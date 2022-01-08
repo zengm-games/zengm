@@ -1803,6 +1803,7 @@ const SettingsForm = ({
 																injuries,
 															}));
 														}}
+														type="injuries"
 													/>
 												);
 											} else if (key === "playerBioInfo") {

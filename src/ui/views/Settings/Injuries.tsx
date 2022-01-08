@@ -2,10 +2,11 @@ import { csvFormat, csvParse } from "d3-dsv";
 import { m, AnimatePresence } from "framer-motion";
 import { ChangeEvent, CSSProperties, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
-import type { InjuriesSetting } from "../../../common/types";
+import type { InjuriesSetting, TragicDeaths } from "../../../common/types";
 import {
 	confirm,
 	downloadFile,
+	helpers,
 	logEvent,
 	resetFileInput,
 	toWorker,
@@ -13,15 +14,38 @@ import {
 import { godModeRequiredMessage } from "./SettingsForm";
 import classNames from "classnames";
 
-const formatInjuries = (injuries: InjuriesSetting) =>
-	injuries.map(row => ({
-		id: Math.random(),
-		name: row.name,
-		frequency: String(row.frequency),
-		games: String(row.games),
-	}));
+type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
+type RowsState<Type> = Type extends "injuries"
+	? {
+			id: number;
+			name: string;
+			frequency: string;
+			games: string;
+	  }[]
+	: {
+			id: number;
+			reason: string;
+			frequency: string;
+	  }[];
 
-type InjuriesText = ReturnType<typeof formatInjuries>;
+const formatRows = <Type extends "injuries" | "tragicDeaths">(
+	rows: Rows<Type>,
+): RowsState<Type> => {
+	const keys = Object.keys(rows[0]) as any[];
+	return rows.map((row: any) => {
+		const formatted = {
+			id: Math.random(),
+		} as any;
+		for (const key of keys) {
+			if (typeof row[key] === "string") {
+				formatted[key] = row[key];
+			} else {
+				formatted[key] = String(row[key]);
+			}
+		}
+		return formatted;
+	});
+};
 
 export const IMPORT_FILE_STYLE: CSSProperties = {
 	position: "absolute",
@@ -36,13 +60,20 @@ export const IMPORT_FILE_STYLE: CSSProperties = {
 	outline: "none",
 };
 
+const getColumns = (type: "injuries" | "tragicDeaths") =>
+	type === "injuries"
+		? ["name", "frequency", "games"]
+		: ["reason", "frequency"];
+
 // https://stackoverflow.com/a/35200633/786644
-const ImportButton = ({
+const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 	setErrorMessage,
-	setInjuries,
+	setRows,
+	type,
 }: {
 	setErrorMessage: (errorMessage?: string) => void;
-	setInjuries: (injuries: InjuriesText) => void;
+	setRows: (injuries: RowsState<Type>) => void;
+	type: Type;
 }) => (
 	<button
 		className="btn btn-light-bordered"
@@ -74,18 +105,20 @@ const ImportButton = ({
 						// @ts-ignore
 						const rows = csvParse(event2.currentTarget.result);
 
-						if (
-							!rows.columns.includes("name") ||
-							!rows.columns.includes("frequency") ||
-							!rows.columns.includes("games")
-						) {
-							setErrorMessage(
-								"File should be a CSV file with columns: name, frequency, games",
-							);
-							return;
+						const columns = getColumns(type);
+
+						for (const column of columns) {
+							if (!rows.columns.includes(column)) {
+								setErrorMessage(
+									`File should be a CSV file with columns: ${columns.join(
+										", ",
+									)}`,
+								);
+								return;
+							}
 						}
 
-						setInjuries(formatInjuries(rows as any));
+						setRows(formatRows(rows as any));
 					} catch (error) {
 						setErrorMessage(error.message);
 						return;
@@ -96,29 +129,37 @@ const ImportButton = ({
 	</button>
 );
 
-const ExportButton = ({ injuries }: { injuries: InjuriesText }) => (
+const ExportButton = <Type extends "injuries" | "tragicDeaths">({
+	rows,
+	type,
+}: {
+	rows: RowsState<Type>;
+	type: Type;
+}) => (
 	<button
 		className="btn btn-light-bordered"
 		onClick={() => {
-			const output = csvFormat(injuries, ["name", "frequency", "games"]);
+			const output = csvFormat(rows as any, getColumns(type));
 
-			downloadFile("injuries.csv", output, "text/csv");
+			downloadFile(`${type}.csv`, output, "text/csv");
 		}}
 	>
 		Export
 	</button>
 );
 
-const Controls = ({
-	injuries,
+const Controls = <Type extends "injuries" | "tragicDeaths">({
+	rows,
 	position,
-	setInjuries,
+	setRows,
+	type,
 }: {
-	injuries: InjuriesText;
+	rows: RowsState<Type>;
 	position: "top" | "bottom";
-	setInjuries: (
-		injuries: InjuriesText | ((injuries: InjuriesText) => InjuriesText),
+	setRows: (
+		rows: RowsState<Type> | ((rows: RowsState<Type>) => RowsState<Type>),
 	) => void;
+	type: Type;
 }) => {
 	const [importErrorMessage, setImportErrorMessage] = useState<
 		string | undefined
@@ -131,16 +172,24 @@ const Controls = ({
 					<button
 						className="btn btn-light-bordered"
 						onClick={() => {
-							const newInjury = {
-								id: Math.random(),
-								name: "Injury",
-								frequency: "1",
-								games: "1",
-							};
+							const newRow =
+								type === "injuries"
+									? {
+											id: Math.random(),
+											name: "Injury",
+											frequency: "1",
+											games: "1",
+									  }
+									: {
+											id: Math.random(),
+											reason: "PLAYER_NAME died.",
+											frequency: "1",
+									  };
+
 							if (position === "top") {
-								setInjuries(rows => [newInjury, ...rows]);
+								setRows(rows => [newRow as any, ...rows]);
 							} else {
-								setInjuries(rows => [...rows, newInjury]);
+								setRows(rows => [...rows, newRow as any]);
 							}
 						}}
 					>
@@ -158,18 +207,18 @@ const Controls = ({
 						<Dropdown.Menu>
 							<Dropdown.Item
 								onClick={async () => {
-									setInjuries(
-										formatInjuries(
-											await toWorker("main", "getDefaultInjuries"),
-										),
+									const defaultRows = await toWorker(
+										"main",
+										`getDefault${helpers.upperCaseFirstLetter(type)}`,
 									);
+									setRows(formatRows(defaultRows) as any);
 								}}
 							>
 								Default
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={() => {
-									setInjuries([]);
+									setRows([]);
 								}}
 							>
 								Clear
@@ -180,9 +229,10 @@ const Controls = ({
 				<div className="btn-group">
 					<ImportButton
 						setErrorMessage={setImportErrorMessage}
-						setInjuries={setInjuries}
+						setRows={setRows}
+						type={type}
 					/>
-					<ExportButton injuries={injuries} />
+					<ExportButton rows={rows} type={type} />
 				</div>
 			</div>
 
@@ -195,57 +245,77 @@ const Controls = ({
 
 const isInvalidNumber = (number: number) => Number.isNaN(number) || number <= 0;
 
-const parseAndValidate = (injuriesText: InjuriesText): InjuriesSetting => {
-	const injuries = injuriesText.map(row => ({
-		name: row.name,
-		frequency: parseFloat(row.frequency),
-		games: parseFloat(row.games),
-	}));
+const parseAndValidate = <Type extends "injuries" | "tragicDeaths">(
+	type: Type,
+	rowsState: RowsState<Type>,
+): Rows<Type> => {
+	const rows = rowsState.map((row: any) => {
+		if (type === "injuries") {
+			return {
+				name: row.name,
+				frequency: parseFloat(row.frequency),
+				games: parseFloat(row.games),
+			};
+		}
 
-	for (const row of injuries) {
+		return {
+			reason: row.reason,
+			frequency: parseFloat(row.frequency),
+		};
+	}) as any as Rows<Type>;
+
+	for (const row of rows) {
+		const name = type === "injuries" ? (row as any).name : (row as any).reason;
+
 		if (isInvalidNumber(row.frequency)) {
 			throw new Error(
-				`Injury "${row.name}" has an invalid frequency - must be a positive number.`,
+				`Injury "${name}" has an invalid frequency - must be a positive number.`,
 			);
 		}
 
-		if (isInvalidNumber(row.games)) {
-			throw new Error(
-				`Injury "${row.name}" has an invalid number of games - must be a positive number.`,
-			);
+		if (type === "injuries") {
+			if (isInvalidNumber((row as any).games)) {
+				throw new Error(
+					`Injury "${name}" has an invalid number of games - must be a positive number.`,
+				);
+			}
 		}
 	}
 
-	if (injuries.length === 0) {
-		throw new Error("You must define at least one type of injury.");
+	if (rows.length === 0) {
+		throw new Error(
+			`You must define at least one ${
+				type === "injuries" ? "injury type" : "tragic death"
+			}.`,
+		);
 	}
 
-	return injuries;
+	return rows;
 };
 
 // If animation is enabled, the modal gets stuck open on Android Chrome v91. This happens only when clicking Cancel/Save - the X and clicking outside the modal still works to close it. All my code is working - show does get set false, it does get rendered, just still displayed. Disabling ads makes no difference. It works when calling programmatically wtih ButtonElement.click() but not with an actual click. Disabling animation fixes it though. Also https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZGhkhtPsGFPFxcKxhvZFkHpl
 export const animation = false;
 
-const Injuries = ({
+const Injuries = <Type extends "injuries" | "tragicDeaths">({
 	defaultValue,
 	disabled,
 	godModeRequired,
 	onChange,
+	type,
 }: {
-	defaultValue: InjuriesSetting;
+	defaultValue: Rows<Type>;
 	disabled: boolean;
 	godModeRequired?: "always" | "existingLeagueOnly";
-	onChange: (injuries: InjuriesSetting) => void;
+	onChange: (rows: Rows<Type>) => void;
+	type: Type;
 }) => {
 	const [show, setShow] = useState(false);
-	const [injuries, setInjuriesRaw] = useState(() =>
-		formatInjuries(defaultValue),
-	);
+	const [rows, setRowsRaw] = useState(() => formatRows<Type>(defaultValue));
 	const [dirty, setDirty] = useState(false);
-	const lastSavedInjuries = useRef<InjuriesText | undefined>();
+	const lastSavedRows = useRef<RowsState<Type> | undefined>();
 
-	const setInjuries = (injuries: Parameters<typeof setInjuriesRaw>[0]) => {
-		setInjuriesRaw(injuries);
+	const setRows = (rows: Parameters<typeof setRowsRaw>[0]) => {
+		setRowsRaw(rows);
 		setDirty(true);
 	};
 
@@ -265,7 +335,7 @@ const Injuries = ({
 			}
 
 			// Reset for next time
-			setInjuriesRaw(lastSavedInjuries.current ?? formatInjuries(defaultValue));
+			setRowsRaw(lastSavedRows.current ?? formatRows(defaultValue));
 			setDirty(false);
 		}
 
@@ -283,7 +353,7 @@ const Injuries = ({
 
 		let parsed;
 		try {
-			parsed = parseAndValidate(injuries);
+			parsed = parseAndValidate(type, rows);
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -295,7 +365,7 @@ const Injuries = ({
 		}
 
 		// Save for next time
-		lastSavedInjuries.current = injuries;
+		lastSavedRows.current = rows;
 		setDirty(false);
 
 		setShow(false);
@@ -304,23 +374,28 @@ const Injuries = ({
 	};
 
 	const handleChange =
-		(key: "name" | "frequency" | "games", i: number) =>
+		(key: "name" | "frequency" | "games" | "reason", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setInjuries(rows =>
-				rows.map((row, j) => {
-					if (i !== j) {
-						return row;
-					}
+			setRows(
+				rows =>
+					rows.map((row, j) => {
+						if (i !== j) {
+							return row;
+						}
 
-					return {
-						...row,
-						[key]: event.target.value,
-					};
-				}),
+						return {
+							...row,
+							[key]: event.target.value,
+						};
+					}) as any,
 			);
 		};
 
 	const title = disabled ? godModeRequiredMessage(godModeRequired) : undefined;
+
+	const singular = type === "injuries" ? "injury" : "tragic death";
+	const singularCapitalized = type === "injuries" ? "Injury" : "Tragic Death";
+	const aOrAn = type === "injuries" ? "an" : "a";
 
 	return (
 		<>
@@ -340,35 +415,50 @@ const Injuries = ({
 				</Modal.Header>
 				<Modal.Body>
 					<p>
-						Injury rate is determined by the "Injury Rate" setting, which is
-						viewable on the main League Settings page. When an injury occurs,
-						the type of injury is randomly selected from this list. The
-						probability of a type being selected is its "frequency" value
-						divided by the sum of all frequencies.
+						The {singular} rate is determined by the "{singularCapitalized}{" "}
+						Rate" setting, which is viewable on the main League Settings page.
+						When {aOrAn} {singular} occurs, the type of {singular} is randomly
+						selected from this list. The probability of a type being selected is
+						its "frequency" value divided by the sum of all frequencies.
 					</p>
-					<p>
-						"Games" is the average number of games that will be missed. There is
-						some variability based on luck and health spending.
-					</p>
+					{type === "injuries" ? (
+						<p>
+							"Games" is the average number of games that will be missed. There
+							is some variability based on luck and health spending.
+						</p>
+					) : (
+						<p>
+							<code>PLAYER_NAME</code> will be replaced by the name of the
+							player who died. By default there are two special tragic deaths,
+							defined by the codes <code>SPECIAL_CLUE</code> and{" "}
+							<code>SPECIAL_GIFTS</code> because internally they have some
+							randomly generated parts.
+						</p>
+					)}
 
-					<Controls
-						position="top"
-						injuries={injuries}
-						setInjuries={setInjuries}
-					/>
+					<Controls position="top" rows={rows} setRows={setRows} type={type} />
 
-					{injuries.length > 0 ? (
+					{rows.length > 0 ? (
 						<form onSubmit={handleSave} className="my-3">
 							<input type="submit" className="d-none" />
 							<div className="row g-2" style={{ marginRight: 22 }}>
-								<div className="col-6">Name</div>
-								<div className="col-3">Frequency</div>
-								<div className="col-3">Games</div>
+								{type === "injuries" ? (
+									<>
+										<div className="col-6">Name</div>
+										<div className="col-3">Frequency</div>
+										<div className="col-3">Games</div>
+									</>
+								) : (
+									<>
+										<div className="col-9">Reason</div>
+										<div className="col-3">Games</div>
+									</>
+								)}
 							</div>
 							<AnimatePresence initial={false}>
-								{injuries.map((injury, i) => (
+								{rows.map((row, i) => (
 									<m.div
-										key={injury.id}
+										key={row.id}
 										initial={{ opacity: 0, y: -38 }}
 										animate={{ opacity: 1, y: 0 }}
 										exit={{}}
@@ -377,44 +467,71 @@ const Injuries = ({
 									>
 										<div className="d-flex">
 											<div className="row g-2 flex-grow-1" key={i}>
-												<div className="col-6">
-													<input
-														type="text"
-														className="form-control"
-														value={injury.name}
-														onChange={handleChange("name", i)}
-													/>
-												</div>
-												<div className="col-3">
-													<input
-														type="text"
-														className={classNames("form-control", {
-															"is-invalid": isInvalidNumber(
-																parseFloat(injury.frequency),
-															),
-														})}
-														value={injury.frequency}
-														onChange={handleChange("frequency", i)}
-													/>
-												</div>
-												<div className="col-3">
-													<input
-														type="text"
-														className={classNames("form-control", {
-															"is-invalid": isInvalidNumber(
-																parseFloat(injury.games),
-															),
-														})}
-														value={injury.games}
-														onChange={handleChange("games", i)}
-													/>
-												</div>
+												{type === "injuries" ? (
+													<>
+														<div className="col-6">
+															<input
+																type="text"
+																className="form-control"
+																value={(row as any).name}
+																onChange={handleChange("name", i)}
+															/>
+														</div>
+														<div className="col-3">
+															<input
+																type="text"
+																className={classNames("form-control", {
+																	"is-invalid": isInvalidNumber(
+																		parseFloat(row.frequency),
+																	),
+																})}
+																value={row.frequency}
+																onChange={handleChange("frequency", i)}
+															/>
+														</div>
+														<div className="col-3">
+															<input
+																type="text"
+																className={classNames("form-control", {
+																	"is-invalid": isInvalidNumber(
+																		parseFloat((row as any).games),
+																	),
+																})}
+																value={(row as any).games}
+																onChange={handleChange("games", i)}
+															/>
+														</div>
+													</>
+												) : (
+													<>
+														<div className="col-9">
+															<input
+																type="text"
+																className="form-control"
+																value={(row as any).reason}
+																onChange={handleChange("reason", i)}
+															/>
+														</div>
+														<div className="col-3">
+															<input
+																type="text"
+																className={classNames("form-control", {
+																	"is-invalid": isInvalidNumber(
+																		parseFloat(row.frequency),
+																	),
+																})}
+																value={row.frequency}
+																onChange={handleChange("frequency", i)}
+															/>
+														</div>
+													</>
+												)}
 											</div>
 											<button
 												className="text-danger btn btn-link ps-2 pe-0 border-0"
 												onClick={() => {
-													setInjuries(rows =>
-														rows.filter(row => row !== injury),
+													setRows(rows =>
+														(rows as any[]).filter(row2 => row2 !== row),
 													);
 												}}
 												style={{ fontSize: 20 }}
@@ -430,15 +547,17 @@ const Injuries = ({
 						</form>
 					) : (
 						<div className="mt-3 text-danger">
-							You must define at least one injury type.
+							You must define at least one{" "}
+							{type === "injuries" ? "injury type" : "tragic death"}.
 						</div>
 					)}
 
-					{injuries.length > 0 ? (
+					{rows.length > 0 ? (
 						<Controls
 							position="bottom"
-							injuries={injuries}
-							setInjuries={setInjuries}
+							rows={rows}
+							setRows={setRows}
+							type={type}
 						/>
 					) : null}
 				</Modal.Body>
@@ -449,7 +568,7 @@ const Injuries = ({
 					<button
 						className="btn btn-primary"
 						onClick={handleSave}
-						disabled={injuries.length === 0}
+						disabled={rows.length === 0}
 					>
 						Save
 					</button>

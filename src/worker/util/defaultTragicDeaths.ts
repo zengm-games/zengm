@@ -1,4 +1,4 @@
-const defaultTragicDeaths = [
+const reasons = [
 	"SPECIAL_CLUE",
 	"SPECIAL_GIFTS",
 	"PLAYER_NAME died from a drug overdose.",
@@ -46,4 +46,4 @@ const defaultTragicDeaths = [
 	"PLAYER_NAME committed suicide by two shots to the back of his head after handcuffing and throwing himself into ocean inside duffle bag, CIA reports.",
 ];
 
-export default defaultTragicDeaths;
+export default reasons.map(reason => ({ reason, frequency: 1 }));

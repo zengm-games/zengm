@@ -209,7 +209,6 @@ const updatePlayoffs = async (
 			if (playoffsByConf) {
 				teams = [];
 				const teamsByConf = groupBy(teamsUnsorted, t => t.seasonAttrs.cid);
-				console.log("teamsByConf", teamsByConf);
 				for (const teamsConf of Object.values(teamsByConf)) {
 					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
 				}

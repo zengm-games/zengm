@@ -243,37 +243,39 @@ const Draft = ({
 						className="btn btn-xs btn-light-bordered"
 						disabled={drafting}
 						onClick={async () => {
-							let numUserPicksBefore = 0;
-							for (const p2 of drafted) {
-								if (p2.draft.dpid === p.draft.dpid) {
-									break;
+							if (!spectator) {
+								let numUserPicksBefore = 0;
+								for (const p2 of drafted) {
+									if (p2.draft.dpid === p.draft.dpid) {
+										break;
+									}
+
+									if (userTids.includes(p2.draft.tid)) {
+										numUserPicksBefore += 1;
+									}
 								}
 
-								if (userTids.includes(p2.draft.tid)) {
-									numUserPicksBefore += 1;
-								}
-							}
+								if (numUserPicksBefore > 0) {
+									const multipleTeams = userTids.length > 1;
+									const multiplePicks = numUserPicksBefore > 1;
 
-							if (numUserPicksBefore > 0) {
-								const multipleTeams = userTids.length > 1;
-								const multiplePicks = numUserPicksBefore > 1;
+									const proceed = await confirm(
+										`Your team${multipleTeams ? "s" : ""} control${
+											multipleTeams ? "" : "s"
+										} ${numUserPicksBefore} pick${
+											multiplePicks ? "s" : ""
+										} before this one. The AI will make ${
+											multiplePicks ? "those draft picks" : "that draft pick"
+										} for you if you choose to sim to this pick.`,
+										{
+											okText: `Let AI Make My Pick${multiplePicks ? "s" : ""}`,
+											cancelText: "Cancel",
+										},
+									);
 
-								const proceed = await confirm(
-									`Your team${multipleTeams ? "s" : ""} control${
-										multipleTeams ? "" : "s"
-									} ${numUserPicksBefore} pick${
-										multiplePicks ? "s" : ""
-									} before this one. The AI will make ${
-										multiplePicks ? "those draft picks" : "that draft pick"
-									} for you if you choose to sim to this pick.`,
-									{
-										okText: `Let AI Make My Pick${multiplePicks ? "s" : ""}`,
-										cancelText: "Cancel",
-									},
-								);
-
-								if (!proceed) {
-									return;
+									if (!proceed) {
+										return;
+									}
 								}
 							}
 

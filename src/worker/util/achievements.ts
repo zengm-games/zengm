@@ -1777,35 +1777,85 @@ if (isSport("basketball")) {
 }
 
 if (isSport("football")) {
-	achievements.push({
-		slug: "clean_sweep",
-		name: "Clean Sweep",
-		desc: "Go undefeated in the regular season and playoffs.",
-		category: "Season",
-
-		async check() {
-			const wonTitle = await userWonTitle();
-
-			if (wonTitle) {
-				const t = await idb.getCopy.teamsPlus(
-					{
-						seasonAttrs: ["won", "lost"],
-						season: g.get("season"),
-						tid: g.get("userTid"),
-					},
-					"noCopyCache",
-				);
-
-				if (t && t.seasonAttrs.won >= 16 && t.seasonAttrs.lost === 0) {
-					return true;
-				}
-			}
-
+	const footballCheckLivingDangerously = async (
+		pointDifferentialLimit: number,
+	) => {
+		if (g.get("numGamesPlayoffSeries", "current").length < 3) {
 			return false;
-		},
+		}
 
-		when: "afterPlayoffs",
-	});
+		const wonTitle = await userWonTitle();
+
+		if (wonTitle) {
+			const games = await idb.cache.games.getAll();
+			const userPlayoffGames = games.filter(
+				game => game.playoffs && game.won.tid === g.get("userTid"),
+			);
+
+			return userPlayoffGames.every(game => {
+				const diff = game.won.pts - game.lost.pts;
+				return diff <= pointDifferentialLimit;
+			});
+		}
+
+		return false;
+	};
+
+	achievements.push(
+		{
+			slug: "clean_sweep",
+			name: "Clean Sweep",
+			desc: "Go undefeated in the regular season and playoffs.",
+			category: "Season",
+
+			async check() {
+				const wonTitle = await userWonTitle();
+
+				if (wonTitle) {
+					const t = await idb.getCopy.teamsPlus(
+						{
+							seasonAttrs: ["won", "lost"],
+							season: g.get("season"),
+							tid: g.get("userTid"),
+						},
+						"noCopyCache",
+					);
+
+					if (t && t.seasonAttrs.won >= 16 && t.seasonAttrs.lost === 0) {
+						return true;
+					}
+				}
+
+				return false;
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "living_dangerously",
+			name: "Living Dangerously",
+			desc: "Win every playoff game by one score or less.",
+			category: "Playoffs",
+
+			check() {
+				return footballCheckLivingDangerously(8);
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "living_dangerously_2",
+			name: "Living Dangerously 2",
+			desc: "Win every playoff game by a field goal or less.",
+			category: "Playoffs",
+
+			check() {
+				return footballCheckLivingDangerously(3);
+			},
+
+			when: "afterPlayoffs",
+		},
+	);
 }
 
 export default achievements;

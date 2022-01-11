@@ -291,6 +291,25 @@ const SettingsForm = ({
 		}
 	};
 
+	const onGameSimPreset = (newPreset: string) => {
+		// @ts-ignore
+		const presets = gameSimPresets[newPreset];
+		if (!presets) {
+			return;
+		}
+
+		const presetsString: any = {};
+		for (const [key, value] of Object.entries(presets)) {
+			presetsString[key] = String(value);
+		}
+
+		setState(prevState => ({
+			...prevState,
+			...presetsString,
+		}));
+		setGameSimPreset(newPreset);
+	};
+
 	// Filter out the new league only ones when appropriate
 	const filteredSettings = settings.filter(setting => {
 		return (
@@ -396,6 +415,7 @@ const SettingsForm = ({
 					handleChange={handleChange}
 					handleChangeRaw={handleChangeRaw}
 					newLeague={newLeague}
+					onGameSimPreset={onGameSimPreset}
 					showGodModeSettings={showGodModeSettings}
 					state={state}
 					submitting={submitting}

@@ -319,6 +319,7 @@ const SettingsFormOptions = ({
 	handleChange,
 	handleChangeRaw,
 	newLeague,
+	onGameSimPreset,
 	showGodModeSettings,
 	state,
 	submitting,
@@ -334,6 +335,7 @@ const SettingsFormOptions = ({
 		name: Name,
 	) => (value: State[Name]) => void;
 	newLeague?: boolean;
+	onGameSimPreset: (gameSimPreset: string) => void;
 	showGodModeSettings: boolean;
 	state: State;
 	submitting: boolean;
@@ -534,22 +536,7 @@ const SettingsFormOptions = ({
 								value={gameSimPreset}
 								disabled={!godMode}
 								onChange={event => {
-									// @ts-ignore
-									const presets = gameSimPresets[event.target.value];
-									if (!presets) {
-										return;
-									}
-
-									const presetsString: any = {};
-									for (const [key, value] of Object.entries(presets)) {
-										presetsString[key] = String(value);
-									}
-
-									setState(prevState => ({
-										...prevState,
-										...presetsString,
-									}));
-									setGameSimPreset(event.target.value);
+									onGameSimPreset(event.target.value);
 								}}
 							>
 								<option value="default">

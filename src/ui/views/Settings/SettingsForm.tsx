@@ -1,10 +1,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { useState, FormEvent, useEffect, ChangeEvent } from "react";
+import { groupBy } from "../../../common/groupBy";
 import { ActionButton, StickyBottomButtons } from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
 import { settings } from "./settings";
-import type { Category, FieldType, Key, Values } from "./types";
+import type { FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 import type {
 	InjuriesSetting,
@@ -13,6 +14,7 @@ import type {
 } from "../../../common/types";
 import SettingsFormOptions from "./SettingsFormOptions";
 import gameSimPresets from "./gameSimPresets";
+import categories from "./categories";
 
 const encodeDecodeFunctions = {
 	bool: {
@@ -139,6 +141,62 @@ const GodModeSettingsButton = ({
 			{children}
 		</button>
 	);
+};
+
+export const settingNeedsGodMode = (
+	godModeRequired?: "always" | "existingLeagueOnly",
+	newLeague?: boolean,
+) => {
+	return !!godModeRequired && (!newLeague || godModeRequired === "always");
+};
+
+export const settingIsEnabled = (
+	godMode: boolean,
+	newLeague: boolean | undefined,
+	godModeRequired?: "always" | "existingLeagueOnly",
+) => {
+	return godMode || !settingNeedsGodMode(godModeRequired, newLeague);
+};
+
+export const getVisibleCategories = ({
+	godMode,
+	filteredSettings,
+	newLeague,
+	showGodModeSettings,
+}: {
+	godMode: boolean;
+	filteredSettings: typeof settings;
+	newLeague: boolean | undefined;
+	showGodModeSettings: boolean;
+}) => {
+	const visibleCategories = [];
+
+	const groupedSettings = groupBy(filteredSettings, "category");
+
+	for (const category of categories) {
+		if (!groupedSettings[category.name]) {
+			continue;
+		}
+
+		const catSettings = groupedSettings[category.name].filter(option => {
+			return (
+				(showGodModeSettings ||
+					settingIsEnabled(godMode, newLeague, option.godModeRequired)) &&
+				!option.hidden
+			);
+		});
+
+		if (catSettings.length === 0) {
+			continue;
+		}
+
+		visibleCategories.push({
+			...category,
+			settings: catSettings,
+		});
+	}
+
+	return visibleCategories;
 };
 
 const SPECIAL_STATE_OTHERS = [
@@ -390,7 +448,14 @@ const SettingsForm = ({
 		setSubmitting(false);
 	};
 
-	const currentCategoryNames: Category[] = [];
+	const visibleCategories = getVisibleCategories({
+		godMode,
+		filteredSettings,
+		newLeague,
+		showGodModeSettings,
+	});
+
+	const currentCategoryNames = visibleCategories.map(category => category.name);
 
 	const toggleGodModeSettings = () => {
 		setShowGodModeSettings(show => !show);
@@ -409,7 +474,7 @@ const SettingsForm = ({
 				</GodModeSettingsButton>
 
 				<SettingsFormOptions
-					filteredSettings={filteredSettings}
+					disabled={submitting}
 					gameSimPreset={gameSimPreset}
 					godMode={godMode}
 					handleChange={handleChange}
@@ -418,7 +483,7 @@ const SettingsForm = ({
 					onGameSimPreset={onGameSimPreset}
 					showGodModeSettings={showGodModeSettings}
 					state={state}
-					submitting={submitting}
+					visibleCategories={visibleCategories}
 				/>
 
 				<StickyBottomButtons>

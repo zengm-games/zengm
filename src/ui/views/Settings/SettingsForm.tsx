@@ -227,6 +227,8 @@ const SettingsForm = ({
 	realPlayers,
 	saveText = "Save Settings",
 	initialSettings,
+	settingsShown,
+	hideShortcuts,
 }: {
 	onCancel?: () => void;
 	onSave: (settings: Settings) => void;
@@ -236,6 +238,10 @@ const SettingsForm = ({
 	realPlayers?: boolean;
 	saveText?: string;
 	initialSettings: Settings;
+	hideShortcuts?: boolean;
+
+	// Used to filter diplayed settings, for the DefaultSettings page
+	settingsShown?: Key[];
 }) => {
 	useEffect(() => {
 		localActions.update({
@@ -297,6 +303,10 @@ const SettingsForm = ({
 
 	// Filter out the new league only ones when appropriate
 	const filteredSettings = settings.filter(setting => {
+		if (settingsShown) {
+			return settingsShown.includes(setting.key);
+		}
+
 		return (
 			!setting.showOnlyIf ||
 			setting.showOnlyIf({
@@ -390,7 +400,11 @@ const SettingsForm = ({
 
 	return (
 		<div className="settings-wrapper mt-lg-2">
-			<form onSubmit={handleFormSubmit} style={{ maxWidth: 2100 }}>
+			<form
+				onSubmit={handleFormSubmit}
+				className="flex-grow-1"
+				style={{ maxWidth: 2100 }}
+			>
 				<GodModeSettingsButton
 					className="mb-5 d-sm-none"
 					godMode={godMode}
@@ -458,18 +472,20 @@ const SettingsForm = ({
 					</div>
 				</StickyBottomButtons>
 			</form>
-			<div className="settings-shortcuts flex-shrink-0">
-				<ul className="list-unstyled">
-					<li>Shortcuts: </li>
-					{visibleCategories
-						.map(category => category.name)
-						.map(name => (
-							<li key={name} className="settings-shortcut">
-								<a href={`#${name}`}>{name}</a>
-							</li>
-						))}
-				</ul>
-			</div>
+			{!hideShortcuts ? (
+				<div className="settings-shortcuts flex-shrink-0">
+					<ul className="list-unstyled">
+						<li>Shortcuts: </li>
+						{visibleCategories
+							.map(category => category.name)
+							.map(name => (
+								<li key={name} className="settings-shortcut">
+									<a href={`#${name}`}>{name}</a>
+								</li>
+							))}
+					</ul>
+				</div>
+			) : null}
 		</div>
 	);
 };

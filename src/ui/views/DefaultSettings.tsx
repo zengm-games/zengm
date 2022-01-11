@@ -6,15 +6,15 @@ import type { Settings } from "../../worker/views/settings";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { settings } from "./Settings/settings";
-import { getVisibleCategories } from "./Settings/SettingsForm";
+import SettingsForm, { getVisibleCategories } from "./Settings/SettingsForm";
 import SettingsFormOptions from "./Settings/SettingsFormOptions";
 import type { Key } from "./Settings/types";
 import useSettingsFormState from "./Settings/useSettingsFormState";
 
 const DefaultNewLeagueSettings = ({
-	defaultSettings,
+	initialSettings,
 }: {
-	defaultSettings: Settings;
+	initialSettings: Settings;
 }) => {
 	useTitleBar({ title: "Default New League Settings" });
 
@@ -34,31 +34,8 @@ const DefaultNewLeagueSettings = ({
 		})),
 	}));
 
-	const {
-		godMode,
-		handleChange,
-		handleChangeRaw,
-		state,
-		setState,
-		gameSimPreset,
-		setGameSimPreset,
-	} = useSettingsFormState({
-		initialSettings: defaultSettings,
-	});
 	console.log("options", options);
-	console.log("defaultSettings", defaultSettings);
-	console.log("state", state);
-
-	const filteredSettings = settings.filter(
-		setting => !setting.hidden && settingsShown.includes(setting.key),
-	);
-
-	const visibleCategories = getVisibleCategories({
-		godMode,
-		filteredSettings,
-		newLeague: true,
-		showGodModeSettings: true,
-	});
+	console.log("initialSettings", initialSettings);
 
 	return (
 		<>
@@ -92,17 +69,16 @@ const DefaultNewLeagueSettings = ({
 				value={null}
 			/>
 
-			<SettingsFormOptions
-				disabled={false}
-				gameSimPreset={gameSimPreset}
-				godMode={godMode}
-				handleChange={handleChange}
-				handleChangeRaw={handleChangeRaw}
-				newLeague={true}
-				setGameSimPreset={setGameSimPreset}
-				showGodModeSettings={true}
-				state={state}
-				visibleCategories={visibleCategories}
+			<SettingsForm
+				onSave={() => {}}
+				saveText="Save Default Settings"
+				initialSettings={initialSettings}
+				settingsShown={settingsShown}
+				hideShortcuts
+				// Enable everything so we get all options
+				hasPlayers
+				newLeague
+				realPlayers
 			/>
 		</>
 	);

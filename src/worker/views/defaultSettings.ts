@@ -3,13 +3,13 @@ import { getDefaultSettings } from "./newLeague";
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun")) {
-		const defaultSettings = {
+		const initialSettings = {
 			...getDefaultSettings(),
 			numActiveTeams: undefined,
 		};
 
 		return {
-			defaultSettings,
+			initialSettings,
 		};
 	}
 };

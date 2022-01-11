@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { useState, FormEvent, useEffect, ChangeEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { groupBy } from "../../../common/groupBy";
 import { ActionButton, StickyBottomButtons } from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
 import { settings } from "./settings";
-import type { FieldType, Key, Values } from "./types";
+import type { Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 import type {
 	InjuriesSetting,
@@ -13,8 +13,8 @@ import type {
 	TragicDeaths,
 } from "../../../common/types";
 import SettingsFormOptions from "./SettingsFormOptions";
-import gameSimPresets from "./gameSimPresets";
 import categories from "./categories";
+import useSettingsFormState from "./useSettingsFormState";
 
 const encodeDecodeFunctions = {
 	bool: {
@@ -199,13 +199,16 @@ export const getVisibleCategories = ({
 	return visibleCategories;
 };
 
-const SPECIAL_STATE_OTHERS = [
+export const SPECIAL_STATE_OTHERS = [
 	"injuries",
 	"tragicDeaths",
 	"playerBioInfo",
 ] as const;
-const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
-const SPECIAL_STATE_ALL = [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS];
+export const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
+export const SPECIAL_STATE_ALL = [
+	...SPECIAL_STATE_BOOLEANS,
+	...SPECIAL_STATE_OTHERS,
+];
 export type SpecialStateOthers = typeof SPECIAL_STATE_OTHERS[number];
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
@@ -234,9 +237,6 @@ const SettingsForm = ({
 	realPlayers?: boolean;
 	saveText?: string;
 }) => {
-	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
-	const [gameSimPreset, setGameSimPreset] = useState("default");
-
 	useEffect(() => {
 		localActions.update({
 			stickyFormButtons: true,
@@ -247,80 +247,22 @@ const SettingsForm = ({
 				stickyFormButtons: false,
 			});
 		};
+	}, []);
+
+	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
+
+	const {
+		godMode,
+		handleChange,
+		handleChangeRaw,
+		state,
+		setState,
+		gameSimPreset,
+		setGameSimPreset,
+	} = useSettingsFormState({
+		gameAttributes: props,
+		onUpdateExtra,
 	});
-
-	const [submitting, setSubmitting] = useState(false);
-	const [state, setStateRaw] = useState<State>(() => {
-		// @ts-ignore
-		const initialState: State = {};
-		for (const { key, type, values } of settings) {
-			if (SPECIAL_STATE_ALL.includes(key as any)) {
-				continue;
-			}
-
-			const value = props[key];
-
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
-			const stringify = encodeDecodeFunctions[type].stringify;
-
-			initialState[key] = stringify ? stringify(value, values) : value;
-		}
-
-		for (const key of [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS]) {
-			(initialState as any)[key] = props[key];
-		}
-
-		return initialState;
-	});
-	const godMode = !!state.godMode;
-
-	const setState = (arg: Parameters<typeof setStateRaw>[0]) => {
-		setStateRaw(arg);
-		if (onUpdateExtra) {
-			onUpdateExtra();
-		}
-	};
-
-	const handleChange =
-		(name: Key, type: FieldType) =>
-		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-			let value: string;
-			if (type === "bool") {
-				value = String((event.target as any).checked);
-			} else if (type === "floatValuesOrCustom") {
-				if (event.target.value === "custom") {
-					const raw = state[name];
-					if (typeof raw !== "string") {
-						throw new Error("Invalid value");
-					}
-
-					value = JSON.stringify([true, JSON.parse(raw)[1]]);
-				} else {
-					value = JSON.stringify([false, event.target.value]);
-				}
-			} else {
-				value = event.target.value;
-			}
-
-			setState(prevState => ({
-				...prevState,
-				[name]: value,
-			}));
-
-			if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
-				setGameSimPreset("default");
-			}
-		};
-
-	const handleChangeRaw =
-		<Name extends SpecialStateOthers>(name: Name) =>
-		(value: State[Name]) => {
-			setState(prevState => ({
-				...prevState,
-				[name]: value,
-			}));
-		};
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
@@ -349,25 +291,6 @@ const SettingsForm = ({
 		}
 	};
 
-	const onGameSimPreset = (newPreset: string) => {
-		// @ts-ignore
-		const presets = gameSimPresets[newPreset];
-		if (!presets) {
-			return;
-		}
-
-		const presetsString: any = {};
-		for (const [key, value] of Object.entries(presets)) {
-			presetsString[key] = String(value);
-		}
-
-		setState(prevState => ({
-			...prevState,
-			...presetsString,
-		}));
-		setGameSimPreset(newPreset);
-	};
-
 	// Filter out the new league only ones when appropriate
 	const filteredSettings = settings.filter(setting => {
 		return (
@@ -379,6 +302,8 @@ const SettingsForm = ({
 			})
 		);
 	});
+
+	const [submitting, setSubmitting] = useState(false);
 
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -455,8 +380,6 @@ const SettingsForm = ({
 		showGodModeSettings,
 	});
 
-	const currentCategoryNames = visibleCategories.map(category => category.name);
-
 	const toggleGodModeSettings = () => {
 		setShowGodModeSettings(show => !show);
 	};
@@ -480,7 +403,7 @@ const SettingsForm = ({
 					handleChange={handleChange}
 					handleChangeRaw={handleChangeRaw}
 					newLeague={newLeague}
-					onGameSimPreset={onGameSimPreset}
+					setGameSimPreset={setGameSimPreset}
 					showGodModeSettings={showGodModeSettings}
 					state={state}
 					visibleCategories={visibleCategories}
@@ -534,11 +457,13 @@ const SettingsForm = ({
 			<div className="settings-shortcuts flex-shrink-0">
 				<ul className="list-unstyled">
 					<li>Shortcuts: </li>
-					{currentCategoryNames.map(name => (
-						<li key={name} className="settings-shortcut">
-							<a href={`#${name}`}>{name}</a>
-						</li>
-					))}
+					{visibleCategories
+						.map(category => category.name)
+						.map(name => (
+							<li key={name} className="settings-shortcut">
+								<a href={`#${name}`}>{name}</a>
+							</li>
+						))}
 				</ul>
 			</div>
 		</div>

@@ -1,3 +1,14 @@
+ability to specify default settings
+- on global settings page
+- ability to select individual settings from a dropdown to add
+- ability to delete individual setting (go back to default)
+- includes goat formula
+- explain that it doens't override when a custom league file or historical league includes a value for a setting
+- import/export default settings
+- make god mode one of the settings, and require it to be set if including a god mode only setting
+- validator needs defaults available for non visible settings
+- gameSimPreset how to handle
+
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 
 on team history, graph of team ovr / winp / mov over time, star for championship
@@ -264,14 +275,6 @@ ratings distributions by position https://discord.com/channels/29001353402305740
 all advanced stats have always disregarded the previous team's stats for traded players, but that can have a big impact on things like normalizing PER to an average of 15 leaguewide if there are a lot of high minutes high/low PER traded players.
 
 Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
-
-ability to specify default settings
-- on global settings page
-- ability to select individual settings from a dropdown to add
-- ability to delete individual setting (go back to default)
-- includes goat formula
-- explain that it doens't override when a custom league file or historical league includes a value for a setting
-- import/export default settings
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf

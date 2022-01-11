@@ -2,7 +2,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import type { PlayerBioInfo } from "../../../common/types";
 import { confirm, helpers, logEvent, toWorker } from "../../util";
-import { godModeRequiredMessage } from "./SettingsForm";
+import { godModeRequiredMessage } from "./SettingsFormOptions";
 import { animation } from "./RowsEditor";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";

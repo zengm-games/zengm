@@ -11,7 +11,7 @@ import {
 	resetFileInput,
 	toWorker,
 } from "../../util";
-import { godModeRequiredMessage } from "./SettingsForm";
+import { godModeRequiredMessage } from "./SettingsFormOptions";
 import classNames from "classnames";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 

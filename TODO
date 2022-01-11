@@ -23,6 +23,8 @@ ability to specify default settings
   - group titles should be clickable https://stackoverflow.com/a/61345937/786644
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined
+- disable while saving from DefaultNewLeagueSettings
+- move to own page, MoreLinks from global settings
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

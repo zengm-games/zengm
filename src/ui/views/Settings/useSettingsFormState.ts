@@ -3,6 +3,7 @@ import type { Settings } from "../../../worker/views/settings";
 import gameSimPresets from "./gameSimPresets";
 import { settings } from "./settings";
 import {
+	encodeDecodeFunctions,
 	SpecialStateOthers,
 	SPECIAL_STATE_ALL,
 	SPECIAL_STATE_BOOLEANS,
@@ -12,10 +13,10 @@ import {
 import type { FieldType, Key } from "./types";
 
 const useSettingsFormState = ({
-	gameAttributes,
+	initialSettings,
 	onUpdateExtra,
 }: {
-	gameAttributes: Settings;
+	initialSettings: Settings;
 	onUpdateExtra?: () => void;
 }) => {
 	const [gameSimPreset, setGameSimPresetRaw] = useState("default");
@@ -28,17 +29,16 @@ const useSettingsFormState = ({
 				continue;
 			}
 
-			const value = gameAttributes[key];
+			const value = initialSettings[key];
 
 			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
-			const stringify = encodeDecodeFunctions[type].stringify;
+			const stringify = (encodeDecodeFunctions[type] as any).stringify;
 
 			initialState[key] = stringify ? stringify(value, values) : value;
 		}
 
 		for (const key of [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS]) {
-			(initialState as any)[key] = gameAttributes[key];
+			(initialState as any)[key] = initialSettings[key];
 		}
 
 		return initialState;

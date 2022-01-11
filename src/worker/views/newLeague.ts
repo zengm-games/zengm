@@ -15,9 +15,7 @@ const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";
 };
 
-const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
-	const godModeLimits = newLeagueGodModeLimits();
-
+export const getDefaultSettings = () => {
 	const defaultSettings: Omit<Settings, "numActiveTeams"> = {
 		godMode: unwrapGameAttribute(defaultGameAttributes, "godMode"),
 		godModeInPast: unwrapGameAttribute(defaultGameAttributes, "godModeInPast"),
@@ -243,6 +241,14 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 			unwrapGameAttribute(defaultGameAttributes, "realDraftRatings") ??
 			"rookie",
 	};
+
+	return defaultSettings;
+};
+
+const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
+	const godModeLimits = newLeagueGodModeLimits();
+
+	const defaultSettings = getDefaultSettings();
 
 	if (lid !== undefined) {
 		// Importing!

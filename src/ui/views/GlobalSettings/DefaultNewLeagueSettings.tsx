@@ -2,9 +2,16 @@ import { useState } from "react";
 import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 import { groupBy } from "../../../common/groupBy";
+import type { Settings } from "../../../worker/views/settings";
 import { settings } from "../Settings/settings";
+import type { Key } from "../Settings/types";
+import useSettingsFormState from "../Settings/useSettingsFormState";
 
-const DefaultNewLeagueSettings = () => {
+const DefaultNewLeagueSettings = ({
+	defaultSettings,
+}: {
+	defaultSettings: Settings;
+}) => {
 	const [settingsShown, setSettingsShown] = useState<Key[]>([]);
 
 	const allSettings = settings.filter(
@@ -20,7 +27,21 @@ const DefaultNewLeagueSettings = () => {
 			})),
 		}),
 	);
-	console.log(options);
+
+	const {
+		godMode,
+		handleChange,
+		handleChangeRaw,
+		state,
+		setState,
+		gameSimPreset,
+		setGameSimPreset,
+	} = useSettingsFormState({
+		initialSettings: defaultSettings,
+	});
+	console.log("options", options);
+	console.log("defaultSettings", defaultSettings);
+	console.log("state", state);
 
 	return (
 		<>
@@ -38,10 +59,15 @@ const DefaultNewLeagueSettings = () => {
 					: null}
 			</p>
 
-			<Select
+			<Select<{
+				label: string;
+				value: Key;
+			}>
 				classNamePrefix="dark-select"
-				onChange={(newValue: any) => {
-					setSettingsShown(shown => [...shown, newValue.value]);
+				onChange={newValue => {
+					if (newValue) {
+						setSettingsShown(shown => [...shown, newValue.value]);
+					}
 				}}
 				options={options}
 				placeholder="Select a setting to supply a new default value for..."

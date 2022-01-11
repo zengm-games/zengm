@@ -9,6 +9,8 @@ import { isSport } from "../../../common";
 import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings";
 
 const Options = (props: View<"globalSettings">) => {
+	const { defaultSettings } = props;
+
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = safeLocalStorage.getItem("theme");
 		let theme: "dark" | "light" | "default";
@@ -134,7 +136,7 @@ const Options = (props: View<"globalSettings">) => {
 					</>
 				) : null}
 
-				<DefaultNewLeagueSettings />
+				<DefaultNewLeagueSettings defaultSettings={defaultSettings} />
 
 				<button className="btn btn-primary mt-3">Save Global Settings</button>
 			</form>

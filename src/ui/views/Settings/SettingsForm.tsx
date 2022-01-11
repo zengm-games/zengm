@@ -16,7 +16,7 @@ import SettingsFormOptions from "./SettingsFormOptions";
 import categories from "./categories";
 import useSettingsFormState from "./useSettingsFormState";
 
-const encodeDecodeFunctions = {
+export const encodeDecodeFunctions = {
 	bool: {
 		stringify: (value: boolean) => String(value),
 		parse: (value: string) => value === "true",
@@ -260,7 +260,7 @@ const SettingsForm = ({
 		gameSimPreset,
 		setGameSimPreset,
 	} = useSettingsFormState({
-		gameAttributes: props,
+		initialSettings: props,
 		onUpdateExtra,
 	});
 

@@ -7,6 +7,7 @@ ability to specify default settings
     - also use this to handle hiding the 2nd "randomization" value
 - explain that it doens't override when a custom league file or historical league includes a value for a setting
 - import/export default settings
+  - import should do a deep diff and only include ones different from default
 - make god mode one of the settings, and require it to be set if including a god mode only setting
 - validator needs defaults available for non visible settings
 - gameSimPreset how to handle
@@ -20,6 +21,8 @@ ability to specify default settings
 - react-select menu
   - placeholder text should not be gray
   - group titles should be clickable https://stackoverflow.com/a/61345937/786644
+- numActiveTeams handled correctly?
+  - needs to skip that validation if numActiveTeams is undefined
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

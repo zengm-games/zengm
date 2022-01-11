@@ -21,7 +21,7 @@ const CustomizeSettings = ({
 			onSave={onSave}
 			saveText={saveText}
 			onCancel={onCancel}
-			{...initial}
+			initialSettings={initial}
 			newLeague
 			hasPlayers={hasPlayers}
 			realPlayers={realPlayers}

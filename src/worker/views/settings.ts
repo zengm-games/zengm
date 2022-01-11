@@ -129,7 +129,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
 	) {
-		const settings: Settings = {
+		const initialSettings: Settings = {
 			godMode: g.get("godMode"),
 			godModeInPast: g.get("godModeInPast"),
 			numGames: g.get("numGames"),
@@ -232,7 +232,9 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			realStats: "none",
 		};
 
-		return settings;
+		return {
+			initialSettings,
+		};
 	}
 };
 

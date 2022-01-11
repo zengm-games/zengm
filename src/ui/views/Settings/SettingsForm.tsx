@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useState, FormEvent, useEffect } from "react";
 import { groupBy } from "../../../common/groupBy";
 import { ActionButton, StickyBottomButtons } from "../../components";
@@ -227,8 +226,8 @@ const SettingsForm = ({
 	newLeague,
 	realPlayers,
 	saveText = "Save Settings",
-	...props
-}: Settings & {
+	initialSettings,
+}: {
 	onCancel?: () => void;
 	onSave: (settings: Settings) => void;
 	onUpdateExtra?: () => void;
@@ -236,6 +235,7 @@ const SettingsForm = ({
 	newLeague?: boolean;
 	realPlayers?: boolean;
 	saveText?: string;
+	initialSettings: Settings;
 }) => {
 	useEffect(() => {
 		localActions.update({
@@ -260,13 +260,17 @@ const SettingsForm = ({
 		gameSimPreset,
 		setGameSimPreset,
 	} = useSettingsFormState({
-		initialSettings: props,
+		initialSettings,
 		onUpdateExtra,
 	});
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
-		if (!state.godMode && !state.godModeInPast && !props.godModeInPast) {
+		if (
+			!state.godMode &&
+			!state.godModeInPast &&
+			!initialSettings.godModeInPast
+		) {
 			proceed = await confirm(
 				"God Mode enables tons of customization features, including many of the settings found here. But if you ever enable God Mode in a league, you will not be awarded any achievements in that league, even if you disable God Mode.",
 				{
@@ -342,7 +346,7 @@ const SettingsForm = ({
 			const { key, name, validator } = option;
 			try {
 				if (validator) {
-					await validator(output[key], output, props);
+					await validator(output[key], output, initialSettings);
 				}
 			} catch (error) {
 				setSubmitting(false);
@@ -468,39 +472,6 @@ const SettingsForm = ({
 			</div>
 		</div>
 	);
-};
-
-SettingsForm.propTypes = {
-	godMode: PropTypes.bool.isRequired,
-	godModeInPast: PropTypes.bool.isRequired,
-	luxuryPayroll: PropTypes.number.isRequired,
-	luxuryTax: PropTypes.number.isRequired,
-	maxContract: PropTypes.number.isRequired,
-	minContract: PropTypes.number.isRequired,
-	minPayroll: PropTypes.number.isRequired,
-	minRosterSize: PropTypes.number.isRequired,
-	maxRosterSize: PropTypes.number.isRequired,
-	numActiveTeams: PropTypes.number.isRequired,
-	numGames: PropTypes.number.isRequired,
-	quarterLength: PropTypes.number.isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	aiTradesFactor: PropTypes.number.isRequired,
-	injuryRate: PropTypes.number.isRequired,
-	tragicDeathRate: PropTypes.number.isRequired,
-	brotherRate: PropTypes.number.isRequired,
-	homeCourtAdvantage: PropTypes.number.isRequired,
-	rookieContractLengths: PropTypes.arrayOf(PropTypes.number).isRequired,
-	sonRate: PropTypes.number.isRequired,
-	hardCap: PropTypes.bool.isRequired,
-	numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
-	numPlayoffByes: PropTypes.number.isRequired,
-	draftType: PropTypes.string.isRequired,
-	playersRefuseToNegotiate: PropTypes.bool.isRequired,
-	budget: PropTypes.bool.isRequired,
-	numSeasonsFutureDraftPicks: PropTypes.number.isRequired,
-	foulRateFactor: PropTypes.number.isRequired,
-	foulsNeededToFoulOut: PropTypes.number.isRequired,
-	foulsUntilBonus: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default SettingsForm;

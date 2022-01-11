@@ -3,6 +3,7 @@ import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../common";
 import { groupBy } from "../../common/groupBy";
 import type { Settings } from "../../worker/views/settings";
+import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { settings } from "./Settings/settings";
 import { getVisibleCategories } from "./Settings/SettingsForm";
@@ -61,6 +62,8 @@ const DefaultNewLeagueSettings = ({
 
 	return (
 		<>
+			<MoreLinks type="globalSettings" page="/settings/default" />
+
 			<p>Here you can override the normal default settings for new leagues.</p>
 
 			<p>

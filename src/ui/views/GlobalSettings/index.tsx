@@ -5,6 +5,7 @@ import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
 import { isSport } from "../../../common";
+import { MoreLinks } from "../../components";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
@@ -83,6 +84,8 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 
 	return (
 		<>
+			<MoreLinks type="globalSettings" page="/settings" />
+
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					<div className="col-sm-3 col-6 mb-3">

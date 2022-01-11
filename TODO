@@ -3,6 +3,7 @@ ability to specify default settings
 - ability to select individual settings from a dropdown to add
 - ability to delete individual setting (go back to default)
 - includes goat formula
+  - extend showOnlyIf
 - explain that it doens't override when a custom league file or historical league includes a value for a setting
 - import/export default settings
 - make god mode one of the settings, and require it to be set if including a god mode only setting
@@ -10,6 +11,7 @@ ability to specify default settings
 - gameSimPreset how to handle
 - dirtySettings
 - wrap up all the state management stuff in a reusable hook
+- switch global settings to have floating submit bar?
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

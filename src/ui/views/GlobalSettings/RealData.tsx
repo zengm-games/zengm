@@ -24,7 +24,7 @@ const RealData = ({
 				</a>
 			</p>
 
-			<div className="row">
+			<div className="row mb-3">
 				<div className="col-sm-6 col-12 mb-3">
 					<label className="form-label" htmlFor="options-team-info">
 						Team Info

@@ -6,6 +6,7 @@ import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
 import { isSport } from "../../../common";
+import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings";
 
 const Options = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
@@ -132,6 +133,8 @@ const Options = (props: View<"globalSettings">) => {
 						/>
 					</>
 				) : null}
+
+				<DefaultNewLeagueSettings />
 
 				<button className="btn btn-primary mt-3">Save Global Settings</button>
 			</form>

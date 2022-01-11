@@ -14,6 +14,7 @@ import CustomizePlayer from "./CustomizePlayer";
 import DailySchedule from "./DailySchedule";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
+import DefaultSettings from "./DefaultSettings";
 import DeleteOldData from "./DeleteOldData";
 import Depth from "./Depth";
 import Draft from "./Draft";
@@ -114,6 +115,7 @@ export default {
 	DailySchedule,
 	DangerZone,
 	Dashboard,
+	DefaultSettings,
 	DeleteOldData,
 	Depth,
 	Draft,

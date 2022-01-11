@@ -1,19 +1,22 @@
 import { useState } from "react";
 import Select from "react-select";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
-import { groupBy } from "../../../common/groupBy";
-import type { Settings } from "../../../worker/views/settings";
-import { settings } from "../Settings/settings";
-import { getVisibleCategories } from "../Settings/SettingsForm";
-import SettingsFormOptions from "../Settings/SettingsFormOptions";
-import type { Key } from "../Settings/types";
-import useSettingsFormState from "../Settings/useSettingsFormState";
+import { SPORT_HAS_REAL_PLAYERS } from "../../common";
+import { groupBy } from "../../common/groupBy";
+import type { Settings } from "../../worker/views/settings";
+import useTitleBar from "../hooks/useTitleBar";
+import { settings } from "./Settings/settings";
+import { getVisibleCategories } from "./Settings/SettingsForm";
+import SettingsFormOptions from "./Settings/SettingsFormOptions";
+import type { Key } from "./Settings/types";
+import useSettingsFormState from "./Settings/useSettingsFormState";
 
 const DefaultNewLeagueSettings = ({
 	defaultSettings,
 }: {
 	defaultSettings: Settings;
 }) => {
+	useTitleBar({ title: "Default New League Settings" });
+
 	const [settingsShown, setSettingsShown] = useState<Key[]>([]);
 
 	const settingsRemainingToSelect = settings.filter(
@@ -58,8 +61,6 @@ const DefaultNewLeagueSettings = ({
 
 	return (
 		<>
-			<h2>Default New League Settings</h2>
-
 			<p>Here you can override the normal default settings for new leagues.</p>
 
 			<p>

@@ -5,7 +5,6 @@ import type {
 	RealPlayerPhotos,
 	RealTeamInfo,
 } from "../../common/types";
-import { getDefaultSettings } from "./newLeague";
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {
@@ -21,13 +20,7 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			| RealTeamInfo
 			| undefined;
 
-		const defaultSettings = {
-			...getDefaultSettings(),
-			numActiveTeams: undefined,
-		};
-
 		return {
-			defaultSettings,
 			realPlayerPhotos:
 				realPlayerPhotos === undefined
 					? ""

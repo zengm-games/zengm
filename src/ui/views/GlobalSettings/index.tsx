@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState, ChangeEvent, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { logEvent, safeLocalStorage, toWorker } from "../../util";
@@ -6,11 +5,8 @@ import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
 import { isSport } from "../../../common";
-import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings";
 
-const Options = (props: View<"globalSettings">) => {
-	const { defaultSettings } = props;
-
+const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = safeLocalStorage.getItem("theme");
 		let theme: "dark" | "light" | "default";
@@ -136,16 +132,10 @@ const Options = (props: View<"globalSettings">) => {
 					</>
 				) : null}
 
-				<DefaultNewLeagueSettings defaultSettings={defaultSettings} />
-
 				<button className="btn btn-primary mt-3">Save Global Settings</button>
 			</form>
 		</>
 	);
 };
 
-Options.propTypes = {
-	title: PropTypes.string,
-};
-
-export default Options;
+export default GlobalSettings;

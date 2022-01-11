@@ -8,6 +8,8 @@ ability to specify default settings
 - make god mode one of the settings, and require it to be set if including a god mode only setting
 - validator needs defaults available for non visible settings
 - gameSimPreset how to handle
+- dirtySettings
+- wrap up all the state management stuff in a reusable hook
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

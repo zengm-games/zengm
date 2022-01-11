@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, ChangeEvent } from "react";
 import { ActionButton, StickyBottomButtons } from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
 import { settings } from "./settings";
-import type { Category, Key, Values } from "./types";
+import type { Category, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 import type {
 	InjuriesSetting,
@@ -12,6 +12,7 @@ import type {
 	TragicDeaths,
 } from "../../../common/types";
 import SettingsFormOptions from "./SettingsFormOptions";
+import gameSimPresets from "./gameSimPresets";
 
 const encodeDecodeFunctions = {
 	bool: {
@@ -147,10 +148,11 @@ const SPECIAL_STATE_OTHERS = [
 ] as const;
 const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 const SPECIAL_STATE_ALL = [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS];
+export type SpecialStateOthers = typeof SPECIAL_STATE_OTHERS[number];
 type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
 type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
 
-type State = Record<Exclude<Key, SpecialStateAll>, string> &
+export type State = Record<Exclude<Key, SpecialStateAll>, string> &
 	Record<SpecialStateBoolean, boolean> &
 	Record<"injuries", InjuriesSetting> &
 	Record<"tragicDeaths", TragicDeaths> &
@@ -175,6 +177,7 @@ const SettingsForm = ({
 	saveText?: string;
 }) => {
 	const [showGodModeSettings, setShowGodModeSettings] = useState(true);
+	const [gameSimPreset, setGameSimPreset] = useState("default");
 
 	useEffect(() => {
 		localActions.update({
@@ -220,6 +223,46 @@ const SettingsForm = ({
 			onUpdateExtra();
 		}
 	};
+
+	const handleChange =
+		(name: Key, type: FieldType) =>
+		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+			let value: string;
+			if (type === "bool") {
+				value = String((event.target as any).checked);
+			} else if (type === "floatValuesOrCustom") {
+				if (event.target.value === "custom") {
+					const raw = state[name];
+					if (typeof raw !== "string") {
+						throw new Error("Invalid value");
+					}
+
+					value = JSON.stringify([true, JSON.parse(raw)[1]]);
+				} else {
+					value = JSON.stringify([false, event.target.value]);
+				}
+			} else {
+				value = event.target.value;
+			}
+
+			setState(prevState => ({
+				...prevState,
+				[name]: value,
+			}));
+
+			if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
+				setGameSimPreset("default");
+			}
+		};
+
+	const handleChangeRaw =
+		<Name extends SpecialStateOthers>(name: Name) =>
+		(value: State[Name]) => {
+			setState(prevState => ({
+				...prevState,
+				[name]: value,
+			}));
+		};
 
 	const handleGodModeToggle = async () => {
 		let proceed: any = true;
@@ -348,9 +391,13 @@ const SettingsForm = ({
 
 				<SettingsFormOptions
 					filteredSettings={filteredSettings}
+					gameSimPreset={gameSimPreset}
 					godMode={godMode}
+					handleChange={handleChange}
+					handleChangeRaw={handleChangeRaw}
 					newLeague={newLeague}
 					showGodModeSettings={showGodModeSettings}
+					state={state}
 					submitting={submitting}
 				/>
 

@@ -11,7 +11,8 @@ import gameSimPresets from "./gameSimPresets";
 import PlayerBioInfo2 from "./PlayerBioInfo";
 import RowsEditor from "./RowsEditor";
 import type { settings } from "./settings";
-import type { Category, Decoration, FieldType, Values } from "./types";
+import type { SpecialStateOthers, State } from "./SettingsForm";
+import type { Category, Decoration, FieldType, Key, Values } from "./types";
 
 const settingNeedsGodMode = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -313,19 +314,30 @@ const Option = ({
 
 const SettingsFormOptions = ({
 	filteredSettings,
+	gameSimPreset,
 	godMode,
+	handleChange,
+	handleChangeRaw,
 	newLeague,
 	showGodModeSettings,
+	state,
 	submitting,
 }: {
 	filteredSettings: typeof settings;
+	gameSimPreset: string;
 	godMode: boolean;
+	handleChange: (
+		name: Key,
+		type: FieldType,
+	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	handleChangeRaw: <Name extends SpecialStateOthers>(
+		name: Name,
+	) => (value: State[Name]) => void;
 	newLeague?: boolean;
 	showGodModeSettings: boolean;
+	state: State;
 	submitting: boolean;
 }) => {
-	const [gameSimPreset, setGameSimPreset] = useState("default");
-
 	const groupedSettings = groupBy(filteredSettings, "category");
 
 	const settingIsEnabled = (
@@ -480,37 +492,6 @@ const SettingsFormOptions = ({
 		},
 	];
 
-	const handleChange =
-		(name: Key, type: FieldType) =>
-		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-			let value: string;
-			if (type === "bool") {
-				value = String((event.target as any).checked);
-			} else if (type === "floatValuesOrCustom") {
-				if (event.target.value === "custom") {
-					const raw = state[name];
-					if (typeof raw !== "string") {
-						throw new Error("Invalid value");
-					}
-
-					value = JSON.stringify([true, JSON.parse(raw)[1]]);
-				} else {
-					value = JSON.stringify([false, event.target.value]);
-				}
-			} else {
-				value = event.target.value;
-			}
-
-			setState(prevState => ({
-				...prevState,
-				[name]: value,
-			}));
-
-			if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
-				setGameSimPreset("default");
-			}
-		};
-
 	return (
 		<>
 			{categories.map(category => {
@@ -651,27 +632,17 @@ const SettingsFormOptions = ({
 													defaultValue={state[key]}
 													disabled={!enabled || submitting}
 													godModeRequired={godModeRequired}
-													onChange={rows => {
-														setState(prevState => ({
-															...prevState,
-															[key]: rows,
-														}));
-													}}
+													onChange={handleChangeRaw(key)}
 													type={key}
 												/>
 											);
 										} else if (key === "playerBioInfo") {
 											customFormNode = (
 												<PlayerBioInfo2
-													defaultValue={state.playerBioInfo}
+													defaultValue={state[key]}
 													disabled={!enabled || submitting}
 													godModeRequired={godModeRequired}
-													onChange={playerBioInfo => {
-														setState(prevState => ({
-															...prevState,
-															playerBioInfo,
-														}));
-													}}
+													onChange={handleChangeRaw(key)}
 												/>
 											);
 										}

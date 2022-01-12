@@ -232,6 +232,7 @@ const SettingsForm = ({
 	settingsShown,
 	hideShortcuts,
 	defaultNewLeagueSettings,
+	alwaysShowGodModeSettings,
 }: {
 	onCancel?: () => void;
 	onCancelDefaultSetting?: (key: Key) => void;
@@ -244,6 +245,7 @@ const SettingsForm = ({
 	initialSettings: Settings;
 	hideShortcuts?: boolean;
 	defaultNewLeagueSettings?: boolean;
+	alwaysShowGodModeSettings?: boolean;
 
 	// Used to filter diplayed settings, for the DefaultSettings page
 	settingsShown?: Key[];
@@ -413,6 +415,8 @@ const SettingsForm = ({
 		setShowGodModeSettings(show => !show);
 	};
 
+	const showGodModeSettingsButton = !godMode && !alwaysShowGodModeSettings;
+
 	return (
 		<div className="settings-wrapper mt-lg-2">
 			<form
@@ -420,14 +424,16 @@ const SettingsForm = ({
 				className="flex-grow-1"
 				style={{ maxWidth: 2100 }}
 			>
-				<GodModeSettingsButton
-					className="mb-5 d-sm-none"
-					godMode={godMode}
-					disabled={submitting}
-					onClick={toggleGodModeSettings}
-				>
-					{showGodModeSettings ? "Hide" : "Show"} God Mode Settings
-				</GodModeSettingsButton>
+				{showGodModeSettingsButton ? (
+					<GodModeSettingsButton
+						className="mb-5 d-sm-none"
+						godMode={godMode}
+						disabled={submitting}
+						onClick={toggleGodModeSettings}
+					>
+						{showGodModeSettings ? "Hide" : "Show"} God Mode Settings
+					</GodModeSettingsButton>
+				) : null}
 
 				<SettingsFormOptions
 					disabled={submitting}
@@ -456,7 +462,7 @@ const SettingsForm = ({
 						>
 							{godMode ? "Disable God Mode" : "Enable God Mode"}
 						</button>
-						{!godMode ? (
+						{showGodModeSettingsButton ? (
 							<GodModeSettingsButton
 								className="d-none d-sm-block"
 								godMode={godMode}

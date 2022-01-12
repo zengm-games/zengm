@@ -121,6 +121,7 @@ const DefaultNewLeagueSettings = ({
 				}}
 				settingsShown={settingsShown}
 				hideShortcuts
+				alwaysShowGodModeSettings
 				// Enable everything so we get all options
 				hasPlayers
 				newLeague

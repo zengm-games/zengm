@@ -5,7 +5,6 @@ ability to specify default settings
 - import/export default settings
   - import should do a deep diff and only include ones different from default
 - god mode
-  - get rid of show/hide god mode buttons
   - get rid of modal warning about god mode
   - error if a god mode required option is set but god mode is not enabled
     - only if non-default value selected

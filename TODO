@@ -4,6 +4,7 @@ ability to specify default settings
     - also use this to handle hiding the 2nd "randomization" value
 - import/export default settings
   - import should do a deep diff and only include ones different from default
+  - set dirtySettings after import
 - god mode
   - get rid of modal warning about god mode
   - error if a god mode required option is set but god mode is not enabled
@@ -14,7 +15,6 @@ ability to specify default settings
   - or, showOnlyIf (see above)
   - or, combine into one and make differences callback-based so they can be dynamic
 - react-select menu
-  - placeholder text should not be gray
   - group titles should be clickable https://stackoverflow.com/a/61345937/786644
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined

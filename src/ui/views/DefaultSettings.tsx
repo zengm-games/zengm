@@ -57,21 +57,22 @@ const DefaultNewLeagueSettings = ({
 					: null}
 			</p>
 
-			<Select<{
-				label: string;
-				value: Key;
-			}>
-				classNamePrefix="dark-select"
-				className="mb-3"
-				onChange={newValue => {
-					if (newValue) {
-						setSettingsShown(shown => [...shown, newValue.value]);
-					}
-				}}
-				options={options}
-				placeholder="Select a setting to supply a new default value for..."
-				value={null}
-			/>
+			<div className="mb-3 default-settings-select">
+				<Select<{
+					label: string;
+					value: Key;
+				}>
+					classNamePrefix="dark-select"
+					onChange={newValue => {
+						if (newValue) {
+							setSettingsShown(shown => [...shown, newValue.value]);
+						}
+					}}
+					options={options}
+					placeholder="Select a setting to supply a new default value for..."
+					value={null}
+				/>
+			</div>
 
 			<SettingsForm
 				onSave={async settings => {

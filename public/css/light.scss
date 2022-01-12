@@ -1394,3 +1394,19 @@ hr {
 		background-color: $list-group-variant-bg !important;
 	}
 }
+
+.default-settings-select {
+	max-width: 400px;
+
+	.dark-select__placeholder {
+		color: $black;
+	}
+
+	.dark-select__group-heading {
+		font-size: 90%;
+	}
+
+	.dark-select__menu {
+		z-index: 3; // Above .settings-buttons
+	}
+}

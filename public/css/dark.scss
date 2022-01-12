@@ -277,9 +277,6 @@ table.table thead .sorting::after {
 	color: $black !important;
 }
 
-.dark-select__menu {
-	z-index: 3 !important; // Above .settings-buttons
-}
 .dark-select__menu-list {
 	background-color: $white !important;
 	color: $black !important;

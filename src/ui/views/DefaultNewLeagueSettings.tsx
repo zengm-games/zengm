@@ -14,7 +14,7 @@ import type { Key } from "./Settings/types";
 const DefaultNewLeagueSettings = ({
 	defaultSettings,
 	overrides,
-}: View<"defaultSettings">) => {
+}: View<"defaultNewLeagueSettings">) => {
 	useTitleBar({ title: "Default New League Settings" });
 
 	useEffect(() => {

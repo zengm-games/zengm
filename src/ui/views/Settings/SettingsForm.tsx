@@ -14,7 +14,6 @@ import type {
 import SettingsFormOptions from "./SettingsFormOptions";
 import categories from "./categories";
 import useSettingsFormState from "./useSettingsFormState";
-import DefaultNewLeagueSettings from "../DefaultSettings";
 
 export const encodeDecodeFunctions = {
 	bool: {

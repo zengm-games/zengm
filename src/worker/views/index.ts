@@ -13,7 +13,7 @@ import countries from "./countries";
 import customizePlayer from "./customizePlayer";
 import dangerZone from "./dangerZone";
 import dashboard from "./dashboard";
-import defaultSettings from "./defaultSettings";
+import defaultNewLeagueSettings from "./defaultNewLeagueSettings";
 import depth from "./depth";
 import draft from "./draft";
 import draftLottery from "./draftLottery";
@@ -109,7 +109,7 @@ export default {
 	customizePlayer,
 	dangerZone,
 	dashboard,
-	defaultSettings,
+	defaultNewLeagueSettings,
 	depth,
 	draft,
 	draftLottery,

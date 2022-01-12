@@ -248,7 +248,15 @@ export const getDefaultSettings = () => {
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	const godModeLimits = newLeagueGodModeLimits();
 
-	const defaultSettings = getDefaultSettings();
+	const overrides = (await idb.meta.get(
+		"attributes",
+		"defaultSettingsOverrides",
+	)) as Settings | undefined;
+
+	const defaultSettings = {
+		...getDefaultSettings(),
+		...overrides,
+	};
 
 	if (lid !== undefined) {
 		// Importing!

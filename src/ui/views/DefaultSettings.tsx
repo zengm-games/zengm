@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../common";
 import { groupBy } from "../../common/groupBy";
 import type { Settings } from "../../worker/views/settings";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
+import { localActions, logEvent } from "../util";
 import { settings } from "./Settings/settings";
 import SettingsForm, { getVisibleCategories } from "./Settings/SettingsForm";
 import SettingsFormOptions from "./Settings/SettingsFormOptions";
@@ -17,6 +18,12 @@ const DefaultNewLeagueSettings = ({
 	initialSettings: Settings;
 }) => {
 	useTitleBar({ title: "Default New League Settings" });
+
+	useEffect(() => {
+		localActions.update({
+			dirtySettings: false,
+		});
+	}, []);
 
 	const [settingsShown, setSettingsShown] = useState<Key[]>([]);
 
@@ -85,9 +92,24 @@ const DefaultNewLeagueSettings = ({
 					}
 
 					console.log("newDefaultSettings", newDefaultSettings);
+
+					localActions.update({
+						dirtySettings: false,
+					});
+
+					logEvent({
+						type: "success",
+						text: "New league default settings successfully updated.",
+						saveToDb: false,
+					});
 				}}
 				onCancelDefaultSetting={key => {
 					setSettingsShown(shown => shown.filter(key2 => key2 !== key));
+				}}
+				onUpdateExtra={() => {
+					localActions.update({
+						dirtySettings: true,
+					});
 				}}
 				saveText="Save Default Settings"
 				initialSettings={initialSettings}

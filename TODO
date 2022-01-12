@@ -1,11 +1,7 @@
 ability to specify default settings
-- on global settings page
-- ability to select individual settings from a dropdown to add
-- ability to delete individual setting (go back to default)
 - includes goat formula
   - extend showOnlyIf
     - also use this to handle hiding the 2nd "randomization" value
-- explain that it doens't override when a custom league file or historical league includes a value for a setting
 - import/export default settings
   - import should do a deep diff and only include ones different from default
 - god mode
@@ -13,10 +9,11 @@ ability to specify default settings
   - error if a god mode required option is set but god mode is not enabled
     - only if non-default value selected
   - godModeInPast should always be the same as godMode, even after multiple toggles
-- dirtySettings
 - reset all to default button
 - two randomization settings
   - if value is not valid choice, ignore
+  - or, showOnlyIf (see above)
+  - or, combine into one and make differences callback-based so they can be dynamic
 - react-select menu
   - placeholder text should not be gray
   - group titles should be clickable https://stackoverflow.com/a/61345937/786644

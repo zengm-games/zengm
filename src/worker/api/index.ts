@@ -2893,6 +2893,20 @@ const updateConfsDivs = async (
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const updateDefaultSettingsOverrides = async (
+	defaultSettingsOverrides: Partial<Settings>,
+) => {
+	if (Object.keys(defaultSettingsOverrides).length === 0) {
+		await idb.meta.delete("attributes", "defaultSettingsOverrides");
+	} else {
+		await idb.meta.put(
+			"attributes",
+			defaultSettingsOverrides,
+			"defaultSettingsOverrides",
+		);
+	}
+};
+
 const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
@@ -3751,6 +3765,7 @@ export default {
 	updateAwards,
 	updateBudget,
 	updateConfsDivs,
+	updateDefaultSettingsOverrides,
 	updateGameAttributes,
 	updateGameAttributesGodMode,
 	updateKeepRosterSorted,

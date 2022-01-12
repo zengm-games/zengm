@@ -2,21 +2,19 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../common";
 import { groupBy } from "../../common/groupBy";
+import type { View } from "../../common/types";
 import type { Settings } from "../../worker/views/settings";
 import { MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, logEvent } from "../util";
+import { localActions, logEvent, toWorker } from "../util";
 import { settings } from "./Settings/settings";
-import SettingsForm, { getVisibleCategories } from "./Settings/SettingsForm";
-import SettingsFormOptions from "./Settings/SettingsFormOptions";
+import SettingsForm from "./Settings/SettingsForm";
 import type { Key } from "./Settings/types";
-import useSettingsFormState from "./Settings/useSettingsFormState";
 
 const DefaultNewLeagueSettings = ({
-	initialSettings,
-}: {
-	initialSettings: Settings;
-}) => {
+	defaultSettings,
+	overrides,
+}: View<"defaultSettings">) => {
 	useTitleBar({ title: "Default New League Settings" });
 
 	useEffect(() => {
@@ -25,7 +23,9 @@ const DefaultNewLeagueSettings = ({
 		});
 	}, []);
 
-	const [settingsShown, setSettingsShown] = useState<Key[]>([]);
+	const [settingsShown, setSettingsShown] = useState<Key[]>(
+		overrides ? (Object.keys(overrides) as any) : [],
+	);
 
 	const settingsRemainingToSelect = settings.filter(
 		setting => !setting.hidden && !settingsShown.includes(setting.key),
@@ -40,9 +40,6 @@ const DefaultNewLeagueSettings = ({
 			value: setting.key,
 		})),
 	}));
-
-	console.log("options", options);
-	console.log("initialSettings", initialSettings);
 
 	return (
 		<>
@@ -77,21 +74,27 @@ const DefaultNewLeagueSettings = ({
 			/>
 
 			<SettingsForm
-				onSave={settings => {
+				onSave={async settings => {
 					console.log(settings);
 
-					const newDefaultSettings = {
+					const newDefaultSettings: Partial<Settings> = {
 						...settings,
 					};
 
-					// If godMode or godModeInPast is false, can delete, that is already the default. Those are always here because of SPECIAL_STATE_BOOLEANS
-					for (const key of ["godMode", "godModeInPast"] as const) {
-						if (!newDefaultSettings[key]) {
-							delete newDefaultSettings[key];
-						}
+					// Enforce godModeInPast always is the same as godMode
+					if (newDefaultSettings.godMode) {
+						newDefaultSettings.godModeInPast = true;
+					} else {
+						// If godMode or godModeInPast is false, can delete, that is already the default. Those are always here because of SPECIAL_STATE_BOOLEANS
+						delete newDefaultSettings.godMode;
+						delete newDefaultSettings.godModeInPast;
 					}
 
-					console.log("newDefaultSettings", newDefaultSettings);
+					await toWorker(
+						"main",
+						"updateDefaultSettingsOverrides",
+						newDefaultSettings,
+					);
 
 					localActions.update({
 						dirtySettings: false,
@@ -112,7 +115,10 @@ const DefaultNewLeagueSettings = ({
 					});
 				}}
 				saveText="Save Default Settings"
-				initialSettings={initialSettings}
+				initialSettings={{
+					...defaultSettings,
+					...overrides,
+				}}
 				settingsShown={settingsShown}
 				hideShortcuts
 				// Enable everything so we get all options

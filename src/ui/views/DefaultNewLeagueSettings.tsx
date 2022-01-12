@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../common";
 import { groupBy } from "../../common/groupBy";
@@ -66,21 +67,44 @@ const DefaultNewLeagueSettings = ({
 					: null}
 			</p>
 
-			<div className="mb-3 default-settings-select">
-				<Select<{
-					label: string;
-					value: Key;
-				}>
-					classNamePrefix="dark-select"
-					onChange={newValue => {
-						if (newValue) {
-							setSettingsShown(shown => [...shown, newValue.value]);
-						}
-					}}
-					options={options}
-					placeholder="Select a setting to supply a new default value for..."
-					value={null}
-				/>
+			<div className="mb-3 d-md-flex">
+				<div className="default-settings-select me-md-2">
+					<Select<{
+						label: string;
+						value: Key;
+					}>
+						classNamePrefix="dark-select"
+						onChange={newValue => {
+							if (newValue) {
+								setSettingsShown(shown => [...shown, newValue.value]);
+							}
+						}}
+						options={options}
+						placeholder="Select a setting to supply a new default value for..."
+						value={null}
+					/>
+				</div>
+				<div className="ms-auto mt-2 mt-md-0 d-flex align-items-center">
+					<Dropdown>
+						<Dropdown.Toggle
+							variant="light-bordered"
+							id="default-new-league-settings-add-all"
+						>
+							Add All...
+						</Dropdown.Toggle>
+						<Dropdown.Menu>
+							<Dropdown.Item>All Categories</Dropdown.Item>
+							{options.map(option => (
+								<Dropdown.Item key={option.label}>{option.label}</Dropdown.Item>
+							))}
+						</Dropdown.Menu>
+					</Dropdown>
+					<button className="btn btn-danger ms-2">Clear All</button>
+					<div className="btn-group ms-2">
+						<button className="btn btn-light-bordered">Import</button>
+						<button className="btn btn-light-bordered">Export</button>
+					</div>
+				</div>
 			</div>
 
 			<SettingsForm

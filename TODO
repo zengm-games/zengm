@@ -8,14 +8,15 @@ ability to specify default settings
 - god mode
   - error if a god mode required option is set but god mode is not enabled
     - only if non-default value selected
-- reset all to default button
-- react-select menu
-  - group titles should be clickable https://stackoverflow.com/a/61345937/786644
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined
 - test injuries (or some other custom one)
 - how to handle "hidden" settings where one control updates multiple fields?
 - mention it on Customize Settings page when accessed from new league
+- button to add all to be shown
+  - only save ones that are actually different than default
+- differnet background color for ones different than default?
+- onCancel - go back to previous page
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

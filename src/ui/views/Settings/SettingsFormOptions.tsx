@@ -191,6 +191,7 @@ const Option = ({
 	godModeRequired,
 	newLeague,
 	maxWidth,
+	onCancelDefaultSetting,
 	onChange,
 	type,
 	value,
@@ -206,6 +207,7 @@ const Option = ({
 	godModeRequired?: "always" | "existingLeagueOnly";
 	newLeague?: boolean;
 	maxWidth?: true;
+	onCancelDefaultSetting?: () => void;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
 	value: unknown;
@@ -278,6 +280,16 @@ const Option = ({
 				<div className={classNames("ms-auto", maxWidth ? "w-100" : undefined)}>
 					{formElement}
 				</div>
+				{onCancelDefaultSetting ? (
+					<button
+						type="button"
+						className="btn-close ms-1"
+						title="Restore default"
+						onClick={() => {
+							onCancelDefaultSetting();
+						}}
+					></button>
+				) : null}
 			</div>
 			{description ? (
 				<div className="text-muted settings-description mt-1">
@@ -315,6 +327,7 @@ const SettingsFormOptions = ({
 	handleChange,
 	handleChangeRaw,
 	newLeague,
+	onCancelDefaultSetting,
 	setGameSimPreset,
 	showGodModeSettings,
 	state,
@@ -331,6 +344,7 @@ const SettingsFormOptions = ({
 		name: Name,
 	) => (value: State[Name]) => void;
 	newLeague?: boolean;
+	onCancelDefaultSetting?: (key: Key) => void;
 	setGameSimPreset: (gameSimPreset: string) => void;
 	showGodModeSettings: boolean;
 	state: State;
@@ -473,6 +487,7 @@ const SettingsFormOptions = ({
 											<div
 												className={classNames("fake-list-group-item rounded", {
 													"settings-striped-bg-alt": i % 2 === 1,
+													"pe-1": onCancelDefaultSetting,
 												})}
 											>
 												<Option
@@ -490,6 +505,13 @@ const SettingsFormOptions = ({
 													maxWidth={maxWidth}
 													godModeRequired={godModeRequired}
 													newLeague={newLeague}
+													onCancelDefaultSetting={
+														onCancelDefaultSetting
+															? () => {
+																	onCancelDefaultSetting(key);
+															  }
+															: undefined
+													}
 												/>
 											</div>
 										</div>

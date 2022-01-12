@@ -8,9 +8,12 @@ ability to specify default settings
 - explain that it doens't override when a custom league file or historical league includes a value for a setting
 - import/export default settings
   - import should do a deep diff and only include ones different from default
-- make god mode one of the settings, and require it to be set if including a god mode only setting
+- god mode
+  - get rid of modal warning about god mode
+  - error if a god mode required option is set but god mode is not enabled
+    - only if non-default value selected
+  - godModeInPast should always be the same as godMode, even after multiple toggles
 - dirtySettings
-- way to reset an individual setting to default
 - reset all to default button
 - two randomization settings
   - if value is not valid choice, ignore

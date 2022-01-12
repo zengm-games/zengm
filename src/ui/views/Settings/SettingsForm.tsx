@@ -221,6 +221,7 @@ export type State = Record<Exclude<Key, SpecialStateAll>, string> &
 
 const SettingsForm = ({
 	onCancel,
+	onCancelDefaultSetting,
 	onSave,
 	onUpdateExtra,
 	hasPlayers,
@@ -233,6 +234,7 @@ const SettingsForm = ({
 	defaultNewLeagueSettings,
 }: {
 	onCancel?: () => void;
+	onCancelDefaultSetting?: (key: Key) => void;
 	onSave: (settings: Settings) => void;
 	onUpdateExtra?: () => void;
 	hasPlayers?: boolean;
@@ -434,6 +436,7 @@ const SettingsForm = ({
 					handleChange={handleChange}
 					handleChangeRaw={handleChangeRaw}
 					newLeague={newLeague}
+					onCancelDefaultSetting={onCancelDefaultSetting}
 					setGameSimPreset={setGameSimPreset}
 					showGodModeSettings={showGodModeSettings}
 					state={state}

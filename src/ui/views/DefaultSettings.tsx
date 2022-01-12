@@ -86,6 +86,9 @@ const DefaultNewLeagueSettings = ({
 
 					console.log("newDefaultSettings", newDefaultSettings);
 				}}
+				onCancelDefaultSetting={key => {
+					setSettingsShown(shown => shown.filter(key2 => key2 !== key));
+				}}
 				saveText="Save Default Settings"
 				initialSettings={initialSettings}
 				settingsShown={settingsShown}

@@ -14,6 +14,7 @@ import type {
 import SettingsFormOptions from "./SettingsFormOptions";
 import categories from "./categories";
 import useSettingsFormState from "./useSettingsFormState";
+import DefaultNewLeagueSettings from "../DefaultSettings";
 
 export const encodeDecodeFunctions = {
 	bool: {
@@ -229,6 +230,7 @@ const SettingsForm = ({
 	initialSettings,
 	settingsShown,
 	hideShortcuts,
+	defaultNewLeagueSettings,
 }: {
 	onCancel?: () => void;
 	onSave: (settings: Settings) => void;
@@ -239,6 +241,7 @@ const SettingsForm = ({
 	saveText?: string;
 	initialSettings: Settings;
 	hideShortcuts?: boolean;
+	defaultNewLeagueSettings?: boolean;
 
 	// Used to filter diplayed settings, for the DefaultSettings page
 	settingsShown?: Key[];
@@ -354,9 +357,19 @@ const SettingsForm = ({
 		// Run validation functions at the end, so all values are available
 		for (const option of filteredSettings) {
 			const { key, name, validator } = option;
+
+			let totalOutput = output;
+			if (defaultNewLeagueSettings) {
+				totalOutput = {
+					// Passing initialSettings here is because from DefaultNewLeagueSettings, output will only contain a subset of settings
+					...initialSettings,
+					...output,
+				};
+			}
+
 			try {
 				if (validator) {
-					await validator(output[key], output, initialSettings);
+					await validator(output[key], totalOutput, initialSettings);
 				}
 			} catch (error) {
 				setSubmitting(false);

@@ -9,11 +9,7 @@ ability to specify default settings
 - import/export default settings
   - import should do a deep diff and only include ones different from default
 - make god mode one of the settings, and require it to be set if including a god mode only setting
-- validator needs defaults available for non visible settings
-- gameSimPreset how to handle
 - dirtySettings
-- wrap up all the state management stuff in a reusable hook
-- switch global settings to have floating submit bar?
 - way to reset an individual setting to default
 - reset all to default button
 - two randomization settings
@@ -23,9 +19,8 @@ ability to specify default settings
   - group titles should be clickable https://stackoverflow.com/a/61345937/786644
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined
-- disable while saving from DefaultNewLeagueSettings
-- can refactor so DefaultSettings uses SettingsForm?
-  - need to be able to pass in settingsShown
+- test injuries (or some other custom one)
+- how to handle "hidden" settings where one control updates multiple fields?
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

@@ -70,7 +70,22 @@ const DefaultNewLeagueSettings = ({
 			/>
 
 			<SettingsForm
-				onSave={() => {}}
+				onSave={settings => {
+					console.log(settings);
+
+					const newDefaultSettings = {
+						...settings,
+					};
+
+					// If godMode or godModeInPast is false, can delete, that is already the default. Those are always here because of SPECIAL_STATE_BOOLEANS
+					for (const key of ["godMode", "godModeInPast"] as const) {
+						if (!newDefaultSettings[key]) {
+							delete newDefaultSettings[key];
+						}
+					}
+
+					console.log("newDefaultSettings", newDefaultSettings);
+				}}
 				saveText="Save Default Settings"
 				initialSettings={initialSettings}
 				settingsShown={settingsShown}
@@ -79,6 +94,7 @@ const DefaultNewLeagueSettings = ({
 				hasPlayers
 				newLeague
 				realPlayers
+				defaultNewLeagueSettings
 			/>
 		</>
 	);

@@ -93,13 +93,41 @@ const DefaultNewLeagueSettings = ({
 							Add All...
 						</Dropdown.Toggle>
 						<Dropdown.Menu>
-							<Dropdown.Item>All Categories</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() => {
+									setSettingsShown(settings.map(setting => setting.key));
+								}}
+							>
+								All Settings
+							</Dropdown.Item>
 							{options.map(option => (
-								<Dropdown.Item key={option.label}>{option.label}</Dropdown.Item>
+								<Dropdown.Item
+									key={option.label}
+									onClick={() => {
+										setSettingsShown(current => {
+											const currentWithCategory = [
+												...current,
+												...settings
+													.filter(setting => setting.category === option.label)
+													.map(setting => setting.key),
+											];
+											return Array.from(new Set(currentWithCategory));
+										});
+									}}
+								>
+									{option.label}
+								</Dropdown.Item>
 							))}
 						</Dropdown.Menu>
 					</Dropdown>
-					<button className="btn btn-danger ms-2">Clear All</button>
+					<button
+						className="btn btn-danger ms-2"
+						onClick={() => {
+							setSettingsShown([]);
+						}}
+					>
+						Clear All
+					</button>
 					<div className="btn-group ms-2">
 						<button className="btn btn-light-bordered">Import</button>
 						<button className="btn btn-light-bordered">Export</button>

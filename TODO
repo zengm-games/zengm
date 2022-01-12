@@ -13,8 +13,7 @@ ability to specify default settings
 - test injuries (or some other custom one)
 - how to handle "hidden" settings where one control updates multiple fields?
 - mention it on Customize Settings page when accessed from new league
-- button to add all to be shown
-  - only save ones that are actually different than default
+- only save ones that are actually different than default
 - differnet background color for ones different than default?
 - onCancel - go back to previous page
 

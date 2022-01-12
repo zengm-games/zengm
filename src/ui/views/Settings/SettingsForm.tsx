@@ -310,17 +310,15 @@ const SettingsForm = ({
 
 	// Filter out the new league only ones when appropriate
 	const filteredSettings = settings.filter(setting => {
-		if (settingsShown) {
-			return settingsShown.includes(setting.key);
-		}
-
 		return (
-			!setting.showOnlyIf ||
-			setting.showOnlyIf({
-				hasPlayers,
-				newLeague,
-				realPlayers,
-			})
+			(!settingsShown || settingsShown.includes(setting.key)) &&
+			(!setting.showOnlyIf ||
+				setting.showOnlyIf({
+					defaultNewLeagueSettings,
+					hasPlayers,
+					newLeague,
+					realPlayers,
+				}))
 		);
 	});
 

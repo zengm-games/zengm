@@ -28,7 +28,16 @@ const DefaultNewLeagueSettings = ({
 	);
 
 	const settingsRemainingToSelect = settings.filter(
-		setting => !setting.hidden && !settingsShown.includes(setting.key),
+		setting =>
+			!setting.hidden &&
+			!settingsShown.includes(setting.key) &&
+			(!setting.showOnlyIf ||
+				setting.showOnlyIf({
+					defaultNewLeagueSettings: true,
+					hasPlayers: true,
+					newLeague: true,
+					realPlayers: true,
+				})),
 	);
 
 	const options = Object.entries(

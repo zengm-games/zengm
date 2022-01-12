@@ -34,6 +34,7 @@ export const settings: {
 
 	// showOnlyIf is for hiding form elements that only make sense in some situations (like when creating a new league). hidden is for a setting where we're merging it with some other setting in the UI (probably with customForm) but still want to track it here so it gets updated properly.
 	showOnlyIf?: (params: {
+		defaultNewLeagueSettings?: boolean;
 		hasPlayers?: boolean;
 		newLeague?: boolean;
 		realPlayers?: boolean;
@@ -114,8 +115,12 @@ export const settings: {
 		key: "randomization",
 		name: "Randomization",
 		godModeRequired: "existingLeagueOnly",
-		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
-			newLeague && hasPlayers && !realPlayers,
+		showOnlyIf: ({
+			defaultNewLeagueSettings,
+			newLeague,
+			hasPlayers,
+			realPlayers,
+		}) => newLeague && hasPlayers && !realPlayers && !defaultNewLeagueSettings,
 		type: "string",
 		values: [
 			{ key: "none", value: "None" },

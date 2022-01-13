@@ -7,6 +7,7 @@ import type {
 	TragicDeaths,
 	UpdateEvents,
 } from "../../common/types";
+import goatFormula from "../util/goatFormula";
 
 const keys = [
 	"godMode",
@@ -102,13 +103,18 @@ const keys = [
 	"numPlayersDunk",
 	"numPlayersThree",
 	"fantasyPoints",
+	"goatFormula",
 ] as const;
 
 export type Settings = Pick<
 	GameAttributesLeague,
 	Exclude<
 		typeof keys[number],
-		"repeatSeason" | "realDraftRatings" | "injuries" | "tragicDeaths"
+		| "repeatSeason"
+		| "realDraftRatings"
+		| "injuries"
+		| "tragicDeaths"
+		| "goatFormula"
 	>
 > & {
 	repeatSeason: boolean;
@@ -121,6 +127,7 @@ export type Settings = Pick<
 	realStats: GetLeagueOptionsReal["realStats"];
 	injuries: InjuriesSetting;
 	tragicDeaths: TragicDeaths;
+	goatFormula: string;
 	confs?: Conf[];
 };
 
@@ -225,6 +232,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPlayersThree: g.get("numPlayersThree"),
 			fantasyPoints: g.get("fantasyPoints"),
 			tragicDeaths: g.get("tragicDeaths") ?? defaultTragicDeaths,
+			goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

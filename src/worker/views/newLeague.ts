@@ -10,6 +10,7 @@ import {
 } from "../util";
 import type { Settings } from "./settings";
 import { unwrapGameAttribute } from "../../common";
+import goatFormula from "../util/goatFormula";
 
 const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";
@@ -235,6 +236,7 @@ export const getDefaultSettings = () => {
 		),
 		fantasyPoints: unwrapGameAttribute(defaultGameAttributes, "fantasyPoints"),
 		tragicDeaths: defaultTragicDeaths,
+		goatFormula: goatFormula.DEFAULT_FORMULA,
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

@@ -3655,7 +3655,7 @@ const validatePlayoffSettings = async ({
 }: {
 	numRounds: number;
 	numPlayoffByes: number;
-	numActiveTeams: number;
+	numActiveTeams: number | undefined;
 	playIn: boolean;
 	playoffsByConf: boolean;
 	confs: GameAttributesLeague["confs"];

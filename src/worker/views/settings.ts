@@ -115,6 +115,7 @@ export type Settings = Pick<
 		| "injuries"
 		| "tragicDeaths"
 		| "goatFormula"
+		| "numActiveTeams"
 	>
 > & {
 	repeatSeason: boolean;
@@ -129,6 +130,9 @@ export type Settings = Pick<
 	tragicDeaths: TragicDeaths;
 	goatFormula: string;
 	confs?: Conf[];
+
+	// undefined in DefaultNewLeagueSettings - then it is not possible to validate some settings that depend on it
+	numActiveTeams: number | undefined;
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {

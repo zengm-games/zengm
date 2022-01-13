@@ -1,6 +1,4 @@
 ability to specify default settings
-- numActiveTeams handled correctly?
-  - needs to skip that validation if numActiveTeams is undefined
 - announcement
   - goat lab formula
 

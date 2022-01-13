@@ -215,11 +215,11 @@ const DefaultNewLeagueSettings = ({
 
 			<SettingsForm
 				key={overridesLocalCounter}
-				onSave={async settings => {
-					console.log(settings);
+				onSave={async settingsFromSave => {
+					console.log(settingsFromSave);
 
 					const newDefaultSettings: Partial<Settings> = {
-						...settings,
+						...settingsFromSave,
 					};
 
 					// Enforce godModeInPast always is the same as godMode
@@ -231,8 +231,32 @@ const DefaultNewLeagueSettings = ({
 						delete newDefaultSettings.godModeInPast;
 					}
 
-					const newDefaultSettings2 =
-						removeSettingsEqualToDefault(newDefaultSettings);
+					const newDefaultSettings2 = removeSettingsEqualToDefault(
+						removeUnknownSettings(newDefaultSettings),
+					);
+
+					// If God Mode is disabled, so no God Mode settings can be included still
+					if (!newDefaultSettings.godMode) {
+						const godModeKeys = [];
+
+						for (const key of helpers.keys(newDefaultSettings2)) {
+							const setting = settings.find(setting => setting.key === key);
+							if (setting?.godModeRequired === "always") {
+								godModeKeys.push(setting.name);
+							}
+						}
+
+						if (godModeKeys.length > 0) {
+							logEvent({
+								type: "error",
+								text: `The following settings require God Mode to be enabled to be changed:<br>- ${godModeKeys.join(
+									"<br>- ",
+								)}`,
+								saveToDb: false,
+								persistent: true,
+							});
+						}
+					}
 
 					await toWorker(
 						"main",

@@ -785,7 +785,6 @@ export const settings: {
 		key: "tragicDeaths",
 		name: "Tragic Death Types",
 		type: "custom",
-		godModeRequired: "always",
 		customForm: true,
 	},
 	{
@@ -1408,7 +1407,6 @@ settings.push(
 		key: "injuries",
 		name: "Injury Types",
 		type: "custom",
-		godModeRequired: "always",
 		customForm: true,
 	},
 	{

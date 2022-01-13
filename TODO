@@ -2,9 +2,6 @@ ability to specify default settings
 - includes goat formula
   - extend showOnlyIf
     - also use this to handle hiding the 2nd "randomization" value
-- god mode
-  - error if a god mode required option is set but god mode is not enabled
-    - only if non-default value selected
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined
 - how to handle "hidden" settings where one control updates multiple fields?

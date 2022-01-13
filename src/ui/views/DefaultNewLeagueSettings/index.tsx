@@ -7,7 +7,7 @@ import type { View } from "../../../common/types";
 import type { Settings } from "../../../worker/views/settings";
 import { MoreLinks } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
-import { localActions, logEvent, toWorker } from "../../util";
+import { localActions, logEvent, realtimeUpdate, toWorker } from "../../util";
 import { settings } from "../Settings/settings";
 import SettingsForm from "../Settings/SettingsForm";
 import type { Key } from "../Settings/types";
@@ -199,6 +199,9 @@ const DefaultNewLeagueSettings = ({
 						text: "New league default settings successfully updated.",
 						saveToDb: false,
 					});
+				}}
+				onCancel={() => {
+					realtimeUpdate([], "/settings");
 				}}
 				onCancelDefaultSetting={key => {
 					onAnyChange();

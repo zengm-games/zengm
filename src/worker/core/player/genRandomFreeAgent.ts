@@ -16,7 +16,11 @@ const genRandomFreeAgent = async (): Promise<Player> => {
 
 	const offset = g.get("phase") > PHASE.REGULAR_SEASON ? 0 : 1;
 
-	if (forceRetireAge > minAge || forceRetireAge > maxAge) {
+	if (
+		forceRetireAge > minAge ||
+		forceRetireAge > maxAge ||
+		forceRetireAge < maxAge
+	) {
 		minAge = draftAges[1] + offset;
 		maxAge = forceRetireAge - 1 + offset;
 	} else if (draftAges[0] > minAge) {

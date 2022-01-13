@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
@@ -40,8 +40,41 @@ const DefaultNewLeagueSettings = ({
 		useState<typeof overrides>(overrides);
 	const [overridesLocalCounter, setOverridesLocalCounter] = useState(0);
 
+	const settingsByKey = useMemo(() => groupBy(settings, "key"), []);
+
+	const getKeysFromOverrides = (newOverrides: typeof overrides) => {
+		if (!newOverrides) {
+			return [];
+		}
+
+		const keys = helpers.keys(newOverrides);
+
+		// Handle adding parent of hidden key
+		return keys
+			.map(key => {
+				const setting = settingsByKey[key]?.[0];
+
+				if (!setting) {
+					// Remove any non-Key elements
+					return [];
+				}
+
+				if (setting.hidden) {
+					const partner = settings.find(setting =>
+						setting?.partners?.includes(key as Key),
+					);
+					if (partner) {
+						return [key, partner.key];
+					}
+				}
+
+				return key;
+			})
+			.flat() as Key[];
+	};
+
 	const [settingsShown, setSettingsShown] = useState<Key[]>(
-		overrides ? (Object.keys(overrides) as any) : [],
+		getKeysFromOverrides(overrides),
 	);
 
 	const settingsRemainingToSelect = settings.filter(
@@ -93,7 +126,15 @@ const DefaultNewLeagueSettings = ({
 			...settings1,
 		};
 
-		const allowedKeys = new Set(settings.map(setting => setting.key));
+		const allowedKeys = new Set<string>(
+			settings
+				.map(setting =>
+					setting.partners ? [setting.key, ...setting.partners] : setting.key,
+				)
+				.flat(),
+		);
+		allowedKeys.add("godMode");
+		allowedKeys.add("godModeInPast");
 
 		for (const key of helpers.keys(settings2)) {
 			if (!allowedKeys.has(key as any)) {
@@ -200,7 +241,7 @@ const DefaultNewLeagueSettings = ({
 									removeUnknownSettings(settings),
 								);
 								setOverridesLocal(newOverrides);
-								setSettingsShown(Object.keys(newOverrides) as any);
+								setSettingsShown(getKeysFromOverrides(newOverrides));
 								setOverridesLocalCounter(counter => counter + 1);
 							}}
 						/>
@@ -240,7 +281,7 @@ const DefaultNewLeagueSettings = ({
 						const godModeKeys = [];
 
 						for (const key of helpers.keys(newDefaultSettings2)) {
-							const setting = settings.find(setting => setting.key === key);
+							const setting = settingsByKey[key][0];
 							if (setting?.godModeRequired === "always") {
 								godModeKeys.push(setting.name);
 							}

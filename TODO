@@ -4,8 +4,6 @@ ability to specify default settings
     - also use this to handle hiding the 2nd "randomization" value
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined
-- how to handle "hidden" settings where one control updates multiple fields?
-  - see removeUnknownSettings too
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

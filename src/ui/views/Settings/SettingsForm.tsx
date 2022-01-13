@@ -328,26 +328,41 @@ const SettingsForm = ({
 		setSubmitting(true);
 
 		const output = {} as unknown as Settings;
-		for (const option of filteredSettings) {
-			const { key, name, type } = option;
-			const value = state[key];
+		for (const primaryOption of filteredSettings) {
+			const options = [primaryOption];
+			if (primaryOption.partners) {
+				for (const partner of primaryOption.partners) {
+					const partnerOption = settings.find(
+						setting => setting.key === partner,
+					);
+					console.log(partner, partnerOption);
+					if (partnerOption) {
+						options.push(partnerOption);
+					}
+				}
+			}
 
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
-			const parse = encodeDecodeFunctions[type].parse;
+			for (const option of options) {
+				const { key, name, type } = option;
+				const value = state[key];
 
-			try {
+				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-ignore
-				output[key] = parse ? parse(value) : value;
-			} catch (error) {
-				setSubmitting(false);
-				logEvent({
-					type: "error",
-					text: `${name}: ${error.message}`,
-					saveToDb: false,
-					persistent: true,
-				});
-				return;
+				const parse = encodeDecodeFunctions[type].parse;
+
+				try {
+					// @ts-ignore
+					output[key] = parse ? parse(value) : value;
+				} catch (error) {
+					setSubmitting(false);
+					logEvent({
+						type: "error",
+						text: `${name}: ${error.message}`,
+						saveToDb: false,
+						persistent: true,
+					});
+					return;
+				}
 			}
 		}
 

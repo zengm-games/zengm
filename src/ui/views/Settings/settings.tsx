@@ -32,6 +32,9 @@ export const settings: {
 		initialSettings: Settings,
 	) => void | Promise<void>;
 
+	// For form fields that render one box for two keys, put any of the associated hidden keys here.
+	partners?: Key[];
+
 	// showOnlyIf is for hiding form elements that only make sense in some situations (like when creating a new league). hidden is for a setting where we're merging it with some other setting in the UI (probably with customForm) but still want to track it here so it gets updated properly.
 	showOnlyIf?: (params: {
 		defaultNewLeagueSettings?: boolean;
@@ -1401,6 +1404,7 @@ settings.push(
 		description:
 			"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
 		customForm: true,
+		partners: ["stopOnInjury"],
 	},
 	{
 		category: "Injuries",

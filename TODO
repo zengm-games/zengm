@@ -2,7 +2,6 @@ ability to specify default settings
 - includes goat formula
   - extend showOnlyIf
     - also use this to handle hiding the 2nd "randomization" value
-- actually implement import
 - god mode
   - error if a god mode required option is set but god mode is not enabled
     - only if non-default value selected

@@ -36,6 +36,10 @@ const DefaultNewLeagueSettings = ({
 		string | undefined
 	>();
 
+	const [overridesLocal, setOverridesLocal] =
+		useState<typeof overrides>(overrides);
+	const [overridesLocalCounter, setOverridesLocalCounter] = useState(0);
+
 	const [settingsShown, setSettingsShown] = useState<Key[]>(
 		overrides ? (Object.keys(overrides) as any) : [],
 	);
@@ -76,12 +80,6 @@ const DefaultNewLeagueSettings = ({
 			const valueString = JSON.stringify(settings[key]);
 			const defaultString = JSON.stringify(defaultSettings[key]);
 
-			console.log(
-				key,
-				valueString === defaultString,
-				valueString,
-				defaultString,
-			);
 			if (valueString !== defaultString) {
 				(changedSettings as any)[key] = settings[key];
 			}
@@ -197,10 +195,13 @@ const DefaultNewLeagueSettings = ({
 							}}
 							onImport={settings => {
 								onAnyChange();
-								console.log(
-									settings,
-									removeSettingsEqualToDefault(removeUnknownSettings(settings)),
+
+								const newOverrides = removeSettingsEqualToDefault(
+									removeUnknownSettings(settings),
 								);
+								setOverridesLocal(newOverrides);
+								setSettingsShown(Object.keys(newOverrides) as any);
+								setOverridesLocalCounter(counter => counter + 1);
 							}}
 						/>
 						<ExportButton />
@@ -213,6 +214,7 @@ const DefaultNewLeagueSettings = ({
 			) : null}
 
 			<SettingsForm
+				key={overridesLocalCounter}
 				onSave={async settings => {
 					console.log(settings);
 
@@ -263,7 +265,7 @@ const DefaultNewLeagueSettings = ({
 				saveText="Save Default Settings"
 				initialSettings={{
 					...defaultSettings,
-					...overrides,
+					...overridesLocal,
 				}}
 				settingsShown={settingsShown}
 				hideShortcuts

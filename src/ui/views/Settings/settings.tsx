@@ -1436,6 +1436,14 @@ settings.push(
 		descriptionLong:
 			"This will hide inactive teams from dropdown menus at the top of many pages, such as the roster page.",
 	},
+	{
+		category: "Players",
+		key: "goatFormula",
+		name: "GOAT Formula",
+		showOnlyIf: ({ defaultNewLeagueSettings }) => defaultNewLeagueSettings,
+		type: "string",
+		description: "See Tools > Frivolities > GOAT Lab for details.",
+	},
 );
 
 if (isSport("basketball")) {

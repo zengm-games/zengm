@@ -1,9 +1,16 @@
 ability to specify default settings
-- includes goat formula
-  - extend showOnlyIf
-    - also use this to handle hiding the 2nd "randomization" value
 - numActiveTeams handled correctly?
   - needs to skip that validation if numActiveTeams is undefined
+- announcement
+  - goat lab formula
+
+TR doesn’t switch to playoffs TR when switching to it on the roster screen https://discord.com/channels/290013534023057409/290015591216054273/930604919973609523
+
+hide inactive teams from edit player https://discord.com/channels/290013534023057409/331882115119448065/930529913000296468
+
+no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
+
+more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

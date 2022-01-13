@@ -7,7 +7,13 @@ import type { View } from "../../../common/types";
 import type { Settings } from "../../../worker/views/settings";
 import { MoreLinks } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
-import { localActions, logEvent, realtimeUpdate, toWorker } from "../../util";
+import {
+	helpers,
+	localActions,
+	logEvent,
+	realtimeUpdate,
+	toWorker,
+} from "../../util";
 import { settings } from "../Settings/settings";
 import SettingsForm from "../Settings/SettingsForm";
 import type { Key } from "../Settings/types";
@@ -64,6 +70,42 @@ const DefaultNewLeagueSettings = ({
 		});
 	};
 
+	const removeSettingsEqualToDefault = (settings: Partial<Settings>) => {
+		const changedSettings: Partial<Settings> = {};
+		for (const key of helpers.keys(settings)) {
+			const valueString = JSON.stringify(settings[key]);
+			const defaultString = JSON.stringify(defaultSettings[key]);
+
+			console.log(
+				key,
+				valueString === defaultString,
+				valueString,
+				defaultString,
+			);
+			if (valueString !== defaultString) {
+				(changedSettings as any)[key] = settings[key];
+			}
+		}
+
+		return changedSettings;
+	};
+
+	const removeUnknownSettings = (settings1: Partial<Settings>) => {
+		const settings2 = {
+			...settings1,
+		};
+
+		const allowedKeys = new Set(settings.map(setting => setting.key));
+
+		for (const key of helpers.keys(settings2)) {
+			if (!allowedKeys.has(key as any)) {
+				delete settings2[key];
+			}
+		}
+
+		return settings2;
+	};
+
 	return (
 		<>
 			<MoreLinks type="globalSettings" page="/settings/default" />
@@ -81,7 +123,7 @@ const DefaultNewLeagueSettings = ({
 			</p>
 
 			<div className="mb-3 d-md-flex">
-				<div className="default-settings-select me-md-2">
+				<div className="default-settings-select flex-grow-1 me-md-2">
 					<Select<{
 						label: string;
 						value: Key;
@@ -155,7 +197,10 @@ const DefaultNewLeagueSettings = ({
 							}}
 							onImport={settings => {
 								onAnyChange();
-								console.log(settings);
+								console.log(
+									settings,
+									removeSettingsEqualToDefault(removeUnknownSettings(settings)),
+								);
 							}}
 						/>
 						<ExportButton />
@@ -184,10 +229,13 @@ const DefaultNewLeagueSettings = ({
 						delete newDefaultSettings.godModeInPast;
 					}
 
+					const newDefaultSettings2 =
+						removeSettingsEqualToDefault(newDefaultSettings);
+
 					await toWorker(
 						"main",
 						"updateDefaultSettingsOverrides",
-						newDefaultSettings,
+						newDefaultSettings2,
 					);
 
 					localActions.update({

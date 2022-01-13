@@ -8,7 +8,7 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const overrides = (await idb.meta.get(
 			"attributes",
 			"defaultSettingsOverrides",
-		)) as Settings | undefined;
+		)) as Partial<Settings> | undefined;
 
 		const defaultSettings = {
 			...getDefaultSettings(),

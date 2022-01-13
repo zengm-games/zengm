@@ -1396,6 +1396,15 @@ const getDefaultInjuries = () => {
 	return defaultInjuries;
 };
 
+const getDefaultNewLeagueSettings = async () => {
+	const overrides = (await idb.meta.get(
+		"attributes",
+		"defaultSettingsOverrides",
+	)) as Partial<Settings> | undefined;
+
+	return overrides ?? {};
+};
+
 const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
 };
@@ -3707,6 +3716,7 @@ export default {
 	generateFace,
 	getAutoPos,
 	getDefaultInjuries,
+	getDefaultNewLeagueSettings,
 	getDefaultTragicDeaths,
 	getLeagueInfo,
 	getLeagueName,

@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
-import { SPORT_HAS_REAL_PLAYERS } from "../../common";
-import { groupBy } from "../../common/groupBy";
-import type { View } from "../../common/types";
-import type { Settings } from "../../worker/views/settings";
-import { MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { localActions, logEvent, toWorker } from "../util";
-import { settings } from "./Settings/settings";
-import SettingsForm from "./Settings/SettingsForm";
-import type { Key } from "./Settings/types";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
+import { groupBy } from "../../../common/groupBy";
+import type { View } from "../../../common/types";
+import type { Settings } from "../../../worker/views/settings";
+import { MoreLinks } from "../../components";
+import useTitleBar from "../../hooks/useTitleBar";
+import { localActions, logEvent, toWorker } from "../../util";
+import { settings } from "../Settings/settings";
+import SettingsForm from "../Settings/SettingsForm";
+import type { Key } from "../Settings/types";
+import ExportButton from "./ExportButton";
+import ImportButton from "./ImportButton";
 
 const DefaultNewLeagueSettings = ({
 	defaultSettings,
@@ -23,6 +25,10 @@ const DefaultNewLeagueSettings = ({
 			dirtySettings: false,
 		});
 	}, []);
+
+	const [importErrorMessage, setImportErrorMessage] = useState<
+		string | undefined
+	>();
 
 	const [settingsShown, setSettingsShown] = useState<Key[]>(
 		overrides ? (Object.keys(overrides) as any) : [],
@@ -51,6 +57,13 @@ const DefaultNewLeagueSettings = ({
 		})),
 	}));
 
+	const onAnyChange = () => {
+		setImportErrorMessage(undefined);
+		localActions.update({
+			dirtySettings: true,
+		});
+	};
+
 	return (
 		<>
 			<MoreLinks type="globalSettings" page="/settings/default" />
@@ -76,6 +89,7 @@ const DefaultNewLeagueSettings = ({
 						classNamePrefix="dark-select"
 						onChange={newValue => {
 							if (newValue) {
+								onAnyChange();
 								setSettingsShown(shown => [...shown, newValue.value]);
 							}
 						}}
@@ -95,6 +109,7 @@ const DefaultNewLeagueSettings = ({
 						<Dropdown.Menu>
 							<Dropdown.Item
 								onClick={() => {
+									onAnyChange();
 									setSettingsShown(settings.map(setting => setting.key));
 								}}
 							>
@@ -104,6 +119,7 @@ const DefaultNewLeagueSettings = ({
 								<Dropdown.Item
 									key={option.label}
 									onClick={() => {
+										onAnyChange();
 										setSettingsShown(current => {
 											const currentWithCategory = [
 												...current,
@@ -123,17 +139,33 @@ const DefaultNewLeagueSettings = ({
 					<button
 						className="btn btn-danger ms-2"
 						onClick={() => {
+							onAnyChange();
 							setSettingsShown([]);
 						}}
 					>
 						Clear All
 					</button>
 					<div className="btn-group ms-2">
-						<button className="btn btn-light-bordered">Import</button>
-						<button className="btn btn-light-bordered">Export</button>
+						<ImportButton
+							onBeforeImport={() => {
+								setImportErrorMessage(undefined);
+							}}
+							onError={errorMessage => {
+								setImportErrorMessage(errorMessage);
+							}}
+							onImport={settings => {
+								onAnyChange();
+								console.log(settings);
+							}}
+						/>
+						<ExportButton />
 					</div>
 				</div>
 			</div>
+
+			{importErrorMessage ? (
+				<p className="text-danger">Error during import: {importErrorMessage}</p>
+			) : null}
 
 			<SettingsForm
 				onSave={async settings => {
@@ -169,6 +201,7 @@ const DefaultNewLeagueSettings = ({
 					});
 				}}
 				onCancelDefaultSetting={key => {
+					onAnyChange();
 					setSettingsShown(shown => shown.filter(key2 => key2 !== key));
 				}}
 				onUpdateExtra={() => {

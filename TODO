@@ -2,9 +2,7 @@ ability to specify default settings
 - includes goat formula
   - extend showOnlyIf
     - also use this to handle hiding the 2nd "randomization" value
-- import/export default settings
-  - import should do a deep diff and only include ones different from default
-  - set dirtySettings after import
+- actually implement import
 - god mode
   - error if a god mode required option is set but god mode is not enabled
     - only if non-default value selected
@@ -16,6 +14,8 @@ ability to specify default settings
 - only save ones that are actually different than default
 - differnet background color for ones different than default?
 - onCancel - go back to previous page
+- deep diff on import/save to only keep non-default settings
+  - how to handle custom ones like injuries, tragicDeaths?
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 

@@ -48,13 +48,6 @@ const shouldRetire = (
 				const ovrFraction = ovr / maxOvr;
 				if (ovrFraction < 0.7) {
 					const prob2 = 0.2 + (0.7 - ovrFraction);
-					console.log(
-						g.get("season"),
-						p.pid,
-						p.firstName,
-						p.lastName,
-						`${ovr} / ${maxOvr} = ${ovrFraction}, p=${prob2}`,
-					);
 					if (prob2 > Math.random()) {
 						return true;
 					}

@@ -10,7 +10,6 @@ ability to specify default settings
   - needs to skip that validation if numActiveTeams is undefined
 - test injuries (or some other custom one)
 - how to handle "hidden" settings where one control updates multiple fields?
-- mention it on Customize Settings page when accessed from new league
 - only save ones that are actually different than default
 - differnet background color for ones different than default?
 - onCancel - go back to previous page

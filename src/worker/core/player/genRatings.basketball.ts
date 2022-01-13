@@ -45,9 +45,9 @@ const genRatings = (
 		],
 	];
 
-	const pca1 = 1.62 * hgt - 78.12 + random.realGauss(0, 13.3);
-	const pca2 = 0.4 * hgt - 19.41 + random.realGauss(0, 14.9);
-	const pca3 = -0.28 * hgt + 13.35 + random.realGauss(0, 9.0);
+	const pca1 = 1.62 * hgt - 78.12 + random.realGauss(0, 15.24);
+	const pca2 = 0.4 * hgt - 19.41 + random.realGauss(0, 16.74);
+	const pca3 = -0.28 * hgt + 13.35 + random.realGauss(0, 10.44);
 
 	const rawRatings = {
 		diq:
@@ -124,7 +124,9 @@ const genRatings = (
 	};
 
 	for (const key of helpers.keys(rawRatings)) {
-		rawRatings[key] = limitRating(rawRatings[key] * random.uniform(0.8, 1.2));
+		rawRatings[key] = limitRating(
+			rawRatings[key] * random.uniform(0.853, 1.174),
+		);
 	}
 
 	const ratings = {

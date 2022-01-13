@@ -2183,7 +2183,7 @@ class GameSim {
 					this.playByPlay.logEvent("injury", {
 						clock: this.clock,
 						t,
-						names: [p.name],
+						names: [`${p.pos} ${p.name} (ABBREV)`],
 						injuredPID: p.id,
 					});
 				}

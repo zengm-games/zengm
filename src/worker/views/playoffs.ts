@@ -163,9 +163,13 @@ const updatePlayoffs = async (
 				}
 			}
 		}
-		for (const matchup of series[0]) {
-			if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
-				canEdit = false;
+		if (series.length === 0) {
+			canEdit = false;
+		} else {
+			for (const matchup of series[0]) {
+				if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
+					canEdit = false;
+				}
 			}
 		}
 
@@ -205,7 +209,6 @@ const updatePlayoffs = async (
 			if (playoffsByConf) {
 				teams = [];
 				const teamsByConf = groupBy(teamsUnsorted, t => t.seasonAttrs.cid);
-				console.log("teamsByConf", teamsByConf);
 				for (const teamsConf of Object.values(teamsByConf)) {
 					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
 				}

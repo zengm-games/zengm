@@ -12,9 +12,16 @@ const Storage = () => {
 	>("loading...");
 
 	useEffect(() => {
+		let mounted = true;
+
 		const check = async () => {
 			if (navigator.storage && navigator.storage.persisted) {
 				const persisted = await navigator.storage.persisted();
+
+				if (!mounted) {
+					return;
+				}
+
 				if (persisted) {
 					setStatus("enabled");
 				} else {
@@ -26,6 +33,10 @@ const Storage = () => {
 		};
 
 		check();
+
+		return () => {
+			mounted = false;
+		};
 	}, []);
 
 	const onClick = useCallback(async event => {

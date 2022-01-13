@@ -3,20 +3,20 @@ import type { ViewInput, RealTeamInfo } from "../../common/types";
 import {
 	defaultGameAttributes,
 	defaultInjuries,
+	defaultTragicDeaths,
 	env,
 	getNewLeagueLid,
 	newLeagueGodModeLimits,
 } from "../util";
 import type { Settings } from "./settings";
 import { unwrapGameAttribute } from "../../common";
+import goatFormula from "../util/goatFormula";
 
 const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";
 };
 
-const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
-	const godModeLimits = newLeagueGodModeLimits();
-
+export const getDefaultSettings = () => {
 	const defaultSettings: Omit<Settings, "numActiveTeams"> = {
 		godMode: unwrapGameAttribute(defaultGameAttributes, "godMode"),
 		godModeInPast: unwrapGameAttribute(defaultGameAttributes, "godModeInPast"),
@@ -235,11 +235,29 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 			"numPlayersThree",
 		),
 		fantasyPoints: unwrapGameAttribute(defaultGameAttributes, "fantasyPoints"),
+		tragicDeaths: defaultTragicDeaths,
+		goatFormula: goatFormula.DEFAULT_FORMULA,
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:
 			unwrapGameAttribute(defaultGameAttributes, "realDraftRatings") ??
 			"rookie",
+	};
+
+	return defaultSettings;
+};
+
+const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
+	const godModeLimits = newLeagueGodModeLimits();
+
+	const overrides = (await idb.meta.get(
+		"attributes",
+		"defaultSettingsOverrides",
+	)) as Settings | undefined;
+
+	const defaultSettings = {
+		...getDefaultSettings(),
+		...overrides,
 	};
 
 	if (lid !== undefined) {

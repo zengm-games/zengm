@@ -10,6 +10,7 @@ const routeInfos = {
 	"/account/reset_password/:token": "resetPassword",
 	"/account/update_card": "accountUpdateCard",
 	"/settings": "globalSettings",
+	"/settings/default": "defaultNewLeagueSettings",
 	"/dropbox": "dropbox",
 
 	// League views

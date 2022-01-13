@@ -493,6 +493,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				filter,
 				forEach,
 				map,
+				name: await toWorker("main", "getLeagueName"),
 				hasHistoricalData,
 				onPercentDone: percent => {
 					setPercentDone(percent);

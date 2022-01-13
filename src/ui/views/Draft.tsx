@@ -73,40 +73,6 @@ DraftButtons.propTypes = {
 	usersTurn: PropTypes.bool.isRequired,
 };
 
-const TradeButton = ({
-	disabled,
-	dpid,
-	tid,
-	visible,
-}: {
-	disabled: boolean;
-	dpid: number;
-	tid: number;
-	visible: boolean;
-}) => {
-	return visible ? (
-		<button
-			className="btn btn-xs btn-light-bordered"
-			disabled={disabled}
-			onClick={async () => {
-				await toWorker("actions", "tradeFor", {
-					dpid,
-					tid,
-				});
-			}}
-		>
-			Trade For Pick
-		</button>
-	) : null;
-};
-
-TradeButton.propTypes = {
-	disabled: PropTypes.bool.isRequired,
-	dpid: PropTypes.number.isRequired,
-	tid: PropTypes.number.isRequired,
-	visible: PropTypes.bool.isRequired,
-};
-
 const Draft = ({
 	challengeNoDraftPicks,
 	challengeNoRatings,
@@ -203,7 +169,7 @@ const Draft = ({
 						onClick={() => draftUser(p.pid, true)}
 						title="Draft player and sim to your next pick or end of draft"
 					>
-						And Sim
+						and sim
 					</button>
 				</div>
 			),
@@ -272,17 +238,70 @@ const Draft = ({
 					{p.name}
 				</PlayerNameLabels>
 			) : (
-				<TradeButton
-					dpid={p.draft.dpid}
-					disabled={drafting}
-					tid={p.draft.tid}
-					visible={
-						!fantasyDraft &&
-						!expansionDraft &&
-						!userTids.includes(p.draft.tid) &&
-						!spectator
-					}
-				/>
+				<>
+					<button
+						className="btn btn-xs btn-light-bordered"
+						disabled={drafting}
+						onClick={async () => {
+							if (!spectator) {
+								let numUserPicksBefore = 0;
+								for (const p2 of drafted) {
+									if (p2.draft.dpid === p.draft.dpid) {
+										break;
+									}
+
+									if (userTids.includes(p2.draft.tid)) {
+										numUserPicksBefore += 1;
+									}
+								}
+
+								if (numUserPicksBefore > 0) {
+									const multipleTeams = userTids.length > 1;
+									const multiplePicks = numUserPicksBefore > 1;
+
+									const proceed = await confirm(
+										`Your team${multipleTeams ? "s" : ""} control${
+											multipleTeams ? "" : "s"
+										} ${numUserPicksBefore} pick${
+											multiplePicks ? "s" : ""
+										} before this one. The AI will make ${
+											multiplePicks ? "those draft picks" : "that draft pick"
+										} for you if you choose to sim to this pick.`,
+										{
+											okText: `Let AI Make My Pick${multiplePicks ? "s" : ""}`,
+											cancelText: "Cancel",
+										},
+									);
+
+									if (!proceed) {
+										return;
+									}
+								}
+							}
+
+							await toWorker("actions", "untilPick", p.draft.dpid);
+						}}
+					>
+						Sim to pick
+					</button>
+					{!fantasyDraft &&
+					!expansionDraft &&
+					!userTids.includes(p.draft.tid) &&
+					!spectator ? (
+						<button
+							className="btn btn-xs btn-light-bordered ms-2"
+							disabled={drafting}
+							onClick={async () => {
+								await toWorker("actions", "tradeFor", {
+									dpid: p.draft.dpid,
+									tid: p.draft.tid,
+								});
+							}}
+						>
+							Trade for pick
+						</button>
+					) : null}
+				</>
 			),
 			p.pid >= 0 ? p.ratings.pos : null,
 			p.pid >= 0 ? p.age : null,

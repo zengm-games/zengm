@@ -1,6 +1,7 @@
 import { idb } from "../../db";
 import {
 	defaultInjuries,
+	defaultTragicDeaths,
 	g,
 	helpers,
 	initUILocalGames,
@@ -42,6 +43,16 @@ const setGameAttributes = async (
 			JSON.stringify(defaultInjuries)
 		) {
 			gameAttributes.injuries = undefined;
+		}
+	}
+
+	if (gameAttributes.tragicDeaths) {
+		// Test if it's the same as default
+		if (
+			JSON.stringify(gameAttributes.tragicDeaths) ===
+			JSON.stringify(defaultTragicDeaths)
+		) {
+			gameAttributes.tragicDeaths = undefined;
 		}
 	}
 

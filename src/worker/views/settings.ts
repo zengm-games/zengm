@@ -1,11 +1,13 @@
-import { defaultInjuries, g } from "../util";
+import { defaultInjuries, defaultTragicDeaths, g } from "../util";
 import type {
 	Conf,
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	InjuriesSetting,
+	TragicDeaths,
 	UpdateEvents,
 } from "../../common/types";
+import goatFormula from "../util/goatFormula";
 
 const keys = [
 	"godMode",
@@ -101,11 +103,20 @@ const keys = [
 	"numPlayersDunk",
 	"numPlayersThree",
 	"fantasyPoints",
+	"goatFormula",
 ] as const;
 
 export type Settings = Pick<
 	GameAttributesLeague,
-	Exclude<typeof keys[number], "repeatSeason" | "realDraftRatings" | "injuries">
+	Exclude<
+		typeof keys[number],
+		| "repeatSeason"
+		| "realDraftRatings"
+		| "injuries"
+		| "tragicDeaths"
+		| "goatFormula"
+		| "numActiveTeams"
+	>
 > & {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -116,7 +127,12 @@ export type Settings = Pick<
 	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
 	realStats: GetLeagueOptionsReal["realStats"];
 	injuries: InjuriesSetting;
+	tragicDeaths: TragicDeaths;
+	goatFormula: string;
 	confs?: Conf[];
+
+	// undefined in DefaultNewLeagueSettings - then it is not possible to validate some settings that depend on it
+	numActiveTeams: number | undefined;
 };
 
 const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -124,7 +140,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
 	) {
-		const settings: Settings = {
+		const initialSettings: Settings = {
 			godMode: g.get("godMode"),
 			godModeInPast: g.get("godModeInPast"),
 			numGames: g.get("numGames"),
@@ -219,6 +235,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPlayersDunk: g.get("numPlayersDunk"),
 			numPlayersThree: g.get("numPlayersThree"),
 			fantasyPoints: g.get("fantasyPoints"),
+			tragicDeaths: g.get("tragicDeaths") ?? defaultTragicDeaths,
+			goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
@@ -226,7 +244,9 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			realStats: "none",
 		};
 
-		return settings;
+		return {
+			initialSettings,
+		};
 	}
 };
 

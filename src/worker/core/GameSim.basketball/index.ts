@@ -134,6 +134,12 @@ const pickPlayer = (
 		sum += ratio;
 	}
 
+	// Special case for all 0 rated players - randomly pick one
+	if (sum === 0) {
+		const candidates = range(ratios.length).filter(i => i !== exempt);
+		return random.choice(candidates);
+	}
+
 	const rand = Math.random() * sum;
 
 	let runningSum = 0;

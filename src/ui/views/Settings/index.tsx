@@ -4,7 +4,7 @@ import SettingsForm from "./SettingsForm";
 import { localActions, logEvent, toWorker } from "../../util";
 import { useEffect } from "react";
 
-const Settings = (props: View<"settings">) => {
+const Settings = ({ initialSettings }: View<"settings">) => {
 	useTitleBar({ title: "League Settings" });
 
 	useEffect(() => {
@@ -15,7 +15,7 @@ const Settings = (props: View<"settings">) => {
 
 	return (
 		<SettingsForm
-			{...props}
+			initialSettings={initialSettings}
 			onUpdateExtra={() => {
 				localActions.update({
 					dirtySettings: true,

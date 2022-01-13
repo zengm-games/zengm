@@ -166,6 +166,10 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	}
 };
 
+const untilPick = async (dpid: number, conditions: Conditions) => {
+	await runDraft({ type: "untilPick", dpid }, conditions);
+};
+
 const addToTradingBlock = async (pid: number, conditions: Conditions) => {
 	toUI(
 		"realtimeUpdate",
@@ -306,7 +310,7 @@ const playStop = async () => {
 };
 
 const runDraft = async (
-	type: "onePick" | "untilYourNextPick" | "untilEnd",
+	action: Parameters<typeof draft.runPicks>[0],
 	conditions: Conditions,
 ) => {
 	if (
@@ -315,7 +319,7 @@ const runDraft = async (
 		g.get("phase") === PHASE.EXPANSION_DRAFT
 	) {
 		await updateStatus("Draft in progress...");
-		await draft.runPicks(type, conditions);
+		await draft.runPicks(action, conditions);
 		const draftPicks = await draft.getOrder();
 
 		if (draftPicks.length === 0) {
@@ -393,13 +397,13 @@ const playMenu = {
 		}
 	},
 	onePick: async (conditions: Conditions) => {
-		await runDraft("onePick", conditions);
+		await runDraft({ type: "onePick" }, conditions);
 	},
 	untilYourNextPick: async (conditions: Conditions) => {
-		await runDraft("untilYourNextPick", conditions);
+		await runDraft({ type: "untilYourNextPick" }, conditions);
 	},
 	untilEnd: async (conditions: Conditions) => {
-		await runDraft("untilEnd", conditions);
+		await runDraft({ type: "untilEnd" }, conditions);
 	},
 	untilResignPlayers: async (conditions: Conditions) => {
 		if (
@@ -521,4 +525,5 @@ export default {
 	simToGame,
 	toolsMenu,
 	tradeFor,
+	untilPick,
 };

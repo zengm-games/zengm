@@ -1,7 +1,7 @@
 import { realtimeUpdate } from "../util";
 
 const Dropbox = () => {
-	const hash = window.location.hash.slice(1);
+	const hash = location.hash.slice(1);
 	const params = new URLSearchParams(hash);
 	const lid = parseInt(params.get("state")!);
 	const accessToken = params.get("access_token");

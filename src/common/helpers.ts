@@ -751,6 +751,7 @@ function formatCurrency(
 		return "$0";
 	}
 
+	// Keep in sync with getSortVal
 	if (append === "M" && abs > 1000) {
 		abs /= 1000;
 		append = "B";

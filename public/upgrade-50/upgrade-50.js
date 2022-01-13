@@ -1,21 +1,3 @@
-const choice = x => {
-	return x[Math.floor(Math.random() * x.length)];
-};
-
-const MOOD_TRAIT_KEYS = ["F", "L", "$", "W"];
-
-const genMoodTraits = () => {
-	const moodTraits = [choice(MOOD_TRAIT_KEYS)];
-	if (Math.random() < 0.5) {
-		moodTraits.push(
-			choice(MOOD_TRAIT_KEYS.filter(trait => trait !== moodTraits[0])),
-		);
-	}
-	moodTraits.sort();
-
-	return moodTraits;
-};
-
 const logDiv = document.getElementById("status");
 const log = text => {
 	logDiv.innerHTML += `${text}<br>`;
@@ -42,16 +24,25 @@ const upgrade1000 = async (db, lastPidInput, lastDraftYearInput) => {
 	let lastDraftYear = undefined;
 	while (cursor) {
 		const p = cursor.value;
-		if (!p.moodTraits) {
-			delete p.freeAgentMood;
-			p.moodTraits = genMoodTraits();
-			p.numDaysFreeAgent = 0;
-			cursor.update(p);
-			numDone += 1;
 
-			lastPid = p.pid;
-			lastDraftYear = p.draft.year;
+		for (const key of ["hof", "watch"]) {
+			if (p[key]) {
+				p[key] = 1;
+			} else {
+				delete p[key];
+			}
 		}
+
+		if (p.note) {
+			p.noteBool = 1;
+		} else {
+			delete p.note;
+		}
+
+		cursor.update(p);
+		numDone += 1;
+		lastPid = p.pid;
+		lastDraftYear = p.draft.year;
 
 		if (numDone >= 1000) {
 			doneAllPlayers = false;
@@ -68,23 +59,6 @@ const upgrade1000 = async (db, lastPidInput, lastDraftYearInput) => {
 		lastPid,
 		lastDraftYear,
 	};
-};
-
-const upgradeTeamSeasons = async db => {
-	log("Upgrading teamSeasons...");
-	const tx = db.transaction("teamSeasons", "readwrite");
-
-	let cursor = await tx.store.openCursor();
-	while (cursor) {
-		const teamSeason = cursor.value;
-		if (typeof teamSeason.numPlayersTradedAway !== "number") {
-			teamSeason.numPlayersTradedAway = 0;
-			cursor.update(teamSeason);
-		}
-		cursor = await cursor.continue();
-	}
-
-	await tx.done;
 };
 
 const initForm = async () => {
@@ -109,7 +83,24 @@ const initForm = async () => {
 		const lid = parseInt(leagueSelect.value);
 
 		log(`Attempting to connect to league ${lid}`);
-		const db = await idb.openDB(`league${lid}`, 39);
+		const db = await idb.openDB(`league${lid}`, 50, {
+			async upgrade(db, oldVersion, newVerison, transaction) {
+				log("Creating new indexes...");
+				const playerStore = transaction.objectStore("players");
+
+				if (oldVersion <= 48) {
+					playerStore.createIndex("hof", "hof", {
+						unique: false,
+					});
+				}
+				playerStore.createIndex("noteBool", "noteBool", {
+					unique: false,
+				});
+				playerStore.createIndex("watch", "watch", {
+					unique: false,
+				});
+			},
+		});
 		log("Connected!");
 
 		log("Upgrading players...");
@@ -124,8 +115,6 @@ const initForm = async () => {
 		}
 		log("Done!");
 
-		await upgradeTeamSeasons(db);
-		log("Done!");
 		log(
 			"You should now be able to play your league like normal. Sorry for the trouble!",
 		);

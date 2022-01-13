@@ -1,7 +1,7 @@
-import { idb } from "../db";
+import { idb, iterate } from "../db";
 import g from "./g";
 import type { Achievement } from "../../common/types";
-import { bySport, isSport } from "../../common";
+import { bySport, isSport, PLAYER } from "../../common";
 import helpers from "./helpers";
 
 const goldenOldiesCutoffs = bySport({
@@ -29,8 +29,8 @@ const checkDynasty = async (titles: number, years: number) => {
 		},
 		"noCopyCache",
 	);
-	let titlesFound = 0; // Look over past years
 
+	let titlesFound = 0;
 	for (let i = 0; i < years; i++) {
 		const ts = teamSeasons[teamSeasons.length - 1 - i];
 
@@ -64,6 +64,42 @@ const checkMoneyball = async (maxPayroll: number) => {
 		t.seasonAttrs.playoffRoundsWon ===
 			g.get("numGamesPlayoffSeries", "current").length &&
 		t.seasonAttrs.expenses.salary.amount <= maxPayroll
+	);
+};
+
+const checkExpansion = async (numSeasons: number) => {
+	const t = await idb.getCopy.teamsPlus(
+		{
+			attrs: ["firstSeasonAfterExpansion"],
+			seasonAttrs: ["playoffRoundsWon"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
+	return !!(
+		t &&
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
+		t.firstSeasonAfterExpansion !== undefined &&
+		g.get("season") - t.firstSeasonAfterExpansion + 1 <= numSeasons
+	);
+};
+
+const checkSmallMarket = async (popCutoff: number) => {
+	const t = await idb.getCopy.teamsPlus(
+		{
+			seasonAttrs: ["playoffRoundsWon", "pop"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
+	return !!(
+		t &&
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
+		t.seasonAttrs.pop <= popCutoff
 	);
 };
 
@@ -226,6 +262,72 @@ const checkSevenGameFinals = async () => {
 	return true;
 };
 
+// Cache is to improve performance, both for multiple checks at different limits in the same season, and for checks in multiple seasons (if last year was same session)
+let checkMvpCache:
+	| {
+			lid: number;
+			season: number;
+			count: number;
+	  }
+	| undefined;
+const checkMvp = async (limit: number, overallLimit: number) => {
+	if (checkMvpCache?.lid !== g.get("lid")) {
+		checkMvpCache = undefined;
+	}
+
+	const season = g.get("season");
+	const userTid = g.get("userTid");
+
+	// If we have current season in cache, use it
+	if (checkMvpCache?.season === season) {
+		return checkMvpCache.count === limit;
+	}
+
+	const currentAwards = await idb.cache.awards.get(season);
+
+	// If we have last season in cache, use it
+	if (checkMvpCache?.season === season - 1) {
+		checkMvpCache.season = season;
+		if (currentAwards.mvp?.tid === userTid) {
+			checkMvpCache.count += 1;
+		}
+		return checkMvpCache.count === limit;
+	}
+
+	// Compute from scratch
+	checkMvpCache = {
+		lid: g.get("lid"),
+		season,
+		count: 0,
+	};
+	if (currentAwards.mvp?.tid === userTid) {
+		checkMvpCache.count += 1;
+	}
+	await iterate(
+		idb.league.transaction("awards").store,
+		undefined,
+		undefined,
+		(awards, shortCircuit) => {
+			// Already checked current season in currentAwards
+			if (awards.season >= season) {
+				return;
+			}
+
+			const userTid = g.get("userTid", awards.season);
+			if (awards.mvp?.tid === userTid) {
+				checkMvpCache!.count += 1;
+			}
+
+			// > rather than >=, because we need to know if we just hit the limit (==) or if it was already beyond it (>)
+			if (checkMvpCache!.count > overallLimit) {
+				shortCircuit();
+			}
+		},
+	);
+
+	return currentAwards.mvp?.tid === userTid && checkMvpCache.count === limit;
+};
+
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const achievements: Achievement[] = [
 	{
@@ -289,6 +391,78 @@ const achievements: Achievement[] = [
 		when: "afterPlayoffs",
 	},
 	{
+		slug: "dynasty_4",
+		name: "Dynasty 4",
+		desc: bySport({
+			basketball: "Win 16 championships in 20 years.",
+			default: "Win 13 championships in 20 years.",
+		}),
+		category: "Multiple Seasons",
+
+		check() {
+			return bySport({
+				basketball: checkDynasty(16, 20),
+				default: checkDynasty(13, 20),
+			});
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "dynasty_5",
+		name: "Dynasty 5",
+		desc: bySport({
+			basketball: "Win 24 championships in 30 years.",
+			default: "Win 20 championships in 30 years.",
+		}),
+		category: "Multiple Seasons",
+
+		check() {
+			return bySport({
+				basketball: checkDynasty(24, 30),
+				default: checkDynasty(20, 30),
+			});
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "break_the_curse",
+		name: "Break The Curse",
+		desc: "Win a championship after going 108+ seasons without winning one.",
+		category: "Multiple Seasons",
+
+		async check() {
+			const wonTitle = await userWonTitle();
+			if (!wonTitle) {
+				return false;
+			}
+
+			const NUM_SEASONS = 108;
+
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					tid: g.get("userTid"),
+					seasons: [g.get("season") - NUM_SEASONS, g.get("season") - 1],
+				},
+				"noCopyCache",
+			);
+
+			if (teamSeasons.length < NUM_SEASONS) {
+				// Not enough seasons played
+				return false;
+			}
+
+			return teamSeasons.every(
+				ts =>
+					ts.playoffRoundsWon <
+					g.get("numGamesPlayoffSeries", ts.season).length,
+			);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
 		slug: "moneyball",
 		name: "Moneyball",
 		desc: "Win a title with a payroll under 2/3 of the salary cap.",
@@ -313,26 +487,49 @@ const achievements: Achievement[] = [
 		when: "afterPlayoffs",
 	},
 	{
-		slug: "small_market",
-		name: "Small Market",
-		desc: "Win a title in a city with under 2 million people.",
+		slug: "expansion",
+		name: "Expansion To Champion",
+		desc: "Win a title as an expansion team within its first 5 seasons.",
 		category: "Season",
 
-		async check() {
-			const t = await idb.getCopy.teamsPlus(
-				{
-					seasonAttrs: ["playoffRoundsWon", "pop"],
-					season: g.get("season"),
-					tid: g.get("userTid"),
-				},
-				"noCopyCache",
-			);
-			return !!(
-				t &&
-				t.seasonAttrs.playoffRoundsWon ===
-					g.get("numGamesPlayoffSeries", "current").length &&
-				t.seasonAttrs.pop <= 2
-			);
+		check() {
+			return checkExpansion(5);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "expansion_2",
+		name: "Expansion To Champion 2",
+		desc: "Win a title as an expansion team within its first 3 seasons.",
+		category: "Season",
+
+		check() {
+			return checkExpansion(3);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "small_market",
+		name: "Small Market",
+		desc: "Win a title in a city with a population under 2 million people.",
+		category: "Season",
+
+		check() {
+			return checkSmallMarket(2);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "small_market_2",
+		name: "Small Market 2",
+		desc: "Win a title in a city with a population under 1.5 million people.",
+		category: "Season",
+
+		check() {
+			return checkSmallMarket(1.5);
 		},
 
 		when: "afterPlayoffs",
@@ -341,6 +538,12 @@ const achievements: Achievement[] = [
 		slug: "hacker",
 		name: "Hacker",
 		desc: "Privately report a security issue in the account system or some other part of the site.",
+		category: "Meta",
+	},
+	{
+		slug: "gold",
+		name: "Gold",
+		desc: "Subscribe to ZenGM Gold from your account page to get this achievement.",
 		category: "Meta",
 	},
 	{
@@ -665,7 +868,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "triple_crown",
 		name: "Triple Crown",
-		desc: "Have a player win MVP, Finals MVP, and DPOY in the same year",
+		desc: "Have a player win MVP, Finals MVP, and DPOY in the same year.",
 		category: "Awards",
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
@@ -745,6 +948,36 @@ const achievements: Achievement[] = [
 					awards.roy.tid === userTid &&
 					awards.finalsMvp.tid === userTid,
 			});
+		},
+		when: "afterAwards",
+	},
+	{
+		slug: "mvp",
+		name: "10 MVPs",
+		desc: "Have your players collectively win 10 MVP awards.",
+		category: "Awards",
+		check() {
+			return checkMvp(10, 1000);
+		},
+		when: "afterAwards",
+	},
+	{
+		slug: "mvp_2",
+		name: "100 MVPs",
+		desc: "Have your players collectively win 100 MVP awards.",
+		category: "Awards",
+		check() {
+			return checkMvp(100, 1000);
+		},
+		when: "afterAwards",
+	},
+	{
+		slug: "mvp_3",
+		name: "1,000 MVPs",
+		desc: "Have your players collectively win 1,000 MVP awards.",
+		category: "Awards",
+		check() {
+			return checkMvp(1000, 1000);
 		},
 		when: "afterAwards",
 	},
@@ -888,6 +1121,35 @@ const achievements: Achievement[] = [
 
 		when: "afterPlayoffs",
 	},
+	{
+		slug: "no_first_round_picks",
+		name: "No First Round Picks",
+		desc: "Win a title without any players picked in the first round of the draft.",
+		category: "Team Composition",
+
+		async check() {
+			const wonTitle = await userWonTitle();
+
+			if (!wonTitle) {
+				return false;
+			}
+
+			const players = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				g.get("userTid"),
+			);
+
+			for (const p of players) {
+				if (p.draft.round === 1) {
+					return false;
+				}
+			}
+
+			return true;
+		},
+
+		when: "afterPlayoffs",
+	},
 ];
 
 if (isSport("hockey") || isSport("basketball")) {
@@ -915,6 +1177,63 @@ if (isSport("hockey") || isSport("basketball")) {
 
 				const seed = await getUserSeed();
 				return seed !== undefined && seed > 1;
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "living_dangerously",
+			name: "Living Dangerously",
+			desc: "Win every playoff series 4-3.",
+			category: "Playoffs",
+
+			async check() {
+				// Similar to checkFoFoFo
+
+				if (g.get("numGamesPlayoffSeries", "current").length < 3) {
+					return false;
+				}
+
+				const playoffSeries = await idb.cache.playoffSeries.get(
+					g.get("season"),
+				);
+
+				if (!playoffSeries || playoffSeries.series.length === 0) {
+					// Should only happen if playoffs are skipped
+					return false;
+				}
+
+				for (const round of playoffSeries.series) {
+					let found = false;
+
+					for (const series of round) {
+						if (
+							series.away &&
+							series.away.won >= 4 &&
+							series.home.won === series.away.won - 1 &&
+							series.away.tid === g.get("userTid")
+						) {
+							found = true;
+							break;
+						}
+
+						if (
+							series.away &&
+							series.home.won >= 4 &&
+							series.away.won === series.home.won - 1 &&
+							series.home.tid === g.get("userTid")
+						) {
+							found = true;
+							break;
+						}
+					}
+
+					if (!found) {
+						return false;
+					}
+				}
+
+				return true;
 			},
 
 			when: "afterPlayoffs",
@@ -1161,38 +1480,382 @@ if (isSport("basketball")) {
 			when: "afterAwards",
 		},
 	);
+
+	// Rebuilds!
+	const rebuilds = [
+		{
+			season: 1980,
+			srIDs: ["SDC", "LAC"],
+			name: "San Diego",
+		},
+		{
+			season: 1981,
+			srIDs: ["DAL"],
+			name: "Dallas",
+		},
+		{
+			season: 1982,
+			srIDs: ["CHI"],
+			name: "Chicago",
+		},
+		{
+			season: 1983,
+			srIDs: ["HOU"],
+			name: "Houston",
+		},
+		{
+			season: 1984,
+			srIDs: ["CLE"],
+			name: "Cleveland",
+		},
+		{
+			season: 1985,
+			srIDs: ["NYK"],
+			name: "New York",
+		},
+		{
+			season: 1986,
+			srIDs: ["IND"],
+			name: "Indiana",
+		},
+		{
+			season: 1987,
+			srIDs: ["LAC"],
+			name: "LA Earthquakes",
+		},
+		{
+			season: 1988,
+			srIDs: ["PHO"],
+			name: "Phoenix",
+		},
+		{
+			season: 1989,
+			srIDs: ["MIA"],
+			name: "Miami",
+		},
+		{
+			season: 1990,
+			srIDs: ["NJN"],
+			name: "New Jersey",
+		},
+		{
+			season: 1991,
+			srIDs: ["WSB", "WAS"],
+			name: "Washington",
+		},
+		{
+			season: 1992,
+			srIDs: ["ORL"],
+			name: "Orlando",
+		},
+		{
+			season: 1993,
+			srIDs: ["DAL"],
+			name: "Dallas",
+		},
+		{
+			season: 1994,
+			srIDs: ["BOS"],
+			name: "Boston",
+		},
+		{
+			season: 1995,
+			srIDs: ["LAC"],
+			name: "LA Earthquakes",
+		},
+		{
+			season: 1996,
+			srIDs: ["VAN", "MEM"],
+			name: "Vancouver",
+		},
+		{
+			season: 1997,
+			srIDs: ["SAS"],
+			name: "San Antonio",
+		},
+		{
+			season: 1998,
+			srIDs: ["GSW"],
+			name: "Golden State",
+		},
+		{
+			season: 1999,
+			srIDs: ["CHI"],
+			name: "Chicago",
+		},
+		{
+			season: 2000,
+			srIDs: ["LAC"],
+			name: "LA Earthquakes",
+		},
+		{
+			season: 2001,
+			srIDs: ["WAS"],
+			name: "Washington",
+		},
+		{
+			season: 2002,
+			srIDs: ["DEN"],
+			name: "Denver",
+		},
+		{
+			season: 2003,
+			srIDs: ["MIA"],
+			name: "Miami",
+		},
+		{
+			season: 2004,
+			srIDs: ["PHI"],
+			name: "Philadelphia",
+		},
+		{
+			season: 2005,
+			srIDs: ["ATL"],
+			name: "Atlanta",
+		},
+		{
+			season: 2006,
+			srIDs: ["POR"],
+			name: "Portland",
+		},
+		{
+			season: 2007,
+			srIDs: ["MEM"],
+			name: "Memphis",
+		},
+		{
+			season: 2008,
+			srIDs: ["NYK"],
+			name: "New York",
+		},
+		{
+			season: 2009,
+			srIDs: ["MIN"],
+			name: "Minnesota",
+		},
+		{
+			season: 2010,
+			srIDs: ["DET"],
+			name: "Detroit",
+		},
+		{
+			season: 2011,
+			srIDs: ["CLE"],
+			name: "Cleveland",
+		},
+		{
+			season: 2012,
+			srIDs: ["CHA", "CHO"], // Changes in 2015
+			name: "Charlotte",
+		},
+		{
+			season: 2013,
+			srIDs: ["ORL"],
+			name: "Orlando",
+		},
+		{
+			season: 2014,
+			srIDs: ["UTA"],
+			name: "Utah",
+		},
+		{
+			season: 2015,
+			srIDs: ["NYK"],
+			name: "New York",
+		},
+		{
+			season: 2016,
+			srIDs: ["LAL"],
+			name: "LA Lowriders",
+		},
+		{
+			season: 2017,
+			srIDs: ["PHO"],
+			name: "Phoenix",
+		},
+		{
+			season: 2018,
+			srIDs: ["MEM"],
+			name: "Memphis",
+		},
+		{
+			season: 2019,
+			srIDs: ["CLE"],
+			name: "Cleveland",
+		},
+		{
+			season: 2020,
+			srIDs: ["WAS"],
+			name: "Washington",
+		},
+		{
+			season: 2021,
+			srIDs: ["DET"],
+			name: "Detroit",
+		},
+	];
+
+	const checkValidRebuild = async (
+		srIDs: string[],
+		season: number,
+		numSeasonsAllowed: number,
+	) => {
+		// After numSeasonsAllowed has passed, no point checking further
+		const numSeasonsElapsed = g.get("season") - season + 1;
+		if (numSeasonsElapsed > numSeasonsAllowed) {
+			return false;
+		}
+
+		// Make sure we're starting in the right season. PLAYER.DOES_NOT_EXIST is to handle case where realStats==="all" and startingSeason is therefore 1947 to account for historical data. That doesn't strictly mean they started in `season`, but the check below for userTid each season will confirm that.
+		if (
+			g.get("startingSeason") !== season &&
+			g.get("userTid", season - 1) !== PLAYER.DOES_NOT_EXIST
+		) {
+			return false;
+		}
+
+		// Get tid of srID
+		const teams = await idb.cache.teams.getAll();
+		const tid = teams.find(t => t.srID && srIDs.includes(t.srID))?.tid;
+		if (tid === undefined) {
+			return false;
+		}
+
+		// Confirm user has managed the same team every season
+		for (let s = season; s <= g.get("season"); s++) {
+			const userTid = g.get("userTid", s);
+			if (userTid !== tid) {
+				return false;
+			}
+		}
+
+		// Make sure there are at least some real players in the league, to prevent user from unselecting "Players" from a custom league and getting a random team
+		const players = await idb.cache.players.getAll();
+		return players.some(p => p.real);
+	};
+
+	for (const { name, season, srIDs } of rebuilds) {
+		const slug = `rebuild_${srIDs[0].toLowerCase()}_${season}`;
+
+		achievements.push(
+			{
+				slug,
+				name: `${season} ${name}`,
+				desc: "",
+				category: "Rebuilds",
+
+				async check() {
+					const valid = await checkValidRebuild(srIDs, season, 3);
+					if (!valid) {
+						return false;
+					}
+
+					return userWonTitle();
+				},
+
+				when: "afterPlayoffs",
+			},
+			{
+				slug: `${slug}_2`,
+				name: `${season} ${name} 2`,
+				desc: "",
+				category: "Rebuilds",
+
+				async check() {
+					const valid = await checkValidRebuild(srIDs, season, 12);
+					if (!valid) {
+						return false;
+					}
+
+					return checkDynasty(6, 8);
+				},
+
+				when: "afterPlayoffs",
+			},
+		);
+	}
 }
 
 if (isSport("football")) {
-	achievements.push({
-		slug: "clean_sweep",
-		name: "Clean Sweep",
-		desc: "Go undefeated in the regular season and playoffs.",
-		category: "Season",
-
-		async check() {
-			const wonTitle = await userWonTitle();
-
-			if (wonTitle) {
-				const t = await idb.getCopy.teamsPlus(
-					{
-						seasonAttrs: ["won", "lost"],
-						season: g.get("season"),
-						tid: g.get("userTid"),
-					},
-					"noCopyCache",
-				);
-
-				if (t && t.seasonAttrs.won >= 16 && t.seasonAttrs.lost === 0) {
-					return true;
-				}
-			}
-
+	const footballCheckLivingDangerously = async (
+		pointDifferentialLimit: number,
+	) => {
+		if (g.get("numGamesPlayoffSeries", "current").length < 3) {
 			return false;
-		},
+		}
 
-		when: "afterPlayoffs",
-	});
+		const wonTitle = await userWonTitle();
+
+		if (wonTitle) {
+			const games = await idb.cache.games.getAll();
+			const userPlayoffGames = games.filter(
+				game => game.playoffs && game.won.tid === g.get("userTid"),
+			);
+
+			return userPlayoffGames.every(game => {
+				const diff = game.won.pts - game.lost.pts;
+				return diff <= pointDifferentialLimit;
+			});
+		}
+
+		return false;
+	};
+
+	achievements.push(
+		{
+			slug: "clean_sweep",
+			name: "Clean Sweep",
+			desc: "Go undefeated in the regular season and playoffs.",
+			category: "Season",
+
+			async check() {
+				const wonTitle = await userWonTitle();
+
+				if (wonTitle) {
+					const t = await idb.getCopy.teamsPlus(
+						{
+							seasonAttrs: ["won", "lost"],
+							season: g.get("season"),
+							tid: g.get("userTid"),
+						},
+						"noCopyCache",
+					);
+
+					if (t && t.seasonAttrs.won >= 16 && t.seasonAttrs.lost === 0) {
+						return true;
+					}
+				}
+
+				return false;
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "living_dangerously",
+			name: "Living Dangerously",
+			desc: "Win every playoff game by one score or less.",
+			category: "Playoffs",
+
+			check() {
+				return footballCheckLivingDangerously(8);
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "living_dangerously_2",
+			name: "Living Dangerously 2",
+			desc: "Win every playoff game by a field goal or less.",
+			category: "Playoffs",
+
+			check() {
+				return footballCheckLivingDangerously(3);
+			},
+
+			when: "afterPlayoffs",
+		},
+	);
 }
 
 export default achievements;

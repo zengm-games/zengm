@@ -67,6 +67,6 @@ RewriteCond %{REQUEST_URI} !^/leagues
 RewriteCond %{REQUEST_URI} !^/manifest
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/sw.js
-RewriteCond %{REQUEST_URI} !^/upgrade-39
+RewriteCond %{REQUEST_URI} !^/upgrade-50
 RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^.*$ index.html

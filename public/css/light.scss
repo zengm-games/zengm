@@ -12,6 +12,9 @@ $badge-padding-y: 0.25em;
 $badge-padding-x: 0.4em;
 $popover-body-padding-y: 0.5rem;
 $popover-body-padding-x: 0.75rem;
+$form-select-indicator-padding: 1.1rem;
+$form-select-bg-position: right 0.15rem center;
+
 .form-check-inline {
 	margin-right: 0.75rem !important;
 }
@@ -503,6 +506,8 @@ table {
 	margin: 0;
 	padding: 0 0.25rem;
 	height: 20px;
+	padding-right: 0.1rem;
+	background-position: right 0.1em center;
 }
 
 // These colors are duplicated from Roster.js
@@ -589,6 +594,8 @@ table {
 	padding-right: 1em;
 	text-align: right;
 	width: 85px;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .finances-settings-text {
@@ -939,11 +946,9 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
-	margin-left: -17px;
-	min-height: 44px;
 	h1 {
 		font-size: 20px;
-		margin-left: 17px;
+		margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
 	}
 	option {
 		font-size: 12px;
@@ -951,6 +956,11 @@ tr.table-warning:hover > td {
 	.dropdown-links .dropdown.show.nav-item {
 		background-color: $gray-100;
 	}
+	gap: 0 10px;
+	min-height: 39px;
+}
+.dropdown-select-wrapper {
+	margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
 }
 .dropdown-select {
 	display: block;
@@ -958,8 +968,7 @@ tr.table-warning:hover > td {
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	appearance: none;
-	padding-left: 2px;
-	padding-right: 13px;
+	padding: 1px 13px 0 2px;
 	background-color: inherit;
 	border: 0;
 	color: inherit;
@@ -983,7 +992,7 @@ tr.table-warning:hover > td {
 		h1 {
 			font-size: 24px;
 		}
-		min-height: 52px;
+		min-height: 45px;
 	}
 }
 
@@ -1329,11 +1338,12 @@ a.anchor {
 }
 
 // https://www.codeply.com/go/NiFzSCukVl/bootstrap-4-open-modal-from-another-modal
+// Increased z-index for Bootstrap 5 https://getbootstrap.com/docs/5.1/layout/z-index/
 .highest-modal {
-	z-index: 1052 !important;
+	z-index: 1057 !important;
 }
 .highest-modal-backdrop.show {
-	z-index: 1051 !important;
+	z-index: 1056 !important;
 }
 
 .border-top-light {
@@ -1375,4 +1385,28 @@ hr {
 }
 .input-group-xs > .form-select {
 	padding-right: $form-select-padding-x + $form-select-indicator-padding;
+}
+
+// Add !important to bg color so they can be used in table on achievements page
+@each $state, $value in $theme-colors {
+	$list-group-variant-bg: shift-color($value, $list-group-item-bg-scale);
+	.list-group-item-#{$state} {
+		background-color: $list-group-variant-bg !important;
+	}
+}
+
+.default-settings-select {
+	max-width: 400px;
+
+	.dark-select__placeholder {
+		color: $black;
+	}
+
+	.dark-select__group-heading {
+		font-size: 90%;
+	}
+
+	.dark-select__menu {
+		z-index: 3; // Above .settings-buttons
+	}
 }

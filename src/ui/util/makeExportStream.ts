@@ -43,6 +43,7 @@ const makeExportStream = async (
 		filter = {},
 		forEach = {},
 		map = {},
+		name,
 		hasHistoricalData,
 		onPercentDone,
 		onProcessingStore,
@@ -57,6 +58,7 @@ const makeExportStream = async (
 		map?: {
 			[key: string]: (a: any) => any;
 		};
+		name?: string;
 		hasHistoricalData?: boolean;
 		onPercentDone?: (percentDone: number) => void;
 		onProcessingStore?: (processingStore: string) => void;
@@ -146,6 +148,11 @@ const makeExportStream = async (
 				await controller.enqueue(
 					`{${newline}${tab}"version":${space}${MAX_SUPPORTED_LEAGUE_VERSION}`,
 				);
+
+				// If name is specified, include it in meta object. Currently this is only used when importing leagues, to set the name
+				if (name) {
+					await writeRootObject(controller, "meta", { name });
+				}
 			},
 
 			async pull(controller) {

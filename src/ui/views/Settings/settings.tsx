@@ -10,8 +10,8 @@ import {
 } from "../../../common";
 import { toWorker, helpers } from "../../util";
 import type { ReactNode } from "react";
-import type { View } from "../../../common/types";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
+import type { Settings } from "../../../worker/views/settings";
 
 export const descriptions = {
 	difficulty:
@@ -29,11 +29,15 @@ export const settings: {
 	validator?: (
 		value: any,
 		output: any,
-		props: View<"settings">,
+		initialSettings: Settings,
 	) => void | Promise<void>;
+
+	// For form fields that render one box for two keys, put any of the associated hidden keys here.
+	partners?: Key[];
 
 	// showOnlyIf is for hiding form elements that only make sense in some situations (like when creating a new league). hidden is for a setting where we're merging it with some other setting in the UI (probably with customForm) but still want to track it here so it gets updated properly.
 	showOnlyIf?: (params: {
+		defaultNewLeagueSettings?: boolean;
 		hasPlayers?: boolean;
 		newLeague?: boolean;
 		realPlayers?: boolean;
@@ -114,8 +118,12 @@ export const settings: {
 		key: "randomization",
 		name: "Randomization",
 		godModeRequired: "existingLeagueOnly",
-		showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
-			newLeague && hasPlayers && !realPlayers,
+		showOnlyIf: ({
+			defaultNewLeagueSettings,
+			newLeague,
+			hasPlayers,
+			realPlayers,
+		}) => newLeague && hasPlayers && !realPlayers && !defaultNewLeagueSettings,
 		type: "string",
 		values: [
 			{ key: "none", value: "None" },
@@ -259,7 +267,7 @@ export const settings: {
 			</>
 		),
 		type: "jsonString",
-		validator: async (value, output, props) => {
+		validator: async (value, output, initialSettings) => {
 			if (!Array.isArray(value)) {
 				throw new Error("Must be an array");
 			}
@@ -273,12 +281,12 @@ export const settings: {
 			await toWorker("main", "validatePlayoffSettings", {
 				numRounds,
 				numPlayoffByes: output.numPlayoffByes,
-				numActiveTeams: props.numActiveTeams,
+				numActiveTeams: initialSettings.numActiveTeams,
 				playIn: output.playIn,
 				playoffsByConf: output.playoffsByConf,
 
 				// Fallback is for when creating a new league and editing settings, confs are not available here
-				confs: props.confs ?? DEFAULT_CONFS,
+				confs: initialSettings.confs ?? DEFAULT_CONFS,
 			});
 		},
 	},
@@ -774,6 +782,13 @@ export const settings: {
 				) : null}
 			</>
 		),
+	},
+	{
+		category: "Events",
+		key: "tragicDeaths",
+		name: "Tragic Death Types",
+		type: "custom",
+		customForm: true,
 	},
 	{
 		category: "Events",
@@ -1389,13 +1404,13 @@ settings.push(
 		description:
 			"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
 		customForm: true,
+		partners: ["stopOnInjury"],
 	},
 	{
 		category: "Injuries",
 		key: "injuries",
 		name: "Injury Types",
 		type: "custom",
-		godModeRequired: "always",
 		customForm: true,
 	},
 	{
@@ -1420,6 +1435,14 @@ settings.push(
 		type: "bool",
 		descriptionLong:
 			"This will hide inactive teams from dropdown menus at the top of many pages, such as the roster page.",
+	},
+	{
+		category: "Players",
+		key: "goatFormula",
+		name: "GOAT Formula",
+		showOnlyIf: ({ defaultNewLeagueSettings }) => defaultNewLeagueSettings,
+		type: "string",
+		description: "See Tools > Frivolities > GOAT Lab for details.",
 	},
 );
 

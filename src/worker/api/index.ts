@@ -56,6 +56,7 @@ import {
 	initUILocalGames,
 	loadNames,
 	defaultInjuries,
+	defaultTragicDeaths,
 } from "../util";
 import {
 	toPolyfillReadable,
@@ -1393,6 +1394,19 @@ const getAutoPos = (ratings: any) => {
 
 const getDefaultInjuries = () => {
 	return defaultInjuries;
+};
+
+const getDefaultNewLeagueSettings = async () => {
+	const overrides = (await idb.meta.get(
+		"attributes",
+		"defaultSettingsOverrides",
+	)) as Partial<Settings> | undefined;
+
+	return overrides ?? {};
+};
+
+const getDefaultTragicDeaths = () => {
+	return defaultTragicDeaths;
 };
 
 const getLeagueInfo = async (
@@ -2888,6 +2902,20 @@ const updateConfsDivs = async (
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const updateDefaultSettingsOverrides = async (
+	defaultSettingsOverrides: Partial<Settings>,
+) => {
+	if (Object.keys(defaultSettingsOverrides).length === 0) {
+		await idb.meta.delete("attributes", "defaultSettingsOverrides");
+	} else {
+		await idb.meta.put(
+			"attributes",
+			defaultSettingsOverrides,
+			"defaultSettingsOverrides",
+		);
+	}
+};
+
 const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
@@ -3627,7 +3655,7 @@ const validatePlayoffSettings = async ({
 }: {
 	numRounds: number;
 	numPlayoffByes: number;
-	numActiveTeams: number;
+	numActiveTeams: number | undefined;
 	playIn: boolean;
 	playoffsByConf: boolean;
 	confs: GameAttributesLeague["confs"];
@@ -3688,6 +3716,8 @@ export default {
 	generateFace,
 	getAutoPos,
 	getDefaultInjuries,
+	getDefaultNewLeagueSettings,
+	getDefaultTragicDeaths,
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,
@@ -3745,6 +3775,7 @@ export default {
 	updateAwards,
 	updateBudget,
 	updateConfsDivs,
+	updateDefaultSettingsOverrides,
 	updateGameAttributes,
 	updateGameAttributesGodMode,
 	updateKeepRosterSorted,

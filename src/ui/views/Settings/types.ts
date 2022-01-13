@@ -91,7 +91,9 @@ export type Key =
 	| "playIn"
 	| "numPlayersDunk"
 	| "numPlayersThree"
-	| "fantasyPoints";
+	| "fantasyPoints"
+	| "tragicDeaths"
+	| "goatFormula";
 
 export type Category =
 	| "New League"

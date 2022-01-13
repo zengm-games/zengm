@@ -1443,6 +1443,7 @@ settings.push(
 		showOnlyIf: ({ defaultNewLeagueSettings }) => defaultNewLeagueSettings,
 		type: "string",
 		description: "See Tools > Frivolities > GOAT Lab for details.",
+		maxWidth: true,
 	},
 );
 

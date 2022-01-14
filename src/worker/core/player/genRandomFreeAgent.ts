@@ -19,7 +19,7 @@ const genRandomFreeAgent = async (): Promise<Player> => {
 	if (
 		forceRetireAge > minAge ||
 		forceRetireAge > maxAge ||
-		forceRetireAge < maxAge
+		(forceRetireAge < maxAge && forceRetireAge >= draftAges[1])
 	) {
 		minAge = draftAges[1] + offset;
 		maxAge = forceRetireAge - 1 + offset;

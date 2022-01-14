@@ -1,63 +1,34 @@
 import fs from "fs";
 import fse from "fs-extra";
-import * as rollup from "rollup";
 import build from "./buildFuncs.js";
 import replace from "replace";
-import rollupConfig from "./rollupConfig.js";
+import { Worker } from "worker_threads";
 
 const rev = build.genRev();
 console.log(rev);
-
-const LODASH_BLACKLIST = [
-	/^lodash$/,
-	/^lodash-es$/,
-
-	// lodash/debound and lodash/memoize are used by visx
-	/^lodash\/(?!debounce|memoize)/,
-];
-
-const BLACKLIST = {
-	ui: [...LODASH_BLACKLIST, /\/worker/],
-	worker: [...LODASH_BLACKLIST, /\/ui/, /^react/],
-};
-
-const buildFile = async (name, legacy) => {
-	const bundle = await rollup.rollup({
-		...rollupConfig("production", {
-			blacklistOptions: BLACKLIST[name],
-			statsFilename: `stats-${name}.html`,
-			legacy,
-		}),
-		input: {
-			[name]: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
-		},
-		preserveEntrySignatures: false,
-	});
-
-	let format;
-	if (legacy) {
-		// SystemJS for chunk loading in UI. IIFE for worker.
-		format = name === "ui" ? "system" : "iife";
-	} else {
-		format = "es";
-	}
-
-	await bundle.write({
-		compact: true,
-		format,
-		indent: false,
-		sourcemap: true,
-		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${rev}.js`,
-		chunkFileNames: `chunk-${legacy ? "legacy-" : ""}[hash].js`,
-		dir: "build/gen",
-	});
-};
 
 const buildJS = async () => {
 	const promises = [];
 	for (const name of ["ui", "worker"]) {
 		for (const legacy of [false, true]) {
-			promises.push(buildFile(name, legacy));
+			promises.push(
+				new Promise(resolve => {
+					const worker = new Worker(
+						new URL("./buildJSWorker.mjs", import.meta.url),
+						{
+							workerData: {
+								legacy,
+								name,
+								rev,
+							},
+						},
+					);
+
+					worker.on("message", () => {
+						resolve();
+					});
+				}),
+			);
 		}
 	}
 	await Promise.all(promises);

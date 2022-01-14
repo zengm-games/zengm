@@ -23,7 +23,11 @@ const BLACKLIST = {
 
 const buildFile = async (name, legacy) => {
 	const bundle = await rollup.rollup({
-		...rollupConfig("production", BLACKLIST[name], `stats-${name}.html`),
+		...rollupConfig("production", {
+			blacklistOptions: BLACKLIST[name],
+			statsFilename: `stats-${name}.html`,
+			legacy,
+		}),
 		input: {
 			[name]: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
 		},
@@ -50,11 +54,13 @@ const buildFile = async (name, legacy) => {
 };
 
 const buildJS = async () => {
-	await Promise.all(["ui", "worker"].map(name => buildFile(name)));
-
-	process.env.LEGACY = "LEGACY";
-	await Promise.all(["ui", "worker"].map(name => buildFile(name, true)));
-	delete process.env.LEGACY;
+	const promises = [];
+	for (const name of ["ui", "worker"]) {
+		for (const legacy of [false, true]) {
+			promises.push(buildFile(name, legacy));
+		}
+	}
+	await Promise.all(promises);
 
 	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
 	const replacePaths = fs

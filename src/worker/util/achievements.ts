@@ -290,8 +290,10 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 		checkMvpCache.season = season;
 		if (currentAwards.mvp?.tid === userTid) {
 			checkMvpCache.count += 1;
+
+			return checkMvpCache.count === limit;
 		}
-		return checkMvpCache.count === limit;
+		return false;
 	}
 
 	// Compute from scratch

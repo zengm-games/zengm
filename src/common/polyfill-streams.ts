@@ -17,7 +17,7 @@ if (POLYFILL_STREAMS) {
 	self.WritableStream = PolyfillWritableStream;
 }
 
-// Chrome 58
+// Chrome 59
 if (self.CountQueuingStrategy === undefined) {
 	self.CountQueuingStrategy = PolyfillCountQueuingStrategy;
 }

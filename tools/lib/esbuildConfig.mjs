@@ -1,8 +1,8 @@
-const fs = require("fs/promises");
-const babel = require("@babel/core");
-const babelPluginSyntaxTypescript = require("@babel/plugin-syntax-typescript");
-const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
-const getSport = require("./getSport");
+import fs from "fs/promises";
+import babel from "@babel/core";
+import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
+import babelPluginSportFunctions from "../babel-plugin-sport-functions/index.js";
+import getSport from "./getSport.js";
 
 const babelCache = {};
 
@@ -79,4 +79,4 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 	};
 };
 
-module.exports = esbuildConfig;
+export default esbuildConfig;

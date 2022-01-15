@@ -12,7 +12,10 @@ const getSport = require("./getSport");
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
-module.exports = (nodeEnv, { blacklistOptions, statsFilename, legacy }) => {
+module.exports = (
+	nodeEnv,
+	{ blacklistOptions, statsFilename, legacy } = {},
+) => {
 	const sport = getSport();
 
 	// This gets used in babel.config.mjs, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs

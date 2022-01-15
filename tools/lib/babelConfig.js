@@ -1,4 +1,4 @@
-// Need  babel.config.js this rather than .babelrc to run on d3 inside node_modules (see also @rollup/plugin-babel config)
+// Need babel.config.js this rather than .babelrc to run on d3 inside node_modules (see also @rollup/plugin-babel config)
 
 const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
 

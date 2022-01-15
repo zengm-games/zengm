@@ -1110,7 +1110,9 @@ const NewLeague = (props: View<"newLeague">) => {
 														state.settings.randomization === "debuts" ||
 														state.settings.randomization === "debutsForever",
 													realDraftRatings: state.settings.realDraftRatings,
-													realStats: state.settings.realStats,
+
+													// Adding historical seasons just screws up tid
+													realStats: "none",
 												})
 											}
 											onLoading={value => {

@@ -21,12 +21,14 @@ const updateCustomizePlayer = async (
 	}
 
 	if (updateEvents.includes("firstRun")) {
-		const teams = (await idb.cache.teams.getAll()).map(t => {
-			return {
-				tid: t.tid,
-				text: `${t.region} ${t.name}`,
-			};
-		});
+		const teams = (await idb.cache.teams.getAll())
+			.filter(t => !t.disabled)
+			.map(t => {
+				return {
+					tid: t.tid,
+					text: `${t.region} ${t.name}`,
+				};
+			});
 
 		let appearanceOption;
 		let originalTid;

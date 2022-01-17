@@ -213,6 +213,7 @@ const updateTrade = async () => {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		challengeNoTrades: g.get("challengeNoTrades"),
 		salaryCap: g.get("salaryCap") / 1000,
+		salaryCapType: g.get("salaryCapType"),
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,
 		userPicks: userPicks2,

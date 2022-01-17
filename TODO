@@ -9,8 +9,8 @@ add way to play without salary cap
 - merge with hard cap setting
   - test migration
   - test import
-- salary cap value is still inflation
-- hide cap in UI various places (league finances, trade)
+- blog
+  - salary cap value is still inflation
 
 separate option for rookie contract scale
 - wrap into version 51 upgrade

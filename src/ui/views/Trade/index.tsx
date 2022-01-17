@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -234,6 +233,7 @@ const Trade = (props: View<"trade">) => {
 		otl,
 		phase,
 		salaryCap,
+		salaryCapType,
 		summary,
 		showResigningMsg,
 		stats,
@@ -400,6 +400,7 @@ const Trade = (props: View<"trade">) => {
 						<Summary
 							ref={summaryText}
 							salaryCap={salaryCap}
+							salaryCapType={salaryCapType}
 							summary={summary}
 						/>
 
@@ -499,42 +500,6 @@ const Trade = (props: View<"trade">) => {
 			</div>
 		</>
 	);
-};
-
-Trade.propTypes = {
-	gameOver: PropTypes.bool.isRequired,
-	godMode: PropTypes.bool.isRequired,
-	lost: PropTypes.number.isRequired,
-	otherDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
-	otherDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
-	otherPicks: PropTypes.array.isRequired,
-	otherPids: PropTypes.arrayOf(PropTypes.number).isRequired,
-	otherPidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
-	otherRoster: PropTypes.array.isRequired,
-	otherTid: PropTypes.number.isRequired,
-	phase: PropTypes.number.isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	summary: PropTypes.object.isRequired,
-	showResigningMsg: PropTypes.bool.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	strategy: PropTypes.string.isRequired,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			name: PropTypes.string.isRequired,
-			region: PropTypes.string.isRequired,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	tied: PropTypes.number,
-	userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
-	userDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
-	userPicks: PropTypes.array.isRequired,
-	userPids: PropTypes.arrayOf(PropTypes.number).isRequired,
-	userPidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
-	userRoster: PropTypes.array.isRequired,
-	userTid: PropTypes.number.isRequired,
-	userTeamName: PropTypes.string.isRequired,
-	won: PropTypes.number.isRequired,
 };
 
 export default Trade;

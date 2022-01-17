@@ -5,7 +5,11 @@ import classNames from "classnames";
 
 const Summary = forwardRef(
 	(
-		{ salaryCap, summary }: Pick<View<"trade">, "salaryCap" | "summary">,
+		{
+			salaryCap,
+			salaryCapType,
+			summary,
+		}: Pick<View<"trade">, "salaryCap" | "salaryCapType" | "summary">,
 		ref: any,
 	) => {
 		return (
@@ -49,9 +53,11 @@ const Summary = forwardRef(
 								{helpers.formatCurrency(t.payrollAfterTrade, "M")}
 							</span>
 						</p>
-						<p className="mb-0">
-							Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-						</p>
+						{salaryCapType !== "none" ? (
+							<p className="mb-0">
+								Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+							</p>
+						) : null}
 					</div>
 				))}
 			</div>

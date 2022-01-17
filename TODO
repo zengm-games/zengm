@@ -1,10 +1,17 @@
+rank column on player stats page https://discord.com/channels/290013534023057409/331882115119448065/932355745616371813
+
 add way to play without salary cap
 - https://old.reddit.com/r/BasketballGM/comments/rlbbby/creating_a_league_with_high_salary_cap_makes_the/hpfp3zb/?context=3
-- unify setting with hardCap?
-add option to disable salary cap @hrmantovani#2284 
+- @hrmantovani#2284 
 - historical leagues
+  - 1985 was first season with cap
+  - no notification about scheduled event if salary cap is disabled
 - merge with hard cap setting
+  - test migration
+  - test import
+  - any place hardCap is used currently
 - salary cap value is still inflation
+- hide cap in UI various places (roster, finances, trade)
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
@@ -19,7 +26,7 @@ minors
 
 sticky first column in most tables
 - https://github.com/twbs/bootstrap/issues/31458
-- 
+- https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
 
 TR doesn’t switch to playoffs TR when switching to it on the roster screen https://discord.com/channels/290013534023057409/290015591216054273/930604919973609523
 

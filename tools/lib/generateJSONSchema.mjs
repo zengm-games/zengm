@@ -693,9 +693,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 							gracePeriodEnd: {
 								type: "integer",
 							},
-							hardCap: {
-								type: "boolean",
-							},
 							hideDisabledTeams: {
 								type: "boolean",
 							},
@@ -966,6 +963,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							salaryCap: {
 								type: "integer",
 								minimum: 0,
+							},
+							salaryCapType: {
+								type: "string",
+								enum: ["hard", "none", "soft"],
 							},
 							season: {
 								type: "integer",

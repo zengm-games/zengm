@@ -482,7 +482,6 @@ export type GameAttributesLeague = {
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
-	hardCap: boolean;
 	hideDisabledTeams: boolean;
 	hofFactor: number;
 	homeCourtAdvantage: number;
@@ -552,6 +551,7 @@ export type GameAttributesLeague = {
 	rookieContractLengths: number[];
 	rookiesCanRefuse: boolean;
 	salaryCap: number;
+	salaryCapType: "hard" | "none" | "soft";
 	season: number;
 	sonRate: number;
 	startingSeason: number;

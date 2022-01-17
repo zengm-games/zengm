@@ -279,6 +279,13 @@ const createGameAttributes = async (
 		}
 	}
 
+	if ((gameAttributes as any).hardCap !== undefined) {
+		gameAttributes.salaryCapType = (gameAttributes as any).hardCap
+			? "hard"
+			: "soft";
+		delete (gameAttributes as any).hardCap;
+	}
+
 	return gameAttributes;
 };
 

@@ -86,7 +86,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	brotherRate: 0.02,
 	forceRetireAge: 0,
 
-	hardCap: false,
+	salaryCapType: "soft",
 
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
 	ties: wrap(false),
@@ -196,7 +196,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
 				numPlayoffByes: wrap(2),
 				stopOnInjuryGames: 1,
-				hardCap: true,
+				salaryCapType: "hard",
 				ties: wrap(true),
 				draftType: "noLottery",
 				numDraftRounds: 7,
@@ -239,7 +239,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numGamesConf: 24,
 				quarterLength: 20,
 				numPeriods: 3,
-				hardCap: true,
+				salaryCapType: "hard",
 				salaryCap: 80000,
 				minPayroll: 60000,
 				minContract: 500,

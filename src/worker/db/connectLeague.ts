@@ -1184,6 +1184,22 @@ const migrate = async ({
 			unique: false,
 		});
 	}
+
+	if (oldVersion <= 50) {
+		const store = transaction.objectStore("gameAttributes");
+		const hardCap = await store.get("hardCap");
+
+		if (hardCap) {
+			const newValue = hardCap.value
+				? "hard"
+				: defaultGameAttributes.salaryCapType;
+			await store.put({
+				key: "salaryCapType",
+				value: newValue,
+			});
+			await store.delete("hardCap");
+		}
+	}
 };
 
 const connectLeague = (lid: number) =>

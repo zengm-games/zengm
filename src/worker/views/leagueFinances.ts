@@ -51,7 +51,7 @@ const updateLeagueFinances = async (
 		return {
 			budget: g.get("budget"),
 			currentSeason: g.get("season"),
-			hardCap: g.get("hardCap"),
+			salaryCapType: g.get("salaryCapType"),
 			season: inputs.season,
 			salaryCap: g.get("salaryCap") / 1000,
 			minPayroll: g.get("minPayroll") / 1000,

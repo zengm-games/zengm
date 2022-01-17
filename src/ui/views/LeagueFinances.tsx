@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable } from "../components";
@@ -8,11 +7,11 @@ import type { ReactNode } from "react";
 const LeagueFinances = ({
 	budget,
 	currentSeason,
-	hardCap,
 	minPayroll,
 	luxuryPayroll,
 	luxuryTax,
 	salaryCap,
+	salaryCapType,
 	season,
 	teams,
 	userTid,
@@ -115,16 +114,21 @@ const LeagueFinances = ({
 	return (
 		<>
 			<p>
-				Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b> (teams over
-				this amount cannot sign {hardCap ? "players" : "free agents"} for more
-				than the minimum contract)
-				<br />
+				{salaryCapType !== "none" ? (
+					<>
+						Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b> (teams
+						over this amount cannot sign{" "}
+						{salaryCapType === "hard" ? "players" : "free agents"} for more than
+						the minimum contract)
+						<br />
+					</>
+				) : null}
 				Minimum payroll limit: <b>
 					{helpers.formatCurrency(minPayroll, "M")}
 				</b>{" "}
 				(teams with payrolls below this limit will be assessed a fine equal to
 				the difference at the end of the season)
-				{!hardCap ? (
+				{salaryCapType !== "hard" ? (
 					<>
 						<br />
 						Luxury tax limit:{" "}
@@ -144,34 +148,6 @@ const LeagueFinances = ({
 			/>
 		</>
 	);
-};
-
-LeagueFinances.propTypes = {
-	budget: PropTypes.bool.isRequired,
-	currentSeason: PropTypes.number.isRequired,
-	hardCap: PropTypes.bool.isRequired,
-	minPayroll: PropTypes.number.isRequired,
-	luxuryPayroll: PropTypes.number.isRequired,
-	luxuryTax: PropTypes.number.isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			seasonAttrs: PropTypes.shape({
-				abbrev: PropTypes.string.isRequired,
-				name: PropTypes.string.isRequired,
-				region: PropTypes.string.isRequired,
-				att: PropTypes.number.isRequired,
-				cash: PropTypes.number.isRequired,
-				payroll: PropTypes.number, // Not required for past seasons
-				profit: PropTypes.number.isRequired,
-				revenue: PropTypes.number.isRequired,
-				salaryPaid: PropTypes.number.isRequired,
-			}).isRequired,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default LeagueFinances;

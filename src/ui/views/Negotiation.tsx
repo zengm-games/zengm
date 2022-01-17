@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
@@ -43,18 +42,18 @@ const sign = async (pid: number, amount: number, exp: number) => {
 };
 
 const Negotiation = ({
-	hardCap,
 	challengeNoRatings,
 	contractOptions,
 	payroll,
 	player = {},
 	resigning,
 	salaryCap,
+	salaryCapType,
 }: View<"negotiation">) => {
 	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
 
 	let message;
-	if (resigning && !hardCap) {
+	if (resigning && salaryCapType === "soft") {
 		message = (
 			<p>
 				You are allowed to go over the salary cap to make this deal because you
@@ -70,15 +69,18 @@ const Negotiation = ({
 				over the salary cap to sign him.
 			</p>
 		);
-	} else {
-		const extra = !hardCap ? (
-			<>
-				{" "}
-				because{" "}
-				<a href={helpers.leagueUrl(["player", player.pid])}>{player.name}</a> is
-				a free agent
-			</>
-		) : null;
+	} else if (salaryCapType !== "none") {
+		const extra =
+			salaryCapType === "soft" ? (
+				<>
+					{" "}
+					because{" "}
+					<a href={helpers.leagueUrl(["player", player.pid])}>
+						{player.name}
+					</a>{" "}
+					is a free agent
+				</>
+			) : null;
 
 		message = (
 			<p>
@@ -94,8 +96,12 @@ const Negotiation = ({
 
 			<p>
 				Current Payroll: {helpers.formatCurrency(payroll, "M")}
-				<br />
-				Salary Cap: {helpers.formatCurrency(salaryCap, "M")}
+				{salaryCapType !== "none" ? (
+					<>
+						<br />
+						Salary Cap: {helpers.formatCurrency(salaryCap, "M")}
+					</>
+				) : null}
 			</p>
 
 			<h2>
@@ -162,22 +168,6 @@ const Negotiation = ({
 			</button>
 		</>
 	);
-};
-
-Negotiation.propTypes = {
-	hardCap: PropTypes.bool.isRequired,
-	contractOptions: PropTypes.arrayOf(
-		PropTypes.shape({
-			smallestAmount: PropTypes.bool.isRequired,
-			amount: PropTypes.number.isRequired,
-			years: PropTypes.number.isRequired,
-			exp: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	payroll: PropTypes.number.isRequired,
-	player: PropTypes.object.isRequired,
-	resigning: PropTypes.bool.isRequired,
-	salaryCap: PropTypes.number.isRequired,
 };
 
 export default Negotiation;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from "react";
 import {
 	BarGraph,
@@ -375,46 +374,66 @@ const FinancesForm = ({
 	);
 };
 
-FinancesForm.propTypes = {
-	gameSimInProgress: PropTypes.bool.isRequired,
-	t: PropTypes.object.isRequired,
-	tid: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
-};
-
 const PayrollInfo = ({
-	hardCap,
 	luxuryPayroll,
 	luxuryTax,
 	minContract,
 	minPayroll,
 	payroll,
 	salaryCap,
+	salaryCapType,
 }: Pick<
 	View<"teamFinances">,
-	| "hardCap"
 	| "luxuryPayroll"
 	| "luxuryTax"
 	| "minContract"
 	| "minPayroll"
 	| "payroll"
 	| "salaryCap"
+	| "salaryCapType"
 >) => {
+	const parts = [
+		<>
+			{payroll > minPayroll ? "above" : "below"} the minimum payroll limit (
+			<b>{helpers.formatCurrency(minPayroll, "M")}</b>)
+		</>,
+	];
+
+	if (salaryCapType !== "none") {
+		parts.push(
+			<>
+				{payroll > salaryCap ? "above" : "below"} the salary cap (
+				<b>{helpers.formatCurrency(salaryCap, "M")}</b>)
+			</>,
+		);
+	}
+
+	if (salaryCapType !== "hard") {
+		parts.push(
+			<>
+				{payroll > luxuryPayroll ? "above" : "below"} the luxury tax limit (
+				<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>)
+			</>,
+		);
+	}
+
 	return (
 		<p>
 			The current payroll (<b>{helpers.formatCurrency(payroll, "M")}</b>) is{" "}
-			{payroll > minPayroll ? "above" : "below"} the minimum payroll limit (
-			<b>{helpers.formatCurrency(minPayroll, "M")}</b>){hardCap ? " and" : ","}{" "}
-			{payroll > salaryCap ? "above" : "below"} the salary cap (
-			<b>{helpers.formatCurrency(salaryCap, "M")}</b>)
-			{hardCap ? null : (
+			{parts.length <= 2 ? (
 				<>
-					, and {payroll > luxuryPayroll ? "above" : "below"} the luxury tax
-					limit (<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>)
+					{parts[0]} and {parts[1]}
+				</>
+			) : (
+				<>
+					{parts.slice(0, -1).map(part => (
+						<>{part}, </>
+					))}
+					and {parts.at(-1)}
 				</>
 			)}
 			.{" "}
-			{hardCap ? (
+			{salaryCapType === "hard" ? (
 				<HelpPopover title="Payroll Limits">
 					<p>
 						The salary cap is a hard cap, meaning that you cannot exceed it,
@@ -429,7 +448,7 @@ const PayrollInfo = ({
 						a fine equal to the difference at the end of the season.
 					</p>
 				</HelpPopover>
-			) : (
+			) : salaryCapType === "soft" ? (
 				<HelpPopover title="Payroll Limits">
 					<p>
 						The salary cap is a soft cap, meaning that you can exceed it to
@@ -446,18 +465,22 @@ const PayrollInfo = ({
 						{luxuryTax} times the difference at the end of the season.
 					</p>
 				</HelpPopover>
+			) : (
+				<HelpPopover title="Payroll Limits">
+					<p>
+						There is no salary cap, but the minimum payroll and luxury tax
+						limits still apply.
+					</p>
+					<p>
+						Teams with payrolls below the minimum payroll limit will be assessed
+						a fine equal to the difference at the end of the season. Teams with
+						payrolls above the luxury tax limit will be assessed a fine equal to{" "}
+						{luxuryTax} times the difference at the end of the season.
+					</p>
+				</HelpPopover>
 			)}
 		</p>
 	);
-};
-PayrollInfo.propTypes = {
-	hardCap: PropTypes.bool.isRequired,
-	luxuryPayroll: PropTypes.number.isRequired,
-	luxuryTax: PropTypes.number.isRequired,
-	minContract: PropTypes.number.isRequired,
-	minPayroll: PropTypes.number.isRequired,
-	payroll: PropTypes.number.isRequired,
-	salaryCap: PropTypes.number.isRequired,
 };
 
 const highlightZeroNegative = (amount: number) => {
@@ -482,7 +505,6 @@ const TeamFinances = ({
 	challengeNoRatings,
 	contractTotals,
 	contracts,
-	hardCap,
 	luxuryPayroll,
 	luxuryTax,
 	maxStadiumCapacity,
@@ -494,6 +516,7 @@ const TeamFinances = ({
 	phase,
 	salariesSeasons,
 	salaryCap,
+	salaryCapType,
 	show,
 	t,
 	tid,
@@ -574,13 +597,13 @@ const TeamFinances = ({
 			<MoreLinks type="team" page="team_finances" abbrev={abbrev} tid={tid} />
 
 			<PayrollInfo
-				hardCap={hardCap}
 				luxuryPayroll={luxuryPayroll}
 				luxuryTax={luxuryTax}
 				minContract={minContract}
 				minPayroll={minPayroll}
 				payroll={payroll}
 				salaryCap={salaryCap}
+				salaryCapType={salaryCapType}
 			/>
 
 			{budget ? null : (
@@ -767,31 +790,6 @@ const TeamFinances = ({
 			/>
 		</>
 	);
-};
-
-TeamFinances.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	barData: PropTypes.object.isRequired,
-	barSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,
-	budget: PropTypes.bool.isRequired,
-	contractTotals: PropTypes.arrayOf(PropTypes.number).isRequired,
-	contracts: PropTypes.arrayOf(PropTypes.object).isRequired,
-	hardCap: PropTypes.bool.isRequired,
-	luxuryPayroll: PropTypes.number.isRequired,
-	luxuryTax: PropTypes.number.isRequired,
-	maxStadiumCapacity: PropTypes.number.isRequired,
-	minContract: PropTypes.number.isRequired,
-	minPayroll: PropTypes.number.isRequired,
-	numGames: PropTypes.number.isRequired,
-	spectator: PropTypes.bool.isRequired,
-	payroll: PropTypes.number.isRequired,
-	phase: PropTypes.number.isRequired,
-	salariesSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	show: PropTypes.oneOf(["10", "all"]).isRequired,
-	t: PropTypes.object.isRequired,
-	tid: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default TeamFinances;

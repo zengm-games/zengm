@@ -9,9 +9,25 @@ add way to play without salary cap
 - merge with hard cap setting
   - test migration
   - test import
-  - any place hardCap is used currently
 - salary cap value is still inflation
-- hide cap in UI various places (roster, finances, trade)
+- hide cap in UI various places (league finances, trade)
+
+separate option for rookie contract scale
+- wrap into version 51 upgrade
+- customize values?
+- football: https://old.reddit.com/message/messages/mfpqf1
+- hockey: https://old.reddit.com/message/messages/16ezfwt
+- update
+  - any contract.rookie
+  - // Keep rookie contract, or no?
+  - expiringPids and draftPick in newPhaseResignPlayers
+  - getRookieContractLength and anything that calls it
+  - selectPlayer
+  - createStream "Impute rookie contract status"
+  - NegotiationList title
+  - play menu
+  - roster release logic
+  - roster release text
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
@@ -23,6 +39,10 @@ minors
   - position balance needed for hockey/football?
 - should minors lead to improvement? make it configurable, but default no
 - need anything special with contracts?
+
+better GameAttribute type
+
+get rid of proptypes
 
 sticky first column in most tables
 - https://github.com/twbs/bootstrap/issues/31458
@@ -153,10 +173,6 @@ fbgm contract scaling
 
 show timeouts in live sim https://discord.com/channels/@me/778760871911751700/894791547156070441
 - https://discord.com/channels/290013534023057409/331882115119448065/898193635005325332
-
-football rookie contract scale
-- https://old.reddit.com/message/messages/mfpqf1
-- hockey: https://old.reddit.com/message/messages/16ezfwt
 
 store results of trading block in database
 - indicator of if the offer is still valid or not

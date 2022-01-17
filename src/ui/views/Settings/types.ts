@@ -19,7 +19,7 @@ export type Key =
 	| "maxContract"
 	| "minContractLength"
 	| "maxContractLength"
-	| "hardCap"
+	| "salaryCapType"
 	| "budget"
 	| "aiTradesFactor"
 	| "playersRefuseToNegotiate"

@@ -54,7 +54,10 @@ const assessPayrollMinLuxury = async () => {
 				showNotification: tid === g.get("userTid"),
 				score: 10,
 			});
-		} else if (payroll > g.get("luxuryPayroll") && !g.get("hardCap")) {
+		} else if (
+			payroll > g.get("luxuryPayroll") &&
+			g.get("salaryCapType") !== "hard"
+		) {
 			// Only apply luxury tax if hard cap is disabled!
 			const amount = g.get("luxuryTax") * (payroll - g.get("luxuryPayroll"));
 			collectedTax += amount;

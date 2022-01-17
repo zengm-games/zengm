@@ -14,17 +14,20 @@ import { dataTableWrappedMood } from "../components/Mood";
 const NegotiationList = ({
 	capSpace,
 	challengeNoRatings,
-	hardCap,
 	maxContract,
 	minContract,
 	numRosterSpots,
 	spectator,
 	players,
+	salaryCapType,
 	stats,
 	sumContracts,
 	userPlayers,
 }: View<"negotiationList">) => {
-	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
+	const title =
+		salaryCapType !== "soft"
+			? "Rookies and Expiring Contracts"
+			: "Re-sign Players";
 
 	useTitleBar({ title });
 
@@ -81,7 +84,9 @@ const NegotiationList = ({
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 						// @ts-ignore
 						<NegotiateButtons
-							canGoOverCap
+							canGoOverCap={
+								salaryCapType === "none" || salaryCapType === "soft"
+							}
 							capSpace={capSpace}
 							minContract={minContract}
 							spectator={spectator}
@@ -106,7 +111,7 @@ const NegotiationList = ({
 				</a>
 			</p>
 
-			{!hardCap ? (
+			{salaryCapType === "soft" ? (
 				<p>
 					You are allowed to go over the salary cap to re-sign your players
 					before they become free agents. If you do not re-sign them before free
@@ -117,20 +122,19 @@ const NegotiationList = ({
 
 			<RosterSalarySummary
 				capSpace={capSpace}
-				hardCap={hardCap}
+				salaryCapType={salaryCapType}
 				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
 			/>
 
-			{hardCap ? (
-				<p>
-					Your unsigned players are asking for a total of{" "}
-					<b>{helpers.formatCurrency(sumContracts, "M")}</b>.
-				</p>
-			) : null}
+			<p>
+				Your unsigned players are asking for a total of{" "}
+				<b>{helpers.formatCurrency(sumContracts, "M")}</b>.
+			</p>
 
-			{!hardCap && players.length > 0 ? (
+			{(salaryCapType !== "hard" || sumContracts < capSpace) &&
+			players.length > 0 ? (
 				<button
 					className="btn btn-secondary mb-3"
 					onClick={async () => {

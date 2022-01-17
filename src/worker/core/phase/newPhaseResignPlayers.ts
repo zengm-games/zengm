@@ -83,7 +83,7 @@ const newPhaseResignPlayers = async (
 
 	const payrollsByTid = new Map();
 
-	if (g.get("hardCap")) {
+	if (g.get("salaryCapType") === "hard") {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			const payroll = await team.getPayroll(tid);
 			const expiringPayroll = players
@@ -98,7 +98,10 @@ const newPhaseResignPlayers = async (
 		[
 			"tid",
 			p => {
-				return g.get("hardCap") && p.draft.year === g.get("season") ? 1 : -1;
+				return g.get("salaryCapType") !== "soft" &&
+					p.draft.year === g.get("season")
+					? 1
+					: -1;
 			},
 			"value",
 		],
@@ -126,7 +129,8 @@ const newPhaseResignPlayers = async (
 			p.contract.rookieResign = true;
 		}
 
-		const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
+		const draftPick =
+			g.get("salaryCapType") !== "soft" && p.draft.year === g.get("season");
 
 		if (
 			g.get("userTids").includes(p.tid) &&
@@ -172,7 +176,7 @@ const newPhaseResignPlayers = async (
 			const positionInfo = positionInfoByTid.get(p.tid);
 			const pos = p.ratings.at(-1).pos;
 
-			if (g.get("hardCap")) {
+			if (g.get("salaryCapType") === "hard") {
 				if (contract.amount + payroll > g.get("salaryCap")) {
 					if (payroll === undefined) {
 						throw new Error(
@@ -228,7 +232,8 @@ const newPhaseResignPlayers = async (
 						contract.amount < g.get("minContract") * 2 && Math.random() < 0.5;
 
 					// More randomness if hard cap
-					const whatever = g.get("hardCap") ? Math.random() > 0.1 : true;
+					const whatever =
+						g.get("salaryCapType") === "hard" ? Math.random() > 0.1 : true;
 
 					if (
 						draftPick ||

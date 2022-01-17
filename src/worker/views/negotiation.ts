@@ -165,7 +165,7 @@ const updateNegotiation = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			contractOptions,
-			hardCap: g.get("hardCap"),
+			salaryCapType: g.get("salaryCapType"),
 			payroll: payroll / 1000,
 			player: p,
 			resigning: negotiation.resigning,

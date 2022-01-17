@@ -23,19 +23,23 @@ const accept = async (
 		return `No negotiation with player ${pid} found.`;
 	}
 
-	const payroll = await team.getPayroll(g.get("userTid"));
-	const birdException = negotiation.resigning && !g.get("hardCap");
+	const salaryCapType = g.get("salaryCapType");
 
-	// If this contract brings team over the salary cap, it's not a minimum contract, and it's not re-signing a current
-	// player with the Bird exception, ERROR!
-	if (
-		!birdException &&
-		payroll + amount - 1 > g.get("salaryCap") &&
-		amount - 1 > g.get("minContract")
-	) {
-		return `This contract would put you over the salary cap. You cannot go over the salary cap to sign ${
-			g.get("hardCap") ? "players" : "free agents"
-		} to contracts higher than the minimum salary.`;
+	if (salaryCapType !== "none") {
+		const payroll = await team.getPayroll(g.get("userTid"));
+		const birdException = negotiation.resigning && salaryCapType === "soft";
+
+		// If this contract brings team over the salary cap, it's not a minimum contract, and it's not re-signing a current
+		// player with the Bird exception, ERROR!
+		if (
+			!birdException &&
+			payroll + amount - 1 > g.get("salaryCap") &&
+			amount - 1 > g.get("minContract")
+		) {
+			return `This contract would put you over the salary cap. You cannot go over the salary cap to sign ${
+				salaryCapType === "hard" ? "players" : "free agents"
+			} to contracts higher than the minimum salary.`;
+		}
 	}
 
 	// This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it

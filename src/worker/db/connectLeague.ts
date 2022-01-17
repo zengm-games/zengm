@@ -1190,9 +1190,7 @@ const migrate = async ({
 		const hardCap = await store.get("hardCap");
 
 		if (hardCap) {
-			const newValue = hardCap.value
-				? "hard"
-				: defaultGameAttributes.salaryCapType;
+			const newValue = hardCap.value ? "hard" : "soft";
 			await store.put({
 				key: "salaryCapType",
 				value: newValue,

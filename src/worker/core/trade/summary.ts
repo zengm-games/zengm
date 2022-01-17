@@ -102,14 +102,15 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		}),
 	);
 	const softCapCondition =
-		!g.get("hardCap") &&
+		g.get("salaryCapType") === "soft" &&
 		((ratios[0] > 125 && overCap[0]) || (ratios[1] > 125 && overCap[1]));
 
 	const overCapAndIncreasing = (i: 0 | 1) =>
 		overCap[i] && s.teams[i].payrollAfterTrade > s.teams[i].payrollBeforeTrade;
 
 	const hardCapCondition =
-		g.get("hardCap") && (overCapAndIncreasing(0) || overCapAndIncreasing(1));
+		g.get("salaryCapType") === "hard" &&
+		(overCapAndIncreasing(0) || overCapAndIncreasing(1));
 
 	if (softCapCondition) {
 		// Which team is at fault?;

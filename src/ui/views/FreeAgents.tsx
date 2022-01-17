@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import { PHASE } from "../../common";
 import {
@@ -19,13 +18,13 @@ const FreeAgents = ({
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	godMode,
-	hardCap,
 	maxContract,
 	minContract,
 	numRosterSpots,
 	spectator,
 	phase,
 	players,
+	salaryCapType,
 	stats,
 	userPlayers,
 }: View<"freeAgents">) => {
@@ -117,6 +116,7 @@ const FreeAgents = ({
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 						// @ts-ignore
 						<NegotiateButtons
+							canGoOverCap={salaryCapType === "none"}
 							capSpace={capSpace}
 							disabled={gameSimInProgress}
 							minContract={minContract}
@@ -139,7 +139,7 @@ const FreeAgents = ({
 
 			<RosterSalarySummary
 				capSpace={capSpace}
-				hardCap={hardCap}
+				salaryCapType={salaryCapType}
 				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
@@ -201,23 +201,6 @@ const FreeAgents = ({
 			/>
 		</>
 	);
-};
-
-FreeAgents.propTypes = {
-	capSpace: PropTypes.number.isRequired,
-	hardCap: PropTypes.bool.isRequired,
-	minContract: PropTypes.number.isRequired,
-	numRosterSpots: PropTypes.number.isRequired,
-	phase: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userPlayers: PropTypes.arrayOf(
-		PropTypes.shape({
-			ratings: PropTypes.shape({
-				pos: PropTypes.string,
-			}),
-		}),
-	).isRequired,
 };
 
 export default FreeAgents;

@@ -431,7 +431,7 @@ const playMenu = {
 					"confirm",
 					[
 						`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
-							g.get("hardCap")
+							g.get("salaryCapType") === "soft"
 								? ""
 								: ", and you won't be able to go over the salary cap to sign them"
 						}.`,

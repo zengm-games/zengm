@@ -109,7 +109,7 @@ const createRandomPlayers = async ({
 				let years;
 				if (isSport("hockey")) {
 					years = 3;
-				} else if (!g.get("hardCap")) {
+				} else if (g.get("salaryCapType") === "soft") {
 					years = draft.getRookieContractLength(round);
 				} else {
 					// 2 years for 2nd round, 3 years for 1st round;
@@ -120,7 +120,7 @@ const createRandomPlayers = async ({
 					amount: rookieSalaries[i],
 					exp: g.get("season") - numYearsAgo + years,
 				};
-				if (!g.get("hardCap")) {
+				if (g.get("salaryCapType") === "soft") {
 					contract.rookie = true;
 				}
 
@@ -187,7 +187,10 @@ const createRandomPlayers = async ({
 		}
 
 		// Keep rookie contract, or no?
-		if (p.contract.exp >= g.get("season") && !g.get("hardCap")) {
+		if (
+			p.contract.exp >= g.get("season") &&
+			g.get("salaryCapType") === "soft"
+		) {
 			delete p.contract.temp;
 		}
 

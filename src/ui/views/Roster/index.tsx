@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { isSport, PHASE, PLAYER, WEBSITE_ROOT } from "../../../common";
@@ -75,7 +74,6 @@ const Roster = ({
 	currentSeason,
 	editable,
 	godMode,
-	hardCap,
 	maxRosterSize,
 	numConfs,
 	numPlayersOnCourt,
@@ -85,6 +83,7 @@ const Roster = ({
 	players,
 	playoffs,
 	salaryCap,
+	salaryCapType,
 	season,
 	showSpectatorWarning,
 	showRelease,
@@ -157,6 +156,7 @@ const Roster = ({
 				payroll={payroll}
 				profit={profit}
 				salaryCap={salaryCap}
+				salaryCapType={salaryCapType}
 				showTradeFor={showTradeFor}
 				showTradingBlock={showTradingBlock}
 				t={t}
@@ -274,7 +274,7 @@ const Roster = ({
 										</a>
 										).
 									</p>
-									{!hardCap ? (
+									{salaryCapType === "soft" ? (
 										<p>
 											However, if you just drafted a player and the regular
 											season has not started yet, his contract is not guaranteed
@@ -400,26 +400,6 @@ const Roster = ({
 			/>
 		</>
 	);
-};
-
-Roster.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	budget: PropTypes.bool.isRequired,
-	currentSeason: PropTypes.number.isRequired,
-	editable: PropTypes.bool.isRequired,
-	maxRosterSize: PropTypes.number.isRequired,
-	numConfs: PropTypes.number.isRequired,
-	numPlayoffRounds: PropTypes.number.isRequired,
-	payroll: PropTypes.number,
-	phase: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	showRelease: PropTypes.bool.isRequired,
-	showTradeFor: PropTypes.bool.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	t: PropTypes.object.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default Roster;

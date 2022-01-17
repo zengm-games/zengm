@@ -11,7 +11,6 @@ const sign = async (
 	phase: Phase,
 ) => {
 	const isRookie =
-		g.get("hardCap") &&
 		p.stats.length === 0 &&
 		p.draft.year === g.get("season") &&
 		p.draft.tid === tid;

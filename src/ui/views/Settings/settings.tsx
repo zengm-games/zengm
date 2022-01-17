@@ -642,15 +642,26 @@ export const settings: {
 	},
 	{
 		category: "Finances",
-		key: "hardCap",
-		name: "Hard Cap",
+		key: "salaryCapType",
+		name: "Salary Cap Type",
 		godModeRequired: "always",
-		type: "bool",
+		type: "string",
+		values: [
+			{ key: "hard", value: "Hard cap" },
+			{ key: "soft", value: "Soft cap" },
+			{ key: "none", value: "None" },
+		],
 		descriptionLong: (
 			<>
 				<p>
-					If this is enabled, then you can not exceed the salary cap to sign
-					draft picks or re-sign players (like the{" "}
+					<b>Hard cap:</b> Team payroll cannot exceed the salary cap, except to
+					sign free agents to minimum contracts which is to guarantee that you
+					never get stuck without enough players. This also disables this luxury
+					tax.
+				</p>
+				<p>
+					<b>Soft cap:</b> Same as hard cap, eccept you can exceed the salary
+					cap to sign draft picks or re-sign players (like the{" "}
 					<a
 						href="https://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception"
 						target="_blank"
@@ -658,15 +669,15 @@ export const settings: {
 					>
 						Larry Bird exception
 					</a>
-					) and you can not make trades that result in either team being over
-					the salary cap.
+					) and you can make trades that increase your payroll beyond the salary
+					cap as long as incoming salary is at most 125% of outgoing salary.
 				</p>
 				<p>
-					It is not really a strict hard cap, though. You can still go over the
-					cap to sign free agents to minimum contracts, which is to guarantee
-					that you never get stuck without enough players.
+					<b>None:</b> There is no limit to your payroll. The "Salary Cap"
+					setting is still used internally in many places to determine the
+					overall financial state of the league, but it does not limit your
+					signings or trades.
 				</p>
-				<p>This also disables the luxury tax.</p>
 			</>
 		),
 	},

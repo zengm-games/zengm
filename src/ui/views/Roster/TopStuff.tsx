@@ -65,6 +65,7 @@ const TopStuff = ({
 	players,
 	profit,
 	salaryCap,
+	salaryCapType,
 	season,
 	showTradeFor,
 	showTradingBlock,
@@ -83,6 +84,7 @@ const TopStuff = ({
 	| "payroll"
 	| "players"
 	| "salaryCap"
+	| "salaryCapType"
 	| "season"
 	| "showTradeFor"
 	| "showTradingBlock"
@@ -167,8 +169,12 @@ const TopStuff = ({
 								<br />
 								Payroll: {helpers.formatCurrency(payroll || 0, "M")}
 								<br />
-								Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-								<br />
+								{salaryCapType !== "none" ? (
+									<>
+										Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+										<br />
+									</>
+								) : null}
 								{budget ? (
 									<>
 										Profit: {helpers.formatCurrency(profit, "M")}

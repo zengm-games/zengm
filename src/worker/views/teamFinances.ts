@@ -198,7 +198,7 @@ const updateTeamFinances = async (
 			abbrev: inputs.abbrev,
 			autoTicketPrice,
 			challengeNoRatings: g.get("challengeNoRatings"),
-			hardCap: g.get("hardCap"),
+			salaryCapType: g.get("salaryCapType"),
 			numGames: g.get("numGames"),
 			tid: inputs.tid,
 			show: inputs.show,

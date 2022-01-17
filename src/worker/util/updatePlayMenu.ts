@@ -105,9 +105,10 @@ const updatePlayMenu = async () => {
 			label: "View draft",
 		},
 		untilResignPlayers: {
-			label: g.get("hardCap")
-				? "Re-sign players and sign rookies"
-				: "Re-sign players with expiring contracts",
+			label:
+				g.get("salaryCapType") === "hard"
+					? "Re-sign players and sign rookies"
+					: "Re-sign players with expiring contracts",
 		},
 		untilFreeAgency: {
 			label: "Until free agency",

@@ -238,7 +238,7 @@ const preProcess = async (
 		// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts
 		if (
 			p.tid >= 0 &&
-			!g.get("hardCap") &&
+			g.get("salaryCapType") === "soft" &&
 			(!x.contract || !hasRookieContracts)
 		) {
 			const rookieContractLength = draft.getRookieContractLength(p.draft.round);
@@ -803,7 +803,7 @@ const finalizeActivePlayers = async ({
 	const players = await idb.cache.players.getAll();
 
 	// Adjustment for hard cap - lower contracts for teams above cap
-	if (!fileHasPlayers && g.get("hardCap")) {
+	if (!fileHasPlayers && g.get("salaryCapType") === "hard") {
 		const minContract = g.get("minContract");
 
 		const teams = await idb.cache.teams.getAll();
@@ -831,7 +831,7 @@ const finalizeActivePlayers = async ({
 
 				if (!foundAny) {
 					throw new Error(
-						"Invalid combination of hardCap, salaryCap, and minContract - a team full of min contract players is still over the cap",
+						"Invalid combination of salaryCapType, salaryCap, and minContract - a team full of min contract players is still over the hard cap",
 					);
 				}
 			}

@@ -804,6 +804,8 @@ const finalizeActivePlayers = async ({
 
 	// Adjustment for hard cap - lower contracts for teams above cap
 	if (!fileHasPlayers && g.get("hardCap")) {
+		const minContract = g.get("minContract");
+
 		const teams = await idb.cache.teams.getAll();
 		for (const t of teams) {
 			if (t.disabled) {
@@ -816,16 +818,20 @@ const finalizeActivePlayers = async ({
 				let foundAny = false;
 
 				for (const p of roster) {
-					if (p.contract.amount >= g.get("minContract") + 50) {
-						p.contract.amount -= 50;
-						payroll -= 50;
+					if (p.contract.amount >= minContract + 10) {
+						payroll -= 10;
+						p.contract.amount -= 10;
+						foundAny = true;
+					} else if (p.contract.amount > minContract) {
+						payroll -= p.contract.amount - minContract;
+						p.contract.amount = minContract;
 						foundAny = true;
 					}
 				}
 
 				if (!foundAny) {
 					throw new Error(
-						"Invalid combination of hardCap, salaryCap, and minContract",
+						"Invalid combination of hardCap, salaryCap, and minContract - a team full of min contract players is still over the cap",
 					);
 				}
 			}

@@ -1,5 +1,7 @@
 // https://getbootstrap.com/docs/4.1/examples/dashboard/
 
+$sidebar-width: 161px; // Line up with Play button
+
 .sidebar {
 	display: none;
 	position: fixed;
@@ -8,7 +10,7 @@
 	left: 0;
 	z-index: 1040;
 	border-right: 1px solid $gray-200;
-	width: 161px; // Line up with Play button
+	width: $sidebar-width;
 }
 
 .sidebar-sticky {
@@ -57,23 +59,22 @@
 	}
 	#actual-content,
 	#main-footer {
-		margin-left: 161px;
+		margin-left: $sidebar-width;
 	}
 	#basketball-gm_leaderboard_atf,
 	#football-gm_leaderboard_atf,
 	#zen-gm_leaderboard_atf {
-		margin-left: 161px;
+		margin-left: $sidebar-width;
 	}
 	.league-top-bar {
-		margin-left: 161px;
+		margin-left: $sidebar-width;
 	}
 	.title-bar {
-		// -17 for left margin in .title-bar
-		margin-left: 144px !important;
+		margin-left: $sidebar-width !important;
 	}
 }
 
-@include media-breakpoint-down(lg) {
+@include media-breakpoint-down(xl) {
 	.sidebar {
 		display: block;
 		font-size: 1rem;
@@ -90,7 +91,6 @@
 	}
 
 	.navbar.fixed-top .navbar-toggler {
-		color: orange;
 		display: block;
 	}
 }

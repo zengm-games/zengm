@@ -45,6 +45,9 @@ const MoreLinks = (
 		| {
 				type: "schedule";
 		  }
+		| {
+				type: "globalSettings";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -58,7 +61,7 @@ const MoreLinks = (
 	}));
 
 	let links: {
-		url: (string | number)[];
+		url: (string | number)[] | string;
 		name: string;
 		className?: string;
 	}[];
@@ -264,6 +267,11 @@ const MoreLinks = (
 		];
 	} else if (props.type === "schedule") {
 		links = [{ url: ["schedule"], name: "Team Schedule" }];
+	} else if (props.type === "globalSettings") {
+		links = [
+			{ url: "/settings", name: "Global Settings" },
+			{ url: "/settings/default", name: "Default New League Settings" },
+		];
 	} else {
 		throw new Error("Invalid MoreLinks type");
 	}
@@ -276,12 +284,21 @@ const MoreLinks = (
 		<p>
 			More:{" "}
 			{links
-				.filter(({ url }) => keepSelfLink || url[0] !== page)
+				.filter(({ url }) => {
+					if (keepSelfLink) {
+						return true;
+					}
+					const key = typeof url === "string" ? url : url[0];
+					return key !== page;
+				})
 				.map(({ className, url, name }, i) => {
 					return (
 						<Fragment key={url[0]}>
 							{i > 0 ? " | " : null}
-							<a className={className} href={helpers.leagueUrl(url)}>
+							<a
+								className={className}
+								href={typeof url === "string" ? url : helpers.leagueUrl(url)}
+							>
 								{name}
 							</a>
 						</Fragment>

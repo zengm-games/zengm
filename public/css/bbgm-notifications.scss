@@ -91,9 +91,10 @@
 	color: rgba(255, 255, 255, 0.7);
 	cursor: pointer;
 	padding: 0 7px;
-	position: absolute;
-	top: 0;
-	right: 0;
+	float: right;
+	margin-top: -6px;
+	margin-right: -12px;
+	margin-left: 12px;
 
 	&:hover,
 	&:focus {

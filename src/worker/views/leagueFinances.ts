@@ -19,23 +19,26 @@ const updateLeagueFinances = async (
 		]);
 
 		const teams = (
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "budget"],
-				seasonAttrs: [
-					"att",
-					"revenue",
-					"profit",
-					"cash",
-					"payroll",
-					"salaryPaid",
-					"pop",
-					"abbrev",
-					"tid",
-					"region",
-					"name",
-				],
-				season: inputs.season,
-			})
+			await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid", "budget", "strategy"],
+					seasonAttrs: [
+						"att",
+						"revenue",
+						"profit",
+						"cash",
+						"payroll",
+						"salaryPaid",
+						"pop",
+						"abbrev",
+						"tid",
+						"region",
+						"name",
+					],
+					season: inputs.season,
+				},
+				"noCopyCache",
+			)
 		).map(t => {
 			const rosterSpots =
 				g.get("maxRosterSize") - players.filter(p => p.tid === t.tid).length;

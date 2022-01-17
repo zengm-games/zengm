@@ -18,9 +18,12 @@ const updateMessage = async (
 
 		if (inputs.mid === undefined) {
 			const messages = (
-				await idb.getCopies.messages({
-					limit: 10,
-				})
+				await idb.getCopies.messages(
+					{
+						limit: 10,
+					},
+					"noCopyCache",
+				)
 			).reverse(); // First look for an unread message
 
 			for (const m of messages) {
@@ -42,9 +45,12 @@ const updateMessage = async (
 				return returnValue;
 			}
 		} else {
-			message = await idb.getCopy.messages({
-				mid: inputs.mid,
-			});
+			message = await idb.getCopy.messages(
+				{
+					mid: inputs.mid,
+				},
+				"noCopyCache",
+			);
 		}
 
 		if (message && !message.read) {

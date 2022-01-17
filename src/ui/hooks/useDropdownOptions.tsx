@@ -9,6 +9,22 @@ import {
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
+export type ResponsiveOption = {
+	minWidth: number;
+	text: string;
+};
+
+const makeNormalResponsive = (short: string, long: string) => [
+	{
+		minWidth: -Infinity,
+		text: short,
+	},
+	{
+		minWidth: 768,
+		text: long,
+	},
+];
+
 export const getSortedTeams = ({
 	teamInfoCache,
 	hideDisabledTeams,
@@ -32,28 +48,29 @@ export const getSortedTeams = ({
 		);
 	}
 
-	const object: { [key: string]: string | undefined } = {};
+	const object: Record<string, string | ResponsiveOption[]> = {};
 	for (const t of array) {
-		object[t.abbrev] = `${t.region} ${t.name}`;
-		if (t.disabled) {
-			object[t.abbrev] += " (inactive)";
-		}
+		const inactiveText = t.disabled ? " (inactive)" : "";
+		object[t.abbrev] = makeNormalResponsive(
+			`${t.abbrev}${inactiveText}`,
+			`${t.region} ${t.name}${inactiveText}`,
+		);
 	}
 
 	return object;
 };
 
-const dropdownValues: { [key: string]: string | undefined } = {
+const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	special: "All-Star Game",
-	"all|||teams": "All Teams",
-	watch: "Watch List",
-	career: "Career Totals",
-	regularSeason: "Regular Season",
+	"all|||teams": makeNormalResponsive("All", "All Teams"),
+	watch: makeNormalResponsive("Watch", "Watch List"),
+	career: makeNormalResponsive("Totals", "Career Totals"),
+	regularSeason: makeNormalResponsive("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
 	"10": "Past 10 Seasons",
-	"all|||seasons": "All Seasons",
-	perGame: "Per Game",
-	per36: "Per 36 Minutes",
+	"all|||seasons": makeNormalResponsive("All", "All Seasons"),
+	perGame: makeNormalResponsive("Per G", "Per Game"),
+	per36: makeNormalResponsive("Per 36", "Per 36 Minutes"),
 	totals: "Totals",
 	shotLocations: "Shot Locations and Feats",
 	advanced: "Advanced",
@@ -98,32 +115,32 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	ast_leader: "League Assists Leader",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",
-	"all|||types": "All Types",
+	"all|||types": makeNormalResponsive("All", "All Types"),
 	draft: "Draft",
 	freeAgent: "FA Signed",
 	reSigned: "Re-signed",
 	release: "Released",
 	trade: "Trades",
 	team: "Team",
-	opponent: "Opponent",
+	opponent: makeNormalResponsive("Opp", "Opponent"),
 	by_team: "By Team",
-	by_conf: "By Conference",
-	by_div: "By Division",
-	"all|||news": "All Stories",
+	by_conf: makeNormalResponsive("By Conf", "By Conference"),
+	by_div: makeNormalResponsive("By Div", "By Division"),
+	"all|||news": makeNormalResponsive("All", "All Stories"),
 	normal: "Normal",
 	big: "Only Big News",
 	newest: "Newest First",
 	oldest: "Oldest First",
-	league: "League",
-	conf: "Conference",
-	div: "Division",
+	league: makeNormalResponsive("Leag", "League"),
+	conf: makeNormalResponsive("Conf", "Conference"),
+	div: makeNormalResponsive("Div", "Division"),
 	your_teams: "Your Teams",
-	flag: "Flagged Players",
-	note: "Players With Notes",
+	flag: makeNormalResponsive("Flagged", "Flagged Players"),
+	note: makeNormalResponsive("Notes", "Players With Notes"),
 	either: "Either",
 	skater: "Skaters",
 	goalie: "Goalies",
-	"all|||playoffsAll": "All Games",
+	"all|||playoffsAll": makeNormalResponsive("All", "All Games"),
 	current: "Current",
 	overview: "Overview",
 	gameLog: "Game Log",
@@ -139,9 +156,7 @@ if (isSport("hockey")) {
 
 export const getDropdownValue = (
 	key: number | string,
-	sortedTeams: {
-		[key: string]: string | undefined;
-	},
+	sortedTeams: Record<string, string | ResponsiveOption[]>,
 ) => {
 	if (typeof key === "number") {
 		return String(key);
@@ -163,6 +178,8 @@ export const getDropdownValue = (
 	if (POSITIONS.includes(key)) {
 		return key;
 	}
+
+	return "???";
 };
 
 const useDropdownOptions = (
@@ -378,7 +395,7 @@ const useDropdownOptions = (
 
 	const newOptions: {
 		key: number | string;
-		val: string | undefined;
+		val: string | ResponsiveOption[];
 	}[] = keys.map(rawKey => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")

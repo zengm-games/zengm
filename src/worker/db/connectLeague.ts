@@ -18,25 +18,25 @@ import connectIndexedDB from "./connectIndexedDB";
 import type { DBSchema, IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
 import type {
 	DraftLotteryResult,
-	DraftPickWithoutKey,
-	ReleasedPlayerWithoutKey,
+	ReleasedPlayer,
 	AllStars,
-	EventBBGMWithoutKey,
+	EventBBGM,
 	GameAttribute,
 	Game,
-	MessageWithoutKey,
+	Message,
 	Negotiation,
-	PlayerFeatWithoutKey,
-	PlayerWithoutKey,
+	PlayerFeat,
+	Player,
 	MinimalPlayerRatings,
 	PlayoffSeries,
-	ScheduleGameWithoutKey,
-	TeamSeasonWithoutKey,
-	TeamStatsWithoutKey,
+	ScheduleGame,
+	TeamSeason,
+	TeamStats,
 	Team,
 	Trade,
-	ScheduledEventWithoutKey,
+	ScheduledEvent,
 	HeadToHead,
+	DraftPick,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 
@@ -55,12 +55,12 @@ export interface LeagueDB extends DBSchema {
 	};
 	draftPicks: {
 		key: number;
-		value: DraftPickWithoutKey;
+		value: DraftPick;
 		autoIncrementKeyPath: "dpid";
 	};
 	events: {
 		key: number;
-		value: EventBBGMWithoutKey;
+		value: EventBBGM;
 		autoIncrementKeyPath: "eid";
 		indexes: {
 			dpids: number;
@@ -85,7 +85,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	messages: {
 		key: number;
-		value: MessageWithoutKey;
+		value: Message;
 		autoIncrementKeyPath: "mid";
 	};
 	negotiations: {
@@ -94,17 +94,20 @@ export interface LeagueDB extends DBSchema {
 	};
 	playerFeats: {
 		key: number;
-		value: PlayerFeatWithoutKey;
+		value: PlayerFeat;
 		autoIncrementKeyPath: "fid";
 	};
 	players: {
 		key: number;
-		value: PlayerWithoutKey<MinimalPlayerRatings>;
+		value: Player<MinimalPlayerRatings>;
 		autoIncrementKeyPath: "pid";
 		indexes: {
 			"draft.year, retiredYear": [number, number];
+			hof: 1;
+			noteBool: 1;
 			statsTids: number;
 			tid: number;
+			watch: 1;
 		};
 	};
 	playoffSeries: {
@@ -113,17 +116,17 @@ export interface LeagueDB extends DBSchema {
 	};
 	releasedPlayers: {
 		key: number;
-		value: ReleasedPlayerWithoutKey;
+		value: ReleasedPlayer;
 		autoIncrementKeyPath: "rid";
 	};
 	schedule: {
 		key: number;
-		value: ScheduleGameWithoutKey;
+		value: ScheduleGame;
 		autoIncrementKeyPath: "gid";
 	};
 	scheduledEvents: {
 		key: number;
-		value: ScheduledEventWithoutKey;
+		value: ScheduledEvent;
 		autoIncrementKeyPath: "id";
 		indexes: {
 			season: number;
@@ -131,7 +134,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	teamSeasons: {
 		key: number;
-		value: TeamSeasonWithoutKey;
+		value: TeamSeason;
 		autoIncrementKeyPath: "rid";
 		indexes: {
 			"season, tid": [number, number];
@@ -140,7 +143,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	teamStats: {
 		key: number;
-		value: TeamStatsWithoutKey;
+		value: TeamStats;
 		autoIncrementKeyPath: "rid";
 		indexes: {
 			"season, tid": [number, number];
@@ -484,6 +487,15 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	playerStore.createIndex("tid", "tid", {
 		unique: false,
 	});
+	playerStore.createIndex("hof", "hof", {
+		unique: false,
+	});
+	playerStore.createIndex("noteBool", "noteBool", {
+		unique: false,
+	});
+	playerStore.createIndex("watch", "watch", {
+		unique: false,
+	});
 	teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
 		unique: true,
 	});
@@ -506,7 +518,7 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	});
 };
 
-const migrate = ({
+const migrate = async ({
 	db,
 	lid,
 	oldVersion,
@@ -1130,6 +1142,47 @@ const migrate = ({
 				});
 			};
 		};
+	}
+
+	if (oldVersion <= 49) {
+		slowUpgrade();
+
+		const playerStore = transaction.objectStore("players");
+		await iterate(
+			transaction.objectStore("players"),
+			undefined,
+			undefined,
+			p => {
+				for (const key of ["hof", "watch"] as const) {
+					if (p[key]) {
+						p[key] = 1;
+					} else {
+						delete p[key];
+					}
+				}
+
+				if (p.note) {
+					p.noteBool = 1;
+				} else {
+					delete p.note;
+				}
+
+				return p;
+			},
+		);
+
+		// Had hof index in version 49, others in 50. Merged together here so the upgrade could happen together for people who have not yet upgraded to 49
+		if (oldVersion <= 48) {
+			playerStore.createIndex("hof", "hof", {
+				unique: false,
+			});
+		}
+		playerStore.createIndex("noteBool", "noteBool", {
+			unique: false,
+		});
+		playerStore.createIndex("watch", "watch", {
+			unique: false,
+		});
 	}
 };
 

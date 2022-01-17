@@ -144,11 +144,14 @@ const updateTeams = async (
 				"oppRbs",
 			],
 		});
-		const teams = await idb.getCopies.teamsPlus({
-			seasonAttrs: ["won", "lost"],
-			stats: stats,
-			season: inputs.season,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				seasonAttrs: ["won", "lost"],
+				stats: stats,
+				season: inputs.season,
+			},
+			"noCopyCache",
+		);
 
 		type Keys =
 			| keyof typeof teams[number]["seasonAttrs"]

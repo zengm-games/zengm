@@ -3,7 +3,11 @@ import { isValidElement } from "react";
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
 
-const getSortVal = (value: any = null, sortType: SortType | undefined) => {
+const getSortVal = (
+	value: any = null,
+	sortType: SortType | undefined,
+	exportCSV?: boolean,
+) => {
 	try {
 		let val;
 		let sortVal: string;
@@ -56,7 +60,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return null;
 			}
 
-			return parseInt(sortVal.split("-")[0], 10);
+			return parseInt(sortVal.split("-")[0]);
 		}
 
 		if (sortType === "draftPick") {
@@ -66,7 +70,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 
 			const [round, pick] = sortVal.split("-"); // This assumes no league has more than a million teams lol
 
-			return parseInt(round, 10) * 1000000 + parseInt(pick, 10);
+			return parseInt(round) * 1000000 + parseInt(pick);
 		}
 
 		if (sortType === "name") {
@@ -96,15 +100,37 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return -Infinity;
 			}
 
-			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-			if (sortVal.includes("B")) {
-				return parseFloat(sortVal.replace("$", "")) * 1000;
-			}
-			if (sortVal.includes("k")) {
-				return parseFloat(sortVal.replace("$", "")) / 1000;
+			// Keep in sync with helpers.formatCurrency
+			let factor;
+			if (sortVal.endsWith("Q")) {
+				factor = 1e15;
+			} else if (sortVal.endsWith("T")) {
+				factor = 1e12;
+			} else if (sortVal.endsWith("B")) {
+				factor = 1e9;
+			} else if (sortVal.endsWith("M")) {
+				factor = 1e6;
+			} else if (sortVal.endsWith("k")) {
+				factor = 1e3;
+			} else {
+				factor = 1;
 			}
 
-			return parseFloat(sortVal.replace("$", ""));
+			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
+			const parsedNumber = parseFloat(sortVal.replace("$", ""));
+
+			if (!exportCSV) {
+				// This gets called by filter functions, which expect it to be in millions
+				factor /= 1e6;
+			}
+
+			const number = parsedNumber * factor;
+			if (factor > 1) {
+				// Get rid of floating point errors if we're multiplying by a large number
+				return Math.round(number);
+			}
+
+			return number;
 		}
 
 		if (sortType === "record") {
@@ -112,9 +138,7 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 				return -Infinity;
 			}
 
-			let [won, lost, otl, tied] = sortVal
-				.split("-")
-				.map(num => parseInt(num, 10));
+			let [won, lost, otl, tied] = sortVal.split("-").map(num => parseInt(num));
 
 			// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
 			if (typeof otl === "number" && typeof tied !== "number") {

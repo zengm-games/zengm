@@ -5,25 +5,28 @@ import { DEFAULT_JERSEY } from "../../common";
 
 const updateTeamInfo = async () => {
 	const teams = (
-		await idb.getCopies.teamsPlus({
-			attrs: [
-				"tid",
-				"abbrev",
-				"region",
-				"name",
-				"imgURL",
-				"imgURLSmall",
-				"colors",
-				"jersey",
-				"did",
-				"pop",
-				"stadiumCapacity",
-				"disabled",
-			],
-			seasonAttrs: ["pop", "stadiumCapacity"],
-			season: g.get("season"),
-			addDummySeason: true,
-		})
+		await idb.getCopies.teamsPlus(
+			{
+				attrs: [
+					"tid",
+					"abbrev",
+					"region",
+					"name",
+					"imgURL",
+					"imgURLSmall",
+					"colors",
+					"jersey",
+					"did",
+					"pop",
+					"stadiumCapacity",
+					"disabled",
+				],
+				seasonAttrs: ["pop", "stadiumCapacity"],
+				season: g.get("season"),
+				addDummySeason: true,
+			},
+			"noCopyCache",
+		)
 	).map(t => {
 		const pop = t.pop ?? t.seasonAttrs.pop;
 

@@ -242,30 +242,33 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 			// Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
 			if (numPlayoffRounds === playoffSeries.currentRound + 2) {
-				const allTeams = await idb.getCopies.teamsPlus({
-					attrs: ["tid"],
-					seasonAttrs: [
-						"winp",
-						"pts",
-						"won",
-						"lost",
-						"otl",
-						"tied",
-						"did",
-						"cid",
-						"wonDiv",
-						"lostDiv",
-						"otlDiv",
-						"tiedDiv",
-						"wonConf",
-						"lostConf",
-						"otlConf",
-						"tiedConf",
-					],
-					stats: ["pts", "oppPts", "gp"],
-					season: g.get("season"),
-					showNoStats: true,
-				});
+				const allTeams = await idb.getCopies.teamsPlus(
+					{
+						attrs: ["tid"],
+						seasonAttrs: [
+							"winp",
+							"pts",
+							"won",
+							"lost",
+							"otl",
+							"tied",
+							"did",
+							"cid",
+							"wonDiv",
+							"lostDiv",
+							"otlDiv",
+							"tiedDiv",
+							"wonConf",
+							"lostConf",
+							"otlConf",
+							"tiedConf",
+						],
+						stats: ["pts", "oppPts", "gp"],
+						season: g.get("season"),
+						showNoStats: true,
+					},
+					"noCopyCache",
+				);
 				const finalsTeams = allTeams.filter(
 					t => t.tid === team1.tid || t.tid === team2.tid,
 				);

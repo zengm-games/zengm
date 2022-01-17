@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, toWorker } from "../../util";
+import { helpers, toWorker, useLocal } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import type { TradeClearType } from "./Buttons";
@@ -252,19 +252,26 @@ const Trade = (props: View<"trade">) => {
 	const summaryText = useRef<HTMLDivElement>(null);
 	const summaryControls = useRef<HTMLDivElement>(null);
 
+	const userTids = useLocal(state => state.userTids);
+
 	const updateSummaryHeight = useCallback(() => {
 		if (summaryControls.current && summaryText.current) {
 			// Keep in sync with .trade-affix
 			if (window.matchMedia("(min-width:768px)").matches) {
 				// 60 for top navbar, 24 for spacing between asset list and trade controls
-				const newHeight =
+				let newHeight =
 					window.innerHeight - 60 - 24 - summaryControls.current.clientHeight;
+
+				// Multi team menu
+				if (userTids.length > 1) {
+					newHeight -= 40;
+				}
 				summaryText.current.style.maxHeight = `${newHeight}px`;
 			} else if (summaryText.current.style.maxHeight !== "") {
 				summaryText.current.style.removeProperty("height");
 			}
 		}
-	}, []);
+	}, [userTids]);
 
 	// Run every render, in case it changes
 	useEffect(() => {

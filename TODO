@@ -1,21 +1,75 @@
-family tree https://mail.google.com/mail/u/0/#inbox/FMfcgzGllVlFGjtRhqBSxzzZsfpFXwpl
+add way to play without salary cap
+- https://old.reddit.com/r/BasketballGM/comments/rlbbby/creating_a_league_with_high_salary_cap_makes_the/hpfp3zb/?context=3
+- unify setting with hardCap?
+add option to disable salary cap @hrmantovani#2284 
+- historical leagues
+- merge with hard cap setting
+- salary cap value is still inflation
 
-on mobile, padding not being added to bottom of page when ad is shown?
+minors
+- add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
+  - or, add a "minors" flag?
+  - same idea for regularSeason and playoffs flags in playersPlus
+- configurable # of slots. default 0
+- at the end of every day, assemble random teams of players in the minors and sim minors games
+  - always keep same (pro) team together?
+  - position balance needed for hockey/football?
+- should minors lead to improvement? make it configurable, but default no
+- need anything special with contracts?
 
-have "watch" as action in schedule page for playoff games too https://discord.com/channels/290013534023057409/331882115119448065/904946069727748106
+sticky first column in most tables
+- https://github.com/twbs/bootstrap/issues/31458
+- 
 
-way to tell getCopy we are not going to mutate, so don't need deepcopy
-- noCopyCache
-- in progress
-  - benchmark
+TR doesn’t switch to playoffs TR when switching to it on the roster screen https://discord.com/channels/290013534023057409/290015591216054273/930604919973609523
 
-half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
+no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
 
-performance on FA page https://discord.com/channels/290013534023057409/290013534023057409/919493773224972348
+more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
 
-mobile zoom issue
-- https://discord.com/channels/290013534023057409/290015591216054273/918908074251653202
-- The white space thing only shows up (atleast I'm pretty sure) on the roster page, for me whenever I click on the three bar things that shows the people's stats, zoom out, or releasing players it shows up. https://discord.com/channels/290013534023057409/569726303926878219/918742921736519710
+dramatic reveal of awards and award voting results, similar to draft lottery
+
+offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
+
+on team history, graph of team ovr / winp / mov over time, star for championship
+- maybe better on league history, to show for whole league?
+
+manually specify draft order in god mode
+- make draft page drag-and-drop, with purple handles
+
+new achievements
+- force challenge mode to remain on
+
+hockey ovr revamp
+- ovrs for skater and goalie. determine skater positions like BBGM, including possibility of hybrid positions like F. cause there's really a fair amount of overlap in what players do
+
+more season preview stuff
+- top rookies
+- top free agent signings
+- ...1 more needed
+  - top young players? kind of redundant
+
+for some fbgm penalties, don't allow the ball carrier to be called
+
+soccer-style team names
+- implementation
+  - add two field allongside abbrev/region/name - customMedium and customLong
+    - customMedium is a medium length name. if undefined, Region is used. could be defined to disambiguate two teams in the same reason, like "LA Earthquakes" and "LA Lowriders"
+    - customLong is a long name. if undefined, Region Name is used. could be defined to have european-style team names
+  - ...this still results in weird situations, like not knowing how to use the medium name in a sentence since it might be the city or it might be the team name, like is it plural or not?
+- usually process in UI. maybe will need some in worker, like for notifications
+- add to teamsPlus?
+- @Ra98
+
+getCopy/getCopies dry
+- rename to idb.get/idb.getAll
+- share code
+- any place that uses this conditionally vs cache.get/getAll, use just getCopy and make sure it's no slower
+  - lookup of single primary key (such as season or xid) should look in cache first and short circuit if found there
+
+fbgm edge cases
+- half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
+- defensive penalty on last possession of half/OT - should have one untimed down https://mail.google.com/mail/u/0/#inbox/FMfcgzGllVnWKrWXjxwNNXWTqsncqjNq
 
 QB throw a Interception but their were two offsetting penalties so the down was replayed but it still counted the INT to the Stats. So the Safety still got credit for a pick https://discord.com/channels/290013534023057409/290015591216054273/917134502336270396
 
@@ -50,8 +104,6 @@ add some way to auto find team colors based on logo
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?
 
-on team history, graph of team ovr and winp over time, star for championship
-
 fix applying penalties on xp/2pt
 - store scrimmage of 2pt, then xp is offset from that
   - wouldn't work for defensive penalties
@@ -84,10 +136,6 @@ configure assist rate https://discord.com/channels/290013534023057409/3318821151
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
 better handle case where cannot play a game (like during contract negotiation) and player tries to live sim https://mail.google.com/mail/u/0/#all/FMfcgzGlkXrSgFVLkrnbVTGLQRjCHPDr
-
-get rid of iterate() now that we don't need to support firefox 60. or at least refactor some of it
-
-other firefox comments
 
 refactor FBGM play by play logging
 - move text generation client side, like hockey
@@ -134,8 +182,6 @@ nicidob improve value formula
 - https://discord.com/channels/290013534023057409/290015591216054273/891394602207174656
 - https://discord.com/channels/290013534023057409/290015468939640832/893115141015625779
 
-"May have found a small bug (Chrome), when you update a players rating, then attempt to update him to a retired jersey number, it throws the retired jersey error. after you change the jersey number, the rating change shows, but the listed OVR doesn't change to what's reflected in the edit page" https://discord.com/channels/290013534023057409/290015591216054273/893175557410406440
-
 more dramatic play-by-play
 - pass attempt and description before result
 - fg attempt before result
@@ -152,10 +198,6 @@ improve table column filtering
 - AND operation
   - how to handle mixing with OR?
 - parentheses to group operations
-
-More specific achievements, that are really more like challenges
-- https://mail.google.com/mail/u/0/?pli=1#inbox/FMfcgzGkZsqLfGwBbsHhbdJVDcVTSgbX
-- Win a championship as a play-in team https://discord.com/channels/290013534023057409/331882115119448065/889311847977730089
 
 better adjustment for real draft prospects
 
@@ -208,16 +250,6 @@ schedule customization
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
 
-minors
-- add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
-  - or, add a "minors" flag?
-  - same idea for regularSeason and playoffs flags in playersPlus
-- configurable # of slots. default 0
-- at the end of every day, assemble random teams of players in the minors and sim minors games
-  - always keep same (pro) team together?
-- should minors lead to improvement? make it configurable, but default no
-- need anything special with contracts?
-
 frivolities
 - players
   - Best/Worst MVP, DPOY, ROY, 6MOY, MIP https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
@@ -249,14 +281,6 @@ ratings distributions by position https://discord.com/channels/29001353402305740
 all advanced stats have always disregarded the previous team's stats for traded players, but that can have a big impact on things like normalizing PER to an average of 15 leaguewide if there are a lot of high minutes high/low PER traded players.
 
 Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
-
-ability to specify default settings
-- on global settings page
-- ability to select individual settings from a dropdown to add
-- ability to delete individual setting (go back to default)
-- includes goat formula
-- explain that it doens't override when a custom league file or historical league includes a value for a setting
-- import/export default settings
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
@@ -333,8 +357,6 @@ playoff series record in live box score messed up https://discord.com/channels/2
 fbgm trade rate
 
 the better way to make FA more detailed but still simple would be to replace the "Sign" button with a "bid" button. And have FAs only take deals after you simulate forward a day. Allow teams to make deals that are +5 or +10 or +15% larger or smaller in the negotiate page, to make their chances of the FA signing with them better/worse. The get rid of the "player won't sign with you" thing. Just show a "chance of signing" given a certain size of deal https://discord.com/channels/290013534023057409/331882115119448065/846534950101843969
-
-teams shouldn't offer nothing on trading block
 
 bundle size
 - defer
@@ -484,8 +506,6 @@ head to head records
     - list available box scores between teams
     - list statisitical feats between teams
     - link here from head2head and head2head_all
-
-auto adjust ticket price for playoffs https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/ghykfvs/
 
 free agents should be more willing to sign with teams that overpay
 - https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
@@ -702,12 +722,6 @@ trade balancing
 - FBGM should not demand as much in 2 for 1 trades? https://discord.com/channels/@me/696164463312764949/776342790586105877
 - https://old.reddit.com/r/BasketballGM/comments/k3339l/the_cpus_lack_of_value_for_draft_picks_is/
 
-soccer-style team names
-- instead of region and name, it's short name and long name
-- abstract any display of team name/region to handle this
-  - maybe in teamsPlus, have longName and shortName which check some option to see how to generate them
-- @Ra98
-
 profit for extreme caps needs to be fixed first, its not possible to make money above $400m cap space
 
 during re-signing phase, should still show % everywhere except re-signing table. same with free agency, i think?
@@ -861,8 +875,6 @@ rebuilding/contending in the old days https://old.reddit.com/r/BasketballGM/comm
 
 option to lock ratings for all players, including future players
 
-FBGM make ratings improvements less correlated
-
 built-in UI to load custom user files
 - UI in BBGM to create league
   - api to list league files
@@ -1002,15 +1014,6 @@ way to save/load leagues on server
       - ideally would send data from IndexedDB to WritableStream to some HTTP API, but that doesn't seem supported - https://github.com/whatwg/fetch/issues/378 for the HTTP request, but also it's a problem with IDB auto closing transactions
       - so would need to read entire league file into memory first
 
-god mode stuff
-- more stuff on player editor
-- edit list of  deaths
-
-add option to disable salary cap @hrmantovani#2284 
-- historical leagues
-- merge with hard cap setting
-- salary cap value is still inflation
-
 FBGM
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
@@ -1069,9 +1072,6 @@ q- When an interception happens on the passer's side of field, the team that pic
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
 - show draft prospects separately when creating a new custom league, to allow creating one without them
-
-manually specify draft order in god mode
-- make draft page drag-and-drop, with purple handles
 
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time
@@ -1229,7 +1229,7 @@ Game list redesign
   - show ovr in box score too
   - show player with highest game score under completed game
 
-nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
+nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff
 
 probGoForIt should account for being down by a FG or less late in the game
 
@@ -1316,7 +1316,6 @@ https://react-hook-form.com/ for forms
 
 more customize player options
 - fixed position
-- hof
 - awards
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
@@ -1336,10 +1335,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
 - https://uppy.io/
   - file sharing platforms are sources, but not destinations?
   - requires server side integration
-
-in basketball gamesim
-- if all ratings are 0, why does one player dominate?
-- player with assist can be same as player who shoots
 
 # football
 
@@ -1430,10 +1425,6 @@ how to get types working, options:
 - pass around overrides manually everywhere, not making it a module
 - move everything inside deion
 
-how will deionUI(overrides) work with types?
-- can pass them as generics, then apply them to factory functions
-- Import modules from deion. Add things like extra views. Apply factories/generics.
-
 type better
 - skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
 - PlayerStatType should be sport specific
@@ -1445,8 +1436,6 @@ type better
 split more from deion
 - processInputs for views only in one sport (depth, shot locations)
 - worker API functions only in one sport (depth)
-
-show game stats in player page
 
 contract demands and position assignments should be based on which position maximizes p.value, not which position maximizes ovr. would you rather have an 80 ovr qb or a 100 ovr kicker?
 
@@ -1496,15 +1485,9 @@ BoxScoreRow
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter
 
-re-evaluate contracts
-- somehow market based
-
 make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
   - https://www.google.com/search?q=OOTP+player+generator+modifiers&client=ubuntu&hs=nzO&channel=fs&sxsrf=ALeKk03DAwxNZl2Io6A0PwDmnR3InA95_w:1612847896152&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjc07TPhtzuAhXlUd8KHdfaB9kQ_AUoAnoECA8QBA&biw=1920&bih=869#imgrc=qKcVVE7ByPY6xM
-
-increase PG cutoff
-- https://www.reddit.com/r/BasketballGM/comments/8lfyuh/7_center_turns_into_pg_when_the_season_starts/
 
 index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
@@ -1571,13 +1554,8 @@ add franchise leaders (stats) to team history page
 
 marker for feats from the playoffs/finals https://www.reddit.com/r/BasketballGM/comments/6gpf1f/suggestion_a_marker_of_some_sort_next_to_game/
 
-some way to see draft picks by team, now that there are AI trades
-
 AI trades
 - notification? only for big trades. quantify! maybe show that info in transactions page too
-
-AI propose trade to user
-- need way to show popup with link to trade page
 
 colors
 - color ratings on ratings page (and tables), just like ratings popup
@@ -1619,7 +1597,6 @@ document cache data format and API!
 - all modifications go into cache
 - cache mutations are dangerous, see getCopy
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
-- promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
 
 ----
 
@@ -1644,8 +1621,6 @@ REACT later
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 Trade Away button on your own players
 
-keep showing splash screen until first view hydrated
-
 Draft
   make it cooler
   fantasy draft is hacky and glitchy - do better!
@@ -1659,11 +1634,6 @@ filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
 
 make positions edited in god mode sticky, like custom roster
-
-different height distributions by country https://www.reddit.com/message/messages/644he7
-  even global setting would be nice, for country specific leagues
-
-newScheduleCrappy should be better
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 
@@ -1687,11 +1657,6 @@ fantasy draft summary https://www.reddit.com/r/BasketballGM/comments/3g4p5a/issu
 
 crime https://www.reddit.com/r/BasketballGM/comments/3g1ngn/its_2015/ctudznu
 
-different jump to menus for season and team specific pages?
-  or unify
-  add gamelog, roster, team finances
-    get rid of "More:" links
-
 minutes directly, not by +/-
 
 use positions for roster building and rotations
@@ -1709,14 +1674,6 @@ use positions for roster building and rotations
 
 Make AI smarter when constructing teams. Then, if that works, make synergy more impactful
 
-Too many 8 seeds winning over 1 seeds
-  http://www.reddit.com/r/BasketballGM/comments/39j6gy/this_happens_way_too_often/cs4lor3
-  http://www.reddit.com/r/BasketballGM/comments/391et4/1v8_seed_theory_100_years_of_simulation/
-  point differential stuff - BBGM teams seem better than NBA teams, but still lose in 8-1 (and have worse records)
-    some of this could be running up the score against bad teams
-
-playoff and regular season playing time and injury differences http://www.reddit.com/r/BasketballGM/comments/38f7dj/playoff_variance_seems_a_little_high/crxh643
-
 when retired, player page (and other career-level things) should display most common pos, or maybe composite that us union of all positions (like GF for someone who was both SG and SF)
   draftHistory, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
 
@@ -1730,15 +1687,6 @@ DEATH
         what would the nba do?
       reset owner mood, new owner message
       https://old.reddit.com/r/BasketballGM/comments/m087u6/could_we_get_something_like_this_as_an_extremely/
-
-screenshot
-  what do i link to? Imgur landing page? or include social links directly?
-    include social links directly. actually that should be the first-level UI - you don't click "Screenshot" you click "Share to X" where X is Twitter, FB, Reddit, etc
-      probably still save to imgur first
-      autocomplete wording: "Draft players, manage teams, go for the championship. How good a Basketball GM are you? Find out at http://basketball-gm.com"
-      also autocomplete hashtag
-  add prompts to take screenshots at various points
-  things can get cut off right, like wide tables in player pages
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding
@@ -1761,13 +1709,6 @@ transaction log
 
 player.updateValues.getStats doesn't really make sense. Should get all from past 2 seasons, sort by PSID, and take stats up to 2000 minutes
 
-new achievements
-- gold
-- 100 year championship drought before winning another (cubs)
-- win title without any 1st round picks @AtomicDelirium#1413
-- "On the edge" – Play 28 games in playoffs and win finals (4-3 in each series)
-- Have more than 100 players who played most of their career on your team be HOF @Happy_McSmileyface#1538
-
 PLAYER DEVELOPMENT REVAMP
 -------------------------
 
@@ -1780,7 +1721,6 @@ TEAM.VALUECHANGE REVAMP
 
 https://www.reddit.com/r/BasketballGM/comments/585af3/the_trade_ai_is_too_easy_to_abuse/
 http://www.reddit.com/r/BasketballGM/comments/2v26p1/how_are_you_exploiting_the_trade_ai/
-http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
 IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
   just drafted players are undervalued, possibly related to the following issue
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now. http://www.reddit.com/r/BasketballGM/comments/2bg3zx/simple_feature_mark_players_as_offlimits_when_we/cj5ap89
@@ -1805,8 +1745,6 @@ Eventually:
 CURRENT
 -------
 
-game log for individual player
-  in each box score, include an array of players in the game. index on that.
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
@@ -1832,8 +1770,6 @@ show prospects before draft
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
 career stats
-  "All Seasons" option - add each unique player/season combo as a row, include column for year
-  column/table widths?
   EWA in averages should be average
     same with per36
 per36, totals, playoffs options elsewhere
@@ -1862,7 +1798,6 @@ BIG NEW FEATURES
 ----------------
 
 player stat summaries http://www.reddit.com/r/BasketballGM/comments/2bf4z0/functionality_of_the_game_vs_2k/cj5ir16
-trading block should allow for multiple (different) offers from the same team
 display of relative ratings like https://mail.google.com/mail/u/0/#inbox/144a4a04330edf3d
 trade improvements
   refactor trade module with all the below in mind
@@ -1922,32 +1857,22 @@ MINOR FIXES
 documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
 Add MVP and Titles columns to HoF table
-Make good young players much less likely to become FAs
-don't need to store abbrev with awards, just tids
-  fix display in season summary (correct in historyAll)
-show team records in playoffs page
 on team history, show counts of conf/league championships, hall of fame players, etc
 if a player refuses to resign, that decision should also be reflected in free agency (don't recalculate mood)
 add "drb" to usage so that good ball handlers shoot more (favor guards over bigs more)
 in player page, show red/green for ratings changes from the previous year, maybe as heatmap
 in ratings tables, show dpot and dovr columns? maybe?
-league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
-merge game.play and freeAgents.play
 replace random.gauss with random.realGauss
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
-schedule page (and dashboard and maybe gamelog) should show opponent records
 
 LOW PRIORITY
 ------------
 
 track longest W/L streaks
 team chemistry http://www.reddit.com/r/BasketballGM/comments/2oco2a/simple_suggestion_team_chemistry/cmrpap6?context=3
-upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 box plots / distributions
   "it'd be great to overlay your roster to see where you stand. Maybe click on a name in a list to add or remove it from the display. Do I have a fast team? Do I have a three point shooting team? Are we big and bruising and slow?"
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
-awards
-  show awards count in hall of fame
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd
@@ -1964,11 +1889,7 @@ mobile UI, bootstrap 3
     table headers
     others?
 some kind of playoff series overview page, including box scores for easy access
-luxury tax money should be redistributed to non-taxpaying teams (or teams under the cap?)
 A year-to-date comparison of team finances with the previous year.
-more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
-  player personality, team chemistry
-  http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
 dashboard info should be on a widget accessible from any screen
 player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
@@ -2119,11 +2040,6 @@ live play-by-play simulation
   could fake where the shots are to display graphically
   allow the user to make substitutions in realtime
 multi team trades
-
-# Pre-JavaScript TODO
-
-csrf protection
-  even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 
 # BELOW IS OLD STUFF
 

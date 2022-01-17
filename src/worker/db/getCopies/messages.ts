@@ -1,22 +1,25 @@
 import { getAll, idb, iterate } from "..";
-import { mergeByPk } from "./helpers";
-import type { Message } from "../../../common/types";
+import { maybeDeepCopy, mergeByPk } from "./helpers";
+import type { GetCopyType, Message } from "../../../common/types";
 
 const getLastEntries = <T>(arr: T[], limit: number): T[] => {
 	return arr.slice(arr.length - limit);
 };
 
-const getCopies = async ({
-	limit,
-	mid,
-}: {
-	limit?: number;
-	mid?: number;
-} = {}): Promise<Message[]> => {
+const getCopies = async (
+	{
+		limit,
+		mid,
+	}: {
+		limit?: number;
+		mid?: number;
+	} = {},
+	type?: GetCopyType,
+): Promise<Message[]> => {
 	if (mid !== undefined) {
 		const message = await idb.cache.messages.get(mid);
 		if (message) {
-			return [message];
+			return [maybeDeepCopy(message, type)];
 		}
 
 		const message2 = await idb.league.get("messages", mid);
@@ -47,6 +50,7 @@ const getCopies = async ({
 			fromDb,
 			getLastEntries(fromCache, limit),
 			"messages",
+			type,
 		);
 
 		// Need another getLastEntries because DB and cache will probably combine for (2 * limit) entries
@@ -57,6 +61,7 @@ const getCopies = async ({
 		await getAll(idb.league.transaction("messages").store),
 		await idb.cache.messages.getAll(),
 		"messages",
+		type,
 	);
 };
 

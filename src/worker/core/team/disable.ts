@@ -101,7 +101,7 @@ const disable = async (tid: number) => {
 			[false, t.tid],
 		);
 		if (teamStats) {
-			await idb.cache.teamSeasons.delete(teamStats.rid);
+			await idb.cache.teamStats.delete(teamStats.rid);
 		}
 	}
 

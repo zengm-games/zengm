@@ -16,11 +16,14 @@ const updateAwardRaces = async (
 	) {
 		const awardCandidates = await season.getAwardCandidates(inputs.season);
 
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season: inputs.season,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid"],
+				seasonAttrs: ["won", "lost", "tied", "otl"],
+				season: inputs.season,
+			},
+			"noCopyCache",
+		);
 
 		return {
 			awardCandidates,

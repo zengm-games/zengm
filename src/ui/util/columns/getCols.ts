@@ -3333,6 +3333,24 @@ const legacyCols: {
 	Name: {
 		sortType: "name",
 	},
+	Normal: {
+		desc: "Normal Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Hard: {
+		desc: "Hard Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Insane: {
+		desc: "Insane Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Negotiate: {
+		sortSequence: [],
+	},
 	Note: {},
 	Odds: {
 		desc: "Pre-lottery odds of getting this pick",
@@ -3446,6 +3464,7 @@ const legacyCols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Strategy: {},
 	T: {
 		desc: "Ties",
 		sortSequence: ["desc", "asc"],

@@ -24,6 +24,8 @@ const hiddenStyle = {
 	marginBottom: -12,
 };
 
+const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 const LeagueTopBar = memo(() => {
 	const { games, lid, liveGameInProgress } = useLocalShallow(state => ({
 		games: state.games,
@@ -131,9 +133,6 @@ const LeagueTopBar = memo(() => {
 		};
 	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
 
-	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
-	keepScrolledToRightIfNecessary();
-
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
 		games.length === 1 &&
@@ -159,9 +158,19 @@ const LeagueTopBar = memo(() => {
 		}
 	}
 
+	// In a new season, start scrolled to right
+	if (games2.length <= 1) {
+		keepScrollToRightRef.current = true;
+	}
+
+	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
+	keepScrolledToRightIfNecessary();
+
 	return (
 		<div
-			className="league-top-bar flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2"
+			className={`league-top-bar${
+				IS_SAFARI ? " league-top-bar-safari" : ""
+			} flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2`}
 			style={show ? undefined : hiddenStyle}
 			ref={element => {
 				setWrapperElement(element);

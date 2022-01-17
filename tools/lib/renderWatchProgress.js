@@ -1,7 +1,11 @@
+let logSymbols;
+import("log-symbols").then(module => {
+	logSymbols = module.default;
+});
+
 const fs = require("fs");
 const { render, Box, Text } = require("ink");
 const Spinner = require("ink-spinner").default;
-const logSymbols = require("log-symbols");
 const React = require("react");
 const watchCSS = require("./watchCSS");
 const watchFiles = require("./watchFiles");
@@ -73,7 +77,7 @@ const reducer = (files, { type, filename, error }) => {
 const File = ({ filename, info }) => {
 	if (info.error) {
 		return (
-			<Text>{`${logSymbols.error} ${filename}: ${info.error.stack}`}</Text>
+			<Text>{`${logSymbols?.error} ${filename}: ${info.error.stack}`}</Text>
 		);
 	}
 
@@ -118,7 +122,7 @@ const File = ({ filename, info }) => {
 	return (
 		<Box>
 			<Text>
-				{logSymbols.success} {filename}:{" "}
+				{logSymbols?.success} {filename}:{" "}
 				{megabytes !== undefined ? `${megabytes} MB in ` : ""}
 				{duration} seconds at <Text {...colorParams}>{time}</Text>
 			</Text>

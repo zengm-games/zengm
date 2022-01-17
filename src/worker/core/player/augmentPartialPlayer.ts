@@ -443,6 +443,20 @@ const augmentPartialPlayer = async (
 	// Delete mood property that was accidentally saved previously
 	delete p.mood;
 
+	// Version 49/50
+	for (const key of ["hof", "watch"] as const) {
+		if (p[key]) {
+			p[key] = 1;
+		} else {
+			delete p[key];
+		}
+	}
+	if (p.note) {
+		p.noteBool = 1;
+	} else {
+		delete p.note;
+	}
+
 	return p;
 };
 

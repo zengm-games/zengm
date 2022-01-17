@@ -1,8 +1,4 @@
-import create, { GetState, SetState } from "zustand";
-import {
-	StoreApiWithSubscribeWithSelector,
-	subscribeWithSelector,
-} from "zustand/middleware";
+import create from "zustand";
 import shallow from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
@@ -38,186 +34,175 @@ type LocalStateWithActions = LocalStateUI & {
 	actions: LocalActions;
 };
 
-const useLocal = create(
-	subscribeWithSelector<
-		LocalStateWithActions,
-		SetState<LocalStateWithActions>,
-		GetState<LocalStateWithActions>,
-		StoreApiWithSubscribeWithSelector<LocalStateWithActions>
-	>(set => ({
-		challengeNoRatings: false,
-		customMenu: undefined,
-		dirtySettings: false,
-		fantasyPoints: undefined,
-		flagOverrides: {},
-		gameSimInProgress: false,
-		games: [],
-		gold: undefined,
-		godMode: false,
-		hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
-		hideDisabledTeams: false,
-		homeCourtAdvantage: 1,
-		lid: undefined,
-		liveGameInProgress: false,
-		numPeriods: defaultGameAttributes.numPeriods,
-		phase: 0,
-		phaseText: "",
-		playMenuOptions: [],
-		popup: window.location.search === "?w=popup",
-		quarterLength: defaultGameAttributes.quarterLength,
-		season: 0,
-		showNagModal: false,
-		sidebarOpen: false,
-		spectator: false,
-		startingSeason: 0,
-		statusText: "Idle",
-		teamInfoCache: [],
-		units: defaultUnits,
-		userTid: 0,
-		userTids: [],
-		username: undefined,
-		viewInfo: undefined,
-		title: undefined,
-		hideNewWindow: false,
-		jumpTo: false,
-		jumpToSeason: undefined,
-		dropdownCustomOptions: undefined,
-		dropdownCustomURL: undefined,
-		dropdownView: undefined,
-		dropdownFields: {},
-		moreInfoAbbrev: undefined,
-		moreInfoSeason: undefined,
-		moreInfoTid: undefined,
-		stickyMultiTeamMenu: false,
-		stickyFooterAd: false,
-		stickyFormButtons: false,
+const useLocal = create<LocalStateWithActions>(set => ({
+	challengeNoRatings: false,
+	customMenu: undefined,
+	dirtySettings: false,
+	fantasyPoints: undefined,
+	flagOverrides: {},
+	gameSimInProgress: false,
+	games: [],
+	gold: undefined,
+	godMode: false,
+	hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
+	hideDisabledTeams: false,
+	homeCourtAdvantage: 1,
+	lid: undefined,
+	liveGameInProgress: false,
+	numPeriods: defaultGameAttributes.numPeriods,
+	phase: 0,
+	phaseText: "",
+	playMenuOptions: [],
+	popup: window.location.search === "?w=popup",
+	quarterLength: defaultGameAttributes.quarterLength,
+	season: 0,
+	showNagModal: false,
+	sidebarOpen: false,
+	spectator: false,
+	startingSeason: 0,
+	statusText: "Idle",
+	teamInfoCache: [],
+	units: defaultUnits,
+	userTid: 0,
+	userTids: [],
+	username: undefined,
+	title: undefined,
+	hideNewWindow: false,
+	jumpTo: false,
+	jumpToSeason: undefined,
+	dropdownCustomOptions: undefined,
+	dropdownCustomURL: undefined,
+	dropdownView: undefined,
+	dropdownFields: {},
+	moreInfoAbbrev: undefined,
+	moreInfoSeason: undefined,
+	moreInfoTid: undefined,
+	stickyFooterAd: false,
+	stickyFormButtons: false,
 
-		actions: {
-			deleteGames(gids: number[]) {
-				set(state => {
-					const newGames = state.games.filter(game => !gids.includes(game.gid));
+	actions: {
+		deleteGames(gids: number[]) {
+			set(state => {
+				const newGames = state.games.filter(game => !gids.includes(game.gid));
 
-					return {
-						games: newGames,
-					};
-				});
-			},
-
-			mergeGames(games: LocalStateUI["games"]) {
-				set(state => {
-					const newGames = state.games.slice();
-
-					for (const game of games) {
-						const index = newGames.findIndex(
-							newGame => newGame.gid === game.gid,
-						);
-						if (index >= 0) {
-							newGames[index] = game;
-						} else {
-							newGames.push(game);
-						}
-					}
-
-					return {
-						games: newGames,
-					};
-				});
-			},
-
-			// Reset any values specific to a league. statusText and phaseText will be set later, no need to override here and cause UI flicker
-			resetLeague() {
-				set({
-					challengeNoRatings: false,
-					games: [],
-					godMode: false,
-					hideDisabledTeams: false,
-					homeCourtAdvantage: 1,
-
-					// Controller.tsx relies on this being undefined (or at least different than the new lid) to trigger calling beforeView.league
-					lid: undefined,
-					liveGameInProgress: false,
-					numPeriods: defaultGameAttributes.numPeriods,
-					phase: 0,
-					playMenuOptions: [],
-					quarterLength: defaultGameAttributes.quarterLength,
-					season: 0,
-					startingSeason: 0,
-					teamInfoCache: [],
-					userTid: 0,
-					userTids: [],
-				});
-				window.removeEventListener("beforeunload", blockCloseTab);
-			},
-
-			toggleSidebar() {
-				set(state => ({ sidebarOpen: !state.sidebarOpen }));
-			},
-
-			update(obj: Partial<LocalStateUI>) {
-				if (obj.hasOwnProperty("units") && obj.units === undefined) {
-					obj.units = defaultUnits;
-				}
-
-				if (obj.hasOwnProperty("liveGameInProgress")) {
-					if (obj.liveGameInProgress) {
-						window.addEventListener("beforeunload", blockCloseTab);
-					} else {
-						window.removeEventListener("beforeunload", blockCloseTab);
-					}
-				}
-
-				set(obj as any);
-			},
-
-			updateGameAttributes(
-				gameAttributes: Partial<GameAttributesLeague>,
-				flagOverrides?: LocalStateUI["flagOverrides"],
-			) {
-				// Keep in sync with gameAttributesToUI - this is just for TypeScript
-				const keys = [
-					"challengeNoRatings",
-					"fantasyPoints",
-					"godMode",
-					"hideDisabledTeams",
-					"homeCourtAdvantage",
-					"lid",
-					"numPeriods",
-					"phase",
-					"quarterLength",
-					"season",
-					"spectator",
-					"startingSeason",
-					"teamInfoCache",
-					"userTid",
-					"userTids",
-				] as const;
-
-				let update = false;
-
-				const updates: Partial<LocalStateUI> = {};
-
-				for (const key of keys) {
-					if (
-						gameAttributes.hasOwnProperty(key) &&
-						updates[key] !== gameAttributes[key]
-					) {
-						// @ts-ignore
-						updates[key] = gameAttributes[key];
-						update = true;
-					}
-				}
-
-				if (flagOverrides) {
-					updates.flagOverrides = flagOverrides;
-				}
-
-				if (update) {
-					set(state => ({ ...state, ...updates }));
-				}
-			},
+				return {
+					games: newGames,
+				};
+			});
 		},
-	})),
-);
+
+		mergeGames(games: LocalStateUI["games"]) {
+			set(state => {
+				const newGames = state.games.slice();
+
+				for (const game of games) {
+					const index = newGames.findIndex(newGame => newGame.gid === game.gid);
+					if (index >= 0) {
+						newGames[index] = game;
+					} else {
+						newGames.push(game);
+					}
+				}
+
+				return {
+					games: newGames,
+				};
+			});
+		},
+
+		// Reset any values specific to a league. statusText and phaseText will be set later, no need to override here and cause UI flicker
+		resetLeague() {
+			set({
+				challengeNoRatings: false,
+				games: [],
+				godMode: false,
+				hideDisabledTeams: false,
+				homeCourtAdvantage: 1,
+
+				// Controller.tsx relies on this being undefined (or at least different than the new lid) to trigger calling beforeView.league
+				lid: undefined,
+				liveGameInProgress: false,
+				numPeriods: defaultGameAttributes.numPeriods,
+				phase: 0,
+				playMenuOptions: [],
+				quarterLength: defaultGameAttributes.quarterLength,
+				season: 0,
+				startingSeason: 0,
+				teamInfoCache: [],
+				userTid: 0,
+				userTids: [],
+			});
+			window.removeEventListener("beforeunload", blockCloseTab);
+		},
+
+		toggleSidebar() {
+			set(state => ({ sidebarOpen: !state.sidebarOpen }));
+		},
+
+		update(obj: Partial<LocalStateUI>) {
+			if (obj.hasOwnProperty("units") && obj.units === undefined) {
+				obj.units = defaultUnits;
+			}
+
+			if (obj.hasOwnProperty("liveGameInProgress")) {
+				if (obj.liveGameInProgress) {
+					window.addEventListener("beforeunload", blockCloseTab);
+				} else {
+					window.removeEventListener("beforeunload", blockCloseTab);
+				}
+			}
+
+			set(obj as any);
+		},
+
+		updateGameAttributes(
+			gameAttributes: Partial<GameAttributesLeague>,
+			flagOverrides?: LocalStateUI["flagOverrides"],
+		) {
+			// Keep in sync with gameAttributesToUI - this is just for TypeScript
+			const keys = [
+				"challengeNoRatings",
+				"fantasyPoints",
+				"godMode",
+				"hideDisabledTeams",
+				"homeCourtAdvantage",
+				"lid",
+				"numPeriods",
+				"phase",
+				"quarterLength",
+				"season",
+				"spectator",
+				"startingSeason",
+				"teamInfoCache",
+				"userTid",
+				"userTids",
+			] as const;
+
+			let update = false;
+
+			const updates: Partial<LocalStateUI> = {};
+
+			for (const key of keys) {
+				if (
+					gameAttributes.hasOwnProperty(key) &&
+					updates[key] !== gameAttributes[key]
+				) {
+					// @ts-ignore
+					updates[key] = gameAttributes[key];
+					update = true;
+				}
+			}
+
+			if (flagOverrides) {
+				updates.flagOverrides = flagOverrides;
+			}
+
+			if (update) {
+				set(state => ({ ...state, ...updates }));
+			}
+		},
+	},
+}));
 
 const useLocalShallow = <T>(selector: (a: LocalStateUI) => T) =>
 	useLocal<T>(selector, shallow);

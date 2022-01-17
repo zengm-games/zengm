@@ -395,15 +395,17 @@ const formatPlayerFactory = async (
 			}
 		}
 
-		const hof =
+		const hof: 1 | undefined =
 			!!awards &&
-			awards.some(award => award.type === "Inducted into the Hall of Fame");
+			awards.some(award => award.type === "Inducted into the Hall of Fame")
+				? 1
+				: undefined;
 		const retiredYear = tid === PLAYER.RETIRED ? ratings.season : Infinity;
 		const diedYear = tid === PLAYER.RETIRED ? bio.diedYear : undefined;
 
 		pid += 1;
 
-		return {
+		const p = {
 			pid,
 			name,
 			pos: bio.pos,
@@ -432,6 +434,12 @@ const formatPlayerFactory = async (
 			retiredYear,
 			srID: ratings.slug,
 		};
+
+		if (!p.hof) {
+			delete p.hof;
+		}
+
+		return p;
 	};
 };
 

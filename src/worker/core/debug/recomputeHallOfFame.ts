@@ -8,8 +8,14 @@ const recomputeHallOfFame = async () => {
 	await iterate(transaction.store, undefined, "prev", p => {
 		const made = player.madeHof(p);
 
-		if (p.hof !== made) {
-			p.hof = made;
+		const prev = p.hof;
+		if (made) {
+			p.hof = 1;
+		} else {
+			delete p.hof;
+		}
+
+		if (p.hof !== prev) {
 			return p;
 		}
 	});

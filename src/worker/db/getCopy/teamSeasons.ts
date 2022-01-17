@@ -1,17 +1,23 @@
 import { idb } from "..";
-import type { TeamSeason } from "../../../common/types";
+import type { GetCopyType, TeamSeason } from "../../../common/types";
 
-const getCopy = async ({
-	season,
-	tid,
-}: {
-	season: number;
-	tid: number;
-}): Promise<TeamSeason | undefined> => {
-	const result = await idb.getCopies.teamSeasons({
+const getCopy = async (
+	{
 		season,
 		tid,
-	});
+	}: {
+		season: number;
+		tid: number;
+	},
+	type?: GetCopyType,
+): Promise<TeamSeason | undefined> => {
+	const result = await idb.getCopies.teamSeasons(
+		{
+			season,
+			tid,
+		},
+		type,
+	);
 	return result[0];
 };
 

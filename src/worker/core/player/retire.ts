@@ -44,7 +44,7 @@ const retire = async (
 
 	// Add to Hall of Fame?
 	if (conditions && madeHof(p)) {
-		p.hof = true;
+		p.hof = 1;
 		p.awards.push({
 			season: g.get("season"),
 			type: "Inducted into the Hall of Fame",

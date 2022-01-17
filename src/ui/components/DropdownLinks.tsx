@@ -32,8 +32,8 @@ const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
 			id="whatever"
 			onMouseEnter={handleMouseEnter}
 		>
-			<span className="d-xs-inline d-sm-none d-md-inline">{long}</span>
-			<span className="d-none d-sm-inline d-md-none" title={long}>
+			<span className="d-none d-md-inline">{long}</span>
+			<span className="d-md-none" title={long}>
 				{short}
 			</span>
 		</Dropdown.Toggle>

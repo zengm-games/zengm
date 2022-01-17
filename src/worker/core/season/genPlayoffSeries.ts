@@ -270,30 +270,33 @@ export const genPlayoffSeriesFromTeams = async (
 };
 
 const genPlayoffSeries = async () => {
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
-		seasonAttrs: [
-			"cid",
-			"did",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"winp",
-			"pts",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
-		season: g.get("season"),
-		showNoStats: true,
-	});
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: [
+				"cid",
+				"did",
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"winp",
+				"pts",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: g.get("season"),
+			showNoStats: true,
+		},
+		"noCopyCache",
+	);
 
 	return genPlayoffSeriesFromTeams(teams);
 };

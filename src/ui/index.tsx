@@ -70,7 +70,6 @@ const handleVersion = async () => {
 			let conflictNum = parseInt(
 				// @ts-ignore
 				safeLocalStorage.getItem("bbgmVersionConflict"),
-				10,
 			);
 
 			if (Number.isNaN(conflictNum)) {
@@ -221,9 +220,12 @@ const setupRoutes = () => {
 					}
 				}
 
+				// Checks for Settings (includes because of league ID in URL) and DefaultSettings
 				if (
-					window.location.pathname.includes("/settings") &&
-					!context.path.includes("/settings")
+					(window.location.pathname.includes("/settings") &&
+						!context.path.includes("/settings")) ||
+					(window.location.pathname === "/settings/default" &&
+						context.path !== "/settings/default")
 				) {
 					const dirtySettings = local.getState().dirtySettings;
 					if (dirtySettings) {

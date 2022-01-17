@@ -56,6 +56,7 @@ import {
 	initUILocalGames,
 	loadNames,
 	defaultInjuries,
+	defaultTragicDeaths,
 } from "../util";
 import {
 	toPolyfillReadable,
@@ -376,33 +377,20 @@ const clearInjury = async (pid: number | "all") => {
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
 };
 
 const clearWatchList = async () => {
-	const pids = new Set();
-	const players = await idb.cache.players.getAll();
-
+	const players = await idb.getCopies.players(
+		{
+			watch: true,
+		},
+		"noCopyCache",
+	);
 	for (const p of players) {
-		if (p.watch) {
-			p.watch = false;
-			await idb.cache.players.put(p);
-		}
-
-		pids.add(p.pid);
+		delete p.watch;
+		await idb.cache.players.put(p);
 	}
-
-	// For watched players not in cache
-	const tx = idb.league.transaction("players", "readwrite");
-	let cursor = await tx.store.openCursor();
-	while (cursor) {
-		const p = cursor.value;
-		if (p.watch && !pids.has(p.pid)) {
-			p.watch = false;
-			cursor.update(p);
-		}
-		cursor = await cursor.continue();
-	}
-	await tx.done;
 
 	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
@@ -770,7 +758,10 @@ const deleteFromTeamInfoScheduledEvent = async (
 };
 
 const deleteScheduledEvents = async (type: string) => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	const scheduledEvents = await idb.getCopies.scheduledEvents(
+		undefined,
+		"noCopyCache",
+	);
 
 	const deletedExpansionTIDs: number[] = [];
 
@@ -1406,6 +1397,19 @@ const getDefaultInjuries = () => {
 	return defaultInjuries;
 };
 
+const getDefaultNewLeagueSettings = async () => {
+	const overrides = (await idb.meta.get(
+		"attributes",
+		"defaultSettingsOverrides",
+	)) as Partial<Settings> | undefined;
+
+	return overrides ?? {};
+};
+
+const getDefaultTragicDeaths = () => {
+	return defaultTragicDeaths;
+};
+
 const getLeagueInfo = async (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
@@ -1423,6 +1427,10 @@ const getLocal = async (name: keyof Local) => {
 const getPlayerBioInfoDefaults = initDefaults;
 
 const getPlayerWatch = async (pid: number) => {
+	if (Number.isNaN(pid)) {
+		return false;
+	}
+
 	const p = await idb.cache.players.get(pid);
 	if (p) {
 		return p.watch;
@@ -1536,14 +1544,16 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			return [];
 		}
 
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["abbrev", "region", "name", "strategy", "tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season: g.get("season"),
-			addDummySeason: true,
-			active: true,
-		});
-
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["abbrev", "region", "name", "strategy", "tid"],
+				seasonAttrs: ["won", "lost", "tied", "otl"],
+				season: g.get("season"),
+				addDummySeason: true,
+				active: true,
+			},
+			"noCopyCache",
+		);
 		const stats = bySport({
 			basketball: [
 				"stat:gp",
@@ -1601,9 +1611,12 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					showRookies: true,
 					fuzz: true,
 				});
-				let picks = await idb.getCopies.draftPicks({
-					tid,
-				});
+				let picks = await idb.getCopies.draftPicks(
+					{
+						tid,
+					},
+					"noCopyCache",
+				);
 				picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
 
 				const picks2 = picks.map(dp => {
@@ -2142,12 +2155,15 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
-		seasonAttrs: ["cid", "did"],
-		season: g.get("season"),
-		active: true,
-	});
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: ["cid", "did"],
+			season: g.get("season"),
+			active: true,
+		},
+		"noCopyCache",
+	);
 
 	const newSchedule = season.newSchedule(teams, {
 		notify: true,
@@ -2240,7 +2256,10 @@ const removeLastTeam = async (): Promise<void> => {
 
 	// Manually removing a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
 	// Delete future scheduledEvents for the deleted team, and decrement future tids for new teams
-	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	const scheduledEvents = await idb.getCopies.scheduledEvents(
+		undefined,
+		"noCopyCache",
+	);
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season < g.get("season")) {
 			await idb.cache.scheduledEvents.delete(scheduledEvent.id);
@@ -2607,7 +2626,13 @@ const setPlayerNote = async (pid: number, note: string) => {
 	);
 
 	if (p) {
-		p.note = note;
+		if (note === "") {
+			delete p.note;
+			delete p.noteBool;
+		} else {
+			p.note = note;
+			p.noteBool = 1;
+		}
 		await idb.cache.players.put(p);
 	} else {
 		throw new Error("Invalid pid");
@@ -2897,6 +2922,20 @@ const updateConfsDivs = async (
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const updateDefaultSettingsOverrides = async (
+	defaultSettingsOverrides: Partial<Settings>,
+) => {
+	if (Object.keys(defaultSettingsOverrides).length === 0) {
+		await idb.meta.delete("attributes", "defaultSettingsOverrides");
+	} else {
+		await idb.meta.put(
+			"attributes",
+			defaultSettingsOverrides,
+			"defaultSettingsOverrides",
+		);
+	}
+};
+
 const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
@@ -3127,20 +3166,19 @@ const updatePlayThroughInjuries = async (
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
-	const cachedPlayer = await idb.cache.players.get(pid);
-
-	if (cachedPlayer) {
-		cachedPlayer.watch = watch;
-		await idb.cache.players.put(cachedPlayer);
-	} else {
-		const p = await idb.league.get("players", pid);
-		if (p) {
-			p.watch = watch;
-			await idb.cache.players.add(p);
-		}
+	let p = await idb.cache.players.get(pid);
+	if (!p) {
+		p = await idb.league.get("players", pid);
 	}
-
-	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+	if (p) {
+		if (watch) {
+			p.watch = 1;
+		} else {
+			delete p.watch;
+		}
+		await idb.cache.players.put(p);
+		await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+	}
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
@@ -3273,7 +3311,7 @@ const updateTeamInfo = async (
 		t.jersey = newTeam.jersey;
 
 		t.pop = parseFloat(newTeam.pop as string);
-		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string, 10);
+		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string);
 
 		const disableTeam = newTeam.disabled && !t.disabled;
 		const enableTeam = !newTeam.disabled && t.disabled;
@@ -3366,9 +3404,12 @@ const updateAwards = async (
 	awards: any,
 	conditions: Conditions,
 ): Promise<any> => {
-	const awardsInitial = await idb.getCopy.awards({
-		season: awards.season,
-	});
+	const awardsInitial = await idb.getCopy.awards(
+		{
+			season: awards.season,
+		},
+		"noCopyCache",
+	);
 
 	if (!awardsInitial) {
 		throw new Error("awardsInitial not found");
@@ -3538,6 +3579,9 @@ const upsertCustomizedPlayer = async (
 		}
 	}
 
+	// In case a player was injured or moved to another team
+	await recomputeLocalUITeamOvrs();
+
 	// @ts-ignore
 	return p.pid;
 };
@@ -3635,7 +3679,7 @@ const validatePlayoffSettings = async ({
 }: {
 	numRounds: number;
 	numPlayoffByes: number;
-	numActiveTeams: number;
+	numActiveTeams: number | undefined;
 	playIn: boolean;
 	playoffsByConf: boolean;
 	confs: GameAttributesLeague["confs"];
@@ -3696,6 +3740,8 @@ export default {
 	generateFace,
 	getAutoPos,
 	getDefaultInjuries,
+	getDefaultNewLeagueSettings,
+	getDefaultTragicDeaths,
 	getLeagueInfo,
 	getLeagueName,
 	getLocal,
@@ -3753,6 +3799,7 @@ export default {
 	updateAwards,
 	updateBudget,
 	updateConfsDivs,
+	updateDefaultSettingsOverrides,
 	updateGameAttributes,
 	updateGameAttributesGodMode,
 	updateKeepRosterSorted,

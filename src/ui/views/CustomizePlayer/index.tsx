@@ -30,11 +30,11 @@ const copyValidValues = (
 ) => {
 	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
 	// @ts-ignore
-	const activated = source.tid >= 0 && parseInt(target.tid, 10) < 0;
+	const activated = source.tid >= 0 && parseInt(target.tid) < 0;
 
 	for (const attr of ["hgt", "tid", "weight"] as const) {
 		// @ts-ignore
-		const val = parseInt(source[attr], 10);
+		const val = parseInt(source[attr]);
 		if (!Number.isNaN(val)) {
 			target[attr] = val;
 		}
@@ -80,7 +80,7 @@ const copyValidValues = (
 	let updatedRatingsOrAge = false;
 	{
 		// @ts-ignore
-		const age = parseInt(source.age, 10);
+		const age = parseInt(source.age);
 		if (!Number.isNaN(age)) {
 			const bornYear = season - age;
 			if (bornYear !== target.born.year) {
@@ -96,7 +96,7 @@ const copyValidValues = (
 
 	{
 		// @ts-ignore
-		const diedYear = parseInt(source.diedYear, 10);
+		const diedYear = parseInt(source.diedYear);
 		if (!Number.isNaN(diedYear)) {
 			target.diedYear = diedYear;
 		} else {
@@ -127,7 +127,7 @@ const copyValidValues = (
 
 	{
 		// @ts-ignore
-		let exp = parseInt(source.contract.exp, 10);
+		let exp = parseInt(source.contract.exp);
 		if (!Number.isNaN(exp)) {
 			// No contracts expiring in the past
 			if (exp < season) {
@@ -176,16 +176,34 @@ const copyValidValues = (
 	}
 
 	{
+		const prevDraftTid = target.draft.tid;
+
 		// @ts-ignore
-		const draftYear = parseInt(source.draft.year, 10);
-		if (!Number.isNaN(draftYear)) {
-			target.draft.year = draftYear;
+		const draftInts = ["year", "round", "pick", "tid"] as const;
+		for (const key of draftInts) {
+			const int = parseInt(source.draft[key] as any);
+			console.log(key, int);
+			if (!Number.isNaN(int)) {
+				target.draft[key] = int;
+			}
+		}
+		if (target.draft.tid === PLAYER.UNDRAFTED) {
+			target.draft.round = 0;
+			target.draft.pick = 0;
+		}
+
+		if (prevDraftTid !== target.draft.tid) {
+			// dpid no longer makes sense to store, since player was drafted with a fake pick now
+			delete target.draft.dpid;
+
+			// No UI to set originalTid, yet so always change
+			target.draft.originalTid = target.draft.tid;
 		}
 	}
 
 	{
 		// @ts-ignore
-		let gamesRemaining = parseInt(source.injury.gamesRemaining, 10);
+		let gamesRemaining = parseInt(source.injury.gamesRemaining);
 		if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
 			gamesRemaining = 0;
 		}
@@ -203,11 +221,7 @@ const copyValidValues = (
 					target.pos = source.ratings[r].pos; // Keep this way forever because fun
 				}
 			} else if (RATINGS.includes(rating)) {
-				const val = helpers.bound(
-					parseInt(source.ratings[r][rating], 10),
-					0,
-					100,
-				);
+				const val = helpers.bound(parseInt(source.ratings[r][rating]), 0, 100);
 				if (!Number.isNaN(val)) {
 					if (target.ratings[r][rating] !== val) {
 						target.ratings[r][rating] = val;
@@ -226,7 +240,7 @@ const copyValidValues = (
 	target.relatives = source.relatives
 		.map(rel => {
 			// @ts-ignore
-			rel.pid = parseInt(rel.pid, 10);
+			rel.pid = parseInt(rel.pid);
 			return rel;
 		})
 		.filter(rel => !Number.isNaN(rel.pid));
@@ -320,7 +334,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 			if (type === "root") {
 				if (field === "hof") {
-					p[field] = val === "true";
+					if (val === "yes") {
+						p[field] = 1;
+					} else {
+						delete p[field];
+					}
 				} else if (field === "jerseyNumber") {
 					if (p.stats.length > 0) {
 						p.stats.at(-1).jerseyNumber = val;
@@ -517,6 +535,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	if (!jerseyNumber) {
 		jerseyNumber = "";
 	}
+
+	const draftTeamUndrafted =
+		p.draft.tid === PLAYER.UNDRAFTED ||
+		(p.draft.tid as any) === String(PLAYER.UNDRAFTED);
 
 	return (
 		<>
@@ -809,6 +831,44 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Round</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "draft", "round")}
+									value={draftTeamUndrafted ? 0 : p.draft.round}
+									disabled={!godMode || draftTeamUndrafted}
+								/>
+							</div>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Pick</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "draft", "pick")}
+									value={draftTeamUndrafted ? 0 : p.draft.pick}
+									disabled={!godMode || draftTeamUndrafted}
+								/>
+							</div>
+							<div className="col-sm-3 mb-3">
+								<label className="form-label">Draft Team</label>
+								<select
+									className="form-select"
+									onChange={handleChange.bind(null, "draft", "tid")}
+									value={p.draft.tid}
+									disabled={!godMode}
+								>
+									<option value={PLAYER.UNDRAFTED}>Undrafted</option>
+									{orderBy(teams, ["text", "tid"]).map(t => {
+										return (
+											<option key={t.tid} value={t.tid}>
+												{t.text}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className="col-sm-3 mb-3">
 								<label className="form-label">Year of Death</label>
 								<input
 									type="text"
@@ -823,11 +883,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<select
 									className="form-select"
 									onChange={handleChange.bind(null, "root", "hof")}
-									value={String(p.hof)}
+									value={p.hof ? "yes" : "no"}
 									disabled={!godMode}
 								>
-									<option value="true">Yes</option>
-									<option value="false">No</option>
+									<option value="yes">Yes</option>
+									<option value="no">No</option>
 								</select>
 							</div>
 						</div>

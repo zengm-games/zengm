@@ -76,7 +76,8 @@ const processLiveGameEvents = ({
 				e.text.includes(text),
 			);
 
-			text = e.text;
+			// Must include parens so it does not collide with ABBREV0 and ABBREV1 for penalties lol
+			text = e.text.replace("(ABBREV)", `(${boxScore.teams[actualT].abbrev})`);
 			boxScore.time = e.time;
 			stop = true;
 		} else if (e.type === "clock") {

@@ -26,11 +26,14 @@ const updateOwnerMood = async (): Promise<
 		return;
 	}
 
-	const t = await idb.getCopy.teamsPlus({
-		seasonAttrs: ["won", "playoffRoundsWon", "profit"],
-		season: g.get("season"),
-		tid: g.get("userTid"),
-	});
+	const t = await idb.getCopy.teamsPlus(
+		{
+			seasonAttrs: ["won", "playoffRoundsWon", "profit"],
+			season: g.get("season"),
+			tid: g.get("userTid"),
+		},
+		"noCopyCache",
+	);
 
 	if (!t) {
 		return;

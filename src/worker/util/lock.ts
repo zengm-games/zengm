@@ -88,9 +88,12 @@ async function canStartGames(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function unreadMessage(): Promise<boolean> {
-	const messages = await idb.getCopies.messages({
-		limit: 10,
-	});
+	const messages = await idb.getCopies.messages(
+		{
+			limit: 10,
+		},
+		"noCopyCache",
+	);
 
 	for (let i = 0; i < messages.length; i++) {
 		if (!messages[i].read) {

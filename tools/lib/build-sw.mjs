@@ -27,7 +27,7 @@ const injectManifest = async () => {
 		globDirectory: "build",
 		globPatterns: [
 			"**/*.{js,css,html}",
-			"fonts/*.woff2",
+			"fonts/*",
 			"gen/*.json",
 			"img/logos-primary/*.svg",
 			"img/logos-secondary/*.svg",
@@ -39,7 +39,7 @@ const injectManifest = async () => {
 		globIgnores: [
 			"gen/*-legacy-*.js",
 			"gen/real-player-*.json",
-			"upgrade-39/*",
+			"upgrade-50/*",
 		],
 
 		// Changing default is only needed for unminified versions from watch-js

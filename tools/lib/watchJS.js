@@ -1,15 +1,13 @@
 const path = require("path");
 const { Worker } = require("worker_threads");
-const getSport = require("./getSport");
 
 const watchJS = (updateStart, updateEnd, updateError) => {
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
 
-		const worker = new Worker(path.join(__dirname, "watchJSWorker.js"), {
+		const worker = new Worker(path.join(__dirname, "watchJSWorker.mjs"), {
 			workerData: {
 				name,
-				sport: getSport(),
 			},
 		});
 

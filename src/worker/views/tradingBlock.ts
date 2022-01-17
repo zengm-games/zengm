@@ -27,12 +27,10 @@ const updateUserRoster = async (
 			football: ["stat:gp", "stat:keyStats", "stat:av"],
 			hockey: ["stat:gp", "stat:keyStats", "stat:ops", "stat:dps", "stat:ps"],
 		});
-		const [userRosterAll, userPicks] = await Promise.all([
-			idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),
-			await idb.getCopies.draftPicks({
-				tid: g.get("userTid"),
-			}),
-		]);
+		const userRosterAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
 
 		const config: TableConfig = new TableConfig("tradingBlock", [
 			"Name",
@@ -45,7 +43,6 @@ const updateUserRoster = async (
 			...stats,
 		]);
 		await config.load();
-
 		const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 			attrs: [...config.attrsNeeded, "untradable", "pid"],
 			ratings: config.ratingsNeeded,
@@ -56,6 +53,13 @@ const updateUserRoster = async (
 			showRookies: true,
 			fuzz: true,
 		});
+
+		const userPicks = await idb.getCopies.draftPicks(
+			{
+				tid: g.get("userTid"),
+			},
+			"noCopyCache",
+		);
 
 		const userPicks2 = userPicks.map(dp => {
 			return {

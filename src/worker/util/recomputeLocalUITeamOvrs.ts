@@ -28,7 +28,7 @@ const recomputeLocalUITeamOvrs = async () => {
 		return team.ovr(playersCurrent);
 	});
 
-	toUI("updateTeamOvrs", [ovrs]);
+	await toUI("updateTeamOvrs", [ovrs]);
 };
 
 export default recomputeLocalUITeamOvrs;

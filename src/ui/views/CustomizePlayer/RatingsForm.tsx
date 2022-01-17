@@ -147,17 +147,18 @@ const RatingsForm = ({
 				);
 			})}
 
-			<div className="ms-1">
-				<label className="form-check-label ms-3 mb-3">
-					<input
-						className="form-check-input"
-						onChange={event => {
-							handleChange("rating", "locked", event);
-						}}
-						type="checkbox"
-						checked={!!ratingsRow.locked}
-						disabled={!godMode}
-					/>
+			<div className="form-check mb-3">
+				<input
+					className="form-check-input"
+					onChange={event => {
+						handleChange("rating", "locked", event);
+					}}
+					type="checkbox"
+					checked={!!ratingsRow.locked}
+					disabled={!godMode}
+					id="checkLockRatings"
+				/>
+				<label className="form-check-label" htmlFor="checkLockRatings">
 					Lock ratings (ratings will not change as player ages)
 				</label>
 			</div>

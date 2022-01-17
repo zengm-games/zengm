@@ -9,7 +9,7 @@ const validatePlayoffSettings = ({
 }: {
 	numRounds: number;
 	numPlayoffByes: number;
-	numActiveTeams: number;
+	numActiveTeams: number | undefined; // For DefaultNewLeagueSettings where we can know everything but this
 	playIn: boolean;
 	byConf: boolean;
 }) => {
@@ -38,7 +38,7 @@ const validatePlayoffSettings = ({
 		byConf,
 	});
 
-	if (numPlayoffTeams > numActiveTeams) {
+	if (numActiveTeams !== undefined && numPlayoffTeams > numActiveTeams) {
 		throw new Error(
 			`${numRounds} playoff rounds with ${numPlayoffByes} first round byes${
 				playIn ? " and a play-in tournament" : ""

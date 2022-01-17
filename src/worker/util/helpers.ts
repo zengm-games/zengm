@@ -15,9 +15,12 @@ const augmentSeries = async (
 	}[][],
 	season: number = g.get("season"),
 ) => {
-	const teamSeasons = await idb.getCopies.teamSeasons({
-		season,
-	});
+	const teamSeasons = await idb.getCopies.teamSeasons(
+		{
+			season,
+		},
+		"noCopyCache",
+	);
 
 	const setAll = (obj: PlayoffSeriesTeam) => {
 		obj.abbrev = g.get("teamInfoCache")[obj.tid]?.abbrev;
@@ -149,7 +152,7 @@ const gb = (team0: teamWonLost, team: teamWonLost) => {
  */
 const getAbbrev = (tid: number | string): string => {
 	if (typeof tid === "string") {
-		tid = parseInt(tid, 10);
+		tid = parseInt(tid);
 	}
 
 	if (tid === PLAYER.FREE_AGENT) {

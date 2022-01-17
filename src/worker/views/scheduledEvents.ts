@@ -10,7 +10,10 @@ const updateScheduledEvents = async (
 		updateEvents.includes("newPhase") ||
 		updateEvents.includes("scheduledEvents")
 	) {
-		const scheduledEvents = await idb.getCopies.scheduledEvents();
+		const scheduledEvents = await idb.getCopies.scheduledEvents(
+			undefined,
+			"noCopyCache",
+		);
 
 		return {
 			scheduledEvents,

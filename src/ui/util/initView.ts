@@ -1,5 +1,5 @@
-import { localActions } from "./local";
 import type { Context } from "../router";
+import { viewManager } from "./viewManager";
 
 type InitArgs = {
 	Component: any;
@@ -12,24 +12,15 @@ const initView = (args: InitArgs) => {
 		throw new Error("Missing arg Component");
 	}
 
-	return async (context: Context): Promise<void> => {
-		return new Promise((resolve, reject) => {
-			localActions.update({
-				viewInfo: {
-					Component: args.Component,
-					id: args.id,
-					inLeague: !!args.inLeague,
-					context,
-					cb: error => {
-						if (error) {
-							reject(error);
-						} else {
-							resolve();
-						}
-					},
-				},
-			});
-		});
+	return async (context: Context) => {
+		const viewInfo = {
+			Component: args.Component,
+			id: args.id,
+			inLeague: !!args.inLeague,
+			context,
+		};
+
+		await viewManager.fromRouter(viewInfo);
 	};
 };
 

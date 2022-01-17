@@ -191,7 +191,7 @@ export const penalties: {
 	},
 	{
 		name: "illegal check to the head",
-		type: "minor",
+		type: "major",
 		numPerSeason: 25,
 		probPerPossession: 0,
 		cumsumProbPerPossession: 0,

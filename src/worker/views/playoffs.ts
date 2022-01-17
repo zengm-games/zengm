@@ -163,46 +163,52 @@ const updatePlayoffs = async (
 				}
 			}
 		}
-		for (const matchup of series[0]) {
-			if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
-				canEdit = false;
+		if (series.length === 0) {
+			canEdit = false;
+		} else {
+			for (const matchup of series[0]) {
+				if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
+					canEdit = false;
+				}
 			}
 		}
 
 		let teamsToEdit: TeamToEdit[] = [];
 		if (canEdit) {
-			const teamsUnsorted = await idb.getCopies.teamsPlus({
-				attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
-				seasonAttrs: [
-					"cid",
-					"did",
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"winp",
-					"pts",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"otlDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"otlConf",
-				],
-				stats: ["pts", "oppPts", "gp"],
-				season: g.get("season"),
-				active: true,
-				showNoStats: true,
-			});
+			const teamsUnsorted = await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
+					seasonAttrs: [
+						"cid",
+						"did",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"winp",
+						"pts",
+						"wonDiv",
+						"lostDiv",
+						"tiedDiv",
+						"otlDiv",
+						"wonConf",
+						"lostConf",
+						"tiedConf",
+						"otlConf",
+					],
+					stats: ["pts", "oppPts", "gp"],
+					season: g.get("season"),
+					active: true,
+					showNoStats: true,
+				},
+				"noCopyCache",
+			);
 
 			// Sort teams by normal playoff order
 			let teams: typeof teamsUnsorted;
 			if (playoffsByConf) {
 				teams = [];
 				const teamsByConf = groupBy(teamsUnsorted, t => t.seasonAttrs.cid);
-				console.log("teamsByConf", teamsByConf);
 				for (const teamsConf of Object.values(teamsByConf)) {
 					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
 				}

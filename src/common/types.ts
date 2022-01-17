@@ -1,6 +1,5 @@
 import type { Face } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
-import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
 
@@ -440,6 +439,11 @@ export type InjuriesSetting = {
 	games: number;
 }[];
 
+export type TragicDeaths = {
+	reason: string;
+	frequency: number;
+}[];
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -565,6 +569,7 @@ export type GameAttributesLeague = {
 	ties: boolean;
 	tradeDeadline: number;
 	tragicDeathRate: number;
+	tragicDeaths?: TragicDeaths;
 	userTid: number;
 	userTids: number[];
 
@@ -666,7 +671,7 @@ export type GameProcessedCompleted = {
 };
 
 export type League = {
-	lid?: number;
+	lid: number;
 	name: string;
 	tid: number;
 	phaseText: string;
@@ -909,13 +914,6 @@ export type LocalStateUI = {
 	userTid: number;
 	userTids: number[];
 	username?: string;
-	viewInfo?: {
-		Component: any;
-		id: string;
-		inLeague: boolean;
-		context: Context;
-		cb: (a?: Error) => void;
-	};
 	title?: string;
 	hideNewWindow: boolean;
 	jumpTo: boolean;
@@ -937,7 +935,6 @@ export type LocalStateUI = {
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;
 	stickyFormButtons: boolean;
-	stickyMultiTeamMenu: boolean;
 };
 
 export type PartialTopMenu = {
@@ -1053,7 +1050,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	firstName: string;
 	gamesUntilTradable: number;
 	hgt: number;
-	hof: boolean;
+	hof?: 1; // Would rather be boolean, but can't index boolean
 	imgURL: string;
 	injury: PlayerInjury;
 	injuries: {
@@ -1067,6 +1064,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	lastName: string;
 	moodTraits: MoodTrait[];
 	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 	numDaysFreeAgent: number;
 	pid?: number;
 	pos?: string; // Only in players from custom league files
@@ -1120,7 +1118,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	valueNoPot: number;
 	valueFuzz: number;
 	valueNoPotFuzz: number;
-	watch: boolean;
+	watch?: 1; // Would rather be boolean, but can't index boolean
 	weight: number;
 	yearsFreeAgent: number;
 

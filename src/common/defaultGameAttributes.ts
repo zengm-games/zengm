@@ -47,6 +47,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	nextPhase: undefined, // Used only for fantasy draft
 	playerBioInfo: undefined,
 	injuries: undefined,
+	tragicDeaths: undefined,
 	daysLeft: 0, // Used only for free agency
 	gameOver: false,
 	godMode: false,

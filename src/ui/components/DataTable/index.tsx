@@ -93,6 +93,7 @@ export type LegacyDataTableRow = {
 export type Props = {
 	bordered?: boolean;
 	className?: string;
+	clickable?: boolean;
 	cols: Col[];
 	config?: TableConfig;
 	defaultSort?: SortBy;
@@ -141,6 +142,7 @@ const DataTable = (props: Props | LegacyProps) => {
 	const {
 		bordered,
 		className,
+		clickable = true,
 		defaultSort,
 		disableSettingsCache,
 		footer,
@@ -313,10 +315,17 @@ const DataTable = (props: Props | LegacyProps) => {
 		const columns = colOrderFiltered.map(
 			({ colIndex }) => state.cols[colIndex].title,
 		);
+		const colNames = cols.map(col => col.title);
 		const rows = processRows().map(row =>
-			row.data.map(val => getSearchVal(val, false)),
+			row.data.map((val, i) => {
+				const sortType = columns[i].sortType;
+				if (sortType === "currency" || sortType === "number") {
+					return getSortVal(val, sortType, true);
+				}
+				return getSearchVal(val, false);
+			}),
 		);
-		const output = csvFormatRows([columns, ...rows]);
+		const output = csvFormatRows([colNames, ...rows]);
 		downloadFile(`${name}.csv`, output, "text/csv");
 	};
 
@@ -386,7 +395,7 @@ const DataTable = (props: Props | LegacyProps) => {
 	};
 
 	const handlePerPage = (event: SyntheticEvent<HTMLSelectElement>) => {
-		const perPage = parseInt(event.currentTarget.value, 10);
+		const perPage = parseInt(event.currentTarget.value);
 
 		if (!Number.isNaN(perPage) && perPage !== state.perPage) {
 			safeLocalStorage.setItem("perPage", String(perPage));
@@ -532,7 +541,12 @@ const DataTable = (props: Props | LegacyProps) => {
 						/>
 						<tbody>
 							{processedRows.map(row => (
-								<Row key={row.key} cols={state.cols} row={row} />
+								<Row
+									key={row.key}
+									row={row}
+									cols={state.cols}
+									clickable={clickable}
+								/>
 							))}
 						</tbody>
 						<Footer colOrder={colOrderFiltered} footer={footer} />

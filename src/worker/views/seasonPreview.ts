@@ -60,12 +60,18 @@ const updateSeasonPreview = async (
 			"desc",
 		).slice(0, NUM_PLAYERS_TO_SHOW);
 
-		const teamSeasonsCurrent = await idb.getCopies.teamSeasons({
-			season,
-		});
-		const teamSeasonsPrev = await idb.getCopies.teamSeasons({
-			season: season - 1,
-		});
+		const teamSeasonsCurrent = await idb.getCopies.teamSeasons(
+			{
+				season,
+			},
+			"noCopyCache",
+		);
+		const teamSeasonsPrev = await idb.getCopies.teamSeasons(
+			{
+				season: season - 1,
+			},
+			"noCopyCache",
+		);
 
 		const playersByTid = groupBy(players, "tid");
 
@@ -107,8 +113,6 @@ const updateSeasonPreview = async (
 				lastSeason,
 			};
 		});
-
-		console.log(teamSeasons);
 
 		const teamsTop = orderBy(teamSeasons, "ovr", "desc").slice(
 			0,

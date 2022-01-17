@@ -6,6 +6,7 @@ import type {
 	RealPlayerPhotos,
 	RealTeamInfo,
 } from "../../common/types";
+import type { Settings } from "../views/settings";
 import connectIndexedDB from "./connectIndexedDB";
 
 export interface MetaDB extends DBSchema {
@@ -17,14 +18,21 @@ export interface MetaDB extends DBSchema {
 		};
 	};
 	attributes: {
-		value: number | string | Options | RealPlayerPhotos | RealTeamInfo;
+		value:
+			| number
+			| string
+			| Options
+			| RealPlayerPhotos
+			| RealTeamInfo
+			| Partial<Settings>;
 		key:
 			| "lastChangesVersion"
 			| "nagged"
 			| "naggedMailingList"
 			| "options"
 			| "realPlayerPhotos"
-			| "realTeamInfo";
+			| "realTeamInfo"
+			| "defaultSettingsOverrides";
 	};
 	tables: {
 		key: string;
@@ -52,7 +60,7 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 	attributeStore.put("REV_GOES_HERE", "lastChangesVersion");
 };
 
-const migrate = ({
+const migrate = async ({
 	db,
 	oldVersion,
 }: {

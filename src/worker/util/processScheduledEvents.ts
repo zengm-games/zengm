@@ -93,7 +93,7 @@ const processTeamInfo = async (
 			showNotification: false,
 			score: 20,
 		});
-	} else if (info.name && info.name !== old.name) {
+	} else if (info.name !== undefined && info.name !== old.name) {
 		const text = `the ${old.region} ${
 			old.name
 		} are now the <a href="${helpers.leagueUrl([

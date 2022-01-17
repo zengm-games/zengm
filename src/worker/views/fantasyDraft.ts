@@ -7,10 +7,13 @@ const updateFantasyDraft = async (
 	updateEvents: UpdateEvents,
 ) => {
 	if (updateEvents.includes("firstRun")) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "region", "name"],
-			active: true,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid", "abbrev", "region", "name"],
+				active: true,
+			},
+			"noCopyCache",
+		);
 		random.shuffle(teams);
 		return {
 			phase: g.get("phase"),

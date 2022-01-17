@@ -43,18 +43,21 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 		g.get("season"),
 		Math.max(g.get("gracePeriodEnd") - 2, g.get("season") - 9),
 	);
-	const teamSeasons = await idb.getCopies.teamSeasons({
-		tid: g.get("userTid"),
-		seasons: [minSeason, g.get("season")],
-	});
+	const teamSeasons = await idb.getCopies.teamSeasons(
+		{
+			tid: g.get("userTid"),
+			seasons: [minSeason, g.get("season")],
+		},
+		"noCopyCache",
+	);
 	const moods = teamSeasons.map(ts => {
-		return ts.ownerMood
-			? ts.ownerMood
-			: {
-					money: 0,
-					playoffs: 0,
-					wins: 0,
-			  };
+		return (
+			ts.ownerMood ?? {
+				money: 0,
+				playoffs: 0,
+				wins: 0,
+			}
+		);
 	});
 
 	let m = "";

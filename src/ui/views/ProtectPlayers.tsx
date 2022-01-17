@@ -186,8 +186,14 @@ const ProtectPlayers = ({
 				return;
 			}
 		} else if (userTids.length > 1) {
+			const expansionTids = expansionDraft.expansionTids;
+
 			// Check other teams in multi team mode too
 			for (const tid of userTids) {
+				if (expansionTids.includes(tid)) {
+					continue;
+				}
+
 				const protectedPids2 = expansionDraft.protectedPids[tid] || [];
 				const numRemaining2 =
 					expansionDraft.numProtectedPlayers - protectedPids2.length;

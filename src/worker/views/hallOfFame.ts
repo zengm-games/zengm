@@ -26,7 +26,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 		const playersAll = await idb.getCopies.players(
 			{
-				filter: p => p.hof,
+				hof: true,
 			},
 			"noCopyCache",
 		);

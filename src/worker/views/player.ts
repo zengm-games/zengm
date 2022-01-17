@@ -139,7 +139,6 @@ export const getCommon = async (pid?: number, season?: number) => {
 				| "injury"
 				| "injuries"
 				| "college"
-				| "watch"
 				| "relatives"
 				| "awards"
 		  > & {
@@ -168,6 +167,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 				jerseyNumber?: string;
 				experience: number;
 				note?: string;
+				watch: boolean;
 		  })
 		| undefined = await idb.getCopy.playersPlus(pRaw, {
 		attrs: [
@@ -286,7 +286,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 		const ts = await getTeamInfoBySeason(ps.tid, ps.season);
 		let t;
-		if (ts && ts.colors && ts.name && ts.region) {
+		if (ts && ts.colors && ts.name !== undefined && ts.region !== undefined) {
 			t = {
 				tid: ps.tid,
 				colors: ts.colors,
@@ -523,13 +523,19 @@ const updatePlayer = async (
 
 		const eventsAll = orderBy(
 			[
-				...(await idb.getCopies.events({
-					pid: topStuff.pid,
-				})),
+				...(await idb.getCopies.events(
+					{
+						pid: topStuff.pid,
+					},
+					"noCopyCache",
+				)),
 				...(p.draft.dpid !== undefined
-					? await idb.getCopies.events({
-							dpid: p.draft.dpid,
-					  })
+					? await idb.getCopies.events(
+							{
+								dpid: p.draft.dpid,
+							},
+							"noCopyCache",
+					  )
 					: []),
 			],
 			"eid",

@@ -5,14 +5,22 @@ import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
 import type { Col, DataTableRow } from "./index";
 
-const Row = ({ row, cols }: { row: DataTableRow; cols: Col[] }) => {
+const Row = ({
+	row,
+	cols,
+	clickable,
+}: {
+	row: DataTableRow;
+	cols: Col[];
+	clickable?: boolean;
+}) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
 		<tr
 			className={classNames(row.classNames, {
-				"table-warning": clicked,
+				"table-warning": clickable && clicked,
 			})}
-			onClick={toggleClicked}
+			onClick={clickable ? toggleClicked : undefined}
 		>
 			{cols.map((col, i) => {
 				const key: string = col.key || "";

@@ -8,6 +8,7 @@ export { default as checkAccount } from "./checkAccount";
 export { default as checkChanges } from "./checkChanges";
 export { default as checkNaNs } from "./checkNaNs";
 export { default as defaultInjuries } from "./defaultInjuries";
+export { default as defaultTragicDeaths } from "./defaultTragicDeaths";
 export { default as env } from "./env";
 export { default as face } from "./face";
 export { default as formatEventText } from "./formatEventText";

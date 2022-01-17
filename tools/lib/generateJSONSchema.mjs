@@ -1006,6 +1006,21 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "number",
 								minimum: 0,
 							},
+							tragicDeaths: {
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										reason: {
+											type: "string",
+										},
+										frequency: {
+											type: "number",
+										},
+									},
+									required: ["reason", "frequency"],
+								},
+							},
 							userTid: wrap({
 								type: "integer",
 							}),
@@ -1322,7 +1337,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 						},
 						hof: {
-							type: "boolean",
+							oneOf: [
+								{
+									type: "boolean",
+								},
+								{
+									const: 1,
+								},
+							],
 						},
 						imgURL: {
 							type: "string",
@@ -1368,6 +1390,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 						},
 						name: {
 							type: "string",
+						},
+						note: {
+							type: "string",
+						},
+						noteBool: {
+							const: 1,
 						},
 						numDaysFreeAgent: {
 							type: "integer",
@@ -1496,7 +1524,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 						},
 						watch: {
-							type: "boolean",
+							oneOf: [
+								{
+									type: "boolean",
+								},
+								{
+									const: 1,
+								},
+							],
 						},
 						weight: {
 							anyOf: [

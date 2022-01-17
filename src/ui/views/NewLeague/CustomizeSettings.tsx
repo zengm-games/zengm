@@ -17,15 +17,22 @@ const CustomizeSettings = ({
 	realPlayers: boolean;
 }) => {
 	return (
-		<SettingsForm
-			onSave={onSave}
-			saveText={saveText}
-			onCancel={onCancel}
-			{...initial}
-			newLeague
-			hasPlayers={hasPlayers}
-			realPlayers={realPlayers}
-		/>
+		<>
+			<p>
+				Find yourself making the same changes here in every league? Go to Tools
+				&gt; Global Settings &gt; Default New League Settings and set them once
+				for every league you make in the future.
+			</p>
+			<SettingsForm
+				onSave={onSave}
+				saveText={saveText}
+				onCancel={onCancel}
+				initialSettings={initial}
+				newLeague
+				hasPlayers={hasPlayers}
+				realPlayers={realPlayers}
+			/>
+		</>
 	);
 };
 

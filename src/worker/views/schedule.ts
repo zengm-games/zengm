@@ -21,12 +21,15 @@ export const getUpcoming = async ({
 		schedule = schedule.filter(game => game.day === day);
 	}
 
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
-		seasonAttrs: ["won", "lost", "tied", "otl"],
-		season: g.get("season"),
-		active: true,
-	});
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: ["won", "lost", "tied", "otl"],
+			season: g.get("season"),
+			active: true,
+		},
+		"noCopyCache",
+	);
 
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 		0, // Active players have tid >= 0

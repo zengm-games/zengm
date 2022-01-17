@@ -7,7 +7,7 @@ if (process.argv.length < 4) {
 	process.exit(1);
 }
 
-const targetSeason = parseInt(process.argv[2], 10);
+const targetSeason = parseInt(process.argv[2]);
 
 if (Number.isNaN(targetSeason)) {
 	console.error(

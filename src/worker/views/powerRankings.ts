@@ -32,26 +32,29 @@ const updatePowerRankings = async (
 		season !== state.season ||
 		playoffs !== state.playoffs
 	) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "depth"],
-			seasonAttrs: [
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"lastTen",
-				"abbrev",
-				"region",
-				"name",
-				"cid",
-				"did",
-				"imgURL",
-				"imgURLSmall",
-			],
-			stats: ["gp", "mov", "pts", "oppPts"],
-			season,
-			showNoStats: true,
-		});
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid", "depth"],
+				seasonAttrs: [
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"lastTen",
+					"abbrev",
+					"region",
+					"name",
+					"cid",
+					"did",
+					"imgURL",
+					"imgURLSmall",
+				],
+				stats: ["gp", "mov", "pts", "oppPts"],
+				season,
+				showNoStats: true,
+			},
+			"noCopyCache",
+		);
 
 		// Calculate team ovr ratings
 		const teamsWithRankings = await Promise.all(
@@ -106,7 +109,7 @@ const updatePowerRankings = async (
 				// Add estimated MOV from ovr (0/100 to -30/30)
 				const estimatedMOV = ovr * 0.6 - 30;
 				score += estimatedMOV;
-				let winsLastTen = parseInt(t.seasonAttrs.lastTen.split("-")[0], 10);
+				let winsLastTen = parseInt(t.seasonAttrs.lastTen.split("-")[0]);
 
 				if (Number.isNaN(winsLastTen)) {
 					winsLastTen = 0;

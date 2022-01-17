@@ -10,7 +10,7 @@ const setUserTid = async (userTid: number) => {
 };
 
 const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
-	const userTid = parseInt(event.target.value, 10);
+	const userTid = parseInt(event.target.value);
 	await setUserTid(userTid);
 };
 

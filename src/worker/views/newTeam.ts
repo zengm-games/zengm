@@ -19,22 +19,25 @@ const getTeamOvr = async (tid: number) => {
 };
 
 const updateTeamSelect = async () => {
-	const rawTeams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "region", "name", "pop", "imgURL", "cid", "abbrev"],
-		seasonAttrs: [
-			"winp",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"season",
-			"playoffRoundsWon",
-			"revenue",
-		],
-		season: g.get("season"),
-		active: true,
-		addDummySeason: true,
-	});
+	const rawTeams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid", "region", "name", "pop", "imgURL", "cid", "abbrev"],
+			seasonAttrs: [
+				"winp",
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"season",
+				"playoffRoundsWon",
+				"revenue",
+			],
+			season: g.get("season"),
+			active: true,
+			addDummySeason: true,
+		},
+		"noCopyCache",
+	);
 
 	const teamsAll = helpers.addPopRank(rawTeams);
 

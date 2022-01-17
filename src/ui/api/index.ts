@@ -116,7 +116,7 @@ const initAds = (goldUntil: number | undefined) => {
 				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
 				const footer = document.getElementById("main-footer");
 				if (footer) {
-					footer.style.marginBottom = "52px";
+					footer.style.paddingBottom = "52px";
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything
@@ -216,7 +216,7 @@ const mergeGames = (games: LocalStateUI["games"]) => {
 const newLid = async (lid: number) => {
 	const parts = window.location.pathname.split("/");
 
-	if (parts[1] === "l" && parseInt(parts[2], 10) !== lid) {
+	if (parts[1] === "l" && parseInt(parts[2]) !== lid) {
 		parts[2] = String(lid);
 		const newPathname = parts.join("/");
 		await realtimeUpdate(["firstRun"], newPathname);
@@ -292,14 +292,17 @@ const updateLocal = (obj: Partial<LocalStateUI>) => {
 const updateTeamOvrs = (ovrs: number[]) => {
 	const games = local.getState().games;
 
-	// Find upcoming game, it's the only one that needs updating
-	const game = games.find(game => game.teams[0].pts === undefined);
-	if (game) {
-		const { teams } = game;
+	// Find upcoming game, it's the only one that needs updating because it's the only one displayed in a ScoreBox in LeagueTopBar
+	const gameIndex = games.findIndex(game => game.teams[0].pts === undefined);
+	if (gameIndex >= 0) {
+		const { teams } = games[gameIndex];
 		if (
 			teams[0].ovr !== ovrs[teams[0].tid] ||
 			teams[1].ovr !== ovrs[teams[1].tid]
 		) {
+			games[gameIndex] = {
+				...games[gameIndex],
+			};
 			teams[0].ovr = ovrs[teams[0].tid];
 			teams[1].ovr = ovrs[teams[1].tid];
 

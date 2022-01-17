@@ -137,9 +137,12 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	);
 
 	// Add winp, for later
-	const teamSeasons = await idb.getCopies.teamSeasons({
-		season,
-	});
+	const teamSeasons = await idb.getCopies.teamSeasons(
+		{
+			season,
+		},
+		"noCopyCache",
+	);
 	const teamInfos: Record<
 		number,
 		{

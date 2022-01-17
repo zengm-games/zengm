@@ -935,7 +935,6 @@ export type LocalStateUI = {
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;
 	stickyFormButtons: boolean;
-	stickyMultiTeamMenu: boolean;
 };
 
 export type PartialTopMenu = {

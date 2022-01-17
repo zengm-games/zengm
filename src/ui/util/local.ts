@@ -77,7 +77,6 @@ const useLocal = create<LocalStateWithActions>(set => ({
 	moreInfoAbbrev: undefined,
 	moreInfoSeason: undefined,
 	moreInfoTid: undefined,
-	stickyMultiTeamMenu: false,
 	stickyFooterAd: false,
 	stickyFormButtons: false,
 

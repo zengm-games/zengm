@@ -1,4 +1,3 @@
-import { isSport } from "../../../common";
 import { g, helpers } from "../../util";
 
 /**
@@ -19,89 +18,54 @@ const getRookieSalaries = (): number[] => {
 
 	const minContract = g.get("minContract");
 	const maxContract = g.get("maxContract");
+	const draftPickAutoContractPercent = g.get("draftPickAutoContractPercent");
+	const draftPickAutoContractRounds = g.get("draftPickAutoContractRounds");
 
-	if (isSport("hockey")) {
-		const earlySalary = Math.min(2 * minContract, maxContract);
-		const lateSalary = minContract;
-
-		const salaries = [];
-
-		for (let i = 0; i < numActiveTeams * numDraftRounds; i++) {
-			if (i < (numActiveTeams * numDraftRounds) / 2) {
-				salaries.push(earlySalary);
-			} else {
-				salaries.push(lateSalary);
-			}
-		}
-
-		return salaries;
-	}
-
-	// Default for first round
-	const firstRoundRookieSalaries = [
-		5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700,
-		1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000,
-		1000, 1000, 1000, 1000, 1000, 1000,
-	];
-
-	// Default for all subsequent rounds
-	const otherRoundRookieSalaries = [
-		500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-		500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-	];
-
-	while (numActiveTeams > firstRoundRookieSalaries.length) {
-		//add first round contracts on to end of first round
-		firstRoundRookieSalaries.push(1000);
-	}
-
-	while (numActiveTeams < firstRoundRookieSalaries.length) {
-		//remove smallest first round salaries
-		firstRoundRookieSalaries.pop();
-	}
-
-	while (
-		numActiveTeams * (numDraftRounds - 1) >
-		otherRoundRookieSalaries.length
-	) {
-		// Add min contracts on to end
-		otherRoundRookieSalaries.push(500);
-	}
-
-	while (
-		numActiveTeams * (numDraftRounds - 1) <
-		otherRoundRookieSalaries.length
-	) {
-		// Remove smallest salaries
-		otherRoundRookieSalaries.pop();
-	}
-
-	// Combine first round and other rounds
-	const rookieSalaries = firstRoundRookieSalaries.concat(
-		otherRoundRookieSalaries,
+	let firstPickSalary = Math.max(
+		(maxContract * draftPickAutoContractPercent) / 100,
+		minContract,
 	);
-
-	if (minContract !== 500 || maxContract !== 20000) {
-		for (let i = 0; i < rookieSalaries.length; i++) {
-			// Subtract min
-			rookieSalaries[i] -= 500;
-
-			// Scale so max will be 1/4 the max contract
-			rookieSalaries[i] *= (0.25 * maxContract - minContract) / 4500;
-
-			// Add min back
-			rookieSalaries[i] += minContract;
-			rookieSalaries[i] = helpers.roundContract(rookieSalaries[i]);
-
-			rookieSalaries[i] = helpers.bound(
-				rookieSalaries[i],
-				minContract,
-				maxContract,
-			);
-		}
+	if (draftPickAutoContractRounds < 1) {
+		firstPickSalary = minContract;
 	}
 
-	return rookieSalaries;
+	const excessSalary = firstPickSalary - minContract;
+
+	// First third of the first round - use up half of excessSalary. Rest of rounds within draftPickAutoContractRounds - use up the rest
+	const numPlayersHighSlope = Math.round(numActiveTeams / 3);
+	const numPlayersLowSlope =
+		numActiveTeams * Math.min(draftPickAutoContractRounds, numDraftRounds) -
+		numPlayersHighSlope;
+	const numPlayersNoSlope =
+		numActiveTeams * numDraftRounds - numPlayersHighSlope - numPlayersLowSlope;
+
+	const highSlope =
+		numPlayersHighSlope > 1
+			? -(excessSalary / 2) / (numPlayersHighSlope - 1)
+			: -(excessSalary / 2);
+
+	// +1 is so the last pick in the round is not min contract already, but we don't want that if this is going to the last pick on the last round
+	const plusOne = numDraftRounds > draftPickAutoContractRounds ? 1 : 0;
+	const lowSlope =
+		numPlayersLowSlope > 0
+			? -(excessSalary / 2) / (numPlayersLowSlope + plusOne)
+			: 0;
+
+	const salaries = [firstPickSalary];
+
+	for (let i = 1; i < numPlayersHighSlope; i++) {
+		salaries.push(salaries.at(-1) + highSlope);
+	}
+	for (let i = 0; i < numPlayersLowSlope; i++) {
+		salaries.push(salaries.at(-1) + lowSlope);
+	}
+	for (let i = 0; i < numPlayersNoSlope; i++) {
+		salaries.push(minContract);
+	}
+
+	const salariesRounded = salaries.map(salary => helpers.roundContract(salary));
+
+	return salariesRounded;
 };
 
 export default getRookieSalaries;

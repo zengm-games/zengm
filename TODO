@@ -14,16 +14,12 @@ add way to play without salary cap
 - blog
   - salary cap value is still inflation
   - draftPickAutoContract
+    - first 10 picks decline half of the range, rest decline the rest
 
 separate option for rookie contract scale
-- how to specify?
-  - % of max contract for first pick, and something for length of decay (# rounds before all minimum)
-    - first 10 picks decline half of the range, rest decline the rest
-- wrap into version 51 upgrade
-- customize values?
-- note in settings UI that all these settings only matter if auto is enabled
-- test settings
 - test interaction with hard/none cap - should still set contract, but not sign
+  - hockeyRookieOverrides
+    - hockey defaults
 - football: https://old.reddit.com/message/messages/mfpqf1
 - hockey: https://old.reddit.com/message/messages/16ezfwt
 - update

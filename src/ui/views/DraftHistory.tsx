@@ -12,6 +12,7 @@ import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import SeasonIcons from "./Player/SeasonIcons";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
@@ -151,7 +152,7 @@ const DraftHistory = ({
 				>
 					{p.currentAbbrev}
 				</a>,
-				p.currentAge,
+				wrappedAgeAtDeath(p.currentAge, p.ageAtDeath),
 				showRatings ? p.currentOvr : null,
 				showRatings ? p.currentPot : null,
 				<span className="skills-alone">

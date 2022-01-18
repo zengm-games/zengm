@@ -107,9 +107,7 @@ const createRandomPlayers = async ({
 				p.contract.exp = -Infinity;
 			} else {
 				let years;
-				if (isSport("hockey")) {
-					years = 3;
-				} else if (g.get("salaryCapType") === "soft") {
+				if (g.get("draftPickAutoContract")) {
 					years = draft.getRookieContractLength(round);
 				} else {
 					// 2 years for 2nd round, 3 years for 1st round;
@@ -120,7 +118,7 @@ const createRandomPlayers = async ({
 					amount: rookieSalaries[i],
 					exp: g.get("season") - numYearsAgo + years,
 				};
-				if (g.get("salaryCapType") === "soft") {
+				if (g.get("draftPickAutoContract")) {
 					contract.rookie = true;
 				}
 
@@ -187,10 +185,7 @@ const createRandomPlayers = async ({
 		}
 
 		// Keep rookie contract, or no?
-		if (
-			p.contract.exp >= g.get("season") &&
-			g.get("salaryCapType") === "soft"
-		) {
+		if (p.contract.exp >= g.get("season") && g.get("draftPickAutoContract")) {
 			delete p.contract.temp;
 		}
 

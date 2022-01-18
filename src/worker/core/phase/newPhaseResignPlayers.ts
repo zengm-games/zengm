@@ -98,17 +98,14 @@ const newPhaseResignPlayers = async (
 		[
 			"tid",
 			p => {
-				return g.get("salaryCapType") !== "soft" &&
-					p.draft.year === g.get("season")
-					? 1
-					: -1;
+				return p.draft.year === g.get("season") ? 1 : -1;
 			},
 			"value",
 		],
 		["asc", "desc", "desc"],
 	).map(p => p.pid);
 
-	const rookiePids = new Set(
+	const expiredRookieContractPids = new Set(
 		players
 			.filter(p => p.contract.exp <= g.get("season") && p.contract.rookie)
 			.map(p => p.pid),
@@ -125,12 +122,21 @@ const newPhaseResignPlayers = async (
 			continue;
 		}
 
-		if (rookiePids.has(p.pid)) {
+		if (expiredRookieContractPids.has(p.pid)) {
 			p.contract.rookieResign = true;
 		}
 
-		const draftPick =
-			g.get("salaryCapType") !== "soft" && p.draft.year === g.get("season");
+		const draftPick = p.draft.year === g.get("season");
+
+		if (draftPick && !g.get("draftPickAutoContract")) {
+			p.contract.amount /= 2;
+
+			if (p.contract.amount < g.get("minContract")) {
+				p.contract.amount = g.get("minContract");
+			} else {
+				p.contract.amount = helpers.roundContract(p.contract.amount);
+			}
+		}
 
 		if (
 			g.get("userTids").includes(p.tid) &&
@@ -140,16 +146,6 @@ const newPhaseResignPlayers = async (
 			const tid = p.tid;
 
 			player.addToFreeAgents(p);
-
-			if (draftPick) {
-				p.contract.amount /= 2;
-
-				if (p.contract.amount < g.get("minContract")) {
-					p.contract.amount = g.get("minContract");
-				} else {
-					p.contract.amount = helpers.roundContract(p.contract.amount);
-				}
-			}
 
 			await idb.cache.players.put(p);
 			const error = await contractNegotiation.create(p.pid, true, tid);
@@ -198,19 +194,8 @@ const newPhaseResignPlayers = async (
 					reSignPlayer = false;
 				}
 
-				// Always sign rookies, and give them smaller contracts
+				// Always sign rookies
 				if (draftPick) {
-					// Hockey already has rookie salaries set correctly in normalizeContractDemands
-					if (isSport("football")) {
-						contract.amount /= 2;
-
-						if (contract.amount < g.get("minContract")) {
-							contract.amount = g.get("minContract");
-						} else {
-							contract.amount = helpers.roundContract(contract.amount);
-						}
-					}
-
 					reSignPlayer = true;
 				}
 			}
@@ -262,7 +247,7 @@ const newPhaseResignPlayers = async (
 			}
 
 			// Delete rookieResign for AI players, since we're done re-signing them. Leave it for user players.
-			if (rookiePids.has(pid) || p.contract.rookieResign) {
+			if (expiredRookieContractPids.has(pid) || p.contract.rookieResign) {
 				delete p.contract.rookieResign;
 			}
 

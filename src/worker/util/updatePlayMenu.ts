@@ -106,7 +106,7 @@ const updatePlayMenu = async () => {
 		},
 		untilResignPlayers: {
 			label:
-				g.get("salaryCapType") === "hard"
+				g.get("salaryCapType") === "hard" || !g.get("draftPickAutoContract")
 					? "Re-sign players and sign rookies"
 					: "Re-sign players with expiring contracts",
 		},

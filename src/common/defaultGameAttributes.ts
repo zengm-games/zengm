@@ -233,8 +233,6 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				playIn: false,
 				fantasyPoints: "standard",
 				draftPickAutoContract: false,
-				draftPickAutoContractPercent: 0.25,
-				draftPickAutoContractRounds: 3,
 		  }
 		: {};
 
@@ -263,9 +261,9 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
 				playoffsNumTeamsDiv: wrap(3),
 				playIn: false,
-				draftPickAutoContract: false,
-				draftPickAutoContractPercent: 0.25,
+				draftPickAutoContractPercent: 10,
 				draftPickAutoContractRounds: 2,
+				rookieContractLengths: [3],
 		  }
 		: {};
 

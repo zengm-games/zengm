@@ -14,23 +14,17 @@ add way to play without salary cap
 - blog
   - salary cap value is still inflation
   - draftPickAutoContract
+    - when enabled, draft picks are auto signed, but you can release them before the regular season
+      - exception - in hard cap mode, this isn't true, cause it can't auto sign without sometimes going over the cap
+    - when disabled, draft picks need to be explicitly signed to contracts during the re-signing phase
     - first 10 picks decline half of the range, rest decline the rest
 
 separate option for rookie contract scale
-- test interaction with hard/none cap - should still set contract, but not sign
-  - hockeyRookieOverrides
-    - hockey defaults
+- test refuse negotiate
+  - rookie contract flag should be set? does that matter for guaranteed contracts?
 - football: https://old.reddit.com/message/messages/mfpqf1
 - hockey: https://old.reddit.com/message/messages/16ezfwt
 - update
-  - any contract.rookie
-  - // Keep rookie contract, or no?
-  - expiringPids and draftPick in newPhaseResignPlayers
-  - getRookieContractLength and anything that calls it
-  - selectPlayer
-  - createStream "Impute rookie contract status"
-  - NegotiationList title
-  - play menu
   - roster release logic
   - roster release text
 
@@ -48,6 +42,8 @@ minors
 better GameAttribute type
 
 get rid of proptypes
+
+when starting a new league, contracts should be set not based on current state of player, but on state when contract was signed. especially noticable for rookies... with draftPickAutoContract it's sensible now, but without that it should be a much lower contract (newPhaseResignPlayers divides by 2 from the contract deserved for rookie ratings, that's before progs)
 
 sticky first column in most tables
 - https://github.com/twbs/bootstrap/issues/31458

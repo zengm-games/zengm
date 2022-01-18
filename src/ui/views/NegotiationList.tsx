@@ -14,6 +14,7 @@ import { dataTableWrappedMood } from "../components/Mood";
 const NegotiationList = ({
 	capSpace,
 	challengeNoRatings,
+	draftPickAutoContract,
 	maxContract,
 	minContract,
 	numRosterSpots,
@@ -25,7 +26,7 @@ const NegotiationList = ({
 	userPlayers,
 }: View<"negotiationList">) => {
 	const title =
-		salaryCapType !== "soft"
+		salaryCapType === "hard" || !draftPickAutoContract
 			? "Rookies and Expiring Contracts"
 			: "Re-sign Players";
 

@@ -252,10 +252,9 @@ const normalizeContractDemands = async ({
 	}
 	//console.timeEnd("foo");
 
-	const hockeyRookieOverrides =
-		isSport("hockey") && type === "includeExpiringContracts";
+	// See selectPlayer.ts - for hard cap, players are not auto signed, so special logic here
 	let rookieSalaries;
-	if (isSport("hockey") && hockeyRookieOverrides) {
+	if (g.get("draftPickAutoContract") && g.get("salaryCapType") === "hard") {
 		rookieSalaries = draft.getRookieSalaries();
 	}
 
@@ -270,20 +269,15 @@ const normalizeContractDemands = async ({
 			const p = info.p;
 
 			const exp =
-				isSport("hockey") && hockeyRookieOverrides && p.draft.year === season
-					? season + 3
+				rookieSalaries && p.draft.year === season
+					? g.get("season") + draft.getRookieContractLength(p.draft.round)
 					: getExpiration(p, type === "newLeague", nextSeason);
 
 			let amount;
 			if (numRounds === 0) {
 				amount = player.genContract(p, type === "newLeague").amount;
 			} else {
-				if (
-					isSport("hockey") &&
-					rookieSalaries &&
-					hockeyRookieOverrides &&
-					p.draft.year === season
-				) {
+				if (rookieSalaries && p.draft.year === season) {
 					const pickIndex =
 						(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
 					amount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
@@ -313,6 +307,10 @@ const normalizeContractDemands = async ({
 				amount,
 				exp,
 			};
+
+			if (rookieSalaries && p.draft.year === season) {
+				p.contract.rookie = true;
+			}
 
 			await idb.cache.players.put(p);
 		}

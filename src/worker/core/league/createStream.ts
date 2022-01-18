@@ -238,7 +238,7 @@ const preProcess = async (
 		// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts
 		if (
 			p.tid >= 0 &&
-			g.get("salaryCapType") === "soft" &&
+			g.get("draftPickAutoContract") &&
 			(!x.contract || !hasRookieContracts)
 		) {
 			const rookieContractLength = draft.getRookieContractLength(p.draft.round);

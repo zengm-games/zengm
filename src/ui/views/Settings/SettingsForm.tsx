@@ -335,7 +335,6 @@ const SettingsForm = ({
 					const partnerOption = settings.find(
 						setting => setting.key === partner,
 					);
-					console.log(partner, partnerOption);
 					if (partnerOption) {
 						options.push(partnerOption);
 					}

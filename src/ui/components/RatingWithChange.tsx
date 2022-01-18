@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 
 const RatingWithChange = ({
 	change,
@@ -25,11 +24,6 @@ const RatingWithChange = ({
 			) : null}
 		</>
 	);
-};
-
-RatingWithChange.propTypes = {
-	change: PropTypes.number.isRequired,
-	children: PropTypes.number.isRequired,
 };
 
 export default RatingWithChange;

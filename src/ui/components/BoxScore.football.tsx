@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, processPlayerStats } from "../util";
@@ -186,11 +185,6 @@ const StatsTable = ({
 		</>
 	);
 };
-StatsTable.propTypes = {
-	boxScore: PropTypes.object.isRequired,
-	Row: PropTypes.any,
-	type: PropTypes.string.isRequired,
-};
 
 // Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
@@ -356,12 +350,6 @@ const ScoringSummary = memo(
 	},
 );
 
-// @ts-ignore
-ScoringSummary.propTypes = {
-	events: PropTypes.array.isRequired,
-	teams: PropTypes.array.isRequired,
-};
-
 const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 	return (
 		<div className="mb-3">
@@ -393,11 +381,6 @@ const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 			))}
 		</div>
 	);
-};
-
-BoxScore.propTypes = {
-	boxScore: PropTypes.object.isRequired,
-	Row: PropTypes.any,
 };
 
 export default BoxScore;

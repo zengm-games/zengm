@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import {
 	memo,
 	ReactNode,
@@ -28,10 +27,6 @@ const getText = (text: MenuItemLink["text"]) => {
 const MenuGroup = ({ children }: { children: ReactNode }) => (
 	<ul className="nav flex-column">{children}</ul>
 );
-
-MenuGroup.propTypes = {
-	children: PropTypes.any.isRequired,
-};
 
 const makeAnchorProps = (
 	menuItem: MenuItemLink,
@@ -302,10 +297,5 @@ const SideBar = memo(({ pageID }: Props) => {
 		</>
 	);
 });
-
-// @ts-ignore
-SideBar.propTypes = {
-	pageID: PropTypes.string,
-};
 
 export default SideBar;

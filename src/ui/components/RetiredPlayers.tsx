@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { isSport } from "../../common";
 import { helpers } from "../util";
 
@@ -70,12 +69,6 @@ const RetiredPlayers = ({
 			</p>
 		</>
 	);
-};
-
-RetiredPlayers.propTypes = {
-	retiredPlayers: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default RetiredPlayers;

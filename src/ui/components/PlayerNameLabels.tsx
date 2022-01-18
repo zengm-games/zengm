@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { ReactNode } from "react";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
@@ -54,20 +53,6 @@ const PlayerNameLabels = (props: {
 			) : null}
 		</span>
 	);
-};
-
-PlayerNameLabels.propTypes = {
-	children: PropTypes.any,
-	injury: PropTypes.shape({
-		gamesRemaining: PropTypes.number.isRequired,
-		type: PropTypes.string.isRequired,
-	}),
-	jerseyNumber: PropTypes.string,
-	pos: PropTypes.string,
-	pid: PropTypes.number,
-	skills: PropTypes.arrayOf(PropTypes.string),
-	style: PropTypes.object,
-	watch: PropTypes.bool,
 };
 
 export default PlayerNameLabels;

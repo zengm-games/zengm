@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 import {
 	DataTable,
@@ -175,12 +174,6 @@ const DraftClass = ({
 			/>
 		</>
 	);
-};
-
-DraftClass.propTypes = {
-	offset: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.number.isRequired,
 };
 
 export default DraftClass;

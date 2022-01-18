@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -125,15 +124,6 @@ const PlayerRatings = ({
 			/>
 		</>
 	);
-};
-
-PlayerRatings.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	currentSeason: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerRatings;

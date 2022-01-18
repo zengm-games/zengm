@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -17,14 +16,6 @@ const PlayerName = ({
 	}
 
 	return <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>;
-};
-PlayerName.propTypes = {
-	p: PropTypes.shape({
-		abbrev: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-		pid: PropTypes.number.isRequired,
-		tid: PropTypes.number.isRequired,
-	}),
 };
 
 const PlayerTeam = ({
@@ -46,13 +37,6 @@ const PlayerTeam = ({
 			{p.abbrev}
 		</a>
 	);
-};
-PlayerTeam.propTypes = {
-	p: PropTypes.shape({
-		abbrev: PropTypes.string.isRequired,
-		tid: PropTypes.number.isRequired,
-	}),
-	season: PropTypes.number.isRequired,
 };
 
 const resultText = ({
@@ -120,13 +104,6 @@ const ResultText = ({
 			{overtimeText}
 		</>
 	);
-};
-ResultText.propTypes = {
-	gid: PropTypes.number,
-	overtimes: PropTypes.number,
-	score: PropTypes.arrayOf(PropTypes.number),
-	season: PropTypes.number.isRequired,
-	teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
@@ -303,11 +280,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			/>
 		</>
 	);
-};
-
-AllStarHistory.propTypes = {
-	allAllStars: PropTypes.arrayOf(PropTypes.object).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default AllStarHistory;

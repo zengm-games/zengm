@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback } from "react";
 import { helpers } from "../util";
 type Props = {
@@ -37,12 +36,6 @@ const NewWindowLink = ({ parts }: Props) => {
 			<path d="M10 263h213M1 60h60M213 220v46" strokeWidth="20" />
 		</svg>
 	);
-};
-
-NewWindowLink.propTypes = {
-	parts: PropTypes.arrayOf(
-		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	),
 };
 
 export default NewWindowLink;

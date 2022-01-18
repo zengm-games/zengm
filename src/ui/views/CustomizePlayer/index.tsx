@@ -1,5 +1,4 @@
 import orderBy from "lodash-es/orderBy";
-import PropTypes from "prop-types";
 import { useState, FormEvent, ChangeEvent, MouseEvent, ReactNode } from "react";
 import {
 	PHASE,
@@ -1075,21 +1074,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			</form>
 		</>
 	);
-};
-
-CustomizePlayer.propTypes = {
-	appearanceOption: PropTypes.oneOf(["Cartoon Face", "Image URL"]),
-	originalTid: PropTypes.number,
-	minContract: PropTypes.number,
-	phase: PropTypes.number,
-	p: PropTypes.object,
-	season: PropTypes.number,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			text: PropTypes.string.isRequired,
-			tid: PropTypes.number.isRequired,
-		}),
-	),
 };
 
 export default CustomizePlayer;

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
 
@@ -310,31 +309,6 @@ const PlayoffMatchup = ({
 			/>
 		</ul>
 	);
-};
-
-PlayoffMatchup.propTypes = {
-	expandTeamNames: PropTypes.bool,
-	numGamesToWinSeries: PropTypes.number,
-	season: PropTypes.number.isRequired,
-	series: PropTypes.shape({
-		away: PropTypes.shape({
-			abbrev: PropTypes.string.isRequired,
-			region: PropTypes.string.isRequired,
-			seed: PropTypes.number.isRequired,
-			tid: PropTypes.number.isRequired,
-			pts: PropTypes.number,
-			won: PropTypes.number,
-		}),
-		home: PropTypes.shape({
-			abbrev: PropTypes.string.isRequired,
-			region: PropTypes.string.isRequired,
-			seed: PropTypes.number.isRequired,
-			tid: PropTypes.number.isRequired,
-			pts: PropTypes.number,
-			won: PropTypes.number,
-		}),
-	}),
-	userTid: PropTypes.number.isRequired,
 };
 
 export default PlayoffMatchup;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { View } from "../../../common/types";
 import { confirm, toWorker } from "../../util";
 
@@ -103,10 +102,6 @@ const InstructionsAndSortButtons = ({
 			) : null}
 		</>
 	);
-};
-
-InstructionsAndSortButtons.propTypes = {
-	editable: PropTypes.bool.isRequired,
 };
 
 export default InstructionsAndSortButtons;

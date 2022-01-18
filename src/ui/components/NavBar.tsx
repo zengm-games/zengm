@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Nav, Navbar, OverlayTrigger, Popover } from "react-bootstrap";
 import { GAME_NAME, PHASE } from "../../common";
 import {
@@ -176,10 +175,6 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 			</Nav>
 		</Navbar>
 	);
-};
-
-NavBar.propTypes = {
-	updating: PropTypes.bool.isRequired,
 };
 
 export default NavBar;

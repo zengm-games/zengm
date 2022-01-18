@@ -1,5 +1,4 @@
 import createDOMPurify from "dompurify";
-import PropTypes from "prop-types";
 const DOMPurify = createDOMPurify(window);
 DOMPurify.setConfig({ ADD_ATTR: ["target"] });
 
@@ -19,10 +18,6 @@ const SafeHtml = ({
 			}}
 		/>
 	);
-};
-
-SafeHtml.propTypes = {
-	dirty: PropTypes.string.isRequired,
 };
 
 export default SafeHtml;

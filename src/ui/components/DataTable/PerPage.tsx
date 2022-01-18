@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { SyntheticEvent } from "react";
 
 const PerPage = ({
@@ -25,11 +24,6 @@ const PerPage = ({
 			</label>
 		</div>
 	);
-};
-
-PerPage.propTypes = {
-	onChange: PropTypes.func.isRequired,
-	value: PropTypes.number.isRequired,
 };
 
 export default PerPage;

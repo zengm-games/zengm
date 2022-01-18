@@ -1,6 +1,5 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
-import PropTypes from "prop-types";
 import { useState, useReducer, useRef } from "react";
 import {
 	DIFFICULTY,
@@ -1478,13 +1477,6 @@ const NewLeague = (props: View<"newLeague">) => {
 			)}
 		</AnimatePresence>
 	);
-};
-
-NewLeague.propTypes = {
-	difficulty: PropTypes.number,
-	lid: PropTypes.number,
-	name: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired,
 };
 
 export default NewLeague;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, SafeHtml } from "../components";
@@ -106,12 +105,6 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 			/>
 		</>
 	);
-};
-
-TragicDeaths.propTypes = {
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default TragicDeaths;

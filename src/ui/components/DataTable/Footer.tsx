@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 
 const Footer = ({
 	colOrder,
@@ -45,10 +44,6 @@ const Footer = ({
 			))}
 		</tfoot>
 	);
-};
-
-Footer.propTypes = {
-	footer: PropTypes.array,
 };
 
 export default Footer;

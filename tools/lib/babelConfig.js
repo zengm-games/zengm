@@ -3,15 +3,7 @@
 const babelPluginSportFunctions = require("../babel-plugin-sport-functions");
 
 module.exports = legacy => {
-	const plugins = [
-		babelPluginSportFunctions,
-		[
-			"transform-react-remove-prop-types",
-			{
-				removeImport: true,
-			},
-		],
-	];
+	const plugins = [babelPluginSportFunctions];
 
 	if (legacy) {
 		plugins.push(

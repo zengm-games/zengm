@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { bySport } from "../../common";
 
 const tooltips = bySport({
@@ -63,11 +62,6 @@ const SkillsBlock = ({
 			))}
 		</span>
 	);
-};
-
-SkillsBlock.propTypes = {
-	className: PropTypes.string,
-	skills: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default SkillsBlock;

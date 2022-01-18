@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "react-bootstrap";
@@ -72,10 +71,6 @@ const Confirm = confirmable(
 		);
 	},
 );
-Confirm.propTypes = {
-	confirmation: PropTypes.string.isRequired,
-	defaultValue: PropTypes.string,
-};
 
 const confirmFunction = createConfirmation(Confirm);
 

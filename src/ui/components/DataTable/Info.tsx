@@ -1,5 +1,3 @@
-import PropTypes from "prop-types";
-
 const Info = ({
 	end,
 	numRows,
@@ -21,13 +19,6 @@ const Info = ({
 			{filteredText}
 		</div>
 	);
-};
-
-Info.propTypes = {
-	end: PropTypes.number.isRequired,
-	numRows: PropTypes.number.isRequired,
-	numRowsUnfiltered: PropTypes.number.isRequired,
-	start: PropTypes.number.isRequired,
 };
 
 export default Info;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import { DataTable, PlayerNameLabels } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -125,19 +124,6 @@ const PlayersTable = ({
 			rows={rows}
 		/>
 	);
-};
-
-PlayersTable.propTypes = {
-	draftType: PropTypes.oneOf(["auto", "user"]).isRequired,
-	name: PropTypes.string.isRequired,
-	onDraft: PropTypes.func,
-	pidsAdd: PropTypes.arrayOf(PropTypes.number),
-	pidsRemove: PropTypes.arrayOf(PropTypes.number),
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	remaining: PropTypes.arrayOf(PropTypes.object),
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
-	usersTurn: PropTypes.bool,
 };
 
 const wait = (ms: number) => {
@@ -383,15 +369,6 @@ const AllStars = ({
 			</div>
 		</>
 	);
-};
-
-AllStars.propTypes = {
-	finalized: PropTypes.bool.isRequired,
-	remaining: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-	teams: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
-	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default AllStars;

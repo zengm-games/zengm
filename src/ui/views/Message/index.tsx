@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import OwnerMoodsChart from "./OwnerMoodsChart";
 import { SafeHtml } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -40,16 +39,6 @@ const Message = ({ message }: View<"message">) => {
 			</p>
 		</>
 	);
-};
-
-Message.propTypes = {
-	message: PropTypes.shape({
-		from: PropTypes.string.isRequired,
-		text: PropTypes.string.isRequired,
-		year: PropTypes.number.isRequired,
-		subject: PropTypes.string,
-		ownerMoods: PropTypes.array,
-	}),
 };
 
 export default Message;

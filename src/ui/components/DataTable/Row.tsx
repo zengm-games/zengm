@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
@@ -79,12 +78,6 @@ const Row = ({
 			})}
 		</tr>
 	);
-};
-
-Row.propTypes = {
-	row: PropTypes.shape({
-		data: PropTypes.array.isRequired,
-	}).isRequired,
 };
 
 export default Row;

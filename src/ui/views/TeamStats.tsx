@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { ReactNode } from "react";
 import { getCols, gradientStyleFactory, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
@@ -215,25 +214,6 @@ const TeamStats = ({
 			/>
 		</>
 	);
-};
-
-TeamStats.propTypes = {
-	allStats: PropTypes.object.isRequired,
-	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
-	season: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	superCols: PropTypes.array,
-	teamOpponent: PropTypes.oneOf([
-		"advanced",
-		"opponent",
-		"team",
-		"teamShotLocations",
-		"opponentShotLocations",
-	]).isRequired,
-	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
-	otl: PropTypes.bool.isRequired,
-	ties: PropTypes.bool.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default TeamStats;

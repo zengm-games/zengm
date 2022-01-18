@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { bySport } from "../../../common";
@@ -41,15 +40,6 @@ const Leader = ({
 	);
 };
 
-Leader.propTypes = {
-	abbrev: PropTypes.string,
-	name: PropTypes.string.isRequired,
-	pid: PropTypes.number.isRequired,
-	stat: PropTypes.string.isRequired,
-	tid: PropTypes.number,
-	value: PropTypes.number.isRequired,
-};
-
 const Leaders = ({
 	leagueLeaders,
 	teamLeaders,
@@ -73,10 +63,5 @@ const Leaders = ({
 		</p>
 	</>
 );
-
-Leaders.propTypes = {
-	leagueLeaders: PropTypes.arrayOf(PropTypes.object).isRequired,
-	teamLeaders: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
 
 export default Leaders;

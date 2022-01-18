@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
@@ -26,10 +25,6 @@ const TeamNameLink = ({
 	) : (
 		<>{children}</>
 	);
-};
-TeamNameLink.propTypes = {
-	season: PropTypes.number.isRequired,
-	t: PropTypes.object.isRequired,
 };
 
 const TeamLogo = ({
@@ -118,9 +113,6 @@ const HeadlineScore = ({ boxScore }: any) => {
 		</>
 	);
 };
-HeadlineScore.propTypes = {
-	boxScore: PropTypes.object.isRequired,
-};
 
 const FourFactors = ({ teams }: { teams: any[] }) => {
 	return (
@@ -170,9 +162,6 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 			</tbody>
 		</table>
 	);
-};
-FourFactors.propTypes = {
-	teams: PropTypes.array.isRequired,
 };
 
 const NextButton = ({
@@ -271,12 +260,6 @@ const NextButton = ({
 			)}
 		</div>
 	);
-};
-NextButton.propTypes = {
-	abbrev: PropTypes.string,
-	boxScore: PropTypes.object.isRequired,
-	currentGidInList: PropTypes.bool,
-	nextGid: PropTypes.number,
 };
 
 const DetailedScore = ({
@@ -385,16 +368,6 @@ const DetailedScore = ({
 			) : null}
 		</div>
 	);
-};
-
-DetailedScore.propTypes = {
-	abbrev: PropTypes.string,
-	boxScore: PropTypes.object.isRequired,
-	currentGidInList: PropTypes.bool,
-	nextGid: PropTypes.number,
-	prevGid: PropTypes.number,
-	showNextPrev: PropTypes.bool,
-	tid: PropTypes.number,
 };
 
 const PlayoffRecord = ({
@@ -613,17 +586,6 @@ const BoxScoreWrapper = ({
 			{forcedWinText}
 		</>
 	);
-};
-
-BoxScoreWrapper.propTypes = {
-	abbrev: PropTypes.string,
-	boxScore: PropTypes.object.isRequired,
-	currentGidInList: PropTypes.bool,
-	nextGid: PropTypes.number,
-	prevGid: PropTypes.number,
-	showNextPrev: PropTypes.bool,
-	tid: PropTypes.number,
-	Row: PropTypes.any,
 };
 
 export default BoxScoreWrapper;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
@@ -95,12 +94,6 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 			/>
 		</>
 	);
-};
-
-HallOfFame.propTypes = {
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default HallOfFame;

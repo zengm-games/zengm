@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { helpers } from "../util";
 
 const RecordAndPlayoffs = ({
@@ -75,20 +74,6 @@ const RecordAndPlayoffs = ({
 			{extraText}
 		</span>
 	);
-};
-
-RecordAndPlayoffs.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	lost: PropTypes.number.isRequired,
-	numConfs: PropTypes.number,
-	numPlayoffRounds: PropTypes.number,
-	option: PropTypes.oneOf(["noSeason"]),
-	playoffRoundsWon: PropTypes.number,
-	season: PropTypes.number.isRequired,
-	style: PropTypes.object,
-	tid: PropTypes.number.isRequired,
-	tied: PropTypes.number,
-	won: PropTypes.number.isRequired,
 };
 
 export default RecordAndPlayoffs;

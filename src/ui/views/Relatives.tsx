@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
@@ -160,13 +159,6 @@ const Relatives = ({
 			/>
 		</>
 	);
-};
-
-Relatives.propTypes = {
-	pid: PropTypes.number,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default Relatives;

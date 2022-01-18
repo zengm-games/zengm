@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { memo, useCallback, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
@@ -40,13 +39,6 @@ const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
 	);
 };
 
-TopMenuToggle.propTypes = {
-	long: PropTypes.string.isRequired,
-	openID: PropTypes.string,
-	short: PropTypes.string.isRequired,
-	toggle: PropTypes.func,
-};
-
 const TopMenuDropdown = ({
 	children,
 	hideTitle,
@@ -81,15 +73,6 @@ const TopMenuDropdown = ({
 			</Dropdown.Menu>
 		</Dropdown>
 	);
-};
-
-TopMenuDropdown.propTypes = {
-	children: PropTypes.any,
-	long: PropTypes.string.isRequired,
-	hideTitle: PropTypes.bool,
-	onToggle: PropTypes.func.isRequired,
-	openID: PropTypes.string,
-	short: PropTypes.string.isRequired,
 };
 
 const getText = (text: MenuItemLink["text"]) => {
@@ -291,14 +274,5 @@ const DropdownLinks = memo(
 		);
 	},
 );
-
-// @ts-ignore
-DropdownLinks.propTypes = {
-	className: PropTypes.string,
-	godMode: PropTypes.bool,
-	hideTitle: PropTypes.bool,
-	lid: PropTypes.number,
-	menuItems: PropTypes.array.isRequired,
-};
 
 export default DropdownLinks;

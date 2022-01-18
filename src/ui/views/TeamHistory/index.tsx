@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../../hooks/useTitleBar";
 import type { View } from "../../../common/types";
 import Overall from "./Overall";
@@ -78,41 +77,6 @@ const TeamHistory = ({
 			</div>
 		</>
 	);
-};
-
-TeamHistory.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	bestRecord: PropTypes.shape({
-		lost: PropTypes.number.isRequired,
-		playoffRoundsWon: PropTypes.number.isRequired,
-		season: PropTypes.number.isRequired,
-		tied: PropTypes.number,
-		won: PropTypes.number.isRequired,
-	}).isRequired,
-	championships: PropTypes.number.isRequired,
-	history: PropTypes.arrayOf(
-		PropTypes.shape({
-			lost: PropTypes.number.isRequired,
-			playoffRoundsWon: PropTypes.number.isRequired,
-			season: PropTypes.number.isRequired,
-			tied: PropTypes.number,
-			won: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	playoffAppearances: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	tid: PropTypes.number.isRequired,
-	totalLost: PropTypes.number.isRequired,
-	totalTied: PropTypes.number,
-	totalWon: PropTypes.number.isRequired,
-	worstRecord: PropTypes.shape({
-		lost: PropTypes.number.isRequired,
-		playoffRoundsWon: PropTypes.number.isRequired,
-		season: PropTypes.number.isRequired,
-		tied: PropTypes.number,
-		won: PropTypes.number.isRequired,
-	}).isRequired,
 };
 
 export default TeamHistory;

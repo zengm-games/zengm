@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { BoxPlot, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
@@ -55,11 +54,6 @@ const PlayerRatingDists = ({
 			</table>
 		</>
 	);
-};
-
-PlayerRatingDists.propTypes = {
-	ratingsAll: PropTypes.object.isRequired,
-	season: PropTypes.number.isRequired,
 };
 
 export default PlayerRatingDists;

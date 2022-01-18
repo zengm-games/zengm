@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { CSSProperties } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
@@ -291,13 +290,6 @@ const BarGraph = (props: Props) => {
 			{bars}
 		</div>
 	);
-};
-
-BarGraph.propTypes = {
-	data: PropTypes.array,
-	labels: PropTypes.array,
-	tooltipCb: PropTypes.func,
-	ylim: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default BarGraph;

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { forwardRef, RefObject, useCallback, useEffect, useState } from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
@@ -194,11 +193,6 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 			toggle={toggle}
 		/>
 	);
-};
-
-RatingsStatsPopover.propTypes = {
-	pid: PropTypes.number.isRequired,
-	watch: PropTypes.bool,
 };
 
 export default RatingsStatsPopover;

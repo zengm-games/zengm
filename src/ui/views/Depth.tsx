@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { Fragment, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
@@ -339,16 +338,6 @@ const Depth = ({
 			/>
 		</>
 	);
-};
-
-Depth.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	editable: PropTypes.bool.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	pos: PropTypes.string.isRequired,
-	season: PropTypes.number.isRequired,
-	ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Depth;

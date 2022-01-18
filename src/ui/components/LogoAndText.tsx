@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { memo } from "react";
 import { GAME_NAME } from "../../common";
 
@@ -32,12 +31,5 @@ const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
 		</a>
 	);
 });
-
-// @ts-ignore
-LogoAndText.propTypes = {
-	gold: PropTypes.bool,
-	inLeague: PropTypes.bool,
-	updating: PropTypes.bool.isRequired,
-};
 
 export default LogoAndText;

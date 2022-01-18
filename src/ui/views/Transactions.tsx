@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { MoreLinks, SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
@@ -49,26 +48,6 @@ const Transactions = ({
 			</ul>
 		</>
 	);
-};
-
-Transactions.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	eventType: PropTypes.oneOf([
-		"all",
-		"draft",
-		"freeAgent",
-		"reSigned",
-		"release",
-		"trade",
-	]).isRequired,
-	events: PropTypes.arrayOf(
-		PropTypes.shape({
-			eid: PropTypes.number.isRequired,
-			text: PropTypes.string.isRequired,
-		}),
-	).isRequired,
-	season: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-	tid: PropTypes.number.isRequired,
 };
 
 export default Transactions;

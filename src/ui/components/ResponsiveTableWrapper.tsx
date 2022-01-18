@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 type Props = {
 	className?: string | null;
 	children: any;
@@ -21,11 +20,6 @@ const ResponsiveTableWrapper = ({ className, children, nonfluid }: Props) => {
 			{children}
 		</div>
 	);
-};
-
-ResponsiveTableWrapper.propTypes = {
-	className: PropTypes.string,
-	nonfluid: PropTypes.bool,
 };
 
 export default ResponsiveTableWrapper;

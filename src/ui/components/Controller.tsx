@@ -1,5 +1,4 @@
 import { LazyMotion } from "framer-motion";
-import PropTypes from "prop-types";
 import { memo, useCallback, useEffect } from "react";
 import { localActions, useLocalShallow } from "../util";
 import ErrorBoundary from "./ErrorBoundary";
@@ -31,11 +30,6 @@ const LeagueContent = memo(
 		return nextProps.updating;
 	},
 );
-
-// @ts-ignore
-LeagueContent.propTypes = {
-	updating: PropTypes.bool.isRequired,
-};
 
 const minHeight100 = {
 	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason

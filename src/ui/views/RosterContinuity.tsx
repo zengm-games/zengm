@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, gradientStyleFactory } from "../util";
@@ -68,12 +67,6 @@ const RosterContinuity = ({
 			/>
 		</>
 	);
-};
-
-RosterContinuity.propTypes = {
-	abbrevs: PropTypes.arrayOf(PropTypes.string).isRequired,
-	season: PropTypes.number.isRequired,
-	seasons: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
 };
 
 export default RosterContinuity;

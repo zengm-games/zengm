@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 
@@ -16,13 +15,6 @@ const TeamStat = ({
 	);
 };
 
-TeamStat.propTypes = {
-	name: PropTypes.string.isRequired,
-	rank: PropTypes.number.isRequired,
-	stat: PropTypes.string.isRequired,
-	value: PropTypes.number.isRequired,
-};
-
 const TeamStats = ({
 	teamStats,
 }: Pick<View<"leagueDashboard">, "teamStats">) => (
@@ -36,16 +28,5 @@ const TeamStats = ({
 		</p>
 	</>
 );
-
-TeamStats.propTypes = {
-	teamStats: PropTypes.arrayOf(
-		PropTypes.shape({
-			name: PropTypes.string.isRequired,
-			rank: PropTypes.number.isRequired,
-			stat: PropTypes.string.isRequired,
-			value: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-};
 
 export default TeamStats;

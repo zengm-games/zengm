@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import type { SyntheticEvent, MouseEvent } from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
@@ -38,16 +37,6 @@ const FilterHeader = ({
 			})}
 		</tr>
 	);
-};
-
-FilterHeader.propTypes = {
-	cols: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: PropTypes.string.isRequired,
-		}),
-	).isRequired,
-	filters: PropTypes.arrayOf(PropTypes.string).isRequired,
-	handleFilterUpdate: PropTypes.func.isRequired,
 };
 
 const SuperCols = ({
@@ -186,33 +175,6 @@ const Header = ({
 			) : null}
 		</thead>
 	);
-};
-
-Header.propTypes = {
-	cols: PropTypes.arrayOf(
-		PropTypes.shape({
-			desc: PropTypes.string,
-			sortSequence: PropTypes.arrayOf(PropTypes.string),
-			title: PropTypes.string.isRequired,
-			width: PropTypes.string,
-		}),
-	).isRequired,
-	enableFilters: PropTypes.bool.isRequired,
-	filters: PropTypes.arrayOf(PropTypes.string).isRequired,
-	handleColClick: PropTypes.func.isRequired,
-	handleFilterUpdate: PropTypes.func.isRequired,
-	sortBys: PropTypes.arrayOf(
-		PropTypes.arrayOf(
-			PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-		),
-	).isRequired,
-	superCols: PropTypes.arrayOf(
-		PropTypes.shape({
-			colspan: PropTypes.number.isRequired,
-			desc: PropTypes.string,
-			title: PropTypes.any.isRequired,
-		}),
-	),
 };
 
 export default Header;

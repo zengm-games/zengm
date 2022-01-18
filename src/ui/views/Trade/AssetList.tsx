@@ -1,5 +1,4 @@
 import range from "lodash-es/range";
-import PropTypes from "prop-types";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
@@ -262,14 +261,6 @@ const AssetList = ({
 			</div>
 		</div>
 	);
-};
-
-AssetList.propTypes = {
-	handleToggle: PropTypes.func.isRequired,
-	picks: PropTypes.array.isRequired,
-	roster: PropTypes.array.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userOrOther: PropTypes.oneOf(["other", "user"]).isRequired,
 };
 
 export default AssetList;

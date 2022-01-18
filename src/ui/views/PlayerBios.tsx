@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { CountryFlag, DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -160,15 +159,6 @@ const PlayerBios = ({
 			/>
 		</>
 	);
-};
-
-PlayerBios.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	currentSeason: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerBios;

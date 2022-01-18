@@ -1,5 +1,4 @@
 import findLast from "lodash-es/findLast";
-import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
@@ -147,12 +146,6 @@ const Select = ({
 			</select>
 		</div>
 	);
-};
-
-Select.propTypes = {
-	field: PropTypes.string.isRequired,
-	handleChange: PropTypes.func.isRequired,
-	value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 };
 
 type Props = {

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
 	DataTable,
 	DraftAbbrev,
@@ -191,14 +190,6 @@ const DraftTeamHistory = ({
 			/>
 		</>
 	);
-};
-
-DraftTeamHistory.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	draftType: PropTypes.string.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userAbbrev: PropTypes.string.isRequired,
 };
 
 export default DraftTeamHistory;

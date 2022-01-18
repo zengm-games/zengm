@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash-es/orderBy";
-import PropTypes from "prop-types";
 import {
 	SyntheticEvent,
 	MouseEvent,
@@ -517,24 +516,6 @@ const DataTable = ({
 			</div>
 		</>
 	);
-};
-
-DataTable.propTypes = {
-	bordered: PropTypes.bool,
-	className: PropTypes.string,
-	cols: PropTypes.array.isRequired,
-	defaultSort: PropTypes.arrayOf(
-		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	).isRequired,
-	disableSettingsCache: PropTypes.bool,
-	footer: PropTypes.array,
-	name: PropTypes.string.isRequired,
-	nonfluid: PropTypes.bool,
-	hideAllControls: PropTypes.bool,
-	pagination: PropTypes.bool,
-	rows: PropTypes.arrayOf(PropTypes.object).isRequired,
-	small: PropTypes.bool,
-	superCols: PropTypes.array,
 };
 
 export default DataTable;

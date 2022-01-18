@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, ChangeEvent, useRef } from "react";
 import { bySport, isSport, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
@@ -198,18 +197,6 @@ const MultiTeamMode = ({
 			</div>
 		</>
 	);
-};
-
-MultiTeamMode.propTypes = {
-	phase: PropTypes.number.isRequired,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			name: PropTypes.string.isRequired,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	userTid: PropTypes.number.isRequired,
-	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default MultiTeamMode;

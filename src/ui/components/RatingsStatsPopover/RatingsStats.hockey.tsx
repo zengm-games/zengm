@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { gradientStyleFactory } from "../../util";
 import type { RatingKey } from "../../../common/types.hockey";
 
@@ -108,11 +107,6 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 			{statsBlock}
 		</>
 	);
-};
-
-RatingsStats.propTypes = {
-	ratings: PropTypes.object,
-	stats: PropTypes.object,
 };
 
 export default RatingsStats;

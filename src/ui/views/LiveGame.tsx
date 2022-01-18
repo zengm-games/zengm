@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import {
 	Component,
 	ChangeEvent,
@@ -69,11 +68,6 @@ class PlayerRow extends Component<PlayerRowProps> {
 		return <BoxScoreRow className={classes} p={p} {...props} />;
 	}
 }
-
-// @ts-ignore
-PlayerRow.propTypes = {
-	p: PropTypes.object.isRequired,
-};
 
 const updatePhaseAndLeagueTopBar = () => {
 	// Send to worker, rather than doing `localActions.update({ liveGameInProgress: false });`, so it works in all tabs
@@ -572,23 +566,10 @@ const LiveGame = (props: View<"liveGame">) => {
 	);
 };
 
-// @ts-ignore
-LiveGame.propTypes = {
-	events: PropTypes.arrayOf(
-		PropTypes.shape({
-			type: PropTypes.string.isRequired,
-		}),
-	),
-	initialBoxScore: PropTypes.object,
-};
-
 const LiveGameWrapper = (props: View<"liveGame">) => {
 	useTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
 
 	return <LiveGame {...props} />;
 };
-
-// @ts-ignore
-LiveGameWrapper.propTypes = LiveGame.propTypes;
 
 export default LiveGameWrapper;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { MouseEvent } from "react";
 import PlayerNameLabels from "./PlayerNameLabels";
 import { helpers } from "../util";
@@ -36,12 +35,6 @@ const BoxScoreRow = ({
 			))}
 		</tr>
 	);
-};
-
-BoxScoreRow.propTypes = {
-	className: PropTypes.string,
-	onClick: PropTypes.func,
-	p: PropTypes.object.isRequired,
 };
 
 export default BoxScoreRow;

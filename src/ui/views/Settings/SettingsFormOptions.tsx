@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import classNames from "classnames";
 import { AnimatePresence, m } from "framer-motion";
-import PropTypes from "prop-types";
 import { ChangeEvent, Fragment, ReactNode, useState } from "react";
 import { isSport } from "../../../common";
 import { HelpPopover } from "../../components";
@@ -170,15 +169,6 @@ const Input = ({
 	}
 
 	return inputElement;
-};
-
-Input.propTypes = {
-	decoration: PropTypes.oneOf(["currency", "percent"]),
-	disabled: PropTypes.bool,
-	onChange: PropTypes.func.isRequired,
-	type: PropTypes.string.isRequired,
-	value: PropTypes.string.isRequired,
-	values: PropTypes.array,
 };
 
 const Option = ({

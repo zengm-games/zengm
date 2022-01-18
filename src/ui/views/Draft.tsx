@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
@@ -66,11 +65,6 @@ const DraftButtons = ({
 			</button>
 		</div>
 	);
-};
-
-DraftButtons.propTypes = {
-	userRemaining: PropTypes.bool.isRequired,
-	usersTurn: PropTypes.bool.isRequired,
 };
 
 const Draft = ({
@@ -477,15 +471,6 @@ const Draft = ({
 			</div>
 		</>
 	);
-};
-
-Draft.propTypes = {
-	draftType: PropTypes.string,
-	drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
-	fantasyDraft: PropTypes.bool.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	undrafted: PropTypes.arrayOf(PropTypes.object).isRequired,
-	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default Draft;

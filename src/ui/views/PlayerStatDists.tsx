@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { ReactNode } from "react";
 import { BoxPlot, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -151,24 +150,6 @@ const PlayerStatDists = ({
 			</table>
 		</>
 	);
-};
-
-PlayerStatDists.propTypes = {
-	numGames: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	statType: PropTypes.oneOf([
-		"advanced",
-		"per36",
-		"perGame",
-		"shotLocations",
-		"totals",
-		"passing",
-		"rushing",
-		"defense",
-		"kicking",
-		"returns",
-	]),
-	statsAll: PropTypes.object.isRequired,
 };
 
 export default PlayerStatDists;

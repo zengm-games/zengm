@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { helpers } from "../../../ui/util";
 import type { ActualProps } from ".";
 import { AWARD_NAMES } from "../../../common";
@@ -44,14 +43,6 @@ const Winner = ({
 	);
 
 	return finals ? nameAndStats : <p>{nameAndStats}</p>;
-};
-
-Winner.propTypes = {
-	award: PropTypes.object,
-	defense: PropTypes.bool,
-	finals: PropTypes.bool,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 const AwardsAndChamp = ({
@@ -137,14 +128,6 @@ const AwardsAndChamp = ({
 			</div>
 		</div>
 	);
-};
-
-AwardsAndChamp.propTypes = {
-	awards: PropTypes.object.isRequired,
-	champ: PropTypes.object.isRequired,
-	confs: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default AwardsAndChamp;

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { helpers } from "../util";
 
 const StatWithChange = ({
@@ -28,12 +27,6 @@ const StatWithChange = ({
 			) : null}
 		</>
 	);
-};
-
-StatWithChange.propTypes = {
-	change: PropTypes.number.isRequired,
-	children: PropTypes.number.isRequired,
-	stat: PropTypes.string.isRequired,
 };
 
 export default StatWithChange;

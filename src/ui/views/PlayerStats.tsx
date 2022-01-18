@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -202,16 +201,6 @@ const PlayerStats = ({
 			/>
 		</>
 	);
-};
-
-PlayerStats.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
-	statType: PropTypes.string.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	superCols: PropTypes.array,
-	userTid: PropTypes.number,
 };
 
 export default PlayerStats;

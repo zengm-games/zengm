@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Fragment, useState } from "react";
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -156,12 +155,6 @@ const Schedule = ({
 			</div>
 		</>
 	);
-};
-
-Schedule.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	completed: PropTypes.arrayOf(PropTypes.object).isRequired,
-	upcoming: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Schedule;

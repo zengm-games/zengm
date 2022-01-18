@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { PLAYER } from "../../common";
@@ -161,13 +160,6 @@ const WatchList = ({
 			/>
 		</>
 	);
-};
-
-WatchList.propTypes = {
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
-	statType: PropTypes.oneOf(["per36", "perGame", "totals"]).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default WatchList;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { PHASE } from "../../common";
@@ -143,19 +142,6 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 			</span>
 		</>
 	);
-};
-
-FantasyDraft.propTypes = {
-	phase: PropTypes.number.isRequired,
-	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			abbrev: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			region: PropTypes.string.isRequired,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
 };
 
 export default FantasyDraft;

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import type { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../../common";
@@ -142,16 +141,6 @@ const Controls = ({
 			</Dropdown>
 		</div>
 	);
-};
-
-Controls.propTypes = {
-	enableFilters: PropTypes.bool.isRequired,
-	name: PropTypes.string.isRequired,
-	onExportCSV: PropTypes.func.isRequired,
-	onResetTable: PropTypes.func.isRequired,
-	onSearch: PropTypes.func.isRequired,
-	onToggleFilters: PropTypes.func.isRequired,
-	searchText: PropTypes.string.isRequired,
 };
 
 export default Controls;

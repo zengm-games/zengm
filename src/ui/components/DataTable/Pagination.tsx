@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import type { ReactNode } from "react";
 
 const Pagination = ({
@@ -80,13 +79,6 @@ const Pagination = ({
 			</ul>
 		</div>
 	);
-};
-
-Pagination.propTypes = {
-	currentPage: PropTypes.number.isRequired,
-	numRows: PropTypes.number.isRequired,
-	onClick: PropTypes.func.isRequired,
-	perPage: PropTypes.number.isRequired,
 };
 
 export default Pagination;

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useCallback, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -48,11 +47,6 @@ const ReorderHandle = SortableHandle(
 	},
 );
 
-ReorderHandle.propTypes = {
-	highlight: PropTypes.bool.isRequired,
-	isDragged: PropTypes.bool.isRequired,
-};
-
 const Row = SortableElement(
 	(props: {
 		className?: string;
@@ -99,17 +93,6 @@ const Row = SortableElement(
 		);
 	},
 );
-
-// @ts-ignore
-Row.propTypes = {
-	className: PropTypes.string,
-	disabled2: PropTypes.bool,
-	highlight: PropTypes.bool.isRequired,
-	index: PropTypes.number.isRequired,
-	isDragged: PropTypes.bool.isRequired,
-	row: PropTypes.func.isRequired,
-	value: PropTypes.object.isRequired,
-};
 
 const TBody = SortableContainer(
 	({
@@ -166,16 +149,6 @@ const TBody = SortableContainer(
 		);
 	},
 );
-
-// @ts-ignore
-TBody.propTypes = {
-	disabled: PropTypes.bool,
-	highlightHandle: PropTypes.func.isRequired,
-	isDragged: PropTypes.bool.isRequired,
-	row: PropTypes.func.isRequired,
-	rowClassName: PropTypes.func,
-	values: PropTypes.array.isRequired,
-};
 
 const SortableTable = <Value extends Record<string, unknown>>({
 	cols,
@@ -293,16 +266,6 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			</table>
 		</ResponsiveTableWrapper>
 	);
-};
-
-SortableTable.propTypes = {
-	cols: PropTypes.func.isRequired,
-	disabled: PropTypes.bool,
-	highlightHandle: PropTypes.func.isRequired,
-	onChange: PropTypes.func.isRequired,
-	row: PropTypes.func.isRequired,
-	rowClassName: PropTypes.func,
-	values: PropTypes.array.isRequired,
 };
 
 export default SortableTable;

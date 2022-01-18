@@ -1,5 +1,3 @@
-import PropTypes from "prop-types";
-
 const PopText = ({
 	className,
 	numActiveTeams,
@@ -46,18 +44,6 @@ const PopText = ({
 	}
 
 	return <span className={className}>Population: ?</span>;
-};
-
-PopText.propTypes = {
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			// pop and popRank not required for Random Team
-			pop: PropTypes.number,
-			popRank: PropTypes.number,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	tid: PropTypes.number.isRequired,
 };
 
 export default PopText;

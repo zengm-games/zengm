@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, useLocalShallow } from "../util";
@@ -16,10 +15,6 @@ const StatsRow = ({ p, ...props }: { i: number; p: any }) => {
 	return (
 		<BoxScoreRow className={classes} onClick={toggleClicked} p={p} {...props} />
 	);
-};
-
-StatsRow.propTypes = {
-	p: PropTypes.object.isRequired,
 };
 
 const findPrevNextGids = (games: Game[], currentGid: number) => {
@@ -183,15 +178,6 @@ const GamesList = ({
 	);
 };
 
-GamesList.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	currentSeason: PropTypes.number.isRequired,
-	gid: PropTypes.number,
-	gamesList: PropTypes.object.isRequired,
-	season: PropTypes.number.isRequired,
-	tid: PropTypes.number.isRequired,
-};
-
 const GameLog = ({
 	abbrev,
 	boxScore,
@@ -281,15 +267,6 @@ const GameLog = ({
 			)}
 		</>
 	);
-};
-
-GameLog.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	boxScore: PropTypes.object.isRequired,
-	currentSeason: PropTypes.number.isRequired,
-	gamesList: PropTypes.object.isRequired,
-	season: PropTypes.number.isRequired,
-	tid: PropTypes.number.isRequired,
 };
 
 export default GameLog;

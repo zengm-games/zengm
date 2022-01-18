@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { DataTable } from "../../components";
 import { getCols } from "../../util";
 
@@ -77,18 +76,6 @@ const Injuries = ({
 			]}
 		/>
 	);
-};
-
-Injuries.propTypes = {
-	injuries: PropTypes.arrayOf(
-		PropTypes.shape({
-			games: PropTypes.number.isRequired,
-			season: PropTypes.number.isRequired,
-			type: PropTypes.string.isRequired,
-			ovrDrop: PropTypes.number,
-			potDrop: PropTypes.number,
-		}),
-	).isRequired,
 };
 
 export default Injuries;

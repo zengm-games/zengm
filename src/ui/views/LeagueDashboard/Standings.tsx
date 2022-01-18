@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { helpers } from "../../util";
 import { ColPtsOrGB, TeamColumn } from "../Standings";
 import type { View } from "../../../common/types";
@@ -61,13 +60,6 @@ const Standings = ({
 			<a href={helpers.leagueUrl(["standings"])}>» League Standings</a>
 		</>
 	);
-};
-
-Standings.propTypes = {
-	confTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
-	numPlayoffTeams: PropTypes.number.isRequired,
-	playoffsByConf: PropTypes.bool.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default Standings;

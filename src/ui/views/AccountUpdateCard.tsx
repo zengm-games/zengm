@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import {
 	ACCOUNT_API_URL,
@@ -202,14 +201,6 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 			</form>
 		</>
 	);
-};
-
-AccountUpdateCard.propTypes = {
-	goldCancelled: PropTypes.bool.isRequired,
-	expMonth: PropTypes.number.isRequired,
-	expYear: PropTypes.number.isRequired,
-	last4: PropTypes.string.isRequired,
-	username: PropTypes.string,
 };
 
 export default AccountUpdateCard;

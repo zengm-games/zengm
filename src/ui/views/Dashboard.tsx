@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useCallback, useState, CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
 
@@ -77,10 +76,6 @@ const DifficultyText = ({
 			{difficultyText(difficulty)}
 		</span>
 	);
-};
-
-DifficultyText.propTypes = {
-	children: PropTypes.number,
 };
 
 const PlayButton = ({
@@ -491,22 +486,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			) : null}
 		</>
 	);
-};
-
-Dashboard.propTypes = {
-	leagues: PropTypes.arrayOf(
-		PropTypes.shape({
-			created: PropTypes.instanceOf(Date),
-			lastPlayed: PropTypes.instanceOf(Date),
-			difficulty: PropTypes.number,
-			lid: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
-			phaseText: PropTypes.string.isRequired,
-			starred: PropTypes.bool,
-			teamName: PropTypes.string.isRequired,
-			teamRegion: PropTypes.string.isRequired,
-		}),
-	).isRequired,
 };
 
 export default Dashboard;

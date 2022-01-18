@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
@@ -222,19 +221,6 @@ const NewTeam = ({
 			) : null}
 		</>
 	);
-};
-
-NewTeam.propTypes = {
-	gameOver: PropTypes.bool.isRequired,
-	godMode: PropTypes.bool.isRequired,
-	phase: PropTypes.number.isRequired,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			name: PropTypes.string.isRequired,
-			region: PropTypes.string.isRequired,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
 };
 
 export default NewTeam;

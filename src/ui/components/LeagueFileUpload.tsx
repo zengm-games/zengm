@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
 	useEffect,
 	useReducer,
@@ -357,13 +356,6 @@ const LeagueFileUpload = ({
 			</div>
 		</>
 	);
-};
-
-LeagueFileUpload.propTypes = {
-	disabled: PropTypes.bool,
-	enterURL: PropTypes.bool,
-	onLoading: PropTypes.func,
-	onDone: PropTypes.func.isRequired,
 };
 
 export default LeagueFileUpload;

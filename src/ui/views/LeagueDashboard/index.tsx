@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
 import { PlayoffMatchup } from "../../components";
@@ -188,47 +187,6 @@ const LeagueDashboard = ({
 			</div>
 		</>
 	);
-};
-
-LeagueDashboard.propTypes = {
-	att: PropTypes.number.isRequired,
-	cash: PropTypes.number.isRequired,
-	confTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
-	events: PropTypes.arrayOf(PropTypes.object).isRequired,
-	leagueLeaders: PropTypes.arrayOf(PropTypes.object).isRequired,
-	lost: PropTypes.number.isRequired,
-	messages: PropTypes.arrayOf(PropTypes.object).isRequired,
-	name: PropTypes.string.isRequired,
-	numConfs: PropTypes.number.isRequired,
-	numGamesToWinSeries: PropTypes.number.isRequired,
-	numPlayoffRounds: PropTypes.number.isRequired,
-	numPlayoffTeams: PropTypes.number.isRequired,
-	payroll: PropTypes.number.isRequired,
-	playoffRoundsWon: PropTypes.number.isRequired,
-	playoffsByConf: PropTypes.bool.isRequired,
-	profit: PropTypes.number.isRequired,
-	rank: PropTypes.number.isRequired,
-	region: PropTypes.string.isRequired,
-	revenue: PropTypes.number.isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	series: PropTypes.object,
-	seriesTitle: PropTypes.string.isRequired,
-	showPlayoffSeries: PropTypes.bool.isRequired,
-	starters: PropTypes.arrayOf(PropTypes.object).isRequired,
-	startersStats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	teamLeaders: PropTypes.arrayOf(PropTypes.object).isRequired,
-	teamStats: PropTypes.arrayOf(
-		PropTypes.shape({
-			name: PropTypes.string.isRequired,
-			rank: PropTypes.number.isRequired,
-			stat: PropTypes.string.isRequired,
-			value: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	tied: PropTypes.number,
-	userTid: PropTypes.number.isRequired,
-	won: PropTypes.number.isRequired,
 };
 
 export default LeagueDashboard;

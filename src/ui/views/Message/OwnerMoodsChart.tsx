@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { AxisBottom } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
@@ -239,17 +238,6 @@ const OwnerMoodsChart = ({
 			</div>
 		</div>
 	);
-};
-
-OwnerMoodsChart.propTypes = {
-	ownerMoods: PropTypes.arrayOf(
-		PropTypes.shape({
-			money: PropTypes.number.isRequired,
-			playoffs: PropTypes.number.isRequired,
-			wins: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	year: PropTypes.number.isRequired,
 };
 
 export default OwnerMoodsChart;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Fragment } from "react";
 import type { ReactNode } from "react";
 import {
@@ -53,11 +52,6 @@ const Relatives = ({
 			<br />
 		</>
 	);
-};
-
-Relatives.propTypes = {
-	pid: PropTypes.number.isRequired,
-	relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const StatsSummary = ({
@@ -210,15 +204,6 @@ const StatsSummary = ({
 			</table>
 		</div>
 	);
-};
-
-StatsSummary.propTypes = {
-	name: PropTypes.string.isRequired,
-	onlyShowIf: PropTypes.arrayOf(PropTypes.string),
-	retired: PropTypes.bool,
-	p: PropTypes.object.isRequired,
-	playoffs: PropTypes.bool,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const TopStuff = ({

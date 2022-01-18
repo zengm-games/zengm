@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
 import { getCols, helpers } from "../util";
@@ -263,12 +262,6 @@ const BoxScore = ({
 				: null}
 		</>
 	);
-};
-
-BoxScore.propTypes = {
-	boxScore: PropTypes.object.isRequired,
-	Row: PropTypes.any,
-	forceRowUpdate: PropTypes.bool.isRequired,
 };
 
 export default BoxScore;

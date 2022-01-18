@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -225,30 +224,6 @@ const PowerRankings = ({
 			/>
 		</>
 	);
-};
-
-PowerRankings.propTypes = {
-	season: PropTypes.number.isRequired,
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			ovr: PropTypes.number.isRequired,
-			ovrCurrent: PropTypes.number.isRequired,
-			rank: PropTypes.number.isRequired,
-			tid: PropTypes.number.isRequired,
-			seasonAttrs: PropTypes.shape({
-				abbrev: PropTypes.string.isRequired,
-				lastTen: PropTypes.string.isRequired,
-				lost: PropTypes.number.isRequired,
-				name: PropTypes.string.isRequired,
-				region: PropTypes.string.isRequired,
-				won: PropTypes.number.isRequired,
-			}),
-			stats: PropTypes.shape({
-				mov: PropTypes.number.isRequired,
-			}),
-		}),
-	).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default PowerRankings;

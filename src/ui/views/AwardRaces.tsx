@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
 import {
@@ -187,12 +186,6 @@ const AwardRaces = ({
 			</div>
 		</>
 	);
-};
-
-AwardRaces.propTypes = {
-	awardCandidates: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default AwardRaces;

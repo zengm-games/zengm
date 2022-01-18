@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import {
@@ -209,14 +208,6 @@ const UserInfo = ({
 			) : null}
 		</>
 	);
-};
-
-UserInfo.propTypes = {
-	goldUntilDateString: PropTypes.string.isRequired,
-	loggedIn: PropTypes.bool.isRequired,
-	showGoldActive: PropTypes.bool.isRequired,
-	showGoldCancelled: PropTypes.bool.isRequired,
-	username: PropTypes.string,
 };
 
 const Account = ({

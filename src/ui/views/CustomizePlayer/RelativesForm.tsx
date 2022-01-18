@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { WEBSITE_PLAY } from "../../../common";
 import { HelpPopover, RatingsStatsPopover } from "../../components";
 
@@ -129,16 +128,6 @@ const RelativesForm = ({
 			</button>
 		</>
 	);
-};
-
-RelativesForm.propTypes = {
-	handleChange: PropTypes.func.isRequired,
-	relatives: PropTypes.arrayOf(
-		PropTypes.shape({
-			pid: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-			type: PropTypes.oneOf(["brother", "father", "son"]).isRequired,
-		}),
-	).isRequired,
 };
 
 export default RelativesForm;

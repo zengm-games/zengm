@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -185,14 +184,6 @@ const PlayerFeats = ({
 			/>
 		</>
 	);
-};
-
-PlayerFeats.propTypes = {
-	abbrev: PropTypes.string.isRequired,
-	feats: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerFeats;

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { memo, SyntheticEvent } from "react";
 import { toWorker } from "../util";
 
@@ -41,11 +40,5 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 		/>
 	);
 });
-
-// @ts-ignore
-WatchBlock.propTypes = {
-	pid: PropTypes.number.isRequired,
-	watch: PropTypes.bool.isRequired,
-};
 
 export default WatchBlock;

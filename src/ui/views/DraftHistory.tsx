@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 import {
 	DataTable,
@@ -200,14 +199,6 @@ const DraftHistory = ({
 			/>
 		</>
 	);
-};
-
-DraftHistory.propTypes = {
-	draftType: PropTypes.string.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	season: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default DraftHistory;

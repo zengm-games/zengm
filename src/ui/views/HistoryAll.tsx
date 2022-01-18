@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
 	DataTable,
 	MoreLinks,
@@ -167,12 +166,6 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			/>
 		</>
 	);
-};
-
-HistoryAll.propTypes = {
-	awards: PropTypes.arrayOf(PropTypes.string).isRequired,
-	seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default HistoryAll;

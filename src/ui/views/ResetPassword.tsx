@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import { useEffect, useState, ReactNode, FormEvent } from "react";
 import { ACCOUNT_API_URL, EMAIL_ADDRESS, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
@@ -197,10 +196,6 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 			</p>
 		</>
 	);
-};
-
-ResetPassword.propTypes = {
-	token: PropTypes.string.isRequired,
 };
 
 export default ResetPassword;

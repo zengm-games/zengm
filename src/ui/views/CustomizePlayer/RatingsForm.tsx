@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Fragment, ChangeEvent, useState, useEffect } from "react";
 import { bySport, RATINGS } from "../../../common";
 import { getCols, helpers, toWorker } from "../../util";
@@ -164,11 +163,6 @@ const RatingsForm = ({
 			</div>
 		</>
 	);
-};
-
-RatingsForm.propTypes = {
-	handleChange: PropTypes.func,
-	ratingsRow: PropTypes.object,
 };
 
 export default RatingsForm;

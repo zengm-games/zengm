@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 import DraftClass from "./DraftClass";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -89,16 +88,6 @@ const DraftScouting = ({
 			</div>
 		</>
 	);
-};
-
-DraftScouting.propTypes = {
-	draftType: PropTypes.string,
-	seasons: PropTypes.arrayOf(
-		PropTypes.shape({
-			players: PropTypes.arrayOf(PropTypes.object).isRequired,
-			season: PropTypes.number.isRequired,
-		}),
-	).isRequired,
 };
 
 export default DraftScouting;

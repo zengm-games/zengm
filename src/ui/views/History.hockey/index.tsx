@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { MoreLinks, RetiredPlayers } from "../../../ui/components";
 import useTitleBar from "../../../ui/hooks/useTitleBar";
 import AwardsAndChamp from "./AwardsAndChamp";
@@ -31,13 +30,8 @@ const History = (props: View<"history">) => {
 		);
 	}
 
-	const {
-		awards,
-		champ,
-		confs,
-		retiredPlayers,
-		userTid,
-	} = props as ActualProps;
+	const { awards, champ, confs, retiredPlayers, userTid } =
+		props as ActualProps;
 
 	return (
 		<>
@@ -79,16 +73,6 @@ const History = (props: View<"history">) => {
 			</div>
 		</>
 	);
-};
-
-History.propTypes = {
-	awards: PropTypes.object,
-	champ: PropTypes.object,
-	confs: PropTypes.arrayOf(PropTypes.object),
-	invalidSeason: PropTypes.bool.isRequired,
-	retiredPlayers: PropTypes.arrayOf(PropTypes.object),
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number,
 };
 
 export default History;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { BoxPlot, MoreLinks } from "../components";
@@ -206,11 +205,6 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 			</table>
 		</>
 	);
-};
-
-TeamStatDists.propTypes = {
-	season: PropTypes.number.isRequired,
-	statsAll: PropTypes.object.isRequired,
 };
 
 export default TeamStatDists;

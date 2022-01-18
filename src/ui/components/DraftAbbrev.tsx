@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { helpers, useLocal } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 
 const DraftAbbrev = ({
@@ -33,12 +32,6 @@ const DraftAbbrev = ({
 			<a href={helpers.leagueUrl(args2)}>{originalAbbrev}</a>)
 		</>
 	);
-};
-
-DraftAbbrev.propTypes = {
-	originalTid: PropTypes.number.isRequired,
-	season: PropTypes.number,
-	tid: PropTypes.number.isRequired,
 };
 
 export default DraftAbbrev;

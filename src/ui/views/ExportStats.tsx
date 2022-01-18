@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
@@ -113,15 +112,6 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 			) : null}
 		</>
 	);
-};
-
-ExportStats.propTypes = {
-	seasons: PropTypes.arrayOf(
-		PropTypes.shape({
-			key: PropTypes.string.isRequired,
-			val: PropTypes.string.isRequired,
-		}),
-	).isRequired,
 };
 
 export default ExportStats;

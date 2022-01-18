@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
@@ -119,12 +118,6 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 			</div>
 		</>
 	);
-};
-
-Leaders.propTypes = {
-	categories: PropTypes.arrayOf(PropTypes.object).isRequired,
-	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
-	season: PropTypes.number.isRequired,
 };
 
 export default Leaders;

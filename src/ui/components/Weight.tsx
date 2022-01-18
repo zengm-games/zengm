@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { local, useLocal } from "../util";
 
 const getWeightString = (pounds: number, units: "metric" | "us") => {
@@ -17,10 +16,6 @@ const Weight = ({ pounds }: { pounds: number }) => {
 	const units = useLocal(state2 => state2.units);
 
 	return getWeightString(pounds, units) as unknown as JSX.Element;
-};
-
-Weight.propTypes = {
-	pounds: PropTypes.number,
 };
 
 export default Weight;

@@ -73,7 +73,6 @@ const reducer = (files, { type, filename, error }) => {
 	}
 };
 
-/* eslint-disable react/prop-types */
 const File = ({ filename, info }) => {
 	if (info.error) {
 		return (
@@ -129,7 +128,6 @@ const File = ({ filename, info }) => {
 		</Box>
 	);
 };
-/* eslint-enable react/prop-types */
 
 const Watch = () => {
 	const [files, dispatch] = useReducer(reducer, {});

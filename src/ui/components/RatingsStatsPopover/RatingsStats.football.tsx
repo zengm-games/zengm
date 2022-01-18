@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Fragment } from "react";
 import posRatings from "../../../common/posRatings.football";
 import { getCols, gradientStyleFactory } from "../../util";
@@ -110,11 +109,6 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 			{statsBlock}
 		</>
 	);
-};
-
-RatingsStats.propTypes = {
-	ratings: PropTypes.object,
-	stats: PropTypes.object,
 };
 
 export default RatingsStats;

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { helpers } from "../../../ui/util";
 
 const Player = ({
@@ -26,12 +25,6 @@ const Player = ({
 			</span>
 		</div>
 	);
-};
-
-Player.propTypes = {
-	p: PropTypes.object,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 const Teams = ({
@@ -78,15 +71,6 @@ const Teams = ({
 			{content}
 		</div>
 	);
-};
-
-Teams.propTypes = {
-	className: PropTypes.string,
-	name: PropTypes.string,
-	nested: PropTypes.bool,
-	team: PropTypes.array.isRequired,
-	season: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default Teams;

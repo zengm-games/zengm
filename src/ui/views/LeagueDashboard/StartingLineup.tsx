@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import {
 	PlayerNameLabels,
 	RatingWithChange,
@@ -92,11 +91,6 @@ const StartingLineup = ({
 			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
 		</>
 	);
-};
-
-StartingLineup.propTypes = {
-	starters: PropTypes.arrayOf(PropTypes.object).isRequired,
-	startersStats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default StartingLineup;

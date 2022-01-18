@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Fragment, useReducer, ChangeEvent, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
@@ -249,15 +248,6 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			</form>
 		</>
 	);
-};
-
-ManageTeams.propTypes = {
-	defaultStadiumCapacity: PropTypes.number.isRequired,
-	confs: PropTypes.arrayOf(PropTypes.object).isRequired,
-	divs: PropTypes.arrayOf(PropTypes.object).isRequired,
-	godMode: PropTypes.bool.isRequired,
-	phase: PropTypes.number.isRequired,
-	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default ManageTeams;

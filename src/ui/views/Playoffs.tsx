@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
@@ -263,16 +262,6 @@ const Playoffs = ({
 			) : null}
 		</div>
 	);
-};
-
-Playoffs.propTypes = {
-	confNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-	finalMatchups: PropTypes.bool.isRequired,
-	matchups: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
-	numGamesToWinSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
-	season: PropTypes.number.isRequired,
-	series: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default Playoffs;

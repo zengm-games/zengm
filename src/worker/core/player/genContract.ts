@@ -24,6 +24,10 @@ const genContract = (
 	let factor = g.get("salaryCapType") === "hard" ? 1.6 : 2;
 	let factor2 = 1;
 
+	if (isSport("basketball")) {
+		factor *= 3.4 / 2;
+	}
+
 	if (isSport("football")) {
 		if (ratings.pos === "QB") {
 			if (p.value >= 75) {

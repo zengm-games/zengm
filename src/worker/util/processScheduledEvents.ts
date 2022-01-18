@@ -160,9 +160,37 @@ const processGameAttributes = async (
 				: "Removed the three point line.",
 		);
 	}
-
+	const prevSalaryCapType = g.get("salaryCapType");
+	const newSalaryCapType = info.salaryCapType ?? prevSalaryCapType;
 	const prevSalaryCap = g.get("salaryCap");
-	if (info.salaryCap !== undefined && info.salaryCap !== prevSalaryCap) {
+	const newSalaryCap = info.salaryCap ?? prevSalaryCap;
+	if (
+		info.salaryCapType !== undefined &&
+		info.salaryCapType !== prevSalaryCapType
+	) {
+		if (info.salaryCapType === "none") {
+			texts.push("Salary cap was eliminated.");
+		} else if (prevSalaryCapType === "none") {
+			texts.push(
+				`${helpers.upperCaseFirstLetter(
+					info.salaryCapType,
+				)} salary cap added at ${helpers.formatCurrency(
+					newSalaryCap / 1000,
+					"M",
+				)}.`,
+			);
+		} else {
+			texts.push(
+				`Salary cap switched to a ${
+					info.salaryCapType
+				} cap of ${helpers.formatCurrency(newSalaryCap / 1000, "M")}.`,
+			);
+		}
+	} else if (
+		info.salaryCap !== undefined &&
+		info.salaryCap !== prevSalaryCap &&
+		newSalaryCapType !== "none"
+	) {
 		const increased =
 			info.salaryCap > prevSalaryCap ? "increased" : "decreased";
 		texts.push(

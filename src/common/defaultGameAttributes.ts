@@ -164,6 +164,9 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playIn: true,
 	numPlayersDunk: 4,
 	numPlayersThree: 8,
+	draftPickAutoContract: true,
+	draftPickAutoContractPercent: 25,
+	draftPickAutoContractRounds: 1,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
@@ -229,6 +232,9 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				playoffsNumTeamsDiv: wrap(1),
 				playIn: false,
 				fantasyPoints: "standard",
+				draftPickAutoContract: false,
+				draftPickAutoContractPercent: 0.25,
+				draftPickAutoContractRounds: 3,
 		  }
 		: {};
 
@@ -257,6 +263,9 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
 				playoffsNumTeamsDiv: wrap(3),
 				playIn: false,
+				draftPickAutoContract: false,
+				draftPickAutoContractPercent: 0.25,
+				draftPickAutoContractRounds: 2,
 		  }
 		: {};
 

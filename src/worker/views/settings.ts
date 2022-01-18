@@ -104,6 +104,9 @@ const keys = [
 	"numPlayersThree",
 	"fantasyPoints",
 	"goatFormula",
+	"draftPickAutoContract",
+	"draftPickAutoContractPercent",
+	"draftPickAutoContractRounds",
 ] as const;
 
 export type Settings = Pick<
@@ -237,6 +240,9 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			fantasyPoints: g.get("fantasyPoints"),
 			tragicDeaths: g.get("tragicDeaths") ?? defaultTragicDeaths,
 			goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
+			draftPickAutoContract: g.get("draftPickAutoContract"),
+			draftPickAutoContractPercent: g.get("draftPickAutoContractPercent"),
+			draftPickAutoContractRounds: g.get("draftPickAutoContractRounds"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

@@ -1,5 +1,7 @@
 rank column on player stats page https://discord.com/channels/290013534023057409/331882115119448065/932355745616371813
 
+make AI aware that fouling at the end of the game is futile if foulsUntilBonus is high enough. https://old.reddit.com/r/BasketballGM/comments/s6g8ub/interesting_foul_situation_i_found_while_doing_a/
+
 add way to play without salary cap
 - https://old.reddit.com/r/BasketballGM/comments/rlbbby/creating_a_league_with_high_salary_cap_makes_the/hpfp3zb/?context=3
 - @hrmantovani#2284 
@@ -11,10 +13,17 @@ add way to play without salary cap
   - test import
 - blog
   - salary cap value is still inflation
+  - draftPickAutoContract
 
 separate option for rookie contract scale
+- how to specify?
+  - % of max contract for first pick, and something for length of decay (# rounds before all minimum)
+    - first 10 picks decline half of the range, rest decline the rest
 - wrap into version 51 upgrade
 - customize values?
+- note in settings UI that all these settings only matter if auto is enabled
+- test settings
+- test interaction with hard/none cap - should still set contract, but not sign
 - football: https://old.reddit.com/message/messages/mfpqf1
 - hockey: https://old.reddit.com/message/messages/16ezfwt
 - update

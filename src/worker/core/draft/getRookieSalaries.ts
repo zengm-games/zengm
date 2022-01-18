@@ -39,70 +39,15 @@ const getRookieSalaries = (): number[] => {
 
 	// Default for first round
 	const firstRoundRookieSalaries = [
-		5000,
-		4500,
-		4000,
-		3500,
-		3000,
-		2750,
-		2500,
-		2250,
-		2000,
-		1900,
-		1800,
-		1700,
-		1600,
-		1500,
-		1400,
-		1300,
-		1200,
-		1100,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
-		1000,
+		5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700,
+		1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000,
+		1000, 1000, 1000, 1000, 1000, 1000,
 	];
 
 	// Default for all subsequent rounds
 	const otherRoundRookieSalaries = [
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
-		500,
+		500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+		500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
 	];
 
 	while (numActiveTeams > firstRoundRookieSalaries.length) {
@@ -129,8 +74,9 @@ const getRookieSalaries = (): number[] => {
 	) {
 		// Remove smallest salaries
 		otherRoundRookieSalaries.pop();
-	} //combine first round and other rounds
+	}
 
+	// Combine first round and other rounds
 	const rookieSalaries = firstRoundRookieSalaries.concat(
 		otherRoundRookieSalaries,
 	);

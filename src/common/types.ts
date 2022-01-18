@@ -465,8 +465,11 @@ export type GameAttributesLeague = {
 	defaultStadiumCapacity: number;
 	difficulty: number;
 	divs: Div[];
-	draftType: DraftType;
 	draftAges: [number, number];
+	draftPickAutoContract: boolean;
+	draftPickAutoContractPercent: number;
+	draftPickAutoContractRounds: number;
+	draftType: DraftType;
 	elam: boolean;
 	elamASG: boolean;
 	elamMinutes: number;

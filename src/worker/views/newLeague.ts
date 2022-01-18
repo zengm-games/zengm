@@ -237,6 +237,18 @@ export const getDefaultSettings = () => {
 		fantasyPoints: unwrapGameAttribute(defaultGameAttributes, "fantasyPoints"),
 		tragicDeaths: defaultTragicDeaths,
 		goatFormula: goatFormula.DEFAULT_FORMULA,
+		draftPickAutoContract: unwrapGameAttribute(
+			defaultGameAttributes,
+			"draftPickAutoContract",
+		),
+		draftPickAutoContractPercent: unwrapGameAttribute(
+			defaultGameAttributes,
+			"draftPickAutoContractPercent",
+		),
+		draftPickAutoContractRounds: unwrapGameAttribute(
+			defaultGameAttributes,
+			"draftPickAutoContractRounds",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

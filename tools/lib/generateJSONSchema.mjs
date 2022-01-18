@@ -625,6 +625,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 								minItems: 2,
 								maxItems: 2,
 							},
+							draftPickAutoContract: {
+								type: "boolean",
+							},
+							draftPickAutoContractPercent: {
+								type: "number",
+								minimum: 0,
+							},
+							draftPickAutoContractRounds: {
+								type: "integer",
+								minimum: 0,
+							},
 							draftType: {
 								type: "string",
 								// nba is legacy

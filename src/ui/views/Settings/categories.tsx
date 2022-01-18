@@ -94,6 +94,29 @@ const categories: {
 		name: "Contracts",
 	},
 	{
+		name: "Rookie Contracts",
+		helpText: (
+			<>
+				<p>
+					Rookie contracts can set either from a fixed rookie contract scale, or
+					by letting teams negotiate with players similar to re-signing a player
+					on an expiring contract. Use the "Rookie Salary Scale" setting to pick
+					which to use.
+				</p>
+				<p className="text-warning">
+					If "Rookie Salary Scale" is disabled, none of the other settings in
+					this section do anything.
+				</p>
+				<p>
+					When using the rookie salary scale, the #1 pick recieves some fraction
+					of a max contract. Subsequent picks recieve smaller contracts. After
+					the number of rounds specified in "Rounds With Above Minimum
+					Contracts" elapses, all remaining players get minimum contracts.
+				</p>
+			</>
+		),
+	},
+	{
 		name: "Events",
 	},
 	{

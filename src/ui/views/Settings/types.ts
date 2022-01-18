@@ -93,7 +93,10 @@ export type Key =
 	| "numPlayersThree"
 	| "fantasyPoints"
 	| "tragicDeaths"
-	| "goatFormula";
+	| "goatFormula"
+	| "draftPickAutoContract"
+	| "draftPickAutoContractPercent"
+	| "draftPickAutoContractRounds";
 
 export type Category =
 	| "New League"
@@ -106,6 +109,7 @@ export type Category =
 	| "Finances"
 	| "Inflation"
 	| "Contracts"
+	| "Rookie Contracts"
 	| "Events"
 	| "Injuries"
 	| "Game Simulation"

@@ -847,24 +847,41 @@ export const settings: {
 		),
 	},
 	{
-		category: "Contracts",
+		category: "Rookie Contracts",
+		key: "draftPickAutoContract",
+		name: "Rookie Salary Scale",
+		godModeRequired: "existingLeagueOnly",
+		type: "bool",
+	},
+	{
+		category: "Rookie Contracts",
+		key: "draftPickAutoContractPercent",
+		name: "#1 Pick Salary, % of Max Contract",
+		godModeRequired: "existingLeagueOnly",
+		type: "float",
+		decoration: "percent",
+	},
+	{
+		category: "Rookie Contracts",
+		key: "draftPickAutoContractRounds",
+		name: "Rounds With Above Minimum Contracts",
+		godModeRequired: "existingLeagueOnly",
+		type: "int",
+	},
+	{
+		category: "Rookie Contracts",
 		key: "rookieContractLengths",
 		name: "Rookie Contract Lengths",
 		godModeRequired: "always",
 		descriptionLong: (
 			<>
-				<p>
-					Specify the length of rookie contracts. Different rounds can have
-					different lengths. The default is for first round picks to have 3 year
-					contracts and second round picks to have 2 year contracts, which looks
-					like: <code>[3,2]</code>. If you want every rookie contract to have
-					the same length regardless of round, just set one number like{" "}
-					<code>[2]</code> - this works because it uses the last value specified
-					here for any rounds where you don't define contract length.
-				</p>
-				<p>
-					This only applies if the <b>hard cap option is disabled</b>.
-				</p>
+				Specify the length of rookie contracts. Different rounds can have
+				different lengths. The default is for first round picks to have 3 year
+				contracts and second round picks to have 2 year contracts, which looks
+				like: <code>[3,2]</code>. If you want every rookie contract to have the
+				same length regardless of round, just set one number like{" "}
+				<code>[2]</code> - this works because it uses the last value specified
+				here for any rounds where you don't define contract length.
 			</>
 		),
 		type: "jsonString",
@@ -880,22 +897,17 @@ export const settings: {
 		},
 	},
 	{
-		category: "Contracts",
+		category: "Rookie Contracts",
 		key: "rookiesCanRefuse",
 		name: "Rookies Can Refuse To Negotiate",
 		godModeRequired: "existingLeagueOnly",
 		descriptionLong: (
 			<>
-				<p>
-					{GAME_NAME} has no concept of "restricted free agency" like the NBA
-					does, so draft picks can refuse to negotiate with you after their
-					rookie contracts expire. This option can force every player to be
-					willing to negotiate when his rookie contract expires, which can
-					somewhat make up for restricted free agency not existing.
-				</p>
-				<p>
-					This only applies if the <b>hard cap option is disabled</b>.
-				</p>
+				{GAME_NAME} has no concept of "restricted free agency" like the NBA
+				does, so draft picks can refuse to negotiate with you after their rookie
+				contracts expire. This option can force every player to be willing to
+				negotiate when his rookie contract expires, which can somewhat make up
+				for restricted free agency not existing.
 			</>
 		),
 		type: "bool",

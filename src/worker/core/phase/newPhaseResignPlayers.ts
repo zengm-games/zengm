@@ -107,7 +107,12 @@ const newPhaseResignPlayers = async (
 
 	const expiredRookieContractPids = new Set(
 		players
-			.filter(p => p.contract.exp <= g.get("season") && p.contract.rookie)
+			.filter(
+				p =>
+					p.contract.exp <= g.get("season") &&
+					p.contract.rookie &&
+					p.draft.year < g.get("season"),
+			)
 			.map(p => p.pid),
 	);
 

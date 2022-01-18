@@ -20,8 +20,8 @@ add way to play without salary cap
     - first 10 picks decline half of the range, rest decline the rest
 
 separate option for rookie contract scale
-- test refuse negotiate
-  - rookie contract flag should be set? does that matter for guaranteed contracts?
+- rookies can refuse to negotiate after first contract... apply to all rookies?
+- rookies can be released... add setting, and apply to all rookies?
 - football: https://old.reddit.com/message/messages/mfpqf1
 - hockey: https://old.reddit.com/message/messages/16ezfwt
 - update
@@ -42,6 +42,8 @@ minors
 better GameAttribute type
 
 get rid of proptypes
+
+get rid of more vertical lines in tables
 
 when starting a new league, contracts should be set not based on current state of player, but on state when contract was signed. especially noticable for rookies... with draftPickAutoContract it's sensible now, but without that it should be a much lower contract (newPhaseResignPlayers divides by 2 from the contract deserved for rookie ratings, that's before progs)
 

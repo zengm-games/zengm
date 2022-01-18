@@ -2,6 +2,8 @@ import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
 import { g, toUI, recomputeLocalUITeamOvrs } from "../../util";
+import type { PlayerContract } from "../../../common/types";
+import { PHASE } from "../../../common";
 
 /**
  * Accept the player's offer.
@@ -58,15 +60,17 @@ const accept = async (
 	if (!p) {
 		throw new Error("Invalid pid");
 	}
-	await player.sign(
-		p,
-		g.get("userTid"),
-		{
-			amount,
-			exp,
-		},
-		g.get("phase"),
-	);
+
+	const contract: PlayerContract = {
+		amount,
+		exp,
+	};
+	if (p.contract.rookie && g.get("phase") === PHASE.RESIGN_PLAYERS) {
+		// Not sure if the phase condition is necessary. The purpose of this is for hard cap rookies with rookie contract scale.
+		contract.rookie = true;
+	}
+
+	await player.sign(p, g.get("userTid"), contract, g.get("phase"));
 	await idb.cache.players.put(p);
 	await cancel(pid);
 

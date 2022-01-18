@@ -18,10 +18,9 @@ add way to play without salary cap
       - exception - in hard cap mode, this isn't true, cause it can't auto sign without sometimes going over the cap
     - when disabled, draft picks need to be explicitly signed to contracts during the re-signing phase
     - first 10 picks decline half of the range, rest decline the rest
+    - all rookies can be released before regular season, even if hard cap is enabled and/or rookie scale is disabled
 
 separate option for rookie contract scale
-- rookies can refuse to negotiate after first contract... apply to all rookies?
-- rookies can be released... add setting, and apply to all rookies?
 - football: https://old.reddit.com/message/messages/mfpqf1
 - hockey: https://old.reddit.com/message/messages/16ezfwt
 - update

@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import { draft, player, freeAgents } from "../..";
-import { PHASE, isSport, POSITION_COUNTS } from "../../../../common";
+import { PHASE, POSITION_COUNTS } from "../../../../common";
 import { groupBy } from "../../../../common/groupBy";
 import type {
 	PlayerWithoutKey,

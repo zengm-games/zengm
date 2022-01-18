@@ -864,7 +864,7 @@ export const settings: {
 	{
 		category: "Rookie Contracts",
 		key: "draftPickAutoContractRounds",
-		name: "Rounds With Above Minimum Contracts",
+		name: "Rounds With >Min Contracts",
 		godModeRequired: "existingLeagueOnly",
 		type: "int",
 	},
@@ -897,9 +897,16 @@ export const settings: {
 		},
 	},
 	{
-		category: "Rookie Contracts",
+		category: "Contracts",
+		key: "playersRefuseToNegotiate",
+		name: "Players Can Refuse To Negotiate",
+		godModeRequired: "always",
+		type: "bool",
+	},
+	{
+		category: "Contracts",
 		key: "rookiesCanRefuse",
-		name: "Rookies Can Refuse To Negotiate",
+		name: "Can Refuse After Rookie Contract",
 		godModeRequired: "existingLeagueOnly",
 		descriptionLong: (
 			<>
@@ -910,13 +917,6 @@ export const settings: {
 				for restricted free agency not existing.
 			</>
 		),
-		type: "bool",
-	},
-	{
-		category: "Contracts",
-		key: "playersRefuseToNegotiate",
-		name: "Players Can Refuse To Negotiate",
-		godModeRequired: "always",
 		type: "bool",
 	},
 	{

@@ -286,11 +286,22 @@ const normalizeContractDemands = async ({
 						info.contractAmount *= random.uniform(0.4, 1.1);
 					}
 
-					amount = helpers.bound(
-						helpers.roundContract(info.contractAmount),
-						minContract,
-						maxContract,
-					);
+					amount = info.contractAmount;
+				}
+			}
+
+			// HACK - assume within first 3 years it is a rookie contract. Only need to check players with draftPickAutoContract disabled, because otherwise there is other code handling rookie contracts.
+			let labelAsRookieContract = rookieSalaries && p.draft.year === season;
+			if (
+				type === "newLeague" &&
+				p.draft.round > 0 &&
+				!g.get("draftPickAutoContract")
+			) {
+				if (g.get("season") <= p.draft.year + 3) {
+					labelAsRookieContract = true;
+
+					// Decrease salary by 50%, like in newPhaseResignPlayers
+					amount /= 2;
 				}
 			}
 
@@ -302,13 +313,19 @@ const normalizeContractDemands = async ({
 				}
 			}
 
+			amount = helpers.bound(
+				helpers.roundContract(amount),
+				minContract,
+				maxContract,
+			);
+
 			// Make sure to remove "temp" flag!
 			p.contract = {
 				amount,
 				exp,
 			};
 
-			if (rookieSalaries && p.draft.year === season) {
+			if (labelAsRookieContract) {
 				p.contract.rookie = true;
 			}
 

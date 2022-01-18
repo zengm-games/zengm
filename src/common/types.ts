@@ -958,7 +958,7 @@ export type PhaseReturn = {
 export type PlayerContract = {
 	amount: number;
 	exp: number;
-	rookie?: true;
+	rookie?: true; // If present, this is a rookie contract. Could be either a rookie scale auto sign, or negotiated.
 	rookieResign?: true; // Should only be present during re-signing phase for guys re-signing after rookie contracts, otherwise can't identify if previous contract was a rookie contract cause it's overwritten!
 };
 

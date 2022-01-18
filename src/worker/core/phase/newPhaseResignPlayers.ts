@@ -141,6 +141,8 @@ const newPhaseResignPlayers = async (
 			} else {
 				p.contract.amount = helpers.roundContract(p.contract.amount);
 			}
+
+			p.contract.rookie = true;
 		}
 
 		if (

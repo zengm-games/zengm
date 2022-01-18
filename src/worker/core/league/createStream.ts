@@ -235,12 +235,8 @@ const preProcess = async (
 			}
 		}
 
-		// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts
-		if (
-			p.tid >= 0 &&
-			g.get("draftPickAutoContract") &&
-			(!x.contract || !hasRookieContracts)
-		) {
+		// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts. Don't check draftPickAutoContract here because we want all rookie contracts to be labeled as such, not just rookie scale contracts.
+		if (p.tid >= 0 && (!x.contract || !hasRookieContracts)) {
 			const rookieContractLength = draft.getRookieContractLength(p.draft.round);
 			const rookieContractExp = p.draft.year + rookieContractLength;
 

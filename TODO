@@ -13,8 +13,6 @@ minors
 - should minors lead to improvement? make it configurable, but default no
 - need anything special with contracts?
 
-better GameAttribute type
-
 get rid of more vertical lines in tables
 
 fbgm kickoff return to own 0 https://discord.com/channels/290013534023057409/290015591216054273/932688109596975164

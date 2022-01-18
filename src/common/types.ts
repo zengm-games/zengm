@@ -648,9 +648,9 @@ export type GameAttributes =
 
 export type GameAttributeKey = keyof GameAttributesLeague;
 
-export type GameAttribute = {
-	key: GameAttributeKey;
-	value: any;
+export type GameAttribute<T extends GameAttributeKey> = {
+	key: T;
+	value: GameAttributesLeagueWithHistory[T];
 };
 
 export type GameProcessed = {

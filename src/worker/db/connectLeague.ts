@@ -70,7 +70,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	gameAttributes: {
 		key: string;
-		value: GameAttribute;
+		value: GameAttribute<any>;
 	};
 	games: {
 		key: number;

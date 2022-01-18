@@ -315,7 +315,7 @@ const getExportInfo = (
 		checked.gameState ||
 		checked.teamsBasic
 	) {
-		filter.gameAttributes = (row: GameAttribute) => {
+		filter.gameAttributes = (row: GameAttribute<any>) => {
 			if (!checked.leagueSettings) {
 				if (
 					!gameAttributesKeysGameState.includes(row.key) &&

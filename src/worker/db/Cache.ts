@@ -240,7 +240,7 @@ class Cache {
 
 	events: StoreAPI<EventBBGMWithoutKey, EventBBGM, number>;
 
-	gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
+	gameAttributes: StoreAPI<GameAttribute<any>, GameAttribute<any>, string>;
 
 	games: StoreAPI<Game, Game, number>;
 

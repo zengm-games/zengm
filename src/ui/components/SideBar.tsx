@@ -15,7 +15,7 @@ import type {
 	MenuItemText,
 } from "../../common/types";
 
-const getText = (text: MenuItemLink["text"]) => {
+export const getText = (text: MenuItemLink["text"]) => {
 	if (text.hasOwnProperty("side")) {
 		// @ts-ignore
 		return text.side;
@@ -28,10 +28,15 @@ const MenuGroup = ({ children }: { children: ReactNode }) => (
 	<ul className="nav flex-column">{children}</ul>
 );
 
-const makeAnchorProps = (
+export const makeAnchorProps = (
 	menuItem: MenuItemLink,
 	onMenuItemClick: () => void,
-) => {
+): {
+	href: string | undefined;
+	rel: string | undefined;
+	target: string | undefined;
+	onClick: (event: MouseEvent) => void | Promise<void>;
+} => {
 	let href;
 	let rel;
 	let target;

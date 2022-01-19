@@ -241,7 +241,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 
 	return (
 		<ResponsiveTableWrapper nonfluid>
-			<table className="table table-striped table-sm table-hover">
+			<table className="table table-sm table-hover">
 				<thead>
 					<tr>
 						{disabled ? null : <th />}

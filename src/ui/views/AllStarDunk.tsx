@@ -668,7 +668,7 @@ export const ScoreTable = ({
 
 	return (
 		<ResponsiveTableWrapper>
-			<table className="table table-striped table-hover table-nonfluid">
+			<table className="table table-hover table-nonfluid">
 				<thead>
 					<tr>
 						<th></th>

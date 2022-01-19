@@ -92,7 +92,7 @@ const StatsTable = ({
 	return (
 		<div className="mb-3">
 			<ResponsiveTableWrapper>
-				<table className="table table-striped table-sm table-hover">
+				<table className="table table-sm table-hover">
 					<thead>
 						<tr>
 							<th colSpan={2}>{title}</th>

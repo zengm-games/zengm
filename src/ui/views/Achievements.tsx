@@ -237,7 +237,6 @@ const Category = ({
 						name={"rebuilds"}
 						rows={rows}
 						superCols={superCols}
-						striped={false}
 						clickable={false} // Clicking messes up achievement highlighting
 					/>
 				</div>

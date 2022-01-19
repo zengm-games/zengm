@@ -231,7 +231,6 @@ const PlayerGameLog = ({
 								defaultSort={[0, "asc"]}
 								name="PlayerGameLogPlayoffs"
 								rows={rowsPlayoffs}
-								striped={striped}
 								superCols={superCols}
 							/>
 						</>

@@ -5,6 +5,7 @@ import { filterPlayerStats, getPeriodName, helpers } from "../../common";
 import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
 import updateSortBys from "./DataTable/updateSortBys";
+import { getSortClassName } from "./DataTable/Header";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -50,13 +51,7 @@ export const StatsHeader = ({
 				let className: string | undefined;
 
 				if (sortable) {
-					className = "sorting";
-					for (const sortBy of sortBys) {
-						if (sortBy[0] === i) {
-							className = sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
-							break;
-						}
-					}
+					className = getSortClassName(sortBys, i);
 				}
 
 				return (
@@ -140,6 +135,9 @@ const StatsTableIndividual = ({
 		.filter(p => filterPlayerStats(p, stats, type))
 		.sort(sortByStats(stats, sortBys));
 
+	const sortable = players.length > 1;
+	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
+
 	return (
 		<div className="mb-3">
 			<ResponsiveTableWrapper>
@@ -153,13 +151,19 @@ const StatsTableIndividual = ({
 								cols={cols}
 								onClick={onClick}
 								sortBys={sortBys}
-								sortable={players.length > 1}
+								sortable={sortable}
 							/>
 						</tr>
 					</thead>
 					<tbody>
 						{players.map((p, i) => (
-							<Row key={p.pid} i={i} p={p} stats={stats} />
+							<Row
+								key={p.pid}
+								i={i}
+								p={p}
+								stats={stats}
+								highlightCols={highlightCols}
+							/>
 						))}
 					</tbody>
 				</table>

@@ -1,4 +1,21 @@
-ctrl+k menu
+ctrl/cmd+k menu
+- league vs non league
+- reminder if no use in along time
+- default
+  - play menu items
+  - menu items
+  - new league (all types)
+  - other sports
+  - global settings
+    - light/dark mode
+    - units
+- @ - search teams and active players
+  - load players dynamically
+- https://github.com/timc1/kbar
+  - probably better to write my own
+- non-exact search and highlighting
+  - https://github.com/kentcdodds/match-sorter
+- see github UI
 
 highlight rookies on re-signing page https://discord.com/channels/290013534023057409/933027292500852786/933126520275337297
 

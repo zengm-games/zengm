@@ -29,6 +29,7 @@ $secondary: $gray-400;
 $text-muted: $gray-400;
 
 $table-bg-scale: 70%;
+$table-hover-bg-factor: 0.1;
 
 $alert-bg-scale: 70%;
 $alert-border-scale: 60%;
@@ -325,9 +326,4 @@ table.table thead .sorting::after {
 	text {
 		fill: lighten($secondary, 10%);
 	}
-}
-
-.sorting_asc,
-.sorting_desc {
-	background-color: #5f583c !important;
 }

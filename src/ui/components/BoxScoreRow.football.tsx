@@ -8,11 +8,13 @@ const width100 = {
 
 const BoxScoreRow = ({
 	className,
+	highlightCols,
 	onClick,
 	p,
 	stats,
 }: {
 	className?: string;
+	highlightCols?: number[];
 	onClick?: (event: MouseEvent) => void;
 	p: any;
 	stats: string[];
@@ -30,8 +32,15 @@ const BoxScoreRow = ({
 					{p.name}
 				</PlayerNameLabels>
 			</td>
-			{stats.map(stat => (
-				<td key={stat}>{helpers.roundStat(p.processed[stat], stat, true)}</td>
+			{stats.map((stat, i) => (
+				<td
+					key={stat}
+					className={
+						highlightCols?.includes(i) ? "sorting_highlight" : undefined
+					}
+				>
+					{helpers.roundStat(p.processed[stat], stat, true)}
+				</td>
 			))}
 		</tr>
 	);

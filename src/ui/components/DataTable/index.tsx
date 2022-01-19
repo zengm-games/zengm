@@ -387,6 +387,10 @@ const DataTable = ({
 		({ hidden, colIndex }) => !hidden && cols[colIndex],
 	);
 
+	const highlightCols = state.sortBys
+		.map(sortBy => sortBy[0])
+		.map(i => colOrderFiltered.findIndex(({ colIndex }) => colIndex === i));
+
 	return (
 		<>
 			<CustomizeColumns
@@ -480,7 +484,12 @@ const DataTable = ({
 						/>
 						<tbody>
 							{processedRows.map(row => (
-								<Row key={row.key} row={row} clickable={clickable} />
+								<Row
+									key={row.key}
+									row={row}
+									clickable={clickable}
+									highlightCols={highlightCols}
+								/>
 							))}
 						</tbody>
 						<Footer colOrder={colOrderFiltered} footer={footer} />

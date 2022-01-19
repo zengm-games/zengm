@@ -99,6 +99,21 @@ const SuperCols = ({
 	);
 };
 
+export const getSortClassName = (sortBys: SortBy[], i: number) => {
+	let className = "sorting";
+
+	for (const sortBy of sortBys) {
+		if (sortBy[0] === i) {
+			className = `sorting_highlight ${
+				sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc"
+			}`;
+			break;
+		}
+	}
+
+	return className;
+};
+
 const Header = ({
 	colOrder,
 	cols,
@@ -139,15 +154,7 @@ const Header = ({
 					if (sortSequence && sortSequence.length === 0) {
 						className = null;
 					} else {
-						className = "sorting";
-
-						for (const sortBy of sortBys) {
-							if (sortBy[0] === colIndex) {
-								className =
-									sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
-								break;
-							}
-						}
+						className = getSortClassName(sortBys, colIndex);
 					}
 
 					return (

@@ -6,9 +6,11 @@ import type { Argument } from "classnames";
 
 const Row = ({
 	clickable,
+	highlightCols,
 	row,
 }: {
 	clickable?: boolean;
+	highlightCols: number[];
 	row: {
 		classNames?: Argument;
 		data: any[];
@@ -29,8 +31,14 @@ const Row = ({
 
 				const props: any = {};
 
+				const highlightCol = highlightCols.includes(i);
 				if (value && value.classNames) {
-					props.className = classNames(value.classNames);
+					props.className = classNames(
+						value.classNames,
+						highlightCol ? "sorting_highlight" : undefined,
+					);
+				} else if (highlightCol) {
+					props.className = "sorting_highlight";
 				}
 
 				if (value && value.title) {

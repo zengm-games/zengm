@@ -89,6 +89,9 @@ const StatsTable = ({
 		}
 	}
 
+	const sortable = players.length > 1;
+	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
+
 	return (
 		<div className="mb-3">
 			<ResponsiveTableWrapper>
@@ -100,7 +103,7 @@ const StatsTable = ({
 								cols={cols}
 								onClick={onClick}
 								sortBys={sortBys}
-								sortable={players.length > 1}
+								sortable={sortable}
 							/>
 						</tr>
 					</thead>
@@ -112,6 +115,7 @@ const StatsTable = ({
 								p={p}
 								stats={stats}
 								forceUpdate={forceRowUpdate}
+								highlightCols={highlightCols}
 							/>
 						))}
 					</tbody>

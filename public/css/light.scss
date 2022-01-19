@@ -382,10 +382,6 @@ table {
 	font-variant: tabular-nums;
 }
 
-.table:not(.table-borderless):not(.table-bordered) {
-	border-top: $table-border-width solid $table-border-color;
-}
-
 // .table is so this doesn't apply to a floating row while dragging
 .table tr.separator td {
 	border-bottom: 1px solid $gray-700;

@@ -24,6 +24,7 @@ const RosterSalarySummary = ({
 				"."
 			) : (
 				<>
+					{" "}
 					and{" "}
 					<b className={actualCapSpace > 0 ? "text-success" : undefined}>
 						{helpers.formatCurrency(actualCapSpace, "M")}

@@ -151,9 +151,9 @@ const ComandPalette = () => {
 
 	return (
 		<Modal animation={false} show={show} onHide={onHide} scrollable>
-			<Modal.Header className="p-1">
+			<Modal.Header className="ps-3 pe-0 py-1">
 				<span
-					className="glyphicon glyphicon-search ms-1"
+					className="glyphicon glyphicon-search"
 					style={{
 						paddingBottom: 2,
 					}}

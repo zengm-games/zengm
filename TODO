@@ -6,10 +6,6 @@ ctrl/cmd+k menu
   - play menu items
   - menu items
   - new league (all types)
-  - other sports
-  - global settings
-    - light/dark mode
-    - units
 - @ - search teams and active players
   - load players dynamically
 - https://github.com/timc1/kbar
@@ -19,6 +15,12 @@ ctrl/cmd+k menu
 - see github UI
 - god mode indicator for links (similar to the settings square)
 - share code with SideBar.tsx
+- default
+  - global settings
+    - light/dark mode
+    - units
+  - include links at bottom of page, and instagram
+  - other sports
 
 highlight rookies on re-signing page https://discord.com/channels/290013534023057409/933027292500852786/933126520275337297
 

@@ -117,7 +117,7 @@ const LeagueDashboard = ({
 										<p>No messages!</p>
 									) : (
 										<>
-											<table className="table table-bordered table-sm messages-table">
+											<table className="table table-sm messages-table">
 												<tbody>
 													{messages.map(m => (
 														<tr

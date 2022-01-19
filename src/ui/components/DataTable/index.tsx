@@ -63,7 +63,6 @@ export type DataTableRow = {
 };
 
 export type Props = {
-	bordered?: boolean;
 	className?: string;
 	clickable?: boolean;
 	cols: Col[];
@@ -99,7 +98,6 @@ export type State = {
 };
 
 const DataTable = ({
-	bordered,
 	className,
 	clickable = true,
 	cols,
@@ -469,7 +467,6 @@ const DataTable = ({
 				>
 					<table
 						className={classNames("table table-hover", {
-							"table-bordered": bordered !== false,
 							"table-sm": small !== false,
 							"table-striped": striped !== false,
 						})}

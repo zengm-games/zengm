@@ -116,7 +116,7 @@ const HeadlineScore = ({ boxScore }: any) => {
 
 const FourFactors = ({ teams }: { teams: any[] }) => {
 	return (
-		<table className="table table-bordered table-sm mb-2 mb-sm-0">
+		<table className="table table-sm mb-2 mb-sm-0">
 			<thead>
 				<tr />
 				<tr>
@@ -310,7 +310,7 @@ const DetailedScore = ({
 			) : null}
 			<div>
 				<div className="me-4 mx-xs-auto table-nonfluid text-center">
-					<table className="table table-bordered table-sm mb-2 mb-sm-0">
+					<table className="table table-sm mb-2 mb-sm-0">
 						<thead>
 							<tr>
 								<th />

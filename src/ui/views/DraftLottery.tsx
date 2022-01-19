@@ -396,7 +396,7 @@ const DraftLotteryTable = (props: Props) => {
 			<>
 				<p />
 				<ResponsiveTableWrapper nonfluid>
-					<table className="table table-striped table-bordered table-sm table-hover">
+					<table className="table table-striped table-sm table-hover">
 						<thead>
 							<tr>
 								<th colSpan={3} />

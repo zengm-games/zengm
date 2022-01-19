@@ -18,10 +18,7 @@ const Inbox = ({ anyUnread, messages }: View<"inbox">) => {
 			{messages.length === 0 ? (
 				<p>No messages!</p>
 			) : (
-				<table
-					className="table table-striped table-bordered table-sm"
-					id="messages-table"
-				>
+				<table className="table table-striped table-sm" id="messages-table">
 					<tbody>
 						{messages.map(({ from, mid, read, subject, text, year }) => {
 							return (

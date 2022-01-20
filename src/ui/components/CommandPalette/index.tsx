@@ -365,9 +365,11 @@ const getResultsGroupedLeagues = async ({
 };
 
 const getResultsGroupedPlayers = async ({
+	challengeNoRatings,
 	onHide,
 	searchText,
 }: {
+	challengeNoRatings: LocalStateUI["challengeNoRatings"];
 	onHide: () => void;
 	searchText: string;
 }) => {
@@ -376,7 +378,13 @@ const getResultsGroupedPlayers = async ({
 	const playerInfos = orderBy(players, ["lastName", "firstName", "abbrev"]).map(
 		p => {
 			return {
-				text: `${p.firstName} ${p.lastName} - ${p.abbrev}, ${p.ratings.pos}, ${p.age}yo - ${p.ratings.ovr} ovr, ${p.ratings.pot} pot`,
+				text: `${p.firstName} ${p.lastName} - ${p.abbrev}, ${p.ratings.pos}, ${
+					p.age
+				}yo${
+					!challengeNoRatings
+						? ` - ${p.ratings.ovr} ovr, ${p.ratings.pot} pot`
+						: ""
+				}`,
 				anchorProps: {
 					href: helpers.leagueUrl(["player", p.pid]),
 					onClick: onHide,
@@ -403,6 +411,7 @@ const getResultsGroupedPlayers = async ({
 };
 
 const getResultsGrouped = async ({
+	challengeNoRatings,
 	godMode,
 	hideDisabledTeams,
 	inLeague,
@@ -412,6 +421,7 @@ const getResultsGrouped = async ({
 	searchText,
 	teamInfoCache,
 }: {
+	challengeNoRatings: LocalStateUI["challengeNoRatings"];
 	godMode: boolean;
 	hideDisabledTeams: LocalStateUI["hideDisabledTeams"];
 	inLeague: boolean;
@@ -436,6 +446,7 @@ const getResultsGrouped = async ({
 		});
 	} else if (mode?.key === "@") {
 		resultsGrouped = await getResultsGroupedPlayers({
+			challengeNoRatings,
 			onHide,
 			searchText,
 		});
@@ -569,14 +580,21 @@ const ComandPalette = ({
 }) => {
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-	const { godMode, hideDisabledTeams, lid, playMenuOptions, teamInfoCache } =
-		useLocalShallow(state => ({
-			godMode: state.godMode,
-			hideDisabledTeams: state.hideDisabledTeams,
-			lid: state.lid,
-			playMenuOptions: state.playMenuOptions,
-			teamInfoCache: state.teamInfoCache,
-		}));
+	const {
+		challengeNoRatings,
+		godMode,
+		hideDisabledTeams,
+		lid,
+		playMenuOptions,
+		teamInfoCache,
+	} = useLocalShallow(state => ({
+		challengeNoRatings: state.challengeNoRatings,
+		godMode: state.godMode,
+		hideDisabledTeams: state.hideDisabledTeams,
+		lid: state.lid,
+		playMenuOptions: state.playMenuOptions,
+		teamInfoCache: state.teamInfoCache,
+	}));
 	const inLeague = lid !== undefined;
 
 	const [searchText, setSearchText] = useState("");
@@ -594,6 +612,7 @@ const ComandPalette = ({
 
 		const update = async () => {
 			const newResults = await getResultsGrouped({
+				challengeNoRatings,
 				godMode,
 				hideDisabledTeams,
 				inLeague,

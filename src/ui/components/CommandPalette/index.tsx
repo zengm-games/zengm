@@ -1,3 +1,4 @@
+import { matchSorter } from "match-sorter";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { groupBy } from "../../../common/groupBy";
@@ -97,80 +98,96 @@ const SearchResults = ({
 
 	const results = [
 		...flat.filter(filterMenuItem).map(menuItem => {
-			const anchorProps = makeAnchorProps(menuItem, onHide, true);
-
 			return {
 				category: "",
-				text: getText(menuItem.text),
-				anchorProps,
+				menuItem,
 			};
 		}),
 		...nested.map(header => {
 			return (header.children.filter(filterMenuItem) as MenuItemLink[]).map(
 				menuItem => {
-					const anchorProps = makeAnchorProps(menuItem, onHide, true);
-
 					return {
 						category: header.long,
-						text: getText(menuItem.text),
-						anchorProps,
+						menuItem,
 					};
 				},
 			);
 		}),
-	].flat();
+	]
+		.flat()
+		.map(({ category, menuItem }) => {
+			const anchorProps = makeAnchorProps(menuItem, onHide, true);
+			const text = getText(menuItem.text);
+			const search = category ? `${category} ${text}` : text;
+
+			return {
+				category,
+				text,
+				search,
+				anchorProps,
+			};
+		});
 	const resultsGrouped = groupBy(results, "category");
 
-	if (searchText === "") {
-		// Render with category headers
-		const filteredResultsGrouped = groupBy(results, "category");
-		return (
-			<>
-				{Object.entries(filteredResultsGrouped).map(
-					([category, catResults], i) => {
-						// Put category header inline if not all of the category is shown
-						const collapseCategory =
-							resultsGrouped[category].length !== catResults.length;
+	const categoriesInOrder = Array.from(
+		new Set(results.map(result => result.category)),
+	);
 
-						return (
-							<div
-								key={category}
-								className={`card border-0${
-									i > 0 ? " pt-2 mt-2 border-top" : ""
-								}`}
-							>
-								{!collapseCategory && category ? (
-									<div className="card-header bg-transparent border-0">
-										<span className="fw-bold text-secondary text-uppercase">
-											{category}
-										</span>
-									</div>
-								) : null}
-								<div className="list-group list-group-flush">
-									{catResults.map((result, j) => {
-										return (
-											<a
-												key={j}
-												{...result.anchorProps}
-												className="cursor-pointer list-group-item list-group-item-action border-0"
-											>
-												{collapseCategory && category ? (
-													<>{category} &gt; </>
-												) : null}
-												{result.text}
-											</a>
-										);
-									})}
-								</div>
+	const filteredResults = matchSorter(results, searchText, {
+		keys: ["search"],
+	});
+	const filteredResultsGrouped = groupBy(filteredResults, "category");
+
+	let first = true;
+	return (
+		<>
+			{categoriesInOrder.map(category => {
+				const catResults = filteredResultsGrouped[category];
+				if (!catResults || catResults.length === 0) {
+					return null;
+				}
+
+				// Put category header inline if not all of the category is shown
+				const collapseCategory =
+					resultsGrouped[category].length !== catResults.length;
+
+				const block = (
+					<div
+						key={category}
+						className={`card border-0${!first ? " pt-2 mt-2 border-top" : ""}`}
+					>
+						{!collapseCategory && category ? (
+							<div className="card-header bg-transparent border-0">
+								<span className="fw-bold text-secondary text-uppercase">
+									{category}
+								</span>
 							</div>
-						);
-					},
-				)}
-			</>
-		);
-	}
+						) : null}
+						<div className="list-group list-group-flush">
+							{catResults.map((result, j) => {
+								return (
+									<a
+										key={j}
+										{...result.anchorProps}
+										className="cursor-pointer list-group-item list-group-item-action border-0"
+									>
+										{collapseCategory && category ? (
+											<>{category} &gt; </>
+										) : null}
+										{result.text}
+									</a>
+								);
+							})}
+						</div>
+					</div>
+				);
 
-	return <>SEARCH</>;
+				first = false;
+
+				return block;
+			})}
+		</>
+	);
 };
 
 const ModeText = () => {

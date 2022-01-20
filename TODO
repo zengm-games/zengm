@@ -16,12 +16,7 @@ ctrl/cmd+k menu
 - what format should the menu items be stored in?
 - what about sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
 - react-virtual for players list?
-- non-exact search
-  - https://github.com/kentcdodds/match-sorter
-    - https://github.com/kentcdodds/match-sorter#match-many-words-across-multiple-fields-table-filtering
-  - search for e.g. "league finances" should work, from header and page
-  - highlight top match, and press enter to go
-  - when filtered, reformat header so text is like League > Finances, unless whole category is still shown
+- highlight top match, and press enter to go
 - highlighting of selected text in search results
 - god mode indicator for links (similar to the settings square)
 - share code with SideBar.tsx

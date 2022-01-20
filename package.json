@@ -57,6 +57,7 @@
 		"html2canvas": "^1.4.0",
 		"idb": "dumbmatter/idb#autoIncrementKeyPath2-build",
 		"lodash-es": "^4.17.21",
+		"match-sorter": "^6.3.1",
 		"nanoevents": "^6.0.2",
 		"promise-worker-bi": "^4.0.2",
 		"react": "^17.0.2",

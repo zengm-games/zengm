@@ -168,11 +168,13 @@ const getResultsGrouped = ({
 		const filteredResults = matchSorter(results, searchText, {
 			keys: ["search"],
 		});
-		output.push({
-			category: "",
-			results: filteredResults,
-		});
-		count = filteredResults.length;
+		if (filteredResults.length > 0) {
+			output.push({
+				category: "",
+				results: filteredResults,
+			});
+			count = filteredResults.length;
+		}
 	}
 
 	return {
@@ -387,10 +389,8 @@ const ComandPalette = () => {
 
 										if (result.anchorProps.href) {
 											if (result.anchorProps.target) {
-												console.log("new window", result.anchorProps.href);
 												window.open(result.anchorProps.href);
 											} else {
-												console.log("realtimeUpdate", result.anchorProps.href);
 												realtimeUpdate([], result.anchorProps.href);
 											}
 										}

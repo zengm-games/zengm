@@ -1,8 +1,5 @@
 command palette
-- later
-  - highlighting of selected text in search results
-- blog
-  - links to deeper pages
+- highlighting of selected text in search results https://github.com/moroshko/autosuggest-highlight#match
 
 dropdown list of cities on manage teams page
 - https://discord.com/channels/290013534023057409/331882115119448065/933031128443539528

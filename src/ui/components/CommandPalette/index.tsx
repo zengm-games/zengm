@@ -62,27 +62,27 @@ const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 ];
 type Mode = typeof MODES[number];
 
-const SearchResults = ({
+const getResultsGrouped = ({
+	inLeague,
 	onHide,
 	mode,
 	searchText,
 }: {
+	inLeague: boolean;
 	onHide: () => void;
 	mode: Mode | undefined;
 	searchText: string;
 }) => {
-	const lid = useLocal(state => state.lid);
-
 	const filterMenuItem = (menuItem: MenuItemLink | MenuItemText) => {
 		if (menuItem.type === "text") {
 			return false;
 		}
 
-		if (!menuItem.league && lid !== undefined) {
+		if (!menuItem.league && inLeague) {
 			return false;
 		}
 
-		if (!menuItem.nonLeague && lid === undefined) {
+		if (!menuItem.nonLeague && !inLeague) {
 			return false;
 		}
 
@@ -129,36 +129,62 @@ const SearchResults = ({
 		});
 	const resultsGrouped = groupBy(results, "category");
 
-	const categoriesInOrder = Array.from(
-		new Set(results.map(result => result.category)),
-	);
-
 	const filteredResults = matchSorter(results, searchText, {
 		keys: ["search"],
 	});
 	const filteredResultsGrouped = groupBy(filteredResults, "category");
+	console.log(results);
 
-	let seenOneResult = false;
-	return (
-		<>
-			{categoriesInOrder.map(category => {
-				const catResults = filteredResultsGrouped[category];
-				if (!catResults || catResults.length === 0) {
-					return null;
-				}
+	const output = [];
+	for (const category of Object.keys(resultsGrouped)) {
+		console.log("hi", category);
+		if (filteredResultsGrouped[category]) {
+			output.push({
+				category,
+				results: filteredResultsGrouped[category],
 
 				// Put category header inline if not all of the category is shown
-				const collapseCategory =
-					resultsGrouped[category].length !== catResults.length;
+				collapse:
+					resultsGrouped[category].length !==
+					filteredResultsGrouped[category].length,
+			});
+		}
+	}
 
+	return output;
+};
+
+const SearchResults = ({
+	inLeague,
+	onHide,
+	mode,
+	searchText,
+}: {
+	inLeague: boolean;
+	onHide: () => void;
+	mode: Mode | undefined;
+	searchText: string;
+}) => {
+	const resultsGrouped = getResultsGrouped({
+		inLeague,
+		onHide,
+		mode,
+		searchText,
+	});
+
+	if (resultsGrouped.length === 0) {
+		return <div className="px-3">No results found.</div>;
+	}
+
+	return (
+		<>
+			{resultsGrouped.map(({ category, results, collapse }, i) => {
 				const block = (
 					<div
 						key={category}
-						className={`card border-0${
-							seenOneResult ? " pt-2 mt-2 border-top" : ""
-						}`}
+						className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
 					>
-						{!collapseCategory && category ? (
+						{!collapse && category ? (
 							<div className="card-header bg-transparent border-0">
 								<span className="fw-bold text-secondary text-uppercase">
 									{category}
@@ -166,8 +192,8 @@ const SearchResults = ({
 							</div>
 						) : null}
 						<div className="list-group list-group-flush rounded-0">
-							{catResults.map((result, j) => {
-								const active = !seenOneResult && j === 0 && searchText !== "";
+							{results.map((result, j) => {
+								const active = i === 0 && j === 0 && searchText !== "";
 
 								return (
 									<a
@@ -177,9 +203,7 @@ const SearchResults = ({
 											active ? "table-bg-striped" : ""
 										}`}
 									>
-										{collapseCategory && category ? (
-											<>{category} &gt; </>
-										) : null}
+										{collapse && category ? <>{category} &gt; </> : null}
 										{result.text}
 
 										{active ? (
@@ -192,11 +216,8 @@ const SearchResults = ({
 					</div>
 				);
 
-				seenOneResult = true;
-
 				return block;
 			})}
-			{!seenOneResult ? <div className="px-3">No results found.</div> : null}
 		</>
 	);
 };
@@ -296,7 +317,12 @@ const ComandPalette = () => {
 					</p>
 				) : null}
 
-				<SearchResults onHide={onHide} mode={mode} searchText={searchText} />
+				<SearchResults
+					inLeague={inLeague}
+					onHide={onHide}
+					mode={mode}
+					searchText={searchText}
+				/>
 			</Modal.Body>
 		</Modal>
 	);

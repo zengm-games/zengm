@@ -17,6 +17,7 @@ ctrl/cmd+k menu
 - what about sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
 - react-virtual for players list?
 - highlight top match, and press enter to go
+- arrow keys move highlighted entry
 - highlighting of selected text in search results
 - god mode indicator for links (similar to the settings square)
 - share code with SideBar.tsx

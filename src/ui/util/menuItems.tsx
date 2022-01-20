@@ -1,6 +1,7 @@
 import { takeScreenshot, toWorker } from ".";
 import { bySport, DAILY_SCHEDULE, isSport, WEBSITE_ROOT } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
+import { frivolities } from "../views/Frivolities";
 
 const depthChart: MenuItemLink = {
 	type: "link",
@@ -552,7 +553,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				active: pageID => pageID === "frivolities",
 				league: true,
-				commandPalette: true,
 				path: ["frivolities"],
 				text: "Frivolities",
 			},
@@ -676,6 +676,29 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				text: "Danger Zone",
 			},
 		],
+	},
+	{
+		type: "header",
+		long: "Frivolities",
+		short: "F",
+		league: true,
+		commandPalette: true,
+		commandPaletteOnly: true,
+		children: Object.entries(frivolities)
+			.map(([category, rows]) =>
+				rows.map(
+					row =>
+						({
+							type: "link",
+							league: true,
+							commandPalette: true,
+							commandPaletteOnly: true,
+							path: ["frivolities", ...row.urlParts],
+							text: `${category} > ${row.name}`,
+						} as MenuItemLink),
+				),
+			)
+			.flat(),
 	},
 	{
 		type: "header",

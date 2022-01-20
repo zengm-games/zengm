@@ -167,7 +167,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 					godMode={godMode}
 					inLeague={inLeague}
 					lid={lid}
-					menuItems={menuItems}
+					menuItems={menuItems.filter(menuItem => !menuItem.commandPaletteOnly)}
 				/>
 			</div>
 			<Nav id="top-user-block" navbar>

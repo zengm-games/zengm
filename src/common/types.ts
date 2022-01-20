@@ -808,6 +808,7 @@ export type MenuItemHeader = {
 	league?: true;
 	nonLeague?: true;
 	commandPalette?: true;
+	commandPaletteOnly?: true;
 	children: (MenuItemLink | MenuItemText)[];
 };
 

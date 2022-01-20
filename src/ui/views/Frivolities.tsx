@@ -10,7 +10,7 @@ import { GAME_NAME, isSport } from "../../common";
 
 const style = { maxWidth: 1000 };
 
-const frivolities = {
+export const frivolities = {
 	Draft: [
 		{
 			urlParts: ["draft_position"],

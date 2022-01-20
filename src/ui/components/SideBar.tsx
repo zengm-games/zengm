@@ -135,6 +135,10 @@ const MenuItem = ({
 	}
 
 	if (menuItem.type === "header") {
+		if (menuItem.commandPaletteOnly) {
+			return null;
+		}
+
 		const children = menuItem.children
 			.map((child, i) => (
 				<MenuItem

@@ -7,7 +7,12 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types";
-import { menuItems, realtimeUpdate, useLocal } from "../../util";
+import {
+	menuItems,
+	realtimeUpdate,
+	useLocal,
+	useLocalShallow,
+} from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 
 const useCommandPalette = () => {
@@ -75,10 +80,12 @@ const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 type Mode = typeof MODES[number];
 
 const getResultsGrouped = ({
+	godMode,
 	inLeague,
 	onHide,
 	searchText,
 }: {
+	godMode: boolean;
 	inLeague: boolean;
 	onHide: () => void;
 	searchText: string;
@@ -93,6 +100,10 @@ const getResultsGrouped = ({
 		}
 
 		if (!menuItem.nonLeague && !inLeague) {
+			return false;
+		}
+
+		if (menuItem.godMode && !godMode) {
 			return false;
 		}
 
@@ -272,7 +283,10 @@ const ComandPalette = () => {
 	} = useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-	const lid = useLocal(state => state.lid);
+	const { godMode, lid } = useLocalShallow(state => ({
+		godMode: state.godMode,
+		lid: state.lid,
+	}));
 	const inLeague = lid !== undefined;
 
 	useEffect(() => {
@@ -282,6 +296,7 @@ const ComandPalette = () => {
 	}, [show]);
 
 	const { resultsGrouped, count } = getResultsGrouped({
+		godMode,
 		inLeague,
 		onHide,
 		searchText,

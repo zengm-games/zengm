@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
+import { groupBy } from "../../../common/groupBy";
 import type {
 	MenuItemHeader,
 	MenuItemLink,
@@ -44,66 +45,6 @@ const useCommandPalette = () => {
 	return { show, onHide, searchText, setSearchText, mode, setMode };
 };
 
-const MenuItemsBlock = ({
-	className,
-	header,
-	menuItems,
-	onHide,
-}: {
-	className?: string;
-	header?: string;
-	menuItems: MenuItemHeader["children"];
-	onHide: () => void;
-}) => {
-	const lid = useLocal(state => state.lid);
-
-	const filteredMenuItems = menuItems.filter(menuItem => {
-		if (menuItem.type === "text") {
-			return false;
-		}
-
-		if (!menuItem.league && lid !== undefined) {
-			return false;
-		}
-
-		if (!menuItem.nonLeague && lid === undefined) {
-			return false;
-		}
-
-		return true;
-	}) as MenuItemLink[];
-
-	if (filteredMenuItems.length === 0) {
-		return null;
-	}
-
-	return (
-		<div className={`card border-0${className ? " " + className : ""}`}>
-			{header ? (
-				<div className="card-header bg-transparent border-0">
-					<span className="fw-bold text-secondary text-uppercase">
-						{header}
-					</span>
-				</div>
-			) : null}
-			<div className="list-group list-group-flush">
-				{filteredMenuItems.map(menuItem => {
-					const anchorProps = makeAnchorProps(menuItem, onHide, true);
-
-					return (
-						<a
-							{...anchorProps}
-							className="cursor-pointer list-group-item list-group-item-action border-0"
-						>
-							{getText(menuItem.text)}
-						</a>
-					);
-				})}
-			</div>
-		</div>
-	);
-};
-
 const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 	{
 		key: "@",
@@ -129,6 +70,24 @@ const SearchResults = ({
 	mode: Mode | undefined;
 	searchText: string;
 }) => {
+	const lid = useLocal(state => state.lid);
+
+	const filterMenuItem = (menuItem: MenuItemLink | MenuItemText) => {
+		if (menuItem.type === "text") {
+			return false;
+		}
+
+		if (!menuItem.league && lid !== undefined) {
+			return false;
+		}
+
+		if (!menuItem.nonLeague && lid === undefined) {
+			return false;
+		}
+
+		return true;
+	};
+
 	const flat = menuItems.filter(
 		menuItem => menuItem.type === "link",
 	) as MenuItemLink[];
@@ -136,19 +95,70 @@ const SearchResults = ({
 		menuItem => menuItem.type === "header",
 	) as MenuItemHeader[];
 
-	return (
-		<>
-			<MenuItemsBlock menuItems={flat} onHide={onHide} />
-			{nested.map(header => (
-				<MenuItemsBlock
-					className="pt-2 mt-2 border-top"
-					header={header.long}
-					menuItems={header.children}
-					onHide={onHide}
-				/>
-			))}
-		</>
-	);
+	const results = [
+		...flat.filter(filterMenuItem).map(menuItem => {
+			const anchorProps = makeAnchorProps(menuItem, onHide, true);
+
+			return {
+				category: "",
+				text: getText(menuItem.text),
+				anchorProps,
+			};
+		}),
+		...nested.map(header => {
+			return (header.children.filter(filterMenuItem) as MenuItemLink[]).map(
+				menuItem => {
+					const anchorProps = makeAnchorProps(menuItem, onHide, true);
+
+					return {
+						category: header.long,
+						text: getText(menuItem.text),
+						anchorProps,
+					};
+				},
+			);
+		}),
+	].flat();
+
+	if (searchText === "") {
+		// Render with category headers
+		const resultsGrouped = groupBy(results, "category");
+		return (
+			<>
+				{Object.entries(resultsGrouped).map(([category, catResults], i) => {
+					return (
+						<div
+							key={category}
+							className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
+						>
+							{category ? (
+								<div className="card-header bg-transparent border-0">
+									<span className="fw-bold text-secondary text-uppercase">
+										{category}
+									</span>
+								</div>
+							) : null}
+							<div className="list-group list-group-flush">
+								{catResults.map((result, j) => {
+									return (
+										<a
+											key={j}
+											{...result.anchorProps}
+											className="cursor-pointer list-group-item list-group-item-action border-0"
+										>
+											{result.text}
+										</a>
+									);
+								})}
+							</div>
+						</div>
+					);
+				})}
+			</>
+		);
+	}
+
+	return <>SEARCH</>;
 };
 
 const ModeText = () => {
@@ -161,11 +171,11 @@ const ModeText = () => {
 		<>
 			Type{" "}
 			{modes.map((mode, i) => (
-				<>
+				<Fragment key={mode.key}>
 					{i === 0 ? null : i === modes.length - 1 ? ", or " : ", "}
 					<span className="text-black">{mode.key}</span> to search{" "}
 					{mode.description}
-				</>
+				</Fragment>
 			))}
 			.
 		</>
@@ -183,7 +193,6 @@ const ComandPalette = () => {
 		}
 	}, [show]);
 
-	console.log("show", show);
 	if (!show) {
 		return null;
 	}

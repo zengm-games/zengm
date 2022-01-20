@@ -15,7 +15,9 @@ import type {
 	MenuItemText,
 } from "../../common/types";
 
-export const getText = (text: MenuItemLink["text"]) => {
+export const getText = (
+	text: MenuItemLink["text"],
+): Exclude<ReactNode, null | undefined | number | boolean> => {
 	if (text.hasOwnProperty("side")) {
 		// @ts-ignore
 		return text.side;

@@ -79,11 +79,13 @@ const getResultsGroupedDefault = ({
 	godMode,
 	inLeague,
 	onHide,
+	playMenuOptions,
 	searchText,
 }: {
 	godMode: boolean;
 	inLeague: boolean;
 	onHide: () => void;
+	playMenuOptions: LocalStateUI["playMenuOptions"];
 	searchText: string;
 }) => {
 	const filterMenuItem = (menuItem: MenuItemLink | MenuItemText) => {
@@ -148,6 +150,23 @@ const getResultsGroupedDefault = ({
 				anchorProps,
 			};
 		});
+
+	results.unshift(
+		...playMenuOptions.map(option => ({
+			category: "Play",
+			text: option.label,
+			search: option.label,
+			anchorProps: {
+				href: option.url,
+				onClick: () => {
+					onHide();
+					if (!option.url) {
+						toWorker("playMenu", option.id as any);
+					}
+				},
+			} as AnchorProps,
+		})),
+	);
 
 	const output = [];
 	if (searchText === "") {
@@ -378,6 +397,7 @@ const getResultsGrouped = async ({
 	inLeague,
 	mode,
 	onHide,
+	playMenuOptions,
 	searchText,
 	teamInfoCache,
 }: {
@@ -386,6 +406,7 @@ const getResultsGrouped = async ({
 	inLeague: boolean;
 	mode: Mode | undefined;
 	onHide: () => void;
+	playMenuOptions: LocalStateUI["playMenuOptions"];
 	searchText: string;
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
@@ -412,6 +433,7 @@ const getResultsGrouped = async ({
 			godMode,
 			inLeague,
 			onHide,
+			playMenuOptions,
 			searchText,
 		});
 	}
@@ -531,14 +553,14 @@ const ComandPalette = () => {
 	const { show, onHide } = useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-	const { godMode, hideDisabledTeams, lid, teamInfoCache } = useLocalShallow(
-		state => ({
+	const { godMode, hideDisabledTeams, lid, playMenuOptions, teamInfoCache } =
+		useLocalShallow(state => ({
 			godMode: state.godMode,
 			hideDisabledTeams: state.hideDisabledTeams,
 			lid: state.lid,
+			playMenuOptions: state.playMenuOptions,
 			teamInfoCache: state.teamInfoCache,
-		}),
-	);
+		}));
 	const inLeague = lid !== undefined;
 
 	const [searchText, setSearchText] = useState("");
@@ -561,6 +583,7 @@ const ComandPalette = () => {
 				inLeague,
 				mode,
 				onHide,
+				playMenuOptions,
 				searchText,
 				teamInfoCache,
 			});
@@ -581,6 +604,7 @@ const ComandPalette = () => {
 		inLeague,
 		mode,
 		onHide,
+		playMenuOptions,
 		searchText,
 		teamInfoCache,
 	]);

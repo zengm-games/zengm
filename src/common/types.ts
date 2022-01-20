@@ -790,6 +790,7 @@ export type MenuItemLink = {
 	godMode?: true;
 	nonLeague?: true;
 	commandPalette?: true;
+	commandPaletteOnly?: true;
 	onClick?: (a: MouseEvent<any>) => void | false | Promise<void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:

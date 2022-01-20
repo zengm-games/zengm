@@ -40,7 +40,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		type: "link",
 		active: pageID => pageID === "leagueDashboard",
 		league: true,
-		commandPalette: true,
 		path: [],
 		text: {
 			side: "Dashboard",
@@ -59,6 +58,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		league: true,
 		commandPalette: true,
 		children: [
+			{
+				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: [],
+				text: "Dashboard",
+			},
 			{
 				type: "link",
 				active: pageID => pageID === "standings",

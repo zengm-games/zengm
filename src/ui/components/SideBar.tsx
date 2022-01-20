@@ -108,6 +108,10 @@ const MenuItem = ({
 	}
 
 	if (menuItem.type === "link") {
+		if (menuItem.commandPaletteOnly) {
+			return null;
+		}
+
 		if (menuItem.godMode && !godMode) {
 			return null;
 		}

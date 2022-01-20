@@ -90,6 +90,10 @@ const getResultsGroupedDefault = ({
 			return false;
 		}
 
+		if (!menuItem.commandPalette) {
+			return false;
+		}
+
 		if (!menuItem.league && inLeague) {
 			return false;
 		}

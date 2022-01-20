@@ -148,28 +148,31 @@ const getResultsGrouped = ({
 				anchorProps,
 			};
 		});
-	const resultsGrouped = groupBy(results, "category");
-
-	const filteredResults = matchSorter(results, searchText, {
-		keys: ["search"],
-	});
-	const filteredResultsGrouped = groupBy(filteredResults, "category");
 
 	let count = 0;
 	const output = [];
-	for (const category of Object.keys(resultsGrouped)) {
-		if (filteredResultsGrouped[category]) {
-			count += filteredResultsGrouped[category].length;
-			output.push({
-				category,
-				results: filteredResultsGrouped[category],
-
-				// Put category header inline if not all of the category is shown
-				collapse:
-					resultsGrouped[category].length !==
-					filteredResultsGrouped[category].length,
-			});
+	if (searchText === "") {
+		// No search - return groups
+		const resultsGrouped = groupBy(results, "category");
+		for (const category of Object.keys(resultsGrouped)) {
+			if (resultsGrouped[category]) {
+				count += resultsGrouped[category].length;
+				output.push({
+					category,
+					results: resultsGrouped[category],
+				});
+			}
 		}
+	} else {
+		// Search - return sorted by relevance, no grouping
+		const filteredResults = matchSorter(results, searchText, {
+			keys: ["search"],
+		});
+		output.push({
+			category: "",
+			results: filteredResults,
+		});
+		count = filteredResults.length;
 	}
 
 	return {
@@ -182,9 +185,11 @@ const ACTIVE_CLASS = "table-bg-striped";
 
 const SearchResults = ({
 	activeIndex,
+	collapseGroups,
 	resultsGrouped,
 }: {
 	activeIndex: number | undefined;
+	collapseGroups: boolean;
 	resultsGrouped: ReturnType<typeof getResultsGrouped>["resultsGrouped"];
 }) => {
 	const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -206,13 +211,13 @@ const SearchResults = ({
 	let index = 0;
 	return (
 		<div ref={wrapperRef}>
-			{resultsGrouped.map(({ category, results, collapse }, i) => {
+			{resultsGrouped.map(({ category, results }, i) => {
 				const block = (
 					<div
 						key={category}
 						className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
 					>
-						{!collapse && category ? (
+						{!collapseGroups && category ? (
 							<div className="card-header bg-transparent border-0">
 								<span className="fw-bold text-secondary text-uppercase">
 									{category}
@@ -232,7 +237,9 @@ const SearchResults = ({
 											active ? ACTIVE_CLASS : ""
 										}`}
 									>
-										{collapse && category ? <>{category} &gt; </> : null}
+										{collapseGroups && result.category ? (
+											<>{result.category} &gt; </>
+										) : null}
 										{result.text}
 
 										{active ? (
@@ -452,6 +459,7 @@ const ComandPalette = () => {
 				{resultsGrouped.length > 0 ? (
 					<SearchResults
 						activeIndex={activeIndex}
+						collapseGroups={searchText !== ""}
 						resultsGrouped={resultsGrouped}
 					/>
 				) : (

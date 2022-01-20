@@ -18,10 +18,13 @@ ctrl/cmd+k menu
 - react-virtual for players list?
 - highlight top match, and press enter to go
 - arrow keys move highlighted entry
+  - keep active one in view
 - highlighting of selected text in search results
 - god mode indicator for links (similar to the settings square)
 - share code with SideBar.tsx
 - reminder if no use in a long time
+- useMemo resultsGrouped?
+- wrap, so all the hooks and crap don't run if show is false
 
 highlight rookies on re-signing page https://discord.com/channels/290013534023057409/933027292500852786/933126520275337297
 

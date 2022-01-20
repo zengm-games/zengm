@@ -65,12 +65,10 @@ type Mode = typeof MODES[number];
 const getResultsGrouped = ({
 	inLeague,
 	onHide,
-	mode,
 	searchText,
 }: {
 	inLeague: boolean;
 	onHide: () => void;
-	mode: Mode | undefined;
 	searchText: string;
 }) => {
 	const filterMenuItem = (menuItem: MenuItemLink | MenuItemText) => {
@@ -133,12 +131,12 @@ const getResultsGrouped = ({
 		keys: ["search"],
 	});
 	const filteredResultsGrouped = groupBy(filteredResults, "category");
-	console.log(results);
 
+	let count = 0;
 	const output = [];
 	for (const category of Object.keys(resultsGrouped)) {
-		console.log("hi", category);
 		if (filteredResultsGrouped[category]) {
+			count += filteredResultsGrouped[category].length;
 			output.push({
 				category,
 				results: filteredResultsGrouped[category],
@@ -151,31 +149,24 @@ const getResultsGrouped = ({
 		}
 	}
 
-	return output;
+	return {
+		resultsGrouped: output,
+		count,
+	};
 };
 
 const SearchResults = ({
-	inLeague,
-	onHide,
-	mode,
-	searchText,
+	activeIndex,
+	resultsGrouped,
 }: {
-	inLeague: boolean;
-	onHide: () => void;
-	mode: Mode | undefined;
-	searchText: string;
+	activeIndex: number | undefined;
+	resultsGrouped: ReturnType<typeof getResultsGrouped>["resultsGrouped"];
 }) => {
-	const resultsGrouped = getResultsGrouped({
-		inLeague,
-		onHide,
-		mode,
-		searchText,
-	});
-
 	if (resultsGrouped.length === 0) {
 		return <div className="px-3">No results found.</div>;
 	}
 
+	let index = 0;
 	return (
 		<>
 			{resultsGrouped.map(({ category, results, collapse }, i) => {
@@ -193,7 +184,8 @@ const SearchResults = ({
 						) : null}
 						<div className="list-group list-group-flush rounded-0">
 							{results.map((result, j) => {
-								const active = i === 0 && j === 0 && searchText !== "";
+								const active = activeIndex === index;
+								index += 1;
 
 								return (
 									<a
@@ -207,7 +199,7 @@ const SearchResults = ({
 										{result.text}
 
 										{active ? (
-											<div className="ms-auto">Press enter to go</div>
+											<div className="ms-auto">Press enter to select</div>
 										) : null}
 									</a>
 								);
@@ -255,6 +247,62 @@ const ComandPalette = () => {
 		}
 	}, [show]);
 
+	const { resultsGrouped, count } = getResultsGrouped({
+		inLeague,
+		onHide,
+		searchText,
+	});
+
+	const [activeIndex, setActiveIndex] = useState<number | undefined>();
+	useEffect(() => {
+		if (window.mobile || !show) {
+			return;
+		}
+
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (
+				event.altKey ||
+				event.ctrlKey ||
+				event.metaKey ||
+				event.shiftKey ||
+				event.isComposing
+			) {
+				return;
+			}
+
+			if (event.code === "ArrowDown") {
+				setActiveIndex(index => {
+					if (index === undefined) {
+						return 0;
+					}
+
+					if (index + 1 >= count) {
+						return 0;
+					}
+
+					return index + 1;
+				});
+			} else if (event.code === "ArrowUp") {
+				setActiveIndex(index => {
+					if (index === undefined) {
+						return 0;
+					}
+
+					if (index - 1 < 0) {
+						return count - 1;
+					}
+
+					return index - 1;
+				});
+			}
+		};
+
+		document.addEventListener("keydown", handleKeydown);
+		return () => {
+			document.removeEventListener("keydown", handleKeydown);
+		};
+	}, [count, show]);
+
 	if (!show) {
 		return null;
 	}
@@ -294,16 +342,19 @@ const ComandPalette = () => {
 								if (newMode) {
 									setMode(newMode);
 									setSearchText(newText.slice(1));
+									setActiveIndex(newText.length > 1 ? 0 : undefined);
 									return;
 								}
 							}
 
 							setSearchText(newText);
+							setActiveIndex(newText.length > 0 ? 0 : undefined);
 						}}
 						onKeyDown={event => {
 							// Handle backspace when mode is set and there is no text - unset mode
 							if (searchText === "" && mode && event.code === "Backspace") {
 								setMode(undefined);
+								setActiveIndex(undefined);
 							}
 						}}
 					/>
@@ -318,10 +369,8 @@ const ComandPalette = () => {
 				) : null}
 
 				<SearchResults
-					inLeague={inLeague}
-					onHide={onHide}
-					mode={mode}
-					searchText={searchText}
+					activeIndex={activeIndex}
+					resultsGrouped={resultsGrouped}
 				/>
 			</Modal.Body>
 		</Modal>

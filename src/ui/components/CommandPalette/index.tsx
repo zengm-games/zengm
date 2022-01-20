@@ -19,6 +19,7 @@ import {
 } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 import orderBy from "lodash-es/orderBy";
+import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
 const useCommandPalette = () => {
 	const [show, setShow] = useState(true);
@@ -177,6 +178,8 @@ const getResultsGroupedDefault = ({
 	return output;
 };
 
+type AnchorProps = ReturnType<typeof makeAnchorProps>;
+
 const getResultsGroupedTeams = ({
 	hideDisabledTeams,
 	onHide,
@@ -197,7 +200,7 @@ const getResultsGroupedTeams = ({
 			anchorProps: {
 				href: helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`]),
 				onClick: onHide,
-			} as ReturnType<typeof makeAnchorProps>,
+			} as AnchorProps,
 		}))
 		.filter(t => !hideDisabledTeams || !t.disabled);
 
@@ -227,41 +230,108 @@ const getResultsGroupedLeagues = async ({
 }) => {
 	const leagues = (await toWorker("main", "getLeagues")) as League[];
 
-	const leagueInfos = orderBy(leagues, "lastPlayed", "desc").map(l => {
-		const lastPlayed = `last played ${
-			l.lastPlayed ? ago(l.lastPlayed) : "???"
-		}`;
-		return {
-			text: (
-				<>
-					{l.name} - {lastPlayed}
-					<br />
-					{l.phaseText} - {l.teamRegion} {l.teamName}
-				</>
-			),
-			search: `${l.name} - ${lastPlayed} ${l.phaseText} - ${l.teamRegion} ${l.teamName}`,
-			anchorProps: {
-				href: `/l/${l.lid}`,
-				onClick: onHide,
-			} as ReturnType<typeof makeAnchorProps>,
-		};
-	});
+	const newLeagueResults = [];
+	if (SPORT_HAS_REAL_PLAYERS) {
+		newLeagueResults.push(
+			{
+				text: "New League - Real Players",
+				href: "/new_league/real",
+			},
+			{
+				text: "New League - Random Players",
+				href: "/new_league/random",
+			},
+		);
 
-	const filteredResults = matchSorter(leagueInfos, searchText, {
-		keys: ["search"],
-		baseSort,
-	});
+		if (SPORT_HAS_LEGENDS) {
+			newLeagueResults.push({
+				text: "New League - Legends",
+				href: "/new_league/legends",
+			});
+		}
 
-	return [
+		newLeagueResults.push({
+			text: "New League - Custom",
+			href: "/new_league",
+		});
+	} else {
+		newLeagueResults.push({
+			text: "New League",
+			href: "/new_league",
+		});
+	}
+
+	const results = [
 		{
 			category: "",
-			results: filteredResults.map(row => ({
-				category: "",
-				text: row.text,
-				anchorProps: row.anchorProps,
-			})),
+			text: "Switch League",
+			anchorProps: {
+				href: "/",
+				onClick: onHide,
+			} as AnchorProps,
 		},
+		...newLeagueResults.map(row => ({
+			category: "",
+			text: row.text,
+			anchorProps: {
+				href: row.href,
+				onClick: onHide,
+			} as AnchorProps,
+		})),
+		...orderBy(leagues, "lastPlayed", "desc").map(l => {
+			const lastPlayed = `last played ${
+				l.lastPlayed ? ago(l.lastPlayed) : "???"
+			}`;
+			return {
+				category: "Leagues",
+				text: (
+					<>
+						{l.name} - {lastPlayed}
+						<br />
+						{l.phaseText} - {l.teamRegion} {l.teamName}
+					</>
+				),
+				search: `${l.name} - ${lastPlayed} ${l.phaseText} - ${l.teamRegion} ${l.teamName}`,
+				anchorProps: {
+					href: `/l/${l.lid}`,
+					onClick: onHide,
+				} as AnchorProps,
+			};
+		}),
 	];
+
+	const output = [];
+	if (searchText === "") {
+		// No search - return groups
+		const resultsGrouped = groupBy(results, "category");
+		for (const category of Object.keys(resultsGrouped)) {
+			if (resultsGrouped[category]) {
+				output.push({
+					category,
+					results: resultsGrouped[category],
+				});
+			}
+		}
+	} else {
+		// Search - return sorted by relevance, no grouping
+		const filteredResults = matchSorter(results, searchText, {
+			keys: [row => (row as any).search ?? row.text],
+			baseSort,
+		});
+		if (filteredResults.length > 0) {
+			output.push({
+				category: "",
+				results: filteredResults.map(row => ({
+					category: row.category,
+					text: row.text,
+					anchorProps: row.anchorProps,
+					hideCollapsedCategory: true,
+				})),
+			});
+		}
+	}
+
+	return output;
 };
 
 const getResultsGroupedPlayers = async ({
@@ -280,7 +350,7 @@ const getResultsGroupedPlayers = async ({
 				anchorProps: {
 					href: helpers.leagueUrl(["player", p.pid]),
 					onClick: onHide,
-				} as ReturnType<typeof makeAnchorProps>,
+				} as AnchorProps,
 			};
 		},
 	);
@@ -415,7 +485,9 @@ const SearchResults = ({
 											active ? ACTIVE_CLASS : ""
 										}`}
 									>
-										{collapseGroups && result.category ? (
+										{collapseGroups &&
+										result.category &&
+										!(result as any).hideCollapsedCategory ? (
 											<>{result.category} &gt; </>
 										) : null}
 										{result.text}

@@ -34,7 +34,12 @@ export const makeAnchorProps = (
 	menuItem: MenuItemLink,
 	onMenuItemClick: () => void,
 	closeBeforeOnClickResolves?: boolean,
-) => {
+): {
+	onClick: (event: MouseEvent) => void;
+	href?: string;
+	rel?: string;
+	target?: string;
+} => {
 	let href;
 	let rel;
 	let target;

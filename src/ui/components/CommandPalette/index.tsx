@@ -3,11 +3,17 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { groupBy } from "../../../common/groupBy";
 import type {
+	LocalStateUI,
 	MenuItemHeader,
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types";
-import { menuItems, realtimeUpdate, useLocalShallow } from "../../util";
+import {
+	helpers,
+	menuItems,
+	realtimeUpdate,
+	useLocalShallow,
+} from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 
 const useCommandPalette = () => {
@@ -159,29 +165,80 @@ const getResultsGroupedDefault = ({
 	return output;
 };
 
+const getResultsGroupedTeams = ({
+	hideDisabledTeams,
+	onHide,
+	searchText,
+	teamInfoCache,
+}: {
+	hideDisabledTeams: LocalStateUI["hideDisabledTeams"];
+	onHide: () => void;
+	searchText: string;
+	teamInfoCache: LocalStateUI["teamInfoCache"];
+}) => {
+	const teamInfos = teamInfoCache
+		.map((t, tid) => ({
+			text: `${t.region} ${t.name} (${t.abbrev}${
+				t.disabled ? ", disabled" : ""
+			})`,
+			disabled: t.disabled,
+			anchorProps: {
+				href: helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`]),
+				onClick: onHide,
+			} as ReturnType<typeof makeAnchorProps>,
+		}))
+		.filter(t => !hideDisabledTeams || !t.disabled);
+
+	const filteredResults = matchSorter(teamInfos, searchText, {
+		keys: ["text"],
+	});
+
+	return [
+		{
+			category: "",
+			results: filteredResults.map(t => ({
+				category: "",
+				text: t.text,
+				anchorProps: t.anchorProps,
+			})),
+		},
+	];
+};
+
 const getResultsGrouped = ({
 	godMode,
+	hideDisabledTeams,
 	inLeague,
 	mode,
 	onHide,
 	searchText,
+	teamInfoCache,
 }: {
 	godMode: boolean;
+	hideDisabledTeams: LocalStateUI["hideDisabledTeams"];
 	inLeague: boolean;
 	mode: Mode | undefined;
 	onHide: () => void;
 	searchText: string;
+	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
-	let resultsGrouped: ReturnType<typeof getResultsGroupedDefault>;
-	if (!mode) {
+	let resultsGrouped;
+	console.log("mode", mode);
+	if (mode?.key === "!") {
+		resultsGrouped = getResultsGroupedTeams({
+			hideDisabledTeams,
+			onHide,
+			searchText,
+			teamInfoCache,
+		});
+		console.log("resultsGrouped", resultsGrouped);
+	} else {
 		resultsGrouped = getResultsGroupedDefault({
 			godMode,
 			inLeague,
 			onHide,
 			searchText,
 		});
-	} else {
-		resultsGrouped = [];
 	}
 
 	let count = 0;
@@ -295,10 +352,14 @@ const ComandPalette = () => {
 	const { show, onHide } = useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-	const { godMode, lid } = useLocalShallow(state => ({
-		godMode: state.godMode,
-		lid: state.lid,
-	}));
+	const { godMode, hideDisabledTeams, lid, teamInfoCache } = useLocalShallow(
+		state => ({
+			godMode: state.godMode,
+			hideDisabledTeams: state.hideDisabledTeams,
+			lid: state.lid,
+			teamInfoCache: state.teamInfoCache,
+		}),
+	);
 	const inLeague = lid !== undefined;
 
 	const [searchText, setSearchText] = useState("");
@@ -317,10 +378,12 @@ const ComandPalette = () => {
 		const update = async () => {
 			const newResults = await getResultsGrouped({
 				godMode,
+				hideDisabledTeams,
 				inLeague,
 				mode,
 				onHide,
 				searchText,
+				teamInfoCache,
 			});
 
 			if (active) {
@@ -333,7 +396,15 @@ const ComandPalette = () => {
 		return () => {
 			active = false;
 		};
-	}, [godMode, inLeague, mode, onHide, searchText]);
+	}, [
+		godMode,
+		hideDisabledTeams,
+		inLeague,
+		mode,
+		onHide,
+		searchText,
+		teamInfoCache,
+	]);
 
 	useEffect(() => {
 		if (show && searchInputRef.current) {

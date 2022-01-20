@@ -8,8 +8,8 @@ ctrl/cmd+k menu
 - default league
   - play menu items
   - new league (all types)
-- @ - search teams and active players
-  - load players dynamically
+- modes
+  - load content dynamically
 - examples
   - https://github.com/timc1/kbar
   - github

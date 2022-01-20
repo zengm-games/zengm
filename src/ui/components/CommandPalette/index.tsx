@@ -100,11 +100,29 @@ const MenuItemsBlock = ({
 	);
 };
 
+const MODES: { key: "@" | "/" | "!"; description: string }[] = [
+	{
+		key: "@",
+		description: "players",
+	},
+	{
+		key: "!",
+		description: "teams",
+	},
+	{
+		key: "/",
+		description: "leagues",
+	},
+];
+type Mode = typeof MODES[number];
+
 const MenuItems = ({
 	onHide,
+	mode,
 	searchText,
 }: {
 	onHide: () => void;
+	mode: Mode | undefined;
 	searchText: string;
 }) => {
 	const flat = menuItems.filter(
@@ -129,10 +147,31 @@ const MenuItems = ({
 	);
 };
 
+const ModeText = () => {
+	const lid = useLocal(state => state.lid);
+
+	// Hide players/teams in league
+	const modes = MODES.filter(mode => lid !== undefined || mode.key === "/");
+
+	return (
+		<>
+			Type{" "}
+			{modes.map((mode, i) => (
+				<>
+					{i === 0 ? null : i === modes.length - 1 ? ", or " : ", "}
+					<span className="text-black">{mode.key}</span> to search{" "}
+					{mode.description}
+				</>
+			))}
+			.
+		</>
+	);
+};
+
 const ComandPalette = () => {
 	const { show, onHide } = useShowCommandPalette();
 	const [searchText, setSearchText] = useState("");
-	const [mode, setMode] = useState<undefined | "@">();
+	const [mode, setMode] = useState<undefined | Mode>();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 	useEffect(() => {
@@ -157,25 +196,35 @@ const ComandPalette = () => {
 				></span>
 				<div className="input-group ps-1">
 					{mode ? (
-						<span className="input-group-text px-1 border-0 rounded-3">@</span>
+						<span
+							className="input-group-text px-1 border-0 rounded-3 justify-content-center"
+							style={{ minWidth: 21 }}
+						>
+							{mode.key}
+						</span>
 					) : null}
 					<input
 						ref={searchInputRef}
 						className="form-control shadow-none border-0 ps-1 pe-0"
 						type="text"
-						placeholder="Search..."
+						placeholder={`Search ${mode?.description ?? "pages"}...`}
 						style={{
 							fontSize: 15,
 						}}
 						value={searchText}
 						onChange={event => {
 							const newText = event.target.value;
-							if (newText.startsWith("@")) {
-								setMode("@");
-								setSearchText(newText.slice(1));
-							} else {
-								setSearchText(newText);
+
+							if (!mode && newText.length > 0) {
+								const newMode = MODES.find(mode => mode.key === newText[0]);
+								if (newMode) {
+									setMode(newMode);
+									setSearchText(newText.slice(1));
+									return;
+								}
 							}
+
+							setSearchText(newText);
 						}}
 						onKeyDown={event => {
 							// Handle backspace when mode is set and there is no text - unset mode
@@ -190,11 +239,11 @@ const ComandPalette = () => {
 			<Modal.Body className="py-2 px-0">
 				{searchText === "" && !mode ? (
 					<p className="text-muted px-3 pb-2 mb-2 border-bottom">
-						Type @ to search players and teams
+						<ModeText />
 					</p>
 				) : null}
 
-				<MenuItems onHide={onHide} searchText={searchText} />
+				<MenuItems onHide={onHide} mode={mode} searchText={searchText} />
 			</Modal.Body>
 		</Modal>
 	);

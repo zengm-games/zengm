@@ -77,7 +77,7 @@ const MenuItemsBlock = ({
 	return (
 		<div className={`card border-0${className ? " " + className : ""}`}>
 			{header ? (
-				<div className="card-header bg-transparent px-0">
+				<div className="card-header bg-transparent border-0">
 					<span className="fw-bold text-secondary text-uppercase">
 						{header}
 					</span>
@@ -94,7 +94,7 @@ const MenuItemsBlock = ({
 					return (
 						<a
 							{...anchorProps}
-							className="cursor-pointer list-group-item list-group-item-action px-0"
+							className="cursor-pointer list-group-item list-group-item-action border-0"
 						>
 							{getText(menuItem.text)}
 						</a>
@@ -124,7 +124,7 @@ const MenuItems = ({
 			<MenuItemsBlock menuItems={flat} onHide={onHide} />
 			{nested.map(header => (
 				<MenuItemsBlock
-					className="mt-2"
+					className="pt-2 mt-2 border-top"
 					header={header.long}
 					menuItems={header.children}
 					onHide={onHide}
@@ -192,9 +192,11 @@ const ComandPalette = () => {
 				</div>
 			</Modal.Header>
 
-			<Modal.Body className="py-2 px-3">
+			<Modal.Body className="py-2 px-0">
 				{searchText === "" && !mode ? (
-					<p className="text-muted">Type @ to search players and teams</p>
+					<p className="text-muted px-3 pb-2 mb-2 border-bottom">
+						Type @ to search players and teams
+					</p>
 				) : null}
 
 				<MenuItems onHide={onHide} searchText={searchText} />

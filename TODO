@@ -10,8 +10,12 @@ ctrl/cmd+k menu
   - load players dynamically
 - https://github.com/timc1/kbar
   - probably better to write my own
-- non-exact search and highlighting
+- non-exact search
   - https://github.com/kentcdodds/match-sorter
+  - search for e.g. "league finances" should work, from header and page
+  - highlight top match, and press enter to go
+  - when filtered, reformat header so text is like League > Finances, unless whole category is still shown
+- highlighting of selected text in search results
 - see github UI
 - god mode indicator for links (similar to the settings square)
 - share code with SideBar.tsx

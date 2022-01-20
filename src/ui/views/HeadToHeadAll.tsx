@@ -129,6 +129,7 @@ const HeadToHeadAll = ({
 						hideAllControls
 						name="HeadToHeadAll"
 						rows={rows}
+						striped={false}
 					/>
 				</>
 			)}

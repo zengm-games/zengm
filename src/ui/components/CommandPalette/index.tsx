@@ -23,6 +23,20 @@ import { getText, makeAnchorProps } from "../SideBar";
 import orderBy from "lodash-es/orderBy";
 import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
+const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
+const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
+const saveLastUsed = (init?: boolean) => {
+	let now = Date.now();
+
+	// If init, set it up so notification will show in a week
+	if (init) {
+		now = now - TWO_MONTHS_IN_MILLISECONDS + ONE_WEEK_IN_MILLISECONDS;
+	}
+
+	safeLocalStorage.setItem("commandPaletteLastUsed", String(now));
+};
+
 const useCommandPalette = () => {
 	const [show, setShow] = useState(false);
 
@@ -646,11 +660,13 @@ const ComandPalette = ({
 	]);
 
 	useEffect(() => {
-		if (show && searchInputRef.current) {
-			searchInputRef.current.focus();
-		}
+		if (show) {
+			if (searchInputRef.current) {
+				searchInputRef.current.focus();
+			}
 
-		if (!show) {
+			saveLastUsed();
+		} else {
 			setSearchText("");
 			setMode(undefined);
 			setActiveIndex(undefined);
@@ -824,20 +840,6 @@ const ComandPaletteWrapper = () => {
 		if (window.mobile) {
 			return;
 		}
-
-		const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
-		const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
-
-		const saveLastUsed = (init?: boolean) => {
-			let now = Date.now();
-
-			// If init, set it up so notification will show in a week
-			if (init) {
-				now = now - TWO_MONTHS_IN_MILLISECONDS + ONE_WEEK_IN_MILLISECONDS;
-			}
-
-			safeLocalStorage.setItem("commandPaletteLastUsed", String(now));
-		};
 
 		const lastUsedOrBugged = safeLocalStorage.getItem("commandPaletteLastUsed");
 		if (lastUsedOrBugged === null) {

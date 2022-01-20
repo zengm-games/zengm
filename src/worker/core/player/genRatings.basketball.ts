@@ -98,28 +98,28 @@ const genRatings = (
 
 	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		stre: 37,
-		spd: 40,
-		jmp: 40,
-		endu: 17,
-		ins: 27,
-		dnk: 27,
-		ft: 32,
-		fg: 32,
-		tp: 32,
-		oiq: 22,
-		diq: 22,
-		drb: 37,
+		diq: 42,
+		dnk: 43,
+		drb: 38,
+		endu: 29,
+		fg: 36,
+		ft: 35,
+		ins: 40,
+		jmp: 36,
+		oiq: 37,
 		pss: 37,
-		reb: 37,
+		reb: 45,
+		spd: 36,
+		stre: 49,
+		tp: 38,
 	};
 
 	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
 	// ensure there are some who are elite in one but not the other
-	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+	const factorAthleticism = random.realGauss(1, 0.1);
+	const factorShooting = random.realGauss(1, 0.14);
+	const factorSkill = random.realGauss(1, 0.11);
+	const factorIns = random.realGauss(1, 0.2);
 	const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
 	const shootingRatings = ["ft", "fg", "tp"];
 	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
@@ -145,7 +145,7 @@ const genRatings = (
 		}
 
 		rawRatings[key] = limitRating(
-			factor * typeFactor * random.realGauss(rawRatings[key], 3),
+			factor * typeFactor * random.realGauss(rawRatings[key], 3.9),
 		);
 	}
 

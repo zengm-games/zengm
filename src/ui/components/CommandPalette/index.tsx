@@ -8,7 +8,7 @@ import type {
 import { menuItems, useLocal } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 
-const useShowCommandPalette = () => {
+const useCommandPalette = () => {
 	const [show, setShow] = useState(true);
 
 	useEffect(() => {
@@ -32,12 +32,16 @@ const useShowCommandPalette = () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
 	}, []);
+	const [searchText, setSearchText] = useState("");
+	const [mode, setMode] = useState<undefined | Mode>();
 
 	const onHide = useCallback(() => {
 		setShow(false);
+		setSearchText("");
+		setMode(undefined);
 	}, []);
 
-	return { show, onHide };
+	return { show, onHide, searchText, setSearchText, mode, setMode };
 };
 
 const MenuItemsBlock = ({
@@ -116,7 +120,7 @@ const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 ];
 type Mode = typeof MODES[number];
 
-const MenuItems = ({
+const SearchResults = ({
 	onHide,
 	mode,
 	searchText,
@@ -169,9 +173,8 @@ const ModeText = () => {
 };
 
 const ComandPalette = () => {
-	const { show, onHide } = useShowCommandPalette();
-	const [searchText, setSearchText] = useState("");
-	const [mode, setMode] = useState<undefined | Mode>();
+	const { show, onHide, searchText, setSearchText, mode, setMode } =
+		useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 	useEffect(() => {
@@ -243,7 +246,7 @@ const ComandPalette = () => {
 					</p>
 				) : null}
 
-				<MenuItems onHide={onHide} mode={mode} searchText={searchText} />
+				<SearchResults onHide={onHide} mode={mode} searchText={searchText} />
 			</Modal.Body>
 		</Modal>
 	);

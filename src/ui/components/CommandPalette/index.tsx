@@ -138,7 +138,7 @@ const SearchResults = ({
 	});
 	const filteredResultsGrouped = groupBy(filteredResults, "category");
 
-	let first = true;
+	let seenOneResult = false;
 	return (
 		<>
 			{categoriesInOrder.map(category => {
@@ -154,7 +154,9 @@ const SearchResults = ({
 				const block = (
 					<div
 						key={category}
-						className={`card border-0${!first ? " pt-2 mt-2 border-top" : ""}`}
+						className={`card border-0${
+							seenOneResult ? " pt-2 mt-2 border-top" : ""
+						}`}
 					>
 						{!collapseCategory && category ? (
 							<div className="card-header bg-transparent border-0">
@@ -163,18 +165,26 @@ const SearchResults = ({
 								</span>
 							</div>
 						) : null}
-						<div className="list-group list-group-flush">
+						<div className="list-group list-group-flush rounded-0">
 							{catResults.map((result, j) => {
+								const active = !seenOneResult && j === 0 && searchText !== "";
+
 								return (
 									<a
 										key={j}
 										{...result.anchorProps}
-										className="cursor-pointer list-group-item list-group-item-action border-0"
+										className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
+											active ? "table-bg-striped" : ""
+										}`}
 									>
 										{collapseCategory && category ? (
 											<>{category} &gt; </>
 										) : null}
 										{result.text}
+
+										{active ? (
+											<div className="ms-auto">Press enter to go</div>
+										) : null}
 									</a>
 								);
 							})}
@@ -182,19 +192,18 @@ const SearchResults = ({
 					</div>
 				);
 
-				first = false;
+				seenOneResult = true;
 
 				return block;
 			})}
+			{!seenOneResult ? <div className="px-3">No results found.</div> : null}
 		</>
 	);
 };
 
-const ModeText = () => {
-	const lid = useLocal(state => state.lid);
-
+const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	// Hide players/teams in league
-	const modes = MODES.filter(mode => lid !== undefined || mode.key === "/");
+	const modes = MODES.filter(mode => inLeague || mode.key === "/");
 
 	return (
 		<>
@@ -215,6 +224,9 @@ const ComandPalette = () => {
 	const { show, onHide, searchText, setSearchText, mode, setMode } =
 		useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+	const lid = useLocal(state => state.lid);
+	const inLeague = lid !== undefined;
 
 	useEffect(() => {
 		if (show && searchInputRef.current) {
@@ -280,7 +292,7 @@ const ComandPalette = () => {
 			<Modal.Body className="py-2 px-0">
 				{searchText === "" && !mode ? (
 					<p className="text-muted px-3 pb-2 mb-2 border-bottom">
-						<ModeText />
+						<ModeText inLeague={inLeague} />
 					</p>
 				) : null}
 

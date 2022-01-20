@@ -34,27 +34,14 @@ const useCommandPalette = () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
 	}, []);
-	const [searchText, setSearchText] = useState("");
-	const [mode, setMode] = useState<undefined | Mode>();
-
-	const [activeIndex, setActiveIndex] = useState<number | undefined>();
 
 	const onHide = useCallback(() => {
 		setShow(false);
-		setSearchText("");
-		setMode(undefined);
-		setActiveIndex(undefined);
 	}, []);
 
 	return {
 		show,
 		onHide,
-		searchText,
-		setSearchText,
-		mode,
-		setMode,
-		activeIndex,
-		setActiveIndex,
 	};
 };
 
@@ -305,16 +292,7 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 };
 
 const ComandPalette = () => {
-	const {
-		show,
-		onHide,
-		searchText,
-		setSearchText,
-		mode,
-		setMode,
-		activeIndex,
-		setActiveIndex,
-	} = useCommandPalette();
+	const { show, onHide } = useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 	const { godMode, lid } = useLocalShallow(state => ({
@@ -323,19 +301,51 @@ const ComandPalette = () => {
 	}));
 	const inLeague = lid !== undefined;
 
+	const [searchText, setSearchText] = useState("");
+	const [mode, setMode] = useState<undefined | Mode>();
+	const [activeIndex, setActiveIndex] = useState<number | undefined>();
+	const [{ resultsGrouped, count }, setResults] = useState<
+		ReturnType<typeof getResultsGrouped>
+	>({
+		resultsGrouped: [],
+		count: 0,
+	});
+
+	useEffect(() => {
+		let active = true;
+
+		const update = async () => {
+			const newResults = await getResultsGrouped({
+				godMode,
+				inLeague,
+				mode,
+				onHide,
+				searchText,
+			});
+
+			if (active) {
+				setResults(newResults);
+			}
+		};
+
+		update();
+
+		return () => {
+			active = false;
+		};
+	}, [godMode, inLeague, mode, onHide, searchText]);
+
 	useEffect(() => {
 		if (show && searchInputRef.current) {
 			searchInputRef.current.focus();
 		}
-	}, [show]);
 
-	const { resultsGrouped, count } = getResultsGrouped({
-		godMode,
-		inLeague,
-		mode,
-		onHide,
-		searchText,
-	});
+		if (!show) {
+			setSearchText("");
+			setMode(undefined);
+			setActiveIndex(undefined);
+		}
+	}, [show]);
 
 	useEffect(() => {
 		if (window.mobile || !show) {

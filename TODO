@@ -1,5 +1,4 @@
 ctrl/cmd+k menu
-- check career totals link in football/hockey
 - reminder if no use in a long time
 - wrap, so all the hooks and crap don't run if show is false
 - hide by default
@@ -9,6 +8,8 @@ ctrl/cmd+k menu
   - highlighting of selected text in search results
 - blog
   - links to deeper pages
+
+hide multi team mode page in god mode
 
 need vertical borders for supercols, e.g. hof
 

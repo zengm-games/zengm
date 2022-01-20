@@ -1,5 +1,5 @@
 import { takeScreenshot, toWorker } from ".";
-import { DAILY_SCHEDULE, isSport, WEBSITE_ROOT } from "../../common";
+import { bySport, DAILY_SCHEDULE, isSport, WEBSITE_ROOT } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const depthChart: MenuItemLink = {
@@ -388,7 +388,16 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 				commandPalette: true,
 				commandPaletteOnly: true,
-				path: ["player_stats", "all", "career", "totals"],
+				path: [
+					"player_stats",
+					"all",
+					"career",
+					bySport({
+						basketball: "totals",
+						football: "passing",
+						hockey: "skater",
+					}),
+				],
 				text: "Career Totals",
 			},
 			{

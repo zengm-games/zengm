@@ -1,8 +1,10 @@
+import ago from "s-ago";
 import { matchSorter } from "match-sorter";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { groupBy } from "../../../common/groupBy";
 import type {
+	League,
 	LocalStateUI,
 	MenuItemHeader,
 	MenuItemLink,
@@ -12,9 +14,11 @@ import {
 	helpers,
 	menuItems,
 	realtimeUpdate,
+	toWorker,
 	useLocalShallow,
 } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
+import orderBy from "lodash-es/orderBy";
 
 const useCommandPalette = () => {
 	const [show, setShow] = useState(true);
@@ -57,15 +61,18 @@ const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 		description: "players",
 	},
 	{
-		key: "!",
+		key: "/",
 		description: "teams",
 	},
 	{
-		key: "/",
+		key: "!",
 		description: "leagues",
 	},
 ];
 type Mode = typeof MODES[number];
+
+// Tiebreaker - original sort order, rather than alphabetical (default)
+const baseSort = () => 0;
 
 const getResultsGroupedDefault = ({
 	godMode,
@@ -153,6 +160,7 @@ const getResultsGroupedDefault = ({
 		// Search - return sorted by relevance, no grouping
 		const filteredResults = matchSorter(results, searchText, {
 			keys: ["search"],
+			baseSort,
 		});
 		if (filteredResults.length > 0) {
 			output.push({
@@ -191,6 +199,7 @@ const getResultsGroupedTeams = ({
 
 	const filteredResults = matchSorter(teamInfos, searchText, {
 		keys: ["text"],
+		baseSort,
 	});
 
 	return [
@@ -205,7 +214,53 @@ const getResultsGroupedTeams = ({
 	];
 };
 
-const getResultsGrouped = ({
+const getResultsGroupedLeagues = async ({
+	onHide,
+	searchText,
+}: {
+	onHide: () => void;
+	searchText: string;
+}) => {
+	const leagues = (await toWorker("main", "getLeagues")) as League[];
+
+	const leagueInfos = orderBy(leagues, "lastPlayed", "desc").map(l => {
+		const lastPlayed = `last played ${
+			l.lastPlayed ? ago(l.lastPlayed) : "???"
+		}`;
+		return {
+			text: (
+				<>
+					{l.name} - {lastPlayed}
+					<br />
+					{l.phaseText} - {l.teamRegion} {l.teamName}
+				</>
+			),
+			search: `${l.name} - ${lastPlayed} ${l.phaseText} - ${l.teamRegion} ${l.teamName}`,
+			anchorProps: {
+				href: `/l/${l.lid}`,
+				onClick: onHide,
+			} as ReturnType<typeof makeAnchorProps>,
+		};
+	});
+
+	const filteredResults = matchSorter(leagueInfos, searchText, {
+		keys: ["search"],
+		baseSort,
+	});
+
+	return [
+		{
+			category: "",
+			results: filteredResults.map(row => ({
+				category: "",
+				text: row.text,
+				anchorProps: row.anchorProps,
+			})),
+		},
+	];
+};
+
+const getResultsGrouped = async ({
 	godMode,
 	hideDisabledTeams,
 	inLeague,
@@ -223,15 +278,18 @@ const getResultsGrouped = ({
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
 	let resultsGrouped;
-	console.log("mode", mode);
-	if (mode?.key === "!") {
+	if (mode?.key === "/") {
 		resultsGrouped = getResultsGroupedTeams({
 			hideDisabledTeams,
 			onHide,
 			searchText,
 			teamInfoCache,
 		});
-		console.log("resultsGrouped", resultsGrouped);
+	} else if (mode?.key === "!") {
+		resultsGrouped = await getResultsGroupedLeagues({
+			onHide,
+			searchText,
+		});
 	} else {
 		resultsGrouped = getResultsGroupedDefault({
 			godMode,
@@ -261,7 +319,9 @@ const SearchResults = ({
 }: {
 	activeIndex: number | undefined;
 	collapseGroups: boolean;
-	resultsGrouped: ReturnType<typeof getResultsGrouped>["resultsGrouped"];
+	resultsGrouped: Awaited<
+		ReturnType<typeof getResultsGrouped>
+	>["resultsGrouped"];
 }) => {
 	const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -331,7 +391,7 @@ const SearchResults = ({
 
 const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	// Hide players/teams in league
-	const modes = MODES.filter(mode => inLeague || mode.key === "/");
+	const modes = MODES.filter(mode => inLeague || mode.key === "!");
 
 	return (
 		<>
@@ -366,7 +426,7 @@ const ComandPalette = () => {
 	const [mode, setMode] = useState<undefined | Mode>();
 	const [activeIndex, setActiveIndex] = useState<number | undefined>();
 	const [{ resultsGrouped, count }, setResults] = useState<
-		ReturnType<typeof getResultsGrouped>
+		Awaited<ReturnType<typeof getResultsGrouped>>
 	>({
 		resultsGrouped: [],
 		count: 0,

@@ -1419,6 +1419,10 @@ const getLeagueName = () => {
 	return league.getName();
 };
 
+const getLeagues = () => {
+	return idb.meta.getAll("leagues");
+};
+
 const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
@@ -3720,6 +3724,7 @@ export default {
 	getDefaultTragicDeaths,
 	getLeagueInfo,
 	getLeagueName,
+	getLeagues,
 	getLocal,
 	getPlayerBioInfoDefaults,
 	getPlayerWatch,

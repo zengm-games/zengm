@@ -1,19 +1,18 @@
 ctrl/cmd+k menu
 - default all
+  - new league (all types)
   - include links at bottom of page, and instagram
   - other sports
 - default non league
   - list of leagues
 - default league
   - play menu items
-  - new league (all types)
+  - sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
 - modes
   - load content dynamically
 - examples
   - https://github.com/timc1/kbar
   - github
-- what format should the menu items be stored in?
-- what about sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
 - react-virtual for players list?
 - share code with SideBar.tsx
 - reminder if no use in a long time

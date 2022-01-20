@@ -7,12 +7,7 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types";
-import {
-	menuItems,
-	realtimeUpdate,
-	useLocal,
-	useLocalShallow,
-} from "../../util";
+import { menuItems, realtimeUpdate, useLocalShallow } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 
 const useCommandPalette = () => {
@@ -79,7 +74,7 @@ const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 ];
 type Mode = typeof MODES[number];
 
-const getResultsGrouped = ({
+const getResultsGroupedDefault = ({
 	godMode,
 	inLeague,
 	onHide,
@@ -149,14 +144,12 @@ const getResultsGrouped = ({
 			};
 		});
 
-	let count = 0;
 	const output = [];
 	if (searchText === "") {
 		// No search - return groups
 		const resultsGrouped = groupBy(results, "category");
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
-				count += resultsGrouped[category].length;
 				output.push({
 					category,
 					results: resultsGrouped[category],
@@ -173,12 +166,44 @@ const getResultsGrouped = ({
 				category: "",
 				results: filteredResults,
 			});
-			count = filteredResults.length;
 		}
 	}
 
+	return output;
+};
+
+const getResultsGrouped = ({
+	godMode,
+	inLeague,
+	mode,
+	onHide,
+	searchText,
+}: {
+	godMode: boolean;
+	inLeague: boolean;
+	mode: Mode | undefined;
+	onHide: () => void;
+	searchText: string;
+}) => {
+	let resultsGrouped: ReturnType<typeof getResultsGroupedDefault>;
+	if (!mode) {
+		resultsGrouped = getResultsGroupedDefault({
+			godMode,
+			inLeague,
+			onHide,
+			searchText,
+		});
+	} else {
+		resultsGrouped = [];
+	}
+
+	let count = 0;
+	for (const group of resultsGrouped) {
+		count += group.results.length;
+	}
+
 	return {
-		resultsGrouped: output,
+		resultsGrouped,
 		count,
 	};
 };
@@ -307,6 +332,7 @@ const ComandPalette = () => {
 	const { resultsGrouped, count } = getResultsGrouped({
 		godMode,
 		inLeague,
+		mode,
 		onHide,
 		searchText,
 	});

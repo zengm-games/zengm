@@ -1,11 +1,5 @@
 ctrl/cmd+k menu
-- default league
-  - sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
-    - commandPaletteOnly
-- examples
-  - https://github.com/timc1/kbar
-  - github
-- react-virtual for players list?
+- check career totals link in football/hockey
 - reminder if no use in a long time
 - wrap, so all the hooks and crap don't run if show is false
 - hide by default
@@ -13,6 +7,10 @@ ctrl/cmd+k menu
   - god mode indicator for links (similar to the settings square)
 - later
   - highlighting of selected text in search results
+- blog
+  - links to deeper pages
+
+need vertical borders for supercols, e.g. hof
 
 highlight rookies on re-signing page https://discord.com/channels/290013534023057409/933027292500852786/933126520275337297
 

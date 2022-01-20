@@ -1,11 +1,11 @@
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import type {
 	MenuItemHeader,
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types";
-import { helpers, menuItems, useLocal } from "../../util";
+import { menuItems, useLocal } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 
 const useShowCommandPalette = () => {
@@ -45,12 +45,16 @@ const useShowCommandPalette = () => {
 	return { show, onHide };
 };
 
-const MenuItems = ({
+const MenuItemsBlock = ({
+	className,
+	header,
+	menuItems,
 	onHide,
-	searchText,
 }: {
+	className?: string;
+	header?: string;
+	menuItems: MenuItemHeader["children"];
 	onHide: () => void;
-	searchText: string;
 }) => {
 	const lid = useLocal(state => state.lid);
 
@@ -70,6 +74,44 @@ const MenuItems = ({
 		return true;
 	};
 
+	return (
+		<div className={`card border-0${className ? " " + className : ""}`}>
+			{header ? (
+				<div className="card-header bg-transparent px-0">
+					<span className="fw-bold text-secondary text-uppercase">
+						{header}
+					</span>
+				</div>
+			) : null}
+			<div className="list-group list-group-flush">
+				{(menuItems.filter(filter) as MenuItemLink[]).map(menuItem => {
+					const anchorProps = makeAnchorProps(menuItem, onHide);
+
+					if (anchorProps.href !== undefined) {
+						anchorProps.onClick = onHide;
+					}
+
+					return (
+						<a
+							{...anchorProps}
+							className="cursor-pointer list-group-item list-group-item-action px-0"
+						>
+							{getText(menuItem.text)}
+						</a>
+					);
+				})}
+			</div>
+		</div>
+	);
+};
+
+const MenuItems = ({
+	onHide,
+	searchText,
+}: {
+	onHide: () => void;
+	searchText: string;
+}) => {
 	const flat = menuItems.filter(
 		menuItem => menuItem.type === "link",
 	) as MenuItemLink[];
@@ -79,54 +121,14 @@ const MenuItems = ({
 
 	return (
 		<>
-			<div className="card border-0">
-				<div className="list-group list-group-flush">
-					{flat.filter(filter).map(menuItem => {
-						const anchorProps = makeAnchorProps(menuItem, onHide);
-
-						if (anchorProps.href !== undefined) {
-							anchorProps.onClick = onHide;
-						}
-
-						return (
-							<a
-								{...anchorProps}
-								className="cursor-pointer list-group-item list-group-item-action px-0"
-							>
-								{getText(menuItem.text)}
-							</a>
-						);
-					})}
-				</div>
-			</div>
+			<MenuItemsBlock menuItems={flat} onHide={onHide} />
 			{nested.map(header => (
-				<div className="card border-0 mt-2">
-					<div className="card-header bg-transparent px-0">
-						<span className="fw-bold text-secondary text-uppercase">
-							{header.long}
-						</span>
-					</div>
-					<div className="list-group list-group-flush">
-						{(header.children.filter(filter) as MenuItemLink[]).map(
-							menuItem => {
-								const anchorProps = makeAnchorProps(menuItem, onHide);
-
-								if (anchorProps.href !== undefined) {
-									anchorProps.onClick = onHide;
-								}
-
-								return (
-									<a
-										{...anchorProps}
-										className="cursor-pointer list-group-item list-group-item-action px-0"
-									>
-										{getText(menuItem.text)}
-									</a>
-								);
-							},
-						)}
-					</div>
-				</div>
+				<MenuItemsBlock
+					className="mt-2"
+					header={header.long}
+					menuItems={header.children}
+					onHide={onHide}
+				/>
 			))}
 		</>
 	);

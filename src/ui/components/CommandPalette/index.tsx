@@ -17,12 +17,7 @@ const useShowCommandPalette = () => {
 		}
 
 		const handleKeydown = (event: KeyboardEvent) => {
-			if (
-				event.altKey ||
-				event.shiftKey ||
-				event.isComposing ||
-				event.code !== "KeyK"
-			) {
+			if (event.altKey || event.shiftKey || event.isComposing) {
 				return;
 			}
 
@@ -58,7 +53,7 @@ const MenuItemsBlock = ({
 }) => {
 	const lid = useLocal(state => state.lid);
 
-	const filter = (menuItem: MenuItemLink | MenuItemText) => {
+	const filteredMenuItems = menuItems.filter(menuItem => {
 		if (menuItem.type === "text") {
 			return false;
 		}
@@ -72,7 +67,11 @@ const MenuItemsBlock = ({
 		}
 
 		return true;
-	};
+	}) as MenuItemLink[];
+
+	if (filteredMenuItems.length === 0) {
+		return null;
+	}
 
 	return (
 		<div className={`card border-0${className ? " " + className : ""}`}>
@@ -84,12 +83,8 @@ const MenuItemsBlock = ({
 				</div>
 			) : null}
 			<div className="list-group list-group-flush">
-				{(menuItems.filter(filter) as MenuItemLink[]).map(menuItem => {
-					const anchorProps = makeAnchorProps(menuItem, onHide);
-
-					if (anchorProps.href !== undefined) {
-						anchorProps.onClick = onHide;
-					}
+				{filteredMenuItems.map(menuItem => {
+					const anchorProps = makeAnchorProps(menuItem, onHide, true);
 
 					return (
 						<a

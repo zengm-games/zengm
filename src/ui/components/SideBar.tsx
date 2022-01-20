@@ -31,12 +31,8 @@ const MenuGroup = ({ children }: { children: ReactNode }) => (
 export const makeAnchorProps = (
 	menuItem: MenuItemLink,
 	onMenuItemClick: () => void,
-): {
-	href: string | undefined;
-	rel: string | undefined;
-	target: string | undefined;
-	onClick: (event: MouseEvent) => void | Promise<void>;
-} => {
+	closeBeforeOnClickResolves?: boolean,
+) => {
 	let href;
 	let rel;
 	let target;
@@ -54,10 +50,14 @@ export const makeAnchorProps = (
 
 	const onClick = async (event: MouseEvent) => {
 		if (menuItem.onClick) {
+			if (closeBeforeOnClickResolves) {
+				onMenuItemClick();
+			}
+
 			// Don't close menu if response is false
 			const response = await menuItem.onClick(event);
 
-			if (response !== false) {
+			if (response !== false && !closeBeforeOnClickResolves) {
 				onMenuItemClick();
 			}
 		} else {

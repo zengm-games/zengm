@@ -90,7 +90,7 @@ const SuperCols = ({
 							textAlign: "center",
 						}}
 						title={desc}
-						className={title ? "border" : undefined}
+						className={title ? "border-start border-end" : "border-top-0"}
 					>
 						{title}
 					</th>

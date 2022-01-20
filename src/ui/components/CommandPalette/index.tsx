@@ -12,8 +12,10 @@ import type {
 } from "../../../common/types";
 import {
 	helpers,
+	logEvent,
 	menuItems,
 	realtimeUpdate,
+	safeLocalStorage,
 	toWorker,
 	useLocalShallow,
 } from "../../util";
@@ -636,7 +638,7 @@ const ComandPalette = ({
 	}, [show]);
 
 	useEffect(() => {
-		if (window.mobile || !show) {
+		if (!show) {
 			return;
 		}
 
@@ -797,6 +799,50 @@ const ComandPalette = ({
 // Wrapper so useEffect stuff in CommandPalette does not run until it shows
 const ComandPaletteWrapper = () => {
 	const { show, onHide } = useCommandPalette();
+
+	useEffect(() => {
+		if (window.mobile) {
+			return;
+		}
+
+		const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
+		const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
+
+		const saveLastUsed = (init?: boolean) => {
+			let now = Date.now();
+
+			// If init, set it up so notification will show in a week
+			if (init) {
+				now = now - TWO_MONTHS_IN_MILLISECONDS + ONE_WEEK_IN_MILLISECONDS;
+			}
+
+			safeLocalStorage.setItem("commandPaletteLastUsed", String(now));
+		};
+
+		const lastUsedOrBugged = safeLocalStorage.getItem("commandPaletteLastUsed");
+		if (lastUsedOrBugged === null) {
+			saveLastUsed(true);
+			return;
+		}
+
+		const lastDate = parseInt(lastUsedOrBugged);
+		if (Number.isNaN(lastDate)) {
+			saveLastUsed();
+			return;
+		}
+
+		const diff = Date.now() - lastDate;
+		if (diff >= TWO_MONTHS_IN_MILLISECONDS) {
+			logEvent({
+				extraClass: "",
+				type: "info",
+				text: "Pro tip: press ctrl+k or cmd+k to open the command palette, which allows easy keyboard navigation of your league.",
+				saveToDb: false,
+				persistent: true,
+			});
+			saveLastUsed();
+		}
+	}, []);
 
 	if (show) {
 		return <ComandPalette show={show} onHide={onHide} />;

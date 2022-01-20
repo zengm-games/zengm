@@ -22,7 +22,7 @@ import orderBy from "lodash-es/orderBy";
 import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
 const useCommandPalette = () => {
-	const [show, setShow] = useState(true);
+	const [show, setShow] = useState(false);
 
 	useEffect(() => {
 		if (window.mobile) {
@@ -164,7 +164,7 @@ const getResultsGroupedDefault = ({
 		...playMenuOptions.map(option => ({
 			category: "Play",
 			text: option.label,
-			search: option.label,
+			search: `Play ${option.label}`,
 			anchorProps: {
 				href: option.url,
 				onClick: () => {
@@ -558,8 +558,13 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	);
 };
 
-const ComandPalette = () => {
-	const { show, onHide } = useCommandPalette();
+const ComandPalette = ({
+	show,
+	onHide,
+}: {
+	show: boolean;
+	onHide: () => void;
+}) => {
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 	const { godMode, hideDisabledTeams, lid, playMenuOptions, teamInfoCache } =
@@ -789,4 +794,15 @@ const ComandPalette = () => {
 	);
 };
 
-export default ComandPalette;
+// Wrapper so useEffect stuff in CommandPalette does not run until it shows
+const ComandPaletteWrapper = () => {
+	const { show, onHide } = useCommandPalette();
+
+	if (show) {
+		return <ComandPalette show={show} onHide={onHide} />;
+	}
+
+	return null;
+};
+
+export default ComandPaletteWrapper;

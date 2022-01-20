@@ -82,7 +82,6 @@ const SuperCols = ({
 				if (adjustedColspan <= 0) {
 					return null;
 				}
-				console.log("title", title);
 				return (
 					<th
 						key={i}

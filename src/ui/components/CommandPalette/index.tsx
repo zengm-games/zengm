@@ -7,7 +7,7 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types";
-import { menuItems, useLocal } from "../../util";
+import { menuItems, realtimeUpdate, useLocal } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 
 const useCommandPalette = () => {
@@ -37,13 +37,25 @@ const useCommandPalette = () => {
 	const [searchText, setSearchText] = useState("");
 	const [mode, setMode] = useState<undefined | Mode>();
 
+	const [activeIndex, setActiveIndex] = useState<number | undefined>();
+
 	const onHide = useCallback(() => {
 		setShow(false);
 		setSearchText("");
 		setMode(undefined);
+		setActiveIndex(undefined);
 	}, []);
 
-	return { show, onHide, searchText, setSearchText, mode, setMode };
+	return {
+		show,
+		onHide,
+		searchText,
+		setSearchText,
+		mode,
+		setMode,
+		activeIndex,
+		setActiveIndex,
+	};
 };
 
 const MODES: { key: "@" | "/" | "!"; description: string }[] = [
@@ -234,8 +246,16 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 };
 
 const ComandPalette = () => {
-	const { show, onHide, searchText, setSearchText, mode, setMode } =
-		useCommandPalette();
+	const {
+		show,
+		onHide,
+		searchText,
+		setSearchText,
+		mode,
+		setMode,
+		activeIndex,
+		setActiveIndex,
+	} = useCommandPalette();
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 	const lid = useLocal(state => state.lid);
@@ -253,7 +273,6 @@ const ComandPalette = () => {
 		searchText,
 	});
 
-	const [activeIndex, setActiveIndex] = useState<number | undefined>();
 	useEffect(() => {
 		if (window.mobile || !show) {
 			return;
@@ -301,7 +320,7 @@ const ComandPalette = () => {
 		return () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
-	}, [count, show]);
+	}, [count, setActiveIndex, show]);
 
 	if (!show) {
 		return null;
@@ -316,49 +335,82 @@ const ComandPalette = () => {
 						paddingBottom: 2,
 					}}
 				></span>
-				<div className="input-group ps-1">
-					{mode ? (
-						<span
-							className="input-group-text px-1 border-0 rounded-3 justify-content-center"
-							style={{ minWidth: 21 }}
-						>
-							{mode.key}
-						</span>
-					) : null}
-					<input
-						ref={searchInputRef}
-						className="form-control shadow-none border-0 ps-1 pe-0"
-						type="text"
-						placeholder={`Search ${mode?.description ?? "pages"}...`}
-						style={{
-							fontSize: 15,
-						}}
-						value={searchText}
-						onChange={event => {
-							const newText = event.target.value;
+				<form
+					className="flex-grow-1"
+					onSubmit={event => {
+						event.preventDefault();
 
-							if (!mode && newText.length > 0) {
-								const newMode = MODES.find(mode => mode.key === newText[0]);
-								if (newMode) {
-									setMode(newMode);
-									setSearchText(newText.slice(1));
-									setActiveIndex(newText.length > 1 ? 0 : undefined);
-									return;
+						if (activeIndex !== undefined) {
+							let index = 0;
+							for (const group of resultsGrouped) {
+								for (const result of group.results) {
+									if (index === activeIndex) {
+										if (result.anchorProps.onClick) {
+											(result.anchorProps.onClick as any)();
+										}
+
+										if (result.anchorProps.href) {
+											if (result.anchorProps.target) {
+												console.log("new window", result.anchorProps.href);
+												window.open(result.anchorProps.href);
+											} else {
+												console.log("realtimeUpdate", result.anchorProps.href);
+												realtimeUpdate([], result.anchorProps.href);
+											}
+										}
+
+										return;
+									}
+									index += 1;
 								}
 							}
+						}
+					}}
+				>
+					<div className="input-group ps-1">
+						{mode ? (
+							<span
+								className="input-group-text px-1 border-0 rounded-3 justify-content-center"
+								style={{ minWidth: 21 }}
+							>
+								{mode.key}
+							</span>
+						) : null}
+						<input
+							ref={searchInputRef}
+							className="form-control shadow-none border-0 ps-1 pe-0"
+							type="text"
+							placeholder={`Search ${mode?.description ?? "pages"}...`}
+							style={{
+								fontSize: 15,
+							}}
+							value={searchText}
+							onChange={event => {
+								const newText = event.target.value;
 
-							setSearchText(newText);
-							setActiveIndex(newText.length > 0 ? 0 : undefined);
-						}}
-						onKeyDown={event => {
-							// Handle backspace when mode is set and there is no text - unset mode
-							if (searchText === "" && mode && event.code === "Backspace") {
-								setMode(undefined);
-								setActiveIndex(undefined);
-							}
-						}}
-					/>
-				</div>
+								if (!mode && newText.length > 0) {
+									const newMode = MODES.find(mode => mode.key === newText[0]);
+									if (newMode) {
+										setMode(newMode);
+										setSearchText(newText.slice(1));
+										setActiveIndex(newText.length > 1 ? 0 : undefined);
+										return;
+									}
+								}
+
+								setSearchText(newText);
+								setActiveIndex(newText.length > 0 ? 0 : undefined);
+							}}
+							onKeyDown={event => {
+								// Handle backspace when mode is set and there is no text - unset mode
+								if (searchText === "" && mode && event.code === "Backspace") {
+									setMode(undefined);
+									setActiveIndex(undefined);
+								}
+							}}
+						/>
+					</div>
+				</form>
 			</Modal.Header>
 
 			<Modal.Body className="py-2 px-0">

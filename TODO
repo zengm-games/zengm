@@ -1,6 +1,5 @@
 ctrl/cmd+k menu
 - default all
-  - menu items
   - include links at bottom of page, and instagram
   - other sports
 - default non league
@@ -16,7 +15,6 @@ ctrl/cmd+k menu
 - what format should the menu items be stored in?
 - what about sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
 - react-virtual for players list?
-- highlight top match, and press enter to go
 - arrow keys move highlighted entry
   - keep active one in view
 - highlighting of selected text in search results
@@ -25,6 +23,7 @@ ctrl/cmd+k menu
 - reminder if no use in a long time
 - useMemo resultsGrouped?
 - wrap, so all the hooks and crap don't run if show is false
+- search for "auto" should return "auto play" first
 
 highlight rookies on re-signing page https://discord.com/channels/290013534023057409/933027292500852786/933126520275337297
 

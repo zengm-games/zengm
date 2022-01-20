@@ -260,6 +260,44 @@ const getResultsGroupedLeagues = async ({
 	];
 };
 
+const getResultsGroupedPlayers = async ({
+	onHide,
+	searchText,
+}: {
+	onHide: () => void;
+	searchText: string;
+}) => {
+	const players = (await toWorker("main", "getPlayersCommandPalette")) as any[];
+
+	const playerInfos = orderBy(players, ["lastName", "firstName", "abbrev"]).map(
+		p => {
+			return {
+				text: `${p.firstName} ${p.lastName} - ${p.abbrev}, ${p.ratings.pos}, ${p.age}yo - ${p.ratings.ovr} ovr, ${p.ratings.pot} pot`,
+				anchorProps: {
+					href: helpers.leagueUrl(["player", p.pid]),
+					onClick: onHide,
+				} as ReturnType<typeof makeAnchorProps>,
+			};
+		},
+	);
+
+	const filteredResults = matchSorter(playerInfos, searchText, {
+		keys: ["text"],
+		baseSort,
+	});
+
+	return [
+		{
+			category: "",
+			results: filteredResults.map(row => ({
+				category: "",
+				text: row.text,
+				anchorProps: row.anchorProps,
+			})),
+		},
+	];
+};
+
 const getResultsGrouped = async ({
 	godMode,
 	hideDisabledTeams,
@@ -287,6 +325,11 @@ const getResultsGrouped = async ({
 		});
 	} else if (mode?.key === "!") {
 		resultsGrouped = await getResultsGroupedLeagues({
+			onHide,
+			searchText,
+		});
+	} else if (mode?.key === "@") {
+		resultsGrouped = await getResultsGroupedPlayers({
 			onHide,
 			searchText,
 		});

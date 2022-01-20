@@ -1423,6 +1423,19 @@ const getLeagues = () => {
 	return idb.meta.getAll("leagues");
 };
 
+const getPlayersCommandPalette = async () => {
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+		PLAYER.FREE_AGENT,
+		Infinity,
+	]);
+
+	return idb.getCopies.playersPlus(playersAll, {
+		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
+		ratings: ["pos", "ovr", "pot"],
+		season: g.get("season"),
+	});
+};
+
 const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
@@ -3725,6 +3738,7 @@ export default {
 	getLeagueInfo,
 	getLeagueName,
 	getLeagues,
+	getPlayersCommandPalette,
 	getLocal,
 	getPlayerBioInfoDefaults,
 	getPlayerWatch,

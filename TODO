@@ -7,7 +7,6 @@ ctrl/cmd+k menu
   - remove "Switch League"
   - play menu items
   - sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
-- players mode
 - examples
   - https://github.com/timc1/kbar
   - github

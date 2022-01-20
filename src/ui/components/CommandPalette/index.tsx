@@ -119,41 +119,53 @@ const SearchResults = ({
 			);
 		}),
 	].flat();
+	const resultsGrouped = groupBy(results, "category");
 
 	if (searchText === "") {
 		// Render with category headers
-		const resultsGrouped = groupBy(results, "category");
+		const filteredResultsGrouped = groupBy(results, "category");
 		return (
 			<>
-				{Object.entries(resultsGrouped).map(([category, catResults], i) => {
-					return (
-						<div
-							key={category}
-							className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
-						>
-							{category ? (
-								<div className="card-header bg-transparent border-0">
-									<span className="fw-bold text-secondary text-uppercase">
-										{category}
-									</span>
+				{Object.entries(filteredResultsGrouped).map(
+					([category, catResults], i) => {
+						// Put category header inline if not all of the category is shown
+						const collapseCategory =
+							resultsGrouped[category].length !== catResults.length;
+
+						return (
+							<div
+								key={category}
+								className={`card border-0${
+									i > 0 ? " pt-2 mt-2 border-top" : ""
+								}`}
+							>
+								{!collapseCategory && category ? (
+									<div className="card-header bg-transparent border-0">
+										<span className="fw-bold text-secondary text-uppercase">
+											{category}
+										</span>
+									</div>
+								) : null}
+								<div className="list-group list-group-flush">
+									{catResults.map((result, j) => {
+										return (
+											<a
+												key={j}
+												{...result.anchorProps}
+												className="cursor-pointer list-group-item list-group-item-action border-0"
+											>
+												{collapseCategory && category ? (
+													<>{category} &gt; </>
+												) : null}
+												{result.text}
+											</a>
+										);
+									})}
 								</div>
-							) : null}
-							<div className="list-group list-group-flush">
-								{catResults.map((result, j) => {
-									return (
-										<a
-											key={j}
-											{...result.anchorProps}
-											className="cursor-pointer list-group-item list-group-item-action border-0"
-										>
-											{result.text}
-										</a>
-									);
-								})}
 							</div>
-						</div>
-					);
-				})}
+						);
+					},
+				)}
 			</>
 		);
 	}

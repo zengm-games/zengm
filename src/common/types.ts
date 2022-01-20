@@ -1620,7 +1620,6 @@ export type UpdateEvents = (
 	| "allStarThree"
 	| "firstRun"
 	| "g.goatFormula"
-	| "g.userTids"
 	| "gameAttributes"
 	| "gameSim"
 	| "leagues"

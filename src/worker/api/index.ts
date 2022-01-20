@@ -3015,7 +3015,7 @@ const updateMultiTeamMode = async (gameAttributes: {
 
 	await league.updateMeta();
 
-	await toUI("realtimeUpdate", [["g.userTids"]]);
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
 const updateOptions = async (

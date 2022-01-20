@@ -15,8 +15,6 @@ ctrl/cmd+k menu
 - what format should the menu items be stored in?
 - what about sub pages not in the main menu? maybe add them to menuItems, but hidden from main menu
 - react-virtual for players list?
-- arrow keys move highlighted entry
-  - keep active one in view
 - highlighting of selected text in search results
 - god mode indicator for links (similar to the settings square)
 - share code with SideBar.tsx

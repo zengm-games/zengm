@@ -167,6 +167,8 @@ const getResultsGrouped = ({
 	};
 };
 
+const ACTIVE_CLASS = "table-bg-striped";
+
 const SearchResults = ({
 	activeIndex,
 	resultsGrouped,
@@ -174,13 +176,25 @@ const SearchResults = ({
 	activeIndex: number | undefined;
 	resultsGrouped: ReturnType<typeof getResultsGrouped>["resultsGrouped"];
 }) => {
-	if (resultsGrouped.length === 0) {
-		return <div className="px-3">No results found.</div>;
-	}
+	const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+	// Keep active element in viewport
+	useEffect(() => {
+		if (activeIndex !== undefined && wrapperRef.current) {
+			const activeElement = wrapperRef.current.querySelector(
+				`.${ACTIVE_CLASS}`,
+			);
+			if (activeElement) {
+				activeElement.scrollIntoView({
+					block: "nearest",
+				});
+			}
+		}
+	}, [activeIndex, resultsGrouped]);
 
 	let index = 0;
 	return (
-		<>
+		<div ref={wrapperRef}>
 			{resultsGrouped.map(({ category, results, collapse }, i) => {
 				const block = (
 					<div
@@ -204,7 +218,7 @@ const SearchResults = ({
 										key={j}
 										{...result.anchorProps}
 										className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
-											active ? "table-bg-striped" : ""
+											active ? ACTIVE_CLASS : ""
 										}`}
 									>
 										{collapse && category ? <>{category} &gt; </> : null}
@@ -222,7 +236,7 @@ const SearchResults = ({
 
 				return block;
 			})}
-		</>
+		</div>
 	);
 };
 
@@ -420,10 +434,14 @@ const ComandPalette = () => {
 					</p>
 				) : null}
 
-				<SearchResults
-					activeIndex={activeIndex}
-					resultsGrouped={resultsGrouped}
-				/>
+				{resultsGrouped.length > 0 ? (
+					<SearchResults
+						activeIndex={activeIndex}
+						resultsGrouped={resultsGrouped}
+					/>
+				) : (
+					<div className="px-3">No results found.</div>
+				)}
 			</Modal.Body>
 		</Modal>
 	);

@@ -383,10 +383,7 @@ table {
 }
 
 .table:not(.table-borderless):not(.table-bordered) {
-	// Extra selector here is so empty column in superCols does not have top border
-	thead:first-child th {
-		border-top: $table-border-width solid $table-border-color;
-	}
+	border-top: $table-border-width solid $table-border-color;
 }
 
 // .table is so this doesn't apply to a floating row while dragging

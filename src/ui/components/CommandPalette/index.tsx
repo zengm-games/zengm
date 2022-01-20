@@ -634,6 +634,7 @@ const ComandPalette = ({
 			active = false;
 		};
 	}, [
+		challengeNoRatings,
 		godMode,
 		hideDisabledTeams,
 		inLeague,

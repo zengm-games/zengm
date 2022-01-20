@@ -76,6 +76,7 @@ export type Props = {
 	rankCol?: number;
 	rows: DataTableRow[];
 	small?: boolean;
+	striped?: boolean;
 	superCols?: SuperCol[];
 	addFilters?: (string | undefined)[];
 };
@@ -110,6 +111,7 @@ const DataTable = ({
 	rankCol,
 	rows,
 	small,
+	striped,
 	superCols,
 	addFilters,
 }: Props) => {

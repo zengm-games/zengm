@@ -143,7 +143,10 @@ const PlayerGameLog = ({
 	const rowsPlayoffs = playoffGames.map(makeRow);
 
 	// Add separators to playoff series when there is one more than a single game
+	let striped;
 	if (numGamesPlayoffSeires.some(numGames => numGames > 1)) {
+		striped = false;
+
 		let prevOppTid;
 		let oppTidCounter = -1;
 		const classes = [
@@ -166,6 +169,8 @@ const PlayerGameLog = ({
 
 			rowsPlayoffs[i].classNames = classes[oppTidCounter % classes.length];
 		}
+	} else {
+		striped = true;
 	}
 
 	let noGamesMessage;

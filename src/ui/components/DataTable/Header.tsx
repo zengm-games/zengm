@@ -82,6 +82,8 @@ const SuperCols = ({
 				if (adjustedColspan <= 0) {
 					return null;
 				}
+
+				// Have border-start and border-end for all, even with no title. Why? So tabs for regular season / playoffs on player pages look okay.
 				return (
 					<th
 						key={i}
@@ -90,7 +92,7 @@ const SuperCols = ({
 							textAlign: "center",
 						}}
 						title={desc}
-						className={title ? "border-start border-end" : "border-top-0"}
+						className="border-start border-end"
 					>
 						{title}
 					</th>

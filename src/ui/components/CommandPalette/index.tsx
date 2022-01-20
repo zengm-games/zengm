@@ -140,7 +140,16 @@ const getResultsGroupedDefault = ({
 		.flat()
 		.map(({ category, menuItem }) => {
 			const anchorProps = makeAnchorProps(menuItem, onHide, true);
-			const text = getText(menuItem.text);
+			let text = getText(menuItem.text);
+			if (menuItem.godMode) {
+				text = (
+					<>
+						<span className="legend-square god-mode me-1" />
+						{text}
+					</>
+				);
+			}
+
 			const search = category ? `${category} ${text}` : text;
 
 			return {

@@ -82,6 +82,7 @@ const SuperCols = ({
 				if (adjustedColspan <= 0) {
 					return null;
 				}
+				console.log("title", title);
 				return (
 					<th
 						key={i}
@@ -90,6 +91,7 @@ const SuperCols = ({
 							textAlign: "center",
 						}}
 						title={desc}
+						className={title ? "border" : undefined}
 					>
 						{title}
 					</th>

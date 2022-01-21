@@ -1,39 +1,66 @@
+import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
 import { PHASE } from "../../common";
 import {
 	DataTable,
 	MoreLinks,
 	NegotiateButtons,
-	PlayerNameLabels,
 	RosterComposition,
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, helpers, toWorker, useLocalShallow } from "../util";
+import { confirm, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
-import { dataTableWrappedMood } from "../components/Mood";
+import getTemplate from "../util/columns/getTemplate";
+import { Player } from "../../common/types";
+import { MetaCol } from "../util/columns/getCols";
+import { TableConfig } from "../util/TableConfig";
 
 const FreeAgents = ({
 	capSpace,
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	godMode,
+	salaryCapType,
 	maxContract,
 	minContract,
 	numRosterSpots,
 	spectator,
 	phase,
 	players,
-	salaryCapType,
-	stats,
+	config: _config,
 	userPlayers,
 }: View<"freeAgents">) => {
 	const [addFilters, setAddFilters] = useState<
 		(string | undefined)[] | undefined
 	>();
 
+	const config = TableConfig.unserialize(_config);
+
+	config.addColumn(
+		{
+			key: "negotiate",
+			title: "Negotiate",
+			template: (p: Player) => (
+				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+				// @ts-ignore
+				<NegotiateButtons
+					capSpace={capSpace}
+					disabled={gameSimInProgress}
+					minContract={minContract}
+					spectator={spectator}
+					p={p}
+					willingToNegotiate={p.mood.user.willing}
+				/>
+			),
+		},
+		1,
+	);
+
+	const cols = [...config.columns];
+
 	const showAfforablePlayers = useCallback(() => {
-		const newAddFilters: (string | undefined)[] = new Array(9 + stats.length);
+		const newAddFilters: (string | undefined)[] = new Array(9);
 		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
 			newAddFilters[newAddFilters.length - 3] = `<${capSpace}`;
 		} else {
@@ -48,7 +75,7 @@ const FreeAgents = ({
 		setTimeout(() => {
 			setAddFilters(undefined);
 		}, 0);
-	}, [capSpace, challengeNoFreeAgents, minContract, stats]);
+	}, [capSpace, challengeNoFreeAgents, minContract]);
 
 	useTitleBar({ title: "Free Agents" });
 
@@ -73,61 +100,12 @@ const FreeAgents = ({
 		);
 	}
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map(stat => `stat:${stat}`),
-		"Mood",
-		"Asking For",
-		"Exp",
-		"Negotiate",
-	]);
-
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
-			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
-				p.ratings.pos,
-				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				dataTableWrappedMood({
-					defaultType: "user",
-					maxWidth: true,
-					p,
-				}),
-				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
-				p.contract.exp,
-				{
-					value: (
-						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-ignore
-						<NegotiateButtons
-							canGoOverCap={salaryCapType === "none"}
-							capSpace={capSpace}
-							disabled={gameSimInProgress}
-							minContract={minContract}
-							spectator={spectator}
-							p={p}
-							willingToNegotiate={p.mood.user.willing}
-						/>
-					),
-					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
-				},
-			],
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, config)]),
+			),
 		};
 	});
 
@@ -193,7 +171,8 @@ const FreeAgents = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[cols.length - 3, "desc"]}
+				config={config}
+				defaultSort={["Ovr", "desc"]}
 				name="FreeAgents"
 				pagination
 				rows={rows}
@@ -201,6 +180,22 @@ const FreeAgents = ({
 			/>
 		</>
 	);
+};
+
+FreeAgents.propTypes = {
+	capSpace: PropTypes.number.isRequired,
+	salaryCapType: PropTypes.string.isRequired,
+	minContract: PropTypes.number.isRequired,
+	numRosterSpots: PropTypes.number.isRequired,
+	phase: PropTypes.number.isRequired,
+	players: PropTypes.arrayOf(PropTypes.object).isRequired,
+	userPlayers: PropTypes.arrayOf(
+		PropTypes.shape({
+			ratings: PropTypes.shape({
+				pos: PropTypes.string,
+			}),
+		}),
+	).isRequired,
 };
 
 export default FreeAgents;

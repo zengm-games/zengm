@@ -1615,6 +1615,7 @@ export type UpdateEvents = (
 	| "account"
 	| "allStarDunk"
 	| "allStarThree"
+	| "customizeTable"
 	| "firstRun"
 	| "g.goatFormula"
 	| "g.userTids"

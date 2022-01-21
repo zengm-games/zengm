@@ -3,6 +3,7 @@ import type { Player } from "../../common/types";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 export const addMood = async (players: Player[]) => {
 	const moods: Awaited<ReturnType<typeof player["moodInfos"]>>[] = [];
@@ -27,25 +28,37 @@ const updateFreeAgents = async () => {
 		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
+
 	const stats = bySport({
-		basketball: ["min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		basketball: [
+			"stat:gp",
+			"stat:min",
+			"stat:pts",
+			"stat:trb",
+			"stat:ast",
+			"stat:per",
+		],
+		football: ["stat:gp", "stat:keyStats", "stat:av"],
+		hockey: ["stat:gp", "stat:keyStats", "stat:ops", "stat:dps", "stat:ps"],
 	});
 
+	const config: TableConfig = new TableConfig("freeAgents", [
+		"Name",
+		"Pos",
+		"Age",
+		"Ovr",
+		"Pot",
+		...stats,
+		"Mood",
+		"Asking For",
+		"Exp",
+	]);
+	await config.load();
+
 	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"pid",
-			"name",
-			"age",
-			"contract",
-			"injury",
-			"watch",
-			"jerseyNumber",
-			"mood",
-		],
-		ratings: ["ovr", "pot", "skills", "pos"],
-		stats,
+		attrs: config.attrsNeeded,
+		ratings: config.ratingsNeeded,
+		stats: config.statsNeeded,
 		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
@@ -73,8 +86,8 @@ const updateFreeAgents = async () => {
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
 		spectator: g.get("spectator"),
 		phase: g.get("phase"),
+		config,
 		players,
-		stats,
 		userPlayers,
 	};
 };

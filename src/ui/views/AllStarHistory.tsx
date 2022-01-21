@@ -273,7 +273,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "desc"]}
+				defaultSort={["col1", "asc"]}
 				name="AllStarHistory"
 				pagination={pagination}
 				rows={rows}

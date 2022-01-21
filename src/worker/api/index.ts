@@ -3001,6 +3001,10 @@ const updateMultiTeamMode = async (gameAttributes: {
 	await toUI("realtimeUpdate", [["g.userTids"]]);
 };
 
+const updateColumns = async (data: { key: string; columns: string[] }) => {
+	await idb.meta.put("tables", data.columns, data.key);
+};
+
 const updateOptions = async (
 	options: Options & {
 		realPlayerPhotos: string;
@@ -3781,6 +3785,7 @@ export default {
 	updateKeepRosterSorted,
 	updateLeague,
 	updateMultiTeamMode,
+	updateColumns,
 	updateOptions,
 	updatePlayThroughInjuries,
 	updatePlayerWatch,

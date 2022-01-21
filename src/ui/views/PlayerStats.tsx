@@ -1,9 +1,10 @@
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import PropTypes from "prop-types";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
+import { helpers } from "../util";
+import type { SortOrder, View } from "../../common/types";
 import { isSport } from "../../common";
-import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
+import getTemplate from "../util/columns/getTemplate";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -47,7 +48,7 @@ const PlayerStats = ({
 	playoffs,
 	season,
 	statType,
-	stats,
+	config,
 	superCols,
 	userTid,
 }: View<"playerStats">) => {
@@ -64,112 +65,44 @@ const PlayerStats = ({
 		},
 	});
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		"Team",
-		...(season === "all" ? ["Season"] : []),
-		...stats.map(
-			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
-		),
-	]);
+	const cols = config.columns;
 
-	if (statType === "shotLocations") {
-		cols[cols.length - 7].title = "M";
-		cols[cols.length - 6].title = "A";
-		cols[cols.length - 5].title = "%";
-	}
-
-	let sortCol = cols.length - 1;
+	let sortCol: string = cols[0].key ?? "col1";
+	let sortDir: SortOrder = "asc";
 	if (isSport("football")) {
 		if (statType === "passing") {
-			sortCol = 9;
+			sortCol = "stat:passYds";
+			sortDir = "desc";
 		} else if (statType === "rushing") {
-			sortCol = cols.length - 3;
+			sortCol = "stat:rusRecTD";
+			sortDir = "desc";
 		} else if (statType === "defense") {
-			sortCol = 16;
+			sortCol = "stat:defSk";
+			sortDir = "desc";
 		} else if (statType === "kicking") {
-			sortCol = cols.length - 11;
+			sortCol = "stat:fgPct";
+			sortDir = "desc";
 		} else if (statType === "returns") {
-			sortCol = 12;
+			sortCol = "stat:krYds";
+			sortDir = "desc";
 		}
 	}
 
 	const rows = players.map(p => {
-		let pos;
-		if (Array.isArray(p.ratings) && p.ratings.length > 0) {
-			pos = p.ratings.at(-1).pos;
-		} else if (p.ratings.pos) {
-			pos = p.ratings.pos;
-		} else {
-			pos = "?";
-		}
-
-		// HACKS to show right stats, info
-		let actualAbbrev;
-		let actualTid;
 		if (season === "career") {
 			p.stats = p.careerStats;
-			actualAbbrev = p.abbrev;
-			actualTid = p.tid;
 			if (playoffs === "playoffs") {
 				p.stats = p.careerStatsPlayoffs;
 			}
-		} else {
-			actualAbbrev = p.stats.abbrev;
-			actualTid = p.stats.tid;
 		}
-
-		const statsRow = stats.map(stat =>
-			formatStatGameHigh(p.stats, stat, statType),
-		);
-
-		const key = season === "all" ? `${p.pid}-${p.stats.season}` : p.pid;
-
 		return {
-			key,
-			data: [
-				{
-					value: (
-						<PlayerNameLabels
-							injury={p.injury}
-							jerseyNumber={p.stats.jerseyNumber}
-							pid={p.pid}
-							season={season === "career" ? undefined : p.stats.season}
-							skills={p.ratings.skills}
-							watch={p.watch}
-						>
-							{p.nameAbbrev}
-						</PlayerNameLabels>
-					),
-					sortValue: p.name,
-					searchValue: p.name,
-				},
-				pos,
-
-				// Only show age at death for career totals, otherwise just use current age
-				season === "career"
-					? wrappedAgeAtDeath(p.age, p.ageAtDeath)
-					: p.stats.season - p.born.year,
-
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${actualAbbrev}_${actualTid}`,
-						...(season === "career" ? [] : [p.stats.season]),
-					])}
-				>
-					{actualAbbrev}
-				</a>,
-
-				...(season === "all" ? [p.stats.season] : []),
-
-				...statsRow,
-			],
+			key: season === "all" ? `${p.pid}-${p.stats.season}` : p.pid,
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, config)]),
+			),
 			classNames: {
 				"table-danger": p.hof,
-				"table-info": actualTid === userTid,
+				"table-info": p.stats.tid === userTid || p.tid === userTid,
 			},
 		};
 	});
@@ -193,7 +126,8 @@ const PlayerStats = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[sortCol, "desc"]}
+				config={config}
+				defaultSort={[sortCol, sortDir]}
 				name={`PlayerStats${statType}`}
 				rows={rows}
 				superCols={superCols}
@@ -201,6 +135,16 @@ const PlayerStats = ({
 			/>
 		</>
 	);
+};
+
+PlayerStats.propTypes = {
+	abbrev: PropTypes.string.isRequired,
+	players: PropTypes.arrayOf(PropTypes.object).isRequired,
+	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
+	statType: PropTypes.string.isRequired,
+	config: PropTypes.object.isRequired,
+	superCols: PropTypes.array,
+	userTid: PropTypes.number,
 };
 
 export default PlayerStats;

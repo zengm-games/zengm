@@ -38,7 +38,7 @@ export const StatsHeader = ({
 	sortable,
 }: {
 	cols: Col[];
-	onClick: (b: MouseEvent, a: number) => void;
+	onClick: (b: MouseEvent, a: string) => void;
 	sortBys: SortBy[];
 	sortable: boolean;
 }) => {
@@ -52,7 +52,7 @@ export const StatsHeader = ({
 				if (sortable) {
 					className = "sorting";
 					for (const sortBy of sortBys) {
-						if (sortBy[0] === i) {
+						if (sortBy[0] === col.key) {
 							className = sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
 							break;
 						}
@@ -64,7 +64,7 @@ export const StatsHeader = ({
 						className={className}
 						key={i}
 						onClick={event => {
-							onClick(event, i);
+							onClick(event, col.key);
 						}}
 						title={desc}
 					>
@@ -83,7 +83,7 @@ export const sortByStats = (
 ) => {
 	return (a: any, b: any) => {
 		for (const [index, order] of sortBys) {
-			const stat = stats[index];
+			const stat = index.includes(":") ? index.split(":")[1] : index;
 
 			const aValue = getValue?.(a, stat) ?? a.processed[stat];
 			const bValue = getValue?.(b, stat) ?? b.processed[stat];
@@ -114,20 +114,21 @@ const StatsTableIndividual = ({
 
 	const [sortBys, setSortBys] = useState(() => {
 		return PLAYER_GAME_STATS[type].sortBy.map(
-			stat => [stats.indexOf(stat), "desc"] as SortBy,
+			stat => [`stat:${stat}`, "desc"] as SortBy,
 		);
 	});
 
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			prevSortBys =>
+	const onClick = (event: MouseEvent, colKey: string) => {
+		setSortBys(prevSortBys => {
+			return (
 				updateSortBys({
 					cols,
 					event,
-					i,
+					colKey,
 					prevSortBys,
-				}) ?? [],
-		);
+				}) ?? []
+			);
+		});
 	};
 
 	const players = t.players

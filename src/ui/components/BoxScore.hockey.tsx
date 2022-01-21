@@ -41,20 +41,21 @@ const StatsTable = ({
 
 	const [sortBys, setSortBys] = useState(() => {
 		return PLAYER_GAME_STATS[type].sortBy.map(
-			stat => [stats.indexOf(stat), "desc"] as SortBy,
+			stat => [`stat:${stat}`, "desc"] as SortBy,
 		);
 	});
 
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			prevSortBys =>
+	const onClick = (event: MouseEvent, colKey: string) => {
+		setSortBys(prevSortBys => {
+			return (
 				updateSortBys({
 					cols,
 					event,
-					i,
+					colKey,
 					prevSortBys,
-				}) ?? [],
-		);
+				}) ?? []
+			);
+		});
 	};
 
 	const players = t.players

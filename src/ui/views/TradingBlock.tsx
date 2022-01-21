@@ -8,8 +8,8 @@ import type { View } from "../../common/types";
 import type { Player } from "../../common/types";
 import type api from "../../worker/api";
 import getTemplate from "../util/columns/getTemplate";
-import type { ColTemp, MetaCol } from "../util/columns/getCols";
-import type { TableConfig } from "../util/TableConfig";
+import type { MetaCol } from "../util/columns/getCols";
+import { TableConfig } from "../util/TableConfig";
 
 type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
@@ -244,7 +244,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		gameOver,
 		spectator,
 		phase,
-		config,
+		config: _config,
 		userPicks,
 		userRoster,
 	} = props;
@@ -284,28 +284,28 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		);
 	}
 
+	const config = TableConfig.unserialize(_config);
+
+	config.addColumn(
+		{
+			title: "",
+			key: "include",
+			sortSequence: [],
+			noSearch: true,
+			template: (p: Player, c: MetaCol, vars: object) => (
+				<input
+					type="checkbox"
+					checked={state.pids.includes(p.pid)}
+					disabled={p.untradable}
+					onChange={() => handleChangeAsset("pids", p.pid)}
+					title={p.untradableMsg}
+				/>
+			),
+		},
+		0,
+	);
+
 	const cols = [...config.columns];
-
-	const includeColumn: MetaCol = {
-		title: "",
-		key: "include",
-		sortSequence: [],
-		noSearch: true,
-		template: (p: Player, c: MetaCol, vars: object) => (
-			<input
-				type="checkbox"
-				checked={state.pids.includes(p.pid)}
-				disabled={p.untradable}
-				onChange={() => handleChangeAsset("pids", p.pid)}
-				title={p.untradableMsg}
-			/>
-		),
-	};
-
-	const includeIndex = cols.findIndex(col => col.key == "include");
-
-	if (includeIndex === -1) cols.unshift(includeColumn);
-	else cols[includeIndex] = includeColumn;
 
 	const rows = userRoster.map(p => {
 		return {

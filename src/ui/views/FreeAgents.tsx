@@ -12,8 +12,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import getTemplate from "../util/columns/getTemplate";
-import { Player } from "../../common/types";
-import { MetaCol } from "../util/columns/getCols";
+import type { Player } from "../../common/types";
 import { TableConfig } from "../util/TableConfig";
 
 const FreeAgents = ({

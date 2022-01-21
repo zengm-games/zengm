@@ -37,7 +37,7 @@ export class TableConfig {
 
 	addColumn(column: MetaCol, pos: number) {
 		const colIndex = this.columns.findIndex(c => c.key === column.key);
-		if (colIndex) {
+		if (colIndex !== -1) {
 			Object.assign(this.columns[colIndex], column);
 		} else {
 			this.columns.splice(pos, 0, column);

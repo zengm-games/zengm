@@ -108,7 +108,7 @@ export const getMostXTeamSeasons = async ({
 			const playoffSeries = await tx
 				.objectStore("playoffSeries")
 				.get(ts.season);
-			if (playoffSeries) {
+			if (playoffSeries && playoffSeries.series.length > 0) {
 				const matchups = playoffSeries.series[0];
 				for (const matchup of matchups) {
 					if (matchup.home.tid === ts.tid) {

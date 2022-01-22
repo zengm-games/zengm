@@ -759,6 +759,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 											const country = await toWorker(
 												"main",
 												"getRandomCountry",
+												undefined,
 											);
 
 											setState(prevState => {
@@ -799,6 +800,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 											const college = await toWorker(
 												"main",
 												"getRandomCollege",
+												undefined,
 											);
 
 											setState(prevState => {

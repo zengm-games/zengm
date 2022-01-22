@@ -38,7 +38,7 @@ const DangerZone = ({
 						processing={regeneratingSchedule}
 						onClick={async () => {
 							setRegeneratingSchedule(true);
-							await toWorker("main", "regenerateSchedule");
+							await toWorker("main", "regenerateSchedule", undefined);
 							setRegeneratingSchedule(false);
 						}}
 					>
@@ -59,7 +59,7 @@ const DangerZone = ({
 						type="button"
 						className="btn btn-light-bordered"
 						onClick={() => {
-							toWorker("toolsMenu", "skipToPlayoffs");
+							toWorker("toolsMenu", "skipToPlayoffs", undefined);
 						}}
 					>
 						Playoffs
@@ -68,7 +68,7 @@ const DangerZone = ({
 						type="button"
 						className="btn btn-light-bordered"
 						onClick={() => {
-							toWorker("toolsMenu", "skipToBeforeDraft");
+							toWorker("toolsMenu", "skipToBeforeDraft", undefined);
 						}}
 					>
 						Before draft
@@ -77,7 +77,7 @@ const DangerZone = ({
 						type="button"
 						className="btn btn-light-bordered"
 						onClick={() => {
-							toWorker("toolsMenu", "skipToAfterDraft");
+							toWorker("toolsMenu", "skipToAfterDraft", undefined);
 						}}
 					>
 						After draft
@@ -86,7 +86,7 @@ const DangerZone = ({
 						type="button"
 						className="btn btn-light-bordered"
 						onClick={() => {
-							toWorker("toolsMenu", "skipToPreseason");
+							toWorker("toolsMenu", "skipToPreseason", undefined);
 						}}
 					>
 						Preseason
@@ -119,7 +119,7 @@ const DangerZone = ({
 						className="btn btn-god-mode border-0"
 						disabled={!godMode}
 						onClick={() => {
-							toWorker("main", "toggleTradeDeadline");
+							toWorker("main", "toggleTradeDeadline", undefined);
 						}}
 					>
 						Switch to before trade deadline
@@ -130,7 +130,7 @@ const DangerZone = ({
 						className="btn btn-god-mode border-0"
 						disabled={phase !== PHASE.REGULAR_SEASON || !godMode}
 						onClick={() => {
-							toWorker("main", "toggleTradeDeadline");
+							toWorker("main", "toggleTradeDeadline", undefined);
 						}}
 					>
 						Switch to after trade deadline
@@ -175,7 +175,7 @@ const DangerZone = ({
 								!godMode
 							}
 							onClick={async () => {
-								await toWorker("main", "allStarGameNow");
+								await toWorker("main", "allStarGameNow", undefined);
 
 								logEvent({
 									saveToDb: false,

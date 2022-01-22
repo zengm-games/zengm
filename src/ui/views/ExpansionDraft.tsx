@@ -147,7 +147,11 @@ const ExpansionDraft = ({
 
 		setSaving(true);
 
-		const errors = await toWorker("main", "advanceToPlayerProtection");
+		const errors = await toWorker(
+			"main",
+			"advanceToPlayerProtection",
+			undefined,
+		);
 
 		if (errors) {
 			logEvent({

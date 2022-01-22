@@ -317,7 +317,11 @@ const DraftLotteryTable = (props: Props) => {
 
 	const startLottery = async () => {
 		dispatch({ type: "startClicked" });
-		const draftLotteryResult = await toWorker("main", "draftLottery");
+		const draftLotteryResult = await toWorker(
+			"main",
+			"draftLottery",
+			undefined,
+		);
 		if (draftLotteryResult) {
 			const { draftType, result } = draftLotteryResult;
 

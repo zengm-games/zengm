@@ -242,7 +242,7 @@ class ViewManager {
 		const lid = local.getState().lid;
 
 		if (inLeague) {
-			if (newLid !== lid) {
+			if (newLid !== lid && newLid !== undefined) {
 				await toWorker("main", "beforeViewLeague", {
 					newLid,
 					loadedLid: lid,
@@ -251,7 +251,7 @@ class ViewManager {
 		} else {
 			// eslint-disable-next-line no-lonely-if
 			if (lid !== undefined) {
-				await toWorker("main", "beforeViewNonLeague");
+				await toWorker("main", "beforeViewNonLeague", undefined);
 				localActions.updateGameAttributes({
 					lid: undefined,
 				});

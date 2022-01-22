@@ -182,7 +182,7 @@ const getResultsGroupedDefault = ({
 				onClick: () => {
 					onHide();
 					if (!option.url) {
-						toWorker("playMenu", option.id as any);
+						toWorker("playMenu", option.id as any, undefined);
 					}
 				},
 			} as AnchorProps,
@@ -268,7 +268,7 @@ const getResultsGroupedLeagues = async ({
 	onHide: () => void;
 	searchText: string;
 }) => {
-	const leagues = (await toWorker("main", "getLeagues")) as League[];
+	const leagues = (await toWorker("main", "getLeagues", undefined)) as League[];
 
 	const newLeagueResults = [];
 	if (SPORT_HAS_REAL_PLAYERS) {
@@ -383,7 +383,11 @@ const getResultsGroupedPlayers = async ({
 	onHide: () => void;
 	searchText: string;
 }) => {
-	const players = (await toWorker("main", "getPlayersCommandPalette")) as any[];
+	const players = (await toWorker(
+		"main",
+		"getPlayersCommandPalette",
+		undefined,
+	)) as any[];
 
 	const playerInfos = orderBy(players, ["lastName", "firstName", "abbrev"]).map(
 		p => {

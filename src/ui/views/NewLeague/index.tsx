@@ -147,38 +147,39 @@ for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
 
 const legends = [
 	{
-		key: "all",
+		key: "all" as const,
 		value: "All Time",
 	},
 	{
-		key: "2010s",
+		key: "2010s" as const,
 		value: "2010s",
 	},
 	{
-		key: "2000s",
+		key: "2000s" as const,
 		value: "2000s",
 	},
 	{
-		key: "1990s",
+		key: "1990s" as const,
 		value: "1990s",
 	},
 	{
-		key: "1980s",
+		key: "1980s" as const,
 		value: "1980s",
 	},
 	{
-		key: "1970s",
+		key: "1970s" as const,
 		value: "1970s",
 	},
 	{
-		key: "1960s",
+		key: "1960s" as const,
 		value: "1960s",
 	},
 	{
-		key: "1950s",
+		key: "1950s" as const,
 		value: "1950s",
 	},
 ];
+type LegendKey = typeof legends[number]["key"];
 
 const phases = [
 	{
@@ -740,7 +741,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			} else if (state.customize === "legends") {
 				getLeagueOptions = {
 					type: "legends",
-					decade: state.legend as any,
+					decade: state.legend as LegendKey,
 				};
 			}
 
@@ -1158,7 +1159,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										getLeagueInfo={value =>
 											toWorker("main", "getLeagueInfo", {
 												type: "legends",
-												decade: value,
+												decade: value as LegendKey,
 											})
 										}
 										onLoading={legend => {

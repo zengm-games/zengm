@@ -7,7 +7,7 @@ import { isSport } from "../../common";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {
-	const count = await toWorker("main", "countNegotiations");
+	const count = await toWorker("main", "countNegotiations", undefined);
 	if (count > 0) {
 		realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
 	} else if (cancelled || isSport("football")) {

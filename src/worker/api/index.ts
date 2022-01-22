@@ -113,6 +113,7 @@ import type { IDBPIndex, IDBPObjectStore } from "idb";
 import type { LeagueDB } from "../db/connectLeague";
 import playMenu from "./playMenu";
 import toolsMenu from "./toolsMenu";
+import omit from "lodash-es/omit";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -348,6 +349,9 @@ const beforeViewNonLeague = async (param: unknown, conditions: Conditions) => {
 const cancelContractNegotiation = async (pid: number) => {
 	return contractNegotiation.cancel(pid);
 };
+
+const checkAccount2 = (param: unknown, conditions: Conditions) =>
+	checkAccount(conditions);
 
 const checkParticipationAchievement = async (
 	force: boolean,
@@ -3048,17 +3052,22 @@ const updateDefaultSettingsOverrides = async (
 	}
 };
 
-const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
+const updateGameAttributes = async (
+	gameAttributes: Partial<GameAttributesLeague>,
+) => {
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 const updateGameAttributesGodMode = async (
-	gameAttributes: Exclude<GameAttributesLeague, "repeatSeason"> & {
-		repeatSeason?: GameAttributesLeague["repeatSeason"] | boolean;
-	},
+	settings: Settings,
 	conditions: Conditions,
 ) => {
-	const repeatSeason = gameAttributes.repeatSeason;
+	const gameAttributes: Partial<GameAttributesLeague> = omit(
+		settings,
+		"repeatSeason",
+	);
+
+	const repeatSeason = settings.repeatSeason;
 	let initRepeatSeason = false;
 	if (typeof repeatSeason === "boolean") {
 		const prevRepeatSeason = g.get("repeatSeason");
@@ -3568,7 +3577,7 @@ const upsertCustomizedPlayer = async (
 		updatedRatingsOrAge,
 	}: {
 		p: Player | PlayerWithoutKey;
-		originalTid: number;
+		originalTid: number | undefined;
 		season: number;
 		updatedRatingsOrAge: boolean;
 	},
@@ -3733,24 +3742,7 @@ const clearTrade = async (
 	await toUI("realtimeUpdate", []);
 };
 
-const createTrade = async (
-	teams: [
-		{
-			tid: number;
-			pids: number[];
-			pidsExcluded: [];
-			dpids: number[];
-			dpidsExcluded: [];
-		},
-		{
-			tid: number;
-			pids: number[];
-			pidsExcluded: [];
-			dpids: number[];
-			dpidsExcluded: [];
-		},
-	],
-) => {
+const createTrade = async (teams: TradeTeams) => {
 	await trade.create(teams);
 	await toUI("realtimeUpdate", []);
 };
@@ -3858,7 +3850,7 @@ export default {
 		beforeViewLeague,
 		beforeViewNonLeague,
 		cancelContractNegotiation,
-		checkAccount,
+		checkAccount: checkAccount2,
 		checkParticipationAchievement,
 		clearTrade,
 		clearInjury,

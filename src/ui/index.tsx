@@ -51,7 +51,7 @@ const handleVersion = async () => {
 
 	window.withGoodUI?.();
 
-	toWorker("main", "ping").then(() => {
+	toWorker("main", "ping", undefined).then(() => {
 		window.withGoodWorker?.();
 	});
 

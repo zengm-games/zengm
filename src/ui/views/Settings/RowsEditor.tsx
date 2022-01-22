@@ -211,6 +211,7 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 									const defaultRows = await toWorker(
 										"main",
 										`getDefault${helpers.upperCaseFirstLetter(type)}`,
+										undefined,
 									);
 									setRows(formatRows(defaultRows) as any);
 								}}

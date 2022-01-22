@@ -836,13 +836,11 @@ const CustomizeTeams = ({
 				div => myTeams.filter(t => t.did === div.did).length,
 			);
 
-			const response = await toWorker(
-				"main",
-				"getRandomTeams",
-				myDivs,
+			const response = await toWorker("main", "getRandomTeams", {
+				divs: myDivs,
 				numTeamsPerDiv,
 				weightByPopulation,
-			);
+			});
 
 			if (typeof response === "string") {
 				logEvent({

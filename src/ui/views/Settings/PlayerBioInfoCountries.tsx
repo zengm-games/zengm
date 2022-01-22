@@ -238,7 +238,7 @@ const Controls = ({
 								onClick={async () => {
 									setInfoState(
 										formatPlayerBioInfoState(
-											await toWorker("main", "getDefaultInjuries"),
+											await toWorker("main", "getDefaultInjuries", undefined),
 											defaults,
 										),
 									);

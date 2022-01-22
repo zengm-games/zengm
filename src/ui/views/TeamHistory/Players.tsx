@@ -43,7 +43,8 @@ const Players = ({
 			tid,
 			info: {
 				number,
-				seasonRetired: season,
+				// Season can only can be undefined if gmHistory is true, but then there are no jersey retirements
+				seasonRetired: season!,
 				seasonTeamInfo,
 				pid: p.pid,
 				text: "",

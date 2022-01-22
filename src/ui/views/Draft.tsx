@@ -26,7 +26,7 @@ const DraftButtons = ({
 				className="btn btn-light-bordered"
 				disabled={usersTurn && !spectator}
 				onClick={async () => {
-					await toWorker("playMenu", "onePick");
+					await toWorker("playMenu", "onePick", undefined);
 				}}
 			>
 				Sim one pick
@@ -36,7 +36,7 @@ const DraftButtons = ({
 					className="btn btn-light-bordered"
 					disabled={usersTurn && !spectator}
 					onClick={async () => {
-						await toWorker("playMenu", "untilYourNextPick");
+						await toWorker("playMenu", "untilYourNextPick", undefined);
 					}}
 				>
 					To your next pick
@@ -58,7 +58,7 @@ const DraftButtons = ({
 							return;
 						}
 					}
-					await toWorker("playMenu", "untilEnd");
+					await toWorker("playMenu", "untilEnd", undefined);
 				}}
 			>
 				To end of draft
@@ -89,7 +89,7 @@ const Draft = ({
 		setDrafting(false);
 
 		if (simToNextUserPick) {
-			await toWorker("playMenu", "untilYourNextPick");
+			await toWorker("playMenu", "untilYourNextPick", undefined);
 		}
 	};
 

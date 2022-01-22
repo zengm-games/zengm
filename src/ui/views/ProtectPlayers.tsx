@@ -215,7 +215,7 @@ const ProtectPlayers = ({
 			}
 		}
 
-		const errors = await toWorker("main", "startExpansionDraft");
+		const errors = await toWorker("main", "startExpansionDraft", undefined);
 
 		if (errors) {
 			logEvent({
@@ -237,7 +237,7 @@ const ProtectPlayers = ({
 	};
 
 	const handleCancel = async () => {
-		await toWorker("main", "cancelExpansionDraft");
+		await toWorker("main", "cancelExpansionDraft", undefined);
 		realtimeUpdate([], helpers.leagueUrl([]));
 	};
 

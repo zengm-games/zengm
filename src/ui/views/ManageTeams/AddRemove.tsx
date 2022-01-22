@@ -23,7 +23,7 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 		dispatch({
 			type: "startSaving",
 		});
-		const t = await toWorker("main", "addTeam");
+		const t = await toWorker("main", "addTeam", undefined);
 		dispatch({
 			type: "addTeam",
 			team: t,

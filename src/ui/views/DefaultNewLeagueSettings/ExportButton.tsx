@@ -19,7 +19,11 @@ const ExportButton = () => (
 				}
 			}
 
-			const settings = await toWorker("main", "getDefaultNewLeagueSettings");
+			const settings = await toWorker(
+				"main",
+				"getDefaultNewLeagueSettings",
+				undefined,
+			);
 
 			downloadFile(
 				`${GAME_ACRONYM}_default_settings.json`,

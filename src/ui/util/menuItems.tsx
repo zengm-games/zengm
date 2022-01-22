@@ -486,7 +486,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 
 				onClick() {
-					return toWorker("toolsMenu", "autoPlaySeasons");
+					return toWorker("toolsMenu", "autoPlaySeasons", undefined);
 				},
 
 				text: "Auto Play",
@@ -629,7 +629,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 
 				async onClick(): Promise<false> {
-					const response = await toWorker("toolsMenu", "resetDb");
+					const response = await toWorker("toolsMenu", "resetDb", undefined);
 
 					if (response) {
 						window.location.reload();

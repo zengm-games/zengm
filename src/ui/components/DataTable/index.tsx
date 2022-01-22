@@ -391,7 +391,21 @@ const DataTable = ({
 
 	const highlightCols = state.sortBys
 		.map(sortBy => sortBy[0])
-		.map(i => colOrderFiltered.findIndex(({ colIndex }) => colIndex === i));
+		.map(i =>
+			colOrderFiltered.findIndex(({ colIndex }) => {
+				if (colIndex !== i) {
+					return false;
+				}
+
+				// Make sure sortSequence is not an empty array - same code is in Header
+				const sortSequence = cols[colIndex].sortSequence;
+				if (sortSequence && sortSequence.length === 0) {
+					return false;
+				}
+
+				return true;
+			}),
+		);
 
 	return (
 		<>

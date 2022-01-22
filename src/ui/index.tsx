@@ -49,14 +49,10 @@ const handleVersion = async () => {
 	});
 	api.bbgmPing("version");
 
-	if (window.withGoodUI) {
-		window.withGoodUI();
-	}
+	window.withGoodUI?.();
 
 	toWorker("main", "ping").then(() => {
-		if (window.withGoodWorker) {
-			window.withGoodWorker();
-		}
+		window.withGoodWorker?.();
 	});
 
 	// Check if there are other tabs open with a different version

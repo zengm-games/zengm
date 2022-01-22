@@ -547,7 +547,7 @@ class GameSim {
 		}
 	}
 
-	getPossessionLength() {
+	getPossessionLength(intentionalFoul: boolean) {
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const pointDifferential =
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
@@ -609,6 +609,8 @@ class GameSim {
 				this.averagePossessionLength + 3 / 60,
 				5 / 60,
 			);
+		} else if (intentionalFoul) {
+			possessionLength = (Math.random() * 3) / 60;
 		} else {
 			possessionLength = random.gauss(this.averagePossessionLength, 5 / 60);
 		}
@@ -641,6 +643,19 @@ class GameSim {
 		return helpers.bound(bounded1, 0, finalUpperBound);
 	}
 
+	// Call this before running clock for possession
+	shouldIntentionalFoul() {
+		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+		const offenseWinningByABit = diff > 0 && diff <= 6;
+		const intentionalFoul =
+			offenseWinningByABit &&
+			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
+			this.t < 25 / 60 &&
+			!this.elamActive;
+
+		return intentionalFoul;
+	}
+
 	simPossession() {
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
@@ -648,10 +663,13 @@ class GameSim {
 		this.updateTeamCompositeRatings();
 
 		// Clock
-		const possessionLength = this.getPossessionLength();
+		const intentionalFoul = this.shouldIntentionalFoul();
+		const possessionLength = this.getPossessionLength(intentionalFoul);
+		const outcome = this.getPossessionOutcome(
+			possessionLength,
+			intentionalFoul,
+		);
 		this.t -= possessionLength;
-
-		const outcome = this.getPossessionOutcome(possessionLength);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
@@ -1271,25 +1289,7 @@ class GameSim {
 	 *
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
-	getPossessionOutcome(possessionLength: number) {
-		const timeBeforePossession = this.t + possessionLength;
-		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-		const offenseWinningByABit = diff > 0 && diff <= 6;
-		const intentionalFoul =
-			offenseWinningByABit &&
-			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-			timeBeforePossession < 25 / 60 &&
-			!this.elamActive;
-
-		if (intentionalFoul) {
-			// HACK! Add some time back on the clock. Would be better if this was like football and time ticked off during the play, not predefined. BE CAREFUL ABOUT CHANGING STUFF BELOW THIS IN THIS FUNCTION, IT MAY DEPEND ON THIS. Like anything reading this.t or intentionalFoul.
-			const possessionLength2 = (Math.random() * 3) / 60;
-
-			if (possessionLength2 < timeBeforePossession) {
-				this.t = timeBeforePossession - possessionLength2;
-			}
-		}
-
+	getPossessionOutcome(possessionLength: number, intentionalFoul: boolean) {
 		// If winning at end of game, just run out the clock
 		if (
 			this.t <= 0 &&

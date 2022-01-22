@@ -1,4 +1,13 @@
-high endu players get more PT than minutes in game https://discord.com/channels/290013534023057409/290015591216054273/934260184405119056
+types for toWorker
+- flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier
+- test with tradeCounterOffer
+- see OfferType
+- if it's possible to make it work with no explicit array passed for optional args, do same in toUI
+
+refactor game sim
+- classes should share some common methods
+
+add league average to team stats and league stats tables https://discord.com/channels/290013534023057409/331882115119448065/838366140739878942
 
 dropdown list of cities on manage teams page
 - https://discord.com/channels/290013534023057409/331882115119448065/933031128443539528
@@ -159,9 +168,6 @@ store results of trading block in database
 - show what the user offered somewhere, not just what is checked
 
 show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
-
-refactor game sim
-- classes should share some common methods
 
 football penalty later
 - make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes
@@ -404,8 +410,6 @@ trade finder, with salary cap rules enforced
 
 fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
-
-add league average to team stats and league stats tables https://discord.com/channels/290013534023057409/331882115119448065/838366140739878942
 
 AI teams too likely to re-sign stars?
 
@@ -1243,11 +1247,6 @@ FBGM football sim bugs
 
 typescript
 - to do
-  - types for toWorker
-    - flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier
-    - test with tradeCounterOffer
-    - see OfferType
-    - if it's possible to make it work with no explicit array passed for optional args, do same in toUI
   - backboard -> idb
     - my branch has two fixes:
       - https://github.com/jakearchibald/idb/pull/151

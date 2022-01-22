@@ -41,10 +41,6 @@ const useCommandPalette = () => {
 	const [show, setShow] = useState(false);
 
 	useEffect(() => {
-		if (window.mobile) {
-			return;
-		}
-
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.altKey || event.shiftKey || event.isComposing) {
 				return;

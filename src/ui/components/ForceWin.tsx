@@ -85,7 +85,10 @@ const ForceWin = ({
 									setState("saving");
 									const newForceWin = forceWin === tid ? undefined : tid;
 									setForceWin(newForceWin);
-									await toWorker("main", "setForceWin", game.gid, newForceWin);
+									await toWorker("main", "setForceWin", {
+										gid: game.gid,
+										tidOrTie: newForceWin,
+									});
 								} catch (error) {
 									setState("error");
 									throw error;
@@ -111,7 +114,10 @@ const ForceWin = ({
 								try {
 									setState("saving");
 									setForceWin("tie");
-									await toWorker("main", "setForceWin", game.gid, "tie");
+									await toWorker("main", "setForceWin", {
+										gid: game.gid,
+										tidOrTie: "tie",
+									});
 								} catch (error) {
 									setState("error");
 									throw error;

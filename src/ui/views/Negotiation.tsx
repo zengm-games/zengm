@@ -24,13 +24,11 @@ const cancel = async (pid: number) => {
 };
 
 const sign = async (pid: number, amount: number, exp: number) => {
-	const errorMsg = await toWorker(
-		"main",
-		"acceptContractNegotiation",
-		pid,
-		Math.round(amount * 1000),
+	const errorMsg = await toWorker("main", "acceptContractNegotiation", {
+		pid: pid,
+		amount: Math.round(amount * 1000),
 		exp,
-	);
+	});
 	if (errorMsg !== undefined && errorMsg) {
 		logEvent({
 			type: "error",

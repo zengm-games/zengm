@@ -63,7 +63,10 @@ export const EditContestants = ({
 					name: p.name,
 				}));
 
-				await toWorker("main", "contestSetPlayers", contest, minimalPlayers);
+				await toWorker("main", "contestSetPlayers", {
+					type: contest,
+					players: minimalPlayers,
+				});
 
 				setShowForm(false);
 			}}
@@ -338,12 +341,10 @@ const UserDunkForm = ({
 
 	useEffect(() => {
 		const updateProjeted = async () => {
-			const newProjected = await toWorker(
-				"main",
-				"dunkGetProjected",
+			const newProjected = await toWorker("main", "dunkGetProjected", {
 				dunkAttempt,
 				index,
-			);
+			});
 			setProjected(newProjected);
 		};
 
@@ -396,7 +397,7 @@ const UserDunkForm = ({
 
 						setSubmitted(true);
 
-						await toWorker("main", "dunkUser", dunkAttempt, index);
+						await toWorker("main", "dunkUser", { dunkAttempt, index });
 
 						setSubmitted(false);
 					}}

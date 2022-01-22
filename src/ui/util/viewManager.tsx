@@ -243,7 +243,10 @@ class ViewManager {
 
 		if (inLeague) {
 			if (newLid !== lid) {
-				await toWorker("main", "beforeViewLeague", newLid, lid);
+				await toWorker("main", "beforeViewLeague", {
+					newLid,
+					loadedLid: lid,
+				});
 			}
 		} else {
 			// eslint-disable-next-line no-lonely-if
@@ -266,15 +269,13 @@ class ViewManager {
 		delete ctxBBGM.navigationSymbol; // Can't send Symbol to worker
 
 		// Resolve all the promises before updating the UI to minimize flicker
-		const results = await toWorker(
-			"main",
-			"runBefore",
-			id,
-			context.params,
+		const results = await toWorker("main", "runBefore", {
+			viewId: id,
+			params: context.params,
 			ctxBBGM,
 			updateEvents,
 			prevData,
-		);
+		});
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {
 			this.initNextAction();

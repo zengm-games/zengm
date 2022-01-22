@@ -6,7 +6,9 @@ import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
 
-type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
+type OfferType = Awaited<
+	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
+>[0];
 
 type OfferProps = {
 	challengeNoRatings: boolean;
@@ -202,8 +204,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		const offers: OfferType[] = await toWorker(
 			"main",
 			"getTradingBlockOffers",
-			state.pids,
-			state.dpids,
+			{ pids: state.pids, dpids: state.dpids },
 		);
 
 		setState(prevState => ({

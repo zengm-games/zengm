@@ -2,7 +2,7 @@ import type { View } from "../../../common/types";
 import { confirm, toWorker } from "../../util";
 
 const handleAutoSort = async () => {
-	await toWorker("main", "autoSortRoster", undefined, undefined);
+	await toWorker("main", "autoSortRoster", {});
 };
 
 const handleResetPT = async () => {
@@ -85,12 +85,10 @@ const InstructionsAndSortButtons = ({
 									if (!keepRosterSorted) {
 										await handleAutoSort();
 									}
-									await toWorker(
-										"main",
-										"updateKeepRosterSorted",
+									await toWorker("main", "updateKeepRosterSorted", {
 										tid,
-										!keepRosterSorted,
-									);
+										keepRosterSorted: !keepRosterSorted,
+									});
 								}}
 							/>
 							<label className="form-check-label" htmlFor="ai-sort-user-roster">

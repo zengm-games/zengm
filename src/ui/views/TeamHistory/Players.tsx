@@ -39,12 +39,15 @@ const Players = ({
 				  ]
 				: season;
 
-		await toWorker("main", "retiredJerseyNumberUpsert", tid, undefined, {
-			number,
-			seasonRetired: season,
-			seasonTeamInfo,
-			pid: p.pid,
-			text: "",
+		await toWorker("main", "retiredJerseyNumberUpsert", {
+			tid,
+			info: {
+				number,
+				seasonRetired: season,
+				seasonTeamInfo,
+				pid: p.pid,
+				text: "",
+			},
 		});
 	};
 

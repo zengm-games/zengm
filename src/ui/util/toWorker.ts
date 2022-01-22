@@ -1,6 +1,8 @@
 import { promiseWorker } from ".";
 import type api from "../../worker/api";
 
+type API = typeof api;
+
 const toWorker = <
 	Type extends
 		| "actions"
@@ -8,21 +10,13 @@ const toWorker = <
 		| "main"
 		| "playMenu"
 		| "toolsMenu",
-	Obj extends Type extends "main"
-		? typeof api
-		: Type extends "actions"
-		? typeof api["actions"]
-		: Type extends "leagueFileUpload"
-		? typeof api["leagueFileUpload"]
-		: Type extends "playMenu"
-		? typeof api["actions"]["playMenu"]
-		: typeof api["actions"]["toolsMenu"],
+	Name extends keyof API[Type],
 >(
 	type: Type,
-	name: keyof Obj,
-	...args: any[]
+	name: Name,
+	param: Parameters<API[Type][Name]>[0],
 ) => {
-	return promiseWorker.postMessage([type, name, ...args]);
+	return promiseWorker.postMessage([type, name, param]);
 };
 
 export default toWorker;

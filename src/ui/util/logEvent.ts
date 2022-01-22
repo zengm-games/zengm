@@ -62,7 +62,7 @@ const showEvent = ({
 		if (persistent) {
 			toWorker("main", "getLocal", "autoPlayUntil").then(autoPlayUntil => {
 				if (!autoPlayUntil) {
-					toWorker("main", "lockSet", "stopGameSim", true);
+					toWorker("main", "lockSet", ["stopGameSim", true]);
 				}
 			});
 		}

@@ -127,13 +127,11 @@ const FinancesForm = ({
 			),
 		};
 
-		await toWorker(
-			"main",
-			"updateBudget",
-			budgetAmounts,
-			state.adjustForInflation,
-			state.autoTicketPrice,
-		);
+		await toWorker("main", "updateBudget", {
+			budgetAmounts: budgetAmounts,
+			adjustForInflation: state.adjustForInflation,
+			autoTicketPrice: state.autoTicketPrice,
+		});
 
 		logEvent({
 			type: "success",

@@ -230,7 +230,10 @@ const ProtectPlayers = ({
 	};
 
 	const updateProtectedPids = async (newProtectedPids: number[]) => {
-		await toWorker("main", "updateProtectedPlayers", userTid, newProtectedPids);
+		await toWorker("main", "updateProtectedPlayers", {
+			tid: userTid,
+			protectedPids: newProtectedPids,
+		});
 	};
 
 	const handleCancel = async () => {

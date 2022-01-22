@@ -8,6 +8,7 @@ import {
 	MOOD_TRAITS,
 	isSport,
 	WEBSITE_ROOT,
+	bySport,
 } from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -289,14 +290,12 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		}
 
 		try {
-			const pid = await toWorker(
-				"main",
-				"upsertCustomizedPlayer",
+			const pid = await toWorker("main", "upsertCustomizedPlayer", {
 				p,
-				props.originalTid,
-				props.season,
+				originalTid: props.originalTid,
+				season: props.season,
 				updatedRatingsOrAge,
-			);
+			});
 
 			realtimeUpdate([], helpers.leagueUrl(["player", pid]));
 		} catch (error) {
@@ -996,10 +995,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									const { hgt, ratings } = await toWorker(
 										"main",
 										"getRandomRatings",
-										(p as any).age,
-										isSport("football") || isSport("hockey")
-											? p.ratings[r].pos
-											: undefined,
+										{
+											age: (p as any).age,
+											pos: bySport({
+												basketball: undefined,
+												football: p.ratings[r].pos,
+												hockey: p.ratings[r].pos,
+											}),
+										},
 									);
 
 									setState(prevState => {

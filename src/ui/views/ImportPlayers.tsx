@@ -468,12 +468,10 @@ const ImportPlayers = ({
 							setErrorMessage(undefined);
 
 							try {
-								await toWorker(
-									"main",
-									"importPlayers",
+								await toWorker("main", "importPlayers", {
 									leagueFile,
-									players.filter(p => p.checked),
-								);
+									players: players.filter(p => p.checked),
+								});
 								setStatus("success");
 							} catch (error) {
 								console.error(error);

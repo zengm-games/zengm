@@ -3,6 +3,11 @@ types for toWorker
 - test with tradeCounterOffer
 - see OfferType
 - if it's possible to make it work with no explicit array passed for optional args, do same in toUI
+- typescript make parameter optional based on condition
+  - autoSortRoster
+  - idb
+  - https://www.typescriptlang.org/play?#code/C4TwDgpgBAkg8gNwgJwDYHsCGATKBeKAbwCgoyoAKUSALigCJ0A7CegGiggA9hlMAFTHwC2AfjoBXJtggAzAJYtsASjoJ087AG5S5KuAh16wAO7p2nHn0Ei6AI3TpUETE1VR1mnQF9ixAMbMAM7AUMIgAGJS-sDyzHTwSGhYuAQAPAAqBpbAENJBDMysUAA+DKbmAHz6tFBZkBzcvAJCmMJ09dBNedgFjCz0UKJQUjIKSlD2js6uyviVRLqBTEFOEAB0GADmNRCNVi0iyj5+4VFMMXFMFP2sHKNyihAqOmfRscw3FRa8EhDHxDeFw+11u9GOQA
+- add typs to return value
 
 refactor game sim
 - classes should share some common methods

@@ -104,6 +104,6 @@
     }
   }],
   "globals": {
-      "process": false
+    "process": false
   }
 }

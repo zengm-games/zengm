@@ -242,8 +242,7 @@ const playMenu = {
 
 			if (numRemaining > 0) {
 				// This function always returns a boolean if no defaultValue is supplied, but couldn't figure out how to get it to work correctly with TypeScript.
-				// @ts-ignore
-				proceed = await toUI(
+				proceed = (await toUI(
 					"confirm",
 					[
 						`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
@@ -256,7 +255,7 @@ const playMenu = {
 						},
 					],
 					conditions,
-				);
+				)) as unknown as boolean;
 			}
 
 			if (proceed) {

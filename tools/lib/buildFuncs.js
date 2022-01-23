@@ -207,7 +207,7 @@ const copyFiles = watch => {
 
 	fse.copySync("data/names.json", "build/gen/names.json");
 
-	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
+	fse.copySync("node_modules/flag-icons/flags/4x3", "build/img/flags");
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;

@@ -304,7 +304,7 @@ const CountryFlag = ({
 	if (code) {
 		return (
 			<span
-				className={classNames(`flag-icon flag-icon-${code}`, className)}
+				className={classNames(`fi fi-${code}`, className)}
 				data-no-row-highlight="true"
 				title={countryCodes[country] ? country : country2}
 				style={style}

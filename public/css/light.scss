@@ -51,7 +51,7 @@ $include: af, ax, al, dz, as, ad, ao, ai, aq, ag, ar, am, aw, au, at, az, bs, bh
 
 // Inlined from flag-icon.scss to save the square flag classes
 $flag-icon-css-path: "/img/flags";
-.flag-icon {
+.fi {
 	background-size: contain;
 	background-position: 50%;
 	background-repeat: no-repeat;
@@ -64,7 +64,7 @@ $flag-icon-css-path: "/img/flags";
 	}
 }
 @mixin flag-icon($country) {
-	.flag-icon-#{$country} {
+	.fi-#{$country} {
 		background-image: url(#{$flag-icon-css-path}/#{$country}.svg);
 	}
 }

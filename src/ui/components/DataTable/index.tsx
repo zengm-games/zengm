@@ -509,7 +509,11 @@ const DataTable = ({
 								/>
 							))}
 						</tbody>
-						<Footer colOrder={colOrderFiltered} footer={footer} />
+						<Footer
+							colOrder={colOrderFiltered}
+							footer={footer}
+							highlightCols={highlightCols}
+						/>
 					</table>
 				</ResponsiveTableWrapper>
 				{!hideAllControls ? (

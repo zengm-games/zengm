@@ -162,7 +162,6 @@ const TeamStats = ({
 
 	const rows = teams.map(t => {
 		const data = makeRowObject(t.stats, t.seasonAttrs);
-		console.log(data);
 
 		// This is our team.
 		if (userTid === t.tid) {

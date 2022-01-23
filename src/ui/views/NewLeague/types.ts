@@ -19,6 +19,8 @@ export type NewLeagueTeam = {
 	did: number;
 };
 
+export type NewLeagueTeamWithoutRank = Omit<NewLeagueTeam, "popRank">;
+
 export type LeagueInfo = {
 	startingSeason: number;
 	stores: string[];
@@ -26,5 +28,5 @@ export type LeagueInfo = {
 		confs: Conf[];
 		divs: Div[];
 	};
-	teams: Omit<NewLeagueTeam, "popRank">[];
+	teams: NewLeagueTeamWithoutRank[];
 };

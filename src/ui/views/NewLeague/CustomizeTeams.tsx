@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import type { Dispatch } from "react";
-import type { NewLeagueTeam } from "./types";
+import type { NewLeagueTeamWithoutRank } from "./types";
 import type { Conf, Div, View } from "../../../common/types";
 import classNames from "classnames";
 import { arrayMoveImmutable } from "array-move";
@@ -25,7 +25,7 @@ const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 type ConfsDivsTeams = {
 	confs: Conf[];
 	divs: Div[];
-	teams: NewLeagueTeam[];
+	teams: NewLeagueTeamWithoutRank[];
 };
 
 type State = ConfsDivsTeams;
@@ -43,7 +43,7 @@ type Action =
 	  }
 	| {
 			type: "addTeam";
-			t: NewLeagueTeam;
+			t: NewLeagueTeamWithoutRank;
 	  }
 	| {
 			type: "renameConf";
@@ -57,7 +57,7 @@ type Action =
 	  }
 	| {
 			type: "editTeam";
-			t: NewLeagueTeam;
+			t: NewLeagueTeamWithoutRank;
 	  }
 	| {
 			type: "moveConf";
@@ -453,9 +453,9 @@ const AddTeam = ({
 	did,
 	availableBuiltInTeams,
 }: {
-	addTeam: (did: number, t?: NewLeagueTeam) => void;
+	addTeam: (did: number, t?: NewLeagueTeamWithoutRank) => void;
 	did: number;
-	availableBuiltInTeams: NewLeagueTeam[];
+	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
 	const [abbrev, setAbbrev] = useState("custom");
 
@@ -506,14 +506,14 @@ const Division = ({
 	div: Div;
 	divs: Div[];
 	confs: Conf[];
-	teams: NewLeagueTeam[];
+	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	addTeam: (did: number, t?: NewLeagueTeam) => void;
+	addTeam: (did: number, t?: NewLeagueTeamWithoutRank) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
-	availableBuiltInTeams: NewLeagueTeam[];
+	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
 	return (
 		<div className="card mt-3">
@@ -614,14 +614,14 @@ const Conference = ({
 	conf: Conf;
 	confs: Conf[];
 	divs: Div[];
-	teams: NewLeagueTeam[];
+	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	addTeam: (did: number, t?: NewLeagueTeam) => void;
+	addTeam: (did: number, t?: NewLeagueTeamWithoutRank) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
-	availableBuiltInTeams: NewLeagueTeam[];
+	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
 	const children = divs.filter(div => div.cid === conf.cid);
 
@@ -711,7 +711,7 @@ const CustomizeTeams = ({
 	onSave: (obj: ConfsDivsTeams) => void;
 	initialConfs: Conf[];
 	initialDivs: Div[];
-	initialTeams: NewLeagueTeam[];
+	initialTeams: NewLeagueTeamWithoutRank[];
 	getDefaultConfsDivsTeams: () => ConfsDivsTeams;
 	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
@@ -746,7 +746,7 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const addTeam = (did: number, t?: NewLeagueTeam) => {
+	const addTeam = (did: number, t?: NewLeagueTeamWithoutRank) => {
 		if (t) {
 			const div = divs.find(div => div.did === did);
 			if (div) {
@@ -767,7 +767,7 @@ const CustomizeTeams = ({
 		}
 	};
 
-	let editingTeam: NewLeagueTeam | undefined;
+	let editingTeam: NewLeagueTeamWithoutRank | undefined;
 	if (editingInfo.type === "add") {
 		const div = divs.find(div => div.did === editingInfo.did);
 		if (div) {
@@ -777,7 +777,6 @@ const CustomizeTeams = ({
 				name: "",
 				abbrev: "NEW",
 				pop: 1,
-				popRank: -1,
 				cid: div.cid,
 				did: div.did,
 			};
@@ -801,7 +800,7 @@ const CustomizeTeams = ({
 		did: -1,
 		abbrev,
 	}));
-	const availableBuiltInTeams: NewLeagueTeam[] = orderBy(
+	const availableBuiltInTeams: NewLeagueTeamWithoutRank[] = orderBy(
 		getTeamInfos(param).map(t => ({
 			...t,
 			popRank: -1,
@@ -986,7 +985,7 @@ const CustomizeTeams = ({
 				t={editingTeam}
 				confs={confs}
 				divs={divs}
-				onSave={(t: NewLeagueTeam) => {
+				onSave={(t: NewLeagueTeamWithoutRank) => {
 					if (t.tid === -1) {
 						dispatch({ type: "addTeam", t });
 					} else {

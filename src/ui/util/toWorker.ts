@@ -4,6 +4,14 @@ import type api from "../../worker/api";
 
 type API = typeof api;
 
+// https://stackoverflow.com/a/70818666/786644
+type ParametersUnconstrained<T> = T extends (...args: infer P) => any
+	? P
+	: never;
+type ReturnTypeUnconstrained<T> = T extends (...args: any) => infer P
+	? P
+	: never;
+
 const toWorker = <
 	Type extends WorkerAPICategory,
 	Name extends keyof API[Type],
@@ -11,10 +19,8 @@ const toWorker = <
 >(
 	type: Type,
 	name: Name,
-	// @ts-expect-error https://stackoverflow.com/q/70818342/786644
-	param: Parameters<Func>[0],
-	// @ts-expect-error
-): Promise<ReturnType<Func>> => {
+	param: ParametersUnconstrained<Func>[0],
+): Promise<ReturnTypeUnconstrained<Func>> => {
 	return promiseWorker.postMessage([type, name, param]);
 };
 

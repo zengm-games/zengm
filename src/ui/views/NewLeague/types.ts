@@ -26,5 +26,5 @@ export type LeagueInfo = {
 		confs: Conf[];
 		divs: Div[];
 	};
-	teams: NewLeagueTeam[];
+	teams: Omit<NewLeagueTeam, "popRank">[];
 };

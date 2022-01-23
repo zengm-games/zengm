@@ -10,6 +10,7 @@ import {
 	isSport,
 	bySport,
 	gameAttributesArrayToObject,
+	DEFAULT_JERSEY,
 } from "../../common";
 import actions from "./actions";
 import leagueFileUpload, {
@@ -127,16 +128,7 @@ const acceptContractNegotiation = async ({
 	return contractNegotiation.accept(pid, amount, exp);
 };
 
-const addTeam = async (): Promise<{
-	tid: number;
-	abbrev: string;
-	region: string;
-	name: string;
-	imgURL?: string;
-	pop: number;
-	stadiumCapacity: number;
-	colors: [string, string, string];
-}> => {
+const addTeam = async () => {
 	const did = g.get("divs")[0].did;
 
 	const t = await team.addNewTeamToExistingLeague({
@@ -157,10 +149,12 @@ const addTeam = async (): Promise<{
 		region: t.region,
 		name: t.name,
 		imgURL: t.imgURL,
-		// @ts-ignore
-		pop: t.pop,
-		// @ts-ignore
-		stadiumCapacity: t.stadiumCapacity,
+		imgURLSmall: t.imgURLSmall ?? "",
+		did: t.did,
+		disabled: t.disabled,
+		jersey: t.jersey ?? DEFAULT_JERSEY,
+		pop: t.pop!, // See comment in types.ts about upgrade
+		stadiumCapacity: t.stadiumCapacity!, // See comment in types.ts about upgrade
 		colors: t.colors,
 	};
 };

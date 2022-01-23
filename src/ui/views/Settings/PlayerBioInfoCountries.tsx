@@ -236,12 +236,7 @@ const Controls = ({
 						<Dropdown.Menu>
 							<Dropdown.Item
 								onClick={async () => {
-									setInfoState(
-										formatPlayerBioInfoState(
-											await toWorker("main", "getDefaultInjuries", undefined),
-											defaults,
-										),
-									);
+									setInfoState(formatPlayerBioInfoState(undefined, defaults));
 								}}
 							>
 								Default

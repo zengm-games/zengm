@@ -2,7 +2,7 @@ import type { View } from "../../../common/types";
 import { confirm, toWorker } from "../../util";
 
 const handleAutoSort = async () => {
-	await toWorker("main", "autoSortRoster", {});
+	await toWorker("main", "autoSortRoster", undefined);
 };
 
 const handleResetPT = async () => {

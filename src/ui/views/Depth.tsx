@@ -13,7 +13,7 @@ const handleAutoSort = async (pos: string) => {
 };
 
 const handleAutoSortAll = async () => {
-	await toWorker("main", "autoSortRoster", {});
+	await toWorker("main", "autoSortRoster", undefined);
 };
 
 const numStartersByPos = bySport<

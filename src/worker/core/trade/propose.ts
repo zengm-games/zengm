@@ -62,7 +62,7 @@ const propose = async (
 	if (dv > 0 || forceTrade) {
 		// Trade players
 		outcome = "accepted";
-		await processTrade(s, tids, pids, dpids);
+		await processTrade(tids, pids, dpids);
 	}
 
 	if (outcome === "accepted") {

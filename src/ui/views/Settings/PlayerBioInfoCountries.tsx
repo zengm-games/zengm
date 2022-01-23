@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
-import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
+import { downloadFile, helpers, resetFileInput } from "../../util";
 import classNames from "classnames";
 import {
 	Defaults,

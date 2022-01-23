@@ -485,8 +485,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 				commandPalette: true,
 
-				onClick() {
-					return toWorker("toolsMenu", "autoPlaySeasons", undefined);
+				async onClick() {
+					const response = await toWorker(
+						"toolsMenu",
+						"autoPlaySeasons",
+						undefined,
+					);
+					return response;
 				},
 
 				text: "Auto Play",

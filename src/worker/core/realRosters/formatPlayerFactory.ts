@@ -255,9 +255,11 @@ const formatPlayerFactory = async (
 					}
 				}
 
+				const maxSalaryHistorySeason = contract?.exp ?? season - 1;
 				salaries = [];
 				for (const row of salaryRows) {
-					for (let season = row.start; season <= row.exp; season++) {
+					const maxSeason = Math.min(row.exp, maxSalaryHistorySeason);
+					for (let season = row.start; season <= maxSeason; season++) {
 						salaries.push({
 							amount: row.amount / 1000,
 							season,

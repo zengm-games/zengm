@@ -25,22 +25,15 @@ export type WorkerAPICategory = typeof categories[number];
 			hostID,
 		};
 
-		for (const category of categories) {
-			if (type === category) {
-				if (!api[category].hasOwnProperty(name)) {
-					throw new Error(
-						`API call to nonexistant worker function "${category}.${name}"`,
-					);
-				}
-
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				return api[category][name](param, conditions);
-			}
+		// @ts-expect-error
+		if (!api[type] || !api[type].hasOwnProperty(name)) {
+			throw new Error(
+				`API call to nonexistant worker function "${type}.${name}"`,
+			);
 		}
 
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-ignore
-		return api[name](param, conditions);
+		return api[type][name](param, conditions);
 	});
 })();

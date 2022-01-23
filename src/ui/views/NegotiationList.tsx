@@ -105,7 +105,6 @@ const NegotiationList = ({
 	});
 
 	const hasRookies = players.some(p => p.contract.rookie);
-	console.log(players, hasRookies);
 
 	return (
 		<>

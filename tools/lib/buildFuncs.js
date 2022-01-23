@@ -42,7 +42,10 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 						// For align="end" in react-bootstrap
 						/^dropdown-menu-end$/,
 
-						/^flag-/,
+						// flag-icons
+						/^fi$/,
+						/^fi-/,
+
 						/^dark-select/,
 						/^bar-graph/,
 					],

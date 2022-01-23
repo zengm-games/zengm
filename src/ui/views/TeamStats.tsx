@@ -7,6 +7,7 @@ import { isSport } from "../../common";
 
 const TeamStats = ({
 	allStats,
+	averages,
 	playoffs,
 	season,
 	stats,
@@ -110,47 +111,38 @@ const TeamStats = ({
 		teams.length,
 	);
 
-	const rows = teams.map(t => {
+	const makeRowObject = (
+		teamStats: typeof teams[number]["stats"],
+		teamSeasonAttrs: typeof teams[number]["seasonAttrs"],
+	) => {
 		const data: { [key: string]: ReactNode } = {
-			"#": null,
-			abbrev: (
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${t.seasonAttrs.abbrev}_${t.tid}`,
-						season,
-					])}
-				>
-					{t.seasonAttrs.abbrev}
-				</a>
-			),
-			gp: t.stats.gp,
-			won: t.seasonAttrs.won,
-			lost: t.seasonAttrs.lost,
+			gp: teamStats.gp,
+			won: teamSeasonAttrs.won,
+			lost: teamSeasonAttrs.lost,
 		};
 
 		if (otl) {
-			data.otl = t.seasonAttrs.otl;
+			data.otl = teamSeasonAttrs.otl;
 		}
 		if (ties) {
-			data.tied = t.seasonAttrs.tied;
+			data.tied = teamSeasonAttrs.tied;
 		}
 		if (usePts) {
-			data.ptsPts = Math.round(t.seasonAttrs.pts);
-			data.ptsPct = helpers.roundWinp(t.seasonAttrs.ptsPct);
+			data.ptsPts = Math.round(teamSeasonAttrs.pts);
+			data.ptsPct = helpers.roundWinp(teamSeasonAttrs.ptsPct);
 		} else {
-			data.winp = helpers.roundWinp(t.seasonAttrs.winp);
+			data.winp = helpers.roundWinp(teamSeasonAttrs.winp);
 		}
 
 		data.avgAge =
-			t.seasonAttrs.avgAge !== undefined
-				? t.seasonAttrs.avgAge.toFixed(1)
+			teamSeasonAttrs.avgAge !== undefined
+				? teamSeasonAttrs.avgAge.toFixed(1)
 				: null;
 
 		for (const stat of stats) {
-			const value = t.stats.hasOwnProperty(stat)
-				? (t.stats as any)[stat]
-				: (t.seasonAttrs as any)[stat];
+			const value = teamStats.hasOwnProperty(stat)
+				? (teamStats as any)[stat]
+				: (teamSeasonAttrs as any)[stat];
 			data[stat] = helpers.roundStat(value, stat);
 		}
 
@@ -159,11 +151,18 @@ const TeamStats = ({
 			for (const plusMinusCol of plusMinusCols) {
 				if (data.hasOwnProperty(plusMinusCol)) {
 					data[plusMinusCol] = (
-						<PlusMinus>{(t.stats as any)[plusMinusCol]}</PlusMinus>
+						<PlusMinus>{(teamStats as any)[plusMinusCol]}</PlusMinus>
 					);
 				}
 			}
 		}
+
+		return data;
+	};
+
+	const rows = teams.map(t => {
+		const data = makeRowObject(t.stats, t.seasonAttrs);
+		console.log(data);
 
 		// This is our team.
 		if (userTid === t.tid) {
@@ -187,18 +186,31 @@ const TeamStats = ({
 					value,
 				};
 			}
-
-			return {
-				key: t.tid,
-				data: Object.values(data),
-			};
 		}
 
 		return {
 			key: t.tid,
-			data: Object.values(data),
+			data: [
+				null,
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${t.seasonAttrs.abbrev}_${t.tid}`,
+						season,
+					])}
+				>
+					{t.seasonAttrs.abbrev}
+				</a>,
+				...Object.values(data),
+			],
 		};
 	});
+
+	const footer = [
+		null,
+		"Avg",
+		...Object.values(makeRowObject(averages as any, averages as any)),
+	];
 
 	return (
 		<>
@@ -210,6 +222,7 @@ const TeamStats = ({
 				name={`TeamStats${teamOpponent}`}
 				rankCol={0}
 				rows={rows}
+				footer={footer}
 				superCols={superCols}
 			/>
 		</>

@@ -429,9 +429,6 @@ const updateTeams = async (
 				ties,
 			},
 		);
-		if (!averages) {
-			throw new Error("Should never happen");
-		}
 
 		return {
 			allStats,

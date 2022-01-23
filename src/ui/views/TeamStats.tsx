@@ -205,11 +205,13 @@ const TeamStats = ({
 		};
 	});
 
-	const footer = [
-		null,
-		"Avg",
-		...Object.values(makeRowObject(averages as any, averages as any)),
-	];
+	const footer = averages
+		? [
+				null,
+				"Avg",
+				...Object.values(makeRowObject(averages as any, averages as any)),
+		  ]
+		: undefined;
 
 	return (
 		<>

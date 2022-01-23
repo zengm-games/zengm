@@ -4,7 +4,6 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { groupBy } from "../../../common/groupBy";
 import type {
-	League,
 	LocalStateUI,
 	MenuItemHeader,
 	MenuItemLink,
@@ -268,7 +267,7 @@ const getResultsGroupedLeagues = async ({
 	onHide: () => void;
 	searchText: string;
 }) => {
-	const leagues = (await toWorker("main", "getLeagues", undefined)) as League[];
+	const leagues = await toWorker("main", "getLeagues", undefined);
 
 	const newLeagueResults = [];
 	if (SPORT_HAS_REAL_PLAYERS) {
@@ -383,11 +382,7 @@ const getResultsGroupedPlayers = async ({
 	onHide: () => void;
 	searchText: string;
 }) => {
-	const players = (await toWorker(
-		"main",
-		"getPlayersCommandPalette",
-		undefined,
-	)) as any[];
+	const players = await toWorker("main", "getPlayersCommandPalette", undefined);
 
 	const playerInfos = orderBy(players, ["lastName", "firstName", "abbrev"]).map(
 		p => {

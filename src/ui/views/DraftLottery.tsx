@@ -329,7 +329,9 @@ const DraftLotteryTable = (props: Props) => {
 
 			for (let i = 0; i < result.length; i++) {
 				const pick = result[i].pick;
-				toReveal[pick - 1] = i;
+				if (pick !== undefined) {
+					toReveal[pick - 1] = i;
+				}
 				result[i].pick = undefined;
 			}
 			toReveal.reverse();

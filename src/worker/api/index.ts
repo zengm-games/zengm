@@ -1479,11 +1479,11 @@ const getPlayerWatch = async (pid: number) => {
 
 	const p = await idb.cache.players.get(pid);
 	if (p) {
-		return p.watch;
+		return !!p.watch;
 	}
 	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (p2) {
-		return p2.watch;
+		return !!p2.watch;
 	}
 
 	return false;
@@ -3747,9 +3747,7 @@ const createTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
-const proposeTrade = async (
-	forceTrade: boolean,
-): Promise<[boolean, string | undefined | null]> => {
+const proposeTrade = async (forceTrade: boolean) => {
 	const output = await trade.propose(forceTrade);
 	await toUI("realtimeUpdate", []);
 	return output;

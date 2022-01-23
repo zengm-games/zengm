@@ -1,14 +1,7 @@
 import { useState, FormEvent } from "react";
 import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import {
-	confirm,
-	helpers,
-	toWorker,
-	logEvent,
-	realtimeUpdate,
-	getCols,
-} from "../util";
+import { confirm, helpers, toWorker, realtimeUpdate, getCols } from "../util";
 import type { View } from "../../common/types";
 import { PlayerNameLabels, SafeHtml, DataTable } from "../components";
 import { PHASE } from "../../common";
@@ -215,18 +208,8 @@ const ProtectPlayers = ({
 			}
 		}
 
-		const errors = await toWorker("main", "startExpansionDraft", undefined);
-
-		if (errors) {
-			logEvent({
-				type: "error",
-				text: `- ${errors.join("<br>- ")}`,
-				saveToDb: false,
-			});
-			setSaving(false);
-		} else {
-			realtimeUpdate([], helpers.leagueUrl(["draft"]));
-		}
+		await toWorker("main", "startExpansionDraft", undefined);
+		realtimeUpdate([], helpers.leagueUrl(["draft"]));
 	};
 
 	const updateProtectedPids = async (newProtectedPids: number[]) => {

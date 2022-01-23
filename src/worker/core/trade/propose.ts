@@ -18,7 +18,7 @@ import { idb } from "../../db";
  */
 const propose = async (
 	forceTrade: boolean = false,
-): Promise<[boolean, string | undefined | null]> => {
+): Promise<[boolean, string | null]> => {
 	if (
 		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
 		g.get("phase") <= PHASE.PLAYOFFS

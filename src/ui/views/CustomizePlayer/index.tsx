@@ -29,11 +29,11 @@ const copyValidValues = (
 	season: number,
 ) => {
 	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
-	// @ts-ignore
+	// @ts-expect-error
 	const activated = source.tid >= 0 && parseInt(target.tid) < 0;
 
 	for (const attr of ["hgt", "tid", "weight"] as const) {
-		// @ts-ignore
+		// @ts-expect-error
 		const val = parseInt(source[attr]);
 		if (!Number.isNaN(val)) {
 			target[attr] = val;
@@ -79,7 +79,7 @@ const copyValidValues = (
 
 	let updatedRatingsOrAge = false;
 	{
-		// @ts-ignore
+		// @ts-expect-error
 		const age = parseInt(source.age);
 		if (!Number.isNaN(age)) {
 			const bornYear = season - age;
@@ -95,7 +95,7 @@ const copyValidValues = (
 	target.college = source.college;
 
 	{
-		// @ts-ignore
+		// @ts-expect-error
 		const diedYear = parseInt(source.diedYear);
 		if (!Number.isNaN(diedYear)) {
 			target.diedYear = diedYear;
@@ -113,7 +113,7 @@ const copyValidValues = (
 
 	{
 		// Allow any value, even above or below normal limits, but round to $10k and convert from M to k
-		// @ts-ignore
+		// @ts-expect-error
 		let amount = Math.round(100 * parseFloat(source.contract.amount)) * 10;
 		if (Number.isNaN(amount)) {
 			amount = minContract;
@@ -126,7 +126,7 @@ const copyValidValues = (
 	}
 
 	{
-		// @ts-ignore
+		// @ts-expect-error
 		let exp = parseInt(source.contract.exp);
 		if (!Number.isNaN(exp)) {
 			// No contracts expiring in the past
@@ -178,7 +178,6 @@ const copyValidValues = (
 	{
 		const prevDraftTid = target.draft.tid;
 
-		// @ts-ignore
 		const draftInts = ["year", "round", "pick", "tid"] as const;
 		for (const key of draftInts) {
 			const int = parseInt(source.draft[key] as any);
@@ -202,7 +201,7 @@ const copyValidValues = (
 	}
 
 	{
-		// @ts-ignore
+		// @ts-expect-error
 		let gamesRemaining = parseInt(source.injury.gamesRemaining);
 		if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
 			gamesRemaining = 0;
@@ -234,12 +233,12 @@ const copyValidValues = (
 		}
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	target.face = JSON.parse(source.face);
 
 	target.relatives = source.relatives
 		.map(rel => {
-			// @ts-ignore
+			// @ts-expect-error
 			rel.pid = parseInt(rel.pid);
 			return rel;
 		})
@@ -252,10 +251,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
 		if (p) {
-			// @ts-ignore
+			// @ts-expect-error
 			p.age = props.season - p.born.year;
 			p.contract.amount /= 1000;
-			// @ts-ignore
+			// @ts-expect-error
 			p.face = JSON.stringify(p.face, null, 2);
 		}
 
@@ -324,7 +323,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			  },
 	) => {
 		const val = event.target.value;
-		// @ts-ignore
+		// @ts-expect-error
 		const checked = event.target.checked;
 
 		setState(prevState => {
@@ -401,7 +400,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		const face = await toWorker("main", "generateFace", p.born.loc);
 
 		setState(prevState => {
-			// @ts-ignore
+			// @ts-expect-error
 			prevState.p.face = JSON.stringify(face, null, 2);
 			return {
 				...prevState,
@@ -422,7 +421,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	let parsedFace;
 	try {
-		// @ts-ignore
+		// @ts-expect-error
 		parsedFace = JSON.parse(p.face);
 	} catch (error) {}
 

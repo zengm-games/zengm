@@ -65,9 +65,9 @@ const createGameAttributes = async (
 			}
 
 			// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
-			// @ts-ignore
+			// @ts-expect-error
 			if (Array.isArray(value) && value.length > 0 && value[0].start === null) {
-				// @ts-ignore
+				// @ts-expect-error
 				value[0].start = -Infinity;
 			}
 		}

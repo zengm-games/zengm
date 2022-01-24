@@ -9,14 +9,14 @@ global.IDBKeyRange = IDBKeyRange;
 const originalPostMessage = global.postMessage;
 global.postMessage = (...args) => {
 	if (
-		// @ts-ignore
+		// @ts-expect-error
 		args.length === 1 &&
 		Array.isArray(args[0]) &&
 		JSON.stringify(args[0]) === "[2,-1,0]"
 	) {
 		// Skip hostID message
 	} else {
-		// @ts-ignore
+		// @ts-expect-error
 		originalPostMessage(...args);
 	}
 };

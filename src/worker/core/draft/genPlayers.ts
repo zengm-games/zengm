@@ -72,7 +72,7 @@ const genPlayers = async (
 		await idb.cache.players.add(p);
 
 		// idb.cache.players.add will create the "pid" property, transforming PlayerWithoutKey to Player
-		// @ts-ignore
+		// @ts-expect-error
 		await player.addRelatives(p);
 
 		await player.updateValues(p);

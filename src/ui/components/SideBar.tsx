@@ -19,7 +19,7 @@ export const getText = (
 	text: MenuItemLink["text"],
 ): Exclude<ReactNode, null | undefined | number | boolean> => {
 	if (text.hasOwnProperty("side")) {
-		// @ts-ignore
+		// @ts-expect-error
 		return text.side;
 	}
 

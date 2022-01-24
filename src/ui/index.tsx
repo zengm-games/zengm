@@ -64,7 +64,7 @@ const handleVersion = async () => {
 		if (cmpResult === 1) {
 			// This version is newer than another tab's - send a signal to the other tabs
 			let conflictNum = parseInt(
-				// @ts-ignore
+				// @ts-expect-error
 				safeLocalStorage.getItem("bbgmVersionConflict"),
 			);
 
@@ -342,7 +342,7 @@ const setupRoutes = () => {
 		}
 
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		return api[name](...params);
 	});
 	await handleVersion();

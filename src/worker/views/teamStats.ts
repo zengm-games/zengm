@@ -82,15 +82,15 @@ export const getStats = async ({
 						const ha = ah === "away" ? "home" : "away";
 						const t = teams.find(
 							// https://github.com/microsoft/TypeScript/issues/21732
-							// @ts-ignore
+							// @ts-expect-error
 							t2 => series[ah] && t2.tid === series[ah].tid,
 						);
 
 						if (t && series[ah] && series[ha]) {
 							// https://github.com/microsoft/TypeScript/issues/21732
-							// @ts-ignore
+							// @ts-expect-error
 							t.seasonAttrs.won += series[ah].won;
-							// @ts-ignore
+							// @ts-expect-error
 							t.seasonAttrs.lost += series[ha].won;
 						}
 					}
@@ -185,7 +185,7 @@ export const averageTeamStats = (
 			if (stat === "avgAge") {
 				sum += t.seasonAttrs.avgAge ?? 0;
 			} else {
-				// @ts-ignore
+				// @ts-expect-error
 				sum += t.stats[stat];
 			}
 			foundSomething = true;
@@ -203,7 +203,7 @@ export const averageTeamStats = (
 			if (tid !== undefined && t.tid !== tid) {
 				continue;
 			}
-			// @ts-ignore
+			// @ts-expect-error
 			sum += t.seasonAttrs[attr];
 			foundSomething = true;
 		}

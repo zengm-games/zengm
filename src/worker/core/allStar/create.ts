@@ -88,7 +88,7 @@ const create = async (conditions: Conditions) => {
 		allStars.remaining.splice(ind, 1);
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	allStars.teamNames = allStars.teams.map(teamPlayers => {
 		const captainPID = teamPlayers[0].pid;
 		const p = players.find(p2 => p2.pid === captainPID);

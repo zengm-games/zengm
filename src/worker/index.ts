@@ -33,7 +33,7 @@ export type WorkerAPICategory = typeof categories[number];
 		}
 
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		return api[type][name](param, conditions);
 	});
 })();

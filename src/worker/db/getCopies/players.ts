@@ -198,7 +198,7 @@ const getCopies = async (
 		// All except draft prospects
 		return mergeByPk(
 			[].concat(
-				// @ts-ignore
+				// @ts-expect-error
 				await getAll(
 					idb.league.transaction("players").store.index("tid"),
 					PLAYER.RETIRED,
@@ -210,7 +210,7 @@ const getCopies = async (
 					.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT)),
 			),
 			[].concat(
-				// @ts-ignore
+				// @ts-expect-error
 				await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 				await idb.cache.players.indexGetAll("playersByTid", [
 					PLAYER.FREE_AGENT,
@@ -323,7 +323,6 @@ const getCopies = async (
 			),
 			([] as Player<MinimalPlayerRatings>[])
 				.concat(
-					// @ts-ignore
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 					await idb.cache.players.indexGetAll("playersByTid", [
 						PLAYER.FREE_AGENT,

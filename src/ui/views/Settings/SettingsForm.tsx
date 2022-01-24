@@ -346,11 +346,11 @@ const SettingsForm = ({
 				const value = state[key];
 
 				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
+				// @ts-expect-error
 				const parse = encodeDecodeFunctions[type].parse;
 
 				try {
-					// @ts-ignore
+					// @ts-expect-error
 					output[key] = parse ? parse(value) : value;
 				} catch (error) {
 					setSubmitting(false);

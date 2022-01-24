@@ -1,6 +1,6 @@
-UI refreshes when loading/creating leagues
+you can change fome insan to easy back to insan and you still get the achievement https://old.reddit.com/chat/channel/1032418_6a31194bd21777ae5f1205d2770bc029b0d0cf3c
 
-why did missing toUI import in api/playMenu not trigger ESLint error?
+UI refreshes when loading/creating leagues
 
 refactor game sim
 - classes should share some common methods
@@ -1247,7 +1247,6 @@ typescript
       - https://github.com/jakearchibald/idb/issues/152
   - any -> unknown
     - also in dependencies, like bbgm-router
-  - @ts-ignore still needed? maybe write script to check
 - later
   - playersPlus
     - finish teamsPlus first, it's easier!

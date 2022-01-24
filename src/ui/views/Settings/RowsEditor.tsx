@@ -103,7 +103,7 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 
 				reader.onload = event2 => {
 					try {
-						// @ts-ignore
+						// @ts-expect-error
 						const rows = csvParse(event2.currentTarget.result);
 
 						const columns = getColumns(type);

@@ -36,7 +36,7 @@ describe("worker/core/player/getPlayerFakeAge", () => {
 				);
 			}
 
-			// @ts-ignore
+			// @ts-expect-error
 			pidCounts[p.pid] += 1;
 		}
 

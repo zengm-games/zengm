@@ -36,7 +36,6 @@ const RelativesForm = ({
 				type: "brother",
 			});
 		} else {
-			// @ts-ignore
 			relatives[index][field] = event.target.value;
 		}
 		handleChange("root", "relatives", {

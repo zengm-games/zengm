@@ -92,7 +92,6 @@ const updateDepth = async (
 		abbrev !== state.abbrev
 	) {
 		const editable = tid === g.get("userTid") && !g.get("spectator");
-		// @ts-ignore
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 		const players = await idb.getCopies.playersPlus(playersAll, {
@@ -100,7 +99,6 @@ const updateDepth = async (
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 			playoffs: playoffs === "playoffs",
 			regularSeason: playoffs !== "playoffs",
-			// @ts-ignore
 			stats: [...stats[pos], "jerseyNumber"],
 			season: g.get("season"),
 			showNoStats: true,
@@ -117,14 +115,10 @@ const updateDepth = async (
 
 		const depthPlayers = team.getDepthPlayers(t.depth, players);
 
-		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
 		const stats2: string[] = stats.hasOwnProperty(pos) ? stats[pos] : [];
 
 		const players2: any[] = depthPlayers.hasOwnProperty(pos)
-			? // https://github.com/microsoft/TypeScript/issues/21732
-			  // @ts-ignore
-			  depthPlayers[pos]
+			? depthPlayers[pos]
 			: [];
 
 		let multiplePositionsWarning: string | undefined;

@@ -101,7 +101,7 @@ const updateTeamFinances = async (
 			"expenses",
 		] as const;
 
-		// @ts-ignore
+		// @ts-expect-error
 		const barData: Record<"won" | "hype" | "pop" | "att" | "cash", number[]> &
 			Record<"revenues" | "expenses", any> = {};
 
@@ -109,7 +109,7 @@ const updateTeamFinances = async (
 			if (teamSeasons.length > 0) {
 				if (typeof teamSeasons[0][key] === "number") {
 					barData[key] = helpers.zeroPad(
-						// @ts-ignore
+						// @ts-expect-error
 						teamSeasons.map(ts => ts[key]),
 						showInt,
 					);
@@ -120,7 +120,7 @@ const updateTeamFinances = async (
 
 					for (const key2 of Object.keys(tempData[0])) {
 						barData[key][key2] = helpers.zeroPad(
-							// @ts-ignore
+							// @ts-expect-error
 							tempData.map(x => x[key2]).map(x => x.amount),
 							showInt,
 						);

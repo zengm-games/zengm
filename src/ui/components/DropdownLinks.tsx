@@ -77,7 +77,7 @@ const TopMenuDropdown = ({
 
 const getText = (text: MenuItemLink["text"]) => {
 	if (text.hasOwnProperty("top")) {
-		// @ts-ignore
+		// @ts-expect-error
 		return text.top;
 	}
 

@@ -28,7 +28,7 @@ const generate = (race?: Race) => {
 const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!p.face || !p.face.accessories) {
-		// @ts-ignore
+		// @ts-expect-error
 		p.face2 = p.face;
 		p.face = generate();
 		await idb.cache.players.put(p);

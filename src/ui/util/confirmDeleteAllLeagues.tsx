@@ -63,7 +63,7 @@ const confirmFunction = createConfirmation(Confirm);
 
 // Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
 const confirmDeleteAllLeagues = (): "all" | "unstarred" | null => {
-	// @ts-ignore
+	// @ts-expect-error
 	return confirmFunction();
 };
 

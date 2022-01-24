@@ -57,7 +57,6 @@ const getRelatives = async (
 		"noCopyCache",
 	);
 
-	// @ts-ignore
 	return players.filter(p2 => !!p2);
 };
 

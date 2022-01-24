@@ -38,11 +38,8 @@ const getRankLastThree = <
 		if (s0 && s1 && s2) {
 			// Use three seasons if possible
 			return (
-				// @ts-ignore
 				(s0[category][item].rank +
-					// @ts-ignore
 					s1[category][item].rank +
-					// @ts-ignore
 					s2[category][item].rank) /
 				3
 			);
@@ -51,17 +48,11 @@ const getRankLastThree = <
 		if (s0 && s1) {
 			// Use two seasons if possible
 			return (
-				// @ts-ignore
-				(s0[category][item].rank +
-					// @ts-ignore
-					s1[category][item].rank +
-					defaultRank) /
-				3
+				(s0[category][item].rank + s1[category][item].rank + defaultRank) / 3
 			);
 		}
 
 		if (s0) {
-			// @ts-ignore
 			return (s0[category][item].rank + 2 * defaultRank) / 3;
 		}
 	}

@@ -8,7 +8,7 @@ const toUI = <Name extends keyof typeof api>(
 	conditions: Conditions = {},
 ): Promise<ReturnType<typeof api[Name]>> => {
 	if (typeof it === "function") {
-		// @ts-ignore
+		// @ts-expect-error
 		return Promise.resolve();
 	}
 

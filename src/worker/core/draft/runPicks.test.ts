@@ -58,7 +58,7 @@ describe("worker/core/draft/runPicks", () => {
 		userPick2 = draftTids.lastIndexOf(g.get("userTid")) + 1;
 	});
 	afterAll(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 	});
 

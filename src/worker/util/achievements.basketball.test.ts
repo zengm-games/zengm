@@ -36,7 +36,7 @@ describe("worker/util/achievements.basketball", () => {
 		idb.league = testHelpers.mockIDBLeague();
 	});
 	afterAll(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 	});
 

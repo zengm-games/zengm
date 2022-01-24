@@ -41,7 +41,7 @@ describe("worker/util/account/checkAchievement", () => {
 		idb.league = testHelpers.mockIDBLeague();
 	});
 	afterAll(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 	});
 
@@ -54,7 +54,7 @@ describe("worker/util/account/checkAchievement", () => {
 			lastSeason += 1;
 			extraSeason.tid = tid;
 			extraSeason.season = lastSeason;
-			// @ts-ignore
+			// @ts-expect-error
 			await idb.cache.teamSeasons.add(extraSeason);
 		}
 	};

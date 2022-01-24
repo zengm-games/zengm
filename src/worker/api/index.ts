@@ -1108,9 +1108,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			"stat:fgpMidRange": "MidRangeFGP",
 		};
 		for (const col of cols) {
-			// @ts-ignore
+			// @ts-expect-error
 			if (overrides[col]) {
-				// @ts-ignore
+				// @ts-expect-error
 				colNames.push(overrides[col]);
 			} else {
 				const array = getCols([col]);
@@ -1808,7 +1808,7 @@ const handleUploadedDraftClass = async ({
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
-			// @ts-ignore
+			// @ts-expect-error
 			delete p2.pid;
 		}
 
@@ -2395,7 +2395,7 @@ const reorderDepthDrag = async ({
 		t.keepRosterSorted = false;
 
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		depth[pos] = sortedPids;
 		await idb.cache.teams.put(t);
 		await toUI("realtimeUpdate", [["playerMovement"]]);
@@ -2598,7 +2598,7 @@ const runBefore = async (
 	let inputs;
 	if (processInputs.hasOwnProperty(viewId)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		inputs = processInputs[viewId](params, ctxBBGM);
 	}
 	if (inputs === undefined) {
@@ -2614,7 +2614,7 @@ const runBefore = async (
 	}
 
 	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-ignore
+	// @ts-expect-error
 	const view = views[viewId];
 
 	if (view) {
@@ -2693,7 +2693,7 @@ const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {
 		await idb.cache.flush();
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	local[key] = value;
 
 	if (key === "autoSave" && value === true) {
@@ -3725,7 +3725,7 @@ const upsertCustomizedPlayer = async (
 	// In case a player was injured or moved to another team
 	await recomputeLocalUITeamOvrs();
 
-	// @ts-ignore
+	// @ts-expect-error
 	return p.pid;
 };
 

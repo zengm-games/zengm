@@ -56,7 +56,6 @@ async function updateSeasons(
 				}
 			}
 
-			// @ts-ignore
 			if (prevMinutesAll) {
 				// compare against previous season
 				seasons.push(

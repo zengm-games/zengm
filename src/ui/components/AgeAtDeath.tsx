@@ -23,7 +23,7 @@ export const wrappedAgeAtDeath = (age: number, ageAtDeath: number | null) => {
 		: age;
 
 	return {
-		// @ts-ignore
+		// @ts-expect-error
 		value: <AgeAtDeath age={age} ageAtDeath={ageAtDeath} />,
 		sortValue: searchSortValue,
 		searchValue: searchSortValue,

@@ -83,7 +83,7 @@ const NegotiationList = ({
 				{
 					value: (
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-ignore
+						// @ts-expect-error
 						<NegotiateButtons
 							canGoOverCap={
 								salaryCapType === "none" || salaryCapType === "soft"

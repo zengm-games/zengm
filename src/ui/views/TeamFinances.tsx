@@ -578,11 +578,11 @@ const TeamFinances = ({
 
 	const footer = [
 		["", "Totals"].concat(
-			// @ts-ignore
+			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
 		["", "Free Cap Space"].concat(
-			// @ts-ignore
+			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
 		),
 	];

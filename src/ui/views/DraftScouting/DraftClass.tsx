@@ -151,12 +151,10 @@ const DraftClass = ({
 								return;
 							}
 
-							await toWorker(
-								"main",
-								"handleUploadedDraftClass",
-								output.basicInfo,
-								season,
-							);
+							await toWorker("main", "handleUploadedDraftClass", {
+								uploadedFile: output.basicInfo,
+								draftYear: season,
+							});
 
 							setShowImportForm(false);
 							setStatus(undefined);

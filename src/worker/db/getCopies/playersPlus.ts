@@ -185,7 +185,6 @@ const processAttrs = (
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
-					// @ts-ignore
 					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
 					const url =
 						transaction.eid !== undefined
@@ -225,7 +224,7 @@ const processAttrs = (
 			output.experience = seasons.size;
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
-			// @ts-ignore
+			// @ts-expect-error
 			output[attr] = helpers.deepCopy(p[attr]);
 		}
 	}

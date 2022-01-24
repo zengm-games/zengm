@@ -24,7 +24,7 @@ const WatchList = ({
 
 	const clearWatchList = useCallback(async () => {
 		setClearing(true);
-		await toWorker("main", "clearWatchList");
+		await toWorker("main", "clearWatchList", undefined);
 		setClearing(false);
 	}, []);
 

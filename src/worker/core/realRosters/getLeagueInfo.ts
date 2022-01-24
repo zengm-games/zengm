@@ -101,7 +101,7 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 		};
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	throw new Error(`Unknown type "${options.type}"`);
 };
 

@@ -125,13 +125,13 @@ const genSeasonRow = (
 	}
 
 	if (typeof t.imgURLSmall === "string") {
-		// @ts-ignore
+		// @ts-expect-error
 		newSeason.imgURLSmall = t.imgURLSmall;
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	if (typeof t.stadiumCapacity === "number") {
-		// @ts-ignore
+		// @ts-expect-error
 		newSeason.stadiumCapacity = t.stadiumCapacity;
 	}
 
@@ -142,7 +142,7 @@ const genSeasonRow = (
 		if (t.pop === undefined) {
 			newSeason.pop = prevSeason.pop;
 		}
-		// @ts-ignore
+		// @ts-expect-error
 		if (t.stadiumCapacity === undefined) {
 			newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
 		}

@@ -5,7 +5,7 @@ const build = require("./buildFuncs");
 
 const watchFiles = (updateStart, updateEnd, updateError) => {
 	const watcher = chokidar.watch(
-		["public", "data", "node_modules/flag-icon-css"],
+		["public", "data", "node_modules/flag-icons"],
 		{},
 	);
 

@@ -33,13 +33,15 @@ const NewTeam = ({
 	const handleNewTeam = async (event: FormEvent) => {
 		event.preventDefault();
 
-		await toWorker("main", "switchTeam", tid);
-		realtimeUpdate(
-			[],
-			expansion
-				? helpers.leagueUrl(["protect_players"])
-				: helpers.leagueUrl([]),
-		);
+		if (tid !== undefined) {
+			await toWorker("main", "switchTeam", tid);
+			realtimeUpdate(
+				[],
+				expansion
+					? helpers.leagueUrl(["protect_players"])
+					: helpers.leagueUrl([]),
+			);
+		}
 	};
 
 	let title;

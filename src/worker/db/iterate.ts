@@ -33,7 +33,7 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 		shortCircuit: () => void,
 	) => StoreValue<LeagueDB, StoreName> | void,
 ) => {
-	// @ts-ignore
+	// @ts-expect-error
 	const unwrapped: IDBObjectStore | IDBIndex = unwrap(store);
 
 	return new Promise<void>((resolve, reject) => {

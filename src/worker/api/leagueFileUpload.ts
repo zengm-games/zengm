@@ -313,9 +313,15 @@ export const emitProgressStream = (
 };
 
 const initialCheck = async (
-	file: File | string,
-	includePlayersInBasicInfo: boolean | undefined,
-	leagueCreationID: number,
+	{
+		file,
+		includePlayersInBasicInfo,
+		leagueCreationID,
+	}: {
+		file: File | string;
+		includePlayersInBasicInfo: boolean | undefined;
+		leagueCreationID: number;
+	},
 	conditions: Conditions,
 ) => {
 	let stream: ReadableStream;

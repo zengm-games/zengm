@@ -11,7 +11,9 @@ import getTemplate from "../util/columns/getTemplate";
 import type { MetaCol } from "../util/columns/getCols";
 import { TableConfig } from "../util/TableConfig";
 
-type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
+type OfferType = Awaited<
+	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
+>[0];
 
 type OfferProps = {
 	challengeNoRatings: boolean;
@@ -78,7 +80,7 @@ const Offer = (props: OfferProps) => {
 	if (picks.length > 0) {
 		offerPicks = (
 			<div className="col-md-4">
-				<table className="table table-striped table-bordered table-sm">
+				<table className="table table-striped table-sm">
 					<thead>
 						<tr>
 							<th>Draft Picks</th>
@@ -204,8 +206,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		const offers: OfferType[] = await toWorker(
 			"main",
 			"getTradingBlockOffers",
-			state.pids,
-			state.dpids,
+			{ pids: state.pids, dpids: state.dpids },
 		);
 
 		setState(prevState => ({

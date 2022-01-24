@@ -43,13 +43,11 @@ const Slider = ({
 					const parsed = parseInt(event.target.value);
 					if (!Number.isNaN(parsed)) {
 						setValue(parsed);
-						await toWorker(
-							"main",
-							"updatePlayThroughInjuries",
+						await toWorker("main", "updatePlayThroughInjuries", {
 							tid,
-							parsed,
+							value: parsed,
 							playoffs,
-						);
+						});
 					}
 				}}
 			/>

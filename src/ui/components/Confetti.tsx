@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import ConfettiGenerator from "confetti-js";
 import { useEffect, useState } from "react";
 

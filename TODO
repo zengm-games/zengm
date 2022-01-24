@@ -1,4 +1,9 @@
-highlight rookies on re-signing page https://discord.com/channels/290013534023057409/933027292500852786/933126520275337297
+you can change fome insan to easy back to insan and you still get the achievement https://old.reddit.com/chat/channel/1032418_6a31194bd21777ae5f1205d2770bc029b0d0cf3c
+
+UI refreshes when loading/creating leagues
+
+refactor game sim
+- classes should share some common methods
 
 dropdown list of cities on manage teams page
 - https://discord.com/channels/290013534023057409/331882115119448065/933031128443539528
@@ -25,8 +30,6 @@ when starting a new league, contracts should be set not based on current state o
 sticky first column in most tables
 - https://github.com/twbs/bootstrap/issues/31458
 - https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
-
-TR doesn’t switch to playoffs TR when switching to it on the roster screen https://discord.com/channels/290013534023057409/290015591216054273/930604919973609523
 
 no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
 
@@ -159,9 +162,6 @@ store results of trading block in database
 - show what the user offered somewhere, not just what is checked
 
 show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
-
-refactor game sim
-- classes should share some common methods
 
 football penalty later
 - make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes
@@ -404,8 +404,6 @@ trade finder, with salary cap rules enforced
 
 fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
-
-add league average to team stats and league stats tables https://discord.com/channels/290013534023057409/331882115119448065/838366140739878942
 
 AI teams too likely to re-sign stars?
 
@@ -1243,18 +1241,12 @@ FBGM football sim bugs
 
 typescript
 - to do
-  - types for toWorker
-    - flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier
-    - test with tradeCounterOffer
-    - see OfferType
-    - if it's possible to make it work with no explicit array passed for optional args, do same in toUI
   - backboard -> idb
     - my branch has two fixes:
       - https://github.com/jakearchibald/idb/pull/151
       - https://github.com/jakearchibald/idb/issues/152
   - any -> unknown
     - also in dependencies, like bbgm-router
-  - @ts-ignore still needed? maybe write script to check
 - later
   - playersPlus
     - finish teamsPlus first, it's easier!

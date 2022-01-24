@@ -103,7 +103,7 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 
 				reader.onload = event2 => {
 					try {
-						// @ts-ignore
+						// @ts-expect-error
 						const rows = csvParse(event2.currentTarget.result);
 
 						const columns = getColumns(type);
@@ -211,6 +211,7 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 									const defaultRows = await toWorker(
 										"main",
 										`getDefault${helpers.upperCaseFirstLetter(type)}`,
+										undefined,
 									);
 									setRows(formatRows(defaultRows) as any);
 								}}

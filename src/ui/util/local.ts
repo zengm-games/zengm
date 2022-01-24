@@ -187,7 +187,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 					gameAttributes.hasOwnProperty(key) &&
 					updates[key] !== gameAttributes[key]
 				) {
-					// @ts-ignore
+					// @ts-expect-error
 					updates[key] = gameAttributes[key];
 					update = true;
 				}

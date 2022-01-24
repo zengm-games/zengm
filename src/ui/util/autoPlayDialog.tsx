@@ -113,7 +113,7 @@ const autoPlayDialog = (
 	phase: string;
 	season: string;
 } | null => {
-	// @ts-ignore
+	// @ts-expect-error
 	return confirmFunction({
 		currentSeason,
 		repeatSeason,

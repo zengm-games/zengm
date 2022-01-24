@@ -81,7 +81,7 @@ const makeExportStream = async (
 	);
 
 	// Always flush before export, so export is current!
-	await toWorker("main", "idbCacheFlush");
+	await toWorker("main", "idbCacheFlush", undefined);
 
 	const space = compressed ? "" : " ";
 	const tab = compressed ? "" : " ".repeat(NUM_SPACES_IN_TAB);

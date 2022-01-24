@@ -4,7 +4,7 @@ import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import type { Conf, Div, View } from "../../../common/types";
 import { helpers, logEvent } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
-import type { NewLeagueTeam } from "./types";
+import type { NewLeagueTeamWithoutRank } from "./types";
 
 export const getGodModeWarnings = ({
 	is,
@@ -74,11 +74,11 @@ const UpsertTeamModal = ({
 	onSave,
 	godModeLimits,
 }: {
-	t?: NewLeagueTeam;
+	t?: NewLeagueTeamWithoutRank;
 	confs: Conf[];
 	divs: Div[];
 	onCancel: () => void;
-	onSave: (t: NewLeagueTeam) => void;
+	onSave: (t: NewLeagueTeamWithoutRank) => void;
 	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
 	const [controlledTeam, setControlledTeam] = useState(() => {

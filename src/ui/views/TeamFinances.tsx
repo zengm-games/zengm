@@ -127,13 +127,11 @@ const FinancesForm = ({
 			),
 		};
 
-		await toWorker(
-			"main",
-			"updateBudget",
-			budgetAmounts,
-			state.adjustForInflation,
-			state.autoTicketPrice,
-		);
+		await toWorker("main", "updateBudget", {
+			budgetAmounts: budgetAmounts,
+			adjustForInflation: state.adjustForInflation,
+			autoTicketPrice: state.autoTicketPrice,
+		});
 
 		logEvent({
 			type: "success",
@@ -580,11 +578,11 @@ const TeamFinances = ({
 
 	const footer = [
 		["", "Totals"].concat(
-			// @ts-ignore
+			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
 		["", "Free Cap Space"].concat(
-			// @ts-ignore
+			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
 		),
 	];

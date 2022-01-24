@@ -8,7 +8,7 @@ const updateMultiTeamMode = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("g.userTids") ||
+		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("newPhase")
 	) {
 		const teamsAll = await idb.cache.teams.getAll();
@@ -22,6 +22,7 @@ const updateMultiTeamMode = async (
 			}));
 
 		return {
+			godMode: g.get("godMode"),
 			phase: g.get("phase"),
 			teams,
 			userTid: g.get("userTid"),

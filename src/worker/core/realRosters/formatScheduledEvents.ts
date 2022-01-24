@@ -144,7 +144,7 @@ const processTeams = (
 		if (
 			(event.season > season ||
 				(event.season === season && event.phase > phase)) &&
-			// @ts-ignore
+			// @ts-expect-error
 			initialTeams === undefined
 		) {
 			initialTeams = helpers.deepCopy(prevState);
@@ -204,7 +204,7 @@ const processTeams = (
 	}
 
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
-	// @ts-ignore
+	// @ts-expect-error
 	if (initialTeams === undefined) {
 		initialTeams = helpers.deepCopy(prevState);
 	}

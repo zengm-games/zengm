@@ -16,13 +16,13 @@ const bySport = <T>(
 	const sport = process.env.SPORT;
 	if (object.hasOwnProperty(sport)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		return object[sport];
 	}
 
 	if (object.hasOwnProperty("default")) {
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		return object.default;
 	}
 

@@ -12,7 +12,7 @@ describe("Smoke Tests", () => {
 
 	it("Create a new league and simuluate a season without error", async function () {
 		// Don't want to include Mocha and Jest types cause they conflict
-		// @ts-ignore
+		// @ts-expect-error
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
 		idb.meta = await connectMeta();
@@ -58,7 +58,7 @@ describe("Smoke Tests", () => {
 	});
 
 	// Don't want to include Mocha and Jest types cause they conflict
-	// @ts-ignore
+	// @ts-expect-error
 	after(async () => {
 		clearInterval(intervalID);
 		await league.remove(g.get("lid"));
@@ -72,7 +72,7 @@ describe("Smoke Tests", () => {
 		}
 
 		await deleteDB("meta");
-		// @ts-ignore
+		// @ts-expect-error
 		idb.meta = undefined;
 	});
 });

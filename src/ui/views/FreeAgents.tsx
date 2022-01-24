@@ -41,8 +41,9 @@ const FreeAgents = ({
 			title: "Negotiate",
 			template: (p: Player) => (
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-				// @ts-ignore
+			  // @ts-expect-error
 				<NegotiateButtons
+          canGoOverCap={salaryCapType === "none"}
 					capSpace={capSpace}
 					disabled={gameSimInProgress}
 					minContract={minContract}

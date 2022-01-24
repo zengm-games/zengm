@@ -122,7 +122,7 @@ const attempt = async (valueChangeKey: number) => {
 	const finalTids: [number, number] = [teams[0].tid, teams[1].tid];
 	const finalPids: [number[], number[]] = [teams[0].pids, teams[1].pids];
 	const finalDpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];
-	await processTrade(tradeSummary, finalTids, finalPids, finalDpids);
+	await processTrade(finalTids, finalPids, finalDpids);
 
 	return true;
 };

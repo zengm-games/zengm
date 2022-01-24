@@ -53,7 +53,7 @@ const SkillsBlock = ({
 					className="skill"
 					title={
 						// https://github.com/microsoft/TypeScript/issues/21732
-						// @ts-ignore
+						// @ts-expect-error
 						tooltips.hasOwnProperty(skill) ? tooltips[skill] : null
 					}
 				>

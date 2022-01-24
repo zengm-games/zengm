@@ -26,7 +26,7 @@ const averageCareerArc = async (ratingToSave: string) => {
 			averagePot[k] += p.ratings[0].pot;
 
 			if (ratingToSave) {
-				// @ts-ignore
+				// @ts-expect-error
 				averageRat[k] += p.ratings[0][ratingToSave];
 			}
 

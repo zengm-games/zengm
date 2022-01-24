@@ -47,13 +47,11 @@ const NegotiateButtons = ({
 				className="btn btn-light-bordered btn-xs"
 				disabled={signDisabled}
 				onClick={async () => {
-					const errorMsg = await toWorker(
-						"main",
-						"sign",
-						p.pid,
-						contractAmount,
-						p.contract.exp,
-					);
+					const errorMsg = await toWorker("main", "sign", {
+						pid: p.pid,
+						amount: contractAmount,
+						exp: p.contract.exp,
+					});
 
 					if (errorMsg) {
 						logEvent({

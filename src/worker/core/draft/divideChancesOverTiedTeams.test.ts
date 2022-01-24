@@ -14,7 +14,7 @@ describe("worker/core/draft/divideChancesOverTiedTeams", () => {
 		await loadTeamSeasons();
 	});
 	afterAll(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 	});
 

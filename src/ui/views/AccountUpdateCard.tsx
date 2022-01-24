@@ -56,9 +56,9 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 			{
 				number: state.number,
 				cvc: state.cvc,
-				// @ts-ignore
+				// @ts-expect-error
 				exp_month: state.exp_month,
-				// @ts-ignore
+				// @ts-expect-error
 				exp_year: state.exp_year,
 			},
 			async (status: number, response: stripe.StripeCardTokenResponse) => {

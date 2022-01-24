@@ -183,7 +183,7 @@ const NextButton = ({
 	const simNext = useCallback(async () => {
 		setAutoGoToNext(true);
 		setClickedGoToNext(true);
-		await toWorker("playMenu", "day");
+		await toWorker("playMenu", "day", undefined);
 	}, []);
 
 	useEffect(() => {

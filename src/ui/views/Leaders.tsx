@@ -49,7 +49,7 @@ const Row = ({
 				</a>
 				{isSport("football") || isSport("hockey") ? `${p.ratings.pos}` : null}
 			</td>
-			<td className="text-end">
+			<td>
 				{cat.stat === "WS/48"
 					? helpers.roundWinp(p.stat)
 					: helpers.roundStat(p.stat, cat.statProp)}
@@ -89,15 +89,15 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 				{categories.map(cat => (
 					<div
 						key={cat.name}
-						className="col-12 col-sm-6 col-md-4 col-xl-3"
+						className="col-12 col-sm-6 col-md-4"
 						style={{ marginTop: 14 }}
 					>
 						<ResponsiveTableWrapper>
-							<table className="table table-sm leaders">
+							<table className="table table-striped table-sm leaders">
 								<thead>
 									<tr title={cat.title}>
 										<th>{cat.name}</th>
-										<th className="text-end">{cat.stat}</th>
+										<th>{cat.stat}</th>
 									</tr>
 								</thead>
 								<tbody>

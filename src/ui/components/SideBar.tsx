@@ -15,9 +15,11 @@ import type {
 	MenuItemText,
 } from "../../common/types";
 
-const getText = (text: MenuItemLink["text"]) => {
+export const getText = (
+	text: MenuItemLink["text"],
+): Exclude<ReactNode, null | undefined | number | boolean> => {
 	if (text.hasOwnProperty("side")) {
-		// @ts-ignore
+		// @ts-expect-error
 		return text.side;
 	}
 
@@ -28,10 +30,16 @@ const MenuGroup = ({ children }: { children: ReactNode }) => (
 	<ul className="nav flex-column">{children}</ul>
 );
 
-const makeAnchorProps = (
+export const makeAnchorProps = (
 	menuItem: MenuItemLink,
 	onMenuItemClick: () => void,
-) => {
+	closeBeforeOnClickResolves?: boolean,
+): {
+	onClick: (event: MouseEvent) => void;
+	href?: string;
+	rel?: string;
+	target?: string;
+} => {
 	let href;
 	let rel;
 	let target;
@@ -49,10 +57,14 @@ const makeAnchorProps = (
 
 	const onClick = async (event: MouseEvent) => {
 		if (menuItem.onClick) {
+			if (closeBeforeOnClickResolves) {
+				onMenuItemClick();
+			}
+
 			// Don't close menu if response is false
 			const response = await menuItem.onClick(event);
 
-			if (response !== false) {
+			if (response !== false && !closeBeforeOnClickResolves) {
 				onMenuItemClick();
 			}
 		} else {
@@ -96,6 +108,10 @@ const MenuItem = ({
 	}
 
 	if (menuItem.type === "link") {
+		if (menuItem.commandPaletteOnly) {
+			return null;
+		}
+
 		if (menuItem.godMode && !godMode) {
 			return null;
 		}
@@ -119,6 +135,10 @@ const MenuItem = ({
 	}
 
 	if (menuItem.type === "header") {
+		if (menuItem.commandPaletteOnly) {
+			return null;
+		}
+
 		const children = menuItem.children
 			.map((child, i) => (
 				<MenuItem

@@ -217,9 +217,11 @@ const LeagueFileUpload = ({
 			const { basicInfo, schemaErrors } = await toWorker(
 				"leagueFileUpload",
 				"initialCheck",
-				url,
-				includePlayersInBasicInfo,
-				leagueCreationID.current,
+				{
+					file: url,
+					includePlayersInBasicInfo,
+					leagueCreationID: leagueCreationID.current,
+				},
 			);
 
 			await afterCheck({
@@ -264,9 +266,11 @@ const LeagueFileUpload = ({
 			const { basicInfo, schemaErrors } = await toWorker(
 				"leagueFileUpload",
 				"initialCheck",
-				file,
-				includePlayersInBasicInfo,
-				leagueCreationID.current,
+				{
+					file,
+					includePlayersInBasicInfo,
+					leagueCreationID: leagueCreationID.current,
+				},
 			);
 
 			await afterCheck({

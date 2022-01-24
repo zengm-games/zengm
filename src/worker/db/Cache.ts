@@ -276,17 +276,17 @@ class Cache {
 
 	constructor() {
 		this._status = "empty";
-		// @ts-ignore
+		// @ts-expect-error
 		this._data = {};
-		// @ts-ignore
+		// @ts-expect-error
 		this._deletes = {};
 		this._dirty = false;
 		this._dirtyIndexes = new Set();
-		// @ts-ignore
+		// @ts-expect-error
 		this._dirtyRecords = {};
-		// @ts-ignore
+		// @ts-expect-error
 		this._indexes = {};
-		// @ts-ignore
+		// @ts-expect-error
 		this._maxIds = {};
 		this.newLeague = false;
 		this._requestQueue = new Map();
@@ -506,7 +506,7 @@ class Cache {
 			},
 		};
 
-		// @ts-ignore
+		// @ts-expect-error
 		this._index2store = {};
 
 		for (const store of helpers.keys(this.storeInfos)) {
@@ -695,7 +695,7 @@ class Cache {
 
 		this._setStatus("filling");
 
-		// @ts-ignore
+		// @ts-expect-error
 		this._data = {};
 
 		// This is crap and should be fixed ASAP

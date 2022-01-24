@@ -42,7 +42,10 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 						// For align="end" in react-bootstrap
 						/^dropdown-menu-end$/,
 
-						/^flag-/,
+						// flag-icons
+						/^fi$/,
+						/^fi-/,
+
 						/^dark-select/,
 						/^bar-graph/,
 					],
@@ -207,7 +210,7 @@ const copyFiles = watch => {
 
 	fse.copySync("data/names.json", "build/gen/names.json");
 
-	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
+	fse.copySync("node_modules/flag-icons/flags/4x3", "build/img/flags");
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;

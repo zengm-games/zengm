@@ -1,6 +1,7 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
 import { localActions, useLocalShallow } from "../util";
+import CommandPalette from "./CommandPalette";
 import ErrorBoundary from "./ErrorBoundary";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -109,6 +110,7 @@ const Controller = () => {
 					</div>
 					<Skyscraper />
 				</div>
+				<CommandPalette />
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />

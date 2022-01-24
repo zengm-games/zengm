@@ -693,16 +693,16 @@ function deepCopy<T>(obj: T): T {
 		return obj;
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	if (obj.constructor === RegExp) {
 		return obj;
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	const retVal = new obj.constructor();
 
 	for (const key of Object.keys(obj)) {
-		// @ts-ignore
+		// @ts-expect-error
 		retVal[key] = deepCopy(obj[key]);
 	}
 

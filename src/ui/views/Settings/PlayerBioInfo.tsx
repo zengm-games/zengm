@@ -392,7 +392,11 @@ const PlayerBioInfo2 = ({
 	};
 
 	const loadDefaults = async () => {
-		const defaults = await toWorker("main", "getPlayerBioInfoDefaults");
+		const defaults = await toWorker(
+			"main",
+			"getPlayerBioInfoDefaults",
+			undefined,
+		);
 		setDefaults(defaults);
 
 		const infoState = formatPlayerBioInfoState(defaultValue, defaults);

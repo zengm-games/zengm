@@ -38,7 +38,7 @@ const close = async (disconnect?: boolean) => {
 		local.reset();
 
 		// Probably this should delete all other properties on g and reset it to GameAttributesNonLeague by calling helpers.resetG, but I don't want to mess with it now and maybe break stuff.
-		// @ts-ignore
+		// @ts-expect-error
 		g.setWithoutSavingToDB("lid", undefined);
 	}
 };

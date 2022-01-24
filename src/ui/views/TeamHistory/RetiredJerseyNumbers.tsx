@@ -71,12 +71,10 @@ const RetiredJerseyNumbers = ({
 					event.preventDefault();
 
 					try {
-						await toWorker(
-							"main",
-							"retiredJerseyNumberUpsert",
+						await toWorker("main", "retiredJerseyNumberUpsert", {
 							tid,
-							editing.type === "edit" ? editing.index : undefined,
-							{
+							i: editing.type === "edit" ? editing.index : undefined,
+							info: {
 								number: editing.number,
 								seasonRetired: parseInt(editing.seasonRetired),
 								seasonTeamInfo: parseInt(editing.seasonTeamInfo),
@@ -86,7 +84,7 @@ const RetiredJerseyNumbers = ({
 										: undefined,
 								text: editing.text,
 							},
-						);
+						});
 
 						setEditing(undefined);
 					} catch (error) {
@@ -251,7 +249,7 @@ const RetiredJerseyNumbers = ({
 		);
 
 		if (proceed) {
-			await toWorker("main", "retiredJerseyNumberDelete", tid, i);
+			await toWorker("main", "retiredJerseyNumberDelete", { tid, i });
 		}
 	};
 

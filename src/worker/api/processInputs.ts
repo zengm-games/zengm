@@ -138,7 +138,7 @@ const depth = (params: Params) => {
 	});
 
 	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-ignore
+	// @ts-expect-error
 	const pos: string = POSITIONS.includes(params.pos) ? params.pos : DEFAULT_POS;
 
 	const playoffs =

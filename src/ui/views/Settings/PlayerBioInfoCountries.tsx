@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown, Modal } from "react-bootstrap";
-import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
+import { downloadFile, helpers, resetFileInput } from "../../util";
 import classNames from "classnames";
 import {
 	Defaults,
@@ -80,7 +80,7 @@ const ImportButton = ({
 
 				reader.onload = async event2 => {
 					try {
-						// @ts-ignore
+						// @ts-expect-error
 						const info = JSON.parse(event2.currentTarget.result);
 						setInfoState(
 							formatPlayerBioInfoState(
@@ -236,12 +236,7 @@ const Controls = ({
 						<Dropdown.Menu>
 							<Dropdown.Item
 								onClick={async () => {
-									setInfoState(
-										formatPlayerBioInfoState(
-											await toWorker("main", "getDefaultInjuries"),
-											defaults,
-										),
-									);
+									setInfoState(formatPlayerBioInfoState(undefined, defaults));
 								}}
 							>
 								Default

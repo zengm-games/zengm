@@ -82,6 +82,10 @@ table.table {
 			position: relative;
 		}
 	}
+
+	.sorting_highlight {
+		background-color: var(--bs-table-hover-bg) !important;
+	}
 }
 
 // Implemented weirdly like https://css-tricks.com/snippets/css/transparent-background-images/ so opacity can be overriden in dark.scss

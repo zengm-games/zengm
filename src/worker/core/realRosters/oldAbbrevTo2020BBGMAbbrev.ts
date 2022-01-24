@@ -100,7 +100,7 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 	};
 
 	if (abbrevs.hasOwnProperty(abbrev)) {
-		// @ts-ignore
+		// @ts-expect-error
 		return abbrevs[abbrev];
 	}
 

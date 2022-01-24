@@ -143,7 +143,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				4 * p.stats.defInt +
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
 				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
+				// @ts-expect-error
 				TCK_CONSTANT[p.ratings.pos] * p.stats.defTck +
 				(allProLevel * 80 * t.stats.gp) / g.get("numGames");
 

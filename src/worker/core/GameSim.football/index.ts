@@ -201,16 +201,16 @@ class GameSim {
 		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
 			delete this.team[t].compositeRating;
-			// @ts-ignore
+			// @ts-expect-error
 			delete this.team[t].pace;
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].age;
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].ptModifier;
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;
@@ -306,7 +306,7 @@ class GameSim {
 		this.d = this.o === 0 ? 1 : 0;
 		this.awaitingKickoff = this.o;
 
-		// @ts-ignore
+		// @ts-expect-error
 		while (this.clock > 0 && this.overtimeState !== "over") {
 			this.simPlay();
 		}
@@ -963,13 +963,13 @@ class GameSim {
 					});
 				this.playersOnField[t][pos] = players.slice(0, numPlayers);
 
-				// @ts-ignore
+				// @ts-expect-error
 				for (const p of this.playersOnField[t][pos]) {
 					pidsUsed.add(p.id);
 				}
 
 				if (playType === "starters") {
-					// @ts-ignore
+					// @ts-expect-error
 					for (const p of this.playersOnField[t][pos]) {
 						this.recordStat(t, p, "gs");
 					}
@@ -2059,11 +2059,9 @@ class GameSim {
 
 				if (positions.length > 0) {
 					// https://github.com/microsoft/TypeScript/issues/21732
-					// @ts-ignore
+					// @ts-expect-error
 					const pos = random.choice(positions, pos2 => posOdds[pos2]);
 
-					// https://github.com/microsoft/TypeScript/issues/21732
-					// @ts-ignore
 					const players = this.playersOnField[penInfo.t][pos];
 
 					if (players !== undefined && players.length > 0) {
@@ -2110,7 +2108,7 @@ class GameSim {
 			for (const pos of helpers.keys(this.playersOnField[t])) {
 				// Update minutes (overall, court, and bench)
 				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
+				// @ts-expect-error
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p.id);
 					this.recordStat(t, p, "min", possessionTime);
@@ -2158,7 +2156,7 @@ class GameSim {
 
 			for (const pos of helpers.keys(this.playersOnField[t])) {
 				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
+				// @ts-expect-error
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p);
 				}

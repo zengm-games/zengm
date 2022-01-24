@@ -10,6 +10,7 @@ import {
 	isSport,
 	bySport,
 	gameAttributesArrayToObject,
+	DEFAULT_JERSEY,
 } from "../../common";
 import actions from "./actions";
 import leagueFileUpload, {
@@ -89,6 +90,7 @@ import type {
 	LocalStateUI,
 	DunkAttempt,
 	AllStarPlayer,
+	League,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -111,25 +113,23 @@ import createStreamFromLeagueObject from "../core/league/create/createStreamFrom
 import type { IDBPIndex, IDBPObjectStore } from "idb";
 import type { LeagueDB } from "../db/connectLeague";
 import { TableConfig } from "../../ui/util/TableConfig";
+import playMenu from "./playMenu";
+import toolsMenu from "./toolsMenu";
+import omit from "lodash-es/omit";
 
-const acceptContractNegotiation = async (
-	pid: number,
-	amount: number,
-	exp: number,
-): Promise<string | undefined | null> => {
+const acceptContractNegotiation = async ({
+	pid,
+	amount,
+	exp,
+}: {
+	pid: number;
+	amount: number;
+	exp: number;
+}): Promise<string | undefined | null> => {
 	return contractNegotiation.accept(pid, amount, exp);
 };
 
-const addTeam = async (): Promise<{
-	tid: number;
-	abbrev: string;
-	region: string;
-	name: string;
-	imgURL?: string;
-	pop: number;
-	stadiumCapacity: number;
-	colors: [string, string, string];
-}> => {
+const addTeam = async () => {
 	const did = g.get("divs")[0].did;
 
 	const t = await team.addNewTeamToExistingLeague({
@@ -150,10 +150,12 @@ const addTeam = async (): Promise<{
 		region: t.region,
 		name: t.name,
 		imgURL: t.imgURL,
-		// @ts-ignore
-		pop: t.pop,
-		// @ts-ignore
-		stadiumCapacity: t.stadiumCapacity,
+		imgURLSmall: t.imgURLSmall ?? "",
+		did: t.did,
+		disabled: t.disabled,
+		jersey: t.jersey ?? DEFAULT_JERSEY,
+		pop: t.pop!, // See comment in types.ts about upgrade
+		stadiumCapacity: t.stadiumCapacity!, // See comment in types.ts about upgrade
 		colors: t.colors,
 	};
 };
@@ -303,10 +305,13 @@ const allStarGameNow = async () => {
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
-const autoSortRoster = async (
-	pos: string | undefined,
-	tids: number[] | undefined,
-) => {
+const autoSortRoster = async ({
+	pos,
+	tids,
+}: {
+	pos?: string;
+	tids?: number[];
+} = {}) => {
 	const tids2 = tids ?? [g.get("userTid")];
 
 	for (const tid of tids2) {
@@ -320,20 +325,28 @@ const autoSortRoster = async (
 };
 
 const beforeViewLeague = async (
-	newLid: number,
-	loadedLid: number | undefined,
+	{
+		newLid,
+		loadedLid,
+	}: {
+		newLid: number;
+		loadedLid: number | undefined;
+	},
 	conditions: Conditions,
 ) => {
 	return beforeView.league(newLid, loadedLid, conditions);
 };
 
-const beforeViewNonLeague = async (conditions: Conditions) => {
+const beforeViewNonLeague = async (param: unknown, conditions: Conditions) => {
 	return beforeView.nonLeague(conditions);
 };
 
 const cancelContractNegotiation = async (pid: number) => {
 	return contractNegotiation.cancel(pid);
 };
+
+const checkAccount2 = (param: unknown, conditions: Conditions) =>
+	checkAccount(conditions);
 
 const checkParticipationAchievement = async (
 	force: boolean,
@@ -887,7 +900,13 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	}
 };
 
-const dunkGetProjected = async (dunkAttempt: DunkAttempt, index: number) => {
+const dunkGetProjected = async ({
+	dunkAttempt,
+	index,
+}: {
+	dunkAttempt: DunkAttempt;
+	index: number;
+}) => {
 	let score = 0;
 	let prob = 0;
 
@@ -927,10 +946,13 @@ const dunkSetControlling = async (controlling: number[]) => {
 	}
 };
 
-const contestSetPlayers = async (
-	type: "dunk" | "three",
-	players: AllStarPlayer[],
-) => {
+const contestSetPlayers = async ({
+	type,
+	players,
+}: {
+	type: "dunk" | "three";
+	players: AllStarPlayer[];
+}) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const contest = allStars?.[type];
 	if (contest) {
@@ -1006,8 +1028,7 @@ const threeSimNext = async (
 };
 
 const dunkUser = async (
-	dunkAttempt: DunkAttempt,
-	index: number,
+	{ dunkAttempt, index }: { dunkAttempt: DunkAttempt; index: number },
 	conditions: Conditions,
 ) => {
 	await allStar.dunkContest.simNextDunkEvent(conditions, {
@@ -1088,9 +1109,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			"stat:fgpMidRange": "MidRangeFGP",
 		};
 		for (const col of cols) {
-			// @ts-ignore
+			// @ts-expect-error
 			if (overrides[col]) {
-				// @ts-ignore
+				// @ts-expect-error
 				colNames.push(overrides[col]);
 			} else {
 				const array = getCols([col]);
@@ -1420,6 +1441,26 @@ const getLeagueName = () => {
 	return league.getName();
 };
 
+const getLeagues = () => {
+	return idb.meta.getAll("leagues");
+};
+
+const getPlayersCommandPalette = async () => {
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+		PLAYER.FREE_AGENT,
+		Infinity,
+	]);
+
+	return idb.getCopies.playersPlus(playersAll, {
+		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
+		ratings: ["pos", "ovr", "pot"],
+		season: g.get("season"),
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+	});
+};
+
 const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
@@ -1433,11 +1474,11 @@ const getPlayerWatch = async (pid: number) => {
 
 	const p = await idb.cache.players.get(pid);
 	if (p) {
-		return p.watch;
+		return !!p.watch;
 	}
 	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (p2) {
-		return p2.watch;
+		return !!p2.watch;
 	}
 
 	return false;
@@ -1463,7 +1504,13 @@ const getRandomName = async (country: string) => {
 	return { firstName, lastName };
 };
 
-const getRandomRatings = async (age: number, pos: string | undefined) => {
+const getRandomRatings = async ({
+	age,
+	pos,
+}: {
+	age: number;
+	pos: string | undefined;
+}) => {
 	// 100 tries to find a matching position
 	let p: any;
 	for (let i = 0; i < 100; i++) {
@@ -1494,7 +1541,13 @@ const getRandomRatings = async (age: number, pos: string | undefined) => {
 	};
 };
 
-const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
+const getTradingBlockOffers = async ({
+	pids,
+	dpids,
+}: {
+	pids: number[];
+	dpids: number[];
+}) => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
 		const teams = await idb.cache.teams.getAll();
@@ -1647,10 +1700,13 @@ const ping = async () => {
 	return;
 };
 
-const handleUploadedDraftClass = async (
-	uploadedFile: any,
-	draftYear: number,
-) => {
+const handleUploadedDraftClass = async ({
+	uploadedFile,
+	draftYear,
+}: {
+	uploadedFile: any;
+	draftYear: number;
+}) => {
 	// Find season from uploaded file, for age adjusting
 	let uploadedSeason: number | undefined;
 
@@ -1763,7 +1819,7 @@ const handleUploadedDraftClass = async (
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
-			// @ts-ignore
+			// @ts-expect-error
 			delete p2.pid;
 		}
 
@@ -1782,11 +1838,14 @@ const idbCacheFlush = async () => {
 	await idb.cache.flush();
 };
 
-const importPlayers = async (
+const importPlayers = async ({
+	leagueFile,
+	players,
+}: {
 	leagueFile: {
 		startingSeason: number;
 		version?: number;
-	},
+	};
 	players: {
 		p: any;
 		contractAmount: string;
@@ -1795,8 +1854,8 @@ const importPlayers = async (
 		season: number;
 		seasonOffset: number;
 		tid: number;
-	}[],
-) => {
+	}[];
+}) => {
 	const currentSeason = g.get("season");
 	const currentPhase = g.get("phase");
 
@@ -1975,15 +2034,27 @@ const initGold = async () => {
 	await toUI("initGold", []);
 };
 
-const lockSet = async (name: LockName, value: boolean) => {
+const lockSet = async ([name, value]: [LockName, boolean]) => {
 	await lock.set(name, value);
 };
 
-const ovr = async (ratings: MinimalPlayerRatings, pos: string) => {
+const ovr = async ({
+	ratings,
+	pos,
+}: {
+	ratings: MinimalPlayerRatings;
+	pos: string;
+}) => {
 	return player.ovr(ratings, pos);
 };
 
-const ratingsStatsPopoverInfo = async (pid: number, season?: number) => {
+const ratingsStatsPopoverInfo = async ({
+	pid,
+	season,
+}: {
+	pid: number;
+	season?: number;
+}) => {
 	const blankObj = {
 		name: undefined,
 		ratings: undefined,
@@ -2145,7 +2216,7 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 	}
 };
 
-const regenerateSchedule = async (conditions: Conditions) => {
+const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
 	const teams = await idb.getCopies.teamsPlus(
 		{
 			attrs: ["tid"],
@@ -2170,7 +2241,13 @@ const regenerateSchedule = async (conditions: Conditions) => {
 	await season.setSchedule(newSchedule);
 };
 
-const releasePlayer = async (pid: number, justDrafted: boolean) => {
+const releasePlayer = async ({
+	pid,
+	justDrafted,
+}: {
+	pid: number;
+	justDrafted: boolean;
+}) => {
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
 		return "Player not found";
@@ -2191,7 +2268,7 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	});
 };
 
-const removeLastTeam = async (): Promise<void> => {
+const removeLastTeam = async () => {
 	const tid = g.get("numTeams") - 1;
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
@@ -2308,7 +2385,13 @@ const removePlayers = async (pids: number[]) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
+const reorderDepthDrag = async ({
+	pos,
+	sortedPids,
+}: {
+	pos: string;
+	sortedPids: number[];
+}) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	if (!t) {
 		throw new Error("Invalid tid");
@@ -2323,7 +2406,7 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 		t.keepRosterSorted = false;
 
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		depth[pos] = sortedPids;
 		await idb.cache.teams.put(t);
 		await toUI("realtimeUpdate", [["playerMovement"]]);
@@ -2372,7 +2455,13 @@ const resetPlayingTime = async (tids: number[] | undefined) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const retiredJerseyNumberDelete = async (tid: number, i: number) => {
+const retiredJerseyNumberDelete = async ({
+	tid,
+	i,
+}: {
+	tid: number;
+	i: number;
+}) => {
 	const t = await idb.cache.teams.get(tid);
 	if (!t) {
 		throw new Error("Invalid tid");
@@ -2385,17 +2474,21 @@ const retiredJerseyNumberDelete = async (tid: number, i: number) => {
 	}
 };
 
-const retiredJerseyNumberUpsert = async (
-	tid: number,
-	i: number | undefined,
+const retiredJerseyNumberUpsert = async ({
+	tid,
+	i,
+	info,
+}: {
+	tid: number;
+	i?: number;
 	info: {
 		number: string;
 		seasonRetired: number;
 		seasonTeamInfo: number;
 		pid: number | undefined;
 		text: string;
-	},
-) => {
+	};
+}) => {
 	const t = await idb.cache.teams.get(tid);
 	if (!t) {
 		throw new Error("Invalid tid");
@@ -2487,11 +2580,19 @@ const retiredJerseyNumberUpsert = async (
 };
 
 const runBefore = async (
-	viewId: string,
-	params: any,
-	ctxBBGM: any,
-	updateEvents: UpdateEvents,
-	prevData: any,
+	{
+		viewId,
+		params,
+		ctxBBGM,
+		updateEvents,
+		prevData,
+	}: {
+		viewId: string;
+		params: any;
+		ctxBBGM: any;
+		updateEvents: UpdateEvents;
+		prevData: any;
+	},
 	conditions: Conditions,
 ): Promise<void | {
 	[key: string]: any;
@@ -2508,7 +2609,7 @@ const runBefore = async (
 	let inputs;
 	if (processInputs.hasOwnProperty(viewId)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		inputs = processInputs[viewId](params, ctxBBGM);
 	}
 	if (inputs === undefined) {
@@ -2524,7 +2625,7 @@ const runBefore = async (
 	}
 
 	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-ignore
+	// @ts-expect-error
 	const view = views[viewId];
 
 	if (view) {
@@ -2535,7 +2636,13 @@ const runBefore = async (
 	return {};
 };
 
-const setForceWin = async (gid: number, tidOrTie?: number | "tie") => {
+const setForceWin = async ({
+	gid,
+	tidOrTie,
+}: {
+	gid: number;
+	tidOrTie?: number | "tie";
+}) => {
 	const game = await idb.cache.schedule.get(gid);
 	if (!game) {
 		throw new Error("Game not found");
@@ -2545,10 +2652,13 @@ const setForceWin = async (gid: number, tidOrTie?: number | "tie") => {
 	await idb.cache.schedule.put(game);
 };
 
-const setForceWinAll = async (
-	tid: number,
-	type: "none" | "win" | "lose" | "tie",
-) => {
+const setForceWinAll = async ({
+	tid,
+	type,
+}: {
+	tid: number;
+	type: "none" | "win" | "lose" | "tie";
+}) => {
 	const games = await idb.cache.schedule.getAll();
 	for (const game of games) {
 		if (game.homeTid !== tid && game.awayTid !== tid) {
@@ -2589,12 +2699,12 @@ const setGOATFormula = async (formula: string) => {
 	await toUI("realtimeUpdate", [["g.goatFormula"]]);
 };
 
-const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
+const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {
 	if (key === "autoSave" && value === false) {
 		await idb.cache.flush();
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	local[key] = value;
 
 	if (key === "autoSave" && value === true) {
@@ -2608,7 +2718,7 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	}
 };
 
-const setPlayerNote = async (pid: number, note: string) => {
+const setPlayerNote = async ({ pid, note }: { pid: number; note: string }) => {
 	const p = await idb.getCopy.players(
 		{
 			pid,
@@ -2632,11 +2742,15 @@ const setPlayerNote = async (pid: number, note: string) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const sign = async (
-	pid: number,
-	amount: number,
-	exp: number,
-): Promise<string | undefined | null> => {
+const sign = async ({
+	pid,
+	amount,
+	exp,
+}: {
+	pid: number;
+	amount: number;
+	exp: number;
+}) => {
 	// Kind of hacky that a negotiation is needed...
 	const negotiation = await idb.cache.negotiations.get(pid);
 
@@ -2695,7 +2809,10 @@ const updateExpansionDraftSetup = async (changes: {
 	});
 };
 
-const advanceToPlayerProtection = async (conditions: Conditions) => {
+const advanceToPlayerProtection = async (
+	param: unknown,
+	conditions: Conditions,
+) => {
 	const errors = await expansionDraft.advanceToPlayerProtection(
 		false,
 		conditions,
@@ -2731,7 +2848,13 @@ const cancelExpansionDraft = async () => {
 	await updatePlayMenu();
 };
 
-const updateProtectedPlayers = async (tid: number, protectedPids: number[]) => {
+const updateProtectedPlayers = async ({
+	tid,
+	protectedPids,
+}: {
+	tid: number;
+	protectedPids: number[];
+}) => {
 	await expansionDraft.updateProtectedPids(tid, protectedPids);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
@@ -2796,17 +2919,21 @@ const uiUpdateLocal = async (obj: Partial<LocalStateUI>) => {
 	await toUI("updateLocal", [obj]);
 };
 
-const updateBudget = async (
+const updateBudget = async ({
+	budgetAmounts,
+	adjustForInflation,
+	autoTicketPrice,
+}: {
 	budgetAmounts: {
 		coaching: number;
 		facilities: number;
 		health: number;
 		scouting: number;
 		ticketPrice: number;
-	},
-	adjustForInflation: boolean,
-	autoTicketPrice: boolean,
-) => {
+	};
+	adjustForInflation: boolean;
+	autoTicketPrice: boolean;
+}) => {
 	const userTid = g.get("userTid");
 
 	const t = await idb.cache.teams.get(userTid);
@@ -2833,10 +2960,13 @@ const updateBudget = async (
 	await toUI("realtimeUpdate", [["teamFinances"]]);
 };
 
-const updateConfsDivs = async (
-	confs: { cid: number; name: string }[],
-	divs: { cid: number; did: number; name: string }[],
-) => {
+const updateConfsDivs = async ({
+	confs,
+	divs,
+}: {
+	confs: { cid: number; name: string }[];
+	divs: { cid: number; did: number; name: string }[];
+}) => {
 	// First some sanity checks to make sure they're consistent
 	if (divs.length === 0) {
 		throw new Error("No divisions");
@@ -2927,17 +3057,22 @@ const updateDefaultSettingsOverrides = async (
 	}
 };
 
-const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
+const updateGameAttributes = async (
+	gameAttributes: Partial<GameAttributesLeague>,
+) => {
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 const updateGameAttributesGodMode = async (
-	gameAttributes: Exclude<GameAttributesLeague, "repeatSeason"> & {
-		repeatSeason?: GameAttributesLeague["repeatSeason"] | boolean;
-	},
+	settings: Settings,
 	conditions: Conditions,
 ) => {
-	const repeatSeason = gameAttributes.repeatSeason;
+	const gameAttributes: Partial<GameAttributesLeague> = omit(
+		settings,
+		"repeatSeason",
+	);
+
+	const repeatSeason = settings.repeatSeason;
 	let initRepeatSeason = false;
 	if (typeof repeatSeason === "boolean") {
 		const prevRepeatSeason = g.get("repeatSeason");
@@ -2982,10 +3117,13 @@ const updateGameAttributesGodMode = async (
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
-const updateKeepRosterSorted = async (
-	tid: number,
-	keepRosterSorted: boolean,
-) => {
+const updateKeepRosterSorted = async ({
+	tid,
+	keepRosterSorted,
+}: {
+	tid: number;
+	keepRosterSorted: boolean;
+}) => {
 	const t = await idb.cache.teams.get(tid);
 	if (!t) {
 		throw new Error("Invalid tid");
@@ -2996,7 +3134,13 @@ const updateKeepRosterSorted = async (
 	await toUI("realtimeUpdate", [["team"]]);
 };
 
-const updateLeague = async (lid: number, obj: any) => {
+const updateLeague = async ({
+	lid,
+	obj,
+}: {
+	lid: number;
+	obj: Partial<League>;
+}) => {
 	await league.updateMeta(obj, lid, true);
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
@@ -3009,7 +3153,7 @@ const updateMultiTeamMode = async (gameAttributes: {
 
 	await league.updateMeta();
 
-	await toUI("realtimeUpdate", [["g.userTids"]]);
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
 const updateColumns = async (data: { key: string; columns: string[] }) => {
@@ -3139,11 +3283,15 @@ const updateOptions = async (
 	await toUI("realtimeUpdate", [["options"]]);
 };
 
-const updatePlayThroughInjuries = async (
-	tid: number,
-	value: number,
-	playoffs?: boolean,
-) => {
+const updatePlayThroughInjuries = async ({
+	tid,
+	value,
+	playoffs,
+}: {
+	tid: number;
+	value: number;
+	playoffs?: boolean;
+}) => {
 	const index = playoffs ? 1 : 0;
 
 	const t = await idb.cache.teams.get(tid);
@@ -3156,7 +3304,13 @@ const updatePlayThroughInjuries = async (
 	}
 };
 
-const updatePlayerWatch = async (pid: number, watch: boolean) => {
+const updatePlayerWatch = async ({
+	pid,
+	watch,
+}: {
+	pid: number;
+	watch: boolean;
+}) => {
 	let p = await idb.cache.players.get(pid);
 	if (!p) {
 		p = await idb.league.get("players", pid);
@@ -3172,7 +3326,13 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 	}
 };
 
-const updatePlayingTime = async (pid: number, ptModifier: number) => {
+const updatePlayingTime = async ({
+	pid,
+	ptModifier,
+}: {
+	pid: number;
+	ptModifier: number;
+}) => {
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
 		throw new Error("Invalid pid");
@@ -3419,10 +3579,17 @@ const updateAwards = async (
 };
 
 const upsertCustomizedPlayer = async (
-	p: Player | PlayerWithoutKey,
-	originalTid: number,
-	season: number,
-	updatedRatingsOrAge: boolean,
+	{
+		p,
+		originalTid,
+		season,
+		updatedRatingsOrAge,
+	}: {
+		p: Player | PlayerWithoutKey;
+		originalTid: number | undefined;
+		season: number;
+		updatedRatingsOrAge: boolean;
+	},
 	conditions: Conditions,
 ): Promise<number> => {
 	if (p.tid >= 0) {
@@ -3573,7 +3740,7 @@ const upsertCustomizedPlayer = async (
 	// In case a player was injured or moved to another team
 	await recomputeLocalUITeamOvrs();
 
-	// @ts-ignore
+	// @ts-expect-error
 	return p.pid;
 };
 
@@ -3584,31 +3751,12 @@ const clearTrade = async (
 	await toUI("realtimeUpdate", []);
 };
 
-const createTrade = async (
-	teams: [
-		{
-			tid: number;
-			pids: number[];
-			pidsExcluded: [];
-			dpids: number[];
-			dpidsExcluded: [];
-		},
-		{
-			tid: number;
-			pids: number[];
-			pidsExcluded: [];
-			dpids: number[];
-			dpidsExcluded: [];
-		},
-	],
-) => {
+const createTrade = async (teams: TradeTeams) => {
 	await trade.create(teams);
 	await toUI("realtimeUpdate", []);
 };
 
-const proposeTrade = async (
-	forceTrade: boolean,
-): Promise<[boolean, string | undefined | null]> => {
+const proposeTrade = async (forceTrade: boolean) => {
 	const output = await trade.propose(forceTrade);
 	await toUI("realtimeUpdate", []);
 	return output;
@@ -3693,118 +3841,124 @@ const validatePlayoffSettings = async ({
 
 export default {
 	actions,
-	acceptContractNegotiation,
-	addTeam,
-	allStarDraftAll,
-	allStarDraftOne,
-	allStarDraftUser,
-	allStarDraftReset,
-	allStarDraftSetPlayers,
-	allStarGameNow,
-	autoSortRoster,
-	beforeViewLeague,
-	beforeViewNonLeague,
-	cancelContractNegotiation,
-	checkAccount,
-	checkParticipationAchievement,
-	clearTrade,
-	clearInjury,
-	clearWatchList,
-	countNegotiations,
-	createLeague,
-	createTrade,
-	deleteOldData,
-	deleteScheduledEvents,
-	discardUnsavedProgress,
-	draftLottery,
-	draftUser,
-	dunkGetProjected,
-	dunkSetControlling,
-	contestSetPlayers,
-	dunkSimNext,
-	dunkUser,
-	evalOnWorker,
-	exportDraftClass,
-	getExportFilename,
-	exportPlayerAveragesCsv,
-	exportPlayerGamesCsv,
-	generateFace,
-	getAutoPos,
-	getDefaultInjuries,
-	getDefaultNewLeagueSettings,
-	getDefaultTragicDeaths,
-	getLeagueInfo,
-	getLeagueName,
-	getLocal,
-	getPlayerBioInfoDefaults,
-	getPlayerWatch,
-	getRandomCollege,
-	getRandomCountry,
-	getRandomName,
-	getRandomRatings,
-	getRandomTeams,
-	getTradingBlockOffers,
-	ping,
-	handleUploadedDraftClass,
-	idbCacheFlush,
-	importPlayers,
-	init,
-	initGold,
 	leagueFileUpload,
-	lockSet,
-	ovr,
-	proposeTrade,
-	ratingsStatsPopoverInfo,
-	reSignAll,
-	realtimeUpdate,
-	regenerateDraftClass,
-	regenerateSchedule,
-	releasePlayer,
-	cloneLeague,
-	removeLeague,
-	removePlayers,
-	reorderDepthDrag,
-	reorderRosterDrag,
-	resetPlayingTime,
-	retiredJerseyNumberDelete,
-	retiredJerseyNumberUpsert,
-	runBefore,
-	setForceWin,
-	setForceWinAll,
-	setGOATFormula,
-	setLocal,
-	setPlayerNote,
-	sign,
-	updateExpansionDraftSetup,
-	advanceToPlayerProtection,
-	autoProtect,
-	cancelExpansionDraft,
-	updateProtectedPlayers,
-	startExpansionDraft,
-	startFantasyDraft,
-	switchTeam,
-	threeSimNext,
-	toggleTradeDeadline,
-	tradeCounterOffer,
-	uiUpdateLocal,
-	updateAwards,
-	updateBudget,
-	updateConfsDivs,
-	updateDefaultSettingsOverrides,
-	updateGameAttributes,
-	updateGameAttributesGodMode,
-	updateKeepRosterSorted,
-	updateLeague,
-	updateMultiTeamMode,
-	updateColumns,
-	updateOptions,
-	updatePlayThroughInjuries,
-	updatePlayerWatch,
-	updatePlayingTime,
-	updatePlayoffTeams,
-	updateTeamInfo,
-	updateTrade,
-	upsertCustomizedPlayer,
-	validatePointsFormula,
-	validatePlayoffSettings,
+	playMenu,
+	toolsMenu,
+	main: {
+		acceptContractNegotiation,
+		addTeam,
+		allStarDraftAll,
+		allStarDraftOne,
+		allStarDraftUser,
+		allStarDraftReset,
+		allStarDraftSetPlayers,
+		allStarGameNow,
+		autoSortRoster,
+		beforeViewLeague,
+		beforeViewNonLeague,
+		cancelContractNegotiation,
+		checkAccount: checkAccount2,
+		checkParticipationAchievement,
+		clearTrade,
+		clearInjury,
+		clearWatchList,
+		countNegotiations,
+		createLeague,
+		createTrade,
+		deleteOldData,
+		deleteScheduledEvents,
+		discardUnsavedProgress,
+		draftLottery,
+		draftUser,
+		dunkGetProjected,
+		dunkSetControlling,
+		contestSetPlayers,
+		dunkSimNext,
+		dunkUser,
+		evalOnWorker,
+		exportDraftClass,
+		getExportFilename,
+		exportPlayerAveragesCsv,
+		exportPlayerGamesCsv,
+		generateFace,
+		getAutoPos,
+		getDefaultInjuries,
+		getDefaultNewLeagueSettings,
+		getDefaultTragicDeaths,
+		getLeagueInfo,
+		getLeagueName,
+		getLeagues,
+		getPlayersCommandPalette,
+		getLocal,
+		getPlayerBioInfoDefaults,
+		getPlayerWatch,
+		getRandomCollege,
+		getRandomCountry,
+		getRandomName,
+		getRandomRatings,
+		getRandomTeams,
+		getTradingBlockOffers,
+		ping,
+		handleUploadedDraftClass,
+		idbCacheFlush,
+		importPlayers,
+		init,
+		initGold,
+		lockSet,
+		ovr,
+		proposeTrade,
+		ratingsStatsPopoverInfo,
+		reSignAll,
+		realtimeUpdate,
+		regenerateDraftClass,
+		regenerateSchedule,
+		releasePlayer,
+		cloneLeague,
+		removeLeague,
+		removePlayers,
+		reorderDepthDrag,
+		reorderRosterDrag,
+		resetPlayingTime,
+		retiredJerseyNumberDelete,
+		retiredJerseyNumberUpsert,
+		runBefore,
+		setForceWin,
+		setForceWinAll,
+		setGOATFormula,
+		setLocal,
+		setPlayerNote,
+		sign,
+		updateExpansionDraftSetup,
+		advanceToPlayerProtection,
+		autoProtect,
+		cancelExpansionDraft,
+		updateProtectedPlayers,
+		startExpansionDraft,
+		startFantasyDraft,
+		switchTeam,
+		threeSimNext,
+		toggleTradeDeadline,
+		tradeCounterOffer,
+		uiUpdateLocal,
+		updateAwards,
+		updateBudget,
+		updateConfsDivs,
+		updateDefaultSettingsOverrides,
+		updateGameAttributes,
+		updateGameAttributesGodMode,
+		updateKeepRosterSorted,
+		updateLeague,
+		updateMultiTeamMode,
+		updateOptions,
+    updateColumns,
+		updatePlayThroughInjuries,
+		updatePlayerWatch,
+		updatePlayingTime,
+		updatePlayoffTeams,
+		updateTeamInfo,
+		updateTrade,
+		upsertCustomizedPlayer,
+		validatePointsFormula,
+		validatePlayoffSettings,
+	},
 };

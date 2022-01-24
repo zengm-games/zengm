@@ -62,12 +62,10 @@ const RatingsForm = ({
 				boundedRatings[key] = helpers.bound(boundedRatings[key], 0, 100);
 			}
 
-			const newOvr = await toWorker(
-				"main",
-				"ovr",
-				boundedRatings,
-				boundedRatings.pos,
-			);
+			const newOvr = await toWorker("main", "ovr", {
+				ratings: boundedRatings,
+				pos: boundedRatings.pos,
+			});
 			if (mounted) {
 				setOvr(newOvr);
 			}

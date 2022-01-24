@@ -255,7 +255,7 @@ const BarGraph = (props: Props) => {
 					let titleStart = "";
 
 					if (labels !== undefined) {
-						// @ts-ignore
+						// @ts-expect-error
 						titleStart = `${labels[0][i]} ${labels[1][j]}: `;
 					}
 

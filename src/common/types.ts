@@ -789,7 +789,11 @@ export type MenuItemLink = {
 	league?: true;
 	godMode?: true;
 	nonLeague?: true;
-	onClick?: (a: MouseEvent<any>) => void | false | Promise<void | false>; // Return false to leave sidebar open
+	commandPalette?: true;
+	commandPaletteOnly?: true;
+	onClick?: (
+		a: MouseEvent<any>,
+	) => undefined | void | false | Promise<undefined | void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:
 		| Exclude<ReactNode, null | undefined | number | boolean>
@@ -805,6 +809,8 @@ export type MenuItemHeader = {
 	short: string;
 	league?: true;
 	nonLeague?: true;
+	commandPalette?: true;
+	commandPaletteOnly?: true;
 	children: (MenuItemLink | MenuItemText)[];
 };
 
@@ -1618,7 +1624,6 @@ export type UpdateEvents = (
 	| "customizeTable"
 	| "firstRun"
 	| "g.goatFormula"
-	| "g.userTids"
 	| "gameAttributes"
 	| "gameSim"
 	| "leagues"

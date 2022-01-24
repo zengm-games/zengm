@@ -11,8 +11,6 @@ const getPlayers = (
 
 	for (const pos of helpers.keys(playersOnIce)) {
 		if (positions.includes(pos) && playersOnIce[pos]) {
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
 			players.push(...playersOnIce[pos]);
 		}
 	}

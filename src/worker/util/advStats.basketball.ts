@@ -61,7 +61,7 @@ export const getEWA = (per: number, min: number, pos: string) => {
 
 	if (prls.hasOwnProperty(pos)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		prl = prls[pos];
 	} else {
 		// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
@@ -291,7 +291,7 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 
 		if (posNum.hasOwnProperty(players[i].ratings.pos)) {
 			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
+			// @ts-expect-error
 			prl = posNum[players[i].ratings.pos];
 		} else {
 			// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files

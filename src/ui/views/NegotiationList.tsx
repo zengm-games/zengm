@@ -83,7 +83,7 @@ const NegotiationList = ({
 				{
 					value: (
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-ignore
+						// @ts-expect-error
 						<NegotiateButtons
 							canGoOverCap={
 								salaryCapType === "none" || salaryCapType === "soft"
@@ -98,8 +98,13 @@ const NegotiationList = ({
 					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 				},
 			],
+			classNames: {
+				"table-info": p.contract.rookie,
+			},
 		};
 	});
+
+	const hasRookies = players.some(p => p.contract.rookie);
 
 	return (
 		<>
@@ -132,6 +137,13 @@ const NegotiationList = ({
 			<p>
 				Your unsigned players are asking for a total of{" "}
 				<b>{helpers.formatCurrency(sumContracts, "M")}</b>.
+				{hasRookies ? (
+					<>
+						{" "}
+						Rookies you just drafted are{" "}
+						<span className="text-info">highlighted in blue</span>.
+					</>
+				) : null}
 			</p>
 
 			{(salaryCapType !== "hard" || sumContracts < capSpace) &&

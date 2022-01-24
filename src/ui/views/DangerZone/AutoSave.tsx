@@ -36,7 +36,7 @@ const AutoSave = ({
 					disabled={disabled}
 					onClick={async () => {
 						setProcessing(true);
-						await toWorker("main", "setLocal", "autoSave", false);
+						await toWorker("main", "setLocal", ["autoSave", false]);
 						setAutoSaveTemp(false);
 						setProcessing(false);
 					}}
@@ -50,7 +50,7 @@ const AutoSave = ({
 						disabled={disabled}
 						onClick={async () => {
 							setProcessing(true);
-							await toWorker("main", "setLocal", "autoSave", true);
+							await toWorker("main", "setLocal", ["autoSave", true]);
 							setAutoSaveTemp(true);
 							setProcessing(false);
 						}}
@@ -63,8 +63,8 @@ const AutoSave = ({
 							disabled={disabled}
 							onClick={async () => {
 								setProcessing(true);
-								await toWorker("main", "discardUnsavedProgress");
-								await toWorker("main", "setLocal", "autoSave", false);
+								await toWorker("main", "discardUnsavedProgress", undefined);
+								await toWorker("main", "setLocal", ["autoSave", false]);
 								setAutoSaveTemp(false);
 								setProcessing(false);
 							}}

@@ -6,6 +6,8 @@ import useClickable from "../../hooks/useClickable";
 import type { Col, DataTableRow } from "./index";
 
 const Row = ({
+	clickable,
+	highlightCols,
 	row,
 	cols,
 	clickable,
@@ -13,6 +15,7 @@ const Row = ({
 	row: DataTableRow;
 	cols: Col[];
 	clickable?: boolean;
+	highlightCols: number[];
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
@@ -31,8 +34,14 @@ const Row = ({
 
 				const props: any = {};
 
+				const highlightCol = highlightCols.includes(i);
 				if (value && value.classNames) {
-					props.className = classNames(value.classNames);
+					props.className = classNames(
+						value.classNames,
+						highlightCol ? "sorting_highlight" : undefined,
+					);
+				} else if (highlightCol) {
+					props.className = "sorting_highlight";
 				}
 
 				if (value && value.title) {

@@ -1463,7 +1463,6 @@ settings.push(
 		category: "Players",
 		key: "goatFormula",
 		name: "GOAT Formula",
-		showOnlyIf: ({ defaultNewLeagueSettings }) => defaultNewLeagueSettings,
 		type: "string",
 		description: "See Tools > Frivolities > GOAT Lab for details.",
 		maxWidth: true,

@@ -166,7 +166,7 @@ const AllStars = ({
 		setStarted(true);
 
 		if (draftType === "auto") {
-			const pids = await toWorker("main", "allStarDraftAll");
+			const pids = await toWorker("main", "allStarDraftAll", undefined);
 			for (const pid of pids) {
 				if (pid !== pids[0]) {
 					await wait(1000);
@@ -181,6 +181,7 @@ const AllStars = ({
 			const { finalized: finalized2, pid } = await toWorker(
 				"main",
 				"allStarDraftOne",
+				undefined,
 			);
 			reveal(pid);
 			setActuallyFinalized(finalized2);
@@ -199,6 +200,7 @@ const AllStars = ({
 				const { finalized: finalized3, pid: pid2 } = await toWorker(
 					"main",
 					"allStarDraftOne",
+					undefined,
 				);
 				if (pid2 !== undefined) {
 					await wait(1000);
@@ -307,7 +309,7 @@ const AllStars = ({
 						className="btn btn-lg btn-god-mode"
 						disabled={!usersTurn && !actuallyFinalized}
 						onClick={async () => {
-							await toWorker("main", "allStarDraftReset");
+							await toWorker("main", "allStarDraftReset", undefined);
 
 							setActuallyFinalized(false);
 							setStarted(false);

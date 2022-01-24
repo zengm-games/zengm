@@ -30,16 +30,14 @@ const processAttrs = <
 			// Always copy, because we mutate below to convert units
 			output.budget = helpers.deepCopy(t.budget);
 
-			// @ts-ignore
 			for (const [key, value] of Object.entries(output.budget)) {
 				if (key !== "ticketPrice") {
 					// ticketPrice is the only thing in dollars always
-					// @ts-ignore
 					value.amount /= 1000;
 				}
 			}
 		} else {
-			// @ts-ignore
+			// @ts-expect-error
 			output[attr] = t[attr];
 		}
 	}
@@ -109,7 +107,7 @@ const processSeasonAttrs = async <
 		"colors",
 	];
 
-	// @ts-ignore
+	// @ts-expect-error
 	output.seasonAttrs = await Promise.all(
 		seasons.map(async ts => {
 			const row: any = {}; // Revenue and expenses calculation
@@ -189,12 +187,12 @@ const processSeasonAttrs = async <
 					// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
 					row.avgAge = ts[attr];
 				} else {
-					// @ts-ignore
+					// @ts-expect-error
 					row[attr] = ts[attr];
 				}
 
 				if (row[attr] === undefined && copyFromTeamIfUndefined.includes(attr)) {
-					// @ts-ignore
+					// @ts-expect-error
 					row[attr] = t[attr];
 				}
 			}
@@ -204,7 +202,7 @@ const processSeasonAttrs = async <
 	);
 
 	if (season !== undefined) {
-		// @ts-ignore
+		// @ts-expect-error
 		output.seasonAttrs = output.seasonAttrs[0];
 	}
 };
@@ -307,7 +305,7 @@ const processStats = async <
 		teamStats.push({});
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	output.stats = teamStats.map(ts => {
 		return team.processStats(ts, stats, playoffs, statType);
 	});
@@ -316,7 +314,7 @@ const processStats = async <
 		season !== undefined &&
 		((playoffs && !regularSeason) || (!playoffs && regularSeason))
 	) {
-		// @ts-ignore
+		// @ts-expect-error
 		output.stats = output.stats[0];
 	}
 };
@@ -352,11 +350,11 @@ const processTeam = async <
 		type: GetCopyType | undefined;
 	},
 ) => {
-	// @ts-ignore
+	// @ts-expect-error
 	const output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season> = {};
 
 	if (attrs) {
-		// @ts-ignore
+		// @ts-expect-error
 		processAttrs(output, t, attrs);
 	}
 
@@ -364,7 +362,7 @@ const processTeam = async <
 
 	if (seasonAttrs) {
 		promises.push(
-			// @ts-ignore
+			// @ts-expect-error
 			processSeasonAttrs(output, t, seasonAttrs, addDummySeason, season, type),
 		);
 	}
@@ -372,7 +370,7 @@ const processTeam = async <
 	if (stats) {
 		promises.push(
 			processStats(
-				// @ts-ignore
+				// @ts-expect-error
 				output,
 				t,
 				stats,
@@ -477,7 +475,7 @@ async function getCopies<
 			teams = teams.filter(t => !t.disabled);
 		}
 
-		// @ts-ignore
+		// @ts-expect-error
 		return (await Promise.all(teams.map(t => processTeam(t, options)))).filter(
 			x => x !== undefined,
 		);
@@ -487,7 +485,7 @@ async function getCopies<
 	if (t) {
 		const val = await processTeam(t, options);
 		if (val) {
-			// @ts-ignore
+			// @ts-expect-error
 			return [val];
 		}
 	}

@@ -1,16 +1,14 @@
 import classNames from "classnames";
+import type { Col } from "./index";
 
 const Footer = ({
-	colOrder,
+	cols,
 	footer,
 	highlightCols,
 }: {
-	colOrder: {
-		colIndex: number;
-		hidden?: boolean;
-	}[];
+	cols: Col[];
 	footer?: any[];
-	highlightCols: number[];
+	highlightCols: string[];
 }) => {
 	if (!footer) {
 		return null;
@@ -30,12 +28,12 @@ const Footer = ({
 		<tfoot>
 			{footers.map((row, i) => (
 				<tr key={i}>
-					{colOrder.map(({ colIndex }, j) => {
-						const highlightColClassNames = highlightCols.includes(j)
+					{cols.map((col, j) => {
+						const highlightColClassNames = highlightCols.includes(col.key)
 							? "sorting_highlight"
 							: undefined;
 
-						const value = row[colIndex];
+						const value = row[j];
 						if (value != null && value.hasOwnProperty("value")) {
 							return (
 								<th
@@ -43,7 +41,7 @@ const Footer = ({
 										value.classNames,
 										highlightColClassNames,
 									)}
-									key={colIndex}
+									key={col.key}
 								>
 									{value.value}
 								</th>
@@ -51,7 +49,7 @@ const Footer = ({
 						}
 
 						return (
-							<th key={colIndex} className={classNames(highlightColClassNames)}>
+							<th key={col.key} className={classNames(highlightColClassNames)}>
 								{value}
 							</th>
 						);

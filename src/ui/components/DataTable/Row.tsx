@@ -10,12 +10,11 @@ const Row = ({
 	highlightCols,
 	row,
 	cols,
-	clickable,
 }: {
 	row: DataTableRow;
 	cols: Col[];
 	clickable?: boolean;
-	highlightCols: number[];
+	highlightCols: string[];
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
@@ -34,7 +33,7 @@ const Row = ({
 
 				const props: any = {};
 
-				const highlightCol = highlightCols.includes(i);
+				const highlightCol = highlightCols.includes(col.key);
 				if (value && value.classNames) {
 					props.className = classNames(
 						value.classNames,

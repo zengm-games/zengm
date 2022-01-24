@@ -144,17 +144,20 @@ const SortableColumn = SortableElement(
 		colIndex: number;
 		handleColClick: (b: MouseEvent, a: string) => void;
 	}) => {
-    let className;
-    if (sortSequence && sortSequence.length === 0) {
-      className = null;
-    } else {
-        className = getSortClassName(sortBys, colIndex);
-    }
+		let className;
+		if (props.col.sortSequence && props.col.sortSequence.length === 0) {
+			className = null;
+		} else {
+			className = getSortClassName(
+				props.sortBy ? [props.sortBy] : [],
+				props.col.key,
+			);
+		}
 
 		return (
 			<th
 				className={classNames(props.col.classNames, {
-					sorted: props.sortBy,
+					sorting_highlight: props.sortBy,
 				})}
 				style={{ width: props.col.width }}
 			>
@@ -168,7 +171,7 @@ const SortableColumn = SortableElement(
 							props.handleColClick(event, props.col.key);
 						}}
 						style={{ width: "19px" }}
-						className={classNames(col.classNames, className)}
+						className={classNames(props.col.classNames, className)}
 					/>
 				</div>
 			</th>
@@ -202,14 +205,12 @@ const SortableColumnHeader = SortableContainer(
 	},
 );
 
-export const getSortClassName = (sortBys: SortBy[], i: number) => {
+export const getSortClassName = (sortBys: SortBy[], key: string | number) => {
 	let className = "sorting";
 
 	for (const sortBy of sortBys) {
-		if (sortBy[0] === i) {
-			className = `sorting_highlight ${
-				sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc"
-			}`;
+		if (sortBy[0] === key) {
+			className = sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
 			break;
 		}
 	}

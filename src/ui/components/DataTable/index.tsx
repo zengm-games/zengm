@@ -482,23 +482,7 @@ const DataTable = (props: Props | LegacyProps) => {
 		({ hidden, colIndex }) => !hidden && state.cols[colIndex],
 	);
 
-	const highlightCols = state.sortBys
-		.map(sortBy => sortBy[0])
-		.map(i =>
-			colOrderFiltered.findIndex(({ colIndex }) => {
-				if (colIndex !== i) {
-					return false;
-				}
-
-				// Make sure sortSequence is not an empty array - same code is in Header
-				const sortSequence = cols[colIndex].sortSequence;
-				if (sortSequence && sortSequence.length === 0) {
-					return false;
-				}
-
-				return true;
-			}),
-		);
+	const highlightCols = state.sortBys.map(sortBy => sortBy[0]);
 
 	return (
 		<>
@@ -571,8 +555,8 @@ const DataTable = (props: Props | LegacyProps) => {
 							))}
 						</tbody>
 						<Footer
-							colOrder={colOrderFiltered}
 							footer={footer}
+							cols={state.cols}
 							highlightCols={highlightCols}
 						/>
 					</table>

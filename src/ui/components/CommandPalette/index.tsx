@@ -45,7 +45,7 @@ const useCommandPalette = () => {
 				return;
 			}
 
-			if (event.code === "KeyK" && (event.ctrlKey || event.metaKey)) {
+			if (event.key.toLowerCase() === "k" && (event.ctrlKey || event.metaKey)) {
 				event.preventDefault();
 				setShow(current => !current);
 			}
@@ -684,7 +684,7 @@ const ComandPalette = ({
 				return;
 			}
 
-			if (event.code === "ArrowDown") {
+			if (event.key === "ArrowDown") {
 				setActiveIndex(index => {
 					if (index === undefined) {
 						return 0;
@@ -696,7 +696,7 @@ const ComandPalette = ({
 
 					return index + 1;
 				});
-			} else if (event.code === "ArrowUp") {
+			} else if (event.key === "ArrowUp") {
 				setActiveIndex(index => {
 					if (index === undefined) {
 						return 0;
@@ -796,7 +796,7 @@ const ComandPalette = ({
 							}}
 							onKeyDown={event => {
 								// Handle backspace when mode is set and there is no text - unset mode
-								if (searchText === "" && mode && event.code === "Backspace") {
+								if (searchText === "" && mode && event.key === "Backspace") {
 									setMode(undefined);
 									setActiveIndex(undefined);
 								}

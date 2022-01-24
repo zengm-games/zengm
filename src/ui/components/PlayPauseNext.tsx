@@ -42,20 +42,19 @@ const PlayPauseNext = ({
 				!event.isComposing &&
 				!event.metaKey
 			) {
+				const key = event.key.toLowerCase();
 				if (paused) {
-					const option = fastForwards?.find(
-						option2 => `Key${option2.key}` === event.code,
-					);
+					const option = fastForwards?.find(option2 => option2.key === key);
 
 					if (option) {
 						option.onClick();
-					} else if (event.code === "KeyB") {
+					} else if (key === "b") {
 						onPlay();
-					} else if (event.code === "KeyN") {
+					} else if (key === "n") {
 						onNext();
 					}
 				} else {
-					if (event.code === "KeyB") {
+					if (key === "b") {
 						onPause();
 					}
 				}
@@ -117,7 +116,9 @@ const PlayPauseNext = ({
 							>
 								{item.label}
 								{item.key ? (
-									<span className="text-muted kbd">Alt+{item.key}</span>
+									<span className="text-muted kbd">
+										Alt+{item.key.toUpperCase()}
+									</span>
 								) : null}
 							</Dropdown.Item>
 						))}

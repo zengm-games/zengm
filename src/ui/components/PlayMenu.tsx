@@ -28,7 +28,8 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 				!event.isComposing &&
 				!event.metaKey
 			) {
-				const option = options.find(option2 => option2.code === event.code);
+				const key = event.key.toLowerCase();
+				const option = options.find(option2 => option2.key === key);
 
 				if (!option) {
 					return;

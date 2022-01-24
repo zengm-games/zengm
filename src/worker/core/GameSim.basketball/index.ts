@@ -557,7 +557,8 @@ class GameSim {
 			quarter >= this.numPeriods &&
 			!this.elamActive &&
 			this.t <= 24 / 60 &&
-			pointDifferential > 0
+			pointDifferential > 0 &&
+			!intentionalFoul
 		) {
 			return this.t;
 		}
@@ -594,7 +595,11 @@ class GameSim {
 
 		let possessionLength; // [min]
 
-		if (holdForLastShot) {
+		if (intentionalFoul) {
+			possessionLength = (Math.random() * 3) / 60;
+			lowerBound = 0;
+			upperBound = this.t;
+		} else if (holdForLastShot) {
 			possessionLength = random.gauss(this.t, 5 / 60);
 		} else if (catchUp) {
 			possessionLength = random.gauss(
@@ -602,15 +607,13 @@ class GameSim {
 				5 / 60,
 			);
 			if (this.t < 48 / 60 && this.t > 4 / 60) {
-				upperBound = Math.sqrt(this.t);
+				upperBound = this.t / 2;
 			}
 		} else if (maintainLead) {
 			possessionLength = random.gauss(
 				this.averagePossessionLength + 3 / 60,
 				5 / 60,
 			);
-		} else if (intentionalFoul) {
-			possessionLength = (Math.random() * 3) / 60;
 		} else {
 			possessionLength = random.gauss(this.averagePossessionLength, 5 / 60);
 		}
@@ -650,7 +653,7 @@ class GameSim {
 		const intentionalFoul =
 			offenseWinningByABit &&
 			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-			this.t < 25 / 60 &&
+			this.t < 27 / 60 &&
 			!this.elamActive;
 
 		return intentionalFoul;
@@ -665,11 +668,11 @@ class GameSim {
 		// Clock
 		const intentionalFoul = this.shouldIntentionalFoul();
 		const possessionLength = this.getPossessionLength(intentionalFoul);
+		this.t -= possessionLength;
 		const outcome = this.getPossessionOutcome(
 			possessionLength,
 			intentionalFoul,
 		);
-		this.t -= possessionLength;
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {

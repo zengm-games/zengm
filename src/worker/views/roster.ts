@@ -25,6 +25,7 @@ const updateRoster = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("customizeTable") ||
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("playerMovement") ||

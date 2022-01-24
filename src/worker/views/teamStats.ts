@@ -153,6 +153,7 @@ const updateTeams = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("customizeTable") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||

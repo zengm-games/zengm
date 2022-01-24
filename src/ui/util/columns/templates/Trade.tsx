@@ -1,8 +1,8 @@
 import type { Player } from "../../../../common/types";
 import { NegotiateButtons } from "../../../components";
-import { ColTemp } from "../getCols";
+import { MetaCol } from "../getCols";
 
-export default (p: Player, c: ColTemp, vars: object) => (
+export default (p: Player, c: MetaCol, vars: object) => (
 	<button
 		className="btn btn-light-bordered btn-xs"
 		disabled={p.untradable}

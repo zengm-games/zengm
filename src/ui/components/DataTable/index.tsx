@@ -106,7 +106,7 @@ export type Props = {
 	small?: boolean;
 	striped?: boolean;
 	superCols?: SuperCol[];
-	addFilters?: (string | undefined)[];
+	addFilters?: Filter[];
 };
 
 export type LegacyProps = Omit<Props, "cols" | "config"> & {
@@ -270,7 +270,7 @@ const DataTable = (props: Props | LegacyProps) => {
 			state.sortBys.map(sortBy => row => {
 				const key = sortBy[0];
 				const col = state.cols.find(c => c.key === key);
-				return getSortVal(row.data[key], col?.sortType);
+				if (key in row.data) return getSortVal(row.data[key], col?.sortType);
 			}),
 			state.sortBys.map(sortBy => sortBy[1]),
 		);
@@ -288,7 +288,7 @@ const DataTable = (props: Props | LegacyProps) => {
 				columns: nextCols.map(c => c.key),
 				key: props.config.tableName,
 			});
-			// await realtimeUpdate(["customizeTable"]);
+			await realtimeUpdate(["customizeTable"]);
 		}
 	};
 
@@ -426,22 +426,26 @@ const DataTable = (props: Props | LegacyProps) => {
 	}
 
 	useEffect(() => {
-		if (
-			addFilters !== undefined &&
-			addFilters.length === state.filters.length
-		) {
+		if (addFilters !== undefined) {
 			// If addFilters is passed and contains a value, merge with prevState.filters and enable filters
 			const filters = helpers.deepCopy(state.filters);
 			let changed = false;
 
 			for (let i = 0; i < addFilters.length; i++) {
-				const filter = addFilters[i];
-				if (filter !== undefined) {
-					filters[i] = filter;
+				const { col, value } = addFilters[i];
+				const filterIndex = filters.findIndex(f => col === f.col);
+
+				if (filterIndex !== -1) {
+					if (filters[filterIndex].value != value) {
+						changed = true;
+						filters[filterIndex].value = value;
+					}
+				} else {
 					changed = true;
-				} else if (!state.enableFilters) {
-					// If there is a saved but hidden filter, remove it
-					filters[i] = "";
+					filters.push({
+						col: col,
+						value: value,
+					});
 				}
 			}
 

@@ -1,8 +1,8 @@
 import { helpers } from "../../index";
 import type { Player } from "../../../../common/types";
-import type { ColTemp } from "../getCols";
+import type { MetaCol } from "../getCols";
 
-export default (p: Player, c: ColTemp) => {
+export default (p: Player, c: MetaCol) => {
 	return (
 		<a href={helpers.leagueUrl(["roster", `${p.stats.abbrev}_${p.tid}`])}>
 			{p.stats.abbrev}

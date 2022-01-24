@@ -14,6 +14,7 @@ import type { View } from "../../common/types";
 import getTemplate from "../util/columns/getTemplate";
 import type { Player } from "../../common/types";
 import { TableConfig } from "../util/TableConfig";
+import type { Filter } from "../components/DataTable";
 
 const FreeAgents = ({
 	capSpace,
@@ -30,9 +31,7 @@ const FreeAgents = ({
 	config: _config,
 	userPlayers,
 }: View<"freeAgents">) => {
-	const [addFilters, setAddFilters] = useState<
-		(string | undefined)[] | undefined
-	>();
+	const [addFilters, setAddFilters] = useState<Filter[] | undefined>();
 
 	const config = TableConfig.unserialize(_config);
 
@@ -59,11 +58,11 @@ const FreeAgents = ({
 	const cols = [...config.columns];
 
 	const showAfforablePlayers = useCallback(() => {
-		const newAddFilters: (string | undefined)[] = new Array(9);
+		let newAddFilters: Filter[];
 		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
-			newAddFilters[newAddFilters.length - 3] = `<${capSpace}`;
+			newAddFilters = [{ col: "Asking For", value: `<${capSpace}` }];
 		} else {
-			newAddFilters[newAddFilters.length - 3] = `<${minContract / 1000}`;
+			newAddFilters = [{ col: "Asking For", value: `<${minContract / 1000}` }];
 		}
 
 		setAddFilters(newAddFilters);

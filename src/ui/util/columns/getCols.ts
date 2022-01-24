@@ -18,7 +18,7 @@ export type MetaCol = Col & {
 	attrs?: string[];
 	template:
 		| string
-		| ((p: Player, c: ColTemp, vars: object) => JSX.Element | string);
+		| ((p: Player, c: MetaCol, vars: object) => JSX.Element | string);
 	options?: { [key: string]: any };
 };
 
@@ -2879,6 +2879,16 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 		template: "Contract",
+		options: { format: "compact" },
+	},
+	FullContract: {
+		title: "Full Contract",
+		attrs: ["contract"],
+		cat: "General",
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+		template: "Contract",
+		options: { format: "full" },
 	},
 	Country: {
 		attrs: ["born"],
@@ -2997,9 +3007,10 @@ const cols: {
 		template: "Pick",
 	},
 	Team: {
+		attrs: ["abbrev", "tid"],
 		cat: "General",
 		sortType: "string",
-		stats: ["abbrev"],
+		stats: ["abbrev", "tid"],
 		template: "Team",
 	},
 	Weight: {

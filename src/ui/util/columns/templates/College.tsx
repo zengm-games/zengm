@@ -1,8 +1,8 @@
 import type { Player } from "../../../../common/types";
-import type { ColTemp } from "../getCols";
+import type { MetaCol } from "../getCols";
 import { helpers } from "../../index";
 
-export default (p: Player, c: ColTemp) => {
+export default (p: Player, c: MetaCol) => {
 	const college = p.college && p.college !== "" ? p.college : "None";
 	return (
 		<a

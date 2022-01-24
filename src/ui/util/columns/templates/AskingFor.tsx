@@ -1,6 +1,6 @@
 import type { Player } from "../../../../common/types";
 import { helpers } from "../../index";
-import type { ColTemp } from "../getCols";
+import type { MetaCol } from "../getCols";
 
-export default (p: Player, c: ColTemp) =>
+export default (p: Player, c: MetaCol) =>
 	helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M");

@@ -160,7 +160,6 @@ const updatePlayers = async (
 			...ovrsPotsColNames,
 		]);
 		await config.load();
-		console.log(config);
 
 		const players = await getPlayers(
 			inputs.season,

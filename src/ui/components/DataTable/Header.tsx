@@ -112,6 +112,7 @@ const SortableColumn = SortableElement(
 				className={classNames(props.col.classNames, {
 					sorted: props.sortBy,
 				})}
+				style={{ width: props.col.width }}
 			>
 				<div
 					className="d-flex user-select-none"
@@ -123,11 +124,15 @@ const SortableColumn = SortableElement(
 							props.handleColClick(event, props.col.key);
 						}}
 						style={{ width: "19px" }}
-						className={classNames({
-							sorting: !props.sortBy && !props.isDragged,
-							sorting_asc: props.sortBy && props.sortBy[1] === "asc",
-							sorting_desc: props.sortBy && props.sortBy[1] === "desc",
-						})}
+						className={classNames(
+							props.col.sortSequence && props.col.sortSequence.length === 0
+								? ""
+								: {
+										sorting: !props.sortBy && !props.isDragged,
+										sorting_asc: props.sortBy && props.sortBy[1] === "asc",
+										sorting_desc: props.sortBy && props.sortBy[1] === "desc",
+								  },
+						)}
 					/>
 				</div>
 			</th>

@@ -1,8 +1,8 @@
 import type { Player } from "../../../../common/types";
 import { PlayerNameLabels } from "../../../components";
-import type { ColTemp } from "../getCols";
+import type { MetaCol } from "../getCols";
 
-export default (p: Player, c: ColTemp) => (
+export default (p: Player, c: MetaCol) => (
 	<PlayerNameLabels
 		pid={p.pid}
 		injury={p.injury}

@@ -1,6 +1,6 @@
 import { idb } from "../../worker/db";
 import getCols, { MetaCol } from "./columns/getCols";
-import { uniq } from "lodash-es";
+import { cloneDeep, uniq } from "lodash-es";
 import { g } from "../../worker/util";
 
 export class TableConfig {
@@ -44,12 +44,20 @@ export class TableConfig {
 		}
 	}
 
+	updateColumn(column: Partial<MetaCol>, key: string) {
+		const colIndex = this.columns.findIndex(c => c.key === key);
+		if (colIndex !== -1) {
+			Object.assign(this.columns[colIndex], column);
+		}
+	}
+
 	static unserialize(_config: TableConfig) {
+		const serialized = cloneDeep(_config);
 		return new TableConfig(
-			_config.tableName,
-			_config.fallback,
-			_config.columns,
-			_config.vars,
+			serialized.tableName,
+			serialized.fallback,
+			serialized.columns,
+			serialized.vars,
 		);
 	}
 

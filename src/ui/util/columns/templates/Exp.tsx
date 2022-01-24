@@ -1,4 +1,4 @@
 import type { Player } from "../../../../common/types";
-import type { ColTemp } from "../getCols";
+import type { MetaCol } from "../getCols";
 
-export default (p: Player, c: ColTemp) => p.contract.exp.toString();
+export default (p: Player, c: MetaCol) => p.contract.exp.toString();

@@ -4,6 +4,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
 import { player } from "../core";
 import { idb } from "../db";
+import { TableConfig } from "../../ui/util/TableConfig";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerBios">,
@@ -11,6 +12,7 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("customizeTable") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
@@ -24,15 +26,36 @@ const updatePlayers = async (
 			hockey: ["keyStats"],
 		});
 
+		const config: TableConfig = new TableConfig("playerBios", [
+			"Name",
+			"Pos",
+			"stat:jerseyNumber",
+			"Team",
+			"Age",
+			"Height",
+			"Weight",
+			"Mood",
+			"Contract",
+			"Country",
+			"College",
+			"DraftYear",
+			"Pick",
+			"Experience",
+			"Ovr",
+			"Pot",
+			...stats.map(s => `stat:${s}`),
+		]);
+		await config.load();
+
 		const players = await getPlayers(
 			inputs.season,
 			inputs.abbrev,
-			["born", "college", "hgt", "weight", "draft", "experience"],
-			["ovr", "pot"],
-			[...stats, "jerseyNumber"],
+			config.attrsNeeded,
+			config.ratingsNeeded,
+			config.statsNeeded,
 			inputs.tid,
+			config,
 		);
-
 		const userTid = g.get("userTid");
 
 		for (const p of players) {
@@ -46,11 +69,10 @@ const updatePlayers = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
+			config: config,
 			currentSeason: g.get("season"),
 			season: inputs.season,
 			players,
-			stats,
 			userTid,
 		};
 	}

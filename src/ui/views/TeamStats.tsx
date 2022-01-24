@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, PlusMinus, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
+import { formatMaybeInteger } from "./LeagueStats";
 
 const TeamStats = ({
 	allStats,
@@ -116,16 +117,16 @@ const TeamStats = ({
 		teamSeasonAttrs: typeof teams[number]["seasonAttrs"],
 	) => {
 		const data: { [key: string]: ReactNode } = {
-			gp: teamStats.gp,
-			won: teamSeasonAttrs.won,
-			lost: teamSeasonAttrs.lost,
+			gp: formatMaybeInteger(teamStats.gp),
+			won: formatMaybeInteger(teamSeasonAttrs.won),
+			lost: formatMaybeInteger(teamSeasonAttrs.lost),
 		};
 
 		if (otl) {
-			data.otl = teamSeasonAttrs.otl;
+			data.otl = formatMaybeInteger(teamSeasonAttrs.otl);
 		}
 		if (ties) {
-			data.tied = teamSeasonAttrs.tied;
+			data.tied = formatMaybeInteger(teamSeasonAttrs.tied);
 		}
 		if (usePts) {
 			data.ptsPts = Math.round(teamSeasonAttrs.pts);

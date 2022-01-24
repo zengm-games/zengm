@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 
-const formatMaybeInteger = (x: number) =>
+export const formatMaybeInteger = (x: number) =>
 	Number.isInteger(x) ? String(x) : x.toFixed(1);
 
 const LeagueStats = ({

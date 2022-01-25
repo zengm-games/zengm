@@ -46,7 +46,6 @@ const buildJS = async () => {
 	});
 
 	build.setTimestamps(rev);
-	await build.minifyIndexHTML();
 
 	const jsonFiles = ["names", "real-player-data", "real-player-stats"];
 	for (const filename of jsonFiles) {

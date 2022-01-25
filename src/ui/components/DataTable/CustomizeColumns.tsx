@@ -26,14 +26,15 @@ const CustomizeColumns = ({
 	onSave: () => void;
 	show: boolean;
 }) => {
-	const initialColumns: ColConfig[] = getAllCols().map(
-		(c): ColConfig => ({
-			...c,
-			cat: c.cat || "Other",
-			hidden: !config.columns.some(col => col.key === c.key),
-		}),
-	);
-	const [columns, setColumns] = useState<ColConfig[]>(initialColumns);
+	const initialColumns = (): ColConfig[] =>
+		getAllCols().map(
+			(c): ColConfig => ({
+				...c,
+				cat: c.cat || "Other",
+				hidden: !config.columns.some(col => col.key === c.key),
+			}),
+		);
+	const [columns, setColumns] = useState<ColConfig[]>(initialColumns());
 
 	useEffect(() => {
 		const nextColumns = [...columns].map(c => ({

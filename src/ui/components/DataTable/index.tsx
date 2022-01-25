@@ -592,7 +592,7 @@ DataTable.propTypes = {
 	className: PropTypes.string,
 	defaultSort: PropTypes.arrayOf(
 		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	).isRequired,
+	),
 	disableSettingsCache: PropTypes.bool,
 	footer: PropTypes.array,
 	name: PropTypes.string.isRequired,

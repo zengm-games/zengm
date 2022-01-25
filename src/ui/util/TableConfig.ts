@@ -57,19 +57,19 @@ export class TableConfig {
 			this.tableName,
 		);
 		this.columns = getCols(colOptions ?? this.fallback);
-		this._statsNeeded = uniq(
+		this.statsNeeded = uniq(
 			this.columns.reduce(
 				(needed: string[], c: MetaCol) => needed.concat(c.stats ?? []),
 				[],
 			),
 		);
-		this._ratingsNeeded = uniq(
+		this.ratingsNeeded = uniq(
 			this.columns.reduce(
 				(needed: string[], c: MetaCol) => needed.concat(c.ratings ?? []),
 				[],
 			),
 		);
-		this._attrsNeeded = uniq(
+		this.attrsNeeded = uniq(
 			this.columns.reduce(
 				(needed: string[], c: MetaCol) => needed.concat(c.attrs ?? []),
 				[],

@@ -54,7 +54,7 @@ const CustomizeColumns = ({
 		}
 	};
 
-	const reset = () => setColumns(initialColumns);
+	const reset = () => setColumns(initialColumns());
 
 	const exit = () => {
 		reset();

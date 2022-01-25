@@ -114,7 +114,7 @@ const AssetList = ({
 			key: "include",
 			sortSequence: [],
 			noSearch: true,
-			template: (p: Player, c: MetaCol, vars: object) => (
+			template: ({ p, c, vars }) => (
 				<input
 					type="checkbox"
 					title={p.untradableMsg}
@@ -134,7 +134,7 @@ const AssetList = ({
 			key: "exclude",
 			sortSequence: [],
 			noSearch: true,
-			template: (p: Player, c: MetaCol, vars: object) => (
+			template: ({ p, c, vars }) => (
 				<input
 					type="checkbox"
 					title={p.untradableMsg ?? "Exclude this player from counter offers"}

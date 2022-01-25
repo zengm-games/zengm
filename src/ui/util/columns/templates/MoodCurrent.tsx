@@ -1,6 +1,5 @@
-import type { Player } from "../../../../common/types";
+import type { TemplateProps } from "../getCols";
 import { dataTableWrappedMood } from "../../../components/Mood";
-import type { MetaCol } from "../getCols";
 
-export default (p: Player, c: MetaCol) =>
+export default ({ p, c, vars }: TemplateProps) =>
 	dataTableWrappedMood({ defaultType: "current", maxWidth: true, p });

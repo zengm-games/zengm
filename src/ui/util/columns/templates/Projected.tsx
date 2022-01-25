@@ -1,6 +1,5 @@
-import type { Player } from "../../../../common/types";
+import type { TemplateProps } from "../getCols";
 import { helpers } from "../../index";
-import type { MetaCol } from "../getCols";
 
-export default (p: Player, c: MetaCol) =>
+export default ({ p, c, vars }: TemplateProps) =>
 	`${helpers.formatCurrency(p.contractDesired.amount, "M")}`;

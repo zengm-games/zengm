@@ -1,5 +1,4 @@
-import type { Player } from "../../../../common/types";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 import { wrappedHeight } from "../../../components/Height";
 
-export default (p: Player, c: MetaCol) => wrappedHeight(p.hgt);
+export default ({ p, c, vars }: TemplateProps) => wrappedHeight(p.hgt);

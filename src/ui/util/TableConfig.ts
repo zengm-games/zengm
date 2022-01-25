@@ -1,5 +1,5 @@
 import { idb } from "../../worker/db";
-import getCols, { MetaCol } from "./columns/getCols";
+import getCols, { LeagueVars, MetaCol } from "./columns/getCols";
 import { cloneDeep, uniq } from "lodash-es";
 import { g } from "../../worker/util";
 
@@ -7,7 +7,7 @@ export class TableConfig {
 	public fallback: string[];
 	public columns: MetaCol[];
 	public tableName: string;
-	public vars: { [key: string]: any };
+	public vars: LeagueVars;
 
 	public statsNeeded: string[] = [];
 	public ratingsNeeded: string[] = [];

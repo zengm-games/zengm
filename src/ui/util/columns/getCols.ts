@@ -1,6 +1,6 @@
 import bySport from "../../../common/bySport";
 import isSport from "../../../common/isSport";
-import type { Player } from "../../../common/types";
+import type { GameAttributesLeague, Player } from "../../../common/types";
 import type { Col } from "../../components/DataTable";
 
 export type ColType =
@@ -11,14 +11,34 @@ export type ColType =
 	| "Other"
 	| null;
 
+export type LeagueVars = Pick<
+	GameAttributesLeague,
+	| "userTid"
+	| "godMode"
+	| "spectator"
+	| "phase"
+	| "challengeNoRatings"
+	| "challengeNoDraftPicks"
+	| "challengeNoFreeAgents"
+	| "challengeNoTrades"
+	| "salaryCapType"
+	| "salaryCap"
+	| "maxContract"
+	| "minContract"
+>;
+
+export type TemplateProps = {
+	p: Player;
+	c: MetaCol;
+	vars: LeagueVars;
+};
+
 export type MetaCol = Col & {
 	cat?: ColType;
 	ratings?: string[];
 	stats?: string[];
 	attrs?: string[];
-	template:
-		| string
-		| ((p: Player, c: MetaCol, vars: object) => JSX.Element | string);
+	template?: string | ((props: TemplateProps) => JSX.Element | string);
 	options?: { [key: string]: any };
 };
 

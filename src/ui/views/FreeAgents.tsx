@@ -12,7 +12,6 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import getTemplate from "../util/columns/getTemplate";
-import type { Player } from "../../common/types";
 import { TableConfig } from "../util/TableConfig";
 import type { Filter } from "../components/DataTable";
 
@@ -39,15 +38,15 @@ const FreeAgents = ({
 		{
 			key: "negotiate",
 			title: "Negotiate",
-			template: (p: Player) => (
+			template: ({ p, c, vars }) => (
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-			  // @ts-expect-error
+				// @ts-expect-error
 				<NegotiateButtons
-          canGoOverCap={salaryCapType === "none"}
+					canGoOverCap={vars.salaryCapType === "none"}
 					capSpace={capSpace}
 					disabled={gameSimInProgress}
-					minContract={minContract}
-					spectator={spectator}
+					minContract={vars.minContract}
+					spectator={vars.spectator}
 					p={p}
 					willingToNegotiate={p.mood.user.willing}
 				/>

@@ -1,5 +1,4 @@
-import type { Player } from "../../../../common/types";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 
-export default (p: Player, c: MetaCol) =>
+export default ({ p, c, vars }: TemplateProps) =>
 	p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : null;

@@ -1,4 +1,3 @@
-import type { Player } from "../../../../common/types";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 
-export default (p: Player, c: MetaCol) => p.injury.type;
+export default ({ p, c, vars }: TemplateProps) => p.injury.type;

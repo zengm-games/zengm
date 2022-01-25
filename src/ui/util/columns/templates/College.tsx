@@ -1,8 +1,7 @@
-import type { Player } from "../../../../common/types";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 import { helpers } from "../../index";
 
-export default (p: Player, c: MetaCol) => {
+export default ({ p, c, vars }: TemplateProps) => {
 	const college = p.college && p.college !== "" ? p.college : "None";
 	return (
 		<a

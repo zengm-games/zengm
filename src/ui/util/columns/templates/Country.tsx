@@ -1,9 +1,8 @@
-import type { Player } from "../../../../common/types";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 import { helpers } from "../../index";
 import { CountryFlag } from "../../../components";
 
-export default (p: Player, c: MetaCol) => (
+export default ({ p, c, vars }: TemplateProps) => (
 	<>
 		<a
 			href={helpers.leagueUrl([

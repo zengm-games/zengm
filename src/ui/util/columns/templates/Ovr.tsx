@@ -1,8 +1,7 @@
-import type { Player } from "../../../../common/types";
 import { RatingWithChange } from "../../../components";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 
-export default (p: Player, c: MetaCol, vars: object) => {
+export default ({ p, c, vars }: TemplateProps) => {
 	if (vars["challengeNoRatings"]) return "";
 	else if (p.ratings["dovr"])
 		return (

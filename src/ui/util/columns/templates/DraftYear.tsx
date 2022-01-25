@@ -1,4 +1,3 @@
-import type { Player } from "../../../../common/types";
-import type { MetaCol } from "../getCols";
+import type { TemplateProps } from "../getCols";
 
-export default (p: Player, c: MetaCol) => p.draft.year;
+export default ({ p, c, vars }: TemplateProps) => p.draft.year;

@@ -50,15 +50,13 @@ FilterHeader.propTypes = {
 };
 
 const SuperCols = ({
-	colOrder,
+	cols,
 	superCols,
 }: {
-	colOrder: {
-		colIndex: number;
-	}[];
+	cols: Col[];
 	superCols: SuperCol[];
 }) => {
-	const colIndexes = colOrder.map(x => x.colIndex);
+	const colIndexes = Array.from({ length: cols.length });
 	const maxColIndex1 = Math.max(...colIndexes);
 	let maxColIndex2 = -1;
 	for (const superCol of superCols) {

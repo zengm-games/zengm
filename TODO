@@ -1,3 +1,6 @@
+add options to control expansion team draft pick position
+- FBGM should default to #1
+
 runBefore sends viewData to worker... wouldn't it be better to keep it on worker? do we ever need anything but "latest state displayed on this tab"? maybe?
 
 refactor game sim
@@ -32,6 +35,7 @@ no awards if 0 games in regular season? https://discord.com/channels/29001353402
 more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
 
 dramatic reveal of awards and award voting results, similar to draft lottery
+- https://discord.com/channels/290013534023057409/331882115119448065/935293110710317087
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 
@@ -228,6 +232,7 @@ player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
 - https://discord.com/channels/290013534023057409/331882115119448065/874769773051936848
+- https://discord.com/channels/290013534023057409/331882115119448065/935369006985117697
 
 https://github.com/zengm-games/zengm/pull/346/files
 

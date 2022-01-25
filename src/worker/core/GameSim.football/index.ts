@@ -1713,7 +1713,7 @@ class GameSim {
 					(this.team[o].compositeRating.passBlocking /
 						this.team[d].compositeRating.passRushing),
 				7,
-				-10,
+				-5,
 				100,
 			),
 		);

@@ -86,6 +86,9 @@ const migrate = async ({
 	}
 
 	// New ones here!
+	if (oldVersion <= 8) {
+		db.createObjectStore("tables");
+	}
 
 	// In next version, can do:
 	// attributeStore.delete("lastSelectedTid");

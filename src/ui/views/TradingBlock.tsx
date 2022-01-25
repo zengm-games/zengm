@@ -354,7 +354,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				<div className="col-md-3 pt-3">
 					<DataTable
 						cols={pickCols}
-						defaultSort={["0", "asc"]}
 						hideAllControls
 						name={`TradingBlock:Picks`}
 						rows={pickRows}

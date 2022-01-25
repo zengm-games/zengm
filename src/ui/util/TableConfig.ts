@@ -4,24 +4,14 @@ import { cloneDeep, uniq } from "lodash-es";
 import { g } from "../../worker/util";
 
 export class TableConfig {
-	get ratingsNeeded(): string[] {
-		return this._ratingsNeeded ?? [];
-	}
-	get statsNeeded(): string[] {
-		return this._statsNeeded ?? [];
-	}
-	get attrsNeeded(): string[] {
-		return this._attrsNeeded ?? [];
-	}
-
 	public fallback: string[];
 	public columns: MetaCol[];
 	public tableName: string;
 	public vars: { [key: string]: any };
 
-	private _statsNeeded: string[] = [];
-	private _ratingsNeeded: string[] = [];
-	private _attrsNeeded: string[] = ["pid"];
+	public statsNeeded: string[] = [];
+	public ratingsNeeded: string[] = [];
+	public attrsNeeded: string[] = ["pid"];
 
 	constructor(
 		tableName: string,

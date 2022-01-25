@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Dropdown, Modal } from "react-bootstrap";
 import { toWorker } from "../../util";
 import type { TableConfig } from "../../util/TableConfig";
 import { ColType, getAllCols } from "../../util/columns/getCols";
-import { difference, groupBy } from "lodash-es";
+import groupBy from "lodash-es/groupBy";
+import difference from "lodash-es/difference";
+
 import type { Col } from "./index";
+import { processingSpinner } from "../ActionButton";
+import { HelpPopover } from "../index";
 
 export type ColConfig = Col & {
 	hidden: boolean;
@@ -105,12 +109,12 @@ const CustomizeColumns = ({
 			<Modal.Header onHide={exit} closeButton>
 				Customize Columns
 			</Modal.Header>
-			<Modal.Body>
+			<Modal.Body className="p-0">
 				<ul className="list-group list-group-flush">
 					{Object.entries(colsGrouped).map(([group, cols]) => (
 						<li key={group} className="list-group-item">
 							<strong>{group}</strong>
-							<div className="row">
+							<div className="row gy-1">
 								{cols.map((col, i) => (
 									<div key={i} className="col-lg-4">
 										<div className="form-check d-flex">
@@ -122,12 +126,12 @@ const CustomizeColumns = ({
 												onChange={onChange(col.key)}
 											/>
 											<label
-												className="form-check-label cursor-pointer user-select-none flex-grow-1"
+												className="form-check-label flex-grow-1 ps-1"
 												htmlFor={`show-column-${col.key}`}
 												title={col.desc}
 											>
 												{col.title}
-												<small className="d-lg-none ml-2">{col.desc}</small>
+												<small className="d-lg-none ms-2">{col.desc}</small>
 											</label>
 										</div>
 									</div>
@@ -137,16 +141,35 @@ const CustomizeColumns = ({
 					))}
 				</ul>
 			</Modal.Body>
-			<Modal.Footer className="d-flex justify-content-between">
-				<button className="btn btn-secondary" onClick={reset}>
-					Reset
-				</button>
-				<button className="btn btn-warning" onClick={restore}>
-					Restore Default
-				</button>
-				<button className="btn btn-primary" onClick={save}>
-					Save
-				</button>
+			<Modal.Footer className="d-flex settings-buttons">
+				<Dropdown>
+					<Dropdown.Toggle variant="danger" id="customize-teams-reset">
+						Reset
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={reset}>Undo Changes</Dropdown.Item>
+						<Dropdown.Item onClick={restore}>Restore Default</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+				<div className="ms-2 pt-2">
+					<HelpPopover title="Reset">
+						<p>
+							<b>Undo Changes</b>: Undo all unsaved configration changes.
+						</p>
+						<p>
+							<b>Restore Default</b>: Restores the table's default configration,
+							all saved changes to this table will be lost.
+						</p>
+					</HelpPopover>
+				</div>
+				<div className="btn-group ms-auto">
+					<button className="btn btn-secondary" onClick={exit}>
+						Cancel
+					</button>
+					<button className="btn btn-primary" onClick={save}>
+						Save
+					</button>
+				</div>
 			</Modal.Footer>
 		</Modal>
 	);

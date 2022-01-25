@@ -654,7 +654,8 @@ class GameSim {
 			offenseWinningByABit &&
 			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
 			this.t < 27 / 60 &&
-			!this.elamActive;
+			!this.elamActive &&
+			this.getNumFoulsUntilBonus() <= 10;
 
 		return intentionalFoul;
 	}
@@ -1287,6 +1288,17 @@ class GameSim {
 		}
 	}
 
+	getNumFoulsUntilBonus() {
+		const foulsUntilBonus = g.get("foulsUntilBonus");
+		if (this.t <= 2) {
+			return foulsUntilBonus[2] - this.foulsLastTwoMinutes[this.d];
+		}
+		if (this.overtimes >= 1) {
+			return foulsUntilBonus[1] - this.foulsThisQuarter[this.d];
+		}
+		return foulsUntilBonus[0] - this.foulsThisQuarter[this.d];
+	}
+
 	/**
 	 * Simulate a single possession.
 	 *
@@ -1321,13 +1333,8 @@ class GameSim {
 		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
 			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
-			const foulsUntilBonus = g.get("foulsUntilBonus");
-			const inBonus =
-				(this.t <= 2 &&
-					this.foulsLastTwoMinutes[this.d] >= foulsUntilBonus[2] - 1) ||
-				(this.overtimes >= 1 &&
-					this.foulsThisQuarter[this.d] >= foulsUntilBonus[1] - 1) ||
-				this.foulsThisQuarter[this.d] >= foulsUntilBonus[0] - 1;
+			const numFoulsUntilBonus = this.getNumFoulsUntilBonus();
+			const inBonus = numFoulsUntilBonus <= 1;
 
 			if (inBonus) {
 				this.doPf(this.d, "pfBonus", shooter);

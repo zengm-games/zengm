@@ -178,17 +178,11 @@ const setupEnv = async () => {
 };
 
 const render = () => {
-	const contentEl = document.getElementById("content");
-
-	if (!contentEl) {
-		throw new Error('Could not find element with id "content"');
-	}
-
 	ReactDOM.render(
 		<ErrorBoundary>
 			<Controller />
 		</ErrorBoundary>,
-		contentEl,
+		document.getElementById("content"),
 	);
 };
 

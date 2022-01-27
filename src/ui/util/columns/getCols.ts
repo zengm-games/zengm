@@ -3036,13 +3036,11 @@ const cols: {
 	Weight: {
 		attrs: ["weight"],
 		cat: "General",
-		desc: "Weight",
 		template: "Weight",
 	},
 	Height: {
 		attrs: ["hgt"],
 		cat: "General",
-		desc: "Height",
 		template: "Height",
 	},
 	InjuryType: {

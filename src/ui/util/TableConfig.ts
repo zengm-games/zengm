@@ -7,7 +7,7 @@ export class TableConfig {
 	public fallback: string[];
 	public columns: MetaCol[];
 	public tableName: string;
-	public vars: LeagueVars;
+	public vars: LeagueVars | object;
 
 	public statsNeeded: string[] = [];
 	public ratingsNeeded: string[] = [];
@@ -17,12 +17,12 @@ export class TableConfig {
 		tableName: string,
 		fallback: string[],
 		columns: MetaCol[] = [],
-		vars: { [key: string]: any } = {},
+		vars?: LeagueVars,
 	) {
 		this.tableName = tableName;
 		this.fallback = fallback;
 		this.columns = columns;
-		this.vars = vars;
+		if (vars) this.vars = vars;
 	}
 
 	addColumn(column: MetaCol, pos: number) {

@@ -5,9 +5,7 @@ import type { TableConfig } from "../../util/TableConfig";
 import { ColType, getAllCols } from "../../util/columns/getCols";
 import groupBy from "lodash-es/groupBy";
 import difference from "lodash-es/difference";
-
 import type { Col } from "./index";
-import { processingSpinner } from "../ActionButton";
 import { HelpPopover } from "../index";
 
 export type ColConfig = Col & {
@@ -26,7 +24,7 @@ const CustomizeColumns = ({
 	onSave: () => void;
 	show: boolean;
 }) => {
-	const initialColumns = (): ColConfig[] =>
+	const initialColumns = () =>
 		getAllCols().map(
 			(c): ColConfig => ({
 				...c,
@@ -34,7 +32,7 @@ const CustomizeColumns = ({
 				hidden: !config.columns.some(col => col.key === c.key),
 			}),
 		);
-	const [columns, setColumns] = useState<ColConfig[]>(initialColumns());
+	const [columns, setColumns] = useState(initialColumns);
 
 	useEffect(() => {
 		const nextColumns = [...columns].map(c => ({
@@ -114,11 +112,11 @@ const CustomizeColumns = ({
 				<ul className="list-group list-group-flush">
 					{Object.entries(colsGrouped).map(([group, cols]) => (
 						<li key={group} className="list-group-item">
-							<strong>{group}</strong>
+							<div className="h4">{group}</div>
 							<div className="row gy-1">
 								{cols.map((col, i) => (
 									<div key={i} className="col-lg-4">
-										<div className="form-check d-flex">
+										<div className="form-check">
 											<input
 												id={`show-column-${col.key}`}
 												className="form-check-input cursor-pointer"
@@ -127,12 +125,17 @@ const CustomizeColumns = ({
 												onChange={onChange(col.key)}
 											/>
 											<label
-												className="form-check-label flex-grow-1 ps-1"
+												className="form-check-label d-flex gap-1"
+												style={{ minWidth: "100px" }}
 												htmlFor={`show-column-${col.key}`}
 												title={col.desc}
 											>
-												{col.title}
-												<small className="d-lg-none ms-2">{col.desc}</small>
+												<div style={{ flexShrink: "0" }}>
+													<strong>{col.title}</strong>
+												</div>
+												<div className="text-truncate">
+													<small>{col.desc}</small>
+												</div>
 											</label>
 										</div>
 									</div>
@@ -152,7 +155,7 @@ const CustomizeColumns = ({
 						<Dropdown.Item onClick={restore}>Restore Default</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
-				<div className="ms-2 pt-2">
+				<div className="ms-2">
 					<HelpPopover title="Reset">
 						<p>
 							<b>Undo Changes</b>: Undo all unsaved configration changes.

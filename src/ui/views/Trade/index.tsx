@@ -472,7 +472,7 @@ const Trade = (props: View<"trade">) => {
 											teamNames={teamNames}
 										/>
 									</div>
-								) : challengeNoTrades ? (
+								) : _config.vars.challengeNoTrades ? (
 									<p className="alert alert-danger">
 										<b>Challenge Mode:</b> You're not allowed to make trades.
 									</p>

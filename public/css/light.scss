@@ -862,7 +862,7 @@ tr.table-warning:hover > td {
 }
 
 .table-accent {
-	background-color: rgba(0, 0, 0, 0.1);
+	background-color: var(--bs-table-hover-bg) !important;
 }
 
 // Hack to get rid of annoying "Privacy Settings" tab from Quantcast CMP

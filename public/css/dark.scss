@@ -296,9 +296,6 @@ table.table thead .sorting::after {
 	background-color: $gray-100 !important;
 	color: $black !important;
 }
-.table-accent {
-	background-color: rgba(255, 255, 255, 0.1);
-}
 
 .modal-backdrop.show {
 	opacity: 0.25; /* otherwise it is blindingly bright */

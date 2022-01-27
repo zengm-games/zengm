@@ -49,7 +49,7 @@ const Injuries = ({
 		<DataTable
 			className="mb-3"
 			cols={cols}
-			defaultSort={[0, "asc"]}
+			defaultSort={["col1", "asc"]}
 			hideAllControls
 			name="Player:Injuries"
 			rows={injuries.map((injury, i) => {

@@ -5,10 +5,8 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
-import type { Player } from "../../common/types";
 import type api from "../../worker/api";
 import getTemplate from "../util/columns/getTemplate";
-import type { MetaCol } from "../util/columns/getCols";
 import { TableConfig } from "../util/TableConfig";
 
 type OfferType = Awaited<
@@ -29,7 +27,6 @@ type OfferProps = {
 const Offer = (props: OfferProps) => {
 	const {
 		abbrev,
-		challengeNoRatings,
 		dpids,
 		handleClickNegotiate,
 		i,

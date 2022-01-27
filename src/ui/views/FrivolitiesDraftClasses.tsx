@@ -98,7 +98,7 @@ const FrivolitiesDraftClasses = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={["col1", "asc"]}
 				name="FrivolitiesDraftClasses"
 				pagination={pagination}
 				rows={rows}

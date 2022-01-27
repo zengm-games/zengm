@@ -1,13 +1,14 @@
 import { idb } from "../../worker/db";
 import getCols, { LeagueVars, MetaCol } from "./columns/getCols";
-import { cloneDeep, uniq } from "lodash-es";
+import { uniq } from "lodash-es";
 import { g } from "../../worker/util";
+import { helpers } from "./index";
 
 export class TableConfig {
 	public fallback: string[];
 	public columns: MetaCol[];
 	public tableName: string;
-	public vars: LeagueVars;
+	public vars?: LeagueVars;
 
 	public statsNeeded: string[] = [];
 	public ratingsNeeded: string[] = [];
@@ -50,7 +51,7 @@ export class TableConfig {
 	}
 
 	static unserialize(_config: TableConfig) {
-		const serialized = cloneDeep(_config);
+		const serialized = helpers.deepCopy(_config);
 		return new TableConfig(
 			serialized.tableName,
 			serialized.fallback,

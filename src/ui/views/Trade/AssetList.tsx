@@ -1,9 +1,9 @@
 import range from "lodash-es/range";
-import { DataTable, PlayerNameLabels } from "../../components";
+import { DataTable } from "../../components";
 import { getCols, helpers } from "../../util";
-import type { Player, View } from "../../../common/types";
+import type { View } from "../../../common/types";
 import { Dropdown } from "react-bootstrap";
-import { TableConfig } from "../../util/TableConfig";
+import type { TableConfig } from "../../util/TableConfig";
 import type { MetaCol } from "../../util/columns/getCols";
 import getTemplate from "../../util/columns/getTemplate";
 
@@ -233,7 +233,7 @@ const AssetList = ({
 				</Dropdown>
 				<DataTable
 					cols={pickCols}
-					defaultSort={[1, "asc"]}
+					defaultSort={["col2", "asc"]}
 					hideAllControls
 					name={`Trade:Picks:${userOrOtherKey}`}
 					rows={pickRows}

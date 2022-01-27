@@ -109,8 +109,9 @@ export type Props = {
 	addFilters?: Filter[];
 };
 
-export type LegacyProps = Omit<Props, "cols" | "config"> & {
+export type LegacyProps = Omit<Props, "cols" | "rows" | "config"> & {
 	cols: LegacyCol[];
+	rows: LegacyDataTableRow[];
 };
 
 export type Filter = {
@@ -124,7 +125,7 @@ export type State = {
 		hidden?: boolean;
 	}[];
 	cols: Col[];
-	rows: DataTableRow[] | LegacyDataTableRow[];
+	rows: DataTableRow[];
 	currentPage: number;
 	enableFilters: boolean;
 	filters: Filter[];
@@ -140,7 +141,6 @@ const DataTable = (props: Props | LegacyProps) => {
 	const {
 		bordered,
 		className,
-		clickable = true,
 		defaultSort,
 		disableSettingsCache,
 		footer,
@@ -167,6 +167,7 @@ const DataTable = (props: Props | LegacyProps) => {
 			  }));
 
 	// Convert LegacyDataTableRows to DataTableRows for backwards compatability
+	// @ts-ignore
 	const rows: DataTableRow[] =
 		props.rows.length && Array.isArray(props.rows[0].data)
 			? props.rows.map(
@@ -205,7 +206,7 @@ const DataTable = (props: Props | LegacyProps) => {
 		}));
 	}, []);
 
-	const processRows = () => {
+	const processRows = (): DataTableRow[] => {
 		const filterFunctions: [string, (value: any) => boolean][] =
 			state.enableFilters
 				? state.filters.map(filter => {
@@ -308,16 +309,12 @@ const DataTable = (props: Props | LegacyProps) => {
 	};
 
 	const handleExportCSV = () => {
-		const colOrderFiltered = state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden && state.cols[colIndex],
-		);
-		const columns = colOrderFiltered.map(
-			({ colIndex }) => state.cols[colIndex].title,
-		);
 		const colNames = cols.map(col => col.title);
 		const rows = processRows().map(row =>
-			row.data.map((val, i) => {
-				const sortType = columns[i].sortType;
+			cols.map(col => {
+				const key: string = col.key || "";
+				const val = row.data[key] ?? null;
+				const sortType = col.sortType;
 				if (sortType === "currency" || sortType === "number") {
 					return getSortVal(val, sortType, true);
 				}
@@ -477,10 +474,6 @@ const DataTable = (props: Props | LegacyProps) => {
 	if (pagination) {
 		processedRows = processedRows.slice(start - 1, end);
 	}
-
-	const colOrderFiltered = state.colOrder.filter(
-		({ hidden, colIndex }) => !hidden && state.cols[colIndex],
-	);
 
 	const highlightCols = state.sortBys.map(sortBy => sortBy[0]);
 

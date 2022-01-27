@@ -112,7 +112,7 @@ const HeadToHead = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={["col1", "asc"]}
 				name="HeadToHead"
 				nonfluid
 				rows={rows}

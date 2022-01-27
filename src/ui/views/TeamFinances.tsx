@@ -780,7 +780,7 @@ const TeamFinances = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[2, "desc"]}
+				defaultSort={["col3", "desc"]}
 				name="TeamFinances"
 				nonfluid
 				footer={footer}

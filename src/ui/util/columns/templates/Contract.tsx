@@ -1,4 +1,3 @@
-import type { Player } from "../../../../common/types";
 import { helpers } from "../../index";
 import type { TemplateProps } from "../getCols";
 

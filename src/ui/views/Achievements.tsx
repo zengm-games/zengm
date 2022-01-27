@@ -233,7 +233,7 @@ const Category = ({
 				>
 					<DataTable
 						cols={cols}
-						defaultSort={[0, "desc"]}
+						defaultSort={["col1", "desc"]}
 						name={"rebuilds"}
 						rows={rows}
 						superCols={superCols}

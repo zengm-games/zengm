@@ -240,7 +240,6 @@ const Trade = (props: View<"trade">) => {
 		salaryCapType,
 		summary,
 		showResigningMsg,
-		stats,
 		strategy,
 		teams,
 		tied,

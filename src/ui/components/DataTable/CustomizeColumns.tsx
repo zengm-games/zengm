@@ -40,7 +40,7 @@ const CustomizeColumns = ({
 			hidden: !config.columns.some(col => col.key === c.key),
 		}));
 		setColumns(nextColumns);
-	}, [config]);
+	}, [config, columns]);
 
 	const onChange = (key: string) => () => {
 		const nextColumns = [...columns];

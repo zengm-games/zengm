@@ -4,9 +4,10 @@ import type { Player } from "../../../common/types";
 import type { TableConfig } from "../TableConfig";
 
 export default function (p: Player, c: MetaCol, config: TableConfig) {
-	if (typeof c.template === "function")
+	if (c.template === undefined) return;
+	else if (typeof c.template === "function")
 		return c.template({ p, c, vars: config.vars });
-	if (!(c.template in templates)) return "";
+	else if (!(c.template in templates)) return;
 	// @ts-ignore
 	// eslint-disable-next-line import/namespace
 	return templates[c.template]({ p, c, vars: config.vars });

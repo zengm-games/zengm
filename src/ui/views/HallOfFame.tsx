@@ -86,7 +86,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 
 			<DataTable
 				cols={cols}
-				defaultSort={[cols.length - 2, "desc"]}
+				defaultSort={["col4", "desc"]}
 				name="HallOfFame"
 				pagination
 				rows={rows}

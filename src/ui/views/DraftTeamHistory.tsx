@@ -182,7 +182,7 @@ const DraftTeamHistory = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "desc"]}
+				defaultSort={["col1", "desc"]}
 				name="DraftTeamHistory"
 				rows={rows}
 				superCols={superCols}

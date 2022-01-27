@@ -192,7 +192,7 @@ const DraftHistory = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={["col1", "asc"]}
 				name="DraftHistory"
 				rows={rows}
 				superCols={superCols}

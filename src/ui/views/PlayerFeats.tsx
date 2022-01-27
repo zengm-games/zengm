@@ -176,7 +176,7 @@ const PlayerFeats = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[23, "desc"]}
+				defaultSort={["col24", "desc"]}
 				name="PlayerFeats"
 				rows={rows}
 				superCols={superCols}

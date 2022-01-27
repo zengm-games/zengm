@@ -3706,7 +3706,7 @@ const legacyCols: {
 	},
 };
 
-export function getAllCols(): Col[] {
+export function getAllCols(): ColTemp[] {
 	return Object.entries(cols).map(([name, col]): Col => {
 		return {
 			...col,

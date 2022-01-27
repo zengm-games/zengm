@@ -7,8 +7,12 @@ export default ({ p, c, vars }: TemplateProps) => (
 		injury={p.injury}
 		jerseyNumber={p.jerseyNumber}
 		skills={p.ratings.skills}
-		watch={p.watch}
-		season={vars.season === "career" ? undefined : vars.season}
+		watch={!!p.watch}
+		season={
+			vars.season === "career" || typeof vars.season != "number"
+				? undefined
+				: vars.season
+		}
 	>
 		{p.name}
 	</PlayerNameLabels>

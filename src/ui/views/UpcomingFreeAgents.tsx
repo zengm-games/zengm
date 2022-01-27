@@ -118,7 +118,7 @@ const UpcomingFreeAgents = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[3, "desc"]}
+				defaultSort={["col4", "desc"]}
 				name="UpcomingFreeAgents"
 				rows={rows}
 				pagination

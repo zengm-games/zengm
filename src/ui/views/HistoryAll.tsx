@@ -159,7 +159,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 			<DataTable
 				className="align-middle"
 				cols={cols}
-				defaultSort={[0, "desc"]}
+				defaultSort={["col0", "desc"]}
 				name="HistoryAll"
 				pagination
 				rows={rows}

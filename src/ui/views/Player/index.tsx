@@ -126,7 +126,7 @@ const StatsTable = ({
 			<DataTable
 				className="mb-3"
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={["col1", "asc"]}
 				footer={[
 					"Career",
 					null,
@@ -279,7 +279,7 @@ const Player2 = ({
 						...ratings.map(rating => `rating:${rating}`),
 						"Skills",
 					])}
-					defaultSort={[0, "asc"]}
+					defaultSort={["col1", "asc"]}
 					hideAllControls
 					name="Player:Ratings"
 					rows={player.ratings.map((r, i) => {
@@ -356,7 +356,7 @@ const Player2 = ({
 					<DataTable
 						className="mb-3"
 						cols={getCols(["Year", "Amount"])}
-						defaultSort={[0, "asc"]}
+						defaultSort={["col1", "asc"]}
 						footer={[
 							"Total",
 							helpers.formatCurrency(player.salariesTotal, "M"),

@@ -4,6 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import EditAllStars from "./EditAllStars";
+import { wait } from "../../../common";
 
 const PlayersTable = ({
 	challengeNoRatings,
@@ -124,12 +125,6 @@ const PlayersTable = ({
 			rows={rows}
 		/>
 	);
-};
-
-const wait = (ms: number) => {
-	return new Promise(resolve => {
-		setTimeout(resolve, ms);
-	});
 };
 
 const AllStars = ({

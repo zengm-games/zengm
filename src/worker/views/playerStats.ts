@@ -94,6 +94,8 @@ const updatePlayers = async (
 		);
 		await config.load();
 
+		config.setVar("season", inputs.season);
+
 		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: config.attrsNeeded,
 			ratings: config.ratingsNeeded,

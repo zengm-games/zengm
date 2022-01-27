@@ -7,7 +7,7 @@ export class TableConfig {
 	public fallback: string[];
 	public columns: MetaCol[];
 	public tableName: string;
-	public vars: LeagueVars | object;
+	public vars: LeagueVars;
 
 	public statsNeeded: string[] = [];
 	public ratingsNeeded: string[] = [];
@@ -39,6 +39,14 @@ export class TableConfig {
 		if (colIndex !== -1) {
 			Object.assign(this.columns[colIndex], column);
 		}
+	}
+
+	setVar(key: keyof LeagueVars, value: any) {
+		if (this.vars) {
+			// @ts-ignore
+			this.vars[key] = value;
+		}
+		return this;
 	}
 
 	static unserialize(_config: TableConfig) {
@@ -76,6 +84,7 @@ export class TableConfig {
 			),
 		);
 		this.vars = {
+			season: g.get("season"),
 			userTid: g.get("userTid"),
 			godMode: g.get("godMode"),
 			spectator: g.get("spectator"),

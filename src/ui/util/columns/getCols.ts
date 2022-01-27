@@ -25,7 +25,9 @@ export type LeagueVars = Pick<
 	| "salaryCap"
 	| "maxContract"
 	| "minContract"
->;
+> & {
+	season?: string | number;
+};
 
 export type TemplateProps = {
 	p: Player;

@@ -3,7 +3,7 @@ import { RatingWithChange } from "../../../components";
 
 export default ({ p, c, vars }: TemplateProps) => {
 	if (vars["challengeNoRatings"]) return "";
-	else if (p.ratings["dpot"])
+	else if (p.ratings["dpot"] && vars.phase === 0)
 		return (
 			<RatingWithChange change={p.ratings["dpot"]}>
 				{p.ratings["pot"]}

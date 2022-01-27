@@ -36,6 +36,7 @@ const updatePlayers = async (
 			"Weight",
 			"Mood",
 			"Contract",
+			"Exp",
 			"Country",
 			"College",
 			"DraftYear",

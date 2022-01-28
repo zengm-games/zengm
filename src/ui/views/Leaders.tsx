@@ -128,7 +128,7 @@ const Leaders = ({
 											p={p}
 											rank={j + 1}
 											season={season}
-											totals={statType === "totals"}
+											totals={statType === "totals" && isSport("basketball")}
 										/>
 									))}
 								</tbody>

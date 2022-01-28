@@ -57,7 +57,7 @@ const Row = ({
 				</a>
 				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
-			<td>
+			<td className="text-end">
 				{cat.stat === "WS/48"
 					? helpers.roundWinp(p.stat)
 					: helpers.roundStat(p.stat, cat.statProp)}
@@ -109,7 +109,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 								<thead>
 									<tr title={cat.title}>
 										<th>{cat.name}</th>
-										<th>{cat.stat}</th>
+										<th className="text-end">{cat.stat}</th>
 									</tr>
 								</thead>
 								<tbody>

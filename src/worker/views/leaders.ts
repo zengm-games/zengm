@@ -14,6 +14,7 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import { groupByUnique } from "../../common/groupBy";
+import range from "lodash-es/range";
 
 const getCategoriesAndStats = () => {
 	const categories = bySport<
@@ -538,18 +539,6 @@ class GamesPlayedCache {
 		);
 	}
 
-	has(season: number | "career", playoffs: boolean) {
-		if (season === "career" || this.straightNumGames(season, playoffs)) {
-			return true;
-		}
-
-		if (playoffs) {
-			return !!this.playoffsCache[season];
-		} else {
-			return !!this.currentSeasonCache;
-		}
-	}
-
 	async loadSeason(season: number | "career", playoffs: boolean) {
 		if (season === "career" || this.straightNumGames(season, playoffs)) {
 			return;
@@ -730,6 +719,20 @@ const updateLeaders = async (
 			}[],
 		}));
 
+		// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
+		let seasons: number[];
+		if (inputs.season === "career") {
+			// Nothing to cache
+			seasons = [];
+		} else if (inputs.season === "all") {
+			seasons = range(g.get("startingSeason"), g.get("season") + 1);
+		} else {
+			seasons = [inputs.season];
+		}
+		for (const season of seasons) {
+			await gamesPlayedCache.loadSeason(season, playoffs);
+		}
+
 		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
 			const p = await idb.getCopy.playersPlus(pRaw, {
 				attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
@@ -802,10 +805,6 @@ const updateLeaders = async (
 							playerValue = playerStats[cat.minStats[k]] * playerStats.gp;
 						}
 
-						// Compare against value normalized for team games played
-						if (!gamesPlayedCache.has(season, playoffs)) {
-							await gamesPlayedCache.loadSeason(season, playoffs);
-						}
 						const gpTeam = gamesPlayedCache.get(
 							season,
 							playoffs,

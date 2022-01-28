@@ -360,9 +360,25 @@ const leaders = (params: Params) => {
 		season = validateSeason(params.season);
 	}
 
+	let statType: PlayerStatType;
+	if (params.statType === "perGame") {
+		statType = "perGame";
+	} else if (params.statType === "per36") {
+		statType = "per36";
+	} else if (params.statType === "totals") {
+		statType = "totals";
+	} else {
+		statType = bySport({
+			basketball: "perGame",
+			football: "totals",
+			hockey: "totals",
+		});
+	}
+
 	return {
 		season,
 		playoffs,
+		statType,
 	};
 };
 

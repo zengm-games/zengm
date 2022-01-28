@@ -686,7 +686,8 @@ const updateLeaders = async (
 		updateEvents.includes("watchList") ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
-		inputs.playoffs !== state.playoffs
+		inputs.playoffs !== state.playoffs ||
+		inputs.statType !== state.statType
 	) {
 		const { categories, stats } = getCategoriesAndStats();
 		const playoffs = inputs.playoffs === "playoffs";
@@ -738,6 +739,7 @@ const updateLeaders = async (
 				playoffs,
 				regularSeason: !playoffs,
 				mergeStats: true,
+				statType: inputs.statType,
 			});
 			if (!p) {
 				return;
@@ -784,8 +786,18 @@ const updateLeaders = async (
 					for (let k = 0; k < cat.minStats.length; k++) {
 						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 						let playerValue;
-						if (!isSport("basketball") || cat.minStats[k] === "gp") {
+						if (
+							!isSport("basketball") ||
+							cat.minStats[k] === "gp" ||
+							inputs.statType === "totals"
+						) {
 							playerValue = playerStats[cat.minStats[k]];
+						} else if (inputs.statType === "per36") {
+							playerValue =
+								(playerStats[cat.minStats[k]] *
+									playerStats.gp *
+									playerStats.min) /
+								36;
 						} else {
 							playerValue = playerStats[cat.minStats[k]] * playerStats.gp;
 						}
@@ -839,7 +851,6 @@ const updateLeaders = async (
 							abbrev = g.get("teamInfoCache")[tid]?.abbrev;
 						}
 					}
-					console.log(p.ratings);
 
 					const leader = {
 						abbrev,
@@ -877,6 +888,7 @@ const updateLeaders = async (
 			categories: outputCategories,
 			playoffs: inputs.playoffs,
 			season: inputs.season,
+			statType: inputs.statType,
 		};
 	}
 };

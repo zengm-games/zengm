@@ -11,11 +11,13 @@ const Row = ({
 	p,
 	rank,
 	season,
+	totals,
 }: {
 	cat: View<"leaders">["categories"][number];
 	p: View<"leaders">["categories"][number]["leaders"][number];
 	rank: number;
 	season: View<"leaders">["season"];
+	totals: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -60,13 +62,18 @@ const Row = ({
 			<td className="text-end">
 				{cat.stat === "WS/48"
 					? helpers.roundWinp(p.stat)
-					: helpers.roundStat(p.stat, cat.statProp)}
+					: helpers.roundStat(p.stat, cat.statProp, totals)}
 			</td>
 		</tr>
 	);
 };
 
-const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
+const Leaders = ({
+	categories,
+	playoffs,
+	season,
+	statType,
+}: View<"leaders">) => {
 	useTitleBar({
 		title: "League Leaders",
 		jumpTo: true,
@@ -74,6 +81,11 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 		dropdownView: "leaders",
 		dropdownFields: {
 			seasonsAndCareer: season,
+			...(isSport("basketball")
+				? {
+						statTypes: statType,
+				  }
+				: {}),
 			playoffs,
 		},
 	});
@@ -120,6 +132,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 											p={p}
 											rank={j + 1}
 											season={season}
+											totals={statType === "totals"}
 										/>
 									))}
 								</tbody>

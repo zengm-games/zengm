@@ -59,7 +59,7 @@ const routeInfos = {
 	"/l/:lid/game_log/:abbrev/:season/:gid/:view": "gameLog",
 	"/l/:lid/leaders": "leaders",
 	"/l/:lid/leaders/:season": "leaders",
-	"/l/:lid/leaders/:season/:playoffs": "leaders",
+	"/l/:lid/leaders/:season/:statType/:playoffs": "leaders",
 	"/l/:lid/player_bios": "playerBios",
 	"/l/:lid/player_bios/:abbrev": "playerBios",
 	"/l/:lid/player_bios/:abbrev/:season": "playerBios",

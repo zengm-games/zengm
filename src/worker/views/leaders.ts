@@ -641,7 +641,13 @@ const iterateAllPlayers = async (
 	const cachePlayers = await idb.cache.players.getAll();
 	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
 
-	// Even for current season, hit database in case someone died or was edited to be retired mid season
+	// For current season, assume everyone is cached, although this might not be true for tragic deaths and God Mode edited players
+	if (season < g.get("season") || g.get("phase") <= PHASE.PLAYOFFS) {
+		for (const p of cachePlayers) {
+			await cb(p);
+		}
+		return;
+	}
 
 	// This is similar to activeSeason from getCopies.players
 	const transaction = idb.league.transaction("players");

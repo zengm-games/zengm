@@ -20,7 +20,7 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 	useEffect(() => {
 		const handleKeydown = async (event: KeyboardEvent) => {
-			// alt + letter
+			// alt + letter -  CANNOT USE KeyboardEvent.key BECAUSE ALT+P ON MAC IS PI!
 			if (
 				event.altKey &&
 				!event.ctrlKey &&
@@ -28,8 +28,7 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 				!event.isComposing &&
 				!event.metaKey
 			) {
-				const key = event.key.toLowerCase();
-				const option = options.find(option2 => option2.key === key);
+				const option = options.find(option2 => option2.code === event.code);
 
 				if (!option) {
 					return;

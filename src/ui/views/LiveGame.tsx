@@ -379,7 +379,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		let skipMinutes = [
 			{
 				minutes: 1,
-				key: "o",
+				key: "O",
 			},
 			{
 				minutes: helpers.bound(
@@ -387,7 +387,7 @@ const LiveGame = (props: View<"liveGame">) => {
 					1,
 					Infinity,
 				),
-				key: "t",
+				key: "T",
 			},
 			{
 				minutes: helpers.bound(
@@ -395,7 +395,7 @@ const LiveGame = (props: View<"liveGame">) => {
 					1,
 					Infinity,
 				),
-				key: "s",
+				key: "S",
 			},
 		];
 
@@ -426,7 +426,7 @@ const LiveGame = (props: View<"liveGame">) => {
 						? "period"
 						: getPeriodName(boxScore.current.numPeriods)
 				}`,
-				key: "q",
+				key: "Q",
 				onClick: () => {
 					playSeconds(Infinity);
 				},
@@ -436,7 +436,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		if (!boxScore.current.elam) {
 			menuItems.push({
 				label: "Until last 2 minutes",
-				key: "u",
+				key: "U",
 				onClick: () => {
 					playUntilLastTwoMinutes();
 				},
@@ -452,7 +452,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		) {
 			menuItems.push({
 				label: "Until change of possession",
-				key: "c",
+				key: "C",
 				onClick: () => {
 					playUntilChangeOfPossession();
 				},
@@ -471,7 +471,7 @@ const LiveGame = (props: View<"liveGame">) => {
 					hockey: "goal",
 					default: "score",
 				})}`,
-				key: "g",
+				key: "G",
 				onClick: () => {
 					playUntilNextScore();
 				},
@@ -481,7 +481,7 @@ const LiveGame = (props: View<"liveGame">) => {
 		if (boxScore.current.elam && boxScore.current.elamTarget === undefined) {
 			menuItems.push({
 				label: "Until Elam Ending",
-				key: "u",
+				key: "U",
 				onClick: () => {
 					playUntilElamEnding();
 				},

@@ -64,7 +64,7 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	special: "All-Star Game",
 	"all|||teams": makeNormalResponsive("All", "All Teams"),
 	watch: makeNormalResponsive("Watch", "Watch List"),
-	career: makeNormalResponsive("Totals", "Career Totals"),
+	career: "Career",
 	regularSeason: makeNormalResponsive("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
 	"10": "Past 10 Seasons",

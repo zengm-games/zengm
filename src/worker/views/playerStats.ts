@@ -68,9 +68,7 @@ const updatePlayers = async (
 			tid = undefined;
 		}
 
-		// Show all teams
 		let statType: PlayerStatType;
-
 		if (isSport("basketball")) {
 			if (inputs.statType === "totals") {
 				statType = "totals";

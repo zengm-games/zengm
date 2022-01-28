@@ -1,5 +1,8 @@
 Leaders improvements
 - "Career Totals" and "All Seasons" options on the League Leaders page
+  - cutoffs for career leaders
+    - playoffs too?
+  - show HoF team for career totals
 - progressive leaders, like bbref
   - before doing this, figure out a better way of handling total/perGame stats in basketball, similar to other sports
   - requires

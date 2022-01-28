@@ -581,8 +581,8 @@ class GamesPlayedCache {
 		);
 	}
 
-	has(season: number, playoffs: boolean) {
-		if (this.straightNumGames(season, playoffs)) {
+	has(season: number | "career", playoffs: boolean) {
+		if (season === "career" || this.straightNumGames(season, playoffs)) {
 			return true;
 		}
 
@@ -593,8 +593,8 @@ class GamesPlayedCache {
 		}
 	}
 
-	async loadSeason(season: number, playoffs: boolean) {
-		if (this.straightNumGames(season, playoffs)) {
+	async loadSeason(season: number | "career", playoffs: boolean) {
+		if (season === "career" || this.straightNumGames(season, playoffs)) {
 			return;
 		}
 
@@ -632,22 +632,35 @@ class GamesPlayedCache {
 		}
 	}
 
-	get(season: number, playoffs: boolean, tid: number) {
+	get(season: number | "career", playoffs: boolean, tid: number) {
+		if (season === "career") {
+			if (playoffs) {
+				// Arbitrary - half a season
+				return g.get("numGames") / 2;
+			}
+
+			// Arbitrary - 5 seasons
+			return g.get("numGames") * 5;
+		}
+
 		if (this.straightNumGames(season, playoffs)) {
 			return g.get("numGames", season);
 		}
 
 		if (playoffs) {
-			return this.playoffsCache[season][tid];
+			return this.playoffsCache[season][tid] ?? 0;
 		}
 
-		return this.currentSeasonCache![tid];
+		return this.currentSeasonCache![tid] ?? 0;
 	}
 }
 
 const iterateAllPlayers = async (
 	season: number | "all" | "career",
-	cb: (p: Player<MinimalPlayerRatings>, season: number) => Promise<void>,
+	cb: (
+		p: Player<MinimalPlayerRatings>,
+		season: number | "career",
+	) => Promise<void>,
 ) => {
 	// Even in past seasons, make sure we have latest info for players
 	const cachePlayers = await idb.cache.players.getAll();
@@ -659,8 +672,6 @@ const iterateAllPlayers = async (
 			for (const season of seasons) {
 				await cb(p, season);
 			}
-		} else if (season === "career") {
-			throw new Error("Not implemented");
 		} else {
 			await cb(p, season);
 		}
@@ -696,6 +707,7 @@ const iterateAllPlayers = async (
 		} else {
 			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
 			await applyCB(p);
+			console.log("before continue 2");
 			cursor = await cursor.continue();
 		}
 	}
@@ -761,7 +773,7 @@ const updateLeaders = async (
 				attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
 				ratings: ["skills", "pos"],
 				stats: ["abbrev", "tid", ...stats],
-				season,
+				season: season === "career" ? undefined : season,
 				playoffs,
 				regularSeason: !playoffs,
 				mergeStats: true,
@@ -769,12 +781,24 @@ const updateLeaders = async (
 			if (!p) {
 				return;
 			}
+			console.log("hi", p);
+
+			let playerStats;
+			if (season === "career") {
+				if (playoffs) {
+					playerStats = p.careerStatsPlayoffs;
+				} else {
+					playerStats = p.careerStats;
+				}
+			} else {
+				playerStats = p.stats;
+			}
 
 			for (let i = 0; i < categories.length; i++) {
 				const cat = categories[i];
 				const outputCat = outputCategories[i];
 
-				const value = p.stats[cat.statProp];
+				const value = playerStats[cat.statProp];
 				const lastValue = outputCat.leaders.at(-1)?.stat;
 				if (
 					outputCat.leaders.length >= NUM_LEADERS &&
@@ -793,16 +817,20 @@ const updateLeaders = async (
 						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 						let playerValue;
 						if (!isSport("basketball") || cat.minStats[k] === "gp") {
-							playerValue = p.stats[cat.minStats[k]];
+							playerValue = playerStats[cat.minStats[k]];
 						} else {
-							playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
+							playerValue = playerStats[cat.minStats[k]] * playerStats.gp;
 						}
 
 						// Compare against value normalized for team games played
 						if (!gamesPlayedCache.has(season, playoffs)) {
 							await gamesPlayedCache.loadSeason(season, playoffs);
 						}
-						const gpTeam = gamesPlayedCache.get(season, playoffs, p.stats.tid);
+						const gpTeam = gamesPlayedCache.get(
+							season,
+							playoffs,
+							playerStats.tid,
+						);
 
 						if (gpTeam !== undefined) {
 							// Special case GP
@@ -835,18 +863,22 @@ const updateLeaders = async (
 					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
 
 					const leader = {
-						abbrev: p.stats.abbrev,
+						abbrev: playerStats.abbrev,
 						injury: p.injury,
 						jerseyNumber: p.jerseyNumber,
 						key,
 						nameAbbrev: p.nameAbbrev,
 						pid: p.pid,
 						pos: p.ratings.pos,
-						season: inputs.season === "all" ? season : undefined,
-						stat: p.stats[cat.statProp],
+						season:
+							inputs.season === "all" && season !== "career"
+								? season
+								: undefined,
+						stat: playerStats[cat.statProp],
 						skills: p.ratings.skills,
-						tid: p.stats.tid,
-						userTeam: g.get("userTid", season) === p.stats.tid,
+						tid: playerStats.tid,
+						userTeam:
+							season !== "career" && g.get("userTid", season) === p.stats.tid,
 						watch: p.watch,
 					};
 

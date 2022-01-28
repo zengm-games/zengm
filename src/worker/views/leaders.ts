@@ -743,6 +743,14 @@ const updateLeaders = async (
 				return;
 			}
 
+			// Shitty handling of career totals
+			if (Array.isArray(p.ratings)) {
+				p.ratings = {
+					pos: p.ratings.at(-1).pos,
+					skills: [],
+				};
+			}
+
 			let playerStats;
 			if (season === "career") {
 				if (playoffs) {
@@ -822,8 +830,8 @@ const updateLeaders = async (
 					// Players can appear multiple times if looking at all seasons
 					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
 
-					let abbrev = playerStats.tid;
-					let tid = playerStats.abbrev;
+					let tid = playerStats.tid;
+					let abbrev = playerStats.abbrev;
 					if (season === "career") {
 						const { legacyTid } = processPlayersHallOfFame([p])[0];
 						if (legacyTid >= 0) {
@@ -831,6 +839,7 @@ const updateLeaders = async (
 							abbrev = g.get("teamInfoCache")[tid]?.abbrev;
 						}
 					}
+					console.log(p.ratings);
 
 					const leader = {
 						abbrev,

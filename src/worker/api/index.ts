@@ -116,6 +116,7 @@ import { TableConfig } from "../../ui/util/TableConfig";
 import playMenu from "./playMenu";
 import toolsMenu from "./toolsMenu";
 import omit from "lodash-es/omit";
+import getPlayerTable from "./getPlayerTable";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3891,6 +3892,7 @@ export default {
 		getPlayersCommandPalette,
 		getLocal,
 		getPlayerBioInfoDefaults,
+		getPlayerTable,
 		getPlayerWatch,
 		getRandomCollege,
 		getRandomCountry,
@@ -3950,7 +3952,7 @@ export default {
 		updateLeague,
 		updateMultiTeamMode,
 		updateOptions,
-    updateColumns,
+		updateColumns,
 		updatePlayThroughInjuries,
 		updatePlayerWatch,
 		updatePlayingTime,

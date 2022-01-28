@@ -22,6 +22,13 @@ const Row = ({
 	const numericSeason =
 		season === "career" ? undefined : season === "all" ? p.season : season;
 
+	let teamUrlParts;
+	if (season === "career") {
+		teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
+	} else {
+		teamUrlParts = ["roster", `${p.abbrev}_${p.tid}`, numericSeason];
+	}
+
 	return (
 		<tr
 			className={classNames({
@@ -44,14 +51,7 @@ const Row = ({
 				>
 					{p.nameAbbrev}
 				</PlayerNameLabels>
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${p.abbrev}_${p.tid}`,
-						numericSeason,
-					])}
-					className="mx-2"
-				>
+				<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
 					{p.abbrev}
 					{p.season !== undefined ? ` ${p.season}` : null}
 				</a>

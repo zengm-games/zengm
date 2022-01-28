@@ -1,6 +1,11 @@
 import { bySport, isSport, PHASE } from "../../common";
 import { idb } from "../db";
-import { defaultGameAttributes, g, helpers } from "../util";
+import {
+	defaultGameAttributes,
+	g,
+	helpers,
+	processPlayersHallOfFame,
+} from "../util";
 import type {
 	MinimalPlayerRatings,
 	Player,
@@ -664,7 +669,6 @@ const iterateAllPlayers = async (
 		} else {
 			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
 			await applyCB(p);
-			console.log("before continue 2");
 			cursor = await cursor.continue();
 		}
 	}
@@ -738,7 +742,6 @@ const updateLeaders = async (
 			if (!p) {
 				return;
 			}
-			console.log("hi", p);
 
 			let playerStats;
 			if (season === "career") {
@@ -819,8 +822,18 @@ const updateLeaders = async (
 					// Players can appear multiple times if looking at all seasons
 					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
 
+					let abbrev = playerStats.tid;
+					let tid = playerStats.abbrev;
+					if (season === "career") {
+						const { legacyTid } = processPlayersHallOfFame([p])[0];
+						if (legacyTid >= 0) {
+							tid = legacyTid;
+							abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+						}
+					}
+
 					const leader = {
-						abbrev: playerStats.abbrev,
+						abbrev,
 						injury: p.injury,
 						jerseyNumber: p.jerseyNumber,
 						key,
@@ -833,7 +846,7 @@ const updateLeaders = async (
 								: undefined,
 						stat: playerStats[cat.statProp],
 						skills: p.ratings.skills,
-						tid: playerStats.tid,
+						tid,
 						userTeam:
 							season !== "career" && g.get("userTid", season) === p.stats.tid,
 						watch: p.watch,

@@ -12,8 +12,8 @@ const Row = ({
 	rank,
 	season,
 }: {
-	cat: any;
-	p: any;
+	cat: View<"leaders">["categories"][number];
+	p: View<"leaders">["categories"][number]["leaders"][number];
 	rank: number;
 	season: number;
 }) => {
@@ -36,7 +36,7 @@ const Row = ({
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
 					season={season}
-					skills={p.ratings.skills}
+					skills={p.skills}
 					watch={p.watch}
 				>
 					{p.nameAbbrev}
@@ -47,7 +47,7 @@ const Row = ({
 				>
 					{p.abbrev}
 				</a>
-				{isSport("football") || isSport("hockey") ? `${p.ratings.pos}` : null}
+				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
 			<td>
 				{cat.stat === "WS/48"
@@ -101,7 +101,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 									</tr>
 								</thead>
 								<tbody>
-									{cat.data.map((p, j) => (
+									{cat.leaders.map((p, j) => (
 										<Row
 											key={p.pid}
 											cat={cat}

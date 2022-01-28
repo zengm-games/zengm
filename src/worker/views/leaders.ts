@@ -4,6 +4,7 @@ import { defaultGameAttributes, g, helpers } from "../util";
 import type {
 	MinimalPlayerRatings,
 	Player,
+	PlayerInjury,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
@@ -711,7 +712,19 @@ const updateLeaders = async (
 			stat: category.stat,
 			statProp: category.statProp,
 			title: category.title,
-			data: [] as any[],
+			leaders: [] as {
+				abbrev: string;
+				injury: PlayerInjury | undefined;
+				jerseyNumber: string;
+				nameAbbrev: string;
+				pid: number;
+				pos: string;
+				stat: number;
+				skills: string[];
+				tid: number;
+				userTeam: boolean;
+				watch: boolean;
+			}[],
 		}));
 
 		await iterateAllPlayers(inputs.season, async pRaw => {
@@ -733,9 +746,9 @@ const updateLeaders = async (
 				const outputCat = outputCategories[i];
 
 				const value = p.stats[cat.statProp];
-				const lastValue = outputCat.data.at(-1)?.stat;
+				const lastValue = outputCat.leaders.at(-1)?.stat;
 				if (
-					outputCat.data.length >= NUM_LEADERS &&
+					outputCat.leaders.length >= NUM_LEADERS &&
 					((cat.sortAscending && value > lastValue) ||
 						(!cat.sortAscending && value < lastValue))
 				) {
@@ -790,20 +803,27 @@ const updateLeaders = async (
 				}
 
 				if (pass) {
-					const leader = helpers.deepCopy(p);
-					leader.stat = leader.stats[cat.statProp];
-					leader.abbrev = leader.stats.abbrev;
-					leader.tid = leader.stats.tid;
-					delete leader.stats;
-					leader.userTeam = g.get("userTid", inputs.season) === leader.tid;
+					const leader = {
+						abbrev: p.stats.abbrev,
+						injury: p.injury,
+						jerseyNumber: p.jerseyNumber,
+						nameAbbrev: p.nameAbbrev,
+						pid: p.pid,
+						pos: p.ratings.pos,
+						stat: p.stats[cat.statProp],
+						skills: p.ratings.skills,
+						tid: p.stats.tid,
+						userTeam: g.get("userTid", inputs.season) === p.stats.tid,
+						watch: p.watch,
+					};
 
 					// Add to current leaders, truncate, and sort before going on to next player
-					outputCat.data = outputCat.data.slice(0, NUM_LEADERS - 1);
-					outputCat.data.push(leader);
+					outputCat.leaders = outputCat.leaders.slice(0, NUM_LEADERS - 1);
+					outputCat.leaders.push(leader);
 					if (cat.sortAscending) {
-						outputCat.data.sort((a, b) => a.stat - b.stat);
+						outputCat.leaders.sort((a, b) => a.stat - b.stat);
 					} else {
-						outputCat.data.sort((a, b) => b.stat - a.stat);
+						outputCat.leaders.sort((a, b) => b.stat - a.stat);
 					}
 				}
 			}

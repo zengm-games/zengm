@@ -194,7 +194,7 @@ const TitleBar = () => {
 				/>
 			) : null}
 			<DropdownLinks
-				className="ms-auto"
+				className="ms-auto titlebar-right-links"
 				hideTitle
 				inLeague
 				lid={lid}

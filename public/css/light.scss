@@ -1405,3 +1405,16 @@ hr {
 		z-index: 3; // Above .settings-buttons
 	}
 }
+
+.titlebar-right-links {
+	.nav-item {
+		height: 45px !important;
+	}
+	.nav-link {
+		padding-bottom: 13px !important;
+		padding-top: 13px !important;
+	}
+	.dropdown-menu {
+		margin-top: -4px !important;
+	}
+}

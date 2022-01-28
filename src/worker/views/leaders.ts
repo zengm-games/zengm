@@ -602,7 +602,7 @@ class GamesPlayedCache {
 			return this.playoffsCache[season][tid] ?? 0;
 		}
 
-		return this.currentSeasonCache![tid] ?? 0;
+		return this.currentSeasonCache?.[tid] ?? 0;
 	}
 }
 

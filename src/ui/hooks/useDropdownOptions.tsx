@@ -297,6 +297,12 @@ const useDropdownOptions = (
 				...(field === "statTypesAdv" ? ["advanced", "gameHighs"] : []),
 			],
 		});
+	} else if (field === "statTypesStrict") {
+		keys = bySport({
+			basketball: ["perGame", "per36", "totals"],
+			football: ["totals"],
+			hockey: ["totals"],
+		});
 	} else if (field === "awardType") {
 		keys = bySport({
 			basketball: [

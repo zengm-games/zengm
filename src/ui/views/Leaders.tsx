@@ -81,11 +81,7 @@ const Leaders = ({
 		dropdownView: "leaders",
 		dropdownFields: {
 			seasonsAndCareer: season,
-			...(isSport("basketball")
-				? {
-						statTypes: statType,
-				  }
-				: {}),
+			statTypesStrict: statType,
 			playoffs,
 		},
 	});

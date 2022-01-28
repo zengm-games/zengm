@@ -78,6 +78,10 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 		},
 	});
 
+	// When season is "all", the season is displayed inline, so columns need to be a bit wider
+	const colClassName =
+		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-md-4";
+
 	return (
 		<>
 			<p>
@@ -97,7 +101,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 				{categories.map(cat => (
 					<div
 						key={cat.name}
-						className="col-12 col-sm-6 col-md-4"
+						className={colClassName}
 						style={{ marginTop: 14 }}
 					>
 						<ResponsiveTableWrapper>

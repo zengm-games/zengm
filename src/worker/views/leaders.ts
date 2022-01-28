@@ -557,6 +557,76 @@ const getCategoriesAndStats = () => {
 	};
 };
 
+// Calculate the number of games played for each team, which is used to test if a player qualifies as a league leader
+class GamesPlayedCache {
+	currentSeasonCache: Record<number, number> | undefined;
+	playoffsCache: Record<number, Record<number, number>>;
+
+	constructor() {
+		this.playoffsCache = {};
+	}
+
+	private straightNumGames(season: number, playoffs: boolean) {
+		// Regular season, completed season -> we already know how many games each team played, from numGames
+		return (
+			!playoffs &&
+			(season < g.get("season") || g.get("phase") > PHASE.REGULAR_SEASON)
+		);
+	}
+
+	async loadSeason(season: number, playoffs: boolean) {
+		if (this.straightNumGames(season, playoffs)) {
+			// If it's not mid season, we already know the answer
+			return;
+		}
+
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{
+				season,
+			},
+			"noCopyCache",
+		);
+
+		const numGames = g.get("numGames", season);
+
+		const cache: Record<number, number> = {};
+		for (const teamSeason of teamSeasons) {
+			if (playoffs) {
+				if (teamSeason.gp < numGames) {
+					cache[teamSeason.tid] = 0;
+				} else {
+					cache[teamSeason.tid] = teamSeason.gp - numGames;
+				}
+			} else {
+				// Don't count playoff games
+				if (teamSeason.gp > numGames) {
+					cache[teamSeason.tid] = numGames;
+				} else {
+					cache[teamSeason.tid] = teamSeason.gp;
+				}
+			}
+		}
+
+		if (playoffs) {
+			this.playoffsCache[season] = cache;
+		} else {
+			this.currentSeasonCache = cache;
+		}
+	}
+
+	get(season: number, playoffs: boolean, tid: number) {
+		if (this.straightNumGames(season, playoffs)) {
+			return g.get("numGames", season);
+		}
+
+		if (playoffs) {
+			return this.playoffsCache[season][tid];
+		}
+
+		return this.currentSeasonCache![tid];
+	}
+}
+
 const updateLeaders = async (
 	inputs: ViewInput<"leaders">,
 	updateEvents: UpdateEvents,
@@ -569,31 +639,8 @@ const updateLeaders = async (
 		inputs.season !== state.season ||
 		inputs.playoffs !== state.playoffs
 	) {
-		const { categories, stats } = getCategoriesAndStats(); // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
-
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				season: inputs.season,
-			},
-			"noCopyCache",
-		);
-		const gps: Record<number, number | undefined> = {};
-		for (const teamSeason of teamSeasons) {
-			if (inputs.playoffs === "playoffs") {
-				if (teamSeason.gp < g.get("numGames")) {
-					gps[teamSeason.tid] = 0;
-				} else {
-					gps[teamSeason.tid] = teamSeason.gp - g.get("numGames");
-				}
-			} else {
-				// Don't count playoff games
-				if (teamSeason.gp > g.get("numGames")) {
-					gps[teamSeason.tid] = g.get("numGames");
-				} else {
-					gps[teamSeason.tid] = teamSeason.gp;
-				}
-			}
-		}
+		const { categories, stats } = getCategoriesAndStats();
+		const playoffs = inputs.playoffs === "playoffs";
 
 		let players;
 		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
@@ -615,8 +662,8 @@ const updateLeaders = async (
 			ratings: ["skills", "pos"],
 			stats: ["abbrev", "tid", ...stats],
 			season: inputs.season,
-			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs !== "playoffs",
+			playoffs,
+			regularSeason: !playoffs,
 			mergeStats: true,
 		});
 		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
@@ -634,6 +681,9 @@ const updateLeaders = async (
 			(g.get("numGames") / defaultGameAttributes.numGames) *
 			numPlayersOnCourtFactor *
 			helpers.quarterLengthFactor();
+
+		const gamesPlayedCache = new GamesPlayedCache();
+		await gamesPlayedCache.loadSeason(inputs.season, playoffs);
 
 		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
 		for (const cat of categories) {
@@ -658,7 +708,11 @@ const updateLeaders = async (
 						}
 
 						// Compare against value normalized for team games played
-						const gpTeam = gps[p.stats.tid];
+						const gpTeam = gamesPlayedCache.get(
+							inputs.season,
+							playoffs,
+							p.stats.tid,
+						);
 
 						if (gpTeam !== undefined) {
 							// Special case GP

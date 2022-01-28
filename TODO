@@ -1,3 +1,14 @@
+Leaders improvements
+- "Career Totals" and "All Seasons" options on the League Leaders page
+- progressive leaders, like bbref
+  - before doing this, figure out a better way of handling total/perGame stats in basketball, similar to other sports
+  - requires
+    - each year's leader in stat
+    - each year's career leader up to that year
+    - each year's *active* career leader up to that year
+- year-by-year top 10, like bbref
+  - requires the top 10 for a single stat, every season
+
 use nicidob's model but fit to random players instead of real players, to get linear prog formula that behaves like the current one
 
 some UI in draft to show you skill labels a player is close to
@@ -1376,10 +1387,7 @@ redo pot formulas?
 
 Add "All Seasons" option to various stat/ratings pages
 - Player Ratings
-- Player Stats
 - Team Stats
-- League Leaders
-  - Also add "Career Totals" there
 
 injury later
 - injury history leads to chance of reinjury

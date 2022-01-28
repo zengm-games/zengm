@@ -581,9 +581,20 @@ class GamesPlayedCache {
 		);
 	}
 
+	has(season: number, playoffs: boolean) {
+		if (this.straightNumGames(season, playoffs)) {
+			return true;
+		}
+
+		if (playoffs) {
+			return !!this.playoffsCache[season];
+		} else {
+			return !!this.currentSeasonCache;
+		}
+	}
+
 	async loadSeason(season: number, playoffs: boolean) {
 		if (this.straightNumGames(season, playoffs)) {
-			// If it's not mid season, we already know the answer
 			return;
 		}
 
@@ -635,17 +646,30 @@ class GamesPlayedCache {
 }
 
 const iterateAllPlayers = async (
-	season: number,
-	cb: (p: Player<MinimalPlayerRatings>) => Promise<void>,
+	season: number | "all" | "career",
+	cb: (p: Player<MinimalPlayerRatings>, season: number) => Promise<void>,
 ) => {
 	// Even in past seasons, make sure we have latest info for players
 	const cachePlayers = await idb.cache.players.getAll();
 	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
 
+	const applyCB = async (p: Player<MinimalPlayerRatings>) => {
+		if (season === "all") {
+			const seasons = new Set(p.stats.map(row => row.season));
+			for (const season of seasons) {
+				await cb(p, season);
+			}
+		} else if (season === "career") {
+			throw new Error("Not implemented");
+		} else {
+			await cb(p, season);
+		}
+	};
+
 	// For current season, assume everyone is cached, although this might not be true for tragic deaths and God Mode edited players
-	if (season < g.get("season") || g.get("phase") <= PHASE.PLAYOFFS) {
+	if (season === g.get("season") && g.get("phase") <= PHASE.PLAYOFFS) {
 		for (const p of cachePlayers) {
-			await cb(p);
+			await applyCB(p);
 		}
 		return;
 	}
@@ -653,8 +677,12 @@ const iterateAllPlayers = async (
 	// This is similar to activeSeason from getCopies.players
 	const transaction = idb.league.transaction("players");
 
-	// + 1 in upper range is because you don't accumulate stats until the year after the draft
-	const range = IDBKeyRange.bound([-Infinity, season], [season + 1, Infinity]);
+	let range;
+	const useRange = typeof season === "number";
+	if (useRange) {
+		// + 1 in upper range is because you don't accumulate stats until the year after the draft
+		range = IDBKeyRange.bound([-Infinity, season], [season + 1, Infinity]);
+	}
 
 	let cursor = await transaction.store
 		.index("draft.year, retiredYear")
@@ -663,11 +691,11 @@ const iterateAllPlayers = async (
 	while (cursor) {
 		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 		const [draftYear, retiredYear] = cursor.key;
-		if (retiredYear < season) {
+		if (useRange && retiredYear < season) {
 			cursor = await cursor.continue([draftYear, season]);
 		} else {
 			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
-			await cb(p);
+			await applyCB(p);
 			cursor = await cursor.continue();
 		}
 	}
@@ -705,7 +733,6 @@ const updateLeaders = async (
 			helpers.quarterLengthFactor();
 
 		const gamesPlayedCache = new GamesPlayedCache();
-		await gamesPlayedCache.loadSeason(inputs.season, playoffs);
 
 		const outputCategories = categories.map(category => ({
 			name: category.name,
@@ -716,9 +743,11 @@ const updateLeaders = async (
 				abbrev: string;
 				injury: PlayerInjury | undefined;
 				jerseyNumber: string;
+				key: number | string;
 				nameAbbrev: string;
 				pid: number;
 				pos: string;
+				season: number | undefined;
 				stat: number;
 				skills: string[];
 				tid: number;
@@ -727,12 +756,12 @@ const updateLeaders = async (
 			}[],
 		}));
 
-		await iterateAllPlayers(inputs.season, async pRaw => {
+		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
 			const p = await idb.getCopy.playersPlus(pRaw, {
 				attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
 				ratings: ["skills", "pos"],
 				stats: ["abbrev", "tid", ...stats],
-				season: inputs.season,
+				season,
 				playoffs,
 				regularSeason: !playoffs,
 				mergeStats: true,
@@ -770,11 +799,10 @@ const updateLeaders = async (
 						}
 
 						// Compare against value normalized for team games played
-						const gpTeam = gamesPlayedCache.get(
-							inputs.season,
-							playoffs,
-							p.stats.tid,
-						);
+						if (!gamesPlayedCache.has(season, playoffs)) {
+							await gamesPlayedCache.loadSeason(season, playoffs);
+						}
+						const gpTeam = gamesPlayedCache.get(season, playoffs, p.stats.tid);
 
 						if (gpTeam !== undefined) {
 							// Special case GP
@@ -803,17 +831,22 @@ const updateLeaders = async (
 				}
 
 				if (pass) {
+					// Players can appear multiple times if looking at all seasons
+					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
+
 					const leader = {
 						abbrev: p.stats.abbrev,
 						injury: p.injury,
 						jerseyNumber: p.jerseyNumber,
+						key,
 						nameAbbrev: p.nameAbbrev,
 						pid: p.pid,
 						pos: p.ratings.pos,
+						season: inputs.season === "all" ? season : undefined,
 						stat: p.stats[cat.statProp],
 						skills: p.ratings.skills,
 						tid: p.stats.tid,
-						userTeam: g.get("userTid", inputs.season) === p.stats.tid,
+						userTeam: g.get("userTid", season) === p.stats.tid,
 						watch: p.watch,
 					};
 

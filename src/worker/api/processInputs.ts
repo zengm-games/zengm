@@ -353,8 +353,15 @@ const leaders = (params: Params) => {
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
+	let season: "career" | "all" | number;
+	if (params.season === "career" || params.season === "all") {
+		season = params.season;
+	} else {
+		season = validateSeason(params.season);
+	}
+
 	return {
-		season: validateSeason(params.season),
+		season,
 		playoffs,
 	};
 };

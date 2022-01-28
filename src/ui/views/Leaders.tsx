@@ -15,9 +15,12 @@ const Row = ({
 	cat: View<"leaders">["categories"][number];
 	p: View<"leaders">["categories"][number]["leaders"][number];
 	rank: number;
-	season: number;
+	season: View<"leaders">["season"];
 }) => {
 	const { clicked, toggleClicked } = useClickable();
+
+	const numericSeason =
+		season === "career" ? undefined : season === "all" ? p.season : season;
 
 	return (
 		<tr
@@ -35,17 +38,22 @@ const Row = ({
 					pid={p.pid}
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
-					season={season}
+					season={numericSeason}
 					skills={p.skills}
 					watch={p.watch}
 				>
 					{p.nameAbbrev}
 				</PlayerNameLabels>
 				<a
-					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}
+					href={helpers.leagueUrl([
+						"roster",
+						`${p.abbrev}_${p.tid}`,
+						numericSeason,
+					])}
 					className="mx-2"
 				>
 					{p.abbrev}
+					{p.season !== undefined ? ` ${p.season}` : null}
 				</a>
 				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
@@ -65,7 +73,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 		jumpToSeason: season,
 		dropdownView: "leaders",
 		dropdownFields: {
-			seasons: season,
+			seasonsAndCareer: season,
 			playoffs,
 		},
 	});
@@ -103,7 +111,7 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 								<tbody>
 									{cat.leaders.map((p, j) => (
 										<Row
-											key={p.pid}
+											key={p.key}
 											cat={cat}
 											p={p}
 											rank={j + 1}

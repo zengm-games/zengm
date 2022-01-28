@@ -1,8 +1,7 @@
 import { idb } from "../../worker/db";
 import getCols, { LeagueVars, MetaCol } from "./columns/getCols";
-import { uniq } from "lodash-es";
+import { cloneDeep, uniq } from "lodash-es";
 import { g } from "../../worker/util";
-import { helpers } from "./index";
 
 export class TableConfig {
 	public fallback: string[];
@@ -51,7 +50,7 @@ export class TableConfig {
 	}
 
 	static unserialize(_config: TableConfig) {
-		const serialized = helpers.deepCopy(_config);
+		const serialized = cloneDeep(_config);
 		return new TableConfig(
 			serialized.tableName,
 			serialized.fallback,

@@ -1,7 +1,13 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import { idb } from "../db";
 import { defaultGameAttributes, g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type {
+	MinimalPlayerRatings,
+	Player,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
+import { groupByUnique } from "../../common/groupBy";
 
 const getCategoriesAndStats = () => {
 	const categories = bySport<
@@ -627,6 +633,41 @@ class GamesPlayedCache {
 	}
 }
 
+const iterateAllPlayers = async (
+	season: number,
+	cb: (p: Player<MinimalPlayerRatings>) => Promise<void>,
+) => {
+	// Even in past seasons, make sure we have latest info for players
+	const cachePlayers = await idb.cache.players.getAll();
+	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
+
+	// Even for current season, hit database in case someone died or was edited to be retired mid season
+
+	// This is similar to activeSeason from getCopies.players
+	const transaction = idb.league.transaction("players");
+
+	// + 1 in upper range is because you don't accumulate stats until the year after the draft
+	const range = IDBKeyRange.bound([-Infinity, season], [season + 1, Infinity]);
+
+	let cursor = await transaction.store
+		.index("draft.year, retiredYear")
+		.openCursor(range);
+
+	while (cursor) {
+		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+		const [draftYear, retiredYear] = cursor.key;
+		if (retiredYear < season) {
+			cursor = await cursor.continue([draftYear, season]);
+		} else {
+			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
+			await cb(p);
+			cursor = await cursor.continue();
+		}
+	}
+};
+
+const NUM_LEADERS = 10;
+
 const updateLeaders = async (
 	inputs: ViewInput<"leaders">,
 	updateEvents: UpdateEvents,
@@ -641,32 +682,6 @@ const updateLeaders = async (
 	) {
 		const { categories, stats } = getCategoriesAndStats();
 		const playoffs = inputs.playoffs === "playoffs";
-
-		let players;
-		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
-		} else {
-			players = await idb.getCopies.players(
-				{
-					activeSeason: inputs.season,
-				},
-				"noCopyCache",
-			);
-		}
-
-		players = await idb.getCopies.playersPlus(players, {
-			attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
-			ratings: ["skills", "pos"],
-			stats: ["abbrev", "tid", ...stats],
-			season: inputs.season,
-			playoffs,
-			regularSeason: !playoffs,
-			mergeStats: true,
-		});
-		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
 
 		// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
 		const numPlayersOnCourtFactor = bySport({
@@ -685,15 +700,43 @@ const updateLeaders = async (
 		const gamesPlayedCache = new GamesPlayedCache();
 		await gamesPlayedCache.loadSeason(inputs.season, playoffs);
 
-		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
-		for (const cat of categories) {
-			if (cat.sortAscending) {
-				players.sort((a, b) => a.stats[cat.statProp] - b.stats[cat.statProp]);
-			} else {
-				players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
+		const outputCategories = categories.map(category => ({
+			name: category.name,
+			stat: category.stat,
+			statProp: category.statProp,
+			title: category.title,
+			data: [] as any[],
+		}));
+
+		await iterateAllPlayers(inputs.season, async pRaw => {
+			const p = await idb.getCopy.playersPlus(pRaw, {
+				attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
+				ratings: ["skills", "pos"],
+				stats: ["abbrev", "tid", ...stats],
+				season: inputs.season,
+				playoffs,
+				regularSeason: !playoffs,
+				mergeStats: true,
+			});
+			if (!p) {
+				return;
 			}
 
-			for (const p of players) {
+			for (let i = 0; i < categories.length; i++) {
+				const cat = categories[i];
+				const outputCat = outputCategories[i];
+
+				const value = p.stats[cat.statProp];
+				const lastValue = outputCat.data.at(-1)?.stat;
+				if (
+					outputCat.data.length >= NUM_LEADERS &&
+					((cat.sortAscending && value > lastValue) ||
+						(!cat.sortAscending && value < lastValue))
+				) {
+					// Value is not good enough for the top 10
+					continue;
+				}
+
 				// Test if the player meets the minimum statistical requirements for this category
 				let pass = cat.minStats.length === 0 && (!cat.filter || cat.filter(p));
 
@@ -746,27 +789,22 @@ const updateLeaders = async (
 					leader.abbrev = leader.stats.abbrev;
 					leader.tid = leader.stats.tid;
 					delete leader.stats;
-					leader.userTeam = userAbbrev === leader.abbrev;
-					cat.data.push(leader);
-				}
+					leader.userTeam = g.get("userTid", inputs.season) === leader.tid;
 
-				// Stop when we found 10
-				if (cat.data.length === 10) {
-					break;
+					// Add to current leaders, truncate, and sort before going on to next player
+					outputCat.data = outputCat.data.slice(0, NUM_LEADERS - 1);
+					outputCat.data.push(leader);
+					if (cat.sortAscending) {
+						outputCat.data.sort((a, b) => a.stat - b.stat);
+					} else {
+						outputCat.data.sort((a, b) => b.stat - a.stat);
+					}
 				}
 			}
-
-			// @ts-expect-error
-			delete cat.minStats;
-
-			// @ts-expect-error
-			delete cat.minValue;
-
-			delete cat.filter;
-		}
+		});
 
 		return {
-			categories,
+			categories: outputCategories,
 			playoffs: inputs.playoffs,
 			season: inputs.season,
 		};

@@ -587,8 +587,13 @@ class GamesPlayedCache {
 	get(season: number | "career", playoffs: boolean, tid: number) {
 		if (season === "career") {
 			if (playoffs) {
-				// Arbitrary - half a season
-				return g.get("numGames") / 2;
+				// Arbitrary - two full playoffs runs
+				const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries");
+				let sum = 0;
+				for (const games of numGamesPlayoffSeries) {
+					sum += games;
+				}
+				return 2 * sum;
 			}
 
 			// Arbitrary - 5 seasons

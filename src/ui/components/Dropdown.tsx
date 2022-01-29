@@ -43,7 +43,7 @@ const Select = ({
 			let currentValue: string | ResponsiveOption[] = "";
 			for (const option of options) {
 				if (option.key === value) {
-					currentValue = option.val;
+					currentValue = option.value;
 					break;
 				}
 			}
@@ -67,9 +67,9 @@ const Select = ({
 		const widthsToCheck = new Set([768]);
 
 		// Also check any other widths where there is a breakpoint in the text of one of the options for this dropdown
-		for (const { val } of options) {
-			if (Array.isArray(val)) {
-				for (const { minWidth } of val) {
+		for (const { value } of options) {
+			if (Array.isArray(value)) {
+				for (const { minWidth } of value) {
 					if (minWidth > -Infinity) {
 						widthsToCheck.add(minWidth);
 					}
@@ -139,7 +139,7 @@ const Select = ({
 				{options.map(opt => {
 					return (
 						<option key={opt.key} value={opt.key}>
-							{getResponsiveValue2(opt.val)}
+							{getResponsiveValue2(opt.value)}
 						</option>
 					);
 				})}

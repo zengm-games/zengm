@@ -5,6 +5,7 @@ import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
 import range from "lodash-es/range";
 import type { Col } from "../components/DataTable";
+import { makeNormalResponsive } from "../hooks/useDropdownOptions";
 
 const LeadersYears = ({
 	allLeaders,
@@ -22,10 +23,15 @@ const LeadersYears = ({
 			playoffs,
 		},
 		dropdownCustomOptions: {
-			stats: stats.map(stat => ({
-				key: stat,
-				value: getCols([`stat:${stat}`])[0].title,
-			})),
+			stats: stats.map(stat => {
+				const col = getCols([`stat:${stat}`])[0];
+				return {
+					key: stat,
+					value: col.desc
+						? makeNormalResponsive(col.title, col.desc)
+						: col.title,
+				};
+			}),
 		},
 	});
 
@@ -88,7 +94,6 @@ const LeadersYears = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "desc"]}
-				hideAllControls
 				name="LeadersYears"
 				rows={rows}
 			/>

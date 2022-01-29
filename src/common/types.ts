@@ -927,13 +927,7 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all" | "career";
-	dropdownCustomOptions?: Record<
-		string,
-		{
-			key: number | string;
-			value: string;
-		}[]
-	>;
+	dropdownCustomOptions?: Record<string, DropdownOption[]>;
 	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
 	dropdownView?: string;
 	dropdownFields?: {
@@ -1437,6 +1431,7 @@ import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball"
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
 import type { TIEBREAKERS } from "./constants";
+import type { DropdownOption } from "../ui/hooks/useDropdownOptions";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
 	Record<TeamStatAttrFootball, number> &
 	Record<TeamStatAttrHockey, number> & {

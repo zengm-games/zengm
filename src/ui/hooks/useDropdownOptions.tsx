@@ -14,7 +14,12 @@ export type ResponsiveOption = {
 	text: string;
 };
 
-const makeNormalResponsive = (short: string, long: string) => [
+export type DropdownOption = {
+	key: number | string;
+	value: string | ResponsiveOption[];
+};
+
+export const makeNormalResponsive = (short: string, long: string) => [
 	{
 		minWidth: -Infinity,
 		text: short,
@@ -184,7 +189,7 @@ export const getDropdownValue = (
 
 const useDropdownOptions = (
 	field: string,
-	customOptions?: NonNullable<LocalStateUI["dropdownCustomOptions"]>[string],
+	customOptions?: DropdownOption[],
 ) => {
 	const state = useLocalShallow(state2 => ({
 		hideDisabledTeams: state2.hideDisabledTeams,
@@ -202,10 +207,7 @@ const useDropdownOptions = (
 		if (customOptions.length === 0) {
 			return [];
 		} else {
-			return customOptions.map(({ key, value }) => ({
-				key,
-				val: value,
-			}));
+			return customOptions;
 		}
 	} else if (field === "teams") {
 		keys = Object.keys(sortedTeams);
@@ -399,17 +401,14 @@ const useDropdownOptions = (
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}
 
-	const newOptions: {
-		key: number | string;
-		val: string | ResponsiveOption[];
-	}[] = keys.map(rawKey => {
+	const newOptions: DropdownOption[] = keys.map(rawKey => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")
 				? rawKey.split("|||")[0]
 				: rawKey;
 		return {
 			key,
-			val: getDropdownValue(rawKey, sortedTeams),
+			value: getDropdownValue(rawKey, sortedTeams),
 		};
 	});
 

@@ -355,10 +355,10 @@ class GamesPlayedCache {
 		}
 
 		if (playoffs) {
-			return this.playoffsCache[season][tid] ?? 0;
+			return this.playoffsCache[season]?.[tid] ?? null;
 		}
 
-		return this.currentSeasonCache?.[tid] ?? 0;
+		return this.currentSeasonCache?.[tid] ?? null;
 	}
 }
 
@@ -560,23 +560,27 @@ const updateLeaders = async (
 							playerStats.tid,
 						);
 
-						if (gpTeam !== undefined) {
-							// Special case GP
-							if (minStat === "gp") {
-								if (playerValue / gpTeam >= minValue / g.get("numGames")) {
-									pass = true;
-									break; // If one is true, don't need to check the others
-								}
-							}
+						if (gpTeam === null) {
+							// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
+							pass = true;
+							break;
+						}
 
-							// Other stats
-							if (
-								playerValue >=
-								Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
-							) {
+						// Special case GP
+						if (minStat === "gp") {
+							if (playerValue / gpTeam >= minValue / g.get("numGames")) {
 								pass = true;
 								break; // If one is true, don't need to check the others
 							}
+						}
+
+						// Other stats
+						if (
+							playerValue >=
+							Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
+						) {
+							pass = true;
+							break; // If one is true, don't need to check the others
 						}
 					}
 				}

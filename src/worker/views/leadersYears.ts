@@ -127,7 +127,7 @@ const updateLeadersYears = async (
 					nameAbbrev: p.nameAbbrev,
 					pid: p.pid,
 					stat: p.stats[cat.stat],
-					userTeam: g.get("userTid") === p.stats.tid,
+					userTeam: g.get("userTid", season) === p.stats.tid,
 					watch: p.watch,
 				};
 

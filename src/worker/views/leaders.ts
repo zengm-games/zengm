@@ -9,7 +9,9 @@ import {
 import type {
 	MinimalPlayerRatings,
 	Player,
+	PlayerFiltered,
 	PlayerInjury,
+	PlayerStatType,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
@@ -419,6 +421,85 @@ const iterateAllPlayers = async (
 	}
 };
 
+type Category = ReturnType<typeof getCategoriesAndStats>["categories"][number];
+
+const playerMeetsCategoryRequirements = ({
+	cat,
+	gamesPlayedCache,
+	p,
+	playerStats,
+	playoffs,
+	season,
+	statType,
+}: {
+	cat: Category;
+	gamesPlayedCache: GamesPlayedCache;
+	p: PlayerFiltered;
+	playerStats: Record<string, any>;
+	playoffs: boolean;
+	season: number | "career";
+	statType: PlayerStatType;
+}) => {
+	// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
+	const numPlayersOnCourtFactor = bySport({
+		basketball:
+			defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
+		football: 1,
+		hockey: 1,
+	});
+
+	// To handle changes in number of games, playing time, etc
+	const factor =
+		(g.get("numGames") / defaultGameAttributes.numGames) *
+		numPlayersOnCourtFactor *
+		helpers.quarterLengthFactor();
+
+	// Test if the player meets the minimum statistical requirements for this category
+	let pass = !cat.minStats && (!cat.filter || cat.filter(p));
+
+	if (!pass && cat.minStats) {
+		for (const [minStat, minValue] of Object.entries(cat.minStats)) {
+			// In basketball, everything except gp is a per-game average, so we need to scale them by games played
+			let playerValue;
+			if (!isSport("basketball") || minStat === "gp" || statType === "totals") {
+				playerValue = playerStats[minStat];
+			} else if (statType === "per36") {
+				playerValue =
+					(playerStats[minStat] * playerStats.gp * playerStats.min) / 36;
+			} else {
+				playerValue = playerStats[minStat] * playerStats.gp;
+			}
+
+			const gpTeam = gamesPlayedCache.get(season, playoffs, playerStats.tid);
+
+			if (gpTeam === null) {
+				// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
+				pass = true;
+				break;
+			}
+
+			// Special case GP
+			if (minStat === "gp") {
+				if (playerValue / gpTeam >= minValue / g.get("numGames")) {
+					pass = true;
+					break; // If one is true, don't need to check the others
+				}
+			}
+
+			// Other stats
+			if (
+				playerValue >=
+				Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
+			) {
+				pass = true;
+				break; // If one is true, don't need to check the others
+			}
+		}
+	}
+
+	return pass;
+};
+
 const NUM_LEADERS = 10;
 
 const updateLeaders = async (
@@ -436,20 +517,6 @@ const updateLeaders = async (
 	) {
 		const { categories, stats } = getCategoriesAndStats();
 		const playoffs = inputs.playoffs === "playoffs";
-
-		// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
-		const numPlayersOnCourtFactor = bySport({
-			basketball:
-				defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
-			football: 1,
-			hockey: 1,
-		});
-
-		// To handle changes in number of games, playing time, etc
-		const factor =
-			(g.get("numGames") / defaultGameAttributes.numGames) *
-			numPlayersOnCourtFactor *
-			helpers.quarterLengthFactor();
 
 		const gamesPlayedCache = new GamesPlayedCache();
 
@@ -534,56 +601,15 @@ const updateLeaders = async (
 					continue;
 				}
 
-				// Test if the player meets the minimum statistical requirements for this category
-				let pass = !cat.minStats && (!cat.filter || cat.filter(p));
-
-				if (!pass && cat.minStats) {
-					for (const [minStat, minValue] of Object.entries(cat.minStats)) {
-						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
-						let playerValue;
-						if (
-							!isSport("basketball") ||
-							minStat === "gp" ||
-							inputs.statType === "totals"
-						) {
-							playerValue = playerStats[minStat];
-						} else if (inputs.statType === "per36") {
-							playerValue =
-								(playerStats[minStat] * playerStats.gp * playerStats.min) / 36;
-						} else {
-							playerValue = playerStats[minStat] * playerStats.gp;
-						}
-
-						const gpTeam = gamesPlayedCache.get(
-							season,
-							playoffs,
-							playerStats.tid,
-						);
-
-						if (gpTeam === null) {
-							// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
-							pass = true;
-							break;
-						}
-
-						// Special case GP
-						if (minStat === "gp") {
-							if (playerValue / gpTeam >= minValue / g.get("numGames")) {
-								pass = true;
-								break; // If one is true, don't need to check the others
-							}
-						}
-
-						// Other stats
-						if (
-							playerValue >=
-							Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
-						) {
-							pass = true;
-							break; // If one is true, don't need to check the others
-						}
-					}
-				}
+				const pass = playerMeetsCategoryRequirements({
+					cat,
+					gamesPlayedCache,
+					p,
+					playerStats,
+					playoffs,
+					season,
+					statType: inputs.statType,
+				});
 
 				if (pass) {
 					// Players can appear multiple times if looking at all seasons

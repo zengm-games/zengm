@@ -49,13 +49,25 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 		const sortedTeams = getSortedTeams(state);
 
 		if (dropdownFields) {
-			for (const key of Object.values(dropdownFields)) {
+			for (const [dropdownKey, key] of Object.entries(dropdownFields)) {
 				if (key === "all") {
 					// Not much use showing "All X" in the title, and also this saves us from having to dedupe all the "all|||" keys in getDropdownValue
 					continue;
 				}
 
-				const value = getDropdownValue(key, sortedTeams);
+				let value;
+				if (dropdownCustomOptions?.[dropdownKey]) {
+					const option = dropdownCustomOptions[dropdownKey].find(
+						row => row.key === key,
+					);
+					if (option) {
+						value = option.value;
+					}
+				}
+
+				if (value === undefined) {
+					value = getDropdownValue(key, sortedTeams);
+				}
 
 				if (value !== undefined) {
 					parts.push(getResponsiveValue(value, Infinity));
@@ -64,7 +76,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 		}
 
 		document.title = parts.join(" » ");
-	}, [dropdownFields, state, title]);
+	}, [dropdownCustomOptions, dropdownFields, state, title]);
 
 	// Without useLayoutEffect, weird shit happens in Safari! State inappropriately bleeds over from one load of a view to the next. Not sure why!
 	useLayoutEffect(() => {

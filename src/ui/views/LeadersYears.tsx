@@ -35,10 +35,6 @@ const LeadersYears = ({
 		},
 	});
 
-	const col = getCols([`stat:${stat}`])[0];
-
-	console.log("allLeaders", allLeaders, col);
-
 	const cols = [
 		getCols(["Season"])[0],
 		...range(1, 11).map(

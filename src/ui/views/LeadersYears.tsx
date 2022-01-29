@@ -87,12 +87,16 @@ const LeadersYears = ({
 			/>
 			<LeadersTopText includeHighlight noHighlightActive />
 
-			<DataTable
-				cols={cols}
-				defaultSort={[0, "desc"]}
-				name="LeadersYears"
-				rows={rows}
-			/>
+			{rows.length === 0 ? (
+				<p>No data yet.</p>
+			) : (
+				<DataTable
+					cols={cols}
+					defaultSort={[0, "desc"]}
+					name="LeadersYears"
+					rows={rows}
+				/>
+			)}
 		</>
 	);
 };

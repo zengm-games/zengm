@@ -267,7 +267,8 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 		}
 	}
 
-	const statsSet = new Set<string>();
+	// Always include GP, since it's used to scale minStats based on season length
+	const statsSet = new Set<string>(["gp"]);
 	for (const { minStats, stat } of categories) {
 		statsSet.add(stat);
 

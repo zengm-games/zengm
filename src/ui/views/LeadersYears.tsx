@@ -55,8 +55,12 @@ const LeadersYears = ({
 				...leaders.map(p => ({
 					value: (
 						<>
-							<a href={helpers.leagueUrl(["player", p.pid])}>{p.nameAbbrev}</a>{" "}
-							({helpers.roundStat(p.stat, stat, totals)})
+							<PlayerNameLabels pid={p.pid} season={season} watch={p.watch}>
+								{p.nameAbbrev}
+							</PlayerNameLabels>
+							<span className="ms-2">
+								{helpers.roundStat(p.stat, stat, totals)}
+							</span>
 						</>
 					),
 					searchValue: `${p.nameAbbrev} (${p.stat})`,

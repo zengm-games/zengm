@@ -8,6 +8,7 @@ import { bySport, isSport } from "../../common";
 
 const Row = ({
 	cat,
+	highlightActiveAndHOF,
 	p,
 	rank,
 	season,
@@ -16,9 +17,8 @@ const Row = ({
 	cat: View<"leaders">["categories"][number];
 	p: View<"leaders">["categories"][number]["leaders"][number];
 	rank: number;
-	season: View<"leaders">["season"];
 	totals: boolean;
-}) => {
+} & Pick<View<"leaders">, "highlightActiveAndHOF" | "season">) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const numericSeason =
@@ -34,6 +34,8 @@ const Row = ({
 	return (
 		<tr
 			className={classNames({
+				"table-danger": highlightActiveAndHOF && p.hof,
+				"table-success": highlightActiveAndHOF && p.retiredYear === Infinity,
 				"table-info": p.userTeam,
 				"table-warning": clicked,
 			})}
@@ -70,6 +72,7 @@ const Row = ({
 
 const Leaders = ({
 	categories,
+	highlightActiveAndHOF,
 	playoffs,
 	season,
 	statType,
@@ -104,6 +107,14 @@ const Leaders = ({
 				})}
 				).
 			</p>
+			{highlightActiveAndHOF ? (
+				<p>
+					Players from team are{" "}
+					<span className="text-info">highlighted in blue</span>. Active players
+					are <span className="text-success">highlighted in green</span>. Hall
+					of Famers are <span className="text-danger">highlighted in red</span>.
+				</p>
+			) : null}
 
 			<div className="row" style={{ marginTop: -14 }}>
 				{categories.map(cat => {
@@ -133,6 +144,7 @@ const Leaders = ({
 											<Row
 												key={p.key}
 												cat={cat}
+												highlightActiveAndHOF={highlightActiveAndHOF}
 												p={p}
 												rank={j + 1}
 												season={season}

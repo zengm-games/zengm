@@ -518,19 +518,19 @@ const updateLeaders = async (
 		const { categories, stats } = getCategoriesAndStats();
 		const playoffs = inputs.playoffs === "playoffs";
 
-		const gamesPlayedCache = new GamesPlayedCache();
-
 		const outputCategories = categories.map(category => ({
 			titleOverride: category.titleOverride,
 			stat: category.stat,
 			leaders: [] as {
 				abbrev: string;
+				hof: boolean;
 				injury: PlayerInjury | undefined;
 				jerseyNumber: string;
 				key: number | string;
 				nameAbbrev: string;
 				pid: number;
 				pos: string;
+				retiredYear: number;
 				season: number | undefined;
 				stat: number;
 				skills: string[];
@@ -541,6 +541,7 @@ const updateLeaders = async (
 		}));
 
 		// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
+		const gamesPlayedCache = new GamesPlayedCache();
 		let seasons: number[];
 		if (inputs.season === "career") {
 			// Nothing to cache
@@ -554,7 +555,15 @@ const updateLeaders = async (
 
 		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
 			const p = await idb.getCopy.playersPlus(pRaw, {
-				attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
+				attrs: [
+					"pid",
+					"nameAbbrev",
+					"injury",
+					"watch",
+					"jerseyNumber",
+					"hof",
+					"retiredYear",
+				],
 				ratings: ["skills", "pos"],
 				stats: ["abbrev", "tid", ...stats],
 				season: season === "career" ? undefined : season,
@@ -625,14 +634,19 @@ const updateLeaders = async (
 						}
 					}
 
+					const userTid =
+						season !== "career" ? g.get("userTid", season) : g.get("userTid");
+
 					const leader = {
 						abbrev,
+						hof: p.hof,
 						injury: p.injury,
 						jerseyNumber: p.jerseyNumber,
 						key,
 						nameAbbrev: p.nameAbbrev,
 						pid: p.pid,
 						pos: p.ratings.pos,
+						retiredYear: p.retiredYear,
 						season:
 							inputs.season === "all" && season !== "career"
 								? season
@@ -640,8 +654,7 @@ const updateLeaders = async (
 						stat: playerStats[cat.stat],
 						skills: p.ratings.skills,
 						tid,
-						userTeam:
-							season !== "career" && g.get("userTid", season) === p.stats.tid,
+						userTeam: userTid === tid,
 						watch: p.watch,
 					};
 
@@ -657,8 +670,14 @@ const updateLeaders = async (
 			}
 		});
 
+		const highlightActiveAndHOF =
+			inputs.season === "career" ||
+			inputs.season === "all" ||
+			inputs.season < g.get("season");
+
 		return {
 			categories: outputCategories,
+			highlightActiveAndHOF,
 			playoffs: inputs.playoffs,
 			season: inputs.season,
 			statType: inputs.statType,

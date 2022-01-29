@@ -1480,7 +1480,18 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "array",
 							items: {
 								type: "object",
-								properties: {},
+								properties: {
+									playoffs: {
+										type: "boolean",
+									},
+									season: {
+										type: "integer",
+									},
+									tid: {
+										type: "integer",
+									},
+								},
+								required: ["playoffs", "season", "tid"],
 							},
 						},
 						statsTids: {

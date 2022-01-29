@@ -293,42 +293,44 @@ class GamesPlayedCache {
 		);
 	}
 
-	async loadSeason(season: number | "career", playoffs: boolean) {
-		if (season === "career" || this.straightNumGames(season, playoffs)) {
-			return;
-		}
+	async loadSeasons(seasons: number[], playoffs: boolean) {
+		for (const season of seasons) {
+			if (this.straightNumGames(season, playoffs)) {
+				continue;
+			}
 
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				season,
-			},
-			"noCopyCache",
-		);
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					season,
+				},
+				"noCopyCache",
+			);
 
-		const numGames = g.get("numGames", season);
+			const numGames = g.get("numGames", season);
 
-		const cache: Record<number, number> = {};
-		for (const teamSeason of teamSeasons) {
-			if (playoffs) {
-				if (teamSeason.gp < numGames) {
-					cache[teamSeason.tid] = 0;
+			const cache: Record<number, number> = {};
+			for (const teamSeason of teamSeasons) {
+				if (playoffs) {
+					if (teamSeason.gp < numGames) {
+						cache[teamSeason.tid] = 0;
+					} else {
+						cache[teamSeason.tid] = teamSeason.gp - numGames;
+					}
 				} else {
-					cache[teamSeason.tid] = teamSeason.gp - numGames;
-				}
-			} else {
-				// Don't count playoff games
-				if (teamSeason.gp > numGames) {
-					cache[teamSeason.tid] = numGames;
-				} else {
-					cache[teamSeason.tid] = teamSeason.gp;
+					// Don't count playoff games
+					if (teamSeason.gp > numGames) {
+						cache[teamSeason.tid] = numGames;
+					} else {
+						cache[teamSeason.tid] = teamSeason.gp;
+					}
 				}
 			}
-		}
 
-		if (playoffs) {
-			this.playoffsCache[season] = cache;
-		} else {
-			this.currentSeasonCache = cache;
+			if (playoffs) {
+				this.playoffsCache[season] = cache;
+			} else {
+				this.currentSeasonCache = cache;
+			}
 		}
 	}
 
@@ -481,9 +483,7 @@ const updateLeaders = async (
 		} else {
 			seasons = [inputs.season];
 		}
-		for (const season of seasons) {
-			await gamesPlayedCache.loadSeason(season, playoffs);
-		}
+		await gamesPlayedCache.loadSeasons(seasons, playoffs);
 
 		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
 			const p = await idb.getCopy.playersPlus(pRaw, {

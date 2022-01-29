@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
+import { getCols, helpers } from "../util";
 import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
 import type { View } from "../../common/types";
 import useClickable from "../hooks/useClickable";
@@ -60,7 +60,7 @@ const Row = ({
 				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
 			<td className="text-end">
-				{cat.stat === "WS/48"
+				{cat.statProp === "ws48"
 					? helpers.roundWinp(p.stat)
 					: helpers.roundStat(p.stat, cat.statProp, totals)}
 			</td>
@@ -106,36 +106,45 @@ const Leaders = ({
 			</p>
 
 			<div className="row" style={{ marginTop: -14 }}>
-				{categories.map(cat => (
-					<div
-						key={cat.name}
-						className={colClassName}
-						style={{ marginTop: 14 }}
-					>
-						<ResponsiveTableWrapper>
-							<table className="table table-striped table-sm leaders">
-								<thead>
-									<tr title={cat.title}>
-										<th>{cat.name}</th>
-										<th className="text-end">{cat.stat}</th>
-									</tr>
-								</thead>
-								<tbody>
-									{cat.leaders.map((p, j) => (
-										<Row
-											key={p.key}
-											cat={cat}
-											p={p}
-											rank={j + 1}
-											season={season}
-											totals={statType === "totals" && isSport("basketball")}
-										/>
-									))}
-								</tbody>
-							</table>
-						</ResponsiveTableWrapper>
-					</div>
-				))}
+				{categories.map(cat => {
+					const col = getCols([`stat:${cat.statProp}`])[0];
+					if (cat.nameOverride === col.desc) {
+						throw new Error("Useless nameOverride");
+					}
+					const name = cat.nameOverride ?? col.desc;
+					const title = cat.nameOverride ? col.desc : undefined;
+
+					return (
+						<div
+							key={cat.statProp}
+							className={colClassName}
+							style={{ marginTop: 14 }}
+						>
+							<ResponsiveTableWrapper>
+								<table className="table table-striped table-sm leaders">
+									<thead>
+										<tr title={title}>
+											<th>{name}</th>
+											<th className="text-end">{col.title}</th>
+										</tr>
+									</thead>
+									<tbody>
+										{cat.leaders.map((p, j) => (
+											<Row
+												key={p.key}
+												cat={cat}
+												p={p}
+												rank={j + 1}
+												season={season}
+												totals={statType === "totals" && isSport("basketball")}
+											/>
+										))}
+									</tbody>
+								</table>
+							</ResponsiveTableWrapper>
+						</div>
+					);
+				})}
 			</div>
 		</>
 	);

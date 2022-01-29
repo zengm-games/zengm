@@ -350,7 +350,7 @@ const injuries = (params: Params) => {
 };
 
 const leaders = (params: Params) => {
-	const playoffs =
+	const playoffs: "playoffs" | "regularSeason" =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
 	let season: "career" | "all" | number;
@@ -383,7 +383,7 @@ const leaders = (params: Params) => {
 };
 
 const leadersYears = (params: Params) => {
-	const playoffs =
+	const playoffs: "playoffs" | "regularSeason" =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
 	let statType: PlayerStatType;

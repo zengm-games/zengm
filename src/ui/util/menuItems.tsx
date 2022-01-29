@@ -350,7 +350,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "leaders",
+				active: pageID => pageID === "leaders" || pageID === "leadersYears",
 				league: true,
 				commandPalette: true,
 				path: ["leaders"],

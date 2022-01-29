@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { bySport, isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
-import type { DraftType } from "../../common/types";
+import type { DraftType, PlayerStatType } from "../../common/types";
 import { helpers, useLocalShallow } from "../util";
 
 const MoreLinks = (
@@ -48,6 +48,12 @@ const MoreLinks = (
 		| {
 				type: "globalSettings";
 		  }
+		| {
+				type: "leaders";
+				playoffs: "playoffs" | "regularSeason";
+				season: number | "career" | "all";
+				statType: PlayerStatType;
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -61,7 +67,7 @@ const MoreLinks = (
 	}));
 
 	let links: {
-		url: (string | number)[] | string;
+		url: (string | number | undefined)[] | string;
 		name: string;
 		className?: string;
 	}[];
@@ -271,6 +277,32 @@ const MoreLinks = (
 		links = [
 			{ url: "/settings", name: "Global Settings" },
 			{ url: "/settings/default", name: "Default New League Settings" },
+		];
+	} else if (props.type === "leaders") {
+		const { playoffs, season, statType } = props;
+
+		links = [
+			{
+				url: ["leaders", season, statType, playoffs],
+				name: "League Leaders",
+			},
+			{
+				url: [
+					"leaders_years",
+					bySport({
+						basketball: "pts",
+						football: "pssYds",
+						hockey: "g",
+					}),
+					statType,
+					playoffs,
+				],
+				name: "Yearly Leaders",
+			},
+			{
+				url: ["player_stats", "all", season, statType, playoffs],
+				name: "Player Stats",
+			},
 		];
 	} else {
 		throw new Error("Invalid MoreLinks type");

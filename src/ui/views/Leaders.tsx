@@ -1,6 +1,10 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
+import {
+	MoreLinks,
+	PlayerNameLabels,
+	ResponsiveTableWrapper,
+} from "../components";
 import type { View } from "../../common/types";
 import useClickable from "../hooks/useClickable";
 import classNames from "classnames";
@@ -134,6 +138,13 @@ const Leaders = ({
 
 	return (
 		<>
+			<MoreLinks
+				type="leaders"
+				page="leaders"
+				playoffs={playoffs}
+				season={season}
+				statType={statType}
+			/>
 			<LeadersTopText includeHighlight={highlightActiveAndHOF} />
 
 			<div className="row" style={{ marginTop: -14 }}>

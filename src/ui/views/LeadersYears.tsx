@@ -1,81 +1,10 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import {
-	DataTable,
-	PlayerNameLabels,
-	ResponsiveTableWrapper,
-} from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
-import useClickable from "../hooks/useClickable";
-import classNames from "classnames";
-import { bySport, isSport } from "../../common";
 import { LeadersTopText } from "./Leaders";
 import range from "lodash-es/range";
 import type { Col } from "../components/DataTable";
-
-const Row = ({
-	cat,
-	highlightActiveAndHOF,
-	p,
-	rank,
-	season,
-	totals,
-}: {
-	cat: View<"leaders">["categories"][number];
-	p: View<"leaders">["categories"][number]["leaders"][number];
-	rank: number;
-	totals: boolean;
-} & Pick<View<"leaders">, "highlightActiveAndHOF" | "season">) => {
-	const { clicked, toggleClicked } = useClickable();
-
-	const numericSeason =
-		season === "career" ? undefined : season === "all" ? p.season : season;
-
-	let teamUrlParts;
-	if (season === "career") {
-		teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
-	} else {
-		teamUrlParts = ["roster", `${p.abbrev}_${p.tid}`, numericSeason];
-	}
-
-	return (
-		<tr
-			className={classNames({
-				"table-danger": highlightActiveAndHOF && p.hof,
-				"table-success": highlightActiveAndHOF && p.retiredYear === Infinity,
-				"table-info": p.userTeam,
-				"table-warning": clicked,
-			})}
-			onClick={toggleClicked}
-		>
-			<td>
-				<div style={{ width: 18 }} className="me-1 float-start">
-					{rank}.
-				</div>
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					season={numericSeason}
-					skills={p.skills}
-					watch={p.watch}
-				>
-					{p.nameAbbrev}
-				</PlayerNameLabels>
-				<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
-					{p.abbrev}
-					{p.season !== undefined ? ` ${p.season}` : null}
-				</a>
-				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
-			</td>
-			<td className="text-end">
-				{cat.stat === "ws48"
-					? helpers.roundWinp(p.stat)
-					: helpers.roundStat(p.stat, cat.stat, totals)}
-			</td>
-		</tr>
-	);
-};
 
 const LeadersYears = ({
 	allLeaders,
@@ -143,6 +72,13 @@ const LeadersYears = ({
 
 	return (
 		<>
+			<MoreLinks
+				type="leaders"
+				page="leaders_years"
+				playoffs={playoffs}
+				season="all"
+				statType={statType}
+			/>
 			<LeadersTopText includeHighlight noHighlightActive />
 
 			<DataTable

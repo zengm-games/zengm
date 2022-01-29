@@ -1,6 +1,4 @@
 Leaders improvements
-- use getCols for labels
-  - test all sports
 - progressive leaders, like bbref
   - before doing this, figure out a better way of handling total/perGame stats in basketball, similar to other sports
     - when i do that, add another option to view totals rather than per game for the other leaders pages

@@ -19,356 +19,257 @@ import range from "lodash-es/range";
 const getCategoriesAndStats = () => {
 	const categories = bySport<
 		{
-			nameOverride?: string;
-			statProp: string;
-			minStats: string[];
-			minValue: number[];
+			titleOverride?: string;
+			stat: string;
+			minStats?: Record<string, number>;
 			sortAscending?: true;
 			filter?: (p: any) => boolean;
 		}[]
 	>({
 		basketball: [
 			{
-				statProp: "pts",
-				minStats: ["gp", "pts"],
-				minValue: [70, 1400],
+				stat: "pts",
+				minStats: { gp: 70, pts: 1400 },
 			},
 			{
-				statProp: "trb",
-				minStats: ["gp", "trb"],
-				minValue: [70, 800],
+				stat: "trb",
+				minStats: { gp: 70, trb: 800 },
 			},
 			{
-				statProp: "ast",
-				minStats: ["gp", "ast"],
-				minValue: [70, 400],
+				stat: "ast",
+				minStats: { gp: 70, ast: 400 },
 			},
 			{
-				statProp: "fg",
-				minStats: [],
-				minValue: [],
+				stat: "fg",
 			},
 			{
-				statProp: "fga",
-				minStats: [],
-				minValue: [],
+				stat: "fga",
 			},
 			{
-				statProp: "fgp",
-				minStats: ["fg"],
-				minValue: [300 * g.get("twoPointAccuracyFactor")],
+				stat: "fgp",
+				minStats: { fg: 300 * g.get("twoPointAccuracyFactor") },
 			},
 			{
-				statProp: "tp",
-				minStats: [],
-				minValue: [],
+				stat: "tp",
 			},
 			{
-				statProp: "tpa",
-				minStats: [],
-				minValue: [],
+				stat: "tpa",
 			},
 			{
-				statProp: "tpp",
-				minStats: ["tp"],
-				minValue: [Math.max(55 * g.get("threePointTendencyFactor"), 12)],
+				stat: "tpp",
+				minStats: { tp: Math.max(55 * g.get("threePointTendencyFactor"), 12) },
 			},
 			{
-				statProp: "ft",
-				minStats: [],
-				minValue: [],
+				stat: "ft",
 			},
 			{
-				statProp: "fta",
-				minStats: [],
-				minValue: [],
+				stat: "fta",
 			},
 			{
-				statProp: "ftp",
-				minStats: ["ft"],
-				minValue: [125],
+				stat: "ftp",
+				minStats: { ft: 125 },
 			},
 			{
-				statProp: "blk",
-				minStats: ["gp", "blk"],
-				minValue: [70, 100],
+				stat: "blk",
+				minStats: { gp: 70, blk: 100 },
 			},
 			{
-				statProp: "stl",
-				minStats: ["gp", "stl"],
-				minValue: [70, 125],
+				stat: "stl",
+				minStats: { gp: 70, stl: 125 },
 			},
 			{
-				statProp: "min",
-				minStats: ["gp", "min"],
-				minValue: [70, 2000],
+				stat: "min",
+				minStats: { gp: 70, min: 2000 },
 			},
 			{
-				statProp: "per",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "per",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "ewa",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ewa",
+				minStats: { min: 2000 },
 			},
 			{
-				nameOverride: "Win Shares / 48 Mins",
-				statProp: "ws48",
-				minStats: ["min"],
-				minValue: [2000],
+				titleOverride: "Win Shares / 48 Mins",
+				stat: "ws48",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "ows",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ows",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "dws",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "dws",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "ws",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ws",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "obpm",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "obpm",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "dbpm",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "dbpm",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "bpm",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "bpm",
+				minStats: { min: 2000 },
 			},
 			{
-				statProp: "vorp",
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "vorp",
+				minStats: { min: 2000 },
 			},
 		],
 		football: [
 			{
-				statProp: "pssYds",
-				minStats: [],
-				minValue: [],
+				stat: "pssYds",
 			},
 			{
-				statProp: "pssYdsPerAtt",
-				minStats: ["pss"],
-				minValue: [14 * 16],
+				stat: "pssYdsPerAtt",
+				minStats: { pss: 14 * 16 },
 			},
 			{
-				statProp: "cmpPct",
-				minStats: ["pss"],
-				minValue: [14 * 16],
+				stat: "cmpPct",
+				minStats: { pss: 14 * 16 },
 			},
 			{
-				statProp: "pssTD",
-				nameOverride: "Passing TDs",
-				minStats: [],
-				minValue: [],
+				stat: "pssTD",
+				titleOverride: "Passing TDs",
 			},
 			{
-				statProp: "pssInt",
-				minStats: [],
-				minValue: [],
+				stat: "pssInt",
 			},
 			{
-				statProp: "qbRat",
-				minStats: ["pss"],
-				minValue: [14 * 16],
+				stat: "qbRat",
+				minStats: { pss: 14 * 16 },
 			},
 			{
-				statProp: "rusYds",
-				minStats: [],
-				minValue: [],
+				stat: "rusYds",
 			},
 			{
-				statProp: "rusYdsPerAtt",
-				minStats: ["rus"],
-				minValue: [6.25 * 16],
+				stat: "rusYdsPerAtt",
+				minStats: { rus: 6.25 * 16 },
 			},
 			{
-				statProp: "rusTD",
-				nameOverride: "Rushing TDs",
-				minStats: [],
-				minValue: [],
+				stat: "rusTD",
+				titleOverride: "Rushing TDs",
 			},
 			{
-				statProp: "recYds",
-				minStats: [],
-				minValue: [],
+				stat: "recYds",
 			},
 			{
-				statProp: "recYdsPerAtt",
-				minStats: ["rec"],
-				minValue: [1.875 * 16],
+				stat: "recYdsPerAtt",
+				minStats: { rec: 1.875 * 16 },
 			},
 			{
-				statProp: "recTD",
-				nameOverride: "Receiving TDs",
-				minStats: [],
-				minValue: [],
+				stat: "recTD",
+				titleOverride: "Receiving TDs",
 			},
 			{
-				statProp: "ydsFromScrimmage",
-				nameOverride: "Yards From Scrimmage",
-				minStats: [],
-				minValue: [],
+				stat: "ydsFromScrimmage",
+				titleOverride: "Yards From Scrimmage",
 			},
 			{
-				statProp: "rusRecTD",
-				nameOverride: "Rushing and Receiving TDs",
-				minStats: [],
-				minValue: [],
+				stat: "rusRecTD",
+				titleOverride: "Rushing and Receiving TDs",
 			},
 			{
-				statProp: "defTck",
-				minStats: [],
-				minValue: [],
+				stat: "defTck",
 			},
 			{
-				statProp: "defSk",
-				minStats: [],
-				minValue: [],
+				stat: "defSk",
 			},
 			{
-				statProp: "defInt",
-				minStats: [],
-				minValue: [],
+				stat: "defInt",
 			},
 			{
-				statProp: "defFmbFrc",
-				minStats: [],
-				minValue: [],
+				stat: "defFmbFrc",
 			},
 			{
-				statProp: "defFmbRec",
-				minStats: [],
-				minValue: [],
+				stat: "defFmbRec",
 			},
 			{
-				statProp: "av",
-				minStats: [],
-				minValue: [],
+				stat: "av",
 			},
 		],
 		hockey: [
 			{
-				statProp: "g",
-				minStats: [],
-				minValue: [],
+				stat: "g",
 			},
 			{
-				statProp: "a",
-				minStats: [],
-				minValue: [],
+				stat: "a",
 			},
 			{
-				statProp: "pts",
-				minStats: [],
-				minValue: [],
+				stat: "pts",
 			},
 			{
-				statProp: "pm",
-				minStats: [],
-				minValue: [],
+				stat: "pm",
 				filter: p => p.ratings.pos !== "G",
 			},
 			{
-				statProp: "pim",
-				minStats: [],
-				minValue: [],
+				stat: "pim",
 			},
 			{
-				statProp: "min",
-				minStats: [],
-				minValue: [],
+				stat: "min",
 				filter: p => p.ratings.pos !== "G",
 			},
 			{
-				statProp: "blk",
-				minStats: [],
-				minValue: [],
+				stat: "blk",
 			},
 			{
-				statProp: "hit",
-				minStats: [],
-				minValue: [],
+				stat: "hit",
 			},
 			{
-				statProp: "tk",
-				minStats: [],
-				minValue: [],
+				stat: "tk",
 			},
 			{
-				statProp: "gv",
-				minStats: [],
-				minValue: [],
+				stat: "gv",
 			},
 			{
-				statProp: "svPct",
-				minStats: ["sv"],
-				minValue: [800],
+				stat: "svPct",
+				minStats: { sv: 800 },
 			},
 			{
-				statProp: "gaa",
-				minStats: ["sv"],
-				minValue: [800],
+				stat: "gaa",
+				minStats: { sv: 800 },
 				sortAscending: true,
 			},
 			{
-				statProp: "so",
-				minStats: [],
-				minValue: [],
+				stat: "so",
 			},
 			{
-				statProp: "gc",
-				minStats: [],
-				minValue: [],
+				stat: "gc",
 			},
 			{
-				statProp: "ops",
-				minStats: [],
-				minValue: [],
+				stat: "ops",
 			},
 			{
-				statProp: "dps",
-				minStats: [],
-				minValue: [],
+				stat: "dps",
 			},
 			{
-				statProp: "gps",
-				minStats: [],
-				minValue: [],
+				stat: "gps",
 			},
 			{
-				statProp: "ps",
-				minStats: [],
-				minValue: [],
+				stat: "ps",
 			},
 		],
 	});
 
 	const statsSet = new Set<string>();
-	for (const { minStats, statProp } of categories) {
-		statsSet.add(statProp);
+	for (const { minStats, stat } of categories) {
+		statsSet.add(stat);
 
-		for (const stat of minStats) {
-			statsSet.add(stat);
+		if (minStats) {
+			for (const stat of Object.keys(minStats)) {
+				statsSet.add(stat);
+			}
 		}
 	}
-
 	const stats = Array.from(statsSet);
+
 	return {
 		categories,
 		stats,
@@ -551,8 +452,8 @@ const updateLeaders = async (
 		const gamesPlayedCache = new GamesPlayedCache();
 
 		const outputCategories = categories.map(category => ({
-			nameOverride: category.nameOverride,
-			statProp: category.statProp,
+			titleOverride: category.titleOverride,
+			stat: category.stat,
 			leaders: [] as {
 				abbrev: string;
 				injury: PlayerInjury | undefined;
@@ -622,7 +523,7 @@ const updateLeaders = async (
 				const cat = categories[i];
 				const outputCat = outputCategories[i];
 
-				const value = playerStats[cat.statProp];
+				const value = playerStats[cat.stat];
 				const lastValue = outputCat.leaders.at(-1)?.stat;
 				if (
 					outputCat.leaders.length >= NUM_LEADERS &&
@@ -634,26 +535,23 @@ const updateLeaders = async (
 				}
 
 				// Test if the player meets the minimum statistical requirements for this category
-				let pass = cat.minStats.length === 0 && (!cat.filter || cat.filter(p));
+				let pass = !cat.minStats && (!cat.filter || cat.filter(p));
 
-				if (!pass) {
-					for (let k = 0; k < cat.minStats.length; k++) {
+				if (!pass && cat.minStats) {
+					for (const [minStat, minValue] of Object.entries(cat.minStats)) {
 						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 						let playerValue;
 						if (
 							!isSport("basketball") ||
-							cat.minStats[k] === "gp" ||
+							minStat === "gp" ||
 							inputs.statType === "totals"
 						) {
-							playerValue = playerStats[cat.minStats[k]];
+							playerValue = playerStats[minStat];
 						} else if (inputs.statType === "per36") {
 							playerValue =
-								(playerStats[cat.minStats[k]] *
-									playerStats.gp *
-									playerStats.min) /
-								36;
+								(playerStats[minStat] * playerStats.gp * playerStats.min) / 36;
 						} else {
-							playerValue = playerStats[cat.minStats[k]] * playerStats.gp;
+							playerValue = playerStats[minStat] * playerStats.gp;
 						}
 
 						const gpTeam = gamesPlayedCache.get(
@@ -664,11 +562,8 @@ const updateLeaders = async (
 
 						if (gpTeam !== undefined) {
 							// Special case GP
-							if (cat.minStats[k] === "gp") {
-								if (
-									playerValue / gpTeam >=
-									cat.minValue[k] / g.get("numGames")
-								) {
+							if (minStat === "gp") {
+								if (playerValue / gpTeam >= minValue / g.get("numGames")) {
 									pass = true;
 									break; // If one is true, don't need to check the others
 								}
@@ -677,9 +572,7 @@ const updateLeaders = async (
 							// Other stats
 							if (
 								playerValue >=
-								Math.ceil(
-									(cat.minValue[k] * factor * gpTeam) / g.get("numGames"),
-								)
+								Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
 							) {
 								pass = true;
 								break; // If one is true, don't need to check the others
@@ -714,7 +607,7 @@ const updateLeaders = async (
 							inputs.season === "all" && season !== "career"
 								? season
 								: undefined,
-						stat: playerStats[cat.statProp],
+						stat: playerStats[cat.stat],
 						skills: p.ratings.skills,
 						tid,
 						userTeam:

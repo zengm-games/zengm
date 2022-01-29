@@ -60,9 +60,9 @@ const Row = ({
 				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
 			<td className="text-end">
-				{cat.statProp === "ws48"
+				{cat.stat === "ws48"
 					? helpers.roundWinp(p.stat)
-					: helpers.roundStat(p.stat, cat.statProp, totals)}
+					: helpers.roundStat(p.stat, cat.stat, totals)}
 			</td>
 		</tr>
 	);
@@ -107,16 +107,16 @@ const Leaders = ({
 
 			<div className="row" style={{ marginTop: -14 }}>
 				{categories.map(cat => {
-					const col = getCols([`stat:${cat.statProp}`])[0];
-					if (cat.nameOverride === col.desc) {
-						throw new Error("Useless nameOverride");
+					const col = getCols([`stat:${cat.stat}`])[0];
+					if (cat.titleOverride === col.desc) {
+						throw new Error("Useless titleOverride");
 					}
-					const name = cat.nameOverride ?? col.desc;
-					const title = cat.nameOverride ? col.desc : undefined;
+					const name = cat.titleOverride ?? col.desc;
+					const title = cat.titleOverride ? col.desc : undefined;
 
 					return (
 						<div
-							key={cat.statProp}
+							key={cat.stat}
 							className={colClassName}
 							style={{ marginTop: 14 }}
 						>

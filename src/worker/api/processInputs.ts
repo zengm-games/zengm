@@ -382,6 +382,38 @@ const leaders = (params: Params) => {
 	};
 };
 
+const leadersYears = (params: Params) => {
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	let statType: PlayerStatType;
+	if (params.statType === "perGame") {
+		statType = "perGame";
+	} else if (params.statType === "per36") {
+		statType = "per36";
+	} else if (params.statType === "totals") {
+		statType = "totals";
+	} else {
+		statType = bySport({
+			basketball: "perGame",
+			football: "totals",
+			hockey: "totals",
+		});
+	}
+
+	const defaultStat = bySport({
+		basketball: "pts",
+		football: "pssYds",
+		hockey: "g",
+	});
+
+	return {
+		stat: params.stat ?? defaultStat,
+		playoffs,
+		statType,
+	};
+};
+
 const dailySchedule = (params: Params) => {
 	if (params.season === "today") {
 		return {
@@ -876,6 +908,7 @@ export default {
 	history,
 	injuries,
 	leaders,
+	leadersYears,
 	leagueFinances: validateSeasonOnly,
 	leagueStats,
 	liveGame,

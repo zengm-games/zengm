@@ -62,11 +62,50 @@ const Row = ({
 				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
 			<td className="text-end">
-				{cat.stat === "ws48"
-					? helpers.roundWinp(p.stat)
-					: helpers.roundStat(p.stat, cat.stat, totals)}
+				{helpers.roundStat(p.stat, cat.stat, totals)}
 			</td>
 		</tr>
+	);
+};
+
+export const LeadersTopText = ({
+	includeHighlight,
+	noHighlightActive,
+}: {
+	includeHighlight?: boolean;
+	noHighlightActive?: boolean;
+}) => {
+	return (
+		<>
+			<p>
+				Only eligible players are shown (<i>e.g.</i>{" "}
+				{bySport({
+					basketball:
+						"a player shooting 2 for 2 on the season is not eligible for the league lead in FG%",
+					football:
+						"a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage",
+					hockey:
+						"a backup goalie who only played one game is not eligible for the league lead in SV%",
+				})}
+				).
+			</p>
+			{includeHighlight ? (
+				<p>
+					Players from your team are{" "}
+					<span className="text-info">highlighted in blue</span>.{" "}
+					{noHighlightActive ? (
+						""
+					) : (
+						<>
+							Active players are{" "}
+							<span className="text-success">highlighted in green</span>.
+						</>
+					)}
+					Hall of Famers are{" "}
+					<span className="text-danger">highlighted in red</span>.
+				</p>
+			) : null}
+		</>
 	);
 };
 
@@ -95,26 +134,7 @@ const Leaders = ({
 
 	return (
 		<>
-			<p>
-				Only eligible players are shown (<i>e.g.</i>{" "}
-				{bySport({
-					basketball:
-						"a player shooting 2 for 2 on the season is not eligible for the league lead in FG%",
-					football:
-						"a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage",
-					hockey:
-						"a backup goalie who only played one game is not eligible for the league lead in SV%",
-				})}
-				).
-			</p>
-			{highlightActiveAndHOF ? (
-				<p>
-					Players from team are{" "}
-					<span className="text-info">highlighted in blue</span>. Active players
-					are <span className="text-success">highlighted in green</span>. Hall
-					of Famers are <span className="text-danger">highlighted in red</span>.
-				</p>
-			) : null}
+			<LeadersTopText includeHighlight={highlightActiveAndHOF} />
 
 			<div className="row" style={{ marginTop: -14 }}>
 				{categories.map(cat => {

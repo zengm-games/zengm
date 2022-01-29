@@ -7,7 +7,10 @@ Leaders improvements
     - each year's career leader up to that year
     - each year's *active* career leader up to that year
 - year-by-year top 10, like bbref
-  - requires the top 10 for a single stat, every season
+  - why is it not working for perGame WS, etc?
+  - less stuff from playersPlus and Leaders
+  - more links
+  - stat in page title
 
 use nicidob's model but fit to random players instead of real players, to get linear prog formula that behaves like the current one
 - running average progs https://discord.com/channels/290013534023057409/290015468939640832/936461665862549505

@@ -18,8 +18,8 @@ import type {
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
 
-const getCategoriesAndStats = () => {
-	const categories = bySport<
+export const getCategoriesAndStats = (onlyStat?: string) => {
+	let categories = bySport<
 		{
 			titleOverride?: string;
 			stat: string;
@@ -260,6 +260,13 @@ const getCategoriesAndStats = () => {
 		],
 	});
 
+	if (onlyStat) {
+		categories = categories.filter(row => row.stat === onlyStat);
+		if (categories.length === 0) {
+			throw new Error(`Invalid stat "${onlyStat}"`);
+		}
+	}
+
 	const statsSet = new Set<string>();
 	for (const { minStats, stat } of categories) {
 		statsSet.add(stat);
@@ -279,7 +286,7 @@ const getCategoriesAndStats = () => {
 };
 
 // Calculate the number of games played for each team, which is used to test if a player qualifies as a league leader
-class GamesPlayedCache {
+export class GamesPlayedCache {
 	currentSeasonCache: Record<number, number> | undefined;
 	playoffsCache: Record<number, Record<number, number>>;
 
@@ -364,7 +371,7 @@ class GamesPlayedCache {
 	}
 }
 
-const iterateAllPlayers = async (
+export const iterateAllPlayers = async (
 	season: number | "all" | "career",
 	cb: (
 		p: Player<MinimalPlayerRatings>,
@@ -423,7 +430,7 @@ const iterateAllPlayers = async (
 
 type Category = ReturnType<typeof getCategoriesAndStats>["categories"][number];
 
-const playerMeetsCategoryRequirements = ({
+export const playerMeetsCategoryRequirements = ({
 	cat,
 	gamesPlayedCache,
 	p,
@@ -500,6 +507,24 @@ const playerMeetsCategoryRequirements = ({
 	return pass;
 };
 
+export type Leader = {
+	abbrev: string;
+	hof: boolean;
+	injury: PlayerInjury | undefined;
+	jerseyNumber: string;
+	key: number | string;
+	nameAbbrev: string;
+	pid: number;
+	pos: string;
+	retiredYear: number;
+	season: number | undefined;
+	stat: number;
+	skills: string[];
+	tid: number;
+	userTeam: boolean;
+	watch: boolean;
+};
+
 const NUM_LEADERS = 10;
 
 const updateLeaders = async (
@@ -521,23 +546,7 @@ const updateLeaders = async (
 		const outputCategories = categories.map(category => ({
 			titleOverride: category.titleOverride,
 			stat: category.stat,
-			leaders: [] as {
-				abbrev: string;
-				hof: boolean;
-				injury: PlayerInjury | undefined;
-				jerseyNumber: string;
-				key: number | string;
-				nameAbbrev: string;
-				pid: number;
-				pos: string;
-				retiredYear: number;
-				season: number | undefined;
-				stat: number;
-				skills: string[];
-				tid: number;
-				userTeam: boolean;
-				watch: boolean;
-			}[],
+			leaders: [] as Leader[],
 		}));
 
 		// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
@@ -658,7 +667,6 @@ const updateLeaders = async (
 						watch: p.watch,
 					};
 
-					// Add to current leaders, truncate, and sort before going on to next player
 					outputCat.leaders = outputCat.leaders.slice(0, NUM_LEADERS - 1);
 					outputCat.leaders.push(leader);
 					if (cat.sortAscending) {

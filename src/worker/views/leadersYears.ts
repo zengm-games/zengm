@@ -1,20 +1,6 @@
-import { bySport, isSport, PHASE } from "../../common";
 import { idb } from "../db";
-import {
-	defaultGameAttributes,
-	g,
-	helpers,
-	processPlayersHallOfFame,
-} from "../util";
-import type {
-	MinimalPlayerRatings,
-	Player,
-	PlayerFiltered,
-	PlayerInjury,
-	PlayerStatType,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types";
+import { g } from "../util";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
 import {
@@ -26,6 +12,18 @@ import {
 } from "./leaders";
 
 const NUM_LEADERS = 10;
+
+type MyLeader = Omit<
+	Leader,
+	| "abbrev"
+	| "jerseyNumber"
+	| "pos"
+	| "injury"
+	| "retiredYear"
+	| "skills"
+	| "tid"
+	| "season"
+>;
 
 const updateLeadersYears = async (
 	inputs: ViewInput<"leadersYears">,
@@ -52,7 +50,7 @@ const updateLeadersYears = async (
 		let allLeaders = seasons
 			.map(season => ({
 				season,
-				leaders: [] as Leader[],
+				leaders: [] as MyLeader[],
 			}))
 			.reverse();
 
@@ -124,19 +122,11 @@ const updateLeadersYears = async (
 
 			if (pass) {
 				const leader = {
-					abbrev: p.stats.abbrev,
 					hof: p.hof,
-					injury: p.injury,
-					jerseyNumber: p.jerseyNumber,
 					key: p.pid,
 					nameAbbrev: p.nameAbbrev,
 					pid: p.pid,
-					pos: p.ratings.pos,
-					retiredYear: p.retiredYear,
-					season: undefined,
 					stat: p.stats[cat.stat],
-					skills: p.ratings.skills,
-					tid: p.stats.tid,
 					userTeam: g.get("userTid") === p.stats.tid,
 					watch: p.watch,
 				};

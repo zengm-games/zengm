@@ -358,6 +358,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: ["leaders_years"],
+				text: "Yearly Leaders",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "playerBios",
 				league: true,
 				commandPalette: true,

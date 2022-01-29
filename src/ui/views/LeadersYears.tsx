@@ -15,7 +15,7 @@ const LeadersYears = ({
 	statType,
 }: View<"leadersYears">) => {
 	useTitleBar({
-		title: "Year-By-Year Leaders",
+		title: "Yearly Leaders",
 		dropdownView: "leaders_years",
 		dropdownFields: {
 			stats: stat,

@@ -10,14 +10,13 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerInjury,
-	PlayerStatType,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
 
-const getCategoriesAndStats = (statType: PlayerStatType) => {
+const getCategoriesAndStats = () => {
 	const categories = bySport<
 		{
 			name: string;
@@ -55,53 +54,69 @@ const getCategoriesAndStats = (statType: PlayerStatType) => {
 				minStats: ["gp", "ast"],
 				minValue: [70, 400],
 			},
-			...(statType === "totals"
-				? [
-						{
-							name: "Field Goals Made",
-							stat: "FG",
-							statProp: "fg",
-							minStats: [],
-							minValue: [],
-						},
-						{
-							name: "Three Pointers Made",
-							stat: "3P",
-							statProp: "tp",
-							minStats: [],
-							minValue: [],
-						},
-						{
-							name: "Free Throws Made",
-							stat: "FT",
-							statProp: "ft",
-							minStats: [],
-							minValue: [],
-						},
-				  ]
-				: [
-						{
-							name: "Field Goal Percentage",
-							stat: "FG%",
-							statProp: "fgp",
-							minStats: ["fg"],
-							minValue: [300 * g.get("twoPointAccuracyFactor")],
-						},
-						{
-							name: "Three Point Percentage",
-							stat: "3P%",
-							statProp: "tpp",
-							minStats: ["tp"],
-							minValue: [Math.max(55 * g.get("threePointTendencyFactor"), 12)],
-						},
-						{
-							name: "Free Throw Percentage",
-							stat: "FT%",
-							statProp: "ftp",
-							minStats: ["ft"],
-							minValue: [125],
-						},
-				  ]),
+			{
+				name: "Field Goals Made",
+				stat: "FG",
+				statProp: "fg",
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Field Goals Attempted",
+				stat: "FGA",
+				statProp: "fga",
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Field Goal Percentage",
+				stat: "FG%",
+				statProp: "fgp",
+				minStats: ["fg"],
+				minValue: [300 * g.get("twoPointAccuracyFactor")],
+			},
+			{
+				name: "Three Pointers Made",
+				stat: "3P",
+				statProp: "tp",
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Three Pointers Attempted",
+				stat: "3PA",
+				statProp: "tpa",
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Three Point Percentage",
+				stat: "3P%",
+				statProp: "tpp",
+				minStats: ["tp"],
+				minValue: [Math.max(55 * g.get("threePointTendencyFactor"), 12)],
+			},
+			{
+				name: "Free Throws Made",
+				stat: "FT",
+				statProp: "ft",
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Free Throws Attempted",
+				stat: "FTA",
+				statProp: "fta",
+				minStats: [],
+				minValue: [],
+			},
+			{
+				name: "Free Throw Percentage",
+				stat: "FT%",
+				statProp: "ftp",
+				minStats: ["ft"],
+				minValue: [125],
+			},
 			{
 				name: "Blocks",
 				stat: "BLK",
@@ -647,7 +662,7 @@ const updateLeaders = async (
 		inputs.playoffs !== state.playoffs ||
 		inputs.statType !== state.statType
 	) {
-		const { categories, stats } = getCategoriesAndStats(inputs.statType);
+		const { categories, stats } = getCategoriesAndStats();
 		const playoffs = inputs.playoffs === "playoffs";
 
 		// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.

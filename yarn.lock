@@ -1356,6 +1356,62 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@parcel/css-darwin-arm64@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-darwin-arm64/-/css-darwin-arm64-1.1.0.tgz#dae8d690eebf492a317c38fa334d66ed89d05495"
+  integrity sha512-zwLLgG4d6oaQAFrbBfUx4MKsn8kw/B84Idefh5uFcp5p+UmWaTJ2c990hpU/q1fWx3fLywDGc0MyQDD5mFj5gA==
+
+"@parcel/css-darwin-x64@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-darwin-x64/-/css-darwin-x64-1.1.0.tgz#114555f4edcac2f3067a2ccf32e4cb5bd030cb6c"
+  integrity sha512-4Fv5wmN8wosajSMI9Kuaj6Z9PnZgu9FXK0xrpopYE3O0f4jE3L15nBXvhYVX9xdpUocLoNEme5oKAqpg54XmPQ==
+
+"@parcel/css-linux-arm-gnueabihf@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-linux-arm-gnueabihf/-/css-linux-arm-gnueabihf-1.1.0.tgz#532fd090cdd474691b12d6b634098393c2a407ed"
+  integrity sha512-3YoTxaU16LKhgkpXSoHDDJN+39YPOwmQKYMjUeOXbvISQAZlxypzaech6azKMeCKWTPF4LpAe8mmXZ/ScFHDvA==
+
+"@parcel/css-linux-arm64-gnu@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-linux-arm64-gnu/-/css-linux-arm64-gnu-1.1.0.tgz#b55a4aa1be083b55e28872efbd00a9f56d1d6423"
+  integrity sha512-UYIeAzzAEi8qIHY9kjzydKeDaoXZIdPk7CpOv13UZEvHYqSb8RPA0bQ+9S7x3q7w/gliM/1tp2+VKtMA2Shgfw==
+
+"@parcel/css-linux-arm64-musl@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-linux-arm64-musl/-/css-linux-arm64-musl-1.1.0.tgz#2ec3f95221694c976fcba6ab813801c8c3c1eacf"
+  integrity sha512-x+2pCPniVHqrEglOx6Rh6ilTgyopL17VvUsf1BCUUDLX9Y7/AqvHodMho7deN2nFbXWMC8sBgsH/H4XsYDtf0Q==
+
+"@parcel/css-linux-x64-gnu@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-linux-x64-gnu/-/css-linux-x64-gnu-1.1.0.tgz#8f603e98d473aefad06fcac0455e522ad4fa3e04"
+  integrity sha512-BBWv1iZpaUo9sX2hRUlYqzd/H3OVsUYlBmclBhPqs4qTJ3bna0+E+i9DdDSaZIgQjGhkk6H/WM1H0P6ho0/8SQ==
+
+"@parcel/css-linux-x64-musl@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-linux-x64-musl/-/css-linux-x64-musl-1.1.0.tgz#5a5530983a1650339cf08feac783d443ef1162be"
+  integrity sha512-ks6Qn382+3dKLblOBb7QAsIJoPjdAJMJwUcPqO5os2BO+wnBaDZuMKR7ItG8yZ7jv6fkZj3Dq+SCNcXVSELIKg==
+
+"@parcel/css-win32-x64-msvc@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css-win32-x64-msvc/-/css-win32-x64-msvc-1.1.0.tgz#cf75b9f3a4d212a61934ecb480fea9a3b813c5d8"
+  integrity sha512-8PWyb/87lFIJtTJ8/emoYVkU0gIG+7nnU2K8JWeJFhKCvuWQCnE1RKaSmQ6Adwids+7IPI97LQHshtfaMo0OOQ==
+
+"@parcel/css@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@parcel/css/-/css-1.1.0.tgz#a36bf491c0c3c5947d59d0360ef4ec5fde9481f2"
+  integrity sha512-iTKWLQxwyMTTMZEddURYP9WbY51bpzqUPejo0yrrxWzPs3sH+wQTdv9EmDT62RmZg6zEaCSKV43949FZd8wwUg==
+  dependencies:
+    detect-libc "^1.0.3"
+  optionalDependencies:
+    "@parcel/css-darwin-arm64" "1.1.0"
+    "@parcel/css-darwin-x64" "1.1.0"
+    "@parcel/css-linux-arm-gnueabihf" "1.1.0"
+    "@parcel/css-linux-arm64-gnu" "1.1.0"
+    "@parcel/css-linux-arm64-musl" "1.1.0"
+    "@parcel/css-linux-x64-gnu" "1.1.0"
+    "@parcel/css-linux-x64-musl" "1.1.0"
+    "@parcel/css-win32-x64-msvc" "1.1.0"
+
 "@popperjs/core@^2.10.1":
   version "2.11.2"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.2.tgz#830beaec4b4091a9e9398ac50f865ddea52186b9"
@@ -2603,7 +2659,7 @@ classnames@^2.3.1:
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
 
-clean-css@^5.2.2, clean-css@^5.2.4:
+clean-css@^5.2.2:
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-5.2.4.tgz#982b058f8581adb2ae062520808fb2429bd487a4"
   integrity sha512-nKseG8wCzEuji/4yrgM/5cthL9oTDc5UOQyFMvW/Q53oP6gLH690o1NbuTh6Y18nujr7BxlsFuS7gXLnLzKJGg==
@@ -3141,6 +3197,11 @@ dequal@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/dequal/-/dequal-2.0.2.tgz#85ca22025e3a87e65ef75a7a437b35284a7e319d"
   integrity sha512-q9K8BlJVxK7hQYqa6XISGmBZbtQQWVXSrRrWreHC94rMt1QL/Impruc+7p2CYSYuVIUr+YCt6hjrs1kkdJRTug==
+
+detect-libc@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
+  integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
 detect-newline@^3.0.0:
   version "3.1.0"

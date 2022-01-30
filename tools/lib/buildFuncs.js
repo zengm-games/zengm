@@ -1,4 +1,5 @@
-const CleanCSS = require("clean-css");
+const parcelCSS = require("@parcel/css");
+const browserslist = require("browserslist");
 const crypto = require("crypto");
 const fs = require("fs");
 const fse = require("fs-extra");
@@ -58,14 +59,18 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 		let output;
 		if (!watch) {
 			const purgeCSSResult = purgeCSSResults[i].css;
-			const result = new CleanCSS().minify(purgeCSSResult);
-			if (result.errors.length > 0) {
-				console.log("clean-css errors", result.errors);
-			}
-			if (result.warnings.length > 0) {
-				console.log("clean-css warnings", result.warnings);
-			}
-			output = result.styles;
+
+			const { code } = parcelCSS.transform({
+				filename: `${filename}.css`,
+				code: Buffer.from(purgeCSSResult),
+				minify: true,
+				sourceMap: false,
+				targets: parcelCSS.browserslistToTargets(
+					browserslist("Chrome >= 49, Firefox >= 78, Safari >= 11"),
+				),
+			});
+
+			output = code;
 		} else {
 			output = rawCSS[i];
 		}

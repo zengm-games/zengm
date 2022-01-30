@@ -1,3 +1,6 @@
+top navbar is not obeying body padding when scrollbar is hidden and modal is open
+- https://github.com/react-bootstrap/react-bootstrap/issues/5222
+
 Leaders improvements
 - progressive leaders, like bbref
   - before doing this, figure out a better way of handling total/perGame stats in basketball, similar to other sports

@@ -7,34 +7,30 @@ import type {
 
 // (age coefficient, age offset) for mean, than std. dev.
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, Array<number>> = {
-	diq: [0.008, -0.18, -0.0, 0.0012],
-	dnk: [0.006, -0.1601, -0.0009, 0.0317],
-	drb: [0.0087, -0.2156, 0.0, 0.0],
-	endu: [-0.0398, 1.0722, 0.0029, -0.0604],
-	fg: [0.0024, -0.0443, -0.0008, 0.054],
-	ft: [0.0052, -0.1124, -0.0012, 0.0704],
-	ins: [0.0027, -0.0933, -0.0006, 0.083],
-	jmp: [-0.0146, 0.2996, 0.0077, -0.1821],
-	oiq: [-0.0016, 0.0676, -0.0, 0.0012],
-	pss: [0.0062, -0.1502, -0.0, 0.0001],
-	reb: [0.0067, -0.1769, -0.0, 0.0006],
-	spd: [-0.0079, 0.1606, 0.0033, -0.0793],
-	stre: [-0.0019, 0.0375, 0.0, 0.0],
-	tp: [0.0079, -0.1909, -0.0025, 0.1013],
+	diq: [-0.1, 2.841, -0.95],
+	dnk: [-0.052, 1.781, 1.205],
+	drb: [0.097, -3.06, -0.014],
+	endu: [-0.52, 13.842, 2.301],
+	fg: [0.015, 0.07, 0.544],
+	ft: [0.155, -3.891, -0.071],
+	ins: [-0.032, 0.924, 0.756],
+	jmp: [-0.247, 5.446, 1.486],
+	oiq: [0.076, -2.039, 0.406],
+	pss: [0.157, -4.602, 0.288],
+	reb: [0.042, -0.964, -0.098],
+	spd: [-0.057, 0.44, 0.323],
+	stre: [-0.099, 2.675, 0.231],
+	tp: [0.138, -3.909, 0.68],
 };
 
 const calcBaseChange = (age: number, coachingRank: number): number => {
 	let val: number;
 
-	const base_coef = [-0.0148, 0.3846, -0.0001, 0.1659];
+	const base_coef = [-0.327, 8.0, 4.202];
 
 	val = base_coef[0] * age + base_coef[1];
-	const std_base = base_coef[2] * age + base_coef[3];
-	const std_noise = helpers.bound(
-		random.realGauss(0, Math.max(0.00001, std_base)),
-		-0.1,
-		0.4,
-	);
+	const std_base = base_coef[2];
+	const std_noise = helpers.bound(random.realGauss() * std_base, -1, 4);
 	val += std_noise;
 
 	if (g.hasOwnProperty("numActiveTeams")) {
@@ -75,15 +71,11 @@ const developSeason = (
 	for (const key of helpers.keys(ratingsFormulas)) {
 		const ageModifier =
 			ratingsFormulas[key][0] * age_bounds + ratingsFormulas[key][1];
-		const ageStd =
-			ratingsFormulas[key][2] * age_bounds + ratingsFormulas[key][3];
+		const ageStd = ratingsFormulas[key][2];
 
 		const ageChange =
-			ageModifier +
-			helpers.bound(random.realGauss(0, Math.max(0.00001, ageStd)), -0.4, 0.5);
-		ratings[key] = limitRating(
-			(Math.sqrt(Math.max(1, ratings[key])) + baseChange + ageChange) ** 2,
-		);
+			ageModifier + helpers.bound(random.realGauss() * ageStd, -3, 5);
+		ratings[key] = limitRating(ratings[key] + baseChange + ageChange);
 		//console.log(baseChange,ageChange);
 	}
 };

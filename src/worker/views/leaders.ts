@@ -299,7 +299,7 @@ export class GamesPlayedCache {
 		// Regular season, completed season -> we already know how many games each team played, from numGames
 		return (
 			!playoffs &&
-			(season < g.get("season") || g.get("phase") > PHASE.REGULAR_SEASON)
+			(season < g.get("season") || g.get("phase") >= PHASE.PLAYOFFS)
 		);
 	}
 

@@ -145,11 +145,6 @@ h5 {
 	font-size: 20px;
 }
 
-.bbgm-container {
-	padding: 0 15px;
-	width: 100%;
-}
-
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
 	#basketball-gm_right_rail,
 	#football-gm_right_rail,
@@ -961,6 +956,15 @@ tr.table-warning:hover > td {
 	}
 	gap: 0 10px;
 	min-height: 39px;
+
+	// Like .container-fluid
+	padding-left: var(--bs-gutter-x, 0.75rem);
+	padding-right: var(--bs-gutter-x, 0.75rem);
+}
+@include media-breakpoint-down(sm) {
+	.title-bar {
+		padding-right: 0;
+	}
 }
 .dropdown-select-wrapper {
 	margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines

@@ -1,5 +1,9 @@
-top navbar is not obeying body padding when scrollbar is hidden and modal is open
-- https://github.com/react-bootstrap/react-bootstrap/issues/5222
+LeagueTopBar looks weird when modal opens/closes
+- toggle button shifts to the right/left when scrollbar disappears/appears
+- score boxes get scrolled a bit further to the right than they should, so the toggle button covers them up after modal is closed
+- https://github.com/react-bootstrap/react-bootstrap/issues/5222#issuecomment-640527757
+
+load real player info from url/file https://discord.com/channels/290013534023057409/290015591216054273/937276075841572874
 
 Leaders improvements
 - progressive leaders, like bbref

@@ -1,7 +1,6 @@
 import ago from "s-ago";
 import { matchSorter } from "match-sorter";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
 import { groupBy } from "../../../common/groupBy";
 import type {
 	LocalStateUI,
@@ -21,6 +20,7 @@ import {
 import { getText, makeAnchorProps } from "../SideBar";
 import orderBy from "lodash-es/orderBy";
 import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
+import Modal from "../Modal";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -722,7 +722,7 @@ const ComandPalette = ({
 	}
 
 	return (
-		<Modal animation={false} show={show} onHide={onHide} scrollable>
+		<Modal show={show} onHide={onHide} scrollable>
 			<Modal.Header className="ps-3 pe-0 py-1">
 				<span
 					className="glyphicon glyphicon-search"

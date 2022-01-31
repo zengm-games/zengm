@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Dropdown, Modal } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import { downloadFile, helpers, resetFileInput } from "../../util";
 import classNames from "classnames";
 import {
@@ -13,6 +13,7 @@ import {
 } from "./PlayerBioInfo";
 import { IMPORT_FILE_STYLE } from "./RowsEditor";
 import { CountryFlag } from "../../components";
+import Modal from "../../components/Modal";
 
 export const smallColStyle = {
 	marginLeft: 10,

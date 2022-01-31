@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import { Modal } from "react-bootstrap";
 import { helpers } from "../../util";
+import Modal from "../../components/Modal";
 
 const Confirm = confirmable(({ show, proceed, p }: any) => {
 	const numbers = Object.keys(p.retirableJerseyNumbers);

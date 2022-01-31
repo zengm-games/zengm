@@ -4,6 +4,7 @@ import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
+	// container-fluid is needed to make this account for scrollbar width when modal is open
 	return (
 		<button
 			className="btn btn-secondary p-0 league-top-bar-toggle"

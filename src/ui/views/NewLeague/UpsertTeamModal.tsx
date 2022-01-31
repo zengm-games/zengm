@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Modal } from "react-bootstrap";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import type { Conf, Div, View } from "../../../common/types";
+import Modal from "../../components/Modal";
 import { helpers, logEvent } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { NewLeagueTeamWithoutRank } from "./types";

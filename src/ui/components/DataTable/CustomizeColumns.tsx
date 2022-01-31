@@ -1,8 +1,8 @@
 import type { Col } from ".";
 import { useState } from "react";
-import { Modal } from "react-bootstrap";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import classNames from "classnames";
+import Modal from "../Modal";
 
 const Item = SortableElement(
 	({

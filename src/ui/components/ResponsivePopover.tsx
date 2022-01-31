@@ -1,5 +1,6 @@
 import { ReactNode, RefObject, useRef, useState } from "react";
-import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import Modal from "./Modal";
 
 const ResponsivePopover = ({
 	id,
@@ -34,7 +35,6 @@ const ResponsivePopover = ({
 					},
 				})}
 				<Modal
-					animation={false}
 					centered
 					show={showModal}
 					onHide={() => {

@@ -1,9 +1,7 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
 import type { PlayerBioInfo } from "../../../common/types";
 import { confirm, helpers, logEvent, toWorker } from "../../util";
 import { godModeRequiredMessage } from "./SettingsFormOptions";
-import { animation } from "./RowsEditor";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
 import isEqual from "lodash-es/isEqual";
@@ -15,6 +13,7 @@ import {
 	RacesEditor,
 } from "./PlayerBioInfoEditors";
 import { CountriesEditor } from "./PlayerBioInfoCountries";
+import Modal from "../../components/Modal";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 
@@ -604,13 +603,7 @@ const PlayerBioInfo2 = ({
 		}
 
 		modal = (
-			<Modal
-				size="lg"
-				show={show}
-				onHide={handleCancel}
-				animation={animation}
-				scrollable
-			>
+			<Modal size="lg" show={show} onHide={handleCancel} scrollable>
 				<Modal.Header closeButton>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>

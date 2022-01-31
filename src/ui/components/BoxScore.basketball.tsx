@@ -21,13 +21,13 @@ const StatsTable = ({
 }) => {
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
-	const onClick = (event: MouseEvent, i: number) => {
+	const onClick = (event: MouseEvent, colKey: string) => {
 		setSortBys(prevSortBys => {
 			const newSortBys =
 				updateSortBys({
 					cols,
 					event,
-					i,
+					colKey,
 					prevSortBys,
 				}) ?? [];
 

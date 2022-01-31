@@ -30,6 +30,7 @@ const RosterContinuity = ({
 				sortSequence: ["desc", "asc"],
 				sortType: "number",
 				title: abbrev,
+				key: abbrev,
 			};
 		}),
 	];
@@ -60,7 +61,7 @@ const RosterContinuity = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "desc"]}
+				defaultSort={["col1", "desc"]}
 				name="RosterContinuity"
 				pagination={rows.length > 100}
 				rows={rows}

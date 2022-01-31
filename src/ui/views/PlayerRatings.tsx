@@ -1,15 +1,15 @@
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import PropTypes from "prop-types";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { POSITIONS, PLAYER, isSport } from "../../common";
 import type { View } from "../../common/types";
+import getTemplate from "../util/columns/getTemplate";
 
 const PlayerRatings = ({
 	abbrev,
 	challengeNoRatings,
 	currentSeason,
 	players,
-	ratings,
+	config,
 	season,
 	userTid,
 }: View<"playerRatings">) => {
@@ -21,84 +21,19 @@ const PlayerRatings = ({
 		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
 	});
 
-	const ovrsPotsColNames: string[] = [];
-	if (isSport("football") || isSport("hockey")) {
-		for (const pos of POSITIONS) {
-			for (const type of ["ovr", "pot"]) {
-				ovrsPotsColNames.push(`rating:${type}${pos}`);
-			}
-		}
-	}
-
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Team",
-		"Age",
-		"Contract",
-		"Exp",
-		"Ovr",
-		"Pot",
-		...ratings.map(rating => `rating:${rating}`),
-		...ovrsPotsColNames,
-	]);
+	const cols = config.columns;
 
 	const rows = players.map(p => {
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
-		const ovrsPotsRatings: string[] = [];
-		if (isSport("football") || isSport("hockey")) {
-			for (const pos of POSITIONS) {
-				for (const type of ["ovrs", "pots"]) {
-					ovrsPotsRatings.push(showRatings ? p.ratings[type][pos] : null);
-				}
-			}
-		}
-
 		return {
 			key: p.pid,
-			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					season={season}
-					skills={p.ratings.skills}
-					jerseyNumber={p.stats.jerseyNumber}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
-				p.ratings.pos,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${p.stats.abbrev}_${p.stats.tid}`,
-						season,
-					])}
-				>
-					{p.stats.abbrev}
-				</a>,
-				p.age,
-				p.contract.amount > 0
-					? helpers.formatCurrency(p.contract.amount, "M")
-					: null,
-				p.contract.amount > 0 && season === currentSeason
-					? p.contract.exp
-					: null,
-				showRatings ? p.ratings.ovr : null,
-				showRatings ? p.ratings.pot : null,
-				...ratings.map(rating => (showRatings ? p.ratings[rating] : null)),
-				...ovrsPotsRatings,
-			],
-			classNames: {
-				"table-danger": p.hof,
-				"table-info": p.stats.tid === userTid,
-			},
+			data: Object.fromEntries(
+				cols.map(col => [col.key, getTemplate(p, col, config)]),
+			),
 		};
 	});
 
 	return (
-		<>
+		<div>
 			<MoreLinks type="playerRatings" page="player_ratings" season={season} />
 
 			{challengeNoRatings ? (
@@ -109,7 +44,7 @@ const PlayerRatings = ({
 			) : null}
 
 			<p>
-				Players on your team are{" "}
+				Players on your team are
 				<span className="text-info">highlighted in blue</span>. Players in the
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
 				.
@@ -117,13 +52,23 @@ const PlayerRatings = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[6, "desc"]}
+				config={config}
+				defaultSort={["Ovr", "desc"]}
 				name="PlayerRatings"
 				pagination
 				rows={rows}
 			/>
-		</>
+		</div>
 	);
+};
+
+PlayerRatings.propTypes = {
+	abbrev: PropTypes.string.isRequired,
+	currentSeason: PropTypes.number.isRequired,
+	players: PropTypes.arrayOf(PropTypes.object).isRequired,
+	config: PropTypes.object.isRequired,
+	season: PropTypes.number.isRequired,
+	userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerRatings;

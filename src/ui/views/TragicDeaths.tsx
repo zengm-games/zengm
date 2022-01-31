@@ -3,6 +3,7 @@ import { getCols, helpers } from "../util";
 import { DataTable, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+import type { LegacyDataTableRow } from "../components/DataTable";
 
 const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 	useTitleBar({ title: "Tragic Deaths", customMenu: frivolitiesMenu });
@@ -45,7 +46,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		"Details",
 	]);
 
-	const rows = players.map((p, i) => {
+	const rows: LegacyDataTableRow[] = players.map((p, i) => {
 		const lastRatings = p.ratings.at(-1);
 		const lastStats = p.stats.at(-1);
 
@@ -97,7 +98,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 
 			<DataTable
 				cols={cols}
-				defaultSort={[4, "desc"]}
+				defaultSort={["col5", "desc"]}
 				name="TragicDeaths"
 				pagination
 				rows={rows}

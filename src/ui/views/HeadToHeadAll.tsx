@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, gradientStyleFactory, helpers } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
-import type { Col } from "../components/DataTable";
+import type { LegacyCol } from "../components/DataTable";
 import classNames from "classnames";
 import { useState } from "react";
 
@@ -33,7 +33,7 @@ const HeadToHeadAll = ({
 
 	const cols = [
 		...getCols(["Team"]),
-		...teamsFiltered.map((t): Col => {
+		...teamsFiltered.map((t): LegacyCol => {
 			return {
 				classNames: classNames(
 					"text-center",
@@ -125,7 +125,7 @@ const HeadToHeadAll = ({
 
 					<DataTable
 						cols={cols}
-						defaultSort={[0, "asc"]}
+						defaultSort={["col1", "asc"]}
 						hideAllControls
 						name="HeadToHeadAll"
 						rows={rows}

@@ -34,6 +34,10 @@ export interface MetaDB extends DBSchema {
 			| "realTeamInfo"
 			| "defaultSettingsOverrides";
 	};
+	tables: {
+		key: string;
+		value: string[];
+	};
 	leagues: {
 		value: League;
 		key: number;
@@ -42,6 +46,7 @@ export interface MetaDB extends DBSchema {
 }
 
 const create = (db: IDBPDatabase<MetaDB>) => {
+	db.createObjectStore("tables");
 	db.createObjectStore("achievements", {
 		keyPath: "aid",
 		autoIncrement: true,
@@ -81,6 +86,9 @@ const migrate = async ({
 	}
 
 	// New ones here!
+	if (oldVersion <= 8) {
+		db.createObjectStore("tables");
+	}
 
 	// In next version, can do:
 	// attributeStore.delete("lastSelectedTid");

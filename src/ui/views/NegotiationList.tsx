@@ -168,7 +168,7 @@ const NegotiationList = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[10, "desc"]}
+				defaultSort={["col11", "desc"]}
 				name="NegotiationList"
 				rows={rows}
 			/>

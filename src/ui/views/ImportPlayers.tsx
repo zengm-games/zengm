@@ -453,7 +453,7 @@ const ImportPlayers = ({
 					<div className="clearfix">
 						<DataTable
 							cols={cols}
-							defaultSort={[1, "asc"]}
+							defaultSort={["col2", "asc"]}
 							name="ImportPlayers"
 							pagination
 							rows={rows}

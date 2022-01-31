@@ -1,16 +1,15 @@
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { toWorker } from "../util";
 import type { View } from "../../common/types";
-import { PLAYER } from "../../common";
+import getTemplate from "../util/columns/getTemplate";
 
 const Injuries = ({
 	abbrev,
-	challengeNoRatings,
 	godMode,
 	injuries,
 	season,
-	stats,
+	config,
 	userTid,
 }: View<"injuries">) => {
 	useTitleBar({
@@ -19,53 +18,12 @@ const Injuries = ({
 		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndCurrent: season },
 	});
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Team",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map(stat => `stat:${stat}`),
-		"TypeInjury",
-		"Games",
-		"Ovr Drop",
-		"Pot Drop",
-	]);
-
-	const rows = injuries.map((p, i) => {
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
+	const rows = injuries.map(p => {
 		return {
-			key: season === "current" ? p.pid : i,
-			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					skills={p.ratings.skills}
-					season={typeof season === "number" ? season : undefined}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
-				p.ratings.pos,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${p.stats.abbrev}_${p.stats.tid}`,
-						season,
-					])}
-				>
-					{p.stats.abbrev}
-				</a>,
-				p.age,
-				showRatings ? p.ratings.ovr : null,
-				showRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				p.type,
-				p.games,
-				showRatings ? p.ovrDrop : null,
-				showRatings ? p.potDrop : null,
-			],
+			key: p.pid,
+			data: Object.fromEntries(
+				config.columns.map(col => [col.key, getTemplate(p, col, config)]),
+			),
 			classNames: {
 				"table-danger": p.hof,
 				"table-info": p.stats.tid === userTid,
@@ -95,8 +53,9 @@ const Injuries = ({
 
 			{rows.length > 0 ? (
 				<DataTable
-					cols={cols}
-					defaultSort={[cols.length - 3, "asc"]}
+					cols={config.columns}
+					config={config}
+					defaultSort={["Games", "asc"]}
 					name="Injuries"
 					pagination
 					rows={rows}

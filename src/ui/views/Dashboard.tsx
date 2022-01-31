@@ -478,16 +478,21 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			</div>
 
 			{rows.length > 0 ? (
-				<DataTable
-					cols={cols}
-					className="dashboard-table align-middle"
-					disableSettingsCache
-					defaultSort={[7, "desc"]}
-					name="Dashboard"
-					pagination={pagination}
-					small={false}
-					rows={rows}
-				/>
+				<>
+					<div className="clearfix" />
+
+					<DataTable
+						bordered={false}
+						cols={cols}
+						className="dashboard-table align-middle"
+						disableSettingsCache
+						defaultSort={["col8", "desc"]}
+						name="Dashboard"
+						pagination={pagination}
+						small={false}
+						rows={rows}
+					/>
+				</>
 			) : null}
 		</>
 	);

@@ -116,7 +116,7 @@ const Players = ({
 			</p>
 			<DataTable
 				cols={cols}
-				defaultSort={[2, "desc"]}
+				defaultSort={["col3", "desc"]}
 				name="TeamHistory"
 				rows={rows}
 				pagination

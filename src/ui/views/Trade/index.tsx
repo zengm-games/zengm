@@ -8,6 +8,7 @@ import type { TradeClearType } from "./Buttons";
 import Summary from "./Summary";
 import type { TradeTeams, View } from "../../../common/types";
 import classNames from "classnames";
+import { TableConfig } from "../../util/TableConfig";
 
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({
@@ -222,8 +223,7 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
-		challengeNoRatings,
-		challengeNoTrades,
+		config: _config,
 		gameOver,
 		otherTeamsWantToHire,
 		godMode,
@@ -240,7 +240,6 @@ const Trade = (props: View<"trade">) => {
 		salaryCapType,
 		summary,
 		showResigningMsg,
-		stats,
 		strategy,
 		teams,
 		tied,
@@ -296,8 +295,8 @@ const Trade = (props: View<"trade">) => {
 		phase === PHASE.EXPANSION_DRAFT ||
 		gameOver ||
 		otherTeamsWantToHire ||
-		spectator ||
-		challengeNoTrades;
+		_config.vars.spectator ||
+		_config.vars.challengeNoTrades;
 
 	const numAssets =
 		summary.teams[0].picks.length +
@@ -312,6 +311,8 @@ const Trade = (props: View<"trade">) => {
 		? `${otherTeam.region} ${otherTeam.name}`
 		: "Other team";
 	const teamNames = [otherTeamName, userTeamName] as [string, string];
+
+	const config = TableConfig.unserialize(_config);
 
 	return (
 		<>
@@ -377,25 +378,23 @@ const Trade = (props: View<"trade">) => {
 						</div>
 					</div>
 					<AssetList
-						challengeNoRatings={challengeNoRatings}
+						config={config}
 						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
 						numDraftRounds={numDraftRounds}
 						picks={otherPicks}
 						roster={otherRoster}
-						stats={stats}
 						userOrOther="other"
 					/>
 
 					<h2 className="mt-3">{userTeamName}</h2>
 					<AssetList
-						challengeNoRatings={challengeNoRatings}
+						config={config}
 						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
 						numDraftRounds={numDraftRounds}
 						picks={userPicks}
 						roster={userRoster}
-						stats={stats}
 						userOrOther="user"
 					/>
 				</div>
@@ -472,7 +471,7 @@ const Trade = (props: View<"trade">) => {
 											teamNames={teamNames}
 										/>
 									</div>
-								) : challengeNoTrades ? (
+								) : _config.vars.challengeNoTrades ? (
 									<p className="alert alert-danger">
 										<b>Challenge Mode:</b> You're not allowed to make trades.
 									</p>

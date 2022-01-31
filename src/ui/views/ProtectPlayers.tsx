@@ -117,7 +117,7 @@ const PlayerList = ({
 			<div>
 				<DataTable
 					cols={cols}
-					defaultSort={[5, "desc"]}
+					defaultSort={["col6", "desc"]}
 					name="ProtectPlayers"
 					rows={rows}
 					hideAllControls

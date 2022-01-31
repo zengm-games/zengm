@@ -148,7 +148,7 @@ export const genView = (
 				</p>
 				<DataTable
 					cols={cols}
-					defaultSort={[5, "desc"]}
+					defaultSort={["col6", "desc"]}
 					name={type === "college" ? "Colleges" : "Countries"}
 					rows={rows}
 					superCols={superCols}

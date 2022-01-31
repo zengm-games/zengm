@@ -4,7 +4,7 @@ import TopStuff from "./Player/TopStuff";
 import { getCols, helpers } from "../util";
 import { DataTable, InjuryIcon } from "../components";
 import { NoGamesMessage } from "./GameLog";
-import type { DataTableRow } from "../components/DataTable";
+import type { LegacyDataTableRow } from "../components/DataTable";
 
 const PlayerGameLog = ({
 	currentSeason,
@@ -69,7 +69,10 @@ const PlayerGameLog = ({
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const makeRow = (game: typeof gameLog[number], i: number): DataTableRow => {
+	const makeRow = (
+		game: typeof gameLog[number],
+		i: number,
+	): LegacyDataTableRow => {
 		return {
 			key: i,
 			data: [
@@ -213,7 +216,7 @@ const PlayerGameLog = ({
 						<>
 							<DataTable
 								cols={cols}
-								defaultSort={[0, "asc"]}
+								defaultSort={["col1", "asc"]}
 								name="PlayerGameLog"
 								rows={rowsRegularSeason}
 								superCols={superCols}
@@ -228,7 +231,7 @@ const PlayerGameLog = ({
 							<DataTable
 								className="datatable-negative-margin-top"
 								cols={cols}
-								defaultSort={[0, "asc"]}
+								defaultSort={["col1", "asc"]}
 								name="PlayerGameLogPlayoffs"
 								rows={rowsPlayoffs}
 								striped={striped}

@@ -217,7 +217,7 @@ const PowerRankings = ({
 			<DataTable
 				className="align-middle"
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={["col1", "asc"]}
 				name="PowerRankings"
 				rows={rows}
 				superCols={superCols}

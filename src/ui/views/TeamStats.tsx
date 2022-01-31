@@ -220,7 +220,7 @@ const TeamStats = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[3, "desc"]}
+				defaultSort={["col4", "desc"]}
 				name={`TeamStats${teamOpponent}`}
 				rankCol={0}
 				rows={rows}

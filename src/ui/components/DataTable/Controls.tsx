@@ -15,6 +15,7 @@ const style = {
 
 const Controls = ({
 	enableFilters,
+	enableCustomizeColumns,
 	hideAllControls,
 	name,
 	onExportCSV,
@@ -25,6 +26,7 @@ const Controls = ({
 	searchText,
 }: {
 	enableFilters: boolean;
+	enableCustomizeColumns: boolean;
 	hideAllControls?: boolean;
 	name: string;
 	onExportCSV: () => void;
@@ -130,9 +132,11 @@ const Controls = ({
 					<span className="glyphicon glyphicon-option-vertical text-muted" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					<Dropdown.Item onClick={onSelectColumns}>
-						Customize Columns
-					</Dropdown.Item>
+					{enableCustomizeColumns ? (
+						<Dropdown.Item onClick={onSelectColumns}>
+							Customize Columns
+						</Dropdown.Item>
+					) : null}
 					<Dropdown.Item onClick={onExportCSV}>
 						Download Spreadsheet
 					</Dropdown.Item>

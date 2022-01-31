@@ -206,7 +206,7 @@ const FrivolitiesTrades = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={["col1", "asc"]}
 				name={`FrivolitiesTrades_${type}`}
 				nonfluid
 				rows={rows}

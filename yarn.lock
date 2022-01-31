@@ -6250,10 +6250,10 @@ pretty-format@^27.0.0, pretty-format@^27.4.6:
     ansi-styles "^5.0.0"
     react-is "^17.0.1"
 
-promise-worker-bi@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/promise-worker-bi/-/promise-worker-bi-4.0.2.tgz#d013a4ab358dba800fe84add4cc4ed0e715acc07"
-  integrity sha512-iLmze2yAtlDiajv5HUAmzURq4fW8GRfwjXEjJIAQEgoRwxxT6llTJbZtbRt+JyNSwMWcEOFLrfS5v1h3zcma1Q==
+promise-worker-bi@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/promise-worker-bi/-/promise-worker-bi-4.0.3.tgz#1b76eb1057853253d23bcc7e9cbb149754f95e9b"
+  integrity sha512-3babWBHTAFIleT9UY7XABC2aCfiZBHz3puWe6MwpyrbBcznFxK8C+y8p9FpmKyheKs33ukcIZsRBi/wDp1EalA==
 
 prompts@^2.0.1:
   version "2.4.2"

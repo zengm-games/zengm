@@ -1380,7 +1380,7 @@ class GameSim {
 				const sub = this.getPlayerFromNextLine(t, "F", currentlyOnIce);
 
 				this.playersOnIce[t].G = [];
-				this.playersOnIce[t].C[1] = sub;
+				this.playersOnIce[t].C.push(sub);
 
 				this.playByPlay.logEvent({
 					type: "pullGoalie",

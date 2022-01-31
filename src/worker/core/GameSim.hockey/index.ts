@@ -1296,7 +1296,7 @@ class GameSim {
 					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = newLine.slice(2, 3);
 				} else {
-					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].C = [];
 					this.playersOnIce[t].W = newLine.slice(1, 3);
 				}
 			} else if (penaltyBoxCount === 2) {
@@ -1306,10 +1306,10 @@ class GameSim {
 					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = [];
 				} else if (r < 0.67) {
-					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].C = [];
 					this.playersOnIce[t].W = newLine.slice(1, 2);
 				} else {
-					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].C = [];
 					this.playersOnIce[t].W = newLine.slice(2, 3);
 				}
 			} else {

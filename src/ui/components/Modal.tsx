@@ -1,6 +1,11 @@
 import type { ContainerState } from "@restart/ui/esm/ModalManager";
 import { Modal } from "react-bootstrap";
 import BootstrapModalManager from "react-bootstrap/BootstrapModalManager";
+import { createNanoEvents } from "nanoevents";
+
+export const emitter = createNanoEvents<{
+	keepScrollToRight: () => void;
+}>();
 
 // If animation is enabled, the modal gets stuck open on Android Chrome v91. This happens only when clicking Cancel/Save - the X and clicking outside the modal still works to close it. All my code is working - show does get set false, it does get rendered, just still displayed. Disabling ads makes no difference. It works when calling programmatically wtih ButtonElement.click() but not with an actual click. Disabling animation fixes it though. Also https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZGhkhtPsGFPFxcKxhvZFkHpl
 const animation = false;
@@ -38,7 +43,7 @@ class MyModalManager extends BootstrapModalManager {
 			divs[0].style.right = "";
 		}
 
-		return;
+		emitter.emit("keepScrollToRight");
 	}
 }
 

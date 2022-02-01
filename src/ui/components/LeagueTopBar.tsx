@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
+import { emitter } from "./Modal";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	// container-fluid is needed to make this account for scrollbar width when modal is open
@@ -69,6 +70,10 @@ const LeagueTopBar = memo(() => {
 			});
 		}
 	}, [wrapperElement]);
+
+	useEffect(() => {
+		return emitter.on("keepScrollToRight", keepScrolledToRightIfNecessary);
+	}, [keepScrolledToRightIfNecessary]);
 
 	useEffect(() => {
 		if (!wrapperElement || !show) {

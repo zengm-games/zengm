@@ -170,7 +170,7 @@ const LeagueFileUpload = ({
 			);
 			(error as any).version = true;
 
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,
@@ -187,7 +187,7 @@ const LeagueFileUpload = ({
 				url,
 			});
 		} catch (error) {
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,
@@ -197,7 +197,7 @@ const LeagueFileUpload = ({
 			return;
 		}
 
-		if (isMounted) {
+		if (isMounted.current) {
 			dispatch({
 				type: "done",
 			});
@@ -235,7 +235,7 @@ const LeagueFileUpload = ({
 				leagueCreationPercent: undefined,
 			});
 		} catch (error) {
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,
@@ -279,7 +279,7 @@ const LeagueFileUpload = ({
 				schemaErrors,
 			});
 		} catch (error) {
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,

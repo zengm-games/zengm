@@ -629,7 +629,6 @@ const TeamFinances = ({
 					<div className="bar-graph-small">
 						<BarGraph
 							data={barData}
-							x="season"
 							y={["won"]}
 							tooltip={row => `${row.season}: ${row.won}${champSuffix(row)}`}
 							ylim={[0, numGames]}
@@ -651,7 +650,6 @@ const TeamFinances = ({
 					<div id="bar-graph-hype" className="bar-graph-small">
 						<BarGraph
 							data={barData}
-							x="season"
 							y={["hype"]}
 							tooltip={row =>
 								`${row.season}: ${row.hype.toFixed(2)}${champSuffix(row)}`
@@ -666,7 +664,6 @@ const TeamFinances = ({
 					<div id="bar-graph-pop" className="bar-graph-small">
 						<BarGraph
 							data={barData}
-							x="season"
 							y={["pop"]}
 							tooltip={row =>
 								`${row.season}: ${row.pop.toFixed(1)}M${champSuffix(row)}`
@@ -681,7 +678,6 @@ const TeamFinances = ({
 					<div id="bar-graph-att" className="bar-graph-small">
 						<BarGraph
 							data={barData}
-							x="season"
 							y={["att"]}
 							tooltip={row =>
 								`${row.season}: ${helpers.numberWithCommas(
@@ -699,7 +695,6 @@ const TeamFinances = ({
 						<div id="bar-graph-revenue" className="bar-graph-large">
 							<BarGraph
 								data={barData}
-								x="season"
 								y={[
 									"revenuesNationalTv",
 									"revenuesLocalTv",
@@ -732,7 +727,6 @@ const TeamFinances = ({
 						<div id="bar-graph-expenses" className="bar-graph-large">
 							<BarGraph
 								data={barData}
-								x="season"
 								y={[
 									"expensesSalary",
 									"expensesMinTax",
@@ -767,7 +761,6 @@ const TeamFinances = ({
 						<div id="bar-graph-cash" className="bar-graph-medium">
 							<BarGraph
 								data={barData}
-								x="season"
 								y={["cash"]}
 								tooltip={row =>
 									`${row.season}: ${helpers.formatCurrency(

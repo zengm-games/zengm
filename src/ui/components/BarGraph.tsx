@@ -6,9 +6,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
  *
  * Displays simple and elegant bar plots that are just series of rectangles with no visible text that completely fill up a container div. When hovering over a bar, a tooltip appears with a complete annotation.
  *
- * Usage:
- *
- * CSS: Set the size of your bar graph (.my-plot here) and specify your colors. These colors were taken from Bootstrap. You only need as many colors as you have stacked components in your bar graphs (so, just .bar-graph-1 is used if you aren't stacking - the exception to this rule is that bar-graph-3 is used for negative values).
+ * CSS: Set the size of your bar graph (.my-plot here) and specify your colors. These colors were taken from Bootstrap. You only need as many colors as you have stacked components in your bar graphs (so, just .bar-graph-1 is used if you aren't stacking - the exception to this rule is that bar-graph-6 is used for negative values).
  *
  *     .my-plot { height: 80px; }
  *     .bar-graph-1 { background-color: #049cdb; }
@@ -18,49 +16,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
  *     .bar-graph-5 { background-color: #7a43b6; }
  *     .bar-graph-6 { background-color: #46a546; }
  *     .bar-graph-7 { background-color: #c3325f; }
- *
- * JavaScript:
- *
- *     <BarGraph
- *         data={data}
- *         labels={labels}
- *         tooltipCb={val => `whatever ${val}`}
- *         ylim={[0, 1]}
- *     />
- *
- * @param {Array} data For a non-stacked bar graph, an array of data values which will be transformed to heights. For a stacked bar graph, an array of arrays, where each internal array is as described in the previous sentence. The first one will be the bottom in the stack, the last will be the top. For stacked bar graphs, all values must be positive. For non-stacked bar graphs, positive and negative values are allowed
- * @param {Array=} labels For a non-stacked bar graph, an array of text labels of the same size as data. For a stacked bar graph, an array of two arrays; the first is the same as described in the first sentence, and the second is an array of labels corresponding to the different stacked components. See the example below to make this more clear. If undefined, then no labels are shown in tooltips and just the data values are displayed.
- * @param {function(number)=} tooltipCb An optional function to process the data values when displayed in a tooltip. So if one of your values is 54.3876826 and you want to display it rounded, pass Math.round here.
- * @param {Array.<number>=} ylim An array of two numbers, the minimum and maximum values for the scale. If undefined, then this will be set to the minimum and maximum values of your data, plus 10% wiggle room and with either the maximum or minimum set to 0 if 0 is not in the range already (for a stacked graph, the default minimum is always 0 because all data is positive).
- *
- * Example JavaScript: Fitting with the HTML and CSS above...
- *
- * This will create a non-stacked bar plot, with positive and negative values shown in different colors. Tooltip labels will be like "2002: $15", "2003: $3", etc.
- *
- *     <BarGraph
- *         data={[15.2, 3, -5, 7.2]}
- *         labels={[2002, 2003, 2004, 2005]}
- *         tooltipCb={val => "$" + Math.round(val)}
- *         ylim={[-10, 20]}
- *     />
- *
- * This will create a stacked bar plot, with tooltip labels like "NJ Lions: 1", "NJ Tigers: 5", "NY Lions: 5", etc.
- *
- *     <BarGraph
- *         data={[[1, 5, 2], [5, 3, 1]]}
- *         labels={[["NJ", "NY", "PA"], ["Lions", "Tigers"]]}
- *     />
- *
- * This will just draw the same bars as above, but with no labels in the tooltips, so they will just be the numbers themselves.
- *
- *     <BarGraph
- *         data={[[1, 5, 2], [5, 3, 1]]}
- *     />
  */
-
-const isStacked = (data: number[] | number[][]): data is number[][] => {
-	return data[0].hasOwnProperty("length");
-};
 
 // Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
 const defaultYlim = <Y extends string[], Row extends Record<Y[number], number>>(
@@ -132,11 +88,7 @@ const Block = ({
 	);
 };
 
-const BarGraph = <
-	X extends string,
-	Y extends string[],
-	Row extends Record<X | Y[number], number>,
->({
+const BarGraph = <Row extends unknown, Y extends (keyof Row)[]>({
 	data,
 	y,
 	tooltip,
@@ -144,7 +96,6 @@ const BarGraph = <
 	classNameOverride,
 }: {
 	data: Row[];
-	x: X;
 	y: Y;
 	tooltip?: (row: Row, y: Y[number]) => string;
 	ylim?: [number, number];
@@ -183,7 +134,7 @@ const BarGraph = <
 						left: `${j * widthPct}%`,
 						width: `calc(${widthPct}% - ${gap}px)`,
 					}}
-					tooltip={tooltip(data[j], y[i])}
+					tooltip={tooltip?.(data[j], y[i])}
 				/>,
 			);
 		}

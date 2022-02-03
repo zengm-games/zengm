@@ -138,16 +138,17 @@ const BarGraph = <
 	Row extends Record<X | Y[number], number>,
 >({
 	data,
-	x,
 	y,
-	tooltip = (row, y) => `${row[x]}: ${row[y]}`,
+	tooltip,
 	ylim = defaultYlim(data, y),
+	classNameOverride,
 }: {
 	data: Row[];
 	x: X;
 	y: Y;
 	tooltip?: (row: Row, y: Y[number]) => string;
 	ylim?: [number, number];
+	classNameOverride?: (row: Row) => string | undefined;
 }) => {
 	const gap = 2; // Gap between bars, in pixels
 
@@ -173,7 +174,7 @@ const BarGraph = <
 			bars.push(
 				<Block
 					key={`${i}.${j}`}
-					className={`bar-graph-${i + 1}`}
+					className={classNameOverride?.(data[j]) ?? `bar-graph-${i + 1}`}
 					style={{
 						marginLeft: `${gap}px`,
 						position: "absolute",

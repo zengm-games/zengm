@@ -596,6 +596,11 @@ const TeamFinances = ({
 	// This happens for expansion teams before they have a TeamSeason
 	const noSeasonData = barData.length === 0;
 
+	type Row = typeof barData[number];
+	const classNameOverride = (row: Row) =>
+		row.champ ? "bar-graph-3" : undefined;
+	const champSuffix = (row: Row) => (row.champ ? ", won championship" : "");
+
 	return (
 		<>
 			<MoreLinks type="team" page="team_finances" abbrev={abbrev} tid={tid} />
@@ -626,7 +631,9 @@ const TeamFinances = ({
 							data={barData}
 							x="season"
 							y={["won"]}
+							tooltip={row => `${row.season}: ${row.won}${champSuffix(row)}`}
 							ylim={[0, numGames]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 					<br />
@@ -646,8 +653,11 @@ const TeamFinances = ({
 							data={barData}
 							x="season"
 							y={["hype"]}
-							tooltip={row => `${row.season}: ${row.hype.toFixed(2)}`}
+							tooltip={row =>
+								`${row.season}: ${row.hype.toFixed(2)}${champSuffix(row)}`
+							}
 							ylim={[0, 1]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 					<br />
@@ -658,8 +668,11 @@ const TeamFinances = ({
 							data={barData}
 							x="season"
 							y={["pop"]}
-							tooltip={row => `${row.season}: ${row.pop.toFixed(1)}M`}
+							tooltip={row =>
+								`${row.season}: ${row.pop.toFixed(1)}M${champSuffix(row)}`
+							}
 							ylim={[0, 20]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 					<br />
@@ -673,9 +686,10 @@ const TeamFinances = ({
 							tooltip={row =>
 								`${row.season}: ${helpers.numberWithCommas(
 									Math.round(row.att),
-								)}`
+								)}${champSuffix(row)}`
 							}
 							ylim={[0, maxStadiumCapacity]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 				</div>
@@ -756,8 +770,13 @@ const TeamFinances = ({
 								x="season"
 								y={["cash"]}
 								tooltip={row =>
-									`${row.season}: ${helpers.formatCurrency(row.cash, "M", 1)}`
+									`${row.season}: ${helpers.formatCurrency(
+										row.cash,
+										"M",
+										1,
+									)}${champSuffix(row)}`
 								}
+								classNameOverride={classNameOverride}
 							/>
 						</div>
 					</div>

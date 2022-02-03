@@ -116,21 +116,44 @@ const BarGraph = <Row extends unknown, Y extends (keyof Row)[]>({
 	// Draw bars
 	const bars = [];
 	for (let j = 0; j < scaled.length; j++) {
-		let offset = 0;
+		let offset = scale(0, ylim);
 		for (let i = 0; i < scaled[j].length; i++) {
+			let className = classNameOverride?.(data[j]) ?? `bar-graph-${i + 1}`;
+
 			if (i > 0) {
 				offset += scaled[j][i - 1];
+			}
+
+			const value = scaled[j][i];
+
+			let bottom = offset;
+			let height;
+
+			if (y.length === 1) {
+				const negative = data[j][y[i]] < 0;
+
+				// Fix for negative values
+				if (negative) {
+					bottom = value;
+					height = scale(0, ylim) - value;
+					className = "bar-graph-6";
+				} else {
+					height = value - scale(0, ylim);
+				}
+			} else {
+				// Assume no negative values
+				height = value;
 			}
 
 			bars.push(
 				<Block
 					key={`${i}.${j}`}
-					className={classNameOverride?.(data[j]) ?? `bar-graph-${i + 1}`}
+					className={className}
 					style={{
 						marginLeft: `${gap}px`,
 						position: "absolute",
-						bottom: `${offset}%`,
-						height: `${scaled[j][i]}%`,
+						bottom: `${bottom}%`,
+						height: `${height}%`,
 						left: `${j * widthPct}%`,
 						width: `calc(${widthPct}% - ${gap}px)`,
 					}}

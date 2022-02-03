@@ -2,7 +2,12 @@ import { PHASE } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type {
+	BudgetItem,
+	TeamSeason,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
 
 const updateTeamFinances = async (
@@ -91,77 +96,62 @@ const updateTeamFinances = async (
 			}
 		}
 
-		const keys = [
-			"won",
-			"hype",
-			"pop",
-			"att",
-			"cash",
-			"revenues",
-			"expenses",
-		] as const;
+		const formatRevenueExpenses = (teamSeason: TeamSeason) => {
+			const output = {} as Record<
+				| `expenses${Capitalize<keyof TeamSeason["expenses"]>}`
+				| `revenues${Capitalize<keyof TeamSeason["revenues"]>}`,
+				number
+			>;
+			for (const key of helpers.keys(teamSeason.revenues)) {
+				const outputKey = `revenues${helpers.upperCaseFirstLetter(
+					key,
+				)}` as const;
+				output[outputKey] = teamSeason.revenues[key].amount;
+			}
+			for (const key of helpers.keys(teamSeason.expenses)) {
+				const outputKey = `expenses${helpers.upperCaseFirstLetter(
+					key,
+				)}` as const;
+				output[outputKey] = teamSeason.expenses[key].amount;
+			}
+			return output;
+		};
 
-		// @ts-expect-error
-		const barData: Record<"won" | "hype" | "pop" | "att" | "cash", number[]> &
-			Record<"revenues" | "expenses", any> = {};
+		const barData = teamSeasons.slice(0, showInt).map(teamSeason => {
+			const gpHome = teamSeason.gpHome ?? Math.round(teamSeason.gp / 2);
+			const att = teamSeason.att / gpHome;
 
-		for (const key of keys) {
-			if (teamSeasons.length > 0) {
-				if (typeof teamSeasons[0][key] === "number") {
-					barData[key] = helpers.zeroPad(
-						// @ts-expect-error
-						teamSeasons.map(ts => ts[key]),
-						showInt,
-					);
-				} else {
-					// Handle an object in the database
-					barData[key] = {};
-					const tempData = teamSeasons.map(ts => ts[key]);
+			const numPlayoffRounds = g.get(
+				"numGamesPlayoffSeries",
+				teamSeason.season,
+			).length;
 
-					for (const key2 of Object.keys(tempData[0])) {
-						barData[key][key2] = helpers.zeroPad(
-							// @ts-expect-error
-							tempData.map(x => x[key2]).map(x => x.amount),
-							showInt,
-						);
-					}
+			const champ = teamSeason.playoffRoundsWon === numPlayoffRounds;
+
+			const row = {
+				season: teamSeason.season,
+				champ,
+				att,
+				cash: teamSeason.cash / 1000, // convert to millions
+				won: teamSeason.won,
+				hype: teamSeason.hype,
+				pop: teamSeason.pop,
+				...formatRevenueExpenses(teamSeason),
+			};
+
+			return row;
+		});
+
+		// Pad with 0s
+		while (barData.length > 0 && barData.length < showInt) {
+			const row = helpers.deepCopy(barData.at(-1));
+			row.season -= 1;
+			for (const key of helpers.keys(row)) {
+				if (key !== "season" && key !== "champ") {
+					row[key] = 0;
 				}
 			}
-		}
-
-		// Process some values
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-		if (barData.att) {
-			barData.att = barData.att.map((num, i) => {
-				if (teamSeasons[i] !== undefined) {
-					if (!teamSeasons[i].hasOwnProperty("gpHome")) {
-						teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2);
-					}
-
-					// See also game.js and team.js
-					if (teamSeasons[i].gpHome > 0 && typeof num === "number") {
-						return num / teamSeasons[i].gpHome; // per game
-					}
-				}
-
-				return 0;
-			});
-		}
-
-		const keys2 = ["cash"] as const;
-		for (const key of keys2) {
-			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-			if (barData[key]) {
-				// convert to millions
-				barData[key] = barData[key].map(num =>
-					typeof num === "number" ? num / 1000 : num,
-				);
-			}
-		}
-
-		const barSeasons: number[] = [];
-		for (let i = 0; i < showInt; i++) {
-			barSeasons[i] = g.get("season") - i;
+			barData.push(row);
 		}
 
 		// Get stuff for the finances form
@@ -213,7 +203,6 @@ const updateTeamFinances = async (
 			maxStadiumCapacity,
 			t,
 			barData,
-			barSeasons,
 			payroll,
 			contracts,
 			contractTotals,

@@ -505,7 +505,6 @@ const TeamFinances = ({
 	abbrev,
 	autoTicketPrice,
 	barData,
-	barSeasons,
 	budget,
 	challengeNoRatings,
 	contractTotals,
@@ -595,7 +594,7 @@ const TeamFinances = ({
 	];
 
 	// This happens for expansion teams before they have a TeamSeason
-	const noSeasonData = Object.keys(barData).length === 0;
+	const noSeasonData = barData.length === 0;
 
 	return (
 		<>
@@ -624,8 +623,9 @@ const TeamFinances = ({
 					<h3>Wins</h3>
 					<div className="bar-graph-small">
 						<BarGraph
-							data={barData.won}
-							labels={barSeasons}
+							data={barData}
+							x="season"
+							y={["won"]}
 							ylim={[0, numGames]}
 						/>
 					</div>
@@ -643,11 +643,10 @@ const TeamFinances = ({
 					</h3>
 					<div id="bar-graph-hype" className="bar-graph-small">
 						<BarGraph
-							data={barData.hype}
-							labels={barSeasons}
-							tooltipCb={val =>
-								typeof val === "number" ? val.toFixed(2) : val
-							}
+							data={barData}
+							x="season"
+							y={["hype"]}
+							tooltip={row => `${row.season}: ${row.hype.toFixed(2)}`}
 							ylim={[0, 1]}
 						/>
 					</div>
@@ -656,11 +655,10 @@ const TeamFinances = ({
 					<h3>Region Population</h3>
 					<div id="bar-graph-pop" className="bar-graph-small">
 						<BarGraph
-							data={barData.pop}
-							labels={barSeasons}
-							tooltipCb={val =>
-								typeof val === "number" ? `${val.toFixed(1)}M` : val
-							}
+							data={barData}
+							x="season"
+							y={["pop"]}
+							tooltip={row => `${row.season}: ${row.pop.toFixed(1)}M`}
 							ylim={[0, 20]}
 						/>
 					</div>
@@ -669,12 +667,13 @@ const TeamFinances = ({
 					<h3>Average Attendance</h3>
 					<div id="bar-graph-att" className="bar-graph-small">
 						<BarGraph
-							data={barData.att}
-							labels={barSeasons}
-							tooltipCb={val =>
-								typeof val === "number"
-									? helpers.numberWithCommas(Math.round(val))
-									: val
+							data={barData}
+							x="season"
+							y={["att"]}
+							tooltip={row =>
+								`${row.season}: ${helpers.numberWithCommas(
+									Math.round(row.att),
+								)}`
 							}
 							ylim={[0, maxStadiumCapacity]}
 						/>
@@ -685,30 +684,32 @@ const TeamFinances = ({
 						<h3>Revenue</h3>
 						<div id="bar-graph-revenue" className="bar-graph-large">
 							<BarGraph
-								data={[
-									barData.revenues.nationalTv,
-									barData.revenues.localTv,
-									barData.revenues.ticket,
-									barData.revenues.sponsor,
-									barData.revenues.merch,
-									barData.revenues.luxuryTaxShare,
+								data={barData}
+								x="season"
+								y={[
+									"revenuesNationalTv",
+									"revenuesLocalTv",
+									"revenuesTicket",
+									"revenuesSponsor",
+									"revenuesMerch",
+									"revenuesLuxuryTaxShare",
 								]}
-								labels={[
-									barSeasons,
-									[
-										"national TV revenue",
-										"local TV revenue",
-										"ticket revenue",
-										"corporate sponsorship revenue",
-										"merchandising revenue",
-										"luxury tax share revenue",
-									],
-								]}
-								tooltipCb={val =>
-									typeof val === "number"
-										? helpers.formatCurrency(val / 1000, "M", 1)
-										: val
-								}
+								tooltip={(row, y) => {
+									const text = {
+										revenuesNationalTv: "national TV revenue",
+										revenuesLocalTv: "local TV revenue",
+										revenuesTicket: "ticket revenue",
+										revenuesSponsor: "corporate sponsorship revenue",
+										revenuesMerch: "merchandising revenue",
+										revenuesLuxuryTaxShare: "luxury tax share revenue",
+									};
+
+									return `${row.season} ${text[y]}: ${helpers.formatCurrency(
+										row[y] / 1000,
+										"M",
+										1,
+									)}`;
+								}}
 							/>
 						</div>
 						<br />
@@ -716,32 +717,34 @@ const TeamFinances = ({
 						<h3>Expenses</h3>
 						<div id="bar-graph-expenses" className="bar-graph-large">
 							<BarGraph
-								data={[
-									barData.expenses.salary,
-									barData.expenses.minTax,
-									barData.expenses.luxuryTax,
-									barData.expenses.scouting,
-									barData.expenses.coaching,
-									barData.expenses.health,
-									barData.expenses.facilities,
+								data={barData}
+								x="season"
+								y={[
+									"expensesSalary",
+									"expensesMinTax",
+									"expensesLuxuryTax",
+									"expensesScouting",
+									"expensesCoaching",
+									"expensesHealth",
+									"expensesFacilities",
 								]}
-								labels={[
-									barSeasons,
-									[
-										"player salaries",
-										"minimum payroll tax",
-										"luxury tax",
-										"scouting",
-										"coaching",
-										"health",
-										"facilities",
-									],
-								]}
-								tooltipCb={val =>
-									typeof val === "number"
-										? helpers.formatCurrency(val / 1000, "M", 1)
-										: val
-								}
+								tooltip={(row, y) => {
+									const text = {
+										expensesSalary: "player salaries",
+										expensesMinTax: "minimum payroll tax",
+										expensesLuxuryTax: "luxury tax",
+										expensesScouting: "scouting",
+										expensesCoaching: "coaching",
+										expensesHealth: "health",
+										expensesFacilities: "facilities",
+									};
+
+									return `${row.season} ${text[y]}: ${helpers.formatCurrency(
+										row[y] / 1000,
+										"M",
+										1,
+									)}`;
+								}}
 							/>
 						</div>
 						<br />
@@ -749,12 +752,11 @@ const TeamFinances = ({
 						<h3>Cash (cumulative)</h3>
 						<div id="bar-graph-cash" className="bar-graph-medium">
 							<BarGraph
-								data={barData.cash}
-								labels={barSeasons}
-								tooltipCb={val =>
-									typeof val === "number"
-										? helpers.formatCurrency(val, "M", 1)
-										: val
+								data={barData}
+								x="season"
+								y={["cash"]}
+								tooltip={row =>
+									`${row.season}: ${helpers.formatCurrency(row.cash, "M", 1)}`
 								}
 							/>
 						</div>

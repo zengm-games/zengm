@@ -182,26 +182,6 @@ const getAbbrev = (tid: number | string): string => {
 const leagueUrl = (components: (number | string | undefined)[]): string =>
 	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
-/**
- * Pad an array with nulls or truncate it so that it has a fixed length.
- *
- * @memberOf util.helpers
- * @param {Array} array Input array.
- * @param {number} length Desired length.
- * @return {Array} Original array padded with null or truncated so that it has the required length.
- */
-function zeroPad(array: number[], length: number) {
-	if (array.length > length) {
-		return array.slice(0, length);
-	}
-
-	while (array.length < length) {
-		array.push(0);
-	}
-
-	return array;
-}
-
 const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	if (
 		typeof numGamesPlayoffSeries !== "number" ||
@@ -332,7 +312,6 @@ const helpers = {
 	gb,
 	getAbbrev,
 	leagueUrl,
-	zeroPad,
 	numGamesToWinSeries,
 	overtimeCounter,
 	pickDesc,

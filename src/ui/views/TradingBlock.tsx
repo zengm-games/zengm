@@ -8,7 +8,9 @@ import type api from "../../worker/api";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
->[0];
+>[0] & {
+	index: number;
+};
 
 type OfferProps = {
 	challengeNoRatings: boolean;
@@ -17,7 +19,7 @@ type OfferProps = {
 		otherPids: number[],
 		otherDpids: number[],
 	) => Promise<void>;
-	i: number;
+	onRemove: () => void;
 	stats: string[];
 } & OfferType;
 
@@ -27,9 +29,10 @@ const Offer = (props: OfferProps) => {
 		challengeNoRatings,
 		dpids,
 		handleClickNegotiate,
-		i,
+		index,
 		lost,
 		name,
+		onRemove,
 		otl,
 		payroll,
 		picks,
@@ -46,16 +49,23 @@ const Offer = (props: OfferProps) => {
 
 	let offerPlayers: ReactNode = null;
 	if (players.length > 0) {
-		const cols = getCols([
-			"Name",
-			"Pos",
-			"Age",
-			"Ovr",
-			"Pot",
-			"Contract",
-			"Exp",
-			...stats.map(stat => `stat:${stat}`),
-		]);
+		const cols = getCols(
+			[
+				"Name",
+				"Pos",
+				"Age",
+				"Ovr",
+				"Pot",
+				"Contract",
+				"Exp",
+				...stats.map(stat => `stat:${stat}`),
+			],
+			{
+				Name: {
+					width: "100%",
+				},
+			},
+		);
 
 		const rows = players.map(p => {
 			return {
@@ -117,13 +127,21 @@ const Offer = (props: OfferProps) => {
 	}
 
 	return (
-		<div className="mt-4">
-			<h2>
-				Offer {i + 1}:{" "}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
-					{region} {name}
-				</a>
-			</h2>
+		<div className="mt-4" style={{ maxWidth: 1125 }}>
+			<div className="d-flex align-items-center mb-2">
+				<h2 className="mb-0">
+					Offer {index + 1}:{" "}
+					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
+						{region} {name}
+					</a>
+				</h2>
+				<button
+					type="button"
+					className="btn-close ms-1"
+					title="Remove offer from list"
+					onClick={onRemove}
+				/>
+			</div>
 			<p>
 				{won}-{lost}
 				{otl > 0 ? <>-{otl}</> : null}
@@ -201,11 +219,15 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			offers: [],
 		}));
 
-		const offers: OfferType[] = await toWorker(
-			"main",
-			"getTradingBlockOffers",
-			{ pids: state.pids, dpids: state.dpids },
-		);
+		const offers = (
+			await toWorker("main", "getTradingBlockOffers", {
+				pids: state.pids,
+				dpids: state.dpids,
+			})
+		).map((offer, i) => ({
+			...offer,
+			index: i,
+		}));
 
 		setState(prevState => ({
 			...prevState,
@@ -235,6 +257,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			userDpids: state.dpids,
 			userPids: state.pids,
 		});
+	};
+
+	const handleRemove = (i: number) => {
+		setState(prevState => ({
+			...prevState,
+			offers: prevState.offers.filter((offer, j) => j !== i),
+		}));
 	};
 
 	const {
@@ -396,7 +425,9 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						key={offer.tid}
 						challengeNoRatings={challengeNoRatings}
 						handleClickNegotiate={handleClickNegotiate}
-						i={i}
+						onRemove={() => {
+							handleRemove(i);
+						}}
 						stats={stats}
 						{...offer}
 					/>

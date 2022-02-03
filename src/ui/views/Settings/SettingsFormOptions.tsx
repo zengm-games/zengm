@@ -278,7 +278,7 @@ const Option = ({
 						onClick={() => {
 							onCancelDefaultSetting();
 						}}
-					></button>
+					/>
 				) : null}
 			</div>
 			{description ? (

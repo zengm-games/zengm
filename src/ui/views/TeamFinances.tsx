@@ -1,4 +1,11 @@
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from "react";
+import {
+	ChangeEvent,
+	FormEvent,
+	Fragment,
+	ReactNode,
+	useEffect,
+	useState,
+} from "react";
 import {
 	BarGraph,
 	DataTable,
@@ -424,8 +431,8 @@ const PayrollInfo = ({
 				</>
 			) : (
 				<>
-					{parts.slice(0, -1).map(part => (
-						<>{part}, </>
+					{parts.slice(0, -1).map((part, i) => (
+						<Fragment key={i}>{part}, </Fragment>
 					))}
 					and {parts.at(-1)}
 				</>

@@ -145,7 +145,7 @@ h5 {
 	font-size: 20px;
 }
 
-@media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
+@media screen and (min-width: (map-get($grid-breakpoints, xl) + 190px)) {
 	#basketball-gm_right_rail,
 	#football-gm_right_rail,
 	#zen-gm_right_rail {

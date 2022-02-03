@@ -18,43 +18,6 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
  *     .bar-graph-7 { background-color: #c3325f; }
  */
 
-// Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
-const defaultYlim = <Y extends string[], Row extends Record<Y[number], number>>(
-	data: Row[],
-	y: Y,
-): [number, number] => {
-	const values: number[] = data.map(row => {
-		// If stacked, add up all the components
-		let value = 0;
-		for (const key of y) {
-			value += row[key];
-		}
-		return value;
-	});
-
-	let min = Math.min(...values);
-	let max = Math.max(...values);
-
-	// Add on some padding
-	min -= 0.1 * (max - min);
-	max += 0.1 * (max - min); // Make sure 0 is in range
-
-	if (min > 0) {
-		min = 0;
-	}
-
-	if (max < 0) {
-		max = 0;
-	}
-
-	// For stacked plots, min is always 0
-	if (y.length > 1) {
-		min = 0;
-	}
-
-	return [min, max];
-};
-
 const scale = (val: number, ylim: [number, number]) => {
 	if (val > ylim[1]) {
 		return 100;
@@ -88,11 +51,15 @@ const Block = ({
 	);
 };
 
-const BarGraph = <Row extends unknown, Y extends (keyof Row)[]>({
+type NumbersOnly<T> = {
+	[Key in keyof T]: T[Key] extends number ? number : never;
+};
+
+const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 	data,
 	y,
 	tooltip,
-	ylim = defaultYlim(data, y),
+	ylim,
 	classNameOverride,
 }: {
 	data: Row[];
@@ -101,6 +68,45 @@ const BarGraph = <Row extends unknown, Y extends (keyof Row)[]>({
 	ylim?: [number, number];
 	classNameOverride?: (row: Row) => string | undefined;
 }) => {
+	// Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
+	const defaultYlim = (): [number, number] => {
+		const values: number[] = data.map(row => {
+			// If stacked, add up all the components
+			let value = 0;
+			for (const key of y) {
+				// @ts-expect-error
+				value += row[key];
+			}
+			return value;
+		});
+
+		let min = Math.min(...values);
+		let max = Math.max(...values);
+
+		// Add on some padding
+		min -= 0.1 * (max - min);
+		max += 0.1 * (max - min); // Make sure 0 is in range
+
+		if (min > 0) {
+			min = 0;
+		}
+
+		if (max < 0) {
+			max = 0;
+		}
+
+		// For stacked plots, min is always 0
+		if (y.length > 1) {
+			min = 0;
+		}
+
+		return [min, max];
+	};
+
+	if (!ylim) {
+		ylim = defaultYlim();
+	}
+
 	const gap = 2; // Gap between bars, in pixels
 
 	const numBars = data.length;
@@ -111,7 +117,12 @@ const BarGraph = <Row extends unknown, Y extends (keyof Row)[]>({
 
 	const widthPct = 100 / numBars;
 
-	const scaled = data.map(row => y.map(key => scale(row[key], ylim)));
+	const scaled = data.map(row =>
+		y.map(key => {
+			// @ts-expect-error
+			return scale(row[key], ylim);
+		}),
+	);
 
 	// Draw bars
 	const bars = [];
@@ -130,6 +141,7 @@ const BarGraph = <Row extends unknown, Y extends (keyof Row)[]>({
 			let height;
 
 			if (y.length === 1) {
+				// @ts-expect-error
 				const negative = data[j][y[i]] < 0;
 
 				// Fix for negative values

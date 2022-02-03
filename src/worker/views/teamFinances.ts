@@ -2,12 +2,7 @@ import { PHASE } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type {
-	BudgetItem,
-	TeamSeason,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types";
+import type { TeamSeason, UpdateEvents, ViewInput } from "../../common/types";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
 
 const updateTeamFinances = async (

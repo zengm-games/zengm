@@ -77,27 +77,38 @@ const SuperCols = ({
 
 	return (
 		<tr>
-			{superCols.map(({ colspan, desc, title }, i) => {
-				const adjustedColspan = colspan + colspanAdjustments[i];
-				if (adjustedColspan <= 0) {
-					return null;
-				}
+			{superCols
+				.map(({ colspan, desc, title }, i) => {
+					const adjustedColspan = colspan + colspanAdjustments[i];
+					return {
+						adjustedColspan,
+						colspan,
+						desc,
+						title,
+					};
+				})
+				.filter(({ adjustedColspan }) => adjustedColspan > 0)
+				.map(({ adjustedColspan, desc, title }, i) => {
+					// No vertical border for left and right edges of table, but we do need it in between to separate superCols
+					let className;
+					if (i > 0 && i < superCols.length - 1) {
+						className = "border-start border-end";
+					}
 
-				// Have border-start and border-end for all, even with no title. Why? So tabs for regular season / playoffs on player pages look okay.
-				return (
-					<th
-						key={i}
-						colSpan={adjustedColspan}
-						style={{
-							textAlign: "center",
-						}}
-						title={desc}
-						className="border-start border-end"
-					>
-						{title}
-					</th>
-				);
-			})}
+					return (
+						<th
+							key={i}
+							colSpan={adjustedColspan}
+							style={{
+								textAlign: "center",
+							}}
+							title={desc}
+							className={className}
+						>
+							{title}
+						</th>
+					);
+				})}
 		</tr>
 	);
 };

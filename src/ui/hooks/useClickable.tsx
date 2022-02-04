@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 
 const useClickable = () => {
 	const [clicked, setClicked] = useState(false);
+
 	const toggleClicked = useCallback((event: any) => {
 		// Purposely using event.target instead of event.currentTarget because we do want check what internal element was clicked on, not the row itself
 		// Don't toggle the row if a link was clicked.
@@ -14,7 +15,7 @@ const useClickable = () => {
 			return;
 		}
 
-		if (event.target.dataset && event.target.dataset.noRowHighlight) {
+		if (event.target.dataset?.noRowHighlight) {
 			return;
 		}
 
@@ -25,6 +26,7 @@ const useClickable = () => {
 
 		setClicked(prevClicked => !prevClicked);
 	}, []);
+
 	return {
 		clicked,
 		toggleClicked,

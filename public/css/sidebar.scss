@@ -48,9 +48,19 @@ $sidebar-width: 158px; // Line up with Play button
 	font-size: 0.75rem;
 	text-transform: uppercase;
 	padding: 0 0.75rem;
+	cursor: pointer;
 	@extend .mt-3;
 	@extend .mb-1;
 	@extend .text-muted;
+
+	&:hover {
+		text-decoration: none;
+	}
+
+	// Make like h2
+	display: block;
+	font-weight: 500;
+	line-height: 1.2;
 }
 
 @include media-breakpoint-up(xl) {

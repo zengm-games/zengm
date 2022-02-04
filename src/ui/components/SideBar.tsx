@@ -14,6 +14,8 @@ import type {
 	MenuItemHeader,
 	MenuItemText,
 } from "../../common/types";
+import CollapseArrow from "./CollapseArrow";
+import { AnimatePresence, m } from "framer-motion";
 
 export const getText = (
 	text: MenuItemLink["text"],
@@ -26,9 +28,51 @@ export const getText = (
 	return text;
 };
 
-const MenuGroup = ({ children }: { children: ReactNode }) => (
-	<ul className="nav flex-column">{children}</ul>
-);
+const MenuGroup = ({
+	children,
+	title,
+}: {
+	children: ReactNode;
+	title?: string;
+}) => {
+	const [open, setOpen] = useState(true);
+
+	return (
+		<>
+			{title ? (
+				<a
+					className="sidebar-heading"
+					onClick={event => {
+						event.preventDefault();
+						setOpen(prev => !prev);
+					}}
+				>
+					<CollapseArrow open={open} /> {title}
+				</a>
+			) : null}
+			<AnimatePresence initial={false}>
+				{open ? (
+					<m.ul
+						className="nav flex-column flex-nowrap overflow-hidden"
+						initial="collapsed"
+						animate="open"
+						exit="collapsed"
+						variants={{
+							open: { opacity: 1, height: "auto" },
+							collapsed: { opacity: 0, height: 0 },
+						}}
+						transition={{
+							duration: 0.3,
+							type: "tween",
+						}}
+					>
+						{children}
+					</m.ul>
+				) : null}
+			</AnimatePresence>
+		</>
+	);
+};
 
 export const makeAnchorProps = (
 	menuItem: MenuItemLink,
@@ -157,12 +201,7 @@ const MenuItem = ({
 			return null;
 		}
 
-		return (
-			<>
-				<h2 className="sidebar-heading">{menuItem.long}</h2>
-				<MenuGroup>{children}</MenuGroup>
-			</>
-		);
+		return <MenuGroup title={menuItem.long}>{children}</MenuGroup>;
 	}
 
 	throw new Error(`Unknown menuItem.type "${(menuItem as any).type}"`);

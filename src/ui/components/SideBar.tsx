@@ -217,7 +217,6 @@ type Props = {
 const SideBar = memo(({ pageID }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
-	const topUserBlockRef = useRef<HTMLElement | null>(null);
 
 	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
 		godMode: state.godMode,
@@ -259,14 +258,6 @@ const SideBar = memo(({ pageID }: Props) => {
 			if (document.body) {
 				document.body.classList.remove("modal-open");
 			}
-
-			if (document.body) {
-				document.body.style.paddingRight = "";
-
-				if (topUserBlockRef.current) {
-					topUserBlockRef.current.style.paddingRight = "";
-				}
-			}
 		}, 300); // Keep time in sync with .sidebar-fade
 	}, [node, nodeFade]);
 
@@ -278,18 +269,8 @@ const SideBar = memo(({ pageID }: Props) => {
 				nodeFade.classList.add("sidebar-fade-open");
 
 				if (document.body) {
-					const scrollbarWidth = window.innerWidth - document.body.offsetWidth;
-
 					if (document.body) {
 						document.body.classList.add("modal-open");
-					}
-
-					if (document.body) {
-						document.body.style.paddingRight = `${scrollbarWidth}px`;
-
-						if (topUserBlockRef.current) {
-							topUserBlockRef.current.style.paddingRight = `${scrollbarWidth}px`;
-						}
 					}
 				}
 			}
@@ -325,10 +306,6 @@ const SideBar = memo(({ pageID }: Props) => {
 			}
 		};
 	}, [closeHandler, nodeFade]);
-
-	useEffect(() => {
-		topUserBlockRef.current = document.getElementById("top-user-block");
-	}, []);
 
 	return (
 		<>

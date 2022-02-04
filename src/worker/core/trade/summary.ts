@@ -61,12 +61,12 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		promises.push(
 			idb.cache.draftPicks
 				.indexGetAll("draftPicksByTid", tids[i])
-				.then(picks => {
+				.then(async picks => {
 					for (let j = 0; j < picks.length; j++) {
 						if (dpids[i].includes(picks[j].dpid)) {
 							s.teams[i].picks.push({
 								dpid: picks[j].dpid,
-								desc: helpers.pickDesc(picks[j], "short"),
+								desc: await helpers.pickDesc(picks[j], "short"),
 							});
 						}
 					}

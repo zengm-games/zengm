@@ -49,12 +49,14 @@ const updateUserRoster = async (
 			"noCopyCache",
 		);
 
-		const userPicks2 = userPicks.map(dp => {
-			return {
-				...dp,
-				desc: helpers.pickDesc(dp),
-			};
-		});
+		const userPicks2 = await Promise.all(
+			userPicks.map(async dp => {
+				return {
+					...dp,
+					desc: await helpers.pickDesc(dp),
+				};
+			}),
+		);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

@@ -1652,12 +1652,14 @@ const getTradingBlockOffers = async ({
 				);
 				picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
 
-				const picks2 = picks.map(dp => {
-					return {
-						...dp,
-						desc: helpers.pickDesc(dp),
-					};
-				});
+				const picks2 = await Promise.all(
+					picks.map(async dp => {
+						return {
+							...dp,
+							desc: await helpers.pickDesc(dp),
+						};
+					}),
+				);
 
 				const payroll = await team.getPayroll(tid);
 				return {

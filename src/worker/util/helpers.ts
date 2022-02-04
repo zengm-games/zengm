@@ -224,7 +224,7 @@ const overtimeCounter = (n: number): string => {
 	}
 };
 
-const pickDesc = (dp: DraftPick, short?: "short"): string => {
+const pickDesc = async (dp: DraftPick, short?: "short") => {
 	const season =
 		dp.season === "fantasy"
 			? "Fantasy draft"
@@ -244,9 +244,34 @@ const pickDesc = (dp: DraftPick, short?: "short"): string => {
 		extras.push(`from ${g.get("teamInfoCache")[dp.originalTid]?.abbrev}`);
 	}
 
+	// Show record for traded pick, Cause in the trade UI there's no other way to see how good the team is.
+	if (
+		typeof dp.season === "number" &&
+		dp.tid !== dp.originalTid &&
+		dp.pick === 0
+	) {
+		const currentSeason = g.get("season");
+		let teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[dp.originalTid, currentSeason],
+		);
+		if (!teamSeason || teamSeason.gp === 0) {
+			teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[dp.originalTid, currentSeason - 1],
+			);
+		}
+		if (teamSeason && teamSeason.gp > 0) {
+			const record = commonHelpers.formatRecord(teamSeason);
+			extras.push(record);
+		}
+	}
+
 	let desc = `${season} ${commonHelpers.ordinal(dp.round)}`;
 	if (extras.length === 0 || !short) {
 		desc += " round pick";
+	} else if (extras.length === 1) {
+		desc += " round";
 	}
 	if (extras.length > 0) {
 		desc += ` (${extras.join(", ")})`;

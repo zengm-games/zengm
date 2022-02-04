@@ -241,7 +241,15 @@ const pickDesc = async (dp: DraftPick, short?: "short") => {
 	}
 
 	if (dp.tid !== dp.originalTid) {
-		extras.push(`from ${g.get("teamInfoCache")[dp.originalTid]?.abbrev}`);
+		const abbrev = g.get("teamInfoCache")[dp.originalTid]?.abbrev;
+		if (abbrev) {
+			extras.push(
+				`from <a href="${leagueUrl([
+					"roster",
+					`${abbrev}_${dp.originalTid}`,
+				])}">${abbrev}</a>`,
+			);
+		}
 	}
 
 	// Show record for traded pick, Cause in the trade UI there's no other way to see how good the team is.

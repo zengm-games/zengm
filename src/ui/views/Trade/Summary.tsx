@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import classNames from "classnames";
+import { SafeHtml } from "../../components";
 
 const Summary = forwardRef(
 	(
@@ -30,7 +31,9 @@ const Summary = forwardRef(
 								</li>
 							))}
 							{summary.teams[t.other].picks.map(pick => (
-								<li key={pick.dpid}>{pick.desc}</li>
+								<li key={pick.dpid}>
+									<SafeHtml dirty={pick.desc} />
+								</li>
 							))}
 							{summary.teams[t.other].trade.length > 0 ? (
 								<li className="mt-1">

@@ -1,5 +1,5 @@
 import range from "lodash-es/range";
-import { DataTable, PlayerNameLabels } from "../../components";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { Dropdown } from "react-bootstrap";
@@ -104,7 +104,11 @@ const genPickRows = (
 						handleToggle(userOrOther, "pick", "exclude", pick.dpid);
 					}}
 				/>,
-				pick.desc,
+				{
+					value: <SafeHtml dirty={pick.desc} />,
+					searchValue: pick.desc,
+					sortValue: pick.desc,
+				},
 			],
 			classNames: {
 				"table-danger": pick.excluded && !pick.included,

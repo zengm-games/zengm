@@ -2,7 +2,7 @@ import { useRef, useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
 
@@ -373,7 +373,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					onChange={() => handleChangeAsset("dpids", pick.dpid)}
 				/>,
 				{
-					value: pick.desc,
+					value: <SafeHtml dirty={pick.desc} />,
+					searchValue: pick.desc,
 					sortValue: i,
 				},
 			],

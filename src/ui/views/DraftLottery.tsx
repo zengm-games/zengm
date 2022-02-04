@@ -143,7 +143,8 @@ const Row = ({
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
-	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts } = t;
+	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts, dpid } =
+		t;
 
 	const pickCols = range(NUM_PICKS).map(j => {
 		const prob = probs[i][j];
@@ -181,11 +182,26 @@ const Row = ({
 			onClick={toggleClicked}
 		>
 			<td
-				className={classNames({
+				className={classNames("d-flex", {
 					"table-info": tid === userTid,
 				})}
 			>
-				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+				<div className="me-auto">
+					<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+				</div>
+				{tid === userTid ? null : (
+					<button
+						className="btn btn-xs btn-light-bordered ms-2"
+						onClick={async () => {
+							await toWorker("actions", "tradeFor", {
+								dpid,
+								tid,
+							});
+						}}
+					>
+						Trade
+					</button>
+				)}
 			</td>
 			<td>
 				<a href={helpers.leagueUrl(["standings", season])}>

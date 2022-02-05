@@ -117,7 +117,9 @@ const Offer = (props: OfferProps) => {
 					<tbody>
 						{picks.map(pick => (
 							<tr key={pick.dpid}>
-								<td>{pick.desc}</td>
+								<td>
+									<SafeHtml dirty={pick.desc} />
+								</td>
 							</tr>
 						))}
 					</tbody>

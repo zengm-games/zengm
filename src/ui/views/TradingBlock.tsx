@@ -16,15 +16,17 @@ type OfferType = Awaited<
 >[0];
 
 type OfferProps = {
-	challengeNoRatings: boolean;
 	handleClickNegotiate: (
 		tid: number,
 		otherPids: number[],
 		otherDpids: number[],
 	) => Promise<void>;
 	onRemove: () => void;
-	stats: string[];
-} & OfferType;
+} & OfferType &
+	Pick<
+		View<"tradingBlock">,
+		"challengeNoRatings" | "salaryCap" | "salaryCapType" | "stats"
+	>;
 
 const OfferPlayers = ({
 	className,
@@ -106,6 +108,8 @@ const Offer = (props: OfferProps) => {
 		pids,
 		players,
 		region,
+		salaryCap,
+		salaryCapType,
 		stats,
 		strategy,
 		tid,
@@ -136,6 +140,11 @@ const Offer = (props: OfferProps) => {
 		);
 	}
 
+	const salaryCapOrPayroll =
+		salaryCapType === "none" ? payroll : salaryCap - payroll;
+	const salaryCapOrPayrollText =
+		salaryCapType === "none" ? "payroll" : "cap space";
+
 	return (
 		<div className="mt-4" style={{ maxWidth: 1125 }}>
 			<div className="d-flex align-items-center mb-2">
@@ -153,7 +162,8 @@ const Offer = (props: OfferProps) => {
 			</div>
 			<p>
 				{helpers.formatRecord(props)}, {strategy},{" "}
-				{helpers.formatCurrency(payroll / 1000, "M")} payroll
+				{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
+				{salaryCapOrPayrollText}
 			</p>
 			<div className="row">
 				<div className="col-md-8">
@@ -299,6 +309,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		gameOver,
 		phase,
 		salaryCap,
+		salaryCapType,
 		spectator,
 		stats,
 		userPicks,
@@ -414,7 +425,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			"Team",
 			"Record",
 			"Strategy",
-			"Cap Space",
+			salaryCapType === "none" ? "Payroll" : "Cap Space",
 			"Players",
 			"Draft Picks",
 			"Cap",
@@ -435,7 +446,11 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			},
 		},
 	);
+
 	const offerRows = state.offers.map((offer, i) => {
+		const salaryCapOrPayroll =
+			salaryCapType === "none" ? offer.payroll : salaryCap - offer.payroll;
+
 		return {
 			key: offer.tid,
 			data: [
@@ -444,7 +459,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</a>,
 				helpers.formatRecord(offer),
 				offer.strategy,
-				helpers.formatCurrency((salaryCap - offer.payroll) / 1000, "M"),
+				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: (
 						<OfferPlayers
@@ -564,6 +579,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 							onRemove={() => {
 								handleRemove(i);
 							}}
+							salaryCap={salaryCap}
+							salaryCapType={salaryCapType}
 							stats={stats}
 							{...offer}
 						/>

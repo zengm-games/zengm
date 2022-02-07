@@ -65,6 +65,7 @@ const updateUserRoster = async (
 			initialPid: inputs.pid,
 			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),
+			salaryCapType: g.get("salaryCapType"),
 			spectator: g.get("spectator"),
 			stats,
 			userPicks: userPicks2,

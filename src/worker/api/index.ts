@@ -1550,9 +1550,10 @@ const getTradingBlockOffers = async ({
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
 		const teams = await idb.cache.teams.getAll();
-		const tids = teams.filter(t => !t.disabled).map(t => t.tid);
-		random.shuffle(tids);
-		tids.splice(10);
+		const tids = orderBy(
+			teams.filter(t => !t.disabled),
+			["region", "name", "tid"],
+		).map(t => t.tid);
 		const offers: TradeTeam[] = [];
 
 		for (const tid of tids) {

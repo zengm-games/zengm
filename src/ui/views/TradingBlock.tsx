@@ -8,9 +8,7 @@ import type api from "../../worker/api";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
->[0] & {
-	index: number;
-};
+>[0];
 
 type OfferProps = {
 	challengeNoRatings: boolean;
@@ -29,7 +27,6 @@ const Offer = (props: OfferProps) => {
 		challengeNoRatings,
 		dpids,
 		handleClickNegotiate,
-		index,
 		lost,
 		name,
 		onRemove,
@@ -132,7 +129,6 @@ const Offer = (props: OfferProps) => {
 		<div className="mt-4" style={{ maxWidth: 1125 }}>
 			<div className="d-flex align-items-center mb-2">
 				<h2 className="mb-0">
-					Offer {index + 1}:{" "}
 					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
 						{region} {name}
 					</a>
@@ -221,30 +217,16 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			offers: [],
 		}));
 
-		const offers = (
-			await toWorker("main", "getTradingBlockOffers", {
-				pids: state.pids,
-				dpids: state.dpids,
-			})
-		).map((offer, i) => ({
-			...offer,
-			index: i,
-		}));
+		const offers = await toWorker("main", "getTradingBlockOffers", {
+			pids: state.pids,
+			dpids: state.dpids,
+		});
 
 		setState(prevState => ({
 			...prevState,
 			asking: false,
 			offers,
 		}));
-	};
-
-	const handleClickAskBottom = async () => {
-		await handleClickAsk();
-
-		if (beforeOffersRef.current) {
-			// This actually scrolls to above the button, because I don't want to worry about the fixed header offset
-			beforeOffersRef.current.scrollIntoView();
-		}
 	};
 
 	const handleClickNegotiate = async (
@@ -436,19 +418,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					/>
 				);
 			})}
-
-			{state.offers.length > 0 ? (
-				<div className="text-center">
-					<p>Don't like those offers? Well maybe you'll get lucky if you...</p>
-					<button
-						className="btn btn-lg btn-primary"
-						disabled={state.asking}
-						onClick={handleClickAskBottom}
-					>
-						{!state.asking ? "Ask For Trade Proposals Again" : "Asking..."}
-					</button>
-				</div>
-			) : null}
 		</>
 	);
 };

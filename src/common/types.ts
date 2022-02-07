@@ -1594,6 +1594,7 @@ type TradeSummaryTeam = {
 export type TradeSummary = {
 	teams: [TradeSummaryTeam, TradeSummaryTeam];
 	warning: null | string;
+	warningAmount?: number;
 };
 
 export type TradeTeam = {
@@ -1603,6 +1604,7 @@ export type TradeTeam = {
 	pidsExcluded: number[];
 	tid: number;
 	warning?: string | null;
+	warningAmount?: number;
 };
 
 export type TradeTeams = [TradeTeam, TradeTeam];

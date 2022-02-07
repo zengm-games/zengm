@@ -12,7 +12,7 @@ const HelpPopover = ({
 	style?: {
 		[key: string]: number | string;
 	};
-	title: string;
+	title?: string;
 }) => {
 	if (!className) {
 		className = "";
@@ -25,7 +25,7 @@ const HelpPopover = ({
 			placement="auto"
 			overlay={
 				<Popover id={title}>
-					<Popover.Header as="h3">{title}</Popover.Header>
+					{title ? <Popover.Header as="h3">{title}</Popover.Header> : null}
 					<Popover.Body>{children}</Popover.Body>
 				</Popover>
 			}

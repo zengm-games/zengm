@@ -2,7 +2,12 @@ import { useRef, useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
+import {
+	DataTable,
+	HelpPopover,
+	PlayerNameLabels,
+	SafeHtml,
+} from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
 
@@ -21,30 +26,14 @@ type OfferProps = {
 	stats: string[];
 } & OfferType;
 
-const Offer = (props: OfferProps) => {
-	const {
-		abbrev,
-		challengeNoRatings,
-		dpids,
-		handleClickNegotiate,
-		lost,
-		name,
-		onRemove,
-		otl,
-		payroll,
-		picks,
-		pids,
-		players,
-		region,
-		stats,
-		strategy,
-		tid,
-		tied,
-		warning,
-		won,
-	} = props;
-
-	let offerPlayers: ReactNode = null;
+const OfferPlayers = ({
+	className,
+	challengeNoRatings,
+	players,
+	stats,
+}: Pick<OfferProps, "challengeNoRatings" | "players" | "stats"> & {
+	className?: string;
+}) => {
 	if (players.length > 0) {
 		const cols = getCols(
 			[
@@ -88,18 +77,40 @@ const Offer = (props: OfferProps) => {
 			};
 		});
 
-		offerPlayers = (
-			<div className="col-md-8">
-				<DataTable
-					cols={cols}
-					defaultSort={[5, "desc"]}
-					hideAllControls
-					name="TradingBlockOffer"
-					rows={rows}
-				/>
-			</div>
+		return (
+			<DataTable
+				classNameWrapper={className}
+				cols={cols}
+				defaultSort={[5, "desc"]}
+				hideAllControls
+				hideMenuToo
+				name="TradingBlockOffer"
+				rows={rows}
+			/>
 		);
 	}
+
+	return null;
+};
+
+const Offer = (props: OfferProps) => {
+	const {
+		abbrev,
+		challengeNoRatings,
+		dpids,
+		handleClickNegotiate,
+		name,
+		onRemove,
+		payroll,
+		picks,
+		pids,
+		players,
+		region,
+		stats,
+		strategy,
+		tid,
+		warning,
+	} = props;
 
 	let offerPicks: ReactNode = null;
 	if (picks.length > 0) {
@@ -141,13 +152,17 @@ const Offer = (props: OfferProps) => {
 				/>
 			</div>
 			<p>
-				{won}-{lost}
-				{otl > 0 ? <>-{otl}</> : null}
-				{tied > 0 ? <>-{tied}</> : null}, {strategy},{" "}
+				{helpers.formatRecord(props)}, {strategy},{" "}
 				{helpers.formatCurrency(payroll / 1000, "M")} payroll
 			</p>
 			<div className="row">
-				{offerPlayers}
+				<div className="col-md-8">
+					<OfferPlayers
+						challengeNoRatings={challengeNoRatings}
+						players={players}
+						stats={stats}
+					/>
+				</div>
 				{offerPicks}
 				{picks.length === 0 && players.length === 0 ? (
 					<div className="col-12">Nothing.</div>
@@ -174,6 +189,34 @@ const pickCols = getCols(["", "Draft Picks"], {
 		width: "100%",
 	},
 });
+
+const pickScore = (
+	picks: {
+		round: number;
+		pick: number;
+	}[],
+) => {
+	let score = 0;
+	for (const { round, pick } of picks) {
+		score += 100 ** (100 - round) + 99 - pick;
+	}
+	return score;
+};
+
+const playerScore = (
+	players: {
+		ratings: {
+			ovr: number;
+			pot: number;
+		};
+	}[],
+) => {
+	let score = 0;
+	for (const p of players) {
+		score = (p.ratings.pot + p.ratings.ovr) ** 2;
+	}
+	return score;
+};
 
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
@@ -254,8 +297,9 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
-		spectator,
 		phase,
+		salaryCap,
+		spectator,
 		stats,
 		userPicks,
 		userRoster,
@@ -365,6 +409,99 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		};
 	});
 
+	const offerCols = getCols(
+		[
+			"Team",
+			"Record",
+			"Strategy",
+			"Cap Space",
+			"Players",
+			"Draft Picks",
+			"Cap",
+			"Actions",
+		],
+		{
+			Actions: {
+				sortSequence: [],
+				width: "1px",
+			},
+			"Draft Picks": {
+				sortSequence: ["desc", "asc"],
+				sortType: "number",
+			},
+			Players: {
+				sortSequence: ["desc", "asc"],
+				sortType: "number",
+			},
+		},
+	);
+	const offerRows = state.offers.map((offer, i) => {
+		return {
+			key: offer.tid,
+			data: [
+				<a href={helpers.leagueUrl(["roster", `${offer.abbrev}_${offer.tid}`])}>
+					{offer.abbrev}
+				</a>,
+				helpers.formatRecord(offer),
+				offer.strategy,
+				helpers.formatCurrency((salaryCap - offer.payroll) / 1000, "M"),
+				{
+					value: (
+						<OfferPlayers
+							className="mb-0"
+							challengeNoRatings={challengeNoRatings}
+							players={offer.players}
+							stats={stats}
+						/>
+					),
+					searchValue: offer.players
+						.map(p => `${p.name} ${p.ratings.pos}`)
+						.join(" "),
+					sortValue: playerScore(offer.players),
+				},
+				{
+					value: (
+						<ul className="list-unstyled mb-0">
+							{offer.picks.map(pick => (
+								<li key={pick.dpid}>
+									<SafeHtml dirty={pick.desc} />
+								</li>
+							))}
+						</ul>
+					),
+					searchValue: offer.picks.map(pick => pick.desc).join(" "),
+					sortValue: pickScore(offer.picks),
+				},
+				{
+					value: offer.warning ? (
+						<HelpPopover className="text-danger">{offer.warning}</HelpPopover>
+					) : null,
+					sortValue: offer.warningAmount ?? 0,
+					classNames: "text-center",
+				},
+				<div className="d-flex align-items-center">
+					<button
+						type="submit"
+						className="btn btn-light-bordered"
+						onClick={() =>
+							handleClickNegotiate(offer.tid, offer.pids, offer.dpids)
+						}
+					>
+						Negotiate
+					</button>
+					<button
+						type="button"
+						className="btn-close ms-2 p-0"
+						title="Remove offer from list"
+						onClick={() => {
+							handleRemove(i);
+						}}
+					/>
+				</div>,
+			],
+		};
+	});
+
 	return (
 		<>
 			<p>
@@ -404,20 +541,35 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</button>
 			</div>
 
-			{state.offers.map((offer, i) => {
-				return (
-					<Offer
-						key={offer.tid}
-						challengeNoRatings={challengeNoRatings}
-						handleClickNegotiate={handleClickNegotiate}
-						onRemove={() => {
-							handleRemove(i);
-						}}
-						stats={stats}
-						{...offer}
+			<div className="d-none d-xxl-block">
+				{offerRows.length > 0 ? (
+					<DataTable
+						clickable={false}
+						cols={offerCols}
+						defaultSort={[0, "asc"]}
+						name={`TradingBlock:Offers`}
+						rows={offerRows}
+						small={false}
 					/>
-				);
-			})}
+				) : null}
+			</div>
+
+			<div className="d-block d-xxl-none">
+				{state.offers.map((offer, i) => {
+					return (
+						<Offer
+							key={offer.tid}
+							challengeNoRatings={challengeNoRatings}
+							handleClickNegotiate={handleClickNegotiate}
+							onRemove={() => {
+								handleRemove(i);
+							}}
+							stats={stats}
+							{...offer}
+						/>
+					);
+				})}
+			</div>
 		</>
 	);
 };

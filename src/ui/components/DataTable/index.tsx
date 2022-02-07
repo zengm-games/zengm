@@ -64,12 +64,14 @@ export type DataTableRow = {
 
 export type Props = {
 	className?: string;
+	classNameWrapper?: string;
 	clickable?: boolean;
 	cols: Col[];
 	defaultSort: SortBy;
 	disableSettingsCache?: boolean;
 	footer?: any[];
 	hideAllControls?: boolean;
+	hideMenuToo?: boolean;
 	name: string;
 	nonfluid?: boolean;
 	pagination?: boolean;
@@ -99,12 +101,14 @@ export type State = {
 
 const DataTable = ({
 	className,
+	classNameWrapper,
 	clickable = true,
 	cols,
 	defaultSort,
 	disableSettingsCache,
 	footer,
 	hideAllControls,
+	hideMenuToo,
 	name,
 	nonfluid,
 	pagination,
@@ -466,21 +470,26 @@ const DataTable = ({
 					{pagination && !hideAllControls ? (
 						<PerPage onChange={handlePerPage} value={state.perPage} />
 					) : null}
-					<Controls
-						enableFilters={state.enableFilters}
-						hideAllControls={hideAllControls}
-						name={name}
-						onExportCSV={handleExportCSV}
-						onResetTable={handleResetTable}
-						onSearch={handleSearch}
-						onSelectColumns={handleSelectColumns}
-						onToggleFilters={handleToggleFilters}
-						searchText={state.searchText}
-					/>
+					{!hideMenuToo ? (
+						<Controls
+							enableFilters={state.enableFilters}
+							hideAllControls={hideAllControls}
+							name={name}
+							onExportCSV={handleExportCSV}
+							onResetTable={handleResetTable}
+							onSearch={handleSearch}
+							onSelectColumns={handleSelectColumns}
+							onToggleFilters={handleToggleFilters}
+							searchText={state.searchText}
+						/>
+					) : null}
 					{nonfluid ? <div className="clearFix" /> : null}
 				</>
 				<ResponsiveTableWrapper
-					className={pagination ? "fix-margin-pagination" : null}
+					className={classNames(
+						classNameWrapper,
+						pagination ? "fix-margin-pagination" : null,
+					)}
 					nonfluid={nonfluid}
 				>
 					<table

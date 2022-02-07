@@ -1584,6 +1584,7 @@ const getTradingBlockOffers = async ({
 				if (teams2) {
 					const summary = await trade.summary(teams2);
 					teams2[1].warning = summary.warning;
+					teams2[1].warningAmount = summary.warningAmount;
 					offers.push(teams2[1]);
 				}
 			}
@@ -1676,6 +1677,7 @@ const getTradingBlockOffers = async ({
 					pids: offer.pids,
 					dpids: offer.dpids,
 					warning: offer.warning,
+					warningAmount: offer.warningAmount,
 					payroll,
 					picks: picks2,
 					players,

@@ -3,6 +3,7 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import {
+	ActionButton,
 	DataTable,
 	HelpPopover,
 	PlayerNameLabels,
@@ -208,7 +209,11 @@ const pickScore = (
 ) => {
 	let score = 0;
 	for (const { round, pick } of picks) {
-		score += 100 ** (100 - round) + 99 - pick;
+		// Assume roughly 30 teams
+		const imputedPick = pick > 0 ? pick : 15;
+
+		// Assume no more than 50 rounds or 100 teams
+		score += 50 - round + (1 - imputedPick / 100);
 	}
 	return score;
 };
@@ -547,13 +552,14 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			<div ref={beforeOffersRef} />
 
 			<div className="text-center">
-				<button
-					className="btn btn-lg btn-primary"
-					disabled={state.asking}
+				<ActionButton
+					processing={state.asking}
 					onClick={handleClickAsk}
+					size="lg"
+					variant="primary"
 				>
-					{!state.asking ? "Ask For Trade Proposals" : "Asking..."}
-				</button>
+					Ask For Trade Proposals
+				</ActionButton>
 			</div>
 
 			<div className="d-none d-xxl-block">

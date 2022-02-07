@@ -1658,7 +1658,7 @@ const getTradingBlockOffers = async ({
 					picks.map(async dp => {
 						return {
 							...dp,
-							desc: await helpers.pickDesc(dp),
+							desc: await helpers.pickDesc(dp, "short"),
 						};
 					}),
 				);

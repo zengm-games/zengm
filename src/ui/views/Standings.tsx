@@ -33,6 +33,16 @@ const record = (
 	return text;
 };
 
+// These styles, and flex-nowrap, are to handle overflow for long region names on the dashboard like https://stackoverflow.com/a/11877033/786644
+const tdStyle = {
+	maxWidth: 0,
+};
+const divStyle: CSSProperties = {
+	textOverflow: "ellipsis",
+	overflow: "hidden",
+	whiteSpace: "nowrap",
+};
+
 export const TeamColumn = ({
 	maxRank,
 	rank,
@@ -58,7 +68,7 @@ export const TeamColumn = ({
 	const rankMinWidth = 8 + 7 * (String(maxRank).length - 1);
 
 	return (
-		<td className="py-1">
+		<td className="py-1" style={tdStyle}>
 			<div className="d-flex align-items-center">
 				<div
 					className="text-end"
@@ -71,9 +81,9 @@ export const TeamColumn = ({
 				<TeamLogoInline
 					imgURL={t.seasonAttrs.imgURL}
 					imgURLSmall={t.seasonAttrs.imgURLSmall}
-					className="mx-1"
+					className="mx-1 flex-shrink-0"
 				/>
-				<div>
+				<div style={divStyle}>
 					<a
 						href={helpers.leagueUrl([
 							"roster",

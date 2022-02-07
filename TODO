@@ -1,3 +1,6 @@
+show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
+- condense UI?
+
 fbgm tie game not kicking field goal as clock runs out https://discord.com/channels/290013534023057409/290015591216054273/939916430646866010
 
 build statues for players https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hqsowkj/
@@ -8,6 +11,7 @@ more sim stopping options, in addition to injury one https://old.reddit.com/r/Ba
 - stop at all star game
 
 also a way to temporarily or indefinitely set a default for how you change a page like News Feed, Player Stats. that way if you're consistently checking the news about your team you can jump right back to it instead of defaulting to all teams https://discord.com/channels/290013534023057409/331882115119448065/938016635401420840
+- maybe a checkbox or button next to the dropdowns?
 
 group ratings ranks into categories https://discord.com/channels/290013534023057409/331882115119448065/936680191936323624
 - https://discord.com/channels/290013534023057409/331882115119448065/936680191936323624
@@ -199,8 +203,6 @@ store results of trading block in database
   - can evaluate trade to see
 - indicator if trade is invalid because an asset no longer exists on that team
 - show what the user offered somewhere, not just what is checked
-
-show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
 
 football penalty later
 - make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes

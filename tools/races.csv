@@ -1,6 +1,6 @@
 country,copy_from,asian,black,brown,white,total
-Algeria,Turkey,,,,,0
-American Samoa,Turkey,,,,,0
+Algeria,India,,,,,0
+American Samoa,India,,,,,0
 Angola,Nigeria,,,,,0
 Argentina,,1,10,14,75,100
 Armenia,Lithuania,,,,,0
@@ -30,8 +30,8 @@ Cuba,Mexico,,,,,0
 Czech Republic,Germany,,,,,0
 Denmark,Germany,,,,,0
 Dominican Republic,Nigeria,,,,,0
-East Timor,Turkey,,,,,0
-Egypt,Turkey,,,,,0
+East Timor,India,,,,,0
+Egypt,India,,,,,0
 El Salvador,Mexico,,,,,0
 England,Germany,,,,,0
 Ecuador,Mexico,,,,,0
@@ -53,7 +53,7 @@ Haiti,Nigeria,,,,,0
 Honduras,Mexico,,,,,0
 Hungary,Lithuania,,,,,0
 Iceland,Lithuania,,,,,0
-India,Turkey,,,,,0
+India,,1,1,997,1,1000
 Indonesia,China,,,,,0
 Iran,Lithuania,,,,,0
 Ireland,Germany,,,,,0
@@ -76,9 +76,9 @@ Mali,Nigeria,,,,,0
 Mexico,,1,10,79,10,100
 Moldova,Lithuania,,,,,0
 Montenegro,Lithuania,,,,,0
-Morocco,Turkey,,,,,0
+Morocco,India,,,,,0
 Mozambique,Nigeria,,,,,0
-Nepal,Turkey,,,,,0
+Nepal,India,,,,,0
 Netherlands,Spain,,,,,0
 New Zealand,Lithuania,,,,,0
 Nicaragua,Mexico,,,,,0
@@ -86,18 +86,18 @@ Nigeria,,1,997,1,1,1000
 North Korea,China,,,,,0
 North Macedonia,Lithuania,,,,,0
 Norway,Spain,,,,,0
-Pakistan,Turkey,,,,,0
+Pakistan,India,,,,,0
 Panama,Mexico,,,,,0
 Papua New Guinea,China,,,,,0
 Paraguay,Mexico,,,,,0
 Peru,Mexico,,,,,0
-Philippines,Turkey,,,,,0
+Philippines,India,,,,,0
 Poland,Lithuania,,,,,0
 Portugal,Spain,,,,,0
 Puerto Rico,USA,,,,,0
 Romania,Lithuania,,,,,0
 Russia,Lithuania,,,,,0
-Samoa,Turkey,,,,,0
+Samoa,India,,,,,0
 Scotland,Spain,,,,,0
 Senegal,Nigeria,,,,,0
 Serbia,Lithuania,,,,,0
@@ -112,7 +112,7 @@ Sweden,Spain,,,,,0
 Switzerland,Germany,,,,,0
 Thailand,China,,,,,0
 Trinidad and Tobago,Cape Verde,,,,,0
-Turkey,,1,1,997,1,1000
+Turkey,,1,1,18,80,100
 USA,,1,50,35,14,100
 Ukraine,Lithuania,,,,,0
 Uruguay,Argentina,,,,,0

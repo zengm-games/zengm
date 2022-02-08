@@ -91,8 +91,11 @@ export const TeamColumn = ({
 							...(season !== undefined ? [season] : []),
 						])}
 					>
-						{t.seasonAttrs.region}
-						{includeName ? ` ${t.seasonAttrs.name}` : null}
+						<span className="d-none d-sm-inline">
+							{t.seasonAttrs.region}
+							{includeName ? ` ${t.seasonAttrs.name}` : null}
+						</span>
+						<span className="d-sm-none">{t.seasonAttrs.abbrev}</span>
 					</a>
 					{t.seasonAttrs.clinchedPlayoffs
 						? ` ${t.seasonAttrs.clinchedPlayoffs}`
@@ -240,7 +243,7 @@ const GroupStandings = ({
 			<table className="table table-striped table-sm table-hover align-middle">
 				<thead>
 					<tr>
-						<th style={{ minWidth: 215 }}>{name}</th>
+						<th className="standings-name">{name}</th>
 						<th>W</th>
 						<th>L</th>
 						{otl ? <th>OTL</th> : null}

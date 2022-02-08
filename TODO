@@ -7,6 +7,7 @@ sticky first column in most tables
 - dark mode
 - configurable per table
 - border on right
+- look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?

@@ -1501,3 +1501,13 @@ table.sticky-xx {
 		}
 	}
 }
+
+.standings-name {
+	min-width: 90px;
+}
+
+@include media-breakpoint-up(sm) {
+	.standings-name {
+		min-width: 215px;
+	}
+}

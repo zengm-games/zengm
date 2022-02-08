@@ -540,7 +540,7 @@ const DataTable = ({
 						className={classNames("table table-hover", {
 							"table-sm": small !== false,
 							"table-striped": striped !== false,
-							"sticky-x sticky-xx": true,
+							"sticky-xx": true,
 						})}
 						ref={tableRef}
 					>

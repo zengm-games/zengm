@@ -7,6 +7,8 @@ sticky first column in most tables
 - dark mode
 - configurable per table
 - border on right
+  - mostly works with :after box-shadow, but in header it conflicts with sorting arrows
+- sorting arrows missing
 - look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
 - supercols
   - sticky-x

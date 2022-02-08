@@ -1450,16 +1450,50 @@ table.sticky-x {
 			left: 0;
 			z-index: 10;
 			background-color: $white;
+
+			&:after {
+				box-shadow: 0px 0px 0px 1px $border-color;
+				content: " ";
+				height: 100%;
+				position: absolute;
+				top: 0;
+				right: 1px;
+			}
 		}
 	}
+}
 
+table.sticky-xx {
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			position: sticky;
+			// left: 157px;
+			z-index: 10;
+			background-color: $white;
+
+			&:after {
+				box-shadow: 0px 0px 0px 1px $border-color;
+				content: " ";
+				height: 100%;
+				position: absolute;
+				top: 0;
+				right: 1px;
+			}
+		}
+	}
+}
+
+table.sticky-x,
+table.sticky-xx {
 	thead {
 		th {
 			background-color: $white;
 		}
+
 		tr th:nth-child(1) {
 			position: sticky;
-			left: 0;
+			left: 0; // for sticky-xx, this will be overwritten by JS
 			top: 0;
 			z-index: 12;
 		}
@@ -1477,27 +1511,6 @@ table.sticky-x {
 		td,
 		td.sorting_highlight {
 			background-color: inherit !important;
-		}
-	}
-}
-
-table.sticky-xx {
-	tr {
-		td:nth-child(2),
-		th:nth-child(2) {
-			position: sticky;
-			// left: 157px;
-			z-index: 10;
-			background-color: $white;
-		}
-	}
-
-	thead {
-		tr th:nth-child(2) {
-			position: sticky;
-			// left: 157px;
-			top: 0;
-			z-index: 12;
 		}
 	}
 }

@@ -1465,10 +1465,18 @@ table.sticky-x {
 		}
 	}
 
-	tr.table-warning {
+	tr.table-warning,
+	tr.table-primary,
+	tr.table-secondary,
+	tr.table-success,
+	tr.table-danger,
+	tr.table-warning,
+	tr.table-info,
+	tr.table-light,
+	tr.table-dark {
 		td,
 		td.sorting_highlight {
-			background-color: map.get($table-variants, "warning") !important;
+			background-color: inherit !important;
 		}
 	}
 }

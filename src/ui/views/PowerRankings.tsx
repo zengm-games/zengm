@@ -149,7 +149,10 @@ const PowerRankings = ({
 										season,
 									])}
 								>
-									{t.seasonAttrs.region} {t.seasonAttrs.name}
+									<span className="d-none d-sm-inline">
+										{t.seasonAttrs.region} {t.seasonAttrs.name}
+									</span>
+									<span className="d-sm-none">{t.seasonAttrs.abbrev}</span>
 								</a>
 							</div>
 						</div>

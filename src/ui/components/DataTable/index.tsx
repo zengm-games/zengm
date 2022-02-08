@@ -8,6 +8,7 @@ import {
 	useState,
 	useEffect,
 	useCallback,
+	useRef,
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
@@ -411,6 +412,49 @@ const DataTable = ({
 			}),
 		);
 
+	const tableRef = useRef<HTMLTableElement>(null);
+	useEffect(() => {
+		const table = tableRef.current;
+		if (!table) {
+			return;
+		}
+		console.log("effect", table);
+
+		let row: HTMLTableRowElement | undefined;
+		let headerRows = Array.from(
+			table.querySelectorAll<HTMLTableRowElement>("thead tr"),
+		);
+		if (headerRows.length > 0) {
+			// Last row - no superCols
+			headerRows = [headerRows.at(-1)];
+
+			row = headerRows[0];
+		}
+
+		const bodyRows = table.querySelectorAll<HTMLTableRowElement>("tbody tr");
+
+		if (!row) {
+			if (bodyRows.length > 0) {
+				row = bodyRows[0];
+			}
+		}
+
+		const cell = row?.cells[0];
+
+		if (!cell) {
+			return;
+		}
+
+		const width = `${cell.offsetWidth}px`;
+
+		const rows = [...headerRows, ...bodyRows];
+
+		for (const row of rows) {
+			const cell = row.cells[1];
+			cell.style.left = width;
+		}
+	});
+
 	return (
 		<>
 			<CustomizeColumns
@@ -496,8 +540,9 @@ const DataTable = ({
 						className={classNames("table table-hover", {
 							"table-sm": small !== false,
 							"table-striped": striped !== false,
-							"sticky-x": true,
+							"sticky-x sticky-xx": true,
 						})}
+						ref={tableRef}
 					>
 						<Header
 							colOrder={colOrderFiltered}

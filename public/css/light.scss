@@ -1480,3 +1480,24 @@ table.sticky-x {
 		}
 	}
 }
+
+table.sticky-xx {
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			position: sticky;
+			// left: 157px;
+			z-index: 10;
+			background-color: $white;
+		}
+	}
+
+	thead {
+		tr th:nth-child(2) {
+			position: sticky;
+			// left: 157px;
+			top: 0;
+			z-index: 12;
+		}
+	}
+}

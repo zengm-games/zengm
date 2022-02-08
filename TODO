@@ -6,6 +6,10 @@ sticky first column in most tables
 - background when sorted
 - dark mode
 - configurable per table
+- border on right
+- supercols
+  - sticky-x
+  - sticky-xx - how to deal with colspan?
 
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 

@@ -11,6 +11,7 @@ import {
 } from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
+import classNames from "classnames";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
@@ -370,8 +371,9 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		],
 		{
 			"": {
-				sortSequence: [],
 				noSearch: true,
+				sortSequence: [],
+				width: "1%",
 			},
 		},
 	);
@@ -494,10 +496,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				},
 				{
 					value: offer.warning ? (
-						<HelpPopover className="text-danger">{offer.warning}</HelpPopover>
+						<HelpPopover className="fs-4">{offer.warning}</HelpPopover>
 					) : null,
 					sortValue: offer.warningAmount ?? 0,
-					classNames: "text-center",
+					classNames: classNames(
+						"text-center",
+						offer.warning ? "table-danger" : undefined,
+					),
 				},
 				<div className="d-flex align-items-center">
 					<button

@@ -1,8 +1,12 @@
+@use "sass:map";
 @use "sass:math";
 
 // These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
 $dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
 $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
+
+// For datatable.scss
+$sorting-highlight-bg: #ececec !default; // Matches var(--bs-table-hover-bg) but without transparency, which is needed for sticky-x
 
 // Make it more like Bootstrap 4
 $link-decoration: none;
@@ -1435,5 +1439,36 @@ hr {
 
 	.dark-select__menu {
 		z-index: 3; // Above .settings-buttons
+	}
+}
+
+table.sticky-x {
+	tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			position: sticky;
+			left: 0;
+			z-index: 10;
+			background-color: $white;
+		}
+	}
+
+	thead {
+		th {
+			background-color: $white;
+		}
+		tr th:nth-child(1) {
+			position: sticky;
+			left: 0;
+			top: 0;
+			z-index: 12;
+		}
+	}
+
+	tr.table-warning {
+		td,
+		td.sorting_highlight {
+			background-color: map.get($table-variants, "warning") !important;
+		}
 	}
 }

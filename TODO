@@ -1,3 +1,12 @@
+sticky first column in most tables
+- https://github.com/twbs/bootstrap/issues/31458
+- https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
+- what if it needs 2 columns, like roster or team stats?
+- what if fixed columns are wider than viewport?
+- background when sorted
+- dark mode
+- configurable per table
+
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 
 build statues for players https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hqsowkj/
@@ -65,12 +74,6 @@ minors
 fbgm kickoff return to own 0 https://discord.com/channels/290013534023057409/290015591216054273/932688109596975164
 
 when starting a new league, contracts should be set not based on current state of player, but on state when contract was signed. especially noticable for rookies who progged a lot
-
-sticky first column in most tables
-- https://github.com/twbs/bootstrap/issues/31458
-- https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
-- what if it needs 2 columns, like roster or team stats?
-- what if fixed columns are wider than viewport?
 
 no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
 

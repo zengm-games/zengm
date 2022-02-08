@@ -496,6 +496,7 @@ const DataTable = ({
 						className={classNames("table table-hover", {
 							"table-sm": small !== false,
 							"table-striped": striped !== false,
+							"sticky-x": true,
 						})}
 					>
 						<Header

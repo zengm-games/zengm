@@ -34,6 +34,7 @@ export const getPlayers = async (
 		attrs: [
 			"pid",
 			"name",
+			"nameAbbrev",
 			"age",
 			"contract",
 			"injury",

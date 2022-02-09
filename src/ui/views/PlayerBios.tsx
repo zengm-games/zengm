@@ -58,6 +58,7 @@ const PlayerBios = ({
 					season={season}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -153,10 +154,10 @@ const PlayerBios = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={1}
 				name="PlayerBios"
 				pagination
 				rows={rows}
-				defaultStickyCols={1}
 			/>
 		</>
 	);

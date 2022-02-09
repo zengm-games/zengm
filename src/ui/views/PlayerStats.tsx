@@ -139,8 +139,9 @@ const PlayerStats = ({
 							season={season === "career" ? undefined : p.stats.season}
 							skills={p.ratings.skills}
 							watch={p.watch}
+							xsName={p.nameAbbrev}
 						>
-							{p.nameAbbrev}
+							{p.name}
 						</PlayerNameLabels>
 					),
 					sortValue: p.name,
@@ -194,6 +195,7 @@ const PlayerStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[sortCol, "desc"]}
+				defaultStickyCols={1}
 				name={`PlayerStats${statType}`}
 				rows={rows}
 				superCols={superCols}

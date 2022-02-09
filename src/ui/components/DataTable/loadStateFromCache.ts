@@ -82,7 +82,7 @@ const loadStateFromCache = ({
 	// If too many cols... who cares, will get filtered out
 
 	const stickyCols =
-		settingsCache.get("DataTableColOrder") ?? defaultStickyCols;
+		settingsCache.get("DataTableStickyCols") ?? defaultStickyCols;
 
 	return {
 		colOrder,

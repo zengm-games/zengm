@@ -22,6 +22,7 @@ const PlayerNameLabels = (props: {
 		[key: string]: string;
 	};
 	watch?: boolean;
+	xsName?: string;
 }) => {
 	const {
 		children,
@@ -33,7 +34,17 @@ const PlayerNameLabels = (props: {
 		skills,
 		style,
 		watch,
+		xsName,
 	} = props;
+
+	const name = xsName ? (
+		<>
+			<span className="d-sm-none">{xsName}</span>
+			<span className="d-none d-sm-inline">{children}</span>
+		</>
+	) : (
+		children
+	);
 
 	return (
 		<span style={style}>
@@ -42,9 +53,9 @@ const PlayerNameLabels = (props: {
 			) : null}
 			{typeof pos === "string" ? `${pos} ` : null}
 			{pid !== undefined ? (
-				<a href={helpers.leagueUrl(["player", pid])}>{children}</a>
+				<a href={helpers.leagueUrl(["player", pid])}>{name}</a>
 			) : (
-				children
+				name
 			)}
 			<InjuryIcon injury={injury} />
 			<SkillsBlock skills={skills} />

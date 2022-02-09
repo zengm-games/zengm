@@ -1,14 +1,12 @@
 sticky first column in most tables
 - https://github.com/twbs/bootstrap/issues/31458
 - https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
-- what if it needs 2 columns, like roster or team stats?
-- what if fixed columns are wider than viewport?
-- background when sorted
 - dark mode
 - configurable per table
 - look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
 - switch from 2 to 1 - need to clear the css set for sticky-xx left?
-- sorting columns in customize columns window is broken with sticky
+- setting in the UI to set sticky
+- sorting columns in customize columns window is broken with sticky-xx
 - test firefox
 - test safari
 - supercols

@@ -1,5 +1,6 @@
 sticky first column in most tables
 - supercols
+  - maybe break up empty ones with colSpan into individual columns?
   - sticky-x
   - sticky-xx - how to deal with colspan?
 - blog

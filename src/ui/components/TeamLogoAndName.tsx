@@ -42,6 +42,7 @@ const TeamLogoAndName = ({
 
 export const wrappedTeamLogoAndName = (t: Team, url: string) => ({
 	value: <TeamLogoAndName t={t} url={url} />,
+	searchValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name} ${t.seasonAttrs.abbrev}`,
 	sortValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name} ${t.seasonAttrs.abbrev}`,
 });
 

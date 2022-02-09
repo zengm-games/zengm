@@ -428,7 +428,7 @@ const DataTable = ({
 				return [];
 			}
 
-			return table.querySelectorAll<HTMLTableRowElement>("tr");
+			return Array.from(table.querySelectorAll<HTMLTableRowElement>("tr"));
 		};
 
 		if (state.stickyCols === 2) {
@@ -438,7 +438,8 @@ const DataTable = ({
 				return;
 			}
 
-			const cell = rows[0].cells[0];
+			// Header/footer might have weird colspan, so try to use something before the footer
+			const cell = (rows.at(-2) ?? rows.at(-1)).cells[0];
 
 			if (!cell) {
 				return;

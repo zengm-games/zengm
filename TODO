@@ -4,7 +4,6 @@ sticky first column in most tables
 - dark mode
 - configurable per table
 - look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
-- switch from 2 to 1 - need to clear the css set for sticky-xx left?
 - sorting columns in customize columns window is broken with sticky-xx
 - test firefox
 - test safari

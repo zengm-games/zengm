@@ -417,13 +417,13 @@ const DataTable = ({
 		);
 
 	const tableRef = useRef<HTMLTableElement>(null);
+	const prevStickyCols = useRef(state.stickyCols);
 	useEffect(() => {
-		if (state.stickyCols === 2) {
+		const getRows = () => {
 			const table = tableRef.current;
 			if (!table) {
-				return;
+				return [];
 			}
-			console.log("effect", table);
 
 			let headerRows = Array.from(
 				table.querySelectorAll<HTMLTableRowElement>("thead tr"),
@@ -437,7 +437,11 @@ const DataTable = ({
 			const footerRows =
 				table.querySelectorAll<HTMLTableRowElement>("tfoot tr");
 
-			const rows = [...headerRows, ...bodyRows, ...footerRows];
+			return [...headerRows, ...bodyRows, ...footerRows];
+		};
+
+		if (state.stickyCols === 2) {
+			const rows = getRows();
 
 			if (rows.length === 0) {
 				return;
@@ -449,13 +453,22 @@ const DataTable = ({
 				return;
 			}
 
+			// Manually offset the 2nd col by the width of the 1st col
 			const width = `${cell.offsetWidth}px`;
-
 			for (const row of rows) {
 				const cell = row.cells[1];
 				cell.style.left = width;
 			}
+		} else if (prevStickyCols.current === 2) {
+			// When switching away from 2 sticky cols, reset style
+			const rows = getRows();
+			for (const row of rows) {
+				const cell = row.cells[1];
+				cell.style.left = "";
+			}
 		}
+
+		prevStickyCols.current = state.stickyCols;
 	});
 
 	return (

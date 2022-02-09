@@ -1460,7 +1460,7 @@ table.sticky-x {
 	tr {
 		td:nth-child(1),
 		th:nth-child(1) {
-			padding-right: 6px;
+			padding-right: 10px;
 		}
 	}
 
@@ -1476,6 +1476,15 @@ table.sticky-x {
 				top: 0;
 				right: 1px;
 			}
+		}
+	}
+}
+table.sticky-x.table-sm {
+	// Add space for box-shadow - $table-cell-padding-x + 2px
+	tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			padding-right: 6px;
 		}
 	}
 }
@@ -1495,7 +1504,7 @@ table.sticky-xx {
 	tr {
 		td:nth-child(2),
 		th:nth-child(2) {
-			padding-right: 6px;
+			padding-right: 10px;
 		}
 	}
 
@@ -1511,6 +1520,15 @@ table.sticky-xx {
 				top: 0;
 				right: 1px;
 			}
+		}
+	}
+}
+table.sticky-xx.table-sm {
+	// Add space for box-shadow - $table-cell-padding-x + 2px
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			padding-right: 6px;
 		}
 	}
 }

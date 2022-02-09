@@ -1533,6 +1533,13 @@ table.sticky-xxx {
 			background-color: inherit !important;
 		}
 	}
+
+	// This is needed for SortableTable handles
+	@each $color, $value in $table-variants {
+		td.table-#{$color} {
+			background-color: $value !important;
+		}
+	}
 }
 
 .standings-name {

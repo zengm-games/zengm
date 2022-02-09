@@ -1,19 +1,11 @@
 sticky first column in most tables
-- improve useStickyXX performance
-  - compute width offsets up front, from just looking at one row (no selecting all yet)
-  - if not changed, bail out
-- tools > Fantasy Draft - handles not showing right
-  - roster too. beta?
 - blog
   - especially helps on mobile
   - can configure for table at ... > Customize Columns
   - on mobile, uses shortened name (first initial) and team (abbrev)
 
 2 sticky columns without DataTable
-- extract logic into reusable hook
 - football/hockey box scores
-- roster
-  - different default for football/hockey
 - depth
 
 xsName refactor

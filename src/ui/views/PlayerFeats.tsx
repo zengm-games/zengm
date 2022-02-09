@@ -177,6 +177,7 @@ const PlayerFeats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[23, "desc"]}
+				defaultStickyCols={1}
 				name="PlayerFeats"
 				rows={rows}
 				superCols={superCols}

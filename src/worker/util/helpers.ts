@@ -335,6 +335,18 @@ const daysLeft = (freeAgents: boolean, days?: number) => {
 	return `${actualDays} ${dayWeek} left`;
 };
 
+const nameAbbrev = (p: { firstName: string; lastName: string }) => {
+	if (p.lastName === "") {
+		return p.firstName;
+	}
+	return `${p.firstName
+		.replace(/"/g, "")
+		.split(" ")
+		.map(s => s[0])
+		.filter(s => s !== undefined)
+		.join(".")}. ${p.lastName}`;
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -353,6 +365,7 @@ const helpers = {
 	roundContract,
 	sigmoid,
 	daysLeft,
+	nameAbbrev,
 };
 
 export default helpers;

@@ -55,10 +55,7 @@ const HeadToHeadAll = ({
 			key: t.tid,
 			data: [
 				{
-					classNames: classNames(
-						"align-middle",
-						userTid === t.tid ? "table-info" : undefined,
-					),
+					classNames: classNames(userTid === t.tid ? "table-info" : undefined),
 					value: (
 						<a
 							href={helpers.leagueUrl([

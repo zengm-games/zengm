@@ -1549,3 +1549,12 @@ table.sticky-xx {
 		min-width: 215px;
 	}
 }
+
+// Better default than top, we often have like a team logo inline or something
+.table td {
+	vertical-align: middle;
+}
+
+.align-top-all .table td {
+	vertical-align: top;
+}

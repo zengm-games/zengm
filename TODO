@@ -10,8 +10,14 @@ sticky first column in most tables
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?
+- blog
+  - especially helps on mobile
+  - can configure for table at ... > Customize Columns
+  - on mobile, uses shortened name (first initial) and team (abbrev)
 
 make watch not crash on scss parse error
+
+make some tables (awards records, power rankings, injuries, ...) nonfluid
 
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 

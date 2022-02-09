@@ -120,16 +120,7 @@ const processAttrs = (
 		} else if (attr === "name") {
 			output.name = `${p.firstName} ${p.lastName}`;
 		} else if (attr === "nameAbbrev") {
-			if (p.lastName === "") {
-				output.nameAbbrev = p.firstName;
-			} else {
-				output.nameAbbrev = `${p.firstName
-					.replace(/"/g, "")
-					.split(" ")
-					.map(s => s[0])
-					.filter(s => s !== undefined)
-					.join(".")}. ${p.lastName}`;
-			}
+			output.nameAbbrev = helpers.nameAbbrev(p);
 		} else if (attr === "untradable") {
 			Object.assign(output, trade.isUntradable(p));
 		} else if (attr === "numBrothers") {

@@ -44,6 +44,7 @@ const Injuries = ({
 					skills={p.ratings.skills}
 					season={typeof season === "number" ? season : undefined}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -97,6 +98,7 @@ const Injuries = ({
 				<DataTable
 					cols={cols}
 					defaultSort={[cols.length - 3, "asc"]}
+					defaultStickyCols={1}
 					name="Injuries"
 					pagination
 					rows={rows}

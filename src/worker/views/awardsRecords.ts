@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import type { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sync with Dropdown.js
 import { bySport } from "../../common";
+import { helpers } from "../util";
 
 const optionsTmp = bySport({
 	basketball: [
@@ -280,6 +281,7 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	const lastYear = Math.max(...years.map(y => y.season)).toString();
 	return {
 		name: `${p.firstName} ${p.lastName}`,
+		nameAbbrev: helpers.nameAbbrev(p),
 		pid: p.pid,
 		count: awards.length,
 		countText: awards.length.toString(),

@@ -574,6 +574,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			<div className="d-none d-xxl-block">
 				{offerRows.length > 0 ? (
 					<DataTable
+						className="align-top-all"
 						clickable={false}
 						cols={offerCols}
 						defaultSort={[0, "asc"]}

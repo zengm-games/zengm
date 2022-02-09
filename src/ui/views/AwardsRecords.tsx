@@ -1,5 +1,5 @@
 import { groupBy } from "../../common/groupBy";
-import { DataTable, MoreLinks } from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -45,7 +45,9 @@ const AwardsRecords = ({
 		return {
 			key: a.pid,
 			data: [
-				<a href={helpers.leagueUrl(["player", a.pid])}>{a.name}</a>,
+				<PlayerNameLabels pid={a.pid} xsName={a.nameAbbrev}>
+					{a.name}
+				</PlayerNameLabels>,
 				a.count,
 				{
 					value: formatYear(groupBy(a.years, "team")),
@@ -78,6 +80,7 @@ const AwardsRecords = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[1, "desc"]}
+				defaultStickyCols={1}
 				name="AwardsRecords"
 				rows={rows}
 				pagination

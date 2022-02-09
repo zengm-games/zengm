@@ -29,7 +29,6 @@ import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
-import getStickyColsClass from "./getStickyColsClass";
 
 export type SortBy = [number, SortOrder];
 
@@ -422,7 +421,7 @@ const DataTable = ({
 			}),
 		);
 
-	const tableRef = useStickyXX(state.stickyCols);
+	const { stickyClass, tableRef } = useStickyXX(state.stickyCols);
 
 	return (
 		<>
@@ -521,7 +520,7 @@ const DataTable = ({
 								"table-sm": small !== false,
 								"table-striped": striped !== false,
 							},
-							getStickyColsClass(state.stickyCols),
+							stickyClass,
 						)}
 						ref={tableRef}
 					>

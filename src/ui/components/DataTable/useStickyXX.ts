@@ -1,6 +1,7 @@
 import range from "lodash-es/range";
 import { useCallback, useEffect, useRef } from "react";
 import type { StickyCols } from ".";
+import getStickyColsClass from "./getStickyColsClass";
 
 // >1 sticky column requires some JS to compute the left offset of all besides the first sticky column (whose offset is always 0)
 const useStickyXX = (stickyCols: StickyCols) => {
@@ -89,7 +90,12 @@ const useStickyXX = (stickyCols: StickyCols) => {
 	// Run every render, because there's no better way to detect when data changes, which can change column widths
 	useEffect(updateStickyCols);
 
-	return tableRef;
+	const stickyClass = getStickyColsClass(stickyCols);
+
+	return {
+		stickyClass,
+		tableRef,
+	};
 };
 
 export default useStickyXX;

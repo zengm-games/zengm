@@ -10,7 +10,6 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 import type { StickyCols } from "./DataTable";
 import useStickyXX from "./DataTable/useStickyXX";
-import getStickyColsClass from "./DataTable/getStickyColsClass";
 
 type HighlightHandle<Value> = (a: { index: number; value: Value }) => boolean;
 type RowClassName<Value> = (a: {
@@ -179,7 +178,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		undefined,
 	);
 
-	const tableRef = useStickyXX(stickyCols);
+	const { stickyClass, tableRef } = useStickyXX(stickyCols);
 
 	// Hacky shit to try to determine click from drag. Could just be a boolean, except on mobile seems sorting fires twice in a row, so we need to track the time to debounce.
 	const clicked = useRef<{
@@ -247,7 +246,6 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	);
 
 	let tableClasses = "table table-striped table-sm table-hover";
-	const stickyClass = getStickyColsClass(stickyCols);
 	if (stickyClass) {
 		tableClasses += ` ${stickyClass}`;
 	}

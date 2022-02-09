@@ -5,9 +5,6 @@ sticky first column in most tables
   - can configure for table at ... > Customize Columns
   - on mobile, uses shortened name (first initial) and team (abbrev)
 
-2 sticky columns without DataTable
-- depth
-
 xsName refactor
 - instead, store firstName and lastName and compute the names client side
 - player feats and box scores will need to be upgraded

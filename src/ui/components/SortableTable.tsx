@@ -160,7 +160,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	onSwap,
 	row,
 	rowClassName,
-	stickyCols,
+	stickyCols = 0,
 	values,
 }: {
 	cols: () => ReactNode;
@@ -170,7 +170,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	onSwap: (index1: number, index2: number) => void;
 	row: Row<Value>;
 	rowClassName?: RowClassName<Value>;
-	stickyCols: StickyCols;
+	stickyCols?: StickyCols;
 	values: Value[];
 }) => {
 	const [isDragged, setIsDragged] = useState(false);

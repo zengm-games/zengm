@@ -8,6 +8,9 @@ import {
 } from "react-sortable-hoc";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
+import type { StickyCols } from "./DataTable";
+import useStickyXX from "./DataTable/useStickyXX";
+import getStickyColsClass from "./DataTable/getStickyColsClass";
 
 type HighlightHandle<Value> = (a: { index: number; value: Value }) => boolean;
 type RowClassName<Value> = (a: {
@@ -158,6 +161,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	onSwap,
 	row,
 	rowClassName,
+	stickyCols,
 	values,
 }: {
 	cols: () => ReactNode;
@@ -167,12 +171,15 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	onSwap: (index1: number, index2: number) => void;
 	row: Row<Value>;
 	rowClassName?: RowClassName<Value>;
+	stickyCols: StickyCols;
 	values: Value[];
 }) => {
 	const [isDragged, setIsDragged] = useState(false);
 	const [indexSelected, setIndexSelected] = useState<number | undefined>(
 		undefined,
 	);
+
+	const tableRef = useStickyXX(stickyCols);
 
 	// Hacky shit to try to determine click from drag. Could just be a boolean, except on mobile seems sorting fires twice in a row, so we need to track the time to debounce.
 	const clicked = useRef<{
@@ -199,7 +206,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			// @ts-expect-error
 			tds[i].style.width = `${childNode.offsetWidth}px`;
 			// @ts-expect-error
-			tds[i].style.padding = "5px";
+			tds[i].style.padding = "4px";
 		}
 	}, []);
 
@@ -239,9 +246,15 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		[onChange, onSwap, indexSelected],
 	);
 
+	let tableClasses = "table table-striped table-sm table-hover";
+	const stickyClass = getStickyColsClass(stickyCols);
+	if (stickyClass) {
+		tableClasses += ` ${stickyClass}`;
+	}
+
 	return (
 		<ResponsiveTableWrapper nonfluid>
-			<table className="table table-striped table-sm table-hover">
+			<table ref={tableRef} className={tableClasses}>
 				<thead>
 					<tr>
 						{disabled ? null : <th />}

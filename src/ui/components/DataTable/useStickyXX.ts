@@ -32,7 +32,6 @@ const useStickyXX = (stickyCols: StickyCols) => {
 			let left = 0;
 			for (let i = 1; i < stickyCols; i++) {
 				left += row.cells[i - 1].offsetWidth;
-				console.log("set left", i, left);
 
 				const width = `${left}px`;
 				for (const row of rows) {
@@ -44,7 +43,6 @@ const useStickyXX = (stickyCols: StickyCols) => {
 		// When removing a sticky col that had a style manually applied above, reset that style
 		if (prevStickyCols.current >= 2 && prevStickyCols.current > stickyCols) {
 			const colsToReset = range(stickyCols, prevStickyCols.current);
-			console.log("colsToReset", colsToReset);
 
 			const rows = getRows();
 			for (const row of rows) {

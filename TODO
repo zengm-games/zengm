@@ -1,4 +1,9 @@
 sticky first column in most tables
+- improve useStickyXX performance
+  - compute width offsets up front, from just looking at one row (no selecting all yet)
+  - if not changed, bail out
+- tools > Fantasy Draft - handles not showing right
+  - roster too. beta?
 - blog
   - especially helps on mobile
   - can configure for table at ... > Customize Columns
@@ -15,11 +20,9 @@ xsName refactor
 - instead, store firstName and lastName and compute the names client side
 - player feats and box scores will need to be upgraded
 
-tools > Fantasy Draft - handles not showing right
-
 make watch not crash on scss parse error
 
-make some tables (awards records, power rankings, injuries, ...) nonfluid
+make some tables (awards records, power rankings, injuries, ...) nonfluid like roster
 
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 

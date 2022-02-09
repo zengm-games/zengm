@@ -29,6 +29,7 @@ import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
+import getStickyColsClass from "./getStickyColsClass";
 
 export type SortBy = [number, SortOrder];
 
@@ -514,13 +515,14 @@ const DataTable = ({
 					nonfluid={nonfluid}
 				>
 					<table
-						className={classNames("table table-hover", {
-							"table-sm": small !== false,
-							"table-striped": striped !== false,
-							"sticky-x": state.stickyCols === 1,
-							"sticky-xx": state.stickyCols === 2,
-							"sticky-xxx": state.stickyCols === 3,
-						})}
+						className={classNames(
+							"table table-hover",
+							{
+								"table-sm": small !== false,
+								"table-striped": striped !== false,
+							},
+							getStickyColsClass(state.stickyCols),
+						)}
 						ref={tableRef}
 					>
 						<Header

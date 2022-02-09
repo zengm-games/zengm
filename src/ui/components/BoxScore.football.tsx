@@ -6,6 +6,7 @@ import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
 import updateSortBys from "./DataTable/updateSortBys";
 import { getSortClassName } from "./DataTable/Header";
+import useStickyXX from "./DataTable/useStickyXX";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -138,13 +139,20 @@ const StatsTableIndividual = ({
 	const sortable = players.length > 1;
 	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
 
+	const { stickyClass, tableRef } = useStickyXX(2);
+	let tableClasses = "table table-striped table-sm table-hover";
+	if (stickyClass) {
+		tableClasses += ` ${stickyClass}`;
+	}
+
 	return (
 		<div className="mb-3">
 			<ResponsiveTableWrapper>
-				<table className="table table-striped table-sm table-hover">
+				<table ref={tableRef} className={tableClasses}>
 					<thead>
 						<tr>
-							<th colSpan={2}>
+							<th />
+							<th>
 								{t.region} {t.name}
 							</th>
 							<StatsHeader

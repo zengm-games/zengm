@@ -1456,7 +1456,7 @@ table.sticky-xx {
 }
 
 table.sticky-x {
-	// Only in tbody because :after conflicts with sort arrows from datatable.scss
+	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
 	tbody tr {
 		td:nth-child(1),
 		th:nth-child(1) {
@@ -1483,7 +1483,7 @@ table.sticky-xx {
 		}
 	}
 
-	// Only in tbody because :after conflicts with sort arrows from datatable.scss
+	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
 	tbody tr {
 		td:nth-child(2),
 		th:nth-child(2) {

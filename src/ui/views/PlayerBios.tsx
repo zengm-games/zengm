@@ -156,6 +156,7 @@ const PlayerBios = ({
 				name="PlayerBios"
 				pagination
 				rows={rows}
+				defaultStickyCols={1}
 			/>
 		</>
 	);

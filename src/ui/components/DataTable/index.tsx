@@ -70,6 +70,7 @@ export type Props = {
 	cols: Col[];
 	defaultSort: SortBy;
 	disableSettingsCache?: boolean;
+	defaultStickyCols?: 0 | 1 | 2;
 	footer?: any[];
 	hideAllControls?: boolean;
 	hideMenuToo?: boolean;
@@ -97,6 +98,7 @@ export type State = {
 	searchText: string;
 	showSelectColumnsModal: boolean;
 	sortBys: SortBy[];
+	stickyCols: 0 | 1 | 2;
 	settingsCache: SettingsCache;
 };
 
@@ -106,6 +108,7 @@ const DataTable = ({
 	clickable = true,
 	cols,
 	defaultSort,
+	defaultStickyCols = 0,
 	disableSettingsCache,
 	footer,
 	hideAllControls,
@@ -124,6 +127,7 @@ const DataTable = ({
 		loadStateFromCache({
 			cols,
 			defaultSort,
+			defaultStickyCols,
 			disableSettingsCache,
 			name,
 		}),
@@ -414,44 +418,46 @@ const DataTable = ({
 
 	const tableRef = useRef<HTMLTableElement>(null);
 	useEffect(() => {
-		const table = tableRef.current;
-		if (!table) {
-			return;
-		}
-		console.log("effect", table);
-
-		let row: HTMLTableRowElement | undefined;
-		let headerRows = Array.from(
-			table.querySelectorAll<HTMLTableRowElement>("thead tr"),
-		);
-		if (headerRows.length > 0) {
-			// Last row - no superCols
-			headerRows = [headerRows.at(-1)];
-
-			row = headerRows[0];
-		}
-
-		const bodyRows = table.querySelectorAll<HTMLTableRowElement>("tbody tr");
-
-		if (!row) {
-			if (bodyRows.length > 0) {
-				row = bodyRows[0];
+		if (state.stickyCols === 2) {
+			const table = tableRef.current;
+			if (!table) {
+				return;
 			}
-		}
+			console.log("effect", table);
 
-		const cell = row?.cells[0];
+			let row: HTMLTableRowElement | undefined;
+			let headerRows = Array.from(
+				table.querySelectorAll<HTMLTableRowElement>("thead tr"),
+			);
+			if (headerRows.length > 0) {
+				// Last row - no superCols
+				headerRows = [headerRows.at(-1)];
 
-		if (!cell) {
-			return;
-		}
+				row = headerRows[0];
+			}
 
-		const width = `${cell.offsetWidth}px`;
+			const bodyRows = table.querySelectorAll<HTMLTableRowElement>("tbody tr");
 
-		const rows = [...headerRows, ...bodyRows];
+			if (!row) {
+				if (bodyRows.length > 0) {
+					row = bodyRows[0];
+				}
+			}
 
-		for (const row of rows) {
-			const cell = row.cells[1];
-			cell.style.left = width;
+			const cell = row?.cells[0];
+
+			if (!cell) {
+				return;
+			}
+
+			const width = `${cell.offsetWidth}px`;
+
+			const rows = [...headerRows, ...bodyRows];
+
+			for (const row of rows) {
+				const cell = row.cells[1];
+				cell.style.left = width;
+			}
 		}
 	});
 
@@ -540,7 +546,8 @@ const DataTable = ({
 						className={classNames("table table-hover", {
 							"table-sm": small !== false,
 							"table-striped": striped !== false,
-							"sticky-xx": true,
+							"sticky-x": state.stickyCols === 1,
+							"sticky-xx": state.stickyCols === 2,
 						})}
 						ref={tableRef}
 					>

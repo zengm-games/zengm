@@ -221,6 +221,7 @@ const PowerRankings = ({
 				className="align-middle"
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={2}
 				name="PowerRankings"
 				rows={rows}
 				superCols={superCols}

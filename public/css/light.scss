@@ -1442,6 +1442,48 @@ hr {
 	}
 }
 
+$sticky-cols: (
+	"sticky-x": 1,
+	"sticky-xx": 2,
+);
+
+@each $class, $col-num in $sticky-cols {
+	table.#{$class} {
+		// Add space for box-shadow - $table-cell-padding-x + 2px
+		tr {
+			td:nth-child(#{$col-num}),
+			th:nth-child(#{$col-num}) {
+				padding-right: 10px;
+			}
+		}
+
+		// :before because :after conflicts with sort arrows from datatable.scss
+		tr {
+			td:nth-child(#{$col-num}),
+			th:nth-child(#{$col-num}) {
+				&:before {
+					box-shadow: 0px 0px 0px 1px $border-color;
+					content: " ";
+					height: 100%;
+					position: absolute;
+					top: 0;
+					right: 1px;
+				}
+			}
+		}
+	}
+
+	table.#{$class}.table-sm {
+		// Add space for box-shadow - $table-cell-padding-x + 2px
+		tr {
+			td:nth-child(#{$col-num}),
+			th:nth-child(#{$col-num}) {
+				padding-right: 6px;
+			}
+		}
+	}
+}
+
 table.sticky-x,
 table.sticky-xx {
 	tr {
@@ -1453,91 +1495,10 @@ table.sticky-xx {
 			background-color: $white;
 		}
 	}
-}
 
-table.sticky-x {
-	// Add space for box-shadow - $table-cell-padding-x + 2px
-	tr {
-		td:nth-child(1),
-		th:nth-child(1) {
-			padding-right: 10px;
-		}
-	}
-
-	// :before because :after conflicts with sort arrows from datatable.scss
-	tr {
-		td:nth-child(1),
-		th:nth-child(1) {
-			&:before {
-				box-shadow: 0px 0px 0px 1px $border-color;
-				content: " ";
-				height: 100%;
-				position: absolute;
-				top: 0;
-				right: 1px;
-			}
-		}
-	}
-}
-table.sticky-x.table-sm {
-	// Add space for box-shadow - $table-cell-padding-x + 2px
-	tr {
-		td:nth-child(1),
-		th:nth-child(1) {
-			padding-right: 6px;
-		}
-	}
-}
-
-table.sticky-xx {
-	tr {
-		td:nth-child(2),
-		th:nth-child(2) {
-			position: sticky;
-			// left: 157px;
-			z-index: 10;
-			background-color: $white;
-		}
-	}
-
-	// Add space for box-shadow - $table-cell-padding-x + 2px
-	tr {
-		td:nth-child(2),
-		th:nth-child(2) {
-			padding-right: 10px;
-		}
-	}
-
-	// :before because :after conflicts with sort arrows from datatable.scss
-	tr {
-		td:nth-child(2),
-		th:nth-child(2) {
-			&:before {
-				box-shadow: 0px 0px 0px 1px $border-color;
-				content: " ";
-				height: 100%;
-				position: absolute;
-				top: 0;
-				right: 1px;
-			}
-		}
-	}
-}
-table.sticky-xx.table-sm {
-	// Add space for box-shadow - $table-cell-padding-x + 2px
-	tr {
-		td:nth-child(2),
-		th:nth-child(2) {
-			padding-right: 6px;
-		}
-	}
-}
-
-table.sticky-x,
-table.sticky-xx {
 	thead tr th:nth-child(1) {
 		position: sticky;
-		left: 0; // for sticky-xx, this will be overwritten by JS
+		left: 0;
 		top: 0;
 		z-index: 12;
 	}
@@ -1554,6 +1515,18 @@ table.sticky-xx {
 		td,
 		td.sorting_highlight {
 			background-color: inherit !important;
+		}
+	}
+}
+
+table.sticky-xx {
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			position: sticky;
+			// left: 157px;
+			z-index: 10;
+			background-color: $white;
 		}
 	}
 }

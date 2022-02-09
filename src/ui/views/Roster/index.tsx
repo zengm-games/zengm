@@ -51,12 +51,10 @@ const handleRelease = async (
 		okText: "Release Player",
 	});
 	if (proceed) {
-		const errorMsg = await toWorker(
-			"main",
-			"releasePlayer",
-			p.pid,
-			wasPlayerJustDrafted,
-		);
+		const errorMsg = await toWorker("main", "releasePlayer", {
+			pid: p.pid,
+			justDrafted: wasPlayerJustDrafted,
+		});
 		if (errorMsg) {
 			logEvent({
 				type: "error",
@@ -300,6 +298,7 @@ const Roster = ({
 									season={season}
 									skills={p.ratings.skills}
 									watch={p.watch}
+									xsName={p.nameAbbrev}
 								>
 									{p.name}
 								</PlayerNameLabels>

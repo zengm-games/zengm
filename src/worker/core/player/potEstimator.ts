@@ -129,7 +129,7 @@ if (isSport("football") || isSport("hockey")) {
 
 	potEstimator = (ovr: number, age: number, pos?: string) => {
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		const coeffs = coeffsByPos[pos];
 		if (!coeffs) {
 			throw new Error(`Invalid position "${pos}" in potEstimator`);

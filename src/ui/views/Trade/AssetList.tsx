@@ -1,5 +1,5 @@
 import range from "lodash-es/range";
-import { DataTable, PlayerNameLabels } from "../../components";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { Dropdown } from "react-bootstrap";
@@ -60,6 +60,7 @@ const genPlayerRows = (
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -104,7 +105,11 @@ const genPickRows = (
 						handleToggle(userOrOther, "pick", "exclude", pick.dpid);
 					}}
 				/>,
-				pick.desc,
+				{
+					value: <SafeHtml dirty={pick.desc} />,
+					searchValue: pick.desc,
+					sortValue: pick.desc,
+				},
 			],
 			classNames: {
 				"table-danger": pick.excluded && !pick.included,
@@ -211,6 +216,7 @@ const AssetList = ({
 					className="datatable-negative-margin-top"
 					cols={playerCols}
 					defaultSort={[5, "desc"]}
+					defaultStickyCols={2}
 					name={`Trade:${userOrOtherKey}`}
 					rows={playerRows}
 				/>

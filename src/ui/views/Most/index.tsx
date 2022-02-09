@@ -73,7 +73,11 @@ const Most = ({
 				{
 					value: (
 						<div className="d-flex">
-							<PlayerNameLabels jerseyNumber={p.jerseyNumber} pid={p.pid}>
+							<PlayerNameLabels
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								xsName={p.nameAbbrev}
+							>
 								{p.name}
 							</PlayerNameLabels>
 							<div className="ms-auto">
@@ -169,6 +173,7 @@ const Most = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={2}
 				name={`Most_${type}`}
 				rows={rows}
 				superCols={superCols}

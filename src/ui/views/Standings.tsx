@@ -33,6 +33,16 @@ const record = (
 	return text;
 };
 
+// These styles, and flex-nowrap, are to handle overflow for long region names on the dashboard like https://stackoverflow.com/a/11877033/786644
+const tdStyle = {
+	maxWidth: 0,
+};
+const divStyle: CSSProperties = {
+	textOverflow: "ellipsis",
+	overflow: "hidden",
+	whiteSpace: "nowrap",
+};
+
 export const TeamColumn = ({
 	maxRank,
 	rank,
@@ -58,7 +68,7 @@ export const TeamColumn = ({
 	const rankMinWidth = 8 + 7 * (String(maxRank).length - 1);
 
 	return (
-		<td className="py-1">
+		<td className="py-1" style={tdStyle}>
 			<div className="d-flex align-items-center">
 				<div
 					className="text-end"
@@ -71,18 +81,21 @@ export const TeamColumn = ({
 				<TeamLogoInline
 					imgURL={t.seasonAttrs.imgURL}
 					imgURLSmall={t.seasonAttrs.imgURLSmall}
-					className="mx-1"
+					className="mx-1 flex-shrink-0"
 				/>
-				<div>
+				<div style={divStyle}>
 					<a
 						href={helpers.leagueUrl([
 							"roster",
 							`${t.seasonAttrs.abbrev}_${t.tid}`,
-							...(season !== undefined ? [season] : []),
+							season,
 						])}
 					>
-						{t.seasonAttrs.region}
-						{includeName ? ` ${t.seasonAttrs.name}` : null}
+						<span className="d-none d-sm-inline">
+							{t.seasonAttrs.region}
+							{includeName ? ` ${t.seasonAttrs.name}` : null}
+						</span>
+						<span className="d-sm-none">{t.seasonAttrs.abbrev}</span>
 					</a>
 					{t.seasonAttrs.clinchedPlayoffs
 						? ` ${t.seasonAttrs.clinchedPlayoffs}`
@@ -227,10 +240,10 @@ const GroupStandings = ({
 
 	return (
 		<ResponsiveTableWrapper>
-			<table className="table table-striped table-sm table-hover align-middle">
+			<table className="table table-striped table-sm table-hover sticky-x">
 				<thead>
 					<tr>
-						<th style={{ minWidth: 215 }}>{name}</th>
+						<th className="standings-name">{name}</th>
 						<th>W</th>
 						<th>L</th>
 						{otl ? <th>OTL</th> : null}
@@ -356,7 +369,7 @@ const SmallStandings = ({
 	);
 
 	return (
-		<table className="table table-striped table-sm align-middle">
+		<table className="table table-striped table-hover table-sm">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>

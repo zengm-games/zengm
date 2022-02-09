@@ -1,6 +1,6 @@
 // https://getbootstrap.com/docs/4.1/examples/dashboard/
 
-$sidebar-width: 161px; // Line up with Play button
+$sidebar-width: 158px; // Line up with Play button
 
 .sidebar {
 	display: none;
@@ -32,7 +32,7 @@ $sidebar-width: 161px; // Line up with Play button
 .sidebar .nav-link {
 	font-weight: 500;
 	color: $gray-900;
-	padding: 4px 16px;
+	padding: 4px 0.75rem;
 }
 
 .sidebar .nav-link.active {
@@ -47,10 +47,20 @@ $sidebar-width: 161px; // Line up with Play button
 .sidebar-heading {
 	font-size: 0.75rem;
 	text-transform: uppercase;
-	@extend .px-3;
+	padding: 0 0.75rem;
+	cursor: pointer;
 	@extend .mt-3;
 	@extend .mb-1;
 	@extend .text-muted;
+
+	&:hover {
+		text-decoration: none;
+	}
+
+	// Make like h2
+	display: block;
+	font-weight: 500;
+	line-height: 1.2;
 }
 
 @include media-breakpoint-up(xl) {

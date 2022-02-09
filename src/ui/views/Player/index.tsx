@@ -127,6 +127,7 @@ const StatsTable = ({
 				className="mb-3"
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={2}
 				footer={[
 					"Career",
 					null,
@@ -280,6 +281,7 @@ const Player2 = ({
 						"Skills",
 					])}
 					defaultSort={[0, "asc"]}
+					defaultStickyCols={2}
 					hideAllControls
 					name="Player:Ratings"
 					rows={player.ratings.map((r, i) => {

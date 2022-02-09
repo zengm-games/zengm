@@ -2016,6 +2016,12 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Cap: {
+		desc: "Salary Cap Issue",
+		sortSequence: ["asc", "desc"],
+		sortType: "number",
+		width: "1px",
+	},
 	"Cap Space": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -2224,6 +2230,7 @@ const cols: {
 	},
 	Negotiate: {
 		sortSequence: [],
+		width: "1px",
 	},
 	Note: {},
 	Odds: {
@@ -2285,6 +2292,7 @@ const cols: {
 		desc: "Draft Pick",
 		sortType: "draftPick",
 	},
+	Players: {},
 	Pop: {
 		desc: "Region Population",
 		sortSequence: ["desc", "asc"],

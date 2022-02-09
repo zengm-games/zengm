@@ -1,561 +1,532 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import { idb } from "../db";
-import { defaultGameAttributes, g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import {
+	defaultGameAttributes,
+	g,
+	helpers,
+	processPlayersHallOfFame,
+} from "../util";
+import type {
+	MinimalPlayerRatings,
+	Player,
+	PlayerFiltered,
+	PlayerInjury,
+	PlayerStatType,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
+import { groupByUnique } from "../../common/groupBy";
+import range from "lodash-es/range";
 
-const getCategoriesAndStats = () => {
-	const categories = bySport<
+export const getCategoriesAndStats = (onlyStat?: string) => {
+	let categories = bySport<
 		{
-			name: string;
+			titleOverride?: string;
 			stat: string;
-			statProp: string;
-			title: string;
-			data: any[];
-			minStats: string[];
-			minValue: number[];
+			minStats?: Record<string, number>;
 			sortAscending?: true;
 			filter?: (p: any) => boolean;
 		}[]
 	>({
 		basketball: [
 			{
-				name: "Points",
-				stat: "PTS",
-				statProp: "pts",
-				title: "Points Per Game",
-				data: [],
-				minStats: ["gp", "pts"],
-				minValue: [70, 1400],
+				stat: "pts",
+				minStats: { gp: 70, pts: 1400 },
 			},
 			{
-				name: "Rebounds",
-				stat: "TRB",
-				statProp: "trb",
-				title: "Rebounds Per Game",
-				data: [],
-				minStats: ["gp", "trb"],
-				minValue: [70, 800],
+				stat: "trb",
+				minStats: { gp: 70, trb: 800 },
 			},
 			{
-				name: "Assists",
-				stat: "AST",
-				statProp: "ast",
-				title: "Assists Per Game",
-				data: [],
-				minStats: ["gp", "ast"],
-				minValue: [70, 400],
+				stat: "ast",
+				minStats: { gp: 70, ast: 400 },
 			},
 			{
-				name: "Field Goal Percentage",
-				stat: "FG%",
-				statProp: "fgp",
-				title: "Field Goal Percentage",
-				data: [],
-				minStats: ["fg"],
-				minValue: [300 * g.get("twoPointAccuracyFactor")],
+				stat: "fg",
 			},
 			{
-				name: "Three-Pointer Percentage",
-				stat: "3PT%",
-				statProp: "tpp",
-				title: "Three-Pointer Percentage",
-				data: [],
-				minStats: ["tp"],
-				minValue: [Math.max(55 * g.get("threePointTendencyFactor"), 12)],
+				stat: "fga",
 			},
 			{
-				name: "Free Throw Percentage",
-				stat: "FT%",
-				statProp: "ftp",
-				title: "Free Throw Percentage",
-				data: [],
-				minStats: ["ft"],
-				minValue: [125],
+				stat: "fgp",
+				minStats: { fg: 300 * g.get("twoPointAccuracyFactor") },
 			},
 			{
-				name: "Blocks",
-				stat: "BLK",
-				statProp: "blk",
-				title: "Blocks Per Game",
-				data: [],
-				minStats: ["gp", "blk"],
-				minValue: [70, 100],
+				stat: "tp",
 			},
 			{
-				name: "Steals",
-				stat: "STL",
-				statProp: "stl",
-				title: "Steals Per Game",
-				data: [],
-				minStats: ["gp", "stl"],
-				minValue: [70, 125],
+				stat: "tpa",
 			},
 			{
-				name: "Minutes",
-				stat: "MP",
-				statProp: "min",
-				title: "Minutes Per Game",
-				data: [],
-				minStats: ["gp", "min"],
-				minValue: [70, 2000],
+				stat: "tpp",
+				minStats: { tp: Math.max(55 * g.get("threePointTendencyFactor"), 12) },
 			},
 			{
-				name: "Player Efficiency Rating",
-				stat: "PER",
-				statProp: "per",
-				title: "Player Efficiency Rating",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ft",
 			},
 			{
-				name: "Estimated Wins Added",
-				stat: "EWA",
-				statProp: "ewa",
-				title: "Estimated Wins Added",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "fta",
 			},
 			{
-				name: "Win Shares / 48 Mins",
-				stat: "WS/48",
-				statProp: "ws48",
-				title: "Win Shares Per 48 Minutes",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ftp",
+				minStats: { ft: 125 },
 			},
 			{
-				name: "Offensive Win Shares",
-				stat: "OWS",
-				statProp: "ows",
-				title: "Offensive Win Shares",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "blk",
+				minStats: { gp: 70, blk: 100 },
 			},
 			{
-				name: "Defensive Win Shares",
-				stat: "DWS",
-				statProp: "dws",
-				title: "Defensive Win Shares",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "stl",
+				minStats: { gp: 70, stl: 125 },
 			},
 			{
-				name: "Win Shares",
-				stat: "WS",
-				statProp: "ws",
-				title: "Win Shares",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "min",
+				minStats: { gp: 70, min: 2000 },
 			},
 			{
-				name: "Offensive Box Plus-Minus",
-				stat: "OBPM",
-				statProp: "obpm",
-				title: "Offensive Box Plus-Minus",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "per",
+				minStats: { min: 2000 },
 			},
 			{
-				name: "Defensive Box Plus-Minus",
-				stat: "DBPM",
-				statProp: "dbpm",
-				title: "Defensive Box Plus-Minus",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ewa",
+				minStats: { min: 2000 },
 			},
 			{
-				name: "Box Plus-Minus",
-				stat: "BPM",
-				statProp: "bpm",
-				title: "Box Plus-Minus",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				titleOverride: "Win Shares / 48 Mins",
+				stat: "ws48",
+				minStats: { min: 2000 },
 			},
 			{
-				name: "Value Over Replacement Player",
-				stat: "VORP",
-				statProp: "vorp",
-				title: "Value Over Replacement Player",
-				data: [],
-				minStats: ["min"],
-				minValue: [2000],
+				stat: "ows",
+				minStats: { min: 2000 },
+			},
+			{
+				stat: "dws",
+				minStats: { min: 2000 },
+			},
+			{
+				stat: "ws",
+				minStats: { min: 2000 },
+			},
+			{
+				stat: "obpm",
+				minStats: { min: 2000 },
+			},
+			{
+				stat: "dbpm",
+				minStats: { min: 2000 },
+			},
+			{
+				stat: "bpm",
+				minStats: { min: 2000 },
+			},
+			{
+				stat: "vorp",
+				minStats: { min: 2000 },
 			},
 		],
 		football: [
 			{
-				name: "Passing Yards",
-				stat: "Yds",
-				statProp: "pssYds",
-				title: "Passing Yards",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "pssYds",
 			},
 			{
-				name: "Passing Yards Per Attempt",
-				stat: "Y/A",
-				statProp: "pssYdsPerAtt",
-				title: "Passing Yards Per Attempt",
-				data: [],
-				minStats: ["pss"],
-				minValue: [14 * 16],
+				stat: "pssYdsPerAtt",
+				minStats: { pss: 14 * 16 },
 			},
 			{
-				name: "Completion Percentage",
-				stat: "%",
-				statProp: "cmpPct",
-				title: "Completion Percentage",
-				data: [],
-				minStats: ["pss"],
-				minValue: [14 * 16],
+				stat: "cmpPct",
+				minStats: { pss: 14 * 16 },
 			},
 			{
-				name: "Passing TDs",
-				stat: "TD",
-				statProp: "pssTD",
-				title: "Passing Touchdowns",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "pssTD",
+				titleOverride: "Passing TDs",
 			},
 			{
-				name: "Passing Interceptions",
-				stat: "Int",
-				statProp: "pssInt",
-				title: "Passing Interceptions",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "pssInt",
 			},
 			{
-				name: "Quarterback Rating",
-				stat: "QBRat",
-				statProp: "qbRat",
-				title: "Quarterback Rating",
-				data: [],
-				minStats: ["pss"],
-				minValue: [14 * 16],
+				stat: "qbRat",
+				minStats: { pss: 14 * 16 },
 			},
 			{
-				name: "Rushing Yards",
-				stat: "Yds",
-				statProp: "rusYds",
-				title: "Rushing Yards",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "rusYds",
 			},
 			{
-				name: "Rushing Yards Per Attempt",
-				stat: "Y/A",
-				statProp: "rusYdsPerAtt",
-				title: "Rushing Yards Per Attempt",
-				data: [],
-				minStats: ["rus"],
-				minValue: [6.25 * 16],
+				stat: "rusYdsPerAtt",
+				minStats: { rus: 6.25 * 16 },
 			},
 			{
-				name: "Rushing TDs",
-				stat: "TD",
-				statProp: "rusTD",
-				title: "Rushing Touchdowns",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "rusTD",
+				titleOverride: "Rushing TDs",
 			},
 			{
-				name: "Receiving Yards",
-				stat: "Yds",
-				statProp: "recYds",
-				title: "Receiving Yards",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "recYds",
 			},
 			{
-				name: "Receiving Yards Per Attempt",
-				stat: "Y/A",
-				statProp: "recYdsPerAtt",
-				title: "Receiving Yards Per Attempt",
-				data: [],
-				minStats: ["rec"],
-				minValue: [1.875 * 16],
+				stat: "recYdsPerAtt",
+				minStats: { rec: 1.875 * 16 },
 			},
 			{
-				name: "Receiving TDs",
-				stat: "TD",
-				statProp: "recTD",
-				title: "Receiving Touchdowns",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "recTD",
+				titleOverride: "Receiving TDs",
 			},
 			{
-				name: "Yards From Scrimmage",
-				stat: "Yds",
-				statProp: "ydsFromScrimmage",
-				title: "Total Rushing and Receiving Yards From Scrimmage",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "ydsFromScrimmage",
+				titleOverride: "Yards From Scrimmage",
 			},
 			{
-				name: "Rushing and Receiving TDs",
-				stat: "TD",
-				statProp: "rusRecTD",
-				title: "Total Rushing and Receiving Touchdowns",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "rusRecTD",
+				titleOverride: "Rushing and Receiving TDs",
 			},
 			{
-				name: "Tackles",
-				stat: "Tck",
-				statProp: "defTck",
-				title: "Tackles",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "defTck",
 			},
 			{
-				name: "Sacks",
-				stat: "Sk",
-				statProp: "defSk",
-				title: "Sacks",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "defSk",
 			},
 			{
-				name: "Defensive Interceptions",
-				stat: "Int",
-				statProp: "defInt",
-				title: "Defensive Interceptions",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "defInt",
 			},
 			{
-				name: "Forced Fumbles",
-				stat: "FF",
-				statProp: "defFmbFrc",
-				title: "Forced Fumbles",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "defFmbFrc",
 			},
 			{
-				name: "Fumbles Recovered",
-				stat: "FR",
-				statProp: "defFmbRec",
-				title: "Fumbles Recovered",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "defFmbRec",
 			},
 			{
-				name: "Approximate Value",
-				stat: "AV",
-				statProp: "av",
-				title: "Approximate Value",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "av",
 			},
 		],
 		hockey: [
 			{
-				name: "Goals",
-				stat: "G",
-				statProp: "g",
-				title: "Goals",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "g",
 			},
 			{
-				name: "Assists",
-				stat: "A",
-				statProp: "a",
-				title: "Assists",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "a",
 			},
 			{
-				name: "Points",
-				stat: "PTS",
-				statProp: "pts",
-				title: "Points",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "pts",
 			},
 			{
-				name: "Plus/Minus",
-				stat: "+/-",
-				statProp: "pm",
-				title: "Plus/Minus",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "pm",
 				filter: p => p.ratings.pos !== "G",
 			},
 			{
-				name: "Penalty Minutes",
-				stat: "PIM",
-				statProp: "pim",
-				title: "Penalty Minutes",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "pim",
 			},
 			{
-				name: "Time On Ice",
-				stat: "TOI",
-				statProp: "min",
-				title: "Time On Ice",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "min",
 				filter: p => p.ratings.pos !== "G",
 			},
 			{
-				name: "Blocks",
-				stat: "BLK",
-				statProp: "blk",
-				title: "Blocks",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "blk",
 			},
 			{
-				name: "Hits",
-				stat: "HIT",
-				statProp: "hit",
-				title: "Hits",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "hit",
 			},
 			{
-				name: "Takeaways",
-				stat: "TK",
-				statProp: "tk",
-				title: "Takeaways",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "tk",
 			},
 			{
-				name: "Giveaways",
-				stat: "GV",
-				statProp: "gv",
-				title: "Giveaways",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "gv",
 			},
 			{
-				name: "Save Percentage",
-				stat: "SV%",
-				statProp: "svPct",
-				title: "Save Percentage",
-				data: [],
-				minStats: ["sv"],
-				minValue: [800],
+				stat: "svPct",
+				minStats: { sv: 800 },
 			},
 			{
-				name: "Goals Against Average",
-				stat: "GAA",
-				statProp: "gaa",
-				title: "Goals Against Average",
-				data: [],
-				minStats: ["sv"],
-				minValue: [800],
+				stat: "gaa",
+				minStats: { sv: 800 },
 				sortAscending: true,
 			},
 			{
-				name: "Shutouts",
-				stat: "SO",
-				statProp: "so",
-				title: "Shutouts",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "so",
 			},
 			{
-				name: "Goals Created",
-				stat: "GC",
-				statProp: "gc",
-				title: "Goals Created",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "gc",
 			},
 			{
-				name: "Offensive Point Shares",
-				stat: "OPS",
-				statProp: "ops",
-				title: "Offensive Point Shares",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "ops",
 			},
 			{
-				name: "Defensive Point Shares",
-				stat: "DPS",
-				statProp: "dps",
-				title: "Defensive Point Shares",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "dps",
 			},
 			{
-				name: "Goalie Point Shares",
-				stat: "GPS",
-				statProp: "gps",
-				title: "Goalie Point Shares",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "gps",
 			},
 			{
-				name: "Point Shares",
-				stat: "PS",
-				statProp: "ps",
-				title: "Point Shares",
-				data: [],
-				minStats: [],
-				minValue: [],
+				stat: "ps",
 			},
 		],
 	});
 
-	const statsSet = new Set<string>();
-	for (const { minStats, statProp } of categories) {
-		statsSet.add(statProp);
-
-		for (const stat of minStats) {
-			statsSet.add(stat);
+	if (onlyStat) {
+		categories = categories.filter(row => row.stat === onlyStat);
+		if (categories.length === 0) {
+			throw new Error(`Invalid stat "${onlyStat}"`);
 		}
 	}
 
+	// Always include GP, since it's used to scale minStats based on season length
+	const statsSet = new Set<string>(["gp"]);
+	for (const { minStats, stat } of categories) {
+		statsSet.add(stat);
+
+		if (minStats) {
+			for (const stat of Object.keys(minStats)) {
+				statsSet.add(stat);
+			}
+		}
+	}
 	const stats = Array.from(statsSet);
+
 	return {
 		categories,
 		stats,
 	};
 };
+
+// Calculate the number of games played for each team, which is used to test if a player qualifies as a league leader
+export class GamesPlayedCache {
+	currentSeasonCache: Record<number, number> | undefined;
+	playoffsCache: Record<number, Record<number, number>>;
+
+	constructor() {
+		this.playoffsCache = {};
+	}
+
+	private straightNumGames(season: number, playoffs: boolean) {
+		// Regular season, completed season -> we already know how many games each team played, from numGames
+		return (
+			!playoffs &&
+			(season < g.get("season") || g.get("phase") >= PHASE.PLAYOFFS)
+		);
+	}
+
+	async loadSeasons(seasons: number[], playoffs: boolean) {
+		for (const season of seasons) {
+			if (this.straightNumGames(season, playoffs)) {
+				continue;
+			}
+
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					season,
+				},
+				"noCopyCache",
+			);
+
+			const numGames = g.get("numGames", season);
+
+			const cache: Record<number, number> = {};
+			for (const teamSeason of teamSeasons) {
+				if (playoffs) {
+					if (teamSeason.gp < numGames) {
+						cache[teamSeason.tid] = 0;
+					} else {
+						cache[teamSeason.tid] = teamSeason.gp - numGames;
+					}
+				} else {
+					// Don't count playoff games
+					if (teamSeason.gp > numGames) {
+						cache[teamSeason.tid] = numGames;
+					} else {
+						cache[teamSeason.tid] = teamSeason.gp;
+					}
+				}
+			}
+
+			if (playoffs) {
+				this.playoffsCache[season] = cache;
+			} else {
+				this.currentSeasonCache = cache;
+			}
+		}
+	}
+
+	get(season: number | "career", playoffs: boolean, tid: number) {
+		if (season === "career") {
+			if (playoffs) {
+				// Arbitrary - two full playoffs runs
+				const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries");
+				let sum = 0;
+				for (const games of numGamesPlayoffSeries) {
+					sum += games;
+				}
+				return 2 * sum;
+			}
+
+			// Arbitrary - 5 seasons
+			return g.get("numGames") * 5;
+		}
+
+		if (this.straightNumGames(season, playoffs)) {
+			return g.get("numGames", season);
+		}
+
+		if (playoffs) {
+			return this.playoffsCache[season]?.[tid] ?? null;
+		}
+
+		return this.currentSeasonCache?.[tid] ?? null;
+	}
+}
+
+export const iterateAllPlayers = async (
+	season: number | "all" | "career",
+	cb: (
+		p: Player<MinimalPlayerRatings>,
+		season: number | "career",
+	) => Promise<void>,
+) => {
+	// Even in past seasons, make sure we have latest info for players
+	const cachePlayers = await idb.cache.players.getAll();
+	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
+
+	const applyCB = async (p: Player<MinimalPlayerRatings>) => {
+		if (season === "all") {
+			const seasons = new Set(p.stats.map(row => row.season));
+			for (const season of seasons) {
+				await cb(p, season);
+			}
+		} else {
+			await cb(p, season);
+		}
+	};
+
+	// For current season, assume everyone is cached, although this might not be true for tragic deaths and God Mode edited players
+	if (season === g.get("season") && g.get("phase") <= PHASE.PLAYOFFS) {
+		for (const p of cachePlayers) {
+			await applyCB(p);
+		}
+		return;
+	}
+
+	// This is similar to activeSeason from getCopies.players
+	const transaction = idb.league.transaction("players");
+
+	let range;
+	const useRange = typeof season === "number";
+	if (useRange) {
+		// + 1 in upper range is because you don't accumulate stats until the year after the draft
+		range = IDBKeyRange.bound([-Infinity, season], [season + 1, Infinity]);
+	}
+
+	let cursor = await transaction.store
+		.index("draft.year, retiredYear")
+		.openCursor(range);
+
+	while (cursor) {
+		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+		const [draftYear, retiredYear] = cursor.key;
+		if (useRange && retiredYear < season) {
+			cursor = await cursor.continue([draftYear, season]);
+		} else {
+			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
+			await applyCB(p);
+			cursor = await cursor.continue();
+		}
+	}
+};
+
+type Category = ReturnType<typeof getCategoriesAndStats>["categories"][number];
+
+export const playerMeetsCategoryRequirements = ({
+	cat,
+	gamesPlayedCache,
+	p,
+	playerStats,
+	playoffs,
+	season,
+	statType,
+}: {
+	cat: Category;
+	gamesPlayedCache: GamesPlayedCache;
+	p: PlayerFiltered;
+	playerStats: Record<string, any>;
+	playoffs: boolean;
+	season: number | "career";
+	statType: PlayerStatType;
+}) => {
+	// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
+	const numPlayersOnCourtFactor = bySport({
+		basketball:
+			defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
+		football: 1,
+		hockey: 1,
+	});
+
+	// To handle changes in number of games, playing time, etc
+	const factor =
+		(g.get("numGames") / defaultGameAttributes.numGames) *
+		numPlayersOnCourtFactor *
+		helpers.quarterLengthFactor();
+
+	// Test if the player meets the minimum statistical requirements for this category
+	let pass = !cat.minStats && (!cat.filter || cat.filter(p));
+
+	if (!pass && cat.minStats) {
+		for (const [minStat, minValue] of Object.entries(cat.minStats)) {
+			// In basketball, everything except gp is a per-game average, so we need to scale them by games played
+			let playerValue;
+			if (!isSport("basketball") || minStat === "gp" || statType === "totals") {
+				playerValue = playerStats[minStat];
+			} else if (statType === "per36") {
+				playerValue =
+					(playerStats[minStat] * playerStats.gp * playerStats.min) / 36;
+			} else {
+				playerValue = playerStats[minStat] * playerStats.gp;
+			}
+
+			const gpTeam = gamesPlayedCache.get(season, playoffs, playerStats.tid);
+
+			if (gpTeam === null) {
+				// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
+				pass = true;
+				break;
+			}
+
+			// Special case GP
+			if (minStat === "gp") {
+				if (playerValue / gpTeam >= minValue / g.get("numGames")) {
+					pass = true;
+					break; // If one is true, don't need to check the others
+				}
+			}
+
+			// Other stats
+			if (
+				playerValue >=
+				Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
+			) {
+				pass = true;
+				break; // If one is true, don't need to check the others
+			}
+		}
+	}
+
+	return pass;
+};
+
+export type Leader = {
+	abbrev: string;
+	hof: boolean;
+	injury: PlayerInjury | undefined;
+	jerseyNumber: string;
+	key: number | string;
+	nameAbbrev: string;
+	pid: number;
+	pos: string;
+	retiredYear: number;
+	season: number | undefined;
+	stat: number;
+	skills: string[];
+	tid: number;
+	userTeam: boolean;
+	watch: boolean;
+};
+
+const NUM_LEADERS = 10;
 
 const updateLeaders = async (
 	inputs: ViewInput<"leaders">,
@@ -567,155 +538,158 @@ const updateLeaders = async (
 		updateEvents.includes("watchList") ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
-		inputs.playoffs !== state.playoffs
+		inputs.playoffs !== state.playoffs ||
+		inputs.statType !== state.statType
 	) {
-		const { categories, stats } = getCategoriesAndStats(); // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
+		const { categories, stats } = getCategoriesAndStats();
+		const playoffs = inputs.playoffs === "playoffs";
 
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				season: inputs.season,
-			},
-			"noCopyCache",
-		);
-		const gps: Record<number, number | undefined> = {};
-		for (const teamSeason of teamSeasons) {
-			if (inputs.playoffs === "playoffs") {
-				if (teamSeason.gp < g.get("numGames")) {
-					gps[teamSeason.tid] = 0;
-				} else {
-					gps[teamSeason.tid] = teamSeason.gp - g.get("numGames");
-				}
-			} else {
-				// Don't count playoff games
-				if (teamSeason.gp > g.get("numGames")) {
-					gps[teamSeason.tid] = g.get("numGames");
-				} else {
-					gps[teamSeason.tid] = teamSeason.gp;
-				}
-			}
-		}
+		const outputCategories = categories.map(category => ({
+			titleOverride: category.titleOverride,
+			stat: category.stat,
+			leaders: [] as Leader[],
+		}));
 
-		let players;
-		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
+		// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
+		const gamesPlayedCache = new GamesPlayedCache();
+		let seasons: number[];
+		if (inputs.season === "career") {
+			// Nothing to cache
+			seasons = [];
+		} else if (inputs.season === "all") {
+			seasons = range(g.get("startingSeason"), g.get("season") + 1);
 		} else {
-			players = await idb.getCopies.players(
-				{
-					activeSeason: inputs.season,
-				},
-				"noCopyCache",
-			);
+			seasons = [inputs.season];
 		}
+		await gamesPlayedCache.loadSeasons(seasons, playoffs);
 
-		players = await idb.getCopies.playersPlus(players, {
-			attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
-			ratings: ["skills", "pos"],
-			stats: ["abbrev", "tid", ...stats],
-			season: inputs.season,
-			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs !== "playoffs",
-			mergeStats: true,
-		});
-		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
-
-		// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
-		const numPlayersOnCourtFactor = bySport({
-			basketball:
-				defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
-			football: 1,
-			hockey: 1,
-		});
-
-		// To handle changes in number of games, playing time, etc
-		const factor =
-			(g.get("numGames") / defaultGameAttributes.numGames) *
-			numPlayersOnCourtFactor *
-			helpers.quarterLengthFactor();
-
-		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
-		for (const cat of categories) {
-			if (cat.sortAscending) {
-				players.sort((a, b) => a.stats[cat.statProp] - b.stats[cat.statProp]);
-			} else {
-				players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
+		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
+			const p = await idb.getCopy.playersPlus(pRaw, {
+				attrs: [
+					"pid",
+					"nameAbbrev",
+					"injury",
+					"watch",
+					"jerseyNumber",
+					"hof",
+					"retiredYear",
+				],
+				ratings: ["skills", "pos"],
+				stats: ["abbrev", "tid", ...stats],
+				season: season === "career" ? undefined : season,
+				playoffs,
+				regularSeason: !playoffs,
+				mergeStats: true,
+				statType: inputs.statType,
+			});
+			if (!p) {
+				return;
 			}
 
-			for (const p of players) {
-				// Test if the player meets the minimum statistical requirements for this category
-				let pass = cat.minStats.length === 0 && (!cat.filter || cat.filter(p));
+			// Shitty handling of career totals
+			if (Array.isArray(p.ratings)) {
+				p.ratings = {
+					pos: p.ratings.at(-1).pos,
+					skills: [],
+				};
+			}
 
-				if (!pass) {
-					for (let k = 0; k < cat.minStats.length; k++) {
-						// In basketball, everything except gp is a per-game average, so we need to scale them by games played
-						let playerValue;
-						if (!isSport("basketball") || cat.minStats[k] === "gp") {
-							playerValue = p.stats[cat.minStats[k]];
-						} else {
-							playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
-						}
-
-						// Compare against value normalized for team games played
-						const gpTeam = gps[p.stats.tid];
-
-						if (gpTeam !== undefined) {
-							// Special case GP
-							if (cat.minStats[k] === "gp") {
-								if (
-									playerValue / gpTeam >=
-									cat.minValue[k] / g.get("numGames")
-								) {
-									pass = true;
-									break; // If one is true, don't need to check the others
-								}
-							}
-
-							// Other stats
-							if (
-								playerValue >=
-								Math.ceil(
-									(cat.minValue[k] * factor * gpTeam) / g.get("numGames"),
-								)
-							) {
-								pass = true;
-								break; // If one is true, don't need to check the others
-							}
-						}
-					}
+			let playerStats;
+			if (season === "career") {
+				if (playoffs) {
+					playerStats = p.careerStatsPlayoffs;
+				} else {
+					playerStats = p.careerStats;
 				}
+			} else {
+				playerStats = p.stats;
+			}
+
+			for (let i = 0; i < categories.length; i++) {
+				const cat = categories[i];
+				const outputCat = outputCategories[i];
+
+				const value = playerStats[cat.stat];
+				const lastValue = outputCat.leaders.at(-1)?.stat;
+				if (
+					outputCat.leaders.length >= NUM_LEADERS &&
+					((cat.sortAscending && value > lastValue) ||
+						(!cat.sortAscending && value < lastValue))
+				) {
+					// Value is not good enough for the top 10
+					continue;
+				}
+
+				const pass = playerMeetsCategoryRequirements({
+					cat,
+					gamesPlayedCache,
+					p,
+					playerStats,
+					playoffs,
+					season,
+					statType: inputs.statType,
+				});
 
 				if (pass) {
-					const leader = helpers.deepCopy(p);
-					leader.stat = leader.stats[cat.statProp];
-					leader.abbrev = leader.stats.abbrev;
-					leader.tid = leader.stats.tid;
-					// @ts-ignore
-					delete leader.stats;
-					leader.userTeam = userAbbrev === leader.abbrev;
-					cat.data.push(leader);
-				}
+					// Players can appear multiple times if looking at all seasons
+					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
 
-				// Stop when we found 10
-				if (cat.data.length === 10) {
-					break;
+					let tid = playerStats.tid;
+					let abbrev = playerStats.abbrev;
+					if (season === "career") {
+						const { legacyTid } = processPlayersHallOfFame([p])[0];
+						if (legacyTid >= 0) {
+							tid = legacyTid;
+							abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+						}
+					}
+
+					const userTid =
+						season !== "career" ? g.get("userTid", season) : g.get("userTid");
+
+					const leader = {
+						abbrev,
+						hof: p.hof,
+						injury: p.injury,
+						jerseyNumber: p.jerseyNumber,
+						key,
+						nameAbbrev: p.nameAbbrev,
+						pid: p.pid,
+						pos: p.ratings.pos,
+						retiredYear: p.retiredYear,
+						season:
+							inputs.season === "all" && season !== "career"
+								? season
+								: undefined,
+						stat: playerStats[cat.stat],
+						skills: p.ratings.skills,
+						tid,
+						userTeam: userTid === tid,
+						watch: p.watch,
+					};
+
+					outputCat.leaders = outputCat.leaders.slice(0, NUM_LEADERS - 1);
+					outputCat.leaders.push(leader);
+					if (cat.sortAscending) {
+						outputCat.leaders.sort((a, b) => a.stat - b.stat);
+					} else {
+						outputCat.leaders.sort((a, b) => b.stat - a.stat);
+					}
 				}
 			}
+		});
 
-			// @ts-ignore
-			delete cat.minStats;
-
-			// @ts-ignore
-			delete cat.minValue;
-
-			delete cat.filter;
-		}
+		const highlightActiveAndHOF =
+			inputs.season === "career" ||
+			inputs.season === "all" ||
+			inputs.season < g.get("season");
 
 		return {
-			categories,
+			categories: outputCategories,
+			highlightActiveAndHOF,
 			playoffs: inputs.playoffs,
 			season: inputs.season,
+			statType: inputs.statType,
 		};
 	}
 };

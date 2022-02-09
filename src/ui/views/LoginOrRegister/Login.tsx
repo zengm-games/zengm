@@ -36,7 +36,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				});
 
 				if (gold) {
-					await toWorker("main", "initGold");
+					await toWorker("main", "initGold", undefined);
 				}
 
 				// Check for participation achievement, if this is the first time logging in to this sport

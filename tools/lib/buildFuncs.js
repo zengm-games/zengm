@@ -1,4 +1,5 @@
-const CleanCSS = require("clean-css");
+const parcelCSS = require("@parcel/css");
+const browserslist = require("browserslist");
 const crypto = require("crypto");
 const fs = require("fs");
 const fse = require("fs-extra");
@@ -42,7 +43,10 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 						// For align="end" in react-bootstrap
 						/^dropdown-menu-end$/,
 
-						/^flag-/,
+						// flag-icons
+						/^fi$/,
+						/^fi-/,
+
 						/^dark-select/,
 						/^bar-graph/,
 					],
@@ -55,14 +59,18 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 		let output;
 		if (!watch) {
 			const purgeCSSResult = purgeCSSResults[i].css;
-			const result = new CleanCSS().minify(purgeCSSResult);
-			if (result.errors.length > 0) {
-				console.log("clean-css errors", result.errors);
-			}
-			if (result.warnings.length > 0) {
-				console.log("clean-css warnings", result.warnings);
-			}
-			output = result.styles;
+
+			const { code } = parcelCSS.transform({
+				filename: `${filename}.css`,
+				code: Buffer.from(purgeCSSResult),
+				minify: true,
+				sourceMap: false,
+				targets: parcelCSS.browserslistToTargets(
+					browserslist("Chrome >= 49, Firefox >= 78, Safari >= 11"),
+				),
+			});
+
+			output = code;
 		} else {
 			output = rawCSS[i];
 		}
@@ -207,7 +215,7 @@ const copyFiles = watch => {
 
 	fse.copySync("data/names.json", "build/gen/names.json");
 
-	fse.copySync("node_modules/flag-icon-css/flags/4x3", "build/img/flags");
+	fse.copySync("node_modules/flag-icons/flags/4x3", "build/img/flags");
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;

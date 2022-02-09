@@ -15,9 +15,9 @@ const idb: {
 	cache: new Cache(),
 	getCopies,
 	getCopy,
-	// @ts-ignore
+	// @ts-expect-error
 	league: undefined,
-	// @ts-ignore
+	// @ts-expect-error
 	meta: undefined,
 };
 

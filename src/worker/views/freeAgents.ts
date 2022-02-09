@@ -37,6 +37,7 @@ const updateFreeAgents = async () => {
 		attrs: [
 			"pid",
 			"name",
+			"nameAbbrev",
 			"age",
 			"contract",
 			"injury",

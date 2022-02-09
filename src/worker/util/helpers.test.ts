@@ -30,23 +30,4 @@ describe("worker/util/helpers", () => {
 			assert.strictEqual(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
 		});
 	});
-	describe("zeroPad", () => {
-		const array = [1, 2, 3, 4, 5];
-
-		test("do nothing if already long enough", () => {
-			assert.deepStrictEqual(helpers.zeroPad(array, 5), array);
-		});
-
-		test("slice if too long", () => {
-			assert.deepStrictEqual(helpers.zeroPad(array, 3), [1, 2, 3]);
-		});
-
-		test("pad with nulls up to requested length if too short", () => {
-			assert.deepStrictEqual(helpers.zeroPad(array, 6), [1, 2, 3, 4, 5, 0]);
-			assert.deepStrictEqual(
-				helpers.zeroPad(array, 8),
-				[1, 2, 3, 4, 5, 0, 0, 0],
-			);
-		});
-	});
 });

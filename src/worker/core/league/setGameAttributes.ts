@@ -65,10 +65,8 @@ const setGameAttributes = async (
 		const currentValue = unwrapGameAttribute(g, key);
 
 		if (
-			// @ts-ignore
 			(gameAttributes[key] === undefined ||
 				currentValue !== gameAttributes[key]) &&
-			// @ts-ignore
 			!Number.isNaN(gameAttributes[key])
 		) {
 			// No needless update for arrays - this matters for wrapped values like numGamesPlayoffSeries so it doesn't create an extra entry every year!

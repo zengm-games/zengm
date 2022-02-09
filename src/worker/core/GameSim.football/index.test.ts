@@ -76,6 +76,26 @@ describe("worker/core/GameSim.football", () => {
 		assert.strictEqual(game.getPlayType(), "fieldGoalLate");
 	});
 
+	test("kick a field goal at the end of overtime in a tie game rather than running out the clock", async () => {
+		const game = await initGameSim();
+
+		// Arbitrary score, 2nd quarter, ball on the opp 20 yard line, 6 seconds left
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.team[0].stat.pts = 21;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, game.team[0].stat.pts, 0];
+		game.team[1].stat.pts = game.team[0].stat.pts;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts, 0];
+		game.scrimmage = 80;
+		game.clock = 3 / 60;
+		game.overtimes = 1;
+		game.overtimeState = "bothTeamsPossessed";
+		game.currentPlay = new Play(game);
+
+		assert.strictEqual(game.getPlayType(), "fieldGoalLate");
+	});
+
 	test("don't punt when down late, and usually pass", async () => {
 		// Down by 7, 4th quarter, ball on own 20 yard line, 4th down, 1:30 left
 		const game = await initGameSim();

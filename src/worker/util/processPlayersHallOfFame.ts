@@ -4,7 +4,7 @@ import { bySport } from "../../common";
 const processPlayersHallOfFame = <
 	T extends {
 		careerStats: any;
-		ratings: any[];
+		ratings: any;
 		stats: any[];
 	},
 >(
@@ -16,9 +16,11 @@ const processPlayersHallOfFame = <
 })[] => {
 	return players.map(p => {
 		let peakOvr = 0;
-		for (const pr of p.ratings) {
-			if (pr.ovr > peakOvr) {
-				peakOvr = pr.ovr;
+		if (Array.isArray(p.ratings)) {
+			for (const pr of p.ratings) {
+				if (pr.ovr > peakOvr) {
+					peakOvr = pr.ovr;
+				}
 			}
 		}
 

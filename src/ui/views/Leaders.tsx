@@ -1,6 +1,10 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
-import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
+import { getCols, helpers } from "../util";
+import {
+	MoreLinks,
+	PlayerNameLabels,
+	ResponsiveTableWrapper,
+} from "../components";
 import type { View } from "../../common/types";
 import useClickable from "../hooks/useClickable";
 import classNames from "classnames";
@@ -8,20 +12,34 @@ import { bySport, isSport } from "../../common";
 
 const Row = ({
 	cat,
+	highlightActiveAndHOF,
 	p,
 	rank,
 	season,
+	totals,
 }: {
-	cat: any;
-	p: any;
+	cat: View<"leaders">["categories"][number];
+	p: View<"leaders">["categories"][number]["leaders"][number];
 	rank: number;
-	season: number;
-}) => {
+	totals: boolean;
+} & Pick<View<"leaders">, "highlightActiveAndHOF" | "season">) => {
 	const { clicked, toggleClicked } = useClickable();
+
+	const numericSeason =
+		season === "career" ? undefined : season === "all" ? p.season : season;
+
+	let teamUrlParts;
+	if (season === "career") {
+		teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
+	} else {
+		teamUrlParts = ["roster", `${p.abbrev}_${p.tid}`, numericSeason];
+	}
 
 	return (
 		<tr
 			className={classNames({
+				"table-danger": highlightActiveAndHOF && p.hof,
+				"table-success": highlightActiveAndHOF && p.retiredYear === Infinity,
 				"table-info": p.userTeam,
 				"table-warning": clicked,
 			})}
@@ -35,41 +53,32 @@ const Row = ({
 					pid={p.pid}
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
-					season={season}
-					skills={p.ratings.skills}
+					season={numericSeason}
+					skills={p.skills}
 					watch={p.watch}
 				>
 					{p.nameAbbrev}
 				</PlayerNameLabels>
-				<a
-					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}
-					className="mx-2"
-				>
+				<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
 					{p.abbrev}
+					{p.season !== undefined ? ` ${p.season}` : null}
 				</a>
-				{isSport("football") || isSport("hockey") ? `${p.ratings.pos}` : null}
+				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
 			</td>
-			<td>
-				{cat.stat === "WS/48"
-					? helpers.roundWinp(p.stat)
-					: helpers.roundStat(p.stat, cat.statProp)}
+			<td className="text-end">
+				{helpers.roundStat(p.stat, cat.stat, totals)}
 			</td>
 		</tr>
 	);
 };
 
-const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
-	useTitleBar({
-		title: "League Leaders",
-		jumpTo: true,
-		jumpToSeason: season,
-		dropdownView: "leaders",
-		dropdownFields: {
-			seasons: season,
-			playoffs,
-		},
-	});
-
+export const LeadersTopText = ({
+	includeHighlight,
+	noHighlightActive,
+}: {
+	includeHighlight?: boolean;
+	noHighlightActive?: boolean;
+}) => {
 	return (
 		<>
 			<p>
@@ -84,37 +93,101 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 				})}
 				).
 			</p>
+			{includeHighlight ? (
+				<p>
+					Players from your team are{" "}
+					<span className="text-info">highlighted in blue</span>.{" "}
+					{noHighlightActive ? (
+						""
+					) : (
+						<>
+							Active players are{" "}
+							<span className="text-success">highlighted in green</span>.
+						</>
+					)}
+					Hall of Famers are{" "}
+					<span className="text-danger">highlighted in red</span>.
+				</p>
+			) : null}
+		</>
+	);
+};
+
+const Leaders = ({
+	categories,
+	highlightActiveAndHOF,
+	playoffs,
+	season,
+	statType,
+}: View<"leaders">) => {
+	useTitleBar({
+		title: "League Leaders",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "leaders",
+		dropdownFields: {
+			seasonsAndCareer: season,
+			statTypesStrict: statType,
+			playoffs,
+		},
+	});
+
+	// When season is "all", the season is displayed inline, so columns need to be a bit wider
+	const colClassName =
+		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-md-4";
+
+	return (
+		<>
+			<MoreLinks
+				type="leaders"
+				page="leaders"
+				playoffs={playoffs}
+				season={season}
+				statType={statType}
+			/>
+			<LeadersTopText includeHighlight={highlightActiveAndHOF} />
 
 			<div className="row" style={{ marginTop: -14 }}>
-				{categories.map(cat => (
-					<div
-						key={cat.name}
-						className="col-12 col-sm-6 col-md-4"
-						style={{ marginTop: 14 }}
-					>
-						<ResponsiveTableWrapper>
-							<table className="table table-striped table-sm leaders">
-								<thead>
-									<tr title={cat.title}>
-										<th>{cat.name}</th>
-										<th>{cat.stat}</th>
-									</tr>
-								</thead>
-								<tbody>
-									{cat.data.map((p, j) => (
-										<Row
-											key={p.pid}
-											cat={cat}
-											p={p}
-											rank={j + 1}
-											season={season}
-										/>
-									))}
-								</tbody>
-							</table>
-						</ResponsiveTableWrapper>
-					</div>
-				))}
+				{categories.map(cat => {
+					const col = getCols([`stat:${cat.stat}`])[0];
+					if (cat.titleOverride === col.desc) {
+						throw new Error("Useless titleOverride");
+					}
+					const name = cat.titleOverride ?? col.desc;
+					const title = cat.titleOverride ? col.desc : undefined;
+
+					return (
+						<div
+							key={cat.stat}
+							className={colClassName}
+							style={{ marginTop: 14 }}
+						>
+							<ResponsiveTableWrapper>
+								<table className="table table-striped table-sm leaders">
+									<thead>
+										<tr title={title}>
+											<th>{name}</th>
+											<th className="text-end">{col.title}</th>
+										</tr>
+									</thead>
+									<tbody>
+										{cat.leaders.map((p, j) => (
+											<Row
+												key={p.key}
+												cat={cat}
+												highlightActiveAndHOF={highlightActiveAndHOF}
+												p={p}
+												rank={j + 1}
+												season={season}
+												totals={statType === "totals" && isSport("basketball")}
+											/>
+										))}
+									</tbody>
+								</table>
+							</ResponsiveTableWrapper>
+						</div>
+					);
+				})}
 			</div>
 		</>
 	);

@@ -38,7 +38,7 @@ const ImportButton = ({
 
 				reader.onload = async event2 => {
 					try {
-						// @ts-ignore
+						// @ts-expect-error
 						const leagueFile = JSON.parse(event2.currentTarget.result);
 						if (leagueFile.gameAttributes) {
 							onImport(leagueFile.gameAttributes);

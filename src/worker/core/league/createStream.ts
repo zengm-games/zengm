@@ -687,7 +687,7 @@ const processTeamInfos = ({
 						(teamSeason.season === g.get("season") &&
 							g.get("phase") < PHASE.PLAYOFFS)
 					) {
-						// @ts-ignore
+						// @ts-expect-error
 						teamSeason[key] = t[key];
 					}
 				}
@@ -699,7 +699,6 @@ const processTeamInfos = ({
 		} else if (!t.disabled) {
 			teamSeasonsLocal = [team.genSeasonRow(t)];
 			teamSeasonsLocal[0].pop = teamInfo.pop;
-			// @ts-ignore
 			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
 		} else {
 			teamSeasonsLocal = [];

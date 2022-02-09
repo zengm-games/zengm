@@ -92,6 +92,7 @@ const AwardRaces = ({
 								season={season}
 								skills={pr ? pr.skills : []}
 								watch={p.watch}
+								xsName={p.nameAbbrev}
 							>
 								{p.name}
 							</PlayerNameLabels>,
@@ -173,6 +174,7 @@ const AwardRaces = ({
 								<DataTable
 									cols={cols}
 									defaultSort={[0, "asc"]}
+									defaultStickyCols={2}
 									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}

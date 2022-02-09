@@ -103,7 +103,11 @@ export const genView = (
 					(c.displayStat / c.numPlayers).toFixed(1),
 					{
 						value: (
-							<PlayerNameLabels jerseyNumber={p.jerseyNumber} pid={p.pid}>
+							<PlayerNameLabels
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								xsName={p.nameAbbrev}
+							>
 								{p.name}
 							</PlayerNameLabels>
 						),
@@ -149,6 +153,7 @@ export const genView = (
 				<DataTable
 					cols={cols}
 					defaultSort={[5, "desc"]}
+					defaultStickyCols={1}
 					name={type === "college" ? "Colleges" : "Countries"}
 					rows={rows}
 					superCols={superCols}

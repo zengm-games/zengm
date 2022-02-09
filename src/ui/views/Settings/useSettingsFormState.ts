@@ -22,7 +22,7 @@ const useSettingsFormState = ({
 	const [gameSimPreset, setGameSimPresetRaw] = useState("default");
 
 	const [state, setStateRaw] = useState<State>(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		const initialState: State = {};
 		for (const { key, type, values } of settings) {
 			if (SPECIAL_STATE_ALL.includes(key as any)) {
@@ -91,7 +91,7 @@ const useSettingsFormState = ({
 		};
 
 	const setGameSimPreset = (newPreset: string) => {
-		// @ts-ignore
+		// @ts-expect-error
 		const presets = gameSimPresets[newPreset];
 		if (!presets) {
 			return;

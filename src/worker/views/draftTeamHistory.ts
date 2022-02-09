@@ -37,6 +37,7 @@ const updateDraftTeamHistory = async (
 			"draft",
 			"pid",
 			"name",
+			"nameAbbrev",
 			"age",
 			"hof",
 			"watch",
@@ -88,6 +89,7 @@ const updateDraftTeamHistory = async (
 			// Attributes
 			pid: p.pid,
 			name: p.name,
+			nameAbbrev: p.nameAbbrev,
 			draft: p.draft,
 			currentAge: p.age,
 			currentAbbrev: p.abbrev,

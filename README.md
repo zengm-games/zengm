@@ -17,7 +17,7 @@ Discussion:
 * <https://www.reddit.com/r/BasketballGM/>
 * <https://www.reddit.com/r/Football_GM/>
 * <https://www.reddit.com/r/ZenGMHockey/>
-* <https://discord.gg/caPFuM9/>
+* <https://zengm.com/discord/>
 
 **This project is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**

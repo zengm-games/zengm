@@ -196,9 +196,9 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		const tds = document.getElementsByClassName("SortableHelper")[0].childNodes;
 		for (let i = 0; i < tds.length; i++) {
 			const childNode = node.childNodes[i];
-			// @ts-ignore
+			// @ts-expect-error
 			tds[i].style.width = `${childNode.offsetWidth}px`;
-			// @ts-ignore
+			// @ts-expect-error
 			tds[i].style.padding = "5px";
 		}
 	}, []);

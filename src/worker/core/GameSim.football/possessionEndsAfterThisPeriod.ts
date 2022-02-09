@@ -2,8 +2,7 @@ import isFirstPeriodAfterHalftime from "./isFirstPeriodAfterHalftime";
 
 const possessionEndsAfterThisPeriod = (quarter: number, numPeriods: number) => {
 	return (
-		quarter === numPeriods ||
-		isFirstPeriodAfterHalftime(quarter + 1, numPeriods)
+		quarter >= numPeriods || isFirstPeriodAfterHalftime(quarter + 1, numPeriods)
 	);
 };
 

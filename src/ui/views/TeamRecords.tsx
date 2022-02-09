@@ -4,13 +4,15 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { bySport } from "../../common";
+import TeamLogoAndName from "../components/TeamLogoAndName";
 
 const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	return {
 		value: t.root ? (
-			<a href={helpers.leagueUrl(["team_history", `${t.abbrev}_${t.tid}`])}>
-				{t.region} {t.name}
-			</a>
+			<TeamLogoAndName
+				t={{ ...t, seasonAttrs: t }}
+				url={helpers.leagueUrl(["team_history", `${t.abbrev}_${t.tid}`])}
+			/>
 		) : (
 			<span className="ms-2">
 				{t.region} {t.name}
@@ -163,8 +165,10 @@ const TeamRecords = ({
 			) : null}
 
 			<DataTable
+				className="align-middle"
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={1}
 				name="TeamRecords"
 				pagination={false}
 				rows={rows}

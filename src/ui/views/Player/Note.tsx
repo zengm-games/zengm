@@ -14,7 +14,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 				className="mt-3"
 				onSubmit={async event => {
 					event.preventDefault();
-					await toWorker("main", "setPlayerNote", pid, editedNote);
+					await toWorker("main", "setPlayerNote", { pid, note: editedNote });
 					setEditing(false);
 				}}
 			>

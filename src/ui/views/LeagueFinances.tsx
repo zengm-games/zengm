@@ -3,6 +3,7 @@ import { getCols, helpers, toWorker } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import type { ReactNode } from "react";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 
 const LeagueFinances = ({
 	budget,
@@ -66,14 +67,13 @@ const LeagueFinances = ({
 				: t.seasonAttrs.salaryPaid;
 
 		const data: ReactNode[] = [
-			<a
-				href={helpers.leagueUrl([
+			wrappedTeamLogoAndName(
+				t,
+				helpers.leagueUrl([
 					"team_finances",
 					`${t.seasonAttrs.abbrev}_${t.seasonAttrs.tid}`,
-				])}
-			>
-				{t.seasonAttrs.region} {t.seasonAttrs.name}
-			</a>,
+				]),
+			),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
 			...(showTicketPrice
@@ -148,6 +148,7 @@ const LeagueFinances = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[5, "desc"]}
+				defaultStickyCols={1}
 				name="LeagueFinances"
 				nonfluid
 				rows={rows}

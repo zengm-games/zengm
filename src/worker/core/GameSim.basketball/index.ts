@@ -405,18 +405,18 @@ class GameSim {
 		for (const t of teamNums) {
 			delete this.team[t].compositeRating;
 
-			// @ts-ignore
+			// @ts-expect-error
 			delete this.team[t].pace;
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].age;
 
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
 
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].ptModifier;
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;
@@ -547,7 +547,7 @@ class GameSim {
 		}
 	}
 
-	getPossessionLength() {
+	getPossessionLength(intentionalFoul: boolean) {
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const pointDifferential =
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
@@ -557,7 +557,8 @@ class GameSim {
 			quarter >= this.numPeriods &&
 			!this.elamActive &&
 			this.t <= 24 / 60 &&
-			pointDifferential > 0
+			pointDifferential > 0 &&
+			!intentionalFoul
 		) {
 			return this.t;
 		}
@@ -594,7 +595,11 @@ class GameSim {
 
 		let possessionLength; // [min]
 
-		if (holdForLastShot) {
+		if (intentionalFoul) {
+			possessionLength = (Math.random() * 3) / 60;
+			lowerBound = 0;
+			upperBound = this.t;
+		} else if (holdForLastShot) {
 			possessionLength = random.gauss(this.t, 5 / 60);
 		} else if (catchUp) {
 			possessionLength = random.gauss(
@@ -602,7 +607,7 @@ class GameSim {
 				5 / 60,
 			);
 			if (this.t < 48 / 60 && this.t > 4 / 60) {
-				upperBound = Math.sqrt(this.t);
+				upperBound = this.t / 2;
 			}
 		} else if (maintainLead) {
 			possessionLength = random.gauss(
@@ -641,6 +646,20 @@ class GameSim {
 		return helpers.bound(bounded1, 0, finalUpperBound);
 	}
 
+	// Call this before running clock for possession
+	shouldIntentionalFoul() {
+		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+		const offenseWinningByABit = diff > 0 && diff <= 6;
+		const intentionalFoul =
+			offenseWinningByABit &&
+			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
+			this.t < 27 / 60 &&
+			!this.elamActive &&
+			this.getNumFoulsUntilBonus() <= 10;
+
+		return intentionalFoul;
+	}
+
 	simPossession() {
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
@@ -648,10 +667,13 @@ class GameSim {
 		this.updateTeamCompositeRatings();
 
 		// Clock
-		const possessionLength = this.getPossessionLength();
+		const intentionalFoul = this.shouldIntentionalFoul();
+		const possessionLength = this.getPossessionLength(intentionalFoul);
 		this.t -= possessionLength;
-
-		const outcome = this.getPossessionOutcome(possessionLength);
+		const outcome = this.getPossessionOutcome(
+			possessionLength,
+			intentionalFoul,
+		);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
@@ -1266,30 +1288,23 @@ class GameSim {
 		}
 	}
 
+	getNumFoulsUntilBonus() {
+		const foulsUntilBonus = g.get("foulsUntilBonus");
+		if (this.t <= 2) {
+			return foulsUntilBonus[2] - this.foulsLastTwoMinutes[this.d];
+		}
+		if (this.overtimes >= 1) {
+			return foulsUntilBonus[1] - this.foulsThisQuarter[this.d];
+		}
+		return foulsUntilBonus[0] - this.foulsThisQuarter[this.d];
+	}
+
 	/**
 	 * Simulate a single possession.
 	 *
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
-	getPossessionOutcome(possessionLength: number) {
-		const timeBeforePossession = this.t + possessionLength;
-		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-		const offenseWinningByABit = diff > 0 && diff <= 6;
-		const intentionalFoul =
-			offenseWinningByABit &&
-			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-			timeBeforePossession < 25 / 60 &&
-			!this.elamActive;
-
-		if (intentionalFoul) {
-			// HACK! Add some time back on the clock. Would be better if this was like football and time ticked off during the play, not predefined. BE CAREFUL ABOUT CHANGING STUFF BELOW THIS IN THIS FUNCTION, IT MAY DEPEND ON THIS. Like anything reading this.t or intentionalFoul.
-			const possessionLength2 = (Math.random() * 3) / 60;
-
-			if (possessionLength2 < timeBeforePossession) {
-				this.t = timeBeforePossession - possessionLength2;
-			}
-		}
-
+	getPossessionOutcome(possessionLength: number, intentionalFoul: boolean) {
 		// If winning at end of game, just run out the clock
 		if (
 			this.t <= 0 &&
@@ -1318,13 +1333,8 @@ class GameSim {
 		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
 			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
-			const foulsUntilBonus = g.get("foulsUntilBonus");
-			const inBonus =
-				(this.t <= 2 &&
-					this.foulsLastTwoMinutes[this.d] >= foulsUntilBonus[2] - 1) ||
-				(this.overtimes >= 1 &&
-					this.foulsThisQuarter[this.d] >= foulsUntilBonus[1] - 1) ||
-				this.foulsThisQuarter[this.d] >= foulsUntilBonus[0] - 1;
+			const numFoulsUntilBonus = this.getNumFoulsUntilBonus();
+			const inBonus = numFoulsUntilBonus <= 1;
 
 			if (inBonus) {
 				this.doPf(this.d, "pfBonus", shooter);

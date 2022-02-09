@@ -1,12 +1,80 @@
-command palette
-- highlighting of selected text in search results https://github.com/moroshko/autosuggest-highlight#match
+sticky first column in most tables
+- blog
+  - especially helps on mobile
+  - can configure for table at ... > Customize Columns
+  - on mobile, uses shortened name (first initial) and team (abbrev)
+
+would be nice to have 3 sticky cols in trade AssetList and ImportPlayers
+
+2 sticky columns without DataTable
+- extract logic into reusable hook
+- football/hockey box scores
+- roster
+  - different default for football/hockey
+- depth
+
+xsName refactor
+- instead, store firstName and lastName and compute the names client side
+- player feats and box scores will need to be upgraded
+
+tools > Fantasy Draft - handles not showing right
+
+make watch not crash on scss parse error
+
+make some tables (awards records, power rankings, injuries, ...) nonfluid
+
+after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
+
+build statues for players https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hqsowkj/
+- https://old.reddit.com/message/messages/1akmgqt
+
+more sim stopping options, in addition to injury one https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hr4xytv/
+- stop at trade deadline
+- stop at all star game
+
+also a way to temporarily or indefinitely set a default for how you change a page like News Feed, Player Stats. that way if you're consistently checking the news about your team you can jump right back to it instead of defaulting to all teams https://discord.com/channels/290013534023057409/331882115119448065/938016635401420840
+- maybe a checkbox or button next to the dropdowns?
+
+group ratings ranks into categories https://discord.com/channels/290013534023057409/331882115119448065/936680191936323624
+- https://discord.com/channels/290013534023057409/331882115119448065/936680191936323624
+- and add that green/red feature from the team stats to that to ez compare to league
+
+put playoff/champ odds on power rankings https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hre8hl7/
+
+put position ranks (from power rankings) in roster composition block https://discord.com/channels/290013534023057409/331882115119448065/937446267859107870
+
+Deleting old box scores deletes stat feats from player pages, but they’re all still saved on the stat feat page? I don’t believe they should disappear from a player’s page https://discord.com/channels/290013534023057409/290015591216054273/937547547663278152
+
+load real player info from url/file https://discord.com/channels/290013534023057409/290015591216054273/937276075841572874
+
+Leaders improvements
+- progressive leaders, like bbref
+  - before doing this, figure out a better way of handling total/perGame stats in basketball, similar to other sports
+    - when i do that, add another option to view totals rather than per game for the other leaders pages
+  - requires
+    - each year's leader in stat
+    - each year's career leader up to that year
+    - each year's *active* career leader up to that year
+
+fbgm/zgmh game sim settings
+
+use nicidob's model but fit to random players instead of real players, to get linear prog formula that behaves like the current one
+- running average progs https://discord.com/channels/290013534023057409/290015468939640832/936461665862549505
+
+some UI in draft to show you skill labels a player is close to
+
+add options to control expansion team draft pick position
+- FBGM should default to #1
+
+runBefore sends viewData to worker... wouldn't it be better to keep it on worker? do we ever need anything but "latest state displayed on this tab"? maybe?
+
+refactor game sim
+- classes should share some common methods
 
 dropdown list of cities on manage teams page
 - https://discord.com/channels/290013534023057409/331882115119448065/933031128443539528
 
 rank column on player stats page https://discord.com/channels/290013534023057409/331882115119448065/932355745616371813
-
-make AI aware that fouling at the end of the game is futile if foulsUntilBonus is high enough. https://old.reddit.com/r/BasketballGM/comments/s6g8ub/interesting_foul_situation_i_found_while_doing_a/
 
 minors
 - add "type" property to stats row, could be playoffs, minors, or undefind (regular season)
@@ -23,17 +91,14 @@ fbgm kickoff return to own 0 https://discord.com/channels/290013534023057409/290
 
 when starting a new league, contracts should be set not based on current state of player, but on state when contract was signed. especially noticable for rookies who progged a lot
 
-sticky first column in most tables
-- https://github.com/twbs/bootstrap/issues/31458
-- https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
-
-TR doesn’t switch to playoffs TR when switching to it on the roster screen https://discord.com/channels/290013534023057409/290015591216054273/930604919973609523
-
 no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
 
 more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
 
-dramatic reveal of awards and award voting results, similar to draft lottery
+redesign season summary
+- dramatic reveal of awards and award voting results, similar to draft lottery
+  - https://discord.com/channels/290013534023057409/331882115119448065/935293110710317087
+- show league leaders https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hr4y9s9/
 
 offsetting penalties broken on kickoff https://discord.com/channels/290013534023057409/290015591216054273/929998618331590667
 
@@ -78,11 +143,7 @@ fbgm edge cases
 - defensive penalty on last possession of half/OT - should have one untimed down https://mail.google.com/mail/u/0/#inbox/FMfcgzGllVnWKrWXjxwNNXWTqsncqjNq
 
 QB throw a Interception but their were two offsetting penalties so the down was replayed but it still counted the INT to the Stats. So the Safety still got credit for a pick https://discord.com/channels/290013534023057409/290015591216054273/917134502336270396
-
-bootstrap 5
-- test
-  - "More Info" dropdown alignment
-    - same with top menu dropdowns
+- similar situation with a score https://discord.com/channels/290013534023057409/569726303926878219/935283475685187684
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 
@@ -159,11 +220,6 @@ store results of trading block in database
 - indicator if trade is invalid because an asset no longer exists on that team
 - show what the user offered somewhere, not just what is checked
 
-show all on trading block https://discord.com/channels/290013534023057409/331882115119448065/879050361564979210
-
-refactor game sim
-- classes should share some common methods
-
 football penalty later
 - make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes
 - option to apply penalty on kickoff, for extra points
@@ -232,6 +288,7 @@ player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
 - https://discord.com/channels/290013534023057409/331882115119448065/874769773051936848
+- https://discord.com/channels/290013534023057409/331882115119448065/935369006985117697
 
 https://github.com/zengm-games/zengm/pull/346/files
 
@@ -405,8 +462,6 @@ trade finder, with salary cap rules enforced
 
 fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
-
-add league average to team stats and league stats tables https://discord.com/channels/290013534023057409/331882115119448065/838366140739878942
 
 AI teams too likely to re-sign stars?
 
@@ -1244,18 +1299,12 @@ FBGM football sim bugs
 
 typescript
 - to do
-  - types for toWorker
-    - flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier
-    - test with tradeCounterOffer
-    - see OfferType
-    - if it's possible to make it work with no explicit array passed for optional args, do same in toUI
   - backboard -> idb
     - my branch has two fixes:
       - https://github.com/jakearchibald/idb/pull/151
       - https://github.com/jakearchibald/idb/issues/152
   - any -> unknown
     - also in dependencies, like bbgm-router
-  - @ts-ignore still needed? maybe write script to check
 - later
   - playersPlus
     - finish teamsPlus first, it's easier!
@@ -1384,10 +1433,7 @@ redo pot formulas?
 
 Add "All Seasons" option to various stat/ratings pages
 - Player Ratings
-- Player Stats
 - Team Stats
-- League Leaders
-  - Also add "Career Totals" there
 
 injury later
 - injury history leads to chance of reinjury

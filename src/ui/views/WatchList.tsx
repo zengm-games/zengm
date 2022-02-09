@@ -24,7 +24,7 @@ const WatchList = ({
 
 	const clearWatchList = useCallback(async () => {
 		setClearing(true);
-		await toWorker("main", "clearWatchList");
+		await toWorker("main", "clearWatchList", undefined);
 		setClearing(false);
 	}, []);
 
@@ -79,6 +79,7 @@ const WatchList = ({
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -154,6 +155,7 @@ const WatchList = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[5, "desc"]}
+				defaultStickyCols={2}
 				name="WatchList"
 				pagination
 				rows={rows}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import { Modal } from "react-bootstrap";
+import Modal from "../components/Modal";
 
 const Confirm = confirmable(
 	({ show, proceed, confirmation, defaultValue, okText, cancelText }: any) => {

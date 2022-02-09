@@ -3,6 +3,7 @@ import { useState } from "react";
 import { timeBetweenGames } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import { HelpPopover } from "../../components";
+import CollapseArrow from "../../components/CollapseArrow";
 import { toWorker } from "../../util";
 
 const Slider = ({
@@ -43,13 +44,11 @@ const Slider = ({
 					const parsed = parseInt(event.target.value);
 					if (!Number.isNaN(parsed)) {
 						setValue(parsed);
-						await toWorker(
-							"main",
-							"updatePlayThroughInjuries",
+						await toWorker("main", "updatePlayThroughInjuries", {
 							tid,
-							parsed,
+							value: parsed,
 							playoffs,
-						);
+						});
 					}
 				}}
 			/>
@@ -88,21 +87,7 @@ const PlayThroughInjuriesSliders = ({
 						type="button"
 						onClick={() => setExpanded(prev => !prev)}
 					>
-						<AnimatePresence initial={false}>
-							<m.span
-								animate={expanded ? "open" : "collapsed"}
-								variants={{
-									open: { rotate: 90 },
-									collapsed: { rotate: 0 },
-								}}
-								transition={{
-									duration: 0.3,
-									type: "tween",
-								}}
-								className="glyphicon glyphicon-triangle-right"
-							/>
-						</AnimatePresence>{" "}
-						{titleText}
+						<CollapseArrow open={expanded} /> {titleText}
 					</button>
 				) : (
 					<b>{titleText}</b>

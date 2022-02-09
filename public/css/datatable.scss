@@ -84,7 +84,7 @@ table.table {
 	}
 
 	.sorting_highlight {
-		background-color: var(--bs-table-hover-bg) !important;
+		background-color: $sorting-highlight-bg !important;
 	}
 }
 

@@ -34,6 +34,12 @@ const defaultRaces: Record<string, Record<Race, number>> = {
 		brown: 15,
 		white: 69,
 	},
+	India: {
+		asian: 1,
+		black: 1,
+		brown: 997,
+		white: 1,
+	},
 	Lithuania: {
 		asian: 1,
 		black: 1,
@@ -67,8 +73,8 @@ const defaultRaces: Record<string, Record<Race, number>> = {
 	Turkey: {
 		asian: 1,
 		black: 1,
-		brown: 997,
-		white: 1,
+		brown: 18,
+		white: 80,
 	},
 	USA: {
 		asian: 1,
@@ -89,8 +95,8 @@ if (isSport("hockey")) {
 	defaultRaces.Spain = defaultRaces.USA;
 }
 
-defaultRaces["Algeria"] = defaultRaces["Turkey"];
-defaultRaces["American Samoa"] = defaultRaces["Turkey"];
+defaultRaces["Algeria"] = defaultRaces["India"];
+defaultRaces["American Samoa"] = defaultRaces["India"];
 defaultRaces["Angola"] = defaultRaces["Nigeria"];
 defaultRaces["Armenia"] = defaultRaces["Lithuania"];
 defaultRaces["Australia"] = defaultRaces["Spain"];
@@ -116,8 +122,8 @@ defaultRaces["Cuba"] = defaultRaces["Mexico"];
 defaultRaces["Czech Republic"] = defaultRaces["Germany"];
 defaultRaces["Denmark"] = defaultRaces["Germany"];
 defaultRaces["Dominican Republic"] = defaultRaces["Nigeria"];
-defaultRaces["East Timor"] = defaultRaces["Turkey"];
-defaultRaces["Egypt"] = defaultRaces["Turkey"];
+defaultRaces["East Timor"] = defaultRaces["India"];
+defaultRaces["Egypt"] = defaultRaces["India"];
 defaultRaces["El Salvador"] = defaultRaces["Mexico"];
 defaultRaces["England"] = defaultRaces["Germany"];
 defaultRaces["Ecuador"] = defaultRaces["Mexico"];
@@ -138,7 +144,6 @@ defaultRaces["Haiti"] = defaultRaces["Nigeria"];
 defaultRaces["Honduras"] = defaultRaces["Mexico"];
 defaultRaces["Hungary"] = defaultRaces["Lithuania"];
 defaultRaces["Iceland"] = defaultRaces["Lithuania"];
-defaultRaces["India"] = defaultRaces["Turkey"];
 defaultRaces["Indonesia"] = defaultRaces["China"];
 defaultRaces["Iran"] = defaultRaces["Lithuania"];
 defaultRaces["Ireland"] = defaultRaces["Germany"];
@@ -159,27 +164,27 @@ defaultRaces["Macau"] = defaultRaces["China"];
 defaultRaces["Mali"] = defaultRaces["Nigeria"];
 defaultRaces["Moldova"] = defaultRaces["Lithuania"];
 defaultRaces["Montenegro"] = defaultRaces["Lithuania"];
-defaultRaces["Morocco"] = defaultRaces["Turkey"];
+defaultRaces["Morocco"] = defaultRaces["India"];
 defaultRaces["Mozambique"] = defaultRaces["Nigeria"];
-defaultRaces["Nepal"] = defaultRaces["Turkey"];
+defaultRaces["Nepal"] = defaultRaces["India"];
 defaultRaces["Netherlands"] = defaultRaces["Spain"];
 defaultRaces["New Zealand"] = defaultRaces["Lithuania"];
 defaultRaces["Nicaragua"] = defaultRaces["Mexico"];
 defaultRaces["North Korea"] = defaultRaces["China"];
 defaultRaces["North Macedonia"] = defaultRaces["Lithuania"];
 defaultRaces["Norway"] = defaultRaces["Spain"];
-defaultRaces["Pakistan"] = defaultRaces["Turkey"];
+defaultRaces["Pakistan"] = defaultRaces["India"];
 defaultRaces["Panama"] = defaultRaces["Mexico"];
 defaultRaces["Papua New Guinea"] = defaultRaces["China"];
 defaultRaces["Paraguay"] = defaultRaces["Mexico"];
 defaultRaces["Peru"] = defaultRaces["Mexico"];
-defaultRaces["Philippines"] = defaultRaces["Turkey"];
+defaultRaces["Philippines"] = defaultRaces["India"];
 defaultRaces["Poland"] = defaultRaces["Lithuania"];
 defaultRaces["Portugal"] = defaultRaces["Spain"];
 defaultRaces["Puerto Rico"] = defaultRaces["USA"];
 defaultRaces["Romania"] = defaultRaces["Lithuania"];
 defaultRaces["Russia"] = defaultRaces["Lithuania"];
-defaultRaces["Samoa"] = defaultRaces["Turkey"];
+defaultRaces["Samoa"] = defaultRaces["India"];
 defaultRaces["Scotland"] = defaultRaces["Spain"];
 defaultRaces["Senegal"] = defaultRaces["Nigeria"];
 defaultRaces["Serbia"] = defaultRaces["Lithuania"];

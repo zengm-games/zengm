@@ -246,11 +246,15 @@ const sortByDivs = (
 	return bestClusters;
 };
 
-const getRandomTeams = (
-	divs: Div[],
-	numTeamsPerDiv: number[],
-	weightByPopulation: boolean,
-) => {
+const getRandomTeams = ({
+	divs,
+	numTeamsPerDiv,
+	weightByPopulation,
+}: {
+	divs: Div[];
+	numTeamsPerDiv: number[];
+	weightByPopulation: boolean;
+}) => {
 	let numTeamsTotal = 0;
 	for (const num of numTeamsPerDiv) {
 		numTeamsTotal += num;

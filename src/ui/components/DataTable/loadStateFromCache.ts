@@ -6,14 +6,15 @@ const loadStateFromCache = ({
 	cols,
 	disableSettingsCache,
 	defaultSort,
+	defaultStickyCols,
 	name,
 }: Pick<
 	Props,
-	"cols" | "disableSettingsCache" | "defaultSort" | "name"
+	"cols" | "disableSettingsCache" | "defaultSort" | "defaultStickyCols" | "name"
 >): State => {
 	const settingsCache = new SettingsCache(name, !!disableSettingsCache);
 
-	// @ts-ignore
+	// @ts-expect-error
 	let perPage = parseInt(safeLocalStorage.getItem("perPage"));
 
 	if (Number.isNaN(perPage)) {
@@ -80,6 +81,9 @@ const loadStateFromCache = ({
 	}
 	// If too many cols... who cares, will get filtered out
 
+	const stickyCols =
+		settingsCache.get("DataTableStickyCols") ?? defaultStickyCols;
+
 	return {
 		colOrder,
 		currentPage: 1,
@@ -90,6 +94,7 @@ const loadStateFromCache = ({
 		searchText: "",
 		showSelectColumnsModal: false,
 		sortBys,
+		stickyCols,
 		settingsCache,
 	};
 };

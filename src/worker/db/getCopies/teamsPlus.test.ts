@@ -195,7 +195,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			playoffs: true,
 			regularSeason: false,
 		});
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 		assert.deepStrictEqual(t, {
 			stats: [
@@ -217,7 +217,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			tid: 4,
 			playoffs: true,
 		});
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 		assert.deepStrictEqual(t, {
 			stats: [
@@ -457,7 +457,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				>
 			>(true);
 
-			// @ts-ignore
+			// @ts-expect-error
 			idb.league = undefined;
 		});
 	});

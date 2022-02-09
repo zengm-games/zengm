@@ -101,10 +101,9 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	if (info.hasOwnProperty(pos2)) {
 		let sumCoeffs = 0;
 
-		// @ts-ignore
+		// @ts-expect-error
 		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
 			const powerFactor = 100 / 100 ** power;
-			// @ts-ignore
 			r += coeff * powerFactor * compositeRatings[key] ** power;
 			sumCoeffs += coeff;
 		}

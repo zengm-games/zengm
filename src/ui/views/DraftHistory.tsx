@@ -111,7 +111,12 @@ const DraftHistory = ({
 				{
 					value: (
 						<div className="d-flex">
-							<PlayerNameLabels pid={p.pid} season={season} watch={p.watch}>
+							<PlayerNameLabels
+								pid={p.pid}
+								season={season}
+								watch={p.watch}
+								xsName={p.nameAbbrev}
+							>
 								{p.name}
 							</PlayerNameLabels>
 							<div className="ms-auto">
@@ -193,6 +198,7 @@ const DraftHistory = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={2}
 				name="DraftHistory"
 				rows={rows}
 				superCols={superCols}

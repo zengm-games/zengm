@@ -46,6 +46,7 @@ const updateProtectPlayers = async () => {
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"age",
 				"injury",
 				"watch",

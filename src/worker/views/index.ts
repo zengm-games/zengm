@@ -11,6 +11,7 @@ import awardsRecords from "./awardsRecords";
 import colleges from "./colleges";
 import countries from "./countries";
 import customizePlayer from "./customizePlayer";
+import dailySchedule from "./dailySchedule";
 import dangerZone from "./dangerZone";
 import dashboard from "./dashboard";
 import defaultNewLeagueSettings from "./defaultNewLeagueSettings";
@@ -45,9 +46,9 @@ import importPlayers from "./importPlayers";
 import inbox from "./inbox";
 import injuries from "./injuries";
 import leaders from "./leaders";
+import leadersYears from "./leadersYears";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
-import dailySchedule from "./dailySchedule";
 import leagueStats from "./leagueStats";
 import liveGame from "./liveGame";
 import manageConfs from "./manageConfs";
@@ -107,6 +108,7 @@ export default {
 	colleges,
 	countries,
 	customizePlayer,
+	dailySchedule,
 	dangerZone,
 	dashboard,
 	defaultNewLeagueSettings,
@@ -141,9 +143,9 @@ export default {
 	injuries,
 	inbox,
 	leaders,
+	leadersYears,
 	leagueDashboard,
 	leagueFinances,
-	dailySchedule,
 	leagueStats,
 	liveGame,
 	manageConfs,

@@ -190,7 +190,7 @@ const processLiveGameEvents = ({
 		}
 
 		// Swap teams order, so home team is at bottom in box score
-		// @ts-ignore
+		// @ts-expect-error
 		const actualT = e.t === 0 ? 1 : 0;
 
 		if (e.type !== "init" && !quarters.includes(e.quarter)) {

@@ -363,7 +363,17 @@ const updateTeamRecords = async (
 		const teamsAll = orderBy(
 			await idb.getCopies.teamsPlus(
 				{
-					attrs: ["tid", "abbrev", "region", "name", "cid", "did", "disabled"],
+					attrs: [
+						"tid",
+						"abbrev",
+						"region",
+						"name",
+						"cid",
+						"did",
+						"disabled",
+						"imgURL",
+						"imgURLSmall",
+					],
 					seasonAttrs: [
 						"abbrev",
 						"region",
@@ -399,6 +409,8 @@ const updateTeamRecords = async (
 				abbrev: t.abbrev,
 				region: t.region,
 				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
 				...getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars),
 				sortValue: teams.length,
 			};

@@ -87,7 +87,7 @@ class GameSim {
 		},
 	];
 
-	// @ts-ignore
+	// @ts-expect-error
 	lines: [TeamLines, TeamLines];
 
 	currentLine: [TeamCurrentLine, TeamCurrentLine];
@@ -443,16 +443,16 @@ class GameSim {
 		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
 			delete this.team[t].compositeRating;
-			// @ts-ignore
+			// @ts-expect-error
 			delete this.team[t].pace;
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].age;
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
-				// @ts-ignore
+				// @ts-expect-error
 				delete this.team[t].player[p].ptModifier;
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;
@@ -534,7 +534,6 @@ class GameSim {
 		this.updatePlayersOnIce({ type: "newPeriod" });
 		this.faceoff();
 
-		// @ts-ignore
 		while (this.clock > 0) {
 			this.simPossession();
 
@@ -1297,7 +1296,7 @@ class GameSim {
 					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = newLine.slice(2, 3);
 				} else {
-					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].C = [];
 					this.playersOnIce[t].W = newLine.slice(1, 3);
 				}
 			} else if (penaltyBoxCount === 2) {
@@ -1307,10 +1306,10 @@ class GameSim {
 					this.playersOnIce[t].C = newLine.slice(0, 1);
 					this.playersOnIce[t].W = [];
 				} else if (r < 0.67) {
-					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].C = [];
 					this.playersOnIce[t].W = newLine.slice(1, 2);
 				} else {
-					this.playersOnIce[t].C = newLine.slice(0, 1);
+					this.playersOnIce[t].C = [];
 					this.playersOnIce[t].W = newLine.slice(2, 3);
 				}
 			} else {
@@ -1381,7 +1380,7 @@ class GameSim {
 				const sub = this.getPlayerFromNextLine(t, "F", currentlyOnIce);
 
 				this.playersOnIce[t].G = [];
-				this.playersOnIce[t].C[1] = sub;
+				this.playersOnIce[t].C.push(sub);
 
 				this.playByPlay.logEvent({
 					type: "pullGoalie",

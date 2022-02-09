@@ -64,10 +64,10 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	if (info.hasOwnProperty(pos2)) {
 		let sumCoeffs = 0;
 
-		// @ts-ignore
+		// @ts-expect-error
 		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
 			const powerFactor = 100 / 100 ** power;
-			// @ts-ignore
+			// @ts-expect-error
 			r += coeff * powerFactor * ratings[key] ** power;
 			sumCoeffs += coeff;
 		}
@@ -76,7 +76,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 
 		if (bonuses.hasOwnProperty(pos2)) {
 			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
+			// @ts-expect-error
 			r += bonuses[pos2](ratings);
 		}
 	} else {

@@ -97,6 +97,7 @@ const updateRoster = async (
 			"tid",
 			"draft",
 			"name",
+			"nameAbbrev",
 			"age",
 			"born",
 			"contract",
@@ -211,16 +212,21 @@ const updateRoster = async (
 			}
 		}
 
+		const playoffsOvr =
+			(g.get("phase") === PHASE.PLAYOFFS &&
+				g.get("season") === inputs.season) ||
+			inputs.playoffs === "playoffs";
+
 		const playersCurrent = players.filter(
 			(p: any) => p.injury.gamesRemaining === 0,
 		);
 		const t2 = {
 			...t,
 			ovr: team.ovr(players, {
-				playoffs: g.get("phase") === PHASE.PLAYOFFS,
+				playoffs: playoffsOvr,
 			}),
 			ovrCurrent: team.ovr(playersCurrent, {
-				playoffs: g.get("phase") === PHASE.PLAYOFFS,
+				playoffs: playoffsOvr,
 			}),
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);

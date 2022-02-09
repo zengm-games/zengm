@@ -4,7 +4,6 @@ import {
 	ReactNode,
 	useCallback,
 	useEffect,
-	useRef,
 	useState,
 	MouseEvent,
 } from "react";
@@ -14,21 +13,65 @@ import type {
 	MenuItemHeader,
 	MenuItemText,
 } from "../../common/types";
+import CollapseArrow from "./CollapseArrow";
+import { AnimatePresence, m } from "framer-motion";
 
 export const getText = (
 	text: MenuItemLink["text"],
 ): Exclude<ReactNode, null | undefined | number | boolean> => {
 	if (text.hasOwnProperty("side")) {
-		// @ts-ignore
+		// @ts-expect-error
 		return text.side;
 	}
 
 	return text;
 };
 
-const MenuGroup = ({ children }: { children: ReactNode }) => (
-	<ul className="nav flex-column">{children}</ul>
-);
+const MenuGroup = ({
+	children,
+	title,
+}: {
+	children: ReactNode;
+	title?: string;
+}) => {
+	const [open, setOpen] = useState(true);
+
+	return (
+		<>
+			{title ? (
+				<a
+					className="sidebar-heading"
+					onClick={event => {
+						event.preventDefault();
+						setOpen(prev => !prev);
+					}}
+				>
+					<CollapseArrow open={open} /> {title}
+				</a>
+			) : null}
+			<AnimatePresence initial={false}>
+				{open ? (
+					<m.ul
+						className="nav flex-column flex-nowrap overflow-hidden"
+						initial="collapsed"
+						animate="open"
+						exit="collapsed"
+						variants={{
+							open: { opacity: 1, height: "auto" },
+							collapsed: { opacity: 0, height: 0 },
+						}}
+						transition={{
+							duration: 0.3,
+							type: "tween",
+						}}
+					>
+						{children}
+					</m.ul>
+				) : null}
+			</AnimatePresence>
+		</>
+	);
+};
 
 export const makeAnchorProps = (
 	menuItem: MenuItemLink,
@@ -157,12 +200,7 @@ const MenuItem = ({
 			return null;
 		}
 
-		return (
-			<>
-				<h2 className="sidebar-heading px-3">{menuItem.long}</h2>
-				<MenuGroup>{children}</MenuGroup>
-			</>
-		);
+		return <MenuGroup title={menuItem.long}>{children}</MenuGroup>;
 	}
 
 	throw new Error(`Unknown menuItem.type "${(menuItem as any).type}"`);
@@ -178,7 +216,6 @@ type Props = {
 const SideBar = memo(({ pageID }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
-	const topUserBlockRef = useRef<HTMLElement | null>(null);
 
 	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
 		godMode: state.godMode,
@@ -220,14 +257,6 @@ const SideBar = memo(({ pageID }: Props) => {
 			if (document.body) {
 				document.body.classList.remove("modal-open");
 			}
-
-			if (document.body) {
-				document.body.style.paddingRight = "";
-
-				if (topUserBlockRef.current) {
-					topUserBlockRef.current.style.paddingRight = "";
-				}
-			}
 		}, 300); // Keep time in sync with .sidebar-fade
 	}, [node, nodeFade]);
 
@@ -239,18 +268,8 @@ const SideBar = memo(({ pageID }: Props) => {
 				nodeFade.classList.add("sidebar-fade-open");
 
 				if (document.body) {
-					const scrollbarWidth = window.innerWidth - document.body.offsetWidth;
-
 					if (document.body) {
 						document.body.classList.add("modal-open");
-					}
-
-					if (document.body) {
-						document.body.style.paddingRight = `${scrollbarWidth}px`;
-
-						if (topUserBlockRef.current) {
-							topUserBlockRef.current.style.paddingRight = `${scrollbarWidth}px`;
-						}
 					}
 				}
 			}
@@ -286,10 +305,6 @@ const SideBar = memo(({ pageID }: Props) => {
 			}
 		};
 	}, [closeHandler, nodeFade]);
-
-	useEffect(() => {
-		topUserBlockRef.current = document.getElementById("top-user-block");
-	}, []);
 
 	return (
 		<>

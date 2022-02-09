@@ -143,7 +143,8 @@ const Row = ({
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
-	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts } = t;
+	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts, dpid } =
+		t;
 
 	const pickCols = range(NUM_PICKS).map(j => {
 		const prob = probs[i][j];
@@ -181,11 +182,26 @@ const Row = ({
 			onClick={toggleClicked}
 		>
 			<td
-				className={classNames({
+				className={classNames("d-flex", {
 					"table-info": tid === userTid,
 				})}
 			>
 				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+			</td>
+			<td>
+				{tid === userTid ? null : (
+					<button
+						className="btn btn-xs btn-light-bordered"
+						onClick={async () => {
+							await toWorker("actions", "tradeFor", {
+								dpid,
+								tid,
+							});
+						}}
+					>
+						Trade
+					</button>
+				)}
 			</td>
 			<td>
 				<a href={helpers.leagueUrl(["standings", season])}>
@@ -317,7 +333,11 @@ const DraftLotteryTable = (props: Props) => {
 
 	const startLottery = async () => {
 		dispatch({ type: "startClicked" });
-		const draftLotteryResult = await toWorker("main", "draftLottery");
+		const draftLotteryResult = await toWorker(
+			"main",
+			"draftLottery",
+			undefined,
+		);
 		if (draftLotteryResult) {
 			const { draftType, result } = draftLotteryResult;
 
@@ -325,7 +345,9 @@ const DraftLotteryTable = (props: Props) => {
 
 			for (let i = 0; i < result.length; i++) {
 				const pick = result[i].pick;
-				toReveal[pick - 1] = i;
+				if (pick !== undefined) {
+					toReveal[pick - 1] = i;
+				}
 				result[i].pick = undefined;
 			}
 			toReveal.reverse();
@@ -396,7 +418,7 @@ const DraftLotteryTable = (props: Props) => {
 			<>
 				<p />
 				<ResponsiveTableWrapper nonfluid>
-					<table className="table table-striped table-sm table-hover">
+					<table className="table table-striped table-sm table-hover sticky-x">
 						<thead>
 							<tr>
 								<th colSpan={3} />
@@ -406,6 +428,7 @@ const DraftLotteryTable = (props: Props) => {
 							</tr>
 							<tr>
 								<th>Team</th>
+								<th />
 								<th>Record</th>
 								<th>Chances</th>
 								{result.map((row, i) => (

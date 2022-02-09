@@ -28,7 +28,7 @@ const footerLinks = [
 		title: "Reddit",
 	},
 	{
-		url: "https://discord.gg/caPFuM9",
+		url: "https://zengm.com/discord/",
 		title: "Discord",
 	},
 ];

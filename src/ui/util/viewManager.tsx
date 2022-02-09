@@ -242,13 +242,16 @@ class ViewManager {
 		const lid = local.getState().lid;
 
 		if (inLeague) {
-			if (newLid !== lid) {
-				await toWorker("main", "beforeViewLeague", newLid, lid);
+			if (newLid !== lid && newLid !== undefined) {
+				await toWorker("main", "beforeViewLeague", {
+					newLid,
+					loadedLid: lid,
+				});
 			}
 		} else {
 			// eslint-disable-next-line no-lonely-if
 			if (lid !== undefined) {
-				await toWorker("main", "beforeViewNonLeague");
+				await toWorker("main", "beforeViewNonLeague", undefined);
 				localActions.updateGameAttributes({
 					lid: undefined,
 				});
@@ -266,15 +269,13 @@ class ViewManager {
 		delete ctxBBGM.navigationSymbol; // Can't send Symbol to worker
 
 		// Resolve all the promises before updating the UI to minimize flicker
-		const results = await toWorker(
-			"main",
-			"runBefore",
-			id,
-			context.params,
+		const results = await toWorker("main", "runBefore", {
+			viewId: id,
+			params: context.params,
 			ctxBBGM,
 			updateEvents,
 			prevData,
-		);
+		});
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {
 			this.initNextAction();

@@ -16,7 +16,7 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 		event.preventDefault();
 		const newWatch = !watch;
 		onChange?.(newWatch);
-		await toWorker("main", "updatePlayerWatch", pid, newWatch);
+		await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
 	};
 
 	if (watch) {

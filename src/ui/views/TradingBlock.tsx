@@ -2,58 +2,60 @@ import { useRef, useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import {
+	ActionButton,
+	DataTable,
+	HelpPopover,
+	PlayerNameLabels,
+	SafeHtml,
+} from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
+import classNames from "classnames";
 
-type OfferType = Awaited<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
+type OfferType = Awaited<
+	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
+>[0];
 
 type OfferProps = {
-	challengeNoRatings: boolean;
 	handleClickNegotiate: (
 		tid: number,
 		otherPids: number[],
 		otherDpids: number[],
 	) => Promise<void>;
-	i: number;
-	stats: string[];
-} & OfferType;
+	onRemove: () => void;
+} & OfferType &
+	Pick<
+		View<"tradingBlock">,
+		"challengeNoRatings" | "salaryCap" | "salaryCapType" | "stats"
+	>;
 
-const Offer = (props: OfferProps) => {
-	const {
-		abbrev,
-		challengeNoRatings,
-		dpids,
-		handleClickNegotiate,
-		i,
-		lost,
-		name,
-		otl,
-		payroll,
-		picks,
-		pids,
-		players,
-		region,
-		stats,
-		strategy,
-		tid,
-		tied,
-		warning,
-		won,
-	} = props;
-
-	let offerPlayers: ReactNode = null;
+const OfferPlayers = ({
+	className,
+	challengeNoRatings,
+	players,
+	stats,
+}: Pick<OfferProps, "challengeNoRatings" | "players" | "stats"> & {
+	className?: string;
+}) => {
 	if (players.length > 0) {
-		const cols = getCols([
-			"Name",
-			"Pos",
-			"Age",
-			"Ovr",
-			"Pot",
-			"Contract",
-			"Exp",
-			...stats.map(stat => `stat:${stat}`),
-		]);
+		const cols = getCols(
+			[
+				"Name",
+				"Pos",
+				"Age",
+				"Ovr",
+				"Pot",
+				"Contract",
+				"Exp",
+				...stats.map(stat => `stat:${stat}`),
+			],
+			{
+				Name: {
+					width: "100%",
+				},
+			},
+		);
 
 		const rows = players.map(p => {
 			return {
@@ -65,6 +67,7 @@ const Offer = (props: OfferProps) => {
 						pid={p.pid}
 						skills={p.ratings.skills}
 						watch={p.watch}
+						xsName={p.nameAbbrev}
 					>
 						{p.name}
 					</PlayerNameLabels>,
@@ -79,18 +82,43 @@ const Offer = (props: OfferProps) => {
 			};
 		});
 
-		offerPlayers = (
-			<div className="col-md-8">
-				<DataTable
-					cols={cols}
-					defaultSort={[5, "desc"]}
-					hideAllControls
-					name="TradingBlockOffer"
-					rows={rows}
-				/>
-			</div>
+		return (
+			<DataTable
+				classNameWrapper={className}
+				cols={cols}
+				defaultSort={[5, "desc"]}
+				defaultStickyCols={1}
+				hideAllControls
+				hideMenuToo
+				name="TradingBlockOffer"
+				rows={rows}
+			/>
 		);
 	}
+
+	return null;
+};
+
+const Offer = (props: OfferProps) => {
+	const {
+		abbrev,
+		challengeNoRatings,
+		dpids,
+		handleClickNegotiate,
+		name,
+		onRemove,
+		payroll,
+		picks,
+		pids,
+		players,
+		region,
+		salaryCap,
+		salaryCapType,
+		stats,
+		strategy,
+		tid,
+		warning,
+	} = props;
 
 	let offerPicks: ReactNode = null;
 	if (picks.length > 0) {
@@ -105,7 +133,9 @@ const Offer = (props: OfferProps) => {
 					<tbody>
 						{picks.map(pick => (
 							<tr key={pick.dpid}>
-								<td>{pick.desc}</td>
+								<td>
+									<SafeHtml dirty={pick.desc} />
+								</td>
 							</tr>
 						))}
 					</tbody>
@@ -114,22 +144,39 @@ const Offer = (props: OfferProps) => {
 		);
 	}
 
+	const salaryCapOrPayroll =
+		salaryCapType === "none" ? payroll : salaryCap - payroll;
+	const salaryCapOrPayrollText =
+		salaryCapType === "none" ? "payroll" : "cap space";
+
 	return (
-		<div className="mt-4">
-			<h2>
-				Offer {i + 1}:{" "}
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
-					{region} {name}
-				</a>
-			</h2>
+		<div className="mt-4" style={{ maxWidth: 1125 }}>
+			<div className="d-flex align-items-center mb-2">
+				<h2 className="mb-0">
+					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
+						{region} {name}
+					</a>
+				</h2>
+				<button
+					type="button"
+					className="btn-close ms-1"
+					title="Remove offer from list"
+					onClick={onRemove}
+				/>
+			</div>
 			<p>
-				{won}-{lost}
-				{otl > 0 ? <>-{otl}</> : null}
-				{tied > 0 ? <>-{tied}</> : null}, {strategy},{" "}
-				{helpers.formatCurrency(payroll / 1000, "M")} payroll
+				{helpers.formatRecord(props)}, {strategy},{" "}
+				{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
+				{salaryCapOrPayrollText}
 			</p>
 			<div className="row">
-				{offerPlayers}
+				<div className="col-md-8">
+					<OfferPlayers
+						challengeNoRatings={challengeNoRatings}
+						players={players}
+						stats={stats}
+					/>
+				</div>
 				{offerPicks}
 				{picks.length === 0 && players.length === 0 ? (
 					<div className="col-12">Nothing.</div>
@@ -156,6 +203,38 @@ const pickCols = getCols(["", "Draft Picks"], {
 		width: "100%",
 	},
 });
+
+const pickScore = (
+	picks: {
+		round: number;
+		pick: number;
+	}[],
+) => {
+	let score = 0;
+	for (const { round, pick } of picks) {
+		// Assume roughly 30 teams
+		const imputedPick = pick > 0 ? pick : 15;
+
+		// Assume no more than 50 rounds or 100 teams
+		score += 50 - round + (1 - imputedPick / 100);
+	}
+	return score;
+};
+
+const playerScore = (
+	players: {
+		ratings: {
+			ovr: number;
+			pot: number;
+		};
+	}[],
+) => {
+	let score = 0;
+	for (const p of players) {
+		score = (p.ratings.pot + p.ratings.ovr) ** 2;
+	}
+	return score;
+};
 
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
@@ -199,27 +278,16 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			offers: [],
 		}));
 
-		const offers: OfferType[] = await toWorker(
-			"main",
-			"getTradingBlockOffers",
-			state.pids,
-			state.dpids,
-		);
+		const offers = await toWorker("main", "getTradingBlockOffers", {
+			pids: state.pids,
+			dpids: state.dpids,
+		});
 
 		setState(prevState => ({
 			...prevState,
 			asking: false,
 			offers,
 		}));
-	};
-
-	const handleClickAskBottom = async () => {
-		await handleClickAsk();
-
-		if (beforeOffersRef.current) {
-			// This actually scrolls to above the button, because I don't want to worry about the fixed header offset
-			beforeOffersRef.current.scrollIntoView();
-		}
 	};
 
 	const handleClickNegotiate = async (
@@ -236,12 +304,21 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		});
 	};
 
+	const handleRemove = (i: number) => {
+		setState(prevState => ({
+			...prevState,
+			offers: prevState.offers.filter((offer, j) => j !== i),
+		}));
+	};
+
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
-		spectator,
 		phase,
+		salaryCap,
+		salaryCapType,
+		spectator,
 		stats,
 		userPicks,
 		userRoster,
@@ -296,8 +373,9 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		],
 		{
 			"": {
-				sortSequence: [],
 				noSearch: true,
+				sortSequence: [],
+				width: "1%",
 			},
 		},
 	);
@@ -319,6 +397,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -343,9 +422,110 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					onChange={() => handleChangeAsset("dpids", pick.dpid)}
 				/>,
 				{
-					value: pick.desc,
+					value: <SafeHtml dirty={pick.desc} />,
+					searchValue: pick.desc,
 					sortValue: i,
 				},
+			],
+		};
+	});
+
+	const offerCols = getCols(
+		[
+			"Team",
+			"Record",
+			"Strategy",
+			salaryCapType === "none" ? "Payroll" : "Cap Space",
+			"Players",
+			"Draft Picks",
+			"Cap",
+			"Actions",
+		],
+		{
+			Actions: {
+				sortSequence: [],
+				width: "1px",
+			},
+			"Draft Picks": {
+				sortSequence: ["desc", "asc"],
+				sortType: "number",
+			},
+			Players: {
+				sortSequence: ["desc", "asc"],
+				sortType: "number",
+			},
+		},
+	);
+
+	const offerRows = state.offers.map((offer, i) => {
+		const salaryCapOrPayroll =
+			salaryCapType === "none" ? offer.payroll : salaryCap - offer.payroll;
+
+		return {
+			key: offer.tid,
+			data: [
+				<a href={helpers.leagueUrl(["roster", `${offer.abbrev}_${offer.tid}`])}>
+					{offer.abbrev}
+				</a>,
+				helpers.formatRecord(offer),
+				offer.strategy,
+				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
+				{
+					value: (
+						<OfferPlayers
+							className="mb-0"
+							challengeNoRatings={challengeNoRatings}
+							players={offer.players}
+							stats={stats}
+						/>
+					),
+					searchValue: offer.players
+						.map(p => `${p.name} ${p.ratings.pos}`)
+						.join(" "),
+					sortValue: playerScore(offer.players),
+				},
+				{
+					value: (
+						<ul className="list-unstyled mb-0">
+							{offer.picks.map(pick => (
+								<li key={pick.dpid}>
+									<SafeHtml dirty={pick.desc} />
+								</li>
+							))}
+						</ul>
+					),
+					searchValue: offer.picks.map(pick => pick.desc).join(" "),
+					sortValue: pickScore(offer.picks),
+				},
+				{
+					value: offer.warning ? (
+						<HelpPopover className="fs-4">{offer.warning}</HelpPopover>
+					) : null,
+					sortValue: offer.warningAmount ?? 0,
+					classNames: classNames(
+						"text-center",
+						offer.warning ? "table-danger" : undefined,
+					),
+				},
+				<div className="d-flex align-items-center">
+					<button
+						type="submit"
+						className="btn btn-light-bordered"
+						onClick={() =>
+							handleClickNegotiate(offer.tid, offer.pids, offer.dpids)
+						}
+					>
+						Negotiate
+					</button>
+					<button
+						type="button"
+						className="btn-close ms-2 p-0"
+						title="Remove offer from list"
+						onClick={() => {
+							handleRemove(i);
+						}}
+					/>
+				</div>,
 			],
 		};
 	});
@@ -362,6 +542,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					<DataTable
 						cols={cols}
 						defaultSort={[6, "desc"]}
+						defaultStickyCols={2}
 						name="TradingBlock"
 						rows={rows}
 					/>
@@ -380,40 +561,48 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			<div ref={beforeOffersRef} />
 
 			<div className="text-center">
-				<button
-					className="btn btn-lg btn-primary"
-					disabled={state.asking}
+				<ActionButton
+					processing={state.asking}
 					onClick={handleClickAsk}
+					size="lg"
+					variant="primary"
 				>
-					{!state.asking ? "Ask For Trade Proposals" : "Asking..."}
-				</button>
+					Ask For Trade Proposals
+				</ActionButton>
 			</div>
 
-			{state.offers.map((offer, i) => {
-				return (
-					<Offer
-						key={offer.tid}
-						challengeNoRatings={challengeNoRatings}
-						handleClickNegotiate={handleClickNegotiate}
-						i={i}
-						stats={stats}
-						{...offer}
+			<div className="d-none d-xxl-block">
+				{offerRows.length > 0 ? (
+					<DataTable
+						className="align-top-all"
+						clickable={false}
+						cols={offerCols}
+						defaultSort={[0, "asc"]}
+						name={`TradingBlock:Offers`}
+						rows={offerRows}
+						small={false}
 					/>
-				);
-			})}
+				) : null}
+			</div>
 
-			{state.offers.length > 0 ? (
-				<div className="text-center">
-					<p>Don't like those offers? Well maybe you'll get lucky if you...</p>
-					<button
-						className="btn btn-lg btn-primary"
-						disabled={state.asking}
-						onClick={handleClickAskBottom}
-					>
-						{!state.asking ? "Ask For Trade Proposals Again" : "Asking..."}
-					</button>
-				</div>
-			) : null}
+			<div className="d-block d-xxl-none">
+				{state.offers.map((offer, i) => {
+					return (
+						<Offer
+							key={offer.tid}
+							challengeNoRatings={challengeNoRatings}
+							handleClickNegotiate={handleClickNegotiate}
+							onRemove={() => {
+								handleRemove(i);
+							}}
+							salaryCap={salaryCap}
+							salaryCapType={salaryCapType}
+							stats={stats}
+							{...offer}
+						/>
+					);
+				})}
+			</div>
 		</>
 	);
 };

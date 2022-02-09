@@ -18,3 +18,4 @@ export { default as processPlayerStatsFootball } from "./processPlayerStats.foot
 export { default as processPlayerStatsHockey } from "./processPlayerStats.hockey";
 export { default as timeBetweenGames } from "./timeBetweenGames";
 export { default as unwrapGameAttribute } from "./unwrapGameAttribute";
+export { default as wait } from "./wait";

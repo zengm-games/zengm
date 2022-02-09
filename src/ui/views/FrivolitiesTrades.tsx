@@ -5,6 +5,7 @@ import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { bySport, PHASE_TEXT } from "../../common";
 import PickText from "./TradeSummary/PickText";
+import TeamLogoAndName from "../components/TeamLogoAndName";
 
 const PlayerInfo = ({
 	asset,
@@ -115,15 +116,18 @@ const FrivolitiesTrades = ({
 			const sortValue = t.assets.length;
 
 			return [
-				<a
-					href={helpers.leagueUrl([
+				<TeamLogoAndName
+					t={{
+						...t,
+						seasonAttrs: t,
+					}}
+					url={helpers.leagueUrl([
 						"roster",
 						`${t.abbrev}_${t.tid}`,
 						trade.season,
 					])}
-				>
-					{t.region} {t.name}
-				</a>,
+					noLogo
+				/>,
 				{
 					value: (
 						<ul className="list-unstyled mb-0">
@@ -205,6 +209,7 @@ const FrivolitiesTrades = ({
 			{description ? <p>{description}</p> : null}
 
 			<DataTable
+				className="align-top-all"
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name={`FrivolitiesTrades_${type}`}

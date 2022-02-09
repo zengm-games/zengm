@@ -26,6 +26,7 @@ const updateUserRoster = async (
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"age",
 				"contract",
 				"injury",
@@ -49,20 +50,24 @@ const updateUserRoster = async (
 			"noCopyCache",
 		);
 
-		const userPicks2 = userPicks.map(dp => {
-			return {
-				...dp,
-				desc: helpers.pickDesc(dp),
-			};
-		});
+		const userPicks2 = await Promise.all(
+			userPicks.map(async dp => {
+				return {
+					...dp,
+					desc: await helpers.pickDesc(dp),
+				};
+			}),
+		);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
 			initialPid: inputs.pid,
-			spectator: g.get("spectator"),
 			phase: g.get("phase"),
+			salaryCap: g.get("salaryCap"),
+			salaryCapType: g.get("salaryCapType"),
+			spectator: g.get("spectator"),
 			stats,
 			userPicks: userPicks2,
 			userRoster,

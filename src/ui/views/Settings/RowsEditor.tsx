@@ -1,7 +1,7 @@
 import { csvFormat, csvParse } from "d3-dsv";
 import { m, AnimatePresence } from "framer-motion";
 import { ChangeEvent, CSSProperties, useRef, useState } from "react";
-import { Dropdown, Modal } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import type { InjuriesSetting, TragicDeaths } from "../../../common/types";
 import {
 	confirm,
@@ -14,6 +14,7 @@ import {
 import { godModeRequiredMessage } from "./SettingsFormOptions";
 import classNames from "classnames";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
+import Modal from "../../components/Modal";
 
 type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
 type RowsState<Type> = Type extends "injuries"
@@ -103,7 +104,7 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 
 				reader.onload = event2 => {
 					try {
-						// @ts-ignore
+						// @ts-expect-error
 						const rows = csvParse(event2.currentTarget.result);
 
 						const columns = getColumns(type);
@@ -211,6 +212,7 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 									const defaultRows = await toWorker(
 										"main",
 										`getDefault${helpers.upperCaseFirstLetter(type)}`,
+										undefined,
 									);
 									setRows(formatRows(defaultRows) as any);
 								}}
@@ -293,9 +295,6 @@ const parseAndValidate = <Type extends "injuries" | "tragicDeaths">(
 
 	return rows;
 };
-
-// If animation is enabled, the modal gets stuck open on Android Chrome v91. This happens only when clicking Cancel/Save - the X and clicking outside the modal still works to close it. All my code is working - show does get set false, it does get rendered, just still displayed. Disabling ads makes no difference. It works when calling programmatically wtih ButtonElement.click() but not with an actual click. Disabling animation fixes it though. Also https://mail.google.com/mail/u/0/#inbox/FMfcgzGkZGhkhtPsGFPFxcKxhvZFkHpl
-export const animation = false;
 
 const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 	defaultValue,
@@ -413,7 +412,6 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 			<Modal
 				show={show}
 				onHide={handleCancel}
-				animation={animation}
 				scrollable
 				size={type === "injuries" ? undefined : "xl"}
 			>

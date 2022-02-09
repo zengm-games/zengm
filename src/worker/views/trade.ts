@@ -92,6 +92,7 @@ const updateTrade = async () => {
 	const attrs = [
 		"pid",
 		"name",
+		"nameAbbrev",
 		"age",
 		"contract",
 		"injury",
@@ -121,14 +122,16 @@ const updateTrade = async () => {
 		p.excluded = teams[0].pidsExcluded.includes(p.pid);
 	}
 
-	const userPicks2 = userPicks.map(dp => {
-		return {
-			...dp,
-			desc: helpers.pickDesc(dp, "short"),
-			included: teams[0].dpids.includes(dp.dpid),
-			excluded: teams[0].dpidsExcluded.includes(dp.dpid),
-		};
-	});
+	const userPicks2 = await Promise.all(
+		userPicks.map(async dp => {
+			return {
+				...dp,
+				desc: await helpers.pickDesc(dp, "short"),
+				included: teams[0].dpids.includes(dp.dpid),
+				excluded: teams[0].dpidsExcluded.includes(dp.dpid),
+			};
+		}),
+	);
 
 	const otherTid = teams[1].tid;
 	const otherRosterAll = await idb.cache.players.indexGetAll(
@@ -176,14 +179,16 @@ const updateTrade = async () => {
 		p.excluded = teams[1].pidsExcluded.includes(p.pid);
 	}
 
-	const otherPicks2 = otherPicks.map(dp => {
-		return {
-			...dp,
-			desc: helpers.pickDesc(dp, "short"),
-			included: teams[1].dpids.includes(dp.dpid),
-			excluded: teams[1].dpidsExcluded.includes(dp.dpid),
-		};
-	});
+	const otherPicks2 = await Promise.all(
+		otherPicks.map(async dp => {
+			return {
+				...dp,
+				desc: await helpers.pickDesc(dp, "short"),
+				included: teams[1].dpids.includes(dp.dpid),
+				excluded: teams[1].dpidsExcluded.includes(dp.dpid),
+			};
+		}),
+	);
 
 	const summary = await getSummary(teams); // Always run this, for multi team mode
 

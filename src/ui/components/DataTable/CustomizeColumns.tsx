@@ -1,8 +1,8 @@
 import type { Col } from ".";
 import { useState } from "react";
-import { Modal } from "react-bootstrap";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import classNames from "classnames";
+import Modal from "../Modal";
 
 const Item = SortableElement(
 	({
@@ -62,11 +62,13 @@ const CustomizeColumns = ({
 	colOrder,
 	cols,
 	hasSuperCols,
+	onChangeStickyCols,
 	onHide,
 	onReset,
 	onSortEnd,
 	onToggleHidden,
 	show,
+	stickyCols,
 }: {
 	colOrder: {
 		colIndex: number;
@@ -74,13 +76,17 @@ const CustomizeColumns = ({
 	}[];
 	cols: Col[];
 	hasSuperCols: boolean;
+	onChangeStickyCols: (stickyCols: 0 | 1 | 2) => void;
 	onHide: () => void;
 	onReset: () => void;
 	onSortEnd: (arg: { oldIndex: number; newIndex: number }) => void;
 	onToggleHidden: (i: number) => () => void;
 	show: boolean;
+	stickyCols: 0 | 1 | 2;
 }) => {
 	const [isDragged, setIsDragged] = useState(false);
+
+	const stickyColsOptions = [0, 1, 2] as const;
 
 	return (
 		<Modal animation={false} centered show={show} onHide={onHide}>
@@ -122,6 +128,22 @@ const CustomizeColumns = ({
 						);
 					})}
 				</Container>
+				<h3 className="mt-3">Number of sticky columns:</h3>
+				<div className="btn-group">
+					{stickyColsOptions.map(i => (
+						<button
+							key={i}
+							className={`btn ${
+								stickyCols === i ? "btn-primary" : "btn-secondary"
+							}`}
+							onClick={() => {
+								onChangeStickyCols(i);
+							}}
+						>
+							{i}
+						</button>
+					))}
+				</div>
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-danger" onClick={onReset}>

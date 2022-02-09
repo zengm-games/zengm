@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { Dropdown, Modal } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import { helpers, logEvent } from "../../util";
 import classNames from "classnames";
 import { isInvalidNumber, PlayerBioInfoState } from "./PlayerBioInfo";
@@ -7,6 +7,7 @@ import {
 	PlayerBioInfoRowButton,
 	smallColStyle,
 } from "./PlayerBioInfoCountries";
+import Modal from "../../components/Modal";
 
 type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];
 

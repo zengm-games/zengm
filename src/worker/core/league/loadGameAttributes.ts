@@ -34,7 +34,6 @@ const loadGameAttributes = async () => {
 			// Wrap on load to avoid IndexedDB upgrade
 			g.setWithoutSavingToDB(key, [
 				{
-					// @ts-ignore
 					start: -Infinity,
 					value,
 				},
@@ -51,7 +50,7 @@ const loadGameAttributes = async () => {
 
 	// Set defaults to avoid IndexedDB upgrade
 	for (const key of helpers.keys(defaultGameAttributes)) {
-		// @ts-ignore
+		// @ts-expect-error
 		if (g[key] === undefined) {
 			if (key === "teamInfoCache") {
 				g.setWithoutSavingToDB(

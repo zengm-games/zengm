@@ -96,6 +96,7 @@ const FreeAgents = ({
 					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -114,7 +115,7 @@ const FreeAgents = ({
 				{
 					value: (
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-ignore
+						// @ts-expect-error
 						<NegotiateButtons
 							canGoOverCap={salaryCapType === "none"}
 							capSpace={capSpace}
@@ -194,6 +195,7 @@ const FreeAgents = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[cols.length - 3, "desc"]}
+				defaultStickyCols={1}
 				name="FreeAgents"
 				pagination
 				rows={rows}

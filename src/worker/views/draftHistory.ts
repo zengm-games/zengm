@@ -40,6 +40,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 			"draft",
 			"pid",
 			"name",
+			"nameAbbrev",
 			"age",
 			"ageAtDeath",
 			"hof",
@@ -64,6 +65,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 				// Attributes
 				pid: p.pid,
 				name: p.name,
+				nameAbbrev: p.nameAbbrev,
 				draft: p.draft,
 				currentAge: p.age,
 				ageAtDeath: p.ageAtDeath,

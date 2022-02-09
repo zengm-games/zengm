@@ -138,7 +138,7 @@ const depth = (params: Params) => {
 	});
 
 	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-ignore
+	// @ts-expect-error
 	const pos: string = POSITIONS.includes(params.pos) ? params.pos : DEFAULT_POS;
 
 	const playoffs =
@@ -350,12 +350,67 @@ const injuries = (params: Params) => {
 };
 
 const leaders = (params: Params) => {
-	const playoffs =
+	const playoffs: "playoffs" | "regularSeason" =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
+	let season: "career" | "all" | number;
+	if (params.season === "career" || params.season === "all") {
+		season = params.season;
+	} else {
+		season = validateSeason(params.season);
+	}
+
+	let statType: PlayerStatType;
+	if (params.statType === "perGame") {
+		statType = "perGame";
+	} else if (params.statType === "per36") {
+		statType = "per36";
+	} else if (params.statType === "totals") {
+		statType = "totals";
+	} else {
+		statType = bySport({
+			basketball: "perGame",
+			football: "totals",
+			hockey: "totals",
+		});
+	}
+
 	return {
-		season: validateSeason(params.season),
+		season,
 		playoffs,
+		statType,
+	};
+};
+
+const leadersYears = (params: Params) => {
+	const playoffs: "playoffs" | "regularSeason" =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	let statType: PlayerStatType;
+	if (params.statType === "perGame") {
+		statType = "perGame";
+	} else if (params.statType === "per36") {
+		statType = "per36";
+	} else if (params.statType === "totals") {
+		statType = "totals";
+	} else {
+		statType = bySport({
+			basketball: "perGame",
+			football: "totals",
+			hockey: "totals",
+		});
+	}
+
+	const defaultStat = bySport({
+		basketball: "pts",
+		football: "pssYds",
+		hockey: "g",
+	});
+
+	return {
+		stat: params.stat ?? defaultStat,
+		playoffs,
+		statType,
 	};
 };
 
@@ -853,6 +908,7 @@ export default {
 	history,
 	injuries,
 	leaders,
+	leadersYears,
 	leagueFinances: validateSeasonOnly,
 	leagueStats,
 	liveGame,

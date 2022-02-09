@@ -274,20 +274,18 @@ const normalizeContractDemands = async ({
 					: getExpiration(p, type === "newLeague", nextSeason);
 
 			let amount;
-			if (numRounds === 0) {
+			if (rookieSalaries && p.draft.year === season) {
+				const pickIndex =
+					(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
+				amount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
+			} else if (numRounds === 0) {
 				amount = player.genContract(p, type === "newLeague").amount;
 			} else {
-				if (rookieSalaries && p.draft.year === season) {
-					const pickIndex =
-						(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
-					amount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
-				} else {
-					if (type === "newLeague") {
-						info.contractAmount *= random.uniform(0.4, 1.1);
-					}
-
-					amount = info.contractAmount;
+				if (type === "newLeague") {
+					info.contractAmount *= random.uniform(0.4, 1.1);
 				}
+
+				amount = info.contractAmount;
 			}
 
 			// HACK - assume within first 3 years it is a rookie contract. Only need to check players with draftPickAutoContract disabled, because otherwise there is other code handling rookie contracts.

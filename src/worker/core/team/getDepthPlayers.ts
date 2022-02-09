@@ -5,7 +5,7 @@ import type { Team } from "../../../common/types";
 const getDepthPlayers = <
 	T extends {
 		pid: number;
-	}
+	},
 >(
 	depth: Team["depth"],
 	players: T[],
@@ -14,11 +14,11 @@ const getDepthPlayers = <
 		throw new Error("Not implemented");
 	}
 
-	// @ts-ignore
+	// @ts-expect-error
 	return Object.keys(depth).reduce((obj, pos: string) => {
 		// p.id is for call from play.ts
 
-		// @ts-ignore
+		// @ts-expect-error
 		obj[pos] = (depth[pos] as number[])
 			.map(pid => players.find(p => p.pid === pid || (p as any).id === pid))
 			.concat(

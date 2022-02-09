@@ -52,14 +52,14 @@ const reducer = (state: State, action: Action) => {
 			}
 
 			if (action.field.startsWith("colors")) {
-				// @ts-ignore
+				// @ts-expect-error
 				t.colors[action.field.replace("colors", "")] = action.value;
 			} else if (action.field === "did") {
 				t[action.field] = parseInt(action.value);
 			} else if (action.field === "disabled") {
 				t[action.field] = action.value === "1";
 			} else {
-				// @ts-ignore
+				// @ts-expect-error
 				t[action.field] = action.value;
 			}
 			return {

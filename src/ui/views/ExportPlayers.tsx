@@ -49,6 +49,7 @@ const ExportPlayers = ({
 				season={season}
 				skills={p.ratings.skills}
 				watch={p.watch}
+				xsName={p.nameAbbrev}
 			>
 				{p.name}
 			</PlayerNameLabels>,
@@ -132,6 +133,7 @@ const ExportPlayers = ({
 						<DataTable
 							cols={cols}
 							defaultSort={[0, "asc"]}
+							defaultStickyCols={1}
 							name="ExportPlayers"
 							pagination
 							rows={rows}
@@ -167,6 +169,7 @@ const ExportPlayers = ({
 								<DataTable
 									cols={cols2}
 									defaultSort={[0, "asc"]}
+									defaultStickyCols={1}
 									name="ExportPlayers2"
 									pagination
 									rows={rows2}

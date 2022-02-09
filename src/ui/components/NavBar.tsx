@@ -113,66 +113,70 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 			bg="light"
 			expand="sm"
 			fixed="top"
-			className="navbar-border flex-nowrap px-3"
+			className="navbar-border flex-nowrap"
 		>
-			<button
-				className="navbar-toggler me-3"
-				onClick={() => {
-					localActions.toggleSidebar();
-				}}
-				type="button"
-				aria-label="Toggle navigation"
-			>
-				<span className="navbar-toggler-icon" />
-			</button>
-			<LogoAndText gold={gold} inLeague={inLeague} updating={updating} />
-			{inLeague ? (
-				<Nav navbar>
-					<OverlayTrigger
-						placement="bottom"
-						defaultShow={!hasViewedALeague && lid === 1}
-						trigger="click"
-						rootClose
-						onExited={() => {
-							localActions.update({
-								hasViewedALeague: true,
-							});
-							safeLocalStorage.setItem("hasViewedALeague", "true");
-						}}
-						overlay={
-							<Popover id="popover-welcome">
-								<Popover.Header className="text-primary fw-bold">
-									Welcome to {GAME_NAME}!
-								</Popover.Header>
-								<Popover.Body>
-									To advance through the game, use the Play button at the top.
-									The options shown will change depending on the current state
-									of the game.
-								</Popover.Body>
-							</Popover>
-						}
-					>
-						<PlayMenu
-							lid={lid}
-							spectator={spectator}
-							options={playMenuOptions}
-						/>
-					</OverlayTrigger>
+			<div className="container-fluid">
+				<button
+					className="navbar-toggler me-3"
+					onClick={() => {
+						localActions.toggleSidebar();
+					}}
+					type="button"
+					aria-label="Toggle navigation"
+				>
+					<span className="navbar-toggler-icon" />
+				</button>
+				<LogoAndText gold={gold} inLeague={inLeague} updating={updating} />
+				{inLeague ? (
+					<Nav navbar>
+						<OverlayTrigger
+							placement="bottom"
+							defaultShow={!hasViewedALeague && lid === 1}
+							trigger="click"
+							rootClose
+							onExited={() => {
+								localActions.update({
+									hasViewedALeague: true,
+								});
+								safeLocalStorage.setItem("hasViewedALeague", "true");
+							}}
+							overlay={
+								<Popover id="popover-welcome">
+									<Popover.Header className="text-primary fw-bold">
+										Welcome to {GAME_NAME}!
+									</Popover.Header>
+									<Popover.Body>
+										To advance through the game, use the Play button at the top.
+										The options shown will change depending on the current state
+										of the game.
+									</Popover.Body>
+								</Popover>
+							}
+						>
+							<PlayMenu
+								lid={lid}
+								spectator={spectator}
+								options={playMenuOptions}
+							/>
+						</OverlayTrigger>
+					</Nav>
+				) : null}
+				{inLeague ? <PhaseStatusBlock /> : null}
+				<div className="flex-grow-1" />
+				<div className="d-none d-sm-flex">
+					<DropdownLinks
+						godMode={godMode}
+						inLeague={inLeague}
+						lid={lid}
+						menuItems={menuItems.filter(
+							menuItem => !menuItem.commandPaletteOnly,
+						)}
+					/>
+				</div>
+				<Nav id="top-user-block" navbar>
+					<Nav.Item>{userBlock}</Nav.Item>
 				</Nav>
-			) : null}
-			{inLeague ? <PhaseStatusBlock /> : null}
-			<div className="flex-grow-1" />
-			<div className="d-none d-sm-flex">
-				<DropdownLinks
-					godMode={godMode}
-					inLeague={inLeague}
-					lid={lid}
-					menuItems={menuItems.filter(menuItem => !menuItem.commandPaletteOnly)}
-				/>
 			</div>
-			<Nav id="top-user-block" navbar>
-				<Nav.Item>{userBlock}</Nav.Item>
-			</Nav>
 		</Navbar>
 	);
 };

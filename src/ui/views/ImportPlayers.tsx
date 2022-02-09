@@ -454,6 +454,7 @@ const ImportPlayers = ({
 						<DataTable
 							cols={cols}
 							defaultSort={[1, "asc"]}
+							defaultStickyCols={2}
 							name="ImportPlayers"
 							pagination
 							rows={rows}
@@ -468,12 +469,10 @@ const ImportPlayers = ({
 							setErrorMessage(undefined);
 
 							try {
-								await toWorker(
-									"main",
-									"importPlayers",
+								await toWorker("main", "importPlayers", {
 									leagueFile,
-									players.filter(p => p.checked),
-								);
+									players: players.filter(p => p.checked),
+								});
 								setStatus("success");
 							} catch (error) {
 								console.error(error);

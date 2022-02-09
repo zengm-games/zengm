@@ -7,6 +7,7 @@ import getPickValues from "./getPickValues";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import makeItWorkTrade from "./makeItWorkTrade";
+import processTrade from "./processTrade";
 import propose from "./propose";
 import summary from "./summary";
 import updatePlayers from "./updatePlayers";
@@ -21,6 +22,7 @@ export default {
 	isUntradable,
 	makeItWork,
 	makeItWorkTrade,
+	processTrade,
 	propose,
 	summary,
 	updatePlayers,

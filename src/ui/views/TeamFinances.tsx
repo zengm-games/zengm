@@ -1,4 +1,11 @@
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from "react";
+import {
+	ChangeEvent,
+	FormEvent,
+	Fragment,
+	ReactNode,
+	useEffect,
+	useState,
+} from "react";
 import {
 	BarGraph,
 	DataTable,
@@ -127,13 +134,11 @@ const FinancesForm = ({
 			),
 		};
 
-		await toWorker(
-			"main",
-			"updateBudget",
-			budgetAmounts,
-			state.adjustForInflation,
-			state.autoTicketPrice,
-		);
+		await toWorker("main", "updateBudget", {
+			budgetAmounts: budgetAmounts,
+			adjustForInflation: state.adjustForInflation,
+			autoTicketPrice: state.autoTicketPrice,
+		});
 
 		logEvent({
 			type: "success",
@@ -426,8 +431,8 @@ const PayrollInfo = ({
 				</>
 			) : (
 				<>
-					{parts.slice(0, -1).map(part => (
-						<>{part}, </>
+					{parts.slice(0, -1).map((part, i) => (
+						<Fragment key={i}>{part}, </Fragment>
 					))}
 					and {parts.at(-1)}
 				</>
@@ -500,7 +505,6 @@ const TeamFinances = ({
 	abbrev,
 	autoTicketPrice,
 	barData,
-	barSeasons,
 	budget,
 	challengeNoRatings,
 	contractTotals,
@@ -580,17 +584,22 @@ const TeamFinances = ({
 
 	const footer = [
 		["", "Totals"].concat(
-			// @ts-ignore
+			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
 		["", "Free Cap Space"].concat(
-			// @ts-ignore
+			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
 		),
 	];
 
 	// This happens for expansion teams before they have a TeamSeason
-	const noSeasonData = Object.keys(barData).length === 0;
+	const noSeasonData = barData.length === 0;
+
+	type Row = typeof barData[number];
+	const classNameOverride = (row: Row) =>
+		row.champ ? "bar-graph-3" : undefined;
+	const champSuffix = (row: Row) => (row.champ ? ", won championship" : "");
 
 	return (
 		<>
@@ -619,9 +628,11 @@ const TeamFinances = ({
 					<h3>Wins</h3>
 					<div className="bar-graph-small">
 						<BarGraph
-							data={barData.won}
-							labels={barSeasons}
+							data={barData}
+							y={["won"]}
+							tooltip={row => `${row.season}: ${row.won}${champSuffix(row)}`}
 							ylim={[0, numGames]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 					<br />
@@ -638,12 +649,13 @@ const TeamFinances = ({
 					</h3>
 					<div id="bar-graph-hype" className="bar-graph-small">
 						<BarGraph
-							data={barData.hype}
-							labels={barSeasons}
-							tooltipCb={val =>
-								typeof val === "number" ? val.toFixed(2) : val
+							data={barData}
+							y={["hype"]}
+							tooltip={row =>
+								`${row.season}: ${row.hype.toFixed(2)}${champSuffix(row)}`
 							}
 							ylim={[0, 1]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 					<br />
@@ -651,12 +663,13 @@ const TeamFinances = ({
 					<h3>Region Population</h3>
 					<div id="bar-graph-pop" className="bar-graph-small">
 						<BarGraph
-							data={barData.pop}
-							labels={barSeasons}
-							tooltipCb={val =>
-								typeof val === "number" ? `${val.toFixed(1)}M` : val
+							data={barData}
+							y={["pop"]}
+							tooltip={row =>
+								`${row.season}: ${row.pop.toFixed(1)}M${champSuffix(row)}`
 							}
 							ylim={[0, 20]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 					<br />
@@ -664,14 +677,15 @@ const TeamFinances = ({
 					<h3>Average Attendance</h3>
 					<div id="bar-graph-att" className="bar-graph-small">
 						<BarGraph
-							data={barData.att}
-							labels={barSeasons}
-							tooltipCb={val =>
-								typeof val === "number"
-									? helpers.numberWithCommas(Math.round(val))
-									: val
+							data={barData}
+							y={["att"]}
+							tooltip={row =>
+								`${row.season}: ${helpers.numberWithCommas(
+									Math.round(row.att),
+								)}${champSuffix(row)}`
 							}
 							ylim={[0, maxStadiumCapacity]}
+							classNameOverride={classNameOverride}
 						/>
 					</div>
 				</div>
@@ -680,30 +694,31 @@ const TeamFinances = ({
 						<h3>Revenue</h3>
 						<div id="bar-graph-revenue" className="bar-graph-large">
 							<BarGraph
-								data={[
-									barData.revenues.nationalTv,
-									barData.revenues.localTv,
-									barData.revenues.ticket,
-									barData.revenues.sponsor,
-									barData.revenues.merch,
-									barData.revenues.luxuryTaxShare,
+								data={barData}
+								y={[
+									"revenuesNationalTv",
+									"revenuesLocalTv",
+									"revenuesTicket",
+									"revenuesSponsor",
+									"revenuesMerch",
+									"revenuesLuxuryTaxShare",
 								]}
-								labels={[
-									barSeasons,
-									[
-										"national TV revenue",
-										"local TV revenue",
-										"ticket revenue",
-										"corporate sponsorship revenue",
-										"merchandising revenue",
-										"luxury tax share revenue",
-									],
-								]}
-								tooltipCb={val =>
-									typeof val === "number"
-										? helpers.formatCurrency(val / 1000, "M", 1)
-										: val
-								}
+								tooltip={(row, y) => {
+									const text = {
+										revenuesNationalTv: "national TV revenue",
+										revenuesLocalTv: "local TV revenue",
+										revenuesTicket: "ticket revenue",
+										revenuesSponsor: "corporate sponsorship revenue",
+										revenuesMerch: "merchandising revenue",
+										revenuesLuxuryTaxShare: "luxury tax share revenue",
+									};
+
+									return `${row.season} ${text[y]}: ${helpers.formatCurrency(
+										row[y] / 1000,
+										"M",
+										1,
+									)}`;
+								}}
 							/>
 						</div>
 						<br />
@@ -711,32 +726,33 @@ const TeamFinances = ({
 						<h3>Expenses</h3>
 						<div id="bar-graph-expenses" className="bar-graph-large">
 							<BarGraph
-								data={[
-									barData.expenses.salary,
-									barData.expenses.minTax,
-									barData.expenses.luxuryTax,
-									barData.expenses.scouting,
-									barData.expenses.coaching,
-									barData.expenses.health,
-									barData.expenses.facilities,
+								data={barData}
+								y={[
+									"expensesSalary",
+									"expensesMinTax",
+									"expensesLuxuryTax",
+									"expensesScouting",
+									"expensesCoaching",
+									"expensesHealth",
+									"expensesFacilities",
 								]}
-								labels={[
-									barSeasons,
-									[
-										"player salaries",
-										"minimum payroll tax",
-										"luxury tax",
-										"scouting",
-										"coaching",
-										"health",
-										"facilities",
-									],
-								]}
-								tooltipCb={val =>
-									typeof val === "number"
-										? helpers.formatCurrency(val / 1000, "M", 1)
-										: val
-								}
+								tooltip={(row, y) => {
+									const text = {
+										expensesSalary: "player salaries",
+										expensesMinTax: "minimum payroll tax",
+										expensesLuxuryTax: "luxury tax",
+										expensesScouting: "scouting",
+										expensesCoaching: "coaching",
+										expensesHealth: "health",
+										expensesFacilities: "facilities",
+									};
+
+									return `${row.season} ${text[y]}: ${helpers.formatCurrency(
+										row[y] / 1000,
+										"M",
+										1,
+									)}`;
+								}}
 							/>
 						</div>
 						<br />
@@ -744,13 +760,16 @@ const TeamFinances = ({
 						<h3>Cash (cumulative)</h3>
 						<div id="bar-graph-cash" className="bar-graph-medium">
 							<BarGraph
-								data={barData.cash}
-								labels={barSeasons}
-								tooltipCb={val =>
-									typeof val === "number"
-										? helpers.formatCurrency(val, "M", 1)
-										: val
+								data={barData}
+								y={["cash"]}
+								tooltip={row =>
+									`${row.season}: ${helpers.formatCurrency(
+										row.cash,
+										"M",
+										1,
+									)}${champSuffix(row)}`
 								}
+								classNameOverride={classNameOverride}
 							/>
 						</div>
 					</div>

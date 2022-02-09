@@ -9,10 +9,9 @@ import {
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import type { TradeEventTeams, TradeSummary } from "../../../common/types";
+import type { TradeEventTeams } from "../../../common/types";
 
 const processTrade = async (
-	tradeSummary: TradeSummary,
 	tids: [number, number],
 	pids: [number[], number[]],
 	dpids: [number[], number[]],

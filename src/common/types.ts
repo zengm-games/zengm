@@ -791,7 +791,9 @@ export type MenuItemLink = {
 	nonLeague?: true;
 	commandPalette?: true;
 	commandPaletteOnly?: true;
-	onClick?: (a: MouseEvent<any>) => void | false | Promise<void | false>; // Return false to leave sidebar open
+	onClick?: (
+		a: MouseEvent<any>,
+	) => undefined | void | false | Promise<undefined | void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:
 		| Exclude<ReactNode, null | undefined | number | boolean>
@@ -925,13 +927,7 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all" | "career";
-	dropdownCustomOptions?: Record<
-		string,
-		{
-			key: number | string;
-			value: string;
-		}[]
-	>;
+	dropdownCustomOptions?: Record<string, DropdownOption[]>;
 	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
 	dropdownView?: string;
 	dropdownFields?: {
@@ -1435,6 +1431,7 @@ import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball"
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
 import type { TIEBREAKERS } from "./constants";
+import type { DropdownOption } from "../ui/hooks/useDropdownOptions";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
 	Record<TeamStatAttrFootball, number> &
 	Record<TeamStatAttrHockey, number> & {
@@ -1597,6 +1594,7 @@ type TradeSummaryTeam = {
 export type TradeSummary = {
 	teams: [TradeSummaryTeam, TradeSummaryTeam];
 	warning: null | string;
+	warningAmount?: number;
 };
 
 export type TradeTeam = {
@@ -1606,6 +1604,7 @@ export type TradeTeam = {
 	pidsExcluded: number[];
 	tid: number;
 	warning?: string | null;
+	warningAmount?: number;
 };
 
 export type TradeTeams = [TradeTeam, TradeTeam];

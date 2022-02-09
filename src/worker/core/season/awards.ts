@@ -53,6 +53,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		attrs: [
 			"pid",
 			"name",
+			"nameAbbrev",
 			"firstName",
 			"tid",
 			"abbrev",

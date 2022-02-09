@@ -182,26 +182,6 @@ const getAbbrev = (tid: number | string): string => {
 const leagueUrl = (components: (number | string | undefined)[]): string =>
 	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
-/**
- * Pad an array with nulls or truncate it so that it has a fixed length.
- *
- * @memberOf util.helpers
- * @param {Array} array Input array.
- * @param {number} length Desired length.
- * @return {Array} Original array padded with null or truncated so that it has the required length.
- */
-function zeroPad(array: number[], length: number) {
-	if (array.length > length) {
-		return array.slice(0, length);
-	}
-
-	while (array.length < length) {
-		array.push(0);
-	}
-
-	return array;
-}
-
 const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	if (
 		typeof numGamesPlayoffSeries !== "number" ||
@@ -244,7 +224,7 @@ const overtimeCounter = (n: number): string => {
 	}
 };
 
-const pickDesc = (dp: DraftPick, short?: "short"): string => {
+const pickDesc = async (dp: DraftPick, short?: "short") => {
 	const season =
 		dp.season === "fantasy"
 			? "Fantasy draft"
@@ -261,12 +241,45 @@ const pickDesc = (dp: DraftPick, short?: "short"): string => {
 	}
 
 	if (dp.tid !== dp.originalTid) {
-		extras.push(`from ${g.get("teamInfoCache")[dp.originalTid]?.abbrev}`);
+		const abbrev = g.get("teamInfoCache")[dp.originalTid]?.abbrev;
+		if (abbrev) {
+			extras.push(
+				`from <a href="${leagueUrl([
+					"roster",
+					`${abbrev}_${dp.originalTid}`,
+				])}">${abbrev}</a>`,
+			);
+		}
+	}
+
+	// Show record for traded pick, Cause in the trade UI there's no other way to see how good the team is.
+	if (
+		typeof dp.season === "number" &&
+		dp.tid !== dp.originalTid &&
+		dp.pick === 0
+	) {
+		const currentSeason = g.get("season");
+		let teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[dp.originalTid, currentSeason],
+		);
+		if (!teamSeason || teamSeason.gp === 0) {
+			teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[dp.originalTid, currentSeason - 1],
+			);
+		}
+		if (teamSeason && teamSeason.gp > 0) {
+			const record = commonHelpers.formatRecord(teamSeason);
+			extras.push(record);
+		}
 	}
 
 	let desc = `${season} ${commonHelpers.ordinal(dp.round)}`;
 	if (extras.length === 0 || !short) {
 		desc += " round pick";
+	} else if (extras.length === 1) {
+		desc += " round";
 	}
 	if (extras.length > 0) {
 		desc += ` (${extras.join(", ")})`;
@@ -322,6 +335,18 @@ const daysLeft = (freeAgents: boolean, days?: number) => {
 	return `${actualDays} ${dayWeek} left`;
 };
 
+const nameAbbrev = (p: { firstName: string; lastName: string }) => {
+	if (p.lastName === "") {
+		return p.firstName;
+	}
+	return `${p.firstName
+		.replace(/"/g, "")
+		.split(" ")
+		.map(s => s[0])
+		.filter(s => s !== undefined)
+		.join(".")}. ${p.lastName}`;
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -332,7 +357,6 @@ const helpers = {
 	gb,
 	getAbbrev,
 	leagueUrl,
-	zeroPad,
 	numGamesToWinSeries,
 	overtimeCounter,
 	pickDesc,
@@ -341,6 +365,7 @@ const helpers = {
 	roundContract,
 	sigmoid,
 	daysLeft,
+	nameAbbrev,
 };
 
 export default helpers;

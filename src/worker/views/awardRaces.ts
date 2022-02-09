@@ -4,7 +4,7 @@ import { season } from "../core";
 import { idb } from "../db";
 
 const updateAwardRaces = async (
-	inputs: ViewInput<"leaders">,
+	inputs: ViewInput<"awardRaces">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {

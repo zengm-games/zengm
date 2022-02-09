@@ -61,12 +61,12 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		promises.push(
 			idb.cache.draftPicks
 				.indexGetAll("draftPicksByTid", tids[i])
-				.then(picks => {
+				.then(async picks => {
 					for (let j = 0; j < picks.length; j++) {
 						if (dpids[i].includes(picks[j].dpid)) {
 							s.teams[i].picks.push({
 								dpid: picks[j].dpid,
-								desc: helpers.pickDesc(picks[j], "short"),
+								desc: await helpers.pickDesc(picks[j], "short"),
 							});
 						}
 					}
@@ -116,6 +116,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		// Which team is at fault?;
 		const j = ratios[0] > 125 ? 0 : 1;
 		s.warning = `The ${s.teams[j].name} are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${ratios[j]}%.`;
+		s.warningAmount = ratios[j];
 	} else if (hardCapCondition) {
 		const j = overCapAndIncreasing(0) ? 0 : 1;
 		const amountIncrease =
@@ -131,6 +132,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			amountOverCap,
 			"M",
 		)}.`;
+		s.warningAmount = amountOverCap;
 	}
 
 	return s;

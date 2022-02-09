@@ -8,6 +8,7 @@ import {
 	useState,
 	useEffect,
 	useCallback,
+	useRef,
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
@@ -64,12 +65,15 @@ export type DataTableRow = {
 
 export type Props = {
 	className?: string;
+	classNameWrapper?: string;
 	clickable?: boolean;
 	cols: Col[];
 	defaultSort: SortBy;
 	disableSettingsCache?: boolean;
+	defaultStickyCols?: 0 | 1 | 2;
 	footer?: any[];
 	hideAllControls?: boolean;
+	hideMenuToo?: boolean;
 	name: string;
 	nonfluid?: boolean;
 	pagination?: boolean;
@@ -94,17 +98,21 @@ export type State = {
 	searchText: string;
 	showSelectColumnsModal: boolean;
 	sortBys: SortBy[];
+	stickyCols: 0 | 1 | 2;
 	settingsCache: SettingsCache;
 };
 
 const DataTable = ({
 	className,
+	classNameWrapper,
 	clickable = true,
 	cols,
 	defaultSort,
+	defaultStickyCols = 0,
 	disableSettingsCache,
 	footer,
 	hideAllControls,
+	hideMenuToo,
 	name,
 	nonfluid,
 	pagination,
@@ -119,6 +127,7 @@ const DataTable = ({
 		loadStateFromCache({
 			cols,
 			defaultSort,
+			defaultStickyCols,
 			disableSettingsCache,
 			name,
 		}),
@@ -251,11 +260,13 @@ const DataTable = ({
 		state.settingsCache.clear("DataTableColOrder");
 		state.settingsCache.clear("DataTableFilters");
 		state.settingsCache.clear("DataTableSort");
+		state.settingsCache.clear("DataTableStickyCols");
 
 		setState(
 			loadStateFromCache({
 				cols,
 				defaultSort,
+				defaultStickyCols,
 				disableSettingsCache,
 				name,
 			}),
@@ -330,6 +341,7 @@ const DataTable = ({
 			loadStateFromCache({
 				cols,
 				defaultSort,
+				defaultStickyCols,
 				disableSettingsCache,
 				name,
 			}),
@@ -391,7 +403,73 @@ const DataTable = ({
 
 	const highlightCols = state.sortBys
 		.map(sortBy => sortBy[0])
-		.map(i => colOrderFiltered.findIndex(({ colIndex }) => colIndex === i));
+		.map(i =>
+			colOrderFiltered.findIndex(({ colIndex }) => {
+				if (colIndex !== i) {
+					return false;
+				}
+
+				// Make sure sortSequence is not an empty array - same code is in Header
+				const sortSequence = cols[colIndex].sortSequence;
+				if (sortSequence && sortSequence.length === 0) {
+					return false;
+				}
+
+				return true;
+			}),
+		);
+
+	const tableRef = useRef<HTMLTableElement>(null);
+	const prevStickyCols = useRef(state.stickyCols);
+	const updateStickyCols = useCallback(() => {
+		const getRows = () => {
+			const table = tableRef.current;
+			if (!table) {
+				return [];
+			}
+
+			return table.querySelectorAll<HTMLTableRowElement>("tr");
+		};
+
+		if (state.stickyCols === 2) {
+			const rows = getRows();
+
+			if (rows.length === 0) {
+				return;
+			}
+
+			const cell = rows[0].cells[0];
+
+			if (!cell) {
+				return;
+			}
+
+			// Manually offset the 2nd col by the width of the 1st col
+			const width = `${cell.offsetWidth}px`;
+			for (const row of rows) {
+				const cell = row.cells[1];
+				cell.style.left = width;
+			}
+		} else if (prevStickyCols.current === 2) {
+			// When switching away from 2 sticky cols, reset style
+			const rows = getRows();
+			for (const row of rows) {
+				const cell = row.cells[1];
+				cell.style.left = "";
+			}
+		}
+
+		prevStickyCols.current = state.stickyCols;
+	}, [state.stickyCols]);
+	useEffect(() => {
+		window.addEventListener("optimizedResize", updateStickyCols);
+		return () => {
+			window.removeEventListener("optimizedResize", updateStickyCols);
+		};
+	}, [updateStickyCols]);
+
+	// Run every render, because there's no better way to detect when data changes, which can change column widths
+	useEffect(updateStickyCols);
 
 	return (
 		<>
@@ -411,8 +489,10 @@ const DataTable = ({
 					}));
 					setStatePartial({
 						colOrder: newOrder,
+						stickyCols: defaultStickyCols,
 					});
 					state.settingsCache.set("DataTableColOrder", newOrder);
+					state.settingsCache.clear("DataTableStickyCols");
 				}}
 				onSortEnd={({ oldIndex, newIndex }) => {
 					const newOrder = arrayMoveImmutable(
@@ -442,6 +522,13 @@ const DataTable = ({
 						state.settingsCache.set("DataTableColOrder", newOrder);
 					}
 				}}
+				onChangeStickyCols={stickyCols => {
+					setStatePartial({
+						stickyCols,
+					});
+					state.settingsCache.set("DataTableStickyCols", stickyCols);
+				}}
+				stickyCols={state.stickyCols}
 			/>
 			<div
 				className={classNames(className, {
@@ -452,28 +539,36 @@ const DataTable = ({
 					{pagination && !hideAllControls ? (
 						<PerPage onChange={handlePerPage} value={state.perPage} />
 					) : null}
-					<Controls
-						enableFilters={state.enableFilters}
-						hideAllControls={hideAllControls}
-						name={name}
-						onExportCSV={handleExportCSV}
-						onResetTable={handleResetTable}
-						onSearch={handleSearch}
-						onSelectColumns={handleSelectColumns}
-						onToggleFilters={handleToggleFilters}
-						searchText={state.searchText}
-					/>
+					{!hideMenuToo ? (
+						<Controls
+							enableFilters={state.enableFilters}
+							hideAllControls={hideAllControls}
+							name={name}
+							onExportCSV={handleExportCSV}
+							onResetTable={handleResetTable}
+							onSearch={handleSearch}
+							onSelectColumns={handleSelectColumns}
+							onToggleFilters={handleToggleFilters}
+							searchText={state.searchText}
+						/>
+					) : null}
 					{nonfluid ? <div className="clearFix" /> : null}
 				</>
 				<ResponsiveTableWrapper
-					className={pagination ? "fix-margin-pagination" : null}
+					className={classNames(
+						classNameWrapper,
+						pagination ? "fix-margin-pagination" : null,
+					)}
 					nonfluid={nonfluid}
 				>
 					<table
 						className={classNames("table table-hover", {
 							"table-sm": small !== false,
 							"table-striped": striped !== false,
+							"sticky-x": state.stickyCols === 1,
+							"sticky-xx": state.stickyCols === 2,
 						})}
+						ref={tableRef}
 					>
 						<Header
 							colOrder={colOrderFiltered}
@@ -495,7 +590,11 @@ const DataTable = ({
 								/>
 							))}
 						</tbody>
-						<Footer colOrder={colOrderFiltered} footer={footer} />
+						<Footer
+							colOrder={colOrderFiltered}
+							footer={footer}
+							highlightCols={highlightCols}
+						/>
 					</table>
 				</ResponsiveTableWrapper>
 				{!hideAllControls ? (

@@ -65,6 +65,7 @@ const PlayerRatings = ({
 					skills={p.ratings.skills}
 					jerseyNumber={p.stats.jerseyNumber}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -118,6 +119,7 @@ const PlayerRatings = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[6, "desc"]}
+				defaultStickyCols={1}
 				name="PlayerRatings"
 				pagination
 				rows={rows}

@@ -120,16 +120,7 @@ const processAttrs = (
 		} else if (attr === "name") {
 			output.name = `${p.firstName} ${p.lastName}`;
 		} else if (attr === "nameAbbrev") {
-			if (p.lastName === "") {
-				output.nameAbbrev = p.firstName;
-			} else {
-				output.nameAbbrev = `${p.firstName
-					.replace(/"/g, "")
-					.split(" ")
-					.map(s => s[0])
-					.filter(s => s !== undefined)
-					.join(".")}. ${p.lastName}`;
-			}
+			output.nameAbbrev = helpers.nameAbbrev(p);
 		} else if (attr === "untradable") {
 			Object.assign(output, trade.isUntradable(p));
 		} else if (attr === "numBrothers") {
@@ -185,7 +176,6 @@ const processAttrs = (
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
-					// @ts-ignore
 					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
 					const url =
 						transaction.eid !== undefined
@@ -225,7 +215,7 @@ const processAttrs = (
 			output.experience = seasons.size;
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
-			// @ts-ignore
+			// @ts-expect-error
 			output[attr] = helpers.deepCopy(p[attr]);
 		}
 	}

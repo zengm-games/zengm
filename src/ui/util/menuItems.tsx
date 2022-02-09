@@ -350,11 +350,19 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "leaders",
+				active: pageID => pageID === "leaders" || pageID === "leadersYears",
 				league: true,
 				commandPalette: true,
 				path: ["leaders"],
 				text: "League Leaders",
+			},
+			{
+				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: ["leaders_years"],
+				text: "Yearly Leaders",
 			},
 			{
 				type: "link",
@@ -485,8 +493,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 				commandPalette: true,
 
-				onClick() {
-					return toWorker("toolsMenu", "autoPlaySeasons");
+				async onClick() {
+					const response = await toWorker(
+						"toolsMenu",
+						"autoPlaySeasons",
+						undefined,
+					);
+					return response;
 				},
 
 				text: "Auto Play",
@@ -629,7 +642,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 
 				async onClick(): Promise<false> {
-					const response = await toWorker("toolsMenu", "resetDb");
+					const response = await toWorker("toolsMenu", "resetDb", undefined);
 
 					if (response) {
 						window.location.reload();

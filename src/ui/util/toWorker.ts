@@ -1,28 +1,27 @@
 import { promiseWorker } from ".";
+import type { WorkerAPICategory } from "../../worker";
 import type api from "../../worker/api";
 
+type API = typeof api;
+
+// https://stackoverflow.com/a/70818666/786644
+type ParametersUnconstrained<T> = T extends (...args: infer P) => any
+	? P
+	: never;
+type ReturnTypeUnconstrained<T> = T extends (...args: any) => infer P
+	? P
+	: never;
+
 const toWorker = <
-	Type extends
-		| "actions"
-		| "leagueFileUpload"
-		| "main"
-		| "playMenu"
-		| "toolsMenu",
-	Obj extends Type extends "main"
-		? typeof api
-		: Type extends "actions"
-		? typeof api["actions"]
-		: Type extends "leagueFileUpload"
-		? typeof api["leagueFileUpload"]
-		: Type extends "playMenu"
-		? typeof api["actions"]["playMenu"]
-		: typeof api["actions"]["toolsMenu"],
+	Type extends WorkerAPICategory,
+	Name extends keyof API[Type],
+	Func extends API[Type][Name],
 >(
 	type: Type,
-	name: keyof Obj,
-	...args: any[]
-) => {
-	return promiseWorker.postMessage([type, name, ...args]);
+	name: Name,
+	param: ParametersUnconstrained<Func>[0],
+): Promise<ReturnTypeUnconstrained<Func>> => {
+	return promiseWorker.postMessage([type, name, param]);
 };
 
 export default toWorker;

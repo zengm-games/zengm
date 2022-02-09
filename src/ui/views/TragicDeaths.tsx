@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, SafeHtml } from "../components";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
@@ -52,7 +52,9 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		return {
 			key: i,
 			data: [
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
+				<PlayerNameLabels pid={p.pid} xsName={p.nameAbbrev}>
+					{p.name}
+				</PlayerNameLabels>,
 				lastRatings.pos,
 				p.draft.year,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
@@ -98,6 +100,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[4, "desc"]}
+				defaultStickyCols={1}
 				name="TragicDeaths"
 				pagination
 				rows={rows}

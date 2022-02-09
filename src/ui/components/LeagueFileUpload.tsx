@@ -170,7 +170,7 @@ const LeagueFileUpload = ({
 			);
 			(error as any).version = true;
 
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,
@@ -187,7 +187,7 @@ const LeagueFileUpload = ({
 				url,
 			});
 		} catch (error) {
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,
@@ -197,7 +197,7 @@ const LeagueFileUpload = ({
 			return;
 		}
 
-		if (isMounted) {
+		if (isMounted.current) {
 			dispatch({
 				type: "done",
 			});
@@ -217,9 +217,11 @@ const LeagueFileUpload = ({
 			const { basicInfo, schemaErrors } = await toWorker(
 				"leagueFileUpload",
 				"initialCheck",
-				url,
-				includePlayersInBasicInfo,
-				leagueCreationID.current,
+				{
+					file: url,
+					includePlayersInBasicInfo,
+					leagueCreationID: leagueCreationID.current,
+				},
 			);
 
 			await afterCheck({
@@ -233,7 +235,7 @@ const LeagueFileUpload = ({
 				leagueCreationPercent: undefined,
 			});
 		} catch (error) {
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,
@@ -264,9 +266,11 @@ const LeagueFileUpload = ({
 			const { basicInfo, schemaErrors } = await toWorker(
 				"leagueFileUpload",
 				"initialCheck",
-				file,
-				includePlayersInBasicInfo,
-				leagueCreationID.current,
+				{
+					file,
+					includePlayersInBasicInfo,
+					leagueCreationID: leagueCreationID.current,
+				},
 			);
 
 			await afterCheck({
@@ -275,7 +279,7 @@ const LeagueFileUpload = ({
 				schemaErrors,
 			});
 		} catch (error) {
-			if (isMounted) {
+			if (isMounted.current) {
 				dispatch({
 					type: "error",
 					error,

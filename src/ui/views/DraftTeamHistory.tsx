@@ -108,6 +108,7 @@ const DraftTeamHistory = ({
 								season={p.draft.year}
 								skills={p.currentSkills}
 								watch={p.watch}
+								xsName={p.nameAbbrev}
 							>
 								{p.name}
 							</PlayerNameLabels>
@@ -183,6 +184,7 @@ const DraftTeamHistory = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "desc"]}
+				defaultStickyCols={2}
 				name="DraftTeamHistory"
 				rows={rows}
 				superCols={superCols}

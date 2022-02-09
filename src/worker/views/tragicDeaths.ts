@@ -45,11 +45,11 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			)
 		).filter(p => p !== undefined);
 
-		// @ts-ignore
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"draft",
 				"diedYear",
 				"ageAtDeath",

@@ -24,7 +24,7 @@ const compositeRating = (
 			factor = component;
 		} else {
 			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-ignore
+			// @ts-expect-error
 			const rating: number | undefined = ratings[component];
 
 			if (rating === undefined) {

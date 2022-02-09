@@ -78,7 +78,11 @@ const Relatives = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels pid={p.pid} jerseyNumber={p.jerseyNumber}>
+				<PlayerNameLabels
+					pid={p.pid}
+					jerseyNumber={p.jerseyNumber}
+					xsName={p.nameAbbrev}
+				>
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.at(-1).pos,
@@ -152,6 +156,7 @@ const Relatives = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[20, "desc"]}
+				defaultStickyCols={1}
 				name="Relatives"
 				pagination
 				rows={rows}

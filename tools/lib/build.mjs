@@ -23,8 +23,9 @@ export default async () => {
 	console.log("Bundling JavaScript files...");
 	await buildJS();
 
-	console.log("Bundling CSS files...");
+	console.log("Processing CSS/HTML files...");
 	await build.buildCSS();
+	await build.minifyIndexHTML();
 
 	console.log("Generating sw.js...");
 	await buildSW();

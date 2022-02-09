@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import { Modal } from "react-bootstrap";
 import { helpers } from "../../util";
+import Modal from "../../components/Modal";
 
 const Confirm = confirmable(({ show, proceed, p }: any) => {
 	const numbers = Object.keys(p.retirableJerseyNumbers);
@@ -78,7 +78,7 @@ const confirmFunction = createConfirmation(Confirm);
 
 // Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
 const playerRetireJerseyNumberDialog = (p: any): string | undefined => {
-	// @ts-ignore
+	// @ts-expect-error
 	return confirmFunction({
 		p,
 	});

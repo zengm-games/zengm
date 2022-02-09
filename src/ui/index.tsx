@@ -49,14 +49,10 @@ const handleVersion = async () => {
 	});
 	api.bbgmPing("version");
 
-	if (window.withGoodUI) {
-		window.withGoodUI();
-	}
+	window.withGoodUI?.();
 
-	toWorker("main", "ping").then(() => {
-		if (window.withGoodWorker) {
-			window.withGoodWorker();
-		}
+	toWorker("main", "ping", undefined).then(() => {
+		window.withGoodWorker?.();
 	});
 
 	// Check if there are other tabs open with a different version
@@ -68,7 +64,7 @@ const handleVersion = async () => {
 		if (cmpResult === 1) {
 			// This version is newer than another tab's - send a signal to the other tabs
 			let conflictNum = parseInt(
-				// @ts-ignore
+				// @ts-expect-error
 				safeLocalStorage.getItem("bbgmVersionConflict"),
 			);
 
@@ -182,17 +178,11 @@ const setupEnv = async () => {
 };
 
 const render = () => {
-	const contentEl = document.getElementById("content");
-
-	if (!contentEl) {
-		throw new Error('Could not find element with id "content"');
-	}
-
 	ReactDOM.render(
 		<ErrorBoundary>
 			<Controller />
 		</ErrorBoundary>,
-		contentEl,
+		document.getElementById("content"),
 	);
 };
 
@@ -346,7 +336,7 @@ const setupRoutes = () => {
 		}
 
 		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-ignore
+		// @ts-expect-error
 		return api[name](...params);
 	});
 	await handleVersion();

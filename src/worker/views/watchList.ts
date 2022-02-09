@@ -49,6 +49,7 @@ const updatePlayers = async (
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"age",
 				"ageAtDeath",
 				"injury",

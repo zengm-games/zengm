@@ -102,7 +102,7 @@ const Trade = (props: View<"trade">) => {
 			);
 		}
 
-		const teams = [
+		const teams: TradeTeams = [
 			{
 				tid: props.userTid,
 				pids: ids["user-pids"],
@@ -128,7 +128,7 @@ const Trade = (props: View<"trade">) => {
 			prevTeams: undefined,
 		}));
 
-		const teams = [
+		const teams: TradeTeams = [
 			{
 				tid: props.userTid,
 				pids: props.userPids,
@@ -173,7 +173,11 @@ const Trade = (props: View<"trade">) => {
 			prevTeams: undefined,
 		}));
 
-		const { changed, message } = await toWorker("main", "tradeCounterOffer");
+		const { changed, message } = await toWorker(
+			"main",
+			"tradeCounterOffer",
+			undefined,
+		);
 
 		if (!changed) {
 			newPrevTeams = undefined;

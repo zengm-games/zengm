@@ -1,8 +1,12 @@
+@use "sass:map";
 @use "sass:math";
 
 // These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
 $dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
 $dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
+
+// For datatable.scss
+$sorting-highlight-bg: #ececec !default; // Matches var(--bs-table-hover-bg) but without transparency, which is needed for sticky-x
 
 // Make it more like Bootstrap 4
 $link-decoration: none;
@@ -51,7 +55,7 @@ $include: af, ax, al, dz, as, ad, ao, ai, aq, ag, ar, am, aw, au, at, az, bs, bh
 
 // Inlined from flag-icon.scss to save the square flag classes
 $flag-icon-css-path: "/img/flags";
-.flag-icon {
+.fi {
 	background-size: contain;
 	background-position: 50%;
 	background-repeat: no-repeat;
@@ -64,7 +68,7 @@ $flag-icon-css-path: "/img/flags";
 	}
 }
 @mixin flag-icon($country) {
-	.flag-icon-#{$country} {
+	.fi-#{$country} {
 		background-image: url(#{$flag-icon-css-path}/#{$country}.svg);
 	}
 }
@@ -145,12 +149,7 @@ h5 {
 	font-size: 20px;
 }
 
-.bbgm-container {
-	padding: 0 15px;
-	width: 100%;
-}
-
-@media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
+@media screen and (min-width: (map-get($grid-breakpoints, xl) + 190px)) {
 	#basketball-gm_right_rail,
 	#football-gm_right_rail,
 	#zen-gm_right_rail {
@@ -171,6 +170,9 @@ h5 {
 	span {
 		padding-left: 5px;
 	}
+
+	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
+	height: 35px;
 }
 
 // This is so "Football GM" takes up the same space as "Basketball GM", allowing the Play dropdown to align with the menu on the left.
@@ -862,7 +864,7 @@ tr.table-warning:hover > td {
 }
 
 .table-accent {
-	background-color: rgba(0, 0, 0, 0.1);
+	background-color: var(--bs-table-hover-bg) !important;
 }
 
 // Hack to get rid of annoying "Privacy Settings" tab from Quantcast CMP
@@ -958,6 +960,28 @@ tr.table-warning:hover > td {
 	}
 	gap: 0 10px;
 	min-height: 39px;
+
+	// Like .container-fluid
+	padding-left: var(--bs-gutter-x, 0.75rem);
+	padding-right: var(--bs-gutter-x, 0.75rem);
+}
+.title-bar-right-links {
+	.nav-item {
+		height: 39px !important;
+	}
+	.nav-link {
+		padding-bottom: 10px !important;
+		padding-top: 10px !important;
+	}
+	.dropdown-menu {
+		margin-top: -5px !important;
+	}
+}
+
+@include media-breakpoint-down(sm) {
+	.title-bar {
+		padding-right: 0;
+	}
 }
 .dropdown-select-wrapper {
 	margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
@@ -993,6 +1017,18 @@ tr.table-warning:hover > td {
 			font-size: 24px;
 		}
 		min-height: 45px;
+	}
+	.title-bar-right-links {
+		.nav-item {
+			height: 45px !important;
+		}
+		.nav-link {
+			padding-bottom: 13px !important;
+			padding-top: 13px !important;
+		}
+		.dropdown-menu {
+			margin-top: -5px !important;
+		}
 	}
 }
 
@@ -1404,4 +1440,121 @@ hr {
 	.dark-select__menu {
 		z-index: 3; // Above .settings-buttons
 	}
+}
+
+table.sticky-x,
+table.sticky-xx {
+	tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			position: sticky;
+			left: 0;
+			z-index: 10;
+			background-color: $white;
+		}
+	}
+}
+
+table.sticky-x {
+	// Add space for box-shadow - $table-cell-padding-x + 2px
+	tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			padding-right: 6px;
+		}
+	}
+
+	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
+	tbody tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			&:after {
+				box-shadow: 0px 0px 0px 1px $border-color;
+				content: " ";
+				height: 100%;
+				position: absolute;
+				top: 0;
+				right: 1px;
+			}
+		}
+	}
+}
+
+table.sticky-xx {
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			position: sticky;
+			// left: 157px;
+			z-index: 10;
+			background-color: $white;
+		}
+	}
+
+	// Add space for box-shadow - $table-cell-padding-x + 2px
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			padding-right: 6px;
+		}
+	}
+
+	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
+	tbody tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			&:after {
+				box-shadow: 0px 0px 0px 1px $border-color;
+				content: " ";
+				height: 100%;
+				position: absolute;
+				top: 0;
+				right: 1px;
+			}
+		}
+	}
+}
+
+table.sticky-x,
+table.sticky-xx {
+	thead tr th:nth-child(1) {
+		position: sticky;
+		left: 0; // for sticky-xx, this will be overwritten by JS
+		top: 0;
+		z-index: 12;
+	}
+
+	tr.table-warning,
+	tr.table-primary,
+	tr.table-secondary,
+	tr.table-success,
+	tr.table-danger,
+	tr.table-warning,
+	tr.table-info,
+	tr.table-light,
+	tr.table-dark {
+		td,
+		td.sorting_highlight {
+			background-color: inherit !important;
+		}
+	}
+}
+
+.standings-name {
+	min-width: 90px;
+}
+
+@include media-breakpoint-up(sm) {
+	.standings-name {
+		min-width: 215px;
+	}
+}
+
+// Better default than top, we often have like a team logo inline or something
+.table td {
+	vertical-align: middle;
+}
+
+.align-top-all .table td {
+	vertical-align: top;
 }

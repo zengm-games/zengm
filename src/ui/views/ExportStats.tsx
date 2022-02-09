@@ -47,7 +47,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 		try {
 			const [data, leagueName] = await Promise.all([
 				csvPromise,
-				toWorker("main", "getLeagueName"),
+				toWorker("main", "getLeagueName", undefined),
 			]);
 
 			const filename = genFilename(leagueName, season, grouping);

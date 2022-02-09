@@ -7,9 +7,9 @@ const genPage = (id: string, inLeague: boolean) => {
 	const componentName = helpers.upperCaseFirstLetter(id);
 	let Component;
 
-	// @ts-ignore
+	// @ts-expect-error
 	if (views[componentName]) {
-		// @ts-ignore
+		// @ts-expect-error
 		Component = views[componentName];
 	}
 

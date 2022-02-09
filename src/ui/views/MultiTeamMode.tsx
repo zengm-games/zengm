@@ -6,7 +6,7 @@ import type { View } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 
 const handleAutoSort = async (tids: number[]) => {
-	await toWorker("main", "autoSortRoster", undefined, tids);
+	await toWorker("main", "autoSortRoster", { tids });
 };
 
 const handleResetPT = async (tids: number[]) => {

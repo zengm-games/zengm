@@ -30,6 +30,7 @@ const updateExportPlayers = async (
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"age",
 				"injury",
 				"watch",

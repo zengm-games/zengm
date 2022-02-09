@@ -21,7 +21,7 @@ describe("worker/core/draft/genPlayers", () => {
 			assert.strictEqual(p.tid, PLAYER.UNDRAFTED);
 		}
 
-		// @ts-ignore
+		// @ts-expect-error
 		idb.league = undefined;
 	});
 });

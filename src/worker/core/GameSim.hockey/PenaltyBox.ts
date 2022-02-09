@@ -80,8 +80,19 @@ class PenaltyBox {
 	goal(scoringTeam: TeamNum) {
 		const shortHandedTeam = this.getShortHandedTeam();
 
-		const t = scoringTeam === 0 ? 1 : 0;
-		for (const entry of this.players[t]) {
+		// If no team has advantage (such as 4 on 4), then nobody gets out of the penalty box
+		if (shortHandedTeam === undefined) {
+			return;
+		}
+
+		// If it's a shorthanded goal, then nobody gets out of the penalty box
+		if (scoringTeam === shortHandedTeam) {
+			return;
+		}
+
+		// Must have been a power play goal!
+
+		for (const entry of this.players[shortHandedTeam]) {
 			const penaltyType = penaltyTypes[entry.penalty.type];
 			if (penaltyType.minutesReducedAfterGoal > 0) {
 				entry.minutesLeft -= penaltyType.minutesReducedAfterGoal;
@@ -96,9 +107,9 @@ class PenaltyBox {
 
 		this.checkIfPenaltiesOver();
 
-		for (const entry of this.players[t]) {
+		for (const entry of this.players[shortHandedTeam]) {
 			// http://fs.ncaa.org/Docs/stats/Stats_Manuals/IceHockey/2012EZ.pdf - since a major does not expire, after N goals have been scored during that penalty, it counts as N+1 PPO
-			if (t === shortHandedTeam && entry.penalty.type === "major") {
+			if (entry.penalty.type === "major") {
 				entry.ppo += 1;
 			}
 		}

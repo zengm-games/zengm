@@ -136,6 +136,7 @@ export const genView = (
 						attrs: [
 							"pid",
 							"name",
+							"nameAbbrev",
 							"draft",
 							"retiredYear",
 							"statsTids",

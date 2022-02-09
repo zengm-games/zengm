@@ -35,7 +35,7 @@ const Schedule = ({
 	const handleForceAll =
 		(type: "win" | "lose" | "tie" | "none") => async () => {
 			setForcingAll(true);
-			await toWorker("main", "setForceWinAll", tid, type);
+			await toWorker("main", "setForceWinAll", { tid, type });
 			setForceWinKey(key => key + 1);
 			setForcingAll(false);
 		};

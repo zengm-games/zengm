@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 const TeamLogoInline = ({
 	className,
 	imgURL,
@@ -11,7 +13,7 @@ const TeamLogoInline = ({
 	imgURLSmall?: string;
 	includePlaceholderIfNoLogo?: boolean;
 	size?: number;
-	style?: React.CSSProperties;
+	style?: CSSProperties;
 }) => {
 	const actualImgURL = imgURLSmall ?? imgURL;
 	if (!actualImgURL && !includePlaceholderIfNoLogo) {

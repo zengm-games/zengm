@@ -86,7 +86,10 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 		event.preventDefault();
 		setSaving(true);
 
-		await toWorker("main", "updateConfsDivs", liveConfs, liveDivs);
+		await toWorker("main", "updateConfsDivs", {
+			confs: liveConfs,
+			divs: liveDivs,
+		});
 
 		let text = "Saved conferences and divisions.";
 

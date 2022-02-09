@@ -365,12 +365,8 @@ const TopStuff = ({
 		);
 	}
 
-	// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-	// @ts-ignore
 	const height = <Height inches={player.hgt} />;
 
-	// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-	// @ts-ignore
 	const weight = <Weight pounds={player.weight} />;
 
 	const college =

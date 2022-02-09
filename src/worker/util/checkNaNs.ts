@@ -54,7 +54,7 @@ const wrapperNaNChecker = (_super: any) => {
           }*/
 		checkObject(obj, false, true); // This will update obj
 
-		// @ts-ignore because annotating this seems to cause runtime errors
+		// @ts-expect-error because annotating this seems to cause runtime errors
 		return _super.call(this, obj, ...args);
 	};
 };

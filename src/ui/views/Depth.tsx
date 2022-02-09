@@ -9,11 +9,11 @@ import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
 
 const handleAutoSort = async (pos: string) => {
-	await toWorker("main", "autoSortRoster", pos, undefined);
+	await toWorker("main", "autoSortRoster", { pos });
 };
 
 const handleAutoSortAll = async () => {
-	await toWorker("main", "autoSortRoster", undefined, undefined);
+	await toWorker("main", "autoSortRoster", undefined);
 };
 
 const numStartersByPos = bySport<
@@ -191,12 +191,10 @@ const Depth = ({
 								if (!keepRosterSorted) {
 									await handleAutoSortAll();
 								}
-								await toWorker(
-									"main",
-									"updateKeepRosterSorted",
+								await toWorker("main", "updateKeepRosterSorted", {
 									tid,
-									!keepRosterSorted,
-								);
+									keepRosterSorted: !keepRosterSorted,
+								});
 							}}
 						/>
 						<label className="form-check-label" htmlFor="ai-sort-user-roster">
@@ -241,14 +239,20 @@ const Depth = ({
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);
-					await toWorker("main", "reorderDepthDrag", pos, newSortedPids);
+					await toWorker("main", "reorderDepthDrag", {
+						pos,
+						sortedPids: newSortedPids,
+					});
 				}}
 				onSwap={async (index1, index2) => {
 					const newSortedPids = players.map(p => p.pid);
 					newSortedPids[index1] = players[index2].pid;
 					newSortedPids[index2] = players[index1].pid;
 					setSortedPids(newSortedPids);
-					await toWorker("main", "reorderDepthDrag", pos, newSortedPids);
+					await toWorker("main", "reorderDepthDrag", {
+						pos,
+						sortedPids: newSortedPids,
+					});
 				}}
 				cols={() => (
 					<>
@@ -295,6 +299,7 @@ const Depth = ({
 									jerseyNumber={p.stats.jerseyNumber}
 									skills={p.ratings.skills}
 									watch={p.watch}
+									xsName={p.nameAbbrev}
 								>
 									{p.name}
 								</PlayerNameLabels>

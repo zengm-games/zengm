@@ -41,7 +41,7 @@ const StripeButton = ({ email }: { email: string }) => {
 								goldResult: data,
 							});
 							if (data.success) {
-								toWorker("main", "initGold");
+								toWorker("main", "initGold", undefined);
 							}
 						} catch (error) {
 							console.error(error);
@@ -166,7 +166,7 @@ const UserInfo = ({
 			return;
 		}
 
-		await toWorker("main", "checkAccount");
+		await toWorker("main", "checkAccount", undefined);
 		await toWorker("main", "realtimeUpdate", ["account"]);
 		await realtimeUpdate([], "/");
 	};

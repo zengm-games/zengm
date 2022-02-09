@@ -403,7 +403,7 @@ class JSONParserText {
 		} else if (this.state === "COMMA") {
 			if (token === "COMMA") {
 				if (this.mode === "ARRAY") {
-					// @ts-ignore
+					// @ts-expect-error
 					this.key++;
 					this.state = "VALUE";
 				} else if (this.mode === "OBJECT") {

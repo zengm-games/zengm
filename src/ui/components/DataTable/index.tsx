@@ -428,19 +428,7 @@ const DataTable = ({
 				return [];
 			}
 
-			let headerRows = Array.from(
-				table.querySelectorAll<HTMLTableRowElement>("thead tr"),
-			);
-			if (headerRows.length > 0) {
-				// Last row - no superCols
-				headerRows = [headerRows.at(-1)];
-			}
-
-			const bodyRows = table.querySelectorAll<HTMLTableRowElement>("tbody tr");
-			const footerRows =
-				table.querySelectorAll<HTMLTableRowElement>("tfoot tr");
-
-			return [...headerRows, ...bodyRows, ...footerRows];
+			return table.querySelectorAll<HTMLTableRowElement>("tr");
 		};
 
 		if (state.stickyCols === 2) {

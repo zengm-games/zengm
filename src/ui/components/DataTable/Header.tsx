@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import type { SyntheticEvent, MouseEvent } from "react";
+import range from "lodash-es/range";
+import { SyntheticEvent, MouseEvent, Fragment } from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
 const FilterHeader = ({
@@ -90,10 +91,32 @@ const SuperCols = ({
 				.filter(({ adjustedColspan }) => adjustedColspan > 0)
 				.map(({ adjustedColspan, desc, title }, i) => {
 					// No vertical border for left and right edges of table, but we do need it in between to separate superCols
-					let className;
-					if (i > 0 && i < superCols.length - 1) {
-						className = "border-start border-end";
+					const addBorders = i > 0 && i < superCols.length - 1;
+
+					// Split up column into N individual columns, rather than one with an adjustedColspan. Why? For stickyCols, otherwise it's hard to know how much of a superCol belongs to the sticky col. This hack works as long as the sticky col has an empty superCol. If not, it'll behave a bit strangely still.
+					if (!title && adjustedColspan > 1) {
+						return (
+							<Fragment key={i}>
+								{range(adjustedColspan).map(j => {
+									return (
+										<th
+											key={j}
+											className={
+												addBorders
+													? classNames({
+															"border-start": j === 0,
+															"border-end": j === adjustedColspan - 1,
+													  })
+													: undefined
+											}
+										/>
+									);
+								})}
+							</Fragment>
+						);
 					}
+
+					const className = addBorders ? "border-start border-end" : undefined;
 
 					return (
 						<th

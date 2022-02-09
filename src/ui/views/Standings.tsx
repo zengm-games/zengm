@@ -369,7 +369,7 @@ const SmallStandings = ({
 	);
 
 	return (
-		<table className="table table-striped table-sm">
+		<table className="table table-striped table-hover table-sm">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>

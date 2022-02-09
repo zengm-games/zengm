@@ -6,9 +6,6 @@ sticky first column in most tables
 - would be nice to have 3 sticky cols in trade AssetList and ImportPlayers
 - test firefox
 - test safari
-- box scores
-- player profile
-- trade summary
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?
@@ -16,6 +13,13 @@ sticky first column in most tables
   - especially helps on mobile
   - can configure for table at ... > Customize Columns
   - on mobile, uses shortened name (first initial) and team (abbrev)
+
+football/hockey box scores need 2 sticky columns without DataTable
+- extract logic into reusable hook
+
+xsName refactor
+- instead, store firstName and lastName and compute the names client side
+- player feats and box scores will need to be upgraded
 
 tools > Fantasy Draft - handles not showing right
 

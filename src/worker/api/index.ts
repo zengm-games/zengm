@@ -1632,6 +1632,7 @@ const getTradingBlockOffers = async ({
 					attrs: [
 						"pid",
 						"name",
+						"nameAbbrev",
 						"age",
 						"contract",
 						"injury",

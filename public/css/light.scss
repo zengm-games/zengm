@@ -1456,6 +1456,14 @@ table.sticky-xx {
 }
 
 table.sticky-x {
+	// Add space for box-shadow - $table-cell-padding-x + 2px
+	tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			padding-right: 6px;
+		}
+	}
+
 	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
 	tbody tr {
 		td:nth-child(1),
@@ -1480,6 +1488,14 @@ table.sticky-xx {
 			// left: 157px;
 			z-index: 10;
 			background-color: $white;
+		}
+	}
+
+	// Add space for box-shadow - $table-cell-padding-x + 2px
+	tr {
+		td:nth-child(2),
+		th:nth-child(2) {
+			padding-right: 6px;
 		}
 	}
 

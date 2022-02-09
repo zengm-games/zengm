@@ -3,8 +3,10 @@ sticky first column in most tables
 - https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
 - dark mode
 - look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
+- would be nice to have 3 sticky cols in trade AssetList
 - test firefox
 - test safari
+- box scores
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?

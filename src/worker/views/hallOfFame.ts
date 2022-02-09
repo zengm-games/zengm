@@ -31,7 +31,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			"noCopyCache",
 		);
 		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
+			attrs: ["pid", "name", "nameAbbrev", "draft", "retiredYear", "statsTids"],
 			ratings: ["ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,

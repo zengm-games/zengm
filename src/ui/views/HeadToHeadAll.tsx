@@ -126,6 +126,7 @@ const HeadToHeadAll = ({
 					<DataTable
 						cols={cols}
 						defaultSort={[0, "asc"]}
+						defaultStickyCols={1}
 						hideAllControls
 						name="HeadToHeadAll"
 						rows={rows}

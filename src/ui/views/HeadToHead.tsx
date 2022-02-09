@@ -113,6 +113,7 @@ const HeadToHead = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={1}
 				name="HeadToHead"
 				nonfluid
 				rows={rows}

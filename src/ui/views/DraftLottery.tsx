@@ -186,12 +186,12 @@ const Row = ({
 					"table-info": tid === userTid,
 				})}
 			>
-				<div className="me-auto">
-					<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
-				</div>
+				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+			</td>
+			<td>
 				{tid === userTid ? null : (
 					<button
-						className="btn btn-xs btn-light-bordered ms-2"
+						className="btn btn-xs btn-light-bordered"
 						onClick={async () => {
 							await toWorker("actions", "tradeFor", {
 								dpid,
@@ -418,7 +418,7 @@ const DraftLotteryTable = (props: Props) => {
 			<>
 				<p />
 				<ResponsiveTableWrapper nonfluid>
-					<table className="table table-striped table-sm table-hover">
+					<table className="table table-striped table-sm table-hover sticky-x">
 						<thead>
 							<tr>
 								<th colSpan={3} />
@@ -428,6 +428,7 @@ const DraftLotteryTable = (props: Props) => {
 							</tr>
 							<tr>
 								<th>Team</th>
+								<th />
 								<th>Record</th>
 								<th>Chances</th>
 								{result.map((row, i) => (

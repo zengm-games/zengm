@@ -67,6 +67,7 @@ const OfferPlayers = ({
 						pid={p.pid}
 						skills={p.ratings.skills}
 						watch={p.watch}
+						xsName={p.nameAbbrev}
 					>
 						{p.name}
 					</PlayerNameLabels>,
@@ -86,6 +87,7 @@ const OfferPlayers = ({
 				classNameWrapper={className}
 				cols={cols}
 				defaultSort={[5, "desc"]}
+				defaultStickyCols={1}
 				hideAllControls
 				hideMenuToo
 				name="TradingBlockOffer"
@@ -395,6 +397,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -539,6 +542,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					<DataTable
 						cols={cols}
 						defaultSort={[6, "desc"]}
+						defaultStickyCols={2}
 						name="TradingBlock"
 						rows={rows}
 					/>

@@ -92,6 +92,7 @@ const updateTrade = async () => {
 	const attrs = [
 		"pid",
 		"name",
+		"nameAbbrev",
 		"age",
 		"contract",
 		"injury",

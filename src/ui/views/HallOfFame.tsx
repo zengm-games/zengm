@@ -38,7 +38,9 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+				<PlayerNameLabels pid={p.pid} xsName={p.nameAbbrev}>
+					{p.name}
+				</PlayerNameLabels>,
 				p.ratings.at(-1).pos,
 				p.draft.year,
 				p.retiredYear,
@@ -87,6 +89,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[cols.length - 2, "desc"]}
+				defaultStickyCols={1}
 				name="HallOfFame"
 				pagination
 				rows={rows}

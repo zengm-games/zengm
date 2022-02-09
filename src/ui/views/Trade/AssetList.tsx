@@ -60,6 +60,7 @@ const genPlayerRows = (
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -215,6 +216,7 @@ const AssetList = ({
 					className="datatable-negative-margin-top"
 					cols={playerCols}
 					defaultSort={[5, "desc"]}
+					defaultStickyCols={2}
 					name={`Trade:${userOrOtherKey}`}
 					rows={playerRows}
 				/>

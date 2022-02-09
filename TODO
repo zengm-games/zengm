@@ -12,7 +12,7 @@ xsName refactor
 - instead, store firstName and lastName and compute the names client side
 - player feats and box scores will need to be upgraded
 
-make watch not crash on scss parse error
+for any watch error (e.g. CSS), it should show in JS console, like it does for JS errors now
 
 make some tables (awards records, power rankings, injuries, ...) nonfluid like roster
 

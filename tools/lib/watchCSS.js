@@ -9,7 +9,7 @@ const watchCSS = async (updateStart, updateEnd, updateError) => {
 	const buildCSS = async () => {
 		filenames.map(updateStart);
 		try {
-			build.buildCSS(true);
+			await build.buildCSS(true);
 			filenames.map(updateEnd);
 		} catch (error) {
 			for (const filename of filenames) {

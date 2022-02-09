@@ -1484,15 +1484,17 @@ $sticky-cols: (
 		}
 	}
 
-	@for $i from 2 through $col-num {
-		table.#{$class} {
-			tr {
-				td:nth-child(#{$i}),
-				th:nth-child(#{$i}) {
-					position: sticky;
-					// left: 157px; will be set by JS
-					z-index: 10;
-					background-color: $white;
+	@if $col-num > 1 {
+		@for $i from 2 through $col-num {
+			table.#{$class} {
+				tr {
+					td:nth-child(#{$i}),
+					th:nth-child(#{$i}) {
+						position: sticky;
+						// left: 157px; will be set by JS
+						z-index: 10;
+						background-color: $white;
+					}
 				}
 			}
 		}

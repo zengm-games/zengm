@@ -238,7 +238,10 @@ const Rigged = ({
 
 	return (
 		<tr>
-			<td colSpan={3} />
+			<th />
+			<th />
+			<th />
+			<th />
 			{actualRigged.map((selected, i) => (
 				<td key={i}>
 					<select
@@ -421,7 +424,9 @@ const DraftLotteryTable = (props: Props) => {
 					<table className="table table-striped table-sm table-hover sticky-x">
 						<thead>
 							<tr>
-								<th colSpan={3} />
+								<th />
+								<th />
+								<th />
 								<th colSpan={NUM_PICKS} className="text-center">
 									Pick Probabilities
 								</th>

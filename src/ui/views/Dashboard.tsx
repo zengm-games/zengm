@@ -483,6 +483,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					className="dashboard-table"
 					disableSettingsCache
 					defaultSort={[7, "desc"]}
+					defaultStickyCols={1}
 					name="Dashboard"
 					pagination={pagination}
 					small={false}

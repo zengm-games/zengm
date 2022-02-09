@@ -1445,6 +1445,7 @@ hr {
 $sticky-cols: (
 	"sticky-x": 1,
 	"sticky-xx": 2,
+	"sticky-xxx": 3,
 );
 
 @each $class, $col-num in $sticky-cols {
@@ -1483,11 +1484,11 @@ $sticky-cols: (
 		}
 	}
 
-	@if $col-num > 1 {
+	@for $i from 2 through $col-num {
 		table.#{$class} {
 			tr {
-				td:nth-child(#{$col-num}),
-				th:nth-child(#{$col-num}) {
+				td:nth-child(#{$i}),
+				th:nth-child(#{$i}) {
 					position: sticky;
 					// left: 157px; will be set by JS
 					z-index: 10;
@@ -1499,7 +1500,8 @@ $sticky-cols: (
 }
 
 table.sticky-x,
-table.sticky-xx {
+table.sticky-xx,
+table.sticky-xxx {
 	tr {
 		td:nth-child(1),
 		th:nth-child(1) {

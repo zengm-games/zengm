@@ -1,4 +1,4 @@
-import type { Col } from ".";
+import type { Col, StickyCols } from ".";
 import { useState } from "react";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 import classNames from "classnames";
@@ -76,17 +76,17 @@ const CustomizeColumns = ({
 	}[];
 	cols: Col[];
 	hasSuperCols: boolean;
-	onChangeStickyCols: (stickyCols: 0 | 1 | 2) => void;
+	onChangeStickyCols: (stickyCols: StickyCols) => void;
 	onHide: () => void;
 	onReset: () => void;
 	onSortEnd: (arg: { oldIndex: number; newIndex: number }) => void;
 	onToggleHidden: (i: number) => () => void;
 	show: boolean;
-	stickyCols: 0 | 1 | 2;
+	stickyCols: StickyCols;
 }) => {
 	const [isDragged, setIsDragged] = useState(false);
 
-	const stickyColsOptions = [0, 1, 2] as const;
+	const stickyColsOptions = [0, 1, 2, 3] as StickyCols[];
 
 	return (
 		<Modal animation={false} centered show={show} onHide={onHide}>

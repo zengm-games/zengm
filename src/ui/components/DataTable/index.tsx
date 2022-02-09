@@ -63,6 +63,8 @@ export type DataTableRow = {
 	classNames?: Argument;
 };
 
+export type StickyCols = 0 | 1 | 2 | 3;
+
 export type Props = {
 	className?: string;
 	classNameWrapper?: string;
@@ -70,7 +72,7 @@ export type Props = {
 	cols: Col[];
 	defaultSort: SortBy;
 	disableSettingsCache?: boolean;
-	defaultStickyCols?: 0 | 1 | 2;
+	defaultStickyCols?: StickyCols;
 	footer?: any[];
 	hideAllControls?: boolean;
 	hideMenuToo?: boolean;
@@ -98,7 +100,7 @@ export type State = {
 	searchText: string;
 	showSelectColumnsModal: boolean;
 	sortBys: SortBy[];
-	stickyCols: 0 | 1 | 2;
+	stickyCols: StickyCols;
 	settingsCache: SettingsCache;
 };
 
@@ -517,6 +519,7 @@ const DataTable = ({
 							"table-striped": striped !== false,
 							"sticky-x": state.stickyCols === 1,
 							"sticky-xx": state.stickyCols === 2,
+							"sticky-xxx": state.stickyCols === 3,
 						})}
 						ref={tableRef}
 					>

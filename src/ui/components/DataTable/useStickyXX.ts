@@ -1,9 +1,12 @@
+import range from "lodash-es/range";
 import { useCallback, useEffect, useRef } from "react";
+import type { StickyCols } from ".";
 
 // >1 sticky column requires some JS to compute the left offset of all besides the first sticky column (whose offset is always 0)
-const useStickyXX = (stickyCols: 0 | 1 | 2) => {
+const useStickyXX = (stickyCols: StickyCols) => {
 	const tableRef = useRef<HTMLTableElement>(null);
 	const prevStickyCols = useRef(stickyCols);
+	console.log("useStickyXX", stickyCols);
 
 	const updateStickyCols = useCallback(() => {
 		const getRows = () => {
@@ -15,32 +18,40 @@ const useStickyXX = (stickyCols: 0 | 1 | 2) => {
 			return Array.from(table.querySelectorAll<HTMLTableRowElement>("tr"));
 		};
 
-		if (stickyCols === 2) {
+		if (stickyCols >= 2) {
 			const rows = getRows();
-
-			if (rows.length === 0) {
-				return;
-			}
 
 			// Header/footer might have weird colspan, so try to use something before the footer
-			const cell = (rows.at(-2) ?? rows.at(-1)).cells[0];
+			const row = rows.at(-2) ?? rows.at(-1);
 
-			if (!cell) {
+			if (!row) {
 				return;
 			}
 
-			// Manually offset the 2nd col by the width of the 1st col
-			const width = `${cell.offsetWidth}px`;
-			for (const row of rows) {
-				const cell = row.cells[1];
-				cell.style.left = width;
+			// For each stickyCol beyond the first, need to figure out how much it needs to be offset by the fixed width of prior sticky cols
+			let left = 0;
+			for (let i = 1; i < stickyCols; i++) {
+				left += row.cells[i - 1].offsetWidth;
+				console.log("set left", i, left);
+
+				const width = `${left}px`;
+				for (const row of rows) {
+					row.cells[i].style.left = width;
+				}
 			}
-		} else if (prevStickyCols.current === 2) {
-			// When switching away from 2 sticky cols, reset style
+		}
+
+		// When removing a sticky col that had a style manually applied above, reset that style
+		if (prevStickyCols.current >= 2 && prevStickyCols.current > stickyCols) {
+			const colsToReset = range(stickyCols, prevStickyCols.current);
+			console.log("colsToReset", colsToReset);
+
 			const rows = getRows();
 			for (const row of rows) {
-				const cell = row.cells[1];
-				cell.style.left = "";
+				for (const i of colsToReset) {
+					const cell = row.cells[i];
+					cell.style.left = "";
+				}
 			}
 		}
 

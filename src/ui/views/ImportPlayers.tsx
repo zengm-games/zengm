@@ -83,10 +83,25 @@ const ImportPlayers = ({
 	}
 
 	const cols = getCols(
-		["", "#", "Name", "Pos", "Ovr", "Pot", "Age", "Team", "Contract", "Exp"],
+		[
+			"",
+			"#",
+			"Name",
+			"",
+			"Pos",
+			"Ovr",
+			"Pot",
+			"Age",
+			"Team",
+			"Contract",
+			"Exp",
+		],
 		{
 			Name: {
 				width: "100%",
+			},
+			"": {
+				width: "1%",
 			},
 		},
 	);
@@ -185,27 +200,20 @@ const ImportPlayers = ({
 					sortValue: checked ? 1 : 0,
 				},
 				i + 1,
-				{
-					value: (
-						<div className="d-flex align-items-center justify-content-between">
-							<PlayerNameLabels injury={p.injury} skills={ratings.skills}>
-								{name}
-							</PlayerNameLabels>
-							<button
-								className="btn btn-secondary btn-sm ms-2"
-								disabled={disableButtons}
-								onClick={() => {
-									const newPlayers = [...players];
-									newPlayers.splice(i, 0, helpers.deepCopy(player));
-									setPlayers(newPlayers);
-								}}
-							>
-								Clone
-							</button>
-						</div>
-					),
-					sortValue: name,
-				},
+				<PlayerNameLabels injury={p.injury} skills={ratings.skills}>
+					{name}
+				</PlayerNameLabels>,
+				<button
+					className="btn btn-secondary btn-sm"
+					disabled={disableButtons}
+					onClick={() => {
+						const newPlayers = [...players];
+						newPlayers.splice(i, 0, helpers.deepCopy(player));
+						setPlayers(newPlayers);
+					}}
+				>
+					Clone
+				</button>,
 				ratings.pos,
 				showRatings ? ratings.ovr : null,
 				showRatings ? ratings.pot : null,
@@ -454,7 +462,7 @@ const ImportPlayers = ({
 						<DataTable
 							cols={cols}
 							defaultSort={[1, "asc"]}
-							defaultStickyCols={2}
+							defaultStickyCols={3}
 							name="ImportPlayers"
 							pagination
 							rows={rows}

@@ -4,8 +4,6 @@ sticky first column in most tables
   - can configure for table at ... > Customize Columns
   - on mobile, uses shortened name (first initial) and team (abbrev)
 
-would be nice to have 3 sticky cols in trade AssetList and ImportPlayers
-
 2 sticky columns without DataTable
 - extract logic into reusable hook
 - football/hockey box scores

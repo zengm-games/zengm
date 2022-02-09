@@ -260,11 +260,13 @@ const DataTable = ({
 		state.settingsCache.clear("DataTableColOrder");
 		state.settingsCache.clear("DataTableFilters");
 		state.settingsCache.clear("DataTableSort");
+		state.settingsCache.clear("DataTableStickyCols");
 
 		setState(
 			loadStateFromCache({
 				cols,
 				defaultSort,
+				defaultStickyCols,
 				disableSettingsCache,
 				name,
 			}),
@@ -339,6 +341,7 @@ const DataTable = ({
 			loadStateFromCache({
 				cols,
 				defaultSort,
+				defaultStickyCols,
 				disableSettingsCache,
 				name,
 			}),

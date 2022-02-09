@@ -72,6 +72,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"pid",
 				"tid",
 				"name",
+				"nameAbbrev",
 				"age",
 				"draft",
 				"injury",
@@ -174,6 +175,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"age",
 				"injury",
 				"contract",
@@ -214,6 +216,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showNoStats: true,
 			showRookies: true,
 		});
+		console.log("hi", drafted, undrafted);
 
 		return {
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),

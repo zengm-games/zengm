@@ -135,6 +135,7 @@ const Draft = ({
 				injury={p.injury}
 				skills={p.ratings.skills}
 				watch={p.watch}
+				xsName={p.nameAbbrev}
 			>
 				{p.name}
 			</PlayerNameLabels>,
@@ -228,6 +229,7 @@ const Draft = ({
 					injury={p.injury}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>
@@ -433,6 +435,7 @@ const Draft = ({
 					<DataTable
 						cols={colsUndrafted}
 						defaultSort={[0, "asc"]}
+						defaultStickyCols={2}
 						name="Draft:Undrafted"
 						pagination={rowsDrafted.length > 100}
 						rows={rowsUndrafted}
@@ -463,6 +466,7 @@ const Draft = ({
 					<DataTable
 						cols={colsDrafted}
 						defaultSort={[0, "asc"]}
+						defaultStickyCols={2}
 						name="Draft:Drafted"
 						pagination={rowsDrafted.length > 100}
 						rows={rowsDrafted}

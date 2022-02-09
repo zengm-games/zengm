@@ -60,6 +60,7 @@ const PlayerList = ({
 					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
+					xsName={p.nameAbbrev}
 				>
 					{p.name}
 				</PlayerNameLabels>,
@@ -118,6 +119,7 @@ const PlayerList = ({
 				<DataTable
 					cols={cols}
 					defaultSort={[5, "desc"]}
+					defaultStickyCols={2}
 					name="ProtectPlayers"
 					rows={rows}
 					hideAllControls

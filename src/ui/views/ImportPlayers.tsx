@@ -454,6 +454,7 @@ const ImportPlayers = ({
 						<DataTable
 							cols={cols}
 							defaultSort={[1, "asc"]}
+							defaultStickyCols={2}
 							name="ImportPlayers"
 							pagination
 							rows={rows}

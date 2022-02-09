@@ -1,11 +1,4 @@
 sticky first column in most tables
-- https://github.com/twbs/bootstrap/issues/31458
-- https://discord.com/channels/290013534023057409/331882115119448065/932307788057681920
-- dark mode
-- look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
-- would be nice to have 3 sticky cols in trade AssetList and ImportPlayers
-- test firefox
-- test safari
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?
@@ -14,8 +7,14 @@ sticky first column in most tables
   - can configure for table at ... > Customize Columns
   - on mobile, uses shortened name (first initial) and team (abbrev)
 
-football/hockey box scores need 2 sticky columns without DataTable
+would be nice to have 3 sticky cols in trade AssetList and ImportPlayers
+
+2 sticky columns without DataTable
 - extract logic into reusable hook
+- football/hockey box scores
+- roster
+  - different default for football/hockey
+- depth
 
 xsName refactor
 - instead, store firstName and lastName and compute the names client side

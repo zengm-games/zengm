@@ -95,7 +95,7 @@ const updateDepth = async (
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "name", "age", "injury", "watch"],
+			attrs: ["pid", "name", "nameAbbrev", "age", "injury", "watch"],
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 			playoffs: playoffs === "playoffs",
 			regularSeason: playoffs !== "playoffs",

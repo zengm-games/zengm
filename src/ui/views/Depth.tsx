@@ -299,6 +299,7 @@ const Depth = ({
 									jerseyNumber={p.stats.jerseyNumber}
 									skills={p.ratings.skills}
 									watch={p.watch}
+									xsName={p.nameAbbrev}
 								>
 									{p.name}
 								</PlayerNameLabels>

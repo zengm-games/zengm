@@ -97,6 +97,7 @@ const updateRoster = async (
 			"tid",
 			"draft",
 			"name",
+			"nameAbbrev",
 			"age",
 			"born",
 			"contract",

@@ -298,6 +298,7 @@ const Roster = ({
 									season={season}
 									skills={p.ratings.skills}
 									watch={p.watch}
+									xsName={p.nameAbbrev}
 								>
 									{p.name}
 								</PlayerNameLabels>

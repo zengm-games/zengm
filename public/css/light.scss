@@ -1501,17 +1501,11 @@ table.sticky-xx {
 
 table.sticky-x,
 table.sticky-xx {
-	thead {
-		th {
-			background-color: $white;
-		}
-
-		tr th:nth-child(1) {
-			position: sticky;
-			left: 0; // for sticky-xx, this will be overwritten by JS
-			top: 0;
-			z-index: 12;
-		}
+	thead tr th:nth-child(1) {
+		position: sticky;
+		left: 0; // for sticky-xx, this will be overwritten by JS
+		top: 0;
+		z-index: 12;
 	}
 
 	tr.table-warning,

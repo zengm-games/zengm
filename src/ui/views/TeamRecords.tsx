@@ -165,6 +165,7 @@ const TeamRecords = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={1}
 				name="TeamRecords"
 				pagination={false}
 				rows={rows}

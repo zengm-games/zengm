@@ -1,6 +1,7 @@
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
+import { idb } from "../db";
 
 const updateHeadToHead = async (
 	{ abbrev, season, tid, type }: ViewInput<"headToHead">,
@@ -68,25 +69,26 @@ const updateHeadToHead = async (
 			},
 		);
 
-		const teams: ({
-			region: string;
-			name: string;
-			abbrev: string;
-			tid: number;
-			winp: number;
-		} & TeamInfo)[] = [];
+		const teamInfos = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid"],
+				seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
+				season: season === "all" ? g.get("season") : season,
+			},
+			"noCopyCache",
+		);
 
-		const teamInfoCache = g.get("teamInfoCache");
-
-		for (const info of infoByTid.values()) {
-			teams.push({
+		const teams = Array.from(infoByTid.values()).map(info => {
+			const t = teamInfos.find(t => t.tid === info.tid);
+			if (!t) {
+				throw new Error("Team not found");
+			}
+			return {
 				...info,
-				region: teamInfoCache[info.tid].region,
-				name: teamInfoCache[info.tid].name,
-				abbrev: teamInfoCache[info.tid].abbrev,
+				...t,
 				winp: helpers.calcWinp(info),
-			});
-		}
+			};
+		});
 
 		totals.winp = helpers.calcWinp(totals);
 

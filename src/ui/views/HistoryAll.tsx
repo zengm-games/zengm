@@ -160,6 +160,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 				className="align-middle"
 				cols={cols}
 				defaultSort={[0, "desc"]}
+				defaultStickyCols={1}
 				name="HistoryAll"
 				pagination
 				rows={rows}

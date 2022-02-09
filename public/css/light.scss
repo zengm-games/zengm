@@ -1442,7 +1442,8 @@ hr {
 	}
 }
 
-table.sticky-x {
+table.sticky-x,
+table.sticky-xx {
 	tr {
 		td:nth-child(1),
 		th:nth-child(1) {
@@ -1450,7 +1451,15 @@ table.sticky-x {
 			left: 0;
 			z-index: 10;
 			background-color: $white;
+		}
+	}
+}
 
+table.sticky-x {
+	// Only in tbody because :after conflicts with sort arrows from datatable.scss
+	tbody tr {
+		td:nth-child(1),
+		th:nth-child(1) {
 			&:after {
 				box-shadow: 0px 0px 0px 1px $border-color;
 				content: " ";
@@ -1471,7 +1480,13 @@ table.sticky-xx {
 			// left: 157px;
 			z-index: 10;
 			background-color: $white;
+		}
+	}
 
+	// Only in tbody because :after conflicts with sort arrows from datatable.scss
+	tbody tr {
+		td:nth-child(2),
+		th:nth-child(2) {
 			&:after {
 				box-shadow: 0px 0px 0px 1px $border-color;
 				content: " ";

@@ -6,13 +6,13 @@ sticky first column in most tables
 - background when sorted
 - dark mode
 - configurable per table
-- border on right
-  - mostly works with :after box-shadow, but in header it conflicts with sorting arrows
 - sorting arrows missing
 - look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?
+
+make watch not crash on scss parse error
 
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 

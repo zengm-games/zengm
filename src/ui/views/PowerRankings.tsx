@@ -1,10 +1,11 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, TeamLogoInline } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
 import { wrappedMovOrDiff } from "../components/MovOrDiff";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 
 const Other = ({
 	actualShowHealthy,
@@ -134,31 +135,14 @@ const PowerRankings = ({
 			key: t.tid,
 			data: [
 				t.rank,
-				{
-					value: (
-						<div className="d-flex align-items-center">
-							<TeamLogoInline
-								imgURL={t.seasonAttrs.imgURL}
-								imgURLSmall={t.seasonAttrs.imgURLSmall}
-							/>
-							<div className="ms-1">
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${t.seasonAttrs.abbrev}_${t.tid}`,
-										season,
-									])}
-								>
-									<span className="d-none d-sm-inline">
-										{t.seasonAttrs.region} {t.seasonAttrs.name}
-									</span>
-									<span className="d-sm-none">{t.seasonAttrs.abbrev}</span>
-								</a>
-							</div>
-						</div>
-					),
-					sortValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name}`,
-				},
+				wrappedTeamLogoAndName(
+					t,
+					helpers.leagueUrl([
+						"roster",
+						`${t.seasonAttrs.abbrev}_${t.tid}`,
+						season,
+					]),
+				),
 				conf ? conf.name.replace(" Conference", "") : null,
 				div ? div.name : null,
 				!challengeNoRatings ? (

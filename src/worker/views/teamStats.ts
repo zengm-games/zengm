@@ -29,6 +29,10 @@ export const getStats = async ({
 	const stats = statsTable.stats;
 	const seasonAttrs: TeamSeasonAttr[] = [
 		"abbrev",
+		"region",
+		"name",
+		"imgURL",
+		"imgURLSmall",
 		"won",
 		"lost",
 		"tied",

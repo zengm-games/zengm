@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { getCols, gradientStyleFactory, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, PlusMinus, MoreLinks } from "../components";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { formatMaybeInteger } from "./LeagueStats";
@@ -192,15 +193,14 @@ const TeamStats = ({
 			key: t.tid,
 			data: [
 				null,
-				<a
-					href={helpers.leagueUrl([
+				wrappedTeamLogoAndName(
+					t,
+					helpers.leagueUrl([
 						"roster",
 						`${t.seasonAttrs.abbrev}_${t.tid}`,
 						season,
-					])}
-				>
-					{t.seasonAttrs.abbrev}
-				</a>,
+					]),
+				),
 				...Object.values(data),
 			],
 		};
@@ -221,6 +221,7 @@ const TeamStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[3, "desc"]}
+				defaultStickyCols={2}
 				name={`TeamStats${teamOpponent}`}
 				rankCol={0}
 				rows={rows}

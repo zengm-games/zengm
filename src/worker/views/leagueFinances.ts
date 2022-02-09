@@ -34,6 +34,8 @@ const updateLeagueFinances = async (
 						"tid",
 						"region",
 						"name",
+						"imgURL",
+						"imgURLSmall",
 					],
 					season: inputs.season,
 				},

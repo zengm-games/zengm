@@ -5,13 +5,13 @@ sticky first column in most tables
 - configurable per table
 - look at all tables and figure out how many cols to make sticky, and if mobile needs a small version
 - switch from 2 to 1 - need to clear the css set for sticky-xx left?
-- setting in the UI to set sticky
 - sorting columns in customize columns window is broken with sticky-xx
 - test firefox
 - test safari
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?
+- footer (like team stats)
 
 make watch not crash on scss parse error
 

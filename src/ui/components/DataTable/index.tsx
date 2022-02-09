@@ -479,8 +479,10 @@ const DataTable = ({
 					}));
 					setStatePartial({
 						colOrder: newOrder,
+						stickyCols: defaultStickyCols,
 					});
 					state.settingsCache.set("DataTableColOrder", newOrder);
+					state.settingsCache.clear("DataTableStickyCols");
 				}}
 				onSortEnd={({ oldIndex, newIndex }) => {
 					const newOrder = arrayMoveImmutable(
@@ -510,6 +512,13 @@ const DataTable = ({
 						state.settingsCache.set("DataTableColOrder", newOrder);
 					}
 				}}
+				onChangeStickyCols={stickyCols => {
+					setStatePartial({
+						stickyCols,
+					});
+					state.settingsCache.set("DataTableStickyCols", stickyCols);
+				}}
+				stickyCols={state.stickyCols}
 			/>
 			<div
 				className={classNames(className, {

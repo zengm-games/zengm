@@ -12,7 +12,6 @@ type Team = {
 };
 
 const TeamLogoAndName = ({ t, url }: { t: Team; url: string }) => {
-	console.log(t, url);
 	return (
 		<div className="d-flex align-items-center">
 			<TeamLogoInline

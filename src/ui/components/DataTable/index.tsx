@@ -421,7 +421,7 @@ const DataTable = ({
 
 	const tableRef = useRef<HTMLTableElement>(null);
 	const prevStickyCols = useRef(state.stickyCols);
-	useEffect(() => {
+	const updateStickyCols = useCallback(() => {
 		const getRows = () => {
 			const table = tableRef.current;
 			if (!table) {
@@ -472,7 +472,16 @@ const DataTable = ({
 		}
 
 		prevStickyCols.current = state.stickyCols;
-	});
+	}, [state.stickyCols]);
+	useEffect(() => {
+		window.addEventListener("optimizedResize", updateStickyCols);
+		return () => {
+			window.removeEventListener("optimizedResize", updateStickyCols);
+		};
+	}, [updateStickyCols]);
+
+	// Run every render, because there's no better way to detect when data changes, which can change column widths
+	useEffect(updateStickyCols);
 
 	return (
 		<>

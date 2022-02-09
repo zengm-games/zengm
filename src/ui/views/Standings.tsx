@@ -88,7 +88,7 @@ export const TeamColumn = ({
 						href={helpers.leagueUrl([
 							"roster",
 							`${t.seasonAttrs.abbrev}_${t.tid}`,
-							...(season !== undefined ? [season] : []),
+							season,
 						])}
 					>
 						<span className="d-none d-sm-inline">

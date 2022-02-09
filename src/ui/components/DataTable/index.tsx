@@ -425,34 +425,31 @@ const DataTable = ({
 			}
 			console.log("effect", table);
 
-			let row: HTMLTableRowElement | undefined;
 			let headerRows = Array.from(
 				table.querySelectorAll<HTMLTableRowElement>("thead tr"),
 			);
 			if (headerRows.length > 0) {
 				// Last row - no superCols
 				headerRows = [headerRows.at(-1)];
-
-				row = headerRows[0];
 			}
 
 			const bodyRows = table.querySelectorAll<HTMLTableRowElement>("tbody tr");
+			const footerRows =
+				table.querySelectorAll<HTMLTableRowElement>("tfoot tr");
 
-			if (!row) {
-				if (bodyRows.length > 0) {
-					row = bodyRows[0];
-				}
+			const rows = [...headerRows, ...bodyRows, ...footerRows];
+
+			if (rows.length === 0) {
+				return;
 			}
 
-			const cell = row?.cells[0];
+			const cell = rows[0].cells[0];
 
 			if (!cell) {
 				return;
 			}
 
 			const width = `${cell.offsetWidth}px`;
-
-			const rows = [...headerRows, ...bodyRows];
 
 			for (const row of rows) {
 				const cell = row.cells[1];

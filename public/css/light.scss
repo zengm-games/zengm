@@ -1464,11 +1464,11 @@ table.sticky-x {
 		}
 	}
 
-	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
-	tbody tr {
+	// :before because :after conflicts with sort arrows from datatable.scss
+	tr {
 		td:nth-child(1),
 		th:nth-child(1) {
-			&:after {
+			&:before {
 				box-shadow: 0px 0px 0px 1px $border-color;
 				content: " ";
 				height: 100%;
@@ -1499,11 +1499,11 @@ table.sticky-xx {
 		}
 	}
 
-	// Only in tbody because :after conflicts with sort arrows from datatable.scss. Could use :before, but actually it kind of looks nice this way.
-	tbody tr {
+	// :before because :after conflicts with sort arrows from datatable.scss
+	tr {
 		td:nth-child(2),
 		th:nth-child(2) {
-			&:after {
+			&:before {
 				box-shadow: 0px 0px 0px 1px $border-color;
 				content: " ";
 				height: 100%;

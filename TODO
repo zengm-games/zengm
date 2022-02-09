@@ -7,6 +7,8 @@ sticky first column in most tables
 - test firefox
 - test safari
 - box scores
+- player profile
+- trade summary
 - supercols
   - sticky-x
   - sticky-xx - how to deal with colspan?

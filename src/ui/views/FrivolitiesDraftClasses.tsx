@@ -69,6 +69,7 @@ const FrivolitiesDraftClasses = ({
 							jerseyNumber={p.jerseyNumber}
 							pid={p.pid}
 							season={p.draft.year}
+							xsName={p.nameAbbrev}
 						>
 							{p.name}
 						</PlayerNameLabels>
@@ -99,6 +100,7 @@ const FrivolitiesDraftClasses = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
+				defaultStickyCols={2}
 				name="FrivolitiesDraftClasses"
 				pagination={pagination}
 				rows={rows}

@@ -49,6 +49,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			attrs: [
 				"pid",
 				"name",
+				"nameAbbrev",
 				"draft",
 				"diedYear",
 				"ageAtDeath",

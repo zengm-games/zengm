@@ -77,6 +77,7 @@ export const getMostXPlayers = async ({
 		attrs: [
 			"pid",
 			"name",
+			"nameAbbrev",
 			"draft",
 			"retiredYear",
 			"statsTids",

@@ -6,6 +6,10 @@ import { PLAYER } from "../../common";
 import { dataTableWrappedMood } from "../components/Mood";
 import { wrappedHeight } from "../components/Height";
 import { wrappedWeight } from "../components/Weight";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const PlayerBios = ({
 	abbrev,
@@ -93,11 +97,9 @@ const PlayerBios = ({
 					maxWidth: true,
 					p,
 				}),
-				p.contract.amount > 0
-					? helpers.formatCurrency(p.contract.amount, "M")
-					: null,
+				p.contract.amount > 0 ? wrappedContractAmount(p) : null,
 				p.contract.amount > 0 && season === currentSeason
-					? p.contract.exp
+					? wrappedContractExp(p)
 					: null,
 				{
 					value: (

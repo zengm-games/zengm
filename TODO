@@ -1,3 +1,5 @@
+more consistent use of italics for non-guaranteed contracts https://old.reddit.com/r/BasketballGM/comments/sp9uf5/version_202202100656_no_more_sticky_columns_on/hwejc87/?context=3
+
 xsName refactor
 - instead, store firstName and lastName and compute the names client side
 - player feats and box scores will need to be upgraded

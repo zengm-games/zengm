@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
-import { isSport, PHASE, PLAYER, WEBSITE_ROOT } from "../../../common";
+import { isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
 	CountryFlag,
 	HelpPopover,
@@ -17,28 +17,14 @@ import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { Phase, View } from "../../../common/types";
-
-// If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
-const justDrafted = (
-	p: View<"roster">["players"][number],
-	phase: Phase,
-	season: number,
-) => {
-	return (
-		p.contract.rookie &&
-		((p.draft.year === season && phase >= PHASE.DRAFT) ||
-			(p.draft.year === season - 1 &&
-				phase < PHASE.REGULAR_SEASON &&
-				phase >= 0))
-	);
-};
+import { Contract, wasJustDrafted } from "../../components/contract";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
 	phase: Phase,
 	season: number,
 ) => {
-	const wasPlayerJustDrafted = justDrafted(p, phase, season);
+	const wasPlayerJustDrafted = wasJustDrafted(p, phase, season);
 
 	let releaseMessage;
 	if (wasPlayerJustDrafted) {
@@ -320,20 +306,8 @@ const Roster = ({
 								) : null}
 							</td>
 							{season === currentSeason ? (
-								<td
-									style={{
-										fontStyle: justDrafted(p, phase, currentSeason)
-											? "italic"
-											: "normal",
-									}}
-									title={
-										justDrafted(p, phase, currentSeason)
-											? "Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing."
-											: undefined
-									}
-								>
-									{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-									{p.contract.exp}
+								<td>
+									<Contract p={p} />
 								</td>
 							) : null}
 							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>

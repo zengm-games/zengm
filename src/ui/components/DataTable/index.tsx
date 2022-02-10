@@ -519,6 +519,7 @@ const DataTable = ({
 							{
 								"table-sm": small !== false,
 								"table-striped": striped !== false,
+								"table-borderless": striped !== false,
 							},
 							stickyClass,
 						)}

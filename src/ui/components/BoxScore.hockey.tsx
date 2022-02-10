@@ -94,7 +94,8 @@ const StatsTable = ({
 	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
 
 	const { stickyClass, tableRef } = useStickyXX(2);
-	let tableClasses = "table table-striped table-sm table-hover";
+	let tableClasses =
+		"table table-striped table-borderless table-sm table-hover";
 	if (stickyClass) {
 		tableClasses += ` ${stickyClass}`;
 	}

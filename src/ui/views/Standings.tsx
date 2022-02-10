@@ -240,7 +240,7 @@ const GroupStandings = ({
 
 	return (
 		<ResponsiveTableWrapper>
-			<table className="table table-striped table-sm table-hover sticky-x">
+			<table className="table table-striped table-borderless table-sm table-hover sticky-x">
 				<thead>
 					<tr>
 						<th className="standings-name">{name}</th>
@@ -369,7 +369,7 @@ const SmallStandings = ({
 	);
 
 	return (
-		<table className="table table-striped table-hover table-sm">
+		<table className="table table-striped table-borderless table-hover table-sm">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>

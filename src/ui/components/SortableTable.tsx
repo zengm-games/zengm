@@ -247,7 +247,8 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		[onChange, onSwap, indexSelected],
 	);
 
-	let tableClasses = "table table-striped table-sm table-hover";
+	let tableClasses =
+		"table table-striped table-borderless table-sm table-hover";
 	if (stickyClass) {
 		tableClasses += ` ${stickyClass}`;
 	}

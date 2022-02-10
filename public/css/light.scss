@@ -384,13 +384,13 @@ table {
 	font-variant: tabular-nums;
 }
 
-.table:not(.table-borderless):not(.table-bordered) {
+.table:not(.table-bordered) {
 	border-top: $table-border-width solid $table-border-color;
 }
 
 // .table is so this doesn't apply to a floating row while dragging
 .table tr.separator td {
-	border-bottom: 1px solid $gray-700;
+	border-bottom: 2px solid $table-border-color;
 }
 
 .roster-handle {
@@ -1175,7 +1175,7 @@ button.fast-forward {
 
 @include media-breakpoint-up(sm) {
 	.table-separator-right {
-		border-right: 2px solid $gray-300;
+		border-right: 2px solid $table-border-color;
 		padding-right: 1em !important;
 	}
 	.table-separator-left {

@@ -124,7 +124,7 @@ const Offer = (props: OfferProps) => {
 	if (picks.length > 0) {
 		offerPicks = (
 			<div className="col-md-4">
-				<table className="table table-striped table-sm">
+				<table className="table table-striped table-borderless table-sm">
 					<thead>
 						<tr>
 							<th>Draft Picks</th>

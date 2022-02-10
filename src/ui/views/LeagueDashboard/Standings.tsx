@@ -27,7 +27,7 @@ const Standings = ({
 
 	return (
 		<>
-			<table className="table table-striped table-sm mb-1">
+			<table className="table table-striped table-borderless table-sm mb-1">
 				<thead>
 					<tr>
 						<th style={width100}>Conference</th>

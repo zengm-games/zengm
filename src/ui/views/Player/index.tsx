@@ -336,7 +336,7 @@ const Player2 = ({
 				<div className="col-6 col-md-3">
 					<h2>Awards</h2>
 					{awardsGrouped.length > 0 ? (
-						<table className="table table-nonfluid table-striped table-sm player-awards">
+						<table className="table table-nonfluid table-striped table-borderless table-sm player-awards">
 							<tbody>
 								{awardsGrouped.map((a, i) => {
 									return (

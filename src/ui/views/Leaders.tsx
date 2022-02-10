@@ -163,7 +163,7 @@ const Leaders = ({
 							style={{ marginTop: 14 }}
 						>
 							<ResponsiveTableWrapper>
-								<table className="table table-striped table-sm leaders">
+								<table className="table table-striped table-borderless table-sm leaders">
 									<thead>
 										<tr title={title}>
 											<th>{name}</th>

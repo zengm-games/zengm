@@ -82,7 +82,7 @@ const GamesList = ({
 	}
 
 	return (
-		<table className="table table-striped table-sm game-log-list">
+		<table className="table table-striped table-borderless table-sm game-log-list">
 			<thead>
 				<tr>
 					<th>Opp</th>

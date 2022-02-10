@@ -129,6 +129,8 @@ const Roster = ({
 
 	const showMood = season === currentSeason;
 
+	const stickyCols = editable ? 2 : 1;
+
 	return (
 		<>
 			<MoreLinks
@@ -170,7 +172,7 @@ const Roster = ({
 			<div className="clearfix" />
 
 			<SortableTable
-				stickyCols={2}
+				stickyCols={stickyCols}
 				disabled={!editable}
 				values={playersSorted}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}

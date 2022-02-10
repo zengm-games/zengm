@@ -8,7 +8,6 @@ import { PLAYER_GAME_STATS } from "../../common/constants.hockey";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
-import useStickyXX from "./DataTable/useStickyXX";
 
 type Team = {
 	abbrev: string;
@@ -93,21 +92,13 @@ const StatsTable = ({
 	const sortable = players.length > 1;
 	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
 
-	const { stickyClass, tableRef } = useStickyXX(2);
-	let tableClasses =
-		"table table-striped table-borderless table-sm table-hover";
-	if (stickyClass) {
-		tableClasses += ` ${stickyClass}`;
-	}
-
 	return (
 		<div className="mb-3">
 			<ResponsiveTableWrapper>
-				<table ref={tableRef} className={tableClasses}>
+				<table className="table table-striped table-borderless table-sm table-hover">
 					<thead>
 						<tr>
-							<th />
-							<th>{title}</th>
+							<th colSpan={2}>{title}</th>
 							<StatsHeader
 								cols={cols}
 								onClick={onClick}
@@ -131,8 +122,7 @@ const StatsTable = ({
 					{showFooter ? (
 						<tfoot>
 							<tr>
-								<th />
-								<th>Total</th>
+								<th colSpan={2}>Total</th>
 								{stats.map(stat => (
 									<th key={stat}>
 										{stat === "pm"

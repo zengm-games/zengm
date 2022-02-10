@@ -224,7 +224,6 @@ const Depth = ({
 			<div className="clearfix" />
 
 			<SortableTable
-				stickyCols={2}
 				disabled={!editable}
 				values={playersSorted}
 				highlightHandle={({ index }) => index < numStarters * numLines}

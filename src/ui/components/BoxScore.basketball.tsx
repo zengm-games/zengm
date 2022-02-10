@@ -126,7 +126,7 @@ const StatsTable = ({
 
 	return (
 		<ResponsiveTableWrapper>
-			<table className="table table-striped table-borderless table-sm table-hover sticky-x">
+			<table className="table table-striped table-borderless table-sm table-hover">
 				<thead>
 					<tr>
 						<th>Name</th>

@@ -170,7 +170,6 @@ const Roster = ({
 			<div className="clearfix" />
 
 			<SortableTable
-				stickyCols={2}
 				disabled={!editable}
 				values={playersSorted}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}

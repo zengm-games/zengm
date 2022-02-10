@@ -97,11 +97,11 @@ const createFilterFunction = (
 						continue;
 					}
 
-					if (direction === ">" && numericVal <= number) {
+					if (direction === ">" && numericVal <= number + Number.EPSILON) {
 						return true;
 					}
 
-					if (direction === "<" && numericVal >= number) {
+					if (direction === "<" && numericVal + Number.EPSILON >= number) {
 						return true;
 					}
 
@@ -141,11 +141,11 @@ const createFilterFunction = (
 						continue;
 					}
 
-					if (direction === ">" && numericVal >= number) {
+					if (direction === ">" && numericVal + Number.EPSILON >= number) {
 						return true;
 					}
 
-					if (direction === "<" && numericVal <= number) {
+					if (direction === "<" && numericVal <= number + Number.EPSILON) {
 						return true;
 					}
 

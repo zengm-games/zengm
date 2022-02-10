@@ -182,7 +182,7 @@ const Row = ({
 			onClick={toggleClicked}
 		>
 			<td
-				className={classNames("d-flex", {
+				className={classNames({
 					"table-info": tid === userTid,
 				})}
 			>

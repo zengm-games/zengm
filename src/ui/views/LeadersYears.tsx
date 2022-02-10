@@ -93,6 +93,7 @@ const LeadersYears = ({
 				<DataTable
 					cols={cols}
 					defaultSort={[0, "desc"]}
+					defaultStickyCols={1}
 					name="LeadersYears"
 					rows={rows}
 				/>

@@ -27,7 +27,7 @@ const StartingLineup = ({
 					: "Top Players"}
 			</h2>
 			<ResponsiveTableWrapper nonfluid className="mb-0">
-				<table className="table table-striped table-borderless table-sm">
+				<table className="table table-striped table-borderless table-sm sticky-x">
 					<thead>
 						<tr>
 							<th>Name</th>

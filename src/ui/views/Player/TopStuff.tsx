@@ -411,7 +411,7 @@ const TopStuff = ({
 
 	return (
 		<div className="mb-3">
-			<div className="d-sm-flex">
+			<div className="d-sm-flex align-items-start">
 				<div className="player-bio">
 					<div className="d-flex">
 						<div
@@ -582,7 +582,7 @@ const TopStuff = ({
 					) : null}
 				</div>
 
-				<div className="mt-3 mt-sm-0 text-nowrap">
+				<div className="mt-3 mt-sm-0 text-nowrap overflow-auto">
 					{showRatingsOverview ? (
 						<RatingsOverview ratings={player.ratings} season={season} />
 					) : null}

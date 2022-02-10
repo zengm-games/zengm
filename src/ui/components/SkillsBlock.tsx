@@ -1,3 +1,4 @@
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { bySport } from "../../common";
 
 const tooltips = bySport({
@@ -34,20 +35,52 @@ const tooltips = bySport({
 	},
 });
 
+const TruncatedSkills = ({
+	numSkillsBeforeTruncate,
+	skills,
+}: {
+	numSkillsBeforeTruncate: number;
+	skills: string[];
+}) => {
+	const remainingSkills = skills.slice(numSkillsBeforeTruncate);
+
+	return (
+		<OverlayTrigger
+			overlay={
+				<Tooltip id="truncated-skills">
+					{numSkillsBeforeTruncate > 0 ? "..." : null}
+					{remainingSkills.join(" ")}
+				</Tooltip>
+			}
+		>
+			<button className="btn btn-link p-0 skill">...</button>
+		</OverlayTrigger>
+	);
+};
+
 const SkillsBlock = ({
 	className,
+	numSkillsBeforeTruncate,
 	skills,
 }: {
 	className?: string;
+	numSkillsBeforeTruncate?: number;
 	skills?: string[];
 }) => {
 	if (skills === undefined) {
 		return null;
 	}
 
+	const truncate =
+		numSkillsBeforeTruncate !== undefined &&
+		skills.length > numSkillsBeforeTruncate;
+	const truncatedSkills = truncate
+		? skills.slice(0, numSkillsBeforeTruncate)
+		: skills;
+
 	return (
 		<span className={className}>
-			{skills.map(skill => (
+			{truncatedSkills.map(skill => (
 				<span
 					key={skill}
 					className="skill"
@@ -60,6 +93,12 @@ const SkillsBlock = ({
 					{skill}
 				</span>
 			))}
+			{truncate ? (
+				<TruncatedSkills
+					skills={skills}
+					numSkillsBeforeTruncate={numSkillsBeforeTruncate}
+				/>
+			) : null}
 		</span>
 	);
 };

@@ -394,7 +394,7 @@ table {
 
 // .table is so this doesn't apply to a floating row while dragging
 .table tr.separator td {
-	border-bottom: 2px solid $table-border-color;
+	border-bottom: 1px solid $gray-700;
 }
 
 .roster-handle {

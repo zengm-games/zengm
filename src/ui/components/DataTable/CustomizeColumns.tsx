@@ -92,6 +92,24 @@ const CustomizeColumns = ({
 		<Modal animation={false} centered show={show} onHide={onHide}>
 			<Modal.Header closeButton>Customize Columns</Modal.Header>
 			<Modal.Body>
+				<div className="d-flex mb-3 align-items-center">
+					<div>Number of sticky columns:</div>
+					<div className="btn-group ms-2">
+						{stickyColsOptions.map(i => (
+							<button
+								key={i}
+								className={`btn ${
+									stickyCols === i ? "btn-primary" : "btn-secondary"
+								}`}
+								onClick={() => {
+									onChangeStickyCols(i);
+								}}
+							>
+								{i}
+							</button>
+						))}
+					</div>
+				</div>
 				<p>
 					Click and drag to reorder columns, or use the checkboxes to show/hide
 					columns.
@@ -128,22 +146,6 @@ const CustomizeColumns = ({
 						);
 					})}
 				</Container>
-				<h3 className="mt-3">Number of sticky columns:</h3>
-				<div className="btn-group">
-					{stickyColsOptions.map(i => (
-						<button
-							key={i}
-							className={`btn ${
-								stickyCols === i ? "btn-primary" : "btn-secondary"
-							}`}
-							onClick={() => {
-								onChangeStickyCols(i);
-							}}
-						>
-							{i}
-						</button>
-					))}
-				</div>
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-danger" onClick={onReset}>

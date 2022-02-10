@@ -19,6 +19,10 @@ $popover-body-padding-x: 0.75rem;
 $form-select-indicator-padding: 1.1rem;
 $form-select-bg-position: right 0.15rem center;
 
+// Default is 0.75rem, but this saves a bit of space
+$container-padding-x: 0.5rem;
+$grid-gutter-width: 1rem; // Needs to decrease too, or it overflows
+
 .form-check-inline {
 	margin-right: 0.75rem !important;
 }
@@ -962,8 +966,8 @@ tr.table-warning:hover > td {
 	min-height: 39px;
 
 	// Like .container-fluid
-	padding-left: var(--bs-gutter-x, 0.75rem);
-	padding-right: var(--bs-gutter-x, 0.75rem);
+	padding-left: var(--bs-gutter-x, $container-padding-x);
+	padding-right: var(--bs-gutter-x, $container-padding-x);
 }
 .title-bar-right-links {
 	.nav-item {

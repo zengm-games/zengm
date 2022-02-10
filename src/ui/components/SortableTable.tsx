@@ -80,7 +80,9 @@ const Row = SortableElement(
 				})}
 				onClick={toggleClicked}
 			>
-				{disabled2 ? null : (
+				{disabled2 ? (
+					<td className="p-0" />
+				) : (
 					<ReorderHandle
 						highlight={highlight}
 						isDragged={isDragged}
@@ -255,7 +257,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			<table ref={tableRef} className={tableClasses}>
 				<thead>
 					<tr>
-						{disabled ? null : <th />}
+						<th className="p-0" />
 						{cols()}
 					</tr>
 				</thead>

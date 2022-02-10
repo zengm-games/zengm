@@ -33,6 +33,7 @@ const updateUserRoster = async (
 				"watch",
 				"untradable",
 				"jerseyNumber",
+				"draft",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,

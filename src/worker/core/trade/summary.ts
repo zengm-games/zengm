@@ -45,7 +45,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 				.then(async playersTemp => {
 					let players = playersTemp.filter(p => pids[i].includes(p.pid));
 					players = await idb.getCopies.playersPlus(players, {
-						attrs: ["pid", "name", "contract"],
+						attrs: ["pid", "name", "contract", "draft"],
 						season: g.get("season"),
 						tid: tids[i],
 						showRookies: true,

@@ -12,6 +12,10 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, helpers, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const FreeAgents = ({
 	capSpace,
@@ -110,8 +114,8 @@ const FreeAgents = ({
 					maxWidth: true,
 					p,
 				}),
-				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
-				p.contract.exp,
+				wrappedContractAmount(p, p.mood.user.contractAmount / 1000),
+				wrappedContractExp(p),
 				{
 					value: (
 						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

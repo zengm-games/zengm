@@ -11,6 +11,10 @@ import {
 } from "../components";
 import type { View } from "../../common/types";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const WatchList = ({
 	challengeNoRatings,
@@ -63,8 +67,8 @@ const WatchList = ({
 		} else if (p.tid === PLAYER.UNDRAFTED) {
 			contract = `${p.draft.year} Draft Prospect`;
 		} else {
-			contract = helpers.formatCurrency(p.contract.amount, "M");
-			exp = p.contract.exp;
+			contract = wrappedContractAmount(p);
+			exp = wrappedContractExp(p);
 		}
 
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;

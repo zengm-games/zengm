@@ -1638,6 +1638,7 @@ const getTradingBlockOffers = async ({
 						"injury",
 						"watch",
 						"jerseyNumber",
+						"draft",
 					],
 					ratings: ["ovr", "pot", "skills", "pos"],
 					stats,

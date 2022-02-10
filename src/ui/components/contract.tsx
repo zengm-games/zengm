@@ -36,7 +36,13 @@ const useJustDrafted = (p: ContractPlayer) => {
 const NON_GUARANTEED_CONTRACT_TEXT =
 	"Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing.";
 
-export const ContractAmount = ({ p }: { p: ContractPlayer }) => {
+export const ContractAmount = ({
+	p,
+	override,
+}: {
+	p: ContractPlayer;
+	override?: number;
+}) => {
 	const justDrafted = useJustDrafted(p);
 
 	return (
@@ -44,22 +50,28 @@ export const ContractAmount = ({ p }: { p: ContractPlayer }) => {
 			className={justDrafted ? "fst-italic" : undefined}
 			title={justDrafted ? NON_GUARANTEED_CONTRACT_TEXT : undefined}
 		>
-			{helpers.formatCurrency(p.contract.amount, "M")}
+			{helpers.formatCurrency(override ?? p.contract.amount, "M")}
 		</span>
 	);
 };
 
-export const wrappedContractAmount = (p: ContractPlayer) => {
-	const formatted = helpers.formatCurrency(p.contract.amount, "M");
+export const wrappedContractAmount = (p: ContractPlayer, override?: number) => {
+	const formatted = helpers.formatCurrency(override ?? p.contract.amount, "M");
 
 	return {
-		value: <ContractAmount p={p} />,
+		value: <ContractAmount p={p} override={override} />,
 		sortValue: formatted,
 		searchValue: formatted,
 	};
 };
 
-export const ContractExp = ({ p }: { p: ContractPlayer }) => {
+export const ContractExp = ({
+	p,
+	override,
+}: {
+	p: ContractPlayer;
+	override?: number;
+}) => {
 	const justDrafted = useJustDrafted(p);
 
 	return (
@@ -67,16 +79,18 @@ export const ContractExp = ({ p }: { p: ContractPlayer }) => {
 			className={justDrafted ? "fst-italic" : undefined}
 			title={justDrafted ? NON_GUARANTEED_CONTRACT_TEXT : undefined}
 		>
-			{p.contract.exp}
+			{override ?? p.contract.exp}
 		</span>
 	);
 };
 
-export const wrappedContractExp = (p: ContractPlayer) => {
+export const wrappedContractExp = (p: ContractPlayer, override?: number) => {
+	const formatted = override ?? p.contract.exp;
+
 	return {
-		value: <ContractExp p={p} />,
-		sortValue: p.contract.exp,
-		searchValue: p.contract.exp,
+		value: <ContractExp p={p} override={override} />,
+		sortValue: formatted,
+		searchValue: formatted,
 	};
 };
 

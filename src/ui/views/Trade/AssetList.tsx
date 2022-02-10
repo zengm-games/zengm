@@ -3,6 +3,10 @@ import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { Dropdown } from "react-bootstrap";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../../components/contract";
 
 type HandleToggle = (
 	userOrOther: "other" | "user",
@@ -68,8 +72,8 @@ const genPlayerRows = (
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				helpers.formatCurrency(p.contract.amount, "M"),
-				p.contract.exp,
+				wrappedContractAmount(p),
+				wrappedContractExp(p),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {

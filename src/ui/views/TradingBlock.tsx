@@ -12,6 +12,10 @@ import {
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
 import classNames from "classnames";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
@@ -75,8 +79,8 @@ const OfferPlayers = ({
 					p.age,
 					!challengeNoRatings ? p.ratings.ovr : null,
 					!challengeNoRatings ? p.ratings.pot : null,
-					helpers.formatCurrency(p.contract.amount, "M"),
-					p.contract.exp,
+					wrappedContractAmount(p),
+					wrappedContractExp(p),
 					...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				],
 			};
@@ -405,8 +409,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				helpers.formatCurrency(p.contract.amount, "M"),
-				p.contract.exp,
+				wrappedContractAmount(p),
+				wrappedContractExp(p),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 		};

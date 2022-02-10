@@ -6,6 +6,7 @@ import {
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { isSport } from "../../../common";
+import { Contract } from "../../components/contract";
 
 const StartingLineup = ({
 	challengeNoRatings,
@@ -76,8 +77,7 @@ const StartingLineup = ({
 									) : null}
 								</td>
 								<td>
-									{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-									{p.contract.exp}
+									<Contract p={p} />
 								</td>
 								{startersStats.map(stat => (
 									<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>

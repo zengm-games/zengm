@@ -3,6 +3,10 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { POSITIONS, PLAYER, isSport } from "../../common";
 import type { View } from "../../common/types";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const PlayerRatings = ({
 	abbrev,
@@ -80,11 +84,9 @@ const PlayerRatings = ({
 					{p.stats.abbrev}
 				</a>,
 				p.age,
-				p.contract.amount > 0
-					? helpers.formatCurrency(p.contract.amount, "M")
-					: null,
+				p.contract.amount > 0 ? wrappedContractAmount(p) : null,
 				p.contract.amount > 0 && season === currentSeason
-					? p.contract.exp
+					? wrappedContractExp(p)
 					: null,
 				showRatings ? p.ratings.ovr : null,
 				showRatings ? p.ratings.pot : null,

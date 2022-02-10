@@ -3,6 +3,7 @@ import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import classNames from "classnames";
 import { SafeHtml } from "../../components";
+import { ContractAmount } from "../../components/contract";
 
 const Summary = forwardRef(
 	(
@@ -27,7 +28,7 @@ const Summary = forwardRef(
 							{summary.teams[t.other].trade.map(p => (
 								<li key={`p${p.pid}`}>
 									<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
-									{helpers.formatCurrency(p.contract.amount, "M")})
+									{<ContractAmount p={p} />})
 								</li>
 							))}
 							{summary.teams[t.other].picks.map(pick => (

@@ -265,6 +265,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"tid",
 					"age",
 					"contract",
+					"draft",
 					"rosterOrder",
 					"injury",
 					"watch",

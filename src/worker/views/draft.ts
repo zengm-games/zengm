@@ -183,6 +183,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"abbrev",
 				"tid",
 				"valueFuzz",
+				"draft",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
@@ -216,7 +217,6 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showNoStats: true,
 			showRookies: true,
 		});
-		console.log("hi", drafted, undrafted);
 
 		return {
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),

@@ -44,6 +44,7 @@ const updateFreeAgents = async () => {
 			"watch",
 			"jerseyNumber",
 			"mood",
+			"draft",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,

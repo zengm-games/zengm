@@ -10,6 +10,10 @@ import {
 	RosterComposition,
 } from "../components";
 import type { View } from "../../common/types";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const DraftButtons = ({
 	spectator,
@@ -174,8 +178,8 @@ const Draft = ({
 			data.splice(
 				6,
 				0,
-				helpers.formatCurrency(p.contract.amount, "M"),
-				p.contract.exp,
+				wrappedContractAmount(p),
+				wrappedContractExp(p),
 				...stats.map(stat =>
 					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
 						? helpers.roundStat(p.stats[stat], stat)

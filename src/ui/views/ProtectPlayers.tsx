@@ -5,6 +5,10 @@ import { confirm, helpers, toWorker, realtimeUpdate, getCols } from "../util";
 import type { View } from "../../common/types";
 import { PlayerNameLabels, SafeHtml, DataTable } from "../components";
 import { PHASE } from "../../common";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -68,8 +72,8 @@ const PlayerList = ({
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				helpers.formatCurrency(p.contract.amount, "M"),
-				p.contract.exp,
+				wrappedContractAmount(p),
+				wrappedContractExp(p),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,

@@ -95,6 +95,7 @@ const updateTrade = async () => {
 		"nameAbbrev",
 		"age",
 		"contract",
+		"draft",
 		"injury",
 		"watch",
 		"untradable",

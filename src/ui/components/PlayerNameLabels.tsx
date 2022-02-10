@@ -39,7 +39,7 @@ const PlayerNameLabels = (props: {
 
 	const name = xsName ? (
 		<>
-			<span className="d-sm-none">{xsName}</span>
+			<span className="d-inline-block d-sm-none">{xsName}</span>
 			<span className="d-none d-sm-inline">{children}</span>
 		</>
 	) : (
@@ -49,7 +49,9 @@ const PlayerNameLabels = (props: {
 	return (
 		<span style={style}>
 			{props.hasOwnProperty("jerseyNumber") ? (
-				<span className="text-muted jersey-number-name">{jerseyNumber}</span>
+				<span className="text-muted jersey-number-name d-none d-sm-inline">
+					{jerseyNumber}
+				</span>
 			) : null}
 			{typeof pos === "string" ? `${pos} ` : null}
 			{pid !== undefined ? (

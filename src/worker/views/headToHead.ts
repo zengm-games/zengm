@@ -74,6 +74,7 @@ const updateHeadToHead = async (
 				attrs: ["tid"],
 				seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
 				season: season === "all" ? g.get("season") : season,
+				addDummySeason: true,
 			},
 			"noCopyCache",
 		);

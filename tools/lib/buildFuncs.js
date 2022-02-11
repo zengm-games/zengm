@@ -49,6 +49,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 
 						/^dark-select/,
 						/^bar-graph/,
+						/^dashboard-top-link-other/,
 					],
 				},
 		  });

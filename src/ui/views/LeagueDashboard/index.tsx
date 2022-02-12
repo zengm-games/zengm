@@ -16,13 +16,14 @@ const LeagueDashboard = ({
 	events,
 	leagueLeaders,
 	lost,
+	maxPlayoffSeed,
+	maxPlayoffSeedNoPlayIn,
 	messages,
 	name,
 	numConfs,
 	numGamesToWinSeries,
 	numPlayersOnCourt,
 	numPlayoffRounds,
-	numPlayoffTeams,
 	otl,
 	payroll,
 	playoffRoundsWon,
@@ -75,7 +76,9 @@ const LeagueDashboard = ({
 							<div className="d-none d-sm-block mt-2">
 								<Standings
 									confTeams={confTeams}
-									numPlayoffTeams={numPlayoffTeams}
+									maxPlayoffSeed={maxPlayoffSeed}
+									maxPlayoffSeedNoPlayIn={maxPlayoffSeedNoPlayIn}
+									numConfs={numConfs}
 									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									usePts={usePts}

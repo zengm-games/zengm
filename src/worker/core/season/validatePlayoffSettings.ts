@@ -31,12 +31,13 @@ const validatePlayoffSettings = ({
 		);
 	}
 
-	const numPlayoffTeams = getNumPlayoffTeamsRaw({
+	const numTeams = getNumPlayoffTeamsRaw({
 		numRounds,
 		numPlayoffByes,
 		playIn,
 		byConf,
 	});
+	const numPlayoffTeams = numTeams.numPlayoffTeams + numTeams.numPlayInTeams;
 
 	if (numActiveTeams !== undefined && numPlayoffTeams > numActiveTeams) {
 		throw new Error(

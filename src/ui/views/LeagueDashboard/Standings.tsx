@@ -9,7 +9,9 @@ const width100 = {
 
 const Standings = ({
 	confTeams,
-	numPlayoffTeams,
+	maxPlayoffSeed,
+	maxPlayoffSeedNoPlayIn,
+	numConfs,
 	playoffsByConf,
 	pointsFormula,
 	usePts,
@@ -17,7 +19,9 @@ const Standings = ({
 }: Pick<
 	View<"leagueDashboard">,
 	| "confTeams"
-	| "numPlayoffTeams"
+	| "maxPlayoffSeed"
+	| "maxPlayoffSeedNoPlayIn"
+	| "numConfs"
 	| "playoffsByConf"
 	| "pointsFormula"
 	| "usePts"
@@ -44,7 +48,10 @@ const Standings = ({
 							<tr
 								key={t.tid}
 								className={classNames({
-									separator: i === numPlayoffTeams - 1 && playoffsByConf,
+									separator:
+										(i === maxPlayoffSeed - 1 ||
+											i === maxPlayoffSeedNoPlayIn - 1) &&
+										(playoffsByConf || numConfs === 1),
 									"table-info": t.tid === userTid,
 								})}
 							>

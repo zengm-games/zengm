@@ -13,16 +13,20 @@ export const getNumPlayoffTeamsRaw = ({
 	playIn: boolean;
 	byConf: boolean;
 }) => {
-	let numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+	let numPlayInTeams = 0;
 	if (playIn) {
 		if (byConf) {
-			numPlayoffTeams += 4;
+			numPlayInTeams += 4;
 		} else {
-			numPlayoffTeams += 2;
+			numPlayInTeams += 2;
 		}
 	}
 
-	return numPlayoffTeams;
+	return {
+		numPlayoffTeams,
+		numPlayInTeams,
+	};
 };
 
 const getNumPlayoffTeams = async (season: number) => {

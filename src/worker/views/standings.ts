@@ -4,6 +4,27 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getTiebreakers } from "../util/orderTeams";
 import { season } from "../core";
 
+export const getMaxPlayoffSeed = async (
+	playoffSeason: number,
+	playoffsByConf: boolean,
+) => {
+	const { numPlayoffTeams, numPlayInTeams } = await season.getNumPlayoffTeams(
+		playoffSeason,
+	);
+	const numTotalPlayoffs = numPlayoffTeams + numPlayInTeams;
+
+	const maxPlayoffSeed = playoffsByConf
+		? numTotalPlayoffs / 2
+		: numTotalPlayoffs;
+	const maxPlayoffSeedNoPlayIn =
+		maxPlayoffSeed - 2 * (playoffsByConf ? numPlayInTeams / 2 : numPlayInTeams);
+
+	return {
+		maxPlayoffSeed,
+		maxPlayoffSeedNoPlayIn,
+	};
+};
+
 const updateStandings = async (
 	inputs: ViewInput<"standings">,
 	updateEvents: UpdateEvents,
@@ -18,12 +39,12 @@ const updateStandings = async (
 		const divs = g.get("divs", inputs.season);
 		const numPlayoffByes = g.get("numPlayoffByes", inputs.season);
 
-		const numPlayoffTeams = await season.getNumPlayoffTeams(inputs.season);
-
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
-		const maxPlayoffSeed = playoffsByConf
-			? numPlayoffTeams / 2
-			: numPlayoffTeams;
+
+		const { maxPlayoffSeed, maxPlayoffSeedNoPlayIn } = await getMaxPlayoffSeed(
+			inputs.season,
+			playoffsByConf,
+		);
 
 		const pointsFormula = g.get("pointsFormula", inputs.season);
 		const usePts = pointsFormula !== "";
@@ -174,6 +195,7 @@ const updateStandings = async (
 			confs,
 			divs,
 			maxPlayoffSeed,
+			maxPlayoffSeedNoPlayIn,
 			numPlayoffByes,
 			playIn,
 			playoffsByConf,

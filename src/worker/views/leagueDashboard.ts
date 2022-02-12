@@ -4,6 +4,7 @@ import { idb } from "../db";
 import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents } from "../../common/types";
 import { processEvents } from "./news";
+import { getMaxPlayoffSeed } from "./standings";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -529,13 +530,17 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		const numPlayoffTeams =
-			(await season.getNumPlayoffTeams(g.get("season"))) / 2;
 		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+		const { maxPlayoffSeed, maxPlayoffSeedNoPlayIn } = await getMaxPlayoffSeed(
+			g.get("season"),
+			playoffsByConf,
+		);
+		console.log(maxPlayoffSeed, maxPlayoffSeedNoPlayIn);
 
 		return {
 			confTeams,
-			numPlayoffTeams,
+			maxPlayoffSeed,
+			maxPlayoffSeedNoPlayIn,
 			playoffsByConf,
 			pointsFormula,
 			usePts,

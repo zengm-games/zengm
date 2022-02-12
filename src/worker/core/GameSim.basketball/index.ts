@@ -1407,7 +1407,7 @@ class GameSim {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
-		const ratios = this.ratingArray("stealing", this.d, 2);
+		const ratios = this.ratingArray("stealing", this.d, 3);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
 		this.recordPlay("stl", this.d, [
@@ -1669,7 +1669,7 @@ class GameSim {
 			this.recordStat(this.o, p, "tpa");
 		}
 
-		const ratios = this.ratingArray("blocking", this.d, 4);
+		const ratios = this.ratingArray("blocking", this.d, 8);
 		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p2, "blk");
 

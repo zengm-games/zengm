@@ -74,7 +74,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	blocking: {
 		ratings: ["hgt", "jmp", "diq"],
-		weights: [1.0, 0.4, 0.1],
+		weights: [2.5, 1.3, 0.5],
 	},
 	fouling: {
 		ratings: [50, "hgt", "diq", "spd"],

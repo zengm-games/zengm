@@ -1,6 +1,6 @@
 // https://getbootstrap.com/docs/4.1/examples/dashboard/
 
-$sidebar-width: 158px; // Line up with Play button
+$sidebar-width: 154px; // Line up with Play button
 
 .sidebar {
 	display: none;
@@ -32,7 +32,7 @@ $sidebar-width: 158px; // Line up with Play button
 .sidebar .nav-link {
 	font-weight: 500;
 	color: $gray-900;
-	padding: 4px 0.75rem;
+	padding: 4px $container-padding-x;
 }
 
 .sidebar .nav-link.active {
@@ -47,7 +47,7 @@ $sidebar-width: 158px; // Line up with Play button
 .sidebar-heading {
 	font-size: 0.75rem;
 	text-transform: uppercase;
-	padding: 0 0.75rem;
+	padding: 0 $container-padding-x;
 	cursor: pointer;
 	@extend .mt-3;
 	@extend .mb-1;
@@ -95,6 +95,10 @@ $sidebar-width: 158px; // Line up with Play button
 	}
 	.sidebar-heading {
 		font-size: 0.875rem;
+		padding-left: 0.75rem;
+	}
+	.sidebar .nav-link {
+		padding-left: 0.75rem;
 	}
 	.sidebar-open {
 		left: 0;

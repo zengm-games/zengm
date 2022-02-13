@@ -462,7 +462,7 @@ const ImportPlayers = ({
 						<DataTable
 							cols={cols}
 							defaultSort={[1, "asc"]}
-							defaultStickyCols={3}
+							defaultStickyCols={window.mobile ? 1 : 3}
 							name="ImportPlayers"
 							pagination
 							rows={rows}

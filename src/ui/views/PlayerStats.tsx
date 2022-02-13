@@ -195,7 +195,7 @@ const PlayerStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[sortCol, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name={`PlayerStats${statType}`}
 				rows={rows}
 				superCols={superCols}

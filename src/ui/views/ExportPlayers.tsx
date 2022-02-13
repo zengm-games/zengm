@@ -133,7 +133,7 @@ const ExportPlayers = ({
 						<DataTable
 							cols={cols}
 							defaultSort={[0, "asc"]}
-							defaultStickyCols={1}
+							defaultStickyCols={window.mobile ? 0 : 1}
 							name="ExportPlayers"
 							pagination
 							rows={rows}
@@ -169,7 +169,7 @@ const ExportPlayers = ({
 								<DataTable
 									cols={cols2}
 									defaultSort={[0, "asc"]}
-									defaultStickyCols={1}
+									defaultStickyCols={window.mobile ? 0 : 1}
 									name="ExportPlayers2"
 									pagination
 									rows={rows2}

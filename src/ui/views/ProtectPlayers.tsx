@@ -123,7 +123,7 @@ const PlayerList = ({
 				<DataTable
 					cols={cols}
 					defaultSort={[5, "desc"]}
-					defaultStickyCols={2}
+					defaultStickyCols={window.mobile ? 1 : 2}
 					name="ProtectPlayers"
 					rows={rows}
 					hideAllControls

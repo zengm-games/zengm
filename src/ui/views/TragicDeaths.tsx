@@ -100,7 +100,7 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[4, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="TragicDeaths"
 				pagination
 				rows={rows}

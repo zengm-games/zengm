@@ -156,7 +156,7 @@ const Relatives = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[20, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="Relatives"
 				pagination
 				rows={rows}

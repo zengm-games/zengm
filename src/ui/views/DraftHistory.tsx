@@ -198,7 +198,7 @@ const DraftHistory = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
-				defaultStickyCols={2}
+				defaultStickyCols={window.mobile ? 1 : 2}
 				name="DraftHistory"
 				rows={rows}
 				superCols={superCols}

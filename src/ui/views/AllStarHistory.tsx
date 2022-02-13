@@ -274,7 +274,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="AllStarHistory"
 				pagination={pagination}
 				rows={rows}

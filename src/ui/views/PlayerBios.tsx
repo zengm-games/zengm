@@ -156,7 +156,7 @@ const PlayerBios = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="PlayerBios"
 				pagination
 				rows={rows}

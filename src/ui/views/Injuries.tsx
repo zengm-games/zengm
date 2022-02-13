@@ -98,7 +98,7 @@ const Injuries = ({
 				<DataTable
 					cols={cols}
 					defaultSort={[cols.length - 3, "asc"]}
-					defaultStickyCols={1}
+					defaultStickyCols={window.mobile ? 0 : 1}
 					name="Injuries"
 					pagination
 					rows={rows}

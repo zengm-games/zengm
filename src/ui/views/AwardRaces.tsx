@@ -174,7 +174,7 @@ const AwardRaces = ({
 								<DataTable
 									cols={cols}
 									defaultSort={[0, "asc"]}
-									defaultStickyCols={2}
+									defaultStickyCols={window.mobile ? 0 : 2}
 									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}

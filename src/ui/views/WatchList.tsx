@@ -159,7 +159,7 @@ const WatchList = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[5, "desc"]}
-				defaultStickyCols={2}
+				defaultStickyCols={window.mobile ? 1 : 2}
 				name="WatchList"
 				pagination
 				rows={rows}

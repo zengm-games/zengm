@@ -80,7 +80,7 @@ const AwardsRecords = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[1, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="AwardsRecords"
 				rows={rows}
 				pagination

@@ -121,7 +121,7 @@ const PlayerRatings = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[6, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="PlayerRatings"
 				pagination
 				rows={rows}

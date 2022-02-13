@@ -199,7 +199,7 @@ const FreeAgents = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[cols.length - 3, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				name="FreeAgents"
 				pagination
 				rows={rows}

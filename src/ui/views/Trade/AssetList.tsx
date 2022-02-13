@@ -220,7 +220,7 @@ const AssetList = ({
 					className="datatable-negative-margin-top"
 					cols={playerCols}
 					defaultSort={[5, "desc"]}
-					defaultStickyCols={3}
+					defaultStickyCols={window.mobile ? 2 : 3}
 					name={`Trade:${userOrOtherKey}`}
 					rows={playerRows}
 				/>

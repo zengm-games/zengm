@@ -173,7 +173,7 @@ const Most = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
-				defaultStickyCols={2}
+				defaultStickyCols={window.mobile ? 0 : 2}
 				name={`Most_${type}`}
 				rows={rows}
 				superCols={superCols}

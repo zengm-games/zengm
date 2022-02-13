@@ -91,7 +91,7 @@ const OfferPlayers = ({
 				classNameWrapper={className}
 				cols={cols}
 				defaultSort={[5, "desc"]}
-				defaultStickyCols={1}
+				defaultStickyCols={window.mobile ? 0 : 1}
 				hideAllControls
 				hideMenuToo
 				name="TradingBlockOffer"
@@ -546,7 +546,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					<DataTable
 						cols={cols}
 						defaultSort={[6, "desc"]}
-						defaultStickyCols={2}
+						defaultStickyCols={window.mobile ? 1 : 2}
 						name="TradingBlock"
 						rows={rows}
 					/>

@@ -131,6 +131,7 @@ const Row = ({
 	indRevealed,
 	toReveal,
 	probs,
+	spectator,
 }: {
 	NUM_PICKS: number;
 	i: number;
@@ -140,6 +141,7 @@ const Row = ({
 	indRevealed: State["indRevealed"];
 	toReveal: State["toReveal"];
 	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>>;
+	spectator: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -188,8 +190,8 @@ const Row = ({
 			>
 				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
 			</td>
-			<td>
-				{tid === userTid ? null : (
+			<td className={spectator ? "p-0" : undefined}>
+				{tid === userTid || spectator ? null : (
 					<button
 						className="btn btn-xs btn-light-bordered"
 						onClick={async () => {
@@ -425,6 +427,7 @@ const DraftLotteryTable = (props: Props) => {
 						<thead>
 							<tr>
 								<th />
+								<th className={props.spectator ? "p-0" : undefined} />
 								<th />
 								<th />
 								<th colSpan={NUM_PICKS} className="text-center">
@@ -433,7 +436,7 @@ const DraftLotteryTable = (props: Props) => {
 							</tr>
 							<tr>
 								<th>Team</th>
-								<th />
+								<th className={props.spectator ? "p-0" : undefined} />
 								<th>Record</th>
 								<th>Chances</th>
 								{result.map((row, i) => (
@@ -459,6 +462,7 @@ const DraftLotteryTable = (props: Props) => {
 									indRevealed={state.indRevealed}
 									toReveal={state.toReveal}
 									probs={probs}
+									spectator={props.spectator}
 								/>
 							))}
 						</tbody>

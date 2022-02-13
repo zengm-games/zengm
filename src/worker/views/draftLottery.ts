@@ -37,6 +37,7 @@ const updateDraftLottery = async (
 	rigged: GameAttributesLeague["riggedLottery"];
 	season: number;
 	showExpansionTeamMessage: boolean;
+	spectator: boolean;
 	type: "completed" | "projected" | "readyToRun";
 	userTid: number;
 } | void> => {
@@ -95,6 +96,7 @@ const updateDraftLottery = async (
 					rigged,
 					season,
 					showExpansionTeamMessage,
+					spectator: g.get("spectator"),
 					type: "completed",
 					userTid: g.get("userTid"),
 				};
@@ -109,6 +111,7 @@ const updateDraftLottery = async (
 					rigged: undefined,
 					season,
 					showExpansionTeamMessage,
+					spectator: g.get("spectator"),
 					type: "completed",
 					userTid: g.get("userTid"),
 				};
@@ -123,6 +126,7 @@ const updateDraftLottery = async (
 				rigged: undefined,
 				season,
 				showExpansionTeamMessage,
+				spectator: g.get("spectator"),
 				type: "projected",
 				userTid: g.get("userTid"),
 			};
@@ -169,6 +173,7 @@ const updateDraftLottery = async (
 			result: draftLotteryResult ? draftLotteryResult.result : undefined,
 			rigged: g.get("riggedLottery"),
 			season: draftLotteryResult ? draftLotteryResult.season : season,
+			spectator: g.get("spectator"),
 			showExpansionTeamMessage,
 			type,
 			userTid: g.get("userTid"),

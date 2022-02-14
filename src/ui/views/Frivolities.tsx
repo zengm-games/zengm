@@ -125,7 +125,7 @@ export const frivolities = {
 		{
 			urlParts: ["most", "no_mvp"],
 			name: "Best Players Without an MVP",
-			description: "The best players who never won an MVP awards.",
+			description: "The best players who never won an MVP award.",
 		},
 		{
 			urlParts: ["most", "progs"],

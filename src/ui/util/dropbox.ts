@@ -206,13 +206,16 @@ export const dropboxStream = async ({
 			const path = `/${filename}`;
 
 			try {
-				await buffer.finalize(path);
+				const response = await buffer.finalize(path);
+
+				// Path might change because of autorename setting
+				const actualPath = response.result.path_display ?? path;
 
 				let fileURL: string | undefined;
 
 				try {
 					const response2 = await dropbox.sharingCreateSharedLinkWithSettings({
-						path,
+						path: actualPath,
 					});
 					fileURL = response2.result.url;
 				} catch (error) {

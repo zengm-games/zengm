@@ -72,9 +72,9 @@ const processLiveGameEvents = ({
 				};
 			}
 
-			possessionChange = possessionChangeTexts.some(text =>
-				e.text.includes(text),
-			);
+			possessionChange =
+				possessionChangeTexts.some(text => e.text.includes(text)) ||
+				!!e.text.match(/missed.*yard field goal/);
 
 			// Must include parens so it does not collide with ABBREV0 and ABBREV1 for penalties lol
 			text = e.text.replace("(ABBREV)", `(${boxScore.teams[actualT].abbrev})`);

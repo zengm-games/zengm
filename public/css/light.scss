@@ -1554,7 +1554,8 @@ table.sticky-xxx {
 
 @include media-breakpoint-up(sm) {
 	.standings-name {
-		min-width: 215px;
+		// Wide enough that Philadelphia Cheesesteaks still fits after clinching playoffs
+		min-width: 228px;
 	}
 }
 

@@ -29,9 +29,10 @@ const newPhaseRegularSeason = async (
 	if (g.get("autoDeleteOldBoxScores")) {
 		const tx = idb.league.transaction("games", "readwrite");
 		const gameStore = tx.store;
+		const gameIndex = gameStore.index("season");
 
 		// openKeyCursor is crucial for performance in Firefox
-		let cursor = await gameStore.openKeyCursor(
+		let cursor = await gameIndex.openKeyCursor(
 			IDBKeyRange.upperBound(g.get("season") - 3),
 		);
 

@@ -1,12 +1,6 @@
-yearly leaders not showing correctly for custom rosters past seasons https://discord.com/channels/@me/361954501365858304/942327538808660058
-
 xsName refactor
 - instead, store firstName and lastName and compute the names client side
 - player feats and box scores will need to be upgraded
-
-for any watch error (e.g. CSS), it should show in JS console, like it does for JS errors now
-
-make some tables (awards records, power rankings, injuries, ...) nonfluid like roster
 
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 

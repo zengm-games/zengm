@@ -4,7 +4,7 @@ import downloadFile from "./downloadFile";
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 // Why is this in UI? streamsaver does not work in worker. Otherwise it would be better there.
-// If this is ever moved to the worker, becareful about file system access API crashing Chrome 93/94 https://dumbmatter.com/file-system-access-worker-bug/
+// If this is ever moved to the worker, be careful about file system access API crashing Chrome 93/94 https://dumbmatter.com/file-system-access-worker-bug/
 const downloadFileStream = async (stream: boolean, filename: string) => {
 	if (stream) {
 		let fileStream: WritableStream;

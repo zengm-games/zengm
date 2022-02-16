@@ -308,8 +308,8 @@ const DetailedScore = ({
 					</a>
 				</div>
 			) : null}
-			<div>
-				<div className="me-4 mx-xs-auto table-nonfluid text-center">
+			<div className="d-sm-flex">
+				<div className="me-4 mx-xs-auto text-center">
 					<table className="table table-sm mb-2 mb-sm-0">
 						<thead>
 							<tr>
@@ -352,7 +352,7 @@ const DetailedScore = ({
 					</table>
 				</div>
 				{isSport("basketball") ? (
-					<div className="mx-xs-auto table-nonfluid text-center">
+					<div className="mx-xs-auto d-sm-inline-block text-center">
 						<FourFactors teams={boxScore.teams} />
 					</div>
 				) : null}

@@ -28,8 +28,6 @@ load real player info from url/file https://discord.com/channels/290013534023057
 
 Leaders improvements
 - progressive leaders, like bbref
-  - before doing this, figure out a better way of handling total/perGame stats in basketball, similar to other sports
-    - when i do that, add another option to view totals rather than per game for the other leaders pages
   - requires
     - each year's leader in stat
     - each year's career leader up to that year

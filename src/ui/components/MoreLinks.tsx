@@ -281,23 +281,24 @@ const MoreLinks = (
 	} else if (props.type === "leaders") {
 		const { playoffs, season, statType } = props;
 
+		const defaultStat = bySport({
+			basketball: "pts",
+			football: "pssYds",
+			hockey: "g",
+		});
+
 		links = [
 			{
 				url: ["leaders", season, statType, playoffs],
 				name: "League Leaders",
 			},
 			{
-				url: [
-					"leaders_years",
-					bySport({
-						basketball: "pts",
-						football: "pssYds",
-						hockey: "g",
-					}),
-					statType,
-					playoffs,
-				],
+				url: ["leaders_years", defaultStat, statType, playoffs],
 				name: "Yearly Leaders",
+			},
+			{
+				url: ["leaders_progressive", defaultStat, statType, playoffs],
+				name: "Progressive Leaders",
 			},
 			{
 				url: ["player_stats", "all", season, statType, playoffs],

@@ -908,6 +908,7 @@ export default {
 	history,
 	injuries,
 	leaders,
+	leadersProgressive: leadersYears,
 	leadersYears,
 	leagueFinances: validateSeasonOnly,
 	leagueStats,

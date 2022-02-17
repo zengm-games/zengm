@@ -1,3 +1,9 @@
+Leaders improvements
+- progressive leaders, like bbref
+  - needs vertical separator between leaders?
+  - why missing first 2 seasons in real players?
+- runningMaxes is wrong for stats that could go up/down - can't just bring prior year value forward unless player was retired that season
+
 sticky columns sometimes fail on mobile
 - seen in safari and android chrome
 - probably only for 2+ columns - so a JS problem in useStickyXX
@@ -30,13 +36,6 @@ put position ranks (from power rankings) in roster composition block https://dis
 Deleting old box scores deletes stat feats from player pages, but they’re all still saved on the stat feat page? I don’t believe they should disappear from a player’s page https://discord.com/channels/290013534023057409/290015591216054273/937547547663278152
 
 load real player info from url/file https://discord.com/channels/290013534023057409/290015591216054273/937276075841572874
-
-Leaders improvements
-- progressive leaders, like bbref
-  - requires
-    - each year's leader in stat
-    - each year's career leader up to that year
-    - each year's *active* career leader up to that year
 
 fbgm/zgmh game sim settings
 

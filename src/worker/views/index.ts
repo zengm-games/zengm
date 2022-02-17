@@ -46,6 +46,7 @@ import importPlayers from "./importPlayers";
 import inbox from "./inbox";
 import injuries from "./injuries";
 import leaders from "./leaders";
+import leadersProgressive from "./leadersProgressive";
 import leadersYears from "./leadersYears";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
@@ -143,6 +144,7 @@ export default {
 	injuries,
 	inbox,
 	leaders,
+	leadersProgressive,
 	leadersYears,
 	leagueDashboard,
 	leagueFinances,

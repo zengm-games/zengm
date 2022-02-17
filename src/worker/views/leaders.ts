@@ -288,18 +288,20 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 
 // Calculate the number of games played for each team, which is used to test if a player qualifies as a league leader
 export class GamesPlayedCache {
-	currentSeasonCache: Record<number, number> | undefined;
+	regularSeasonCache: Record<number, Record<number, number>>;
 	playoffsCache: Record<number, Record<number, number>>;
 
 	constructor() {
+		this.regularSeasonCache = {};
 		this.playoffsCache = {};
 	}
 
 	private straightNumGames(season: number, playoffs: boolean) {
-		// Regular season, completed season -> we already know how many games each team played, from numGames
+		// Current year, regular season, completed season -> we already know how many games each team played, from numGames
 		return (
 			!playoffs &&
-			(season < g.get("season") || g.get("phase") >= PHASE.PLAYOFFS)
+			season === g.get("season") &&
+			g.get("phase") >= PHASE.PLAYOFFS
 		);
 	}
 
@@ -316,20 +318,23 @@ export class GamesPlayedCache {
 				"noCopyCache",
 			);
 
-			const numGames = g.get("numGames", season);
-
 			const cache: Record<number, number> = {};
 			for (const teamSeason of teamSeasons) {
+				const gpRegularSeason =
+					teamSeason.won +
+					teamSeason.lost +
+					(teamSeason.tied ?? 0) +
+					(teamSeason.otl ?? 0);
 				if (playoffs) {
-					if (teamSeason.gp < numGames) {
+					if (teamSeason.gp < gpRegularSeason) {
 						cache[teamSeason.tid] = 0;
 					} else {
-						cache[teamSeason.tid] = teamSeason.gp - numGames;
+						cache[teamSeason.tid] = teamSeason.gp - gpRegularSeason;
 					}
 				} else {
 					// Don't count playoff games
-					if (teamSeason.gp > numGames) {
-						cache[teamSeason.tid] = numGames;
+					if (teamSeason.gp > gpRegularSeason) {
+						cache[teamSeason.tid] = gpRegularSeason;
 					} else {
 						cache[teamSeason.tid] = teamSeason.gp;
 					}
@@ -339,7 +344,7 @@ export class GamesPlayedCache {
 			if (playoffs) {
 				this.playoffsCache[season] = cache;
 			} else {
-				this.currentSeasonCache = cache;
+				this.regularSeasonCache[season] = cache;
 			}
 		}
 	}
@@ -356,19 +361,19 @@ export class GamesPlayedCache {
 				return 2 * sum;
 			}
 
-			// Arbitrary - 5 seasons
-			return g.get("numGames") * 5;
+			// Arbitrary - 4 seasons
+			return g.get("numGames") * 4;
 		}
 
 		if (this.straightNumGames(season, playoffs)) {
-			return g.get("numGames", season);
+			return g.get("numGames");
 		}
 
 		if (playoffs) {
 			return this.playoffsCache[season]?.[tid] ?? null;
 		}
 
-		return this.currentSeasonCache?.[tid] ?? null;
+		return this.regularSeasonCache[season]?.[tid] ?? null;
 	}
 }
 

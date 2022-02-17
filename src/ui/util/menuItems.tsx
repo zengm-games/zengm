@@ -350,11 +350,22 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "leaders" || pageID === "leadersYears",
+				active: pageID =>
+					pageID === "leaders" ||
+					pageID === "leadersProgressive" ||
+					pageID === "leadersYears",
 				league: true,
 				commandPalette: true,
 				path: ["leaders"],
 				text: "League Leaders",
+			},
+			{
+				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: ["leaders_progressive"],
+				text: "Progressive Leaders",
 			},
 			{
 				type: "link",

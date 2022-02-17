@@ -64,6 +64,11 @@ const updateLeadersYears = async (
 				throw new Error("Invalid season");
 			}
 
+			const current = leadersBySeason[season];
+			if (!current) {
+				return;
+			}
+
 			const p = await idb.getCopy.playersPlus(pRaw, {
 				attrs: [
 					"pid",
@@ -83,19 +88,6 @@ const updateLeadersYears = async (
 				statType: inputs.statType,
 			});
 			if (!p) {
-				return;
-			}
-
-			// Shitty handling of career totals
-			if (Array.isArray(p.ratings)) {
-				p.ratings = {
-					pos: p.ratings.at(-1).pos,
-					skills: [],
-				};
-			}
-
-			const current = leadersBySeason[season];
-			if (!current) {
 				return;
 			}
 

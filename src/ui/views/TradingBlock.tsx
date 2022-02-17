@@ -173,19 +173,22 @@ const Offer = (props: OfferProps) => {
 				{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
 				{salaryCapOrPayrollText}
 			</p>
-			<div className="row">
-				<div className="col-md-8">
-					<OfferPlayers
-						challengeNoRatings={challengeNoRatings}
-						players={players}
-						stats={stats}
-					/>
+			{picks.length > 0 || players.length > 0 ? (
+				<div className="row">
+					{players.length > 0 ? (
+						<div className="col-md-8">
+							<OfferPlayers
+								challengeNoRatings={challengeNoRatings}
+								players={players}
+								stats={stats}
+							/>
+						</div>
+					) : null}
+					{offerPicks}
 				</div>
-				{offerPicks}
-				{picks.length === 0 && players.length === 0 ? (
-					<div className="col-12">Nothing.</div>
-				) : null}
-			</div>
+			) : (
+				<p>Nothing.</p>
+			)}
 			{warning ? <p className="text-danger">{warning}</p> : null}
 
 			<button

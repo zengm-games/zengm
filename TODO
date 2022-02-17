@@ -1,3 +1,8 @@
+sticky columns sometimes fail on mobile
+- seen in safari and android chrome
+- probably only for 2+ columns - so a JS problem in useStickyXX
+- "It usually happens when I try to sort other columns and sometimes somehow get fixed when I sort another one" https://discord.com/channels/290013534023057409/290015591216054273/943644259498745926
+
 xsName refactor
 - instead, store firstName and lastName and compute the names client side
 - player feats and box scores will need to be upgraded

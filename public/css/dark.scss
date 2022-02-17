@@ -208,6 +208,12 @@ a.god-mode.active {
 		darken($purple, 27),
 		darken($purple, 27)
 	);
+
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		color: $black !important;
+	}
 }
 
 .btn-outline-god-mode {

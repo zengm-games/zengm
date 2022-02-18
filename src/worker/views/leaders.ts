@@ -349,11 +349,11 @@ export class GamesPlayedCache {
 		}
 	}
 
-	get(season: number | "career", playoffs: boolean, tid: number) {
-		if (season === "career") {
+	get(season: number, playoffs: boolean, tid: number, career: boolean) {
+		if (career) {
 			if (playoffs) {
 				// Arbitrary - two full playoffs runs
-				const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries");
+				const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", season);
 				let sum = 0;
 				for (const games of numGamesPlayoffSeries) {
 					sum += games;
@@ -361,8 +361,15 @@ export class GamesPlayedCache {
 				return 2 * sum;
 			}
 
-			// Arbitrary - 4 seasons
-			return g.get("numGames") * 4;
+			// Arbitrary - 4 seasons, scaled to the number of seasons played
+			const numSeasons = Math.min(1 + season - g.get("startingSeason"), 4);
+			let numGames;
+			if (this.regularSeasonCache[season]) {
+				numGames = Math.max(...Object.values(this.regularSeasonCache[season]));
+			} else {
+				numGames = g.get("numGames");
+			}
+			return numGames * numSeasons;
 		}
 
 		if (this.straightNumGames(season, playoffs)) {
@@ -436,7 +443,9 @@ export const iterateAllPlayers = async (
 
 type Category = ReturnType<typeof getCategoriesAndStats>["categories"][number];
 
+// Accept season even when career is true, because for progressive leaders we need to know the season being evaluated, otherwise we might want multiple seasons of stats to determine the all-time leader when there is only one season available
 export const playerMeetsCategoryRequirements = ({
+	career,
 	cat,
 	gamesPlayedCache,
 	p,
@@ -445,12 +454,13 @@ export const playerMeetsCategoryRequirements = ({
 	season,
 	statType,
 }: {
+	career: boolean;
 	cat: Category;
 	gamesPlayedCache: GamesPlayedCache;
 	p: PlayerFiltered;
 	playerStats: Record<string, any>;
 	playoffs: boolean;
-	season: number | "career";
+	season: number;
 	statType: PlayerStatType;
 }) => {
 	// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
@@ -483,7 +493,12 @@ export const playerMeetsCategoryRequirements = ({
 				playerValue = playerStats[minStat] * playerStats.gp;
 			}
 
-			const gpTeam = gamesPlayedCache.get(season, playoffs, playerStats.tid);
+			const gpTeam = gamesPlayedCache.get(
+				season,
+				playoffs,
+				playerStats.tid,
+				career,
+			);
 
 			if (gpTeam === null) {
 				// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
@@ -626,12 +641,13 @@ const updateLeaders = async (
 				}
 
 				const pass = playerMeetsCategoryRequirements({
+					career: season === "career",
 					cat,
 					gamesPlayedCache,
 					p,
 					playerStats,
 					playoffs,
-					season,
+					season: season === "career" ? g.get("season") : season,
 					statType: inputs.statType,
 				});
 

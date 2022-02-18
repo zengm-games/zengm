@@ -103,6 +103,7 @@ const updateLeadersYears = async (
 			}
 
 			const pass = playerMeetsCategoryRequirements({
+				career: false,
 				cat,
 				gamesPlayedCache,
 				p,

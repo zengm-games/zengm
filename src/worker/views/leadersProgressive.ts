@@ -94,6 +94,7 @@ const updateLeadersProgressive = async (
 						(!cat.sortAscending && value > lastValue)
 					) {
 						const pass = playerMeetsCategoryRequirements({
+							career: false,
 							cat,
 							gamesPlayedCache,
 							p,
@@ -146,6 +147,7 @@ const updateLeadersProgressive = async (
 					}
 
 					const pass = playerMeetsCategoryRequirements({
+						career: true,
 						cat,
 						gamesPlayedCache,
 						p,

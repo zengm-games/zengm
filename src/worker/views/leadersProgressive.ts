@@ -127,10 +127,12 @@ const updateLeadersProgressive = async (
 
 			{
 				// Career stats up to this season
+				const filteredStats = pRaw.stats.filter(row => row.season <= season);
+
 				const p = await idb.getCopy.playersPlus(
 					{
 						...pRaw,
-						stats: pRaw.stats.filter(row => row.season <= season),
+						stats: filteredStats,
 					},
 					playersPlusArgs,
 				);
@@ -148,75 +150,86 @@ const updateLeadersProgressive = async (
 						playerStats = p.careerStats;
 					}
 
-					const value = playerStats[cat.stat];
-					const lastValue = current.active?.stat;
-					if (pRaw.pid === 1285) {
-						console.log(season, p, value, lastValue);
-					}
-					if (
-						lastValue === undefined ||
-						(cat.sortAscending && value < lastValue) ||
-						(!cat.sortAscending && value > lastValue)
-					) {
-						const pass = playerMeetsCategoryRequirements({
-							cat,
-							gamesPlayedCache,
-							p,
-							playerStats,
-							playoffs,
-							season,
-							statType: inputs.statType,
-						});
-						if (pRaw.pid === 1285) {
-							console.log(season, p, value, lastValue, pass);
+					const pass = playerMeetsCategoryRequirements({
+						cat,
+						gamesPlayedCache,
+						p,
+						playerStats,
+						playoffs,
+						season,
+						statType: inputs.statType,
+					});
+
+					if (pass) {
+						const value = playerStats[cat.stat];
+						const leader = {
+							hof: p.hof,
+							key: p.pid,
+							nameAbbrev: p.nameAbbrev,
+							pid: p.pid,
+							stat: playerStats[cat.stat],
+							userTeam: g.get("userTid", season) === p.stats.tid,
+							watch: p.watch,
+						};
+
+						// Update active
+						const lastValue = current.active?.stat;
+						if (
+							lastValue === undefined ||
+							(cat.sortAscending && value < lastValue) ||
+							(!cat.sortAscending && value > lastValue)
+						) {
+							current.active = leader;
 						}
 
-						if (pass) {
-							current.active = {
-								hof: p.hof,
-								key: p.pid,
-								nameAbbrev: p.nameAbbrev,
-								pid: p.pid,
-								stat: playerStats[cat.stat],
-								userTeam: g.get("userTid", season) === p.stats.tid,
-								watch: p.watch,
-							};
+						// Update career
+						// For "active", consider up to the current season. For "career", also consider values for retired players or players who are not playing this year but will play again later. To do this, get `maxSeasonCareer`, which is the maximum season up to which this player's career total for this `season` can apply.
+						const allSeasons: number[] = Array.from(
+							new Set(pRaw.stats.map(row => row.season)),
+						).sort((a, b) => a - b);
+						const nextSeason = allSeasons.find(season2 => season2 > season);
+						let maxSeasonCareer;
+						if (nextSeason === undefined) {
+							// Last year of this player - so can apply this to any season
+							maxSeasonCareer = Infinity;
+						} else {
+							// Anything before nextSeason works - this includes gap years!
+							maxSeasonCareer = nextSeason - 1;
+						}
+
+						const startIndex = allLeaders.indexOf(current);
+						for (let i = startIndex; i < allLeaders.length; i++) {
+							const lastValue = allLeaders[i].career?.stat;
+							if (
+								lastValue === undefined ||
+								(cat.sortAscending && value < lastValue) ||
+								(!cat.sortAscending && value > lastValue)
+							) {
+								allLeaders[i].career = leader;
+							}
+
+							if (allLeaders[i].season === maxSeasonCareer) {
+								break;
+							}
 						}
 					}
 				}
 			}
 		});
 
-		type LeaderType = Exclude<keyof typeof allLeaders[number], "season">;
-		const runningMaxes: {
-			from: LeaderType;
-			to: LeaderType;
-		}[] = [
-			{
-				from: "yearByYear",
-				to: "singleSeason",
-			},
-			{
-				from: "active",
-				to: "career",
-			},
-		];
-		for (const { from, to } of runningMaxes) {
-			let runningLeader: MyLeader | undefined;
-			for (const row of allLeaders) {
-				const pFrom = row[from];
-				if (pFrom) {
-					const lastValue = runningLeader?.stat;
-					const value = pFrom.stat;
-					if (
-						lastValue === undefined ||
-						(cat.sortAscending && value < lastValue) ||
-						(!cat.sortAscending && value > lastValue)
-					) {
-						runningLeader = pFrom;
-					}
-					row[to] = runningLeader;
+		let runningLeader: MyLeader | undefined;
+		for (const row of allLeaders) {
+			if (row.yearByYear) {
+				const lastValue = runningLeader?.stat;
+				const value = row.yearByYear.stat;
+				if (
+					lastValue === undefined ||
+					(cat.sortAscending && value < lastValue) ||
+					(!cat.sortAscending && value > lastValue)
+				) {
+					runningLeader = row.yearByYear;
 				}
+				row.singleSeason = runningLeader;
 			}
 		}
 

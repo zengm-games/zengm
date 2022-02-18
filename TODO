@@ -1,8 +1,7 @@
 Leaders improvements
 - progressive leaders, like bbref
   - needs vertical separator between leaders?
-  - why missing first 2 seasons in real players?
-- runningMaxes is wrong for stats that could go up/down - can't just bring prior year value forward unless player was retired that season
+  - add explanations
 
 sticky columns sometimes fail on mobile
 - seen in safari and android chrome

@@ -68,40 +68,47 @@ const LeadersProgressive = ({
 			data: [
 				<a href={helpers.leagueUrl(["history", season])}>{season}</a>,
 				...leaderTypes
-					.map(type => {
+					.map((type, i) => {
 						const p = row[type];
 
+						let tableRow: any[];
 						if (!p) {
-							return [undefined, undefined, spacer];
+							tableRow = [undefined, undefined];
+						} else {
+							tableRow = [
+								{
+									value: (
+										<PlayerNameLabels
+											pid={p.pid}
+											season={season}
+											watch={p.watch}
+											skills={p.skills}
+											jerseyNumber={p.jerseyNumber}
+										>
+											{p.nameAbbrev}
+										</PlayerNameLabels>
+									),
+									classNames: {
+										"table-danger": p.hof,
+										"table-info": p.userTeam,
+									},
+								},
+								{
+									value: helpers.roundStat(p.stat, stat, totals),
+									sortValue: p.stat,
+									classNames: {
+										"table-danger": p.hof,
+										"table-info": p.userTeam,
+									},
+								},
+							];
 						}
-						return [
-							{
-								value: (
-									<PlayerNameLabels
-										pid={p.pid}
-										season={season}
-										watch={p.watch}
-										skills={p.skills}
-										jerseyNumber={p.jerseyNumber}
-									>
-										{p.nameAbbrev}
-									</PlayerNameLabels>
-								),
-								classNames: {
-									"table-danger": p.hof,
-									"table-info": p.userTeam,
-								},
-							},
-							{
-								value: helpers.roundStat(p.stat, stat, totals),
-								sortValue: p.stat,
-								classNames: {
-									"table-danger": p.hof,
-									"table-info": p.userTeam,
-								},
-							},
-							spacer,
-						];
+
+						if (i !== 0) {
+							tableRow.unshift(spacer);
+						}
+
+						return tableRow;
 					})
 					.flat(),
 			],

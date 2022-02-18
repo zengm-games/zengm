@@ -482,97 +482,99 @@ const DataTable = ({
 				}}
 				stickyCols={state.stickyCols}
 			/>
-			<div
-				className={classNames(className, {
-					"table-nonfluid-wrapper": nonfluid,
-				})}
-			>
-				<>
-					{pagination && !hideAllControls ? (
-						<PerPage onChange={handlePerPage} value={state.perPage} />
-					) : null}
-					{!hideMenuToo ? (
-						<Controls
-							enableFilters={state.enableFilters}
-							hideAllControls={hideAllControls}
-							name={name}
-							onExportCSV={handleExportCSV}
-							onResetTable={handleResetTable}
-							onSearch={handleSearch}
-							onSelectColumns={handleSelectColumns}
-							onToggleFilters={handleToggleFilters}
-							searchText={state.searchText}
-						/>
-					) : null}
-					{nonfluid ? <div className="clearFix" /> : null}
-				</>
-				<ResponsiveTableWrapper
-					className={classNames(
-						classNameWrapper,
-						pagination ? "fix-margin-pagination" : null,
-					)}
-					nonfluid={nonfluid}
+			<div className={className}>
+				<div
+					className={classNames({
+						"d-inline-block mw-100": nonfluid,
+					})}
 				>
-					<table
-						className={classNames(
-							"table table-hover",
-							{
-								"table-sm": small !== false,
-								"table-striped": striped !== false,
-								"table-borderless": striped !== false,
-							},
-							stickyClass,
-						)}
-						ref={tableRef}
-					>
-						<Header
-							colOrder={colOrderFiltered}
-							cols={cols}
-							enableFilters={state.enableFilters}
-							filters={state.filters}
-							handleColClick={handleColClick}
-							handleFilterUpdate={handleFilterUpdate}
-							sortBys={state.sortBys}
-							superCols={superCols}
-						/>
-						<tbody>
-							{processedRows.map(row => (
-								<Row
-									key={row.key}
-									row={row}
-									clickable={clickable}
-									highlightCols={highlightCols}
-								/>
-							))}
-						</tbody>
-						<Footer
-							colOrder={colOrderFiltered}
-							footer={footer}
-							highlightCols={highlightCols}
-						/>
-					</table>
-				</ResponsiveTableWrapper>
-				{!hideAllControls ? (
 					<>
-						{nonfluid && pagination ? <div className="clearFix" /> : null}
-						{pagination ? (
-							<Info
-								end={end}
-								numRows={numRowsFiltered}
-								numRowsUnfiltered={rows.length}
-								start={start}
+						{pagination && !hideAllControls ? (
+							<PerPage onChange={handlePerPage} value={state.perPage} />
+						) : null}
+						{!hideMenuToo ? (
+							<Controls
+								enableFilters={state.enableFilters}
+								hideAllControls={hideAllControls}
+								name={name}
+								onExportCSV={handleExportCSV}
+								onResetTable={handleResetTable}
+								onSearch={handleSearch}
+								onSelectColumns={handleSelectColumns}
+								onToggleFilters={handleToggleFilters}
+								searchText={state.searchText}
 							/>
 						) : null}
-						{pagination ? (
-							<Pagination
-								currentPage={state.currentPage}
-								numRows={numRowsFiltered}
-								onClick={handlePagination}
-								perPage={state.perPage}
-							/>
-						) : null}
+						{nonfluid ? <div className="clearFix" /> : null}
 					</>
-				) : null}
+					<ResponsiveTableWrapper
+						className={classNames(
+							classNameWrapper,
+							pagination ? "fix-margin-pagination" : null,
+						)}
+						nonfluid={nonfluid}
+					>
+						<table
+							className={classNames(
+								"table table-hover",
+								{
+									"table-sm": small !== false,
+									"table-striped": striped !== false,
+									"table-borderless": striped !== false,
+								},
+								stickyClass,
+							)}
+							ref={tableRef}
+						>
+							<Header
+								colOrder={colOrderFiltered}
+								cols={cols}
+								enableFilters={state.enableFilters}
+								filters={state.filters}
+								handleColClick={handleColClick}
+								handleFilterUpdate={handleFilterUpdate}
+								sortBys={state.sortBys}
+								superCols={superCols}
+							/>
+							<tbody>
+								{processedRows.map(row => (
+									<Row
+										key={row.key}
+										row={row}
+										clickable={clickable}
+										highlightCols={highlightCols}
+									/>
+								))}
+							</tbody>
+							<Footer
+								colOrder={colOrderFiltered}
+								footer={footer}
+								highlightCols={highlightCols}
+							/>
+						</table>
+					</ResponsiveTableWrapper>
+					{!hideAllControls ? (
+						<>
+							{nonfluid && pagination ? <div className="clearFix" /> : null}
+							{pagination ? (
+								<Info
+									end={end}
+									numRows={numRowsFiltered}
+									numRowsUnfiltered={rows.length}
+									start={start}
+								/>
+							) : null}
+							{pagination ? (
+								<Pagination
+									currentPage={state.currentPage}
+									numRows={numRowsFiltered}
+									onClick={handlePagination}
+									perPage={state.perPage}
+								/>
+							) : null}
+						</>
+					) : null}
+				</div>
 			</div>
 		</>
 	);

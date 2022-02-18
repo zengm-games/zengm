@@ -1,8 +1,3 @@
-Leaders improvements
-- progressive leaders, like bbref
-  - needs vertical separator between leaders?
-  - add explanations
-
 sticky columns sometimes fail on mobile
 - seen in safari and android chrome
 - probably only for 2+ columns - so a JS problem in useStickyXX
@@ -10,6 +5,7 @@ sticky columns sometimes fail on mobile
 
 xsName refactor
 - instead, store firstName and lastName and compute the names client side
+  - could use this to handle case where two players abbreviate to the same name - abbreviate to the shortest length that distinguishies them
 - player feats and box scores will need to be upgraded
 
 after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687

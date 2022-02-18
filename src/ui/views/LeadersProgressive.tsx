@@ -25,21 +25,31 @@ const LeadersProgressive = ({
 		},
 	});
 
-	const cols = getCols([
-		"Season",
-		"Name",
-		`stat:${stat}`,
-		"Name",
-		`stat:${stat}`,
-		"Name",
-		`stat:${stat}`,
-		"Name",
-		`stat:${stat}`,
-	]);
+	const cols = getCols(
+		[
+			"Season",
+			"Name",
+			`stat:${stat}`,
+			"",
+			"Name",
+			`stat:${stat}`,
+			"",
+			"Name",
+			`stat:${stat}`,
+			"",
+			"Name",
+			`stat:${stat}`,
+		],
+		{
+			"": {
+				sortSequence: [],
+			},
+		},
+	);
 	cols[1].title = "Year-by-Year";
-	cols[3].title = "Active";
-	cols[5].title = "Career";
-	cols[7].title = "Single Season";
+	cols[4].title = "Active";
+	cols[7].title = "Career";
+	cols[10].title = "Single Season";
 
 	const totals = statType === "totals";
 
@@ -49,6 +59,8 @@ const LeadersProgressive = ({
 		"career",
 		"singleSeason",
 	] as const;
+
+	const spacer = <div style={{ width: 20 }} />;
 
 	const rows = allLeaders.map(({ season, ...row }) => {
 		return {
@@ -60,12 +72,18 @@ const LeadersProgressive = ({
 						const p = row[type];
 
 						if (!p) {
-							return [undefined, undefined];
+							return [undefined, undefined, spacer];
 						}
 						return [
 							{
 								value: (
-									<PlayerNameLabels pid={p.pid} season={season} watch={p.watch}>
+									<PlayerNameLabels
+										pid={p.pid}
+										season={season}
+										watch={p.watch}
+										skills={p.skills}
+										jerseyNumber={p.jerseyNumber}
+									>
 										{p.nameAbbrev}
 									</PlayerNameLabels>
 								),
@@ -82,6 +100,7 @@ const LeadersProgressive = ({
 									"table-info": p.userTeam,
 								},
 							},
+							spacer,
 						];
 					})
 					.flat(),

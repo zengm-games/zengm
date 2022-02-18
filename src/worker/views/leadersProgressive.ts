@@ -13,14 +13,7 @@ import {
 
 type MyLeader = Omit<
 	Leader,
-	| "abbrev"
-	| "jerseyNumber"
-	| "pos"
-	| "injury"
-	| "retiredYear"
-	| "skills"
-	| "tid"
-	| "season"
+	"abbrev" | "pos" | "injury" | "retiredYear" | "tid" | "season"
 >;
 
 const updateLeadersProgressive = async (
@@ -113,9 +106,11 @@ const updateLeadersProgressive = async (
 						if (pass) {
 							current.yearByYear = {
 								hof: p.hof,
+								jerseyNumber: p.jerseyNumber,
 								key: p.pid,
 								nameAbbrev: p.nameAbbrev,
 								pid: p.pid,
+								skills: p.ratings.skills,
 								stat: p.stats[cat.stat],
 								userTeam: g.get("userTid", season) === p.stats.tid,
 								watch: p.watch,
@@ -164,9 +159,11 @@ const updateLeadersProgressive = async (
 						const value = playerStats[cat.stat];
 						const leader = {
 							hof: p.hof,
+							jerseyNumber: p.jerseyNumber,
 							key: p.pid,
 							nameAbbrev: p.nameAbbrev,
 							pid: p.pid,
+							skills: p.ratings.skills,
 							stat: playerStats[cat.stat],
 							userTeam: g.get("userTid", season) === p.stats.tid,
 							watch: p.watch,

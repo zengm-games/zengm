@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels2 } from "../components";
 import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
 import range from "lodash-es/range";
@@ -58,15 +58,20 @@ const LeadersYears = ({
 				...leaders.map(p => ({
 					value: (
 						<>
-							<PlayerNameLabels pid={p.pid} season={season} watch={p.watch}>
-								{p.nameAbbrev}
-							</PlayerNameLabels>
+							<PlayerNameLabels2
+								pid={p.pid}
+								season={season}
+								watch={p.watch}
+								firstName={p.firstName}
+								firstNameShort={p.firstNameShort}
+								lastName={p.lastName}
+							/>
 							<span className="ms-2">
 								{helpers.roundStat(p.stat, stat, totals)}
 							</span>
 						</>
 					),
-					searchValue: `${p.nameAbbrev} (${p.stat})`,
+					searchValue: `${p.firstName} ${p.lastName} (${p.stat})`,
 					sortValue: p.stat,
 					classNames: {
 						"table-danger": p.hof,

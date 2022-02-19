@@ -8,6 +8,7 @@ xsName refactor
 - get rid of "name" special case in getSortVal and getCols
   - need to make sure every column displaying a player name uses wrappedPlayerNameLabels
 - player feats and box scores will need to be upgraded
+- todo leadersProgressive
 - get rid of nameAbbrev everywhere?
 - Swawp PlayerNameLabels for PlayerNameLabels2
 - would be better if it only extended the abbreviation when necessary. so if there are 3 players with the same name, and 2 of them require 3 letters, don't go to 3 letters for the other one. see real players awards records Jones. use trie?

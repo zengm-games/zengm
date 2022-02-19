@@ -8,6 +8,7 @@ import {
 	getCategoriesAndStats,
 	iterateAllPlayers,
 	Leader,
+	leadersAddFirstNameShort,
 	playerMeetsCategoryRequirements,
 } from "./leaders";
 
@@ -72,7 +73,8 @@ const updateLeadersYears = async (
 			const p = await idb.getCopy.playersPlus(pRaw, {
 				attrs: [
 					"pid",
-					"nameAbbrev",
+					"firstName",
+					"lastName",
 					"injury",
 					"watch",
 					"jerseyNumber",
@@ -117,7 +119,8 @@ const updateLeadersYears = async (
 				const leader = {
 					hof: p.hof,
 					key: p.pid,
-					nameAbbrev: p.nameAbbrev,
+					firstName: p.firstName,
+					lastName: p.lastName,
 					pid: p.pid,
 					stat: p.stats[cat.stat],
 					userTeam: g.get("userTid", season) === p.stats.tid,
@@ -137,7 +140,7 @@ const updateLeadersYears = async (
 		allLeaders = allLeaders.filter(row => row.leaders.length > 0);
 
 		return {
-			allLeaders,
+			allLeaders: leadersAddFirstNameShort(allLeaders),
 			playoffs: inputs.playoffs,
 			stat: inputs.stat,
 			statType: inputs.statType,

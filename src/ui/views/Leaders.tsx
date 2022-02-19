@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import {
 	MoreLinks,
-	PlayerNameLabels,
+	PlayerNameLabels2,
 	ResponsiveTableWrapper,
 } from "../components";
 import type { View } from "../../common/types";
@@ -177,7 +177,7 @@ const Leaders = ({
 												key={p.key}
 												cat={cat}
 												highlightActiveAndHOF={highlightActiveAndHOF}
-												p={p}
+												p={p as any}
 												rank={j + 1}
 												season={season}
 												totals={statType === "totals" && isSport("basketball")}

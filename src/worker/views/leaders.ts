@@ -536,6 +536,7 @@ export type Leader = {
 	jerseyNumber: string;
 	key: number | string;
 	firstName: string;
+	firstNameShort?: string;
 	lastName: string;
 	pid: number;
 	pos: string;
@@ -548,7 +549,21 @@ export type Leader = {
 	watch: boolean;
 };
 
-export const leadersAddFirstNameShort = () => {};
+export const leadersAddFirstNameShort = <
+	LocalLeader extends {
+		firstName: string;
+		lastName: string;
+	},
+	T extends {
+		leaders: LocalLeader[];
+	},
+>(
+	rows: T[],
+) =>
+	rows.map(row => ({
+		...row,
+		leaders: addFirstNameShort(row.leaders),
+	}));
 
 const NUM_LEADERS = 10;
 

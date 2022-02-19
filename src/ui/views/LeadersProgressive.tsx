@@ -4,6 +4,7 @@ import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
 import { formatStatsDropdown } from "./LeadersYears";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const LeadersProgressive = ({
 	allLeaders,
@@ -77,17 +78,16 @@ const LeadersProgressive = ({
 						} else {
 							tableRow = [
 								{
-									value: (
-										<PlayerNameLabels
-											pid={p.pid}
-											season={season}
-											watch={p.watch}
-											skills={p.skills}
-											jerseyNumber={p.jerseyNumber}
-										>
-											{p.nameAbbrev}
-										</PlayerNameLabels>
-									),
+									...wrappedPlayerNameLabels({
+										pid: p.pid,
+										season,
+										watch: p.watch,
+										skills: p.skills,
+										jerseyNumber: p.jerseyNumber,
+										firstName: p.firstName,
+										firstNameShort: p.firstNameShort,
+										lastName: p.lastName,
+									}),
 									classNames: {
 										"table-danger": p.hof,
 										"table-info": p.userTeam,

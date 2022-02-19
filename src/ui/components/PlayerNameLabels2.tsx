@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";

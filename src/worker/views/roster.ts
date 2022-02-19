@@ -8,6 +8,7 @@ import type {
 	TeamSeasonAttr,
 } from "../../common/types";
 import { addMood } from "./freeAgents";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const footballScore = (p: {
 	ratings: {
@@ -96,8 +97,8 @@ const updateRoster = async (
 			"pid",
 			"tid",
 			"draft",
-			"name",
-			"nameAbbrev",
+			"firstName",
+			"lastName",
 			"age",
 			"born",
 			"contract",
@@ -246,7 +247,7 @@ const updateRoster = async (
 			payroll,
 			phase: g.get("phase"),
 			playoffs: inputs.playoffs,
-			players,
+			players: addFirstNameShort(players),
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
 			showSpectatorWarning:

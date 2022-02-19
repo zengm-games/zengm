@@ -6,7 +6,7 @@ import {
 	CountryFlag,
 	HelpPopover,
 	Mood,
-	PlayerNameLabels,
+	PlayerNameLabels2,
 	RatingWithChange,
 	SortableTable,
 	SafeHtml,
@@ -28,9 +28,9 @@ const handleRelease = async (
 
 	let releaseMessage;
 	if (wasPlayerJustDrafted) {
-		releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
+		releaseMessage = `Are you sure you want to release ${p.firstName} ${p.lastName}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
 	} else {
-		releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp}.`;
+		releaseMessage = `Are you sure you want to release ${p.firstName} ${p.lastName}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp}.`;
 	}
 
 	const proceed = await confirm(releaseMessage, {
@@ -277,17 +277,17 @@ const Roster = ({
 					return (
 						<>
 							<td>
-								<PlayerNameLabels
+								<PlayerNameLabels2
 									pid={p.pid}
 									injury={p.injury}
 									jerseyNumber={p.stats.jerseyNumber}
 									season={season}
 									skills={p.ratings.skills}
 									watch={p.watch}
-									xsName={p.nameAbbrev}
-								>
-									{p.name}
-								</PlayerNameLabels>
+									firstName={p.firstName}
+									firstNameShort={p.firstNameShort}
+									lastName={p.lastName}
+								/>
 							</td>
 							<td>{p.ratings.pos}</td>
 							<td>{p.age}</td>

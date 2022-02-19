@@ -34,6 +34,7 @@ export { default as NewWindowLink } from "./NewWindowLink";
 export { default as NewsBlock } from "./NewsBlock";
 export { default as PlayPauseNext } from "./PlayPauseNext";
 export { default as PlayerNameLabels } from "./PlayerNameLabels";
+export { default as PlayerNameLabels2 } from "./PlayerNameLabels2";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
 export { default as PopText } from "./PopText";
 export { default as ProgressBarText } from "./ProgressBarText";

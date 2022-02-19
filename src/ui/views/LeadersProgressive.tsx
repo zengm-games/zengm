@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
 import { formatStatsDropdown } from "./LeadersYears";

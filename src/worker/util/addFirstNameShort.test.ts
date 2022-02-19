@@ -109,4 +109,27 @@ describe("worker/util/addFirstNameShort", () => {
 		assert.strictEqual(players2[0].firstNameShort, "B.");
 		assert.strictEqual(players2[1].firstNameShort, "B.");
 	});
+
+	test("handles only some players with colliding first names", () => {
+		const players = [
+			{
+				firstName: "Robert",
+				lastName: "Anderson",
+			},
+			{
+				firstName: "Roberta",
+				lastName: "Anderson",
+			},
+			{
+				firstName: "Bob",
+				lastName: "Anderson",
+			},
+		];
+
+		const players2 = addFirstNameShort(players);
+
+		assert.strictEqual(players2[0].firstNameShort, "Robert");
+		assert.strictEqual(players2[1].firstNameShort, "Roberta");
+		assert.strictEqual(players2[2].firstNameShort, "B.");
+	});
 });

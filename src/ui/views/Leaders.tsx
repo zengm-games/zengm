@@ -49,16 +49,17 @@ const Row = ({
 				<div style={{ width: 18 }} className="me-1 float-start">
 					{rank}.
 				</div>
-				<PlayerNameLabels
+				<PlayerNameLabels2
 					pid={p.pid}
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
 					season={numericSeason}
 					skills={p.skills}
 					watch={p.watch}
-				>
-					{p.nameAbbrev}
-				</PlayerNameLabels>
+					firstName={p.firstNameShort}
+					firstNameShort={p.firstNameShort}
+					lastName={p.lastName}
+				/>
 				<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
 					{p.abbrev}
 					{p.season !== undefined ? ` ${p.season}` : null}

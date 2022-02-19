@@ -17,6 +17,7 @@ import type {
 } from "../../common/types";
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -534,7 +535,8 @@ export type Leader = {
 	injury: PlayerInjury | undefined;
 	jerseyNumber: string;
 	key: number | string;
-	nameAbbrev: string;
+	firstName: string;
+	lastName: string;
 	pid: number;
 	pos: string;
 	retiredYear: number;
@@ -545,6 +547,8 @@ export type Leader = {
 	userTeam: boolean;
 	watch: boolean;
 };
+
+export const leadersAddFirstNameShort = () => {};
 
 const NUM_LEADERS = 10;
 
@@ -587,7 +591,8 @@ const updateLeaders = async (
 			const p = await idb.getCopy.playersPlus(pRaw, {
 				attrs: [
 					"pid",
-					"nameAbbrev",
+					"firstName",
+					"lastName",
 					"injury",
 					"watch",
 					"jerseyNumber",
@@ -674,7 +679,8 @@ const updateLeaders = async (
 						injury: p.injury,
 						jerseyNumber: p.jerseyNumber,
 						key,
-						nameAbbrev: p.nameAbbrev,
+						firstName: p.firstName,
+						lastName: p.lastName,
 						pid: p.pid,
 						pos: p.ratings.pos,
 						retiredYear: p.retiredYear,
@@ -706,7 +712,7 @@ const updateLeaders = async (
 			inputs.season < g.get("season");
 
 		return {
-			categories: outputCategories,
+			categories: leadersAddFirstNameShort(outputCategories),
 			highlightActiveAndHOF,
 			playoffs: inputs.playoffs,
 			season: inputs.season,

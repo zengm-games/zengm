@@ -1,17 +1,11 @@
 import { useState } from "react";
-import {
-	DataTable,
-	DraftAbbrev,
-	SkillsBlock,
-	PlayerNameLabels,
-	MoreLinks,
-} from "../components";
+import { DataTable, DraftAbbrev, SkillsBlock, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
-import SeasonIcons from "./Player/SeasonIcons";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
@@ -108,26 +102,15 @@ const DraftHistory = ({
 			key: p.pid,
 			data: [
 				p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
-				{
-					value: (
-						<div className="d-flex">
-							<PlayerNameLabels
-								pid={p.pid}
-								season={season}
-								watch={p.watch}
-								xsName={p.nameAbbrev}
-							>
-								{p.name}
-							</PlayerNameLabels>
-							<div className="ms-auto">
-								<SeasonIcons className="ms-1" awards={p.awards} playoffs />
-								<SeasonIcons className="ms-1" awards={p.awards} />
-							</div>
-						</div>
-					),
-					sortValue: p.name,
-					searchValue: p.name,
-				},
+				wrappedPlayerNameLabels({
+					awards: p.awards,
+					pid: p.pid,
+					season,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.pos,
 				{
 					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${

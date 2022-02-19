@@ -7,6 +7,7 @@ import type {
 	Player,
 } from "../../common/types";
 import maxBy from "lodash-es/maxBy";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
@@ -36,8 +37,8 @@ const updateDraftTeamHistory = async (
 			"abbrev",
 			"draft",
 			"pid",
-			"name",
-			"nameAbbrev",
+			"firstName",
+			"lastName",
 			"age",
 			"hof",
 			"watch",
@@ -88,8 +89,8 @@ const updateDraftTeamHistory = async (
 		players.push({
 			// Attributes
 			pid: p.pid,
-			name: p.name,
-			nameAbbrev: p.nameAbbrev,
+			firstName: p.firstName,
+			lastName: p.lastName,
 			draft: p.draft,
 			currentAge: p.age,
 			currentAbbrev: p.abbrev,
@@ -127,7 +128,7 @@ const updateDraftTeamHistory = async (
 		abbrev,
 		challengeNoRatings: g.get("challengeNoRatings"),
 		draftType: g.get("draftType"),
-		players,
+		players: addFirstNameShort(players),
 		stats,
 		userAbbrev,
 	};

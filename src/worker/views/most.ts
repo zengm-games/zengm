@@ -17,6 +17,7 @@ import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
 import goatFormula from "../util/goatFormula";
 import orderBy from "lodash-es/orderBy";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 type Most = {
 	value: number;
@@ -76,8 +77,8 @@ export const getMostXPlayers = async ({
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
-			"name",
-			"nameAbbrev",
+			"firstName",
+			"lastName",
 			"draft",
 			"retiredYear",
 			"statsTids",
@@ -105,7 +106,7 @@ export const getMostXPlayers = async ({
 	}
 
 	return {
-		players: processPlayersHallOfFame(ordered),
+		players: addFirstNameShort(processPlayersHallOfFame(ordered)),
 		stats,
 	};
 };

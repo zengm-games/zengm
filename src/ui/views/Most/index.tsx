@@ -1,10 +1,10 @@
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers } from "../../util";
-import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
+import { DataTable, SafeHtml } from "../../components";
 import type { View } from "../../../common/types";
 import { frivolitiesMenu } from "../Frivolities";
 import GOATFormula from "./GOATFormula";
-import SeasonIcons from "../Player/SeasonIcons";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
 
 export const getValue = (
 	obj: any,
@@ -70,25 +70,14 @@ const Most = ({
 			key: p.pid,
 			data: [
 				p.rank,
-				{
-					value: (
-						<div className="d-flex">
-							<PlayerNameLabels
-								jerseyNumber={p.jerseyNumber}
-								pid={p.pid}
-								xsName={p.nameAbbrev}
-							>
-								{p.name}
-							</PlayerNameLabels>
-							<div className="ms-auto">
-								<SeasonIcons className="ms-1" awards={p.awards} playoffs />
-								<SeasonIcons className="ms-1" awards={p.awards} />
-							</div>
-						</div>
-					),
-					sortValue: p.name,
-					searchValue: p.name,
-				},
+				wrappedPlayerNameLabels({
+					awards: p.awards,
+					jerseyNumber: p.jerseyNumber,
+					pid: p.pid,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				...extraCols.map(x => {
 					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {

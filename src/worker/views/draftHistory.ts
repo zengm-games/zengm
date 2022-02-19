@@ -3,6 +3,7 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
 import maxBy from "lodash-es/maxBy";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	// Update every time because anything could change this (unless all players from class are retired)
@@ -39,8 +40,8 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 			"abbrev",
 			"draft",
 			"pid",
-			"name",
-			"nameAbbrev",
+			"firstName",
+			"lastName",
 			"age",
 			"ageAtDeath",
 			"hof",
@@ -64,8 +65,8 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 			return {
 				// Attributes
 				pid: p.pid,
-				name: p.name,
-				nameAbbrev: p.nameAbbrev,
+				firstName: p.firstName,
+				lastName: p.lastName,
 				draft: p.draft,
 				currentAge: p.age,
 				ageAtDeath: p.ageAtDeath,
@@ -93,7 +94,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		draftType: g.get("draftType"),
-		players,
+		players: addFirstNameShort(players),
 		season: inputs.season,
 		stats,
 		userTid: g.get("userTid"),

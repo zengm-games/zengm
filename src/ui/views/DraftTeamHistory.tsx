@@ -2,7 +2,6 @@ import {
 	DataTable,
 	DraftAbbrev,
 	SkillsBlock,
-	PlayerNameLabels,
 	MoreLinks,
 	PlusMinus,
 } from "../components";
@@ -10,7 +9,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
-import SeasonIcons from "./Player/SeasonIcons";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -99,28 +98,17 @@ const DraftTeamHistory = ({
 						{(p.lotteryProb * 100).toFixed(1)}%
 					</a>
 				) : undefined,
-				{
-					value: (
-						<div className="d-flex">
-							<PlayerNameLabels
-								jerseyNumber={p.jerseyNumber}
-								pid={p.pid}
-								season={p.draft.year}
-								skills={p.currentSkills}
-								watch={p.watch}
-								xsName={p.nameAbbrev}
-							>
-								{p.name}
-							</PlayerNameLabels>
-							<div className="ms-auto">
-								<SeasonIcons className="ms-1" awards={p.awards} playoffs />
-								<SeasonIcons className="ms-1" awards={p.awards} />
-							</div>
-						</div>
-					),
-					sortValue: p.name,
-					searchValue: p.name,
-				},
+				wrappedPlayerNameLabels({
+					awards: p.awards,
+					jerseyNumber: p.jerseyNumber,
+					pid: p.pid,
+					season: p.draft.year,
+					skills: p.currentSkills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.pos,
 				{
 					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${

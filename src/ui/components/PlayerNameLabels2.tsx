@@ -1,10 +1,12 @@
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
-import type { PlayerInjury } from "../../common/types";
+import type { Player, PlayerInjury } from "../../common/types";
 import InjuryIcon from "./InjuryIcon";
+import SeasonIcons from "../views/Player/SeasonIcons";
 
 type Props = {
+	awards?: Player["awards"];
 	jerseyNumber?: string;
 	injury?: PlayerInjury & {
 		playingThrough?: boolean;
@@ -28,6 +30,7 @@ type Props = {
 
 const PlayerNameLabels = (props: Props) => {
 	const {
+		awards,
 		firstName,
 		firstNameShort,
 		injury,
@@ -91,7 +94,7 @@ const PlayerNameLabels = (props: Props) => {
 		</>
 	);
 
-	return (
+	const nameLabelsBlock = (
 		<span style={style}>
 			{props.hasOwnProperty("jerseyNumber") ? (
 				<span className="text-muted jersey-number-name d-none d-sm-inline-block">
@@ -114,6 +117,20 @@ const PlayerNameLabels = (props: Props) => {
 			) : null}
 		</span>
 	);
+
+	if (awards) {
+		return (
+			<div className="d-flex">
+				{nameLabelsBlock}
+				<div className="ms-auto">
+					<SeasonIcons className="ms-1" awards={awards} playoffs />
+					<SeasonIcons className="ms-1" awards={awards} />
+				</div>
+			</div>
+		);
+	}
+
+	return nameLabelsBlock;
 };
 
 export const wrappedPlayerNameLabels = (props: Props) => {

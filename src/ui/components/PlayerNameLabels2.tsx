@@ -4,7 +4,7 @@ import { helpers } from "../util";
 import type { PlayerInjury } from "../../common/types";
 import InjuryIcon from "./InjuryIcon";
 
-const PlayerNameLabels = (props: {
+type Props = {
 	jerseyNumber?: string;
 	injury?: PlayerInjury & {
 		playingThrough?: boolean;
@@ -24,7 +24,9 @@ const PlayerNameLabels = (props: {
 	firstName: string;
 	lastName: string;
 	firstNameShort?: string;
-}) => {
+};
+
+const PlayerNameLabels = (props: Props) => {
 	const {
 		firstName,
 		firstNameShort,
@@ -112,6 +114,14 @@ const PlayerNameLabels = (props: {
 			) : null}
 		</span>
 	);
+};
+
+export const wrappedPlayerNameLabels = (props: Props) => {
+	return {
+		value: <PlayerNameLabels {...props} />,
+		sortValue: `${props.lastName} ${props.firstName}`,
+		searchValue: `${props.firstName} ${props.lastName}`,
+	};
 };
 
 export default PlayerNameLabels;

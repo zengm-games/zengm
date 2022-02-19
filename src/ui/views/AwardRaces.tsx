@@ -1,7 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
 import {
-	PlayerNameLabels,
 	DataTable,
 	RatingWithChange,
 	StatWithChange,
@@ -9,6 +8,7 @@ import {
 } from "../components";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const AwardRaces = ({
 	awardCandidates,
@@ -85,17 +85,17 @@ const AwardRaces = ({
 
 						const data = [
 							j + 1,
-							<PlayerNameLabels
-								injury={p.injury}
-								jerseyNumber={ps ? ps.jerseyNumber : undefined}
-								pid={p.pid}
-								season={season}
-								skills={pr ? pr.skills : []}
-								watch={p.watch}
-								xsName={p.nameAbbrev}
-							>
-								{p.name}
-							</PlayerNameLabels>,
+							wrappedPlayerNameLabels({
+								injury: p.injury,
+								jerseyNumber: ps ? ps.jerseyNumber : undefined,
+								pid: p.pid,
+								season: season,
+								skills: pr ? pr.skills : [],
+								watch: p.watch,
+								firstName: p.firstName,
+								firstNameShort: p.firstNameShort,
+								lastName: p.lastName,
+							}),
 							pos,
 							p.age,
 							<>

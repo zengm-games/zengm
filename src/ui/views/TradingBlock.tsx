@@ -2,13 +2,7 @@ import { useRef, useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import {
-	ActionButton,
-	DataTable,
-	HelpPopover,
-	PlayerNameLabels,
-	SafeHtml,
-} from "../components";
+import { ActionButton, DataTable, HelpPopover, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
 import classNames from "classnames";
@@ -16,6 +10,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
@@ -65,16 +60,16 @@ const OfferPlayers = ({
 			return {
 				key: p.pid,
 				data: [
-					<PlayerNameLabels
-						injury={p.injury}
-						jerseyNumber={p.jerseyNumber}
-						pid={p.pid}
-						skills={p.ratings.skills}
-						watch={p.watch}
-						xsName={p.nameAbbrev}
-					>
-						{p.name}
-					</PlayerNameLabels>,
+					wrappedPlayerNameLabels({
+						pid: p.pid,
+						injury: p.injury,
+						jerseyNumber: p.jerseyNumber,
+						skills: p.ratings.skills,
+						watch: p.watch,
+						firstName: p.firstName,
+						firstNameShort: p.firstNameShort,
+						lastName: p.lastName,
+					}),
 					p.ratings.pos,
 					p.age,
 					!challengeNoRatings ? p.ratings.ovr : null,
@@ -398,16 +393,16 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					onChange={() => handleChangeAsset("pids", p.pid)}
 					title={p.untradableMsg}
 				/>,
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,

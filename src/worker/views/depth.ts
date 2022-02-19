@@ -5,6 +5,7 @@ import posRatings from "../../common/posRatings";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES, NUM_PLAYERS_PER_LINE } from "../../common/constants.hockey";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const defenseStats = [
 	"defTckSolo",
@@ -94,17 +95,19 @@ const updateDepth = async (
 		const editable = tid === g.get("userTid") && !g.get("spectator");
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
-		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "name", "nameAbbrev", "age", "injury", "watch"],
-			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
-			playoffs: playoffs === "playoffs",
-			regularSeason: playoffs !== "playoffs",
-			stats: [...stats[pos], "jerseyNumber"],
-			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
+		const players = addFirstNameShort(
+			await idb.getCopies.playersPlus(playersAll, {
+				attrs: ["pid", "firstName", "lastName", "age", "injury", "watch"],
+				ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
+				playoffs: playoffs === "playoffs",
+				regularSeason: playoffs !== "playoffs",
+				stats: [...stats[pos], "jerseyNumber"],
+				season: g.get("season"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
 
 		// Sort players based on current depth chart
 		const t = await idb.cache.teams.get(tid);

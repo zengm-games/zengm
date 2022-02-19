@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import type { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sync with Dropdown.js
 import { bySport } from "../../common";
-import { helpers } from "../util";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const optionsTmp = bySport({
 	basketball: [
@@ -280,8 +280,8 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	});
 	const lastYear = Math.max(...years.map(y => y.season)).toString();
 	return {
-		name: `${p.firstName} ${p.lastName}`,
-		nameAbbrev: helpers.nameAbbrev(p),
+		firstName: p.firstName,
+		lastName: p.lastName,
 		pid: p.pid,
 		count: awards.length,
 		countText: awards.length.toString(),
@@ -322,9 +322,10 @@ const updateAwardsRecords = async (
 			return returnValue;
 		}
 
-		const awardsRecords = players
-			.map(p => getPlayerAwards(p, awardType))
-			.filter(o => o.count > 0);
+		const awardsRecords = addFirstNameShort(
+			players.map(p => getPlayerAwards(p, awardType)).filter(o => o.count > 0),
+		);
+
 		return {
 			awardsRecords,
 			playerCount: awardsRecords.length,

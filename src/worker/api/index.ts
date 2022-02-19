@@ -115,6 +115,7 @@ import type { LeagueDB } from "../db/connectLeague";
 import playMenu from "./playMenu";
 import toolsMenu from "./toolsMenu";
 import omit from "lodash-es/omit";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1628,26 +1629,28 @@ const getTradingBlockOffers = async ({
 					tid,
 				);
 				playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
-				const players = await idb.getCopies.playersPlus(playersAll, {
-					attrs: [
-						"pid",
-						"name",
-						"nameAbbrev",
-						"age",
-						"contract",
-						"injury",
-						"watch",
-						"jerseyNumber",
-						"draft",
-					],
-					ratings: ["ovr", "pot", "skills", "pos"],
-					stats,
-					season: g.get("season"),
-					tid,
-					showNoStats: true,
-					showRookies: true,
-					fuzz: true,
-				});
+				const players = addFirstNameShort(
+					await idb.getCopies.playersPlus(playersAll, {
+						attrs: [
+							"pid",
+							"firstName",
+							"lastName",
+							"age",
+							"contract",
+							"injury",
+							"watch",
+							"jerseyNumber",
+							"draft",
+						],
+						ratings: ["ovr", "pot", "skills", "pos"],
+						stats,
+						season: g.get("season"),
+						tid,
+						showNoStats: true,
+						showRookies: true,
+						fuzz: true,
+					}),
+				);
 				let picks = await idb.getCopies.draftPicks(
 					{
 						tid,

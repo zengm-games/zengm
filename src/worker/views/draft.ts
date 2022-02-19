@@ -3,6 +3,7 @@ import type { UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g, local } from "../util";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -67,26 +68,28 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			);
 		}
 
-		drafted = await idb.getCopies.playersPlus(drafted, {
-			attrs: [
-				"pid",
-				"tid",
-				"name",
-				"nameAbbrev",
-				"age",
-				"draft",
-				"injury",
-				"contract",
-				"watch",
-				"prevTid",
-				"prevAbbrev",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats: ["per", "ewa"],
-			season: g.get("season"),
-			showRookies: true,
-			fuzz: true,
-		});
+		drafted = addFirstNameShort(
+			await idb.getCopies.playersPlus(drafted, {
+				attrs: [
+					"pid",
+					"tid",
+					"firstName",
+					"lastName",
+					"age",
+					"draft",
+					"injury",
+					"contract",
+					"watch",
+					"prevTid",
+					"prevAbbrev",
+				],
+				ratings: ["ovr", "pot", "skills", "pos"],
+				stats: ["per", "ewa"],
+				season: g.get("season"),
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
 
 		let stats: string[];
 		let undrafted: any[];
@@ -171,27 +174,29 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
-		undrafted = await idb.getCopies.playersPlus(undrafted, {
-			attrs: [
-				"pid",
-				"name",
-				"nameAbbrev",
-				"age",
-				"injury",
-				"contract",
-				"watch",
-				"abbrev",
-				"tid",
-				"valueFuzz",
-				"draft",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats,
-			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
+		undrafted = addFirstNameShort(
+			await idb.getCopies.playersPlus(undrafted, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"age",
+					"injury",
+					"contract",
+					"watch",
+					"abbrev",
+					"tid",
+					"valueFuzz",
+					"draft",
+				],
+				ratings: ["ovr", "pot", "skills", "pos"],
+				stats,
+				season: g.get("season"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
 		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
 		undrafted = undrafted.map((p, i) => ({
 			...p,

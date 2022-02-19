@@ -1,8 +1,9 @@
 import { groupBy } from "../../common/groupBy";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];
@@ -45,9 +46,12 @@ const AwardsRecords = ({
 		return {
 			key: a.pid,
 			data: [
-				<PlayerNameLabels pid={a.pid} xsName={a.nameAbbrev}>
-					{a.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: a.pid,
+					firstName: a.firstName,
+					firstNameShort: a.firstNameShort,
+					lastName: a.lastName,
+				}),
 				a.count,
 				{
 					value: formatYear(groupBy(a.years, "team")),

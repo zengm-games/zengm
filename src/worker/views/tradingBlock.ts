@@ -2,6 +2,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { bySport } from "../../common";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,
@@ -22,27 +23,29 @@ const updateUserRoster = async (
 			"playersByTid",
 			g.get("userTid"),
 		);
-		const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
-			attrs: [
-				"pid",
-				"name",
-				"nameAbbrev",
-				"age",
-				"contract",
-				"injury",
-				"watch",
-				"untradable",
-				"jerseyNumber",
-				"draft",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats,
-			season: g.get("season"),
-			tid: g.get("userTid"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
+		const userRoster = addFirstNameShort(
+			await idb.getCopies.playersPlus(userRosterAll, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"age",
+					"contract",
+					"injury",
+					"watch",
+					"untradable",
+					"jerseyNumber",
+					"draft",
+				],
+				ratings: ["ovr", "pot", "skills", "pos"],
+				stats,
+				season: g.get("season"),
+				tid: g.get("userTid"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
 
 		const userPicks = await idb.getCopies.draftPicks(
 			{

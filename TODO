@@ -10,6 +10,7 @@ xsName refactor
 - player feats and box scores will need to be upgraded
 - get rid of nameAbbrev everywhere?
 - Swawp PlayerNameLabels for PlayerNameLabels2
+- would be better if it only extended the abbreviation when necessary. so if there are 3 players with the same name, and 2 of them require 3 letters, don't go to 3 letters for the other one. use trie?
 
 sticky columns sometimes fail on mobile
 - seen in safari and android chrome

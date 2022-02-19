@@ -3,7 +3,7 @@ import { Fragment, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
+import { MoreLinks, PlayerNameLabels2, SortableTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
@@ -293,16 +293,16 @@ const Depth = ({
 					return (
 						<>
 							<td>
-								<PlayerNameLabels
+								<PlayerNameLabels2
 									pid={p.pid}
 									injury={p.injury}
 									jerseyNumber={p.stats.jerseyNumber}
 									skills={p.ratings.skills}
 									watch={p.watch}
-									xsName={p.nameAbbrev}
-								>
-									{p.name}
-								</PlayerNameLabels>
+									firstName={p.firstName}
+									firstNameShort={p.firstNameShort}
+									lastName={p.lastName}
+								/>
 							</td>
 							<td
 								className={classNames({

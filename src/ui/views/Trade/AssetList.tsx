@@ -1,5 +1,5 @@
 import range from "lodash-es/range";
-import { DataTable, PlayerNameLabels, SafeHtml } from "../../components";
+import { DataTable, SafeHtml } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { Dropdown } from "react-bootstrap";
@@ -7,6 +7,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../../components/contract";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
 
 type HandleToggle = (
 	userOrOther: "other" | "user",
@@ -58,16 +59,16 @@ const genPlayerRows = (
 						handleToggle(userOrOther, "player", "exclude", p.pid);
 					}}
 				/>,
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,

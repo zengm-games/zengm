@@ -4,6 +4,7 @@ import { team, trade } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
 import type { TradeTeams } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const getSummary = async (teams: TradeTeams) => {
 	const summary = await trade.summary(teams);
@@ -91,8 +92,8 @@ const updateTrade = async () => {
 	);
 	const attrs = [
 		"pid",
-		"name",
-		"nameAbbrev",
+		"firstName",
+		"lastName",
 		"age",
 		"contract",
 		"draft",
@@ -107,16 +108,18 @@ const updateTrade = async () => {
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
-	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
-		attrs,
-		ratings,
-		stats,
-		season: g.get("season"),
-		tid: g.get("userTid"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
+	const userRoster = addFirstNameShort(
+		await idb.getCopies.playersPlus(userRosterAll, {
+			attrs,
+			ratings,
+			stats,
+			season: g.get("season"),
+			tid: g.get("userTid"),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		}),
+	);
 
 	for (const p of userRoster) {
 		p.included = teams[0].pids.includes(p.pid);
@@ -164,16 +167,18 @@ const updateTrade = async () => {
 		return returnValue;
 	}
 
-	const otherRoster = await idb.getCopies.playersPlus(otherRosterAll, {
-		attrs,
-		ratings,
-		stats,
-		season: g.get("season"),
-		tid: otherTid,
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
+	const otherRoster = addFirstNameShort(
+		await idb.getCopies.playersPlus(otherRosterAll, {
+			attrs,
+			ratings,
+			stats,
+			season: g.get("season"),
+			tid: otherTid,
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		}),
+	);
 
 	for (const p of otherRoster) {
 		p.included = teams[1].pids.includes(p.pid);

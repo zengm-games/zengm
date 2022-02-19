@@ -6,7 +6,6 @@ import {
 	DataTable,
 	DraftAbbrev,
 	MoreLinks,
-	PlayerNameLabels,
 	RosterComposition,
 } from "../components";
 import type { View } from "../../common/types";
@@ -14,6 +13,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const DraftButtons = ({
 	spectator,
@@ -134,15 +134,15 @@ const Draft = ({
 	const rowsUndrafted = undrafted.map(p => {
 		const data = [
 			p.rank,
-			<PlayerNameLabels
-				pid={p.pid}
-				injury={p.injury}
-				skills={p.ratings.skills}
-				watch={p.watch}
-				xsName={p.nameAbbrev}
-			>
-				{p.name}
-			</PlayerNameLabels>,
+			wrappedPlayerNameLabels({
+				pid: p.pid,
+				injury: p.injury,
+				skills: p.ratings.skills,
+				watch: p.watch,
+				firstName: p.firstName,
+				firstNameShort: p.firstNameShort,
+				lastName: p.lastName,
+			}),
 			p.ratings.pos,
 			p.age,
 			!challengeNoRatings ? p.ratings.ovr : null,
@@ -228,15 +228,15 @@ const Draft = ({
 				),
 			},
 			p.pid >= 0 ? (
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				})
 			) : (
 				<>
 					<button

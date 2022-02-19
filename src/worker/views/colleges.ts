@@ -3,6 +3,7 @@ import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
 import { bySport } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -135,8 +136,8 @@ export const genView = (
 					const p = await idb.getCopy.playersPlus(info.best.p, {
 						attrs: [
 							"pid",
-							"name",
-							"nameAbbrev",
+							"firstName",
+							"lastName",
 							"draft",
 							"retiredYear",
 							"statsTids",
@@ -160,6 +161,13 @@ export const genView = (
 					};
 				}),
 			);
+
+			// Hacky crap because p is nested
+			const players = infos.map(info => info.p);
+			const playersWithFirstNameShort = addFirstNameShort(players);
+			for (let i = 0; i < infos.length; i++) {
+				infos[i].p = playersWithFirstNameShort[i];
+			}
 
 			return {
 				challengeNoRatings: g.get("challengeNoRatings"),

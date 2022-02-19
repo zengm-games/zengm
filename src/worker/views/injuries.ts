@@ -2,6 +2,7 @@ import { bySport, PHASE } from "../../common";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateInjuries = async (
 	inputs: ViewInput<"injuries">,
@@ -65,7 +66,7 @@ const updateInjuries = async (
 			abbrev: inputs.abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			godMode: g.get("godMode"),
-			injuries,
+			injuries: addFirstNameShort(injuries),
 			season: inputs.season,
 			stats,
 			userTid,

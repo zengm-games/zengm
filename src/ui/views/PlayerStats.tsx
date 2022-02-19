@@ -1,9 +1,10 @@
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -130,23 +131,17 @@ const PlayerStats = ({
 		return {
 			key,
 			data: [
-				{
-					value: (
-						<PlayerNameLabels
-							injury={p.injury}
-							jerseyNumber={p.stats.jerseyNumber}
-							pid={p.pid}
-							season={season === "career" ? undefined : p.stats.season}
-							skills={p.ratings.skills}
-							watch={p.watch}
-							xsName={p.nameAbbrev}
-						>
-							{p.name}
-						</PlayerNameLabels>
-					),
-					sortValue: p.name,
-					searchValue: p.name,
-				},
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					season: season === "career" ? undefined : p.stats.season,
+					skills: p.ratings.skills,
+					jerseyNumber: p.stats.jerseyNumber,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				pos,
 
 				// Only show age at death for career totals, otherwise just use current age

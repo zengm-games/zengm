@@ -2,8 +2,9 @@ import { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const ExportPlayers = ({
 	challengeNoRatings,
@@ -42,17 +43,17 @@ const ExportPlayers = ({
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return [
-			<PlayerNameLabels
-				injury={p.injury}
-				jerseyNumber={p.jerseyNumber}
-				pid={p.pid}
-				season={season}
-				skills={p.ratings.skills}
-				watch={p.watch}
-				xsName={p.nameAbbrev}
-			>
-				{p.name}
-			</PlayerNameLabels>,
+			wrappedPlayerNameLabels({
+				injury: p.injury,
+				jerseyNumber: p.jerseyNumber,
+				pid: p.pid,
+				season: season,
+				skills: p.ratings.skills,
+				watch: p.watch,
+				firstName: p.firstName,
+				firstNameShort: p.firstNameShort,
+				lastName: p.lastName,
+			}),
 			p.ratings.pos,
 			p.age,
 			<a

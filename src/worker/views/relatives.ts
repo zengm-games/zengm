@@ -2,6 +2,7 @@ import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player, ViewInput } from "../../common/types";
 import { bySport } from "../../common";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updatePlayers = async (
 	{ pid }: ViewInput<"relatives">,
@@ -58,8 +59,8 @@ const updatePlayers = async (
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
-				"name",
-				"nameAbbrev",
+				"firstName",
+				"lastName",
 				"draft",
 				"retiredYear",
 				"statsTids",
@@ -79,7 +80,7 @@ const updatePlayers = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			pid,
-			players: processPlayersHallOfFame(players),
+			players: addFirstNameShort(processPlayersHallOfFame(players)),
 			stats,
 			userTid: g.get("userTid"),
 		};

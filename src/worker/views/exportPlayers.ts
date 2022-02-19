@@ -2,6 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateExportPlayers = async (
 	{ season }: ViewInput<"exportPlayers">,
@@ -26,25 +27,27 @@ const updateExportPlayers = async (
 			);
 		}
 
-		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"pid",
-				"name",
-				"nameAbbrev",
-				"age",
-				"injury",
-				"watch",
-				"tid",
-				"abbrev",
-				"jerseyNumber",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats: ["abbrev", "tid"],
-			season: season,
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
+		const players = addFirstNameShort(
+			await idb.getCopies.playersPlus(playersAll, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"age",
+					"injury",
+					"watch",
+					"tid",
+					"abbrev",
+					"jerseyNumber",
+				],
+				ratings: ["ovr", "pot", "skills", "pos"],
+				stats: ["abbrev", "tid"],
+				season: season,
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

@@ -3,18 +3,14 @@ import { Dropdown } from "react-bootstrap";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import {
-	ActionButton,
-	DataTable,
-	PlayerNameLabels,
-	WatchBlock,
-} from "../components";
+import { ActionButton, DataTable, WatchBlock } from "../components";
 import type { View } from "../../common/types";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const WatchList = ({
 	challengeNoRatings,
@@ -77,16 +73,16 @@ const WatchList = ({
 			key: p.pid,
 			data: [
 				<WatchBlock pid={p.pid} watch={p.watch} />,
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				wrappedAgeAtDeath(p.age, p.ageAtDeath),
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>

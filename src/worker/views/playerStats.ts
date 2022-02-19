@@ -6,6 +6,7 @@ import type {
 	ViewInput,
 	PlayerStatType,
 } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -88,8 +89,8 @@ const updatePlayers = async (
 		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
-				"nameAbbrev",
-				"name",
+				"firstName",
+				"lastName",
 				"age",
 				"born",
 				"ageAtDeath",
@@ -178,6 +179,8 @@ const updatePlayers = async (
 				return false;
 			});
 		}
+
+		players = addFirstNameShort(players);
 
 		return {
 			players,

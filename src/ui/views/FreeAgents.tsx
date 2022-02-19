@@ -4,7 +4,6 @@ import {
 	DataTable,
 	MoreLinks,
 	NegotiateButtons,
-	PlayerNameLabels,
 	RosterComposition,
 	RosterSalarySummary,
 } from "../components";
@@ -16,6 +15,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const FreeAgents = ({
 	capSpace,
@@ -94,16 +94,16 @@ const FreeAgents = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,

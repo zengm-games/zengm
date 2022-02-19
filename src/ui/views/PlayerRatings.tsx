@@ -1,4 +1,4 @@
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { POSITIONS, PLAYER, isSport } from "../../common";
@@ -7,6 +7,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const PlayerRatings = ({
 	abbrev,
@@ -62,17 +63,17 @@ const PlayerRatings = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					season={season}
-					skills={p.ratings.skills}
-					jerseyNumber={p.stats.jerseyNumber}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					season,
+					skills: p.ratings.skills,
+					jerseyNumber: p.stats.jerseyNumber,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				<a
 					href={helpers.leagueUrl([

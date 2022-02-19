@@ -1,9 +1,10 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { bySport } from "../../common";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const FrivolitiesDraftClasses = ({
 	challengeNoRatings,
@@ -64,16 +65,14 @@ const FrivolitiesDraftClasses = ({
 				draftClass.numMVP,
 				draftClass.numHOF,
 				{
-					value: (
-						<PlayerNameLabels
-							jerseyNumber={p.jerseyNumber}
-							pid={p.pid}
-							season={p.draft.year}
-							xsName={p.nameAbbrev}
-						>
-							{p.name}
-						</PlayerNameLabels>
-					),
+					...wrappedPlayerNameLabels({
+						jerseyNumber: p.jerseyNumber,
+						pid: p.pid,
+						season: p.draft.year,
+						firstName: p.firstName,
+						firstNameShort: p.firstNameShort,
+						lastName: p.lastName,
+					}),
 					classNames: {
 						"table-success": p.retiredYear === Infinity,
 						"table-info": p.statsTids.includes(userTid),

@@ -1,8 +1,9 @@
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const Injuries = ({
 	abbrev,
@@ -39,15 +40,15 @@ const Injuries = ({
 		return {
 			key: season === "current" ? p.pid : i,
 			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					skills={p.ratings.skills}
-					season={typeof season === "number" ? season : undefined}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					season: typeof season === "number" ? season : undefined,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				<a
 					href={helpers.leagueUrl([

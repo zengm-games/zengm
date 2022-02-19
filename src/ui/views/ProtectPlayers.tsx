@@ -3,12 +3,13 @@ import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, toWorker, realtimeUpdate, getCols } from "../util";
 import type { View } from "../../common/types";
-import { PlayerNameLabels, SafeHtml, DataTable } from "../components";
+import { SafeHtml, DataTable } from "../components";
 import { PHASE } from "../../common";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -58,16 +59,16 @@ const PlayerList = ({
 						}
 					}}
 				/>,
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,

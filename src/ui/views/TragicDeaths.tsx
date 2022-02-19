@@ -1,8 +1,9 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
+import { DataTable, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 	useTitleBar({ title: "Tragic Deaths", customMenu: frivolitiesMenu });
@@ -52,9 +53,12 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		return {
 			key: i,
 			data: [
-				<PlayerNameLabels pid={p.pid} xsName={p.nameAbbrev}>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				lastRatings.pos,
 				p.draft.year,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",

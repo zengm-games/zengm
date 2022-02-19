@@ -7,6 +7,7 @@ import type {
 } from "../../common/types";
 import { bySport, isSport, PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
@@ -120,23 +121,25 @@ const updateFrivolitiesDraftClasses = async (
 		const bestPlayersAll = draftClasses.map(
 			draftClass => draftClass.bestPlayer.p,
 		);
-		const bestPlayers = processPlayersHallOfFame(
-			await idb.getCopies.playersPlus(bestPlayersAll, {
-				attrs: [
-					"pid",
-					"name",
-					"nameAbbrev",
-					"draft",
-					"retiredYear",
-					"statsTids",
-					"born",
-					"diedYear",
-					"jerseyNumber",
-				],
-				ratings: ["ovr", "pos"],
-				stats: ["season", "abbrev", "tid", ...stats],
-				fuzz: true,
-			}),
+		const bestPlayers = addFirstNameShort(
+			processPlayersHallOfFame(
+				await idb.getCopies.playersPlus(bestPlayersAll, {
+					attrs: [
+						"pid",
+						"firstName",
+						"lastName",
+						"draft",
+						"retiredYear",
+						"statsTids",
+						"born",
+						"diedYear",
+						"jerseyNumber",
+					],
+					ratings: ["ovr", "pos"],
+					stats: ["season", "abbrev", "tid", ...stats],
+					fuzz: true,
+				}),
+			),
 		);
 
 		const draftClasses2 = orderBy(

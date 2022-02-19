@@ -2,6 +2,7 @@ import { bySport, PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 export const getPlayers = async (
 	season: number,
@@ -33,8 +34,8 @@ export const getPlayers = async (
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
-			"name",
-			"nameAbbrev",
+			"firstName",
+			"lastName",
 			"age",
 			"contract",
 			"injury",
@@ -148,13 +149,15 @@ const updatePlayers = async (
 			hockey: ["ovrs", "pots"],
 		});
 
-		const players = await getPlayers(
-			inputs.season,
-			inputs.abbrev,
-			[],
-			[...ratings, ...extraRatings],
-			[],
-			inputs.tid,
+		const players = addFirstNameShort(
+			await getPlayers(
+				inputs.season,
+				inputs.abbrev,
+				[],
+				[...ratings, ...extraRatings],
+				[],
+				inputs.tid,
+			),
 		);
 
 		return {

@@ -1,4 +1,4 @@
-import { CountryFlag, DataTable, PlayerNameLabels } from "../components";
+import { CountryFlag, DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -10,6 +10,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const PlayerBios = ({
 	abbrev,
@@ -56,16 +57,16 @@ const PlayerBios = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					season={season}
-					skills={p.ratings.skills}
-					watch={p.watch}
-					xsName={p.nameAbbrev}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					season,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				<a
 					href={helpers.leagueUrl([

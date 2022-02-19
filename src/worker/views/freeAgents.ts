@@ -3,6 +3,7 @@ import type { Player } from "../../common/types";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 export const addMood = async (players: Player[]) => {
 	const moods: Awaited<ReturnType<typeof player["moodInfos"]>>[] = [];
@@ -33,27 +34,29 @@ const updateFreeAgents = async () => {
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
-	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"pid",
-			"name",
-			"nameAbbrev",
-			"age",
-			"contract",
-			"injury",
-			"watch",
-			"jerseyNumber",
-			"mood",
-			"draft",
-		],
-		ratings: ["ovr", "pot", "skills", "pos"],
-		stats,
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-		oldStats: true,
-	});
+	const players = addFirstNameShort(
+		await idb.getCopies.playersPlus(playersAll, {
+			attrs: [
+				"pid",
+				"firstName",
+				"lastName",
+				"age",
+				"contract",
+				"injury",
+				"watch",
+				"jerseyNumber",
+				"mood",
+				"draft",
+			],
+			ratings: ["ovr", "pot", "skills", "pos"],
+			stats,
+			season: g.get("season"),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+			oldStats: true,
+		}),
+	);
 
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],

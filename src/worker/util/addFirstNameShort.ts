@@ -12,6 +12,7 @@ const addFirstNameShort = <
 ): (T & {
 	firstNameShort: string;
 })[] => {
+	console.log(players);
 	const playersByLastName = groupBy(players, "lastName");
 
 	const lengthNeeded: Record<string, number> = {};

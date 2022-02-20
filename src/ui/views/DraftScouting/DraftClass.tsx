@@ -1,12 +1,9 @@
 import { useState } from "react";
-import {
-	DataTable,
-	LeagueFileUpload,
-	PlayerNameLabels,
-} from "../../components";
+import { DataTable, LeagueFileUpload } from "../../components";
 import { confirm, downloadFile, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { WEBSITE_ROOT } from "../../../common";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
 
 const DraftClass = ({
 	challengeNoRatings,
@@ -31,20 +28,15 @@ const DraftClass = ({
 			key: p.pid,
 			data: [
 				p.rank,
-				{
-					value: (
-						<PlayerNameLabels
-							pid={p.pid}
-							season={season}
-							skills={p.skills}
-							watch={p.watch}
-						>
-							{p.nameAbbrev}
-						</PlayerNameLabels>
-					),
-					sortValue: p.name,
-					searchValue: p.name,
-				},
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					season,
+					skills: p.skills,
+					watch: p.watch,
+					firstName: p.firstNameShort,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.pos,
 				p.age,
 				!challengeNoRatings ? p.ovr : null,

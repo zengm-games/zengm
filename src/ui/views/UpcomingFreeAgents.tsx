@@ -1,9 +1,10 @@
 import { PHASE } from "../../common";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
+import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,
@@ -55,15 +56,16 @@ const UpcomingFreeAgents = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					skills={p.ratings.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					pid: p.pid,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.ratings.pos,
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
 					{p.abbrev}

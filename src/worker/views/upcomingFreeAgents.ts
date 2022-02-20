@@ -3,6 +3,7 @@ import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,
@@ -36,27 +37,30 @@ const updateUpcomingFreeAgents = async (
 		});
 	}
 
-	players = await idb.getCopies.playersPlus(players, {
-		attrs: [
-			"pid",
-			"name",
-			"abbrev",
-			"tid",
-			"age",
-			"contract",
-			"injury",
-			"contractDesired",
-			"watch",
-			"jerseyNumber",
-			"mood",
-		],
-		ratings: ["ovr", "pot", "skills", "pos"],
-		stats,
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
+	players = addFirstNameShort(
+		await idb.getCopies.playersPlus(players, {
+			attrs: [
+				"pid",
+				"firstName",
+				"lastName",
+				"abbrev",
+				"tid",
+				"age",
+				"contract",
+				"injury",
+				"contractDesired",
+				"watch",
+				"jerseyNumber",
+				"mood",
+			],
+			ratings: ["ovr", "pot", "skills", "pos"],
+			stats,
+			season: g.get("season"),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		}),
+	);
 
 	// Apply mood
 	for (const p of players) {

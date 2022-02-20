@@ -1,8 +1,9 @@
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const PlayerFeats = ({
 	abbrev,
@@ -35,12 +36,11 @@ const PlayerFeats = ({
 		return {
 			key: p.fid,
 			data: [
-				<PlayerNameLabels
-					pid={p.pid}
-					season={typeof season === "number" ? season : undefined}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					season: typeof season === "number" ? season : undefined,
+					legacyName: p.name,
+				}),
 				p.pos,
 				<a
 					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, p.season])}

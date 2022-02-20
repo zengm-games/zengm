@@ -4,7 +4,7 @@ import { helpers, useLocalShallow } from "../../util";
 import { memo, ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
 import defaultGameAttributes from "../../../common/defaultGameAttributes";
-import { PlayerNameLabels } from "..";
+import PlayerNameLabels2 from "../PlayerNameLabels2";
 import getBestPlayer from "./getBestPlayer";
 
 const roundHalf = (x: number) => {
@@ -466,14 +466,13 @@ const ScoreBox = memo(
 										>
 											<div>
 												<div>
-													<PlayerNameLabels
+													<PlayerNameLabels2
 														pid={p.pid}
 														injury={p.injury}
 														pos={p.ratings?.pos ?? p.pos}
 														season={season}
-													>
-														{p.name}
-													</PlayerNameLabels>
+														legacyName={p.name}
+													/>
 												</div>
 												<div>{playerStatText}</div>
 											</div>

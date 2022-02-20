@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";
-import { PlayerNameLabels } from "../../components";
+import { PlayerNameLabels2 } from "../../components";
 import { PHASE_TEXT } from "../../../common";
 import Charts from "./Charts";
 import PickText from "./PickText";
@@ -51,15 +51,14 @@ const TradeSummary = ({
 									return (
 										<div key={i} className="mb-2">
 											<div>
-												<PlayerNameLabels
+												<PlayerNameLabels2
 													pid={asset.pid}
 													pos={asset.pos}
 													season={season}
 													skills={asset.skills}
 													watch={asset.watch}
-												>
-													{asset.name}
-												</PlayerNameLabels>
+													legacyName={asset.name}
+												/>
 											</div>
 											<div>
 												{helpers.formatCurrency(
@@ -105,14 +104,13 @@ const TradeSummary = ({
 									return (
 										<div key={i} className="mb-2">
 											<div>
-												<PlayerNameLabels
+												<PlayerNameLabels2
 													pid={asset.pid}
 													pos={asset.pos}
 													skills={asset.skills}
 													watch={asset.watch}
-												>
-													{asset.name}
-												</PlayerNameLabels>
+													legacyName={asset.name}
+												/>
 											</div>
 											<div>
 												<span className="text-muted">

@@ -53,11 +53,30 @@ const parseLegacyName = (name: string) => {
 	};
 };
 
+const getFirstLastNames = (props: Props) => {
+	let firstName: string;
+	let lastName: string;
+	if (props.legacyName) {
+		const parts = parseLegacyName(props.legacyName);
+		firstName = parts.firstName;
+		lastName = parts.lastName;
+	} else if (props.firstName !== undefined && props.lastName !== undefined) {
+		firstName = props.firstName;
+		lastName = props.lastName;
+	} else {
+		throw new Error("Missing firstName/lastName/legacyName");
+	}
+
+	return {
+		firstName,
+		lastName,
+	};
+};
+
 const PlayerNameLabels = (props: Props) => {
 	const {
 		awards,
 		firstNameShort,
-		legacyName,
 		injury,
 		jerseyNumber,
 		pid,
@@ -68,18 +87,7 @@ const PlayerNameLabels = (props: Props) => {
 		watch,
 	} = props;
 
-	let firstName: string;
-	let lastName: string;
-	if (legacyName) {
-		const parts = parseLegacyName(legacyName);
-		firstName = parts.firstName;
-		lastName = parts.lastName;
-	} else if (props.firstName !== undefined && props.lastName !== undefined) {
-		firstName = props.firstName;
-		lastName = props.lastName;
-	} else {
-		throw new Error("Missing firstName/lastName/legacyName");
-	}
+	let { firstName, lastName } = getFirstLastNames(props);
 
 	// See if we need to truncate skills
 	let numSkillsBeforeTruncate;
@@ -171,10 +179,12 @@ const PlayerNameLabels = (props: Props) => {
 };
 
 export const wrappedPlayerNameLabels = (props: Props) => {
+	const { firstName, lastName } = getFirstLastNames(props);
+
 	return {
 		value: <PlayerNameLabels {...props} />,
-		sortValue: `${props.lastName} ${props.firstName}`,
-		searchValue: `${props.firstName} ${props.lastName}`,
+		sortValue: `${lastName} ${firstName}`,
+		searchValue: `${firstName} ${lastName}`,
 	};
 };
 

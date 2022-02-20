@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import type { MouseEvent } from "react";
-import PlayerNameLabels from "./PlayerNameLabels";
+import PlayerNameLabels2 from "./PlayerNameLabels2";
 import { helpers } from "../util";
 
 const BoxScoreRow = ({
@@ -62,14 +62,13 @@ const BoxScoreRow = ({
 			onClick={onClick}
 		>
 			<td>
-				<PlayerNameLabels
+				<PlayerNameLabels2
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.skills}
-				>
-					{p.name}
-				</PlayerNameLabels>
+					legacyName={p.name}
+				/>
 			</td>
 			{typeof p.abbrev === "string" ? (
 				<td>

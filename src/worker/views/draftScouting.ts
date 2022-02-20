@@ -2,11 +2,12 @@ import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter(p => p.draft.year === season);
 	const players = await idb.getCopies.playersPlus(playersAllFiltered, {
-		attrs: ["pid", "name", "nameAbbrev", "age", "valueFuzz", "watch"],
+		attrs: ["pid", "firstName", "lastName", "age", "valueFuzz", "watch"],
 		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
 		showNoStats: true,
 		showRookies: true,
@@ -14,20 +15,22 @@ const getSeason = async (playersAll: Player[], season: number) => {
 	});
 	players.sort((a, b) => b.valueFuzz - a.valueFuzz);
 
-	const players2 = players.map((pa, i) => ({
-		pid: pa.pid,
-		name: pa.name,
-		nameAbbrev: pa.nameAbbrev,
-		age: pa.age,
-		watch: pa.watch,
-		valueFuzz: pa.valueFuzz,
-		// Ratings - just take the only entry
-		ovr: pa.ratings.at(-1).ovr,
-		pot: pa.ratings.at(-1).pot,
-		skills: pa.ratings.at(-1).skills,
-		pos: pa.ratings.at(-1).pos,
-		rank: i + 1,
-	}));
+	const players2 = addFirstNameShort(
+		players.map((pa, i) => ({
+			pid: pa.pid,
+			firstName: pa.firstName,
+			lastName: pa.lastName,
+			age: pa.age,
+			watch: pa.watch,
+			valueFuzz: pa.valueFuzz,
+			// Ratings - just take the only entry
+			ovr: pa.ratings.at(-1).ovr,
+			pot: pa.ratings.at(-1).pot,
+			skills: pa.ratings.at(-1).skills,
+			pos: pa.ratings.at(-1).pos,
+			rank: i + 1,
+		})),
+	);
 
 	return {
 		players: players2,

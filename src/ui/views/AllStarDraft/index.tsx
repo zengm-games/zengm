@@ -1,10 +1,11 @@
 import { useCallback, useState } from "react";
-import { DataTable, PlayerNameLabels } from "../../components";
+import { DataTable } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import EditAllStars from "./EditAllStars";
 import { wait } from "../../../common";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
 
 const PlayersTable = ({
 	challengeNoRatings,
@@ -71,16 +72,15 @@ const PlayersTable = ({
 		})
 		.map((p, i) => {
 			const data = [
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.stats.jerseyNumber}
-					pos={p.ratings.pos}
-					skills={p.skills}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.stats.jerseyNumber,
+					pos: p.ratings.pos,
+					skills: p.skills,
+					watch: p.watch,
+					legacyName: p.name,
+				}),
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 					{p.abbrev}
 				</a>,

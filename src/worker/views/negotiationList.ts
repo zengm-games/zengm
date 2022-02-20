@@ -2,6 +2,7 @@ import { bySport, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
+import addFirstNameShort from "../util/addFirstNameShort";
 import { addMood } from "./freeAgents";
 
 const updateNegotiationList = async () => {
@@ -29,27 +30,30 @@ const updateNegotiationList = async () => {
 		).filter(p => negotiationPids.includes(p.pid)),
 	);
 
-	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"pid",
-			"name",
-			"age",
-			"injury",
-			"jerseyNumber",
-			"watch",
-			"contract",
-			"draft",
-			"latestTransaction",
-			"latestTransactionSeason",
-			"mood",
-		],
-		ratings: ["ovr", "pot", "skills", "pos"],
-		stats,
-		season: g.get("season"),
-		tid: userTid,
-		showNoStats: true,
-		fuzz: true,
-	});
+	const players = addFirstNameShort(
+		await idb.getCopies.playersPlus(playersAll, {
+			attrs: [
+				"pid",
+				"firstName",
+				"lastName",
+				"age",
+				"injury",
+				"jerseyNumber",
+				"watch",
+				"contract",
+				"draft",
+				"latestTransaction",
+				"latestTransactionSeason",
+				"mood",
+			],
+			ratings: ["ovr", "pot", "skills", "pos"],
+			stats,
+			season: g.get("season"),
+			tid: userTid,
+			showNoStats: true,
+			fuzz: true,
+		}),
+	);
 
 	let sumContracts = 0;
 	for (const p of players) {

@@ -1,5 +1,5 @@
 import {
-	PlayerNameLabels,
+	PlayerNameLabels2,
 	RatingWithChange,
 	ResponsiveTableWrapper,
 } from "../../components";
@@ -49,15 +49,16 @@ const StartingLineup = ({
 						{starters.map(p => (
 							<tr key={p.pid}>
 								<td>
-									<PlayerNameLabels
+									<PlayerNameLabels2
 										injury={p.injury}
 										jerseyNumber={p.jerseyNumber}
 										pid={p.pid}
 										skills={p.ratings.skills}
 										watch={p.watch}
-									>
-										{p.name}
-									</PlayerNameLabels>
+										firstName={p.firstName}
+										firstNameShort={p.firstNameShort}
+										lastName={p.lastName}
+									/>
 								</td>
 								<td>{p.ratings.pos}</td>
 								<td>{p.age}</td>

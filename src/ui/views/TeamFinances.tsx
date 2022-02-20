@@ -6,17 +6,12 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import {
-	BarGraph,
-	DataTable,
-	HelpPopover,
-	MoreLinks,
-	PlayerNameLabels,
-} from "../components";
+import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View, Phase } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -549,16 +544,17 @@ const TeamFinances = ({
 	const rows = contracts.map((p, i) => {
 		const data: ReactNode[] = [
 			p.pos,
-			<PlayerNameLabels
-				injury={p.injury}
-				jerseyNumber={p.jerseyNumber}
-				pid={p.pid}
-				skills={p.skills}
-				style={{ fontStyle: p.released ? "italic" : "normal" }}
-				watch={p.watch}
-			>
-				{p.firstName} {p.lastName}
-			</PlayerNameLabels>,
+			wrappedPlayerNameLabels({
+				injury: p.injury,
+				jerseyNumber: p.jerseyNumber,
+				pid: p.pid,
+				skills: p.skills,
+				style: { fontStyle: p.released ? "italic" : "normal" },
+				watch: p.watch,
+				firstName: p.firstName,
+				firstNameShort: p.firstNameShort,
+				lastName: p.lastName,
+			}),
 		];
 
 		// Loop through the salaries for the next five years for this player.

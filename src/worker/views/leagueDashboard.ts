@@ -5,6 +5,7 @@ import { g, helpers, orderTeams } from "../util";
 import type { UpdateEvents } from "../../common/types";
 import { processEvents } from "./news";
 import { getMaxPlayoffSeed } from "./standings";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -216,7 +217,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		// League leaders
 		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "name", "abbrev", "tid"],
+			attrs: ["pid", "firstName", "lastName", "abbrev", "tid"],
 			stats: leaderStats,
 			season: g.get("season"),
 			showNoStats: true,
@@ -226,7 +227,8 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const leagueLeaders: {
 			abbrev: string;
-			name: string;
+			firstName: string;
+			lastName: string;
 			pid: number;
 			stat: string;
 			tid: number;
@@ -238,7 +240,8 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				leaderPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
 				leagueLeaders.push({
 					abbrev: leaderPlayers[0].abbrev,
-					name: leaderPlayers[0].name,
+					firstName: leaderPlayers[0].firstName,
+					lastName: leaderPlayers[0].lastName,
 					pid: leaderPlayers[0].pid,
 					stat,
 					tid: leaderPlayers[0].tid,
@@ -247,7 +250,8 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			} else {
 				leagueLeaders.push({
 					abbrev: g.get("teamInfoCache")[g.get("userTid")]?.abbrev,
-					name: "",
+					firstName: "",
+					lastName: "",
 					pid: 0,
 					stat,
 					tid: g.get("userTid"),
@@ -256,34 +260,39 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		const userPlayers = await idb.getCopies.playersPlus(
-			playersAll.filter(p => p.tid === g.get("userTid")),
-			{
-				attrs: [
-					"pid",
-					"name",
-					"abbrev",
-					"tid",
-					"age",
-					"contract",
-					"draft",
-					"rosterOrder",
-					"injury",
-					"watch",
-					"jerseyNumber",
-				],
-				ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-				stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
-				season: g.get("season"),
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-			},
+		const userPlayers = addFirstNameShort(
+			await idb.getCopies.playersPlus(
+				playersAll.filter(p => p.tid === g.get("userTid")),
+				{
+					attrs: [
+						"pid",
+						"firstName",
+						"lastName",
+						"abbrev",
+						"tid",
+						"age",
+						"contract",
+						"draft",
+						"rosterOrder",
+						"injury",
+						"watch",
+						"jerseyNumber",
+					],
+					ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
+					stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
+					season: g.get("season"),
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+				},
+			),
 		);
 
 		// Team leaders
 		const teamLeaders: {
-			name: string;
+			firstName: string;
+			firstNameShort: string;
+			lastName: string;
 			pid: number;
 			stat: string;
 			value: number;
@@ -293,14 +302,18 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			if (userPlayers.length > 0) {
 				userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
 				teamLeaders.push({
-					name: userPlayers[0].name,
+					firstName: userPlayers[0].firstName,
+					firstNameShort: userPlayers[0].firstNameShort,
+					lastName: userPlayers[0].lastName,
 					pid: userPlayers[0].pid,
 					stat,
 					value: userPlayers[0].stats[stat],
 				});
 			} else {
 				teamLeaders.push({
-					name: "",
+					firstName: "",
+					firstNameShort: "",
+					lastName: "",
 					pid: 0,
 					stat,
 					value: 0,
@@ -341,7 +354,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
-			leagueLeaders,
+			leagueLeaders: addFirstNameShort(leagueLeaders),
 			numPlayersOnCourt,
 			teamLeaders,
 			starters,

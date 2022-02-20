@@ -8,6 +8,7 @@ import type {
 } from "../../common/types";
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 	let bestRecord;
@@ -143,7 +144,8 @@ export const getHistory = async (
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
-			"name",
+			"firstName",
+			"lastName",
 			"injury",
 			"tid",
 			"hof",
@@ -157,6 +159,9 @@ export const getHistory = async (
 
 	// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
 	players = players.filter(p => p.careerStats.gp > 0);
+
+	players = addFirstNameShort(players);
+	console.log(players);
 
 	for (const p of players) {
 		p.lastYr = "";

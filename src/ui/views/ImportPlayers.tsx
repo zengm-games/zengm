@@ -2,14 +2,10 @@ import { useState, ChangeEvent } from "react";
 import { PLAYER, PHASE, gameAttributesArrayToObject } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocal } from "../util";
-import {
-	DataTable,
-	PlayerNameLabels,
-	LeagueFileUpload,
-	MoreLinks,
-} from "../components";
+import { DataTable, LeagueFileUpload, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
 
 const ImportPlayers = ({
 	challengeNoRatings,
@@ -179,8 +175,6 @@ const ImportPlayers = ({
 			};
 		});
 
-		const name = `${p.firstName} ${p.lastName}`;
-
 		const ageRow = ages.find(row => row.season === season);
 		const age = ageRow ? ageRow.age : 0;
 
@@ -200,9 +194,12 @@ const ImportPlayers = ({
 					sortValue: checked ? 1 : 0,
 				},
 				i + 1,
-				<PlayerNameLabels injury={p.injury} skills={ratings.skills}>
-					{name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					injury: p.injury,
+					skills: ratings.skills,
+					firstName: p.firstName,
+					lastName: p.lastName,
+				}),
 				<button
 					className="btn btn-secondary btn-sm"
 					disabled={disableButtons}

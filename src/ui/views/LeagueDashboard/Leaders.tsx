@@ -1,17 +1,22 @@
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { bySport } from "../../../common";
+import { PlayerNameLabels2 } from "../../components";
 
 const Leader = ({
 	abbrev,
-	name,
+	firstName,
+	firstNameShort,
+	lastName,
 	pid,
 	stat,
 	tid,
 	value,
 }: {
 	abbrev?: string;
-	name: string;
+	firstName: string;
+	firstNameShort: string;
+	lastName: string;
 	pid: number;
 	stat: string;
 	tid?: number;
@@ -25,16 +30,21 @@ const Leader = ({
 
 	return (
 		<>
-			<a href={helpers.leagueUrl(["player", pid])}>{name}</a>
+			<PlayerNameLabels2
+				pid={pid}
+				firstName={firstName}
+				firstNameShort={firstNameShort}
+				lastName={lastName}
+			/>
 			{abbrev && tid !== undefined ? (
 				<>
-					,{" "}
+					{" "}
 					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
 						{abbrev}
 					</a>
 				</>
-			) : null}
-			: {numberToDisplay} {stat}
+			) : null}{" "}
+			{numberToDisplay} {stat}
 			<br />
 		</>
 	);

@@ -3,7 +3,7 @@ import { helpers, toWorker, useLocal } from "../util";
 import type { DunkAttempt, Player, View } from "../../common/types";
 import {
 	Height,
-	PlayerNameLabels,
+	PlayerNameLabels2,
 	PlayerPicture,
 	PlayPauseNext,
 	ResponsiveTableWrapper,
@@ -549,15 +549,15 @@ export const ContestantProfiles = ({
 								tid === userTid ? "table-info" : undefined,
 							)}
 						>
-							<PlayerNameLabels
+							<PlayerNameLabels2
 								pid={p.pid}
 								season={season}
 								jerseyNumber={p.stats.jerseyNumber}
 								pos={p.ratings.pos}
 								watch={p.watch}
-							>
-								{contest.players[i].name}
-							</PlayerNameLabels>
+								firstName={p.firstName}
+								lastName={p.lastName}
+							/>
 							<a
 								className="ms-2"
 								href={helpers.leagueUrl([
@@ -701,9 +701,13 @@ export const ScoreTable = ({
 								className={tid === userTid ? "table-info" : undefined}
 							>
 								<td>
-									<PlayerNameLabels pid={p.pid} watch={p.watch} season={season}>
-										{contest.players[i].name}
-									</PlayerNameLabels>
+									<PlayerNameLabels2
+										pid={p.pid}
+										watch={p.watch}
+										season={season}
+										firstName={p.firstName}
+										lastName={p.lastName}
+									/>
 								</td>
 								{contest.rounds.map((round, j) => {
 									const roundResult = resultsByRound[j].find(

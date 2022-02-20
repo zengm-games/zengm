@@ -69,7 +69,8 @@ const updateAllStarDunk = async (
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [
 				"pid",
-				"name",
+				"firstName",
+				"lastName",
 				"age",
 				"watch",
 				"face",
@@ -201,6 +202,7 @@ const updateAllStarDunk = async (
 			playersShort: await getShortTall(dunk.pidsShort),
 			playersTall: await getShortTall(dunk.pidsTall),
 		};
+		console.log(players);
 
 		return {
 			allPossibleContestants,

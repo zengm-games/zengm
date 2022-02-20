@@ -4,6 +4,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { TeamSeason, UpdateEvents, ViewInput } from "../../common/types";
 import { getAutoTicketPriceByTid } from "../core/game/attendance";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateTeamFinances = async (
 	inputs: ViewInput<"teamFinances">,
@@ -47,29 +48,31 @@ const updateTeamFinances = async (
 
 		// Convert contract objects into table rows
 		const contractTotals = Array(numSeasons).fill(0);
-		const contracts = contractsRaw.map(contract => {
-			const amounts: number[] = [];
+		const contracts = addFirstNameShort(
+			contractsRaw.map(contract => {
+				const amounts: number[] = [];
 
-			for (let i = season; i <= contract.exp; i++) {
-				amounts.push(contract.amount / 1000);
-				if (contractTotals[i - season] !== undefined) {
-					contractTotals[i - season] += contract.amount / 1000;
+				for (let i = season; i <= contract.exp; i++) {
+					amounts.push(contract.amount / 1000);
+					if (contractTotals[i - season] !== undefined) {
+						contractTotals[i - season] += contract.amount / 1000;
+					}
 				}
-			}
 
-			return {
-				pid: contract.pid,
-				firstName: contract.firstName,
-				lastName: contract.lastName,
-				skills: contract.skills,
-				pos: contract.pos,
-				injury: contract.injury,
-				jerseyNumber: contract.jerseyNumber,
-				watch: contract.watch,
-				released: contract.released,
-				amounts,
-			};
-		});
+				return {
+					pid: contract.pid,
+					firstName: contract.firstName,
+					lastName: contract.lastName,
+					skills: contract.skills,
+					pos: contract.pos,
+					injury: contract.injury,
+					jerseyNumber: contract.jerseyNumber,
+					watch: contract.watch,
+					released: contract.released,
+					amounts,
+				};
+			}),
+		);
 
 		const salariesSeasons = [];
 		for (let i = 0; i < numSeasons; i++) {

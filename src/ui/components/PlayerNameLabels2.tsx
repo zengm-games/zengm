@@ -23,16 +23,41 @@ type Props = {
 	};
 	watch?: boolean;
 
-	firstName: string;
-	lastName: string;
+	firstName?: string;
+	lastName?: string;
 	firstNameShort?: string;
+
+	// Pass to override firstName and lastName
+	legacyName?: string;
+};
+
+const parseLegacyName = (name: string) => {
+	const parts = name.split(" (")[0].split(" ");
+	let lastName = parts.at(-1);
+
+	// For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
+	// Eventually should probably unify this with the code in tools/names.js
+	const suffixes = ["Jr", "Jr.", "Sr", "Sr."];
+
+	if (
+		parts.length > 2 &&
+		(suffixes.includes(lastName) || lastName === lastName.toUpperCase())
+	) {
+		lastName = parts[parts.length - 2];
+	}
+	const firstName = parts.slice(0, parts.indexOf(lastName)).join(" ");
+
+	return {
+		firstName,
+		lastName,
+	};
 };
 
 const PlayerNameLabels = (props: Props) => {
 	const {
 		awards,
-		firstName,
 		firstNameShort,
+		legacyName,
 		injury,
 		jerseyNumber,
 		pid,
@@ -42,7 +67,19 @@ const PlayerNameLabels = (props: Props) => {
 		style,
 		watch,
 	} = props;
-	let lastName = props.lastName;
+
+	let firstName: string;
+	let lastName: string;
+	if (legacyName) {
+		const parts = parseLegacyName(legacyName);
+		firstName = parts.firstName;
+		lastName = parts.lastName;
+	} else if (props.firstName !== undefined && props.lastName !== undefined) {
+		firstName = props.firstName;
+		lastName = props.lastName;
+	} else {
+		throw new Error("Missing firstName/lastName/legacyName");
+	}
 
 	// See if we need to truncate skills
 	let numSkillsBeforeTruncate;

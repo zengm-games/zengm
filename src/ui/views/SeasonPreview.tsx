@@ -4,7 +4,7 @@ import { helpers } from "../util";
 import type { View } from "../../common/types";
 import {
 	MoreLinks,
-	PlayerNameLabels,
+	PlayerNameLabels2,
 	RatingWithChange,
 	RecordAndPlayoffs,
 } from "../components";
@@ -42,15 +42,15 @@ const PlayerList = ({
 							"p-1 table-info": userTid === p.tid,
 						})}
 					>
-						<PlayerNameLabels
+						<PlayerNameLabels2
 							pid={p.pid}
 							season={season}
 							pos={p.ratings.pos}
 							skills={p.ratings.skills}
 							watch={p.watch}
-						>
-							{p.name}
-						</PlayerNameLabels>
+							firstName={p.firstName}
+							lastName={p.lastName}
+						/>
 						<a
 							href={helpers.leagueUrl([
 								"roster",
@@ -155,15 +155,15 @@ const TeamList = ({
 					) : null}
 					{t.players.map(p => (
 						<div key={p.pid} className="text-muted mt-2">
-							<PlayerNameLabels
+							<PlayerNameLabels2
 								pid={p.pid}
 								season={season}
 								pos={p.ratings.pos}
 								skills={p.ratings.skills}
 								watch={p.watch}
-							>
-								{p.name}
-							</PlayerNameLabels>
+								firstName={p.firstName}
+								lastName={p.lastName}
+							/>
 							<br />
 							{!challengeNoRatings ? (
 								<>

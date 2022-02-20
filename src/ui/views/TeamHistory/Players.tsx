@@ -1,8 +1,9 @@
 import { PLAYER } from "../../../common";
-import { DataTable, PlayerNameLabels } from "../../components";
+import { DataTable } from "../../components";
 import { helpers, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
 
 // The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({
@@ -72,14 +73,15 @@ const Players = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
-					watch={p.watch}
-				>
-					{p.name}
-				</PlayerNameLabels>,
+				wrappedPlayerNameLabels({
+					injury: p.injury,
+					jerseyNumber: p.jerseyNumber,
+					pid: p.pid,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
 				p.pos,
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
 				p.lastYr,

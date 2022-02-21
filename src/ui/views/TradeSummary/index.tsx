@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";
-import { PlayerNameLabels2 } from "../../components";
+import { PlayerNameLabels } from "../../components";
 import { PHASE_TEXT } from "../../../common";
 import Charts from "./Charts";
 import PickText from "./PickText";
@@ -51,7 +51,7 @@ const TradeSummary = ({
 									return (
 										<div key={i} className="mb-2">
 											<div>
-												<PlayerNameLabels2
+												<PlayerNameLabels
 													pid={asset.pid}
 													pos={asset.pos}
 													season={season}
@@ -104,7 +104,7 @@ const TradeSummary = ({
 									return (
 										<div key={i} className="mb-2">
 											<div>
-												<PlayerNameLabels2
+												<PlayerNameLabels
 													pid={asset.pid}
 													pos={asset.pos}
 													skills={asset.skills}

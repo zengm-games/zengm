@@ -11,7 +11,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View, Phase } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const paddingLeft85 = { paddingLeft: 85 };
 

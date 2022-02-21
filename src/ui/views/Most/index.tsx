@@ -4,7 +4,7 @@ import { DataTable, SafeHtml } from "../../components";
 import type { View } from "../../../common/types";
 import { frivolitiesMenu } from "../Frivolities";
 import GOATFormula from "./GOATFormula";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 
 export const getValue = (
 	obj: any,

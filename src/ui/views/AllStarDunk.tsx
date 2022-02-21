@@ -3,7 +3,7 @@ import { helpers, toWorker, useLocal } from "../util";
 import type { DunkAttempt, Player, View } from "../../common/types";
 import {
 	Height,
-	PlayerNameLabels2,
+	PlayerNameLabels,
 	PlayerPicture,
 	PlayPauseNext,
 	ResponsiveTableWrapper,
@@ -549,7 +549,7 @@ export const ContestantProfiles = ({
 								tid === userTid ? "table-info" : undefined,
 							)}
 						>
-							<PlayerNameLabels2
+							<PlayerNameLabels
 								pid={p.pid}
 								season={season}
 								jerseyNumber={p.stats.jerseyNumber}
@@ -701,7 +701,7 @@ export const ScoreTable = ({
 								className={tid === userTid ? "table-info" : undefined}
 							>
 								<td>
-									<PlayerNameLabels2
+									<PlayerNameLabels
 										pid={p.pid}
 										watch={p.watch}
 										season={season}

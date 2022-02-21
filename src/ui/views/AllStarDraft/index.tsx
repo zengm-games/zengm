@@ -5,7 +5,7 @@ import { getCols, helpers, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import EditAllStars from "./EditAllStars";
 import { wait } from "../../../common";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 
 const PlayersTable = ({
 	challengeNoRatings,

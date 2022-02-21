@@ -10,7 +10,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>

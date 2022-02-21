@@ -3,7 +3,7 @@ import { DataTable, LeagueFileUpload } from "../../components";
 import { confirm, downloadFile, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { WEBSITE_ROOT } from "../../../common";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 
 const DraftClass = ({
 	challengeNoRatings,

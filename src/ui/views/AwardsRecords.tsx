@@ -3,7 +3,7 @@ import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];

@@ -3,7 +3,7 @@ import { DataTable } from "../../components";
 import { helpers, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 
 // The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({

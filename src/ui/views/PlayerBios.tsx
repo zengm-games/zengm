@@ -10,7 +10,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const PlayerBios = ({
 	abbrev,

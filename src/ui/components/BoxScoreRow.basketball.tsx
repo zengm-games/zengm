@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import type { MouseEvent } from "react";
-import PlayerNameLabels2 from "./PlayerNameLabels2";
+import PlayerNameLabels from "./PlayerNameLabels";
 import { helpers } from "../util";
 
 const BoxScoreRow = ({
@@ -62,7 +62,7 @@ const BoxScoreRow = ({
 			onClick={onClick}
 		>
 			<td>
-				<PlayerNameLabels2
+				<PlayerNameLabels
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}

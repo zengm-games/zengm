@@ -3,7 +3,7 @@ import { getCols, helpers } from "../util";
 import { DataTable, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 	useTitleBar({ title: "Tragic Deaths", customMenu: frivolitiesMenu });

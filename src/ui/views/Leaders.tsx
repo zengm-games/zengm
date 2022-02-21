@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import {
 	MoreLinks,
-	PlayerNameLabels2,
+	PlayerNameLabels,
 	ResponsiveTableWrapper,
 } from "../components";
 import type { View } from "../../common/types";
@@ -49,7 +49,7 @@ const Row = ({
 				<div style={{ width: 18 }} className="me-1 float-start">
 					{rank}.
 				</div>
-				<PlayerNameLabels2
+				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}

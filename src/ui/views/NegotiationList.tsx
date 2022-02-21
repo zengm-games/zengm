@@ -9,7 +9,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const NegotiationList = ({
 	capSpace,

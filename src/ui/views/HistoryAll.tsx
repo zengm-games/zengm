@@ -1,7 +1,7 @@
 import {
 	DataTable,
 	MoreLinks,
-	PlayerNameLabels2,
+	PlayerNameLabels,
 	TeamLogoInline,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -30,7 +30,7 @@ const awardName = (
 	const ret = (
 		<div className="d-flex">
 			<div className="me-auto">
-				<PlayerNameLabels2
+				<PlayerNameLabels
 					pid={award.pid}
 					pos={award.pos}
 					season={season}

@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 	useTitleBar({ title: "Hall of Fame" });

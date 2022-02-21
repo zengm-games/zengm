@@ -1,7 +1,7 @@
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { bySport } from "../../../common";
-import { PlayerNameLabels2 } from "../../components";
+import { PlayerNameLabels } from "../../components";
 
 const Leader = ({
 	abbrev,
@@ -30,7 +30,7 @@ const Leader = ({
 
 	return (
 		<>
-			<PlayerNameLabels2
+			<PlayerNameLabels
 				pid={pid}
 				firstName={firstName}
 				firstNameShort={firstNameShort}

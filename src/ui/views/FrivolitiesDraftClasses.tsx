@@ -4,7 +4,7 @@ import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { bySport } from "../../common";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const FrivolitiesDraftClasses = ({
 	challengeNoRatings,

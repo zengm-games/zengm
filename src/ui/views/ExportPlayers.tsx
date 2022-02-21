@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const ExportPlayers = ({
 	challengeNoRatings,

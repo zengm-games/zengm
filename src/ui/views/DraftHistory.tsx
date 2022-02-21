@@ -5,7 +5,7 @@ import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);

@@ -4,7 +4,7 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 export const formatStatGameHigh = (
 	ps: any,

@@ -10,7 +10,7 @@ xsName refactor
 - player feats and box scores will need to be upgraded
 - todo leadersProgressive
 - get rid of nameAbbrev everywhere?
-- Swawp PlayerNameLabels for PlayerNameLabels2
+- Swawp PlayerNameLabels for PlayerNameLabels
 - would be better if it only extended the abbreviation when necessary. so if there are 3 players with the same name, and 2 of them require 3 letters, don't go to 3 letters for the other one. see real players awards records Jones. use trie?
 
 make ratings table editable https://old.reddit.com/r/BasketballGM/comments/sv89fj/version_202202171376_progressive_leaders_page/hxo0y96/?context=3

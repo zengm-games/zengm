@@ -6,7 +6,7 @@ import {
 	CountryFlag,
 	HelpPopover,
 	Mood,
-	PlayerNameLabels2,
+	PlayerNameLabels,
 	RatingWithChange,
 	SortableTable,
 	SafeHtml,
@@ -277,7 +277,7 @@ const Roster = ({
 					return (
 						<>
 							<td>
-								<PlayerNameLabels2
+								<PlayerNameLabels
 									pid={p.pid}
 									injury={p.injury}
 									jerseyNumber={p.stats.jerseyNumber}

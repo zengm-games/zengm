@@ -4,7 +4,7 @@ import { helpers } from "../util";
 import type { View } from "../../common/types";
 import {
 	MoreLinks,
-	PlayerNameLabels2,
+	PlayerNameLabels,
 	RatingWithChange,
 	RecordAndPlayoffs,
 } from "../components";
@@ -42,7 +42,7 @@ const PlayerList = ({
 							"p-1 table-info": userTid === p.tid,
 						})}
 					>
-						<PlayerNameLabels2
+						<PlayerNameLabels
 							pid={p.pid}
 							season={season}
 							pos={p.ratings.pos}
@@ -155,7 +155,7 @@ const TeamList = ({
 					) : null}
 					{t.players.map(p => (
 						<div key={p.pid} className="text-muted mt-2">
-							<PlayerNameLabels2
+							<PlayerNameLabels
 								pid={p.pid}
 								season={season}
 								pos={p.ratings.pos}

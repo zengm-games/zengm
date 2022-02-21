@@ -4,7 +4,7 @@ import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
 import { formatStatsDropdown } from "./LeadersYears";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels2";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const LeadersProgressive = ({
 	allLeaders,

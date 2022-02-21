@@ -99,7 +99,11 @@ const addFirstNameShort = <
 		let firstNameShort;
 		const trie = tries[p.lastName];
 		if (!trie) {
-			firstNameShort = `${p.firstName.slice(0, 1)}.`;
+			if (p.firstName.length <= 2) {
+				firstNameShort = p.firstName;
+			} else {
+				firstNameShort = `${p.firstName.slice(0, 1)}.`;
+			}
 		} else {
 			firstNameShort = trie.findAbbrev(p.firstName);
 		}

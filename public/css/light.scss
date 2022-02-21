@@ -276,8 +276,8 @@ a.god-mode.active {
 	.kbd {
 		display: block;
 		position: absolute;
-		right: 20px;
-		top: 4px;
+		right: $dropdown-item-padding-x;
+		top: $dropdown-item-padding-y;
 	}
 }
 

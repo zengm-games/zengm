@@ -1,5 +1,5 @@
 import { ButtonGroup, Dropdown } from "react-bootstrap";
-import { useLocalStorageState } from "use-local-storage-state";
+import useLocalStorageState from "use-local-storage-state";
 
 export type TradeClearType = "all" | "other" | "user" | "keepUntradeable";
 
@@ -30,7 +30,9 @@ const Buttons = ({
 }) => {
 	const [defaultType, setDefaultType] = useLocalStorageState<TradeClearType>(
 		"trade-clear-type",
-		"all",
+		{
+			defaultValue: "all",
+		},
 	);
 
 	const onClick = (type: TradeClearType) => async () => {

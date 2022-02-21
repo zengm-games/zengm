@@ -2,20 +2,20 @@ import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
-const PlayerName = ({
-	p,
-}: {
-	p: {
-		pid: number;
-		name: string;
-	};
-}) => {
+const playerName = (p: { pid: number; name: string }) => {
 	if (!p) {
-		return "???";
+		return {
+			value: "???",
+			sortValue: null,
+		};
 	}
 
-	return <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>;
+	return wrappedPlayerNameLabels({
+		pid: p.pid,
+		legacyName: p.name,
+	});
 };
 
 const PlayerTeam = ({
@@ -116,7 +116,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		"Team",
 		"Captain 2",
 		"Team",
-		"MVP",
+		"award:mvp",
 		"Team",
 		"Dunk Winner",
 		"Team",
@@ -159,13 +159,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					),
 				},
 				{
+					...playerName(row.captain1),
 					classNames: classNamesCaptain1,
-					value: (
-						// @ts-expect-error
-						<PlayerName p={row.captain1}>
-							{row.captain1 ? row.captain1.name : "???"}
-						</PlayerName>
-					),
 				},
 				{
 					classNames: classNamesCaptain1,
@@ -177,13 +172,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					),
 				},
 				{
+					...playerName(row.captain2),
 					classNames: classNamesCaptain2,
-					value: (
-						// @ts-expect-error
-						<PlayerName p={row.captain2}>
-							{row.captain2 ? row.captain2.name : "???"}
-						</PlayerName>
-					),
 				},
 				{
 					classNames: classNamesCaptain2,
@@ -195,13 +185,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					),
 				},
 				{
+					...playerName(row.mvp),
 					classNames: classNamesMVP,
-					value: (
-						// @ts-expect-error
-						<PlayerName p={row.mvp}>
-							{row.mvp ? row.mvp.name : "???"}
-						</PlayerName>
-					),
 				},
 				{
 					classNames: classNamesMVP,
@@ -213,13 +198,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					),
 				},
 				{
+					...playerName(row.dunk),
 					classNames: classNamesDunk,
-					value: (
-						// @ts-expect-error
-						<PlayerName p={row.dunk}>
-							{row.dunk ? row.dunk.name : "???"}
-						</PlayerName>
-					),
 				},
 				{
 					classNames: classNamesDunk,
@@ -231,13 +211,8 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					),
 				},
 				{
+					...playerName(row.three),
 					classNames: classNamesThree,
-					value: (
-						// @ts-expect-error
-						<PlayerName p={row.three}>
-							{row.three ? row.three.name : "???"}
-						</PlayerName>
-					),
 				},
 				{
 					classNames: classNamesThree,

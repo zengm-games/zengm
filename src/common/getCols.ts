@@ -2026,12 +2026,8 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
-	"Captain 1": {
-		sortType: "name",
-	},
-	"Captain 2": {
-		sortType: "name",
-	},
+	"Captain 1": {},
+	"Captain 2": {},
 	Cash: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -2103,7 +2099,6 @@ const cols: {
 	},
 	"Dunk Winner": {
 		desc: "Slam Dunk Contest Winner",
-		sortType: "name",
 	},
 	End: {
 		sortSequence: ["desc", "asc"],
@@ -2205,10 +2200,6 @@ const cols: {
 		width: "1px",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-	},
-	MVP: {
-		desc: "Most Valuable Player",
-		sortType: "name",
 	},
 	Name: {},
 	Normal: {
@@ -2405,7 +2396,6 @@ const cols: {
 	Team: {},
 	"Three-Point Winner": {
 		desc: "Three-Point Contest Winner",
-		sortType: "name",
 	},
 	Titles: {
 		desc: "Championships Won",

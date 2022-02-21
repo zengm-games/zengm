@@ -73,28 +73,6 @@ const getSortVal = (
 			return parseInt(round) * 1000000 + parseInt(pick);
 		}
 
-		if (sortType === "name") {
-			if (sortVal === null) {
-				return null;
-			}
-
-			const parts = sortVal.split(" (")[0].split(" ");
-			let lastName = parts.at(-1);
-
-			// For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
-			// Eventually should probably unify this with the code in tools/names.js
-			const suffixes = ["Jr", "Jr.", "Sr", "Sr."];
-
-			if (
-				parts.length > 2 &&
-				(suffixes.includes(lastName) || lastName === lastName.toUpperCase())
-			) {
-				lastName = parts[parts.length - 2];
-			}
-
-			return `${lastName} ${parts[0]}`;
-		}
-
 		if (sortType === "currency") {
 			if (sortVal === null || sortVal === "") {
 				return -Infinity;

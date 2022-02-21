@@ -1,12 +1,8 @@
-import {
-	DataTable,
-	MoreLinks,
-	PlayerNameLabels,
-	TeamLogoInline,
-} from "../components";
+import { DataTable, MoreLinks, TeamLogoInline } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const awardName = (
 	award:
@@ -24,41 +20,50 @@ const awardName = (
 ) => {
 	if (!award) {
 		// For old seasons with no Finals MVP
-		return "N/A";
+		return {
+			value: "N/A",
+			sortValue: null,
+		};
 	}
 
-	const ret = (
-		<div className="d-flex">
-			<div className="me-auto">
-				<PlayerNameLabels
-					pid={award.pid}
-					pos={award.pos}
-					season={season}
-					legacyName={award.name}
-				/>{" "}
-				(
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${award.abbrev}_${award.tid}`,
-						season,
-					])}
-				>
-					{award.abbrev}
-				</a>
-				)
+	const wrappedValue = wrappedPlayerNameLabels({
+		pid: award.pid,
+		pos: award.pos,
+		season: season,
+		legacyName: award.name,
+	});
+
+	const ret = {
+		value: (
+			<div className="d-flex">
+				<div className="me-auto">
+					{wrappedValue.value} (
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${award.abbrev}_${award.tid}`,
+							season,
+						])}
+					>
+						{award.abbrev}
+					</a>
+					)
+				</div>
+				<CountBadge count={award.count} />
 			</div>
-			<CountBadge count={award.count} />
-		</div>
-	);
+		),
+		searchValue: `${award.name} ${award.abbrev}`,
+		sortValue: wrappedValue.sortValue,
+	};
 
 	// This is our team.
 	if (award.tid === userTid) {
 		return {
+			...ret,
 			classNames: "table-info",
-			value: ret,
 		};
 	}
+
 	return ret;
 };
 

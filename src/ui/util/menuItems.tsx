@@ -162,7 +162,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 							league: true,
 							commandPalette: true,
 							commandPaletteOnly: true,
-							path: ["all_star_history"],
+							path: ["all_star", "history"],
 							text: "All-Star History",
 						} as MenuItemLink,
 				  ]

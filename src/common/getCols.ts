@@ -2210,9 +2210,7 @@ const cols: {
 		desc: "Most Valuable Player",
 		sortType: "name",
 	},
-	Name: {
-		sortType: "name",
-	},
+	Name: {},
 	Normal: {
 		desc: "Normal Difficulty",
 		sortSequence: ["desc", "asc"],
@@ -2609,42 +2607,34 @@ const cols: {
 	},
 	"award:dpoy": {
 		desc: "Defensive Player of the Year",
-		sortType: "name",
 		title: "DPOY",
 	},
 	"award:dfoy": {
 		desc: "Defensive Forward of the Year",
-		sortType: "name",
 		title: "DFOY",
 	},
 	"award:goy": {
 		desc: "Goalie of the Year",
-		sortType: "name",
 		title: "GOY",
 	},
 	"award:finalsMvp": {
 		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
-		sortType: "name",
 		title: `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
 	},
 	"award:mip": {
 		desc: "Most Improved Player",
-		sortType: "name",
 		title: "MIP",
 	},
 	"award:mvp": {
 		desc: "Most Valuable Player",
-		sortType: "name",
 		title: "MVP",
 	},
 	"award:roy": {
 		desc: "Rookie of the Year",
-		sortType: "name",
 		title: "ROY",
 	},
 	"award:smoy": {
 		desc: "Sixth Man of the Year",
-		sortType: "name",
 		title: "SMOY",
 	},
 	"award:oroy": {

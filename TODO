@@ -3,8 +3,6 @@ xsName refactor
   - could use this to handle case where two players abbreviate to the same name - abbreviate to the shortest length that distinguishies them
     - https://old.reddit.com/r/BasketballGM/comments/svz0hm/increased_name_clarity/
     - needs to know all players shown in table. add extra function to put on firstNameShort in worker
-- wrappedPlayerNameLabels takes just p with stuff in standard positions
-  - be careful about props not passed - don't want extra info shown
 - get rid of "name" special case in getSortVal and getCols
   - need to make sure every column displaying a player name uses wrappedPlayerNameLabels
 - player feats and box scores will need to be upgraded

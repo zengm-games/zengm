@@ -40,6 +40,11 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 			if (drafted.some(p => p.draft.year === g.get("season"))) {
 				defaultStatusText = "Draft in progress...";
 			}
+		} else {
+			const negotiations = await idb.cache.negotiations.getAll();
+			if (negotiations.some(negotiation => !negotiation.resigning)) {
+				defaultStatusText = "Contract negotiation";
+			}
 		}
 
 		local.statusText = defaultStatusText;

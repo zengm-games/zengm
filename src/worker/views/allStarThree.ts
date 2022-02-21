@@ -50,7 +50,8 @@ const updateAllStarThree = async (
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [
 				"pid",
-				"name",
+				"firstName",
+				"lastName",
 				"age",
 				"watch",
 				"face",

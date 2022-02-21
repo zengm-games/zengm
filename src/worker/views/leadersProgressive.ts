@@ -10,11 +10,44 @@ import {
 	Leader,
 	playerMeetsCategoryRequirements,
 } from "./leaders";
+import addFirstNameShort from "../util/addFirstNameShort";
 
 type MyLeader = Omit<
 	Leader,
 	"abbrev" | "pos" | "injury" | "retiredYear" | "tid" | "season"
 >;
+
+const leadersProgressiveAddFirstNameShort = (
+	rows: {
+		yearByYear: MyLeader | undefined;
+		active: MyLeader | undefined;
+		career: MyLeader | undefined;
+		singleSeason: MyLeader | undefined;
+	}[],
+) => {
+	const categories = [
+		"yearByYear",
+		"active",
+		"career",
+		"singleSeason",
+	] as const;
+	const players = addFirstNameShort(
+		rows
+			.map(row => categories.map(category => row[category]))
+			.flat()
+			.filter(row => row !== undefined) as MyLeader[],
+	);
+
+	let i = 0;
+	for (const row of rows) {
+		for (const category of categories) {
+			if (row[category]) {
+				row[category] = players[i];
+				i += 1;
+			}
+		}
+	}
+};
 
 const updateLeadersProgressive = async (
 	inputs: ViewInput<"leadersProgressive">,
@@ -236,6 +269,7 @@ const updateLeadersProgressive = async (
 		}
 
 		allLeaders = allLeaders.filter(row => row.yearByYear);
+		leadersProgressiveAddFirstNameShort(allLeaders);
 
 		return {
 			allLeaders,

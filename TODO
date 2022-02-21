@@ -1,6 +1,4 @@
-xsName refactor
-- player feats and box scores will need to be upgraded
-- todo leadersProgressive
+player feats and box scores will need to be upgraded to use firstNameShort
 
 make ratings table editable https://old.reddit.com/r/BasketballGM/comments/sv89fj/version_202202171376_progressive_leaders_page/hxo0y96/?context=3
 

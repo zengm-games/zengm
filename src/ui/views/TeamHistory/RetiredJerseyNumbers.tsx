@@ -197,7 +197,7 @@ const RetiredJerseyNumbers = ({
 									>
 										{sortedPlayers.map(p => (
 											<option key={p.pid} value={p.pid}>
-												{p.name}
+												{p.firstName} {p.lastName}
 											</option>
 										))}
 										<option value="other">Other</option>

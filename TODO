@@ -1,3 +1,5 @@
+team ovr on trading block https://old.reddit.com/r/BasketballGM/comments/syseeg/version_202202220718_due_to_popular_demand_i/hxzg6ty/
+
 player feats and box scores will need to be upgraded to use firstNameShort
 
 make ratings table editable https://old.reddit.com/r/BasketballGM/comments/sv89fj/version_202202171376_progressive_leaders_page/hxo0y96/?context=3
@@ -440,8 +442,6 @@ fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/8370501
 - force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
 
 AI teams too likely to re-sign stars?
-
-show team record and ovr on trading block, for picks (including traded picks) https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtprmml/
 
 in god mode, add button to switch to controlling a team directly on the roster page https://discord.com/channels/290013534023057409/331882115119448065/837416287948111942
 

@@ -165,7 +165,11 @@ const PlayerNameLabels = (props: Props) => {
 	const nameLabelsBlock = (
 		<span style={style}>
 			{props.hasOwnProperty("jerseyNumber") ? (
-				<span className="text-muted jersey-number-name d-none d-sm-inline-block">
+				<span
+					className={`text-muted jersey-number-name${
+						!fullNames ? " d-none d-sm-inline-block" : ""
+					}`}
+				>
 					{jerseyNumber}
 				</span>
 			) : null}

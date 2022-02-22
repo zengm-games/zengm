@@ -38,6 +38,7 @@ type Props = {
 const parseLegacyName = (name: string) => {
 	const parts = name.split(" (")[0].split(" ");
 	let lastName = parts.at(-1);
+	let lastNameIndex = parts.length - 1;
 
 	// For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
 	// Eventually should probably unify this with the code in tools/names.js
@@ -47,9 +48,10 @@ const parseLegacyName = (name: string) => {
 		parts.length > 2 &&
 		(suffixes.includes(lastName) || lastName === lastName.toUpperCase())
 	) {
-		lastName = parts[parts.length - 2];
+		lastName = parts.slice(-2).join(" ");
+		lastNameIndex = parts.length - 2;
 	}
-	const firstName = parts.slice(0, parts.indexOf(lastName)).join(" ");
+	const firstName = parts.slice(0, lastNameIndex).join(" ");
 
 	return {
 		firstName,

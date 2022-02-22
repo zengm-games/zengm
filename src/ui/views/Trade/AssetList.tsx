@@ -8,13 +8,7 @@ import {
 	wrappedContractExp,
 } from "../../components/contract";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-
-type HandleToggle = (
-	userOrOther: "other" | "user",
-	playerOrPick: "pick" | "player",
-	includeOrExclude: "include" | "exclude",
-	id: number,
-) => Promise<void>;
+import type { HandleToggle } from ".";
 
 type HandleBulk = (
 	type: "check" | "clear",

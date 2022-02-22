@@ -9,6 +9,13 @@ import Summary from "./Summary";
 import type { TradeTeams, View } from "../../../common/types";
 import classNames from "classnames";
 
+export type HandleToggle = (
+	userOrOther: "other" | "user",
+	playerOrPick: "pick" | "player",
+	includeOrExclude: "include" | "exclude",
+	id: number,
+) => Promise<void>;
+
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({
 		accepted: false,
@@ -18,7 +25,7 @@ const Trade = (props: View<"trade">) => {
 		prevTeams: undefined as TradeTeams | undefined,
 	});
 
-	const handleChangeAsset = async (
+	const handleChangeAsset: HandleToggle = async (
 		userOrOther: "other" | "user",
 		playerOrPick: "pick" | "player",
 		includeOrExclude: "include" | "exclude",
@@ -402,6 +409,7 @@ const Trade = (props: View<"trade">) => {
 				<div className="col-md-3">
 					<div className="trade-affix">
 						<Summary
+							handleToggle={handleChangeAsset}
 							ref={summaryText}
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}

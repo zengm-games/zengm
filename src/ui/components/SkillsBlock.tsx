@@ -1,5 +1,6 @@
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { bySport } from "../../common";
+import { useLocal } from "../util";
 
 const tooltips = bySport({
 	basketball: {
@@ -67,11 +68,14 @@ const SkillsBlock = ({
 	numSkillsBeforeTruncate?: number;
 	skills?: string[];
 }) => {
+	const fullNames = useLocal(state => state.fullNames);
+
 	if (skills === undefined) {
 		return null;
 	}
 
 	const truncate =
+		!fullNames &&
 		numSkillsBeforeTruncate !== undefined &&
 		skills.length > numSkillsBeforeTruncate;
 	const truncatedSkills = truncate

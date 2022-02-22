@@ -4,7 +4,7 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
-const playerName = (p?: { pid: number; name: string }) => {
+const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {
 		return {
 			value: "???",
@@ -15,6 +15,7 @@ const playerName = (p?: { pid: number; name: string }) => {
 	return wrappedPlayerNameLabels({
 		pid: p.pid,
 		legacyName: p.name,
+		count: p.count,
 	});
 };
 

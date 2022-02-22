@@ -2026,7 +2026,11 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	// Send options to all new tabs
 	const options = ((await idb.meta.get("attributes", "options")) ||
 		{}) as unknown as Options;
-	await toUI("updateLocal", [{ units: options.units }], conditions);
+	await toUI(
+		"updateLocal",
+		[{ units: options.units, fullNames: options.fullNames }],
+		conditions,
+	);
 };
 
 const initGold = async () => {
@@ -3269,12 +3273,15 @@ const updateOptions = async (
 		"attributes",
 		{
 			units: options.units,
+			fullNames: options.fullNames,
 		},
 		"options",
 	);
 	await idb.meta.put("attributes", realPlayerPhotos, "realPlayerPhotos");
 	await idb.meta.put("attributes", realTeamInfo, "realTeamInfo");
-	await toUI("updateLocal", [{ units: options.units }]);
+	await toUI("updateLocal", [
+		{ units: options.units, fullNames: options.fullNames },
+	]);
 	await toUI("realtimeUpdate", [["options"]]);
 };
 

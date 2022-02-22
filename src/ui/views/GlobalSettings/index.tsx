@@ -28,7 +28,10 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			units = "default";
 		}
 
+		const fullNames = props.fullNames ? "always" : ("abbrev-small" as const);
+
 		return {
+			fullNames,
 			realPlayerPhotos: props.realPlayerPhotos,
 			realTeamInfo: props.realTeamInfo,
 			theme,
@@ -61,6 +64,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		const units = state.units === "default" ? undefined : state.units;
 		try {
 			await toWorker("main", "updateOptions", {
+				fullNames: state.fullNames === "always",
 				realPlayerPhotos: state.realPlayerPhotos,
 				realTeamInfo: state.realTeamInfo,
 				units,
@@ -116,6 +120,22 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 							<option value="default">Auto</option>
 							<option value="us">US</option>
 							<option value="metric">Metric</option>
+						</select>
+					</div>
+					<div className="col-sm-3 col-6 mb-3">
+						<label className="form-label" htmlFor="options-fullNames">
+							Player Name Display
+						</label>
+						<select
+							id="options-fullNames"
+							className="form-select"
+							onChange={handleChange("fullNames")}
+							value={state.fullNames}
+						>
+							<option value="abbrev-small">
+								Abbreviate first names and skills on small screens
+							</option>
+							<option value="always">Always show full names and skills</option>
 						</select>
 					</div>
 					<div className="col-sm-3 col-6 mb-3">

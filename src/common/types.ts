@@ -847,6 +847,7 @@ export type Option = {
 };
 
 export type Options = {
+	fullNames?: boolean;
 	units?: "metric" | "us";
 };
 
@@ -884,6 +885,7 @@ export type LocalStateUI = {
 		];
 	}[];
 	fantasyPoints: GameAttributesLeague["fantasyPoints"];
+	fullNames: boolean;
 	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;

@@ -40,6 +40,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 	dirtySettings: false,
 	fantasyPoints: undefined,
 	flagOverrides: {},
+	fullNames: false,
 	gameSimInProgress: false,
 	games: [],
 	gold: undefined,

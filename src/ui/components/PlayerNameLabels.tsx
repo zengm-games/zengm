@@ -1,6 +1,6 @@
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
-import { helpers } from "../util";
+import { helpers, useLocal } from "../util";
 import type { Player, PlayerInjury } from "../../common/types";
 import InjuryIcon from "./InjuryIcon";
 import SeasonIcons from "../views/Player/SeasonIcons";
@@ -90,6 +90,8 @@ export const CountBadge = ({ count }: { count: number }) => {
 };
 
 const PlayerNameLabels = (props: Props) => {
+	const fullNames = useLocal(state => state.fullNames);
+
 	const {
 		abbrev,
 		awards,
@@ -110,7 +112,7 @@ const PlayerNameLabels = (props: Props) => {
 
 	// See if we need to truncate skills
 	let numSkillsBeforeTruncate;
-	if (window.mobile && firstNameShort && skills) {
+	if (window.mobile && !fullNames && firstNameShort && skills) {
 		// Skills are about twice as wide as normal letters
 		const injuryLength = injury && injury.gamesRemaining > 0 ? 3 : 0;
 		const totalLength =
@@ -146,7 +148,7 @@ const PlayerNameLabels = (props: Props) => {
 
 	const name = (
 		<>
-			{firstNameShort ? (
+			{firstNameShort && !fullNames ? (
 				<>
 					<span className="d-inline-block d-sm-none">{firstNameShort}</span>
 					<span className="d-none d-sm-inline">{firstName}</span>

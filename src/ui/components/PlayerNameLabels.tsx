@@ -7,6 +7,7 @@ import SeasonIcons from "../views/Player/SeasonIcons";
 
 type Props = {
 	awards?: Player["awards"];
+	count?: number;
 	jerseyNumber?: string;
 	injury?: PlayerInjury & {
 		playingThrough?: boolean;
@@ -14,7 +15,10 @@ type Props = {
 	pos?: string;
 	pid?: number;
 
-	// season is passed to RatingsStatsPopover only, where it's used to determine whether to show a historical season's data
+	abbrev?: string;
+	tid?: number;
+
+	// season is passed to RatingsStatsPopover, where it's used to determine whether to show a historical season's data. Also team link
 	season?: number;
 
 	skills?: string[];
@@ -73,9 +77,23 @@ const getFirstLastNames = (props: Props) => {
 	};
 };
 
+export const CountBadge = ({ count }: { count: number }) => {
+	if (count > 1) {
+		return (
+			<div className="ms-1">
+				<span className="badge bg-secondary align-text-bottom">{count}</span>
+			</div>
+		);
+	}
+
+	return null;
+};
+
 const PlayerNameLabels = (props: Props) => {
 	const {
+		abbrev,
 		awards,
+		count,
 		firstNameShort,
 		injury,
 		jerseyNumber,
@@ -84,6 +102,7 @@ const PlayerNameLabels = (props: Props) => {
 		season,
 		skills,
 		style,
+		tid,
 		watch,
 	} = props;
 
@@ -160,6 +179,14 @@ const PlayerNameLabels = (props: Props) => {
 			{pid !== undefined ? (
 				<RatingsStatsPopover pid={pid} season={season} watch={watch} />
 			) : null}
+			{abbrev !== undefined && tid !== undefined ? (
+				<a
+					href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}
+					className="ms-1"
+				>
+					{abbrev}
+				</a>
+			) : null}
 		</span>
 	);
 
@@ -171,6 +198,15 @@ const PlayerNameLabels = (props: Props) => {
 					<SeasonIcons className="ms-1" awards={awards} playoffs />
 					<SeasonIcons className="ms-1" awards={awards} />
 				</div>
+			</div>
+		);
+	}
+
+	if (count !== undefined) {
+		return (
+			<div className="d-flex">
+				<div className="me-auto">{nameLabelsBlock}</div>
+				<CountBadge count={count} />
 			</div>
 		);
 	}

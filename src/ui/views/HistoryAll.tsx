@@ -2,7 +2,10 @@ import { DataTable, MoreLinks, TeamLogoInline } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import {
+	CountBadge,
+	wrappedPlayerNameLabels,
+} from "../components/PlayerNameLabels";
 
 const awardName = (
 	award:
@@ -31,40 +34,20 @@ const awardName = (
 		pos: award.pos,
 		season: season,
 		legacyName: award.name,
+		abbrev: award.abbrev,
+		tid: award.tid,
+		count: award.count,
 	});
-
-	const ret = {
-		value: (
-			<div className="d-flex">
-				<div className="me-auto">
-					{wrappedValue.value} (
-					<a
-						href={helpers.leagueUrl([
-							"roster",
-							`${award.abbrev}_${award.tid}`,
-							season,
-						])}
-					>
-						{award.abbrev}
-					</a>
-					)
-				</div>
-				<CountBadge count={award.count} />
-			</div>
-		),
-		searchValue: `${award.name} ${award.abbrev}`,
-		sortValue: wrappedValue.sortValue,
-	};
 
 	// This is our team.
 	if (award.tid === userTid) {
 		return {
-			...ret,
+			...wrappedValue,
 			classNames: "table-info",
 		};
 	}
 
-	return ret;
+	return wrappedValue;
 };
 
 const teamName = (
@@ -86,18 +69,6 @@ const teamName = (
 
 	// This happens if there is missing data, such as from Delete Old Data
 	return "N/A";
-};
-
-const CountBadge = ({ count }: { count: number }) => {
-	if (count > 1) {
-		return (
-			<div className="ms-1">
-				<span className="badge bg-secondary align-text-bottom">{count}</span>
-			</div>
-		);
-	}
-
-	return null;
 };
 
 const formatTeam = (

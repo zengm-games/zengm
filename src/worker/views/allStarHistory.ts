@@ -2,7 +2,13 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, AllStars } from "../../common/types";
 
-const addAbbrev = (obj: any): any => {
+const addAbbrev = <
+	T extends {
+		tid: number;
+	},
+>(
+	obj: T,
+) => {
 	return { ...obj, abbrev: g.get("teamInfoCache")[obj.tid]?.abbrev };
 };
 

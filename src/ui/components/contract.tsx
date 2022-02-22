@@ -1,6 +1,7 @@
+import classNames from "classnames";
 import { helpers, PHASE } from "../../common";
 import type { Phase, PlayerContract } from "../../common/types";
-import { useLocalShallow } from "../util";
+import { useLocal, useLocalShallow } from "../util";
 
 type ContractPlayer = {
 	draft: {
@@ -74,10 +75,22 @@ export const ContractExp = ({
 }) => {
 	const justDrafted = useJustDrafted(p);
 
+	const season = useLocal(state => state.season);
+	const expiring = season === p.contract.exp;
+
 	return (
 		<span
-			className={justDrafted ? "fst-italic" : undefined}
-			title={justDrafted ? NON_GUARANTEED_CONTRACT_TEXT : undefined}
+			className={classNames({
+				"fst-italic": justDrafted,
+				"text-info": expiring,
+			})}
+			title={
+				justDrafted
+					? NON_GUARANTEED_CONTRACT_TEXT
+					: expiring
+					? "Expiring contract"
+					: undefined
+			}
 		>
 			{override ?? p.contract.exp}
 		</span>

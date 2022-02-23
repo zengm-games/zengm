@@ -6,7 +6,13 @@ import { SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
 
-const OvrChange = ({ after, before }: { after: number; before: number }) => {
+export const OvrChange = ({
+	after,
+	before,
+}: {
+	after: number;
+	before: number;
+}) => {
 	return (
 		<>
 			{before} <span className="glyphicon glyphicon-arrow-right" />{" "}

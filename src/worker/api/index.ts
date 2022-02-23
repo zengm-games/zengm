@@ -1555,7 +1555,7 @@ const getTradingBlockOffers = async ({
 			teams.filter(t => !t.disabled),
 			["region", "name", "tid"],
 		).map(t => t.tid);
-		const offers: TradeTeam[] = [];
+		const offers = [];
 
 		for (const tid of tids) {
 			const teams: TradeTeams = [
@@ -1584,9 +1584,14 @@ const getTradingBlockOffers = async ({
 
 				if (teams2) {
 					const summary = await trade.summary(teams2);
-					teams2[1].warning = summary.warning;
-					teams2[1].warningAmount = summary.warningAmount;
-					offers.push(teams2[1]);
+					const team3 = {
+						...teams2[1],
+						warning: summary.warning,
+						warningAmount: summary.warningAmount,
+						ovrBefore: summary.teams[1].ovrBefore,
+						ovrAfter: summary.teams[1].ovrAfter,
+					};
+					offers.push(team3);
 				}
 			}
 		}
@@ -1594,7 +1599,9 @@ const getTradingBlockOffers = async ({
 		return offers;
 	};
 
-	const augmentOffers = async (offers: TradeTeam[]) => {
+	const augmentOffers = async (
+		offers: Awaited<ReturnType<typeof getOffers>>,
+	) => {
 		if (offers.length === 0) {
 			return [];
 		}
@@ -1683,6 +1690,8 @@ const getTradingBlockOffers = async ({
 					dpids: offer.dpids,
 					warning: offer.warning,
 					warningAmount: offer.warningAmount,
+					ovrAfter: offer.ovrAfter,
+					ovrBefore: offer.ovrBefore,
 					payroll,
 					picks: picks2,
 					players,

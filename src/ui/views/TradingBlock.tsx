@@ -11,6 +11,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { OvrChange } from "./Trade/Summary";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
@@ -106,6 +107,8 @@ const Offer = (props: OfferProps) => {
 		handleClickNegotiate,
 		name,
 		onRemove,
+		ovrAfter,
+		ovrBefore,
 		payroll,
 		picks,
 		pids,
@@ -166,7 +169,8 @@ const Offer = (props: OfferProps) => {
 			<p>
 				{helpers.formatRecord(props)}, {strategy},{" "}
 				{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
-				{salaryCapOrPayrollText}
+				{salaryCapOrPayrollText}, ovr:{" "}
+				<OvrChange before={ovrBefore} after={ovrAfter} />
 			</p>
 			{picks.length > 0 || players.length > 0 ? (
 				<div className="row">

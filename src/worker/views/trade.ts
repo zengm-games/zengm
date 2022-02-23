@@ -19,6 +19,8 @@ const getSummary = async (teams: TradeTeams) => {
 		teams: [0, 1].map(i => {
 			return {
 				name: summary.teams[i].name,
+				ovrAfter: summary.teams[i].ovrAfter,
+				ovrBefore: summary.teams[i].ovrBefore,
 				payrollAfterTrade: summary.teams[i].payrollAfterTrade,
 				total: summary.teams[i].total,
 				trade: summary.teams[i].trade,

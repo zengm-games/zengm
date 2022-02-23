@@ -1583,6 +1583,8 @@ export type TradePickValues = {
 };
 type TradeSummaryTeam = {
 	name: string;
+	ovrAfter: number;
+	ovrBefore: number;
 	payrollAfterTrade: number;
 	payrollBeforeTrade: number;
 	picks: {

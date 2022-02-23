@@ -6,6 +6,22 @@ import { SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
 
+const OvrChange = ({ after, before }: { after: number; before: number }) => {
+	return (
+		<>
+			{before} -&gt;{" "}
+			<span
+				className={classNames({
+					"text-success": after > before,
+					"text-danger": before > after,
+				})}
+			>
+				{after}
+			</span>
+		</>
+	);
+};
+
 const Summary = forwardRef(
 	(
 		{
@@ -74,21 +90,30 @@ const Summary = forwardRef(
 									<li>Nothing</li>
 								) : null}
 							</ul>
-							<p className="mt-auto mb-0">
-								Payroll after trade:{" "}
-								<span
-									className={
-										t.payrollAfterTrade > salaryCap ? "text-danger" : undefined
-									}
-								>
-									{helpers.formatCurrency(t.payrollAfterTrade, "M")}
-								</span>
-							</p>
-							{salaryCapType !== "none" ? (
-								<p className="mb-0">
-									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-								</p>
-							) : null}
+							<ul className="list-unstyled">
+								<li>
+									Payroll after trade:{" "}
+									<span
+										className={
+											t.payrollAfterTrade > salaryCap
+												? "text-danger"
+												: undefined
+										}
+									>
+										{helpers.formatCurrency(t.payrollAfterTrade, "M")}
+									</span>
+								</li>
+								{salaryCapType !== "none" ? (
+									<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
+								) : null}
+								<li>
+									Ovr:{" "}
+									<OvrChange
+										before={summary.teams[t.other].ovrBefore}
+										after={summary.teams[t.other].ovrAfter}
+									/>
+								</li>
+							</ul>
 						</div>
 					);
 				})}

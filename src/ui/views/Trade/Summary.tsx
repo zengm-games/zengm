@@ -45,11 +45,13 @@ export const OvrChange = ({
 const Summary = forwardRef(
 	(
 		{
+			challengeNoRatings,
 			handleToggle,
 			salaryCap,
 			salaryCapType,
 			summary,
 		}: Pick<View<"trade">, "salaryCap" | "salaryCapType" | "summary"> & {
+			challengeNoRatings: boolean;
 			handleToggle: HandleToggle;
 		},
 		ref: any,
@@ -126,13 +128,15 @@ const Summary = forwardRef(
 								{salaryCapType !== "none" ? (
 									<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
 								) : null}
-								<li>
-									Team ovr:{" "}
-									<OvrChange
-										before={summary.teams[t.other].ovrBefore}
-										after={summary.teams[t.other].ovrAfter}
-									/>
-								</li>
+								{!challengeNoRatings ? (
+									<li>
+										Team ovr:{" "}
+										<OvrChange
+											before={summary.teams[t.other].ovrBefore}
+											after={summary.teams[t.other].ovrAfter}
+										/>
+									</li>
+								) : null}
 							</ul>
 						</div>
 					);

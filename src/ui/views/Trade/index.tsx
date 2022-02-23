@@ -409,6 +409,7 @@ const Trade = (props: View<"trade">) => {
 				<div className="col-md-3">
 					<div className="trade-affix">
 						<Summary
+							challengeNoRatings={challengeNoRatings}
 							handleToggle={handleChangeAsset}
 							ref={summaryText}
 							salaryCap={salaryCap}

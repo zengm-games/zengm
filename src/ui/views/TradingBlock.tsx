@@ -177,12 +177,17 @@ const Offer = (props: OfferProps) => {
 					{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
 					{salaryCapOrPayrollText}
 				</div>
-				<div>
-					{abbrev} ovr: <OvrChange before={ovrBefore} after={ovrAfter} />
-				</div>
-				<div>
-					Your ovr: <OvrChange before={ovrBeforeUser} after={ovrAfterUser} />
-				</div>
+				{!challengeNoRatings ? (
+					<>
+						<div>
+							{abbrev} ovr: <OvrChange before={ovrBefore} after={ovrAfter} />
+						</div>
+						<div>
+							Your ovr:{" "}
+							<OvrChange before={ovrBeforeUser} after={ovrAfterUser} />
+						</div>
+					</>
+				) : null}
 			</div>
 			{picks.length > 0 || players.length > 0 ? (
 				<div className="row">
@@ -493,21 +498,27 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</a>,
 				helpers.formatRecord(offer),
 				offer.strategy,
-				{
-					value: <OvrChange before={offer.ovrBefore} after={offer.ovrAfter} />,
-					sortValue: offer.ovrAfter,
-					searchValue: `${offer.ovrBefore} ${offer.ovrAfter}`,
-				},
-				{
-					value: (
-						<OvrChange
-							before={offer.ovrBeforeUser}
-							after={offer.ovrAfterUser}
-						/>
-					),
-					sortValue: offer.ovrAfterUser,
-					searchValue: `${offer.ovrBeforeUser} ${offer.ovrAfterUser}`,
-				},
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange before={offer.ovrBefore} after={offer.ovrAfter} />
+							),
+							sortValue: offer.ovrAfter,
+							searchValue: `${offer.ovrBefore} ${offer.ovrAfter}`,
+					  }
+					: null,
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange
+									before={offer.ovrBeforeUser}
+									after={offer.ovrAfterUser}
+								/>
+							),
+							sortValue: offer.ovrAfterUser,
+							searchValue: `${offer.ovrBeforeUser} ${offer.ovrAfterUser}`,
+					  }
+					: null,
 				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: (

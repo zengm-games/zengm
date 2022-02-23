@@ -127,7 +127,7 @@ const Summary = forwardRef(
 									<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
 								) : null}
 								<li>
-									Ovr:{" "}
+									Team ovr:{" "}
 									<OvrChange
 										before={summary.teams[t.other].ovrBefore}
 										after={summary.teams[t.other].ovrAfter}

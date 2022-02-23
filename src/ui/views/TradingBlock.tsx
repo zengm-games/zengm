@@ -453,6 +453,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			"Team",
 			"Record",
 			"Strategy",
+			"Ovr",
+			"Ovr",
 			salaryCapType === "none" ? "Payroll" : "Cap Space",
 			"Players",
 			"Draft Picks",
@@ -474,6 +476,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			},
 		},
 	);
+	offerCols[3].title = "Other Ovr";
+	offerCols[3].desc = "Other team's change in ovr rating";
+	offerCols[4].title = "Your Ovr";
+	offerCols[3].desc = "Your team's change in ovr rating";
 
 	const offerRows = state.offers.map((offer, i) => {
 		const salaryCapOrPayroll =
@@ -487,6 +493,21 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</a>,
 				helpers.formatRecord(offer),
 				offer.strategy,
+				{
+					value: <OvrChange before={offer.ovrBefore} after={offer.ovrAfter} />,
+					sortValue: offer.ovrAfter,
+					searchValue: `${offer.ovrBefore} ${offer.ovrAfter}`,
+				},
+				{
+					value: (
+						<OvrChange
+							before={offer.ovrBeforeUser}
+							after={offer.ovrAfterUser}
+						/>
+					),
+					sortValue: offer.ovrAfterUser,
+					searchValue: `${offer.ovrBeforeUser} ${offer.ovrAfterUser}`,
+				},
 				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: (

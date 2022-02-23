@@ -109,6 +109,8 @@ const Offer = (props: OfferProps) => {
 		onRemove,
 		ovrAfter,
 		ovrBefore,
+		ovrAfterUser,
+		ovrBeforeUser,
 		payroll,
 		picks,
 		pids,
@@ -166,12 +168,22 @@ const Offer = (props: OfferProps) => {
 					onClick={onRemove}
 				/>
 			</div>
-			<p>
-				{helpers.formatRecord(props)}, {strategy},{" "}
-				{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
-				{salaryCapOrPayrollText}, ovr:{" "}
-				<OvrChange before={ovrBefore} after={ovrAfter} />
-			</p>
+			<div
+				className="mb-3 d-sm-flex justify-content-between"
+				style={{ maxWidth: 500 }}
+			>
+				<div>
+					{helpers.formatRecord(props)}, {strategy},{" "}
+					{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
+					{salaryCapOrPayrollText}
+				</div>
+				<div>
+					{abbrev} ovr: <OvrChange before={ovrBefore} after={ovrAfter} />
+				</div>
+				<div>
+					Your ovr: <OvrChange before={ovrBeforeUser} after={ovrAfterUser} />
+				</div>
+			</div>
 			{picks.length > 0 || players.length > 0 ? (
 				<div className="row">
 					{players.length > 0 ? (

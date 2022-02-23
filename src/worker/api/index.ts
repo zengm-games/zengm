@@ -76,7 +76,6 @@ import type {
 	TradeTeams,
 	MinimalPlayerRatings,
 	Relative,
-	TradeTeam,
 	Options,
 	ExpansionDraftSetupTeam,
 	GetLeagueOptions,
@@ -1588,8 +1587,10 @@ const getTradingBlockOffers = async ({
 						...teams2[1],
 						warning: summary.warning,
 						warningAmount: summary.warningAmount,
-						ovrBefore: summary.teams[1].ovrBefore,
-						ovrAfter: summary.teams[1].ovrAfter,
+						ovrBefore: summary.teams[0].ovrBefore,
+						ovrAfter: summary.teams[0].ovrAfter,
+						ovrBeforeUser: summary.teams[1].ovrBefore,
+						ovrAfterUser: summary.teams[1].ovrAfter,
 					};
 					offers.push(team3);
 				}
@@ -1692,6 +1693,8 @@ const getTradingBlockOffers = async ({
 					warningAmount: offer.warningAmount,
 					ovrAfter: offer.ovrAfter,
 					ovrBefore: offer.ovrBefore,
+					ovrAfterUser: offer.ovrAfterUser,
+					ovrBeforeUser: offer.ovrBeforeUser,
 					payroll,
 					picks: picks2,
 					players,

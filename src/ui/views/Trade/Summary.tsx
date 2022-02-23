@@ -9,7 +9,7 @@ import type { HandleToggle } from ".";
 const OvrChange = ({ after, before }: { after: number; before: number }) => {
 	return (
 		<>
-			{before} -&gt;{" "}
+			{before} <span className="glyphicon glyphicon-arrow-right" />{" "}
 			<span
 				className={classNames({
 					"text-success": after > before,

@@ -82,7 +82,7 @@ export const ContractExp = ({
 		<span
 			className={classNames({
 				"fst-italic": justDrafted,
-				"text-info": expiring,
+				"fw-bold": expiring,
 			})}
 			title={
 				justDrafted

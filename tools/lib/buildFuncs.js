@@ -112,6 +112,7 @@ const setSport = () => {
 	replace({
 		regex: "GAME_NAME",
 		replacement: bySport({
+			baseball: "ZenGM Baseball",
 			basketball: "Basketball GM",
 			football: "Football GM",
 			hockey: "ZenGM Hockey",
@@ -122,6 +123,7 @@ const setSport = () => {
 	replace({
 		regex: "SPORT",
 		replacement: bySport({
+			baseball: "baseball",
 			basketball: "basketball",
 			football: "football",
 			hockey: "hockey",
@@ -134,7 +136,7 @@ const setSport = () => {
 		replacement: bySport({
 			basketball: "basketball-gm.com",
 			football: "football-gm.com",
-			hockey: "zengm.com",
+			default: "zengm.com",
 		}),
 		paths: ["build/index.html"],
 		silent: true,
@@ -142,9 +144,10 @@ const setSport = () => {
 	replace({
 		regex: "WEBSITE_ROOT",
 		replacement: bySport({
+			baseball: "zengm.com/baseball",
 			basketball: "basketball-gm.com",
 			football: "football-gm.com",
-			hockey: "basketball-gm.com",
+			hockey: "zengm.com/hockey",
 		}),
 		paths: ["build/index.html"],
 		silent: true,
@@ -152,6 +155,7 @@ const setSport = () => {
 	replace({
 		regex: "PLAY_SUBDOMAIN",
 		replacement: bySport({
+			baseball: "baseball.zengm.com",
 			basketball: "play.basketball-gm.com",
 			football: "play.football-gm.com",
 			hockey: "hockey.zengm.com",
@@ -162,6 +166,7 @@ const setSport = () => {
 	replace({
 		regex: "BETA_SUBDOMAIN",
 		replacement: bySport({
+			baseball: "beta.baseball.zengm.com",
 			basketball: "beta.basketball-gm.com",
 			football: "beta.football-gm.com",
 			hockey: "beta.hockey.zengm.com",
@@ -172,7 +177,13 @@ const setSport = () => {
 };
 
 const copyFiles = watch => {
-	const foldersToIgnore = ["basketball", "css", "football", "hockey"];
+	const foldersToIgnore = [
+		"baseball",
+		"basketball",
+		"css",
+		"football",
+		"hockey",
+	];
 
 	fse.copySync("public", "build", {
 		filter: filename => {
@@ -287,7 +298,7 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
   var host = '${bySport({
 		basketball: "basketball-gm.com",
 		football: "football-gm.com",
-		hockey: "zengm.com",
+		default: "zengm.com",
 	})}';
   var element = document.createElement('script');
   var firstScript = document.getElementsByTagName('script')[0];
@@ -484,7 +495,7 @@ if (window.enableLogging) {
 		replacement: bySport({
 			basketball: "UA-38759330-1",
 			football: "UA-38759330-2",
-			hockey: "UA-38759330-3",
+			default: "UA-38759330-3",
 		}),
 		paths: ["build/index.html"],
 		silent: true,
@@ -493,6 +504,7 @@ if (window.enableLogging) {
 	replace({
 		regex: "GOOGLE_SURVEYS_ID",
 		replacement: bySport({
+			baseball: "_ez6qiutxtbl66x5e22u5mzuyqq",
 			basketball: "_5lgefwumzxr6qxsbcz46dpx624",
 			football: "_ez6qiutxtbl66x5e22u5mzuyqq",
 			hockey: "_zrz3msjci2slargulizluenoni",
@@ -504,6 +516,7 @@ if (window.enableLogging) {
 	replace({
 		regex: "BUGSNAG_API_KEY",
 		replacement: bySport({
+			baseball: "37b1fd32d021f7716dc0e1d4a3e619bc",
 			basketball: "c10b95290070cb8888a7a79cc5408555",
 			football: "fed8957cbfca2d1c80997897b840e6cf",
 			hockey: "449e8ed576f7cbccf5c7649e936ab9ff",

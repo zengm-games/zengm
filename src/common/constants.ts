@@ -1,4 +1,5 @@
 import bySport from "./bySport";
+import * as constantsBaseball from "./constants.baseball";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 import * as constantsHockey from "./constants.hockey";
@@ -22,6 +23,7 @@ const DIFFICULTY = {
 };
 
 const DRAFT_BY_TEAM_OVR = bySport({
+	baseball: false,
 	basketball: false,
 	football: true,
 	hockey: true,
@@ -102,6 +104,7 @@ const STRIPE_PUBLISHABLE_KEY =
 		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
+	baseball: constantsBaseball.COMPOSITE_WEIGHTS,
 	basketball: constantsBasketball.COMPOSITE_WEIGHTS,
 	football: constantsFootball.COMPOSITE_WEIGHTS,
 	hockey: constantsHockey.COMPOSITE_WEIGHTS,
@@ -114,6 +117,7 @@ const PLAYER_GAME_STATS = bySport<{
 		sortBy: string[];
 	};
 }>({
+	baseball: constantsBaseball.PLAYER_GAME_STATS,
 	basketball: constantsBasketball.PLAYER_GAME_STATS,
 	football: constantsFootball.PLAYER_GAME_STATS,
 	hockey: constantsHockey.PLAYER_GAME_STATS,
@@ -127,6 +131,7 @@ const PLAYER_SUMMARY = bySport<{
 		superCols?: any[];
 	};
 }>({
+	baseball: constantsBaseball.PLAYER_SUMMARY,
 	basketball: constantsBasketball.PLAYER_SUMMARY,
 	football: constantsFootball.PLAYER_SUMMARY,
 	hockey: constantsHockey.PLAYER_SUMMARY,
@@ -140,12 +145,14 @@ const PLAYER_STATS_TABLES = bySport<{
 		superCols?: any[];
 	};
 }>({
+	baseball: constantsBaseball.PLAYER_STATS_TABLES,
 	basketball: constantsBasketball.PLAYER_STATS_TABLES,
 	football: constantsFootball.PLAYER_STATS_TABLES,
 	hockey: constantsHockey.PLAYER_STATS_TABLES,
 });
 
 const RATINGS = bySport<any[]>({
+	baseball: constantsBaseball.RATINGS,
 	basketball: constantsBasketball.RATINGS,
 	football: constantsFootball.RATINGS,
 	hockey: constantsHockey.RATINGS,
@@ -154,12 +161,14 @@ const RATINGS = bySport<any[]>({
 const POSITION_COUNTS: {
 	[key: string]: number;
 } = bySport({
+	baseball: constantsBaseball.POSITION_COUNTS,
 	basketball: constantsBasketball.POSITION_COUNTS,
 	football: constantsFootball.POSITION_COUNTS,
 	hockey: constantsHockey.POSITION_COUNTS,
 });
 
 const POSITIONS = bySport<any[]>({
+	baseball: constantsBaseball.POSITIONS,
 	basketball: constantsBasketball.POSITIONS,
 	football: constantsFootball.POSITIONS,
 	hockey: constantsHockey.POSITIONS,
@@ -172,6 +181,7 @@ const TEAM_STATS_TABLES: {
 		superCols?: any[];
 	};
 } = bySport({
+	baseball: constantsBaseball.TEAM_STATS_TABLES,
 	basketball: constantsBasketball.TEAM_STATS_TABLES,
 	football: constantsFootball.TEAM_STATS_TABLES,
 	hockey: constantsHockey.TEAM_STATS_TABLES,
@@ -190,36 +200,42 @@ const MOOD_TRAITS: Record<MoodTrait, string> = {
 };
 
 const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
+	baseball: constantsBaseball.SIMPLE_AWARDS,
 	basketball: constantsBasketball.SIMPLE_AWARDS,
 	football: constantsFootball.SIMPLE_AWARDS,
 	hockey: constantsHockey.SIMPLE_AWARDS,
 });
 
 const AWARD_NAMES = bySport<Record<string, string>>({
+	baseball: constantsBaseball.AWARD_NAMES,
 	basketball: constantsBasketball.AWARD_NAMES,
 	football: constantsFootball.AWARD_NAMES,
 	hockey: constantsHockey.AWARD_NAMES,
 });
 
 const DEFAULT_CONFS = bySport({
+	baseball: constantsBaseball.DEFAULT_CONFS,
 	basketball: constantsBasketball.DEFAULT_CONFS,
 	football: constantsFootball.DEFAULT_CONFS,
 	hockey: constantsHockey.DEFAULT_CONFS,
 });
 
 const DEFAULT_DIVS = bySport({
+	baseball: constantsBaseball.DEFAULT_DIVS,
 	basketball: constantsBasketball.DEFAULT_DIVS,
 	football: constantsFootball.DEFAULT_DIVS,
 	hockey: constantsHockey.DEFAULT_DIVS,
 });
 
 const DEFAULT_STADIUM_CAPACITY = bySport({
+	baseball: constantsBaseball.DEFAULT_STADIUM_CAPACITY,
 	basketball: constantsBasketball.DEFAULT_STADIUM_CAPACITY,
 	football: constantsFootball.DEFAULT_STADIUM_CAPACITY,
 	hockey: constantsHockey.DEFAULT_STADIUM_CAPACITY,
 });
 
 const COURT = bySport({
+	baseball: "field",
 	basketball: "court",
 	football: "field",
 	hockey: "ice",
@@ -228,18 +244,21 @@ const COURT = bySport({
 const EMAIL_ADDRESS = "jeremy@zengm.com";
 
 const GAME_ACRONYM = bySport({
+	baseball: "ZGMB",
 	basketball: "BBGM",
 	football: "FBGM",
 	hockey: "ZGMH",
 });
 
 const GAME_NAME = bySport({
+	baseball: "ZenGM Baseball",
 	basketball: "Basketball GM",
 	football: "Football GM",
 	hockey: "ZenGM Hockey",
 });
 
 const SUBREDDIT_NAME = bySport({
+	baseball: "ZenGMBaseball",
 	basketball: "BasketballGM",
 	football: "Football_GM",
 	hockey: "ZenGMHockey",
@@ -248,34 +267,38 @@ const SUBREDDIT_NAME = bySport({
 const TWITTER_HANDLE = bySport({
 	basketball: "basketball_gm",
 	football: "FootballGM_Game",
-	hockey: "ZenGMGames",
+	default: "ZenGMGames",
 });
 
 const FACEBOOK_USERNAME = bySport({
 	basketball: "basketball.general.manager",
 	football: "football.general.manager",
-	hockey: "ZenGMGames",
+	default: "ZenGMGames",
 });
 
 const SPORT_HAS_REAL_PLAYERS = bySport({
+	baseball: false,
 	basketball: true,
 	football: false,
 	hockey: false,
 });
 
 const SPORT_HAS_LEGENDS = bySport({
+	baseball: false,
 	basketball: true,
 	football: false,
 	hockey: false,
 });
 
 const WEBSITE_PLAY = bySport({
+	baseball: "baseball.zengm.com",
 	basketball: "play.basketball-gm.com",
 	football: "play.football-gm.com",
 	hockey: "hockey.zengm.com",
 });
 
 const WEBSITE_ROOT = bySport({
+	baseball: "zengm.com/baseball",
 	basketball: "basketball-gm.com",
 	football: "football-gm.com",
 	hockey: "zengm.com/hockey",
@@ -314,7 +337,7 @@ const AD_DIVS = bySport({
 		rectangle2: "football-gm_mrec_btf_2",
 		rail: "football-gm_right_rail",
 	},
-	hockey: {
+	default: {
 		mobile: "zen-gm_mobile_leaderboard",
 		leaderboard: "zen-gm_leaderboard_atf",
 		rectangle1: "zen-gm_mrec_btf_1",
@@ -324,12 +347,16 @@ const AD_DIVS = bySport({
 });
 
 const DEFAULT_JERSEY = bySport({
+	baseball: "jersey3",
 	basketball: "jersey3",
 	football: "football",
 	hockey: "hockey",
 });
 
 const JERSEYS = bySport({
+	baseball: {
+		jersey3: "Solid horizontal",
+	},
 	basketball: {
 		jersey: "Plain",
 		jersey2: "Bordered",
@@ -354,6 +381,7 @@ const JERSEYS = bySport({
 
 // Target: 90% in playThroughInjuriesFactor
 const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
+	baseball: [0, 4],
 	basketball: [0, 4],
 	football: [0, 2],
 	hockey: [0, 4],

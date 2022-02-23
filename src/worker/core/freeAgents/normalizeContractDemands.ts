@@ -87,6 +87,7 @@ const normalizeContractDemands = async ({
 }) => {
 	// Higher means more unequal salaries
 	const PARAM = bySport({
+		baseball: 2.5,
 		basketball: 0.5 * (type === "newLeague" ? 5 : 15),
 		football: 1,
 		hockey: 2.5,

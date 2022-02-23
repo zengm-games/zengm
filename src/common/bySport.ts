@@ -1,12 +1,14 @@
 const bySport = <T>(
 	object:
 		| {
+				baseball: T;
 				basketball: T;
 				football: T;
 				hockey: T;
 				default?: T;
 		  }
 		| {
+				baseball?: T;
 				basketball?: T;
 				football?: T;
 				hockey?: T;

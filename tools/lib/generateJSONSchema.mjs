@@ -34,6 +34,20 @@ const genRatings = (sport /*: string*/) => {
 	};
 
 	const ratings = bySport({
+		baseball: [
+			"hgt",
+			"spd",
+			"hpw",
+			"con",
+			"eye",
+			"fld",
+			"thr",
+			"cat",
+			"ppw",
+			"ctl",
+			"mov",
+			"endu",
+		],
 		basketball: [
 			"dnk",
 			"drb",
@@ -156,6 +170,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 		.toUpperCase()}${sport.slice(1)}`;
 
 	const depth = bySport({
+		baseball: {},
 		basketball: {},
 		football: {
 			depth: {
@@ -361,6 +376,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 			playerSkill: {
 				type: "string",
 				enum: bySport({
+					baseball: [],
 					basketball: ["3", "A", "B", "Di", "Dp", "Po", "Ps", "R", "V"],
 					football: [
 						"Pa",

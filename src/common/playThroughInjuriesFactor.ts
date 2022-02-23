@@ -1,6 +1,7 @@
 import bySport from "./bySport";
 
 const PERFORMANCE_FRACTION_DECREASE_PER_DAY = bySport({
+	baseball: 0.025,
 	basketball: 0.025,
 	football: 0.05,
 	hockey: 0.025,

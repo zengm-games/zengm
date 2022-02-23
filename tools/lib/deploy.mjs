@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 import cloudflare from "cloudflare";
-import { readFile } from 'fs/promises';
+import { readFile } from "fs/promises";
 import build from "./build.mjs";
 import buildFuncs from "./buildFuncs.js";
 import getSport from "./getSport.js";
@@ -33,13 +33,18 @@ const mySpawn = (command, args) => {
 };
 
 const deploy = async () => {
-	const cloudflareConfig = JSON.parse(await readFile(new URL("../../../../.config/cloudflare.json", import.meta.url)));
+	const cloudflareConfig = JSON.parse(
+		await readFile(
+			new URL("../../../../.config/cloudflare.json", import.meta.url),
+		),
+	);
 
 	await build();
 
 	const subdomain = getSubdomain();
 	const sport = getSport();
 	const domain = buildFuncs.bySport({
+		baseball: `${subdomain === "play" ? "" : "beta."}baseball.zengm.com`,
 		basketball: `${subdomain}.basketball-gm.com`,
 		football: `${subdomain}.football-gm.com`,
 		hockey: `${subdomain === "play" ? "" : "beta."}hockey.zengm.com`,

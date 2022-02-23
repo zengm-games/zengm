@@ -1,4 +1,4 @@
-const SPORTS = ["basketball", "football", "hockey"];
+const SPORTS = ["baseball", "basketball", "football", "hockey"];
 
 const getSport = () => {
 	if (SPORTS.includes(process.env.SPORT)) {

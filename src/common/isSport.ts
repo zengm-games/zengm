@@ -1,4 +1,4 @@
-const isSport = (sport: "basketball" | "football" | "hockey") => {
+const isSport = (sport: "baseball" | "basketball" | "football" | "hockey") => {
 	return sport === process.env.SPORT;
 };
 

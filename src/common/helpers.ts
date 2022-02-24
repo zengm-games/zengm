@@ -68,7 +68,190 @@ const gameScore = (arg: { [key: string]: number }): number => {
 
 function getTeamsDefault(): TeamBasic[] {
 	let teams: TeamBasic[];
-	if (isSport("basketball")) {
+	if (isSport("baseball")) {
+		teams = getTeamInfos([
+			{
+				tid: 1,
+				cid: 1,
+				did: 3,
+				abbrev: "ATL",
+			},
+			{
+				tid: 2,
+				cid: 0,
+				did: 0,
+				abbrev: "BAL",
+			},
+			{
+				tid: 3,
+				cid: 1,
+				did: 3,
+				abbrev: "BKN",
+			},
+			{
+				tid: 4,
+				cid: 0,
+				did: 0,
+				abbrev: "BOS",
+			},
+			{
+				tid: 5,
+				cid: 1,
+				did: 4,
+				abbrev: "CHI",
+			},
+			{
+				tid: 6,
+				cid: 1,
+				did: 4,
+				abbrev: "CIN",
+			},
+			{
+				tid: 7,
+				cid: 0,
+				did: 1,
+				abbrev: "CLE",
+			},
+			{
+				tid: 8,
+				cid: 0,
+				did: 2,
+				abbrev: "DAL",
+			},
+			{
+				tid: 9,
+				cid: 1,
+				did: 5,
+				abbrev: "DEN",
+			},
+			{
+				tid: 10,
+				cid: 0,
+				did: 1,
+				abbrev: "DET",
+			},
+			{
+				tid: 11,
+				cid: 0,
+				did: 2,
+				abbrev: "HOU",
+			},
+			{
+				tid: 12,
+				cid: 0,
+				did: 1,
+				abbrev: "IND",
+			},
+			{
+				tid: 13,
+				cid: 0,
+				did: 1,
+				abbrev: "KC",
+			},
+			{
+				tid: 14,
+				cid: 0,
+				did: 2,
+				abbrev: "LAE",
+			},
+			{
+				tid: 15,
+				cid: 1,
+				did: 5,
+				abbrev: "LAL",
+			},
+			{
+				tid: 16,
+				cid: 1,
+				did: 3,
+				abbrev: "MIA",
+			},
+			{
+				tid: 17,
+				cid: 1,
+				did: 4,
+				abbrev: "MIL",
+			},
+			{
+				tid: 18,
+				cid: 0,
+				did: 1,
+				abbrev: "MIN",
+			},
+			{
+				tid: 19,
+				cid: 0,
+				did: 0,
+				abbrev: "NYC",
+			},
+			{
+				tid: 20,
+				cid: 1,
+				did: 3,
+				abbrev: "PHI",
+			},
+			{
+				tid: 21,
+				cid: 1,
+				did: 5,
+				abbrev: "PHO",
+			},
+			{
+				tid: 22,
+				cid: 1,
+				did: 4,
+				abbrev: "PIT",
+			},
+			{
+				tid: 23,
+				cid: 1,
+				did: 5,
+				abbrev: "SD",
+			},
+			{
+				tid: 24,
+				cid: 0,
+				did: 2,
+				abbrev: "SEA",
+			},
+			{
+				tid: 25,
+				cid: 1,
+				did: 5,
+				abbrev: "SF",
+			},
+			{
+				tid: 26,
+				cid: 0,
+				did: 2,
+				abbrev: "SJ",
+			},
+			{
+				tid: 27,
+				cid: 1,
+				did: 4,
+				abbrev: "STL",
+			},
+			{
+				tid: 28,
+				cid: 0,
+				did: 0,
+				abbrev: "TOR",
+			},
+			{
+				tid: 29,
+				cid: 0,
+				did: 0,
+				abbrev: "TPA",
+			},
+			{
+				tid: 30,
+				cid: 1,
+				did: 3,
+				abbrev: "WAS",
+			},
+		]);
+	} else if (isSport("basketball")) {
 		teams = getTeamInfos([
 			{
 				tid: 0,

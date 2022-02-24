@@ -11,6 +11,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { OvrChange } from "./Trade/Summary";
 
 type OfferType = Awaited<
 	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
@@ -106,6 +107,10 @@ const Offer = (props: OfferProps) => {
 		handleClickNegotiate,
 		name,
 		onRemove,
+		ovrAfter,
+		ovrBefore,
+		ovrAfterUser,
+		ovrBeforeUser,
 		payroll,
 		picks,
 		pids,
@@ -163,11 +168,27 @@ const Offer = (props: OfferProps) => {
 					onClick={onRemove}
 				/>
 			</div>
-			<p>
-				{helpers.formatRecord(props)}, {strategy},{" "}
-				{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
-				{salaryCapOrPayrollText}
-			</p>
+			<div
+				className="mb-3 d-sm-flex justify-content-between"
+				style={{ maxWidth: 500 }}
+			>
+				<div>
+					{helpers.formatRecord(props)}, {strategy},{" "}
+					{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
+					{salaryCapOrPayrollText}
+				</div>
+				{!challengeNoRatings ? (
+					<>
+						<div>
+							{abbrev} ovr: <OvrChange before={ovrBefore} after={ovrAfter} />
+						</div>
+						<div>
+							Your ovr:{" "}
+							<OvrChange before={ovrBeforeUser} after={ovrAfterUser} />
+						</div>
+					</>
+				) : null}
+			</div>
 			{picks.length > 0 || players.length > 0 ? (
 				<div className="row">
 					{players.length > 0 ? (
@@ -437,6 +458,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			"Team",
 			"Record",
 			"Strategy",
+			"Ovr",
+			"Ovr",
 			salaryCapType === "none" ? "Payroll" : "Cap Space",
 			"Players",
 			"Draft Picks",
@@ -458,6 +481,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			},
 		},
 	);
+	offerCols[3].title = "Other Ovr";
+	offerCols[3].desc = "Other team's change in ovr rating";
+	offerCols[4].title = "Your Ovr";
+	offerCols[3].desc = "Your team's change in ovr rating";
 
 	const offerRows = state.offers.map((offer, i) => {
 		const salaryCapOrPayroll =
@@ -471,6 +498,27 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</a>,
 				helpers.formatRecord(offer),
 				offer.strategy,
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange before={offer.ovrBefore} after={offer.ovrAfter} />
+							),
+							sortValue: offer.ovrAfter,
+							searchValue: `${offer.ovrBefore} ${offer.ovrAfter}`,
+					  }
+					: null,
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange
+									before={offer.ovrBeforeUser}
+									after={offer.ovrAfterUser}
+								/>
+							),
+							sortValue: offer.ovrAfterUser,
+							searchValue: `${offer.ovrBeforeUser} ${offer.ovrAfterUser}`,
+					  }
+					: null,
 				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: (

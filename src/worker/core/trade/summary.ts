@@ -1,7 +1,18 @@
 import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import type { TradeSummary, TradeTeams } from "../../../common/types";
+import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
+
+const getTeamOvr = async (playersRaw: Player[]) => {
+	const players = await idb.getCopies.playersPlus(playersRaw, {
+		attrs: ["value"],
+		fuzz: true,
+		ratings: ["ovr", "pos", "ovrs"],
+		season: g.get("season"),
+	});
+
+	return team.ovr(players);
+};
 
 /**
  * Create a summary of the trade, for eventual display to the user.
@@ -18,6 +29,8 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		teams: [
 			{
 				name: "",
+				ovrAfter: 0,
+				ovrBefore: 0,
 				payrollAfterTrade: 0,
 				payrollBeforeTrade: 0,
 				picks: [],
@@ -26,6 +39,8 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			},
 			{
 				name: "",
+				ovrAfter: 0,
+				ovrBefore: 0,
 				payrollAfterTrade: 0,
 				payrollBeforeTrade: 0,
 				picks: [],
@@ -37,43 +52,50 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	};
 
 	// Calculate properties of the trade
-	const promises: Promise<any>[] = [];
-	[0, 1].forEach(i => {
-		promises.push(
-			idb.cache.players
-				.indexGetAll("playersByTid", tids[i])
-				.then(async playersTemp => {
-					let players = playersTemp.filter(p => pids[i].includes(p.pid));
-					players = await idb.getCopies.playersPlus(players, {
-						attrs: ["pid", "name", "contract", "draft"],
-						season: g.get("season"),
-						tid: tids[i],
-						showRookies: true,
-						showNoStats: true,
-					});
-					s.teams[i].trade = players;
-					s.teams[i].total = s.teams[i].trade.reduce(
-						(memo, p) => memo + p.contract.amount,
-						0,
-					);
-				}),
+	const playersAfter: [Player[], Player[]] = [[], []];
+	for (const i of [0, 1] as const) {
+		const playersBefore = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			tids[i],
 		);
-		promises.push(
-			idb.cache.draftPicks
-				.indexGetAll("draftPicksByTid", tids[i])
-				.then(async picks => {
-					for (let j = 0; j < picks.length; j++) {
-						if (dpids[i].includes(picks[j].dpid)) {
-							s.teams[i].picks.push({
-								dpid: picks[j].dpid,
-								desc: await helpers.pickDesc(picks[j], "short"),
-							});
-						}
-					}
-				}),
+		let players = playersBefore.filter(p => pids[i].includes(p.pid));
+		players = await idb.getCopies.playersPlus(players, {
+			attrs: ["pid", "name", "contract", "draft"],
+			season: g.get("season"),
+			tid: tids[i],
+			showRookies: true,
+			showNoStats: true,
+		});
+		s.teams[i].trade = players;
+		s.teams[i].total = s.teams[i].trade.reduce(
+			(memo, p) => memo + p.contract.amount,
+			0,
 		);
-	});
-	await Promise.all(promises); // Test if any warnings need to be displayed
+
+		const picks = await idb.cache.draftPicks.indexGetAll(
+			"draftPicksByTid",
+			tids[i],
+		);
+		for (let j = 0; j < picks.length; j++) {
+			if (dpids[i].includes(picks[j].dpid)) {
+				s.teams[i].picks.push({
+					dpid: picks[j].dpid,
+					desc: await helpers.pickDesc(picks[j], "short"),
+				});
+			}
+		}
+
+		const j = i === 0 ? 1 : 0;
+		s.teams[j].ovrBefore = await getTeamOvr(playersBefore);
+
+		playersAfter[j].push(
+			...playersBefore.filter(p => !pids[i].includes(p.pid)),
+		);
+		playersAfter[i].push(...playersBefore.filter(p => pids[i].includes(p.pid)));
+	}
+	for (const i of [0, 1] as const) {
+		s.teams[i].ovrAfter = await getTeamOvr(playersAfter[i]);
+	}
 
 	const overCap = [false, false];
 	const ratios = [0, 0];

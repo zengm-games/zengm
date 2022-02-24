@@ -6,14 +6,52 @@ import { SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
 
+// Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1
+export const OvrChange = ({
+	after,
+	before,
+}: {
+	after: number;
+	before: number;
+}) => {
+	return (
+		<>
+			{before}{" "}
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="14"
+				height="14"
+				fill="currentColor"
+				viewBox="0 0 16 16"
+				style={{ marginBottom: 1 }}
+			>
+				<path
+					fillRule="evenodd"
+					d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+				/>
+			</svg>{" "}
+			<span
+				className={classNames({
+					"text-success": after > before,
+					"text-danger": before > after,
+				})}
+			>
+				{after}
+			</span>
+		</>
+	);
+};
+
 const Summary = forwardRef(
 	(
 		{
+			challengeNoRatings,
 			handleToggle,
 			salaryCap,
 			salaryCapType,
 			summary,
 		}: Pick<View<"trade">, "salaryCap" | "salaryCapType" | "summary"> & {
+			challengeNoRatings: boolean;
 			handleToggle: HandleToggle;
 		},
 		ref: any,
@@ -74,21 +112,32 @@ const Summary = forwardRef(
 									<li>Nothing</li>
 								) : null}
 							</ul>
-							<p className="mt-auto mb-0">
-								Payroll after trade:{" "}
-								<span
-									className={
-										t.payrollAfterTrade > salaryCap ? "text-danger" : undefined
-									}
-								>
-									{helpers.formatCurrency(t.payrollAfterTrade, "M")}
-								</span>
-							</p>
-							{salaryCapType !== "none" ? (
-								<p className="mb-0">
-									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-								</p>
-							) : null}
+							<ul className="list-unstyled">
+								<li>
+									Payroll after trade:{" "}
+									<span
+										className={
+											t.payrollAfterTrade > salaryCap
+												? "text-danger"
+												: undefined
+										}
+									>
+										{helpers.formatCurrency(t.payrollAfterTrade, "M")}
+									</span>
+								</li>
+								{salaryCapType !== "none" ? (
+									<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
+								) : null}
+								{!challengeNoRatings ? (
+									<li>
+										Team ovr:{" "}
+										<OvrChange
+											before={summary.teams[t.other].ovrBefore}
+											after={summary.teams[t.other].ovrAfter}
+										/>
+									</li>
+								) : null}
+							</ul>
 						</div>
 					);
 				})}

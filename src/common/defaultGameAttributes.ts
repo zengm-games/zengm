@@ -269,10 +269,46 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 		  }
 		: {};
 
+// Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
+export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
+	process.env.NODE_ENV === "test" || isSport("baseball")
+		? {
+				numGames: 162,
+				numGamesDiv: 76,
+				numGamesConf: null,
+				numGamesPlayoffSeries: wrap([1, 5, 7, 7]),
+				numPlayoffByes: wrap(3),
+				salaryCapType: "none",
+				draftType: "noLottery",
+				numDraftRounds: 7,
+				draftAges: [18, 22],
+				salaryCap: 175000,
+				minPayroll: 150000,
+				luxuryPayroll: 200000,
+				minContract: 500,
+				maxContract: 30000,
+				minRosterSize: 25,
+				maxRosterSize: 30,
+				// Arbitrary - 1 injury every 5 games, spread over 40 plate appearances per game
+				injuryRate: 0.2 / 40,
+				// 200 days per season, 1 tragic death per 50 years
+				tragicDeathRate: 1 / (200 * 50),
+				allStarGame: null,
+				numPlayersOnCourt: 9,
+				playoffsNumTeamsDiv: wrap(1),
+				playIn: false,
+				draftPickAutoContractPercent: 20,
+				draftPickAutoContractRounds: 4,
+				draftPickAutoContract: false,
+		  }
+		: {};
+
 if (isSport("football")) {
 	Object.assign(defaultGameAttributes, footballOverrides);
 } else if (isSport("hockey")) {
 	Object.assign(defaultGameAttributes, hockeyOverrides);
+} else if (isSport("baseball")) {
+	Object.assign(defaultGameAttributes, baseballOverrides);
 }
 
 export default defaultGameAttributes;

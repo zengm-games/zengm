@@ -8,7 +8,12 @@ const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
 		title: "Error",
 		hideNewWindow: true,
 	});
-	return <p>{error.message}</p>;
+	return (
+		<>
+			<p>{error.message}</p>
+			<pre>{error.stack}</pre>
+		</>
+	);
 };
 
 const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
@@ -20,9 +25,8 @@ const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
 	);
 };
 
-const ErrorBoundaryBugsnag = Bugsnag.getPlugin("react")!.createErrorBoundary(
-	React,
-);
+const ErrorBoundaryBugsnag =
+	Bugsnag.getPlugin("react")!.createErrorBoundary(React);
 
 const ErrorBoundary = ({
 	children,

@@ -32,7 +32,7 @@ const useStickyXX = (stickyCols: StickyCols) => {
 
 		if (stickyCols >= 2) {
 			const row = getRow();
-			if (!row) {
+			if (!row || row.cells.length < stickyCols) {
 				return;
 			}
 
@@ -56,7 +56,9 @@ const useStickyXX = (stickyCols: StickyCols) => {
 
 			for (const row of rows) {
 				for (let i = 1; i < widths.length; i++) {
-					row.cells[i].style.left = widths[i];
+					if (row.cells[i]) {
+						row.cells[i].style.left = widths[i];
+					}
 				}
 			}
 		}

@@ -66,7 +66,6 @@ const OfferPlayers = ({
 						injury: p.injury,
 						jerseyNumber: p.jerseyNumber,
 						skills: p.ratings.skills,
-						watch: p.watch,
 						firstName: p.firstName,
 						firstNameShort: p.firstNameShort,
 						lastName: p.lastName,

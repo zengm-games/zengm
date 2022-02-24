@@ -504,10 +504,9 @@ if (window.enableLogging) {
 	replace({
 		regex: "GOOGLE_SURVEYS_ID",
 		replacement: bySport({
-			baseball: "_ez6qiutxtbl66x5e22u5mzuyqq",
 			basketball: "_5lgefwumzxr6qxsbcz46dpx624",
 			football: "_ez6qiutxtbl66x5e22u5mzuyqq",
-			hockey: "_zrz3msjci2slargulizluenoni",
+			default: "_zrz3msjci2slargulizluenoni",
 		}),
 		paths: ["build/index.html"],
 		silent: true,

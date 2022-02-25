@@ -81,7 +81,8 @@ export type Awards = {
 };
 
 export type Position =
-	| "P"
+	| "SP"
+	| "RP"
 	| "C"
 	| "1B"
 	| "2B"

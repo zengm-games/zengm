@@ -1,6 +1,7 @@
 import { bySport, PHASE } from "../../../common";
 import type { MinimalPlayerRatings } from "../../../common/types";
 import { g, helpers } from "../../util";
+import genRatingsBaseball from "./genRatings.baseball";
 import genRatingsBasketball from "./genRatings.basketball";
 import genRatingsFootball from "./genRatings.football";
 import genRatingsHockey from "./genRatings.hockey";
@@ -11,6 +12,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 		heightInInches: number;
 		ratings: MinimalPlayerRatings;
 	}>({
+		baseball: genRatingsBaseball(season, scoutingRank),
 		basketball: genRatingsBasketball(season, scoutingRank),
 		football: genRatingsFootball(season, scoutingRank),
 		hockey: genRatingsHockey(season, scoutingRank),
@@ -18,6 +20,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 
 	// Should correspond to defaultGameAttributes.draftAges[0], but maybe they will diverge in the future..
 	const DEFAULT_AGE = bySport({
+		baseball: 18,
 		basketball: 19,
 		football: 21,
 		hockey: 18,
@@ -28,6 +31,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 	const ageDiff = age - DEFAULT_AGE;
 	if (ageDiff !== 0) {
 		const exponent = bySport({
+			baseball: 0.75,
 			basketball: 0.8,
 			football: 1,
 			hockey: 0.75,
@@ -38,6 +42,18 @@ const genRatings = (season: number, scoutingRank: number) => {
 		);
 
 		const rtgs = bySport({
+			baseball: [
+				"hpw",
+				"con",
+				"eye",
+				"fld",
+				"thr",
+				"cat",
+				"ppw",
+				"ctl",
+				"mov",
+				"endu",
+			],
 			basketball: [
 				"stre",
 				"endu",
@@ -87,6 +103,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 		});
 
 		const rtgsDevelopSlow = bySport({
+			baseball: ["spd"],
 			basketball: ["spd", "jmp", "drb", "pss", "reb"],
 			football: ["spd"],
 			hockey: ["spd"],

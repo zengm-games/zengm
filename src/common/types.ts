@@ -1020,7 +1020,6 @@ export type MinimalPlayerRatings = {
 	pots?: any;
 	injuryIndex?: number;
 	hgt: number;
-	stre: number;
 	spd: number;
 	endu: number;
 	locked?: boolean;

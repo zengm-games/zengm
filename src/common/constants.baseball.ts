@@ -12,7 +12,8 @@ const PLAYER_STATS_TABLES = {};
 const TEAM_STATS_TABLES = {};
 
 const POSITIONS: Position[] = [
-	"P",
+	"SP",
+	"RP",
 	"C",
 	"1B",
 	"2B",
@@ -23,7 +24,18 @@ const POSITIONS: Position[] = [
 	"RF",
 ];
 
-const POSITION_COUNTS = {};
+const POSITION_COUNTS: Record<Position, number> = {
+	SP: 5,
+	RP: 7,
+	C: 2,
+	"1B": 1.25,
+	"2B": 1.25,
+	"3B": 1.25,
+	SS: 1.25,
+	LF: 5 / 3,
+	CF: 5 / 3,
+	RF: 5 / 3,
+};
 
 const RATINGS: RatingKey[] = [
 	"hgt",

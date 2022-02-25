@@ -9,6 +9,7 @@ const rosterAutoSort = (
 	pos?: string,
 ) => {
 	return bySport({
+		baseball: Promise.resolve(),
 		basketball: rosterAutoSortBasketball(tid, onlyNewPlayers),
 		football: rosterAutoSortFootball(tid, onlyNewPlayers, pos as any),
 		hockey: rosterAutoSortHockey(tid, onlyNewPlayers, pos as any),

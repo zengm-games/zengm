@@ -1,4 +1,5 @@
 import { bySport } from "../../../common";
+import ovrBaseball from "./ovr.baseball";
 import ovrBasketball from "./ovr.basketball";
 import ovrFootball from "./ovr.football";
 import ovrHockey from "./ovr.hockey";
@@ -22,6 +23,7 @@ const ovr = (
 	} = {},
 ) => {
 	return bySport({
+		baseball: ovrBaseball(),
 		basketball: ovrBasketball(players, {
 			playoffs: options.playoffs,
 			rating: options.rating,

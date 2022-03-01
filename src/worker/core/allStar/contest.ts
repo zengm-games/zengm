@@ -21,7 +21,7 @@ export const getNextRoundType = (contest: {
 	const currentRoundNum = baseRounds.length;
 
 	// Index of the current baseRound
-	const currentRoundIndex = contest.rounds.indexOf(baseRounds.at(-1));
+	const currentRoundIndex = contest.rounds.indexOf(baseRounds.at(-1)!);
 
 	// Current round (1st or 2nd round) plus all its tiebreakers
 	const currentRoundAndTiebreakers = contest.rounds.filter(

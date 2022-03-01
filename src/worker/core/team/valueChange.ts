@@ -405,9 +405,9 @@ const refreshCache = async () => {
 			players.map(p => ({
 				value: p.value,
 				ratings: {
-					ovr: p.ratings.at(-1).ovr,
-					ovrs: p.ratings.at(-1).ovrs,
-					pos: p.ratings.at(-1).pos,
+					ovr: p.ratings.at(-1)!.ovr,
+					ovrs: p.ratings.at(-1)!.ovrs,
+					pos: p.ratings.at(-1)!.pos,
 				},
 			})),
 		);

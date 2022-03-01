@@ -54,10 +54,10 @@ const getRookieSalaries = (): number[] => {
 	const salaries = [firstPickSalary];
 
 	for (let i = 1; i < numPlayersHighSlope; i++) {
-		salaries.push(salaries.at(-1) + highSlope);
+		salaries.push(salaries.at(-1)! + highSlope);
 	}
 	for (let i = 0; i < numPlayersLowSlope; i++) {
-		salaries.push(salaries.at(-1) + lowSlope);
+		salaries.push(salaries.at(-1)! + lowSlope);
 	}
 	for (let i = 0; i < numPlayersNoSlope; i++) {
 		salaries.push(minContract);

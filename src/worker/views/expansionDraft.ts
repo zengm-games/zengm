@@ -26,7 +26,7 @@ const updateExpansionDraft = async () => {
 	const allAbbrevs = getUnusedAbbrevs(currentTeams);
 
 	const divs = g.get("divs", "current");
-	const div = divs.at(-1);
+	const div = divs.at(-1)!;
 	const param = allAbbrevs.map(abbrev => ({
 		tid: -1,
 		cid: div.cid,

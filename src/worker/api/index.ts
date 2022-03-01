@@ -679,7 +679,7 @@ const deleteOldData = async (options: {
 				let updated = false;
 				if (p.ratings.length > 0) {
 					updated = true;
-					p.ratings = [p.ratings.at(-1)];
+					p.ratings = [p.ratings.at(-1)!];
 				}
 				if (p.stats.length > 0) {
 					updated = true;
@@ -700,7 +700,7 @@ const deleteOldData = async (options: {
 				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
 					let updated = false;
 					if (p.ratings.length > 0) {
-						p.ratings = [p.ratings.at(-1)];
+						p.ratings = [p.ratings.at(-1)!];
 						updated = true;
 					}
 
@@ -1825,7 +1825,7 @@ const handleUploadedDraftClass = async ({
 			uploadedFile.version,
 		);
 		p2.draft.year = draftYear;
-		p2.ratings.at(-1).season = draftYear;
+		p2.ratings.at(-1)!.season = draftYear;
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
@@ -3014,13 +3014,13 @@ const updateConfsDivs = async ({
 			// Put in last division of conference, if possible
 			const potentialDivs = divs.filter(d => d.cid === conf.cid);
 			if (potentialDivs.length > 0) {
-				newDid = potentialDivs.at(-1).did;
+				newDid = potentialDivs.at(-1)!.did;
 			}
 		}
 
 		// If this hasn't resulted in a newCid or newDid, we need to pick a new one
 		if (newDid === undefined && newCid === undefined) {
-			const newDiv = divs.at(-1);
+			const newDiv = divs.at(-1)!;
 			newDid = newDiv.did;
 			newCid = newDiv.cid;
 		}

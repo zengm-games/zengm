@@ -75,7 +75,7 @@ const ovrByPosFactory =
 				if (weight === undefined) {
 					// Decay slower for positions with many players, because injury substitutions will be more likely
 					const base = (3 + minLength) * 0.05;
-					const lastWeight = weights.at(-1);
+					const lastWeight = weights.at(-1)!;
 					let exponent = i - minLength + 1;
 
 					// Penalty for exceeding normal roster limits

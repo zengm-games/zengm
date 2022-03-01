@@ -36,7 +36,7 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				ts = await teamSeasonsIndex.get([season, tid]);
 			}
 			if (ts) {
-				teamSeasonsByTeam.at(-1).push(ts);
+				teamSeasonsByTeam.at(-1)!.push(ts);
 
 				if (!seasonsByTid[ts.tid]) {
 					seasonsByTid[ts.tid] = new Set();

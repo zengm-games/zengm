@@ -264,11 +264,7 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	const getTeam = (season: number) => {
 		const stats = p.stats.filter(s => s.season === season);
 
-		if (stats.length > 0) {
-			return stats.at(-1).abbrev;
-		}
-
-		return "???";
+		return stats.at(-1)?.abbrev ?? "???";
 	};
 
 	const awards = p.awards.filter(filter);

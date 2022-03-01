@@ -190,7 +190,7 @@ const processAttrs = (
 			}
 		} else if (attr === "latestTransactionSeason") {
 			if (p.transactions && p.transactions.length > 0) {
-				output.latestTransactionSeason = p.transactions.at(-1).season;
+				output.latestTransactionSeason = p.transactions.at(-1)!.season;
 			} else {
 				output.latestTransactionSeason = undefined;
 			}

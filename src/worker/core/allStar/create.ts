@@ -150,7 +150,7 @@ const create = async (conditions: Conditions) => {
 
 			const orderedByHeight = orderBy(
 				activePlayers,
-				p => p.ratings.at(-1).hgt,
+				p => p.ratings.at(-1)!.hgt,
 				"desc",
 			);
 
@@ -176,8 +176,8 @@ const create = async (conditions: Conditions) => {
 				],
 				controlling,
 				pidsShort: [
-					orderedByHeight.at(shortIndexes[0]).pid,
-					orderedByHeight.at(shortIndexes[1]).pid,
+					orderedByHeight.at(shortIndexes[0])!.pid,
+					orderedByHeight.at(shortIndexes[1])!.pid,
 				],
 				pidsTall: [
 					orderedByHeight[longIndexes[0]].pid,

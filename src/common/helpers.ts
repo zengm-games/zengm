@@ -977,7 +977,7 @@ const isAmerican = (loc: string) => {
 	const parts = loc.split(", ");
 	const state = parts.at(-1);
 
-	if (state === "Georgia") {
+	if (state === "Georgia" || state === undefined) {
 		return false;
 	}
 
@@ -993,8 +993,9 @@ const getCountry = (bornLoc?: string) => {
 		// Find part after last comma/colon
 		for (const delimiter of [", ", ": "]) {
 			const parts = name.split(delimiter);
-			if (parts.length > 1) {
-				name = parts.at(-1);
+			const nameTemp = parts.at(-1);
+			if (nameTemp !== undefined) {
+				name = nameTemp;
 			}
 		}
 	}

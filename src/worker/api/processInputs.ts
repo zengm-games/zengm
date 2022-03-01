@@ -33,7 +33,7 @@ export const validateAbbrev = (
 
 		{
 			const parts = abbrev.split("_");
-			const int = parseInt(parts.at(-1));
+			const int = parseInt(parts.at(-1)!);
 			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
 				return [int, g.get("teamInfoCache")[int]?.abbrev];
 			}

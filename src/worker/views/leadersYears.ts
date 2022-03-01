@@ -96,6 +96,7 @@ const updateLeadersYears = async (
 			const value = p.stats[cat.stat];
 			const lastValue = current.leaders.at(-1)?.stat;
 			if (
+				lastValue !== undefined &&
 				current.leaders.length >= NUM_LEADERS &&
 				((cat.sortAscending && value > lastValue) ||
 					(!cat.sortAscending && value < lastValue))

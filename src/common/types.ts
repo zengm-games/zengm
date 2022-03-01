@@ -38,14 +38,6 @@ declare global {
 			SPORT: "basketball" | "football" | "hockey";
 		}
 	}
-
-	// Hopefully these can be removed with a newer version of TypeScript
-	interface Array<T> {
-		at: (i: number) => T;
-	}
-	interface String {
-		at: (i: number) => string;
-	}
 }
 
 type ViewsKeys = keyof typeof views;

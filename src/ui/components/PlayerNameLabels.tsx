@@ -37,7 +37,7 @@ type Props = {
 
 const parseLegacyName = (name: string) => {
 	const parts = name.split(" (")[0].split(" ");
-	let lastName = parts.at(-1);
+	let lastName = parts.at(-1)!;
 	let lastNameIndex = parts.length - 1;
 
 	// For "Bob Smith Jr." and similar names, return "Smith" not "Jr."

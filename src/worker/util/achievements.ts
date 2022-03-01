@@ -241,11 +241,7 @@ const checkSevenGameFinals = async () => {
 		"noCopyCache",
 	);
 
-	if (!playoffSeries || playoffSeries.series.length === 0) {
-		return false;
-	}
-
-	const matchup = playoffSeries.series.at(-1)[0];
+	const matchup = playoffSeries?.series.at(-1)?.[0];
 
 	if (
 		matchup === undefined ||
@@ -1066,27 +1062,18 @@ const achievements: Achievement[] = [
 		category: "Playoffs",
 
 		async check() {
-			if (isSport("football")) {
-				const games = await idb.cache.games.getAll();
-				const game = games.at(-1); // Last game of finals
+			if (!isSport("football")) {
+				const sevenGameFinals = await checkSevenGameFinals();
 
-				return game.overtimes >= 1 && game.won.tid === g.get("userTid");
-			}
-
-			const sevenGameFinals = await checkSevenGameFinals();
-
-			if (!sevenGameFinals) {
-				return false;
+				if (!sevenGameFinals) {
+					return false;
+				}
 			}
 
 			const games = await idb.cache.games.getAll();
-			if (games.length === 0) {
-				return false;
-			}
-
 			const game = games.at(-1); // Last game of finals
 
-			return game.overtimes >= 1 && game.won.tid === g.get("userTid");
+			return !!game && game.overtimes >= 1 && game.won.tid === g.get("userTid");
 		},
 
 		when: "afterPlayoffs",
@@ -1102,23 +1089,20 @@ const achievements: Achievement[] = [
 		category: "Playoffs",
 
 		async check() {
-			if (isSport("football")) {
-				const games = await idb.cache.games.getAll();
-				const game = games.at(-1); // Last game of finals
+			if (!isSport("football")) {
+				const sevenGameFinals = await checkSevenGameFinals();
 
-				return game.overtimes >= 1 && game.lost.tid === g.get("userTid");
-			}
-
-			const sevenGameFinals = await checkSevenGameFinals();
-
-			if (!sevenGameFinals) {
-				return false;
+				if (!sevenGameFinals) {
+					return false;
+				}
 			}
 
 			const games = await idb.cache.games.getAll();
 			const game = games.at(-1); // Last game of finals
 
-			return game.overtimes >= 1 && game.lost.tid === g.get("userTid");
+			return (
+				!!game && game.overtimes >= 1 && game.lost.tid === g.get("userTid")
+			);
 		},
 
 		when: "afterPlayoffs",

@@ -652,6 +652,7 @@ const updateLeaders = async (
 				const value = playerStats[cat.stat];
 				const lastValue = outputCat.leaders.at(-1)?.stat;
 				if (
+					lastValue !== undefined &&
 					outputCat.leaders.length >= NUM_LEADERS &&
 					((cat.sortAscending && value > lastValue) ||
 						(!cat.sortAscending && value < lastValue))

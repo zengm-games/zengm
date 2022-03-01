@@ -11,8 +11,9 @@ const countSkills = async () => {
 	const counts: Record<string, number> = {};
 
 	for (const p of players) {
-		const r = p.ratings.at(-1); // Dynamically recompute, to make dev easier when changing skills formula
+		const r = p.ratings.at(-1)!;
 
+		// Dynamically recompute, to make dev easier when changing skills formula
 		const skills = player.skills(r);
 
 		for (const skill of skills) {

@@ -1113,7 +1113,7 @@ class Play {
 								tackOn: false,
 							});
 
-							const indexEvent = this.spotOfEnforcementIndexes.at(-1);
+							const indexEvent = this.spotOfEnforcementIndexes.at(-1)!;
 							if (indexEvent > 0) {
 								subResults.push({
 									indexEvent,

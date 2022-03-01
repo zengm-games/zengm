@@ -70,7 +70,7 @@ const newPhaseResignPlayers = async (
 			}
 
 			const positionInfo = positionInfoByTid.get(p.tid);
-			const pos = p.ratings.at(-1).pos;
+			const pos = p.ratings.at(-1)!.pos;
 
 			if (positionInfo !== undefined && positionInfo[pos] !== undefined) {
 				positionInfo[pos].count -= 1;
@@ -177,7 +177,7 @@ const newPhaseResignPlayers = async (
 			const payroll = payrollsByTid.get(p.tid);
 
 			const positionInfo = positionInfoByTid.get(p.tid);
-			const pos = p.ratings.at(-1).pos;
+			const pos = p.ratings.at(-1)!.pos;
 
 			if (g.get("salaryCapType") === "hard") {
 				if (contract.amount + payroll > g.get("salaryCap")) {

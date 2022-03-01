@@ -10,7 +10,7 @@ const parseLastName = (lastName: string): [string, number | undefined] => {
 		return [lastName, undefined];
 	}
 
-	const suffix = parts.at(-1);
+	const suffix = parts.at(-1)!;
 	const parsedName = parts.slice(0, -1).join(" ");
 
 	if (suffix === "Sr.") {

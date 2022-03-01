@@ -139,8 +139,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 		if (options.realStats === "allActive") {
 			// Only keep players who are active this season
 			groupedRatings = groupedRatings.filter(allRatings => {
-				const lastRatings = allRatings.at(-1);
-				return lastRatings.season === options.season;
+				const lastSeason = allRatings.at(-1)?.season;
+				return lastSeason === options.season;
 			});
 		} else if (
 			options.realStats === "allActiveHOF" ||
@@ -161,7 +161,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			if (options.realStats === "allActiveHOF") {
 				// Only keep players who are active this season or in the HoF
 				groupedRatings = groupedRatings.filter(allRatings => {
-					const lastRatings = allRatings.at(-1);
+					const lastRatings = allRatings.at(-1)!;
 					return (
 						lastRatings.season === options.season ||
 						hofSlugs.has(lastRatings.slug)

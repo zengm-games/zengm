@@ -151,6 +151,7 @@ export const getHistory = async (
 			"hof",
 			"watch",
 			"jerseyNumber",
+			"awards",
 			"retirableJerseyNumbers",
 		],
 		ratings: ["pos"],
@@ -161,7 +162,12 @@ export const getHistory = async (
 	players = players.filter(p => p.careerStats.gp > 0);
 
 	players = addFirstNameShort(players);
-	console.log(players);
+
+	const champSeasons = new Set(
+		teamHistory.history
+			.filter(row => row.playoffRoundsWon >= row.numPlayoffRounds)
+			.map(row => row.season),
+	);
 
 	for (const p of players) {
 		p.lastYr = "";
@@ -171,6 +177,12 @@ export const getHistory = async (
 				p.lastYr += ` ${p.stats.at(-1).abbrev}`;
 			}
 		}
+
+		p.numRings = p.awards.filter(
+			(award: Player["awards"][number]) =>
+				award.type === "Won Championship" && champSeasons.has(award.season),
+		).length;
+		delete p.awards;
 
 		// Handle case where ratings don't exist
 		p.pos = p.ratings.length > 0 ? p.ratings.at(-1).pos : "";
@@ -246,14 +258,12 @@ const updateTeamHistory = async (
 		);
 
 		const retiredByPid: Record<number, string[]> = {};
-		if (retiredJerseyNumbers) {
-			for (const { pid, number } of retiredJerseyNumbers) {
-				if (pid !== undefined) {
-					if (!retiredByPid[pid]) {
-						retiredByPid[pid] = [];
-					}
-					retiredByPid[pid].push(number);
+		for (const { pid, number } of retiredJerseyNumbers) {
+			if (pid !== undefined) {
+				if (!retiredByPid[pid]) {
+					retiredByPid[pid] = [];
 				}
+				retiredByPid[pid].push(number);
 			}
 		}
 
@@ -281,6 +291,7 @@ const updateTeamHistory = async (
 		const history = await getHistory(teamSeasons, players);
 
 		const retiredJerseyNumbers2 = retiredJerseyNumbers.map(row => {
+			// Can't use numRings from getHistory because this could be a player from another team. Although in that case it'd just be 0, so maybe I should...
 			let numRings = 0;
 			for (const historyRow of history.history) {
 				if (

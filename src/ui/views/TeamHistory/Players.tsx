@@ -53,13 +53,21 @@ const Players = ({
 		});
 	};
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		...stats.map(stat => `stat:${stat}`),
-		"Last Season",
-		"Actions",
-	]);
+	const cols = getCols(
+		[
+			"Name",
+			"Pos",
+			...stats.map(stat => `stat:${stat}`),
+			"Titles",
+			"Last Season",
+			"Actions",
+		],
+		{
+			Titles: {
+				title: <span className="ring" />,
+			},
+		},
+	);
 	if (!includeRetireJerseyButton) {
 		cols.pop();
 	}
@@ -84,6 +92,7 @@ const Players = ({
 				}),
 				p.pos,
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				p.numRings,
 				p.lastYr,
 				...(includeRetireJerseyButton
 					? [

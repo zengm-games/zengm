@@ -9,6 +9,7 @@ import type {
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { groupByUnique } from "../../common/groupBy";
 
 export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 	let bestRecord;
@@ -233,17 +234,11 @@ const updateTeamHistory = async (
 
 				let name;
 				let pos;
-				let champSeasons: number[] = [];
 				if (row.pid !== undefined) {
 					const p = await idb.getCopy.players({ pid: row.pid }, "noCopyCache");
 					if (p) {
 						name = `${p.firstName} ${p.lastName}`;
 						pos = getMostCommonPosition(p, inputs.tid);
-
-						champSeasons = p.awards
-							.filter(award => award.type === "Won Championship")
-							.map(award => award.season)
-							.sort();
 					}
 				}
 
@@ -252,7 +247,6 @@ const updateTeamHistory = async (
 					teamInfo,
 					name,
 					pos,
-					champSeasons,
 				};
 			}),
 		);
@@ -290,16 +284,11 @@ const updateTeamHistory = async (
 
 		const history = await getHistory(teamSeasons, players);
 
+		const playersByPid = groupByUnique(history.players, "pid");
 		const retiredJerseyNumbers2 = retiredJerseyNumbers.map(row => {
-			// Can't use numRings from getHistory because this could be a player from another team. Although in that case it'd just be 0, so maybe I should...
 			let numRings = 0;
-			for (const historyRow of history.history) {
-				if (
-					historyRow.playoffRoundsWon >= historyRow.numPlayoffRounds &&
-					row.champSeasons.includes(historyRow.season)
-				) {
-					numRings += 1;
-				}
+			if (row.pid) {
+				numRings = playersByPid[row.pid]?.numRings ?? 0;
 			}
 
 			return {

@@ -522,8 +522,8 @@ class GameSim {
 			this.team[1].stat.ptsQtrs.push(0);
 			this.foulsThisQuarter = [0, 0];
 			this.foulsLastTwoMinutes = [0, 0];
-			this.t = g.get("quarterLength");
 			this.lastScoringPlay = [];
+			this.t = g.get("quarterLength");
 			this.recordPlay("quarter");
 		}
 	}
@@ -539,6 +539,9 @@ class GameSim {
 		this.overtimes += 1;
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
+		this.foulsThisQuarter = [0, 0];
+		this.foulsLastTwoMinutes = [0, 0];
+		this.lastScoringPlay = [];
 		this.recordPlay("overtime");
 		this.jumpBall();
 

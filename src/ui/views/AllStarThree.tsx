@@ -180,6 +180,7 @@ const AllStarThree = ({
 			/>
 
 			<ScoreTable
+				centerResults
 				contest={three}
 				resultsByRound={resultsByRound}
 				players={players}

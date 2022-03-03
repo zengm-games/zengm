@@ -649,12 +649,14 @@ export const ContestantProfiles = ({
 };
 
 export const ScoreTable = ({
+	centerResults,
 	contest,
 	players,
 	resultsByRound,
 	season,
 	userTid,
 }: {
+	centerResults?: boolean;
 	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
 	players: View<"allStarDunk">["players"];
 	resultsByRound:
@@ -667,6 +669,8 @@ export const ScoreTable = ({
 
 	let maxRoundCurrent = 0;
 
+	const centerClassName = centerResults ? "text-center" : undefined;
+
 	return (
 		<ResponsiveTableWrapper>
 			<table className="table table-striped table-borderless table-hover table-nonfluid">
@@ -676,7 +680,7 @@ export const ScoreTable = ({
 						{contest.rounds.map((round, i) => {
 							if (round.tiebreaker) {
 								return (
-									<th key={i} title="Tiebreaker">
+									<th key={i} className={centerClassName} title="Tiebreaker">
 										T
 									</th>
 								);
@@ -686,7 +690,9 @@ export const ScoreTable = ({
 							return <th key={i}>Round {maxRoundCurrent}</th>;
 						})}
 						{range(maxRoundCurrent + 1, numRounds + 1).map(i => (
-							<th key={i}>Round {i}</th>
+							<th key={i} className={centerClassName}>
+								Round {i}
+							</th>
 						))}
 						{contest.winner !== undefined ? <th></th> : null}
 					</tr>
@@ -717,7 +723,7 @@ export const ScoreTable = ({
 										return <td key={j} />;
 									}
 									return (
-										<td key={j}>
+										<td key={j} className={centerClassName}>
 											{roundResult.score}
 											{(roundResult as any).scores &&
 											(roundResult as any).scores.length > 1 ? (

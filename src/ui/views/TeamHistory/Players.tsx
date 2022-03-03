@@ -64,7 +64,7 @@ const Players = ({
 		],
 		{
 			Titles: {
-				title: <span className="ring" />,
+				titleReact: <span className="ring" />,
 			},
 		},
 	);

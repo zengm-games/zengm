@@ -184,6 +184,7 @@ const Header = ({
 						desc,
 						sortSequence,
 						title,
+						titleReact,
 						width,
 					} = cols[colIndex];
 
@@ -204,7 +205,7 @@ const Header = ({
 							title={desc}
 							style={{ width }}
 						>
-							{title}
+							{titleReact ?? title}
 						</th>
 					);
 				})}

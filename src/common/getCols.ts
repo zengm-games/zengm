@@ -1,10 +1,9 @@
-import type { ReactNode } from "react";
 import type { Col } from "../ui/components/DataTable";
 import bySport from "./bySport";
 import isSport from "./isSport";
 
 type ColTemp = Omit<Col, "title"> & {
-	title?: string | ReactNode;
+	title?: string;
 };
 
 const gp = isSport("hockey") ? "GP" : "G";

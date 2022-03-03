@@ -39,7 +39,8 @@ export type Col = {
 	sortSequence?: SortOrder[];
 	sortType?: SortType;
 	searchType?: SortType;
-	title: string | ReactNode;
+	title: string;
+	titleReact?: ReactNode;
 	width?: string;
 };
 

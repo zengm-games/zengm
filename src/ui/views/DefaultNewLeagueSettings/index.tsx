@@ -257,8 +257,6 @@ const DefaultNewLeagueSettings = ({
 			<SettingsForm
 				key={overridesLocalCounter}
 				onSave={async settingsFromSave => {
-					console.log(settingsFromSave);
-
 					const newDefaultSettings: Partial<Settings> = {
 						...settingsFromSave,
 					};

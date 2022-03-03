@@ -19,6 +19,17 @@ const formatYear = (year: {
 	});
 };
 
+const formatYearString = (year: {
+	[key: string]: { team: string; season: number }[];
+}) => {
+	return Object.keys(year)
+		.map((k, i) => {
+			const years = helpers.yearRanges(year[k].map(y => y.season)).join(", ");
+			return `${i > 0 ? ", " : ""}${k} (${years})`;
+		})
+		.join("");
+};
+
 const CheckmarkOrCross = ({ success }: { success: boolean }) => {
 	if (success) {
 		return <span className="glyphicon glyphicon-ok text-success" />;
@@ -40,9 +51,15 @@ const AwardsRecords = ({
 			awardType,
 		},
 	});
-	const cols = getCols(["Name", "Count", "Year", "Last", "Retired", "HOF"]);
+	const cols = getCols(["Name", "Count", "Year", "Last", "Retired", "HOF"], {
+		Year: {
+			searchType: "string",
+		},
+	});
 
 	const rows = awardsRecords.map(a => {
+		const yearsGrouped = groupBy(a.years, "team");
+
 		return {
 			key: a.pid,
 			data: [
@@ -54,11 +71,9 @@ const AwardsRecords = ({
 				}),
 				a.count,
 				{
-					value: formatYear(groupBy(a.years, "team")),
-					sortValue: a.years
-						.map(year => year.team)
-						.sort()
-						.join(","),
+					value: formatYear(yearsGrouped),
+					searchValue: formatYearString(yearsGrouped),
+					sortValue: a.years.map(year => year.season).sort()[0],
 				},
 				a.lastYear,
 				{

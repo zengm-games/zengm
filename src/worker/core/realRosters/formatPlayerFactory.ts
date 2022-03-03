@@ -72,7 +72,7 @@ const formatPlayerFactory = async (
 			? ratingsInput
 			: [ratingsInput];
 
-		const ratings = allRatings.at(-1);
+		const ratings = allRatings.at(-1)!;
 
 		const slug = ratings.slug;
 

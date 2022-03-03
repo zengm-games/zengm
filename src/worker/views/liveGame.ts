@@ -137,7 +137,7 @@ const updatePlayByPlay = async (
 			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 			if (playoffSeries) {
 				const finalRound = playoffSeries.series.at(-1);
-				if (finalRound.length === 1) {
+				if (finalRound?.length === 1) {
 					const finalMatchup = finalRound[0];
 					if (
 						(finalMatchup.home.tid === boxScore.teams[0].tid &&

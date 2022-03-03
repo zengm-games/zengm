@@ -42,15 +42,18 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			prevTid,
 			prevAbbrev: g.get("teamInfoCache")[prevTid]?.abbrev,
 		};
+
+		const { ovr, pot, skills } = p.ratings.at(-1)!;
+
 		fakeP.draft = {
 			round: dp.round,
 			pick: dp.pick,
 			tid: dp.tid,
 			year: g.get("season"),
 			originalTid: dp.originalTid,
-			pot: p.ratings.at(-1).pot,
-			ovr: p.ratings.at(-1).ovr,
-			skills: p.ratings.at(-1).skills,
+			pot,
+			ovr,
+			skills,
 			dpid: dp.dpid,
 		};
 		local.fantasyDraftResults.push(fakeP);

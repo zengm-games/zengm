@@ -381,7 +381,7 @@ const yearRanges = (arrInput: number[]): string[] => {
 			tempArr.push([]);
 		}
 
-		tempArr.at(-1).push(arr[i]);
+		tempArr.at(-1)!.push(arr[i]);
 	}
 
 	for (let i = 0; i < tempArr.length; i++) {

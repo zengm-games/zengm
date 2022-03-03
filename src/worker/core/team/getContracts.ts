@@ -14,12 +14,13 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 	// First, get players currently on the roster
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const contracts = players.map(p => {
+		const { pos, skills } = p.ratings.at(-1)!;
 		return {
 			pid: p.pid,
 			firstName: p.firstName,
 			lastName: p.lastName,
-			skills: p.ratings.at(-1).skills,
-			pos: p.ratings.at(-1).pos,
+			skills,
+			pos,
 			injury: p.injury,
 			jerseyNumber:
 				p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : undefined,

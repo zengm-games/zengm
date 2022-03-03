@@ -60,9 +60,9 @@ const processTeam = (
 		.map(p => ({
 			value: p.value,
 			ratings: {
-				ovr: player.fuzzRating(p.ratings.at(-1).ovr, p.ratings.at(-1).fuzz),
-				ovrs: player.fuzzOvrs(p.ratings.at(-1).ovrs, p.ratings.at(-1).fuzz),
-				pos: p.ratings.at(-1).pos,
+				ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
+				ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
+				pos: p.ratings.at(-1)!.pos,
 			},
 		}));
 	const ovr = team.ovr(playersCurrent, {
@@ -104,7 +104,7 @@ const processTeam = (
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
 
-		const rating = p.ratings.at(-1);
+		const rating = p.ratings.at(-1)!;
 		const playerCompositeRatings: any = {};
 		const p2 = {
 			id: p.pid,

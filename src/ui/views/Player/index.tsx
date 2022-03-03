@@ -81,9 +81,9 @@ const StatsTable = ({
 	}
 
 	if (name === "Shot Locations") {
-		cols[cols.length - 3].title = "M";
-		cols[cols.length - 2].title = "A";
-		cols.at(-1).title = "%";
+		cols.at(-3)!.title = "M";
+		cols.at(-2)!.title = "A";
+		cols.at(-1)!.title = "%";
 	}
 
 	return (
@@ -213,9 +213,9 @@ const Player2 = ({
 		dropdownCustomURL: fields => {
 			let gameLogSeason;
 			if (player.stats.length > 0) {
-				gameLogSeason = player.stats.at(-1).season;
+				gameLogSeason = player.stats.at(-1)!.season;
 			} else if (player.ratings.length > 0) {
-				gameLogSeason = player.ratings.at(-1).season;
+				gameLogSeason = player.ratings.at(-1)!.season;
 			} else {
 				gameLogSeason = currentSeason;
 			}

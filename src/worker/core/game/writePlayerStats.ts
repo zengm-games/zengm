@@ -215,8 +215,8 @@ const doInjury = async (
 			}
 		}
 
-		p2.injuries.at(-1).ovrDrop = p2.ratings[r2].ovr - p2.ratings[r].ovr;
-		p2.injuries.at(-1).potDrop = p2.ratings[r2].pot - p2.ratings[r].pot;
+		p2.injuries.at(-1)!.ovrDrop = p2.ratings[r2].ovr - p2.ratings[r].ovr;
+		p2.injuries.at(-1)!.potDrop = p2.ratings[r2].pot - p2.ratings[r].pot;
 	}
 
 	return {

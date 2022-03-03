@@ -144,7 +144,7 @@ const AllStarThree = ({
 	let currentName = "???";
 	let currentScore = 0;
 	let maxScore = 30;
-	const currentResult = three.rounds.at(-1).results.at(-1);
+	const currentResult = three.rounds.at(-1)?.results.at(-1);
 	if (currentResult) {
 		currentName = three.players[currentResult.index].name;
 
@@ -180,6 +180,7 @@ const AllStarThree = ({
 			/>
 
 			<ScoreTable
+				centerResults
 				contest={three}
 				resultsByRound={resultsByRound}
 				players={players}
@@ -243,7 +244,7 @@ const AllStarThree = ({
 					<h2>
 						{currentName} - {currentScore}/{maxScore}
 					</h2>
-					<ShotTable racks={three.rounds.at(-1).results.at(-1)?.racks ?? []} />
+					<ShotTable racks={three.rounds.at(-1)?.results.at(-1)?.racks ?? []} />
 				</>
 			)}
 		</>

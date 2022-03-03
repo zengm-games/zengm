@@ -3,7 +3,7 @@ import type { Race } from "../../../common/types";
 import { loadNames, local, random } from "../../util";
 
 const getFromCumSumArray = <T extends string>(array: [T, number][]) => {
-	const rand = random.uniform(0, array.at(-1)[1]);
+	const rand = random.uniform(0, array.at(-1)![1]);
 	const foundRow = array.find(row => row[1] >= rand);
 
 	if (foundRow === undefined) {

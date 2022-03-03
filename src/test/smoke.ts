@@ -19,8 +19,8 @@ describe("Smoke Tests", () => {
 		const stream = createStreamFromLeagueObject({});
 
 		await league.createStream(stream, {
-			confs: defaultGameAttributes.confs.at(-1).value,
-			divs: defaultGameAttributes.divs.at(-1).value,
+			confs: defaultGameAttributes.confs.at(-1)!.value,
+			divs: defaultGameAttributes.divs.at(-1)!.value,
 			fromFile: {
 				gameAttributes: undefined,
 				hasRookieContracts: true,

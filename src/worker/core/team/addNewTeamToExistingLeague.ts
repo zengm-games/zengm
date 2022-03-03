@@ -33,7 +33,7 @@ const addNewTeamToExistingLeague = async (
 
 	let div = divs.find(d => d.did === teamInfo.did);
 	if (!div) {
-		div = divs.at(-1);
+		div = divs.at(-1)!;
 	}
 	const cid = div.cid;
 

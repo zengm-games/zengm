@@ -118,11 +118,11 @@ const shuntingYard = (string: string) => {
 			} else if (operators[token]) {
 				const operator = operators[token];
 				while (
-					typeof operators[stack.at(-1)] !== "undefined" &&
+					typeof operators[stack.at(-1)!] !== "undefined" &&
 					((operator.associativity === "l" &&
-						operator.precedence <= operators[stack.at(-1)].precedence) ||
+						operator.precedence <= operators[stack.at(-1)!].precedence) ||
 						(operator.associativity === "r" &&
-							operator.precedence < operators[stack.at(-1)].precedence))
+							operator.precedence < operators[stack.at(-1)!].precedence))
 				) {
 					output.push(stack.pop() as string);
 				}

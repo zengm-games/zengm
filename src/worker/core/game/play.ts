@@ -187,7 +187,7 @@ const play = async (
 					};
 					changed = true;
 					const healedText = `${
-						p.ratings.at(-1).pos
+						p.ratings.at(-1)!.pos
 					} <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 						p.lastName
 					}</a>`;

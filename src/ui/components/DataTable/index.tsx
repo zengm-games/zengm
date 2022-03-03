@@ -40,6 +40,7 @@ export type Col = {
 	sortType?: SortType;
 	searchType?: SortType;
 	title: string;
+	titleReact?: ReactNode;
 	width?: string;
 };
 

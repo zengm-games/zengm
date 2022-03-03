@@ -142,7 +142,7 @@ const updateTeamFinances = async (
 
 		// Pad with 0s
 		while (barData.length > 0 && barData.length < showInt) {
-			const row = helpers.deepCopy(barData.at(-1));
+			const row = helpers.deepCopy(barData.at(-1)!);
 			row.season -= 1;
 			for (const key of helpers.keys(row)) {
 				if (key !== "season" && key !== "champ") {

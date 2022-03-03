@@ -194,7 +194,7 @@ export const getTopPlayers = async (
 		const playersRaw = orderBy(
 			await idb.cache.players.indexGetAll("playersByTid", tid),
 			t => {
-				const ratings = t.ratings.at(-1);
+				const ratings = t.ratings.at(-1)!;
 				const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
 				return ovr;
 			},

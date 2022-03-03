@@ -20,7 +20,7 @@ const doneRoundShots = (racks: ThreeResult["racks"]) => {
 
 // Return undefined means contest is over or another round needs to be added
 const getNextShooterIndex = (three: Three) => {
-	const currentRound = three.rounds.at(-1);
+	const currentRound = three.rounds.at(-1)!;
 
 	// Another shot/score in the current round needed?
 	const lastResult = currentRound.results.at(-1);
@@ -93,8 +93,8 @@ export const simNextThreeEvent = async (
 	// Figure out current dunker
 	const nextShooterIndex = getNextShooterIndex(three);
 	if (nextShooterIndex !== undefined) {
-		const currentRound = three.rounds.at(-1);
-		const lastResult = currentRound.results.at(-1);
+		const currentRound = three.rounds.at(-1)!;
+		const lastResult = currentRound.results.at(-1)!;
 
 		// Each call should take a shot or label a result as done
 		if (lastResult && doneRoundShots(lastResult.racks)) {
@@ -118,9 +118,9 @@ export const simNextThreeEvent = async (
 			const rating = ratings.tp;
 
 			const success = getShotOutcome(rating);
-			lastResult.racks.at(-1).push(success);
+			lastResult.racks.at(-1)!.push(success);
 
-			if (lastResult.racks.at(-1).length === NUM_BALLS_PER_RACK) {
+			if (lastResult.racks.at(-1)!.length === NUM_BALLS_PER_RACK) {
 				if (lastResult.racks.length < NUM_RACKS) {
 					lastResult.racks.push([]);
 					type = "rack";

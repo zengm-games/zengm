@@ -11,6 +11,62 @@ const gp = isSport("hockey") ? "GP" : "G";
 const sportSpecificCols = bySport<{
 	[key: string]: ColTemp;
 }>({
+	baseball: {
+		"rating:hpw": {
+			desc: "Hitting Power",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Hpw",
+		},
+		"rating:con": {
+			desc: "Contact",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Con",
+		},
+		"rating:eye": {
+			desc: "Eye",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Eye",
+		},
+		"rating:fld": {
+			desc: "Fielding",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Fld",
+		},
+		"rating:thr": {
+			desc: "Throwing",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Thr",
+		},
+		"rating:cat": {
+			desc: "Catcher",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Cat",
+		},
+		"rating:ppw": {
+			desc: "Pitching Power",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Ppw",
+		},
+		"rating:ctl": {
+			desc: "Control",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Ctl",
+		},
+		"rating:mov": {
+			desc: "Movement",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Mov",
+		},
+	},
 	basketball: {
 		"rating:fg": {
 			desc: "Mid Range",

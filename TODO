@@ -1,3 +1,8 @@
+add option to show ratings rounded to every 10/20/whatever for less precision https://discord.com/channels/@me/778760871911751700/948801654701035550
+- add generic pre-processor for every displayed rating
+  - also use for challengeNoRatings
+  - also use to scale ovr/pot to be more like other games
+
 show "award" for being in top 10 all time of some statistic
 
 trade away pick button https://discord.com/channels/290013534023057409/331882115119448065/946350730686636062

@@ -2,6 +2,14 @@ import classNames from "classnames";
 import { isSport } from "../../../common";
 import type { Player } from "../../../common/types";
 
+const prefixCount = (text: string, count: number) => {
+	if (count <= 1) {
+		return text;
+	}
+
+	return `${count}x ${text}`;
+};
+
 // If no season, then check whole career
 const SeasonIcons = ({
 	className,
@@ -78,19 +86,19 @@ const SeasonIcons = ({
 	} else {
 		if (playoffs) {
 			if (countChamp > 0) {
-				title = `${countChamp}x Won Championship`;
+				title = prefixCount("Won Championship", countChamp);
 				classNameIcon = "ring";
 			}
 		} else {
 			const titles = [];
 			if (countMVP > 0) {
-				titles.push(`${countMVP}x Most Valuable Player`);
+				titles.push(prefixCount("Most Valuable Player", countMVP));
 			}
 			if (countAllStar > 0) {
-				titles.push(`${countAllStar}x All-Star`);
+				titles.push(prefixCount("All-Star", countAllStar));
 			}
 			if (countAllLeague > 0) {
-				titles.push(`${countAllLeague}x All-League`);
+				titles.push(prefixCount("All-League", countAllLeague));
 			}
 
 			if (titles.length > 0) {

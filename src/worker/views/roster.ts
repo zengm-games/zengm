@@ -3,6 +3,7 @@ import { season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
+	Player,
 	UpdateEvents,
 	ViewInput,
 	TeamSeasonAttr,
@@ -112,6 +113,7 @@ const updateRoster = async (
 			"latestTransaction",
 			"mood",
 			"value",
+			"awards",
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
@@ -231,6 +233,12 @@ const updateRoster = async (
 			}),
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
+
+		for (const p of players) {
+			p.awards = p.awards.filter(
+				(award: Player["awards"][number]) => award.season === inputs.season,
+			);
+		}
 
 		return {
 			abbrev: inputs.abbrev,

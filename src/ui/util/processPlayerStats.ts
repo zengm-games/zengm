@@ -1,5 +1,6 @@
 import {
-	isSport,
+	bySport,
+	processPlayerStatsBaseball,
 	processPlayerStatsBasketball,
 	processPlayerStatsFootball,
 	processPlayerStatsHockey,
@@ -13,17 +14,14 @@ const processPlayerStats = (
 	statType?: PlayerStatType,
 	bornYear?: number,
 ) => {
-	if (isSport("football")) {
-		return processPlayerStatsFootball(ps, stats, bornYear, () => {
+	return bySport({
+		baseball: processPlayerStatsBaseball(ps, stats, statType, bornYear),
+		basketball: processPlayerStatsBasketball(ps, stats, statType, bornYear),
+		football: processPlayerStatsFootball(ps, stats, bornYear, () => {
 			return local.getState().fantasyPoints;
-		});
-	}
-
-	if (isSport("hockey")) {
-		return processPlayerStatsHockey(ps, stats, statType, bornYear);
-	}
-
-	return processPlayerStatsBasketball(ps, stats, statType, bornYear);
+		}),
+		hockey: processPlayerStatsHockey(ps, stats, statType, bornYear),
+	});
 };
 
 export default processPlayerStats;

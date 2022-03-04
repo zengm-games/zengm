@@ -40,6 +40,7 @@ const updateRoster = async (
 		inputs.season !== state.season
 	) {
 		const stats = bySport({
+			baseball: ["keyStats"],
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],

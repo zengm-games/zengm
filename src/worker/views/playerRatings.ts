@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER, RATINGS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
@@ -86,6 +86,7 @@ const updatePlayers = async (
 		inputs.abbrev !== state.abbrev
 	) {
 		const ratings = bySport({
+			baseball: RATINGS,
 			basketball: [
 				"hgt",
 				"stre",
@@ -144,6 +145,7 @@ const updatePlayers = async (
 			],
 		});
 		const extraRatings = bySport({
+			baseball: [],
 			basketball: [],
 			football: ["ovrs", "pots"],
 			hockey: ["ovrs", "pots"],

@@ -757,6 +757,7 @@ const standings = (params: Params) => {
 		g.get("numGamesPlayoffSeries").length === 0
 			? "league"
 			: bySport({
+					baseball: "div",
 					basketball: "conf",
 					football: "div",
 					hockey: "div",

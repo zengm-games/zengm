@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { GAME_NAME } from "../../common";
+import { GAME_NAME, isSport } from "../../common";
 
 type Props = {
 	gold?: boolean;
@@ -7,6 +7,9 @@ type Props = {
 	updating: boolean;
 };
 const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
+	// "ZenGM Baseball" is too long to fit when the league menu is shown
+	const gameName = isSport("baseball") ? "ZGM Baseball" : GAME_NAME;
+
 	return (
 		<a
 			className={
@@ -26,8 +29,15 @@ const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
 					animationPlayState: updating ? "running" : "paused",
 				}}
 			/>
-			<span className="d-none d-lg-inline">{GAME_NAME}</span>
-			{!inLeague ? <span className="d-lg-none">{GAME_NAME}</span> : null}
+
+			{!inLeague ? (
+				<span>{GAME_NAME}</span>
+			) : (
+				<>
+					<span className="d-none d-lg-inline">{gameName}</span>
+					<span className="d-lg-none">{gameName}</span>
+				</>
+			)}
 		</a>
 	);
 });

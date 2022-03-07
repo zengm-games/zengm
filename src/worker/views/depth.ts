@@ -144,11 +144,11 @@ const updateDepth = async (
 						break;
 					}
 
-					const { name, pid } = p;
+					const { firstName, lastName, pid } = p;
 					let info = playerInfoByPid.get(pid);
 					if (!info) {
 						info = {
-							name,
+							name: `${firstName} ${lastName}`,
 							positions: [] as string[],
 						};
 						playerInfoByPid.set(pid, info);

@@ -98,7 +98,8 @@ export type PlayerRatings = {
 	hpw: number;
 	con: number;
 	eye: number;
-	fld: number;
+	gnd: number;
+	fly: number;
 	thr: number;
 	cat: number;
 	ppw: number;
@@ -123,7 +124,8 @@ export type RatingKey =
 	| "hpw"
 	| "con"
 	| "eye"
-	| "fld"
+	| "gnd"
+	| "fly"
 	| "thr"
 	| "cat"
 	| "ppw"

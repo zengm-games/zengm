@@ -39,6 +39,16 @@ const RatingsOverview = ({
 	>({
 		baseball: [
 			{
+				Physical: [
+					{
+						label: "Height",
+						rating: "hgt",
+					},
+					{
+						label: "Speed",
+						rating: "spd",
+					},
+				],
 				Hitting: [
 					{
 						label: "Power",
@@ -57,16 +67,12 @@ const RatingsOverview = ({
 			{
 				Defense: [
 					{
-						label: "Height",
-						rating: "hgt",
+						label: "Ground Balls",
+						rating: "gnd",
 					},
 					{
-						label: "Speed",
-						rating: "spd",
-					},
-					{
-						label: "Fielding",
-						rating: "fld",
+						label: "Fly Balls",
+						rating: "gnd",
 					},
 					{
 						label: "Throwing",

@@ -43,7 +43,8 @@ const RATINGS: RatingKey[] = [
 	"hpw",
 	"con",
 	"eye",
-	"fld",
+	"gnd",
+	"fly",
 	"thr",
 	"cat",
 	"ppw",
@@ -58,7 +59,7 @@ const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
 	poy: "Pitcher of the Year",
-	finalsMvp: "Playoffs MVP",
+	finalsMvp: "Finals MVP",
 	allOffense: "All-Offense Team",
 	allDefense: "All-Defense Team",
 } as const;

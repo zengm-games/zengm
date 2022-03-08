@@ -30,11 +30,17 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Eye",
 		},
-		"rating:fld": {
-			desc: "Fielding",
+		"rating:gnd": {
+			desc: "Ground Balls",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "Fld",
+			title: "Gnd",
+		},
+		"rating:fly": {
+			desc: "Fly Balls",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Fly",
 		},
 		"rating:thr": {
 			desc: "Throwing",

@@ -27,14 +27,14 @@ const getRatingsToBoost = (pos: string) => {
 		ppw: 0.25,
 		ctl: 0.25,
 		mov: 0.25,
-		endur: 0.25,
+		endu: 0.25,
 	};
 
 	if (pos === "SP") {
 		return {
 			hgt: 1.5,
 			spd: 0.5,
-			ppw: 2,
+			ppw: 2.25,
 			ctl: 2,
 			mov: 2,
 			cat: 0.25,
@@ -48,7 +48,7 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			hgt: 1.5,
 			spd: 0.5,
-			ppw: 2,
+			ppw: 2.25,
 			ctl: 1.5,
 			mov: 1.5,
 			cat: 0.25,
@@ -61,7 +61,7 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			...nonPitcher,
 			spd: 0.5,
-			cat: 2,
+			cat: 1.75,
 		};
 	}
 	if (pos === "1B") {
@@ -150,7 +150,7 @@ const infoIn = {};
 const infoOut = {};
 let timeoutID;*/
 
-const initialRating = () => limitRating(random.truncGauss(7, 5, 0, 15));
+const initialRating = () => limitRating(random.truncGauss(7, 3, 0, 15));
 
 const defaultOvrsOrPots = {
 	SP: 0,
@@ -174,15 +174,17 @@ const genRatings = (
 } => {
 	const pos = getPos();
 
+	const isPitcher = pos === "RP" || pos === "SP";
+
 	const rawRatings = {
 		hgt: initialRating() + 30,
-		spd: initialRating(),
-		hpw: initialRating(),
-		con: initialRating(),
-		eye: initialRating(),
+		spd: initialRating() * (isPitcher ? 1 : 3),
+		hpw: initialRating() * (isPitcher ? 1 : 4),
+		con: initialRating() * (isPitcher ? 1 : 3),
+		eye: initialRating() * (isPitcher ? 1 : 3),
 		gnd: initialRating(),
 		fly: initialRating(),
-		thr: initialRating(),
+		thr: initialRating() * (isPitcher ? 1 : 1.25),
 		cat: initialRating(),
 		ppw: initialRating(),
 		ctl: initialRating(),

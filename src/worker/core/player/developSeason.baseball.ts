@@ -165,7 +165,7 @@ const developSeason = (
 		ratings[key] = limitRating(
 			ratings[key] +
 				helpers.bound(
-					(baseChange + ageModifier) * random.uniform(0.4, 1.4),
+					(baseChange + ageModifier) * random.uniform(0.6, 1.3),
 					changeLimits[0],
 					changeLimits[1],
 				),

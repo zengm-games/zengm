@@ -218,6 +218,7 @@ const genRatings = (
 	return {
 		heightInInches: heightToInches(ratings.hgt),
 		ratings,
+		genPos: pos,
 	};
 };
 

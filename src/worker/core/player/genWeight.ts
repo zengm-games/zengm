@@ -1,9 +1,13 @@
 import { isSport } from "../../../common";
 import { random } from "../../util";
 
-const genWeight = (hgt: number, stre: number, pos?: string) => {
+const genWeight = (hgt: number, stre?: number, pos?: string) => {
 	let MIN_WEIGHT = 155;
 	let MAX_WEIGHT = 305;
+
+	if (stre === undefined) {
+		stre = hgt;
+	}
 
 	if (isSport("football")) {
 		if (pos === "OL") {

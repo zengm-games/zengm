@@ -72,6 +72,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Mov",
 		},
+		"stat:keyStats": {
+			desc: "Key Stats",
+			sortSequence: ["desc", "asc"],
+			sortType: "string",
+			title: "Stats",
+		},
 	},
 	basketball: {
 		"rating:fg": {

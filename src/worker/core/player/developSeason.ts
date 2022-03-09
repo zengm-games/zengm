@@ -1,3 +1,4 @@
+import developSeasonBaseball from "./developSeason.baseball";
 import developSeasonBasketball from "./developSeason.basketball";
 import developSeasonFootball from "./developSeason.football";
 import developSeasonHockey from "./developSeason.hockey";
@@ -18,6 +19,7 @@ const developSeason = async (
 	coachingRank?: number,
 ) => {
 	bySport({
+		baseball: developSeasonBaseball(ratings as any, age, coachingRank),
 		basketball: developSeasonBasketball(ratings as any, age, coachingRank),
 		football: developSeasonFootball(ratings as any, age, coachingRank),
 		hockey: developSeasonHockey(ratings as any, age, coachingRank),
@@ -31,10 +33,6 @@ const developSeason = async (
 		helpers.bound(g.get("realPlayerDeterminism"), 0, 1) ** 2;
 	if (realPlayerDeterminism === 0 || srID === undefined) {
 		return;
-	}
-
-	if (!isSport("basketball")) {
-		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 
 	const basketball = await loadDataBasketball();

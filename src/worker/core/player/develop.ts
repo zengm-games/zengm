@@ -30,6 +30,7 @@ export const bootstrapPot = async ({
 	}
 
 	if (
+		isSport("baseball") ||
 		isSport("football") ||
 		isSport("hockey") ||
 		(isSport("basketball") && usePotEstimator)
@@ -37,7 +38,7 @@ export const bootstrapPot = async ({
 		let ovr;
 		let pot;
 
-		if (isSport("football") || isSport("hockey")) {
+		if (isSport("baseball") || isSport("football") || isSport("hockey")) {
 			if (pos === undefined) {
 				throw new Error("pos is required for potEstimator");
 			}
@@ -189,7 +190,11 @@ const develop = async (
 	if (!ratings.locked && years > 0) {
 		// In the NBA displayed weights seem to never change and seem inaccurate
 		if (isSport("football")) {
-			const newWeight = genWeight(ratings.hgt, ratings.stre, ratings.pos);
+			const newWeight = genWeight(
+				ratings.hgt,
+				(ratings as any).stre,
+				ratings.pos,
+			);
 			if (p.ratings.length <= 1) {
 				p.weight = newWeight;
 			} else {

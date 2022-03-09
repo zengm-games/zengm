@@ -48,7 +48,7 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			hgt: 1.5,
 			spd: 0.5,
-			ppw: 2.5,
+			ppw: 2,
 			ctl: 1.5,
 			mov: 1.5,
 			cat: 0.25,
@@ -69,8 +69,8 @@ const getRatingsToBoost = (pos: string) => {
 			...nonPitcher,
 			hgt: 1.5,
 			spd: 0.75,
-			gnd: 2,
-			fly: 2,
+			gnd: 1.25,
+			fly: 1.5,
 			cat: 0.25,
 			hpw: 1.25,
 		};
@@ -80,8 +80,8 @@ const getRatingsToBoost = (pos: string) => {
 			...nonPitcher,
 			hgt: 0.75,
 			spd: 1.25,
-			gnd: 3,
-			fly: 1.5,
+			gnd: 1.5,
+			fly: 1.25,
 			thr: 1.25,
 			cat: 0.25,
 		};
@@ -90,8 +90,8 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			...nonPitcher,
 			spd: 0.75,
-			gnd: 3,
-			fly: 1.5,
+			gnd: 1.5,
+			fly: 1.25,
 			thr: 2,
 			cat: 0.25,
 		};
@@ -100,8 +100,8 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			...nonPitcher,
 			spd: 1.5,
-			gnd: 4,
-			fly: 2,
+			gnd: 2,
+			fly: 1.5,
 			thr: 1.5,
 			cat: 0.25,
 		};
@@ -110,7 +110,7 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			...nonPitcher,
 			gnd: 1.5,
-			fly: 2,
+			fly: 1.5,
 			thr: 1.5,
 			cat: 0.25,
 			hpw: 1.25,
@@ -121,7 +121,7 @@ const getRatingsToBoost = (pos: string) => {
 			...nonPitcher,
 			spd: 2,
 			gnd: 1.5,
-			fly: 4,
+			fly: 2,
 			thr: 1.5,
 			cat: 0.25,
 		};
@@ -130,7 +130,7 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			...nonPitcher,
 			gnd: 1.5,
-			fly: 2,
+			fly: 1.5,
 			thr: 2,
 			cat: 0.25,
 			hpw: 1.5,

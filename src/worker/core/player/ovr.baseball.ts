@@ -18,7 +18,6 @@ const infoDefense: Record<Position, RatingWeights> = {
 		ppw: [1, 1],
 		ctl: [1, 1],
 		mov: [1, 1],
-		endu: [-1, 1],
 	},
 	C: {
 		cat: [2, 1],

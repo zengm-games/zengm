@@ -15,7 +15,16 @@ const Relatives = ({
 	const target =
 		pid !== undefined ? players.find(p => p.pid === pid) : undefined;
 
-	const title = target === undefined ? "Relatives" : `${target.name}'s Family`;
+	let title;
+	if (target === undefined) {
+		title = "Relatives";
+	} else {
+		let name = target.firstName;
+		if (target.lastName) {
+			name += ` ${target.lastName}`;
+		}
+		title = `${name}'s Family`;
+	}
 
 	useTitleBar({ title, customMenu: frivolitiesMenu });
 

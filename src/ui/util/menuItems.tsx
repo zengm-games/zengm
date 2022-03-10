@@ -3,14 +3,42 @@ import { bySport, DAILY_SCHEDULE, isSport, WEBSITE_ROOT } from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 import { frivolities } from "../views/Frivolities";
 
-const depthChart: MenuItemLink = {
-	type: "link",
-	active: pageID => pageID === "depth",
-	league: true,
-	commandPalette: true,
-	path: ["depth"],
-	text: isSport("hockey") ? "Lines" : "Depth Chart",
-};
+const depthChart: MenuItemLink[] = [
+	{
+		type: "link",
+		active: pageID => pageID === "depth",
+		league: true,
+		commandPalette: true,
+		path: ["depth"],
+		text: bySport({
+			baseball: "Lineup",
+			basketball: "",
+			football: "Depth Chart",
+			hockey: "Lines",
+		}),
+	},
+];
+
+if (isSport("baseball")) {
+	depthChart.push(
+		{
+			type: "link",
+			active: pageID => pageID === "depth",
+			league: true,
+			commandPalette: true,
+			path: ["depth", "D"],
+			text: "Defense",
+		},
+		{
+			type: "link",
+			active: pageID => pageID === "depth",
+			league: true,
+			commandPalette: true,
+			path: ["depth", "P"],
+			text: "Pitching",
+		},
+	);
+}
 
 const scheduledEvents: MenuItemLink = {
 	type: "link",
@@ -192,7 +220,9 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["roster"],
 				text: "Roster",
 			},
-			...(isSport("football") || isSport("hockey") ? [depthChart] : []),
+			...(isSport("baseball") || isSport("football") || isSport("hockey")
+				? depthChart
+				: []),
 			{
 				type: "link",
 				active: pageID => pageID === "schedule",

@@ -10,7 +10,7 @@ const getDepthPlayers = <
 	depth: Team["depth"],
 	players: T[],
 ): Record<string, T[]> => {
-	if (!isSport("football") && !isSport("hockey")) {
+	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}
 

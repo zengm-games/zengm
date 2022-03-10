@@ -19,6 +19,24 @@ const handleAutoSortAll = async () => {
 const numStartersByPos = bySport<
 	Record<string, number | Record<string, number>>
 >({
+	baseball: {
+		L: 9,
+		D: {
+			C: 1,
+			"1B": 1,
+			"2B": 1,
+			"3B": 1,
+			SS: 1,
+			LF: 1,
+			CF: 1,
+			RF: 1,
+		},
+		P: {
+			SP: 5,
+			CL: 1,
+			RP: 6,
+		},
+	},
 	basketball: {},
 	football: {
 		QB: 1,
@@ -45,13 +63,19 @@ const numStartersByPos = bySport<
 	},
 });
 
-const posNames: Record<string, string> | undefined = isSport("hockey")
-	? {
-			F: "Forwards",
-			D: "Defensemen",
-			G: "Goalies",
-	  }
-	: undefined;
+const posNames = bySport<Record<string, string> | undefined>({
+	baseball: {
+		L: "Lineup",
+		D: "Defense",
+		P: "Pitching",
+	},
+	hockey: {
+		F: "Forwards",
+		D: "Defensemen",
+		G: "Goalies",
+	},
+	default: undefined,
+});
 
 const numLinesByPos: Record<string, number> | undefined = isSport("hockey")
 	? NUM_LINES
@@ -71,7 +95,7 @@ const Depth = ({
 	stats,
 	tid,
 }: View<"depth">) => {
-	if (!isSport("football") && !isSport("hockey")) {
+	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}
 
@@ -80,9 +104,13 @@ const Depth = ({
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
 	useTitleBar({
-		title: isSport("hockey") ? "Lines" : "Depth Chart",
+		title: bySport({
+			baseball: (posNames && posNames[pos]) ?? "Lineup",
+			hockey: "Lines",
+			default: "Depth Chart",
+		}),
 		dropdownView: "depth",
-		dropdownFields: { teams: abbrev, depth: pos, playoffs },
+		dropdownFields: { depth: pos, teams: abbrev, playoffs },
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
 		moreInfoTid: tid,
@@ -157,7 +185,7 @@ const Depth = ({
 							className={classNames("nav-link", {
 								active: pos === pos2,
 							})}
-							href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`, pos2])}
+							href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
 						>
 							{posNames ? posNames[pos2] : pos2}
 						</a>

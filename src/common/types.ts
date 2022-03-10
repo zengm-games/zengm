@@ -1373,6 +1373,11 @@ export type Team = {
 				F: number[];
 				D: number[];
 				G: number[];
+		  }
+		| {
+				L: number[]; // Lineup
+				D: number[]; // Defense
+				P: number[]; // Pitching
 		  };
 	firstSeasonAfterExpansion?: number;
 	srID?: string;

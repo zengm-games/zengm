@@ -23,7 +23,7 @@ const DIFFICULTY = {
 };
 
 const DRAFT_BY_TEAM_OVR = bySport({
-	baseball: false,
+	baseball: true,
 	basketball: false,
 	football: true,
 	hockey: true,

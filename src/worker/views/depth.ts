@@ -26,6 +26,11 @@ const defenseStats = [
 ];
 
 const stats = bySport<Record<string, string[]>>({
+	baseball: {
+		L: [],
+		D: [],
+		P: [],
+	},
 	basketball: {},
 	football: {
 		QB: [
@@ -78,7 +83,7 @@ const updateDepth = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (!isSport("football") && !isSport("hockey")) {
+	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}
 
@@ -93,7 +98,14 @@ const updateDepth = async (
 		abbrev !== state.abbrev
 	) {
 		const editable = tid === g.get("userTid") && !g.get("spectator");
-		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
+		const ratings = [
+			...(isSport("baseball")
+				? pos === "P"
+					? []
+					: ["hgt", "spd"]
+				: ["hgt", "stre", "spd", "endu"]),
+			...posRatings(pos),
+		];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 		const players = addFirstNameShort(
 			await idb.getCopies.playersPlus(playersAll, {

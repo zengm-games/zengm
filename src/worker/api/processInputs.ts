@@ -132,14 +132,13 @@ const depth = (params: Params) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 
 	const DEFAULT_POS = bySport({
+		baseball: "L",
 		basketball: "G",
 		football: "QB",
 		hockey: "F",
 	});
 
-	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-expect-error
-	const pos: string = POSITIONS.includes(params.pos) ? params.pos : DEFAULT_POS;
+	const pos = params.pos ?? DEFAULT_POS;
 
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";

@@ -386,7 +386,11 @@ const useDropdownOptions = (
 	} else if (field === "teamRecordsFilter") {
 		keys = ["all|||teams", "your_teams"];
 	} else if (field === "depth") {
-		keys = isSport("hockey") ? ["F", "D", "G"] : POSITIONS;
+		keys = bySport({
+			baseball: [],
+			hockey: ["F", "D", "G"],
+			default: POSITIONS,
+		});
 	} else if (field === "newsLevels") {
 		keys = ["big", "normal", "all|||news"];
 	} else if (field === "newestOldestFirst") {

@@ -1,4 +1,4 @@
-import { isSport } from "../../../common";
+import { isSport, POSITIONS } from "../../../common";
 import type { Team } from "../../../common/types";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
@@ -67,17 +67,25 @@ const getDepthPlayers = <
 				return {
 					pid: -1,
 					id: -1,
+					lineupPos: "P",
+					lineupIndex: -1,
 				};
 			}
 
 			if (depths.D[i]) {
-				return depths.D[i];
+				return {
+					...depths.D[i],
+					lineupPos: POSITIONS[2 + i],
+					lineupIndex: i,
+				};
 			}
 
 			dummyID -= 1;
 			return {
 				pid: dummyID,
 				id: dummyID,
+				lineupPos: "?",
+				lineupIndex: dummyID,
 			};
 		});
 	}

@@ -168,6 +168,8 @@ const Depth = ({
 		}
 	}
 
+	console.log(playersSorted);
+
 	return (
 		<>
 			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
@@ -361,13 +363,19 @@ const Depth = ({
 							<td
 								className={classNames({
 									"text-danger":
-										p.pid >= 0 &&
-										pos !== "KR" &&
-										pos !== "PR" &&
-										!positions.includes(p.ratings.pos),
+										isSport("baseball") && p.lineupPos
+											? p.pid >= 0 && p.lineupPos !== p.ratings.pos
+											: p.pid >= 0 &&
+											  pos !== "KR" &&
+											  pos !== "PR" &&
+											  !positions.includes(p.ratings.pos),
 								})}
 							>
-								{p.pid >= 0 ? p.ratings.pos : p.pid === -1 ? "P" : null}
+								{p.pid >= 0
+									? p.lineupPos ?? p.ratings.pos
+									: p.pid === -1
+									? "P"
+									: null}
 							</td>
 							<td>{p.age}</td>
 							{positions.map(position =>

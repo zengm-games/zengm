@@ -345,49 +345,60 @@ const Depth = ({
 					return (
 						<>
 							<td>
-								<PlayerNameLabels
-									pid={p.pid}
-									injury={p.injury}
-									jerseyNumber={p.stats.jerseyNumber}
-									skills={p.ratings.skills}
-									watch={p.watch}
-									firstName={p.firstName}
-									firstNameShort={p.firstNameShort}
-									lastName={p.lastName}
-								/>
+								{p.pid >= 0 ? (
+									<PlayerNameLabels
+										pid={p.pid}
+										injury={p.injury}
+										jerseyNumber={p.stats.jerseyNumber}
+										skills={p.ratings.skills}
+										watch={p.watch}
+										firstName={p.firstName}
+										firstNameShort={p.firstNameShort}
+										lastName={p.lastName}
+									/>
+								) : null}
 							</td>
 							<td
 								className={classNames({
 									"text-danger":
+										p.pid >= 0 &&
 										pos !== "KR" &&
 										pos !== "PR" &&
 										!positions.includes(p.ratings.pos),
 								})}
 							>
-								{p.ratings.pos}
+								{p.pid >= 0 ? p.ratings.pos : p.pid === -1 ? "P" : null}
 							</td>
 							<td>{p.age}</td>
-							{positions.map(position => (
-								<Fragment key={position}>
-									<td
-										className={
-											highlightPosOvr === position ? "table-primary" : undefined
-										}
-									>
-										{!challengeNoRatings ? p.ratings.ovrs[position] : null}
-									</td>
-									<td>
-										{!challengeNoRatings ? p.ratings.pots[position] : null}
-									</td>
-								</Fragment>
-							))}
+							{positions.map(position =>
+								p.pid >= 0 ? (
+									<Fragment key={position}>
+										<td
+											className={
+												highlightPosOvr === position
+													? "table-primary"
+													: undefined
+											}
+										>
+											{!challengeNoRatings ? p.ratings.ovrs[position] : null}
+										</td>
+										<td>
+											{!challengeNoRatings ? p.ratings.pots[position] : null}
+										</td>
+									</Fragment>
+								) : (
+									<td key={position} colSpan={2} />
+								),
+							)}
 							{ratings.map(rating => (
 								<td key={rating} className="table-accent">
-									{!challengeNoRatings ? p.ratings[rating] : null}
+									{!challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null}
 								</td>
 							))}
 							{stats.map(stat => (
-								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
+								<td key={stat}>
+									{p.pid >= 0 ? helpers.roundStat(p.stats[stat], stat) : null}
+								</td>
 							))}
 						</>
 					);

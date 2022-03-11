@@ -129,6 +129,7 @@ const updateDepth = async (
 		}
 
 		const depthPlayers = team.getDepthPlayers(t.depth, players);
+		console.log(depthPlayers);
 
 		const stats2: string[] = stats.hasOwnProperty(pos) ? stats[pos] : [];
 

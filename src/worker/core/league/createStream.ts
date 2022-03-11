@@ -1239,19 +1239,45 @@ const afterDBStream = async ({
 	}
 
 	// Gregg Brown from DNBA, RIP. Make one player on Denver have his name, assuming it's a random players league, Denver exists, and there are no custom names.
-	if (isSport("basketball") && !fileHasPlayers && !g.get("playerBioInfo")) {
-		const tid = teams.find(t => t.region === "Denver")?.tid;
-		if (tid !== undefined) {
-			const players = (
-				await idb.cache.players.indexGetAll("playersByTid", tid)
-			).filter(p => p.relatives.length === 0);
-			const p = random.choice(players);
-			if (p) {
-				p.firstName = "Gregg";
-				p.lastName = "Brown";
-				p.born.loc = "Australia";
-				p.real = true;
-				await idb.cache.players.put(p);
+	if (!fileHasPlayers && !g.get("playerBioInfo")) {
+		let memorials;
+		if (isSport("basketball")) {
+			memorials = [
+				{
+					region: "Denver",
+					firstName: "Gregg",
+					lastName: "Brown",
+					bornLoc: "Australia",
+				},
+			];
+		} else if (isSport("hockey")) {
+			// https://discord.com/channels/@me/896580823057326130
+			memorials = [
+				{
+					region: "Boston",
+					firstName: "Matthew",
+					lastName: "Dennison",
+					bornLoc: "Rhode Island, USA",
+				},
+			];
+		}
+
+		if (memorials) {
+			for (const memorial of memorials) {
+				const tid = teams.find(t => t.region === memorial.region)?.tid;
+				if (tid !== undefined) {
+					const players = (
+						await idb.cache.players.indexGetAll("playersByTid", tid)
+					).filter(p => p.relatives.length === 0);
+					const p = random.choice(players);
+					if (p) {
+						p.firstName = memorial.firstName;
+						p.lastName = memorial.lastName;
+						p.born.loc = memorial.bornLoc;
+						p.real = true;
+						await idb.cache.players.put(p);
+					}
+				}
 			}
 		}
 	}

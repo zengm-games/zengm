@@ -58,6 +58,7 @@ const Row = SortableElement(
 		isDragged: boolean;
 		selected: boolean;
 		row: Row<ShouldBeValue>;
+		rowLabel?: string;
 		value: ShouldBeValue;
 	}) => {
 		const { clicked, toggleClicked } = useClickable();
@@ -69,6 +70,7 @@ const Row = SortableElement(
 			i,
 			isDragged,
 			row,
+			rowLabel,
 			selected,
 			value,
 		} = props;
@@ -80,6 +82,7 @@ const Row = SortableElement(
 				})}
 				onClick={toggleClicked}
 			>
+				{rowLabel !== undefined ? <td>{rowLabel}</td> : null}
 				{disabled2 ? (
 					<td className="p-0" />
 				) : (
@@ -106,6 +109,7 @@ const TBody = SortableContainer(
 		isDragged,
 		row,
 		rowClassName,
+		rowLabels,
 		values,
 	}: {
 		disabled?: boolean;
@@ -114,6 +118,7 @@ const TBody = SortableContainer(
 		isDragged: boolean;
 		row: ShouldBeValue;
 		rowClassName?: RowClassName<ShouldBeValue>;
+		rowLabels?: string[];
 		values: ShouldBeValue[];
 	}) => {
 		return (
@@ -144,6 +149,7 @@ const TBody = SortableContainer(
 							index={index}
 							isDragged={isDragged}
 							selected={indexSelected === index}
+							rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
 							row={row}
 							value={value}
 						/>
@@ -162,6 +168,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	onSwap,
 	row,
 	rowClassName,
+	rowLabels,
 	stickyCols = 0,
 	values,
 }: {
@@ -172,6 +179,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	onSwap: (index1: number, index2: number) => void;
 	row: Row<Value>;
 	rowClassName?: RowClassName<Value>;
+	rowLabels?: string[];
 	stickyCols?: StickyCols;
 	values: Value[];
 }) => {
@@ -259,6 +267,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 				<thead>
 					<tr>
 						<th className="p-0" />
+						{rowLabels ? <th className="p-0" /> : null}
 						{cols()}
 					</tr>
 				</thead>
@@ -273,6 +282,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 					onSortOver={onSortOver}
 					row={row}
 					rowClassName={rowClassName}
+					rowLabels={rowLabels}
 					transitionDuration={0}
 					values={values}
 					useDragHandle

@@ -7,6 +7,7 @@ import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
+import range from "lodash-es/range";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", { pos });
@@ -156,6 +157,17 @@ const Depth = ({
 
 	const numLines = numLinesByPos ? numLinesByPos[pos] : 1;
 
+	let rowLabels;
+	if (isSport("baseball")) {
+		if (pos === "L") {
+			rowLabels = range(1, 10).map(i => String(i));
+		} else if (pos === "D") {
+			rowLabels = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"];
+		} else if (pos === "P") {
+			rowLabels = ["S1", "S2", "S3", "S4", "S5", "CL"];
+		}
+	}
+
 	return (
 		<>
 			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
@@ -263,6 +275,7 @@ const Depth = ({
 							!isDragged,
 					})
 				}
+				rowLabels={rowLabels}
 				onChange={async ({ oldIndex, newIndex }) => {
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);

@@ -22,16 +22,7 @@ const numStartersByPos = bySport<
 >({
 	baseball: {
 		L: 9,
-		D: {
-			C: 1,
-			"1B": 1,
-			"2B": 1,
-			"3B": 1,
-			SS: 1,
-			LF: 1,
-			CF: 1,
-			RF: 1,
-		},
+		D: 8,
 		P: {
 			SP: 5,
 			CL: 1,
@@ -328,10 +319,10 @@ const Depth = ({
 						{positions.map(position => (
 							<Fragment key={position}>
 								<th title={`Overall Rating (${[position]})`}>
-									Ovr{[position]}
+									Ovr{isSport("baseball") ? null : [position]}
 								</th>
 								<th title={`Potential Rating (${[position]})`}>
-									Pot{[position]}
+									Pot{isSport("baseball") ? null : [position]}
 								</th>
 							</Fragment>
 						))}
@@ -356,6 +347,9 @@ const Depth = ({
 					) {
 						highlightPosOvr = index % numStarters === 0 ? "C" : "W";
 					}
+
+					const lineupPos = p.lineupPos ?? p.ratings.pos;
+
 					return (
 						<>
 							<td>
@@ -383,15 +377,24 @@ const Depth = ({
 											  !positions.includes(p.ratings.pos),
 								})}
 							>
-								{p.pid >= 0
-									? p.lineupPos ?? p.ratings.pos
-									: p.pid === -1
-									? "P"
-									: null}
+								{p.pid >= 0 ? lineupPos : p.pid === -1 ? "P" : null}
 							</td>
 							<td>{p.age}</td>
-							{positions.map(position =>
+							{isSport("baseball") ? (
 								p.pid >= 0 ? (
+									<>
+										<td>
+											{!challengeNoRatings ? p.ratings.ovrs[lineupPos] : null}
+										</td>
+										<td>
+											{!challengeNoRatings ? p.ratings.pots[lineupPos] : null}
+										</td>
+									</>
+								) : (
+									<td colSpan={2} />
+								)
+							) : (
+								positions.map(position => (
 									<Fragment key={position}>
 										<td
 											className={
@@ -406,9 +409,7 @@ const Depth = ({
 											{!challengeNoRatings ? p.ratings.pots[position] : null}
 										</td>
 									</Fragment>
-								) : (
-									<td key={position} colSpan={2} />
-								),
+								))
 							)}
 							{ratings.map(rating => (
 								<td key={rating} className="table-accent">

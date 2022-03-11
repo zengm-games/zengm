@@ -23,7 +23,6 @@ if (isSport("baseball")) {
 	depthChart.push(
 		{
 			type: "link",
-			active: pageID => pageID === "depth",
 			league: true,
 			commandPalette: true,
 			path: ["depth", "D"],
@@ -31,7 +30,6 @@ if (isSport("baseball")) {
 		},
 		{
 			type: "link",
-			active: pageID => pageID === "depth",
 			league: true,
 			commandPalette: true,
 			path: ["depth", "P"],

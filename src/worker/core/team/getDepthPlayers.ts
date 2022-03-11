@@ -30,6 +30,12 @@ const getDepthPlayers = <
 				),
 			)
 			.filter(p => p !== undefined);
+
+		if (isSport("baseball") && pos === "L") {
+			// @ts-expect-error
+			obj[pos] = obj[pos].slice(0, 9);
+		}
+
 		return obj;
 	}, {});
 };

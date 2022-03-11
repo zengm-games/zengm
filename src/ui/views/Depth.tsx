@@ -245,20 +245,30 @@ const Depth = ({
 			) : null}
 
 			{isSport("hockey") && pos === "F" ? (
-				<p className="text-warning">
+				<div className="alert alert-info d-inline-block">
 					Each line of forwards is made up of one center and two wings. The
 					center is the first of the three players in each line.
-				</p>
+				</div>
 			) : null}
 
 			{isSport("hockey") && pos === "G" ? (
-				<p className="text-warning">
+				<div className="alert alert-info">
 					During the regular season, your starting goalie will automatically get
 					some rest days. Rest days are based on how many consecutive games your
 					starting goalie has played and how good your backup is. If your backup
 					is very bad, your starter will start more games, but his performance
 					will suffer.
-				</p>
+				</div>
+			) : null}
+
+			{isSport("baseball") && pos === "L" ? (
+				<div className="alert alert-info d-inline-block">
+					To move players in and out of the starting lineup, switch to the{" "}
+					<a href={helpers.leagueUrl(["depth", "D", `${abbrev}_${tid}`])}>
+						Defense tab
+					</a>
+					.
+				</div>
 			) : null}
 
 			<div className="clearfix" />
@@ -272,7 +282,8 @@ const Depth = ({
 						separator:
 							(index % numStarters) + 1 === numStarters &&
 							index < numLines * numStarters &&
-							!isDragged,
+							!isDragged &&
+							index !== playersSorted.length - 1,
 					})
 				}
 				rowLabels={rowLabels}

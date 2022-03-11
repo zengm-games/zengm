@@ -168,7 +168,19 @@ const Depth = ({
 		}
 	}
 
-	console.log(playersSorted);
+	const getIDsToSave = (pids: number[]): number[] => {
+		// For baseball lineup where saved IDs are not player IDs
+		if (isSport("baseball") && players[0].lineupIndex === undefined) {
+			return pids;
+		}
+		return pids.map(pid => {
+			const p2 = players.find(p => p.pid === pid);
+			if (!p2) {
+				throw new Error("Player not found");
+			}
+			return p2.lineupIndex;
+		});
+	};
 
 	return (
 		<>
@@ -295,7 +307,7 @@ const Depth = ({
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderDepthDrag", {
 						pos,
-						sortedPids: newSortedPids,
+						sortedPids: getIDsToSave(newSortedPids),
 					});
 				}}
 				onSwap={async (index1, index2) => {
@@ -305,7 +317,7 @@ const Depth = ({
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderDepthDrag", {
 						pos,
-						sortedPids: newSortedPids,
+						sortedPids: getIDsToSave(newSortedPids),
 					});
 				}}
 				cols={() => (

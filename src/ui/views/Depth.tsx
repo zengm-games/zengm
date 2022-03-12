@@ -23,11 +23,7 @@ const numStartersByPos = bySport<
 	baseball: {
 		L: 9,
 		D: 8,
-		P: {
-			SP: 5,
-			CL: 1,
-			RP: 6,
-		},
+		P: 12,
 	},
 	basketball: {},
 	football: {

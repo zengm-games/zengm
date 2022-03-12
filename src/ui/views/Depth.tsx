@@ -22,8 +22,11 @@ const numStartersByPos = bySport<
 >({
 	baseball: {
 		L: 9,
-		D: 8,
-		P: 12,
+		D: 14,
+		P: {
+			SP: 5,
+			RP: 7,
+		},
 	},
 	basketball: {},
 	football: {
@@ -144,14 +147,27 @@ const Depth = ({
 
 	const numLines = numLinesByPos ? numLinesByPos[pos] : 1;
 
-	let rowLabels;
+	let rowLabels: string[] | undefined;
 	if (isSport("baseball")) {
 		if (pos === "L") {
 			rowLabels = range(1, 10).map(i => String(i));
 		} else if (pos === "D") {
 			rowLabels = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"];
 		} else if (pos === "P") {
-			rowLabels = ["S1", "S2", "S3", "S4", "S5", "CL"];
+			rowLabels = [
+				"S1",
+				"S2",
+				"S3",
+				"S4",
+				"S5",
+				"CL",
+				"RP",
+				"RP",
+				"RP",
+				"RP",
+				"RP",
+				"RP",
+			];
 		}
 	}
 
@@ -281,10 +297,12 @@ const Depth = ({
 				rowClassName={({ index, isDragged }) =>
 					classNames({
 						separator:
-							(index % numStarters) + 1 === numStarters &&
-							index < numLines * numStarters &&
-							!isDragged &&
-							index !== playersSorted.length - 1,
+							(isSport("baseball") && pos === "P" && index === 4) ||
+							(isSport("baseball") && pos === "D" && index === 7) ||
+							((index % numStarters) + 1 === numStarters &&
+								index < numLines * numStarters &&
+								!isDragged &&
+								index !== playersSorted.length - 1),
 					})
 				}
 				rowLabels={rowLabels}
@@ -315,10 +333,10 @@ const Depth = ({
 						{positions.map(position => (
 							<Fragment key={position}>
 								<th title={`Overall Rating (${[position]})`}>
-									Ovr{isSport("baseball") ? null : [position]}
+									Ovr{isSport("baseball") && pos !== "P" ? null : [position]}
 								</th>
 								<th title={`Potential Rating (${[position]})`}>
-									Pot{isSport("baseball") ? null : [position]}
+									Pot{isSport("baseball") && pos !== "P" ? null : [position]}
 								</th>
 							</Fragment>
 						))}
@@ -342,9 +360,20 @@ const Depth = ({
 						index < numLines * numStarters
 					) {
 						highlightPosOvr = index % numStarters === 0 ? "C" : "W";
+					} else if (isSport("baseball") && pos === "P") {
+						if (index < 5) {
+							highlightPosOvr = "SP";
+						} else if (index < numStarters) {
+							highlightPosOvr = "RP";
+						}
 					}
 
-					const lineupPos = p.lineupPos ?? p.ratings.pos;
+					let lineupPos;
+					if (isSport("baseball") && pos === "D" && rowLabels?.[index]) {
+						lineupPos = rowLabels[index];
+					} else {
+						lineupPos = p.lineupPos ?? p.ratings.pos;
+					}
 
 					return (
 						<>
@@ -367,16 +396,25 @@ const Depth = ({
 									"text-danger":
 										isSport("baseball") && p.lineupPos
 											? p.pid >= 0 && p.lineupPos !== p.ratings.pos
+											: isSport("baseball") && pos === "D"
+											? rowLabels?.[index] !== undefined &&
+											  rowLabels[index] !== p.ratings.pos
 											: p.pid >= 0 &&
 											  pos !== "KR" &&
 											  pos !== "PR" &&
 											  !positions.includes(p.ratings.pos),
 								})}
 							>
-								{p.pid >= 0 ? lineupPos : p.pid === -1 ? "P" : null}
+								{isSport("baseball") && pos === "D"
+									? p.ratings.pos
+									: p.pid >= 0
+									? lineupPos
+									: p.pid === -1
+									? "P"
+									: null}
 							</td>
 							<td>{p.age}</td>
-							{isSport("baseball") ? (
+							{isSport("baseball") && pos !== "P" ? (
 								p.pid >= 0 ? (
 									<>
 										<td>

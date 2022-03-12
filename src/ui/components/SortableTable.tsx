@@ -82,7 +82,9 @@ const Row = SortableElement(
 				})}
 				onClick={toggleClicked}
 			>
-				{rowLabel !== undefined ? <td>{rowLabel}</td> : null}
+				{rowLabel !== undefined ? (
+					<td className="text-center">{rowLabel}</td>
+				) : null}
 				{disabled2 ? (
 					<td className="p-0" />
 				) : (

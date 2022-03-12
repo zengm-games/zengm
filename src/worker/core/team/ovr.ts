@@ -23,7 +23,10 @@ const ovr = (
 	} = {},
 ) => {
 	return bySport({
-		baseball: ovrBaseball(),
+		baseball: ovrBaseball(players, {
+			onlyPos: options.pos,
+			wholeRoster: options.wholeRoster,
+		}),
 		basketball: ovrBasketball(players, {
 			playoffs: options.playoffs,
 			rating: options.rating,

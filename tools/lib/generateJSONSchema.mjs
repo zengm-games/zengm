@@ -624,6 +624,22 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "integer",
 								minimum: 0,
 							},
+
+							dh: {
+								oneOf: [
+									{
+										type: "string",
+										enum: ["all", "none"],
+									},
+									{
+										type: "array",
+										items: {
+											type: "integer",
+											minimum: 0,
+										},
+									},
+								],
+							},
 							difficulty: {
 								type: "number",
 							},

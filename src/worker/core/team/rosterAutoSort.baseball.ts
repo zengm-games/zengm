@@ -28,12 +28,23 @@ const sortFunction =
 	};
 
 const DEF_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"] as const;
+const DEF_POSITIONS_DH = [
+	"C",
+	"1B",
+	"2B",
+	"3B",
+	"SS",
+	"LF",
+	"CF",
+	"RF",
+	"DH",
+] as const;
 const NUM_STARTERS = 5;
 
 const rosterAutoSort = async (
 	tid: number,
 	onlyNewPlayers?: boolean,
-	pos?: "L" | "D" | "P",
+	pos?: "L" | "LP" | "D" | "DP" | "P",
 ) => {
 	const t = await idb.cache.teams.get(tid);
 	if (!t) {
@@ -41,7 +52,9 @@ const rosterAutoSort = async (
 	}
 	const depth = t.depth as {
 		L: number[];
+		LP: number[];
 		D: number[];
+		DP: number[];
 		P: number[];
 	};
 
@@ -63,11 +76,13 @@ const rosterAutoSort = async (
 	});
 
 	// Lineup last, since that depends on defensive starters
-	const positions: (keyof typeof depth)[] = pos ? [pos] : ["P", "D", "L"];
+	const positions: (keyof typeof depth)[] = pos
+		? [pos]
+		: ["P", "D", "DP", "L", "LP"];
 
 	for (const pos2 of positions) {
 		if (onlyNewPlayers) {
-			if (pos2 === "L") {
+			if (pos2 === "L" || pos2 === "LP") {
 				continue;
 			}
 
@@ -78,15 +93,17 @@ const rosterAutoSort = async (
 				p => !depth[pos2].includes(p.pid),
 			);
 
-			if (pos2 === "D") {
+			if (pos2 === "D" || pos2 === "DP") {
 				const addToBench = [];
+
+				const defPositions = pos2 === "D" ? DEF_POSITIONS_DH : DEF_POSITIONS;
 
 				for (const p of playersNotInDepth) {
 					let added = false;
 
 					// Put in starting lineup if better than existing starter
-					for (let i = 0; i < DEF_POSITIONS.length; i++) {
-						const scorePos = DEF_POSITIONS[i];
+					for (let i = 0; i < defPositions.length; i++) {
+						const scorePos = defPositions[i];
 						const pScore = score(p, scorePos);
 						const p2 = players.find(p2 => p2.pid === depth[pos2][i]);
 						if (!p2 || pScore > score(p2, scorePos)) {
@@ -109,7 +126,7 @@ const rosterAutoSort = async (
 				for (const p of addToBench) {
 					const pScore = score(p);
 					let added = false;
-					for (let i = DEF_POSITIONS.length; i < depth[pos2].length; i++) {
+					for (let i = defPositions.length; i < depth[pos2].length; i++) {
 						const p2 = players.find(p2 => p2.pid === depth[pos2][i]);
 
 						if (!p2 || pScore > score(p2)) {
@@ -181,16 +198,16 @@ const rosterAutoSort = async (
 		} else {
 			depth[pos2] = [];
 
-			if (pos2 === "L") {
-				depth[pos2] = [6, 4, 5, 1, 7, 3, 2, 0, -1];
-			} else if (pos2 === "D") {
-				depth[pos2] = [];
+			const getDefensivePlayers = (dh: boolean) => {
+				const pids = [];
 
 				let playersRemaining = players;
 
-				for (const scorePos of DEF_POSITIONS) {
+				const defPositions = dh ? DEF_POSITIONS_DH : DEF_POSITIONS;
+
+				for (const scorePos of defPositions) {
 					playersRemaining.sort(sortFunction(scorePos));
-					depth[pos2].push(playersRemaining[0].pid);
+					pids.push(playersRemaining[0].pid);
 					playersRemaining = playersRemaining.slice(1);
 					if (playersRemaining.length === 0) {
 						break;
@@ -198,7 +215,19 @@ const rosterAutoSort = async (
 				}
 
 				playersRemaining.sort(sortFunction());
-				depth[pos2].push(...playersRemaining.map(p => p.pid));
+				pids.push(...playersRemaining.map(p => p.pid));
+
+				return pids;
+			};
+
+			if (pos2 === "LP") {
+				depth[pos2] = [6, 4, 5, 1, 7, 3, 2, 0, -1];
+			} else if (pos2 === "L") {
+				depth[pos2] = [6, 4, 5, 1, 8, 7, 3, 2, 0];
+			} else if (pos2 === "DP") {
+				depth[pos2] = getDefensivePlayers(false);
+			} else if (pos2 === "D") {
+				depth[pos2] = getDefensivePlayers(true);
 			} else if (pos2 === "P") {
 				depth[pos2] = [];
 

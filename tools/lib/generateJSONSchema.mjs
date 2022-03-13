@@ -171,7 +171,44 @@ const generateJSONSchema = (sport /*: string*/) => {
 		.toUpperCase()}${sport.slice(1)}`;
 
 	const depth = bySport({
-		baseball: {},
+		baseball: {
+			depth: {
+				type: "object",
+				properties: {
+					L: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					LP: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					D: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					DP: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+					P: {
+						type: "array",
+						items: {
+							type: "integer",
+						},
+					},
+				},
+				required: ["F", "D", "G"],
+			},
+		},
 		basketball: {},
 		football: {
 			depth: {

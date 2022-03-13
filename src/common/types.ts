@@ -455,6 +455,7 @@ export type GameAttributesLeague = {
 	confs: Conf[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;
+	dh: "all" | "none" | number[];
 	difficulty: number;
 	divs: Div[];
 	draftAges: [number, number];

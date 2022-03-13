@@ -107,6 +107,7 @@ const keys = [
 	"draftPickAutoContract",
 	"draftPickAutoContractPercent",
 	"draftPickAutoContractRounds",
+	"dh",
 ] as const;
 
 export type Settings = Pick<
@@ -243,6 +244,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			draftPickAutoContract: g.get("draftPickAutoContract"),
 			draftPickAutoContractPercent: g.get("draftPickAutoContractPercent"),
 			draftPickAutoContractRounds: g.get("draftPickAutoContractRounds"),
+			dh: g.get("dh"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

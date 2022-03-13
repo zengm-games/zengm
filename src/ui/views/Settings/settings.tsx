@@ -26,6 +26,7 @@ export const settings: {
 	type: FieldType;
 	decoration?: Decoration;
 	values?: Values;
+	parse?: (value: string) => unknown;
 	validator?: (
 		value: any,
 		output: any,
@@ -1506,6 +1507,41 @@ if (isSport("basketball")) {
 			if (value <= 1) {
 				throw new Error("Value must be greater than 2");
 			}
+		},
+	});
+} else if (isSport("baseball")) {
+	settings.push({
+		category: "Game Simulation",
+		key: "dh",
+		name: "Designated Hitter",
+		godModeRequired: "existingLeagueOnly",
+		type: "custom",
+		descriptionLong: (
+			<>
+				<p>
+					Enter <code>all</code> to make all conferences use a DH. Enter{" "}
+					<code>none</code> to make no conferences use a DH. To have DH only for
+					some conferences, enter a JSON array of integers containing the
+					conference ID numbers of the conferences you want to have a DH. For
+					example, enter <code>[0]</code> to make only the first conference have
+					a DH.
+				</p>
+			</>
+		),
+		parse: value => {
+			if (value === "all" || value === "none") {
+				return value;
+			}
+
+			const parsed = JSON.parse(value) as unknown;
+			if (!Array.isArray(parsed)) {
+				throw new Error('Must be "all", "none", or array');
+			}
+			if (parsed.some(x => typeof x !== "number" || !Number.isInteger(x))) {
+				throw new Error("Array can only contain integers");
+			}
+
+			return parsed;
 		},
 	});
 }

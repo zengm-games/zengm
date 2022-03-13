@@ -347,7 +347,7 @@ const SettingsForm = ({
 
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-expect-error
-				const parse = encodeDecodeFunctions[type].parse;
+				const parse = option.parse ?? encodeDecodeFunctions[type].parse;
 
 				try {
 					// @ts-expect-error

@@ -167,6 +167,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	draftPickAutoContract: true,
 	draftPickAutoContractPercent: 25,
 	draftPickAutoContractRounds: 1,
+	dh: "all",
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

@@ -96,7 +96,8 @@ export type Key =
 	| "goatFormula"
 	| "draftPickAutoContract"
 	| "draftPickAutoContractPercent"
-	| "draftPickAutoContractRounds";
+	| "draftPickAutoContractRounds"
+	| "dh";
 
 export type Category =
 	| "New League"

@@ -99,14 +99,49 @@ const updateDepth = async (
 		playoffs !== state.playoffs ||
 		abbrev !== state.abbrev
 	) {
+		let showDH: "noDH" | "dh" | "both" | undefined;
+		let pos2 = pos;
+		if (isSport("baseball")) {
+			const dh = g.get("dh");
+			if (dh === "none") {
+				showDH = "noDH";
+			} else if (dh === "all") {
+				showDH = "dh";
+			} else {
+				const confs = g.get("confs");
+				const filteredConfs = confs.filter(conf => dh.includes(conf.cid));
+				if (confs.length === filteredConfs.length) {
+					showDH = "dh";
+				} else if (filteredConfs.length === 0) {
+					showDH = "noDH";
+				} else {
+					showDH = "both";
+				}
+			}
+
+			if (showDH === "noDH") {
+				if (pos === "L") {
+					pos2 = "LP";
+				} else if (pos === "D") {
+					pos2 = "DP";
+				}
+			} else if (showDH === "dh") {
+				if (pos === "LP") {
+					pos2 = "L";
+				} else if (pos === "DP") {
+					pos2 = "D";
+				}
+			}
+		}
+
 		const editable = tid === g.get("userTid") && !g.get("spectator");
 		const ratings = [
 			...(isSport("baseball")
-				? pos === "P"
+				? pos2 === "P"
 					? []
 					: ["hgt", "spd"]
 				: ["hgt", "stre", "spd", "endu"]),
-			...posRatings(pos),
+			...posRatings(pos2),
 		];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 		const players = addFirstNameShort(
@@ -115,7 +150,7 @@ const updateDepth = async (
 				ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 				playoffs: playoffs === "playoffs",
 				regularSeason: playoffs !== "playoffs",
-				stats: [...stats[pos], "jerseyNumber"],
+				stats: [...stats[pos2], "jerseyNumber"],
 				season: g.get("season"),
 				showNoStats: true,
 				showRookies: true,
@@ -133,10 +168,10 @@ const updateDepth = async (
 		const depthPlayers = team.getDepthPlayers(t.depth, players);
 		console.log(depthPlayers);
 
-		const stats2: string[] = stats.hasOwnProperty(pos) ? stats[pos] : [];
+		const stats2: string[] = stats.hasOwnProperty(pos2) ? stats[pos2] : [];
 
-		const players2: any[] = depthPlayers.hasOwnProperty(pos)
-			? depthPlayers[pos]
+		const players2: any[] = depthPlayers.hasOwnProperty(pos2)
+			? depthPlayers[pos2]
 			: [];
 
 		let multiplePositionsWarning: string | undefined;
@@ -192,11 +227,12 @@ const updateDepth = async (
 			editable,
 			keepRosterSorted: t.keepRosterSorted,
 			multiplePositionsWarning,
-			pos,
+			pos: pos2,
 			players: players2,
 			playoffs,
 			ratings,
 			season: g.get("season"),
+			showDH,
 			stats: stats2,
 			tid,
 		};

@@ -27,6 +27,7 @@ export const settings: {
 	decoration?: Decoration;
 	values?: Values;
 	parse?: (value: string) => unknown;
+	stringify?: (value: unknown) => string;
 	validator?: (
 		value: any,
 		output: any,
@@ -1542,6 +1543,13 @@ if (isSport("basketball")) {
 			}
 
 			return parsed;
+		},
+		stringify: value => {
+			if (typeof value === "string") {
+				return value;
+			}
+
+			return JSON.stringify(value);
 		},
 	});
 }

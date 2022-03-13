@@ -24,7 +24,9 @@ const useSettingsFormState = ({
 	const [state, setStateRaw] = useState<State>(() => {
 		// @ts-expect-error
 		const initialState: State = {};
-		for (const { key, type, values } of settings) {
+		for (const setting of settings) {
+			const { key, type, values } = setting;
+
 			if (SPECIAL_STATE_ALL.includes(key as any)) {
 				continue;
 			}
@@ -32,7 +34,8 @@ const useSettingsFormState = ({
 			const value = initialSettings[key];
 
 			// https://github.com/microsoft/TypeScript/issues/21732
-			const stringify = (encodeDecodeFunctions[type] as any).stringify;
+			const stringify =
+				setting.stringify ?? (encodeDecodeFunctions[type] as any).stringify;
 
 			initialState[key] = stringify ? stringify(value, values) : value;
 		}

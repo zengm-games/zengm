@@ -91,6 +91,7 @@ const Depth = ({
 	pos,
 	ratings,
 	season,
+	showDH,
 	stats,
 	tid,
 }: View<"depth">) => {
@@ -218,18 +219,38 @@ const Depth = ({
 			) : null}
 
 			<ul className="nav nav-tabs mb-3 d-none d-sm-flex">
-				{Object.keys(numStartersByPos).map(pos2 => (
-					<li className="nav-item" key={pos2}>
-						<a
-							className={classNames("nav-link", {
-								active: pos === pos2,
-							})}
-							href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
-						>
-							{posNames ? posNames[pos2] : pos2}
-						</a>
-					</li>
-				))}
+				{Object.keys(numStartersByPos).map(pos2 => {
+					console.log(showDH, pos, pos2);
+					if (
+						(showDH === "noDH" && (pos2 === "L" || pos2 === "D")) ||
+						(showDH === "dh" && (pos2 === "LP" || pos2 === "DP"))
+					) {
+						return null;
+					}
+
+					let text = posNames ? posNames[pos2] : pos2;
+					if (
+						isSport("baseball") &&
+						posNames &&
+						showDH === "noDH" &&
+						(pos2 === "DP" || pos2 === "LP")
+					) {
+						text = posNames[pos2.slice(0, 1)];
+					}
+
+					return (
+						<li className="nav-item" key={pos2}>
+							<a
+								className={classNames("nav-link", {
+									active: pos === pos2,
+								})}
+								href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
+							>
+								{text}
+							</a>
+						</li>
+					);
+				})}
 			</ul>
 
 			{editable ? (

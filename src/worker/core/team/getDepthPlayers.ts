@@ -1,3 +1,4 @@
+import range from "lodash-es/range";
 import { isSport, POSITIONS } from "../../../common";
 import type { Team } from "../../../common/types";
 
@@ -45,49 +46,49 @@ const getDepthPlayers = <
 
 	if (isSport("baseball")) {
 		// Lineup IDs are references to positions
-		// -1 -> pitcher
+		// -1 -> pitcher/DH
 		// -2 or less -> does not exist (not enough players)
 
-		const DEFAULT_LINEUP = [6, 4, 5, 1, 7, 3, 2, 0, -1];
+		const lineupKeys = ["L", "LP"] as const;
 
-		let lineup = (
-			depth as {
-				L: number[];
+		for (const key of lineupKeys) {
+			const DEFAULT_LINEUP = key === "L" ? range(0, 9) : range(-1, 8);
+
+			let lineup = (depth as Record<string, number[]>)[key];
+
+			if (!lineup || lineup.length !== DEFAULT_LINEUP.length) {
+				lineup = DEFAULT_LINEUP;
 			}
-		).L;
 
-		if (!lineup || lineup.length !== DEFAULT_LINEUP.length) {
-			lineup = DEFAULT_LINEUP;
+			let dummyID = -1;
+			// @ts-expect-error
+			depths[key] = lineup.map(i => {
+				if (i === -1) {
+					return {
+						pid: -1,
+						id: -1,
+						lineupPos: "P",
+						lineupIndex: -1,
+					};
+				}
+
+				if (depths.D[i]) {
+					return {
+						...depths.D[i],
+						lineupPos: POSITIONS[2 + i],
+						lineupIndex: i,
+					};
+				}
+
+				dummyID -= 1;
+				return {
+					pid: dummyID,
+					id: dummyID,
+					lineupPos: "?",
+					lineupIndex: dummyID,
+				};
+			});
 		}
-
-		let dummyID = -1;
-		// @ts-expect-error
-		depths.L = lineup.map(i => {
-			if (i === -1) {
-				return {
-					pid: -1,
-					id: -1,
-					lineupPos: "P",
-					lineupIndex: -1,
-				};
-			}
-
-			if (depths.D[i]) {
-				return {
-					...depths.D[i],
-					lineupPos: POSITIONS[2 + i],
-					lineupIndex: i,
-				};
-			}
-
-			dummyID -= 1;
-			return {
-				pid: dummyID,
-				id: dummyID,
-				lineupPos: "?",
-				lineupIndex: dummyID,
-			};
-		});
 	}
 
 	return depths;

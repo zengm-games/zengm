@@ -28,7 +28,9 @@ const defenseStats = [
 const stats = bySport<Record<string, string[]>>({
 	baseball: {
 		L: [],
+		LP: [],
 		D: [],
+		DP: [],
 		P: [],
 	},
 	basketball: {},

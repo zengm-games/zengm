@@ -1376,7 +1376,9 @@ export type Team = {
 		  }
 		| {
 				L: number[]; // Lineup
+				LP: number[]; // Lineup (no DH)
 				D: number[]; // Defense
+				DP: number[]; // Defense (no DH)
 				P: number[]; // Pitching
 		  };
 	firstSeasonAfterExpansion?: number;

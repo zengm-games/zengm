@@ -17,12 +17,18 @@ const handleAutoSortAll = async () => {
 	await toWorker("main", "autoSortRoster", undefined);
 };
 
+const lowerCaseFirstLetter = (string: string) => {
+	return `${string.charAt(0).toLowerCase()}${string.slice(1)}`;
+};
+
 const numStartersByPos = bySport<
 	Record<string, number | Record<string, number>>
 >({
 	baseball: {
 		L: 9,
+		LP: 9,
 		D: 14,
+		DP: 14,
 		P: {
 			SP: 5,
 			RP: 7,
@@ -57,7 +63,9 @@ const numStartersByPos = bySport<
 const posNames = bySport<Record<string, string> | undefined>({
 	baseball: {
 		L: "Lineup",
+		LP: "Lineup (no DH)",
 		D: "Defense",
+		DP: "Defense (no DH)",
 		P: "Pitching",
 	},
 	hockey: {
@@ -149,9 +157,11 @@ const Depth = ({
 
 	let rowLabels: string[] | undefined;
 	if (isSport("baseball")) {
-		if (pos === "L") {
+		if (pos === "L" || pos === "LP") {
 			rowLabels = range(1, 10).map(i => String(i));
 		} else if (pos === "D") {
+			rowLabels = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH"];
+		} else if (pos === "DP") {
 			rowLabels = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"];
 		} else if (pos === "P") {
 			rowLabels = [
@@ -229,7 +239,7 @@ const Depth = ({
 							className="btn btn-light-bordered"
 							onClick={() => handleAutoSort(pos)}
 						>
-							Auto sort {posNames ? posNames[pos].toLowerCase() : pos}
+							Auto sort {posNames ? lowerCaseFirstLetter(posNames[pos]) : pos}
 						</button>
 						<button
 							className="btn btn-light-bordered"
@@ -288,6 +298,16 @@ const Depth = ({
 				</div>
 			) : null}
 
+			{isSport("baseball") && pos === "LP" ? (
+				<div className="alert alert-info d-inline-block">
+					To move players in and out of the starting lineup, switch to the{" "}
+					<a href={helpers.leagueUrl(["depth", "DP", `${abbrev}_${tid}`])}>
+						Defense tab
+					</a>
+					.
+				</div>
+			) : null}
+
 			<div className="clearfix" />
 
 			<SortableTable
@@ -298,7 +318,8 @@ const Depth = ({
 					classNames({
 						separator:
 							(isSport("baseball") && pos === "P" && index === 4) ||
-							(isSport("baseball") && pos === "D" && index === 7) ||
+							(isSport("baseball") && pos === "D" && index === 8) ||
+							(isSport("baseball") && pos === "DP" && index === 7) ||
 							((index % numStarters) + 1 === numStarters &&
 								index < numLines * numStarters &&
 								!isDragged &&
@@ -396,10 +417,12 @@ const Depth = ({
 									"text-danger":
 										isSport("baseball") && p.lineupPos
 											? p.pid >= 0 && p.lineupPos !== p.ratings.pos
-											: isSport("baseball") && pos === "D"
+											: isSport("baseball") && (pos === "D" || pos === "DP")
 											? rowLabels?.[index] !== undefined &&
+											  rowLabels[index] !== "DH" &&
 											  rowLabels[index] !== p.ratings.pos
-											: p.pid >= 0 &&
+											: !isSport("baseball") &&
+											  p.pid >= 0 &&
 											  pos !== "KR" &&
 											  pos !== "PR" &&
 											  !positions.includes(p.ratings.pos),
@@ -418,10 +441,14 @@ const Depth = ({
 								p.pid >= 0 ? (
 									<>
 										<td>
-											{!challengeNoRatings ? p.ratings.ovrs[lineupPos] : null}
+											{!challengeNoRatings
+												? p.ratings.ovrs[lineupPos] ?? p.ratings.ovr
+												: null}
 										</td>
 										<td>
-											{!challengeNoRatings ? p.ratings.pots[lineupPos] : null}
+											{!challengeNoRatings
+												? p.ratings.pots[lineupPos] ?? p.ratings.pot
+												: null}
 										</td>
 									</>
 								) : (

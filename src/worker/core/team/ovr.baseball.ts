@@ -17,6 +17,7 @@ const weights: Record<Position, number[]> = {
 	LF: [1],
 	CF: [1],
 	RF: [1],
+	DH: [1],
 };
 
 const scale = (predictedMOV: number) => {

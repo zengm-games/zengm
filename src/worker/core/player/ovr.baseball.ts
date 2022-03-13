@@ -65,6 +65,7 @@ const infoDefense: Record<Position, RatingWeights> = {
 		fly: [2, 1],
 		thr: [2, 1],
 	},
+	DH: {},
 };
 
 const infoOffense: RatingWeights = {
@@ -96,6 +97,8 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	let r;
 	if (pos2 === "RP" || pos2 === "SP") {
 		r = 0.1 * offense + 0.9 * defense;
+	} else if (pos2 === "DH") {
+		r = 0.85 * offense;
 	} else {
 		r = 0.6 * offense + 0.4 * defense;
 	}

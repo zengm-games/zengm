@@ -90,7 +90,8 @@ export type Position =
 	| "SS"
 	| "LF"
 	| "CF"
-	| "RF";
+	| "RF"
+	| "DH";
 
 export type PlayerRatings = {
 	hgt: number;

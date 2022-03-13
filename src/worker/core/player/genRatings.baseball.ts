@@ -163,6 +163,7 @@ const defaultOvrsOrPots = {
 	LF: 0,
 	CF: 0,
 	RF: 0,
+	DH: 0,
 };
 
 const genRatings = (

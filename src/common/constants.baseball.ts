@@ -22,6 +22,7 @@ const POSITIONS: Position[] = [
 	"LF",
 	"CF",
 	"RF",
+	"DH",
 ];
 
 const POSITION_COUNTS: Record<Position, number> = {
@@ -35,6 +36,7 @@ const POSITION_COUNTS: Record<Position, number> = {
 	LF: 5 / 3,
 	CF: 5 / 3,
 	RF: 5 / 3,
+	DH: 0,
 };
 
 const RATINGS: RatingKey[] = [

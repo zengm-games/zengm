@@ -85,8 +85,7 @@ export type PlayersOnField = Partial<Record<Position, PlayerGameSim[]>>;
 
 export type TeamGameSim = {
 	id: number;
-	pace: number;
-	// mean number of possessions the team likes to have in a game
+	pace: number; // mean number of possessions the team likes to have in a game
 	stat: any;
 	player: PlayerGameSim[];
 	compositeRating: any;

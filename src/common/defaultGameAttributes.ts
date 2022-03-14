@@ -279,6 +279,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numGamesConf: null,
 				numGamesPlayoffSeries: wrap([1, 5, 7, 7]),
 				numPlayoffByes: wrap(3),
+				numPeriods: 9,
 				salaryCapType: "none",
 				draftType: "noLottery",
 				numDraftRounds: 7,

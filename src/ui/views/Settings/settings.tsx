@@ -1350,7 +1350,7 @@ settings.push(
 	{
 		category: "Game Simulation",
 		key: "numPeriods",
-		name: "Number of Periods Per Game",
+		name: `Number of ${isSport("baseball") ? "Innings" : "Periods"} Per Game`,
 		godModeRequired: "always",
 		type: "int",
 		validator: value => {

@@ -1,21 +1,9 @@
 import type { PlayerInjury } from "../../../common/types";
-import type { Position } from "../../../common/types.hockey";
+import type { Position } from "../../../common/types.baseball";
 
 export type TeamNum = 0 | 1;
 
-export type CompositeRating =
-	| "pace"
-	| "playmaker"
-	| "power"
-	| "grinder"
-	| "enforcer"
-	| "sniper"
-	| "faceoffs"
-	| "goalkeeping"
-	| "blocking"
-	| "scoring"
-	| "penalties"
-	| "endurance";
+export type CompositeRating = "";
 
 export type PlayerGameSim = {
 	id: number;
@@ -33,18 +21,15 @@ export type PlayerGameSim = {
 	};
 	ptModifier: number;
 	ovrs: Record<Position, number>;
-	numConsecutiveGamesG?: number;
+	lineupPos: string;
 };
-
-export type PlayersOnIce = Record<Position, PlayerGameSim[]>;
 
 export type TeamGameSim = {
 	id: number;
-	pace: number; // mean number of possessions the team likes to have in a game
 	stat: any;
 	player: PlayerGameSim[];
 	compositeRating: any;
-	depth: Record<"F" | "D" | "G", PlayerGameSim[]>;
+	depth: Record<"L" | "LP" | "D" | "DP" | "P", PlayerGameSim[]>;
 	synergy: {
 		reb: number;
 	};

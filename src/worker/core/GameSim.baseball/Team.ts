@@ -29,6 +29,8 @@ class Team<DH extends boolean> {
 		PlayerInGame<DH>,
 	];
 
+	atBat: number;
+
 	constructor(t: TeamGameSim, dh: DH) {
 		this.t = t;
 		this.dh = dh;
@@ -72,6 +74,8 @@ class Team<DH extends boolean> {
 		this.playersInGameByPos = {} as any;
 		this.playersInGameByBattingOrder = [] as any;
 		this.rebuildIndexes();
+
+		this.atBat = 0;
 	}
 
 	rebuildIndexes() {
@@ -82,6 +86,14 @@ class Team<DH extends boolean> {
 					playerInGame;
 			}
 		}
+	}
+
+	getBatter() {
+		return this.playersInGameByBattingOrder[this.atBat];
+	}
+
+	advanceToNextBatter() {
+		this.atBat = (this.atBat + 1) % 9;
 	}
 }
 

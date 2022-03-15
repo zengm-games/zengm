@@ -26,6 +26,7 @@ export type PlayerGameSim = {
 
 export type TeamGameSim = {
 	id: number;
+	cid: number;
 	stat: any;
 	player: PlayerGameSim[];
 	compositeRating: any;

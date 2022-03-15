@@ -108,8 +108,8 @@ const categories: {
 					this section do anything.
 				</p>
 				<p>
-					When using the rookie salary scale, the #1 pick recieves some fraction
-					of a max contract. Subsequent picks recieve smaller contracts. After
+					When using the rookie salary scale, the #1 pick receives some fraction
+					of a max contract. Subsequent picks receive smaller contracts. After
 					the number of rounds specified in "Rounds With Above Minimum
 					Contracts" elapses, all remaining players get minimum contracts.
 				</p>

@@ -108,7 +108,7 @@ const assessPayrollMinLuxury = async () => {
 					type: "luxuryTaxDist",
 					text: `The ${rosterLink(
 						tid,
-					)} recieved a luxury tax distribution of ${helpers.formatCurrency(
+					)} received a luxury tax distribution of ${helpers.formatCurrency(
 						distribute / 1000,
 						"M",
 					)} for having a payroll under ${helpers.formatCurrency(

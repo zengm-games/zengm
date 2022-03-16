@@ -76,27 +76,15 @@ type PlayByPlayEventInput =
 			distance: "infield" | "shallow" | "normal" | "deep";
 	  }
 	| {
-			type: "hit";
+			type: "hitResult";
+			result: "flyOut" | "throwOut" | "fieldersChoice" | "hit" | "error";
 			t: TeamNum;
 			pid: number;
+			pidError?: number;
+			posDefense: number[]; // Like for a double play, this could be [6, 4, 3]
 			runners: Runner[];
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
-	  }
-	| {
-			type: "flyOut";
-			t: TeamNum;
-			pid: number;
-			pidDefense: number;
-			runners: Runner[];
-	  }
-	| {
-			type: "throwOut";
-			t: TeamNum;
-			pid: number;
-			posDefense: number[]; // Like for a double play, this could be [6, 4, 3]
-			base: 0 | 1 | 2;
-			runners: Runner[];
 	  }
 	| {
 			type: "walk";
@@ -114,22 +102,11 @@ type PlayByPlayEventInput =
 			type: "stealEnd";
 			t: TeamNum;
 			pid: number;
-			to: 1 | 2 | 3;
+			pidError?: number;
+			from: 1 | 2 | 3;
+			to: 1 | 2 | 3 | 4;
 			out: boolean;
-	  }
-	| {
-			type: "errorHit";
-			t: TeamNum;
-			pid: number;
-			pidError: number;
-			runners: Runner[];
-			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
-	  }
-	| {
-			type: "errorThrow";
-			t: TeamNum;
-			pidError: number;
 			runners: Runner[];
 	  }
 	| {
@@ -137,62 +114,6 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 			pid: number;
 			runners: Runner[];
-	  }
-	| {
-			type:
-				| "gv"
-				| "tk"
-				| "slapshot"
-				| "wristshot"
-				| "shot"
-				| "reboundShot"
-				| "block"
-				| "miss"
-				| "save"
-				| "save-freeze"
-				| "deflection";
-			clock: number;
-			t: TeamNum;
-			names: [string];
-	  }
-	| PlayByPlayEventInputScore
-	| {
-			type: "offensiveLineChange" | "fullLineChange" | "defensiveLineChange";
-			clock: number;
-			t: TeamNum;
-	  }
-	| {
-			type: "playersOnIce";
-			t: TeamNum;
-			pids: number[];
-	  }
-	| {
-			type: "penalty";
-			clock: number;
-			t: TeamNum;
-			names: [string];
-			penaltyType: keyof typeof penaltyTypes;
-			penaltyName: string;
-			penaltyPID: number;
-	  }
-	| {
-			type: "penaltyOver";
-			clock: number;
-			t: TeamNum;
-			names: [string];
-			penaltyPID: number;
-	  }
-	| {
-			type: "pullGoalie";
-			clock: number;
-			t: TeamNum;
-			name: string;
-	  }
-	| {
-			type: "noPullGoalie";
-			clock: number;
-			t: TeamNum;
-			name: string;
 	  };
 
 export type PlayByPlayEvent =
@@ -206,7 +127,7 @@ export type PlayByPlayEvent =
 					amt: number;
 			  }
 	  ) & {
-			quarter: number;
+			inning: number;
 	  })
 	| {
 			type: "init";

@@ -315,6 +315,10 @@ const updateTeams = async (
 				"oppFgMidRange",
 				"oppFgaMidRange",
 				"oppFgpMidRange",
+				"oppDd",
+				"oppTd",
+				"oppQd",
+				"oppFxf",
 			],
 			football: [
 				"lost",

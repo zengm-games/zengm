@@ -133,7 +133,7 @@ const uniformSeed = (seed: number): number => {
  * @param {number} x Array to choose a random value from.
  */
 const choice = <T>(
-	x: T[],
+	x: readonly T[],
 	weightInput?: ((a: T, index: number) => number) | number[],
 ): T => {
 	if (weightInput === undefined) {

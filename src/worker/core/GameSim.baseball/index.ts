@@ -7,6 +7,7 @@ import type { Position } from "../../../common/types.hockey";
 import type {
 	CompositeRating,
 	PlayerGameSim,
+	Runner,
 	TeamGameSim,
 	TeamNum,
 } from "./types";
@@ -17,6 +18,30 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
+
+const POS_NUMBERS = {
+	P: 1,
+	C: 2,
+	"1B": 3,
+	"2B": 4,
+	"3B": 5,
+	SS: 6,
+	LF: 7,
+	CF: 8,
+	RF: 9,
+} as const;
+
+const POS_NUMBERS_INVERSE = {
+	1: "P",
+	2: "C",
+	3: "1B",
+	4: "2B",
+	5: "3B",
+	6: "SS",
+	7: "LF",
+	8: "CF",
+	9: "RF",
+} as const;
 
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
@@ -44,6 +69,10 @@ class GameSim {
 	numInnings: number;
 
 	inning: number;
+
+	overtime: boolean;
+
+	overtimes: number;
 
 	bases!: [
 		PlayerGameSim | undefined,
@@ -98,6 +127,8 @@ class GameSim {
 		this.numInnings = g.get("numPeriods");
 
 		this.inning = 1;
+		this.overtime = false;
+		this.overtimes = 0;
 
 		this.resetNewInning();
 	}
@@ -113,52 +144,384 @@ class GameSim {
 		this.strikes = 0;
 	}
 
+	getHitTo(
+		info: {
+			direction: "farLeft" | "left" | "middle" | "right" | "farRight";
+		} & (
+			| {
+					type: "fly";
+					distance: "infield" | "shallow" | "normal" | "deep";
+			  }
+			| {
+					type: "ground" | "line";
+					speed: "soft" | "normal" | "hard";
+			  }
+		),
+	): keyof typeof POS_NUMBERS_INVERSE {
+		const { type, direction } = info;
+		if (type === "fly") {
+			const { distance } = info;
+			if (distance === "infield") {
+				switch (direction) {
+					case "farLeft":
+						return POS_NUMBERS["3B"];
+					case "farRight":
+						return POS_NUMBERS["1B"];
+					case "middle":
+						return POS_NUMBERS.CF;
+					case "left":
+						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+					case "right":
+						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+				}
+			} else {
+				switch (direction) {
+					case "farLeft":
+						return POS_NUMBERS.LF;
+					case "farRight":
+						return POS_NUMBERS.RF;
+					case "middle":
+						return POS_NUMBERS.CF;
+					case "left":
+						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+					case "right":
+						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+				}
+			}
+		} else if (type === "line") {
+			const { speed } = info;
+
+			let probOutfield;
+			if (speed === "soft") {
+				probOutfield = 0.5;
+			} else if (speed === "normal") {
+				probOutfield = 0.8;
+			} else {
+				probOutfield = 0.9;
+			}
+
+			const outfield = Math.random() < probOutfield;
+
+			if (outfield) {
+				switch (direction) {
+					case "farLeft":
+						return POS_NUMBERS.LF;
+					case "farRight":
+						return POS_NUMBERS.RF;
+					case "middle":
+						return POS_NUMBERS.CF;
+					case "left":
+						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+					case "right":
+						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+				}
+			} else {
+				switch (direction) {
+					case "farLeft":
+						return POS_NUMBERS["3B"];
+					case "farRight":
+						return POS_NUMBERS["1B"];
+					case "middle":
+						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS.SS]);
+					case "left":
+						return random.choice([POS_NUMBERS["3B"], POS_NUMBERS.SS]);
+					case "right":
+						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS["1B"]]);
+				}
+			}
+		} else if (type === "ground") {
+			const { speed } = info;
+
+			let probOutfield;
+			if (speed === "soft") {
+				probOutfield = 0;
+			} else if (speed === "normal") {
+				probOutfield = 0.2;
+			} else {
+				probOutfield = 0.4;
+			}
+
+			const outfield = Math.random() < probOutfield;
+
+			if (outfield) {
+				switch (direction) {
+					case "farLeft":
+						return POS_NUMBERS.LF;
+					case "farRight":
+						return POS_NUMBERS.RF;
+					case "middle":
+						return POS_NUMBERS.CF;
+					case "left":
+						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+					case "right":
+						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+				}
+			} else {
+				switch (direction) {
+					case "farLeft":
+						return POS_NUMBERS["3B"];
+					case "farRight":
+						return POS_NUMBERS["1B"];
+					case "middle":
+						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS.SS]);
+					case "left":
+						return random.choice([POS_NUMBERS["3B"], POS_NUMBERS.SS]);
+					case "right":
+						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS["1B"]]);
+				}
+			}
+		}
+
+		throw new Error("Should never happen");
+	}
+
 	simPitch() {
-		const outcome = random.choice(["ball", "strike", "foul", "inPlay"]);
+		let doneBatter;
+		const outcome = random.choice(["ball", "strike", "contact"]);
 
 		if (outcome === "ball") {
 			this.balls += 1;
 			if (this.balls >= 4) {
 				this.doWalk();
+				doneBatter = true;
+			} else {
+				this.playByPlay.logEvent({
+					type: "ball",
+					intentional: false,
+				});
 			}
 		} else if (outcome === "strike") {
 			this.strikes += 1;
 			if (this.strikes >= 3) {
 				this.doStrikeout();
-			}
-		} else if (outcome === "foul") {
-			if (this.strikes < 3) {
-				this.strikes += 1;
+				doneBatter = true;
+			} else {
+				this.playByPlay.logEvent({
+					type: "strike",
+					swinging: Math.random() < 0.5,
+				});
 			}
 		} else {
-			const type = random.choice(["ground", "line", "fly"]);
-			const direction = random.choice(["left", "middle", "right"]);
-			if (type === "ground") {
-				const speed = random.choice(["soft", "normal", "hard"]);
-			} else if (type === "line") {
-				const speed = random.choice(["soft", "normal", "hard"]);
+			const p = this.team[this.o].getBatter().p;
+
+			const foul = Math.random() < 0.25;
+
+			const type = random.choice(["ground", "line", "fly"] as const);
+			const direction = foul
+				? random.choice(["farLeft", "farRight", "outOfPlay"] as const)
+				: random.choice([
+						"farLeft",
+						"left",
+						"middle",
+						"right",
+						"farRight",
+				  ] as const);
+			let speed;
+			let distance;
+
+			if (direction === "outOfPlay") {
+				// If it's obviously out of play, just log it as a foul ball immmediately
+				this.playByPlay.logEvent({
+					type: "foul",
+				});
 			} else {
-				const distance = random.choice([
-					"infield",
-					"shallow",
-					"normal",
-					"deep",
-				]);
+				// Announce the type of hit before the result
+				if (type === "ground") {
+					speed = random.choice(["soft", "normal", "hard"] as const);
+					this.playByPlay.logEvent({
+						type,
+						t: this.o,
+						pid: p.id,
+						direction,
+						speed,
+					});
+				} else if (type === "line") {
+					speed = random.choice(["soft", "normal", "hard"] as const);
+					this.playByPlay.logEvent({
+						type,
+						t: this.o,
+						pid: p.id,
+						direction,
+						speed,
+					});
+				} else {
+					distance = random.choice([
+						"infield",
+						"shallow",
+						"normal",
+						"deep",
+					] as const);
+					this.playByPlay.logEvent({
+						type,
+						t: this.o,
+						pid: p.id,
+						direction,
+						distance,
+					});
+				}
+
+				// Result of the hit
+				if (foul) {
+					this.playByPlay.logEvent({
+						type: "foul",
+					});
+				} else {
+					const hitTo = this.getHitTo({
+						type,
+						distance,
+						direction,
+						speed: speed,
+					} as any);
+
+					const runners = this.getRunners();
+
+					const hit = Math.random() < 0.3;
+					let result: "hit" | "flyOut" | "throwOut" | "fieldersChoice";
+					let pidError: number | undefined;
+					const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
+					let numBasesWeights: [number, number, number, number];
+					if (hit) {
+						result = "hit";
+						if (type === "fly") {
+							if (distance === "infield") {
+								numBasesWeights = [1, 0, 0, 0];
+							} else if (distance === "shallow") {
+								numBasesWeights = [1, 0.1, 0.01, 0];
+							} else if (distance === "normal") {
+								numBasesWeights = [0.2, 1, 0.1, 0.1];
+							} else {
+								numBasesWeights = [0, 0.1, 0.1, 1];
+							}
+						} else if (type === "line") {
+							if (speed === "soft") {
+								numBasesWeights = [1, 0.1, 0, 0];
+							} else if (speed === "normal") {
+								numBasesWeights = [0.2, 1, 0.01, 0];
+							} else {
+								numBasesWeights = [0.1, 1, 0.1, 0.01];
+							}
+						} else {
+							if (speed === "soft") {
+								numBasesWeights = [1, 0.01, 0, 0];
+							} else if (speed === "normal") {
+								numBasesWeights = [1, 0.02, 0, 0];
+							} else {
+								numBasesWeights = [1, 0.03, 0, 0];
+							}
+						}
+					} else {
+						numBasesWeights = [1, 0, 0, 0];
+
+						if (type === "fly" || type === "line") {
+							result = "flyOut";
+						} else {
+							result = "fieldersChoice";
+							result = "throwOut";
+						}
+
+						if (Math.random() < 0.05) {
+							const errorPosition = random.choice(posDefense);
+							const pos = POS_NUMBERS_INVERSE[errorPosition];
+							pidError = this.team[this.d].playersInGameByPos[pos].p.id;
+						}
+					}
+
+					const numBases = random.choice(
+						[1, 2, 3, 4] as const,
+						numBasesWeights,
+					);
+
+					for (const runner of runners) {
+						throw new Error("Not implemented");
+					}
+
+					if (pidError !== undefined) {
+						this.playByPlay.logEvent({
+							type: "hitResult",
+							result: "error",
+							t: this.o,
+							pid: p.id,
+							pidError,
+							posDefense,
+							runners: this.finalizeRunners(runners),
+							numBases,
+							outAtNextBase: false,
+						});
+					} else {
+						this.playByPlay.logEvent({
+							type: "hitResult",
+							result,
+							t: this.o,
+							pid: p.id,
+							posDefense,
+							runners: this.finalizeRunners(runners),
+							numBases,
+							outAtNextBase: false,
+						});
+
+						if (result === "flyOut" || result === "throwOut") {
+							this.outs += 1;
+						}
+					}
+
+					doneBatter = true;
+				}
 			}
 		}
+
+		return doneBatter;
+	}
+
+	getRunners() {
+		return this.bases.map((p, i) => {
+			if (p) {
+				return {
+					pid: p.id,
+					from: i + 1,
+					to: i + 1,
+					out: false,
+				};
+			}
+		});
+	}
+
+	finalizeRunners(
+		runners: (
+			| {
+					pid: number;
+					from: number;
+					to: number;
+					out: boolean;
+			  }
+			| undefined
+		)[],
+	) {
+		const finalized: Runner[] = [];
+		for (const runner of runners) {
+			if (runner && runner.from !== runner.to) {
+				finalized.push(runner as Runner);
+			}
+		}
+
+		return finalized;
 	}
 
 	doWalk() {
+		const runners = this.getRunners();
+
 		if (this.bases[0]) {
 			if (this.bases[1]) {
 				if (this.bases[2]) {
 					this.doScore(this.bases[2]);
+					runners[2]!.to += 1;
 				}
 
 				this.bases[2] = this.bases[1];
+				runners[1]!.to += 1;
 			}
 
 			this.bases[1] = this.bases[0];
+			runners[0]!.to += 1;
 		}
 
 		const t = this.team[this.o];
@@ -166,11 +529,23 @@ class GameSim {
 		const batter = t.getBatter();
 		this.bases[0] = batter.p;
 
+		this.playByPlay.logEvent({
+			type: "walk",
+			t: this.o,
+			pid: batter.p.id,
+			runners: this.finalizeRunners(runners),
+		});
+
 		t.advanceToNextBatter();
 		this.resetNewBatter();
 	}
 
 	doStrikeout() {
+		this.playByPlay.logEvent({
+			type: "strikeOut",
+			swinging: Math.random() < 0.5,
+		});
+
 		this.outs += 1;
 
 		const t = this.team[this.o];
@@ -208,42 +583,29 @@ class GameSim {
 	}
 
 	run() {
-		// Simulate the game up to the end of regulation
-		this.simRegulation();
-
-		while (this.team[0].stat.pts === this.team[1].stat.pts) {
-			// this.checkGameTyingShot();
-			this.simOvertime();
-
-			// More than one overtime only if no ties are allowed or if it's the playoffs
-			if (g.get("phase") !== PHASE.PLAYOFFS && g.get("ties", "current")) {
-				break;
-			}
-		}
-
+		this.simGame();
 		this.playByPlay.logEvent({
 			type: "gameOver",
-			clock: this.clock,
 		});
 
 		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
-			delete this.team[t].compositeRating;
+			delete this.team[t].t.compositeRating;
 			// @ts-expect-error
 			delete this.team[t].pace;
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (let p = 0; p < this.team[t].t.player.length; p++) {
 				// @ts-expect-error
-				delete this.team[t].player[p].age;
+				delete this.team[t].t.player[p].age;
 				// @ts-expect-error
-				delete this.team[t].player[p].valueNoPot;
-				delete this.team[t].player[p].compositeRating;
+				delete this.team[t].t.player[p].valueNoPot;
+				delete this.team[t].t.player[p].compositeRating;
 				// @ts-expect-error
-				delete this.team[t].player[p].ptModifier;
-				delete this.team[t].player[p].stat.benchTime;
-				delete this.team[t].player[p].stat.courtTime;
-				delete this.team[t].player[p].stat.energy;
-				delete this.team[t].player[p].numConsecutiveGamesG;
+				delete this.team[t].t.player[p].ptModifier;
+				delete this.team[t].t.player[p].stat.benchTime;
+				delete this.team[t].t.player[p].stat.courtTime;
+				delete this.team[t].t.player[p].stat.energy;
+				delete this.team[t].t.player[p].numConsecutiveGamesG;
 			}
 		}
 
@@ -259,80 +621,64 @@ class GameSim {
 		return out;
 	}
 
-	simRegulation() {
-		let quarter = 1;
+	simPlateAppearance() {
+		const t = this.team[this.o];
+		t.advanceToNextBatter();
+		this.playByPlay.logEvent({
+			type: "plateAppearance",
+			t: this.o,
+			pid: t.getBatter().p.id,
+		});
 
 		while (true) {
-			this.updatePlayersOnIce({ type: "newPeriod" });
-			this.faceoff();
-
-			while (this.clock > 0) {
-				this.simPossession();
-				this.advanceClock();
-				if (this.clock > 0) {
-					this.injuries();
-					this.updatePlayersOnIce({ type: "normal" });
-					this.checkPullGoalie(this.o);
-				}
-			}
-
-			quarter += 1;
-
-			if (quarter > this.numPeriods) {
+			const doneBatter = this.simPitch();
+			if (doneBatter) {
 				break;
 			}
-
-			this.team[0].stat.ptsQtrs.push(0);
-			this.team[1].stat.ptsQtrs.push(0);
-			this.clock = g.get("quarterLength");
-			this.minutesSinceLineChange[0].F = 0;
-			this.minutesSinceLineChange[0].D = 0;
-			this.minutesSinceLineChange[1].F = 0;
-			this.minutesSinceLineChange[1].D = 0;
-			this.playByPlay.logEvent({
-				type: "quarter",
-				clock: this.clock,
-				quarter: this.team[0].stat.ptsQtrs.length,
-			});
 		}
 	}
 
-	simOvertime() {
-		this.clock = g.get("quarterLength");
+	simGame() {
+		while (true) {
+			this.simPlateAppearance();
+			if (this.outs >= 3) {
+				if (this.o === 1) {
+					this.playByPlay.logEvent({
+						type: "sideOver",
+						inning: this.inning,
+					});
 
-		if (this.clock <= 0) {
-			this.clock = defaultGameAttributes.quarterLength;
-		}
+					if (
+						this.inning >= this.numInnings &&
+						this.team[0].t.stat.pts > this.team[1].t.stat.pts
+					) {
+						// No need to play bottom of inning, home team is already up
+						break;
+					}
+				} else {
+					this.playByPlay.logEvent({
+						type: "inningOver",
+						inning: this.inning,
+					});
 
-		this.overtime = true;
-		this.overtimes += 1;
-		this.team[0].stat.ptsQtrs.push(0);
-		this.team[1].stat.ptsQtrs.push(0);
-		this.playByPlay.logEvent({
-			type: "overtime",
-			clock: this.clock,
-			quarter: this.team[0].stat.ptsQtrs.length,
-		});
+					if (
+						this.inning >= this.numInnings &&
+						this.team[0].t.stat.pts !== this.team[1].t.stat.pts
+					) {
+						break;
+					}
+				}
 
-		this.checkPullGoalie(this.o);
-		this.checkPullGoalie(this.d);
+				if (this.o === 0) {
+					this.inning += 1;
+					if (this.inning > this.numInnings) {
+						this.overtime = true;
+						this.overtimes += 1;
+					}
+				}
 
-		this.updatePlayersOnIce({ type: "newPeriod" });
-		this.faceoff();
-
-		while (this.clock > 0) {
-			this.simPossession();
-
-			if (this.team[0].stat.pts !== this.team[1].stat.pts) {
-				// Sudden death overtime
-				break;
-			}
-
-			this.advanceClock();
-
-			if (this.clock > 0) {
-				this.injuries();
-				this.updatePlayersOnIce({ type: "normal" });
+				this.possessionChange();
+				this.resetNewInning();
 			}
 		}
 	}

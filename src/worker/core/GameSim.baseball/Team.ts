@@ -75,7 +75,7 @@ class Team<DH extends boolean> {
 		this.playersInGameByBattingOrder = [] as any;
 		this.rebuildIndexes();
 
-		this.atBat = 0;
+		this.atBat = -1;
 	}
 
 	rebuildIndexes() {

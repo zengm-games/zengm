@@ -35,3 +35,10 @@ export type TeamGameSim = {
 		reb: number;
 	};
 };
+
+export type Runner = {
+	pid: number;
+	from: 1 | 2 | 3; // 1st/2nd/3rd base
+	to: 2 | 3 | 4; // 2nd/3rd/home
+	out: boolean;
+};

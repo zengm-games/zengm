@@ -80,7 +80,7 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "hitResult";
-			result: "flyOut" | "throwOut" | "fieldersChoice" | "hit";
+			result: "flyOut" | "throwOut" | "fieldersChoice" | "doublePlay" | "hit";
 			t: TeamNum;
 			pid: number;
 			posDefense: number[]; // Like for a double play, this could be [6, 4, 3]

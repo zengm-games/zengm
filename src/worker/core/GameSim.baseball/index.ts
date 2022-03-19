@@ -376,11 +376,18 @@ class GameSim {
 					const runners = this.getRunners();
 
 					const hit = Math.random() < 0.3;
-					let result: "hit" | "flyOut" | "throwOut" | "fieldersChoice";
+					const errorIfNotHit = Math.random() < 0.05;
+
+					let result:
+						| "hit"
+						| "flyOut"
+						| "throwOut"
+						| "fieldersChoice"
+						| "doublePlay";
 					let pidError: number | undefined;
 					const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
 					let numBasesWeights: [number, number, number, number];
-					if (hit) {
+					if (errorIfNotHit || hit) {
 						result = "hit";
 						if (type === "fly") {
 							if (distance === "infield") {
@@ -415,11 +422,41 @@ class GameSim {
 						if (type === "fly" || type === "line") {
 							result = "flyOut";
 						} else {
-							result = "fieldersChoice";
-							result = "throwOut";
+							if (runners[0]) {
+								const r = Math.random();
+								let probDoublePlay;
+
+								// Probability of double play depends on who it's hit to
+								if (hitTo === 6) {
+									probDoublePlay = 0.7;
+								} else if (hitTo === 4) {
+									probDoublePlay = 0.5;
+								} else if (hitTo === 5) {
+									probDoublePlay = 0.3;
+								} else {
+									probDoublePlay = 0.2;
+								}
+
+								// ...and other runners
+								if (runners[1] && runners[2]) {
+									probDoublePlay /= 3;
+								} else if (runners[1]) {
+									probDoublePlay /= 2;
+								}
+
+								if (r < probDoublePlay) {
+									result = "doublePlay";
+								} else if (r < probDoublePlay + (1 - probDoublePlay) / 2) {
+									result = "fieldersChoice";
+								} else {
+									result = "throwOut";
+								}
+							} else {
+								result = "throwOut";
+							}
 						}
 
-						if (Math.random() < 0.05) {
+						if (errorIfNotHit) {
 							const errorPosition = random.choice(posDefense);
 							const pos = POS_NUMBERS_INVERSE[errorPosition];
 							pidError = this.team[this.d].playersInGameByPos[pos].p.id;
@@ -431,8 +468,90 @@ class GameSim {
 						numBasesWeights,
 					);
 
-					for (const runner of runners) {
-						throw new Error("Not implemented");
+					if (runners[0] && !runners[1] && !runners[2]) {
+						// Runner on first
+
+						if (errorIfNotHit || hit) {
+							// Advance by numBases is mandatory, to stay ahead of hitter
+							runners[0].to = Math.min(4, runners[0].from + numBases);
+
+							// Fast runner might get one more base
+							if (runners[0].to < 4 && Math.random() < 0.1) {
+								runners[0].to += 1;
+							}
+						} else {
+							// Is runner out due to a double play or fielder's choice?
+							if (result === "doublePlay" || result === "fieldersChoice") {
+								runners[0].to += 1;
+								runners[0].out = true;
+							} else {
+								// Tag up on very deep fly ball
+								if (
+									type === "fly" &&
+									distance === "deep" &&
+									Math.random() < 0.05
+								) {
+									runners[0].to += 1;
+								}
+							}
+						}
+					} else if (runners[0] && runners[1] && !runners[2]) {
+						// Runners on first and second
+					} else if (runners[0] && runners[1] && runners[2]) {
+						// Bases loaded
+					} else if (!runners[0] && runners[1] && !runners[2]) {
+						// Runner on second
+					} else if (!runners[0] && !runners[1] && runners[2]) {
+						// Runner on third
+
+						if (errorIfNotHit || hit) {
+							if (numBases >= 2) {
+								// Double or more is a score
+								runners[2].to = 4;
+							} else {
+								// Single, score on anything except some infield hits
+								if (
+									type === "ground" &&
+									(hitTo === 3 || hitTo === 4 || hitTo === 5 || hitTo === 6) &&
+									Math.random() < 0.5
+								) {
+									runners[2].to = 3;
+								} else {
+									runners[2].to = 4;
+								}
+							}
+						} else {
+							// Is runner out due to a double play or fielder's choice?
+							if (result === "fieldersChoice") {
+								runners[2].to += 1;
+								runners[2].out = true;
+							} else {
+								if (type === "fly") {
+									if (distance === "shallow" && Math.random() < 0.25) {
+										runners[2].to = 4;
+									} else if (distance === "normal" && Math.random() < 0.75) {
+										runners[2].to = 4;
+									} else if (distance === "deep") {
+										runners[2].to = 4;
+									}
+								} else if (type === "line") {
+									if (
+										(hitTo === 7 || hitTo === 8 || hitTo === 9) &&
+										Math.random() < 0.5
+									) {
+										runners[2].to = 4;
+									}
+								} else {
+									if (Math.random() < 0.5) {
+										runners[2].to = 4;
+									}
+								}
+							}
+						}
+					} else if (runners[0] && !runners[1] && runners[2]) {
+						// Runners on first and third
+					} else if (!runners[0] && runners[1] && runners[2]) {
+						// Runners on second and third
 					}
 
 					if (pidError !== undefined) {
@@ -447,6 +566,8 @@ class GameSim {
 							numBases,
 							outAtNextBase: false,
 						});
+
+						this.bases[numBases - 1] = p;
 					} else {
 						this.playByPlay.logEvent({
 							type: "hitResult",
@@ -461,6 +582,14 @@ class GameSim {
 
 						if (result === "flyOut" || result === "throwOut") {
 							this.outs += 1;
+						} else if (result === "doublePlay") {
+							this.outs += 1;
+						} else {
+							if (result === "fieldersChoice") {
+								this.outs += 1;
+							}
+
+							this.bases[numBases - 1] = p;
 						}
 					}
 

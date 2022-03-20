@@ -35,7 +35,7 @@ class Team<DH extends boolean> {
 		this.t = t;
 		this.dh = dh;
 
-		this.playersInGame = [];
+		this.playersInGame = {};
 
 		// Starting pitcher
 		const starter = this.t.depth.P[0];

@@ -356,6 +356,222 @@ class GameSim {
 		}
 	}
 
+	advanceRunners({
+		battedBallInfo,
+		errorIfNotHit,
+		fieldersChoiceOrDoublePlayIndex,
+		hit,
+		hitTo,
+		numBases,
+		result,
+	}: {
+		battedBallInfo: ReturnType<GameSim["doBattedBall"]>;
+		errorIfNotHit: boolean;
+		fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2;
+		hit: boolean;
+		hitTo: ReturnType<GameSim["getHitTo"]>;
+		numBases: 1 | 2 | 3 | 4;
+		result: "hit" | "flyOut" | "throwOut" | "fieldersChoice" | "doublePlay";
+	}) {
+		const runners = this.getRunners();
+
+		// Handle runners
+		// Start from 3rd base first, because a blocked base can't be advanced to
+		const blockedBases = new Set<0 | 1 | 2>();
+		for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
+			const runner = runners[i];
+			if (!runner) {
+				continue;
+			}
+
+			if (hit || errorIfNotHit) {
+				// Handle runners advancing on a hit/error
+
+				const mustAdvanceWithHitter =
+					i === 0 ||
+					(i === 1 && runners[0]) ||
+					(i === 2 && runners[0] && runners[1]);
+
+				if (i === 2) {
+					// Third base
+					if (numBases >= 2) {
+						// Double or more is a score
+						runner.to = 4;
+					} else {
+						// Single, score on anything except some infield hits
+						if (
+							!mustAdvanceWithHitter &&
+							battedBallInfo.type === "ground" &&
+							hitTo <= 6 &&
+							Math.random() < 0.5
+						) {
+							runner.to = 3;
+							blockedBases.add(2);
+						} else {
+							runner.to = 4;
+						}
+					}
+				} else if (i === 1) {
+					// Second base
+
+					if (numBases >= 2) {
+						// Double or more is a score
+						runner.to = 4;
+					} else {
+						if (blockedBases.has(2)) {
+							// Can't advance cause runner on 3rd didn't advance
+							runner.to = 2;
+							blockedBases.add(1);
+						} else if (hitTo <= 6) {
+							// Infield single, maybe not advance
+							if (Math.random() < 0.5 && !mustAdvanceWithHitter) {
+								runner.to = 2;
+								blockedBases.add(1);
+							} else {
+								runner.to = 3;
+								blockedBases.add(2);
+							}
+						} else {
+							// Outfield single, go to 3rd or 4th
+							if (Math.random() < 0.2) {
+								runner.to = 3;
+								blockedBases.add(2);
+							} else {
+								runner.to = 4;
+							}
+						}
+					}
+				} else {
+					// First base
+
+					// Advance by numBases is mandatory, to stay ahead of hitter
+					runner.to = Math.min(4, runner.from + numBases);
+
+					// Fast runner might get one more base
+					if (
+						runner.to < 4 &&
+						Math.random() < 0.1 &&
+						!blockedBases.has(runner.to as any)
+					) {
+						runner.to += 1;
+					}
+					blockedBases.add((runner.to - 1) as any);
+				}
+			} else {
+				// Handle runners advancing on an out, whether tagging up on a fly ball or advancing on a ground ball.
+				if (
+					(result === "doublePlay" || result === "fieldersChoice") &&
+					fieldersChoiceOrDoublePlayIndex === i
+				) {
+					runner.to += 1;
+					runner.out = true;
+					continue;
+				}
+
+				if (blockedBases.has(i)) {
+					continue;
+				}
+
+				let advance = false;
+
+				if (i === 2) {
+					// Third base
+
+					if (battedBallInfo.type === "fly") {
+						// Tag up
+						if (battedBallInfo.distance === "shallow" && Math.random() < 0.25) {
+							advance = true;
+						} else if (
+							battedBallInfo.distance === "normal" &&
+							Math.random() < 0.75
+						) {
+							advance = true;
+						} else if (battedBallInfo.distance === "deep") {
+							advance = true;
+						}
+					} else if (battedBallInfo.type === "line") {
+						// Tag up
+						if (hitTo >= 7 && Math.random() < 0.5) {
+							advance = true;
+						}
+					} else {
+						// Maybe score on ground ball
+						if (Math.random() < 0.5) {
+							advance = true;
+						}
+					}
+				} else if (i === 1) {
+					// Second base
+
+					let tendency = 0;
+					if (hitTo == 7) {
+						tendency = 0.5;
+					} else if (hitTo === 8) {
+						tendency = 1;
+					} else if (hitTo === 9) {
+						tendency = 1.5;
+					}
+
+					if (battedBallInfo.type === "fly") {
+						if (
+							battedBallInfo.distance === "normal" &&
+							Math.random() < 0.25 * tendency
+						) {
+							advance = true;
+						} else if (
+							battedBallInfo.distance === "deep" &&
+							Math.random() < 0.5 * tendency
+						) {
+							advance = true;
+						}
+					} else if (battedBallInfo.type === "line") {
+						if (Math.random() < 0.25 * tendency) {
+							advance = true;
+						}
+					} else {
+						if (hitTo == 3) {
+							tendency = 1.5;
+						} else if (hitTo === 4) {
+							tendency = 1;
+						} else if (hitTo === 5) {
+							tendency = 0.5;
+						} else if (hitTo === 6) {
+							tendency = 0.5;
+						}
+
+						// Maybe advance on ground ball
+						if (Math.random() < 0.4 * tendency) {
+							advance = true;
+						}
+					}
+				} else {
+					// First base
+
+					// Tag up on very deep fly ball
+					if (
+						battedBallInfo.type === "fly" &&
+						battedBallInfo.distance === "deep" &&
+						Math.random() < 0.05
+					) {
+						advance = true;
+					}
+				}
+
+				if (advance) {
+					runner.to += 1;
+				} else {
+					blockedBases.add(i);
+				}
+			}
+
+			if (runner.to === 4) {
+				this.doScore(this.bases[i]);
+			}
+		}
+
+		return runners;
+	}
+
 	simPitch() {
 		let doneBatter;
 		const outcome = random.choice(["ball", "strike", "contact"]);
@@ -399,8 +615,6 @@ class GameSim {
 			} else {
 				// Figure out what defender fields the ball
 				const hitTo = this.getHitTo(battedBallInfo as any);
-
-				const runners = this.getRunners();
 
 				const hit = Math.random() < 0.3;
 				const errorIfNotHit = Math.random() < 0.05;
@@ -495,197 +709,18 @@ class GameSim {
 
 				const numBases = random.choice([1, 2, 3, 4] as const, numBasesWeights);
 
-				// Handle runners
-				// Start from 3rd base first, because a blocked base can't be advanced to
-				const blockedBases = new Set<0 | 1 | 2>();
-				for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
-					const runner = runners[i];
-					if (!runner) {
-						continue;
-					}
+				const runners = this.advanceRunners({
+					battedBallInfo,
+					errorIfNotHit,
+					fieldersChoiceOrDoublePlayIndex,
+					hit,
+					hitTo,
+					numBases,
+					result,
+				});
 
-					if (hit || errorIfNotHit) {
-						// Handle runners advancing on a hit/error
-
-						const mustAdvanceWithHitter =
-							i === 0 ||
-							(i === 1 && runners[0]) ||
-							(i === 2 && runners[0] && runners[1]);
-
-						if (i === 2) {
-							// Third base
-							if (numBases >= 2) {
-								// Double or more is a score
-								runner.to = 4;
-							} else {
-								// Single, score on anything except some infield hits
-								if (
-									!mustAdvanceWithHitter &&
-									battedBallInfo.type === "ground" &&
-									hitTo <= 6 &&
-									Math.random() < 0.5
-								) {
-									runner.to = 3;
-									blockedBases.add(2);
-								} else {
-									runner.to = 4;
-								}
-							}
-						} else if (i === 1) {
-							// Second base
-
-							if (numBases >= 2) {
-								// Double or more is a score
-								runner.to = 4;
-							} else {
-								if (blockedBases.has(2)) {
-									// Can't advance cause runner on 3rd didn't advance
-									runner.to = 2;
-									blockedBases.add(1);
-								} else if (hitTo <= 6) {
-									// Infield single, maybe not advance
-									if (Math.random() < 0.5 && !mustAdvanceWithHitter) {
-										runner.to = 2;
-										blockedBases.add(1);
-									} else {
-										runner.to = 3;
-										blockedBases.add(2);
-									}
-								} else {
-									// Outfield single, go to 3rd or 4th
-									if (Math.random() < 0.2) {
-										runner.to = 3;
-										blockedBases.add(2);
-									} else {
-										runner.to = 4;
-									}
-								}
-							}
-						} else {
-							// First base
-
-							// Advance by numBases is mandatory, to stay ahead of hitter
-							runner.to = Math.min(4, runner.from + numBases);
-
-							// Fast runner might get one more base
-							if (
-								runner.to < 4 &&
-								Math.random() < 0.1 &&
-								!blockedBases.has(runner.to as any)
-							) {
-								runner.to += 1;
-							}
-							blockedBases.add((runner.to - 1) as any);
-						}
-					} else {
-						// Handle runners advancing on an out, whether tagging up on a fly ball or advancing on a ground ball.
-						if (
-							(result === "doublePlay" || result === "fieldersChoice") &&
-							fieldersChoiceOrDoublePlayIndex === i
-						) {
-							runner.to += 1;
-							runner.out = true;
-							continue;
-						}
-
-						if (blockedBases.has(i)) {
-							continue;
-						}
-
-						let advance = false;
-
-						if (i === 2) {
-							// Third base
-
-							if (battedBallInfo.type === "fly") {
-								// Tag up
-								if (
-									battedBallInfo.distance === "shallow" &&
-									Math.random() < 0.25
-								) {
-									advance = true;
-								} else if (
-									battedBallInfo.distance === "normal" &&
-									Math.random() < 0.75
-								) {
-									advance = true;
-								} else if (battedBallInfo.distance === "deep") {
-									advance = true;
-								}
-							} else if (battedBallInfo.type === "line") {
-								// Tag up
-								if (hitTo >= 7 && Math.random() < 0.5) {
-									advance = true;
-								}
-							} else {
-								// Maybe score on ground ball
-								if (Math.random() < 0.5) {
-									advance = true;
-								}
-							}
-						} else if (i === 1) {
-							// Second base
-
-							let tendency = 0;
-							if (hitTo == 7) {
-								tendency = 0.5;
-							} else if (hitTo === 8) {
-								tendency = 1;
-							} else if (hitTo === 9) {
-								tendency = 1.5;
-							}
-
-							if (battedBallInfo.type === "fly") {
-								if (
-									battedBallInfo.distance === "normal" &&
-									Math.random() < 0.25 * tendency
-								) {
-									advance = true;
-								} else if (
-									battedBallInfo.distance === "deep" &&
-									Math.random() < 0.5 * tendency
-								) {
-									advance = true;
-								}
-							} else if (battedBallInfo.type === "line") {
-								if (Math.random() < 0.25 * tendency) {
-									advance = true;
-								}
-							} else {
-								if (hitTo == 3) {
-									tendency = 1.5;
-								} else if (hitTo === 4) {
-									tendency = 1;
-								} else if (hitTo === 5) {
-									tendency = 0.5;
-								} else if (hitTo === 6) {
-									tendency = 0.5;
-								}
-
-								// Maybe advance on ground ball
-								if (Math.random() < 0.4 * tendency) {
-									advance = true;
-								}
-							}
-						} else {
-							// First base
-
-							// Tag up on very deep fly ball
-							if (
-								battedBallInfo.type === "fly" &&
-								battedBallInfo.distance === "deep" &&
-								Math.random() < 0.05
-							) {
-								advance = true;
-							}
-						}
-
-						if (advance) {
-							runner.to += 1;
-						} else {
-							blockedBases.add(i);
-						}
-					}
+				if (numBases === 4) {
+					this.doScore(p);
 				}
 
 				if (pidError !== undefined) {

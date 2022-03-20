@@ -495,121 +495,90 @@ class GameSim {
 
 				const numBases = random.choice([1, 2, 3, 4] as const, numBasesWeights);
 
-				if (runners[0] && !runners[1] && !runners[2]) {
-					// Runner on first
-
-					if (errorIfNotHit || hit) {
-						// Advance by numBases is mandatory, to stay ahead of hitter
-						runners[0].to = Math.min(4, runners[0].from + numBases);
-
-						// Fast runner might get one more base
-						if (runners[0].to < 4 && Math.random() < 0.1) {
-							runners[0].to += 1;
-						}
-					}
-				} else if (runners[0] && runners[1] && !runners[2]) {
-					// Runners on first and second
-
-					if (errorIfNotHit || hit) {
-						for (const runner of runners) {
-							if (runner) {
-								// Advance by numBases is mandatory, to stay ahead of hitter
-								runner.to = Math.min(4, runner.from + numBases);
-
-								// Fast runner might get one more base
-								if (runner.to < 4 && Math.random() < 0.1) {
-									runner.to += 1;
-								}
-							}
-
-							// Handle collisions, if runner on 1st wants to take extra base but cannot
-							if (runners[1].to === runners[0].to && runners[0].to < 4) {
-								runners[0].to -= 1;
-							}
-						}
-					}
-				} else if (runners[0] && runners[1] && runners[2]) {
-					// Bases loaded
-
-					if (errorIfNotHit || hit) {
-						for (const runner of runners) {
-							if (runner) {
-								// Advance by numBases is mandatory, to stay ahead of hitter
-								runner.to = Math.min(4, runner.from + numBases);
-
-								// Fast runner might get one more base
-								if (runner.to < 4 && Math.random() < 0.1) {
-									runner.to += 1;
-								}
-							}
-
-							// Handle collisions, if runner on 1st wants to take extra base but cannot
-							if (runners[1].to === runners[0].to && runners[0].to < 4) {
-								runners[0].to -= 1;
-							}
-						}
-					}
-				} else if (!runners[0] && runners[1] && !runners[2]) {
-					// Runner on second
-
-					if (errorIfNotHit || hit) {
-						if (numBases >= 2) {
-							// Double or more is a score
-							runners[1].to = 4;
-						} else {
-							if (hitTo <= 6) {
-								// Infield single, maybe not advance
-								if (Math.random() < 0.5) {
-									runners[1].to = 2;
-								} else {
-									runners[1].to = 3;
-								}
-							} else {
-								// Outfield single, go to 3rd or 4th
-								if (Math.random() < 0.2) {
-									runners[1].to = 3;
-								} else {
-									runners[1].to = 4;
-								}
-							}
-						}
-					}
-				} else if (!runners[0] && !runners[1] && runners[2]) {
-					// Runner on third
-
-					if (errorIfNotHit || hit) {
-						if (numBases >= 2) {
-							// Double or more is a score
-							runners[2].to = 4;
-						} else {
-							// Single, score on anything except some infield hits
-							if (
-								battedBallInfo.type === "ground" &&
-								hitTo <= 6 &&
-								Math.random() < 0.5
-							) {
-								runners[2].to = 3;
-							} else {
-								runners[2].to = 4;
-							}
-						}
-					}
-				} else if (runners[0] && !runners[1] && runners[2]) {
-					// Runners on first and third
-				} else if (!runners[0] && runners[1] && runners[2]) {
-					// Runners on second and third
-				}
-
-				// Handle runners advancing on an out, whether tagging up on a fly ball or advancing on a ground ball.
-				// Go from 3rd base first, because a blocked base can't be advanced to
+				// Handle runners
+				// Start from 3rd base first, because a blocked base can't be advanced to
 				const blockedBases = new Set<0 | 1 | 2>();
-				if (!hit && !errorIfNotHit) {
-					for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
-						const runner = runners[i];
-						if (!runner) {
-							continue;
-						}
+				for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
+					const runner = runners[i];
+					if (!runner) {
+						continue;
+					}
 
+					if (hit || errorIfNotHit) {
+						// Handle runners advancing on a hit/error
+
+						const mustAdvanceWithHitter =
+							i === 0 ||
+							(i === 1 && runners[0]) ||
+							(i === 2 && runners[0] && runners[1]);
+
+						if (i === 2) {
+							// Third base
+							if (numBases >= 2) {
+								// Double or more is a score
+								runner.to = 4;
+							} else {
+								// Single, score on anything except some infield hits
+								if (
+									!mustAdvanceWithHitter &&
+									battedBallInfo.type === "ground" &&
+									hitTo <= 6 &&
+									Math.random() < 0.5
+								) {
+									runner.to = 3;
+									blockedBases.add(2);
+								} else {
+									runner.to = 4;
+								}
+							}
+						} else if (i === 1) {
+							// Second base
+
+							if (numBases >= 2) {
+								// Double or more is a score
+								runner.to = 4;
+							} else {
+								if (blockedBases.has(2)) {
+									// Can't advance cause runner on 3rd didn't advance
+									runner.to = 2;
+									blockedBases.add(1);
+								} else if (hitTo <= 6) {
+									// Infield single, maybe not advance
+									if (Math.random() < 0.5 && !mustAdvanceWithHitter) {
+										runner.to = 2;
+										blockedBases.add(1);
+									} else {
+										runner.to = 3;
+										blockedBases.add(2);
+									}
+								} else {
+									// Outfield single, go to 3rd or 4th
+									if (Math.random() < 0.2) {
+										runner.to = 3;
+										blockedBases.add(2);
+									} else {
+										runner.to = 4;
+									}
+								}
+							}
+						} else {
+							// First base
+
+							// Advance by numBases is mandatory, to stay ahead of hitter
+							runner.to = Math.min(4, runner.from + numBases);
+
+							// Fast runner might get one more base
+							if (
+								runner.to < 4 &&
+								Math.random() < 0.1 &&
+								!blockedBases.has(runner.to as any)
+							) {
+								runner.to += 1;
+							}
+							blockedBases.add((runner.to - 1) as any);
+						}
+					} else {
+						// Handle runners advancing on an out, whether tagging up on a fly ball or advancing on a ground ball.
 						if (
 							(result === "doublePlay" || result === "fieldersChoice") &&
 							fieldersChoiceOrDoublePlayIndex === i

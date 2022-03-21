@@ -177,21 +177,15 @@ const doInjury = async (
 		}
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
-		const r = p2.ratings.length - 1;
+		const r = p2.ratings.length - 1; // New ratings row
 
-		// New ratings row
-		p2.ratings[r].spd = player.limitRating(
-			p2.ratings[r].spd - random.randInt(1, biggestRatingsLoss),
-		);
-		p2.ratings[r].endu = player.limitRating(
-			p2.ratings[r].endu - random.randInt(1, biggestRatingsLoss),
-		);
-		const rating = bySport({
-			basketball: "jmp",
-			football: "thp",
-			hockey: undefined,
+		const ratingsToNerf = bySport({
+			baseball: ["spd", "endu", "hpw", "thr", "ppw"],
+			basketball: ["spd", "endu", "jmp"],
+			football: ["spd", "endu", "thp"],
+			hockey: ["spd", "endu"],
 		});
-		if (rating) {
+		for (const rating of ratingsToNerf) {
 			p2.ratings[r][rating] = player.limitRating(
 				p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
 			);
@@ -206,7 +200,6 @@ const doInjury = async (
 		if (p2.ratings[r].pot > p2.ratings[r2].pot) {
 			p2.ratings[r].pot = p2.ratings[r2].pot;
 		}
-
 		if (p2.ratings[r].pots) {
 			for (const pos of Object.keys(p2.ratings[r].pots)) {
 				if (p2.ratings[r].pots[pos] > p2.ratings[r2].pots[pos]) {

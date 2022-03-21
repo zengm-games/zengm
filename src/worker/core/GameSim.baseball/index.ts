@@ -922,7 +922,7 @@ class GameSim {
 		for (let t = 0; t < 2; t++) {
 			delete this.team[t].t.compositeRating;
 			// @ts-expect-error
-			delete this.team[t].pace;
+			delete this.team[t].t.pace;
 
 			for (let p = 0; p < this.team[t].t.player.length; p++) {
 				// @ts-expect-error
@@ -937,6 +937,8 @@ class GameSim {
 				delete this.team[t].t.player[p].stat.energy;
 				delete this.team[t].t.player[p].numConsecutiveGamesG;
 			}
+
+			this.team[t] = this.team[t].t as any;
 		}
 
 		const out = {

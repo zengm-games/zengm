@@ -81,7 +81,7 @@ class Team<DH extends boolean> {
 	rebuildIndexes() {
 		for (const playerInGame of Object.values(this.playersInGame)) {
 			this.playersInGameByPos[playerInGame.pos] = playerInGame;
-			if (playerInGame.battingOrder > 0) {
+			if (playerInGame.battingOrder >= 0) {
 				this.playersInGameByBattingOrder[playerInGame.battingOrder] =
 					playerInGame;
 			}

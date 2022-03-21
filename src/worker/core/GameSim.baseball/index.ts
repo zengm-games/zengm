@@ -132,6 +132,8 @@ class GameSim {
 	}
 
 	resetNewInning() {
+		this.team[this.o].t.stat.ptsQtrs.push(0);
+
 		this.bases = [undefined, undefined, undefined];
 		this.outs = 0;
 		this.resetNewBatter();

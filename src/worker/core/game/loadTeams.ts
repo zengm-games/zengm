@@ -211,7 +211,7 @@ const processTeam = (
 		}
 	}
 
-	t.stat = { ...teamStats, pts: 0, ptsQtrs: [0] };
+	t.stat = { ...teamStats, pts: 0, ptsQtrs: isSport("baseball") ? [] : [0] };
 	return t;
 };
 

@@ -6,6 +6,7 @@ const stats = {
 	raw: [
 		// Batting
 		"gp",
+		"gs",
 		"pa",
 		"r",
 		"h",
@@ -26,8 +27,8 @@ const stats = {
 		// Pitching
 		"w",
 		"l",
-		"gPit",
-		"gs",
+		"gpPit",
+		"gsPit",
 		"gf",
 		"cg",
 		"sho",

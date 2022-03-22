@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, ReactNode } from "react";
 import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
 import BoxScore from "./BoxScore";
@@ -282,12 +282,18 @@ const DetailedScore = ({
 	// Quarter/overtime labels
 	const qtrs: string[] = boxScore.teams[0].ptsQtrs.map(
 		(pts: number, i: number) => {
-			return i < boxScore.numPeriods
+			return i < boxScore.numPeriods || isSport("baseball")
 				? `${i + 1}`
 				: `OT${i - boxScore.numPeriods + 1}`;
 		},
 	);
 	qtrs.push("F");
+
+	// For baseball, we don't have bottom of the inning yet or maybe at all
+	let emptyFrameSpacer: ReactNode;
+	if (boxScore.teams[0].ptsQtrs.length > boxScore.teams[1].ptsQtrs.length) {
+		emptyFrameSpacer = <th />;
+	}
 
 	return (
 		<div className="d-flex align-items-center justify-content-center">
@@ -325,7 +331,7 @@ const DetailedScore = ({
 							</tr>
 						</thead>
 						<tbody>
-							{boxScore.teams.map((t: any) => (
+							{boxScore.teams.map((t: any, i: number) => (
 								<tr key={t.abbrev}>
 									<th>
 										{t.tid >= 0 ? (
@@ -345,6 +351,7 @@ const DetailedScore = ({
 									{t.ptsQtrs.map((pts: number, i: number) => (
 										<td key={i}>{pts}</td>
 									))}
+									{i === 1 ? emptyFrameSpacer : null}
 									<th>{t.pts}</th>
 								</tr>
 							))}

@@ -129,6 +129,8 @@ class GameSim {
 		this.overtimes = 0;
 
 		this.resetNewInning();
+
+		this.logStarters();
 	}
 
 	resetNewInning() {
@@ -142,6 +144,20 @@ class GameSim {
 	resetNewBatter() {
 		this.balls = 0;
 		this.strikes = 0;
+	}
+
+	logStarters() {
+		for (const i of teamNums) {
+			const t = this.team[i];
+			for (const p of t.playersInGameByBattingOrder) {
+				this.recordStat(i, p.p, "gp");
+				this.recordStat(i, p.p, "gs");
+			}
+
+			const startingPitcher = t.playersInGameByPos.P.p;
+			this.recordStat(i, startingPitcher, "gpPit");
+			this.recordStat(i, startingPitcher, "gsPit");
+		}
 	}
 
 	getHitTo(

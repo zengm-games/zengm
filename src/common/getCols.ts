@@ -186,13 +186,13 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "L",
 		},
-		"stat:gPit": {
+		"stat:gpPit": {
 			desc: "Games Played",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "GP",
 		},
-		"stat:gs": {
+		"stat:gsPit": {
 			desc: "Games Started",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",

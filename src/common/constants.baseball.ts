@@ -3,7 +3,18 @@ import type { Position, RatingKey } from "./types.baseball";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {};
 
-const PLAYER_GAME_STATS = {};
+const PLAYER_GAME_STATS = {
+	batting: {
+		name: "Batting",
+		stats: ["ab", "r", "h", "rbi", "bb", "so", "pa"],
+		sortBy: ["pa"],
+	},
+	pitching: {
+		name: "Pitching",
+		stats: ["ip", "hPit", "rPit", "er", "bbPit", "soPit", "hrPit"],
+		sortBy: ["min"],
+	},
+};
 
 const PLAYER_SUMMARY = {};
 

@@ -408,7 +408,6 @@ class GameSim {
 							Math.random() < 0.5
 						) {
 							runner.to = 3;
-							blockedBases.add(2);
 						} else {
 							runner.to = 4;
 						}
@@ -423,21 +422,17 @@ class GameSim {
 						if (blockedBases.has(2)) {
 							// Can't advance cause runner on 3rd didn't advance
 							runner.to = 2;
-							blockedBases.add(1);
 						} else if (hitTo <= 6) {
 							// Infield single, maybe not advance
 							if (Math.random() < 0.5 && !mustAdvanceWithHitter) {
 								runner.to = 2;
-								blockedBases.add(1);
 							} else {
 								runner.to = 3;
-								blockedBases.add(2);
 							}
 						} else {
 							// Outfield single, go to 3rd or 4th
 							if (Math.random() < 0.2) {
 								runner.to = 3;
-								blockedBases.add(2);
 							} else {
 								runner.to = 4;
 							}
@@ -457,7 +452,6 @@ class GameSim {
 					) {
 						runner.to += 1;
 					}
-					blockedBases.add((runner.to - 1) as any);
 				}
 			} else {
 				// Handle runners advancing on an out, whether tagging up on a fly ball or advancing on a ground ball.
@@ -558,11 +552,8 @@ class GameSim {
 						advance = true;
 					}
 				}
-
 				if (advance) {
 					runner.to += 1;
-				} else {
-					blockedBases.add(i);
 				}
 			}
 
@@ -570,6 +561,10 @@ class GameSim {
 				const pRBI = error ? undefined : p;
 
 				this.doScore(this.bases[i]!, pRBI);
+			}
+
+			if (!runner.out && runner.to < 4) {
+				blockedBases.add((runner.to - 1) as any);
 			}
 		}
 

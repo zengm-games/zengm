@@ -1,4 +1,4 @@
-const bySport = <T>(
+const bySport = <T extends unknown>(
 	object:
 		| {
 				baseball: T;

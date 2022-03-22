@@ -82,7 +82,7 @@ const addFirstNameShort = <
 
 	const tries: Record<string, Trie | undefined> = {};
 	for (const [lastName, playersGroup] of Object.entries(playersByLastName)) {
-		if (playersGroup.length <= 1) {
+		if (playersGroup.length <= 1 || lastName === "") {
 			continue;
 		}
 
@@ -99,7 +99,7 @@ const addFirstNameShort = <
 		let firstNameShort;
 		const trie = tries[p.lastName];
 		if (!trie) {
-			if (p.firstName.length <= 2) {
+			if (p.firstName.length <= 2 || p.lastName === "") {
 				firstNameShort = p.firstName;
 			} else {
 				firstNameShort = `${p.firstName.slice(0, 1)}.`;

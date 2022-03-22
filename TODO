@@ -1,3 +1,13 @@
+When you reach playoffs if you press sim game or watch game live it puts the game on a seperate day. Say it is day 20 in playoffs, you live sim a game and the game you simmed remains on day 20 while the rest of the  games for that day are moved to day 21. https://discord.com/channels/290013534023057409/290015591216054273/953828260565905438
+
+if better teams get better draft picks, tiebreakers should be reversed https://discord.com/channels/290013534023057409/290015591216054273/951988322807476284
+
+sticky columns (maybe just mobile >2 columns) don't get applied correctly when table contents changes, such as on the trade screen when making a trade https://discord.com/channels/@me/673750689649917958/952412436609245255
+
+complete a successful trade. then click "what would make this deal work?" - the box containing text from other GM is green rather than blue https://discord.com/channels/@me/673750689649917958/952413582421786645
+
+add more stuff to league leaders - TS%, DD, TD https://discord.com/channels/@me/673750689649917958/953637095887499324
+
 add option to show ratings rounded to every 10/20/whatever for less precision https://discord.com/channels/@me/778760871911751700/948801654701035550
 - add generic pre-processor for every displayed rating
   - also use for challengeNoRatings

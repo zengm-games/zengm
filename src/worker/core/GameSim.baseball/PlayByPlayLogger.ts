@@ -12,6 +12,11 @@ type PlayByPlayEventInputScore = {
 
 type PlayByPlayEventInput =
 	| {
+			type: "sideStart";
+			inning: number;
+			t: TeamNum;
+	  }
+	| {
 			type: "sideOver";
 			inning: number;
 	  }
@@ -41,13 +46,23 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "foul";
+			balls: number;
+			strikes: number;
 	  }
 	| {
 			type: "ball";
 			intentional: boolean;
+			balls: number;
+			strikes: number;
 	  }
 	| {
-			type: "strike" | "strikeOut";
+			type: "strike";
+			swinging: boolean;
+			balls: number;
+			strikes: number;
+	  }
+	| {
+			type: "strikeOut";
 			swinging: boolean;
 	  }
 	| {

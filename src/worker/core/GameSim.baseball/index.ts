@@ -291,6 +291,18 @@ class GameSim {
 		throw new Error("Should never happen");
 	}
 
+	doFoul() {
+		if (this.strikes < 2) {
+			this.strikes += 1;
+		}
+
+		this.playByPlay.logEvent({
+			type: "foul",
+			balls: this.balls,
+			strikes: this.strikes,
+		});
+	}
+
 	doBattedBall(p: PlayerGameSim) {
 		const foul = Math.random() < 0.25;
 
@@ -309,9 +321,7 @@ class GameSim {
 
 		if (direction === "outOfPlay") {
 			// If it's obviously out of play, just log it as a foul ball immmediately
-			this.playByPlay.logEvent({
-				type: "foul",
-			});
+			this.doFoul();
 
 			return {
 				type: "outOfPlay",
@@ -608,6 +618,8 @@ class GameSim {
 				this.playByPlay.logEvent({
 					type: "ball",
 					intentional: false,
+					balls: this.balls,
+					strikes: this.strikes,
 				});
 			}
 		} else if (outcome === "strike") {
@@ -619,6 +631,8 @@ class GameSim {
 				this.playByPlay.logEvent({
 					type: "strike",
 					swinging: Math.random() < 0.5,
+					balls: this.balls,
+					strikes: this.strikes,
 				});
 			}
 		} else {
@@ -632,9 +646,7 @@ class GameSim {
 				battedBallInfo.direction === "farLeftFoul" ||
 				battedBallInfo.direction === "farRightFoul"
 			) {
-				this.playByPlay.logEvent({
-					type: "foul",
-				});
+				this.doFoul();
 			} else {
 				// Figure out what defender fields the ball
 				const hitTo = this.getHitTo(battedBallInfo as any);
@@ -1005,15 +1017,20 @@ class GameSim {
 	}
 
 	simGame() {
+		this.playByPlay.logEvent({
+			type: "sideStart",
+			inning: this.inning,
+			t: this.o,
+		});
+
 		while (true) {
 			this.simPlateAppearance();
 			if (this.outs >= 3) {
+				this.playByPlay.logEvent({
+					type: "sideOver",
+					inning: this.inning,
+				});
 				if (this.o === 1) {
-					this.playByPlay.logEvent({
-						type: "sideOver",
-						inning: this.inning,
-					});
-
 					if (
 						this.inning >= this.numInnings &&
 						this.team[0].t.stat.pts > this.team[1].t.stat.pts
@@ -1022,11 +1039,6 @@ class GameSim {
 						break;
 					}
 				} else {
-					this.playByPlay.logEvent({
-						type: "inningOver",
-						inning: this.inning,
-					});
-
 					if (
 						this.inning >= this.numInnings &&
 						this.team[0].t.stat.pts !== this.team[1].t.stat.pts
@@ -1045,6 +1057,11 @@ class GameSim {
 
 				this.possessionChange();
 				this.resetNewInning();
+				this.playByPlay.logEvent({
+					type: "sideStart",
+					inning: this.inning,
+					t: this.o,
+				});
 			}
 		}
 	}

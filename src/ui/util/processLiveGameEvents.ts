@@ -1,4 +1,5 @@
 import { bySport } from "../../common";
+import processLiveGameEventsBaseball from "./processLiveGameEvents.baseball";
 import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball";
 import processLiveGameEventsFootball from "./processLiveGameEvents.football";
 import processLiveGameEventsHockey from "./processLiveGameEvents.hockey";
@@ -16,6 +17,12 @@ const processLiveGameEvents = ({
 	quarters: any[]; // Basketball/football use strings, hockey uses numbers
 }) => {
 	return bySport({
+		baseball: processLiveGameEventsBaseball({
+			events,
+			boxScore,
+			overtimes,
+			quarters,
+		}) as any,
 		basketball: processLiveGameEventsBasketball({
 			events,
 			boxScore,

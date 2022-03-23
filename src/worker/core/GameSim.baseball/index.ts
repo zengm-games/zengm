@@ -151,7 +151,6 @@ class GameSim {
 			const t = this.team[i];
 			for (const p of t.playersInGameByBattingOrder) {
 				this.recordStat(i, p.p, "gp");
-				console.log(p.p);
 				this.recordStat(i, p.p, "gs");
 			}
 
@@ -734,14 +733,17 @@ class GameSim {
 				const numBases = random.choice([1, 2, 3, 4] as const, numBasesWeights);
 
 				if (hit) {
+					const pitcher = this.team[this.d].getPitcher().p;
+
 					this.recordStat(this.o, p, "ab");
 					this.recordStat(this.o, p, "h");
+					this.recordStat(this.d, pitcher, "hPit");
 					if (numBases > 1) {
-						this.recordStat(
-							this.o,
-							p,
-							numBases === 2 ? "2b" : numBases === 3 ? "3b" : "hr",
-						);
+						const hitType =
+							numBases === 2 ? "2b" : numBases === 3 ? "3b" : "hr";
+						this.recordStat(this.o, p, hitType);
+
+						this.recordStat(this.d, pitcher, `${hitType}Pit`);
 					}
 				}
 
@@ -787,12 +789,12 @@ class GameSim {
 					});
 
 					if (result === "flyOut" || result === "throwOut") {
-						this.outs += 1;
+						this.doOut();
 					} else if (result === "doublePlay") {
-						this.outs += 1;
+						this.doOut();
 					} else {
 						if (result === "fieldersChoice") {
-							this.outs += 1;
+							this.doOut();
 						}
 
 						this.bases[numBases - 1] = p;
@@ -807,6 +809,10 @@ class GameSim {
 	}
 
 	doScore(run: PlayerGameSim, rbi?: PlayerGameSim) {
+		const pitcher = this.team[this.d].getPitcher().p;
+		this.recordStat(this.d, pitcher, "rPit");
+		this.recordStat(this.d, pitcher, "er");
+
 		this.recordStat(this.o, run, "r");
 		if (rbi) {
 			this.recordStat(this.o, rbi, "rbi");
@@ -869,7 +875,10 @@ class GameSim {
 
 		this.bases[0] = p;
 
+		const pitcher = this.team[this.d].getPitcher().p;
+
 		this.recordStat(this.o, p, "bb");
+		this.recordStat(this.d, pitcher, "bbPit");
 		this.playByPlay.logEvent({
 			type: "walk",
 			t: this.o,
@@ -881,17 +890,26 @@ class GameSim {
 		this.resetNewBatter();
 	}
 
+	doOut() {
+		this.outs += 1;
+		const pitcher = this.team[this.d].getPitcher().p;
+		this.recordStat(this.d, pitcher, "ip");
+	}
+
 	doStrikeout() {
 		const t = this.team[this.o];
-		const p = t.getBatter().p;
+		const batter = t.getBatter().p;
+		const pitcher = this.team[this.d].getPitcher().p;
 
-		this.recordStat(this.o, p, "ab");
+		this.recordStat(this.o, batter, "ab");
+		this.recordStat(this.o, batter, "so");
+		this.recordStat(this.d, pitcher, "soPit");
 		this.playByPlay.logEvent({
 			type: "strikeOut",
 			swinging: Math.random() < 0.5,
 		});
 
-		this.outs += 1;
+		this.doOut();
 
 		t.advanceToNextBatter();
 		this.resetNewBatter();
@@ -1041,6 +1059,20 @@ class GameSim {
 		const qtr = this.team[t].t.stat.ptsQtrs.length - 1;
 
 		if (p !== undefined) {
+			if (s === "ip") {
+				// Handle fractional innings
+				const prevIP = p.stat.ip;
+
+				// Careful about floating point error
+				const remainderDigit = Math.round(10 * prevIP) % 10;
+				if (remainderDigit < 2) {
+					amt = 0.1;
+				} else {
+					// Go from 0.2 to 1
+					amt = 0.8;
+				}
+			}
+
 			p.stat[s] += amt;
 		}
 

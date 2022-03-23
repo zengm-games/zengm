@@ -92,6 +92,10 @@ class Team<DH extends boolean> {
 		return this.playersInGameByBattingOrder[this.atBat];
 	}
 
+	getPitcher() {
+		return this.playersInGameByPos.P;
+	}
+
 	advanceToNextBatter() {
 		this.atBat = (this.atBat + 1) % 9;
 	}

@@ -151,6 +151,7 @@ class GameSim {
 			const t = this.team[i];
 			for (const p of t.playersInGameByBattingOrder) {
 				this.recordStat(i, p.p, "gp");
+				console.log(p.p);
 				this.recordStat(i, p.p, "gs");
 			}
 

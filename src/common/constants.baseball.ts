@@ -6,7 +6,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {};
 const PLAYER_GAME_STATS = {
 	batting: {
 		name: "Batting",
-		stats: ["ab", "r", "h", "rbi", "bb", "so", "pa"],
+		stats: ["ab", "r", "h", "rbi", "hr", "sb", "bb", "so", "pa"],
 		sortBy: ["pa"],
 	},
 	pitching: {

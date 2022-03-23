@@ -7,6 +7,7 @@ import type {
 	Conditions,
 } from "../../../common/types";
 import {
+	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
@@ -215,6 +216,13 @@ const processTeam = (
 	return t;
 };
 
+const skipPlayerStats = bySport({
+	baseball: ["minAvailable"],
+	basketball: ["gp", "minAvailable"],
+	football: ["gp", "minAvailable"],
+	hockey: ["gp", "minAvailable"],
+});
+
 /**
  * Load the teams specified by tids into an object of team objects.
  *
@@ -227,7 +235,7 @@ const processTeam = (
 const loadTeams = async (tids: number[], conditions: Conditions) => {
 	const playerStats = player.stats.raw.reduce<Record<string, number>>(
 		(stats, stat) => {
-			if (stat === "gp" || stat === "minAvailable") {
+			if (skipPlayerStats.includes(stat)) {
 				return stats;
 			}
 

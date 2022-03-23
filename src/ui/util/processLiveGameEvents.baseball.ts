@@ -56,6 +56,50 @@ let playersByPid: Record<number, BoxScorePlayer> = {};
 
 const getName = (pid: number) => playersByPid[pid].name ?? "???";
 
+const getDirectionInfield = (
+	direction: Extract<PlayByPlayEvent, { type: "fly" }>["direction"],
+) => {
+	if (direction === "left" || direction === "right") {
+		return `to the ${direction} side of the field`;
+	}
+
+	if (direction === "middle") {
+		return "up the middle";
+	}
+
+	if (direction === "farLeft" || direction === "farLeftFoul") {
+		return "down the third base line";
+	}
+
+	if (direction === "farRight" || direction === "farRightFoul") {
+		return "down the first base line";
+	}
+
+	throw new Error("Should never happen");
+};
+
+const getDirectionOutfield = (
+	direction: Extract<PlayByPlayEvent, { type: "fly" }>["direction"],
+) => {
+	if (direction === "left" || direction === "right") {
+		return `to ${direction} field`;
+	}
+
+	if (direction === "middle") {
+		return "to center field";
+	}
+
+	if (direction === "farLeft" || direction === "farLeftFoul") {
+		return "down the left field line";
+	}
+
+	if (direction === "farRight" || direction === "farRightFoul") {
+		return "down the right field line";
+	}
+
+	throw new Error("Should never happen");
+};
+
 const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
@@ -106,8 +150,42 @@ const getText = (
 			text = event.swinging ? "He goes down swinging" : "Called strike three";
 			break;
 		}
+		case "bunt": {
+			const speedText = event.speed !== "normal" ? `${event.speed} ` : "";
+			text = `He lays down a ${speedText}bunt ${getDirectionInfield(
+				event.direction,
+			)}`;
+			break;
+		}
+		case "ground": {
+			const speedText = event.speed !== "normal" ? `${event.speed} ` : "";
+			text = `He hits a ${speedText}ground ball ${getDirectionInfield(
+				event.direction,
+			)}`;
+			break;
+		}
+		case "line": {
+			const speedText = event.speed !== "normal" ? `${event.speed} ` : "";
+			text = `He hits a ${speedText}line drive ${getDirectionInfield(
+				event.direction,
+			)}`;
+			break;
+		}
+		case "fly": {
+			if (event.distance === "infield") {
+				text = `He hits a short popup ${getDirectionInfield(event.direction)}`;
+			} else {
+				const distanceText =
+					event.distance !== "normal" ? `${event.distance} ` : "";
+				text = `He hits a ${distanceText}fly ball ${getDirectionOutfield(
+					event.direction,
+				)}`;
+			}
+
+			break;
+		}
 		default: {
-			text = "???";
+			text = JSON.stringify(event);
 			console.log(event);
 		}
 	}

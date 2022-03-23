@@ -33,6 +33,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 	// Can't just switch to hooks and React.memo because p is mutated, so there is no way to access the previous value of inGame in the memo callback function
 	override shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return bySport({
+			baseball: true,
 			basketball: !!(
 				this.prevInGame ||
 				nextProps.p.inGame ||

@@ -66,35 +66,7 @@ type PlayByPlayEventInput =
 			swinging: boolean;
 	  }
 	| {
-			type: "bunt";
-			t: TeamNum;
-			pid: number;
-			direction:
-				| "left"
-				| "right"
-				| "middle"
-				| "farLeft"
-				| "farRight"
-				| "farLeftFoul"
-				| "farRightFoul";
-			speed: "soft" | "normal" | "hard";
-	  }
-	| {
-			type: "ground";
-			t: TeamNum;
-			pid: number;
-			direction:
-				| "left"
-				| "right"
-				| "middle"
-				| "farLeft"
-				| "farRight"
-				| "farLeftFoul"
-				| "farRightFoul";
-			speed: "soft" | "normal" | "hard";
-	  }
-	| {
-			type: "line";
+			type: "bunt" | "ground" | "line";
 			t: TeamNum;
 			pid: number;
 			direction:

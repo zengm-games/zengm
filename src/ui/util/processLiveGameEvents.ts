@@ -10,11 +10,13 @@ const processLiveGameEvents = ({
 	boxScore,
 	overtimes,
 	quarters,
+	sportState,
 }: {
 	events: any[];
 	boxScore: any;
 	overtimes: number;
-	quarters: any[]; // Basketball/football use strings, hockey uses numbers
+	quarters: any[]; // Basketball/football use strings, baseball/hockey use numbers
+	sportState: any;
 }) => {
 	return bySport({
 		baseball: processLiveGameEventsBaseball({
@@ -22,6 +24,7 @@ const processLiveGameEvents = ({
 			boxScore,
 			overtimes,
 			quarters,
+			sportState,
 		}) as any,
 		basketball: processLiveGameEventsBasketball({
 			events,

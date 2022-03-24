@@ -270,24 +270,45 @@ const NextButton = ({
 	);
 };
 
-const BaseballDiamond = () => {
+const Base = ({
+	occupied,
+	shiftDown,
+}: {
+	occupied: boolean;
+	shiftDown?: boolean;
+}) => {
+	return (
+		<div
+			className={`baseball-base ${
+				occupied ? "bg-secondary" : "border border-secondary"
+			}`}
+			style={shiftDown ? { marginTop: 20 } : undefined}
+		></div>
+	);
+};
+
+const BaseballDiamond = ({
+	bases,
+	outs,
+	balls,
+	strikes,
+}: {
+	bases: [boolean, boolean, boolean];
+	outs: number;
+	balls: number;
+	strikes: number;
+}) => {
 	return (
 		<div>
 			<div className="d-flex mx-1 mt-1">
-				<div
-					className="baseball-base border border-secondary"
-					style={{ marginTop: 20 }}
-				></div>
-				<div className="baseball-base bg-secondary"></div>
-				<div
-					className="baseball-base border border-secondary"
-					style={{ marginTop: 20 }}
-				></div>
+				<Base occupied={bases[2]} shiftDown />
+				<Base occupied={bases[1]} />
+				<Base occupied={bases[0]} shiftDown />
 			</div>
 			<div className="text-center mt-1">
-				2 outs
+				{outs} outs
 				<br />
-				3-2
+				{balls}-{strikes}
 			</div>
 		</div>
 	);
@@ -300,6 +321,7 @@ const DetailedScore = ({
 	nextGid,
 	prevGid,
 	showNextPrev,
+	sportState,
 	tid,
 }: {
 	abbrev?: string;
@@ -308,6 +330,7 @@ const DetailedScore = ({
 	nextGid?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
+	sportState: any;
 	tid?: number;
 }) => {
 	// Quarter/overtime labels
@@ -391,7 +414,7 @@ const DetailedScore = ({
 				</div>
 				{isSport("baseball") && liveGameSim ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-start">
-						<BaseballDiamond />
+						<BaseballDiamond {...sportState} />
 					</div>
 				) : null}
 				{isSport("basketball") ? (
@@ -489,6 +512,7 @@ const BoxScoreWrapper = ({
 	playIndex,
 	prevGid,
 	showNextPrev,
+	sportState,
 	tid,
 	Row,
 }: {
@@ -499,6 +523,7 @@ const BoxScoreWrapper = ({
 	playIndex?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
+	sportState: any;
 	tid?: number;
 	Row: any;
 }) => {
@@ -611,6 +636,7 @@ const BoxScoreWrapper = ({
 						nextGid={nextGid}
 						prevGid={prevGid}
 						showNextPrev={showNextPrev}
+						sportState={sportState}
 						tid={tid}
 					/>
 					<div className="mt-sm-1">

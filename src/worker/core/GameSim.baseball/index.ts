@@ -785,10 +785,23 @@ class GameSim {
 						runners: this.finalizeRunners(runners),
 						numBases,
 						outAtNextBase: false,
+						...this.getSportState(),
 					});
 
 					this.bases[numBases - 1] = p;
 				} else {
+					if (result === "flyOut" || result === "throwOut") {
+						this.logOut();
+					} else if (result === "doublePlay") {
+						this.logOut();
+					} else {
+						if (result === "fieldersChoice") {
+							this.logOut();
+						}
+
+						this.bases[numBases - 1] = p;
+					}
+
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result,
@@ -798,19 +811,8 @@ class GameSim {
 						runners: this.finalizeRunners(runners),
 						numBases,
 						outAtNextBase: false,
+						...this.getSportState(),
 					});
-
-					if (result === "flyOut" || result === "throwOut") {
-						this.doOut();
-					} else if (result === "doublePlay") {
-						this.doOut();
-					} else {
-						if (result === "fieldersChoice") {
-							this.doOut();
-						}
-
-						this.bases[numBases - 1] = p;
-					}
 				}
 
 				doneBatter = true;
@@ -857,7 +859,7 @@ class GameSim {
 	) {
 		const finalized: Runner[] = [];
 		for (const runner of runners) {
-			if (runner && runner.from !== runner.to && runner.from !== 0) {
+			if (runner && runner.from !== 0) {
 				finalized.push(runner as Runner);
 			}
 		}
@@ -896,16 +898,24 @@ class GameSim {
 			t: this.o,
 			pid: p.id,
 			runners: this.finalizeRunners(runners),
+			...this.getSportState(),
 		});
 
 		t.advanceToNextBatter();
 		this.resetNewBatter();
 	}
 
-	doOut() {
+	logOut() {
 		this.outs += 1;
 		const pitcher = this.team[this.d].getPitcher().p;
 		this.recordStat(this.d, pitcher, "ip");
+	}
+
+	getSportState() {
+		return {
+			outs: this.outs,
+			bases: this.bases.map(p => !!p) as [boolean, boolean, boolean],
+		};
 	}
 
 	doStrikeout() {
@@ -916,12 +926,12 @@ class GameSim {
 		this.recordStat(this.o, batter, "ab");
 		this.recordStat(this.o, batter, "so");
 		this.recordStat(this.d, pitcher, "soPit");
+		this.logOut();
 		this.playByPlay.logEvent({
 			type: "strikeOut",
 			swinging: Math.random() < 0.5,
+			...this.getSportState(),
 		});
-
-		this.doOut();
 
 		t.advanceToNextBatter();
 		this.resetNewBatter();

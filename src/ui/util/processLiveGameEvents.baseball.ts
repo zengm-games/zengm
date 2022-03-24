@@ -4,6 +4,7 @@ import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
+import { DEFAULT_SPORT_STATE } from "../views/LiveGame";
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
 const cmpTime = (t1: string, t2: string) => {
@@ -296,6 +297,7 @@ const processLiveGameEvents = ({
 	boxScore,
 	overtimes,
 	quarters,
+	sportState,
 }: {
 	events: PlayByPlayEvent[];
 	boxScore: {
@@ -309,6 +311,12 @@ const processLiveGameEvents = ({
 	};
 	overtimes: number;
 	quarters: number[];
+	sportState: {
+		bases: [boolean, boolean, boolean];
+		outs: number;
+		balls: number;
+		strikes: number;
+	};
 }) => {
 	let stop = false;
 	let text;
@@ -353,6 +361,30 @@ const processLiveGameEvents = ({
 					)} ${getPeriodName(boxScore.numPeriods)}`;
 				}
 			}
+
+			Object.assign(sportState, DEFAULT_SPORT_STATE);
+		}
+
+		if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
+			sportState.balls = e.balls;
+			sportState.strikes = e.strikes;
+		} else if (e.type === "plateAppearance") {
+			sportState.balls = 0;
+			sportState.strikes = 0;
+		} else if (
+			e.type === "hitResult" ||
+			e.type === "strikeOut" ||
+			e.type === "stealEnd"
+		) {
+			if (e.outs >= 3) {
+				// Don't update bases, since it didn't happen
+				sportState.outs = e.outs;
+			} else {
+				sportState.bases = e.bases;
+				sportState.outs = e.outs;
+			}
+		} else if (e.type === "walk" || e.type === "balk") {
+			sportState.bases = e.bases;
 		}
 
 		if (e.type === "stat") {
@@ -419,6 +451,7 @@ const processLiveGameEvents = ({
 	return {
 		overtimes,
 		quarters,
+		sportState,
 		text,
 	};
 };

@@ -80,6 +80,15 @@ const getSeconds = (time: string) => {
 	return min * 60 + sec;
 };
 
+export const DEFAULT_SPORT_STATE = isSport("baseball")
+	? {
+			bases: [false, false, false] as [boolean, boolean, boolean],
+			outs: 0,
+			balls: 0,
+			strikes: 0,
+	  }
+	: undefined;
+
 const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
@@ -106,6 +115,9 @@ const LiveGame = (props: View<"liveGame">) => {
 	const possessionChange = useRef<boolean | undefined>();
 	const componentIsMounted = useRef(false);
 	const events = useRef<any[] | undefined>();
+	const sportState = useRef(
+		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
+	);
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
@@ -125,11 +137,13 @@ const LiveGame = (props: View<"liveGame">) => {
 				events: events.current,
 				overtimes: overtimes.current,
 				quarters: quarters.current,
+				sportState: sportState.current,
 			});
 			const text = output.text;
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
 			possessionChange.current = output.possessionChange;
+			sportState.current = output.sportState;
 
 			if (text !== undefined) {
 				const p = document.createElement("p");
@@ -518,6 +532,7 @@ const LiveGame = (props: View<"liveGame">) => {
 							boxScore={boxScore.current}
 							Row={PlayerRow}
 							playIndex={playIndex}
+							sportState={sportState.current}
 						/>
 					) : (
 						<h2>Loading...</h2>

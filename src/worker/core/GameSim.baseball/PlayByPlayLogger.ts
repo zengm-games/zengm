@@ -1,3 +1,4 @@
+import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
 import type { Runner, TeamNum } from "./types";
 
 type PlayByPlayEventInputScore = {
@@ -100,7 +101,7 @@ type PlayByPlayEventInput =
 			result: "flyOut" | "throwOut" | "fieldersChoice" | "doublePlay" | "hit";
 			t: TeamNum;
 			pid: number;
-			posDefense: number[]; // Like for a double play, this could be [6, 4, 3]
+			posDefense: (keyof typeof POS_NUMBERS_INVERSE)[]; // Like for a double play, this could be [6, 4, 3]
 			runners: Runner[];
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
@@ -113,7 +114,7 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 			pid: number;
 			pidError: number;
-			posDefense: number[]; // Like for a double play, this could be [6, 4, 3]
+			posDefense: (keyof typeof POS_NUMBERS_INVERSE)[]; // Like for a double play, this could be [6, 4, 3]
 			runners: Runner[];
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base

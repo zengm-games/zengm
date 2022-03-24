@@ -36,6 +36,30 @@ const POSITIONS: Position[] = [
 	"DH",
 ];
 
+const POS_NUMBERS = {
+	P: 1,
+	C: 2,
+	"1B": 3,
+	"2B": 4,
+	"3B": 5,
+	SS: 6,
+	LF: 7,
+	CF: 8,
+	RF: 9,
+} as const;
+
+const POS_NUMBERS_INVERSE = {
+	1: "P",
+	2: "C",
+	3: "1B",
+	4: "2B",
+	5: "3B",
+	6: "SS",
+	7: "LF",
+	8: "CF",
+	9: "RF",
+} as const;
+
 const POSITION_COUNTS: Record<Position, number> = {
 	SP: 5,
 	RP: 7,
@@ -131,6 +155,8 @@ export {
 	PLAYER_GAME_STATS,
 	PLAYER_STATS_TABLES,
 	PLAYER_SUMMARY,
+	POS_NUMBERS,
+	POS_NUMBERS_INVERSE,
 	POSITION_COUNTS,
 	POSITIONS,
 	RATINGS,

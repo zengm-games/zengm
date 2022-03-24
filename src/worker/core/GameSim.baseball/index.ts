@@ -1,6 +1,10 @@
 import { PHASE } from "../../../common";
 import { defaultGameAttributes, g, helpers, random } from "../../util";
-import { POSITIONS } from "../../../common/constants.baseball";
+import {
+	POSITIONS,
+	POS_NUMBERS,
+	POS_NUMBERS_INVERSE,
+} from "../../../common/constants.baseball";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import type { Position } from "../../../common/types.hockey";
 import type {
@@ -16,30 +20,6 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
-
-const POS_NUMBERS = {
-	P: 1,
-	C: 2,
-	"1B": 3,
-	"2B": 4,
-	"3B": 5,
-	SS: 6,
-	LF: 7,
-	CF: 8,
-	RF: 9,
-} as const;
-
-const POS_NUMBERS_INVERSE = {
-	1: "P",
-	2: "C",
-	3: "1B",
-	4: "2B",
-	5: "3B",
-	6: "SS",
-	7: "LF",
-	8: "CF",
-	9: "RF",
-} as const;
 
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.

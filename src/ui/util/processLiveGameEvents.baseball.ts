@@ -5,6 +5,7 @@ import type {
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
 import { DEFAULT_SPORT_STATE } from "../views/LiveGame";
+import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
 const cmpTime = (t1: string, t2: string) => {
@@ -101,45 +102,58 @@ const getDirectionOutfield = (
 	throw new Error("Should never happen");
 };
 
+const getBaseName = (base: 1 | 2 | 3 | 4) => {
+	if (base === 4) {
+		return "home";
+	}
+
+	return helpers.ordinal(base);
+};
+
 const formatRunners = (
 	runners: Extract<PlayByPlayEvent, { type: "walk" }>["runners"],
-	ignoreStationary?: boolean,
+	{
+		ignoreStationary,
+	}: {
+		ignoreStationary?: boolean;
+	} = {},
 ) => {
 	const filtered = runners.filter(
 		runner => runner.to !== runner.from || !ignoreStationary,
 	);
 
-	const getBaseName = (base: 1 | 2 | 3 | 4) => {
-		if (base === 4) {
-			return "home";
-		}
-
-		return helpers.ordinal(base);
-	};
-
-	let text = "";
+	const texts = [];
+	const scored = [];
 	for (const runner of filtered) {
 		const name = getName(runner.pid);
 		if (runner.out) {
-			text += `${name} out at ${getBaseName(runner.to)}.`;
+			texts.push(`${name} out at ${getBaseName(runner.to)}.`);
 		} else if (runner.from === runner.to) {
 			if (!ignoreStationary) {
-				text += `${name} stays at ${getBaseName(runner.to)}.`;
+				texts.push(`${name} stays at ${getBaseName(runner.to)}.`);
 			}
 		} else if (runner.to === 4) {
-			text += `${name} scores from ${getBaseName(runner.from)}.`;
+			scored.push(name);
 		} else {
-			text += `${name} advances from ${getBaseName(
-				runner.from,
-			)} to ${getBaseName(runner.to)}.`;
+			texts.push(`${name} advances to ${getBaseName(runner.to)}.`);
 		}
 	}
 
-	if (text !== "") {
-		return `. ${text}`;
+	if (scored.length === 1) {
+		texts.push(`${scored[0]} scores.`);
+	} else if (scored.length > 1) {
+		let namesCombined;
+		// @ts-expect-error
+		if (Intl.ListFormat) {
+			// @ts-expect-error
+			namesCombined = new Intl.ListFormat("en").format(scored);
+		} else {
+			namesCombined = `${scored.length} runners`;
+		}
+		texts.push(`${namesCombined} score.`);
 	}
 
-	return text;
+	return texts.join(" ");
 };
 
 const getText = (
@@ -226,9 +240,61 @@ const getText = (
 			break;
 		}
 		case "walk": {
+			const runnerText = formatRunners(event.runners, {
+				ignoreStationary: true,
+			});
 			text = `${event.intentional ? "Intentional walk" : "Ball 4"}, ${getName(
 				event.pid,
-			)} takes 1st base${formatRunners(event.runners, true)}`;
+			)} takes 1st base${runnerText ? `. ${runnerText}` : ""}`;
+			break;
+		}
+		case "hitResult": {
+			text = "";
+			if (event.result === "error") {
+				text = "ERROR TODO!";
+			} else if (event.result === "hit") {
+				if (event.numBases === 1) {
+					text = "Single!";
+				} else if (event.numBases === 2) {
+					text = "Double!";
+				} else if (event.numBases === 3) {
+					text = "Triple!";
+				} else {
+					text = "Home run!";
+				}
+			} else if (event.result === "flyOut") {
+				text = `Caught by the ${
+					POS_NUMBERS_INVERSE[event.posDefense[0]]
+				} for an out`;
+			} else if (event.result === "throwOut") {
+				text = `Fielded by the ${
+					POS_NUMBERS_INVERSE[event.posDefense[0]]
+				} and thrown out at 1st`;
+			} else if (event.result === "fieldersChoice") {
+				text = `He reaches ${getBaseName(
+					event.numBases,
+				)} on a fielder's choice`;
+			} else if (event.result === "doublePlay") {
+				text = "Double play!";
+			}
+
+			if (event.outAtNextBase) {
+				if (!text.endsWith("!") && !text.endsWith(".")) {
+					text += ".";
+				}
+				text += ` Thrown out advancing to ${getBaseName(
+					(event.numBases + 1) as any,
+				)}.`;
+			}
+
+			const runnersText = formatRunners(event.runners);
+
+			if (runnersText) {
+				if (!text.endsWith("!") && !text.endsWith(".")) {
+					text += ".";
+				}
+				text += ` ${runnersText}`;
+			}
 			break;
 		}
 		default: {

@@ -875,14 +875,12 @@ class GameSim {
 		this.recordStat(this.d, pitcher, "bbPit");
 		this.playByPlay.logEvent({
 			type: "walk",
+			intentional: false,
 			t: this.o,
 			pid: p.id,
 			runners: this.finalizeRunners(runners),
 			...this.getSportState(),
 		});
-
-		t.advanceToNextBatter();
-		this.resetNewBatter();
 	}
 
 	logOut() {
@@ -912,9 +910,6 @@ class GameSim {
 			swinging: Math.random() < 0.5,
 			...this.getSportState(),
 		});
-
-		t.advanceToNextBatter();
-		this.resetNewBatter();
 	}
 
 	possessionChange() {
@@ -990,6 +985,7 @@ class GameSim {
 	simPlateAppearance() {
 		const t = this.team[this.o];
 		t.advanceToNextBatter();
+		this.resetNewBatter();
 		const p = t.getBatter().p;
 		this.playByPlay.logEvent({
 			type: "plateAppearance",

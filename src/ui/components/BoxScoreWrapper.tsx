@@ -108,6 +108,13 @@ const HeadlineScore = ({ boxScore }: any) => {
 						? "Final score"
 						: boxScore.elamTarget !== undefined
 						? `Elam Ending target: ${boxScore.elamTarget} points`
+						: isSport("baseball")
+						? `${
+								boxScore.teams[0].ptsQtrs.length ===
+								boxScore.teams[1].ptsQtrs.length
+									? "Bottom"
+									: "Top"
+						  } of the ${boxScore.quarter}`
 						: `${boxScore.quarter}, ${boxScore.time} remaining`}
 				</div>
 			) : null}
@@ -263,6 +270,29 @@ const NextButton = ({
 	);
 };
 
+const BaseballDiamond = () => {
+	return (
+		<div>
+			<div className="d-flex mx-1 mt-1">
+				<div
+					className="baseball-base border border-secondary"
+					style={{ marginTop: 20 }}
+				></div>
+				<div className="baseball-base bg-secondary"></div>
+				<div
+					className="baseball-base border border-secondary"
+					style={{ marginTop: 20 }}
+				></div>
+			</div>
+			<div className="text-center mt-1">
+				2 outs
+				<br />
+				3-2
+			</div>
+		</div>
+	);
+};
+
 const DetailedScore = ({
 	abbrev,
 	boxScore,
@@ -291,6 +321,8 @@ const DetailedScore = ({
 			: `OT${i - boxScore.numPeriods + 1}`;
 	});
 	qtrs.push("F");
+
+	const liveGameSim = boxScore.won?.name === undefined;
 
 	return (
 		<div className="d-flex align-items-center justify-content-center">
@@ -357,6 +389,11 @@ const DetailedScore = ({
 						</tbody>
 					</table>
 				</div>
+				{isSport("baseball") && liveGameSim ? (
+					<div className="ms-4 mx-xs-auto d-sm-inline-block text-start">
+						<BaseballDiamond />
+					</div>
+				) : null}
 				{isSport("basketball") ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactors teams={boxScore.teams} />

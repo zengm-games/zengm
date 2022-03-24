@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import range from "lodash-es/range";
 import { useCallback, useEffect, useState, useRef, ReactNode } from "react";
 import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
@@ -280,20 +281,16 @@ const DetailedScore = ({
 	tid?: number;
 }) => {
 	// Quarter/overtime labels
-	const qtrs: string[] = boxScore.teams[0].ptsQtrs.map(
-		(pts: number, i: number) => {
-			return i < boxScore.numPeriods || isSport("baseball")
-				? `${i + 1}`
-				: `OT${i - boxScore.numPeriods + 1}`;
-		},
+	const numPeriods = Math.max(
+		boxScore.teams[0].ptsQtrs.length,
+		boxScore.numPeriods ?? 0,
 	);
+	const qtrs: string[] = range(numPeriods).map(i => {
+		return i < boxScore.numPeriods || isSport("baseball")
+			? `${i + 1}`
+			: `OT${i - boxScore.numPeriods + 1}`;
+	});
 	qtrs.push("F");
-
-	// For baseball, we don't have bottom of the inning yet or maybe at all
-	let emptyFrameSpacer: ReactNode;
-	if (boxScore.teams[0].ptsQtrs.length > boxScore.teams[1].ptsQtrs.length) {
-		emptyFrameSpacer = <th />;
-	}
 
 	return (
 		<div className="d-flex align-items-center justify-content-center">
@@ -315,7 +312,7 @@ const DetailedScore = ({
 				</div>
 			) : null}
 			<div className="d-sm-flex">
-				<div className="me-4 mx-xs-auto text-center">
+				<div className="mx-xs-auto text-center">
 					<table className="table table-sm mb-2 mb-sm-0">
 						<thead>
 							<tr>
@@ -331,7 +328,7 @@ const DetailedScore = ({
 							</tr>
 						</thead>
 						<tbody>
-							{boxScore.teams.map((t: any, i: number) => (
+							{boxScore.teams.map((t: any) => (
 								<tr key={t.abbrev}>
 									<th>
 										{t.tid >= 0 ? (
@@ -351,7 +348,9 @@ const DetailedScore = ({
 									{t.ptsQtrs.map((pts: number, i: number) => (
 										<td key={i}>{pts}</td>
 									))}
-									{i === 1 ? emptyFrameSpacer : null}
+									{range(numPeriods - t.ptsQtrs.length).map(i => (
+										<td key={i} />
+									))}
 									<th>{t.pts}</th>
 								</tr>
 							))}
@@ -359,7 +358,7 @@ const DetailedScore = ({
 					</table>
 				</div>
 				{isSport("basketball") ? (
-					<div className="mx-xs-auto d-sm-inline-block text-center">
+					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactors teams={boxScore.teams} />
 					</div>
 				) : null}

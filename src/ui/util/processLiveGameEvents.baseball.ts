@@ -333,31 +333,27 @@ const processLiveGameEvents = ({
 		// @ts-expect-error
 		const actualT = e.t === 0 ? 1 : 0;
 
-		if (e.type !== "init" && !quarters.includes(e.inning)) {
+		if (e.type === "sideStart") {
 			quarters.push(e.inning);
-			boxScore.teams[0].ptsQtrs.push(0);
-			boxScore.teams[1].ptsQtrs.push(0);
+			boxScore.teams[actualT].ptsQtrs.push(0);
 
-			const ptsQtrs = boxScore.teams[0].ptsQtrs;
-			if (ptsQtrs.length > boxScore.numPeriods) {
-				overtimes += 1;
-				if (overtimes === 1) {
-					boxScore.overtime = " (OT)";
-				} else if (overtimes > 1) {
-					boxScore.overtime = ` (${overtimes}OT)`;
+			if (actualT === 0) {
+				const ptsQtrs = boxScore.teams[0].ptsQtrs;
+				if (ptsQtrs.length > boxScore.numPeriods) {
+					overtimes += 1;
+					if (overtimes === 1) {
+						boxScore.overtime = " (OT)";
+					} else if (overtimes > 1) {
+						boxScore.overtime = ` (${overtimes}OT)`;
+					}
+					boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
+				} else {
+					boxScore.quarter = `${helpers.ordinal(
+						ptsQtrs.length,
+					)} ${getPeriodName(boxScore.numPeriods)}`;
 				}
-				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
-			} else {
-				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} ${getPeriodName(
-					boxScore.numPeriods,
-				)}`;
-			}
-
-			if (e.type !== "stat" && e.type !== "playersOnIce") {
-				//boxScore.time = formatClock(e.clock);
 			}
 		}
-		0;
 
 		if (e.type === "stat") {
 			// Quarter-by-quarter score

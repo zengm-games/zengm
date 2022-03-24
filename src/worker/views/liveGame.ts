@@ -81,7 +81,7 @@ const updatePlayByPlay = async (
 			}
 
 			await setTeamInfo(t, i, allStars, boxScore);
-			t.ptsQtrs = [0];
+			t.ptsQtrs = isSport("baseball") ? [] : [0];
 
 			for (const stat of resetStatsTeam) {
 				if (t.hasOwnProperty(stat)) {

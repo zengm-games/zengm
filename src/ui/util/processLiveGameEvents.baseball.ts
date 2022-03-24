@@ -69,11 +69,11 @@ const getDirectionInfield = (
 	}
 
 	if (direction === "farLeft" || direction === "farLeftFoul") {
-		return "down the third base line";
+		return "down the 3rd base line";
 	}
 
 	if (direction === "farRight" || direction === "farRightFoul") {
-		return "down the first base line";
+		return "down the 1st base line";
 	}
 
 	throw new Error("Should never happen");
@@ -99,6 +99,47 @@ const getDirectionOutfield = (
 	}
 
 	throw new Error("Should never happen");
+};
+
+const formatRunners = (
+	runners: Extract<PlayByPlayEvent, { type: "walk" }>["runners"],
+	ignoreStationary?: boolean,
+) => {
+	const filtered = runners.filter(
+		runner => runner.to !== runner.from || !ignoreStationary,
+	);
+
+	const getBaseName = (base: 1 | 2 | 3 | 4) => {
+		if (base === 4) {
+			return "home";
+		}
+
+		return helpers.ordinal(base);
+	};
+
+	let text = "";
+	for (const runner of filtered) {
+		const name = getName(runner.pid);
+		if (runner.out) {
+			text += `${name} out at ${getBaseName(runner.to)}.`;
+		} else if (runner.from === runner.to) {
+			if (!ignoreStationary) {
+				text += `${name} stays at ${getBaseName(runner.to)}.`;
+			}
+		} else if (runner.to === 4) {
+			text += `${name} scores from ${getBaseName(runner.from)}.`;
+		} else {
+			text += `${name} advances from ${getBaseName(
+				runner.from,
+			)} to ${getBaseName(runner.to)}.`;
+		}
+	}
+
+	if (text !== "") {
+		return `. ${text}`;
+	}
+
+	return text;
 };
 
 const getText = (
@@ -182,7 +223,12 @@ const getText = (
 					event.direction,
 				)}`;
 			}
-
+			break;
+		}
+		case "walk": {
+			text = `${event.intentional ? "Intentional walk" : "Ball 4"}, ${getName(
+				event.pid,
+			)} takes 1st base${formatRunners(event.runners, true)}`;
 			break;
 		}
 		default: {
@@ -376,6 +422,10 @@ const processLiveGameEvents = ({
 			e.type === "strikeOut" ||
 			e.type === "stealEnd"
 		) {
+			if (e.type === "strikeOut") {
+				sportState.strikes = 3;
+			}
+
 			if (e.outs >= 3) {
 				// Don't update bases, since it didn't happen
 				sportState.outs = e.outs;
@@ -383,7 +433,10 @@ const processLiveGameEvents = ({
 				sportState.bases = e.bases;
 				sportState.outs = e.outs;
 			}
-		} else if (e.type === "walk" || e.type === "balk") {
+		} else if (e.type === "walk") {
+			sportState.balls = 4;
+			sportState.bases = e.bases;
+		} else if (e.type === "balk") {
 			sportState.bases = e.bases;
 		}
 

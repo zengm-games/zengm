@@ -125,6 +125,7 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 			pid: number;
 			runners: Runner[];
+			intentional: boolean;
 			bases: [boolean, boolean, boolean];
 	  }
 	| {

@@ -66,7 +66,7 @@ type PlayByPlayEventInput =
 			type: "strikeOut";
 			swinging: boolean;
 			outs: number;
-			bases: [boolean, boolean, boolean];
+			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "bunt" | "ground" | "line";
@@ -106,7 +106,7 @@ type PlayByPlayEventInput =
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
-			bases: [boolean, boolean, boolean];
+			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "hitResult";
@@ -119,7 +119,7 @@ type PlayByPlayEventInput =
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
-			bases: [boolean, boolean, boolean];
+			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "walk";
@@ -127,7 +127,7 @@ type PlayByPlayEventInput =
 			pid: number;
 			runners: Runner[];
 			intentional: boolean;
-			bases: [boolean, boolean, boolean];
+			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "stealStart";
@@ -145,14 +145,14 @@ type PlayByPlayEventInput =
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			runners: Runner[];
 			outs: number;
-			bases: [boolean, boolean, boolean];
+			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "balk";
 			t: TeamNum;
 			pid: number;
 			runners: Runner[];
-			bases: [boolean, boolean, boolean];
+			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "sub";

@@ -82,7 +82,11 @@ const getSeconds = (time: string) => {
 
 export const DEFAULT_SPORT_STATE = isSport("baseball")
 	? {
-			bases: [false, false, false] as [boolean, boolean, boolean],
+			bases: [undefined, undefined, undefined] as [
+				number | undefined,
+				number | undefined,
+				number | undefined,
+			],
 			outs: 0,
 			balls: 0,
 			strikes: 0,
@@ -456,8 +460,41 @@ const LiveGame = (props: View<"liveGame">) => {
 							label: "Next baserunner",
 							key: "T",
 							onClick: () => {
-								// Need this info in sportState or something, could have pids in bases
-								console.log("aaa");
+								const initialBases = sportState.current?.bases ?? [];
+								const initialBaserunners = new Set(
+									initialBases.filter(pid => pid !== undefined),
+								);
+
+								const initialHR =
+									boxScore.current.teams[0].hr + boxScore.current.teams[1].hr;
+
+								let numPlays = 0;
+
+								while (true) {
+									processToNextPause(true);
+									numPlays += 1;
+
+									// Any new baserunner -> stop
+									const baserunners = (sportState.current?.bases ?? []).filter(
+										pid => pid !== undefined,
+									);
+									if (baserunners.length === 0) {
+										// Handle case where it's a new inning and the same guy gets on base
+										initialBaserunners.clear();
+									}
+									if (baserunners.some(pid => !initialBaserunners.has(pid))) {
+										break;
+									}
+
+									// Home run counts as new baserunner
+									const currentHR =
+										boxScore.current.teams[0].hr + boxScore.current.teams[1].hr;
+									if (initialHR !== currentHR) {
+										break;
+									}
+								}
+
+								setPlayIndex(prev => prev + numPlays);
 							},
 						},
 						{

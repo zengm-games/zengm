@@ -768,7 +768,9 @@ class GameSim {
 						...this.getSportState(),
 					});
 
-					this.bases[numBases - 1] = p;
+					if (numBases < 4) {
+						this.bases[numBases - 1] = p;
+					}
 				} else {
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
@@ -779,7 +781,9 @@ class GameSim {
 							this.logOut();
 						}
 
-						this.bases[numBases - 1] = p;
+						if (numBases < 4) {
+							this.bases[numBases - 1] = p;
+						}
 					}
 
 					this.playByPlay.logEvent({
@@ -892,7 +896,11 @@ class GameSim {
 	getSportState() {
 		return {
 			outs: this.outs,
-			bases: this.bases.map(p => !!p) as [boolean, boolean, boolean],
+			bases: this.bases.map(p => p?.id) as [
+				number | undefined,
+				number | undefined,
+				number | undefined,
+			],
 		};
 	}
 

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import range from "lodash-es/range";
-import { useCallback, useEffect, useState, useRef, ReactNode } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
 import BoxScore from "./BoxScore";
@@ -293,7 +293,7 @@ const BaseballDiamond = ({
 	balls,
 	strikes,
 }: {
-	bases: [boolean, boolean, boolean];
+	bases: [number | undefined, number | undefined, number | undefined];
 	outs: number;
 	balls: number;
 	strikes: number;
@@ -301,9 +301,9 @@ const BaseballDiamond = ({
 	return (
 		<div>
 			<div className="d-flex mx-1 mt-1">
-				<Base occupied={bases[2]} shiftDown />
-				<Base occupied={bases[1]} />
-				<Base occupied={bases[0]} shiftDown />
+				<Base occupied={bases[2] !== undefined} shiftDown />
+				<Base occupied={bases[1] !== undefined} />
+				<Base occupied={bases[0] !== undefined} shiftDown />
 			</div>
 			<div className="text-center mt-1">
 				{outs} outs

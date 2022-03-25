@@ -424,7 +424,7 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: number[];
 	sportState: {
-		bases: [boolean, boolean, boolean];
+		bases: [number | undefined, number | undefined, number | undefined];
 		outs: number;
 		balls: number;
 		strikes: number;

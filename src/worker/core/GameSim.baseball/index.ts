@@ -1011,6 +1011,16 @@ class GameSim {
 
 		while (true) {
 			this.simPlateAppearance();
+
+			if (
+				this.o === 0 &&
+				this.inning >= this.numInnings &&
+				this.team[0].t.stat.pts > this.team[1].t.stat.pts
+			) {
+				// Game over, home team is at bat and up after 9+ innings
+				break;
+			}
+
 			if (this.outs >= 3) {
 				this.playByPlay.logEvent({
 					type: "sideOver",
@@ -1029,6 +1039,7 @@ class GameSim {
 						this.inning >= this.numInnings &&
 						this.team[0].t.stat.pts !== this.team[1].t.stat.pts
 					) {
+						// Game over, all innings used up
 						break;
 					}
 				}

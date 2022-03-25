@@ -390,31 +390,34 @@ const LiveGame = (props: View<"liveGame">) => {
 				processToNextPause(true);
 				numPlays += 1;
 			}
+
 			setPlayIndex(prev => prev + numPlays);
 		};
 
-		let skipMinutes = [
-			{
-				minutes: 1,
-				key: "O",
-			},
-			{
-				minutes: helpers.bound(
-					Math.round(props.quarterLength / 4),
-					1,
-					Infinity,
-				),
-				key: "T",
-			},
-			{
-				minutes: helpers.bound(
-					Math.round(props.quarterLength / 2),
-					1,
-					Infinity,
-				),
-				key: "S",
-			},
-		];
+		let skipMinutes = isSport("baseball")
+			? []
+			: [
+					{
+						minutes: 1,
+						key: "O",
+					},
+					{
+						minutes: helpers.bound(
+							Math.round(props.quarterLength / 4),
+							1,
+							Infinity,
+						),
+						key: "T",
+					},
+					{
+						minutes: helpers.bound(
+							Math.round(props.quarterLength / 2),
+							1,
+							Infinity,
+						),
+						key: "S",
+					},
+			  ];
 
 		// Dedupe
 		const skipMinutesValues = new Set();
@@ -427,6 +430,10 @@ const LiveGame = (props: View<"liveGame">) => {
 			return true;
 		});
 
+		const getNumSidesSoFar = () =>
+			boxScore.current.teams[0].ptsQtrs.length +
+			boxScore.current.teams[1].ptsQtrs.length;
+
 		const menuItems = [
 			...skipMinutes.map(({ minutes, key }) => ({
 				label: `${minutes} minute${minutes === 1 ? "" : "s"}`,
@@ -435,24 +442,99 @@ const LiveGame = (props: View<"liveGame">) => {
 					playSeconds(60 * minutes);
 				},
 			})),
-			{
-				label: `End of ${
-					boxScore.current.elamTarget !== undefined
-						? "game"
-						: boxScore.current.overtime
-						? "period"
-						: getPeriodName(boxScore.current.numPeriods)
-				}`,
-				key: "Q",
-				onClick: () => {
-					playSeconds(Infinity);
-				},
-			},
+			...(isSport("baseball")
+				? [
+						{
+							label: "Next batter",
+							key: "O",
+							onClick: () => {
+								// Need this info in sportState or something
+								console.log("aaa");
+							},
+						},
+						{
+							label: "Next baserunner",
+							key: "T",
+							onClick: () => {
+								// Need this info in sportState or something, could have pids in bases
+								console.log("aaa");
+							},
+						},
+						{
+							label: "Side is retired",
+							key: "C",
+							onClick: () => {
+								let numPlays = 0;
+
+								const numSidesSoFar = getNumSidesSoFar();
+								while (true) {
+									processToNextPause(true);
+									numPlays += 1;
+									if (numSidesSoFar !== getNumSidesSoFar()) {
+										break;
+									}
+								}
+
+								setPlayIndex(prev => prev + numPlays);
+							},
+						},
+						{
+							label: "End of inning",
+							key: "Q",
+							onClick: () => {
+								let numPlays = 0;
+
+								const numSidesSoFar = getNumSidesSoFar();
+								while (true) {
+									processToNextPause(true);
+									numPlays += 1;
+									const newNum = getNumSidesSoFar();
+									if (numSidesSoFar !== newNum && newNum % 2 === 1) {
+										break;
+									}
+								}
+
+								setPlayIndex(prev => prev + numPlays);
+							},
+						},
+						{
+							label: `${helpers.ordinal(boxScore.current.numPeriods)} inning`,
+							key: "U",
+							onClick: () => {
+								let numPlays = 0;
+
+								while (
+									getNumSidesSoFar() <=
+									(boxScore.current.numPeriods - 1) * 2
+								) {
+									processToNextPause(true);
+									numPlays += 1;
+								}
+
+								setPlayIndex(prev => prev + numPlays);
+							},
+						},
+				  ]
+				: [
+						{
+							label: `End of ${
+								boxScore.current.elamTarget !== undefined
+									? "game"
+									: boxScore.current.overtime
+									? "period"
+									: getPeriodName(boxScore.current.numPeriods)
+							}`,
+							key: "Q",
+							onClick: () => {
+								playSeconds(Infinity);
+							},
+						},
+				  ]),
 		];
 
-		if (!boxScore.current.elam) {
+		if (!boxScore.current.elam && !isSport("baseball")) {
 			menuItems.push({
-				label: "Until last 2 minutes",
+				label: "Last 2 minutes",
 				key: "U",
 				onClick: () => {
 					playUntilLastTwoMinutes();
@@ -462,13 +544,14 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		if (
 			bySport({
+				baseball: false,
 				basketball: false,
 				football: true,
 				hockey: false,
 			})
 		) {
 			menuItems.push({
-				label: "Until change of possession",
+				label: "Change of possession",
 				key: "C",
 				onClick: () => {
 					playUntilChangeOfPossession();
@@ -478,13 +561,14 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		if (
 			bySport({
+				baseball: true,
 				basketball: false,
 				football: true,
 				hockey: true,
 			})
 		) {
 			menuItems.push({
-				label: `Until next ${bySport({
+				label: `Next ${bySport({
 					hockey: "goal",
 					default: "score",
 				})}`,
@@ -497,7 +581,7 @@ const LiveGame = (props: View<"liveGame">) => {
 
 		if (boxScore.current.elam && boxScore.current.elamTarget === undefined) {
 			menuItems.push({
-				label: "Until Elam Ending",
+				label: "Elam Ending",
 				key: "U",
 				onClick: () => {
 					playUntilElamEnding();

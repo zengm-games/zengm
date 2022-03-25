@@ -8,11 +8,25 @@ import type {
 import { DEFAULT_JERSEY, isSport } from "../../common";
 
 const generate = (race?: Race) => {
-	const overrides: any = {
-		jersey: {
-			id: DEFAULT_JERSEY,
-		},
-	};
+	let overrides: any;
+
+	if (isSport("baseball")) {
+		const [jersey, accessory] = DEFAULT_JERSEY.split(":");
+		overrides = {
+			jersey: {
+				id: jersey,
+			},
+			accessories: {
+				id: accessory,
+			},
+		};
+	} else {
+		overrides = {
+			jersey: {
+				id: DEFAULT_JERSEY,
+			},
+		};
+	}
 
 	if (!isSport("basketball")) {
 		overrides.glasses = {
@@ -24,11 +38,13 @@ const generate = (race?: Race) => {
 		race,
 	});
 
-	// No baseball hat
-	while (face.accessories.id.startsWith("hat")) {
-		face = generateFace(overrides, {
-			race,
-		});
+	if (!isSport("baseball")) {
+		// No baseball hat
+		while (face.accessories.id.startsWith("hat")) {
+			face = generateFace(overrides, {
+				race,
+			});
+		}
 	}
 
 	return face;

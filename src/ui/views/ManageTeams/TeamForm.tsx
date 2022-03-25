@@ -1,10 +1,9 @@
-import { display } from "facesjs";
 import type { Face } from "facesjs";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { DEFAULT_JERSEY, helpers, JERSEYS } from "../../../common";
+import { helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 import { JerseyNumber } from "../../components";
-import { toWorker } from "../../util";
+import { displayFace, toWorker } from "../../util";
 
 const TeamForm = ({
 	classNamesCol,
@@ -80,13 +79,12 @@ const TeamForm = ({
 			}
 
 			if (faceWrapper && face.current) {
-				const overrides = {
-					teamColors: [color1, color2, color3],
-					jersey: {
-						id: t.jersey ?? DEFAULT_JERSEY,
-					},
-				};
-				display(faceWrapper, face.current, overrides);
+				displayFace({
+					colors: [color1, color2, color3],
+					face: face.current,
+					jersey: t.jersey,
+					wrapper: faceWrapper,
+				});
 			}
 		};
 

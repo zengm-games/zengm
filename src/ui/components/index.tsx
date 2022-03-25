@@ -1,5 +1,3 @@
-import { Suspense, lazy } from "react";
-
 export { default as ActionButton } from "./ActionButton";
 export { default as BarGraph } from "./BarGraph";
 export { default as BoxPlot } from "./BoxPlot";
@@ -12,6 +10,7 @@ export { default as Controller } from "./Controller";
 export { default as CountryFlag } from "./CountryFlag";
 export { default as DataTable } from "./DataTable";
 export { default as DraftAbbrev } from "./DraftAbbrev";
+export { default as ErrorBoundary } from "./ErrorBoundary";
 export { default as Footer } from "./Footer";
 export { default as ForceWin } from "./ForceWin";
 export { default as GameLinks } from "./GameLinks";
@@ -34,6 +33,7 @@ export { default as NewWindowLink } from "./NewWindowLink";
 export { default as NewsBlock } from "./NewsBlock";
 export { default as PlayPauseNext } from "./PlayPauseNext";
 export { default as PlayerNameLabels } from "./PlayerNameLabels";
+export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
 export { default as PopText } from "./PopText";
 export { default as ProgressBarText } from "./ProgressBarText";
@@ -54,17 +54,3 @@ export { default as StickyBottomButtons } from "./StickyBottomButtons";
 export { default as TeamLogoInline } from "./TeamLogoInline";
 export { default as WatchBlock } from "./WatchBlock";
 export { default as Weight } from "./Weight";
-
-import ErrorBoundary from "./ErrorBoundary";
-export { ErrorBoundary };
-
-const PlayerPictureLazy = lazy(() => import("./PlayerPicture"));
-export const PlayerPicture = (
-	props: Parameters<typeof PlayerPictureLazy>[0],
-) => (
-	<ErrorBoundary local>
-		<Suspense fallback={<div className="mt-3">Loading...</div>}>
-			<PlayerPictureLazy {...props} />
-		</Suspense>
-	</ErrorBoundary>
-);

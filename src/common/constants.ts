@@ -347,7 +347,7 @@ const AD_DIVS = bySport({
 });
 
 const DEFAULT_JERSEY = bySport({
-	baseball: "jersey3",
+	baseball: "baseball2:hat2",
 	basketball: "jersey3",
 	football: "football",
 	hockey: "hockey",
@@ -355,7 +355,18 @@ const DEFAULT_JERSEY = bySport({
 
 const JERSEYS = bySport({
 	baseball: {
-		jersey3: "Solid horizontal",
+		"baseball:hat": "Solid jersey, solid hat",
+		"baseball:hat2": "Solid jersey, brim hat",
+		"baseball:hat3": "Solid jersey, multi hat",
+		"baseball2:hat": "Accent jersey, solid hat",
+		"baseball2:hat2": "Accent jersey, brim hat",
+		"baseball2:hat3": "Accent jersey, multi hat",
+		"baseball3:hat": "Pinstripe jersey, solid hat",
+		"baseball3:hat2": "Pinstripe jersey, brim hat",
+		"baseball3:hat3": "Pinstripe jersey, multi hat",
+		"baseball4:hat": "White jersey, solid hat",
+		"baseball4:hat2": "White jersey, brim hat",
+		"baseball4:hat3": "White jersey, multi hat",
 	},
 	basketball: {
 		jersey: "Plain",

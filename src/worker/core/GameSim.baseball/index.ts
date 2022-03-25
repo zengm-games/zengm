@@ -585,8 +585,45 @@ class GameSim {
 		return runners;
 	}
 
+	doBalk() {
+		const runners = this.getRunners();
+
+		if (this.bases[2]) {
+			this.doScore(this.bases[2]);
+			runners[2]!.to += 1;
+			this.bases[2] = undefined;
+		}
+		if (this.bases[1]) {
+			runners[1]!.to += 1;
+			this.bases[2] = this.bases[1];
+			this.bases[1] = undefined;
+		}
+		if (this.bases[0]) {
+			runners[0]!.to += 1;
+			this.bases[1] = this.bases[0];
+			this.bases[0] = undefined;
+		}
+
+		const p = this.team[this.d].getPitcher().p;
+
+		this.recordStat(this.o, p, "bk");
+		this.playByPlay.logEvent({
+			type: "balk",
+			t: this.d,
+			pid: p.id,
+			runners: this.finalizeRunners(runners),
+			...this.getSportState(),
+		});
+	}
+
 	simPitch() {
 		let doneBatter;
+
+		if (this.bases.some(p => p) && Math.random() < 0.01) {
+			this.doBalk();
+			return doneBatter;
+		}
+
 		const outcome = random.choice(["ball", "strike", "contact"]);
 
 		if (outcome === "ball") {

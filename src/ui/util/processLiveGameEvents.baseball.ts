@@ -248,6 +248,11 @@ const getText = (
 			)} takes 1st base${runnerText ? `. ${runnerText}` : ""}`;
 			break;
 		}
+		case "balk": {
+			const runnerText = formatRunners(event.runners);
+			text = `Balk!${runnerText ? ` ${runnerText}` : ""}`;
+			break;
+		}
 		case "hitResult": {
 			text = "";
 			if (event.result === "error") {

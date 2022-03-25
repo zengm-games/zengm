@@ -470,7 +470,7 @@ const LiveGame = (props: View<"liveGame">) => {
 
 								let numPlays = 0;
 
-								while (true) {
+								while (!boxScore.current.gameOver) {
 									processToNextPause(true);
 									numPlays += 1;
 
@@ -504,9 +504,10 @@ const LiveGame = (props: View<"liveGame">) => {
 								let numPlays = 0;
 
 								const numSidesSoFar = getNumSidesSoFar();
-								while (true) {
+								while (!boxScore.current.gameOver) {
 									processToNextPause(true);
 									numPlays += 1;
+
 									if (numSidesSoFar !== getNumSidesSoFar()) {
 										break;
 									}
@@ -522,9 +523,10 @@ const LiveGame = (props: View<"liveGame">) => {
 								let numPlays = 0;
 
 								const numSidesSoFar = getNumSidesSoFar();
-								while (true) {
+								while (!boxScore.current.gameOver) {
 									processToNextPause(true);
 									numPlays += 1;
+
 									const newNum = getNumSidesSoFar();
 									if (numSidesSoFar !== newNum && newNum % 2 === 1) {
 										break;
@@ -541,8 +543,8 @@ const LiveGame = (props: View<"liveGame">) => {
 								let numPlays = 0;
 
 								while (
-									getNumSidesSoFar() <=
-									(boxScore.current.numPeriods - 1) * 2
+									getNumSidesSoFar() <= (boxScore.current.numPeriods - 1) * 2 &&
+									!boxScore.current.gameOver
 								) {
 									processToNextPause(true);
 									numPlays += 1;

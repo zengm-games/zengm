@@ -20,9 +20,18 @@ const generate = (race?: Race) => {
 		};
 	}
 
-	return generateFace(overrides, {
+	let face = generateFace(overrides, {
 		race,
 	});
+
+	// No baseball hat
+	while (face.accessories.id.startsWith("hat")) {
+		face = generateFace(overrides, {
+			race,
+		});
+	}
+
+	return face;
 };
 
 const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {

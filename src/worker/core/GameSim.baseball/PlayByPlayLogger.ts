@@ -129,6 +129,13 @@ type PlayByPlayEventInput =
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
+			type: "hitByPitch";
+			t: TeamNum;
+			pid: number;
+			runners: Runner[];
+			bases: [number | undefined, number | undefined, number | undefined];
+	  }
+	| {
 			type: "stealStart";
 			t: TeamNum;
 			pid: number;

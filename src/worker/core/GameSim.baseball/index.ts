@@ -624,6 +624,11 @@ class GameSim {
 			return doneBatter;
 		}
 
+		if (Math.random() < 0.01) {
+			this.doWalk("hitByPitch");
+			return doneBatter;
+		}
+
 		const outcome = random.choice(["ball", "strike", "contact"]);
 
 		if (outcome === "ball") {
@@ -887,7 +892,7 @@ class GameSim {
 		return finalized;
 	}
 
-	doWalk(type: "intentional" | "normal") {
+	doWalk(type: "intentional" | "normal" | "hitByPitch") {
 		const t = this.team[this.o];
 		const p = t.getBatter().p;
 		const runners = this.getRunners();
@@ -915,12 +920,23 @@ class GameSim {
 			this.recordStat(this.o, p, "ibb");
 			this.recordStat(this.d, pitcher, "ibbPit");
 		}
+
 		if (type === "intentional" || type === "normal") {
 			this.recordStat(this.o, p, "bb");
 			this.recordStat(this.d, pitcher, "bbPit");
 			this.playByPlay.logEvent({
 				type: "walk",
 				intentional: type === "intentional",
+				t: this.o,
+				pid: p.id,
+				runners: this.finalizeRunners(runners),
+				...this.getSportState(),
+			});
+		} else {
+			this.recordStat(this.o, p, "hbp");
+			this.recordStat(this.d, pitcher, "hbpPit");
+			this.playByPlay.logEvent({
+				type: "hitByPitch",
 				t: this.o,
 				pid: p.id,
 				runners: this.finalizeRunners(runners),

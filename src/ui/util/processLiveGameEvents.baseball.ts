@@ -246,6 +246,15 @@ const getText = (
 			)} takes 1st base${runnerText ? `. ${runnerText}` : ""}`;
 			break;
 		}
+		case "hitByPitch": {
+			const runnerText = formatRunners(event.runners, {
+				ignoreStationary: true,
+			});
+			text = `He's hit by the pitch! ${getName(event.pid)} takes 1st base${
+				runnerText ? `. ${runnerText}` : ""
+			}`;
+			break;
+		}
 		case "balk": {
 			const runnerText = formatRunners(event.runners);
 			text = `Balk!${runnerText ? ` ${runnerText}` : ""}`;
@@ -507,7 +516,7 @@ const processLiveGameEvents = ({
 				sportState.balls = 4;
 			}
 			sportState.bases = e.bases;
-		} else if (e.type === "balk") {
+		} else if (e.type === "balk" || e.type === "hitByPitch") {
 			sportState.bases = e.bases;
 		}
 

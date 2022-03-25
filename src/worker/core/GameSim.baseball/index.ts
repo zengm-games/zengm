@@ -629,12 +629,11 @@ class GameSim {
 		if (outcome === "ball") {
 			this.balls += 1;
 			if (this.balls >= 4) {
-				this.doWalk();
+				this.doWalk("normal");
 				doneBatter = true;
 			} else {
 				this.playByPlay.logEvent({
 					type: "ball",
-					intentional: false,
 					balls: this.balls,
 					strikes: this.strikes,
 				});
@@ -888,7 +887,7 @@ class GameSim {
 		return finalized;
 	}
 
-	doWalk() {
+	doWalk(type: "intentional" | "normal") {
 		const t = this.team[this.o];
 		const p = t.getBatter().p;
 		const runners = this.getRunners();
@@ -912,16 +911,22 @@ class GameSim {
 
 		const pitcher = this.team[this.d].getPitcher().p;
 
-		this.recordStat(this.o, p, "bb");
-		this.recordStat(this.d, pitcher, "bbPit");
-		this.playByPlay.logEvent({
-			type: "walk",
-			intentional: false,
-			t: this.o,
-			pid: p.id,
-			runners: this.finalizeRunners(runners),
-			...this.getSportState(),
-		});
+		if (type === "intentional") {
+			this.recordStat(this.o, p, "ibb");
+			this.recordStat(this.d, pitcher, "ibbPit");
+		}
+		if (type === "intentional" || type === "normal") {
+			this.recordStat(this.o, p, "bb");
+			this.recordStat(this.d, pitcher, "bbPit");
+			this.playByPlay.logEvent({
+				type: "walk",
+				intentional: type === "intentional",
+				t: this.o,
+				pid: p.id,
+				runners: this.finalizeRunners(runners),
+				...this.getSportState(),
+			});
+		}
 	}
 
 	logOut() {
@@ -1027,6 +1032,16 @@ class GameSim {
 		return out;
 	}
 
+	/**
+	 * Two scenarios for intentional walk:
+	 *
+	 * 1. Runner on 2nd, we want the option of a double play, and the next hitter is worse than the current one.
+	 * 2. Scary hitter up, we'd just like to avoid him.
+	 */
+	shouldIntentionalWalk() {
+		return Math.random() < 0.01;
+	}
+
 	simPlateAppearance() {
 		const t = this.team[this.o];
 		t.advanceToNextBatter();
@@ -1038,6 +1053,11 @@ class GameSim {
 			pid: p.id,
 		});
 		this.recordStat(this.o, p, "pa");
+
+		if (this.shouldIntentionalWalk()) {
+			this.doWalk("intentional");
+			return;
+		}
 
 		while (true) {
 			const doneBatter = this.simPitch();

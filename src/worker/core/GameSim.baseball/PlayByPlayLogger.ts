@@ -52,7 +52,6 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "ball";
-			intentional: boolean;
 			balls: number;
 			strikes: number;
 	  }

@@ -197,9 +197,7 @@ const getText = (
 			break;
 		}
 		case "ball": {
-			text = `${event.intentional ? "Intentional ball" : "Ball"} (${
-				event.balls
-			}-${event.strikes})`;
+			text = `Ball (${event.balls}-${event.strikes})`;
 			break;
 		}
 		case "strikeOut": {
@@ -505,7 +503,9 @@ const processLiveGameEvents = ({
 				sportState.outs = e.outs;
 			}
 		} else if (e.type === "walk") {
-			sportState.balls = 4;
+			if (!e.intentional) {
+				sportState.balls = 4;
+			}
 			sportState.bases = e.bases;
 		} else if (e.type === "balk") {
 			sportState.bases = e.bases;

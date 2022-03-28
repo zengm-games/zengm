@@ -437,7 +437,9 @@ const Depth = ({
 								className={classNames({
 									"text-danger":
 										isSport("baseball") && p.lineupPos
-											? p.pid >= 0 && p.lineupPos !== p.ratings.pos
+											? p.pid >= 0 &&
+											  p.lineupPos !== "DH" &&
+											  p.lineupPos !== p.ratings.pos
 											: isSport("baseball") && (pos === "D" || pos === "DP")
 											? rowLabels?.[index] !== undefined &&
 											  rowLabels[index] !== "DH" &&

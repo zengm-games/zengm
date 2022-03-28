@@ -52,7 +52,7 @@
 		"d3-dsv": "^3.0.1",
 		"dompurify": "^2.3.6",
 		"dropbox": "^10.26.1",
-		"facesjs": "^3.7.1",
+		"facesjs": "^3.7.2",
 		"flag-icons": "^6.1.1",
 		"framer-motion": "^6.2.8",
 		"html2canvas": "^1.4.1",

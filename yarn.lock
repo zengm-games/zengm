@@ -3994,10 +3994,10 @@ extend@^3.0.0:
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
 
-facesjs@^3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.7.1.tgz#31f885040ba6b24a762ed74ff0e1e65c923f197f"
-  integrity sha512-uIjDqRYE7wUV3fKuJfZ4XXqoODA4QqLE1wtSX1eFzNLTs7Y3brqfpPfkIkVryEywVu0dHwK2h/ivAebKY9Uc7g==
+facesjs@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-3.7.2.tgz#ff80a960b3a31f44620c0033ecbbb18f6cf91dd4"
+  integrity sha512-ZfqEiiMaCDhLpHXqmvdetKPxbGN3BktXpNboZf8kYHMIvhdm6upRXji1F5xHzp0QTwx/tLtxp5ijPpWZFJXOFQ==
 
 fake-indexeddb@4.0.0-beta.2:
   version "4.0.0-beta.2"

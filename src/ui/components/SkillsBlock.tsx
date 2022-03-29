@@ -3,6 +3,22 @@ import { bySport } from "../../common";
 import { useLocal } from "../util";
 
 const tooltips = bySport({
+	baseball: {
+		Pp: "Power Pitcher",
+		Pf: "Finesse Pitcher",
+		Pw: "Workhorse Pitcher",
+		Ri: "Outfield Range",
+		Ro: "Infield Range",
+		Dc: "Catcher Defense",
+		D1: "First Base Defense",
+		Dg: "Ground Ball Fielding",
+		Df: "Fly Ball Fielding",
+		A: "Strong Arm",
+		Hp: "Power Hitter",
+		Hc: "Contact Hitter",
+		E: "Good Eye",
+		S: "Speed",
+	},
 	basketball: {
 		"3": "Three Point Shooter",
 		A: "Athlete",

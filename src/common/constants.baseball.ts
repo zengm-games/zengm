@@ -1,7 +1,120 @@
 import type { CompositeWeights, Conf, Div } from "./types";
 import type { Position, RatingKey } from "./types.baseball";
 
-const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {};
+const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
+	powerPitcher: {
+		ratings: ["ppw"],
+		weights: [1],
+		skill: {
+			label: "Pp",
+			cutoff: 0.65,
+		},
+	},
+	finessePitcher: {
+		ratings: ["ctl", "mov"],
+		weights: [1, 1],
+		skill: {
+			label: "Pf",
+			cutoff: 0.65,
+		},
+	},
+	workhorsePitcher: {
+		ratings: ["endu"],
+		weights: [1],
+		skill: {
+			label: "Pw",
+			cutoff: 0.65,
+		},
+	},
+	outfieldRange: {
+		ratings: ["spd", "fly", "hgt"],
+		weights: [1, 0.2, 0.1],
+		skill: {
+			label: "Ro",
+			cutoff: 0.65,
+		},
+	},
+	infieldRange: {
+		ratings: ["spd", "gnd", "hgt"],
+		weights: [1, 0.2, 0.2],
+		skill: {
+			label: "Ri",
+			cutoff: 0.65,
+		},
+	},
+	firstBaseDefense: {
+		ratings: ["hgt", "gnd"],
+		weights: [2, 1],
+		skill: {
+			label: "D1",
+			cutoff: 0.65,
+		},
+	},
+	catcherDefense: {
+		ratings: ["cat"],
+		weights: [1],
+		skill: {
+			label: "Dc",
+			cutoff: 0.65,
+		},
+	},
+	groundBallDefense: {
+		ratings: ["gnd", "spd"],
+		weights: [1, 0.2],
+		skill: {
+			label: "Dg",
+			cutoff: 0.65,
+		},
+	},
+	flyBallDefense: {
+		ratings: ["fly", "spd"],
+		weights: [1, 0.2],
+		skill: {
+			label: "Df",
+			cutoff: 0.65,
+		},
+	},
+	arm: {
+		ratings: ["thr"],
+		weights: [1],
+		skill: {
+			label: "A",
+			cutoff: 0.65,
+		},
+	},
+	powerHitter: {
+		ratings: ["hpw"],
+		weights: [1],
+		skill: {
+			label: "Hp",
+			cutoff: 0.65,
+		},
+	},
+	contactHitter: {
+		ratings: ["con"],
+		weights: [1],
+		skill: {
+			label: "Hc",
+			cutoff: 0.65,
+		},
+	},
+	eye: {
+		ratings: ["eye"],
+		weights: [1],
+		skill: {
+			label: "E",
+			cutoff: 0.65,
+		},
+	},
+	speed: {
+		ratings: ["spd"],
+		weights: [1],
+		skill: {
+			label: "S",
+			cutoff: 0.65,
+		},
+	},
+};
 
 const PLAYER_GAME_STATS = {
 	batting: {

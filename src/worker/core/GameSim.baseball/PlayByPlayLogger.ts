@@ -137,19 +137,20 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "stealStart";
-			t: TeamNum;
 			pid: number;
-			from: 1 | 2 | 3;
+			to: 2 | 3 | 4;
+	  }
+	| {
+			type: "stealStartAll";
 	  }
 	| {
 			type: "stealEnd";
-			t: TeamNum;
 			pid: number;
 			pidError?: number;
 			to: 2 | 3 | 4;
 			out: boolean;
+			throw: boolean;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
-			runners: Runner[];
 			outs: number;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }

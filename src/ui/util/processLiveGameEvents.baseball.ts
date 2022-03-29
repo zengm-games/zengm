@@ -309,108 +309,37 @@ const getText = (
 			}
 			break;
 		}
+		case "stealStartAll": {
+			text = "The runners all start moving on the pitch";
+			break;
+		}
+		case "stealStart": {
+			text = `${getName(event.pid)} breaks for ${getBaseName(
+				event.to,
+			)} on the pitch`;
+			break;
+		}
+		case "stealEnd": {
+			if (event.out) {
+				text = `${getName(event.pid)} is thrown out at ${getBaseName(
+					event.to,
+				)}`;
+			} else if (event.throw) {
+				text = `${getName(
+					event.pid,
+				)} beats the throw and is safe at ${getBaseName(event.to)}`;
+			} else {
+				text = `${getName(event.pid)} steals ${getBaseName(
+					event.to,
+				)} with no throw`;
+			}
+			break;
+		}
 		default: {
 			text = JSON.stringify(event);
 			console.log(event);
 		}
 	}
-
-	/*if (event.type === "injury") {
-		text = `${event.names[0]} was injured!`;
-	}
-	if (event.type === "quarter") {
-		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
-			boxScore.numPeriods,
-		)}`;
-		showTeamAndClock = false;
-	}
-	if (event.type === "overtime") {
-		const overtimes = event.quarter - boxScore.numPeriods;
-		text = `Start of ${
-			overtimes === 1 ? "" : `${helpers.ordinal(overtimes)} `
-		} overtime`;
-		showTeamAndClock = false;
-	}
-	if (event.type === "gameOver") {
-		text = "End of game";
-		showTeamAndClock = false;
-	}
-	if (event.type === "hit") {
-		text = `${event.names[0]} hit ${event.names[1]}`;
-	}
-	if (event.type === "gv") {
-		text = `Giveaway by ${event.names[0]}`;
-	}
-	if (event.type === "tk") {
-		text = `Takeaway by ${event.names[0]}`;
-	}
-	if (event.type === "slapshot") {
-		text = `Slapshot from ${event.names[0]}`;
-	}
-	if (event.type === "wristshot") {
-		text = `Wristshot by ${event.names[0]}`;
-	}
-	if (event.type === "shot") {
-		text = `Shot by ${event.names[0]}`;
-	}
-	if (event.type === "reboundShot") {
-		text = `Shot by ${event.names[0]} off the rebound`;
-	}
-	if (event.type === "deflection") {
-		text = `Deflected by ${event.names[0]}`;
-	}
-	if (event.type === "block") {
-		text = `Blocked by ${event.names[0]}`;
-	}
-	if (event.type === "miss") {
-		text = "Shot missed the goal";
-	}
-	if (event.type === "save") {
-		text = `Saved by ${event.names[0]}`;
-	}
-	if (event.type === "save-freeze") {
-		text = `Saved by ${event.names[0]}, and he freezes the puck`;
-	}
-	if (event.type === "faceoff") {
-		text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;
-	}
-	if (event.type === "goal") {
-		text = "Goal!!!";
-		if (event.names.length > 1) {
-			text += ` (assist: ${event.names.slice(1).join(", ")})`;
-		}
-	}
-	if (event.type === "offensiveLineChange") {
-		text = "Offensive line change";
-	}
-	if (event.type === "fullLineChange") {
-		text = "Full line change";
-	}
-	if (event.type === "defensiveLineChange") {
-		text = "Defensive line change";
-	}
-	if (event.type === "penalty") {
-		const type =
-			event.penaltyType === "major"
-				? "Major"
-				: event.penaltyType === "minor"
-				? "Minor"
-				: "Double minor";
-		text = `${type} penalty on ${event.names[0]} for ${event.penaltyName}`;
-	}
-	if (event.type === "penaltyOver") {
-		text = `${event.names[0]} is released from the penalty box`;
-	}
-	if (event.type === "pullGoalie") {
-		text = `Pulled goalie! ${event.name} takes the ice`;
-	}
-	if (event.type === "noPullGoalie") {
-		text = `Goalie ${event.name} comes back into the game`;
-	}*/
-
-	/*if (text === undefined) {
-		throw new Error(`Invalid event type "${event.type}"`);
-	}*/
 
 	return text;
 };

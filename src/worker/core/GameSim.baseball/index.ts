@@ -371,6 +371,7 @@ class GameSim {
 		numBases,
 		p,
 		result,
+		stealing,
 	}: {
 		battedBallInfo: ReturnType<GameSim["doBattedBall"]>;
 		error: boolean;
@@ -380,6 +381,7 @@ class GameSim {
 		numBases: 1 | 2 | 3 | 4;
 		p: PlayerGameSim;
 		result: "hit" | "flyOut" | "throwOut" | "fieldersChoice" | "doublePlay";
+		stealing: [boolean, boolean, boolean];
 	}) {
 		const runners = this.getRunners();
 
@@ -391,6 +393,8 @@ class GameSim {
 			if (!runner) {
 				continue;
 			}
+
+			const isStealing = stealing[i];
 
 			if (hit || error) {
 				// Handle runners advancing on a hit/error
@@ -409,6 +413,7 @@ class GameSim {
 						// Single, score on anything except some infield hits
 						if (
 							!mustAdvanceWithHitter &&
+							!isStealing &&
 							battedBallInfo.type === "ground" &&
 							hitTo <= 6 &&
 							Math.random() < 0.5
@@ -430,14 +435,18 @@ class GameSim {
 							runner.to = 2;
 						} else if (hitTo <= 6) {
 							// Infield single, maybe not advance
-							if (Math.random() < 0.5 && !mustAdvanceWithHitter) {
+							if (
+								Math.random() < 0.5 &&
+								!mustAdvanceWithHitter &&
+								!isStealing
+							) {
 								runner.to = 2;
 							} else {
 								runner.to = 3;
 							}
 						} else {
 							// Outfield single, go to 3rd or 4th
-							if (Math.random() < 0.2) {
+							if (!isStealing && Math.random() < 0.2) {
 								runner.to = 3;
 							} else {
 								runner.to = 4;
@@ -453,8 +462,9 @@ class GameSim {
 					// Fast runner might get one more base
 					if (
 						runner.to < 4 &&
-						Math.random() < 0.1 &&
-						!blockedBases.has(runner.to as any)
+						!blockedBases.has(runner.to as any) &&
+						((!isStealing && Math.random() < 0.1) ||
+							(isStealing && Math.random() < 0.5))
 					) {
 						runner.to += 1;
 					}
@@ -481,7 +491,11 @@ class GameSim {
 
 					if (battedBallInfo.type === "fly") {
 						// Tag up
-						if (battedBallInfo.distance === "shallow" && Math.random() < 0.25) {
+						if (
+							battedBallInfo.distance === "shallow" &&
+							!isStealing &&
+							Math.random() < 0.25
+						) {
 							advance = true;
 						} else if (
 							battedBallInfo.distance === "normal" &&
@@ -493,12 +507,15 @@ class GameSim {
 						}
 					} else if (battedBallInfo.type === "line") {
 						// Tag up
-						if (hitTo >= 7 && Math.random() < 0.5) {
+						if (hitTo >= 7 && !isStealing && Math.random() < 0.5) {
 							advance = true;
 						}
 					} else {
 						// Maybe score on ground ball
-						if (Math.random() < 0.5) {
+						if (
+							(!isStealing && Math.random() < 0.4) ||
+							(isStealing && Math.random() < 0.8)
+						) {
 							advance = true;
 						}
 					}
@@ -517,6 +534,7 @@ class GameSim {
 					if (battedBallInfo.type === "fly") {
 						if (
 							battedBallInfo.distance === "normal" &&
+							!isStealing &&
 							Math.random() < 0.25 * tendency
 						) {
 							advance = true;
@@ -527,7 +545,7 @@ class GameSim {
 							advance = true;
 						}
 					} else if (battedBallInfo.type === "line") {
-						if (Math.random() < 0.25 * tendency) {
+						if (!isStealing && Math.random() < 0.25 * tendency) {
 							advance = true;
 						}
 					} else {
@@ -542,7 +560,7 @@ class GameSim {
 						}
 
 						// Maybe advance on ground ball
-						if (Math.random() < 0.4 * tendency) {
+						if (isStealing || Math.random() < 0.4 * tendency) {
 							advance = true;
 						}
 					}
@@ -553,6 +571,7 @@ class GameSim {
 					if (
 						battedBallInfo.type === "fly" &&
 						battedBallInfo.distance === "deep" &&
+						!isStealing &&
 						Math.random() < 0.05
 					) {
 						advance = true;
@@ -616,6 +635,68 @@ class GameSim {
 		});
 	}
 
+	processSteals(stealing: [boolean, boolean, boolean]) {
+		if (stealing[2]) {
+			// Stealing home currently is only implemented on a full count with 2 outs, and processSteals only happens after a strike or ball, so this should never happen
+			throw new Error("Should never happen");
+		}
+
+		if (!stealing[0] && !stealing[1]) {
+			return;
+		}
+
+		const indexes: (0 | 1)[] = [];
+		for (let i = stealing.length - 1; i >= 0; i--) {
+			if (stealing[i]) {
+				indexes.push(i as 0 | 1);
+			}
+		}
+
+		let throwAt = Math.random() < 0.1 ? undefined : random.choice(indexes);
+		if (throwAt === 0 && this.bases[2]) {
+			// Stealing 2nd with runners on 1st and 3rd, maybe don't throw
+			if (Math.random() < 0.5) {
+				throwAt = undefined;
+			}
+		}
+
+		let thrownOut = false;
+		if (throwAt !== undefined) {
+			thrownOut = Math.random() < 0.5;
+		}
+
+		// indexes is in descending order, so bases can safely be updated
+		for (const i of indexes) {
+			const p = this.bases[i]!;
+			this.bases[i + 1] = p;
+			this.bases[i] = undefined;
+
+			const success = throwAt === i && thrownOut;
+			const out = !success;
+
+			this.recordStat(this.o, p, out ? "cs" : "sb");
+
+			if (out) {
+				this.outs += 1;
+
+				if (this.outs >= 3) {
+					// Same batter will be up next inning
+					this.team[this.o].atBat -= 1;
+				}
+			}
+
+			this.playByPlay.logEvent({
+				type: "stealEnd",
+				pid: p!.id,
+				to: (i + 2) as any,
+				out: !success,
+				throw: throwAt === i,
+				outAtNextBase: false,
+				...this.getSportState(),
+			});
+		}
+	}
+
 	simPitch() {
 		let doneBatter;
 
@@ -627,6 +708,53 @@ class GameSim {
 		if (Math.random() < 0.01) {
 			this.doWalk("hitByPitch");
 			return doneBatter;
+		}
+
+		const stealing = [false, false, false];
+		const allRunnersGo =
+			this.outs === 2 && this.balls === 3 && this.strikes === 2;
+
+		let numStealing = 0;
+		let numStaying = 0;
+
+		for (let i = 2; i >= 0; i--) {
+			const p = this.bases[i];
+			if (!p) {
+				continue;
+			}
+
+			if (allRunnersGo) {
+				// Full count with 2 outs, might as well start running
+				stealing[i] = true;
+			} else {
+				const nextBaseOccupied = !!this.bases[i + 1] && !stealing[i + 1];
+
+				if (!nextBaseOccupied) {
+					stealing[i] = i < 2 && !!this.bases[i] && Math.random() < 0.05;
+				}
+			}
+
+			if (stealing[i]) {
+				numStealing += 1;
+			} else {
+				numStaying += 1;
+			}
+		}
+
+		if (numStealing > 1 && numStaying === 0) {
+			this.playByPlay.logEvent({
+				type: "stealStartAll",
+			});
+		} else {
+			for (let i = 0; i < stealing.length; i++) {
+				if (stealing[i]) {
+					this.playByPlay.logEvent({
+						type: "stealStart",
+						pid: this.bases[i]!.id,
+						to: (i + 2) as 2 | 3 | 4,
+					});
+				}
+			}
 		}
 
 		const outcome = random.choice(["ball", "strike", "contact"]);
@@ -642,12 +770,21 @@ class GameSim {
 					balls: this.balls,
 					strikes: this.strikes,
 				});
+				if (numStealing > 0) {
+					this.processSteals(stealing);
+					if (this.outs >= 3) {
+						return doneBatter;
+					}
+				}
 			}
 		} else if (outcome === "strike") {
 			this.strikes += 1;
 			if (this.strikes >= 3) {
 				this.doStrikeout();
 				doneBatter = true;
+				if (this.outs >= 3) {
+					return doneBatter;
+				}
 			} else {
 				this.playByPlay.logEvent({
 					type: "strike",
@@ -655,6 +792,13 @@ class GameSim {
 					balls: this.balls,
 					strikes: this.strikes,
 				});
+			}
+
+			if (numStealing > 0) {
+				this.processSteals(stealing);
+				if (this.outs >= 3) {
+					return doneBatter;
+				}
 			}
 		} else {
 			const p = this.team[this.o].getBatter().p;
@@ -789,6 +933,7 @@ class GameSim {
 					numBases,
 					p,
 					result,
+					stealing,
 				});
 
 				if (numBases === 4) {
@@ -816,6 +961,7 @@ class GameSim {
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
 					} else if (result === "doublePlay") {
+						this.recordStat(this.o, p, "gdp");
 						this.logOut();
 					} else {
 						if (result === "fieldersChoice") {

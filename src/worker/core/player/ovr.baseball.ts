@@ -119,8 +119,13 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 
 	r *= 100;
 
-	// Scale 10-90 to 0-100
-	r = -10 + (r * 100) / 80;
+	if (pos2 === "RP" || pos2 === "SP") {
+		// Scale 10-90 to 0-100
+		r = -10 + (r * 100) / 80;
+	} else {
+		// Scale more for position players
+		r = -22.5 + (r * 100) / 55;
+	}
 
 	r = helpers.bound(Math.round(r), 0, 100);
 

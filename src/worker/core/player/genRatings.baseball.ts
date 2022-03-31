@@ -34,9 +34,9 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			hgt: 1.5,
 			spd: 0.5,
-			ppw: 2.25,
-			ctl: 2,
-			mov: 2,
+			ppw: 1.75,
+			ctl: 1.25,
+			mov: 1.5,
 			cat: 0.25,
 			endu: 2,
 			hpw: 0.25,
@@ -48,9 +48,9 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			hgt: 1.5,
 			spd: 0.5,
-			ppw: 2.25,
-			ctl: 1.5,
-			mov: 1.5,
+			ppw: 2,
+			ctl: 1,
+			mov: 1,
 			cat: 0.25,
 			hpw: 0.25,
 			con: 0.25,
@@ -100,7 +100,7 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			...nonPitcher,
 			spd: 1.5,
-			gnd: 2,
+			gnd: 1.75,
 			fly: 1.5,
 			thr: 1.5,
 			cat: 0.25,
@@ -121,7 +121,7 @@ const getRatingsToBoost = (pos: string) => {
 			...nonPitcher,
 			spd: 2,
 			gnd: 1.5,
-			fly: 2,
+			fly: 1.75,
 			thr: 1.5,
 			cat: 0.25,
 		};
@@ -180,7 +180,7 @@ const genRatings = (
 	const rawRatings = {
 		hgt: initialRating() + 30,
 		spd: initialRating() * (isPitcher ? 1 : 3),
-		hpw: initialRating() * (isPitcher ? 1 : 4),
+		hpw: initialRating() * (isPitcher ? 1 : 3.25),
 		con: initialRating() * (isPitcher ? 1 : 3),
 		eye: initialRating() * (isPitcher ? 1 : 3),
 		gnd: initialRating(),

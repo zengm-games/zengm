@@ -26,14 +26,52 @@ const powerFormula: RatingFormula = {
 	},
 	changeLimits: () => [-3, 6],
 };
+const powerFormulaMinus: RatingFormula = {
+	ageModifier: (age: number) => {
+		// Reverse most of the age-related decline in calcBaseChange
+		if (age <= 27) {
+			return -0.25;
+		}
+
+		if (age <= 29) {
+			return 0.25;
+		}
+
+		if (age <= 31) {
+			return 1.25;
+		}
+
+		return 2;
+	},
+	changeLimits: () => [-3, 6],
+};
+const powerFormulaPlus: RatingFormula = {
+	ageModifier: (age: number) => {
+		// Reverse most of the age-related decline in calcBaseChange
+		if (age <= 27) {
+			return 0.5;
+		}
+
+		if (age <= 29) {
+			return 0.75;
+		}
+
+		if (age <= 31) {
+			return 1.5;
+		}
+
+		return 2;
+	},
+	changeLimits: () => [-3, 8],
+};
 const iqFormula: RatingFormula = {
 	ageModifier: (age: number) => {
 		if (age <= 21) {
-			return 3;
+			return 2.75;
 		}
 
 		if (age <= 23) {
-			return 2;
+			return 1.75;
 		}
 
 		// Reverse most of the age-related decline in calcBaseChange
@@ -43,6 +81,76 @@ const iqFormula: RatingFormula = {
 
 		if (age <= 29) {
 			return 0.5;
+		}
+
+		if (age <= 31) {
+			return 1.5;
+		}
+
+		return 2;
+	},
+	changeLimits: age => {
+		if (age >= 24) {
+			return [-3, 9];
+		}
+
+		// For 19: [-3, 32]
+		// For 23: [-3, 12]
+		return [-3, 7 + 5 * (24 - age)];
+	},
+};
+const iqFormulaMinus: RatingFormula = {
+	ageModifier: (age: number) => {
+		if (age <= 21) {
+			return 2.5;
+		}
+
+		if (age <= 23) {
+			return 1.5;
+		}
+
+		// Reverse most of the age-related decline in calcBaseChange
+		if (age <= 27) {
+			return -0.25;
+		}
+
+		if (age <= 29) {
+			return 0.25;
+		}
+
+		if (age <= 31) {
+			return 1.25;
+		}
+
+		return 1.75;
+	},
+	changeLimits: age => {
+		if (age >= 24) {
+			return [-3, 9];
+		}
+
+		// For 19: [-3, 32]
+		// For 23: [-3, 12]
+		return [-3, 7 + 5 * (24 - age)];
+	},
+};
+const iqFormulaPlus: RatingFormula = {
+	ageModifier: (age: number) => {
+		if (age <= 21) {
+			return 4;
+		}
+
+		if (age <= 23) {
+			return 3.75;
+		}
+
+		// Reverse most of the age-related decline in calcBaseChange
+		if (age <= 27) {
+			return 0.5;
+		}
+
+		if (age <= 29) {
+			return 0.75;
 		}
 
 		if (age <= 31) {
@@ -76,13 +184,13 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 		},
 		changeLimits: () => [-12, 2],
 	},
-	hpw: powerFormula,
-	con: iqFormula,
+	hpw: powerFormulaMinus,
+	con: iqFormulaPlus,
 	eye: iqFormula,
-	gnd: iqFormula,
-	fly: iqFormula,
+	gnd: iqFormulaMinus,
+	fly: iqFormulaMinus,
 	thr: powerFormula,
-	cat: powerFormula,
+	cat: powerFormulaPlus,
 	ppw: powerFormula,
 	ctl: iqFormula,
 	mov: iqFormula,

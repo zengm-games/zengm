@@ -108,13 +108,13 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	} else if (pos2 === "SP") {
 		r = defense;
 	} else if (pos2 === "DH") {
-		r = 0.85 * offense;
+		r = 0.95 * offense;
 	} else if (pos === "SS" || pos === "C") {
-		r = 0.6 * offense + 0.4 * defense;
+		r = 0.7 * offense + 0.3 * defense;
 	} else if (pos === "CF" || pos === "3B" || pos === "2B") {
-		r = 0.6 * offense + 0.05 + 0.3 * defense;
+		r = 0.7 * offense + 0.05 + 0.2 * defense;
 	} else {
-		r = 0.6 * offense + 0.1 + 0.2 * defense;
+		r = 0.7 * offense + 0.1 + 0.1 * defense;
 	}
 
 	r *= 100;
@@ -124,7 +124,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		r = -10 + (r * 100) / 80;
 	} else {
 		// Scale more for position players
-		r = -22.5 + (r * 100) / 55;
+		r = -20 + (r * 100) / 60;
 	}
 
 	r = helpers.bound(Math.round(r), 0, 100);

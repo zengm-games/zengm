@@ -8,6 +8,7 @@ import { g, helpers, random } from "../../util";
 import type { MinimalPlayerRatings } from "../../../common/types";
 import genWeight from "./genWeight";
 import potEstimator from "./potEstimator";
+import { BANNED_POSITIONS } from "./pos.baseball";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -149,11 +150,10 @@ const develop = async (
 			let pos;
 			let maxOvr = -Infinity; // A player can never have KR or PR as his main position
 
-			const bannedPositions = ["KR", "PR"];
 			ratings.ovrs = POSITIONS.reduce((ovrs, pos2) => {
 				ovrs[pos2] = ovr(ratings, pos2);
 
-				if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
+				if (!BANNED_POSITIONS.includes(pos2) && ovrs[pos2] > maxOvr) {
 					pos = pos2;
 					maxOvr = ovrs[pos2];
 				}

@@ -84,6 +84,8 @@ export const makeTeams = (
 	return teams;
 };
 
+const GOALIE_ADJUSTMENT = 0.225;
+
 export const mvpScore = (p: PlayerFiltered) => {
 	let teamFactor = 0;
 	if (p.currentStats.gp >= 20) {
@@ -94,13 +96,15 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return (
 		p.currentStats.pts / 25 +
 		p.currentStats.ps -
-		0.225 * p.currentStats.gps +
+		GOALIE_ADJUSTMENT * p.currentStats.gps +
 		teamFactor
 	);
 };
 
 export const royScore = (p: PlayerFiltered) =>
-	p.currentStats.pts / 25 + p.currentStats.ps;
+	p.currentStats.pts / 25 +
+	p.currentStats.ps -
+	GOALIE_ADJUSTMENT * p.currentStats.gps;
 
 export const dpoyScore = (p: PlayerFiltered) =>
 	p.currentStats.tk / 25 + p.currentStats.hit / 25 + p.currentStats.dps;

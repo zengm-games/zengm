@@ -748,8 +748,14 @@ class GameSim {
 
 	getPitchOutcome(batter: PlayerGameSim, pitcher: PlayerGameSim) {
 		const ballWeight =
-			1 - pitcher.compositeRating.controlPitcher + batter.compositeRating.eye;
-		return random.choice(["ball", "strike", "contact"], [ballWeight, 1, 1]);
+			1.5 - pitcher.compositeRating.controlPitcher + batter.compositeRating.eye;
+
+		const strikeWeight = this.strikes === 2 ? 0.75 : 1;
+
+		return random.choice(
+			["ball", "strike", "contact"],
+			[ballWeight, strikeWeight, 1],
+		);
 	}
 
 	probHit(batter: PlayerGameSim, pitcher: PlayerGameSim) {
@@ -889,6 +895,8 @@ class GameSim {
 
 		const batter = this.team[this.o].getBatter().p;
 		const pitcher = this.team[this.d].getPitcher().p;
+
+		this.recordStat(this.d, pitcher, "pc");
 
 		const outcome = this.getPitchOutcome(batter, pitcher);
 

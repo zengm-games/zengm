@@ -132,7 +132,7 @@ const PLAYER_GAME_STATS = {
 	},
 	pitching: {
 		name: "Pitching",
-		stats: ["ip", "hPit", "rPit", "er", "bbPit", "soPit", "hrPit"],
+		stats: ["ip", "hPit", "rPit", "er", "bbPit", "soPit", "hrPit", "pc"],
 		sortBy: ["min"],
 	},
 };

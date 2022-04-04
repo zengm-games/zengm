@@ -318,6 +318,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "BF",
 		},
+		"stat:pc": {
+			desc: "Pitch Count",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PC",
+		},
 		"stat:ab": {
 			desc: "At Bats",
 			sortSequence: ["desc", "asc"],

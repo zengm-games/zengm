@@ -8,8 +8,6 @@ const processStats = (
 ) => {
 	const row: any = {};
 
-	console.log("processStats", stats, ps.pa, ps.bb, ps.hbp, ps.sf);
-
 	for (const stat of stats) {
 		if (stat === "age") {
 			if (bornYear === undefined) {

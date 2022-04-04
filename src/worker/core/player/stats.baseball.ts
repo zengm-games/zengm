@@ -49,6 +49,7 @@ const stats = {
 		"bk",
 		"wp",
 		"bf",
+		"pc",
 	] as const,
 	max: [
 		// Batting

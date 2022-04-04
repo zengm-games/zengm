@@ -8,6 +8,8 @@ const processStats = (
 ) => {
 	const row: any = {};
 
+	console.log("processStats", stats, ps.pa, ps.bb, ps.hbp, ps.sf);
+
 	for (const stat of stats) {
 		if (stat === "age") {
 			if (bornYear === undefined) {
@@ -19,6 +21,8 @@ const processStats = (
 			row.age = ps.season - bornYear;
 		} else if (stat === "keyStats") {
 			row[stat] = "keyStats";
+		} else if (stat === "ab") {
+			row[stat] = ps.pa - ps.bb - ps.hbp - ps.sf;
 		} else {
 			row[stat] = ps[stat];
 		}

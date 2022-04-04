@@ -18,6 +18,14 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 			cutoff: 0.65,
 		},
 	},
+	controlPitcher: {
+		ratings: ["ctl"],
+		weights: [1],
+	},
+	pitcher: {
+		ratings: ["ppw", "mov", "ctl"],
+		weights: [1, 1, 0.5], // ctl is weighted less because it counts for strikes/balls too
+	},
 	workhorsePitcher: {
 		ratings: ["endu"],
 		weights: [1],

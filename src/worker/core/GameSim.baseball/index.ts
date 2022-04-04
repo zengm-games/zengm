@@ -697,27 +697,156 @@ class GameSim {
 		}
 	}
 
+	probBalk() {
+		return 0.01;
+	}
+
+	probHitByPitch() {
+		const p = this.team[this.d].getPitcher().p;
+
+		return 0.01 * (1 - p.compositeRating.controlPitcher);
+	}
+
+	probSteal(baseIndex: 0 | 1 | 2) {
+		const runner = this.bases[baseIndex];
+		if (!runner) {
+			return 0;
+		}
+
+		// Late game when down, don't steal unless it advances the tying/winning run
+		const runsDown =
+			this.team[this.d].t.stat.pts - this.team[this.o].t.stat.pts;
+		if (runsDown > 0) {
+			const numRunnersAhead = this.bases.filter(
+				(base, i) => !!base && i > baseIndex,
+			).length;
+			const isWinningRun = numRunnersAhead === runsDown;
+			const isTyingRun = numRunnersAhead === runsDown - 1;
+			if (!isWinningRun && !isTyingRun) {
+				return 0;
+			}
+		}
+
+		const catcher = this.team[this.d].playersInGameByPos.C.p;
+
+		// Ranges from 0 to 1, adjusted below
+		let prob = runner.compositeRating.speed - catcher.compositeRating.arm;
+
+		if (baseIndex === 0) {
+			// Stealing 2nd
+			prob *= 0.25;
+		} else if (baseIndex === 1) {
+			// Stealing 3rd
+			prob *= 0.1;
+		} else {
+			// Stealing home
+			prob *= 0;
+		}
+
+		return prob;
+	}
+
+	getPitchOutcome(batter: PlayerGameSim, pitcher: PlayerGameSim) {
+		const ballWeight =
+			1 - pitcher.compositeRating.controlPitcher + batter.compositeRating.eye;
+		return random.choice(["ball", "strike", "contact"], [ballWeight, 1, 1]);
+	}
+
+	probHit(batter: PlayerGameSim, pitcher: PlayerGameSim) {
+		const value =
+			batter.compositeRating.contactHitter - pitcher.compositeRating.pitcher;
+
+		return 0.15 + 0.25 * value;
+	}
+
+	probErrorIfNotHit(defenderIndex: ReturnType<GameSim["getHitTo"]>) {
+		const defender =
+			this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[defenderIndex]]
+				.p;
+
+		return 0.05;
+	}
+
+	getNumBases(
+		batter: PlayerGameSim,
+		battedBallInfo: ReturnType<GameSim["doBattedBall"]>,
+	) {
+		// On some softer hits, speed is what determines likelihood of extra base hit, not power
+		let extraBasesBySpeedOnly = false;
+
+		let numBasesWeights: [number, number, number, number];
+		if (battedBallInfo.type === "fly") {
+			if (battedBallInfo.distance === "infield") {
+				numBasesWeights = [1, 0, 0, 0];
+				extraBasesBySpeedOnly = true;
+			} else if (battedBallInfo.distance === "shallow") {
+				numBasesWeights = [1, 0.1, 0.001, 0];
+				extraBasesBySpeedOnly = true;
+			} else if (battedBallInfo.distance === "normal") {
+				numBasesWeights = [0.2, 1, 0.01, 0.1];
+			} else {
+				numBasesWeights = [0, 0.1, 0.01, 1];
+			}
+		} else if (battedBallInfo.type === "line") {
+			if (battedBallInfo.speed === "soft") {
+				numBasesWeights = [1, 0.1, 0, 0];
+				extraBasesBySpeedOnly = true;
+			} else if (battedBallInfo.speed === "normal") {
+				numBasesWeights = [0.2, 1, 0.001, 0];
+			} else {
+				numBasesWeights = [0.1, 1, 0.01, 0.01];
+			}
+		} else {
+			extraBasesBySpeedOnly = true;
+			if (battedBallInfo.speed === "soft") {
+				numBasesWeights = [1, 0.01, 0, 0];
+			} else if (battedBallInfo.speed === "normal") {
+				numBasesWeights = [1, 0.02, 0, 0];
+			} else {
+				numBasesWeights = [1, 0.03, 0, 0];
+			}
+		}
+
+		const speedFactor = 0.5 + batter.compositeRating.speed;
+
+		if (extraBasesBySpeedOnly) {
+			numBasesWeights[1] *= speedFactor;
+			numBasesWeights[2] *= speedFactor;
+			numBasesWeights[3] *= speedFactor;
+		} else {
+			const powerFactor = 0.5 + batter.compositeRating.powerHitter;
+			numBasesWeights[1] *= powerFactor;
+			numBasesWeights[2] *= powerFactor;
+			numBasesWeights[3] *= powerFactor;
+
+			// Triples depend on speed too
+			numBasesWeights[2] *= speedFactor;
+		}
+
+		return random.choice([1, 2, 3, 4] as const, numBasesWeights);
+	}
+
 	simPitch() {
 		let doneBatter;
 
-		if (this.bases.some(p => p) && Math.random() < 0.01) {
+		if (this.bases.some(p => p) && Math.random() < this.probBalk()) {
 			this.doBalk();
 			return doneBatter;
 		}
 
-		if (Math.random() < 0.01) {
+		if (Math.random() < this.probHitByPitch()) {
 			this.doWalk("hitByPitch");
 			return doneBatter;
 		}
 
-		const stealing = [false, false, false];
+		const stealing = [false, false, false] as [boolean, boolean, boolean];
 		const allRunnersGo =
 			this.outs === 2 && this.balls === 3 && this.strikes === 2;
 
 		let numStealing = 0;
 		let numStaying = 0;
 
-		for (let i = 2; i >= 0; i--) {
+		for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
 			const p = this.bases[i];
 			if (!p) {
 				continue;
@@ -730,7 +859,8 @@ class GameSim {
 				const nextBaseOccupied = !!this.bases[i + 1] && !stealing[i + 1];
 
 				if (!nextBaseOccupied) {
-					stealing[i] = i < 2 && !!this.bases[i] && Math.random() < 0.05;
+					stealing[i] =
+						i < 2 && !!this.bases[i] && Math.random() < this.probSteal(i);
 				}
 			}
 
@@ -757,7 +887,10 @@ class GameSim {
 			}
 		}
 
-		const outcome = random.choice(["ball", "strike", "contact"]);
+		const batter = this.team[this.o].getBatter().p;
+		const pitcher = this.team[this.d].getPitcher().p;
+
+		const outcome = this.getPitchOutcome(batter, pitcher);
 
 		if (outcome === "ball") {
 			this.balls += 1;
@@ -801,9 +934,7 @@ class GameSim {
 				}
 			}
 		} else {
-			const p = this.team[this.o].getBatter().p;
-
-			const battedBallInfo = this.doBattedBall(p);
+			const battedBallInfo = this.doBattedBall(batter);
 
 			// Result of the hit
 			if (
@@ -816,8 +947,8 @@ class GameSim {
 				// Figure out what defender fields the ball
 				const hitTo = this.getHitTo(battedBallInfo as any);
 
-				const hit = Math.random() < 0.3;
-				const errorIfNotHit = Math.random() < 0.05;
+				const hit = Math.random() < this.probHit(batter, pitcher);
+				const errorIfNotHit = Math.random() < this.probErrorIfNotHit(hitTo);
 
 				let result:
 					| "hit"
@@ -827,39 +958,13 @@ class GameSim {
 					| "doublePlay";
 				let pidError: number | undefined;
 				const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
-				let numBasesWeights: [number, number, number, number];
+				let numBases: 1 | 2 | 3 | 4;
 				let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
 				if (errorIfNotHit || hit) {
 					result = "hit";
-					if (battedBallInfo.type === "fly") {
-						if (battedBallInfo.distance === "infield") {
-							numBasesWeights = [1, 0, 0, 0];
-						} else if (battedBallInfo.distance === "shallow") {
-							numBasesWeights = [1, 0.1, 0.01, 0];
-						} else if (battedBallInfo.distance === "normal") {
-							numBasesWeights = [0.2, 1, 0.1, 0.1];
-						} else {
-							numBasesWeights = [0, 0.1, 0.1, 1];
-						}
-					} else if (battedBallInfo.type === "line") {
-						if (battedBallInfo.speed === "soft") {
-							numBasesWeights = [1, 0.1, 0, 0];
-						} else if (battedBallInfo.speed === "normal") {
-							numBasesWeights = [0.2, 1, 0.01, 0];
-						} else {
-							numBasesWeights = [0.1, 1, 0.1, 0.01];
-						}
-					} else {
-						if (battedBallInfo.speed === "soft") {
-							numBasesWeights = [1, 0.01, 0, 0];
-						} else if (battedBallInfo.speed === "normal") {
-							numBasesWeights = [1, 0.02, 0, 0];
-						} else {
-							numBasesWeights = [1, 0.03, 0, 0];
-						}
-					}
+					numBases = this.getNumBases(batter, battedBallInfo);
 				} else {
-					numBasesWeights = [1, 0, 0, 0];
+					numBases = 1;
 
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 						result = "flyOut";
@@ -907,18 +1012,14 @@ class GameSim {
 					}
 				}
 
-				const numBases = random.choice([1, 2, 3, 4] as const, numBasesWeights);
-
 				if (hit) {
-					const pitcher = this.team[this.d].getPitcher().p;
-
-					this.recordStat(this.o, p, "ab");
-					this.recordStat(this.o, p, "h");
+					this.recordStat(this.o, batter, "ab");
+					this.recordStat(this.o, batter, "h");
 					this.recordStat(this.d, pitcher, "hPit");
 					if (numBases > 1) {
 						const hitType =
 							numBases === 2 ? "2b" : numBases === 3 ? "3b" : "hr";
-						this.recordStat(this.o, p, hitType);
+						this.recordStat(this.o, batter, hitType);
 
 						this.recordStat(this.d, pitcher, `${hitType}Pit`);
 					}
@@ -931,13 +1032,13 @@ class GameSim {
 					hit,
 					hitTo,
 					numBases,
-					p,
+					p: batter,
 					result,
 					stealing,
 				});
 
 				if (numBases === 4) {
-					this.doScore(p, pidError === undefined ? p : undefined);
+					this.doScore(batter, pidError === undefined ? batter : undefined);
 				}
 
 				if (pidError !== undefined) {
@@ -945,7 +1046,7 @@ class GameSim {
 						type: "hitResult",
 						result: "error",
 						t: this.o,
-						pid: p.id,
+						pid: batter.id,
 						pidError,
 						posDefense,
 						runners: this.finalizeRunners(runners),
@@ -955,13 +1056,13 @@ class GameSim {
 					});
 
 					if (numBases < 4) {
-						this.bases[numBases - 1] = p;
+						this.bases[numBases - 1] = batter;
 					}
 				} else {
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
 					} else if (result === "doublePlay") {
-						this.recordStat(this.o, p, "gdp");
+						this.recordStat(this.o, batter, "gdp");
 						this.logOut();
 					} else {
 						if (result === "fieldersChoice") {
@@ -969,7 +1070,7 @@ class GameSim {
 						}
 
 						if (numBases < 4) {
-							this.bases[numBases - 1] = p;
+							this.bases[numBases - 1] = batter;
 						}
 					}
 
@@ -977,7 +1078,7 @@ class GameSim {
 						type: "hitResult",
 						result,
 						t: this.o,
-						pid: p.id,
+						pid: batter.id,
 						posDefense,
 						runners: this.finalizeRunners(runners),
 						numBases,
@@ -1194,14 +1295,36 @@ class GameSim {
 		return out;
 	}
 
-	/**
-	 * Two scenarios for intentional walk:
-	 *
-	 * 1. Runner on 2nd, we want the option of a double play, and the next hitter is worse than the current one.
-	 * 2. Scary hitter up, we'd just like to avoid him.
-	 */
 	shouldIntentionalWalk() {
-		return Math.random() < 0.01;
+		// At end of game, don't put tying/winning run on
+		const diffPts = this.team[this.d].t.stat.pts - this.team[this.o].t.stat.pts;
+		const runsWithHR = this.bases.filter(p => !p).length + 1;
+		const tyingRunUp = diffPts === runsWithHR;
+		const tyingRunOnDeck = diffPts === runsWithHR + 1;
+		if (this.inning >= this.numInnings - 1 && (tyingRunUp || tyingRunOnDeck)) {
+			return;
+		}
+
+		// Runners on 2nd and 3rd, less than 2 outs - always
+		if (this.outs < 2 && !this.bases[0] && this.bases[1] && this.bases[2]) {
+			return true;
+		}
+
+		const batter = this.team[this.o].getBatter().p;
+		const onDeck = this.team[this.o].getOnDeck().p;
+		const score = (p: PlayerGameSim) =>
+			p.compositeRating.contactHitter + p.compositeRating.powerHitter;
+		const batterScore = score(batter);
+		const onDeckScore = score(onDeck);
+		const diffScore = batterScore - onDeckScore; // Each score ranges from 0 to 2, so the most this could be is 2
+
+		// Runner on just 2nd, less than 2 outs - maybe if the next hitter is worse
+		if (this.outs < 2 && !this.bases[0] && this.bases[1] && !this.bases[2]) {
+			return Math.random() < diffScore;
+		}
+
+		// If the current batter is just very scary
+		return diffScore > 1 && Math.random() < diffScore - 1;
 	}
 
 	simPlateAppearance() {

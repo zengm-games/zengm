@@ -12,6 +12,8 @@ type PlayerInGame<DH extends boolean> = {
 	pos: GamePositions<DH>;
 };
 
+const NUM_BATTERS_PER_SIDE = 9;
+
 class Team<DH extends boolean> {
 	t: TeamGameSim;
 	dh: DH;
@@ -42,7 +44,9 @@ class Team<DH extends boolean> {
 
 		// Starting position players
 		const lineup = this.dh ? this.t.depth.L : this.t.depth.LP;
-		const numPositionPlayers = this.dh ? 9 : 8;
+		const numPositionPlayers = this.dh
+			? NUM_BATTERS_PER_SIDE
+			: NUM_BATTERS_PER_SIDE - 1;
 		for (let i = 0; i < numPositionPlayers; i++) {
 			const p = lineup[i];
 			if (!p) {
@@ -92,12 +96,18 @@ class Team<DH extends boolean> {
 		return this.playersInGameByBattingOrder[this.atBat];
 	}
 
+	getOnDeck() {
+		return this.playersInGameByBattingOrder[
+			(this.atBat + 1) % NUM_BATTERS_PER_SIDE
+		];
+	}
+
 	getPitcher() {
 		return this.playersInGameByPos.P;
 	}
 
 	advanceToNextBatter() {
-		this.atBat = (this.atBat + 1) % 9;
+		this.atBat = (this.atBat + 1) % NUM_BATTERS_PER_SIDE;
 	}
 }
 

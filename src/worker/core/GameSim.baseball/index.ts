@@ -681,9 +681,7 @@ class GameSim {
 
 				if (this.outs >= 3) {
 					// Same batter will be up next inning
-					// BUG - when this puts it at -1 (which is supposed to work) somehow getBatter is called before it's incremented again
-					//this.team[this.o].atBat -= 1;
-					//console.log("AFTER STEAL OUT", this.team[this.o].atBat)
+					this.team[this.o].atBat -= 1;
 				}
 			}
 
@@ -916,6 +914,7 @@ class GameSim {
 				if (numStealing > 0) {
 					this.processSteals(stealing);
 					if (this.outs >= 3) {
+						doneBatter = true;
 						return doneBatter;
 					}
 				}
@@ -940,6 +939,7 @@ class GameSim {
 			if (numStealing > 0) {
 				this.processSteals(stealing);
 				if (this.outs >= 3) {
+					doneBatter = true;
 					return doneBatter;
 				}
 			}

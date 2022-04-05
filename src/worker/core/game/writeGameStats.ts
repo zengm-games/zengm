@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { isSport, PHASE } from "../../../common";
 import { saveAwardsByPlayer } from "../season/awards";
 import { idb } from "../../db";
 import { g, helpers, logEvent, toUI } from "../../util";
@@ -262,6 +262,17 @@ const writeGameStats = async (
 			}
 			gameStats.teams[t].players[p].jerseyNumber =
 				results.team[t].player[p].jerseyNumber;
+
+			if (isSport("baseball")) {
+				// These are either integers or undefined
+				const baseballMaybeKeys = ["battingOrder", "subIndex"];
+				for (const key of baseballMaybeKeys) {
+					const value = results.team[t].player[p][key];
+					if (value !== undefined) {
+						gameStats.teams[t].players[p][key] = value;
+					}
+				}
+			}
 		}
 	}
 

@@ -32,6 +32,7 @@ class Team<DH extends boolean> {
 	];
 
 	atBat: number;
+	subIndex: number;
 
 	constructor(t: TeamGameSim, dh: DH) {
 		this.t = t;
@@ -75,11 +76,12 @@ class Team<DH extends boolean> {
 			};
 		}
 
+		this.atBat = -1;
+		this.subIndex = -1;
+
 		this.playersInGameByPos = {} as any;
 		this.playersInGameByBattingOrder = [] as any;
 		this.rebuildIndexes();
-
-		this.atBat = -1;
 	}
 
 	rebuildIndexes() {
@@ -88,6 +90,19 @@ class Team<DH extends boolean> {
 			if (playerInGame.battingOrder >= 0) {
 				this.playersInGameByBattingOrder[playerInGame.battingOrder] =
 					playerInGame;
+
+				playerInGame.p.battingOrder = playerInGame.battingOrder;
+			}
+
+			if (playerInGame.p.subIndex === undefined) {
+				this.subIndex += 1;
+				playerInGame.p.subIndex = this.subIndex;
+				console.log(
+					"playerInGame",
+					playerInGame.p,
+					playerInGame.p.subIndex,
+					playerInGame.p.battingOrder,
+				);
 			}
 		}
 	}

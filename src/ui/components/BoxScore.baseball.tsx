@@ -7,6 +7,7 @@ import { PLAYER_GAME_STATS } from "../../common/constants.baseball";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
+import orderBy from "lodash-es/orderBy";
 
 type Team = {
 	abbrev: string;
@@ -64,15 +65,24 @@ const StatsTable = ({
 		});
 	};
 
-	const players = t.players
+	let players = t.players
 		.map(p => {
 			return {
 				...p,
 				processed: processPlayerStats(p, stats),
 			};
 		})
-		.filter(p => filterPlayerStats(p, stats, type))
-		.sort(sortByStats(stats, sortBys));
+		.filter(p => filterPlayerStats(p, stats, type));
+
+	if (sortBys.length === 0) {
+		// Default sort order
+		players = orderBy(
+			players,
+			type === "batting" ? ["battingOrder", "subIndex"] : ["subIndex"],
+		);
+	} else {
+		players.sort(sortByStats(stats, sortBys));
+	}
 
 	const showFooter = players.length > 1;
 	const sumsByStat: Record<string, number> = {};

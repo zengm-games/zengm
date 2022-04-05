@@ -73,11 +73,11 @@ const getDepthPlayers = <
 				}
 
 				if (depths.D[i]) {
-					return {
-						...depths.D[i],
+					// IMPORTANT - maintain referential integrity
+					return Object.assign(depths.D[i], {
 						lineupPos: POSITIONS[2 + i],
 						lineupIndex: i,
-					};
+					});
 				}
 
 				dummyID -= 1;

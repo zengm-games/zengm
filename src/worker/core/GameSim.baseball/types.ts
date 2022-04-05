@@ -22,6 +22,10 @@ export type PlayerGameSim = {
 	ptModifier: number;
 	ovrs: Record<Position, number>;
 	lineupPos: string;
+
+	// Used for box score ordering only
+	battingOrder?: number;
+	subIndex?: number;
 };
 
 export type TeamGameSim = {

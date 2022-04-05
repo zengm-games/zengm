@@ -681,7 +681,9 @@ class GameSim {
 
 				if (this.outs >= 3) {
 					// Same batter will be up next inning
-					this.team[this.o].atBat -= 1;
+					// BUG - when this puts it at -1 (which is supposed to work) somehow getBatter is called before it's incremented again
+					//this.team[this.o].atBat -= 1;
+					//console.log("AFTER STEAL OUT", this.team[this.o].atBat)
 				}
 			}
 
@@ -1012,12 +1014,12 @@ class GameSim {
 							result = "throwOut";
 						}
 					}
+				}
 
-					if (errorIfNotHit) {
-						const errorPosition = random.choice(posDefense);
-						const pos = POS_NUMBERS_INVERSE[errorPosition];
-						pidError = this.team[this.d].playersInGameByPos[pos].p.id;
-					}
+				if (errorIfNotHit) {
+					const errorPosition = random.choice(posDefense);
+					const pos = POS_NUMBERS_INVERSE[errorPosition];
+					pidError = this.team[this.d].playersInGameByPos[pos].p.id;
 				}
 
 				if (hit) {
@@ -1050,6 +1052,10 @@ class GameSim {
 				}
 
 				if (pidError !== undefined) {
+					if (numBases < 4) {
+						this.bases[numBases - 1] = batter;
+					}
+
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result: "error",
@@ -1062,10 +1068,6 @@ class GameSim {
 						outAtNextBase: false,
 						...this.getSportState(),
 					});
-
-					if (numBases < 4) {
-						this.bases[numBases - 1] = batter;
-					}
 				} else {
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();

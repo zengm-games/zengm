@@ -288,9 +288,15 @@ const getText = (
 					POS_NUMBERS_INVERSE[event.posDefense[0]]
 				} for an out`;
 			} else if (event.result === "throwOut") {
-				text = `Fielded by the ${
-					POS_NUMBERS_INVERSE[event.posDefense[0]]
-				} and thrown out at 1st`;
+				if (event.posDefense[0] === 3) {
+					text = `Fielded by the ${
+						POS_NUMBERS_INVERSE[event.posDefense[0]]
+					} and forced out at 1st`;
+				} else {
+					text = `Fielded by the ${
+						POS_NUMBERS_INVERSE[event.posDefense[0]]
+					} and thrown out at 1st`;
+				}
 			} else if (event.result === "fieldersChoice") {
 				text = `He reaches ${getBaseName(
 					event.numBases,

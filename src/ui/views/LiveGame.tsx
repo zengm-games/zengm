@@ -138,6 +138,8 @@ const LiveGame = (props: View<"liveGame">) => {
 
 			// Save here since it is mutated in processLiveGameEvents
 			const prevOuts = sportState.current!.outs;
+			const prevPts =
+				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 
 			const output = processLiveGameEvents({
 				boxScore: boxScore.current,
@@ -148,6 +150,9 @@ const LiveGame = (props: View<"liveGame">) => {
 			});
 			let text = output.text;
 			const showOuts = isSport("baseball") && output.sportState.outs > prevOuts;
+			const currentPts =
+				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
+			const showScore = isSport("baseball") && currentPts !== prevPts;
 
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
@@ -155,18 +160,42 @@ const LiveGame = (props: View<"liveGame">) => {
 			sportState.current = output.sportState;
 
 			if (text !== undefined) {
-				if (isSport("baseball") && showOuts) {
-					let endWithPeriod = true;
-					if (!text.endsWith("!") && !text.endsWith(".")) {
-						text += ",";
-						endWithPeriod = false;
+				if (isSport("baseball")) {
+					if (showOuts) {
+						let endWithPeriod = true;
+						if (!text.endsWith("!") && !text.endsWith(".")) {
+							text += ",";
+							endWithPeriod = false;
+						}
+
+						const outs = output.sportState.outs;
+
+						text += ` ${outs} out${outs === 1 ? "" : "s"}${
+							endWithPeriod ? "." : ""
+						}`;
 					}
 
-					const outs = output.sportState.outs;
+					if (showScore) {
+						if (!text.endsWith("!") && !text.endsWith(".")) {
+							text += ",";
+						}
 
-					text += ` ${outs} out${outs === 1 ? "" : "s"}${
-						endWithPeriod ? "." : ""
-					}`;
+						const tied =
+							boxScore.current.teams[0].pts === boxScore.current.teams[1].pts;
+						const leader =
+							boxScore.current.teams[0].pts > boxScore.current.teams[1].pts
+								? 0
+								: 1;
+						const other = leader === 0 ? 1 : 0;
+
+						if (tied) {
+							text += " The game is tied ";
+						} else {
+							text += ` ${boxScore.current.teams[leader].abbrev} leads `;
+						}
+
+						text += `${boxScore.current.teams[leader].pts}-${boxScore.current.teams[other].pts}.`;
+					}
 				}
 
 				const p = document.createElement("p");

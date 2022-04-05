@@ -300,14 +300,15 @@ const BaseballDiamond = ({
 }) => {
 	return (
 		<div>
-			<div className="d-flex mx-1 mt-1">
+			<div className="text-center mb-2">
+				{outs} out{outs === 1 ? "" : "s"}
+			</div>
+			<div className="d-flex mx-1">
 				<Base occupied={bases[2] !== undefined} shiftDown />
 				<Base occupied={bases[1] !== undefined} />
 				<Base occupied={bases[0] !== undefined} shiftDown />
 			</div>
 			<div className="text-center mt-1">
-				{outs} outs
-				<br />
 				{balls}-{strikes}
 			</div>
 		</div>
@@ -343,7 +344,12 @@ const DetailedScore = ({
 			? `${i + 1}`
 			: `OT${i - boxScore.numPeriods + 1}`;
 	});
-	qtrs.push("F");
+
+	if (isSport("baseball")) {
+		qtrs.push("R", "H", "E");
+	} else {
+		qtrs.push("F");
+	}
 
 	const liveGameSim = boxScore.won?.name === undefined;
 
@@ -375,7 +381,11 @@ const DetailedScore = ({
 								{qtrs.map((qtr, i) => (
 									<th
 										key={qtr}
-										className={i < qtrs.length - 1 ? "text-muted" : undefined}
+										className={
+											i < qtrs.length - (isSport("baseball") ? 3 : 1)
+												? "text-muted"
+												: undefined
+										}
 									>
 										{qtr}
 									</th>
@@ -404,9 +414,15 @@ const DetailedScore = ({
 										<td key={i}>{pts}</td>
 									))}
 									{range(numPeriods - t.ptsQtrs.length).map(i => (
-										<td key={i} />
+										<td key={i}>-</td>
 									))}
 									<th>{t.pts}</th>
+									{isSport("baseball") ? (
+										<>
+											<th>{t.h}</th>
+											<th>{t.e}</th>
+										</>
+									) : null}
 								</tr>
 							))}
 						</tbody>

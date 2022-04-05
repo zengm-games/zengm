@@ -136,6 +136,9 @@ const LiveGame = (props: View<"liveGame">) => {
 				throw new Error("events.current is undefined");
 			}
 
+			// Save here since it is mutated in processLiveGameEvents
+			const prevOuts = sportState.current!.outs;
+
 			const output = processLiveGameEvents({
 				boxScore: boxScore.current,
 				events: events.current,
@@ -143,13 +146,29 @@ const LiveGame = (props: View<"liveGame">) => {
 				quarters: quarters.current,
 				sportState: sportState.current,
 			});
-			const text = output.text;
+			let text = output.text;
+			const showOuts = isSport("baseball") && output.sportState.outs > prevOuts;
+
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
 			possessionChange.current = output.possessionChange;
 			sportState.current = output.sportState;
 
 			if (text !== undefined) {
+				if (isSport("baseball") && showOuts) {
+					let endWithPeriod = true;
+					if (!text.endsWith("!") && !text.endsWith(".")) {
+						text += ",";
+						endWithPeriod = false;
+					}
+
+					const outs = output.sportState.outs;
+
+					text += ` ${outs} out${outs === 1 ? "" : "s"}${
+						endWithPeriod ? "." : ""
+					}`;
+				}
+
 				const p = document.createElement("p");
 				if (isSport("football") && text.startsWith("Penalty")) {
 					p.innerHTML = text

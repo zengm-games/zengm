@@ -167,19 +167,24 @@ const getText = (
 ) => {
 	let text;
 
+	let bold = false;
+
 	switch (event.type) {
 		case "sideStart": {
 			text = `${event.t === 0 ? "Bottom" : "Top"} of the ${helpers.ordinal(
 				event.inning,
 			)}`;
+			bold = true;
 			break;
 		}
 		case "sideOver": {
 			text = "The side has been retired";
+			bold = true;
 			break;
 		}
 		case "gameOver": {
 			text = "End of game";
+			bold = true;
 			break;
 		}
 		case "plateAppearance": {
@@ -202,6 +207,7 @@ const getText = (
 		}
 		case "strikeOut": {
 			text = event.swinging ? "He goes down swinging" : "Called strike three";
+			bold = true;
 			break;
 		}
 		case "bunt": {
@@ -244,6 +250,7 @@ const getText = (
 			text = `${event.intentional ? "Intentional walk" : "Ball 4"}, ${getName(
 				event.pid,
 			)} takes 1st base${runnerText ? `. ${runnerText}` : ""}`;
+			bold = true;
 			break;
 		}
 		case "hitByPitch": {
@@ -253,11 +260,13 @@ const getText = (
 			text = `He's hit by the pitch! ${getName(event.pid)} takes 1st base${
 				runnerText ? `. ${runnerText}` : ""
 			}`;
+			bold = true;
 			break;
 		}
 		case "balk": {
 			const runnerText = formatRunners(event.runners);
 			text = `Balk!${runnerText ? ` ${runnerText}` : ""}`;
+			bold = true;
 			break;
 		}
 		case "hitResult": {
@@ -307,6 +316,9 @@ const getText = (
 				}
 				text += ` ${runnersText}`;
 			}
+
+			bold = true;
+
 			break;
 		}
 		case "stealStartAll": {
@@ -333,6 +345,7 @@ const getText = (
 					event.to,
 				)} with no throw`;
 			}
+			bold = true;
 			break;
 		}
 		default: {
@@ -341,7 +354,10 @@ const getText = (
 		}
 	}
 
-	return text;
+	return {
+		bold,
+		text,
+	};
 };
 
 // Mutates boxScore!!!
@@ -373,6 +389,7 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
+	let bold = false;
 	let prevGoal: PlayByPlayEvent | undefined;
 
 	if (!playersByPid || boxScore.gid !== playersByPidGid) {
@@ -480,7 +497,10 @@ const processLiveGameEvents = ({
 				};
 			}
 
-			text = getText(e, boxScore);
+			const output = getText(e, boxScore);
+			text = output.text;
+			bold = output.bold;
+
 			//boxScore.time = formatClock(e.clock);
 			stop = true;
 		}
@@ -511,6 +531,7 @@ const processLiveGameEvents = ({
 	}
 
 	return {
+		bold,
 		overtimes,
 		quarters,
 		sportState,

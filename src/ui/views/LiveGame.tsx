@@ -167,7 +167,8 @@ const LiveGame = (props: View<"liveGame">) => {
 						(isSport("basketball") &&
 							text.startsWith("Elam Ending activated! First team to")) ||
 						(isSport("hockey") &&
-							(text.includes("Goal!") || text.includes("penalty")))
+							(text.includes("Goal!") || text.includes("penalty"))) ||
+						output.bold
 					) {
 						const b = document.createElement("b");
 						b.appendChild(node);

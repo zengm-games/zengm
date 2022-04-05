@@ -97,12 +97,6 @@ class Team<DH extends boolean> {
 			if (playerInGame.p.subIndex === undefined) {
 				this.subIndex += 1;
 				playerInGame.p.subIndex = this.subIndex;
-				console.log(
-					"playerInGame",
-					playerInGame.p,
-					playerInGame.p.subIndex,
-					playerInGame.p.battingOrder,
-				);
 			}
 		}
 	}

@@ -60,7 +60,9 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "tpp",
-				minStats: { tp: Math.max(55 * g.get("threePointTendencyFactor"), 12) },
+				minStats: {
+					tp: Math.max(55 * Math.min(1, g.get("threePointTendencyFactor")), 12),
+				},
 			},
 			{
 				stat: "ft",

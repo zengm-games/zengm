@@ -842,6 +842,7 @@ class GameSim {
 
 		if (Math.random() < this.probHitByPitch()) {
 			this.doWalk("hitByPitch");
+			doneBatter = true;
 			return doneBatter;
 		}
 

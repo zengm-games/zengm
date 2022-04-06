@@ -319,8 +319,6 @@ const batterStats = (p: any) => {
 
 	const ab = processStats(p, ["ab"]).ab;
 
-	console.log(p.pa, p.bb, p.hbp, p.sf);
-
 	return `${p.h}-${ab}, ${p.r} R, ${p.rbi} RBI`;
 };
 
@@ -337,7 +335,7 @@ const BatterAndPitcher = ({
 	return (
 		<div className="d-flex mb-3">
 			<div className="d-flex mx-auto">
-				<div className="pe-3 border-end">
+				<div className="pe-3 border-end" style={{ minWidth: 140 }}>
 					<b>Pitcher</b>
 					<br />
 					{pitcher ? (
@@ -352,7 +350,7 @@ const BatterAndPitcher = ({
 					<br />
 					<span className="text-muted">{pitcherStats(pitcher)}</span>
 				</div>
-				<div className="ps-3">
+				<div className="ps-3" style={{ minWidth: 140 }}>
 					<b>Batter</b>
 					<br />
 					{batter ? (

@@ -54,7 +54,7 @@ type BoxScoreTeam = {
 };
 
 let playersByPidGid: number | undefined;
-let playersByPid: Record<number, BoxScorePlayer> = {};
+export let playersByPid: Record<number, BoxScorePlayer> = {};
 
 const getName = (pid: number) => playersByPid[pid].name ?? "???";
 
@@ -366,6 +366,15 @@ const getText = (
 	};
 };
 
+export type SportState = {
+	bases: [number | undefined, number | undefined, number | undefined];
+	outs: number;
+	balls: number;
+	strikes: number;
+	batterPid: number;
+	pitcherPid: number;
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
@@ -386,12 +395,7 @@ const processLiveGameEvents = ({
 	};
 	overtimes: number;
 	quarters: number[];
-	sportState: {
-		bases: [number | undefined, number | undefined, number | undefined];
-		outs: number;
-		balls: number;
-		strikes: number;
-	};
+	sportState: SportState;
 }) => {
 	let stop = false;
 	let text;
@@ -439,14 +443,15 @@ const processLiveGameEvents = ({
 			}
 
 			Object.assign(sportState, DEFAULT_SPORT_STATE);
-		}
-
-		if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
+			sportState.pitcherPid = e.pitcherPid;
+			sportState.batterPid = -1;
+		} else if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
 			sportState.balls = e.balls;
 			sportState.strikes = e.strikes;
 		} else if (e.type === "plateAppearance") {
 			sportState.balls = 0;
 			sportState.strikes = 0;
+			sportState.batterPid = e.pid;
 		} else if (
 			e.type === "hitResult" ||
 			e.type === "strikeOut" ||

@@ -8,9 +8,10 @@ const BoxScore = (props: {
 	boxScore: any;
 	Row: any;
 	forceRowUpdate: boolean;
+	sportState?: any;
 }) => {
 	return bySport({
-		baseball: BoxScoreBaseball(props),
+		baseball: BoxScoreBaseball(props as any),
 		basketball: BoxScoreBasketball(props),
 		football: BoxScoreFootball(props as any),
 		hockey: BoxScoreHockey(props as any),

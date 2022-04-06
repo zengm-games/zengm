@@ -1367,6 +1367,7 @@ class GameSim {
 			type: "sideStart",
 			inning: this.inning,
 			t: this.o,
+			pitcherPid: this.team[this.d].playersInGameByPos.P.p.id,
 		});
 
 		while (true) {
@@ -1418,6 +1419,7 @@ class GameSim {
 					type: "sideStart",
 					inning: this.inning,
 					t: this.o,
+					pitcherPid: this.team[this.d].playersInGameByPos.P.p.id,
 				});
 			}
 		}

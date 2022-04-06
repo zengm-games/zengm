@@ -19,6 +19,7 @@ import { helpers, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { bySport, getPeriodName, isSport } from "../../common";
 import useLocalStorageState from "use-local-storage-state";
+import type { SportState } from "../util/processLiveGameEvents.baseball";
 
 type PlayerRowProps = {
 	forceUpdate?: boolean;
@@ -56,6 +57,7 @@ class PlayerRow extends Component<PlayerRowProps> {
 		this.prevInGame = p.inGame;
 
 		const classes = bySport({
+			baseball: undefined,
 			basketball: classNames({
 				"table-warning": p.inGame,
 			}),
@@ -81,7 +83,7 @@ const getSeconds = (time: string) => {
 };
 
 export const DEFAULT_SPORT_STATE = isSport("baseball")
-	? {
+	? ({
 			bases: [undefined, undefined, undefined] as [
 				number | undefined,
 				number | undefined,
@@ -90,7 +92,9 @@ export const DEFAULT_SPORT_STATE = isSport("baseball")
 			outs: 0,
 			balls: 0,
 			strikes: 0,
-	  }
+			batterPid: -1,
+			pitcherPid: -1,
+	  } as SportState)
 	: undefined;
 
 const LiveGame = (props: View<"liveGame">) => {

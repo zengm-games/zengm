@@ -666,7 +666,12 @@ const BoxScoreWrapper = ({
 				</div>
 				<TeamLogo season={boxScore.season} t={t1} />
 			</div>
-			<BoxScore boxScore={boxScore} Row={Row} forceRowUpdate={forceRowUpdate} />
+			<BoxScore
+				boxScore={boxScore}
+				Row={Row}
+				forceRowUpdate={forceRowUpdate}
+				sportState={sportState}
+			/>
 			Attendance: {helpers.numberWithCommas(boxScore.att)}
 			{forcedWinText}
 		</>

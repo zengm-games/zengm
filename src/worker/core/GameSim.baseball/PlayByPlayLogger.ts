@@ -16,6 +16,7 @@ type PlayByPlayEventInput =
 			type: "sideStart";
 			inning: number;
 			t: TeamNum;
+			pitcherPid: number;
 	  }
 	| {
 			type: "sideOver";
@@ -169,7 +170,7 @@ type PlayByPlayEventInput =
 	  };
 
 export type PlayByPlayEvent =
-	| ((
+	| (
 			| PlayByPlayEventInput
 			| {
 					type: "stat";
@@ -178,9 +179,7 @@ export type PlayByPlayEvent =
 					s: string;
 					amt: number;
 			  }
-	  ) & {
-			inning: number;
-	  })
+	  )
 	| {
 			type: "init";
 			boxScore: any;
@@ -198,31 +197,17 @@ class PlayByPlayLogger {
 
 	scoringSummary: PlayByPlayEventScore[];
 
-	quarter: number;
-
 	constructor(active: boolean) {
 		this.active = active;
 		this.playByPlay = [];
 		this.scoringSummary = [];
-		this.quarter = 1;
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
-		if (event.type === "quarter") {
-			this.quarter = event.quarter;
-		} else if (event.type === "overtime") {
-			this.quarter += 1;
-		}
+		this.playByPlay.push(event);
 
-		const event2: PlayByPlayEvent = {
-			quarter: this.quarter,
-			...event,
-		};
-
-		this.playByPlay.push(event2);
-
-		if (event2.type === "goal") {
-			this.scoringSummary.push(event2);
+		if (event.type === "goal") {
+			this.scoringSummary.push(event);
 		}
 	}
 
@@ -233,7 +218,6 @@ class PlayByPlayLogger {
 
 		this.playByPlay.push({
 			type: "stat",
-			quarter: this.quarter,
 			t,
 			pid,
 			s,

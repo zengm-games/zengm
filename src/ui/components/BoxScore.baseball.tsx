@@ -8,6 +8,12 @@ import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
 import orderBy from "lodash-es/orderBy";
+import {
+	playersByPid,
+	SportState,
+} from "../util/processLiveGameEvents.baseball";
+import PlayerNameLabels from "./PlayerNameLabels";
+import processStats from "../../common/processPlayerStats.baseball";
 
 type Team = {
 	abbrev: string;
@@ -298,17 +304,94 @@ const ScoringSummary = memo(
 	},
 );
 
+const pitcherStats = (p: any) => {
+	if (!p) {
+		return "";
+	}
+
+	return `${p.ip.toFixed(1)} IP, ${p.er} ER, ${p.soPit} K, ${p.bbPit} BB`;
+};
+
+const batterStats = (p: any) => {
+	if (!p) {
+		return "";
+	}
+
+	const ab = processStats(p, ["ab"]).ab;
+
+	return `${p.h}-${ab}, ${p.r} R, ${p.rbi} RBI`;
+};
+
+const BatterAndPitcher = ({
+	batterPid,
+	pitcherPid,
+}: {
+	batterPid: number;
+	pitcherPid: number;
+}) => {
+	const batter: any = playersByPid[batterPid];
+	const pitcher: any = playersByPid[pitcherPid];
+
+	return (
+		<div className="d-flex mb-3">
+			<div className="d-flex mx-auto">
+				<div className="pe-3 border-end">
+					<b>Pitcher</b>
+					<br />
+					{pitcher ? (
+						<PlayerNameLabels
+							injury={pitcher.injury}
+							jerseyNumber={pitcher.jerseyNumber}
+							pid={pitcher.pid}
+							skills={pitcher.skills}
+							legacyName={pitcher.name}
+						/>
+					) : null}
+					<br />
+					<span className="text-muted">{pitcherStats(pitcher)}</span>
+				</div>
+				<div className="ps-3">
+					<b>Batter</b>
+					<br />
+					{batter ? (
+						<PlayerNameLabels
+							injury={batter.injury}
+							jerseyNumber={batter.jerseyNumber}
+							pid={batter.pid}
+							skills={batter.skills}
+							legacyName={batter.name}
+						/>
+					) : null}
+					<br />
+					<span className="text-muted">{batterStats(batter)}</span>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 const BoxScore = ({
 	boxScore,
 	forceRowUpdate,
+	sportState,
 	Row,
 }: {
 	boxScore: BoxScore;
 	forceRowUpdate: boolean;
+	sportState: SportState;
 	Row: any;
 }) => {
+	const liveGameSim = (boxScore as any).won?.name === undefined;
+
 	return (
 		<div className="mb-3">
+			{liveGameSim ? (
+				<BatterAndPitcher
+					batterPid={sportState.batterPid}
+					pitcherPid={sportState.pitcherPid}
+				/>
+			) : undefined}
+
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}

@@ -319,6 +319,8 @@ const batterStats = (p: any) => {
 
 	const ab = processStats(p, ["ab"]).ab;
 
+	console.log(p.pa, p.bb, p.hbp, p.sf);
+
 	return `${p.h}-${ab}, ${p.r} R, ${p.rbi} RBI`;
 };
 

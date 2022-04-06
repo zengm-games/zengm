@@ -1022,8 +1022,9 @@ class GameSim {
 					pidError = this.team[this.d].playersInGameByPos[pos].p.id;
 				}
 
+				this.recordStat(this.o, batter, "pa");
+
 				if (hit) {
-					this.recordStat(this.o, batter, "ab");
 					this.recordStat(this.o, batter, "h");
 					this.recordStat(this.d, pitcher, "hPit");
 					if (numBases > 1) {
@@ -1173,6 +1174,8 @@ class GameSim {
 
 		const pitcher = this.team[this.d].getPitcher().p;
 
+		this.recordStat(this.o, p, "pa");
+
 		if (type === "intentional") {
 			this.recordStat(this.o, p, "ibb");
 			this.recordStat(this.d, pitcher, "ibbPit");
@@ -1224,7 +1227,7 @@ class GameSim {
 		const batter = t.getBatter().p;
 		const pitcher = this.team[this.d].getPitcher().p;
 
-		this.recordStat(this.o, batter, "ab");
+		this.recordStat(this.o, batter, "pa");
 		this.recordStat(this.o, batter, "so");
 		this.recordStat(this.d, pitcher, "soPit");
 		this.logOut();
@@ -1347,7 +1350,6 @@ class GameSim {
 			t: this.o,
 			pid: p.id,
 		});
-		this.recordStat(this.o, p, "pa");
 
 		if (this.shouldIntentionalWalk()) {
 			this.doWalk("intentional");

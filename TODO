@@ -1,3 +1,5 @@
+column title typos in trading block table https://discord.com/channels/290013534023057409/290015591216054273/960753790728957953
+
 make speed influence catch distance more in FBGM https://discord.com/channels/290013534023057409/331882115119448065/957000434973802496
 
 add player note to popover https://discord.com/channels/290013534023057409/331882115119448065/955039124501450793
@@ -17,7 +19,10 @@ add option to show ratings rounded to every 10/20/whatever for less precision ht
   - also use for challengeNoRatings
   - also use to scale ovr/pot to be more like other games
 
-show "award" for being in top 10 all time of some statistic
+store pids of top 10 leaders in some key stats
+- update after each day
+- show dynamic "award" for being in top 10 all time of some statistic
+- bold in player stats table when league leader
 
 "award" column on player page, like baseball reference
 - requires storing top 10 of award votes

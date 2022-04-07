@@ -333,9 +333,9 @@ const BatterAndPitcher = ({
 	const pitcher: any = playersByPid[pitcherPid];
 
 	return (
-		<div className="d-flex mb-3">
-			<div className="d-flex mx-auto">
-				<div className="pe-3 border-end" style={{ minWidth: 140 }}>
+		<div className="row mb-3">
+			<div className="col-6 d-flex justify-content-end border-end">
+				<div>
 					<b>Pitcher</b>
 					<br />
 					{pitcher ? (
@@ -350,7 +350,9 @@ const BatterAndPitcher = ({
 					<br />
 					<span className="text-muted">{pitcherStats(pitcher)}</span>
 				</div>
-				<div className="ps-3" style={{ minWidth: 140 }}>
+			</div>
+			<div className="col-6">
+				<div>
 					<b>Batter</b>
 					<br />
 					{batter ? (

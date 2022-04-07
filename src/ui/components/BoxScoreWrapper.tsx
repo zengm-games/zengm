@@ -303,10 +303,12 @@ const BaseballDiamond = ({
 			<div className="text-center mb-2">
 				{outs} out{outs === 1 ? "" : "s"}
 			</div>
-			<div className="d-flex mx-1">
-				<Base occupied={bases[2] !== undefined} shiftDown />
-				<Base occupied={bases[1] !== undefined} />
-				<Base occupied={bases[0] !== undefined} shiftDown />
+			<div className="d-flex justify-content-center">
+				<div className="d-flex mx-1">
+					<Base occupied={bases[2] !== undefined} shiftDown />
+					<Base occupied={bases[1] !== undefined} />
+					<Base occupied={bases[0] !== undefined} shiftDown />
+				</div>
 			</div>
 			<div className="text-center mt-1">
 				{balls}-{strikes}

@@ -18,6 +18,7 @@ import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
+import { makeFieldingRow } from "../player/stats.baseball";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -979,40 +980,136 @@ class GameSim {
 
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 						result = "flyOut";
-					} else {
-						if (this.bases[0]) {
-							const r = Math.random();
-							let probDoublePlay;
 
+						const posCatch = POS_NUMBERS_INVERSE[hitTo];
+
+						const fielder = this.team[this.d].playersInGameByPos[posCatch].p;
+						this.recordStat(this.d, fielder, "po", 1, "fielding");
+					} else {
+						if (this.bases[0] || this.bases[1] || this.bases[2]) {
 							// Probability of double play depends on who it's hit to
-							if (hitTo === 6) {
-								probDoublePlay = 0.7;
-							} else if (hitTo === 4) {
-								probDoublePlay = 0.5;
-							} else if (hitTo === 5) {
-								probDoublePlay = 0.3;
-							} else {
-								probDoublePlay = 0.2;
+							const r = Math.random();
+							let probDoublePlay = 0;
+							if (this.bases[0] && this.outs < 2) {
+								if (hitTo === 6) {
+									probDoublePlay = 0.7;
+								} else if (hitTo === 4) {
+									probDoublePlay = 0.5;
+								} else if (hitTo === 5) {
+									probDoublePlay = 0.3;
+								} else {
+									probDoublePlay = 0.2;
+								}
 							}
 
-							// ...and other runners
-							if (this.bases[1] && this.bases[2]) {
-								probDoublePlay /= 3;
-							} else if (this.bases[1]) {
-								probDoublePlay /= 2;
+							const r2 = Math.random();
+							let probFieldersChoice = 0;
+							if (this.bases[0]) {
+								probFieldersChoice = 0.7;
+							} else if (this.bases[1] || this.bases[2]) {
+								probFieldersChoice = 0.1;
 							}
 
 							if (r < probDoublePlay) {
 								result = "doublePlay";
-							} else if (r < probDoublePlay + (1 - probDoublePlay) / 2) {
+
+								const putOutBaseIndexWeights = [0, 0, 0];
+								let forceOutPossible = true;
+								for (let i = 0; i < 3; i++) {
+									if (this.bases[0]) {
+										putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0.05;
+									} else {
+										forceOutPossible = false;
+									}
+								}
+								fieldersChoiceOrDoublePlayIndex = random.choice(
+									[0, 1, 2],
+									putOutBaseIndexWeights,
+								);
+							} else if (r2 < probFieldersChoice) {
 								result = "fieldersChoice";
 							} else {
 								result = "throwOut";
 							}
 
-							fieldersChoiceOrDoublePlayIndex = 0;
+							if (result === "doublePlay" || result === "fieldersChoice") {
+								const putOutBaseIndexWeights = [0, 0, 0];
+								let forceOutPossible = true;
+								for (let i = 0; i < 3; i++) {
+									if (this.bases[i]) {
+										if (result === "fieldersChoice") {
+											// Runners on 1st, 2nd, or 3rd could be out, but higher chance of it happening when a force out is possible
+											putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0.05;
+										} else {
+											// Only force outs
+											putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0;
+										}
+									} else {
+										forceOutPossible = false;
+									}
+								}
+								fieldersChoiceOrDoublePlayIndex = random.choice(
+									[0, 1, 2],
+									putOutBaseIndexWeights,
+								);
+
+								// Undefind means put out is done by the same person who fielded the ball
+								let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
+								if (fieldersChoiceOrDoublePlayIndex === 2) {
+									// Out at home
+									posPutOut = hitTo === 2 ? 1 : 2;
+								} else if (fieldersChoiceOrDoublePlayIndex === 1) {
+									// Out at 3rd
+									posPutOut = hitTo === 5 ? undefined : 5;
+								} else {
+									// Out at 2nd
+									if ((hitTo === 4 || hitTo === 6) && Math.random() < 0.2) {
+										posPutOut = undefined;
+									} else {
+										const secondBasemanCovers = [1, 2, 5, 6, 7, 8];
+										posPutOut = secondBasemanCovers.includes(hitTo) ? 4 : 6;
+									}
+								}
+
+								if (posPutOut !== undefined) {
+									posDefense.push(posPutOut);
+								}
+								const fielder =
+									this.team[this.d].playersInGameByPos[
+										POS_NUMBERS_INVERSE[posPutOut ?? hitTo]
+									].p;
+								this.recordStat(this.d, fielder, "po", 1, "fielding");
+
+								if (result === "doublePlay") {
+									// Double play always includes batter, currently
+									posDefense.push(3);
+									const fielder = this.team[this.d].playersInGameByPos["1B"].p;
+									this.recordStat(this.d, fielder, "po", 1, "fielding");
+								}
+							}
 						} else {
 							result = "throwOut";
+						}
+
+						if (result === "throwOut") {
+							// Undefind means put out is done by the same person who fielded the ball
+							let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
+							if (hitTo === 3) {
+								if (Math.random() < 0.2) {
+									posPutOut = 1;
+								}
+							} else {
+								posPutOut = 3;
+							}
+
+							if (posPutOut !== undefined) {
+								posDefense.push(posPutOut);
+							}
+							const fielder =
+								this.team[this.d].playersInGameByPos[
+									POS_NUMBERS_INVERSE[posPutOut ?? hitTo]
+								].p;
+							this.recordStat(this.d, fielder, "po", 1, "fielding");
 						}
 					}
 				}
@@ -1227,10 +1324,12 @@ class GameSim {
 		const t = this.team[this.o];
 		const batter = t.getBatter().p;
 		const pitcher = this.team[this.d].getPitcher().p;
+		const catcher = this.team[this.d].playersInGameByPos.C.p;
 
 		this.recordStat(this.o, batter, "pa");
 		this.recordStat(this.o, batter, "so");
 		this.recordStat(this.d, pitcher, "soPit");
+		this.recordStat(this.d, catcher, "po", 1, "fielding");
 		this.logOut();
 		this.playByPlay.logEvent({
 			type: "strikeOut",
@@ -1434,6 +1533,7 @@ class GameSim {
 		p: PlayerGameSim | undefined,
 		s: string,
 		amt: number = 1,
+		type?: "fielding",
 	) {
 		const qtr = this.team[t].t.stat.ptsQtrs.length - 1;
 
@@ -1452,7 +1552,20 @@ class GameSim {
 				}
 			}
 
-			p.stat[s] += amt;
+			if (type === "fielding") {
+				const pos = this.team[t].playersInGame[p.id].pos;
+				if (pos === "DH") {
+					throw new Error("Should never happen");
+				}
+				const posIndex = POS_NUMBERS[pos];
+
+				if (!p.stat.fielding[posIndex]) {
+					p.stat.fielding[posIndex] = makeFieldingRow("player");
+				}
+				p.stat.fielding[posIndex][s] += amt;
+			} else {
+				p.stat[s] += amt;
+			}
 		}
 
 		// Filter out stats that don't get saved to box score

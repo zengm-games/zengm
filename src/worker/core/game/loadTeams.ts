@@ -180,6 +180,11 @@ const processTeam = (
 			benchTime: 0,
 			energy: 1,
 		};
+
+		if (isSport("baseball")) {
+			(p2.stat as any).fielding = {};
+		}
+
 		t.player.push(p2);
 	}
 

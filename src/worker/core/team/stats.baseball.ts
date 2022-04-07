@@ -1,6 +1,8 @@
 import { helpers } from "../../util";
+import { fielding } from "../player/stats.baseball";
 
 const teamAndOpp = [
+	// Batting
 	"pts",
 	"pa",
 	"r",
@@ -19,6 +21,10 @@ const teamAndOpp = [
 	"sf",
 	"ibb",
 
+	// Fielding
+	...fielding,
+
+	// Pitching
 	"w",
 	"l",
 	"gpPit",

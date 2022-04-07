@@ -75,7 +75,6 @@ const stats = {
 		"tbMax",
 
 		// Pitching
-		"ipMax",
 		"rPitMax",
 		"erMax",
 		"hPitMax",
@@ -91,7 +90,26 @@ const stats = {
 		"bkMax",
 		"wpMax",
 		"bfMax",
+
+		// Pitching derived
+		"ipMax",
 	] as const,
 };
 
 export default stats;
+
+export const fielding = ["po", "a", "e", "dp", "pb", "sbF", "csF"] as const;
+
+export const makeFieldingRow = (type: "player" | "team") => {
+	const keys = [
+		...(type === "player" ? ["gsF", "gF", "cgF", "outsF"] : []),
+		...fielding,
+	];
+
+	const row: Record<string, number> = {};
+	for (const key of keys) {
+		row[key] = 0;
+	}
+
+	return row;
+};

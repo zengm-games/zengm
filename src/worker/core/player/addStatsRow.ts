@@ -2,6 +2,7 @@ import stats from "./stats";
 import { g, helpers } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 import genJerseyNumber from "./genJerseyNumber";
+import { isSport } from "../../../common";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -68,6 +69,10 @@ const addStatsRow = async (
 			jerseyNumbers.team,
 			jerseyNumbers.retired,
 		);
+	}
+
+	if (isSport("baseball")) {
+		statsRow.fielding = {};
 	}
 
 	p.stats.push(statsRow);

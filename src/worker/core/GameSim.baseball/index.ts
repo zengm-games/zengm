@@ -1126,6 +1126,16 @@ class GameSim {
 								].p;
 							this.recordStat(this.d, fielder, "a", 1, "fielding");
 						}
+
+						if (result === "doublePlay") {
+							for (const posNumber of posDefense) {
+								const fielder =
+									this.team[this.d].playersInGameByPos[
+										POS_NUMBERS_INVERSE[posNumber]
+									].p;
+								this.recordStat(this.d, fielder, "dp", 1, "fielding");
+							}
+						}
 					}
 				}
 

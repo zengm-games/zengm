@@ -17,6 +17,7 @@ const NUM_BATTERS_PER_SIDE = 9;
 class Team<DH extends boolean> {
 	t: TeamGameSim;
 	dh: DH;
+	playersByPid: Record<number, PlayerGameSim>;
 	playersInGame: Record<number, PlayerInGame<DH>>;
 	playersInGameByPos: Record<GamePositions<DH>, PlayerInGame<DH>>;
 	playersInGameByBattingOrder: [
@@ -78,6 +79,11 @@ class Team<DH extends boolean> {
 
 		this.atBat = -1;
 		this.subIndex = -1;
+
+		this.playersByPid = {} as any;
+		for (const p of this.t.player) {
+			this.playersByPid[p.id] = p;
+		}
 
 		this.playersInGameByPos = {} as any;
 		this.playersInGameByBattingOrder = [] as any;

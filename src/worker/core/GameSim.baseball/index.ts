@@ -611,7 +611,7 @@ class GameSim {
 			if (runner.to === 4) {
 				const pRBI = error ? undefined : p;
 
-				this.doScore(this.bases[i]!.p, pRBI);
+				this.doScore(this.bases[i]!, pRBI);
 			}
 
 			if (!runner.out && runner.to < 4) {
@@ -639,7 +639,7 @@ class GameSim {
 		const runners = this.getRunners();
 
 		if (this.bases[2]) {
-			this.doScore(this.bases[2].p);
+			this.doScore(this.bases[2]);
 			runners[2]!.to += 1;
 			this.bases[2] = undefined;
 		}
@@ -1213,6 +1213,10 @@ class GameSim {
 						this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[hitTo]].p;
 					this.recordStat(this.d, pError, "e", 1, "fielding");
 					pidError = pError.id;
+
+					if (this.outs > 2) {
+						this.thirdOutShouldHaveBeenReachedPitcherPids.add(pitcher.id);
+					}
 				}
 
 				this.recordStat(this.o, batter, "pa");
@@ -1242,7 +1246,14 @@ class GameSim {
 				});
 
 				if (numBases === 4) {
-					this.doScore(batter, pidError === undefined ? batter : undefined);
+					this.doScore(
+						{
+							p: batter,
+							reachedOnError: pidError !== undefined,
+							responsiblePitcherPid: pitcher.id,
+						},
+						pidError === undefined ? batter : undefined,
+					);
 				}
 
 				if (pidError !== undefined) {
@@ -1298,12 +1309,20 @@ class GameSim {
 		return doneBatter;
 	}
 
-	doScore(run: PlayerGameSim, rbi?: PlayerGameSim) {
-		const pitcher = this.team[this.d].getPitcher().p;
-		this.recordStat(this.d, pitcher, "rPit");
-		this.recordStat(this.d, pitcher, "er");
+	doScore(runInfo: OccupiedBase, rbi?: PlayerGameSim) {
+		const pitcher =
+			this.team[this.d].playersByPid[runInfo.responsiblePitcherPid];
 
-		this.recordStat(this.o, run, "r");
+		const unearned =
+			runInfo.reachedOnError ||
+			this.thirdOutShouldHaveBeenReachedPitcherPids.has(pitcher.id);
+
+		this.recordStat(this.d, pitcher, "rPit");
+		if (!unearned) {
+			this.recordStat(this.d, pitcher, "er");
+		}
+
+		this.recordStat(this.o, runInfo.p, "r");
 		if (rbi) {
 			this.recordStat(this.o, rbi, "rbi");
 		}
@@ -1351,7 +1370,7 @@ class GameSim {
 		if (this.bases[0]) {
 			if (this.bases[1]) {
 				if (this.bases[2]) {
-					this.doScore(this.bases[2].p, p);
+					this.doScore(this.bases[2], p);
 					runners[2]!.to += 1;
 				}
 
@@ -1682,6 +1701,13 @@ class GameSim {
 					this.team[t].t.stat.pts += amt;
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;
 					this.playByPlay.logStat(t, undefined, "pts", amt);
+				} else if (s === "er") {
+					if (this.thirdOutShouldHaveBeenReachedPitcherPids.size > 0) {
+						// It's an ER for this reliever, but not for the team
+						this.team[t].t.stat.rPit += amt;
+					} else {
+						this.team[t].t.stat.er += amt;
+					}
 				} else {
 					this.team[t].t.stat[s] += amt;
 				}

@@ -37,6 +37,16 @@ const fatigue = (energy: number): number => {
 	return energy;
 };
 
+type OccupiedBase = {
+	p: PlayerGameSim;
+
+	// Used to determine which pitcher a run counts for
+	responsiblePitcherPid: number;
+
+	// Used to determine if it's an ER or not (along with thirdOutShouldHaveBeenReachedPitcherPids)
+	reachedOnError: boolean;
+};
+
 class GameSim {
 	id: number;
 
@@ -53,9 +63,9 @@ class GameSim {
 	overtimes: number;
 
 	bases!: [
-		PlayerGameSim | undefined,
-		PlayerGameSim | undefined,
-		PlayerGameSim | undefined,
+		OccupiedBase | undefined,
+		OccupiedBase | undefined,
+		OccupiedBase | undefined,
 	];
 
 	outs!: number;
@@ -69,6 +79,9 @@ class GameSim {
 	d: TeamNum;
 
 	playByPlay: PlayByPlayLogger;
+
+	// When the third out of an inning would have happened except for an error, any further runs are unearned. If a reliever comes in, then future runs will be earned to him but unearned to the team, unless the same situation happens again.
+	thirdOutShouldHaveBeenReachedPitcherPids: Set<number>;
 
 	constructor({
 		gid,
@@ -107,6 +120,7 @@ class GameSim {
 		this.inning = 1;
 		this.overtime = false;
 		this.overtimes = 0;
+		this.thirdOutShouldHaveBeenReachedPitcherPids = new Set();
 
 		this.resetNewInning();
 
@@ -115,6 +129,8 @@ class GameSim {
 
 	resetNewInning() {
 		this.team[this.o].t.stat.ptsQtrs.push(0);
+
+		this.thirdOutShouldHaveBeenReachedPitcherPids.clear();
 
 		this.bases = [undefined, undefined, undefined];
 		this.outs = 0;
@@ -362,6 +378,16 @@ class GameSim {
 		}
 	}
 
+	makeOccupiedBase(p: PlayerGameSim, reachedOnError: boolean) {
+		const pitcher = this.team[this.d].getPitcher().p;
+
+		return {
+			p,
+			reachedOnError,
+			responsiblePitcherPid: pitcher.id,
+		};
+	}
+
 	advanceRunners({
 		battedBallInfo,
 		error,
@@ -585,7 +611,7 @@ class GameSim {
 			if (runner.to === 4) {
 				const pRBI = error ? undefined : p;
 
-				this.doScore(this.bases[i]!, pRBI);
+				this.doScore(this.bases[i]!.p, pRBI);
 			}
 
 			if (!runner.out && runner.to < 4) {
@@ -593,11 +619,16 @@ class GameSim {
 			}
 		}
 
+		const prevBasesByPid: Record<number, OccupiedBase> = {};
+		for (const base of this.bases) {
+			if (base) {
+				prevBasesByPid[base.p.id] = base;
+			}
+		}
 		this.bases = [undefined, undefined, undefined];
 		for (const runner of runners) {
 			if (runner && runner.to < 4) {
-				this.bases[(runner.to - 1) as any] =
-					this.team[this.o].playersInGame[runner.pid].p;
+				this.bases[(runner.to - 1) as any] = prevBasesByPid[runner.pid];
 			}
 		}
 
@@ -608,7 +639,7 @@ class GameSim {
 		const runners = this.getRunners();
 
 		if (this.bases[2]) {
-			this.doScore(this.bases[2]);
+			this.doScore(this.bases[2].p);
 			runners[2]!.to += 1;
 			this.bases[2] = undefined;
 		}
@@ -679,13 +710,14 @@ class GameSim {
 		let thrownOut = false;
 		if (throwAt !== undefined) {
 			thrownOut =
-				Math.random() < this.probStealThrowOut(this.bases[throwAt]!, throwAt);
+				Math.random() < this.probStealThrowOut(this.bases[throwAt]!.p, throwAt);
 		}
 
 		// indexes is in descending order, so bases can safely be updated
 		for (const i of indexes) {
-			const p = this.bases[i]!;
-			this.bases[i + 1] = p;
+			const occupiedBase = this.bases[i]!;
+			const p = occupiedBase.p;
+			this.bases[i + 1] = occupiedBase;
 			this.bases[i] = undefined;
 
 			const success = throwAt === i && thrownOut;
@@ -729,7 +761,7 @@ class GameSim {
 	}
 
 	probSteal(baseIndex: 0 | 1 | 2) {
-		const runner = this.bases[baseIndex];
+		const runner = this.bases[baseIndex]?.p;
 		if (!runner) {
 			return 0;
 		}
@@ -923,7 +955,7 @@ class GameSim {
 				if (stealing[i]) {
 					this.playByPlay.logEvent({
 						type: "stealStart",
-						pid: this.bases[i]!.id,
+						pid: this.bases[i]!.p.id,
 						to: (i + 2) as 2 | 3 | 4,
 					});
 				}
@@ -1215,7 +1247,7 @@ class GameSim {
 
 				if (pidError !== undefined) {
 					if (numBases < 4) {
-						this.bases[numBases - 1] = batter;
+						this.bases[numBases - 1] = this.makeOccupiedBase(batter, true);
 					}
 
 					this.playByPlay.logEvent({
@@ -1242,7 +1274,7 @@ class GameSim {
 						}
 
 						if (numBases < 4) {
-							this.bases[numBases - 1] = batter;
+							this.bases[numBases - 1] = this.makeOccupiedBase(batter, false);
 						}
 					}
 
@@ -1278,10 +1310,10 @@ class GameSim {
 	}
 
 	getRunners() {
-		return this.bases.map((p, i) => {
-			if (p) {
+		return this.bases.map((base, i) => {
+			if (base) {
 				return {
-					pid: p.id,
+					pid: base.p.id,
 					from: i + 1,
 					to: i + 1,
 					out: false,
@@ -1319,7 +1351,7 @@ class GameSim {
 		if (this.bases[0]) {
 			if (this.bases[1]) {
 				if (this.bases[2]) {
-					this.doScore(this.bases[2], p);
+					this.doScore(this.bases[2].p, p);
 					runners[2]!.to += 1;
 				}
 
@@ -1331,7 +1363,7 @@ class GameSim {
 			runners[0]!.to += 1;
 		}
 
-		this.bases[0] = p;
+		this.bases[0] = this.makeOccupiedBase(p, false);
 
 		const pitcher = this.team[this.d].getPitcher().p;
 
@@ -1375,7 +1407,7 @@ class GameSim {
 	getSportState() {
 		return {
 			outs: this.outs,
-			bases: this.bases.map(p => p?.id) as [
+			bases: this.bases.map(base => base?.p.id) as [
 				number | undefined,
 				number | undefined,
 				number | undefined,

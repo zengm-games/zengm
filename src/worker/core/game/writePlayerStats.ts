@@ -323,6 +323,7 @@ const writePlayerStats = async (
 				const updatePlayer =
 					(isSport("hockey") && p.pos === "G") ||
 					isSport("basketball") ||
+					isSport("baseball") ||
 					p.stat.min > 0;
 				if (!updatePlayer) {
 					continue;
@@ -395,7 +396,7 @@ const writePlayerStats = async (
 					}
 
 					// Update stats
-					if (p.stat.min > 0) {
+					if (p.stat.min > 0 || isSport("baseball")) {
 						for (const key of Object.keys(p.stat)) {
 							if (ps[key] === undefined) {
 								ps[key] = 0;
@@ -404,6 +405,16 @@ const writePlayerStats = async (
 							if (isSport("football") && key.endsWith("Lng")) {
 								if (p.stat[key] > ps[key]) {
 									ps[key] = p.stat[key];
+								}
+							} else if (stats.byPos && stats.byPos.includes(key)) {
+								for (let i = 0; i < p.stat[key].length; i++) {
+									const value = p.stat[key][i];
+									if (value !== undefined) {
+										if (ps[key][i] === undefined) {
+											ps[key][i] = 0;
+										}
+										ps[key][i] += value;
+									}
 								}
 							} else {
 								ps[key] += p.stat[key];

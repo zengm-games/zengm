@@ -38,7 +38,7 @@ const processTeam = (
 	},
 	teamStats: Record<string, number>,
 	players: Player<MinimalPlayerRatings>[],
-	playerStats: Record<string, number>,
+	playerStats: Record<string, number | number[]>,
 ) => {
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;
 
@@ -114,7 +114,7 @@ const processTeam = (
 			age: g.get("season") - p.born.year,
 			pos: rating.pos,
 			valueNoPot: p.valueNoPot * injuryFactor,
-			stat: {},
+			stat: {} as any,
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
 			injury: {
@@ -181,8 +181,10 @@ const processTeam = (
 			energy: 1,
 		};
 
-		if (isSport("baseball")) {
-			(p2.stat as any).fielding = {};
+		if (player.stats.byPos) {
+			for (const key of player.stats.byPos) {
+				p2.stat[key] = [];
+			}
 		}
 
 		t.player.push(p2);
@@ -238,17 +240,15 @@ const skipPlayerStats = bySport({
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[], conditions: Conditions) => {
-	const playerStats = player.stats.raw.reduce<Record<string, number>>(
-		(stats, stat) => {
+	const playerStats: Record<string, number | number[]> =
+		player.stats.raw.reduce<Record<string, number>>((stats, stat) => {
 			if (skipPlayerStats.includes(stat)) {
 				return stats;
 			}
 
 			stats[stat] = 0;
 			return stats;
-		},
-		{},
-	);
+		}, {});
 
 	const teamStats = team.stats.raw.reduce<Record<string, number>>(
 		(stats, stat) => {

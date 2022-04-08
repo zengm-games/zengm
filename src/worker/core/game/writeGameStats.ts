@@ -239,10 +239,6 @@ const writeGameStats = async (
 				gameStats.teams[t].players[p][key] =
 					results.team[t].player[p].stat[key];
 			}
-			if (isSport("baseball")) {
-				gameStats.teams[t].players[p].fielding =
-					results.team[t].player[p].stat.fielding;
-			}
 
 			gameStats.teams[t].players[p].name = results.team[t].player[p].name;
 			gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;

@@ -44,6 +44,13 @@ const addStatsRow = async (
 		statsRow[key] = null;
 	}
 
+	if (stats.byPos) {
+		for (const key of stats.byPos) {
+			// Will get one entry per position
+			statsRow[key] = [];
+		}
+	}
+
 	p.statsTids.push(p.tid);
 	p.statsTids = Array.from(new Set(p.statsTids)); // Calculate yearsWithTeam
 
@@ -69,10 +76,6 @@ const addStatsRow = async (
 			jerseyNumbers.team,
 			jerseyNumbers.retired,
 		);
-	}
-
-	if (isSport("baseball")) {
-		statsRow.fielding = {};
 	}
 
 	p.stats.push(statsRow);

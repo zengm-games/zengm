@@ -22,7 +22,13 @@ const teamAndOpp = [
 	"ibb",
 
 	// Fielding
-	...fielding,
+	"po",
+	"a",
+	"e",
+	"dp",
+	"pb",
+	"sbF",
+	"csF",
 
 	// Pitching
 	"w",

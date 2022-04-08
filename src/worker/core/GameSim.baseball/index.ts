@@ -18,7 +18,6 @@ import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
-import { makeFieldingRow } from "../player/stats.baseball";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -1557,12 +1556,12 @@ class GameSim {
 				if (pos === "DH") {
 					throw new Error("Should never happen");
 				}
-				const posIndex = POS_NUMBERS[pos];
+				const posIndex = POS_NUMBERS[pos] - 1;
 
-				if (!p.stat.fielding[posIndex]) {
-					p.stat.fielding[posIndex] = makeFieldingRow("player");
+				if (p.stat[s][posIndex] === undefined) {
+					p.stat[s][posIndex] = 0;
 				}
-				p.stat.fielding[posIndex][s] += amt;
+				p.stat[s][posIndex] += amt;
 			} else {
 				p.stat[s] += amt;
 			}

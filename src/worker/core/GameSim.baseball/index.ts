@@ -1160,10 +1160,14 @@ class GameSim {
 					}
 				}
 
-				if (errorIfNotHit) {
+				if (errorIfNotHit && !hit) {
 					const errorPosition = random.choice(posDefense);
-					const pos = POS_NUMBERS_INVERSE[errorPosition];
-					pidError = this.team[this.d].playersInGameByPos[pos].p.id;
+					const pError =
+						this.team[this.d].playersInGameByPos[
+							POS_NUMBERS_INVERSE[errorPosition]
+						].p;
+					this.recordStat(this.d, pError, "e", 1, "fielding");
+					pidError = pError.id;
 				}
 
 				this.recordStat(this.o, batter, "pa");

@@ -379,13 +379,20 @@ class GameSim {
 		}
 	}
 
-	makeOccupiedBase(p: PlayerGameSim, reachedOnError: boolean) {
-		const pitcher = this.team[this.d].getPitcher().p;
+	makeOccupiedBase(
+		p: PlayerGameSim,
+		reachedOnError?: boolean,
+		responsiblePitcherPid?: number,
+	) {
+		if (responsiblePitcherPid === undefined) {
+			const pitcher = this.team[this.d].getPitcher().p;
+			responsiblePitcherPid = pitcher.id;
+		}
 
 		return {
 			p,
-			reachedOnError,
-			responsiblePitcherPid: pitcher.id,
+			reachedOnError: !!reachedOnError,
+			responsiblePitcherPid,
 		};
 	}
 
@@ -1233,6 +1240,16 @@ class GameSim {
 					}
 				}
 
+				// On fielder's choice, the batter is inherited by the pitcher responsible for the runner called out
+				let responsiblePitcherPid: number | undefined;
+				if (
+					result === "fieldersChoice" &&
+					fieldersChoiceOrDoublePlayIndex !== undefined
+				) {
+					responsiblePitcherPid =
+						this.bases[fieldersChoiceOrDoublePlayIndex]!.responsiblePitcherPid;
+				}
+
 				const runners = this.advanceRunners({
 					battedBallInfo,
 					error: pidError !== undefined,
@@ -1285,7 +1302,11 @@ class GameSim {
 						}
 
 						if (numBases < 4) {
-							this.bases[numBases - 1] = this.makeOccupiedBase(batter, false);
+							this.bases[numBases - 1] = this.makeOccupiedBase(
+								batter,
+								false,
+								responsiblePitcherPid,
+							);
 						}
 					}
 
@@ -1382,7 +1403,7 @@ class GameSim {
 			runners[0]!.to += 1;
 		}
 
-		this.bases[0] = this.makeOccupiedBase(p, false);
+		this.bases[0] = this.makeOccupiedBase(p);
 
 		const pitcher = this.team[this.d].getPitcher().p;
 

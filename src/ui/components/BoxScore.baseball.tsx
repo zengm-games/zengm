@@ -335,7 +335,7 @@ const BatterAndPitcher = ({
 	return (
 		<div className="row mb-3">
 			<div className="col-6 d-flex justify-content-end border-end">
-				<div>
+				<div className="text-end">
 					<b>Pitcher</b>
 					<br />
 					{pitcher ? (

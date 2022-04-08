@@ -43,7 +43,7 @@ type OccupiedBase = {
 	// Used to determine which pitcher a run counts for
 	responsiblePitcherPid: number;
 
-	// Used to determine if it's an ER or not (along with thirdOutShouldHaveBeenReachedPitcherPids)
+	// Used to determine if it's an ER or not (along with outsIfNoErrors)
 	reachedOnError: boolean;
 };
 
@@ -80,8 +80,9 @@ class GameSim {
 
 	playByPlay: PlayByPlayLogger;
 
-	// When the third out of an inning would have happened except for an error, any further runs are unearned. If a reliever comes in, then future runs will be earned to him but unearned to the team, unless the same situation happens again.
-	thirdOutShouldHaveBeenReachedPitcherPids: Set<number>;
+	// When the third out of an inning would have happened except for an error, any further runs are unearned to the team. Same applies to the pitcher if it's the same pitcher, but for a new reliever mid inning, they start with ERs unless another error happens to put it over the limit
+	outsIfNoErrors!: number;
+	outsIfNoErrorsByPitcherPid!: Record<number, number>;
 
 	constructor({
 		gid,
@@ -120,7 +121,6 @@ class GameSim {
 		this.inning = 1;
 		this.overtime = false;
 		this.overtimes = 0;
-		this.thirdOutShouldHaveBeenReachedPitcherPids = new Set();
 
 		this.resetNewInning();
 
@@ -130,7 +130,8 @@ class GameSim {
 	resetNewInning() {
 		this.team[this.o].t.stat.ptsQtrs.push(0);
 
-		this.thirdOutShouldHaveBeenReachedPitcherPids.clear();
+		this.outsIfNoErrors = 0;
+		this.outsIfNoErrorsByPitcherPid = {};
 
 		this.bases = [undefined, undefined, undefined];
 		this.outs = 0;
@@ -727,7 +728,7 @@ class GameSim {
 				this.recordStat(this.o, p, "cs");
 				this.recordStat(this.d, catcher, "csF", 1, "fielding");
 
-				this.outs += 1;
+				this.logOut();
 
 				if (this.outs >= 3) {
 					// Same batter will be up next inning
@@ -1214,9 +1215,8 @@ class GameSim {
 					this.recordStat(this.d, pError, "e", 1, "fielding");
 					pidError = pError.id;
 
-					if (this.outs > 2) {
-						this.thirdOutShouldHaveBeenReachedPitcherPids.add(pitcher.id);
-					}
+					this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
+					this.outsIfNoErrors += 1;
 				}
 
 				this.recordStat(this.o, batter, "pa");
@@ -1315,7 +1315,7 @@ class GameSim {
 
 		const unearned =
 			runInfo.reachedOnError ||
-			this.thirdOutShouldHaveBeenReachedPitcherPids.has(pitcher.id);
+			(this.outsIfNoErrorsByPitcherPid[pitcher.id] ?? 0) >= 3;
 
 		this.recordStat(this.d, pitcher, "rPit");
 		if (!unearned) {
@@ -1421,6 +1421,12 @@ class GameSim {
 		this.outs += 1;
 		const pitcher = this.team[this.d].getPitcher().p;
 		this.recordStat(this.d, pitcher, "ip");
+
+		if (this.outsIfNoErrorsByPitcherPid[pitcher.id] === undefined) {
+			this.outsIfNoErrorsByPitcherPid[pitcher.id] = 0;
+		}
+		this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
+		this.outsIfNoErrors += 1;
 	}
 
 	getSportState() {
@@ -1702,7 +1708,7 @@ class GameSim {
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;
 					this.playByPlay.logStat(t, undefined, "pts", amt);
 				} else if (s === "er") {
-					if (this.thirdOutShouldHaveBeenReachedPitcherPids.size > 0) {
+					if (this.outsIfNoErrors >= 3) {
 						// It's an ER for this reliever, but not for the team
 						this.team[t].t.stat.rPit += amt;
 					} else {

@@ -1,5 +1,4 @@
 import { helpers } from "../../util";
-import { fielding } from "../player/stats.baseball";
 
 const teamAndOpp = [
 	// Batting

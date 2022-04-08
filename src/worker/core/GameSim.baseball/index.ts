@@ -635,6 +635,20 @@ class GameSim {
 		});
 	}
 
+	probStealThrowOut(p: PlayerGameSim, fromBaseIndex: 0 | 1) {
+		const catcher = this.team[this.d].playersInGameByPos.C.p;
+
+		// Stealing 2nd is easier than stealing 3rd
+		const baseline = fromBaseIndex === 0 ? 0.5 : 0.65;
+
+		return (
+			baseline +
+			(0.25 * catcher.compositeRating.arm +
+				catcher.compositeRating.catcherDefense) -
+			0.5 * p.compositeRating.speed
+		);
+	}
+
 	processSteals(stealing: [boolean, boolean, boolean]) {
 		if (stealing[2]) {
 			// Stealing home currently is only implemented on a full count with 2 outs, and processSteals only happens after a strike or ball, so this should never happen
@@ -660,9 +674,12 @@ class GameSim {
 			}
 		}
 
+		const catcher = this.team[this.d].playersInGameByPos.C.p;
+
 		let thrownOut = false;
 		if (throwAt !== undefined) {
-			thrownOut = Math.random() < 0.5;
+			thrownOut =
+				Math.random() < this.probStealThrowOut(this.bases[throwAt]!, throwAt);
 		}
 
 		// indexes is in descending order, so bases can safely be updated
@@ -674,15 +691,19 @@ class GameSim {
 			const success = throwAt === i && thrownOut;
 			const out = !success;
 
-			this.recordStat(this.o, p, out ? "cs" : "sb");
-
 			if (out) {
+				this.recordStat(this.o, p, "cs");
+				this.recordStat(this.d, catcher, "csF", 1, "fielding");
+
 				this.outs += 1;
 
 				if (this.outs >= 3) {
 					// Same batter will be up next inning
 					this.team[this.o].atBat -= 1;
 				}
+			} else {
+				this.recordStat(this.o, p, "sb");
+				this.recordStat(this.d, catcher, "sbF", 1, "fielding");
 			}
 
 			this.playByPlay.logEvent({

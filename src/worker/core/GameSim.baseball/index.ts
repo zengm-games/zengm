@@ -414,7 +414,13 @@ class GameSim {
 		hitTo: ReturnType<GameSim["getHitTo"]>;
 		numBases: 1 | 2 | 3 | 4;
 		p: PlayerGameSim;
-		result: "hit" | "flyOut" | "throwOut" | "fieldersChoice" | "doublePlay";
+		result:
+			| "hit"
+			| "error"
+			| "flyOut"
+			| "throwOut"
+			| "fieldersChoice"
+			| "doublePlay";
 		stealing: [boolean, boolean, boolean];
 	}) {
 		const runners = this.getRunners();
@@ -908,6 +914,178 @@ class GameSim {
 		return random.choice([1, 2, 3, 4] as const, numBasesWeights);
 	}
 
+	getBattedBallOutcome(
+		battedBallInfo: ReturnType<GameSim["doBattedBall"]>,
+		batter: PlayerGameSim,
+		pitcher: PlayerGameSim,
+	) {
+		// Figure out what defender fields the ball
+		const hitTo = this.getHitTo(battedBallInfo as any);
+
+		const hit = Math.random() < this.probHit(batter, pitcher);
+		const errorIfNotHit =
+			Math.random() < this.probErrorIfNotHit(battedBallInfo.type as any, hitTo);
+
+		let result:
+			| "hit"
+			| "error"
+			| "flyOut"
+			| "throwOut"
+			| "fieldersChoice"
+			| "doublePlay";
+		const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
+		let numBases: 1 | 2 | 3 | 4;
+		let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
+
+		if (hit) {
+			result = "hit";
+			numBases = this.getNumBases(batter, battedBallInfo);
+		} else if (errorIfNotHit) {
+			result = "error";
+			numBases = this.getNumBases(batter, battedBallInfo);
+		} else {
+			numBases = 1;
+
+			if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
+				result = "flyOut";
+			} else {
+				if (this.bases[0] || this.bases[1] || this.bases[2]) {
+					// Probability of double play depends on who it's hit to
+					const r = Math.random();
+					let probDoublePlay = 0;
+					if (this.bases[0] && this.outs < 2) {
+						if (hitTo === 6) {
+							probDoublePlay = 0.7;
+						} else if (hitTo === 4) {
+							probDoublePlay = 0.5;
+						} else if (hitTo === 5) {
+							probDoublePlay = 0.3;
+						} else {
+							probDoublePlay = 0.2;
+						}
+					}
+
+					const r2 = Math.random();
+					let probFieldersChoice = 0;
+					if (this.bases[0]) {
+						probFieldersChoice = 0.7;
+					} else if (this.bases[1] || this.bases[2]) {
+						probFieldersChoice = 0.1;
+					}
+
+					if (r < probDoublePlay) {
+						result = "doublePlay";
+
+						const putOutBaseIndexWeights = [0, 0, 0];
+						let forceOutPossible = true;
+						for (let i = 0; i < 3; i++) {
+							if (this.bases[0]) {
+								putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0.05;
+							} else {
+								forceOutPossible = false;
+							}
+						}
+						fieldersChoiceOrDoublePlayIndex = random.choice(
+							[0, 1, 2],
+							putOutBaseIndexWeights,
+						);
+					} else if (r2 < probFieldersChoice) {
+						result = "fieldersChoice";
+					} else {
+						result = "throwOut";
+					}
+
+					if (result === "doublePlay" || result === "fieldersChoice") {
+						const putOutBaseIndexWeights = [0, 0, 0];
+						let forceOutPossible = true;
+						for (let i = 0; i < 3; i++) {
+							if (this.bases[i]) {
+								if (result === "fieldersChoice") {
+									// Runners on 1st, 2nd, or 3rd could be out, but higher chance of it happening when a force out is possible
+									putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0.05;
+								} else {
+									// Only force outs
+									putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0;
+								}
+							} else {
+								forceOutPossible = false;
+							}
+						}
+						fieldersChoiceOrDoublePlayIndex = random.choice(
+							[0, 1, 2],
+							putOutBaseIndexWeights,
+						);
+
+						// Undefind means put out is done by the same person who fielded the ball
+						let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
+						if (fieldersChoiceOrDoublePlayIndex === 2) {
+							// Out at home
+							posPutOut = hitTo === 2 ? 1 : 2;
+						} else if (fieldersChoiceOrDoublePlayIndex === 1) {
+							// Out at 3rd
+							posPutOut = hitTo === 5 ? undefined : 5;
+						} else {
+							// Out at 2nd
+							if ((hitTo === 4 || hitTo === 6) && Math.random() < 0.2) {
+								posPutOut = undefined;
+							} else {
+								const secondBasemanCovers = [1, 2, 5, 6, 7, 8];
+								posPutOut = secondBasemanCovers.includes(hitTo) ? 4 : 6;
+							}
+						}
+
+						if (posPutOut !== undefined) {
+							posDefense.push(posPutOut);
+						}
+
+						if (result === "doublePlay") {
+							// Double play always includes batter, currently
+							posDefense.push(3);
+						}
+					}
+				} else {
+					result = "throwOut";
+				}
+
+				if (result === "throwOut") {
+					// Undefind means put out is done by the same person who fielded the ball
+					let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
+					if (hitTo === 3) {
+						if (Math.random() < 0.2) {
+							posPutOut = 1;
+						}
+					} else {
+						posPutOut = 3;
+					}
+
+					if (posPutOut !== undefined) {
+						posDefense.push(posPutOut);
+					}
+				}
+			}
+		}
+
+		// On fielder's choice, the batter is inherited by the pitcher responsible for the runner called out
+		let responsiblePitcherPid: number | undefined;
+		if (
+			result === "fieldersChoice" &&
+			fieldersChoiceOrDoublePlayIndex !== undefined
+		) {
+			responsiblePitcherPid =
+				this.bases[fieldersChoiceOrDoublePlayIndex]!.responsiblePitcherPid;
+		}
+
+		return {
+			hitTo,
+			hit,
+			result,
+			posDefense,
+			numBases,
+			fieldersChoiceOrDoublePlayIndex,
+			responsiblePitcherPid,
+		};
+	}
+
 	simPitch() {
 		let doneBatter;
 
@@ -1031,204 +1209,36 @@ class GameSim {
 			) {
 				this.doFoul();
 			} else {
-				// Figure out what defender fields the ball
-				const hitTo = this.getHitTo(battedBallInfo as any);
+				const {
+					hitTo,
+					hit,
+					result,
+					posDefense,
+					numBases,
+					fieldersChoiceOrDoublePlayIndex,
+					responsiblePitcherPid,
+				} = this.getBattedBallOutcome(battedBallInfo, batter, pitcher);
 
-				const hit = Math.random() < this.probHit(batter, pitcher);
-				const errorIfNotHit =
-					Math.random() < this.probErrorIfNotHit(battedBallInfo.type, hitTo);
+				if (result === "flyOut") {
+					const posCatch = POS_NUMBERS_INVERSE[hitTo];
+					const p = this.team[this.d].playersInGameByPos[posCatch].p;
+					this.recordStat(this.d, p, "po", 1, "fielding");
+				} else if (result === "throwOut" || result === "fieldersChoice") {
+					const p =
+						this.team[this.d].playersInGameByPos[
+							POS_NUMBERS_INVERSE[posDefense.at(-1)!]
+						].p;
+					this.recordStat(this.d, p, "po", 1, "fielding");
+				} else if (result === "doublePlay") {
+					const posFirstPutOut = POS_NUMBERS_INVERSE[posDefense.at(-2)!];
+					const fielder =
+						this.team[this.d].playersInGameByPos[posFirstPutOut].p;
+					this.recordStat(this.d, fielder, "po", 1, "fielding");
 
-				let result:
-					| "hit"
-					| "flyOut"
-					| "throwOut"
-					| "fieldersChoice"
-					| "doublePlay";
-				let pidError: number | undefined;
-				const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
-				let numBases: 1 | 2 | 3 | 4;
-				let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
-				if (errorIfNotHit || hit) {
-					result = "hit";
-					numBases = this.getNumBases(batter, battedBallInfo);
-				} else {
-					numBases = 1;
-
-					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
-						result = "flyOut";
-
-						const posCatch = POS_NUMBERS_INVERSE[hitTo];
-
-						const fielder = this.team[this.d].playersInGameByPos[posCatch].p;
-						this.recordStat(this.d, fielder, "po", 1, "fielding");
-					} else {
-						if (this.bases[0] || this.bases[1] || this.bases[2]) {
-							// Probability of double play depends on who it's hit to
-							const r = Math.random();
-							let probDoublePlay = 0;
-							if (this.bases[0] && this.outs < 2) {
-								if (hitTo === 6) {
-									probDoublePlay = 0.7;
-								} else if (hitTo === 4) {
-									probDoublePlay = 0.5;
-								} else if (hitTo === 5) {
-									probDoublePlay = 0.3;
-								} else {
-									probDoublePlay = 0.2;
-								}
-							}
-
-							const r2 = Math.random();
-							let probFieldersChoice = 0;
-							if (this.bases[0]) {
-								probFieldersChoice = 0.7;
-							} else if (this.bases[1] || this.bases[2]) {
-								probFieldersChoice = 0.1;
-							}
-
-							if (r < probDoublePlay) {
-								result = "doublePlay";
-
-								const putOutBaseIndexWeights = [0, 0, 0];
-								let forceOutPossible = true;
-								for (let i = 0; i < 3; i++) {
-									if (this.bases[0]) {
-										putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0.05;
-									} else {
-										forceOutPossible = false;
-									}
-								}
-								fieldersChoiceOrDoublePlayIndex = random.choice(
-									[0, 1, 2],
-									putOutBaseIndexWeights,
-								);
-							} else if (r2 < probFieldersChoice) {
-								result = "fieldersChoice";
-							} else {
-								result = "throwOut";
-							}
-
-							if (result === "doublePlay" || result === "fieldersChoice") {
-								const putOutBaseIndexWeights = [0, 0, 0];
-								let forceOutPossible = true;
-								for (let i = 0; i < 3; i++) {
-									if (this.bases[i]) {
-										if (result === "fieldersChoice") {
-											// Runners on 1st, 2nd, or 3rd could be out, but higher chance of it happening when a force out is possible
-											putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0.05;
-										} else {
-											// Only force outs
-											putOutBaseIndexWeights[i] = forceOutPossible ? 1 : 0;
-										}
-									} else {
-										forceOutPossible = false;
-									}
-								}
-								fieldersChoiceOrDoublePlayIndex = random.choice(
-									[0, 1, 2],
-									putOutBaseIndexWeights,
-								);
-
-								// Undefind means put out is done by the same person who fielded the ball
-								let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
-								if (fieldersChoiceOrDoublePlayIndex === 2) {
-									// Out at home
-									posPutOut = hitTo === 2 ? 1 : 2;
-								} else if (fieldersChoiceOrDoublePlayIndex === 1) {
-									// Out at 3rd
-									posPutOut = hitTo === 5 ? undefined : 5;
-								} else {
-									// Out at 2nd
-									if ((hitTo === 4 || hitTo === 6) && Math.random() < 0.2) {
-										posPutOut = undefined;
-									} else {
-										const secondBasemanCovers = [1, 2, 5, 6, 7, 8];
-										posPutOut = secondBasemanCovers.includes(hitTo) ? 4 : 6;
-									}
-								}
-
-								if (posPutOut !== undefined) {
-									posDefense.push(posPutOut);
-								}
-								const fielder =
-									this.team[this.d].playersInGameByPos[
-										POS_NUMBERS_INVERSE[posPutOut ?? hitTo]
-									].p;
-								this.recordStat(this.d, fielder, "po", 1, "fielding");
-
-								if (result === "doublePlay") {
-									// Double play always includes batter, currently
-									posDefense.push(3);
-									const fielder = this.team[this.d].playersInGameByPos["1B"].p;
-									this.recordStat(this.d, fielder, "po", 1, "fielding");
-								}
-							}
-						} else {
-							result = "throwOut";
-						}
-
-						if (result === "throwOut") {
-							// Undefind means put out is done by the same person who fielded the ball
-							let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
-							if (hitTo === 3) {
-								if (Math.random() < 0.2) {
-									posPutOut = 1;
-								}
-							} else {
-								posPutOut = 3;
-							}
-
-							if (posPutOut !== undefined) {
-								posDefense.push(posPutOut);
-							}
-							const fielder =
-								this.team[this.d].playersInGameByPos[
-									POS_NUMBERS_INVERSE[posPutOut ?? hitTo]
-								].p;
-							this.recordStat(this.d, fielder, "po", 1, "fielding");
-						}
-
-						if (posDefense.length > 1) {
-							const fielder =
-								this.team[this.d].playersInGameByPos[
-									POS_NUMBERS_INVERSE[posDefense.at(-2)!]
-								].p;
-							this.recordStat(this.d, fielder, "a", 1, "fielding");
-						}
-
-						if (posDefense.length > 2 && result === "doublePlay") {
-							const fielder =
-								this.team[this.d].playersInGameByPos[
-									POS_NUMBERS_INVERSE[posDefense.at(-2)!]
-								].p;
-							this.recordStat(this.d, fielder, "a", 1, "fielding");
-						}
-
-						if (result === "doublePlay") {
-							for (const posNumber of posDefense) {
-								const fielder =
-									this.team[this.d].playersInGameByPos[
-										POS_NUMBERS_INVERSE[posNumber]
-									].p;
-								this.recordStat(this.d, fielder, "dp", 1, "fielding");
-							}
-						}
-					}
-				}
-
-				if (errorIfNotHit && !hit) {
-					const pError =
-						this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[hitTo]].p;
-					this.recordStat(this.d, pError, "e", 1, "fielding");
-					pidError = pError.id;
-
-					this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
-					this.outsIfNoErrors += 1;
-				}
-
-				this.recordStat(this.o, batter, "pa");
-
-				if (hit) {
+					// Double play always includes batter, currently
+					const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
+					this.recordStat(this.d, firstBaseman, "po", 1, "fielding");
+				} else if (result === "hit") {
 					this.recordStat(this.o, batter, "h");
 					this.recordStat(this.d, pitcher, "hPit");
 					if (numBases > 1) {
@@ -1240,19 +1250,43 @@ class GameSim {
 					}
 				}
 
-				// On fielder's choice, the batter is inherited by the pitcher responsible for the runner called out
-				let responsiblePitcherPid: number | undefined;
 				if (
-					result === "fieldersChoice" &&
-					fieldersChoiceOrDoublePlayIndex !== undefined
+					["flyOut", "throwOut", "fieldersChoice", "doublePlay"].includes(
+						result,
+					)
 				) {
-					responsiblePitcherPid =
-						this.bases[fieldersChoiceOrDoublePlayIndex]!.responsiblePitcherPid;
+					if (posDefense.length > 1) {
+						const fielder =
+							this.team[this.d].playersInGameByPos[
+								POS_NUMBERS_INVERSE[posDefense.at(-2)!]
+							].p;
+						this.recordStat(this.d, fielder, "a", 1, "fielding");
+					}
+
+					if (posDefense.length > 2 && result === "doublePlay") {
+						const fielder =
+							this.team[this.d].playersInGameByPos[
+								POS_NUMBERS_INVERSE[posDefense.at(-2)!]
+							].p;
+						this.recordStat(this.d, fielder, "a", 1, "fielding");
+					}
+
+					if (result === "doublePlay") {
+						for (const posNumber of posDefense) {
+							const fielder =
+								this.team[this.d].playersInGameByPos[
+									POS_NUMBERS_INVERSE[posNumber]
+								].p;
+							this.recordStat(this.d, fielder, "dp", 1, "fielding");
+						}
+					}
 				}
+
+				this.recordStat(this.o, batter, "pa");
 
 				const runners = this.advanceRunners({
 					battedBallInfo,
-					error: pidError !== undefined,
+					error: result === "error",
 					fieldersChoiceOrDoublePlayIndex,
 					hit,
 					hitTo,
@@ -1266,14 +1300,22 @@ class GameSim {
 					this.doScore(
 						{
 							p: batter,
-							reachedOnError: pidError !== undefined,
+							reachedOnError: result === "error",
 							responsiblePitcherPid: pitcher.id,
 						},
-						pidError === undefined ? batter : undefined,
+						result === "error" ? batter : undefined,
 					);
 				}
 
-				if (pidError !== undefined) {
+				if (result === "error") {
+					const pError =
+						this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[hitTo]].p;
+					this.recordStat(this.d, pError, "e", 1, "fielding");
+					const pidError = pError.id;
+
+					this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
+					this.outsIfNoErrors += 1;
+
 					if (numBases < 4) {
 						this.bases[numBases - 1] = this.makeOccupiedBase(batter, true);
 					}

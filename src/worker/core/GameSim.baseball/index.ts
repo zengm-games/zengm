@@ -1564,8 +1564,19 @@ class GameSim {
 			type: "gameOver",
 		});
 
-		// Delete stuff that isn't needed before returning
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
+			// Handle some stats here
+			const pitcher = this.team[t].getPitcher().p;
+			this.recordStat(t, pitcher, "gf");
+			if (pitcher.stat.gsPit) {
+				this.recordStat(t, pitcher, "cg");
+
+				if (pitcher.stat.rPit === 0) {
+					this.recordStat(t, pitcher, "sho");
+				}
+			}
+
+			// Delete stuff that isn't needed before returning
 			delete this.team[t].t.compositeRating;
 			// @ts-expect-error
 			delete this.team[t].t.pace;

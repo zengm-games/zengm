@@ -277,6 +277,7 @@ const writePlayerStats = async (
 			let goaliePID: number | undefined;
 
 			// This needs to be before checkStatisticalFeat
+			// This might be better in GameSim.run, like it is for basebal...
 			if (isSport("hockey")) {
 				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
 

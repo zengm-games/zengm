@@ -377,6 +377,7 @@ const processRatings = (
 };
 
 export const weightByMinutes = bySport({
+	baseball: [],
 	basketball: [
 		"per",
 		"ws48",

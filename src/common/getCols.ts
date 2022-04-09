@@ -330,6 +330,36 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "AB",
 		},
+		"stat:ba": {
+			desc: "Batting Average",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "BA",
+		},
+		"stat:obp": {
+			desc: "On-Base Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OBP",
+		},
+		"stat:slg": {
+			desc: "Slugging Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SLG",
+		},
+		"stat:ops": {
+			desc: "On-Base + Slugging Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OPS",
+		},
+		"stat:tb": {
+			desc: "Total Bases",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TB",
+		},
 	},
 	basketball: {
 		"rating:fg": {

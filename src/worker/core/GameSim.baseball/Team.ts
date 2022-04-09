@@ -34,6 +34,7 @@ class Team<DH extends boolean> {
 
 	atBat: number;
 	subIndex: number;
+	saveEligibleWhenEnteredGame: boolean;
 
 	constructor(t: TeamGameSim, dh: DH) {
 		this.t = t;
@@ -79,6 +80,7 @@ class Team<DH extends boolean> {
 
 		this.atBat = -1;
 		this.subIndex = -1;
+		this.saveEligibleWhenEnteredGame = false;
 
 		this.playersByPid = {} as any;
 		for (const p of this.t.player) {

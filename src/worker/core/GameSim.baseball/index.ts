@@ -84,6 +84,10 @@ class GameSim {
 	outsIfNoErrors!: number;
 	outsIfNoErrorsByPitcherPid!: Record<number, number>;
 
+	// As runs are scored, track eligibility for W/L
+	winEligiblePid: number | undefined;
+	lossEligiblePid: number | undefined;
+
 	constructor({
 		gid,
 		day,
@@ -1397,6 +1401,18 @@ class GameSim {
 		if (rbi) {
 			this.recordStat(this.o, rbi, "rbi");
 		}
+
+		if (this.team[0].t.stat.pts === this.team[1].t.stat.pts) {
+			this.winEligiblePid = undefined;
+			this.lossEligiblePid = undefined;
+		} else if (
+			this.team[this.o].t.stat.pts - 1 ===
+			this.team[this.d].t.stat.pts
+		) {
+			// This run just broke the tie, now someone is winning
+			this.winEligiblePid = this.team[this.o].getPitcher().p.id;
+			this.lossEligiblePid = pitcher.id;
+		}
 	}
 
 	getRunners() {
@@ -1564,8 +1580,8 @@ class GameSim {
 			type: "gameOver",
 		});
 
+		// Handle some stats here
 		for (const t of teamNums) {
-			// Handle some stats here
 			const pitcher = this.team[t].getPitcher().p;
 			this.recordStat(t, pitcher, "gf");
 			if (pitcher.stat.gsPit) {
@@ -1576,7 +1592,38 @@ class GameSim {
 				}
 			}
 
-			// Delete stuff that isn't needed before returning
+			const t2 = t === 0 ? 1 : 0;
+			const teamWon = this.team[t].t.stat.pts > this.team[t2].t.stat.pts;
+			if (
+				teamWon &&
+				pitcher.id !== this.winEligiblePid &&
+				(this.team[t].saveEligibleWhenEnteredGame || pitcher.stat.outs >= 9)
+			) {
+				this.recordStat(t, pitcher, "sv");
+			}
+
+			const winLossInfos = [
+				{
+					stat: "w",
+					pid: this.winEligiblePid,
+				},
+				{
+					stat: "l",
+					pid: this.lossEligiblePid,
+				},
+			];
+			for (const info of winLossInfos) {
+				if (info.pid !== undefined) {
+					const p = this.team[t].playersByPid[info.pid];
+					if (p) {
+						this.recordStat(t, p, info.stat);
+					}
+				}
+			}
+		}
+
+		// Delete stuff that isn't needed before returning
+		for (const t of teamNums) {
 			delete this.team[t].t.compositeRating;
 			// @ts-expect-error
 			delete this.team[t].t.pace;

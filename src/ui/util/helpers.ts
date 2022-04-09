@@ -31,6 +31,31 @@ const roundOverrides: Record<
 	| "minutes"
 	| undefined
 > = bySport({
+	baseball: {
+		gp: "noDecimalPlace",
+		gs: "noDecimalPlace",
+		pa: "noDecimalPlace",
+		r: "noDecimalPlace",
+		h: "noDecimalPlace",
+		"2b": "noDecimalPlace",
+		"3b": "noDecimalPlace",
+		hr: "noDecimalPlace",
+		rbi: "noDecimalPlace",
+		sb: "noDecimalPlace",
+		cs: "noDecimalPlace",
+		bb: "noDecimalPlace",
+		so: "noDecimalPlace",
+		ba: "roundWinp",
+		obp: "roundWinp",
+		slg: "roundWinp",
+		ops: "roundWinp",
+		tb: "noDecimalPlace",
+		gdp: "noDecimalPlace",
+		hbp: "noDecimalPlace",
+		sh: "noDecimalPlace",
+		sf: "noDecimalPlace",
+		ibb: "noDecimalPlace",
+	},
 	basketball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",

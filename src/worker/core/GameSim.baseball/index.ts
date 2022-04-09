@@ -436,13 +436,13 @@ class GameSim {
 
 			const isStealing = stealing[i];
 
+			const mustAdvanceWithHitter =
+				i === 0 ||
+				(i === 1 && runners[0]) ||
+				(i === 2 && runners[0] && runners[1]);
+
 			if (hit || error) {
 				// Handle runners advancing on a hit/error
-
-				const mustAdvanceWithHitter =
-					i === 0 ||
-					(i === 1 && runners[0]) ||
-					(i === 2 && runners[0] && runners[1]);
 
 				if (i === 2) {
 					// Third base
@@ -554,7 +554,8 @@ class GameSim {
 						// Maybe score on ground ball
 						if (
 							(!isStealing && Math.random() < 0.4) ||
-							(isStealing && Math.random() < 0.8)
+							(isStealing && Math.random() < 0.8) ||
+							mustAdvanceWithHitter
 						) {
 							advance = true;
 						}
@@ -600,7 +601,11 @@ class GameSim {
 						}
 
 						// Maybe advance on ground ball
-						if (isStealing || Math.random() < 0.4 * tendency) {
+						if (
+							isStealing ||
+							mustAdvanceWithHitter ||
+							Math.random() < 0.4 * tendency
+						) {
 							advance = true;
 						}
 					}
@@ -614,6 +619,9 @@ class GameSim {
 						!isStealing &&
 						Math.random() < 0.05
 					) {
+						advance = true;
+					} else if (battedBallInfo.type === "ground") {
+						// Must advance on ground ball
 						advance = true;
 					}
 				}

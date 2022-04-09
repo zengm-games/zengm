@@ -42,6 +42,30 @@ const processStats = (
 			const fractionalInnings = ps.outs % 3;
 
 			row[stat] = completeInnings + fractionalInnings / 10;
+		} else if (stat === "winp") {
+			row[stat] = helpers.ratio(ps.w, ps.w + ps.l);
+		} else if (stat === "era") {
+			row[stat] = helpers.ratio(ps.er, ps.outs / 27);
+		} else if (stat === "fip") {
+			row[stat] =
+				helpers.ratio(
+					13 * ps.hrPit + 3 * (ps.hbpPit + ps.bbPit) - 2 * ps.soPit,
+					ps.outs / 3,
+				) + 3.2;
+		} else if (stat === "whip") {
+			row[stat] = helpers.ratio(ps.bbPit + ps.hPit, ps.outs / 3);
+		} else if (stat === "h9") {
+			row[stat] = helpers.ratio(ps.hPit, ps.outs / 27);
+		} else if (stat === "hr9") {
+			row[stat] = helpers.ratio(ps.hrPit, ps.outs / 27);
+		} else if (stat === "bb9") {
+			row[stat] = helpers.ratio(ps.soPit, ps.outs / 27);
+		} else if (stat === "so9") {
+			row[stat] = helpers.ratio(ps.soPit, ps.outs / 27);
+		} else if (stat === "pc9") {
+			row[stat] = helpers.ratio(ps.pc, ps.outs / 27);
+		} else if (stat === "sow") {
+			row[stat] = helpers.ratio(ps.soPit, ps.bbPit);
 		} else {
 			row[stat] = ps[stat];
 		}

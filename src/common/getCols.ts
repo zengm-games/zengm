@@ -360,6 +360,66 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "TB",
 		},
+		"stat:winp": {
+			desc: "Win-Loss Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "W-L%",
+		},
+		"stat:era": {
+			desc: "Earned Run Average",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "ERA",
+		},
+		"stat:fip": {
+			desc: "Fielding Independent Pitching",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "FIP",
+		},
+		"stat:whip": {
+			desc: "Walks And Hits Per Inning Pitched",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "WHIP",
+		},
+		"stat:h9": {
+			desc: "Hits Per 9 Innings",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "H9",
+		},
+		"stat:hr9": {
+			desc: "Home Runs Per 9 Innings",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "HR9",
+		},
+		"stat:bb9": {
+			desc: "Walks Per 9 Innings",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "BB9",
+		},
+		"stat:so9": {
+			desc: "Strikeouts Per 9 Innings",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SO9",
+		},
+		"stat:pc9": {
+			desc: "Pitches Per 9 Innings",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PC9",
+		},
+		"stat:sow": {
+			desc: "Strikeouts Per Walk",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SO/W",
+		},
 	},
 	basketball: {
 		"rating:fg": {

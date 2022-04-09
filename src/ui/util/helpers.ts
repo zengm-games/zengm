@@ -24,6 +24,7 @@ const roundOverrides: Record<
 	| "none"
 	| "oneDecimalPlace"
 	| "twoDecimalPlaces"
+	| "threeDecimalPlaces"
 	| "roundWinp"
 	| "plusMinus"
 	| "plusMinusNoDecimalPlace"
@@ -55,6 +56,41 @@ const roundOverrides: Record<
 		sh: "noDecimalPlace",
 		sf: "noDecimalPlace",
 		ibb: "noDecimalPlace",
+		w: "noDecimalPlace",
+		l: "noDecimalPlace",
+		winp: "roundWinp",
+		era: "twoDecimalPlaces",
+		gpPit: "noDecimalPlace",
+		gsPit: "noDecimalPlace",
+		gf: "noDecimalPlace",
+		cg: "noDecimalPlace",
+		sho: "noDecimalPlace",
+		sv: "noDecimalPlace",
+		ip: "oneDecimalPlace",
+		rPit: "noDecimalPlace",
+		er: "noDecimalPlace",
+		hPit: "noDecimalPlace",
+		"2bPit": "noDecimalPlace",
+		"3bPit": "noDecimalPlace",
+		hrPit: "noDecimalPlace",
+		bbPit: "noDecimalPlace",
+		soPit: "noDecimalPlace",
+		pc: "noDecimalPlace",
+		ibbPit: "noDecimalPlace",
+		hbpPit: "noDecimalPlace",
+		shPit: "noDecimalPlace",
+		sfPit: "noDecimalPlace",
+		bk: "noDecimalPlace",
+		wp: "noDecimalPlace",
+		bf: "noDecimalPlace",
+		fip: "twoDecimalPlaces",
+		whip: "threeDecimalPlaces",
+		h9: "oneDecimalPlace",
+		hr9: "oneDecimalPlace",
+		bb9: "oneDecimalPlace",
+		so9: "oneDecimalPlace",
+		pc9: "oneDecimalPlace",
+		sow: "twoDecimalPlaces",
 	},
 	basketball: {
 		gp: "noDecimalPlace",
@@ -362,6 +398,13 @@ const roundStat = (
 			return value.toLocaleString("en-US", {
 				maximumFractionDigits: 2,
 				minimumFractionDigits: 2,
+			});
+		}
+
+		if (roundOverrides[stat] === "threeDecimalPlaces") {
+			return value.toLocaleString("en-US", {
+				maximumFractionDigits: 3,
+				minimumFractionDigits: 3,
 			});
 		}
 

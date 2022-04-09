@@ -137,7 +137,18 @@ const PLAYER_GAME_STATS = {
 	},
 };
 
-const PLAYER_SUMMARY = {};
+const PLAYER_SUMMARY = {
+	summaryBatter: {
+		name: "SummaryBatter",
+		onlyShowIf: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH"],
+		stats: ["ab", "h", "hr", "ba", "r", "rbi", "sb", "obp", "slg", "ops"],
+	},
+	summaryPitcher: {
+		name: "SummaryPitcher",
+		onlyShowIf: ["SP", "RP"],
+		stats: ["w", "l", "era", "gpPit", "gsPit", "sv", "ip", "soPit", "whip"],
+	},
+};
 
 const PLAYER_STATS_TABLES = {
 	batting: {
@@ -146,6 +157,7 @@ const PLAYER_STATS_TABLES = {
 			"gp",
 			"gs",
 			"pa",
+			"ab",
 			"r",
 			"h",
 			"2b",

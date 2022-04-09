@@ -36,6 +36,7 @@ const roundOverrides: Record<
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
 		pa: "noDecimalPlace",
+		ab: "noDecimalPlace",
 		r: "noDecimalPlace",
 		h: "noDecimalPlace",
 		"2b": "noDecimalPlace",

@@ -128,6 +128,7 @@ const StatsSummary = ({
 	}
 
 	const separatorAfter = bySport({
+		baseball: onlyShowIf?.includes("SP") ? [0, 3, 6] : [0, 4, 7],
 		basketball: [0, 4, 8],
 		football: [0, 2],
 		hockey: onlyShowIf?.includes("G") ? [0, 3] : [0, 5],

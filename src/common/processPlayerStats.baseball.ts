@@ -21,6 +21,11 @@ const processStats = (
 			row[stat] = "keyStats";
 		} else if (stat === "ab") {
 			row[stat] = ps.pa - ps.bb - ps.hbp - ps.sf;
+		} else if (stat === "ip") {
+			const completeInnings = Math.floor(ps.outs / 3);
+			const fractionalInnings = ps.outs % 3;
+
+			row[stat] = completeInnings + fractionalInnings / 10;
 		} else {
 			row[stat] = ps[stat];
 		}

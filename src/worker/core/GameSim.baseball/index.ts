@@ -1491,7 +1491,7 @@ class GameSim {
 	logOut() {
 		this.outs += 1;
 		const pitcher = this.team[this.d].getPitcher().p;
-		this.recordStat(this.d, pitcher, "ip");
+		this.recordStat(this.d, pitcher, "outs");
 
 		if (this.outsIfNoErrorsByPitcherPid[pitcher.id] === undefined) {
 			this.outsIfNoErrorsByPitcherPid[pitcher.id] = 0;
@@ -1729,20 +1729,6 @@ class GameSim {
 		const qtr = this.team[t].t.stat.ptsQtrs.length - 1;
 
 		if (p !== undefined) {
-			if (s === "ip") {
-				// Handle fractional innings
-				const prevIP = p.stat.ip;
-
-				// Careful about floating point error
-				const remainderDigit = Math.round(10 * prevIP) % 10;
-				if (remainderDigit < 2) {
-					amt = 0.1;
-				} else {
-					// Go from 0.2 to 1
-					amt = 0.8;
-				}
-			}
-
 			if (type === "fielding") {
 				const pos = this.team[t].playersInGame[p.id].pos;
 				if (pos === "DH") {

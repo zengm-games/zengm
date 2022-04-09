@@ -38,7 +38,7 @@ const teamAndOpp = [
 	"cg",
 	"sho",
 	"sv",
-	"ip",
+	"outs", // Easier than tracking IP
 	"rPit",
 	"er",
 	"hPit",

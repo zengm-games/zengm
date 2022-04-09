@@ -309,7 +309,9 @@ const pitcherStats = (p: any) => {
 		return "";
 	}
 
-	return `${p.ip.toFixed(1)} IP, ${p.er} ER, ${p.soPit} K, ${p.bbPit} BB`;
+	const ip = processStats(p, ["ip"]).ip;
+
+	return `${ip.toFixed(1)} IP, ${p.er} ER, ${p.soPit} K, ${p.bbPit} BB`;
 };
 
 const batterStats = (p: any) => {

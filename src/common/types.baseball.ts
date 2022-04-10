@@ -1,24 +1,7 @@
-import type teamStats from "../worker/core/team/stats.hockey";
+import type teamStats from "../worker/core/team/stats.baseball";
 
 // Should all the extra ones be in teamStats["derived"]?
-export type TeamStatAttr =
-	| typeof teamStats["raw"][number]
-	| "g"
-	| "a"
-	| "sa"
-	| "sPct"
-	| "svPct"
-	| "foPct"
-	| "ppPct"
-	| "gaa"
-	| "oppG"
-	| "oppA"
-	| "oppAa"
-	| "oppSPct"
-	| "oppSvPct"
-	| "oppFoPct"
-	| "oppPpPct"
-	| "oppGaa";
+export type TeamStatAttr = typeof teamStats["raw"][number] | "ops" | "era";
 
 type AwardTeam = {
 	tid: number;

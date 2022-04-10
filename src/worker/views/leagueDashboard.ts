@@ -80,6 +80,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("newPhase")
 	) {
 		const stats = bySport({
+			baseball: ["r", "oppR", "ops", "era"] as const,
 			basketball: ["pts", "oppPts", "trb", "ast"] as const,
 			football: [
 				"ptsPerGame",
@@ -90,6 +91,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			hockey: ["g", "oppG"] as const,
 		});
 		const statNames = bySport({
+			baseball: ["Runs", "Allowed", "OPS", "ERA"],
 			basketball: ["Points", "Allowed", "Rebounds", "Assists"],
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
 			hockey: ["Goals", "Allowed"],
@@ -118,7 +120,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"tiedConf",
 					"otlConf",
 				],
-				stats: ["pts", "oppPts", "gp", ...stats],
+				stats: ["pts", "oppPts", "gp", ...stats] as const,
 				season: g.get("season"),
 				showNoStats: true,
 			},
@@ -150,7 +152,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 							name: statNames[i],
 							rank: 0,
 							stat,
-							value: t2.stats[stat],
+							value: (t2.stats as any)[stat],
 						};
 					});
 					att = t2.seasonAttrs.att;
@@ -164,7 +166,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		for (const stat of stats) {
-			teams.sort((a, b) => b.stats[stat] - a.stats[stat]);
+			teams.sort((a, b) => (b.stats as any)[stat] - (a.stats as any)[stat]);
 
 			for (let j = 0; j < teams.length; j++) {
 				if (teams[j].tid === g.get("userTid")) {
@@ -201,11 +203,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("newPhase")
 	) {
 		const startersStats = bySport({
+			baseball: ["hr", "ba", "ops", "era", "ip"],
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		});
 		const leaderStats = bySport({
+			baseball: ["hr", "h", "w"],
 			basketball: ["pts", "trb", "ast"],
 			football: ["pssYds", "rusYds", "recYds"],
 			hockey: ["g", "a", "pts"],
@@ -495,7 +499,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"imgURL",
 					"imgURLSmall",
 				],
-				stats: ["pts", "oppPts", "gp"],
+				stats: ["pts", "oppPts", "gp"] as const,
 				season: g.get("season"),
 				showNoStats: true,
 			},

@@ -29,6 +29,7 @@ const updateProtectPlayers = async () => {
 	}
 
 	const stats = bySport({
+		baseball: ["yearsWithTeam", "gp", "keyStats"],
 		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
 		football: ["yearsWithTeam", "gp", "keyStats", "av"],
 		hockey: ["yearsWithTeam", "gp", "keyStats", "ops", "dps", "ps"],

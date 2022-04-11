@@ -104,6 +104,7 @@ export const genView = (
 				hockey: "ps",
 			});
 			const stats = bySport({
+				baseball: ["gp", "keyStats"],
 				basketball: [
 					"gp",
 					"min",

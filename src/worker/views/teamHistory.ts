@@ -137,6 +137,7 @@ export const getHistory = async (
 	const teamHistory = getHistoryTeam(teamSeasons);
 
 	const stats = bySport({
+		baseball: ["gp", "keyStats"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

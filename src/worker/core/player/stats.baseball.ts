@@ -5,8 +5,8 @@ const stats = {
 	derived: [] as const,
 	raw: [
 		// Batting
-		"gp",
-		"gs",
+		"gp", // Also given to pitcher, since it's displayed various places
+		"gs", // Also given to pitcher, since it's displayed various places
 		"pa",
 		"r",
 		"h",

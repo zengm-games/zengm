@@ -12,6 +12,7 @@ const updatePlayers = async (
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun") || pid !== state.pid) {
 		const stats = bySport({
+			baseball: ["gp", "keyStats"],
 			basketball: [
 				"gp",
 				"min",

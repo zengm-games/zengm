@@ -103,6 +103,7 @@ const updateFrivolitiesDraftClasses = async (
 		);
 
 		const stats = bySport({
+			baseball: ["gp", "keyStats"],
 			basketball: [
 				"gp",
 				"min",

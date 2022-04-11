@@ -96,6 +96,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		if (fantasyDraft) {
 			stats = bySport({
+				baseball: ["gp", "keyStats"],
 				basketball: ["per", "ewa"],
 				football: ["gp", "keyStats", "av"],
 				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
@@ -114,6 +115,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			expansionDraft.phase === "draft"
 		) {
 			stats = bySport({
+				baseball: ["gp", "keyStats"],
 				basketball: ["per", "ewa"],
 				football: ["gp", "keyStats", "av"],
 				hockey: ["gp", "keyStats", "ops", "dps", "ps"],

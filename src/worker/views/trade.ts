@@ -106,6 +106,7 @@ const updateTrade = async () => {
 	];
 	const ratings = ["ovr", "pot", "skills", "pos"];
 	const stats = bySport({
+		baseball: ["gp", "keyStats"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

@@ -151,13 +151,20 @@ class GameSim {
 		for (const i of teamNums) {
 			const t = this.team[i];
 			for (const p of t.playersInGameByBattingOrder) {
-				this.recordStat(i, p.p, "gp");
+				if (p.pos === "P") {
+					// Pitcher is handled below
+					continue;
+				}
 				this.recordStat(i, p.p, "gs");
+				// gp is handled in writePlayerStats
 			}
 
 			const startingPitcher = t.playersInGameByPos.P.p;
 			this.recordStat(i, startingPitcher, "gpPit");
 			this.recordStat(i, startingPitcher, "gsPit");
+
+			// Pitcher gets a normal game played too. gp is handled in writePlayerStats
+			this.recordStat(i, startingPitcher, "gs");
 		}
 	}
 
@@ -1295,6 +1302,7 @@ class GameSim {
 				}
 
 				this.recordStat(this.o, batter, "pa");
+				this.recordStat(this.d, pitcher, "bf");
 
 				const runners = this.advanceRunners({
 					battedBallInfo,

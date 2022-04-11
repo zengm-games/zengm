@@ -56,6 +56,7 @@ const PowerRankings = ({
 	const actualShowHealthy = showHealthy || currentSeason !== season;
 
 	const [otherKeys, otherKeysTitle, otherKeysPrefix] = bySport({
+		baseball: [POSITIONS.filter(pos => pos !== "DH"), "Position Ranks", "pos"],
 		basketball: [RATINGS, "Rating Ranks", "rating"],
 		football: [
 			POSITIONS.filter(pos => pos !== "KR" && pos !== "PR"),

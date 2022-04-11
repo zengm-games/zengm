@@ -12,6 +12,56 @@ const sportSpecificCols = bySport<{
 	[key: string]: ColTemp;
 }>({
 	baseball: {
+		"pos:SP": {
+			desc: "Starting Pitcher",
+			sortType: "number",
+			title: "SP",
+		},
+		"pos:RP": {
+			desc: "Relief Pitcher",
+			sortType: "number",
+			title: "RP",
+		},
+		"pos:C": {
+			desc: "Catcher",
+			sortType: "number",
+			title: "C",
+		},
+		"pos:1B": {
+			desc: "First Baseman",
+			sortType: "number",
+			title: "1B",
+		},
+		"pos:2B": {
+			desc: "Second Baseman",
+			sortType: "number",
+			title: "2B",
+		},
+		"pos:3B": {
+			desc: "Third Baseman",
+			sortType: "number",
+			title: "3B",
+		},
+		"pos:SS": {
+			desc: "Shortstop",
+			sortType: "number",
+			title: "SS",
+		},
+		"pos:LF": {
+			desc: "Left Fielder",
+			sortType: "number",
+			title: "LF",
+		},
+		"pos:CF": {
+			desc: "Center Fielder",
+			sortType: "number",
+			title: "CF",
+		},
+		"pos:RF": {
+			desc: "Right Fielder",
+			sortType: "number",
+			title: "RF",
+		},
 		"rating:hpw": {
 			desc: "Hitting Power",
 			sortSequence: ["desc", "asc"],

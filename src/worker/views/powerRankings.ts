@@ -49,7 +49,7 @@ const updatePowerRankings = async (
 					"imgURL",
 					"imgURLSmall",
 				],
-				stats: ["gp", "mov", "pts", "oppPts"],
+				stats: ["gp", "mov", "pts", "oppPts"] as const,
 				season,
 				showNoStats: true,
 			},
@@ -133,7 +133,7 @@ const updatePowerRankings = async (
 					}
 				} else {
 					for (const pos of POSITIONS) {
-						if (pos === "KR" || pos === "PR") {
+						if (pos === "KR" || pos === "PR" || pos === "DH") {
 							continue;
 						}
 						other[pos] = team.ovr(teamPlayers, {

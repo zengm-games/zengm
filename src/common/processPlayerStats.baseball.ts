@@ -15,6 +15,9 @@ const processStats = (
 	const obp = helpers.ratio(ps.h + ps.bb + ps.hbp, ab + ps.bb + ps.hbp + ps.sf);
 	const slg = helpers.ratio(tb, ab);
 
+	const completeInnings = Math.floor(ps.outs / 3);
+	const fractionalInnings = ps.outs % 3;
+	const ip = completeInnings + fractionalInnings / 10;
 	const era = helpers.ratio(ps.er, ps.outs / 27);
 
 	for (const stat of stats) {
@@ -26,7 +29,7 @@ const processStats = (
 			}
 
 			row.age = ps.season - bornYear;
-		} else if (stat === "keyStats") {
+		} else if (stat === "keyStats" || stat === "keyStatsShort") {
 			let role: string | undefined;
 			if (ps.pa > 0 && ps.pa >= ps.pc) {
 				role = "batter";
@@ -36,9 +39,15 @@ const processStats = (
 
 			if (role === "batter") {
 				row[stat] = `${helpers.roundWinp(ba)} BA, ${ps.hr} HR`;
+				if (stat === "keyStats") {
+					row[stat] += `, ${ab} AB`;
+				}
 			} else if (role === "pitcher") {
 				const recordOrSaves = ps.w >= ps.sv ? `${ps.w}-${ps.l}` : `${ps.sv} SV`;
 				row[stat] = `${recordOrSaves}, ${era.toFixed(2)} ERA`;
+				if (stat === "keyStats") {
+					row[stat] += `, ${ip.toFixed(1)} IP`;
+				}
 			} else {
 				row[stat] = "";
 			}
@@ -55,10 +64,7 @@ const processStats = (
 		} else if (stat === "tb") {
 			row[stat] = tb;
 		} else if (stat === "ip") {
-			const completeInnings = Math.floor(ps.outs / 3);
-			const fractionalInnings = ps.outs % 3;
-
-			row[stat] = completeInnings + fractionalInnings / 10;
+			row[stat] = ip;
 		} else if (stat === "winp") {
 			row[stat] = helpers.ratio(ps.w, ps.w + ps.l);
 		} else if (stat === "era") {

@@ -320,6 +320,9 @@ const ScoreBox = memo(
 										) : null}
 										{!challengeNoRatings ? `${p.ratings.ovr} ovr` : null}
 										{bySport({
+											baseball: `${!challengeNoRatings ? ", " : ""}${
+												p.stats.keyStatsShort
+											}`,
 											basketball: `${
 												!challengeNoRatings ? ", " : ""
 											}${p.stats.pts.toFixed(1)} / ${p.stats.trb.toFixed(

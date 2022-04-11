@@ -2116,6 +2116,7 @@ const ratingsStatsPopoverInfo = async ({
 	}
 
 	const stats = bySport({
+		baseball: ["keyStats"],
 		basketball: [
 			"pts",
 			"trb",

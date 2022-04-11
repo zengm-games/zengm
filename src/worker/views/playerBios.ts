@@ -20,6 +20,7 @@ const updatePlayers = async (
 		inputs.abbrev !== state.abbrev
 	) {
 		const stats = bySport({
+			baseball: ["keyStats"],
 			basketball: ["pts", "trb", "ast"],
 			football: ["keyStats"],
 			hockey: ["keyStats"],

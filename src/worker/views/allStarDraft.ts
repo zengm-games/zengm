@@ -12,6 +12,7 @@ import { bySport, PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
 
 const stats = bySport({
+	baseball: ["keyStats"],
 	basketball: ["pts", "trb", "ast"],
 	football: ["keyStats"],
 	hockey: ["keyStats"],

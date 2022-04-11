@@ -49,7 +49,7 @@ const updatePowerRankings = async (
 					"imgURL",
 					"imgURLSmall",
 				],
-				stats: ["gp", "mov", "pts", "oppPts"] as const,
+				stats: ["gp", "mov", "pts", "oppPts"],
 				season,
 				showNoStats: true,
 			},

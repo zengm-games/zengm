@@ -65,7 +65,9 @@ const stats = {
 		"gp",
 		"min",
 		...teamAndOpp,
-		...teamAndOpp.map(stat => `opp${helpers.upperCaseFirstLetter(stat)}`),
+		...teamAndOpp.map(
+			stat => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
+		),
 	] as const,
 };
 

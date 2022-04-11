@@ -96,7 +96,7 @@ const stats = {
 	] as const,
 	byPos: [
 		"gsF",
-		"gF",
+		"gpF",
 		"cgF",
 		"outsF",
 		"po",

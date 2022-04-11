@@ -283,6 +283,7 @@ const POS_NUMBERS = {
 	LF: 7,
 	CF: 8,
 	RF: 9,
+	DH: 10,
 } as const;
 
 const POS_NUMBERS_INVERSE = {
@@ -295,6 +296,7 @@ const POS_NUMBERS_INVERSE = {
 	7: "LF",
 	8: "CF",
 	9: "RF",
+	10: "DH",
 } as const;
 
 const POSITION_COUNTS: Record<Position, number> = {

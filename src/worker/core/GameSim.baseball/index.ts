@@ -156,6 +156,8 @@ class GameSim {
 					continue;
 				}
 				this.recordStat(i, p.p, "gs");
+				this.recordStat(i, p.p, "gsF", 1, "fielding");
+				this.recordStat(i, p.p, "gpF", 1, "fielding");
 				// gp is handled in writePlayerStats
 			}
 
@@ -163,8 +165,11 @@ class GameSim {
 			this.recordStat(i, startingPitcher, "gpPit");
 			this.recordStat(i, startingPitcher, "gsPit");
 
-			// Pitcher gets a normal game played too. gp is handled in writePlayerStats
+			// Pitcher gets a normal game played too
 			this.recordStat(i, startingPitcher, "gs");
+			this.recordStat(i, startingPitcher, "gsF", 1, "fielding");
+			this.recordStat(i, startingPitcher, "gpF", 1, "fielding");
+			// gp is handled in writePlayerStats
 		}
 	}
 
@@ -1797,9 +1802,6 @@ class GameSim {
 		if (p !== undefined) {
 			if (type === "fielding") {
 				const pos = this.team[t].playersInGame[p.id].pos;
-				if (pos === "DH") {
-					throw new Error("Should never happen");
-				}
 				const posIndex = POS_NUMBERS[pos] - 1;
 
 				if (p.stat[s][posIndex] === undefined) {

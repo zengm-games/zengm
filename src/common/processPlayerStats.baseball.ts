@@ -11,8 +11,11 @@ const processStats = (
 
 	const ab = ps.pa - ps.bb - ps.hbp - ps.sf;
 	const tb = ps.h + ps["2b"] + 2 * ps["3b"] + 3 * ps.hr;
+	const ba = helpers.ratio(ps.h, ab);
 	const obp = helpers.ratio(ps.h + ps.bb + ps.hbp, ab + ps.bb + ps.hbp + ps.sf);
 	const slg = helpers.ratio(tb, ab);
+
+	const era = helpers.ratio(ps.er, ps.outs / 27);
 
 	for (const stat of stats) {
 		if (stat === "age") {
@@ -24,11 +27,25 @@ const processStats = (
 
 			row.age = ps.season - bornYear;
 		} else if (stat === "keyStats") {
-			row[stat] = "keyStats";
+			let role: string | undefined;
+			if (ps.pa > 0 && ps.pa >= ps.pc) {
+				role = "batter";
+			} else if (ps.pc > 0) {
+				role = "pitcher";
+			}
+
+			if (role === "batter") {
+				row[stat] = `${helpers.roundWinp(ba)} BA, ${ps.hr} HR`;
+			} else if (role === "pitcher") {
+				const recordOrSaves = ps.w >= ps.sv ? `${ps.w}-${ps.l}` : `${ps.sv} SV`;
+				row[stat] = `${recordOrSaves}, ${era.toFixed(2)} ERA`;
+			} else {
+				row[stat] = "";
+			}
 		} else if (stat === "ab") {
 			row[stat] = ab;
 		} else if (stat === "ba") {
-			row[stat] = helpers.ratio(ps.h, ab);
+			row[stat] = ba;
 		} else if (stat === "obp") {
 			row[stat] = obp;
 		} else if (stat === "slg") {
@@ -45,7 +62,7 @@ const processStats = (
 		} else if (stat === "winp") {
 			row[stat] = helpers.ratio(ps.w, ps.w + ps.l);
 		} else if (stat === "era") {
-			row[stat] = helpers.ratio(ps.er, ps.outs / 27);
+			row[stat] = era;
 		} else if (stat === "fip") {
 			row[stat] =
 				helpers.ratio(

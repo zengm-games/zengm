@@ -208,6 +208,7 @@ export const getTopPlayers = async (
 			ratings: ["ovr", "pos"],
 			season: g.get("season"),
 			stats: bySport({
+				baseball: ["keyStats"],
 				basketball: ["pts", "trb", "ast"],
 				football: undefined, // football keyStats is too long
 				hockey: ["keyStats"],

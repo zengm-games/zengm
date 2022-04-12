@@ -26,6 +26,13 @@ const genStatsRow = (tid: number, playoffs: boolean = false): TeamStats => {
 		statsRow[key] = 0;
 	}
 
+	if (stats.byPos) {
+		for (const key of stats.byPos) {
+			// Will get one entry per position
+			statsRow[key] = [];
+		}
+	}
+
 	return statsRow;
 };
 

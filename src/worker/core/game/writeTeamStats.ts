@@ -9,6 +9,7 @@ import {
 	getAutoTicketPrice,
 	getBaseAttendance,
 } from "./attendance";
+import stats from "../team/stats";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -261,6 +262,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({
+			baseball: ["ptsQtrs"],
 			basketball: ["ptsQtrs", "ba"],
 			football: ["ptsQtrs"],
 			hockey: ["ptsQtrs"],
@@ -278,6 +280,16 @@ const writeTeamStats = async (results: GameResults) => {
 			if (isSport("football") && key.endsWith("Lng")) {
 				if (results.team[t1].stat[key] > teamStats[key]) {
 					teamStats[key] = results.team[t1].stat[key];
+				}
+			} else if (stats.byPos && stats.byPos.includes(key)) {
+				for (let i = 0; i < results.team[t1].stat[key].length; i++) {
+					const value = results.team[t1].stat[key][i];
+					if (value !== undefined) {
+						if (teamStats[key][i] === undefined) {
+							teamStats[key][i] = 0;
+						}
+						teamStats[key][i] += value;
+					}
 				}
 			} else {
 				teamStats[key] += results.team[t1].stat[key];

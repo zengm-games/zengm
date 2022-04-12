@@ -1,6 +1,8 @@
 import helpers from "./helpers";
 import type { PlayerStats, PlayerStatType } from "./types";
 
+export const NUM_OUTS_PER_GAME = 27;
+
 const processStats = (
 	ps: PlayerStats,
 	stats: string[],
@@ -18,7 +20,7 @@ const processStats = (
 	const completeInnings = Math.floor(ps.outs / 3);
 	const fractionalInnings = ps.outs % 3;
 	const ip = completeInnings + fractionalInnings / 10;
-	const era = helpers.ratio(ps.er, ps.outs / 27);
+	const era = helpers.ratio(ps.er, ps.outs / NUM_OUTS_PER_GAME);
 
 	for (const stat of stats) {
 		if (stat === "age") {
@@ -78,15 +80,15 @@ const processStats = (
 		} else if (stat === "whip") {
 			row[stat] = helpers.ratio(ps.bbPit + ps.hPit, ps.outs / 3);
 		} else if (stat === "h9") {
-			row[stat] = helpers.ratio(ps.hPit, ps.outs / 27);
+			row[stat] = helpers.ratio(ps.hPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "hr9") {
-			row[stat] = helpers.ratio(ps.hrPit, ps.outs / 27);
+			row[stat] = helpers.ratio(ps.hrPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "bb9") {
-			row[stat] = helpers.ratio(ps.soPit, ps.outs / 27);
+			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "so9") {
-			row[stat] = helpers.ratio(ps.soPit, ps.outs / 27);
+			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "pc9") {
-			row[stat] = helpers.ratio(ps.pc, ps.outs / 27);
+			row[stat] = helpers.ratio(ps.pc, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "sow") {
 			row[stat] = helpers.ratio(ps.soPit, ps.bbPit);
 		} else {

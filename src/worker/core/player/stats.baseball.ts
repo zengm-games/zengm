@@ -2,7 +2,14 @@
 // derived: still stored in database, but not directly recorded in game sim
 // not present in this file: transiently derived things, like FG%
 const stats = {
-	derived: [] as const,
+	derived: [
+		"rbat",
+		"rbr",
+		"rdef", // This one is an array, like byPos
+		"rpos",
+		"rpit",
+		"war",
+	] as const,
 	raw: [
 		// Batting
 		"gp", // Also given to pitcher, since it's displayed various places
@@ -95,6 +102,7 @@ const stats = {
 		"ipMax",
 	] as const,
 	byPos: [
+		// Fielding
 		"gsF",
 		"gpF",
 		"cgF",

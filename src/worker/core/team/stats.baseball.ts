@@ -20,15 +20,6 @@ const teamAndOpp = [
 	"sf",
 	"ibb",
 
-	// Fielding
-	"po",
-	"a",
-	"e",
-	"dp",
-	"pb",
-	"sbF",
-	"csF",
-
 	// Pitching
 	"w",
 	"l",
@@ -68,6 +59,16 @@ const stats = {
 		...teamAndOpp.map(
 			stat => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
 		),
+	] as const,
+	byPos: [
+		// Fielding
+		"po",
+		"a",
+		"e",
+		"dp",
+		"pb",
+		"sbF",
+		"csF",
 	] as const,
 };
 

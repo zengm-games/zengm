@@ -12,5 +12,6 @@ const stats = bySport<unknown>({
 }) as {
 	derived: string[];
 	raw: string[];
+	byPos?: string[];
 };
 export default stats;

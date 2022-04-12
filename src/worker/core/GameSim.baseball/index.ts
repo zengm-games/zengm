@@ -1839,6 +1839,14 @@ class GameSim {
 					} else {
 						this.team[t].t.stat.er += amt;
 					}
+				} else if (type === "fielding") {
+					const pos = this.team[t].playersInGame[p!.id].pos;
+					const posIndex = POS_NUMBERS[pos] - 1;
+
+					if (this.team[t].t.stat[s][posIndex] === undefined) {
+						this.team[t].t.stat[s][posIndex] = 0;
+					}
+					this.team[t].t.stat[s][posIndex] += amt;
 				} else {
 					this.team[t].t.stat[s] += amt;
 				}

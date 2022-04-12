@@ -57,6 +57,9 @@ const stats = {
 		"wp",
 		"bf",
 		"pc",
+
+		// Putouts due to strikeouts, used in WAR formula
+		"poSo",
 	] as const,
 	max: [
 		// Batting

@@ -1,7 +1,15 @@
 import type teamStats from "../worker/core/team/stats.baseball";
 
 // Should all the extra ones be in teamStats["derived"]?
-export type TeamStatAttr = typeof teamStats["raw"][number] | "ops" | "era";
+export type TeamStatAttr =
+	| typeof teamStats["raw"][number]
+	| typeof teamStats["byPos"][number]
+	| "ab"
+	| "ops"
+	| "era"
+	| "po"
+	| "poSo"
+	| "poTot";
 
 type AwardTeam = {
 	tid: number;

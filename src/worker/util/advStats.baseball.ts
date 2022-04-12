@@ -19,7 +19,7 @@ const teamStats = [
 	"outs",
 	"gp",
 	"po",
-	"po2",
+	"poSo",
 	"a",
 	"e",
 	"dp",
@@ -54,7 +54,12 @@ const frP = (i: 0, t: Team, apl: number) => {
 
 const frC = (i: 1, t: Team, apl: number) => {
 	const fr =
-		0.2 * (t.stats.po2[i] + 2 * t.stats.a[i] - t.stats.e[i] + t.stats.dp[i]) -
+		0.2 *
+			(t.stats.po[i] -
+				t.stats.poSo +
+				2 * t.stats.a[i] -
+				t.stats.e[i] +
+				t.stats.dp[i]) -
 		apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
 		return 0;
@@ -105,7 +110,12 @@ const aplP = (i: 0, league: any) => {
 
 const aplC = (i: 1, league: any) => {
 	const apl =
-		(0.2 * (league.po2[i] + 2 * league.a[i] - league.e[i] + league.dp[i])) /
+		(0.2 *
+			(league.po[i] -
+				league.poSo +
+				2 * league.a[i] -
+				league.e[i] +
+				league.dp[i])) /
 		(league.poTot - league.soPit);
 	if (Number.isNaN(apl)) {
 		return 0;
@@ -234,9 +244,11 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 
 				// Fielding Runs
 				if (pos !== "DH") {
-					const po = pos === "C" ? p.stats.po2[j] : p.stats.po[j];
+					const po =
+						pos === "C" ? p.stats.po[j] - p.stats.posSo : p.stats.po[j];
 					if (po !== undefined && po > 0) {
-						const poTeam = pos === "C" ? t.stats.po2[j] : t.stats.po[j];
+						const poTeam =
+							pos === "C" ? t.stats.po[j] - t.stats.poSo : t.stats.po[j];
 						rdef[i] += (po / poTeam) * teamFieldingRuns[t.tid][pos];
 					}
 				}
@@ -245,6 +257,14 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 
 		// Pitching Runs Saved
 		rpit[i] = (p.stats.outs / NUM_OUTS_PER_GAME) * league.era - p.stats.er;
+
+		// Replacement Player Adjustment
+		let replacementPlayerAdjustment;
+		if (p.stats.gpPit > 0) {
+			replacementPlayerAdjustment = p.stats.bf / 50;
+		} else {
+			replacementPlayerAdjustment = p.stats.pa / 30;
+		}
 
 		// Wins Above Replacement
 		war[i] =
@@ -287,7 +307,7 @@ const advStats = async () => {
 			"sb",
 			"cs",
 			"po",
-			"po2",
+			"poSo",
 			"outs",
 			"er",
 			"bf",
@@ -314,14 +334,28 @@ const advStats = async () => {
 	);
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {
-			if (memo.hasOwnProperty(key)) {
-				memo[key] += t.stats[key];
+			if (Array.isArray(t.stats[key])) {
+				if (!memo[key]) {
+					memo[key] = [];
+				}
+
+				for (let i = 0; i < t.stats[key].length; i++) {
+					const value = t.stats[key][i];
+					if (value !== undefined) {
+						if (memo[key][i] === undefined) {
+							memo[key][i] = 0;
+						}
+						memo[key][i] += value;
+					}
+				}
 			} else {
-				memo[key] = t.stats[key];
+				if (memo.hasOwnProperty(key)) {
+					memo[key] += t.stats[key];
+				} else {
+					memo[key] = t.stats[key];
+				}
 			}
 		}
-
-		throw new Error("HANDLE ARRAYS");
 
 		/*if (!memo.hasOwnProperty("ptsDefault")) {
 			memo.ptsDefault = 0;

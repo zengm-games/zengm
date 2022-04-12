@@ -1550,6 +1550,7 @@ class GameSim {
 		this.recordStat(this.o, batter, "so");
 		this.recordStat(this.d, pitcher, "soPit");
 		this.recordStat(this.d, catcher, "po", 1, "fielding");
+		this.recordStat(this.d, catcher, "poSo");
 		this.logOut();
 		this.playByPlay.logEvent({
 			type: "strikeOut",
@@ -1821,13 +1822,7 @@ class GameSim {
 			s !== "energy"
 		) {
 			// Filter out stats that are only for player, not team
-			if (
-				s !== "ppMin" &&
-				s !== "shMin" &&
-				s !== "gpSkater" &&
-				s !== "gpGoalie" &&
-				s !== "ga"
-			) {
+			if (s !== "gsF" && s !== "gpF") {
 				if (s === "r") {
 					this.team[t].t.stat.pts += amt;
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;

@@ -220,6 +220,13 @@ const processTeam = (
 	}
 
 	t.stat = { ...teamStats, pts: 0, ptsQtrs: isSport("baseball") ? [] : [0] };
+
+	if (team.stats.byPos) {
+		for (const key of team.stats.byPos) {
+			t.stat[key] = [];
+		}
+	}
+
 	return t;
 };
 

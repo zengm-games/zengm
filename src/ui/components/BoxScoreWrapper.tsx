@@ -422,7 +422,12 @@ const DetailedScore = ({
 									{isSport("baseball") ? (
 										<>
 											<th>{t.h}</th>
-											<th>{t.e}</th>
+											<th>
+												{(t.e as (number | undefined)[]).reduce<number>(
+													(prev, current) => prev + (current ?? 0),
+													0,
+												)}
+											</th>
 										</>
 									) : null}
 								</tr>

@@ -19,7 +19,6 @@ const teamStats = [
 	"outs",
 	"gp",
 	"po",
-	"poSo",
 	"a",
 	"e",
 	"dp",
@@ -112,7 +111,7 @@ const aplC = (i: 1, league: any) => {
 	const apl =
 		(0.2 *
 			(league.po[i] -
-				league.poSo +
+				league.soPit +
 				2 * league.a[i] -
 				league.e[i] +
 				league.dp[i])) /

@@ -45,9 +45,6 @@ const teamAndOpp = [
 	"bk",
 	"wp",
 	"bf",
-
-	// Putouts due to strikeouts, used in WAR formula
-	"poSo",
 ] as const;
 
 // raw: recorded directly in game sim

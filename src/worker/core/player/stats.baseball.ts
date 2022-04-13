@@ -5,7 +5,7 @@ const stats = {
 	derived: [
 		"rbat",
 		"rbr",
-		"rdef", // This one is an array, like byPos
+		"rfld", // This one is an array, like byPos
 		"rpos",
 		"rpit",
 		"war",

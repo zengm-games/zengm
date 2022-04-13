@@ -92,6 +92,12 @@ const roundOverrides: Record<
 		so9: "oneDecimalPlace",
 		pc9: "oneDecimalPlace",
 		sow: "twoDecimalPlaces",
+		rbat: "oneDecimalPlace",
+		rbr: "oneDecimalPlace",
+		rfld: "oneDecimalPlace",
+		rpos: "oneDecimalPlace",
+		rpit: "oneDecimalPlace",
+		war: "oneDecimalPlace",
 	},
 	basketball: {
 		gp: "noDecimalPlace",

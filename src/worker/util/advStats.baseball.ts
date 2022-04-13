@@ -156,7 +156,7 @@ const aplLF = (i: 6 | 7 | 8, league: any) => {
 const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	const rbat = []; // Batting Runs
 	const rbr = []; // Baserunning Runs
-	const rdef = []; // Fielding Runs
+	const rfld = []; // Fielding Runs
 	const rpos = []; // Positional Adjustment Runs
 	const rpit = []; // Pitching Runs Saved
 	const war = []; // Wins Above Replacement
@@ -230,7 +230,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		// Baserunning Runs
 		rbr[i] = 0.3 * p.stats.sb - 0.6 * p.stats.cs;
 
-		rdef[i] = 0;
+		rfld[i] = 0;
 		rpos[i] = 0;
 		for (let j = 0; j < p.stats.gpF; j++) {
 			const gpF = p.stats.gpF[j];
@@ -248,7 +248,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					if (po !== undefined && po > 0) {
 						const poTeam =
 							pos === "C" ? t.stats.po[j] - t.stats.poSo : t.stats.po[j];
-						rdef[i] += (po / poTeam) * teamFieldingRuns[t.tid][pos];
+						rfld[i] += (po / poTeam) * teamFieldingRuns[t.tid][pos];
 					}
 				}
 			}
@@ -269,7 +269,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		war[i] =
 			(rbat[i] +
 				rbr[i] +
-				rdef[i] +
+				rfld[i] +
 				rpos[i] +
 				rpit[i] +
 				replacementPlayerAdjustment) /
@@ -279,7 +279,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	return {
 		rbat,
 		rbr,
-		rdef,
+		rfld,
 		rpos,
 		rpit,
 		war,

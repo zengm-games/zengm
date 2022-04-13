@@ -470,6 +470,42 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "SO/W",
 		},
+		"stat:rbat": {
+			desc: "Batting Runs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rbat",
+		},
+		"stat:rbr": {
+			desc: "Baserunning Runs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rbr",
+		},
+		"stat:rfld": {
+			desc: "Fielding Runs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rfld",
+		},
+		"stat:rpos": {
+			desc: "Positional Adjustment Runs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rpos",
+		},
+		"stat:rpit": {
+			desc: "Pitching Runs Saved",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rpit",
+		},
+		"stat:war": {
+			desc: "Wins Above Replacement",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "WAR",
+		},
 	},
 	basketball: {
 		"rating:fg": {

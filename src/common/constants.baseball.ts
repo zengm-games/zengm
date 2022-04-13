@@ -222,6 +222,10 @@ const PLAYER_STATS_TABLES = {
 		],
 		onlyShowIf: ["gpPit"],
 	},
+	advanced: {
+		name: "Advanced",
+		stats: ["rbat", "rbr", "rfld", "rpos", "rpit", "war"],
+	},
 	/*fielding: {
 		name: "Fielding",
 		stats: ["gp", "gc", "ops", "dps", "gps", "ps"],

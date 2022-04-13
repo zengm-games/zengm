@@ -9,7 +9,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	// Update every time because anything could change this (unless all players from class are retired)
 
 	const stats = bySport({
-		baseball: ["gp", "keyStats"],
+		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

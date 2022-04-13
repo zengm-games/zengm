@@ -29,7 +29,7 @@ const updateFreeAgents = async () => {
 	);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 	const stats = bySport({
-		baseball: ["gp", "keyStats"],
+		baseball: ["gp", "keyStats", "war"],
 		basketball: ["min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

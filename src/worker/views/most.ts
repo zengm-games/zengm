@@ -69,7 +69,7 @@ export const getMostXPlayers = async ({
 	);
 
 	const stats = bySport({
-		baseball: ["gp", "keyStats"],
+		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

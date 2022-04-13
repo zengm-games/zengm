@@ -21,7 +21,7 @@ const updateDraftTeamHistory = async (
 	}
 
 	const stats = bySport({
-		baseball: ["gp", "keyStats"],
+		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

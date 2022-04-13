@@ -19,7 +19,7 @@ const updatePlayers = async (
 		inputs.flagNote !== state.flagNote
 	) {
 		const stats = bySport({
-			baseball: ["gp", "keyStats"],
+			baseball: ["gp", "keyStats", "war"],
 			basketball: [
 				"gp",
 				"min",

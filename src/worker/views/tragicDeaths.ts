@@ -23,7 +23,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const stats = bySport({
-			baseball: ["gp", "keyStats"],
+			baseball: ["gp", "keyStats", "war"],
 			basketball: [
 				"gp",
 				"min",

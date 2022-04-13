@@ -9,7 +9,7 @@ const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,
 ) => {
 	const stats = bySport({
-		baseball: ["gp", "keyStats"],
+		baseball: ["gp", "keyStats", "war"],
 		basketball: ["min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],

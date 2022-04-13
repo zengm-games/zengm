@@ -99,12 +99,13 @@ export const genView = (
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {
 			const displayStat = bySport({
+				baseball: "war",
 				basketball: "ws",
 				football: "av",
 				hockey: "ps",
 			});
 			const stats = bySport({
-				baseball: ["gp", "keyStats"],
+				baseball: ["keyStats", "war"],
 				basketball: [
 					"gp",
 					"min",

@@ -74,6 +74,14 @@ const processStats = (
 				row[stat] = helpers.ratio(ts.pc, ts.outs / NUM_OUTS_PER_GAME);
 			} else if (stat === "sow") {
 				row[stat] = helpers.ratio(ts.soPit, ts.bbPit);
+			} else if (stat === "poTot") {
+				row[stat] = 0;
+				for (let i = 0; i < ts.po.length; i++) {
+					const value = ts.po[i];
+					if (value !== undefined) {
+						row[stat] += value;
+					}
+				}
 			} else {
 				row[stat] = ts[stat];
 			}

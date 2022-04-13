@@ -24,6 +24,7 @@ const teamStats = [
 	"dp",
 	"poTot",
 	"soPit",
+	"pts",
 ] as const;
 
 type Team = TeamFiltered<["tid"], ["ptsDefault"], typeof teamStats, number>;
@@ -232,7 +233,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 
 		rfld[i] = 0;
 		rpos[i] = 0;
-		for (let j = 0; j < p.stats.gpF; j++) {
+		for (let j = 0; j < p.stats.gpF.length; j++) {
 			const gpF = p.stats.gpF[j];
 			if (gpF !== undefined && gpF > 0) {
 				const pos =
@@ -273,7 +274,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 				rpos[i] +
 				rpit[i] +
 				replacementPlayerAdjustment) /
-			((2 * league.r) / league.gp);
+			((2 * league.pts) / league.gp);
 	}
 
 	return {
@@ -305,6 +306,7 @@ const advStats = async () => {
 			"ab",
 			"sb",
 			"cs",
+			"gpF",
 			"po",
 			"poSo",
 			"outs",

@@ -156,9 +156,9 @@ class GameSim {
 					continue;
 				}
 				this.recordStat(i, p.p, "gs");
+				this.recordStat(i, p.p, "gp");
 				this.recordStat(i, p.p, "gsF", 1, "fielding");
 				this.recordStat(i, p.p, "gpF", 1, "fielding");
-				// gp is handled in writePlayerStats
 			}
 
 			const startingPitcher = t.playersInGameByPos.P.p;
@@ -167,9 +167,9 @@ class GameSim {
 
 			// Pitcher gets a normal game played too
 			this.recordStat(i, startingPitcher, "gs");
+			this.recordStat(i, startingPitcher, "gp");
 			this.recordStat(i, startingPitcher, "gsF", 1, "fielding");
 			this.recordStat(i, startingPitcher, "gpF", 1, "fielding");
-			// gp is handled in writePlayerStats
 		}
 	}
 

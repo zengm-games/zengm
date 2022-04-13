@@ -397,7 +397,13 @@ const writePlayerStats = async (
 					}
 
 					// Update stats
-					if (p.stat.min > 0 || isSport("baseball")) {
+					const playedInGame = bySport({
+						baseball: p.stat.gp > 0,
+						basketball: p.stat.min > 0,
+						football: p.stat.min > 0,
+						hockey: p.stat.min > 0,
+					});
+					if (playedInGame) {
 						for (const key of Object.keys(p.stat)) {
 							if (ps[key] === undefined) {
 								ps[key] = 0;
@@ -422,7 +428,10 @@ const writePlayerStats = async (
 							}
 						}
 
-						ps.gp += 1;
+						// baseball handles this in GameSim
+						if (!isSport("baseball")) {
+							ps.gp += 1;
+						}
 
 						if (isSport("football") || isSport("hockey")) {
 							const result = qbgResults.get(p.id);

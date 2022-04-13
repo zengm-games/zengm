@@ -29,8 +29,15 @@ const updatePlayByPlay = async (
 		const otl = g.get("otl", "current");
 
 		// Stats to set to 0
-		const resetStatsPlayer = player.stats.raw;
-		const resetStatsTeam = team.stats.raw;
+		const resetStatsPlayer = [...player.stats.raw];
+		if (player.stats.byPos) {
+			resetStatsPlayer.push(...player.stats.byPos);
+		}
+		const resetStatsTeam = [...team.stats.raw];
+		if (team.stats.byPos) {
+			resetStatsTeam.push(...team.stats.byPos);
+		}
+		console.log("resetStatsTeam", resetStatsTeam);
 		const allStarGame =
 			boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
 		let allStars;

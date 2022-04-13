@@ -423,10 +423,12 @@ const DetailedScore = ({
 										<>
 											<th>{t.h}</th>
 											<th>
-												{(t.e as (number | undefined)[]).reduce<number>(
-													(prev, current) => prev + (current ?? 0),
-													0,
-												)}
+												{Array.isArray(t.e)
+													? (t.e as (number | undefined)[]).reduce<number>(
+															(prev, current) => prev + (current ?? 0),
+															0,
+													  )
+													: t.e}
 											</th>
 										</>
 									) : null}

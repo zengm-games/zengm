@@ -505,8 +505,24 @@ const LiveGame = (props: View<"liveGame">) => {
 							label: "Next batter",
 							key: "O",
 							onClick: () => {
-								// Need this info in sportState or something
-								console.log("aaa");
+								let numPlays = 0;
+
+								const initialBatter = sportState.current?.batterPid;
+								while (!boxScore.current.gameOver) {
+									processToNextPause(true);
+									numPlays += 1;
+
+									const currentBatter = sportState.current?.batterPid;
+									if (
+										currentBatter !== undefined &&
+										currentBatter >= 0 &&
+										initialBatter !== currentBatter
+									) {
+										break;
+									}
+								}
+
+								setPlayIndex(prev => prev + numPlays);
 							},
 						},
 						{

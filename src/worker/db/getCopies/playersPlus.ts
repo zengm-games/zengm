@@ -1,4 +1,4 @@
-import { PLAYER, PHASE, bySport } from "../../../common";
+import { PLAYER, PHASE, bySport, isSport } from "../../../common";
 import { player, trade } from "../../core";
 import {
 	g,
@@ -403,36 +403,63 @@ const reduceCareerStats = (
 	attr: string,
 	playoffs: boolean,
 ) => {
+	let initialValue: null | (number | undefined)[] | number;
+	let type: "max" | "byPos" | "normal";
+	if (attr.endsWith("Max")) {
+		initialValue = null;
+		type = "max";
+	} else if (
+		player.stats.byPos?.includes(attr) ||
+		(isSport("baseball") && attr === "rfld")
+	) {
+		initialValue = [];
+		type = "byPos";
+	} else {
+		initialValue = 0;
+		type = "normal";
+	}
+
+	const weightAttrByMinutes = weightByMinutes.includes(attr);
+
 	return careerStats
 		.filter(cs => cs.playoffs === playoffs)
-		.reduce(
-			(memo, cs) => {
-				if (cs[attr] === undefined) {
+		.reduce((memo, cs) => {
+			if (cs[attr] === undefined) {
+				return memo;
+			}
+
+			if (type === "byPos") {
+				for (let i = 0; i < cs[attr].length; i++) {
+					const value = cs[attr][i];
+					if (value !== undefined) {
+						if (memo[i] === undefined) {
+							memo[i] = 0;
+						}
+						memo[i] += value;
+					}
+				}
+
+				return memo;
+			}
+
+			const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
+
+			if (type === "max") {
+				if (num === undefined || num === null) {
 					return memo;
 				}
 
-				const num = weightByMinutes.includes(attr)
-					? cs[attr] * cs.min
-					: cs[attr];
+				return memo === null || num[0] > memo[0]
+					? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
+					: memo;
+			}
 
-				if (attr.endsWith("Lng")) {
-					return num > memo ? num : memo;
-				}
+			if (attr.endsWith("Lng")) {
+				return num > memo ? num : memo;
+			}
 
-				if (attr.endsWith("Max")) {
-					if (num === undefined || num === null) {
-						return memo;
-					}
-
-					return memo === null || num[0] > memo[0]
-						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
-						: memo;
-				}
-
-				return memo + num;
-			},
-			attr.endsWith("Max") ? null : 0,
-		);
+			return memo + num;
+		}, initialValue);
 };
 
 const getPlayerStats = (

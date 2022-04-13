@@ -95,6 +95,7 @@ const roundOverrides: Record<
 		rbat: "oneDecimalPlace",
 		rbr: "oneDecimalPlace",
 		rfld: "oneDecimalPlace",
+		rfldTot: "oneDecimalPlace",
 		rpos: "oneDecimalPlace",
 		rpit: "oneDecimalPlace",
 		war: "oneDecimalPlace",

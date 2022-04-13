@@ -1,5 +1,8 @@
 import team from ".";
-import { NUM_OUTS_PER_GAME } from "../../../common/processPlayerStats.baseball";
+import {
+	NUM_OUTS_PER_GAME,
+	sumByPos,
+} from "../../../common/processPlayerStats.baseball";
 import type { TeamStatAttr, TeamStats } from "../../../common/types";
 import { helpers } from "../../util";
 
@@ -75,13 +78,7 @@ const processStats = (
 			} else if (stat === "sow") {
 				row[stat] = helpers.ratio(ts.soPit, ts.bbPit);
 			} else if (stat === "poTot") {
-				row[stat] = 0;
-				for (let i = 0; i < ts.po.length; i++) {
-					const value = ts.po[i];
-					if (value !== undefined) {
-						row[stat] += value;
-					}
-				}
+				row[stat] = sumByPos(ts.po);
 			} else {
 				row[stat] = ts[stat];
 			}

@@ -3,6 +3,17 @@ import type { PlayerStats, PlayerStatType } from "./types";
 
 export const NUM_OUTS_PER_GAME = 27;
 
+export const sumByPos = (array: (number | undefined)[]) => {
+	let sum = 0;
+	for (const value of array) {
+		if (value !== undefined) {
+			sum += value;
+		}
+	}
+
+	return sum;
+};
+
 const processStats = (
 	ps: PlayerStats,
 	stats: string[],
@@ -91,6 +102,8 @@ const processStats = (
 			row[stat] = helpers.ratio(ps.pc, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "sow") {
 			row[stat] = helpers.ratio(ps.soPit, ps.bbPit);
+		} else if (stat === "rfldTot") {
+			row[stat] = sumByPos(ps.rfld);
 		} else {
 			row[stat] = ps[stat];
 		}

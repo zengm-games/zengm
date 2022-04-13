@@ -488,6 +488,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Rfld",
 		},
+		"stat:rfldTot": {
+			desc: "Fielding Runs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rfld",
+		},
 		"stat:rpos": {
 			desc: "Positional Adjustment Runs",
 			sortSequence: ["desc", "asc"],

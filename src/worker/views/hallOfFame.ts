@@ -11,7 +11,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
 		const stats = bySport({
-			baseball: ["keyStats"],
+			baseball: ["keyStats", "war"],
 			basketball: [
 				"gp",
 				"min",

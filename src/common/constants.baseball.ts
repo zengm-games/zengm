@@ -224,7 +224,7 @@ const PLAYER_STATS_TABLES = {
 	},
 	advanced: {
 		name: "Advanced",
-		stats: ["rbat", "rbr", "rfld", "rpos", "rpit", "war"],
+		stats: ["rbat", "rbr", "rfldTot", "rpos", "rpit", "war"],
 	},
 	/*fielding: {
 		name: "Fielding",

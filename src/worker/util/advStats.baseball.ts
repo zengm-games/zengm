@@ -231,7 +231,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		// Baserunning Runs
 		rbr[i] = 0.3 * p.stats.sb - 0.6 * p.stats.cs;
 
-		rfld[i] = 0;
+		rfld[i] = [] as number[];
 		rpos[i] = 0;
 		for (let j = 0; j < p.stats.gpF.length; j++) {
 			const gpF = p.stats.gpF[j];
@@ -249,7 +249,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					if (po !== undefined && po > 0) {
 						const poTeam =
 							pos === "C" ? t.stats.po[j] - t.stats.poSo : t.stats.po[j];
-						rfld[i] += (po / poTeam) * teamFieldingRuns[t.tid][pos];
+						rfld[i][j] = (po / poTeam) * teamFieldingRuns[t.tid][pos];
 					}
 				}
 			}

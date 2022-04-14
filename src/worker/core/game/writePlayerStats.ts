@@ -321,11 +321,12 @@ const writePlayerStats = async (
 
 			for (const p of t.player) {
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
-				const updatePlayer =
-					(isSport("hockey") && p.pos === "G") ||
-					isSport("basketball") ||
-					isSport("baseball") ||
-					p.stat.min > 0;
+				const updatePlayer = bySport({
+					baseball: p.stat.gp > 0,
+					basketball: true,
+					football: p.stat.min > 0,
+					hockey: p.pos === "G" || p.stat.min > 0,
+				});
 				if (!updatePlayer) {
 					continue;
 				}

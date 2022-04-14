@@ -1430,6 +1430,16 @@ const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
 };
 
+const getDiamondInfo = async (pid: number) => {
+	const p = await idb.cache.players.get(pid);
+	if (p) {
+		return {
+			name: `${p.firstName} ${p.lastName}`,
+			spd: p.ratings.at(-1)!.spd,
+		};
+	}
+};
+
 const getLeagueInfo = async (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
@@ -3900,6 +3910,7 @@ export default {
 		getDefaultInjuries,
 		getDefaultNewLeagueSettings,
 		getDefaultTragicDeaths,
+		getDiamondInfo,
 		getLeagueInfo,
 		getLeagueName,
 		getLeagues,

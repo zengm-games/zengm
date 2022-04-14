@@ -270,19 +270,41 @@ const NextButton = ({
 	);
 };
 
-const Base = ({
-	occupied,
-	shiftDown,
-}: {
-	occupied: boolean;
-	shiftDown?: boolean;
-}) => {
+const Base = ({ pid, shiftDown }: { pid: number; shiftDown?: boolean }) => {
+	const [state, setState] = useState<
+		| {
+				name: string;
+				spd: number;
+		  }
+		| undefined
+	>();
+	useEffect(() => {
+		if (pid === undefined) {
+			setState(undefined);
+		} else {
+			let active = true;
+			const run = async () => {
+				const info = await toWorker("main", "getDiamondInfo", pid);
+				if (active && info) {
+					setState(info);
+				}
+			};
+
+			run();
+
+			return () => {
+				active = false;
+			};
+		}
+	}, [pid]);
+
 	return (
 		<div
 			className={`baseball-base ${
-				occupied ? "bg-secondary" : "border border-secondary"
+				pid !== undefined ? "bg-secondary" : "border border-secondary"
 			}`}
 			style={shiftDown ? { marginTop: 20 } : undefined}
+			title={state ? `${state.name} (${state.spd} spd)` : undefined}
 		></div>
 	);
 };
@@ -305,9 +327,9 @@ const BaseballDiamond = ({
 			</div>
 			<div className="d-flex justify-content-center">
 				<div className="d-flex mx-1">
-					<Base occupied={bases[2] !== undefined} shiftDown />
-					<Base occupied={bases[1] !== undefined} />
-					<Base occupied={bases[0] !== undefined} shiftDown />
+					<Base pid={bases[2]} shiftDown />
+					<Base pid={bases[1]} />
+					<Base pid={bases[0]} shiftDown />
 				</div>
 			</div>
 			<div className="text-center mt-1">

@@ -164,6 +164,53 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 	);
 };
 
+const FourFactorsFootball = ({ teams }: { teams: any[] }) => {
+	return (
+		<table className="table table-sm mb-2 mb-sm-0">
+			<thead>
+				<tr />
+				<tr>
+					<th title="Passing Yards">PssYds</th>
+					<th title="Rushing Yards">RusYds</th>
+					<th title="Penalties">Pen</th>
+					<th title="Turnovers">TOV</th>
+				</tr>
+			</thead>
+			<tbody>
+				{teams.map((t, i) => {
+					const t2 = teams[1 - i];
+
+					const tov = t.pssInt + t.fmbLost;
+					const tov2 = t2.pssInt + t2.fmbLost;
+
+					return (
+						<tr key={t.abbrev}>
+							<td
+								className={t.pssYds > t2.pssYds ? "table-success" : undefined}
+							>
+								{t.pssYds}
+							</td>
+							<td
+								className={t.rusYds > t2.rusYds ? "table-success" : undefined}
+							>
+								{t.rusYds}
+							</td>
+							<td
+								className={t.penYds < t2.penYds ? "table-success" : undefined}
+							>
+								{t.pen}-{t.penYds}
+							</td>
+							<td className={tov < tov2 ? "table-success" : undefined}>
+								{tov}
+							</td>
+						</tr>
+					);
+				})}
+			</tbody>
+		</table>
+	);
+};
+
 const NextButton = ({
 	abbrev,
 	boxScore,
@@ -354,6 +401,11 @@ const DetailedScore = ({
 				{isSport("basketball") ? (
 					<div className="mx-xs-auto d-sm-inline-block text-center">
 						<FourFactors teams={boxScore.teams} />
+					</div>
+				) : null}
+				{isSport("football") ? (
+					<div className="mx-xs-auto d-sm-inline-block text-center">
+						<FourFactorsFootball teams={boxScore.teams} />
 					</div>
 				) : null}
 			</div>

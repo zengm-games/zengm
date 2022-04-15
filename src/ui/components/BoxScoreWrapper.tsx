@@ -211,6 +211,51 @@ const FourFactorsFootball = ({ teams }: { teams: any[] }) => {
 	);
 };
 
+const FourFactorsHockey = ({ teams }: { teams: any[] }) => {
+	return (
+		<table className="table table-sm mb-2 mb-sm-0">
+			<thead>
+				<tr />
+				<tr>
+					<th title="Shots">S</th>
+					<th title="Rushing Yards">PP</th>
+					<th title="Takeaways">TK</th>
+					<th title="Giveaway">GV</th>
+					<th title="Faceoff Win Percentage">FO%</th>
+				</tr>
+			</thead>
+			<tbody>
+				{teams.map((t, i) => {
+					const t2 = teams[1 - i];
+
+					const foPct = t.fow / (t.fow + t.fol);
+					const foPct2 = t2.fow / (t2.fow + t2.fol);
+
+					return (
+						<tr key={t.abbrev}>
+							<td className={t.s > t2.s ? "table-success" : undefined}>
+								{t.s}
+							</td>
+							<td className={t.ppG > t2.ppG ? "table-success" : undefined}>
+								{t.ppG}/{t.ppo}
+							</td>
+							<td className={t.tk > t2.tk ? "table-success" : undefined}>
+								{t.tk}
+							</td>
+							<td className={t.gv < t2.gv ? "table-success" : undefined}>
+								{t.gv}
+							</td>
+							<td className={foPct > foPct2 ? "table-success" : undefined}>
+								{helpers.roundStat(100 * foPct, "foPct")}
+							</td>
+						</tr>
+					);
+				})}
+			</tbody>
+		</table>
+	);
+};
+
 const NextButton = ({
 	abbrev,
 	boxScore,
@@ -406,6 +451,11 @@ const DetailedScore = ({
 				{isSport("football") ? (
 					<div className="mx-xs-auto d-sm-inline-block text-center">
 						<FourFactorsFootball teams={boxScore.teams} />
+					</div>
+				) : null}
+				{isSport("hockey") ? (
+					<div className="mx-xs-auto d-sm-inline-block text-center">
+						<FourFactorsHockey teams={boxScore.teams} />
 					</div>
 				) : null}
 			</div>

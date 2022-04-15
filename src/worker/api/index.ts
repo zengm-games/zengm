@@ -341,7 +341,9 @@ const beforeViewNonLeague = async (param: unknown, conditions: Conditions) => {
 };
 
 const cancelContractNegotiation = async (pid: number) => {
-	return contractNegotiation.cancel(pid);
+	const result = await contractNegotiation.cancel(pid);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+	return result;
 };
 
 const checkAccount2 = (param: unknown, conditions: Conditions) =>

@@ -3,6 +3,7 @@ import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
+import { groupByUnique } from "../../common/groupBy";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -43,9 +44,11 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 	};
 	const sumsByPosition: Record<number, any> = {};
 
+	const teamsByTid = groupByUnique(teams, "tid");
+
 	// Goals created
 	const gc = players.map(p => {
-		const t = teams.find(t => t.tid === p.tid);
+		const t = teamsByTid[p.tid];
 		if (t === undefined) {
 			throw new Error("Should never happen");
 		}
@@ -82,7 +85,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
-		const t = teams.find(t => t.tid === p.tid);
+		const t = teamsByTid[p.tid];
 		if (t === undefined) {
 			throw new Error("Should never happen");
 		}

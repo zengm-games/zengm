@@ -449,6 +449,17 @@ const TopStuff = ({
 							</strong>
 							<br />
 							{height}, {weight}
+							{player.srID ? (
+								<>
+									{" "}
+									-{" "}
+									<a
+										href={`https://www.basketball-reference.com/players/${player.srID[0]}/${player.srID}.html`}
+									>
+										BBRef
+									</a>
+								</>
+							) : null}
 							<br />
 							Born: {player.born.year} -{" "}
 							<a

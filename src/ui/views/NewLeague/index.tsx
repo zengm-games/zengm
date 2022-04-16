@@ -1016,9 +1016,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
-	if (state.season === 2022 && state.phase > PHASE.PRESEASON) {
+	if (state.season === 2022 && state.phase > PHASE.PLAYOFFS) {
 		invalidSeasonPhaseMessage =
-			"Sorry, I'm not allowed to share the results of the 2022 season yet.";
+			"Sorry, I'm not allowed to share the results of the 2022 playoffs yet.";
 	}
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);

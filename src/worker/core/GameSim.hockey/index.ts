@@ -1758,6 +1758,10 @@ class GameSim {
 			if (p !== undefined) {
 				this.playByPlay.logStat(t, p.id, s, amt);
 			}
+
+			if (s === "ppo") {
+				this.playByPlay.logStat(t, undefined, s, amt);
+			}
 		}
 	}
 }

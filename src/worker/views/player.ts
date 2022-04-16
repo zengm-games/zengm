@@ -141,6 +141,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 				| "college"
 				| "relatives"
 				| "awards"
+				| "srID"
 		  > & {
 				age: number;
 				ageAtDeath: number | null;
@@ -198,6 +199,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			"jerseyNumber",
 			"experience",
 			"note",
+			"srID",
 		],
 		ratings: [
 			"season",

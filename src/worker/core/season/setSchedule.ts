@@ -3,6 +3,7 @@ import { getUpcoming } from "../../views/schedule";
 import { g, toUI } from "../../util";
 import type {
 	LocalStateUI,
+	ScheduleGame,
 	ScheduleGameWithoutKey,
 } from "../../../common/types";
 import addDaysToSchedule from "./addDaysToSchedule";
@@ -20,16 +21,15 @@ const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
  */
 const setSchedule = async (tids: [number, number][]) => {
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-	const oldForceWin: Record<string, number | "tie"> = {};
+
+	const oldPlayoffGames: Record<string, ScheduleGame> = {};
 	if (playoffs) {
-		// If live simming an individual playoff game, setSchedule gets called afterwards with the remaining games that day. But that means it forgets forceWin! So we need to keep track of old forceWin values
+		// If live simming an individual playoff game, setSchedule gets called afterwards with the remaining games that day. But that means it forgets forceWin! So we need to keep track of old forceWin values. Same with gid, which messes with LeagueTopBar if it changes.
 		const oldSchedule = await idb.cache.schedule.getAll();
 
 		for (const game of oldSchedule) {
-			if (game.forceWin !== undefined) {
-				const key = makePlayoffsKey(game);
-				oldForceWin[key] = game.forceWin;
-			}
+			const key = makePlayoffsKey(game);
+			oldPlayoffGames[key] = game;
 		}
 	}
 
@@ -45,8 +45,10 @@ const setSchedule = async (tids: [number, number][]) => {
 	for (const game of schedule) {
 		if (playoffs) {
 			const key = makePlayoffsKey(game);
-			if (oldForceWin[key] !== undefined) {
-				game.forceWin = oldForceWin[key];
+			if (oldPlayoffGames[key]) {
+				game.day = oldPlayoffGames[key].day;
+				game.gid = oldPlayoffGames[key].gid;
+				game.forceWin = oldPlayoffGames[key].forceWin;
 			}
 		}
 

@@ -9,6 +9,7 @@ import {
 	mvpScore,
 } from "../core/season/doAwards.football";
 import advStatsSave from "./advStatsSave";
+import { groupByUnique } from "../../common/groupBy";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -102,11 +103,12 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			},
 		};
 	});
+	const teamsByTid = groupByUnique(teams, "tid");
 
 	const individualPts = players.map(p => {
 		let score = 0;
 
-		const t = teams.find(t => t.tid === p.tid);
+		const t = teamsByTid[p.tid];
 
 		if (t === undefined) {
 			throw new Error("Should never happen");
@@ -160,7 +162,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	const av = players.map((p, i) => {
 		let score = 0;
 
-		const t = teams.find(t => t.tid === p.tid);
+		const t = teamsByTid[p.tid];
 
 		if (t === undefined) {
 			throw new Error("Should never happen");

@@ -4,6 +4,7 @@ import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
+import { groupByUnique } from "../../common/groupBy";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -73,18 +74,15 @@ export const getEWA = (per: number, min: number, pos: string) => {
 };
 
 // http://www.basketball-reference.com/about/per.html
-const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
-	const teams = teamsInput.map(t => {
-		const paceAdj = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
-
-		return {
-			...t,
-			stats: {
-				...t.stats,
-				paceAdj,
-			},
-		};
-	});
+const calculatePER = (
+	players: any[],
+	teamsByTid: Record<string, Team>,
+	league: any,
+) => {
+	const paceAdj: Record<number, number> = {};
+	for (const t of Object.values(teamsByTid)) {
+		paceAdj[t.tid] = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
+	}
 
 	const aPER: number[] = [];
 	const mins: number[] = [];
@@ -97,7 +95,7 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	const drbp = (league.trb - league.orb) / league.trb; // DRB%
 
 	for (let i = 0; i < players.length; i++) {
-		const t = teams.find(t => t.tid === players[i].tid);
+		const t = teamsByTid[players[i].tid];
 		if (!t) {
 			throw new Error("No team found");
 		}
@@ -131,7 +129,7 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 			uPER = 0;
 		}
 
-		aPER[i] = t.stats.paceAdj * uPER;
+		aPER[i] = paceAdj[t.tid] * uPER;
 		league.aPER += aPER[i] * players[i].stats.min;
 		mins[i] = players[i].stats.min; // Save for EWA calculation
 	}
@@ -172,18 +170,12 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
  * 2) The position constants. I don't get why it uses this weird slope thing but whatever.
  * 3) It does (NetRating/100 - TOTAL BPM)/5 for the team adjustment. This is just really weird to me. Order of magnitudes seems off. It's like ~5, ~35 for the 2 terms, so it feels like only the latter should be /5? But I just copied the spreadsheet math
  */
-const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
-	const teams = teamsInput.map(t => {
-		const paceAdj = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
-
-		return {
-			...t,
-			stats: {
-				...t.stats,
-				paceAdj,
-			},
-		};
-	});
+const calculateBPM = (
+	players: any[],
+	teamsByTid: Record<string, Team>,
+	league: any,
+) => {
+	const teams = Object.values(teamsByTid);
 
 	const posNum = {
 		PG: 1,
@@ -259,7 +251,7 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 
 	// compute team stats
 	for (let i = 0; i < players.length; i++) {
-		const t = teams.find(t => t.tid === players[i].tid);
+		const t = teamsByTid[players[i].tid];
 		if (!t) {
 			throw new Error("No team found");
 		}
@@ -281,7 +273,7 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 
 	// compute average offensive roles and positions
 	for (let i = 0; i < players.length; i++) {
-		const t = teams.find(t => t.tid === players[i].tid);
+		const t = teamsByTid[players[i].tid];
 		if (!t) {
 			throw new Error("No team found");
 		}
@@ -460,7 +452,7 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 		OBPM[i] += teamAverages[players[i].tid].teamAdjOBPM;
 		DBPM[i] = BPM[i] - OBPM[i];
 
-		const t = teams.find(t => t.tid === players[i].tid);
+		const t = teamsByTid[players[i].tid];
 		if (!t) {
 			throw new Error("No team found");
 		}
@@ -476,7 +468,10 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 };
 
 // https://www.basketball-reference.com/about/glossary.html
-const calculatePercentages = (players: any[], teams: Team[]) => {
+const calculatePercentages = (
+	players: any[],
+	teamsByTid: Record<string, Team>,
+) => {
 	const numPlayersOnCourt = g.get("numPlayersOnCourt");
 
 	const astp: number[] = [];
@@ -489,7 +484,7 @@ const calculatePercentages = (players: any[], teams: Team[]) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
-		const t = teams.find(t => t.tid === p.tid);
+		const t = teamsByTid[p.tid];
 
 		if (t === undefined) {
 			astp[i] = 0;
@@ -567,7 +562,11 @@ const calculatePercentages = (players: any[], teams: Team[]) => {
 };
 
 // https://www.basketball-reference.com/about/ratings.html
-const calculateRatings = (players: any[], teams: Team[], league: any) => {
+const calculateRatings = (
+	players: any[],
+	teamsByTid: Record<string, Team>,
+	league: any,
+) => {
 	const drtg: number[] = [];
 	const dws: number[] = [];
 	const ortg: number[] = [];
@@ -577,7 +576,7 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
-		const t = teams.find(t => t.tid === p.tid);
+		const t = teamsByTid[p.tid];
 
 		if (t === undefined) {
 			drtg[i] = 0;
@@ -863,11 +862,13 @@ const advStats = async () => {
 		return;
 	}
 
+	const teamsByTid = groupByUnique(teams, "tid");
+
 	const updatedStats = {
-		...calculatePER(players, teams, league),
-		...calculatePercentages(players, teams),
-		...calculateRatings(players, teams, league),
-		...calculateBPM(players, teams, league),
+		...calculatePER(players, teamsByTid, league),
+		...calculatePercentages(players, teamsByTid),
+		...calculateRatings(players, teamsByTid, league),
+		...calculateBPM(players, teamsByTid, league),
 	};
 	await advStatsSave(players, playersRaw, updatedStats);
 };

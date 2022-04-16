@@ -51,6 +51,19 @@ const NegotiationList = ({
 	]);
 
 	const rows = players.map(p => {
+		const negotiateButtons = (
+			// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+			// @ts-expect-error
+			<NegotiateButtons
+				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}
+				capSpace={capSpace}
+				minContract={minContract}
+				spectator={spectator}
+				p={p}
+				willingToNegotiate={p.mood.user.willing}
+			/>
+		);
+
 		return {
 			key: p.pid,
 			data: [
@@ -83,18 +96,17 @@ const NegotiationList = ({
 				p.contract.exp,
 				{
 					value: (
-						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-expect-error
-						<NegotiateButtons
-							canGoOverCap={
-								salaryCapType === "none" || salaryCapType === "soft"
-							}
-							capSpace={capSpace}
-							minContract={minContract}
-							spectator={spectator}
-							p={p}
-							willingToNegotiate={p.mood.user.willing}
-						/>
+						<div className="d-flex align-items-center">
+							{negotiateButtons}
+							<button
+								type="button"
+								className="btn-close ms-2 p-0"
+								title="End negotiation"
+								onClick={async () => {
+									await toWorker("main", "cancelContractNegotiation", p.pid);
+								}}
+							/>
+						</div>
 					),
 					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 				},

@@ -141,7 +141,7 @@ const LiveGame = (props: View<"liveGame">) => {
 			}
 
 			// Save here since it is mutated in processLiveGameEvents
-			const prevOuts = sportState.current!.outs;
+			const prevOuts = sportState.current?.outs;
 			const prevPts =
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 
@@ -153,7 +153,8 @@ const LiveGame = (props: View<"liveGame">) => {
 				sportState: sportState.current,
 			});
 			let text = output.text;
-			const showOuts = isSport("baseball") && output.sportState.outs > prevOuts;
+			const showOuts =
+				isSport("baseball") && output.sportState.outs > prevOuts!;
 			const currentPts =
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 			const showScore = isSport("baseball") && currentPts !== prevPts;

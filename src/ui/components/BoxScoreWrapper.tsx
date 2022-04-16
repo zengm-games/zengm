@@ -562,12 +562,12 @@ const DetailedScore = ({
 					</div>
 				) : null}
 				{isSport("football") ? (
-					<div className="mx-xs-auto d-sm-inline-block text-center">
+					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactorsFootball teams={boxScore.teams} />
 					</div>
 				) : null}
 				{isSport("hockey") ? (
-					<div className="mx-xs-auto d-sm-inline-block text-center">
+					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactorsHockey teams={boxScore.teams} />
 					</div>
 				) : null}

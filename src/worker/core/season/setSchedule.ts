@@ -46,6 +46,7 @@ const setSchedule = async (tids: [number, number][]) => {
 		if (playoffs) {
 			const key = makePlayoffsKey(game);
 			if (oldPlayoffGames[key]) {
+				game.day = oldPlayoffGames[key].day;
 				game.gid = oldPlayoffGames[key].gid;
 				game.forceWin = oldPlayoffGames[key].forceWin;
 			}

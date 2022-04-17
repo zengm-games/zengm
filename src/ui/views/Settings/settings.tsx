@@ -1376,12 +1376,16 @@ settings.push(
 		description:
 			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 	},
-	{
-		category: "Game Simulation",
-		key: "ties",
-		name: "Ties (Regular Season Only)",
-		type: "bool",
-	},
+	...(isSport("baseball")
+		? []
+		: [
+				{
+					category: "Game Simulation",
+					key: "ties",
+					name: "Ties (Regular Season Only)",
+					type: "bool",
+				} as const,
+		  ]),
 	{
 		category: "Game Simulation",
 		key: "otl",

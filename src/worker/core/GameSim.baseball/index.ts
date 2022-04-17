@@ -763,7 +763,7 @@ class GameSim {
 
 			if (out) {
 				this.recordStat(this.o, p, "cs");
-				this.recordStat(this.d, catcher, "csF", 1, "fielding");
+				this.recordStat(this.d, catcher, "csF");
 
 				this.logOut();
 
@@ -773,7 +773,7 @@ class GameSim {
 				}
 			} else {
 				this.recordStat(this.o, p, "sb");
-				this.recordStat(this.d, catcher, "sbF", 1, "fielding");
+				this.recordStat(this.d, catcher, "sbF");
 			}
 
 			this.playByPlay.logEvent({

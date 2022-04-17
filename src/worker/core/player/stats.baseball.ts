@@ -104,7 +104,7 @@ const stats = {
 		// Pitching derived
 		"ipMax",
 
-		// Defense, but only one position is possible (catcher)
+		// Fielding, but only one position is possible (catcher)
 		"pb",
 		"sbF",
 		"csF",

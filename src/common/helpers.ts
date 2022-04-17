@@ -1152,6 +1152,19 @@ const states = [
 	"District of Columbia",
 ];
 
+const provinces = [
+	"Ontario",
+	"Quebec",
+	"Nova Scotia",
+	"New Brunswick",
+	"Manitoba",
+	"British Columbia",
+	"Prince Edward Island",
+	"Saskatchewan",
+	"Alberta",
+	"Newfoundland and Labrador",
+];
+
 const isAmerican = (loc: string) => {
 	if (loc.endsWith("USA")) {
 		return true;
@@ -1167,11 +1180,28 @@ const isAmerican = (loc: string) => {
 	return states.includes(state);
 };
 
+const isCanadian = (loc: string) => {
+	if (loc.endsWith("Canada")) {
+		return true;
+	}
+
+	const parts = loc.split(", ");
+	const province = parts.at(-1);
+
+	if (province === undefined) {
+		return false;
+	}
+
+	return provinces.includes(province);
+};
+
 const getCountry = (bornLoc?: string) => {
 	let name = bornLoc && bornLoc !== "" ? bornLoc : "None";
 
 	if (isAmerican(name)) {
 		name = "USA";
+	} else if (isCanadian(name)) {
+		name = "Canada";
 	} else {
 		// Find part after last comma/colon
 		for (const delimiter of [", ", ": "]) {

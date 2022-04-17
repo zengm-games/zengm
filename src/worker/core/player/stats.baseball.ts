@@ -103,6 +103,11 @@ const stats = {
 
 		// Pitching derived
 		"ipMax",
+
+		// Defense, but only one position is possible (catcher)
+		"pb",
+		"sbF",
+		"csF",
 	] as const,
 	byPos: [
 		// Fielding
@@ -114,9 +119,6 @@ const stats = {
 		"a",
 		"e",
 		"dp",
-		"pb",
-		"sbF",
-		"csF",
 	] as const,
 };
 

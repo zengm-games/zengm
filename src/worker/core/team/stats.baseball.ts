@@ -45,6 +45,11 @@ const teamAndOpp = [
 	"bk",
 	"wp",
 	"bf",
+
+	// Fielding, but only one position is possible (catcher)
+	"pb",
+	"sbF",
+	"csF",
 ] as const;
 
 // raw: recorded directly in game sim
@@ -66,9 +71,6 @@ const stats = {
 		"a",
 		"e",
 		"dp",
-		"pb",
-		"sbF",
-		"csF",
 	] as const,
 };
 

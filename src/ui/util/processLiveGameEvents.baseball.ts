@@ -429,17 +429,11 @@ const processLiveGameEvents = ({
 				const ptsQtrs = boxScore.teams[0].ptsQtrs;
 				if (ptsQtrs.length > boxScore.numPeriods) {
 					overtimes += 1;
-					if (overtimes === 1) {
-						boxScore.overtime = " (OT)";
-					} else if (overtimes > 1) {
-						boxScore.overtime = ` (${overtimes}OT)`;
-					}
-					boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
-				} else {
-					boxScore.quarter = `${helpers.ordinal(
-						ptsQtrs.length,
-					)} ${getPeriodName(boxScore.numPeriods)}`;
+					boxScore.overtime = ` (${boxScore.numPeriods} + ${overtimes})`;
 				}
+				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} ${getPeriodName(
+					boxScore.numPeriods,
+				)}`;
 			}
 
 			Object.assign(sportState, DEFAULT_SPORT_STATE);

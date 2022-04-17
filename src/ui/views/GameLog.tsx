@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
-import { bySport } from "../../common";
+import { bySport, isSport } from "../../common";
 
 const StatsRow = ({ p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -110,14 +110,16 @@ const GamesList = ({
 							result = "T";
 						}
 
-						let overtimes;
-						if (gm.overtimes !== undefined && gm.overtimes > 0) {
-							if (gm.overtimes === 1) {
-								overtimes = "OT";
-							} else if (gm.overtimes > 1) {
-								overtimes = `${gm.overtimes}OT`;
-							}
-						}
+						const overtimeText = helpers.overtimeText(
+							gm.overtimes,
+							gm.numPeriods,
+						);
+						const overtimes =
+							overtimeText === ""
+								? ""
+								: isSport("baseball")
+								? ` (${overtimeText})`
+								: ` ${overtimeText}`;
 
 						const oppAbbrev =
 							abbrev === "special"
@@ -166,7 +168,8 @@ const GamesList = ({
 											gm.gid,
 										])}
 									>
-										{gm.teams[user].pts}-{gm.teams[other].pts} {overtimes}
+										{gm.teams[user].pts}-{gm.teams[other].pts}
+										{overtimes}
 									</a>
 								</td>
 							</tr>
@@ -187,6 +190,7 @@ const GameLog = ({
 	tid,
 }: View<"gameLog">) => {
 	const dropdownTeamsKey = bySport({
+		baseball: "teams",
 		basketball: "teamsAndSpecial",
 		football: "teams",
 		hockey: "teams",
@@ -244,6 +248,7 @@ const GameLog = ({
 									nextGid={nextGid}
 									prevGid={prevGid}
 									showNextPrev
+									sportState={undefined}
 									tid={tid}
 									Row={StatsRow}
 								/>

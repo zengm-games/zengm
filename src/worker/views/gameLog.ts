@@ -109,14 +109,8 @@ const boxScore = async (gid: number) => {
 	const wonInd = game.won.tid === game.teams[0].tid ? 0 : 1;
 	const lostInd = wonInd === 0 ? 1 : 0;
 
-	let overtime;
-	if (game.overtimes === 1) {
-		overtime = " (OT)";
-	} else if (game.overtimes > 1) {
-		overtime = ` (${game.overtimes}OT)`;
-	} else {
-		overtime = "";
-	}
+	const overtimeText = helpers.overtimeText(game.overtimes, game.numPeriods);
+	const overtime = overtimeText === "" ? "" : ` (${overtimeText})`;
 
 	if (game.numPeriods === undefined) {
 		game.numPeriods = 4;

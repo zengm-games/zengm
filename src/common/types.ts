@@ -853,6 +853,7 @@ export type LocalStateUI = {
 	games: {
 		forceWin?: number; // Number of iterations - defined means result was forced
 		gid: number;
+		numPeriods?: number;
 		overtimes?: number;
 		teams: [
 			{

@@ -362,7 +362,13 @@ const NextButton = ({
 	);
 };
 
-const Base = ({ pid, shiftDown }: { pid: number; shiftDown?: boolean }) => {
+const Base = ({
+	pid,
+	shiftDown,
+}: {
+	pid: number | undefined;
+	shiftDown?: boolean;
+}) => {
 	const [state, setState] = useState<
 		| {
 				name: string;

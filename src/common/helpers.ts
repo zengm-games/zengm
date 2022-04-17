@@ -1336,6 +1336,27 @@ const formatRecord = ({
 	return record;
 };
 
+const overtimeText = (
+	numOvertimes: number | undefined,
+	numPeriods: number | undefined,
+) => {
+	let overtimes = "";
+
+	if (numOvertimes !== undefined && numOvertimes > 0) {
+		if (isSport("baseball")) {
+			overtimes = `${(numPeriods ?? 0) + numOvertimes}`;
+		} else {
+			if (numOvertimes === 1) {
+				overtimes = "OT";
+			} else if (numOvertimes > 1) {
+				overtimes = `${numOvertimes}OT`;
+			}
+		}
+	}
+
+	return overtimes;
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1358,4 +1379,5 @@ export default {
 	ratio,
 	percentage,
 	formatRecord,
+	overtimeText,
 };

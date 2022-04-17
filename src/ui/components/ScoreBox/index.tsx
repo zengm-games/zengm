@@ -72,9 +72,10 @@ const ScoreBox = memo(
 		game: {
 			forceWin?: number;
 			gid: number;
-			overtimes?: number;
 			season?: number;
 			teams: [Team, Team];
+			numPeriods?: number;
+			overtimes?: number;
 		};
 		playersUpcoming?: any[];
 		playersUpcomingAbbrev?: boolean;
@@ -174,14 +175,7 @@ const ScoreBox = memo(
 			}
 		}
 
-		let overtimes;
-		if (game.overtimes !== undefined && game.overtimes > 0) {
-			if (game.overtimes === 1) {
-				overtimes = "OT";
-			} else if (game.overtimes > 1) {
-				overtimes = `${game.overtimes}OT`;
-			}
-		}
+		const overtimes = helpers.overtimeText(game.overtimes, game.numPeriods);
 
 		const gameSeason = game.season ?? season;
 

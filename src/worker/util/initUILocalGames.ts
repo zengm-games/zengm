@@ -18,6 +18,7 @@ const initUILocalGames = async () => {
 		forceWin: game.forceWin,
 		gid: game.gid,
 		overtimes: game.overtimes,
+		numPeriods: game.numPeriods,
 		teams: [
 			{
 				ovr: game.teams[0].ovr,

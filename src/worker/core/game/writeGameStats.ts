@@ -483,6 +483,7 @@ const writeGameStats = async (
 					forceWin: results.forceWin,
 					gid: results.gid,
 					overtimes: results.overtimes,
+					numPeriods: g.get("numPeriods"),
 					teams: [
 						{
 							ovr: results.team[0].ovr,

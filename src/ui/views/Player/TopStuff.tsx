@@ -449,7 +449,7 @@ const TopStuff = ({
 							</strong>
 							<br />
 							{height}, {weight}
-							{player.srID ? (
+							{player.srID && !player.srID.startsWith("dp_") ? (
 								<>
 									{" "}
 									-{" "}

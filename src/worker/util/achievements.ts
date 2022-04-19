@@ -1055,6 +1055,7 @@ const achievements: Achievement[] = [
 		slug: "clutch_finish",
 		name: "Clutch Finish",
 		desc: bySport({
+			baseball: "Win game 7 of the finals in extra innings.",
 			basketball: "Win game 7 of the finals in OT.",
 			football: "Win the championship in OT.",
 			hockey: "Win game 7 of the finals in OT.",
@@ -1082,6 +1083,7 @@ const achievements: Achievement[] = [
 		slug: "unclutch_finish",
 		name: "Unclutch Finish",
 		desc: bySport({
+			baseball: "Lose game 7 of the finals in extra innings.",
 			basketball: "Lose game 7 of the finals in OT.",
 			football: "Lose the championship in OT.",
 			hockey: "Lose game 7 of the finals in OT.",

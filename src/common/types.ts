@@ -1122,6 +1122,9 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 
 	// Only for hockey goalies
 	numConsecutiveGamesG?: number;
+
+	// Only for baseball pitchers
+	pFatigue?: number;
 };
 
 export type Player<PlayerRatings = any> = {

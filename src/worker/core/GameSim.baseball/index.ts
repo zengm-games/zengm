@@ -18,24 +18,9 @@ import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
+import { fatigueFactor } from "./fatigueFactor";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
-
-/**
- * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
- *
- * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
- * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
- */
-const fatigue = (energy: number): number => {
-	energy += 0.05;
-
-	if (energy > 1) {
-		energy = 1;
-	}
-
-	return energy;
-};
 
 type OccupiedBase = {
 	p: PlayerGameSim;
@@ -1653,7 +1638,8 @@ class GameSim {
 				delete this.team[t].t.player[p].stat.benchTime;
 				delete this.team[t].t.player[p].stat.courtTime;
 				delete this.team[t].t.player[p].stat.energy;
-				delete this.team[t].t.player[p].numConsecutiveGamesG;
+				// @ts-expect-error
+				delete this.team[t].t.player[p].pFatigue;
 			}
 
 			this.team[t] = this.team[t].t as any;

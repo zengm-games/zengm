@@ -13,7 +13,9 @@ import {
 import loadTeams from "./loadTeams";
 import updatePlayoffSeries from "./updatePlayoffSeries";
 import writeGameStats from "./writeGameStats";
-import writePlayerStats from "./writePlayerStats";
+import writePlayerStats, {
+	P_FATIGUE_DAILY_REDUCTION,
+} from "./writePlayerStats";
 import writeTeamStats from "./writeTeamStats";
 import { idb } from "../../db";
 import {
@@ -175,6 +177,15 @@ const play = async (
 
 				if (p.injury.gamesRemaining > 0) {
 					p.injury.gamesRemaining -= 1;
+					changed = true;
+				}
+
+				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+					p.pFatigue = helpers.bound(
+						p.pFatigue - P_FATIGUE_DAILY_REDUCTION,
+						0,
+						100,
+					);
 					changed = true;
 				}
 

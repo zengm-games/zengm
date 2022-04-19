@@ -6,6 +6,8 @@ import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 import maxBy from "lodash-es/maxBy";
 
+export const P_FATIGUE_DAILY_REDUCTION = 20;
+
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
@@ -380,6 +382,15 @@ const writePlayerStats = async (
 						p2.numConsecutiveGamesG += 1;
 					} else if (p2.numConsecutiveGamesG !== undefined) {
 						p2.numConsecutiveGamesG = 0;
+					}
+				} else if (isSport("baseball")) {
+					if (p.stat.pc > 0) {
+						if (p2.pFatigue === undefined) {
+							p2.pFatigue = 0;
+						}
+
+						// Need to add P_FATIGUE_DAILY_REDUCTION for anyone who pitched in this game, cause that will be subtracted later
+						p2.pFatigue += p.stat.pc + P_FATIGUE_DAILY_REDUCTION;
 					}
 				}
 

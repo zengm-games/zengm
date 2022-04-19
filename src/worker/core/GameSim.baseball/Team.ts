@@ -1,4 +1,5 @@
 import type { Position } from "../../../common/types.baseball";
+import { getStartingPitcher } from "./getStartingPitcher";
 import type { PlayerGameSim, TeamGameSim } from "./types";
 
 type GamePositions<DH extends boolean> =
@@ -43,7 +44,7 @@ class Team<DH extends boolean> {
 		this.playersInGame = {};
 
 		// Starting pitcher
-		const starter = this.t.depth.P[0];
+		const starter = getStartingPitcher(this.t.depth.P);
 
 		// Starting position players
 		const lineup = this.dh ? this.t.depth.L : this.t.depth.LP;

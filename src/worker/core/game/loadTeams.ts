@@ -170,6 +170,10 @@ const processTeam = (
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
 
+		if (isSport("baseball")) {
+			(p2 as any).pFatigue = p.pFatigue ?? 0;
+		}
+
 		p2.stat = {
 			gs: 0,
 			min: 0,

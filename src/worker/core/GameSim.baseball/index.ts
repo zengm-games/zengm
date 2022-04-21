@@ -823,7 +823,38 @@ class GameSim {
 	}
 
 	getPitchOutcome(pitcher: PlayerGameSim, batter: PlayerGameSim) {
-		const ballOrStrike = Math.random() < 0.7 ? "ball" : ("strike" as const);
+		const BALL_PROB_BY_COUNT: Record<number, Record<number, number>> = {
+			0: {
+				0: 0.6,
+				1: 0.55,
+				2: 0.5,
+				3: 0.3,
+			},
+			1: {
+				0: 0.65,
+				1: 0.6,
+				2: 0.55,
+				3: 0.3,
+			},
+			2: {
+				0: 0.8,
+				1: 0.7,
+				2: 0.6,
+				3: 0.4,
+			},
+		};
+		let ballProb = BALL_PROB_BY_COUNT[this.strikes][this.balls];
+
+		if (this.strikes === 2 && this.balls === 0) {
+			ballProb -= 0.1 - 0.2 * pitcher.compositeRating.controlPitcher;
+		} else if (this.strikes === 2 && this.balls === 1) {
+			ballProb -= 0.05 - 0.1 * pitcher.compositeRating.controlPitcher;
+		} else {
+			ballProb += 0.1 - 0.2 * pitcher.compositeRating.controlPitcher;
+		}
+
+		const ballOrStrike =
+			Math.random() < ballProb ? "ball" : ("strike" as const);
 
 		const pitchQuality = helpers.bound(
 			random.gauss(pitcher.compositeRating.pitcher, 0.2),
@@ -835,7 +866,7 @@ class GameSim {
 		let swinging = false;
 
 		if (ballOrStrike === "ball") {
-			const swingProb = 0.25 + pitchQuality - batter.compositeRating.eye;
+			const swingProb = pitchQuality - batter.compositeRating.eye;
 			if (Math.random() < swingProb) {
 				swinging = true;
 				const contactProb =

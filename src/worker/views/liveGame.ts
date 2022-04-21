@@ -37,7 +37,6 @@ const updatePlayByPlay = async (
 		if (team.stats.byPos) {
 			resetStatsTeam.push(...team.stats.byPos);
 		}
-		console.log("resetStatsTeam", resetStatsTeam);
 		const allStarGame =
 			boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
 		let allStars;

@@ -50,6 +50,9 @@ const addStatsRow = async (
 			statsRow[key] = [];
 		}
 	}
+	if (isSport("baseball")) {
+		statsRow.rfld = [];
+	}
 
 	p.statsTids.push(p.tid);
 	p.statsTids = Array.from(new Set(p.statsTids)); // Calculate yearsWithTeam

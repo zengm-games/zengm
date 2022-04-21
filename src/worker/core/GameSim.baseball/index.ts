@@ -897,7 +897,7 @@ class GameSim {
 		const value =
 			batter.compositeRating.contactHitter - pitcher.compositeRating.pitcher;
 
-		return 0.15 + 0.25 * value;
+		return 0.4 + 0.25 * value;
 	}
 
 	probErrorIfNotHit(

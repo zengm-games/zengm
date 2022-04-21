@@ -822,16 +822,44 @@ class GameSim {
 		return prob;
 	}
 
-	getPitchOutcome(batter: PlayerGameSim, pitcher: PlayerGameSim) {
-		const ballWeight =
-			1.5 - pitcher.compositeRating.controlPitcher + batter.compositeRating.eye;
+	getPitchOutcome(pitcher: PlayerGameSim, batter: PlayerGameSim) {
+		const ballOrStrike = Math.random() < 0.7 ? "ball" : ("strike" as const);
 
-		const strikeWeight = this.strikes === 2 ? 0.75 : 1;
-
-		return random.choice(
-			["ball", "strike", "contact"],
-			[ballWeight, strikeWeight, 1],
+		const pitchQuality = helpers.bound(
+			random.gauss(pitcher.compositeRating.pitcher, 0.2),
+			0,
+			1,
 		);
+
+		let outcome: "ball" | "strike" | "contact";
+		let swinging = false;
+
+		if (ballOrStrike === "ball") {
+			const swingProb = 0.25 + pitchQuality - batter.compositeRating.eye;
+			if (Math.random() < swingProb) {
+				swinging = true;
+				const contactProb =
+					0.5 + batter.compositeRating.contactHitter - pitchQuality;
+				outcome = Math.random() < contactProb ? "contact" : "strike";
+			} else {
+				outcome = "ball";
+			}
+		} else {
+			const swingProb = 0.75 - pitchQuality + batter.compositeRating.eye;
+			if (Math.random() < swingProb) {
+				swinging = true;
+				const contactProb =
+					0.75 + batter.compositeRating.contactHitter - pitchQuality;
+				outcome = Math.random() < contactProb ? "contact" : "strike";
+			} else {
+				outcome = "strike";
+			}
+		}
+
+		return {
+			outcome,
+			swinging,
+		};
 	}
 
 	probHit(batter: PlayerGameSim, pitcher: PlayerGameSim) {
@@ -1162,7 +1190,7 @@ class GameSim {
 
 		this.recordStat(this.d, pitcher, "pc");
 
-		const outcome = this.getPitchOutcome(batter, pitcher);
+		const { outcome, swinging } = this.getPitchOutcome(pitcher, batter);
 
 		if (outcome === "ball") {
 			this.balls += 1;
@@ -1186,7 +1214,7 @@ class GameSim {
 		} else if (outcome === "strike") {
 			this.strikes += 1;
 			if (this.strikes >= 3) {
-				this.doStrikeout();
+				this.doStrikeout(swinging);
 				doneBatter = true;
 				if (this.outs >= 3) {
 					return doneBatter;
@@ -1194,7 +1222,7 @@ class GameSim {
 			} else {
 				this.playByPlay.logEvent({
 					type: "strike",
-					swinging: Math.random() < 0.5,
+					swinging,
 					balls: this.balls,
 					strikes: this.strikes,
 				});
@@ -1525,7 +1553,7 @@ class GameSim {
 		};
 	}
 
-	doStrikeout() {
+	doStrikeout(swinging: boolean) {
 		const t = this.team[this.o];
 		const batter = t.getBatter().p;
 		const pitcher = this.team[this.d].getPitcher().p;
@@ -1539,7 +1567,7 @@ class GameSim {
 		this.logOut();
 		this.playByPlay.logEvent({
 			type: "strikeOut",
-			swinging: Math.random() < 0.5,
+			swinging,
 			...this.getSportState(),
 		});
 	}

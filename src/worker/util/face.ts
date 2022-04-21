@@ -5,7 +5,7 @@ import type {
 	PlayerWithoutKey,
 	Race,
 } from "../../common/types";
-import { DEFAULT_JERSEY, isSport } from "../../common";
+import { bySport, DEFAULT_JERSEY, isSport } from "../../common";
 
 const generate = (race?: Race) => {
 	let overrides: any;
@@ -39,8 +39,18 @@ const generate = (race?: Race) => {
 	});
 
 	if (!isSport("baseball")) {
+		const allowEyeBlack = bySport({
+			baseball: false,
+			basketball: false,
+			football: true,
+			hockey: false,
+		});
+
 		// No baseball hat
-		while (face.accessories.id.startsWith("hat")) {
+		while (
+			face.accessories.id.startsWith("hat") ||
+			(!allowEyeBlack && face.accessories.id === "eye-black")
+		) {
 			face = generateFace(overrides, {
 				race,
 			});

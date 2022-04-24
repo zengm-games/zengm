@@ -307,14 +307,15 @@ class GameSim {
 
 		const type = random.choice(["ground", "line", "fly"] as const);
 		const direction = foul
-			? random.choice(["farLeftFoul", "farRightFoul", "outOfPlay"] as const)
-			: random.choice([
-					"farLeft",
-					"left",
-					"middle",
-					"right",
-					"farRight",
-			  ] as const);
+			? random.choice(
+					["farLeftFoul", "farRightFoul", "outOfPlay"] as const,
+					[1.5, 0.5, 1],
+			  )
+			: random.choice(
+					["farLeft", "left", "middle", "right", "farRight"] as const,
+					[1.5, 2, 1.5, 1, 0.5],
+			  );
+
 		let speed;
 		let distance;
 

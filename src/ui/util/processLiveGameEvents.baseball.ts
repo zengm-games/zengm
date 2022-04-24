@@ -234,6 +234,8 @@ const getText = (
 		case "fly": {
 			if (event.distance === "infield") {
 				text = `He hits a short popup ${getDirectionInfield(event.direction)}`;
+			} else if (event.distance === "noDoubter") {
+				text = `He crushes it ${getDirectionOutfield(event.direction)}`;
 			} else {
 				const distanceText =
 					event.distance !== "normal" ? `${event.distance} ` : "";

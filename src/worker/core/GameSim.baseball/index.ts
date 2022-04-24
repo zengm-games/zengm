@@ -19,6 +19,7 @@ import range from "lodash-es/range";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
+import { infoDefense } from "../player/ovr.baseball";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -164,14 +165,14 @@ class GameSim {
 		} & (
 			| {
 					type: "fly";
-					distance: "infield" | "shallow" | "normal" | "deep";
+					distance: "infield" | "shallow" | "normal" | "deep" | "noDoubter";
 			  }
 			| {
 					type: "ground" | "line";
 					speed: "soft" | "normal" | "hard";
 			  }
 		),
-	): keyof typeof POS_NUMBERS_INVERSE {
+	): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 {
 		const { type, direction } = info;
 		if (type === "fly") {
 			const { distance } = info;
@@ -362,6 +363,7 @@ class GameSim {
 					"shallow",
 					"normal",
 					"deep",
+					"noDoubter",
 				] as const);
 				this.playByPlay.logEvent({
 					type,
@@ -893,11 +895,65 @@ class GameSim {
 		};
 	}
 
-	probHit(batter: PlayerGameSim, pitcher: PlayerGameSim) {
+	probHit(
+		batter: PlayerGameSim,
+		pitcher: PlayerGameSim,
+		hitTo: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
+		battedBallInfo: ReturnType<GameSim["doBattedBall"]>,
+	) {
+		if (
+			battedBallInfo.type === "fly" &&
+			battedBallInfo.distance === "noDoubter"
+		) {
+			return 1;
+		}
+
+		const hitToPos = POS_NUMBERS_INVERSE[hitTo];
+
+		const fielder = this.team[this.d].playersInGameByPos[hitToPos].p;
+
+		const defenseWeights = {
+			infieldRange: 0,
+			outfieldRange: 0,
+			groundBallDefense: 0,
+			flyBallDefense: 0,
+			arm: 0,
+		};
+		if (battedBallInfo.type === "ground") {
+			const infielders = ["1B", "2B", "3B", "SS"] as const;
+			const posToTakeRatingsFrom = (
+				infielders.includes(hitToPos as any) ? hitToPos : "2B"
+			) as typeof infielders[number];
+
+			defenseWeights.infieldRange =
+				infoDefense[posToTakeRatingsFrom].infieldRange[0];
+			defenseWeights.groundBallDefense =
+				infoDefense[posToTakeRatingsFrom].groundBallDefense[0];
+			defenseWeights.arm = infoDefense[posToTakeRatingsFrom].arm[0];
+		} else {
+			const outfielders = ["LF", "CF", "RF"] as const;
+			const posToTakeRatingsFrom = (
+				outfielders.includes(hitToPos as any) ? hitToPos : "LF"
+			) as typeof outfielders[number];
+
+			defenseWeights.outfieldRange =
+				infoDefense[posToTakeRatingsFrom].outfieldRange[0];
+			defenseWeights.flyBallDefense =
+				infoDefense[posToTakeRatingsFrom].flyBallDefense[0];
+		}
+
+		let numerator = 0;
+		let denominator = 0;
+		for (const [key, value] of Object.entries(defenseWeights)) {
+			numerator += value * fielder.compositeRating[key];
+			denominator += value;
+		}
+		const fieldingFactor = 0.5 - numerator / denominator;
+
 		const value =
 			batter.compositeRating.contactHitter - pitcher.compositeRating.pitcher;
 
-		return 0.4 + 0.25 * value;
+		return 0.4 + 0.25 * value + fieldingFactor;
 	}
 
 	probErrorIfNotHit(
@@ -940,8 +996,10 @@ class GameSim {
 				extraBasesBySpeedOnly = true;
 			} else if (battedBallInfo.distance === "normal") {
 				numBasesWeights = [0.2, 1, 0.01, 0.1];
-			} else {
+			} else if (battedBallInfo.distance === "deep") {
 				numBasesWeights = [0, 0.1, 0.01, 1];
+			} else {
+				numBasesWeights = [0, 0, 0, 1];
 			}
 		} else if (battedBallInfo.type === "line") {
 			if (battedBallInfo.speed === "soft") {
@@ -990,7 +1048,8 @@ class GameSim {
 		// Figure out what defender fields the ball
 		const hitTo = this.getHitTo(battedBallInfo as any);
 
-		const hit = Math.random() < this.probHit(batter, pitcher);
+		const hit =
+			Math.random() < this.probHit(batter, pitcher, hitTo, battedBallInfo);
 		const errorIfNotHit =
 			Math.random() < this.probErrorIfNotHit(battedBallInfo.type as any, hitTo);
 

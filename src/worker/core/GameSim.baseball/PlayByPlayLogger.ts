@@ -94,7 +94,7 @@ type PlayByPlayEventInput =
 				| "farRight"
 				| "farLeftFoul"
 				| "farRightFoul";
-			distance: "infield" | "shallow" | "normal" | "deep";
+			distance: "infield" | "shallow" | "normal" | "deep" | "noDoubter";
 	  }
 	| {
 			type: "hitResult";

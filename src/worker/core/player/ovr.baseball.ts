@@ -5,7 +5,7 @@ import compositeRating from "./compositeRating";
 
 type RatingWeights = Record<string, [number, number]>;
 
-const infoDefense: Record<Position, RatingWeights> = {
+export const infoDefense: Record<Position, RatingWeights> = {
 	SP: {
 		powerPitcher: [1, 1],
 		finessePitcher: [2, 1],

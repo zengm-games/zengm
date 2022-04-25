@@ -128,11 +128,13 @@ const PLAYER_GAME_STATS = {
 	batting: {
 		name: "Batting",
 		stats: ["ab", "r", "h", "rbi", "hr", "sb", "bb", "so", "pa"],
+		seasonStats: ["ba", "obp", "slg", "ops"],
 		sortBy: ["pa"],
 	},
 	pitching: {
 		name: "Pitching",
 		stats: ["ip", "hPit", "rPit", "er", "bbPit", "soPit", "hrPit", "pc"],
+		seasonStats: ["era"],
 		sortBy: ["min"],
 	},
 };

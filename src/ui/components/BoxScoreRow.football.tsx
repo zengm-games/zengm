@@ -12,12 +12,14 @@ const BoxScoreRow = ({
 	onClick,
 	p,
 	stats,
+	seasonStats,
 }: {
 	className?: string;
 	highlightCols?: number[];
 	onClick?: (event: MouseEvent) => void;
 	p: any;
 	stats: string[];
+	seasonStats?: string[];
 }) => {
 	return (
 		<tr className={className} onClick={onClick}>
@@ -41,6 +43,18 @@ const BoxScoreRow = ({
 					{helpers.roundStat(p.processed[stat], stat, true)}
 				</td>
 			))}
+			{seasonStats
+				? seasonStats.map((stat, i) => (
+						<td
+							key={stat}
+							className={
+								highlightCols?.includes(i) ? "sorting_highlight" : undefined
+							}
+						>
+							{helpers.roundStat(p.seasonStats[stat], stat, true)}
+						</td>
+				  ))
+				: null}
 		</tr>
 	);
 };

@@ -43,7 +43,8 @@ const StatsTable = ({
 	t: Team;
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
-	const cols = getCols(stats.map(stat => `stat:${stat}`));
+	const seasonStats = PLAYER_GAME_STATS[type].seasonStats;
+	const cols = getCols([...stats, ...seasonStats].map(stat => `stat:${stat}`));
 
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
@@ -73,9 +74,18 @@ const StatsTable = ({
 
 	let players = t.players
 		.map(p => {
+			// p.seasonStats is stats from before the game. Add current game stats to get current value - works for live sim and post-game box score!
+			const seasonStatsCurrent = {
+				...p.seasonStats,
+			};
+			for (const key of Object.keys(seasonStatsCurrent)) {
+				seasonStatsCurrent[key] += p[key];
+			}
+
 			return {
 				...p,
 				processed: processPlayerStats(p, stats),
+				seasonStats: processPlayerStats(seasonStatsCurrent, seasonStats),
 			};
 		})
 		.filter(p => filterPlayerStats(p, stats, type));
@@ -94,20 +104,9 @@ const StatsTable = ({
 	const sumsByStat: Record<string, number> = {};
 	if (showFooter) {
 		for (const stat of stats) {
-			if (stat === "svPct") {
-				sumsByStat[stat] = helpers.percentage(sumsByStat.sv, sumsByStat.sa);
-			} else if (stat === "foPct") {
-				sumsByStat[stat] = helpers.percentage(
-					sumsByStat.fow,
-					sumsByStat.fow + sumsByStat.fol,
-				);
-			} else if (stat === "sPct") {
-				sumsByStat[stat] = helpers.percentage(sumsByStat.g, sumsByStat.s);
-			} else {
-				sumsByStat[stat] = 0;
-				for (const p of players) {
-					sumsByStat[stat] += p.processed[stat];
-				}
+			sumsByStat[stat] = 0;
+			for (const p of players) {
+				sumsByStat[stat] += p.processed[stat];
 			}
 		}
 	}
@@ -137,6 +136,7 @@ const StatsTable = ({
 								i={i}
 								p={p}
 								stats={stats}
+								seasonStats={seasonStats}
 								forceUpdate={forceRowUpdate}
 								highlightCols={highlightCols}
 							/>
@@ -152,6 +152,9 @@ const StatsTable = ({
 											? null
 											: helpers.roundStat(sumsByStat[stat], stat, true)}
 									</th>
+								))}
+								{seasonStats.map(stat => (
+									<th key={stat} />
 								))}
 							</tr>
 						</tfoot>

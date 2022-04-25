@@ -305,7 +305,11 @@ class GameSim {
 	doBattedBall(p: PlayerGameSim) {
 		const foul = Math.random() < 0.25;
 
-		const type = random.choice(["ground", "line", "fly"] as const);
+		const type = random.choice(["ground", "line", "fly"] as const, [
+			0.5,
+			0.5,
+			p.compositeRating.powerHitter,
+		]);
 		const direction = foul
 			? random.choice(
 					["farLeftFoul", "farRightFoul", "outOfPlay"] as const,

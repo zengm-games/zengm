@@ -348,7 +348,11 @@ class GameSim {
 					speed,
 				};
 			} else if (type === "line") {
-				speed = random.choice(["soft", "normal", "hard"] as const);
+				speed = random.choice(["soft", "normal", "hard"] as const, [
+					0.5,
+					0.5,
+					(p.compositeRating.powerHitter + 0.5) / 2,
+				]);
 				this.playByPlay.logEvent({
 					type,
 					t: this.o,
@@ -363,13 +367,16 @@ class GameSim {
 					speed,
 				};
 			} else {
-				distance = random.choice([
-					"infield",
-					"shallow",
-					"normal",
-					"deep",
-					"noDoubter",
-				] as const);
+				distance = random.choice(
+					["infield", "shallow", "normal", "deep", "noDoubter"] as const,
+					[
+						0.1,
+						0.5,
+						(p.compositeRating.powerHitter + 0.5) / 2,
+						p.compositeRating.powerHitter,
+						p.compositeRating.powerHitter / 4,
+					],
+				);
 				this.playByPlay.logEvent({
 					type,
 					t: this.o,
@@ -945,6 +952,10 @@ class GameSim {
 				infoDefense[posToTakeRatingsFrom].outfieldRange[0];
 			defenseWeights.flyBallDefense =
 				infoDefense[posToTakeRatingsFrom].flyBallDefense[0];
+
+			if (battedBallInfo.type === "line") {
+				defenseWeights.groundBallDefense = defenseWeights.flyBallDefense;
+			}
 		}
 
 		let numerator = 0;

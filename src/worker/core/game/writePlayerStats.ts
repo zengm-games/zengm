@@ -5,6 +5,7 @@ import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 import maxBy from "lodash-es/maxBy";
+import statsRowIsCurrent from "../player/statsRowIsCurrent";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -398,12 +399,7 @@ const writePlayerStats = async (
 					let ps = p2.stats.at(-1);
 
 					// This should never happen, but sometimes does
-					if (
-						!ps ||
-						ps.tid !== t.id ||
-						ps.playoffs !== playoffs ||
-						ps.season !== g.get("season")
-					) {
+					if (!statsRowIsCurrent(ps, t.id, playoffs)) {
 						await player.addStatsRow(p2, playoffs);
 						ps = p2.stats.at(-1);
 					}

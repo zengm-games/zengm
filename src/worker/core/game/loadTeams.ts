@@ -14,6 +14,7 @@ import {
 	PHASE,
 } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
+import statsRowIsCurrent from "../player/statsRowIsCurrent";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
@@ -55,6 +56,8 @@ const processTeam = (
 		}
 	}
 
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 	// Injury-adjusted ovr
 	const playersCurrent = players
 		.filter((p: any) => p.injury.gamesRemaining === 0)
@@ -67,7 +70,7 @@ const processTeam = (
 			},
 		}));
 	const ovr = team.ovr(playersCurrent, {
-		playoffs: g.get("phase") === PHASE.PLAYOFFS,
+		playoffs,
 	});
 
 	const t: any = {
@@ -99,8 +102,7 @@ const processTeam = (
 		playThroughInjuriesBoth = DEFAULT_PLAY_THROUGH_INJURIES;
 	}
 
-	const playThroughInjuries =
-		playThroughInjuriesBoth[g.get("phase") === PHASE.PLAYOFFS ? 1 : 0];
+	const playThroughInjuries = playThroughInjuriesBoth[playoffs ? 1 : 0];
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
@@ -145,11 +147,7 @@ const processTeam = (
 					false,
 				) * injuryFactor;
 
-			if (
-				isSport("hockey") &&
-				k === "goalkeeping" &&
-				g.get("phase") !== PHASE.PLAYOFFS
-			) {
+			if (isSport("hockey") && k === "goalkeeping" && !playoffs) {
 				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
 				if (p.numConsecutiveGamesG !== undefined) {
 					(p2 as any).numConsecutiveGamesG = p.numConsecutiveGamesG;
@@ -172,6 +170,27 @@ const processTeam = (
 
 		if (isSport("baseball")) {
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
+
+			// Store some pre-game season stats that are displayed in box score
+			const seasonStats: Record<string, number> = {};
+			const seasonStatsKeys = [
+				"pa",
+				"bb",
+				"hbp",
+				"sf",
+				"h",
+				"2b",
+				"3b",
+				"hr",
+				"er",
+				"outs",
+			];
+			const ps = p.stats.at(-1);
+			const hasStats = statsRowIsCurrent(ps, t.id, playoffs);
+			for (const key of seasonStatsKeys) {
+				seasonStats[key] = hasStats ? ps[key] : 0;
+			}
+			(p2 as any).seasonStats = seasonStats;
 		}
 
 		p2.stat = {

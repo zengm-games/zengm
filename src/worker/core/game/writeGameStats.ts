@@ -264,6 +264,9 @@ const writeGameStats = async (
 				results.team[t].player[p].jerseyNumber;
 
 			if (isSport("baseball")) {
+				gameStats.teams[t].players[p].seasonStats =
+					results.team[t].player[p].seasonStats;
+
 				// These are either integers or undefined
 				const baseballMaybeKeys = ["battingOrder", "subIndex"];
 				for (const key of baseballMaybeKeys) {

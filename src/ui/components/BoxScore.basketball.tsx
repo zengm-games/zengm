@@ -99,7 +99,7 @@ const StatsTable = ({
 
 	if (sortBys.length > 0) {
 		playersActiveOrPlayed.sort(
-			sortByStats(stats, sortBys, (p, stat) => {
+			sortByStats(stats, undefined, sortBys, (p, stat) => {
 				if (stat === "trb") {
 					return p.orb + p.drb;
 				}

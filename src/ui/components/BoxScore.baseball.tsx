@@ -97,7 +97,7 @@ const StatsTable = ({
 			type === "batting" ? ["battingOrder", "subIndex"] : ["subIndex"],
 		);
 	} else {
-		players.sort(sortByStats(stats, sortBys));
+		players.sort(sortByStats(stats, seasonStats, sortBys));
 	}
 
 	const showFooter = players.length > 1;

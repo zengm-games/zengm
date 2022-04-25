@@ -65,7 +65,7 @@ const StatsTable = ({
 			};
 		})
 		.filter(p => filterPlayerStats(p, stats, type))
-		.sort(sortByStats(stats, sortBys));
+		.sort(sortByStats(stats, undefined, sortBys));
 
 	const showFooter = players.length > 1;
 	const sumsByStat: Record<string, number> = {};

@@ -73,15 +73,21 @@ export const StatsHeader = ({
 
 export const sortByStats = (
 	stats: string[],
+	seasonStats: string[] | undefined,
 	sortBys: SortBy[],
 	getValue?: (p: any, stat: string) => number,
 ) => {
 	return (a: any, b: any) => {
 		for (const [index, order] of sortBys) {
-			const stat = stats[index];
+			let stat = stats[index];
+			let statsObject = "processed";
+			if (stat === undefined && seasonStats) {
+				stat = seasonStats[index - stats.length];
+				statsObject = "seasonStats";
+			}
 
-			const aValue = getValue?.(a, stat) ?? a.processed[stat];
-			const bValue = getValue?.(b, stat) ?? b.processed[stat];
+			const aValue = getValue?.(a, stat) ?? a[statsObject][stat];
+			const bValue = getValue?.(b, stat) ?? b[statsObject][stat];
 
 			if (bValue !== aValue) {
 				const diff = bValue - aValue;
@@ -133,7 +139,7 @@ const StatsTableIndividual = ({
 			};
 		})
 		.filter(p => filterPlayerStats(p, stats, type))
-		.sort(sortByStats(stats, sortBys));
+		.sort(sortByStats(stats, undefined, sortBys));
 
 	const sortable = players.length > 1;
 	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;

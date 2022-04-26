@@ -17,6 +17,7 @@ import type { SortBy } from "./DataTable";
 import orderBy from "lodash-es/orderBy";
 import {
 	BoxScorePlayer,
+	getText,
 	playersByPid,
 	SportState,
 } from "../util/processLiveGameEvents.baseball";
@@ -218,21 +219,14 @@ const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en") => {
 			return "Empty net";
 	}
 };
-export let playersByPid: Record<number, BoxScorePlayer> = {};
-
-const getName = (pid: number) => playersByPid[pid].name ?? "???";
 
 const ScoringSummary = memo(
 	({
 		events,
-		gid,
-		numPeriods,
 		teams,
 	}: {
 		count: number;
 		events: PlayByPlayEventScore[];
-		gid: number;
-		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
 		let prevInning: number;
@@ -257,11 +251,13 @@ const ScoringSummary = memo(
 				}
 			}
 			setPlayersByPid(updated);
-		}, [gid, someEvents]);
+		}, [someEvents, teams]);
 
 		if (!someEvents) {
 			return <p>None</p>;
 		}
+
+		const getName = (pid: number) => playersByPid[pid]?.name ?? "???";
 
 		return (
 			<table className="table table-sm border-bottom">
@@ -299,8 +295,10 @@ const ScoringSummary = memo(
 											</>
 										)}
 									</td>
-									<td>{playersByPid[event.pid]?.name}</td>
-									<td style={{ whiteSpace: "normal" }}>TEXT</td>
+									<td>{getName(event.pid)}</td>
+									<td style={{ whiteSpace: "normal" }}>
+										{getText(event, getName).text}
+									</td>
 								</tr>
 							</Fragment>
 						);
@@ -411,8 +409,6 @@ const BoxScore = ({
 				key={boxScore.gid}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
-				gid={boxScore.gid}
-				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
 

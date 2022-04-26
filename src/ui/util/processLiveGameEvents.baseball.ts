@@ -111,6 +111,7 @@ const getBaseName = (base: 1 | 2 | 3 | 4) => {
 };
 
 const formatRunners = (
+	getName: (pid: number) => string,
 	runners: Extract<PlayByPlayEvent, { type: "walk" }>["runners"],
 	{
 		ignoreStationary,
@@ -156,14 +157,9 @@ const formatRunners = (
 	return texts.join(" ");
 };
 
-const getText = (
+export const getText = (
 	event: PlayByPlayEvent,
-	boxScore: {
-		gid: number;
-		numPeriods: number;
-		time: string;
-		teams: [BoxScoreTeam, BoxScoreTeam];
-	},
+	getName: (pid: number) => string,
 ) => {
 	let text;
 
@@ -246,7 +242,7 @@ const getText = (
 			break;
 		}
 		case "walk": {
-			const runnerText = formatRunners(event.runners, {
+			const runnerText = formatRunners(getName, event.runners, {
 				ignoreStationary: true,
 			});
 			text = `${event.intentional ? "Intentional walk" : "Ball 4"}, ${getName(
@@ -256,7 +252,7 @@ const getText = (
 			break;
 		}
 		case "hitByPitch": {
-			const runnerText = formatRunners(event.runners, {
+			const runnerText = formatRunners(getName, event.runners, {
 				ignoreStationary: true,
 			});
 			text = `He's hit by the pitch! ${getName(event.pid)} takes 1st base${
@@ -266,7 +262,7 @@ const getText = (
 			break;
 		}
 		case "balk": {
-			const runnerText = formatRunners(event.runners);
+			const runnerText = formatRunners(getName, event.runners);
 			text = `Balk!${runnerText ? ` ${runnerText}` : ""}`;
 			bold = true;
 			break;
@@ -316,7 +312,7 @@ const getText = (
 				)}.`;
 			}
 
-			const runnersText = formatRunners(event.runners);
+			const runnersText = formatRunners(getName, event.runners);
 
 			if (runnersText) {
 				if (!text.endsWith("!") && !text.endsWith(".")) {
@@ -504,7 +500,7 @@ const processLiveGameEvents = ({
 				};
 			}
 
-			const output = getText(e, boxScore);
+			const output = getText(e, getName);
 			text = output.text;
 			bold = output.bold;
 

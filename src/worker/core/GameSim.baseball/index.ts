@@ -1447,7 +1447,7 @@ class GameSim {
 							reachedOnError: result === "error",
 							responsiblePitcherPid: pitcher.id,
 						},
-						result === "error" ? batter : undefined,
+						result !== "error" ? batter : undefined,
 					);
 				}
 

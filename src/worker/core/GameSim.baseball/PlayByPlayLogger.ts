@@ -1,16 +1,6 @@
 import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
 import type { Runner, TeamNum } from "./types";
 
-type PlayByPlayEventInputScore = {
-	type: "goal";
-	clock: number;
-	t: TeamNum;
-	names: [string] | [string, string] | [string, string, string];
-	pids: [number] | [number, number] | [number, number, number];
-	goalType: "ev" | "sh" | "pp" | "en";
-	shotType: string;
-};
-
 type PlayByPlayEventInput =
 	| {
 			type: "sideStart";
@@ -185,9 +175,8 @@ export type PlayByPlayEvent =
 			boxScore: any;
 	  };
 
-export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
-	quarter: number;
-	hide?: boolean;
+export type PlayByPlayEventScore = PlayByPlayEvent & {
+	inning: number;
 };
 
 class PlayByPlayLogger {
@@ -197,17 +186,39 @@ class PlayByPlayLogger {
 
 	scoringSummary: PlayByPlayEventScore[];
 
+	period: number;
+
 	constructor(active: boolean) {
 		this.active = active;
 		this.playByPlay = [];
 		this.scoringSummary = [];
+		this.period = 1;
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
 		this.playByPlay.push(event);
 
-		if (event.type === "goal") {
-			this.scoringSummary.push(event);
+		if (event.type === "sideStart") {
+			this.period = event.inning;
+		}
+
+		let scored = false;
+		if (event.type === "hitResult" && event.numBases === 4) {
+			// Home run
+			scored = true;
+		} else {
+			const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
+				.runners;
+			if (runners?.some(runner => runner.to === 4)) {
+				scored = true;
+			}
+		}
+
+		if (scored) {
+			this.scoringSummary.push({
+				...event,
+				inning: this.period,
+			});
 		}
 	}
 

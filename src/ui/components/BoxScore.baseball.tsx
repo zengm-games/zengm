@@ -2,7 +2,6 @@ import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers, processPlayerStats } from "../util";
 import { filterPlayerStats, getPeriodName } from "../../common";
-import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
@@ -14,6 +13,7 @@ import {
 } from "../util/processLiveGameEvents.baseball";
 import PlayerNameLabels from "./PlayerNameLabels";
 import processStats from "../../common/processPlayerStats.baseball";
+import type { PlayByPlayEventScore } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
 
 type Team = {
 	abbrev: string;
@@ -221,7 +221,8 @@ const ScoringSummary = memo(
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
-		let prevQuarter: number;
+		let prevInning: number;
+		let prevT: number;
 		const processedEvents = processEvents(events);
 
 		if (processedEvents.length === 0) {
@@ -232,27 +233,15 @@ const ScoringSummary = memo(
 			<table className="table table-sm border-bottom">
 				<tbody>
 					{processedEvents.map((event, i) => {
-						let quarterText = "???";
-						if (event.quarter > numPeriods) {
-							const overtimes = event.quarter - numPeriods;
-							if (overtimes > 1) {
-								quarterText = `${helpers.ordinal(overtimes)} overtime`;
-							} else {
-								quarterText = "Overtime";
-							}
-						} else {
-							quarterText = `${helpers.ordinal(event.quarter)} ${getPeriodName(
-								numPeriods,
-							)}`;
-						}
-
 						let quarterHeader: ReactNode = null;
-						if (event.quarter !== prevQuarter) {
-							prevQuarter = event.quarter;
+						if (event.inning !== prevInning || event.t !== prevT) {
+							prevInning = event.inning;
+							prevT = event.t;
 							quarterHeader = (
 								<tr>
-									<td className="text-muted" colSpan={5}>
-										{quarterText}
+									<td className="text-muted" colSpan={4}>
+										{event.t === 0 ? "Top" : "Bottom"}{" "}
+										{helpers.ordinal(event.inning)}
 									</td>
 								</tr>
 							);
@@ -276,24 +265,8 @@ const ScoringSummary = memo(
 											</>
 										)}
 									</td>
-									<td>{formatClock(event.clock)}</td>
-									<td title={goalTypeTitle(event.goalType)}>
-										{event.goalType.toUpperCase()}
-									</td>
-									<td style={{ whiteSpace: "normal" }}>
-										{event.shotType === "reboundShot"
-											? "Rebound shot"
-											: helpers.upperCaseFirstLetter(event.shotType)}{" "}
-										by {event.names[0]}
-										{event.names.length > 1 ? (
-											<>
-												{" "}
-												<span className="text-muted">
-													(assist: {event.names.slice(1).join(", ")})
-												</span>
-											</>
-										) : null}
-									</td>
+									<td>BATTER NAME</td>
+									<td style={{ whiteSpace: "normal" }}>TEXT</td>
 								</tr>
 							</Fragment>
 						);

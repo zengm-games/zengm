@@ -43,7 +43,7 @@ export const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
-type BoxScorePlayer = {
+export type BoxScorePlayer = {
 	name: string;
 	pid: number;
 };

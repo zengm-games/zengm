@@ -1,4 +1,12 @@
-import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
+import {
+	memo,
+	Fragment,
+	MouseEvent,
+	ReactNode,
+	useState,
+	useRef,
+	useEffect,
+} from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers, processPlayerStats } from "../util";
 import { filterPlayerStats, getPeriodName } from "../../common";
@@ -8,6 +16,7 @@ import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
 import orderBy from "lodash-es/orderBy";
 import {
+	BoxScorePlayer,
 	playersByPid,
 	SportState,
 } from "../util/processLiveGameEvents.baseball";
@@ -209,15 +218,20 @@ const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en") => {
 			return "Empty net";
 	}
 };
+export let playersByPid: Record<number, BoxScorePlayer> = {};
+
+const getName = (pid: number) => playersByPid[pid].name ?? "???";
 
 const ScoringSummary = memo(
 	({
 		events,
+		gid,
 		numPeriods,
 		teams,
 	}: {
 		count: number;
 		events: PlayByPlayEventScore[];
+		gid: number;
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
@@ -225,7 +239,27 @@ const ScoringSummary = memo(
 		let prevT: number;
 		const processedEvents = processEvents(events);
 
-		if (processedEvents.length === 0) {
+		const [playersByPid, setPlayersByPid] = useState<
+			Record<number, BoxScorePlayer>
+		>({});
+
+		const someEvents = processedEvents.length > 0;
+
+		useEffect(() => {
+			if (!someEvents) {
+				return;
+			}
+
+			const updated: typeof playersByPid = {};
+			for (const t of teams) {
+				for (const p of t.players) {
+					updated[p.pid] = p;
+				}
+			}
+			setPlayersByPid(updated);
+		}, [gid, someEvents]);
+
+		if (!someEvents) {
 			return <p>None</p>;
 		}
 
@@ -265,7 +299,7 @@ const ScoringSummary = memo(
 											</>
 										)}
 									</td>
-									<td>BATTER NAME</td>
+									<td>{playersByPid[event.pid]?.name}</td>
 									<td style={{ whiteSpace: "normal" }}>TEXT</td>
 								</tr>
 							</Fragment>
@@ -377,6 +411,7 @@ const BoxScore = ({
 				key={boxScore.gid}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
+				gid={boxScore.gid}
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>

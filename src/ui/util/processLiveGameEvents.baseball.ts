@@ -509,30 +509,6 @@ const processLiveGameEvents = ({
 		}
 	}
 
-	//  Handle filtering of scoringSummary
-	if (boxScore.scoringSummary && boxScore.time !== undefined) {
-		for (const event of boxScore.scoringSummary) {
-			if (event.hide === false) {
-				// Already past, no need to check again
-				continue;
-			}
-
-			if (!quarters.includes(event.quarter)) {
-				// Future quarters
-				event.hide = true;
-			} else if (event.quarter !== quarters.at(-1)) {
-				// Past quarters
-				event.hide = false;
-			} else {
-				const cmp = cmpTime(formatClock(event.clock), boxScore.time);
-				const show =
-					cmp === 1 ||
-					(cmp === 0 && prevGoal && (prevGoal as any).clock === event.clock);
-				event.hide = !show;
-			}
-		}
-	}
-
 	return {
 		bold,
 		overtimes,

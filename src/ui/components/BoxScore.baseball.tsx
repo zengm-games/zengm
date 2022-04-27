@@ -1,15 +1,14 @@
 import {
-	memo,
 	Fragment,
 	MouseEvent,
 	ReactNode,
 	useState,
-	useRef,
 	useEffect,
+	useMemo,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers, processPlayerStats } from "../util";
-import { filterPlayerStats, getPeriodName } from "../../common";
+import { filterPlayerStats } from "../../common";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
@@ -33,6 +32,7 @@ type Team = {
 	name: string;
 	region: string;
 	players: any[];
+	pts: number;
 };
 
 type BoxScore = {
@@ -179,17 +179,12 @@ const StatsTable = ({
 };
 
 const processEvents = (events: PlayByPlayEventScore[]) => {
-	console.log("processEvents", events);
 	const processedEvents: (PlayByPlayEventScore & {
 		score: [number, number];
 	})[] = [];
 	const score = [0, 0] as [number, number];
 
 	for (const event of events) {
-		if (event.hide) {
-			continue;
-		}
-
 		let numRuns = 0;
 		if (event.type === "hitResult" && event.numBases === 4) {
 			// Home run
@@ -216,120 +211,94 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 	return processedEvents;
 };
 
-const getCount = (events: PlayByPlayEventScore[]) => {
-	let count = 0;
-	for (const event of events) {
-		if (!event.hide) {
-			count += 1;
-		}
-	}
-	return count;
-};
+const ScoringSummary = ({
+	processedEvents,
+	teams,
+}: {
+	processedEvents: ReturnType<typeof processEvents>;
+	teams: [Team, Team];
+}) => {
+	let prevInning: number;
+	let prevT: number;
 
-const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en") => {
-	switch (goalType) {
-		case "ev":
-			return "Even strength";
-		case "sh":
-			return "Short handed";
-		case "pp":
-			return "Power play";
-		case "en":
-			return "Empty net";
-	}
-};
+	const [playersByPid, setPlayersByPid] = useState<
+		Record<number, BoxScorePlayer>
+	>({});
 
-const ScoringSummary = memo(
-	({
-		events,
-		teams,
-	}: {
-		count: number;
-		events: PlayByPlayEventScore[];
-		teams: [Team, Team];
-	}) => {
-		let prevInning: number;
-		let prevT: number;
-		const processedEvents = processEvents(events);
+	const eventsToShow = processedEvents.filter(event => {
+		return event.score[0] <= teams[0].pts && event.score[1] <= teams[1].pts;
+	});
 
-		const [playersByPid, setPlayersByPid] = useState<
-			Record<number, BoxScorePlayer>
-		>({});
+	const someEvents = eventsToShow.length > 0;
 
-		const someEvents = processedEvents.length > 0;
-
-		useEffect(() => {
-			if (!someEvents) {
-				return;
-			}
-
-			const updated: typeof playersByPid = {};
-			for (const t of teams) {
-				for (const p of t.players) {
-					updated[p.pid] = p;
-				}
-			}
-			setPlayersByPid(updated);
-		}, [someEvents, teams]);
-
+	useEffect(() => {
 		if (!someEvents) {
-			return <p>None</p>;
+			return;
 		}
 
-		const getName = (pid: number) => playersByPid[pid]?.name ?? "???";
+		const updated: typeof playersByPid = {};
+		for (const t of teams) {
+			for (const p of t.players) {
+				updated[p.pid] = p;
+			}
+		}
+		setPlayersByPid(updated);
+	}, [someEvents, teams]);
 
-		return (
-			<table className="table table-sm border-bottom">
-				<tbody>
-					{processedEvents.map((event, i) => {
-						let quarterHeader: ReactNode = null;
-						if (event.inning !== prevInning || event.t !== prevT) {
-							prevInning = event.inning;
-							prevT = event.t;
-							quarterHeader = (
-								<tr>
-									<td className="text-muted" colSpan={4}>
-										{event.t === 0 ? "Top" : "Bottom"}{" "}
-										{helpers.ordinal(event.inning)}
-									</td>
-								</tr>
-							);
-						}
+	if (!someEvents) {
+		return <p>None</p>;
+	}
 
-						return (
-							<Fragment key={i}>
-								{quarterHeader}
-								<tr>
-									<td>{teams[event.t].abbrev}</td>
-									<td>
-										{event.t === 0 ? (
-											<>
-												<b>{event.score[0]}</b>-
-												<span className="text-muted">{event.score[1]}</span>
-											</>
-										) : (
-											<>
-												<span className="text-muted">{event.score[0]}</span>-
-												<b>{event.score[1]}</b>
-											</>
-										)}
-									</td>
-									<td>{getName(event.pid)}</td>
-									<td style={{ whiteSpace: "normal" }}>
-										{getText(event, getName).text}
-									</td>
-								</tr>
-							</Fragment>
+	const getName = (pid: number) => playersByPid[pid]?.name ?? "???";
+
+	return (
+		<table className="table table-sm border-bottom">
+			<tbody>
+				{eventsToShow.map((event, i) => {
+					let quarterHeader: ReactNode = null;
+					if (event.inning !== prevInning || event.t !== prevT) {
+						prevInning = event.inning;
+						prevT = event.t;
+						quarterHeader = (
+							<tr>
+								<td className="text-muted" colSpan={4}>
+									{event.t === 0 ? "Top" : "Bottom"}{" "}
+									{helpers.ordinal(event.inning)}
+								</td>
+							</tr>
 						);
-					})}
-				</tbody>
-			</table>
-		);
-	},
-	(prevProps, nextProps) => {
-		return prevProps.count === nextProps.count;
-	},
-);
+					}
+
+					return (
+						<Fragment key={i}>
+							{quarterHeader}
+							<tr>
+								<td>{teams[event.t].abbrev}</td>
+								<td>
+									{event.t === 0 ? (
+										<>
+											<b>{event.score[0]}</b>-
+											<span className="text-muted">{event.score[1]}</span>
+										</>
+									) : (
+										<>
+											<span className="text-muted">{event.score[0]}</span>-
+											<b>{event.score[1]}</b>
+										</>
+									)}
+								</td>
+								<td>{getName(event.pid)}</td>
+								<td style={{ whiteSpace: "normal" }}>
+									{getText(event, getName).text}
+								</td>
+							</tr>
+						</Fragment>
+					);
+				})}
+			</tbody>
+		</table>
+	);
+};
 
 const pitcherStats = (p: any) => {
 	if (!p) {
@@ -414,6 +383,11 @@ const BoxScore = ({
 }) => {
 	const liveGameSim = (boxScore as any).won?.name === undefined;
 
+	const processedEvents = useMemo(
+		() => processEvents(boxScore.scoringSummary),
+		[boxScore.scoringSummary],
+	);
+
 	return (
 		<div className="mb-3">
 			{liveGameSim ? (
@@ -426,8 +400,7 @@ const BoxScore = ({
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
-				count={getCount(boxScore.scoringSummary)}
-				events={boxScore.scoringSummary}
+				processedEvents={processedEvents}
 				teams={boxScore.teams}
 			/>
 

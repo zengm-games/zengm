@@ -177,7 +177,6 @@ export type PlayByPlayEvent =
 
 export type PlayByPlayEventScore = PlayByPlayEvent & {
 	inning: number;
-	hide?: boolean;
 };
 
 class PlayByPlayLogger {

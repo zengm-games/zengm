@@ -23,7 +23,10 @@ import {
 } from "../util/processLiveGameEvents.baseball";
 import PlayerNameLabels from "./PlayerNameLabels";
 import processStats from "../../common/processPlayerStats.baseball";
-import type { PlayByPlayEventScore } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
+import type {
+	PlayByPlayEvent,
+	PlayByPlayEventScore,
+} from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
 
 type Team = {
 	abbrev: string;
@@ -186,7 +189,22 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 			continue;
 		}
 
-		score[event.t] += 1;
+		let numRuns = 0;
+		if (event.type === "hitResult" && event.numBases === 4) {
+			// Home run
+			numRuns += 1;
+		}
+		const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
+			.runners;
+		if (runners) {
+			for (const runner of runners) {
+				if (runner.to === 4) {
+					numRuns += 1;
+				}
+			}
+		}
+
+		score[event.t] += numRuns;
 
 		processedEvents.push({
 			...event,

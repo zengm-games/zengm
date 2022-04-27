@@ -1066,8 +1066,6 @@ class GameSim {
 
 		const hit =
 			Math.random() < this.probHit(batter, pitcher, hitTo, battedBallInfo);
-		const errorIfNotHit =
-			Math.random() < this.probErrorIfNotHit(battedBallInfo.type as any, hitTo);
 
 		let result:
 			| "hit"
@@ -1083,7 +1081,9 @@ class GameSim {
 		if (hit) {
 			result = "hit";
 			numBases = this.getNumBases(batter, battedBallInfo);
-		} else if (errorIfNotHit) {
+		} else if (
+			Math.random() < this.probErrorIfNotHit(battedBallInfo.type as any, hitTo)
+		) {
 			result = "error";
 			numBases = this.getNumBases(batter, battedBallInfo);
 		} else {
@@ -1091,6 +1091,7 @@ class GameSim {
 
 			if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 				result = "flyOut";
+				posDefense.push(hitTo);
 			} else {
 				if (this.bases[0] || this.bases[1] || this.bases[2]) {
 					// Probability of double play depends on who it's hit to

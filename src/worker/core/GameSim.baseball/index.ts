@@ -411,6 +411,90 @@ class GameSim {
 		};
 	}
 
+	probSuccessIfTagUp({
+		battedBallInfo,
+		runner,
+		startingBase,
+		hitTo,
+		fielder,
+		isStealing,
+	}: {
+		battedBallInfo: ReturnType<GameSim["doBattedBall"]>;
+		runner: PlayerGameSim;
+		startingBase: 1 | 2 | 3;
+		hitTo: ReturnType<GameSim["getHitTo"]>;
+		fielder: PlayerGameSim;
+		isStealing: boolean;
+	}) {
+		const hitToPos = POS_NUMBERS_INVERSE[hitTo];
+		const outfielders = ["LF", "CF", "RF"];
+		if (!outfielders.includes(hitToPos)) {
+			return 0;
+		}
+
+		if (isStealing && battedBallInfo.type === "line") {
+			return 0;
+		}
+
+		// Min and max probabilities of success, for a given hit type. Then the actual probability will be picked based on the runner/fielder/startingBase
+		let probs: [number, number];
+		if (battedBallInfo.type === "fly") {
+			if (battedBallInfo.distance === "noDoubter") {
+				probs = [1, 1];
+			} else if (battedBallInfo.distance === "deep") {
+				probs = [0.9, 1];
+			} else if (battedBallInfo.distance === "normal") {
+				probs = [0.5, 1];
+			} else if (battedBallInfo.distance === "shallow") {
+				probs = [0, 0.5];
+			} else if (battedBallInfo.distance === "infield") {
+				probs = [0, 0];
+			} else {
+				throw new Error("Should never happen");
+			}
+		} else if (battedBallInfo.type === "line") {
+			if (battedBallInfo.speed === "hard") {
+				probs = [0, 1];
+			} else if (battedBallInfo.speed === "normal") {
+				probs = [0, 0.75];
+			} else if (battedBallInfo.speed === "soft") {
+				probs = [0, 0.5];
+			} else {
+				throw new Error("Should never happen");
+			}
+		} else {
+			throw new Error("Should never happen");
+		}
+
+		// Amount within min/max probs to go - this ranges from 0 to 1
+		let value =
+			0.5 * (1 + runner.compositeRating.speed - fielder.compositeRating.arm);
+
+		// Harder to tag up from 1st/2nd
+		if (startingBase === 2) {
+			// Tagging up to 3rd depends on which outfielder fields it
+			if (hitToPos === "LF") {
+				value *= 0.4;
+			} else if (hitToPos === "CF") {
+				value *= 0.6;
+			} else {
+				value *= 0.8;
+			}
+		} else if (startingBase === 1) {
+			value *= 0.2;
+		}
+
+		if (isStealing) {
+			value *= 0.5;
+		}
+
+		const diff = probs[1] - probs[0];
+
+		const prob = probs[0] + value * diff;
+
+		return prob;
+	}
+
 	advanceRunners({
 		battedBallInfo,
 		error,
@@ -443,9 +527,10 @@ class GameSim {
 		// Handle runners
 		// Start from 3rd base first, because a blocked base can't be advanced to
 		const blockedBases = new Set<0 | 1 | 2>();
+		let someRunnerIsAlreadyOut = false;
 		for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
 			const runner = runners[i];
-			if (!runner) {
+			if (!runner || this.outs >= 3) {
 				continue;
 			}
 
@@ -455,6 +540,10 @@ class GameSim {
 				i === 0 ||
 				(i === 1 && runners[0]) ||
 				(i === 2 && runners[0] && runners[1]);
+
+			const p = this.team[this.o].playersByPid[runner.pid];
+			const hitToPos = POS_NUMBERS_INVERSE[hitTo];
+			const fielder = this.team[this.d].playersInGameByPos[hitToPos].p;
 
 			if (hit || error) {
 				// Handle runners advancing on a hit/error
@@ -539,32 +628,21 @@ class GameSim {
 					continue;
 				}
 
-				let advance = false;
+				let probSuccess: number = 0;
 
 				if (i === 2) {
 					// Third base
 
-					if (battedBallInfo.type === "fly") {
+					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 						// Tag up
-						if (
-							battedBallInfo.distance === "shallow" &&
-							!isStealing &&
-							Math.random() < 0.25
-						) {
-							advance = true;
-						} else if (
-							battedBallInfo.distance === "normal" &&
-							Math.random() < 0.75
-						) {
-							advance = true;
-						} else if (battedBallInfo.distance === "deep") {
-							advance = true;
-						}
-					} else if (battedBallInfo.type === "line") {
-						// Tag up
-						if (hitTo >= 7 && !isStealing && Math.random() < 0.5) {
-							advance = true;
-						}
+						probSuccess = this.probSuccessIfTagUp({
+							battedBallInfo,
+							runner: p,
+							startingBase: 3,
+							hitTo,
+							fielder,
+							isStealing,
+						});
 					} else {
 						// Maybe score on ground ball
 						if (
@@ -572,39 +650,23 @@ class GameSim {
 							(isStealing && Math.random() < 0.8) ||
 							mustAdvanceWithHitter
 						) {
-							advance = true;
+							probSuccess = 1;
 						}
 					}
 				} else if (i === 1) {
 					// Second base
 
-					let tendency = 0;
-					if (hitTo == 7) {
-						tendency = 0.5;
-					} else if (hitTo === 8) {
-						tendency = 1;
-					} else if (hitTo === 9) {
-						tendency = 1.5;
-					}
-
-					if (battedBallInfo.type === "fly") {
-						if (
-							battedBallInfo.distance === "normal" &&
-							!isStealing &&
-							Math.random() < 0.25 * tendency
-						) {
-							advance = true;
-						} else if (
-							battedBallInfo.distance === "deep" &&
-							Math.random() < 0.5 * tendency
-						) {
-							advance = true;
-						}
-					} else if (battedBallInfo.type === "line") {
-						if (!isStealing && Math.random() < 0.25 * tendency) {
-							advance = true;
-						}
+					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
+						probSuccess = this.probSuccessIfTagUp({
+							battedBallInfo,
+							runner: p,
+							startingBase: 2,
+							hitTo,
+							fielder,
+							isStealing,
+						});
 					} else {
+						let tendency;
 						if (hitTo == 3) {
 							tendency = 1.5;
 						} else if (hitTo === 4) {
@@ -612,6 +674,10 @@ class GameSim {
 						} else if (hitTo === 5) {
 							tendency = 0.5;
 						} else if (hitTo === 6) {
+							tendency = 0.5;
+						} else if (hitTo >= 7) {
+							tendency = 2;
+						} else {
 							tendency = 0.5;
 						}
 
@@ -621,38 +687,74 @@ class GameSim {
 							mustAdvanceWithHitter ||
 							Math.random() < 0.4 * tendency
 						) {
-							advance = true;
+							probSuccess = 1;
 						}
 					}
 				} else {
 					// First base
 
 					// Tag up on very deep fly ball
-					if (
-						battedBallInfo.type === "fly" &&
-						battedBallInfo.distance === "deep" &&
-						!isStealing &&
-						Math.random() < 0.05
-					) {
-						advance = true;
+					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
+						probSuccess = this.probSuccessIfTagUp({
+							battedBallInfo,
+							runner: p,
+							startingBase: 1,
+							hitTo,
+							fielder,
+							isStealing,
+						});
 					} else if (battedBallInfo.type === "ground") {
 						// Must advance on ground ball
-						advance = true;
+						probSuccess = 1;
 					}
 				}
+
+				const advance = probSuccess > Math.random();
 				if (advance) {
 					runner.to += 1;
+					runner.out = !someRunnerIsAlreadyOut && probSuccess < Math.random();
+					if (runner.out) {
+						someRunnerIsAlreadyOut = true;
+					}
+					console.log(
+						"RUNNER ADVANCE",
+						p.name,
+						probSuccess,
+						runner.out,
+						`${runner.from} -> ${runner.to}`,
+						blockedBases,
+					);
 				}
 			}
 
-			if (runner.to === 4) {
+			if (runner.to === 4 && !runner.out) {
 				const pRBI = error ? undefined : p;
 
 				this.doScore(this.bases[i]!, pRBI);
 			}
 
-			if (!runner.out && runner.to < 4) {
+			if (runner.to < 4) {
 				blockedBases.add((runner.to - 1) as any);
+			}
+			console.log("blockedBases", blockedBases);
+
+			if (runner.out) {
+				this.recordStat(this.d, fielder, "a", 1, "fielding");
+
+				let putoutPos: "1B" | "2B" | "SS" | "3B" | "C";
+				if (runner.to === 4) {
+					putoutPos = "C";
+				} else if (runner.to === 3) {
+					putoutPos = "3B";
+				} else if (runner.to === 2) {
+					putoutPos = Math.random() < 0.5 ? "2B" : "SS";
+				} else {
+					putoutPos = "1B";
+				}
+				const fielder2 = this.team[this.d].playersInGameByPos[putoutPos].p;
+				this.recordStat(this.d, fielder2, "po", 1, "fielding");
+
+				this.logOut();
 			}
 		}
 

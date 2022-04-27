@@ -427,7 +427,7 @@ const processLiveGameEvents = ({
 				const ptsQtrs = boxScore.teams[0].ptsQtrs;
 				if (ptsQtrs.length > boxScore.numPeriods) {
 					overtimes += 1;
-					boxScore.overtime = ` (${boxScore.numPeriods} + ${overtimes})`;
+					boxScore.overtime = ` (${boxScore.numPeriods + overtimes})`;
 				}
 				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} ${getPeriodName(
 					boxScore.numPeriods,

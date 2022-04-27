@@ -177,6 +177,7 @@ export type PlayByPlayEvent =
 
 export type PlayByPlayEventScore = PlayByPlayEvent & {
 	inning: number;
+	hide?: boolean;
 };
 
 class PlayByPlayLogger {
@@ -209,16 +210,22 @@ class PlayByPlayLogger {
 		} else {
 			const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
 				.runners;
-			if (runners?.some(runner => runner.to === 4)) {
+			if (runners?.some(runner => runner.to === 4 && !runner.out)) {
 				scored = true;
 			}
 		}
 
 		if (scored) {
-			this.scoringSummary.push({
+			const scoringSummaryEvent = {
 				...event,
 				inning: this.period,
-			});
+			};
+			if (scoringSummaryEvent.type === "balk") {
+				// Swap team, so it shows up correctly in scoring summary. Basically, t must be team that scored
+				scoringSummaryEvent.t = scoringSummaryEvent.t === 0 ? 1 : 0;
+			}
+
+			this.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
 

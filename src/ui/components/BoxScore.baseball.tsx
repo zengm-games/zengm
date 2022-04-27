@@ -179,6 +179,7 @@ const StatsTable = ({
 };
 
 const processEvents = (events: PlayByPlayEventScore[]) => {
+	console.log("processEvents", events);
 	const processedEvents: (PlayByPlayEventScore & {
 		score: [number, number];
 	})[] = [];
@@ -198,7 +199,7 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 			.runners;
 		if (runners) {
 			for (const runner of runners) {
-				if (runner.to === 4) {
+				if (runner.to === 4 && !runner.out) {
 					numRuns += 1;
 				}
 			}

@@ -411,7 +411,7 @@ class GameSim {
 		};
 	}
 
-	probSuccessIfTagUp({
+	probSuccessTagUp({
 		battedBallInfo,
 		runner,
 		startingBase,
@@ -628,14 +628,14 @@ class GameSim {
 					continue;
 				}
 
-				let probSuccess: number = 0;
+				let probSuccessIfAdvances: number = 0;
 
 				if (i === 2) {
 					// Third base
 
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 						// Tag up
-						probSuccess = this.probSuccessIfTagUp({
+						probSuccessIfAdvances = this.probSuccessTagUp({
 							battedBallInfo,
 							runner: p,
 							startingBase: 3,
@@ -657,7 +657,7 @@ class GameSim {
 					// Second base
 
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
-						probSuccess = this.probSuccessIfTagUp({
+						probSuccessIfAdvances = this.probSuccessTagUp({
 							battedBallInfo,
 							runner: p,
 							startingBase: 2,
@@ -695,7 +695,7 @@ class GameSim {
 
 					// Tag up on very deep fly ball
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
-						probSuccess = this.probSuccessIfTagUp({
+						probSuccessIfAdvances = this.probSuccessTagUp({
 							battedBallInfo,
 							runner: p,
 							startingBase: 1,
@@ -705,25 +705,18 @@ class GameSim {
 						});
 					} else if (battedBallInfo.type === "ground") {
 						// Must advance on ground ball
-						probSuccess = 1;
+						probSuccessIfAdvances = 1;
 					}
 				}
 
-				const advance = probSuccess > Math.random();
+				const advance = probSuccessIfAdvances > Math.random();
 				if (advance) {
 					runner.to += 1;
-					runner.out = !someRunnerIsAlreadyOut && probSuccess < Math.random();
+					runner.out =
+						!someRunnerIsAlreadyOut && probSuccessIfAdvances < Math.random();
 					if (runner.out) {
 						someRunnerIsAlreadyOut = true;
 					}
-					console.log(
-						"RUNNER ADVANCE",
-						p.name,
-						probSuccess,
-						runner.out,
-						`${runner.from} -> ${runner.to}`,
-						blockedBases,
-					);
 				}
 			}
 

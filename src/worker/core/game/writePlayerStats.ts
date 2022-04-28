@@ -6,6 +6,7 @@ import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 import maxBy from "lodash-es/maxBy";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
+import processStatsBaseball from "../../../common/processPlayerStats.baseball";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -468,6 +469,12 @@ const writePlayerStats = async (
 								value = p.stat.evG + p.stat.ppG + p.stat.shG;
 							} else if (isSport("hockey") && stat === "a") {
 								value = p.stat.evA + p.stat.ppA + p.stat.shA;
+							} else if (isSport("baseball") && stat === "ab") {
+								value = processStatsBaseball(p.stat, ["ab"]).ab;
+							} else if (isSport("baseball") && stat === "tb") {
+								value = processStatsBaseball(p.stat, ["tb"]).tb;
+							} else if (isSport("baseball") && stat === "ip") {
+								value = processStatsBaseball(p.stat, ["ip"]).ip;
 							} else {
 								value = p.stat[stat];
 							}

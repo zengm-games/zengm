@@ -58,6 +58,11 @@ const stats = {
 		"bf",
 		"pc",
 
+		// Fielding, but only one position is possible (catcher)
+		"pb",
+		"sbF",
+		"csF",
+
 		// Putouts due to strikeouts, used in WAR formula
 		"poSo",
 	] as const,
@@ -103,11 +108,6 @@ const stats = {
 
 		// Pitching derived
 		"ipMax",
-
-		// Fielding, but only one position is possible (catcher)
-		"pb",
-		"sbF",
-		"csF",
 	] as const,
 	byPos: [
 		// Fielding

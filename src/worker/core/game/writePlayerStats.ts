@@ -1,12 +1,19 @@
 import { bySport, isSport, PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, lock, logEvent, random } from "../../util";
+import {
+	g,
+	helpers,
+	local,
+	lock,
+	logEvent,
+	processPlayerStats,
+	random,
+} from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 import maxBy from "lodash-es/maxBy";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
-import processStatsBaseball from "../../../common/processPlayerStats.baseball";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -453,31 +460,21 @@ const writePlayerStats = async (
 							}
 						}
 
+						const derivedMaxStats = bySport({
+							baseball: ["ab", "ip", "tb"],
+							basketball: ["2p", "2pa", "trb", "gmsc"],
+							hockey: ["g", "a"],
+							football: undefined,
+						});
+						const derivedMaxValues: Record<string, number> | undefined =
+							derivedMaxStats
+								? processPlayerStats(p.stat, derivedMaxStats)
+								: undefined;
+
 						for (const key of stats.max) {
 							const stat = key.replace("Max", "");
 
-							let value;
-							if (isSport("basketball") && stat === "2p") {
-								value = p.stat.fg - p.stat.tp;
-							} else if (isSport("basketball") && stat === "2pa") {
-								value = p.stat.fga - p.stat.tpa;
-							} else if (isSport("basketball") && stat === "trb") {
-								value = p.stat.drb + p.stat.orb;
-							} else if (isSport("basketball") && stat === "gmsc") {
-								value = helpers.gameScore(p.stat);
-							} else if (isSport("hockey") && stat === "g") {
-								value = p.stat.evG + p.stat.ppG + p.stat.shG;
-							} else if (isSport("hockey") && stat === "a") {
-								value = p.stat.evA + p.stat.ppA + p.stat.shA;
-							} else if (isSport("baseball") && stat === "ab") {
-								value = processStatsBaseball(p.stat, ["ab"]).ab;
-							} else if (isSport("baseball") && stat === "tb") {
-								value = processStatsBaseball(p.stat, ["tb"]).tb;
-							} else if (isSport("baseball") && stat === "ip") {
-								value = processStatsBaseball(p.stat, ["ip"]).ip;
-							} else {
-								value = p.stat[stat];
-							}
+							const value = p.stat[stat] ?? derivedMaxValues?.[stat];
 
 							if (value !== undefined) {
 								// !ps[key] is for upgraded leagues

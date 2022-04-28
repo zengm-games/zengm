@@ -484,8 +484,87 @@ class GameSim {
 			value *= 0.2;
 		}
 
+		// When stealing, need to go back to base before tagging up, which makes it harder to do
 		if (isStealing) {
 			value *= 0.5;
+		}
+
+		const diff = probs[1] - probs[0];
+
+		const prob = probs[0] + value * diff;
+
+		return prob;
+	}
+
+	probSuccessGroundOut({
+		battedBallInfo,
+		runner,
+		startingBase,
+		hitTo,
+		fielder,
+		isStealing,
+		mustAdvanceWithHitter,
+	}: {
+		battedBallInfo: ReturnType<GameSim["doBattedBall"]>;
+		runner: PlayerGameSim;
+		startingBase: 1 | 2 | 3;
+		hitTo: ReturnType<GameSim["getHitTo"]>;
+		fielder: PlayerGameSim;
+		isStealing: boolean;
+		mustAdvanceWithHitter: boolean;
+	}) {
+		if (mustAdvanceWithHitter) {
+			return 1;
+		}
+
+		const hitToPos = POS_NUMBERS_INVERSE[hitTo];
+		const outfielders = ["LF", "CF", "RF"];
+		if (outfielders.includes(hitToPos)) {
+			return 1;
+		}
+
+		if (isStealing && battedBallInfo.type === "line") {
+			return 0;
+		}
+
+		// Min and max probabilities of success, for a given hit type. Then the actual probability will be picked based on the runner/fielder/startingBase
+		let probs: [number, number];
+		if (battedBallInfo.type === "ground") {
+			if (battedBallInfo.speed === "hard") {
+				probs = [0, 0.5];
+			} else if (battedBallInfo.speed === "normal") {
+				probs = [0.25, 0.75];
+			} else if (battedBallInfo.speed === "soft") {
+				probs = [0.5, 1];
+			} else {
+				throw new Error("Should never happen");
+			}
+		} else {
+			throw new Error("Should never happen");
+		}
+
+		// Amount within min/max probs to go - this ranges from 0 to 1
+		let value =
+			0.5 * (1 + runner.compositeRating.speed - fielder.compositeRating.arm);
+
+		if (startingBase === 3) {
+			if (hitToPos === "P" || hitToPos === "C") {
+				value *= 0.33;
+			} else if (hitToPos === "1B" || hitToPos === "3B") {
+				value *= 0.67;
+			}
+		} else if (startingBase === 2) {
+			value *= 0.2;
+			if (hitToPos === "SS" || hitToPos === "3B") {
+				value *= 0.33;
+			} else if (hitToPos === "P" || hitToPos === "C") {
+				value *= 0.67;
+			}
+		}
+
+		if (isStealing) {
+			// This could put value over 1, but that's okay
+			value *= 1.5;
 		}
 
 		const diff = probs[1] - probs[0];
@@ -536,10 +615,11 @@ class GameSim {
 
 			const isStealing = stealing[i];
 
-			const mustAdvanceWithHitter =
+			const mustAdvanceWithHitter = !!(
 				i === 0 ||
 				(i === 1 && runners[0]) ||
-				(i === 2 && runners[0] && runners[1]);
+				(i === 2 && runners[0] && runners[1])
+			);
 
 			const p = this.team[this.o].playersByPid[runner.pid];
 			const hitToPos = POS_NUMBERS_INVERSE[hitTo];
@@ -645,13 +725,15 @@ class GameSim {
 						});
 					} else {
 						// Maybe score on ground ball
-						if (
-							(!isStealing && Math.random() < 0.4) ||
-							(isStealing && Math.random() < 0.8) ||
-							mustAdvanceWithHitter
-						) {
-							probSuccess = 1;
-						}
+						probSuccessIfAdvances = this.probSuccessGroundOut({
+							battedBallInfo,
+							runner: p,
+							startingBase: 3,
+							hitTo,
+							fielder,
+							isStealing,
+							mustAdvanceWithHitter,
+						});
 					}
 				} else if (i === 1) {
 					// Second base
@@ -666,29 +748,15 @@ class GameSim {
 							isStealing,
 						});
 					} else {
-						let tendency;
-						if (hitTo == 3) {
-							tendency = 1.5;
-						} else if (hitTo === 4) {
-							tendency = 1;
-						} else if (hitTo === 5) {
-							tendency = 0.5;
-						} else if (hitTo === 6) {
-							tendency = 0.5;
-						} else if (hitTo >= 7) {
-							tendency = 2;
-						} else {
-							tendency = 0.5;
-						}
-
-						// Maybe advance on ground ball
-						if (
-							isStealing ||
-							mustAdvanceWithHitter ||
-							Math.random() < 0.4 * tendency
-						) {
-							probSuccess = 1;
-						}
+						probSuccessIfAdvances = this.probSuccessGroundOut({
+							battedBallInfo,
+							runner: p,
+							startingBase: 3,
+							hitTo,
+							fielder,
+							isStealing,
+							mustAdvanceWithHitter,
+						});
 					}
 				} else {
 					// First base
@@ -729,7 +797,6 @@ class GameSim {
 			if (runner.to < 4) {
 				blockedBases.add((runner.to - 1) as any);
 			}
-			console.log("blockedBases", blockedBases);
 
 			if (runner.out) {
 				this.recordStat(this.d, fielder, "a", 1, "fielding");

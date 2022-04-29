@@ -133,23 +133,29 @@ const processStats = (
 		} else if (stat === "rfldTot") {
 			row[stat] = sumByPos(ps.rfld);
 		} else if (stat === "ch") {
-			row[stat] = derivedByPosStat(i => ps.po[i] + ps.a[i] + ps.e[i]);
+			row[stat] = derivedByPosStat(
+				i => (ps.po[i] ?? 0) + (ps.a[i] ?? 0) + (ps.e[i] ?? 0),
+			);
 		} else if (stat === "fldp") {
 			row[stat] = derivedByPosStat(i =>
-				helpers.ratio(ps.po[i] + ps.a[i], ps.po[i] + ps.a[i] + ps.e[i]),
+				helpers.ratio(
+					(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
+					(ps.po[i] ?? 0) + (ps.a[i] ?? 0) + (ps.e[i] ?? 0),
+				),
 			);
 		} else if (stat === "rf9") {
 			row[stat] = derivedByPosStat(i =>
-				helpers.ratio(ps.po[i] + ps.a[i], ps.outsF[i] / NUM_OUTS_PER_GAME),
+				helpers.ratio(
+					(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
+					(ps.outsF[i] ?? 0) / NUM_OUTS_PER_GAME,
+				),
 			);
 		} else if (stat === "rfg") {
 			row[stat] = derivedByPosStat(i =>
-				helpers.ratio(ps.po[i] + ps.a[i], ps.gpF[i]),
+				helpers.ratio((ps.po[i] ?? 0) + (ps.a[i] ?? 0), ps.gpF[i]),
 			);
 		} else if (stat === "csp") {
-			row[stat] = derivedByPosStat(i =>
-				helpers.percentage(ps.csF[i], ps.csF[i] + ps.sbF[i]),
-			);
+			row[stat] = helpers.percentage(ps.csF, ps.csF + ps.sbF);
 		} else if (stat === "inn") {
 			row[stat] = derivedByPosStat(i => outsToInnings(ps.outsF[i]));
 		} else {

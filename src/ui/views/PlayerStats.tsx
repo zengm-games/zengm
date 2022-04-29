@@ -11,6 +11,16 @@ export const formatStatGameHigh = (
 	stat: string,
 	statType?: string,
 ) => {
+	if (isSport("baseball")) {
+		// Catcher-only fielding stats
+		if (
+			ps.pos !== "C" &&
+			(stat === "pb" || stat === "sbF" || stat === "csF" || stat === "csp")
+		) {
+			return null;
+		}
+	}
+
 	if (stat.endsWith("Max")) {
 		if (!Array.isArray(ps[stat])) {
 			return null;

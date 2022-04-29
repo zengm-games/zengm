@@ -1240,14 +1240,16 @@ class GameSim {
 		let numBases: 1 | 2 | 3 | 4;
 		let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
 
-		if (hit) {
-			result = "hit";
-			numBases = this.getNumBases(batter, battedBallInfo);
-		} else if (
+		if (
+			hit ||
 			Math.random() < this.probErrorIfNotHit(battedBallInfo.type as any, hitTo)
 		) {
-			result = "error";
 			numBases = this.getNumBases(batter, battedBallInfo);
+			if (hit || numBases === 4) {
+				result = "hit";
+			} else {
+				result = "error";
+			}
 		} else {
 			numBases = 1;
 

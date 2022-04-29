@@ -1900,6 +1900,21 @@ class GameSim {
 			}
 
 			const t2 = t === 0 ? 1 : 0;
+			for (const [pos, p] of Object.entries(this.team[t].playersInGameByPos)) {
+				if (pos !== "DH") {
+					const posIndex = (POS_NUMBERS as any)[pos] - 1;
+
+					// Use ptsQtrs rather than this.numInnings and this.overtimes because it handles when the bottom half of the last inning is not played
+					if (
+						pos !== "DH" &&
+						p.p.stat.outsF[posIndex] ===
+							NUM_OUTS_PER_INNING * this.team[t2].t.stat.ptsQtrs.length
+					) {
+						this.recordStat(t, p.p, "cgF", 1, "fielding");
+					}
+				}
+			}
+
 			const teamWon = this.team[t].t.stat.pts > this.team[t2].t.stat.pts;
 			if (
 				teamWon &&
@@ -2121,7 +2136,8 @@ class GameSim {
 				s !== "gpF" &&
 				s !== "poSo" &&
 				s !== "pc" &&
-				s !== "outsF"
+				s !== "outsF" &&
+				s !== "cgF"
 			) {
 				if (s === "r") {
 					this.team[t].t.stat.pts += amt;

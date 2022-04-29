@@ -21,6 +21,8 @@ import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
 
+const NUM_OUTS_PER_INNING = 3;
+
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 type OccupiedBase = {
@@ -609,7 +611,7 @@ class GameSim {
 		let someRunnerIsAlreadyOut = false;
 		for (let i = 2 as 0 | 1 | 2; i >= 0; i--) {
 			const runner = runners[i];
-			if (!runner || this.outs >= 3) {
+			if (!runner || this.outs >= NUM_OUTS_PER_INNING) {
 				continue;
 			}
 
@@ -928,7 +930,7 @@ class GameSim {
 
 				this.logOut();
 
-				if (this.outs >= 3) {
+				if (this.outs >= NUM_OUTS_PER_INNING) {
 					// Same batter will be up next inning
 					this.team[this.o].atBat -= 1;
 				}
@@ -1476,7 +1478,7 @@ class GameSim {
 				});
 				if (numStealing > 0) {
 					this.processSteals(stealing);
-					if (this.outs >= 3) {
+					if (this.outs >= NUM_OUTS_PER_INNING) {
 						doneBatter = true;
 						return doneBatter;
 					}
@@ -1487,7 +1489,7 @@ class GameSim {
 			if (this.strikes >= 3) {
 				this.doStrikeout(swinging);
 				doneBatter = true;
-				if (this.outs >= 3) {
+				if (this.outs >= NUM_OUTS_PER_INNING) {
 					return doneBatter;
 				}
 			} else {
@@ -1501,7 +1503,7 @@ class GameSim {
 
 			if (numStealing > 0) {
 				this.processSteals(stealing);
-				if (this.outs >= 3) {
+				if (this.outs >= NUM_OUTS_PER_INNING) {
 					doneBatter = true;
 					return doneBatter;
 				}
@@ -1687,7 +1689,7 @@ class GameSim {
 
 		const unearned =
 			runInfo.reachedOnError ||
-			(this.outsIfNoErrorsByPitcherPid[pitcher.id] ?? 0) >= 3;
+			(this.outsIfNoErrorsByPitcherPid[pitcher.id] ?? 0) >= NUM_OUTS_PER_INNING;
 
 		this.recordStat(this.d, pitcher, "rPit");
 		if (!unearned) {
@@ -2039,7 +2041,7 @@ class GameSim {
 				break;
 			}
 
-			if (this.outs >= 3) {
+			if (this.outs >= NUM_OUTS_PER_INNING) {
 				this.playByPlay.logEvent({
 					type: "sideOver",
 					inning: this.inning,
@@ -2126,7 +2128,7 @@ class GameSim {
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;
 					this.playByPlay.logStat(t, undefined, "pts", amt);
 				} else if (s === "er") {
-					if (this.outsIfNoErrors >= 3) {
+					if (this.outsIfNoErrors >= NUM_OUTS_PER_INNING) {
 						// It's an ER for this reliever, but not for the team
 						this.team[t].t.stat.rPit += amt;
 					} else {

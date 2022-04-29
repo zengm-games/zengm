@@ -226,7 +226,25 @@ const PLAYER_STATS_TABLES = {
 	},
 	/*fielding: {
 		name: "Fielding",
-		stats: ["gp", "gc", "ops", "dps", "gps", "ps"],
+		stats: [
+			"pos",
+			"gpF",
+			"gsF",
+			"cgF",
+			"inn",
+			"ch",
+			"po",
+			"a",
+			"e",
+			"dp",
+			"fldp",
+			"rfld",
+			"rf9",
+			"rfg",
+			"pb",
+			"sbF",
+			"csF",
+		],
 	},*/
 	advanced: {
 		name: "Advanced",

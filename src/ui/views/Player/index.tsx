@@ -89,6 +89,7 @@ const StatsTable = ({
 		cols.at(-1)!.title = "%";
 	}
 
+	let footer;
 	if (isSport("baseball") && name === "Fielding") {
 		playerStats = (playerStats as any[])
 			.map(row => {
@@ -119,6 +120,49 @@ const StatsTable = ({
 				});
 			})
 			.flat() as any;
+
+		const posIndexes = [];
+		for (let i = 0; i < (careerStats.gpF as any).length; i++) {
+			if ((careerStats.gpF as any)[i] !== undefined) {
+				posIndexes.push(i);
+			}
+		}
+		if (posIndexes.length === 0) {
+			// Add one dummy row, if no career stats
+			posIndexes.push(0);
+		}
+
+		let firstFooter = true;
+		footer = posIndexes.map(posIndex => {
+			const newRow = {
+				...careerStats,
+				pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
+			} as any;
+
+			for (const key of stats) {
+				if (Array.isArray(newRow[key])) {
+					newRow[key] = newRow[key][posIndex] ?? 0;
+				}
+			}
+
+			const row = [
+				firstFooter ? "Career" : null,
+				null,
+				null,
+				...stats.map(stat => formatStatGameHigh(newRow, stat)),
+			];
+
+			firstFooter = false;
+
+			return row;
+		});
+	} else {
+		footer = [
+			"Career",
+			null,
+			null,
+			...stats.map(stat => formatStatGameHigh(careerStats, stat)),
+		];
 	}
 
 	return (
@@ -163,12 +207,7 @@ const StatsTable = ({
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
-				footer={[
-					"Career",
-					null,
-					null,
-					...stats.map(stat => formatStatGameHigh(careerStats, stat)),
-				]}
+				footer={footer}
 				hideAllControls
 				name={`Player:${name}`}
 				rows={playerStats.map((ps, i) => {

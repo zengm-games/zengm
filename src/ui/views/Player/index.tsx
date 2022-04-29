@@ -8,7 +8,9 @@ import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
-import { PLAYER } from "../../../common";
+import { isSport, PLAYER } from "../../../common";
+import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
+import { outsToInnings } from "../../../common/processPlayerStats.baseball";
 
 const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
 	return (
@@ -47,7 +49,7 @@ const StatsTable = ({
 		return null;
 	}
 
-	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
+	let playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
 	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
 
 	if (onlyShowIf !== undefined) {
@@ -68,8 +70,10 @@ const StatsTable = ({
 		"Year",
 		"Team",
 		"Age",
-		...stats.map(
-			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		...stats.map(stat =>
+			stat === "pos"
+				? "Pos"
+				: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
 		),
 	]);
 
@@ -80,10 +84,43 @@ const StatsTable = ({
 		superCols[0].colspan -= 1;
 	}
 
-	if (name === "Shot Locations") {
+	if (isSport("basketball") && name === "Shot Locations") {
 		cols.at(-3)!.title = "M";
 		cols.at(-2)!.title = "A";
 		cols.at(-1)!.title = "%";
+	}
+
+	if (isSport("baseball") && name === "Fielding") {
+		playerStats = (playerStats as any[])
+			.map(row => {
+				if (row.gpF.length === 0) {
+					return [];
+				}
+
+				const posIndexes = [];
+				for (let i = 0; i < row.gpF.length; i++) {
+					if (row.gpF[i] !== undefined) {
+						posIndexes.push(i);
+					}
+				}
+
+				return posIndexes.map(posIndex => {
+					const newRow = {
+						...row,
+						pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
+					};
+					for (const key of stats) {
+						if (Array.isArray(newRow[key])) {
+							newRow[key] = newRow[key][posIndex] ?? 0;
+						}
+					}
+
+					newRow.outsF = outsToInnings(newRow.outsF);
+
+					return newRow;
+				});
+			})
+			.flat() as any;
 	}
 
 	return (

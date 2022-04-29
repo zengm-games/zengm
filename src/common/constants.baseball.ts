@@ -224,14 +224,14 @@ const PLAYER_STATS_TABLES = {
 		],
 		onlyShowIf: ["gpPit"],
 	},
-	/*fielding: {
+	fielding: {
 		name: "Fielding",
 		stats: [
 			"pos",
 			"gpF",
 			"gsF",
 			"cgF",
-			"inn",
+			"outsF",
 			"ch",
 			"po",
 			"a",
@@ -244,8 +244,9 @@ const PLAYER_STATS_TABLES = {
 			"pb",
 			"sbF",
 			"csF",
+			"csp",
 		],
-	},*/
+	},
 	advanced: {
 		name: "Advanced",
 		stats: ["rbat", "rbr", "rfldTot", "rpos", "rpit", "war"],

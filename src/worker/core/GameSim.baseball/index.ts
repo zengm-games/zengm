@@ -1803,6 +1803,13 @@ class GameSim {
 		this.outs += 1;
 		const pitcher = this.team[this.d].getPitcher().p;
 		this.recordStat(this.d, pitcher, "outs");
+		for (const [pos, p] of Object.entries(
+			this.team[this.d].playersInGameByPos,
+		)) {
+			if (pos !== "DH") {
+				this.recordStat(this.d, p.p, "outsF", 1, "fielding");
+			}
+		}
 
 		if (this.outsIfNoErrorsByPitcherPid[pitcher.id] === undefined) {
 			this.outsIfNoErrorsByPitcherPid[pitcher.id] = 0;
@@ -2105,7 +2112,13 @@ class GameSim {
 			s !== "energy"
 		) {
 			// Filter out stats that are only for player, not team
-			if (s !== "gsF" && s !== "gpF" && s !== "poSo" && s !== "pc") {
+			if (
+				s !== "gsF" &&
+				s !== "gpF" &&
+				s !== "poSo" &&
+				s !== "pc" &&
+				s !== "outsF"
+			) {
 				if (s === "r") {
 					this.team[t].t.stat.pts += amt;
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;

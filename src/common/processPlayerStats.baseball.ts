@@ -14,6 +14,12 @@ export const sumByPos = (array: (number | undefined)[]) => {
 	return sum;
 };
 
+export const outsToInnings = (outs: number) => {
+	const completeInnings = Math.floor(outs / 3);
+	const fractionalInnings = outs % 3;
+	return completeInnings + fractionalInnings / 10;
+};
+
 const processStats = (
 	ps: PlayerStats,
 	stats: string[],
@@ -28,9 +34,7 @@ const processStats = (
 	const obp = helpers.ratio(ps.h + ps.bb + ps.hbp, ab + ps.bb + ps.hbp + ps.sf);
 	const slg = helpers.ratio(tb, ab);
 
-	const completeInnings = Math.floor(ps.outs / 3);
-	const fractionalInnings = ps.outs % 3;
-	const ip = completeInnings + fractionalInnings / 10;
+	const ip = outsToInnings(ps.outs);
 	const era = helpers.ratio(ps.er, ps.outs / NUM_OUTS_PER_GAME);
 
 	for (const stat of stats) {

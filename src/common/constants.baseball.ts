@@ -231,7 +231,7 @@ const PLAYER_STATS_TABLES = {
 			"gpF",
 			"gsF",
 			"cgF",
-			"outsF",
+			"inn",
 			"ch",
 			"po",
 			"a",

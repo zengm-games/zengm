@@ -14,7 +14,7 @@ export const sumByPos = (array: (number | undefined)[]) => {
 	return sum;
 };
 
-export const outsToInnings = (outs: number) => {
+const outsToInnings = (outs: number) => {
 	const completeInnings = Math.floor(outs / 3);
 	const fractionalInnings = outs % 3;
 	return completeInnings + fractionalInnings / 10;
@@ -36,6 +36,30 @@ const processStats = (
 
 	const ip = outsToInnings(ps.outs);
 	const era = helpers.ratio(ps.er, ps.outs / NUM_OUTS_PER_GAME);
+
+	let posIndexesChecked = false;
+	const posIndexes: number[] = [];
+	const initPosIndexes = () => {
+		if (!posIndexesChecked) {
+			for (let i = 0; i < row.gpF.length; i++) {
+				if (row.gpF[i] !== undefined) {
+					posIndexes.push(i);
+				}
+			}
+			posIndexesChecked = true;
+		}
+	};
+
+	const derivedByPosStat = (cb: (i: number) => number) => {
+		const output = [];
+		initPosIndexes();
+		if (posIndexes.length > 0) {
+			for (const i of posIndexes) {
+				output[i] = cb(i);
+			}
+		}
+		return output;
+	};
 
 	for (const stat of stats) {
 		if (stat === "age") {
@@ -108,6 +132,26 @@ const processStats = (
 			row[stat] = helpers.ratio(ps.soPit, ps.bbPit);
 		} else if (stat === "rfldTot") {
 			row[stat] = sumByPos(ps.rfld);
+		} else if (stat === "ch") {
+			row[stat] = derivedByPosStat(i => ps.po[i] + ps.a[i] + ps.e[i]);
+		} else if (stat === "fldp") {
+			row[stat] = derivedByPosStat(i =>
+				helpers.ratio(ps.po[i] + ps.a[i], ps.po[i] + ps.a[i] + ps.e[i]),
+			);
+		} else if (stat === "rf9") {
+			row[stat] = derivedByPosStat(i =>
+				helpers.ratio(ps.po[i] + ps.a[i], ps.outsF[i] / NUM_OUTS_PER_GAME),
+			);
+		} else if (stat === "rfg") {
+			row[stat] = derivedByPosStat(i =>
+				helpers.ratio(ps.po[i] + ps.a[i], ps.gpF[i]),
+			);
+		} else if (stat === "csp") {
+			row[stat] = derivedByPosStat(i =>
+				helpers.percentage(ps.csF[i], ps.csF[i] + ps.sbF[i]),
+			);
+		} else if (stat === "inn") {
+			row[stat] = derivedByPosStat(i => outsToInnings(ps.outsF[i]));
 		} else {
 			row[stat] = ps[stat];
 		}

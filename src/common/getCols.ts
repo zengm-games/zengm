@@ -524,7 +524,7 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "CG",
 		},
-		"stat:outsF": {
+		"stat:inn": {
 			desc: "Innings Played In Field",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",

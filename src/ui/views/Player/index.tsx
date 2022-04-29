@@ -10,10 +10,6 @@ import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
-import {
-	NUM_OUTS_PER_GAME,
-	outsToInnings,
-} from "../../../common/processPlayerStats.baseball";
 
 const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
 	return (
@@ -118,16 +114,6 @@ const StatsTable = ({
 							newRow[key] = newRow[key][posIndex] ?? 0;
 						}
 					}
-
-					newRow.ch = newRow.po + newRow.a + newRow.e;
-					newRow.fldp = helpers.ratio(newRow.po + newRow.a, newRow.ch);
-					newRow.rf9 = helpers.ratio(
-						newRow.po + newRow.a,
-						newRow.outsF / NUM_OUTS_PER_GAME,
-					);
-					newRow.rfg = helpers.ratio(newRow.po + newRow.a, newRow.gpF);
-					newRow.csp = helpers.percentage(newRow.csF, newRow.csF + newRow.sbF);
-					newRow.outsF = outsToInnings(newRow.outsF);
 
 					return newRow;
 				});

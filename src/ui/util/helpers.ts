@@ -135,7 +135,7 @@ const roundOverrides: Record<
 		gpF: "noDecimalPlace",
 		gsF: "noDecimalPlace",
 		cgF: "noDecimalPlace",
-		outsF: "oneDecimalPlace",
+		inn: "oneDecimalPlace",
 		ch: "noDecimalPlace",
 		po: "noDecimalPlace",
 		a: "noDecimalPlace",

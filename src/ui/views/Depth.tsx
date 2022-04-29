@@ -184,7 +184,7 @@ const Depth = ({
 
 	const getIDsToSave = (pids: number[]): number[] => {
 		// For baseball lineup where saved IDs are not player IDs
-		if (isSport("baseball") && players[0].lineupIndex === undefined) {
+		if (isSport("baseball") && pos !== "L" && pos !== "LP") {
 			return pids;
 		}
 		return pids.map(pid => {
@@ -220,7 +220,6 @@ const Depth = ({
 
 			<ul className="nav nav-tabs mb-3 d-none d-sm-flex">
 				{Object.keys(numStartersByPos).map(pos2 => {
-					console.log(showDH, pos, pos2);
 					if (
 						(showDH === "noDH" && (pos2 === "L" || pos2 === "D")) ||
 						(showDH === "dh" && (pos2 === "LP" || pos2 === "DP"))

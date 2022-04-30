@@ -726,9 +726,16 @@ const teamStats = (params: Params) => {
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "team",
+		football: "team",
+		hockey: "team",
+	});
+
 	return {
 		season: validateSeason(params.season),
-		teamOpponent: params.teamOpponent ?? "team",
+		teamOpponent: params.teamOpponent ?? defaultStatType,
 		playoffs,
 	};
 };

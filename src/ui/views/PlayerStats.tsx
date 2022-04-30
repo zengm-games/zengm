@@ -5,7 +5,7 @@ import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
+import { expandFieldingStats } from "../util/expandFieldingStats.baseball";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -111,34 +111,11 @@ const PlayerStats = ({
 	}
 
 	if (isSport("baseball") && statType === "fielding") {
-		players = (players as any[])
-			.map(row => {
-				const posIndexes = [];
-				for (let i = 0; i < row.stats.gpF.length; i++) {
-					if (row.stats.gpF[i] !== undefined) {
-						posIndexes.push(i);
-					}
-				}
-
-				return posIndexes.map(posIndex => {
-					const newRow = {
-						...row,
-						stats: {
-							...row.stats,
-							pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
-						},
-					};
-
-					for (const key of stats) {
-						if (Array.isArray(newRow.stats[key])) {
-							newRow.stats[key] = newRow.stats[key][posIndex] ?? 0;
-						}
-					}
-
-					return newRow;
-				});
-			})
-			.flat() as any;
+		players = expandFieldingStats({
+			rows: players,
+			stats,
+			statsProperty: "stats",
+		});
 	}
 
 	const rows = players.map(p => {

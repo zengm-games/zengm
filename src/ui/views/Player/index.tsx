@@ -10,6 +10,7 @@ import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
+import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
 
 const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
 	return (
@@ -91,31 +92,10 @@ const StatsTable = ({
 
 	let footer;
 	if (isSport("baseball") && name === "Fielding") {
-		playerStats = (playerStats as any[])
-			.map(row => {
-				const posIndexes = [];
-				for (let i = 0; i < row.gpF.length; i++) {
-					if (row.gpF[i] !== undefined) {
-						posIndexes.push(i);
-					}
-				}
-
-				return posIndexes.map(posIndex => {
-					const newRow = {
-						...row,
-						pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
-					};
-
-					for (const key of stats) {
-						if (Array.isArray(newRow[key])) {
-							newRow[key] = newRow[key][posIndex] ?? 0;
-						}
-					}
-
-					return newRow;
-				});
-			})
-			.flat() as any;
+		playerStats = expandFieldingStats({
+			rows: playerStats,
+			stats,
+		});
 
 		const posIndexes = [];
 		for (let i = 0; i < (careerStats.gpF as any).length; i++) {

@@ -200,7 +200,10 @@ const TeamStats = ({
 		}
 
 		return {
-			key: t.tid,
+			key:
+				isSport("baseball") && teamOpponent === "fielding"
+					? `${t.tid}-${(t.stats as any).pos}`
+					: t.tid,
 			data: [
 				null,
 				wrappedTeamLogoAndName(

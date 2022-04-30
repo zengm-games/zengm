@@ -55,7 +55,11 @@ const StatsTable = ({
 	if (onlyShowIf !== undefined) {
 		let display = false;
 		for (const stat of onlyShowIf) {
-			if (careerStats[stat] > 0) {
+			if (
+				careerStats[stat] > 0 ||
+				(Array.isArray(careerStats[stat]) &&
+					(careerStats[stat] as any).length > 0)
+			) {
 				display = true;
 				break;
 			}
@@ -97,41 +101,16 @@ const StatsTable = ({
 			stats,
 		});
 
-		const posIndexes = [];
-		for (let i = 0; i < (careerStats.gpF as any).length; i++) {
-			if ((careerStats.gpF as any)[i] !== undefined) {
-				posIndexes.push(i);
-			}
-		}
-		if (posIndexes.length === 0) {
-			// Add one dummy row, if no career stats
-			posIndexes.push(0);
-		}
-
-		let firstFooter = true;
-		footer = posIndexes.map(posIndex => {
-			const newRow = {
-				...careerStats,
-				pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
-			} as any;
-
-			for (const key of stats) {
-				if (Array.isArray(newRow[key])) {
-					newRow[key] = newRow[key][posIndex] ?? 0;
-				}
-			}
-
-			const row = [
-				firstFooter ? "Career" : null,
-				null,
-				null,
-				...stats.map(stat => formatStatGameHigh(newRow, stat)),
-			];
-
-			firstFooter = false;
-
-			return row;
-		});
+		footer = expandFieldingStats({
+			rows: [careerStats],
+			stats,
+			addDummyPosIndex: true,
+		}).map((object, i) => [
+			i === 0 ? "Career" : null,
+			null,
+			null,
+			...stats.map(stat => formatStatGameHigh(object, stat)),
+		]);
 	} else {
 		footer = [
 			"Career",

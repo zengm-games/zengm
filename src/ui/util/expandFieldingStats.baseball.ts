@@ -1,18 +1,20 @@
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
 
 export const expandFieldingStats = ({
+	addDummyPosIndex,
 	allPositions,
 	rows,
 	stats,
 	statsProperty,
 }: {
+	addDummyPosIndex?: boolean;
 	allPositions?: boolean;
 	rows: any[];
 	stats: string[];
 
 	// When this is undefined, assume stats are in root object
 	statsProperty?: string;
-}) => {
+}): any[] => {
 	return rows
 		.map(row => {
 			const rowStats = statsProperty !== undefined ? row[statsProperty] : row;
@@ -26,6 +28,10 @@ export const expandFieldingStats = ({
 					if (rowStats.gpF[i] !== undefined) {
 						posIndexes.push(i);
 					}
+				}
+
+				if (addDummyPosIndex && posIndexes.length === 0) {
+					posIndexes.push(0);
 				}
 			}
 

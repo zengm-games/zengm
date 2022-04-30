@@ -9,7 +9,20 @@ export type TeamStatAttr =
 	| "era"
 	| "po"
 	| "poSo"
-	| "poTot";
+	| "poTot"
+	| "obp"
+	| "slg"
+	| "tb"
+	| "ip"
+	| "winp"
+	| "fip"
+	| "whip"
+	| "h9"
+	| "hr9"
+	| "bb9"
+	| "so9"
+	| "pc9"
+	| "sow";
 
 type AwardTeam = {
 	tid: number;

@@ -111,6 +111,10 @@ class Team<DH extends boolean> {
 	}
 
 	getBatter() {
+		if (!this.playersInGameByBattingOrder[this.atBat]) {
+			console.log(this.atBat);
+			console.log(this.playersInGameByBattingOrder);
+		}
 		return this.playersInGameByBattingOrder[this.atBat];
 	}
 

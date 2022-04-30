@@ -153,7 +153,7 @@ const updatePlayers = async (
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&
-			(isSport("football") || isSport("hockey"))
+			!isSport("basketball")
 		) {
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;
@@ -171,7 +171,11 @@ const updatePlayers = async (
 
 			players = players.filter(p => {
 				for (const stat of onlyShowIf) {
-					if (typeof p[obj][stat] === "number" && p[obj][stat] > 0) {
+					// Array check is for byPos stats
+					if (
+						(typeof p[obj][stat] === "number" && p[obj][stat] > 0) ||
+						(Array.isArray(p[obj][stat]) && p[obj][stat].length > 0)
+					) {
 						return true;
 					}
 				}

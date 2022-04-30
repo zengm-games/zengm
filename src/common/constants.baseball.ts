@@ -181,7 +181,7 @@ const PLAYER_STATS_TABLES = {
 			"sf",
 			"ibb",
 		],
-		onlyShowIf: ["gp"],
+		onlyShowIf: ["pa", "r", "sb", "cs"],
 	},
 	pitching: {
 		name: "Pitching",
@@ -246,6 +246,7 @@ const PLAYER_STATS_TABLES = {
 			"csF",
 			"csp",
 		],
+		onlyShowIf: ["gpF"],
 	},
 	advanced: {
 		name: "Advanced",

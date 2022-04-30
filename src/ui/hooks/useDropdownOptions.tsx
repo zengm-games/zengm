@@ -5,6 +5,7 @@ import {
 	POSITIONS,
 	bySport,
 	isSport,
+	PLAYER_STATS_TABLES,
 } from "../../common";
 import { useLocalShallow } from "../util";
 import type { LocalStateUI } from "../../common/types";
@@ -151,6 +152,14 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	gameLog: "Game Log",
 };
 
+if (isSport("baseball")) {
+	Object.assign(dropdownValues, {
+		batting: PLAYER_STATS_TABLES.batting.name,
+		pitching: PLAYER_STATS_TABLES.pitching.name,
+		fielding: PLAYER_STATS_TABLES.fielding.name,
+	});
+}
+
 if (isSport("hockey")) {
 	Object.assign(dropdownValues, {
 		F: "Forwards",
@@ -284,6 +293,12 @@ const useDropdownOptions = (
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {
 		keys = bySport({
+			baseball: [
+				"batting",
+				"pitching",
+				"fielding",
+				...(field === "statTypesAdv" ? ["advanced", "gameHighs"] : []),
+			],
 			basketball: [
 				"perGame",
 				"per36",
@@ -301,6 +316,7 @@ const useDropdownOptions = (
 		});
 	} else if (field === "statTypesStrict") {
 		keys = bySport({
+			baseball: ["totals"],
 			basketball: ["perGame", "per36", "totals"],
 			football: ["totals"],
 			hockey: ["totals"],

@@ -81,8 +81,10 @@ const PlayerStats = ({
 		"Age",
 		"Team",
 		...(season === "all" ? ["Season"] : []),
-		...stats.map(
-			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		...stats.map(stat =>
+			stat === "pos"
+				? "Pos"
+				: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
 		),
 	]);
 

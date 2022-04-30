@@ -368,6 +368,7 @@ const leaders = (params: Params) => {
 		statType = "totals";
 	} else {
 		statType = bySport({
+			baseball: "totals",
 			basketball: "perGame",
 			football: "totals",
 			hockey: "totals",
@@ -394,6 +395,7 @@ const leadersYears = (params: Params) => {
 		statType = "totals";
 	} else {
 		statType = bySport({
+			baseball: "totals",
 			basketball: "perGame",
 			football: "totals",
 			hockey: "totals",
@@ -401,6 +403,7 @@ const leadersYears = (params: Params) => {
 	}
 
 	const defaultStat = bySport({
+		baseball: "ba",
 		basketball: "pts",
 		football: "pssYds",
 		hockey: "g",
@@ -626,6 +629,7 @@ const playerStats = (params: Params) => {
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
 	const defaultStatType = bySport({
+		baseball: "batting",
 		basketball: "perGame",
 		football: "passing",
 		hockey: "skater",
@@ -648,6 +652,7 @@ const playerStats = (params: Params) => {
 
 const playerStatDists = (params: Params) => {
 	const defaultStatType = bySport({
+		baseball: "batting",
 		basketball: "perGame",
 		football: "passing",
 		hockey: "skater",

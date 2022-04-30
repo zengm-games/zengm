@@ -163,7 +163,10 @@ const TeamStats = ({
 		return data;
 	};
 
-	if (isSport("baseball") && teamOpponent === "fielding") {
+	if (
+		isSport("baseball") &&
+		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
+	) {
 		teams = expandFieldingStats({
 			rows: teams,
 			stats,
@@ -201,7 +204,8 @@ const TeamStats = ({
 
 		return {
 			key:
-				isSport("baseball") && teamOpponent === "fielding"
+				isSport("baseball") &&
+				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 					? `${t.tid}-${(t.stats as any).pos}`
 					: t.tid,
 			data: [

@@ -6,6 +6,7 @@ import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { formatMaybeInteger } from "./LeagueStats";
+import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
 
 const TeamStats = ({
 	allStats,
@@ -75,7 +76,7 @@ const TeamStats = ({
 				if (stat.startsWith("opp")) {
 					return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 				}
-				return `stat:${stat}`;
+				return stat === "pos" ? "Pos" : `stat:${stat}`;
 			}),
 		],
 		{
@@ -161,6 +162,32 @@ const TeamStats = ({
 
 		return data;
 	};
+
+	if (isSport("baseball") && teamOpponent === "fielding") {
+		teams = (teams as any[])
+			.map(row => {
+				const posIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+				return posIndexes.map(posIndex => {
+					const newRow = {
+						...row,
+						stats: {
+							...row.stats,
+							pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
+						},
+					};
+
+					for (const key of stats) {
+						if (Array.isArray(newRow.stats[key])) {
+							newRow.stats[key] = newRow.stats[key][posIndex] ?? 0;
+						}
+					}
+
+					return newRow;
+				});
+			})
+			.flat() as any;
+	}
 
 	const rows = teams.map(t => {
 		const data = makeRowObject(t.stats, t.seasonAttrs);

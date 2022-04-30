@@ -93,10 +93,6 @@ const StatsTable = ({
 	if (isSport("baseball") && name === "Fielding") {
 		playerStats = (playerStats as any[])
 			.map(row => {
-				if (row.gpF.length === 0) {
-					return [];
-				}
-
 				const posIndexes = [];
 				for (let i = 0; i < row.gpF.length; i++) {
 					if (row.gpF[i] !== undefined) {

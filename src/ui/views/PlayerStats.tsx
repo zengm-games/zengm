@@ -5,6 +5,7 @@ import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -109,6 +110,37 @@ const PlayerStats = ({
 		}
 	}
 
+	if (isSport("baseball") && statType === "fielding") {
+		players = (players as any[])
+			.map(row => {
+				const posIndexes = [];
+				for (let i = 0; i < row.stats.gpF.length; i++) {
+					if (row.stats.gpF[i] !== undefined) {
+						posIndexes.push(i);
+					}
+				}
+
+				return posIndexes.map(posIndex => {
+					const newRow = {
+						...row,
+						stats: {
+							...row.stats,
+							pos: (POS_NUMBERS_INVERSE as any)[posIndex + 1],
+						},
+					};
+
+					for (const key of stats) {
+						if (Array.isArray(newRow.stats[key])) {
+							newRow.stats[key] = newRow.stats[key][posIndex] ?? 0;
+						}
+					}
+
+					return newRow;
+				});
+			})
+			.flat() as any;
+	}
+
 	const rows = players.map(p => {
 		let pos;
 		if (Array.isArray(p.ratings) && p.ratings.length > 0) {
@@ -138,7 +170,14 @@ const PlayerStats = ({
 			formatStatGameHigh(p.stats, stat, statType),
 		);
 
-		const key = season === "all" ? `${p.pid}-${p.stats.season}` : p.pid;
+		let key;
+		if (isSport("baseball") && statType === "fielding") {
+			key = `${p.pid}-${p.stats.season}-${p.stats.pos}`;
+		} else if (season === "all") {
+			key = `${p.pid}-${p.stats.season}`;
+		} else {
+			key = p.pid;
+		}
 
 		return {
 			key,

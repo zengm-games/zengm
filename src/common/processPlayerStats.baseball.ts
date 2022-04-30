@@ -14,7 +14,7 @@ export const sumByPos = (array: (number | undefined)[]) => {
 	return sum;
 };
 
-const outsToInnings = (outs: number) => {
+export const outsToInnings = (outs: number) => {
 	const completeInnings = Math.floor(outs / 3);
 	const fractionalInnings = outs % 3;
 	return completeInnings + fractionalInnings / 10;

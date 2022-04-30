@@ -22,7 +22,14 @@ export type TeamStatAttr =
 	| "bb9"
 	| "so9"
 	| "pc9"
-	| "sow";
+	| "sow"
+	| "rfldTot"
+	| "ch"
+	| "fldp"
+	| "rf9"
+	| "rfg"
+	| "csp"
+	| "inn";
 
 type AwardTeam = {
 	tid: number;

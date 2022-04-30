@@ -1,6 +1,7 @@
 import team from ".";
 import {
 	NUM_OUTS_PER_GAME,
+	outsToInnings,
 	sumByPos,
 } from "../../../common/processPlayerStats.baseball";
 import type { TeamStatAttr, TeamStats } from "../../../common/types";
@@ -24,6 +25,9 @@ const processStats = (
 	const fractionalInnings = ts.outs % 3;
 	const ip = completeInnings + fractionalInnings / 10;
 	const era = helpers.ratio(ts.er, ts.outs / NUM_OUTS_PER_GAME);
+
+	const derivedByPosStat = (cb: (i: number) => number) =>
+		[0, 1, 2, 3, 4, 5, 6, 7, 8].map(cb);
 
 	if (ts.gp > 0) {
 		for (const stat of stats) {
@@ -79,6 +83,34 @@ const processStats = (
 				row[stat] = helpers.ratio(ts.soPit, ts.bbPit);
 			} else if (stat === "poTot") {
 				row[stat] = sumByPos(ts.po);
+			} else if (stat === "rfldTot") {
+				row[stat] = sumByPos(ts.rfld);
+			} else if (stat === "ch") {
+				row[stat] = derivedByPosStat(
+					i => (ts.po[i] ?? 0) + (ts.a[i] ?? 0) + (ts.e[i] ?? 0),
+				);
+			} else if (stat === "fldp") {
+				row[stat] = derivedByPosStat(i =>
+					helpers.ratio(
+						(ts.po[i] ?? 0) + (ts.a[i] ?? 0),
+						(ts.po[i] ?? 0) + (ts.a[i] ?? 0) + (ts.e[i] ?? 0),
+					),
+				);
+			} else if (stat === "rf9") {
+				row[stat] = derivedByPosStat(i =>
+					helpers.ratio(
+						(ts.po[i] ?? 0) + (ts.a[i] ?? 0),
+						(ts.outsF[i] ?? 0) / NUM_OUTS_PER_GAME,
+					),
+				);
+			} else if (stat === "rfg") {
+				row[stat] = derivedByPosStat(i =>
+					helpers.ratio((ts.po[i] ?? 0) + (ts.a[i] ?? 0), ts.gp),
+				);
+			} else if (stat === "csp") {
+				row[stat] = helpers.percentage(ts.csF, ts.csF + ts.sbF);
+			} else if (stat === "inn") {
+				row[stat] = derivedByPosStat(i => outsToInnings(ts.outsF[i]));
 			} else {
 				row[stat] = ts[stat];
 			}

@@ -2136,7 +2136,6 @@ class GameSim {
 				s !== "gpF" &&
 				s !== "poSo" &&
 				s !== "pc" &&
-				s !== "outsF" &&
 				s !== "cgF"
 			) {
 				if (s === "r") {

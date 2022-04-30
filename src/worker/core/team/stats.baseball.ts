@@ -67,6 +67,7 @@ const stats = {
 	] as const,
 	byPos: [
 		// Fielding
+		"outsF",
 		"po",
 		"a",
 		"e",

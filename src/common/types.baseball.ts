@@ -29,7 +29,23 @@ export type TeamStatAttr =
 	| "rf9"
 	| "rfg"
 	| "csp"
-	| "inn";
+	| "inn"
+	| "oppAb"
+	| "oppBa"
+	| "oppObp"
+	| "oppSlg"
+	| "oppOps"
+	| "oppTb"
+	| "oppEra"
+	| "oppIp"
+	| "oppFip"
+	| "oppWhip"
+	| "oppH9"
+	| "oppHr9"
+	| "oppBb9"
+	| "oppSo9"
+	| "oppPc9"
+	| "oppSow";
 
 type AwardTeam = {
 	tid: number;

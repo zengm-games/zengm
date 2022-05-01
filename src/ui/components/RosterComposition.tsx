@@ -15,7 +15,7 @@ const PositionFraction = ({
 	pos: string;
 }) => {
 	const count = players.filter(p => p.ratings.pos === pos).length;
-	const target = POSITION_COUNTS[pos];
+	const target = Math.floor(POSITION_COUNTS[pos]);
 	const ratio = count / target;
 
 	let classes: string | undefined;
@@ -52,6 +52,7 @@ const RosterComposition = ({
 					</p>
 					<p>
 						{bySport({
+							baseball: "SS",
 							basketball: "?",
 							football: "QB",
 							hockey: "G",
@@ -61,6 +62,7 @@ const RosterComposition = ({
 					<p>
 						That means you have two{" "}
 						{bySport({
+							baseball: "shortstops",
 							basketball: "?",
 							football: "quarterbacks",
 							hockey: "goalies",
@@ -71,6 +73,7 @@ const RosterComposition = ({
 						You don't have to follow these recommendations. You can make an
 						entire team of{" "}
 						{bySport({
+							baseball: "catchers",
 							basketball: "?",
 							football: "punters",
 							hockey: "goalies",
@@ -82,6 +85,34 @@ const RosterComposition = ({
 				</HelpPopover>
 			</b>
 			{bySport({
+				baseball: (
+					<div className="mt-2 row">
+						<div className="col-4">
+							<PositionFraction players={players} pos="SP" />
+							<br />
+							<PositionFraction players={players} pos="RP" />
+							<br />
+							<br />
+							<PositionFraction players={players} pos="C" />
+						</div>
+						<div className="col-4">
+							<PositionFraction players={players} pos="1B" />
+							<br />
+							<PositionFraction players={players} pos="2B" />
+							<br />
+							<PositionFraction players={players} pos="3B" />
+							<br />
+							<PositionFraction players={players} pos="SS" />
+						</div>
+						<div className="col-4">
+							<PositionFraction players={players} pos="LF" />
+							<br />
+							<PositionFraction players={players} pos="CF" />
+							<br />
+							<PositionFraction players={players} pos="RF" />
+						</div>
+					</div>
+				),
 				basketball: null,
 				football: (
 					<div className="mt-2 row">

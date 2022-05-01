@@ -174,13 +174,16 @@ const POSITIONS = bySport<any[]>({
 	hockey: constantsHockey.POSITIONS,
 });
 
-const TEAM_STATS_TABLES: {
-	[key: string]: {
-		name: string;
-		stats: string[];
-		superCols?: any[];
-	};
-} = bySport({
+const TEAM_STATS_TABLES = bySport<
+	Record<
+		string,
+		{
+			name: string;
+			stats: string[];
+			superCols?: any[];
+		}
+	>
+>({
 	baseball: constantsBaseball.TEAM_STATS_TABLES,
 	basketball: constantsBasketball.TEAM_STATS_TABLES,
 	football: constantsFootball.TEAM_STATS_TABLES,

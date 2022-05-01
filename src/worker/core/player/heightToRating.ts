@@ -3,12 +3,14 @@ import limitRating from "./limitRating";
 
 const heightToRating = (heightInInches: number) => {
 	const minHgt = bySport({
+		baseball: 62, // 5'2"
 		basketball: 66, // 5'6"
 		football: 64, // 5'4"
 		hockey: 62, // 5'2"
 	});
 
 	const maxHgt = bySport({
+		baseball: 82, // 6'10"
 		basketball: 93, // 7'9"
 		football: 82, // 6'10"
 		hockey: 82, // 6'10"

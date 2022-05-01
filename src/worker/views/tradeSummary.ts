@@ -433,7 +433,12 @@ const updateTradeSummary = async (
 			teams,
 			season: event.season,
 			phase: event.phase,
-			stat: bySport({ basketball: "WS", football: "AV", hockey: "PS" }),
+			stat: bySport({
+				baseball: "WAR",
+				basketball: "WS",
+				football: "AV",
+				hockey: "PS",
+			}),
 			seasonsToPlot,
 			usePts,
 		};

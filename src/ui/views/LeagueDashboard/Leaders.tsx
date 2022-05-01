@@ -23,6 +23,7 @@ const Leader = ({
 	value: number;
 }) => {
 	const numberToDisplay = bySport({
+		baseball: helpers.numberWithCommas(value),
 		basketball: helpers.roundStat(value, stat),
 		football: helpers.numberWithCommas(value),
 		hockey: helpers.numberWithCommas(value),

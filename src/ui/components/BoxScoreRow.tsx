@@ -12,6 +12,7 @@ const BoxScoreRow = (props: {
 	stats?: string[];
 }) => {
 	return bySport({
+		baseball: BoxScoreRowFootball(props as any),
 		basketball: BoxScoreRowBasketball(props),
 		football: BoxScoreRowFootball(props as any),
 		hockey: BoxScoreRowFootball(props as any),

@@ -1,6 +1,7 @@
 import { bySport } from "../../common";
 
 const defaultColleges = bySport<Record<string, number>>({
+	baseball: {},
 	basketball: {
 		"Abilene Christian": 0.1,
 		"Air Force": 1,

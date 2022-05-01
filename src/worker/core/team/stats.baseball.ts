@@ -60,7 +60,7 @@ const byPosAndOpp = [
 	"a",
 	"e",
 	"dp",
-];
+] as const;
 
 // raw: recorded directly in game sim
 // derived: still stored in database, but not directly recorded in game sim

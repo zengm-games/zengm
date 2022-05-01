@@ -3,6 +3,7 @@ import { bySport } from "../../common";
 
 // Client ID aka app key
 const CLIENT_ID = bySport({
+	baseball: "69fvfvar845n8f7",
 	basketball: "fvdi8cdcwscxt5j",
 	football: "lqbn33k6vre8tla",
 	hockey: "h4v41smg906nbpy",

@@ -1,6 +1,6 @@
 import { helpers } from "../../util";
 
-const teamAndOpp = [
+const rawAndOpp = [
 	// Batting
 	"pts",
 	"pa",
@@ -53,6 +53,15 @@ const teamAndOpp = [
 	"csF",
 ] as const;
 
+const byPosAndOpp = [
+	// Fielding
+	"outsF",
+	"po",
+	"a",
+	"e",
+	"dp",
+];
+
 // raw: recorded directly in game sim
 // derived: still stored in database, but not directly recorded in game sim
 // not present in this file: transiently derived things, like FG%
@@ -61,18 +70,16 @@ const stats = {
 	raw: [
 		"gp",
 		"min",
-		...teamAndOpp,
-		...teamAndOpp.map(
+		...rawAndOpp,
+		...rawAndOpp.map(
 			stat => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
 		),
 	] as const,
 	byPos: [
-		// Fielding
-		"outsF",
-		"po",
-		"a",
-		"e",
-		"dp",
+		...byPosAndOpp,
+		...byPosAndOpp.map(
+			stat => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
+		),
 	] as const,
 };
 

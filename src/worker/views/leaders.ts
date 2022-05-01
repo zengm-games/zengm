@@ -18,6 +18,7 @@ import type {
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { NUM_OUTS_PER_INNING } from "../core/GameSim.baseball";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -29,6 +30,150 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			filter?: (p: any) => boolean;
 		}[]
 	>({
+		baseball: [
+			{
+				stat: "ba",
+				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
+			},
+			{
+				stat: "hr",
+			},
+			{
+				stat: "rbi",
+			},
+			{
+				stat: "r",
+			},
+			{
+				stat: "h",
+			},
+			{
+				stat: "sb",
+			},
+			{
+				stat: "bb",
+			},
+			{
+				stat: "obp",
+				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
+			},
+			{
+				stat: "slg",
+				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
+			},
+			{
+				stat: "ops",
+				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
+			},
+			{
+				stat: "tb",
+			},
+			{
+				stat: "w",
+			},
+			{
+				stat: "l",
+			},
+			{
+				stat: "era",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "sho",
+			},
+			{
+				stat: "sv",
+			},
+			{
+				stat: "ip",
+			},
+			{
+				stat: "hrPit",
+			},
+			{
+				stat: "bbPit",
+			},
+			{
+				stat: "soPit",
+			},
+			{
+				stat: "pc",
+			},
+			{
+				stat: "bk",
+			},
+			{
+				stat: "wp",
+			},
+			{
+				stat: "bf",
+			},
+			{
+				stat: "fip",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "whip",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "h9",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "hr9",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "bb9",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "so9",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "pc9",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "sow",
+				minStats: {
+					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
+				},
+			},
+			{
+				stat: "rbat",
+			},
+			{
+				stat: "rbr",
+			},
+			{
+				stat: "rfldTot",
+			},
+			{
+				stat: "rpit",
+			},
+			{
+				stat: "war",
+			},
+		],
 		basketball: [
 			{
 				stat: "pts",
@@ -466,8 +611,8 @@ export const playerMeetsCategoryRequirements = ({
 	season: number;
 	statType: PlayerStatType;
 }) => {
-	// In theory this should be the same for all sports, like basketball. But for a while FBGM set it to the same value as basketball, which didn't matter since it doesn't influence game sim, but it would mess this up.
 	const numPlayersOnCourtFactor = bySport({
+		baseball: 1,
 		basketball:
 			defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
 		football: 1,

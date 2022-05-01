@@ -21,7 +21,7 @@ import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
 
-const NUM_OUTS_PER_INNING = 3;
+export const NUM_OUTS_PER_INNING = 3;
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

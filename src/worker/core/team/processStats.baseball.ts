@@ -93,8 +93,6 @@ const processStats = (
 				row[stat] = helpers.ratio(ts.soPit, ts.bbPit);
 			} else if (stat === "poTot") {
 				row[stat] = sumByPos(ts.po);
-			} else if (stat === "rfldTot") {
-				row[stat] = sumByPos(ts.rfld);
 			} else if (stat === "ch") {
 				row[stat] = derivedByPosStat(
 					i => (ts.po[i] ?? 0) + (ts.a[i] ?? 0) + (ts.e[i] ?? 0),
@@ -159,6 +157,32 @@ const processStats = (
 				row[stat] = helpers.ratio(ts.oppPc, ts.oppOuts / NUM_OUTS_PER_GAME);
 			} else if (stat === "oppSow") {
 				row[stat] = helpers.ratio(ts.oppSoPit, ts.oppBbPit);
+			} else if (stat === "oppCh") {
+				row[stat] = derivedByPosStat(
+					i => (ts.oppPo[i] ?? 0) + (ts.oppA[i] ?? 0) + (ts.oppE[i] ?? 0),
+				);
+			} else if (stat === "oppFldp") {
+				row[stat] = derivedByPosStat(i =>
+					helpers.ratio(
+						(ts.oppPo[i] ?? 0) + (ts.oppA[i] ?? 0),
+						(ts.oppPo[i] ?? 0) + (ts.oppA[i] ?? 0) + (ts.oppE[i] ?? 0),
+					),
+				);
+			} else if (stat === "oppRf9") {
+				row[stat] = derivedByPosStat(i =>
+					helpers.ratio(
+						(ts.oppPo[i] ?? 0) + (ts.oppA[i] ?? 0),
+						(ts.oppOutsF[i] ?? 0) / NUM_OUTS_PER_GAME,
+					),
+				);
+			} else if (stat === "oppRfg") {
+				row[stat] = derivedByPosStat(i =>
+					helpers.ratio((ts.oppPo[i] ?? 0) + (ts.oppA[i] ?? 0), ts.gp),
+				);
+			} else if (stat === "oppCsp") {
+				row[stat] = helpers.percentage(ts.oppCsF, ts.oppCsF + ts.oppSbF);
+			} else if (stat === "oppInn") {
+				row[stat] = derivedByPosStat(i => outsToInnings(ts.oppOutsF[i]));
 			} else {
 				row[stat] = ts[stat];
 			}

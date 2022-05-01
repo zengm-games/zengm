@@ -432,7 +432,7 @@ const TEAM_STATS_TABLES = {
 			"oppSfPit",
 			"oppBk",
 			"oppWp",
-			"oppVf",
+			"oppBf",
 			"oppFip",
 			"oppWhip",
 			"oppH9",

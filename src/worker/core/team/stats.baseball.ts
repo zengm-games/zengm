@@ -45,6 +45,7 @@ const teamAndOpp = [
 	"bk",
 	"wp",
 	"bf",
+	"pc",
 
 	// Fielding, but only one position is possible (catcher)
 	"pb",

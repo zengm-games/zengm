@@ -33,6 +33,7 @@ const create = async (conditions: Conditions) => {
 
 	const score = (p: PlayerFiltered) =>
 		bySport({
+			baseball: p.currentStats.war,
 			football: p.currentStats.av,
 			basketball: 2.5 * p.currentStats.ewa + p.currentStats.ws,
 			hockey: p.currentStats.ps,

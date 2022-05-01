@@ -46,6 +46,14 @@ const getReason = () => {
 			"ankle braces",
 			"knee braces",
 			...bySport({
+				baseball: [
+					"cleats",
+					"jock straps",
+					"gloves",
+					"hats",
+					"helmets",
+					"bats",
+				],
 				basketball: ["sneakers", "headbands"],
 				football: ["cleats", "helmets", "shoulder pads"],
 				hockey: ["skates", "helmets", "shoulder pads", "gloves"],

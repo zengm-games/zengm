@@ -76,6 +76,7 @@ const findStatSum = (
 		const row = allStats[i];
 
 		const stat = bySport({
+			baseball: row.war,
 			basketball: row.ows + row.dws,
 			football: row.av,
 			hockey: row.ops + row.dps + row.gps,

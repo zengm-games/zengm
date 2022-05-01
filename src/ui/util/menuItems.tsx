@@ -453,6 +453,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					"all",
 					"career",
 					bySport({
+						baseball: "batting",
 						basketball: "totals",
 						football: "passing",
 						hockey: "skater",

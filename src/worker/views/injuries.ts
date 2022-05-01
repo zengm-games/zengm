@@ -18,6 +18,7 @@ const updateInjuries = async (
 		inputs.abbrev !== state.abbrev
 	) {
 		const stats = bySport({
+			baseball: ["gp", "keyStats"],
 			basketball: ["gp", "pts", "trb", "ast"],
 			football: ["gp", "keyStats"],
 			hockey: ["gp", "keyStats"],

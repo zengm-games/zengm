@@ -138,6 +138,7 @@ const MoreLinks = (
 					`${abbrev}_${tid}`,
 					"career",
 					bySport({
+						baseball: "batting",
 						football: "passing",
 						basketball: "totals",
 						hockey: "skater",
@@ -282,6 +283,7 @@ const MoreLinks = (
 		const { playoffs, season, statType } = props;
 
 		const defaultStat = bySport({
+			baseball: "ba",
 			basketball: "pts",
 			football: "pssYds",
 			hockey: "g",

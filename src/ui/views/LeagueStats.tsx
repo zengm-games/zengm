@@ -74,7 +74,7 @@ const LeagueStats = ({
 			if (stat.startsWith("opp")) {
 				return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 			}
-			return `stat:${stat}`;
+			return stat === "pos" ? "Pos" : `stat:${stat}`;
 		}),
 	]);
 

@@ -755,10 +755,17 @@ const leagueStats = (params: Params) => {
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "team",
+		football: "team",
+		hockey: "team",
+	});
+
 	return {
 		tid,
 		abbrev,
-		teamOpponent: params.teamOpponent ?? "team",
+		teamOpponent: params.teamOpponent ?? defaultStatType,
 		playoffs,
 	};
 };

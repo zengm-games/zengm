@@ -1,6 +1,7 @@
 import { bySport, PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
+import checkStatisticalFeatBaseball from "./checkStatisticalFeat.baseball";
 import checkStatisticalFeatBasketball from "./checkStatisticalFeat.basketball";
 import checkStatisticalFeatFootball from "./checkStatisticalFeat.football";
 import checkStatisticalFeatHockey from "./checkStatisticalFeat.hockey";
@@ -11,6 +12,7 @@ import type {
 } from "../../../common/types";
 
 const checkPlayer = bySport({
+	baseball: checkStatisticalFeatBaseball,
 	basketball: checkStatisticalFeatBasketball,
 	football: checkStatisticalFeatFootball,
 	hockey: checkStatisticalFeatHockey,

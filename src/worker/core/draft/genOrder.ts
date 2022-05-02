@@ -108,6 +108,7 @@ export const draftHasLottey = (
 };
 
 const TIEBREAKER_AFTER_FIRST_ROUND = bySport<"swap" | "rotate" | "same">({
+	baseball: "swap", // MLB uses last year's record
 	basketball: "swap",
 	football: "rotate",
 	hockey: "same",

@@ -398,6 +398,8 @@ const updatePlayers = async (
 		} else if (type === "steals") {
 			title = "Biggest Steals";
 			description = bySport({
+				baseball:
+					"These are the undrafted players or 5th+ round picks who had the best careers.",
 				basketball:
 					"These are the undrafted players or second round picks who had the best careers.",
 				football:
@@ -413,6 +415,7 @@ const updatePlayers = async (
 			filter = p =>
 				p.draft.round === 0 ||
 				bySport({
+					baseball: p.draft.round >= 5,
 					basketball: p.draft.round >= 2,
 					football: p.draft.round >= 5,
 					hockey: p.draft.round >= 3,

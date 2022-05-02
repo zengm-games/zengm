@@ -85,6 +85,8 @@ export const LeadersTopText = ({
 			<p>
 				Only eligible players are shown (<i>e.g.</i>{" "}
 				{bySport({
+					baseball:
+						"a player with only two plate appearances is not eligible for the league lead in batting average",
 					basketball:
 						"a player shooting 2 for 2 on the season is not eligible for the league lead in FG%",
 					football:

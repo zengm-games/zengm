@@ -3,6 +3,8 @@ import { getCols, helpers } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
+import { isSport } from "../../common";
+import { expandFieldingStats } from "../util/expandFieldingStats.baseball";
 
 export const formatMaybeInteger = (x: number) =>
 	Number.isInteger(x) ? String(x) : x.toFixed(1);
@@ -84,6 +86,18 @@ const LeagueStats = ({
 		cols[cols.length - 5].title = "%";
 	}
 
+	if (
+		isSport("baseball") &&
+		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
+	) {
+		seasons = expandFieldingStats({
+			rows: seasons,
+			stats,
+			allPositions: true,
+			statsProperty: "stats",
+		});
+	}
+
 	const rows = seasons.map(s => {
 		const otherStatColumns = ["won", "lost"];
 		if (otl) {
@@ -124,33 +138,37 @@ const LeagueStats = ({
 			data.numTeams = s.numTeams;
 		}
 
-		data.gp = formatMaybeInteger(s.stats.gp);
-		data.won = formatMaybeInteger(s.stats.won);
-		data.lost = formatMaybeInteger(s.stats.lost);
+		data.gp = formatMaybeInteger((s.stats as any).gp);
+		data.won = formatMaybeInteger((s.stats as any).won);
+		data.lost = formatMaybeInteger((s.stats as any).lost);
 
 		if (otl) {
-			data.otl = formatMaybeInteger(s.stats.otl);
+			data.otl = formatMaybeInteger((s.stats as any).otl);
 		}
 		if (ties) {
-			data.tied = formatMaybeInteger(s.stats.tied);
+			data.tied = formatMaybeInteger((s.stats as any).tied);
 		}
 		if (usePts) {
-			data.ptsPts = formatMaybeInteger(s.stats.ptsPts);
-			data.ptsPct = helpers.roundWinp(s.stats.ptsPct);
+			data.ptsPts = formatMaybeInteger((s.stats as any).ptsPts);
+			data.ptsPct = helpers.roundWinp((s.stats as any).ptsPct);
 		} else {
-			data.winp = helpers.roundWinp(s.stats.winp);
+			data.winp = helpers.roundWinp((s.stats as any).winp);
 		}
 
 		data.avgAge = Number.isNaN(s.stats.avgAge)
 			? null
-			: s.stats.avgAge.toFixed(1);
+			: (s.stats.avgAge as number).toFixed(1);
 
 		for (const stat of stats) {
-			data[stat] = helpers.roundStat(s.stats[stat], stat);
+			data[stat] = helpers.roundStat((s.stats as any)[stat], stat);
 		}
 
 		return {
-			key: s.season,
+			key:
+				isSport("baseball") &&
+				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
+					? `${s.season}-${(s.stats as any).pos}`
+					: s.season,
 			data: Object.values(data),
 		};
 	});

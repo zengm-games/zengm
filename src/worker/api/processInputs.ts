@@ -1,4 +1,4 @@
-import { bySport, PHASE, POSITIONS } from "../../common";
+import { bySport, PHASE } from "../../common";
 import { g, helpers } from "../util";
 import type { PlayerStatType } from "../../common/types";
 import type { Params } from "../../ui/router";

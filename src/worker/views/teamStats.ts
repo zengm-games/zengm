@@ -171,7 +171,7 @@ export const averageTeamStats = (
 		}
 	}
 
-	const row: Record<string, number> = {};
+	const row: Record<string, number | number[]> = {};
 
 	let foundSomething = false;
 
@@ -180,14 +180,30 @@ export const averageTeamStats = (
 		if (ignoreStats.includes(stat)) {
 			continue;
 		}
-		let sum = 0;
+
+		const byPos = Array.isArray((teams[0].stats as any)[stat]);
+
+		let sum = byPos ? [] : 0;
 		for (const t of teams) {
 			if (tid !== undefined && t.tid !== tid) {
 				continue;
 			}
 
 			if (stat === "avgAge") {
+				// @ts-expect-error
 				sum += t.seasonAttrs.avgAge ?? 0;
+			} else if (byPos) {
+				// @ts-expect-error
+				const byPosStat: (number | undefined)[] = t.stats[stat];
+				for (let i = 0; i < byPosStat.length; i++) {
+					const value = byPosStat[i];
+					if (value !== undefined) {
+						if ((sum as number[])[i] === undefined) {
+							(sum as number[])[i] = 0;
+						}
+						(sum as number[])[i] += value;
+					}
+				}
 			} else {
 				// @ts-expect-error
 				sum += t.stats[stat];
@@ -195,8 +211,15 @@ export const averageTeamStats = (
 			foundSomething = true;
 		}
 
-		row[stat] =
-			tid === undefined && teams.length !== 0 ? sum / teams.length : sum;
+		if (tid === undefined && teams.length !== 0) {
+			if (byPos) {
+				row[stat] = (sum as number[]).map(value => value / teams.length);
+			} else {
+				row[stat] = (sum as number) / teams.length;
+			}
+		} else {
+			row[stat] = sum;
+		}
 	}
 	for (const attr of seasonAttrs) {
 		if (attr === "abbrev") {

@@ -78,6 +78,8 @@ const updateLeagueStats = async (
 
 		stats = stats.filter(stat => !ignoreStats.includes(stat));
 
+		console.log("seasons", seasons);
+
 		return {
 			abbrev: inputs.abbrev,
 			playoffs: inputs.playoffs,

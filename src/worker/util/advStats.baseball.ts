@@ -19,7 +19,6 @@ const teamStats = [
 	"outs",
 	"gp",
 	"po",
-	"poSo",
 	"a",
 	"e",
 	"dp",
@@ -44,9 +43,12 @@ const POSITIONAL_ADJUSTMENT_COEFFICIENTS = {
 };
 
 const frP = (i: 0, t: Team, apl: number) => {
+	const po = t.stats.po[i] ?? 0;
+	const a = t.stats.a[i] ?? 0;
+	const e = t.stats.e[i] ?? 0;
+	const dp = t.stats.dp[i] ?? 0;
 	const fr =
-		0.1 * (t.stats.po[i] + 2 * t.stats.a[i] - t.stats.e[i] + t.stats.dp[i]) -
-		apl * (t.stats.poTot - t.stats.soPit);
+		0.1 * (po + 2 * a - e + dp) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
 		return 0;
 	}
@@ -54,13 +56,13 @@ const frP = (i: 0, t: Team, apl: number) => {
 };
 
 const frC = (i: 1, t: Team, apl: number) => {
+	const po = t.stats.po[i] ?? 0;
+	const a = t.stats.a[i] ?? 0;
+	const e = t.stats.e[i] ?? 0;
+	const dp = t.stats.dp[i] ?? 0;
+
 	const fr =
-		0.2 *
-			(t.stats.po[i] -
-				t.stats.poSo +
-				2 * t.stats.a[i] -
-				t.stats.e[i] +
-				t.stats.dp[i]) -
+		0.2 * (po - t.stats.soPit + 2 * a - e + dp) -
 		apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
 		return 0;
@@ -69,9 +71,10 @@ const frC = (i: 1, t: Team, apl: number) => {
 };
 
 const fr1B = (i: 2, t: Team, apl: number) => {
-	const fr =
-		0.2 * (2 * t.stats.a[i] - t.stats.e[i]) -
-		apl * (t.stats.poTot - t.stats.soPit);
+	const a = t.stats.a[i] ?? 0;
+	const e = t.stats.e[i] ?? 0;
+
+	const fr = 0.2 * (2 * a - e) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
 		return 0;
 	}
@@ -79,9 +82,13 @@ const fr1B = (i: 2, t: Team, apl: number) => {
 };
 
 const fr2B = (i: 3 | 4 | 5, t: Team, apl: number) => {
+	const po = t.stats.po[i] ?? 0;
+	const a = t.stats.a[i] ?? 0;
+	const e = t.stats.e[i] ?? 0;
+	const dp = t.stats.dp[i] ?? 0;
+
 	const fr =
-		0.2 * (t.stats.po[i] + 2 * t.stats.a[i] - t.stats.e[i] + t.stats.dp[i]) -
-		apl * (t.stats.poTot - t.stats.soPit);
+		0.2 * (po + 2 * a - e + dp) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
 		return 0;
 	}
@@ -89,10 +96,13 @@ const fr2B = (i: 3 | 4 | 5, t: Team, apl: number) => {
 };
 
 const frLF = (i: 6 | 7 | 8, t: Team, apl: number) => {
+	const po = t.stats.po[i] ?? 0;
+	const a = t.stats.a[i] ?? 0;
+	const e = t.stats.e[i] ?? 0;
+	const dp = t.stats.dp[i] ?? 0;
+
 	const fr =
-		0.2 *
-			(t.stats.po[i] + 4 * t.stats.a[i] - t.stats.e[i] + 2 * t.stats.dp[i]) -
-		apl * (t.stats.poTot - t.stats.soPit);
+		0.2 * (po + 4 * a - e + 2 * dp) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
 		return 0;
 	}
@@ -245,11 +255,10 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 
 				// Fielding Runs
 				if (pos !== "DH") {
-					const po =
-						pos === "C" ? p.stats.po[j] - p.stats.posSo : p.stats.po[j];
+					const po = pos === "C" ? p.stats.po[j] - p.stats.poSo : p.stats.po[j];
 					if (po !== undefined && po > 0) {
 						const poTeam =
-							pos === "C" ? t.stats.po[j] - t.stats.poSo : t.stats.po[j];
+							pos === "C" ? t.stats.po[j] - t.stats.soPit : t.stats.po[j];
 						rfld[i][j] = (po / poTeam) * teamFieldingRuns[t.tid][pos];
 					}
 				}

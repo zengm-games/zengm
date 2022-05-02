@@ -19,6 +19,7 @@ const teamStats = [
 	"outs",
 	"gp",
 	"po",
+	"poSo",
 	"a",
 	"e",
 	"dp",
@@ -270,7 +271,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		war[i] =
 			(rbat[i] +
 				rbr[i] +
-				rfld[i] +
+				helpers.sum(rfld[i]) +
 				rpos[i] +
 				rpit[i] +
 				replacementPlayerAdjustment) /
@@ -340,8 +341,8 @@ const advStats = async () => {
 					memo[key] = [];
 				}
 
-				for (let i = 0; i < t.stats[key].length; i++) {
-					const value = t.stats[key][i];
+				for (let i = 0; i < (t.stats[key] as number[]).length; i++) {
+					const value = (t.stats[key] as number[])[i];
 					if (value !== undefined) {
 						if (memo[key][i] === undefined) {
 							memo[key][i] = 0;
@@ -357,24 +358,6 @@ const advStats = async () => {
 				}
 			}
 		}
-
-		/*if (!memo.hasOwnProperty("ptsDefault")) {
-			memo.ptsDefault = 0;
-		}
-		if (playoffs) {
-			// Base off gp during the playoffs - 1 point per GP, because it'll add up to 2 after going through all teams
-			memo.ptsDefault += t.stats.gp;
-		} else {
-			memo.ptsDefault += t.seasonAttrs.ptsDefault;
-		}
-
-		if (t.stats.gp > 0) {
-			if (memo.hasOwnProperty("gPerGame")) {
-				memo.gPerGame += t.stats.g / t.stats.gp;
-			} else {
-				memo.gPerGame = t.stats.g / t.stats.gp;
-			}
-		}*/
 
 		return memo;
 	}, {});

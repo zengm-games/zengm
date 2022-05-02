@@ -1433,12 +1433,14 @@ type TeamSeasonPlus = TeamSeason & {
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
 import type { TeamStatAttr as TeamStatAttrBaseball } from "./types.baseball";
+import type { TeamStatAttrByPos as TeamStatAttrByPosBaseball } from "./types.baseball";
 import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
 import type { TIEBREAKERS } from "./constants";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
+	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &
 	Record<TeamStatAttrFootball, number> &
 	Record<TeamStatAttrHockey, number> & {

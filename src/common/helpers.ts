@@ -1357,6 +1357,14 @@ const overtimeText = (
 	return overtimes;
 };
 
+const sum = (values: number[]) => {
+	let total = 0;
+	for (const value of values) {
+		total += value;
+	}
+	return total;
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1380,4 +1388,5 @@ export default {
 	percentage,
 	formatRecord,
 	overtimeText,
+	sum,
 };

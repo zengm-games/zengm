@@ -5,11 +5,12 @@ import {
 	sumByPos,
 } from "../../../common/processPlayerStats.baseball";
 import type { TeamStatAttr, TeamStats } from "../../../common/types";
+import type { TeamStatAttrByPos } from "../../../common/types.baseball";
 import { helpers } from "../../util";
 
 const processStats = (
 	ts: TeamStats,
-	stats: Readonly<TeamStatAttr[]>,
+	stats: Readonly<(TeamStatAttr | TeamStatAttrByPos)[]>,
 	playoffs: boolean,
 	// statType: TeamStatType,
 ) => {

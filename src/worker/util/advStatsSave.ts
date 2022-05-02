@@ -4,7 +4,7 @@ import type { MinimalPlayerRatings, Player } from "../../common/types";
 const advStatsSave = async (
 	players: any[],
 	playersRaw: Player<MinimalPlayerRatings>[],
-	updatedStats: Record<string, number[]>,
+	updatedStats: Record<string, number[] | number[][]>,
 ) => {
 	const keys = Object.keys(updatedStats);
 	await Promise.all(

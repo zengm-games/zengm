@@ -111,10 +111,6 @@ class Team<DH extends boolean> {
 	}
 
 	getBatter() {
-		if (!this.playersInGameByBattingOrder[this.atBat]) {
-			console.log(this.atBat);
-			console.log(this.playersInGameByBattingOrder);
-		}
 		return this.playersInGameByBattingOrder[this.atBat];
 	}
 
@@ -130,6 +126,13 @@ class Team<DH extends boolean> {
 
 	advanceToNextBatter() {
 		this.atBat = (this.atBat + 1) % NUM_BATTERS_PER_SIDE;
+	}
+
+	moveToPreviousBatter() {
+		this.atBat -= 1;
+		if (this.atBat < 0) {
+			this.atBat = NUM_BATTERS_PER_SIDE - 1;
+		}
 	}
 }
 

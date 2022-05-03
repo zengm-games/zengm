@@ -932,7 +932,7 @@ class GameSim {
 
 				if (this.outs >= NUM_OUTS_PER_INNING) {
 					// Same batter will be up next inning
-					this.team[this.o].atBat -= 1;
+					this.team[this.o].moveToPreviousBatter();
 				}
 			} else {
 				this.recordStat(this.o, p, "sb");

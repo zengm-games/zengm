@@ -1357,10 +1357,12 @@ const overtimeText = (
 	return overtimes;
 };
 
-const sum = (values: number[]) => {
+const sum = (values: (number | undefined)[]) => {
 	let total = 0;
 	for (const value of values) {
-		total += value;
+		if (value !== undefined) {
+			total += value;
+		}
 	}
 	return total;
 };

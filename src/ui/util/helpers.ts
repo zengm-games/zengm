@@ -38,6 +38,7 @@ const roundOverrides: Record<
 		pa: "noDecimalPlace",
 		ab: "noDecimalPlace",
 		r: "noDecimalPlace",
+		pts: "noDecimalPlace",
 		h: "noDecimalPlace",
 		"2b": "noDecimalPlace",
 		"3b": "noDecimalPlace",

@@ -304,7 +304,7 @@ const TEAM_STATS_TABLES = {
 		stats: [
 			"pa",
 			"ab",
-			"r",
+			"pts",
 			"h",
 			"2b",
 			"3b",

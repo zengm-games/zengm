@@ -140,6 +140,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "R",
 		},
+		"stat:pts": {
+			desc: "Runs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "R",
+		},
 		"stat:h": {
 			desc: "Hits",
 			sortSequence: ["desc", "asc"],

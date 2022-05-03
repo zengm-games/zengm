@@ -261,7 +261,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({
-			baseball: ["ptsQtrs"],
+			baseball: ["ptsQtrs", "gp"],
 			basketball: ["ptsQtrs", "ba"],
 			football: ["ptsQtrs"],
 			hockey: ["ptsQtrs"],

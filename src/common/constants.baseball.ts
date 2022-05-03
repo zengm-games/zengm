@@ -143,12 +143,35 @@ const PLAYER_SUMMARY = {
 	summaryBatter: {
 		name: "SummaryBatter",
 		onlyShowIf: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH"],
-		stats: ["ab", "h", "hr", "ba", "r", "rbi", "sb", "obp", "slg", "ops"],
+		stats: [
+			"war",
+			"ab",
+			"h",
+			"hr",
+			"ba",
+			"r",
+			"rbi",
+			"sb",
+			"obp",
+			"slg",
+			"ops",
+		],
 	},
 	summaryPitcher: {
 		name: "SummaryPitcher",
 		onlyShowIf: ["SP", "RP"],
-		stats: ["w", "l", "era", "gpPit", "gsPit", "sv", "ip", "soPit", "whip"],
+		stats: [
+			"war",
+			"w",
+			"l",
+			"era",
+			"gpPit",
+			"gsPit",
+			"sv",
+			"ip",
+			"soPit",
+			"whip",
+		],
 	},
 };
 

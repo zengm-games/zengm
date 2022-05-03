@@ -251,7 +251,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					POS_NUMBERS_INVERSE[(j + 1) as keyof typeof POS_NUMBERS_INVERSE];
 
 				// Positional Adjustment Runs
-				rpos[i] += (gpF / p.stats.gp) * POSITIONAL_ADJUSTMENT_COEFFICIENTS[pos];
+				rpos[i] += (gpF / t.stats.gp) * POSITIONAL_ADJUSTMENT_COEFFICIENTS[pos];
 
 				// Fielding Runs
 				if (pos !== "DH") {

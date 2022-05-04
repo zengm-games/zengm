@@ -72,6 +72,22 @@ const getBestPlayer = (players: any[]) => {
 	};
 
 	return bySport({
+		baseball: () => {
+			// The offensive ones are based on WAR formula components. Pitching ones are not ideal because we can't currently represent "lower is better" stats like ER.
+			const factors: [string, number][] = [
+				["h", 0.47],
+				["2b", 0.38],
+				["3b", 0.55],
+				["hr", 0.93],
+				["bb", 0.33],
+				["hbp", 0.33],
+				["sb", 0.3],
+				["sho", 10],
+				["so", 0.1],
+			];
+
+			return withFactors(factors);
+		},
 		basketball: () => {
 			// Based on https://fansided.com/2017/04/10/updating-dre-tweaks/ but with blk increased because otherwise it'd basically never get selected, and pts lower to account for the negative terms kind of
 			const factors: [string, number][] = [

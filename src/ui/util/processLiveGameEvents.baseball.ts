@@ -7,42 +7,6 @@ import type {
 import { DEFAULT_SPORT_STATE } from "../views/LiveGame";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
 
-// For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
-const cmpTime = (t1: string, t2: string) => {
-	const [min1, sec1] = t1.split(":").map(x => parseInt(x));
-	const [min2, sec2] = t2.split(":").map(x => parseInt(x));
-
-	if (min1 > min2) {
-		return 1;
-	}
-	if (min1 < min2) {
-		return -1;
-	}
-	if (sec1 > sec2) {
-		return 1;
-	}
-	if (sec1 < sec2) {
-		return -1;
-	}
-	return 0;
-};
-
-// Convert clock in minutes to min:sec, like 1.5 -> 1:30
-export const formatClock = (clock: number) => {
-	const secNum = Math.ceil((clock % 1) * 60);
-
-	let sec;
-	if (secNum >= 60) {
-		sec = "59";
-	} else if (secNum < 10) {
-		sec = `0${secNum}`;
-	} else {
-		sec = `${secNum}`;
-	}
-
-	return `${Math.floor(clock)}:${sec}`;
-};
-
 export type BoxScorePlayer = {
 	name: string;
 	pid: number;
@@ -398,7 +362,6 @@ const processLiveGameEvents = ({
 	let stop = false;
 	let text;
 	let bold = false;
-	let prevGoal: PlayByPlayEvent | undefined;
 
 	if (!playersByPid || boxScore.gid !== playersByPidGid) {
 		playersByPid = {};
@@ -504,7 +467,6 @@ const processLiveGameEvents = ({
 			text = output.text;
 			bold = output.bold;
 
-			//boxScore.time = formatClock(e.clock);
 			stop = true;
 		}
 	}

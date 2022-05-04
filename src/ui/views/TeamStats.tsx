@@ -223,13 +223,18 @@ const TeamStats = ({
 		};
 	});
 
-	const footer = averages
-		? [
-				null,
-				"Avg",
-				...Object.values(makeRowObject(averages as any, averages as any)),
-		  ]
-		: undefined;
+	const footer =
+		averages &&
+		!(
+			isSport("baseball") &&
+			(teamOpponent === "fielding" || teamOpponent === "oppFielding")
+		)
+			? [
+					null,
+					"Avg",
+					...Object.values(makeRowObject(averages as any, averages as any)),
+			  ]
+			: undefined;
 
 	return (
 		<>

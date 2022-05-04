@@ -131,6 +131,19 @@ const PlayerFeats = ({
 	return (
 		<>
 			{bySport({
+				baseball: (
+					<p>
+						This lists all games where a player got {scaleMinimum(3)} home runs,{" "}
+						{scaleMinimum(5)} hits, {scaleMinimum(5)} RBIs, {scaleMinimum(4)}{" "}
+						runs, {scaleMinimum(3)} stolen bases, {scaleMinimum(10)} strikeouts,
+						a no hitter, a shutout, or hit for the cycle
+						{quarterLengthFactor !== 1
+							? " (cutoffs are scaled due to a non-default period length)"
+							: null}
+						. Statistical feats from your players are{" "}
+						<span className="text-info">highlighted in blue</span>.
+					</p>
+				),
 				basketball: (
 					<p>
 						This lists all games where a player got a{" "}

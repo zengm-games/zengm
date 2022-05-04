@@ -38,21 +38,32 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 	const teamsPerDiv = teams.length / (conferences * divisions);
 
 	const matches: number[][] = [];
-	// interConferenceOffsets are assigned so that divisions play each other once every divisions years.
-	// I feel like I'm really forgetting some basic math to generate this pattern, but until I remember it, hardcode
-	// for 4 divisions
-	const crossConferenceOffsets = [
-		[0, 1, 2, 3],
-		[1, 0, 3, 2],
-		[2, 3, 0, 1],
-		[3, 2, 1, 0],
-	];
-	// Same here, It's driving me nuts.
-	const intraConferenceOffsets = [
-		[1, 0, 3, 2],
-		[2, 3, 0, 1],
-		[3, 2, 1, 0],
-	];
+
+	//Conference offsets work according to this table
+	//Teams  | 0 1 2 3
+	// ----------------
+	//Year 0 | 0 1 2 3
+	//Year 1 | 3 0 1 2
+	//Year 2 | 2 3 0 1
+	//Year 3 | 1 2 3 0
+	//
+	// For same conference matchups, drop the first year since division 0 already plays division 0 every year
+
+	//Set cross conference Offsets to unique orderings of a set of numbers, 0-n divisions
+	const crossConferenceOffsets: number[][] = [];
+	//Get vanilla version [0, 1... ,n]
+	const arrayToShift = Array.from(Array(divisions).keys());
+	crossConferenceOffsets.push(arrayToShift);
+	//Get n-1 versions of that array which all items shifted (nth version would be same as original arrayToShift)
+	for (let i = 0; i < divisions - 1; i++) {
+		const mover = arrayToShift.pop()!;
+		arrayToShift.unshift(mover);
+		crossConferenceOffsets.push(arrayToShift);
+	}
+
+	//IntraConference is the same as cross conference, without the first item.
+	const intraConferenceOffsets = crossConferenceOffsets.slice(0);
+
 	// Divisional States will carry the possible binary representations of home and away games for divisional
 	// matches where we want to face all teams once.  This should work for any even square number of games for sure
 	// and can likely be tweaked for any number of equal sized divisions.  The '16' below should be 2^n, where n is the

@@ -986,11 +986,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							<button
 								type="button"
 								className="btn btn-secondary btn-sm mb-1"
-								title={`Ratings will be taken from a randomly generated player with the same age${
-									isSport("football") || isSport("hockey")
-										? " and position"
-										: ""
-								} as this player`}
+								title={`Ratings will be taken from a randomly generated player with the same age${bySport(
+									{
+										baseball: " and position",
+										basketball: "",
+										football: " and position",
+										hockey: " and position",
+									},
+								)} as this player`}
 								onClick={async event => {
 									event.preventDefault();
 									const { hgt, ratings } = await toWorker(
@@ -999,6 +1002,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										{
 											age: (p as any).age,
 											pos: bySport({
+												baseball: p.ratings[r].pos,
 												basketball: undefined,
 												football: p.ratings[r].pos,
 												hockey: p.ratings[r].pos,

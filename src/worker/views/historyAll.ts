@@ -230,6 +230,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const awardNames = bySport({
+			baseball: ["finalsMvp", "mvp", "poy", "qoy", "roy"],
 			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
 			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
 			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],

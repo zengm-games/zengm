@@ -7,6 +7,13 @@ const rows = bySport<
 		[key: string]: string[];
 	}[][]
 >({
+	baseball: [
+		[
+			{ "Physical/Hitting": ["hgt", "spd", "hpw", "con", "eye"] },
+			{ Defense: ["gnd", "fly", "thr", "cat"] },
+			{ Pitching: ["ppw", "ctl", "mov", "endu"] },
+		],
+	],
 	basketball: [
 		[
 			{ Physical: ["hgt", "stre", "spd", "jmp", "endu"] },

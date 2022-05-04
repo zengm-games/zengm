@@ -9,7 +9,6 @@ import { formatStatGameHigh } from "../PlayerStats";
 import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
-import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
 
 const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {

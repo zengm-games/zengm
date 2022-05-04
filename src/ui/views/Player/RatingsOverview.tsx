@@ -72,7 +72,7 @@ const RatingsOverview = ({
 					},
 					{
 						label: "Fly Balls",
-						rating: "gnd",
+						rating: "fly",
 					},
 					{
 						label: "Throwing",

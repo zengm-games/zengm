@@ -37,18 +37,21 @@ import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 const FIRST_ROUND_PLAYOFF_TEAMS_ORDER = bySport<
 	"record" | "playoffs" | "playoffsHockey"
 >({
+	baseball: "record",
 	basketball: "record",
 	football: "playoffs",
 	hockey: "playoffsHockey",
 });
 
 const TIEBREAKER = bySport<"random" | "default">({
+	baseball: "default",
 	basketball: "random",
 	football: "default",
 	hockey: "default",
 });
 
 const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
+	baseball: "firstRound",
 	basketball: "record",
 	football: "firstRound",
 	hockey: "firstRound",

@@ -43,33 +43,63 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 	//Teams  | 0 1 2 3
 	// ----------------
 	//Year 0 | 0 1 2 3
-	//Year 1 | 3 0 1 2
+	//Year 1 | 1 0 3 2
 	//Year 2 | 2 3 0 1
-	//Year 3 | 1 2 3 0
+	//Year 3 | 3 2 1 0
 	//
-	// For same conference matchups, drop the first year since division 0 already plays division 0 every year
+	//This is kinda an elusive problem, since the values need to be unique for their position, as well as be reciprocal
+	//to their array position.  So for row x and value y, row y must be value x.
 
-	//Set cross conference Offsets to unique orderings of a set of numbers, 0-n divisions
-	const crossConferenceOffsets: number[][] = [];
-	//Get vanilla version [0, 1... ,n]
-	const arrayToShift = Array.from(Array(divisions).keys());
-	crossConferenceOffsets.push(arrayToShift);
-	//Get n-1 versions of that array which all items shifted (nth version would be same as original arrayToShift)
-	for (let i = 0; i < divisions - 1; i++) {
-		const mover = arrayToShift.pop()!;
-		arrayToShift.unshift(mover);
-		crossConferenceOffsets.push(arrayToShift);
-	}
+	// Stepping through the problem, we start with crossConferenceOffsets as an array.  We then append divisions arrays
+	// with divisions empty spots to that array.  The first array is always [0,...,n].  We also assign the first row
+	// of every array to that same pattern.
+
+	//So this is apparently a Latin Square, and this will really only work for conferences which contain 2, 4, 8, ect. divisions.
+	//Sadly this means that we'd have to split the logic based on division count, but it means there's probably a decent way
+	//to generate this very symmetric pattern.
+	const crossConferenceOffsets = [
+		[0, 1, 2, 3],
+		[1, 0, 3, 2],
+		[2, 3, 0, 1],
+		[3, 2, 1, 0],
+	];
 
 	//IntraConference is the same as cross conference, without the first item.
-	const intraConferenceOffsets = crossConferenceOffsets.slice(0);
+	const intraConferenceOffsets = crossConferenceOffsets.slice(1);
 
 	// Divisional States will carry the possible binary representations of home and away games for divisional
 	// matches where we want to face all teams once.  This should work for any even square number of games for sure
 	// and can likely be tweaked for any number of equal sized divisions.  The '16' below should be 2^n, where n is the
 	// number of games.
-	// [...Array(16).keys()].filter(n => ((n >>> 0).toString(2)).match('/0/g')?.length === 2)???
-	const divisionalStates: Array<number> = [3, 5, 6, 9, 10, 12];
+
+	// Thankfully, someone already asked this on Stack Overflow, and even better, someone left a great answer that's already
+	// in javascript which is quite nice.
+	// https://stackoverflow.com/questions/36451090/permutations-of-binary-number-by-swapping-two-bits-not-lexicographically/36466454#36466454
+
+	// So we'll avail ourselves to the walking bit algo.
+	function walkingBits(n: number, k: number, container: Array<Array<number>>) {
+		const seq: Array<number> = [];
+		for (let i = 0; i < n; i++) seq[i] = 0;
+		walk(n, k, 1, 0);
+
+		function walk(n: number, k: number, dir: number, pos: number) {
+			for (let i = 1; i <= n - k + 1; i++, pos += dir) {
+				seq[pos] = 1;
+				if (k > 1)
+					walk(
+						n - i,
+						k - 1,
+						i % 2 ? dir : -dir,
+						pos + dir * (i % 2 ? 1 : n - i),
+					);
+				else container.push(JSON.parse(JSON.stringify(seq)));
+				seq[pos] = 0;
+			}
+		}
+	}
+
+	const divisionalStates: Array<Array<number>> = [];
+	walkingBits(4, 2, divisionalStates);
 	//Tracks pairs of intra-conference division pairings
 	const intraConferenceSets = new Map<number, number>();
 	//tracks pairs of cross conference division pairings
@@ -142,29 +172,22 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 		//Major and Minor states carry the binary representation for home and away games between 4 teams on any given year.
 		//So take the year, get the remainder from the total number of possible states, and that will give the layout of games
 		//for that year.
-		let majorState =
-			divisionalStates[year % divisionalStates.length].toString(2);
-		//Since Javascript is somehow even worse for binary operations than python, we'll have to ensure we add the appropriate number of
-		//zeros to the start of a binary string.
-		while (majorState.length < 4) {
-			majorState = "0".concat(majorState);
-		}
+		const majorState = divisionalStates[year % divisionalStates.length];
+
 		//Anything bitwise appears to be a pain in JS, so we'll just invert using an array
-		const minorState = Array.from(majorState)
-			.map(d => {
-				if (d === "0") {
-					return "1";
-				} else {
-					return "0";
-				}
-			})
-			.join("");
+		const minorState = majorState.map(d => {
+			if (d === 0) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
 
 		// Finally assign the binary representations based on rank and whether the division has been assigned first or
 		// second in the conference set maps
-		let intraArrangement: string;
-		let crossArrangement: string;
-		if (majorState[rank] === "0") {
+		let intraArrangement: Array<number>;
+		let crossArrangement: Array<number>;
+		if (majorState[rank] === 0) {
 			intraArrangement = Array.from(intraConferenceSets.keys()).includes(div)
 				? majorState
 				: minorState;
@@ -207,7 +230,7 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 			}
 
 			//intra-conference Divisional matches
-			if (intraArrangement[oppRank] === "0") {
+			if (intraArrangement[oppRank] === 0) {
 				if (
 					!nestedArrayIncludes(matches, [
 						tID,
@@ -228,7 +251,7 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 			}
 
 			//cross conference divisional matches
-			if (crossArrangement[oppRank] === "0") {
+			if (crossArrangement[oppRank] === 0) {
 				if (
 					!nestedArrayIncludes(matches, [
 						tID,

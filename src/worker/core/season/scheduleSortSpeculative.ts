@@ -13,13 +13,14 @@ const scheduleSort = (
 ): number[][][] => {
 	// A schedule is an array of weeks, each with an array of matches
 
-	const games = typeof gamesPerWeek === "undefined" ? 16 : gamesPerWeek;
-	const partWeeks =
+	const games: number = typeof gamesPerWeek === "undefined" ? 16 : gamesPerWeek;
+	const partWeeks: number =
 		typeof partiallyFullWeeks === "undefined" ? 8 : partiallyFullWeeks;
-	const fullWeeks = typeof fullSlateWeeks === "undefined" ? 10 : fullSlateWeeks;
+	const fullWeeks: number =
+		typeof fullSlateWeeks === "undefined" ? 10 : fullSlateWeeks;
 	//I guess this could be a variable, so I'm leaving as is for a moment, but ideally, maxByesPerWeek should be double the ideal number of byes
 	//in a given week (16 games across 8 weeks = 2 per, max of 4)
-	const maxByesPerWeek = Math.ceil(games / partWeeks) * 2;
+	const maxByesPerWeek: number = Math.ceil(games / partWeeks) * 2;
 
 	//First sort: return desired number of full weeks.  From personal experience, this number can only be slightly
 	//over half of all games assigned.  There's likely some general math principal that would give a better idea of what
@@ -139,11 +140,11 @@ const scheduleSort = (
 			//the dissolved week and add it back to the match pool, then reformulate a new week using the
 			//matches that we weren't able to assign as the first matches is in the week, followed by the matches
 			//of the dissolved week.
-			const dissolving = partialWeeks.shift();
+			const dissolving: number[][] = partialWeeks.shift()!;
 			partialAssigned.shift();
 			//The reverse might be unnecessary, but it helps vary the available matchups when we get stuck
-			dissolving?.reverse();
-			dissolving?.forEach(m => matches.push(m));
+			dissolving.reverse();
+			dissolving.forEach(m => matches.push(m));
 			//Create new week, allocate matches
 			const newWeek: number[][] = [];
 			const newWeekAssigned: number[] = [];

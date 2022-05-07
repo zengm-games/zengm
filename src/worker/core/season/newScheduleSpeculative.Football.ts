@@ -4,7 +4,7 @@
 // mixed vs. another division same conference
 // mixed vs. another division other conference
 // mixed vs. same rank, another division same conference (2 games)
-// 1 from other division, other conference, switch homeaway based on season
+// 1 from other division, other conference, switch home/away based on season
 
 // # Table (array visualization):
 // #                     AFC             |             NFC
@@ -17,55 +17,105 @@
 
 //nestedArrayIncludes, checks for whether a nested match array is equitable.  Uses array.some()
 //and checks whether first item === first item and second item === second item
-const nestedArrayIncludes = (
-	array: Array<Array<number>>,
-	nested: Array<number>,
-) => {
+const nestedArrayIncludes = (array: number[][], nested: number[]): boolean => {
 	return array.some(i => {
-		const test = i;
-		return test[0] === nested[0] && test[1] === nested[1];
+		return i[0] === nested[0] && i[1] === nested[1];
 	});
 };
 
 // generateMatches takes an array of teams, as described above, and the year and returns an array of arrays, which carry
 // home and away team matches based on position in the teams array.  This creates the current 17 game NFL schedule using
 // the NFL's current scheduling formula.
-const generateMatches = (teams: Array<number>, year: number): number[][] => {
+const generateMatches = (teams: number[], year: number): number[][] => {
 	// Once the cross/intraConferenceOffsets can be derived, then most of this solution can be applied to any
 	// evenly distributed number of divisions with an equal number of teams.
-	const conferences = 2;
-	const divisions = 4;
-	const teamsPerDiv = teams.length / (conferences * divisions);
+	const conferences: number = 2;
+	const divisions: number = 4;
+	const teamsPerDiv: number = teams.length / (conferences * divisions);
 
 	const matches: number[][] = [];
 
-	//Conference offsets work according to this table
-	//Teams  | 0 1 2 3
+	//Conference offsets work according to this table.  Utilizing this pattern we can ensure
+	//that every division will play each other every 4 years.
+	//Divs   | 0 1 2 3
 	// ----------------
 	//Year 0 | 0 1 2 3
 	//Year 1 | 1 0 3 2
 	//Year 2 | 2 3 0 1
 	//Year 3 | 3 2 1 0
-	//
-	//This is kinda an elusive problem, since the values need to be unique for their position, as well as be reciprocal
-	//to their array position.  So for row x and value y, row y must be value x.
+	//So this is apparently a Latin Square.
+	//After some thinking, I think we can create these particular latin squares by using a the smallest
+	//version and applying the pattern across pairs of the next sized version.
+	// So this means that:
+	//	0	|	1
+	//	1	|	0
+	// can be applied to the next size up:
+	// Pairs = [0,1], [2,3]
+	// [0,1], [2,3]					[0,1,2,3]
+	// [1,0], [3,2]	  which can		[1,0,3,2]
+	// [2,3], [0,1]	  simplify to	[2,3,0,1]
+	// [3,2], [1,0]					[3,2,1,0]
+	// and you can use this configuration to generate the next size up, and so on.
+	const latinSquareBuilder = (base: number): number[][] => {
+		//Start with first combination
+		let start: number[][] = [
+			[0, 1],
+			[1, 0],
+		];
+		//Base 1 is the first combination, so good work
+		if (base === 1) {
+			return start;
+		}
+		// We'll run up the bases, starting at 2 (since we've already solved for 1)
+		for (let i = 2; i < base + 1; i++) {
+			const combos = 2 ** i;
+			const pairs: number[][] = [];
+			//Create pairs from combos
+			for (let j = 0; j < combos; j++) {
+				if (j % 2 == 0) {
+					pairs.push([j]);
+				} else {
+					pairs[(j / 2) | 0].push(j);
+				}
+			}
+			// build a temp square based on the current square, pairs
+			const tempSquare: number[][] = [];
+			for (let j = 0; j < combos; j++) {
+				tempSquare.push([]);
+				const row = (j / 2) | 0;
+				//normal order
+				if (j % 2 == 0) {
+					for (let k = 0; k < combos; k = k + 2) {
+						const col = (k / 2) | 0;
+						tempSquare[j].push(
+							pairs[start[row][col]][0],
+							pairs[start[row][col]][1],
+						);
+					}
+					//reverse
+				} else {
+					for (let k = 0; k < combos; k = k + 2) {
+						const col = (k / 2) | 0;
+						tempSquare[j].push(
+							pairs[start[row][col]][1],
+							pairs[start[row][col]][0],
+						);
+					}
+				}
+			}
+			//replace start with tempSquare, use start to seed the next size up.
+			start = JSON.parse(JSON.stringify(tempSquare));
+		}
+		return start;
+	};
 
-	// Stepping through the problem, we start with crossConferenceOffsets as an array.  We then append divisions arrays
-	// with divisions empty spots to that array.  The first array is always [0,...,n].  We also assign the first row
-	// of every array to that same pattern.
-
-	//So this is apparently a Latin Square, and this will really only work for conferences which contain 2, 4, 8, ect. divisions.
-	//Sadly this means that we'd have to split the logic based on division count, but it means there's probably a decent way
-	//to generate this very symmetric pattern.
-	const crossConferenceOffsets = [
-		[0, 1, 2, 3],
-		[1, 0, 3, 2],
-		[2, 3, 0, 1],
-		[3, 2, 1, 0],
-	];
+	//Only works for 2,4,8... ect. (Math.log2 returns a whole number) divisions.
+	const crossConferenceOffsets: number[][] = latinSquareBuilder(
+		Math.log2(divisions),
+	);
 
 	//IntraConference is the same as cross conference, without the first item.
-	const intraConferenceOffsets = crossConferenceOffsets.slice(1);
+	const intraConferenceOffsets: number[][] = crossConferenceOffsets.slice(1);
 
 	// Divisional States will carry the possible binary representations of home and away games for divisional
 	// matches where we want to face all teams once.  This should work for any even square number of games for sure
@@ -77,8 +127,8 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 	// https://stackoverflow.com/questions/36451090/permutations-of-binary-number-by-swapping-two-bits-not-lexicographically/36466454#36466454
 
 	// So we'll avail ourselves to the walking bit algo.
-	function walkingBits(n: number, k: number, container: Array<Array<number>>) {
-		const seq: Array<number> = [];
+	function walkingBits(n: number, k: number, container: number[][]) {
+		const seq: number[] = [];
 		for (let i = 0; i < n; i++) seq[i] = 0;
 		walk(n, k, 1, 0);
 
@@ -98,7 +148,7 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 		}
 	}
 
-	const divisionalStates: Array<Array<number>> = [];
+	const divisionalStates: number[][] = [];
 	walkingBits(4, 2, divisionalStates);
 	//Tracks pairs of intra-conference division pairings
 	const intraConferenceSets = new Map<number, number>();
@@ -109,24 +159,24 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 
 	// Iterate team IDs, using i as the positional index and assigning matches with tID
 	teams.forEach((tID, i) => {
-		const div = i % (conferences * divisions);
+		const div: number = i % (conferences * divisions);
 		//some silly float rounding is killing me here, but it appears we can use bitwise OR 0 to do what we want
-		const rank = (i / (conferences * divisions)) | 0;
+		const rank: number = (i / (conferences * divisions)) | 0;
 		// Divisions for conference sets will be set based on the year, as well as offsets.  This
 		// rotates the matches every divisions years, with same conference games rotating
 		// divisions - 1 years, since a division already plays itself.
-		const divSameConf =
+		const divSameConf: number =
 			div < divisions
 				? intraConferenceOffsets[year % (divisions - 1)][div]
 				: intraConferenceOffsets[year % (divisions - 1)][div % divisions] +
 				  divisions;
-		const divOtherConf =
+		const divOtherConf: number =
 			div < divisions
 				? crossConferenceOffsets[year % divisions][div] + divisions
 				: crossConferenceOffsets[year % divisions][div % divisions];
 
 		// Just take divisions /2, so it offset by at least one in all multi-division scenarios
-		const extraDiv =
+		const extraDiv: number =
 			div < divisions
 				? crossConferenceOffsets[(year + ((divisions / 2) | 0)) % divisions][
 						div
@@ -172,10 +222,11 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 		//Major and Minor states carry the binary representation for home and away games between 4 teams on any given year.
 		//So take the year, get the remainder from the total number of possible states, and that will give the layout of games
 		//for that year.
-		const majorState = divisionalStates[year % divisionalStates.length];
+		const majorState: number[] =
+			divisionalStates[year % divisionalStates.length];
 
 		//Anything bitwise appears to be a pain in JS, so we'll just invert using an array
-		const minorState = majorState.map(d => {
+		const minorState: number[] = majorState.map(d => {
 			if (d === 0) {
 				return 1;
 			} else {
@@ -185,8 +236,8 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 
 		// Finally assign the binary representations based on rank and whether the division has been assigned first or
 		// second in the conference set maps
-		let intraArrangement: Array<number>;
-		let crossArrangement: Array<number>;
+		let intraArrangement: number[];
+		let crossArrangement: number[];
 		if (majorState[rank] === 0) {
 			intraArrangement = Array.from(intraConferenceSets.keys()).includes(div)
 				? majorState
@@ -208,7 +259,7 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 		Array.from(Array(teamsPerDiv).keys()).forEach(oppRank => {
 			// opposing rank is the row offset.  With this we can derive the position of the opposing team, then
 			// place into spot
-			const opposingRankOffset = oppRank * divisions * conferences;
+			const opposingRankOffset: number = oppRank * divisions * conferences;
 
 			//intra-division matches.  Home and away against every team in division.  Using the opposingRankOffset,
 			//We can add that, plus the division, to find the team ID of the opposing team in the teams (array)
@@ -272,16 +323,15 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 			}
 		});
 		// 14 games down
-
 		// Iterate through intraRankSet to find relevant matches
 		for (const [d1, d2] of Array.from(intraRankSet.entries())) {
 			if (d1 === div) {
-				const opp = teams[d2 + rank * divisions * conferences];
+				const opp: number = teams[d2 + rank * divisions * conferences];
 				if (!nestedArrayIncludes(matches, [tID, opp])) {
 					matches.push([tID, opp]);
 				}
 			} else if (d2 === div) {
-				const opp = teams[d1 + rank * divisions * conferences];
+				const opp: number = teams[d1 + rank * divisions * conferences];
 				if (!nestedArrayIncludes(matches, [opp, tID])) {
 					matches.push([opp, tID]);
 				}
@@ -292,12 +342,12 @@ const generateMatches = (teams: Array<number>, year: number): number[][] => {
 		if (year % 2 === 0) {
 			// conference splits at halfway point
 			if (div < divisions) {
-				const opp = teams[extraDiv + rank * divisions * conferences];
+				const opp: number = teams[extraDiv + rank * divisions * conferences];
 				matches.push([tID, opp]);
 			}
 		} else {
 			if (div >= divisions) {
-				const opp = teams[extraDiv + rank * divisions * conferences];
+				const opp: number = teams[extraDiv + rank * divisions * conferences];
 				matches.push([tID, opp]);
 			}
 		}

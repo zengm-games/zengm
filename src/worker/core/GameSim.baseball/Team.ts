@@ -146,6 +146,9 @@ class Team<DH extends boolean> {
 				this.subIndex += 1;
 				playerInGame.p.subIndex = this.subIndex;
 			}
+
+			// If players can switch positions mid game, this doens't make sense. Would need to store an array to track all positions
+			playerInGame.p.pos = playerInGame.pos;
 		}
 	}
 

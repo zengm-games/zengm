@@ -605,6 +605,10 @@ class GameSim {
 	}) {
 		const runners = this.getRunners();
 
+		if (this.outs >= 3) {
+			return runners;
+		}
+
 		// Handle runners
 		// Start from 3rd base first, because a blocked base can't be advanced to
 		const blockedBases = new Set<0 | 1 | 2>();
@@ -1595,17 +1599,19 @@ class GameSim {
 				this.recordStat(this.o, batter, "pa");
 				this.recordStat(this.d, pitcher, "bf");
 
-				const runners = this.advanceRunners({
-					battedBallInfo,
-					error: result === "error",
-					fieldersChoiceOrDoublePlayIndex,
-					hit,
-					hitTo,
-					numBases,
-					p: batter,
-					result,
-					stealing,
-				});
+				const getRunners = () => {
+					return this.advanceRunners({
+						battedBallInfo,
+						error: result === "error",
+						fieldersChoiceOrDoublePlayIndex,
+						hit,
+						hitTo,
+						numBases,
+						p: batter,
+						result,
+						stealing,
+					});
+				};
 
 				if (numBases === 4) {
 					this.doScore(
@@ -1638,7 +1644,7 @@ class GameSim {
 						pid: batter.id,
 						pidError,
 						posDefense,
-						runners: this.finalizeRunners(runners),
+						runners: this.finalizeRunners(getRunners()),
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),
@@ -1669,7 +1675,7 @@ class GameSim {
 						t: this.o,
 						pid: batter.id,
 						posDefense,
-						runners: this.finalizeRunners(runners),
+						runners: this.finalizeRunners(getRunners()),
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),

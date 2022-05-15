@@ -71,16 +71,14 @@ export type AwardPlayer = {
 	name: string;
 	tid: number;
 	pos: string;
-	g: number;
-	a: number;
-	pts: number;
-	ops: number;
-	tk: number;
-	hit: number;
-	dps: number;
-	gaa: number;
-	svPct: number;
-	gps: number;
+	keyStats: string;
+	w: number;
+	sv: number;
+	l: number;
+	ip: number;
+	era: number;
+	war: number;
+	rpit: number;
 };
 
 export type Awards = {
@@ -109,9 +107,8 @@ export type Awards = {
 			players: AwardPlayer[];
 		},
 	];
-	dpoy: AwardPlayer;
-	dfoy: AwardPlayer;
-	goy: AwardPlayer;
+	poy: AwardPlayer;
+	qoy: AwardPlayer;
 	finalsMvp: AwardPlayer | undefined;
 };
 

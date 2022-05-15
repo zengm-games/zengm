@@ -64,6 +64,22 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats: bySport({
+			baseball: [
+				"keyStats",
+				"gpPit",
+				"gsPit",
+				"w",
+				"l",
+				"sv",
+				"era",
+				"ip",
+				"war",
+				"rpit",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+			],
 			basketball: [
 				"gp",
 				"gs",

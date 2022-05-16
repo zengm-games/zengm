@@ -1274,15 +1274,28 @@ class GameSim {
 					const r = Math.random();
 					let probDoublePlay = 0;
 					if (this.bases[0] && this.outs < 2) {
-						if (hitTo === 6) {
-							probDoublePlay = 0.7;
-						} else if (hitTo === 4) {
+						if (hitTo === 6 || hitTo === 4) {
 							probDoublePlay = 0.5;
 						} else if (hitTo === 5) {
-							probDoublePlay = 0.3;
+							probDoublePlay = 0.25;
 						} else {
-							probDoublePlay = 0.2;
+							probDoublePlay = 0.15;
 						}
+
+						const fielder =
+							this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[hitTo]]
+								.p;
+						const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
+
+						// Ideally this would include any intermediate fielder too, not just the primary fielder and first baseman
+						const doublePlayDefenseFactor =
+							(fielder.compositeRating.groundBallDefense +
+								fielder.compositeRating.arm +
+								firstBaseman.compositeRating.firstBaseDefense) /
+								3 +
+							0.5;
+
+						probDoublePlay *= doublePlayDefenseFactor;
 					}
 
 					const r2 = Math.random();

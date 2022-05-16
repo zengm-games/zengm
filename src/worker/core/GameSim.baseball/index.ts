@@ -304,7 +304,8 @@ class GameSim {
 		});
 	}
 
-	doBattedBall(p: PlayerGameSim) {
+	// pitchQuality is from 0 to 1
+	doBattedBall(p: PlayerGameSim, pitchQuality: number) {
 		const foul = Math.random() < 0.25;
 
 		const type = random.choice(["ground", "line", "fly"] as const, [
@@ -353,7 +354,7 @@ class GameSim {
 				speed = random.choice(["soft", "normal", "hard"] as const, [
 					0.5,
 					0.5,
-					(p.compositeRating.powerHitter + 0.5) / 2,
+					(p.compositeRating.powerHitter + 0.5) / 2 - (pitchQuality - 0.5) / 4,
 				]);
 				this.playByPlay.logEvent({
 					type,
@@ -374,9 +375,10 @@ class GameSim {
 					[
 						0.1,
 						0.5,
-						(p.compositeRating.powerHitter + 0.5) / 2,
-						p.compositeRating.powerHitter,
-						p.compositeRating.powerHitter / 4,
+						(p.compositeRating.powerHitter + 0.5) / 2 -
+							(pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter / 4 - (pitchQuality - 0.5) / 8,
 					],
 				);
 				this.playByPlay.logEvent({
@@ -1039,7 +1041,13 @@ class GameSim {
 			Math.random() < ballProb ? "ball" : ("strike" as const);
 
 		const pitchQuality = helpers.bound(
-			random.gauss(pitcher.compositeRating.pitcher, 0.2),
+			random.gauss(
+				fatigueFactor(
+					pitcher.stat.pc,
+					pitcher.compositeRating.workhorsePitcher,
+				) * pitcher.compositeRating.pitcher,
+				0.2,
+			),
 			0,
 			1,
 		);
@@ -1071,6 +1079,7 @@ class GameSim {
 
 		return {
 			outcome,
+			pitchQuality,
 			swinging,
 		};
 	}
@@ -1134,10 +1143,7 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		const value =
-			batter.compositeRating.contactHitter - pitcher.compositeRating.pitcher;
-
-		return 0.4 + 0.25 * value + fieldingFactor;
+		return 0.2 + 0.15 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
 	probErrorIfNotHit(
@@ -1467,7 +1473,10 @@ class GameSim {
 
 		this.recordStat(this.d, pitcher, "pc");
 
-		const { outcome, swinging } = this.getPitchOutcome(pitcher, batter);
+		const { outcome, pitchQuality, swinging } = this.getPitchOutcome(
+			pitcher,
+			batter,
+		);
 
 		if (outcome === "ball") {
 			this.balls += 1;
@@ -1513,7 +1522,7 @@ class GameSim {
 				}
 			}
 		} else {
-			const battedBallInfo = this.doBattedBall(batter);
+			const battedBallInfo = this.doBattedBall(batter, pitchQuality);
 
 			// Result of the hit
 			if (

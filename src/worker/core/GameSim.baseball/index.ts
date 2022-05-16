@@ -1146,7 +1146,7 @@ class GameSim {
 		return 0.2 + 0.15 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
-	probErrorIfNotHit(
+	getPErrorIfNotHit(
 		type: "ground" | "line" | "fly",
 		defenderIndex: ReturnType<GameSim["getHitTo"]>,
 	) {
@@ -1154,23 +1154,39 @@ class GameSim {
 			this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[defenderIndex]]
 				.p;
 
+		let prob;
+		if (type === "ground") {
+			prob = 0.03 + 0.03 * (1 - p.compositeRating.groundBallDefense);
+		} else if (type === "fly") {
+			prob = 0.015 + 0.015 * (1 - p.compositeRating.flyBallDefense);
+		} else {
+			prob =
+				0.02 +
+				0.02 *
+					(1 -
+						(p.compositeRating.groundBallDefense +
+							p.compositeRating.flyBallDefense) /
+							2);
+		}
+
+		if (prob > Math.random()) {
+			return p;
+		}
+
 		if (type === "ground") {
 			const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
 
-			return (
-				0.05 * (1 - p.compositeRating.groundBallDefense) +
-				0.25 * (1 - firstBaseman.compositeRating.firstBaseDefense)
-			);
-		} else if (type === "fly") {
-			return 0.05 * (1 - p.compositeRating.flyBallDefense);
-		} else {
-			return (
-				0.05 *
-				(1 -
-					(p.compositeRating.groundBallDefense +
-						p.compositeRating.flyBallDefense) /
-						2)
-			);
+			const prob =
+				0.005 +
+				0.005 *
+					(1 -
+						(firstBaseman.compositeRating.firstBaseDefense +
+							firstBaseman.compositeRating.groundBallDefense) /
+							2);
+
+			if (prob > Math.random()) {
+				return firstBaseman;
+			}
 		}
 	}
 
@@ -1257,10 +1273,11 @@ class GameSim {
 		let numBases: 1 | 2 | 3 | 4;
 		let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
 
-		if (
-			hit ||
-			Math.random() < this.probErrorIfNotHit(battedBallInfo.type as any, hitTo)
-		) {
+		const pErrorIfNotHit = hit
+			? undefined
+			: this.getPErrorIfNotHit(battedBallInfo.type as any, hitTo);
+
+		if (hit || pErrorIfNotHit) {
 			numBases = this.getNumBases(batter, battedBallInfo);
 			if (hit || numBases === 4) {
 				result = "hit";
@@ -1421,6 +1438,7 @@ class GameSim {
 			numBases,
 			fieldersChoiceOrDoublePlayIndex,
 			responsiblePitcherPid,
+			pErrorIfNotHit,
 		};
 	}
 
@@ -1558,6 +1576,7 @@ class GameSim {
 					numBases,
 					fieldersChoiceOrDoublePlayIndex,
 					responsiblePitcherPid,
+					pErrorIfNotHit,
 				} = this.getBattedBallOutcome(battedBallInfo, batter, pitcher);
 
 				if (result === "flyOut") {
@@ -1652,8 +1671,7 @@ class GameSim {
 				}
 
 				if (result === "error") {
-					const pError =
-						this.team[this.d].playersInGameByPos[POS_NUMBERS_INVERSE[hitTo]].p;
+					const pError = pErrorIfNotHit!;
 					this.recordStat(this.d, pError, "e", 1, "fielding");
 					const pidError = pError.id;
 

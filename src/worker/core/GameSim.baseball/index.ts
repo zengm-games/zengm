@@ -1108,8 +1108,13 @@ class GameSim {
 			flyBallDefense: 0,
 			arm: 0,
 		};
+		const outfielders = ["LF", "CF", "RF"] as const;
+		const infielders = ["1B", "2B", "3B", "SS"] as const;
 		if (battedBallInfo.type === "ground") {
-			const infielders = ["1B", "2B", "3B", "SS"] as const;
+			if (outfielders.includes(hitToPos as any)) {
+				return true;
+			}
+
 			const posToTakeRatingsFrom = (
 				infielders.includes(hitToPos as any) ? hitToPos : "2B"
 			) as typeof infielders[number];
@@ -1120,7 +1125,6 @@ class GameSim {
 				infoDefense[posToTakeRatingsFrom].groundBallDefense[0];
 			defenseWeights.arm = infoDefense[posToTakeRatingsFrom].arm[0];
 		} else {
-			const outfielders = ["LF", "CF", "RF"] as const;
 			const posToTakeRatingsFrom = (
 				outfielders.includes(hitToPos as any) ? hitToPos : "LF"
 			) as typeof outfielders[number];
@@ -1289,7 +1293,6 @@ class GameSim {
 
 			if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 				result = "flyOut";
-				posDefense.push(hitTo);
 			} else {
 				if (this.bases[0] || this.bases[1] || this.bases[2]) {
 					// Probability of double play depends on who it's hit to

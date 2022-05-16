@@ -1155,7 +1155,12 @@ class GameSim {
 				.p;
 
 		if (type === "ground") {
-			return 0.05 * (1 - p.compositeRating.groundBallDefense);
+			const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
+
+			return (
+				0.05 * (1 - p.compositeRating.groundBallDefense) +
+				0.25 * (1 - firstBaseman.compositeRating.firstBaseDefense)
+			);
 		} else if (type === "fly") {
 			return 0.05 * (1 - p.compositeRating.flyBallDefense);
 		} else {

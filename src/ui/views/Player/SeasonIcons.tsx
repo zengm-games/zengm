@@ -55,7 +55,15 @@ const SeasonIcons = ({
 				type = award.type;
 				countAllStar += 1;
 			}
-			if (!isSport("basketball") && award.type.includes("All-League")) {
+			if (
+				!isSport("basketball") &&
+				!isSport("baseball") &&
+				award.type.includes("All-League")
+			) {
+				type = award.type;
+				countAllLeague += 1;
+			}
+			if (isSport("baseball") && award.type.includes("All-Offensive")) {
 				type = award.type;
 				countAllLeague += 1;
 			}

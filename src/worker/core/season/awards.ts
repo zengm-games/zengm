@@ -88,6 +88,14 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 				// For position determination
 				"gpF",
+
+				// For season leaders
+				"hr",
+				"rbi",
+				"r",
+				"sb",
+				"bb",
+				"soPit",
 			],
 			basketball: [
 				"gp",

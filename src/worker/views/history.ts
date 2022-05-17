@@ -21,7 +21,6 @@ const updateHistory = async (
 		const awards = await idb.getCopy.awards({
 			season,
 		});
-		console.log("awards", awards);
 
 		if (!awards) {
 			viewedSeasonSummary(); // Should never happen, but just in case

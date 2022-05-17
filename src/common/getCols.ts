@@ -3231,6 +3231,14 @@ const cols: {
 		desc: "Sixth Man of the Year",
 		title: "SMOY",
 	},
+	"award:poy": {
+		desc: "Pitcher of the Year",
+		title: "POY",
+	},
+	"award:qoy": {
+		desc: "Reliever of the Year",
+		title: "ROY",
+	},
 	"award:oroy": {
 		desc: "Offensive Rookie of the Year",
 		sortSequence: ["desc", "asc"],

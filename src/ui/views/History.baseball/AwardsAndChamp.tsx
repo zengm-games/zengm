@@ -52,7 +52,6 @@ const AwardsAndChamp = ({
 	season,
 	userTid,
 }: Pick<ActualProps, "awards" | "champ" | "confs" | "season" | "userTid">) => {
-	console.log("awards", awards);
 	return (
 		<div className="row">
 			<div className="col-sm-12 col-6">

@@ -1,4 +1,4 @@
-import { bySport, PHASE } from "../../common";
+import { bySport, PHASE, SIMPLE_AWARDS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
@@ -82,6 +82,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				roy: addAbbrev(a.roy, teams, a.season),
 				oroy: addAbbrev(a.oroy, teams, a.season),
 				droy: addAbbrev(a.droy, teams, a.season),
+				poy: addAbbrev(a.poy, teams, a.season),
+				qoy: addAbbrev(a.qoy, teams, a.season),
 				runnerUp: undefined,
 				champ: undefined,
 			};
@@ -174,33 +176,14 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		// Count up number of championships/awards per tid/pid
 		const counts: Record<string, Record<number, number>> = {
-			finalsMvp: {},
-			mvp: {},
-			dpoy: {},
-			dfoy: {},
-			goy: {},
-			smoy: {},
-			mip: {},
-			roy: {},
-			oroy: {},
-			droy: {},
 			runnerUp: {},
 			champ: {},
 		};
+		for (const award of SIMPLE_AWARDS) {
+			counts[award] = {};
+		}
 
 		const teamCategories = ["champ", "runnerUp"];
-		const playerCategories = [
-			"finalsMvp",
-			"mvp",
-			"dpoy",
-			"dfoy",
-			"goy",
-			"smoy",
-			"mip",
-			"roy",
-			"oroy",
-			"droy",
-		];
 		for (const row of seasons) {
 			for (const category of teamCategories) {
 				if (!row[category]) {
@@ -215,7 +198,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				row[category].count = counts[category][tid];
 			}
 
-			for (const category of playerCategories) {
+			for (const category of SIMPLE_AWARDS) {
 				if (!row[category]) {
 					continue;
 				}

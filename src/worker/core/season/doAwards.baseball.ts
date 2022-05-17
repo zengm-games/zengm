@@ -101,7 +101,7 @@ const makeTeams = (
 		let sorted = players;
 		if (type === "defense") {
 			const index = (POS_NUMBERS as any)[pos] - 1;
-			sorted = orderBy(players, p => p.currentStats.rfld[index] ?? 0);
+			sorted = orderBy(players, p => p.currentStats.rfld[index] ?? 0, "desc");
 		}
 
 		return getTopByPos(sorted, pos, usedPids);

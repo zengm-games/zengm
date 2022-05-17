@@ -566,8 +566,8 @@ const AWARD_NAMES = {
 	poy: "Pitcher of the Year",
 	qoy: "Reliever of the Year",
 	finalsMvp: "Finals MVP",
-	allOffense: "All-Offense Team",
-	allDefense: "All-Defense Team",
+	allOffense: "All-Offensive Team",
+	allDefense: "All-Defensive Team",
 	allRookie: "All-Rookie Team",
 } as const;
 

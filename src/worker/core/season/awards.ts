@@ -19,6 +19,7 @@ import type {
 	PlayerFiltered,
 	TeamFiltered,
 } from "../../../common/types";
+import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -79,6 +80,14 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"abbrev",
 				"tid",
 				"jerseyNumber",
+
+				// For all-offense/defense teams
+				"rbat",
+				"rbr",
+				"rfld",
+
+				// For position determination
+				"gpF",
 			],
 			basketball: [
 				"gp",
@@ -180,13 +189,32 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 	// For convenience later
 	for (const p of players) {
-		p.pos = p.ratings.at(-1).pos;
-
 		p.currentStats = p.stats.at(-1);
 		for (let i = p.stats.length - 1; i >= 0; i--) {
 			if (p.stats[i].season === season) {
 				p.currentStats = p.stats[i];
 				break;
+			}
+		}
+
+		p.pos = p.ratings.at(-1).pos;
+		if (isSport("baseball")) {
+			// Overwrite position with actual position played
+			const gpF = (p.currentStats.gpF as (number | undefined)[]).map(gp =>
+				gp === undefined ? 0 : gp,
+			);
+			let maxGP = 0; // Start at 0 rather than -Infinity because we're not interested in positions with 0 games played
+			let maxIndex;
+			for (let i = 0; i < gpF.length; i++) {
+				const gp = gpF[i];
+				if (gp > maxGP) {
+					maxGP = gp;
+					maxIndex = i;
+				}
+			}
+
+			if (maxIndex !== undefined) {
+				p.pos = (POS_NUMBERS_INVERSE as any)[maxIndex + 1];
 			}
 		}
 
@@ -538,6 +566,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 		});
 	}
 	const awardsTeams = bySport({
+		baseball: ["allRookie", "allOffense", "allDefense"] as const,
 		basketball: ["allRookie", "allLeague", "allDefensive"] as const,
 		football: ["allRookie", "allLeague"] as const,
 		hockey: ["allRookie", "allLeague"] as const,
@@ -545,7 +574,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 	for (const key of awardsTeams) {
 		const type = AWARD_NAMES[key] as string;
 
-		if (key === "allRookie") {
+		if (key === "allRookie" || isSport("baseball")) {
 			for (const p of awards.allRookie) {
 				if (p) {
 					const { pid, tid, name } = p;

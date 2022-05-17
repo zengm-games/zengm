@@ -53,10 +53,7 @@ const getTopByPos = (
 	}
 };
 
-export const makeTeams = (
-	players: AwardPlayer[],
-	rookie: boolean = false,
-): any => {
+const makeTeams = (players: AwardPlayer[], rookie: boolean = false): any => {
 	const usedPids = new Set<number>();
 	const teamPositions = [["C"], ["W"], ["W"], ["D"], ["D"], ["G"]];
 

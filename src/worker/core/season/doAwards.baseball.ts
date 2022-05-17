@@ -11,8 +11,14 @@ import { idb } from "../../db";
 import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type { AwardPlayer, Awards } from "../../../common/types.baseball";
+import orderBy from "lodash-es/orderBy";
+import { POS_NUMBERS } from "../../../common/constants.baseball";
 
-const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
+const getPlayerInfo = (p: PlayerFiltered): AwardPlayer | undefined => {
+	if (!p) {
+		return;
+	}
+
 	return {
 		pid: p.pid,
 		name: p.name,
@@ -31,7 +37,7 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 
 const getTopByPos = (
 	players: AwardPlayer[],
-	positions?: string[],
+	position: string,
 	usedPids?: Set<number>,
 ) => {
 	for (const p of players) {
@@ -41,7 +47,7 @@ const getTopByPos = (
 			}
 		}
 
-		if (positions === undefined || positions.includes(p.pos)) {
+		if (position === p.pos) {
 			if (usedPids) {
 				usedPids.add(p.pid);
 			}
@@ -51,35 +57,56 @@ const getTopByPos = (
 	}
 };
 
-export const makeTeams = (
-	players: AwardPlayer[],
-	rookie: boolean = false,
+const makeTeams = (
+	players: PlayerFiltered[],
+	type: "offense" | "defense" | "rookie",
 ): any => {
 	const usedPids = new Set<number>();
-	const teamPositions = [["C"], ["W"], ["W"], ["D"], ["D"], ["G"]];
+	const teamPositions = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"];
 
-	if (rookie) {
-		const teams = teamPositions.map(positions =>
-			getTopByPos(players, positions, usedPids),
-		);
-		return teams;
+	const dh = g.get("dh");
+	const confs = g.get("confs");
+	let dhType: "allDH" | "noDH" | "mix";
+	if (
+		dh === "all" ||
+		(Array.isArray(dh) && confs.every(conf => dh.includes(conf.cid)))
+	) {
+		dhType = "allDH";
+	} else if (dh === "none" || (Array.isArray(dh) && dh.length === 0)) {
+		dhType = "noDH";
+	} else {
+		dhType = "mix";
 	}
 
-	const teams = [
-		{
-			title: "First Team",
-			players: teamPositions.map(positions =>
-				getTopByPos(players, positions, usedPids),
-			),
-		},
-		{
-			title: "Second Team",
-			players: teamPositions.map(positions =>
-				getTopByPos(players, positions, usedPids),
-			),
-		},
-	];
-	return teams;
+	// Add DH or P as necessary
+	if (type === "offense") {
+		if (dhType === "allDH") {
+			teamPositions.push("DH");
+		} else if (dhType === "noDH") {
+			teamPositions.push("P");
+		} else {
+			teamPositions.push("DH", "P");
+		}
+	} else if (type === "defense") {
+		teamPositions.push("P");
+	} else {
+		if (dhType === "allDH" || dhType === "mix") {
+			teamPositions.push("DH");
+		}
+		teamPositions.push("P");
+	}
+
+	const team = teamPositions.map(pos => {
+		// Rookie and offense come pre-sorted. For defense, need to sort by position each time
+		let sorted = players;
+		if (type === "defense") {
+			const index = (POS_NUMBERS as any)[pos] - 1;
+			sorted = orderBy(players, p => p.currentStats.rfld[index] ?? 0);
+		}
+
+		return getTopByPos(sorted, pos, usedPids);
+	});
+	return team;
 };
 
 export const mvpScore = (p: PlayerFiltered) => {
@@ -139,18 +166,43 @@ const doAwards = async (conditions: Conditions) => {
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
 	const categories = [
 		{
-			name: "League Points Leader",
-			stat: "pts",
+			name: "League HR Leader",
+			stat: "hr",
 			minValue: 0,
 		},
 		{
-			name: "League Goals Leader",
-			stat: "g",
+			name: "League RBI Leader",
+			stat: "rbi",
 			minValue: 0,
 		},
 		{
-			name: "League Assists Leader",
-			stat: "a",
+			name: "League Runs Leader",
+			stat: "r",
+			minValue: 0,
+		},
+		{
+			name: "League Stolen Bases Leader",
+			stat: "sb",
+			minValue: 0,
+		},
+		{
+			name: "League Walks Leader",
+			stat: "bb",
+			minValue: 0,
+		},
+		{
+			name: "League Wins Leader",
+			stat: "w",
+			minValue: 0,
+		},
+		{
+			name: "League Strikeouts Leader",
+			stat: "soPit",
+			minValue: 0,
+		},
+		{
+			name: "League WAR Leader",
+			stat: "war",
 			minValue: 0,
 		},
 	];
@@ -165,7 +217,7 @@ const doAwards = async (conditions: Conditions) => {
 		players,
 	).map(getPlayerInfo);
 	const mvp = mvpPlayers[0];
-	const allLeague = makeTeams(mvpPlayers);
+
 	const royPlayers = getTopPlayers(
 		{
 			allowNone: true,
@@ -174,11 +226,20 @@ const doAwards = async (conditions: Conditions) => {
 			score: mvpScore,
 		},
 		players,
-	).map(getPlayerInfo);
+	);
+	const roy = getPlayerInfo(royPlayers[0]);
 
-	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
-	const roy = royPlayers[0];
-	const allRookie = makeTeams(royPlayers, true);
+	const offensePlayers = getTopPlayers(
+		{
+			allowNone: true,
+			amount: Infinity,
+			score: p => p.currentStats.rbr + p.currentStats.rbat,
+		},
+		players,
+	);
+	const allOffense = makeTeams(offensePlayers, "offense").map(getPlayerInfo);
+	const allDefense = makeTeams(offensePlayers, "defense").map(getPlayerInfo);
+	const allRookie = makeTeams(royPlayers, "rookie").map(getPlayerInfo);
 
 	const poyPlayers = getTopPlayers(
 		{
@@ -270,7 +331,8 @@ const doAwards = async (conditions: Conditions) => {
 		qoy,
 		roy,
 		finalsMvp,
-		allLeague,
+		allOffense,
+		allDefense,
 		allRookie,
 		season: g.get("season"),
 	};

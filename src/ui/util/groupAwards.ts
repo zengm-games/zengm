@@ -1,3 +1,4 @@
+import { bySport } from "../../common";
 import { groupBy } from "../../common/groupBy";
 import type { Player } from "../../common/types";
 import helpers from "./helpers";
@@ -25,17 +26,36 @@ const awardsOrder = [
 	"All-Star",
 	"Slam Dunk Contest Winner",
 	"Three-Point Contest Winner",
-	"League Scoring Leader",
-	"League Rebounding Leader",
-	"League Assists Leader",
-	"League Steals Leader",
-	"League Blocks Leader",
-	"League Passing Leader",
-	"League Rushing Leader",
-	"League Receiving Leader",
-	"League Scrimmage Yards Leader",
-	"League Points Leader",
-	"League Goals Leader",
+	...bySport({
+		baseball: [
+			"League HR Leader",
+			"League RBI Leader",
+			"League Runs Leader",
+			"League Stolen Bases Leader",
+			"League Walks Leader",
+			"League Wins Leader",
+			"League Strikeouts Leader",
+			"League WAR Leader",
+		],
+		basketball: [
+			"League Scoring Leader",
+			"League Rebounding Leader",
+			"League Assists Leader",
+			"League Steals Leader",
+			"League Blocks Leader",
+		],
+		football: [
+			"League Passing Leader",
+			"League Rushing Leader",
+			"League Receiving Leader",
+			"League Scrimmage Yards Leader",
+		],
+		hockey: [
+			"League Points Leader",
+			"League Goals Leader",
+			"League Assists Leader",
+		],
+	}),
 ];
 
 const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {

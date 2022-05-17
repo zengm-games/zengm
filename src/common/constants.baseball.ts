@@ -568,6 +568,7 @@ const AWARD_NAMES = {
 	finalsMvp: "Finals MVP",
 	allOffense: "All-Offense Team",
 	allDefense: "All-Defense Team",
+	allRookie: "All-Rookie Team",
 } as const;
 
 const DEFAULT_CONFS: Conf[] = [

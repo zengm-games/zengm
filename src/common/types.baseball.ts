@@ -91,24 +91,12 @@ export type Awards = {
 	brw?: AwardTeam;
 
 	roy: AwardPlayer | undefined;
-	allRookie: AwardPlayer[];
+	allOffense: (AwardPlayer | undefined)[];
+	allDefense: (AwardPlayer | undefined)[];
+	allRookie: (AwardPlayer | undefined)[];
 	mvp: AwardPlayer | undefined;
-	allLeague: [
-		{
-			title: "First Team";
-			players: AwardPlayer[];
-		},
-		{
-			title: "Second Team";
-			players: AwardPlayer[];
-		},
-		{
-			title: "Third Team";
-			players: AwardPlayer[];
-		},
-	];
-	poy: AwardPlayer;
-	qoy: AwardPlayer;
+	poy: AwardPlayer | undefined;
+	qoy: AwardPlayer | undefined;
 	finalsMvp: AwardPlayer | undefined;
 };
 

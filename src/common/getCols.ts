@@ -3127,6 +3127,12 @@ const cols: {
 		sortType: "number",
 		title: "AS",
 	},
+	"count:allOffense": {
+		desc: "All-Offensive",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "AO",
+	},
 	"count:allStarMVP": {
 		desc: "All-Star MVP",
 		sortSequence: ["desc", "asc"],

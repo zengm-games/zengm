@@ -28,9 +28,15 @@ const FrivolitiesDraftClasses = ({
 	const cols = getCols([
 		"#",
 		"Season",
-		bySport({ basketball: "stat:ws", football: "stat:av", hockey: "stat:ps" }),
+		bySport({
+			baseball: "stat:war",
+			basketball: "stat:ws",
+			football: "stat:av",
+			hockey: "stat:ps",
+		}),
 		"Active",
 		bySport({
+			baseball: "count:allOffense",
 			basketball: "count:allStar",
 			football: "count:allLeague",
 			hockey: "count:allLeague",

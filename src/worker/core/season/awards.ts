@@ -575,7 +575,7 @@ const addSimpleAndTeamAwardsToAwardsByPlayer = (
 		const type = AWARD_NAMES[key] as string;
 
 		if (key === "allRookie" || isSport("baseball")) {
-			for (const p of awards.allRookie) {
+			for (const p of awards[key]) {
 				if (p) {
 					const { pid, tid, name } = p;
 					awardsByPlayer.push({

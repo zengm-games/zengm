@@ -98,6 +98,8 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "Three-Point Contest";
 		} else if (type.includes("All-League")) {
 			type = "All-League";
+		} else if (type.includes("All-Offensive")) {
+			type = "All-Offensive";
 		} else if (type.includes("All-Defensive")) {
 			type = "All-Defensive";
 		} else if (type.includes("All-Rookie")) {

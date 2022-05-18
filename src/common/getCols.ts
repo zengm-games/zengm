@@ -81,13 +81,13 @@ const sportSpecificCols = bySport<{
 			title: "Eye",
 		},
 		"rating:gnd": {
-			desc: "Ground Balls",
+			desc: "Ground Ball Fielding",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "Gnd",
 		},
 		"rating:fly": {
-			desc: "Fly Balls",
+			desc: "Fly Ball Fielding",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "Fly",
@@ -99,7 +99,7 @@ const sportSpecificCols = bySport<{
 			title: "Thr",
 		},
 		"rating:cat": {
-			desc: "Catcher",
+			desc: "Catcher Defense",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "Cat",

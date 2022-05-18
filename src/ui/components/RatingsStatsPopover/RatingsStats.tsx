@@ -1,3 +1,4 @@
+import RatingsStatsBaseball from "./RatingsStats.baseball";
 import RatingsStatsBasketball from "./RatingsStats.basketball";
 import RatingsStatsFootball from "./RatingsStats.football";
 import RatingsStatsHockey from "./RatingsStats.hockey";
@@ -12,6 +13,10 @@ const RatingsStats = (props: {
 	const challengeNoRatings = useLocal(state => state.challengeNoRatings);
 
 	return bySport({
+		baseball: RatingsStatsBaseball({
+			...props,
+			challengeNoRatings,
+		}),
 		basketball: RatingsStatsBasketball({
 			...props,
 			challengeNoRatings,

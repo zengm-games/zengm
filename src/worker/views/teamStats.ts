@@ -181,7 +181,8 @@ export const averageTeamStats = (
 			continue;
 		}
 
-		const byPos = Array.isArray((teams[0].stats as any)[stat]);
+		const byPos =
+			teams.length > 0 && Array.isArray((teams[0].stats as any)[stat]);
 
 		let sum = byPos ? [] : 0;
 		for (const t of teams) {

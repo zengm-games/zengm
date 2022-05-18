@@ -20,6 +20,7 @@ type InfoTemp = {
 };
 
 const displayStatNames = bySport({
+	baseball: ["war"],
 	basketball: ["ows", "dws"],
 	football: ["av"],
 	hockey: ["ops", "dps", "gps"],

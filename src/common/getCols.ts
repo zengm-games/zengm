@@ -512,6 +512,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "WAR",
 		},
+		"stat:warPerPlayer": {
+			desc: "WAR Per Player",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "WAR/Player",
+		},
 		"stat:gpF": {
 			desc: "Games Played",
 			sortSequence: ["desc", "asc"],

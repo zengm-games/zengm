@@ -2098,12 +2098,22 @@ class GameSim {
 		const runsWithHR = this.bases.filter(p => !p).length + 1;
 		const tyingRunUp = diffPts === runsWithHR;
 		const tyingRunOnDeck = diffPts === runsWithHR + 1;
-		if (this.inning >= this.numInnings - 1 && (tyingRunUp || tyingRunOnDeck)) {
+		if (
+			this.inning >= this.numInnings - 1 &&
+			(tyingRunUp || tyingRunOnDeck) &&
+			Math.random() < 0.75
+		) {
 			return;
 		}
 
-		// Runners on 2nd and 3rd, less than 2 outs - always
-		if (this.outs < 2 && !this.bases[0] && this.bases[1] && this.bases[2]) {
+		// Runners on 2nd and 3rd, less than 2 outs
+		if (
+			this.outs < 2 &&
+			!this.bases[0] &&
+			this.bases[1] &&
+			this.bases[2] &&
+			Math.random() < 0.5
+		) {
 			return true;
 		}
 
@@ -2117,11 +2127,13 @@ class GameSim {
 
 		// Runner on just 2nd, less than 2 outs - maybe if the next hitter is worse
 		if (this.outs < 2 && !this.bases[0] && this.bases[1] && !this.bases[2]) {
-			return Math.random() < diffScore;
+			const ibb = Math.random() < diffScore - 0.1;
+			return ibb;
 		}
 
 		// If the current batter is just very scary
-		return diffScore > 1 && Math.random() < diffScore - 1;
+		const scary = diffScore > 1 && Math.random() < diffScore - 1;
+		return scary;
 	}
 
 	simPlateAppearance() {

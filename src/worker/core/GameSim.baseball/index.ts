@@ -2084,7 +2084,7 @@ class GameSim {
 			gid: this.id,
 			day: this.day,
 			overtimes: this.overtimes,
-			team: this.team,
+			team: this.team as unknown as [TeamGameSim, TeamGameSim],
 			clutchPlays: [],
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
 			scoringSummary: this.playByPlay.scoringSummary,

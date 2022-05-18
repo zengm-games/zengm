@@ -159,17 +159,16 @@ type PlayByPlayEventInput =
 			pidOn: number;
 	  };
 
+type PlayByPlayEventStat = {
+	type: "stat";
+	t: TeamNum;
+	pid: number | undefined | null;
+	s: string;
+	amt: number;
+};
+
 export type PlayByPlayEvent =
-	| (
-			| PlayByPlayEventInput
-			| {
-					type: "stat";
-					t: TeamNum;
-					pid: number | undefined | null;
-					s: string;
-					amt: number;
-			  }
-	  )
+	| (PlayByPlayEventInput | PlayByPlayEventStat)
 	| {
 			type: "init";
 			boxScore: any;
@@ -177,6 +176,8 @@ export type PlayByPlayEvent =
 
 export type PlayByPlayEventScore = PlayByPlayEvent & {
 	inning: number;
+	t: TeamNum;
+	pid: number;
 };
 
 class PlayByPlayLogger {
@@ -228,7 +229,7 @@ class PlayByPlayLogger {
 				scoringSummaryEvent.t = scoringSummaryEvent.t === 0 ? 1 : 0;
 			}
 
-			this.scoringSummary.push(scoringSummaryEvent);
+			this.scoringSummary.push(scoringSummaryEvent as any);
 		}
 	}
 

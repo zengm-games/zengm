@@ -231,6 +231,18 @@ export const getText = (
 			bold = true;
 			break;
 		}
+		case "passedBall": {
+			const runnerText = formatRunners(getName, event.runners);
+			text = `Passed ball!${runnerText ? ` ${runnerText}` : ""}`;
+			bold = true;
+			break;
+		}
+		case "wildPitch": {
+			const runnerText = formatRunners(getName, event.runners);
+			text = `Wild pitch!${runnerText ? ` ${runnerText}` : ""}`;
+			bold = true;
+			break;
+		}
 		case "hitResult": {
 			text = "";
 			if (event.result === "error") {
@@ -428,7 +440,12 @@ const processLiveGameEvents = ({
 				sportState.balls = 4;
 			}
 			sportState.bases = e.bases;
-		} else if (e.type === "balk" || e.type === "hitByPitch") {
+		} else if (
+			e.type === "balk" ||
+			e.type === "wildPitch" ||
+			e.type === "passedBall" ||
+			e.type === "hitByPitch"
+		) {
 			sportState.bases = e.bases;
 		}
 

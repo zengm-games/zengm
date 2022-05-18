@@ -146,7 +146,7 @@ type PlayByPlayEventInput =
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
-			type: "balk";
+			type: "balk" | "wildPitch" | "passedBall";
 			t: TeamNum;
 			pid: number;
 			runners: Runner[];
@@ -219,7 +219,11 @@ class PlayByPlayLogger {
 				...event,
 				inning: this.period,
 			};
-			if (scoringSummaryEvent.type === "balk") {
+			if (
+				scoringSummaryEvent.type === "balk" ||
+				scoringSummaryEvent.type === "wildPitch" ||
+				scoringSummaryEvent.type === "passedBall"
+			) {
 				// Swap team, so it shows up correctly in scoring summary. Basically, t must be team that scored
 				scoringSummaryEvent.t = scoringSummaryEvent.t === 0 ? 1 : 0;
 			}

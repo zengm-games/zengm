@@ -842,7 +842,7 @@ class GameSim {
 		return runners;
 	}
 
-	doBalk() {
+	doBalkWildPitchPassedBall(type: "balk" | "passedBall" | "wildPitch") {
 		const runners = this.getRunners();
 
 		if (this.bases[2]) {
@@ -861,11 +861,22 @@ class GameSim {
 			this.bases[0] = undefined;
 		}
 
-		const p = this.team[this.d].getPitcher().p;
+		const pos = type === "passedBall" ? "C" : "P";
 
-		this.recordStat(this.o, p, "bk");
+		const p = this.team[this.d].playersInGameByPos[pos].p;
+
+		let stat;
+		if (type === "balk") {
+			stat = "bk";
+		} else if (type === "passedBall") {
+			stat = "pb";
+		} else {
+			stat = "wp";
+		}
+
+		this.recordStat(this.d, p, stat);
 		this.playByPlay.logEvent({
-			type: "balk",
+			type,
 			t: this.d,
 			pid: p.id,
 			runners: this.finalizeRunners(runners),
@@ -959,6 +970,28 @@ class GameSim {
 
 	probBalk() {
 		return 0.01;
+	}
+
+	probWildPitch() {
+		const pitcher = this.team[this.d].playersInGameByPos.P.p;
+		const catcher = this.team[this.d].playersInGameByPos.C.p;
+		return (
+			0.005 *
+			(1 -
+				(0.75 * pitcher.compositeRating.controlPitcher +
+					0.25 * catcher.compositeRating.catcherDefense))
+		);
+	}
+
+	probPassedBall() {
+		const pitcher = this.team[this.d].playersInGameByPos.P.p;
+		const catcher = this.team[this.d].playersInGameByPos.C.p;
+		return (
+			0.001 *
+			(1 -
+				(0.25 * pitcher.compositeRating.controlPitcher +
+					0.75 * catcher.compositeRating.catcherDefense))
+		);
 	}
 
 	probHitByPitch() {
@@ -1449,7 +1482,32 @@ class GameSim {
 		let doneBatter;
 
 		if (this.bases.some(p => p) && Math.random() < this.probBalk()) {
-			this.doBalk();
+			this.doBalkWildPitchPassedBall("balk");
+			return doneBatter;
+		}
+
+		let wildPitchPassedBall: "wildPitch" | "passedBall" | undefined;
+		if (Math.random() < this.probWildPitch()) {
+			wildPitchPassedBall = "wildPitch";
+		} else if (Math.random() < this.probPassedBall()) {
+			wildPitchPassedBall = "passedBall";
+		}
+
+		if (wildPitchPassedBall) {
+			this.doBalkWildPitchPassedBall(wildPitchPassedBall);
+
+			this.balls += 1;
+			if (this.balls >= 4) {
+				this.doWalk("normal");
+				doneBatter = true;
+			} else {
+				this.playByPlay.logEvent({
+					type: "ball",
+					balls: this.balls,
+					strikes: this.strikes,
+				});
+			}
+
 			return doneBatter;
 		}
 

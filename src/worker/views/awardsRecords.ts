@@ -3,7 +3,74 @@ import type { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sy
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
 
+// Sync with useDropdownOptions
 const optionsTmp = bySport({
+	baseball: [
+		{
+			val: "Won Championship",
+			key: "champion",
+		},
+		{
+			val: "Most Valuable Player",
+			key: "mvp",
+		},
+		{
+			val: "Finals MVP",
+			key: "finals_mvp",
+		},
+		{
+			val: "Pitcher of the Year",
+			key: "poy",
+		},
+		{
+			val: "Reliever of the Year",
+			key: "qoy",
+		},
+		{
+			val: "Rookie of the Year",
+			key: "roy",
+		},
+		{
+			val: "All-Offensive",
+			key: "all_off",
+		},
+		{
+			val: "All-Defensive",
+			key: "all_def",
+		},
+		{
+			val: "League HR Leader",
+			key: "hr_leader",
+		},
+		{
+			val: "League RBI Leader",
+			key: "rbi_leader",
+		},
+		{
+			val: "League Runs Leader",
+			key: "r_leader",
+		},
+		{
+			val: "League Stolen Bases Leader",
+			key: "sb_leader",
+		},
+		{
+			val: "League Walks Leader",
+			key: "bb_leader",
+		},
+		{
+			val: "League Wins Leader",
+			key: "w_leader",
+		},
+		{
+			val: "League Strikeouts Leader",
+			key: "soPit_leader",
+		},
+		{
+			val: "League WAR Leader",
+			key: "war_leader",
+		},
+	],
 	basketball: [
 		{
 			val: "Won Championship",
@@ -254,8 +321,14 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 			return (
 				a.type === o.first_def ||
 				a.type === o.second_def ||
-				a.type === o.third_def
+				a.type === o.third_def ||
+				a.type === "All-Defensive Team"
 			);
+		};
+	} else if (awardType === "all_off") {
+		filter = (a: LocalPlayerAward) => {
+			const o = awardOptions;
+			return a.type === "All-Offensive Team";
 		};
 	} else {
 		filter = (a: LocalPlayerAward) => a.type === aType;

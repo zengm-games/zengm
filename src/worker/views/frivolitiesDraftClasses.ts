@@ -13,6 +13,7 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
 	for (const ps of p.stats) {
 		sum += bySport({
+			baseball: ps.war,
 			basketball: ps.ows + ps.dws,
 			football: ps.av,
 			hockey: ps.dps + ps.ops + ps.gps,

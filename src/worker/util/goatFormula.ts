@@ -6,6 +6,7 @@ import FormulaEvaluator from "./FormulaEvaluator";
 import g from "./g";
 
 const DEFAULT_FORMULA = bySport({
+	baseball: "20 * mvp + war",
 	basketball: "20 * mvp + pts/gp + 2 * ast/gp + dwsPeak",
 	football:
 		"20 * mvp + defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
@@ -43,11 +44,13 @@ AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
 const MIN_GP_SEASON = bySport({
+	baseball: 20,
 	basketball: 10,
 	football: 5,
 	hockey: 10,
 });
 const MIN_GP_TOTAL = bySport({
+	baseball: 100,
 	basketball: 50,
 	football: 10,
 	hockey: 50,

@@ -253,6 +253,7 @@ const newPhasePreseason = async (
 				`A newly discovered Kenyan birth certificate suggests that ${name}`,
 				`In a televised press conference, the parents of ${name} explained how they faked his age as a child to make him perform better against younger competition. He`,
 				`Internet sleuths on /r/${bySport({
+					baseball: "baseball",
 					basketball: "nba",
 					football: "nfl",
 					hockey: "hockey",

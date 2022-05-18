@@ -3134,10 +3134,10 @@ const cols: {
 		title: "AS",
 	},
 	"count:allOffense": {
-		desc: "All-Offensive",
+		desc: "All-Offensive Team",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "AO",
+		title: "AOT",
 	},
 	"count:allStarMVP": {
 		desc: "All-Star MVP",
@@ -3210,6 +3210,18 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "DROY",
+	},
+	"count:poy": {
+		desc: "Pitcher of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "POY",
+	},
+	"count:qoy": {
+		desc: "Reliever of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "ROY",
 	},
 	"award:dpoy": {
 		desc: "Defensive Player of the Year",

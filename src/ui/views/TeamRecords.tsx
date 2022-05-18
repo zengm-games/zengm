@@ -23,6 +23,17 @@ const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 };
 
 const categories = bySport({
+	baseball: [
+		"mvp",
+		"poy",
+		"qoy",
+		"roy",
+		"bestRecord",
+		"bestRecordConf",
+		"allRookie",
+		"allOffense",
+		"allDefense",
+	],
 	basketball: [
 		"mvp",
 		"dpoy",

@@ -2,6 +2,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
+import { isSport } from "../../common";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -56,8 +57,11 @@ const tallyAwards = (
 		roy: 0,
 		oroy: 0,
 		droy: 0,
+		poy: 0,
+		qoy: 0,
 		allLeague: 0,
 		allDefense: 0,
+		allOffense: 0,
 		allRookie: 0,
 		allStar: 0,
 		allStarMVP: 0,
@@ -110,6 +114,16 @@ const tallyAwards = (
 			teamAwards.droy++;
 		}
 
+		if (isSport("baseball")) {
+			if (a.poy && a.poy.tid === tid) {
+				teamAwards.poy++;
+			}
+
+			if (a.qoy && a.qoy.tid === tid) {
+				teamAwards.qoy++;
+			}
+		}
+
 		if (a.bre && a.brw) {
 			// For old league files, this format is obsolete now
 			if (a.bre.tid === tid) {
@@ -148,19 +162,32 @@ const tallyAwards = (
 			}
 		}
 
-		for (let i = 0; i < a.allLeague.length; i++) {
-			for (const p of a.allLeague[i].players) {
+		if (isSport("baseball")) {
+			for (const p of a.allDefense) {
 				if (p && p.tid === tid) {
-					teamAwards.allLeague++;
+					teamAwards.allDefense++;
 				}
 			}
-		}
-
-		if (a.allDefensive) {
-			for (let i = 0; i < a.allDefensive.length; i++) {
-				for (const p of a.allDefensive[i].players) {
+			for (const p of a.allOffense) {
+				if (p && p.tid === tid) {
+					teamAwards.allOffense++;
+				}
+			}
+		} else {
+			for (let i = 0; i < a.allLeague.length; i++) {
+				for (const p of a.allLeague[i].players) {
 					if (p && p.tid === tid) {
-						teamAwards.allDefense++;
+						teamAwards.allLeague++;
+					}
+				}
+			}
+
+			if (a.allDefensive) {
+				for (let i = 0; i < a.allDefensive.length; i++) {
+					for (const p of a.allDefensive[i].players) {
+						if (p && p.tid === tid) {
+							teamAwards.allDefense++;
+						}
 					}
 				}
 			}

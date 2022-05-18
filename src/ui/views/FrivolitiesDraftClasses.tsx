@@ -63,7 +63,12 @@ const FrivolitiesDraftClasses = ({
 				</a>,
 				helpers.roundStat(
 					draftClass.value,
-					bySport({ basketball: "ws", football: "av", hockey: "ps" }),
+					bySport({
+						baseball: "war",
+						basketball: "ws",
+						football: "av",
+						hockey: "ps",
+					}),
 					true,
 				),
 				draftClass.numActive,

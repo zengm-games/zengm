@@ -1432,8 +1432,10 @@ type TeamSeasonPlus = TeamSeason & {
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
-import type { TeamStatAttr as TeamStatAttrBaseball } from "./types.baseball";
-import type { TeamStatAttrByPos as TeamStatAttrByPosBaseball } from "./types.baseball";
+import type {
+	TeamStatAttr as TeamStatAttrBaseball,
+	TeamStatAttrByPos as TeamStatAttrByPosBaseball,
+} from "./types.baseball";
 import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
 import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";

@@ -5,17 +5,25 @@ import { bySport, isSport, PLAYER } from "../../common";
 import helpers from "./helpers";
 
 const goldenOldiesCutoffs = bySport({
+	baseball: [30, 33, 36],
 	basketball: [30, 33, 36],
 	football: [28, 30, 32],
 	hockey: [30, 33, 36],
 });
 const youngGunsCutoffs = bySport({
+	baseball: [25, 22],
 	basketball: [25, 22],
 	football: [26, 24],
 	hockey: [25, 22],
 });
-const superTeamCutoff = bySport({ basketball: 3, football: 15, hockey: 4 });
+const superTeamCutoff = bySport({
+	baseball: 4,
+	basketball: 3,
+	football: 15,
+	hockey: 4,
+});
 const trustTheProcessCutoff = bySport({
+	baseball: 3,
 	basketball: 3,
 	football: 7,
 	hockey: 3,

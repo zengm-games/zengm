@@ -35,6 +35,10 @@ const makeAwardPlayer = (
 		tid: p.stats.tid,
 		abbrev: p.stats.abbrev,
 		...bySport<any>({
+			baseball: {
+				pos: pos ?? p.ratings.pos,
+				keyStats: p.stats.keyStats,
+			},
 			basketball:
 				type === "defense"
 					? {
@@ -171,7 +175,11 @@ const EditAwards = ({
 						);
 					}
 				}
-			} else if (type == "allRookie") {
+			} else if (
+				type == "allRookie" ||
+				(isSport("baseball") &&
+					(type === "allOffense" || type === "allDefense"))
+			) {
 				if (p?.pid == undefined) {
 					newAwards[type][playerNumber] = undefined;
 				} else {
@@ -268,32 +276,36 @@ const EditAwards = ({
 					))}
 				</div>
 				<div className="row">
-					{aws.allLeague.map((element: any, i: number) => {
-						const teamSelect = element.players.map((player: any, j: number) => {
-							return (
-								<div className="d-flex" key={j}>
-									<Position index={j} p={player} />
-									<div className="mb-3 flex-grow-1">
-										<SelectMultiple
-											key={season}
-											options={players}
-											value={getPlayer(player)}
-											getOptionLabel={getOptionLabel("allLeague")}
-											getOptionValue={p => String(p.pid)}
-											onChange={handleChange("allLeague", i, j)}
-										/>
-									</div>
-								</div>
-							);
-						});
+					{!isSport("baseball")
+						? aws.allLeague.map((element: any, i: number) => {
+								const teamSelect = element.players.map(
+									(player: any, j: number) => {
+										return (
+											<div className="d-flex" key={j}>
+												<Position index={j} p={player} />
+												<div className="mb-3 flex-grow-1">
+													<SelectMultiple
+														key={season}
+														options={players}
+														value={getPlayer(player)}
+														getOptionLabel={getOptionLabel("allLeague")}
+														getOptionValue={p => String(p.pid)}
+														onChange={handleChange("allLeague", i, j)}
+													/>
+												</div>
+											</div>
+										);
+									},
+								);
 
-						return [
-							<div className="col-lg-4 col-md-6" key={i}>
-								<h3 className="mt-4">{element.title} All-League</h3>
-								{teamSelect}
-							</div>,
-						];
-					})}
+								return [
+									<div className="col-lg-4 col-md-6" key={i}>
+										<h3 className="mt-4">{element.title} All-League</h3>
+										{teamSelect}
+									</div>,
+								];
+						  })
+						: null}
 
 					{isSport("basketball") ? (
 						<>
@@ -322,6 +334,52 @@ const EditAwards = ({
 									</div>,
 								];
 							})}
+						</>
+					) : null}
+
+					{isSport("baseball") ? (
+						<>
+							<div className="col-md-4 col-6">
+								<h3 className="mt-4">All-Offensive Team</h3>
+								{aws.allOffense.map((player: any, i: number) => {
+									return (
+										<div className="d-flex" key={i}>
+											<Position index={i} p={player} />
+											<div className="mb-3 flex-grow-1">
+												<SelectMultiple
+													options={players}
+													key={season}
+													value={getPlayer(player)}
+													getOptionLabel={getOptionLabel("allOffense")}
+													getOptionValue={p => String(p.pid)}
+													onChange={handleChange("allOffense", undefined, i)}
+												/>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+
+							<div className="col-md-4 col-6">
+								<h3 className="mt-4">All-Defensive Team</h3>
+								{aws.allDefense.map((player: any, i: number) => {
+									return (
+										<div className="d-flex" key={i}>
+											<Position index={i} p={player} />
+											<div className="mb-3 flex-grow-1">
+												<SelectMultiple
+													options={players}
+													key={season}
+													value={getPlayer(player)}
+													getOptionLabel={getOptionLabel("allDefense")}
+													getOptionValue={p => String(p.pid)}
+													onChange={handleChange("allDefense", undefined, i)}
+												/>
+											</div>
+										</div>
+									);
+								})}
+							</div>
 						</>
 					) : null}
 

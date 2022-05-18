@@ -53,6 +53,7 @@ const updateAwards = async (
 			attrs: ["pid", "name"],
 			ratings: ["pos"],
 			stats: bySport({
+				baseball: ["abbrev", "tid", "keyStats"],
 				basketball: ["abbrev", "tid", "pts", "trb", "ast", "blk", "stl"],
 				football: ["abbrev", "tid", "keyStats"],
 				hockey: [

@@ -35,6 +35,12 @@ const Controls = ({
 	searchText: string;
 }) => {
 	const positionFilterText = bySport({
+		baseball: (
+			<>
+				<code>SS|3B</code> under a Position column to display shortstops and
+				third basemen
+			</>
+		),
 		basketball: (
 			<>
 				<code>C|PF</code> under a Position column to display centers and power

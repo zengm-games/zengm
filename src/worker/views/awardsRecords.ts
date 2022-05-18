@@ -327,7 +327,6 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 		};
 	} else if (awardType === "all_off") {
 		filter = (a: LocalPlayerAward) => {
-			const o = awardOptions;
 			return a.type === "All-Offensive Team";
 		};
 	} else {

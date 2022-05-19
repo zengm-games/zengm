@@ -162,10 +162,6 @@ class Team<DH extends boolean> {
 		];
 	}
 
-	getPitcher() {
-		return this.playersInGameByPos.P;
-	}
-
 	advanceToNextBatter() {
 		this.atBat = (this.atBat + 1) % NUM_BATTERS_PER_SIDE;
 	}

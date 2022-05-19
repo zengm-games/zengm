@@ -404,7 +404,7 @@ class GameSim {
 		responsiblePitcherPid?: number,
 	) {
 		if (responsiblePitcherPid === undefined) {
-			const pitcher = this.team[this.d].getPitcher().p;
+			const pitcher = this.team[this.d].playersInGameByPos.P.p;
 			responsiblePitcherPid = pitcher.id;
 		}
 
@@ -995,7 +995,7 @@ class GameSim {
 	}
 
 	probHitByPitch() {
-		const p = this.team[this.d].getPitcher().p;
+		const p = this.team[this.d].playersInGameByPos.P.p;
 
 		return 0.01 * (1 - p.compositeRating.controlPitcher);
 	}
@@ -1566,7 +1566,7 @@ class GameSim {
 		}
 
 		const batter = this.team[this.o].getBatter().p;
-		const pitcher = this.team[this.d].getPitcher().p;
+		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 
 		this.recordStat(this.d, pitcher, "pc");
 
@@ -1821,7 +1821,7 @@ class GameSim {
 			this.team[this.d].t.stat.pts
 		) {
 			// This run just broke the tie, now someone is winning
-			this.winEligiblePid = this.team[this.o].getPitcher().p.id;
+			this.winEligiblePid = this.team[this.o].playersInGameByPos.P.p.id;
 			this.lossEligiblePid = pitcher.id;
 		}
 	}
@@ -1882,7 +1882,7 @@ class GameSim {
 
 		this.bases[0] = this.makeOccupiedBase(p);
 
-		const pitcher = this.team[this.d].getPitcher().p;
+		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 
 		this.recordStat(this.o, p, "pa");
 
@@ -1917,7 +1917,7 @@ class GameSim {
 
 	logOut() {
 		this.outs += 1;
-		const pitcher = this.team[this.d].getPitcher().p;
+		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 		this.recordStat(this.d, pitcher, "outs");
 		for (const [pos, p] of Object.entries(
 			this.team[this.d].playersInGameByPos,
@@ -1948,7 +1948,7 @@ class GameSim {
 	doStrikeout(swinging: boolean) {
 		const t = this.team[this.o];
 		const batter = t.getBatter().p;
-		const pitcher = this.team[this.d].getPitcher().p;
+		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 		const catcher = this.team[this.d].playersInGameByPos.C.p;
 
 		this.recordStat(this.o, batter, "pa");
@@ -2001,7 +2001,7 @@ class GameSim {
 
 		// Handle some stats here
 		for (const t of teamNums) {
-			const pitcher = this.team[t].getPitcher().p;
+			const pitcher = this.team[t].playersInGameByPos.P.p;
 			this.recordStat(t, pitcher, "gf");
 			if (pitcher.stat.gsPit) {
 				this.recordStat(t, pitcher, "cg");

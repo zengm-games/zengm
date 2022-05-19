@@ -15,11 +15,16 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 
+// Would be better to use random.choice, but it is in worker only
+const choice = <T extends unknown>(array: T[]): T =>
+	array[Math.floor(Math.random() * array.length)];
+
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({
-	basketball: Math.random() < 0.5 ? "football" : "hockey",
-	football: Math.random() < 0.5 ? "basketball" : "hockey",
-	hockey: Math.random() < 0.5 ? "basketball" : "football",
+	baseball: choice(["basketball", "football", "hockey"]),
+	basketball: choice(["baseball", "football", "hockey"]),
+	football: choice(["baseball", "basketball", "hockey"]),
+	hockey: choice(["baseball", "basketball", "football"]),
 });
 
 const difficultyText = (difficulty: number | undefined) => {
@@ -394,12 +399,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	const pagination = rows.length > 100;
 
-	const otherSportsText = bySport({
-		basketball: "football and hockey",
-		football: "basketball and hockey",
-		hockey: "basketball and football",
-	});
-
 	return (
 		<>
 			{location.host.indexOf("beta") === 0 ? (
@@ -473,7 +472,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					href="https://zengm.com/"
 					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${randomOtherSport}`}
 				>
-					Try our {otherSportsText} games!
+					Try our other sports sim
+					<br />
+					games!
 				</a>
 			</div>
 

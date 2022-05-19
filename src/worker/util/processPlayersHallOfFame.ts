@@ -32,6 +32,7 @@ const processPlayersHallOfFame = <
 		for (const ps of p.stats) {
 			const tid = ps.tid;
 			const ewa = bySport({
+				baseball: ps.war,
 				basketball: ps.ewa,
 				football: ps.av,
 				hockey: ps.ps,

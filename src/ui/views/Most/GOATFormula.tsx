@@ -17,6 +17,7 @@ const GOATFormula = ({
 	const cols = getCols(stats.map(stat => `stat:${stat}`));
 
 	const exampleStat = bySport({
+		baseball: "hr",
 		basketball: "pts",
 		football: "pssYds",
 		hockey: "sv",

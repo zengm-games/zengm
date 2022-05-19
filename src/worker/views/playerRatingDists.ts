@@ -31,6 +31,7 @@ const updatePlayers = async (
 		}
 
 		const extraRatings = bySport({
+			baseball: ["ovrs", "pots"],
 			basketball: [],
 			football: ["ovrs", "pots"],
 			hockey: ["ovrs", "pots"],

@@ -1,10 +1,4 @@
-import {
-	bySport,
-	isSport,
-	PHASE,
-	PLAYER,
-	PLAYER_STATS_TABLES,
-} from "../../common";
+import { bySport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {

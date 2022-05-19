@@ -414,7 +414,22 @@ const generateJSONSchema = (sport /*: string*/) => {
 			playerSkill: {
 				type: "string",
 				enum: bySport({
-					baseball: [],
+					baseball: [
+						"Pp",
+						"Pf",
+						"Pw",
+						"Ro",
+						"Ri",
+						"D1",
+						"Dc",
+						"Dg",
+						"Df",
+						"A",
+						"Hp",
+						"Hc",
+						"E",
+						"S",
+					],
 					basketball: ["3", "A", "B", "Di", "Dp", "Po", "Ps", "R", "V"],
 					football: [
 						"Pa",

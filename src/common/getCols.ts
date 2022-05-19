@@ -284,6 +284,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "IP",
 		},
+		"stat:outs": {
+			desc: "Outs Pitched",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Outs",
+		},
 		"stat:rPit": {
 			desc: "Runs Allowed",
 			sortSequence: ["desc", "asc"],

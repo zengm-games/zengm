@@ -13,7 +13,14 @@ const DEFAULT_FORMULA = bySport({
 	hockey: "20 * mvp + ops + dps + gps",
 });
 
-const BANNED_STAT_VARIABLES = new Set(["minAvailable", "gpSkater", "gpGoalie"]);
+const BANNED_STAT_VARIABLES = new Set(
+	bySport({
+		baseball: ["minAvailable", "poSo"],
+		basketball: ["minAvailable"],
+		football: ["minAvailable"],
+		hockey: ["minAvailable", "gpSkater", "gpGoalie"],
+	}),
+);
 
 const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 	stat => !BANNED_STAT_VARIABLES.has(stat),

@@ -1,4 +1,10 @@
-import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+} from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -37,7 +43,14 @@ const updatePlayers = async (
 
 		let stats = undefined;
 		let statType: PlayerStatType = "perGame";
-		if (isSport("football") || isSport("hockey")) {
+		if (
+			bySport({
+				baseball: true,
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
+		) {
 			stats = PLAYER_STATS_TABLES[inputs.statType].stats;
 		} else {
 			if (inputs.statType === "advanced") {
@@ -60,18 +73,27 @@ const updatePlayers = async (
 			season: inputs.season,
 			statType: statType,
 		});
-		if (isSport("football") || isSport("hockey")) {
+		if (
+			bySport({
+				baseball: true,
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
+		) {
 			const statTable = PLAYER_STATS_TABLES[inputs.statType];
-			const onlyShowIf = statTable.onlyShowIf as string[];
-			players = players.filter(p => {
-				for (const stat of onlyShowIf) {
-					if (typeof p["stats"][stat] === "number" && p["stats"][stat] > 0) {
-						return true;
+			const onlyShowIf = statTable.onlyShowIf;
+			if (onlyShowIf) {
+				players = players.filter(p => {
+					for (const stat of onlyShowIf) {
+						if (typeof p["stats"][stat] === "number" && p["stats"][stat] > 0) {
+							return true;
+						}
 					}
-				}
 
-				return false;
-			});
+					return false;
+				});
+			}
 		}
 
 		const statsAll = players.reduce((memo, p) => {

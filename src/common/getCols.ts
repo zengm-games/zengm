@@ -626,6 +626,18 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "CS%",
 		},
+		"stat:babip": {
+			desc: "Batting Average On Balls In Play",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "BAbip",
+		},
+		"stat:iso": {
+			desc: "Isolated Power",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "ISO",
+		},
 	},
 	basketball: {
 		"rating:fg": {

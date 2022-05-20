@@ -273,7 +273,17 @@ const PLAYER_STATS_TABLES = {
 	},
 	advanced: {
 		name: "Advanced",
-		stats: ["rbat", "rbr", "rfldTot", "rpos", "rpit", "war"],
+		stats: [
+			"pa",
+			"babip",
+			"iso",
+			"rbat",
+			"rbr",
+			"rfldTot",
+			"rpos",
+			"rpit",
+			"war",
+		],
 	},
 	gameHighs: {
 		name: "Game Highs",

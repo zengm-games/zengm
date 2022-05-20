@@ -48,6 +48,12 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				stat: "h",
 			},
 			{
+				stat: "2b",
+			},
+			{
+				stat: "3b",
+			},
+			{
 				stat: "sb",
 			},
 			{

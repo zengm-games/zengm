@@ -123,7 +123,7 @@ const processStats = (
 		} else if (stat === "hr9") {
 			row[stat] = helpers.ratio(ps.hrPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "bb9") {
-			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME);
+			row[stat] = helpers.ratio(ps.bbPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "so9") {
 			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME);
 		} else if (stat === "pc9") {

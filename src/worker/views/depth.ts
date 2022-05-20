@@ -25,13 +25,27 @@ const defenseStats = [
 	"defFmbTD",
 ];
 
+const baseballLineupStats = [
+	"war",
+	"ab",
+	"h",
+	"hr",
+	"ba",
+	"r",
+	"rbi",
+	"sb",
+	"obp",
+	"slg",
+	"ops",
+];
+
 const stats = bySport<Record<string, string[]>>({
 	baseball: {
-		L: [],
-		LP: [],
-		D: [],
-		DP: [],
-		P: [],
+		L: baseballLineupStats,
+		LP: baseballLineupStats,
+		D: baseballLineupStats,
+		DP: baseballLineupStats,
+		P: ["war", "w", "l", "era", "gpPit", "gsPit", "sv", "ip", "soPit", "whip"],
 	},
 	basketball: {},
 	football: {

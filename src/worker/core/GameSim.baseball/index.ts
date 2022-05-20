@@ -2028,10 +2028,12 @@ class GameSim {
 			}
 
 			const teamWon = this.team[t].t.stat.pts > this.team[t2].t.stat.pts;
+			const saveOutsNeeded = this.team[t].saveOutsNeeded;
 			if (
 				teamWon &&
 				pitcher.id !== this.winEligiblePid &&
-				(this.team[t].saveEligibleWhenEnteredGame || pitcher.stat.outs >= 9)
+				saveOutsNeeded !== undefined &&
+				pitcher.stat.outs >= saveOutsNeeded
 			) {
 				this.recordStat(t, pitcher, "sv");
 			}
@@ -2161,10 +2163,20 @@ class GameSim {
 	}
 
 	checkReliefPitcher(betweenInnings: boolean) {
-		let saveSituation = false;
+		const scoreDiff =
+			this.team[this.d].t.stat.pts - this.team[this.o].t.stat.pts;
+		const runsUpToOnDeck = this.bases.filter(base => base).length + 2;
+		let saveOutsNeeded = 9;
+		if (scoreDiff > 0 && scoreDiff <= 3) {
+			saveOutsNeeded = 3;
+		}
+		if (scoreDiff > 0 && scoreDiff <= runsUpToOnDeck) {
+			saveOutsNeeded = 1;
+		}
 
 		const t = this.team[this.d];
 
+		const saveSituation = this.inning === this.numInnings && saveOutsNeeded < 9;
 		const candidate = t.getBestReliefPitcher(saveSituation, betweenInnings);
 		if (!candidate) {
 			return;
@@ -2172,8 +2184,10 @@ class GameSim {
 
 		const pitcher = t.playersInGameByPos.P.p;
 		const value =
-			fatigueFactor(pitcher.stat.pc, pitcher.compositeRating.workhorsePitcher) *
-			pitcher.compositeRating.pitcher;
+			fatigueFactor(
+				pitcher.pFatigue + pitcher.stat.pc,
+				pitcher.compositeRating.workhorsePitcher,
+			) * pitcher.compositeRating.pitcher;
 
 		// -1 to 1
 		const valueDiff = candidate.value - value;
@@ -2208,6 +2222,8 @@ class GameSim {
 			this.recordStat(this.d, candidate.p, "gpPit");
 			this.recordStat(this.d, candidate.p, "gp");
 			this.recordStat(this.d, candidate.p, "gpF", 1, "fielding");
+
+			t.saveOutsNeeded = saveOutsNeeded;
 		}
 	}
 
@@ -2264,7 +2280,9 @@ class GameSim {
 
 				this.possessionChange();
 				this.resetNewInning();
-				this.checkReliefPitcher(true);
+				if (this.inning > 1) {
+					this.checkReliefPitcher(true);
+				}
 				this.playByPlay.logEvent({
 					type: "sideStart",
 					inning: this.inning,

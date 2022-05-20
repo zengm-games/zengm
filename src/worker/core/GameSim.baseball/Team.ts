@@ -39,7 +39,7 @@ class Team<DH extends boolean> {
 
 	atBat: number;
 	subIndex: number;
-	saveEligibleWhenEnteredGame: boolean;
+	saveOutsNeeded: number | undefined;
 
 	constructor(t: TeamGameSim, dh: DH) {
 		this.t = t;
@@ -54,7 +54,6 @@ class Team<DH extends boolean> {
 
 		this.atBat = -1;
 		this.subIndex = -1;
-		this.saveEligibleWhenEnteredGame = false;
 
 		this.playersByPid = {} as any;
 		for (const p of this.t.player) {
@@ -193,8 +192,10 @@ class Team<DH extends boolean> {
 				p,
 				index: i,
 				value:
-					fatigueFactor(p.stat.pc, p.compositeRating.workhorsePitcher) *
-					p.compositeRating.pitcher,
+					fatigueFactor(
+						p.pFatigue + p.stat.pc,
+						p.compositeRating.workhorsePitcher,
+					) * p.compositeRating.pitcher,
 			}))
 			.filter(p => p.p.subIndex === undefined);
 
@@ -232,8 +233,10 @@ class Team<DH extends boolean> {
 			p,
 			index: i,
 			value:
-				fatigueFactor(p.stat.pc, p.compositeRating.workhorsePitcher) *
-				p.compositeRating.pitcher,
+				fatigueFactor(
+					p.pFatigue + p.stat.pc,
+					p.compositeRating.workhorsePitcher,
+				) * p.compositeRating.pitcher,
 		})).filter(p => p.p.subIndex === undefined);
 
 		return random.choice(availablePitchers2, choiceWeight);

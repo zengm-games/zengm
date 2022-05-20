@@ -1042,7 +1042,7 @@ class GameSim {
 				0: 0.6,
 				1: 0.55,
 				2: 0.5,
-				3: 0.3,
+				3: 0.2,
 			},
 			1: {
 				0: 0.65,
@@ -1060,11 +1060,13 @@ class GameSim {
 		let ballProb = BALL_PROB_BY_COUNT[this.strikes][this.balls];
 
 		if (this.strikes === 2 && this.balls === 0) {
-			ballProb -= 0.1 - 0.2 * pitcher.compositeRating.controlPitcher;
+			ballProb += 0.2 * pitcher.compositeRating.controlPitcher;
 		} else if (this.strikes === 2 && this.balls === 1) {
-			ballProb -= 0.05 - 0.1 * pitcher.compositeRating.controlPitcher;
+			ballProb += 0.1 * pitcher.compositeRating.controlPitcher;
+		} else if (this.balls === 3) {
+			ballProb -= 0.2 * pitcher.compositeRating.controlPitcher;
 		} else {
-			ballProb += 0.1 - 0.2 * pitcher.compositeRating.controlPitcher;
+			ballProb -= 0.1 * pitcher.compositeRating.controlPitcher;
 		}
 
 		const ballOrStrike =
@@ -1085,22 +1087,28 @@ class GameSim {
 		let outcome: "ball" | "strike" | "contact";
 		let swinging = false;
 
+		let swingProbAdjustment = 0;
+		if (this.strikes === 2) {
+			swingProbAdjustment += 0.1;
+		}
+
+		const eyeAdjusted = 0.25 + 0.5 * batter.compositeRating.eye;
+		const contactAdjusted = 0.25 + 0.5 * batter.compositeRating.contactHitter;
+
 		if (ballOrStrike === "ball") {
-			const swingProb = pitchQuality - batter.compositeRating.eye;
+			const swingProb = pitchQuality - eyeAdjusted + swingProbAdjustment;
 			if (Math.random() < swingProb) {
 				swinging = true;
-				const contactProb =
-					0.5 + batter.compositeRating.contactHitter - pitchQuality;
+				const contactProb = 0.6 + contactAdjusted - pitchQuality;
 				outcome = Math.random() < contactProb ? "contact" : "strike";
 			} else {
 				outcome = "ball";
 			}
 		} else {
-			const swingProb = 0.75 - pitchQuality + batter.compositeRating.eye;
+			const swingProb = 0.75 - pitchQuality + eyeAdjusted + swingProbAdjustment;
 			if (Math.random() < swingProb) {
 				swinging = true;
-				const contactProb =
-					0.75 + batter.compositeRating.contactHitter - pitchQuality;
+				const contactProb = 0.85 + contactAdjusted - pitchQuality;
 				outcome = Math.random() < contactProb ? "contact" : "strike";
 			} else {
 				outcome = "strike";
@@ -1177,7 +1185,7 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		return 0.2 + 0.15 * batter.compositeRating.contactHitter + fieldingFactor;
+		return 0.2 + 0.1 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
 	getPErrorIfNotHit(

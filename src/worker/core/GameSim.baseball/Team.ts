@@ -1,5 +1,8 @@
 import orderBy from "lodash-es/orderBy";
+import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball";
 import type { Position } from "../../../common/types.baseball";
+import { random } from "../../util";
+import { fatigueFactor } from "./fatigueFactor";
 import { getStartingPitcher } from "./getStartingPitcher";
 import type { PlayerGameSim, TeamGameSim } from "./types";
 
@@ -171,6 +174,69 @@ class Team<DH extends boolean> {
 		if (this.atBat < 0) {
 			this.atBat = NUM_BATTERS_PER_SIDE - 1;
 		}
+	}
+
+	getBestReliefPitcher(
+		saveSituation: boolean,
+		betweenInnings: boolean,
+	):
+		| {
+				p: PlayerGameSim;
+				value: number;
+		  }
+		| undefined {
+		const depth = this.t.depth.P;
+
+		const availablePitchers = depth
+			.map((p, i) => ({
+				starter: i < NUM_STARTING_PITCHERS,
+				p,
+				index: i,
+				value:
+					fatigueFactor(p.stat.pc, p.compositeRating.workhorsePitcher) *
+					p.compositeRating.pitcher,
+			}))
+			.filter(p => p.p.subIndex === undefined);
+
+		const choiceWeight = (p: typeof availablePitchers[number]) => p.value ** 2;
+
+		const healthyPitchers = availablePitchers.filter(p => !p.p.injured);
+
+		const closer =
+			healthyPitchers.find(p => p.index >= NUM_STARTING_PITCHERS) ??
+			random.choice(healthyPitchers, choiceWeight) ??
+			random.choice(availablePitchers);
+
+		if (saveSituation && betweenInnings) {
+			return closer;
+		}
+
+		const reliever = random.choice(
+			healthyPitchers.filter(p => !p.starter),
+			choiceWeight,
+		);
+
+		if (reliever) {
+			return reliever;
+		}
+
+		const pitcher = random.choice(availablePitchers, choiceWeight);
+
+		if (pitcher) {
+			return pitcher;
+		}
+
+		// No pitchers available, go to position players
+		const availablePitchers2 = this.t.depth.D.map((p, i) => ({
+			starter: false,
+			p,
+			index: i,
+			value:
+				fatigueFactor(p.stat.pc, p.compositeRating.workhorsePitcher) *
+				p.compositeRating.pitcher,
+		})).filter(p => p.p.subIndex === undefined);
+
+		return random.choice(availablePitchers2, choiceWeight);
 	}
 }
 

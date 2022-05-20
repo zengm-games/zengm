@@ -1,7 +1,8 @@
+import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball";
 import { random } from "../../util";
 import type { PlayerGameSim } from "./types";
 
-const CLOSER_INDEX = 5;
+const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 
 export const getStartingPitcher = (pitchers: PlayerGameSim[]) => {
 	// First pass - look for starting pitcher with no fatigue
@@ -11,7 +12,7 @@ export const getStartingPitcher = (pitchers: PlayerGameSim[]) => {
 			return p;
 		}
 
-		if (i === 4) {
+		if (i === NUM_STARTING_PITCHERS - 1) {
 			break;
 		}
 	}
@@ -31,7 +32,7 @@ export const getStartingPitcher = (pitchers: PlayerGameSim[]) => {
 			return p;
 		}
 
-		if (i === 4) {
+		if (i === NUM_STARTING_PITCHERS - 1) {
 			break;
 		}
 	}

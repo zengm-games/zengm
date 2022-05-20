@@ -2160,6 +2160,57 @@ class GameSim {
 		}
 	}
 
+	checkReliefPitcher(betweenInnings: boolean) {
+		let saveSituation = false;
+
+		const t = this.team[this.d];
+
+		const candidate = t.getBestReliefPitcher(saveSituation, betweenInnings);
+		if (!candidate) {
+			return;
+		}
+
+		const pitcher = t.playersInGameByPos.P.p;
+		const value =
+			fatigueFactor(pitcher.stat.pc, pitcher.compositeRating.workhorsePitcher) *
+			pitcher.compositeRating.pitcher;
+
+		// -1 to 1
+		const valueDiff = candidate.value - value;
+
+		let probSwitch = helpers.sigmoid(valueDiff, 10, 0);
+
+		const starterIsIn = pitcher.stat.gsPit > 0;
+
+		if (starterIsIn) {
+			if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 4) {
+				probSwitch /= 2;
+			}
+		} else {
+			if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
+				probSwitch *= 2;
+			}
+		}
+
+		if (probSwitch > Math.random()) {
+			const prevEntry = t.playersInGame[pitcher.id];
+
+			t.playersInGame[candidate.p.id] = {
+				p: candidate.p,
+				battingOrder: prevEntry.battingOrder,
+				pos: "P",
+			};
+
+			delete t.playersInGame[pitcher.id];
+
+			t.rebuildIndexes();
+
+			this.recordStat(this.d, candidate.p, "gpPit");
+			this.recordStat(this.d, candidate.p, "gp");
+			this.recordStat(this.d, candidate.p, "gpF", 1, "fielding");
+		}
+	}
+
 	simGame() {
 		this.playByPlay.logEvent({
 			type: "sideStart",
@@ -2213,6 +2264,7 @@ class GameSim {
 
 				this.possessionChange();
 				this.resetNewInning();
+				this.checkReliefPitcher(true);
 				this.playByPlay.logEvent({
 					type: "sideStart",
 					inning: this.inning,

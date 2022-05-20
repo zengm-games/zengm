@@ -1,21 +1,10 @@
-import { PHASE } from "../../../common";
-import { defaultGameAttributes, g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import {
-	POSITIONS,
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball";
 import PlayByPlayLogger from "./PlayByPlayLogger";
-import type { Position } from "../../../common/types.hockey";
-import type {
-	CompositeRating,
-	PlayerGameSim,
-	Runner,
-	TeamGameSim,
-	TeamNum,
-} from "./types";
-import orderBy from "lodash-es/orderBy";
-import range from "lodash-es/range";
+import type { PlayerGameSim, Runner, TeamGameSim, TeamNum } from "./types";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";

@@ -781,6 +781,14 @@ class GameSim {
 						!someRunnerIsAlreadyOut && probSuccessIfAdvances < Math.random();
 					if (runner.out) {
 						someRunnerIsAlreadyOut = true;
+					} else {
+						// Is this a sacrifice fly?
+						if (
+							runner.to === 4 &&
+							(battedBallInfo.type === "fly" || battedBallInfo.type === "line")
+						) {
+							this.recordStat(this.o, p, "sf");
+						}
 					}
 				}
 			}

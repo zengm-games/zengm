@@ -22,6 +22,7 @@ const BoxScoreRow = ({
 	stats: string[];
 	seasonStats?: string[];
 }) => {
+	console.log(p, stats, seasonStats);
 	return (
 		<tr className={className} onClick={onClick}>
 			<td>{p.pos}</td>
@@ -35,11 +36,15 @@ const BoxScoreRow = ({
 				/>
 				{isSport("baseball") ? (
 					p.w > 0 ? (
-						<span className="text-success ms-2">W</span>
+						<span className="text-success ms-2">
+							W ({p.seasonStats.w}-{p.seasonStats.l})
+						</span>
 					) : p.l > 0 ? (
-						<span className="text-danger ms-2">L</span>
+						<span className="text-danger ms-2">
+							L ({p.seasonStats.w}-{p.seasonStats.l})
+						</span>
 					) : p.sv > 0 ? (
-						<span className="ms-2">SV</span>
+						<span className="ms-2">SV ({p.seasonStats.sv + 1})</span>
 					) : null
 				) : null}
 			</td>

@@ -95,10 +95,19 @@ const StatsTable = ({
 				seasonStatsCurrent[key] += p[key];
 			}
 
+			const seasonStats2 = processPlayerStats(seasonStatsCurrent, seasonStats);
+			if (p.w > 0 || p.l > 0) {
+				seasonStats2.w = seasonStatsCurrent.w;
+				seasonStats2.l = seasonStatsCurrent.l;
+			} else if (p.sv > 0) {
+				seasonStats2.sv = seasonStatsCurrent.sv;
+			}
+			console.log(seasonStats2);
+
 			return {
 				...p,
 				processed: processPlayerStats(p, stats),
-				seasonStats: processPlayerStats(seasonStatsCurrent, seasonStats),
+				seasonStats: seasonStats2,
 			};
 		})
 		.filter(p => filterPlayerStats(p, stats, type));

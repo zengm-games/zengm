@@ -184,6 +184,9 @@ const processTeam = (
 				"hr",
 				"er",
 				"outs",
+				"w",
+				"l",
+				"sv",
 			];
 			const ps = p.stats.at(-1);
 			const hasStats = statsRowIsCurrent(ps, t.id, playoffs);

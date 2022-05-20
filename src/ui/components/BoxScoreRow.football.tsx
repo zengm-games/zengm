@@ -1,6 +1,7 @@
 import type { MouseEvent } from "react";
 import PlayerNameLabels from "./PlayerNameLabels";
 import { helpers } from "../util";
+import { isSport } from "../../common";
 
 const width100 = {
 	width: "100%",
@@ -32,6 +33,15 @@ const BoxScoreRow = ({
 					skills={p.skills}
 					legacyName={p.name}
 				/>
+				{isSport("baseball") ? (
+					p.w > 0 ? (
+						<span className="text-success ms-2">W</span>
+					) : p.l > 0 ? (
+						<span className="text-danger ms-2">L</span>
+					) : p.sv > 0 ? (
+						<span className="ms-2">SV</span>
+					) : null
+				) : null}
 			</td>
 			{stats.map((stat, i) => (
 				<td

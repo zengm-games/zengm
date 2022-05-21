@@ -2229,6 +2229,7 @@ class GameSim {
 			this.recordStat(this.d, candidate.p, "gpF", 1, "fielding");
 
 			t.saveOutsNeeded = saveOutsNeeded;
+			this.outsIfNoErrorsByPitcherPid[candidate.p.id] += this.outsIfNoErrors;
 		}
 	}
 

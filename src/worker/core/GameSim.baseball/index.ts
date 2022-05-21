@@ -618,7 +618,7 @@ class GameSim {
 				(i === 2 && runners[0] && runners[1])
 			);
 
-			const p = this.team[this.o].playersByPid[runner.pid];
+			const pRunner = this.team[this.o].playersByPid[runner.pid];
 			const hitToPos = POS_NUMBERS_INVERSE[hitTo];
 			const fielder = this.team[this.d].playersInGameByPos[hitToPos].p;
 
@@ -714,7 +714,7 @@ class GameSim {
 						// Tag up
 						probSuccessIfAdvances = this.probSuccessTagUp({
 							battedBallInfo,
-							runner: p,
+							runner: pRunner,
 							startingBase: 3,
 							hitTo,
 							fielder,
@@ -724,7 +724,7 @@ class GameSim {
 						// Maybe score on ground ball
 						probSuccessIfAdvances = this.probSuccessGroundOut({
 							battedBallInfo,
-							runner: p,
+							runner: pRunner,
 							startingBase: 3,
 							hitTo,
 							fielder,
@@ -738,7 +738,7 @@ class GameSim {
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 						probSuccessIfAdvances = this.probSuccessTagUp({
 							battedBallInfo,
-							runner: p,
+							runner: pRunner,
 							startingBase: 2,
 							hitTo,
 							fielder,
@@ -747,7 +747,7 @@ class GameSim {
 					} else {
 						probSuccessIfAdvances = this.probSuccessGroundOut({
 							battedBallInfo,
-							runner: p,
+							runner: pRunner,
 							startingBase: 3,
 							hitTo,
 							fielder,
@@ -762,7 +762,7 @@ class GameSim {
 					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
 						probSuccessIfAdvances = this.probSuccessTagUp({
 							battedBallInfo,
-							runner: p,
+							runner: pRunner,
 							startingBase: 1,
 							hitTo,
 							fielder,

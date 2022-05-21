@@ -1075,7 +1075,7 @@ class GameSim {
 		const pitchQuality = helpers.bound(
 			random.gauss(
 				fatigueFactor(
-					pitcher.stat.pc,
+					pitcher.pFatigue + pitcher.stat.pc,
 					pitcher.compositeRating.workhorsePitcher,
 				) * pitcher.compositeRating.pitcher,
 				0.2,

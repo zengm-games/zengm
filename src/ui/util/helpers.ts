@@ -209,7 +209,6 @@ const roundOverrides: Record<
 		oppE: "noDecimalPlace",
 		oppDp: "noDecimalPlace",
 		oppFldp: "roundWinp",
-		oppRfld: "oneDecimalPlace",
 		oppRf9: "twoDecimalPlaces",
 		oppRfg: "twoDecimalPlaces",
 		oppPb: "noDecimalPlace",

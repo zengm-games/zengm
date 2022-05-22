@@ -12,7 +12,10 @@ import { g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type { AwardPlayer, Awards } from "../../../common/types.baseball";
 import orderBy from "lodash-es/orderBy";
-import { POS_NUMBERS } from "../../../common/constants.baseball";
+import {
+	POS_NUMBERS,
+	POS_NUMBERS_INVERSE,
+} from "../../../common/constants.baseball";
 import processPlayerStats, {
 	NUM_OUTS_PER_GAME,
 } from "../../../common/processPlayerStats.baseball";
@@ -28,13 +31,6 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer | undefined => {
 		tid: p.tid,
 		pos: p.pos,
 		keyStats: p.currentStats.keyStats,
-		w: p.currentStats.w,
-		sv: p.currentStats.sv,
-		l: p.currentStats.l,
-		ip: p.currentStats.ip,
-		era: p.currentStats.era,
-		war: p.currentStats.war,
-		rpit: p.currentStats.rpit,
 	};
 };
 
@@ -182,6 +178,7 @@ const getRealFinalsMvp = async (
 			score: number;
 			tid: number;
 			fakeWAR: number;
+			gpF: number[];
 		} & Record<typeof keysToSum[number], number>
 	> = new Map();
 
@@ -209,6 +206,7 @@ const getRealFinalsMvp = async (
 					score: 0,
 					tid: t.tid,
 					fakeWAR: 0,
+					gpF: [],
 					h: 0,
 					"2b": 0,
 					"3b": 0,
@@ -233,6 +231,16 @@ const getRealFinalsMvp = async (
 					if (total.hasOwnProperty(key)) {
 						// @ts-expect-error
 						total[key] += p[key];
+					}
+				}
+
+				for (let i = 0; i < p.gpF.length; i++) {
+					const value = p.gpF[i];
+					if (info.gpF[i] === undefined) {
+						info.gpF[i] = 0;
+					}
+					if (value !== undefined) {
+						info.gpF[i] += value;
 					}
 				}
 
@@ -287,11 +295,25 @@ const getRealFinalsMvp = async (
 	const p = players.find(p2 => p2.pid === pid);
 
 	if (p) {
+		const info = playerArray[0];
+
+		let posIndex = -1;
+		let maxGP = -Infinity;
+		for (let i = 0; i < info.gpF.length; i++) {
+			const gp = info.gpF[i];
+			if (gp > maxGP) {
+				posIndex = i;
+				maxGP = gp;
+			}
+		}
+		const pos = (POS_NUMBERS_INVERSE as any)[posIndex + 1] ?? "?";
+
 		return {
 			pid: p.pid,
 			name: p.name,
 			tid: p.tid,
-			keyStats: processPlayerStats(playerArray[0], ["keyStats"]).keyStats,
+			pos,
+			keyStats: processPlayerStats(info, ["keyStats"]).keyStats,
 		};
 	}
 };
@@ -482,7 +504,6 @@ const doAwards = async (conditions: Conditions) => {
 				p.pos = p.ratings.pos;
 			}
 
-			// In hockey, it's the MVP of the playoffs, not just the finals
 			const p = getTopPlayers(
 				{
 					score: mvpScore,

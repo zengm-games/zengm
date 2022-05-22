@@ -72,13 +72,6 @@ export type AwardPlayer = {
 	tid: number;
 	pos: string;
 	keyStats: string;
-	w: number;
-	sv: number;
-	l: number;
-	ip: number;
-	era: number;
-	war: number;
-	rpit: number;
 };
 
 export type Awards = {

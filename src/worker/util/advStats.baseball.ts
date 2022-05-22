@@ -278,6 +278,8 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 			replacementPlayerAdjustment = p.stats.pa / 30;
 		}
 
+		console.log("replacementPlayerAdjustment", replacementPlayerAdjustment);
+
 		// Wins Above Replacement
 		war[i] =
 			(rbat[i] +
@@ -286,7 +288,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 				rpos[i] +
 				rpit[i] +
 				replacementPlayerAdjustment) /
-			((2 * league.pts) / league.gp);
+			(league.pts / league.gp);
 	}
 
 	return {

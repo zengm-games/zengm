@@ -512,6 +512,30 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Rpit",
 		},
+		"stat:raa": {
+			desc: "Runs Above Average",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "RAA",
+		},
+		"stat:waa": {
+			desc: "Wins Above Average",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "WAA",
+		},
+		"stat:rrep": {
+			desc: "Runs From Replacement Level",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Rrep",
+		},
+		"stat:rar": {
+			desc: "Runs Above Replacement",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "RAR",
+		},
 		"stat:war": {
 			desc: "Wins Above Replacement",
 			sortSequence: ["desc", "asc"],

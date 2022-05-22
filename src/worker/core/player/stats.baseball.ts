@@ -8,6 +8,10 @@ const stats = {
 		"rfld", // This one is an array, like byPos
 		"rpos",
 		"rpit",
+		"raa",
+		"waa",
+		"rrep",
+		"rar",
 		"war",
 	] as const,
 	raw: [

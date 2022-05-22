@@ -172,9 +172,15 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	const rfld = []; // Fielding Runs
 	const rpos = []; // Positional Adjustment Runs
 	const rpit = []; // Pitching Runs Saved
+	const raa = []; // Runs Above Average
+	const waa = []; // Wins Above Average
+	const rrep = []; // Runs From Replacement Level
+	const rar = []; // Runs Above Replacement
 	const war = []; // Wins Above Replacement
 
 	const lgf = 1; // "league factor"
+
+	const runsPerGame = league.pts / league.gp;
 
 	const abf =
 		(0.47 * league.h +
@@ -271,24 +277,20 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		rpit[i] = (p.stats.outs / NUM_OUTS_PER_GAME) * league.era - p.stats.er;
 
 		// Replacement Player Adjustment
-		let replacementPlayerAdjustment;
 		if (p.stats.gpPit > 0) {
-			replacementPlayerAdjustment = p.stats.bf / 50;
+			rrep[i] = p.stats.bf / 50;
 		} else {
-			replacementPlayerAdjustment = p.stats.pa / 30;
+			rrep[i] = p.stats.pa / 30;
 		}
 
-		console.log("replacementPlayerAdjustment", replacementPlayerAdjustment);
+		raa[i] = rbat[i] + rbr[i] + helpers.sum(rfld[i]) + rpos[i] + rpit[i];
+
+		waa[i] = raa[i] / runsPerGame;
+
+		rar[i] = raa[i] + rrep[i];
 
 		// Wins Above Replacement
-		war[i] =
-			(rbat[i] +
-				rbr[i] +
-				helpers.sum(rfld[i]) +
-				rpos[i] +
-				rpit[i] +
-				replacementPlayerAdjustment) /
-			(league.pts / league.gp);
+		war[i] = rar[i] / runsPerGame;
 	}
 
 	return {
@@ -297,6 +299,10 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		rfld,
 		rpos,
 		rpit,
+		raa,
+		waa,
+		rrep,
+		rar,
 		war,
 	};
 };

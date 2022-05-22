@@ -8,11 +8,14 @@ import {
 	saveAwardsByPlayer,
 } from "./awards";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type { AwardPlayer, Awards } from "../../../common/types.baseball";
 import orderBy from "lodash-es/orderBy";
 import { POS_NUMBERS } from "../../../common/constants.baseball";
+import processPlayerStats, {
+	NUM_OUTS_PER_GAME,
+} from "../../../common/processPlayerStats.baseball";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer | undefined => {
 	if (!p) {
@@ -126,6 +129,171 @@ export const royFilter = (p: PlayerFiltered) => {
 		(repeatSeason !== undefined &&
 			p.draft.year === repeatSeason.startingSeason - 1)
 	);
+};
+
+const getRealFinalsMvp = async (
+	players: PlayerFiltered[],
+	champTid: number,
+): Promise<AwardPlayer | undefined> => {
+	const games = await idb.cache.games.getAll();
+	if (games.length === 0) {
+		return;
+	}
+
+	// Last game of the season will have the two finals teams
+	const finalsTids = games.at(-1)!.teams.map(t => t.tid);
+
+	// Get all playoff games between those two teams - that will be all finals games
+	const finalsGames = games.filter(
+		game =>
+			game.playoffs &&
+			finalsTids.includes(game.teams[0].tid) &&
+			finalsTids.includes(game.teams[1].tid),
+	);
+
+	if (finalsGames.length === 0) {
+		return;
+	}
+
+	// Calculate sum of something WAR-like for each player
+	const keysToSum = [
+		"h",
+		"2b",
+		"3b",
+		"hr",
+		"bb",
+		"hbp",
+		"pa",
+		"sf",
+		"sb",
+		"cs",
+		"outs",
+		"er",
+		"pc",
+		"w",
+		"l",
+		"sv",
+	] as const;
+
+	const playerInfos: Map<
+		number,
+		{
+			pid: number;
+			score: number;
+			tid: number;
+			fakeWAR: number;
+		} & Record<typeof keysToSum[number], number>
+	> = new Map();
+
+	const total = {
+		h: 0,
+		"2b": 0,
+		"3b": 0,
+		hr: 0,
+		bb: 0,
+		hbp: 0,
+		pa: 0,
+		sf: 0,
+		outs: 0,
+		er: 0,
+	};
+	for (const game of finalsGames) {
+		for (const t of game.teams) {
+			for (const p of t.players) {
+				if (!p.gp) {
+					continue;
+				}
+
+				const info = playerInfos.get(p.pid) || {
+					pid: p.pid,
+					score: 0,
+					tid: t.tid,
+					fakeWAR: 0,
+					h: 0,
+					"2b": 0,
+					"3b": 0,
+					hr: 0,
+					bb: 0,
+					hbp: 0,
+					pa: 0,
+					sf: 0,
+					sb: 0,
+					cs: 0,
+					outs: 0,
+					er: 0,
+					pc: 0,
+					w: 0,
+					l: 0,
+					sv: 0,
+				};
+
+				for (const key of keysToSum) {
+					info[key] += p[key];
+
+					if (total.hasOwnProperty(key)) {
+						// @ts-expect-error
+						total[key] += p[key];
+					}
+				}
+
+				playerInfos.set(p.pid, info);
+			}
+		}
+	}
+
+	const totalERA = helpers.ratio(total.er, total.outs / NUM_OUTS_PER_GAME);
+
+	const totalAB = total.pa - total.bb - total.hbp - total.sf;
+	const abf =
+		(0.47 * total.h +
+			0.38 * total["2b"] +
+			0.55 * total["3b"] +
+			0.93 * total.hr +
+			0.33 * (total.bb + total.hbp)) /
+		(totalAB - total.h);
+
+	for (const info of playerInfos.values()) {
+		// 75% bonus for the winning team
+		const factor = info.tid === champTid ? 1.75 : 1;
+
+		const ab = info.pa - info.bb - info.hbp - info.sf;
+
+		const rbat =
+			0.47 * info.h +
+			0.38 * info["2b"] +
+			0.55 * info["3b"] +
+			0.93 * info.hr +
+			0.33 * (info.bb + info.hbp) -
+			abf * (ab - info.h);
+
+		const rbr = 0.3 * info.sb - 0.6 * info.cs;
+
+		const rpit = (info.outs / NUM_OUTS_PER_GAME) * totalERA - info.er;
+
+		info.fakeWAR = factor * (rbat + rbr + rpit);
+	}
+
+	const playerArray = orderBy(
+		Array.from(playerInfos.values()),
+		"fakeWAR",
+		"desc",
+	);
+
+	if (playerArray.length === 0) {
+		return;
+	}
+
+	const { pid } = playerArray[0];
+	const p = players.find(p2 => p2.pid === pid);
+
+	if (p) {
+		return {
+			pid: p.pid,
+			name: p.name,
+			tid: p.tid,
+			keyStats: processPlayerStats(playerArray[0], ["keyStats"]).keyStats,
+		};
+	}
 };
 
 const doAwards = async (conditions: Conditions) => {
@@ -271,55 +439,60 @@ const doAwards = async (conditions: Conditions) => {
 
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		const champPlayersAll = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			champTid,
-		);
+		finalsMvp = await getRealFinalsMvp(players, champTid);
 
-		const noPlayoffs = g.get("numGamesPlayoffSeries", "current").length === 0;
+		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
+		if (finalsMvp === undefined) {
+			const champPlayersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				champTid,
+			);
 
-		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
-			// Only the champions, only playoff stats
-			attrs: ["pid", "name", "tid", "abbrev"],
-			stats: [
-				"keyStats",
-				"gpPit",
-				"gsPit",
-				"w",
-				"l",
-				"sv",
-				"era",
-				"ip",
-				"war",
-				"rpit",
-				"season",
-				"abbrev",
-				"tid",
-				"jerseyNumber",
-			],
-			ratings: ["pos"],
-			season: g.get("season"),
-			playoffs: !noPlayoffs,
-			regularSeason: noPlayoffs,
-			tid: champTid,
-		});
+			const noPlayoffs = g.get("numGamesPlayoffSeries", "current").length === 0;
 
-		// For symmetry with players array
-		for (const p of champPlayers) {
-			p.currentStats = p.stats;
-			p.pos = p.ratings.pos;
-		}
+			const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
+				// Only the champions, only playoff stats
+				attrs: ["pid", "name", "tid", "abbrev"],
+				stats: [
+					"keyStats",
+					"gpPit",
+					"gsPit",
+					"w",
+					"l",
+					"sv",
+					"era",
+					"ip",
+					"war",
+					"rpit",
+					"season",
+					"abbrev",
+					"tid",
+					"jerseyNumber",
+				],
+				ratings: ["pos"],
+				season: g.get("season"),
+				playoffs: !noPlayoffs,
+				regularSeason: noPlayoffs,
+				tid: champTid,
+			});
 
-		// In hockey, it's the MVP of the playoffs, not just the finals
-		const p = getTopPlayers(
-			{
-				score: mvpScore,
-			},
-			champPlayers,
-		)[0];
+			// For symmetry with players array
+			for (const p of champPlayers) {
+				p.currentStats = p.stats;
+				p.pos = p.ratings.pos;
+			}
 
-		if (p) {
-			finalsMvp = getPlayerInfo(p);
+			// In hockey, it's the MVP of the playoffs, not just the finals
+			const p = getTopPlayers(
+				{
+					score: mvpScore,
+				},
+				champPlayers,
+			)[0];
+
+			if (p) {
+				finalsMvp = getPlayerInfo(p);
+			}
 		}
 	}
 

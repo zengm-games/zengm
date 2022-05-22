@@ -1,7 +1,7 @@
 import { filterPlayerStats, PLAYER_GAME_STATS } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
-import { g, getTeamInfoBySeason, processPlayerStats } from "../util";
+import { g, getTeamInfoBySeason, helpers, processPlayerStats } from "../util";
 import { getCommon } from "./player";
 
 const updatePlayerGameLog = async (
@@ -87,14 +87,11 @@ const updatePlayerGameLog = async (
 				result = "T";
 			}
 
-			let overtimes = "";
-			if (game.overtimes !== undefined && game.overtimes > 0) {
-				if (game.overtimes === 1) {
-					overtimes = " OT";
-				} else if (game.overtimes > 1) {
-					overtimes = ` ${game.overtimes}OT`;
-				}
-			}
+			const overtimeText = helpers.overtimeText(
+				game.overtimes,
+				game.numPeriods,
+			);
+			const overtimes = overtimeText === "" ? "" : ` (${overtimeText})`;
 
 			const processed = processPlayerStats(row, allStats);
 			const p = {

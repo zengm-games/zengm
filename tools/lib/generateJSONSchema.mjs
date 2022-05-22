@@ -206,7 +206,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 						},
 					},
 				},
-				required: ["F", "D", "G"],
+				required: ["L", "LP", "D", "DP", "P"],
 			},
 		},
 		basketball: {},

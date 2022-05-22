@@ -231,7 +231,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 		const t = teamsByTid[p.tid];
 
 		// Batting Runs
-		const pitcherFactor = p.stats.gpPit >= 0.75 * p.stats.gp ? 1 : 0.5;
+		const pitcherFactor = p.stats.gpPit >= 0.75 * p.stats.gp ? 0.5 : 1;
 		rbat[i] =
 			0.47 * p.stats.h +
 			0.38 * p.stats["2b"] +

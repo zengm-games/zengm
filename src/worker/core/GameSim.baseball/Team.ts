@@ -241,6 +241,18 @@ class Team<DH extends boolean> {
 
 		return random.choice(availablePitchers2, choiceWeight);
 	}
+
+	substitution(off: PlayerInGame<DH>, on: PlayerGameSim) {
+		this.playersInGame[on.id] = {
+			p: on,
+			battingOrder: off.battingOrder,
+			pos: off.pos,
+		};
+
+		delete this.playersInGame[off.p.id];
+
+		this.rebuildIndexes();
+	}
 }
 
 export default Team;

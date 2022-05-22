@@ -22,7 +22,6 @@ const BoxScoreRow = ({
 	stats: string[];
 	seasonStats?: string[];
 }) => {
-	console.log(p, stats, seasonStats);
 	return (
 		<tr className={className} onClick={onClick}>
 			<td>{p.pos}</td>

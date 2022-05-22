@@ -9,6 +9,7 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
+import { NUM_OUTS_PER_GAME } from "../../../common/processPlayerStats.baseball";
 
 export const NUM_OUTS_PER_INNING = 3;
 
@@ -2167,9 +2168,10 @@ class GameSim {
 		}
 	}
 
-	checkReliefPitcher(betweenInnings: boolean) {
+	getSaveOutsNeeded(teamNum: TeamNum) {
+		const otherTeamNum = teamNum === 1 ? 0 : 1;
 		const scoreDiff =
-			this.team[this.d].t.stat.pts - this.team[this.o].t.stat.pts;
+			this.team[teamNum].t.stat.pts - this.team[otherTeamNum].t.stat.pts;
 		const runsUpToOnDeck = this.bases.filter(base => base).length + 2;
 		let saveOutsNeeded = 9;
 		if (scoreDiff > 0 && scoreDiff <= 3) {
@@ -2178,6 +2180,33 @@ class GameSim {
 		if (scoreDiff > 0 && scoreDiff <= runsUpToOnDeck) {
 			saveOutsNeeded = 1;
 		}
+
+		return saveOutsNeeded;
+	}
+
+	substitution(
+		teamNum: TeamNum,
+		off: GameSim["team"][0]["playersInGame"][number],
+		on: PlayerGameSim,
+	) {
+		const t = this.team[teamNum];
+
+		t.substitution(off, on);
+
+		if (off.pos === "P") {
+			this.recordStat(teamNum, on, "gpPit");
+
+			const saveOutsNeeded = this.getSaveOutsNeeded(teamNum);
+			t.saveOutsNeeded = saveOutsNeeded;
+			this.outsIfNoErrorsByPitcherPid[on.id] += this.outsIfNoErrors;
+		}
+
+		this.recordStat(teamNum, on, "gp");
+		this.recordStat(teamNum, on, "gpF", 1, "fielding");
+	}
+
+	checkReliefPitcher(betweenInnings: boolean) {
+		const saveOutsNeeded = this.getSaveOutsNeeded(this.d);
 
 		const t = this.team[this.d];
 
@@ -2212,24 +2241,7 @@ class GameSim {
 		}
 
 		if (probSwitch > Math.random()) {
-			const prevEntry = t.playersInGame[pitcher.id];
-
-			t.playersInGame[candidate.p.id] = {
-				p: candidate.p,
-				battingOrder: prevEntry.battingOrder,
-				pos: "P",
-			};
-
-			delete t.playersInGame[pitcher.id];
-
-			t.rebuildIndexes();
-
-			this.recordStat(this.d, candidate.p, "gpPit");
-			this.recordStat(this.d, candidate.p, "gp");
-			this.recordStat(this.d, candidate.p, "gpF", 1, "fielding");
-
-			t.saveOutsNeeded = saveOutsNeeded;
-			this.outsIfNoErrorsByPitcherPid[candidate.p.id] += this.outsIfNoErrors;
+			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
 		}
 	}
 

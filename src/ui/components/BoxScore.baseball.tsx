@@ -102,7 +102,6 @@ const StatsTable = ({
 			} else if (p.sv > 0) {
 				seasonStats2.sv = seasonStatsCurrent.sv;
 			}
-			console.log(seasonStats2);
 
 			return {
 				...p,

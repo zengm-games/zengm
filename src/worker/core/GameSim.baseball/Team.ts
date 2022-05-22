@@ -175,10 +175,7 @@ class Team<DH extends boolean> {
 		}
 	}
 
-	getBestReliefPitcher(
-		saveSituation: boolean,
-		betweenInnings: boolean,
-	):
+	getBestReliefPitcher(saveSituation: boolean):
 		| {
 				p: PlayerGameSim;
 				value: number;
@@ -208,7 +205,7 @@ class Team<DH extends boolean> {
 			random.choice(healthyPitchers, choiceWeight) ??
 			random.choice(availablePitchers);
 
-		if (saveSituation && betweenInnings) {
+		if (saveSituation) {
 			return closer;
 		}
 

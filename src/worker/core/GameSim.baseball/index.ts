@@ -2206,12 +2206,16 @@ class GameSim {
 	}
 
 	checkReliefPitcher(betweenInnings: boolean) {
+		if (this.inning === 1 && betweenInnings) {
+			return;
+		}
+
 		const saveOutsNeeded = this.getSaveOutsNeeded(this.d);
 
 		const t = this.team[this.d];
 
 		const saveSituation = this.inning === this.numInnings && saveOutsNeeded < 9;
-		const candidate = t.getBestReliefPitcher(saveSituation, betweenInnings);
+		const candidate = t.getBestReliefPitcher(saveSituation);
 		if (!candidate) {
 			return;
 		}
@@ -2224,19 +2228,23 @@ class GameSim {
 			) * pitcher.compositeRating.pitcher;
 
 		// -1 to 1
-		const valueDiff = candidate.value - value;
-
-		let probSwitch = helpers.sigmoid(valueDiff, 10, 0);
 
 		const starterIsIn = pitcher.stat.gsPit > 0;
 
-		if (starterIsIn) {
-			if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 4) {
-				probSwitch /= 2;
-			}
-		} else {
-			if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
-				probSwitch *= 2;
+		let probSwitch = 0;
+
+		if (betweenInnings) {
+			const valueDiff = candidate.value - value;
+			probSwitch = helpers.sigmoid(valueDiff, 10, 0);
+
+			if (starterIsIn) {
+				if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 4) {
+					probSwitch /= 2;
+				}
+			} else {
+				if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
+					probSwitch *= 2;
+				}
 			}
 		}
 
@@ -2245,7 +2253,7 @@ class GameSim {
 				? pitcher.seasonStats.er / pitcher.seasonStats.outs
 				: 4 / 27;
 		const excessRuns = pitcher.stat.rPit - pitcher.stat.outs * runsPerOut;
-		if (excessRuns > 0) {
+		if (excessRuns > (starterIsIn ? 1 : 0)) {
 			probSwitch += 0.2 * excessRuns;
 		}
 
@@ -2307,15 +2315,15 @@ class GameSim {
 
 				this.possessionChange();
 				this.resetNewInning();
-				if (this.inning > 1) {
-					this.checkReliefPitcher(true);
-				}
+				this.checkReliefPitcher(true);
 				this.playByPlay.logEvent({
 					type: "sideStart",
 					inning: this.inning,
 					t: this.o,
 					pitcherPid: this.team[this.d].playersInGameByPos.P.p.id,
 				});
+			} else {
+				this.checkReliefPitcher(false);
 			}
 		}
 	}

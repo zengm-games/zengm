@@ -2240,6 +2240,15 @@ class GameSim {
 			}
 		}
 
+		const runsPerOut =
+			pitcher.seasonStats.outs > 0
+				? pitcher.seasonStats.er / pitcher.seasonStats.outs
+				: 4 / 27;
+		const excessRuns = pitcher.stat.rPit - pitcher.stat.outs * runsPerOut;
+		if (excessRuns > 0) {
+			probSwitch += 0.2 * excessRuns;
+		}
+
 		if (probSwitch > Math.random()) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
 		}

@@ -21,7 +21,9 @@ import {
 	SportState,
 } from "../util/processLiveGameEvents.baseball";
 import PlayerNameLabels from "./PlayerNameLabels";
-import processStats from "../../common/processPlayerStats.baseball";
+import processStats, {
+	outsToInnings,
+} from "../../common/processPlayerStats.baseball";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
@@ -126,11 +128,13 @@ const StatsTable = ({
 	if (showFooter) {
 		for (const stat of stats) {
 			sumsByStat[stat] = 0;
+			const ip = stat === "ip";
 			for (const p of players) {
-				sumsByStat[stat] += p.processed[stat];
+				sumsByStat[stat] += ip ? p.outs : p.processed[stat];
 			}
 		}
 	}
+	sumsByStat.ip = outsToInnings(sumsByStat.ip);
 
 	const sortable = players.length > 1;
 	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;

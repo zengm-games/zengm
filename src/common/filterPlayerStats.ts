@@ -5,7 +5,7 @@ const filterPlayerStats = (p: any, stats: string[], type: string) => {
 	return bySport({
 		baseball: () => {
 			return (
-				(type === "batting" && p.battingOrder !== undefined) ||
+				(type === "batting" && p.gp > 0 && p.battingOrder !== undefined) ||
 				(type === "pitching" && p.gpPit > 0)
 			);
 		},

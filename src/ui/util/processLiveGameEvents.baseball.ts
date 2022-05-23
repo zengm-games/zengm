@@ -328,6 +328,17 @@ export const getText = (
 			bold = true;
 			break;
 		}
+		case "injury": {
+			text = `${getName(event.pid)} was injured on the play!`;
+
+			if (event.replacementPid !== undefined) {
+				text += ` ${getName(event.replacementPid)} comes on to replace him.`;
+			}
+
+			bold = true;
+
+			break;
+		}
 		default: {
 			text = JSON.stringify(event);
 			console.log(event);
@@ -467,10 +478,6 @@ const processLiveGameEvents = ({
 			if (boxScore.teams[actualT].hasOwnProperty(e.s)) {
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
-		} else if (e.type === "playersOnIce") {
-			/*for (const p of boxScore.teams[actualT].players) {
-				p.inGame = e.pids.includes(p.pid);
-			}*/
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
 				const p = playersByPid[e.pid];

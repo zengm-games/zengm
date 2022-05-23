@@ -23,6 +23,7 @@ type PlayByPlayEventInput =
 			type: "injury";
 			t: TeamNum;
 			pid: number;
+			replacementPid: number | undefined;
 	  }
 	| {
 			type: "plateAppearance";

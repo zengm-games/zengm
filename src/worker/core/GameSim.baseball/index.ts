@@ -2309,11 +2309,6 @@ class GameSim {
 			if (Math.random() < injuryRate) {
 				p.injured = true;
 				p.newInjury = true;
-				this.playByPlay.logEvent({
-					type: "injury",
-					t: info.t,
-					pid: p.id,
-				});
 				console.log("INJURY", p);
 
 				let replacementPlayer: PlayerGameSim | undefined;
@@ -2324,6 +2319,13 @@ class GameSim {
 						info.p.pos,
 					);
 				}
+
+				this.playByPlay.logEvent({
+					type: "injury",
+					t: info.t,
+					pid: p.id,
+					replacementPid: replacementPlayer?.id,
+				});
 
 				if (!replacementPlayer) {
 					return;

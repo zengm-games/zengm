@@ -21,7 +21,6 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "injury";
-			clock: number;
 			t: TeamNum;
 			pid: number;
 	  }

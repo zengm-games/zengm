@@ -24,7 +24,7 @@ const BoxScoreRow = ({
 }) => {
 	return (
 		<tr className={className} onClick={onClick}>
-			<td>{p.pos}</td>
+			<td>{isSport("baseball") && !p.gs && p.pos !== "P" ? null : p.pos}</td>
 			<td style={width100}>
 				<PlayerNameLabels
 					injury={p.injury}

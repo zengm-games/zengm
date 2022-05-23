@@ -2166,6 +2166,8 @@ class GameSim {
 				break;
 			}
 		}
+
+		this.checkInjuries();
 	}
 
 	getSaveOutsNeeded(teamNum: TeamNum) {
@@ -2259,6 +2261,66 @@ class GameSim {
 
 		if (probSwitch > Math.random()) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
+		}
+	}
+
+	// This is called at end of plate appearance. Should check for batter and all fielders
+	checkInjuries() {
+		const baseInjuryRate = g.get("injuryRate");
+
+		if ((g as any).disableInjuries || baseInjuryRate === 0) {
+			return;
+		}
+
+		const fielders = Object.entries(
+			this.team[this.d].playersInGameByPos,
+		).filter(([pos]) => pos !== "DH");
+
+		const injuryCandidates = [
+			{
+				t: this.o,
+				p: this.team[this.o].getBatter(),
+				weight: 5,
+			},
+			...fielders.map(([pos, p]) => ({
+				t: this.d,
+				p,
+				weight: pos === "P" ? 5 : 1,
+			})),
+		];
+
+		for (const info of injuryCandidates) {
+			const p = info.p.p;
+
+			const injuryRate =
+				getInjuryRate(baseInjuryRate, p.age, p.injury.playingThrough) *
+				info.weight;
+
+			if (Math.random() < injuryRate) {
+				p.injured = true;
+				p.newInjury = true;
+				this.playByPlay.logEvent({
+					type: "injury",
+					t: info.t,
+					pid: p.id,
+				});
+				console.log("INJURY", p);
+
+				let replacementPlayer: PlayerGameSim | undefined;
+				if (info.p.pos === "P") {
+					replacementPlayer = this.team[info.t].getBestReliefPitcher(false)?.p;
+				} else {
+					replacementPlayer = this.team[info.t].getInjuryReplacement(
+						info.p.pos,
+					);
+				}
+
+				if (!replacementPlayer) {
+					return;
+				}
+
+				this.substitution(info.t, info.p, replacementPlayer);
+			}
 		}
 	}
 

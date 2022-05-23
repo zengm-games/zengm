@@ -239,6 +239,26 @@ class Team<DH extends boolean> {
 		return random.choice(availablePitchers2, choiceWeight);
 	}
 
+	getInjuryReplacement(
+		pos: Exclude<Position, "SP" | "RP">,
+	): PlayerGameSim | undefined {
+		const depth = this.dh ? this.t.depth.D : this.t.depth.DP;
+
+		const availablePlayers = depth.filter(p => p.subIndex === undefined);
+
+		let replacement;
+		let maxOvr = -Infinity;
+		for (const p of availablePlayers) {
+			const ovr = p.ovrs[pos];
+			if (ovr > maxOvr) {
+				maxOvr = ovr;
+				replacement = p;
+			}
+		}
+
+		return replacement;
+	}
+
 	substitution(off: PlayerInGame<DH>, on: PlayerGameSim) {
 		this.playersInGame[on.id] = {
 			p: on,

@@ -473,7 +473,7 @@ const processLiveGameEvents = ({
 			}*/
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				const p = playersByPid[e.injuredPID];
+				const p = playersByPid[e.pid];
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,

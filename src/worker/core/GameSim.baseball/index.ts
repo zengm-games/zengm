@@ -2425,12 +2425,7 @@ class GameSim {
 		}
 
 		// Filter out stats that don't get saved to box score
-		if (
-			s !== "gs" &&
-			s !== "courtTime" &&
-			s !== "benchTime" &&
-			s !== "energy"
-		) {
+		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
 			// Filter out stats that are only for player, not team
 			if (s !== "gsF" && s !== "gpF" && s !== "poSo" && s !== "cgF") {
 				if (s === "r") {

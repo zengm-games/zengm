@@ -2271,6 +2271,13 @@ class GameSim {
 
 		if (probSwitch > Math.random()) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
+
+			this.playByPlay.logEvent({
+				type: "reliefPitcher",
+				t: this.d,
+				pidOn: candidate.p.id,
+				pidOff: pitcher.id,
+			});
 		}
 	}
 
@@ -2309,7 +2316,6 @@ class GameSim {
 			if (Math.random() < injuryRate) {
 				p.injured = true;
 				p.newInjury = true;
-				console.log("INJURY", p);
 
 				let replacementPlayer: PlayerGameSim | undefined;
 				if (info.p.pos === "P") {

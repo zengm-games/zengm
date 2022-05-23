@@ -26,6 +26,12 @@ type PlayByPlayEventInput =
 			replacementPid: number | undefined;
 	  }
 	| {
+			type: "reliefPitcher";
+			t: TeamNum;
+			pidOff: number;
+			pidOn: number;
+	  }
+	| {
 			type: "plateAppearance";
 			t: TeamNum;
 			pid: number;

@@ -339,6 +339,13 @@ export const getText = (
 
 			break;
 		}
+		case "reliefPitcher": {
+			text = `Pitching change! ${getName(event.pidOn)} comes on for ${getName(
+				event.pidOff,
+			)}.`;
+			bold = true;
+			break;
+		}
 		default: {
 			text = JSON.stringify(event);
 			console.log(event);

@@ -1745,6 +1745,8 @@ class GameSim {
 					this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
 					this.outsIfNoErrors += 1;
 
+					const runners = getRunners();
+
 					if (numBases < 4) {
 						this.bases[numBases - 1] = this.makeOccupiedBase(batter, true);
 					}
@@ -1756,21 +1758,29 @@ class GameSim {
 						pid: batter.id,
 						pidError,
 						posDefense,
-						runners: this.finalizeRunners(getRunners()),
+						runners: this.finalizeRunners(runners),
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),
 					});
 				} else {
+					// Make sure we do runners stuff after hitter out is logged, but before hitter is put on base
+					let runners;
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
+
+						runners = getRunners();
 					} else if (result === "doublePlay") {
 						this.recordStat(this.o, batter, "gdp");
 						this.logOut();
+
+						runners = getRunners();
 					} else {
 						if (result === "fieldersChoice") {
 							this.logOut();
 						}
+
+						runners = getRunners();
 
 						if (numBases < 4) {
 							this.bases[numBases - 1] = this.makeOccupiedBase(
@@ -1787,7 +1797,7 @@ class GameSim {
 						t: this.o,
 						pid: batter.id,
 						posDefense,
-						runners: this.finalizeRunners(getRunners()),
+						runners: this.finalizeRunners(runners),
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),

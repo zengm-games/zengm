@@ -17,13 +17,13 @@ describe("worker/core/season/newScheduleSpeculative", () => {
 			testHelpers.resetG();
 		});
 
-		test("schedule 272 games (17 each for 32 teams)", () => {
-			const matches = generateMatches(newDefaultTeams, year);
+		test("schedule 272 games (17 each for 32 teams)", async () => {
+			const matches = await generateMatches(newDefaultTeams, year);
 			assert.strictEqual(matches.length, 272);
 		});
 
-		test("schedule 8 home games and 8 away games for each team", () => {
-			const matches = generateMatches(newDefaultTeams, year);
+		test("schedule 8 home games and 8 away games for each team", async () => {
+			const matches = await generateMatches(newDefaultTeams, year);
 			assert.strictEqual(matches.length, 272);
 
 			const home: Record<number, number> = {}; // Number of home games for each team

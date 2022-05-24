@@ -11,14 +11,17 @@ import getSchedule from "./getSchedule";
 import newSchedule from "./newSchedule";
 import newSchedulePlayoffsDay from "./newSchedulePlayoffsDay";
 import setSchedule from "./setSchedule";
+import scheduleSort from "./scheduleSortSpeculative";
 import updateOwnerMood from "./updateOwnerMood";
 import validatePlayoffSettings from "./validatePlayoffSettings";
+import generateMatches from "./newScheduleSpeculative.Football";
 
 export default {
 	addDaysToSchedule,
 	doAwards,
 	genPlayoffSeeds,
 	genPlayoffSeries,
+	generateMatches,
 	getAwardCandidates,
 	getDaysLeftSchedule,
 	getInitialNumGamesConfDivSettings,
@@ -28,6 +31,7 @@ export default {
 	newSchedule,
 	newSchedulePlayoffsDay,
 	setSchedule,
+	scheduleSort,
 	updateOwnerMood,
 	validatePlayoffSettings,
 };

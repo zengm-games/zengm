@@ -23,12 +23,16 @@ const nestedArrayIncludes = (array: number[][], nested: number[]): boolean => {
 	});
 };
 
-// generateMatches takes an array of teams, as described above, and the year and returns an array of arrays, which carry
-// home and away team matches based on position in the teams array.  This creates the current 17 game NFL schedule using
-// the NFL's current scheduling formula.
-const generateMatches = (teams: number[], year: number): number[][] => {
-	// Once the cross/intraConferenceOffsets can be derived, then most of this solution can be applied to any
-	// evenly distributed number of divisions with an equal number of teams.
+// generateMatches takes the year and returns an array of arrays, which carry
+// home and away team matches based on position in the teams array.  This creates the current
+// 17 game NFL schedule using the NFL's current scheduling formula.
+const generateMatches = async (
+	teams: number[],
+	year: number,
+): Promise<number[][]> => {
+	//For the time being, I'm not feeling super inspired for how to further expand the functionality.
+	//Ideally, one would be able to pass these as arguments and we'd figure out how
+	//to allocate games dynamically based on conference and division alignment.
 	const conferences: number = 2;
 	const divisions: number = 4;
 	const teamsPerDiv: number = teams.length / (conferences * divisions);

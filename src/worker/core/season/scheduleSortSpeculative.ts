@@ -1,3 +1,4 @@
+import type { ScheduleGameWithoutKey } from "src/common/types";
 import { random } from "../../../worker/util";
 
 //scheduleSort takes a list of nfl matches, and sorts them into an 18 week configuration, where each team has one bye.  I'm going
@@ -10,7 +11,7 @@ const scheduleSort = (
 	gamesPerWeek?: number,
 	partiallyFullWeeks?: number,
 	fullSlateWeeks?: number,
-): number[][][] => {
+): ScheduleGameWithoutKey[] => {
 	// A schedule is an array of weeks, each with an array of matches
 
 	const games: number = typeof gamesPerWeek === "undefined" ? 16 : gamesPerWeek;
@@ -175,7 +176,13 @@ const scheduleSort = (
 		.slice(0, 7)
 		.concat(partialWeeks)
 		.concat(fullSlates.slice(7));
-	return schedule;
+	const finalSchedule: ScheduleGameWithoutKey[] = [];
+	schedule.forEach((week, i) => {
+		week.forEach(game => {
+			finalSchedule.push({ awayTid: game[1], homeTid: game[0], day: i });
+		});
+	});
+	return finalSchedule;
 };
 
 export default scheduleSort;

@@ -248,7 +248,9 @@ export const getText = (
 		case "hitResult": {
 			text = "";
 			if (event.result === "error") {
-				text = "ERROR TODO!";
+				text = `He reaches ${getBaseName(
+					event.numBases,
+				)} on an error by ${getName(event.pidError)}!`;
 			} else if (event.result === "hit") {
 				if (event.numBases === 1) {
 					text = "Single!";

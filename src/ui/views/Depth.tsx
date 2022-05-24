@@ -8,7 +8,11 @@ import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
 import range from "lodash-es/range";
-import { NUM_STARTING_PITCHERS } from "../../common/constants.baseball";
+import {
+	NUM_ACTIVE_BATTERS,
+	NUM_ACTIVE_PITCHERS,
+	NUM_STARTING_PITCHERS,
+} from "../../common/constants.baseball";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", { pos });
@@ -28,11 +32,11 @@ const numStartersByPos = bySport<
 	baseball: {
 		L: 9,
 		LP: 9,
-		D: 14,
-		DP: 14,
+		D: NUM_ACTIVE_BATTERS,
+		DP: NUM_ACTIVE_BATTERS,
 		P: {
 			SP: NUM_STARTING_PITCHERS,
-			RP: 7,
+			RP: NUM_ACTIVE_PITCHERS - NUM_STARTING_PITCHERS,
 		},
 	},
 	basketball: {},

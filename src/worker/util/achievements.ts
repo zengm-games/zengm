@@ -899,6 +899,8 @@ const achievements: Achievement[] = [
 		slug: "hardware_store",
 		name: "Hardware Store",
 		desc: bySport({
+			baseball:
+				"Players on your team win MVP, POY, ROY, ROY, and Finals MVP in the same season.",
 			basketball:
 				"Players on your team win MVP, DPOY, SMOY, MIP, ROY, and Finals MVP in the same season.",
 			football:
@@ -914,45 +916,37 @@ const achievements: Achievement[] = [
 			const userTid = g.get("userTid");
 
 			return bySport({
+				baseball:
+					awards &&
+					awards.mvp?.tid === userTid &&
+					awards.poy?.tid === userTid &&
+					awards.roy?.tid === userTid &&
+					awards.goy?.tid === userTid &&
+					awards.roy?.tid === userTid &&
+					awards.finalsMvp?.tid === userTid,
 				basketball:
 					awards &&
-					awards.mvp &&
-					awards.dpoy &&
-					awards.smoy &&
-					awards.mip &&
-					awards.roy &&
-					awards.finalsMvp &&
-					awards.mvp.tid === userTid &&
-					awards.dpoy.tid === userTid &&
-					awards.smoy.tid === userTid &&
-					awards.mip.tid === userTid &&
-					awards.roy.tid === userTid &&
-					awards.finalsMvp.tid === userTid,
+					awards.mvp?.tid === userTid &&
+					awards.dpoy?.tid === userTid &&
+					awards.smoy?.tid === userTid &&
+					awards.mip?.tid === userTid &&
+					awards.roy?.tid === userTid &&
+					awards.finalsMvp?.tid === userTid,
 				football:
 					awards &&
-					awards.mvp &&
-					awards.dpoy &&
-					awards.oroy &&
-					awards.droy &&
-					awards.finalsMvp &&
-					awards.mvp.tid === userTid &&
-					awards.dpoy.tid === userTid &&
-					awards.oroy.tid === userTid &&
-					awards.droy.tid === userTid &&
-					awards.finalsMvp.tid === userTid,
+					awards.mvp?.tid === userTid &&
+					awards.dpoy?.tid === userTid &&
+					awards.oroy?.tid === userTid &&
+					awards.droy?.tid === userTid &&
+					awards.finalsMvp?.tid === userTid,
 				hockey:
 					awards &&
-					awards.mvp &&
-					awards.dpoy &&
-					awards.goy &&
-					awards.roy &&
-					awards.finalsMvp &&
-					awards.mvp.tid === userTid &&
-					awards.dpoy.tid === userTid &&
-					awards.dfoy.tid === userTid &&
-					awards.goy.tid === userTid &&
-					awards.roy.tid === userTid &&
-					awards.finalsMvp.tid === userTid,
+					awards.mvp?.tid === userTid &&
+					awards.dpoy?.tid === userTid &&
+					awards.dfoy?.tid === userTid &&
+					awards.goy?.tid === userTid &&
+					awards.roy?.tid === userTid &&
+					awards.finalsMvp?.tid === userTid,
 			});
 		},
 		when: "afterAwards",
@@ -991,6 +985,7 @@ const achievements: Achievement[] = [
 		slug: "sleeper_pick",
 		name: "Sleeper Pick",
 		desc: bySport({
+			baseball: "Draft the ROY in the 2nd round or later.",
 			basketball: "Use a non-lottery pick to draft the ROY.",
 			football: "Draft the ROY in the 3rd round or later.",
 			hockey: "Use a non-lottery pick to draft the ROY.",
@@ -1010,6 +1005,7 @@ const achievements: Achievement[] = [
 					p.draft.year === g.get("season") - 1
 				) {
 					return bySport({
+						baseball: p.draft.round >= 2,
 						basketball: p.draft.round > 1 || p.draft.pick >= 15,
 						football: p.draft.round >= 3,
 						hockey: p.draft.round > 1 || p.draft.pick >= 15,
@@ -1026,6 +1022,7 @@ const achievements: Achievement[] = [
 		slug: "sleeper_pick_2",
 		name: "Sleeper Pick 2",
 		desc: bySport({
+			baseball: "Draft the ROY in the 3nd round or later.",
 			basketball: "Use a second round pick to draft the ROY.",
 			football: "Draft the ROY in the 5th round or later.",
 			hockey: "Draft the ROY in the 2nd round or later.",
@@ -1046,6 +1043,7 @@ const achievements: Achievement[] = [
 					p.draft.round > 1
 				) {
 					return bySport({
+						baseball: p.draft.round >= 3,
 						basketball: p.draft.round > 1,
 						football: p.draft.round >= 5,
 						hockey: p.draft.round > 1,

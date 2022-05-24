@@ -9,7 +9,6 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
-import { NUM_OUTS_PER_GAME } from "../../../common/processPlayerStats.baseball";
 
 export const NUM_OUTS_PER_INNING = 3;
 

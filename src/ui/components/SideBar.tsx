@@ -129,6 +129,7 @@ const MenuItem = ({
 	menuItem,
 	onMenuItemClick,
 	pageID,
+	pathname,
 	root,
 }: {
 	godMode: boolean;
@@ -136,6 +137,7 @@ const MenuItem = ({
 	menuItem: MenuItemHeader | MenuItemLink | MenuItemText;
 	onMenuItemClick: () => void;
 	pageID?: string;
+	pathname?: string;
 	root: boolean;
 }) => {
 	if (menuItem.type === "text") {
@@ -165,7 +167,7 @@ const MenuItem = ({
 			<li className="nav-item">
 				<a
 					className={classNames("nav-link", {
-						active: menuItem.active ? menuItem.active(pageID) : false,
+						active: menuItem.active ? menuItem.active(pageID, pathname) : false,
 						"god-mode": menuItem.godMode,
 					})}
 					{...anchorProps}
@@ -191,6 +193,7 @@ const MenuItem = ({
 					menuItem={child}
 					onMenuItemClick={onMenuItemClick}
 					pageID={pageID}
+					pathname={pathname}
 					root={false}
 				/>
 			))
@@ -208,12 +211,13 @@ const MenuItem = ({
 
 type Props = {
 	pageID?: string;
+	pathname?: string;
 };
 
 // Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.getState()
 // because then performance of the menu is independent of any other React performance issues - basically it's a hack to
 // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
-const SideBar = memo(({ pageID }: Props) => {
+const SideBar = memo(({ pageID, pathname }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
 
@@ -324,6 +328,7 @@ const SideBar = memo(({ pageID }: Props) => {
 							menuItem={menuItem}
 							onMenuItemClick={closeHandler}
 							pageID={pageID}
+							pathname={pathname}
 							root
 						/>
 					))}

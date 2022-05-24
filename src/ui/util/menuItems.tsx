@@ -6,7 +6,11 @@ import { frivolities } from "../views/Frivolities";
 const depthChart: MenuItemLink[] = [
 	{
 		type: "link",
-		active: pageID => pageID === "depth",
+		active: (pageID, pathname) =>
+			pageID === "depth" &&
+			(!isSport("baseball") ||
+				!pathname ||
+				(!pathname.includes("/D") && !pathname.includes("/P"))),
 		league: true,
 		commandPalette: true,
 		path: ["depth"],
@@ -23,6 +27,8 @@ if (isSport("baseball")) {
 	depthChart.push(
 		{
 			type: "link",
+			active: (pageID, pathname) =>
+				pageID === "depth" && !!pathname && pathname.includes("/D"),
 			league: true,
 			commandPalette: true,
 			path: ["depth", "D"],
@@ -30,6 +36,8 @@ if (isSport("baseball")) {
 		},
 		{
 			type: "link",
+			active: (pageID, pathname) =>
+				pageID === "depth" && !!pathname && pathname.includes("/P"),
 			league: true,
 			commandPalette: true,
 			path: ["depth", "P"],

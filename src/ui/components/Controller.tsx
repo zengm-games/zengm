@@ -14,6 +14,7 @@ import SideBar from "./SideBar";
 import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import { useViewData } from "../util/viewManager";
+import { isSport } from "../../common";
 
 const loadFramerMotionFeatures = () =>
 	import("../util/framerMotionFeatures").then(res => res.default);
@@ -80,13 +81,14 @@ const Controller = () => {
 	// Optimistically use idLoading before it renders, for UI responsiveness in the sidebar
 	const sidebarPageID = idLoading ?? idLoaded;
 
+	const pathname = isSport("baseball") ? document.location.pathname : undefined;
 	return (
 		<LazyMotion strict features={loadFramerMotionFeatures}>
 			<NavBar updating={updating} />
 			<LeagueTopBar />
 			<TitleBar />
 			<div className="container-fluid position-relative mt-2 flex-grow-1 h-100">
-				<SideBar pageID={sidebarPageID} />
+				<SideBar pageID={sidebarPageID} pathname={pathname} />
 				<div className="d-flex" style={minHeight100}>
 					<div className="w-100 d-flex flex-column" style={minWidth0}>
 						<Header />

@@ -778,7 +778,7 @@ export type Message = {
 
 export type MenuItemLink = {
 	type: "link";
-	active?: (a?: string) => boolean;
+	active?: (pageID?: string, pathname?: string) => boolean;
 	league?: true;
 	godMode?: true;
 	nonLeague?: true;

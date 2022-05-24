@@ -6,10 +6,12 @@ import type {
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
 import { DEFAULT_SPORT_STATE } from "../views/LiveGame";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
+import type { PlayerInjury } from "../../common/types";
 
 export type BoxScorePlayer = {
 	name: string;
 	pid: number;
+	injury: PlayerInjury;
 };
 type BoxScoreTeam = {
 	abbrev: string;
@@ -478,11 +480,14 @@ const processLiveGameEvents = ({
 			// Everything else
 			if (e.pid != undefined) {
 				const p = playersByPid[e.pid];
+				// @ts-expect-error
 				if (p && p[e.s] !== undefined) {
+					// @ts-expect-error
 					p[e.s] += e.amt;
 				}
 			}
 			if (boxScore.teams[actualT].hasOwnProperty(e.s)) {
+				// @ts-expect-error
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
 		} else if (e.type !== "init") {

@@ -1039,22 +1039,22 @@ class GameSim {
 	getPitchOutcome(pitcher: PlayerGameSim, batter: PlayerGameSim) {
 		const BALL_PROB_BY_COUNT: Record<number, Record<number, number>> = {
 			0: {
-				0: 0.6,
-				1: 0.55,
-				2: 0.5,
-				3: 0.2,
+				0: 0.56,
+				1: 0.51,
+				2: 0.46,
+				3: 0.16,
 			},
 			1: {
-				0: 0.65,
-				1: 0.6,
-				2: 0.55,
-				3: 0.3,
+				0: 0.61,
+				1: 0.56,
+				2: 0.51,
+				3: 0.26,
 			},
 			2: {
-				0: 0.8,
-				1: 0.7,
-				2: 0.6,
-				3: 0.4,
+				0: 0.76,
+				1: 0.66,
+				2: 0.56,
+				3: 0.36,
 			},
 		};
 		let ballProb = BALL_PROB_BY_COUNT[this.strikes][this.balls];
@@ -1099,7 +1099,7 @@ class GameSim {
 			const swingProb = pitchQuality - eyeAdjusted + swingProbAdjustment;
 			if (Math.random() < swingProb) {
 				swinging = true;
-				const contactProb = 0.6 + contactAdjusted - pitchQuality;
+				const contactProb = 0.45 + contactAdjusted - pitchQuality;
 				outcome = Math.random() < contactProb ? "contact" : "strike";
 			} else {
 				outcome = "ball";
@@ -1108,7 +1108,7 @@ class GameSim {
 			const swingProb = 0.75 - pitchQuality + eyeAdjusted + swingProbAdjustment;
 			if (Math.random() < swingProb) {
 				swinging = true;
-				const contactProb = 0.85 + contactAdjusted - pitchQuality;
+				const contactProb = 0.7 + contactAdjusted - pitchQuality;
 				outcome = Math.random() < contactProb ? "contact" : "strike";
 			} else {
 				outcome = "strike";
@@ -1185,7 +1185,7 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		return 0.2 + 0.1 * batter.compositeRating.contactHitter + fieldingFactor;
+		return 0.13 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
 	getPErrorIfNotHit(
@@ -1338,11 +1338,11 @@ class GameSim {
 					let probDoublePlay = 0;
 					if (this.bases[0] && this.outs < 2) {
 						if (hitTo === 6 || hitTo === 4) {
-							probDoublePlay = 0.5;
+							probDoublePlay = 0.75;
 						} else if (hitTo === 5) {
-							probDoublePlay = 0.25;
+							probDoublePlay = 0.5;
 						} else {
-							probDoublePlay = 0.15;
+							probDoublePlay = 0.2;
 						}
 
 						const fielder =

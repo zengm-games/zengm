@@ -1,0 +1,12 @@
+diff --git a/node_modules/@types/jsdom/base.d.ts b/node_modules/@types/jsdom/base.d.ts
+index fcfed64..48cec61 100755
+--- a/node_modules/@types/jsdom/base.d.ts
++++ b/node_modules/@types/jsdom/base.d.ts
+@@ -2,6 +2,7 @@
+ /// <reference types="node" />
+ 
+ import { EventEmitter } from "events";
++// @ts-expect-error
+ import { ElementLocation } from "parse5";
+ import { Context } from "vm";
+ import * as tough from "tough-cookie";

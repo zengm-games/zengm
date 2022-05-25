@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import fs from "fs";
 import path from "path";
 import { juniors, provinces, states } from "./namesHelpers.mjs";
@@ -16,7 +16,7 @@ const namesFootball = () => {
 		const file = path.join(folder, filename);
 		const contents = fs.readFileSync(file, "utf8");
 
-		const $ = cheerio.load(contents);
+		const $ = load(contents);
 
 		$("table tbody tr").each((i, element) => {
 			const children = $(element).children();

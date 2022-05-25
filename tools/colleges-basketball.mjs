@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import fs from "fs";
 import path from "path";
 
@@ -469,7 +469,7 @@ for (const filename of fs.readdirSync(folder)) {
 	const file = path.join(folder, filename);
 	const contents = fs.readFileSync(file, "utf8");
 
-	const $ = cheerio.load(contents);
+	const $ = load(contents);
 	let name = $("title")
 		.text()
 		.replace("NBA & ABA Players Who Attended ", "")

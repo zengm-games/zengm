@@ -1,5 +1,5 @@
 import _ from "lodash";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import fs from "fs";
 import path from "path";
 import { juniors, provinces, states } from "./namesHelpers.mjs";
@@ -392,7 +392,7 @@ const namesBasketball = () => {
 			continue;
 		}
 
-		const $ = cheerio.load(contents);
+		const $ = load(contents);
 
 		let fn;
 		let ln;

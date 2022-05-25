@@ -13,7 +13,8 @@ const score = (p: PlayerFiltered, pos?: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
-		tempScore += 10;
+		// More likely to put actual catcher at catcher
+		tempScore += pos === "C" ? 25 : 10;
 	}
 
 	return tempScore;
@@ -279,7 +280,6 @@ const rosterAutoSort = async (
 					info => info.p.ratings.ovrs.DH + 0.2 * info.p.ratings.spd,
 					"desc",
 				);
-				console.log(sortedStarters);
 
 				const indexes = sortedStarters.map(info => info.i);
 

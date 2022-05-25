@@ -15,7 +15,7 @@ const depthChart: MenuItemLink[] = [
 		commandPalette: true,
 		path: ["depth"],
 		text: bySport({
-			baseball: "Lineup",
+			baseball: "Batting Order",
 			basketball: "",
 			football: "Depth Chart",
 			hockey: "Lines",

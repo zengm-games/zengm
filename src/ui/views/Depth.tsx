@@ -67,8 +67,8 @@ const numStartersByPos = bySport<
 
 const posNames = bySport<Record<string, string> | undefined>({
 	baseball: {
-		L: "Lineup",
-		LP: "Lineup (no DH)",
+		L: "Batting Order",
+		LP: "Batting Order (no DH)",
 		D: "Defense",
 		DP: "Defense (no DH)",
 		P: "Pitching",
@@ -110,7 +110,7 @@ const Depth = ({
 
 	useTitleBar({
 		title: bySport({
-			baseball: (posNames && posNames[pos]) ?? "Lineup",
+			baseball: (posNames && posNames[pos]) ?? "Batting Order",
 			hockey: "Lines",
 			default: "Depth Chart",
 		}),

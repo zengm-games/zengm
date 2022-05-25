@@ -110,9 +110,7 @@ const formatRunners = (
 		texts.push(`${scored[0]} scores.`);
 	} else if (scored.length > 1) {
 		let namesCombined;
-		// @ts-expect-error
 		if (Intl.ListFormat) {
-			// @ts-expect-error
 			namesCombined = new Intl.ListFormat("en").format(scored);
 		} else {
 			namesCombined = `${scored.length} runners`;

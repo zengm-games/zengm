@@ -2,6 +2,8 @@ import { idb } from "../../db";
 import { g } from "../../util";
 import type { Position } from "../../../common/types.baseball";
 import type { PlayerFiltered } from "../../../common/types";
+import { groupByUnique } from "../../../common/groupBy";
+import orderBy from "lodash-es/orderBy";
 
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {
@@ -68,7 +70,7 @@ const rosterAutoSort = async (
 	);
 	const players = await idb.getCopies.playersPlus(playersFromCache, {
 		attrs: ["pid"],
-		ratings: ["pos", "ovrs"],
+		ratings: ["spd", "pos", "ovrs"],
 		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
@@ -201,7 +203,7 @@ const rosterAutoSort = async (
 			const getDefensivePlayers = (dh: boolean) => {
 				const pids = [];
 
-				let playersRemaining = players;
+				let playersRemaining = [...players];
 
 				const defPositions = dh ? DEF_POSITIONS_DH : DEF_POSITIONS;
 
@@ -220,10 +222,32 @@ const rosterAutoSort = async (
 				return pids;
 			};
 
-			if (pos2 === "LP") {
-				depth[pos2] = [6, 4, 5, 1, 7, 3, 2, 0, -1];
-			} else if (pos2 === "L") {
-				depth[pos2] = [6, 4, 5, 1, 8, 7, 3, 2, 0];
+			if (pos2 === "LP" || pos2 === "L") {
+				const depthDefense = depth[pos2 === "L" ? "D" : "DP"];
+				const playersByPid = groupByUnique(players, "pid");
+
+				const starters = depthDefense
+					.slice(0, pos2 === "L" ? 9 : 8)
+					.map((pid, i) => ({
+						i,
+						p: playersByPid[pid],
+					}));
+
+				const sortedStarters = orderBy(
+					starters,
+					info => info.p.ratings.ovrs.DH + 0.2 * info.p.ratings.spd,
+					"desc",
+				);
+				console.log(sortedStarters);
+
+				const indexes = sortedStarters.map(info => info.i);
+
+				if (pos2 === "LP") {
+					// Pitcher last
+					indexes.push(-1);
+				}
+
+				depth[pos2] = indexes;
 			} else if (pos2 === "DP") {
 				depth[pos2] = getDefensivePlayers(false);
 			} else if (pos2 === "D") {

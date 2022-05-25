@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, random } from "../../util";
 import type { Position } from "../../../common/types.baseball";
 import type { PlayerFiltered } from "../../../common/types";
 import { groupByUnique } from "../../../common/groupBy";
@@ -201,7 +201,7 @@ const rosterAutoSort = async (
 			depth[pos2] = [];
 
 			const getDefensivePlayers = (dh: boolean) => {
-				const pids = [];
+				const defensivePlayersSorted = [];
 
 				let playersRemaining = [...players];
 
@@ -209,7 +209,7 @@ const rosterAutoSort = async (
 
 				for (const scorePos of defPositions) {
 					playersRemaining.sort(sortFunction(scorePos));
-					pids.push(playersRemaining[0].pid);
+					defensivePlayersSorted.push(playersRemaining[0]);
 					playersRemaining = playersRemaining.slice(1);
 					if (playersRemaining.length === 0) {
 						break;
@@ -217,9 +217,50 @@ const rosterAutoSort = async (
 				}
 
 				playersRemaining.sort(sortFunction());
-				pids.push(...playersRemaining.map(p => p.pid));
+				defensivePlayersSorted.push(...playersRemaining);
 
-				return pids;
+				// Try swappinng players to see if that improves the total ovr
+				const numPlayersToTest =
+					defensivePlayersSorted.length < 11
+						? defensivePlayersSorted.length
+						: 11;
+				for (let numSwapTries = 0; numSwapTries < 5; numSwapTries++) {
+					let swapped = false;
+
+					const defPositionsShuffled = defPositions.map((pos, i) => ({
+						pos,
+						i,
+					}));
+					random.shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
+
+					for (const { i, pos } of defPositionsShuffled) {
+						for (let j = 0; j < numPlayersToTest; j++) {
+							if (i === j) {
+								continue;
+							}
+
+							const p = defensivePlayersSorted[i];
+							const p2 = defensivePlayersSorted[j];
+							const pos2 = defPositions[j];
+
+							if (
+								p.ratings.ovrs[pos2] + p2.ratings.ovrs[pos] >
+								p.ratings.ovrs[pos] + p2.ratings.ovrs[pos2]
+							) {
+								const temp: any = defensivePlayersSorted[i];
+								defensivePlayersSorted[i] = defensivePlayersSorted[j];
+								defensivePlayersSorted[j] = temp;
+								swapped = true;
+							}
+						}
+					}
+
+					if (!swapped) {
+						break;
+					}
+				}
+
+				return defensivePlayersSorted.map(p => p.pid);
 			};
 
 			if (pos2 === "LP" || pos2 === "L") {

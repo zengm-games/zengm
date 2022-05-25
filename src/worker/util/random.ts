@@ -1,4 +1,22 @@
 /**
+ * Get a random number selected from a uniform distribution.
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum number that can be returned.
+ * @param {number} b Maximum number that can be returned.
+ * @return {number} Random number from uniform distribution.
+ */
+const uniform = (a: number, b: number): number => {
+	return Math.random() * (b - a) + a;
+};
+
+// https://stackoverflow.com/a/19303725/786644
+const uniformSeed = (seed: number): number => {
+	const x = Math.sin(seed) * 10000;
+	return x - Math.floor(x);
+};
+
+/**
  * Choose a random integer from [a, b]
  *
  * @memberOf util.random
@@ -6,8 +24,9 @@
  * @param {number} b Maximum integer that can be returned.
  * @return {number} Random integer between a and b.
  */
-const randInt = (a: number, b: number): number => {
-	return Math.floor(Math.random() * (1 + b - a)) + a;
+const randInt = (a: number, b: number, seed?: number): number => {
+	const r = seed === undefined ? Math.random() : uniformSeed(seed);
+	return Math.floor(r * (1 + b - a)) + a;
 };
 
 /**
@@ -16,11 +35,11 @@ const randInt = (a: number, b: number): number => {
  * @memberOf util.random
  * @param {array} list List to be shuffled in place.
  */
-const shuffle = (list: any[]) => {
+const shuffle = (list: any[], seed?: number) => {
 	const l = list.length;
 
 	for (let i = 1; i < l; i++) {
-		const j = randInt(0, i);
+		const j = randInt(0, i, seed);
 
 		if (j !== i) {
 			const t = list[i]; // swap list[i] and list[j]
@@ -106,24 +125,6 @@ const truncGauss = (
 	} while (x < lowerBound || x > upperBound);
 
 	return x;
-};
-
-/**
- * Get a random number selected from a uniform distribution.
- *
- * @memberOf util.random
- * @param {number} a Minimum number that can be returned.
- * @param {number} b Maximum number that can be returned.
- * @return {number} Random number from uniform distribution.
- */
-const uniform = (a: number, b: number): number => {
-	return Math.random() * (b - a) + a;
-};
-
-// https://stackoverflow.com/a/19303725/786644
-const uniformSeed = (seed: number): number => {
-	const x = Math.sin(seed) * 10000;
-	return x - Math.floor(x);
 };
 
 /**

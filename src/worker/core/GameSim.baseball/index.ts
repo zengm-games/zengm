@@ -1039,22 +1039,22 @@ class GameSim {
 	getPitchOutcome(pitcher: PlayerGameSim, batter: PlayerGameSim) {
 		const BALL_PROB_BY_COUNT: Record<number, Record<number, number>> = {
 			0: {
-				0: 0.56,
-				1: 0.51,
-				2: 0.46,
-				3: 0.16,
+				0: 0.58,
+				1: 0.53,
+				2: 0.48,
+				3: 0.18,
 			},
 			1: {
-				0: 0.61,
-				1: 0.56,
-				2: 0.51,
-				3: 0.26,
+				0: 0.63,
+				1: 0.58,
+				2: 0.53,
+				3: 0.28,
 			},
 			2: {
-				0: 0.76,
-				1: 0.66,
-				2: 0.56,
-				3: 0.36,
+				0: 0.78,
+				1: 0.68,
+				2: 0.58,
+				3: 0.38,
 			},
 		};
 		let ballProb = BALL_PROB_BY_COUNT[this.strikes][this.balls];
@@ -1099,7 +1099,7 @@ class GameSim {
 			const swingProb = pitchQuality - eyeAdjusted + swingProbAdjustment;
 			if (Math.random() < swingProb) {
 				swinging = true;
-				const contactProb = 0.45 + contactAdjusted - pitchQuality;
+				const contactProb = 0.4 + contactAdjusted - pitchQuality;
 				outcome = Math.random() < contactProb ? "contact" : "strike";
 			} else {
 				outcome = "ball";
@@ -1108,7 +1108,7 @@ class GameSim {
 			const swingProb = 0.75 - pitchQuality + eyeAdjusted + swingProbAdjustment;
 			if (Math.random() < swingProb) {
 				swinging = true;
-				const contactProb = 0.7 + contactAdjusted - pitchQuality;
+				const contactProb = 0.65 + contactAdjusted - pitchQuality;
 				outcome = Math.random() < contactProb ? "contact" : "strike";
 			} else {
 				outcome = "strike";
@@ -1185,7 +1185,9 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		return 0.13 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
+		return (
+			0.225 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor
+		);
 	}
 
 	getPErrorIfNotHit(

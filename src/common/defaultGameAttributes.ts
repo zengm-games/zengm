@@ -291,8 +291,8 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				maxContract: 30000,
 				minRosterSize: 25,
 				maxRosterSize: 30,
-				// Arbitrary - 1 injury every 5 games, spread over 40 plate appearances per game
-				injuryRate: 0.2 / 40,
+				// Arbitrary, spread over 40 plate appearances per game
+				injuryRate: 0.02 / 40,
 				// 200 days per season, 1 tragic death per 50 years
 				tragicDeathRate: 1 / (200 * 50),
 				allStarGame: null,

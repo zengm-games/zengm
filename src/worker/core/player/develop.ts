@@ -148,11 +148,12 @@ const develop = async (
 			}
 		} else {
 			let pos;
-			let maxOvr = -Infinity; // A player can never have KR or PR as his main position
+			let maxOvr = -Infinity;
 
 			ratings.ovrs = POSITIONS.reduce((ovrs, pos2) => {
 				ovrs[pos2] = ovr(ratings, pos2);
 
+				// A player can never have KR or PR as his main position
 				if (!BANNED_POSITIONS.includes(pos2) && ovrs[pos2] > maxOvr) {
 					pos = pos2;
 					maxOvr = ovrs[pos2];

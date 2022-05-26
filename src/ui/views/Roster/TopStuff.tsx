@@ -8,7 +8,7 @@ import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders";
 import type { View } from "../../../common/types";
-import { isSport } from "../../../common";
+import { bySport, isSport } from "../../../common";
 
 const fontSizeLarger = { fontSize: "larger" };
 
@@ -119,7 +119,14 @@ const TopStuff = ({
 		);
 
 	let marginOfVictory = 0;
-	if (isSport("football") || isSport("hockey")) {
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: true,
+		})
+	) {
 		if (t.stats.gp !== 0) {
 			marginOfVictory = (t.stats.pts - t.stats.oppPts) / t.stats.gp;
 		}

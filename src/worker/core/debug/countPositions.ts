@@ -22,6 +22,7 @@ const countPositions = async () => {
 		const position = player.pos(r);
 
 		const ovr = player.ovr(r, position);
+		// const ovr = g.get("season") - p.born.year;
 
 		if (posCounts[position] === undefined) {
 			posCounts[position] = 0;

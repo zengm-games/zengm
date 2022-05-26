@@ -1,4 +1,4 @@
-import { isSport, PHASE, PLAYER } from "../../../common";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
 import generate from "./generate";
@@ -214,7 +214,12 @@ const augmentPartialPlayer = async (
 	const r2 = p.ratings.at(-1);
 
 	if (
-		(isSport("football") || isSport("hockey")) &&
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: true,
+		}) &&
 		(!r2.ovrs || !r2.pots || !r2.pos)
 	) {
 		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills

@@ -88,7 +88,14 @@ const updateFrivolitiesDraftClasses = async (
 				}
 				if (
 					p.awards.some(award => {
-						if (isSport("football") || isSport("hockey")) {
+						if (
+							bySport({
+								baseball: true,
+								basketball: false,
+								football: true,
+								hockey: true,
+							})
+						) {
 							return award.type.includes("All-League");
 						}
 

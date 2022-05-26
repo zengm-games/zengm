@@ -145,7 +145,7 @@ const updatePlayers = async (
 			],
 		});
 		const extraRatings = bySport({
-			baseball: [],
+			baseball: ["ovrs", "pots"],
 			basketball: [],
 			football: ["ovrs", "pots"],
 			hockey: ["ovrs", "pots"],

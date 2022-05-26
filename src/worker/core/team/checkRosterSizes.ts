@@ -1,4 +1,4 @@
-import { isSport, PLAYER, POSITION_COUNTS } from "../../../common";
+import { bySport, PLAYER, POSITION_COUNTS } from "../../../common";
 import { player, freeAgents } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
@@ -50,7 +50,14 @@ const checkRosterSizes = async (
 
 				// Only drop player from a position there is an excess of (no dropping your only kicker)
 				let counts;
-				if (isSport("football") || isSport("hockey")) {
+				if (
+					bySport({
+						baseball: true,
+						basketball: false,
+						football: true,
+						hockey: true,
+					})
+				) {
 					counts = { ...POSITION_COUNTS };
 					for (const pos of Object.keys(counts)) {
 						counts[pos] = 0;
@@ -86,7 +93,15 @@ const checkRosterSizes = async (
 					i += 1;
 					const p = players[i];
 
-					if (counts && (isSport("football") || isSport("hockey"))) {
+					if (
+						counts &&
+						bySport({
+							baseball: true,
+							basketball: false,
+							football: true,
+							hockey: true,
+						})
+					) {
 						const pos = p.ratings.at(-1)!.pos;
 
 						// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply

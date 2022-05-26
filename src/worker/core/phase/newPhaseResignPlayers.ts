@@ -1,5 +1,5 @@
 import orderBy from "lodash-es/orderBy";
-import { isSport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
+import { bySport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import {
 	contractNegotiation,
 	draft,
@@ -192,7 +192,12 @@ const newPhaseResignPlayers = async (
 
 				// Don't go beyond roster needs by position
 				if (
-					(isSport("football") || isSport("hockey")) &&
+					bySport({
+						baseball: true,
+						basketball: false,
+						football: true,
+						hockey: true,
+					}) &&
 					positionInfo !== undefined &&
 					positionInfo[pos] !== undefined &&
 					positionInfo[pos].count <= 0 &&

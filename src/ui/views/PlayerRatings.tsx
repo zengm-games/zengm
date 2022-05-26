@@ -1,7 +1,7 @@
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { POSITIONS, PLAYER, isSport } from "../../common";
+import { POSITIONS, PLAYER, isSport, bySport } from "../../common";
 import type { View } from "../../common/types";
 import {
 	wrappedContractAmount,
@@ -27,7 +27,14 @@ const PlayerRatings = ({
 	});
 
 	const ovrsPotsColNames: string[] = [];
-	if (isSport("football") || isSport("hockey")) {
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: true,
+		})
+	) {
 		for (const pos of POSITIONS) {
 			for (const type of ["ovr", "pot"]) {
 				ovrsPotsColNames.push(`rating:${type}${pos}`);
@@ -52,7 +59,14 @@ const PlayerRatings = ({
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		const ovrsPotsRatings: string[] = [];
-		if (isSport("football") || isSport("hockey")) {
+		if (
+			bySport({
+				baseball: true,
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
+		) {
 			for (const pos of POSITIONS) {
 				for (const type of ["ovrs", "pots"]) {
 					ovrsPotsRatings.push(showRatings ? p.ratings[type][pos] : null);

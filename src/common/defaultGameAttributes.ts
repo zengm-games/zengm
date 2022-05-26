@@ -282,7 +282,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numPeriods: 9,
 				salaryCapType: "none",
 				draftType: "noLottery",
-				numDraftRounds: 7,
+				numDraftRounds: 4,
 				draftAges: [18, 22],
 				salaryCap: 175000,
 				minPayroll: 150000,

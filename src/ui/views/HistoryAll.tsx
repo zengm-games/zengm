@@ -25,7 +25,7 @@ const awardName = (
 		// For old seasons with no Finals MVP
 		return {
 			value: "N/A",
-			sortValue: null,
+			sortValue: undefined,
 		};
 	}
 

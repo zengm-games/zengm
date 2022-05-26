@@ -8,7 +8,7 @@ const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {
 		return {
 			value: "???",
-			sortValue: null,
+			sortValue: undefined,
 		};
 	}
 

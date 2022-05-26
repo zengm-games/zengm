@@ -2,7 +2,7 @@
 import "./util/initBugsnag";
 import "bbgm-polyfills"; // eslint-disable-line
 import type { ReactNode } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
@@ -178,20 +178,12 @@ const setupEnv = async () => {
 };
 
 const render = () => {
-	/*
-	For React 18 eventual upgrade:
-
 	const container = document.getElementById("content");
 	const root = createRoot(container!);
-	root.render(<ErrorBoundary>
-		<Controller />
-	</ErrorBoundary>);
-	*/
-	ReactDOM.render(
+	root.render(
 		<ErrorBoundary>
 			<Controller />
 		</ErrorBoundary>,
-		document.getElementById("content"),
 	);
 };
 

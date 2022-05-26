@@ -24,6 +24,7 @@ export const getText = (
 		return text.side;
 	}
 
+	// @ts-expect-error
 	return text;
 };
 
@@ -227,13 +228,13 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 		sidebarOpen: state.sidebarOpen,
 	}));
 
-	const getNode = useCallback(node2 => {
+	const getNode = useCallback((node2: HTMLDivElement) => {
 		if (node2 !== null) {
 			setNode(node2);
 		}
 	}, []);
 
-	const getNodeFade = useCallback(node2 => {
+	const getNodeFade = useCallback((node2: HTMLDivElement) => {
 		if (node2 !== null) {
 			setNodeFade(node2);
 		}

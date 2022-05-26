@@ -1,17 +1,11 @@
-import {
-	ChangeEvent,
-	FormEvent,
-	Fragment,
-	ReactNode,
-	useEffect,
-	useState,
-} from "react";
+import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View, Phase } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -542,7 +536,7 @@ const TeamFinances = ({
 	);
 
 	const rows = contracts.map((p, i) => {
-		const data: ReactNode[] = [
+		const data: DataTableRow["data"] = [
 			p.pos,
 			wrappedPlayerNameLabels({
 				injury: p.injury,

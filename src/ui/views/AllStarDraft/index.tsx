@@ -153,7 +153,7 @@ const AllStars = ({
 	const [revealed, setRevealed] = useState<number[]>([]);
 	const [editing, setEditing] = useState(false);
 
-	const reveal = useCallback(pid => {
+	const reveal = useCallback((pid: number) => {
 		setRevealed(revealed2 => [...revealed2, pid]);
 	}, []);
 
@@ -178,7 +178,9 @@ const AllStars = ({
 				"allStarDraftOne",
 				undefined,
 			);
-			reveal(pid);
+			if (pid !== undefined) {
+				reveal(pid);
+			}
 			setActuallyFinalized(finalized2);
 		}
 	}, [draftType, reveal, teams, userTids]);

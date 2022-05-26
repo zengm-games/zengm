@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useCallback, useEffect, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { GAME_NAME, WEBSITE_ROOT } from "../../../common";
 
 const Storage = () => {
@@ -39,7 +39,7 @@ const Storage = () => {
 		};
 	}, []);
 
-	const onClick = useCallback(async event => {
+	const onClick = useCallback(async (event: MouseEvent) => {
 		event.preventDefault();
 
 		if (navigator.storage && navigator.storage.persist) {

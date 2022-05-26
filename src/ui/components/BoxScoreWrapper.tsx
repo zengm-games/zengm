@@ -698,7 +698,7 @@ const BoxScoreWrapper = ({
 	}
 
 	const handleKeydown = useCallback(
-		e => {
+		(e: KeyboardEvent) => {
 			if (showNextPrev) {
 				if (e.altKey || e.ctrlKey || e.shiftKey || e.isComposing || e.metaKey) {
 					return;

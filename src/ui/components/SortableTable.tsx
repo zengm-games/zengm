@@ -201,32 +201,36 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		time: 0,
 	});
 
-	const onSortStart = useCallback(({ node, index }) => {
-		setIsDragged(true);
+	const onSortStart = useCallback(
+		({ node, index }: { node: Element; index: number }) => {
+			setIsDragged(true);
 
-		// Hack to avoid responding to duiplicated event on mobile
-		const ignoreToDebounce = Date.now() - clicked.current.time < 500;
-		if (!ignoreToDebounce) {
-			clicked.current.index = index;
-		}
+			// Hack to avoid responding to duiplicated event on mobile
+			const ignoreToDebounce = Date.now() - clicked.current.time < 500;
+			if (!ignoreToDebounce) {
+				clicked.current.index = index;
+			}
 
-		// https://github.com/clauderic/react-sortable-hoc/issues/361#issuecomment-471907612
-		const tds = document.getElementsByClassName("SortableHelper")[0].childNodes;
-		for (let i = 0; i < tds.length; i++) {
-			const childNode = node.childNodes[i];
-			// @ts-expect-error
-			tds[i].style.width = `${childNode.offsetWidth}px`;
-			// @ts-expect-error
-			tds[i].style.padding = "4px";
-		}
-	}, []);
+			// https://github.com/clauderic/react-sortable-hoc/issues/361#issuecomment-471907612
+			const tds =
+				document.getElementsByClassName("SortableHelper")[0].childNodes;
+			for (let i = 0; i < tds.length; i++) {
+				const childNode = node.childNodes[i];
+				// @ts-expect-error
+				tds[i].style.width = `${childNode.offsetWidth}px`;
+				// @ts-expect-error
+				tds[i].style.padding = "4px";
+			}
+		},
+		[],
+	);
 
 	const onSortOver = useCallback(() => {
 		clicked.current.index = undefined;
 	}, []);
 
 	const onSortEnd = useCallback(
-		({ oldIndex, newIndex }) => {
+		({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
 			setIsDragged(false);
 
 			// Hack to avoid responding to duiplicated event on mobile

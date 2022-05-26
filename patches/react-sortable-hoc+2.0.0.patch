@@ -1,11 +1,11 @@
 diff --git a/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js b/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js
-index 78ebe6e..a227357 100644
+index 78ebe6e..cadef76 100644
 --- a/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js
 +++ b/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js
 @@ -958,6 +958,10 @@ function sortableContainer(WrappedComponent) {
            }
          }
-  
+ 
 +        if (!_this.helper || !_this.helper.parentNode) {
 +          return;
 +        }
@@ -13,3 +13,16 @@ index 78ebe6e..a227357 100644
          _this.helper.parentNode.removeChild(_this.helper);
  
          if (hideSortableGhost && _this.sortableGhost) {
+diff --git a/node_modules/react-sortable-hoc/types/index.d.ts b/node_modules/react-sortable-hoc/types/index.d.ts
+index 770a771..1de7882 100644
+--- a/node_modules/react-sortable-hoc/types/index.d.ts
++++ b/node_modules/react-sortable-hoc/types/index.d.ts
+@@ -105,7 +105,7 @@ export type WrappedComponentFactory<P> = (props: P) => JSX.Element;
+ 
+ export type WrappedComponent<P> =
+   | React.ComponentClass<P>
+-  | React.SFC<P>
++  | React.FunctionComponent<P>
+   | WrappedComponentFactory<P>;
+ 
+ export function SortableContainer<P>(

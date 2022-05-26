@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
 import type { View } from "../../common/types";
@@ -23,12 +23,13 @@ const genFilename = (
 const ExportStats = ({ seasons }: View<"exportStats">) => {
 	const [status, setStatus] = useState<string | undefined>();
 
-	const handleSubmit = useCallback(async event => {
+	const handleSubmit = useCallback(async (event: FormEvent) => {
 		event.preventDefault();
 
 		setStatus("Exporting...");
 
 		// Get array of object stores to export
+		// @ts-expect-error
 		const selectEls = event.target.getElementsByTagName("select");
 		const grouping = selectEls[0].value;
 		const season =

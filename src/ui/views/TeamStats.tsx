@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { getCols, gradientStyleFactory, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, PlusMinus, MoreLinks } from "../components";
@@ -7,6 +6,7 @@ import type { View } from "../../common/types";
 import { isSport } from "../../common";
 import { formatMaybeInteger } from "./LeagueStats";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball";
+import type { DataTableRow } from "../components/DataTable";
 
 const TeamStats = ({
 	allStats,
@@ -118,7 +118,7 @@ const TeamStats = ({
 		teamStats: typeof teams[number]["stats"],
 		teamSeasonAttrs: typeof teams[number]["seasonAttrs"],
 	) => {
-		const data: { [key: string]: ReactNode } = {
+		const data: { [key: string]: DataTableRow["data"][number] } = {
 			gp: formatMaybeInteger(teamStats.gp),
 			won: formatMaybeInteger(teamSeasonAttrs.won),
 			lost: formatMaybeInteger(teamSeasonAttrs.lost),
@@ -197,6 +197,7 @@ const TeamStats = ({
 
 				data[statType] = {
 					style: gradientStyle(rank),
+					// @ts-expect-error
 					value,
 				};
 			}

@@ -57,7 +57,7 @@ export type DataTableRow = {
 		| {
 				classNames?: Argument;
 				value: ReactNode;
-				searchValue?: string;
+				searchValue?: string | number;
 				sortValue?: string | number;
 		  }
 	)[];

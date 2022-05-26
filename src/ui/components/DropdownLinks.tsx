@@ -18,7 +18,7 @@ type TopMenuToggleProps = {
 
 const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
 	const handleMouseEnter = useCallback(
-		event => {
+		(event: MouseEvent<any>) => {
 			if (openID !== undefined && openID !== long && toggle) {
 				toggle(event);
 			}
@@ -54,7 +54,10 @@ const TopMenuDropdown = ({
 	openID?: string;
 	short: string;
 }) => {
-	const toggle = useCallback(event => onToggle(long, event), [long, onToggle]);
+	const toggle = useCallback(
+		(event: any) => onToggle(long, event),
+		[long, onToggle],
+	);
 	return (
 		<Dropdown show={openID === long} onToggle={toggle} as={Nav.Item}>
 			<TopMenuToggle

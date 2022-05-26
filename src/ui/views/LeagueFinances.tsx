@@ -2,8 +2,8 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
-import type { ReactNode } from "react";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
+import type { DataTableRow } from "../components/DataTable";
 
 const LeagueFinances = ({
 	budget,
@@ -66,7 +66,7 @@ const LeagueFinances = ({
 				? t.seasonAttrs.payroll
 				: t.seasonAttrs.salaryPaid;
 
-		const data: ReactNode[] = [
+		const data: DataTableRow["data"] = [
 			wrappedTeamLogoAndName(
 				t,
 				helpers.leagueUrl([

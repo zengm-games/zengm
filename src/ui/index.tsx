@@ -178,6 +178,15 @@ const setupEnv = async () => {
 };
 
 const render = () => {
+	/*
+	For React 18 eventual upgrade:
+
+	const container = document.getElementById("content");
+	const root = createRoot(container!);
+	root.render(<ErrorBoundary>
+		<Controller />
+	</ErrorBoundary>);
+	*/
 	ReactDOM.render(
 		<ErrorBoundary>
 			<Controller />

@@ -22,8 +22,11 @@ const handleAutoSortAll = async () => {
 	await toWorker("main", "autoSortRoster", undefined);
 };
 
-const lowerCaseFirstLetter = (string: string) => {
-	return `${string.charAt(0).toLowerCase()}${string.slice(1)}`;
+const lowerCaseWords = (string: string) => {
+	return string
+		.split(" ")
+		.map(word => `${word.charAt(0).toLowerCase()}${word.slice(1)}`)
+		.join(" ");
 };
 
 const numStartersByPos = bySport<
@@ -264,7 +267,7 @@ const Depth = ({
 							className="btn btn-light-bordered"
 							onClick={() => handleAutoSort(pos)}
 						>
-							Auto sort {posNames ? lowerCaseFirstLetter(posNames[pos]) : pos}
+							Auto sort {posNames ? lowerCaseWords(posNames[pos]) : pos}
 						</button>
 						<button
 							className="btn btn-light-bordered"

@@ -366,8 +366,8 @@ class GameSim {
 						0.5,
 						(p.compositeRating.powerHitter + 0.5) / 2 -
 							(pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter - (pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter / 4 - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter * 0.9 - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter / 5 - (pitchQuality - 0.5) / 8,
 					],
 				);
 				this.playByPlay.logEvent({

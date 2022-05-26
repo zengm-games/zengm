@@ -182,6 +182,10 @@ const develop = async (
 				pos = p.pos;
 			}
 
+			/*if (pos !== ratings.pos) {
+				console.log(`${ratings.pos} -> ${pos}`, p)
+			}*/
+
 			ratings.ovr = ratings.ovrs[pos];
 			ratings.pot = ratings.pots[pos];
 			ratings.pos = pos;

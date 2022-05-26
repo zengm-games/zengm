@@ -110,7 +110,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	} else if (pos2 === "DH") {
 		r = 0.95 * offense;
 	} else if (pos === "SS") {
-		r = 0.7 * offense + 0.32 * defense;
+		r = 0.7 * offense + 0.315 * defense;
 	} else if (pos === "C") {
 		r = 0.7 * offense + 0.375 * defense;
 	} else if (pos === "CF" || pos === "3B" || pos === "2B") {
@@ -118,7 +118,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	} else if (pos === "1B") {
 		r = 0.7 * offense + 0.04 + 0.2 * defense;
 	} else if (pos === "LF") {
-		r = 0.7 * offense + 0.095 + 0.1 * defense;
+		r = 0.7 * offense + 0.0975 + 0.1 * defense;
 	} else {
 		r = 0.7 * offense + 0.1 + 0.1 * defense;
 	}

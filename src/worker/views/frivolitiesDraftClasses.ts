@@ -5,7 +5,7 @@ import type {
 	Player,
 	MinimalPlayerRatings,
 } from "../../common/types";
-import { bySport, isSport, PHASE } from "../../common";
+import { bySport, PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
 import addFirstNameShort from "../util/addFirstNameShort";
 

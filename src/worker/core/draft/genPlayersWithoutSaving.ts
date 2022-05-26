@@ -9,6 +9,7 @@ import type {
 
 // To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
 const defaultFractionPerYear = bySport({
+	baseball: 0.5,
 	basketball: 0.5,
 	football: 0.5,
 	hockey: 0.75,
@@ -214,6 +215,13 @@ const genPlayersWithoutSaving = async (
 		}
 	}
 
+	/*console.log(draftYear, enteringDraft.length);
+	const grouped = groupBy(enteringDraft, p => p.ratings[0].pos);
+	const table = orderBy(Object.entries(grouped), 0).map(([pos, players]) => ({
+		pos,
+		count: players.length,
+	}));
+	console.table(table);*/
 	return enteringDraft;
 };
 

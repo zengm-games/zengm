@@ -1,7 +1,7 @@
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { POSITIONS, PLAYER, isSport, bySport } from "../../common";
+import { POSITIONS, PLAYER, bySport } from "../../common";
 import type { View } from "../../common/types";
 import {
 	wrappedContractAmount,

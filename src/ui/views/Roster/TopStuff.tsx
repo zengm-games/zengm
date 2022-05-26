@@ -8,7 +8,7 @@ import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders";
 import type { View } from "../../../common/types";
-import { bySport, isSport } from "../../../common";
+import { bySport } from "../../../common";
 
 const fontSizeLarger = { fontSize: "larger" };
 

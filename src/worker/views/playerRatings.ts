@@ -4,6 +4,13 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 
+export const extraRatings = bySport({
+	baseball: ["ovrs", "pots"],
+	basketball: [],
+	football: ["ovrs", "pots"],
+	hockey: ["ovrs", "pots"],
+});
+
 export const getPlayers = async (
 	season: number,
 	abbrev: string,
@@ -143,12 +150,6 @@ const updatePlayers = async (
 				"diq",
 				"glk",
 			],
-		});
-		const extraRatings = bySport({
-			baseball: ["ovrs", "pots"],
-			basketball: [],
-			football: ["ovrs", "pots"],
-			hockey: ["ovrs", "pots"],
 		});
 
 		const players = addFirstNameShort(

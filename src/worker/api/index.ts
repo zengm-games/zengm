@@ -11,6 +11,7 @@ import {
 	bySport,
 	gameAttributesArrayToObject,
 	DEFAULT_JERSEY,
+	POSITIONS,
 } from "../../common";
 import actions from "./actions";
 import leagueFileUpload, {
@@ -115,6 +116,8 @@ import playMenu from "./playMenu";
 import toolsMenu from "./toolsMenu";
 import omit from "lodash-es/omit";
 import addFirstNameShort from "../util/addFirstNameShort";
+import statsBaseball from "../core/team/stats.baseball";
+import { extraRatings } from "../views/playerRatings";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1086,12 +1089,34 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		seasons = [season];
 	}
 
-	const ratings = RATINGS;
+	const ratings = [...RATINGS, ...extraRatings];
+
 	let stats: string[] = [];
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
-			stats.push(...table.stats.filter(stat => !stat.endsWith("Max")));
+			stats.push(
+				...table.stats.filter(stat => {
+					if (stat.endsWith("Max")) {
+						return false;
+					}
+
+					if (isSport("baseball")) {
+						if (stat === "pos") {
+							return false;
+						}
+
+						if (
+							statsBaseball.byPos &&
+							statsBaseball.byPos.includes(stat as any)
+						) {
+							return false;
+						}
+					}
+
+					return true;
+				}),
+			);
 		}
 	}
 
@@ -1136,7 +1161,14 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		...shotLocationsGetCols(stats.map(stat => `stat:${stat}`)),
 		"Ovr",
 		"Pot",
-		...getCols(ratings.map(rating => `rating:${rating}`)).map(col => col.title),
+		...getCols(RATINGS.map(rating => `rating:${rating}`)).map(col => col.title),
+		...getCols(
+			extraRatings.length
+				? ["ovr", "pot"]
+						.map(prefix => POSITIONS.map(pos => `rating:${prefix}${pos}`))
+						.flat()
+				: [],
+		).map(col => col.title),
 	];
 	const rows: any[] = [];
 
@@ -1164,7 +1196,12 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				...stats.map(stat => p.stats[stat]),
 				p.ratings.ovr,
 				p.ratings.pot,
-				...ratings.map(rating => p.ratings[rating]),
+				...RATINGS.map(rating => p.ratings[rating]),
+				...(extraRatings.length
+					? ["ovrs", "pots"]
+							.map(type => POSITIONS.map(pos => p.ratings[type][pos]))
+							.flat()
+					: []),
 			]);
 		}
 	}

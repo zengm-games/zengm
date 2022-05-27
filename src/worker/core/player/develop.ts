@@ -1,5 +1,5 @@
 import orderBy from "lodash-es/orderBy";
-import { isSport, PLAYER, POSITIONS } from "../../../common";
+import { bySport, isSport, PLAYER, POSITIONS } from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";
 import pos from "./pos";
@@ -31,15 +31,17 @@ export const bootstrapPot = async ({
 	}
 
 	if (
-		isSport("baseball") ||
-		isSport("football") ||
-		isSport("hockey") ||
-		(isSport("basketball") && usePotEstimator)
+		bySport({
+			baseball: true,
+			basketball: usePotEstimator,
+			football: true,
+			hockey: true,
+		})
 	) {
 		let ovr;
 		let pot;
 
-		if (isSport("baseball") || isSport("football") || isSport("hockey")) {
+		if (!isSport("basketball")) {
 			if (pos === undefined) {
 				throw new Error("pos is required for potEstimator");
 			}
@@ -148,12 +150,11 @@ const develop = async (
 			}
 		} else {
 			let pos;
-			let maxOvr = -Infinity;
+			let maxOvr = -Infinity; // A player can never have KR or PR as his main position
 
 			ratings.ovrs = POSITIONS.reduce((ovrs, pos2) => {
 				ovrs[pos2] = ovr(ratings, pos2);
 
-				// A player can never have KR or PR as his main position
 				if (!BANNED_POSITIONS.includes(pos2) && ovrs[pos2] > maxOvr) {
 					pos = pos2;
 					maxOvr = ovrs[pos2];
@@ -181,10 +182,6 @@ const develop = async (
 			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
 				pos = p.pos;
 			}
-
-			/*if (pos !== ratings.pos) {
-				console.log(`${ratings.pos} -> ${pos}`, p)
-			}*/
 
 			ratings.ovr = ratings.ovrs[pos];
 			ratings.pot = ratings.pots[pos];

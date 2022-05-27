@@ -124,10 +124,22 @@ const MoreLinks = (
 			},
 		];
 
-		if (isSport("football") || isSport("hockey")) {
+		if (
+			bySport({
+				baseball: true,
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
+		) {
 			links.unshift({
 				url: ["depth", `${abbrev}_${tid}`],
-				name: isSport("hockey") ? "Lines" : "Depth Chart",
+				name: bySport({
+					baseball: "Batting Order",
+					basketball: "",
+					football: "Depth Chart",
+					hockey: "Lines",
+				}),
 			});
 		}
 

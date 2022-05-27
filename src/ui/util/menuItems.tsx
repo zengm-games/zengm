@@ -226,7 +226,12 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["roster"],
 				text: "Roster",
 			},
-			...(isSport("baseball") || isSport("football") || isSport("hockey")
+			...(bySport({
+				baseball: true,
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
 				? depthChart
 				: []),
 			{

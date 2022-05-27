@@ -64,7 +64,14 @@ const Row = ({
 					{p.abbrev}
 					{p.season !== undefined ? ` ${p.season}` : null}
 				</a>
-				{isSport("football") || isSport("hockey") ? `${p.pos}` : null}
+				{bySport({
+					baseball: true,
+					basketball: false,
+					football: true,
+					hockey: true,
+				})
+					? `${p.pos}`
+					: null}
 			</td>
 			<td className="text-end">
 				{helpers.roundStat(p.stat, cat.stat, totals)}

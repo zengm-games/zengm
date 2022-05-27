@@ -496,10 +496,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			const oldRatings = p.ratings[r];
 			const pos = p.ratings[r].pos;
 
-			const keys = posRatings(pos);
-			if (isSport("football") || isSport("hockey")) {
-				keys.push("stre", "spd", "endu");
-			}
+			const extraKeys = bySport({
+				baseball: ["spd"],
+				basketball: [],
+				football: ["stre", "spd", "endu"],
+				hockey: ["stre", "spd", "endu"],
+			});
+			const keys = [...posRatings(pos), ...extraKeys];
 
 			const newRatings: any = {};
 			for (const key of keys) {

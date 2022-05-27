@@ -9,7 +9,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { TeamSeason, View } from "../../common/types";
-import { isSport, TIEBREAKERS } from "../../common";
+import { bySport, isSport, TIEBREAKERS } from "../../common";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];
@@ -255,21 +255,22 @@ const GroupStandings = ({
 						<th>Road</th>
 						<th>Div</th>
 						<th>Conf</th>
-						{isSport("hockey") ? (
-							<th title="Goals For">GF</th>
-						) : (
-							<th title="Points Scored">PS</th>
-						)}
-						{isSport("hockey") ? (
-							<th title="Goals Against">GA</th>
-						) : (
-							<th title="Points Against">PA</th>
-						)}
-						{isSport("basketball") ? (
-							<th title="Average Margin of Victory">MOV</th>
-						) : (
-							<th title="Point Differential">Diff</th>
-						)}
+						{bySport({
+							baseball: <th title="Runs Scored">RS</th>,
+							hockey: <th title="Goals For">GF</th>,
+							default: <th title="Points Scored">PS</th>,
+						})}
+						{bySport({
+							baseball: <th title="Runs Allowed">RA</th>,
+							hockey: <th title="Goals Against">GA</th>,
+							default: <th title="Points Against">PA</th>,
+						})}
+						{bySport({
+							baseball: <th title="Run Differential">Diff</th>,
+							basketball: <th title="Average Margin of Victory">MOV</th>,
+							football: <th title="Point Differential">Diff</th>,
+							hockey: <th title="Goal Differential">Diff</th>,
+						})}
 						<th>Streak</th>
 						<th>L10</th>
 						<th style={{ minWidth: 191 }}>Tiebreaker</th>

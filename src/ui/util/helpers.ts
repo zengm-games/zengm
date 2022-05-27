@@ -221,6 +221,7 @@ const roundOverrides: Record<
 		oppCsp: "oneDecimalPlace",
 		babip: "roundWinp",
 		iso: "roundWinp",
+		oppPts: "noDecimalPlace",
 	},
 	basketball: {
 		gp: "noDecimalPlace",

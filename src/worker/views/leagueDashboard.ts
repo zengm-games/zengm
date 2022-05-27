@@ -80,7 +80,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("newPhase")
 	) {
 		const stats = bySport({
-			baseball: ["r", "oppR", "ops", "era"] as const,
+			baseball: ["pts", "oppPts", "ops", "era"] as const,
 			basketball: ["pts", "oppPts", "trb", "ast"] as const,
 			football: [
 				"ptsPerGame",

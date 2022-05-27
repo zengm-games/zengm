@@ -133,7 +133,16 @@ const MoreLinks = (
 			})
 		) {
 			links.unshift({
-				url: ["depth", `${abbrev}_${tid}`],
+				url: [
+					"depth",
+					bySport({
+						baseball: "L",
+						basketball: "",
+						football: "QB",
+						hockey: "F",
+					}),
+					`${abbrev}_${tid}`,
+				],
 				name: bySport({
 					baseball: "Batting Order",
 					basketball: "",

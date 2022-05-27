@@ -8,7 +8,7 @@ import genRatingsHockey from "./genRatings.hockey";
 import pos from "./pos";
 
 const genRatings = (season: number, scoutingRank: number) => {
-	const { heightInInches, ratings, genPos } = bySport<{
+	const { heightInInches, ratings } = bySport<{
 		heightInInches: number;
 		ratings: MinimalPlayerRatings;
 	}>({
@@ -149,7 +149,7 @@ const genRatings = (season: number, scoutingRank: number) => {
 	return {
 		heightInInches,
 		ratings,
-		genPos,
+		// genPos,
 	};
 };
 

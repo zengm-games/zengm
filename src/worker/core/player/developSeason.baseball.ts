@@ -24,7 +24,7 @@ const powerFormula: RatingFormula = {
 
 		return 2;
 	},
-	changeLimits: () => [-3, 6],
+	changeLimits: () => [-6, 6],
 };
 const powerFormulaMinus: RatingFormula = {
 	ageModifier: (age: number) => {
@@ -43,7 +43,7 @@ const powerFormulaMinus: RatingFormula = {
 
 		return 2;
 	},
-	changeLimits: () => [-3, 6],
+	changeLimits: () => [-6, 6],
 };
 const powerFormulaPlus: RatingFormula = {
 	ageModifier: (age: number) => {
@@ -62,7 +62,7 @@ const powerFormulaPlus: RatingFormula = {
 
 		return 2;
 	},
-	changeLimits: () => [-3, 8],
+	changeLimits: () => [-6, 8],
 };
 const iqFormula: RatingFormula = {
 	ageModifier: (age: number) => {
@@ -96,7 +96,7 @@ const iqFormula: RatingFormula = {
 
 		// For 19: [-3, 32]
 		// For 23: [-3, 12]
-		return [-3, 7 + 5 * (24 - age)];
+		return [-6, 7 + 5 * (24 - age)];
 	},
 };
 const iqFormulaMinus: RatingFormula = {
@@ -131,7 +131,7 @@ const iqFormulaMinus: RatingFormula = {
 
 		// For 19: [-3, 32]
 		// For 23: [-3, 12]
-		return [-3, 7 + 5 * (24 - age)];
+		return [-6, 7 + 5 * (24 - age)];
 	},
 };
 const iqFormulaPlus: RatingFormula = {
@@ -166,7 +166,7 @@ const iqFormulaPlus: RatingFormula = {
 
 		// For 19: [-3, 32]
 		// For 23: [-3, 12]
-		return [-3, 7 + 5 * (24 - age)];
+		return [-6, 7 + 5 * (24 - age)];
 	},
 };
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
@@ -210,10 +210,14 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 		val = -1;
 	} else if (age <= 31) {
 		val = -2;
-	} else if (age <= 34) {
+	} else if (age <= 33) {
 		val = -3;
-	} else {
+	} else if (age <= 35) {
 		val = -4;
+	} else if (age <= 37) {
+		val = -5;
+	} else {
+		val = -6;
 	}
 
 	// Noise

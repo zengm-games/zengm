@@ -343,7 +343,8 @@ class GameSim {
 				speed = random.choice(["soft", "normal", "hard"] as const, [
 					0.5,
 					0.5,
-					(p.compositeRating.powerHitter + 0.5) / 2 - (pitchQuality - 0.5) / 4,
+					(0.9 * (p.compositeRating.powerHitter + 0.5)) / 2 -
+						(pitchQuality - 0.5) / 4,
 				]);
 				this.playByPlay.logEvent({
 					type,
@@ -364,10 +365,10 @@ class GameSim {
 					[
 						0.1,
 						0.5,
-						(p.compositeRating.powerHitter + 0.5) / 2 -
+						(0.9 * (p.compositeRating.powerHitter + 0.5)) / 2 -
 							(pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter * 0.9 - (pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter / 5 - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter * 0.7 - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter / 6 - (pitchQuality - 0.5) / 8,
 					],
 				);
 				this.playByPlay.logEvent({
@@ -1072,7 +1073,7 @@ class GameSim {
 		const ballOrStrike =
 			Math.random() < ballProb ? "ball" : ("strike" as const);
 
-		const pitchQuality = helpers.bound(
+		let pitchQuality = helpers.bound(
 			random.gauss(
 				fatigueFactor(
 					pitcher.pFatigue + pitcher.stat.pc,
@@ -1083,6 +1084,9 @@ class GameSim {
 			0,
 			1,
 		);
+
+		// Scale pitch quality to tune the effect of pitchers
+		pitchQuality = 0.25 + 0.5 * pitchQuality;
 
 		let outcome: "ball" | "strike" | "contact";
 		let swinging = false;
@@ -1185,9 +1189,7 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		return (
-			0.225 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor
-		);
+		return 0.21 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
 	getPErrorIfNotHit(

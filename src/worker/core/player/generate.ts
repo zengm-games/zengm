@@ -34,11 +34,11 @@ const generate = (
 		race: "asian",
 	},
 ): PlayerWithoutKey<MinimalPlayerRatings> => {
-	const { heightInInches, ratings, genPos } = genRatings(
+	const { heightInInches, ratings } = genRatings(
 		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingRank,
 	);
-	lastName += `-${genPos}`;
+	// lastName += `-${genPos}`;
 
 	const weight = genWeight(ratings.hgt, (ratings as any).stre);
 

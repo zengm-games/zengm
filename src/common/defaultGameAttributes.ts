@@ -302,6 +302,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContractPercent: 20,
 				draftPickAutoContractRounds: 4,
 				draftPickAutoContract: false,
+				aiTradesFactor: 0,
 		  }
 		: {};
 

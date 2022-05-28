@@ -1,4 +1,4 @@
-import { PHASE, NO_LOTTERY_DRAFT_TYPES, isSport, bySport } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES, bySport } from "../../common";
 import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";

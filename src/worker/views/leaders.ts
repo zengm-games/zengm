@@ -85,6 +85,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "sho",
@@ -127,24 +128,28 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "h9",
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "hr9",
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "bb9",
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "so9",
@@ -157,6 +162,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "sow",

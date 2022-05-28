@@ -7,7 +7,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "Pp",
-			cutoff: 0.65,
+			cutoff: 0.73,
 		},
 	},
 	finessePitcher: {
@@ -15,7 +15,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1],
 		skill: {
 			label: "Pf",
-			cutoff: 0.65,
+			cutoff: 0.6,
 		},
 	},
 	controlPitcher: {
@@ -31,7 +31,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "Pw",
-			cutoff: 0.65,
+			cutoff: 0.66,
 		},
 	},
 	outfieldRange: {
@@ -39,7 +39,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.2, 0.1],
 		skill: {
 			label: "Ro",
-			cutoff: 0.65,
+			cutoff: 0.6,
 		},
 	},
 	infieldRange: {
@@ -47,7 +47,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.2, 0.2],
 		skill: {
 			label: "Ri",
-			cutoff: 0.65,
+			cutoff: 0.6,
 		},
 	},
 	firstBaseDefense: {
@@ -55,7 +55,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [2, 1],
 		skill: {
 			label: "D1",
-			cutoff: 0.65,
+			cutoff: 0.64,
 		},
 	},
 	catcherDefense: {
@@ -63,7 +63,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "Dc",
-			cutoff: 0.65,
+			cutoff: 0.66,
 		},
 	},
 	groundBallDefense: {
@@ -71,7 +71,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.2],
 		skill: {
 			label: "Dg",
-			cutoff: 0.65,
+			cutoff: 0.67,
 		},
 	},
 	flyBallDefense: {
@@ -79,7 +79,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.2],
 		skill: {
 			label: "Df",
-			cutoff: 0.65,
+			cutoff: 0.67,
 		},
 	},
 	arm: {
@@ -95,7 +95,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "Hp",
-			cutoff: 0.65,
+			cutoff: 0.67,
 		},
 	},
 	contactHitter: {
@@ -103,7 +103,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "Hc",
-			cutoff: 0.65,
+			cutoff: 0.6,
 		},
 	},
 	eye: {
@@ -111,7 +111,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "E",
-			cutoff: 0.65,
+			cutoff: 0.55,
 		},
 	},
 	speed: {
@@ -119,7 +119,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1],
 		skill: {
 			label: "S",
-			cutoff: 0.65,
+			cutoff: 0.63,
 		},
 	},
 };

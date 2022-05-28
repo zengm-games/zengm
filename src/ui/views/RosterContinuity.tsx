@@ -7,6 +7,7 @@ import { frivolitiesMenu } from "./Frivolities";
 import { bySport } from "../../common";
 
 const gradientStyle = bySport({
+	baseball: gradientStyleFactory(0.6, 0.75, 0.8, 0.95),
 	basketball: gradientStyleFactory(0.5, 0.775, 0.85, 1),
 	football: gradientStyleFactory(0.6, 0.75, 0.8, 0.95),
 	hockey: gradientStyleFactory(0.55, 0.7, 0.775, 0.925),

@@ -51,7 +51,9 @@ const moodInfo = async (
 		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
 	}
 	const valueDiff =
-		(p.value - bySport({ football: 85, basketball: 65, hockey: 75 })) / 2;
+		(p.value -
+			bySport({ baseball: 75, basketball: 65, football: 85, hockey: 75 })) /
+		2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
 	const thisIsAUserTeam = g.get("userTids").includes(tid);

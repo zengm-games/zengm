@@ -107,7 +107,14 @@ const writeTeamStats = async (results: GameResults) => {
 				salaryCapFactor2 = salaryCapFactor;
 			}
 
-			if (isSport("basketball") || isSport("hockey")) {
+			if (
+				bySport({
+					baseball: true,
+					basketball: true,
+					football: false,
+					hockey: true,
+				})
+			) {
 				merchRevenue = (salaryCapFactor2 * 4.5 * baseAttendance) / 1000;
 
 				if (merchRevenue > salaryCapFactor * 250) {

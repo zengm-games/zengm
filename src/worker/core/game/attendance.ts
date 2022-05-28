@@ -45,7 +45,7 @@ const salaryCapFactor = () => {
 
 // Adjustment added after auto ticket prices, to keep overall finances about the same as before auto ticket prices existed
 const SPORT_FACTOR = bySport({
-	baseball: 0.75,
+	baseball: 0.1,
 	basketball: 0.75,
 	football: 0.0575,
 	hockey: 0.35,

@@ -249,7 +249,8 @@ class Team<DH extends boolean> {
 			}))
 			.filter(p => p.p.subIndex === undefined);
 
-		const choiceWeight = (p: typeof availablePitchers[number]) => p.value ** 2;
+		const choiceWeight = (p: typeof availablePitchers[number]) =>
+			0.01 + p.value ** 2;
 
 		const healthyPitchers = availablePitchers.filter(p => !p.p.injured);
 

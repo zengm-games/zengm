@@ -2253,8 +2253,12 @@ class GameSim {
 			probSwitch = helpers.sigmoid(valueDiff, 10, 0);
 
 			if (starterIsIn) {
-				if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 4) {
-					probSwitch /= 2;
+				if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 3) {
+					probSwitch /= 16;
+				} else if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 5) {
+					probSwitch /= 8;
+				} else if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 7) {
+					probSwitch /= 4;
 				}
 			} else {
 				if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
@@ -2268,8 +2272,8 @@ class GameSim {
 				? pitcher.seasonStats.er / pitcher.seasonStats.outs
 				: 4 / 27;
 		const excessRuns = pitcher.stat.rPit - pitcher.stat.outs * runsPerOut;
-		if (excessRuns > (starterIsIn ? 1 : 0)) {
-			probSwitch += 0.2 * excessRuns;
+		if (excessRuns > (starterIsIn ? 2 : 0)) {
+			probSwitch += (starterIsIn ? 0.1 : 0.2) * excessRuns;
 		}
 
 		if (probSwitch > Math.random()) {

@@ -542,7 +542,7 @@ const POS_NUMBERS_INVERSE = {
 
 const POSITION_COUNTS: Record<Position, number> = {
 	SP: 5,
-	RP: 7,
+	RP: 10,
 	C: 2,
 	"1B": 1.25,
 	"2B": 1.25,
@@ -631,7 +631,7 @@ const DEFAULT_STADIUM_CAPACITY = 50000;
 
 const NUM_STARTING_PITCHERS = 5;
 
-const NUM_ACTIVE_PITCHERS = 12;
+const NUM_ACTIVE_PITCHERS = 15;
 
 const NUM_ACTIVE_BATTERS = 14;
 

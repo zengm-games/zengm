@@ -3,7 +3,11 @@ import type { PlayerStats, PlayerStatType } from "./types";
 
 export const NUM_OUTS_PER_GAME = 27;
 
-export const sumByPos = (array: (number | undefined)[]) => {
+export const sumByPos = (array: (number | undefined)[] | undefined) => {
+	if (!array) {
+		return 0;
+	}
+
 	let sum = 0;
 	for (const value of array) {
 		if (value !== undefined) {

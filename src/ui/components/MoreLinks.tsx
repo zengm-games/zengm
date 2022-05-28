@@ -132,24 +132,41 @@ const MoreLinks = (
 				hockey: true,
 			})
 		) {
-			links.unshift({
-				url: [
-					"depth",
-					bySport({
-						baseball: "L",
+			if (isSport("baseball")) {
+				links.unshift(
+					{
+						url: ["depth", "L", `${abbrev}_${tid}`],
+						name: "Batting Order",
+					},
+					{
+						url: ["depth", "D", `${abbrev}_${tid}`],
+						name: "Defense",
+					},
+					{
+						url: ["depth", "P", `${abbrev}_${tid}`],
+						name: "Pitching",
+					},
+				);
+			} else {
+				links.unshift({
+					url: [
+						"depth",
+						bySport({
+							baseball: "",
+							basketball: "",
+							football: "QB",
+							hockey: "F",
+						}),
+						`${abbrev}_${tid}`,
+					],
+					name: bySport({
+						baseball: "",
 						basketball: "",
-						football: "QB",
-						hockey: "F",
+						football: "Depth Chart",
+						hockey: "Lines",
 					}),
-					`${abbrev}_${tid}`,
-				],
-				name: bySport({
-					baseball: "Batting Order",
-					basketball: "",
-					football: "Depth Chart",
-					hockey: "Lines",
-				}),
-			});
+				});
+			}
 		}
 
 		if (page === "team_history") {
@@ -349,7 +366,7 @@ const MoreLinks = (
 				})
 				.map(({ className, url, name }, i) => {
 					return (
-						<Fragment key={url[0]}>
+						<Fragment key={url[0] + String(i)}>
 							{i > 0 ? " | " : null}
 							<a
 								className={className}

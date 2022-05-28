@@ -282,15 +282,15 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numPeriods: 9,
 				salaryCapType: "none",
 				draftType: "noLottery",
-				numDraftRounds: 4,
+				numDraftRounds: 5,
 				draftAges: [18, 22],
 				salaryCap: 175000,
 				minPayroll: 150000,
 				luxuryPayroll: 200000,
 				minContract: 500,
 				maxContract: 30000,
-				minRosterSize: 25,
-				maxRosterSize: 30,
+				minRosterSize: 35,
+				maxRosterSize: 40,
 				// Arbitrary, spread over 40 plate appearances per game
 				injuryRate: 0.02 / 40,
 				// 200 days per season, 1 tragic death per 50 years

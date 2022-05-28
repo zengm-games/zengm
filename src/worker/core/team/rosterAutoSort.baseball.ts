@@ -13,8 +13,14 @@ const score = (p: PlayerFiltered, pos?: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
-		// More likely to put actual catcher at catcher
-		tempScore += pos === "C" ? 25 : 10;
+		if (pos === "C") {
+			// More likely to put actual catcher at catcher
+			tempScore += 25;
+		} else if (pos === "RP") {
+			// Relief pitcher, who cares about "right" position
+		} else {
+			tempScore += 10;
+		}
 	}
 
 	return tempScore;

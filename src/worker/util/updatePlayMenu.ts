@@ -229,7 +229,14 @@ const updatePlayMenu = async () => {
 		}
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs
-		if (isSport("basketball") || isSport("hockey")) {
+		if (
+			bySport({
+				baseball: true,
+				basketball: true,
+				football: false,
+				hockey: true,
+			})
+		) {
 			keys = [
 				"day",
 				"dayLive",

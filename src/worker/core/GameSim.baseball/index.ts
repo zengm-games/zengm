@@ -699,96 +699,101 @@ class GameSim {
 				) {
 					runner.to += 1;
 					runner.out = true;
-					continue;
-				}
+				} else if (!blockedBases.has(i)) {
+					let probSuccessIfAdvances: number = 0;
 
-				if (blockedBases.has(i)) {
-					continue;
-				}
+					if (i === 2) {
+						// Third base
 
-				let probSuccessIfAdvances: number = 0;
-
-				if (i === 2) {
-					// Third base
-
-					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
-						// Tag up
-						probSuccessIfAdvances = this.probSuccessTagUp({
-							battedBallInfo,
-							runner: pRunner,
-							startingBase: 3,
-							hitTo,
-							fielder,
-							isStealing,
-						});
-					} else {
-						// Maybe score on ground ball
-						probSuccessIfAdvances = this.probSuccessGroundOut({
-							battedBallInfo,
-							runner: pRunner,
-							startingBase: 3,
-							hitTo,
-							fielder,
-							isStealing,
-							mustAdvanceWithHitter,
-						});
-					}
-				} else if (i === 1) {
-					// Second base
-
-					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
-						probSuccessIfAdvances = this.probSuccessTagUp({
-							battedBallInfo,
-							runner: pRunner,
-							startingBase: 2,
-							hitTo,
-							fielder,
-							isStealing,
-						});
-					} else {
-						probSuccessIfAdvances = this.probSuccessGroundOut({
-							battedBallInfo,
-							runner: pRunner,
-							startingBase: 3,
-							hitTo,
-							fielder,
-							isStealing,
-							mustAdvanceWithHitter,
-						});
-					}
-				} else {
-					// First base
-
-					// Tag up on very deep fly ball
-					if (battedBallInfo.type === "fly" || battedBallInfo.type === "line") {
-						probSuccessIfAdvances = this.probSuccessTagUp({
-							battedBallInfo,
-							runner: pRunner,
-							startingBase: 1,
-							hitTo,
-							fielder,
-							isStealing,
-						});
-					} else if (battedBallInfo.type === "ground") {
-						// Must advance on ground ball
-						probSuccessIfAdvances = 1;
-					}
-				}
-
-				const advance = probSuccessIfAdvances > Math.random();
-				if (advance) {
-					runner.to += 1;
-					runner.out =
-						!someRunnerIsAlreadyOut && probSuccessIfAdvances < Math.random();
-					if (runner.out) {
-						someRunnerIsAlreadyOut = true;
-					} else {
-						// Is this a sacrifice fly?
 						if (
-							runner.to === 4 &&
-							(battedBallInfo.type === "fly" || battedBallInfo.type === "line")
+							battedBallInfo.type === "fly" ||
+							battedBallInfo.type === "line"
 						) {
-							this.recordStat(this.o, p, "sf");
+							// Tag up
+							probSuccessIfAdvances = this.probSuccessTagUp({
+								battedBallInfo,
+								runner: pRunner,
+								startingBase: 3,
+								hitTo,
+								fielder,
+								isStealing,
+							});
+						} else {
+							// Maybe score on ground ball
+							probSuccessIfAdvances = this.probSuccessGroundOut({
+								battedBallInfo,
+								runner: pRunner,
+								startingBase: 3,
+								hitTo,
+								fielder,
+								isStealing,
+								mustAdvanceWithHitter,
+							});
+						}
+					} else if (i === 1) {
+						// Second base
+
+						if (
+							battedBallInfo.type === "fly" ||
+							battedBallInfo.type === "line"
+						) {
+							probSuccessIfAdvances = this.probSuccessTagUp({
+								battedBallInfo,
+								runner: pRunner,
+								startingBase: 2,
+								hitTo,
+								fielder,
+								isStealing,
+							});
+						} else {
+							probSuccessIfAdvances = this.probSuccessGroundOut({
+								battedBallInfo,
+								runner: pRunner,
+								startingBase: 3,
+								hitTo,
+								fielder,
+								isStealing,
+								mustAdvanceWithHitter,
+							});
+						}
+					} else {
+						// First base
+
+						// Tag up on very deep fly ball
+						if (
+							battedBallInfo.type === "fly" ||
+							battedBallInfo.type === "line"
+						) {
+							probSuccessIfAdvances = this.probSuccessTagUp({
+								battedBallInfo,
+								runner: pRunner,
+								startingBase: 1,
+								hitTo,
+								fielder,
+								isStealing,
+							});
+						} else if (battedBallInfo.type === "ground") {
+							// Must advance on ground ball
+							probSuccessIfAdvances = 1;
+						}
+					}
+
+					const advance = probSuccessIfAdvances > Math.random();
+					if (advance) {
+						runner.to += 1;
+						runner.out =
+							!someRunnerIsAlreadyOut && probSuccessIfAdvances < Math.random();
+						if (runner.out) {
+							someRunnerIsAlreadyOut = true;
+						} else {
+							// Is this a sacrifice fly?
+							if (
+								runner.to === 4 &&
+								(battedBallInfo.type === "fly" ||
+									battedBallInfo.type === "line")
+							) {
+								this.recordStat(this.o, p, "sf");
+							}
 						}
 					}
 				}
@@ -832,7 +837,7 @@ class GameSim {
 		}
 		this.bases = [undefined, undefined, undefined];
 		for (const runner of runners) {
-			if (runner && runner.to < 4) {
+			if (runner && runner.to < 4 && !runner.out) {
 				this.bases[(runner.to - 1) as any] = prevBasesByPid[runner.pid];
 			}
 		}
@@ -933,7 +938,6 @@ class GameSim {
 		for (const i of indexes) {
 			const occupiedBase = this.bases[i]!;
 			const p = occupiedBase.p;
-			this.bases[i + 1] = occupiedBase;
 			this.bases[i] = undefined;
 
 			const success = throwAt === i && thrownOut;
@@ -950,6 +954,7 @@ class GameSim {
 					this.team[this.o].moveToPreviousBatter();
 				}
 			} else {
+				this.bases[i + 1] = occupiedBase;
 				this.recordStat(this.o, p, "sb");
 				this.recordStat(this.d, catcher, "sbF");
 			}

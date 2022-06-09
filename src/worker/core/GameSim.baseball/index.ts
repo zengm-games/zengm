@@ -1784,10 +1784,6 @@ class GameSim {
 
 						runners = getRunners();
 					} else {
-						if (result === "fieldersChoice") {
-							this.logOut();
-						}
-
 						runners = getRunners();
 
 						if (numBases < 4) {

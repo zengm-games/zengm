@@ -226,7 +226,7 @@ const FourFactorsHockey = ({ teams }: { teams: any[] }) => {
 				<tr />
 				<tr>
 					<th title="Shots">S</th>
-					<th title="Rushing Yards">PP</th>
+					<th title="Power Plays">PP</th>
 					<th title="Takeaways">TK</th>
 					<th title="Giveaway">GV</th>
 					<th title="Faceoff Win Percentage">FO%</th>

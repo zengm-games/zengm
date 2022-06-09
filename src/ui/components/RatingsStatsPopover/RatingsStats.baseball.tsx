@@ -68,7 +68,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 					</span>
 					<br />
 					<span style={gradientStyle(ratings.cat)}>
-						<span title="Catcher Ddefense">Cat:</span> {ratings.cat}
+						<span title="Catcher Defense">Cat:</span> {ratings.cat}
 					</span>
 				</div>
 				<div className="col-4">

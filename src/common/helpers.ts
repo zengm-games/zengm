@@ -1023,19 +1023,19 @@ const numberWithCommas = (x: number | string): string => {
 	return y.toLocaleString("en-US", { maximumFractionDigits: 10 });
 };
 
-function roundWinp(winp: number): string {
+const roundWinp = (winp: number): string => {
 	let output = winp.toFixed(3);
 
 	if (output[0] === "0") {
 		// Delete leading 0
 		output = output.slice(1, output.length);
-	} else if (output[0] !== "-") {
-		// Delete trailing digit if positive and no leading 0
-		output = output.slice(0, output.length - 1);
+	} else if (output === "1.000") {
+		// 1.000 => 1.00, but for higher numbers leave 3 decimal places, like for OPS
+		output = "1.00";
 	}
 
 	return output;
-}
+};
 
 const upperCaseFirstLetter = <T extends string>(string: T) => {
 	return `${string.charAt(0).toUpperCase()}${string.slice(1)}` as Capitalize<T>;

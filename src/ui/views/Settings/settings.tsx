@@ -1359,13 +1359,17 @@ settings.push(
 			}
 		},
 	},
-	{
-		category: "Game Simulation",
-		key: "quarterLength",
-		name: "Period Length (minutes)",
-		godModeRequired: "always",
-		type: "float",
-	},
+	...(isSport("baseball")
+		? []
+		: [
+				{
+					category: "Game Simulation",
+					key: "quarterLength",
+					name: "Period Length (minutes)",
+					godModeRequired: "always",
+					type: "float",
+				} as const,
+		  ]),
 	{
 		category: "Game Simulation",
 		key: "homeCourtAdvantage",

@@ -735,11 +735,28 @@ const achievements: Achievement[] = [
 
 			const awards = await idb.cache.awards.get(g.get("season"));
 
-			if (awards && awards.allLeague) {
-				for (const team of awards.allLeague) {
-					for (const p of team.players) {
-						if (p.tid === g.get("userTid")) {
-							return false;
+			if (!awards) {
+				return false;
+			}
+
+			if (isSport("baseball")) {
+				const awardTeams = ["allOffense", "allDefense"];
+				for (const awardTeam of awardTeams) {
+					if (awards[awardTeam]) {
+						for (const p of awards[awardTeam]) {
+							if (p.tid === g.get("userTid")) {
+								return false;
+							}
+						}
+					}
+				}
+			} else {
+				if (awards.allLeague) {
+					for (const team of awards.allLeague) {
+						for (const p of team.players) {
+							if (p.tid === g.get("userTid")) {
+								return false;
+							}
 						}
 					}
 				}

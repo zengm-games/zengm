@@ -122,6 +122,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				minStats: {
 					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
 				},
+				sortAscending: true,
 			},
 			{
 				stat: "whip",

@@ -85,7 +85,7 @@ const processStats = (
 			} else if (stat === "hr9") {
 				row[stat] = helpers.ratio(ts.hrPit, ts.outs / NUM_OUTS_PER_GAME);
 			} else if (stat === "bb9") {
-				row[stat] = helpers.ratio(ts.soPit, ts.outs / NUM_OUTS_PER_GAME);
+				row[stat] = helpers.ratio(ts.bbPit, ts.outs / NUM_OUTS_PER_GAME);
 			} else if (stat === "so9") {
 				row[stat] = helpers.ratio(ts.soPit, ts.outs / NUM_OUTS_PER_GAME);
 			} else if (stat === "pc9") {

@@ -1497,6 +1497,12 @@ class GameSim {
 
 		if (this.bases.some(p => p) && Math.random() < this.probBalk()) {
 			this.doBalkWildPitchPassedBall("balk");
+
+			if (this.gameIsOverDuringInning()) {
+				// End the game mid at bat
+				doneBatter = true;
+			}
+
 			return doneBatter;
 		}
 
@@ -2350,6 +2356,17 @@ class GameSim {
 		}
 	}
 
+	gameIsOverDuringInning() {
+		if (
+			this.o === 0 &&
+			this.inning >= this.numInnings &&
+			this.team[0].t.stat.pts > this.team[1].t.stat.pts
+		) {
+			// Game over, home team is at bat and up after 9+ innings
+			return true;
+		}
+	}
+
 	simGame() {
 		this.playByPlay.logEvent({
 			type: "sideStart",
@@ -2361,12 +2378,7 @@ class GameSim {
 		while (true) {
 			this.simPlateAppearance();
 
-			if (
-				this.o === 0 &&
-				this.inning >= this.numInnings &&
-				this.team[0].t.stat.pts > this.team[1].t.stat.pts
-			) {
-				// Game over, home team is at bat and up after 9+ innings
+			if (this.gameIsOverDuringInning()) {
 				break;
 			}
 

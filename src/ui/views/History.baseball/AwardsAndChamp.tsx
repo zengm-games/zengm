@@ -121,8 +121,8 @@ const AwardsAndChamp = ({
 			<div className="col-sm-12 col-6">
 				<h2>{AWARD_NAMES.poy}</h2>
 				<Winner award={awards.poy} season={season} userTid={userTid} />
-				<h2>{AWARD_NAMES.qoy}</h2>
-				<Winner award={awards.qoy} season={season} userTid={userTid} />
+				<h2>{AWARD_NAMES.rpoy}</h2>
+				<Winner award={awards.rpoy} season={season} userTid={userTid} />
 				<h2>{AWARD_NAMES.roy}</h2>
 				<Winner award={awards.roy} season={season} userTid={userTid} />
 			</div>

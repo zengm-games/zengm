@@ -570,13 +570,13 @@ const RATINGS: RatingKey[] = [
 	"endu",
 ];
 
-const SIMPLE_AWARDS = ["mvp", "roy", "poy", "qoy", "finalsMvp"] as const;
+const SIMPLE_AWARDS = ["mvp", "roy", "poy", "rpoy", "finalsMvp"] as const;
 
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
 	poy: "Pitcher of the Year",
-	qoy: "Reliever of the Year",
+	rpoy: "Relief Pitcher of the Year",
 	finalsMvp: "Finals MVP",
 	allOffense: "All-Offensive Team",
 	allDefense: "All-Defensive Team",

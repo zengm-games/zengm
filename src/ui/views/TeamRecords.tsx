@@ -26,7 +26,7 @@ const categories = bySport({
 	baseball: [
 		"mvp",
 		"poy",
-		"qoy",
+		"rpoy",
 		"roy",
 		"bestRecord",
 		"bestRecordConf",

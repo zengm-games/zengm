@@ -58,7 +58,7 @@ const tallyAwards = (
 		oroy: 0,
 		droy: 0,
 		poy: 0,
-		qoy: 0,
+		rpoy: 0,
 		allLeague: 0,
 		allDefense: 0,
 		allOffense: 0,
@@ -119,8 +119,8 @@ const tallyAwards = (
 				teamAwards.poy++;
 			}
 
-			if (a.qoy && a.qoy.tid === tid) {
-				teamAwards.qoy++;
+			if (a.rpoy && a.rpoy.tid === tid) {
+				teamAwards.rpoy++;
 			}
 		}
 

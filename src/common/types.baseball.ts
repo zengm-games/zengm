@@ -89,7 +89,7 @@ export type Awards = {
 	allRookie: (AwardPlayer | undefined)[];
 	mvp: AwardPlayer | undefined;
 	poy: AwardPlayer | undefined;
-	qoy: AwardPlayer | undefined;
+	rpoy: AwardPlayer | undefined;
 	finalsMvp: AwardPlayer | undefined;
 };
 

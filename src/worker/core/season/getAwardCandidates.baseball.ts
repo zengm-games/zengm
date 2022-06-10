@@ -1,6 +1,6 @@
 import { AWARD_NAMES } from "../../../common";
 import { getPlayers, getTopPlayers } from "./awards";
-import { mvpScore, poyScore, qoyFilter, royFilter } from "./doAwards.baseball";
+import { mvpScore, poyScore, rpoyFilter, royFilter } from "./doAwards.baseball";
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);
@@ -31,12 +31,12 @@ const getAwardCandidates = async (season: number) => {
 			stats: ["w", "l", "era", "ip", "rpit"],
 		},
 		{
-			name: AWARD_NAMES.qoy,
+			name: AWARD_NAMES.rpoy,
 			players: getTopPlayers(
 				{
 					allowNone: true,
 					amount: 10,
-					filter: qoyFilter,
+					filter: rpoyFilter,
 					score: poyScore,
 				},
 				players,

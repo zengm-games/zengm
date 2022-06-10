@@ -112,7 +112,7 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return p.currentStats.war;
 };
 
-export const qoyFilter = (p: PlayerFiltered) =>
+export const rpoyFilter = (p: PlayerFiltered) =>
 	p.currentStats.gpPit > 2 * p.currentStats.gsPit;
 
 export const poyScore = (p: PlayerFiltered) => p.currentStats.rpit;
@@ -441,16 +441,16 @@ const doAwards = async (conditions: Conditions) => {
 	).map(getPlayerInfo);
 	const poy = poyPlayers[0];
 
-	const qoyPlayers = getTopPlayers(
+	const rpoyPlayers = getTopPlayers(
 		{
 			allowNone: true,
 			amount: 1,
-			filter: qoyFilter,
+			filter: rpoyFilter,
 			score: poyScore,
 		},
 		players,
 	).map(getPlayerInfo);
-	const qoy = qoyPlayers[0];
+	const rpoy = rpoyPlayers[0];
 
 	let finalsMvp;
 	const champTeam = teams.find(
@@ -522,7 +522,7 @@ const doAwards = async (conditions: Conditions) => {
 		bestRecordConfs,
 		mvp,
 		poy,
-		qoy,
+		rpoy,
 		roy,
 		finalsMvp,
 		allOffense,

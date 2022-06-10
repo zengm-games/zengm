@@ -83,7 +83,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				oroy: addAbbrev(a.oroy, teams, a.season),
 				droy: addAbbrev(a.droy, teams, a.season),
 				poy: addAbbrev(a.poy, teams, a.season),
-				qoy: addAbbrev(a.qoy, teams, a.season),
+				rpoy: addAbbrev(a.rpoy, teams, a.season),
 				runnerUp: undefined,
 				champ: undefined,
 			};
@@ -213,7 +213,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const awardNames = bySport({
-			baseball: ["finalsMvp", "mvp", "poy", "qoy", "roy"],
+			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
 			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
 			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
 			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],

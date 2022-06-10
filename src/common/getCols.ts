@@ -3391,11 +3391,11 @@ const cols: {
 		sortType: "number",
 		title: "POY",
 	},
-	"count:qoy": {
-		desc: "Reliever of the Year",
+	"count:rpoy": {
+		desc: "Relief Pitcher of the Year",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "ROY",
+		title: "RPOY",
 	},
 	"award:dpoy": {
 		desc: "Defensive Player of the Year",
@@ -3433,9 +3433,9 @@ const cols: {
 		desc: "Pitcher of the Year",
 		title: "POY",
 	},
-	"award:qoy": {
-		desc: "Reliever of the Year",
-		title: "ROY",
+	"award:rpoy": {
+		desc: "Relief Pitcher of the Year",
+		title: "RPOY",
 	},
 	"award:oroy": {
 		desc: "Offensive Rookie of the Year",

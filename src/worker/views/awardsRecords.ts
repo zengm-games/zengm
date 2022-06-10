@@ -23,8 +23,8 @@ const optionsTmp = bySport({
 			key: "poy",
 		},
 		{
-			val: "Reliever of the Year",
-			key: "qoy",
+			val: "Relief Pitcher of the Year",
+			key: "rpoy",
 		},
 		{
 			val: "Rookie of the Year",

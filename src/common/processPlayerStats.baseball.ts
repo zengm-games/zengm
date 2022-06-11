@@ -83,9 +83,18 @@ const processStats = (
 			}
 
 			if (role === "batter") {
-				row[stat] = `${helpers.roundWinp(ba)} BA, ${ps.hr} HR`;
+				if (stat === "keyStatsShort") {
+					row[stat] = `${helpers.roundWinp(ba)} BA, `;
+				} else {
+					row[stat] = "";
+				}
+				row[stat] += `${ps.hr} HR`;
 				if (stat === "keyStats") {
-					row[stat] += `, ${ab} AB`;
+					row[stat] += `, ${ab} AB, ${helpers.roundWinp(
+						ba,
+					)} / ${helpers.roundWinp(obp)} / ${helpers.roundWinp(
+						slg,
+					)} / ${helpers.roundWinp(obp + slg)}`;
 				}
 			} else if (role === "pitcher") {
 				const recordOrSaves = ps.w >= ps.sv ? `${ps.w}-${ps.l}` : `${ps.sv} SV`;

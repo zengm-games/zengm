@@ -250,6 +250,11 @@ const rosterAutoSort = async (
 							const p2 = defensivePlayersSorted[j];
 							const pos2 = defPositions[j];
 
+							// Needed for empty roster, like expansion draft
+							if (!p || !p2) {
+								continue;
+							}
+
 							if (
 								p.ratings.ovrs[pos2] + p2.ratings.ovrs[pos] >
 								p.ratings.ovrs[pos] + p2.ratings.ovrs[pos2]

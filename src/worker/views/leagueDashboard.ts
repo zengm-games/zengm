@@ -175,7 +175,10 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					if (entry) {
 						entry.rank = j + 1;
 
-						if (stat.startsWith("opp")) {
+						if (
+							stat.startsWith("opp") ||
+							(isSport("baseball") && stat === "era")
+						) {
 							entry.rank = teams.length + 1 - entry.rank;
 						}
 					}

@@ -50,6 +50,8 @@ const DEF_POSITIONS_DH = [
 ] as const;
 const NUM_STARTERS = 5;
 
+export const lineupSort = (ovrDH: number, spd: number) => ovrDH + 0.2 * spd;
+
 const rosterAutoSort = async (
 	tid: number,
 	onlyNewPlayers?: boolean,
@@ -288,7 +290,7 @@ const rosterAutoSort = async (
 
 				const sortedStarters = orderBy(
 					starters,
-					info => info.p.ratings.ovrs.DH + 0.2 * info.p.ratings.spd,
+					info => lineupSort(info.p.ratings.ovrs.DH, info.p.ratings.spd),
 					"desc",
 				);
 

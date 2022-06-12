@@ -6,6 +6,7 @@ import {
 } from "../../../common/constants.baseball";
 import type { Position } from "../../../common/types.baseball";
 import { random } from "../../util";
+import { lineupSort } from "../team/rosterAutoSort.baseball";
 import { fatigueFactor } from "./fatigueFactor";
 import { getStartingPitcher } from "./getStartingPitcher";
 import type { PlayerGameSim, TeamGameSim } from "./types";
@@ -135,6 +136,8 @@ class Team<DH extends boolean> {
 			pos: "P",
 		};
 
+		let substitutionOccurred = false;
+
 		const numPositionPlayers = this.dh
 			? NUM_BATTERS_PER_SIDE
 			: NUM_BATTERS_PER_SIDE - 1;
@@ -169,6 +172,8 @@ class Team<DH extends boolean> {
 				} else {
 					p = p2;
 				}
+
+				substitutionOccurred = true;
 			}
 
 			if (p.id === -1) {
@@ -183,6 +188,27 @@ class Team<DH extends boolean> {
 					battingOrder: i,
 					pos,
 				};
+			}
+		}
+
+		// If there were subs in the starting batting order, auto sort
+		if (substitutionOccurred) {
+			const originalBattingOrder = [];
+			for (const p of Object.values(playersInGame)) {
+				if (p.battingOrder >= 0) {
+					originalBattingOrder[p.battingOrder] = p;
+				}
+			}
+
+			const newBattingOrder = orderBy(
+				[...originalBattingOrder],
+				p => lineupSort(p.p.ovrs.DH, p.p.compositeRating.speed),
+				"desc",
+			);
+
+			for (let i = 0; i < newBattingOrder.length; i++) {
+				const p = newBattingOrder[i];
+				p.battingOrder = i;
 			}
 		}
 

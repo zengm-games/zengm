@@ -26,6 +26,7 @@ const FreeAgents = ({
 	minContract,
 	numRosterSpots,
 	spectator,
+	payroll,
 	phase,
 	players,
 	salaryCapType,
@@ -148,6 +149,7 @@ const FreeAgents = ({
 				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
+				payroll={payroll}
 			/>
 
 			<div className="d-sm-flex mb-3">

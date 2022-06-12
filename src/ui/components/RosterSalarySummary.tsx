@@ -7,12 +7,14 @@ const RosterSalarySummary = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
+	payroll,
 	salaryCapType,
 }: {
 	capSpace: number;
 	maxContract: number;
 	minContract: number;
 	numRosterSpots: number;
+	payroll: number;
 	salaryCapType: GameAttributesLeague["salaryCapType"];
 }) => {
 	const actualCapSpace = capSpace > 0 ? capSpace : 0;
@@ -21,7 +23,10 @@ const RosterSalarySummary = ({
 		<div className="mb-3">
 			You currently have <b>{numRosterSpots}</b> open roster spots
 			{salaryCapType === "none" ? (
-				"."
+				<>
+					{" "}
+					and a <b>{helpers.formatCurrency(payroll, "M")}</b> payroll.
+				</>
 			) : (
 				<>
 					{" "}

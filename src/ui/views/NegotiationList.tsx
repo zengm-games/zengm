@@ -19,6 +19,7 @@ const NegotiationList = ({
 	minContract,
 	numRosterSpots,
 	spectator,
+	payroll,
 	players,
 	salaryCapType,
 	stats,
@@ -145,6 +146,7 @@ const NegotiationList = ({
 				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
+				payroll={payroll}
 			/>
 
 			<p>

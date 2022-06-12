@@ -577,10 +577,19 @@ const TeamFinances = ({
 			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
-		["", "Free Cap Space"].concat(
-			// @ts-expect-error
-			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
-		),
+		salaryCapType === "none" && luxuryPayroll > 0
+			? ["", "Under Luxury Tax"].concat(
+					// @ts-expect-error
+					contractTotals.map(amount =>
+						highlightZeroNegative(luxuryPayroll - amount),
+					),
+			  )
+			: ["", "Free Cap Space"].concat(
+					// @ts-expect-error
+					contractTotals.map(amount =>
+						highlightZeroNegative(salaryCap - amount),
+					),
+			  ),
 	];
 
 	// This happens for expansion teams before they have a TeamSeason

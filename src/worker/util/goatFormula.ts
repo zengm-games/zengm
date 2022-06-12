@@ -15,7 +15,7 @@ const DEFAULT_FORMULA = bySport({
 
 const BANNED_STAT_VARIABLES = new Set(
 	bySport({
-		baseball: ["minAvailable", "poSo"],
+		baseball: ["minAvailable", "poSo", "rfld"],
 		basketball: ["minAvailable"],
 		football: ["minAvailable"],
 		hockey: ["minAvailable", "gpSkater", "gpGoalie"],

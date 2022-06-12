@@ -229,7 +229,11 @@ const Depth = ({
 				</div>
 			) : null}
 
-			<ul className="nav nav-tabs mb-3 d-none d-sm-flex">
+			<ul
+				className={`nav nav-tabs mb-3 ${
+					isSport("baseball") ? "" : "d-none d-sm-flex"
+				}`}
+			>
 				{Object.keys(numStartersByPos).map(pos2 => {
 					if (
 						(showDH === "noDH" && (pos2 === "L" || pos2 === "D")) ||

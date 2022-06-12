@@ -176,7 +176,7 @@ const roundOverrides: Record<
 		oppSh: "noDecimalPlace",
 		oppSf: "noDecimalPlace",
 		oppIbb: "noDecimalPlace",
-		oppMov: "noDecimalPlace",
+		oppMov: "oneDecimalPlace",
 		oppEra: "twoDecimalPlaces",
 		oppCg: "noDecimalPlace",
 		oppSho: "noDecimalPlace",

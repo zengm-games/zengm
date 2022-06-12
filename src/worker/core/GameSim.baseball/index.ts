@@ -1538,8 +1538,10 @@ class GameSim {
 		}
 
 		const stealing = [false, false, false] as [boolean, boolean, boolean];
-		const allRunnersGo =
-			this.outs === 2 && this.balls === 3 && this.strikes === 2;
+		const fullCountTwoOuts =
+			this.outs === NUM_OUTS_PER_INNING - 1 &&
+			this.balls === 3 &&
+			this.strikes === 2;
 
 		let numStealing = 0;
 		let numStaying = 0;
@@ -1550,10 +1552,16 @@ class GameSim {
 				continue;
 			}
 
-			if (allRunnersGo) {
-				// Full count with 2 outs, might as well start running
-				stealing[i] = true;
-			} else {
+			if (fullCountTwoOuts) {
+				// Full count with 2 outs, might as well start running if it's a force out
+				const isForceOut =
+					i === 0 ||
+					(i === 1 && !!this.bases[0]) ||
+					(i === 2 && !!this.bases[0] && !!this.bases[1]);
+				stealing[i] = isForceOut;
+			}
+
+			if (!stealing[i]) {
 				const nextBaseOccupied = !!this.bases[i + 1] && !stealing[i + 1];
 
 				if (!nextBaseOccupied) {

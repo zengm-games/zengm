@@ -22,6 +22,7 @@ const FreeAgents = ({
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	godMode,
+	luxuryPayroll,
 	maxContract,
 	minContract,
 	numRosterSpots,
@@ -146,6 +147,7 @@ const FreeAgents = ({
 			<RosterSalarySummary
 				capSpace={capSpace}
 				salaryCapType={salaryCapType}
+				luxuryPayroll={luxuryPayroll}
 				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}

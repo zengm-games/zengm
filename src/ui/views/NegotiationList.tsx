@@ -15,6 +15,7 @@ const NegotiationList = ({
 	capSpace,
 	challengeNoRatings,
 	draftPickAutoContract,
+	luxuryPayroll,
 	maxContract,
 	minContract,
 	numRosterSpots,
@@ -143,6 +144,7 @@ const NegotiationList = ({
 			<RosterSalarySummary
 				capSpace={capSpace}
 				salaryCapType={salaryCapType}
+				luxuryPayroll={luxuryPayroll}
 				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}

@@ -4,6 +4,7 @@ import { helpers } from "../util";
 
 const RosterSalarySummary = ({
 	capSpace,
+	luxuryPayroll,
 	maxContract,
 	minContract,
 	numRosterSpots,
@@ -11,6 +12,7 @@ const RosterSalarySummary = ({
 	salaryCapType,
 }: {
 	capSpace: number;
+	luxuryPayroll: number;
 	maxContract: number;
 	minContract: number;
 	numRosterSpots: number;
@@ -25,7 +27,14 @@ const RosterSalarySummary = ({
 			{salaryCapType === "none" ? (
 				<>
 					{" "}
-					and a <b>{helpers.formatCurrency(payroll, "M")}</b> payroll.
+					and a <b>{helpers.formatCurrency(payroll, "M")}</b> payroll
+					{luxuryPayroll > 0 ? (
+						<>
+							{" "}
+							(luxury tax limit: {helpers.formatCurrency(luxuryPayroll, "M")})
+						</>
+					) : null}
+					.
 				</>
 			) : (
 				<>

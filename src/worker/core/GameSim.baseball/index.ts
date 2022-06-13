@@ -613,11 +613,7 @@ class GameSim {
 
 			const isStealing = stealing[i];
 
-			const mustAdvanceWithHitter = !!(
-				i === 0 ||
-				(i === 1 && runners[0]) ||
-				(i === 2 && runners[0] && runners[1])
-			);
+			const mustAdvanceWithHitter = this.isForceOut(i, runners);
 
 			const pRunner = this.team[this.o].playersByPid[runner.pid];
 			const hitToPos = POS_NUMBERS_INVERSE[hitTo];
@@ -902,11 +898,7 @@ class GameSim {
 	}
 
 	processSteals(stealing: [boolean, boolean, boolean]) {
-		if (stealing[2]) {
-			// Stealing home currently is only implemented on a full count with 2 outs, and processSteals only happens after a strike or ball, so this should never happen
-			throw new Error("Should never happen");
-		}
-
+		// Stealing home currently is only implemented on a full count with 2 outs, and processSteals only happens after a strike or ball, so this should never happen
 		if (!stealing[0] && !stealing[1]) {
 			return;
 		}
@@ -914,6 +906,11 @@ class GameSim {
 		const indexes: (0 | 1)[] = [];
 		for (let i = stealing.length - 1; i >= 0; i--) {
 			if (stealing[i]) {
+				// If this is a walk and the runner gets the base automatically, then no steal attempt
+				if (this.balls === 4 && this.isForceOut(i as any)) {
+					continue;
+				}
+
 				indexes.push(i as 0 | 1);
 			}
 		}
@@ -1492,6 +1489,14 @@ class GameSim {
 		};
 	}
 
+	isForceOut(i: 0 | 1 | 2, basesOrRunners: [any, any, any] = this.bases) {
+		return (
+			i === 0 ||
+			(i === 1 && !!basesOrRunners[0]) ||
+			(i === 2 && !!basesOrRunners[0] && !!basesOrRunners[1])
+		);
+	}
+
 	simPitch() {
 		let doneBatter;
 
@@ -1554,10 +1559,7 @@ class GameSim {
 
 			if (fullCountTwoOuts) {
 				// Full count with 2 outs, might as well start running if it's a force out
-				const isForceOut =
-					i === 0 ||
-					(i === 1 && !!this.bases[0]) ||
-					(i === 2 && !!this.bases[0] && !!this.bases[1]);
+				const isForceOut = this.isForceOut(i);
 				stealing[i] = isForceOut;
 			}
 
@@ -1614,12 +1616,13 @@ class GameSim {
 					balls: this.balls,
 					strikes: this.strikes,
 				});
-				if (numStealing > 0) {
-					this.processSteals(stealing);
-					if (this.outs >= NUM_OUTS_PER_INNING) {
-						doneBatter = true;
-						return doneBatter;
-					}
+			}
+
+			if (numStealing > 0) {
+				this.processSteals(stealing);
+				if (this.outs >= NUM_OUTS_PER_INNING) {
+					doneBatter = true;
+					return doneBatter;
 				}
 			}
 		} else if (outcome === "strike") {
@@ -1870,7 +1873,26 @@ class GameSim {
 					out: false,
 				};
 			}
-		});
+		}) as [
+			{
+				pid: number;
+				from: number;
+				to: number;
+				out: boolean;
+			},
+			{
+				pid: number;
+				from: number;
+				to: number;
+				out: boolean;
+			},
+			{
+				pid: number;
+				from: number;
+				to: number;
+				out: boolean;
+			},
+		];
 	}
 
 	finalizeRunners(

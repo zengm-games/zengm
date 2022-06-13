@@ -256,6 +256,8 @@ export const getText = (
 					text = "Double!";
 				} else if (event.numBases === 3) {
 					text = "Triple!";
+				} else if (event.runners.length === 3) {
+					text = "Grand slam!";
 				} else {
 					text = "Home run!";
 				}

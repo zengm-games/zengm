@@ -27,14 +27,8 @@ const RosterSalarySummary = ({
 			{salaryCapType === "none" ? (
 				<>
 					{" "}
-					and a <b>{helpers.formatCurrency(payroll, "M")}</b> payroll
-					{luxuryPayroll > 0 ? (
-						<>
-							{" "}
-							(luxury tax limit: {helpers.formatCurrency(luxuryPayroll, "M")})
-						</>
-					) : null}
-					.
+					and a <b>{helpers.formatCurrency(payroll, "M")}</b> payroll (luxury
+					tax limit: {helpers.formatCurrency(luxuryPayroll, "M")}).
 				</>
 			) : (
 				<>

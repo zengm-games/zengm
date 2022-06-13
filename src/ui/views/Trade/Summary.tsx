@@ -47,15 +47,22 @@ const Summary = forwardRef(
 		{
 			challengeNoRatings,
 			handleToggle,
+			luxuryPayroll,
 			salaryCap,
 			salaryCapType,
 			summary,
-		}: Pick<View<"trade">, "salaryCap" | "salaryCapType" | "summary"> & {
+		}: Pick<
+			View<"trade">,
+			"luxuryPayroll" | "salaryCap" | "salaryCapType" | "summary"
+		> & {
 			challengeNoRatings: boolean;
 			handleToggle: HandleToggle;
 		},
 		ref: any,
 	) => {
+		const payrollColorCutoff =
+			salaryCapType === "none" ? luxuryPayroll : salaryCap;
+
 		return (
 			<div className="row trade-items mb-3" ref={ref}>
 				{summary.teams.map((t, i) => {
@@ -117,7 +124,7 @@ const Summary = forwardRef(
 									Payroll after trade:{" "}
 									<span
 										className={
-											t.payrollAfterTrade > salaryCap
+											t.payrollAfterTrade > payrollColorCutoff
 												? "text-danger"
 												: undefined
 										}
@@ -127,7 +134,11 @@ const Summary = forwardRef(
 								</li>
 								{salaryCapType !== "none" ? (
 									<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
-								) : null}
+								) : (
+									<li>
+										Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}
+									</li>
+								)}
 								{!challengeNoRatings ? (
 									<li>
 										Team ovr:{" "}

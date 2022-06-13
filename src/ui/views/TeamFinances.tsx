@@ -577,7 +577,7 @@ const TeamFinances = ({
 			// @ts-expect-error
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
-		salaryCapType === "none" && luxuryPayroll > 0
+		salaryCapType === "none"
 			? ["", "Under Luxury Tax"].concat(
 					// @ts-expect-error
 					contractTotals.map(amount =>

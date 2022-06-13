@@ -235,6 +235,7 @@ const Trade = (props: View<"trade">) => {
 		otherTeamsWantToHire,
 		godMode,
 		lost,
+		luxuryPayroll,
 		multiTeamMode,
 		numDraftRounds,
 		spectator,
@@ -411,6 +412,7 @@ const Trade = (props: View<"trade">) => {
 						<Summary
 							challengeNoRatings={challengeNoRatings}
 							handleToggle={handleChangeAsset}
+							luxuryPayroll={luxuryPayroll}
 							ref={summaryText}
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}

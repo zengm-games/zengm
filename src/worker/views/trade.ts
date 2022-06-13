@@ -226,6 +226,7 @@ const updateTrade = async () => {
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		challengeNoTrades: g.get("challengeNoTrades"),
+		luxuryPayroll: g.get("luxuryPayroll") / 1000,
 		salaryCap: g.get("salaryCap") / 1000,
 		salaryCapType: g.get("salaryCapType"),
 		userDpids: teams[0].dpids,

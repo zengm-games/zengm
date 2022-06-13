@@ -432,6 +432,8 @@ const processLiveGameEvents = ({
 			Object.assign(sportState, DEFAULT_SPORT_STATE);
 			sportState.pitcherPid = e.pitcherPid;
 			sportState.batterPid = -1;
+		} else if (e.type === "reliefPitcher") {
+			sportState.pitcherPid = e.pidOn;
 		} else if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
 			sportState.balls = e.balls;
 			sportState.strikes = e.strikes;

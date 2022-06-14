@@ -120,11 +120,12 @@ const rosterAutoSort = async (
 						if (!p2 || pScore > score(p2, scorePos)) {
 							depth[pos2][i] = p.pid;
 							added = true;
-							break;
-						}
 
-						if (p2) {
-							addToBench.push(p2);
+							if (p2) {
+								addToBench.push(p2);
+							}
+
+							break;
 						}
 					}
 
@@ -175,10 +176,6 @@ const rosterAutoSort = async (
 							}
 
 							break;
-						}
-
-						if (p2) {
-							addToBullpen.push(p2);
 						}
 					}
 

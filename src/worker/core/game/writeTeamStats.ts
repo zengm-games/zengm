@@ -421,7 +421,7 @@ const writeTeamStats = async (results: GameResults) => {
 				teamSeason.tid,
 			);
 			const players = await idb.getCopies.playersPlus(playersRaw, {
-				attrs: ["value"],
+				attrs: ["pid", "value"],
 				fuzz: true,
 				ratings: ["ovr", "pos", "ovrs"],
 				season: g.get("season"),

@@ -3,7 +3,7 @@ import ovrByPosFactory from "./ovrByPosFactory";
 
 // See analysis/team-ovr-baseball
 
-const intercept = -4.4;
+const intercept = -4.7;
 
 const scale2 = 0.005;
 

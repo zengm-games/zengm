@@ -414,6 +414,7 @@ const refreshCache = async () => {
 		const tid = parseInt(tidString);
 		const ovr = team.ovr(
 			players.map(p => ({
+				pid: p.pid,
 				value: p.value,
 				ratings: {
 					ovr: p.ratings.at(-1)!.ovr,

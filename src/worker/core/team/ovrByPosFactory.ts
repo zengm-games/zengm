@@ -1,5 +1,11 @@
 import orderBy from "lodash-es/orderBy";
+import { bySport } from "../../../common";
 import { POSITION_COUNTS } from "../../../common/constants";
+import {
+	NUM_STARTING_PITCHERS,
+	POS_NUMBERS_INVERSE,
+} from "../../../common/constants.baseball";
+import { getDepthDefense, getDepthPitchers } from "./rosterAutoSort.baseball";
 
 const DEFAULT_OVR = 0;
 
@@ -11,9 +17,11 @@ const ovrByPosFactory =
 	) =>
 	(
 		players: {
+			pid: number | undefined;
 			value: number;
 			ratings: {
 				ovr: number;
+				ovrs: Record<string, number>;
 				pos: string;
 			};
 		}[],
@@ -27,16 +35,53 @@ const ovrByPosFactory =
 	) => {
 		const playerInfo = orderBy(
 			players.map(p => {
+				let pos;
+				if (
+					bySport({
+						baseball: true,
+						basketball: false,
+						football: false,
+						hockey: false,
+					})
+				) {
+					// Use depth chart starters for position - important in baseball where subs are rare and cross position players are common
+
+					// Since this might be a hypothetical team (like in a trade evaluation), auto sort first, and then use that depth chart to assign starters
+					const depthDefense = getDepthDefense(players as any, true);
+					const depthPitchers = getDepthPitchers(players as any);
+
+					// First check position players
+					const startingPositionPlayers = depthDefense.slice(0, 9);
+					const index = startingPositionPlayers.indexOf(p.pid as any);
+					const posIndex = index + 2; // 0 is catcher
+					if (posIndex >= 2) {
+						pos = (POS_NUMBERS_INVERSE as any)[posIndex];
+					} else {
+						// Second check pitchers
+						const index = depthPitchers.indexOf(p.pid as any);
+						if (index < NUM_STARTING_PITCHERS) {
+							pos = "SP";
+						} else if (pos === "SP" || pos === "RP") {
+							// Any non-pitcher in a pitcher slot is assumed to be better placed on as a position player
+							pos = "RP";
+						} else {
+							pos = p.ratings.pos;
+						}
+					}
+				} else {
+					pos = p.ratings.pos;
+				}
+
 				if (wholeRoster) {
 					return {
-						pos: p.ratings.pos,
+						pos,
 						value: p.value,
 					};
 				}
 
 				return {
-					pos: p.ratings.pos,
-					value: p.ratings.ovr,
+					pos,
+					value: p.ratings.ovrs?.[pos] ?? p.ratings.ovr,
 				};
 			}),
 			"value",

@@ -77,7 +77,7 @@ const deploy = async () => {
 		"--exclude",
 		"/.well-known",
 
-		// For hockey
+		// For baseball and hockey
 		"--exclude",
 		"/old",
 	];

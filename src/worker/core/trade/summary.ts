@@ -5,7 +5,7 @@ import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["value"],
+		attrs: ["value", "pid"],
 		fuzz: true,
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),

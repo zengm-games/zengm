@@ -1120,6 +1120,7 @@ const afterDBStream = async ({
 			const teamPlayers = activePlayers
 				.filter(p => p.tid === i)
 				.map(p => ({
+					pid: p.pid,
 					value: p.value,
 					ratings: p.ratings.at(-1),
 				}));

@@ -52,6 +52,125 @@ const NUM_STARTERS = 5;
 
 export const lineupSort = (ovrDH: number, spd: number) => ovrDH + 0.2 * spd;
 
+export const getDepthDefense = (
+	players: {
+		pid: number;
+		ratings: {
+			ovrs: Record<string, number>;
+		};
+	}[],
+	dh: boolean,
+) => {
+	const defensivePlayersSorted: typeof players = [];
+
+	let playersRemaining = [...players];
+
+	const defPositions = dh ? DEF_POSITIONS_DH : DEF_POSITIONS;
+
+	for (const scorePos of defPositions) {
+		playersRemaining.sort(sortFunction(scorePos));
+		defensivePlayersSorted.push(playersRemaining[0]);
+		playersRemaining = playersRemaining.slice(1);
+		if (playersRemaining.length === 0) {
+			break;
+		}
+	}
+
+	playersRemaining.sort(sortFunction());
+	defensivePlayersSorted.push(...playersRemaining);
+
+	// Try swappinng players to see if that improves the total ovr
+	const numPlayersToTest =
+		defensivePlayersSorted.length < 11 ? defensivePlayersSorted.length : 11;
+	for (let numSwapTries = 0; numSwapTries < 5; numSwapTries++) {
+		let swapped = false;
+
+		const defPositionsShuffled = defPositions.map((pos, i) => ({
+			pos,
+			i,
+		}));
+		random.shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
+
+		for (const { i, pos } of defPositionsShuffled) {
+			for (let j = 0; j < numPlayersToTest; j++) {
+				if (i === j) {
+					continue;
+				}
+
+				const p = defensivePlayersSorted[i];
+				const p2 = defensivePlayersSorted[j];
+				const pos2 = defPositions[j];
+
+				// Needed for empty roster, like expansion draft
+				if (!p || !p2) {
+					continue;
+				}
+
+				if (
+					p.ratings.ovrs[pos2] + p2.ratings.ovrs[pos] >
+					p.ratings.ovrs[pos] + p2.ratings.ovrs[pos2]
+				) {
+					const temp: any = defensivePlayersSorted[i];
+					defensivePlayersSorted[i] = defensivePlayersSorted[j];
+					defensivePlayersSorted[j] = temp;
+					swapped = true;
+				}
+			}
+		}
+
+		if (!swapped) {
+			break;
+		}
+	}
+
+	return defensivePlayersSorted.map(p => p.pid);
+};
+
+export const getDepthPitchers = (
+	players: {
+		pid: number;
+		ratings: {
+			ovrs: Record<string, number>;
+		};
+	}[],
+) => {
+	const pitchersSorted: number[] = [];
+
+	let playersRemaining = players;
+
+	const addStarters = (numToAdd: number) => {
+		playersRemaining.sort(sortFunction("SP"));
+		for (let i = 0; i < numToAdd; i++) {
+			const p = playersRemaining[i];
+			if (!p) {
+				break;
+			}
+			pitchersSorted.push(p.pid);
+		}
+		playersRemaining = playersRemaining.slice(numToAdd);
+	};
+
+	// Top 3 starters
+	addStarters(3);
+
+	// Closer
+	playersRemaining.sort(sortFunction("RP"));
+	const closer = playersRemaining[0];
+	playersRemaining = playersRemaining.slice(1);
+
+	// Remaining 2 starters
+	addStarters(2);
+
+	// Everybody else
+	if (closer) {
+		pitchersSorted.push(closer.pid);
+	}
+	playersRemaining.sort(sortFunction("RP"));
+	pitchersSorted.push(...playersRemaining.map(p => p.pid));
+
+	return pitchersSorted;
+};
+
 const rosterAutoSort = async (
 	tid: number,
 	onlyNewPlayers?: boolean,
@@ -206,74 +325,6 @@ const rosterAutoSort = async (
 		} else {
 			depth[pos2] = [];
 
-			const getDefensivePlayers = (dh: boolean) => {
-				const defensivePlayersSorted = [];
-
-				let playersRemaining = [...players];
-
-				const defPositions = dh ? DEF_POSITIONS_DH : DEF_POSITIONS;
-
-				for (const scorePos of defPositions) {
-					playersRemaining.sort(sortFunction(scorePos));
-					defensivePlayersSorted.push(playersRemaining[0]);
-					playersRemaining = playersRemaining.slice(1);
-					if (playersRemaining.length === 0) {
-						break;
-					}
-				}
-
-				playersRemaining.sort(sortFunction());
-				defensivePlayersSorted.push(...playersRemaining);
-
-				// Try swappinng players to see if that improves the total ovr
-				const numPlayersToTest =
-					defensivePlayersSorted.length < 11
-						? defensivePlayersSorted.length
-						: 11;
-				for (let numSwapTries = 0; numSwapTries < 5; numSwapTries++) {
-					let swapped = false;
-
-					const defPositionsShuffled = defPositions.map((pos, i) => ({
-						pos,
-						i,
-					}));
-					random.shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
-
-					for (const { i, pos } of defPositionsShuffled) {
-						for (let j = 0; j < numPlayersToTest; j++) {
-							if (i === j) {
-								continue;
-							}
-
-							const p = defensivePlayersSorted[i];
-							const p2 = defensivePlayersSorted[j];
-							const pos2 = defPositions[j];
-
-							// Needed for empty roster, like expansion draft
-							if (!p || !p2) {
-								continue;
-							}
-
-							if (
-								p.ratings.ovrs[pos2] + p2.ratings.ovrs[pos] >
-								p.ratings.ovrs[pos] + p2.ratings.ovrs[pos2]
-							) {
-								const temp: any = defensivePlayersSorted[i];
-								defensivePlayersSorted[i] = defensivePlayersSorted[j];
-								defensivePlayersSorted[j] = temp;
-								swapped = true;
-							}
-						}
-					}
-
-					if (!swapped) {
-						break;
-					}
-				}
-
-				return defensivePlayersSorted.map(p => p.pid);
-			};
-
 			if (pos2 === "LP" || pos2 === "L") {
 				const depthDefense = depth[pos2 === "L" ? "D" : "DP"];
 				const playersByPid = groupByUnique(players, "pid");
@@ -300,43 +351,11 @@ const rosterAutoSort = async (
 
 				depth[pos2] = indexes;
 			} else if (pos2 === "DP") {
-				depth[pos2] = getDefensivePlayers(false);
+				depth[pos2] = getDepthDefense(players, false);
 			} else if (pos2 === "D") {
-				depth[pos2] = getDefensivePlayers(true);
+				depth[pos2] = getDepthDefense(players, true);
 			} else if (pos2 === "P") {
-				depth[pos2] = [];
-
-				let playersRemaining = players;
-
-				const addStarters = (numToAdd: number) => {
-					playersRemaining.sort(sortFunction("SP"));
-					for (let i = 0; i < numToAdd; i++) {
-						const p = playersRemaining[i];
-						if (!p) {
-							break;
-						}
-						depth[pos2].push(p.pid);
-					}
-					playersRemaining = playersRemaining.slice(numToAdd);
-				};
-
-				// Top 3 starters
-				addStarters(3);
-
-				// Closer
-				playersRemaining.sort(sortFunction("RP"));
-				const closer = playersRemaining[0];
-				playersRemaining = playersRemaining.slice(1);
-
-				// Remaining 2 starters
-				addStarters(2);
-
-				// Everybody else
-				if (closer) {
-					depth[pos2].push(closer.pid);
-				}
-				playersRemaining.sort(sortFunction("RP"));
-				depth[pos2].push(...playersRemaining.map(p => p.pid));
+				depth[pos2] = getDepthPitchers(players);
 			}
 		}
 	}

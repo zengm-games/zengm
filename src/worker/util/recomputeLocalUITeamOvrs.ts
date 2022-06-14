@@ -11,6 +11,7 @@ const recomputeLocalUITeamOvrs = async () => {
 			Infinity,
 		])
 	).map(p => ({
+		pid: p.pid,
 		tid: p.tid,
 		injury: p.injury,
 		value: p.value,

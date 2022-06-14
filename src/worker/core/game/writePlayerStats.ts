@@ -170,6 +170,7 @@ const doInjury = async (
 
 	let ratingsLoss = false;
 	const gamesRemainingNormalized = bySport({
+		baseball: p2.injury.gamesRemaining / 2,
 		football: p2.injury.gamesRemaining * 3,
 		default: p2.injury.gamesRemaining,
 	});

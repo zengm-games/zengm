@@ -2298,7 +2298,12 @@ class GameSim {
 					probSwitch /= 4;
 				}
 			} else {
-				if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
+				if (this.inning < 4) {
+					// Early in the game, leave reliever in
+					probSwitch /= 16;
+				} else if (this.inning < 6) {
+					probSwitch /= 8;
+				} else if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
 					probSwitch *= 2;
 				}
 			}

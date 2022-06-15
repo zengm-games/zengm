@@ -1022,8 +1022,13 @@ class GameSim {
 
 		const catcher = this.team[this.d].playersInGameByPos.C.p;
 
-		// Ranges from 0 to 1, adjusted below
-		let prob = runner.compositeRating.speed - catcher.compositeRating.arm;
+		// Adjustment is to make low speed runners less likely to steal
+		const adjustedSpeed =
+			runner.compositeRating.speed *
+			helpers.sigmoid(runner.compositeRating.speed, 15, 0.3);
+
+		// Ranges from 0 to 1, adjusted below too
+		let prob = adjustedSpeed - catcher.compositeRating.arm;
 
 		if (baseIndex === 0) {
 			// Stealing 2nd

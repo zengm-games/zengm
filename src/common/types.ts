@@ -972,6 +972,7 @@ export type PlayerFeatWithoutKey = {
 	won: boolean;
 	score: string;
 	overtimes: number;
+	numPeriods: number;
 };
 
 export type PlayerFeat = PlayerFeatWithoutKey & {

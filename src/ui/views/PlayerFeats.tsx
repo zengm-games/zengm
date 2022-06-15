@@ -134,7 +134,7 @@ const PlayerFeats = ({
 				baseball: (
 					<p>
 						This lists all games where a player got {scaleMinimum(3)} home runs,{" "}
-						{scaleMinimum(5)} hits, {scaleMinimum(5)} RBIs, {scaleMinimum(4)}{" "}
+						{scaleMinimum(5)} hits, {scaleMinimum(6)} RBIs, {scaleMinimum(4)}{" "}
 						runs, {scaleMinimum(3)} stolen bases, {scaleMinimum(15)} strikeouts,
 						a no hitter, a shutout, or hit for the cycle
 						{quarterLengthFactor !== 1

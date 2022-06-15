@@ -3,6 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { isSport } from "../../common";
 
 const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {
@@ -60,10 +61,14 @@ const resultText = ({
 	const tl = tw === 0 ? 1 : 0;
 
 	let overtimeText = "";
-	if (overtimes === 1) {
-		overtimeText = " (OT)";
-	} else if (overtimes > 1) {
-		overtimeText = ` (${overtimes}OT)`;
+
+	// Ignore baseball, don't want to worry about numPeriods
+	if (!isSport("baseball")) {
+		if (overtimes === 1) {
+			overtimeText = " (OT)";
+		} else if (overtimes > 1) {
+			overtimeText = ` (${overtimes}OT)`;
+		}
 	}
 
 	return `${teamNames[tw]} ${score[tw]}, ${teamNames[tl]} ${score[tl]}${{

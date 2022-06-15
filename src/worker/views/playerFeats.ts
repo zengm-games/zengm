@@ -70,10 +70,12 @@ const updatePlayers = async (
 				diff = pts[0] - pts[1];
 			}
 
-			if (feat.overtimes === 1) {
-				feat.score += " (OT)";
-			} else if (feat.overtimes > 1) {
-				feat.score += ` (${feat.overtimes}OT)`;
+			const overtimeText = helpers.overtimeText(
+				feat.overtimes,
+				feat.numPeriods,
+			);
+			if (overtimeText !== "") {
+				feat.score += ` (${overtimeText})`;
 			}
 
 			let type: string;

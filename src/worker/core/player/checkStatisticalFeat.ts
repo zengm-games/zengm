@@ -125,6 +125,7 @@ const checkStatisticalFeat = (
 			won,
 			score: `${results.team[i].stat.pts}-${results.team[j].stat.pts}`,
 			overtimes: results.overtimes,
+			numPeriods: g.get("numPeriods"),
 		});
 	}
 };

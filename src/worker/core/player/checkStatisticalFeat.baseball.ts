@@ -5,8 +5,8 @@ import { PHASE } from "../../../common";
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = helpers.quarterLengthFactor();
 
+	const TWENTY = minFactor * 20;
 	const FIFTEEN = minFactor * 15;
-	const TEN = minFactor * 10;
 	const SIX = minFactor * 6;
 	const FIVE = minFactor * 5;
 	const FOUR = minFactor * 4;
@@ -51,9 +51,9 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		score += 20;
 	}
 
-	if (p.stat.soPit >= TEN) {
+	if (p.stat.soPit >= FIFTEEN) {
 		statArr.strikeouts = p.stat.soPit;
-		score += p.stat.soPit >= FIFTEEN ? 20 : 10;
+		score += p.stat.soPit >= TWENTY ? 20 : 10;
 	}
 
 	const noHitter = p.stat.cg > 0 && p.stat.sho > 0 && p.stat.hPit === 0;

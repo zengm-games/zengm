@@ -2278,52 +2278,52 @@ class GameSim {
 		}
 
 		const pitcher = t.playersInGameByPos.P.p;
-		const value =
-			fatigueFactor(
-				pitcher.pFatigue + pitcher.stat.pc,
-				pitcher.compositeRating.workhorsePitcher,
-			) * pitcher.compositeRating.pitcher;
-
-		// -1 to 1
+		const pitcherFatigueFactor = fatigueFactor(
+			pitcher.pFatigue + pitcher.stat.pc,
+			pitcher.compositeRating.workhorsePitcher,
+		);
+		const value = pitcherFatigueFactor * pitcher.compositeRating.pitcher;
 
 		const starterIsIn = pitcher.stat.gsPit > 0;
 
 		let probSwitch = 0;
 
 		if (betweenInnings) {
-			const valueDiff = candidate.value - value;
-			probSwitch = helpers.sigmoid(valueDiff, 10, 0);
+			probSwitch = 1.25 * (1 - pitcherFatigueFactor);
 
-			if (starterIsIn) {
-				if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 3) {
-					probSwitch /= 16;
-				} else if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 5) {
-					probSwitch /= 8;
-				} else if (pitcher.stat.outs <= NUM_OUTS_PER_INNING * 7) {
-					probSwitch /= 4;
-				}
-			} else {
-				if (this.inning < 4) {
-					// Early in the game, leave reliever in
-					probSwitch /= 16;
-				} else if (this.inning < 6) {
-					probSwitch /= 8;
-				} else if (pitcher.stat.outs >= NUM_OUTS_PER_INNING) {
-					probSwitch *= 2;
+			if (candidate.value < value) {
+				probSwitch *= 0.75;
+			}
+
+			if (this.inning === 9) {
+				probSwitch *= 2;
+			} else if (this.inning === 8) {
+				probSwitch *= 1.5;
+			} else if (pitcherFatigueFactor > 0.5 && this.inning <= 5) {
+				probSwitch = 0;
+			}
+
+			if (!starterIsIn && this.inning > 6) {
+				probSwitch += 0.3;
+
+				if (this.inning > 7) {
+					probSwitch += 0.4;
 				}
 			}
 		}
 
-		const runsPerOut =
-			pitcher.seasonStats.outs > 0
-				? pitcher.seasonStats.er / pitcher.seasonStats.outs
-				: 4 / 27;
-		const excessRuns = pitcher.stat.rPit - pitcher.stat.outs * runsPerOut;
-		if (excessRuns > (starterIsIn ? 2 : 0)) {
-			probSwitch += (starterIsIn ? 0.1 : 0.2) * excessRuns;
+		if (this.inning > 3) {
+			const runsPerOut =
+				pitcher.seasonStats.outs > 0
+					? pitcher.seasonStats.er / pitcher.seasonStats.outs
+					: 4 / 27;
+			const excessRuns = pitcher.stat.rPit - pitcher.stat.outs * runsPerOut;
+			if (excessRuns > (starterIsIn ? 3 : 1)) {
+				probSwitch += (starterIsIn ? 0.1 : 0.2) * excessRuns;
+			}
 		}
 
-		if (probSwitch > Math.random()) {
+		if (probSwitch > 0.8 || (probSwitch > 0.2 && probSwitch > Math.random())) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
 
 			this.playByPlay.logEvent({

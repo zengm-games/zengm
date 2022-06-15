@@ -4,7 +4,7 @@ export const fatigueFactor = (pFatigue: number, endu: number): number => {
 	const adjustedFatigue = Math.max(0, pFatigue - 30);
 
 	// How fast a player's fatigue factor drops is based on endu
-	const pitchesToDropTenPercent = 10 + 50 * endu;
+	const pitchesToDropTenPercent = 10 + 40 * endu;
 
 	const ratio = adjustedFatigue / pitchesToDropTenPercent;
 

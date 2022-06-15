@@ -135,7 +135,7 @@ const PlayerFeats = ({
 					<p>
 						This lists all games where a player got {scaleMinimum(3)} home runs,{" "}
 						{scaleMinimum(5)} hits, {scaleMinimum(5)} RBIs, {scaleMinimum(4)}{" "}
-						runs, {scaleMinimum(3)} stolen bases, {scaleMinimum(10)} strikeouts,
+						runs, {scaleMinimum(3)} stolen bases, {scaleMinimum(15)} strikeouts,
 						a no hitter, a shutout, or hit for the cycle
 						{quarterLengthFactor !== 1
 							? " (cutoffs are scaled due to a non-default period length)"

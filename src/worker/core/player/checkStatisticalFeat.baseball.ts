@@ -7,6 +7,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 
 	const TWENTY = minFactor * 20;
 	const FIFTEEN = minFactor * 15;
+	const EIGHT = minFactor * 8;
 	const SIX = minFactor * 6;
 	const FIVE = minFactor * 5;
 	const FOUR = minFactor * 4;
@@ -26,9 +27,9 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		score += p.stat.h >= SIX ? 20 : 10;
 	}
 
-	if (p.stat.rbi >= FIVE && p.stat.rbi >= 2) {
+	if (p.stat.rbi >= SIX && p.stat.rbi >= 2) {
 		statArr.RBIs = p.stat.rbi;
-		score += p.stat.rbi >= SIX ? 20 : 10;
+		score += p.stat.rbi >= EIGHT ? 20 : 10;
 	}
 
 	if (p.stat.r >= FOUR && p.stat.r >= 2) {

@@ -1098,13 +1098,14 @@ class GameSim {
 		let outcome: "ball" | "strike" | "contact";
 		let swinging = false;
 
+		const eyeAdjusted = 0.25 + 0.5 * batter.compositeRating.eye;
+		let contactAdjusted = 0.25 + 0.5 * batter.compositeRating.contactHitter;
+
 		let swingProbAdjustment = 0;
 		if (this.strikes === 2) {
-			swingProbAdjustment += 0.1;
+			swingProbAdjustment += 0.2;
+			contactAdjusted += 0.08;
 		}
-
-		const eyeAdjusted = 0.25 + 0.5 * batter.compositeRating.eye;
-		const contactAdjusted = 0.25 + 0.5 * batter.compositeRating.contactHitter;
 
 		if (ballOrStrike === "ball") {
 			const swingProb = pitchQuality - eyeAdjusted + swingProbAdjustment;
@@ -1196,7 +1197,7 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		return 0.21 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
+		return 0.2 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
 	getPErrorIfNotHit(
@@ -2309,6 +2310,10 @@ class GameSim {
 				if (this.inning > 7) {
 					probSwitch += 0.4;
 				}
+			}
+
+			if (starterIsIn && this.inning > this.numInnings) {
+				probSwitch *= 2;
 			}
 		}
 

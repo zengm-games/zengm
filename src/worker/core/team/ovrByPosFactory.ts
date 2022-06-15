@@ -26,9 +26,11 @@ const ovrByPosFactory =
 			};
 		}[],
 		{
+			fast,
 			onlyPos,
 			wholeRoster,
 		}: {
+			fast?: boolean;
 			onlyPos?: string;
 			wholeRoster?: boolean;
 		},
@@ -37,8 +39,9 @@ const ovrByPosFactory =
 			players.map(p => {
 				let pos;
 				if (
+					// This is slower than normal, so don't use in a tight loop like in getTeamOvrDiffs
 					bySport({
-						baseball: true,
+						baseball: !fast,
 						basketball: false,
 						football: false,
 						hockey: false,

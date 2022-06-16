@@ -108,7 +108,8 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	} else if (pos2 === "SP") {
 		r = defense;
 	} else if (pos2 === "DH") {
-		r = 0.95 * offense;
+		// Needs to have the same offensive weight as other positions, so roster auto sort can work
+		r = 0.7 * offense;
 	} else if (pos === "SS") {
 		r = 0.7 * offense + 0.315 * defense;
 	} else if (pos === "C") {

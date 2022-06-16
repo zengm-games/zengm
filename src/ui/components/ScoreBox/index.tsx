@@ -277,7 +277,14 @@ const ScoreBox = memo(
 							let teamName;
 							let rosterURL;
 							if (allStarGame) {
-								imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.png`;
+								imgURL = `https://zengm.com/files/logo-${
+									process.env.SPORT
+								}.${bySport({
+									baseball: "svg",
+									basketball: "png",
+									football: "png",
+									hockey: "png",
+								})}`;
 								teamName = small
 									? `AS${i === 0 ? 2 : 1}`
 									: `All-Star Team ${i === 0 ? 2 : 1}`;

@@ -1197,7 +1197,7 @@ class GameSim {
 		}
 		const fieldingFactor = 0.5 - numerator / denominator;
 
-		return 0.2 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
+		return 0.21 + 0.075 * batter.compositeRating.contactHitter + fieldingFactor;
 	}
 
 	getPErrorIfNotHit(

@@ -99,8 +99,8 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		},
 	},
 	contactHitter: {
-		ratings: ["con"],
-		weights: [1],
+		ratings: ["con", "hpw"],
+		weights: [1, 0.2],
 		skill: {
 			label: "Hc",
 			cutoff: 0.6,

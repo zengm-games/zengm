@@ -367,9 +367,9 @@ const JERSEYS = bySport({
 		"baseball3:hat": "Pinstripe jersey, solid hat",
 		"baseball3:hat2": "Pinstripe jersey, brim hat",
 		"baseball3:hat3": "Pinstripe jersey, multi hat",
-		"baseball4:hat": "White jersey, solid hat",
-		"baseball4:hat2": "White jersey, brim hat",
-		"baseball4:hat3": "White jersey, multi hat",
+		"baseball4:hat": "Secondary jersey, solid hat",
+		"baseball4:hat2": "Secondary jersey, brim hat",
+		"baseball4:hat3": "Secondary jersey, multi hat",
 	},
 	basketball: {
 		jersey: "Plain",

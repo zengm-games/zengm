@@ -997,7 +997,7 @@ class GameSim {
 	probHitByPitch() {
 		const p = this.team[this.d].playersInGameByPos.P.p;
 
-		return 0.01 * (1 - p.compositeRating.controlPitcher);
+		return 0.007 * (1 - p.compositeRating.controlPitcher);
 	}
 
 	probSteal(baseIndex: 0 | 1 | 2) {
@@ -1257,12 +1257,12 @@ class GameSim {
 				numBasesWeights = [1, 0, 0, 0];
 				extraBasesBySpeedOnly = true;
 			} else if (battedBallInfo.distance === "shallow") {
-				numBasesWeights = [1, 0.1, 0.001, 0];
+				numBasesWeights = [1, 0.1, 0.006, 0];
 				extraBasesBySpeedOnly = true;
 			} else if (battedBallInfo.distance === "normal") {
-				numBasesWeights = [0.2, 1, 0.01, 0.1];
+				numBasesWeights = [0.4, 0.4, 0.1, 0.1];
 			} else if (battedBallInfo.distance === "deep") {
-				numBasesWeights = [0, 0.1, 0.01, 1];
+				numBasesWeights = [0, 0.1, 0.1, 1.3];
 			} else {
 				numBasesWeights = [0, 0, 0, 1];
 			}
@@ -1271,9 +1271,9 @@ class GameSim {
 				numBasesWeights = [1, 0.1, 0, 0];
 				extraBasesBySpeedOnly = true;
 			} else if (battedBallInfo.speed === "normal") {
-				numBasesWeights = [0.2, 1, 0.001, 0];
+				numBasesWeights = [0.4, 0.6, 0.003, 0];
 			} else {
-				numBasesWeights = [0.1, 1, 0.01, 0.01];
+				numBasesWeights = [0.2, 0.7, 0.12, 0.06];
 			}
 		} else {
 			extraBasesBySpeedOnly = true;
@@ -1286,7 +1286,7 @@ class GameSim {
 			}
 		}
 
-		const speedFactor = 0.5 + batter.compositeRating.speed;
+		const speedFactor = 1.5 * batter.compositeRating.speed;
 
 		if (extraBasesBySpeedOnly) {
 			numBasesWeights[1] *= speedFactor;

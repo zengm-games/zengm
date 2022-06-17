@@ -37,7 +37,7 @@ const updateMeta = async (
 						if (g.get("userTids").length > 1) {
 							l.teamName = "Multi Team Mode";
 							l.teamRegion = "";
-							l.imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.png`;
+							l.imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
 						} else {
 							l.teamName = teamInfo.name;
 							l.teamRegion = teamInfo.region;

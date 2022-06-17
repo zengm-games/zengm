@@ -18,7 +18,7 @@ import type {
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
 import addFirstNameShort from "../util/addFirstNameShort";
-import { NUM_OUTS_PER_INNING } from "../core/GameSim.baseball";
+import { NUM_OUTS_PER_INNING } from "../../common/constants.baseball";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<

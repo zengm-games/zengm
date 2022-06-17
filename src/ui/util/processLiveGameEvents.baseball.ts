@@ -5,7 +5,10 @@ import type {
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
 import { DEFAULT_SPORT_STATE } from "../views/LiveGame";
-import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
+import {
+	NUM_OUTS_PER_INNING,
+	POS_NUMBERS_INVERSE,
+} from "../../common/constants.baseball";
 import type { PlayerInjury } from "../../common/types";
 
 export type BoxScorePlayer = {
@@ -276,6 +279,9 @@ export const getText = (
 					} and thrown out at 1st`;
 				}
 			} else if (event.result === "fieldersChoice") {
+				if (event.outs === NUM_OUTS_PER_INNING) {
+					text = "Fielder's choice,";
+				}
 				text = `He reaches ${getBaseName(
 					event.numBases,
 				)} on a fielder's choice`;
@@ -292,10 +298,20 @@ export const getText = (
 				)}.`;
 			}
 
-			const runnersText = formatRunners(getName, event.runners);
+			let runnersText;
+			if (
+				event.outs === NUM_OUTS_PER_INNING &&
+				event.runners.every(runner => !runner.out) &&
+				!event.outAtNextBase
+			) {
+				// If there are 3 outs and no runner is out, then the hitter was out, in which case we don't need any runnersText
+				runnersText = "";
+			} else {
+				runnersText = formatRunners(getName, event.runners);
+			}
 
 			if (runnersText) {
-				if (!text.endsWith("!") && !text.endsWith(".")) {
+				if (!text.endsWith("!") && !text.endsWith(".") && !text.endsWith(",")) {
 					text += ".";
 				}
 				text += ` ${runnersText}`;

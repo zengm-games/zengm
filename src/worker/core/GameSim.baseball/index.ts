@@ -1,5 +1,6 @@
 import { g, helpers, random } from "../../util";
 import {
+	NUM_OUTS_PER_INNING,
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball";
@@ -9,8 +10,6 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
-
-export const NUM_OUTS_PER_INNING = 3;
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

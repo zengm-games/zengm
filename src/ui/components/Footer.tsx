@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { AD_DIVS, bySport, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
+import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
 
 const footerLinks = [
 	{

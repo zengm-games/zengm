@@ -679,6 +679,7 @@ class GameSim {
 					// Fast runner might get one more base
 					if (
 						runner.to < 4 &&
+						// blockedBases index is 0/1/2, runner.to is one more, so this works
 						!blockedBases.has(runner.to as any) &&
 						((!isStealing && Math.random() < 0.1) ||
 							(isStealing && Math.random() < 0.5))
@@ -694,7 +695,7 @@ class GameSim {
 				) {
 					runner.to += 1;
 					runner.out = true;
-				} else if (!blockedBases.has(i)) {
+				} else if (!blockedBases.has((i + 1) as any)) {
 					let probSuccessIfAdvances: number = 0;
 
 					if (i === 2) {
@@ -823,6 +824,8 @@ class GameSim {
 				this.logOut();
 			}
 		}
+
+		console.log(runners, blockedBases);
 
 		const prevBasesByPid: Record<number, OccupiedBase> = {};
 		for (const base of this.bases) {

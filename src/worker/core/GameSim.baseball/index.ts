@@ -596,7 +596,7 @@ class GameSim {
 	}) {
 		const runners = this.getRunners();
 
-		if (this.outs >= 3) {
+		if (this.outs >= NUM_OUTS_PER_INNING) {
 			return runners;
 		}
 
@@ -824,8 +824,6 @@ class GameSim {
 				this.logOut();
 			}
 		}
-
-		console.log(runners, blockedBases);
 
 		const prevBasesByPid: Record<number, OccupiedBase> = {};
 		for (const base of this.bases) {
@@ -1315,7 +1313,7 @@ class GameSim {
 		// Figure out what defender fields the ball
 		const hitTo = this.getHitTo(battedBallInfo as any);
 
-		const hit =
+		let hit =
 			Math.random() < this.probHit(batter, pitcher, hitTo, battedBallInfo);
 
 		let result:
@@ -1337,6 +1335,7 @@ class GameSim {
 			numBases = this.getNumBases(batter, battedBallInfo);
 			if (hit || numBases === 4) {
 				result = "hit";
+				hit = true;
 			} else {
 				result = "error";
 			}

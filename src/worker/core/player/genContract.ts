@@ -41,7 +41,7 @@ const genContract = (
 	}
 
 	if (isSport("baseball")) {
-		factor *= 1.6;
+		factor *= 1.4;
 	}
 
 	let amount =

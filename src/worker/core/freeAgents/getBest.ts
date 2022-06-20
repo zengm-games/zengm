@@ -15,6 +15,8 @@ const getBest = <T extends PlayerWithoutKey>(
 	const maxRosterSize = g.get("maxRosterSize");
 	const minContract = g.get("minContract");
 	const salaryCap = g.get("salaryCap");
+	const salaryCapType = g.get("salaryCapType");
+	const numActiveTeams = g.get("numActiveTeams");
 
 	let playersSorted: T[];
 	if (DRAFT_BY_TEAM_OVR) {
@@ -46,9 +48,14 @@ const getBest = <T extends PlayerWithoutKey>(
 		playersSorted = playersAvailable;
 	}
 
+	const skipSalaryCapCheck =
+		salaryCapType === "none" && Math.random() < 2 / numActiveTeams;
+
 	for (const p of playersSorted) {
 		const salaryCapCheck =
-			payroll === undefined || p.contract.amount + payroll <= salaryCap;
+			payroll === undefined ||
+			skipSalaryCapCheck ||
+			p.contract.amount + payroll <= salaryCap;
 
 		const shouldAddPlayerNormal =
 			salaryCapCheck && p.contract.amount > minContract;

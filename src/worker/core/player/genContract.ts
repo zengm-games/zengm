@@ -25,7 +25,7 @@ const genContract = (
 	let factor2 = 1;
 
 	if (isSport("basketball")) {
-		factor *= 3.4 / 2;
+		factor *= 1.7;
 	}
 
 	if (isSport("football")) {
@@ -38,6 +38,10 @@ const genContract = (
 		} else if (ratings.pos === "K" || ratings.pos === "P") {
 			factor *= 0.25;
 		}
+	}
+
+	if (isSport("baseball")) {
+		factor *= 1.6;
 	}
 
 	let amount =

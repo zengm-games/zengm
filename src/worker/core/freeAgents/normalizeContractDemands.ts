@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, isSport, bySport } from "../../../common";
+import { PLAYER, PHASE, bySport } from "../../../common";
 import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -87,7 +87,7 @@ const normalizeContractDemands = async ({
 }) => {
 	// Higher means more unequal salaries
 	const PARAM = bySport({
-		baseball: 2.5,
+		baseball: 1,
 		basketball: 0.5 * (type === "newLeague" ? 5 : 15),
 		football: 1,
 		hockey: 2.5,
@@ -101,7 +101,15 @@ const normalizeContractDemands = async ({
 	let numRounds = DEFAULT_ROUNDS;
 
 	// 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula. Same if minContract and maxContract are the same, no point in doing auction.
-	if (isSport("football") || minContract === maxContract) {
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: false,
+		}) ||
+		minContract === maxContract
+	) {
 		numRounds = 0;
 	}
 

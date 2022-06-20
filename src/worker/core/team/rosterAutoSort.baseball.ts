@@ -136,7 +136,7 @@ export const getDepthPitchers = (
 ) => {
 	const pitchersSorted: number[] = [];
 
-	let playersRemaining = players;
+	let playersRemaining = [...players];
 
 	const addStarters = (numToAdd: number) => {
 		playersRemaining.sort(sortFunction("SP"));

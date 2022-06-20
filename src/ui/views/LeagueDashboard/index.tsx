@@ -16,6 +16,7 @@ const LeagueDashboard = ({
 	events,
 	leagueLeaders,
 	lost,
+	luxuryPayroll,
 	maxPlayoffSeed,
 	maxPlayoffSeedNoPlayIn,
 	messages,
@@ -34,6 +35,7 @@ const LeagueDashboard = ({
 	region,
 	revenue,
 	salaryCap,
+	salaryCapType,
 	season,
 	series,
 	seriesTitle,
@@ -163,7 +165,13 @@ const LeagueDashboard = ({
 										<br />
 										Payroll: {helpers.formatCurrency(payroll, "M")}
 										<br />
-										Salary Cap: {helpers.formatCurrency(salaryCap, "M")}
+										{salaryCapType === "none" ? (
+											<>
+												Luxury Tax: {helpers.formatCurrency(luxuryPayroll, "M")}
+											</>
+										) : (
+											<>Salary Cap: {helpers.formatCurrency(salaryCap, "M")}</>
+										)}
 										<br />
 										<a href={helpers.leagueUrl(["team_finances"])}>
 											» Team Finances

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { bySport, isSport } from "../../../common";
+import { bySport } from "../../../common";
 import { helpers, useLocalShallow } from "../../util";
 import { memo, ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";

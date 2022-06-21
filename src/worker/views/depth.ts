@@ -1,4 +1,4 @@
-import { team } from "../core";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import posRatings from "../../common/posRatings";
@@ -38,6 +38,22 @@ const baseballLineupStats = [
 	"slg",
 	"ops",
 ];
+
+export const buffOvrDH = (p: {
+	ratings: {
+		ovrs: {
+			DH: number;
+		};
+		pots: {
+			DH: number;
+		};
+	};
+}) => {
+	// For roster auto sort to work, it's best if DH is only the offensive component, so it is directly comparable to other positions. Otherwise you could wind up with a better offensive+defensive player winding up at DH, when you'd rather have him in the field. But then, displayed ovrs for DHs are really low. So adjust it with this.
+	for (const key of ["ovrs", "pots"] as const) {
+		p.ratings[key].DH = player.limitRating((0.95 / 0.7) * p.ratings[key].DH);
+	}
+};
 
 const stats = bySport<Record<string, string[]>>({
 	baseball: {
@@ -231,6 +247,12 @@ const updateDepth = async (
 				multiplePositionsWarning = `Some players are in the rotation at multiple positions, which may lead to erratic substitution patterns: ${playersAtMultiplePositions.join(
 					", ",
 				)}.`;
+			}
+		}
+
+		if (isSport("baseball")) {
+			for (const p of players2) {
+				buffOvrDH(p);
 			}
 		}
 

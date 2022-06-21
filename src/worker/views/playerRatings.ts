@@ -1,8 +1,9 @@
-import { bySport, PHASE, PLAYER, RATINGS } from "../../common";
+import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { buffOvrDH } from "./depth";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],
@@ -75,6 +76,12 @@ export const getPlayers = async (
 		}
 	} else if (tid !== undefined) {
 		players = players.filter(p => p.stats.tid === tid);
+	}
+
+	if (isSport("baseball")) {
+		for (const p of players) {
+			buffOvrDH(p);
+		}
 	}
 
 	return players;

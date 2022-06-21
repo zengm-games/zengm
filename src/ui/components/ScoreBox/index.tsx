@@ -130,23 +130,20 @@ const ScoreBox = memo(
 			game.teams[1].ovr !== undefined &&
 			(!small || !final)
 		) {
-			let spread;
+			const ovr0 = game.teams[0].ovr;
+			const ovr1 = game.teams[1].ovr;
+			let spread = bySport({
+				baseball: () => (1 / 10) * (ovr0 - ovr1) + 1 * homeCourtAdvantage,
 
-			if (isSport("basketball")) {
 				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 				// Default homeCourtAdvantage is 1
-				spread =
-					(15 / 50) * (game.teams[0].ovr - game.teams[1].ovr) +
-					3.3504 * homeCourtAdvantage;
-			} else if (isSport("hockey")) {
-				spread =
-					(1.8 / 100) * (game.teams[0].ovr - game.teams[1].ovr) +
-					0.25 * homeCourtAdvantage;
-			} else {
-				spread =
-					(3 / 10) * (game.teams[0].ovr - game.teams[1].ovr) +
-					3 * homeCourtAdvantage;
-			}
+				basketball: () =>
+					(15 / 50) * (ovr0 - ovr1) + 3.3504 * homeCourtAdvantage,
+
+				football: () => (3 / 10) * (ovr0 - ovr1) + 3 * homeCourtAdvantage,
+
+				hockey: () => (1.8 / 100) * (ovr0 - ovr1) + 0.25 * homeCourtAdvantage,
+			})();
 
 			// Adjust for game length
 			spread *=

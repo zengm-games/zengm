@@ -1,5 +1,5 @@
 import assert from "assert";
-import { assert as typeAssert, IsExact } from "conditional-type-checks";
+import { assert as typeAssert, type IsExact } from "conditional-type-checks";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
 import { idb } from "..";

@@ -2298,9 +2298,9 @@ class GameSim {
 			}
 
 			if (this.inning === 9) {
-				probSwitch *= 2;
+				probSwitch *= 3;
 			} else if (this.inning === 8) {
-				probSwitch *= 1.5;
+				probSwitch *= 2;
 			} else if (pitcherFatigueFactor > 0.5 && this.inning <= 5) {
 				probSwitch = 0;
 			}
@@ -2314,7 +2314,7 @@ class GameSim {
 			}
 
 			if (starterIsIn && this.inning > this.numInnings) {
-				probSwitch *= 2;
+				probSwitch *= 3;
 			}
 		}
 

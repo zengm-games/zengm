@@ -1,4 +1,4 @@
-import { idb } from "../db";
+import { getAll, idb } from "../db";
 import g from "./g";
 import type { Game } from "../../common/types";
 
@@ -49,10 +49,10 @@ const getProcessedGames = async ({
 	if (season === g.get("season")) {
 		games = await idb.cache.games.getAll();
 	} else {
-		games = await idb.league
-			.transaction("games")
-			.store.index("season")
-			.getAll(season);
+		games = await getAll(
+			idb.league.transaction("games").store.index("season"),
+			season,
+		);
 	}
 
 	// Iterate backwards, was more useful back when current season wasn't cached

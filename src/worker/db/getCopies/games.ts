@@ -12,10 +12,10 @@ const getCopies = async (
 ): Promise<Game[]> => {
 	if (season !== undefined) {
 		return mergeByPk(
-			await idb.league
-				.transaction("games")
-				.store.index("season")
-				.getAll(season),
+			await getAll(
+				idb.league.transaction("games").store.index("season"),
+				season,
+			),
 			(await idb.cache.games.getAll()).filter(gm => {
 				return gm.season === season;
 			}),

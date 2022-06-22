@@ -29,7 +29,7 @@ const displayFace = ({
 		overrides = {
 			teamColors: colors,
 			jersey: {
-				id: DEFAULT_JERSEY,
+				id: jersey,
 			},
 		};
 	}

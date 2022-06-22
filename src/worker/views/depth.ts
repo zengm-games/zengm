@@ -51,7 +51,7 @@ export const buffOvrDH = (p: {
 }) => {
 	// For roster auto sort to work, it's best if DH is only the offensive component, so it is directly comparable to other positions. Otherwise you could wind up with a better offensive+defensive player winding up at DH, when you'd rather have him in the field. But then, displayed ovrs for DHs are really low. So adjust it with this.
 	for (const key of ["ovrs", "pots"] as const) {
-		if (p.ratings[key] && p.ratings[key].DH !== undefined) {
+		if (p.ratings?.[key]?.DH !== undefined) {
 			p.ratings[key].DH = player.limitRating((0.95 / 0.7) * p.ratings[key].DH);
 		}
 	}

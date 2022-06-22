@@ -25,7 +25,11 @@ const handleAutoSortAll = async () => {
 const lowerCaseWords = (string: string) => {
 	return string
 		.split(" ")
-		.map(word => `${word.charAt(0).toLowerCase()}${word.slice(1)}`)
+		.map(word =>
+			isSport("baseball") && word === "DH)"
+				? "DH)"
+				: `${word.charAt(0).toLowerCase()}${word.slice(1)}`,
+		)
 		.join(" ");
 };
 

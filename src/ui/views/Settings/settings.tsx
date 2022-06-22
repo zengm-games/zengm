@@ -1522,7 +1522,7 @@ if (isSport("basketball")) {
 	settings.push({
 		category: "Game Simulation",
 		key: "dh",
-		name: "Designated Hitter",
+		name: "Designated Hitter (DH)",
 		godModeRequired: "existingLeagueOnly",
 		type: "custom",
 		descriptionLong: (

@@ -82,9 +82,14 @@ const assessPayrollMinLuxury = async () => {
 		}
 	}
 
+	const payrollCutoff =
+		g.get("salaryCapType") === "none"
+			? g.get("luxuryPayroll")
+			: g.get("salaryCap");
+
 	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
 	const payteams = Object.values(payrolls).filter(
-		x => x !== undefined && x <= g.get("salaryCap"),
+		x => x !== undefined && x <= payrollCutoff,
 	);
 
 	if (payteams.length > 0 && collectedTax > 0) {
@@ -97,7 +102,7 @@ const assessPayrollMinLuxury = async () => {
 				throw new Error(`No payroll found for team ${tid}`);
 			}
 
-			if (payroll <= g.get("salaryCap")) {
+			if (payroll <= payrollCutoff) {
 				teamSeason.revenues.luxuryTaxShare = {
 					amount: distribute,
 					rank: defaultRank,
@@ -112,7 +117,7 @@ const assessPayrollMinLuxury = async () => {
 						distribute / 1000,
 						"M",
 					)} for having a payroll under ${helpers.formatCurrency(
-						g.get("salaryCap") / 1000,
+						payrollCutoff / 1000,
 						"M",
 					)}.`,
 					tids: [tid],

@@ -82,8 +82,8 @@ export const getDepthDefense = (
 	players: {
 		pid: number;
 		ratings: {
-			ovr: number;
 			ovrs: Record<string, number>;
+			pos: string;
 		};
 	}[],
 	dh: boolean,
@@ -106,7 +106,15 @@ export const getDepthDefense = (
 	}
 
 	playersRemaining.sort((a, b) => {
-		const diff = b.ratings.ovr - a.ratings.ovr;
+		const bOvr =
+			b.ratings.pos === "RP" || b.ratings.pos === "SP"
+				? b.ratings.ovrs.LF
+				: b.ratings.ovrs[b.ratings.pos];
+		const aOvr =
+			a.ratings.pos === "RP" || a.ratings.pos === "SP"
+				? a.ratings.ovrs.LF
+				: a.ratings.ovrs[a.ratings.pos];
+		const diff = bOvr - aOvr;
 		if (diff === 0) {
 			// Deterministic order
 			return b.pid - a.pid;

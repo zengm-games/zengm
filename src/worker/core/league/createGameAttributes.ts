@@ -64,9 +64,13 @@ const createGameAttributes = async (
 				(gameAttributes as any)[key] = value;
 			}
 
-			// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
-			// @ts-expect-error
-			if (Array.isArray(value) && value.length > 0 && value[0].start === null) {
+			// Hack to replace null with -Infinity, cause Infinity is not in JSON spec. ? after value[0] is in case first entry is null/undefined, which could happen for riggedLottery and maybe others
+			if (
+				Array.isArray(value) &&
+				value.length > 0 &&
+				// @ts-expect-error
+				value[0]?.start === null
+			) {
 				// @ts-expect-error
 				value[0].start = -Infinity;
 			}

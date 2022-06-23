@@ -25,16 +25,6 @@ const score = (p: PlayerFiltered, pos?: Position) => {
 	return tempScore;
 };
 
-const sortFunction =
-	(pos?: Position) => (a: PlayerFiltered, b: PlayerFiltered) => {
-		const diff = score(b, pos) - score(a, pos);
-		if (diff === 0) {
-			// Deterministic order
-			return b.pid - a.pid;
-		}
-		return diff;
-	};
-
 const DEF_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"] as const;
 const DEF_POSITIONS_DH = [
 	"C",
@@ -92,6 +82,7 @@ export const getDepthDefense = (
 	players: {
 		pid: number;
 		ratings: {
+			ovr: number;
 			ovrs: Record<string, number>;
 		};
 	}[],
@@ -114,7 +105,14 @@ export const getDepthDefense = (
 		}
 	}
 
-	playersRemaining.sort(sortFunction());
+	playersRemaining.sort((a, b) => {
+		const diff = b.ratings.ovr - a.ratings.ovr;
+		if (diff === 0) {
+			// Deterministic order
+			return b.pid - a.pid;
+		}
+		return diff;
+	});
 	defensivePlayersSorted.push(...playersRemaining);
 
 	// Try swappinng players to see if that improves the total ovr
@@ -204,7 +202,15 @@ export const getDepthPitchers = (
 	if (closer !== undefined) {
 		pitchersSorted.push(closer);
 	}
-	playersRemaining.sort(sortFunction("RP"));
+	playersRemaining.sort((a, b) => {
+		// Inlining this improves performance significantly, for some reason
+		const diff = b.ratings.ovrs.RP - a.ratings.ovrs.RP;
+		if (diff === 0) {
+			// Deterministic order
+			return b.pid - a.pid;
+		}
+		return diff;
+	});
 	pitchersSorted.push(...playersRemaining.map(p => p.pid));
 
 	return pitchersSorted;

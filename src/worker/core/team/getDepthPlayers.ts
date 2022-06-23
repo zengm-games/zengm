@@ -20,7 +20,7 @@ const getDepthPlayers = <
 		(obj, pos: string) => {
 			// p.id is for call from play.ts
 
-			if (isSport("baseball") && pos === "L") {
+			if (isSport("baseball") && (pos === "L" || pos === "LP")) {
 				// Lineup IDs are references to positions
 
 				return obj;
@@ -52,6 +52,8 @@ const getDepthPlayers = <
 		const lineupKeys = ["L", "LP"] as const;
 
 		for (const key of lineupKeys) {
+			const defenseKey = key === "L" ? "D" : "DP";
+
 			const DEFAULT_LINEUP = key === "L" ? range(0, 9) : range(-1, 8);
 
 			let lineup = (depth as Record<string, number[]>)[key];
@@ -74,7 +76,7 @@ const getDepthPlayers = <
 
 				if (depths.D[i]) {
 					// IMPORTANT - maintain referential integrity
-					return Object.assign(depths.D[i], {
+					return Object.assign(depths[defenseKey][i], {
 						lineupPos: POSITIONS[2 + i],
 						lineupIndex: i,
 					});

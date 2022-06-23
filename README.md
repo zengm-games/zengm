@@ -1,4 +1,4 @@
-# Basketball GM, Football GM, and ZenGM Hockey
+# Basketball GM, Football GM, ZenGM Baseball, and ZenGM Hockey
 
 Single-player sports simulation games. Make trades, set rosters, draft players,
 and try to build the next dynasty, all from within your web browser. The games
@@ -16,6 +16,7 @@ Discussion:
 
 * <https://www.reddit.com/r/BasketballGM/>
 * <https://www.reddit.com/r/Football_GM/>
+* <https://www.reddit.com/r/ZenGMBaseball/>
 * <https://www.reddit.com/r/ZenGMHockey/>
 * <https://zengm.com/discord/>
 
@@ -72,8 +73,8 @@ which will start the server and watch JS and CSS files for changes and
 recompile. This simply runs both `yarn run start` and `yarn run watch` together,
 which alternatively can be run separately if you wish.
 
-By default this will build the basketball version of the game. For football or
-hockey, set the SPORT environment variable to "football" or "hockey", like:
+By default this will build the basketball version of the game. For other sports,
+set the SPORT environment variable to "football", "baseball", or "hockey", like:
 
     SPORT=football yarn run start-watch
 

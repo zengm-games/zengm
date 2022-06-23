@@ -63,14 +63,23 @@ export const getDepthDefense = (
 ) => {
 	const defensivePlayersSorted: typeof players = [];
 
-	let playersRemaining = [...players];
+	const playersRemaining = [...players];
 
 	const defPositions = dh ? DEF_POSITIONS_DH : DEF_POSITIONS;
 
 	for (const scorePos of defPositions) {
-		playersRemaining.sort(sortFunction(scorePos));
-		defensivePlayersSorted.push(playersRemaining[0]);
-		playersRemaining = playersRemaining.slice(1);
+		let maxScore = -Infinity;
+		let maxIndex = 0;
+		for (let i = 0; i < playersRemaining.length; i++) {
+			const p = playersRemaining[i];
+			const pScore = score(p, scorePos);
+			if (pScore > maxScore) {
+				maxIndex = i;
+				maxScore = pScore;
+			}
+		}
+		defensivePlayersSorted.push(playersRemaining[maxIndex]);
+		playersRemaining.splice(maxIndex, 1);
 		if (playersRemaining.length === 0) {
 			break;
 		}

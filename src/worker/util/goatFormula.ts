@@ -57,7 +57,7 @@ const MIN_GP_SEASON = bySport({
 	hockey: 10,
 });
 const MIN_GP_TOTAL = bySport({
-	baseball: 100,
+	baseball: 50,
 	basketball: 50,
 	football: 10,
 	hockey: 50,

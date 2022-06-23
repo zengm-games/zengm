@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../../common";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
@@ -94,13 +94,19 @@ const moodInfo = async (
 		// Decrease that 0.7 to make players less likely to be at extremes (1% or 99%) in mood
 		probWilling = 1 / (1 + Math.exp(-0.7 * sumAndStuff));
 
-		const rand = random.uniformSeed(
+		let seed =
 			tid +
-				p.pid +
-				p.stats.length +
-				p.ratings.at(-1).ovr +
-				(p.stats.length > 0 ? p.stats.at(-1).min : 0),
-		);
+			p.pid +
+			p.stats.length +
+			p.ratings.at(-1).ovr +
+			(p.stats.at(-1)?.min ?? 0);
+
+		if (isSport("baseball")) {
+			// Since min is 0 in baseball
+			seed += (p.stats.at(-1)?.pa ?? 0) + (p.stats.at(-1)?.outs ?? 0);
+		}
+
+		const rand = random.uniformSeed(seed);
 		willing = rand < probWilling;
 	}
 

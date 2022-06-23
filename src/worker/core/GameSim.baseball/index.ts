@@ -70,22 +70,18 @@ class GameSim {
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
+		dh,
 	}: {
 		gid: number;
 		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
+		dh: boolean;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.day = day;
-
-		const dhSetting = g.get("dh");
-		const cidHome = teams[0].cid;
-		const dh =
-			dhSetting === "all" ||
-			(Array.isArray(dhSetting) && dhSetting.includes(cidHome));
 
 		// If a team plays twice in a day, this needs to be a deep copy
 		this.team = [new Team(teams[0], dh), new Team(teams[1], dh)];

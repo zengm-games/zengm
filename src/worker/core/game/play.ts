@@ -318,10 +318,19 @@ const play = async (
 		homeCourtFactor?: number;
 		disableHomeCourtAdvantage?: boolean;
 	}) => {
+		let dh;
+		if (isSport("baseball")) {
+			const dhSetting = g.get("dh");
+			const cidHome = teams[0].cid;
+			dh =
+				dhSetting === "all" ||
+				(Array.isArray(dhSetting) && dhSetting.includes(cidHome));
+		}
+
 		// In FBGM, need to do depth chart generation here (after deepCopy in forceWin case) to maintain referential integrity of players (same object in depth and team).
 		for (const t of teams) {
 			if (t.depth !== undefined) {
-				t.depth = team.getDepthPlayers(t.depth, t.player);
+				t.depth = team.getDepthPlayers(t.depth, t.player, dh);
 			}
 		}
 
@@ -332,6 +341,9 @@ const play = async (
 			doPlayByPlay,
 			homeCourtFactor,
 			disableHomeCourtAdvantage,
+
+			// @ts-expect-error
+			dh,
 		}).run();
 	};
 

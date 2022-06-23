@@ -10,6 +10,7 @@ const getDepthPlayers = <
 >(
 	depth: Team["depth"],
 	players: T[],
+	dh?: boolean,
 ): Record<string, T[]> => {
 	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
@@ -38,6 +39,15 @@ const getDepthPlayers = <
 					),
 				)
 				.filter(p => p !== undefined);
+
+			// Break referential integrity between D and DP, otherwise linupIndex and lineupPos get overwritten. But do it for the one we're not interested in, based on DH setting. This is needed for game sim to record stuff correctly.
+			if (
+				isSport("baseball") &&
+				((dh && pos === "DP") || (!dh && pos === "D"))
+			) {
+				// @ts-expect-error
+				obj[pos] = obj[pos].map(p => ({ ...p }));
+			}
 
 			return obj;
 		},

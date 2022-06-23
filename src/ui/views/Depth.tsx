@@ -370,14 +370,6 @@ const Depth = ({
 				onChange={async ({ oldIndex, newIndex }) => {
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);
-					console.log(
-						"onChange",
-						pids,
-						oldIndex,
-						newIndex,
-						newSortedPids,
-						getIDsToSave(newSortedPids),
-					);
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderDepthDrag", {
 						pos,
@@ -463,7 +455,7 @@ const Depth = ({
 							<td
 								className={classNames({
 									"text-danger":
-										isSport("baseball") && p.lineupPos
+										isSport("baseball") && p.lineupPos !== undefined
 											? p.pid >= 0 &&
 											  p.lineupPos !== "DH" &&
 											  p.lineupPos !== p.ratings.pos
@@ -478,7 +470,7 @@ const Depth = ({
 											  !positions.includes(p.ratings.pos),
 								})}
 							>
-								{isSport("baseball") && pos === "D"
+								{isSport("baseball") && (pos === "D" || pos === "DP")
 									? p.ratings.pos
 									: p.pid >= 0
 									? lineupPos

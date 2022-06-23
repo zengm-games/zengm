@@ -126,6 +126,7 @@ class Team<DH extends boolean> {
 		const playersInGame: Team<DH>["playersInGame"] = {};
 
 		const lineup = this.dh ? this.t.depth.L : this.t.depth.LP;
+		const defense = this.dh ? this.t.depth.D : this.t.depth.DP;
 
 		// -1 if not found
 		const pitcherBattingOrder = lineup.findIndex(p => p.id === -1);
@@ -141,7 +142,7 @@ class Team<DH extends boolean> {
 		const numPositionPlayers = this.dh
 			? NUM_BATTERS_PER_SIDE
 			: NUM_BATTERS_PER_SIDE - 1;
-		const bench = this.t.depth.D.slice(numPositionPlayers);
+		const bench = defense.slice(numPositionPlayers);
 		for (let i = 0; i < numPositionPlayers; i++) {
 			let p = lineup[i];
 			if (!p) {

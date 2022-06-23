@@ -16,9 +16,8 @@ const score = (p: PlayerFiltered, pos?: Position) => {
 		if (pos === "C") {
 			// More likely to put actual catcher at catcher
 			tempScore += 25;
-		} else if (pos === "RP") {
+		} else if (pos !== "RP") {
 			// Relief pitcher, who cares about "right" position
-		} else {
 			tempScore += 10;
 		}
 	}
@@ -52,6 +51,43 @@ const NUM_STARTERS = 5;
 
 export const lineupSort = (ovrDH: number, spd: number) => ovrDH + 0.2 * spd;
 
+const findMaxBy = <T extends unknown>(
+	records: T[],
+	count: number,
+	getScore: (record: T) => number,
+) => {
+	const output: {
+		index: number;
+		record: T;
+		score: number;
+	}[] = [];
+
+	const addToOutput = (x: typeof output[number]) => {
+		for (let i = 0; i < count - 1; i++) {
+			if (output[i] === undefined || output[i].score < x.score) {
+				output[i] = x;
+				return;
+			}
+		}
+
+		output[count - 1] = x;
+	};
+
+	for (let i = 0; i < records.length; i++) {
+		const record = records[i];
+		const score = getScore(record);
+		if (output.length < count || score > output[count - 1].score) {
+			addToOutput({
+				index: i,
+				record,
+				score,
+			});
+		}
+	}
+
+	return output.slice(0, count);
+};
+
 export const getDepthDefense = (
 	players: {
 		pid: number;
@@ -68,16 +104,9 @@ export const getDepthDefense = (
 	const defPositions = dh ? DEF_POSITIONS_DH : DEF_POSITIONS;
 
 	for (const scorePos of defPositions) {
-		let maxScore = -Infinity;
-		let maxIndex = 0;
-		for (let i = 0; i < playersRemaining.length; i++) {
-			const p = playersRemaining[i];
-			const pScore = score(p, scorePos);
-			if (pScore > maxScore) {
-				maxIndex = i;
-				maxScore = pScore;
-			}
-		}
+		const maxIndex = findMaxBy(playersRemaining, 1, p => score(p, scorePos))[0]
+			.index;
+
 		defensivePlayersSorted.push(playersRemaining[maxIndex]);
 		playersRemaining.splice(maxIndex, 1);
 		if (playersRemaining.length === 0) {
@@ -147,32 +176,33 @@ export const getDepthPitchers = (
 
 	let playersRemaining = [...players];
 
-	const addStarters = (numToAdd: number) => {
-		playersRemaining.sort(sortFunction("SP"));
-		for (let i = 0; i < numToAdd; i++) {
-			const p = playersRemaining[i];
-			if (!p) {
-				break;
-			}
-			pitchersSorted.push(p.pid);
+	const getTopByPos = (pos: "SP" | "RP", numToAdd: number) => {
+		const pids = [];
+		const indexes = new Set();
+		const records = findMaxBy(playersRemaining, numToAdd, p => score(p, pos));
+		for (const record of records) {
+			pids.push(playersRemaining[record.index].pid);
+			indexes.add(record.index);
 		}
-		playersRemaining = playersRemaining.slice(numToAdd);
+
+		// Can't use splice if there are multiple to remove
+		playersRemaining = playersRemaining.filter((p, i) => !indexes.has(i));
+
+		return pids;
 	};
 
 	// Top 3 starters
-	addStarters(3);
+	pitchersSorted.push(...getTopByPos("SP", 3));
 
 	// Closer
-	playersRemaining.sort(sortFunction("RP"));
-	const closer = playersRemaining[0];
-	playersRemaining = playersRemaining.slice(1);
+	const closer = getTopByPos("RP", 1)[0];
 
 	// Remaining 2 starters
-	addStarters(2);
+	pitchersSorted.push(...getTopByPos("SP", 2));
 
 	// Everybody else
-	if (closer) {
-		pitchersSorted.push(closer.pid);
+	if (closer !== undefined) {
+		pitchersSorted.push(closer);
 	}
 	playersRemaining.sort(sortFunction("RP"));
 	pitchersSorted.push(...playersRemaining.map(p => p.pid));

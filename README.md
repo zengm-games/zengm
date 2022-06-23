@@ -1,4 +1,4 @@
-# Basketball GM, Football GM, and ZenGM Hockey
+# Basketball GM, Football GM, ZenGM Hockey and ZenGM Baseball
 
 Single-player sports simulation games. Make trades, set rosters, draft players,
 and try to build the next dynasty, all from within your web browser. The games
@@ -17,6 +17,7 @@ Discussion:
 * <https://www.reddit.com/r/BasketballGM/>
 * <https://www.reddit.com/r/Football_GM/>
 * <https://www.reddit.com/r/ZenGMHockey/>
+* <https://www.reddit.com/r/ZenGMBaseball/>
 * <https://zengm.com/discord/>
 
 **This project is NOT open source, but it is also not completely closed. Please

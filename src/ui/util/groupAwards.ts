@@ -124,6 +124,7 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 		if (awardsGroupedTemp[type] && !seen.has(type)) {
 			awardsGrouped.push({
 				type,
+				long: originalType,
 				count: awardsGroupedTemp[type].length,
 				seasons: helpers.yearRanges(awardsGroupedTemp[type].map(a => a.season)),
 			});
@@ -137,6 +138,7 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 		if (!seen.has(type)) {
 			awardsGrouped.push({
 				type,
+				long: originalType,
 				count: awardsGroupedTemp[type].length,
 				seasons: helpers.yearRanges(awardsGroupedTemp[type].map(a => a.season)),
 			});

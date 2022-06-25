@@ -92,7 +92,7 @@ const AwardsAndChamp = ({
 							/>
 						</p>
 						{awards.sfmvp ? (
-							<p>
+							<div className="mb-3">
 								{AWARD_NAMES.sfmvp}s:
 								{(awards.sfmvp as any[]).map((p, i) => (
 									<div key={i}>
@@ -104,7 +104,7 @@ const AwardsAndChamp = ({
 										/>
 									</div>
 								))}
-							</p>
+							</div>
 						) : null}
 					</div>
 				) : (

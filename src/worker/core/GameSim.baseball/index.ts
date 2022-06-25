@@ -883,14 +883,15 @@ class GameSim {
 		const catcher = this.team[this.d].playersInGameByPos.C.p;
 
 		// Stealing 2nd is easier than stealing 3rd
-		const baseline = fromBaseIndex === 0 ? 0.5 : 0.65;
+		const baseline = fromBaseIndex === 0 ? 0.4 : 0.55;
 
-		return (
+		const prob =
 			baseline +
-			(0.25 * catcher.compositeRating.arm +
-				catcher.compositeRating.catcherDefense) -
-			0.5 * p.compositeRating.speed
-		);
+			0.25 *
+				(catcher.compositeRating.arm + catcher.compositeRating.catcherDefense) -
+			0.5 * p.compositeRating.speed;
+
+		return prob;
 	}
 
 	processSteals(stealing: [boolean, boolean, boolean]) {
@@ -933,8 +934,8 @@ class GameSim {
 			const p = occupiedBase.p;
 			this.bases[i] = undefined;
 
-			const success = throwAt === i && thrownOut;
-			const out = !success;
+			const out = throwAt === i && thrownOut;
+			const success = !out;
 
 			if (out) {
 				this.recordStat(this.o, p, "cs");

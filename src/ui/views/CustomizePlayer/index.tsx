@@ -181,7 +181,6 @@ const copyValidValues = (
 		const draftInts = ["year", "round", "pick", "tid"] as const;
 		for (const key of draftInts) {
 			const int = parseInt(source.draft[key] as any);
-			console.log(key, int);
 			if (!Number.isNaN(int)) {
 				target.draft[key] = int;
 			}

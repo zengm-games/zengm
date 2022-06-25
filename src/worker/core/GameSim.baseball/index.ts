@@ -23,6 +23,8 @@ type OccupiedBase = {
 	reachedOnError: boolean;
 };
 
+// self.hrTypes = {};
+
 class GameSim {
 	id: number;
 
@@ -338,7 +340,7 @@ class GameSim {
 				speed = random.choice(["soft", "normal", "hard"] as const, [
 					0.5,
 					0.5,
-					(0.9 * (p.compositeRating.powerHitter + 0.5)) / 2 -
+					(0.5 * (p.compositeRating.powerHitter + 0.5)) / 2 -
 						(pitchQuality - 0.5) / 4,
 				]);
 				this.playByPlay.logEvent({
@@ -362,8 +364,8 @@ class GameSim {
 						0.5,
 						(0.9 * (p.compositeRating.powerHitter + 0.5)) / 2 -
 							(pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter * 0.7 - (pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter / 6 - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter / 5 - (pitchQuality - 0.5) / 8,
+						p.compositeRating.powerHitter / 12 - (pitchQuality - 0.5) / 8,
 					],
 				);
 				this.playByPlay.logEvent({
@@ -1257,9 +1259,9 @@ class GameSim {
 				numBasesWeights = [1, 0.1, 0.006, 0];
 				extraBasesBySpeedOnly = true;
 			} else if (battedBallInfo.distance === "normal") {
-				numBasesWeights = [0.4, 0.4, 0.1, 0.1];
+				numBasesWeights = [0.4, 0.4, 0.1, 0.03];
 			} else if (battedBallInfo.distance === "deep") {
-				numBasesWeights = [0, 0.1, 0.1, 1.3];
+				numBasesWeights = [0, 0.1, 0.1, 0.5];
 			} else {
 				numBasesWeights = [0, 0, 0, 1];
 			}
@@ -1299,7 +1301,17 @@ class GameSim {
 			numBasesWeights[2] *= speedFactor;
 		}
 
-		return random.choice([1, 2, 3, 4] as const, numBasesWeights);
+		const numBases = random.choice([1, 2, 3, 4] as const, numBasesWeights);
+
+		/*if (numBases === 4) {
+			const type = `${battedBallInfo.type}-${battedBallInfo.speed ?? battedBallInfo.distance}`;
+			if (!self.hrTypes[type]) {
+				self.hrTypes[type] = 0;
+			}
+			self.hrTypes[type] += 1;
+		}*/
+
+		return numBases;
 	}
 
 	getBattedBallOutcome(
@@ -1310,7 +1322,9 @@ class GameSim {
 		// Figure out what defender fields the ball
 		const hitTo = this.getHitTo(battedBallInfo as any);
 
+		let numBases = this.getNumBases(batter, battedBallInfo);
 		let hit =
+			numBases === 4 ||
 			Math.random() < this.probHit(batter, pitcher, hitTo, battedBallInfo);
 
 		let result:
@@ -1321,7 +1335,6 @@ class GameSim {
 			| "fieldersChoice"
 			| "doublePlay";
 		const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
-		let numBases: 1 | 2 | 3 | 4;
 		let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
 
 		const pErrorIfNotHit = hit
@@ -1329,8 +1342,7 @@ class GameSim {
 			: this.getPErrorIfNotHit(battedBallInfo.type as any, hitTo);
 
 		if (hit || pErrorIfNotHit) {
-			numBases = this.getNumBases(batter, battedBallInfo);
-			if (hit || numBases === 4) {
+			if (hit) {
 				result = "hit";
 				hit = true;
 			} else {

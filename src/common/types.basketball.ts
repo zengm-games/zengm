@@ -71,7 +71,7 @@ export type AwardPlayerDefense = {
 
 export type Awards<
 	PlayerOverride = AwardPlayer,
-	PlayerDefenseOverride = AwardPlayerDefense
+	PlayerDefenseOverride = AwardPlayerDefense,
 > = {
 	season: number;
 	bestRecord: AwardTeam;
@@ -116,6 +116,7 @@ export type Awards<
 		},
 	];
 	finalsMvp: PlayerOverride | undefined;
+	sfmvp: PlayerOverride[] | undefined;
 };
 
 export type PlayerRatings = {

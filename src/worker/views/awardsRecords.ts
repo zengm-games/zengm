@@ -85,6 +85,10 @@ const optionsTmp = bySport({
 			key: "finals_mvp",
 		},
 		{
+			val: "Semifinals MVP",
+			key: "sfmvp",
+		},
+		{
 			val: "Defensive Player of the Year",
 			key: "dpoy",
 		},

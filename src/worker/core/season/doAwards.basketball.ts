@@ -11,7 +11,7 @@ import {
 } from "./awards";
 import { idb } from "../../db";
 import { defaultGameAttributes, g, helpers } from "../../util";
-import type { Conditions, PlayerFiltered } from "../../../common/types";
+import type { Conditions, Game, PlayerFiltered } from "../../../common/types";
 import type {
 	AwardPlayer,
 	AwardPlayerDefense,
@@ -86,29 +86,13 @@ const makeTeams = <T>(
 	];
 };
 
-const getRealFinalsMvp = async (
-	players: PlayerFiltered[],
-	champTid: number,
-): Promise<AwardPlayer | void> => {
-	const games = await idb.cache.games.getAll();
+const getPlayoffSeriesMVP = (players: PlayerFiltered[], games: Game[]) => {
 	if (games.length === 0) {
 		return;
 	}
 
-	// Last game of the season will have the two finals teams
-	const finalsTids = games.at(-1)!.teams.map(t => t.tid);
-
-	// Get all playoff games between those two teams - that will be all finals games
-	const finalsGames = games.filter(
-		game =>
-			game.playoffs &&
-			finalsTids.includes(game.teams[0].tid) &&
-			finalsTids.includes(game.teams[1].tid),
-	);
-
-	if (finalsGames.length === 0) {
-		return;
-	}
+	// Champ is winner of the last game in the series
+	const wonSeriesTid = games.at(-1)!.won.tid;
 
 	// Calculate sum of game scores for each player
 	const playerInfos: Map<
@@ -124,7 +108,7 @@ const getRealFinalsMvp = async (
 		}
 	> = new Map();
 
-	for (const game of finalsGames) {
+	for (const game of games) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
 				const info = playerInfos.get(p.pid) || {
@@ -138,7 +122,7 @@ const getRealFinalsMvp = async (
 				};
 
 				// 75% bonus for the winning team
-				const factor = t.tid === champTid ? 1.75 : 1;
+				const factor = t.tid === wonSeriesTid ? 1.75 : 1;
 				info.score += factor * helpers.gameScore(p);
 				info.pts += p.pts;
 				info.trb += p.drb + p.orb;
@@ -174,6 +158,53 @@ const getRealFinalsMvp = async (
 			ast: playerArray[0].ast / playerArray[0].gp,
 		};
 	}
+};
+
+const getRealFinalsMvp = async (
+	players: PlayerFiltered[],
+): Promise<AwardPlayer | undefined> => {
+	const games = await idb.cache.games.getAll();
+	if (games.length === 0) {
+		return;
+	}
+
+	// Last game of the season will have the two finals teams
+	const finalsTids = games.at(-1)!.teams.map(t => t.tid);
+
+	// Get all playoff games between those two teams - that will be all finals games
+	const finalsGames = games.filter(
+		game =>
+			game.playoffs &&
+			finalsTids.includes(game.teams[0].tid) &&
+			finalsTids.includes(game.teams[1].tid),
+	);
+
+	return getPlayoffSeriesMVP(players, finalsGames);
+};
+
+const getSemiFinalsMvp = async (
+	players: PlayerFiltered[],
+): Promise<AwardPlayer[]> => {
+	const games = await idb.cache.games.getAll();
+
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (!playoffSeries || playoffSeries.series.length < 2) {
+		return [];
+	}
+	const semifinalsSeries = playoffSeries.series.at(-2)!;
+
+	const mvps = [];
+
+	for (const series of semifinalsSeries) {
+		const seriesGames = games.filter(game => series.gids?.includes(game.gid));
+		console.log("seriesGames", seriesGames);
+		const mvp = getPlayoffSeriesMVP(players, seriesGames);
+		if (mvp) {
+			mvps.push(mvp);
+		}
+	}
+
+	return mvps;
 };
 
 // For mvpScore, smoyScore, royScore, and dpoyScore, @nicidob did some kind of regression against NBA data to find these coefficients
@@ -440,9 +471,11 @@ const doAwards = async (conditions: Conditions) => {
 			g.get("numGamesPlayoffSeries", "current").length,
 	);
 
+	const noPlayoffs = g.get("numGamesPlayoffSeries", "current").length === 0;
+
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		finalsMvp = await getRealFinalsMvp(players, champTid);
+		finalsMvp = await getRealFinalsMvp(players);
 
 		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
 		if (finalsMvp === undefined) {
@@ -450,8 +483,6 @@ const doAwards = async (conditions: Conditions) => {
 				"playersByTid",
 				champTid,
 			);
-
-			const noPlayoffs = g.get("numGamesPlayoffSeries", "current").length === 0;
 
 			const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
 				// Only the champions, only playoff stats
@@ -481,6 +512,11 @@ const doAwards = async (conditions: Conditions) => {
 		}
 	}
 
+	let sfmvp;
+	if (!noPlayoffs) {
+		sfmvp = await getSemiFinalsMvp(players);
+	}
+
 	const awards: Awards = {
 		bestRecord,
 		bestRecordConfs,
@@ -490,6 +526,7 @@ const doAwards = async (conditions: Conditions) => {
 		mip,
 		roy,
 		finalsMvp,
+		sfmvp,
 		allLeague,
 		allDefensive,
 		allRookie,

@@ -517,6 +517,7 @@ const AWARD_NAMES = {
 	dpoy: "Defensive Player of the Year",
 	mip: "Most Improved Player",
 	finalsMvp: "Finals MVP",
+	sfmvp: "Semifinals MVP",
 	allLeague: "All-League",
 	allDefensive: "All-Defensive",
 	allRookie: "All-Rookie Team",

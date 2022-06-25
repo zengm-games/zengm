@@ -91,6 +91,21 @@ const AwardsAndChamp = ({
 								userTid={userTid}
 							/>
 						</p>
+						{awards.sfmvp ? (
+							<p>
+								{AWARD_NAMES.sfmvp}s:
+								{(awards.sfmvp as any[]).map((p, i) => (
+									<div key={i}>
+										<Winner
+											award={p}
+											finals
+											season={season}
+											userTid={userTid}
+										/>
+									</div>
+								))}
+							</p>
+						) : null}
 					</div>
 				) : (
 					<p>???</p>

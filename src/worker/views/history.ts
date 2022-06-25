@@ -71,13 +71,15 @@ const updateHistory = async (
 		}
 		const flatTeams = bySport({
 			baseball: ["allRookie", "allOffense", "allDefense"],
-			basketball: ["allRookie"],
+			basketball: ["allRookie", "sfmvp"],
 			football: ["allRookie"],
 			hockey: ["allRookie"],
 		});
 		for (const key of flatTeams) {
-			for (const p of awards[key]) {
-				addAbbrev(p);
+			if (awards[key]) {
+				for (const p of awards[key]) {
+					addAbbrev(p);
+				}
 			}
 		}
 
@@ -112,6 +114,8 @@ const updateHistory = async (
 				t.seasonAttrs.playoffRoundsWon ===
 				g.get("numGamesPlayoffSeries", season).length,
 		);
+
+		console.log("awards", awards);
 
 		return {
 			awards,

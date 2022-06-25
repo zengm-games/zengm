@@ -206,6 +206,10 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 			},
 		],
 		finalsMvp: awardPlayer(awards.finalsMvp, false, true),
+		sfmvp:
+			awards.sfmvp && awards.sfmvp.length > 0
+				? (awards.sfmvp.map(slug => awardPlayer(slug, false)) as AwardPlayer[])
+				: undefined,
 	};
 };
 
@@ -292,6 +296,7 @@ const getAwards = (
 		const allDefensive2: string[] = [];
 		const allDefensive3: string[] = [];
 		const allRookie: string[] = [];
+		const sfmvp: string[] = [];
 
 		for (const { slug, type } of seasonAwards) {
 			const short = invertedAwardNames[type];
@@ -309,6 +314,8 @@ const getAwards = (
 				allDefensive2.push(slug);
 			} else if (type === "Third Team All-Defensive") {
 				allDefensive3.push(slug);
+			} else if (type === AWARD_NAMES.sfmvp) {
+				sfmvp.push(slug);
 			} else if (type === AWARD_NAMES.allRookie) {
 				allRookie.push(slug);
 			}
@@ -354,6 +361,7 @@ const getAwards = (
 				},
 			],
 			finalsMvp: simple.finalsMvp,
+			sfmvp,
 		};
 
 		allAwards.push(awards);

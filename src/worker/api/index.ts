@@ -675,26 +675,67 @@ const deleteOldData = async (options: {
 		);
 	}
 
+	const deletePlayerStats = (p: Player) => {
+		let updated = false;
+		if (p.ratings.length > 0) {
+			updated = true;
+			p.ratings = [p.ratings.at(-1)!];
+		}
+		if (p.stats.length > 0) {
+			updated = true;
+			p.stats = [p.stats.at(-1)];
+		}
+		if (p.injuries.length > 0) {
+			if (
+				p.injuries.length >= 1 &&
+				(p.injury.gamesRemaining > 0 || p.injury.type !== "Healthy")
+			) {
+				if (p.injuries.length > 1) {
+					p.injuries = [p.injuries.at(-1)!];
+					updated = true;
+				}
+			} else {
+				p.injuries = [];
+				updated = true;
+			}
+		}
+		if (p.salaries.length > 0) {
+			if (p.tid < 0) {
+				p.salaries = [];
+			} else {
+				const minSeasonKeep =
+					g.get("phase") > PHASE.PLAYOFFS
+						? g.get("season") + 1
+						: g.get("season");
+				let minIndexKeep = Infinity;
+				for (let i = 0; i < p.salaries.length; i++) {
+					if (p.salaries[i].season === minSeasonKeep) {
+						// Keep latest contract that covers the current season - handles the case of old released contracts that would have also covered this season
+						minIndexKeep = i;
+					}
+				}
+				if (p.pid === 565) {
+					console.log(minIndexKeep);
+				}
+				const lengthBefore = p.salaries.length;
+				p.salaries = p.salaries.slice(minIndexKeep);
+				if (lengthBefore > p.salaries.length) {
+					updated = true;
+				}
+			}
+		}
+
+		if (updated) {
+			return p;
+		}
+	};
+
 	if (options.playerStats) {
 		await iterate(
 			transaction.objectStore("players"),
 			undefined,
 			undefined,
-			p => {
-				let updated = false;
-				if (p.ratings.length > 0) {
-					updated = true;
-					p.ratings = [p.ratings.at(-1)!];
-				}
-				if (p.stats.length > 0) {
-					updated = true;
-					p.stats = [p.stats.at(-1)];
-				}
-
-				if (updated) {
-					return p;
-				}
-			},
+			deletePlayerStats,
 		);
 	} else if (options.playerStatsUnnotable) {
 		await iterate(
@@ -703,20 +744,7 @@ const deleteOldData = async (options: {
 			undefined,
 			p => {
 				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
-					let updated = false;
-					if (p.ratings.length > 0) {
-						p.ratings = [p.ratings.at(-1)!];
-						updated = true;
-					}
-
-					if (p.stats.length > 0) {
-						p.stats = [p.stats.at(-1)];
-						updated = true;
-					}
-
-					if (updated) {
-						return p;
-					}
+					return deletePlayerStats(p);
 				}
 			},
 		);

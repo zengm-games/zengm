@@ -15,14 +15,13 @@ const DeleteOldData = () => {
 	});
 	const [deleting, setDeleting] = useState(false);
 
-	const handleChange = (name: string) => (
-		event: ChangeEvent<HTMLInputElement>,
-	) => {
-		setState({
-			...state,
-			[name]: event.target.checked,
-		});
-	};
+	const handleChange =
+		(name: string) => (event: ChangeEvent<HTMLInputElement>) => {
+			setState({
+				...state,
+				[name]: event.target.checked,
+			});
+		};
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -118,7 +117,7 @@ const DeleteOldData = () => {
 							type="checkbox"
 							checked={state.playerStatsUnnotable}
 						/>
-						Delete Unnotable Player Stats and Ratings
+						Delete Unnotable Player Info (stats, ratings, salaries, injuries)
 						<br />
 						<i>Won't delete your past players or players who have won awards</i>
 					</label>
@@ -131,7 +130,7 @@ const DeleteOldData = () => {
 							type="checkbox"
 							checked={state.playerStats}
 						/>
-						Delete Old Player Stats and Ratings
+						Delete Old Player Info (stats, ratings, salaries, injuries)
 					</label>
 				</div>
 				<div className="form-check">

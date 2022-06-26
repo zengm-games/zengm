@@ -227,7 +227,6 @@ type Props = {
 const SideBar = memo(({ pageID, pathname }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
-	const [nodeWrapper, setNodeWrapper] = useState<null | HTMLDivElement>(null);
 
 	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
 		godMode: state.godMode,
@@ -247,12 +246,6 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 		}
 	}, []);
 
-	const getNodeWrapper = useCallback((node2: HTMLDivElement) => {
-		if (node2 !== null) {
-			setNodeWrapper(node2);
-		}
-	}, []);
-
 	const close = useCallback(() => {
 		// These are flat conditions while open is nested, by design - clean up everything!
 		if (node) {
@@ -261,10 +254,6 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 
 		if (nodeFade) {
 			nodeFade.classList.add("sidebar-fade-closing");
-		}
-
-		if (nodeWrapper) {
-			nodeWrapper.classList.remove("sidebar-open");
 		}
 
 		setTimeout(() => {
@@ -280,7 +269,7 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 				document.body.classList.remove("modal-open");
 			}
 		}, 300); // Keep time in sync with .sidebar-fade
-	}, [node, nodeFade, nodeWrapper]);
+	}, [node, nodeFade]);
 
 	const open = useCallback(() => {
 		if (node) {
@@ -296,11 +285,7 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 				}
 			}
 		}
-
-		if (nodeWrapper) {
-			nodeWrapper.classList.add("sidebar-open");
-		}
-	}, [node, nodeFade, nodeWrapper]);
+	}, [node, nodeFade]);
 
 	useEffect(() => {
 		if (node) {
@@ -359,15 +344,15 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 	}, [nodeFade]);
 
 	return (
-		<div className="sidebar-wrapper flex-shrink-0" ref={getNodeWrapper}>
+		<>
 			<div ref={getNodeFade} className="sidebar-fade" />
 			<nav
-				className="bg-light sidebar"
+				className="bg-light sidebar flex-shrink-0"
 				id="sidebar"
 				ref={getNode}
 				aria-label="side navigation"
 			>
-				<div className="sidebar-sticky">
+				<div className="bg-light sidebar-inner">
 					{menuItems.map((menuItem, i) => (
 						<MenuItem
 							godMode={godMode}
@@ -387,7 +372,7 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 					))}
 				</div>
 			</nav>
-		</div>
+		</>
 	);
 });
 

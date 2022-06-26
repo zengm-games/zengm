@@ -1,6 +1,5 @@
 sidebar
 - xl/smaller behavior
-  - xl: don't close on link click
   - xl: animate open/closed similar to small
 - ads?
 

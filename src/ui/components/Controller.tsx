@@ -87,7 +87,7 @@ const Controller = () => {
 			<NavBar updating={updating} />
 			<div className="h-100 d-flex">
 				<SideBar pageID={sidebarPageID} pathname={pathname} />
-				<div className="h-100 w-100 d-flex flex-column">
+				<div className="h-100 w-100 d-flex flex-column" style={minWidth0}>
 					<LeagueTopBar />
 					<TitleBar />
 					<div className="container-fluid position-relative mt-2 flex-grow-1 h-100">

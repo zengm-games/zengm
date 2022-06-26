@@ -1,6 +1,6 @@
 sidebar
 - xl/smaller behavior
-  - xl: animate open/closed similar to small
+  - unify positioning logic
 - ads?
 
 baseball bugs

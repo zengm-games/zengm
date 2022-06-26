@@ -2,12 +2,7 @@
 
 $sidebar-width: 154px; // Line up with Play button
 
-.sidebar {
-	display: none;
-}
-
 .sidebar-inner {
-	position: relative;
 	height: 100%;
 	padding: 0.5rem 0;
 	overflow-x: hidden;
@@ -52,15 +47,22 @@ $sidebar-width: 154px; // Line up with Play button
 
 @include media-breakpoint-up(xl) {
 	.sidebar {
-		display: none;
-		width: $sidebar-width;
-	}
-	.sidebar-open {
-		display: block;
+		transition: width 0.3s ease-in-out;
+		width: 0;
 	}
 	.sidebar-inner {
 		position: fixed;
+		transition: left 0.3s ease-in-out;
+		left: -190px;
 		top: 52px;
+		bottom: 0;
+		width: $sidebar-width;
+	}
+	.sidebar-open {
+		width: $sidebar-width;
+	}
+	.sidebar-open .sidebar-inner {
+		left: 0;
 	}
 }
 
@@ -71,7 +73,6 @@ $sidebar-width: 154px; // Line up with Play button
 
 @include media-breakpoint-down(xl) {
 	.sidebar {
-		display: block;
 		position: fixed;
 		font-size: 1rem;
 		transition: left 0.3s ease-in-out;

@@ -7,7 +7,13 @@ import {
 	useState,
 	MouseEvent,
 } from "react";
-import { helpers, localActions, menuItems, useLocalShallow } from "../util";
+import {
+	helpers,
+	localActions,
+	menuItems,
+	safeLocalStorage,
+	useLocalShallow,
+} from "../util";
 import type {
 	MenuItemLink,
 	MenuItemHeader,
@@ -247,54 +253,64 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 		}
 	}, []);
 
-	const close = useCallback(() => {
-		// These are flat conditions while open is nested, by design - clean up everything!
-		if (node) {
-			node.classList.remove("sidebar-open");
-		}
-
-		if (nodeFade) {
-			nodeFade.classList.add("sidebar-fade-closing");
-		}
-
-		if (nodeWrapper) {
-			nodeWrapper.classList.remove("sidebar-open");
-		}
-
-		setTimeout(() => {
-			if (nodeFade) {
-				nodeFade.classList.remove("sidebar-fade-open");
+	const close = useCallback(
+		(immediate?: boolean) => {
+			// These are flat conditions while open is nested, by design - clean up everything!
+			if (node) {
+				node.classList.remove("sidebar-open");
 			}
 
-			if (nodeFade) {
-				nodeFade.classList.remove("sidebar-fade-closing");
+			if (!immediate) {
+				if (nodeFade) {
+					nodeFade.classList.add("sidebar-fade-closing");
+				}
 			}
 
-			if (document.body) {
-				document.body.classList.remove("modal-open");
+			if (nodeWrapper) {
+				nodeWrapper.classList.remove("sidebar-open");
 			}
-		}, 300); // Keep time in sync with .sidebar-fade
-	}, [node, nodeFade, nodeWrapper]);
 
-	const open = useCallback(() => {
-		if (node) {
-			node.classList.add("sidebar-open");
+			setTimeout(() => {
+				if (nodeFade) {
+					nodeFade.classList.remove("sidebar-fade-open");
+				}
 
-			if (nodeFade) {
-				nodeFade.classList.add("sidebar-fade-open");
+				if (nodeFade) {
+					nodeFade.classList.remove("sidebar-fade-closing");
+				}
 
 				if (document.body) {
+					document.body.classList.remove("modal-open");
+				}
+			}, 300); // Keep time in sync with .sidebar-fade
+		},
+		[node, nodeFade, nodeWrapper],
+	);
+
+	const open = useCallback(
+		(immediate?: boolean) => {
+			if (node) {
+				node.classList.add("sidebar-open");
+
+				if (nodeFade) {
+					if (!immediate) {
+						nodeFade.classList.add("sidebar-fade-open");
+					}
+
 					if (document.body) {
-						document.body.classList.add("modal-open");
+						if (document.body) {
+							document.body.classList.add("modal-open");
+						}
 					}
 				}
 			}
-		}
 
-		if (nodeWrapper) {
-			nodeWrapper.classList.add("sidebar-open");
-		}
-	}, [node, nodeFade, nodeWrapper]);
+			if (nodeWrapper) {
+				nodeWrapper.classList.add("sidebar-open");
+			}
+		},
+		[node, nodeFade, nodeWrapper],
+	);
 
 	useEffect(() => {
 		if (node) {
@@ -307,6 +323,37 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 			}
 		}
 	}, [close, node, open, sidebarOpen]);
+
+	useEffect(() => {
+		// Use one media query per cutoff. At the time of writing, there is only ever one, at 768px. This is more efficient than listening for the window resize event and updating every time it changes.
+		const mediaQueryList = window.matchMedia("(min-width: 1200px)");
+
+		const handle = (event: MediaQueryListEvent) => {
+			// Call open/close even if sidebarOpen says it's open, cause sidebarOpen is not actually the source of truth!
+			if (event.matches) {
+				// Now we're xl or larger - open unless closed is saved value
+				const saved = safeLocalStorage.getItem("sidebarOpen");
+				if (saved === "false") {
+					close(true);
+					localActions.setSidebarOpen(false);
+				} else {
+					open(true);
+					localActions.setSidebarOpen(true);
+				}
+			} else {
+				// Now we're smaller than xl - hide the sidebar
+				close(true);
+				localActions.setSidebarOpen(false);
+			}
+		};
+
+		// Rather than addEventListener for Safari <14
+		mediaQueryList.addListener(handle);
+
+		return () => {
+			mediaQueryList.removeListener(handle);
+		};
+	}, [close, open]);
 
 	const closeHandler = useCallback(() => {
 		localActions.setSidebarOpen(false);

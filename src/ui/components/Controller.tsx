@@ -85,31 +85,35 @@ const Controller = () => {
 	return (
 		<LazyMotion strict features={loadFramerMotionFeatures}>
 			<NavBar updating={updating} />
-			<LeagueTopBar />
-			<TitleBar />
-			<div className="container-fluid position-relative mt-2 flex-grow-1 h-100">
+			<div className="h-100 d-flex">
 				<SideBar pageID={sidebarPageID} pathname={pathname} />
-				<div className="d-flex" style={minHeight100}>
-					<div className="w-100 d-flex flex-column" style={minWidth0}>
-						<Header />
-						<main className="p402_premium" id="actual-content">
-							<div id="actual-actual-content" className="clearfix">
-								<ErrorBoundary key={idLoaded}>
-									{Component ? (
-										<KeepPreviousRenderWhileUpdating updating={updating}>
-											<Component {...data} />
-										</KeepPreviousRenderWhileUpdating>
-									) : null}
-									{inLeague ? <MultiTeamMenu /> : null}
-								</ErrorBoundary>
+				<div className="h-100 w-100 d-flex flex-column">
+					<LeagueTopBar />
+					<TitleBar />
+					<div className="container-fluid position-relative mt-2 flex-grow-1 h-100">
+						<div className="d-flex" style={minHeight100}>
+							<div className="w-100 d-flex flex-column" style={minWidth0}>
+								<Header />
+								<main className="p402_premium">
+									<div id="actual-actual-content" className="clearfix">
+										<ErrorBoundary key={idLoaded}>
+											{Component ? (
+												<KeepPreviousRenderWhileUpdating updating={updating}>
+													<Component {...data} />
+												</KeepPreviousRenderWhileUpdating>
+											) : null}
+											{inLeague ? <MultiTeamMenu /> : null}
+										</ErrorBoundary>
+									</div>
+								</main>
+								<Footer />
 							</div>
-						</main>
-						<Footer />
+							<Skyscraper />
+						</div>
+						<CommandPalette />
+						<NagModal close={closeNagModal} show={showNagModal} />
 					</div>
-					<Skyscraper />
 				</div>
-				<CommandPalette />
-				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />
 		</LazyMotion>

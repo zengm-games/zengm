@@ -1,3 +1,13 @@
+sidebar
+- xl/smaller behavior
+  - xl: don't close on link click
+  - small: default to closed whenever (initial open on small screen) or (window resized to small screen)
+  - xl: default to (previous stored open/closed state) on (initial open on large screen) or (window resized to large screen)
+  - xl: animate open/closed similar to small
+- do we need separate open/closed state for xl/small?
+  - shared state - set initial state on load (could be open or closed), and assess state when screen size changes (media query listener)
+  - separate state - each can have own default value, don't have to worry about transitions
+
 baseball bugs
 - score on double play https://discord.com/channels/290013534023057409/290015591216054273/989256454643003444
   - and fielder's choice https://discord.com/channels/290013534023057409/290015591216054273/990055493714210816

@@ -64,27 +64,24 @@ $sidebar-width: 154px; // Line up with Play button
 }
 
 @include media-breakpoint-up(xl) {
+	.sidebar-wrapper {
+		width: 0;
+	}
+	.sidebar-wrapper.sidebar-open {
+		width: $sidebar-width;
+	}
 	.sidebar {
+		display: none;
+	}
+	.sidebar-open {
 		display: block;
-	}
-	#actual-content,
-	#main-footer {
-		margin-left: $sidebar-width;
-	}
-	#basketball-gm_leaderboard_atf,
-	#football-gm_leaderboard_atf,
-	#zen-gm_leaderboard_atf {
-		margin-left: $sidebar-width;
-	}
-	.league-top-bar {
-		margin-left: $sidebar-width;
-	}
-	.title-bar {
-		margin-left: $sidebar-width !important;
 	}
 }
 
 @include media-breakpoint-down(xl) {
+	.sidebar-wrapper {
+		width: 0;
+	}
 	.sidebar {
 		display: block;
 		font-size: 1rem;
@@ -104,32 +101,28 @@ $sidebar-width: 154px; // Line up with Play button
 		left: 0;
 	}
 
-	.navbar.fixed-top .navbar-toggler {
-		display: block;
+	// Fade animation only works in one direction!
+	.sidebar-fade {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 0;
+		z-index: -1040;
+		background-color: $black;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
 	}
-}
 
-// Fade animation only works in one direction!
-.sidebar-fade {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	width: 0;
-	z-index: -1040;
-	background-color: $black;
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
-}
+	.sidebar-fade.sidebar-fade-open {
+		opacity: 0.2;
+		width: 100%;
+		z-index: 1040;
+	}
 
-.sidebar-fade.sidebar-fade-open {
-	opacity: 0.2;
-	width: 100%;
-	z-index: 1040;
-}
-
-.sidebar-fade.sidebar-fade-closing {
-	opacity: 0;
-	width: 100%;
-	z-index: 1040;
+	.sidebar-fade.sidebar-fade-closing {
+		opacity: 0;
+		width: 100%;
+		z-index: 1040;
+	}
 }

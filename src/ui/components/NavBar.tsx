@@ -123,7 +123,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		>
 			<div className="container-fluid">
 				<button
-					className="navbar-toggler me-3"
+					className="navbar-toggler me-3 d-block"
 					onClick={() => {
 						localActions.toggleSidebar();
 					}}

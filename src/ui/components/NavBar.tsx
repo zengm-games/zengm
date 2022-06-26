@@ -127,9 +127,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 				<button
 					className="navbar-toggler me-3 d-block"
 					onClick={() => {
-						localActions.update({
-							sidebarOpen: !sidebarOpen,
-						});
+						localActions.setSidebarOpen(!sidebarOpen);
 					}}
 					type="button"
 					aria-label="Toggle navigation"

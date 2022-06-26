@@ -10,13 +10,7 @@ export const updateSkyscraperDisplay = () => {
 	if (div) {
 		const gold = !!div.dataset.gold;
 
-		const documentElement = document.documentElement;
-
-		if (
-			documentElement &&
-			documentElement.clientWidth >= widthCutoff &&
-			!gold
-		) {
+		if (document.documentElement.clientWidth >= widthCutoff && !gold) {
 			if (!displayed) {
 				window.freestar.queue.push(() => {
 					div.style.display = "block";

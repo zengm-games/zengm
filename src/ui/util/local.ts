@@ -11,6 +11,7 @@ type LocalActions = {
 	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
 	resetLeague: () => void;
+	setSidebarOpen: (sidebarOpen: boolean) => void;
 	update: (obj: Partial<LocalStateUI>) => void;
 	updateGameAttributes: (
 		gameAttributes: Partial<GameAttributesLeague>,
@@ -32,6 +33,15 @@ const blockCloseTab = (e: BeforeUnloadEvent) => {
 type LocalStateWithActions = LocalStateUI & {
 	actions: LocalActions;
 };
+
+let initialSidebarOpen: boolean;
+if (window.innerWidth >= 1200) {
+	// Large screen - default may be saved, if not default to open
+	const saved = safeLocalStorage.getItem("sidebarOpen");
+	initialSidebarOpen = saved !== "false";
+} else {
+	initialSidebarOpen = false;
+}
 
 const useLocal = create<LocalStateWithActions>(set => ({
 	challengeNoRatings: false,
@@ -57,7 +67,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 	quarterLength: defaultGameAttributes.quarterLength,
 	season: 0,
 	showNagModal: false,
-	sidebarOpen: false,
+	sidebarOpen: initialSidebarOpen,
 	spectator: false,
 	startingSeason: 0,
 	statusText: "Idle",
@@ -133,6 +143,19 @@ const useLocal = create<LocalStateWithActions>(set => ({
 				userTids: [],
 			});
 			window.removeEventListener("beforeunload", blockCloseTab);
+		},
+
+		setSidebarOpen(sidebarOpen: boolean) {
+			if (window.innerWidth >= 1200) {
+				if (sidebarOpen) {
+					// Don't save true, cause default is true
+					safeLocalStorage.removeItem("sidebarOpen");
+				} else {
+					safeLocalStorage.setItem("sidebarOpen", "false");
+				}
+			}
+
+			set({ sidebarOpen });
 		},
 
 		update(obj: Partial<LocalStateUI>) {

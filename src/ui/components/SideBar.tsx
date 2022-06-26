@@ -309,9 +309,7 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 	}, [close, node, open, sidebarOpen]);
 
 	const closeHandler = useCallback(() => {
-		localActions.update({
-			sidebarOpen: false,
-		});
+		localActions.setSidebarOpen(false);
 	}, []);
 
 	useEffect(() => {

@@ -78,6 +78,11 @@ $sidebar-width: 154px; // Line up with Play button
 	}
 }
 
+// Set this here or it flashes when switching between xl and below xl
+.sidebar-fade {
+	opacity: 0;
+}
+
 @include media-breakpoint-down(xl) {
 	.sidebar-wrapper {
 		width: 0;

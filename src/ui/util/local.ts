@@ -11,7 +11,6 @@ type LocalActions = {
 	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
 	resetLeague: () => void;
-	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
 	updateGameAttributes: (
 		gameAttributes: Partial<GameAttributesLeague>,
@@ -134,10 +133,6 @@ const useLocal = create<LocalStateWithActions>(set => ({
 				userTids: [],
 			});
 			window.removeEventListener("beforeunload", blockCloseTab);
-		},
-
-		toggleSidebar() {
-			set(state => ({ sidebarOpen: !state.sidebarOpen }));
 		},
 
 		update(obj: Partial<LocalStateUI>) {

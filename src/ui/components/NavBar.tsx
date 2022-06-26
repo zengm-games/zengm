@@ -79,6 +79,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		godMode,
 		gold,
 		hasViewedALeague,
+		sidebarOpen,
 		spectator,
 		playMenuOptions,
 		popup,
@@ -88,6 +89,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		godMode: state.godMode,
 		gold: state.gold,
 		hasViewedALeague: state.hasViewedALeague,
+		sidebarOpen: state.sidebarOpen,
 		spectator: state.spectator,
 		playMenuOptions: state.playMenuOptions,
 		popup: state.popup,
@@ -125,7 +127,9 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 				<button
 					className="navbar-toggler me-3 d-block"
 					onClick={() => {
-						localActions.toggleSidebar();
+						localActions.update({
+							sidebarOpen: !sidebarOpen,
+						});
 					}}
 					type="button"
 					aria-label="Toggle navigation"

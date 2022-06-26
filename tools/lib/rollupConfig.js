@@ -52,7 +52,7 @@ module.exports = (
 		babel({
 			babelHelpers: "bundled",
 			exclude: legacy
-				? "node_modules/!(d3|idb|react-bootstrap|streamsaver)**"
+				? "node_modules/!(d3|idb|nanoevents|react-bootstrap|streamsaver)**"
 				: "node_modules/**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 			configFile: path.join(

@@ -4,6 +4,7 @@ import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectMultiple from "../components/SelectMultiple";
 import { AWARD_NAMES, bySport, isSport, SIMPLE_AWARDS } from "../../common";
+import range from "lodash-es/range";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {
@@ -178,7 +179,8 @@ const EditAwards = ({
 			} else if (
 				type == "allRookie" ||
 				(isSport("baseball") &&
-					(type === "allOffense" || type === "allDefense"))
+					(type === "allOffense" || type === "allDefense")) ||
+				type === "sfmvp"
 			) {
 				if (p?.pid == undefined) {
 					newAwards[type][playerNumber] = undefined;
@@ -274,6 +276,29 @@ const EditAwards = ({
 							/>
 						</div>
 					))}
+					{isSport("basketball") ? (
+						<div className="col-lg-4 col-md-6 mb-3">
+							<label className="form-label">{AWARD_NAMES.sfmvp}s</label>
+							{range(2).map(i => {
+								const player = aws.sfmvp[i];
+								return (
+									<div className="d-flex" key={i}>
+										<Position index={i} p={player} />
+										<div className="mb-3 flex-grow-1">
+											<SelectMultiple
+												options={players}
+												key={season}
+												value={getPlayer(player)}
+												getOptionLabel={getOptionLabel("sfmvp")}
+												getOptionValue={p => String(p.pid)}
+												onChange={handleChange("sfmvp", undefined, i)}
+											/>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					) : null}
 				</div>
 				<div className="row">
 					{!isSport("baseball")

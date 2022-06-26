@@ -35,6 +35,9 @@ const updateAwards = async (
 			);
 		}
 	}
+	if (awards && !awards.sfmvp) {
+		awards.sfmvp = [];
+	}
 	if (
 		(season === g.get("season") && updateEvents.includes("newPhase")) ||
 		season !== state.season

@@ -17,7 +17,7 @@ const Winner = ({
 }) => {
 	if (!award) {
 		// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-		return finals ? <>"???"</> : <p>???</p>;
+		return finals ? <>???</> : <p>???</p>;
 	}
 
 	const stats = defense ? ["trb", "blk", "stl"] : ["pts", "trb", "ast"];
@@ -96,12 +96,14 @@ const AwardsAndChamp = ({
 								{AWARD_NAMES.sfmvp}s:
 								{(awards.sfmvp as any[]).map((p, i) => (
 									<div key={i}>
-										<Winner
-											award={p}
-											finals
-											season={season}
-											userTid={userTid}
-										/>
+										{p ? (
+											<Winner
+												award={p}
+												finals
+												season={season}
+												userTid={userTid}
+											/>
+										) : null}
 									</div>
 								))}
 							</div>

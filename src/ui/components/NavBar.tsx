@@ -125,7 +125,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		>
 			<div className="container-fluid">
 				<button
-					className="navbar-toggler me-3 d-block"
+					className="navbar-toggler me-2 d-block"
 					onClick={() => {
 						localActions.setSidebarOpen(!sidebarOpen);
 					}}

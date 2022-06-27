@@ -1,6 +1,5 @@
 sidebar
-- xl/smaller behavior
-  - old browsers
+- on sub xl, sometimes opacity 0.2 is rendered as 1 (all white)
 - ads?
 
 baseball bugs

@@ -179,14 +179,6 @@ h5 {
 	height: 35px;
 }
 
-// This is so "Football GM" takes up the same space as "Basketball GM", allowing the Play dropdown to align with the menu on the left.
-@include media-breakpoint-up(xl) {
-	.navbar-brand {
-		min-width: 145px;
-		margin-right: 0;
-	}
-}
-
 .spin {
 	animation: spin 4s linear infinite;
 }

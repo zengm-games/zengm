@@ -278,6 +278,14 @@ export const prune = (
 		}
 
 		if (
+			(name === "USA" || name === "Canada") &&
+			country.fractionSkipCollege === undefined
+		) {
+			// Would be better to have it undefined, as in using the global default. But that can't be persisted to JSON, so we need some other way to encode it. Until that exists, just set the default here, better than nothing. Actually seems to work, just results in a bit of extra storage overhead.
+			country.fractionSkipCollege = info.default.fractionSkipCollege;
+		}
+
+		if (
 			((name === "USA" || name === "Canada") &&
 				country.fractionSkipCollege === 0.02) ||
 			country.fractionSkipCollege === 0.98

@@ -103,13 +103,13 @@ $sidebar-width: 154px;
 		transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
 	}
 
-	.sidebar-fade.sidebar-fade-open {
+	.sidebar-fade-open {
 		opacity: 0.2;
 		width: 100%;
 		z-index: 1040;
 	}
 
-	.sidebar-fade.sidebar-fade-closing {
+	.sidebar-fade-closing {
 		opacity: 0;
 		width: 100%;
 		z-index: 1040;

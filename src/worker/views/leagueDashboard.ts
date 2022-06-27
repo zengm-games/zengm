@@ -555,7 +555,6 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("season"),
 			playoffsByConf,
 		);
-		console.log(maxPlayoffSeed, maxPlayoffSeedNoPlayIn);
 
 		return {
 			confTeams,

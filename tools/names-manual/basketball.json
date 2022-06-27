@@ -6227,8 +6227,11 @@
 			"Gao": 1,
 			"Han": 1,
 			"Hao": 1,
+			"Jeff": 1,
+			"Jet": 1,
 			"Ji": 1,
 			"Jinqiu": 1,
+			"Joe": 1,
 			"Li": 1,
 			"Lin": 1,
 			"Max": 1,
@@ -6243,6 +6246,7 @@
 			"Xue": 1,
 			"Yanhao": 1,
 			"Yao": 1,
+			"Yi-Hsiang": 1,
 			"Yi": 1,
 			"Zhizhi": 1,
 			"Zhou": 1,
@@ -7939,12 +7943,6 @@
 		"Tanzania": {
 			"Hasheem": 1,
 			"Ray": 1
-		},
-		"Taiwan": {
-			"Jeff": 1,
-			"Jet": 1,
-			"Joe": 1,
-			"Yi-Hsiang": 1
 		},
 		"Costa Rica": {
 			"Jefny": 1
@@ -19203,10 +19201,12 @@
 			"Shang": 1,
 			"Delong": 1,
 			"Fu": 1,
+			"Wu": 1,
+			"Chang": 2,
 			"Xiang": 1,
 			"Hu": 1,
+			"Alexander": 1,
 			"Muhao": 1,
-			"Chang": 1,
 			"Zhang": 1,
 			"Tao": 1,
 			"Yue": 1,
@@ -19219,6 +19219,7 @@
 			"Yuyang": 1,
 			"Zhao": 1,
 			"Ming": 1,
+			"Chou": 1,
 			"Jianlian": 1,
 			"Qi": 1,
 			"Fangyu": 1,
@@ -21441,12 +21442,6 @@
 		"Tanzania": {
 			"Thabeet": 1,
 			"Munyagi": 1
-		},
-		"Taiwan": {
-			"Wu": 1,
-			"Chang": 1,
-			"Alexander": 1,
-			"Chou": 1
 		},
 		"Costa Rica": {
 			"Anderson-Brown": 1

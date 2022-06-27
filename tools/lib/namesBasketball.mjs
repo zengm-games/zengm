@@ -327,10 +327,11 @@ const namesBasketball = () => {
 			Zrenjanin: "Serbia",
 		};
 
+		// Taiwan -> China, because we use the merged list for both
 		const countryFixes = {
 			Bosnia: "Bosnia and Herzegovina",
 			Bsonia: "Bosnia and Herzegovina",
-			"Chinese Taipei": "Taiwan",
+			"Chinese Taipei": "China",
 			"Congo DR": "Congo",
 			Cypus: "Cyprus",
 			"Democratic Republic of the Congo": "Congo",
@@ -343,7 +344,8 @@ const namesBasketball = () => {
 			"Saint Vincent and Grenadines": "Saint Vincent and the Grenadines",
 			SO: "Mexico",
 			"St. Vincent": "Saint Vincent and the Grenadines",
-			Taipei: "Taiwan",
+			Taipei: "China",
+			Taiwan: "China",
 			"Trinidad & Tobago": "Trinidad and Tobago",
 			WC: "USA",
 		};

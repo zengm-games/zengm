@@ -49,6 +49,7 @@ export const initDefaults = async (force?: boolean) => {
 				Austria: dummyNames,
 			};
 			defaultNamesGroups = {
+				chinese: dummyNames,
 				hispanic: dummyNames,
 				korean: dummyNames,
 				portuguese: dummyNames,

@@ -6,6 +6,7 @@ import { bySport } from "../../common";
 // Countries in default names will be added to this in loadNames.ts, so be careful using this anywhere else!
 
 const groups = {
+	chinese: ["China", "Taiwan"],
 	hispanic: [
 		"Argentina",
 		"Chile",
@@ -69,6 +70,7 @@ if (process.env.NODE_ENV === "test") {
 			"South Korea": 7,
 			// "Curacao": 5, // Not sure what to make of names
 			Australia: 3,
+			Taiwan: 2,
 
 			// Extra countries from https://www.baseball-reference.com/bio/
 			"American Samoa": 1,
@@ -194,6 +196,7 @@ if (process.env.NODE_ENV === "test") {
 			Sudan: 24,
 			Sweden: 47,
 			Switzerland: 15,
+			Taiwan: 3,
 			"Trinidad and Tobago": 11,
 			Turkey: 110,
 			USA: 23461,

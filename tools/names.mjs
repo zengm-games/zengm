@@ -20,8 +20,12 @@ const countryFreqs = ({ fnsByCountry }) => {
 	);
 };
 
-const basketball = JSON.parse(fs.readFileSync(path.join(__dirname, "names-manual/basketball.json")));
-const football = JSON.parse(fs.readFileSync(path.join(__dirname, "names-manual/football.json")));
+const basketball = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "names-manual/basketball.json")),
+);
+const football = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "names-manual/football.json")),
+);
 
 const countriesBasketball = countryFreqs(basketball);
 const countriesFootball = countryFreqs(football);
@@ -120,8 +124,16 @@ const lnsByCountry = combineNames([
 
 const { dropped, namesByCountry } = filterAndOutput(fnsByCountry, lnsByCountry);
 
+// Special case for Chinese names
+groups.chinese = namesByCountry.China;
+delete namesByCountry.China;
+countriesBasketball.Taiwan = 3;
+
 const filename = path.join(__dirname, "../data/names.json");
-fs.writeFileSync(filename, JSONstringifyOrder({ countries: namesByCountry, groups}, "\t"));
+fs.writeFileSync(
+	filename,
+	JSONstringifyOrder({ countries: namesByCountry, groups }, "\t"),
+);
 console.log(`Wrote data to ${filename}`);
 
 for (const freq of [countriesBasketball, countriesFootball]) {

@@ -1,7 +1,7 @@
-// https://getbootstrap.com/docs/4.1/examples/dashboard/
+// This used to line up with the Play button, but no more since there is now a toggle on large screens
+$sidebar-width: 154px;
 
-$sidebar-width: 154px; // Line up with Play button
-
+// .sidebar-inner is needed because you can't put a fixed div in flexbox
 .sidebar-inner {
 	height: 100%;
 	padding: 0.5rem 0;
@@ -9,6 +9,9 @@ $sidebar-width: 154px; // Line up with Play button
 	overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 	z-index: 1040;
 	border-right: 1px solid $gray-200;
+	position: fixed;
+	transition: left 0.3s ease-in-out;
+	bottom: 0;
 }
 
 .sidebar-inner .nav-link {
@@ -50,15 +53,13 @@ $sidebar-width: 154px; // Line up with Play button
 		transition: width 0.3s ease-in-out;
 		width: 0;
 	}
-	.sidebar-inner {
-		position: fixed;
-		transition: left 0.3s ease-in-out;
-		left: -190px;
-		top: 52px;
-		bottom: 0;
+	.sidebar-open {
 		width: $sidebar-width;
 	}
-	.sidebar-open {
+
+	.sidebar-inner {
+		left: -$sidebar-width;
+		top: 52px;
 		width: $sidebar-width;
 	}
 	.sidebar-open .sidebar-inner {
@@ -72,29 +73,21 @@ $sidebar-width: 154px; // Line up with Play button
 }
 
 @include media-breakpoint-down(xl) {
-	.sidebar {
-		position: fixed;
-		font-size: 1rem;
-		transition: left 0.3s ease-in-out;
+	.sidebar-inner {
 		left: -190px;
 		top: 0;
-		bottom: 0;
 		width: 190px;
-		z-index: 1040;
+		font-size: 1rem;
 	}
 	.sidebar-heading {
 		font-size: 0.875rem;
 		padding-left: 0.75rem;
 	}
-	.sidebar .nav-link {
+	.sidebar-inner .nav-link {
 		padding-left: 0.75rem;
 	}
-	.sidebar-open {
+	.sidebar-open .sidebar-inner {
 		left: 0;
-	}
-
-	.sidebar-inner {
-		top: 0;
 	}
 
 	// Fade animation only works in one direction!

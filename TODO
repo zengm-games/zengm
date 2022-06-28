@@ -17,6 +17,11 @@ baseball bugs
   - lower IP for low endurance starters
 - on a similar vein, a 3rd baseman with 32 catching just made the allstar team with a perfect fielding rating over 78 games at catcher. you can stick anyone at catcher and they'll be basically the same https://discord.com/channels/290013534023057409/290015591216054273/991001719712395294
 
+add comparison to real player, for random player or draft prospect?
+- https://twitter.com/messages/1928999030-3723150857
+- draftRatings/seasonRatings/seasonStats/seasonPotential/careerRatings/careerStats
+- "real life"/"your league" (only basketball)
+
 stop on injury spoils live sim https://discord.com/channels/290013534023057409/290015591216054273/966465865090465852
 
 1 and 1 free throws option https://old.reddit.com/r/BasketballGM/comments/t3v3bj/monthly_suggestions_thread/i01a2dk/
@@ -225,11 +230,6 @@ hockey player does stuff on ice while in penalty box https://discord.com/channel
 
 combined regular season and playoffs on player stats page https://discord.com/channels/@me/819437830773538816/907468037312114718
 
-add comparison to real player, for random player or draft prospect?
-- https://twitter.com/messages/1928999030-3723150857
-- draftRatings/seasonRatings/seasonStats/seasonPotential/careerRatings/careerStats
-- "real life"/"your league" (only basketball)
-
 fix ai value of reversed draft picks https://discord.com/channels/290013534023057409/290013534023057409/905048206457581598
 - and random https://old.reddit.com/r/BasketballGM/comments/pyw33f/monthly_suggestions_thread/hg2t67n/
 
@@ -369,6 +369,7 @@ frivolities
   - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
   - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
   - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
+  - lowest payroll for championship https://old.reddit.com/r/BasketballGM/comments/ttdazd/monthly_suggestions_thread/i6cctm4/
 - oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
 - Youngest and Oldest ever to achieve certain statistical feats like triple doubles and 50 pointers https://discord.com/channels/290013534023057409/331882115119448065/904435732842700810
 - playoffs
@@ -773,8 +774,6 @@ nicidob new ovr formula
 FBGM too many very short players
 
 on trade summary page, also show how the player left the team (or if still active/retired). use p.transactions
-
-Maybe another frivolty to say which players were the best with a certain pick, e.g. 1-3 would be Michael Jordan IRL, 1-1 would be LeBron James, etc @lewie100
 
 trade summary charts future
 - some indication for winning a championship, special marker?

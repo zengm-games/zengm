@@ -302,8 +302,8 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	})}';
   var element = document.createElement('script');
   var firstScript = document.getElementsByTagName('script')[0];
-  var url = 'https://quantcast.mgr.consensu.org'
-    .concat('/choice/', 'M1Q1fpfqa7Vk4', '/', host, '/choice.js')
+  var url = 'https://cmp.quantcast.com'
+    .concat('/choice/', 'M1Q1fpfqa7Vk4', '/', host, '/choice.js');
   var uspTries = 0;
   var uspTriesLimit = 3;
   element.async = true;
@@ -364,6 +364,9 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
           args[2](retr);
         }
       } else {
+        if(args[0] === 'init' && typeof args[3] === 'object') {
+          args[3] = { ...args[3], tag_version: 'V2' };
+        }
         queue.push(args);
       }
     }
@@ -396,10 +399,10 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
             };
             if (msgIsString) {
               returnMsg = JSON.stringify(returnMsg);
-			}
-			if (event.source) {
-			  event.source.postMessage(returnMsg, '*');
-			}
+            }
+            if (event && event.source && event.source.postMessage) {
+              event.source.postMessage(returnMsg, '*');
+            }
           },
           payload.parameter
         );

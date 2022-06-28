@@ -14,13 +14,15 @@ function at(this: any, n: number) {
 	// Otherwise, this is just normal property access
 	return this[n];
 }
-for (const C of [Array, String]) {
-	Object.defineProperty(C.prototype, "at", {
-		value: at,
-		writable: true,
-		enumerable: false,
-		configurable: true,
-	});
+if (!Array.prototype.at) {
+	for (const C of [Array, String]) {
+		Object.defineProperty(C.prototype, "at", {
+			value: at,
+			writable: true,
+			enumerable: false,
+			configurable: true,
+		});
+	}
 }
 
 // Needed for some reason

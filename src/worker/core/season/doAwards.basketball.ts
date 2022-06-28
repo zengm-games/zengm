@@ -197,7 +197,6 @@ const getSemiFinalsMvp = async (
 
 	for (const series of semifinalsSeries) {
 		const seriesGames = games.filter(game => series.gids?.includes(game.gid));
-		console.log("seriesGames", seriesGames);
 		const mvp = getPlayoffSeriesMVP(players, seriesGames);
 		if (mvp) {
 			mvps.push(mvp);

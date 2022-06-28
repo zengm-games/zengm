@@ -2,7 +2,7 @@
 
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Chrome 92, Firefox 92, Safari ??
+// Chrome 92, Firefox 90, Safari 15.4
 // https://github.com/tc39/proposal-relative-indexing-method#polyfill
 function at(this: any, n: number) {
 	// ToInteger() abstract op

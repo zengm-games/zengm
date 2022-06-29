@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { WEBSITE_PLAY } from "../../../common";
+import { useMemo, useState } from "react";
+import { groupByUnique } from "../../../common/groupBy";
 import {
 	ActionButton,
 	HelpPopover,
 	RatingsStatsPopover,
 } from "../../components";
+import SelectMultiple from "../../components/SelectMultiple";
 import { toWorker } from "../../util";
 
 const RelativesForm = ({
@@ -33,18 +34,23 @@ const RelativesForm = ({
 		type: string;
 	}[];
 }) => {
-	console.log("initialPlayers", initialPlayers);
 	const [allPlayersState, setAllPlayersState] = useState<
 		"init" | "loading" | "done"
 	>("init");
 	const [allPlayers, setAllPlayers] = useState<
 		{ pid: number; name: string }[] | undefined
 	>();
+	const candidateRelatives = allPlayers ?? initialPlayers;
+
+	const playersByPid = useMemo(
+		() => groupByUnique(candidateRelatives, "pid"),
+		[candidateRelatives],
+	);
 
 	const handleRelativesChange = (
 		index: number,
 		field: "pid" | "type" | "add" | "delete",
-		event?: any,
+		value?: string,
 	) => {
 		if (field === "delete") {
 			relatives.splice(index, 1);
@@ -55,7 +61,7 @@ const RelativesForm = ({
 				type: "brother",
 			});
 		} else {
-			relatives[index][field] = event.target.value;
+			relatives[index][field] = value!;
 		}
 		handleChange("root", "relatives", {
 			target: {
@@ -76,7 +82,7 @@ const RelativesForm = ({
 							<select
 								className="form-select"
 								onChange={event => {
-									handleRelativesChange(i, "type", event);
+									handleRelativesChange(i, "type", event.target.value);
 								}}
 								value={type}
 								disabled={!godMode}
@@ -86,34 +92,19 @@ const RelativesForm = ({
 								<option value="son">Son</option>
 							</select>
 						</div>
-						<div className="me-2">
-							{i === 0 ? (
-								<label className="form-label">
-									Player ID number{" "}
-									<HelpPopover title="Player ID number">
-										<p>Enter the player ID number of the relative here.</p>
-										<p>
-											To find a player ID number, go to the player page for that
-											player and look at the end of the URL. For instance, if
-											the URL is https://{WEBSITE_PLAY}/l/19/player/6937, then
-											the player ID number is 6937.
-										</p>
-										<p>
-											Ideally this would be a search box that would
-											automatically find the ID number when you type in a
-											player's name, but oh well.
-										</p>
-									</HelpPopover>
-								</label>
-							) : null}
-							<input
-								type="text"
-								className="form-control"
-								onChange={event => {
-									handleRelativesChange(i, "pid", event);
+						<div className="me-2 flex-grow-1">
+							{i === 0 ? <label className="form-label">Player</label> : null}
+							<SelectMultiple
+								value={playersByPid[pid]}
+								options={candidateRelatives}
+								onChange={p => {
+									handleRelativesChange(i, "pid", String(p!.pid));
 								}}
-								value={pid}
+								getOptionLabel={p => p.name}
+								getOptionValue={p => String(p.pid)}
 								disabled={!godMode}
+								loading={allPlayersState === "loading"}
+								isClearable={false}
 							/>
 						</div>
 						<div className="flex-shrink-0" style={{ fontSize: 20 }}>

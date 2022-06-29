@@ -2,9 +2,11 @@ Button to load all names into memory
 - show pct done while disabled
 - invalidate when?
 - use on player editor, maybe on retired jersey editor, player comparison
-- in name, include first-last stats seasons
 - normal state includes active players and current relatives
 - handle case where relative pid has no entry in database
+- slow? https://github.com/jacobworrel/react-windowed-select/
+- height of react-select box
+- auto sync other players when adding/removing relatives
 
 slow performance in safari? https://discord.com/channels/290013534023057409/290013534023057409/990841766766858270
 

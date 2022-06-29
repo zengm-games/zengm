@@ -7,6 +7,8 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	isClearable = true,
 	getOptionLabel,
 	getOptionValue,
+	disabled,
+	loading,
 }: {
 	value: T | null | undefined;
 	options: T[];
@@ -14,6 +16,8 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	isClearable?: boolean;
 	getOptionLabel: (value: T) => string;
 	getOptionValue: (value: T) => string;
+	disabled?: boolean;
+	loading?: boolean;
 }) => {
 	return (
 		<Select<T>
@@ -24,6 +28,8 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 			options={options}
 			getOptionValue={getOptionValue}
 			getOptionLabel={getOptionLabel}
+			isDisabled={disabled}
+			isLoading={loading}
 		/>
 	);
 };

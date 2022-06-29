@@ -15,6 +15,9 @@ const stats = {
 		"war",
 	] as const,
 	raw: [
+		// Dummy value used some places
+		"min",
+
 		// Batting
 		"gp", // Also given to pitcher, since it's displayed various places
 		"gs", // Also given to pitcher, since it's displayed various places

@@ -422,6 +422,11 @@ const writePlayerStats = async (
 						hockey: p.stat.min > 0,
 					});
 					if (playedInGame) {
+						// Too many other parts of the codebase use "min", so put a dummy value there
+						if (isSport("baseball")) {
+							p.stat.min = 1;
+						}
+
 						for (const key of Object.keys(p.stat)) {
 							if (ps[key] === undefined) {
 								ps[key] = 0;
@@ -447,7 +452,14 @@ const writePlayerStats = async (
 						}
 
 						// baseball handles this in GameSim
-						if (!isSport("baseball")) {
+						if (
+							bySport({
+								baseball: false,
+								basketball: true,
+								football: true,
+								hockey: true,
+							})
+						) {
 							ps.gp += 1;
 						}
 

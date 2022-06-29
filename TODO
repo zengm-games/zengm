@@ -4,7 +4,6 @@ Button to load all names into memory
 - use on player editor, maybe on retired jersey editor, player comparison
 - normal state includes active players and current relatives
 - handle case where relative pid has no entry in database
-- slow? https://github.com/jacobworrel/react-windowed-select/
 - height of react-select box
 - auto sync other players when adding/removing relatives
 

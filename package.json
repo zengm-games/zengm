@@ -68,6 +68,7 @@
 		"react-dom": "^18.2.0",
 		"react-select": "^5.3.2",
 		"react-sortable-hoc": "^2.0.0",
+		"react-windowed-select": "^5.0.0",
 		"roman-numerals": "^0.3.2",
 		"s-ago": "^2.2.0",
 		"streamsaver": "^2.0.6",

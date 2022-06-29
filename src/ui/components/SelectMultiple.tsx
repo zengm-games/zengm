@@ -1,4 +1,4 @@
-import Select from "react-select";
+import Select from "react-windowed-select";
 
 const SelectMultiple = <T extends Record<string, unknown>>({
 	value,
@@ -20,6 +20,7 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	loading?: boolean;
 }) => {
 	return (
+		// @ts-expect-error
 		<Select<T>
 			classNamePrefix="dark-select"
 			value={value}

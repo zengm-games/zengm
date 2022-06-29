@@ -1,5 +1,11 @@
+import { useState } from "react";
 import { WEBSITE_PLAY } from "../../../common";
-import { HelpPopover, RatingsStatsPopover } from "../../components";
+import {
+	ActionButton,
+	HelpPopover,
+	RatingsStatsPopover,
+} from "../../components";
+import { toWorker } from "../../util";
 
 const RelativesForm = ({
 	godMode,
@@ -22,6 +28,13 @@ const RelativesForm = ({
 		type: string;
 	}[];
 }) => {
+	const [allPlayersState, setAllPlayersState] = useState<
+		"init" | "loading" | "done"
+	>("init");
+	const [allPlayers, setAllPlayers] = useState<
+		{ pid: number; name: string }[] | undefined
+	>();
+
 	const handleRelativesChange = (
 		index: number,
 		field: "pid" | "type" | "add" | "delete",
@@ -115,16 +128,53 @@ const RelativesForm = ({
 					</div>
 				);
 			})}
-			<button
-				type="button"
-				className="btn btn-secondary"
-				onClick={() => {
-					handleRelativesChange(-1, "add");
-				}}
-				disabled={!godMode}
-			>
-				Add
-			</button>
+			<div className="d-flex align-items-center">
+				<button
+					type="button"
+					className="btn btn-secondary"
+					onClick={() => {
+						handleRelativesChange(-1, "add");
+					}}
+					disabled={!godMode}
+				>
+					Add
+				</button>
+				<ActionButton
+					className="ms-3 me-2"
+					processing={allPlayersState === "loading"}
+					disabled={allPlayersState === "done"}
+					onClick={async () => {
+						setAllPlayersState("loading");
+						try {
+							const newPlayers = await toWorker(
+								"main",
+								"loadRetiredPlayers",
+								undefined,
+							);
+							console.log(newPlayers);
+							setAllPlayers(newPlayers);
+							setAllPlayersState("done");
+						} catch (error) {
+							setAllPlayersState("init");
+							throw error;
+						}
+					}}
+					variant="secondary"
+				>
+					{allPlayersState === "done" ? "Done!" : "Load Retired Players"}
+				</ActionButton>
+				<HelpPopover title="Load Retired Players">
+					<p>
+						By default, only active players are shown as selectable options in
+						the relatives form. This is for performance reasons, to handle
+						leagues where people have played many seasons.
+					</p>
+					<p>
+						If you press the "Load Retired Players" button and wait for it to
+						load, then retired players will be available to select as well.
+					</p>
+				</HelpPopover>
+			</div>
 		</>
 	);
 };

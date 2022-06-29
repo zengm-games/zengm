@@ -118,6 +118,7 @@ import omit from "lodash-es/omit";
 import addFirstNameShort from "../util/addFirstNameShort";
 import statsBaseball from "../core/team/stats.baseball";
 import { extraRatings } from "../views/playerRatings";
+import { groupByUnique } from "../../common/groupBy";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2126,6 +2127,70 @@ const initGold = async () => {
 	await toUI("initGold", []);
 };
 
+const loadRetiredPlayers = async () => {
+	const players = await idb.cache.players.getAll();
+	const playersByPid = groupByUnique(players, "pid");
+
+	const playerNames: {
+		pid: number;
+		firstName: string;
+		lastName: string;
+		firstSeason: number | undefined;
+		lastSeason: number | undefined;
+	}[] = [];
+
+	await iterate(
+		idb.league.transaction("players").store,
+		undefined,
+		undefined,
+		pTemp => {
+			// Make sure we have latest version of this player
+			const p = playersByPid[pTemp.pid] ?? pTemp;
+
+			let name = `${p.firstName} ${p.lastName}`;
+			let firstSeason;
+			let lastSeason;
+			if (p.stats.length > 0) {
+				firstSeason = p.stats[0].season;
+				lastSeason = p.stats.at(-1)!.season;
+				if (firstSeason !== lastSeason) {
+					name += ` (${firstSeason}-${lastSeason})`;
+				}
+			}
+
+			playerNames.push({
+				pid: p.pid,
+				firstName: p.firstName,
+				lastName: p.lastName,
+				firstSeason,
+				lastSeason,
+			});
+		},
+	);
+
+	return orderBy(playerNames, [
+		"lastName",
+		"firstName",
+		"firstSeason",
+		"lastSeason",
+	]).map(p => {
+		let name = p.firstName;
+		if (p.lastName) {
+			name += ` ${p.lastName}`;
+		}
+		if (p.firstSeason !== undefined && p.lastSeason !== undefined) {
+			if (p.firstSeason !== p.lastSeason) {
+				name += ` (${p.firstSeason}-${p.lastSeason})`;
+			}
+		}
+
+		return {
+			pid: p.pid,
+			name,
+		};
+	});
+};
+
 const lockSet = async ([name, value]: [LockName, boolean]) => {
 	await lock.set(name, value);
 };
@@ -3997,6 +4062,7 @@ export default {
 		importPlayers,
 		init,
 		initGold,
+		loadRetiredPlayers,
 		lockSet,
 		ovr,
 		proposeTrade,

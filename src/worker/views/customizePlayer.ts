@@ -156,7 +156,10 @@ const updateCustomizePlayer = async (
 
 		for (const relative of p.relatives) {
 			if (!pids.has(relative.pid)) {
-				const pRelative = await idb.getCopy.players({ pid: relative.pid });
+				const pRelative = await idb.getCopy.players(
+					{ pid: relative.pid },
+					"noCopyCache",
+				);
 				if (pRelative) {
 					currentPlayers.push(pRelative);
 				}

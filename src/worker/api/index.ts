@@ -719,9 +719,6 @@ const deleteOldData = async (options: {
 						minIndexKeep = i;
 					}
 				}
-				if (p.pid === 565) {
-					console.log(minIndexKeep);
-				}
 				const lengthBefore = p.salaries.length;
 				p.salaries = p.salaries.slice(minIndexKeep);
 				if (lengthBefore > p.salaries.length) {
@@ -3818,6 +3815,51 @@ const upsertCustomizedPlayer = async (
 	// Fill in player names for relatives
 	const relatives: Relative[] = [];
 
+	const getInverseType = (type: Player["relatives"][number]["type"]) => {
+		let type2: typeof type;
+		if (type === "father") {
+			type2 = "son";
+		} else if (type === "son") {
+			type2 = "father";
+		} else {
+			type2 = "brother";
+		}
+
+		return type2;
+	};
+
+	const ensureRelationExists = async (
+		p: Player,
+		p2: Player,
+		type: Player["relatives"][number]["type"],
+	) => {
+		const type2 = getInverseType(type);
+
+		let name = p.firstName;
+		if (p.lastName) {
+			name += ` ${p.lastName}`;
+		}
+
+		const existingRelation = p2.relatives.find(
+			rel => rel.type === type2 && rel.pid === p.pid,
+		);
+		if (existingRelation) {
+			// We found relation! Make sure name is correct
+			if (name !== existingRelation.name) {
+				existingRelation.name = name;
+				await idb.cache.players.put(p2);
+			}
+		} else {
+			// Need to add this relation
+			p2.relatives.push({
+				type: type2,
+				pid: p.pid,
+				name,
+			});
+			await idb.cache.players.put(p2);
+		}
+	};
+
 	for (const rel of p.relatives) {
 		const p2 = await idb.getCopy.players(
 			{
@@ -3827,7 +3869,12 @@ const upsertCustomizedPlayer = async (
 		);
 
 		if (p2) {
-			rel.name = `${p2.firstName} ${p2.lastName}`;
+			rel.name = p2.firstName;
+			if (p2.lastName) {
+				rel.name += ` ${p2.lastName}`;
+			}
+
+			await ensureRelationExists(p, p2, rel.type);
 		}
 
 		if (rel.name !== "") {
@@ -3837,6 +3884,37 @@ const upsertCustomizedPlayer = async (
 	}
 
 	p.relatives = relatives;
+
+	const prevPlayer = p.pid
+		? await idb.getCopy.players({ pid: p.pid }, "noCopyCache")
+		: undefined;
+	if (prevPlayer) {
+		// Any relation in here that is no longer in p should be deleted in the corresponding player too
+		for (const prevRel of prevPlayer.relatives) {
+			const currentRel = p.relatives.find(
+				rel => rel.type === prevRel.type && rel.pid === prevRel.pid,
+			);
+			if (!currentRel) {
+				// prevRel has been deleted!
+				const p2 = await idb.getCopy.players(
+					{
+						pid: prevRel.pid,
+					},
+					"noCopyCache",
+				);
+				if (p2) {
+					p2.relatives = p2.relatives.filter(
+						rel =>
+							!(
+								rel.type === getInverseType(prevRel.type) &&
+								rel.pid === prevPlayer.pid
+							),
+					);
+					await idb.cache.players.put(p2);
+				}
+			}
+		}
+	}
 
 	// Save to database, adding pid if it doesn't already exist
 	await idb.cache.players.put(p);

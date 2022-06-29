@@ -408,8 +408,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
-	const { challengeNoRatings, godMode, originalTid, playerMoodTraits, teams } =
-		props;
+	const {
+		challengeNoRatings,
+		godMode,
+		originalTid,
+		playerMoodTraits,
+		playersRelativesList,
+		teams,
+	} = props;
 	const { appearanceOption, p, saving } = state;
 
 	const title = originalTid === undefined ? "Create Player" : "Edit Player";
@@ -1067,6 +1073,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<RelativesForm
 							godMode={godMode}
 							handleChange={handleChange}
+							initialPlayers={playersRelativesList}
 							relatives={p.relatives}
 						/>
 					</div>

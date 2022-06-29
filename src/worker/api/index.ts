@@ -119,6 +119,10 @@ import addFirstNameShort from "../util/addFirstNameShort";
 import statsBaseball from "../core/team/stats.baseball";
 import { extraRatings } from "../views/playerRatings";
 import { groupByUnique } from "../../common/groupBy";
+import {
+	finalizePlayersRelativesList,
+	formatPlayerRelativesList,
+} from "../views/customizePlayer";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2147,48 +2151,11 @@ const loadRetiredPlayers = async () => {
 			// Make sure we have latest version of this player
 			const p = playersByPid[pTemp.pid] ?? pTemp;
 
-			let name = `${p.firstName} ${p.lastName}`;
-			let firstSeason;
-			let lastSeason;
-			if (p.stats.length > 0) {
-				firstSeason = p.stats[0].season;
-				lastSeason = p.stats.at(-1)!.season;
-				if (firstSeason !== lastSeason) {
-					name += ` (${firstSeason}-${lastSeason})`;
-				}
-			}
-
-			playerNames.push({
-				pid: p.pid,
-				firstName: p.firstName,
-				lastName: p.lastName,
-				firstSeason,
-				lastSeason,
-			});
+			playerNames.push(formatPlayerRelativesList(p));
 		},
 	);
 
-	return orderBy(playerNames, [
-		"lastName",
-		"firstName",
-		"firstSeason",
-		"lastSeason",
-	]).map(p => {
-		let name = p.firstName;
-		if (p.lastName) {
-			name += ` ${p.lastName}`;
-		}
-		if (p.firstSeason !== undefined && p.lastSeason !== undefined) {
-			if (p.firstSeason !== p.lastSeason) {
-				name += ` (${p.firstSeason}-${p.lastSeason})`;
-			}
-		}
-
-		return {
-			pid: p.pid,
-			name,
-		};
-	});
+	return finalizePlayersRelativesList(playerNames);
 };
 
 const lockSet = async ([name, value]: [LockName, boolean]) => {

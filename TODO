@@ -4,8 +4,7 @@ Button to load all names into memory
 - use on player editor, maybe on retired jersey editor, player comparison
 - in name, include first-last stats seasons
 - normal state includes active players and current relatives
-- on worker
-  - iterate through players, checking in memory players for newer values
+- handle case where relative pid has no entry in database
 
 slow performance in safari? https://discord.com/channels/290013534023057409/290013534023057409/990841766766858270
 

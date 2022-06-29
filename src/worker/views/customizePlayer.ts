@@ -6,7 +6,52 @@ import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerWithoutKey,
+	Player,
 } from "../../common/types";
+import orderBy from "lodash-es/orderBy";
+
+export const formatPlayerRelativesList = (p: Player) => {
+	let firstSeason;
+	let lastSeason;
+	if (p.stats.length > 0) {
+		firstSeason = p.stats[0].season;
+		lastSeason = p.stats.at(-1)!.season;
+	}
+
+	return {
+		pid: p.pid,
+		firstName: p.firstName,
+		lastName: p.lastName,
+		firstSeason,
+		lastSeason,
+	};
+};
+
+export const finalizePlayersRelativesList = (
+	players: ReturnType<typeof formatPlayerRelativesList>[],
+) => {
+	return orderBy(players, [
+		"lastName",
+		"firstName",
+		"firstSeason",
+		"lastSeason",
+	]).map(p => {
+		let name = p.firstName;
+		if (p.lastName) {
+			name += ` ${p.lastName}`;
+		}
+		if (p.firstSeason !== undefined && p.lastSeason !== undefined) {
+			if (p.firstSeason !== p.lastSeason) {
+				name += ` (${p.firstSeason}-${p.lastSeason})`;
+			}
+		}
+
+		return {
+			pid: p.pid,
+			name,
+		};
+	});
+};
 
 const updateCustomizePlayer = async (
 	inputs: ViewInput<"customizePlayer">,
@@ -106,6 +151,22 @@ const updateCustomizePlayer = async (
 			}
 		}
 
+		const currentPlayers = await idb.cache.players.getAll();
+		const pids = new Set(currentPlayers.map(p => p.pid));
+
+		for (const relative of p.relatives) {
+			if (!pids.has(relative.pid)) {
+				const pRelative = await idb.getCopy.players({ pid: relative.pid });
+				if (pRelative) {
+					currentPlayers.push(pRelative);
+				}
+			}
+		}
+
+		const playersRelativesList = finalizePlayersRelativesList(
+			currentPlayers.map(formatPlayerRelativesList),
+		);
+
 		return {
 			appearanceOption,
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -114,6 +175,7 @@ const updateCustomizePlayer = async (
 			originalTid,
 			p,
 			playerMoodTraits: g.get("playerMoodTraits"),
+			playersRelativesList,
 			phase: g.get("phase"),
 			season: g.get("season"),
 			teams,

@@ -10,6 +10,7 @@ import { toWorker } from "../../util";
 const RelativesForm = ({
 	godMode,
 	handleChange,
+	initialPlayers,
 	relatives,
 }: {
 	godMode: boolean;
@@ -22,12 +23,17 @@ const RelativesForm = ({
 			};
 		},
 	) => void;
+	initialPlayers: {
+		name: string;
+		pid: number;
+	}[];
 	relatives: {
 		name: string;
 		pid: number | string;
 		type: string;
 	}[];
 }) => {
+	console.log("initialPlayers", initialPlayers);
 	const [allPlayersState, setAllPlayersState] = useState<
 		"init" | "loading" | "done"
 	>("init");

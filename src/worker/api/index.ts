@@ -3873,8 +3873,6 @@ const upsertCustomizedPlayer = async (
 			if (p2.lastName) {
 				rel.name += ` ${p2.lastName}`;
 			}
-
-			await ensureRelationExists(p, p2, rel.type);
 		}
 
 		if (rel.name !== "") {
@@ -3918,6 +3916,20 @@ const upsertCustomizedPlayer = async (
 
 	// Save to database, adding pid if it doesn't already exist
 	await idb.cache.players.put(p);
+
+	// Only after pid is known - update current relatives
+	for (const rel of p.relatives) {
+		const p2 = await idb.getCopy.players(
+			{
+				pid: rel.pid,
+			},
+			"noCopyCache",
+		);
+
+		if (p2) {
+			await ensureRelationExists(p as Player, p2, rel.type);
+		}
+	}
 
 	// If jersey number is the same as a teammate, edit the teammate's
 	const jerseyNumber = helpers.getJerseyNumber(p);

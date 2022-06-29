@@ -594,9 +594,15 @@ class GameSim {
 	}) {
 		const runners = this.getRunners();
 
+		// Batter is out, inning is already over
 		if (this.outs >= NUM_OUTS_PER_INNING) {
 			return runners;
 		}
+
+		// Inning ends before batter reaches first base
+		const inningOverAndNobodyAdvances =
+			this.outs === NUM_OUTS_PER_INNING - 1 &&
+			(result === "doublePlay" || result === "fieldersChoice");
 
 		// Handle runners
 		// Start from 3rd base first, because a blocked base can't be advanced to
@@ -793,7 +799,7 @@ class GameSim {
 				}
 			}
 
-			if (runner.to === 4 && !runner.out) {
+			if (runner.to === 4 && !runner.out && !inningOverAndNobodyAdvances) {
 				const pRBI = error ? undefined : p;
 
 				this.doScore(this.bases[i]!, pRBI);

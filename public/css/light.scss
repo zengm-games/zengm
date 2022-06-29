@@ -1431,6 +1431,14 @@ hr {
 	}
 }
 
+// Make same height as other form controls
+.dark-select__control {
+	min-height: 33px !important;
+}
+.dark-select__indicator {
+	padding: 0 8px !important;
+}
+
 $sticky-cols: (
 	"sticky-x": 1,
 	"sticky-xx": 2,

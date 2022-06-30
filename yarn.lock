@@ -1889,13 +1889,6 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@^17.0.3":
-  version "17.0.17"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.17.tgz#2e3743277a793a96a99f1bf87614598289da68a1"
-  integrity sha512-VjnqEmqGnasQKV0CWLevqMTXBYG9GbwuE6x3VetERLh0cq2LTptFE73MrQi2S7GkKXCf2GgwItB/melLnxfnsg==
-  dependencies:
-    "@types/react" "^17"
-
 "@types/react-dom@^18.0.5":
   version "18.0.5"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.0.5.tgz#330b2d472c22f796e5531446939eacef8378444a"
@@ -1921,15 +1914,6 @@
   version "18.0.14"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.14.tgz#e016616ffff51dba01b04945610fe3671fdbe06d"
   integrity sha512-x4gGuASSiWmo0xjDLpm5mPb52syZHJx02VKbqUKdLmKtAwIh63XClGsiTI1K6DO5q7ox4xAsQrU+Gl3+gGXF9Q==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@^17", "@types/react@^17.0.3":
-  version "17.0.47"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.47.tgz#4ee71aaf4c5a9e290e03aa4d0d313c5d666b3b78"
-  integrity sha512-mk0BL8zBinf2ozNr3qPnlu1oyVTYq+4V7WA76RgxUAtf0Em/Wbid38KN6n4abEkvO4xMTBWmnP1FtQzgkEiJoA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -6785,13 +6769,12 @@ react-window@^1.8.6:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
 
-react-windowed-select@^5.0.0:
+react-windowed-select@dumbmatter/react-windowed-select#react18-build:
   version "5.0.0"
-  resolved "https://registry.yarnpkg.com/react-windowed-select/-/react-windowed-select-5.0.0.tgz#1096df3325dc974ea381a40f0ff0342d390a667a"
-  integrity sha512-ZQM4oCI8sClIc4ArjK5jWgYx1+7PUKDPu6XuKawDai7yUz7/U5xpbUDQl3t8zi3WxH+FbINxNN8//hFgQ38hRw==
+  resolved "https://codeload.github.com/dumbmatter/react-windowed-select/tar.gz/392c0b92f11365473fe131d962b8bcf71c954b07"
   dependencies:
-    "@types/react" "^17.0.3"
-    "@types/react-dom" "^17.0.3"
+    "@types/react" "^18.0.14"
+    "@types/react-dom" "^18.0.5"
     "@types/react-window" "^1.8.2"
     react-select "^5.2.2"
     react-window "^1.8.6"

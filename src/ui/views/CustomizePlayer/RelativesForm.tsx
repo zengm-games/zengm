@@ -148,7 +148,6 @@ const RelativesForm = ({
 								"loadRetiredPlayers",
 								undefined,
 							);
-							console.log(newPlayers);
 							setAllPlayers(newPlayers);
 							setAllPlayersState("done");
 						} catch (error) {

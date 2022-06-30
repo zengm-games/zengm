@@ -155,6 +155,7 @@ const RelativesForm = ({
 							throw error;
 						}
 					}}
+					type="button"
 					variant="secondary"
 				>
 					{allPlayersState === "done" ? "Done!" : "Load Retired Players"}

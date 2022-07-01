@@ -1,4 +1,5 @@
-import Select from "react-select";
+// @ts-expect-error
+import Select from "react-select-virtualized";
 
 const SelectMultiple = <T extends Record<string, unknown>>({
 	value,
@@ -22,12 +23,20 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	return (
 		<Select<T>
 			classNamePrefix="dark-select"
-			value={value}
+			value={
+				value != undefined
+					? {
+							label: getOptionLabel(value),
+							value: getOptionValue(value),
+					  }
+					: undefined
+			}
 			isClearable={isClearable}
 			onChange={onChange}
-			options={options}
-			getOptionValue={getOptionValue}
-			getOptionLabel={getOptionLabel}
+			options={options.map(option => ({
+				label: getOptionLabel(option),
+				value: getOptionValue(option),
+			}))}
 			isDisabled={disabled}
 			isLoading={loading}
 		/>

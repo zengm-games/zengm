@@ -240,6 +240,10 @@ export const settings: {
 			if (!isSport("football") && value < output.numPlayersOnCourt) {
 				throw new Error("Value cannot be less than # Players On Court");
 			}
+			if (isSport("hockey") && value < 12) {
+				// Game sim crashes with fewer than 12 players currently. Otherwise, should be no limit.
+				throw new Error("Value must be at least 12");
+			}
 		},
 	},
 	{

@@ -1,15 +1,14 @@
-SelectMultiple is slow
-- error with react-windowed-select https://discord.com/channels/@me/906281746675413013/991875186355884143
-- rc-select
-- https://www.downshift-js.com/use-combobox
-- https://react-spectrum.adobe.com/react-spectrum/ComboBox.html
-- https://www.botsplash.com/post/optimize-your-react-select-component-to-smoothly-render-10k-data
-- https://github.com/guiyep/react-select-virtualized
+there's a bug where you get the Moneyball achievement (1 and 2) if you win a championship as soon as you start a new league https://old.reddit.com/r/BasketballGM/comments/v23qzt/monthly_suggestions_thread/ib22xdj/
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857
 - draftRatings/seasonRatings/seasonStats/seasonPotential/careerRatings/careerStats
 - "real life"/"your league" (only basketball)
+
+all-time teams
+- https://old.reddit.com/r/BasketballGM/comments/v23qzt/monthly_suggestions_thread/iaqmdke/
+- all decade, all century, all time
+- update all time every 25 years, after start of league, adding 25 players more each time
 
 slow performance in safari? https://discord.com/channels/290013534023057409/290013534023057409/990841766766858270
 
@@ -27,6 +26,10 @@ baseball bugs
   - more extreme performances for bad pitchers https://discord.com/channels/290013534023057409/290015591216054273/991844802599600228
   - lower IP for low endurance starters
 - on a similar vein, a 3rd baseman with 32 catching just made the allstar team with a perfect fielding rating over 78 games at catcher. you can stick anyone at catcher and they'll be basically the same https://discord.com/channels/290013534023057409/290015591216054273/991001719712395294
+- double play or fielder's choice 3rd out - still showing as scoring plays in scoring summary
+  - repeat logic that fixed original bug in PlayByPlayLogger?
+  - add to runners a scored boolean?
+  - don't let runners advance if inning over?
 
 when u change a players position the displayed OVR does not change to the OVR at that position https://discord.com/channels/290013534023057409/290015591216054273/991836318709600287
 

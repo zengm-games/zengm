@@ -47,4 +47,5 @@ export type Runner = {
 	from: 1 | 2 | 3; // 1st/2nd/3rd base
 	to: 2 | 3 | 4; // 2nd/3rd/home
 	out: boolean;
+	scored?: boolean; // Handles case where to is 4 but the 3rd out occurred, like a fielder's choice
 };

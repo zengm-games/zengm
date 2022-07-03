@@ -678,7 +678,7 @@ class GameSim {
 					// First base
 
 					// Advance by numBases is mandatory, to stay ahead of hitter
-					runner.to = Math.min(4, runner.from + numBases);
+					runner.to = Math.min(4, runner.from + numBases) as any;
 
 					// Fast runner might get one more base
 					if (
@@ -801,6 +801,7 @@ class GameSim {
 
 			if (runner.to === 4 && !runner.out && !inningOverAndNobodyAdvances) {
 				const pRBI = error ? undefined : p;
+				runner.scored = true;
 
 				this.doScore(this.bases[i]!, pRBI);
 			}
@@ -851,6 +852,7 @@ class GameSim {
 		if (this.bases[2]) {
 			this.doScore(this.bases[2]);
 			runners[2]!.to += 1;
+			runners[2]!.scored = true;
 			this.bases[2] = undefined;
 		}
 		if (this.bases[1]) {
@@ -1899,26 +1901,7 @@ class GameSim {
 					out: false,
 				};
 			}
-		}) as [
-			{
-				pid: number;
-				from: number;
-				to: number;
-				out: boolean;
-			},
-			{
-				pid: number;
-				from: number;
-				to: number;
-				out: boolean;
-			},
-			{
-				pid: number;
-				from: number;
-				to: number;
-				out: boolean;
-			},
-		];
+		}) as [Runner, Runner, Runner];
 	}
 
 	finalizeRunners(
@@ -1952,6 +1935,7 @@ class GameSim {
 				if (this.bases[2]) {
 					this.doScore(this.bases[2], p);
 					runners[2]!.to += 1;
+					runners[2]!.scored = true;
 				}
 
 				this.bases[2] = this.bases[1];

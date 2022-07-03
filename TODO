@@ -1,5 +1,13 @@
 slow performance in safari? https://discord.com/channels/290013534023057409/290013534023057409/990841766766858270
 - not just safari. maybe only after a few seasons in a league. https://discord.com/channels/290013534023057409/290013534023057409/992942000619913256
+- transitioning from the trade block to the trader offer screen there is now a 2/3 second delay before it does anything which was never there before, it used to zip from screen to screen https://discord.com/channels/290013534023057409/569726303926878219/993037130970447902
+  - Two problems
+    - scrollTo in viewManager gets called before trade page is rendered
+    - when going from trading block to trade page, it's somehow much slower than doing it from a normal link or from the roster page. why?
+  - console says something like "[Violation] 'message' handler took 1175ms" - what is that?
+    - still there even when trade UI is null
+  - at before-baseball, it's still slow, but scroll up happens at correct time. that was after viewManager though. what happened in between?
+    - it was the react 18 upgrade on 05-26
 
 there's a bug where you get the Moneyball achievement (1 and 2) if you win a championship as soon as you start a new league https://old.reddit.com/r/BasketballGM/comments/v23qzt/monthly_suggestions_thread/ib22xdj/
 

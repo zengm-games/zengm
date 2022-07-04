@@ -39,7 +39,9 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 					: undefined
 			}
 			isClearable={isClearable}
-			onChange={(x: any) => onChange(optionsByValue[x.value])}
+			onChange={(x: any) =>
+				onChange(x != null ? optionsByValue[x.value] : null)
+			}
 			options={options.map(option => ({
 				label: getOptionLabel(option),
 				value: getOptionValue(option),

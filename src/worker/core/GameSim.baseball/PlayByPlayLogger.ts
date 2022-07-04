@@ -216,7 +216,7 @@ class PlayByPlayLogger {
 		} else {
 			const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
 				.runners;
-			if (runners?.some(runner => runner.to === 4 && !runner.out)) {
+			if (runners?.some(runner => runner.scored)) {
 				scored = true;
 			}
 		}

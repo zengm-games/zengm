@@ -1,0 +1,10 @@
+diff --git a/node_modules/react-select-virtualized/dist/index.min.js b/node_modules/react-select-virtualized/dist/index.min.js
+index 64d56ab..391ad0d 100644
+--- a/node_modules/react-select-virtualized/dist/index.min.js
++++ b/node_modules/react-select-virtualized/dist/index.min.js
+@@ -1,4 +1,4 @@
+-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-virtualized"),n=require("react-select");require("react-virtualized/styles.css");var o=require("react-select/async"),r=require("react-select/creatable"),a=require("react-select/async-creatable");function i(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var l=i(e),u=i(n),s=i(o),c=i(r),p=i(a);function f(){return f=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var o in n)Object.prototype.hasOwnProperty.call(n,o)&&(e[o]=n[o])}return e},f.apply(this,arguments)}var d="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function m(e,t){return e(t={exports:{}},t.exports),t.exports
++"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-virtualized"),n=require("react-select");var o=require("react-select/async"),r=require("react-select/creatable"),a=require("react-select/async-creatable");function i(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var l=i(e),u=i(n),s=i(o),c=i(r),p=i(a);function f(){return f=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var o in n)Object.prototype.hasOwnProperty.call(n,o)&&(e[o]=n[o])}return e},f.apply(this,arguments)}var d="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function m(e,t){return e(t={exports:{}},t.exports),t.exports
+ /** @license React v16.13.1
+  * react-is.production.min.js
+  *

@@ -76,12 +76,21 @@ const Controller = () => {
 		idLoaded,
 		inLeague,
 		loading: updating,
+		scrollToTop,
 	} = state;
 
 	// Optimistically use idLoading before it renders, for UI responsiveness in the sidebar
 	const sidebarPageID = idLoading ?? idLoaded;
 
 	const pathname = isSport("baseball") ? document.location.pathname : undefined;
+
+	// Scroll to top if this load came from user clicking a link to a new page
+	useEffect(() => {
+		if (scrollToTop) {
+			window.scrollTo(window.pageXOffset, 0);
+		}
+	}, [idLoaded, scrollToTop]);
+
 	return (
 		<LazyMotion strict features={loadFramerMotionFeatures}>
 			<NavBar updating={updating} />

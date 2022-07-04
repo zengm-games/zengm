@@ -1,17 +1,17 @@
-SelectMultiple is slow
-- error with react-windowed-select https://discord.com/channels/@me/906281746675413013/991875186355884143
-- rc-select
-- https://www.downshift-js.com/use-combobox
-- https://react-spectrum.adobe.com/react-spectrum/ComboBox.html
-- https://www.botsplash.com/post/optimize-your-react-select-component-to-smoothly-render-10k-data
-- https://github.com/guiyep/react-select-virtualized
+slow performance in safari? https://discord.com/channels/290013534023057409/290013534023057409/990841766766858270
+- not just safari. maybe only after a few seasons in a league. https://discord.com/channels/290013534023057409/290013534023057409/992942000619913256
+
+there's a bug where you get the Moneyball achievement (1 and 2) if you win a championship as soon as you start a new league https://old.reddit.com/r/BasketballGM/comments/v23qzt/monthly_suggestions_thread/ib22xdj/
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857
 - draftRatings/seasonRatings/seasonStats/seasonPotential/careerRatings/careerStats
 - "real life"/"your league" (only basketball)
 
-slow performance in safari? https://discord.com/channels/290013534023057409/290013534023057409/990841766766858270
+all-time teams
+- https://old.reddit.com/r/BasketballGM/comments/v23qzt/monthly_suggestions_thread/iaqmdke/
+- all decade, all century, all time
+- update all time every 25 years, after start of league, adding 25 players more each time
 
 baseball bugs
 - high eye guys should get more BB https://old.reddit.com/r/ZenGMBaseball/comments/vi8eib/new_zengm_baseball_out_now/ide7b6a/

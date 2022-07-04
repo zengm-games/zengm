@@ -36,6 +36,7 @@ type State = {
 	idLoading: string | undefined;
 	inLeague: boolean;
 	data: Record<string, any>;
+	scrollToTop: boolean;
 };
 
 type ViewInfo = {
@@ -68,6 +69,7 @@ export const useViewData = create<
 			set(state);
 		},
 	},
+	scrollToTop: false,
 }));
 
 const actions = useViewData.getState().actions;
@@ -310,6 +312,7 @@ class ViewManager {
 			idLoaded: id,
 			idLoading: undefined,
 			inLeague,
+			scrollToTop: updateEvents.length === 1 && updateEvents[0] === "firstRun",
 		};
 
 		if (vars.data && vars.data.redirectUrl !== undefined) {
@@ -336,11 +339,6 @@ class ViewManager {
 		actions.reset(vars);
 		this.idLoaded = id;
 		this.viewData = vars.data;
-
-		// Scroll to top if this load came from user clicking a link
-		if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
-			window.scrollTo(window.pageXOffset, 0);
-		}
 
 		this.initNextAction();
 	}

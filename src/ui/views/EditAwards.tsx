@@ -92,7 +92,6 @@ const EditAwards = ({
 	const handleChange =
 		(type: string, teamNumber = 0, playerNumber = 0) =>
 		(p: any) => {
-			console.log("handleChange", type, teamNumber, playerNumber, p);
 			let error = false;
 
 			const newAwards = { ...aws };
@@ -207,7 +206,6 @@ const EditAwards = ({
 			}
 
 			if (!error) {
-				console.log("newAwards", newAwards);
 				setAws({ ...newAwards });
 			}
 

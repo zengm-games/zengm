@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 // @ts-expect-error
 import Select from "react-select-virtualized";
+import { groupByUnique } from "../../common/groupBy";
 
 const SelectMultiple = <T extends Record<string, unknown>>({
 	value,
@@ -20,6 +22,11 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	disabled?: boolean;
 	loading?: boolean;
 }) => {
+	const optionsByValue = useMemo(
+		() => groupByUnique(options, getOptionValue),
+		[getOptionValue, options],
+	);
+
 	return (
 		<Select<T>
 			classNamePrefix="dark-select"
@@ -32,7 +39,7 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 					: undefined
 			}
 			isClearable={isClearable}
-			onChange={onChange}
+			onChange={(x: any) => onChange(optionsByValue[x.value])}
 			options={options.map(option => ({
 				label: getOptionLabel(option),
 				value: getOptionValue(option),

@@ -102,6 +102,11 @@ export const frivolities = {
 			name: "Worst Championship Teams",
 			description: "The worst seasons from teams that won the title.",
 		},
+		{
+			urlParts: ["teams", "old_champ"],
+			name: "Oldest Championship Teams",
+			description: "The oldest teams that won the title.",
+		},
 	],
 	Trades: [
 		{

@@ -348,12 +348,12 @@ const updateFrivolitiesTeamSeasons = async (
 					return;
 				}
 				return {
-					value: ts.avgAge ? Math.round(ts.avgAge * 100) / 100 : 0,
+					value: ts.avgAge ? ts.avgAge : 0,
 					roundsWonText,
 				};
 			};
 			sortParams = [
-				["most.value", "mov"],
+				["most.value", "winp"],
 				["desc", "desc"],
 			];
 		} else {

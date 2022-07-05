@@ -41,7 +41,6 @@ const updateExportPlayers = async (
 					"jerseyNumber",
 				],
 				ratings: ["ovr", "pot", "skills", "pos"],
-				stats: ["abbrev", "tid"],
 				season: season,
 				showNoStats: true,
 				showRookies: true,

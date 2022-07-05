@@ -56,14 +56,8 @@ const ExportPlayers = ({
 			}),
 			p.ratings.pos,
 			p.age,
-			<a
-				href={helpers.leagueUrl([
-					"roster",
-					`${p.stats.abbrev}_${p.stats.tid}`,
-					season,
-				])}
-			>
-				{p.stats.abbrev}
+			<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
+				{p.abbrev}
 			</a>,
 			showRatings ? p.ratings.ovr : null,
 			showRatings ? p.ratings.pot : null,

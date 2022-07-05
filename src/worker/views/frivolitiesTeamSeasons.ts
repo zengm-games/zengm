@@ -79,7 +79,6 @@ export const getMostXTeamSeasons = async ({
 				pts: 0,
 				oppPts: 0,
 				most: after ? await after(ts.most) : ts.most,
-				avgAge: ts.avgAge ? ts.avgAge.toFixed(1) : "0",
 			};
 		}),
 	);
@@ -321,17 +320,12 @@ const updateFrivolitiesTeamSeasons = async (
 			description = "These are oldest teams that won the title.";
 			extraCols.push(
 				{
-					key: "avgAge",
+					key: ["most", "value"],
 					colName: "AvgAge",
 				},
 				{
 					key: "seed",
 					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
 				},
 			);
 
@@ -340,16 +334,8 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = ts => {
-				const roundsWonText = getRoundsWonText(ts);
-
-				// Keep in sync with helpers.roundsWonText
-				const validTexts = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
-					return;
-				}
 				return {
 					value: ts.avgAge ?? 0,
-					roundsWonText,
 				};
 			};
 			sortParams = [
@@ -361,17 +347,12 @@ const updateFrivolitiesTeamSeasons = async (
 			description = "These are youngest teams that won the title.";
 			extraCols.push(
 				{
-					key: "avgAge",
+					key: ["most", "value"],
 					colName: "AvgAge",
 				},
 				{
 					key: "seed",
 					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
 				},
 			);
 
@@ -380,16 +361,8 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = ts => {
-				const roundsWonText = getRoundsWonText(ts);
-
-				// Keep in sync with helpers.roundsWonText
-				const validTexts = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
-					return;
-				}
 				return {
 					value: -(ts.avgAge ?? 0),
-					roundsWonText,
 				};
 			};
 			sortParams = [

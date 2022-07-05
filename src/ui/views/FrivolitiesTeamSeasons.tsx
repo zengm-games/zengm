@@ -67,7 +67,11 @@ const FrivolitiesTeamSeasons = ({
 					isSport("basketball") ? "mov" : "diff",
 				),
 				...extraCols.map(x => {
-					const value = getValue(ts, x.key);
+					let value = getValue(ts, x.key);
+					if (x.colName === "AvgAge") {
+						value = value.toFixed(1);
+					}
+
 					if (x.keySort) {
 						const sortValue = getValue(ts, x.keySort);
 

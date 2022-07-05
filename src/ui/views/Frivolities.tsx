@@ -107,6 +107,11 @@ export const frivolities = {
 			name: "Oldest Championship Teams",
 			description: "The oldest teams that won the title.",
 		},
+		{
+			urlParts: ["teams", "young_champ"],
+			name: "Youngest Championship Teams",
+			description: "The youngest teams that won the title.",
+		},
 	],
 	Trades: [
 		{

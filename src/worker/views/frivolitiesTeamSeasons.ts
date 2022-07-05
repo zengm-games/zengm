@@ -247,7 +247,7 @@ const updateFrivolitiesTeamSeasons = async (
 				["desc", "asc"],
 			];
 		} else if (type === "worst_champ") {
-			title = "Worst Champion Teams";
+			title = "Worst Championship Teams";
 			description =
 				"These are the worst seasons from teams that somehow won the title.";
 			extraCols.push(
@@ -336,7 +336,7 @@ const updateFrivolitiesTeamSeasons = async (
 			);
 
 			filter = ts =>
-				!!ts.avgAge &&
+				ts.avgAge !== undefined &&
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = ts => {
@@ -348,7 +348,47 @@ const updateFrivolitiesTeamSeasons = async (
 					return;
 				}
 				return {
-					value: ts.avgAge ? ts.avgAge : 0,
+					value: ts.avgAge ?? 0,
+					roundsWonText,
+				};
+			};
+			sortParams = [
+				["most.value", "winp"],
+				["desc", "desc"],
+			];
+		} else if (type === "young_champ") {
+			title = "Youngest Championship Teams";
+			description = "These are youngest teams that won the title.";
+			extraCols.push(
+				{
+					key: "avgAge",
+					colName: "AvgAge",
+				},
+				{
+					key: "seed",
+					colName: "Seed",
+				},
+				{
+					key: ["most", "roundsWonText"],
+					keySort: "playoffRoundsWon",
+					colName: "Rounds Won",
+				},
+			);
+
+			filter = ts =>
+				ts.avgAge !== undefined &&
+				ts.playoffRoundsWon >= 0 &&
+				(season > ts.season || phase > PHASE.PLAYOFFS);
+			getValue = ts => {
+				const roundsWonText = getRoundsWonText(ts);
+
+				// Keep in sync with helpers.roundsWonText
+				const validTexts = ["League champs"];
+				if (!validTexts.includes(roundsWonText)) {
+					return;
+				}
+				return {
+					value: -(ts.avgAge ?? 0),
 					roundsWonText,
 				};
 			};

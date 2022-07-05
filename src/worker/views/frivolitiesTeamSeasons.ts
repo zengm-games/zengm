@@ -315,9 +315,13 @@ const updateFrivolitiesTeamSeasons = async (
 				["most.value", "mov"],
 				["desc", "asc"],
 			];
-		} else if (type === "old_champ") {
-			title = "Oldest Championship Teams";
-			description = "These are oldest teams that won the title.";
+		} else if (type === "old_champ" || type === "young_champ") {
+			title = `${
+				type === "old_champ" ? "Oldest" : "Youngest"
+			} Championship Teams`;
+			description = `These are ${
+				type === "old_champ" ? "oldest" : "youngest"
+			} teams that won the title.`;
 			extraCols.push(
 				{
 					key: ["most", "value"],
@@ -334,40 +338,21 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = ts => {
+				const roundsWonText = getRoundsWonText(ts);
+
+				// Keep in sync with helpers.roundsWonText
+				const validTexts = ["League champs"];
+				if (!validTexts.includes(roundsWonText)) {
+					return;
+				}
+
 				return {
 					value: ts.avgAge ?? 0,
 				};
 			};
 			sortParams = [
 				["most.value", "winp"],
-				["desc", "desc"],
-			];
-		} else if (type === "young_champ") {
-			title = "Youngest Championship Teams";
-			description = "These are youngest teams that won the title.";
-			extraCols.push(
-				{
-					key: ["most", "value"],
-					colName: "AvgAge",
-				},
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-			);
-
-			filter = ts =>
-				ts.avgAge !== undefined &&
-				ts.playoffRoundsWon >= 0 &&
-				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = ts => {
-				return {
-					value: -(ts.avgAge ?? 0),
-				};
-			};
-			sortParams = [
-				["most.value", "winp"],
-				["desc", "desc"],
+				[type === "old_champ" ? "desc" : "asc", "desc"],
 			];
 		} else {
 			throw new Error(`Unknown type "${type}"`);

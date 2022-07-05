@@ -121,6 +121,7 @@ export type Basketball = {
 				lostDiv: number;
 				wonConf: number;
 				lostConf: number;
+				avgAge: number;
 			}
 		>
 	>;

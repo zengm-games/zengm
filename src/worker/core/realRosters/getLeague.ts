@@ -526,6 +526,14 @@ const getLeague = async (options: GetLeagueOptions) => {
 					teamSeason.gp = teamSeason.won + teamSeason.lost;
 					teamSeason.gpHome = teamSeason.wonHome + teamSeason.lostHome;
 
+					if (
+						teamSeason.season < options.season ||
+						(teamSeason.season === options.season &&
+							options.phase >= PHASE.PLAYOFFS)
+					) {
+						teamSeason.avgAge = teamSeasonData.avgAge;
+					}
+
 					teamSeason.srID = t.srID;
 
 					for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {

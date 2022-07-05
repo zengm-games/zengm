@@ -2,7 +2,7 @@ import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
 import { isSport, PHASE } from "../../common";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "lodash-es";
 import { team } from "../core";
 
 type Most = {
@@ -79,6 +79,7 @@ export const getMostXTeamSeasons = async ({
 				pts: 0,
 				oppPts: 0,
 				most: after ? await after(ts.most) : ts.most,
+				avgAge: ts.avgAge ? ts.avgAge.toFixed(1) : "0",
 			};
 		}),
 	);
@@ -246,7 +247,7 @@ const updateFrivolitiesTeamSeasons = async (
 				["desc", "asc"],
 			];
 		} else if (type === "worst_champ") {
-			title = "Worst Champion Teams";
+			title = "Worst Championship Teams";
 			description =
 				"These are the worst seasons from teams that somehow won the title.";
 			extraCols.push(
@@ -314,6 +315,86 @@ const updateFrivolitiesTeamSeasons = async (
 			sortParams = [
 				["most.value", "mov"],
 				["desc", "asc"],
+			];
+		} else if (type === "old_champ") {
+			title = "Oldest Championship Teams";
+			description = "These are oldest teams that won the title.";
+			extraCols.push(
+				{
+					key: "avgAge",
+					colName: "AvgAge",
+				},
+				{
+					key: "seed",
+					colName: "Seed",
+				},
+				{
+					key: ["most", "roundsWonText"],
+					keySort: "playoffRoundsWon",
+					colName: "Rounds Won",
+				},
+			);
+
+			filter = ts =>
+				ts.avgAge !== undefined &&
+				ts.playoffRoundsWon >= 0 &&
+				(season > ts.season || phase > PHASE.PLAYOFFS);
+			getValue = ts => {
+				const roundsWonText = getRoundsWonText(ts);
+
+				// Keep in sync with helpers.roundsWonText
+				const validTexts = ["League champs"];
+				if (!validTexts.includes(roundsWonText)) {
+					return;
+				}
+				return {
+					value: ts.avgAge ?? 0,
+					roundsWonText,
+				};
+			};
+			sortParams = [
+				["most.value", "winp"],
+				["desc", "desc"],
+			];
+		} else if (type === "young_champ") {
+			title = "Youngest Championship Teams";
+			description = "These are youngest teams that won the title.";
+			extraCols.push(
+				{
+					key: "avgAge",
+					colName: "AvgAge",
+				},
+				{
+					key: "seed",
+					colName: "Seed",
+				},
+				{
+					key: ["most", "roundsWonText"],
+					keySort: "playoffRoundsWon",
+					colName: "Rounds Won",
+				},
+			);
+
+			filter = ts =>
+				ts.avgAge !== undefined &&
+				ts.playoffRoundsWon >= 0 &&
+				(season > ts.season || phase > PHASE.PLAYOFFS);
+			getValue = ts => {
+				const roundsWonText = getRoundsWonText(ts);
+
+				// Keep in sync with helpers.roundsWonText
+				const validTexts = ["League champs"];
+				if (!validTexts.includes(roundsWonText)) {
+					return;
+				}
+				return {
+					value: -(ts.avgAge ?? 0),
+					roundsWonText,
+				};
+			};
+			sortParams = [
+				["most.value", "winp"],
+				["desc", "desc"],
 			];
 		} else {
 			throw new Error(`Unknown type "${type}"`);

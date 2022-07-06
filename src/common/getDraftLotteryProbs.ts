@@ -38,6 +38,55 @@ class ProbsCache {
 	}
 }
 
+class MultiDimensionalRange {
+	start: number;
+	end: number;
+	dimensions: number;
+
+	constructor(end: number, dimensions: number) {
+		this.start = 0;
+		this.end = end;
+		this.dimensions = dimensions;
+	}
+
+	[Symbol.iterator]() {
+		const value = Array(this.dimensions).fill(this.start);
+
+		const getNextValue = (dimension: number): boolean => {
+			if (value[dimension] < this.end - 1) {
+				value[dimension] += 1;
+				return false;
+			}
+
+			if (dimension === 0) {
+				return true;
+			}
+
+			for (let i = dimension; i < this.dimensions; i++) {
+				value[i] = this.start;
+			}
+			return getNextValue(dimension - 1);
+		};
+
+		return {
+			next: () => {
+				const dimension = this.dimensions - 1;
+				const done = getNextValue(dimension);
+				if (done) {
+					return {
+						done,
+					};
+				}
+
+				return {
+					value,
+					done,
+				};
+			},
+		};
+	}
+}
+
 const getDraftLotteryProbs = (
 	result: DraftLotteryResultArray | undefined,
 	draftType: DraftType | "dummy" | undefined,
@@ -116,71 +165,28 @@ const getDraftLotteryProbs = (
 		}
 	}
 
-	// i: current team
-	for (let i = 0; i < result.length; i++) {
-		// k: team that got 1st pick
-		for (let k = 0; k < result.length; k++) {
-			if (k === i) {
+	// pickIndex 1 means start with 2nd pick, since we handled 1st pick above
+	for (let pickIndex = 1; pickIndex < numPicksInLottery; pickIndex++) {
+		const range = new MultiDimensionalRange(result.length, pickIndex + 1);
+
+		for (const indexes of range) {
+			if (indexes.length !== new Set(indexes).size) {
 				// Skip case where this team already got an earlier pick
 				continue;
 			}
+			const [currentTeamIndex, ...prevLotteryWinnerIndexes] = indexes;
+
+			let chancesLeft = totalChances;
+			for (const prevTeamIndex of prevLotteryWinnerIndexes) {
+				chancesLeft -= result[prevTeamIndex].chances;
+			}
 
 			const prob =
-				(probsCache.get([k]) * result[i].chances) /
-				(totalChances - result[k].chances);
-			probs[i][1] += prob;
-			probsCache.set([k, i], prob);
-		}
-	}
-
-	for (let i = 0; i < result.length; i++) {
-		for (let k = 0; k < result.length; k++) {
-			if (k === i) {
-				continue;
-			}
-
-			// l: team that got 2st pick
-			for (let l = 0; l < result.length; l++) {
-				if (l === i || l === k) {
-					continue;
-				}
-				const prob =
-					(probsCache.get([k, l]) * result[i].chances) /
-					(totalChances - result[k].chances - result[l].chances);
-				probs[i][2] += prob;
-				probsCache.set([k, l, i], prob);
-			}
-		}
-	}
-
-	for (let i = 0; i < result.length; i++) {
-		for (let k = 0; k < result.length; k++) {
-			if (k === i) {
-				continue;
-			}
-			for (let l = 0; l < result.length; l++) {
-				if (l === i || l === k) {
-					continue;
-				}
-				if (numPicksInLottery > 3) {
-					// Go one level deeper
-					// m: team that got 3st pick
-					for (let m = 0; m < result.length; m++) {
-						if (m === i || m === k || m === l) {
-							continue;
-						}
-
-						const prob =
-							(probsCache.get([k, l, m]) * result[i].chances) /
-							(totalChances -
-								result[k].chances -
-								result[l].chances -
-								result[m].chances);
-						probs[i][3] += prob;
-						probsCache.set([k, l, m, i], prob);
-					}
-				}
-			}
+				(probsCache.get(prevLotteryWinnerIndexes) *
+					result[currentTeamIndex].chances) /
+				chancesLeft;
+			probs[currentTeamIndex][pickIndex] += prob;
+			probsCache.set([...prevLotteryWinnerIndexes, currentTeamIndex], prob);
 		}
 	}
 

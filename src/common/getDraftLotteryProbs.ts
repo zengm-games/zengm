@@ -1,7 +1,7 @@
 import type { DraftLotteryResultArray, DraftType } from "./types";
 
 class ProbsCache {
-	// Key is the index of the current team followed by the indexes of teams winning the prior picks (could be any number of picks from 0 to numPicksInLottery, all get stored here), value is probability of that happening
+	// Key indexes of teams winning the first N picks in order (could be any number of picks from 1 to numPicksInLottery, all get stored here), value is probability of that happening
 	probs: Record<string, number>;
 
 	// Same as probs, but we don't care about order of key ([1,5] is same as [5,1], and probs get added up) and we only care about fully specified lotteries (keys length equal to numPicksInLottery)
@@ -129,7 +129,7 @@ const getDraftLotteryProbs = (
 				(probsCache.get([k]) * result[i].chances) /
 				(totalChances - result[k].chances);
 			probs[i][1] += prob;
-			probsCache.set([i, k], prob);
+			probsCache.set([k, i], prob);
 		}
 	}
 
@@ -145,10 +145,10 @@ const getDraftLotteryProbs = (
 					continue;
 				}
 				const prob =
-					(probsCache.get([l, k]) * result[i].chances) /
+					(probsCache.get([k, l]) * result[i].chances) /
 					(totalChances - result[k].chances - result[l].chances);
 				probs[i][2] += prob;
-				probsCache.set([i, l, k], prob);
+				probsCache.set([k, l, i], prob);
 			}
 		}
 	}
@@ -171,13 +171,13 @@ const getDraftLotteryProbs = (
 						}
 
 						const prob =
-							(probsCache.get([m, l, k]) * result[i].chances) /
+							(probsCache.get([k, l, m]) * result[i].chances) /
 							(totalChances -
 								result[k].chances -
 								result[l].chances -
 								result[m].chances);
 						probs[i][3] += prob;
-						probsCache.set([i, m, l, k], prob);
+						probsCache.set([k, l, m, i], prob);
 					}
 				}
 			}

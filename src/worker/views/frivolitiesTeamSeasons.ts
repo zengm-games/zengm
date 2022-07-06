@@ -2,7 +2,7 @@ import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
 import { isSport, PHASE } from "../../common";
-import { orderBy } from "lodash-es";
+import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
 
 type Most = {

@@ -15,20 +15,19 @@ class ProbsCache {
 		this.probsMerged = {};
 	}
 
-	stringifyKey(keys: number[]) {
-		return JSON.stringify(keys);
+	static stringifyKey(keys: number[]) {
+		return keys.join(",");
 	}
 
-	parseKey(key: string): number[] {
-		return JSON.parse(key);
+	static parseKey(key: string): number[] {
+		return key.split(",").map(x => parseInt(x));
 	}
 
-	set(keys: number[], value: number) {
-		const key = this.stringifyKey(keys);
+	set(keys: number[], key: string, value: number) {
 		this.probs[key] = value;
 
 		if (keys.length === this.numPicksInLottery) {
-			const keyMerged = this.stringifyKey([...keys].sort());
+			const keyMerged = ProbsCache.stringifyKey([...keys].sort());
 			if (this.probsMerged[keyMerged] === undefined) {
 				this.probsMerged[keyMerged] = 0;
 			}
@@ -36,14 +35,13 @@ class ProbsCache {
 		}
 	}
 
-	get(keys: number[]) {
-		const key = this.stringifyKey(keys);
+	get(key: string) {
 		return this.probs[key];
 	}
 
 	mergedEntries() {
 		return Object.entries(this.probsMerged).map(row => {
-			const parsed = this.parseKey(row[0]);
+			const parsed = ProbsCache.parseKey(row[0]);
 			return [parsed, row[1]] as const;
 		});
 	}
@@ -167,7 +165,8 @@ const getDraftLotteryProbs = (
 	}
 
 	const getProb = (indexes: number[]): number => {
-		const cached = probsCache.get(indexes);
+		const indexesString = ProbsCache.stringifyKey(indexes);
+		const cached = probsCache.get(indexesString);
 		if (cached !== undefined) {
 			return cached;
 		}
@@ -192,7 +191,7 @@ const getDraftLotteryProbs = (
 		}
 		probs[currentTeamIndex][indexes.length - 1] += prob;
 
-		probsCache.set(indexes, prob);
+		probsCache.set(indexes, indexesString, prob);
 
 		return prob;
 	};

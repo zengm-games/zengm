@@ -1,5 +1,24 @@
 import type { DraftLotteryResultArray, DraftType } from "./types";
 
+class ProbsCache {
+	// Key is the index of the current team followed by the indexes of teams winning the prior picks (could be any number of picks from 0 to numPicksInLottery, all get stored here), value is probability of that happening
+	probs: Record<string, number>;
+
+	constructor() {
+		this.probs = {};
+	}
+
+	set(keys: number[], value: number) {
+		const key = JSON.stringify(keys);
+		this.probs[key] = value;
+	}
+
+	get(keys: number[]) {
+		const key = JSON.stringify(keys);
+		return this.probs[key];
+	}
+}
+
 const getDraftLotteryProbs = (
 	result: DraftLotteryResultArray | undefined,
 	draftType: DraftType | "dummy" | undefined,
@@ -62,12 +81,16 @@ const getDraftLotteryProbs = (
 		numPicksInLottery = 3;
 	}
 
+	const probsCache = new ProbsCache();
+
 	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = [];
 
 		// Odds of 1st pick are simple
-		probs[i][0] = result[i].chances / totalChances;
+		const prob = result[i].chances / totalChances;
+		probs[i][0] = prob;
+		probsCache.set([i], prob);
 
 		// Initialize odds of other picks determined in the lottery
 		for (let j = 1; j < numPicksInLottery; j++) {
@@ -75,63 +98,79 @@ const getDraftLotteryProbs = (
 		}
 	}
 
+	// i: current team
 	for (let i = 0; i < result.length; i++) {
+		// k: team that got 1st pick
 		for (let k = 0; k < result.length; k++) {
 			if (k === i) {
 				// Skip case where this team already got an earlier pick
 				continue;
 			}
 
-			probs[i][1] +=
-				(probs[k][0] * result[i].chances) / (totalChances - result[k].chances);
+			const prob =
+				(probsCache.get([k]) * result[i].chances) /
+				(totalChances - result[k].chances);
+			probs[i][1] += prob;
+			probsCache.set([i, k], prob);
+		}
+	}
 
+	for (let i = 0; i < result.length; i++) {
+		for (let k = 0; k < result.length; k++) {
+			if (k === i) {
+				continue;
+			}
+
+			// l: team that got 2st pick
 			for (let l = 0; l < result.length; l++) {
-				if (l !== i && l !== k) {
-					const combosTemp =
-						(probs[k][0] *
-							(result[l].chances / (totalChances - result[k].chances)) *
-							result[i].chances) /
-						(totalChances - result[k].chances - result[l].chances);
-					probs[i][2] += combosTemp;
+				if (l === i || l === k) {
+					continue;
+				}
+				const combosTemp =
+					(probsCache.get([l, k]) * result[i].chances) /
+					(totalChances - result[k].chances - result[l].chances);
+				probs[i][2] += combosTemp;
+				probsCache.set([i, l, k], combosTemp);
 
-					if (draftType === "nba2019") {
-						// Go one level deeper
-						for (let m = 0; m < result.length; m++) {
-							if (m !== i && m !== k && m !== l) {
-								const combosTemp2 =
-									(probs[k][0] *
-										(result[l].chances / (totalChances - result[k].chances)) *
-										(result[m].chances /
-											(totalChances - result[k].chances - result[l].chances)) *
-										result[i].chances) /
-									(totalChances -
-										result[k].chances -
-										result[l].chances -
-										result[m].chances);
-								probs[i][3] += combosTemp2;
-								const topFourKey = JSON.stringify([i, k, l, m].sort());
-
-								if (!topNCombos.has(topFourKey)) {
-									topNCombos.set(topFourKey, combosTemp2);
-								} else {
-									topNCombos.set(
-										topFourKey,
-										topNCombos.get(topFourKey) + combosTemp2,
-									);
-								}
-							}
+				if (numPicksInLottery > 3) {
+					// Go one level deeper
+					// m: team that got 3st pick
+					for (let m = 0; m < result.length; m++) {
+						if (m === i || m === k || m === l) {
+							continue;
 						}
-					} else {
-						const topThreeKey = JSON.stringify([i, k, l].sort());
 
-						if (!topNCombos.has(topThreeKey)) {
-							topNCombos.set(topThreeKey, combosTemp);
+						const combosTemp2 =
+							(probsCache.get([l, k]) *
+								(result[m].chances /
+									(totalChances - result[k].chances - result[l].chances)) *
+								result[i].chances) /
+							(totalChances -
+								result[k].chances -
+								result[l].chances -
+								result[m].chances);
+						probs[i][3] += combosTemp2;
+						const topFourKey = JSON.stringify([i, k, l, m].sort());
+
+						if (!topNCombos.has(topFourKey)) {
+							topNCombos.set(topFourKey, combosTemp2);
 						} else {
 							topNCombos.set(
-								topThreeKey,
-								topNCombos.get(topThreeKey) + combosTemp,
+								topFourKey,
+								topNCombos.get(topFourKey) + combosTemp2,
 							);
 						}
+					}
+				} else {
+					const topThreeKey = JSON.stringify([i, k, l].sort());
+
+					if (!topNCombos.has(topThreeKey)) {
+						topNCombos.set(topThreeKey, combosTemp);
+					} else {
+						topNCombos.set(
+							topThreeKey,
+							topNCombos.get(topThreeKey) + combosTemp,
+						);
 					}
 				}
 			}

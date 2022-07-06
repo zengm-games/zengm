@@ -24,9 +24,10 @@ class ProbsCache {
 	}
 
 	set(keys: number[], key: string, value: number) {
-		this.probs[key] = value;
-
-		if (keys.length === this.numPicksInLottery) {
+		// Only need to cache intermediate values here, final values will never be needed again, except in the aggregate form of probsMerged
+		if (keys.length < this.numPicksInLottery) {
+			this.probs[key] = value;
+		} else {
 			const keyMerged = ProbsCache.stringifyKey([...keys].sort());
 			if (this.probsMerged[keyMerged] === undefined) {
 				this.probsMerged[keyMerged] = 0;

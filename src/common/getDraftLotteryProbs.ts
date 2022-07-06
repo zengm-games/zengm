@@ -53,74 +53,84 @@ const getDraftLotteryProbs = (
 		return probs;
 	}
 
-	// Top N picks
+	let numPicksInLottery;
+	if (draftType === "nba2019") {
+		numPicksInLottery = 4;
+	} else if (draftType === "mlb2022") {
+		numPicksInLottery = 6;
+	} else {
+		numPicksInLottery = 3;
+	}
+
+	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = [];
-		probs[i][0] = result[i].chances / totalChances; // First pick
 
-		probs[i][1] = 0; // Second pick
+		// Odds of 1st pick are simple
+		probs[i][0] = result[i].chances / totalChances;
 
-		probs[i][2] = 0; // Third pick
-
-		if (draftType === "nba2019") {
-			probs[i][3] = 0; // Fourth pick
+		// Initialize odds of other picks determined in the lottery
+		for (let j = 1; j < numPicksInLottery; j++) {
+			probs[i][j] = 0;
 		}
+	}
 
+	for (let i = 0; i < result.length; i++) {
 		for (let k = 0; k < result.length; k++) {
-			if (k !== i) {
-				probs[i][1] +=
-					((result[k].chances / totalChances) * result[i].chances) /
-					(totalChances - result[k].chances);
+			if (k === i) {
+				// Skip case where this team already got an earlier pick
+				continue;
+			}
 
-				for (let l = 0; l < result.length; l++) {
-					if (l !== i && l !== k) {
-						const combosTemp =
-							((result[k].chances / totalChances) *
-								(result[l].chances / (totalChances - result[k].chances)) *
-								result[i].chances) /
-							(totalChances - result[k].chances - result[l].chances);
-						probs[i][2] += combosTemp;
+			probs[i][1] +=
+				(probs[k][0] * result[i].chances) / (totalChances - result[k].chances);
 
-						if (draftType === "nba2019") {
-							// Go one level deeper
-							for (let m = 0; m < result.length; m++) {
-								if (m !== i && m !== k && m !== l) {
-									const combosTemp2 =
-										((result[k].chances / totalChances) *
-											(result[l].chances / (totalChances - result[k].chances)) *
-											(result[m].chances /
-												(totalChances -
-													result[k].chances -
-													result[l].chances)) *
-											result[i].chances) /
-										(totalChances -
-											result[k].chances -
-											result[l].chances -
-											result[m].chances);
-									probs[i][3] += combosTemp2;
-									const topFourKey = JSON.stringify([i, k, l, m].sort());
+			for (let l = 0; l < result.length; l++) {
+				if (l !== i && l !== k) {
+					const combosTemp =
+						(probs[k][0] *
+							(result[l].chances / (totalChances - result[k].chances)) *
+							result[i].chances) /
+						(totalChances - result[k].chances - result[l].chances);
+					probs[i][2] += combosTemp;
 
-									if (!topNCombos.has(topFourKey)) {
-										topNCombos.set(topFourKey, combosTemp2);
-									} else {
-										topNCombos.set(
-											topFourKey,
-											topNCombos.get(topFourKey) + combosTemp2,
-										);
-									}
+					if (draftType === "nba2019") {
+						// Go one level deeper
+						for (let m = 0; m < result.length; m++) {
+							if (m !== i && m !== k && m !== l) {
+								const combosTemp2 =
+									(probs[k][0] *
+										(result[l].chances / (totalChances - result[k].chances)) *
+										(result[m].chances /
+											(totalChances - result[k].chances - result[l].chances)) *
+										result[i].chances) /
+									(totalChances -
+										result[k].chances -
+										result[l].chances -
+										result[m].chances);
+								probs[i][3] += combosTemp2;
+								const topFourKey = JSON.stringify([i, k, l, m].sort());
+
+								if (!topNCombos.has(topFourKey)) {
+									topNCombos.set(topFourKey, combosTemp2);
+								} else {
+									topNCombos.set(
+										topFourKey,
+										topNCombos.get(topFourKey) + combosTemp2,
+									);
 								}
 							}
-						} else {
-							const topThreeKey = JSON.stringify([i, k, l].sort());
+						}
+					} else {
+						const topThreeKey = JSON.stringify([i, k, l].sort());
 
-							if (!topNCombos.has(topThreeKey)) {
-								topNCombos.set(topThreeKey, combosTemp);
-							} else {
-								topNCombos.set(
-									topThreeKey,
-									topNCombos.get(topThreeKey) + combosTemp,
-								);
-							}
+						if (!topNCombos.has(topThreeKey)) {
+							topNCombos.set(topThreeKey, combosTemp);
+						} else {
+							topNCombos.set(
+								topThreeKey,
+								topNCombos.get(topThreeKey) + combosTemp,
+							);
 						}
 					}
 				}
@@ -130,7 +140,8 @@ const getDraftLotteryProbs = (
 
 	// Fill in picks (N+1)+
 	for (let i = 0; i < result.length; i++) {
-		const skipped = [0, 0, 0, 0, 0]; // Probabilities of being "skipped" (lower prob team in top N) 0/1/2/3/4 times
+		// Probabilities of being "skipped" (lower prob team in top N) i times. +1 is for when skipped 0 times, in addition to being skipped possibly up to numPicksInLottery times
+		const skipped = Array(numPicksInLottery + 1).fill(0);
 
 		for (const [key, prob] of topNCombos.entries()) {
 			const inds = JSON.parse(key);
@@ -148,8 +159,8 @@ const getDraftLotteryProbs = (
 		}
 
 		// Fill in table after first N picks
-		for (let j = 0; j < (draftType === "nba2019" ? 5 : 4); j++) {
-			if (i + j > (draftType === "nba2019" ? 3 : 2) && i + j < result.length) {
+		for (let j = 0; j < numPicksInLottery + 1; j++) {
+			if (i + j > numPicksInLottery - 1 && i + j < result.length) {
 				probs[i][i + j] = skipped[j];
 			}
 		}

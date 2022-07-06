@@ -59,6 +59,14 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 
 		let output;
 		if (!watch) {
+			// https://zengm.com/blog/2022/07/investigating-a-tricky-performance-bug/
+			const DANGER_CSS = ".input-group.has-validation";
+			if (!rawCSS[i].includes(DANGER_CSS)) {
+				throw new Error(
+					`rawCSS no longer contains ${DANGER_CSS} - same problem might exist with another name?`,
+				);
+			}
+
 			const purgeCSSResult = purgeCSSResults[i].css;
 
 			const { code } = parcelCSS.transform({
@@ -72,6 +80,10 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 			});
 
 			output = code;
+
+			if (output.includes(DANGER_CSS)) {
+				throw new Error(`CSS output contains ${DANGER_CSS}`);
+			}
 		} else {
 			output = rawCSS[i];
 		}

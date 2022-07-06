@@ -324,7 +324,7 @@ const updateFrivolitiesTeamSeasons = async (
 			} teams that won the title.`;
 			extraCols.push(
 				{
-					key: ["most", "value"],
+					key: ["most", "avgAge"],
 					colName: "AvgAge",
 				},
 				{
@@ -346,13 +346,16 @@ const updateFrivolitiesTeamSeasons = async (
 					return;
 				}
 
+				const avgAge = ts.avgAge ?? 0;
+
 				return {
-					value: ts.avgAge ?? 0,
+					avgAge,
+					value: type === "old_champ" ? avgAge : -avgAge,
 				};
 			};
 			sortParams = [
 				["most.value", "winp"],
-				[type === "old_champ" ? "desc" : "asc", "desc"],
+				["desc", "desc"],
 			];
 		} else {
 			throw new Error(`Unknown type "${type}"`);

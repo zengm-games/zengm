@@ -404,6 +404,10 @@ export const settings: {
 					since 2017
 				</p>
 				<p>
+					<b>MLB 2022:</b> Weighted lottery for the top 6 picks, like the MLB
+					since 2022
+				</p>
+				<p>
 					<b>Random, first 3:</b> Random lottery for the top 3 picks, like the
 					NBA from 1987-1989
 				</p>
@@ -441,6 +445,7 @@ export const settings: {
 			{ key: "nba1994", value: "NBA 1994" },
 			{ key: "nba1990", value: "NBA 1990" },
 			{ key: "nhl2017", value: "NHL 2017" },
+			{ key: "mlb2022", value: "MLB 2022" },
 			{ key: "randomLotteryFirst3", value: "Random, first 3" },
 			{ key: "randomLottery", value: "Random, lottery only" },
 			{ key: "coinFlip", value: "Coin flip" },

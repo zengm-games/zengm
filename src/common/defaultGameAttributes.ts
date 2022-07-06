@@ -281,7 +281,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numPlayoffByes: wrap(4),
 				numPeriods: 9,
 				salaryCapType: "none",
-				draftType: "noLottery",
+				draftType: "mlb2022",
 				numDraftRounds: 5,
 				draftAges: [18, 22],
 				salaryCap: 175000,

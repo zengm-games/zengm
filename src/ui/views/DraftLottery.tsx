@@ -22,6 +22,7 @@ const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
 	nba1994: "Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
 	nba1990: "Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
 	nhl2017: "Weighted lottery for the top 3 picks, like the NHL since 2017",
+	mlb2022: "Weighted lottery for the top 6 picks, like the MLB since 2022",
 	randomLotteryFirst3:
 		"Random lottery for the top 3 picks, like the NBA from 1987-1989",
 	randomLottery:

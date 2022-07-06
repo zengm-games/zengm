@@ -88,6 +88,17 @@ export const getLotteryInfo = (
 		};
 	}
 
+	if (draftType === "mlb2022") {
+		return {
+			minNumTeams: 6,
+			numToPick: 6,
+			chances: [
+				1650, 1650, 1650, 1325, 1000, 750, 550, 390, 270, 180, 140, 110, 90, 76,
+				62, 48, 36, 23,
+			],
+		};
+	}
+
 	throw new Error(`Unsupported draft type "${draftType}"`);
 };
 
@@ -99,6 +110,7 @@ const LOTTERY_DRAFT_TYPES = [
 	"randomLotteryFirst3",
 	"nba1990",
 	"nhl2017",
+	"mlb2022",
 ] as const;
 
 export const draftHasLottey = (

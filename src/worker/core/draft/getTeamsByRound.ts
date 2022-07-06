@@ -37,7 +37,7 @@ import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
 const FIRST_ROUND_PLAYOFF_TEAMS_ORDER = bySport<
 	"record" | "playoffs" | "playoffsHockey"
 >({
-	baseball: "record",
+	baseball: "playoffs",
 	basketball: "record",
 	football: "playoffs",
 	hockey: "playoffsHockey",

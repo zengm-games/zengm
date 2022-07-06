@@ -85,7 +85,7 @@ const updateDraftLottery = async (
 				let rigged: GameAttributesLeague["riggedLottery"];
 
 				if (draftLotteryResult) {
-					draftType = draftLotteryResult.draftType || "nba1994";
+					draftType = draftLotteryResult.draftType ?? "nba1994";
 					rigged = draftLotteryResult.rigged;
 				}
 

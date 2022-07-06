@@ -15,12 +15,20 @@ class ProbsCache {
 		this.probsMerged = {};
 	}
 
+	stringifyKey(keys: number[]) {
+		return JSON.stringify(keys);
+	}
+
+	parseKey(key: string): number[] {
+		return JSON.parse(key);
+	}
+
 	set(keys: number[], value: number) {
-		const key = JSON.stringify(keys);
+		const key = this.stringifyKey(keys);
 		this.probs[key] = value;
 
 		if (keys.length === this.numPicksInLottery) {
-			const keyMerged = JSON.stringify([...keys].sort());
+			const keyMerged = this.stringifyKey([...keys].sort());
 			if (this.probsMerged[keyMerged] === undefined) {
 				this.probsMerged[keyMerged] = 0;
 			}
@@ -29,12 +37,15 @@ class ProbsCache {
 	}
 
 	get(keys: number[]) {
-		const key = JSON.stringify(keys);
+		const key = this.stringifyKey(keys);
 		return this.probs[key];
 	}
 
 	mergedEntries() {
-		return Object.entries(this.probsMerged);
+		return Object.entries(this.probsMerged).map(row => {
+			const parsed = this.parseKey(row[0]);
+			return [parsed, row[1]] as const;
+		});
 	}
 }
 
@@ -204,17 +215,16 @@ const getDraftLotteryProbs = (
 		// Probabilities of being "skipped" (lower prob team in top N) i times. +1 is for when skipped 0 times, in addition to being skipped possibly up to numPicksInLottery times
 		const skipped = Array(numPicksInLottery + 1).fill(0);
 
-		for (const [key, prob] of probsCache.mergedEntries()) {
-			const inds = JSON.parse(key);
+		for (const [indexes, prob] of probsCache.mergedEntries()) {
 			let skipCount = 0;
 
-			for (const ind of inds) {
+			for (const ind of indexes) {
 				if (ind > i) {
 					skipCount += 1;
 				}
 			}
 
-			if (!inds.includes(i)) {
+			if (!indexes.includes(i)) {
 				skipped[skipCount] += prob;
 			}
 		}

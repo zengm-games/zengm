@@ -20,7 +20,7 @@ class ProbsCache {
 		this.probs[key] = value;
 
 		if (keys.length === this.numPicksInLottery) {
-			const keyMerged = JSON.stringify(keys.sort());
+			const keyMerged = JSON.stringify([...keys].sort());
 			if (this.probsMerged[keyMerged] === undefined) {
 				this.probsMerged[keyMerged] = 0;
 			}
@@ -143,7 +143,7 @@ const getDraftLotteryProbs = (
 	if (draftType === "nba2019") {
 		numPicksInLottery = 4;
 	} else if (draftType === "mlb2022") {
-		numPicksInLottery = 4;
+		numPicksInLottery = 5;
 	} else {
 		numPicksInLottery = 3;
 	}
@@ -153,42 +153,51 @@ const getDraftLotteryProbs = (
 	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = [];
-
-		// Odds of 1st pick are simple
-		const prob = result[i].chances / totalChances;
-		probs[i][0] = prob;
-		probsCache.set([i], prob);
-
-		// Initialize odds of other picks determined in the lottery
-		for (let j = 1; j < numPicksInLottery; j++) {
-			probs[i][j] = 0;
-		}
 	}
 
-	// pickIndex 1 means start with 2nd pick, since we handled 1st pick above
-	for (let pickIndex = 1; pickIndex < numPicksInLottery; pickIndex++) {
-		const range = new MultiDimensionalRange(result.length, pickIndex + 1);
-
-		for (const indexes of range) {
-			if (indexes.length !== new Set(indexes).size) {
-				// Skip case where this team already got an earlier pick
-				continue;
-			}
-			const [currentTeamIndex, ...prevLotteryWinnerIndexes] = indexes;
-
-			let chancesLeft = totalChances;
-			for (const prevTeamIndex of prevLotteryWinnerIndexes) {
-				chancesLeft -= result[prevTeamIndex].chances;
-			}
-
-			const prob =
-				(probsCache.get(prevLotteryWinnerIndexes) *
-					result[currentTeamIndex].chances) /
-				chancesLeft;
-			probs[currentTeamIndex][pickIndex] += prob;
-			probsCache.set([...prevLotteryWinnerIndexes, currentTeamIndex], prob);
+	const getProb = (indexes: number[]): number => {
+		const cached = probsCache.get(indexes);
+		if (cached !== undefined) {
+			return cached;
 		}
+
+		const currentTeamIndex = indexes[0];
+		const prevLotteryWinnerIndexes = indexes.slice(1);
+
+		let chancesLeft = totalChances;
+		for (const prevTeamIndex of prevLotteryWinnerIndexes) {
+			chancesLeft -= result[prevTeamIndex].chances;
+		}
+
+		const priorProb =
+			prevLotteryWinnerIndexes.length === 0
+				? 1
+				: getProb(prevLotteryWinnerIndexes);
+
+		const prob = (priorProb * result[currentTeamIndex].chances) / chancesLeft;
+
+		if (probs[currentTeamIndex][indexes.length - 1] === undefined) {
+			probs[currentTeamIndex][indexes.length - 1] = 0;
+		}
+		probs[currentTeamIndex][indexes.length - 1] += prob;
+
+		probsCache.set(indexes, prob);
+
+		return prob;
+	};
+
+	console.time("foo");
+	const range = new MultiDimensionalRange(result.length, numPicksInLottery);
+	for (const indexes of range) {
+		if (indexes.length !== new Set(indexes).size) {
+			// Skip case where this team already got an earlier pick
+			continue;
+		}
+
+		// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
+		getProb(indexes);
 	}
+	console.timeEnd("foo");
 
 	// Fill in picks (N+1)+
 	for (let i = 0; i < result.length; i++) {

@@ -1,6 +1,8 @@
 baseball lottery
-- test UI for 3/4 pick lotteries
 - new hockey too
+- customize num picks and counts
+  - divideChancesOverTiedTeams
+  - other settings in genOrder and getTeamsByRound
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

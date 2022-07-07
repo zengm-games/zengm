@@ -113,7 +113,7 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 	if (draftType === "custom") {
 		return {
 			numToPick: g.get("draftLotteryCustomNumPicks"),
-			chances: g.get("draftLotteryCustomChances"),
+			chances: [...g.get("draftLotteryCustomChances")],
 		};
 	}
 

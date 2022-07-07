@@ -1,6 +1,6 @@
 baseball lottery
 - customize num picks and counts
-  - other settings in genOrder and getTeamsByRound
+  - test what happens if num teams is too high
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

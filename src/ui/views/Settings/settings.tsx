@@ -422,14 +422,19 @@ export const settings: {
 					round.
 				</p>
 				<p>
-					<b>No Lottery, worst to best:</b> {draftTypeDescriptions.noLottery}
+					<b>No lottery, worst to best:</b> {draftTypeDescriptions.noLottery}
 				</p>
 				<p>
-					<b>No Lottery, best to worst:</b>{" "}
+					<b>No lottery, best to worst:</b>{" "}
 					{draftTypeDescriptions.noLotteryReverse}
 				</p>
 				<p>
-					<b>No draft, rookies are free agents</b> There is no draft and all
+					<b>Custom lottery:</b> {draftTypeDescriptions.custom} Set the lottery
+					parameters in the "Custom # lottery selections" and "Custom lottery
+					chances" settings.
+				</p>
+				<p>
+					<b>No draft, rookies are free agents:</b> There is no draft and all
 					rookies simply become free agents who can be signed by any team.
 				</p>
 			</>
@@ -448,8 +453,69 @@ export const settings: {
 			{ key: "random", value: "Random" },
 			{ key: "noLottery", value: "No lottery, worst to best" },
 			{ key: "noLotteryReverse", value: "No lottery, best to worst" },
+			{ key: "custom", value: "Custom lottery" },
 			{ key: "freeAgents", value: "No draft, rookies are free agents" },
 		],
+	},
+	{
+		category: "Draft",
+		key: "draftLotteryCustomNumPicks",
+		name: "Custom # lottery selections",
+		godModeRequired: "existingLeagueOnly",
+		type: "int",
+		description: 'This only applies if Draft Type is set to "Custom lottery".',
+		descriptionLong: (
+			<>
+				<p>This only applies if Draft Type is set to "Custom lottery".</p>
+				<p>
+					This defines the number of picks that will be randomly assigned in the
+					draft lottery. Any picks after this are assigned in order from worst
+					team to best team. This must be less than the number of non-playoff
+					teams.
+				</p>
+			</>
+		),
+
+		validator: value => {
+			if (value < 1) {
+				throw new Error("Value cannot be less than 1");
+			}
+		},
+	},
+	{
+		category: "Draft",
+		key: "draftLotteryCustomChances",
+		name: "Custom lottery chances",
+		godModeRequired: "existingLeagueOnly",
+		type: "jsonString",
+		description: 'This only applies if Draft Type is set to "Custom lottery".',
+		descriptionLong: (
+			<>
+				<p>This only applies if Draft Type is set to "Custom lottery".</p>
+				<p>
+					Specify the number of chances each team should have to win the
+					lottery. The first number is for the worst team, second is for the
+					next worst team, etc. If there are more lottery teams than entries
+					here, the last number will be repeated for all other teams.
+				</p>
+				<p>
+					You must enter a valid JSON array of integers. For example, enter{" "}
+					<code>[10, 5, 1]</code> to give 10 chances to the first team, 5
+					chances to the second team, and 1 chance to all other teams in the
+					lottery.
+				</p>
+			</>
+		),
+		validator: async value => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			for (const num of value) {
+				if (!Number.isInteger(num)) {
+					throw new Error("Array must contain only integers");
+				}
+			}
+		},
 	},
 	{
 		category: "Draft",

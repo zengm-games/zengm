@@ -157,6 +157,7 @@ export const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
 	random: "Teams draft in random order, including playoff teams",
 	freeAgents:
 		"There is no draft and all, rookies simply become free agents who can be signed by any team",
+	custom: "Custom weighted lottery for the top N picks.",
 	dummy: "From historical data",
 };
 

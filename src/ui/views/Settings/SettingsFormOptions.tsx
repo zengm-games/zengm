@@ -281,7 +281,7 @@ const Option = ({
 					/>
 				) : null}
 			</div>
-			{description ? (
+			{description && !showDescriptionLong ? (
 				<div className="text-muted settings-description mt-1">
 					{description}
 				</div>

@@ -250,6 +250,14 @@ export const getDefaultSettings = () => {
 			"draftPickAutoContractRounds",
 		),
 		dh: unwrapGameAttribute(defaultGameAttributes, "dh"),
+		draftLotteryCustomNumPicks: unwrapGameAttribute(
+			defaultGameAttributes,
+			"draftLotteryCustomNumPicks",
+		),
+		draftLotteryCustomChances: unwrapGameAttribute(
+			defaultGameAttributes,
+			"draftLotteryCustomChances",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

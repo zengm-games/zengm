@@ -93,6 +93,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	otl: wrap(false),
 
 	draftType: "nba2019",
+	draftLotteryCustomChances: [
+		140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5,
+	],
+	draftLotteryCustomNumPicks: 4,
 	numDraftRounds: 2,
 	draftAges: [19, 22],
 	defaultStadiumCapacity: DEFAULT_STADIUM_CAPACITY,

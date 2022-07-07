@@ -97,7 +97,9 @@ export type Key =
 	| "draftPickAutoContract"
 	| "draftPickAutoContractPercent"
 	| "draftPickAutoContractRounds"
-	| "dh";
+	| "dh"
+	| "draftLotteryCustomNumPicks"
+	| "draftLotteryCustomChances";
 
 export type Category =
 	| "New League"

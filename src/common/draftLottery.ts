@@ -90,7 +90,7 @@ const draftLotteryProbsTooSlow = (numTeams: number, numToPick: number) => {
 export const getDraftLotteryProbs = (
 	result: DraftLotteryResultArray | undefined,
 	draftType: DraftType | "dummy" | undefined,
-	numPicksInLottery: number,
+	numToPick: number,
 ): {
 	tooSlow: boolean;
 	probs?: (number | undefined)[][];
@@ -151,7 +151,7 @@ export const getDraftLotteryProbs = (
 		};
 	}
 
-	const tooSlow = draftLotteryProbsTooSlow(result.length, numPicksInLottery);
+	const tooSlow = draftLotteryProbsTooSlow(result.length, numToPick);
 
 	// Cache default baseball probs
 	if (
@@ -421,12 +421,12 @@ export const getDraftLotteryProbs = (
 		probs[i] = [];
 
 		// Initialize values that we'll definitely fill in soon
-		for (let j = 0; j < numPicksInLottery; j++) {
+		for (let j = 0; j < numToPick; j++) {
 			probs[i][j] = 0;
 		}
 
 		// +1 is to handle the case of 0 skips to N skips
-		skipped[i] = Array(numPicksInLottery + 1).fill(0);
+		skipped[i] = Array(numToPick + 1).fill(0);
 	}
 
 	const getProb = (indexes: number[]): number => {
@@ -448,7 +448,7 @@ export const getDraftLotteryProbs = (
 		return prob;
 	};
 
-	for (let pickIndex = 0; pickIndex < numPicksInLottery; pickIndex += 1) {
+	for (let pickIndex = 0; pickIndex < numToPick; pickIndex += 1) {
 		if (tooSlow && pickIndex > 0) {
 			break;
 		}
@@ -468,7 +468,7 @@ export const getDraftLotteryProbs = (
 			probs[currentTeamIndex][pickIndex] += prob;
 
 			// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
-			if (pickIndex === numPicksInLottery - 1) {
+			if (pickIndex === numToPick - 1) {
 				for (let i = 0; i < skipped.length; i++) {
 					if (indexesSet.has(i)) {
 						continue;
@@ -490,8 +490,8 @@ export const getDraftLotteryProbs = (
 	// Fill in picks (N+1)+
 	for (let i = 0; i < result.length; i++) {
 		// Fill in table after first N picks
-		for (let j = 0; j < numPicksInLottery + 1; j++) {
-			if (i + j > numPicksInLottery - 1 && i + j < result.length) {
+		for (let j = 0; j < numToPick + 1; j++) {
+			if (i + j > numToPick - 1 && i + j < result.length) {
 				probs[i][i + j] = skipped[i][j];
 			}
 		}

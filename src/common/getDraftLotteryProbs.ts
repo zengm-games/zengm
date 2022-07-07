@@ -116,6 +116,8 @@ const getDraftLotteryProbs = (
 		numPicksInLottery = 3;
 	}
 
+	const skipped: number[][] = [];
+
 	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = [];
@@ -124,6 +126,9 @@ const getDraftLotteryProbs = (
 		for (let j = 0; j < numPicksInLottery; j++) {
 			probs[i][j] = 0;
 		}
+
+		// +1 is to handle the case of 0 skips to N skips
+		skipped[i] = Array(numPicksInLottery + 1).fill(0);
 	}
 
 	const getProb = (indexes: number[]): number => {
@@ -145,55 +150,48 @@ const getDraftLotteryProbs = (
 		return prob;
 	};
 
-	const topNCombos = new Map();
-
 	console.time("foo");
 	for (let pickIndex = 0; pickIndex < numPicksInLottery; pickIndex += 1) {
 		const range = new MultiDimensionalRange(result.length, pickIndex + 1);
 		for (const indexes of range) {
-			if (indexes.length !== new Set(indexes).size) {
+			const indexesSet = new Set(indexes);
+			if (indexes.length !== indexesSet.size) {
 				// Skip case where this team already got an earlier pick
 				continue;
 			}
 
+			const currentTeamIndex = indexes[0];
+
 			// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
 			const prob = getProb(indexes);
-			probs[indexes[0]][pickIndex] += prob;
+			probs[currentTeamIndex][pickIndex] += prob;
 
+			// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
 			if (pickIndex === numPicksInLottery - 1) {
-				const key = JSON.stringify([...indexes].sort());
-				const prev = topNCombos.get(key) ?? 0;
+				for (let i = 0; i < skipped.length; i++) {
+					if (indexesSet.has(i)) {
+						continue;
+					}
 
-				topNCombos.set(key, prev + prob);
+					let skipCount = 0;
+					for (const ind of indexes) {
+						if (ind > i) {
+							skipCount += 1;
+						}
+					}
+
+					skipped[i][skipCount] += prob;
+				}
 			}
 		}
 	}
 
 	// Fill in picks (N+1)+
 	for (let i = 0; i < result.length; i++) {
-		// Probabilities of being "skipped" (lower prob team in top N) i times. +1 is for when skipped 0 times, in addition to being skipped possibly up to numPicksInLottery times
-		const skipped = Array(numPicksInLottery + 1).fill(0);
-
-		for (const [key, prob] of topNCombos.entries()) {
-			const indexes = JSON.parse(key);
-
-			let skipCount = 0;
-
-			for (const ind of indexes) {
-				if (ind > i) {
-					skipCount += 1;
-				}
-			}
-
-			if (!indexes.includes(i)) {
-				skipped[skipCount] += prob;
-			}
-		}
-
 		// Fill in table after first N picks
 		for (let j = 0; j < numPicksInLottery + 1; j++) {
 			if (i + j > numPicksInLottery - 1 && i + j < result.length) {
-				probs[i][i + j] = skipped[j];
+				probs[i][i + j] = skipped[i][j];
 			}
 		}
 	}

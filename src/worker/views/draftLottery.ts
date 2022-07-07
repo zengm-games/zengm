@@ -10,19 +10,7 @@ import type {
 	DraftLotteryResult,
 	GameAttributesLeague,
 } from "../../common/types";
-import { draftHasLottey } from "../core/draft/genOrder";
-import { getLotteryInfo } from "../../common/draftLottery";
-
-const getNumToPick = (
-	draftType: DraftType | "dummy" | undefined,
-	numLotteryTeams: number,
-) => {
-	if (draftHasLottey(draftType)) {
-		return getLotteryInfo(draftType, numLotteryTeams).numToPick;
-	}
-
-	return 0;
-};
+import { getNumToPick } from "../core/draft/genOrder";
 
 const updateDraftLottery = async (
 	{ season }: ViewInput<"draftLottery">,

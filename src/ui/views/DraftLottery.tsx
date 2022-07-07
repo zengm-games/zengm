@@ -375,7 +375,7 @@ const DraftLotteryTable = (props: Props) => {
 
 	const { godMode, numToPick, rigged, season, type, userTid } = props;
 	const { draftType, result } = state;
-	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType);
+	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType, numToPick);
 	const NUM_PICKS = result !== undefined ? result.length : 14;
 
 	const showStartButton =

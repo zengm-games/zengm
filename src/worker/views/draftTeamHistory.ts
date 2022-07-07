@@ -9,6 +9,7 @@ import type {
 import maxBy from "lodash-es/maxBy";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { getDraftLotteryProbs } from "../../common/draftLottery";
+import { getNumToPick } from "../core/draft/genOrder";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
@@ -77,9 +78,14 @@ const updateDraftTeamHistory = async (
 					preLotteryRank = lotteryRowIndex + 1;
 					lotteryChange = preLotteryRank - p.draft.pick;
 
+					const numToPick = getNumToPick(
+						draftLottery.draftType ?? "nba1994",
+						draftLottery.result.length,
+					);
 					const { probs, tooSlow } = getDraftLotteryProbs(
 						draftLottery.result,
 						draftLottery.draftType,
+						numToPick,
 					);
 					if (probs && !tooSlow) {
 						lotteryProb = probs[lotteryRowIndex]?.[p.draft.pick - 1];

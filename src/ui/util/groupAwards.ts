@@ -114,17 +114,28 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 		return type;
 	};
 
+	// Don't return First Team All-League when the group represents all All-League awards
+	const getLong = (type: string, originalType: string) => {
+		if (type.startsWith("All-")) {
+			return type;
+		}
+
+		return originalType;
+	};
+
 	const seen = new Set();
 	const awardsGrouped = [];
 	const awardsGroupedTemp = groupBy(awards, award => getType(award.type));
+	console.log(structuredClone(awardsGroupedTemp));
 
 	for (const originalType of awardsOrder) {
 		const type = getType(originalType);
+		const long = getLong(type, originalType);
 
 		if (awardsGroupedTemp[type] && !seen.has(type)) {
 			awardsGrouped.push({
 				type,
-				long: originalType,
+				long,
 				count: awardsGroupedTemp[type].length,
 				seasons: helpers.yearRanges(awardsGroupedTemp[type].map(a => a.season)),
 			});

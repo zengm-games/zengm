@@ -15,7 +15,7 @@ import type {
 	DraftType,
 } from "../../common/types";
 import useClickable from "../hooks/useClickable";
-import { getDraftLotteryProbs } from "../../common";
+import { getDraftLotteryProbs } from "../../common/draftLottery";
 
 const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
 	nba2019: "Weighted lottery for the top 4 picks, like the NBA since 2019",
@@ -133,6 +133,7 @@ const Row = ({
 	toReveal,
 	probs,
 	spectator,
+	tooSlow,
 }: {
 	NUM_PICKS: number;
 	i: number;
@@ -141,8 +142,9 @@ const Row = ({
 	userTid: number;
 	indRevealed: State["indRevealed"];
 	toReveal: State["toReveal"];
-	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>>;
+	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>["probs"]>;
 	spectator: boolean;
+	tooSlow: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -151,7 +153,12 @@ const Row = ({
 
 	const pickCols = range(NUM_PICKS).map(j => {
 		const prob = probs[i][j];
-		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
+		let pct: any =
+			prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
+		if (tooSlow && pct !== undefined && j > 0) {
+			pct = <div className="text-center">?</div>;
+		}
+
 		let highlighted = false;
 
 		if (pick !== undefined) {
@@ -387,7 +394,7 @@ const DraftLotteryTable = (props: Props) => {
 
 	const { godMode, numToPick, rigged, season, type, userTid } = props;
 	const { draftType, result } = state;
-	const probs = getDraftLotteryProbs(result, draftType);
+	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType);
 	const NUM_PICKS = result !== undefined ? result.length : 14;
 
 	const showStartButton =
@@ -423,6 +430,14 @@ const DraftLotteryTable = (props: Props) => {
 		table = (
 			<>
 				<p />
+				{tooSlow ? (
+					<div className="alert alert-warning d-inline-block">
+						<p>
+							<b>Warning:</b> Computing lottery odds for so many teams and picks
+							is too slow. The lottery will still run fine though.
+						</p>
+					</div>
+				) : null}
 				<ResponsiveTableWrapper nonfluid>
 					<table className="table table-striped table-borderless table-sm table-hover sticky-x">
 						<thead>
@@ -464,6 +479,7 @@ const DraftLotteryTable = (props: Props) => {
 									toReveal={state.toReveal}
 									probs={probs}
 									spectator={props.spectator}
+									tooSlow={tooSlow}
 								/>
 							))}
 						</tbody>
@@ -472,7 +488,7 @@ const DraftLotteryTable = (props: Props) => {
 			</>
 		);
 	} else {
-		table = <p>No draft lottery results for {season}.</p>;
+		table = <p className="mt-3">No draft lottery results for {season}.</p>;
 	}
 
 	return (

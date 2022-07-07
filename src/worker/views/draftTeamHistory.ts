@@ -1,4 +1,4 @@
-import { bySport, getDraftLotteryProbs, PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -8,6 +8,7 @@ import type {
 } from "../../common/types";
 import maxBy from "lodash-es/maxBy";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { getDraftLotteryProbs } from "../../common/draftLottery";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
@@ -76,11 +77,11 @@ const updateDraftTeamHistory = async (
 					preLotteryRank = lotteryRowIndex + 1;
 					lotteryChange = preLotteryRank - p.draft.pick;
 
-					const probs = getDraftLotteryProbs(
+					const { probs, tooSlow } = getDraftLotteryProbs(
 						draftLottery.result,
 						draftLottery.draftType,
 					);
-					if (probs) {
+					if (probs && !tooSlow) {
 						lotteryProb = probs[lotteryRowIndex]?.[p.draft.pick - 1];
 					}
 				}

@@ -10,7 +10,8 @@ import type {
 	DraftLotteryResult,
 	GameAttributesLeague,
 } from "../../common/types";
-import { draftHasLottey, getLotteryInfo } from "../core/draft/genOrder";
+import { draftHasLottey } from "../core/draft/genOrder";
+import { getLotteryInfo } from "../../common/draftLottery";
 
 const getNumToPick = (
 	draftType: DraftType | "dummy" | undefined,

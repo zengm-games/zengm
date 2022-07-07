@@ -55,10 +55,100 @@ class MultiDimensionalRange {
 	}
 }
 
-const getDraftLotteryProbs = (
+// chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
+export const getLotteryInfo = (
+	draftType: DraftType,
+	numLotteryTeams: number,
+) => {
+	if (draftType === "coinFlip") {
+		return {
+			minNumTeams: 2,
+			numToPick: 2,
+			chances: [1, 1, 0],
+		};
+	}
+
+	if (draftType === "randomLottery") {
+		return {
+			minNumTeams: numLotteryTeams,
+			numToPick: numLotteryTeams,
+			chances: [1],
+		};
+	}
+
+	if (draftType === "randomLotteryFirst3") {
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances: [1],
+		};
+	}
+
+	if (draftType === "nba1990") {
+		const chances = [];
+		for (let i = numLotteryTeams; i > 0; i--) {
+			chances.push(i);
+		}
+
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances,
+		};
+	}
+
+	if (draftType === "nba1994") {
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances: [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5],
+		};
+	}
+
+	if (draftType === "nba2019") {
+		return {
+			minNumTeams: 4,
+			numToPick: 4,
+			chances: [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5],
+		};
+	}
+
+	if (draftType === "nhl2017") {
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances: [185, 135, 115, 95, 85, 75, 65, 60, 50, 35, 30, 25, 20, 15, 10],
+		};
+	}
+
+	if (draftType === "mlb2022") {
+		return {
+			minNumTeams: 6,
+			numToPick: 6,
+			chances: [
+				1650, 1650, 1650, 1325, 1000, 750, 550, 390, 270, 180, 140, 110, 90, 76,
+				62, 48, 36, 23,
+			],
+		};
+	}
+
+	throw new Error(`Unsupported draft type "${draftType}"`);
+};
+
+const draftLotteryProbsTooSlow = (draftType: DraftType, numTeams: number) => {
+	const count = numTeams ** getLotteryInfo(draftType, numTeams).numToPick;
+
+	// This will happen for baseball (18 teams, 6 picks)
+	return count >= 1e7;
+};
+
+export const getDraftLotteryProbs = (
 	result: DraftLotteryResultArray | undefined,
 	draftType: DraftType | "dummy" | undefined,
-): (number | undefined)[][] | undefined => {
+): {
+	tooSlow: boolean;
+	probs?: (number | undefined)[][];
+} => {
 	if (
 		result === undefined ||
 		draftType === undefined ||
@@ -68,7 +158,9 @@ const getDraftLotteryProbs = (
 		draftType === "freeAgents" ||
 		draftType === "dummy"
 	) {
-		return;
+		return {
+			tooSlow: false,
+		};
 	}
 
 	const probs: number[][] = [];
@@ -85,7 +177,10 @@ const getDraftLotteryProbs = (
 			}
 		}
 
-		return probs;
+		return {
+			tooSlow: false,
+			probs,
+		};
 	}
 
 	if (draftType === "coinFlip") {
@@ -104,17 +199,15 @@ const getDraftLotteryProbs = (
 			}
 		}
 
-		return probs;
+		return {
+			tooSlow: false,
+			probs,
+		};
 	}
 
-	let numPicksInLottery;
-	if (draftType === "nba2019") {
-		numPicksInLottery = 4;
-	} else if (draftType === "mlb2022") {
-		numPicksInLottery = 5;
-	} else {
-		numPicksInLottery = 3;
-	}
+	const tooSlow = draftLotteryProbsTooSlow(draftType, result.length);
+
+	const numPicksInLottery = getLotteryInfo(draftType, result.length).numToPick;
 
 	const skipped: number[][] = [];
 
@@ -150,8 +243,11 @@ const getDraftLotteryProbs = (
 		return prob;
 	};
 
-	console.time("foo");
 	for (let pickIndex = 0; pickIndex < numPicksInLottery; pickIndex += 1) {
+		if (tooSlow && pickIndex > 0) {
+			break;
+		}
+
 		const range = new MultiDimensionalRange(result.length, pickIndex + 1);
 		for (const indexes of range) {
 			const indexesSet = new Set(indexes);
@@ -195,9 +291,9 @@ const getDraftLotteryProbs = (
 			}
 		}
 	}
-	console.timeEnd("foo");
 
-	return probs;
+	return {
+		tooSlow,
+		probs,
+	};
 };
-
-export default getDraftLotteryProbs;

@@ -32,6 +32,7 @@ const LOTTERY_DRAFT_TYPES = [
 	"nhl2017",
 	"nhl2021",
 	"mlb2022",
+	"custom",
 ] as const;
 
 // chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
@@ -106,6 +107,13 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 				1650, 1650, 1650, 1325, 1000, 750, 550, 390, 270, 180, 140, 110, 90, 76,
 				62, 48, 36, 23,
 			],
+		};
+	}
+
+	if (draftType === "custom") {
+		return {
+			numToPick: g.get("draftLotteryCustomNumPicks"),
+			chances: g.get("draftLotteryCustomChances"),
 		};
 	}
 

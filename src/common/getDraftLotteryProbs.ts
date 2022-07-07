@@ -30,9 +30,10 @@ class ProbsCache {
 		} else {
 			const keyMerged = ProbsCache.stringifyKey([...keys].sort());
 			if (this.probsMerged[keyMerged] === undefined) {
-				this.probsMerged[keyMerged] = 0;
+				this.probsMerged[keyMerged] = value;
+			} else {
+				this.probsMerged[keyMerged] += value;
 			}
-			this.probsMerged[keyMerged] += value;
 		}
 	}
 
@@ -188,9 +189,10 @@ const getDraftLotteryProbs = (
 		const prob = (priorProb * result[currentTeamIndex].chances) / chancesLeft;
 
 		if (probs[currentTeamIndex][indexes.length - 1] === undefined) {
-			probs[currentTeamIndex][indexes.length - 1] = 0;
+			probs[currentTeamIndex][indexes.length - 1] = prob;
+		} else {
+			probs[currentTeamIndex][indexes.length - 1] += prob;
 		}
-		probs[currentTeamIndex][indexes.length - 1] += prob;
 
 		probsCache.set(indexes, indexesString, prob);
 

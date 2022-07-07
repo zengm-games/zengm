@@ -255,7 +255,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				maxRosterSize: 26,
 				// Injury rate per player per possession, basically. But it's a little more complicated than that.
 				injuryRate: 1 / 10000,
-				draftType: "nhl2017",
+				draftType: "nhl2021",
 				numDraftRounds: 4,
 				draftAges: [18, 21],
 				allStarGame: null,

@@ -12,6 +12,7 @@ import { toWorker, helpers } from "../../util";
 import type { ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
+import { draftTypeDescriptions } from "../../../common/draftLottery";
 
 export const descriptions = {
 	difficulty:
@@ -388,36 +389,31 @@ export const settings: {
 		descriptionLong: (
 			<>
 				<p>
-					<b>NBA 2019:</b> Weighted lottery for the top 4 picks, like the NBA
-					since 2019
+					<b>NBA 2019:</b> {draftTypeDescriptions.nba2019}
 				</p>
 				<p>
-					<b>NBA 1994:</b> Weighted lottery for the top 3 picks, like the NBA
-					from 1994-2018
+					<b>NBA 1994:</b> {draftTypeDescriptions.nba1994}
 				</p>
 				<p>
-					<b>NBA 1990:</b> Weighted lottery for the top 3 picks, like the NBA
-					from 1990-1993
+					<b>NBA 1990:</b> {draftTypeDescriptions.nba1990}
 				</p>
 				<p>
-					<b>NHL 2017:</b> Weighted lottery for the top 3 picks, like the NHL
-					since 2017
+					<b>NHL 2017:</b> {draftTypeDescriptions.nhl2017}
 				</p>
 				<p>
-					<b>MLB 2022:</b> Weighted lottery for the top 6 picks, like the MLB
-					since 2022
+					<b>NHL 2021:</b> {draftTypeDescriptions.nhl2021}
 				</p>
 				<p>
-					<b>Random, first 3:</b> Random lottery for the top 3 picks, like the
-					NBA from 1987-1989
+					<b>MLB 2022:</b> {draftTypeDescriptions.mlb2022}
 				</p>
 				<p>
-					<b>Random, lottery only:</b> Non-playoff teams draft in random order,
-					like the NBA from 1985-1986
+					<b>Random, first 3:</b> {draftTypeDescriptions.randomLotteryFirst3}
 				</p>
 				<p>
-					<b>Coin flip:</b> Coin flip to determine the top 2 picks, like the NBA
-					from 1966-1984
+					<b>Random, lottery only:</b> {draftTypeDescriptions.randomLottery}
+				</p>
+				<p>
+					<b>Coin flip:</b> {draftTypeDescriptions.coinFlip}
 				</p>
 				<p>
 					<b>Random:</b> order the draft completely randomly, with no regard for
@@ -426,12 +422,11 @@ export const settings: {
 					round.
 				</p>
 				<p>
-					<b>No Lottery, worst to best:</b> No lottery, teams draft in order of
-					their record, from worst to best with non-playoff teams coming first.
+					<b>No Lottery, worst to best:</b> {draftTypeDescriptions.noLottery}
 				</p>
 				<p>
-					<b>No Lottery, best to worst:</b> No lottery, teams draft in order of
-					their record, from best to worst with playoff teams coming first.
+					<b>No Lottery, best to worst:</b>{" "}
+					{draftTypeDescriptions.noLotteryReverse}
 				</p>
 				<p>
 					<b>No draft, rookies are free agents</b> There is no draft and all
@@ -445,6 +440,7 @@ export const settings: {
 			{ key: "nba1994", value: "NBA 1994" },
 			{ key: "nba1990", value: "NBA 1990" },
 			{ key: "nhl2017", value: "NHL 2017" },
+			{ key: "nhl2021", value: "NHL 2021" },
 			{ key: "mlb2022", value: "MLB 2022" },
 			{ key: "randomLotteryFirst3", value: "Random, first 3" },
 			{ key: "randomLottery", value: "Random, lottery only" },

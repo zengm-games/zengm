@@ -31,6 +31,7 @@ const LOTTERY_DRAFT_TYPES = [
 	"randomLotteryFirst3",
 	"nba1990",
 	"nhl2017",
+	"nhl2021",
 	"mlb2022",
 ] as const;
 

@@ -228,6 +228,7 @@ export type DraftType =
 	| "nba1990"
 	| "freeAgents"
 	| "nhl2017"
+	| "nhl2021"
 	| "mlb2022";
 
 // Key is team ID receiving this asset

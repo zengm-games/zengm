@@ -1,50 +1,13 @@
 import type { DraftLotteryResultArray, DraftType } from "./types";
 
-class ProbsCache {
-	// Key indexes of teams winning the first N picks in order (could be any number of picks from 1 to numPicksInLottery, all get stored here), value is probability of that happening
-	probs: Map<string, number>;
-
-	// Same as probs, but we don't care about order of key ([1,5] is same as [5,1], and probs get added up) and we only care about fully specified lotteries (keys length equal to numPicksInLottery)
-	probsMerged: Map<string, number>;
-
-	numPicksInLottery: number;
-
-	constructor(numPicksInLottery: number) {
-		this.numPicksInLottery = numPicksInLottery;
-		this.probs = new Map();
-		this.probsMerged = new Map();
-	}
-
-	static stringifyKey(keys: number[]) {
-		return keys.join(",");
-	}
-
-	static parseKey(key: string): number[] {
-		return key.split(",").map(x => parseInt(x));
-	}
-
-	set(keys: number[], key: string, value: number) {
-		// Only need to cache intermediate values here, final values will never be needed again, except in the aggregate form of probsMerged
-		if (keys.length < this.numPicksInLottery) {
-			this.probs.set(key, value);
-		} else {
-			const keyMerged = ProbsCache.stringifyKey([...keys].sort());
-			const prev = this.probsMerged.get(keyMerged) ?? 0;
-			this.probsMerged.set(keyMerged, prev + value);
-		}
-	}
-
-	get(key: string) {
-		return this.probs.get(key);
-	}
-}
-
 class MultiDimensionalRange {
+	initial: boolean;
 	start: number;
 	end: number;
 	dimensions: number;
 
 	constructor(end: number, dimensions: number) {
+		this.initial = true;
 		this.start = 0;
 		this.end = end;
 		this.dimensions = dimensions;
@@ -55,7 +18,11 @@ class MultiDimensionalRange {
 
 		const getNextValue = (dimension: number): boolean => {
 			if (value[dimension] < this.end - 1) {
-				value[dimension] += 1;
+				if (this.initial) {
+					this.initial = false;
+				} else {
+					value[dimension] += 1;
+				}
 				return false;
 			}
 
@@ -149,21 +116,19 @@ const getDraftLotteryProbs = (
 		numPicksInLottery = 3;
 	}
 
-	const probsCache = new ProbsCache(numPicksInLottery);
-
 	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = [];
+
+		// Initialize values that we'll definitely fill in soon
+		for (let j = 0; j < numPicksInLottery; j++) {
+			probs[i][j] = 0;
+		}
 	}
 
 	const getProb = (indexes: number[]): number => {
-		const indexesString = ProbsCache.stringifyKey(indexes);
-		const cached = probsCache.get(indexesString);
-		if (cached !== undefined) {
-			return cached;
-		}
-
-		const [currentTeamIndex, ...prevLotteryWinnerIndexes] = indexes;
+		const currentTeamIndex = indexes[0];
+		const prevLotteryWinnerIndexes = indexes.slice(1);
 
 		let chancesLeft = totalChances;
 		for (const prevTeamIndex of prevLotteryWinnerIndexes) {
@@ -177,34 +142,40 @@ const getDraftLotteryProbs = (
 
 		const prob = (priorProb * result[currentTeamIndex].chances) / chancesLeft;
 
-		const prev = probs[currentTeamIndex][indexes.length - 1] ?? 0;
-		probs[currentTeamIndex][indexes.length - 1] = prev + prob;
-
-		probsCache.set(indexes, indexesString, prob);
-
 		return prob;
 	};
 
-	console.time("foo");
-	const range = new MultiDimensionalRange(result.length, numPicksInLottery);
-	for (const indexes of range) {
-		if (indexes.length !== new Set(indexes).size) {
-			// Skip case where this team already got an earlier pick
-			continue;
-		}
+	const topNCombos = new Map();
 
-		// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
-		getProb(indexes);
+	console.time("foo");
+	for (let pickIndex = 0; pickIndex < numPicksInLottery; pickIndex += 1) {
+		const range = new MultiDimensionalRange(result.length, pickIndex + 1);
+		for (const indexes of range) {
+			if (indexes.length !== new Set(indexes).size) {
+				// Skip case where this team already got an earlier pick
+				continue;
+			}
+
+			// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
+			const prob = getProb(indexes);
+			probs[indexes[0]][pickIndex] += prob;
+
+			if (pickIndex === numPicksInLottery - 1) {
+				const key = JSON.stringify([...indexes].sort());
+				const prev = topNCombos.get(key) ?? 0;
+
+				topNCombos.set(key, prev + prob);
+			}
+		}
 	}
-	console.timeEnd("foo");
 
 	// Fill in picks (N+1)+
 	for (let i = 0; i < result.length; i++) {
 		// Probabilities of being "skipped" (lower prob team in top N) i times. +1 is for when skipped 0 times, in addition to being skipped possibly up to numPicksInLottery times
 		const skipped = Array(numPicksInLottery + 1).fill(0);
 
-		for (const [key, prob] of probsCache.probsMerged) {
-			const indexes = ProbsCache.parseKey(key);
+		for (const [key, prob] of topNCombos.entries()) {
+			const indexes = JSON.parse(key);
 
 			let skipCount = 0;
 
@@ -226,6 +197,7 @@ const getDraftLotteryProbs = (
 			}
 		}
 	}
+	console.timeEnd("foo");
 
 	return probs;
 };

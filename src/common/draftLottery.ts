@@ -63,7 +63,6 @@ export const getLotteryInfo = (
 ) => {
 	if (draftType === "coinFlip") {
 		return {
-			minNumTeams: 2,
 			numToPick: 2,
 			chances: [1, 1, 0],
 		};
@@ -71,7 +70,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "randomLottery") {
 		return {
-			minNumTeams: numLotteryTeams,
 			numToPick: numLotteryTeams,
 			chances: [1],
 		};
@@ -79,7 +77,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "randomLotteryFirst3") {
 		return {
-			minNumTeams: 3,
 			numToPick: 3,
 			chances: [1],
 		};
@@ -92,7 +89,6 @@ export const getLotteryInfo = (
 		}
 
 		return {
-			minNumTeams: 3,
 			numToPick: 3,
 			chances,
 		};
@@ -100,7 +96,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "nba1994") {
 		return {
-			minNumTeams: 3,
 			numToPick: 3,
 			chances: [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5],
 		};
@@ -108,7 +103,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "nba2019") {
 		return {
-			minNumTeams: 4,
 			numToPick: 4,
 			chances: [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5],
 		};
@@ -116,7 +110,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "nhl2017") {
 		return {
-			minNumTeams: 3,
 			numToPick: 3,
 			chances: [185, 135, 115, 95, 85, 75, 65, 60, 50, 35, 30, 25, 20, 15, 10],
 		};
@@ -124,7 +117,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "nhl2021") {
 		return {
-			minNumTeams: 2,
 			numToPick: 2,
 			chances: [
 				185, 135, 115, 95, 85, 75, 65, 60, 50, 35, 30, 25, 20, 15, 5, 5,
@@ -134,7 +126,6 @@ export const getLotteryInfo = (
 
 	if (draftType === "mlb2022") {
 		return {
-			minNumTeams: 6,
 			numToPick: 6,
 			chances: [
 				1650, 1650, 1650, 1325, 1000, 750, 550, 390, 270, 180, 140, 110, 90, 76,

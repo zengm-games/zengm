@@ -99,11 +99,10 @@ const genOrder = async (
 			draftType,
 			firstRoundTeams.length - numPlayoffTeams,
 		);
-		const minNumLotteryTeams = info.minNumTeams;
 		const numToPick = info.numToPick;
 		chances = info.chances;
 
-		if (firstRoundTeams.length < minNumLotteryTeams) {
+		if (firstRoundTeams.length < numToPick) {
 			const error = new Error(
 				`Number of teams with draft picks (${firstRoundTeams.length}) is less than the minimum required for draft type "${draftType}"`,
 			);
@@ -113,8 +112,8 @@ const genOrder = async (
 
 		numLotteryTeams = helpers.bound(
 			firstRoundTeams.length - numPlayoffTeams,
-			minNumLotteryTeams,
-			draftType === "coinFlip" ? minNumLotteryTeams : firstRoundTeams.length,
+			numToPick,
+			draftType === "coinFlip" ? numToPick : firstRoundTeams.length,
 		);
 
 		if (numLotteryTeams < chances.length) {

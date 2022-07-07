@@ -48,6 +48,13 @@ const TIEBREAKER_AFTER_FIRST_ROUND = bySport<"swap" | "rotate" | "same">({
 	hockey: "same",
 });
 
+const DIVIDE_CHANCES_OVER_TIED_TEAMS = bySport({
+	baseball: false,
+	basketball: true,
+	football: false,
+	hockey: false,
+});
+
 /**
  * Sets draft order and save it to the draftPicks object store.
  *
@@ -124,7 +131,7 @@ const genOrder = async (
 			}
 		}
 
-		if (draftType.startsWith("nba")) {
+		if (DIVIDE_CHANCES_OVER_TIED_TEAMS) {
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
 		}
 

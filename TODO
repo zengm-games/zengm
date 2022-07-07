@@ -1,6 +1,5 @@
 baseball lottery
 - customize num picks and counts
-  - divideChancesOverTiedTeams
   - other settings in genOrder and getTeamsByRound
 
 add comparison to real player, for random player or draft prospect?

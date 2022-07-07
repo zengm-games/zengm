@@ -160,10 +160,10 @@ export const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
 	dummy: "From historical data",
 };
 
-const draftLotteryProbsTooSlow = (draftType: DraftType, numTeams: number) => {
-	const count = numTeams ** getLotteryInfo(draftType, numTeams).numToPick;
+const draftLotteryProbsTooSlow = (numTeams: number, numToPick: number) => {
+	const count = numTeams ** numToPick;
 
-	// This will happen for baseball (18 teams, 6 picks)
+	// This will happen for baseball (18 teams, 6 picks) except for the hardcoded default
 	return count >= 1e7;
 };
 
@@ -230,7 +230,9 @@ export const getDraftLotteryProbs = (
 		};
 	}
 
-	const tooSlow = draftLotteryProbsTooSlow(draftType, result.length);
+	const numPicksInLottery = getLotteryInfo(draftType, result.length).numToPick;
+
+	const tooSlow = draftLotteryProbsTooSlow(result.length, numPicksInLottery);
 
 	// Cache default baseball probs
 	if (
@@ -492,8 +494,6 @@ export const getDraftLotteryProbs = (
 			],
 		};
 	}
-
-	const numPicksInLottery = getLotteryInfo(draftType, result.length).numToPick;
 
 	const skipped: number[][] = [];
 

@@ -2,17 +2,17 @@ import type { DraftLotteryResultArray, DraftType } from "./types";
 
 class ProbsCache {
 	// Key indexes of teams winning the first N picks in order (could be any number of picks from 1 to numPicksInLottery, all get stored here), value is probability of that happening
-	probs: Record<string, number>;
+	probs: Map<string, number>;
 
 	// Same as probs, but we don't care about order of key ([1,5] is same as [5,1], and probs get added up) and we only care about fully specified lotteries (keys length equal to numPicksInLottery)
-	probsMerged: Record<string, number>;
+	probsMerged: Map<string, number>;
 
 	numPicksInLottery: number;
 
 	constructor(numPicksInLottery: number) {
 		this.numPicksInLottery = numPicksInLottery;
-		this.probs = {};
-		this.probsMerged = {};
+		this.probs = new Map();
+		this.probsMerged = new Map();
 	}
 
 	static stringifyKey(keys: number[]) {
@@ -26,26 +26,16 @@ class ProbsCache {
 	set(keys: number[], key: string, value: number) {
 		// Only need to cache intermediate values here, final values will never be needed again, except in the aggregate form of probsMerged
 		if (keys.length < this.numPicksInLottery) {
-			this.probs[key] = value;
+			this.probs.set(key, value);
 		} else {
 			const keyMerged = ProbsCache.stringifyKey([...keys].sort());
-			if (this.probsMerged[keyMerged] === undefined) {
-				this.probsMerged[keyMerged] = value;
-			} else {
-				this.probsMerged[keyMerged] += value;
-			}
+			const prev = this.probsMerged.get(keyMerged) ?? 0;
+			this.probsMerged.set(keyMerged, prev + value);
 		}
 	}
 
 	get(key: string) {
-		return this.probs[key];
-	}
-
-	mergedEntries() {
-		return Object.entries(this.probsMerged).map(row => {
-			const parsed = ProbsCache.parseKey(row[0]);
-			return [parsed, row[1]] as const;
-		});
+		return this.probs.get(key);
 	}
 }
 
@@ -173,8 +163,7 @@ const getDraftLotteryProbs = (
 			return cached;
 		}
 
-		const currentTeamIndex = indexes[0];
-		const prevLotteryWinnerIndexes = indexes.slice(1);
+		const [currentTeamIndex, ...prevLotteryWinnerIndexes] = indexes;
 
 		let chancesLeft = totalChances;
 		for (const prevTeamIndex of prevLotteryWinnerIndexes) {
@@ -188,11 +177,8 @@ const getDraftLotteryProbs = (
 
 		const prob = (priorProb * result[currentTeamIndex].chances) / chancesLeft;
 
-		if (probs[currentTeamIndex][indexes.length - 1] === undefined) {
-			probs[currentTeamIndex][indexes.length - 1] = prob;
-		} else {
-			probs[currentTeamIndex][indexes.length - 1] += prob;
-		}
+		const prev = probs[currentTeamIndex][indexes.length - 1] ?? 0;
+		probs[currentTeamIndex][indexes.length - 1] = prev + prob;
 
 		probsCache.set(indexes, indexesString, prob);
 
@@ -217,7 +203,9 @@ const getDraftLotteryProbs = (
 		// Probabilities of being "skipped" (lower prob team in top N) i times. +1 is for when skipped 0 times, in addition to being skipped possibly up to numPicksInLottery times
 		const skipped = Array(numPicksInLottery + 1).fill(0);
 
-		for (const [indexes, prob] of probsCache.mergedEntries()) {
+		for (const [key, prob] of probsCache.probsMerged) {
+			const indexes = ProbsCache.parseKey(key);
+
 			let skipCount = 0;
 
 			for (const ind of indexes) {

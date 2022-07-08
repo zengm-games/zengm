@@ -46,11 +46,10 @@ const updateDraftScouting = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
 	) {
+		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
+
 		// In fantasy draft, use temp tid
-		const tid =
-			g.get("phase") === PHASE.FANTASY_DRAFT
-				? PLAYER.UNDRAFTED_FANTASY_TEMP
-				: PLAYER.UNDRAFTED;
+		const tid = fantasyDraft ? PLAYER.UNDRAFTED_FANTASY_TEMP : PLAYER.UNDRAFTED;
 
 		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
@@ -79,6 +78,7 @@ const updateDraftScouting = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			draftType: g.get("draftType"),
+			fantasyDraft,
 			godMode: g.get("godMode"),
 			seasons,
 		};

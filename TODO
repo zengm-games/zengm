@@ -1,6 +1,11 @@
-baseball lottery
-- customize num picks and counts
-  - test what happens if num teams is too high
+ga4
+- pageviews not correct
+  - https://support.google.com/analytics/answer/11403294 says it can be automatic or manual. try automatic, but if it fails, could do manual
+  - https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications explans UA way, could do that more precisely and see if it works for both
+
+if tooSlow, then bootstrap
+- show warning in UI that values are estimated
+- universal too
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

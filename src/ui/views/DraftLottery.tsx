@@ -114,7 +114,6 @@ const Row = ({
 	toReveal,
 	probs,
 	spectator,
-	tooSlow,
 }: {
 	NUM_PICKS: number;
 	i: number;
@@ -125,7 +124,6 @@ const Row = ({
 	toReveal: State["toReveal"];
 	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>["probs"]>;
 	spectator: boolean;
-	tooSlow: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -134,11 +132,7 @@ const Row = ({
 
 	const pickCols = range(NUM_PICKS).map(j => {
 		const prob = probs[i][j];
-		let pct: any =
-			prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
-		if (tooSlow && pct !== undefined && j > 0) {
-			pct = <div className="text-center">?</div>;
-		}
+		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
 
 		let highlighted = false;
 
@@ -414,8 +408,9 @@ const DraftLotteryTable = (props: Props) => {
 				{tooSlow ? (
 					<div className="alert alert-warning d-inline-block">
 						<p>
-							<b>Warning:</b> Computing lottery odds for so many teams and picks
-							is too slow. The lottery will still run fine though.
+							<b>Warning:</b> Computing exact odds for so many teams and picks
+							is too slow, so estimates are shown. The lottery will still run
+							correctly though.
 						</p>
 					</div>
 				) : null}
@@ -460,7 +455,6 @@ const DraftLotteryTable = (props: Props) => {
 									toReveal={state.toReveal}
 									probs={probs}
 									spectator={props.spectator}
-									tooSlow={tooSlow}
 								/>
 							))}
 						</tbody>

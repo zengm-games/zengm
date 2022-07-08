@@ -82,12 +82,12 @@ const updateDraftTeamHistory = async (
 						draftLottery.draftType ?? "nba1994",
 						draftLottery.result.length,
 					);
-					const { probs, tooSlow } = getDraftLotteryProbs(
+					const { probs } = getDraftLotteryProbs(
 						draftLottery.result,
 						draftLottery.draftType,
 						numToPick,
 					);
-					if (probs && !tooSlow) {
+					if (probs) {
 						lotteryProb = probs[lotteryRowIndex]?.[p.draft.pick - 1];
 					}
 				}

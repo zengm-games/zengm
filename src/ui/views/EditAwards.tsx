@@ -103,7 +103,9 @@ const EditAwards = ({
 				type == "roy" ||
 				type == "mip" ||
 				type == "oroy" ||
-				type == "droy"
+				type == "droy" ||
+				type == "poy" ||
+				type == "rpoy"
 			) {
 				if (p?.pid == undefined) {
 					newAwards[type] = undefined;

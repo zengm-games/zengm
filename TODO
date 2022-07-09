@@ -31,6 +31,7 @@ baseball bugs
   - more extreme performances for bad pitchers https://discord.com/channels/290013534023057409/290015591216054273/991844802599600228
   - lower IP for low endurance starters
 - on a similar vein, a 3rd baseman with 32 catching just made the allstar team with a perfect fielding rating over 78 games at catcher. you can stick anyone at catcher and they'll be basically the same https://discord.com/channels/290013534023057409/290015591216054273/991001719712395294
+- when a player in the starting lineup is injured and there is an injury replacement, currently it auto sorts the whole lineup. it would be better to auto sort, see where it puts the replacement player, and then move them to that spot while keeping everyone else the same. https://discord.com/channels/290013534023057409/290015591216054273/994934736243933184
 
 when u change a players position the displayed OVR does not change to the OVR at that position https://discord.com/channels/290013534023057409/290015591216054273/991836318709600287
 

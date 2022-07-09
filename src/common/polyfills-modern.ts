@@ -25,5 +25,20 @@ if (!Array.prototype.at) {
 	}
 }
 
+// Chrome 93, Firefox 92, Safari 15.4
+if (!Object.hasOwn) {
+	Object.defineProperty(Object, "hasOwn", {
+		value: function (object: object, property: PropertyKey) {
+			if (object == null) {
+				throw new TypeError("Cannot convert undefined or null to object");
+			}
+			return Object.prototype.hasOwnProperty.call(Object(object), property);
+		},
+		configurable: true,
+		enumerable: false,
+		writable: true,
+	});
+}
+
 // Needed for some reason
 export default 1;

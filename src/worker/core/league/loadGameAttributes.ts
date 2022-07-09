@@ -71,7 +71,7 @@ const loadGameAttributes = async () => {
 				);
 			} else if (
 				key === "numGamesPlayoffSeries" &&
-				g.hasOwnProperty("numPlayoffRounds")
+				Object.hasOwn(g, "numPlayoffRounds")
 			) {
 				// If numPlayoffRounds was set back before numGamesPlayoffSeries existed, use that
 				await league.setGameAttributes({

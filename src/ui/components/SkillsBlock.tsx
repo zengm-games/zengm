@@ -101,15 +101,7 @@ const SkillsBlock = ({
 	return (
 		<span className={className}>
 			{truncatedSkills.map(skill => (
-				<span
-					key={skill}
-					className="skill"
-					title={
-						// https://github.com/microsoft/TypeScript/issues/21732
-						// @ts-expect-error
-						tooltips.hasOwnProperty(skill) ? tooltips[skill] : null
-					}
-				>
+				<span key={skill} className="skill" title={(tooltips as any)[skill]}>
 					{skill}
 				</span>
 			))}

@@ -49,7 +49,7 @@ const updatePlayers = async (
 				if (rating === "ovrs" || rating === "pots") {
 					for (const pos of Object.keys(p.ratings[rating])) {
 						const posRating = `${rating.slice(0, rating.length - 1)}${pos}`;
-						if (memo.hasOwnProperty(posRating)) {
+						if (memo[posRating]) {
 							memo[posRating].push(p.ratings[rating][pos]);
 						} else {
 							memo[posRating] = [p.ratings[rating][pos]];
@@ -58,7 +58,7 @@ const updatePlayers = async (
 					continue;
 				}
 
-				if (memo.hasOwnProperty(rating)) {
+				if (memo[rating]) {
 					memo[rating].push(p.ratings[rating]);
 				} else {
 					memo[rating] = [p.ratings[rating]];

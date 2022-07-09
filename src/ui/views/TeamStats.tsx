@@ -143,7 +143,7 @@ const TeamStats = ({
 				: null;
 
 		for (const stat of stats) {
-			const value = teamStats.hasOwnProperty(stat)
+			const value = Object.hasOwn(teamStats, stat)
 				? (teamStats as any)[stat]
 				: (teamSeasonAttrs as any)[stat];
 			data[stat] = helpers.roundStat(value, stat);
@@ -152,7 +152,7 @@ const TeamStats = ({
 		if (isSport("basketball") || isSport("hockey")) {
 			const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
 			for (const plusMinusCol of plusMinusCols) {
-				if (data.hasOwnProperty(plusMinusCol)) {
+				if (Object.hasOwn(data, plusMinusCol)) {
 					data[plusMinusCol] = (
 						<PlusMinus>{(teamStats as any)[plusMinusCol]}</PlusMinus>
 					);
@@ -190,7 +190,7 @@ const TeamStats = ({
 				}
 
 				// Determine our team's percentile for this stat type. Closer to the start is better.
-				const statTypeValue = t.stats.hasOwnProperty(statType)
+				const statTypeValue = Object.hasOwn(t.stats, statType)
 					? (t.stats as any)[statType]
 					: (t.seasonAttrs as any)[statType];
 				const rank = teams.length - allStats[statType].indexOf(statTypeValue);

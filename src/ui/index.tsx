@@ -328,7 +328,7 @@ const setupRoutes = () => {
 
 (async () => {
 	promiseWorker.register(([name, ...params]) => {
-		if (!api.hasOwnProperty(name)) {
+		if (!Object.hasOwn(api, name)) {
 			throw new Error(
 				`API call to nonexistant UI function "${name}" with params ${JSON.stringify(
 					params,

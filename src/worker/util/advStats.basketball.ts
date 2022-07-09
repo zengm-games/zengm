@@ -60,7 +60,7 @@ const prls = {
 export const getEWA = (per: number, min: number, pos: string) => {
 	let prl;
 
-	if (prls.hasOwnProperty(pos)) {
+	if (Object.hasOwn(prls, pos)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-expect-error
 		prl = prls[pos];
@@ -281,7 +281,7 @@ const calculateBPM = (
 
 		let prl;
 
-		if (posNum.hasOwnProperty(players[i].ratings.pos)) {
+		if (Object.hasOwn(posNum, players[i].ratings.pos)) {
 			// https://github.com/microsoft/TypeScript/issues/21732
 			// @ts-expect-error
 			prl = posNum[players[i].ratings.pos];
@@ -844,7 +844,7 @@ const advStats = async () => {
 			// Special case for pace - scale by number of games
 			const value = key === "pace" ? t.stats.pace * t.stats.gp : t.stats[key];
 
-			if (memo.hasOwnProperty(key)) {
+			if (Object.hasOwn(memo, key)) {
 				memo[key] += value;
 			} else {
 				memo[key] = value;

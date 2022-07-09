@@ -182,7 +182,7 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 								</tr>
 							);
 							let proPlot: ReactNode = null;
-							if (proStatsAll.hasOwnProperty(stat)) {
+							if ((proStatsAll as any)[stat]) {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
 										<td />

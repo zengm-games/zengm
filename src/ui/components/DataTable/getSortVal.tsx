@@ -13,9 +13,9 @@ const getSortVal = (
 		let sortVal: string;
 
 		// Get the right 'value'.
-		if (value != null && value.hasOwnProperty("sortValue")) {
+		if (value != null && Object.hasOwn(value, "sortValue")) {
 			val = value.sortValue;
-		} else if (value != null && value.hasOwnProperty("value")) {
+		} else if (value != null && Object.hasOwn(value, "value")) {
 			val = value.value;
 		} else {
 			val = value;

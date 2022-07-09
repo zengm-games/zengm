@@ -95,7 +95,7 @@ const updatePlayers = async (
 				if (stat === "playoffs") {
 					continue;
 				}
-				if (memo.hasOwnProperty(stat)) {
+				if (memo[stat]) {
 					memo[stat].push(p.stats[stat]);
 				} else {
 					memo[stat] = [p.stats[stat]];

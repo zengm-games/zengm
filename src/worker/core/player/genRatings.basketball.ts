@@ -125,9 +125,7 @@ const genRatings = (
 	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
 
 	for (const key of helpers.keys(rawRatings)) {
-		const typeFactor = typeFactors[type].hasOwnProperty(key)
-			? typeFactors[type][key]
-			: 1;
+		const typeFactor = typeFactors[type]?.[key] ?? 1;
 		let factor = factorIns;
 
 		if (athleticismRatings.includes(key)) {

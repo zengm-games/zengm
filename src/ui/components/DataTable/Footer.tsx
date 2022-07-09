@@ -36,7 +36,7 @@ const Footer = ({
 							: undefined;
 
 						const value = row[colIndex];
-						if (value != null && value.hasOwnProperty("value")) {
+						if (value != null && Object.hasOwn(value, "value")) {
 							return (
 								<th
 									className={classNames(

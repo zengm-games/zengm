@@ -19,7 +19,7 @@ if (Number.isNaN(targetSeason)) {
 const league = JSON.parse(await readFile(process.argv[3]));
 
 let currentSeason;
-if (league.hasOwnProperty("startingSeason")) {
+if (Object.hasOwn(league, "startingSeason")) {
 	currentSeason = league.startingSeason;
 } else if (Array.isArray(league.gameAttributes)) {
 	for (const { key, value } of league.gameAttributes) {

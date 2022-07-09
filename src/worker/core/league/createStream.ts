@@ -190,17 +190,19 @@ const preProcess = async (
 		}
 	} else if (key === "games") {
 		// Fix missing +/-, blocks against in boxscore
-		if (!x.teams[0].hasOwnProperty("ba")) {
-			x.teams[0].ba = 0;
-			x.teams[1].ba = 0;
-		}
-		for (const t of x.teams) {
-			for (const p of t.players) {
-				if (!p.hasOwnProperty("ba")) {
-					p.ba = 0;
-				}
-				if (!p.hasOwnProperty("pm")) {
-					p.pm = 0;
+		if (isSport("basketball")) {
+			if (x.teams[0].ba === undefined) {
+				x.teams[0].ba = 0;
+				x.teams[1].ba = 0;
+			}
+			for (const t of x.teams) {
+				for (const p of t.players) {
+					if (p.ba === undefined) {
+						p.ba = 0;
+					}
+					if (p.pm === undefined) {
+						p.pm = 0;
+					}
 				}
 			}
 		}
@@ -726,13 +728,15 @@ const processTeamInfos = ({
 		for (const ts of teamStatsLocal) {
 			ts.tid = t.tid;
 
-			if (ts.hasOwnProperty("ba")) {
-				ts.oppBlk = ts.ba;
-				delete ts.ba;
-			}
+			if (isSport("basketball")) {
+				if (ts.ba !== undefined) {
+					ts.oppBlk = ts.ba;
+					delete ts.ba;
+				}
 
-			if (typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) {
-				ts.oppBlk = 0;
+				if (typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) {
+					ts.oppBlk = 0;
+				}
 			}
 
 			// teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);

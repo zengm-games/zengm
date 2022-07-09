@@ -211,7 +211,7 @@ export const parseAndValidate = (state: PlayerBioInfoState) => {
 	};
 
 	for (const row of state.countries) {
-		if (output.frequencies.hasOwnProperty(row.country)) {
+		if (Object.hasOwn(output.frequencies, row.country)) {
 			throw new Error(
 				`Country names must be unique, but you have multiple countries named "${row.country}"`,
 			);
@@ -500,9 +500,9 @@ const PlayerBioInfo2 = ({
 						// Just sets the default to false. Might be better to compare values, like it does in prune.
 						extraProps.defaultNames = false;
 						extraProps.defaultRaces = false;
-						extraProps.builtIn = !!defaults?.countries.hasOwnProperty(
-							event.target.value,
-						);
+						extraProps.builtIn = defaults
+							? Object.hasOwn(defaults.countries, event.target.value)
+							: false;
 					}
 
 					return {

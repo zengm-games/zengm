@@ -30,7 +30,7 @@ const setGameAttributes = async (
 
 	if (
 		gameAttributes.difficulty !== undefined &&
-		g.hasOwnProperty("lowestDifficulty") &&
+		Object.hasOwn(g, "lowestDifficulty") &&
 		gameAttributes.difficulty < g.get("lowestDifficulty")
 	) {
 		gameAttributes.lowestDifficulty = gameAttributes.difficulty;

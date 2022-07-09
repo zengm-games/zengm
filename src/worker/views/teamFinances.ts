@@ -85,9 +85,9 @@ const updateTeamFinances = async (
 		teamSeasons.reverse(); // Most recent season first
 
 		// Add in luxuryTaxShare if it's missing
-		for (let i = 0; i < teamSeasons.length; i++) {
-			if (!teamSeasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
-				teamSeasons[i].revenues.luxuryTaxShare = {
+		for (const teamSeason of teamSeasons) {
+			if (!teamSeason.revenues.luxuryTaxShare) {
+				teamSeason.revenues.luxuryTaxShare = {
 					amount: 0,
 					rank: 15,
 				};

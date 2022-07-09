@@ -579,7 +579,7 @@ const migrate = async ({
 				for (const teamStats of (t as any).stats) {
 					teamStats.tid = t.tid;
 
-					if (!teamStats.hasOwnProperty("ba")) {
+					if (!Object.hasOwn(teamStats, "ba")) {
 						teamStats.ba = 0;
 					}
 

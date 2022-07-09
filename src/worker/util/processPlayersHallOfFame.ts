@@ -43,7 +43,7 @@ const processPlayersHallOfFame = <
 					bestEWA = ewa;
 				}
 			}
-			if (teamSums.hasOwnProperty(tid)) {
+			if (Object.hasOwn(teamSums, tid)) {
 				teamSums[tid] += ewa;
 			} else {
 				teamSums[tid] = ewa;

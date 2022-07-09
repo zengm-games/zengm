@@ -142,7 +142,7 @@ const develop = async (
 				ratings.pot = await bootstrapPot({ ratings, age, srID: p.srID });
 			}
 
-			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+			if (typeof p.pos === "string") {
 				// Must be a custom league player, let's not rock the boat
 				ratings.pos = p.pos;
 			} else {
@@ -179,7 +179,7 @@ const develop = async (
 				throw new Error("Should never happen");
 			}
 
-			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+			if (typeof p.pos === "string") {
 				pos = p.pos;
 			}
 

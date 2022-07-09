@@ -3457,7 +3457,7 @@ export default (
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
 	return titles.map(title => {
-		if (!cols.hasOwnProperty(title)) {
+		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
 		}
 

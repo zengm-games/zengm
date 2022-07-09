@@ -412,7 +412,7 @@ const skip = [
 	"Youngstown State",
 ];
 for (const college of skip) {
-	if (!colleges.hasOwnProperty(college)) {
+	if (!Object.hasOwn(colleges, college)) {
 		console.log("INVALID SKIP", college);
 	}
 	colleges[college] = 0.1;
@@ -502,17 +502,15 @@ for (const filename of fs.readdirSync(folder)) {
 	}
 
 	for (const name2 of names) {
-		if (colleges.hasOwnProperty(name2)) {
-			if (colleges[name2] !== undefined) {
-				// Missouri State University and Missouri State are the same school, so add them
-				if (name2 === "Missouri State") {
-					colleges[name2] += count;
-				} else {
-					console.log("DUPE", name2);
-				}
+		if (colleges[name2] !== undefined) {
+			// Missouri State University and Missouri State are the same school, so add them
+			if (name2 === "Missouri State") {
+				colleges[name2] += count;
 			} else {
-				colleges[name2] = count;
+				console.log("DUPE", name2);
 			}
+		} else {
+			colleges[name2] = count;
 		}
 	}
 }

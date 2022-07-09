@@ -19,7 +19,7 @@ const g: GameAttributes & {
 	lid: undefined,
 
 	get: (key, season = Infinity) => {
-		if (g.hasOwnProperty(key)) {
+		if (Object.hasOwn(g, key)) {
 			// @ts-expect-error
 			const gameAttribute = g[key];
 

@@ -246,7 +246,7 @@ const writeTeamStats = async (results: GameResults) => {
 			// Only home team gets attendance...
 			teamSeason.att += attendance; // This is only used for attendance tracking
 
-			if (!teamSeason.hasOwnProperty("gpHome")) {
+			if (teamSeason.gpHome === undefined) {
 				teamSeason.gpHome = Math.round(teamSeason.gp / 2);
 			}
 
@@ -305,7 +305,7 @@ const writeTeamStats = async (results: GameResults) => {
 				const oppKey = `opp${helpers.upperCaseFirstLetter(key)}`;
 
 				// Deal with upgraded leagues, and some stats that don't have opp versions
-				if (teamStats.hasOwnProperty(oppKey)) {
+				if (teamStats[oppKey] !== undefined) {
 					if (team.stats.byPos && team.stats.byPos.includes(oppKey)) {
 						for (let i = 0; i < results.team[t2].stat[key].length; i++) {
 							const value = results.team[t2].stat[key][i];

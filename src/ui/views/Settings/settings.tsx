@@ -331,7 +331,7 @@ export const settings: {
 				if (typeof key !== "string") {
 					throw new Error("Array must contain only strings");
 				}
-				if (!TIEBREAKERS.hasOwnProperty(key)) {
+				if (!Object.hasOwn(TIEBREAKERS, key)) {
 					throw new Error(`Invalid tiebreaker "${key}"`);
 				}
 			}

@@ -371,7 +371,7 @@ const advStats = async () => {
 	);
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {
-			if (memo.hasOwnProperty(key)) {
+			if (Object.hasOwn(memo, key)) {
 				memo[key] += t.stats[key];
 			} else {
 				memo[key] = t.stats[key];

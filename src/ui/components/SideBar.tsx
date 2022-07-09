@@ -25,7 +25,7 @@ import { AnimatePresence, m } from "framer-motion";
 export const getText = (
 	text: MenuItemLink["text"],
 ): Exclude<ReactNode, null | undefined | number | boolean> => {
-	if (text.hasOwnProperty("side")) {
+	if (Object.hasOwn(text as any, "side")) {
 		// @ts-expect-error
 		return text.side;
 	}

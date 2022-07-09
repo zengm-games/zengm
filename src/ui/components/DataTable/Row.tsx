@@ -27,7 +27,7 @@ const Row = ({
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =
-					value !== null && value.hasOwnProperty("value") ? value.value : value;
+					value !== null && Object.hasOwn(value, "value") ? value.value : value;
 
 				const props: any = {};
 

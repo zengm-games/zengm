@@ -61,7 +61,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	const pos2 = pos ?? ratings.pos;
 	let r = 0;
 
-	if (info.hasOwnProperty(pos2)) {
+	if (Object.hasOwn(info, pos2)) {
 		let sumCoeffs = 0;
 
 		// @ts-expect-error
@@ -74,7 +74,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 
 		r /= sumCoeffs;
 
-		if (bonuses.hasOwnProperty(pos2)) {
+		if (Object.hasOwn(bonuses, pos2)) {
 			// https://github.com/microsoft/TypeScript/issues/21732
 			// @ts-expect-error
 			r += bonuses[pos2](ratings);

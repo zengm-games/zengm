@@ -109,11 +109,11 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 
 const bySport = object => {
 	const sport = getSport();
-	if (object.hasOwnProperty(sport)) {
+	if (Object.hasOwn(object, sport)) {
 		return object[sport];
 	}
 
-	if (object.hasOwnProperty("default")) {
+	if (Object.hasOwn(object, "default")) {
 		return object.default;
 	}
 

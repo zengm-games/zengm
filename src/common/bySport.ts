@@ -16,13 +16,13 @@ const bySport = <T extends unknown>(
 		  },
 ): T => {
 	const sport = process.env.SPORT;
-	if (object.hasOwnProperty(sport)) {
+	if (Object.hasOwn(object, sport)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-expect-error
 		return object[sport];
 	}
 
-	if (object.hasOwnProperty("default")) {
+	if (Object.hasOwn(object, "default")) {
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-expect-error
 		return object.default;

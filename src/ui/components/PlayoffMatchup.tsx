@@ -261,14 +261,8 @@ const PlayoffMatchup = ({
 		return null;
 	}
 
-	const homeWon =
-		!series.away ||
-		(series.home.hasOwnProperty("won") &&
-			series.home.won === numGamesToWinSeries);
-	const awayWon =
-		!!series.away &&
-		series.away.hasOwnProperty("won") &&
-		series.away.won === numGamesToWinSeries;
+	const homeWon = !series.away || series.home.won === numGamesToWinSeries;
+	const awayWon = !!series.away && series.away.won === numGamesToWinSeries;
 	const showPts =
 		!!series.away &&
 		series.away.pts !== undefined &&

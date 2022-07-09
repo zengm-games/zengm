@@ -401,7 +401,7 @@ const genRatings = (
 	timeoutID = setTimeout(() => {
 		console.log(info);
 		for (const pos2 of Object.keys(POSITION_COUNTS)) {
-			if (infoIn.hasOwnProperty(pos2)) {
+			if (Object.hasOwn(infoIn, pos2)) {
 				console.log(pos2, infoIn[pos2], infoOut[pos2]);
 			}
 		}

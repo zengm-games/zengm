@@ -126,7 +126,7 @@ const processSeasonAttrs = async <
 				} else if (attr === "att") {
 					row.att = 0;
 
-					if (!ts.hasOwnProperty("gpHome")) {
+					if (ts.gpHome === undefined) {
 						ts.gpHome = Math.round(ts.gp / 2);
 					}
 

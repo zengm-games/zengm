@@ -194,14 +194,14 @@ const advStats = async () => {
 	);
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {
-			if (memo.hasOwnProperty(key)) {
+			if (Object.hasOwn(memo, key)) {
 				memo[key] += t.stats[key];
 			} else {
 				memo[key] = t.stats[key];
 			}
 		}
 
-		if (!memo.hasOwnProperty("ptsDefault")) {
+		if (!Object.hasOwn(memo, "ptsDefault")) {
 			memo.ptsDefault = 0;
 		}
 		if (playoffs) {
@@ -212,7 +212,7 @@ const advStats = async () => {
 		}
 
 		if (t.stats.gp > 0) {
-			if (memo.hasOwnProperty("gPerGame")) {
+			if (Object.hasOwn(memo, "gPerGame")) {
 				memo.gPerGame += t.stats.g / t.stats.gp;
 			} else {
 				memo.gPerGame = t.stats.g / t.stats.gp;

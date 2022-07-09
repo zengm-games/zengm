@@ -66,7 +66,7 @@ const checkRosterSizes = async (
 					for (const p of players) {
 						const pos = p.ratings.at(-1)!.pos;
 
-						if (counts.hasOwnProperty(pos)) {
+						if (counts[pos] !== undefined) {
 							counts[pos] += 1;
 						}
 					}

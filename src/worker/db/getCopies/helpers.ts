@@ -40,7 +40,7 @@ export const mergeByPk = <
 		.map(row => {
 			const key = row[pk];
 
-			if (cacheKeys.hasOwnProperty(key)) {
+			if (Object.hasOwn(cacheKeys, key)) {
 				cacheKeysUsed[key] = true;
 				return maybeDeepCopy(fromCache[cacheKeys[key]], type);
 			}

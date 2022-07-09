@@ -8,7 +8,7 @@ export const groupBy = <T extends Record<string, unknown>>(
 
 	for (const row of rows) {
 		const keyValue = (typeof key === "string" ? row[key] : key(row)) as any;
-		if (grouped.hasOwnProperty(keyValue)) {
+		if (Object.hasOwn(grouped, keyValue)) {
 			grouped[keyValue].push(row);
 		} else {
 			grouped[keyValue] = [row];
@@ -26,7 +26,7 @@ export const groupByUnique = <T extends Record<string, unknown>>(
 
 	for (const row of rows) {
 		const keyValue = (typeof key === "string" ? row[key] : key(row)) as any;
-		if (grouped.hasOwnProperty(keyValue)) {
+		if (Object.hasOwn(grouped, keyValue)) {
 			throw new Error(`Duplicate primary key "${keyValue}"`);
 		} else {
 			grouped[keyValue] = row;

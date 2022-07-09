@@ -64,8 +64,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(typeof pf.stats.fgp, "number");
 		assert.strictEqual(typeof pf.stats.per, "number");
 		assert.strictEqual(Object.keys(pf.stats).length, 6);
-		assert(!pf.hasOwnProperty("careerStats"));
-		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+		assert(!Object.hasOwn(pf, "careerStats"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	});
 
 	test("return requested info if tid/season match for an array of player objects", async () => {
@@ -89,8 +89,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 			assert.strictEqual(typeof pf[i].stats.fgp, "number");
 			assert.strictEqual(typeof pf[i].stats.per, "number");
 			assert.strictEqual(Object.keys(pf[i].stats).length, 6);
-			assert(!pf[i].hasOwnProperty("careerStats"));
-			assert(!pf[i].hasOwnProperty("careerStatsPlayoffs"));
+			assert(!Object.hasOwn(pf[i], "careerStats"));
+			assert(!Object.hasOwn(pf[i], "careerStatsPlayoffs"));
 		}
 	});
 
@@ -115,8 +115,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(typeof pf.stats.fgp, "number");
 		assert.strictEqual(typeof pf.stats.per, "number");
 		assert.strictEqual(Object.keys(pf.stats).length, 6);
-		assert(!pf.hasOwnProperty("careerStats"));
-		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+		assert(!Object.hasOwn(pf, "careerStats"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	});
 
 	test("return requested info if tid/season match, even when no ratings requested", async () => {
@@ -133,15 +133,15 @@ describe("worker/db/getCopies/playersPlus", () => {
 
 		assert.strictEqual(pf.tid, 4);
 		assert.strictEqual(pf.awards.length, 0);
-		assert(!pf.hasOwnProperty("ratings"));
+		assert(!Object.hasOwn(pf, "ratings"));
 		assert.strictEqual(pf.stats.season, 2012);
 		assert.strictEqual(pf.stats.abbrev, "CIN");
 		assert.strictEqual(typeof pf.stats.fg, "number");
 		assert.strictEqual(typeof pf.stats.fgp, "number");
 		assert.strictEqual(typeof pf.stats.per, "number");
 		assert.strictEqual(Object.keys(pf.stats).length, 6);
-		assert(!pf.hasOwnProperty("careerStats"));
-		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+		assert(!Object.hasOwn(pf, "careerStats"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	});
 
 	test("return requested info if tid/season match, even when no stats requested", async () => {
@@ -161,9 +161,9 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(pf.ratings.season, 2012);
 		assert.strictEqual(typeof pf.ratings.ovr, "number");
 		assert.strictEqual(Object.keys(pf.ratings).length, 2);
-		assert(!pf.hasOwnProperty("stats"));
-		assert(!pf.hasOwnProperty("careerStats"));
-		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+		assert(!Object.hasOwn(pf, "stats"));
+		assert(!Object.hasOwn(pf, "careerStats"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	});
 
 	test("return undefined if tid does not match any on record", async () => {
@@ -411,7 +411,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(pf.stats[1].abbrev, "ATL");
 		assert.strictEqual(pf.stats[1].fg, 56);
 		assert.strictEqual(pf.careerStats.fg, 76);
-		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	});
 
 	test("return stats and ratings from all seasons with a specific team if no season is specified but a team is", async () => {
@@ -437,7 +437,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(pf.stats[0].fg, 20);
 		assert.strictEqual(pf.stats.length, 1);
 		assert.strictEqual(pf.careerStats.fg, 20);
-		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	});
 
 	test("mergeStats combines stats from multiple teams in the same season", async () => {

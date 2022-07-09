@@ -83,8 +83,8 @@ const updateHistory = async (
 			}
 		}
 
-		// Hack placeholder for old seasons before Finals MVP existed
-		if (!awards.hasOwnProperty("allRookie")) {
+		// Hack placeholder for old seasons
+		if (!awards.allRookie) {
 			awards.allRookie = [];
 		}
 

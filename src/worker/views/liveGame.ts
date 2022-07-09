@@ -90,7 +90,7 @@ const updatePlayByPlay = async (
 			t.ptsQtrs = isSport("baseball") ? [] : [0];
 
 			for (const stat of resetStatsTeam) {
-				if (t.hasOwnProperty(stat)) {
+				if (Object.hasOwn(t, stat)) {
 					t[stat] = 0;
 				}
 			}
@@ -112,7 +112,7 @@ const updatePlayByPlay = async (
 				}
 
 				for (const stat of resetStatsPlayer) {
-					if (p.hasOwnProperty(stat)) {
+					if (Object.hasOwn(p, stat)) {
 						p[stat] = 0;
 					}
 				}

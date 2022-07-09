@@ -1812,7 +1812,7 @@ const handleUploadedDraftClass = async ({
 		}
 	}
 
-	if (uploadedFile.hasOwnProperty("startingSeason")) {
+	if (Object.hasOwn(uploadedFile, "startingSeason")) {
 		uploadedSeason = uploadedFile.startingSeason;
 	}
 
@@ -1908,7 +1908,7 @@ const handleUploadedDraftClass = async ({
 		p2.ratings.at(-1)!.season = draftYear;
 		p2.tid = PLAYER.UNDRAFTED;
 
-		if (p2.hasOwnProperty("pid")) {
+		if (Object.hasOwn(p2, "pid")) {
 			// @ts-expect-error
 			delete p2.pid;
 		}
@@ -2524,7 +2524,7 @@ const reorderDepthDrag = async ({
 		throw new Error("Missing depth");
 	}
 
-	if (depth.hasOwnProperty(pos)) {
+	if (Object.hasOwn(depth, pos)) {
 		t.keepRosterSorted = false;
 
 		// https://github.com/microsoft/TypeScript/issues/21732
@@ -2729,7 +2729,7 @@ const runBefore = async (
 	}
 
 	let inputs;
-	if (processInputs.hasOwnProperty(viewId)) {
+	if (Object.hasOwn(processInputs, viewId)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-expect-error
 		inputs = processInputs[viewId](params, ctxBBGM);
@@ -3572,10 +3572,10 @@ const updateTeamInfo = async (
 		t.name = newTeam.name;
 		t.abbrev = newTeam.abbrev;
 
-		if (newTeam.hasOwnProperty("imgURL")) {
+		if (Object.hasOwn(newTeam, "imgURL")) {
 			t.imgURL = newTeam.imgURL;
 		}
-		if (newTeam.hasOwnProperty("imgURLSmall")) {
+		if (Object.hasOwn(newTeam, "imgURLSmall")) {
 			t.imgURLSmall = newTeam.imgURLSmall;
 		}
 
@@ -3774,7 +3774,7 @@ const upsertCustomizedPlayer = async (
 	// Recalculate player ovr, pot, and values if necessary
 	const selectedPos = p.ratings[r].pos;
 
-	if (updatedRatingsOrAge || !p.hasOwnProperty("pid")) {
+	if (updatedRatingsOrAge || !Object.hasOwn(p, "pid")) {
 		await player.develop(p, 0);
 		await player.updateValues(p);
 	}
@@ -3785,9 +3785,9 @@ const upsertCustomizedPlayer = async (
 	if (isSport("football")) {
 		if (
 			p.ratings[r].ovrs &&
-			p.ratings[r].ovrs.hasOwnProperty(selectedPos) &&
+			Object.hasOwn(p.ratings[r].ovrs, selectedPos) &&
 			p.ratings[r].pots &&
-			p.ratings[r].pots.hasOwnProperty(selectedPos)
+			Object.hasOwn(p.ratings[r].pots, selectedPos)
 		) {
 			p.ratings[r].ovr = p.ratings[r].ovrs[selectedPos];
 			p.ratings[r].pot = p.ratings[r].pots[selectedPos];

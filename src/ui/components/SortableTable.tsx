@@ -133,9 +133,9 @@ const TBody = SortableContainer(
 
 					// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
 					let key;
-					if (value.hasOwnProperty("pid")) {
+					if (Object.hasOwn(value, "pid")) {
 						key = value.pid;
-					} else if (value.hasOwnProperty("tid")) {
+					} else if (Object.hasOwn(value, "tid")) {
 						key = value.tid;
 					} else {
 						key = index;

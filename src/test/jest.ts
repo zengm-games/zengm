@@ -27,7 +27,7 @@ if (!process.env.SPORT) {
 
 const fetchCache: Record<string, any> = {};
 (global as any).fetch = async (url: string) => {
-	if (!fetchCache.hasOwnProperty(url)) {
+	if (!Object.hasOwn(fetchCache, url)) {
 		let filePath = url.replace("/gen/", "data/");
 
 		if (filePath.endsWith("real-player-data.json")) {

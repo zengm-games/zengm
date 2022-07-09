@@ -110,7 +110,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			await updateStatus("Processing...");
 			await updatePlayMenu();
 
-			if (phaseChangeInfo.hasOwnProperty(phase)) {
+			if (phaseChangeInfo[phase]) {
 				const result = await phaseChangeInfo[phase].func(conditions, extra);
 
 				await finalize(phase, conditions, result);

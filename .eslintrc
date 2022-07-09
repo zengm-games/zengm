@@ -69,7 +69,6 @@
     "jsx-a11y/no-static-element-interactions": "off",
     "no-constant-condition": ["error", { "checkLoops": false }],
     "no-empty": "off",
-    "no-prototype-builtins": "off",
     "prefer-const": ["error", {
         "destructuring": "all"
     }],

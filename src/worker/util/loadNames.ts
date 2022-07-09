@@ -97,7 +97,7 @@ export const initDefaults = async (force?: boolean) => {
 const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 	await initDefaults();
 
-	let gPlayerBioInfo = g.hasOwnProperty("playerBioInfo")
+	let gPlayerBioInfo = Object.hasOwn(g, "playerBioInfo")
 		? g.get("playerBioInfo")
 		: undefined;
 	const gNames: NamesLegacy | undefined = (g as any).names;

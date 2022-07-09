@@ -39,7 +39,7 @@ const formatPlayerFactory = async (
 		if (abbrev === undefined) {
 			return;
 		}
-		if (tidCache.hasOwnProperty(abbrev)) {
+		if (Object.hasOwn(tidCache, abbrev)) {
 			return tidCache[abbrev];
 		}
 

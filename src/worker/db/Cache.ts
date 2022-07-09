@@ -598,7 +598,7 @@ class Cache {
 
 				if (!index.unique) {
 					if (
-						!this._indexes[index.name].hasOwnProperty(key) ||
+						!Object.hasOwn(this._indexes[index.name], key) ||
 						!this._indexes[index.name][key].includes(row)
 					) {
 						this._dirtyIndexes.add(store);
@@ -631,7 +631,7 @@ class Cache {
 					const key = getIndexKey(index, row);
 
 					if (!index.unique) {
-						if (!this._indexes[index.name].hasOwnProperty(key)) {
+						if (!Object.hasOwn(this._indexes[index.name], key)) {
 							this._indexes[index.name][key] = [row];
 						} else {
 							this._indexes[index.name][key].push(row);
@@ -861,7 +861,7 @@ class Cache {
 		this._checkIndexFreshness(index);
 
 		if (typeof key === "number" || typeof key === "string") {
-			if (this._indexes[index].hasOwnProperty(key)) {
+			if (Object.hasOwn(this._indexes[index], key)) {
 				const val = this._indexes[index][key];
 
 				if (!Array.isArray(val)) {
@@ -911,14 +911,14 @@ class Cache {
 		await this._waitForStatus("full");
 		const pk = this.storeInfos[store].pk;
 
-		if (obj.hasOwnProperty(pk)) {
+		if (Object.hasOwn(obj, pk)) {
 			if (type === "add" && this._data[store][obj[pk]]) {
 				throw new Error(
 					`Primary key "${obj[pk]}" already exists in "${store}"`,
 				);
 			}
 
-			if (this._maxIds.hasOwnProperty(store) && obj[pk] > this._maxIds[store]) {
+			if (Object.hasOwn(this._maxIds, store) && obj[pk] > this._maxIds[store]) {
 				this._maxIds[store] = obj[pk];
 			}
 		} else {
@@ -963,7 +963,7 @@ class Cache {
 	async _delete(store: Store, id: number | string) {
 		await this._waitForStatus("full");
 
-		if (this._data[store].hasOwnProperty(id)) {
+		if (Object.hasOwn(this._data[store], id)) {
 			delete this._data[store][id];
 		}
 

@@ -300,7 +300,7 @@ class ViewManager {
 
 		if (
 			prevData.errorMessage ||
-			(results && results.hasOwnProperty("errorMessage"))
+			(results && Object.hasOwn(results, "errorMessage"))
 		) {
 			NewComponent = ErrorMessage;
 		}

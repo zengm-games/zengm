@@ -90,7 +90,7 @@ const namesFootball = () => {
 			}
 		}
 
-		if (!fnsByCountry.hasOwnProperty(country)) {
+		if (!fnsByCountry[country]) {
 			fnsByCountry[country] = {};
 			lnsByCountry[country] = {};
 		}
@@ -111,7 +111,7 @@ const namesFootball = () => {
 
 		const skipFN = [];
 		if (!skipFN.includes(fn)) {
-			if (!fnsByCountry[country].hasOwnProperty(fn)) {
+			if (fnsByCountry[country][fn] === undefined) {
 				fnsByCountry[country][fn] = 0;
 			}
 			fnsByCountry[country][fn] += 1;
@@ -119,7 +119,7 @@ const namesFootball = () => {
 
 		const skipLN = [];
 		if (!skipLN.includes(ln)) {
-			if (!lnsByCountry[country].hasOwnProperty(ln)) {
+			if (lnsByCountry[country][ln] === undefined) {
 				lnsByCountry[country][ln] = 0;
 			}
 			lnsByCountry[country][ln] += 1;

@@ -123,7 +123,7 @@ const PlayerStatDists = ({
 								</tr>
 							);
 							let proPlot: ReactNode = null;
-							if (proQuartiles.hasOwnProperty(stat) && statType == "perGame") {
+							if ((proQuartiles as any)[stat] && statType == "perGame") {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
 										<td />

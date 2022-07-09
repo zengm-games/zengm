@@ -825,7 +825,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		if (newTeams) {
 			for (const t of newTeams) {
 				// Is pop hidden in season, like in manageTeams import?
-				if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+				if (!Object.hasOwn(t, "pop") && t.seasons && t.seasons.length > 0) {
 					t.pop = t.seasons.at(-1).pop;
 				}
 

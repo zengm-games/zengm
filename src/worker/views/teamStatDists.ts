@@ -214,7 +214,7 @@ const updateTeams = async (
 		const statsAll = teams.reduce((memo: StatsAll, t) => {
 			for (const cat of ["seasonAttrs", "stats"] as const) {
 				for (const stat of helpers.keys(t[cat])) {
-					if (memo.hasOwnProperty(stat)) {
+					if (memo[stat]) {
 						memo[stat].push((t[cat] as any)[stat]);
 					} else {
 						memo[stat] = [(t[cat] as any)[stat]];

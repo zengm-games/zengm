@@ -25,7 +25,7 @@ const sendFile = (res, filename) => {
 	const filePath = path.join("build", filename);
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
-		if (mimeTypes.hasOwnProperty(ext)) {
+		if (Object.hasOwn(mimeTypes, ext)) {
 			res.writeHead(200, { "Content-Type": mimeTypes[ext] });
 		} else {
 			console.log(`Unknown mime type for extension ${ext}`);
@@ -35,7 +35,7 @@ const sendFile = (res, filename) => {
 	} else {
 		console.log(`404 ${filename}`);
 		res.writeHead(404, {
-			'Content-Type': 'text/plain'
+			"Content-Type": "text/plain",
 		});
 		res.end("404 Not Found");
 	}

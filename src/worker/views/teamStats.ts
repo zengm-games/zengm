@@ -465,7 +465,7 @@ const updateTeams = async (
 
 		for (const t of teams) {
 			for (const statType of statTypes) {
-				const value = t.stats.hasOwnProperty(statType)
+				const value = Object.hasOwn(t.stats, statType)
 					? (t.stats as any)[statType]
 					: (t.seasonAttrs as any)[statType];
 

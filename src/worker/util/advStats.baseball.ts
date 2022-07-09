@@ -367,7 +367,7 @@ const advStats = async () => {
 					}
 				}
 			} else {
-				if (memo.hasOwnProperty(key)) {
+				if (Object.hasOwn(memo, key)) {
 					memo[key] += t.stats[key];
 				} else {
 					memo[key] = t.stats[key];

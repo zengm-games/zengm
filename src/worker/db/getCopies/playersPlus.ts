@@ -518,7 +518,7 @@ const getPlayerStats = (
 
 				// Special case for some variables, weight by minutes
 				for (const attr of weightByMinutes) {
-					if (statSums.hasOwnProperty(attr)) {
+					if (Object.hasOwn(statSums, attr)) {
 						if (statSums.min > 0) {
 							statSums[attr] /= statSums.min;
 						} else {
@@ -650,7 +650,7 @@ const processStats = (
 
 		// Special case for some variables, weight by minutes
 		for (const attr of weightByMinutes) {
-			if (statSums.hasOwnProperty(attr)) {
+			if (Object.hasOwn(statSums, attr)) {
 				if (statSums.min > 0) {
 					statSums[attr] /= statSums.min;
 				} else {
@@ -658,7 +658,7 @@ const processStats = (
 				}
 			}
 
-			if (statSumsPlayoffs.hasOwnProperty(attr)) {
+			if (Object.hasOwn(statSumsPlayoffs, attr)) {
 				if (statSumsPlayoffs.min > 0) {
 					statSumsPlayoffs[attr] /= statSumsPlayoffs.min;
 				} else {

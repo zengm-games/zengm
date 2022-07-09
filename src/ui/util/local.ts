@@ -159,11 +159,11 @@ const useLocal = create<LocalStateWithActions>(set => ({
 		},
 
 		update(obj: Partial<LocalStateUI>) {
-			if (obj.hasOwnProperty("units") && obj.units === undefined) {
+			if (Object.hasOwn(obj, "units") && obj.units === undefined) {
 				obj.units = defaultUnits;
 			}
 
-			if (obj.hasOwnProperty("liveGameInProgress")) {
+			if (Object.hasOwn(obj, "liveGameInProgress")) {
 				if (obj.liveGameInProgress) {
 					window.addEventListener("beforeunload", blockCloseTab);
 				} else {
@@ -203,7 +203,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 
 			for (const key of keys) {
 				if (
-					gameAttributes.hasOwnProperty(key) &&
+					Object.hasOwn(gameAttributes, key) &&
 					updates[key] !== gameAttributes[key]
 				) {
 					// @ts-expect-error

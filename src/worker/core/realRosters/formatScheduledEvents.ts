@@ -40,7 +40,7 @@ const processGameAttributes = (
 		for (const [key, value] of Object.entries(event.info)) {
 			if (
 				!gameAttributesHistory ||
-				!prevState.hasOwnProperty(key) ||
+				!Object.hasOwn(prevState, key) ||
 				!ALWAYS_WRAP.includes(key)
 			) {
 				prevState[key] = value;

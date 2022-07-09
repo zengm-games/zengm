@@ -5,8 +5,8 @@ const fuzzRating = (rating: number, fuzz: number): number => {
 	// existence of variables is because this is sometimes called in league upgrade code when g is not available and
 	// would be difficult to make available due to Firefox promise/IDB/worker issues.
 	if (
-		(g.hasOwnProperty("userTids") && g.get("userTids").length > 1) ||
-		(g.hasOwnProperty("godMode") && g.get("godMode"))
+		(Object.hasOwn(g, "userTids") && g.get("userTids").length > 1) ||
+		(Object.hasOwn(g, "godMode") && g.get("godMode"))
 	) {
 		fuzz = 0;
 	}

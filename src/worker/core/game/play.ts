@@ -224,7 +224,7 @@ const play = async (
 				}
 
 				// Also check for gamesUntilTradable
-				if (!p.hasOwnProperty("gamesUntilTradable")) {
+				if (p.gamesUntilTradable === undefined) {
 					p.gamesUntilTradable = 0; // Initialize for old leagues
 
 					changed = true;

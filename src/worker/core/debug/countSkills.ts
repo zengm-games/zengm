@@ -17,7 +17,7 @@ const countSkills = async () => {
 		const skills = player.skills(r);
 
 		for (const skill of skills) {
-			if (!counts.hasOwnProperty(skill)) {
+			if (counts[skill] === undefined) {
 				counts[skill] = 0;
 			}
 			counts[skill] += 1;

@@ -16,7 +16,7 @@ import {
  */
 // If I ever type this, ensure that at least one of budget and popRank is set
 const generate = (tm: any): Team => {
-	const strategy = tm.hasOwnProperty("strategy") ? tm.strategy : "rebuilding";
+	const strategy = Object.hasOwn(tm, "strategy") ? tm.strategy : "rebuilding";
 
 	const t: Team = {
 		tid: tm.tid,
@@ -32,40 +32,40 @@ const generate = (tm: any): Team => {
 
 		budget: {
 			ticketPrice: {
-				amount: tm.hasOwnProperty("budget")
+				amount: Object.hasOwn(tm, "budget")
 					? tm.budget.ticketPrice.amount
 					: helpers.defaultTicketPrice(tm.popRank),
-				rank: tm.hasOwnProperty("budget")
+				rank: Object.hasOwn(tm, "budget")
 					? tm.budget.ticketPrice.rank
 					: tm.popRank,
 			},
 			scouting: {
-				amount: tm.hasOwnProperty("budget")
+				amount: Object.hasOwn(tm, "budget")
 					? tm.budget.scouting.amount
 					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: tm.hasOwnProperty("budget")
+				rank: Object.hasOwn(tm, "budget")
 					? tm.budget.scouting.rank
 					: tm.popRank,
 			},
 			coaching: {
-				amount: tm.hasOwnProperty("budget")
+				amount: Object.hasOwn(tm, "budget")
 					? tm.budget.coaching.amount
 					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: tm.hasOwnProperty("budget")
+				rank: Object.hasOwn(tm, "budget")
 					? tm.budget.coaching.rank
 					: tm.popRank,
 			},
 			health: {
-				amount: tm.hasOwnProperty("budget")
+				amount: Object.hasOwn(tm, "budget")
 					? tm.budget.health.amount
 					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: tm.hasOwnProperty("budget") ? tm.budget.health.rank : tm.popRank,
+				rank: Object.hasOwn(tm, "budget") ? tm.budget.health.rank : tm.popRank,
 			},
 			facilities: {
-				amount: tm.hasOwnProperty("budget")
+				amount: Object.hasOwn(tm, "budget")
 					? tm.budget.facilities.amount
 					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: tm.hasOwnProperty("budget")
+				rank: Object.hasOwn(tm, "budget")
 					? tm.budget.facilities.rank
 					: tm.popRank,
 			},

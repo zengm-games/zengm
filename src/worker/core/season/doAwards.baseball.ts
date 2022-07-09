@@ -228,7 +228,7 @@ const getRealFinalsMvp = async (
 				for (const key of keysToSum) {
 					info[key] += p[key];
 
-					if (total.hasOwnProperty(key)) {
+					if (Object.hasOwn(total, key)) {
 						// @ts-expect-error
 						total[key] += p[key];
 					}

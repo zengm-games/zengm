@@ -199,11 +199,9 @@ const updateDepth = async (
 
 		const depthPlayers = team.getDepthPlayers(t.depth, players);
 
-		const stats2: string[] = stats.hasOwnProperty(pos2) ? stats[pos2] : [];
+		const stats2: string[] = stats[pos2] ?? [];
 
-		const players2: any[] = depthPlayers.hasOwnProperty(pos2)
-			? depthPlayers[pos2]
-			: [];
+		const players2: any[] = depthPlayers[pos2] ?? [];
 
 		let multiplePositionsWarning: string | undefined;
 		if (isSport("hockey") && players.length >= g.get("minRosterSize")) {

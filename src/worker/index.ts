@@ -26,7 +26,7 @@ export type WorkerAPICategory = typeof categories[number];
 		};
 
 		// @ts-expect-error
-		if (!api[type] || !api[type].hasOwnProperty(name)) {
+		if (!api[type] || !Object.hasOwn(api[type], name)) {
 			throw new Error(
 				`API call to nonexistant worker function "${type}.${name}"`,
 			);

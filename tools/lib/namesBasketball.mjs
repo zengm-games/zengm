@@ -28,7 +28,7 @@ const namesBasketball = () => {
 			"St. Paul Latham": ["St. Paul", "Latham"],
 		};
 		let parts;
-		if (nameFixes.hasOwnProperty(name)) {
+		if (nameFixes[name]) {
 			parts = nameFixes[name];
 		} else {
 			parts = name.split(" ").map(upperCaseFirst);
@@ -131,7 +131,7 @@ const namesBasketball = () => {
 		}
 
 		const fnFixes = {};
-		if (fnFixes.hasOwnProperty(parts[0])) {
+		if (fnFixes[parts[0]]) {
 			parts[0] = fnFixes[parts[0]];
 		}
 
@@ -362,7 +362,7 @@ const namesBasketball = () => {
 			throw new Error(`Blank hometown in ${file}`);
 		}
 
-		if (hometownsToCountries.hasOwnProperty(hometown)) {
+		if (Object.hasOwn(hometownsToCountries, hometown)) {
 			return hometownsToCountries[hometown];
 		}
 
@@ -374,9 +374,7 @@ const namesBasketball = () => {
 		let country = hometownComponents[1];
 		country = states.includes(country) ? "USA" : country;
 		country = provinces.includes(country) ? "Canada" : country;
-		country = countryFixes.hasOwnProperty(country)
-			? countryFixes[country]
-			: country;
+		country = countryFixes[country] ?? country;
 
 		return country;
 	};
@@ -414,14 +412,14 @@ const namesBasketball = () => {
 		}
 		// console.log(fn, "|", ln, "|", country);
 
-		if (!fnsByCountry.hasOwnProperty(country)) {
+		if (!fnsByCountry[country]) {
 			fnsByCountry[country] = {};
 			lnsByCountry[country] = {};
 		}
 
 		const skipFN = ["Just-in'love", "Sir'Dominic"];
 		if (!skipFN.includes(fn)) {
-			if (!fnsByCountry[country].hasOwnProperty(fn)) {
+			if (fnsByCountry[country][fn] === undefined) {
 				fnsByCountry[country][fn] = 0;
 			}
 			fnsByCountry[country][fn] += 1;
@@ -429,7 +427,7 @@ const namesBasketball = () => {
 
 		const skipLN = ["Kickingstallionsims"];
 		if (!skipLN.includes(ln)) {
-			if (!lnsByCountry[country].hasOwnProperty(ln)) {
+			if (lnsByCountry[country][ln] === undefined) {
 				lnsByCountry[country][ln] = 0;
 			}
 			lnsByCountry[country][ln] += 1;

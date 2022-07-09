@@ -243,7 +243,7 @@ const processLiveGameEvents = ({
 					p[e.s] += e.amt;
 				}
 			}
-			if (boxScore.teams[actualT].hasOwnProperty(e.s)) {
+			if (boxScore.teams[actualT][e.s] !== undefined) {
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
 		} else if (e.type === "playersOnIce") {

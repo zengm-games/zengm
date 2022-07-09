@@ -135,7 +135,7 @@ const colleges = {
 // Colleges with no players
 const skip = [];
 for (const college of skip) {
-	if (!colleges.hasOwnProperty(college)) {
+	if (colleges[college] === undefined) {
 		console.log("INVALID SKIP", college);
 	}
 	colleges[college] = 0.1;
@@ -996,12 +996,10 @@ for (const [name, count] of Object.entries(nflCounts)) {
 	}
 
 	for (const name2 of names) {
-		if (colleges.hasOwnProperty(name2)) {
-			if (colleges[name2] !== undefined) {
-				console.log("DUPE", name2);
-			} else {
-				colleges[name2] = count;
-			}
+		if (colleges[name2] !== undefined) {
+			console.log("DUPE", name2);
+		} else {
+			colleges[name2] = count;
 		}
 	}
 }

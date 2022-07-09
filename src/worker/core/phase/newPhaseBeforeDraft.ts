@@ -39,7 +39,7 @@ const upcomingScheduledEventBlocksInflation = async () => {
 	return scheduledEvents.some(event => {
 		if (event.type === "gameAttributes") {
 			for (const key of INFLATION_GAME_ATTRIBUTES) {
-				if (event.info.hasOwnProperty(key)) {
+				if (Object.hasOwn(event.info, key)) {
 					return true;
 				}
 			}

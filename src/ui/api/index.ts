@@ -29,12 +29,7 @@ const bbgmPing = (
 	arg?: any,
 ) => {
 	if (window.enableLogging && window.gtag) {
-		if (type === "league") {
-			window.gtag("event", "New league", {
-				event_category: arg[1],
-				event_label: String(arg[0]),
-			});
-		} else if (type === "season") {
+		if (type === "season") {
 			window.gtag("event", "Completed season", {
 				event_category: "BBGM",
 				event_label: String(arg),

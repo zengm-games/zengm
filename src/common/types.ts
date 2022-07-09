@@ -19,7 +19,6 @@ declare global {
 		enableLogging: boolean;
 		freestar: any;
 		getTheme: () => string;
-		googleAnalyticsID: string;
 		googletag: any;
 		heartbeatID: string;
 		mobile: boolean;

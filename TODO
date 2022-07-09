@@ -1,3 +1,40 @@
+frivolities
+- players
+  - Best/Worst MVP, DPOY, ROY, 6MOY, MIP https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
+  - oldest/youngest of any award https://discord.com/channels/290013534023057409/994079396065452132/994079523605860442
+  - would need history of salaryCap
+    - most overpaid, most underpaid (career total)
+    - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
+    - worst contract
+  - GOAT Lab for seasons
+  - highest ovr at each age https://discord.com/channels/290013534023057409/331882115119448065/868031573205876778
+  - best rookie season https://old.reddit.com/r/BasketballGM/comments/p5stae/best_rookie_seasons_frivolty/
+- team seasons
+  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
+  - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
+  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
+  - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
+  - lowest payroll for championship https://old.reddit.com/r/BasketballGM/comments/ttdazd/monthly_suggestions_thread/i6cctm4/
+- oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
+- Youngest and Oldest ever to achieve certain statistical feats like triple doubles and 50 pointers https://discord.com/channels/290013534023057409/331882115119448065/904435732842700810
+- playoffs
+  - playoff seeding, like number of times an 8 seed won @Tuxie93
+- best dunk (scan dunk contest for highest difficulty dunnk completed, and show actual score and probability too)
+
+add more data (most win shares, all stars, MVPs) to draft history page https://discord.com/channels/290013534023057409/331882115119448065/982865678526738503
+
+highlight your team when viewing other team's schedule https://discord.com/channels/290013534023057409/331882115119448065/976114143700586537
+
+When playing an historical league, in all frivolities pages, maybe hide players that are not born yet/wait for their draft year to show them on these lists? https://discord.com/channels/290013534023057409/331882115119448065/977839132766273546
+
+In the "Trading block" page, add a feature like in the "Trade" page: when you select players the total salary of all players is shown (I suck at maths so it's hard for me to do it by myself) https://discord.com/channels/290013534023057409/331882115119448065/979653599879643166
+
+On Free Agents page, for players asking for more than my available cap space, add somewhere (maybe in the "asking for" column?) the amount of cap space I have to get rid to sign this player so I don't have to do the maths by myself https://discord.com/channels/290013534023057409/331882115119448065/979755636529168404
+
+League Finances page always shows the current  salary cap/ min payroll/luxury tax limit even when you go back in time - I'd rather have it display values from the past years (or also could be shown in roster page - previous years) https://discord.com/channels/290013534023057409/331882115119448065/979759314090754108
+
+when you click on an achievement popup after it's earned, have the page auto-scroll to that achievement. atm it stays at the top of the page https://discord.com/channels/290013534023057409/331882115119448065/979975214509195354
+
 ga4
 - pageviews not correct
   - https://support.google.com/analytics/answer/11403294 says it can be automatic or manual. try automatic, but if it fails, could do manual
@@ -366,29 +403,6 @@ schedule customization
   - somehow get rid of perGame stuff and make them all excess, to better handle unbalanced divs/confs
     - how to define when a set of matchups is as good as we can do? generate a bunch and keep the best scoring one?
   - option to make the settings like "# games vs each division opponent" if someone wants that behavior for a league where divisions are not equal size
-
-frivolities
-- players
-  - Best/Worst MVP, DPOY, ROY, 6MOY, MIP https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
-  - oldest/youngest of any award https://discord.com/channels/290013534023057409/994079396065452132/994079523605860442
-  - would need history of salaryCap
-    - most overpaid, most underpaid (career total)
-    - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
-    - worst contract
-  - GOAT Lab for seasons
-  - highest ovr at each age https://discord.com/channels/290013534023057409/331882115119448065/868031573205876778
-  - best rookie season https://old.reddit.com/r/BasketballGM/comments/p5stae/best_rookie_seasons_frivolty/
-- team seasons
-  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
-  - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
-  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
-  - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
-  - lowest payroll for championship https://old.reddit.com/r/BasketballGM/comments/ttdazd/monthly_suggestions_thread/i6cctm4/
-- oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
-- Youngest and Oldest ever to achieve certain statistical feats like triple doubles and 50 pointers https://discord.com/channels/290013534023057409/331882115119448065/904435732842700810
-- playoffs
-  - playoff seeding, like number of times an 8 seed won @Tuxie93
-- best dunk (scan dunk contest for highest difficulty dunnk completed, and show actual score and probability too)
 
 show best performer(s) by score on schedule page https://discord.com/channels/290013534023057409/331882115119448065/862565411262169098
 - make sure it agrees with all star MVP, finals MVP
@@ -1414,7 +1428,7 @@ hype revamp
 - YWT
 
 zipped files @Jofish#5051
-- https://github.com/Stuk/jszip is a bit big, but CompressionStream won't work currently (doesn't make zip files)
+- deflate-raw is in CompressionStream now so it can work. https://gildas-lormeau.github.io/zip.js/ is an implementation, kind of big
 
 https://react-hook-form.com/ for forms
 

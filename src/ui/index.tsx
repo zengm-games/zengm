@@ -242,10 +242,25 @@ const setupRoutes = () => {
 				if (window.enableLogging) {
 					if (!initialLoad) {
 						if (window.gtag) {
+							const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
+
+							// https://developers.google.com/analytics/devguides/collection/gtagjs/pages
+							window.gtag("event", "page_view", {
+								page_path: pagePath,
+
+								// https://online-metrics.com/page-view-in-google-analytics-4/
+								page_location: `${location.origin}${pagePath}`,
+							});
+
+							// https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
+							// gtag('set', 'page_path', pagePath);
+							// gtag('event', 'page_view');
+
+							/*// Prev, also similar to https://developers.google.com/analytics/devguides/collection/ga4/views?technology=websites - but did not work
 							window.gtag("config", window.googleAnalyticsID, {
 								// Normalize league URLs to all look the same
-								page_path: context.path.replace(/^\/l\/[0-9]+/, "/l/0"),
-							});
+								page_path: pagePath,
+							});*/
 						}
 
 						/*if (window._qevents) {

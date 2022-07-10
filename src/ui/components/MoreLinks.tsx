@@ -294,14 +294,10 @@ const MoreLinks = (
 			{ url: ["history_all"], name: "League History" },
 			{ url: ["team_records"], name: "Team Records" },
 			{ url: ["awards_records"], name: "Awards Records" },
-			...(isSport("basketball")
-				? [
-						{
-							url: ["all_star", "history"],
-							name: "All-Star History",
-						},
-				  ]
-				: []),
+			{
+				url: ["all_star", "history"],
+				name: "All-Star History",
+			},
 			{ url: ["season_preview"], name: "Season Previews" },
 		];
 	} else if (props.type === "importExport") {

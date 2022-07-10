@@ -1,4 +1,4 @@
-import { isSport, PHASE } from "../../../common";
+import { ALL_STAR_GAME_ONLY, isSport, PHASE } from "../../../common";
 import {
 	GameSim,
 	allStar,
@@ -78,7 +78,12 @@ const play = async (
 				if (allStarNext && gidOneGame === undefined) {
 					toUI(
 						"realtimeUpdate",
-						[[], helpers.leagueUrl(["all_star"])],
+						[
+							[],
+							helpers.leagueUrl([
+								ALL_STAR_GAME_ONLY ? "daily_schedule" : "all_star",
+							]),
+						],
 						conditions,
 					);
 				}

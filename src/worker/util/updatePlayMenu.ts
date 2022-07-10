@@ -1,4 +1,9 @@
-import { PHASE, NO_LOTTERY_DRAFT_TYPES, bySport } from "../../common";
+import {
+	PHASE,
+	NO_LOTTERY_DRAFT_TYPES,
+	bySport,
+	ALL_STAR_GAME_ONLY,
+} from "../../common";
 import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";
@@ -42,7 +47,7 @@ const updatePlayMenu = async () => {
 			key: "m",
 		},
 		untilAllStarGame: {
-			label: "Until All-Star events",
+			label: `Until All-Star ${ALL_STAR_GAME_ONLY ? "game" : "events"}`,
 			key: "a",
 		},
 		untilTradeDeadline: {
@@ -50,8 +55,10 @@ const updatePlayMenu = async () => {
 			key: "r",
 		},
 		viewAllStar: {
-			url: helpers.leagueUrl(["all_star"]),
-			label: "All-Star events",
+			url: helpers.leagueUrl([
+				ALL_STAR_GAME_ONLY ? "daily_schedule" : "all_star",
+			]),
+			label: `All-Star ${ALL_STAR_GAME_ONLY ? "game" : "events"}`,
 		},
 		viewSlam: {
 			url: helpers.leagueUrl(["slam"]),

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { bySport } from "../../../common";
+import { ALL_STAR_GAME_ONLY, bySport } from "../../../common";
 import { helpers, useLocalShallow } from "../../util";
 import { memo, ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
@@ -229,7 +229,10 @@ const ScoreBox = memo(
 							>
 								<div className={classNames("p-1", { "pe-5": small })}>
 									<a
-										href={helpers.leagueUrl(["all_star", "draft"])}
+										href={helpers.leagueUrl([
+											"all_star",
+											ALL_STAR_GAME_ONLY ? "history" : "draft",
+										])}
 										className={!small ? "fw-bold" : undefined}
 									>
 										{small ? `AS${i}` : `All-Stars ${i}`}

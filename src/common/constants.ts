@@ -405,8 +405,17 @@ const DAILY_SCHEDULE = `${
 	TIME_BETWEEN_GAMES === "week" ? "Weekly" : "Daily"
 } Schedule`;
 
+// Basketball has other events, but other sports are just a game
+const ALL_STAR_GAME_ONLY = bySport({
+	baseball: true,
+	basketball: false,
+	football: true,
+	hockey: true,
+});
+
 export {
 	AD_DIVS,
+	ALL_STAR_GAME_ONLY,
 	AWARD_NAMES,
 	COURT,
 	DAILY_SCHEDULE,

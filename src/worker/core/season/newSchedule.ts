@@ -26,12 +26,10 @@ const newSchedule = (
 	}
 
 	// Add an All-Star Game
-	if (isSport("basketball")) {
-		const allStarGame = g.get("allStarGame");
-		if (allStarGame !== null) {
-			const ind = Math.round(helpers.bound(allStarGame, 0, 1) * tids.length);
-			tids.splice(ind, 0, [-1, -2]);
-		}
+	const allStarGame = g.get("allStarGame");
+	if (allStarGame !== null) {
+		const ind = Math.round(helpers.bound(allStarGame, 0, 1) * tids.length);
+		tids.splice(ind, 0, [-1, -2]);
 	}
 
 	if (settings?.notify && warning) {

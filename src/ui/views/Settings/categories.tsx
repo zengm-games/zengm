@@ -61,6 +61,9 @@ const categories: {
 		name: "Finances",
 	},
 	{
+		name: "All-Star",
+	},
+	{
 		name: "Inflation",
 		helpText: (
 			<>
@@ -157,9 +160,6 @@ const categories: {
 				</p>
 			</>
 		),
-	},
-	{
-		name: "All-Star Contests",
 	},
 	{
 		name: "Challenge Modes",

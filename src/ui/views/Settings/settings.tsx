@@ -13,6 +13,7 @@ import type { ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
 import { draftTypeDescriptions } from "../../../common/draftLottery";
+import defaultGameAttributes from "../../../common/defaultGameAttributes";
 
 export const descriptions = {
 	difficulty:
@@ -1150,41 +1151,86 @@ export const settings: {
 		description: "Customize the home countries and names of generated players.",
 		customForm: true,
 	},
+	{
+		category: "All-Star",
+		key: "allStarGame",
+		name: "All-Star Game",
+		type: "floatOrNull",
+		descriptionLong: (
+			<>
+				<p>
+					Set this to the fraction of the regular season you want to happen
+					before the All-Star Game. So if you set this to 0.75, 75% of the
+					season will be played before the All-Star Game.
+				</p>
+				<p>Make it blank to disable the All-Star Game.</p>
+				<p>
+					If you're already in the regular season, changing this setting will
+					only affect future seasons, not the current season. See Tools &gt;
+					Danger Zone to edit the current season's All-Star game.
+				</p>
+			</>
+		),
+		validator: value => {
+			if (value !== null) {
+				if (value > 1) {
+					throw new Error("Value cannot be greater than 1");
+				}
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0");
+				}
+			}
+		},
+	},
+	{
+		category: "All-Star",
+		key: "allStarNum",
+		name: "# Players Per Team",
+		type: "int",
+		validator: (value, output) => {
+			if (isSport("basketball") && value < output.minRosterSize) {
+				throw new Error("Value cannot be less than the min roster size");
+			}
+			if (value < defaultGameAttributes.allStarNum) {
+				throw new Error(
+					`Value must be greater than or equal to ${defaultGameAttributes.allStarNum}`,
+				);
+			}
+		},
+	},
+	{
+		category: "All-Star",
+		key: "allStarType",
+		name: "Team Assignment",
+		type: "string",
+		values: [
+			...(isSport("basketball") ? [{ key: "draft", value: "Draft" }] : []),
+			{ key: "byConf", value: "By Conference" },
+			{ key: "top", value: "Mixed" },
+		],
+		descriptionLong: (
+			<>
+				{isSport("basketball") ? (
+					<p>
+						<b>Draft:</b> The top two players are captains and draft their teams
+						from the remaining players.
+					</p>
+				) : null}
+				<p>
+					<b>By Conference:</b> Each conference has a separate All-Star Team.
+					This only is possible for leagues with exactly 2 conferences.
+				</p>
+				<p>
+					<b>Mixed:</b> Teams are made up of the top players, regardless of
+					conference.
+				</p>
+			</>
+		),
+	},
 ];
 
 if (isSport("basketball")) {
 	settings.push(
-		{
-			category: "Schedule",
-			key: "allStarGame",
-			name: "All-Star Game",
-			type: "floatOrNull",
-			descriptionLong: (
-				<>
-					<p>
-						Set this to the fraction of the regular season you want to happen
-						before the All-Star Game. So if you set this to 0.75, 75% of the
-						season will be played before the All-Star Game.
-					</p>
-					<p>Make it blank to disable the All-Star Game.</p>
-					<p>
-						If you're already in the regular season, changing this setting will
-						only affect future seasons, not the current season. See Tools &gt;
-						Danger Zone to edit the current season's All-Star game.
-					</p>
-				</>
-			),
-			validator: value => {
-				if (value !== null) {
-					if (value > 1) {
-						throw new Error("Value cannot be greater than 1");
-					}
-					if (value < 0) {
-						throw new Error("Value cannot be less than 0");
-					}
-				}
-			},
-		},
 		{
 			category: "Game Simulation",
 			key: "foulsNeededToFoulOut",
@@ -1568,7 +1614,7 @@ if (isSport("basketball")) {
 		},
 	});
 	settings.push({
-		category: "All-Star Contests",
+		category: "All-Star",
 		key: "numPlayersDunk",
 		name: "# Players In Dunk Contest",
 		type: "int",
@@ -1579,7 +1625,7 @@ if (isSport("basketball")) {
 		},
 	});
 	settings.push({
-		category: "All-Star Contests",
+		category: "All-Star",
 		key: "numPlayersThree",
 		name: "# Players In 3pt Contest",
 		type: "int",

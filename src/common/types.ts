@@ -443,8 +443,8 @@ export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
 	allStarGame: number | null;
-	allStarType: "draft" | "byConf" | "top";
 	allStarNum: number;
+	allStarType: "draft" | "byConf" | "top";
 	autoDeleteOldBoxScores: boolean;
 	brotherRate: number;
 	budget: boolean;

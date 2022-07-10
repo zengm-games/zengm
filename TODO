@@ -3,7 +3,6 @@ other sport all-stars
   - no injuries
   - all-star and all-leauge teams can be the same, but all-star has more players for subs
 - support all values of allStarType
-- real player leagues switch from byConf to draft
 - for non-basketball sports, select players in order by position, so positions are balanced in final roster
   - handle baseball/hockey having different quantities of players per position
   - randomize order for last "group" if partial
@@ -13,14 +12,13 @@ other sport all-stars
   - if two equal teams can't be formed (such as empty conf), fall back
   - handle actually assigning teams by conf
   - team names
-- settings UI
-  - draft only available in basketball
-  - allStarNum - minimum value by sport. basketball is minRosterSize, other is default
 - all-star weekend UI only in basketball, just one event for other sports
 - blog
   - allStarType
   - allStarNum
   - default byConf for old seasons in real players leauges
+- places in UI that use all-league rather than all-star for other sports
+  - stars
 
 take advantage of the ability to bring people back to life
 - play all-star game between all time players in league

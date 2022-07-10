@@ -32,6 +32,8 @@ export type Key =
 	| "rookieContractLengths"
 	| "rookiesCanRefuse"
 	| "allStarGame"
+	| "allStarNum"
+	| "allStarType"
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
 	| "foulsUntilBonus"
@@ -110,6 +112,7 @@ export type Category =
 	| "Teams"
 	| "Draft"
 	| "Finances"
+	| "All-Star"
 	| "Inflation"
 	| "Contracts"
 	| "Rookie Contracts"
@@ -120,8 +123,7 @@ export type Category =
 	| "Challenge Modes"
 	| "Game Modes"
 	| "Players"
-	| "UI"
-	| "All-Star Contests";
+	| "UI";
 
 export type FieldType =
 	| "bool"

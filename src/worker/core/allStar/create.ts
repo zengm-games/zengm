@@ -25,11 +25,12 @@ const create = async (conditions: Conditions) => {
 		teams: [[], []],
 		remaining: [],
 		finalized: false,
+		type: "top",
 	};
 	const players = await getPlayers(g.get("season"));
 
 	// 12 per team, for a default league
-	const NUM_ALL_STARS = 2 * (g.get("minRosterSize") + 2);
+	const NUM_ALL_STARS = 2 * g.get("allStarNum");
 
 	const score = (p: PlayerFiltered) =>
 		bySport({
@@ -48,6 +49,17 @@ const create = async (conditions: Conditions) => {
 	);
 	let healthyCount = 0;
 
+	let allStarType = g.get("allStarType");
+	const confs = g.get("confs");
+	if (!isSport("basketball") && allStarType === "draft") {
+		allStarType = "byConf";
+	}
+	if (allStarType === "byConf" && confs.length !== 2) {
+		allStarType = "top";
+	}
+
+	const healthyPids = new Set();
+
 	for (const p of sortedPlayers) {
 		const obj: AllStarPlayer = {
 			pid: p.pid,
@@ -57,6 +69,7 @@ const create = async (conditions: Conditions) => {
 
 		if (p.injury.gamesRemaining === 0) {
 			healthyCount += 1;
+			healthyPids.add(p.pid);
 		} else {
 			obj.injured = true;
 		}
@@ -79,26 +92,45 @@ const create = async (conditions: Conditions) => {
 	});
 	await saveAwardsByPlayer(awardsByPlayer, conditions);
 
-	// Pick two captains
-	for (const team of allStars.teams) {
-		const ind = allStars.remaining.findIndex(({ pid }) => {
-			const p = players.find(p2 => p2.pid === pid);
-			return p.injury.gamesRemaining === 0;
-		});
+	const assignTopPlayerToTeam = (team: typeof allStars["teams"][number]) => {
+		const ind = allStars.remaining.findIndex(({ pid }) => healthyPids.has(pid));
 		team.push(allStars.remaining[ind]);
 		allStars.remaining.splice(ind, 1);
+	};
+
+	if (allStarType === "draft") {
+		// Pick two captains
+		for (const team of allStars.teams) {
+			assignTopPlayerToTeam(team);
+		}
+
+		// @ts-expect-error
+		allStars.teamNames = allStars.teams.map(teamPlayers => {
+			const captainPID = teamPlayers[0].pid;
+			const p = players.find(p2 => p2.pid === captainPID);
+			return `Team ${p.firstName}`;
+		});
+
+		if (allStars.teamNames[0] === allStars.teamNames[1]) {
+			allStars.teamNames[1] += " 2";
+		}
+	} else if (allStarType === "byConf") {
+		throw new Error("Not implemented");
+
+		allStars.teamNames[1] = `${confs[0].name} All-Stars`;
+		allStars.teamNames[0] = `${confs[1].name} All-Stars`;
+	} else {
+		let i = 0;
+		while (allStars.teams[0].length + allStars.teams[1].length < healthyCount) {
+			assignTopPlayerToTeam(allStars.teams[i]);
+			i = i === 0 ? 1 : 0;
+		}
+
+		allStars.teamNames[1] = "All-Stars 1";
+		allStars.teamNames[0] = "All-Stars 2";
 	}
 
-	// @ts-expect-error
-	allStars.teamNames = allStars.teams.map(teamPlayers => {
-		const captainPID = teamPlayers[0].pid;
-		const p = players.find(p2 => p2.pid === captainPID);
-		return `Team ${p.firstName}`;
-	});
-
-	if (allStars.teamNames[0] === allStars.teamNames[1]) {
-		allStars.teamNames[1] += " 2";
-	}
+	allStars.type = allStarType;
 
 	if (isSport("basketball")) {
 		const lastYear = await idb.getCopy.allStars(

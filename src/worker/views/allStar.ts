@@ -13,7 +13,16 @@ const updateAllStar = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const showDunk = allStars?.dunk !== undefined;
 		const showThree = allStars?.dunk !== undefined;
 
+		let allStarType;
+		if (allStars) {
+			// If type not set, it's an old allStar object when draft was the only option
+			allStarType = allStars.type ?? "draft";
+		} else {
+			allStarType = "top";
+		}
+
 		return {
+			allStarType,
 			numPlayersDunk: allStars?.dunk?.players.length ?? g.get("numPlayersDunk"),
 			numPlayersThree:
 				allStars?.three?.players.length ?? g.get("numPlayersThree"),

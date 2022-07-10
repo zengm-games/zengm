@@ -34,7 +34,7 @@ declare global {
 	namespace NodeJS {
 		interface ProcessEnv {
 			NODE_ENV: "development" | "production" | "test";
-			SPORT: "basketball" | "football" | "hockey";
+			SPORT: "basketball" | "football" | "baseball" | "hockey";
 		}
 	}
 }
@@ -110,6 +110,7 @@ export type AllStars = {
 	teams: [AllStarPlayer[], AllStarPlayer[]];
 	remaining: AllStarPlayer[];
 	finalized: boolean; // Refers to if draft is complete or not
+	type: GameAttributesLeague["allStarType"];
 
 	// After game is complete
 	gid?: number;
@@ -442,6 +443,8 @@ export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
 	allStarGame: number | null;
+	allStarType: "draft" | "byConf" | "top";
+	allStarNum: number;
 	autoDeleteOldBoxScores: boolean;
 	brotherRate: number;
 	budget: boolean;

@@ -53,6 +53,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
+			"cid",
 			"name",
 			"firstName",
 			"lastName",

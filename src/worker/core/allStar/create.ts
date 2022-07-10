@@ -15,6 +15,7 @@ import { idb } from "../../db";
 import orderBy from "lodash-es/orderBy";
 import type { PlayerRatings } from "../../../common/types.basketball";
 import range from "lodash-es/range";
+import { groupBy } from "../../../common/groupBy";
 
 const MIN_PLAYERS_CONTEST = 2;
 
@@ -29,7 +30,7 @@ const create = async (conditions: Conditions) => {
 	};
 	const players = await getPlayers(g.get("season"));
 
-	// 12 per team, for a default league
+	const allStarNum = g.get("allStarNum");
 	const NUM_ALL_STARS = 2 * g.get("allStarNum");
 
 	const score = (p: PlayerFiltered) =>
@@ -47,7 +48,6 @@ const create = async (conditions: Conditions) => {
 		},
 		players,
 	);
-	let healthyCount = 0;
 
 	let allStarType = g.get("allStarType");
 	const confs = g.get("confs");
@@ -58,27 +58,83 @@ const create = async (conditions: Conditions) => {
 		allStarType = "top";
 	}
 
-	const healthyPids = new Set();
+	let healthyPids = new Set();
+	let pickedAllStars = false;
 
-	for (const p of sortedPlayers) {
-		const obj: AllStarPlayer = {
-			pid: p.pid,
-			tid: p.tid,
-			name: p.name,
-		};
+	const pickAllStars = (candidates: typeof sortedPlayers, limit: number) => {
+		let count = 0;
+		for (const p of candidates) {
+			const obj: AllStarPlayer = {
+				pid: p.pid,
+				tid: p.tid,
+				name: p.name,
+			};
 
-		if (p.injury.gamesRemaining === 0) {
-			healthyCount += 1;
-			healthyPids.add(p.pid);
+			if (p.injury.gamesRemaining === 0) {
+				healthyPids.add(p.pid);
+				count += 1;
+			} else {
+				obj.injured = true;
+			}
+
+			allStars.remaining.push(obj);
+
+			if (count >= limit) {
+				// Success!
+				return true;
+			}
+		}
+
+		// Didn't find enough players
+		return false;
+	};
+
+	if (allStarType === "byConf") {
+		// Try byConf, but if it fails, fall back on top
+		const cidsByTid: Record<number, number> = {};
+		const teams = await idb.cache.teams.getAll();
+		for (const t of teams) {
+			cidsByTid[t.tid] = t.cid;
+		}
+
+		const grouped = groupBy(
+			sortedPlayers.filter(p => p.tid >= 0),
+			p => cidsByTid[p.tid],
+		);
+
+		// Sorting is to make sure lowest cid is first
+		const groupedPlayers = orderBy(
+			Object.entries(grouped),
+			row => row[0],
+			"asc",
+		).map(row => row[1]);
+
+		let numSuccess = 0;
+
+		if (groupedPlayers.length === 2) {
+			for (const confPlayers of groupedPlayers) {
+				const success = pickAllStars(confPlayers, allStarNum);
+				if (success) {
+					numSuccess += 1;
+				} else {
+					numSuccess = 0;
+					break;
+				}
+			}
+		}
+
+		if (numSuccess === 2) {
+			pickedAllStars = true;
 		} else {
-			obj.injured = true;
+			// Reset if it failed to find enough players, don't do it by conf
+			allStarType = "top";
+			healthyPids = new Set();
+			allStars.remaining = [];
 		}
+	}
 
-		allStars.remaining.push(obj);
-
-		if (healthyCount >= NUM_ALL_STARS) {
-			break;
-		}
+	if (!pickedAllStars) {
+		pickAllStars(sortedPlayers, NUM_ALL_STARS);
 	}
 
 	// Do awards first, before picking captains, so remaining has all players
@@ -115,13 +171,25 @@ const create = async (conditions: Conditions) => {
 			allStars.teamNames[1] += " 2";
 		}
 	} else if (allStarType === "byConf") {
-		throw new Error("Not implemented");
+		// First half of allStars.remaining is 1st conference, second half is 2nd conference
+		for (let i = 0; i < 2; i++) {
+			while (allStars.teams[i].length < allStarNum) {
+				assignTopPlayerToTeam(allStars.teams[i]);
+			}
+		}
 
-		allStars.teamNames[1] = `${confs[0].name} All-Stars`;
-		allStars.teamNames[0] = `${confs[1].name} All-Stars`;
+		// Order by cid ascending, same as players
+		const confNames = orderBy(Object.values(confs), "cid", "asc").map(
+			conf => conf.name,
+		);
+		allStars.teamNames[1] = `${confNames[1]}`;
+		allStars.teamNames[0] = `${confNames[0]}`;
 	} else {
 		let i = 0;
-		while (allStars.teams[0].length + allStars.teams[1].length < healthyCount) {
+		while (
+			allStars.teams[0].length + allStars.teams[1].length <
+			healthyPids.size
+		) {
 			assignTopPlayerToTeam(allStars.teams[i]);
 			i = i === 0 ? 1 : 0;
 		}

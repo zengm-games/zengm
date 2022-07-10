@@ -15,14 +15,25 @@ export const setTeamInfo = async (
 ) => {
 	if (allStars) {
 		const ind = t.tid === -1 ? 0 : 1;
-		t.region = "Team";
-		t.name = allStars.teamNames[ind].replace("Team ", "");
-		t.abbrev = t.name.slice(0, 3).toUpperCase();
-		t.imgURL = "";
 
-		if (i === 1 && t.abbrev === game.teams[0].abbrev) {
-			t.abbrev = `${t.abbrev.slice(0, 2)}2`;
+		if (allStars.type === "byConf" || allStars.type === "top") {
+			t.name = allStars.teamNames[ind];
+		} else {
+			// Covers type==="draft" and undefind type, from when draft was the only option
+			t.region = "Team";
+			t.name = allStars.teamNames[ind].replace("Team ", "");
 		}
+
+		if (allStars.type === "top") {
+			t.abbrev = `AS${i === 0 ? 2 : 1}`;
+		} else {
+			t.abbrev = t.name.slice(0, 3).toUpperCase();
+			if (i === 1 && t.abbrev === game.teams[0].abbrev) {
+				t.abbrev = `${t.abbrev.slice(0, 2)}2`;
+			}
+		}
+
+		t.imgURL = "";
 
 		for (const p of t.players) {
 			const entry = allStars.teams[ind].find(p2 => p2.pid === p.pid);

@@ -232,7 +232,7 @@ const ScoreBox = memo(
 										href={helpers.leagueUrl(["all_star", "draft"])}
 										className={!small ? "fw-bold" : undefined}
 									>
-										{small ? `AS${i}` : `All-Star Team ${i}`}
+										{small ? `AS${i}` : `All-Stars ${i}`}
 									</a>
 								</div>
 							</div>
@@ -277,7 +277,7 @@ const ScoreBox = memo(
 								imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
 								teamName = small
 									? `AS${i === 0 ? 2 : 1}`
-									: `All-Star Team ${i === 0 ? 2 : 1}`;
+									: `All-Stars ${i === 0 ? 2 : 1}`;
 								rosterURL = helpers.leagueUrl(["all_star", "history"]);
 							} else {
 								imgURL =

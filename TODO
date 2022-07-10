@@ -2,23 +2,20 @@ other sport all-stars
 - support all-star game during playoffs, with allStarGame >= 1 representing which round to do it before
   - no injuries
   - all-star and all-leauge teams can be the same, but all-star has more players for subs
-- support all values of allStarType
 - for non-basketball sports, select players in order by position, so positions are balanced in final roster
   - handle baseball/hockey having different quantities of players per position
   - randomize order for last "group" if partial
   - baseball - 6 pitchers, 15 position players
   - hockey - 6 forwards, 4 defensemen, 2 goalies
-- byConf
-  - if two equal teams can't be formed (such as empty conf), fall back
-  - handle actually assigning teams by conf
-  - team names
 - all-star weekend UI only in basketball, just one event for other sports
+  - auto redirect too
+- restore defaultGameAttributes
+- places in UI that use all-league rather than all-star for other sports
+  - stars
 - blog
   - allStarType
   - allStarNum
   - default byConf for old seasons in real players leauges
-- places in UI that use all-league rather than all-star for other sports
-  - stars
 
 take advantage of the ability to bring people back to life
 - play all-star game between all time players in league

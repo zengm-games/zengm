@@ -60,11 +60,14 @@ const create = async (conditions: Conditions) => {
 	let healthyPids = new Set();
 	let pickedAllStars = false;
 
-	const pickAllStars = (candidates: typeof sortedPlayers, numTeams: 1 | 2) => {
-		const limit = numTeams * allStarNum;
-
+	const pickAllStars = (
+		candidates: typeof sortedPlayers,
+		numTeams: 1 | 2,
+	): boolean => {
+		const numPlayersNeeded = numTeams * allStarNum;
 		let count = 0;
-		for (const p of candidates) {
+
+		const addPlayer = (p: typeof candidates[number]) => {
 			const obj: AllStarPlayer = {
 				pid: p.pid,
 				tid: p.tid,
@@ -79,15 +82,82 @@ const create = async (conditions: Conditions) => {
 			}
 
 			allStars.remaining.push(obj);
+		};
 
-			if (count >= limit) {
-				// Success!
-				return true;
+		const footballHockey = () => {
+			const positionCounts = isSport("hockey")
+				? {
+						C: 4,
+						W: 8,
+						D: 6,
+						G: 2,
+				  }
+				: {
+						QB: 3,
+						RB: 3,
+						WR: 5,
+						TE: 2,
+						OL: 6,
+						DL: 6,
+						LB: 5,
+						S: 4,
+						CB: 4,
+						K: 1,
+						P: 1,
+				  };
+
+			const positions = [];
+			for (const [pos, count] of Object.entries(positionCounts)) {
+				for (let i = 0; i < count; i++) {
+					positions.push(pos);
+				}
 			}
-		}
 
-		// Didn't find enough players
-		return false;
+			// If we need more than the default positions, they should be random
+			random.shuffle(positions);
+
+			const playersByPos = groupBy(candidates, p => p.ratings.at(-1).pos);
+
+			let failed = false;
+
+			while (count < numPlayersNeeded && !failed) {
+				for (const pos of positions) {
+					// Take 2 players from every position, if we're doing 2 teams at once, because they will alternate as selected for teams
+					for (let i = 0; i < numTeams; i++) {
+						if (!playersByPos[pos] || playersByPos[pos].length === 0) {
+							failed = true;
+						} else {
+							const p = playersByPos[pos].shift();
+
+							addPlayer(p);
+						}
+					}
+				}
+			}
+
+			return !failed;
+		};
+
+		return bySport({
+			baseball: () => {
+				throw new Error("Not implemented");
+			},
+			basketball: () => {
+				for (const p of candidates) {
+					addPlayer(p);
+
+					if (count >= numPlayersNeeded) {
+						// Success!
+						return true;
+					}
+				}
+
+				// Didn't find enough players
+				return false;
+			},
+			football: footballHockey,
+			hockey: footballHockey,
+		})();
 	};
 
 	if (allStarType === "byConf") {
@@ -192,6 +262,8 @@ const create = async (conditions: Conditions) => {
 			healthyPids.size
 		) {
 			assignTopPlayerToTeam(allStars.teams[i]);
+
+			// Alternate team assignment when going through list of players
 			i = i === 0 ? 1 : 0;
 		}
 

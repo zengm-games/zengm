@@ -3,15 +3,10 @@ other sport all-stars
   - no injuries
 - for non-basketball sports, select players in order by position, so positions are balanced in final roster
   - baseball - 6 pitchers, 15 position players
-  - hockey - 4 C, 8 W, 6 defensemen, 2 goalies
   - pickAllStars implementations
     - baseball
       - byConf: determine pitcher/position player split, based on default ratio. take top player at each defensive position (including DH), and then take top WAR position players (based on rfld to filter out pitchers) to fill out bench. then take N top pitchers by rpit
-      - top: same as byConf, but do twice as many as needed each time, since picking will alternate. randomize the order of every 2 players
-    - football:
-      - assemble list of 22 positions to take (offense and defense). shuffle them (for excess players it matters). loop through positions, taking top 2 of each (starter and bench), similar to baseball for byConf/top
-    - hockey:
-      - same as football
+      - top: same as byConf, but do twice as many as needed each time, since picking will alternate
 - restore defaultGameAttributes
 - maybe make all-star draft page a summary of the all-star teams pre-game, if no draft?
   - can use "type" of allStars to check which
@@ -20,6 +15,7 @@ other sport all-stars
   - how to enable editing all-stars? need to place on team
 - test game sim in all sports, since auto sort stuff has changed
 - all-star MVP for other sports
+- when building the two "top" teams, randomize which gets the 1st and which gets the 2nd player of a pair, otherwise the 1st team will always get the best players
 - sport specific game sim
   - baseball - max 3 innings per pitcher
   - football - more passing
@@ -31,6 +27,8 @@ other sport all-stars
   - other sports
 
 fix esbuild source maps
+
+for ScoreBox playoff series, make the # of series wins more prominent
 
 take advantage of the ability to bring people back to life
 - play all-star game between all time players in league

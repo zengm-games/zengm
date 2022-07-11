@@ -86,9 +86,13 @@ class GameSim {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.day = day;
+		this.allStarGame = teams[0].id === -1 && teams[1].id === -2;
 
 		// If a team plays twice in a day, this needs to be a deep copy
-		this.team = [new Team(teams[0], dh), new Team(teams[1], dh)];
+		this.team = [
+			new Team(teams[0], dh, this.allStarGame),
+			new Team(teams[1], dh, this.allStarGame),
+		];
 
 		this.homeCourtAdvantage(homeCourtFactor);
 
@@ -105,8 +109,6 @@ class GameSim {
 		this.resetNewInning();
 
 		this.logStarters();
-
-		this.allStarGame = teams[0].id === -1 && teams[1].id === -2;
 	}
 
 	resetNewInning() {
@@ -2281,7 +2283,7 @@ class GameSim {
 		const t = this.team[this.d];
 
 		const saveSituation = this.inning === this.numInnings && saveOutsNeeded < 9;
-		const candidate = t.getBestReliefPitcher(saveSituation, this.allStarGame);
+		const candidate = t.getBestReliefPitcher(saveSituation);
 		if (!candidate) {
 			return;
 		}
@@ -2390,10 +2392,7 @@ class GameSim {
 
 				let replacementPlayer: PlayerGameSim | undefined;
 				if (info.p.pos === "P") {
-					replacementPlayer = this.team[info.t].getBestReliefPitcher(
-						false,
-						this.allStarGame,
-					)?.p;
+					replacementPlayer = this.team[info.t].getBestReliefPitcher(false)?.p;
 				} else {
 					replacementPlayer = this.team[info.t].getInjuryReplacement(
 						info.p.pos,

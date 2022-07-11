@@ -29,6 +29,7 @@ type Depth = Record<"pitchers" | "batters", PlayerGameSim[]>;
 class Team<DH extends boolean> {
 	t: TeamGameSim;
 	dh: DH;
+	allStarGame: boolean;
 	playersByPid: Record<number, PlayerGameSim>;
 	playersInGame: Record<number, PlayerInGame<DH>>;
 	playersInGameByPos: Record<GamePositions<DH>, PlayerInGame<DH>>;
@@ -51,9 +52,10 @@ class Team<DH extends boolean> {
 	// Depth chart, but adjusted to remove injured players and capped at the number of active players
 	depth: Depth;
 
-	constructor(t: TeamGameSim, dh: DH) {
+	constructor(t: TeamGameSim, dh: DH, allStarGame: boolean) {
 		this.t = t;
 		this.dh = dh;
+		this.allStarGame = allStarGame;
 
 		this.playersInGame = {};
 
@@ -88,7 +90,7 @@ class Team<DH extends boolean> {
 		}
 
 		// Starting pitcher
-		const startingPitcher = getStartingPitcher(pitchers);
+		const startingPitcher = getStartingPitcher(pitchers, this.allStarGame);
 
 		// This handles replacements for injured players
 		this.playersInGame = this.getStartingPlayersInGame(startingPitcher);
@@ -257,10 +259,7 @@ class Team<DH extends boolean> {
 		}
 	}
 
-	getBestReliefPitcher(
-		saveSituation: boolean,
-		allStarGame: boolean,
-	):
+	getBestReliefPitcher(saveSituation: boolean):
 		| {
 				p: PlayerGameSim;
 				value: number;
@@ -284,7 +283,7 @@ class Team<DH extends boolean> {
 
 		const healthyPitchers = availablePitchers.filter(p => !p.p.injured);
 
-		if (allStarGame) {
+		if (this.allStarGame) {
 			return healthyPitchers[0];
 		}
 

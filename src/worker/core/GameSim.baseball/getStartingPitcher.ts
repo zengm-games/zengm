@@ -4,7 +4,14 @@ import type { PlayerGameSim } from "./types";
 
 const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 
-export const getStartingPitcher = (pitchers: PlayerGameSim[]) => {
+export const getStartingPitcher = (
+	pitchers: PlayerGameSim[],
+	allStarGame: boolean,
+) => {
+	if (allStarGame) {
+		return pitchers[0];
+	}
+
 	// First pass - look for starting pitcher with no fatigue
 	let firstFound;
 	for (let i = 0; i < pitchers.length; i++) {

@@ -35,6 +35,7 @@ type Team = {
 	region: string;
 	players: any[];
 	pts: number;
+	tid: number;
 };
 
 type BoxScore = {
@@ -87,14 +88,17 @@ const StatsTable = ({
 		});
 	};
 
+	const allStarGame = t.tid === -1 || t.tid === -2;
 	let players = t.players
 		.map(p => {
 			// p.seasonStats is stats from before the game. Add current game stats to get current value - works for live sim and post-game box score!
 			const seasonStatsCurrent = {
 				...p.seasonStats,
 			};
-			for (const key of Object.keys(seasonStatsCurrent)) {
-				seasonStatsCurrent[key] += p[key];
+			if (!allStarGame) {
+				for (const key of Object.keys(seasonStatsCurrent)) {
+					seasonStatsCurrent[key] += p[key];
+				}
 			}
 
 			const seasonStats2 = processPlayerStats(seasonStatsCurrent, seasonStats);

@@ -10,11 +10,9 @@ other sport all-stars
 - test game sim in all sports, since auto sort stuff has changed
 - all-star MVP for other sports
 - when building the two "top" teams, randomize which gets the 1st and which gets the 2nd player of a pair, otherwise the 1st team will always get the best players
-- sport specific game sim
-  - baseball
-    - don't add to season stats in box score if ASG
 - bug
   - 3B put in as starting pitcher, why?
+    - need to ignore fatigue when picking starting pitcher
 - blog
   - allStarType
   - allStarNum

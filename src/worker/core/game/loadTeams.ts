@@ -190,8 +190,17 @@ const processTeam = (
 				"l",
 				"sv",
 			];
-			const ps = p.stats.at(-1);
-			const hasStats = statsRowIsCurrent(ps, t.id, playoffs);
+
+			let hasStats;
+			let ps;
+			if (allStarGame) {
+				// Only look at regular season stats, in case All-Star game is in playoffs
+				ps = p.stats.filter(ps => !ps.playoffs).at(-1);
+				hasStats = !!ps && ps.season === g.get("season");
+			} else {
+				ps = p.stats.at(-1);
+				hasStats = statsRowIsCurrent(ps, t.id, playoffs);
+			}
 			for (const key of seasonStatsKeys) {
 				seasonStats[key] = hasStats ? ps[key] : 0;
 			}

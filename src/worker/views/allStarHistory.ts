@@ -77,8 +77,6 @@ const augment = (allAllStars: AllStars[]) => {
 		}
 	}
 
-	console.log(augmented);
-
 	return augmented;
 };
 

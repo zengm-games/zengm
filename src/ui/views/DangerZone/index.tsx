@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isSport, PHASE, WEBSITE_ROOT } from "../../../common";
+import { PHASE, WEBSITE_ROOT } from "../../../common";
 import type { View } from "../../../common/types";
 import { ActionButton } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";

@@ -31,7 +31,6 @@ const create = async (conditions: Conditions) => {
 	const players = await getPlayers(g.get("season"));
 
 	const allStarNum = g.get("allStarNum");
-	const NUM_ALL_STARS = 2 * g.get("allStarNum");
 
 	const score = (p: PlayerFiltered) =>
 		bySport({
@@ -61,7 +60,9 @@ const create = async (conditions: Conditions) => {
 	let healthyPids = new Set();
 	let pickedAllStars = false;
 
-	const pickAllStars = (candidates: typeof sortedPlayers, limit: number) => {
+	const pickAllStars = (candidates: typeof sortedPlayers, numTeams: 1 | 2) => {
+		const limit = numTeams * allStarNum;
+
 		let count = 0;
 		for (const p of candidates) {
 			const obj: AllStarPlayer = {
@@ -113,7 +114,7 @@ const create = async (conditions: Conditions) => {
 
 		if (groupedPlayers.length === 2) {
 			for (const confPlayers of groupedPlayers) {
-				const success = pickAllStars(confPlayers, allStarNum);
+				const success = pickAllStars(confPlayers, 1);
 				if (success) {
 					numSuccess += 1;
 				} else {
@@ -134,7 +135,7 @@ const create = async (conditions: Conditions) => {
 	}
 
 	if (!pickedAllStars) {
-		pickAllStars(sortedPlayers, NUM_ALL_STARS);
+		pickAllStars(sortedPlayers, 2);
 	}
 
 	// Do awards first, before picking captains, so remaining has all players

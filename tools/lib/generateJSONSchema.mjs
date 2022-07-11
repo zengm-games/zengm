@@ -627,6 +627,13 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 								],
 							},
+							allStarNum: {
+								type: "number",
+							},
+							allStarType: {
+								type: "string",
+								enum: ["draft", "byConf", "top"],
+							},
 							autoDeleteOldBoxScores: {
 								type: "boolean",
 							},
@@ -737,7 +744,20 @@ const generateJSONSchema = (sport /*: string*/) => {
 									"nba",
 									"freeAgents",
 									"nhl2017",
+									"nhl2021",
+									"mlb2022",
+									"custom",
 								],
+							},
+							draftLotteryCustomChances: {
+								type: "array",
+								items: {
+									type: "number",
+								},
+							},
+							draftLotteryCustomNumPicks: {
+								type: "integer",
+								minimum: 0,
 							},
 							elam: {
 								type: "boolean",

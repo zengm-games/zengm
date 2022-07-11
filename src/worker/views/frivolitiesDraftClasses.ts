@@ -86,22 +86,7 @@ const updateFrivolitiesDraftClasses = async (
 				if (p.awards.some(award => award.type === "Most Valuable Player")) {
 					draftClass.numMVP += 1;
 				}
-				if (
-					p.awards.some(award => {
-						if (
-							bySport({
-								baseball: true,
-								basketball: false,
-								football: true,
-								hockey: true,
-							})
-						) {
-							return award.type.includes("All-League");
-						}
-
-						return award.type === "All-Star";
-					})
-				) {
+				if (p.awards.some(award => award.type === "All-Star")) {
 					draftClass.numAS += 1;
 				}
 				if (p.retiredYear === Infinity) {

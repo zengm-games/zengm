@@ -35,12 +35,7 @@ const FrivolitiesDraftClasses = ({
 			hockey: "stat:ps",
 		}),
 		"Active",
-		bySport({
-			baseball: "count:allOffense",
-			basketball: "count:allStar",
-			football: "count:allLeague",
-			hockey: "count:allLeague",
-		}),
+		"count:allStar",
 		"count:mvp",
 		"HoF",
 		"Name",

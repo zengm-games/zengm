@@ -1,11 +1,7 @@
 other sport all-stars
 - support all-star game during playoffs, with allStarGame >= 1 representing which round to do it before
   - no injuries
-  - all-star and all-leauge teams can be the same, but all-star has more players for subs
 - for non-basketball sports, select players in order by position, so positions are balanced in final roster
-  - how to do depth chart?
-  - handle baseball/hockey having different quantities of players per position
-  - randomize order for last "group" if partial
   - baseball - 6 pitchers, 15 position players
   - hockey - 4 C, 8 W, 6 defensemen, 2 goalies
   - pickAllStars implementations
@@ -17,20 +13,22 @@ other sport all-stars
     - hockey:
       - same as football
 - restore defaultGameAttributes
-- places in UI that use all-league rather than all-star for other sports?
 - maybe make all-star draft page a summary of the all-star teams pre-game, if no draft?
   - can use "type" of allStars to check which
   - see ALL_STAR_GAME_ONLY URL conditionals, switch back to draft
   - "draft results" text on all-star history
+  - how to enable editing all-stars? need to place on team
 - test game sim in all sports, since auto sort stuff has changed
 - all-star MVP for other sports
-- sport specific
+- sport specific game sim
   - baseball - max 3 innings per pitcher
   - football - more passing
 - blog
   - allStarType
   - allStarNum
   - default byConf for old seasons in real players leauges
+  - also "top" option
+  - other sports
 
 fix esbuild source maps
 

@@ -7,7 +7,7 @@ const divStyle = {
 	width: 300,
 };
 
-type MyAllStarPlayer = View<"allStarDraft">["allPossiblePlayers"][number];
+type MyAllStarPlayer = View<"allStarTeams">["allPossiblePlayers"][number];
 
 const Player = ({
 	allPossiblePlayers,

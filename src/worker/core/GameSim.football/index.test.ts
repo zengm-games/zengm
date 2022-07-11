@@ -32,6 +32,7 @@ export const initGameSim = async () => {
 	return new GameSim({
 		gid: 0,
 		teams: [teams[0], teams[1]],
+		baseInjuryRate: g.get("injuryRate"),
 	});
 };
 

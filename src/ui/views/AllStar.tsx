@@ -1,7 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
-import { isSport } from "../../common";
 
 const style = { maxWidth: "18rem" };
 
@@ -12,11 +11,9 @@ const AllStar = ({
 	showDunk,
 	showThree,
 }: View<"allStar">) => {
-	if (!isSport("basketball")) {
-		throw new Error("Not implemented");
-	}
-
-	useTitleBar({ title: "All-Star Events" });
+	useTitleBar({
+		title: `All-Star ${showDunk || showThree ? "Events" : "Game"}`,
+	});
 
 	return (
 		<div
@@ -68,7 +65,7 @@ const AllStar = ({
 							All-Star Game.
 						</p>
 						<a
-							href={helpers.leagueUrl(["all_star", "draft"])}
+							href={helpers.leagueUrl(["all_star", "teams"])}
 							className="btn btn-primary stretched-link"
 						>
 							Start the draft
@@ -76,22 +73,38 @@ const AllStar = ({
 					</div>
 				</div>
 			) : (
-				<div className="card" style={style}>
-					<div className="card-body">
-						<h3 className="card-title">All-Star Game</h3>
-						<p className="card-text">
-							The best players in{" "}
-							{allStarType === "byConf" ? "each conference" : "the league"} face
-							off in an exhibition game.
-						</p>
-						<a
-							href={helpers.leagueUrl(["daily_schedule"])}
-							className="btn btn-primary stretched-link"
-						>
-							Watch the game
-						</a>
+				<>
+					<div className="card" style={style}>
+						<div className="card-body">
+							<h3 className="card-title">All-Star Teams</h3>
+							<p className="card-text">
+								See which players made the All-Star teams.
+							</p>
+							<a
+								href={helpers.leagueUrl(["all_star", "teams"])}
+								className="btn btn-primary stretched-link"
+							>
+								View the teams
+							</a>
+						</div>
 					</div>
-				</div>
+					<div className="card" style={style}>
+						<div className="card-body">
+							<h3 className="card-title">All-Star Game</h3>
+							<p className="card-text">
+								The best players in{" "}
+								{allStarType === "byConf" ? "each conference" : "the league"}{" "}
+								face off in an exhibition game.
+							</p>
+							<a
+								href={helpers.leagueUrl(["daily_schedule"])}
+								className="btn btn-primary stretched-link"
+							>
+								Watch the game
+							</a>
+						</div>
+					</div>
+				</>
 			)}
 			<div className="card" style={style}>
 				<div className="card-body">

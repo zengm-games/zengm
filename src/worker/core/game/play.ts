@@ -80,9 +80,9 @@ const play = async (
 						"realtimeUpdate",
 						[
 							[],
-							helpers.leagueUrl([
-								ALL_STAR_GAME_ONLY ? "daily_schedule" : "all_star",
-							]),
+							helpers.leagueUrl(
+								ALL_STAR_GAME_ONLY ? ["all_star", "teams"] : ["all_star"],
+							),
 						],
 						conditions,
 					);

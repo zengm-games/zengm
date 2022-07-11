@@ -3,8 +3,8 @@ import accountUpdateCard from "./accountUpdateCard";
 import achievements from "./achievements";
 import allStar from "./allStar";
 import allStarDunk from "./allStarDunk";
-import allStarDraft from "./allStarDraft";
 import allStarHistory from "./allStarHistory";
+import allStarTeams from "./allStarTeams";
 import allStarThree from "./allStarThree";
 import awardRaces from "./awardRaces";
 import awardsRecords from "./awardsRecords";
@@ -100,9 +100,9 @@ export default {
 	accountUpdateCard,
 	achievements,
 	allStar,
-	allStarDraft,
 	allStarDunk,
 	allStarHistory,
+	allStarTeams,
 	allStarThree,
 	awardRaces,
 	awardsRecords,

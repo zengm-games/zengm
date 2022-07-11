@@ -27,8 +27,8 @@ const PlayersTable = ({
 	onDraft?: (pid: number) => Promise<void>;
 	pidsAdd?: number[];
 	pidsRemove?: number[];
-	players: View<"allStarDraft">["teams"][number];
-	remaining?: View<"allStarDraft">["remaining"];
+	players: View<"allStarTeams">["teams"][number];
+	remaining?: View<"allStarTeams">["remaining"];
 	season: number;
 	stats: string[];
 	userTids: number[];
@@ -143,7 +143,7 @@ const AllStars = ({
 	teamNames,
 	type,
 	userTids,
-}: View<"allStarDraft">) => {
+}: View<"allStarTeams">) => {
 	const draftType =
 		!spectator && teams.some(t => userTids.includes(t[0].tid))
 			? "user"
@@ -290,7 +290,7 @@ const AllStars = ({
 					</a>
 				</p>
 			) : null}
-			{!actuallyFinalized && !started ? (
+			{!actuallyFinalized && !started && type === "draft" ? (
 				<div className="mb-3">
 					<button className="btn btn-lg btn-success" onClick={startDraft}>
 						Start draft
@@ -307,7 +307,11 @@ const AllStars = ({
 					) : null}
 				</div>
 			) : null}
-			{godMode && started && nextGameIsAllStar && isCurrentSeason ? (
+			{godMode &&
+			started &&
+			nextGameIsAllStar &&
+			isCurrentSeason &&
+			type === "draft" ? (
 				<div className="mb-3">
 					<button
 						className="btn btn-lg btn-god-mode"
@@ -321,6 +325,18 @@ const AllStars = ({
 						}}
 					>
 						Reset draft
+					</button>
+				</div>
+			) : null}
+			{godMode && nextGameIsAllStar && isCurrentSeason && type !== "draft" ? (
+				<div className="mb-3">
+					<button
+						className="btn btn-lg btn-god-mode"
+						onClick={() => {
+							setEditing(true);
+						}}
+					>
+						Edit All-Stars
 					</button>
 				</div>
 			) : null}

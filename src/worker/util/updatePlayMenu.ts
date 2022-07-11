@@ -55,10 +55,10 @@ const updatePlayMenu = async () => {
 			key: "r",
 		},
 		viewAllStar: {
-			url: helpers.leagueUrl([
-				ALL_STAR_GAME_ONLY ? "daily_schedule" : "all_star",
-			]),
-			label: `All-Star ${ALL_STAR_GAME_ONLY ? "game" : "events"}`,
+			url: helpers.leagueUrl(
+				ALL_STAR_GAME_ONLY ? ["all_star", "teams"] : ["all_star"],
+			),
+			label: `All-Star ${ALL_STAR_GAME_ONLY ? "teams" : "events"}`,
 		},
 		viewSlam: {
 			url: helpers.leagueUrl(["slam"]),

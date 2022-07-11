@@ -903,8 +903,8 @@ const validateSeasonOnly = (params: Params) => {
 
 export default {
 	account,
-	allStarDraft: validateSeasonOnly,
 	allStarDunk: validateSeasonOnly,
+	allStarTeams: validateSeasonOnly,
 	allStarThree: validateSeasonOnly,
 	awardRaces: validateSeasonOnly,
 	awardsRecords,

@@ -64,8 +64,8 @@ const augment = async (allStars: AllStars) => {
 	};
 };
 
-const updateAllStarDraft = async (
-	{ season }: ViewInput<"allStarDraft">,
+const updateAllStarTeams = async (
+	{ season }: ViewInput<"allStarTeams">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
@@ -144,4 +144,4 @@ const updateAllStarDraft = async (
 	}
 };
 
-export default updateAllStarDraft;
+export default updateAllStarTeams;

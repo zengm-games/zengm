@@ -28,6 +28,8 @@ const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 
 const AWARD_VARIABLES: Record<string, string> = {
 	champ: "Won Championship",
+	allStar: "All-Star",
+	allStarMvp: "All-Star MVP",
 };
 for (const [short, long] of Object.entries(AWARD_NAMES)) {
 	if (short === "allDefensive" || short === "allLeague") {
@@ -41,10 +43,6 @@ for (const [short, long] of Object.entries(AWARD_NAMES)) {
 	} else {
 		AWARD_VARIABLES[short] = long;
 	}
-}
-if (isSport("basketball")) {
-	AWARD_VARIABLES.allStar = "All-Star";
-	AWARD_VARIABLES.allStarMvp = "All-Star MVP";
 }
 AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 

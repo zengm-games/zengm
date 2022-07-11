@@ -33,6 +33,8 @@ const categories = bySport({
 		"allRookie",
 		"allOffense",
 		"allDefense",
+		"allStar",
+		"allStarMVP",
 	],
 	basketball: [
 		"mvp",
@@ -57,6 +59,8 @@ const categories = bySport({
 		"bestRecordConf",
 		"allRookie",
 		"allLeague",
+		"allStar",
+		"allStarMVP",
 	],
 	hockey: [
 		"mvp",
@@ -68,6 +72,8 @@ const categories = bySport({
 		"bestRecordConf",
 		"allRookie",
 		"allLeague",
+		"allStar",
+		"allStarMVP",
 	],
 });
 

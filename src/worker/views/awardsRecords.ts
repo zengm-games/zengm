@@ -39,6 +39,14 @@ const optionsTmp = bySport({
 			key: "all_def",
 		},
 		{
+			val: "All-Star",
+			key: "all_star",
+		},
+		{
+			val: "All-Star MVP",
+			key: "all_star_mvp",
+		},
+		{
 			val: "League HR Leader",
 			key: "hr_leader",
 		},
@@ -211,6 +219,14 @@ const optionsTmp = bySport({
 			key: "all_league",
 		},
 		{
+			val: "All-Star",
+			key: "all_star",
+		},
+		{
+			val: "All-Star MVP",
+			key: "all_star_mvp",
+		},
+		{
 			val: "League Passing Leader",
 			key: "pss_leader",
 		},
@@ -267,6 +283,14 @@ const optionsTmp = bySport({
 		{
 			val: "All-League",
 			key: "all_league",
+		},
+		{
+			val: "All-Star",
+			key: "all_star",
+		},
+		{
+			val: "All-Star MVP",
+			key: "all_star_mvp",
 		},
 		{
 			val: "League Points Leader",

@@ -239,6 +239,7 @@ class GameSim {
 	fatigueFactor: number;
 
 	numPlayersOnCourt: number;
+	baseInjuryRate: number;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -251,12 +252,16 @@ class GameSim {
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
+		allStarGame = false,
+		baseInjuryRate,
 	}: {
 		gid: number;
 		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
+		allStarGame?: boolean;
+		baseInjuryRate: number;
 	}) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
@@ -265,6 +270,7 @@ class GameSim {
 		this.id = gid;
 		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+		this.baseInjuryRate = baseInjuryRate;
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.numPlayersOnCourt = g.get("numPlayersOnCourt");
@@ -298,7 +304,7 @@ class GameSim {
 
 		this.lastScoringPlay = [];
 		this.clutchPlays = [];
-		this.allStarGame = this.team[0].id === -1 && this.team[1].id === -2;
+		this.allStarGame = allStarGame;
 		this.elam = this.allStarGame ? g.get("elamASG") : g.get("elam");
 		this.elamActive = false;
 		this.elamDone = false;
@@ -1256,9 +1262,7 @@ class GameSim {
 		}
 
 		let newInjury = false;
-		let baseRate = this.allStarGame
-			? g.get("injuryRate") / 4
-			: g.get("injuryRate");
+		let baseRate = this.baseInjuryRate;
 
 		// Modulate by pace - since injuries are evaluated per possession, but really probably happen per minute played
 		baseRate *= 100 / g.get("pace");

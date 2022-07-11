@@ -101,6 +101,7 @@ class GameSim {
 	currentPlay: Play;
 
 	lngTracker: LngTracker;
+	baseInjuryRate: number;
 
 	constructor({
 		gid,
@@ -109,6 +110,7 @@ class GameSim {
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 		disableHomeCourtAdvantage = false,
+		baseInjuryRate,
 	}: {
 		gid: number;
 		day?: number;
@@ -116,11 +118,13 @@ class GameSim {
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
 		disableHomeCourtAdvantage?: boolean;
+		baseInjuryRate: number;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+		this.baseInjuryRate = baseInjuryRate;
 
 		this.playersOnField = [{}, {}];
 
@@ -2165,7 +2169,7 @@ class GameSim {
 			for (const p of onField) {
 				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
 				const injuryRate = getInjuryRate(
-					g.get("injuryRate"),
+					this.baseInjuryRate,
 					p.age,
 					p.injury.playingThrough,
 				);

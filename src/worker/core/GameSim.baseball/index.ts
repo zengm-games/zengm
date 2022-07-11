@@ -67,6 +67,7 @@ class GameSim {
 	lossEligiblePid: number | undefined;
 
 	allStarGame: boolean;
+	baseInjuryRate: number;
 
 	constructor({
 		gid,
@@ -75,6 +76,8 @@ class GameSim {
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 		dh,
+		allStarGame = false,
+		baseInjuryRate,
 	}: {
 		gid: number;
 		day?: number;
@@ -82,11 +85,14 @@ class GameSim {
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
 		dh: boolean;
+		allStarGame: boolean;
+		baseInjuryRate: number;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.day = day;
-		this.allStarGame = teams[0].id === -1 && teams[1].id === -2;
+		this.allStarGame = allStarGame;
+		this.baseInjuryRate = baseInjuryRate;
 
 		// If a team plays twice in a day, this needs to be a deep copy
 		this.team = [
@@ -2356,9 +2362,7 @@ class GameSim {
 
 	// This is called at end of plate appearance. Should check for batter and all fielders
 	checkInjuries() {
-		const baseInjuryRate = g.get("injuryRate");
-
-		if ((g as any).disableInjuries || baseInjuryRate === 0) {
+		if ((g as any).disableInjuries || this.baseInjuryRate === 0) {
 			return;
 		}
 
@@ -2383,7 +2387,7 @@ class GameSim {
 			const p = info.p.p;
 
 			const injuryRate =
-				getInjuryRate(baseInjuryRate, p.age, p.injury.playingThrough) *
+				getInjuryRate(this.baseInjuryRate, p.age, p.injury.playingThrough) *
 				info.weight;
 
 			if (Math.random() < injuryRate) {

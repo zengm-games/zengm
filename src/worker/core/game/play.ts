@@ -339,6 +339,19 @@ const play = async (
 			}
 		}
 
+		let baseInjuryRate;
+		const allStarGame = teams[0].id === -1 && teams[1].id === -2;
+		if (allStarGame) {
+			// Fewer injuries in All-Star Game, and no injuries in playoffs All-Star Game
+			if (g.get("phase") === PHASE.PLAYOFFS) {
+				baseInjuryRate = 0;
+			} else {
+				baseInjuryRate = g.get("injuryRate") / 4;
+			}
+		} else {
+			baseInjuryRate = g.get("injuryRate");
+		}
+
 		return new GameSim({
 			gid,
 			day,
@@ -346,6 +359,8 @@ const play = async (
 			doPlayByPlay,
 			homeCourtFactor,
 			disableHomeCourtAdvantage,
+			allStarGame,
+			baseInjuryRate,
 
 			// @ts-expect-error
 			dh,

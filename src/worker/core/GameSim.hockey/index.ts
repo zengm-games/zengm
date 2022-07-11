@@ -97,6 +97,7 @@ class GameSim {
 	synergyFactor: number;
 
 	pulledGoalie: [boolean, boolean];
+	baseInjuryRate: number;
 
 	constructor({
 		gid,
@@ -104,17 +105,20 @@ class GameSim {
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
+		baseInjuryRate,
 	}: {
 		gid: number;
 		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
+		baseInjuryRate: number;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
 		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+		this.baseInjuryRate = baseInjuryRate;
 
 		this.synergyFactor = 1;
 
@@ -1568,9 +1572,7 @@ class GameSim {
 					t: TeamNum;
 			  },
 	) {
-		const baseInjuryRate = g.get("injuryRate");
-
-		if ((g as any).disableInjuries || baseInjuryRate === 0) {
+		if ((g as any).disableInjuries || this.baseInjuryRate === 0) {
 			return;
 		}
 
@@ -1581,7 +1583,7 @@ class GameSim {
 			if (info.type === "hit") {
 				if (
 					Math.random() <
-					250 * info.hitter.compositeRating.enforcer * baseInjuryRate
+					250 * info.hitter.compositeRating.enforcer * this.baseInjuryRate
 				) {
 					info.target.injured = true;
 					info.target.newInjury = true;
@@ -1597,7 +1599,7 @@ class GameSim {
 			} else {
 				if (
 					Math.random() <
-					250 * info.shooter.compositeRating.sniper * baseInjuryRate
+					250 * info.shooter.compositeRating.sniper * this.baseInjuryRate
 				) {
 					info.target.injured = true;
 					info.target.newInjury = true;
@@ -1616,7 +1618,7 @@ class GameSim {
 				for (const pos of helpers.keys(this.playersOnIce[t])) {
 					for (const p of this.playersOnIce[t][pos]) {
 						let injuryRate = getInjuryRate(
-							baseInjuryRate,
+							this.baseInjuryRate,
 							p.age,
 							p.injury.playingThrough,
 						);

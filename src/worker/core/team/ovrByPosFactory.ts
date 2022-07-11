@@ -5,7 +5,7 @@ import {
 	NUM_STARTING_PITCHERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball";
-import { getDepthDefense, getDepthPitchers } from "./rosterAutoSort.baseball";
+import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball";
 
 const DEFAULT_OVR = 0;
 

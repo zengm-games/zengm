@@ -1,4 +1,4 @@
-import { isSport, WEBSITE_ROOT } from "../../../common";
+import { WEBSITE_ROOT } from "../../../common";
 import type { Conditions } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
 import newScheduleGood from "./newScheduleGood";

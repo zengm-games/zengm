@@ -4,7 +4,6 @@ import {
 	DEFAULT_JERSEY,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
-	POSITIONS,
 } from "../../../common";
 
 /**
@@ -94,10 +93,21 @@ const generate = (tm: any): Team => {
 	}
 
 	if (isSport("football") && tm.depth === undefined) {
-		t.depth = POSITIONS.reduce((depth, pos) => {
-			depth[pos] = [];
-			return depth;
-		}, {});
+		t.depth = {
+			QB: [],
+			RB: [],
+			WR: [],
+			TE: [],
+			OL: [],
+			DL: [],
+			LB: [],
+			CB: [],
+			S: [],
+			K: [],
+			P: [],
+			KR: [],
+			PR: [],
+		};
 	} else if (isSport("hockey") && tm.depth === undefined) {
 		t.depth = {
 			F: [],

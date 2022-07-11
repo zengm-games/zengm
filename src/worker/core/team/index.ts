@@ -8,6 +8,7 @@ import evaluatePointsFormula from "./evaluatePointsFormula";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
 import generate from "./generate";
+import genDepth from "./genDepth";
 import getContracts from "./getContracts";
 import getDepthPlayers from "./getDepthPlayers";
 import getPayroll from "./getPayroll";
@@ -34,6 +35,7 @@ export default {
 	genSeasonRow,
 	genStatsRow,
 	generate,
+	genDepth,
 	getContracts,
 	getDepthPlayers,
 	getPayroll,

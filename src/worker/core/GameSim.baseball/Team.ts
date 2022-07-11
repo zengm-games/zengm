@@ -6,7 +6,7 @@ import {
 } from "../../../common/constants.baseball";
 import type { Position } from "../../../common/types.baseball";
 import { random } from "../../util";
-import { lineupSort } from "../team/rosterAutoSort.baseball";
+import { lineupSort } from "../team/genDepth.baseball";
 import { fatigueFactor } from "./fatigueFactor";
 import { getStartingPitcher } from "./getStartingPitcher";
 import type { PlayerGameSim, TeamGameSim } from "./types";
@@ -73,6 +73,7 @@ class Team<DH extends boolean> {
 	}
 
 	initDepth() {
+		console.log(this.t);
 		// For pitchers, slots have meaning (starter, closer, etc) so maybe it's best to just leave the injured players there and just add extra players
 		let numPitchersCurrent = 0;
 		const pitchers = [];

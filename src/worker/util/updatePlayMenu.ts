@@ -275,6 +275,14 @@ const updatePlayMenu = async () => {
 		} else {
 			keys = keys.filter(key => key !== "untilEndOfPlayIn");
 		}
+
+		const schedule = await season.getSchedule();
+		const allStarIndex = schedule.findIndex(
+			game => game.awayTid === -2 && game.homeTid === -1,
+		);
+		if (allStarIndex === 0) {
+			keys.unshift("viewAllStar");
+		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		if (g.get("repeatSeason")) {
 			keys = ["untilPreseason"];

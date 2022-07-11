@@ -234,7 +234,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					: []),
 				<>
 					<a href={helpers.leagueUrl(["all_star", "draft", row.season])}>
-						Draft Results
+						{row.type === "draft" ? "Draft Results" : "View Teams"}
 					</a>
 					{isSport("basketball") ? (
 						<>

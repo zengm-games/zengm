@@ -31,6 +31,7 @@ const augment = (allAllStars: AllStars[]) => {
 				row.three && row.three.winner !== undefined
 					? addAbbrevAndCount(row.three.players[row.three.winner])
 					: undefined,
+			type: row.type ?? "draft",
 		};
 	});
 

@@ -138,6 +138,20 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	// If series are still in progress, write games and short circuit
 	if (tids.length > 0) {
+		// Check if we need a playoffs All-Star Game
+		if (
+			series[rnd].length === 1 &&
+			series[rnd][0].home.won === 0 &&
+			series[rnd][0].away?.won === 0
+		) {
+			// Make sure we didn't just play the All-Star Game - only schedule once
+			const allStar = await idb.getCopy.allStars({ season: g.get("season") });
+			if (!allStar?.score) {
+				tids.unshift([-1, -2]);
+			}
+		}
+
+		console.log(tids);
 		await setSchedule(tids);
 		return false;
 	}

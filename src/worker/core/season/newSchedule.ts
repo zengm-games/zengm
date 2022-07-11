@@ -27,7 +27,7 @@ const newSchedule = (
 
 	// Add an All-Star Game
 	const allStarGame = g.get("allStarGame");
-	if (allStarGame !== null) {
+	if (allStarGame !== null && allStarGame >= 0) {
 		const ind = Math.round(helpers.bound(allStarGame, 0, 1) * tids.length);
 		tids.splice(ind, 0, [-1, -2]);
 	}

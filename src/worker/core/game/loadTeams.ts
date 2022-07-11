@@ -194,7 +194,7 @@ const processTeam = (
 			let hasStats;
 			let ps;
 			if (allStarGame) {
-				// Only look at regular season stats, in case All-Star game is in playoffs
+				// Only look at regular season stats, in case All-Star Game is in playoffs
 				ps = p.stats.filter(ps => !ps.playoffs).at(-1);
 				hasStats = !!ps && ps.season === g.get("season");
 			} else {

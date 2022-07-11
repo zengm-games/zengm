@@ -1163,11 +1163,16 @@ export const settings: {
 					before the All-Star Game. So if you set this to 0.75, 75% of the
 					season will be played before the All-Star Game.
 				</p>
+				<p>
+					Set it to -1 to play the All-Star Game right before the finals. In
+					this case, just for fun, there will be no injuries during the All-Star
+					Game so players in the upcoming championship game can play too.
+				</p>
 				<p>Make it blank to disable the All-Star Game.</p>
 				<p>
 					If you're already in the regular season, changing this setting will
 					only affect future seasons, not the current season. See Tools &gt;
-					Danger Zone to edit the current season's All-Star game.
+					Danger Zone to edit the current season's All-Star Game.
 				</p>
 			</>
 		),
@@ -1176,8 +1181,8 @@ export const settings: {
 				if (value > 1) {
 					throw new Error("Value cannot be greater than 1");
 				}
-				if (value < 0) {
-					throw new Error("Value cannot be less than 0");
+				if (value < 0 && value !== -1) {
+					throw new Error("-1 is the only allowable value less than 0");
 				}
 			}
 		},

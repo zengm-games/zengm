@@ -224,6 +224,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				tragicDeathRate: 1 / (20 * 50),
 				sonRate: 0.005,
 				brotherRate: 0.005,
+				allStarGame: -1,
 				allStarNum: 44,
 				allStarType: "byConf",
 				numPlayersOnCourt: 11,

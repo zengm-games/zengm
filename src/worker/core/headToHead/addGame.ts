@@ -34,6 +34,11 @@ const addGame = async ({
 	const t0 = tids[i];
 	const t1 = tids[j];
 
+	// All-Star Game
+	if (t0 < 0 || t1 < 0) {
+		return;
+	}
+
 	if (!playoffs) {
 		if (!headToHead.regularSeason[t0]) {
 			headToHead.regularSeason[t0] = {};

@@ -7,14 +7,22 @@ other sport all-stars
   - handle baseball/hockey having different quantities of players per position
   - randomize order for last "group" if partial
   - baseball - 6 pitchers, 15 position players
-  - hockey - 6 forwards, 4 defensemen, 2 goalies
+  - hockey - 4 C, 8 W, 6 defensemen, 2 goalies
+  - pickAllStars implementations
+    - baseball
+      - byConf: determine pitcher/position player split, based on default ratio. take top player at each defensive position (including DH), and then take top WAR position players (based on rfld to filter out pitchers) to fill out bench. then take N top pitchers by rpit
+      - top: same as byConf, but do twice as many as needed each time, since picking will alternate. randomize the order of every 2 players
+    - football:
+      - assemble list of 22 positions to take (offense and defense). shuffle them (for excess players it matters). loop through positions, taking top 2 of each (starter and bench), similar to baseball for byConf/top
+    - hockey:
+      - same as football
 - restore defaultGameAttributes
 - places in UI that use all-league rather than all-star for other sports
   - stars
-- make sure no dunk/three on all-star history table
 - maybe make all-star draft page a summary of the all-star teams pre-game, if no draft?
   - can use "type" of allStars to check which
   - see ALL_STAR_GAME_ONLY URL conditionals, switch back to draft
+  - "draft results" text on all-star history
 - test game sim in all sports, since auto sort stuff has changed
 - sport specific
   - baseball - max 3 innings per pitcher

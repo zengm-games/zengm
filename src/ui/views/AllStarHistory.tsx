@@ -124,10 +124,9 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		"Team",
 		"award:mvp",
 		"Team",
-		"Dunk Winner",
-		"Team",
-		"Three-Point Winner",
-		"Team",
+		...(isSport("basketball")
+			? ["Dunk Winner", "Team", "Three-Point Winner", "Team"]
+			: []),
 		"Links",
 	]);
 
@@ -203,44 +202,53 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 						</PlayerTeam>
 					),
 				},
-				{
-					...playerName(row.dunk),
-					classNames: classNamesDunk,
-				},
-				{
-					classNames: classNamesDunk,
-					value: (
-						// @ts-expect-error
-						<PlayerTeam p={row.dunk} season={row.season}>
-							{row.dunk ? row.dunk.abbrev : "???"}
-						</PlayerTeam>
-					),
-				},
-				{
-					...playerName(row.three),
-					classNames: classNamesThree,
-				},
-				{
-					classNames: classNamesThree,
-					value: (
-						// @ts-expect-error
-						<PlayerTeam p={row.three} season={row.season}>
-							{row.three ? row.three.abbrev : "???"}
-						</PlayerTeam>
-					),
-				},
+				...(isSport("basketball")
+					? [
+							{
+								...playerName(row.dunk),
+								classNames: classNamesDunk,
+							},
+							{
+								classNames: classNamesDunk,
+								value: (
+									// @ts-expect-error
+									<PlayerTeam p={row.dunk} season={row.season}>
+										{row.dunk ? row.dunk.abbrev : "???"}
+									</PlayerTeam>
+								),
+							},
+							{
+								...playerName(row.three),
+								classNames: classNamesThree,
+							},
+							{
+								classNames: classNamesThree,
+								value: (
+									// @ts-expect-error
+									<PlayerTeam p={row.three} season={row.season}>
+										{row.three ? row.three.abbrev : "???"}
+									</PlayerTeam>
+								),
+							},
+					  ]
+					: []),
 				<>
 					<a href={helpers.leagueUrl(["all_star", "draft", row.season])}>
 						Draft Results
-					</a>{" "}
-					|{" "}
-					<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
-						Dunk Contest
-					</a>{" "}
-					|{" "}
-					<a href={helpers.leagueUrl(["all_star", "three", row.season])}>
-						Three-Point Contest
 					</a>
+					{isSport("basketball") ? (
+						<>
+							{" "}
+							|{" "}
+							<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
+								Dunk Contest
+							</a>{" "}
+							|{" "}
+							<a href={helpers.leagueUrl(["all_star", "three", row.season])}>
+								Three-Point Contest
+							</a>
+						</>
+					) : null}
 				</>,
 			],
 		};

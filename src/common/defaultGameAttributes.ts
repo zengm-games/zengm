@@ -224,7 +224,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				tragicDeathRate: 1 / (20 * 50),
 				sonRate: 0.005,
 				brotherRate: 0.005,
-				allStarNum: 22,
+				allStarNum: 44,
 				allStarType: "byConf",
 				numPlayersOnCourt: 11,
 				tiebreakers: wrap([
@@ -265,7 +265,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftType: "nhl2021",
 				numDraftRounds: 4,
 				draftAges: [18, 21],
-				allStarNum: 12,
+				allStarNum: 20,
 				allStarType: "byConf",
 				numPlayersOnCourt: 6,
 				otl: wrap(true),

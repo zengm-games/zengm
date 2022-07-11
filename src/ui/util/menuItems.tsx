@@ -189,18 +189,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["awards_records"],
 				text: "Awards Records",
 			},
-			...(isSport("basketball")
-				? [
-						{
-							type: "link",
-							league: true,
-							commandPalette: true,
-							commandPaletteOnly: true,
-							path: ["all_star", "history"],
-							text: "All-Star History",
-						} as MenuItemLink,
-				  ]
-				: []),
+			{
+				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: ["all_star", "history"],
+				text: "All-Star History",
+			},
 			{
 				type: "link",
 				league: true,

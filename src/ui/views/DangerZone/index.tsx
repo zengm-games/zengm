@@ -137,57 +137,55 @@ const DangerZone = ({
 					</button>
 				)}
 
-				{isSport("basketball") ? (
-					<div className="mt-5">
-						<h2>All-Star Game</h2>
+				<div className="mt-5">
+					<h2>All-Star Game</h2>
 
-						<p>
-							If the All-Star Game has not yet happened, you can move it up to
-							right now, so that it will happen before the next currently
-							scheduled game. This also works if the current season has no
-							All-Star Game - it will add one, and it will happen before the
-							next game.
+					<p>
+						If the All-Star Game has not yet happened, you can move it up to
+						right now, so that it will happen before the next currently
+						scheduled game. This also works if the current season has no
+						All-Star Game - it will add one, and it will happen before the next
+						game.
+					</p>
+
+					<p>
+						If the All-Star Game has already happened and you add another one...
+						I guess you get an extra All-Star Game?
+					</p>
+
+					{!godMode ? (
+						<p className="text-warning">
+							This feature is only available in{" "}
+							<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
 						</p>
-
-						<p>
-							If the All-Star Game has already happened and you add another
-							one... I guess you get an extra All-Star Game?
+					) : phase !== PHASE.REGULAR_SEASON &&
+					  phase !== PHASE.AFTER_TRADE_DEADLINE ? (
+						<p className="text-warning">
+							This only works during the regular season.
 						</p>
+					) : null}
 
-						{!godMode ? (
-							<p className="text-warning">
-								This feature is only available in{" "}
-								<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-							</p>
-						) : phase !== PHASE.REGULAR_SEASON &&
-						  phase !== PHASE.AFTER_TRADE_DEADLINE ? (
-							<p className="text-warning">
-								This only works during the regular season.
-							</p>
-						) : null}
+					<button
+						type="button"
+						className="btn btn-god-mode border-0"
+						disabled={
+							(phase !== PHASE.REGULAR_SEASON &&
+								phase !== PHASE.AFTER_TRADE_DEADLINE) ||
+							!godMode
+						}
+						onClick={async () => {
+							await toWorker("main", "allStarGameNow", undefined);
 
-						<button
-							type="button"
-							className="btn btn-god-mode border-0"
-							disabled={
-								(phase !== PHASE.REGULAR_SEASON &&
-									phase !== PHASE.AFTER_TRADE_DEADLINE) ||
-								!godMode
-							}
-							onClick={async () => {
-								await toWorker("main", "allStarGameNow", undefined);
-
-								logEvent({
-									saveToDb: false,
-									text: "The All-Star Game has been scheduled.",
-									type: "info",
-								});
-							}}
-						>
-							Schedule All-Star Game now
-						</button>
-					</div>
-				) : null}
+							logEvent({
+								saveToDb: false,
+								text: "The All-Star Game has been scheduled.",
+								type: "info",
+							});
+						}}
+					>
+						Schedule All-Star Game now
+					</button>
+				</div>
 			</div>
 
 			<div className="col-md-6">

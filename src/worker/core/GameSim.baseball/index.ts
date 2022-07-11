@@ -66,6 +66,8 @@ class GameSim {
 	winEligiblePid: number | undefined;
 	lossEligiblePid: number | undefined;
 
+	allStarGame: boolean;
+
 	constructor({
 		gid,
 		day,
@@ -103,6 +105,8 @@ class GameSim {
 		this.resetNewInning();
 
 		this.logStarters();
+
+		this.allStarGame = teams[0].id === -1 && teams[1].id === -2;
 	}
 
 	resetNewInning() {
@@ -2277,7 +2281,7 @@ class GameSim {
 		const t = this.team[this.d];
 
 		const saveSituation = this.inning === this.numInnings && saveOutsNeeded < 9;
-		const candidate = t.getBestReliefPitcher(saveSituation);
+		const candidate = t.getBestReliefPitcher(saveSituation, this.allStarGame);
 		if (!candidate) {
 			return;
 		}
@@ -2332,6 +2336,10 @@ class GameSim {
 			}
 		}
 
+		if (this.allStarGame && pitcher.stat.outs >= 6) {
+			probSwitch = 1;
+		}
+
 		if (probSwitch > 0.8 || (probSwitch > 0.2 && probSwitch > Math.random())) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
 
@@ -2382,7 +2390,10 @@ class GameSim {
 
 				let replacementPlayer: PlayerGameSim | undefined;
 				if (info.p.pos === "P") {
-					replacementPlayer = this.team[info.t].getBestReliefPitcher(false)?.p;
+					replacementPlayer = this.team[info.t].getBestReliefPitcher(
+						false,
+						this.allStarGame,
+					)?.p;
 				} else {
 					replacementPlayer = this.team[info.t].getInjuryReplacement(
 						info.p.pos,

@@ -12,8 +12,9 @@ other sport all-stars
 - when building the two "top" teams, randomize which gets the 1st and which gets the 2nd player of a pair, otherwise the 1st team will always get the best players
 - sport specific game sim
   - baseball
-    - max 3 innings per pitcher
-    - show current season stats in box score, rather than starting at 0 bc this is a new "team"
+    - don't add to season stats in box score if ASG
+- bug
+  - 3B put in as starting pitcher, why?
 - blog
   - allStarType
   - allStarNum

@@ -257,7 +257,10 @@ class Team<DH extends boolean> {
 		}
 	}
 
-	getBestReliefPitcher(saveSituation: boolean):
+	getBestReliefPitcher(
+		saveSituation: boolean,
+		allStarGame: boolean,
+	):
 		| {
 				p: PlayerGameSim;
 				value: number;
@@ -280,6 +283,10 @@ class Team<DH extends boolean> {
 			0.01 + p.value ** 2;
 
 		const healthyPitchers = availablePitchers.filter(p => !p.p.injured);
+
+		if (allStarGame) {
+			return healthyPitchers[0];
+		}
 
 		const closer =
 			healthyPitchers.find(p => p.index >= NUM_STARTING_PITCHERS) ??

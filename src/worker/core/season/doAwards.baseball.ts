@@ -127,6 +127,19 @@ export const royFilter = (p: PlayerFiltered) => {
 	);
 };
 
+export const getPosByGpF = (gpF: (number | undefined)[]) => {
+	let posIndex = -1;
+	let maxGP = -Infinity;
+	for (let i = 0; i < gpF.length; i++) {
+		const gp = gpF[i];
+		if (gp !== undefined && gp > maxGP) {
+			posIndex = i;
+			maxGP = gp;
+		}
+	}
+	return (POS_NUMBERS_INVERSE as any)[posIndex + 1] ?? "?";
+};
+
 const getRealFinalsMvp = async (
 	players: PlayerFiltered[],
 	champTid: number,
@@ -297,16 +310,7 @@ const getRealFinalsMvp = async (
 	if (p) {
 		const info = playerArray[0];
 
-		let posIndex = -1;
-		let maxGP = -Infinity;
-		for (let i = 0; i < info.gpF.length; i++) {
-			const gp = info.gpF[i];
-			if (gp > maxGP) {
-				posIndex = i;
-				maxGP = gp;
-			}
-		}
-		const pos = (POS_NUMBERS_INVERSE as any)[posIndex + 1] ?? "?";
+		const pos = getPosByGpF(info.gpF);
 
 		return {
 			pid: p.pid,

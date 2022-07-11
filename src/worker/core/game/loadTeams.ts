@@ -366,7 +366,6 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 			);
 
 			const depth = await team.genDepth(players, initialDepth);
-			console.log("depth", depth);
 
 			teams[tid] = processTeam(
 				{

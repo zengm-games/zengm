@@ -73,7 +73,6 @@ class Team<DH extends boolean> {
 	}
 
 	initDepth() {
-		console.log(this.t);
 		// For pitchers, slots have meaning (starter, closer, etc) so maybe it's best to just leave the injured players there and just add extra players
 		let numPitchersCurrent = 0;
 		const pitchers = [];

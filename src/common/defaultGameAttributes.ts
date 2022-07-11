@@ -101,9 +101,9 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	draftAges: [19, 22],
 	defaultStadiumCapacity: DEFAULT_STADIUM_CAPACITY,
 	playersRefuseToNegotiate: true,
-	allStarGame: 0.1, // 0.7
+	allStarGame: 0.7,
 	allStarNum: 12,
-	allStarType: "top", // draft
+	allStarType: "draft",
 	budget: true,
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,
@@ -303,7 +303,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				injuryRate: 0.018 / 40,
 				// 200 days per season, 1 tragic death per 50 years
 				tragicDeathRate: 1 / (200 * 50),
-				allStarNum: 21,
+				allStarNum: 24,
 				allStarType: "byConf",
 				numPlayersOnCourt: 9,
 				playoffsNumTeamsDiv: wrap(1),

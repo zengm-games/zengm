@@ -16,6 +16,7 @@ import orderBy from "lodash-es/orderBy";
 import type { PlayerRatings } from "../../../common/types.basketball";
 import range from "lodash-es/range";
 import { groupBy } from "../../../common/groupBy";
+import { getPosByGpF } from "../season/doAwards.baseball";
 
 const MIN_PLAYERS_CONTEST = 2;
 
@@ -74,7 +75,9 @@ const create = async (conditions: Conditions) => {
 				name: p.name,
 			};
 
-			if (p.injury.gamesRemaining === 0) {
+			const healthy = p.injury.gamesRemaining === 0;
+
+			if (healthy) {
 				healthyPids.add(p.pid);
 				count += 1;
 			} else {
@@ -82,33 +85,17 @@ const create = async (conditions: Conditions) => {
 			}
 
 			allStars.remaining.push(obj);
+
+			return healthy;
 		};
 
-		const footballHockey = () => {
-			const positionCounts = isSport("hockey")
-				? {
-						C: 4,
-						W: 8,
-						D: 6,
-						G: 2,
-				  }
-				: {
-						QB: 3,
-						RB: 3,
-						WR: 5,
-						TE: 2,
-						OL: 6,
-						DL: 6,
-						LB: 5,
-						S: 4,
-						CB: 4,
-						K: 1,
-						P: 1,
-				  };
-
+		const pickAllStarsByPosition = (
+			positionCounts: Record<string, number>,
+			noPlayersBeyondPositionCounts?: boolean,
+		) => {
 			const positions = [];
-			for (const [pos, count] of Object.entries(positionCounts)) {
-				for (let i = 0; i < count; i++) {
+			for (const [pos, numPlayers] of Object.entries(positionCounts)) {
+				for (let i = 0; i < numPlayers; i++) {
 					positions.push(pos);
 				}
 			}
@@ -116,7 +103,14 @@ const create = async (conditions: Conditions) => {
 			// If we need more than the default positions, they should be random
 			random.shuffle(positions);
 
-			const playersByPos = groupBy(candidates, p => p.ratings.at(-1).pos);
+			const playersByPos = groupBy(candidates, p => {
+				if (isSport("baseball")) {
+					// Find actual played position based on highest gpF value
+					return getPosByGpF(p.currentStats.gpF);
+				}
+
+				return p.ratings.at(-1).pos;
+			});
 
 			let failed = false;
 
@@ -127,11 +121,22 @@ const create = async (conditions: Conditions) => {
 						if (!playersByPos[pos] || playersByPos[pos].length === 0) {
 							failed = true;
 						} else {
-							const p = playersByPos[pos].shift();
-
-							addPlayer(p);
+							let foundHealthyPlayer = false;
+							while (!foundHealthyPlayer) {
+								const p = playersByPos[pos].shift();
+								if (!p) {
+									failed = true;
+									break;
+								}
+								foundHealthyPlayer = addPlayer(p);
+							}
 						}
 					}
+				}
+
+				// For baseball, we don't want to use this function for our bench, so only go through positionCounts once and then stop
+				if (noPlayersBeyondPositionCounts) {
+					break;
 				}
 			}
 
@@ -140,7 +145,48 @@ const create = async (conditions: Conditions) => {
 
 		return bySport({
 			baseball: () => {
-				throw new Error("Not implemented");
+				pickAllStarsByPosition(
+					{
+						C: 1,
+						"1B": 1,
+						"2B": 1,
+						"3B": 1,
+						SS: 1,
+						LF: 1,
+						CF: 1,
+						RF: 1,
+						P: 8,
+					},
+					true,
+				);
+
+				// Fill out with best non-pitchers, regardless of position
+				if (count < numPlayersNeeded) {
+					const pidsUsed = new Set(allStars.remaining.map(p => p.pid));
+					const remainingCandidates = candidates.filter(p => {
+						if (pidsUsed.has(p.pid)) {
+							return false;
+						}
+
+						const pos = getPosByGpF(p.currentStats.gpF);
+						if (pos === "P") {
+							return false;
+						}
+
+						return true;
+					});
+
+					for (const p of remainingCandidates) {
+						addPlayer(p);
+
+						if (count >= numPlayersNeeded) {
+							// Success!
+							return true;
+						}
+					}
+				}
+
+				return false;
 			},
 			basketball: () => {
 				for (const p of candidates) {
@@ -155,8 +201,27 @@ const create = async (conditions: Conditions) => {
 				// Didn't find enough players
 				return false;
 			},
-			football: footballHockey,
-			hockey: footballHockey,
+			football: () =>
+				pickAllStarsByPosition({
+					QB: 3,
+					RB: 3,
+					WR: 5,
+					TE: 2,
+					OL: 6,
+					DL: 6,
+					LB: 5,
+					S: 4,
+					CB: 4,
+					K: 1,
+					P: 1,
+				}),
+			hockey: () =>
+				pickAllStarsByPosition({
+					C: 4,
+					W: 8,
+					D: 6,
+					G: 2,
+				}),
 		})();
 	};
 

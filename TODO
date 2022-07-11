@@ -17,8 +17,7 @@ other sport all-stars
     - hockey:
       - same as football
 - restore defaultGameAttributes
-- places in UI that use all-league rather than all-star for other sports
-  - stars
+- places in UI that use all-league rather than all-star for other sports?
 - maybe make all-star draft page a summary of the all-star teams pre-game, if no draft?
   - can use "type" of allStars to check which
   - see ALL_STAR_GAME_ONLY URL conditionals, switch back to draft

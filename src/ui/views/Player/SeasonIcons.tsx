@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { isSport } from "../../../common";
 import type { Player } from "../../../common/types";
 
 const prefixCount = (text: string, count: number) => {
@@ -25,9 +24,7 @@ const SeasonIcons = ({
 	let countChamp = 0;
 	let countMVP = 0;
 	let countAllStar = 0;
-	let countAllLeague = 0;
 
-	let type;
 	for (const award of awards) {
 		if (season !== undefined && award.season !== season) {
 			continue;
@@ -35,7 +32,6 @@ const SeasonIcons = ({
 
 		if (playoffs) {
 			if (award.type === "Won Championship") {
-				type = award.type;
 				countChamp += 1;
 				if (season !== undefined) {
 					break;
@@ -43,7 +39,6 @@ const SeasonIcons = ({
 			}
 		} else {
 			if (award.type === "Most Valuable Player") {
-				type = award.type;
 				countMVP += 1;
 				if (season !== undefined) {
 					break;
@@ -51,21 +46,8 @@ const SeasonIcons = ({
 			}
 
 			// Only show these if not MVP, so no "break" statement inside
-			if (isSport("basketball") && award.type === "All-Star") {
-				type = award.type;
+			if (award.type === "All-Star") {
 				countAllStar += 1;
-			}
-			if (
-				!isSport("basketball") &&
-				!isSport("baseball") &&
-				award.type.includes("All-League")
-			) {
-				type = award.type;
-				countAllLeague += 1;
-			}
-			if (isSport("baseball") && award.type.includes("All-Offensive")) {
-				type = award.type;
-				countAllLeague += 1;
 			}
 		}
 	}
@@ -85,10 +67,6 @@ const SeasonIcons = ({
 			} else if (countAllStar > 0) {
 				title = "All-Star";
 				classNameIcon = "glyphicon glyphicon-star text-muted";
-			} else if (countAllLeague > 0) {
-				// So it gets First Team or Second Team included
-				title = type;
-				classNameIcon = "glyphicon glyphicon-star text-muted";
 			}
 		}
 	} else {
@@ -104,9 +82,6 @@ const SeasonIcons = ({
 			}
 			if (countAllStar > 0) {
 				titles.push(prefixCount("All-Star", countAllStar));
-			}
-			if (countAllLeague > 0) {
-				titles.push(prefixCount("All-League", countAllLeague));
 			}
 
 			if (titles.length > 0) {

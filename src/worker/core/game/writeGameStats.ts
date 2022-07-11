@@ -10,6 +10,7 @@ import type {
 	PlayoffSeries,
 } from "../../../common/types";
 import { headToHead, season } from "..";
+import getBestPlayer from "../../../ui/components/ScoreBox/getBestPlayer";
 
 const allStarMVP = async (
 	game: Game,
@@ -17,17 +18,30 @@ const allStarMVP = async (
 	conditions: Conditions,
 ) => {
 	let mvp;
-	let maxScore = -Infinity; // Find MVP
 
-	for (const t of game.teams) {
-		const wonBonus = game.won.tid === t.tid ? 8 : 0;
+	// Why special case for basketball? No real reason, but it was there before the other sports and seems to work better than getBestPlayer because efficiency gets factored into gmSc.
+	if (isSport("basketball")) {
+		let maxScore = -Infinity;
 
-		for (const p of t.players) {
-			const score = helpers.gameScore(p) + p.pts / 2 + wonBonus;
+		for (const t of game.teams) {
+			const wonBonus = game.won.tid === t.tid ? 8 : 0;
 
-			if (score > maxScore) {
-				mvp = p;
-				maxScore = score;
+			for (const p of t.players) {
+				const score = helpers.gameScore(p) + p.pts / 2 + wonBonus;
+
+				if (score > maxScore) {
+					mvp = p;
+					maxScore = score;
+				}
+			}
+		}
+	} else {
+		for (const t of game.teams) {
+			if (game.won.tid === t.tid) {
+				const output = getBestPlayer(t.players);
+				if (output) {
+					mvp = output.p;
+				}
 			}
 		}
 	}

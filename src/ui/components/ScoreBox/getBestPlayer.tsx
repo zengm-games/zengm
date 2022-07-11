@@ -1,7 +1,12 @@
 import orderBy from "lodash-es/orderBy";
 import React from "react";
-import { bySport, getCols, isSport } from "../../../common";
-import { helpers, processPlayerStats } from "../../util";
+import {
+	bySport,
+	getCols,
+	helpers,
+	isSport,
+	processPlayerStats,
+} from "../../../common";
 
 const getBestPlayer = (players: any[]) => {
 	if (players.length === 0) {

@@ -151,7 +151,6 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			}
 		}
 
-		console.log(tids);
 		await setSchedule(tids);
 		return false;
 	}

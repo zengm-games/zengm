@@ -12,6 +12,7 @@ export { default as getPeriodName } from "./getPeriodName";
 export { default as helpers } from "./helpers";
 export { default as isSport } from "./isSport";
 export { default as posRatings } from "./posRatings";
+export { default as processPlayerStats } from "./processPlayerStats";
 export { default as processPlayerStatsBaseball } from "./processPlayerStats.baseball";
 export { default as processPlayerStatsBasketball } from "./processPlayerStats.basketball";
 export { default as processPlayerStatsFootball } from "./processPlayerStats.football";

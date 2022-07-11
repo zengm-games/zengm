@@ -1,11 +1,12 @@
 import classNames from "classnames";
-import { ALL_STAR_GAME_ONLY, bySport } from "../../../common";
-import { helpers, useLocalShallow } from "../../util";
+import { ALL_STAR_GAME_ONLY, bySport, isSport } from "../../../common";
+import { getCols, helpers, useLocalShallow } from "../../util";
 import { memo, ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
 import defaultGameAttributes from "../../../common/defaultGameAttributes";
 import PlayerNameLabels from "../PlayerNameLabels";
 import getBestPlayer from "./getBestPlayer";
+import React from "react";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -333,7 +334,26 @@ const ScoreBox = memo(
 								const best = getBestPlayer(t.players);
 								if (best) {
 									p = best.p;
-									playerStatText = best.statText;
+									playerStatText = best.statTexts.map((stat, i) => {
+										const col = getCols([`stat:${stat}`])[0];
+
+										let title = col.title;
+										// Add back in prefix for some football ones
+										if (isSport("football")) {
+											if (!stat.startsWith("def")) {
+												title = helpers.upperCaseFirstLetter(stat);
+											}
+										}
+
+										return (
+											<React.Fragment key={stat}>
+												{i > 0 ? ", " : null}
+												<span title={col.desc}>
+													{best.processedStats[stat]} {title}
+												</span>
+											</React.Fragment>
+										);
+									});
 								}
 							}
 

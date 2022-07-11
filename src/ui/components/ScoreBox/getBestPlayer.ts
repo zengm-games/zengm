@@ -1,12 +1,5 @@
 import orderBy from "lodash-es/orderBy";
-import React from "react";
-import {
-	bySport,
-	getCols,
-	helpers,
-	isSport,
-	processPlayerStats,
-} from "../../../common";
+import { bySport, processPlayerStats } from "../../../common";
 
 const getBestPlayer = (players: any[]) => {
 	if (players.length === 0) {
@@ -53,26 +46,8 @@ const getBestPlayer = (players: any[]) => {
 
 		return {
 			p: best.p,
-			statText: statTextsSorted.map((stat, i) => {
-				const col = getCols([`stat:${stat}`])[0];
-
-				let title = col.title;
-				// Add back in prefix for some football ones
-				if (isSport("football")) {
-					if (!stat.startsWith("def")) {
-						title = helpers.upperCaseFirstLetter(stat);
-					}
-				}
-
-				return (
-					<React.Fragment key={stat}>
-						{i > 0 ? ", " : null}
-						<span title={col.desc}>
-							{best.processedStats[stat]} {title}
-						</span>
-					</React.Fragment>
-				);
-			}),
+			processedStats: best.processedStats,
+			statTexts: statTextsSorted,
 		};
 	};
 

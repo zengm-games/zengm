@@ -1,4 +1,4 @@
-import { isSport, PHASE } from "../../../common";
+import { getBestPlayerBoxScore, isSport, PHASE } from "../../../common";
 import { saveAwardsByPlayer } from "../season/awards";
 import { idb } from "../../db";
 import { g, helpers, logEvent, toUI } from "../../util";
@@ -10,7 +10,6 @@ import type {
 	PlayoffSeries,
 } from "../../../common/types";
 import { headToHead, season } from "..";
-import getBestPlayer from "../../../ui/components/ScoreBox/getBestPlayer";
 
 const allStarMVP = async (
 	game: Game,
@@ -38,7 +37,7 @@ const allStarMVP = async (
 	} else {
 		for (const t of game.teams) {
 			if (game.won.tid === t.tid) {
-				const output = getBestPlayer(t.players);
+				const output = getBestPlayerBoxScore(t.players);
 				if (output) {
 					mvp = output.p;
 				}

@@ -1,7 +1,8 @@
 import orderBy from "lodash-es/orderBy";
-import { bySport, processPlayerStats } from "../../../common";
+import bySport from "./bySport";
+import processPlayerStats from "./processPlayerStats";
 
-const getBestPlayer = (players: any[]) => {
+const getBestPlayerBoxScore = (players: any[]) => {
 	if (players.length === 0) {
 		return;
 	}
@@ -121,4 +122,4 @@ const getBestPlayer = (players: any[]) => {
 	})();
 };
 
-export default getBestPlayer;
+export default getBestPlayerBoxScore;

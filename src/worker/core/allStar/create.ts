@@ -321,15 +321,16 @@ const create = async (conditions: Conditions) => {
 		allStars.teamNames[1] = `${confNames[1]}`;
 		allStars.teamNames[0] = `${confNames[0]}`;
 	} else {
+		// Alternate team assignment when going through list of players, in snake fashion
+		const snakeOrder = Math.random() < 0.5 ? [0, 1, 1, 0] : [1, 0, 0, 1];
 		let i = 0;
 		while (
 			allStars.teams[0].length + allStars.teams[1].length <
 			healthyPids.size
 		) {
-			assignTopPlayerToTeam(allStars.teams[i]);
-
-			// Alternate team assignment when going through list of players
-			i = i === 0 ? 1 : 0;
+			const teamIndex = snakeOrder[i % snakeOrder.length];
+			assignTopPlayerToTeam(allStars.teams[teamIndex]);
+			i += 1;
 		}
 
 		allStars.teamNames[1] = "All-Stars 1";

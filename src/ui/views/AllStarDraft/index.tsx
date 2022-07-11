@@ -141,6 +141,7 @@ const AllStars = ({
 	stats,
 	teams,
 	teamNames,
+	type,
 	userTids,
 }: View<"allStarDraft">) => {
 	const draftType =
@@ -210,7 +211,7 @@ const AllStars = ({
 	);
 
 	useTitleBar({
-		title: "All-Star Draft",
+		title: `All-Star ${type === "draft" ? "Draft" : "Teams"}`,
 		dropdownView: "all_star_draft",
 		dropdownFields: { seasons: season },
 		dropdownCustomURL: fields => {
@@ -257,6 +258,8 @@ const AllStars = ({
 		);
 	}
 
+	const teamDisplayOrder = type === "draft" ? [0, 1] : [1, 0];
+
 	return (
 		<>
 			<p>
@@ -264,14 +267,18 @@ const AllStars = ({
 				any of them are injured, they are still All-Stars, but an additional
 				All-Star will be selected as a replacement to play in the game.
 			</p>
-			<p>
-				The players are split into two teams, captained by the top two players.
-				The teams are filled by a draft. Just for fun, if a captain is on your
-				team, you get to draft for him! Otherwise, the captains get to choose.
-			</p>
-			{actuallyFinalized && nextGameIsAllStar ? (
+			{type === "draft" ? (
+				<p>
+					The players are split into two teams, captained by the top two
+					players. The teams are filled by a draft. Just for fun, if a captain
+					is on your team, you get to draft for him! Otherwise, the captains get
+					to choose.
+				</p>
+			) : null}
+			{(type !== "draft" || actuallyFinalized) && nextGameIsAllStar ? (
 				<p className="alert alert-primary d-inline-block">
-					The All-Star draft is over! To watch the All-Star Game,{" "}
+					{type === "draft" ? "The All-Star draft is over! " : null}To watch the
+					All-Star Game,{" "}
 					<a href={helpers.leagueUrl(["daily_schedule"])}>click here</a>.
 				</p>
 			) : null}
@@ -321,13 +328,13 @@ const AllStars = ({
 				<div className="col-sm-6 col-md-8">
 					<div className="row">
 						<div className="col-md-6">
-							<h2>{teamNames[0]}</h2>
+							<h2>{teamNames[teamDisplayOrder[0]]}</h2>
 							<PlayersTable
 								challengeNoRatings={challengeNoRatings}
 								draftType={draftType}
 								name="Team0"
 								pidsAdd={revealed0}
-								players={teams[0]}
+								players={teams[teamDisplayOrder[0]]}
 								remaining={remaining}
 								season={season}
 								stats={stats}
@@ -335,13 +342,13 @@ const AllStars = ({
 							/>
 						</div>
 						<div className="col-md-6">
-							<h2>{teamNames[1]}</h2>
+							<h2>{teamNames[teamDisplayOrder[1]]}</h2>
 							<PlayersTable
 								challengeNoRatings={challengeNoRatings}
 								draftType={draftType}
 								name="Team1"
 								pidsAdd={revealed1}
-								players={teams[1]}
+								players={teams[teamDisplayOrder[1]]}
 								remaining={remaining}
 								season={season}
 								stats={stats}
@@ -351,7 +358,10 @@ const AllStars = ({
 					</div>
 				</div>
 				<div className="col-sm-6 col-md-4">
-					<h2>{actuallyFinalized ? "Injured" : "Remaining"} All Stars</h2>
+					<h2>
+						{actuallyFinalized || type !== "draft" ? "Injured" : "Remaining"}{" "}
+						All Stars
+					</h2>
 					<PlayersTable
 						challengeNoRatings={challengeNoRatings}
 						draftType={draftType}

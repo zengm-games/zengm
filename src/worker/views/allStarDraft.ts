@@ -138,6 +138,7 @@ const updateAllStarDraft = async (
 			stats,
 			teams,
 			teamNames,
+			type: allStars.type,
 			userTids: g.get("userTids"),
 		};
 	}

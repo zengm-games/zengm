@@ -250,7 +250,44 @@ const AllStars = ({
 		return (
 			<EditAllStars
 				allPossiblePlayers={allPossiblePlayers}
-				initialPlayers={[...teams[0], ...teams[1], ...remaining]}
+				initialSections={
+					type === "draft"
+						? [
+								{
+									name: "Captains",
+									players: [...teams[0], ...teams[1]],
+									allowHealthy: true,
+									allowInjured: false,
+								},
+								{
+									name: "Other All-Stars",
+									players: [...remaining],
+									allowHealthy: true,
+									allowInjured: true,
+								},
+						  ]
+						: [
+								{
+									name: teamNames[0],
+									players: teams[0],
+									allowHealthy: true,
+									allowInjured: false,
+								},
+								{
+									name: teamNames[1],
+									players: teams[1],
+									allowHealthy: true,
+									allowInjured: false,
+								},
+								{
+									name: "Injured All-Stars",
+									players: remaining,
+									allowHealthy: false,
+									allowInjured: true,
+								},
+						  ]
+				}
+				type={type}
 				onDone={() => {
 					setEditing(false);
 				}}
@@ -376,7 +413,7 @@ const AllStars = ({
 				<div className="col-sm-6 col-md-4">
 					<h2>
 						{actuallyFinalized || type !== "draft" ? "Injured" : "Remaining"}{" "}
-						All Stars
+						All-Stars
 					</h2>
 					<PlayersTable
 						challengeNoRatings={challengeNoRatings}

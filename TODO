@@ -1,8 +1,6 @@
 other sport all-stars
-- maybe make all-star draft page a summary of the all-star teams pre-game, if no draft?
-  - can use "type" of allStars to check which
-  - "draft results" text on all-star history
-  - how to enable editing all-stars? need to place on team
+- "draft results" text on all-star history
+- little UI glitch when adding injured all star - new dropdown inits to same as the one you just added, rather than blank. same in prod, not a new bug
 - blog
   - allStarType
   - allStarNum

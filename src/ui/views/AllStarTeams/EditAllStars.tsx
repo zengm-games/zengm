@@ -42,35 +42,137 @@ const Player = ({
 	);
 };
 
+const Section = ({
+	className,
+	name,
+	players,
+	allowHealthy,
+	allowInjured,
+	selectedPIDs,
+	allPossibleHealthy,
+	allPossibleInjured,
+	sectionIndex,
+	onChange,
+	onAdd,
+}: {
+	className?: string;
+	name: string;
+	players: MyAllStarPlayer[];
+	allowHealthy: boolean;
+	allowInjured: boolean;
+	selectedPIDs: number[];
+	allPossibleHealthy: MyAllStarPlayer[];
+	allPossibleInjured: MyAllStarPlayer[];
+	sectionIndex: number;
+	onChange: (
+		sectionIndex: number,
+		prevPlayer: MyAllStarPlayer,
+	) => (p: MyAllStarPlayer | null) => void;
+	onAdd: (sectionIndex: number) => (p: MyAllStarPlayer | null) => void;
+}) => {
+	let healthy: typeof players = [];
+	let injured: typeof players = [];
+	if (allowHealthy && allowInjured) {
+		healthy = [];
+		injured = [];
+		for (const p of players) {
+			if (p === null || p.injury.gamesRemaining > 0) {
+				injured.push(p);
+			} else {
+				healthy.push(p);
+			}
+		}
+	} else if (allowHealthy) {
+		healthy = players;
+	} else if (allowInjured) {
+		injured = players;
+	}
+
+	return (
+		<div className={className}>
+			{allowHealthy ? (
+				<>
+					<h2>{name}</h2>
+					<div
+						className="d-flex flex-wrap"
+						style={{
+							gap: "1rem",
+						}}
+					>
+						{healthy.map((p, i) => {
+							return (
+								<Player
+									key={i}
+									allPossiblePlayers={allPossibleHealthy}
+									onChange={onChange(sectionIndex, p)}
+									p={p}
+									selectedPIDs={selectedPIDs}
+								/>
+							);
+						})}
+					</div>
+				</>
+			) : null}
+
+			{allowInjured ? (
+				<>
+					<h2 className="mt-4">
+						{name}
+						{allowHealthy ? " (Injured)" : null}
+					</h2>
+					<div
+						className="d-flex flex-wrap"
+						style={{
+							gap: "1rem",
+						}}
+					>
+						{injured.map((p, i) => {
+							return (
+								<Player
+									key={i}
+									allPossiblePlayers={allPossibleInjured}
+									onChange={onChange(sectionIndex, p)}
+									p={p}
+									selectedPIDs={selectedPIDs}
+									isClearable
+								/>
+							);
+						})}
+						<Player
+							allPossiblePlayers={allPossibleInjured}
+							onChange={onAdd(sectionIndex)}
+							p={null}
+							selectedPIDs={selectedPIDs}
+							isClearable
+						/>
+					</div>
+				</>
+			) : null}
+		</div>
+	);
+};
+
 const EditAllStars = ({
 	allPossiblePlayers,
-	initialPlayers,
+	initialSections,
 	onDone,
+	type,
 }: {
 	allPossiblePlayers: MyAllStarPlayer[];
-	initialPlayers: MyAllStarPlayer[];
+	initialSections: {
+		name: string;
+		players: MyAllStarPlayer[];
+		allowHealthy: boolean;
+		allowInjured: boolean;
+	}[];
 	onDone: () => void;
+	type: View<"allStarTeams">["type"];
 }) => {
-	console.log(allPossiblePlayers, initialPlayers);
+	const [sections, setSections] = useState(initialSections);
 
-	const [players, setPlayers] = useState([...initialPlayers]);
-
-	const selectedPIDs = players.map(p => p?.pid);
-
-	const NUM_CAPTAINS = 2;
-
-	const captains = players.slice(0, NUM_CAPTAINS);
-	const others = players.slice(NUM_CAPTAINS);
-
-	const healthy = [];
-	const injured = [];
-	for (const p of others) {
-		if (p === null || p.injury.gamesRemaining > 0) {
-			injured.push(p);
-		} else {
-			healthy.push(p);
-		}
-	}
+	const selectedPIDs = sections
+		.map(section => section.players.map(p => p?.pid))
+		.flat();
 
 	const allPossibleHealthy: typeof allPossiblePlayers = [];
 	const allPossibleInjured: typeof allPossiblePlayers = [];
@@ -83,23 +185,59 @@ const EditAllStars = ({
 	}
 
 	const onChange =
-		(prevPlayer: MyAllStarPlayer) => (p: MyAllStarPlayer | null) => {
-			const index = players.indexOf(prevPlayer);
+		(sectionIndex: number, prevPlayer: MyAllStarPlayer) =>
+		(p: MyAllStarPlayer | null) => {
+			const players = sections[sectionIndex].players;
+			const playerIndex = players.indexOf(prevPlayer);
 
-			if (index >= 0) {
+			if (playerIndex >= 0) {
 				if (p) {
 					const newPlayers = [...players];
-					newPlayers[index] = p;
-					setPlayers(newPlayers);
+					newPlayers[playerIndex] = p;
+					setSections(
+						sections.map((section, i) => {
+							if (i === sectionIndex) {
+								return {
+									...section,
+									players: newPlayers,
+								};
+							}
+
+							return section;
+						}),
+					);
 				} else {
-					setPlayers(players.filter((p, i) => i !== index));
+					setSections(
+						sections.map((section, i) => {
+							if (i === sectionIndex) {
+								return {
+									...section,
+									players: section.players.filter((p, i) => i !== playerIndex),
+								};
+							}
+
+							return section;
+						}),
+					);
 				}
 			}
 		};
 
-	const onAdd = (p: MyAllStarPlayer | null) => {
+	const onAdd = (sectionIndex: number) => (p: MyAllStarPlayer | null) => {
 		if (p) {
-			setPlayers([...players, p]);
+			const players = sections[sectionIndex].players;
+			setSections(
+				sections.map((section, i) => {
+					if (i === sectionIndex) {
+						return {
+							...section,
+							players: [...players, p],
+						};
+					}
+
+					return section;
+				}),
+			);
 		}
 	};
 
@@ -109,94 +247,57 @@ const EditAllStars = ({
 				event.preventDefault();
 
 				// Get rid of any other properties, like abbrev
-				const minimalPlayers = players
-					.filter(p => p !== null)
-					.map(p => {
-						const p2: AllStarPlayer = {
-							pid: p.pid,
-							tid: p.tid,
-							name: p.name,
-						};
+				const minimalSections = sections.map(section => ({
+					...section,
+					players: section.players
+						.filter(p => p !== null)
+						.map(p => {
+							const p2: AllStarPlayer = {
+								pid: p.pid,
+								tid: p.tid,
+								name: p.name,
+							};
 
-						if (p.injury.gamesRemaining > 0) {
-							p2.injured = true;
-						}
+							if (p.injury.gamesRemaining > 0) {
+								p2.injured = true;
+							}
 
-						return p2;
-					});
+							return p2;
+						}),
+				}));
 
-				await toWorker("main", "allStarDraftSetPlayers", minimalPlayers);
+				const players = {
+					teams: [[], []] as [AllStarPlayer[], AllStarPlayer[]],
+					remaining: [] as AllStarPlayer[],
+				};
+				if (type === "draft") {
+					players.teams[0].push(minimalSections[0].players[0]);
+					players.teams[0].push(minimalSections[0].players[1]);
+					players.remaining.push(...minimalSections[1].players);
+				} else {
+					players.teams[0].push(...minimalSections[0].players);
+					players.teams[1].push(...minimalSections[1].players);
+					players.remaining.push(...minimalSections[2].players);
+				}
+
+				await toWorker("main", "allStarDraftSetPlayers", players);
 
 				onDone();
 			}}
 		>
-			<h2>Captains</h2>
-			<div
-				className="d-flex flex-wrap"
-				style={{
-					gap: "1rem",
-				}}
-			>
-				{captains.map((p, i) => {
-					return (
-						<Player
-							key={i}
-							allPossiblePlayers={allPossibleHealthy}
-							onChange={onChange(p)}
-							p={p}
-							selectedPIDs={selectedPIDs}
-						/>
-					);
-				})}
-			</div>
-
-			<h2 className="mt-4">Other All-Stars</h2>
-			<div
-				className="d-flex flex-wrap"
-				style={{
-					gap: "1rem",
-				}}
-			>
-				{healthy.map((p, i) => {
-					return (
-						<Player
-							key={i}
-							allPossiblePlayers={allPossibleHealthy}
-							onChange={onChange(p)}
-							p={p}
-							selectedPIDs={selectedPIDs}
-						/>
-					);
-				})}
-			</div>
-
-			<h2 className="mt-4">Injured All-Stars</h2>
-			<div
-				className="d-flex flex-wrap"
-				style={{
-					gap: "1rem",
-				}}
-			>
-				{injured.map((p, i) => {
-					return (
-						<Player
-							key={i}
-							allPossiblePlayers={allPossibleInjured}
-							onChange={onChange(p)}
-							p={p}
-							selectedPIDs={selectedPIDs}
-							isClearable
-						/>
-					);
-				})}
-				<Player
-					allPossiblePlayers={allPossibleInjured}
-					onChange={onAdd}
-					p={null}
+			{sections.map((section, i) => (
+				<Section
+					key={i}
+					className={i === 0 ? undefined : "mt-4"}
+					{...section}
 					selectedPIDs={selectedPIDs}
-					isClearable
+					allPossibleHealthy={allPossibleHealthy}
+					allPossibleInjured={allPossibleInjured}
+					sectionIndex={i}
+					onChange={onChange}
+					onAdd={onAdd}
 				/>
-			</div>
+			))}
 
 			<div className="mt-4">
 				<button className="btn btn-primary" type="submit">

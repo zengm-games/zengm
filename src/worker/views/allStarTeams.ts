@@ -111,7 +111,7 @@ const updateAllStarTeams = async (
 			abbrev: string;
 			injury: PlayerInjury;
 		}[] = [];
-		if (godMode && !started) {
+		if (godMode && (!started || allStars.type !== "draft")) {
 			allPossiblePlayers = orderBy(
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
 				["lastName", "firstName"],

@@ -219,7 +219,10 @@ const allStarDraftReset = async () => {
 };
 
 const allStarDraftSetPlayers = async (
-	players: AllStarPlayer[],
+	players: {
+		teams: [AllStarPlayer[], AllStarPlayer[]];
+		remaining: AllStarPlayer[];
+	},
 	conditions: Conditions,
 ) => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
@@ -230,9 +233,15 @@ const allStarDraftSetPlayers = async (
 			...allStars.remaining,
 		].map(p => p.pid);
 
-		const pidsToDelete = prevPids.filter(
-			pid => !players.some(p => p.pid === pid),
-		);
+		const newPlayers = [
+			...players.teams[0],
+			...players.teams[1],
+			...players.remaining,
+		];
+
+		const newPids = newPlayers.map(p => p.pid);
+
+		const pidsToDelete = prevPids.filter(pid => !newPids.includes(pid));
 
 		// Delete old awards
 		const awardsByPlayerToDelete = pidsToDelete.map(pid => ({
@@ -242,7 +251,7 @@ const allStarDraftSetPlayers = async (
 		await deleteAwardsByPlayer(awardsByPlayerToDelete, g.get("season"));
 
 		// Add new awards
-		const awardsByPlayer = players
+		const awardsByPlayer = newPlayers
 			.filter(p => !prevPids.includes(p.pid))
 			.map(p => ({
 				pid: p.pid,
@@ -253,12 +262,14 @@ const allStarDraftSetPlayers = async (
 		await saveAwardsByPlayer(awardsByPlayer, conditions);
 
 		// Save new All-Stars
-		allStars.teams = [[players[0]], [players[1]]];
-		allStars.remaining = players.slice(2);
-		for (let i = 0; i < 2; i++) {
-			const p = await idb.cache.players.get(players[i].pid);
-			if (p) {
-				allStars.teamNames[i] = `Team ${p.firstName}`;
+		allStars.teams = players.teams;
+		allStars.remaining = players.remaining;
+		if (allStars.type === "draft") {
+			for (let i = 0; i < 2; i++) {
+				const p = await idb.cache.players.get(allStars.teams[i][0].pid);
+				if (p) {
+					allStars.teamNames[i] = `Team ${p.firstName}`;
+				}
 			}
 		}
 		await idb.cache.allStars.put(allStars);

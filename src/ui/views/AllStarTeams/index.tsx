@@ -145,7 +145,9 @@ const AllStars = ({
 	userTids,
 }: View<"allStarTeams">) => {
 	const draftType =
-		!spectator && teams.some(t => userTids.includes(t[0].tid))
+		!spectator &&
+		type === "draft" &&
+		teams.some(t => userTids.includes(t[0].tid))
 			? "user"
 			: "auto";
 
@@ -187,7 +189,9 @@ const AllStars = ({
 	}, [draftType, reveal, teams, userTids]);
 
 	const userDraftingBothTeams =
-		userTids.includes(teams[0][0].tid) && userTids.includes(teams[1][0].tid);
+		type === "draft" &&
+		userTids.includes(teams[0][0].tid) &&
+		userTids.includes(teams[1][0].tid);
 	const onDraft = useCallback(
 		async (pid: number) => {
 			const finalized2 = await toWorker("main", "allStarDraftUser", pid);

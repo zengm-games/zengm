@@ -1193,13 +1193,16 @@ export const settings: {
 		name: "# Players Per Team",
 		type: "int",
 		validator: (value, output) => {
-			if (isSport("basketball") && value < output.minRosterSize) {
-				throw new Error("Value cannot be less than the min roster size");
-			}
-			if (value < defaultGameAttributes.allStarNum) {
-				throw new Error(
-					`Value must be greater than or equal to ${defaultGameAttributes.allStarNum}`,
-				);
+			if (isSport("basketball")) {
+				if (value < output.minRosterSize) {
+					throw new Error("Value cannot be less than the min roster size");
+				}
+			} else {
+				if (value < defaultGameAttributes.allStarNum) {
+					throw new Error(
+						`Value must be greater than or equal to ${defaultGameAttributes.allStarNum}`,
+					);
+				}
 			}
 		},
 	},

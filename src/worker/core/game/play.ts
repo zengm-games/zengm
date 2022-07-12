@@ -63,30 +63,14 @@ const play = async (
 		await lock.set("gameSim", false);
 
 		// Check to see if the season is over
+		const schedule = await season.getSchedule();
 		if (g.get("phase") < PHASE.PLAYOFFS) {
-			const schedule = await season.getSchedule();
-
 			if (schedule.length === 0) {
 				await phase.newPhase(
 					PHASE.PLAYOFFS,
 					conditions,
 					gidOneGame !== undefined,
 				);
-			} else {
-				const allStarNext = await allStar.nextGameIsAllStar(schedule);
-
-				if (allStarNext && gidOneGame === undefined) {
-					toUI(
-						"realtimeUpdate",
-						[
-							[],
-							helpers.leagueUrl(
-								ALL_STAR_GAME_ONLY ? ["all_star", "teams"] : ["all_star"],
-							),
-						],
-						conditions,
-					);
-				}
 			}
 		} else if (playoffsOver) {
 			await phase.newPhase(
@@ -94,6 +78,21 @@ const play = async (
 				conditions,
 				gidOneGame !== undefined,
 			);
+		} else if (schedule.length > 0) {
+			const allStarNext = await allStar.nextGameIsAllStar(schedule);
+
+			if (allStarNext && gidOneGame === undefined) {
+				toUI(
+					"realtimeUpdate",
+					[
+						[],
+						helpers.leagueUrl(
+							ALL_STAR_GAME_ONLY ? ["all_star", "teams"] : ["all_star"],
+						),
+					],
+					conditions,
+				);
+			}
 		}
 
 		await updatePlayMenu();

@@ -147,9 +147,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			// Make sure we didn't just play the All-Star Game - only schedule once
 			const allStar = await idb.getCopy.allStars({ season: g.get("season") });
 			if (!allStar?.score) {
-				console.log("check 3");
 				tids.unshift([-1, -2]);
-				console.log(tids);
 			}
 		}
 

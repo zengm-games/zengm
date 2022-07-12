@@ -1,3 +1,10 @@
+regular season -> playoffs processing transition is slow in football, maybe only in prod build not watch
+
+except basketball, teams should be sorted by position similar to roster https://discord.com/channels/290013534023057409/569726303926878219/996426386283692083
+
+sim to all-star game should be present even when it's in the playoffs https://discord.com/channels/290013534023057409/569726303926878219/996409511428505610
+- need a consistent way to determine if playoffs ASG has happened or not. currently it's hackily determined in getNumDaysPlayoffs and newSchedulePlayoffsDay
+
 little UI glitch when adding injured all star - new dropdown inits to same as the one you just added, rather than blank. same in prod, not a new bug
 
 fix esbuild source maps

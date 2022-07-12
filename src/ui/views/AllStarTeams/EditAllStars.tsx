@@ -272,7 +272,7 @@ const EditAllStars = ({
 				};
 				if (type === "draft") {
 					players.teams[0].push(minimalSections[0].players[0]);
-					players.teams[0].push(minimalSections[0].players[1]);
+					players.teams[1].push(minimalSections[0].players[1]);
 					players.remaining.push(...minimalSections[1].players);
 				} else {
 					players.teams[0].push(...minimalSections[0].players);

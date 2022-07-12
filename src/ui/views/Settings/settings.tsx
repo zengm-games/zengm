@@ -1194,7 +1194,10 @@ export const settings: {
 		type: "int",
 		validator: (value, output) => {
 			if (isSport("basketball")) {
-				if (value < output.minRosterSize) {
+				if (
+					value < output.minRosterSize &&
+					value < defaultGameAttributes.minRosterSize
+				) {
 					throw new Error("Value cannot be less than the min roster size");
 				}
 			} else {

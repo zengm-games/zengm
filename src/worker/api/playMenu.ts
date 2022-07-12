@@ -82,8 +82,17 @@ const getNumDaysPlayoffs = async () => {
 
 	const numDaysPlayIn = await getNumDaysPlayIn();
 
+	let numDaysAllStar = 0;
+	if (g.get("allStarGame") === -1) {
+		// All-Star Game will happen right before finals. Would be nice to precisely figure out if it's happened yet or not, but whatever, just add 1
+		numDaysAllStar += 1;
+	}
+
 	return (
-		numDaysPlayIn + numDaysFutureRounds + getNumDaysThisRound(playoffSeries)
+		numDaysAllStar +
+		numDaysPlayIn +
+		numDaysFutureRounds +
+		getNumDaysThisRound(playoffSeries)
 	);
 };
 

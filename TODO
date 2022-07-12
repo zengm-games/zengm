@@ -7,9 +7,6 @@ sim to all-star game should be present even when it's in the playoffs https://di
 
 little UI glitch when adding injured all star - new dropdown inits to same as the one you just added, rather than blank. same in prod, not a new bug
 
-fix esbuild source maps
-- going through git history, seems it was always broken
-
 for ScoreBox playoff series, make the # of series wins more prominent
 
 take advantage of the ability to bring people back to life

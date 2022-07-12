@@ -300,7 +300,7 @@ const getAwards = (
 
 		for (const { slug, type } of seasonAwards) {
 			const short = invertedAwardNames[type];
-			if (short && simple[short] !== undefined) {
+			if (short && Object.hasOwn(simple, short)) {
 				simple[short] = slug;
 			} else if (type === "First Team All-League") {
 				allLeague1.push(slug);

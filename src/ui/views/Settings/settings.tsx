@@ -1154,7 +1154,7 @@ export const settings: {
 	{
 		category: "All-Star",
 		key: "allStarGame",
-		name: "All-Star Game",
+		name: "Game Scheduling",
 		type: "floatOrNull",
 		descriptionLong: (
 			<>

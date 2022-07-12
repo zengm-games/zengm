@@ -215,7 +215,7 @@ const AllStars = ({
 		dropdownView: "all_star_draft",
 		dropdownFields: { seasons: season },
 		dropdownCustomURL: fields => {
-			return helpers.leagueUrl(["all_star", "draft", fields.seasons]);
+			return helpers.leagueUrl(["all_star", "teams", fields.seasons]);
 		},
 	});
 

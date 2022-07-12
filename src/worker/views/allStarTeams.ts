@@ -82,7 +82,7 @@ const updateAllStarTeams = async (
 				g.get("phase") <= PHASE.REGULAR_SEASON
 			) {
 				return {
-					redirectUrl: helpers.leagueUrl(["all_star", "draft", season - 1]),
+					redirectUrl: helpers.leagueUrl(["all_star", "teams", season - 1]),
 				};
 			}
 

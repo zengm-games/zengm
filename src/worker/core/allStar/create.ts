@@ -132,6 +132,10 @@ const create = async (conditions: Conditions) => {
 							}
 						}
 					}
+
+					if (count >= numPlayersNeeded) {
+						break;
+					}
 				}
 
 				// For baseball, we don't want to use this function for our bench, so only go through positionCounts once and then stop

@@ -1,5 +1,4 @@
 other sport all-stars
-- "draft results" text on all-star history
 - little UI glitch when adding injured all star - new dropdown inits to same as the one you just added, rather than blank. same in prod, not a new bug
 - blog
   - allStarType

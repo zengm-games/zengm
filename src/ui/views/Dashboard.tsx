@@ -208,6 +208,8 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const [cloningLID, setCloningLID] = useState<number | undefined>();
 	useTitleBar();
 
+	throw new Error("FOO");
+
 	const cols = getCols(
 		[
 			"",

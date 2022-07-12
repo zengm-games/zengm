@@ -1,15 +1,7 @@
-other sport all-stars
-- little UI glitch when adding injured all star - new dropdown inits to same as the one you just added, rather than blank. same in prod, not a new bug
-- blog
-  - allStarType
-  - allStarNum
-  - can happen right before finals. no injuries in that case, so everyone can play
-  - default byConf for old seasons in real players leauges
-  - also "top" option
-  - other sports
-    - describe how teams are picked
+little UI glitch when adding injured all star - new dropdown inits to same as the one you just added, rather than blank. same in prod, not a new bug
 
 fix esbuild source maps
+- going through git history, seems it was always broken
 
 for ScoreBox playoff series, make the # of series wins more prominent
 

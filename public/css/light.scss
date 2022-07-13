@@ -1442,6 +1442,7 @@ hr {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	padding: 6px 12px !important;
 }
 .dark-select__option:hover,
 .dark-select__option--is-focused {

@@ -2,17 +2,23 @@ import { Children, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { components, type MenuListProps, type OptionProps } from "react-select";
 
-const DefaultItemHeight = 33;
+const DefaultItemHeight = 32;
 
 // https://www.botsplash.com/post/optimize-your-react-select-component-to-smoothly-render-10k-data
-export const CustomOption = ({ children, ...props }: OptionProps) => {
-	// eslint-disable-next-line no-unused-vars
+export const CustomOption = <T extends unknown>({
+	children,
+	...props
+}: OptionProps<T>) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
 	const newProps = { ...props, innerProps: rest };
 	return <components.Option {...newProps}>{children}</components.Option>;
 };
 
-export const CustomMenuList = ({ children, maxHeight }: MenuListProps) => {
+export const CustomMenuList = <T extends unknown>({
+	children,
+	maxHeight,
+}: MenuListProps<T>) => {
 	const childrenArray = Children.toArray(children);
 	const wrapperHeight =
 		maxHeight < childrenArray.length * DefaultItemHeight
@@ -38,11 +44,11 @@ export const CustomMenuList = ({ children, maxHeight }: MenuListProps) => {
 	useEffect(() => {
 		let align;
 		if (firstOpen.current) {
-			// For initial render of list
+			// For initial render of list, always align to top
 			align = "start";
 			firstOpen.current = false;
 		} else {
-			// For scrolling with keyboard
+			// For scrolling with keyboard, align to top/bottom depending on scroll direction
 			align = "auto";
 		}
 

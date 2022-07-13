@@ -1,18 +1,18 @@
 import { Children, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { components } from "react-select";
+import { components, type MenuListProps, type OptionProps } from "react-select";
 
 const DefaultItemHeight = 33;
 
 // https://www.botsplash.com/post/optimize-your-react-select-component-to-smoothly-render-10k-data
-export const CustomOption = ({ children, ...props }) => {
+export const CustomOption = ({ children, ...props }: OptionProps) => {
 	// eslint-disable-next-line no-unused-vars
 	const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
 	const newProps = { ...props, innerProps: rest };
 	return <components.Option {...newProps}>{children}</components.Option>;
 };
 
-export const CustomMenuList = ({ children, maxHeight }) => {
+export const CustomMenuList = ({ children, maxHeight }: MenuListProps) => {
 	const childrenArray = Children.toArray(children);
 	const wrapperHeight =
 		maxHeight < childrenArray.length * DefaultItemHeight
@@ -31,7 +31,7 @@ export const CustomMenuList = ({ children, maxHeight }) => {
 	});
 
 	const currentIndexFocused = useMemo(
-		() => childrenArray.findIndex(child => child.props.isFocused),
+		() => childrenArray.findIndex((child: any) => child?.props?.isFocused),
 		[childrenArray],
 	);
 	const firstOpen = useRef(true);
@@ -77,10 +77,9 @@ export const CustomMenuList = ({ children, maxHeight }) => {
 								width: "100%",
 								height: `${virtualItem.size}px`,
 								transform: `translateY(${virtualItem.start}px)`,
-								overflow: "hidden",
 							}}
 						>
-							{children[virtualItem.index]}
+							{childrenArray[virtualItem.index]}
 						</div>
 					))}
 				</div>

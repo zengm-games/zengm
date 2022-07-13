@@ -1438,6 +1438,11 @@ hr {
 .dark-select__indicator {
 	padding: 0 8px !important;
 }
+.dark-select__option {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .dark-select__option:hover,
 .dark-select__option--is-focused {
 	background-color: $gray-200 !important;
@@ -1452,6 +1457,10 @@ hr {
 	// Keep in sync with btn-primary
 	background-color: darken($primary, 10) !important;
 	color: $white !important;
+}
+.dark-select__menu {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 $sticky-cols: (

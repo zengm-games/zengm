@@ -1,13 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import { Children, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { components } from "react-select";
-
-/**
- * Problems with this:
- *
- * - initialOffset setting seems to do nothing. Ideally would scroll to the current selected entry on open
- * - Does not scroll on keyboard navigation
- */
 
 const DefaultItemHeight = 33;
 
@@ -19,28 +12,44 @@ export const CustomOption = ({ children, ...props }) => {
 	return <components.Option {...newProps}>{children}</components.Option>;
 };
 
-export const CustomMenuList = ({ options, children, maxHeight, getValue }) => {
-	const [value] = getValue();
-	const childrenOptions = React.Children.toArray(children);
+export const CustomMenuList = ({ children, maxHeight }) => {
+	const childrenArray = Children.toArray(children);
 	const wrapperHeight =
-		maxHeight < childrenOptions.length * DefaultItemHeight
+		maxHeight < childrenArray.length * DefaultItemHeight
 			? maxHeight
-			: childrenOptions.length * DefaultItemHeight;
+			: childrenArray.length * DefaultItemHeight;
 
 	const parentRef = useRef<HTMLDivElement>(null);
 
 	const rowVirtualizer = useVirtualizer({
-		count: childrenOptions.length,
+		count: childrenArray.length,
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => DefaultItemHeight,
+
+		// Ideally would use smooth scroll on keyboard navigation, and no smooth scroll on initial load, but seems it must just be set once
+		enableSmoothScroll: false,
 	});
 
-	const currentIndex = options.indexOf(value);
+	const currentIndexFocused = useMemo(
+		() => childrenArray.findIndex(child => child.props.isFocused),
+		[childrenArray],
+	);
+	const firstOpen = useRef(true);
 	useEffect(() => {
-		rowVirtualizer.scrollToIndex(currentIndex, {
-			align: "start",
+		let align;
+		if (firstOpen.current) {
+			// For initial render of list
+			align = "start";
+			firstOpen.current = false;
+		} else {
+			// For scrolling with keyboard
+			align = "auto";
+		}
+
+		rowVirtualizer.scrollToIndex(currentIndexFocused, {
+			align,
 		});
-	}, [rowVirtualizer, currentIndex]);
+	}, [rowVirtualizer, currentIndexFocused]);
 
 	return (
 		<>

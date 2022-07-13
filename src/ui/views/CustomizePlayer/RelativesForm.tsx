@@ -77,7 +77,7 @@ const RelativesForm = ({
 
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>
-						<div className="me-3">
+						<div className="me-3 flex-shrink-0">
 							{i === 0 ? <label className="form-label">Type</label> : null}
 							<select
 								className="form-select"

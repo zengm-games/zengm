@@ -32,7 +32,6 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 			isDisabled={disabled}
 			isLoading={loading}
 			components={{ Option: CustomOption, MenuList: CustomMenuList }}
-			menuIsOpen
 		/>
 	);
 };

@@ -78,7 +78,9 @@ const play = async (
 				conditions,
 				gidOneGame !== undefined,
 			);
-		} else if (schedule.length > 0) {
+		}
+
+		if (schedule.length > 0 && !playoffsOver) {
 			const allStarNext = await allStar.nextGameIsAllStar(schedule);
 
 			if (allStarNext && gidOneGame === undefined) {

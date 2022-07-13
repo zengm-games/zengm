@@ -92,7 +92,7 @@ const GodMode = (props: View<"godMode">) => {
 							<a href={helpers.leagueUrl(["manage_teams"])}>
 								Tools &gt; Manage Teams
 							</a>
-							. Do the same for divisions and conferenes at{" "}
+							. Do the same for divisions and conferences at{" "}
 							<a href={helpers.leagueUrl(["manage_confs"])}>
 								Tools &gt; Manage Confs
 							</a>

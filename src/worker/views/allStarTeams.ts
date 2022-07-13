@@ -8,8 +8,9 @@ import type {
 	AllStarPlayer,
 	PlayerInjury,
 } from "../../common/types";
-import { bySport, PHASE } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
+import { sortByPos } from "./roster";
 
 const stats = bySport({
 	baseball: ["keyStats"],
@@ -55,6 +56,14 @@ const augment = async (allStars: AllStars) => {
 			Promise.all(players.map(info => getPlayerInfo(info, allStars.season))),
 		),
 	);
+
+	if (!isSport("basketball")) {
+		for (const t of teams) {
+			t.sort((a, b) => sortByPos(b) - sortByPos(a));
+		}
+		remaining.sort((a, b) => sortByPos(b) - sortByPos(a));
+	}
+
 	return {
 		finalized: allStars.finalized,
 		gid: allStars.gid,

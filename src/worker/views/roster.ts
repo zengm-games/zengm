@@ -11,7 +11,7 @@ import type {
 import { addMood } from "./freeAgents";
 import addFirstNameShort from "../util/addFirstNameShort";
 
-const footballScore = (p: {
+export const sortByPos = (p: {
 	ratings: {
 		pos: string;
 		ovr: number;
@@ -161,7 +161,7 @@ const updateRoster = async (
 			if (isSport("basketball")) {
 				players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 			} else {
-				players.sort((a, b) => footballScore(b) - footballScore(a));
+				players.sort((a, b) => sortByPos(b) - sortByPos(a));
 			}
 
 			for (const p of players) {
@@ -208,7 +208,7 @@ const updateRoster = async (
 					(a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
 				);
 			} else {
-				players.sort((a, b) => footballScore(b) - footballScore(a));
+				players.sort((a, b) => sortByPos(b) - sortByPos(a));
 			}
 
 			for (const p of players) {

@@ -299,11 +299,15 @@ table.table thead .sorting::after {
 }
 .dark-select__option {
 	background-color: $white;
-	color: $black;
+	color: $black !important;
 }
-.dark-select__option:hover,
-.dark-select__option--is-focused {
-	background-color: $gray-100 !important;
+.dark-select__option--is-selected {
+	// Keep in sync with btn-primary
+	background-color: darken($orange, 25) !important;
+}
+.dark-select__option--is-selected:hover {
+	// Keep in sync with btn-primary
+	background-color: darken($orange, 30) !important;
 	color: $black !important;
 }
 

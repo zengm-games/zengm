@@ -1438,6 +1438,21 @@ hr {
 .dark-select__indicator {
 	padding: 0 8px !important;
 }
+.dark-select__option:hover,
+.dark-select__option--is-focused {
+	background-color: $gray-200 !important;
+	color: $black !important;
+}
+.dark-select__option--is-selected {
+	// Keep in sync with btn-primary
+	background-color: $primary !important;
+	color: $white !important;
+}
+.dark-select__option--is-selected:hover {
+	// Keep in sync with btn-primary
+	background-color: darken($primary, 10) !important;
+	color: $white !important;
+}
 
 $sticky-cols: (
 	"sticky-x": 1,

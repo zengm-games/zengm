@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { components } from "react-select";
 
@@ -21,7 +21,6 @@ export const CustomOption = ({ children, ...props }) => {
 
 export const CustomMenuList = ({ options, children, maxHeight, getValue }) => {
 	const [value] = getValue();
-	const initialOffset = options.indexOf(value) * DefaultItemHeight;
 	const childrenOptions = React.Children.toArray(children);
 	const wrapperHeight =
 		maxHeight < childrenOptions.length * DefaultItemHeight
@@ -34,8 +33,14 @@ export const CustomMenuList = ({ options, children, maxHeight, getValue }) => {
 		count: childrenOptions.length,
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => DefaultItemHeight,
-		initialOffset,
 	});
+
+	const currentIndex = options.indexOf(value);
+	useEffect(() => {
+		rowVirtualizer.scrollToIndex(currentIndex, {
+			align: "start",
+		});
+	}, [rowVirtualizer, currentIndex]);
 
 	return (
 		<>

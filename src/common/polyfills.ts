@@ -58,4 +58,41 @@ if (!Array.prototype.flat) {
 	});
 }
 
+import {
+	CountQueuingStrategy as PolyfillCountQueuingStrategy,
+	ReadableStream as PolyfillReadableStream,
+	TransformStream as PolyfillTransformStream,
+	WritableStream as PolyfillWritableStream,
+} from "web-streams-polyfill/ponyfill/es6";
+import {
+	createReadableStreamWrapper,
+	createTransformStreamWrapper,
+} from "@mattiasbuelens/web-streams-adapter";
+
+// It's all or nothing for stream polyfills, because native methods return native streams which do not play nice with the polyfill streams.
+const POLYFILL_STREAMS = !self.WritableStream || !self.TransformStream;
+export let toPolyfillReadable: (stream: ReadableStream) => ReadableStream;
+export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
+if (POLYFILL_STREAMS) {
+	// Chrome 67, Firefox 102, Safari 14.1 (those are for TransformStream, which was the last implemented in some browsers, so that's the cutoff for removing all of these polyfills)
+	self.ReadableStream = PolyfillReadableStream as any;
+	self.TransformStream = PolyfillTransformStream as any;
+	self.WritableStream = PolyfillWritableStream;
+
+	toPolyfillReadable = createReadableStreamWrapper(
+		PolyfillReadableStream,
+	) as any;
+	toPolyfillTransform = createTransformStreamWrapper(
+		PolyfillTransformStream as any,
+	) as any;
+} else {
+	toPolyfillReadable = x => x;
+	toPolyfillTransform = x => x;
+}
+
+// Chrome 59
+if (self.CountQueuingStrategy === undefined) {
+	self.CountQueuingStrategy = PolyfillCountQueuingStrategy;
+}
+
 import "./polyfills-modern";

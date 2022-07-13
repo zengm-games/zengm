@@ -126,7 +126,13 @@ var timeoutID = setTimeout(function () {
 }, 6000);
 
 function checkModern() {
+  // Chrome 67, Firefox 102, Safari 14.1
+  if (typeof TransformStream === "undefined") {
+    return false;
+  }
+
   try {
+    // Chrome 80, Firefox 74, Safari 13.1
     eval("var x = {}; x ?? x?.y;");
     return true;
   } catch (err) {
@@ -175,7 +181,7 @@ function withGoodWorker() {
 // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
 function goodIDB(cb) {
   try {
-    if (typeof window.indexedDB === "undefined") {
+    if (typeof indexedDB === "undefined") {
       cb("bad");
       return;
     }
@@ -191,13 +197,13 @@ function goodIDB(cb) {
   }
 
   try {
-    window.IDBKeyRange.only([1]);
+    IDBKeyRange.only([1]);
   } catch (e) {
     cb("bad");
     return;
   }
 
-  var openRequest = window.indexedDB.open('__detectIDB_test2', 1);
+  var openRequest = indexedDB.open('__detectIDB_test2', 1);
 
   openRequest.onerror = function (evt) {
     console.error(evt.target.error);

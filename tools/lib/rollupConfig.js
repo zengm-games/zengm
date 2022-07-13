@@ -23,23 +23,25 @@ module.exports = (
 		process.env.NODE_ENV = nodeEnv;
 	}
 
+	const root = path.resolve(__dirname, "../..");
+
 	const plugins = [
 		alias({
 			resolve: [".json"],
 			entries: {
 				// This is assumed to be generated prior to rollup being started
-				"league-schema": "./../../../build/files/league-schema.json",
+				"league-schema": path.resolve(root, "build/files/league-schema.json"),
 
 				"bbgm-polyfills": legacy
-					? "./../common/polyfills.ts"
-					: "./../common/polyfills-modern.ts",
+					? path.resolve(root, "src/common/polyfills.ts")
+					: path.resolve(root, "src/common/polyfills-modern.ts"),
 
 				"bbgm-debug":
 					nodeEnv === "production"
-						? "./../../common/polyfills-modern.ts"
-						: "./../../worker/core/debug/index.ts",
+						? path.resolve(root, "src/worker/core/debug/prod.ts")
+						: path.resolve(root, "src/worker/core/debug/index.ts"),
 
-				"ajv-hack": "./../../worker/ajvHack/esbuild.js",
+				"ajv-hack": path.resolve(root, "src/worker/ajvHack/esbuild.js"),
 			},
 		}),
 		replace({

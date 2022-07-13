@@ -40,5 +40,16 @@ if (!Object.hasOwn) {
 	});
 }
 
+// Needed to mirror polyfills.ts
+export const toPolyfillReadable: (
+	stream: ReadableStream,
+) => ReadableStream = x => x;
+export const toPolyfillTransform: (
+	stream: TransformStream,
+) => TransformStream = x => x;
+
+// Chrome 71, Firefox ??, Safari 14.1
+import "./polyfill-TextEncoderDecoderStream";
+
 // Needed for some reason
 export default 1;

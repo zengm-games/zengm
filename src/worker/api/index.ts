@@ -60,10 +60,7 @@ import {
 	defaultInjuries,
 	defaultTragicDeaths,
 } from "../util";
-import {
-	toPolyfillReadable,
-	toPolyfillTransform,
-} from "../util/polyfills-modern";
+import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
 import views from "../views";
 import type {
 	Conditions,

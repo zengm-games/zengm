@@ -140,6 +140,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	if (tids.length > 0) {
 		// Check if we need a playoffs All-Star Game
 		if (
+			g.get("allStarGame") === -1 &&
 			series[rnd].length === 1 &&
 			series[rnd][0].home.won === 0 &&
 			series[rnd][0].away?.won === 0

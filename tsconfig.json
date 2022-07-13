@@ -20,6 +20,7 @@
 		"useUnknownInCatchVariables": false,
 		"importsNotUsedAsValues": "error",
 		"module": "es2020",
-		"noImplicitOverride": true
+		"noImplicitOverride": true,
+		"skipLibCheck": true // Maybe only needed for https://github.com/TanStack/virtual/issues/339
 	}
 }

@@ -67,6 +67,7 @@ export const CustomMenuList = ({ children, maxHeight }: MenuListProps) => {
 						position: "relative",
 					}}
 				>
+					{/* @ts-expect-error */}
 					{rowVirtualizer.getVirtualItems().map(virtualItem => (
 						<div
 							key={virtualItem.key}

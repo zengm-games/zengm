@@ -1439,21 +1439,6 @@ hr {
 	padding: 0 8px !important;
 }
 
-// Added for react-select-virtualized
-.dark-select__menu {
-	background-color: $white !important;
-
-	.flat-virtualized-item {
-		background-color: $white !important;
-		color: $black !important;
-	}
-	.flat-virtualized-item:hover,
-	.fast-option-focused {
-		background-color: $gray-100 !important;
-		color: $black !important;
-	}
-}
-
 $sticky-cols: (
 	"sticky-x": 1,
 	"sticky-xx": 2,

@@ -306,6 +306,11 @@ table.table thead .sorting::after {
 	color: $black !important;
 }
 
+// Without this, the background flashes white on fast scroll
+.dark-select__menu {
+	background-color: $white !important;
+}
+
 .modal-backdrop.show {
 	opacity: 0.25; /* otherwise it is blindingly bright */
 }

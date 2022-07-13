@@ -12,7 +12,7 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "chrome",
-		browser_version: "80.0", // Works back to 49 currently (last release on XP and some old Mac versions). Importing league files only works back to 54
+		browser_version: "49.0", // Works back to 49 currently (last release on XP and some old Mac versions). Importing league files only works back to 54
 		os: "Windows",
 		os_version: "10",
 	},

@@ -298,10 +298,11 @@ table.table thead .sorting::after {
 	}
 }
 .dark-select__option {
-	background-color: $white !important;
-	color: $black !important;
+	background-color: $white;
+	color: $black;
 }
-.dark-select__option:hover {
+.dark-select__option:hover,
+.dark-select__option--is-focused {
 	background-color: $gray-100 !important;
 	color: $black !important;
 }

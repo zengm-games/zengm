@@ -2,6 +2,13 @@ import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { components } from "react-select";
 
+/**
+ * Problems with this:
+ *
+ * - initialOffset setting seems to do nothing. Ideally would scroll to the current selected entry on open
+ * - Does not scroll on keyboard navigation
+ */
+
 const DefaultItemHeight = 33;
 
 // https://www.botsplash.com/post/optimize-your-react-select-component-to-smoothly-render-10k-data
@@ -56,6 +63,7 @@ export const CustomMenuList = ({ options, children, maxHeight, getValue }) => {
 								width: "100%",
 								height: `${virtualItem.size}px`,
 								transform: `translateY(${virtualItem.start}px)`,
+								overflow: "hidden",
 							}}
 						>
 							{children[virtualItem.index]}

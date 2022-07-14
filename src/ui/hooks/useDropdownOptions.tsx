@@ -191,11 +191,11 @@ export const getDropdownValue = (
 		return String(key);
 	}
 
-	if (sortedTeams[key]) {
+	if (sortedTeams[key] !== undefined) {
 		return sortedTeams[key];
 	}
 
-	if (dropdownValues[key]) {
+	if (dropdownValues[key] !== undefined) {
 		return dropdownValues[key];
 	}
 

@@ -2123,7 +2123,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	}
 
 	// Send options to all new tabs
-	const options = ((await idb.meta.get("attributes", "options")) ||
+	const options = ((await idb.meta.get("attributes", "options")) ??
 		{}) as unknown as Options;
 	await toUI(
 		"updateLocal",
@@ -3891,9 +3891,10 @@ const upsertCustomizedPlayer = async (
 
 	p.relatives = relatives;
 
-	const prevPlayer = p.pid
-		? await idb.getCopy.players({ pid: p.pid }, "noCopyCache")
-		: undefined;
+	const prevPlayer =
+		p.pid !== undefined
+			? await idb.getCopy.players({ pid: p.pid }, "noCopyCache")
+			: undefined;
 	if (prevPlayer) {
 		// Any relation in here that is no longer in p should be deleted in the corresponding player too
 		for (const prevRel of prevPlayer.relatives) {

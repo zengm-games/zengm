@@ -154,7 +154,7 @@ const ImportPlayers = ({
 
 		let ratings = p.ratings.at(-1);
 
-		for (let i = p.ratings.length - 1; i--; i >= 0) {
+		for (let i = p.ratings.length - 1; i >= 0; i--) {
 			if (p.ratings[i].season + seasonOffset === season) {
 				ratings = p.ratings[i];
 				break;
@@ -369,7 +369,7 @@ const ImportPlayers = ({
 							p.stats.length > 0 &&
 							exportedSeason !== undefined
 						) {
-							for (let i = p.stats.length - 1; i--; i >= 0) {
+							for (let i = p.stats.length - 1; i >= 0; i--) {
 								const ps = p.stats[i];
 								if (ps.season === p.exportedSeason) {
 									if (

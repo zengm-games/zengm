@@ -209,7 +209,7 @@ const normalizeContractDemands = async ({
 				playerInfosCurrent.filter(
 					p =>
 						p.contractAmount <= capSpace &&
-						(bids.get(p.pid) || 0) < NUM_BIDS_BEFORE_REMOVED,
+						(bids.get(p.pid) ?? 0) < NUM_BIDS_BEFORE_REMOVED,
 				),
 			);
 			while (capSpace > minContract && availablePlayers.size > 0) {
@@ -221,7 +221,7 @@ const normalizeContractDemands = async ({
 				const p = random.choice(availablePlayersArray, probs);
 				availablePlayers.delete(p);
 
-				bids.set(p.pid, (bids.get(p.pid) || 0) + 1);
+				bids.set(p.pid, (bids.get(p.pid) ?? 0) + 1);
 				capSpace -= p.contractAmount;
 				if (capSpace > minContract) {
 					for (const p of availablePlayers) {

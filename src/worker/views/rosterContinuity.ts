@@ -47,10 +47,8 @@ async function updateSeasons(
 				);
 
 				for (const ps of stats) {
-					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					if (minutesAll[ps.tid]) {
-						// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-						const min = minutesAll[ps.tid].get(p.pid) || 0;
+						const min = minutesAll[ps.tid].get(p.pid) ?? 0;
 						minutesAll[ps.tid].set(p.pid, min + ps.min);
 					}
 				}

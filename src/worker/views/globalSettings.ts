@@ -8,7 +8,7 @@ import type {
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {
-		const options = ((await idb.meta.get("attributes", "options")) ||
+		const options = ((await idb.meta.get("attributes", "options")) ??
 			{}) as unknown as Options;
 
 		const realPlayerPhotos = (await idb.meta.get(

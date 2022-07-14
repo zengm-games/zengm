@@ -72,7 +72,7 @@ const FrivolitiesTeamSeasons = ({
 						value = value.toFixed(1);
 					}
 
-					if (x.keySort) {
+					if (x.keySort !== undefined) {
 						const sortValue = getValue(ts, x.keySort);
 
 						return {

@@ -136,7 +136,7 @@ const monteCarloLotteryProbs = (
 			if (!probs[k]) {
 				probs[k] = [];
 			}
-			if (!probs[k][j]) {
+			if (probs[k][j] === undefined) {
 				probs[k][j] = 1 / ITERATIONS;
 			} else {
 				probs[k][j] += 1 / ITERATIONS;

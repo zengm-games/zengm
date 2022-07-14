@@ -99,7 +99,7 @@ const findStatSum = (
 				(row.season === g.get("season") &&
 					g.get("phase") >= PHASE.REGULAR_SEASON)
 			) {
-				if (!statSumsBySeason[row.season]) {
+				if (statSumsBySeason[row.season] === undefined) {
 					statSumsBySeason[row.season] = 0;
 				}
 				statSumsBySeason[row.season] += stat;

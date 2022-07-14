@@ -168,7 +168,7 @@ const TopStuff = ({
 							<div className="mt-3">
 								{openRosterSpots} open roster spots
 								<br />
-								Payroll: {helpers.formatCurrency(payroll || 0, "M")}
+								Payroll: {helpers.formatCurrency(payroll ?? 0, "M")}
 								<br />
 								{salaryCapType !== "none" ? (
 									<>

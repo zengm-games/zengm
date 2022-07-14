@@ -190,11 +190,11 @@ const Row = ({
 			</td>
 			<td>
 				<a href={helpers.leagueUrl(["standings", season])}>
-					{pts ? `${pts} pts (` : null}
+					{pts !== undefined ? `${pts} pts (` : null}
 					{won}-{lost}
 					{otl > 0 ? <>-{otl}</> : null}
 					{tied > 0 ? <>-{tied}</> : null}
-					{pts ? `)` : null}
+					{pts !== undefined ? `)` : null}
 				</a>
 			</td>
 			<td>{chances}</td>

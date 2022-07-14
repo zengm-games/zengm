@@ -288,7 +288,7 @@ const updateTeamHistory = async (
 		const playersByPid = groupByUnique(history.players, "pid");
 		const retiredJerseyNumbers2 = retiredJerseyNumbers.map(row => {
 			let numRings = 0;
-			if (row.pid) {
+			if (row.pid !== undefined) {
 				numRings = playersByPid[row.pid]?.numRings ?? 0;
 			}
 

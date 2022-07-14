@@ -42,7 +42,7 @@ export const getMostCommonPosition = (p: Player, tid: number) => {
 	for (const pr of p.ratings) {
 		const ps = p.stats.find(ps => ps.season === pr.season && ps.tid === tid);
 		if (ps) {
-			const prevValue = positionCounts.get(pr.pos) || 0;
+			const prevValue = positionCounts.get(pr.pos) ?? 0;
 			positionCounts.set(pr.pos, prevValue + 1);
 		}
 	}
@@ -142,7 +142,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 				continue;
 			}
 			const value = getValueStatsRow(ps);
-			const prevValue = valuesByJerseyNumber.get(ps.jerseyNumber) || 0;
+			const prevValue = valuesByJerseyNumber.get(ps.jerseyNumber) ?? 0;
 			valuesByJerseyNumber.set(ps.jerseyNumber, prevValue + value);
 		}
 

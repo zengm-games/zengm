@@ -1,11 +1,144 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { DataTable, DraftAbbrev, SkillsBlock, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
-import { PLAYER } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import orderBy from "lodash-es/orderBy";
+
+const Summary = ({
+	players,
+	summaryStat,
+}: {
+	players: View<"draftHistory">["players"];
+	summaryStat: View<"draftHistory">["summaryStat"];
+}) => {
+	const col = getCols([`stat:${summaryStat}`])[0];
+	const statText = <span title={col.desc}>{col.title}</span>;
+
+	const formatStat = (p: typeof players[number]) =>
+		helpers.roundStat(p.careerStats[summaryStat], summaryStat);
+	const formatDraft = (p: typeof players[number]) =>
+		p.draft.round === 0 ? "undrafted" : `${p.draft.round}-${p.draft.pick}`;
+
+	const firstPick = players.find(
+		p => p.draft.round === 1 && p.draft.pick === 1,
+	);
+
+	const mostStat = orderBy(
+		players,
+		p => p.careerStats[summaryStat],
+		"desc",
+	).slice(0, 3);
+
+	const summaryRows = [];
+
+	if (firstPick) {
+		summaryRows.push(
+			<>
+				<b>1st Pick:</b>{" "}
+				<a href={helpers.leagueUrl(["player", firstPick.pid])}>
+					{firstPick.firstName} {firstPick.lastName}
+				</a>{" "}
+				({formatStat(firstPick)} {statText})
+			</>,
+		);
+	}
+
+	if (mostStat.length > 0) {
+		summaryRows.push(
+			<>
+				<b>
+					Most{" "}
+					{bySport({
+						baseball: col.title,
+						basketball: col.desc,
+						football: col.desc,
+						hockey: col.desc,
+					})}
+					:
+				</b>{" "}
+				{mostStat.map((p, i) => (
+					<Fragment key={p.pid}>
+						<a href={helpers.leagueUrl(["player", p.pid])}>
+							{p.firstNameShort} {p.lastName}
+						</a>{" "}
+						({formatStat(p)}, {formatDraft(p)})
+						{i < mostStat.length - 1 ? ", " : null}
+					</Fragment>
+				))}
+			</>,
+		);
+	}
+
+	const awards: {
+		key: "allStar" | "mvp" | "champ";
+		title: string;
+	}[] = [
+		{
+			key: "champ",
+			title: "Champion",
+		},
+		{
+			key: "allStar",
+			title: "All-Star",
+		},
+		{
+			key: "mvp",
+			title: "MVP",
+		},
+	];
+	for (const { key, title } of awards) {
+		const filtered = orderBy(
+			players.filter(p => p.awardCounts[key] > 0),
+			[p => p.awardCounts[key], p => p.careerStats[summaryStat]],
+			["desc", "desc"],
+		);
+		const count = filtered.length;
+		if (count > 0) {
+			const display = filtered.slice(0, count === 4 ? 4 : 3);
+			const excess = count - display.length;
+
+			summaryRows.push(
+				<>
+					<b>
+						{count} {title}
+						{count > 1 ? "s" : null}:
+					</b>{" "}
+					{display.map((p, i) => (
+						<Fragment key={p.pid}>
+							<a href={helpers.leagueUrl(["player", p.pid])}>
+								{p.firstNameShort} {p.lastName}
+							</a>{" "}
+							({p.awardCounts[key]}x, {formatDraft(p)})
+							{i < display.length - 1 ? ", " : null}
+						</Fragment>
+					))}
+					{excess > 0 ? `, ${excess} more` : null}
+				</>,
+			);
+		} else {
+			summaryRows.push(
+				<>
+					<b>0 {title}s</b>
+				</>,
+			);
+		}
+	}
+
+	return (
+		<p>
+			{summaryRows.map((row, i) => (
+				<Fragment key={i}>
+					{i > 0 ? <br /> : null}
+					{row}
+				</Fragment>
+			))}
+		</p>
+	);
+};
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
@@ -37,6 +170,7 @@ const DraftHistory = ({
 	players,
 	season,
 	stats,
+	summaryStat,
 	userTid,
 }: View<"draftHistory">) => {
 	const noDraft = draftType === "freeAgents";
@@ -168,6 +302,8 @@ const DraftHistory = ({
 				draftType={draftType}
 				season={season}
 			/>
+
+			<Summary players={players} summaryStat={summaryStat} />
 
 			<p>
 				Players drafted by your team are{" "}

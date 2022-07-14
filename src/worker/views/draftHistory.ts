@@ -15,6 +15,13 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	});
 
+	const summaryStat = bySport({
+		baseball: "war",
+		basketball: "ws",
+		football: "av",
+		hockey: "ps",
+	});
+
 	let playersAll;
 
 	if (g.get("season") === inputs.season) {
@@ -76,6 +83,16 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 				hof: p.hof,
 				watch: p.watch,
 				awards: p.awards,
+				awardCounts: {
+					allStar: p.awards.filter((award: any) => award.type === "All-Star")
+						.length,
+					mvp: p.awards.filter(
+						(award: any) => award.type === "Most Valuable Player",
+					).length,
+					champ: p.awards.filter(
+						(award: any) => award.type === "Won Championship",
+					).length,
+				},
 
 				// Ratings
 				currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
@@ -98,6 +115,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		players: addFirstNameShort(players),
 		season: inputs.season,
 		stats,
+		summaryStat,
 		userTid: g.get("userTid"),
 	};
 };

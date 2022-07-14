@@ -1,8 +1,7 @@
 {
-	"name": "gm-games",
+	"name": "zengm",
 	"version": "5.1.0",
-	"description": "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
-	"homepage": "https://basketball-gm.com/",
+	"homepage": "https://zengm.com/",
 	"bugs": {
 		"url": "https://github.com/zengm-games/zengm/issues"
 	},

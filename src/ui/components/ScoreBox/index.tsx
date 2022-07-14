@@ -29,7 +29,7 @@ type Team = {
 
 const getRecord = (t: Team) => {
 	if (t.playoffs) {
-		return ` ${t.playoffs.won}`;
+		return <b>{t.playoffs.won}</b>;
 	}
 
 	if (t.won === undefined || t.lost === undefined) {
@@ -43,7 +43,7 @@ const getRecord = (t: Team) => {
 	if (t.otl !== undefined && t.otl > 0) {
 		record += `-${t.otl}`;
 	}
-	return ` ${record}`;
+	return record;
 };
 
 const smallStyle = {

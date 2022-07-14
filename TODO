@@ -8,8 +8,6 @@ regular season -> playoffs processing transition is slow in football, maybe only
 sim to all-star game should be present even when it's in the playoffs https://discord.com/channels/290013534023057409/569726303926878219/996409511428505610
 - need a consistent way to determine if playoffs ASG has happened or not. currently it's hackily determined in getNumDaysPlayoffs and newSchedulePlayoffsDay
 
-for ScoreBox playoff series, make the # of series wins more prominent
-
 take advantage of the ability to bring people back to life
 - play all-star game between all time players in league
 - torunament between all best teams in league

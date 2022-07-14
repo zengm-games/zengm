@@ -90,7 +90,7 @@ if (POLYFILL_STREAMS) {
 	toPolyfillTransform = x => x;
 }
 
-// Chrome 59
+// Chrome 52
 if (self.CountQueuingStrategy === undefined) {
 	self.CountQueuingStrategy = PolyfillCountQueuingStrategy;
 }

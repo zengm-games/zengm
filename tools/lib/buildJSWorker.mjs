@@ -19,7 +19,7 @@ const buildFile = async (name, legacy, rev) => {
 	const bundle = await rollup.rollup({
 		...rollupConfig("production", {
 			blacklistOptions: BLACKLIST[name],
-			statsFilename: `stats-${name}.html`,
+			statsFilename: `stats-${name}${legacy ? "-legacy" : ""}.html`,
 			legacy,
 		}),
 		input: {

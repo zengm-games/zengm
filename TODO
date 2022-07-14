@@ -1,3 +1,5 @@
+don't show captains on All-Star History page unless it's a draft
+
 ga4
 - Configure > Events
   - modify events to normalize names

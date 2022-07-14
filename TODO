@@ -48,6 +48,7 @@ When playing an historical league, in all frivolities pages, maybe hide players 
 In the "Trading block" page, add a feature like in the "Trade" page: when you select players the total salary of all players is shown (I suck at maths so it's hard for me to do it by myself) https://discord.com/channels/290013534023057409/331882115119448065/979653599879643166
 
 On Free Agents page, for players asking for more than my available cap space, add somewhere (maybe in the "asking for" column?) the amount of cap space I have to get rid to sign this player so I don't have to do the maths by myself https://discord.com/channels/290013534023057409/331882115119448065/979755636529168404
+- should be in another column, hidden by default
 
 League Finances page always shows the current  salary cap/ min payroll/luxury tax limit even when you go back in time - I'd rather have it display values from the past years (or also could be shown in roster page - previous years) https://discord.com/channels/290013534023057409/331882115119448065/979759314090754108
 
@@ -57,10 +58,6 @@ ga4
 - pageviews not correct
   - https://support.google.com/analytics/answer/11403294 says it can be automatic or manual. try automatic, but if it fails, could do manual
   - https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications explans UA way, could do that more precisely and see if it works for both
-
-if tooSlow, then bootstrap
-- show warning in UI that values are estimated
-- universal too
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

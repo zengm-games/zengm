@@ -119,7 +119,7 @@ const simLottery = (chances: number[], numToPick: number) => {
 };
 
 // If it's too slow to calculate the precise probability, just estimate
-const bootstrapLotteryProbs = (
+const monteCarloLotteryProbs = (
 	result: DraftLotteryResultArray,
 	numToPick: number,
 ) => {
@@ -475,10 +475,10 @@ export const getDraftLotteryProbs = (
 				],
 			};
 		} else {
-			// Bootstrap probs
+			// Estimate probs
 			return {
 				tooSlow,
-				probs: bootstrapLotteryProbs(result, numToPick),
+				probs: monteCarloLotteryProbs(result, numToPick),
 			};
 		}
 	}

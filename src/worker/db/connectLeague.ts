@@ -779,7 +779,7 @@ const migrate = async ({
 						r.ovr = player.ovr(r);
 						r.skills = player.skills(r);
 
-						// Don't want to deal with bootstrapPot now being async
+						// Don't want to deal with monteCarloPot now being async
 						r.pot = r.ovr;
 
 						if (p.draft.year === r.season) {

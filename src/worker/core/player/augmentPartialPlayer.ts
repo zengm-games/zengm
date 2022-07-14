@@ -1,6 +1,6 @@
 import { bySport, isSport, PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
-import develop, { bootstrapPot } from "./develop";
+import develop, { monteCarloPot } from "./develop";
 import generate from "./generate";
 import heightToRating from "./heightToRating";
 import name from "./name";
@@ -281,7 +281,7 @@ const augmentPartialPlayer = async (
 
 			r.ovr = ovr(r);
 			r.skills = skills(r);
-			r.pot = await bootstrapPot({
+			r.pot = await monteCarloPot({
 				ratings: r,
 				age: r.season - p.born.year,
 				srID: p.srID,
@@ -319,7 +319,7 @@ const augmentPartialPlayer = async (
 
 		if (isSport("basketball") && (r.pot === undefined || r.pot < r.ovr)) {
 			// Only basketball, in case position is not known at this point
-			r.pot = await bootstrapPot({
+			r.pot = await monteCarloPot({
 				ratings: r,
 				age: r.season - p.born.year,
 				srID: p.srID,

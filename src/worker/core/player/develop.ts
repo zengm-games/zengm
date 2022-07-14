@@ -13,7 +13,7 @@ import { BANNED_POSITIONS } from "./pos.baseball";
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
-export const bootstrapPot = async ({
+export const monteCarloPot = async ({
 	ratings,
 	age,
 	srID,
@@ -139,7 +139,7 @@ const develop = async (
 			ratings.ovr = ovr(ratings);
 
 			if (!skipPot) {
-				ratings.pot = await bootstrapPot({ ratings, age, srID: p.srID });
+				ratings.pot = await monteCarloPot({ ratings, age, srID: p.srID });
 			}
 
 			if (typeof p.pos === "string") {
@@ -166,7 +166,7 @@ const develop = async (
 			if (!skipPot) {
 				ratings.pots = {};
 				for (const pos2 of POSITIONS) {
-					ratings.pots[pos2] = await bootstrapPot({
+					ratings.pots[pos2] = await monteCarloPot({
 						ratings,
 						age,
 						srID: p.srID,

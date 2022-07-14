@@ -446,7 +446,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						You can edit this JSON here, but you'll probably find it easier to
 						use{" "}
 						<a
-							href={`http://dumbmatter.com/facesjs/editor.html#${faceHash}`}
+							href={`https://zengm.com/facesjs/editor/#${faceHash}`}
 							rel="noopener noreferrer"
 							target="_blank"
 						>

@@ -16,6 +16,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import classNames from "classnames";
 
 const FreeAgents = ({
 	capSpace,
@@ -138,6 +139,8 @@ const FreeAgents = ({
 		};
 	});
 
+	const showShowPlayersAffordButton = salaryCapType !== "none";
+
 	return (
 		<>
 			<RosterComposition className="float-end mb-3" players={userPlayers} />
@@ -154,36 +157,45 @@ const FreeAgents = ({
 				payroll={payroll}
 			/>
 
-			<div className="d-sm-flex mb-3">
-				<button className="btn btn-secondary" onClick={showAfforablePlayers}>
-					Show players you can afford now
-				</button>
-
-				<div className="d-block">
-					{godMode ? (
+			{showShowPlayersAffordButton || godMode ? (
+				<div className="d-sm-flex mb-3">
+					{showShowPlayersAffordButton ? (
 						<button
-							className="btn btn-god-mode ms-sm-2 mt-2 mt-sm-0"
-							onClick={async () => {
-								const proceed = await confirm(
-									`Are you sure you want to delete all ${players.length} free agents?`,
-									{
-										okText: "Delete Players",
-									},
-								);
-								if (proceed) {
-									await toWorker(
-										"main",
-										"removePlayers",
-										players.map(p => p.pid),
-									);
-								}
-							}}
+							className="btn btn-secondary"
+							onClick={showAfforablePlayers}
 						>
-							Delete all players
+							Show players you can afford now
 						</button>
 					) : null}
+
+					<div className="d-block">
+						{godMode ? (
+							<button
+								className={classNames("btn btn-god-mode", {
+									"ms-sm-2 mt-2 mt-sm-0": showShowPlayersAffordButton,
+								})}
+								onClick={async () => {
+									const proceed = await confirm(
+										`Are you sure you want to delete all ${players.length} free agents?`,
+										{
+											okText: "Delete Players",
+										},
+									);
+									if (proceed) {
+										await toWorker(
+											"main",
+											"removePlayers",
+											players.map(p => p.pid),
+										);
+									}
+								}}
+							>
+								Delete all players
+							</button>
+						) : null}
+					</div>
 				</div>
-			</div>
+			) : null}
 
 			{gameSimInProgress && !spectator ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>

@@ -73,8 +73,12 @@ const Summary = ({
 		);
 	}
 
+	type AwardKey = "allStar" | "mvp" | "champ" | "hof";
+
+	const [expanded, setExpanded] = useState<AwardKey[]>([]);
+
 	const awards: {
-		key: "allStar" | "mvp" | "champ" | "hof";
+		key: AwardKey;
 		title: string;
 	}[] = [
 		{
@@ -102,7 +106,9 @@ const Summary = ({
 		);
 		const count = filtered.length;
 		if (count > 0) {
-			const display = filtered.slice(0, count === 4 ? 4 : 3);
+			const display = expanded.includes(key)
+				? filtered
+				: filtered.slice(0, count === 4 ? 4 : 3);
 			const excess = count - display.length;
 
 			summaryRows.push(
@@ -120,7 +126,20 @@ const Summary = ({
 							{formatDraft(p)}){i < display.length - 1 ? ", " : null}
 						</Fragment>
 					))}
-					{excess > 0 ? `, ${excess} more` : null}
+					{excess > 0 ? (
+						<>
+							,{" "}
+							<a
+								href="#"
+								onClick={event => {
+									event.preventDefault();
+									setExpanded([...expanded, key]);
+								}}
+							>
+								{excess} more
+							</a>
+						</>
+					) : null}
 				</>,
 			);
 		} else {
@@ -307,7 +326,7 @@ const DraftHistory = ({
 				season={season}
 			/>
 
-			<Summary players={players} summaryStat={summaryStat} />
+			<Summary key={season} players={players} summaryStat={summaryStat} />
 
 			<p>
 				Players drafted by your team are{" "}

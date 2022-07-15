@@ -1,3 +1,38 @@
+custom awards
+- fields
+  - formula
+  - abbrev
+  - short name
+  - long name
+  - some way to filter for SMOY
+  - stats range (regular season, playoffs, semifinals, finals)
+  - team or individual
+  - if team
+    - way to specify if it's position based or not
+    - number of players per team
+    - how many teams
+  - active (so order/name/etc can be maintained for awards that no longer exist)
+  - order (for listing in player profile page)
+  - show in league history table?
+    - might need some other UI ones too
+  - SeasonIcon color
+- extra things that get stored in player awards, but not in awards object
+  - All-Star
+  - Won Championship
+  - Dunk Contest
+  - Three Point Contest
+  - Hall of Fame
+- UI to update
+  - award races
+  - groupAwards
+  - awards editor
+  - player profile
+  - league history table
+  - season summary
+  - awards records
+  - team records
+  - GOAT formula
+
 baseballGM: roster composition on Trade page. WAR on resigning page? https://discord.com/channels/290013534023057409/331882115119448065/991842013798473749
 
 game sim tendencies for other sports

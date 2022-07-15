@@ -92,6 +92,9 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 					champ: p.awards.filter(
 						(award: any) => award.type === "Won Championship",
 					).length,
+					hof: p.awards.filter(
+						(award: any) => award.type === "Inducted into the Hall of Fame",
+					).length,
 				},
 
 				// Ratings

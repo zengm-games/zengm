@@ -74,7 +74,7 @@ const Summary = ({
 	}
 
 	const awards: {
-		key: "allStar" | "mvp" | "champ";
+		key: "allStar" | "mvp" | "champ" | "hof";
 		title: string;
 	}[] = [
 		{
@@ -88,6 +88,10 @@ const Summary = ({
 		{
 			key: "mvp",
 			title: "MVP",
+		},
+		{
+			key: "hof",
+			title: "Hall of Famer",
 		},
 	];
 	for (const { key, title } of awards) {
@@ -112,8 +116,8 @@ const Summary = ({
 							<a href={helpers.leagueUrl(["player", p.pid])}>
 								{p.firstNameShort} {p.lastName}
 							</a>{" "}
-							({p.awardCounts[key]}x, {formatDraft(p)})
-							{i < display.length - 1 ? ", " : null}
+							({key !== "hof" ? `${p.awardCounts[key]}x, ` : null}
+							{formatDraft(p)}){i < display.length - 1 ? ", " : null}
 						</Fragment>
 					))}
 					{excess > 0 ? `, ${excess} more` : null}

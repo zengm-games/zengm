@@ -1083,7 +1083,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepStrictEqual(play.state.current.pts, [0, 0]);
 		});
 
-		test("offsetting penalties -> take score off the board", async () => {
+		test("offsetting penalties -> roll back play", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1143,6 +1143,102 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.down, 2);
 			assert.strictEqual(play.state.current.toGo, 7);
 			assert.strictEqual(play.state.current.scrimmage, 25);
+		});
+
+		test("offsetting penalties -> take score off the board", async () => {
+			const game = await initGameSim();
+			game.o = 0;
+			game.d = 1;
+			game.down = 2;
+			game.toGo = 7;
+			game.scrimmage = 80;
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("pass");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "dropback",
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: false,
+				name: "Holding",
+				penYds: 10,
+				spotYds: -3,
+				t: game.o,
+				tackOn: false,
+			});
+			play.addEvent({
+				type: "penalty",
+				p,
+				automaticFirstDown: true,
+				name: "Holding",
+				penYds: 5,
+				spotYds: undefined,
+				t: game.d,
+				tackOn: false,
+			});
+			play.addEvent({
+				type: "pss",
+				qb: p,
+				target: p,
+			});
+			const { td } = play.addEvent({
+				type: "pssCmp",
+				qb: p,
+				target: p,
+				yds: 100 - game.scrimmage,
+			});
+
+			assert.deepStrictEqual(td, true);
+
+			play.addEvent({
+				type: "pssTD",
+				qb: p,
+				target: p,
+			});
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[6, 0],
+				"play state, before penalty application",
+			);
+
+			assert.deepStrictEqual(
+				[game.team[0].stat.pts, game.team[1].stat.pts],
+				[6, 0],
+				"game state, before penalty application",
+			);
+
+			play.adjudicatePenalties();
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[0, 0],
+				"play state, after penalty application",
+			);
+
+			assert.deepStrictEqual(
+				[game.team[0].stat.pts, game.team[1].stat.pts],
+				[0, 0],
+				"game state, after penalty application",
+			);
+
+			play.commit();
+
+			assert.strictEqual(play.state.current.down, 2);
+			assert.strictEqual(play.state.current.toGo, 7);
+			assert.strictEqual(play.state.current.scrimmage, 80);
+
+			assert.deepStrictEqual(
+				play.state.current.pts,
+				[0, 0],
+				"play state, after commit",
+			);
 		});
 
 		test("tackOn -> offsetting penalties, replay down", async () => {

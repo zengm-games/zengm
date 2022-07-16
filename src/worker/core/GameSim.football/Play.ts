@@ -1212,7 +1212,7 @@ class Play {
 			// Actually apply result of accepted penalty - ASSUMES JUST ONE IS ACCEPTED
 			this.state.current = result.state;
 
-			if (result.indexAccept >= 0) {
+			if (result.indexAccept >= 0 || offsetStatus === "offset") {
 				let numPenaltiesSeen = 0;
 
 				const statChanges = [

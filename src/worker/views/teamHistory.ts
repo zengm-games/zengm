@@ -233,21 +233,31 @@ const updateTeamHistory = async (
 					region: ts ? ts.region : t.region,
 				};
 
-				let name;
+				let firstName;
+				let lastName;
 				let pos;
+				let lastSeasonWithTeam = -Infinity;
 				if (row.pid !== undefined) {
 					const p = await idb.getCopy.players({ pid: row.pid }, "noCopyCache");
 					if (p) {
-						name = `${p.firstName} ${p.lastName}`;
+						firstName = p.firstName;
+						lastName = p.lastName;
 						pos = getMostCommonPosition(p, inputs.tid);
+						for (const row of p.stats) {
+							if (row.tid === inputs.tid && row.season > lastSeasonWithTeam) {
+								lastSeasonWithTeam = row.season;
+							}
+						}
 					}
 				}
 
 				return {
 					...row,
 					teamInfo,
-					name,
+					firstName,
+					lastName,
 					pos,
+					lastSeasonWithTeam,
 				};
 			}),
 		);
@@ -293,11 +303,13 @@ const updateTeamHistory = async (
 			}
 
 			return {
-				name: row.name,
+				firstName: row.firstName,
+				lastName: row.lastName,
 				number: row.number,
 				pid: row.pid,
 				pos: row.pos,
 				score: row.score,
+				lastSeasonWithTeam: row.lastSeasonWithTeam,
 				seasonRetired: row.seasonRetired,
 				seasonTeamInfo: row.seasonTeamInfo,
 				teamInfo: row.teamInfo,

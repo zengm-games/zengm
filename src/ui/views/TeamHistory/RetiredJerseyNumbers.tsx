@@ -5,6 +5,7 @@ import type { View } from "../../../common/types";
 import orderBy from "lodash-es/orderBy";
 import { PLAYER } from "../../../common";
 import classNames from "classnames";
+import useLocalStorageState from "use-local-storage-state";
 
 const PAGE_SIZE = 12;
 
@@ -20,6 +21,18 @@ const RetiredJerseyNumbers = ({
 	"godMode" | "players" | "retiredJerseyNumbers" | "season" | "tid" | "userTid"
 >) => {
 	const [page, setPage] = useState(0);
+
+	type JeresySortKey =
+		| "jerseyRetirementYear"
+		| "lastSeasonWithTeam"
+		| "jerseyNumber"
+		| "name";
+	const [jerseySortKey, setJerseySortKey] = useLocalStorageState<JeresySortKey>(
+		"jerseySortKey",
+		{
+			defaultValue: "jerseyRetirementYear",
+		},
+	);
 
 	const [editing, setEditing] = useState<
 		| {
@@ -97,11 +110,11 @@ const RetiredJerseyNumbers = ({
 					}
 				}}
 			>
-				<h3>
+				<h2>
 					{editing.type === "add"
 						? "Add Retired Jersey Number"
 						: "Edit Retired Jersey Number"}
-				</h3>
+				</h2>
 				<div className="row">
 					<div className="col-lg-6">
 						<div className="mb-3">
@@ -293,21 +306,87 @@ const RetiredJerseyNumbers = ({
 	const enablePrevious = pagination && page > 0;
 	const enableNext = pagination && page < maxPage;
 
+	const jerseySortOptions: {
+		key: JeresySortKey;
+		title: string;
+	}[] = [
+		{
+			key: "lastSeasonWithTeam",
+			title: "Last Season With Team",
+		},
+		{
+			key: "jerseyRetirementYear",
+			title: "Jersey Retirement Year",
+		},
+		{
+			key: "jerseyNumber",
+			title: "Jersey Number",
+		},
+		{
+			key: "name",
+			title: "Name",
+		},
+	];
+
+	let sortedJerseyNumbers;
+	if (jerseySortKey === "name") {
+		sortedJerseyNumbers = orderBy(retiredJerseyNumbers, [
+			"lastName",
+			"firstName",
+		]);
+	} else if (jerseySortKey === "jerseyNumber") {
+		sortedJerseyNumbers = orderBy(retiredJerseyNumbers, row =>
+			parseInt(row.number),
+		);
+	} else if (jerseySortKey === "jerseyRetirementYear") {
+		sortedJerseyNumbers = orderBy(
+			retiredJerseyNumbers,
+			row => row.seasonRetired,
+		);
+	} else {
+		sortedJerseyNumbers = orderBy(
+			retiredJerseyNumbers,
+			row => row.lastSeasonWithTeam,
+		);
+	}
+
 	let retiredJerseyNumbersToDisplay;
 	if (pagination) {
 		const indexStart = page * PAGE_SIZE;
 		const indexEnd = indexStart + PAGE_SIZE;
-		retiredJerseyNumbersToDisplay = retiredJerseyNumbers.slice(
+		retiredJerseyNumbersToDisplay = sortedJerseyNumbers.slice(
 			indexStart,
 			indexEnd,
 		);
 	} else {
-		retiredJerseyNumbersToDisplay = retiredJerseyNumbers;
+		retiredJerseyNumbersToDisplay = sortedJerseyNumbers;
 	}
 
 	return (
 		<>
-			{retiredJerseyNumbers.length === 0 ? (
+			<div className="d-flex justify-content-between mb-2">
+				<h2>
+					Retired <span className="d-sm-none">Jerseys</span>
+					<span className="d-none d-sm-inline">Jersey Numbers</span>
+				</h2>
+				{sortedJerseyNumbers.length > 1 ? (
+					<select
+						className="form-select form-select-sm ms-3"
+						style={{ width: 150 }}
+						value={jerseySortKey}
+						onChange={event => {
+							setJerseySortKey(event.target.value as JeresySortKey);
+						}}
+					>
+						{jerseySortOptions.map(({ key, title }) => (
+							<option key={key} value={key}>
+								{title}
+							</option>
+						))}
+					</select>
+				) : null}
+			</div>
+			{sortedJerseyNumbers.length === 0 ? (
 				<p>None yet!</p>
 			) : (
 				<div className="row">
@@ -329,7 +408,7 @@ const RetiredJerseyNumbers = ({
 										<>
 											{row.pos ? `${row.pos} ` : null}
 											<a href={helpers.leagueUrl(["player", row.pid])}>
-												{row.name}
+												{row.firstName} {row.lastName}
 											</a>
 											{row.numRings > 0 ? (
 												<span

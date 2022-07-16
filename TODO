@@ -1,3 +1,5 @@
+FBGM penalty during score
+
 custom awards
 - fields
   - formula
@@ -43,7 +45,11 @@ don't show captains on All-Star History page unless it's a draft
 ga4
 - Configure > Events
   - modify events to normalize names
+  -  maybe use standard names https://support.google.com/analytics/answer/9267735?
   - mark as conversion
+- user id
+  - https://support.google.com/analytics/answer/9213390?hl=en
+  - https://developers.google.com/analytics/devguides/collection/ga4/user-id?platform=websites
 
 regular season -> playoffs processing transition is slow in football, maybe only in prod build not watch
 

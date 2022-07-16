@@ -693,7 +693,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			return game;
 		};
 
-		it("touchdown on first possession -> over", async () => {
+		test("touchdown on first possession -> over", async () => {
 			const game = await initOvertime();
 			game.overtimeState = "firstPossession";
 			game.currentPlay = new Play(game);
@@ -713,7 +713,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepEqual(game.overtimeState, "over");
 		});
 
-		it("FG on first possession -> not over", async () => {
+		test("FG on first possession -> not over", async () => {
 			const game = await initOvertime();
 			game.overtimeState = "firstPossession";
 			game.currentPlay = new Play(game);
@@ -736,7 +736,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepEqual(game.overtimeState, "firstPossession");
 		});
 
-		it("FG on second possession -> over", async () => {
+		test("FG on second possession -> over", async () => {
 			const game = await initOvertime();
 			game.overtimeState = "secondPossession";
 			game.currentPlay = new Play(game);
@@ -759,7 +759,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepEqual(game.overtimeState, "over");
 		});
 
-		it("safety on first possession -> over", async () => {
+		test("safety on first possession -> over", async () => {
 			const game = await initOvertime();
 			game.overtimeState = "firstPossession";
 			game.currentPlay = new Play(game);
@@ -779,7 +779,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepEqual(game.overtimeState, "over");
 		});
 
-		it("touchdown on first possession negated by penalty -> not over", async () => {
+		test("touchdown on first possession negated by penalty -> not over", async () => {
 			const game = await initOvertime();
 			game.overtimeState = "firstPossession";
 			game.currentPlay = new Play(game);
@@ -812,7 +812,7 @@ describe("worker/core/GameSim.football/Play", () => {
 	});
 
 	describe("one penalty on each team", () => {
-		it("15 yard penalty overrules 5 yard penalty", async () => {
+		test("15 yard penalty overrules 5 yard penalty", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -875,7 +875,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 20);
 		});
 
-		it("two penalties after change of possession -> roll back to change of possession", async () => {
+		test("two penalties after change of possession -> roll back to change of possession", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -947,7 +947,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			);
 		});
 
-		it("penalty on offense, change of possession, penalty on new offense -> apply only 2nd penalty", async () => {
+		test("penalty on offense, change of possession, penalty on new offense -> apply only 2nd penalty", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1022,7 +1022,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(game.o, 1, "possession change happened");
 		});
 
-		it("no special case -> offsetting penalties, replay down", async () => {
+		test("no special case -> offsetting penalties, replay down", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1083,7 +1083,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.deepStrictEqual(play.state.current.pts, [0, 0]);
 		});
 
-		it("offsetting penalties -> take score off the board", async () => {
+		test("offsetting penalties -> take score off the board", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1145,7 +1145,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 25);
 		});
 
-		it("tackOn -> offsetting penalties, replay down", async () => {
+		test("tackOn -> offsetting penalties, replay down", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1209,7 +1209,7 @@ describe("worker/core/GameSim.football/Play", () => {
 	});
 
 	describe("game sim issues", () => {
-		it("missed fg -> possesion change", async () => {
+		test("missed fg -> possesion change", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1243,7 +1243,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 44);
 		});
 
-		it("run -> fumble recovered by offense -> lost down", async () => {
+		test("run -> fumble recovered by offense -> lost down", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1284,7 +1284,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 67);
 		});
 
-		it("pass -> fumble recovered by offense -> lost down", async () => {
+		test("pass -> fumble recovered by offense -> lost down", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;
@@ -1323,7 +1323,7 @@ describe("worker/core/GameSim.football/Play", () => {
 			assert.strictEqual(play.state.current.scrimmage, 65);
 		});
 
-		it("QB scramble counts as one down", async () => {
+		test("QB scramble counts as one down", async () => {
 			const game = await initGameSim();
 			game.o = 0;
 			game.d = 1;

@@ -33,6 +33,11 @@ const RetiredJerseyNumbers = ({
 			defaultValue: "jerseyRetirementYear",
 		},
 	);
+	const [jerseySortDirection, setJerseySortDirection] = useLocalStorageState<
+		"asc" | "desc"
+	>("jerseySortDirection", {
+		defaultValue: "asc",
+	});
 
 	const [editing, setEditing] = useState<
 		| {
@@ -330,23 +335,28 @@ const RetiredJerseyNumbers = ({
 
 	let sortedJerseyNumbers;
 	if (jerseySortKey === "name") {
-		sortedJerseyNumbers = orderBy(retiredJerseyNumbers, [
-			"lastName",
-			"firstName",
-		]);
+		sortedJerseyNumbers = orderBy(
+			retiredJerseyNumbers,
+			["lastName", "firstName"],
+			jerseySortDirection,
+		);
 	} else if (jerseySortKey === "jerseyNumber") {
-		sortedJerseyNumbers = orderBy(retiredJerseyNumbers, row =>
-			parseInt(row.number),
+		sortedJerseyNumbers = orderBy(
+			retiredJerseyNumbers,
+			row => parseInt(row.number),
+			jerseySortDirection,
 		);
 	} else if (jerseySortKey === "jerseyRetirementYear") {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
 			row => row.seasonRetired,
+			jerseySortDirection,
 		);
 	} else {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
 			row => row.lastSeasonWithTeam,
+			jerseySortDirection,
 		);
 	}
 
@@ -362,28 +372,49 @@ const RetiredJerseyNumbers = ({
 		retiredJerseyNumbersToDisplay = sortedJerseyNumbers;
 	}
 
+	const showSortOptions = sortedJerseyNumbers.length > 1;
+
 	return (
 		<>
 			<div className="d-flex justify-content-between mb-2">
-				<h2>
+				<h2 className="mb-0">
 					Retired <span className="d-sm-none">Jerseys</span>
 					<span className="d-none d-sm-inline">Jersey Numbers</span>
 				</h2>
-				{sortedJerseyNumbers.length > 1 ? (
-					<select
-						className="form-select form-select-sm ms-3"
-						style={{ width: 150 }}
-						value={jerseySortKey}
-						onChange={event => {
-							setJerseySortKey(event.target.value as JeresySortKey);
-						}}
-					>
-						{jerseySortOptions.map(({ key, title }) => (
-							<option key={key} value={key}>
-								{title}
-							</option>
-						))}
-					</select>
+				{showSortOptions ? (
+					<div className="ms-3 d-flex align-items-center">
+						<select
+							className="form-select form-select-sm"
+							style={{ width: 150 }}
+							value={jerseySortKey}
+							onChange={event => {
+								setJerseySortKey(event.target.value as JeresySortKey);
+							}}
+						>
+							{jerseySortOptions.map(({ key, title }) => (
+								<option key={key} value={key}>
+									{title}
+								</option>
+							))}
+						</select>
+						<button
+							className="btn btn-sm btn-light-bordered ms-1"
+							onClick={() => {
+								setJerseySortDirection(
+									jerseySortDirection === "asc" ? "desc" : "asc",
+								);
+							}}
+							title={`Sort ${
+								jerseySortDirection === "asc" ? "descending" : "ascending"
+							}`}
+						>
+							<span
+								className={`glyphicon glyphicon-arrow-${
+									jerseySortDirection === "asc" ? "up" : "down"
+								}`}
+							/>
+						</button>
+					</div>
 				) : null}
 			</div>
 			{sortedJerseyNumbers.length === 0 ? (

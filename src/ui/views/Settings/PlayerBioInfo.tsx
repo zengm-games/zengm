@@ -1,6 +1,12 @@
 import { ChangeEvent, useRef, useState } from "react";
 import type { PlayerBioInfo } from "../../../common/types";
-import { confirm, helpers, logEvent, toWorker } from "../../util";
+import {
+	confirm,
+	helpers,
+	logEvent,
+	safeLocalStorage,
+	toWorker,
+} from "../../util";
 import { godModeRequiredMessage } from "./SettingsFormOptions";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
@@ -91,6 +97,39 @@ export const formatPlayerBioInfoState = (
 	const defaultFractionSkipCollege2 =
 		playerBioInfo?.default?.fractionSkipCollege ?? 0.98;
 
+	const playerBioInfoSortDefault: {
+		colleges: ["name" | "frequency", "asc" | "desc"];
+		countries: ["country" | "frequency", "asc" | "desc"];
+		names: ["name" | "frequency", "asc" | "desc"];
+	} = {
+		colleges: ["name", "asc"],
+		countries: ["country", "asc"],
+		names: ["frequency", "desc"],
+	};
+	let playerBioInfoSort = playerBioInfoSortDefault;
+	try {
+		const temp = safeLocalStorage.getItem("playerBioInfoSort");
+		if (temp) {
+			playerBioInfoSort = JSON.parse(temp);
+		}
+		for (const key of ["colleges", "countries", "names"] as const) {
+			const nameKey = key === "countries" ? "country" : "name";
+			if (
+				!playerBioInfoSort[key] ||
+				!Array.isArray(playerBioInfoSort[key]) ||
+				(playerBioInfoSort[key][0] !== nameKey &&
+					playerBioInfoSort[key][0] !== "frequency") ||
+				(playerBioInfoSort[key][1] !== "asc" &&
+					playerBioInfoSort[key][1] !== "desc")
+			) {
+				// @ts-expect-error
+				playerBioInfoSort[key] = playerBioInfoSortDefault[key];
+			}
+		}
+	} catch (err) {
+		playerBioInfoSort = playerBioInfoSortDefault;
+	}
+
 	for (const [country, frequency] of Object.entries(frequencies)) {
 		const mergedCountry = mergedCountries[country];
 		if (!mergedCountry) {
@@ -129,12 +168,20 @@ export const formatPlayerBioInfoState = (
 			last: [],
 		};
 		for (const key of ["first", "last"] as const) {
-			namesText[key] = objectToArray(names[key], "name", "frequency", "desc");
+			namesText[key] = objectToArray(
+				names[key],
+				"name",
+				...playerBioInfoSort.names,
+			);
 		}
 
 		const colleges = mergedCountry.colleges ?? defaultColleges2;
 		const defaultColleges = allDefaults || isEqual(colleges, defaultColleges2);
-		const collegesText = objectToArray(colleges, "name", "name");
+		const collegesText = objectToArray(
+			colleges,
+			"name",
+			...playerBioInfoSort.colleges,
+		);
 
 		const defaultRaces2 =
 			defaults.races[country] ??
@@ -189,7 +236,7 @@ export const formatPlayerBioInfoState = (
 		defaultColleges: defaultCollegesText,
 		defaultRaces: defaultRacesText,
 		defaultFractionSkipCollege: defaultFractionSkipCollegeText,
-		countries: orderBy(countries, "country"),
+		countries: orderBy(countries, ...playerBioInfoSort.countries),
 	};
 };
 

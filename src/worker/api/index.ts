@@ -3244,6 +3244,9 @@ const updateGameAttributesGodMode = async (
 	if (initRepeatSeason) {
 		await league.initRepeatSeason();
 	}
+
+	await idb.cache.flush();
+
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 

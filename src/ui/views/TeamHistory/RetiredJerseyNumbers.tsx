@@ -377,18 +377,24 @@ const RetiredJerseyNumbers = ({
 	return (
 		<>
 			<div className="d-flex justify-content-between mb-2">
-				<h2 className="mb-0">
+				<h2 className="mb-0 text-nowrap">
 					Retired <span className="d-sm-none">Jerseys</span>
 					<span className="d-none d-sm-inline">Jersey Numbers</span>
 				</h2>
 				{showSortOptions ? (
-					<div className="ms-3 d-flex align-items-center">
+					<div
+						className="input-group input-group-sm ms-3"
+						style={{ maxWidth: 250 }}
+					>
+						<span className="input-group-text" id="basic-addon1">
+							Sort by
+						</span>
 						<select
-							className="form-select form-select-sm"
-							style={{ width: 150 }}
+							className="form-select"
 							value={jerseySortKey}
 							onChange={event => {
 								setJerseySortKey(event.target.value as JeresySortKey);
+								setPage(0);
 							}}
 						>
 							{jerseySortOptions.map(({ key, title }) => (
@@ -398,11 +404,12 @@ const RetiredJerseyNumbers = ({
 							))}
 						</select>
 						<button
-							className="btn btn-sm btn-light-bordered ms-1"
+							className="btn btn-sm btn-light-bordered"
 							onClick={() => {
 								setJerseySortDirection(
 									jerseySortDirection === "asc" ? "desc" : "asc",
 								);
+								setPage(0);
 							}}
 							title={`Sort ${
 								jerseySortDirection === "asc" ? "descending" : "ascending"
@@ -410,7 +417,7 @@ const RetiredJerseyNumbers = ({
 						>
 							<span
 								className={`glyphicon glyphicon-arrow-${
-									jerseySortDirection === "asc" ? "up" : "down"
+									jerseySortDirection === "asc" ? "down" : "up"
 								}`}
 							/>
 						</button>

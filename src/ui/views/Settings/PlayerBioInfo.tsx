@@ -37,7 +37,7 @@ export const objectToArray = <T extends string>(
 					frequency: String(frequency),
 				} as Record<T | "frequency", string>),
 		),
-		sortKey,
+		sortKey === "frequency" ? row => parseInt(row.frequency) : sortKey,
 		order,
 	);
 

@@ -261,7 +261,7 @@ const Controls = ({
 						onClick={(field, direction) => {
 							let countries: typeof infoState["countries"];
 							if (field === "country") {
-								countries = orderBy(infoState.countries, "country", direction);
+								countries = orderBy(infoState.countries, field, direction);
 							} else {
 								countries = orderBy(
 									infoState.countries,

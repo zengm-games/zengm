@@ -2,9 +2,7 @@ button to sort player bio info stuff alphabetically or by frequency
 - name
   - initial load
   - on change
-- college
-  - initial load
-  - on change
+- default colleges initial load
 
 custom awards
 - fields

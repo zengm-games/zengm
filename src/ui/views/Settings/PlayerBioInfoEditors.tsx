@@ -7,7 +7,9 @@ import {
 	PlayerBioInfoRowButton,
 	smallColStyle,
 } from "./PlayerBioInfoCountries";
+import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
 import Modal from "../../components/Modal";
+import orderBy from "lodash-es/orderBy";
 
 type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];
 
@@ -213,13 +215,12 @@ const CollegesControls = ({
 				</button>
 				<Dropdown>
 					<Dropdown.Toggle
-						className="btn-light-bordered btn-light-bordered-group-right"
+						className="btn-light-bordered btn-light-bordered-group-left btn-light-bordered-group-right"
 						variant="foo"
 						id="dropdown-colleges-reset"
 					>
 						Reset
 					</Dropdown.Toggle>
-
 					<Dropdown.Menu>
 						<Dropdown.Item
 							onClick={() => {
@@ -237,6 +238,22 @@ const CollegesControls = ({
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
+				<PlayerBioInfoSortButton
+					type="colleges"
+					onClick={(field, direction) => {
+						let colleges: typeof rows;
+						if (field === "name") {
+							colleges = orderBy(rows, field, direction);
+						} else {
+							colleges = orderBy(
+								rows,
+								row => parseInt(row.frequency),
+								direction,
+							);
+						}
+						onSave(colleges);
+					}}
+				/>
 			</div>
 		</>
 	);

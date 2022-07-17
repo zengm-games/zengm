@@ -53,6 +53,16 @@ export const arrayToObject = <T extends string>(
 	return output;
 };
 
+export const PLAYER_BIO_INFO_SORT_DEFAULT: {
+	colleges: ["name" | "frequency", "asc" | "desc"];
+	countries: ["country" | "frequency", "asc" | "desc"];
+	names: ["name" | "frequency", "asc" | "desc"];
+} = {
+	colleges: ["name", "asc"],
+	countries: ["country", "asc"],
+	names: ["frequency", "desc"],
+};
+
 export const formatPlayerBioInfoState = (
 	playerBioInfo: PlayerBioInfo | undefined,
 	defaults: Defaults | undefined,
@@ -97,16 +107,7 @@ export const formatPlayerBioInfoState = (
 	const defaultFractionSkipCollege2 =
 		playerBioInfo?.default?.fractionSkipCollege ?? 0.98;
 
-	const playerBioInfoSortDefault: {
-		colleges: ["name" | "frequency", "asc" | "desc"];
-		countries: ["country" | "frequency", "asc" | "desc"];
-		names: ["name" | "frequency", "asc" | "desc"];
-	} = {
-		colleges: ["name", "asc"],
-		countries: ["country", "asc"],
-		names: ["frequency", "desc"],
-	};
-	let playerBioInfoSort = playerBioInfoSortDefault;
+	let playerBioInfoSort = { ...PLAYER_BIO_INFO_SORT_DEFAULT };
 	try {
 		const temp = safeLocalStorage.getItem("playerBioInfoSort");
 		if (temp) {
@@ -123,11 +124,11 @@ export const formatPlayerBioInfoState = (
 					playerBioInfoSort[key][1] !== "desc")
 			) {
 				// @ts-expect-error
-				playerBioInfoSort[key] = playerBioInfoSortDefault[key];
+				playerBioInfoSort[key] = PLAYER_BIO_INFO_SORT_DEFAULT[key];
 			}
 		}
 	} catch (err) {
-		playerBioInfoSort = playerBioInfoSortDefault;
+		playerBioInfoSort = { ...PLAYER_BIO_INFO_SORT_DEFAULT };
 	}
 
 	for (const [country, frequency] of Object.entries(frequencies)) {
@@ -232,11 +233,22 @@ export const formatPlayerBioInfoState = (
 	);
 	const defaultFractionSkipCollegeText = String(defaultFractionSkipCollege2);
 
+	let countriesSorted;
+	if (playerBioInfoSort.countries[0] === "frequency") {
+		countriesSorted = orderBy(
+			countries,
+			row => parseInt(row.frequency),
+			playerBioInfoSort.countries[1],
+		);
+	} else {
+		countriesSorted = orderBy(countries, ...playerBioInfoSort.countries);
+	}
+
 	return {
 		defaultColleges: defaultCollegesText,
 		defaultRaces: defaultRacesText,
 		defaultFractionSkipCollege: defaultFractionSkipCollegeText,
-		countries: orderBy(countries, ...playerBioInfoSort.countries),
+		countries: countriesSorted,
 	};
 };
 

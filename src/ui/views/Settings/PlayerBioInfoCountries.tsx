@@ -11,9 +11,11 @@ import {
 	PlayerBioInfoState,
 	prune,
 } from "./PlayerBioInfo";
+import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
 import { IMPORT_FILE_STYLE } from "./RowsEditor";
 import { CountryFlag } from "../../components";
 import Modal from "../../components/Modal";
+import orderBy from "lodash/orderBy";
 
 export const smallColStyle = {
 	marginLeft: 10,
@@ -123,7 +125,7 @@ const ExportButton = ({
 	</button>
 );
 
-type SetInfoState = (
+export type SetInfoState = (
 	infoState:
 		| PlayerBioInfoState
 		| ((infoState: PlayerBioInfoState) => PlayerBioInfoState),
@@ -227,7 +229,7 @@ const Controls = ({
 					</Dropdown>
 					<Dropdown>
 						<Dropdown.Toggle
-							className="btn-light-bordered btn-light-bordered-group-right"
+							className="btn-light-bordered btn-light-bordered-group-left btn-light-bordered-group-right"
 							variant="foo"
 							id="dropdown-countries-reset"
 						>
@@ -254,6 +256,25 @@ const Controls = ({
 							</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
+					<PlayerBioInfoSortButton
+						type="countries"
+						onClick={(field, direction) => {
+							let countries: typeof infoState["countries"];
+							if (field === "country") {
+								countries = orderBy(infoState.countries, "country", direction);
+							} else {
+								countries = orderBy(
+									infoState.countries,
+									row => parseInt(row.frequency),
+									direction,
+								);
+							}
+							setInfoState(data => ({
+								...data,
+								countries,
+							}));
+						}}
+					/>
 				</div>
 				<div className="btn-group">
 					<ImportButton

@@ -1,9 +1,10 @@
 button to sort player bio info stuff alphabetically or by frequency
-- country
 - name
+  - initial load
+  - on change
 - college
-- after reload (but not before reload) edited countries and colleges are already sorted, but not names. why? because it's sorted by frequency
-- add Sort button next to reset, pick Alphabetical or Frequency, Asc or Desc. remember. use on initial sort too
+  - initial load
+  - on change
 
 custom awards
 - fields

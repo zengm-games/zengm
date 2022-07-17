@@ -171,10 +171,19 @@ const untilPick = async (dpid: number, conditions: Conditions) => {
 	await runDraft({ type: "untilPick", dpid }, conditions);
 };
 
-const addToTradingBlock = async (pid: number, conditions: Conditions) => {
+const addToTradingBlock = async (
+	param:
+		| {
+				pid: number;
+		  }
+		| {
+				dpid: number;
+		  },
+	conditions: Conditions,
+) => {
 	toUI(
 		"realtimeUpdate",
-		[[], helpers.leagueUrl(["trading_block"]), { pid }],
+		[[], helpers.leagueUrl(["trading_block"]), param],
 		conditions,
 	);
 };

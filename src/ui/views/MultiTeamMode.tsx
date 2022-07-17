@@ -140,10 +140,10 @@ const MultiTeamMode = ({
 				(command+click on Mac) to select individual teams.
 			</p>
 
-			<div className="btn-group mb-3">
+			<div className="d-flex mb-3">
 				<button
 					type="button"
-					className="btn btn-light-bordered"
+					className="btn btn-light-bordered me-2"
 					onClick={async () => {
 						await toWorker("main", "updateMultiTeamMode", {
 							userTids: teams.map(t => t.tid),

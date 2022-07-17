@@ -237,6 +237,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats,
 			undrafted,
 			userPlayers,
+			userTid: g.get("userTid"),
 			userTids: g.get("userTids"),
 		};
 	}

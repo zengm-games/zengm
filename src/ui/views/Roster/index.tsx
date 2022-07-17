@@ -357,7 +357,9 @@ const Roster = ({
 											if (showTradeFor) {
 												toWorker("actions", "tradeFor", { pid: p.pid });
 											} else {
-												toWorker("actions", "addToTradingBlock", p.pid);
+												toWorker("actions", "addToTradingBlock", {
+													pid: p.pid,
+												});
 											}
 										}}
 									>

@@ -802,8 +802,10 @@ const tradeSummary = (params: Params) => {
 
 const tradingBlock = (params: Params, ctxBBGM: any) => {
 	const pid = ctxBBGM.pid;
+	const dpid = ctxBBGM.dpid;
 	return {
 		pid: typeof pid === "number" ? pid : undefined,
+		dpid: typeof dpid === "number" ? dpid : undefined,
 	};
 };
 

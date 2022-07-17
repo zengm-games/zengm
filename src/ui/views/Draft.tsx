@@ -83,6 +83,7 @@ const Draft = ({
 	stats,
 	undrafted,
 	userPlayers,
+	userTid,
 	userTids,
 }: View<"draft">) => {
 	const [drafting, setDrafting] = useState(false);
@@ -284,22 +285,33 @@ const Draft = ({
 					>
 						Sim to pick
 					</button>
-					{!fantasyDraft &&
-					!expansionDraft &&
-					!userTids.includes(p.draft.tid) &&
-					!spectator ? (
-						<button
-							className="btn btn-xs btn-light-bordered ms-2"
-							disabled={drafting}
-							onClick={async () => {
-								await toWorker("actions", "tradeFor", {
-									dpid: p.draft.dpid,
-									tid: p.draft.tid,
-								});
-							}}
-						>
-							Trade for pick
-						</button>
+					{!fantasyDraft && !expansionDraft && !spectator ? (
+						userTid === p.draft.tid ? (
+							<button
+								className="btn btn-xs btn-light-bordered ms-2"
+								disabled={drafting}
+								onClick={async () => {
+									await toWorker("actions", "addToTradingBlock", {
+										dpid: p.draft.dpid,
+									});
+								}}
+							>
+								Trade away pick
+							</button>
+						) : (
+							<button
+								className="btn btn-xs btn-light-bordered ms-2"
+								disabled={drafting}
+								onClick={async () => {
+									await toWorker("actions", "tradeFor", {
+										dpid: p.draft.dpid,
+										tid: p.draft.tid,
+									});
+								}}
+							>
+								Trade for pick
+							</button>
+						)
 					) : null}
 				</>
 			),

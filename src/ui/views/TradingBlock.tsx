@@ -268,7 +268,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		asking: false,
 		offers: [],
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
-		dpids: [],
+		dpids: props.initialDpid !== undefined ? [props.initialDpid] : [],
 	});
 
 	const beforeOffersRef = useRef<HTMLDivElement>(null);

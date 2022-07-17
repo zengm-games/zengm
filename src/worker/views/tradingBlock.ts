@@ -69,6 +69,7 @@ const updateUserRoster = async (
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
 			initialPid: inputs.pid,
+			initialDpid: inputs.dpid,
 			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),
 			salaryCapType: g.get("salaryCapType"),

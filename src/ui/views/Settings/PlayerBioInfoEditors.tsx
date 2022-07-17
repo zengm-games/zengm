@@ -517,13 +517,12 @@ const NamesControls = ({
 				</button>
 				<Dropdown>
 					<Dropdown.Toggle
-						className="btn-light-bordered btn-light-bordered-group-right"
+						className="btn-light-bordered btn-light-bordered-group-left btn-light-bordered-group-right"
 						variant="foo"
 						id="dropdown-names-reset"
 					>
 						Reset
 					</Dropdown.Toggle>
-
 					<Dropdown.Menu>
 						{defaultRows ? (
 							<Dropdown.Item
@@ -543,6 +542,18 @@ const NamesControls = ({
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
+				<PlayerBioInfoSortButton
+					type="names"
+					onClick={(field, direction) => {
+						let names: typeof rows;
+						if (field === "name") {
+							names = orderBy(rows, field, direction);
+						} else {
+							names = orderBy(rows, row => parseInt(row.frequency), direction);
+						}
+						onSave(names);
+					}}
+				/>
 			</div>
 		</>
 	);

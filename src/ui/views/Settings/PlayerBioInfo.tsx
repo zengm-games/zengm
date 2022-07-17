@@ -225,7 +225,11 @@ export const formatPlayerBioInfoState = (
 		});
 	}
 
-	const defaultCollegesText = objectToArray(defaultColleges2, "name", "name");
+	const defaultCollegesText = objectToArray(
+		defaultColleges2,
+		"name",
+		...playerBioInfoSort.colleges,
+	);
 	const defaultRacesText = objectToArray(
 		playerBioInfo?.default?.races ?? defaults.races.USA,
 		"race",

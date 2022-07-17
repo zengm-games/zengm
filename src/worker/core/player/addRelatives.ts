@@ -2,6 +2,7 @@ import romanNumerals from "roman-numerals";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type { Player, Relative, RelativeType } from "../../../common/types";
+import { isSport } from "../../../common";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -83,7 +84,11 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 		newRelative.college = existingRelative.college;
 	}
 
-	if (existingRelative.stats.length > 0 && Math.random() < 0.5) {
+	if (
+		!isSport("football") &&
+		existingRelative.stats.length > 0 &&
+		Math.random() < 0.5
+	) {
 		newRelative.jerseyNumber = existingRelative.stats.at(-1).jerseyNumber;
 	}
 };

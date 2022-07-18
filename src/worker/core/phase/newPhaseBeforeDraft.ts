@@ -488,7 +488,27 @@ const newPhaseBeforeDraft = async (
 		riggedLottery: undefined,
 	});
 
-	toUI("bbgmPing", ["season", g.get("season")], conditions);
+	toUI(
+		"analyticsEvent",
+		[
+			"completed_season",
+			{
+				season: g.get("season"),
+			},
+		],
+		conditions,
+	);
+	toUI(
+		"analyticsEvent",
+		[
+			"level_up",
+			{
+				level: g.get("season"),
+				character: String(g.get("lid")),
+			},
+		],
+		conditions,
+	);
 	return {
 		url,
 		updateEvents: ["playerMovement"],

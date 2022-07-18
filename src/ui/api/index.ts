@@ -1,5 +1,6 @@
 import {
 	ads,
+	analyticsEvent,
 	autoPlayDialog,
 	confirm,
 	confirmDeleteAllLeagues,
@@ -18,30 +19,6 @@ import type {
 } from "../../common/types";
 import { AD_DIVS, GRACE_PERIOD } from "../../common";
 import { updateSkyscraperDisplay } from "../components/Skyscraper";
-
-/**
- * Ping a counter at basketball-gm.com.
- *
- * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
- */
-const bbgmPing = (
-	type: "customizePlayers" | "league" | "season" | "version",
-	arg?: any,
-) => {
-	if (window.enableLogging && window.gtag) {
-		if (type === "season") {
-			window.gtag("event", "Completed season", {
-				event_category: "BBGM",
-				event_label: String(arg),
-			});
-		} else if (type === "version") {
-			window.gtag("event", "Version", {
-				event_category: "BBGM",
-				event_label: window.bbgmVersion,
-			});
-		}
-	}
-};
 
 // Read from goldUntil rather than local because this is called before local is updated
 const initAds = (goldUntil: number | undefined) => {
@@ -309,8 +286,8 @@ const updateTeamOvrs = (ovrs: number[]) => {
 };
 
 export default {
+	analyticsEvent,
 	autoPlayDialog,
-	bbgmPing,
 	confirm,
 	confirmDeleteAllLeagues,
 	deleteGames,

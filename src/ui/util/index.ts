@@ -26,6 +26,7 @@ promiseWorker.registerError(error => {
 });
 
 export { default as ads } from "./ads";
+export { default as analyticsEvent } from "./analyticsEvent";
 export { default as autoPlayDialog } from "./autoPlayDialog";
 export { default as compareVersions } from "./compareVersions";
 export { default as confirm } from "./confirm";

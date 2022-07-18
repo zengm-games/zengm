@@ -32,6 +32,7 @@ import {
 	toWorker,
 	safeLocalStorage,
 	useLocalShallow,
+	analyticsEvent,
 } from "../../util";
 import type {
 	View,
@@ -781,19 +782,24 @@ const NewLeague = (props: View<"newLeague">) => {
 			});
 
 			let type: string = state.customize;
+			let type2 = type;
 			if (type === "real") {
 				type = String(state.season);
+				type2 += `-${state.season}`;
 			}
 			if (type === "legends") {
 				type = String(state.legend);
+				type2 += `-${state.legend}`;
 			}
-			if (window.enableLogging && window.gtag) {
-				window.gtag("event", "new_league", {
-					event_category: type,
-					event_label: teamRegionName,
-					value: lid,
-				});
-			}
+			analyticsEvent("new_league", {
+				league_type: type,
+				team: teamRegionName,
+				league_id: lid,
+			});
+			analyticsEvent("select_content", {
+				content_type: "new_league",
+				item_id: type2,
+			});
 
 			realtimeUpdate([], `/l/${lid}`);
 		} catch (err) {

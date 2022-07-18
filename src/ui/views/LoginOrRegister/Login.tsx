@@ -1,7 +1,12 @@
 import { FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { ActionButton } from "../../components";
-import { localActions, realtimeUpdate, toWorker } from "../../util";
+import {
+	analyticsEvent,
+	localActions,
+	realtimeUpdate,
+	toWorker,
+} from "../../util";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [submitting, setSubmitting] = useState(false);
@@ -43,6 +48,8 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				await toWorker("main", "checkParticipationAchievement", false);
 				await toWorker("main", "realtimeUpdate", ["account"]);
 				await realtimeUpdate([], "/account");
+
+				analyticsEvent("login");
 			} else {
 				setSubmitting(false);
 				setErrorMessage("Invalid username or password.");

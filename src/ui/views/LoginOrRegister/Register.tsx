@@ -1,7 +1,12 @@
 import classNames from "classnames";
 import { FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import { localActions, realtimeUpdate, toWorker } from "../../util";
+import {
+	analyticsEvent,
+	localActions,
+	realtimeUpdate,
+	toWorker,
+} from "../../util";
 import { ActionButton, GameLinks } from "../../components";
 
 export const fields = {
@@ -63,7 +68,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 		});
 
 		if (!formRef.current) {
-			throw new Error("login element not found");
+			throw new Error("signup element not found");
 		}
 		const formData = new FormData(formRef.current);
 
@@ -81,6 +86,8 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				});
 				await toWorker("main", "checkParticipationAchievement", true);
 				realtimeUpdate([], "/account");
+
+				analyticsEvent("sign_up");
 			} else {
 				const updatedState: Partial<State> = {};
 

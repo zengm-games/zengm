@@ -478,15 +478,34 @@ const getPlayerStats = (
 		return rows;
 	}
 
-	// Merged playoffs can only happen with God Mode forcing a player to switch teams during playoffs
-	const getMergedRow = (mergeSeason: number, mergePlayoffs: boolean) => {
-		const rowsTemp = rows.filter(
-			row => row.season === mergeSeason && row.playoffs === mergePlayoffs,
-		);
-		if (rowsTemp.length === 1) {
-			return rowsTemp;
+	let thereAreRowsToMerge = false;
+	const seasonInfoKey = (row: { season: number; playoffs: true }) =>
+		JSON.stringify([row.season, row.playoffs]);
+	type SeasonInfo = {
+		season: number;
+		playoffs: boolean;
+		rows: any[];
+	};
+	const seasonInfos: SeasonInfo[] = [];
+	const seasonInfosByKey: Record<string, SeasonInfo> = {};
+	for (const row of rows) {
+		const key = seasonInfoKey(row);
+		if (seasonInfosByKey[key]) {
+			seasonInfosByKey[key].rows.push(row);
+			thereAreRowsToMerge = true;
+		} else {
+			const seasonInfo = {
+				season: row.season,
+				playoffs: row.playoffs,
+				rows: [row],
+			};
+			seasonInfos.push(seasonInfo);
+			seasonInfosByKey[key] = seasonInfo;
 		}
+	}
 
+	// Merged playoffs can only happen with God Mode forcing a player to switch teams during playoffs
+	const getMerged = (rowsToMerge: any[]) => {
 		// Aggregate annual stats and ignore other things
 		const ignoredKeys = [
 			"season",
@@ -496,11 +515,11 @@ const getPlayerStats = (
 			"jerseyNumber",
 		];
 		const statSums: any = {};
-		const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp.at(-1)) : [];
+		const attrs = rowsToMerge.length > 0 ? Object.keys(rowsToMerge.at(-1)) : [];
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.includes(attr)) {
-				statSums[attr] = reduceCareerStats(rowsTemp, attr, false);
+				statSums[attr] = reduceCareerStats(rowsToMerge, attr, false);
 			}
 		}
 
@@ -520,63 +539,27 @@ const getPlayerStats = (
 			if (attr === "tid" && mergeStats === "totAndTeams") {
 				statSums[attr] = PLAYER.TOT;
 			} else {
-				statSums[attr] = rowsTemp.at(-1)[attr];
+				statSums[attr] = rowsToMerge.at(-1)[attr];
 			}
 		}
 
+		if (mergeStats === "totAndTeams") {
+			// Return individual stats rows and the merged row
+			return [...rowsToMerge, statSums];
+		}
+
+		// Just return the merged row, discard the individual team entries
 		return statSums;
 	};
 
-	const seasonInfoKey = (row: { season: number; playoffs: true }) =>
-		JSON.stringify([row.season, row.playoffs]);
-	type SeasonInfo = {
-		season: number;
-		playoffs: boolean;
-		merge: boolean;
-		rows: any[];
-	};
-	const seasonInfos: SeasonInfo[] = [];
-	const seasonInfosByKey: Record<string, SeasonInfo> = {};
-	for (const row of rows) {
-		const key = seasonInfoKey(row);
-		if (seasonInfosByKey[key]) {
-			seasonInfosByKey[key].merge = true;
-			seasonInfosByKey[key].rows.push(row);
-		} else {
-			const seasonInfo = {
-				season: row.season,
-				playoffs: row.playoffs,
-				merge: false,
-				rows: [row],
-			};
-			seasonInfos.push(seasonInfo);
-			seasonInfosByKey[key] = seasonInfo;
-		}
-	}
-
-	if (seasonInfos.length !== rows.length) {
-		if (mergeStats === "totOnly") {
-			// Remove any partial seasons, just keep one row per season exactly
-			return seasonInfos
-				.map(seasonInfo =>
-					seasonInfo.merge
-						? getMergedRow(seasonInfo.season, seasonInfo.playoffs)
-						: seasonInfo.rows,
-				)
-				.flat();
-		} else if (mergeStats === "totAndTeams") {
-			// For any partial seasons, add another for TOT following it
-			return seasonInfos
-				.map(seasonInfo =>
-					seasonInfo.merge
-						? [
-								...seasonInfo.rows,
-								getMergedRow(seasonInfo.season, seasonInfo.playoffs),
-						  ]
-						: seasonInfo.rows,
-				)
-				.flat();
-		}
+	if (thereAreRowsToMerge) {
+		return seasonInfos
+			.map(seasonInfo =>
+				seasonInfo.rows.length > 1
+					? getMerged(seasonInfo.rows)
+					: seasonInfo.rows,
+			)
+			.flat();
 	}
 
 	return rows;

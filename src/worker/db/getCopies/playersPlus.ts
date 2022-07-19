@@ -414,7 +414,7 @@ const reduceCareerStats = (
 	const weightAttrByMinutes = weightByMinutes.includes(attr);
 
 	return careerStats
-		.filter(cs => cs.playoffs === playoffs)
+		.filter(cs => cs.playoffs === playoffs && cs.tid !== PLAYER.TOT)
 		.reduce((memo, cs) => {
 			if (cs[attr] === undefined) {
 				return memo;

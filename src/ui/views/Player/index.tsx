@@ -12,9 +12,22 @@ import { isSport, PLAYER } from "../../../common";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
 import TeamAbbrevLink from "../../components/TeamAbbrevLink";
 
-const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
+const SeasonLink = ({
+	className,
+	pid,
+	season,
+}: {
+	className?: string;
+	pid: number;
+	season: number;
+}) => {
 	return (
-		<a href={helpers.leagueUrl(["player_game_log", pid, season])}>{season}</a>
+		<a
+			className={className}
+			href={helpers.leagueUrl(["player_game_log", pid, season])}
+		>
+			{season}
+		</a>
 	);
 };
 
@@ -166,6 +179,8 @@ const StatsTable = ({
 				hideAllControls
 				name={`Player:${name}`}
 				rows={playerStats.map((ps, i) => {
+					const className = ps.hasTot ? "text-muted" : undefined;
+
 					return {
 						key: i,
 						data: [
@@ -174,7 +189,11 @@ const StatsTable = ({
 								sortValue: i,
 								value: (
 									<>
-										<SeasonLink pid={p.pid} season={ps.season} />{" "}
+										<SeasonLink
+											className={className}
+											pid={p.pid}
+											season={ps.season}
+										/>{" "}
 										<SeasonIcons
 											season={ps.season}
 											awards={p.awards}
@@ -185,15 +204,14 @@ const StatsTable = ({
 							},
 							<TeamAbbrevLink
 								abbrev={ps.abbrev}
+								className={className}
 								season={ps.season}
 								tid={ps.tid}
 							/>,
 							ps.age,
 							...stats.map(stat => formatStatGameHigh(ps, stat)),
 						],
-						classNames: {
-							"text-muted": ps.hasTot,
-						},
+						classNames: className,
 					};
 				})}
 				superCols={superCols}

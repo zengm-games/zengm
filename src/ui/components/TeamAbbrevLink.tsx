@@ -4,10 +4,12 @@ import { helpers } from "../util";
 const TeamAbbrev = ({
 	tid,
 	abbrev,
+	className,
 	season,
 }: {
 	tid: number;
 	abbrev: string;
+	className?: string;
 	season?: number;
 }) => {
 	if (!abbrev) {
@@ -15,12 +17,19 @@ const TeamAbbrev = ({
 	}
 
 	if (tid === PLAYER.DOES_NOT_EXIST) {
-		return <span title="Does Not Exist">DNE</span>;
+		return (
+			<span className={className} title="Does Not Exist">
+				DNE
+			</span>
+		);
 	}
 
 	if (tid === PLAYER.TOT) {
 		return (
-			<span title={season !== undefined ? `Total for ${season}` : "Total"}>
+			<span
+				className={className}
+				title={season !== undefined ? `Total for ${season}` : "Total"}
+			>
 				TOT
 			</span>
 		);
@@ -39,7 +48,11 @@ const TeamAbbrev = ({
 		leagueUrlParam = ["roster", `${abbrev}_${tid}`, season];
 	}
 
-	return <a href={helpers.leagueUrl(leagueUrlParam)}>{abbrev}</a>;
+	return (
+		<a className={className} href={helpers.leagueUrl(leagueUrlParam)}>
+			{abbrev}
+		</a>
+	);
 };
 
 export default TeamAbbrev;

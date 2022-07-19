@@ -473,55 +473,109 @@ const getPlayerStats = (
 		}),
 	);
 
-	const actuallyMergeStats =
-		mergeStats &&
-		regularSeason &&
-		!playoffs &&
-		tid === undefined &&
-		rows.length > 1;
+	// Can't merge if there's only 1 row!
+	if (mergeStats === "none" || rows.length <= 1) {
+		return rows;
+	}
 
-	if (actuallyMergeStats) {
-		const seasons = Array.from(new Set(rows.map(row => row.season)));
-		if (seasons.length !== rows.length) {
-			// Multiple entries when we want one row of output per season... maybe player was traded during season?
-			return seasons.map(season2 => {
-				const rowsTemp = rows.filter(row => row.season === season2);
+	// Merged playoffs can only happen with God Mode forcing a player to switch teams during playoffs
+	const getMergedRow = (mergeSeason: number, mergePlayoffs: boolean) => {
+		const rowsTemp = rows.filter(
+			row => row.season === mergeSeason && row.playoffs === mergePlayoffs,
+		);
+		if (rowsTemp.length === 1) {
+			return rowsTemp;
+		}
 
-				// Aggregate annual stats and ignore other things
-				const ignoredKeys = [
-					"season",
-					"tid",
-					"yearsWithTeam",
-					"playoffs",
-					"jerseyNumber",
-				];
-				const statSums: any = {};
-				const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp.at(-1)) : [];
+		// Aggregate annual stats and ignore other things
+		const ignoredKeys = [
+			"season",
+			"tid",
+			"yearsWithTeam",
+			"playoffs",
+			"jerseyNumber",
+		];
+		const statSums: any = {};
+		const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp.at(-1)) : [];
 
-				for (const attr of attrs) {
-					if (!ignoredKeys.includes(attr)) {
-						statSums[attr] = reduceCareerStats(rowsTemp, attr, false);
-					}
+		for (const attr of attrs) {
+			if (!ignoredKeys.includes(attr)) {
+				statSums[attr] = reduceCareerStats(rowsTemp, attr, false);
+			}
+		}
+
+		// Special case for some variables, weight by minutes
+		for (const attr of weightByMinutes) {
+			if (Object.hasOwn(statSums, attr)) {
+				if (statSums.min > 0) {
+					statSums[attr] /= statSums.min;
+				} else {
+					statSums[attr] = 0;
 				}
+			}
+		}
 
-				// Special case for some variables, weight by minutes
-				for (const attr of weightByMinutes) {
-					if (Object.hasOwn(statSums, attr)) {
-						if (statSums.min > 0) {
-							statSums[attr] /= statSums.min;
-						} else {
-							statSums[attr] = 0;
-						}
-					}
-				}
+		// Defaults from latest entry
+		for (const attr of ignoredKeys) {
+			if (attr === "tid" && mergeStats === "totAndTeams") {
+				statSums[attr] = PLAYER.TOT;
+			} else {
+				statSums[attr] = rowsTemp.at(-1)[attr];
+			}
+		}
 
-				// Defaults from latest entry
-				for (const attr of ignoredKeys) {
-					statSums[attr] = rowsTemp.at(-1)[attr];
-				}
+		return statSums;
+	};
 
-				return statSums;
-			});
+	const seasonInfoKey = (row: { season: number; playoffs: true }) =>
+		JSON.stringify([row.season, row.playoffs]);
+	type SeasonInfo = {
+		season: number;
+		playoffs: boolean;
+		merge: boolean;
+		rows: any[];
+	};
+	const seasonInfos: SeasonInfo[] = [];
+	const seasonInfosByKey: Record<string, SeasonInfo> = {};
+	for (const row of rows) {
+		const key = seasonInfoKey(row);
+		if (seasonInfosByKey[key]) {
+			seasonInfosByKey[key].merge = true;
+			seasonInfosByKey[key].rows.push(row);
+		} else {
+			const seasonInfo = {
+				season: row.season,
+				playoffs: row.playoffs,
+				merge: false,
+				rows: [row],
+			};
+			seasonInfos.push(seasonInfo);
+			seasonInfosByKey[key] = seasonInfo;
+		}
+	}
+
+	if (seasonInfos.length !== rows.length) {
+		if (mergeStats === "totOnly") {
+			// Remove any partial seasons, just keep one row per season exactly
+			return seasonInfos
+				.map(seasonInfo =>
+					seasonInfo.merge
+						? getMergedRow(seasonInfo.season, seasonInfo.playoffs)
+						: seasonInfo.rows,
+				)
+				.flat();
+		} else if (mergeStats === "totAndTeams") {
+			// For any partial seasons, add another for TOT following it
+			return seasonInfos
+				.map(seasonInfo =>
+					seasonInfo.merge
+						? [
+								...seasonInfo.rows,
+								getMergedRow(seasonInfo.season, seasonInfo.playoffs),
+						  ]
+						: seasonInfo.rows,
+				)
+				.flat();
 		}
 	}
 

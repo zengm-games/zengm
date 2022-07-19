@@ -217,6 +217,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		playoffs: true,
 		showRookies: true,
 		fuzz: true,
+		mergeStats: "totAndTeams",
 	});
 
 	if (!p) {

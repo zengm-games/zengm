@@ -167,6 +167,10 @@ const getAbbrev = (tid: number | string): string => {
 		return "DNE";
 	}
 
+	if (tid === PLAYER.TOT) {
+		return "TOT";
+	}
+
 	if (tid < 0 || Number.isNaN(tid)) {
 		// Weird or retired
 		return "";

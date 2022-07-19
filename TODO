@@ -1,16 +1,22 @@
 separate "TOT" line for stats
 - player profile page
+  - stat tables
+  - statSummary should use TOT row
 - player stats page
   - need to support season+new mergeStats setting
 - add up rows where keys match
   - handle ones where it's a weighted average, similar to careerStats
-- show TOT as abbrev with no link
 - show non-TOT rows in light gray text
+  - hasTot should be a special field like "playoffs" or others, may be true or undefined, may always be present
 - API
   - mergeStats switch from boolean to string
   - if season is passed, how to handle that? cause then stats is not array. maybe don't allow for now
 
 put GOAT formula in advanced stats? https://discord.com/channels/290013534023057409/331882115119448065/998425104155418696
+
+use TeamAbbrevLink more places
+- maybe default to reading from local state if no abbrev
+- if available, would be nice to put team region+name in title
 
 custom awards
 - fields

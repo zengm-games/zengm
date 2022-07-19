@@ -10,6 +10,7 @@ import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
+import TeamAbbrevLink from "../../components/TeamAbbrevLink";
 
 const SeasonLink = ({ pid, season }: { pid: number; season: number }) => {
 	return (
@@ -182,15 +183,11 @@ const StatsTable = ({
 									</>
 								),
 							},
-							<a
-								href={helpers.leagueUrl([
-									"roster",
-									`${ps.abbrev}_${ps.tid}`,
-									ps.season,
-								])}
-							>
-								{ps.abbrev}
-							</a>,
+							<TeamAbbrevLink
+								abbrev={ps.abbrev}
+								season={ps.season}
+								tid={ps.tid}
+							/>,
 							ps.age,
 							...stats.map(stat => formatStatGameHigh(ps, stat)),
 						],
@@ -335,17 +332,11 @@ const Player2 = ({
 										</>
 									),
 								},
-								r.abbrev ? (
-									<a
-										href={helpers.leagueUrl([
-											"roster",
-											`${r.abbrev}_${r.tid}`,
-											r.season,
-										])}
-									>
-										{r.abbrev}
-									</a>
-								) : null,
+								<TeamAbbrevLink
+									abbrev={r.abbrev}
+									season={r.season}
+									tid={r.tid}
+								/>,
 								r.age,
 								r.pos,
 								showRatings ? r.ovr : null,

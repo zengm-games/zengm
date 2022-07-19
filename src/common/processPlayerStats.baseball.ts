@@ -190,6 +190,12 @@ const processStats = (
 
 	// Since they come in same stream, always need to be able to distinguish
 	row.playoffs = ps.playoffs;
+
+	// Always pass through hasTot
+	if (ps.hasTot) {
+		row.hasTot = ps.hasTot;
+	}
+
 	return row;
 };
 

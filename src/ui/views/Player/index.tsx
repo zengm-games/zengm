@@ -191,6 +191,9 @@ const StatsTable = ({
 							ps.age,
 							...stats.map(stat => formatStatGameHigh(ps, stat)),
 						],
+						classNames: {
+							"text-muted": ps.hasTot,
+						},
 					};
 				})}
 				superCols={superCols}

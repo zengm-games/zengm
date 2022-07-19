@@ -545,7 +545,13 @@ const getPlayerStats = (
 
 		if (mergeStats === "totAndTeams") {
 			// Return individual stats rows and the merged row
-			return [...rowsToMerge, statSums];
+			return [
+				...rowsToMerge.map(row => ({
+					...row,
+					hasTot: true,
+				})),
+				statSums,
+			];
 		}
 
 		// Just return the merged row, discard the individual team entries

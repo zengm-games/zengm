@@ -1591,3 +1591,7 @@ table.sticky-xxx {
 	height: 20px;
 	transform: rotate(45deg);
 }
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+	color: inherit;
+}

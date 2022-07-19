@@ -7,7 +7,7 @@ separate "TOT" line for stats
 - add up rows where keys match
   - handle ones where it's a weighted average, similar to careerStats
 - show non-TOT rows in light gray text
-  - hasTot should be a special field like "playoffs" or others, may be true or undefined, may always be present
+  - season/team links too
 - API
   - mergeStats switch from boolean to string
   - if season is passed, how to handle that? cause then stats is not array. maybe don't allow for now

@@ -162,7 +162,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			],
 		}),
 		fuzz: true,
-		mergeStats: true,
+		mergeStats: "totOnly",
 	});
 
 	// Only keep players who actually have a stats entry for the latest season

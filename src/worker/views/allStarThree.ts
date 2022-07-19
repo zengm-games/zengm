@@ -64,7 +64,7 @@ const updateAllStarThree = async (
 			stats: ["gp", "pts", "tpa", "tpp", "jerseyNumber"],
 			season,
 			fuzz: true,
-			mergeStats: true,
+			mergeStats: "totOnly",
 			showNoStats: true,
 		});
 

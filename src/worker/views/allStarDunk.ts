@@ -83,7 +83,7 @@ const updateAllStarDunk = async (
 			stats: ["gp", "pts", "trb", "ast", "jerseyNumber"],
 			season,
 			fuzz: true,
-			mergeStats: true,
+			mergeStats: "totOnly",
 			showNoStats: true,
 		});
 

@@ -107,7 +107,7 @@ const updatePlayers = async (
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs !== "playoffs",
-			mergeStats: true,
+			mergeStats: "totOnly",
 		});
 
 		if (inputs.season === "all") {

@@ -76,7 +76,7 @@ const updateAwards = async (
 				],
 			}),
 			fuzz: true,
-			mergeStats: true,
+			mergeStats: "totOnly",
 			season,
 		});
 

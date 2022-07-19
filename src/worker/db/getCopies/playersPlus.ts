@@ -12,23 +12,11 @@ import type {
 	PlayersPlusOptions,
 } from "../../../common/types";
 
-type PlayersPlusOptionsRequired = {
+type PlayersPlusOptionsRequired = Required<
+	Omit<PlayersPlusOptions, "season" | "tid">
+> & {
 	season?: number;
 	tid?: number;
-	attrs: string[];
-	ratings: string[];
-	stats: string[];
-	playoffs: boolean;
-	regularSeason: boolean;
-	showNoStats: boolean;
-	showRookies: boolean;
-	showDraftProspectRookieRatings: boolean;
-	showRetired: boolean;
-	fuzz: boolean;
-	oldStats: boolean;
-	numGamesRemaining: number;
-	statType: PlayerStatType;
-	mergeStats: boolean;
 };
 
 const processAttrs = (
@@ -468,7 +456,7 @@ const getPlayerStats = (
 	tid: number | undefined,
 	playoffs: boolean,
 	regularSeason: boolean,
-	mergeStats: boolean,
+	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
 	const rows = helpers.deepCopy(
 		playerStats.filter(ps => {
@@ -780,9 +768,15 @@ const getCopies = async (
 		oldStats = false,
 		numGamesRemaining = 0,
 		statType = "perGame",
-		mergeStats = false,
+		mergeStats = "none",
 	}: PlayersPlusOptions,
 ): Promise<PlayerFiltered[]> => {
+	if (mergeStats === "totAndTeams" && season !== undefined) {
+		throw new Error(
+			"mergeStats totOnly is not supported for individual seasons",
+		);
+	}
+
 	const options: PlayersPlusOptionsRequired = {
 		season,
 		tid,

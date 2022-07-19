@@ -449,7 +449,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			attrs: ["tid"],
 			stats: ["season", "fg", "tid"],
 			season: 2012,
-			mergeStats: true,
+			mergeStats: "totOnly",
 		});
 
 		if (!pf) {
@@ -468,7 +468,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		const pf = await idb.getCopy.playersPlus(p2, {
 			attrs: ["tid"],
 			stats: ["season", "fg", "tid"],
-			mergeStats: true,
+			mergeStats: "totOnly",
 		});
 
 		if (!pf) {

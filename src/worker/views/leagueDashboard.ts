@@ -229,7 +229,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
-			mergeStats: true,
+			mergeStats: "totOnly",
 		});
 
 		const leagueLeaders: {

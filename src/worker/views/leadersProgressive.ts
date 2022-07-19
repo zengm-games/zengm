@@ -109,7 +109,7 @@ const updateLeadersProgressive = async (
 				stats: ["abbrev", "tid", ...stats],
 				playoffs,
 				regularSeason: !playoffs,
-				mergeStats: true,
+				mergeStats: "totOnly",
 				statType: inputs.statType,
 			};
 

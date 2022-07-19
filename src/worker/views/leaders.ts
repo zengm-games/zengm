@@ -779,7 +779,7 @@ const updateLeaders = async (
 				season: season === "career" ? undefined : season,
 				playoffs,
 				regularSeason: !playoffs,
-				mergeStats: true,
+				mergeStats: "totOnly",
 				statType: inputs.statType,
 			});
 			if (!p) {

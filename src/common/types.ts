@@ -1157,7 +1157,7 @@ export type PlayersPlusOptions = {
 	oldStats?: boolean;
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
-	mergeStats?: boolean;
+	mergeStats?: "none" | "totOnly" | "totAndTeams";
 };
 
 export type Race = "asian" | "black" | "brown" | "white";

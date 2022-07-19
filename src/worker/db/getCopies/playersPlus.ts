@@ -493,6 +493,11 @@ const getPlayerStats = (
 	const seasonInfos: SeasonInfo[] = [];
 	const seasonInfosByKey: Record<string, SeasonInfo> = {};
 	for (const row of rows) {
+		if (row.gp === 0) {
+			// Ignore rows with 0 GP, hope that's safe!
+			continue;
+		}
+
 		const key = seasonInfoKey(row);
 		if (seasonInfosByKey[key]) {
 			seasonInfosByKey[key].rows.push(row);

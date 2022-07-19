@@ -479,5 +479,6 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(pf.stats[0].tid, 20);
 		assert.strictEqual(pf.stats[0].fg, (30 + 20) / 8);
 		assert.strictEqual(pf.stats[1].fg, 56 / 8);
+		assert.strictEqual(pf.stats.length, 2);
 	});
 });

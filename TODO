@@ -1,3 +1,15 @@
+separate "TOT" line for stats
+- player profile page
+- player stats page
+  - need to support season+new mergeStats setting
+- add up rows where keys match
+  - handle ones where it's a weighted average, similar to careerStats
+- show TOT as abbrev with no link
+- show non-TOT rows in light gray text
+- API
+  - mergeStats switch from boolean to string
+  - if season is passed, how to handle that? cause then stats is not array. maybe don't allow for now
+
 put GOAT formula in advanced stats? https://discord.com/channels/290013534023057409/331882115119448065/998425104155418696
 
 custom awards

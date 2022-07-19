@@ -488,7 +488,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 
 		const pf = await idb.getCopy.playersPlus(p2, {
 			attrs: ["tid"],
-			stats: ["season", "fg", "tid"],
+			stats: ["season", "fg", "tid", "abbrev"],
+			ratings: ["season", "abbrev"],
 			mergeStats: "totAndTeams",
 		});
 
@@ -517,5 +518,24 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(pf.stats[1].hasTot, true);
 		assert.strictEqual(pf.stats[2].hasTot, undefined);
 		assert.strictEqual(pf.stats[3].hasTot, undefined);
+
+		assert.deepStrictEqual(pf.ratings, [
+			{
+				season: 2011,
+				abbrev: "",
+			},
+			{
+				season: 2012,
+				abbrev: "POR",
+			},
+			{
+				season: 2013,
+				abbrev: "ATL",
+			},
+			{
+				season: 2014,
+				abbrev: "",
+			},
+		]);
 	});
 });

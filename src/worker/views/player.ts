@@ -219,6 +219,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		fuzz: true,
 		mergeStats: "totAndTeams",
 	});
+	console.log(p);
 
 	if (!p) {
 		// https://stackoverflow.com/a/59923262/786644

@@ -297,7 +297,7 @@ const processRatings = (
 				// Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
 				if (!stats.includes("tid")) {
 					throw new Error(
-						'Crazy I know, but if you request "abbrev" or "tid" from ratings, you must also request "tid", "season", and "playoffs" from stats',
+						'If you request "abbrev" or "tid" from ratings, you must also request "tid", "season", and "playoffs" from stats',
 					);
 				}
 
@@ -306,7 +306,11 @@ const processRatings = (
 				for (const ps of Array.isArray(output.stats)
 					? output.stats
 					: [output.stats]) {
-					if (ps.season === pr.season && ps.playoffs === false) {
+					if (
+						ps.season === pr.season &&
+						ps.playoffs === false &&
+						ps.tid !== PLAYER.TOT
+					) {
 						tidTemp = ps.tid;
 					}
 				}

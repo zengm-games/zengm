@@ -1,3 +1,11 @@
+page width adding scrollbar after bootstrap 5.2 upgrade
+
+UI to delete account
+- make type username
+- not allowed with active subscription, say to email me instead
+- explain this will not delete saved games, delete all can do that
+- log user out after deleting
+
 separate "TOT" line for stats on player stats page
 - need to support season+new mergeStats setting
 

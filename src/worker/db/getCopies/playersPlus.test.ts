@@ -479,6 +479,38 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.strictEqual(pf.stats[0].tid, 20);
 		assert.strictEqual(pf.stats[0].fg, (30 + 20) / 8);
 		assert.strictEqual(pf.stats[1].fg, 56 / 8);
-		assert.strictEqual(pf.stats.length, 2);
+	});
+
+	test("mergeStats totAndTeams results ", async () => {
+		const p2 = helpers.deepCopy(p);
+		p2.stats[1].playoffs = false;
+		p2.stats[1].tid = 20;
+
+		const pf = await idb.getCopy.playersPlus(p2, {
+			attrs: ["tid"],
+			stats: ["season", "fg", "tid"],
+			mergeStats: "totAndTeams",
+		});
+
+		if (!pf) {
+			throw new Error("Missing player");
+		}
+
+		assert.strictEqual(pf.stats.length, 4);
+
+		assert.strictEqual(pf.stats[0].tid, 4);
+		assert.strictEqual(pf.stats[1].tid, 20);
+		assert.strictEqual(pf.stats[2].tid, PLAYER.TOT);
+		assert.strictEqual(pf.stats[3].tid, 0);
+
+		assert.strictEqual(pf.stats[0].season, 2012);
+		assert.strictEqual(pf.stats[1].season, 2012);
+		assert.strictEqual(pf.stats[2].season, 2012);
+		assert.strictEqual(pf.stats[3].season, 2013);
+
+		assert.strictEqual(pf.stats[0].fg, 20 / 5);
+		assert.strictEqual(pf.stats[1].fg, 30 / 3);
+		assert.strictEqual(pf.stats[2].fg, 50 / 8);
+		assert.strictEqual(pf.stats[3].fg, 56 / 8);
 	});
 });

@@ -75,6 +75,9 @@ const PLAYER = {
 	// Used for realStats when a team has been contracted
 	DOES_NOT_EXIST: -7,
 
+	// Used for summed up season stats for multiple teams
+	TOT: -8,
+
 	// THESE ARE OBSOLETE!
 	UNDRAFTED_2: -4, // Next year's draft class
 	UNDRAFTED_3: -5, // Next next year's draft class

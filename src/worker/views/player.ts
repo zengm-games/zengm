@@ -284,7 +284,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 	let prevKey: string = "";
 	for (const ps of p.stats) {
 		const jerseyNumber = ps.jerseyNumber;
-		if (jerseyNumber === undefined || ps.gp === 0) {
+		if (jerseyNumber === undefined || ps.gp === 0 || ps.tid === PLAYER.TOT) {
 			continue;
 		}
 

@@ -22,7 +22,6 @@ const toolsMenu = {
 	},
 	resetDb: async (param: unknown, conditions: Conditions) => {
 		const response = await toUI("confirmDeleteAllLeagues", [], conditions);
-		console.log("response", response);
 
 		if (response) {
 			await reset(response);

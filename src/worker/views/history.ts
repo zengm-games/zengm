@@ -115,8 +115,6 @@ const updateHistory = async (
 				g.get("numGamesPlayoffSeries", season).length,
 		);
 
-		console.log("awards", awards);
-
 		return {
 			awards,
 			champ,

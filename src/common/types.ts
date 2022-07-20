@@ -1557,7 +1557,7 @@ export type TeamSeasonWithoutKey = {
 	// w - clinched play-in tournament
 	// x - clinched playoffs
 	// y - if byes exist - clinched bye
-	// z - clinched home court advantage
+	// z - clinched #1 seed advantage
 	// o - eliminated
 	clinchedPlayoffs?: "w" | "x" | "y" | "z" | "o";
 

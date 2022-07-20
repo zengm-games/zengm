@@ -94,7 +94,7 @@ export const makeMatchups = (
 	};
 };
 
-const getTidPlayIns = (playIns: PlayInTournament[]) => {
+export const getTidPlayIns = (playIns: PlayInTournament[]) => {
 	const tids = [];
 	for (const playIn of playIns) {
 		for (const matchup of playIn) {

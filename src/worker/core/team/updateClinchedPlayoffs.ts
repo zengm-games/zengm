@@ -1,7 +1,10 @@
 import { idb } from "../../db";
 import type { TeamSeason, Conditions, TeamStats } from "../../../common/types";
 import { g, helpers, logEvent } from "../../util";
-import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
+import {
+	genPlayoffSeriesFromTeams,
+	getTidPlayIns,
+} from "../season/genPlayoffSeries";
 import evaluatePointsFormula from "./evaluatePointsFormula";
 import { season } from "..";
 
@@ -10,7 +13,6 @@ type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 const getClinchedPlayoffs = async (
 	teamSeasons: TeamSeason[],
 	teamStats: Map<number, TeamStats>,
-	finalStandings: boolean,
 ) => {
 	if (g.get("numGamesPlayoffSeries").length === 0) {
 		return teamSeasons.map(() => undefined);
@@ -19,7 +21,7 @@ const getClinchedPlayoffs = async (
 	const usePts = g.get("pointsFormula", "current") !== "";
 
 	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow.
-	const skipTiebreakers = !finalStandings;
+	const skipTiebreakers = true;
 
 	const output: ClinchedPlayoffs[] = [];
 	for (const t of teamSeasons) {
@@ -28,8 +30,8 @@ const getClinchedPlayoffs = async (
 			const otl = t2.otl ?? 0;
 			const gp = t2.won + t2.lost + tied + otl;
 
-			// finalStandings means the season is over, which matters because in some league structures not all teams will play the same number of games
-			const gamesLeft = finalStandings ? 0 : g.get("numGames") - gp;
+			// Will be wrong if a team is missing a game due to scheduling constraints
+			const gamesLeft = g.get("numGames") - gp;
 
 			const stats = teamStats.get(t2.tid);
 
@@ -89,7 +91,7 @@ const getClinchedPlayoffs = async (
 		// w - clinched play-in tournament
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye
-		// z - clinched home court advantage
+		// z - clinched #1 seed
 		// o - eliminated
 		let clinchedPlayoffs: ClinchedPlayoffs;
 
@@ -123,8 +125,8 @@ const getClinchedPlayoffs = async (
 				const otl = t2.otl ?? 0;
 				const gp = t2.won + t2.lost + tied + otl;
 
-				// finalStandings means the season is over, which matters because in some league structures not all teams will play the same number of games
-				const gamesLeft = finalStandings ? 0 : g.get("numGames") - gp;
+				// Will be wrong if a team is missing a game due to scheduling constraints
+				const gamesLeft = g.get("numGames") - gp;
 
 				const stats = teamStats.get(t2.tid);
 
@@ -197,6 +199,62 @@ const getClinchedPlayoffs = async (
 	return output;
 };
 
+// We already know the playoff matchups, so just use those to derive the final clinched playoffs status. Much faster this way than running getClinchedPlayoffs with tiebreakers!
+const getClinchedPlayoffsFinal = async (teamSeasons: TeamSeason[]) => {
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (!playoffSeries) {
+		throw new Error("playoffSeries not found");
+	}
+
+	const playoffTids: number[] = [];
+	const byeTids: number[] = [];
+	const topSeedTids: number[] = [];
+
+	const firstRound = playoffSeries.series[0];
+	for (const { away, home } of firstRound) {
+		if (home.seed === 1) {
+			topSeedTids.push(home.tid);
+		} else if (!away) {
+			byeTids.push(home.tid);
+		} else {
+			playoffTids.push(home.tid);
+		}
+
+		if (away && !away.pendingPlayIn) {
+			playoffTids.push(away.tid);
+		}
+	}
+
+	const playInTids = playoffSeries.playIns
+		? getTidPlayIns(playoffSeries.playIns)
+		: [];
+
+	// w - clinched play-in tournament
+	// x - clinched playoffs
+	// y - if byes exist - clinched bye
+	// z - clinched #1 seed
+	// o - eliminated
+	return teamSeasons.map(({ tid }) => {
+		if (playInTids.includes(tid)) {
+			return "w";
+		}
+
+		if (topSeedTids.includes(tid)) {
+			return "z";
+		}
+
+		if (byeTids.includes(tid)) {
+			return "y";
+		}
+
+		if (playoffTids.includes(tid)) {
+			return "x";
+		}
+
+		return "o";
+	});
+};
+
 const updateClinchedPlayoffs = async (
 	finalStandings: boolean,
 	conditions: Conditions,
@@ -205,20 +263,23 @@ const updateClinchedPlayoffs = async (
 		"teamSeasonsBySeasonTid",
 		[[g.get("season")], [g.get("season"), "Z"]],
 	);
-	const teamStatsArray = await idb.cache.teamStats.indexGetAll(
-		"teamStatsByPlayoffsTid",
-		[[false], [false, "Z"]],
-	);
-	const teamStats = new Map<number, TeamStats>();
-	for (const row of teamStatsArray) {
-		teamStats.set(row.tid, row);
-	}
 
-	const clinchedPlayoffs = await getClinchedPlayoffs(
-		teamSeasons,
-		teamStats,
-		finalStandings,
-	);
+	let clinchedPlayoffs: ClinchedPlayoffs[];
+	if (finalStandings) {
+		// MUST BE AFTER PLAYOFF SERIES ARE SET!
+		clinchedPlayoffs = await getClinchedPlayoffsFinal(teamSeasons);
+	} else {
+		const teamStatsArray = await idb.cache.teamStats.indexGetAll(
+			"teamStatsByPlayoffsTid",
+			[[false], [false, "Z"]],
+		);
+		const teamStats = new Map<number, TeamStats>();
+		for (const row of teamStatsArray) {
+			teamStats.set(row.tid, row);
+		}
+
+		clinchedPlayoffs = await getClinchedPlayoffs(teamSeasons, teamStats);
+	}
 
 	let playoffsByConf: boolean | undefined;
 	for (let i = 0; i < teamSeasons.length; i++) {

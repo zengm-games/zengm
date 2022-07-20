@@ -63,11 +63,11 @@ don't show captains on All-Star History page unless it's a draft
 
 ga4
 - https://community.tealiumiq.com/t5/Client-Side-Tags/Google-Analytics-4-GA4-Tag-Setup-Guide/ta-p/35288
+- https://developers.google.com/analytics/devguides/collection/ga4/reference/config#user_id
 - Configure > Events
   - mark as conversion
 - send_to can send to only one property
 - bbgm-ads account link
-- API for realtime
 
 regular season -> playoffs processing transition is slow in football, maybe only in prod build not watch
 

@@ -1,5 +1,5 @@
 import { Children, useEffect, useMemo, useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer, type ScrollToOptions } from "@tanstack/react-virtual";
 import { components, type MenuListProps, type OptionProps } from "react-select";
 
 const DefaultItemHeight = 32;
@@ -42,7 +42,7 @@ export const CustomMenuList = <T extends unknown>({
 	);
 	const firstOpen = useRef(true);
 	useEffect(() => {
-		let align;
+		let align: ScrollToOptions["align"];
 		if (firstOpen.current) {
 			// For initial render of list, always align to top
 			align = "start";
@@ -73,7 +73,6 @@ export const CustomMenuList = <T extends unknown>({
 						position: "relative",
 					}}
 				>
-					{/* @ts-expect-error */}
 					{rowVirtualizer.getVirtualItems().map(virtualItem => (
 						<div
 							key={virtualItem.key}

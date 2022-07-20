@@ -74,8 +74,8 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 		},
 		plugins: [pluginSportFunctions(nodeEnv)],
 
-		// This is needed because dropbox conditionally requries various node builtins, and esbuild chokes on that even though it never actually makes it to the browser. Skip it for the worker though, otherwise that introduces a spurious error because the type export in worker/index.ts results in a module.exports being added.
-		platform: name === "ui" ? "node" : undefined,
+		// This is needed because dropbox conditionally requries various node builtins, and esbuild chokes on that even though it never actually makes it to the browser
+		external: name === "ui" ? ["crypto", "util"] : undefined,
 	};
 };
 

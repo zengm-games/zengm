@@ -333,7 +333,7 @@ const RetiredJerseyNumbers = ({
 		},
 	];
 
-	let sortedJerseyNumbers;
+	let sortedJerseyNumbers: typeof retiredJerseyNumbers;
 	if (jerseySortKey === "name") {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
@@ -373,6 +373,15 @@ const RetiredJerseyNumbers = ({
 	}
 
 	const showSortOptions = sortedJerseyNumbers.length > 1;
+
+	const findUnsortedIndex = (sortedIndex: number) => {
+		const target = sortedJerseyNumbers[sortedIndex];
+		const unsortedIndex = retiredJerseyNumbers.indexOf(target);
+		if (unsortedIndex < 0) {
+			throw new Error("Should never happen");
+		}
+		return unsortedIndex;
+	};
 
 	return (
 		<>
@@ -472,7 +481,7 @@ const RetiredJerseyNumbers = ({
 										<button
 											className="btn btn-sm btn-link p-0 border-0"
 											onClick={() => {
-												editRetiredJersey(i);
+												editRetiredJersey(findUnsortedIndex(i));
 											}}
 										>
 											Edit
@@ -481,7 +490,7 @@ const RetiredJerseyNumbers = ({
 										<button
 											className="btn btn-sm btn-link p-0 border-0"
 											onClick={() => {
-												deleteRetiredJersey(i);
+												deleteRetiredJersey(findUnsortedIndex(i));
 											}}
 										>
 											Delete

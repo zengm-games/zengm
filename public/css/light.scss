@@ -720,7 +720,7 @@ tr.table-warning:hover > td {
 
 .btn-xs {
 	padding: 0.25rem 0.4rem;
-	font-size: 0.75rem;
+	font-size: $btn-font-size-sm;
 	line-height: 0.9;
 	border-radius: 0.2rem;
 }

@@ -339,8 +339,7 @@ const Player2 = ({
 				/>
 			))}
 
-			<>
-				<h2>Ratings</h2>
+			<HideableSection title="Ratings">
 				<DataTable
 					className="mb-3"
 					cols={getCols([
@@ -397,96 +396,104 @@ const Player2 = ({
 						};
 					})}
 				/>
-			</>
+			</HideableSection>
 
 			<div className="row">
 				<div className="col-6 col-md-3">
-					<h2>Awards</h2>
-					{awardsGrouped.length > 0 ? (
-						<table className="table table-nonfluid table-striped table-borderless table-sm player-awards">
-							<tbody>
-								{awardsGrouped.map((a, i) => {
-									return (
-										<tr key={i}>
-											<td>
-												{a.count > 1 ? `${a.count}x ` : null}
-												{a.type} ({a.seasons.join(", ")})
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					) : null}
-					{awardsGrouped.length === 0 ? <p>None</p> : null}
+					<HideableSection title="Awards">
+						{awardsGrouped.length > 0 ? (
+							<table className="table table-nonfluid table-striped table-borderless table-sm player-awards">
+								<tbody>
+									{awardsGrouped.map((a, i) => {
+										return (
+											<tr key={i}>
+												<td>
+													{a.count > 1 ? `${a.count}x ` : null}
+													{a.type} ({a.seasons.join(", ")})
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						) : null}
+						{awardsGrouped.length === 0 ? <p>None</p> : null}
+					</HideableSection>
 				</div>
 				<div className="col-6 col-md-3">
-					<h2>Salaries</h2>
-					<DataTable
-						className="mb-3"
-						cols={getCols(["Year", "Amount"])}
-						defaultSort={[0, "asc"]}
-						footer={[
-							"Total",
-							helpers.formatCurrency(player.salariesTotal, "M"),
-						]}
-						hideAllControls
-						name="Player:Salaries"
-						rows={player.salaries.map((s, i) => {
-							return {
-								key: i,
-								data: [
-									{
-										searchValue: s.season,
-										sortValue: i,
-										value: (
-											<>
-												<SeasonLink pid={player.pid} season={s.season} />{" "}
-												<SeasonIcons season={s.season} awards={player.awards} />
-											</>
-										),
-									},
-									helpers.formatCurrency(s.amount, "M"),
-								],
-							};
-						})}
-					/>
+					<HideableSection title="Salaries">
+						<DataTable
+							className="mb-3"
+							cols={getCols(["Year", "Amount"])}
+							defaultSort={[0, "asc"]}
+							footer={[
+								"Total",
+								helpers.formatCurrency(player.salariesTotal, "M"),
+							]}
+							hideAllControls
+							name="Player:Salaries"
+							rows={player.salaries.map((s, i) => {
+								return {
+									key: i,
+									data: [
+										{
+											searchValue: s.season,
+											sortValue: i,
+											value: (
+												<>
+													<SeasonLink pid={player.pid} season={s.season} />{" "}
+													<SeasonIcons
+														season={s.season}
+														awards={player.awards}
+													/>
+												</>
+											),
+										},
+										helpers.formatCurrency(s.amount, "M"),
+									],
+								};
+							})}
+						/>
+					</HideableSection>
 				</div>
 				<div className="col-md-6">
-					<h2>Statistical Feats</h2>
-					<div
-						style={{
-							maxHeight: 500,
-							overflowY: "scroll",
-						}}
-					>
-						{feats.map(e => {
+					<HideableSection title="Statistical Feats">
+						<div
+							style={{
+								maxHeight: 500,
+								overflowY: "scroll",
+							}}
+						>
+							{feats.map(e => {
+								return (
+									<p key={e.eid}>
+										<b>{e.season}</b>: <SafeHtml dirty={e.text} />
+									</p>
+								);
+							})}
+						</div>
+						{feats.length === 0 ? <p>None</p> : null}
+					</HideableSection>
+				</div>
+			</div>
+
+			<div className="row" style={{ marginBottom: "-1rem" }}>
+				<div className="col-md-6 col-lg-4">
+					<HideableSection title="Injuries">
+						<Injuries injuries={player.injuries} showRatings={showRatings} />
+					</HideableSection>
+				</div>
+				<div className="col-md-6 col-lg-8">
+					<HideableSection title="Transactions">
+						{events.map(e => {
 							return (
 								<p key={e.eid}>
 									<b>{e.season}</b>: <SafeHtml dirty={e.text} />
 								</p>
 							);
 						})}
-					</div>
-					{feats.length === 0 ? <p>None</p> : null}
-				</div>
-			</div>
-
-			<div className="row" style={{ marginBottom: "-1rem" }}>
-				<div className="col-md-6 col-lg-4">
-					<h2>Injuries</h2>
-					<Injuries injuries={player.injuries} showRatings={showRatings} />
-				</div>
-				<div className="col-md-6 col-lg-8">
-					<h2>Transactions</h2>
-					{events.map(e => {
-						return (
-							<p key={e.eid}>
-								<b>{e.season}</b>: <SafeHtml dirty={e.text} />
-							</p>
-						);
-					})}
-					{events.length === 0 ? <p>None</p> : null}
+						{events.length === 0 ? <p>None</p> : null}
+					</HideableSection>
 				</div>
 			</div>
 		</>

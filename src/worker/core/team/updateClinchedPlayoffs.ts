@@ -211,17 +211,19 @@ const getClinchedPlayoffsFinal = async (teamSeasons: TeamSeason[]) => {
 	const topSeedTids: number[] = [];
 
 	const firstRound = playoffSeries.series[0];
-	for (const { away, home } of firstRound) {
-		if (home.seed === 1) {
-			topSeedTids.push(home.tid);
-		} else if (!away) {
-			byeTids.push(home.tid);
-		} else {
-			playoffTids.push(home.tid);
-		}
+	if (firstRound) {
+		for (const { away, home } of firstRound) {
+			if (home.seed === 1) {
+				topSeedTids.push(home.tid);
+			} else if (!away) {
+				byeTids.push(home.tid);
+			} else {
+				playoffTids.push(home.tid);
+			}
 
-		if (away && !away.pendingPlayIn) {
-			playoffTids.push(away.tid);
+			if (away && !away.pendingPlayIn) {
+				playoffTids.push(away.tid);
+			}
 		}
 	}
 

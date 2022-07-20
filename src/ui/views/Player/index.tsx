@@ -11,6 +11,7 @@ import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
 import TeamAbbrevLink from "../../components/TeamAbbrevLink";
+import useLocalStorageState from "use-local-storage-state";
 
 const SeasonLink = ({
 	className,
@@ -38,7 +39,9 @@ const HideableSection = ({
 	children: ReactNode;
 	title: string;
 }) => {
-	const [show, setShow] = useState(true);
+	const [show, setShow] = useLocalStorageState(`show-${title}`, {
+		defaultValue: true,
+	});
 
 	return (
 		<>

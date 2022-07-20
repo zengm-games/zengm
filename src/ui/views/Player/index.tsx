@@ -47,6 +47,8 @@ const StatsTable = ({
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
 
+	const [show, setShow] = useState(true);
+
 	// Show playoffs by default if that's all we have
 	const [playoffs, setPlayoffs] = useState(!hasRegularSeasonStats);
 
@@ -81,6 +83,24 @@ const StatsTable = ({
 		if (!display) {
 			return null;
 		}
+	}
+
+	const header = (
+		<div className="d-flex mb-2">
+			<h2 className="mb-0">{name}</h2>
+			<button
+				className="btn btn-light-bordered btn-xs ms-2"
+				onClick={() => {
+					setShow(!show);
+				}}
+			>
+				{show ? "Hide" : "Show"}
+			</button>
+		</div>
+	);
+
+	if (!show) {
+		return <div className="mb-3">{header}</div>;
 	}
 
 	const cols = getCols([
@@ -135,38 +155,36 @@ const StatsTable = ({
 
 	return (
 		<>
-			<h2>{name}</h2>
+			{header}
 			<ul className="nav nav-tabs border-bottom-0">
 				{hasRegularSeasonStats ? (
 					<li className="nav-item">
-						<a
+						<button
 							className={classNames("nav-link", {
 								active: !playoffs,
 								"border-bottom": !playoffs,
 							})}
-							onClick={event => {
-								event.preventDefault();
+							onClick={() => {
 								setPlayoffs(false);
 							}}
 						>
 							Regular Season
-						</a>
+						</button>
 					</li>
 				) : null}
 				{hasPlayoffStats ? (
 					<li className="nav-item">
-						<a
+						<button
 							className={classNames("nav-link", {
 								active: playoffs,
 								"border-bottom": playoffs,
 							})}
-							onClick={event => {
-								event.preventDefault();
+							onClick={() => {
 								setPlayoffs(true);
 							}}
 						>
 							Playoffs
-						</a>
+						</button>
 					</li>
 				) : null}
 			</ul>

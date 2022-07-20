@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { DataTable, SafeHtml, SkillsBlock } from "../../components";
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -31,6 +31,33 @@ const SeasonLink = ({
 	);
 };
 
+const HideableSection = ({
+	children,
+	title,
+}: {
+	children: ReactNode;
+	title: string;
+}) => {
+	const [show, setShow] = useState(true);
+
+	return (
+		<>
+			<div className={`d-flex ${show ? "mb-2" : "mb-3"}`}>
+				<h2 className="mb-0">{title}</h2>
+				<button
+					className="btn btn-light-bordered btn-xs ms-2"
+					onClick={() => {
+						setShow(!show);
+					}}
+				>
+					{show ? "Hide" : "Show"}
+				</button>
+			</div>
+			{show ? children : null}
+		</>
+	);
+};
+
 const StatsTable = ({
 	name,
 	onlyShowIf,
@@ -46,8 +73,6 @@ const StatsTable = ({
 }) => {
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
-
-	const [show, setShow] = useState(true);
 
 	// Show playoffs by default if that's all we have
 	const [playoffs, setPlayoffs] = useState(!hasRegularSeasonStats);
@@ -83,24 +108,6 @@ const StatsTable = ({
 		if (!display) {
 			return null;
 		}
-	}
-
-	const header = (
-		<div className="d-flex mb-2">
-			<h2 className="mb-0">{name}</h2>
-			<button
-				className="btn btn-light-bordered btn-xs ms-2"
-				onClick={() => {
-					setShow(!show);
-				}}
-			>
-				{show ? "Hide" : "Show"}
-			</button>
-		</div>
-	);
-
-	if (!show) {
-		return <div className="mb-3">{header}</div>;
 	}
 
 	const cols = getCols([
@@ -154,8 +161,7 @@ const StatsTable = ({
 	}
 
 	return (
-		<>
-			{header}
+		<HideableSection title={name}>
 			<ul className="nav nav-tabs border-bottom-0">
 				{hasRegularSeasonStats ? (
 					<li className="nav-item">
@@ -234,7 +240,7 @@ const StatsTable = ({
 				})}
 				superCols={superCols}
 			/>
-		</>
+		</HideableSection>
 	);
 };
 

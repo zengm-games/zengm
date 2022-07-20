@@ -356,7 +356,7 @@ const ScoreBox = memo(
 								<div
 									key={i}
 									className={classNames(
-										"d-flex align-items-center alert-bg-color",
+										"d-flex align-items-center",
 										scoreClassForceWin,
 										userTeamClass,
 									)}
@@ -433,7 +433,7 @@ const ScoreBox = memo(
 										{final ? (
 											<div
 												className={classNames(
-													"text-body text-end align-self-stretch d-flex align-items-center alert-bg-color",
+													"text-body text-end align-self-stretch d-flex align-items-center",
 													scoreClass,
 													userTeamClass,
 													{

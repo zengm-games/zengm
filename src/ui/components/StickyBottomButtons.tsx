@@ -12,7 +12,7 @@ const StickyBottomButtons = ({ children }: { children: any }) => {
 
 	return (
 		<div
-			className="alert-bg-color alert-secondary rounded-top p-2 d-flex settings-buttons"
+			className="alert-secondary rounded-top p-2 d-flex settings-buttons"
 			style={{ bottom }}
 		>
 			{children}

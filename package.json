@@ -78,7 +78,7 @@
 		"workbox-precaching": "^6.5.3",
 		"workbox-routing": "^6.5.3",
 		"workbox-window": "^6.5.3",
-		"zustand": "^3.7.1"
+		"zustand": "^4.0.0-rc.3"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.9",

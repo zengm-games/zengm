@@ -48,9 +48,6 @@ const handleVersion = async () => {
 			}
 		}
 	});
-	analyticsEvent("app_version", {
-		app_version: window.bbgmVersion,
-	});
 
 	window.withGoodUI?.();
 

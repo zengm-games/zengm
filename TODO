@@ -1,3 +1,5 @@
+in real players league, start at draft should give you the option to start at your team's first pick, with other teams picks being made like IRL https://mail.google.com/mail/u/0/?zx=82hreb1i3vdd#inbox/FMfcgzGpGwsMgptrrHzfvcVQTTWJMchN
+
 Injuries page for players traded during injury season shows the last team that season, not the team the injury occurred on https://old.reddit.com/r/BasketballGM/comments/w301nx/version_202207190879_on_player_profile_pages_for/iguxzxk/?context=3
 
 page width adding scrollbar after bootstrap 5.2 upgrade
@@ -60,6 +62,7 @@ game sim tendencies for other sports
 don't show captains on All-Star History page unless it's a draft
 
 ga4
+- https://community.tealiumiq.com/t5/Client-Side-Tags/Google-Analytics-4-GA4-Tag-Setup-Guide/ta-p/35288
 - Configure > Events
   - mark as conversion
 - send_to can send to only one property

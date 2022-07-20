@@ -12,6 +12,7 @@ import type { View } from "../../../common/types";
 import { GameLinks } from "../../components";
 import { ajaxErrorMsg } from "../LoginOrRegister";
 import AccountInfoForm from "./AccountInfoForm";
+import DeleteAccountForm from "./DeleteAccountForm";
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();
@@ -312,6 +313,15 @@ const Account = ({
 					<h2 className="mt-5">Update Account Info</h2>
 
 					<AccountInfoForm initialEmail={email} initialUsername={username} />
+
+					<h2 className="mt-5">Delete Account</h2>
+
+					<div style={{ maxWidth: 648 }}>
+						<DeleteAccountForm
+							username={username}
+							showGoldActive={showGoldActive}
+						/>
+					</div>
 				</>
 			) : null}
 

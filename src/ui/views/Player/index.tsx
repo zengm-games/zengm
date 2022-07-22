@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { DataTable, SafeHtml, SkillsBlock } from "../../components";
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -11,7 +11,7 @@ import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
 import TeamAbbrevLink from "../../components/TeamAbbrevLink";
-import useLocalStorageState from "use-local-storage-state";
+import hideableSectionFactory from "../../components/hideableSectionFactory";
 
 const SeasonLink = ({
 	className,
@@ -32,47 +32,20 @@ const SeasonLink = ({
 	);
 };
 
-const HideableSection = ({
-	children,
-	title,
-}: {
-	children: ReactNode;
-	title: string;
-}) => {
-	const [show, setShow] = useLocalStorageState(`show-${title}`, {
-		defaultValue: true,
-	});
-
-	return (
-		<>
-			<div className={`d-flex ${show ? "mb-2" : "mb-3"}`}>
-				<h2 className="mb-0">{title}</h2>
-				<button
-					className="btn btn-light-bordered btn-xs ms-2"
-					onClick={() => {
-						setShow(!show);
-					}}
-				>
-					{show ? "Hide" : "Show"}
-				</button>
-			</div>
-			{show ? children : null}
-		</>
-	);
-};
-
 const StatsTable = ({
 	name,
 	onlyShowIf,
 	p,
 	stats,
 	superCols,
+	HideableSection,
 }: {
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
 	stats: string[];
 	superCols?: any[];
+	HideableSection: ReturnType<typeof hideableSectionFactory>;
 }) => {
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
@@ -304,6 +277,8 @@ const Player2 = ({
 
 	const awardsGrouped = groupAwards(player.awards);
 
+	const HideableSection = hideableSectionFactory(undefined);
+
 	return (
 		<>
 			<TopStuff
@@ -336,6 +311,7 @@ const Player2 = ({
 					stats={stats}
 					superCols={superCols}
 					p={player}
+					HideableSection={HideableSection}
 				/>
 			))}
 

@@ -51,7 +51,7 @@ const frP = (i: 0, t: Team, apl: number) => {
 	const fr =
 		0.1 * (po + 2 * a - e + dp) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return fr;
 };
@@ -66,7 +66,7 @@ const frC = (i: 1, t: Team, apl: number) => {
 		0.2 * (po - t.stats.soPit + 2 * a - e + dp) -
 		apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return fr;
 };
@@ -77,7 +77,7 @@ const fr1B = (i: 2, t: Team, apl: number) => {
 
 	const fr = 0.2 * (2 * a - e) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return fr;
 };
@@ -91,7 +91,7 @@ const fr2B = (i: 3 | 4 | 5, t: Team, apl: number) => {
 	const fr =
 		0.2 * (po + 2 * a - e + dp) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return fr;
 };
@@ -105,7 +105,7 @@ const frLF = (i: 6 | 7 | 8, t: Team, apl: number) => {
 	const fr =
 		0.2 * (po + 4 * a - e + 2 * dp) - apl * (t.stats.poTot - t.stats.soPit);
 	if (Number.isNaN(fr)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return fr;
 };
@@ -115,7 +115,7 @@ const aplP = (i: 0, league: any) => {
 		(0.1 * (league.po[i] + 2 * league.a[i] - league.e[i] + league.dp[i])) /
 		(league.poTot - league.soPit);
 	if (Number.isNaN(apl)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return apl;
 };
@@ -130,7 +130,7 @@ const aplC = (i: 1, league: any) => {
 				league.dp[i])) /
 		(league.poTot - league.soPit);
 	if (Number.isNaN(apl)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return apl;
 };
@@ -139,7 +139,7 @@ const apl1B = (i: 2, league: any) => {
 	const apl =
 		(0.2 * (2 * league.a[i] - league.e[i])) / (league.poTot - league.soPit);
 	if (Number.isNaN(apl)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return apl;
 };
@@ -149,7 +149,7 @@ const apl2B = (i: 3 | 4 | 5, league: any) => {
 		(0.2 * (league.po[i] + 2 * league.a[i] - league.e[i] + league.dp[i])) /
 		(league.poTot - league.soPit);
 	if (Number.isNaN(apl)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return apl;
 };
@@ -159,7 +159,7 @@ const aplLF = (i: 6 | 7 | 8, league: any) => {
 		(0.2 * (league.po[i] + 4 * league.a[i] - league.e[i] + 2 * league.dp[i])) /
 		(league.poTot - league.soPit);
 	if (Number.isNaN(apl)) {
-		throw new Error("NaN");
+		return 0;
 	}
 	return apl;
 };

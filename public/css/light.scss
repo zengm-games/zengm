@@ -1249,7 +1249,7 @@ button.fast-forward {
 }
 @include media-breakpoint-down(lg) {
 	.settings-buttons {
-		margin: 0 -15px;
+		margin: 0 -0.5rem;
 		border-top-left-radius: 0 !important;
 		border-top-right-radius: 0 !important;
 	}

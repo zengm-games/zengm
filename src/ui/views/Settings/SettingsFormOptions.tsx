@@ -26,7 +26,7 @@ export const godModeRequiredMessage = (
 };
 
 const inputStyle = {
-	width: 150,
+	maxWidth: 150,
 };
 
 const Input = ({

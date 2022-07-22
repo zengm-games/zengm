@@ -66,6 +66,7 @@ const GmHistory = ({
 						<HideableSection
 							key={i}
 							title={teamHistory.history[0].name ?? ""}
+							titleExtraKey={i}
 							className={showOverall ? "mt-3" : undefined}
 						>
 							<Overall

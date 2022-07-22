@@ -19,9 +19,16 @@ const HideableSectionButton = ({
 	</button>
 );
 
-const useShowSection = (pageName: string | undefined, title: string) => {
-	const key =
+const useShowSection = (
+	pageName: string | undefined,
+	title: string,
+	titleExtraKey?: string | number,
+) => {
+	let key =
 		pageName === undefined ? `show-${title}` : `show-${pageName}-${title}`;
+	if (titleExtraKey !== undefined) {
+		key += `-${titleExtraKey}`;
+	}
 
 	const [show, setShow] = useLocalStorageState(key, {
 		defaultValue: true,
@@ -41,12 +48,18 @@ const hideableSectionFactory =
 		children,
 		className,
 		title,
+		titleExtraKey,
 	}: {
 		children: ReactNode;
 		className?: string;
 		title: string;
+		titleExtraKey?: string | number;
 	}) => {
-		const [show, hideableSectionButton] = useShowSection(pageName, title);
+		const [show, hideableSectionButton] = useShowSection(
+			pageName,
+			title,
+			titleExtraKey,
+		);
 
 		return (
 			<>

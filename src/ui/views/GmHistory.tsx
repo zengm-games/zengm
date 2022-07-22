@@ -4,6 +4,7 @@ import type { View } from "../../common/types";
 import Overall from "./TeamHistory/Overall";
 import Players from "./TeamHistory/Players";
 import Seasons from "./TeamHistory/Seasons";
+import hideableSectionFactory from "../components/hideableSectionFactory";
 
 const GmHistory = ({
 	bestRecord,
@@ -25,6 +26,10 @@ const GmHistory = ({
 		title: "GM History",
 	});
 
+	const showOverall = teamHistories.length !== 1;
+
+	const HideableSection = hideableSectionFactory("GmHistory");
+
 	return (
 		<>
 			<p>
@@ -40,23 +45,29 @@ const GmHistory = ({
 
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
-					{teamHistories.length !== 1 ? (
-						<Overall
-							bestRecord={bestRecord}
-							championships={championships}
-							finalsAppearances={finalsAppearances}
-							playoffAppearances={playoffAppearances}
-							totalLost={totalLost}
-							totalTied={totalTied}
-							totalOtl={totalOtl}
-							totalWinp={totalWinp}
-							totalWon={totalWon}
-							worstRecord={worstRecord}
-						/>
+					{showOverall ? (
+						<HideableSection title="Overall">
+							<Overall
+								bestRecord={bestRecord}
+								championships={championships}
+								finalsAppearances={finalsAppearances}
+								playoffAppearances={playoffAppearances}
+								totalLost={totalLost}
+								totalTied={totalTied}
+								totalOtl={totalOtl}
+								totalWinp={totalWinp}
+								totalWon={totalWon}
+								worstRecord={worstRecord}
+							/>
+						</HideableSection>
 					) : null}
 
 					{teamHistories.map((teamHistory, i) => (
-						<div key={i} className="mt-3">
+						<HideableSection
+							key={i}
+							title={teamHistory.history[0].name ?? ""}
+							className={showOverall ? "mt-3" : undefined}
+						>
 							<Overall
 								bestRecord={teamHistory.bestRecord}
 								championships={teamHistory.championships}
@@ -68,10 +79,9 @@ const GmHistory = ({
 								totalWinp={teamHistory.totalWinp}
 								totalWon={teamHistory.totalWon}
 								worstRecord={teamHistory.worstRecord}
-								title={teamHistory.history[0].name}
 							/>
 							<Seasons history={teamHistory.history} />
-						</div>
+						</HideableSection>
 					))}
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
@@ -92,7 +102,9 @@ const GmHistory = ({
 						If you do change teams in God Mode, the one listed here for a given
 						season will be the team you controlled when the playoffs ended.
 					</p>
-					<Players gmHistory players={players} stats={stats} tid={userTid} />
+					<HideableSection title="Players">
+						<Players gmHistory players={players} stats={stats} tid={userTid} />
+					</HideableSection>
 				</div>
 			</div>
 		</>

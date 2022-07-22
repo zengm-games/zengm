@@ -1,29 +1,65 @@
+import classNames from "classnames";
 import type { ReactNode } from "react";
 import useLocalStorageState from "use-local-storage-state";
+
+const HideableSectionButton = ({
+	show,
+	setShow,
+}: {
+	show: boolean;
+	setShow: (show: boolean) => void;
+}) => (
+	<button
+		className="btn btn-light-bordered btn-xs ms-2"
+		onClick={() => {
+			setShow(!show);
+		}}
+	>
+		{show ? "Hide" : "Show"}
+	</button>
+);
+
+const useShowSection = (pageName: string | undefined, title: string) => {
+	const key =
+		pageName === undefined ? `show-${title}` : `show-${pageName}-${title}`;
+
+	const [show, setShow] = useLocalStorageState(key, {
+		defaultValue: true,
+	});
+
+	const hideableSectionButton = (
+		<HideableSectionButton show={show} setShow={setShow} />
+	);
+
+	return [show, hideableSectionButton];
+};
 
 // Undefind pagename is for backwards compatibility with original usage on player page
 const hideableSectionFactory =
 	(pageName: string | undefined) =>
-	({ children, title }: { children: ReactNode; title: string }) => {
-		const key =
-			pageName === undefined ? `show-${title}` : `show-${pageName}-${title}`;
-
-		const [show, setShow] = useLocalStorageState(key, {
-			defaultValue: true,
-		});
+	({
+		children,
+		className,
+		title,
+	}: {
+		children: ReactNode;
+		className?: string;
+		title: string;
+	}) => {
+		const [show, hideableSectionButton] = useShowSection(pageName, title);
 
 		return (
 			<>
-				<div className={`d-flex ${show ? "mb-2" : "mb-3"}`}>
-					<h2 className="mb-0">{title}</h2>
-					<button
-						className="btn btn-light-bordered btn-xs ms-2"
-						onClick={() => {
-							setShow(!show);
-						}}
+				<div
+					className={classNames("d-flex", className, show ? "mb-2" : "mb-3")}
+				>
+					<h2
+						className="mb-0 text-nowrap"
+						style={{ overflow: "hidden", textOverflow: "ellipsis" }}
 					>
-						{show ? "Hide" : "Show"}
-					</button>
+						{title}
+					</h2>
+					{hideableSectionButton}
 				</div>
 				{show ? children : null}
 			</>

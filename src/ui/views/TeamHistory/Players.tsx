@@ -117,7 +117,6 @@ const Players = ({
 
 	return (
 		<>
-			<h2>Players</h2>
 			<p>
 				Players currently on {gmHistory ? "your" : "this"} team are{" "}
 				<span className="text-success">highlighted in green</span>. Other active

@@ -1,4 +1,4 @@
-import { realtimeUpdate } from "../util";
+import { realtimeUpdate, safeLocalStorage } from "../util";
 
 const Dropbox = () => {
 	const hash = location.hash.slice(1);
@@ -6,7 +6,7 @@ const Dropbox = () => {
 	const lid = parseInt(params.get("state")!);
 	const accessToken = params.get("access_token");
 	if (accessToken && !Number.isNaN(lid)) {
-		localStorage.setItem("dropboxAccessToken", accessToken);
+		safeLocalStorage.setItem("dropboxAccessToken", accessToken);
 		realtimeUpdate(["firstRun"], `/l/${lid}/export_league`);
 	}
 

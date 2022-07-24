@@ -152,25 +152,45 @@ class Buffer {
 	}
 }*/
 
-const handleAuthError = async (
+const handleStreamError = async (
 	stream: WritableStream,
 	error: any,
 	lid: number,
 ) => {
-	console.log(error.status, error.message, error.error);
 	if (error.status === 401) {
-		// "Response failed with a 401 code" - need user to log in again
+		// "Response failed with a 401 code" - need user to log in again. Would be better to check for a more specific error message though!
 		localStorage.removeItem("dropboxAccessToken");
-		stream.abort(error.message);
+		if (!stream.locked) {
+			stream.abort(error.message);
+		}
 
 		const url = await getAuthenticationUrl(lid);
 
 		window.location.href = url;
 
-		return true;
+		return;
 	}
 
-	return false;
+	let errorMessage;
+	if (
+		error.status === 409 &&
+		error.error?.error_summary?.includes("insufficient_space")
+	) {
+		errorMessage =
+			"Your Dropbox is full. Either delete some files from Dropbox or upgrade your Dropbox account.";
+	} else if (error.error?.error_summary) {
+		errorMessage = `${error.message} - ${error.error?.error_summary}`;
+	}
+
+	if (!stream.locked) {
+		stream.abort(errorMessage ?? error.message);
+	}
+
+	// Maybe would be better to use controller.error rather than throwing, but this seems to work
+	if (errorMessage) {
+		throw new Error(errorMessage);
+	}
+	throw error;
 };
 
 // Based on https://github.com/dropbox/dropbox-sdk-js/blob/b75b1e3bfedcf4b00f613489c5291d3235f052db/examples/javascript/upload/index.html
@@ -198,9 +218,7 @@ export const dropboxStream = async ({
 			try {
 				await buffer.add(chunk);
 			} catch (error) {
-				if (!handleAuthError(stream, error, lid)) {
-					throw error;
-				}
+				await handleStreamError(stream, error, lid);
 			}
 		},
 		async close() {
@@ -232,9 +250,7 @@ export const dropboxStream = async ({
 				const downloadURL = fileURL?.replace("https://www.", "https://dl.");
 				onComplete(downloadURL);
 			} catch (error) {
-				if (!handleAuthError(stream, error, lid)) {
-					throw error;
-				}
+				await handleStreamError(stream, error, lid);
 			}
 		},
 		abort() {

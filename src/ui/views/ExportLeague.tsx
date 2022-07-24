@@ -568,7 +568,9 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			cleanupAfterStream(status);
 		} catch (error) {
 			cleanupAfterStream(
-				<span className="text-danger">Error: "{error.message}"</span>,
+				<span className="text-danger">
+					<b>Error:</b> {error.message}
+				</span>,
 			);
 			throw error;
 		}

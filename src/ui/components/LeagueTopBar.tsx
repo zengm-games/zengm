@@ -174,7 +174,7 @@ const LeagueTopBar = memo(() => {
 
 	return (
 		<div
-			className={`league-top-bar${
+			className={`league-top-bar small-scrollbar${
 				IS_SAFARI ? " league-top-bar-safari" : ""
 			} flex-shrink-0 d-flex overflow-auto flex-row ps-1 pb-1 mt-2`}
 			style={show ? undefined : hiddenStyle}

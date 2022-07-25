@@ -352,7 +352,7 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 				ref={getNode}
 				aria-label="side navigation"
 			>
-				<div className="bg-light sidebar-inner">
+				<div className="bg-light sidebar-inner small-scrollbar">
 					{menuItems.map((menuItem, i) => (
 						<MenuItem
 							godMode={godMode}

@@ -1022,28 +1022,8 @@ tr.table-warning:hover > td {
 }
 
 $league-top-bar-toggle-width: 15px;
-$league-top-bar-scrollbar-track-color: $gray-300;
-$league-top-bar-scrollbar-thumb-color: $gray-500;
 .league-top-bar {
 	padding-right: $league-top-bar-toggle-width;
-
-	// Firefox
-	scrollbar-color: $league-top-bar-scrollbar-thumb-color
-		$league-top-bar-scrollbar-track-color;
-	scrollbar-width: thin;
-
-	// Other browsers
-	&::-webkit-scrollbar {
-		height: 5px;
-	}
-	&::-webkit-scrollbar-track {
-		background: $league-top-bar-scrollbar-track-color;
-		border-radius: 50px;
-	}
-	&::-webkit-scrollbar-thumb {
-		background: $league-top-bar-scrollbar-thumb-color;
-		border-radius: 50px;
-	}
 }
 .league-top-bar-safari {
 	margin-right: $league-top-bar-toggle-width + 8px;
@@ -1056,6 +1036,28 @@ $league-top-bar-scrollbar-thumb-color: $gray-500;
 	z-index: 1000;
 	position: absolute;
 	right: 0px;
+}
+
+$small-scrollbar-track-color: $gray-300;
+$small-scrollbar-thumb-color: $gray-500;
+.small-scrollbar {
+	// Firefox
+	scrollbar-color: $small-scrollbar-thumb-color $small-scrollbar-track-color;
+	scrollbar-width: thin;
+
+	// Other browsers
+	&::-webkit-scrollbar {
+		height: 5px;
+		width: 10px;
+	}
+	&::-webkit-scrollbar-track {
+		background: $small-scrollbar-track-color;
+		border-radius: 50px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: $small-scrollbar-thumb-color;
+		border-radius: 50px;
+	}
 }
 
 .score-box-deadline {

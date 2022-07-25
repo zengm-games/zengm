@@ -1048,7 +1048,7 @@ $small-scrollbar-thumb-color: $gray-500;
 	// Other browsers
 	&::-webkit-scrollbar {
 		height: 5px;
-		width: 10px;
+		width: 5px;
 	}
 	&::-webkit-scrollbar-track {
 		background: $small-scrollbar-track-color;

@@ -1,15 +1,17 @@
 // This used to line up with the Play button, but no more since there is now a toggle on large screens
-$sidebar-width: 145px;
+$sidebar-width: 150px;
 
 // .sidebar-inner is needed because you can't put a fixed div in flexbox
 .sidebar-inner {
 	height: 100%;
 	padding: 0.5rem 0;
 	overflow-x: hidden;
-	overflow-y: hidden;
+	overflow-y: auto;
 	&:hover {
 		// Scrollbar on hover only
-		overflow-y: auto;
+		&::-webkit-scrollbar {
+			width: 10px;
+		}
 	}
 	z-index: 1040;
 	border-right: 1px solid $gray-200;

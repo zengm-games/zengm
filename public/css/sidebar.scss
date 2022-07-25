@@ -7,12 +7,6 @@ $sidebar-width: 150px;
 	padding: 0.5rem 0;
 	overflow-x: hidden;
 	overflow-y: auto;
-	&:hover {
-		// Scrollbar on hover only
-		&::-webkit-scrollbar {
-			width: 10px;
-		}
-	}
 	z-index: 1040;
 	border-right: 1px solid $gray-200;
 	position: fixed;

@@ -1,10 +1,9 @@
 scrollbar
-- bar color swap for dark mode?
-- hover color
 - sidebar height extends beyond window
 - vh/vw units so it's stable on zoom
-- overflow should always be scroll on mobile
-- only show on hover for score bar?
+- other places
+  - Player stat feats
+  - player-stats-summary
 
 relievers as starters
 - in playoffs, fatigue should matter less, so best starters pitch more

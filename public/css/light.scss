@@ -939,7 +939,7 @@ tr.table-warning:hover > td {
 .title-bar {
 	h1 {
 		font-size: 20px;
-		margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
+		margin-bottom: 7px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
 	}
 	option {
 		font-size: 12px;
@@ -948,7 +948,7 @@ tr.table-warning:hover > td {
 		background-color: $gray-100;
 	}
 	gap: 0 10px;
-	min-height: 39px;
+	min-height: 32px;
 
 	// Like .container-fluid
 	padding-left: var(--bs-gutter-x, $container-padding-x);
@@ -960,7 +960,7 @@ tr.table-warning:hover > td {
 	}
 	.nav-link {
 		padding-bottom: 10px !important;
-		padding-top: 10px !important;
+		padding-top: 6px !important;
 	}
 	.dropdown-menu {
 		margin-top: -5px !important;
@@ -973,7 +973,7 @@ tr.table-warning:hover > td {
 	}
 }
 .dropdown-select-wrapper {
-	margin: 7px 0; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
+	margin-bottom: 7px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
 }
 .dropdown-select {
 	display: block;
@@ -1005,15 +1005,15 @@ tr.table-warning:hover > td {
 		h1 {
 			font-size: 24px;
 		}
-		min-height: 45px;
+		min-height: 38px;
 	}
 	.title-bar-right-links {
 		.nav-item {
-			height: 45px !important;
+			height: 38px !important;
 		}
 		.nav-link {
 			padding-bottom: 13px !important;
-			padding-top: 13px !important;
+			padding-top: 6px !important;
 		}
 		.dropdown-menu {
 			margin-top: -5px !important;
@@ -1024,6 +1024,9 @@ tr.table-warning:hover > td {
 $league-top-bar-toggle-width: 15px;
 .league-top-bar {
 	padding-right: $league-top-bar-toggle-width;
+
+	// For scrollbar that grows on hover
+	height: 63px;
 }
 .league-top-bar-safari {
 	margin-right: $league-top-bar-toggle-width + 8px;
@@ -1038,25 +1041,35 @@ $league-top-bar-toggle-width: 15px;
 	right: 0px;
 }
 
-$small-scrollbar-track-color: $gray-300;
-$small-scrollbar-thumb-color: $gray-500;
+$small-scrollbar-track-color: $gray-300 !default;
+$small-scrollbar-thumb-color: $gray-500 !default;
+$small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 .small-scrollbar {
 	// Firefox
 	scrollbar-color: $small-scrollbar-thumb-color $small-scrollbar-track-color;
-	scrollbar-width: thin;
 
 	// Other browsers
 	&::-webkit-scrollbar {
-		height: 5px;
-		width: 5px;
+		// Careful about changing thses! Check where they are used
+		height: 0px;
+		width: 3px;
 	}
 	&::-webkit-scrollbar-track {
 		background: $small-scrollbar-track-color;
-		border-radius: 50px;
 	}
 	&::-webkit-scrollbar-thumb {
 		background: $small-scrollbar-thumb-color;
 		border-radius: 50px;
+		&:hover {
+			background: $small-scrollbar-thumb-hover-color;
+		}
+	}
+	&:hover {
+		&::-webkit-scrollbar {
+			// Careful about changing thses! Check where they are used
+			height: 6px;
+			width: 10px;
+		}
 	}
 }
 

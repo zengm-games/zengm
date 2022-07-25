@@ -265,10 +265,7 @@ const ImportPlayers = ({
 				tid >= PLAYER.FREE_AGENT ? (
 					{
 						value: (
-							<div
-								className="input-group input-group"
-								style={{ minWidth: 180 }}
-							>
+							<div className="input-group" style={{ minWidth: 180 }}>
 								<div className="input-group-text">$</div>
 								<input
 									type="text"

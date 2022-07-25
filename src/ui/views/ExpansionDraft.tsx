@@ -98,10 +98,7 @@ const ExpansionDraft = ({
 
 	const handleInputChange =
 		(i: number) =>
-		async (
-			field: string,
-			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-		) => {
+		async (field: string, event: { target: { value: string } }) => {
 			const value = event.target.value;
 
 			const t: any = {

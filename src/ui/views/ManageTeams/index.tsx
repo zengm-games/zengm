@@ -1,4 +1,4 @@
-import { Fragment, useReducer, ChangeEvent, FormEvent } from "react";
+import { Fragment, useReducer, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
@@ -82,11 +82,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	});
 
 	const handleInputChange =
-		(tid: number) =>
-		(
-			field: string,
-			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-		) => {
+		(tid: number) => (field: string, event: { target: { value: string } }) => {
 			const value = event.target.value;
 
 			dispatch({ type: "updateTeam", tid, field, value });
@@ -232,6 +228,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 								disablePop={!props.godMode}
 								disableStatus={disableStatus}
 								disableStadiumCapacity={!props.godMode}
+								moveButton
 								t={t}
 							/>
 							<div className="col-12 d-lg-none" style={{ marginTop: -12 }}>

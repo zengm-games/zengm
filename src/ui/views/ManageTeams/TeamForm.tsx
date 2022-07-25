@@ -1,9 +1,10 @@
 import type { Face } from "facesjs";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 import { JerseyNumber } from "../../components";
 import { displayFace, toWorker } from "../../util";
+import MoveModal, { type MoveModalTeamFinal } from "./MoveModal";
 
 const TeamForm = ({
 	classNamesCol,
@@ -15,6 +16,7 @@ const TeamForm = ({
 	divs,
 	handleInputChange,
 	hideStatus,
+	moveButton,
 	t,
 }: {
 	classNamesCol: [
@@ -37,9 +39,11 @@ const TeamForm = ({
 	divs: View<"manageTeams">["divs"];
 	handleInputChange: (
 		field: string,
-		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		event: { target: { value: string } },
 	) => void;
 	hideStatus?: boolean;
+	moveButton?: boolean;
+
 	// Really should just be ExpansionDraftSetupTeam, but need to update Manage Teams
 	t:
 		| Omit<View<"manageTeams">["teams"][number], "tid">
@@ -91,17 +95,57 @@ const TeamForm = ({
 		renderFace();
 	}, [faceWrapper, showFace, color1, color2, color3, t.jersey]);
 
+	const [showMoveModal, setShowMoveModal] = useState(false);
+
+	const cancelMoveModal = () => {
+		setShowMoveModal(false);
+	};
+
+	const saveMoveModal = (newTeamInfo: MoveModalTeamFinal, rebrand: boolean) => {
+		const apply = (key: string, value: string) => {
+			handleInputChange(key, { target: { value } });
+		};
+		apply("region", newTeamInfo.region);
+		apply("abbrev", newTeamInfo.abbrev);
+		apply("pop", String(newTeamInfo.pop));
+
+		if (rebrand) {
+			apply("jersey", newTeamInfo.jersey);
+			apply("name", newTeamInfo.name);
+			apply("imgURL", newTeamInfo.imgURL);
+			apply("imgURLSmall", newTeamInfo.imgURLSmall ?? "");
+			apply("colors0", newTeamInfo.colors[0]);
+			apply("colors1", newTeamInfo.colors[1]);
+			apply("colors2", newTeamInfo.colors[2]);
+		}
+
+		setShowMoveModal(false);
+	};
+
 	return (
 		<>
 			<div className={classNamesCol[0]}>
 				<div className="mb-3">
 					<label className={classNameLabel}>Region</label>
-					<input
-						type="text"
-						className="form-control"
-						onChange={e => handleInputChange("region", e)}
-						value={t.region}
-					/>
+					<div className="input-group">
+						<input
+							type="text"
+							className="form-control"
+							onChange={e => handleInputChange("region", e)}
+							value={t.region}
+						/>
+						{moveButton ? (
+							<button
+								className="btn btn-light-bordered"
+								type="button"
+								onClick={() => {
+									setShowMoveModal(true);
+								}}
+							>
+								Move
+							</button>
+						) : null}
+					</div>
 				</div>
 			</div>
 			<div className={classNamesCol[1]}>
@@ -278,6 +322,14 @@ const TeamForm = ({
 						</select>
 					</div>
 				</div>
+			) : null}
+			{moveButton ? (
+				<MoveModal
+					show={showMoveModal}
+					onHide={cancelMoveModal}
+					onSave={saveMoveModal}
+					currentTeam={t}
+				/>
 			) : null}
 		</>
 	);

@@ -1,3 +1,7 @@
+dropdown list of cities on manage teams page
+- https://discord.com/channels/290013534023057409/331882115119448065/933031128443539528
+- should not allow cities that already have teams?
+
 relievers as starters
 - in playoffs, fatigue should matter less, so best starters pitch more
 - reliever with low endurance starting game should not pitch many innings
@@ -254,9 +258,6 @@ runBefore sends viewData to worker... wouldn't it be better to keep it on worker
 
 refactor game sim
 - classes should share some common methods
-
-dropdown list of cities on manage teams page
-- https://discord.com/channels/290013534023057409/331882115119448065/933031128443539528
 
 rank column on player stats page https://discord.com/channels/290013534023057409/331882115119448065/932355745616371813
 

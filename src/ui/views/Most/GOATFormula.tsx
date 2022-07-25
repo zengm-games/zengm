@@ -39,7 +39,7 @@ const GOATFormula = ({
 					}
 				}}
 			>
-				<div className="mb-2 overflow-auto">
+				<div className="mb-2 overflow-auto small-scrollbar">
 					<label className="form-label" htmlFor="goat-formula">
 						GOAT Formula
 					</label>

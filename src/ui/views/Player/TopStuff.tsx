@@ -138,7 +138,7 @@ const StatsSummary = ({
 	const showPeakSeason = p.tid === PLAYER.RETIRED && season === undefined;
 
 	return (
-		<div className="player-stats-summary">
+		<div className="player-stats-summary small-scrollbar">
 			<table className="table table-sm table-borderless border-top-0 table-nonfluid text-center mt-3 mb-0">
 				<thead>
 					<tr>
@@ -595,7 +595,7 @@ const TopStuff = ({
 					) : null}
 				</div>
 
-				<div className="mt-3 mt-sm-0 text-nowrap overflow-auto">
+				<div className="mt-3 mt-sm-0 text-nowrap overflow-auto small-scrollbar">
 					{showRatingsOverview ? (
 						<RatingsOverview ratings={player.ratings} season={season} />
 					) : null}

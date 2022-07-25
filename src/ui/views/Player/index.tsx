@@ -435,9 +435,10 @@ const Player2 = ({
 				<div className="col-md-6">
 					<HideableSection title="Statistical Feats">
 						<div
+							className="small-scrollbar"
 							style={{
 								maxHeight: 500,
-								overflowY: "scroll",
+								overflowY: "auto",
 							}}
 						>
 							{feats.map(e => {

@@ -98,7 +98,7 @@ const WatchList = ({
 				{
 					value: (
 						<div
-							className="overflow-auto"
+							className="overflow-auto small-scrollbar"
 							style={{
 								maxHeight: 300,
 								whiteSpace: "pre-line",

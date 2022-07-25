@@ -1027,6 +1027,9 @@ $league-top-bar-toggle-width: 15px;
 
 	// For scrollbar that grows on hover
 	height: 63px;
+	&::-webkit-scrollbar {
+		height: 0;
+	}
 }
 .league-top-bar-safari {
 	margin-right: $league-top-bar-toggle-width + 8px;
@@ -1051,11 +1054,12 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	// Other browsers
 	&::-webkit-scrollbar {
 		// Careful about changing thses! Check where they are used
-		height: 0px;
+		height: 6px;
 		width: 3px;
 	}
 	&::-webkit-scrollbar-track {
 		background: $small-scrollbar-track-color;
+		border-radius: 50px;
 	}
 	&::-webkit-scrollbar-thumb {
 		background: $small-scrollbar-thumb-color;

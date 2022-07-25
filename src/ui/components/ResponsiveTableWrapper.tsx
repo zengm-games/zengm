@@ -10,7 +10,7 @@ const ResponsiveTableWrapper = ({ className, children, nonfluid }: Props) => {
 	return (
 		<div
 			className={classNames(
-				"table-responsive",
+				"table-responsive small-scrollbar",
 				{
 					"table-nonfluid": nonfluid,
 				},

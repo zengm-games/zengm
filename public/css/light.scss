@@ -1027,8 +1027,10 @@ $league-top-bar-toggle-width: 15px;
 
 	// For scrollbar that grows on hover
 	height: 63px;
-	&::-webkit-scrollbar {
-		height: 0;
+	@include media-breakpoint-up(sm) {
+		&::-webkit-scrollbar {
+			height: 0 !important;
+		}
 	}
 }
 .league-top-bar-safari {
@@ -1047,32 +1049,34 @@ $league-top-bar-toggle-width: 15px;
 $small-scrollbar-track-color: $gray-300 !default;
 $small-scrollbar-thumb-color: $gray-500 !default;
 $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
-.small-scrollbar {
-	// Firefox
-	scrollbar-color: $small-scrollbar-thumb-color $small-scrollbar-track-color;
+@include media-breakpoint-up(sm) {
+	.small-scrollbar {
+		// Firefox
+		scrollbar-color: $small-scrollbar-thumb-color $small-scrollbar-track-color;
 
-	// Other browsers
-	&::-webkit-scrollbar {
-		// Careful about changing thses! Check where they are used
-		height: 6px;
-		width: 3px;
-	}
-	&::-webkit-scrollbar-track {
-		background: $small-scrollbar-track-color;
-		border-radius: 50px;
-	}
-	&::-webkit-scrollbar-thumb {
-		background: $small-scrollbar-thumb-color;
-		border-radius: 50px;
-		&:hover {
-			background: $small-scrollbar-thumb-hover-color;
-		}
-	}
-	&:hover {
+		// Other browsers
 		&::-webkit-scrollbar {
 			// Careful about changing thses! Check where they are used
 			height: 6px;
-			width: 10px;
+			width: 3px;
+		}
+		&::-webkit-scrollbar-track {
+			background: $small-scrollbar-track-color;
+			border-radius: 50px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background: $small-scrollbar-thumb-color;
+			border-radius: 50px;
+			&:hover {
+				background: $small-scrollbar-thumb-hover-color;
+			}
+		}
+		&:hover {
+			&::-webkit-scrollbar {
+				// Careful about changing thses! Check where they are used
+				height: 6px !important;
+				width: 10px;
+			}
 		}
 	}
 }

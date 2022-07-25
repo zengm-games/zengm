@@ -5,6 +5,7 @@ import AddRemove from "./AddRemove";
 import type { View } from "../../../common/types";
 import { PHASE } from "../../../common";
 import TeamForm from "./TeamForm";
+import { groupBy } from "../../../common/groupBy";
 
 const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
@@ -75,6 +76,49 @@ const reducer = (state: State, action: Action) => {
 	}
 };
 
+const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
+	const grouped = groupBy(teams, "abbrev");
+
+	const duplicateInfos = [];
+
+	for (const [abbrev, teams] of Object.entries(grouped)) {
+		const count = teams.length;
+		if (count > 1) {
+			duplicateInfos.push({
+				abbrev,
+				count,
+			});
+		}
+	}
+
+	if (duplicateInfos.length === 0) {
+		return;
+	}
+
+	if (duplicateInfos.length === 1) {
+		const { abbrev, count } = duplicateInfos[0];
+		return (
+			<>
+				{count} teams have the same abbrev <b>{abbrev}</b> which can cause
+				problems in the UI.
+			</>
+		);
+	}
+
+	return (
+		<>
+			Some teams have the same abbrev (
+			{duplicateInfos.map(({ abbrev, count }, i) => (
+				<Fragment key={abbrev}>
+					{i > 0 ? ", " : null}
+					<b>{abbrev}:</b> {count}
+				</Fragment>
+			))}
+			) which can cause problems in the UI.
+		</>
+	);
+};
+
 const ManageTeams = (props: View<"manageTeams">) => {
 	const [state, dispatch] = useReducer(reducer, {
 		saving: false,
@@ -131,6 +175,8 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		].includes(props.phase);
 
 	const { saving, teams } = state;
+
+	const uniqueAbbrevsErrorMessage = getUniqueAbbrevsErrorMessage(teams);
 
 	return (
 		<>
@@ -238,9 +284,16 @@ const ManageTeams = (props: View<"manageTeams">) => {
 					))}
 				</div>
 				<div className="text-center">
-					<button type="submit" className="btn btn-primary" disabled={saving}>
-						Update Team Info
-					</button>
+					{uniqueAbbrevsErrorMessage ? (
+						<div className="alert alert-danger d-inline-block">
+							<b>Warning:</b> {uniqueAbbrevsErrorMessage}
+						</div>
+					) : null}
+					<div>
+						<button type="submit" className="btn btn-primary" disabled={saving}>
+							Update Team Info
+						</button>
+					</div>
 				</div>
 			</form>
 		</>

@@ -78,7 +78,7 @@
 		"workbox-precaching": "^6.5.3",
 		"workbox-routing": "^6.5.3",
 		"workbox-window": "^6.5.3",
-		"zustand": "^4.0.0-rc.3"
+		"zustand": "^4.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.9",
@@ -114,8 +114,8 @@
 		"@types/stripe-checkout": "^1.0.4",
 		"@types/stripe-v2": "^2.0.2",
 		"@types/wicg-file-system-access": "^2020.9.5",
-		"@typescript-eslint/eslint-plugin": "^5.30.7",
-		"@typescript-eslint/parser": "^5.30.7",
+		"@typescript-eslint/eslint-plugin": "^5.31.0",
+		"@typescript-eslint/parser": "^5.31.0",
 		"browserslist": "^4.21.2",
 		"cheerio": "^1.0.0-rc.12",
 		"chokidar": "^3.5.3",
@@ -123,12 +123,12 @@
 		"concurrently": "^7.3.0",
 		"conditional-type-checks": "^1.0.6",
 		"cross-env": "^7.0.3",
-		"esbuild": "^0.14.49",
+		"esbuild": "^0.14.50",
 		"eslint": "^8.20.0",
 		"eslint-config-airbnb-typescript": "^17.0.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-import": "^2.26.0",
-		"eslint-plugin-jsx-a11y": "^6.6.0",
+		"eslint-plugin-jsx-a11y": "^6.6.1",
 		"eslint-plugin-react": "^7.30.1",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"fake-indexeddb": "4.0.0",
@@ -159,7 +159,7 @@
 		"rollup-plugin-blacklist": "^1.0.1",
 		"rollup-plugin-terser": "^7.0.2",
 		"rollup-plugin-visualizer": "^5.7.1",
-		"sass": "1.53.0",
+		"sass": "1.54.0",
 		"typescript": "^4.7.4",
 		"workbox-build": "^6.5.3"
 	},

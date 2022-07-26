@@ -16,12 +16,6 @@ in real players league, start at draft should give you the option to start at yo
 
 Injuries page for players traded during injury season shows the last team that season, not the team the injury occurred on https://old.reddit.com/r/BasketballGM/comments/w301nx/version_202207190879_on_player_profile_pages_for/iguxzxk/?context=3
 
-UI to delete account
-- make type username
-- not allowed with active subscription, say to email me instead
-- explain this will not delete saved games, delete all can do that
-- log user out after deleting
-
 separate "TOT" line for stats on player stats page
 - need to support season+new mergeStats setting
 

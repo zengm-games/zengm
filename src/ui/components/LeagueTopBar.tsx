@@ -23,7 +23,7 @@ const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 };
 
 const hiddenStyle = {
-	marginBottom: -12,
+	height: 0,
 };
 
 const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);

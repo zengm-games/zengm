@@ -1052,7 +1052,7 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 @include media-breakpoint-up(sm) {
 	.small-scrollbar {
 		&::-webkit-scrollbar {
-			// Careful about changing thses! Check where they are used
+			// Careful about changing these! Check where they are used
 			height: 6px;
 			width: 3px;
 		}
@@ -1069,7 +1069,7 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 		}
 		&:hover {
 			&::-webkit-scrollbar {
-				// Careful about changing thses! Check where they are used
+				// Careful about changing these! Check where they are used
 				height: 6px !important;
 				width: 10px;
 			}

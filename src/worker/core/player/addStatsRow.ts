@@ -3,6 +3,7 @@ import { g, helpers } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 import genJerseyNumber from "./genJerseyNumber";
 import { isSport } from "../../../common";
+import statsRowIsCurrent from "./statsRowIsCurrent";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -24,6 +25,13 @@ const addStatsRow = async (
 		retired?: string[];
 	} = {},
 ) => {
+	// Never add duplicate row, such as player beign signed as FA by team who released him
+	const ps = p.stats.at(-1);
+	const hasStats = statsRowIsCurrent(ps, p.tid, playoffs);
+	if (hasStats) {
+		return;
+	}
+
 	const statsRow: any = {
 		playoffs,
 		season: g.get("season"),

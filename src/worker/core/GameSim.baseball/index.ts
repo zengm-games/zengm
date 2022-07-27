@@ -2306,7 +2306,9 @@ class GameSim {
 		let probSwitch = 0;
 
 		if (betweenInnings) {
-			probSwitch = 1.25 * (1 - pitcherFatigueFactor);
+			// Weird thing to make relievers with low endurance get taken out earlier
+			const factor = 1 + 3 * (1 - pitcher.compositeRating.workhorsePitcher);
+			probSwitch = factor * (1 - pitcherFatigueFactor);
 
 			if (candidate.value < value) {
 				probSwitch *= 0.75;
@@ -2316,7 +2318,7 @@ class GameSim {
 				probSwitch *= 3;
 			} else if (this.inning === 8) {
 				probSwitch *= 2;
-			} else if (pitcherFatigueFactor > 0.5 && this.inning <= 5) {
+			} else if (pitcherFatigueFactor > 0.85 && this.inning <= 5) {
 				probSwitch = 0;
 			}
 
@@ -2348,7 +2350,25 @@ class GameSim {
 			probSwitch = 1;
 		}
 
+		let sub = false;
 		if (probSwitch > 0.8 || (probSwitch > 0.2 && probSwitch > Math.random())) {
+			sub = true;
+		}
+
+		// Extra hack for bullpen games
+		if (
+			starterIsIn &&
+			betweenInnings &&
+			pitcher.compositeRating.workhorsePitcher < 0.25
+		) {
+			const probSwitchBullpenGame =
+				0.95 * (0.25 - pitcher.compositeRating.workhorsePitcher) * 4;
+			if (Math.random() < probSwitchBullpenGame) {
+				sub = true;
+			}
+		}
+
+		if (sub) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
 
 			this.playByPlay.logEvent({

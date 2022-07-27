@@ -1051,6 +1051,11 @@ $small-scrollbar-thumb-color: $gray-500 !default;
 $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 @include media-breakpoint-up(sm) {
 	.small-scrollbar {
+		// Firefox
+		scrollbar-color: $small-scrollbar-thumb-color $small-scrollbar-track-color;
+		scrollbar-width: thin;
+
+		// Other browsers
 		&::-webkit-scrollbar {
 			// Careful about changing these! Check where they are used
 			height: 6px;

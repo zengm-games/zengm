@@ -16,6 +16,7 @@ import {
 } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
+import { P_FATIGUE_DAILY_REDUCTION } from "./writePlayerStats";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
@@ -172,6 +173,13 @@ const processTeam = (
 
 		if (isSport("baseball")) {
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
+			if (playoffs) {
+				// Pitchers play through some fatigue in playoffs
+				(p2 as any).pFatigue -= P_FATIGUE_DAILY_REDUCTION;
+				if ((p2 as any).pFatigue < 0) {
+					(p2 as any).pFatigue = 0;
+				}
+			}
 
 			// Store some pre-game season stats that are displayed in box score
 			const seasonStats: Record<string, number> = {};

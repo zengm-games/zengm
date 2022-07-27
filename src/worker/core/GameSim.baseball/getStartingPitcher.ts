@@ -1,5 +1,6 @@
+import { PHASE } from "../../../common";
 import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { PlayerGameSim } from "./types";
 
 const CLOSER_INDEX = NUM_STARTING_PITCHERS;
@@ -12,13 +13,15 @@ export const getStartingPitcher = (
 		return pitchers[0];
 	}
 
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 	// First pass - look for starting pitcher with no fatigue
 	let firstFound;
 	for (let i = 0; i < pitchers.length; i++) {
 		const p = pitchers[i];
-		if (p.pFatigue === 0 && !p.injured) {
+		if ((p.pFatigue === 0 || (playoffs && p.pFatigue < 30)) && !p.injured) {
 			// Add some randomness, to get lower starters some extra starts
-			if (Math.random() < 0.8) {
+			if (playoffs || Math.random() < 0.8) {
 				return p;
 			}
 

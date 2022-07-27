@@ -3982,7 +3982,48 @@ const createTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
-const proposeTrade = async (forceTrade: boolean) => {
+const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
+	const { teams } = await trade.get();
+	const dv = await team.valueChange(
+		teams[1].tid,
+		teams[0].pids,
+		teams[1].pids,
+		teams[0].dpids,
+		teams[1].dpids,
+		undefined,
+		g.get("userTid"),
+	);
+	const aiWillAcceptTrade = dv > 0;
+	if (
+		aiWillAcceptTrade &&
+		teams[1].pids.length === 0 &&
+		teams[1].dpids.length === 0
+	) {
+		let assetsText;
+		if (teams[0].pids.length === 0) {
+			assetsText = "Picks";
+		} else if (teams[0].dpids.length === 0) {
+			assetsText = "Players";
+		} else {
+			assetsText = "Assets";
+		}
+
+		const proceed = await toUI(
+			"confirm",
+			[
+				"Are you sure you want to propose a trade where you recieve nothing?",
+				{
+					okText: `Give Away ${assetsText}`,
+				},
+			],
+			conditions,
+		);
+
+		if (!proceed) {
+			return;
+		}
+	}
+
 	const output = await trade.propose(forceTrade);
 	await toUI("realtimeUpdate", []);
 	return output;

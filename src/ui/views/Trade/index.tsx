@@ -215,17 +215,17 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleClickPropose = async () => {
-		const [accepted, message] = await toWorker(
-			"main",
-			"proposeTrade",
-			state.forceTrade,
-		);
-		setState(prevState => ({
-			...prevState,
-			accepted,
-			message,
-			prevTeams: undefined,
-		}));
+		const output = await toWorker("main", "proposeTrade", state.forceTrade);
+
+		if (output) {
+			const [accepted, message] = output;
+			setState(prevState => ({
+				...prevState,
+				accepted,
+				message,
+				prevTeams: undefined,
+			}));
+		}
 	};
 
 	const {

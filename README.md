@@ -21,7 +21,7 @@ Discussion:
 * <https://zengm.com/discord/>
 
 **This project is NOT open source, but it is also not completely closed. Please
-see LICENSE.md for details.**
+see [LICENSE.md](LICENSE.md) for details.**
 
 ## Development Info
 

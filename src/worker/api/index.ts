@@ -3224,21 +3224,23 @@ const updateGameAttributesGodMode = async (
 		}
 	}
 
-	// Check schedule
+	// Check schedule, unless it'd be too slow
 	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
-	season.newSchedule(
-		teams.map(t => ({
-			tid: t.tid,
-			seasonAttrs: {
-				cid: t.cid,
-				did: t.did,
+	if (teams.length < 50) {
+		season.newSchedule(
+			teams.map(t => ({
+				tid: t.tid,
+				seasonAttrs: {
+					cid: t.cid,
+					did: t.did,
+				},
+			})),
+			{
+				notify: true,
+				conditions,
 			},
-		})),
-		{
-			notify: true,
-			conditions,
-		},
-	);
+		);
+	}
 
 	await league.setGameAttributes(gameAttributes);
 	if (initRepeatSeason) {

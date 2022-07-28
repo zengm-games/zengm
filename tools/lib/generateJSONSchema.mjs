@@ -1908,6 +1908,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "integer",
 										minimum: 0,
 									},
+									otl: {
+										type: "integer",
+										minimum: 0,
+									},
 									wonHome: {
 										type: "integer",
 										minimum: 0,
@@ -1917,6 +1921,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 										minimum: 0,
 									},
 									tiedHome: {
+										type: "integer",
+										minimum: 0,
+									},
+									otlHome: {
 										type: "integer",
 										minimum: 0,
 									},
@@ -1932,6 +1940,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "integer",
 										minimum: 0,
 									},
+									otlAway: {
+										type: "integer",
+										minimum: 0,
+									},
 									wonDiv: {
 										type: "integer",
 										minimum: 0,
@@ -1944,7 +1956,15 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "integer",
 										minimum: 0,
 									},
+									otlDiv: {
+										type: "integer",
+										minimum: 0,
+									},
 									wonConf: {
+										type: "integer",
+										minimum: 0,
+									},
+									otlConf: {
 										type: "integer",
 										minimum: 0,
 									},
@@ -2088,31 +2108,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 										type: "number",
 									},
 								},
-								required: [
-									"season",
-									"gp",
-									"gpHome",
-									"att",
-									"cash",
-									"won",
-									"lost",
-									"wonHome",
-									"lostHome",
-									"wonAway",
-									"lostAway",
-									"wonDiv",
-									"lostDiv",
-									"wonConf",
-									"lostConf",
-									"lastTen",
-									"streak",
-									"playoffRoundsWon",
-									"hype",
-									"pop",
-									"revenues",
-									"expenses",
-									"payrollEndOfSeason",
-								],
+								required: ["season"],
 							},
 						},
 						stats: {

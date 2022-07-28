@@ -1,6 +1,12 @@
 import type { IDBPTransaction } from "idb";
 import { draft, finances, freeAgents, league, player, season, team } from "..";
-import { applyRealTeamInfo, isSport, PHASE, PLAYER } from "../../../common";
+import {
+	applyRealTeamInfo,
+	DEFAULT_STADIUM_CAPACITY,
+	isSport,
+	PHASE,
+	PLAYER,
+} from "../../../common";
 import type {
 	Conditions,
 	Conf,
@@ -680,22 +686,142 @@ const processTeamInfos = ({
 					"name",
 					"abbrev",
 					"imgURL",
+					"imgURLSmall",
 					"colors",
 					"jersey",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
-					if (
-						teamSeason[key] === undefined ||
-						(teamSeason.season === g.get("season") &&
-							g.get("phase") < PHASE.PLAYOFFS)
-					) {
+					if (teamSeason[key] === undefined) {
 						// @ts-expect-error
 						teamSeason[key] = t[key];
 					}
 				}
 
-				if (teamSeason.numPlayersTradedAway === undefined) {
-					teamSeason.numPlayersTradedAway = 0;
+				const defaultZero = [
+					"gp",
+					"gpHome",
+					"att",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"wonHome",
+					"lostHome",
+					"tiedHome",
+					"otlHome",
+					"wonAway",
+					"lostAway",
+					"tiedAway",
+					"otlAway",
+					"wonDiv",
+					"lostDiv",
+					"tiedDiv",
+					"otlDiv",
+					"wonConf",
+					"lostConf",
+					"tiedConf",
+					"otlConf",
+					"streak",
+					"payrollEndOfSeason",
+					"numPlayersTradedAway",
+				] as const;
+				for (const key of defaultZero) {
+					if (teamSeason[key] === undefined) {
+						teamSeason[key] = 0;
+					}
+				}
+
+				// Keep these in sync with genSeasonRow
+				if (teamSeason.cash === undefined) {
+					teamSeason.cash = 10000;
+				}
+				if (teamSeason.hype === undefined) {
+					teamSeason.hype = Math.random();
+				}
+				if (teamSeason.pop === undefined) {
+					teamSeason.pop = 1;
+				}
+				if (teamSeason.stadiumCapacity === undefined) {
+					teamSeason.stadiumCapacity = DEFAULT_STADIUM_CAPACITY;
+				}
+				if (teamSeason.playoffRoundsWon === undefined) {
+					teamSeason.playoffRoundsWon = -1;
+				}
+				if (teamSeason.lastTen === undefined) {
+					teamSeason.lastTen = [];
+				}
+				if (teamSeason.ownerMood === undefined) {
+					teamSeason.ownerMood = {
+						wins: 0,
+						playoffs: 0,
+						money: 0,
+					};
+				}
+				if (
+					teamSeason.revenues === undefined ||
+					teamSeason.expenses === undefined
+				) {
+					const defaultRank = (teams.filter(t => !t.disabled).length + 1) / 2;
+					if (teamSeason.revenues === undefined) {
+						teamSeason.revenues = {
+							luxuryTaxShare: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							merch: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							sponsor: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							ticket: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							nationalTv: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							localTv: {
+								amount: 0,
+								rank: defaultRank,
+							},
+						};
+					}
+					if (teamSeason.expenses === undefined) {
+						teamSeason.expenses = {
+							salary: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							luxuryTax: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							minTax: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							scouting: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							coaching: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							health: {
+								amount: 0,
+								rank: defaultRank,
+							},
+							facilities: {
+								amount: 0,
+								rank: defaultRank,
+							},
+						};
+					}
 				}
 			}
 		} else if (!t.disabled) {

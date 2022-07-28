@@ -55,6 +55,16 @@ const JerseyNumber = ({
 		? "4px double var(--bs-yellow)"
 		: `2px solid ${colors[2]}`;
 
+	let fontSize = 32;
+	const numDigits = number.length;
+	if (numDigits === 3) {
+		fontSize = 26;
+	} else if (numDigits === 4) {
+		fontSize = 20;
+	} else if (numDigits > 4) {
+		fontSize = 17;
+	}
+
 	return (
 		<OverlayTrigger
 			overlay={<Tooltip id={id}>{text}</Tooltip>}
@@ -71,7 +81,7 @@ const JerseyNumber = ({
 					border,
 					backgroundColor: colors[0],
 					color: colors[1],
-					fontSize: 32,
+					fontSize,
 				}}
 			>
 				{number}

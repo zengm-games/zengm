@@ -4018,7 +4018,7 @@ const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 		const proceed = await toUI(
 			"confirm",
 			[
-				"Are you sure you want to propose a trade where you recieve nothing?",
+				"Are you sure you want to propose a trade where you receive nothing?",
 				{
 					okText: `Give Away ${assetsText}`,
 				},

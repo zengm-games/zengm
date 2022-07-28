@@ -716,19 +716,19 @@ const newSchedule = (
 	teams: MyTeam[],
 	settingsInput?: NewScheduleGoodSettings,
 ) => {
-	if (teams.length >= TOO_MANY_TEAMS_TOO_SLOW) {
-		return {
-			tids: [],
-			warning: "Too many teams to generate a good schedule.",
-		};
-	}
-
 	const settings = settingsInput ?? {
 		divs: g.get("divs"),
 		numGames: g.get("numGames"),
 		numGamesConf: g.get("numGamesConf"),
 		numGamesDiv: g.get("numGamesDiv"),
 	};
+
+	if (teams.length >= TOO_MANY_TEAMS_TOO_SLOW) {
+		return {
+			tids: newScheduleGood(teams, settings, true),
+			warning: "Too many teams to generate a good schedule.",
+		};
+	}
 
 	let tids = newScheduleGood(teams, settings);
 	let warning: string | undefined;

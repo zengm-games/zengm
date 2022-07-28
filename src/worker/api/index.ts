@@ -4003,12 +4003,16 @@ const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 		teams[1].dpids.length === 0
 	) {
 		let assetsText;
+		const numAssets = teams[0].pids.length + teams[0].dpids.length;
 		if (teams[0].pids.length === 0) {
-			assetsText = "Picks";
+			assetsText = "Pick";
 		} else if (teams[0].dpids.length === 0) {
-			assetsText = "Players";
+			assetsText = "Player";
 		} else {
-			assetsText = "Assets";
+			assetsText = "Asset";
+		}
+		if (numAssets !== 1) {
+			assetsText += "s";
 		}
 
 		const proceed = await toUI(

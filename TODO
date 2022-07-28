@@ -1,5 +1,3 @@
-auto save in danger zone mobile padding
-
 traded players being put in starting lineup for no reason? https://discord.com/channels/290013534023057409/331882115119448065/999033358749290587
 
 add some way to delete players after exporting them https://discord.com/channels/@me/753599190856368209/999457177259479050
@@ -147,6 +145,7 @@ baseball bugs
 - on a similar vein, a 3rd baseman with 32 catching just made the allstar team with a perfect fielding rating over 78 games at catcher. you can stick anyone at catcher and they'll be basically the same https://discord.com/channels/290013534023057409/290015591216054273/991001719712395294
 - when a player in the starting lineup is injured and there is an injury replacement, currently it auto sorts the whole lineup. it would be better to auto sort, see where it puts the replacement player, and then move them to that spot while keeping everyone else the same. https://discord.com/channels/290013534023057409/290015591216054273/994934736243933184
 - thr not important enough or maybe broken https://discord.com/channels/290013534023057409/290015468939640832/997136405895585802
+- should be possible for a pitcher at DH to enter game as relief pitcher https://discord.com/channels/290013534023057409/290015591216054273/1002304562562093086
 
 when u change a players position the displayed OVR does not change to the OVR at that position https://discord.com/channels/290013534023057409/290015591216054273/991836318709600287
 

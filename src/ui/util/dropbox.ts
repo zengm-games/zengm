@@ -178,6 +178,9 @@ const handleStreamError = async (
 	) {
 		errorMessage =
 			"Your Dropbox is full. Either delete some files from Dropbox or upgrade your Dropbox account.";
+	} else if (typeof error.error === "string") {
+		// Sometimes it's a string!
+		errorMessage = error.error;
 	} else if (error.error?.error_summary) {
 		errorMessage = `${error.message} - ${error.error?.error_summary}`;
 	}

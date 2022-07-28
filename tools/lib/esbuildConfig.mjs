@@ -16,7 +16,9 @@ const pluginSportFunctions = nodeEnv => ({
 				return babelCache[args.path].result;
 			}
 
-			const loader = args.path.endsWith("tsx") ? "tsx" : "ts";
+			const isTSX = args.path.endsWith("tsx");
+
+			const loader = isTSX ? "tsx" : "ts";
 
 			const text = await fs.readFile(args.path, "utf8");
 
@@ -32,7 +34,7 @@ const pluginSportFunctions = nodeEnv => ({
 						configFile: false,
 						sourceMaps: "inline",
 						plugins: [
-							[babelPluginSyntaxTypescript, { isTSX: true }],
+							[babelPluginSyntaxTypescript, { isTSX }],
 							babelPluginSportFunctions,
 						],
 					})
@@ -67,7 +69,8 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 		outfile,
 		bundle: true,
 		sourcemap: true,
-		inject: ["tools/lib/react-shim.mjs"],
+		jsx: "automatic",
+		jsxDev: nodeEnv === "development",
 		define: {
 			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
 			"process.env.SPORT": JSON.stringify(sport),

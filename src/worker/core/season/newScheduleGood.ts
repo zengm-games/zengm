@@ -4,6 +4,7 @@ import { g, helpers, random } from "../../../worker/util";
 import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type { Div, GameAttributesLeague } from "../../../common/types";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -715,6 +716,13 @@ const newSchedule = (
 	teams: MyTeam[],
 	settingsInput?: NewScheduleGoodSettings,
 ) => {
+	if (teams.length >= TOO_MANY_TEAMS_TOO_SLOW) {
+		return {
+			tids: [],
+			warning: "Too many teams to generate a good schedule.",
+		};
+	}
+
 	const settings = settingsInput ?? {
 		divs: g.get("divs"),
 		numGames: g.get("numGames"),

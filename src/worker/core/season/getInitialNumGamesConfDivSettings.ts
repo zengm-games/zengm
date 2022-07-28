@@ -1,6 +1,8 @@
 import type { NewScheduleGoodSettings } from "./newScheduleGood";
 import newScheduleGood from "./newScheduleGood";
 
+export const TOO_MANY_TEAMS_TOO_SLOW = 100;
+
 const getInitialNumGamesConfDivSettings = (
 	teams: {
 		tid: number;
@@ -21,7 +23,11 @@ const getInitialNumGamesConfDivSettings = (
 		},
 	}));
 
-	if (settings.numGamesDiv !== null && settings.numGamesConf !== null) {
+	if (
+		settings.numGamesDiv !== null &&
+		settings.numGamesConf !== null &&
+		teams.length < TOO_MANY_TEAMS_TOO_SLOW
+	) {
 		const { warning } = newScheduleGood(scheduleTeams, settings);
 		if (warning !== undefined) {
 			return {

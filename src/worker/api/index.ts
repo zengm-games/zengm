@@ -120,6 +120,7 @@ import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
 } from "../views/customizePlayer";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3226,7 +3227,7 @@ const updateGameAttributesGodMode = async (
 
 	// Check schedule, unless it'd be too slow
 	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
-	if (teams.length < 50) {
+	if (teams.length < TOO_MANY_TEAMS_TOO_SLOW) {
 		season.newSchedule(
 			teams.map(t => ({
 				tid: t.tid,

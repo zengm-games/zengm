@@ -4,6 +4,7 @@ import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
 import orderBy from "lodash-es/orderBy";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -108,7 +109,8 @@ const normalizeContractDemands = async ({
 			football: true,
 			hockey: false,
 		}) ||
-		minContract === maxContract
+		minContract === maxContract ||
+		g.get("numActiveTeams") >= TOO_MANY_TEAMS_TOO_SLOW
 	) {
 		numRounds = 0;
 	}

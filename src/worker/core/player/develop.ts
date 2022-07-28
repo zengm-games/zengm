@@ -9,6 +9,7 @@ import type { MinimalPlayerRatings } from "../../../common/types";
 import genWeight from "./genWeight";
 import potEstimator from "./potEstimator";
 import { BANNED_POSITIONS } from "./pos.baseball";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -33,7 +34,8 @@ export const monteCarloPot = async ({
 	if (
 		bySport({
 			baseball: true,
-			basketball: usePotEstimator,
+			basketball:
+				usePotEstimator || g.get("numActiveTeams") >= TOO_MANY_TEAMS_TOO_SLOW,
 			football: true,
 			hockey: true,
 		})

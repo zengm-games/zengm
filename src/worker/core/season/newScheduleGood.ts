@@ -1,6 +1,5 @@
 import range from "lodash-es/range";
 import { g, helpers, random } from "../../../worker/util";
-// import newScheduleCrappy from "./newScheduleCrappy";
 import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type { Div, GameAttributesLeague } from "../../../common/types";
@@ -724,8 +723,12 @@ const newSchedule = (
 	};
 
 	if (teams.length >= TOO_MANY_TEAMS_TOO_SLOW) {
+		const tids = newScheduleGood(teams, settings, true);
+		if (typeof tids === "string") {
+			throw new Error("newScheduleGood double fail");
+		}
 		return {
-			tids: newScheduleGood(teams, settings, true),
+			tids,
 			warning: "Too many teams to generate a good schedule.",
 		};
 	}

@@ -680,6 +680,7 @@ const processTeamInfos = ({
 			for (const teamSeason of teamSeasonsLocal) {
 				// See similar code in teamsPlus
 				const copyFromTeamIfUndefined = [
+					// For upgrades, or manually edited league files
 					"cid",
 					"did",
 					"region",
@@ -689,6 +690,10 @@ const processTeamInfos = ({
 					"imgURLSmall",
 					"colors",
 					"jersey",
+
+					// These ones too, they might be on team object but for very old leagues they aren't. This is not for upgrades, since these being on the root is new, they were always on teamSeason
+					"pop",
+					"stadiumCapacity",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
 					if (teamSeason[key] === undefined) {

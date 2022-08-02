@@ -722,25 +722,22 @@ const newSchedule = (
 		numGamesDiv: g.get("numGamesDiv"),
 	};
 
-	if (teams.length >= TOO_MANY_TEAMS_TOO_SLOW) {
-		const tids = newScheduleGood(teams, settings, true);
-		if (typeof tids === "string") {
-			throw new Error("newScheduleGood double fail");
-		}
-		return {
-			tids,
-			warning: "Too many teams to generate a good schedule.",
-		};
-	}
-
-	let tids = newScheduleGood(teams, settings);
+	let tids;
 	let warning: string | undefined;
 
-	if (typeof tids === "string") {
-		// console.log("FAILED FIRST TRY", tids)
-		warning = tids;
+	if (teams.length >= TOO_MANY_TEAMS_TOO_SLOW) {
 		tids = newScheduleGood(teams, settings, true);
-		// tids = [];
+
+		warning = "Too many teams to generate a good schedule.";
+	} else {
+		tids = newScheduleGood(teams, settings);
+
+		if (typeof tids === "string") {
+			// console.log("FAILED FIRST TRY", tids)
+			warning = tids;
+			tids = newScheduleGood(teams, settings, true);
+			// tids = [];
+		}
 	}
 
 	if (typeof tids === "string") {

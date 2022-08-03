@@ -31,9 +31,6 @@ export const CustomMenuList = <T extends unknown>({
 		count: childrenArray.length,
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => DefaultItemHeight,
-
-		// Ideally would use smooth scroll on keyboard navigation, and no smooth scroll on initial load, but seems it must just be set once
-		enableSmoothScroll: false,
 	});
 
 	const currentIndexFocused = useMemo(
@@ -42,19 +39,21 @@ export const CustomMenuList = <T extends unknown>({
 	);
 	const firstOpen = useRef(true);
 	useEffect(() => {
-		let align: ScrollToOptions["align"];
+		const scrollToOptions: ScrollToOptions = {};
 		if (firstOpen.current) {
-			// For initial render of list, always align to top
-			align = "start";
 			firstOpen.current = false;
+
+			// For initial render of list, always align to top
+			scrollToOptions.align = "start";
+
+			// Smooth scroll everything but the initial render
+			scrollToOptions.smoothScroll = false;
 		} else {
 			// For scrolling with keyboard, align to top/bottom depending on scroll direction
-			align = "auto";
+			scrollToOptions.align = "auto";
 		}
 
-		rowVirtualizer.scrollToIndex(currentIndexFocused, {
-			align,
-		});
+		rowVirtualizer.scrollToIndex(currentIndexFocused, scrollToOptions);
 	}, [rowVirtualizer, currentIndexFocused]);
 
 	return (

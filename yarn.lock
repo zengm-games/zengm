@@ -1589,11 +1589,6 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.5.tgz#db5a11bf66bdab39569719555b0f76e138d7bd64"
   integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
 
-"@reach/observe-rect@^1.1.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@reach/observe-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
-  integrity sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==
-
 "@react-aria/ssr@^3.2.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@react-aria/ssr/-/ssr-3.3.0.tgz#25e81daf0c7a270a4a891159d8d984578e4512d8"
@@ -1736,20 +1731,17 @@
     magic-string "^0.25.0"
     string.prototype.matchall "^4.0.6"
 
-"@tanstack/react-virtual@3.0.0-beta.12":
-  version "3.0.0-beta.12"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.0.0-beta.12.tgz#e62a1f51d018635493ecaa1fa16876188db68dc7"
-  integrity sha512-5ZztFUDq7QdtvdeYO48a8nzWFkF7unrbRtQr0N81Msm2epSrDZ0PPcyE8oXbhmy2os8cMPTmMYDzEyWBWXE+Iw==
+"@tanstack/react-virtual@^3.0.0-beta.17":
+  version "3.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.0.0-beta.17.tgz#490335fd4544a98f415aab84825c432fc27e2246"
+  integrity sha512-Rgy/D5cWf+q12XxR/Jo2lfStL/6FdcqPX5+nMjDkIu2Twfx1zjACvoi3UeieVbQjlZCynRcxw9T0BkhkNHKDjA==
   dependencies:
-    "@reach/observe-rect" "^1.1.0"
-    "@tanstack/virtual-core" "3.0.0-beta.12"
+    "@tanstack/virtual-core" "3.0.0-beta.17"
 
-"@tanstack/virtual-core@3.0.0-beta.12":
-  version "3.0.0-beta.12"
-  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.0.0-beta.12.tgz#db220052dbefa042ecaa2b78edaf735ce4eb536b"
-  integrity sha512-b2jAPFoPVvgEDxIygFG43d4sn3DJHeohYiSUMIWXha8TcM2LR5pNxYsf+muQETUzLmB+7UNf+e0IUNKbzwMphA==
-  dependencies:
-    "@reach/observe-rect" "^1.1.0"
+"@tanstack/virtual-core@3.0.0-beta.17":
+  version "3.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.0.0-beta.17.tgz#e9e2fa3bb00a4836d0b913ce00fb01dece6a3cb2"
+  integrity sha512-p4bBBwHkBCCDRE8umXtLJ8UGJ03efZj39WklRwTQReVq5JOx7hvvPYY6zN9zRbbGCseNXX95OLgXiggDL657Jw==
 
 "@tootallnate/once@2":
   version "2.0.0"

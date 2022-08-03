@@ -216,7 +216,11 @@ const ScoreBox = memo(
 								small ? "score-box-deadline-small" : "score-box-deadline"
 							} p-1 d-flex align-items-center ms-1`}
 						>
-							Trade deadline
+							{small ? (
+								"Trade Deadline"
+							) : (
+								<h2 className="mb-0">Trade Deadline</h2>
+							)}
 						</div>
 					) : allStarGame && !final ? (
 						[1, 2].map(i => (

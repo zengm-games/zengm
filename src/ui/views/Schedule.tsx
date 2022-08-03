@@ -78,35 +78,44 @@ const Schedule = ({
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
 						{upcoming.map((game, i) => {
-							const actions = [
-								game.teams[0].playoffs || (canLiveSimFirstGame && i === 0)
-									? {
-											disabled: gameSimInProgress,
-											text: (
-												<>
-													Watch
-													<br />
-													game
-												</>
-											),
-											onClick: () => toWorker("actions", "liveGame", game.gid),
-									  }
-									: {
-											disabled: gameSimInProgress,
-											text: (
-												<>
-													Sim
-													<br />
-													to
-													<br />
-													game
-												</>
-											),
-											onClick: () => {
-												toWorker("actions", "simToGame", game.gid);
-											},
-									  },
-							];
+							const tradeDeadline =
+								game.teams[0].tid === -3 && game.teams[1].tid === -3;
+							const canWatch =
+								game.teams[0].playoffs || (canLiveSimFirstGame && i === 0);
+
+							const actions =
+								canWatch && tradeDeadline
+									? undefined
+									: [
+											canWatch
+												? {
+														disabled: gameSimInProgress,
+														text: (
+															<>
+																Watch
+																<br />
+																game
+															</>
+														),
+														onClick: () =>
+															toWorker("actions", "liveGame", game.gid),
+												  }
+												: {
+														disabled: gameSimInProgress,
+														text: (
+															<>
+																Sim
+																<br />
+																to
+																<br />
+																game
+															</>
+														),
+														onClick: () => {
+															toWorker("actions", "simToGame", game.gid);
+														},
+												  },
+									  ];
 
 							const allowTie = allowForceTie({
 								homeTid: game.teams[0].tid,

@@ -334,6 +334,7 @@ class GameSim {
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		const desperation =
+			this.scrimmage < 97 &&
 			quarter >= this.numPeriods &&
 			((quarter > this.numPeriods && ptsDown > 0) ||
 				(ptsDown > 0 && this.clock <= 2) ||
@@ -395,6 +396,13 @@ class GameSim {
 				0.45,
 				0.65,
 			);
+		}
+
+		if (this.scrimmage >= 95) {
+			// 5 for 1 yd to go, 1 for 5 yds to go
+			const runAtGoallineWeight = this.scrimmage - 94;
+
+			passOdds = passOdds / runAtGoallineWeight;
 		}
 
 		return passOdds;

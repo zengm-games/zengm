@@ -13,11 +13,13 @@ const PlayerList = ({
 	challengeNoRatings,
 	players,
 	season,
+	showDraftPick,
 	userTid,
 }: {
 	challengeNoRatings: boolean;
 	players: any[];
 	season: number;
+	showDraftPick?: boolean;
 	userTid: number;
 }) => {
 	if (players.length === 0) {
@@ -76,6 +78,14 @@ const PlayerList = ({
 						</>
 					) : null}
 					{p.age} yo
+					{showDraftPick ? (
+						<>
+							,{" "}
+							{p.draft.round > 0
+								? `${p.draft.round}-${p.draft.pick}`
+								: "undrafted"}
+						</>
+					) : null}
 				</li>
 			))}
 		</ol>
@@ -186,6 +196,7 @@ const SeasonPreview = ({
 	playersDeclining,
 	playersImproving,
 	playersTop,
+	playersTopRookies,
 	season,
 	teamsDeclining,
 	teamsImproving,
@@ -204,7 +215,7 @@ const SeasonPreview = ({
 			<MoreLinks type="league" page="season_preview" />
 			<div style={{ maxWidth: 1200 }}>
 				<div className="row">
-					<div className="col-md-4">
+					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Top Players</h2>
 						<PlayerList
 							challengeNoRatings={challengeNoRatings}
@@ -213,7 +224,7 @@ const SeasonPreview = ({
 							userTid={userTid}
 						/>
 					</div>
-					<div className="col-md-4">
+					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Improving Players</h2>
 						<PlayerList
 							challengeNoRatings={challengeNoRatings}
@@ -222,7 +233,7 @@ const SeasonPreview = ({
 							userTid={userTid}
 						/>
 					</div>
-					<div className="col-md-4">
+					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Declining Players</h2>
 						<PlayerList
 							challengeNoRatings={challengeNoRatings}
@@ -231,9 +242,17 @@ const SeasonPreview = ({
 							userTid={userTid}
 						/>
 					</div>
-				</div>
-				<div className="row">
-					<div className="col-md-4">
+					<div className="col-sm-6 col-md-4 col-lg-3">
+						<h2>Top Rookies</h2>
+						<PlayerList
+							challengeNoRatings={challengeNoRatings}
+							players={playersTopRookies}
+							season={season}
+							userTid={userTid}
+							showDraftPick
+						/>
+					</div>
+					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Top Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
@@ -244,7 +263,7 @@ const SeasonPreview = ({
 							userTid={userTid}
 						/>
 					</div>
-					<div className="col-md-4">
+					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Improving Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
@@ -255,7 +274,7 @@ const SeasonPreview = ({
 							userTid={userTid}
 						/>
 					</div>
-					<div className="col-md-4">
+					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Declining Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}

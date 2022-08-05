@@ -20,7 +20,6 @@ $form-select-indicator-padding: 1.1rem;
 $form-select-bg-position: right 0.15rem center;
 
 // Default is 1.5rem, but this saves a bit of space
-$container-padding-x: 0.5rem;
 $grid-gutter-width: 1rem; // Needs to decrease too, or it overflows
 
 .form-check-inline {
@@ -89,6 +88,7 @@ $flag-icon-css-path: "/img/flags";
 // Taken from bootstrap.scss, but with unused things deleted. PurgeCSS would do the same thing from just importing the main bootstrap.scss file, but it has some false positives (such as offcanvas placeholder).
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/maps";
 @import "node_modules/bootstrap/scss/mixins";
 @import "node_modules/bootstrap/scss/utilities";
 @import "node_modules/bootstrap/scss/root";
@@ -951,8 +951,8 @@ tr.table-warning:hover > td {
 	min-height: 32px;
 
 	// Like .container-fluid
-	padding-left: var(--bs-gutter-x, $container-padding-x);
-	padding-right: var(--bs-gutter-x, $container-padding-x);
+	padding-left: var(--bs-gutter-x, 0.5rem);
+	padding-right: var(--bs-gutter-x, 0.5rem);
 }
 .title-bar-right-links {
 	.nav-item {
@@ -1277,6 +1277,10 @@ button.fast-forward {
 		border-top-left-radius: 0 !important;
 		border-top-right-radius: 0 !important;
 	}
+}
+
+.alert-bg-color {
+	background-color: var(--bs-alert-bg);
 }
 
 a.anchor {

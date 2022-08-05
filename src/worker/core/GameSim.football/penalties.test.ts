@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import penalties from "./penalties";
 
 describe("worker/core/GameSim.football", () => {

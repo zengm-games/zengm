@@ -1,6 +1,6 @@
 /* eslint-env mocha:true */
 
-const assert = require("assert");
+const assert = require("node:assert/strict");
 const babel = require("@babel/core");
 const babelPluginSportFunctions = require("./index.js");
 

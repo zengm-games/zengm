@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { PLAYER } from "../../common";
 import g from "./g";
 import helpers from "./helpers";

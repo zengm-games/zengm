@@ -1,5 +1,5 @@
 /* eslint-disable no-async-promise-executor */
-import assert from "assert";
+import assert from "node:assert/strict";
 import router from ".";
 import type { Context } from ".";
 

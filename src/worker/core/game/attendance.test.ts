@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import helpers from "../../../test/helpers";
 import {
 	getActualAttendance,

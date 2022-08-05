@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import player from "./index";
 import testHelpers from "../../../test/helpers";
 

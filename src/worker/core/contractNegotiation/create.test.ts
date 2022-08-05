@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { beforeTests, givePlayerMinContract } from "./testHelpers";

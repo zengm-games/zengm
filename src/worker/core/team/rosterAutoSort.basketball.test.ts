@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { findStarters } from "./rosterAutoSort.basketball";
 
 describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {

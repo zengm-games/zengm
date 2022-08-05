@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import range from "lodash-es/range";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";

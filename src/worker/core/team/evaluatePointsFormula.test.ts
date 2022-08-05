@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { PointsFormulaEvaluator } from "./evaluatePointsFormula";
 
 describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {

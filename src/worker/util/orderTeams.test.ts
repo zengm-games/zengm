@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import helpers from "./helpers";
 import range from "lodash-es/range";
 import { breakTies } from "./orderTeams";

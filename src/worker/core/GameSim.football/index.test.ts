@@ -1,5 +1,5 @@
 import range from "lodash-es/range";
-import assert from "assert";
+import assert from "node:assert/strict";
 import GameSim from ".";
 import { player, team } from "..";
 import loadTeams from "../game/loadTeams";

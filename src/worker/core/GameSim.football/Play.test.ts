@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import Play from "./Play";
 import { genTwoTeams, initGameSim } from "./index.test";
 

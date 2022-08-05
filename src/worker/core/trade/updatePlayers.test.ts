@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { trade } from "..";
 import { g } from "../../util";
 import { beforeTests, reset } from "./testHelpers";

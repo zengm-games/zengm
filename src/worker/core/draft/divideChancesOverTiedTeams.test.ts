@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { loadTeamSeasons } from "./testHelpers";
 import lotterySort from "./lotterySort";
 import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";

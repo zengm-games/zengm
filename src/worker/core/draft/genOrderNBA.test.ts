@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 import testHelpers from "../../../test/helpers";
 import { idb } from "../../db";

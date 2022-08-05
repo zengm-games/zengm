@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 import { makeMatchups } from "./genPlayoffSeries";

@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {

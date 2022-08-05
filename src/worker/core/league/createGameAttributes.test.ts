@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { defaultGameAttributes, helpers } from "../../util";
 import createGameAttributes from "./createGameAttributes";
 import { PHASE } from "../../../common";

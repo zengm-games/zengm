@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import { assert as typeAssert, type IsExact } from "conditional-type-checks";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";

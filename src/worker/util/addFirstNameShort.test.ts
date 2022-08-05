@@ -1,4 +1,4 @@
-import assert from "assert";
+import assert from "node:assert/strict";
 import addFirstNameShort from "./addFirstNameShort";
 
 describe("worker/util/addFirstNameShort", () => {

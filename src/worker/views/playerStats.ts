@@ -1,4 +1,10 @@
-import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import {
+	helpers,
+	isSport,
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+} from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -186,6 +192,17 @@ const updatePlayers = async (
 
 		players = addFirstNameShort(players);
 
+		let superCols;
+		if (inputs.season === "all") {
+			if (statsTable.superCols) {
+				// Account for extra "Season" column
+				superCols = helpers.deepCopy(statsTable.superCols);
+				superCols[0].colspan += 1;
+			}
+		} else {
+			superCols = statsTable.superCols;
+		}
+
 		return {
 			players,
 			abbrev: inputs.abbrev,
@@ -193,7 +210,7 @@ const updatePlayers = async (
 			statType: inputs.statType,
 			playoffs: inputs.playoffs,
 			stats,
-			superCols: statsTable.superCols,
+			superCols,
 			userTid: g.get("userTid"),
 		};
 	}

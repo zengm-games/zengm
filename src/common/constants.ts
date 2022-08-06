@@ -131,7 +131,11 @@ const PLAYER_SUMMARY = bySport<{
 		name: string;
 		onlyShowIf?: string[];
 		stats: string[];
-		superCols?: any[];
+		superCols?: {
+			colspan: number;
+			desc: string;
+			title: string;
+		}[];
 	};
 }>({
 	baseball: constantsBaseball.PLAYER_SUMMARY,

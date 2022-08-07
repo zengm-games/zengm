@@ -196,7 +196,7 @@ class ViewManager {
 		await router.navigate(actualURL, {
 			state,
 			refresh,
-			replace,
+			replace: replace || url === undefined,
 		});
 
 		// router.navigate runs fromRouter, which waits until the content is displayed, so we can resolve the action here

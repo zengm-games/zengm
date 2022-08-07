@@ -196,7 +196,9 @@ class ViewManager {
 		await router.navigate(actualURL, {
 			state,
 			refresh,
-			replace: replace || url === undefined,
+
+			// Would like to make this `replace: replace || url === undefined,` so it doesn't add a history entry on refreshes, but then Safari errors "Attempt to use history.replaceState() more than 100 times per 30 seconds"
+			replace,
 		});
 
 		// router.navigate runs fromRouter, which waits until the content is displayed, so we can resolve the action here

@@ -126,13 +126,16 @@ const newPhasePlayoffs = async (
 	await team.updateClinchedPlayoffs(true, conditions);
 
 	// Don't redirect if we're viewing a live game now
-	let url;
+	let redirect;
 	if (!liveGameSim) {
-		url = helpers.leagueUrl(["playoffs"]);
+		redirect = {
+			url: helpers.leagueUrl(["playoffs"]),
+			text: "View playoff bracket",
+		};
 	}
 
 	return {
-		url,
+		redirect,
 		updateEvents: ["teamFinances"],
 	};
 };

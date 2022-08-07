@@ -848,6 +848,7 @@ export type Option = {
 
 export type Options = {
 	fullNames?: boolean;
+	phaseChangeRedirects: Phase[];
 	units?: "metric" | "us";
 };
 
@@ -954,7 +955,10 @@ export type PartialTopMenu = {
 export type Phase = -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export type PhaseReturn = {
-	url?: string;
+	redirect?: {
+		url: string;
+		text: string;
+	};
 	updateEvents?: UpdateEvents;
 };
 

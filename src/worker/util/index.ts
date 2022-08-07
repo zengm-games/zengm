@@ -14,6 +14,7 @@ export { default as face } from "./face";
 export { default as formatEventText } from "./formatEventText";
 export { default as g } from "./g";
 export { default as genMessage } from "./genMessage";
+export { default as getGlobalSettings } from "./getGlobalSettings";
 export { default as getNewLeagueLid } from "./getNewLeagueLid";
 export { default as getProcessedGames } from "./getProcessedGames";
 export { default as getTeamColors } from "./getTeamColors";

@@ -477,9 +477,12 @@ const newPhaseBeforeDraft = async (
 	await doInflation(conditions);
 
 	// Don't redirect if we're viewing a live game now
-	let url;
+	let redirect;
 	if (!liveGameInProgress) {
-		url = helpers.leagueUrl(["history"]);
+		redirect = {
+			url: helpers.leagueUrl(["history"]),
+			text: "View season summary",
+		};
 	} else {
 		local.unviewedSeasonSummary = true;
 	}
@@ -510,7 +513,7 @@ const newPhaseBeforeDraft = async (
 		conditions,
 	);
 	return {
-		url,
+		redirect,
 		updateEvents: ["playerMovement"],
 	};
 };

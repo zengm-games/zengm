@@ -1,7 +1,7 @@
 import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, league } from "..";
 import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
+import { g, local } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseFantasyDraft = async (
@@ -62,7 +62,6 @@ const newPhaseFantasyDraft = async (
 	}
 
 	return {
-		url: helpers.leagueUrl(["draft"]),
 		updateEvents: ["playerMovement"],
 	};
 };

@@ -3407,6 +3407,7 @@ const updateOptions = async (
 		{
 			units: options.units,
 			fullNames: options.fullNames,
+			phaseChangeRedirects: options.phaseChangeRedirects,
 		},
 		"options",
 	);

@@ -10,6 +10,8 @@ import {
 	updateStatus,
 	processScheduledEvents,
 	g,
+	getGlobalSettings,
+	logEvent,
 } from "../../util";
 import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
 
@@ -27,7 +29,7 @@ import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
 const finalize = async (
 	phase: Phase,
 	conditions: Conditions,
-	{ url, updateEvents = [] }: PhaseReturn,
+	{ redirect, updateEvents = [] }: PhaseReturn,
 ) => {
 	await updateStatus("Saving...");
 
@@ -54,16 +56,37 @@ const finalize = async (
 		await processScheduledEvents(g.get("season"), phase, conditions);
 	}
 
-	// If auto-simulating, initiate next action but don't redirect to a new URL
-	if (local.autoPlayUntil) {
+	// Redirect if no auto play and if the user wants this redirect
+	let redirectToNewURL = false;
+	if (redirect !== undefined && !local.autoPlayUntil) {
+		const globalSettings = await getGlobalSettings();
+
+		if (globalSettings.phaseChangeRedirects.includes(phase)) {
+			redirectToNewURL = true;
+		}
+	}
+
+	if (redirectToNewURL && redirect !== undefined) {
+		toUI("realtimeUpdate", [updateEvents, redirect.url], conditions).then(
+			() => {
+				// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"
+				return toUI("realtimeUpdate", [updateEvents]);
+			},
+		);
+	} else {
 		toUI("realtimeUpdate", [updateEvents]);
 
+		if (redirect !== undefined && !local.autoPlayUntil) {
+			await logEvent({
+				type: "info",
+				text: `<a href="${redirect.url}">${redirect.text}</a>`,
+				saveToDb: false,
+			});
+		}
+	}
+
+	if (local.autoPlayUntil) {
 		await league.autoPlay(conditions);
-	} else {
-		toUI("realtimeUpdate", [updateEvents, url], conditions).then(() => {
-			// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"
-			return toUI("realtimeUpdate", [updateEvents]);
-		});
 	}
 };
 

@@ -315,7 +315,10 @@ const newPhaseResignPlayers = async (
 	});
 
 	return {
-		url: helpers.leagueUrl(["negotiation"]),
+		redirect: {
+			url: helpers.leagueUrl(["negotiation"]),
+			text: "Re-sign players",
+		},
 		updateEvents: ["playerMovement"],
 	};
 };

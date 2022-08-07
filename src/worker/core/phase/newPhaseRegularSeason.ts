@@ -128,13 +128,16 @@ const newPhaseRegularSeason = async (
 		}
 	}
 
-	let url;
+	let redirect;
 	if (g.get("season") > g.get("startingSeason")) {
-		url = helpers.leagueUrl(["season_preview"]);
+		redirect = {
+			url: helpers.leagueUrl(["season_preview"]),
+			text: "View season preview",
+		};
 	}
 
 	return {
-		url,
+		redirect,
 		updateEvents: ["playerMovement"],
 	};
 };

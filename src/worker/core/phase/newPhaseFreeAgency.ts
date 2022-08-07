@@ -11,7 +11,10 @@ const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 	await freeAgents.normalizeContractDemands({ type: "freeAgentsOnly" });
 
 	return {
-		url: helpers.leagueUrl(["free_agents"]),
+		redirect: {
+			url: helpers.leagueUrl(["free_agents"]),
+			text: "View free agents",
+		},
 		updateEvents: ["playerMovement"],
 	};
 };

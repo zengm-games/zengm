@@ -73,11 +73,16 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 		otherTeamsWantToHire: false,
 	});
 
+	let redirect;
+	if (g.get("draftType") !== "freeAgents") {
+		redirect = {
+			url: helpers.leagueUrl(["draft"]),
+			text: "View the draft",
+		};
+	}
+
 	return {
-		url:
-			g.get("draftType") !== "freeAgents"
-				? helpers.leagueUrl(["draft"])
-				: undefined,
+		redirect,
 	};
 };
 

@@ -130,6 +130,8 @@ const Row = ({
 	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts, dpid } =
 		t;
 
+	const userTeam = tid === userTid;
+
 	const pickCols = range(NUM_PICKS).map(j => {
 		const prob = probs[i][j];
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
@@ -151,7 +153,8 @@ const Row = ({
 		return (
 			<td
 				className={classNames({
-					"table-success": highlighted,
+					"table-success": highlighted && !userTeam,
+					"table-info": highlighted && userTeam,
 				})}
 				key={j}
 			>
@@ -168,13 +171,13 @@ const Row = ({
 		>
 			<td
 				className={classNames({
-					"table-info": tid === userTid,
+					"table-info": userTeam,
 				})}
 			>
 				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
-				{tid === userTid || spectator ? null : (
+				{userTeam || spectator ? null : (
 					<button
 						className="btn btn-xs btn-light-bordered"
 						onClick={async () => {

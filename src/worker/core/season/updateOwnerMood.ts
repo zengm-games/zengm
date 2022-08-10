@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, local } from "../../util";
+import { defaultGameAttributes, g, local } from "../../util";
 import type { OwnerMood } from "../../../common/types";
 
 /**
@@ -48,7 +48,7 @@ const updateOwnerMood = async (): Promise<
 		return;
 	}
 
-	const salaryCapFactor = g.get("salaryCap") / 90000;
+	const salaryCapFactor = g.get("salaryCap") / defaultGameAttributes.salaryCap;
 
 	const expectedProfit = 15 * salaryCapFactor;
 
@@ -59,8 +59,7 @@ const updateOwnerMood = async (): Promise<
 			(g.get("numGames") / 2),
 		playoffs: 0,
 		money: g.get("budget")
-			? (t.seasonAttrs.profit - expectedProfit) /
-			  (100 * Math.sqrt(salaryCapFactor))
+			? (t.seasonAttrs.profit - expectedProfit) / (100 * salaryCapFactor)
 			: 0,
 	};
 

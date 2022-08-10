@@ -347,3 +347,9 @@ table.table thead .sorting::after {
 		fill: lighten($secondary, 10%);
 	}
 }
+
+#basketball-gm_mobile_leaderboard,
+#football-gm_mobile_leaderboard,
+#zen-gm_mobile_leaderboard {
+	background-color: rgba(33, 37, 41, 0.8);
+}

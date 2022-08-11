@@ -1353,7 +1353,7 @@ class GameSim {
 			}
 
 			if (inBonus) {
-				return this.doFt(shooter, 2); // fg, orb, or drb
+				return this.doFt(shooter, this.determineFtAmount()); // fg, orb, or drb
 			}
 
 			return "nonShootingFoul";
@@ -1361,6 +1361,21 @@ class GameSim {
 
 		// Shot!
 		return this.doShot(shooter, possessionLength); // fg, orb, or drb
+	}
+
+	/*
+	* Determines the amount of FT a team gets.
+	*/
+	determineFtAmount(isThreePointer: boolean=false): number {
+		// default FT amount
+		var ft = 2;
+		if(this.isOneTwos){
+			ft-=1;
+		}
+		if(isThreePointer){
+			ft+=1;
+		}
+		return ft
 	}
 
 	/**
@@ -1609,12 +1624,12 @@ class GameSim {
 			const threePointer = type === "threePointer" && g.get("threePointers");
 
 			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
-
+			// set a variable since this gets tricker now.
 			if (threePointer) {
-				return this.doFt(shooter, 3); // fg, orb, or drb
+				return this.doFt(shooter, this.determineFtAmount(true)); // fg, orb, or drb
 			}
 
-			return this.doFt(shooter, 2); // fg, orb, or drb
+			return this.doFt(shooter, this.determineFtAmount()); // fg, orb, or drb
 		}
 
 		// Miss

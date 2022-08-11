@@ -240,6 +240,7 @@ class GameSim {
 
 	numPlayersOnCourt: number;
 	baseInjuryRate: number;
+	isOneTwos: boolean;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -254,6 +255,7 @@ class GameSim {
 		homeCourtFactor = 1,
 		allStarGame = false,
 		baseInjuryRate,
+		isOneTwos = false
 	}: {
 		gid: number;
 		day?: number;
@@ -262,6 +264,7 @@ class GameSim {
 		homeCourtFactor?: number;
 		allStarGame?: boolean;
 		baseInjuryRate: number;
+		isOneTwos: boolean;
 	}) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
@@ -1716,7 +1719,10 @@ class GameSim {
 		const p = this.playersOnCourt[this.o][shooter];
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
-		this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
+		this.recordStat(this.o, p, "pts"); 
+		if(!this.isOneTwos){
+			this.recordStat(this.o, p, "pts"); 
+		}
 
 		let fouler;
 		if (andOne) {

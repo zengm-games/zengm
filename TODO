@@ -178,8 +178,6 @@ pot skills - show % likelihood of achieving a skill tag, based on pot bootstrap
 
 When I set brother and son rate to 1 in the offseason and generate a new draft class, the last names and birthplace of the ALL players still on their rookie contracts change https://discord.com/channels/290013534023057409/290015591216054273/962927125508288512
 
-more rushing attempts near goalline
-
 column title typos in trading block table https://discord.com/channels/290013534023057409/290015591216054273/960753790728957953
 
 make speed influence catch distance more in FBGM https://discord.com/channels/290013534023057409/331882115119448065/957000434973802496
@@ -301,7 +299,6 @@ hockey ovr revamp
 - ovrs for skater and goalie. determine skater positions like BBGM, including possibility of hybrid positions like F. cause there's really a fair amount of overlap in what players do
 
 more season preview stuff
-- top rookies
 - top free agent signings
 - ...1 more needed
   - top young players? kind of redundant
@@ -350,6 +347,7 @@ fbgm negative passes https://discord.com/channels/@me/625036115497451609/9129094
 add some way to auto find team colors based on logo
 - https://lokeshdhakar.com/projects/color-thief/
 - https://github.com/Vibrant-Colors/node-vibrant
+- CORS?
 
 use ovrStart/ovrEnd on power rankings page?
 - show change from beginning of season or last season?
@@ -396,7 +394,6 @@ store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
 - indicator if trade is invalid because an asset no longer exists on that team
-- show what the user offered somewhere, not just what is checked
 
 football penalty later
 - make spotOfEnforcementIndexes and cleanHandsChangeOfPossessionIndexes dynamic when computing penalties, like possessionChangeIndexes
@@ -673,8 +670,6 @@ settings re-design
   - playoff structure
 - to add
   - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
-
-hockey new lottery nhl2021
 
 If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
 

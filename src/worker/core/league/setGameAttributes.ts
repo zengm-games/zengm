@@ -16,6 +16,7 @@ import { getAutoTicketPriceByTid } from "../game/attendance";
 import goatFormula from "../../util/goatFormula";
 import updateMeta from "./updateMeta";
 import { initDefaults } from "../../util/loadNames";
+import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({
@@ -62,6 +63,10 @@ const setGameAttributes = async (
 	}
 
 	for (const key of helpers.keys(gameAttributes)) {
+		if (gameAttributesKeysOtherSports.has(key)) {
+			continue;
+		}
+
 		const currentValue = unwrapGameAttribute(g, key);
 
 		if (

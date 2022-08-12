@@ -42,6 +42,53 @@ export const gameAttributesCache: GameAttributeKey[] = [
 	"teamInfoCache",
 ];
 
+const gameAttributesKeysSportSpecific = {
+	baseball: ["dh"] as GameAttributeKey[],
+	basketball: [
+		"pace",
+		"threePointers",
+		"threePointTendencyFactor",
+		"threePointAccuracyFactor",
+		"twoPointAccuracyFactor",
+		"blockFactor",
+		"stealFactor",
+		"turnoverFactor",
+		"orbFactor",
+		"realPlayerDeterminism",
+		"foulRateFactor",
+		"foulsNeededToFoulOut",
+		"foulsUntilBonus",
+		"elam",
+		"elamASG",
+		"elamMinutes",
+		"elamPoints",
+		"randomDebutsForever",
+		"realDraftRatings",
+		"numPlayersDunk",
+		"numPlayersThree",
+		"quarterLength",
+		"ties",
+		"numPlayersOnCourt",
+	] as GameAttributeKey[],
+	football: [
+		"fantasyPoints",
+		"foulRateFactor",
+		"quarterLength",
+		"ties",
+	] as GameAttributeKey[],
+	hockey: ["quarterLength", "ties"] as GameAttributeKey[],
+};
+export const gameAttributesKeysOtherSports = new Set<GameAttributeKey>();
+for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
+	if (sport !== process.env.SPORT) {
+		for (const key of keys) {
+			if (!gameAttributesKeysSportSpecific[process.env.SPORT].includes(key)) {
+				gameAttributesKeysOtherSports.add(key);
+			}
+		}
+	}
+}
+
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft

@@ -7,6 +7,7 @@ import {
 	unwrapGameAttribute,
 } from "../../../common";
 import gameAttributesToUI from "./gameAttributesToUI";
+import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes";
 
 export const ALWAYS_WRAP = [
 	"confs",
@@ -30,6 +31,10 @@ const loadGameAttributes = async () => {
 	const gameAttributes = await idb.cache.gameAttributes.getAll();
 
 	for (const { key, value } of gameAttributes) {
+		if (gameAttributesKeysOtherSports.has(key)) {
+			continue;
+		}
+
 		if (ALWAYS_WRAP.includes(key) && !gameAttributeHasHistory(value)) {
 			// Wrap on load to avoid IndexedDB upgrade
 			g.setWithoutSavingToDB(key, [
@@ -89,9 +94,6 @@ const loadGameAttributes = async () => {
 	}
 
 	// Avoid IDB upgrade
-	if ((g.get("draftType") as any) === "nba") {
-		g.setWithoutSavingToDB("draftType", "nba2019");
-	}
 	if ((g.get("draftType") as any) === "nba") {
 		g.setWithoutSavingToDB("draftType", "nba2019");
 	}

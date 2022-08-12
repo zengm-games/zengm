@@ -1,3 +1,6 @@
+game sim settings for other sports
+- pace in all sports, except maybe baseball
+
 defensemen need more shots, wingers need less https://discord.com/channels/@me/662077709836484618/1004952271710326794
 
 show stars/rings next to player names on player stats page (and similar pages) https://discord.com/channels/290013534023057409/331882115119448065/1003353503948865736
@@ -241,8 +244,6 @@ put position ranks (from power rankings) in roster composition block https://dis
 Deleting old box scores deletes stat feats from player pages, but they’re all still saved on the stat feat page? I don’t believe they should disappear from a player’s page https://discord.com/channels/290013534023057409/290015591216054273/937547547663278152
 
 load real player info from url/file https://discord.com/channels/290013534023057409/290015591216054273/937276075841572874
-
-fbgm/zgmh game sim settings
 
 use nicidob's model but fit to random players instead of real players, to get linear prog formula that behaves like the current one
 - running average progs https://discord.com/channels/290013534023057409/290015468939640832/936461665862549505

@@ -4,7 +4,10 @@ import {
 	gameAttributesArrayToObject,
 	MAX_SUPPORTED_LEAGUE_VERSION,
 } from "../../common";
-import { gameAttributesCache } from "../../common/defaultGameAttributes";
+import {
+	gameAttributesCache,
+	gameAttributesKeysOtherSports,
+} from "../../common/defaultGameAttributes";
 import { local } from "./local";
 import toWorker from "./toWorker";
 import type { LeagueDB } from "../../worker/db/connectLeague";
@@ -200,6 +203,12 @@ const makeExportStream = async (
 					if (filter[store]) {
 						rows = rows.filter(filter[store]);
 					}
+
+					// No need to include settings that don't apply to this sport
+
+					rows = rows.filter(
+						row => !gameAttributesKeysOtherSports.has(row.key),
+					);
 
 					if (forEach[store]) {
 						for (const row of rows) {

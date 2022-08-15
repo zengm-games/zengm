@@ -255,7 +255,7 @@ class GameSim {
 		homeCourtFactor = 1,
 		allStarGame = false,
 		baseInjuryRate,
-		isOneTwos = false
+		isOneTwos = false,
 	}: {
 		gid: number;
 		day?: number;
@@ -312,6 +312,7 @@ class GameSim {
 		this.elamActive = false;
 		this.elamDone = false;
 		this.elamTarget = 0;
+		this.isOneTwos = isOneTwos;
 
 		this.fatigueFactor = 0.055;
 
@@ -1364,18 +1365,18 @@ class GameSim {
 	}
 
 	/*
-	* Determines the amount of FT a team gets.
-	*/
-	determineFtAmount(isThreePointer: boolean=false): number {
+	 * Determines the amount of FT a team gets.
+	 */
+	determineFtAmount(isThreePointer: boolean = false): number {
 		// default FT amount
 		var ft = 2;
-		if(this.isOneTwos){
-			ft-=1;
+		if (this.isOneTwos) {
+			ft -= 1;
 		}
-		if(isThreePointer){
-			ft+=1;
+		if (isThreePointer) {
+			ft += 1;
 		}
-		return ft
+		return ft;
 	}
 
 	/**
@@ -1624,7 +1625,6 @@ class GameSim {
 			const threePointer = type === "threePointer" && g.get("threePointers");
 
 			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
-			// set a variable since this gets tricker now.
 			if (threePointer) {
 				return this.doFt(shooter, this.determineFtAmount(true)); // fg, orb, or drb
 			}
@@ -1734,9 +1734,9 @@ class GameSim {
 		const p = this.playersOnCourt[this.o][shooter];
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
-		this.recordStat(this.o, p, "pts"); 
-		if(!this.isOneTwos){
-			this.recordStat(this.o, p, "pts"); 
+		this.recordStat(this.o, p, "pts");
+		if (!this.isOneTwos) {
+			this.recordStat(this.o, p, "pts");
 		}
 
 		let fouler;

@@ -57,27 +57,13 @@ const animationVariants = {
 		transition: { duration: 0.25, ease: "easeInOut" },
 	},
 	left: {
-		x: "-75vw",
+		x: "-100vw",
 		transition: { duration: 0.25, ease: "easeInOut" },
 	},
 	right: {
-		x: "75vw",
+		x: "100vw",
 		transition: { duration: 0.25, ease: "easeInOut" },
 	},
-};
-
-const onAnimationCompleteHack = (definition: string) => {
-	// HACK HACK HACK
-	// CustomizeSettings has a sticky div inside it, and mobile Chrome (and maybe others) get confused by the `transform: translateX(0vw) translateZ(0px);` CSS that framer-motion leaves hanging around
-	if (definition === "visible") {
-		const parent = document.getElementById("actual-actual-content");
-		if (parent) {
-			const animatedDiv = parent.children[0] as HTMLDivElement | undefined;
-			if (animatedDiv) {
-				animatedDiv.style.transform = "";
-			}
-		}
-	}
 };
 
 const applyRealTeamInfos = (
@@ -931,7 +917,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				initial="right"
 				animate="visible"
 				exit="right"
-				onAnimationComplete={onAnimationCompleteHack}
 			>
 				<CustomizeTeams
 					onCancel={() => {
@@ -972,7 +957,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				initial="right"
 				animate="visible"
 				exit="right"
-				onAnimationComplete={onAnimationCompleteHack}
 			>
 				<CustomizeSettings
 					onCancel={() => {
@@ -1031,9 +1015,8 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
-	// exitBeforeEnter sucks (makes transition slower) but otherwise it jumps at the end because it stacks the divs vertically, and I couldn't figure out how to work around that
 	return (
-		<AnimatePresence exitBeforeEnter initial={false}>
+		<AnimatePresence mode="popLayout" initial={false}>
 			{subPage ? (
 				subPage
 			) : (

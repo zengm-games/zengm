@@ -361,8 +361,8 @@ const RetiredJerseyNumbers = ({
 	}
 
 	let retiredJerseyNumbersToDisplay;
+	const indexStart = page * PAGE_SIZE;
 	if (pagination) {
-		const indexStart = page * PAGE_SIZE;
 		const indexEnd = indexStart + PAGE_SIZE;
 		retiredJerseyNumbersToDisplay = sortedJerseyNumbers.slice(
 			indexStart,
@@ -375,8 +375,8 @@ const RetiredJerseyNumbers = ({
 	const showSortOptions = sortedJerseyNumbers.length > 1;
 
 	const findUnsortedIndex = (sortedIndex: number) => {
-		const target = sortedJerseyNumbers[sortedIndex];
-		const unsortedIndex = retiredJerseyNumbers.indexOf(target);
+		const target = sortedJerseyNumbers[indexStart + sortedIndex];
+		const unsortedIndex = retiredJerseyNumbers.indexOf(target) - indexStart;
 		if (unsortedIndex < 0) {
 			throw new Error("Should never happen");
 		}

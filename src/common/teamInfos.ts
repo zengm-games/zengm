@@ -333,6 +333,20 @@ const teamInfos: {
 		latitude: 40.7127753,
 		longitude: -74.0059728,
 	},
+	OAK: {
+		region: "Oakland",
+		name: "Blue Oaks",
+		pop: 0.5,
+		colors: ["#0173f3", "#fefefe", "#010101"],
+		jersey: bySport({
+			baseball: "baseball:hat3",
+			basketball: "jersey3",
+			football: "football3",
+			hockey: "hockey4",
+		}),
+		latitude: 37.8044,
+		longitude: -122.2712,
+	},
 	OKC: {
 		region: "Oklahoma City",
 		name: "66ers",

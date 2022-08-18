@@ -55,7 +55,6 @@ const Footer = memo(() => {
 						top: "5px",
 						left: 0,
 					}}
-					data-refresh-time="-1"
 				/>
 				<div
 					id="bbgm-ads-logo"
@@ -86,7 +85,6 @@ const Footer = memo(() => {
 						top: "5px",
 						right: 0,
 					}}
-					data-refresh-time="-1"
 				/>
 			</div>
 

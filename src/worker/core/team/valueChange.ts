@@ -11,13 +11,23 @@ import type {
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
 
-type Asset = {
-	value: number;
-	contractValue: number;
-	injury: PlayerInjury;
-	age: number;
-	draftPick?: number;
-};
+type Asset =
+	| {
+			type: "player";
+			value: number;
+			contractValue: number;
+			injury: PlayerInjury;
+			age: number;
+	  }
+	| {
+			type: "pick";
+			value: number;
+			contractValue: number;
+			injury: PlayerInjury;
+			age: number;
+			draftPick: number;
+			draftYear: number;
+	  };
 
 let prevValueChangeKey: number | undefined;
 let cache: {
@@ -107,6 +117,7 @@ const getPlayers = async ({
 
 		if (!pidsRemove.includes(p.pid)) {
 			roster.push({
+				type: "player",
 				value,
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
@@ -120,6 +131,7 @@ const getPlayers = async ({
 			}
 
 			remove.push({
+				type: "player",
 				value: fudgedValue,
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
@@ -135,6 +147,7 @@ const getPlayers = async ({
 			const value = zscore(p.value);
 
 			add.push({
+				type: "player",
 				value,
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
@@ -255,6 +268,7 @@ const getPickInfo = (
 	value -= estPick * 1e-10;
 
 	return {
+		type: "pick",
 		value,
 		contractValue,
 		injury: {
@@ -265,6 +279,7 @@ const getPickInfo = (
 		// Would be better to store age in estValues, but oh well
 		age: 20,
 		draftPick: estPick,
+		draftYear: season,
 	};
 };
 
@@ -336,12 +351,18 @@ const sumValues = (
 		return 0;
 	}
 
+	const season = g.get("season");
+	const phase = g.get("phase");
+
 	return players.reduce((memo, p) => {
 		let playerValue = p.value;
 
+		const treatAsFutureDraftPick =
+			p.type === "pick" && (season !== p.draftYear || phase <= PHASE.PLAYOFFS);
+
 		if (strategy === "rebuilding") {
 			// Value young/cheap players and draft picks more. Penalize expensive/old players
-			if (p.draftPick !== undefined) {
+			if (treatAsFutureDraftPick) {
 				playerValue *= 1.1;
 			} else if (p.age <= 19) {
 				playerValue *= 1.075;
@@ -362,7 +383,7 @@ const sumValues = (
 			}
 		} else if (strategy === "contending") {
 			// Much of the value for these players comes from potential, which we don't really care about
-			if (p.draftPick !== undefined) {
+			if (treatAsFutureDraftPick) {
 				playerValue *= 0.825;
 			} else if (p.age <= 19) {
 				playerValue *= 0.8;

@@ -187,14 +187,6 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		// Receiving
 		score += (p.stats.recYds / t.stats.recYds) * t.stats.ptsRec;
 
-		if (p.stats.rec / p.stats.gp >= 70 / 16) {
-			if (p.stats.recYdsPerAtt > league.recYdsPerAtt) {
-				score += 0.5 * (p.stats.recYdsPerAtt - league.recYdsPerAtt);
-			} else {
-				score += 2 * (p.stats.recYdsPerAtt - league.recYdsPerAtt);
-			}
-		}
-
 		// Passing
 		score += (p.stats.pssYds / t.stats.pssYds) * t.stats.ptsPss;
 
@@ -296,7 +288,6 @@ const advStats = async () => {
 			"rusYdsPerAtt",
 			"rec",
 			"recYds",
-			"recYdsPerAtt",
 			"defSk",
 			"defFmbRec",
 			"defInt",
@@ -384,7 +375,6 @@ const advStats = async () => {
 	league.pssAdjYdsPerAtt =
 		(league.pssYds + 20 * league.pssTD - 45 * league.pssInt) / league.pss;
 	league.rusYdsPerAtt = league.rusYds / league.rus;
-	league.recYdsPerAtt = league.recYds / league.rec;
 	league.fgp0 = league.fg0 / league.fga0;
 	league.fgp20 = league.fg20 / league.fga20;
 	league.fgp30 = league.fg30 / league.fga30;

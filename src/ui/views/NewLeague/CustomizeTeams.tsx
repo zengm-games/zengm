@@ -389,10 +389,7 @@ const CardHeader = ({
 	const [controlledName, setControlledName] = useState(name);
 
 	return (
-		<div
-			className={classNames("card-header", renaming ? "p-1" : undefined)}
-			style={{ height: 44 }}
-		>
+		<div className={classNames("card-header", renaming ? "p-1" : undefined)}>
 			{renaming ? (
 				<form
 					className="d-flex"

@@ -384,9 +384,9 @@ class GameSim {
 		defRushing = helpers.bound((defRushing - 0.4) * (0.5 / 0.2) + 0.25, 0, 1);
 
 		const passingTendency =
-			1.1 * helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
+			1.075 * helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
 		const rushingTendency =
-			0.9 * helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
+			0.925 * helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
 
 		let passOdds = 0.57;
 		if (passingTendency > 0 || rushingTendency > 0) {
@@ -1604,7 +1604,7 @@ class GameSim {
 			undefined,
 			5,
 		);
-		const ydsRaw = random.randInt(-1, -15);
+		const ydsRaw = random.randInt(-1, -12);
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
 		const { safety } = this.currentPlay.addEvent({
@@ -1721,7 +1721,7 @@ class GameSim {
 		);
 		let ydsRaw = Math.round(
 			random.truncGauss(
-				9.2 *
+				8.2 *
 					(this.team[o].compositeRating.passBlocking /
 						this.team[d].compositeRating.passRushing),
 				7,
@@ -1730,7 +1730,13 @@ class GameSim {
 			),
 		);
 
-		if (Math.random() < qb.compositeRating.passingDeep * 0.07) {
+		if (Math.random() < qb.compositeRating.passingDeep * 0.05) {
+			ydsRaw += random.randInt(0, 109);
+		}
+
+		// Adjust for receiver speed
+		ydsRaw += Math.round((target.compositeRating.speed - 0.5) * 10);
+		if (Math.random() < target.compositeRating.speed * 0.03) {
 			ydsRaw += random.randInt(0, 109);
 		}
 

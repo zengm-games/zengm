@@ -37,6 +37,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.5, 1, 1],
 		skill: {
 			label: "X",
+			cutoff: 0.55,
 		},
 	},
 	catching: {
@@ -49,7 +50,11 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	gettingOpen: {
 		ratings: ["hgt", "spd", "rtr", "hnd"],
-		weights: [1, 1, 2, 1],
+		weights: [1, 0.25, 2, 1],
+	},
+	speed: {
+		ratings: ["spd"],
+		weights: [1],
 	},
 	passBlocking: {
 		ratings: ["hgt", "stre", "spd", "pbk"],

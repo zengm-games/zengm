@@ -66,11 +66,13 @@ const animationVariants = {
 	},
 };
 
-const applyRealTeamInfos = (
-	teams: NewLeagueTeam[],
+export const applyRealTeamInfos = <
+	T extends Parameters<typeof applyRealTeamInfo>[0],
+>(
+	teams: T[],
 	realTeamInfo: RealTeamInfo | undefined,
 	season: number = new Date().getFullYear(),
-) => {
+): T[] => {
 	if (!realTeamInfo) {
 		return teams;
 	}

@@ -270,6 +270,14 @@ export const getDefaultSettings = () => {
 	return defaultSettings;
 };
 
+export const getRealTeamInfo = async () => {
+	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
+		| RealTeamInfo
+		| undefined;
+
+	return realTeamInfo;
+};
+
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	const godModeLimits = newLeagueGodModeLimits();
 
@@ -302,15 +310,11 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	// Find most recent league and add one to the LID
 	const newLid = await getNewLeagueLid();
 
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
-
 	return {
 		lid: undefined,
 		difficulty: defaultSettings.difficulty,
 		name: `League ${newLid}`,
-		realTeamInfo,
+		realTeamInfo: await getRealTeamInfo(),
 		type,
 		godModeLimits,
 		defaultSettings,

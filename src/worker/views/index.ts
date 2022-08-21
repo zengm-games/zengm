@@ -22,6 +22,7 @@ import draftScouting from "./draftScouting";
 import draftHistory from "./draftHistory";
 import draftTeamHistory from "./draftTeamHistory";
 import editAwards from "./editAwards";
+import exhibition from "./exhibition";
 import expansionDraft from "./expansionDraft";
 import exportLeague from "./exportLeague";
 import exportPlayers from "./exportPlayers";
@@ -120,6 +121,7 @@ export default {
 	draftHistory,
 	draftTeamHistory,
 	editAwards,
+	exhibition,
 	expansionDraft,
 	exportLeague,
 	exportPlayers,

@@ -2,11 +2,16 @@ import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import { useEffect, useState } from "react";
 import { isSport, PHASE } from "../../common";
+import type { RealTeamInfo, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
-import { MAX_SEASON, MIN_SEASON } from "./NewLeague";
+import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 
-const SelectTeam = () => {
+const SelectTeam = ({
+	realTeamInfo,
+}: {
+	realTeamInfo: RealTeamInfo | undefined;
+}) => {
 	const [season, setSeason] = useState(MAX_SEASON);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
@@ -31,7 +36,10 @@ const SelectTeam = () => {
 			realDraftRatings: "draft",
 			realStats: "none",
 		});
-		const newTeams = orderBy(leagueInfo.teams, ["region", "name", "tid"]);
+		const newTeams = orderBy(
+			applyRealTeamInfos(leagueInfo.teams, realTeamInfo, season),
+			["region", "name", "tid"],
+		);
 
 		const prevTeam = teams.find(t => t.tid === tid);
 		let newTid;
@@ -110,7 +118,7 @@ const SelectTeam = () => {
 	);
 };
 
-const Exhibition = () => {
+const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	if (!isSport("basketball")) {
 		throw new Error("Not supported");
 	}
@@ -124,11 +132,11 @@ const Exhibition = () => {
 		<div className="row" style={{ maxWidth: 600 }}>
 			<div className="col-12 col-sm-6">
 				<h2>Home</h2>
-				<SelectTeam />
+				<SelectTeam realTeamInfo={realTeamInfo} />
 			</div>
 			<div className="col-12 col-sm-6 mt-3 mt-sm-0">
 				<h2>Away</h2>
-				<SelectTeam />
+				<SelectTeam realTeamInfo={realTeamInfo} />
 			</div>
 		</div>
 	);

@@ -6,6 +6,11 @@ scrimmage between historical teams
 - pick season for game sim settings (presets)
 - use end of season (playoff) rosters
 - somehow set rules
+- option for neutral court
+- box score UI
+  - how to handle ratings stats popover?
+    - could cache raw player objects in `local`
+  - no link to player page
 - persist result?
 - eventually
   - from a created league

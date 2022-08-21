@@ -3,6 +3,8 @@ import formatScheduledEvents from "./formatScheduledEvents";
 import { isSport } from "../../../common";
 import getGameAttributes from "./getGameAttributes";
 import type { GetLeagueOptions } from "../../../common/types";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
+import { helpers } from "../../util";
 
 export const legendsInfo = {
 	"1950s": {
@@ -71,11 +73,73 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 						"startingSeason",
 						"scheduledEvents",
 				  ];
+
+		const gameAttributes = getGameAttributes(initialGameAttributes, options);
+		const teams = initialTeams.filter(t => !t.disabled);
+
+		if (options.includeSeasonInfo) {
+			const teamSeasons = basketball.teamSeasons[options.season];
+			if (teamSeasons) {
+				const teamsWithSeasonInfo = teams.map(t => {
+					const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
+
+					const teamSeason = teamSeasons[abbrev];
+					if (!teamSeason) {
+						console.log("NONE", abbrev);
+						return t;
+					}
+
+					let roundsWonText;
+					const playoffSeries = basketball.playoffSeries[options.season];
+					if (playoffSeries) {
+						let playoffRoundsWon = -1;
+						for (const round of playoffSeries) {
+							const index = round.abbrevs.indexOf(abbrev);
+							if (index >= 0) {
+								playoffRoundsWon = round.round;
+								const otherIndex = index === 0 ? 1 : 0;
+								if (round.wons[index] > round.wons[otherIndex]) {
+									playoffRoundsWon += 1;
+								}
+							}
+						}
+
+						roundsWonText = helpers.roundsWonText(
+							playoffRoundsWon,
+							gameAttributes.numGamesPlayoffSeries!.length,
+							gameAttributes.confs.length,
+						);
+						if (roundsWonText === "") {
+							roundsWonText = "Missed playoffs";
+						}
+					}
+
+					const seasonInfo = {
+						won: teamSeason.won,
+						lost: teamSeason.lost,
+						roundsWonText,
+					};
+
+					return {
+						...t,
+						seasonInfo,
+					};
+				});
+
+				return {
+					gameAttributes,
+					startingSeason: options.season,
+					stores,
+					teams: teamsWithSeasonInfo,
+				};
+			}
+		}
+
 		return {
-			gameAttributes: getGameAttributes(initialGameAttributes, options),
+			gameAttributes,
 			startingSeason: options.season,
 			stores,
-			teams: initialTeams.filter(t => !t.disabled),
+			teams,
 		};
 	}
 

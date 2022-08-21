@@ -22,6 +22,11 @@ const SelectTeam = ({
 			region: string;
 			name: string;
 			tid: number;
+			seasonInfo?: {
+				won: number;
+				lost: number;
+				roundsWonText?: string;
+			};
 		}[]
 	>([]);
 
@@ -31,10 +36,11 @@ const SelectTeam = ({
 		const leagueInfo = await toWorker("main", "getLeagueInfo", {
 			type: "real",
 			season,
-			phase: PHASE.REGULAR_SEASON,
+			phase: PHASE.PLAYOFFS,
 			randomDebuts: false,
 			realDraftRatings: "draft",
 			realStats: "none",
+			includeSeasonInfo: true,
 		});
 		const newTeams = orderBy(
 			applyRealTeamInfos(leagueInfo.teams, realTeamInfo, season),
@@ -106,14 +112,26 @@ const SelectTeam = ({
 				</div>
 			</form>
 
-			{t?.imgURL ? (
+			<div className="d-flex">
 				<div
 					style={{ width: 128, height: 128 }}
 					className="d-flex align-items-center justify-content-center mt-2"
 				>
-					<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
+					{t?.imgURL ? (
+						<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
+					) : null}
 				</div>
-			) : null}
+				{t?.seasonInfo ? (
+					<div className="d-flex align-items-center ms-2">
+						<div>
+							<h1 className="mb-0">
+								{t.seasonInfo.won}-{t.seasonInfo.lost}
+							</h1>
+							{t.seasonInfo.roundsWonText}
+						</div>
+					</div>
+				) : null}
+			</div>
 		</>
 	);
 };

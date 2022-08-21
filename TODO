@@ -1,11 +1,15 @@
 scrimmage between historical teams
-- show team info (roster, record, playoff result)
+- also get players and team ovr if includeSeasonInfo
+- UI
+  - team ovr
+  - roster
 - pick season for game sim settings (presets)
-- pick start of season or end of season roster
+- use end of season (playoff) rosters
 - somehow set rules
 - persist result?
-- eventually - from a created league
-  - store pids of players on team from beginning and end of regular season
+- eventually
+  - from a created league
+    - store pids of players on team from beginning and end of regular season
 
 game sim settings for other sports
 - pace in all sports, except maybe baseball

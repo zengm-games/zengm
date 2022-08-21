@@ -1,6 +1,10 @@
 scrimmage between historical teams
+- apply global settings team info
+- show team info (roster, record, playoff result)
 - pick season for game sim settings (presets)
+- pick start of season or end of season roster
 - somehow set rules
+- persist result?
 - eventually - from a created league
   - store pids of players on team from beginning and end of regular season
 

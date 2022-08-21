@@ -310,6 +310,10 @@ a.god-mode.active {
 	background-image: url("https://play.football-gm.com/ico/icon70.png");
 	background-position: 81px 34px;
 }
+.dashboard-top-link-other-baseball {
+	background-image: url("https://baseball.zengm.com/ico/icon70.png");
+	background-position: 85px 34px;
+}
 .dashboard-top-link-other-hockey {
 	background-image: url("https://hockey.zengm.com/ico/icon70.png");
 	background-position: 81px 34px;
@@ -318,17 +322,6 @@ a.god-mode.active {
 @include media-breakpoint-down(sm) {
 	.dashboard-top-wrapper {
 		text-align: center;
-
-		a.dashboard-top-link-other {
-			width: 326px;
-			height: inherit;
-		}
-		.dashboard-top-link-other-hockey {
-			background-position: 247px 0px;
-		}
-		.dashboard-top-link-other-football {
-			background-position: 243px 0px;
-		}
 	}
 }
 

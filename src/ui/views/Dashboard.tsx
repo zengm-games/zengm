@@ -456,18 +456,25 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<span className="dashboard-top-link-small">» Custom</span>
 						</a>
 						<div className="d-sm-none" />
+						<a
+							href="/exhibition"
+							className="btn btn-secondary dashboard-top-link dashboard-top-link-new me-3 mb-3"
+						>
+							Exhibition game
+						</a>
 					</>
 				) : (
-					<a
-						href="/new_league"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new me-3 mb-3"
-					>
-						Create new
-						<br />
-						league
-					</a>
+					<>
+						<a
+							href="/new_league"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new me-3 mb-3"
+						>
+							Create new
+							<br />
+							league
+						</a>
+					</>
 				)}
-
 				<a
 					href="https://zengm.com/"
 					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${randomOtherSport}`}

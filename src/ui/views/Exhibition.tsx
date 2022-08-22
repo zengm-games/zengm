@@ -115,28 +115,26 @@ const SelectTeam = ({
 				</div>
 			</form>
 
-			<div className="d-flex">
+			<div className="d-flex my-2">
 				<div
 					style={{ width: 128, height: 128 }}
-					className="d-flex align-items-center justify-content-center my-2"
+					className="d-flex align-items-center justify-content-center"
 				>
 					{t?.imgURL ? (
 						<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
 					) : null}
 				</div>
 				{t ? (
-					<div className="d-flex align-items-center ms-2">
-						<div>
-							<h1 className="mb-0">{t.ovr} ovr</h1>
-							{t.seasonInfo ? (
-								<>
-									<h1 className="mb-0">
-										{t.seasonInfo.won}-{t.seasonInfo.lost}
-									</h1>
-									{t.seasonInfo.roundsWonText}
-								</>
-							) : null}
-						</div>
+					<div className="ms-2" style={{ marginTop: 20 }}>
+						<h1>{t.ovr} ovr</h1>
+						{t.seasonInfo ? (
+							<>
+								<h1 className="mb-0">
+									{t.seasonInfo.won}-{t.seasonInfo.lost}
+								</h1>
+								{t.seasonInfo.roundsWonText}
+							</>
+						) : null}
 					</div>
 				) : null}
 			</div>

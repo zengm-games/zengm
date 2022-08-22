@@ -2,6 +2,7 @@ scrimmage between historical teams
 - also get players and team ovr if includeSeasonInfo
   - players missing ovr and
 - UI
+  - home/away too close together
   - player stats
   - PlayerNameLabels (jersey number, popover, etc)
   - random team button

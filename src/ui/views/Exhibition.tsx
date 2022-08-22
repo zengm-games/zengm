@@ -7,12 +7,16 @@ import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 
+const getRandomSeason = () => {
+	return Math.floor(Math.random() * (1 + MAX_SEASON - MIN_SEASON)) + MIN_SEASON;
+};
+
 const SelectTeam = ({
 	realTeamInfo,
 }: {
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
-	const [season, setSeason] = useState(MAX_SEASON);
+	const [season, setSeason] = useState(getRandomSeason);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
 	const [teams, setTeams] = useState<
@@ -67,7 +71,7 @@ const SelectTeam = ({
 	};
 
 	useEffect(() => {
-		loadTeams(MAX_SEASON, true);
+		loadTeams(season, true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

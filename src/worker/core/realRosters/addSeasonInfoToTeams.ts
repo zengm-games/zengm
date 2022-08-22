@@ -3,6 +3,7 @@ import { groupBy } from "../../../common/groupBy";
 import type { GetLeagueOptions, Player } from "../../../common/types";
 import { g, helpers, local } from "../../util";
 import player from "../player";
+import team from "../team";
 import formatPlayerFactory from "./formatPlayerFactory";
 import type formatScheduledEvents from "./formatScheduledEvents";
 import type getGameAttributes from "./getGameAttributes";
@@ -109,10 +110,25 @@ const addSeasonInfoToTeams = async (
 				seasonInfo,
 			};
 		})
-		.map(t => ({
-			...t,
-			players: playersByTid[t.tid],
-		}));
+		.map(t => {
+			const ovr = team.ovr(
+				playersByTid[t.tid].map(p => ({
+					pid: p.pid,
+					value: p.value,
+					ratings: {
+						ovr: p.ratings.at(-1)!.ovr,
+						ovrs: p.ratings.at(-1)!.ovrs,
+						pos: p.ratings.at(-1)!.pos,
+					},
+				})),
+			);
+
+			return {
+				...t,
+				players: playersByTid[t.tid],
+				ovr,
+			};
+		});
 	console.log(teamsAugmented);
 
 	return teamsAugmented;

@@ -28,6 +28,7 @@ const SelectTeam = ({
 				roundsWonText?: string;
 			};
 			players: Player[];
+			ovr: number;
 		}[]
 	>([]);
 
@@ -123,13 +124,18 @@ const SelectTeam = ({
 						<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
 					) : null}
 				</div>
-				{t?.seasonInfo ? (
+				{t ? (
 					<div className="d-flex align-items-center ms-2">
 						<div>
-							<h1 className="mb-0">
-								{t.seasonInfo.won}-{t.seasonInfo.lost}
-							</h1>
-							{t.seasonInfo.roundsWonText}
+							<h1 className="mb-0">{t.ovr} ovr</h1>
+							{t.seasonInfo ? (
+								<>
+									<h1 className="mb-0">
+										{t.seasonInfo.won}-{t.seasonInfo.lost}
+									</h1>
+									{t.seasonInfo.roundsWonText}
+								</>
+							) : null}
 						</div>
 					</div>
 				) : null}

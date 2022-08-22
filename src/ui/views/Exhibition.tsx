@@ -36,7 +36,7 @@ const SelectTeam = ({
 		}[]
 	>([]);
 
-	const loadTeams = async (season: number, firstLoad?: boolean) => {
+	const loadTeams = async (season: number, randomTeam?: boolean) => {
 		setLoadingTeams(true);
 
 		const leagueInfo = await toWorker("main", "getLeagueInfo", {
@@ -55,7 +55,7 @@ const SelectTeam = ({
 
 		const prevTeam = teams.find(t => t.tid === tid);
 		let newTid;
-		if (firstLoad) {
+		if (randomTeam) {
 			const index = Math.floor(Math.random() * newTeams.length);
 			newTid = newTeams[index].tid;
 		} else {
@@ -88,7 +88,6 @@ const SelectTeam = ({
 						onChange={async event => {
 							const value = parseInt(event.target.value);
 							setSeason(value);
-
 							await loadTeams(value);
 						}}
 						style={{
@@ -116,6 +115,18 @@ const SelectTeam = ({
 							</option>
 						))}
 					</select>
+					<button
+						className="btn btn-light-bordered"
+						type="button"
+						disabled={loadingTeams}
+						onClick={async () => {
+							const randomSeason = getRandomSeason();
+							setSeason(randomSeason);
+							await loadTeams(randomSeason, true);
+						}}
+					>
+						Random
+					</button>
 				</div>
 			</form>
 
@@ -130,12 +141,12 @@ const SelectTeam = ({
 				</div>
 				{t ? (
 					<div className="ms-2" style={{ marginTop: 20 }}>
-						<h1>{t.ovr} ovr</h1>
+						<h2>{t.ovr} ovr</h2>
 						{t.seasonInfo ? (
 							<>
-								<h1 className="mb-0">
+								<h2 className="mb-0">
 									{t.seasonInfo.won}-{t.seasonInfo.lost}
-								</h1>
+								</h2>
 								{t.seasonInfo.roundsWonText}
 							</>
 						) : null}
@@ -164,7 +175,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	});
 
 	return (
-		<div className="row" style={{ maxWidth: 600 }}>
+		<div className="row gx-5" style={{ maxWidth: 700 }}>
 			<div className="col-12 col-sm-6">
 				<h2>Home</h2>
 				<SelectTeam realTeamInfo={realTeamInfo} />

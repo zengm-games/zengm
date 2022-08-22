@@ -1,16 +1,22 @@
 import classNames from "classnames";
 import { ButtonHTMLAttributes, MouseEvent, ReactNode, useRef } from "react";
 
-export const processingSpinner = (
-	<>
-		<span
-			className="spinner-border spinner-border-sm"
-			role="status"
-			aria-hidden="true"
-		></span>{" "}
-		Processing
-	</>
-);
+export const ProcessingSpinner = ({
+	text = "Processing",
+}: {
+	text?: string;
+}) => {
+	return (
+		<>
+			<span
+				className="spinner-border spinner-border-sm"
+				role="status"
+				aria-hidden="true"
+			></span>{" "}
+			{text}
+		</>
+	);
+};
 
 const ActionButton = ({
 	children,
@@ -19,6 +25,7 @@ const ActionButton = ({
 	maintainWidth = true,
 	onClick,
 	processing,
+	processingText,
 	size,
 	type,
 	variant = "primary",
@@ -29,6 +36,7 @@ const ActionButton = ({
 	maintainWidth?: boolean;
 	onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 	processing: boolean;
+	processingText?: string;
 	size?: "lg";
 	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
 	variant?: "primary" | "secondary" | "god-mode" | "danger";
@@ -64,7 +72,7 @@ const ActionButton = ({
 					: undefined
 			}
 		>
-			{processing ? processingSpinner : children}
+			{processing ? <ProcessingSpinner text={processingText} /> : children}
 		</button>
 	);
 };

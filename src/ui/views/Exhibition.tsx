@@ -1,8 +1,9 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import { useEffect, useState } from "react";
-import { isSport, PHASE } from "../../common";
+import { COURT, isSport, PHASE } from "../../common";
 import type { Player, RealTeamInfo, View } from "../../common/types";
+import { ActionButton } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
@@ -11,33 +12,38 @@ const getRandomSeason = () => {
 	return Math.floor(Math.random() * (1 + MAX_SEASON - MIN_SEASON)) + MIN_SEASON;
 };
 
+type ExhibitionTeam = {
+	abbrev: string;
+	imgURL: string;
+	region: string;
+	name: string;
+	tid: number;
+	seasonInfo?: {
+		won: number;
+		lost: number;
+		roundsWonText?: string;
+	};
+	players: Player[];
+	ovr: number;
+};
+
 const SelectTeam = ({
+	disabled,
+	onChange,
 	realTeamInfo,
 }: {
+	disabled: boolean;
+	onChange: (t: ExhibitionTeam | undefined) => void;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
 	const [season, setSeason] = useState(getRandomSeason);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
-	const [teams, setTeams] = useState<
-		{
-			abbrev: string;
-			imgURL: string;
-			region: string;
-			name: string;
-			tid: number;
-			seasonInfo?: {
-				won: number;
-				lost: number;
-				roundsWonText?: string;
-			};
-			players: Player[];
-			ovr: number;
-		}[]
-	>([]);
+	const [teams, setTeams] = useState<ExhibitionTeam[]>([]);
 
 	const loadTeams = async (season: number, randomTeam?: boolean) => {
 		setLoadingTeams(true);
+		onChange(undefined);
 
 		const leagueInfo = await toWorker("main", "getLeagueInfo", {
 			type: "real",
@@ -54,20 +60,21 @@ const SelectTeam = ({
 		);
 
 		const prevTeam = teams.find(t => t.tid === tid);
-		let newTid;
+		let newTeam;
 		if (randomTeam) {
 			const index = Math.floor(Math.random() * newTeams.length);
-			newTid = newTeams[index].tid;
+			newTeam = newTeams[index];
 		} else {
-			newTid =
-				newTeams.find(t => t.abbrev === prevTeam?.abbrev)?.tid ??
-				newTeams.find(t => t.region === prevTeam?.region)?.tid ??
-				0;
+			newTeam =
+				newTeams.find(t => t.abbrev === prevTeam?.abbrev) ??
+				newTeams.find(t => t.region === prevTeam?.region);
 		}
 
 		setTeams(newTeams as any);
-		setTid(newTid);
+		setTid(newTeam?.tid ?? 0);
 		setLoadingTeams(false);
+
+		onChange(newTeam as any);
 	};
 
 	useEffect(() => {
@@ -76,7 +83,9 @@ const SelectTeam = ({
 	}, []);
 
 	const t = teams.find(t => t.tid === tid);
-	console.log(t);
+
+	const NUM_PLAYERS_TO_SHOW = 10;
+	const playersToShow = t?.players.slice(0, NUM_PLAYERS_TO_SHOW) ?? [];
 
 	return (
 		<>
@@ -90,6 +99,7 @@ const SelectTeam = ({
 							setSeason(value);
 							await loadTeams(value);
 						}}
+						disabled={disabled}
 						style={{
 							maxWidth: 75,
 						}}
@@ -107,7 +117,7 @@ const SelectTeam = ({
 							const value = parseInt(event.target.value);
 							setTid(value);
 						}}
-						disabled={loadingTeams}
+						disabled={loadingTeams || disabled}
 					>
 						{teams.map(t => (
 							<option key={t.tid} value={t.tid}>
@@ -118,7 +128,7 @@ const SelectTeam = ({
 					<button
 						className="btn btn-light-bordered"
 						type="button"
-						disabled={loadingTeams}
+						disabled={disabled}
 						onClick={async () => {
 							const randomSeason = getRandomSeason();
 							setSeason(randomSeason);
@@ -154,9 +164,14 @@ const SelectTeam = ({
 				) : null}
 			</div>
 			<ul className="list-unstyled mb-0">
-				{t?.players.slice(0, 10).map(p => (
+				{playersToShow.map(p => (
 					<li key={p.pid}>
 						{p.firstName} {p.lastName} - {p.ratings.at(-1).ovr} ovr
+					</li>
+				))}
+				{range(NUM_PLAYERS_TO_SHOW - playersToShow.length).map(i => (
+					<li key={i}>
+						<br />
 					</li>
 				))}
 			</ul>
@@ -165,6 +180,14 @@ const SelectTeam = ({
 };
 
 const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
+	const [teams, setTeams] = useState<
+		[ExhibitionTeam | undefined, ExhibitionTeam | undefined]
+	>([undefined, undefined]);
+	const [neutralCourt, setNeutralCourt] = useState(true);
+	const [simmingGame, setSimmingGame] = useState(false);
+
+	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
+
 	if (!isSport("basketball")) {
 		throw new Error("Not supported");
 	}
@@ -175,16 +198,62 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	});
 
 	return (
-		<div className="row gx-5" style={{ maxWidth: 700 }}>
-			<div className="col-12 col-sm-6">
-				<h2>Home</h2>
-				<SelectTeam realTeamInfo={realTeamInfo} />
+		<>
+			<div className="row gx-5 mb-3" style={{ maxWidth: 700 }}>
+				<div className="col-12 col-sm-6">
+					<h2>{neutralCourt ? "Team 1" : "Home"}</h2>
+					<SelectTeam
+						disabled={simmingGame}
+						realTeamInfo={realTeamInfo}
+						onChange={t => setTeams(teams => [t, teams[1]])}
+					/>
+				</div>
+				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
+					<h2>{neutralCourt ? "Team 2" : "Away"}</h2>
+					<SelectTeam
+						disabled={simmingGame}
+						realTeamInfo={realTeamInfo}
+						onChange={t => setTeams(teams => [teams[0], t])}
+					/>
+				</div>
 			</div>
-			<div className="col-12 col-sm-6 mt-3 mt-sm-0">
-				<h2>Away</h2>
-				<SelectTeam realTeamInfo={realTeamInfo} />
-			</div>
-		</div>
+
+			<form
+				onSubmit={event => {
+					event.preventDefault();
+
+					console.log("SUBMIT", teams);
+
+					setSimmingGame(true);
+				}}
+			>
+				<div className="form-check mb-3">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						id="neutralCourtCheck"
+						checked={neutralCourt}
+						disabled={simmingGame}
+						onChange={() => {
+							setNeutralCourt(!neutralCourt);
+						}}
+					/>
+					<label className="form-check-label" htmlFor="neutralCourtCheck">
+						Neutral {COURT}
+					</label>
+				</div>
+
+				<ActionButton
+					disabled={loadingTeams}
+					processing={simmingGame}
+					processingText="Simming"
+					size="lg"
+					type="submit"
+				>
+					Sim Game
+				</ActionButton>
+			</form>
+		</>
 	);
 };
 

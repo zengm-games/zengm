@@ -13,7 +13,7 @@ import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown } from "react-bootstrap";
-import { processingSpinner } from "../../components/ActionButton";
+import { ProcessingSpinner } from "../../components/ActionButton";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -898,7 +898,7 @@ const CustomizeTeams = ({
 						id="customize-teams-reset"
 						disabled={randomizing}
 					>
-						{randomizing ? processingSpinner : "Reset"}
+						{randomizing ? <ProcessingSpinner /> : "Reset"}
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
 						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>

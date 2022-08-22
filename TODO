@@ -8,6 +8,7 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - somehow set rules
 - option for neutral court
+  - make sure home court gets set for correct team
 - box score UI
   - how to handle ratings stats popover?
     - reset pids on load, or could be dupes

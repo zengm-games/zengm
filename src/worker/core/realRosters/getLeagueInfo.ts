@@ -81,11 +81,11 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 				gameAttributes,
 				startingSeason: options.season,
 				stores,
-				teams: addSeasonInfoToTeams(
+				teams: await addSeasonInfoToTeams(
 					teams,
 					basketball,
 					gameAttributes,
-					options.season,
+					options,
 				),
 			};
 		}

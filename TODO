@@ -1,14 +1,18 @@
 scrimmage between historical teams
 - also get players and team ovr if includeSeasonInfo
+  - players missing ovr and
 - UI
   - team ovr
-  - roster
+  - player stats
+  - PlayerNameLabels (jersey number, popover, etc)
+  - random team button
 - pick season for game sim settings (presets)
 - use end of season (playoff) rosters
 - somehow set rules
 - option for neutral court
 - box score UI
   - how to handle ratings stats popover?
+    - reset pids on load, or could be dupes
     - could cache raw player objects in `local`
   - no link to player page
 - persist result?

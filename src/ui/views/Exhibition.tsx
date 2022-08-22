@@ -2,7 +2,7 @@ import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import { useEffect, useState } from "react";
 import { isSport, PHASE } from "../../common";
-import type { RealTeamInfo, View } from "../../common/types";
+import type { Player, RealTeamInfo, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
@@ -27,6 +27,7 @@ const SelectTeam = ({
 				lost: number;
 				roundsWonText?: string;
 			};
+			players: Player[];
 		}[]
 	>([]);
 
@@ -59,7 +60,7 @@ const SelectTeam = ({
 				0;
 		}
 
-		setTeams(newTeams);
+		setTeams(newTeams as any);
 		setTid(newTid);
 		setLoadingTeams(false);
 	};
@@ -70,6 +71,7 @@ const SelectTeam = ({
 	}, []);
 
 	const t = teams.find(t => t.tid === tid);
+	console.log(t);
 
 	return (
 		<>
@@ -115,7 +117,7 @@ const SelectTeam = ({
 			<div className="d-flex">
 				<div
 					style={{ width: 128, height: 128 }}
-					className="d-flex align-items-center justify-content-center mt-2"
+					className="d-flex align-items-center justify-content-center my-2"
 				>
 					{t?.imgURL ? (
 						<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
@@ -132,6 +134,13 @@ const SelectTeam = ({
 					</div>
 				) : null}
 			</div>
+			<ul className="list-unstyled mb-0">
+				{t?.players.slice(0, 10).map(p => (
+					<li key={p.pid}>
+						{p.firstName} {p.lastName} - {p.ratings.at(-1).ovr} ovr
+					</li>
+				))}
+			</ul>
 		</>
 	);
 };

@@ -25,7 +25,7 @@ const developSeason = async (
 		hockey: developSeasonHockey(ratings as any, age, coachingRank),
 	});
 
-	if (!isSport("basketball")) {
+	if (!isSport("basketball") || !Object.hasOwn(g, "realPlayerDeterminism")) {
 		return;
 	}
 

@@ -7,11 +7,20 @@ import type {
 	Game,
 } from "../../common/types";
 
+export type TeamSeasonOverride = {
+	region?: string;
+	name?: string;
+	abbrev?: string;
+	imgURL?: string;
+	colors?: [string, string, string];
+};
+
 export const setTeamInfo = async (
 	t: any,
 	i: number,
 	allStars: AllStars | undefined,
 	game: any,
+	teamSeasonOverride?: TeamSeasonOverride,
 ) => {
 	if (allStars) {
 		const ind = t.tid === -1 ? 0 : 1;
@@ -41,10 +50,12 @@ export const setTeamInfo = async (
 			p.tid = entry ? entry.tid : g.get("userTid");
 		}
 	} else {
-		const teamSeason = await idb.cache.teamSeasons.indexGet(
-			"teamSeasonsByTidSeason",
-			[t.tid, game.season],
-		);
+		const teamSeason =
+			teamSeasonOverride ??
+			(await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+				t.tid,
+				game.season,
+			]));
 		if (teamSeason) {
 			t.region = teamSeason.region || g.get("teamInfoCache")[t.tid]?.region;
 			t.name = teamSeason.name || g.get("teamInfoCache")[t.tid]?.name;

@@ -1,7 +1,7 @@
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { setTeamInfo } from "./gameLog";
+import { setTeamInfo, type TeamSeasonOverride } from "./gameLog";
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
 import { getPeriodName, isSport, PHASE } from "../../common";
 
@@ -10,11 +10,13 @@ export const boxScoreToLiveSim = async ({
 	boxScore,
 	confetti,
 	playByPlay,
+	teamSeasonOverrides,
 }: {
 	allStars: AllStars | undefined;
 	boxScore: any;
 	confetti: boolean;
 	playByPlay: any[];
+	teamSeasonOverrides?: [TeamSeasonOverride, TeamSeasonOverride];
 }) => {
 	const otl = g.get("otl", "current");
 
@@ -65,7 +67,7 @@ export const boxScoreToLiveSim = async ({
 			}
 		}
 
-		await setTeamInfo(t, i, allStars, boxScore);
+		await setTeamInfo(t, i, allStars, boxScore, teamSeasonOverrides?.[i]);
 		t.ptsQtrs = isSport("baseball") ? [] : [0];
 
 		for (const stat of resetStatsTeam) {

@@ -17,7 +17,6 @@ const simExhibitionGame = async ({
 	teams: [ExhibitionTeam, ExhibitionTeam];
 	disableHomeCourtAdvantage: boolean;
 }) => {
-	console.log(teams, disableHomeCourtAdvantage);
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);
@@ -102,6 +101,7 @@ const simExhibitionGame = async ({
 		confetti: false,
 		boxScore,
 		playByPlay: result.playByPlay as any,
+		teamSeasonOverrides: teams,
 	});
 
 	console.log("liveSim", liveSim);

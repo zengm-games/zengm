@@ -11,6 +11,9 @@ scrimmage between historical teams
 - make sure home court gets set for correct team
 - option for playoff intensity
 - box score UI
+  - link to play another exhibition game after this one is over
+  - warning about navigating away
+  - jersey numbers
   - implement
     - format GameSim result into box score object (like in writeGameStats.ts)
     - process like in views/liveGame.ts (extract into function)
@@ -22,11 +25,19 @@ scrimmage between historical teams
   - put year in team name somewhere
   - don't increment w/l records
   - what if both abbrevs are the same?
-- confirm confetti works in normal league
+- confirm confetti still works in normal league
 - persist result?
 - eventually
   - from a created league
     - store pids of players on team from beginning and end of regular season
+
+Strike out throw out DP does not advance batting order https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
+
+runners should go on contact with 2 outs https://discord.com/channels/290013534023057409/290015591216054273/1010335962229907567
+
+baseball injury lineup auto sort - only below injured player https://discord.com/channels/290013534023057409/290015591216054273/1009826420660392077
+
+fbgm timeout after extra point https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
 
 game sim settings for other sports
 - pace in all sports, except maybe baseball

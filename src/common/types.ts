@@ -1227,6 +1227,7 @@ export type Local = {
 		start: number;
 	};
 	autoSave: boolean;
+	exhibitionGame: boolean;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string;
 		prevTid: number;

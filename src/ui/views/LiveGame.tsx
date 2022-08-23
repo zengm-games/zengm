@@ -105,7 +105,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	});
 	const speedRef = useRef(parseInt(speed));
 	const [playIndex, setPlayIndex] = useState(-1);
-	const [started, setStarted] = useState(!!props.events);
+	const [started, setStarted] = useState(false);
 	const [confetti, setConfetti] = useState<{
 		colors?: [string, string, string];
 		display: boolean;

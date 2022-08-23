@@ -7,7 +7,7 @@ import type { ExhibitionTeam } from "../../ui/views/Exhibition";
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
-import { defaultGameAttributes, g } from "../util";
+import { defaultGameAttributes, g, local } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
 const simExhibitionGame = async ({
@@ -17,6 +17,8 @@ const simExhibitionGame = async ({
 	teams: [ExhibitionTeam, ExhibitionTeam];
 	disableHomeCourtAdvantage: boolean;
 }) => {
+	local.exhibitionGame = true;
+
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);

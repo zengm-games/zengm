@@ -21,6 +21,7 @@ const toWorker = <
 	name: Name,
 	param: ParametersUnconstrained<Func>[0],
 ): Promise<ReturnTypeUnconstrained<Func>> => {
+	console.log("toWorker", type, name, param);
 	return promiseWorker.postMessage([type, name, param]);
 };
 

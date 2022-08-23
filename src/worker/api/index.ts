@@ -1556,6 +1556,10 @@ const getLocal = async (name: keyof Local) => {
 const getPlayerBioInfoDefaults = initDefaults;
 
 const getPlayerWatch = async (pid: number) => {
+	if (local.exhibitionGame) {
+		return false;
+	}
+
 	if (Number.isNaN(pid)) {
 		return false;
 	}

@@ -1,10 +1,16 @@
-import { DEFAULT_PLAY_THROUGH_INJURIES, PHASE } from "../../common";
+import {
+	DEFAULT_PLAY_THROUGH_INJURIES,
+	DEFAULT_STADIUM_CAPACITY,
+	PHASE,
+} from "../../common";
 import type { ExhibitionTeam } from "../../ui/views/Exhibition";
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
+import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { defaultGameAttributes, g } from "../util";
+import { boxScoreToLiveSim } from "../views/liveGame";
 
-const simExhibitionGame = ({
+const simExhibitionGame = async ({
 	teams,
 	disableHomeCourtAdvantage,
 }: {
@@ -14,6 +20,7 @@ const simExhibitionGame = ({
 	console.log(teams, disableHomeCourtAdvantage);
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
+	g.setWithoutSavingToDB("userTid", 0);
 	const applyDefaults = [
 		"ties",
 		"otl",
@@ -82,8 +89,22 @@ const simExhibitionGame = ({
 		baseInjuryRate: defaultGameAttributes.injuryRate,
 		dh: false,
 	}).run();
+	console.log("result", result);
 
-	console.log(result);
+	const { gameStats: boxScore } = await gameSimToBoxScore(
+		result,
+		DEFAULT_STADIUM_CAPACITY,
+	);
+	console.log("boxScore", boxScore);
+
+	const liveSim = await boxScoreToLiveSim({
+		allStars: undefined,
+		confetti: false,
+		boxScore,
+		playByPlay: result.playByPlay as any,
+	});
+
+	console.log("liveSim", liveSim);
 };
 
 export default simExhibitionGame;

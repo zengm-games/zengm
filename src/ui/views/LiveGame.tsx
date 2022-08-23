@@ -263,10 +263,7 @@ const LiveGame = (props: View<"liveGame">) => {
 							if (boxScore.current.won.tid === t.tid) {
 								t.playoffs.won += 1;
 
-								if (
-									props.finals &&
-									t.playoffs.won >= boxScore.current.numGamesToWinSeries
-								) {
+								if (props.confetti) {
 									setConfetti({
 										display: true,
 										colors: t.colors,
@@ -303,7 +300,7 @@ const LiveGame = (props: View<"liveGame">) => {
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.finals, props.otl],
+		[props.confetti, props.otl],
 	);
 
 	useEffect(() => {

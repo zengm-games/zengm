@@ -2,8 +2,128 @@ import { player, team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import { setTeamInfo } from "./gameLog";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
 import { getPeriodName, isSport, PHASE } from "../../common";
+
+export const boxScoreToLiveSim = async ({
+	allStars,
+	boxScore,
+	confetti,
+	playByPlay,
+}: {
+	allStars: AllStars | undefined;
+	boxScore: any;
+	confetti: boolean;
+	playByPlay: any[];
+}) => {
+	const otl = g.get("otl", "current");
+
+	// Stats to set to 0
+	const resetStatsPlayer = [...player.stats.raw];
+	if (player.stats.byPos) {
+		resetStatsPlayer.push(...player.stats.byPos);
+	}
+	const resetStatsTeam = [...team.stats.raw];
+	if (team.stats.byPos) {
+		resetStatsTeam.push(...team.stats.byPos);
+	}
+
+	boxScore.elam = allStars ? g.get("elamASG") : g.get("elam");
+
+	boxScore.overtime = "";
+	boxScore.quarter = `1st ${getPeriodName(boxScore.numPeriods)}`;
+	boxScore.time = `${g.get("quarterLength")}:00`;
+	boxScore.gameOver = false;
+
+	for (let i = 0; i < boxScore.teams.length; i++) {
+		const t = boxScore.teams[i];
+
+		// Fix records, taking out result of this game
+		// Keep in sync with LiveGame.tsx
+		if (boxScore.playoffs) {
+			if (t.playoffs) {
+				if (boxScore.won.tid === t.tid) {
+					t.playoffs.won -= 1;
+				} else if (boxScore.lost.tid === t.tid) {
+					t.playoffs.lost -= 1;
+				}
+			}
+		} else {
+			if (boxScore.won.pts === boxScore.lost.pts) {
+				// Tied!
+				if (t.tied !== undefined) {
+					t.tied -= 1;
+				}
+			} else if (boxScore.won.tid === t.tid) {
+				t.won -= 1;
+			} else if (boxScore.lost.tid === t.tid) {
+				if (boxScore.overtimes > 0 && otl) {
+					t.otl -= 1;
+				} else {
+					t.lost -= 1;
+				}
+			}
+		}
+
+		await setTeamInfo(t, i, allStars, boxScore);
+		t.ptsQtrs = isSport("baseball") ? [] : [0];
+
+		for (const stat of resetStatsTeam) {
+			if (Object.hasOwn(t, stat)) {
+				t[stat] = 0;
+			}
+		}
+
+		for (let j = 0; j < t.players.length; j++) {
+			const p = t.players[j];
+
+			// Fix for players who were hurt this game - don't show right away! And handle players playing through an injury who were injured again.
+			if (p.injury.newThisGame) {
+				p.injury = p.injuryAtStart
+					? {
+							...p.injuryAtStart,
+							playingThrough: true,
+					  }
+					: {
+							type: "Healthy",
+							gamesRemaining: 0,
+					  };
+			}
+
+			for (const stat of resetStatsPlayer) {
+				if (Object.hasOwn(p, stat)) {
+					p[stat] = 0;
+				}
+			}
+
+			if (isSport("basketball")) {
+				p.inGame = j < (boxScore.numPlayersOnCourt || 5);
+			}
+		}
+	}
+
+	// Swap teams order, so home team is at bottom in box score
+	boxScore.teams.reverse();
+
+	if (boxScore.scoringSummary) {
+		for (const event of boxScore.scoringSummary) {
+			event.t = event.t === 0 ? 1 : 0;
+		}
+	}
+
+	// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
+	if (isSport("football")) {
+		boxScore.scoringSummary = [];
+	}
+
+	return {
+		confetti,
+		events: playByPlay,
+		initialBoxScore: boxScore,
+		otl,
+		quarterLength: g.get("quarterLength"),
+	};
+};
 
 const updatePlayByPlay = async (
 	inputs: ViewInput<"liveGame">,
@@ -26,17 +146,6 @@ const updatePlayByPlay = async (
 			await idb.cache.games.get(inputs.gid),
 		);
 
-		const otl = g.get("otl", "current");
-
-		// Stats to set to 0
-		const resetStatsPlayer = [...player.stats.raw];
-		if (player.stats.byPos) {
-			resetStatsPlayer.push(...player.stats.byPos);
-		}
-		const resetStatsTeam = [...team.stats.raw];
-		if (team.stats.byPos) {
-			resetStatsTeam.push(...team.stats.byPos);
-		}
 		const allStarGame =
 			boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
 		let allStars;
@@ -49,96 +158,7 @@ const updatePlayByPlay = async (
 			}
 		}
 
-		boxScore.elam = allStarGame ? g.get("elamASG") : g.get("elam");
-
-		boxScore.overtime = "";
-		boxScore.quarter = `1st ${getPeriodName(boxScore.numPeriods)}`;
-		boxScore.time = `${g.get("quarterLength")}:00`;
-		boxScore.gameOver = false;
-
-		for (let i = 0; i < boxScore.teams.length; i++) {
-			const t = boxScore.teams[i];
-
-			// Fix records, taking out result of this game
-			// Keep in sync with LiveGame.tsx
-			if (boxScore.playoffs) {
-				if (t.playoffs) {
-					if (boxScore.won.tid === t.tid) {
-						t.playoffs.won -= 1;
-					} else if (boxScore.lost.tid === t.tid) {
-						t.playoffs.lost -= 1;
-					}
-				}
-			} else {
-				if (boxScore.won.pts === boxScore.lost.pts) {
-					// Tied!
-					if (t.tied !== undefined) {
-						t.tied -= 1;
-					}
-				} else if (boxScore.won.tid === t.tid) {
-					t.won -= 1;
-				} else if (boxScore.lost.tid === t.tid) {
-					if (boxScore.overtimes > 0 && otl) {
-						t.otl -= 1;
-					} else {
-						t.lost -= 1;
-					}
-				}
-			}
-
-			await setTeamInfo(t, i, allStars, boxScore);
-			t.ptsQtrs = isSport("baseball") ? [] : [0];
-
-			for (const stat of resetStatsTeam) {
-				if (Object.hasOwn(t, stat)) {
-					t[stat] = 0;
-				}
-			}
-
-			for (let j = 0; j < t.players.length; j++) {
-				const p = t.players[j];
-
-				// Fix for players who were hurt this game - don't show right away! And handle players playing through an injury who were injured again.
-				if (p.injury.newThisGame) {
-					p.injury = p.injuryAtStart
-						? {
-								...p.injuryAtStart,
-								playingThrough: true,
-						  }
-						: {
-								type: "Healthy",
-								gamesRemaining: 0,
-						  };
-				}
-
-				for (const stat of resetStatsPlayer) {
-					if (Object.hasOwn(p, stat)) {
-						p[stat] = 0;
-					}
-				}
-
-				if (isSport("basketball")) {
-					p.inGame = j < (boxScore.numPlayersOnCourt || 5);
-				}
-			}
-		}
-
-		// Swap teams order, so home team is at bottom in box score
-		boxScore.teams.reverse();
-
-		if (boxScore.scoringSummary) {
-			for (const event of boxScore.scoringSummary) {
-				event.t = event.t === 0 ? 1 : 0;
-			}
-		}
-
-		// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
-		if (isSport("football")) {
-			boxScore.scoringSummary = [];
-		}
-
-		// For confetti
-		let finals = false;
+		let confetti = false;
 		if (boxScore.playoffs && g.get("phase") >= PHASE.PLAYOFFS) {
 			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 			if (playoffSeries) {
@@ -151,19 +171,24 @@ const updatePlayByPlay = async (
 						(finalMatchup.home.tid === boxScore.teams[1].tid &&
 							finalMatchup.away?.tid === boxScore.teams[0].tid)
 					) {
-						finals = true;
+						const maxWon = Math.max(
+							finalMatchup.home.won,
+							finalMatchup.away?.won ?? 0,
+						);
+						if (maxWon >= boxScore.current.numGamesToWinSeries) {
+							confetti = true;
+						}
 					}
 				}
 			}
 		}
 
-		return {
-			events: inputs.playByPlay,
-			finals,
-			initialBoxScore: boxScore,
-			otl,
-			quarterLength: g.get("quarterLength"),
-		};
+		return boxScoreToLiveSim({
+			allStars,
+			boxScore,
+			confetti,
+			playByPlay: inputs.playByPlay,
+		});
 	}
 };
 

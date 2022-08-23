@@ -182,11 +182,7 @@ const getPlayoffInfos = async (game: Game) => {
 	};
 };
 
-const writeGameStats = async (
-	results: GameResults,
-	att: number,
-	conditions: Conditions,
-) => {
+export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	const gameStats: Game = {
@@ -327,6 +323,44 @@ const writeGameStats = async (
 		gameStats.teams[1].playoffs = playoffInfos[1];
 		gameStats.numGamesToWinSeries = numGamesToWinSeries;
 	}
+
+	// We want text at the beginning, because adding game information is redundant when attached to the box score. Later notify about events
+	for (const clutchPlay of results.clutchPlays) {
+		// @ts-expect-error
+		gameStats.clutchPlays.push(`${clutchPlay.text}.`);
+	}
+
+	return {
+		allStarGame,
+		allStars,
+		currentRound,
+		gameStats,
+		numGamesToWinSeries,
+		playoffInfos,
+		playoffs,
+		tied,
+		tl,
+		tw,
+	};
+};
+
+const writeGameStats = async (
+	results: GameResults,
+	att: number,
+	conditions: Conditions,
+) => {
+	const {
+		allStarGame,
+		allStars,
+		currentRound,
+		gameStats,
+		numGamesToWinSeries,
+		playoffInfos,
+		playoffs,
+		tied,
+		tl,
+		tw,
+	} = await gameSimToBoxScore(results, att);
 
 	if (
 		results.team[0].id === g.get("userTid") ||
@@ -520,9 +554,6 @@ const writeGameStats = async (
 	}
 
 	for (const clutchPlay of results.clutchPlays) {
-		// We want text at the beginning, because adding game information is redundant when attached to the box score
-		// @ts-expect-error
-		gameStats.clutchPlays.push(`${clutchPlay.text}.`);
 		const indTeam = clutchPlay.tids[0] === results.team[0].id ? 0 : 1;
 		const indOther = indTeam === 0 ? 1 : 0;
 		const won = indTeam === tw;

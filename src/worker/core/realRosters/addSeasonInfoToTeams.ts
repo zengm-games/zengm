@@ -51,7 +51,9 @@ const addSeasonInfoToTeams = async (
 			const parts = p.name.split(" ");
 			p2.firstName = parts[0];
 			p2.lastName = parts.slice(1, parts.length).join(" ");
-			p2.stats = [];
+			if (!p2.stats) {
+				p2.stats = [];
+			}
 			return p2;
 		});
 

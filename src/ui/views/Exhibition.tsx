@@ -55,7 +55,7 @@ const SelectTeam = ({
 			phase: PHASE.PLAYOFFS,
 			randomDebuts: false,
 			realDraftRatings: "draft",
-			realStats: "none",
+			realStats: "lastSeason",
 			includeSeasonInfo: true,
 		});
 		const newTeams = orderBy(
@@ -209,7 +209,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	if (exhibitionGame) {
 		return <LiveGame {...exhibitionGame} />;
 	}
-	console.log(teams.map(t => t?.abbrev));
+	console.log(teams);
 
 	return (
 		<>

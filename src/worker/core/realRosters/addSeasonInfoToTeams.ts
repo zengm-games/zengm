@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import orderBy from "lodash-es/orderBy";
 import { groupBy } from "../../../common/groupBy";
 import type { GetLeagueOptions, Player } from "../../../common/types";
 import { g, helpers, local } from "../../util";
@@ -41,6 +41,11 @@ const addSeasonInfoToTeams = async (
 				...p,
 				firstName: "",
 				lastName: "",
+				injury: {
+					gamesRemaining: 0,
+					type: "Healthy",
+				},
+				ptModifier: 1,
 			} as unknown as Player;
 			delete (p2 as any).name;
 			const parts = p.name.split(" ");
@@ -102,6 +107,8 @@ const addSeasonInfoToTeams = async (
 			const seasonInfo = {
 				won: teamSeason.won,
 				lost: teamSeason.lost,
+				tied: 0,
+				otl: 0,
 				roundsWonText,
 			};
 
@@ -129,7 +136,6 @@ const addSeasonInfoToTeams = async (
 				ovr,
 			};
 		});
-	console.log(teamsAugmented);
 
 	return teamsAugmented;
 };

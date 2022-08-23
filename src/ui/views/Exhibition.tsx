@@ -12,7 +12,7 @@ const getRandomSeason = () => {
 	return Math.floor(Math.random() * (1 + MAX_SEASON - MIN_SEASON)) + MIN_SEASON;
 };
 
-type ExhibitionTeam = {
+export type ExhibitionTeam = {
 	abbrev: string;
 	imgURL: string;
 	region: string;
@@ -21,6 +21,8 @@ type ExhibitionTeam = {
 	seasonInfo?: {
 		won: number;
 		lost: number;
+		tied: number;
+		otl: number;
 		roundsWonText?: string;
 	};
 	players: Player[];
@@ -219,12 +221,17 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 			</div>
 
 			<form
-				onSubmit={event => {
+				onSubmit={async event => {
 					event.preventDefault();
 
 					console.log("SUBMIT", teams);
 
 					setSimmingGame(true);
+
+					const result = await toWorker("main", "simExhibitionGame", {
+						teams: teams as any,
+						disableHomeCourtAdvantage: neutralCourt,
+					});
 				}}
 			>
 				<div className="form-check mb-3">

@@ -20,7 +20,17 @@ import { P_FATIGUE_DAILY_REDUCTION } from "./writePlayerStats";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
-const processTeam = (
+const skipPlayerStats = bySport({
+	baseball: ["minAvailable"],
+	basketball: ["gp", "minAvailable"],
+	football: ["gp", "minAvailable"],
+	hockey: ["gp", "minAvailable"],
+});
+
+let playerStats: Record<string, number | number[]>;
+let teamStats: Record<string, number>;
+
+export const processTeam = (
 	teamInput: {
 		tid: number;
 		playThroughInjuries: [number, number];
@@ -39,10 +49,29 @@ const processTeam = (
 			};
 		};
 	},
-	teamStats: Record<string, number>,
 	players: Player<MinimalPlayerRatings>[],
-	playerStats: Record<string, number | number[]>,
 ) => {
+	if (!playerStats) {
+		playerStats = player.stats.raw.reduce<Record<string, number>>(
+			(stats, stat) => {
+				if (skipPlayerStats.includes(stat)) {
+					return stats;
+				}
+
+				stats[stat] = 0;
+				return stats;
+			},
+			{},
+		);
+	}
+
+	if (!teamStats) {
+		teamStats = team.stats.raw.reduce<Record<string, number>>((stats, stat) => {
+			stats[stat] = 0;
+			return stats;
+		}, {});
+	}
+
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;
 
 	if (!allStarGame) {
@@ -275,13 +304,6 @@ const processTeam = (
 	return t;
 };
 
-const skipPlayerStats = bySport({
-	baseball: ["minAvailable"],
-	basketball: ["gp", "minAvailable"],
-	football: ["gp", "minAvailable"],
-	hockey: ["gp", "minAvailable"],
-});
-
 /**
  * Load the teams specified by tids into an object of team objects.
  *
@@ -292,24 +314,6 @@ const skipPlayerStats = bySport({
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[], conditions: Conditions) => {
-	const playerStats: Record<string, number | number[]> =
-		player.stats.raw.reduce<Record<string, number>>((stats, stat) => {
-			if (skipPlayerStats.includes(stat)) {
-				return stats;
-			}
-
-			stats[stat] = 0;
-			return stats;
-		}, {});
-
-	const teamStats = team.stats.raw.reduce<Record<string, number>>(
-		(stats, stat) => {
-			stats[stat] = 0;
-			return stats;
-		},
-		{},
-	);
-
 	const teams: Record<number, undefined | ReturnType<typeof processTeam>> = {};
 	if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
 		// All-Star Game
@@ -403,9 +407,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 						},
 					},
 				},
-				teamStats,
 				players,
-				playerStats,
 			);
 		}
 	} else {
@@ -427,13 +429,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					throw new Error("Team season not found");
 				}
 
-				teams[tid] = processTeam(
-					team,
-					teamSeason,
-					teamStats,
-					players,
-					playerStats,
-				);
+				teams[tid] = processTeam(team, teamSeason, players);
 			}),
 		);
 	}

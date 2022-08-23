@@ -97,7 +97,7 @@ export const DEFAULT_SPORT_STATE = isSport("baseball")
 	  } as SportState)
 	: undefined;
 
-const LiveGame = (props: View<"liveGame">) => {
+export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
 	const [speed, setSpeed] = useLocalStorageState("live-game-speed", {

@@ -78,7 +78,7 @@ const simExhibitionGame = async ({
 	) as [any, any];
 
 	const result = new GameSim({
-		gid: -1,
+		gid: 0,
 		day: -1,
 		teams: teamsProcessed,
 		doPlayByPlay: true,
@@ -104,7 +104,7 @@ const simExhibitionGame = async ({
 		teamSeasonOverrides: teams,
 	});
 
-	console.log("liveSim", liveSim);
+	return liveSim;
 };
 
 export default simExhibitionGame;

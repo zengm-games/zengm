@@ -6,6 +6,7 @@ import type { Player, RealTeamInfo, View } from "../../common/types";
 import { ActionButton } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
+import { LiveGame } from "./LiveGame";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 
 const getRandomSeason = () => {
@@ -187,6 +188,9 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	>([undefined, undefined]);
 	const [neutralCourt, setNeutralCourt] = useState(true);
 	const [simmingGame, setSimmingGame] = useState(false);
+	const [exhibitionGame, setExhibitionGame] = useState<
+		View<"liveGame"> | undefined
+	>();
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
@@ -198,6 +202,10 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 		title: "Exhibition Game",
 		hideNewWindow: true,
 	});
+
+	if (exhibitionGame) {
+		return <LiveGame {...exhibitionGame} />;
+	}
 
 	return (
 		<>
@@ -228,10 +236,11 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 
 					setSimmingGame(true);
 
-					const result = await toWorker("main", "simExhibitionGame", {
+					const liveSimInfo = await toWorker("main", "simExhibitionGame", {
 						teams: teams as any,
 						disableHomeCourtAdvantage: neutralCourt,
 					});
+					setExhibitionGame(liveSimInfo);
 				}}
 			>
 				<div className="form-check mb-3">

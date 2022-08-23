@@ -19,6 +19,7 @@ export type ExhibitionTeam = {
 	region: string;
 	name: string;
 	tid: number;
+	season: number;
 	seasonInfo?: {
 		won: number;
 		lost: number;
@@ -117,8 +118,10 @@ const SelectTeam = ({
 						className="form-select"
 						value={tid}
 						onChange={event => {
-							const value = parseInt(event.target.value);
-							setTid(value);
+							const newTid = parseInt(event.target.value);
+							setTid(newTid);
+							const newTeam = teams.find(t => t.tid === newTid);
+							onChange(newTeam as any);
 						}}
 						disabled={loadingTeams || disabled}
 					>
@@ -206,6 +209,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	if (exhibitionGame) {
 		return <LiveGame {...exhibitionGame} />;
 	}
+	console.log(teams.map(t => t?.abbrev));
 
 	return (
 		<>

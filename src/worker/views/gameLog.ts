@@ -71,6 +71,15 @@ export const setTeamInfo = async (
 	}
 };
 
+export const makeAbbrevsUnique = <T extends { abbrev: string }>(
+	teams: [T, T],
+) => {
+	if (teams[0].abbrev === teams[1].abbrev) {
+		teams[0].abbrev = `${teams[0].abbrev}2`;
+		teams[1].abbrev = `${teams[1].abbrev}1`;
+	}
+};
+
 /**
  * Generate a box score.
  *
@@ -127,6 +136,7 @@ const boxScore = async (gid: number) => {
 			);
 		});
 	}
+	makeAbbrevsUnique(game.teams as any);
 
 	const wonInd = game.won.tid === game.teams[0].tid ? 0 : 1;
 	const lostInd = wonInd === 0 ? 1 : 0;

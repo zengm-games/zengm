@@ -90,23 +90,29 @@ const simExhibitionGame = async ({
 		baseInjuryRate: defaultGameAttributes.injuryRate,
 		dh: false,
 	}).run();
-	console.log("result", result);
 
 	const { gameStats: boxScore } = await gameSimToBoxScore(
 		result,
 		DEFAULT_STADIUM_CAPACITY,
 	);
-	console.log("boxScore", boxScore);
 
 	const liveSim = await boxScoreToLiveSim({
 		allStars: undefined,
 		confetti: false,
 		boxScore,
 		playByPlay: result.playByPlay as any,
-		teamSeasonOverrides: teams,
+		teamSeasonOverrides: teams.map(t => {
+			return {
+				...t,
+				region: `${t.season} ${t.region}`,
+			};
+		}) as [ExhibitionTeam, ExhibitionTeam],
 	});
 
-	return liveSim;
+	return {
+		...liveSim,
+		exhibition: true,
+	};
 };
 
 export default simExhibitionGame;

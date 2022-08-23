@@ -114,6 +114,7 @@ const addSeasonInfoToTeams = async (
 
 			return {
 				...t,
+				season: options.season,
 				seasonInfo,
 			};
 		})

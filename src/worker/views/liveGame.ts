@@ -1,7 +1,11 @@
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { setTeamInfo, type TeamSeasonOverride } from "./gameLog";
+import {
+	makeAbbrevsUnique,
+	setTeamInfo,
+	type TeamSeasonOverride,
+} from "./gameLog";
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
 import { getPeriodName, isSport, PHASE } from "../../common";
 
@@ -103,6 +107,7 @@ export const boxScoreToLiveSim = async ({
 			}
 		}
 	}
+	makeAbbrevsUnique(boxScore.teams);
 
 	// Swap teams order, so home team is at bottom in box score
 	boxScore.teams.reverse();

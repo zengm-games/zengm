@@ -21,15 +21,16 @@ scrimmage between historical teams
   - how to handle ratings stats popover?
     - reset pids on load, or could be dupes
     - could cache raw player objects in `local`
+  - how to handle clicking watch flag?
   - no link to player page
-  - put year in team name somewhere
   - don't increment w/l records
-  - what if both abbrevs are the same?
 - confirm confetti still works in normal league
 - persist result?
 - eventually
   - from a created league
     - store pids of players on team from beginning and end of regular season
+
+show/hide family toggle for large families https://discord.com/channels/@me/662077709836484618/1011058071449124864
 
 Strike out throw out DP does not advance batting order https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
 

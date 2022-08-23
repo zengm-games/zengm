@@ -97,7 +97,10 @@ export const DEFAULT_SPORT_STATE = isSport("baseball")
 	  } as SportState)
 	: undefined;
 
-export const LiveGame = (props: View<"liveGame">) => {
+export const LiveGame = ({
+	exhibition,
+	...props
+}: { exhibition?: boolean } & View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
 	const [speed, setSpeed] = useLocalStorageState("live-game-speed", {
@@ -710,9 +713,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 			{confetti.display ? <Confetti colors={confetti.colors} /> : null}
 
 			<p className="text-danger">
-				If you navigate away from this page, you won't be able to see these
-				play-by-play results again because they are not stored anywhere. The
-				results of this game are already final, though.
+				{exhibition
+					? "If you navigate away from this page, you won't be able to see this box score again because it is not stored anywhere."
+					: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
 			</p>
 
 			<div className="row">

@@ -3,9 +3,9 @@ import range from "lodash-es/range";
 import { useEffect, useState } from "react";
 import { COURT, isSport, PHASE } from "../../common";
 import type { Player, RealTeamInfo, View } from "../../common/types";
-import { ActionButton } from "../components";
+import { ActionButton, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { toWorker } from "../util";
+import { helpers, toWorker } from "../util";
 import { LiveGame } from "./LiveGame";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 
@@ -29,6 +29,18 @@ export type ExhibitionTeam = {
 	};
 	players: Player[];
 	ovr: number;
+};
+
+const playerRowClassName = (i: number) => {
+	if (i === 0) {
+		return;
+	}
+
+	if (i < 5) {
+		return "mt-1";
+	}
+
+	return "mt-1 d-none d-sm-block";
 };
 
 const SelectTeam = ({
@@ -88,7 +100,7 @@ const SelectTeam = ({
 
 	const t = teams.find(t => t.tid === tid);
 
-	const NUM_PLAYERS_TO_SHOW = 10;
+	const NUM_PLAYERS_TO_SHOW = 9;
 	const playersToShow = t?.players.slice(0, NUM_PLAYERS_TO_SHOW) ?? [];
 
 	return (
@@ -170,16 +182,46 @@ const SelectTeam = ({
 				) : null}
 			</div>
 			<ul className="list-unstyled mb-0">
-				{playersToShow.map(p => (
-					<li key={p.pid}>
-						{p.firstName} {p.lastName} - {p.ratings.at(-1).ovr} ovr
-					</li>
-				))}
-				{range(NUM_PLAYERS_TO_SHOW - playersToShow.length).map(i => (
-					<li key={i}>
-						<br />
-					</li>
-				))}
+				{playersToShow.map((p, i) => {
+					const stats = p.stats.at(-1);
+					const ratings = p.ratings.at(-1);
+
+					return (
+						<li key={p.pid} className={playerRowClassName(i)}>
+							<PlayerNameLabels
+								firstName={p.firstName}
+								lastName={p.lastName}
+								jerseyNumber={p.stats.at(-1)?.jerseyNumber ?? p.jerseyNumber}
+								skills={p.ratings.at(-1)!.skills}
+								fullNames
+							/>{" "}
+							<span className="text-muted">-</span> {ratings.pos}{" "}
+							<span className="text-muted">-</span> {ratings.ovr} ovr
+							<div className="exhibition-stats text-muted">
+								{stats?.gp > 0 ? (
+									<>
+										{" "}
+										{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
+										{helpers.roundStat(
+											(stats.orb + stats.drb) / stats.gp,
+											"trb",
+										)}{" "}
+										trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
+									</>
+								) : null}
+							</div>
+						</li>
+					);
+				})}
+				{range(NUM_PLAYERS_TO_SHOW - playersToShow.length).map(j => {
+					const i = playersToShow.length + j;
+					return (
+						<li key={i} className={playerRowClassName(i)}>
+							<br />
+							<br />
+						</li>
+					);
+				})}
 			</ul>
 		</>
 	);

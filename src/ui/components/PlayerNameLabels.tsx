@@ -31,6 +31,9 @@ type Props = {
 	lastName?: string;
 	firstNameShort?: string;
 
+	// Allow overriding settings, for places where we're sure there is always room
+	fullNames?: boolean;
+
 	// Pass to override firstName and lastName
 	legacyName?: string;
 };
@@ -92,7 +95,7 @@ export const CountBadge = ({ count }: { count: number }) => {
 };
 
 const PlayerNameLabels = (props: Props) => {
-	const fullNames = useLocal(state => state.fullNames);
+	const fullNames = useLocal(state => state.fullNames) || props.fullNames;
 
 	const {
 		abbrev,

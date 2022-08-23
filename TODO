@@ -1,13 +1,14 @@
 scrimmage between historical teams
 - also get players and team ovr if includeSeasonInfo
   - players missing ovr and
+- jersey number missing in box score for 2023 teams - fall back to root of player object? or should added row be using that already?
 - UI
-  - player stats
-  - PlayerNameLabels (jersey number, popover, etc)
+  - skill missing?
+  - PlayerNameLabels popover
 - pick season for game sim settings (presets)
 - use end of season (playoff) rosters
 - somehow set rules
-  see setWithoutSavingToDB calls in simExhibitionGame
+  - see setWithoutSavingToDB calls in simExhibitionGame
 - make sure home court gets set for correct team
 - option for playoff intensity
 - box score UI
@@ -16,6 +17,7 @@ scrimmage between historical teams
   - how to handle ratings stats popover?
     - reset pids on load, or could be dupes
     - could cache raw player objects in `local`
+    - could pass through manually, would be more convenient on team selector page
   - how to handle clicking watch flag?
   - no link to player page
 - confirm confetti still works in normal league

@@ -47,13 +47,20 @@ const addSeasonInfoToTeams = async (
 				},
 				ptModifier: 1,
 			} as unknown as Player;
+
 			delete (p2 as any).name;
 			const parts = p.name.split(" ");
 			p2.firstName = parts[0];
 			p2.lastName = parts.slice(1, parts.length).join(" ");
+
 			if (!p2.stats) {
 				p2.stats = [];
 			}
+
+			for (const row of p2.ratings) {
+				row.fuzz = 0;
+			}
+
 			return p2;
 		});
 

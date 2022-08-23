@@ -216,9 +216,6 @@ const develop = async (
 	}
 
 	ratings.skills = skills(ratings);
-	if (ratings.ovr >= 70) {
-		console.log("SET SKILLS", ratings.skills, ratings);
-	}
 
 	if (p.tid === PLAYER.UNDRAFTED) {
 		p.draft.ovr = ratings.ovr;

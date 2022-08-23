@@ -195,14 +195,22 @@ const setupRoutes = () => {
 	router.start({
 		routeMatched: async ({ context }) => {
 			if (!context.state.backendRedirect) {
-				if (
+				console.log(window.location.pathname, context.path);
+				const liveGame =
 					window.location.pathname.includes("/live_game") &&
-					!context.path.includes("/live_game")
-				) {
+					!context.path.includes("/live_game");
+				const liveGameExhibition =
+					window.location.pathname.includes("/exhibition") &&
+					!context.path.includes("/exhibition");
+				if (liveGame || liveGameExhibition) {
 					const liveGameInProgress = local.getState().liveGameInProgress;
 					if (liveGameInProgress) {
 						const proceed = await confirm(
-							"If you navigate away from this page, you won't be able to see these play-by-play results again.",
+							`If you navigate away from this page, you won't be able to see ${
+								window.location.pathname.includes("/exhibition")
+									? "this box score"
+									: "these play-by-play results"
+							} again.`,
 							{
 								okText: "Navigate Away",
 								cancelText: "Stay Here",

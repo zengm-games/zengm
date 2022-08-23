@@ -12,7 +12,6 @@ scrimmage between historical teams
 - option for playoff intensity
 - box score UI
   - link to play another exhibition game after this one is over
-  - warning about navigating away
   - how to handle ratings stats popover?
     - reset pids on load, or could be dupes
     - could cache raw player objects in `local`

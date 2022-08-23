@@ -8,12 +8,14 @@ import updateSortBys from "./DataTable/updateSortBys";
 
 const StatsTable = ({
 	Row,
+	exhibition,
 	forceRowUpdate,
 	liveGameInProgress,
 	numPlayersOnCourt,
 	t,
 }: {
 	Row: any;
+	exhibition?: boolean;
 	forceRowUpdate: boolean;
 	liveGameInProgress: boolean;
 	numPlayersOnCourt: number;
@@ -144,6 +146,7 @@ const StatsTable = ({
 					{players.map((p, i) => (
 						<Row
 							key={p.pid}
+							exhibition={exhibition}
 							lastStarter={sortBys.length === 0 && i + 1 === numPlayersOnCourt}
 							liveGameInProgress={liveGameInProgress}
 							p={p}
@@ -245,6 +248,7 @@ const BoxScore = ({
 						</h2>
 						<StatsTable
 							Row={Row}
+							exhibition={boxScore.exhibition}
 							forceRowUpdate={forceRowUpdate}
 							liveGameInProgress={liveGameInProgress}
 							numPlayersOnCourt={boxScore.numPlayersOnCourt ?? 5}

@@ -31,6 +31,7 @@ type BoxScore = {
 	scoringSummary: ScoringSummaryEvent[];
 	teams: [Team, Team];
 	numPeriods?: number;
+	exhibition?: boolean;
 };
 
 export const StatsHeader = ({
@@ -104,10 +105,12 @@ export const sortByStats = (
 
 const StatsTableIndividual = ({
 	Row,
+	exhibition,
 	t,
 	type,
 }: {
 	Row: any;
+	exhibition?: boolean;
 	t: BoxScore["teams"][number];
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
@@ -167,6 +170,7 @@ const StatsTableIndividual = ({
 						{players.map((p, i) => (
 							<Row
 								key={p.pid}
+								exhibition={exhibition}
 								i={i}
 								p={p}
 								stats={stats}
@@ -192,7 +196,13 @@ const StatsTable = ({
 	return (
 		<>
 			{boxScore.teams.map((t, i) => (
-				<StatsTableIndividual key={i} Row={Row} t={t} type={type} />
+				<StatsTableIndividual
+					key={i}
+					Row={Row}
+					exhibition={boxScore.exhibition}
+					t={t}
+					type={type}
+				/>
 			))}
 		</>
 	);

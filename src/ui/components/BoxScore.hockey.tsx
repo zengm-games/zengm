@@ -22,16 +22,19 @@ type BoxScore = {
 	scoringSummary: PlayByPlayEventScore[];
 	teams: [Team, Team];
 	numPeriods?: number;
+	exhibition?: boolean;
 };
 
 const StatsTable = ({
 	Row,
+	exhibition,
 	forceRowUpdate,
 	title,
 	type,
 	t,
 }: {
 	Row: any;
+	exhibition?: boolean;
 	forceRowUpdate: boolean;
 	title: string;
 	type: keyof typeof PLAYER_GAME_STATS;
@@ -112,6 +115,7 @@ const StatsTable = ({
 						{players.map((p, i) => (
 							<Row
 								key={p.pid}
+								exhibition={exhibition}
 								i={i}
 								p={p}
 								stats={stats}
@@ -312,6 +316,7 @@ const BoxScore = ({
 						<StatsTable
 							key={title}
 							Row={Row}
+							exhibition={boxScore.exhibition}
 							forceRowUpdate={forceRowUpdate}
 							title={title}
 							type={title.toLowerCase() as any}

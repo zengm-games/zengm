@@ -71,13 +71,7 @@ const TeamLogo = ({
 	) : null;
 };
 
-const HeadlineScore = ({
-	boxScore,
-	exhibition,
-}: {
-	boxScore: any;
-	exhibition: boolean | undefined;
-}) => {
+const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
@@ -87,7 +81,7 @@ const HeadlineScore = ({
 	const t1 =
 		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
-	const className = `d-none d-${exhibition ? "md" : "sm"}-inline`;
+	const className = `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
 
 	return (
 		<>
@@ -673,7 +667,6 @@ const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
-	exhibition,
 	nextGid,
 	playIndex,
 	prevGid,
@@ -685,7 +678,6 @@ const BoxScoreWrapper = ({
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
-	exhibition?: boolean;
 	nextGid?: number;
 	playIndex?: number;
 	prevGid?: number;
@@ -794,7 +786,7 @@ const BoxScoreWrapper = ({
 			<div className="d-flex text-center">
 				<TeamLogo season={boxScore.season} t={t0} />
 				<div className="mx-auto flex-shrink-0 mb-2">
-					<HeadlineScore boxScore={boxScore} exhibition={exhibition} />
+					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
 						abbrev={abbrev}
 						boxScore={boxScore}

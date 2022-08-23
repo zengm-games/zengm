@@ -5,12 +5,14 @@ import { helpers } from "../util";
 
 const BoxScoreRow = ({
 	className,
+	exhibition,
 	lastStarter,
 	liveGameInProgress,
 	onClick,
 	p,
 }: {
 	className?: string;
+	exhibition?: boolean;
 	lastStarter?: boolean;
 	liveGameInProgress?: boolean;
 	onClick?: (event: MouseEvent) => void;
@@ -65,7 +67,7 @@ const BoxScoreRow = ({
 				<PlayerNameLabels
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
+					pid={exhibition ? undefined : p.pid}
 					skills={p.skills}
 					legacyName={p.name}
 				/>

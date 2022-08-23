@@ -5,6 +5,7 @@ import BoxScoreRowFootball from "./BoxScoreRow.football";
 
 const BoxScoreRow = (props: {
 	className?: string;
+	exhibition?: boolean;
 	lastStarter?: boolean;
 	liveGameInProgress?: boolean;
 	onClick?: (event: MouseEvent) => void;

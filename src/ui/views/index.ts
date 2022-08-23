@@ -55,6 +55,7 @@ import LeadersYears from "./LeadersYears";
 import LeagueDashboard from "./LeagueDashboard";
 import LeagueFinances from "./LeagueFinances";
 import LeagueStats from "./LeagueStats";
+// eslint-disable-next-line import/no-named-as-default
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";

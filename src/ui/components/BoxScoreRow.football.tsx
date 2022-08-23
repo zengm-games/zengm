@@ -9,6 +9,7 @@ const width100 = {
 
 const BoxScoreRow = ({
 	className,
+	exhibition,
 	highlightCols,
 	onClick,
 	p,
@@ -16,6 +17,7 @@ const BoxScoreRow = ({
 	seasonStats,
 }: {
 	className?: string;
+	exhibition?: boolean;
 	highlightCols?: number[];
 	onClick?: (event: MouseEvent) => void;
 	p: any;
@@ -29,7 +31,7 @@ const BoxScoreRow = ({
 				<PlayerNameLabels
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
-					pid={p.pid}
+					pid={exhibition ? undefined : p.pid}
 					skills={p.skills}
 					legacyName={p.name}
 				/>

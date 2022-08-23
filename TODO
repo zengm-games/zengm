@@ -16,8 +16,8 @@ scrimmage between historical teams
     - reset pids on load, or could be dupes
     - could cache raw player objects in `local`
     - could pass through manually, would be more convenient on team selector page
+    - need to pass pid to PlayerNameLabels without making it a link to player page
   - how to handle clicking watch flag?
-  - no link to player page
 - persist result?
 - eventually
   - from a created league

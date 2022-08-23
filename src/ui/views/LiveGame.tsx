@@ -22,6 +22,7 @@ import useLocalStorageState from "use-local-storage-state";
 import type { SportState } from "../util/processLiveGameEvents.baseball";
 
 type PlayerRowProps = {
+	exhibition?: boolean;
 	forceUpdate?: boolean;
 	i: number;
 	liveGameInProgress?: boolean;
@@ -728,7 +729,6 @@ export const LiveGame = ({
 							Row={PlayerRow}
 							playIndex={playIndex}
 							sportState={sportState.current}
-							exhibition={exhibition}
 						/>
 					) : (
 						<h2>Loading...</h2>

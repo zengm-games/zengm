@@ -260,35 +260,37 @@ export const LiveGame = ({
 
 				// Update team records with result of game
 				// Keep in sync with liveGame.ts
-				for (const t of boxScore.current.teams) {
-					if (boxScore.current.playoffs) {
-						if (t.playoffs) {
-							if (boxScore.current.won.tid === t.tid) {
-								t.playoffs.won += 1;
+				if (!exhibition) {
+					for (const t of boxScore.current.teams) {
+						if (boxScore.current.playoffs) {
+							if (t.playoffs) {
+								if (boxScore.current.won.tid === t.tid) {
+									t.playoffs.won += 1;
 
-								if (props.confetti) {
-									setConfetti({
-										display: true,
-										colors: t.colors,
-									});
+									if (props.confetti) {
+										setConfetti({
+											display: true,
+											colors: t.colors,
+										});
+									}
+								} else if (boxScore.current.lost.tid === t.tid) {
+									t.playoffs.lost += 1;
 								}
+							}
+						} else {
+							if (boxScore.current.won.pts === boxScore.current.lost.pts) {
+								// Tied!
+								if (t.tied !== undefined) {
+									t.tied += 1;
+								}
+							} else if (boxScore.current.won.tid === t.tid) {
+								t.won += 1;
 							} else if (boxScore.current.lost.tid === t.tid) {
-								t.playoffs.lost += 1;
-							}
-						}
-					} else {
-						if (boxScore.current.won.pts === boxScore.current.lost.pts) {
-							// Tied!
-							if (t.tied !== undefined) {
-								t.tied += 1;
-							}
-						} else if (boxScore.current.won.tid === t.tid) {
-							t.won += 1;
-						} else if (boxScore.current.lost.tid === t.tid) {
-							if (boxScore.current.overtimes > 0 && props.otl) {
-								t.otl += 1;
-							} else {
-								t.lost += 1;
+								if (boxScore.current.overtimes > 0 && props.otl) {
+									t.otl += 1;
+								} else {
+									t.lost += 1;
+								}
 							}
 						}
 					}
@@ -303,7 +305,7 @@ export const LiveGame = ({
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.confetti, props.otl],
+		[exhibition, props.confetti, props.otl],
 	);
 
 	useEffect(() => {
@@ -726,6 +728,7 @@ export const LiveGame = ({
 							Row={PlayerRow}
 							playIndex={playIndex}
 							sportState={sportState.current}
+							exhibition={exhibition}
 						/>
 					) : (
 						<h2>Loading...</h2>

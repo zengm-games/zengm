@@ -14,6 +14,7 @@ type Team = {
 	name: string;
 	region: string;
 	players: any[];
+	season?: number;
 };
 
 type BoxScore = {
@@ -304,6 +305,7 @@ const BoxScore = ({
 			{boxScore.teams.map(t => (
 				<Fragment key={t.abbrev}>
 					<h2>
+						{t.season !== undefined ? `${t.season} ` : null}
 						{t.region} {t.name}
 					</h2>
 					{["Skaters", "Goalies"].map(title => (

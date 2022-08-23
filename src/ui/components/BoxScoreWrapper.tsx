@@ -71,7 +71,13 @@ const TeamLogo = ({
 	) : null;
 };
 
-const HeadlineScore = ({ boxScore }: any) => {
+const HeadlineScore = ({
+	boxScore,
+	exhibition,
+}: {
+	boxScore: any;
+	exhibition: boolean | undefined;
+}) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
@@ -81,6 +87,8 @@ const HeadlineScore = ({ boxScore }: any) => {
 	const t1 =
 		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
+	const className = `d-none d-${exhibition ? "md" : "sm"}-inline`;
+
 	return (
 		<>
 			<h2>
@@ -88,7 +96,8 @@ const HeadlineScore = ({ boxScore }: any) => {
 					<span className="text-muted">{t0.playoffs.seed}. </span>
 				) : null}
 				<TeamNameLink season={boxScore.season} t={t0}>
-					<span className="d-none d-sm-inline">{t0.region} </span>
+					{t0.season !== undefined ? `${t0.season} ` : null}
+					<span className={className}>{t0.region} </span>
 					{t0.name}
 				</TeamNameLink>{" "}
 				{t0.pts},{" "}
@@ -96,7 +105,8 @@ const HeadlineScore = ({ boxScore }: any) => {
 					<span className="text-muted">{t1.playoffs.seed}. </span>
 				) : null}
 				<TeamNameLink season={boxScore.season} t={t1}>
-					<span className="d-none d-sm-inline">{t1.region} </span>
+					{t1.season !== undefined ? `${t1.season} ` : null}
+					<span className={className}>{t1.region} </span>
 					{t1.name}
 				</TeamNameLink>{" "}
 				{t1.pts}
@@ -663,6 +673,7 @@ const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
+	exhibition,
 	nextGid,
 	playIndex,
 	prevGid,
@@ -674,6 +685,7 @@ const BoxScoreWrapper = ({
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
+	exhibition?: boolean;
 	nextGid?: number;
 	playIndex?: number;
 	prevGid?: number;
@@ -782,7 +794,7 @@ const BoxScoreWrapper = ({
 			<div className="d-flex text-center">
 				<TeamLogo season={boxScore.season} t={t0} />
 				<div className="mx-auto flex-shrink-0 mb-2">
-					<HeadlineScore boxScore={boxScore} />
+					<HeadlineScore boxScore={boxScore} exhibition={exhibition} />
 					<DetailedScore
 						abbrev={abbrev}
 						boxScore={boxScore}

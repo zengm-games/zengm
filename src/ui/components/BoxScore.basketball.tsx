@@ -233,10 +233,12 @@ const BoxScore = ({
 										boxScore.season,
 									])}
 								>
+									{t.season !== undefined ? `${t.season} ` : null}
 									{t.region} {t.name}
 								</a>
 							) : (
 								<>
+									{t.season !== undefined ? `${t.season} ` : null}
 									{t.region} {t.name}
 								</>
 							)}

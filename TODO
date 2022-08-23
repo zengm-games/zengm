@@ -14,21 +14,17 @@ scrimmage between historical teams
   - link to play another exhibition game after this one is over
   - warning about navigating away
   - jersey numbers
-  - implement
-    - format GameSim result into box score object (like in writeGameStats.ts)
-    - process like in views/liveGame.ts (extract into function)
-    - send back to UI, display in something like LiveGame
   - how to handle ratings stats popover?
     - reset pids on load, or could be dupes
     - could cache raw player objects in `local`
   - how to handle clicking watch flag?
   - no link to player page
-  - don't increment w/l records
 - confirm confetti still works in normal league
 - persist result?
 - eventually
   - from a created league
     - store pids of players on team from beginning and end of regular season
+      - use on roster page for historical seasons, toggle show start of season, playoffs, and all
 
 show/hide family toggle for large families https://discord.com/channels/@me/662077709836484618/1011058071449124864
 

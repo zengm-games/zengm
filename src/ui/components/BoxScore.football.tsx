@@ -23,6 +23,7 @@ type Team = {
 	name: string;
 	region: string;
 	players: any[];
+	season?: number;
 };
 
 type BoxScore = {
@@ -151,6 +152,7 @@ const StatsTableIndividual = ({
 					<thead>
 						<tr>
 							<th colSpan={2}>
+								{t.season !== undefined ? `${t.season} ` : null}
 								{t.region} {t.name}
 							</th>
 							<StatsHeader

@@ -101,13 +101,12 @@ const simExhibitionGame = async ({
 		confetti: false,
 		boxScore,
 		playByPlay: result.playByPlay as any,
-		teamSeasonOverrides: teams.map(t => {
-			return {
-				...t,
-				region: `${t.season} ${t.region}`,
-			};
-		}) as [ExhibitionTeam, ExhibitionTeam],
+		teamSeasonOverrides: teams,
 	});
+	for (let i = 0; i < 2; i++) {
+		const j = i === 0 ? 1 : 0;
+		liveSim.initialBoxScore.teams[i].season = teams[j].season;
+	}
 
 	return {
 		...liveSim,

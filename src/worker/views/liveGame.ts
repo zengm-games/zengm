@@ -182,7 +182,7 @@ const updatePlayByPlay = async (
 							finalMatchup.home.won,
 							finalMatchup.away?.won ?? 0,
 						);
-						if (maxWon >= boxScore.current.numGamesToWinSeries) {
+						if (maxWon >= boxScore.numGamesToWinSeries) {
 							confetti = true;
 						}
 					}

@@ -86,7 +86,7 @@ const value = (
 	if (isSport("basketball") && ps.length > 0) {
 		const ps1 = ps.at(-1); // Most recent stats
 
-		// PER may be undefined for exhibition game players from old historical seasons
+		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
 		if (Object.hasOwn(ps1, "per")) {
 			if (ps.length === 1 || ps[0].min >= 2000) {
 				// Only one year of stats
@@ -99,16 +99,18 @@ const value = (
 				// Two most recent seasons
 				const ps2 = ps[ps.length - 2];
 
-				if (ps1.min + ps2.min > 0) {
-					current =
-						intercept +
-						(slope * (ps1.per * ps1.min + ps2.per * ps2.min)) /
-							(ps1.min + ps2.min);
-
-					if (ps1.min + ps2.min < 2000) {
+				if (Object.hasOwn(ps2, "per")) {
+					if (ps1.min + ps2.min > 0) {
 						current =
-							(current * (ps1.min + ps2.min)) / 2000 +
-							pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+							intercept +
+							(slope * (ps1.per * ps1.min + ps2.per * ps2.min)) /
+								(ps1.min + ps2.min);
+
+						if (ps1.min + ps2.min < 2000) {
+							current =
+								(current * (ps1.min + ps2.min)) / 2000 +
+								pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+						}
 					}
 				}
 			}

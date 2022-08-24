@@ -1,7 +1,6 @@
 scrimmage between historical teams
 - also get players and team ovr if includeSeasonInfo
   - players missing ovr and
-- jersey number missing in box score for 2023 teams - fall back to root of player object? or should added row be using that already?
 - pick season for game sim settings (presets)
 - use end of season (playoff) rosters
 - somehow set rules

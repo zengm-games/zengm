@@ -139,6 +139,10 @@ export const processTeam = (
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
 
+		// p.jerseyNumber fallback is for exhibition game players for the current season with no stats
+		const jerseyNumber =
+			p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : p.jerseyNumber;
+
 		const rating = p.ratings.at(-1)!;
 		const playerCompositeRatings: any = {};
 		const p2 = {
@@ -158,8 +162,7 @@ export const processTeam = (
 					p.injury.gamesRemaining <= playThroughInjuries,
 			},
 			injured: p.injury.gamesRemaining > playThroughInjuries,
-			jerseyNumber:
-				p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : undefined,
+			jerseyNumber,
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
 		};

@@ -214,7 +214,9 @@ const SelectTeam = ({
 										)}{" "}
 										trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
 									</>
-								) : null}
+								) : (
+									<br />
+								)}
 							</div>
 						</li>
 					);

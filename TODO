@@ -3,6 +3,11 @@ scrimmage between historical teams
 - somehow set rules
   - see setWithoutSavingToDB calls in simExhibitionGame
   - ability to select preset based on either of the selected teams, or (in bbgm) the season presets from real players leagues
+  - dropdown "Real Players 1971", "Real Players 2020", "Default", "Custom"
+  - do any of these need to handle history?
+- do URL parameters need to include settings too?
+  - not just gameAttributes, but home court and playoff intensity too
+  - localStorage instead?
 - option for playoff intensity
 - from a created league
   - store pids of players on team from beginning and end of regular season

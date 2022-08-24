@@ -1,8 +1,14 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import { useLayoutEffect, useState } from "react";
-import { COURT, isSport, PHASE } from "../../common";
-import type { Player, RealTeamInfo, View } from "../../common/types";
+import { COURT, EXHIBITION_GAME_SETTINGS, isSport, PHASE } from "../../common";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
+import type {
+	GameAttributesLeague,
+	Player,
+	RealTeamInfo,
+	View,
+} from "../../common/types";
 import { ActionButton, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
@@ -42,6 +48,24 @@ const playerRowClassName = (i: number) => {
 	return "mt-1 d-none d-sm-block";
 };
 
+type ExhibitionGameAttributes = Pick<
+	GameAttributesLeague,
+	typeof EXHIBITION_GAME_SETTINGS[number]
+>;
+
+const getGameAttributes = (gameAttributes?: Partial<GameAttributesLeague>) => {
+	const output: ExhibitionGameAttributes = {} as any;
+	for (const key of EXHIBITION_GAME_SETTINGS) {
+		if (gameAttributes?.[key] !== undefined) {
+			(output as any)[key] = gameAttributes[key];
+		} else {
+			(output as any)[key] = defaultGameAttributes[key];
+		}
+	}
+
+	return output;
+};
+
 const SelectTeam = ({
 	disabled,
 	index,
@@ -50,17 +74,22 @@ const SelectTeam = ({
 }: {
 	disabled: boolean;
 	index: number;
-	onChange: (t: ExhibitionTeam | undefined) => void;
+	onChange: (
+		t: ExhibitionTeam | undefined,
+		gameAttributes: ExhibitionGameAttributes,
+	) => void;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
 	const [season, setSeason] = useState(getRandomSeason);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
 	const [teams, setTeams] = useState<ExhibitionTeam[]>([]);
+	const [gameAttributes, setGameAttributes] =
+		useState<ExhibitionGameAttributes>(getGameAttributes);
 
 	const loadTeams = async (season: number, tid?: number | "random") => {
 		setLoadingTeams(true);
-		onChange(undefined);
+		onChange(undefined, getGameAttributes());
 
 		const leagueInfo = await toWorker("main", "getLeagueInfo", {
 			type: "real",
@@ -94,11 +123,14 @@ const SelectTeam = ({
 			}
 		}
 
+		const newGameAttributes = getGameAttributes(leagueInfo.gameAttributes);
+
 		setTeams(newTeams as any);
 		setTid(newTeam.tid);
+		setGameAttributes(newGameAttributes);
 		setLoadingTeams(false);
 
-		onChange(newTeam as any);
+		onChange(newTeam as any, newGameAttributes);
 	};
 
 	useLayoutEffect(() => {
@@ -165,7 +197,7 @@ const SelectTeam = ({
 							const newTid = parseInt(event.target.value);
 							setTid(newTid);
 							const newTeam = teams.find(t => t.tid === newTid);
-							onChange(newTeam as any);
+							onChange(newTeam as any, gameAttributes);
 						}}
 						disabled={loadingTeams || disabled}
 					>
@@ -264,9 +296,17 @@ const SelectTeam = ({
 	);
 };
 
+type ExhibitionTeamAndSettings = {
+	t: ExhibitionTeam;
+	gameAttributes: ExhibitionGameAttributes;
+};
+
 const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	const [teams, setTeams] = useState<
-		[ExhibitionTeam | undefined, ExhibitionTeam | undefined]
+		[
+			ExhibitionTeamAndSettings | undefined,
+			ExhibitionTeamAndSettings | undefined,
+		]
 	>([undefined, undefined]);
 	const [neutralCourt, setNeutralCourt] = useState(true);
 	const [simmingGame, setSimmingGame] = useState(false);
@@ -283,13 +323,18 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 
 	console.log(teams);
 
-	const setTeam = (index: 0 | 1, t: ExhibitionTeam | undefined) => {
+	const setTeam = (
+		index: 0 | 1,
+		t: ExhibitionTeam | undefined,
+		gameAttributes: ExhibitionGameAttributes,
+	) => {
 		setTeams(teams => {
 			let newTeams: typeof teams;
+			const entry = t === undefined ? undefined : { t, gameAttributes };
 			if (index === 0) {
-				newTeams = [t, teams[1]];
+				newTeams = [entry, teams[1]];
 			} else {
-				newTeams = [teams[0], t];
+				newTeams = [teams[0], entry];
 			}
 
 			return newTeams;
@@ -305,8 +350,8 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={1}
 						realTeamInfo={realTeamInfo}
-						onChange={t => {
-							setTeam(1, t);
+						onChange={(t, gameAttributes) => {
+							setTeam(1, t, gameAttributes);
 						}}
 					/>
 				</div>
@@ -316,8 +361,8 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={0}
 						realTeamInfo={realTeamInfo}
-						onChange={t => {
-							setTeam(0, t);
+						onChange={(t, gameAttributes) => {
+							setTeam(0, t, gameAttributes);
 						}}
 					/>
 				</div>
@@ -332,18 +377,21 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					const hash = encodeURIComponent(
 						JSON.stringify([
 							"real",
-							teams[0]!.season,
-							teams[0]!.tid,
+							teams[0]!.t!.season,
+							teams[0]!.t!.tid,
 							"real",
-							teams[1]!.season,
-							teams[1]!.tid,
+							teams[1]!.t!.season,
+							teams[1]!.t!.tid,
 						]),
 					);
 
 					await toWorker("main", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
 						hash,
-						teams: teams as any,
+						teams: teams.map(entry => entry?.t) as [
+							ExhibitionTeam,
+							ExhibitionTeam,
+						],
 					});
 				}}
 			>

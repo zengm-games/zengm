@@ -3,7 +3,6 @@ import * as constantsBaseball from "./constants.baseball";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 import * as constantsHockey from "./constants.hockey";
-
 import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types";
 
 const ACCOUNT_API_URL =
@@ -422,6 +421,35 @@ const ALL_STAR_GAME_ONLY = bySport({
 
 const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
 
+const EXHIBITION_GAME_SETTINGS = [
+	"ties",
+	"otl",
+	"dh",
+	"numPlayersOnCourt",
+	"foulsNeededToFoulOut",
+	"numPlayersOnCourt",
+	"quarterLength",
+	"numPeriods",
+	"pace",
+	"elamASG",
+	"elam",
+	"homeCourtAdvantage",
+	"elamMinutes",
+	"elamPoints",
+	"foulsUntilBonus",
+	"foulRateFactor",
+	"turnoverFactor",
+	"stealFactor",
+	"threePointTendencyFactor",
+	"threePointAccuracyFactor",
+	"twoPointAccuracyFactor",
+	"foulRateFactor",
+	"threePointers",
+	"blockFactor",
+	"threePointers",
+	"orbFactor",
+] as const;
+
 export {
 	AD_DIVS,
 	ALL_STAR_GAME_ONLY,
@@ -439,6 +467,7 @@ export {
 	DIFFICULTY,
 	DRAFT_BY_TEAM_OVR,
 	EMAIL_ADDRESS,
+	EXHIBITION_GAME_SETTINGS,
 	FACEBOOK_USERNAME,
 	GAME_ACRONYM,
 	GAME_NAME,

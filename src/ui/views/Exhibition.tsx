@@ -303,10 +303,10 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralCourt ? "Team 1" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
-						index={0}
+						index={1}
 						realTeamInfo={realTeamInfo}
 						onChange={t => {
-							setTeam(0, t);
+							setTeam(1, t);
 						}}
 					/>
 				</div>
@@ -314,10 +314,10 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralCourt ? "Team 2" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
-						index={1}
+						index={0}
 						realTeamInfo={realTeamInfo}
 						onChange={t => {
-							setTeam(1, t);
+							setTeam(0, t);
 						}}
 					/>
 				</div>

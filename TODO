@@ -1,10 +1,8 @@
 scrimmage between historical teams
-- pick season for game sim settings (presets)
 - use end of season (playoff) rosters
 - somehow set rules
   - see setWithoutSavingToDB calls in simExhibitionGame
-- make sure home court gets set for correct team
-  - swap order in UI on selection page?
+  - ability to select preset based on either of the selected teams, or (in bbgm) the season presets from real players leagues
 - option for playoff intensity
 - from a created league
   - store pids of players on team from beginning and end of regular season

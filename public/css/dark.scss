@@ -28,7 +28,7 @@ $teal: lighten(#20c997, 20);
 $cyan: lighten(#17a2b8, 20);
 
 $primary: $orange;
-$secondary: $gray-400;
+$secondary: $gray-300;
 $text-muted: $gray-400;
 $input-placeholder-color: $gray-400;
 
@@ -98,20 +98,6 @@ $small-scrollbar-thumb-hover-color: $gray-600;
 	&:not(:disabled):hover {
 		border-color: darken($orange, 30) !important;
 		background-color: darken($orange, 30) !important;
-	}
-}
-
-.btn-secondary {
-	color: $white;
-
-	&:active,
-	&:focus,
-	&:not(:disabled):hover {
-		color: $white !important;
-	}
-
-	&:disabled {
-		color: $gray-200;
 	}
 }
 

@@ -200,6 +200,7 @@ const SelectTeam = ({
 								skills={p.ratings.at(-1)!.skills}
 								fullNames
 								disableNameLink
+								season={season}
 							/>{" "}
 							<span className="text-muted">-</span> {ratings.pos}{" "}
 							<span className="text-muted">-</span> {ratings.ovr} ovr

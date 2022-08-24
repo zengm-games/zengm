@@ -3,13 +3,42 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	PHASE,
 } from "../../common";
-import type { Conditions } from "../../common/types";
+import type { Conditions, GameAttributesLeague } from "../../common/types";
 import type { ExhibitionTeam } from "../../ui/views/Exhibition";
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { defaultGameAttributes, g, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
+
+const EXHIBITION_GAME_SETTINGS: (keyof GameAttributesLeague)[] = [
+	"ties",
+	"otl",
+	"dh",
+	"numPlayersOnCourt",
+	"foulsNeededToFoulOut",
+	"numPlayersOnCourt",
+	"quarterLength",
+	"numPeriods",
+	"pace",
+	"elamASG",
+	"elam",
+	"homeCourtAdvantage",
+	"elamMinutes",
+	"elamPoints",
+	"foulsUntilBonus",
+	"foulRateFactor",
+	"turnoverFactor",
+	"stealFactor",
+	"threePointTendencyFactor",
+	"threePointAccuracyFactor",
+	"twoPointAccuracyFactor",
+	"foulRateFactor",
+	"threePointers",
+	"blockFactor",
+	"threePointers",
+	"orbFactor",
+];
 
 const simExhibitionGame = async (
 	{
@@ -26,37 +55,11 @@ const simExhibitionGame = async (
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);
-	const applyDefaults = [
-		"ties",
-		"otl",
+	const settingsCannotChange: typeof EXHIBITION_GAME_SETTINGS = [
 		"budget",
 		"spectator",
-		"dh",
-		"numPlayersOnCourt",
-		"foulsNeededToFoulOut",
-		"numPlayersOnCourt",
-		"quarterLength",
-		"numPeriods",
-		"pace",
-		"elamASG",
-		"elam",
-		"homeCourtAdvantage",
-		"elamMinutes",
-		"elamPoints",
-		"foulsUntilBonus",
-		"foulRateFactor",
-		"turnoverFactor",
-		"stealFactor",
-		"threePointTendencyFactor",
-		"threePointAccuracyFactor",
-		"twoPointAccuracyFactor",
-		"foulRateFactor",
-		"threePointers",
-		"blockFactor",
-		"threePointers",
-		"orbFactor",
-	] as const;
-	for (const key of applyDefaults) {
+	];
+	for (const key of [...settingsCannotChange, ...EXHIBITION_GAME_SETTINGS]) {
 		g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
 	}
 

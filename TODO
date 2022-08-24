@@ -9,8 +9,6 @@ scrimmage between historical teams
 - option for playoff intensity
 - box score UI
   - link to play another exhibition game after this one is over
-  - how to handle clicking watch flag?
-- "Timeout while waiting for valid status" error after loading exhibition team select page
 - from a created league
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all

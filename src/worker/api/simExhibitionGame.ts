@@ -8,7 +8,7 @@ import type { ExhibitionTeam } from "../../ui/views/Exhibition";
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
-import { defaultGameAttributes, g, local, toUI } from "../util";
+import { defaultGameAttributes, g, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
 const simExhibitionGame = async (
@@ -21,8 +21,6 @@ const simExhibitionGame = async (
 	},
 	conditions: Conditions,
 ) => {
-	local.exhibitionGame = true;
-
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);

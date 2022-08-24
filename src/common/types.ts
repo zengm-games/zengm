@@ -1227,7 +1227,6 @@ export type Local = {
 		start: number;
 	};
 	autoSave: boolean;
-	exhibitionGame: boolean;
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string;

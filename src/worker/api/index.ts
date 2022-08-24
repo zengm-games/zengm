@@ -1556,15 +1556,20 @@ const getLocal = async (name: keyof Local) => {
 const getPlayerBioInfoDefaults = initDefaults;
 
 const getPlayerWatch = async (pid: number) => {
-	if (local.exhibitionGame) {
-		return false;
-	}
-
 	if (Number.isNaN(pid)) {
 		return false;
 	}
 
-	const p = await idb.cache.players.get(pid);
+	let p;
+	if (local.exhibitionGamePlayers) {
+		p = local.exhibitionGamePlayers[pid];
+		if (!p) {
+			return false;
+		}
+	} else {
+		p = await idb.cache.players.get(pid);
+	}
+
 	if (p) {
 		return !!p.watch;
 	}
@@ -2211,7 +2216,6 @@ const ratingsStatsPopoverInfo = async ({
 			"noCopyCache",
 		);
 	}
-	console.log("p", pid, p);
 
 	if (!p) {
 		return blankObj;
@@ -3465,7 +3469,15 @@ const updatePlayerWatch = async ({
 	pid: number;
 	watch: boolean;
 }) => {
-	let p = await idb.cache.players.get(pid);
+	let p;
+	if (local.exhibitionGamePlayers) {
+		p = local.exhibitionGamePlayers[pid];
+		if (!p) {
+			return false;
+		}
+	} else {
+		p = await idb.cache.players.get(pid);
+	}
 	if (!p) {
 		p = await idb.league.get("players", pid);
 	}
@@ -3475,8 +3487,10 @@ const updatePlayerWatch = async ({
 		} else {
 			delete p.watch;
 		}
-		await idb.cache.players.put(p);
-		await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+		if (!local.exhibitionGamePlayers) {
+			await idb.cache.players.put(p);
+			await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+		}
 	}
 };
 

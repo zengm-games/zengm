@@ -18,7 +18,6 @@ scrimmage between historical teams
     - could pass through manually, would be more convenient on team selector page
     - need to pass pid to PlayerNameLabels without making it a link to player page
   - how to handle clicking watch flag?
-- error when simming with 1947 Boston
 - in PlayerNameLabels, if player has no link, skills should be muted
 - persist result?
 - from a created league

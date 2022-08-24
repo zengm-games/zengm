@@ -83,11 +83,12 @@ const SelectTeam = ({
 		} else {
 			newTeam =
 				newTeams.find(t => t.abbrev === prevTeam?.abbrev) ??
-				newTeams.find(t => t.region === prevTeam?.region);
+				newTeams.find(t => t.region === prevTeam?.region) ??
+				newTeams[0];
 		}
 
 		setTeams(newTeams as any);
-		setTid(newTeam?.tid ?? 0);
+		setTid(newTeam.tid);
 		setLoadingTeams(false);
 
 		onChange(newTeam as any);

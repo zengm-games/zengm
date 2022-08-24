@@ -7,10 +7,10 @@ scrimmage between historical teams
 - somehow set rules
   - see setWithoutSavingToDB calls in simExhibitionGame
 - make sure home court gets set for correct team
+- should be passing season to RatingsStatsPopover
+  - team selector
+  - box score
 - option for playoff intensity
-- augment stats row with defaults
-  - for old players with no orb, etc. otherwise trb calculation gets messed  up
-  - remove special check for displaying trb on Exhibition.tsx
 - box score UI
   - link to play another exhibition game after this one is over
   - how to handle clicking watch flag?

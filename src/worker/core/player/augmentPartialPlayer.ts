@@ -412,15 +412,6 @@ const augmentPartialPlayer = async (
 				ps.yearsWithTeam = yearsWithTeam;
 			}
 
-			// If needed, set missing +/-, blocks against to 0
-			if (ps.ba === undefined) {
-				ps.ba = 0;
-			}
-
-			if (ps.pm === undefined) {
-				ps.pm = 0;
-			}
-
 			// Handle any missing stats
 			for (const key of statKeys) {
 				if (ps[key] === undefined) {

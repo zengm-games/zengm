@@ -208,16 +208,11 @@ const SelectTeam = ({
 									<>
 										{" "}
 										{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
-										{stats.drb !== undefined ? (
-											<>
-												{helpers.roundStat(
-													((stats.orb ?? 0) + stats.drb) / stats.gp,
-													"trb",
-												)}{" "}
-												trb /{" "}
-											</>
-										) : null}
-										{helpers.roundStat(stats.ast / stats.gp, "ast")} ast
+										{helpers.roundStat(
+											((stats.orb ?? 0) + stats.drb) / stats.gp,
+											"trb",
+										)}{" "}
+										trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
 									</>
 								) : null}
 							</div>

@@ -3,6 +3,7 @@ import { groupBy, groupByUnique } from "../../../common/groupBy";
 import type { GetLeagueOptions, Player } from "../../../common/types";
 import { g, helpers, local } from "../../util";
 import player from "../player";
+import stats from "../player/stats";
 import team from "../team";
 import formatPlayerFactory from "./formatPlayerFactory";
 import type formatScheduledEvents from "./formatScheduledEvents";
@@ -54,8 +55,17 @@ const addSeasonInfoToTeams = async (
 			p2.firstName = parts[0];
 			p2.lastName = parts.slice(1, parts.length).join(" ");
 
+			// Handle any missing stats
 			if (!p2.stats) {
 				p2.stats = [];
+			}
+			const statKeys = [...stats.derived, ...stats.raw];
+			for (const ps of p2.stats) {
+				for (const key of statKeys) {
+					if (ps[key] === undefined) {
+						ps[key] = 0;
+					}
+				}
 			}
 
 			for (const row of p2.ratings) {

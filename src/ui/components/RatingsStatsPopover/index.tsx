@@ -27,12 +27,18 @@ const Icon = forwardRef<
 });
 
 type Props = {
+	disableNameLink?: boolean;
 	pid: number;
 	season?: number;
 	watch?: boolean;
 };
 
-const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
+const RatingsStatsPopover = ({
+	disableNameLink,
+	pid,
+	season,
+	watch,
+}: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
 		abbrev?: string;
@@ -120,12 +126,16 @@ const RatingsStatsPopover = ({ season, pid, watch }: Props) => {
 						{jerseyNumber}
 					</div>
 				) : null}
-				<a
-					href={helpers.leagueUrl(["player", pid])}
-					className="fw-bold text-truncate"
-				>
-					{name}
-				</a>
+				{disableNameLink ? (
+					name
+				) : (
+					<a
+						href={helpers.leagueUrl(["player", pid])}
+						className="fw-bold text-truncate"
+					>
+						{name}
+					</a>
+				)}
 				{ratings !== undefined ? (
 					<div className="ms-1">{ratings.pos}</div>
 				) : null}

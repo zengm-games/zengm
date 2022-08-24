@@ -31,9 +31,10 @@ const BoxScoreRow = ({
 				<PlayerNameLabels
 					injury={p.injury}
 					jerseyNumber={p.jerseyNumber}
-					pid={exhibition ? undefined : p.pid}
+					pid={p.pid}
 					skills={p.skills}
 					legacyName={p.name}
+					disableNameLink={exhibition}
 				/>
 				{isSport("baseball") ? (
 					p.w > 0 ? (

@@ -192,7 +192,12 @@ const PlayerNameLabels = (props: Props) => {
 				numSkillsBeforeTruncate={numSkillsBeforeTruncate}
 			/>
 			{pid !== undefined ? (
-				<RatingsStatsPopover pid={pid} season={season} watch={watch} />
+				<RatingsStatsPopover
+					pid={pid}
+					season={season}
+					watch={watch}
+					disableNameLink
+				/>
 			) : null}
 			{abbrev !== undefined && tid !== undefined ? (
 				<a

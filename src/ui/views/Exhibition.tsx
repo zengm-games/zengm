@@ -259,12 +259,6 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 		hideNewWindow: true,
 	});
 
-	useEffect(() => {
-		return () => {
-			console.log("LEAVE");
-		};
-	}, []);
-
 	if (exhibitionGame) {
 		return <LiveGame {...exhibitionGame} />;
 	}

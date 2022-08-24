@@ -13,7 +13,14 @@ const ExhibitionGame = (props: View<"exhibitionGame">) => {
 		hideNewWindow: true,
 	});
 
-	return <LiveGame {...props} />;
+	return (
+		<>
+			<p>
+				<a href="/exhibition">Sim another exhibition game</a>
+			</p>
+			<LiveGame {...props} />
+		</>
+	);
 };
 
 export default ExhibitionGame;

@@ -7,8 +7,7 @@ scrimmage between historical teams
   - see setWithoutSavingToDB calls in simExhibitionGame
 - make sure home court gets set for correct team
 - option for playoff intensity
-- box score UI
-  - link to play another exhibition game after this one is over
+- "Sim another exhibition game" should link to the same two teams again, through URL hash
 - from a created league
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all

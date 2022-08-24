@@ -195,7 +195,6 @@ const setupRoutes = () => {
 	router.start({
 		routeMatched: async ({ context }) => {
 			if (!context.state.backendRedirect) {
-				console.log(window.location.pathname, context.path);
 				const liveGame =
 					window.location.pathname.includes("/live_game") &&
 					!context.path.includes("/live_game") &&

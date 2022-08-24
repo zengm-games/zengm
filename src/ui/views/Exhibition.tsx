@@ -44,16 +44,14 @@ const playerRowClassName = (i: number) => {
 
 const SelectTeam = ({
 	disabled,
+	index,
 	onChange,
-	pidOffset,
 	realTeamInfo,
-	urlIndex,
 }: {
 	disabled: boolean;
+	index: number;
 	onChange: (t: ExhibitionTeam | undefined) => void;
-	pidOffset?: number;
 	realTeamInfo: RealTeamInfo | undefined;
-	urlIndex: "1" | "2";
 }) => {
 	const [season, setSeason] = useState(getRandomSeason);
 	const [loadingTeams, setLoadingTeams] = useState(true);
@@ -61,7 +59,6 @@ const SelectTeam = ({
 	const [teams, setTeams] = useState<ExhibitionTeam[]>([]);
 
 	const loadTeams = async (season: number, tid?: number | "random") => {
-		console.log("loadTeams", season, tid);
 		setLoadingTeams(true);
 		onChange(undefined);
 
@@ -73,7 +70,7 @@ const SelectTeam = ({
 			realDraftRatings: "draft",
 			realStats: "lastSeason",
 			includeSeasonInfo: true,
-			pidOffset,
+			pidOffset: index * 1e6,
 		});
 		const newTeams = orderBy(
 			applyRealTeamInfos(leagueInfo.teams, realTeamInfo, season),
@@ -96,7 +93,6 @@ const SelectTeam = ({
 					newTeams[0];
 			}
 		}
-		console.log("newTeam", newTeam);
 
 		setTeams(newTeams as any);
 		setTid(newTeam.tid);
@@ -106,18 +102,25 @@ const SelectTeam = ({
 	};
 
 	useLayoutEffect(() => {
-		const initialParams = new URLSearchParams(location.hash.slice(1));
 		try {
-			const initialValues = JSON.parse(String(initialParams.get(urlIndex)));
-			if (
-				Array.isArray(initialValues) &&
-				initialValues[0] === "real" &&
-				initialValues[1] >= MIN_SEASON &&
-				initialValues[1] <= MAX_SEASON
-			) {
-				setSeason(initialValues[1]);
-				loadTeams(initialValues[1], initialValues[2]);
-				return;
+			const hash = location.hash.slice(1);
+			if (hash) {
+				const initialValuesAll = JSON.parse(
+					decodeURIComponent(location.hash.slice(1)),
+				);
+				const initialValues = initialValuesAll.slice(
+					3 * index,
+					3 * (index + 1),
+				);
+				if (
+					initialValues[0] === "real" &&
+					initialValues[1] >= MIN_SEASON &&
+					initialValues[1] <= MAX_SEASON
+				) {
+					setSeason(initialValues[1]);
+					loadTeams(initialValues[1], initialValues[2]);
+					return;
+				}
 			}
 		} catch (error) {
 			console.error(error);
@@ -300,23 +303,22 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralCourt ? "Team 1" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
+						index={0}
 						realTeamInfo={realTeamInfo}
 						onChange={t => {
 							setTeam(0, t);
 						}}
-						urlIndex="1"
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
 					<h2>{neutralCourt ? "Team 2" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
+						index={1}
 						realTeamInfo={realTeamInfo}
 						onChange={t => {
 							setTeam(1, t);
 						}}
-						pidOffset={1e6}
-						urlIndex="2"
 					/>
 				</div>
 			</div>
@@ -325,20 +327,22 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 				onSubmit={async event => {
 					event.preventDefault();
 
-					console.log("SUBMIT", teams);
-
 					setSimmingGame(true);
 
-					const params = new URLSearchParams();
-					const append = (key: string, t: ExhibitionTeam) => {
-						params.append(key, JSON.stringify(["real", t.season, t.tid]));
-					};
-					append("1", teams[0] as ExhibitionTeam);
-					append("2", teams[1] as ExhibitionTeam);
+					const hash = encodeURIComponent(
+						JSON.stringify([
+							"real",
+							teams[0]!.season,
+							teams[0]!.tid,
+							"real",
+							teams[1]!.season,
+							teams[1]!.tid,
+						]),
+					);
 
 					await toWorker("main", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
-						hash: params.toString(),
+						hash,
 						teams: teams as any,
 					});
 				}}

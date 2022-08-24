@@ -13,6 +13,7 @@ const routeInfos = {
 	"/settings/default": "defaultNewLeagueSettings",
 	"/dropbox": "dropbox",
 	"/exhibition": "exhibition",
+	"/exhibition/game": "exhibitionGame",
 
 	// League views
 	"/l/:lid": "leagueDashboard",

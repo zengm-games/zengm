@@ -198,27 +198,25 @@ const setupRoutes = () => {
 				console.log(window.location.pathname, context.path);
 				const liveGame =
 					window.location.pathname.includes("/live_game") &&
-					!context.path.includes("/live_game");
+					!context.path.includes("/live_game") &&
+					local.getState().liveGameInProgress;
 				const liveGameExhibition =
-					window.location.pathname.includes("/exhibition") &&
-					!context.path.includes("/exhibition");
+					window.location.pathname.includes("/exhibition/game") &&
+					!context.path.includes("/exhibition/game");
 				if (liveGame || liveGameExhibition) {
-					const liveGameInProgress = local.getState().liveGameInProgress;
-					if (liveGameInProgress) {
-						const proceed = await confirm(
-							`If you navigate away from this page, you won't be able to see ${
-								window.location.pathname.includes("/exhibition")
-									? "this box score"
-									: "these play-by-play results"
-							} again.`,
-							{
-								okText: "Navigate Away",
-								cancelText: "Stay Here",
-							},
-						);
-						if (!proceed) {
-							return false;
-						}
+					const proceed = await confirm(
+						`If you navigate away from this page, you won't be able to see ${
+							window.location.pathname.includes("/exhibition")
+								? "this box score"
+								: "these play-by-play results"
+						} again.`,
+						{
+							okText: "Navigate Away",
+							cancelText: "Stay Here",
+						},
+					);
+					if (!proceed) {
+						return false;
 					}
 				}
 

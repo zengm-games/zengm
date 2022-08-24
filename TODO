@@ -11,7 +11,6 @@ scrimmage between historical teams
 - box score UI
   - link to play another exhibition game after this one is over
   - how to handle clicking watch flag?
-- does it work if league is open in othe rtab?
 - "Timeout while waiting for valid status" error after loading exhibition team select page
 - from a created league
   - store pids of players on team from beginning and end of regular season

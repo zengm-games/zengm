@@ -3,20 +3,24 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	PHASE,
 } from "../../common";
+import type { Conditions } from "../../common/types";
 import type { ExhibitionTeam } from "../../ui/views/Exhibition";
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
-import { defaultGameAttributes, g, local } from "../util";
+import { defaultGameAttributes, g, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
-const simExhibitionGame = async ({
-	teams,
-	disableHomeCourtAdvantage,
-}: {
-	teams: [ExhibitionTeam, ExhibitionTeam];
-	disableHomeCourtAdvantage: boolean;
-}) => {
+const simExhibitionGame = async (
+	{
+		teams,
+		disableHomeCourtAdvantage,
+	}: {
+		teams: [ExhibitionTeam, ExhibitionTeam];
+		disableHomeCourtAdvantage: boolean;
+	},
+	conditions: Conditions,
+) => {
 	local.exhibitionGame = true;
 
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
@@ -110,9 +114,17 @@ const simExhibitionGame = async ({
 
 	liveSim.initialBoxScore.exhibition = true;
 
-	return {
-		...liveSim,
-	};
+	await toUI(
+		"realtimeUpdate",
+		[
+			[],
+			"/exhibition/game",
+			{
+				liveSim,
+			},
+		],
+		conditions,
+	);
 };
 
 export default simExhibitionGame;

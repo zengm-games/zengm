@@ -2,6 +2,7 @@ import { bySport, PHASE } from "../../common";
 import { g, helpers } from "../util";
 import type { PlayerStatType } from "../../common/types";
 import type { Params } from "../../ui/router";
+import type { boxScoreToLiveSim } from "../views/liveGame";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -435,6 +436,14 @@ const dailySchedule = (params: Params) => {
 	return {
 		day,
 		season,
+	};
+};
+
+const exhibitionGame = (params: Params, ctxBBGM: any) => {
+	return {
+		liveSim: ctxBBGM.liveSim as
+			| Awaited<ReturnType<typeof boxScoreToLiveSim>>
+			| undefined,
 	};
 };
 
@@ -918,6 +927,7 @@ export default {
 	draftHistory,
 	draftTeamHistory,
 	editAwards: validateSeasonOnly,
+	exhibitionGame,
 	exportPlayers: validateSeasonOnly,
 	fantasyDraft,
 	freeAgents,

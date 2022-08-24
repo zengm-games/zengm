@@ -25,6 +25,7 @@ import DraftTeamHistory from "./DraftTeamHistory";
 import Dropbox from "./Dropbox";
 import EditAwards from "./EditAwards";
 import Exhibition from "./Exhibition";
+import ExhibitionGame from "./ExhibitionGame";
 import ExpansionDraft from "./ExpansionDraft";
 import ExportLeague from "./ExportLeague";
 import ExportPlayers from "./ExportPlayers";
@@ -130,6 +131,7 @@ export default {
 	Dropbox,
 	EditAwards,
 	Exhibition,
+	ExhibitionGame,
 	ExpansionDraft,
 	ExportLeague,
 	ExportPlayers,

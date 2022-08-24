@@ -7,6 +7,7 @@ import { getResponsiveValue } from "../components/Dropdown";
 
 const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	title,
+	titleLong,
 	customMenu,
 	hideNewWindow,
 	jumpTo,
@@ -20,6 +21,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	moreInfoTid,
 }: {
 	title?: string;
+	titleLong?: string;
 	customMenu?: MenuItemHeader;
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
@@ -40,7 +42,9 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	useEffect(() => {
 		const parts: string[] = [];
 
-		if (title) {
+		if (titleLong) {
+			parts.push(titleLong);
+		} else if (title) {
 			parts.push(title);
 		} else {
 			parts.push(GAME_NAME);
@@ -76,7 +80,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 		}
 
 		document.title = parts.filter(part => part !== "???").join(" » ");
-	}, [dropdownCustomOptions, dropdownFields, state, title]);
+	}, [dropdownCustomOptions, dropdownFields, state, title, titleLong]);
 
 	// Without useLayoutEffect, weird shit happens in Safari! State inappropriately bleeds over from one load of a view to the next. Not sure why!
 	useLayoutEffect(() => {

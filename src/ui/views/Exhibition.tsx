@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { COURT, isSport, PHASE } from "../../common";
 import type { Player, RealTeamInfo, View } from "../../common/types";
 import { ActionButton, PlayerNameLabels } from "../components";
@@ -47,18 +47,21 @@ const SelectTeam = ({
 	onChange,
 	pidOffset,
 	realTeamInfo,
+	urlIndex,
 }: {
 	disabled: boolean;
 	onChange: (t: ExhibitionTeam | undefined) => void;
 	pidOffset?: number;
 	realTeamInfo: RealTeamInfo | undefined;
+	urlIndex: "1" | "2";
 }) => {
 	const [season, setSeason] = useState(getRandomSeason);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
 	const [teams, setTeams] = useState<ExhibitionTeam[]>([]);
 
-	const loadTeams = async (season: number, randomTeam?: boolean) => {
+	const loadTeams = async (season: number, tid?: number | "random") => {
+		console.log("loadTeams", season, tid);
 		setLoadingTeams(true);
 		onChange(undefined);
 
@@ -79,15 +82,21 @@ const SelectTeam = ({
 
 		const prevTeam = teams.find(t => t.tid === tid);
 		let newTeam;
-		if (randomTeam) {
+		if (tid === "random") {
 			const index = Math.floor(Math.random() * newTeams.length);
 			newTeam = newTeams[index];
 		} else {
-			newTeam =
-				newTeams.find(t => t.abbrev === prevTeam?.abbrev) ??
-				newTeams.find(t => t.region === prevTeam?.region) ??
-				newTeams[0];
+			if (typeof tid === "number") {
+				newTeam = newTeams.find(t => t.tid === tid);
+			}
+			if (!newTeam) {
+				newTeam =
+					newTeams.find(t => t.abbrev === prevTeam?.abbrev) ??
+					newTeams.find(t => t.region === prevTeam?.region) ??
+					newTeams[0];
+			}
 		}
+		console.log("newTeam", newTeam);
 
 		setTeams(newTeams as any);
 		setTid(newTeam.tid);
@@ -96,8 +105,25 @@ const SelectTeam = ({
 		onChange(newTeam as any);
 	};
 
-	useEffect(() => {
-		loadTeams(season, true);
+	useLayoutEffect(() => {
+		const initialParams = new URLSearchParams(location.hash.slice(1));
+		try {
+			const initialValues = JSON.parse(String(initialParams.get(urlIndex)));
+			if (
+				Array.isArray(initialValues) &&
+				initialValues[0] === "real" &&
+				initialValues[1] >= MIN_SEASON &&
+				initialValues[1] <= MAX_SEASON
+			) {
+				setSeason(initialValues[1]);
+				loadTeams(initialValues[1], initialValues[2]);
+				return;
+			}
+		} catch (error) {
+			console.error(error);
+		}
+
+		loadTeams(season, "random");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -153,7 +179,7 @@ const SelectTeam = ({
 						onClick={async () => {
 							const randomSeason = getRandomSeason();
 							setSeason(randomSeason);
-							await loadTeams(randomSeason, true);
+							await loadTeams(randomSeason, "random");
 						}}
 					>
 						Random
@@ -254,6 +280,19 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 
 	console.log(teams);
 
+	const setTeam = (index: 0 | 1, t: ExhibitionTeam | undefined) => {
+		setTeams(teams => {
+			let newTeams: typeof teams;
+			if (index === 0) {
+				newTeams = [t, teams[1]];
+			} else {
+				newTeams = [teams[0], t];
+			}
+
+			return newTeams;
+		});
+	};
+
 	return (
 		<>
 			<div className="row gx-5 mb-3" style={{ maxWidth: 700 }}>
@@ -262,7 +301,10 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					<SelectTeam
 						disabled={simmingGame}
 						realTeamInfo={realTeamInfo}
-						onChange={t => setTeams(teams => [t, teams[1]])}
+						onChange={t => {
+							setTeam(0, t);
+						}}
+						urlIndex="1"
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
@@ -270,8 +312,11 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					<SelectTeam
 						disabled={simmingGame}
 						realTeamInfo={realTeamInfo}
-						onChange={t => setTeams(teams => [teams[0], t])}
+						onChange={t => {
+							setTeam(1, t);
+						}}
 						pidOffset={1e6}
+						urlIndex="2"
 					/>
 				</div>
 			</div>
@@ -284,9 +329,17 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 
 					setSimmingGame(true);
 
+					const params = new URLSearchParams();
+					const append = (key: string, t: ExhibitionTeam) => {
+						params.append(key, JSON.stringify(["real", t.season, t.tid]));
+					};
+					append("1", teams[0] as ExhibitionTeam);
+					append("2", teams[1] as ExhibitionTeam);
+
 					await toWorker("main", "simExhibitionGame", {
-						teams: teams as any,
 						disableHomeCourtAdvantage: neutralCourt,
+						hash: params.toString(),
+						teams: teams as any,
 					});
 				}}
 			>

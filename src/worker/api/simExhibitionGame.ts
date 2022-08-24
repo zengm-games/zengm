@@ -13,11 +13,13 @@ import { boxScoreToLiveSim } from "../views/liveGame";
 
 const simExhibitionGame = async (
 	{
-		teams,
 		disableHomeCourtAdvantage,
+		hash,
+		teams,
 	}: {
-		teams: [ExhibitionTeam, ExhibitionTeam];
 		disableHomeCourtAdvantage: boolean;
+		hash: string;
+		teams: [ExhibitionTeam, ExhibitionTeam];
 	},
 	conditions: Conditions,
 ) => {
@@ -118,6 +120,7 @@ const simExhibitionGame = async (
 			[],
 			"/exhibition/game",
 			{
+				hash,
 				liveSim,
 			},
 		],

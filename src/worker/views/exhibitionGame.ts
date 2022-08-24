@@ -1,18 +1,21 @@
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types";
 
-const updateExibitionGame = async (
-	inputs: ViewInput<"exhibitionGame">,
-	updateEvents: UpdateEvents,
-) => {
+const updateExibitionGame = async ({
+	hash,
+	liveSim,
+}: ViewInput<"exhibitionGame">) => {
 	const redirect = {
 		redirectUrl: "/exhibition",
 	};
 
-	if (updateEvents.includes("firstRun") && !inputs.liveSim) {
+	if (!liveSim) {
 		return redirect;
 	}
 
-	return inputs.liveSim;
+	return {
+		hash,
+		liveSim,
+	};
 };
 
 export default updateExibitionGame;

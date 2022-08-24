@@ -441,6 +441,7 @@ const dailySchedule = (params: Params) => {
 
 const exhibitionGame = (params: Params, ctxBBGM: any) => {
 	return {
+		hash: ctxBBGM.hash as string,
 		liveSim: ctxBBGM.liveSim as
 			| Awaited<ReturnType<typeof boxScoreToLiveSim>>
 			| undefined,

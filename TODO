@@ -12,7 +12,9 @@ scrimmage between historical teams
 - from a created league
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
-- add all options from main dashboard to ctrl+k menu
+  - other sports
+    - dashboard link
+    - menuItems links
 - later
   - persist result?
 

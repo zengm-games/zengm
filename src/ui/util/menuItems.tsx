@@ -1,5 +1,11 @@
 import { takeScreenshot, toWorker } from ".";
-import { bySport, DAILY_SCHEDULE, isSport, WEBSITE_ROOT } from "../../common";
+import {
+	bySport,
+	DAILY_SCHEDULE,
+	isSport,
+	SPORT_HAS_REAL_PLAYERS,
+	WEBSITE_ROOT,
+} from "../../common";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 import { frivolities } from "../views/Frivolities";
 
@@ -64,6 +70,67 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		path: "/",
 		text: "Leagues",
 	},
+	...(SPORT_HAS_REAL_PLAYERS
+		? ([
+				{
+					type: "link",
+					active: pageID => pageID === "newLeague",
+					nonLeague: true,
+					path: "/new_leauge",
+					text: "New League",
+				},
+				{
+					type: "link",
+					nonLeague: true,
+					commandPalette: true,
+					commandPaletteOnly: true,
+					path: "/new_league/real",
+					text: "New League > Real Players",
+				},
+				{
+					type: "link",
+					nonLeague: true,
+					commandPalette: true,
+					commandPaletteOnly: true,
+					path: "/new_league/random",
+					text: "New League > Random Players",
+				},
+				{
+					type: "link",
+					nonLeague: true,
+					commandPalette: true,
+					commandPaletteOnly: true,
+					path: "/new_league/legends",
+					text: "New League > Legends",
+				},
+				{
+					type: "link",
+					nonLeague: true,
+					commandPalette: true,
+					commandPaletteOnly: true,
+					path: "/new_league",
+					text: "New League > Custom",
+				},
+				{
+					type: "link",
+					active: pageID =>
+						typeof pageID === "string" && pageID.startsWith("exhibition"),
+					nonLeague: true,
+					commandPalette: true,
+					path: "/exhibition",
+					text: "Exhibition Game",
+				},
+		  ] as MenuItemLink[])
+		: ([
+				{
+					type: "link",
+					active: pageID => pageID === "newLeague",
+					nonLeague: true,
+					commandPalette: true,
+					path: "/new_leauge",
+					text: "New League",
+				},
+		  ] as MenuItemLink[])),
 	{
 		type: "link",
 		active: pageID => pageID === "dashboard",
@@ -615,6 +682,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				active: pageID => pageID === "frivolities",
 				league: true,
+				commandPalette: true,
 				path: ["frivolities"],
 				text: "Frivolities",
 			},

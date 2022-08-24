@@ -2,27 +2,32 @@ scrimmage between historical teams
 - also get players and team ovr if includeSeasonInfo
   - players missing ovr and
 - jersey number missing in box score for 2023 teams - fall back to root of player object? or should added row be using that already?
-- UI
-  - PlayerNameLabels popover
 - pick season for game sim settings (presets)
 - use end of season (playoff) rosters
 - somehow set rules
   - see setWithoutSavingToDB calls in simExhibitionGame
 - make sure home court gets set for correct team
 - option for playoff intensity
+- augment stats row with defaults
+  - for old players with no orb, etc. otherwise trb calculation gets messed  up
+  - remove special check for displaying trb on Exhibition.tsx
 - box score UI
   - link to play another exhibition game after this one is over
   - how to handle ratings stats popover?
     - reset pids on load, or could be dupes
     - could cache raw player objects in `local`
+      - clean up on exit LEAVE - or is this needed, local will reset on league change
     - could pass through manually, would be more convenient on team selector page
     - need to pass pid to PlayerNameLabels without making it a link to player page
   - how to handle clicking watch flag?
 - in PlayerNameLabels, if player has no link, skills should be muted
-- persist result?
+- does it work if league is open in othe rtab?
+- "Timeout while waiting for valid status" error after loading exhibition team select page
 - from a created league
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
+- later
+  - persist result?
 
 show/hide family toggle for large families https://discord.com/channels/@me/662077709836484618/1011058071449124864
 

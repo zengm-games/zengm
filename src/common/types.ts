@@ -1228,6 +1228,7 @@ export type Local = {
 	};
 	autoSave: boolean;
 	exhibitionGame: boolean;
+	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string;
 		prevTid: number;
@@ -1686,7 +1687,10 @@ export type GetLeagueOptionsReal = {
 	randomDebuts: boolean;
 	realDraftRatings: "draft" | "rookie";
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
+
+	// For exhibition game only
 	includeSeasonInfo?: boolean;
+	pidOffset?: number;
 };
 
 export type GetLeagueOptions =

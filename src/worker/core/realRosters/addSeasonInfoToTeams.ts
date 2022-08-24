@@ -1,5 +1,5 @@
 import orderBy from "lodash-es/orderBy";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy, groupByUnique } from "../../../common/groupBy";
 import type { GetLeagueOptions, Player } from "../../../common/types";
 import { g, helpers, local } from "../../util";
 import player from "../player";
@@ -10,6 +10,7 @@ import type getGameAttributes from "./getGameAttributes";
 import type { Basketball } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 
+// INTENDED ONLY FOR EXHIBITION GAME! If you want to use this somewhere else, do something about local.exhibitionGamePlayers
 const addSeasonInfoToTeams = async (
 	teams: ReturnType<typeof formatScheduledEvents>["initialTeams"],
 	basketball: Basketball,
@@ -27,7 +28,7 @@ const addSeasonInfoToTeams = async (
 		options,
 		options.season,
 		teams,
-		-1,
+		-1 + (options.pidOffset ?? 0),
 	);
 
 	const ratings = basketball.ratings.filter(
@@ -73,6 +74,11 @@ const addSeasonInfoToTeams = async (
 		await player.develop(p, 0, false, 1);
 		await player.updateValues(p);
 	}
+
+	if (!local.exhibitionGamePlayers) {
+		local.exhibitionGamePlayers = {};
+	}
+	Object.assign(local.exhibitionGamePlayers, groupByUnique(players, "pid"));
 
 	const playersByTid = groupBy(
 		orderBy(players, p => p.ratings.at(-1).ovr, "desc"),

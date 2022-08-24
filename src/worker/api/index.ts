@@ -2200,12 +2200,18 @@ const ratingsStatsPopoverInfo = async ({
 		return blankObj;
 	}
 
-	const p = await idb.getCopy.players(
-		{
-			pid,
-		},
-		"noCopyCache",
-	);
+	let p;
+	if (local.exhibitionGamePlayers) {
+		p = local.exhibitionGamePlayers[pid];
+	} else {
+		p = await idb.getCopy.players(
+			{
+				pid,
+			},
+			"noCopyCache",
+		);
+	}
+	console.log("p", pid, p);
 
 	if (!p) {
 		return blankObj;
@@ -2258,9 +2264,16 @@ const ratingsStatsPopoverInfo = async ({
 		hockey: ["keyStats"],
 	});
 
+	const attrs = ["name", "jerseyNumber", "tid", "age"];
+	const ratings = ["pos", "ovr", "pot", "season", "tid", ...RATINGS];
+	if (!local.exhibitionGamePlayers) {
+		attrs.push("abbrev");
+		ratings.push("abbrev");
+	}
+
 	const p2 = await idb.getCopy.playersPlus(p, {
-		attrs: ["name", "jerseyNumber", "abbrev", "tid", "age"],
-		ratings: ["pos", "ovr", "pot", "season", "abbrev", "tid", ...RATINGS],
+		attrs,
+		ratings,
 		stats: ["tid", "season", "playoffs", ...stats],
 		season: actualSeason,
 		showNoStats: true,

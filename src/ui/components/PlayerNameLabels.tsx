@@ -31,6 +31,9 @@ type Props = {
 	lastName?: string;
 	firstNameShort?: string;
 
+	// For when we supply a pid, but we want no link to player page, like an exhibition game
+	disableNameLink?: boolean;
+
 	// Allow overriding settings, for places where we're sure there is always room
 	fullNames?: boolean;
 
@@ -101,6 +104,7 @@ const PlayerNameLabels = (props: Props) => {
 		abbrev,
 		awards,
 		count,
+		disableNameLink,
 		firstNameShort,
 		injury,
 		jerseyNumber,
@@ -177,7 +181,7 @@ const PlayerNameLabels = (props: Props) => {
 				</span>
 			) : null}
 			{typeof pos === "string" ? `${pos} ` : null}
-			{pid !== undefined ? (
+			{!disableNameLink && pid !== undefined ? (
 				<a href={helpers.leagueUrl(["player", pid])}>{name}</a>
 			) : (
 				name

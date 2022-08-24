@@ -46,10 +46,12 @@ const playerRowClassName = (i: number) => {
 const SelectTeam = ({
 	disabled,
 	onChange,
+	pidOffset,
 	realTeamInfo,
 }: {
 	disabled: boolean;
 	onChange: (t: ExhibitionTeam | undefined) => void;
+	pidOffset?: number;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
 	const [season, setSeason] = useState(getRandomSeason);
@@ -69,6 +71,7 @@ const SelectTeam = ({
 			realDraftRatings: "draft",
 			realStats: "lastSeason",
 			includeSeasonInfo: true,
+			pidOffset,
 		});
 		const newTeams = orderBy(
 			applyRealTeamInfos(leagueInfo.teams, realTeamInfo, season),
@@ -190,11 +193,13 @@ const SelectTeam = ({
 					return (
 						<li key={p.pid} className={playerRowClassName(i)}>
 							<PlayerNameLabels
+								pid={p.pid}
 								firstName={p.firstName}
 								lastName={p.lastName}
 								jerseyNumber={p.stats.at(-1)?.jerseyNumber ?? p.jerseyNumber}
 								skills={p.ratings.at(-1)!.skills}
 								fullNames
+								disableNameLink
 							/>{" "}
 							<span className="text-muted">-</span> {ratings.pos}{" "}
 							<span className="text-muted">-</span> {ratings.ovr} ovr
@@ -254,6 +259,12 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 		hideNewWindow: true,
 	});
 
+	useEffect(() => {
+		return () => {
+			console.log("LEAVE");
+		};
+	}, []);
+
 	if (exhibitionGame) {
 		return <LiveGame {...exhibitionGame} />;
 	}
@@ -276,6 +287,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						realTeamInfo={realTeamInfo}
 						onChange={t => setTeams(teams => [teams[0], t])}
+						pidOffset={1e6}
 					/>
 				</div>
 			</div>

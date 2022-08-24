@@ -5,6 +5,7 @@ const defaultLocal: Local = {
 	autoPlayUntil: undefined,
 	autoSave: true,
 	exhibitionGame: false,
+	exhibitionGamePlayers: undefined,
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
 	mailingList: false, // Default, until told otherwise by server
@@ -26,6 +27,7 @@ const local: Local & {
 	autoPlayUntil: defaultLocal.autoPlayUntil,
 	autoSave: defaultLocal.autoSave,
 	exhibitionGame: defaultLocal.exhibitionGame,
+	exhibitionGamePlayers: defaultLocal.exhibitionGamePlayers,
 	fantasyDraftResults: defaultLocal.fantasyDraftResults,
 	goldUntil: defaultLocal.goldUntil,
 	leagueLoaded: defaultLocal.leagueLoaded,
@@ -45,6 +47,7 @@ const local: Local & {
 		local.autoPlayUntil = defaultLocal.autoPlayUntil;
 		local.autoSave = defaultLocal.autoSave;
 		local.exhibitionGame = defaultLocal.exhibitionGame;
+		local.exhibitionGamePlayers = defaultLocal.exhibitionGamePlayers;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;
 		local.minFractionDiffs = defaultLocal.minFractionDiffs;

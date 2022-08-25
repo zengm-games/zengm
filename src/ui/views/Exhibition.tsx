@@ -1,6 +1,7 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import { useLayoutEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 import { COURT, EXHIBITION_GAME_SETTINGS, isSport, PHASE } from "../../common";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
 import type {
@@ -321,6 +322,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	>({
 		type: "t1",
 	});
+	const [showCustomizeModal, setShowCustomizeModal] = useState(false);
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
@@ -365,6 +367,10 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 			gameAttributes = getGameAttributes();
 		}
 		return gameAttributes;
+	};
+
+	const onHideCustomizeModal = () => {
+		setShowCustomizeModal(false);
 	};
 
 	return (
@@ -469,6 +475,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 									type: "custom",
 									custom,
 								});
+								setShowCustomizeModal(true);
 							}}
 						>
 							Customize
@@ -502,6 +509,24 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					Sim Game
 				</ActionButton>
 			</form>
+
+			<Modal show={showCustomizeModal} onHide={onHideCustomizeModal} scrollable>
+				<Modal.Body>HI</Modal.Body>
+				<Modal.Footer>
+					<button className="btn btn-secondary" onClick={onHideCustomizeModal}>
+						Cancel
+					</button>
+					<button
+						className="btn btn-primary"
+						onClick={() => {
+							console.log("SAVE");
+							onHideCustomizeModal();
+						}}
+					>
+						Save
+					</button>
+				</Modal.Footer>
+			</Modal>
 		</>
 	);
 };

@@ -233,6 +233,7 @@ const SettingsForm = ({
 	defaultNewLeagueSettings,
 	alwaysShowGodModeSettings,
 	isInsideModal,
+	hideGodModeToggle,
 }: {
 	onCancel?: () => void;
 	onCancelDefaultSetting?: (key: Key) => void;
@@ -247,6 +248,7 @@ const SettingsForm = ({
 	defaultNewLeagueSettings?: boolean;
 	alwaysShowGodModeSettings?: boolean;
 	isInsideModal?: boolean;
+	hideGodModeToggle?: boolean;
 
 	// Used to filter diplayed settings, for the DefaultSettings page
 	settingsShown?: Readonly<Key[]>;
@@ -463,29 +465,31 @@ const SettingsForm = ({
 				/>
 
 				<StickyBottomButtons isInsideModal={isInsideModal}>
-					<div className="btn-group">
-						<button
-							className={classNames(
-								"btn",
-								godMode ? "btn-secondary" : "btn-god-mode",
-							)}
-							onClick={handleGodModeToggle}
-							type="button"
-							disabled={submitting}
-						>
-							{godMode ? "Disable God Mode" : "Enable God Mode"}
-						</button>
-						{showGodModeSettingsButton ? (
-							<GodModeSettingsButton
-								className="d-none d-sm-block"
-								godMode={godMode}
+					{!hideGodModeToggle ? (
+						<div className="btn-group">
+							<button
+								className={classNames(
+									"btn",
+									godMode ? "btn-secondary" : "btn-god-mode",
+								)}
+								onClick={handleGodModeToggle}
+								type="button"
 								disabled={submitting}
-								onClick={toggleGodModeSettings}
 							>
-								{showGodModeSettings ? "Hide" : "Show"} God Mode settings
-							</GodModeSettingsButton>
-						) : null}
-					</div>
+								{godMode ? "Disable God Mode" : "Enable God Mode"}
+							</button>
+							{showGodModeSettingsButton ? (
+								<GodModeSettingsButton
+									className="d-none d-sm-block"
+									godMode={godMode}
+									disabled={submitting}
+									onClick={toggleGodModeSettings}
+								>
+									{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+								</GodModeSettingsButton>
+							) : null}
+						</div>
+					) : null}
 					<div className="btn-group ms-auto">
 						{onCancel ? (
 							<button

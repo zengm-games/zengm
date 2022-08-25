@@ -536,6 +536,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						settingsShown={EXHIBITION_GAME_SETTINGS}
 						hideShortcuts
 						isInsideModal
+						hideGodModeToggle
 					/>
 				</Modal.Body>
 			</Modal>

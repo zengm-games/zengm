@@ -311,6 +311,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		]
 	>([undefined, undefined]);
 	const [neutralCourt, setNeutralCourt] = useState(true);
+	const [playoffIntensity, setPlayoffIntensity] = useState(true);
 	const [simmingGame, setSimmingGame] = useState(false);
 	const [gameAttributesInfo, setGameAttributesInfo] = useState<
 		| {
@@ -424,6 +425,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disableHomeCourtAdvantage: neutralCourt,
 						gameAttributes,
 						hash,
+						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
 						teams: teams.map(entry => entry?.t) as [
 							ExhibitionTeam,
 							ExhibitionTeam,
@@ -431,7 +433,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					});
 				}}
 			>
-				<div className="mb-3" style={{ width: 200 }}>
+				<div className="mb-2" style={{ width: 200 }}>
 					<label htmlFor="gameAttributesSelect" className="form-label">
 						Game Sim Settings
 					</label>
@@ -484,7 +486,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					</div>
 				</div>
 
-				<div className="form-check mb-3">
+				<div className="form-check mb-2">
 					<input
 						className="form-check-input"
 						type="checkbox"
@@ -499,6 +501,24 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						Neutral {COURT}
 					</label>
 				</div>
+
+				{isSport("basketball") ? (
+					<div className="form-check mb-3">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							id="playoffIntensityCheck"
+							checked={playoffIntensity}
+							disabled={simmingGame}
+							onChange={() => {
+								setPlayoffIntensity(!playoffIntensity);
+							}}
+						/>
+						<label className="form-check-label" htmlFor="playoffIntensityCheck">
+							Playoff intensity
+						</label>
+					</div>
+				) : null}
 
 				<ActionButton
 					disabled={loadingTeams}

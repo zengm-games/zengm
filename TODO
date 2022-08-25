@@ -4,7 +4,7 @@ scrimmage between historical teams
   - not just gameAttributes, but home court and playoff intensity too
   - localStorage instead?
   - load in root component, rather than children for individual team?
-- option for playoff intensity
+- settings on right for large screens
 - update rosters
 - from a created league
   - store pids of players on team from beginning and end of regular season

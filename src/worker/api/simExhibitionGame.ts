@@ -20,16 +20,18 @@ const simExhibitionGame = async (
 		disableHomeCourtAdvantage,
 		gameAttributes,
 		hash,
+		phase,
 		teams,
 	}: {
 		disableHomeCourtAdvantage: boolean;
 		gameAttributes: ExhibitionGameAttributes;
 		hash: string;
+		phase: typeof PHASE["REGULAR_SEASON"] | typeof PHASE["PLAYOFFS"];
 		teams: [ExhibitionTeam, ExhibitionTeam];
 	},
 	conditions: Conditions,
 ) => {
-	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
+	g.setWithoutSavingToDB("phase", phase);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);
 
@@ -81,6 +83,9 @@ const simExhibitionGame = async (
 		baseInjuryRate: defaultGameAttributes.injuryRate,
 		dh: false,
 	}).run();
+
+	// Hacky way to skip playoff database access in gameSimToBoxScore
+	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 
 	const { gameStats: boxScore } = await gameSimToBoxScore(
 		result,

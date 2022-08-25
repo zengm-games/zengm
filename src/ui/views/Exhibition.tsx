@@ -14,6 +14,7 @@ import { ActionButton, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
+import SettingsForm from "./Settings/SettingsForm";
 
 const getRandomSeason = () => {
 	return Math.floor(Math.random() * (1 + MAX_SEASON - MIN_SEASON)) + MIN_SEASON;
@@ -302,7 +303,7 @@ type ExhibitionTeamAndSettings = {
 	gameAttributes: ExhibitionGameAttributes;
 };
 
-const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
+const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	const [teams, setTeams] = useState<
 		[
 			ExhibitionTeamAndSettings | undefined,
@@ -510,22 +511,30 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 				</ActionButton>
 			</form>
 
-			<Modal show={showCustomizeModal} onHide={onHideCustomizeModal} scrollable>
-				<Modal.Body>HI</Modal.Body>
-				<Modal.Footer>
-					<button className="btn btn-secondary" onClick={onHideCustomizeModal}>
-						Cancel
-					</button>
-					<button
-						className="btn btn-primary"
-						onClick={() => {
-							console.log("SAVE");
-							onHideCustomizeModal();
+			<Modal
+				size="xl"
+				show={showCustomizeModal}
+				onHide={onHideCustomizeModal}
+				scrollable
+			>
+				<Modal.Header closeButton>
+					<Modal.Title>Customize game sim settings</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<SettingsForm
+						onSave={() => {
+							console.log("SAVE2");
 						}}
-					>
-						Save
-					</button>
-				</Modal.Footer>
+						onCancel={onHideCustomizeModal}
+						initialSettings={{
+							...defaultSettings,
+							...getGameAttributesByType(),
+							godMode: true,
+						}}
+						settingsShown={EXHIBITION_GAME_SETTINGS}
+						hideShortcuts
+					/>
+				</Modal.Body>
 			</Modal>
 		</>
 	);

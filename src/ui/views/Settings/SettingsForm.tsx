@@ -247,7 +247,7 @@ const SettingsForm = ({
 	alwaysShowGodModeSettings?: boolean;
 
 	// Used to filter diplayed settings, for the DefaultSettings page
-	settingsShown?: Key[];
+	settingsShown?: Readonly<Key[]>;
 }) => {
 	useEffect(() => {
 		localActions.update({

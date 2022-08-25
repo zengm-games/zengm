@@ -520,7 +520,11 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				<Modal.Body>
 					<SettingsForm
 						onSave={settings => {
-							console.log("SAVE2", settings);
+							setGameAttributesInfo({
+								type: "custom",
+								// getGameAttributes call should not be necessary, but let's just be save
+								custom: getGameAttributes(settings as ExhibitionGameAttributes),
+							});
 							onHideCustomizeModal();
 						}}
 						onCancel={onHideCustomizeModal}

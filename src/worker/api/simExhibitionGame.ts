@@ -19,13 +19,11 @@ const simExhibitionGame = async (
 	{
 		disableHomeCourtAdvantage,
 		gameAttributes,
-		hash,
 		phase,
 		teams,
 	}: {
 		disableHomeCourtAdvantage: boolean;
 		gameAttributes: ExhibitionGameAttributes;
-		hash: string;
 		phase: typeof PHASE["REGULAR_SEASON"] | typeof PHASE["PLAYOFFS"];
 		teams: [ExhibitionTeam, ExhibitionTeam];
 	},
@@ -112,7 +110,6 @@ const simExhibitionGame = async (
 			[],
 			"/exhibition/game",
 			{
-				hash,
 				liveSim,
 			},
 		],

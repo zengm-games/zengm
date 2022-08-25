@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { COURT, EXHIBITION_GAME_SETTINGS, isSport, PHASE } from "../../common";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
@@ -12,7 +12,7 @@ import type {
 } from "../../common/types";
 import { ActionButton, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
+import { helpers, safeLocalStorage, toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 import SettingsForm from "./Settings/SettingsForm";
 
@@ -303,27 +303,61 @@ type ExhibitionTeamAndSettings = {
 	gameAttributes: ExhibitionGameAttributes;
 };
 
+const CACHE_KEY = "lastExhibitionGame";
+
+type GameAttributesInfo =
+	| {
+			type: "t0" | "t1" | "default";
+	  }
+	| {
+			type: "custom";
+			custom: ExhibitionGameAttributes;
+	  };
+
+type CachedTeam = {
+	type: "real";
+	season: number;
+	tid: number;
+};
+type CachedSettings = {
+	gameAttributesInfo: GameAttributesInfo;
+	neutralCourt: boolean;
+	playoffIntensity: boolean;
+	teams: [CachedTeam, CachedTeam];
+};
+
 const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
+	// Default state comes from cache of last exhibition game, if possible
+	const defaultState = useMemo(() => {
+		try {
+			const json = safeLocalStorage.getItem(CACHE_KEY);
+			if (json) {
+				return JSON.parse(json) as CachedSettings;
+			}
+		} catch (error) {}
+
+		return {
+			gameAttributesInfo: {
+				type: "t1",
+			} as GameAttributesInfo,
+			neutralCourt: true,
+			playoffIntensity: true,
+		};
+	}, []);
+
 	const [teams, setTeams] = useState<
 		[
 			ExhibitionTeamAndSettings | undefined,
 			ExhibitionTeamAndSettings | undefined,
 		]
 	>([undefined, undefined]);
-	const [neutralCourt, setNeutralCourt] = useState(true);
-	const [playoffIntensity, setPlayoffIntensity] = useState(true);
+	const [neutralCourt, setNeutralCourt] = useState(defaultState.neutralCourt);
+	const [playoffIntensity, setPlayoffIntensity] = useState(
+		defaultState.playoffIntensity,
+	);
 	const [simmingGame, setSimmingGame] = useState(false);
-	const [gameAttributesInfo, setGameAttributesInfo] = useState<
-		| {
-				type: "t0" | "t1" | "default";
-		  }
-		| {
-				type: "custom";
-				custom: ExhibitionGameAttributes;
-		  }
-	>({
-		type: "t1",
-	});
+	const [gameAttributesInfo, setGameAttributesInfo] =
+		useState<GameAttributesInfo>(defaultState.gameAttributesInfo);
 	const [showCustomizeModal, setShowCustomizeModal] = useState(false);
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
@@ -408,23 +442,30 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 					setSimmingGame(true);
 
-					const hash = encodeURIComponent(
-						JSON.stringify([
-							"real",
-							teams[0]!.t.season,
-							teams[0]!.t.tid,
-							"real",
-							teams[1]!.t.season,
-							teams[1]!.t.tid,
-						]),
-					);
-
 					const gameAttributes = getGameAttributesByType();
+
+					const toSave: CachedSettings = {
+						gameAttributesInfo,
+						neutralCourt,
+						playoffIntensity,
+						teams: [
+							{
+								type: "real",
+								season: teams[0]!.t.season,
+								tid: teams[0]!.t.tid,
+							},
+							{
+								type: "real",
+								season: teams[1]!.t.season,
+								tid: teams[1]!.t.tid,
+							},
+						],
+					};
+					safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
 
 					await toWorker("main", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
 						gameAttributes,
-						hash,
 						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
 						teams: teams.map(entry => entry?.t) as [
 							ExhibitionTeam,

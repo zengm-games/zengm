@@ -310,6 +310,11 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	>([undefined, undefined]);
 	const [neutralCourt, setNeutralCourt] = useState(true);
 	const [simmingGame, setSimmingGame] = useState(false);
+	const [gameAttributesInfo, setGameAttributesInfo] = useState(() => ({
+		type: "default",
+		gameAttributes: getGameAttributes(),
+	}));
+
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
 	if (!isSport("basketball")) {
@@ -377,11 +382,11 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					const hash = encodeURIComponent(
 						JSON.stringify([
 							"real",
-							teams[0]!.t!.season,
-							teams[0]!.t!.tid,
+							teams[0]!.t.season,
+							teams[0]!.t.tid,
 							"real",
-							teams[1]!.t!.season,
-							teams[1]!.t!.tid,
+							teams[1]!.t.season,
+							teams[1]!.t.tid,
 						]),
 					);
 
@@ -395,6 +400,67 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 					});
 				}}
 			>
+				<div className="mb-3" style={{ width: 200 }}>
+					<label htmlFor="gameAttributesSelect" className="form-label">
+						Game Sim Settings
+					</label>
+					<div className="input-group">
+						<select
+							id="gameAttributesSelect"
+							className="form-select"
+							value={gameAttributesInfo.type}
+							onChange={async event => {
+								const type = event.target.value;
+
+								let newGameAttributes;
+								if (type === "default") {
+									newGameAttributes = getGameAttributes();
+								} else if (type === "t0") {
+									newGameAttributes = getGameAttributes(
+										teams[0]?.gameAttributes,
+									);
+								} else if (type === "t1") {
+									newGameAttributes = getGameAttributes(
+										teams[1]?.gameAttributes,
+									);
+								} else {
+									newGameAttributes = gameAttributesInfo.gameAttributes;
+								}
+
+								setGameAttributesInfo({
+									type,
+									gameAttributes: newGameAttributes,
+								});
+							}}
+							disabled={simmingGame || loadingTeams}
+						>
+							<option value="default">Default</option>
+							{teams[0] ? (
+								<option value="t0">{teams[0].t.season}</option>
+							) : null}
+							{teams[1] && teams[1].t.season !== teams[0]?.t.season ? (
+								<option value="t1">{teams[1].t.season}</option>
+							) : null}
+							{gameAttributesInfo.type === "custom" ? (
+								<option value="custom">Custom</option>
+							) : null}
+						</select>
+						<button
+							className="btn btn-light-bordered"
+							type="button"
+							disabled={simmingGame || loadingTeams}
+							onClick={() => {
+								setGameAttributesInfo({
+									...gameAttributesInfo,
+									type: "custom",
+								});
+							}}
+						>
+							Customize
+						</button>
+					</div>
+				</div>
+
 				<div className="form-check mb-3">
 					<input
 						className="form-check-input"

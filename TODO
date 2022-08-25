@@ -2,8 +2,7 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - custom settings
   - get rid of god mode button and god mode indicators
-  - buttons align to bottom
-  - can we somehow use modal footer for buttons?
+  - test mobile UI
 - do URL parameters need to include settings too?
   - not just gameAttributes, but home court and playoff intensity too
   - localStorage instead?

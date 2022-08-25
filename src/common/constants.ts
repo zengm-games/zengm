@@ -435,7 +435,6 @@ const EXHIBITION_GAME_SETTINGS = [
 	"elamMinutes",
 	"elamPoints",
 	"foulsUntilBonus",
-	"foulRateFactor",
 	"turnoverFactor",
 	"stealFactor",
 	"threePointTendencyFactor",

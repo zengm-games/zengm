@@ -232,6 +232,7 @@ const SettingsForm = ({
 	hideShortcuts,
 	defaultNewLeagueSettings,
 	alwaysShowGodModeSettings,
+	isInsideModal,
 }: {
 	onCancel?: () => void;
 	onCancelDefaultSetting?: (key: Key) => void;
@@ -245,6 +246,7 @@ const SettingsForm = ({
 	hideShortcuts?: boolean;
 	defaultNewLeagueSettings?: boolean;
 	alwaysShowGodModeSettings?: boolean;
+	isInsideModal?: boolean;
 
 	// Used to filter diplayed settings, for the DefaultSettings page
 	settingsShown?: Readonly<Key[]>;
@@ -429,7 +431,7 @@ const SettingsForm = ({
 	const showGodModeSettingsButton = !godMode && !alwaysShowGodModeSettings;
 
 	return (
-		<div className="settings-wrapper mt-lg-2">
+		<div className="settings-wrapper">
 			<form
 				onSubmit={handleFormSubmit}
 				className="flex-grow-1"
@@ -460,7 +462,7 @@ const SettingsForm = ({
 					visibleCategories={visibleCategories}
 				/>
 
-				<StickyBottomButtons>
+				<StickyBottomButtons isInsideModal={isInsideModal}>
 					<div className="btn-group">
 						<button
 							className={classNames(

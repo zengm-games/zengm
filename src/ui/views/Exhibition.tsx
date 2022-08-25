@@ -517,13 +517,11 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				onHide={onHideCustomizeModal}
 				scrollable
 			>
-				<Modal.Header closeButton>
-					<Modal.Title>Customize game sim settings</Modal.Title>
-				</Modal.Header>
 				<Modal.Body>
 					<SettingsForm
-						onSave={() => {
-							console.log("SAVE2");
+						onSave={settings => {
+							console.log("SAVE2", settings);
+							onHideCustomizeModal();
 						}}
 						onCancel={onHideCustomizeModal}
 						initialSettings={{
@@ -533,6 +531,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						}}
 						settingsShown={EXHIBITION_GAME_SETTINGS}
 						hideShortcuts
+						isInsideModal
 					/>
 				</Modal.Body>
 			</Modal>

@@ -48,7 +48,7 @@ const playerRowClassName = (i: number) => {
 	return "mt-1 d-none d-sm-block";
 };
 
-type ExhibitionGameAttributes = Pick<
+export type ExhibitionGameAttributes = Pick<
 	GameAttributesLeague,
 	typeof EXHIBITION_GAME_SETTINGS[number]
 >;
@@ -392,6 +392,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 
 					await toWorker("main", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
+						gameAttributes: gameAttributesInfo.gameAttributes,
 						hash,
 						teams: teams.map(entry => entry?.t) as [
 							ExhibitionTeam,

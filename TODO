@@ -1,10 +1,9 @@
 scrimmage between historical teams
 - use end of season (playoff) rosters
 - somehow set rules
-  - see setWithoutSavingToDB calls in simExhibitionGame
-  - ability to select preset based on either of the selected teams, or (in bbgm) the season presets from real players leagues
-  - dropdown "Real Players 1971", "Real Players 2020", "Default", "Custom"
+  - some of EXHIBITION_GAME_SETTINGS don't actually need to be customized, defaults are fine
   - do any of these need to handle history?
+  - better default would be first team's settings, not "default"
 - do URL parameters need to include settings too?
   - not just gameAttributes, but home court and playoff intensity too
   - localStorage instead?
@@ -12,7 +11,10 @@ scrimmage between historical teams
 - from a created league
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
-  - store historical settings better. either wrap everything or come up with a new plan
+  - gameAttributes
+    - some settings will need to be unwrapped
+    - current: just use latest values
+    - eventually: store historical settings better. either wrap everything or come up with a new plan
   - other sports
     - dashboard link
     - menuItems links

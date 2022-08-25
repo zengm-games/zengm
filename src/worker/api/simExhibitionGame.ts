@@ -5,7 +5,10 @@ import {
 	PHASE,
 } from "../../common";
 import type { Conditions } from "../../common/types";
-import type { ExhibitionTeam } from "../../ui/views/Exhibition";
+import type {
+	ExhibitionGameAttributes,
+	ExhibitionTeam,
+} from "../../ui/views/Exhibition";
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
@@ -15,10 +18,12 @@ import { boxScoreToLiveSim } from "../views/liveGame";
 const simExhibitionGame = async (
 	{
 		disableHomeCourtAdvantage,
+		gameAttributes,
 		hash,
 		teams,
 	}: {
 		disableHomeCourtAdvantage: boolean;
+		gameAttributes: ExhibitionGameAttributes;
 		hash: string;
 		teams: [ExhibitionTeam, ExhibitionTeam];
 	},
@@ -28,8 +33,11 @@ const simExhibitionGame = async (
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);
 	const settingsCannotChange = ["budget", "spectator"] as const;
-	for (const key of [...settingsCannotChange, ...EXHIBITION_GAME_SETTINGS]) {
+	for (const key of settingsCannotChange) {
 		g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
+	}
+	for (const key of EXHIBITION_GAME_SETTINGS) {
+		g.setWithoutSavingToDB(key, gameAttributes[key]);
 	}
 
 	const teamsProcessed = teams.map((t, tid) =>

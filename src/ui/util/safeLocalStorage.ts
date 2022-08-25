@@ -25,7 +25,7 @@ const safeLocalStorage = {
 
 	removeItem(key: string) {
 		if (!window.localStorage) {
-			return null;
+			return;
 		}
 
 		return window.localStorage.removeItem(key);

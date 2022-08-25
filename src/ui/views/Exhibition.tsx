@@ -71,11 +71,13 @@ const getGameAttributes = (gameAttributes?: Partial<GameAttributesLeague>) => {
 const SelectTeam = ({
 	disabled,
 	index,
+	initialTeam,
 	onChange,
 	realTeamInfo,
 }: {
 	disabled: boolean;
 	index: number;
+	initialTeam?: CachedTeam;
 	onChange: (
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
@@ -136,31 +138,26 @@ const SelectTeam = ({
 	};
 
 	useLayoutEffect(() => {
-		try {
-			const hash = location.hash.slice(1);
-			if (hash) {
-				const initialValuesAll = JSON.parse(
-					decodeURIComponent(location.hash.slice(1)),
-				);
-				const initialValues = initialValuesAll.slice(
-					3 * index,
-					3 * (index + 1),
-				);
+		const run = async () => {
+			try {
 				if (
-					initialValues[0] === "real" &&
-					initialValues[1] >= MIN_SEASON &&
-					initialValues[1] <= MAX_SEASON
+					initialTeam &&
+					initialTeam.type === "real" &&
+					initialTeam.season >= MIN_SEASON &&
+					initialTeam.season <= MAX_SEASON
 				) {
-					setSeason(initialValues[1]);
-					loadTeams(initialValues[1], initialValues[2]);
+					setSeason(initialTeam.season);
+					await loadTeams(initialTeam.season, initialTeam.tid);
 					return;
 				}
+			} catch (error) {
+				console.error(error);
 			}
-		} catch (error) {
-			console.error(error);
-		}
 
-		loadTeams(season, "random");
+			await loadTeams(season, "random");
+		};
+
+		run();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -342,6 +339,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			} as GameAttributesInfo,
 			neutralCourt: true,
 			playoffIntensity: true,
+			teams: undefined,
 		};
 	}, []);
 
@@ -370,7 +368,6 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		title: "Exhibition Game",
 		hideNewWindow: true,
 	});
-
 	console.log(teams, gameAttributesInfo);
 
 	const setTeam = (
@@ -417,6 +414,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					<SelectTeam
 						disabled={simmingGame}
 						index={1}
+						initialTeam={defaultState.teams?.[1]}
 						realTeamInfo={realTeamInfo}
 						onChange={(t, gameAttributes) => {
 							setTeam(1, t, gameAttributes);
@@ -428,6 +426,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					<SelectTeam
 						disabled={simmingGame}
 						index={0}
+						initialTeam={defaultState.teams?.[0]}
 						realTeamInfo={realTeamInfo}
 						onChange={(t, gameAttributes) => {
 							setTeam(0, t, gameAttributes);

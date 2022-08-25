@@ -1,9 +1,5 @@
 scrimmage between historical teams
 - use end of season (playoff) rosters
-- do URL parameters need to include settings too?
-  - not just gameAttributes, but home court and playoff intensity too
-  - localStorage instead?
-  - load in root component, rather than children for individual team?
 - settings on right for large screens
 - update rosters
 - from a created league

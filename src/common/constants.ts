@@ -423,7 +423,6 @@ const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
 
 const EXHIBITION_GAME_SETTINGS = [
 	"ties",
-	"otl",
 	"dh",
 	"numPlayersOnCourt",
 	"foulsNeededToFoulOut",
@@ -431,9 +430,8 @@ const EXHIBITION_GAME_SETTINGS = [
 	"quarterLength",
 	"numPeriods",
 	"pace",
-	"elamASG",
-	"elam",
 	"homeCourtAdvantage",
+	"elam",
 	"elamMinutes",
 	"elamPoints",
 	"foulsUntilBonus",

@@ -1,12 +1,12 @@
 scrimmage between historical teams
 - use end of season (playoff) rosters
-- somehow set rules
-  - some of EXHIBITION_GAME_SETTINGS don't actually need to be customized, defaults are fine
-  - do any of these need to handle history?
-  - better default would be first team's settings, not "default"
+- better default settings would be first team's settings, not "default"
+  - would be nice if we didn't have to know what the settings are to select it (except for custom), since we only need to know when editing/creating. could just disable those actions while loading
+- custom settings
 - do URL parameters need to include settings too?
   - not just gameAttributes, but home court and playoff intensity too
   - localStorage instead?
+  - load in root component, rather than children for individual team?
 - option for playoff intensity
 - from a created league
   - store pids of players on team from beginning and end of regular season

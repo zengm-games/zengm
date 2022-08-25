@@ -32,7 +32,14 @@ const simExhibitionGame = async (
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("userTids", [0, 1]);
 	g.setWithoutSavingToDB("userTid", 0);
-	const settingsCannotChange = ["budget", "spectator"] as const;
+
+	const settingsCannotChange = [
+		"budget",
+		"spectator",
+		"otl",
+		"elamASG",
+	] as const;
+
 	for (const key of settingsCannotChange) {
 		g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
 	}

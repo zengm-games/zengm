@@ -1,13 +1,12 @@
 scrimmage between historical teams
 - use end of season (playoff) rosters
-- better default settings would be first team's settings, not "default"
-  - would be nice if we didn't have to know what the settings are to select it (except for custom), since we only need to know when editing/creating. could just disable those actions while loading
 - custom settings
 - do URL parameters need to include settings too?
   - not just gameAttributes, but home court and playoff intensity too
   - localStorage instead?
   - load in root component, rather than children for individual team?
 - option for playoff intensity
+- update rosters
 - from a created league
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all

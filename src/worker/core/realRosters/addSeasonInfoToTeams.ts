@@ -139,7 +139,6 @@ const addSeasonInfoToTeams = async (
 
 			return {
 				...t,
-				season: options.season,
 				seasonInfo,
 			};
 		})
@@ -158,8 +157,9 @@ const addSeasonInfoToTeams = async (
 
 			return {
 				...t,
-				players: playersByTid[t.tid],
 				ovr,
+				players: playersByTid[t.tid],
+				season: options.season,
 			};
 		});
 

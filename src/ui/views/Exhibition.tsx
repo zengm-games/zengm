@@ -310,10 +310,17 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 	>([undefined, undefined]);
 	const [neutralCourt, setNeutralCourt] = useState(true);
 	const [simmingGame, setSimmingGame] = useState(false);
-	const [gameAttributesInfo, setGameAttributesInfo] = useState(() => ({
-		type: "default",
-		gameAttributes: getGameAttributes(),
-	}));
+	const [gameAttributesInfo, setGameAttributesInfo] = useState<
+		| {
+				type: "t0" | "t1" | "default";
+		  }
+		| {
+				type: "custom";
+				custom: ExhibitionGameAttributes;
+		  }
+	>({
+		type: "t1",
+	});
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
@@ -326,7 +333,7 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 		hideNewWindow: true,
 	});
 
-	console.log(teams);
+	console.log(teams, gameAttributesInfo);
 
 	const setTeam = (
 		index: 0 | 1,
@@ -344,6 +351,20 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 
 			return newTeams;
 		});
+	};
+
+	const getGameAttributesByType = () => {
+		let gameAttributes;
+		if (gameAttributesInfo.type === "custom") {
+			gameAttributes = gameAttributesInfo.custom;
+		} else if (gameAttributesInfo.type === "t0") {
+			gameAttributes = getGameAttributes(teams[0]?.gameAttributes);
+		} else if (gameAttributesInfo.type === "t1") {
+			gameAttributes = getGameAttributes(teams[1]?.gameAttributes);
+		} else {
+			gameAttributes = getGameAttributes();
+		}
+		return gameAttributes;
 	};
 
 	return (
@@ -390,9 +411,11 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 						]),
 					);
 
+					const gameAttributes = getGameAttributesByType();
+
 					await toWorker("main", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
-						gameAttributes: gameAttributesInfo.gameAttributes,
+						gameAttributes,
 						hash,
 						teams: teams.map(entry => entry?.t) as [
 							ExhibitionTeam,
@@ -413,35 +436,25 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 							onChange={async event => {
 								const type = event.target.value;
 
-								let newGameAttributes;
-								if (type === "default") {
-									newGameAttributes = getGameAttributes();
-								} else if (type === "t0") {
-									newGameAttributes = getGameAttributes(
-										teams[0]?.gameAttributes,
-									);
-								} else if (type === "t1") {
-									newGameAttributes = getGameAttributes(
-										teams[1]?.gameAttributes,
-									);
+								if (type === "custom") {
+									throw new Error("Should never happen");
 								} else {
-									newGameAttributes = gameAttributesInfo.gameAttributes;
+									setGameAttributesInfo({
+										type: type as any,
+									});
 								}
-
-								setGameAttributesInfo({
-									type,
-									gameAttributes: newGameAttributes,
-								});
 							}}
 							disabled={simmingGame || loadingTeams}
 						>
+							<option value="t1">
+								{teams[1] ? teams[1].t.season : "Loading..."}
+							</option>
+							{!teams[0] || teams[0].t.season !== teams[1]?.t.season ? (
+								<option value="t0">
+									{teams[0] ? teams[0].t.season : "Loading..."}
+								</option>
+							) : null}
 							<option value="default">Default</option>
-							{teams[0] ? (
-								<option value="t0">{teams[0].t.season}</option>
-							) : null}
-							{teams[1] && teams[1].t.season !== teams[0]?.t.season ? (
-								<option value="t1">{teams[1].t.season}</option>
-							) : null}
 							{gameAttributesInfo.type === "custom" ? (
 								<option value="custom">Custom</option>
 							) : null}
@@ -451,9 +464,10 @@ const Exhibition = ({ realTeamInfo }: View<"exhibition">) => {
 							type="button"
 							disabled={simmingGame || loadingTeams}
 							onClick={() => {
+								const custom = getGameAttributesByType();
 								setGameAttributesInfo({
-									...gameAttributesInfo,
 									type: "custom",
+									custom,
 								});
 							}}
 						>

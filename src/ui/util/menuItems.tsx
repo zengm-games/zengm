@@ -76,7 +76,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					type: "link",
 					active: pageID => pageID === "newLeague",
 					nonLeague: true,
-					path: "/new_leauge",
+					path: "/new_league",
 					text: "New League",
 				},
 				{
@@ -127,7 +127,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					active: pageID => pageID === "newLeague",
 					nonLeague: true,
 					commandPalette: true,
-					path: "/new_leauge",
+					path: "/new_league",
 					text: "New League",
 				},
 		  ] as MenuItemLink[])),

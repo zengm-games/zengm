@@ -230,13 +230,15 @@ const SelectTeam = ({
 	const NUM_PLAYERS_TO_SHOW = 9;
 	const playersToShow = t?.players.slice(0, NUM_PLAYERS_TO_SHOW) ?? [];
 
+	const lid = league.type === "real" ? "real" : league.lid;
+
 	return (
 		<>
 			<form>
 				<div className="mb-2">
 					<select
 						className="form-select"
-						value={league.type}
+						value={lid}
 						disabled={disabled}
 						onChange={async event => {
 							const value = event.target.value;
@@ -264,10 +266,7 @@ const SelectTeam = ({
 						onChange={async event => {
 							const value = parseInt(event.target.value);
 							setSeason(value);
-							await loadTeams(
-								league.type === "real" ? "real" : league.lid,
-								value,
-							);
+							await loadTeams(lid, value);
 						}}
 						disabled={disabled}
 						style={{
@@ -307,11 +306,7 @@ const SelectTeam = ({
 								league.seasonEnd,
 							);
 							setSeason(randomSeason);
-							await loadTeams(
-								league.type === "real" ? "real" : league.lid,
-								randomSeason,
-								"random",
-							);
+							await loadTeams(lid, randomSeason, "random");
 						}}
 					>
 						Random

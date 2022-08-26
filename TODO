@@ -2,15 +2,12 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - update rosters
 - switching season should keep same team, if possible
-- initial load should be random team, not moving menus
+- initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
 - from a created league
   - make sure state from localStorage works
   - game sim settings UI
     - warning about gameAttributes being current, not from that season
     - rethink what is displayed as options, like just the year is not clear for real players
-  - gameAttributes
-    - some settings will need to be unwrapped
-    - current: just use latest values
   - confirm disabled teams are left out of list
   - other sports
     - default can't be "real", need to wait to get list of leagues and then pick one

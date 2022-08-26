@@ -113,7 +113,7 @@ const SelectTeam = ({
 }) => {
 	const leagueReal: ExhibitionLeagueWithSeasons = {
 		type: "real",
-		seasonStart: MAX_SEASON,
+		seasonStart: MIN_SEASON,
 		seasonEnd: MAX_SEASON,
 	};
 	const [league, setLeague] = useState<ExhibitionLeagueWithSeasons>(leagueReal);
@@ -223,7 +223,9 @@ const SelectTeam = ({
 				console.error(error);
 			}
 
-			await loadTeams(leagueReal, season, "random");
+			const randomSeason = getRandomSeason(MIN_SEASON, MAX_SEASON);
+			setSeason(randomSeason);
+			await loadTeams(leagueReal, randomSeason, "random");
 		};
 
 		run();
@@ -247,12 +249,8 @@ const SelectTeam = ({
 							const value = event.target.value;
 							const lid = value === "real" ? value : parseInt(value);
 							const league = await loadLeague(lid);
-							const newSeason = getRandomSeason(
-								league.seasonStart,
-								league.seasonEnd,
-							);
-							setSeason(newSeason);
-							await loadTeams(league, newSeason, "random");
+							setSeason(league.seasonEnd);
+							await loadTeams(league, league.seasonEnd);
 						}}
 					>
 						{SPORT_HAS_REAL_PLAYERS ? (

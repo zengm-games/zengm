@@ -2,6 +2,7 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - update rosters
 - switching season should keep same team, if possible
+  - same for switching league
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
 - from a created league
   - make sure state from localStorage works
@@ -18,7 +19,6 @@ scrimmage between historical teams
     - use to more accurately get lineup for exhibition games
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
   - store historical settings better. either wrap everything or come up with a new plan
-
 
 show/hide family toggle for large families https://discord.com/channels/@me/662077709836484618/1011058071449124864
 

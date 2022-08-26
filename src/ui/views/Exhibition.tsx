@@ -1,8 +1,14 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { COURT, EXHIBITION_GAME_SETTINGS, isSport, PHASE } from "../../common";
+import {
+	COURT,
+	EXHIBITION_GAME_SETTINGS,
+	isSport,
+	PHASE,
+	SPORT_HAS_REAL_PLAYERS,
+} from "../../common";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
 import type {
 	GameAttributesLeague,
@@ -16,7 +22,7 @@ import { helpers, safeLocalStorage, toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 import SettingsForm from "./Settings/SettingsForm";
 
-const getRandomSeason = () => {
+const getRandomRealSeason = () => {
 	return Math.floor(Math.random() * (1 + MAX_SEASON - MIN_SEASON)) + MIN_SEASON;
 };
 
@@ -36,6 +42,11 @@ export type ExhibitionTeam = {
 	};
 	players: Player[];
 	ovr: number;
+};
+
+type ExhibitionLeague = {
+	lid: number;
+	name: string;
 };
 
 const playerRowClassName = (i: number) => {
@@ -68,28 +79,70 @@ const getGameAttributes = (gameAttributes?: Partial<GameAttributesLeague>) => {
 	return output;
 };
 
+type ExhibitionLID = "real" | number;
+
 const SelectTeam = ({
 	disabled,
 	index,
 	initialTeam,
+	leagues,
 	onChange,
 	realTeamInfo,
 }: {
 	disabled: boolean;
 	index: number;
 	initialTeam?: CachedTeam;
+	leagues: ExhibitionLeague[];
 	onChange: (
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
 	) => void;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
-	const [season, setSeason] = useState(getRandomSeason);
+	const [league, setLeague] = useState<
+		| {
+				type: "real";
+				seasonStart: number;
+				seasonEnd: number;
+		  }
+		| {
+				type: "league";
+				lid: number;
+				seasonStart: number;
+				seasonEnd: number;
+		  }
+	>({ type: "real", seasonStart: MAX_SEASON, seasonEnd: MAX_SEASON });
+	const [season, setSeason] = useState(0);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
 	const [teams, setTeams] = useState<ExhibitionTeam[]>([]);
 	const [gameAttributes, setGameAttributes] =
 		useState<ExhibitionGameAttributes>(getGameAttributes);
+
+	const loadLeague = async (lid: ExhibitionLID) => {
+		if (lid === "real") {
+			setLeague({
+				type: "real",
+				seasonStart: MIN_SEASON,
+				seasonEnd: MAX_SEASON,
+			});
+			const newSeason = getRandomRealSeason();
+			setSeason(newSeason);
+			await loadTeams(newSeason, "random");
+		} else {
+			const { seasonStart, seasonEnd } = await toWorker(
+				"exhibitionGame",
+				"getSeasons",
+				lid,
+			);
+			setLeague({
+				type: "league",
+				lid,
+				seasonStart,
+				seasonEnd,
+			});
+		}
+	};
 
 	const loadTeams = async (season: number, tid?: number | "random") => {
 		setLoadingTeams(true);
@@ -169,6 +222,30 @@ const SelectTeam = ({
 	return (
 		<>
 			<form>
+				<div className="mb-2">
+					<select
+						className="form-select"
+						value={league.type}
+						disabled={disabled}
+						onChange={async event => {
+							const value = event.target.value;
+							if (value === "real") {
+								loadLeague("real");
+							} else {
+								loadLeague(parseInt(value));
+							}
+						}}
+					>
+						{SPORT_HAS_REAL_PLAYERS ? (
+							<option value="real">Real historical teams</option>
+						) : null}
+						{leagues.map(league => (
+							<option key={league.lid} value={league.lid}>
+								{league.name}
+							</option>
+						))}
+					</select>
+				</div>
 				<div className="input-group">
 					<select
 						className="form-select"
@@ -183,7 +260,7 @@ const SelectTeam = ({
 							maxWidth: 75,
 						}}
 					>
-						{range(MAX_SEASON, MIN_SEASON - 1).map(i => (
+						{range(league.seasonEnd, league.seasonStart - 1).map(i => (
 							<option key={i} value={i}>
 								{i}
 							</option>
@@ -211,7 +288,7 @@ const SelectTeam = ({
 						type="button"
 						disabled={disabled}
 						onClick={async () => {
-							const randomSeason = getRandomSeason();
+							const randomSeason = getRandomRealSeason();
 							setSeason(randomSeason);
 							await loadTeams(randomSeason, "random");
 						}}
@@ -323,6 +400,25 @@ type CachedSettings = {
 	teams: [CachedTeam, CachedTeam];
 };
 
+const useLeagues = () => {
+	const [leagues, setLeagues] = useState<ExhibitionLeague[]>([]);
+
+	useLayoutEffect(() => {
+		const run = async () => {
+			const newLeagues = await toWorker(
+				"exhibitionGame",
+				"getLeagues",
+				undefined,
+			);
+			setLeagues(newLeagues);
+		};
+
+		run();
+	}, []);
+
+	return leagues;
+};
+
 const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	// Default state comes from cache of last exhibition game, if possible
 	const defaultState = useMemo(() => {
@@ -343,6 +439,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		};
 	}, []);
 
+	const leagues = useLeagues();
 	const [teams, setTeams] = useState<
 		[
 			ExhibitionTeamAndSettings | undefined,
@@ -418,6 +515,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={1}
 						initialTeam={defaultState.teams?.[1]}
+						leagues={leagues}
 						realTeamInfo={realTeamInfo}
 						onChange={(t, gameAttributes) => {
 							setTeam(1, t, gameAttributes);
@@ -430,6 +528,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={0}
 						initialTeam={defaultState.teams?.[0]}
+						leagues={leagues}
 						realTeamInfo={realTeamInfo}
 						onChange={(t, gameAttributes) => {
 							setTeam(0, t, gameAttributes);
@@ -465,7 +564,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					};
 					safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
 
-					await toWorker("main", "simExhibitionGame", {
+					await toWorker("exhibitionGame", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
 						gameAttributes,
 						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,

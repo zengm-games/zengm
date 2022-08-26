@@ -2,6 +2,8 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - update rosters
 - from a created league
+  - make wrapper in exhibitionGame API for getLeagueInfo, real or random
+  - make sure state from localStorage works
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
   - gameAttributes
@@ -9,6 +11,7 @@ scrimmage between historical teams
     - current: just use latest values
     - eventually: store historical settings better. either wrap everything or come up with a new plan
   - other sports
+    - test
     - dashboard link
     - menuItems links
 - later

@@ -121,7 +121,7 @@ import {
 	formatPlayerRelativesList,
 } from "../views/customizePlayer";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings";
-import simExhibitionGame from "./simExhibitionGame";
+import * as exhibitionGame from "./exhibitionGame";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -4148,6 +4148,7 @@ const validatePlayoffSettings = async ({
 
 export default {
 	actions,
+	exhibitionGame,
 	leagueFileUpload,
 	playMenu,
 	toolsMenu,
@@ -4237,7 +4238,6 @@ export default {
 		setLocal,
 		setPlayerNote,
 		sign,
-		simExhibitionGame,
 		updateExpansionDraftSetup,
 		advanceToPlayerProtection,
 		autoProtect,

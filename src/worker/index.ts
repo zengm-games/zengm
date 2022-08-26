@@ -9,6 +9,7 @@ self.bbgm = { api, ...common, ...core, ...db, ...util };
 
 const categories = [
 	"actions",
+	"exhibitionGame",
 	"leagueFileUpload",
 	"main",
 	"playMenu",

@@ -12,10 +12,41 @@ import type {
 import { GameSim } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
+import { connectLeague, idb } from "../db";
 import { defaultGameAttributes, g, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
-const simExhibitionGame = async (
+export const getLeagues = async () => {
+	const leagues = await idb.meta.getAll("leagues");
+	return leagues
+		.map(league => ({
+			lid: league.lid,
+			name: league.name,
+		}))
+		.reverse();
+};
+
+export const getSeasons = async (lid: number) => {
+	const league = await connectLeague(lid);
+	const store = league.transaction("gameAttributes").store;
+	const season = await store.get("season");
+	const startingSeason = await store.get("startingSeason");
+
+	if (!season) {
+		throw new Error("Invalid season");
+	}
+	if (!startingSeason) {
+		throw new Error("Invalid startingSeason");
+	}
+	console.log(startingSeason, season);
+
+	return {
+		seasonStart: startingSeason.value as number,
+		seasonEnd: season.value as number,
+	};
+};
+
+export const simExhibitionGame = async (
 	{
 		disableHomeCourtAdvantage,
 		gameAttributes,
@@ -116,5 +147,3 @@ const simExhibitionGame = async (
 		conditions,
 	);
 };
-
-export default simExhibitionGame;

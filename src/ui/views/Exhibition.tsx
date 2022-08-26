@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
 import {
 	COURT,
@@ -22,8 +22,8 @@ import { helpers, safeLocalStorage, toWorker } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 import SettingsForm from "./Settings/SettingsForm";
 
-const getRandomRealSeason = () => {
-	return Math.floor(Math.random() * (1 + MAX_SEASON - MIN_SEASON)) + MIN_SEASON;
+const getRandomSeason = (start: number, end: number) => {
+	return Math.floor(Math.random() * (1 + end - start)) + start;
 };
 
 export type ExhibitionTeam = {
@@ -120,35 +120,41 @@ const SelectTeam = ({
 		useState<ExhibitionGameAttributes>(getGameAttributes);
 
 	const loadLeague = async (lid: ExhibitionLID) => {
+		let newLeague: typeof league;
 		if (lid === "real") {
-			setLeague({
+			newLeague = {
 				type: "real",
 				seasonStart: MIN_SEASON,
 				seasonEnd: MAX_SEASON,
-			});
-			const newSeason = getRandomRealSeason();
-			setSeason(newSeason);
-			await loadTeams(newSeason, "random");
+			};
 		} else {
 			const { seasonStart, seasonEnd } = await toWorker(
 				"exhibitionGame",
 				"getSeasons",
 				lid,
 			);
-			setLeague({
+			newLeague = {
 				type: "league",
 				lid,
 				seasonStart,
 				seasonEnd,
-			});
+			};
 		}
+
+		setLeague(newLeague);
+
+		return newLeague;
 	};
 
-	const loadTeams = async (season: number, tid?: number | "random") => {
+	const loadTeams = async (
+		lid: ExhibitionLID,
+		season: number,
+		tid?: number | "random",
+	) => {
 		setLoadingTeams(true);
 		onChange(undefined, getGameAttributes());
 
-		const leagueInfo = await toWorker("main", "getLeagueInfo", {
+		const seasonInfo = await toWorker("main", "getLeagueInfo", {
 			type: "real",
 			season,
 			phase: PHASE.PLAYOFFS,
@@ -159,7 +165,7 @@ const SelectTeam = ({
 			pidOffset: index * 1e6,
 		});
 		const newTeams = orderBy(
-			applyRealTeamInfos(leagueInfo.teams, realTeamInfo, season),
+			applyRealTeamInfos(seasonInfo.teams, realTeamInfo, season),
 			["region", "name", "tid"],
 		);
 
@@ -180,7 +186,7 @@ const SelectTeam = ({
 			}
 		}
 
-		const newGameAttributes = getGameAttributes(leagueInfo.gameAttributes);
+		const newGameAttributes = getGameAttributes(seasonInfo.gameAttributes);
 
 		setTeams(newTeams as any);
 		setTid(newTeam.tid);
@@ -193,21 +199,18 @@ const SelectTeam = ({
 	useLayoutEffect(() => {
 		const run = async () => {
 			try {
-				if (
-					initialTeam &&
-					initialTeam.type === "real" &&
-					initialTeam.season >= MIN_SEASON &&
-					initialTeam.season <= MAX_SEASON
-				) {
+				if (initialTeam) {
+					const lid = initialTeam.type === "real" ? "real" : initialTeam.lid;
+					await loadLeague(lid);
 					setSeason(initialTeam.season);
-					await loadTeams(initialTeam.season, initialTeam.tid);
+					await loadTeams(lid, initialTeam.season, initialTeam.tid);
 					return;
 				}
 			} catch (error) {
 				console.error(error);
 			}
 
-			await loadTeams(season, "random");
+			await loadTeams("real", season, "random");
 		};
 
 		run();
@@ -229,11 +232,11 @@ const SelectTeam = ({
 						disabled={disabled}
 						onChange={async event => {
 							const value = event.target.value;
-							if (value === "real") {
-								loadLeague("real");
-							} else {
-								loadLeague(parseInt(value));
-							}
+							const lid = value === "real" ? value : parseInt(value);
+							const { seasonStart, seasonEnd } = await loadLeague(lid);
+							const newSeason = getRandomSeason(seasonStart, seasonEnd);
+							setSeason(newSeason);
+							await loadTeams(lid, newSeason, "random");
 						}}
 					>
 						{SPORT_HAS_REAL_PLAYERS ? (
@@ -253,7 +256,10 @@ const SelectTeam = ({
 						onChange={async event => {
 							const value = parseInt(event.target.value);
 							setSeason(value);
-							await loadTeams(value);
+							await loadTeams(
+								league.type === "real" ? "real" : league.lid,
+								value,
+							);
 						}}
 						disabled={disabled}
 						style={{
@@ -288,9 +294,16 @@ const SelectTeam = ({
 						type="button"
 						disabled={disabled}
 						onClick={async () => {
-							const randomSeason = getRandomRealSeason();
+							const randomSeason = getRandomSeason(
+								league.seasonStart,
+								league.seasonEnd,
+							);
 							setSeason(randomSeason);
-							await loadTeams(randomSeason, "random");
+							await loadTeams(
+								league.type === "real" ? "real" : league.lid,
+								randomSeason,
+								"random",
+							);
 						}}
 					>
 						Random
@@ -388,11 +401,18 @@ type GameAttributesInfo =
 			custom: ExhibitionGameAttributes;
 	  };
 
-type CachedTeam = {
-	type: "real";
-	season: number;
-	tid: number;
-};
+type CachedTeam =
+	| {
+			type: "real";
+			season: number;
+			tid: number;
+	  }
+	| {
+			type: "league";
+			lid: number;
+			season: number;
+			tid: number;
+	  };
 type CachedSettings = {
 	gameAttributesInfo: GameAttributesInfo;
 	neutralCourt: boolean;

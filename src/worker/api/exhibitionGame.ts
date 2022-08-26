@@ -32,13 +32,14 @@ export const getSeasons = async (lid: number) => {
 	const season = await store.get("season");
 	const startingSeason = await store.get("startingSeason");
 
+	league.close();
+
 	if (!season) {
 		throw new Error("Invalid season");
 	}
 	if (!startingSeason) {
 		throw new Error("Invalid startingSeason");
 	}
-	console.log(startingSeason, season);
 
 	return {
 		seasonStart: startingSeason.value as number,

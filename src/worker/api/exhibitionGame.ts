@@ -3,10 +3,15 @@ import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_STADIUM_CAPACITY,
 	EXHIBITION_GAME_SETTINGS,
+	isSport,
 	PHASE,
 	unwrapGameAttribute,
 } from "../../common";
-import type { Conditions, GameAttributesLeague } from "../../common/types";
+import type {
+	Conditions,
+	GameAttributesLeague,
+	Team,
+} from "../../common/types";
 import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
@@ -82,6 +87,8 @@ const getSeasonInfoLeague = async ({
 
 	const numGamesPlayoffSeries = await getGameAttribute("numGamesPlayoffSeries");
 	const confs = await getGameAttribute("confs");
+	const currentSeason = await getGameAttribute("season");
+	const currentPhase = await getGameAttribute("phase");
 
 	const teams = await league.transaction("teams").store.getAll();
 	const teamSeasons = await league
@@ -146,6 +153,12 @@ const getSeasonInfoLeague = async ({
 				},
 				ovr: 0,
 				players,
+
+				// If current season, use current depth. Otherwise, auto generate later.
+				depth:
+					season === currentSeason && currentPhase < PHASE.DRAFT
+						? t.depth
+						: undefined,
 			};
 		}),
 	);
@@ -260,28 +273,38 @@ export const simExhibitionGame = async (
 		g.setWithoutSavingToDB(key, gameAttributes[key]);
 	}
 
-	const teamsProcessed = teams.map((t, tid) =>
-		processTeam(
-			{
-				tid,
-				playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
-			},
-			{
-				won: t.seasonInfo?.won ?? 0,
-				lost: t.seasonInfo?.lost ?? 0,
-				tied: t.seasonInfo?.tied ?? 0,
-				otl: t.seasonInfo?.otl ?? 0,
-				cid: 0,
-				did: 0,
-				expenses: {
-					health: {
-						rank: 1,
+	const teamsProcessed = (await Promise.all(
+		teams.map(async (t, tid) => {
+			let depth: Team["depth"];
+			if (t.depth) {
+				depth = t.depth;
+			} else if (!isSport("basketball")) {
+				depth = await team.genDepth(t.players);
+			}
+
+			return processTeam(
+				{
+					tid,
+					playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
+					depth,
+				},
+				{
+					won: t.seasonInfo?.won ?? 0,
+					lost: t.seasonInfo?.lost ?? 0,
+					tied: t.seasonInfo?.tied ?? 0,
+					otl: t.seasonInfo?.otl ?? 0,
+					cid: 0,
+					did: 0,
+					expenses: {
+						health: {
+							rank: 1,
+						},
 					},
 				},
-			},
-			t.players,
-		),
-	) as [any, any];
+				t.players,
+			);
+		}),
+	)) as [any, any];
 
 	const result = new GameSim({
 		gid: 0,

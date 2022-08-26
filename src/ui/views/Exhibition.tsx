@@ -18,7 +18,12 @@ import type {
 } from "../../common/types";
 import { ActionButton, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, safeLocalStorage, toWorker } from "../util";
+import {
+	helpers,
+	processPlayerStats,
+	safeLocalStorage,
+	toWorker,
+} from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 import SettingsForm from "./Settings/SettingsForm";
 
@@ -91,6 +96,25 @@ type ExhibitionLeagueWithSeasons =
 			seasonStart: number;
 			seasonEnd: number;
 	  };
+
+const PlayerStatsSummary = ({ stats }: { stats: Player["stats"][number] }) => {
+	if (!stats || stats.gp === undefined || stats.gp === 0) {
+		return <br />;
+	}
+
+	if (isSport("basketball")) {
+		return (
+			<>
+				{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
+				{helpers.roundStat(((stats.orb ?? 0) + stats.drb) / stats.gp, "trb")}{" "}
+				trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
+			</>
+		);
+	}
+
+	const processed = processPlayerStats(stats, ["keyStats"]);
+	return processed.keyStats;
+};
 
 const SelectTeam = ({
 	disabled,
@@ -382,19 +406,7 @@ const SelectTeam = ({
 							<span className="text-muted">-</span> {ratings.pos}{" "}
 							<span className="text-muted">-</span> {ratings.ovr} ovr
 							<div className="exhibition-stats text-muted">
-								{stats?.gp > 0 ? (
-									<>
-										{" "}
-										{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
-										{helpers.roundStat(
-											((stats.orb ?? 0) + stats.drb) / stats.gp,
-											"trb",
-										)}{" "}
-										trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
-									</>
-								) : (
-									<br />
-								)}
+								<PlayerStatsSummary stats={stats} />
 							</div>
 						</li>
 					);

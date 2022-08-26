@@ -6,7 +6,6 @@ scrimmage between historical teams
   - RatingsStatsPopover not working
   - other sports
     - test
-    - show keyStats on main page
     - baseball - don't update season stats in game
   - test with cleared localStorage
 - later

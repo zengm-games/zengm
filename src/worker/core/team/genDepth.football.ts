@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers, local } from "../../util";
 import { POSITIONS } from "../../../common/constants.football";
 import type { Position } from "../../../common/types.football";
 import type { Player, PlayerFiltered } from "../../../common/types";
@@ -39,14 +39,30 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["pid"],
-		ratings: ["pos", "ovrs"],
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
+	let players;
+
+	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
+	if (local.exhibitionGamePlayers) {
+		players = playersRaw.map(p => {
+			const ratings = p.ratings.at(-1)!;
+			return {
+				pid: p.pid,
+				ratings: {
+					pos: ratings.pos,
+					ovrs: ratings.ovrs,
+				},
+			};
+		});
+	} else {
+		players = await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["pid"],
+			ratings: ["pos", "ovrs"],
+			season: g.get("season"),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		});
+	}
 	const positions = pos ? [pos] : POSITIONS;
 
 	for (const pos2 of positions) {

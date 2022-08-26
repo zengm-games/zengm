@@ -7,10 +7,10 @@ scrimmage between historical teams
     - dh setting
       - pass to GameSim
       - used internally anywhere, why is it in g?
-    - depth
-      - if current season, should use from database somehow
-      - if not current season, depth will need to be auto generated like ASG
     - test
+      - game sim
+      - settings
+        - dh
     - baseball - don't update season stats in game
   - test with cleared localStorage
 - later

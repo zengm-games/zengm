@@ -94,6 +94,7 @@ const SelectTeam = ({
 	initialTeam?: CachedTeam;
 	leagues: ExhibitionLeague[];
 	onChange: (
+		lid: ExhibitionLID,
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
 	) => void;
@@ -152,7 +153,7 @@ const SelectTeam = ({
 		tid?: number | "random",
 	) => {
 		setLoadingTeams(true);
-		onChange(undefined, getGameAttributes());
+		onChange(lid, undefined, getGameAttributes());
 
 		const pidOffset = index * 1e6;
 
@@ -201,7 +202,7 @@ const SelectTeam = ({
 		setGameAttributes(newGameAttributes);
 		setLoadingTeams(false);
 
-		onChange(newTeam as any, newGameAttributes);
+		onChange(lid, newTeam as any, newGameAttributes);
 	};
 
 	useLayoutEffect(() => {
@@ -286,7 +287,7 @@ const SelectTeam = ({
 							const newTid = parseInt(event.target.value);
 							setTid(newTid);
 							const newTeam = teams.find(t => t.tid === newTid);
-							onChange(newTeam as any, gameAttributes);
+							onChange(lid, newTeam as any, gameAttributes);
 						}}
 						disabled={loadingTeams || disabled}
 					>
@@ -389,8 +390,9 @@ const SelectTeam = ({
 };
 
 type ExhibitionTeamAndSettings = {
-	t: ExhibitionTeam;
+	lid: ExhibitionLID;
 	gameAttributes: ExhibitionGameAttributes;
+	t: ExhibitionTeam;
 };
 
 const CACHE_KEY = "lastExhibitionGame";
@@ -492,12 +494,13 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 	const setTeam = (
 		index: 0 | 1,
+		lid: ExhibitionLID,
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
 	) => {
 		setTeams(teams => {
 			let newTeams: typeof teams;
-			const entry = t === undefined ? undefined : { t, gameAttributes };
+			const entry = t === undefined ? undefined : { gameAttributes, lid, t };
 			if (index === 0) {
 				newTeams = [entry, teams[1]];
 			} else {
@@ -533,8 +536,28 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			return "Loading...";
 		}
 
-		return entry.t.season;
+		if (entry.lid === "real") {
+			return entry.t.season;
+		}
+
+		return leagues.find(league => league.lid === entry.lid)?.name ?? "???";
 	};
+
+	let gameAttributesWarning;
+	if (gameAttributesInfo.type === "t0" || gameAttributesInfo.type === "t1") {
+		const entry = teams[gameAttributesInfo.type === "t0" ? 0 : 1];
+		if (entry && entry.lid !== "real") {
+			const league = leagues.find(league => league.lid === entry.lid);
+			if (league) {
+				gameAttributesWarning = (
+					<div className="text-danger mb-2">
+						Past season game sim settings are currently not saved, so the latest
+						settings in {league.name} will be used.
+					</div>
+				);
+			}
+		}
+	}
 
 	return (
 		<div className="d-lg-flex">
@@ -550,8 +573,8 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						initialTeam={defaultState.teams?.[1]}
 						leagues={leagues}
 						realTeamInfo={realTeamInfo}
-						onChange={(t, gameAttributes) => {
-							setTeam(1, t, gameAttributes);
+						onChange={(lid, t, gameAttributes) => {
+							setTeam(1, lid, t, gameAttributes);
 						}}
 					/>
 				</div>
@@ -563,8 +586,8 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						initialTeam={defaultState.teams?.[0]}
 						leagues={leagues}
 						realTeamInfo={realTeamInfo}
-						onChange={(t, gameAttributes) => {
-							setTeam(0, t, gameAttributes);
+						onChange={(lid, t, gameAttributes) => {
+							setTeam(0, lid, t, gameAttributes);
 						}}
 					/>
 				</div>
@@ -656,6 +679,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						</button>
 					</div>
 				</div>
+				{gameAttributesWarning}
 
 				<div className="form-check mb-2">
 					<input

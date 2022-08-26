@@ -7,10 +7,43 @@ import genDepthHockey from "./genDepth.hockey";
 
 const genDepth = async (
 	players: Player[],
-	initialDepth: Team["depth"],
+	initialDepth?: Team["depth"],
 	onlyNewPlayers?: boolean,
 	pos?: "L" | "LP" | "D" | "DP" | "P" | Position | "F" | "D" | "G",
 ) => {
+	if (!initialDepth) {
+		initialDepth = bySport({
+			baseball: {
+				L: [],
+				LP: [],
+				D: [],
+				DP: [],
+				P: [],
+			},
+			basketball: undefined,
+			football: {
+				QB: [],
+				RB: [],
+				WR: [],
+				TE: [],
+				OL: [],
+				DL: [],
+				LB: [],
+				CB: [],
+				S: [],
+				K: [],
+				P: [],
+				KR: [],
+				PR: [],
+			},
+			hockey: {
+				F: [],
+				D: [],
+				G: [],
+			},
+		});
+	}
+
 	return bySport<Promise<Team["depth"]>>({
 		baseball: genDepthBaseball(
 			players,

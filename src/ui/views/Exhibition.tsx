@@ -14,6 +14,7 @@ import type {
 	GameAttributesLeague,
 	Player,
 	RealTeamInfo,
+	Team,
 	View,
 } from "../../common/types";
 import { ActionButton, PlayerNameLabels } from "../components";
@@ -32,11 +33,6 @@ const getRandomSeason = (start: number, end: number) => {
 };
 
 export type ExhibitionTeam = {
-	abbrev: string;
-	imgURL: string | undefined;
-	region: string;
-	name: string;
-	tid: number;
 	season: number;
 	seasonInfo?: {
 		won: number;
@@ -47,7 +43,7 @@ export type ExhibitionTeam = {
 	};
 	players: Player[];
 	ovr: number;
-};
+} & Pick<Team, "abbrev" | "imgURL" | "region" | "name" | "tid" | "depth">;
 
 type ExhibitionLeague = {
 	lid: number;

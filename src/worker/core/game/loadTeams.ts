@@ -5,7 +5,6 @@ import type {
 	Player,
 	MinimalPlayerRatings,
 	Conditions,
-	Team,
 } from "../../../common/types";
 import {
 	bySport,
@@ -344,37 +343,6 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 			}
 		}
 
-		const initialDepth = bySport<Team["depth"]>({
-			baseball: {
-				L: [],
-				LP: [],
-				D: [],
-				DP: [],
-				P: [],
-			},
-			basketball: undefined,
-			football: {
-				QB: [],
-				RB: [],
-				WR: [],
-				TE: [],
-				OL: [],
-				DL: [],
-				LB: [],
-				CB: [],
-				S: [],
-				K: [],
-				P: [],
-				KR: [],
-				PR: [],
-			},
-			hockey: {
-				F: [],
-				D: [],
-				G: [],
-			},
-		});
-
 		for (const tid of tids) {
 			const allStarsTeamInd = tid === -1 ? 0 : 1;
 			const players: Player[] = await Promise.all(
@@ -389,7 +357,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 				}),
 			);
 
-			const depth = await team.genDepth(players, initialDepth);
+			const depth = await team.genDepth(players);
 
 			teams[tid] = processTeam(
 				{

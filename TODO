@@ -4,7 +4,9 @@ scrimmage between historical teams
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
 - from a created league
   - other sports
-    - depth being included?
+    - depth
+      - if current season, should use from database somehow
+      - if not current season, depth will need to be auto generated like ASG
     - test
     - baseball - don't update season stats in game
   - test with cleared localStorage

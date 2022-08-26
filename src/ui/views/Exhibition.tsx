@@ -407,8 +407,11 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	};
 
 	return (
-		<>
-			<div className="row gx-5 mb-3" style={{ maxWidth: 700 }}>
+		<div className="d-lg-flex">
+			<div
+				className="row gx-5 mb-4 mb-lg-0 me-lg-4 flex-shrink-0"
+				style={{ maxWidth: 700, width: "100%" }}
+			>
 				<div className="col-12 col-sm-6">
 					<h2>{neutralCourt ? "Team 1" : "Home"}</h2>
 					<SelectTeam
@@ -474,7 +477,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				}}
 			>
 				<div className="mb-2" style={{ width: 200 }}>
-					<label htmlFor="gameAttributesSelect" className="form-label">
+					<label htmlFor="gameAttributesSelect" className="form-label h2">
 						Game Sim Settings
 					</label>
 					<div className="input-group">
@@ -600,7 +603,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					/>
 				</Modal.Body>
 			</Modal>
-		</>
+		</div>
 	);
 };
 

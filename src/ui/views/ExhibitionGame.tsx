@@ -2,7 +2,7 @@ import type { View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { LiveGame } from "./LiveGame";
 
-const ExhibitionGame = ({ hash, liveSim }: View<"exhibitionGame">) => {
+const ExhibitionGame = ({ liveSim }: View<"exhibitionGame">) => {
 	const teamName = (t: typeof liveSim["initialBoxScore"]["teams"][number]) =>
 		`${t.season} ${t.region} ${t.name}`;
 	useTitleBar({
@@ -16,7 +16,7 @@ const ExhibitionGame = ({ hash, liveSim }: View<"exhibitionGame">) => {
 	return (
 		<>
 			<p>
-				<a href={`/exhibition#${hash}`}>Sim another exhibition game</a>
+				<a href="/exhibition">Sim another exhibition game</a>
 			</p>
 			<LiveGame {...liveSim} />
 		</>

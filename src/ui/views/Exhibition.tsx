@@ -116,7 +116,9 @@ const SelectTeam = ({
 		seasonStart: MIN_SEASON,
 		seasonEnd: MAX_SEASON,
 	};
-	const [league, setLeague] = useState<ExhibitionLeagueWithSeasons>(leagueReal);
+	const [league, setLeague] = useState<
+		ExhibitionLeagueWithSeasons | undefined
+	>();
 	const [season, setSeason] = useState(0);
 	const [loadingTeams, setLoadingTeams] = useState(true);
 	const [tid, setTid] = useState(0);
@@ -211,6 +213,11 @@ const SelectTeam = ({
 
 	useLayoutEffect(() => {
 		const run = async () => {
+			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
+			if (league) {
+				return;
+			}
+
 			try {
 				if (initialTeam) {
 					const lid = initialTeam.type === "real" ? "real" : initialTeam.lid;
@@ -223,14 +230,24 @@ const SelectTeam = ({
 				console.error(error);
 			}
 
-			const randomSeason = getRandomSeason(MIN_SEASON, MAX_SEASON);
-			setSeason(randomSeason);
-			await loadTeams(leagueReal, randomSeason, "random");
+			if (SPORT_HAS_REAL_PLAYERS) {
+				const randomSeason = getRandomSeason(MIN_SEASON, MAX_SEASON);
+				setSeason(randomSeason);
+				await loadTeams(leagueReal, randomSeason, "random");
+			} else if (leagues.length > 0) {
+				const league = await loadLeague(leagues[0].lid);
+				const randomSeason = getRandomSeason(
+					league.seasonStart,
+					league.seasonEnd,
+				);
+				setSeason(randomSeason);
+				await loadTeams(league, randomSeason, "random");
+			}
 		};
 
 		run();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [leagues]);
 
 	const t = teams.find(t => t.tid === tid);
 
@@ -243,8 +260,10 @@ const SelectTeam = ({
 				<div className="mb-2">
 					<select
 						className="form-select"
-						value={league.type === "real" ? "real" : league.lid}
-						disabled={disabled}
+						value={
+							!league ? undefined : league.type === "real" ? "real" : league.lid
+						}
+						disabled={disabled || !league}
 						onChange={async event => {
 							const value = event.target.value;
 							const lid = value === "real" ? value : parseInt(value);
@@ -270,18 +289,20 @@ const SelectTeam = ({
 						onChange={async event => {
 							const value = parseInt(event.target.value);
 							setSeason(value);
-							await loadTeams(league, value);
+							await loadTeams(league!, value);
 						}}
-						disabled={disabled}
+						disabled={disabled || !league}
 						style={{
 							maxWidth: 75,
 						}}
 					>
-						{range(league.seasonEnd, league.seasonStart - 1).map(i => (
-							<option key={i} value={i}>
-								{i}
-							</option>
-						))}
+						{league
+							? range(league.seasonEnd, league.seasonStart - 1).map(i => (
+									<option key={i} value={i}>
+										{i}
+									</option>
+							  ))
+							: null}
 					</select>
 					<select
 						className="form-select"
@@ -290,9 +311,9 @@ const SelectTeam = ({
 							const newTid = parseInt(event.target.value);
 							setTid(newTid);
 							const newTeam = teams.find(t => t.tid === newTid);
-							onChange(league, newTeam as any, gameAttributes);
+							onChange(league!, newTeam as any, gameAttributes);
 						}}
-						disabled={loadingTeams || disabled}
+						disabled={loadingTeams || disabled || !league}
 					>
 						{teams.map(t => (
 							<option key={t.tid} value={t.tid}>
@@ -303,14 +324,14 @@ const SelectTeam = ({
 					<button
 						className="btn btn-light-bordered"
 						type="button"
-						disabled={disabled}
+						disabled={disabled || !league}
 						onClick={async () => {
 							const randomSeason = getRandomSeason(
-								league.seasonStart,
-								league.seasonEnd,
+								league!.seasonStart,
+								league!.seasonEnd,
 							);
 							setSeason(randomSeason);
-							await loadTeams(league, randomSeason, "random");
+							await loadTeams(league!, randomSeason, "random");
 						}}
 					>
 						Random
@@ -429,7 +450,7 @@ type CachedSettings = {
 };
 
 const useLeagues = () => {
-	const [leagues, setLeagues] = useState<ExhibitionLeague[]>([]);
+	const [leagues, setLeagues] = useState<ExhibitionLeague[] | undefined>();
 
 	useLayoutEffect(() => {
 		const run = async () => {
@@ -485,10 +506,6 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
-	if (!isSport("basketball")) {
-		throw new Error("Not supported");
-	}
-
 	useTitleBar({
 		title: "Exhibition Game",
 		hideNewWindow: true,
@@ -536,7 +553,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		entry: ExhibitionTeamAndSettings | undefined,
 	) => {
 		if (!entry) {
-			return "Loading...";
+			return "";
 		}
 
 		const league = entry.league;
@@ -544,7 +561,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			return entry.t.season;
 		}
 
-		return leagues.find(league2 => league2.lid === league.lid)?.name ?? "???";
+		return leagues?.find(league2 => league2.lid === league.lid)?.name ?? "???";
 	};
 
 	let gameAttributesWarning;
@@ -552,7 +569,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		const entry = teams[gameAttributesInfo.type === "t0" ? 0 : 1];
 		const league = entry?.league;
 		if (league && league.type !== "real") {
-			const league2 = leagues.find(league2 => league2.lid === league.lid);
+			const league2 = leagues?.find(league2 => league2.lid === league.lid);
 			if (league2 && entry.t.season !== league.seasonEnd) {
 				gameAttributesWarning = (
 					<div className="text-danger mb-2">
@@ -562,6 +579,15 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				);
 			}
 		}
+	}
+
+	if (leagues?.length === 0) {
+		return (
+			<p>
+				You need to <a href="/new_league">create some leagues</a> before you
+				play an exhibition game.
+			</p>
+		);
 	}
 
 	return (
@@ -576,7 +602,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={1}
 						initialTeam={defaultState.teams?.[1]}
-						leagues={leagues}
+						leagues={leagues ?? []}
 						realTeamInfo={realTeamInfo}
 						onChange={(league, t, gameAttributes) => {
 							setTeam(1, league, t, gameAttributes);
@@ -589,7 +615,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={0}
 						initialTeam={defaultState.teams?.[0]}
-						leagues={leagues}
+						leagues={leagues ?? []}
 						realTeamInfo={realTeamInfo}
 						onChange={(league, t, gameAttributes) => {
 							setTeam(0, league, t, gameAttributes);

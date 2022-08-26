@@ -3,8 +3,8 @@ scrimmage between historical teams
 - update rosters
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
 - from a created league
+  - RatingsStatsPopover not working
   - other sports
-    - default can't be "real", need to wait to get list of leagues and then pick one
     - test
     - show keyStats on main page
     - baseball - don't update season stats in game

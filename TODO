@@ -2,12 +2,8 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - update rosters
 - switching season should keep same team, if possible
+- initial load should be random team, not moving menus
 - from a created league
-  - make wrapper in exhibitionGame API for getLeagueInfo, real or random
-  - includeSeasonInfo DRY for random too?
-    - move part of this to getSeasonInfo?
-    - team ovr
-    - season
   - make sure state from localStorage works
   - game sim settings UI
     - warning about gameAttributes being current, not from that season

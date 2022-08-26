@@ -1,3 +1,4 @@
+import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_STADIUM_CAPACITY,
@@ -10,7 +11,7 @@ import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
 } from "../../ui/views/Exhibition";
-import { GameSim, realRosters } from "../core";
+import { GameSim, realRosters, team } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { connectLeague, getAll, idb } from "../db";
@@ -143,8 +144,8 @@ const getSeasonInfoLeague = async ({
 					otl: teamSeason.otl ?? 0,
 					roundsWonText,
 				},
+				ovr: 0,
 				players,
-				ovr: 50,
 			};
 		}),
 	);
@@ -170,10 +171,9 @@ export const getSeasonInfo = async (
 				season: number;
 				pidOffset: number;
 		  },
-): Promise<{
-	gameAttributes: Partial<GameAttributesLeague>;
-	teams: ExhibitionTeam[];
-}> => {
+) => {
+	let gameAttributes: Partial<GameAttributesLeague>;
+	let teams: ExhibitionTeam[];
 	if (options.type === "real") {
 		const info = await realRosters.getLeagueInfo({
 			phase: PHASE.PLAYOFFS,
@@ -183,14 +183,33 @@ export const getSeasonInfo = async (
 			includeSeasonInfo: true,
 			...options,
 		});
-
-		return {
-			gameAttributes: info.gameAttributes,
-			teams: info.teams as any,
-		};
+		gameAttributes = info.gameAttributes;
+		teams = info.teams as any;
 	} else {
-		return getSeasonInfoLeague(options);
+		const info = await getSeasonInfoLeague(options);
+		gameAttributes = info.gameAttributes;
+		teams = info.teams;
 	}
+
+	for (const t of teams) {
+		t.players = orderBy(t.players, p => p.ratings.at(-1).ovr, "desc");
+		t.ovr = team.ovr(
+			t.players.map(p => ({
+				pid: p.pid,
+				value: p.value,
+				ratings: {
+					ovr: p.ratings.at(-1)!.ovr,
+					ovrs: p.ratings.at(-1)!.ovrs,
+					pos: p.ratings.at(-1)!.pos,
+				},
+			})),
+		);
+	}
+
+	return {
+		gameAttributes,
+		teams,
+	};
 };
 
 type ExhibitionGamePhase =

@@ -1,10 +1,8 @@
-import orderBy from "lodash-es/orderBy";
 import { groupBy, groupByUnique } from "../../../common/groupBy";
 import type { GetLeagueOptions, Player } from "../../../common/types";
 import { g, helpers, local } from "../../util";
 import player from "../player";
 import stats from "../player/stats";
-import team from "../team";
 import formatPlayerFactory from "./formatPlayerFactory";
 import type formatScheduledEvents from "./formatScheduledEvents";
 import type getGameAttributes from "./getGameAttributes";
@@ -90,76 +88,55 @@ const addSeasonInfoToTeams = async (
 	}
 	Object.assign(local.exhibitionGamePlayers, groupByUnique(players, "pid"));
 
-	const playersByTid = groupBy(
-		orderBy(players, p => p.ratings.at(-1).ovr, "desc"),
-		"tid",
-	);
+	const playersByTid = groupBy(players, "tid");
 
-	const teamsAugmented = teams
-		.map(t => {
-			const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
+	const teamsAugmented = teams.map(t => {
+		const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
 
-			const teamSeason = teamSeasons?.[abbrev];
-			if (!teamSeason) {
-				return t;
-			}
+		const teamSeason = teamSeasons?.[abbrev];
+		if (!teamSeason) {
+			return t;
+		}
 
-			let roundsWonText;
-			const playoffSeries = basketball.playoffSeries[options.season];
-			if (playoffSeries) {
-				let playoffRoundsWon = -1;
-				for (const round of playoffSeries) {
-					const index = round.abbrevs.indexOf(abbrev);
-					if (index >= 0) {
-						playoffRoundsWon = round.round;
-						const otherIndex = index === 0 ? 1 : 0;
-						if (round.wons[index] > round.wons[otherIndex]) {
-							playoffRoundsWon += 1;
-						}
+		let roundsWonText;
+		const playoffSeries = basketball.playoffSeries[options.season];
+		if (playoffSeries) {
+			let playoffRoundsWon = -1;
+			for (const round of playoffSeries) {
+				const index = round.abbrevs.indexOf(abbrev);
+				if (index >= 0) {
+					playoffRoundsWon = round.round;
+					const otherIndex = index === 0 ? 1 : 0;
+					if (round.wons[index] > round.wons[otherIndex]) {
+						playoffRoundsWon += 1;
 					}
 				}
-
-				roundsWonText = helpers.roundsWonText(
-					playoffRoundsWon,
-					gameAttributes.numGamesPlayoffSeries!.length,
-					gameAttributes.confs.length,
-					true,
-				);
 			}
 
-			const seasonInfo = {
-				won: teamSeason.won,
-				lost: teamSeason.lost,
-				tied: 0,
-				otl: 0,
-				roundsWonText,
-			};
-
-			return {
-				...t,
-				seasonInfo,
-			};
-		})
-		.map(t => {
-			const ovr = team.ovr(
-				playersByTid[t.tid].map(p => ({
-					pid: p.pid,
-					value: p.value,
-					ratings: {
-						ovr: p.ratings.at(-1)!.ovr,
-						ovrs: p.ratings.at(-1)!.ovrs,
-						pos: p.ratings.at(-1)!.pos,
-					},
-				})),
+			roundsWonText = helpers.roundsWonText(
+				playoffRoundsWon,
+				gameAttributes.numGamesPlayoffSeries!.length,
+				gameAttributes.confs.length,
+				true,
 			);
+		}
 
-			return {
-				...t,
-				ovr,
-				players: playersByTid[t.tid],
-				season: options.season,
-			};
-		});
+		const seasonInfo = {
+			won: teamSeason.won,
+			lost: teamSeason.lost,
+			tied: 0,
+			otl: 0,
+			roundsWonText,
+		};
+
+		return {
+			...t,
+			ovr: 0,
+			players: playersByTid[t.tid],
+			season: options.season,
+			seasonInfo,
+		};
+	});
 
 	return teamsAugmented;
 };

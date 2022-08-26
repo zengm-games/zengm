@@ -526,6 +526,16 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		setShowCustomizeModal(false);
 	};
 
+	const gameSimSettingsText = (
+		entry: ExhibitionTeamAndSettings | undefined,
+	) => {
+		if (!entry) {
+			return "Loading...";
+		}
+
+		return entry.t.season;
+	};
+
 	return (
 		<div className="d-lg-flex">
 			<div
@@ -620,13 +630,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							}}
 							disabled={simmingGame || loadingTeams}
 						>
-							<option value="t1">
-								{teams[1] ? teams[1].t.season : "Loading..."}
-							</option>
+							<option value="t1">{gameSimSettingsText(teams[1])}</option>
 							{!teams[0] || teams[0].t.season !== teams[1]?.t.season ? (
-								<option value="t0">
-									{teams[0] ? teams[0].t.season : "Loading..."}
-								</option>
+								<option value="t0">{gameSimSettingsText(teams[0])}</option>
 							) : null}
 							<option value="default">Default</option>
 							{gameAttributesInfo.type === "custom" ? (

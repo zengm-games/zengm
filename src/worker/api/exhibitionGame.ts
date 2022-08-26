@@ -3,8 +3,9 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	EXHIBITION_GAME_SETTINGS,
 	PHASE,
+	unwrapGameAttribute,
 } from "../../common";
-import type { Conditions } from "../../common/types";
+import type { Conditions, GameAttributesLeague } from "../../common/types";
 import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
@@ -47,6 +48,41 @@ export const getSeasons = async (lid: number) => {
 	};
 };
 
+const getSeasonInfoLeague = async ({
+	lid,
+	season,
+	pidOffset,
+}: {
+	lid: number;
+	season: number;
+	pidOffset: number;
+}) => {
+	const league = await connectLeague(lid);
+
+	const gameAttributes: Partial<GameAttributesLeague> = {};
+	const gameAttributesStore = league.transaction("gameAttributes").store;
+	for (const key of EXHIBITION_GAME_SETTINGS) {
+		const value = await gameAttributesStore.get(key);
+		if (value) {
+			gameAttributes[key] = unwrapGameAttribute(
+				{
+					[key]: value.value,
+				},
+				key,
+			) as any;
+		}
+	}
+
+	const exhibitionTeams: ExhibitionTeam[] = [];
+
+	league.close();
+
+	return {
+		gameAttributes,
+		teams: exhibitionTeams,
+	};
+};
+
 export const getSeasonInfo = async (
 	options:
 		| {
@@ -60,7 +96,10 @@ export const getSeasonInfo = async (
 				season: number;
 				pidOffset: number;
 		  },
-) => {
+): Promise<{
+	gameAttributes: Partial<GameAttributesLeague>;
+	teams: ExhibitionTeam[];
+}> => {
 	if (options.type === "real") {
 		const info = await realRosters.getLeagueInfo({
 			phase: PHASE.PLAYOFFS,
@@ -73,10 +112,10 @@ export const getSeasonInfo = async (
 
 		return {
 			gameAttributes: info.gameAttributes,
-			teams: info.teams,
+			teams: info.teams as any,
 		};
 	} else {
-		throw new Error("Not implemented");
+		return getSeasonInfoLeague(options);
 	}
 };
 

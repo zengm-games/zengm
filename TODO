@@ -12,6 +12,7 @@ scrimmage between historical teams
   - gameAttributes
     - some settings will need to be unwrapped
     - current: just use latest values
+  - confirm disabled teams are left out of list
   - other sports
     - default can't be "real", need to wait to get list of leagues and then pick one
     - test

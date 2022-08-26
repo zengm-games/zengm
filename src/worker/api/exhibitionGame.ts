@@ -13,7 +13,7 @@ import type {
 import { GameSim, realRosters } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
-import { connectLeague, idb } from "../db";
+import { connectLeague, getAll, idb } from "../db";
 import { defaultGameAttributes, g, helpers, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
@@ -88,9 +88,11 @@ const getSeasonInfoLeague = async ({
 		.store.index("season, tid")
 		.getAll(IDBKeyRange.bound([season], [season, ""]));
 
+	let pid = pidOffset;
 	const exhibitionTeams: ExhibitionTeam[] = await Promise.all(
-		teamSeasons.map(teamSeason => {
-			const t = teams[teamSeason.tid];
+		teamSeasons.map(async teamSeason => {
+			const tid = teamSeason.tid;
+			const t = teams[tid];
 
 			const roundsWonText = helpers.roundsWonText(
 				teamSeason.playoffRoundsWon,
@@ -99,12 +101,40 @@ const getSeasonInfoLeague = async ({
 				true,
 			);
 
+			const players = (
+				await getAll(
+					league.transaction("players").store.index("statsTids"),
+					tid,
+				)
+			).filter(p => {
+				// Keep players who ended the season on this team. Not perfect, will miss released players
+				const seasonStats = p.stats.filter(row => row.season === season).at(-1);
+				if (!seasonStats || seasonStats.tid !== tid) {
+					return false;
+				}
+				p.stats = [seasonStats];
+
+				// Also filter ratings here, why  not
+				const seasonRatings = p.ratings
+					.filter(row => row.season === season)
+					.at(-1);
+				if (!seasonRatings) {
+					return false;
+				}
+				p.ratings = [seasonRatings];
+
+				p.pid = pid;
+				pid += 1;
+
+				return true;
+			});
+
 			return {
 				abbrev: teamSeason.abbrev ?? t.abbrev,
 				imgURL: teamSeason.imgURL ?? t.imgURL,
 				region: teamSeason.region ?? t.region,
 				name: teamSeason.name ?? t.name,
-				tid: teamSeason.tid,
+				tid,
 				season,
 				seasonInfo: {
 					won: teamSeason.won ?? 0,
@@ -113,7 +143,7 @@ const getSeasonInfoLeague = async ({
 					otl: teamSeason.otl ?? 0,
 					roundsWonText,
 				},
-				players: [],
+				players,
 				ovr: 50,
 			};
 		}),

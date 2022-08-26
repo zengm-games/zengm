@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import {
 	COURT,
@@ -135,11 +135,6 @@ const SelectTeam = ({
 	) => void;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
-	const leagueReal: ExhibitionLeagueWithSeasons = {
-		type: "real",
-		seasonStart: MIN_SEASON,
-		seasonEnd: MAX_SEASON,
-	};
 	const [league, setLeague] = useState<
 		ExhibitionLeagueWithSeasons | undefined
 	>();
@@ -235,12 +230,14 @@ const SelectTeam = ({
 		onChange(league, newTeam as any, newGameAttributes);
 	};
 
+	const awaitingInitialLoad = useRef(true);
 	useLayoutEffect(() => {
 		const run = async () => {
 			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
-			if (league) {
+			if (!awaitingInitialLoad.current || leagues.length === 0) {
 				return;
 			}
+			awaitingInitialLoad.current = false;
 
 			try {
 				if (initialTeam) {
@@ -254,19 +251,15 @@ const SelectTeam = ({
 				console.error(error);
 			}
 
-			if (SPORT_HAS_REAL_PLAYERS) {
-				const randomSeason = getRandomSeason(MIN_SEASON, MAX_SEASON);
-				setSeason(randomSeason);
-				await loadTeams(leagueReal, randomSeason, "random");
-			} else if (leagues.length > 0) {
-				const league = await loadLeague(leagues[0].lid);
-				const randomSeason = getRandomSeason(
-					league.seasonStart,
-					league.seasonEnd,
-				);
-				setSeason(randomSeason);
-				await loadTeams(league, randomSeason, "random");
-			}
+			const league = await loadLeague(
+				SPORT_HAS_REAL_PLAYERS ? "real" : leagues[0].lid,
+			);
+			const randomSeason = getRandomSeason(
+				league.seasonStart,
+				league.seasonEnd,
+			);
+			setSeason(randomSeason);
+			await loadTeams(league, randomSeason, "random");
 		};
 
 		run();
@@ -593,6 +586,8 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		}
 	}
 
+	const leaguesDefined = useMemo(() => leagues ?? [], [leagues]);
+
 	if (leagues?.length === 0) {
 		return (
 			<p>
@@ -614,7 +609,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={1}
 						initialTeam={defaultState.teams?.[1]}
-						leagues={leagues ?? []}
+						leagues={leaguesDefined}
 						realTeamInfo={realTeamInfo}
 						onChange={(league, t, gameAttributes) => {
 							setTeam(1, league, t, gameAttributes);
@@ -627,7 +622,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						disabled={simmingGame}
 						index={0}
 						initialTeam={defaultState.teams?.[0]}
-						leagues={leagues ?? []}
+						leagues={leaguesDefined}
 						realTeamInfo={realTeamInfo}
 						onChange={(league, t, gameAttributes) => {
 							setTeam(0, league, t, gameAttributes);

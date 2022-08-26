@@ -15,7 +15,7 @@ import { GameSim, realRosters, team } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { connectLeague, getAll, idb } from "../db";
-import { defaultGameAttributes, g, helpers, toUI } from "../util";
+import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
 export const getLeagues = async () => {
@@ -191,6 +191,10 @@ export const getSeasonInfo = async (
 		teams = info.teams;
 	}
 
+	if (!local.exhibitionGamePlayers) {
+		local.exhibitionGamePlayers = {};
+	}
+
 	for (const t of teams) {
 		t.players = orderBy(t.players, p => p.ratings.at(-1).ovr, "desc");
 		t.ovr = team.ovr(
@@ -204,6 +208,10 @@ export const getSeasonInfo = async (
 				},
 			})),
 		);
+
+		for (const p of t.players) {
+			local.exhibitionGamePlayers[p.pid] = p;
+		}
 	}
 
 	return {

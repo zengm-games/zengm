@@ -5,7 +5,6 @@ scrimmage between historical teams
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
 - from a created league
   - make sure state from localStorage works
-  - gameAttributesWarning only if past season selected
   - confirm disabled teams are left out of list
   - other sports
     - default can't be "real", need to wait to get list of leagues and then pick one

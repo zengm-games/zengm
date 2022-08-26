@@ -323,6 +323,23 @@ a.god-mode.active {
 	.dashboard-top-wrapper {
 		text-align: center;
 	}
+
+	a.dashboard-top-link-flatten {
+		width: 326px;
+		height: inherit;
+
+		br {
+			display: none;
+		}
+	}
+	.dashboard-top-link-flatten.dashboard-top-link-other-basketball,
+	.dashboard-top-link-flatten.dashboard-top-link-other-football,
+	.dashboard-top-link-flatten.dashboard-top-link-other-baseball {
+		background-position: 239px 0px;
+	}
+	.dashboard-top-link-flatten.dashboard-top-link-other-hockey {
+		background-position: 239px -7px;
+	}
 }
 
 .dashboard-controls {

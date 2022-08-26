@@ -413,11 +413,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					<a href={`https://${WEBSITE_PLAY}/`}>the main site</a>.
 				</p>
 			) : null}
-			<div
-				className={
-					SPORT_HAS_REAL_PLAYERS ? "mt-2 dashboard-top-wrapper" : "mt-2"
-				}
-			>
+			<div className="mt-2 dashboard-top-wrapper">
 				{SPORT_HAS_REAL_PLAYERS ? (
 					<>
 						<a
@@ -436,7 +432,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<br />
 							<span className="dashboard-top-link-small">» Random players</span>
 						</a>
-						<div className="d-sm-none" />
 						{SPORT_HAS_LEGENDS ? (
 							<a
 								href="/new_league/legends"
@@ -455,7 +450,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<br />
 							<span className="dashboard-top-link-small">» Custom</span>
 						</a>
-						<div className="d-sm-none" />
 						<a
 							href="/exhibition"
 							className="btn btn-secondary dashboard-top-link dashboard-top-link-new me-3 mb-3"
@@ -473,15 +467,23 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<br />
 							league
 						</a>
+						<a
+							href="/exhibition"
+							className="btn btn-secondary dashboard-top-link dashboard-top-link-new me-sm-3 mb-3"
+						>
+							Exhibition game
+						</a>
+						<div className="d-sm-none" />
 					</>
 				)}
 				<a
 					href="https://zengm.com/"
-					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${randomOtherSport}`}
+					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${randomOtherSport}${
+						SPORT_HAS_REAL_PLAYERS ? "" : " dashboard-top-link-flatten"
+					}`}
 				>
 					Try our other sports sim
-					<br />
-					games!
+					<br /> games!
 				</a>
 			</div>
 

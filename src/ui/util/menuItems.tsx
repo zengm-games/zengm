@@ -111,15 +111,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					path: "/new_league",
 					text: "New League > Custom",
 				},
-				{
-					type: "link",
-					active: pageID =>
-						typeof pageID === "string" && pageID.startsWith("exhibition"),
-					nonLeague: true,
-					commandPalette: true,
-					path: "/exhibition",
-					text: "Exhibition Game",
-				},
 		  ] as MenuItemLink[])
 		: ([
 				{
@@ -131,6 +122,15 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					text: "New League",
 				},
 		  ] as MenuItemLink[])),
+	{
+		type: "link",
+		active: pageID =>
+			typeof pageID === "string" && pageID.startsWith("exhibition"),
+		nonLeague: true,
+		commandPalette: true,
+		path: "/exhibition",
+		text: "Exhibition Game",
+	},
 	{
 		type: "link",
 		active: pageID => pageID === "dashboard",

@@ -6,23 +6,25 @@ scrimmage between historical teams
   - includeSeasonInfo DRY for random too?
     - move part of this to getSeasonInfo?
   - make sure state from localStorage works
-  - store pids of players on team from beginning and end of regular season
-    - use on roster page for historical seasons, toggle show start of season, playoffs, and all
   - game sim settings UI
     - warning about gameAttributes being current, not from that season
     - rethink what is displayed as options, like just the year is not clear for real players
   - gameAttributes
     - some settings will need to be unwrapped
     - current: just use latest values
-    - eventually: store historical settings better. either wrap everything or come up with a new plan
   - other sports
     - default can't be "real", need to wait to get list of leagues and then pick one
     - test
-    - dashboard link
-    - menuItems links
-  - test with no localStorage
+    - show keyStats on main page
+    - baseball - don't update season stats in game
+  - test with cleared localStorage
 - later
   - persist result?
+  - store pids of players on team from beginning and end of regular season
+    - use to more accurately get lineup for exhibition games
+    - use on roster page for historical seasons, toggle show start of season, playoffs, and all
+  - store historical settings better. either wrap everything or come up with a new plan
+
 
 show/hide family toggle for large families https://discord.com/channels/@me/662077709836484618/1011058071449124864
 

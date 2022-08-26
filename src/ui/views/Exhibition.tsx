@@ -154,18 +154,26 @@ const SelectTeam = ({
 		setLoadingTeams(true);
 		onChange(undefined, getGameAttributes());
 
-		const seasonInfo = await toWorker("main", "getLeagueInfo", {
-			type: "real",
-			season,
-			phase: PHASE.PLAYOFFS,
-			randomDebuts: false,
-			realDraftRatings: "draft",
-			realStats: "lastSeason",
-			includeSeasonInfo: true,
-			pidOffset: index * 1e6,
-		});
+		const pidOffset = index * 1e6;
+
+		const newInfo = await toWorker(
+			"exhibitionGame",
+			"getSeasonInfo",
+			lid === "real"
+				? {
+						type: "real",
+						season,
+						pidOffset,
+				  }
+				: {
+						type: "league",
+						lid,
+						season,
+						pidOffset,
+				  },
+		);
 		const newTeams = orderBy(
-			applyRealTeamInfos(seasonInfo.teams, realTeamInfo, season),
+			applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
 			["region", "name", "tid"],
 		);
 
@@ -186,7 +194,7 @@ const SelectTeam = ({
 			}
 		}
 
-		const newGameAttributes = getGameAttributes(seasonInfo.gameAttributes);
+		const newGameAttributes = getGameAttributes(newInfo.gameAttributes);
 
 		setTeams(newTeams as any);
 		setTid(newTeam.tid);

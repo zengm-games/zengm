@@ -9,7 +9,7 @@ import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
 } from "../../ui/views/Exhibition";
-import { GameSim } from "../core";
+import { GameSim, realRosters } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { connectLeague, idb } from "../db";
@@ -47,6 +47,43 @@ export const getSeasons = async (lid: number) => {
 	};
 };
 
+export const getSeasonInfo = async (
+	options:
+		| {
+				type: "real";
+				season: number;
+				pidOffset: number;
+		  }
+		| {
+				type: "league";
+				lid: number;
+				season: number;
+				pidOffset: number;
+		  },
+) => {
+	if (options.type === "real") {
+		const info = await realRosters.getLeagueInfo({
+			phase: PHASE.PLAYOFFS,
+			randomDebuts: false,
+			realDraftRatings: "draft",
+			realStats: "lastSeason",
+			includeSeasonInfo: true,
+			...options,
+		});
+
+		return {
+			gameAttributes: info.gameAttributes,
+			teams: info.teams,
+		};
+	} else {
+		throw new Error("Not implemented");
+	}
+};
+
+type ExhibitionGamePhase =
+	| typeof PHASE["REGULAR_SEASON"]
+	| typeof PHASE["PLAYOFFS"];
+
 export const simExhibitionGame = async (
 	{
 		disableHomeCourtAdvantage,
@@ -56,7 +93,7 @@ export const simExhibitionGame = async (
 	}: {
 		disableHomeCourtAdvantage: boolean;
 		gameAttributes: ExhibitionGameAttributes;
-		phase: typeof PHASE["REGULAR_SEASON"] | typeof PHASE["PLAYOFFS"];
+		phase: ExhibitionGamePhase;
 		teams: [ExhibitionTeam, ExhibitionTeam];
 	},
 	conditions: Conditions,

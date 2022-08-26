@@ -3,10 +3,14 @@ scrimmage between historical teams
 - update rosters
 - from a created league
   - make wrapper in exhibitionGame API for getLeagueInfo, real or random
+  - includeSeasonInfo DRY for random too?
+    - move part of this to getSeasonInfo?
   - make sure state from localStorage works
   - store pids of players on team from beginning and end of regular season
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
-  - warning about gameAttributes being current, not from that season
+  - game sim settings UI
+    - warning about gameAttributes being current, not from that season
+    - rethink what is displayed as options, like just the year is not clear for real players
   - gameAttributes
     - some settings will need to be unwrapped
     - current: just use latest values

@@ -123,10 +123,8 @@ const addSeasonInfoToTeams = async (
 					playoffRoundsWon,
 					gameAttributes.numGamesPlayoffSeries!.length,
 					gameAttributes.confs.length,
+					true,
 				);
-				if (roundsWonText === "") {
-					roundsWonText = "Missed playoffs";
-				}
 			}
 
 			const seasonInfo = {

@@ -1260,6 +1260,7 @@ const roundsWonText = (
 	playoffRoundsWon: number,
 	numPlayoffRounds: number,
 	numConfs: number,
+	showMissedPlayoffs?: boolean,
 ): string => {
 	const playoffsByConf = numConfs === 2;
 
@@ -1287,7 +1288,7 @@ const roundsWonText = (
 		return `Made ${ordinal(playoffRoundsWon + 1)} round`;
 	}
 
-	return "";
+	return showMissedPlayoffs ? "Missed playoffs" : "";
 };
 
 // Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?

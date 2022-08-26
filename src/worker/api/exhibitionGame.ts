@@ -14,7 +14,7 @@ import { GameSim, realRosters } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { connectLeague, idb } from "../db";
-import { defaultGameAttributes, g, toUI } from "../util";
+import { defaultGameAttributes, g, helpers, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
 export const getLeagues = async () => {
@@ -59,21 +59,65 @@ const getSeasonInfoLeague = async ({
 }) => {
 	const league = await connectLeague(lid);
 
+	const getGameAttribute = async <T extends keyof GameAttributesLeague>(
+		key: T,
+	): Promise<GameAttributesLeague[T]> => {
+		const value =
+			(await gameAttributesStore.get(key))?.value ?? defaultGameAttributes[key];
+		return unwrapGameAttribute(
+			{
+				[key]: value,
+			},
+			key,
+		) as any;
+	};
+
 	const gameAttributes: Partial<GameAttributesLeague> = {};
 	const gameAttributesStore = league.transaction("gameAttributes").store;
 	for (const key of EXHIBITION_GAME_SETTINGS) {
-		const value = await gameAttributesStore.get(key);
-		if (value) {
-			gameAttributes[key] = unwrapGameAttribute(
-				{
-					[key]: value.value,
-				},
-				key,
-			) as any;
-		}
+		const value = await getGameAttribute(key);
+		gameAttributes[key] = value as any;
 	}
 
-	const exhibitionTeams: ExhibitionTeam[] = [];
+	const numGamesPlayoffSeries = await getGameAttribute("numGamesPlayoffSeries");
+	const confs = await getGameAttribute("confs");
+
+	const teams = await league.transaction("teams").store.getAll();
+	const teamSeasons = await league
+		.transaction("teamSeasons")
+		.store.index("season, tid")
+		.getAll(IDBKeyRange.bound([season], [season, ""]));
+
+	const exhibitionTeams: ExhibitionTeam[] = await Promise.all(
+		teamSeasons.map(teamSeason => {
+			const t = teams[teamSeason.tid];
+
+			const roundsWonText = helpers.roundsWonText(
+				teamSeason.playoffRoundsWon,
+				numGamesPlayoffSeries.length,
+				confs.length,
+				true,
+			);
+
+			return {
+				abbrev: teamSeason.abbrev ?? t.abbrev,
+				imgURL: teamSeason.imgURL ?? t.imgURL,
+				region: teamSeason.region ?? t.region,
+				name: teamSeason.name ?? t.name,
+				tid: teamSeason.tid,
+				season,
+				seasonInfo: {
+					won: teamSeason.won ?? 0,
+					lost: teamSeason.lost ?? 0,
+					tied: teamSeason.tied ?? 0,
+					otl: teamSeason.otl ?? 0,
+					roundsWonText,
+				},
+				players: [],
+				ovr: 50,
+			};
+		}),
+	);
 
 	league.close();
 

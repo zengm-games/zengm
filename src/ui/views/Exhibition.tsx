@@ -28,7 +28,7 @@ const getRandomSeason = (start: number, end: number) => {
 
 export type ExhibitionTeam = {
 	abbrev: string;
-	imgURL: string;
+	imgURL: string | undefined;
 	region: string;
 	name: string;
 	tid: number;

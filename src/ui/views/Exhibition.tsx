@@ -328,7 +328,7 @@ const SelectTeam = ({
 					) : null}
 				</div>
 				{t ? (
-					<div className="ms-2" style={{ marginTop: 20 }}>
+					<div className="ms-2" style={{ marginTop: 22 }}>
 						<h2>{t.ovr} ovr</h2>
 						{t.seasonInfo ? (
 							<>
@@ -610,18 +610,26 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						gameAttributesInfo,
 						neutralCourt,
 						playoffIntensity,
-						teams: [
-							{
-								type: "real",
-								season: teams[0]!.t.season,
-								tid: teams[0]!.t.tid,
-							},
-							{
-								type: "real",
-								season: teams[1]!.t.season,
-								tid: teams[1]!.t.tid,
-							},
-						],
+						teams: teams.map(entry => {
+							if (!entry) {
+								throw new Error("Missing entry");
+							}
+
+							if (entry.league.type === "real") {
+								return {
+									type: "real",
+									season: entry.t.season,
+									tid: entry.t.tid,
+								};
+							}
+
+							return {
+								type: "league",
+								lid: entry.league.lid,
+								season: entry.t.season,
+								tid: entry.t.tid,
+							};
+						}) as [CachedTeam, CachedTeam],
 					};
 					safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
 

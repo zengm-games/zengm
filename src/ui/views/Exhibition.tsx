@@ -154,7 +154,7 @@ const SelectTeam = ({
 	const loadTeams = async (
 		league: ExhibitionLeagueWithSeasons,
 		season: number,
-		tid?: number | "random",
+		tidInput?: number | "random",
 	) => {
 		setLoadingTeams(true);
 		onChange(league, undefined, getGameAttributes());
@@ -184,12 +184,12 @@ const SelectTeam = ({
 
 		const prevTeam = teams.find(t => t.tid === tid);
 		let newTeam;
-		if (tid === "random") {
+		if (tidInput === "random") {
 			const index = Math.floor(Math.random() * newTeams.length);
 			newTeam = newTeams[index];
 		} else {
-			if (typeof tid === "number") {
-				newTeam = newTeams.find(t => t.tid === tid);
+			if (typeof tidInput === "number") {
+				newTeam = newTeams.find(t => t.tid === tidInput);
 			}
 			if (!newTeam) {
 				newTeam =

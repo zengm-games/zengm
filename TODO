@@ -1,9 +1,8 @@
 scrimmage between historical teams
 - use end of season (playoff) rosters
 - update rosters
-- switching season should keep same team, if possible
-  - same for switching league
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
+- real players 2023 is broken
 - from a created league
   - make sure state from localStorage works
   - confirm disabled teams are left out of list

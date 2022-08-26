@@ -306,7 +306,7 @@ export const simExhibitionGame = async (
 		}),
 	)) as [any, any];
 
-	const dh = false;
+	const dh = gameAttributes.dh === "all";
 
 	for (const t of teamsProcessed) {
 		if (t.depth !== undefined) {

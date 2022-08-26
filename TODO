@@ -4,14 +4,13 @@ scrimmage between historical teams
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
 - from a created league
   - other sports
-    - dh setting
-      - pass to GameSim
-      - used internally anywhere, why is it in g?
     - test
       - game sim
-      - settings
-        - dh
-    - baseball - don't update season stats in game
+      - baseball
+        - ignore pitcher fatigue
+        - old seasons broken
+        - depth chart working right? weird pitchers, and RatingsStatsPopover not working
+        - don't update season stats in game
   - test with cleared localStorage
 - later
   - persist result?
@@ -19,6 +18,8 @@ scrimmage between historical teams
     - use to more accurately get lineup for exhibition games
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
   - store historical settings better. either wrap everything or come up with a new plan
+
+sub players not indented in baseball box score?
 
 show/hide family toggle for large families https://discord.com/channels/@me/662077709836484618/1011058071449124864
 

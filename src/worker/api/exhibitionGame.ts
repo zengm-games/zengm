@@ -193,6 +193,10 @@ export const getSeasonInfo = async (
 
 	if (!local.exhibitionGamePlayers) {
 		local.exhibitionGamePlayers = {};
+
+		// Some value here is needed for ratingsStatsPopoverInfo and game sim
+		g.setWithoutSavingToDB("season", 0);
+		g.setWithoutSavingToDB("numActiveTeams", 2);
 	}
 
 	for (const t of teams) {

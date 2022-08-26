@@ -306,6 +306,14 @@ export const simExhibitionGame = async (
 		}),
 	)) as [any, any];
 
+	const dh = false;
+
+	for (const t of teamsProcessed) {
+		if (t.depth !== undefined) {
+			t.depth = team.getDepthPlayers(t.depth, t.player, dh);
+		}
+	}
+
 	const result = new GameSim({
 		gid: 0,
 		day: -1,
@@ -315,7 +323,7 @@ export const simExhibitionGame = async (
 		disableHomeCourtAdvantage,
 		allStarGame: false,
 		baseInjuryRate: defaultGameAttributes.injuryRate,
-		dh: false,
+		dh,
 	}).run();
 
 	// Hacky way to skip playoff database access in gameSimToBoxScore

@@ -432,6 +432,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<br />
 							<span className="dashboard-top-link-small">» Random players</span>
 						</a>
+						<div className="d-sm-none" />
 						{SPORT_HAS_LEGENDS ? (
 							<a
 								href="/new_league/legends"
@@ -450,6 +451,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<br />
 							<span className="dashboard-top-link-small">» Custom</span>
 						</a>
+						<div className="d-sm-none" />
 						<a
 							href="/exhibition"
 							className="btn btn-secondary dashboard-top-link dashboard-top-link-new me-3 mb-3"

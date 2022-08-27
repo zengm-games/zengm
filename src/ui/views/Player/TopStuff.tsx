@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import {
 	CountryFlag,
@@ -31,13 +31,18 @@ const Relatives = ({
 	pid: number;
 	relatives: Player["relatives"];
 }) => {
+	const [showAll, setShowAll] = useState(false);
+
 	if (relatives.length === 0) {
 		return null;
 	}
 
+	const numToShow = showAll || relatives.length <= 3 ? relatives.length : 2;
+	const numToHide = relatives.length - numToShow;
+
 	return (
 		<>
-			{relatives.map(rel => {
+			{relatives.slice(0, numToShow).map(rel => {
 				return (
 					<Fragment key={rel.pid}>
 						{helpers.upperCaseFirstLetter(rel.type)}:{" "}
@@ -46,6 +51,19 @@ const Relatives = ({
 					</Fragment>
 				);
 			})}
+			{numToHide > 0 ? (
+				<>
+					<button
+						className="btn btn-link p-0 m-0 border-0"
+						onClick={() => {
+							setShowAll(true);
+						}}
+					>
+						...show {numToHide} more relatives
+					</button>
+					<br />
+				</>
+			) : null}
 			<a href={helpers.leagueUrl(["frivolities", "relatives", pid])}>
 				(Family details)
 			</a>

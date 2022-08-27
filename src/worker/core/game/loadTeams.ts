@@ -49,6 +49,7 @@ export const processTeam = (
 		};
 	},
 	players: Player<MinimalPlayerRatings>[],
+	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
 		playerStats = player.stats.raw.reduce<Record<string, number>>(
@@ -238,7 +239,7 @@ export const processTeam = (
 				hasStats = !!ps && ps.season === g.get("season");
 			} else {
 				ps = p.stats.at(-1);
-				hasStats = statsRowIsCurrent(ps, t.id, playoffs);
+				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
 			}
 			for (const key of seasonStatsKeys) {
 				seasonStats[key] = hasStats ? ps[key] : 0;

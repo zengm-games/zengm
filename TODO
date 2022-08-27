@@ -9,9 +9,9 @@ scrimmage between historical teams
       - baseball
         - old seasons broken
         - depth chart working right? weird pitchers
-        - show season stats in box score
-        - don't update season stats in game
+        - cache timeouts during live sim?
   - test with cleared localStorage
+- any local.exhibition checks - be careful, could be in a league too!
 - later
   - persist result?
   - store pids of players on team from beginning and end of regular season

@@ -99,7 +99,7 @@ const StatsTable = ({
 			const seasonStatsCurrent = {
 				...p.seasonStats,
 			};
-			if (!allStarGame) {
+			if (!allStarGame && !exhibition) {
 				for (const key of Object.keys(seasonStatsCurrent)) {
 					seasonStatsCurrent[key] += p[key];
 				}

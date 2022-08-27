@@ -321,6 +321,7 @@ export const simExhibitionGame = async (
 					},
 				},
 				t.players,
+				true,
 			);
 		}),
 	)) as [any, any];

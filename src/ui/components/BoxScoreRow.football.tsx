@@ -39,14 +39,16 @@ const BoxScoreRow = ({
 				{isSport("baseball") ? (
 					p.w > 0 ? (
 						<span className="text-success ms-2">
-							W ({p.seasonStats.w}-{p.seasonStats.l})
+							W{exhibition ? null : ` (${p.seasonStats.w}-${p.seasonStats.l})`}
 						</span>
 					) : p.l > 0 ? (
 						<span className="text-danger ms-2">
-							L ({p.seasonStats.w}-{p.seasonStats.l})
+							L{exhibition ? null : ` (${p.seasonStats.w}-${p.seasonStats.l})`}
 						</span>
 					) : p.sv > 0 ? (
-						<span className="ms-2">SV ({p.seasonStats.sv + 1})</span>
+						<span className="ms-2">
+							SV{exhibition ? null : ` (${p.seasonStats.sv + 1})`}
+						</span>
 					) : null
 				) : null}
 			</td>

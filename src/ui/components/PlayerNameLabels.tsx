@@ -196,7 +196,7 @@ const PlayerNameLabels = (props: Props) => {
 					pid={pid}
 					season={season}
 					watch={watch}
-					disableNameLink
+					disableNameLink={disableNameLink}
 				/>
 			) : null}
 			{abbrev !== undefined && tid !== undefined ? (

@@ -127,7 +127,7 @@ const RatingsStatsPopover = ({
 					</div>
 				) : null}
 				{disableNameLink ? (
-					name
+					<b>{name}</b>
 				) : (
 					<a
 						href={helpers.leagueUrl(["player", pid])}

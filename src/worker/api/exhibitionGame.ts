@@ -116,7 +116,9 @@ const getSeasonInfoLeague = async ({
 				)
 			).filter(p => {
 				// Keep players who ended the season on this team. Not perfect, will miss released players
-				const seasonStats = p.stats.filter(row => row.season === season).at(-1);
+				const seasonStats = p.stats
+					.filter(row => row.season === season && !row.playoffs)
+					.at(-1);
 				if (!seasonStats || seasonStats.tid !== tid) {
 					return false;
 				}

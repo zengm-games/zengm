@@ -154,9 +154,16 @@ const getSeasonInfoLeague = async ({
 					p.numConsecutiveGamesG = 0;
 				}
 
-				// Reset to default
-				if (isSport("basketball") && !isCurrentOngoingSeason) {
-					p.ptModifier = 1;
+				// Reset to default, because we don't know what it should be
+				if (!isCurrentOngoingSeason) {
+					if (isSport("basketball")) {
+						p.ptModifier = 1;
+					}
+
+					p.injury = {
+						type: "Healthy",
+						gamesRemaining: 0,
+					};
 				}
 
 				return true;

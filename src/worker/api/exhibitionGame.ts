@@ -90,6 +90,9 @@ const getSeasonInfoLeague = async ({
 	const currentSeason = await getGameAttribute("season");
 	const currentPhase = await getGameAttribute("phase");
 
+	const isCurrentOngoingSeason =
+		season === currentSeason && currentPhase < PHASE.DRAFT;
+
 	const teams = await league.transaction("teams").store.getAll();
 	const teamSeasons = await league
 		.transaction("teamSeasons")
@@ -136,8 +139,21 @@ const getSeasonInfoLeague = async ({
 				p.pid = pid;
 				pid += 1;
 
+				// No fatigue in exhibition game
 				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
 					p.pFatigue = 0;
+				}
+				if (
+					isSport("hockey") &&
+					p.numConsecutiveGamesG !== undefined &&
+					p.numConsecutiveGamesG > 0
+				) {
+					p.numConsecutiveGamesG = 0;
+				}
+
+				// Reset to default
+				if (isSport("basketball") && !isCurrentOngoingSeason) {
+					p.ptModifier = 1;
 				}
 
 				return true;
@@ -161,10 +177,7 @@ const getSeasonInfoLeague = async ({
 				players,
 
 				// If current season, use current depth. Otherwise, auto generate later.
-				depth:
-					season === currentSeason && currentPhase < PHASE.DRAFT
-						? t.depth
-						: undefined,
+				depth: isCurrentOngoingSeason ? t.depth : undefined,
 			};
 		}),
 	);

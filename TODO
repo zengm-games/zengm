@@ -1,6 +1,4 @@
-scrimmage between historical teams
-- update rosters
-- initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
+exhibition game
 - later
   - any local.exhibition checks - be careful, could be in a league too!
   - persist result?

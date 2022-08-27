@@ -511,7 +511,6 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		title: "Exhibition Game",
 		hideNewWindow: true,
 	});
-	console.log(teams, gameAttributesInfo);
 
 	const setTeam = (
 		index: 0 | 1,

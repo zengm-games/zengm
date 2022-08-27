@@ -57,6 +57,45 @@ export const findStarters = (positions: string[]): number[] => {
 	return starters;
 };
 
+export const getRosterOrderByPid = (
+	players: {
+		pid: number;
+		valueNoPot: number;
+		valueNoPotFuzz: number;
+		ratings: {
+			pos: string;
+		};
+	}[],
+	tid: number,
+	fuzzUser: boolean,
+) => {
+	// Fuzz only for user's team
+	if (fuzzUser && tid === g.get("userTid")) {
+		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
+	} else {
+		players.sort((a, b) => b.valueNoPot - a.valueNoPot);
+	}
+
+	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
+	const positions = players.map(p => p.ratings.pos);
+	const starters = findStarters(positions);
+	const newPlayers = starters.map(i => players[i]);
+
+	for (let i = 0; i < players.length; i++) {
+		if (!starters.includes(i)) {
+			newPlayers.push(players[i]);
+		}
+	}
+
+	const rosterOrders = new Map();
+
+	for (let i = 0; i < newPlayers.length; i++) {
+		rosterOrders.set(newPlayers[i].pid, i);
+	}
+
+	return rosterOrders;
+};
+
 /**
  * Sort a team's roster based on player ratings and stats.
  *
@@ -75,7 +114,7 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		"playersByTid",
 		tid,
 	);
-	let players = await idb.getCopies.playersPlus(playersFromCache, {
+	const players = await idb.getCopies.playersPlus(playersFromCache, {
 		attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -83,35 +122,13 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		showRookies: true,
 	});
 
-	// Fuzz only for user's team
-	if (tid === g.get("userTid")) {
-		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
-	} else {
-		players.sort((a, b) => b.valueNoPot - a.valueNoPot);
-	}
-
-	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
-	const positions = players.map(p => p.ratings.pos);
-	const starters = findStarters(positions);
-	const newPlayers = starters.map(i => players[i]);
-
-	for (let i = 0; i < players.length; i++) {
-		if (!starters.includes(i)) {
-			newPlayers.push(players[i]);
-		}
-	}
-
-	players = newPlayers;
-	const rosterOrders = new Map();
-
-	for (let i = 0; i < players.length; i++) {
-		rosterOrders.set(players[i].pid, i);
-	}
+	const rosterOrders = getRosterOrderByPid(players, tid, true);
 
 	// Update rosterOrder
 	for (const p of playersFromCache) {
-		const rosterOrder = rosterOrders.get(p.pid); // Only write to DB if this actually changes
+		const rosterOrder = rosterOrders.get(p.pid);
 
+		// Only write to DB if this actually changes
 		if (rosterOrder !== undefined && rosterOrder !== p.rosterOrder) {
 			p.rosterOrder = rosterOrder;
 			await idb.cache.players.put(p);

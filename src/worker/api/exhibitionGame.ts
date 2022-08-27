@@ -16,9 +16,10 @@ import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
 } from "../../ui/views/Exhibition";
-import { GameSim, realRosters, team } from "../core";
+import { GameSim, player, realRosters, team } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
+import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball";
 import { connectLeague, getAll, idb } from "../db";
 import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
@@ -168,6 +169,38 @@ const getSeasonInfoLeague = async ({
 
 				return true;
 			});
+
+			if (!isCurrentOngoingSeason) {
+				// Update player values, since it will be needed for either depth chart or rosterOrder
+				g.setWithoutSavingToDB("season", season);
+				g.setWithoutSavingToDB("numActiveTeams", 2);
+				local.playerOvrMean = 48;
+				local.playerOvrStd = 10;
+				local.playerOvrMeanStdStale = false;
+				for (const p of players) {
+					await player.develop(p, 0, false, 1);
+					await player.updateValues(p);
+				}
+
+				// Reset rosterOrder for past seasons, since we don't store it
+				if (isSport("basketball")) {
+					const rosterOrderByPid = getRosterOrderByPid(
+						players.map(p => ({
+							pid: p.pid,
+							valueNoPot: p.valueNoPot,
+							valueNoPotFuzz: p.valueNoPotFuzz,
+							ratings: {
+								pos: p.ratings.at(-1)!.pos,
+							},
+						})),
+						tid,
+						false,
+					);
+					for (const p of players) {
+						p.rosterOrder = rosterOrderByPid.get(p.pid);
+					}
+				}
+			}
 
 			const translateDepthPids = (depth: Team["depth"]) => {
 				if (!depth) {

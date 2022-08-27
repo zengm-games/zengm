@@ -112,6 +112,8 @@ const getSeasonInfoLeague = async ({
 				true,
 			);
 
+			const translatePids: Record<number, number> = {};
+
 			const players = (
 				await getAll(
 					league.transaction("players").store.index("statsTids"),
@@ -136,6 +138,7 @@ const getSeasonInfoLeague = async ({
 				}
 				p.ratings = [seasonRatings];
 
+				translatePids[p.pid] = pid;
 				p.pid = pid;
 				pid += 1;
 
@@ -159,6 +162,25 @@ const getSeasonInfoLeague = async ({
 				return true;
 			});
 
+			const translateDepthPids = (depth: Team["depth"]) => {
+				if (!depth) {
+					return;
+				}
+
+				for (const [key, pids] of Object.entries(depth)) {
+					if (isSport("baseball") && (key === "L" || key === "LP")) {
+						// These are not actually pids
+						continue;
+					}
+
+					(depth as any)[key] = pids
+						.filter(pid => translatePids[pid] !== undefined)
+						.map(pid => translatePids[pid]);
+				}
+
+				return depth;
+			};
+
 			return {
 				abbrev: teamSeason.abbrev ?? t.abbrev,
 				imgURL: teamSeason.imgURL ?? t.imgURL,
@@ -177,7 +199,7 @@ const getSeasonInfoLeague = async ({
 				players,
 
 				// If current season, use current depth. Otherwise, auto generate later.
-				depth: isCurrentOngoingSeason ? t.depth : undefined,
+				depth: isCurrentOngoingSeason ? translateDepthPids(t.depth) : undefined,
 			};
 		}),
 	);

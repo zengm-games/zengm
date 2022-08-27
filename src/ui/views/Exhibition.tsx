@@ -263,6 +263,16 @@ const SelectTeam = ({
 	}, [leagues]);
 
 	const t = teams.find(t => t.tid === tid);
+	let record;
+	if (t?.seasonInfo) {
+		record = `${t.seasonInfo.won}-${t.seasonInfo.lost}`;
+		if (t.seasonInfo.tied !== undefined && t.seasonInfo.tied > 0) {
+			record += `-${t.seasonInfo.tied}`;
+		}
+		if (t.seasonInfo.otl !== undefined && t.seasonInfo.otl > 0) {
+			record += `-${t.seasonInfo.otl}`;
+		}
+	}
 
 	const NUM_PLAYERS_TO_SHOW = 9;
 	const playersToShow = t?.players.slice(0, NUM_PLAYERS_TO_SHOW) ?? [];
@@ -369,9 +379,7 @@ const SelectTeam = ({
 						<h2>{t.ovr} ovr</h2>
 						{t.seasonInfo ? (
 							<>
-								<h2 className="mb-0">
-									{t.seasonInfo.won}-{t.seasonInfo.lost}
-								</h2>
+								<h2 className="mb-0">{record}</h2>
 								{t.seasonInfo.roundsWonText}
 							</>
 						) : null}

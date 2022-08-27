@@ -21,7 +21,7 @@ import { GameSim, player, realRosters, team } from "../core";
 import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball";
-import { connectLeague, getAll, idb } from "../db";
+import { connectLeague, idb } from "../db";
 import { getPlayersActiveSeason } from "../db/getCopies/players";
 import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";

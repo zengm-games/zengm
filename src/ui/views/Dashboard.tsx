@@ -413,7 +413,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					<a href={`https://${WEBSITE_PLAY}/`}>the main site</a>.
 				</p>
 			) : null}
-			<div className="mt-2 dashboard-top-wrapper">
+			<div className="dashboard-top-wrapper">
 				{SPORT_HAS_REAL_PLAYERS ? (
 					<>
 						<a

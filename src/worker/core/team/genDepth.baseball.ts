@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { g, helpers, local, random } from "../../util";
 import type { Position } from "../../../common/types.baseball";
 import type { Player, PlayerFiltered } from "../../../common/types";
 import { groupByUnique } from "../../../common/groupBy";
@@ -241,7 +241,7 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	const players = await idb.getCopies.playersPlus(playersRaw, {
+	let players = await idb.getCopies.playersPlus(playersRaw, {
 		attrs: ["pid"],
 		ratings: ["spd", "pos", "ovrs"],
 		season: g.get("season"),
@@ -249,6 +249,22 @@ const genDepth = async (
 		showRookies: true,
 		fuzz: true,
 	});
+	if (players.length === 0 && local.exhibitionGamePlayers) {
+		let season;
+		for (const p of playersRaw) {
+			if (p.stats.length > 0) {
+				season = p.stats.at(-1)!.season;
+			}
+		}
+		players = await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["pid"],
+			ratings: ["spd", "pos", "ovrs"],
+			season,
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		});
+	}
 
 	// Lineup last, since that depends on defensive starters
 	const positions: (keyof typeof depth)[] = pos

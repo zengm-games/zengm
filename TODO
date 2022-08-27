@@ -9,7 +9,6 @@ scrimmage between historical teams
       - baseball
         - old seasons broken
         - depth chart working right? weird pitchers
-        - cache timeouts during live sim?
   - test with cleared localStorage
 - any local.exhibition checks - be careful, could be in a league too!
 - later

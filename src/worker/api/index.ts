@@ -1510,7 +1510,13 @@ const getDefaultTragicDeaths = () => {
 };
 
 const getDiamondInfo = async (pid: number) => {
-	const p = await idb.cache.players.get(pid);
+	let p;
+	if (local.exhibitionGamePlayers) {
+		p = local.exhibitionGamePlayers[pid];
+	} else {
+		p = await idb.cache.players.get(pid);
+	}
+
 	if (p) {
 		return {
 			name: `${p.firstName} ${p.lastName}`,

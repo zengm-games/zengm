@@ -7,7 +7,53 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../../common/types";
-import { unwrap } from "idb";
+import { type IDBPDatabase, unwrap } from "idb";
+import type { LeagueDB } from "../connectLeague";
+
+export const getPlayersActiveSeason = (
+	league: IDBPDatabase<LeagueDB>,
+	season: number,
+) => {
+	return new Promise<Player<MinimalPlayerRatings>[]>((resolve, reject) => {
+		const transaction = league.transaction("players");
+
+		const players: Player<MinimalPlayerRatings>[] = [];
+
+		const index = unwrap(
+			transaction.objectStore("players").index("draft.year, retiredYear"),
+		);
+
+		// + 1 in upper range is because you don't accumulate stats until the year after the draft
+		const range = IDBKeyRange.bound(
+			[-Infinity, season],
+			[season + 1, Infinity],
+		);
+		const request = index.openCursor(range);
+
+		request.onerror = (e: any) => {
+			reject(e.target.error);
+		};
+
+		request.onsuccess = (e: any) => {
+			const cursor = e.target.result;
+
+			if (!cursor) {
+				resolve(players);
+				return;
+			}
+
+			const [draftYear2, retiredYear] = cursor.key;
+
+			// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+			if (retiredYear < season) {
+				cursor.continue([draftYear2, season]);
+			} else {
+				players.push(cursor.value);
+				cursor.continue();
+			}
+		};
+	});
+};
 
 const getCopies = async (
 	{
@@ -223,47 +269,7 @@ const getCopies = async (
 	}
 
 	if (activeSeason !== undefined) {
-		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
-			(resolve, reject) => {
-				const transaction = idb.league.transaction("players");
-
-				const players: Player<MinimalPlayerRatings>[] = [];
-
-				const index = unwrap(
-					transaction.objectStore("players").index("draft.year, retiredYear"),
-				);
-
-				// + 1 in upper range is because you don't accumulate stats until the year after the draft
-				const range = IDBKeyRange.bound(
-					[-Infinity, activeSeason],
-					[activeSeason + 1, Infinity],
-				);
-				const request = index.openCursor(range);
-
-				request.onerror = (e: any) => {
-					reject(e.target.error);
-				};
-
-				request.onsuccess = (e: any) => {
-					const cursor = e.target.result;
-
-					if (!cursor) {
-						resolve(players);
-						return;
-					}
-
-					const [draftYear2, retiredYear] = cursor.key;
-
-					// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-					if (retiredYear < activeSeason) {
-						cursor.continue([draftYear2, activeSeason]);
-					} else {
-						players.push(cursor.value);
-						cursor.continue();
-					}
-				};
-			},
-		);
+		const fromDB = await getPlayersActiveSeason(idb.league, activeSeason);
 
 		return mergeByPk(
 			fromDB,

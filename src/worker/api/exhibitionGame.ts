@@ -7,6 +7,7 @@ import {
 	PHASE,
 	unwrapGameAttribute,
 } from "../../common";
+import { groupBy } from "../../common/groupBy";
 import type {
 	Conditions,
 	GameAttributesLeague,
@@ -21,6 +22,7 @@ import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball";
 import { connectLeague, getAll, idb } from "../db";
+import { getPlayersActiveSeason } from "../db/getCopies/players";
 import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
@@ -101,6 +103,28 @@ const getSeasonInfoLeague = async ({
 		.getAll(IDBKeyRange.bound([season], [season, ""]));
 
 	let pid = pidOffset;
+
+	const players = (await getPlayersActiveSeason(league, season)).filter(p => {
+		// Keep players who ended the season on this team. Not perfect, will miss released players
+		const seasonStats = p.stats
+			.filter(row => row.season === season && !row.playoffs)
+			.at(-1);
+		if (!seasonStats) {
+			return false;
+		}
+		p.stats = [seasonStats];
+
+		// Also filter ratings here, why  not
+		const seasonRatings = p.ratings.filter(row => row.season === season).at(-1);
+		if (!seasonRatings) {
+			return false;
+		}
+		p.ratings = [seasonRatings];
+
+		return true;
+	});
+	const playersByTid = groupBy(players, p => p.stats[0].tid);
+
 	const exhibitionTeams: ExhibitionTeam[] = await Promise.all(
 		teamSeasons.map(async teamSeason => {
 			const tid = teamSeason.tid;
@@ -115,30 +139,8 @@ const getSeasonInfoLeague = async ({
 
 			const translatePids: Record<number, number> = {};
 
-			const players = (
-				await getAll(
-					league.transaction("players").store.index("statsTids"),
-					tid,
-				)
-			).filter(p => {
-				// Keep players who ended the season on this team. Not perfect, will miss released players
-				const seasonStats = p.stats
-					.filter(row => row.season === season && !row.playoffs)
-					.at(-1);
-				if (!seasonStats || seasonStats.tid !== tid) {
-					return false;
-				}
-				p.stats = [seasonStats];
-
-				// Also filter ratings here, why  not
-				const seasonRatings = p.ratings
-					.filter(row => row.season === season)
-					.at(-1);
-				if (!seasonRatings) {
-					return false;
-				}
-				p.ratings = [seasonRatings];
-
+			const teamPlayers = playersByTid[tid];
+			for (const p of teamPlayers) {
 				translatePids[p.pid] = pid;
 				p.pid = pid;
 				pid += 1;
@@ -166,9 +168,7 @@ const getSeasonInfoLeague = async ({
 						gamesRemaining: 0,
 					};
 				}
-
-				return true;
-			});
+			}
 
 			if (!isCurrentOngoingSeason) {
 				// Update player values, since it will be needed for either depth chart or rosterOrder
@@ -177,7 +177,7 @@ const getSeasonInfoLeague = async ({
 				local.playerOvrMean = 48;
 				local.playerOvrStd = 10;
 				local.playerOvrMeanStdStale = false;
-				for (const p of players) {
+				for (const p of teamPlayers) {
 					await player.develop(p, 0, false, 1);
 					await player.updateValues(p);
 				}
@@ -185,7 +185,7 @@ const getSeasonInfoLeague = async ({
 				// Reset rosterOrder for past seasons, since we don't store it
 				if (isSport("basketball")) {
 					const rosterOrderByPid = getRosterOrderByPid(
-						players.map(p => ({
+						teamPlayers.map(p => ({
 							pid: p.pid,
 							valueNoPot: p.valueNoPot,
 							valueNoPotFuzz: p.valueNoPotFuzz,
@@ -196,7 +196,7 @@ const getSeasonInfoLeague = async ({
 						tid,
 						false,
 					);
-					for (const p of players) {
+					for (const p of teamPlayers) {
 						p.rosterOrder = rosterOrderByPid.get(p.pid);
 					}
 				}
@@ -236,7 +236,7 @@ const getSeasonInfoLeague = async ({
 					roundsWonText,
 				},
 				ovr: 0,
-				players,
+				players: teamPlayers,
 
 				// If current season, use current depth. Otherwise, auto generate later.
 				depth: isCurrentOngoingSeason ? translateDepthPids(t.depth) : undefined,

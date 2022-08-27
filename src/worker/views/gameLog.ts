@@ -57,16 +57,37 @@ export const setTeamInfo = async (
 				game.season,
 			]));
 		if (teamSeason) {
-			t.region = teamSeason.region || g.get("teamInfoCache")[t.tid]?.region;
-			t.name = teamSeason.name || g.get("teamInfoCache")[t.tid]?.name;
-			t.abbrev = teamSeason.abbrev || g.get("teamInfoCache")[t.tid]?.abbrev;
-			t.imgURL = teamSeason.imgURL || g.get("teamInfoCache")[t.tid]?.imgURL;
+			t.region =
+				teamSeason.region ??
+				(Object.hasOwn(g, "teamInfoCache")
+					? g.get("teamInfoCache")[t.tid]?.region
+					: "");
+			t.name =
+				teamSeason.name ??
+				(Object.hasOwn(g, "teamInfoCache")
+					? g.get("teamInfoCache")[t.tid]?.name
+					: "");
+			t.abbrev =
+				teamSeason.abbrev ??
+				(Object.hasOwn(g, "teamInfoCache")
+					? g.get("teamInfoCache")[t.tid]?.abbrev
+					: "");
+			t.imgURL =
+				teamSeason.imgURL ??
+				(Object.hasOwn(g, "teamInfoCache")
+					? g.get("teamInfoCache")[t.tid]?.imgURL
+					: "");
 			t.colors = teamSeason.colors;
-		} else {
+		} else if (Object.hasOwn(g, "teamInfoCache")) {
 			t.region = g.get("teamInfoCache")[t.tid]?.region;
 			t.name = g.get("teamInfoCache")[t.tid]?.name;
 			t.abbrev = g.get("teamInfoCache")[t.tid]?.abbrev;
 			t.imgURL = g.get("teamInfoCache")[t.tid]?.imgURL;
+		} else {
+			t.region = "";
+			t.name = "";
+			t.abbrev = "";
+			t.imgURL = "";
 		}
 	}
 };

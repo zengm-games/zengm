@@ -241,25 +241,26 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	let players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["pid"],
-		ratings: ["spd", "pos", "ovrs"],
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
-	if (players.length === 0 && local.exhibitionGamePlayers) {
-		let season;
-		for (const p of playersRaw) {
-			if (p.stats.length > 0) {
-				season = p.stats.at(-1)!.season;
-			}
-		}
+	let players: any[];
+
+	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
+	if (local.exhibitionGamePlayers) {
+		players = playersRaw.map(p => {
+			const ratings = p.ratings.at(-1)!;
+			return {
+				pid: p.pid,
+				ratings: {
+					spd: ratings.spd,
+					pos: ratings.pos,
+					ovrs: ratings.ovrs,
+				},
+			};
+		});
+	} else {
 		players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: ["pid"],
 			ratings: ["spd", "pos", "ovrs"],
-			season,
+			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,

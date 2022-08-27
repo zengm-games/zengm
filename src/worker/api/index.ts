@@ -2224,25 +2224,30 @@ const ratingsStatsPopoverInfo = async ({
 	const currentSeason = g.get("season");
 
 	let actualSeason: number | undefined;
-	if (season !== undefined) {
-		// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
-		actualSeason = p.draft.year > season ? p.draft.year : season;
-	} else {
-		actualSeason = p.draft.year > currentSeason ? p.draft.year : currentSeason;
-	}
-
-	// If player has no stats that season and is not a draft prospect, show career stats
-	if (
-		p.draft.year < actualSeason &&
-		!p.ratings.some(row => row.season === actualSeason)
-	) {
-		actualSeason = undefined;
-	}
-
 	let draftProspect = false;
-	if (p.draft.year === actualSeason) {
-		draftProspect = true;
-		actualSeason = undefined;
+	if (local.exhibitionGamePlayers && p.stats.length > 0) {
+		actualSeason = p.stats.at(-1)!.season;
+	} else {
+		if (season !== undefined) {
+			// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
+			actualSeason = p.draft.year > season ? p.draft.year : season;
+		} else {
+			actualSeason =
+				p.draft.year > currentSeason ? p.draft.year : currentSeason;
+		}
+
+		// If player has no stats that season and is not a draft prospect, show career stats
+		if (
+			p.draft.year < actualSeason &&
+			!p.ratings.some(row => row.season === actualSeason)
+		) {
+			actualSeason = undefined;
+		}
+
+		if (p.draft.year === actualSeason) {
+			draftProspect = true;
+			actualSeason = undefined;
+		}
 	}
 
 	const stats = bySport({

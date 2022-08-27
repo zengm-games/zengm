@@ -9,7 +9,6 @@ scrimmage between historical teams
       - baseball
         - old seasons broken
         - depth chart working right? weird pitchers
-        - RatingsStatsPopover not working in box score
         - show season stats in box score
         - don't update season stats in game
   - test with cleared localStorage

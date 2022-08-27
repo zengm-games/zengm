@@ -8,6 +8,8 @@ exhibition game
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
   - store historical settings better. either wrap everything or come up with a new plan
 
+past season roster - query by active season or statsTid based on number of teams and seasons
+
 modal fullscreen setting for small screens https://react-bootstrap.github.io/components/modal/#api
 
 more db ints/less dline and linebacker ints, also lower rb yards per reception as they are catching out of the backfield. Their y/r shouldn’t higher than wrs https://discord.com/channels/290013534023057409/331882115119448065/1011053649469915187

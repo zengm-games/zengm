@@ -121,6 +121,10 @@ $small-scrollbar-thumb-hover-color: $gray-600;
 	background-color: darken($red, 20) !important;
 }
 
+.bg-secondary {
+	background-color: $gray-400 !important;
+}
+
 .bg-danger,
 .bg-darkblue,
 .bg-primary,

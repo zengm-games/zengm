@@ -136,6 +136,10 @@ const getSeasonInfoLeague = async ({
 				p.pid = pid;
 				pid += 1;
 
+				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+					p.pFatigue = 0;
+				}
+
 				return true;
 			});
 

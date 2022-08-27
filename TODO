@@ -7,9 +7,9 @@ scrimmage between historical teams
     - test
       - game sim
       - baseball
-        - ignore pitcher fatigue
         - old seasons broken
         - depth chart working right? weird pitchers, and RatingsStatsPopover not working
+        - show season stats in box score
         - don't update season stats in game
   - test with cleared localStorage
 - later

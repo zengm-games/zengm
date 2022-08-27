@@ -98,10 +98,7 @@ export const DEFAULT_SPORT_STATE = isSport("baseball")
 	  } as SportState)
 	: undefined;
 
-export const LiveGame = ({
-	exhibition,
-	...props
-}: { exhibition?: boolean } & View<"liveGame">) => {
+export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
 	const [speed, setSpeed] = useLocalStorageState("live-game-speed", {
@@ -261,7 +258,7 @@ export const LiveGame = ({
 
 				// Update team records with result of game
 				// Keep in sync with liveGame.ts
-				if (!exhibition) {
+				if (!boxScore.current.exhibition) {
 					for (const t of boxScore.current.teams) {
 						if (boxScore.current.playoffs) {
 							if (t.playoffs) {
@@ -306,7 +303,7 @@ export const LiveGame = ({
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[exhibition, props.confetti, props.otl],
+		[props.confetti, props.otl],
 	);
 
 	useEffect(() => {
@@ -716,7 +713,7 @@ export const LiveGame = ({
 			{confetti.display ? <Confetti colors={confetti.colors} /> : null}
 
 			<p className="text-danger">
-				{exhibition
+				{boxScore.current.exhibition
 					? "If you navigate away from this page, you won't be able to see this box score again because it is not stored anywhere."
 					: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
 			</p>

@@ -2,7 +2,6 @@ scrimmage between historical teams
 - use end of season (playoff) rosters
 - update rosters
 - initial load of a league should be random season/team only if it's the first league, otherwise do first season/team
-- win being added to record in baseball, what about other sports? disable in exhibition
 - any local.exhibition checks - be careful, could be in a league too!
 - later
   - persist result?

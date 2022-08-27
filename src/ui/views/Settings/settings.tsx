@@ -597,6 +597,11 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float1000",
 			decoration: "currency",
+			validator: value => {
+				if (value <= 0) {
+					throw new Error("Must be a positive number");
+				}
+			},
 		},
 		{
 			category: "Finances",

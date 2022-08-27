@@ -319,7 +319,7 @@ const SelectTeam = ({
 					</select>
 					<select
 						className="form-select"
-						value={tid}
+						value={teams.length === 0 ? "loading" : tid}
 						onChange={event => {
 							const newTid = parseInt(event.target.value);
 							setTid(newTid);
@@ -334,9 +334,7 @@ const SelectTeam = ({
 							</option>
 						))}
 						{teams.length === 0 ? (
-							<option value="" disabled selected hidden>
-								Loading...
-							</option>
+							<option value="loading">Loading...</option>
 						) : null}
 					</select>
 					<button

@@ -333,6 +333,11 @@ const SelectTeam = ({
 								{t.region} {t.name}
 							</option>
 						))}
+						{teams.length === 0 ? (
+							<option value="" disabled selected hidden>
+								Loading...
+							</option>
+						) : null}
 					</select>
 					<button
 						className="btn btn-light-bordered"
@@ -553,7 +558,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		entry: ExhibitionTeamAndSettings | undefined,
 	) => {
 		if (!entry) {
-			return "";
+			return "Loading...";
 		}
 
 		const league = entry.league;

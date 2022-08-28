@@ -1,0 +1,11 @@
+diff --git a/node_modules/@restart/ui/esm/usePopper.d.ts b/node_modules/@restart/ui/esm/usePopper.d.ts
+index a14f49a..58e4435 100644
+--- a/node_modules/@restart/ui/esm/usePopper.d.ts
++++ b/node_modules/@restart/ui/esm/usePopper.d.ts
+@@ -1,5 +1,5 @@
+ import * as Popper from '@popperjs/core';
+-export declare type Modifier<Name, Options> = Popper.Modifier<Name, Options>;
++export declare type Modifier<Name, Options extends Popper.Obj> = Popper.Modifier<Name, Options>;
+ export declare type Options = Popper.Options;
+ export declare type Instance = Popper.Instance;
+ export declare type Placement = Popper.Placement;

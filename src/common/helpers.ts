@@ -876,7 +876,6 @@ function deepCopy<T>(obj: T): T {
 		return obj;
 	}
 
-	// @ts-expect-error
 	if (obj.constructor === RegExp) {
 		return obj;
 	}

@@ -40,6 +40,7 @@ const throttleRender = (wait: number) => {
 			}
 
 			override render() {
+				// @ts-expect-error
 				return createElement(component, this.state.props);
 			}
 		}

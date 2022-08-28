@@ -77,7 +77,7 @@ if (POLYFILL_STREAMS) {
 	// Chrome 67, Firefox 102, Safari 14.1 (those are for TransformStream, which was the last implemented in some browsers, so that's the cutoff for removing all of these polyfills)
 	self.ReadableStream = PolyfillReadableStream as any;
 	self.TransformStream = PolyfillTransformStream as any;
-	self.WritableStream = PolyfillWritableStream;
+	self.WritableStream = PolyfillWritableStream as any;
 
 	toPolyfillReadable = createReadableStreamWrapper(
 		PolyfillReadableStream,

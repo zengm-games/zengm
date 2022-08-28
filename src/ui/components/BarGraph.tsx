@@ -141,7 +141,6 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 			let height;
 
 			if (y.length === 1) {
-				// @ts-expect-error
 				const negative = data[j][y[i]] < 0;
 
 				// Fix for negative values

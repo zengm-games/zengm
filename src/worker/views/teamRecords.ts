@@ -21,7 +21,8 @@ const minBy = <Key extends string, T extends Record<Key, number | undefined>>(
 ) => {
 	let min: undefined | number;
 	for (const record of records) {
-		if (record[key] !== undefined && (min === undefined || record[key] < min)) {
+		const value = record[key];
+		if (value !== undefined && (min === undefined || value < min)) {
 			min = record[key];
 		}
 	}
@@ -34,8 +35,9 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 ) => {
 	let max: undefined | number;
 	for (const record of records) {
-		if (record[key] !== undefined && (max === undefined || record[key] > max)) {
-			max = record[key];
+		const value = record[key];
+		if (value !== undefined && (max === undefined || value > max)) {
+			max = value;
 		}
 	}
 	return max;

@@ -230,7 +230,10 @@ const SelectTeam = ({
 	useLayoutEffect(() => {
 		const run = async () => {
 			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
-			if (!awaitingInitialLoad.current || leagues.length === 0) {
+			if (
+				!awaitingInitialLoad.current ||
+				(!SPORT_HAS_REAL_PLAYERS && leagues.length === 0)
+			) {
 				return;
 			}
 			awaitingInitialLoad.current = false;
@@ -594,7 +597,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 	const leaguesDefined = useMemo(() => leagues ?? [], [leagues]);
 
-	if (leagues?.length === 0) {
+	if (!SPORT_HAS_REAL_PLAYERS && leagues?.length === 0) {
 		return (
 			<p>
 				You need to <a href="/new_league">create some leagues</a> before you

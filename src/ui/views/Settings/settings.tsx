@@ -750,7 +750,7 @@ export const settings: Setting[] = (
 						luxury tax.
 					</p>
 					<p>
-						<b>Soft cap:</b> Same as hard cap, eccept you can exceed the salary
+						<b>Soft cap:</b> Same as hard cap, accept you can exceed the salary
 						cap to sign draft picks or re-sign players (like the{" "}
 						<a
 							href="https://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception"

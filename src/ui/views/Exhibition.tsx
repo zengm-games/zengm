@@ -461,6 +461,7 @@ type CachedSettings = {
 	gameAttributesInfo: GameAttributesInfo;
 	neutralCourt: boolean;
 	playoffIntensity: boolean;
+	swapHomeAway?: boolean;
 	teams: [CachedTeam, CachedTeam];
 };
 
@@ -499,6 +500,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			} as GameAttributesInfo,
 			neutralCourt: true,
 			playoffIntensity: true,
+			swapHomeAway: false,
 			teams: undefined,
 		};
 	}, []);
@@ -511,6 +513,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		]
 	>([undefined, undefined]);
 	const [neutralCourt, setNeutralCourt] = useState(defaultState.neutralCourt);
+	const [swapHomeAway, setSwapHomeAway] = useState(
+		defaultState.swapHomeAway ?? false,
+	);
 	const [playoffIntensity, setPlayoffIntensity] = useState(
 		defaultState.playoffIntensity,
 	);
@@ -613,7 +618,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				style={{ maxWidth: 700, width: "100%" }}
 			>
 				<div className="col-12 col-sm-6">
-					<h2>{neutralCourt ? "Team 1" : "Home"}</h2>
+					<h2>{neutralCourt ? "Team 1" : swapHomeAway ? "Away" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
 						index={1}
@@ -626,7 +631,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
-					<h2>{neutralCourt ? "Team 2" : "Away"}</h2>
+					<h2>{neutralCourt ? "Team 2" : swapHomeAway ? "Home" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
 						index={0}
@@ -652,6 +657,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						gameAttributesInfo,
 						neutralCourt,
 						playoffIntensity,
+						swapHomeAway: neutralCourt ? undefined : swapHomeAway,
 						teams: teams.map(entry => {
 							if (!entry) {
 								throw new Error("Missing entry");
@@ -675,14 +681,20 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					};
 					safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
 
+					const simTeams = teams.map(entry => entry?.t) as [
+						ExhibitionTeam,
+						ExhibitionTeam,
+					];
+
+					if (swapHomeAway && !neutralCourt) {
+						simTeams.reverse();
+					}
+
 					await toWorker("exhibitionGame", "simExhibitionGame", {
 						disableHomeCourtAdvantage: neutralCourt,
 						gameAttributes,
 						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
-						teams: teams.map(entry => entry?.t) as [
-							ExhibitionTeam,
-							ExhibitionTeam,
-						],
+						teams: simTeams,
 					});
 				}}
 			>
@@ -736,39 +748,60 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				</div>
 				{gameAttributesWarning}
 
-				<div className="form-check mb-2">
-					<input
-						className="form-check-input"
-						type="checkbox"
-						id="neutralCourtCheck"
-						checked={neutralCourt}
-						disabled={simmingGame}
-						onChange={() => {
-							setNeutralCourt(!neutralCourt);
-						}}
-					/>
-					<label className="form-check-label" htmlFor="neutralCourtCheck">
-						Neutral {COURT}
-					</label>
-				</div>
+				<div className="d-flex mb-3">
+					<div>
+						<div className="form-check mb-2">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="neutralCourtCheck"
+								checked={neutralCourt}
+								disabled={simmingGame}
+								onChange={() => {
+									setNeutralCourt(!neutralCourt);
+								}}
+							/>
+							<label className="form-check-label" htmlFor="neutralCourtCheck">
+								Neutral {COURT}
+							</label>
+						</div>
 
-				{isSport("basketball") ? (
-					<div className="form-check mb-3">
-						<input
-							className="form-check-input"
-							type="checkbox"
-							id="playoffIntensityCheck"
-							checked={playoffIntensity}
-							disabled={simmingGame}
-							onChange={() => {
-								setPlayoffIntensity(!playoffIntensity);
-							}}
-						/>
-						<label className="form-check-label" htmlFor="playoffIntensityCheck">
-							Playoff intensity
-						</label>
+						{isSport("basketball") ? (
+							<div className="form-check">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									id="playoffIntensityCheck"
+									checked={playoffIntensity}
+									disabled={simmingGame}
+									onChange={() => {
+										setPlayoffIntensity(!playoffIntensity);
+									}}
+								/>
+								<label
+									className="form-check-label"
+									htmlFor="playoffIntensityCheck"
+								>
+									Playoff intensity
+								</label>
+							</div>
+						) : null}
 					</div>
-				) : null}
+
+					{!neutralCourt ? (
+						<button
+							className="btn py-1 btn-light-bordered ms-2"
+							type="button"
+							onClick={() => {
+								setSwapHomeAway(swap => !swap);
+							}}
+						>
+							Swap
+							<br />
+							home/away
+						</button>
+					) : null}
+				</div>
 
 				<ActionButton
 					disabled={loadingTeams}

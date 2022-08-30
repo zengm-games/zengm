@@ -145,7 +145,7 @@ class PlayByPlayLogger {
 		this.playByPlay.push(event2);
 
 		if (event2.type === "goal") {
-			this.scoringSummary.push(event2);
+			this.scoringSummary.push({ ...event2 });
 		}
 	}
 

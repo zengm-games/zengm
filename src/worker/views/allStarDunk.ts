@@ -89,11 +89,16 @@ const updateAllStarDunk = async (
 
 		for (const p of dunk.players) {
 			const p2 = players.find(p2 => p2.pid === p.pid);
-			const ts = await getTeamInfoBySeason(p.tid, season);
-			if (ts) {
-				p2.colors = ts.colors;
-				p2.jersey = ts.jersey;
-				p2.abbrev = ts.abbrev;
+
+			// p2 could be undefined if player was deleted before contest
+			if (p2) {
+				const ts = await getTeamInfoBySeason(p.tid, season);
+
+				if (ts) {
+					p2.colors = ts.colors;
+					p2.jersey = ts.jersey;
+					p2.abbrev = ts.abbrev;
+				}
 			}
 		}
 
@@ -202,7 +207,6 @@ const updateAllStarDunk = async (
 			playersShort: await getShortTall(dunk.pidsShort),
 			playersTall: await getShortTall(dunk.pidsTall),
 		};
-		console.log(players);
 
 		return {
 			allPossibleContestants,

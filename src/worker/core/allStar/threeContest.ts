@@ -110,14 +110,18 @@ export const simNextThreeEvent = async (
 			const p = await idb.cache.players.get(
 				three.players[nextShooterIndex].pid,
 			);
+
+			let success;
 			if (!p) {
-				throw new Error("Invalid pid");
+				// Can happen if player was deleted before starting sim
+				success = false;
+			} else {
+				const ratings = p.ratings.at(-1) as PlayerRatings;
+				const rating = ratings.tp;
+
+				success = getShotOutcome(rating);
 			}
 
-			const ratings = p.ratings.at(-1) as PlayerRatings;
-			const rating = ratings.tp;
-
-			const success = getShotOutcome(rating);
 			lastResult.racks.at(-1)!.push(success);
 
 			if (lastResult.racks.at(-1)!.length === NUM_BALLS_PER_RACK) {

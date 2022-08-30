@@ -346,17 +346,20 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 
 		for (const tid of tids) {
 			const allStarsTeamInd = tid === -1 ? 0 : 1;
-			const players: Player[] = await Promise.all(
-				allStars.teams[allStarsTeamInd].map(async ({ pid }) => {
-					const p = await idb.cache.players.get(pid);
+			const players = (
+				await Promise.all(
+					allStars.teams[allStarsTeamInd].map(async ({ pid }) => {
+						const p = await idb.cache.players.get(pid);
 
-					if (!p) {
-						throw new Error(`Can't find player ${pid}`);
-					}
+						if (!p) {
+							// Can happen if player was deleted before starting sim
+							return;
+						}
 
-					return p;
-				}),
-			);
+						return p;
+					}),
+				)
+			).filter(p => p !== undefined) as Player[];
 
 			const depth = await team.genDepth(players);
 

@@ -52,7 +52,7 @@ const PlayersTable = ({
 	}
 	const cols = getCols(colNames);
 
-	const playersAugmented =
+	const playersAugmented = (
 		!pidsAdd || pidsAdd.length === 0 || !remaining
 			? players
 			: [
@@ -61,7 +61,10 @@ const PlayersTable = ({
 						const p = remaining.find(p2 => p2.pid === pid);
 						return p;
 					}),
-			  ].filter(p => p !== undefined);
+			  ]
+	)
+		// Filter everything, because `players` might have empty slots too due to deleted players
+		.filter(p => p !== undefined);
 
 	const rows = playersAugmented
 		.filter(p => {

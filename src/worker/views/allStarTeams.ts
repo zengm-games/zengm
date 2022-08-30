@@ -25,7 +25,8 @@ const getPlayerInfo = async (
 ) => {
 	const p = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (!p) {
-		throw new Error("Invalid pid");
+		// Can happen if player was deleted before starting sim
+		return;
 	}
 
 	const p2 = await idb.getCopy.playersPlus(p, {
@@ -48,9 +49,11 @@ const getPlayerInfo = async (
 };
 
 const augment = async (allStars: AllStars) => {
-	const remaining = await Promise.all(
-		allStars.remaining.map(info => getPlayerInfo(info, allStars.season)),
-	);
+	const remaining = (
+		await Promise.all(
+			allStars.remaining.map(info => getPlayerInfo(info, allStars.season)),
+		)
+	).filter(p => p !== undefined);
 	const teams = await Promise.all(
 		allStars.teams.map(players =>
 			Promise.all(players.map(info => getPlayerInfo(info, allStars.season))),

@@ -333,6 +333,39 @@ const initialCheck = async (
 			);
 		}
 
+		if (!response.ok) {
+			let description;
+			switch (response.status) {
+				case 400:
+					description = "bad request";
+					break;
+				case 401:
+					description = "unauthorized";
+					break;
+				case 403:
+					description = "forbidden";
+					break;
+				case 404:
+					description = "file not found";
+					break;
+				case 500:
+					description = "internal server error";
+					break;
+				case 502:
+					description = "bad gateway";
+					break;
+				case 503:
+					description = "service unavailable";
+					break;
+			}
+
+			throw new Error(
+				`server responded with HTTP error code ${response.status}${
+					description ? ` (${description})` : ""
+				}`,
+			);
+		}
+
 		stream = response.body as unknown as ReadableStream;
 		const size = response.headers.get("content-length");
 		if (size) {

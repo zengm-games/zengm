@@ -9,11 +9,12 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 	// slower is fine). This assumes all killable players have no changes in the cache, which is almost certainly true,
 	// but under certain rare cases could cause a minor problem. For performance reasons, this also assumes that any
 	// player drafted more than 110 years ago is dead already. If that's not true, congrats on immortality!
-	const promises: Promise<any>[] = [];
+	const promises: Promise<unknown>[] = [];
 
+	const currentSeason = g.get("season");
 	await iterate(
 		idb.league.transaction("players").store.index("draft.year, retiredYear"),
-		IDBKeyRange.bound([g.get("season") - 110], [""]),
+		IDBKeyRange.bound([currentSeason - 110], [""]),
 		undefined,
 		p => {
 			// Skip non-retired players and dead players
@@ -21,26 +22,31 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 				return;
 			}
 
+			// Skip real players dying young
+			if (p.real && currentSeason - p.born.year < 70) {
+				return;
+			}
+
 			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
 			const probDeath =
-				0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
+				0.0001165111 * Math.exp(0.0761889274 * (currentSeason - p.born.year));
 
 			if (Math.random() < probDeath) {
-				p.diedYear = g.get("season");
-				promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
+				p.diedYear = currentSeason;
+				promises.push(idb.cache.players.put(p));
 			}
 		},
 	);
 
 	await Promise.all(promises);
 
-	await draft.genPlayers(g.get("season"));
+	await draft.genPlayers(currentSeason);
 
 	if (g.get("draftType") !== "freeAgents") {
 		// Run lottery only if it hasn't been done yet
 		const draftLotteryResult = await idb.getCopy.draftLotteryResults(
 			{
-				season: g.get("season"),
+				season: currentSeason,
 			},
 			"noCopyCache",
 		);
@@ -62,7 +68,7 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 		const players = await idb.cache.players.getAll();
 
 		for (const p of players) {
-			if (p.draft.year === g.get("season") && p.tid >= 0) {
+			if (p.draft.year === currentSeason && p.tid >= 0) {
 				p.draft.year -= 1;
 				await idb.cache.players.put(p);
 			}

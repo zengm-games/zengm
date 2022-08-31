@@ -15,6 +15,7 @@ import { player, team } from "../core";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
+import { getRoundsWonText } from "./frivolitiesTeamSeasons";
 
 const findRatingsRow = (
 	allRatings: MinimalPlayerRatings[],
@@ -175,11 +176,23 @@ const getSeasonsToPlot = async (
 			lost?: number;
 			tied?: number;
 			otl?: number;
-			stat?: number;
-			playoffs?: boolean;
 			champ?: boolean;
+			region?: string;
+			name?: string;
+			roundsWonText?: string;
+			season: number;
+			stat: number;
 		};
-		const teams: [Team, Team] = [{}, {}];
+		const teams: [Team, Team] = [
+			{
+				season: i,
+				stat: 0,
+			},
+			{
+				season: i,
+				stat: 0,
+			},
+		];
 		for (let j = 0; j < tids.length; j++) {
 			const tid = tids[j];
 			let teamSeason;
@@ -201,16 +214,19 @@ const getSeasonsToPlot = async (
 					teamSeason.otl > 0)
 			) {
 				teams[j] = {
+					...teams[j],
 					won: teamSeason.won,
 					lost: teamSeason.lost,
 					tied: teamSeason.tied ?? 0,
 					otl: teamSeason.otl ?? 0,
 					winp: helpers.calcWinp(teamSeason),
 					ptsPct: team.ptsPct(teamSeason),
-					playoffs: teamSeason.playoffRoundsWon >= 0,
 					champ:
 						teamSeason.playoffRoundsWon ===
 						g.get("numGamesPlayoffSeries", teamSeason.season).length,
+					region: teamSeason.region ?? g.get("teamInfoCache")[tid].region,
+					name: teamSeason.name ?? g.get("teamInfoCache")[tid].name,
+					roundsWonText: getRoundsWonText(teamSeason),
 				};
 			}
 

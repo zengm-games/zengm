@@ -1,11 +1,13 @@
-import { Fragment } from "react";
+import { Fragment, MouseEvent } from "react";
 import type { ScaleLinear } from "d3-scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
+import { localPoint } from "@visx/event";
 import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
+import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 import { PHASE } from "../../../common";
@@ -48,6 +50,28 @@ const Chart = ({
 		left: 30,
 	};
 
+	type TooltipData = typeof seasonsToPlot[number]["teams"][number];
+
+	const {
+		tooltipData,
+		tooltipLeft,
+		tooltipTop,
+		tooltipOpen,
+		showTooltip,
+		hideTooltip,
+	} = useTooltip<TooltipData>();
+
+	const handleMouseOver = (event: MouseEvent, datum: TooltipData) => {
+		const coords = localPoint((event.target as any).ownerSVGElement, event);
+		if (coords) {
+			showTooltip({
+				tooltipLeft: coords.x,
+				tooltipTop: coords.y,
+				tooltipData: datum,
+			});
+		}
+	};
+
 	return (
 		<div
 			className={classNames("position-relative", className)}
@@ -88,6 +112,28 @@ const Chart = ({
 									}
 									color="var(--bs-secondary)"
 								/>
+								<ReferenceLine
+									x={[xMarker, xMarker]}
+									y={yScale.range() as [number, number]}
+									color="var(--bs-danger)"
+									text="Trade"
+									textPosition="right"
+								/>
+								<AxisBottom
+									axisClassName="chart-axis"
+									numTicks={8}
+									scale={xScale}
+									tickFormat={String}
+									tickLength={5}
+									top={HEIGHT}
+								/>
+								<AxisLeft
+									axisClassName="chart-axis"
+									numTicks={5}
+									scale={yScale}
+									tickFormat={yTickFormat as any}
+									tickLength={5}
+								/>
 								{[0, 1].map(i => {
 									const filtered = seasonsToPlot.filter(
 										row => row.teams[i][valueKey] !== undefined,
@@ -115,38 +161,37 @@ const Chart = ({
 													cy={yScale(d.teams[i][valueKey] ?? 0)}
 													stroke={d.teams[i].champ ? colorChamp : colors[i]}
 													strokeWidth={STROKE_WIDTH}
+													onMouseOver={event =>
+														handleMouseOver(event, d.teams[i])
+													}
+													onMouseOut={hideTooltip}
 												/>
 											))}
 										</Fragment>
 									);
 								})}
-								<ReferenceLine
-									x={[xMarker, xMarker]}
-									y={yScale.range() as [number, number]}
-									color="var(--bs-danger)"
-									text="Trade"
-									textPosition="right"
-								/>
-								<AxisBottom
-									axisClassName="chart-axis"
-									numTicks={8}
-									scale={xScale}
-									tickFormat={String}
-									tickLength={5}
-									top={HEIGHT}
-								/>
-								<AxisLeft
-									axisClassName="chart-axis"
-									numTicks={5}
-									scale={yScale}
-									tickFormat={yTickFormat as any}
-									tickLength={5}
-								/>
 							</Group>
 						</svg>
 					);
 				}}
 			</ParentSize>
+			{tooltipOpen && tooltipData ? (
+				<TooltipWithBounds
+					key={Math.random()}
+					top={tooltipTop}
+					left={tooltipLeft}
+				>
+					{tooltipData.season} {tooltipData.region} {tooltipData.name}
+					<br />
+					{helpers.formatRecord({
+						won: tooltipData.won ?? 0,
+						lost: tooltipData.lost ?? 0,
+						otl: tooltipData.otl,
+						tied: tooltipData.tied,
+					})}
+					{tooltipData.roundsWonText ? `, ${tooltipData.roundsWonText}` : null}
+				</TooltipWithBounds>
+			) : null}
 			<div
 				className="chart-legend"
 				style={{

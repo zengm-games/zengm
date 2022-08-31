@@ -131,7 +131,7 @@ export const getMostXTeamSeasons = async ({
 	return ordered;
 };
 
-const getRoundsWonText = (ts: TeamSeason) => {
+export const getRoundsWonText = (ts: TeamSeason) => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
 	const numConfs = g.get("confs", ts.season).length;
 

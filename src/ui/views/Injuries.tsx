@@ -8,6 +8,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 const Injuries = ({
 	abbrev,
 	challengeNoRatings,
+	currentSeason,
 	godMode,
 	injuries,
 	season,
@@ -48,6 +49,8 @@ const Injuries = ({
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
+					awards: p.awards,
+					awardsSeason: typeof season === "number" ? season : currentSeason,
 				}),
 				p.ratings.pos,
 				<a

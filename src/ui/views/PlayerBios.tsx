@@ -66,6 +66,8 @@ const PlayerBios = ({
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
+					awards: p.awards,
+					awardsSeason: season,
 				}),
 				p.ratings.pos,
 				<a

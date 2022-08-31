@@ -52,6 +52,7 @@ export const getPlayers = async (
 			"tid",
 			"abbrev",
 			"draft",
+			"awards",
 			...attrs,
 		],
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],

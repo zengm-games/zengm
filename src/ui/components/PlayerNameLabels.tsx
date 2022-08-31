@@ -7,6 +7,7 @@ import SeasonIcons from "../views/Player/SeasonIcons";
 
 type Props = {
 	awards?: Player["awards"];
+	awardsSeason?: number;
 	count?: number;
 	jerseyNumber?: string;
 	injury?: PlayerInjury & {
@@ -103,6 +104,7 @@ const PlayerNameLabels = (props: Props) => {
 	const {
 		abbrev,
 		awards,
+		awardsSeason,
 		count,
 		disableNameLink,
 		firstNameShort,
@@ -215,8 +217,13 @@ const PlayerNameLabels = (props: Props) => {
 			<div className="d-flex">
 				{nameLabelsBlock}
 				<div className="ms-auto">
-					<SeasonIcons className="ms-1" awards={awards} playoffs />
-					<SeasonIcons className="ms-1" awards={awards} />
+					<SeasonIcons
+						className="ms-1"
+						awards={awards}
+						season={awardsSeason}
+						playoffs
+					/>
+					<SeasonIcons className="ms-1" awards={awards} season={awardsSeason} />
 				</div>
 			</div>
 		);

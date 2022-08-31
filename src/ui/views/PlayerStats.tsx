@@ -156,19 +156,23 @@ const PlayerStats = ({
 			key = p.pid;
 		}
 
+		const numericSeason = season === "career" ? undefined : p.stats.season;
+
 		return {
 			key,
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,
-					season: season === "career" ? undefined : p.stats.season,
+					season: numericSeason,
 					skills: p.ratings.skills,
 					jerseyNumber: p.stats.jerseyNumber,
 					watch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
+					awards: p.awards,
+					awardsSeason: numericSeason,
 				}),
 				pos,
 

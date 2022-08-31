@@ -105,6 +105,7 @@ const updatePlayers = async (
 				"abbrev",
 				"hof",
 				"watch",
+				"awards",
 			],
 			ratings: ["skills", "pos", "season"],
 			stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],

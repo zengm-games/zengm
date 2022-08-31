@@ -6,7 +6,7 @@ const LODASH_BLACKLIST = [
 	/^lodash$/,
 	/^lodash-es$/,
 
-	// lodash/debound and lodash/memoize are used by visx
+	// lodash/debounce and lodash/memoize are used by visx
 	/^lodash\/(?!debounce|memoize)/,
 ];
 

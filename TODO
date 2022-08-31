@@ -1,3 +1,16 @@
+Customize Teams
+- similar to exhibition game
+  - allow adding real teams from any season
+  - allow adding team from any other league
+- if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
+
+trade summary charts future
+- some indication for winning a championship, special marker?
+  - tooltip required, for clarity
+  - It's a little frustrating to switch teams (either by being fired or taking a new job) and not having your previous stars appear as "played for your team" when looking at the HOF.
+- tooltip
+  - team region, name, record, playoff result
+
 exhibition game
 - later
   - add all-star and all-league teams as playable https://discord.com/channels/290013534023057409/1013099630168387627/1013101645132988556
@@ -7,6 +20,8 @@ exhibition game
     - use to more accurately get lineup for exhibition games
     - use on roster page for historical seasons, toggle show start of season, playoffs, and all
   - store historical settings better. either wrap everything or come up with a new plan
+
+on season summary page, show counts for team finishes, player awards (individual and team) https://old.reddit.com/r/BasketballGM/comments/wd2soz/monthly_suggestions_thread/iihwll3/
 
 past season roster - query by active season or statsTid based on number of teams and seasons
 
@@ -129,7 +144,8 @@ unify league leaders and award stat leader code, to allow things like BA leader 
 
 frivolities
 - players
-  - Best/Worst MVP, DPOY, ROY, 6MOY, MIP https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
+  - Best/Worst MVP, DPOY, ROY, 6MOY, MIP, AS https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
+    - Also, best to never get there https://old.reddit.com/r/BasketballGM/comments/wd2soz/monthly_suggestions_thread/iig6kdf/
   - oldest/youngest of any award https://discord.com/channels/290013534023057409/994079396065452132/994079523605860442
   - would need history of salaryCap
     - most overpaid, most underpaid (career total)
@@ -908,14 +924,6 @@ nicidob new ovr formula
 FBGM too many very short players
 
 on trade summary page, also show how the player left the team (or if still active/retired). use p.transactions
-
-trade summary charts future
-- some indication for winning a championship, special marker?
-  - tooltip required, for clarity
-- tooltip
-  - team region, name, record, playoff result
-- https://github.com/airbnb/visx
-  - would it make tooltips easier?
 
 fuzz
 - nicidob - fix fuzz uniformity so that it's more like 70 +/- 1, 60 +/- 3,  50 +/-5

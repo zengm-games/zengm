@@ -226,7 +226,7 @@ const getSeasonsToPlot = async (
 						g.get("numGamesPlayoffSeries", teamSeason.season).length,
 					region: teamSeason.region ?? g.get("teamInfoCache")[tid].region,
 					name: teamSeason.name ?? g.get("teamInfoCache")[tid].name,
-					roundsWonText: getRoundsWonText(teamSeason),
+					roundsWonText: getRoundsWonText(teamSeason).toLocaleLowerCase(),
 				};
 			}
 

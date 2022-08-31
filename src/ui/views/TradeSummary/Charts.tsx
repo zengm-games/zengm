@@ -40,6 +40,7 @@ const Chart = ({
 }) => {
 	const MAX_WIDTH = 400;
 	const STROKE_WIDTH = 1;
+	const STAR_SIZE = 20;
 	const colors = ["var(--bs-blue)", "var(--bs-green)"];
 	const colorChamp = "var(--bs-yellow)";
 
@@ -150,23 +151,39 @@ const Chart = ({
 												stroke={colors[i]}
 												strokeWidth={STROKE_WIDTH}
 											/>
-											{filtered.map((d, j) => (
-												<circle
-													key={j}
-													className={
-														d.teams[i].champ ? "fill-yellow" : "fill-white"
-													}
-													r={5 * Math.sqrt(STROKE_WIDTH)}
-													cx={xScale(d.season)}
-													cy={yScale(d.teams[i][valueKey] ?? 0)}
-													stroke={d.teams[i].champ ? colorChamp : colors[i]}
-													strokeWidth={STROKE_WIDTH}
-													onMouseOver={event =>
-														handleMouseOver(event, d.teams[i])
-													}
-													onMouseOut={hideTooltip}
-												/>
-											))}
+											{filtered.map((d, j) =>
+												d.teams[i].champ ? (
+													<text
+														key={j}
+														className="user-select-none fill-yellow"
+														x={xScale(d.season)}
+														y={yScale(d.teams[i][valueKey] ?? 0)}
+														fontSize={STAR_SIZE}
+														textAnchor="middle"
+														alignmentBaseline="middle"
+														onMouseOver={event =>
+															handleMouseOver(event, d.teams[i])
+														}
+														onMouseOut={hideTooltip}
+													>
+														★
+													</text>
+												) : (
+													<circle
+														key={j}
+														className="fill-white"
+														r={5 * Math.sqrt(STROKE_WIDTH)}
+														cx={xScale(d.season)}
+														cy={yScale(d.teams[i][valueKey] ?? 0)}
+														stroke={d.teams[i].champ ? colorChamp : colors[i]}
+														strokeWidth={STROKE_WIDTH}
+														onMouseOver={event =>
+															handleMouseOver(event, d.teams[i])
+														}
+														onMouseOut={hideTooltip}
+													/>
+												),
+											)}
 										</Fragment>
 									);
 								})}

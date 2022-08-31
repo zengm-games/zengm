@@ -176,6 +176,8 @@ const getSeasonsToPlot = async (
 			tied?: number;
 			otl?: number;
 			stat?: number;
+			playoffs?: boolean;
+			champ?: boolean;
 		};
 		const teams: [Team, Team] = [{}, {}];
 		for (let j = 0; j < tids.length; j++) {
@@ -198,12 +200,18 @@ const getSeasonsToPlot = async (
 					teamSeason.tied > 0 ||
 					teamSeason.otl > 0)
 			) {
-				teams[j].won = teamSeason.won;
-				teams[j].lost = teamSeason.lost;
-				teams[j].tied = teamSeason.tied;
-				teams[j].otl = teamSeason.otl;
-				teams[j].winp = helpers.calcWinp(teamSeason);
-				teams[j].ptsPct = team.ptsPct(teamSeason);
+				teams[j] = {
+					won: teamSeason.won,
+					lost: teamSeason.lost,
+					tied: teamSeason.tied ?? 0,
+					otl: teamSeason.otl ?? 0,
+					winp: helpers.calcWinp(teamSeason),
+					ptsPct: team.ptsPct(teamSeason),
+					playoffs: teamSeason.playoffRoundsWon >= 0,
+					champ:
+						teamSeason.playoffRoundsWon ===
+						g.get("numGamesPlayoffSeries", teamSeason.season).length,
+				};
 			}
 
 			teams[j].stat = statSumsBySeason[j][i];

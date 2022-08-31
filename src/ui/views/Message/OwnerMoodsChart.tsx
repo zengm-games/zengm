@@ -205,7 +205,7 @@ const OwnerMoodsChart = ({
 											{data.map((d, j) => (
 												<circle
 													key={j}
-													className="chart-point"
+													className="fill-white"
 													r={3 * Math.sqrt(width)}
 													cx={xScale(d.year)}
 													cy={yScale(d[key])}

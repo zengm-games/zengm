@@ -934,8 +934,11 @@ tr.table-warning:hover > td {
 .chart-line {
 	fill: none;
 }
-.chart-point {
+.fill-white {
 	fill: $white;
+}
+.fill-yellow {
+	fill: $yellow;
 }
 
 .cursor-default {

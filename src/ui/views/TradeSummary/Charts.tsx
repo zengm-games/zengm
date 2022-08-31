@@ -39,6 +39,7 @@ const Chart = ({
 	const MAX_WIDTH = 400;
 	const STROKE_WIDTH = 1;
 	const colors = ["var(--bs-blue)", "var(--bs-green)"];
+	const colorChamp = "var(--bs-yellow)";
 
 	const margin = {
 		top: 15,
@@ -106,11 +107,13 @@ const Chart = ({
 											{filtered.map((d, j) => (
 												<circle
 													key={j}
-													className="chart-point"
+													className={
+														d.teams[i].champ ? "fill-yellow" : "fill-white"
+													}
 													r={5 * Math.sqrt(STROKE_WIDTH)}
 													cx={xScale(d.season)}
 													cy={yScale(d.teams[i][valueKey] ?? 0)}
-													stroke={colors[i]}
+													stroke={d.teams[i].champ ? colorChamp : colors[i]}
 													strokeWidth={STROKE_WIDTH}
 												/>
 											))}

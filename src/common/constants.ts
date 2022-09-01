@@ -445,6 +445,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"blockFactor",
 	"threePointers",
 	"orbFactor",
+	"injuryRate",
 ] as const;
 
 export {

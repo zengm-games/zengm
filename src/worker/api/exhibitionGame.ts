@@ -404,7 +404,7 @@ export const simExhibitionGame = async (
 		homeCourtFactor: 1,
 		disableHomeCourtAdvantage,
 		allStarGame: false,
-		baseInjuryRate: defaultGameAttributes.injuryRate,
+		baseInjuryRate: g.get("injuryRate"),
 		dh,
 	}).run();
 

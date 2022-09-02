@@ -268,13 +268,7 @@ const SelectTeam = ({
 	const t = teams.find(t => t.tid === tid);
 	let record;
 	if (t?.seasonInfo) {
-		record = `${t.seasonInfo.won}-${t.seasonInfo.lost}`;
-		if (t.seasonInfo.tied !== undefined && t.seasonInfo.tied > 0) {
-			record += `-${t.seasonInfo.tied}`;
-		}
-		if (t.seasonInfo.otl !== undefined && t.seasonInfo.otl > 0) {
-			record += `-${t.seasonInfo.otl}`;
-		}
+		record = helpers.formatRecord(t.seasonInfo);
 	}
 
 	const NUM_PLAYERS_TO_SHOW = 9;

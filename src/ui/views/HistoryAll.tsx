@@ -60,9 +60,7 @@ const teamName = (
 				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}>
 					{t.region}
 				</a>{" "}
-				({t.won}-{t.lost}
-				{t.otl > 0 ? <>-{t.otl}</> : null}
-				{t.tied > 0 ? <>-{t.tied}</> : null})
+				({helpers.formatRecord(t)})
 			</>
 		);
 	}

@@ -26,13 +26,12 @@ const Overall = ({
 	| "totalWon"
 	| "worstRecord"
 >) => {
-	let record = `${totalWon}-${totalLost}`;
-	if (totalOtl > 0) {
-		record += `-${totalOtl}`;
-	}
-	if (totalTied > 0) {
-		record += `-${totalTied}`;
-	}
+	const record = helpers.formatRecord({
+		won: totalWon,
+		lost: totalLost,
+		otl: totalOtl,
+		tied: totalTied,
+	});
 
 	return (
 		<>

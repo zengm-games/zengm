@@ -1313,7 +1313,6 @@ const percentage = (numerator: number, denominator: number) => {
 	return 100 * ratio(numerator, denominator);
 };
 
-// There are a bunch of places where formatRecord is not used and it's done manually :(
 const formatRecord = ({
 	won,
 	lost,

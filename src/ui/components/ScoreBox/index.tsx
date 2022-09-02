@@ -36,14 +36,7 @@ const getRecord = (t: Team) => {
 		return "";
 	}
 
-	let record = `${t.won}-${t.lost}`;
-	if (t.tied !== undefined && t.tied > 0) {
-		record += `-${t.tied}`;
-	}
-	if (t.otl !== undefined && t.otl > 0) {
-		record += `-${t.otl}`;
-	}
-	return record;
+	return helpers.formatRecord(t as any);
 };
 
 const smallStyle = {

@@ -212,15 +212,7 @@ const Team = ({
 					</a>
 					<br />
 					<span className="text-muted">
-						{team.regularSeason.won}-{team.regularSeason.lost}
-						{team.regularSeason.otl !== undefined &&
-						team.regularSeason.otl > 0 ? (
-							<>-{team.regularSeason.otl}</>
-						) : null}
-						{team.regularSeason.tied !== undefined &&
-						team.regularSeason.tied > 0 ? (
-							<>-{team.regularSeason.tied}</>
-						) : null}
+						{helpers.formatRecord(team.regularSeason)}
 					</span>
 				</div>
 			)}

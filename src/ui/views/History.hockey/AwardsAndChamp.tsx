@@ -144,9 +144,7 @@ const AwardsAndChamp = ({
 								>
 									{t.region} {t.name}
 								</a>{" "}
-								({t.won}-{t.lost}
-								{t.otl !== undefined && t.otl > 0 ? <>-{t.otl}</> : null}
-								{t.tied !== undefined && t.tied > 0 ? <>-{t.tied}</> : null})
+								({helpers.formatRecord(t)})
 							</span>
 							<br />
 						</p>

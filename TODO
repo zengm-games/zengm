@@ -1179,69 +1179,6 @@ fuzz/scouting revamp
 - fuzz is deterministic noise
 - scouting budget affects accuracy of mood percentages?
 
-add records to top scroll on desktop https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/ftg0cvm/?context=3
-
-way to save/load leagues on server
-- ~/projects/google-drive
-- MVP
-  - import league from google drive
-    - show files we have access to
-  - export league to google drive rather than file
-    - still need to track googleFileID, so it won't create a new file every time you export to drive
-    - option to create new file or overwrite existing one
-- Cloud
-  - authorize and sign out buttons for google
-    - https://developers.google.com/drive/api/v3/about-auth#save_refresh_tokens_in_long-term_storage
-  - list of leagues in cloud
-    - delete button
-      - when deleting, delete file ID from local leagues too
-    - rename button
-    - link to create a new league with cloud file
-  - https://developers.google.com/drive/api/v3/picker to add more files to list?
-- Dashboard
-  - link to Cloud page, and explanation if not logged in
-  - for a league linked to a cloud save (with googleFileID etc)
-    - if lastPlayed is greater than googleLastSync, show button to save changes to the cloud
-    - if version in cloud is greater than googleFileVersion, show button to overwrite league with latest from cloud
-    - if both of those things are true, show warning
-  - for a league not linked to a cloud save (googleFileID is undefined)
-    - show button to upload to cloud
-  - some way to import leagues from the cloud (maybe another "New League" button, and support "Import" over existing one too)
-  - some way to delete things from cloud
-    - deleting a league locally should pop up an option of if you want to delete from cloud
-  - design
-    - condense some columns (name, team, difficulty) into one
-    - add column for # seasons played
-- Data stored locally
-  - in each league, store google file ID, version, and timestamp of last sync (download or upload) w/ cloud
-    - googleFileID
-    - googleFileVerison
-    - googleLastSync
-- API
-  - should this run all client side, or do we need a server side component?
-    - try all client side first
-  - authentication
-    - https://developers.google.com/drive/api/v3/quickstart/js
-    - store all keys and gapi object in worker
-  - get list of cloud saves, including google file ID, BBGM league ID, last time played, and last phase/season
-    - how to search for them? https://developers.google.com/drive/api/v3/properties says it is possible
-      - https://developers.google.com/drive/api/v3/reference/query-ref
-  - download existing save by google file ID
-  - upload new save
-  - update (overwrite) existing save
-  - delete save
-- for multiplayer leagues, some way to support other people having read access to a league
-  - manual input of file ID or URL
-- store on my system (s3 maybe) or use google drive?
-  - google drive
-    - https://developers.google.com/drive/api/v3/reference/files could put metadata in "properties"
-      - use that to store some unique ID of the save
-    - UI integration https://developers.google.com/drive/api/v3/about-apps
-    - thumbnail https://developers.google.com/drive/api/v3/create-file#upload_thumbnails
-    - challenge - how do i stream data out of IndexedDB and into Google Drive?
-      - ideally would send data from IndexedDB to WritableStream to some HTTP API, but that doesn't seem supported - https://github.com/whatwg/fetch/issues/378 for the HTTP request, but also it's a problem with IDB auto closing transactions
-      - so would need to read entire league file into memory first
-
 FBGM
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
@@ -1421,8 +1358,6 @@ login issues
 
 add toggle to table, to turn it into a heatmap showing which values are high or low. like think on a player stats table
 
-FBGM punt when down in OT https://cdn.discordapp.com/attachments/290015591216054273/690387745042071592/Screenshot_2020-03-19_at_9.34.14_PM.png
-
 make the 3 year delayed effect of team finances more obvious
 
 teams play better/worse when down/up
@@ -1493,11 +1428,6 @@ Salary cap trade stuff
 FBGM rookie contract length
 - https://old.reddit.com/r/Football_GM/comments/eddhp1/fixing_ai_team_contract_logic/
 
-value should be more ovr-based
-- https://old.reddit.com/r/BasketballGM/comments/ecr0mw/20192020_nba_roster_v_11_traded_draft_picks_up_to/fbk80xj/?context=3
-
-kicker trade value
-
 god mode options for tendencies
 - sport specific options, like shot tendencies, enabling/disabling 3 pointers, etc
 - have them as sliders, where 50 means "no effect", 0 means "never happens", and 100 means "always". then blend those rates with the default rates behind the scenes
@@ -1549,7 +1479,6 @@ https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_g
 option to control retirement rate
 
 load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automatic_nba_rosters_by_understanding/es28wcf/?context=3
-- explanation text?
 - docs
   - The tricky part is https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS which generally prevents websites from loading data from other domains, for security reasons. As described at that link in excruciating detail, you can allow a file to be included in another domain (or any domain) with the "Access-Control-Allow-Origin" header. If you don't control your server, that's not very helpful. But I have noticed that GitHub does this automatically on githubusercontent.com, so if you make a GitHub repo, you can use a link like https://raw.githubusercontent.com/user_name/repo_name/branch_name/file.json
 - https://uppy.io/
@@ -1758,11 +1687,6 @@ advanced stat table too confusing? needs vertical dividers/spacing?
 
 use something besides PER in player value formula
 
-new adv stats in roster page?
-- switch PER to WS/48 - roster.js now pulling both, then eventually switch Roster.js
-- same for HoF
-- OR, wait for BPM?
-
 per 100 possessions and totals toggle on team stats page
 
 remove polyfills
@@ -1796,6 +1720,7 @@ shared worker
     - something to handle init/close of tabs
     - look at all toUI calls
   - disconnect league when none are left registered to promise worker (so need api to get all metadata)
+  - this would help with exhibition games too
 
 when dirty on close, show warning window, and initiate flush (if not already in progress)
 - hard to coordinate across UI and worker...

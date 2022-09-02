@@ -45,14 +45,6 @@ const TeamLogo = ({
 		otl?: number;
 	};
 }) => {
-	let record = `${t.won}-${t.lost}`;
-	if (typeof t.otl === "number" && !Number.isNaN(t.otl) && t.otl > 0) {
-		record += `-${t.otl}`;
-	}
-	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
-		record += `-${t.tied}`;
-	}
-
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
 		<div className="w-100 d-none d-lg-flex justify-content-center">
 			<div>
@@ -65,7 +57,7 @@ const TeamLogo = ({
 						/>
 					</TeamNameLink>
 				</div>
-				<div className="mt-1 mb-3 fw-bold">{record}</div>
+				<div className="mt-1 mb-3 fw-bold">{helpers.formatRecord(t)}</div>
 			</div>
 		</div>
 	) : null;

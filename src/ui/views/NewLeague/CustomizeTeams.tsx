@@ -14,6 +14,8 @@ import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
+import { useLeagues } from "../Exhibition";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -445,12 +447,14 @@ const CardHeader = ({
 	);
 };
 
+type TeamOrType = NewLeagueTeamWithoutRank | "custom" | "real" | "league";
+
 const AddTeam = ({
 	addTeam,
 	did,
 	availableBuiltInTeams,
 }: {
-	addTeam: (did: number, t?: NewLeagueTeamWithoutRank) => void;
+	addTeam: (did: number, t: TeamOrType) => void;
 	did: number;
 	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
@@ -466,7 +470,11 @@ const AddTeam = ({
 						setAbbrev(event.target.value);
 					}}
 				>
-					<option value="custom">Custom Team</option>
+					<option value="custom">Custom team</option>
+					{SPORT_HAS_REAL_PLAYERS ? (
+						<option value="real">Real historical team</option>
+					) : null}
+					<option value="league">Existing league</option>
 					{availableBuiltInTeams.map(t => (
 						<option key={t.abbrev} value={t.abbrev}>
 							{t.region} {t.name} ({t.abbrev})
@@ -476,7 +484,20 @@ const AddTeam = ({
 				<button
 					className="btn btn-light-bordered"
 					onClick={() => {
-						const t = availableBuiltInTeams.find(t => t.abbrev === abbrev);
+						let t: TeamOrType;
+						if (
+							abbrev === "custom" ||
+							abbrev === "real" ||
+							abbrev === "league"
+						) {
+							t = abbrev;
+						} else {
+							const team = availableBuiltInTeams.find(t => t.abbrev === abbrev);
+							if (!team) {
+								throw new Error("Team not found");
+							}
+							t = team;
+						}
 						addTeam(did, t);
 					}}
 				>
@@ -505,7 +526,7 @@ const Division = ({
 	confs: Conf[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	addTeam: (did: number, t?: NewLeagueTeamWithoutRank) => void;
+	addTeam: (did: number, t: TeamOrType) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -613,7 +634,7 @@ const Conference = ({
 	divs: Div[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	addTeam: (did: number, t?: NewLeagueTeamWithoutRank) => void;
+	addTeam: (did: number, t: TeamOrType) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -736,6 +757,8 @@ const CustomizeTeams = ({
 
 	const [randomizing, setRandomizing] = useState(false);
 
+	const leagues = useLeagues();
+
 	const editTeam = (tid: number) => {
 		setEditingInfo({
 			type: "edit",
@@ -743,8 +766,17 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const addTeam = (did: number, t?: NewLeagueTeamWithoutRank) => {
-		if (t) {
+	const addTeam = (did: number, t: TeamOrType) => {
+		if (t === "custom") {
+			setEditingInfo({
+				type: "add",
+				did,
+			});
+		} else if (t === "league") {
+			console.log("addTeam", t);
+		} else if (t === "real") {
+			console.log("addTeam", t);
+		} else {
 			const div = divs.find(div => div.did === did);
 			if (div) {
 				dispatch({
@@ -756,11 +788,6 @@ const CustomizeTeams = ({
 					},
 				});
 			}
-		} else {
-			setEditingInfo({
-				type: "add",
-				did,
-			});
 		}
 	};
 

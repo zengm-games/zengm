@@ -459,7 +459,7 @@ type CachedSettings = {
 	teams: [CachedTeam, CachedTeam];
 };
 
-const useLeagues = () => {
+export const useLeagues = () => {
 	const [leagues, setLeagues] = useState<ExhibitionLeague[] | undefined>();
 
 	useLayoutEffect(() => {

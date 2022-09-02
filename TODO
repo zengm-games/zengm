@@ -2,6 +2,10 @@ Customize Teams
 - similar to exhibition game
   - allow adding real teams from any season
   - allow adding team from any other league
+- under Reset, let it pull in a whole league
+- icon showing if team includes players
+  - needs to be toggleable from edit dialog
+- list of available random teams - filter on just selected random teams, or all teams?
 - if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
 
 exhibition game

@@ -2,9 +2,12 @@ import orderBy from "lodash-es/orderBy";
 import { useEffect, useState } from "react";
 import { applyRealTeamInfos } from ".";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
+import getTeamInfos from "../../../common/getTeamInfos";
+import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import type { Conf, Div, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent, toWorker } from "../../util";
+import { useLeagues } from "../Exhibition";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
@@ -69,6 +72,94 @@ const GodModeWarning = ({
 	return null;
 };
 
+const CUSTOM_TEAM = {
+	tid: -1,
+	region: "",
+	name: "",
+	abbrev: "NEW",
+	pop: 1,
+	// cid: div.cid,
+	// did: div.did,
+	cid: -1,
+	did: -1,
+};
+
+const SelectTeam = ({
+	abbrev,
+	addEditTeamInfo,
+	disabled,
+	onChange,
+	teams,
+}: {
+	abbrev: string | undefined;
+	addEditTeamInfo: AddEditTeamInfo;
+	disabled: boolean;
+	onChange: (t: NewLeagueTeamWithoutRank) => void;
+	teams: NewLeagueTeamWithoutRank[];
+}) => {
+	let availableTeams: NewLeagueTeamWithoutRank[];
+
+	if (addEditTeamInfo.type === "addRandom") {
+		const availableAbbrevs = getUnusedAbbrevs(teams);
+		const param = availableAbbrevs.map(abbrev => ({
+			tid: -1,
+			cid: -1,
+			did: -1,
+			abbrev,
+		}));
+		availableTeams = orderBy(
+			getTeamInfos(param).map(t => ({
+				...t,
+				popRank: -1,
+			})),
+			["region", "name"],
+		);
+	} else if (addEditTeamInfo.type === "addReal") {
+		throw new Error("Not implemented");
+	} else if (addEditTeamInfo.type === "addLeague") {
+		throw new Error("Not implemented");
+	} else {
+		return null;
+	}
+	const availableAbbrevs = availableTeams.map(t => t.abbrev);
+	const actualAbbrev = availableAbbrevs.includes(abbrev as any)
+		? abbrev
+		: "custom";
+	console.log(availableTeams);
+
+	return (
+		<>
+			<label htmlFor="select-team-team">Team</label>
+			<select
+				id="select-team-team"
+				className="form-select"
+				disabled={disabled}
+				value={actualAbbrev}
+				onChange={event => {
+					const newAbbrev = event.target.value;
+					if (newAbbrev === "custom") {
+						onChange({ ...CUSTOM_TEAM });
+					} else {
+						const t = availableTeams.find(t => t.abbrev === newAbbrev);
+						if (t) {
+							onChange(t);
+						}
+					}
+				}}
+			>
+				{addEditTeamInfo.type === "addRandom" ? (
+					<option value="custom">Custom Team</option>
+				) : null}
+				{availableTeams.map(t => (
+					<option key={t.abbrev} value={t.abbrev}>
+						{t.region} {t.name} ({t.abbrev})
+					</option>
+				))}
+			</select>
+		</>
+	);
+};
+
 const UpsertTeamModal = ({
 	addEditTeamInfo,
 	teams,
@@ -103,6 +194,28 @@ const UpsertTeamModal = ({
 		| undefined
 	>();
 
+	const newControlledTeam = (t: NewLeagueTeamWithoutRank | undefined) => {
+		if (!t) {
+			setControlledTeam(undefined);
+		} else {
+			setControlledTeam({
+				...t,
+				region: t.region,
+				name: t.name,
+				abbrev: t.abbrev,
+				pop: String(t.pop),
+				stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
+				colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+				jersey: t.jersey ?? DEFAULT_JERSEY,
+				did: String(t.did),
+				imgURL: t.imgURL ?? "",
+				imgURLSmall: t.imgURLSmall ?? "",
+			});
+		}
+	};
+
+	const leagues = useLeagues();
+
 	useEffect(() => {
 		let mounted = true;
 
@@ -113,7 +226,7 @@ const UpsertTeamModal = ({
 			}
 
 			if (addEditTeamInfo.type === "none") {
-				setControlledTeam(undefined);
+				newControlledTeam(undefined);
 				return;
 			}
 
@@ -121,15 +234,7 @@ const UpsertTeamModal = ({
 			if (addEditTeamInfo.type === "edit") {
 				t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
 			} else if (addEditTeamInfo.type === "addRandom") {
-				t = {
-					tid: -1,
-					region: "",
-					name: "",
-					abbrev: "NEW",
-					pop: 1,
-					cid: div.cid,
-					did: div.did,
-				};
+				t = { ...CUSTOM_TEAM };
 			} else if (addEditTeamInfo.type === "addReal") {
 				const season = addEditTeamInfo.seasonReal;
 				const newInfo = await toWorker("exhibitionGame", "getSeasonInfo", {
@@ -144,8 +249,10 @@ const UpsertTeamModal = ({
 				console.log("newInfo", newInfo, newTeams);
 				t = {
 					...newTeams[0],
-					cid: div.cid,
-					did: div.did,
+					// cid: div.cid,
+					// did: div.did,
+					cid: -1,
+					did: -1,
 				};
 			} else if (addEditTeamInfo.type === "addLeague") {
 				throw new Error("NOT IMPLEMENTED");
@@ -159,25 +266,12 @@ const UpsertTeamModal = ({
 				throw new Error("Invalid team");
 			}
 
-			setControlledTeam({
-				...t,
-				region: t.region,
-				name: t.name,
-				abbrev: t.abbrev,
-				pop: String(t.pop),
-				stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
-				colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
-				jersey: t.jersey ?? DEFAULT_JERSEY,
-				did: String(t.did),
-				imgURL: t.imgURL ?? "",
-				imgURLSmall: t.imgURLSmall ?? "",
-			});
+			newControlledTeam(t);
 		};
 
 		run();
 
 		return () => {
-			console.log("close");
 			mounted = false;
 		};
 	}, [
@@ -192,13 +286,15 @@ const UpsertTeamModal = ({
 
 	const save = () => {
 		if (controlledTeam === undefined) {
-			return;
+			throw new Error("Invalid team");
 		}
-		const did = parseInt(controlledTeam.did);
+		const did = addEditTeamInfo.did;
 		const div = divs.find(div => div.did === did);
 		if (!div) {
-			return;
+			throw new Error("Invalid div");
 		}
+
+		const tid = addEditTeamInfo.type === "edit" ? controlledTeam.tid : -1;
 
 		const edited = {
 			...controlledTeam,
@@ -209,6 +305,7 @@ const UpsertTeamModal = ({
 			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
 			colors: controlledTeam.colors,
 			jersey: controlledTeam.jersey,
+			tid,
 			did,
 			cid: div.cid,
 			imgURL: controlledTeam.imgURL,
@@ -248,6 +345,17 @@ const UpsertTeamModal = ({
 			<Modal.Header closeButton>
 				{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
 			</Modal.Header>
+			<Modal.Body className="border-bottom">
+				<SelectTeam
+					abbrev={controlledTeam?.abbrev}
+					addEditTeamInfo={addEditTeamInfo}
+					disabled={!controlledTeam}
+					onChange={t => {
+						newControlledTeam(t);
+					}}
+					teams={teams}
+				/>
+			</Modal.Body>
 			<Modal.Body>
 				{controlledTeam ? (
 					<form
@@ -318,7 +426,7 @@ const UpsertTeamModal = ({
 					onClick={save}
 					disabled={!controlledTeam}
 				>
-					Save
+					{addEditTeamInfo.type === "edit" ? "Save" : "Add Team"}
 				</button>
 			</Modal.Footer>
 		</Modal>

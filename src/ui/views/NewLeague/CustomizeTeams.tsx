@@ -9,12 +9,9 @@ import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
 import { HelpPopover, StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
-import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
-import getTeamInfos from "../../../common/getTeamInfos";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
-import { useLeagues } from "../Exhibition";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 import { MAX_SEASON } from ".";
 
@@ -742,8 +739,6 @@ const CustomizeTeams = ({
 
 	const [randomizing, setRandomizing] = useState(false);
 
-	const leagues = useLeagues();
-
 	const editTeam = (tidEdit: number) => {
 		setAddEditTeamInfo({
 			...addEditTeamInfo,
@@ -753,7 +748,6 @@ const CustomizeTeams = ({
 	};
 
 	const showAddEditTeamModal = (did: number, type: AddTeamType) => {
-		console.log(did, type);
 		setAddEditTeamInfo({ ...addEditTeamInfo, type, did });
 	};
 
@@ -764,21 +758,6 @@ const CustomizeTeams = ({
 			abbrevsUsedMultipleTimes.push(abbrev);
 		}
 	}
-
-	const availableAbbrevs = getUnusedAbbrevs(teams);
-	const param = availableAbbrevs.map(abbrev => ({
-		tid: -1,
-		cid: -1,
-		did: -1,
-		abbrev,
-	}));
-	const availableBuiltInTeams: NewLeagueTeamWithoutRank[] = orderBy(
-		getTeamInfos(param).map(t => ({
-			...t,
-			popRank: -1,
-		})),
-		["region", "name"],
-	);
 
 	const resetDefault = () => {
 		const info = getDefaultConfsDivsTeams();

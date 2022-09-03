@@ -451,44 +451,19 @@ const AddTeam = ({
 	showAddEditTeamModal,
 	did,
 }: {
-	showAddEditTeamModal: (did: number, type: AddTeamType) => void;
+	showAddEditTeamModal: (did: number) => void;
 	did: number;
 }) => {
 	return (
 		<div className="d-flex p-0 m-2 justify-content-end">
-			<Dropdown>
-				<Dropdown.Toggle
-					variant="light-bordered"
-					id={`customize-teams-add-${did}`}
-				>
-					Add Team
-				</Dropdown.Toggle>
-				<Dropdown.Menu>
-					<Dropdown.Item
-						onClick={() => {
-							showAddEditTeamModal(did, "addRandom");
-						}}
-					>
-						Random players team
-					</Dropdown.Item>
-					{SPORT_HAS_REAL_PLAYERS ? (
-						<Dropdown.Item
-							onClick={() => {
-								showAddEditTeamModal(did, "addReal");
-							}}
-						>
-							Real historical team
-						</Dropdown.Item>
-					) : null}
-					<Dropdown.Item
-						onClick={() => {
-							showAddEditTeamModal(did, "addLeague");
-						}}
-					>
-						Team from existing league
-					</Dropdown.Item>
-				</Dropdown.Menu>
-			</Dropdown>
+			<button
+				className="btn btn-light-bordered"
+				onClick={() => {
+					showAddEditTeamModal(did);
+				}}
+			>
+				Add Team
+			</button>
 		</div>
 	);
 };
@@ -510,7 +485,7 @@ const Division = ({
 	confs: Conf[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	showAddEditTeamModal: (did: number, type: AddTeamType) => void;
+	showAddEditTeamModal: (did: number) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -612,7 +587,7 @@ const Conference = ({
 	divs: Div[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	showAddEditTeamModal: (did: number, type: AddTeamType) => void;
+	showAddEditTeamModal: (did: number) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -747,8 +722,12 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const showAddEditTeamModal = (did: number, type: AddTeamType) => {
-		setAddEditTeamInfo({ ...addEditTeamInfo, type, did });
+	const showAddEditTeamModal = (did: number) => {
+		const newInfo = { ...addEditTeamInfo, did };
+		if (!newInfo.type.startsWith("add")) {
+			newInfo.type = "addRandom";
+		}
+		setAddEditTeamInfo(newInfo);
 	};
 
 	const abbrevCounts = countBy(teams, "abbrev");

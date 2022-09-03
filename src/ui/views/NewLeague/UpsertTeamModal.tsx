@@ -278,6 +278,26 @@ const SelectTeam = ({
 
 	return (
 		<>
+			<div className="mb-3">
+				<select
+					className="form-select"
+					value={addEditTeamInfo.type}
+					onChange={async event => {
+						setAddEditTeamInfo({
+							...addEditTeamInfo,
+							type: event.target.value as any,
+						});
+					}}
+					disabled={disabled}
+					style={{
+						maxWidth: 200,
+					}}
+				>
+					<option value="addRandom">Random players team</option>
+					<option value="addReal">Real historical team</option>
+					<option value="addLeague">Team from existing league</option>
+				</select>
+			</div>
 			<div className="input-group">
 				{addEditTeamInfo.type !== "addRandom" ? (
 					<select

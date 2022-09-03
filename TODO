@@ -10,7 +10,7 @@ Customize Teams
   - "Random" button for team, like exhibition game
   - get rid of one of the useEffects in UpsertTeamModal?
   - persist all the addEditTeamInfo values after submitting form
-  - maybe make "Add Team" one button, and let you pick from the types in the modal
+  - remember the "type" from last time when switching to "none", so can default to that
 - under Reset, let it pull in a whole league
 - icon showing if team includes players
 - implement new league using players specified in team

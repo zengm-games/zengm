@@ -447,63 +447,38 @@ const CardHeader = ({
 	);
 };
 
-type TeamOrType = NewLeagueTeamWithoutRank | "custom" | "real" | "league";
+type AddTeamType = "random" | "real" | "league";
 
 const AddTeam = ({
-	addTeam,
+	showAddTeamModal,
 	did,
-	availableBuiltInTeams,
 }: {
-	addTeam: (did: number, t: TeamOrType) => void;
+	showAddTeamModal: (did: number, type: AddTeamType) => void;
 	did: number;
-	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
-	const [abbrev, setAbbrev] = useState("custom");
-
 	return (
-		<div className="card-body p-0 m-3">
-			<div className="input-group">
-				<select
-					className="form-select"
-					value={abbrev}
-					onChange={event => {
-						setAbbrev(event.target.value);
-					}}
-				>
-					<option value="custom">Custom team</option>
-					{SPORT_HAS_REAL_PLAYERS ? (
-						<option value="real">Real historical team</option>
-					) : null}
-					<option value="league">Existing league</option>
-					{availableBuiltInTeams.map(t => (
-						<option key={t.abbrev} value={t.abbrev}>
-							{t.region} {t.name} ({t.abbrev})
-						</option>
-					))}
-				</select>
-				<button
-					className="btn btn-light-bordered"
-					onClick={() => {
-						let t: TeamOrType;
-						if (
-							abbrev === "custom" ||
-							abbrev === "real" ||
-							abbrev === "league"
-						) {
-							t = abbrev;
-						} else {
-							const team = availableBuiltInTeams.find(t => t.abbrev === abbrev);
-							if (!team) {
-								throw new Error("Team not found");
-							}
-							t = team;
-						}
-						addTeam(did, t);
-					}}
+		<div className="d-flex p-0 m-2 justify-content-end">
+			<Dropdown>
+				<Dropdown.Toggle
+					variant="light-bordered"
+					id={`customize-teams-add-${did}`}
 				>
 					Add Team
-				</button>
-			</div>
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item
+						onClick={() => {
+							showAddTeamModal(did, "random");
+						}}
+					>
+						Random players team
+					</Dropdown.Item>
+					{SPORT_HAS_REAL_PLAYERS ? (
+						<Dropdown.Item>Real historical team</Dropdown.Item>
+					) : null}
+					<Dropdown.Item>Team from existing league</Dropdown.Item>
+				</Dropdown.Menu>
+			</Dropdown>
 		</div>
 	);
 };
@@ -514,24 +489,22 @@ const Division = ({
 	confs,
 	teams,
 	dispatch,
-	addTeam,
+	showAddTeamModal,
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
 	abbrevsUsedMultipleTimes,
-	availableBuiltInTeams,
 }: {
 	div: Div;
 	divs: Div[];
 	confs: Conf[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	addTeam: (did: number, t: TeamOrType) => void;
+	showAddTeamModal: (did: number, type: AddTeamType) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
-	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
 	return (
 		<div className="card mt-3">
@@ -607,11 +580,7 @@ const Division = ({
 				))}
 			</ul>
 
-			<AddTeam
-				addTeam={addTeam}
-				did={div.did}
-				availableBuiltInTeams={availableBuiltInTeams}
-			/>
+			<AddTeam showAddTeamModal={showAddTeamModal} did={div.did} />
 		</div>
 	);
 };
@@ -622,29 +591,27 @@ const Conference = ({
 	divs,
 	teams,
 	dispatch,
-	addTeam,
+	showAddTeamModal,
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
 	abbrevsUsedMultipleTimes,
-	availableBuiltInTeams,
 }: {
 	conf: Conf;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	addTeam: (did: number, t: TeamOrType) => void;
+	showAddTeamModal: (did: number, type: AddTeamType) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
-	availableBuiltInTeams: NewLeagueTeamWithoutRank[];
 }) => {
 	const children = divs.filter(div => div.cid === conf.cid);
 
 	return (
-		<div className="card mb-3">
+		<div className="card mb-2">
 			<CardHeader
 				name={conf.name}
 				onDelete={async () => {
@@ -690,23 +657,25 @@ const Conference = ({
 							divs={divs}
 							confs={confs}
 							dispatch={dispatch}
-							addTeam={addTeam}
+							showAddTeamModal={showAddTeamModal}
 							editTeam={editTeam}
 							teams={teams.filter(t => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
 							disableMoveDown={i === divs.length - 1 && disableMoveDown}
 							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
-							availableBuiltInTeams={availableBuiltInTeams}
 						/>
 					</div>
 				))}
 			</div>
 
-			<div className="card-body p-0 m-3 d-flex">
+			<div className="card-body p-0 m-2 d-flex">
 				<button
 					className="btn btn-light-bordered ms-auto"
 					onClick={() => {
 						dispatch({ type: "addDiv", cid: conf.cid });
+					}}
+					style={{
+						marginRight: 9,
 					}}
 				>
 					Add Division
@@ -766,28 +735,15 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const addTeam = (did: number, t: TeamOrType) => {
-		if (t === "custom") {
+	const showAddTeamModal = (did: number, type: AddTeamType) => {
+		console.log(did, type);
+		if (type === "real") {
+		} else if (type === "league") {
+		} else {
 			setEditingInfo({
 				type: "add",
 				did,
 			});
-		} else if (t === "league") {
-			console.log("addTeam", t);
-		} else if (t === "real") {
-			console.log("addTeam", t);
-		} else {
-			const div = divs.find(div => div.did === did);
-			if (div) {
-				dispatch({
-					type: "addTeam",
-					t: {
-						...t,
-						cid: div.cid,
-						did: div.did,
-					},
-				});
-			}
 		}
 	};
 
@@ -896,12 +852,11 @@ const CustomizeTeams = ({
 					divs={divs}
 					teams={teams}
 					dispatch={dispatch}
-					addTeam={addTeam}
+					showAddTeamModal={showAddTeamModal}
 					editTeam={editTeam}
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
 					abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
-					availableBuiltInTeams={availableBuiltInTeams}
 				/>
 			))}
 			<div className="mb-3 d-flex">
@@ -911,7 +866,7 @@ const CustomizeTeams = ({
 						dispatch({ type: "addConf" });
 					}}
 					style={{
-						marginRight: 15,
+						marginRight: 18,
 					}}
 				>
 					Add Conference

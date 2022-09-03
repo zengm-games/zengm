@@ -88,6 +88,7 @@ const CUSTOM_TEAM = {
 const SelectTeam = ({
 	abbrev,
 	addEditTeamInfo,
+	setAddEditTeamInfo,
 	disabled,
 	onChange,
 	currentTeams,
@@ -95,6 +96,7 @@ const SelectTeam = ({
 }: {
 	abbrev: string | undefined;
 	addEditTeamInfo: AddEditTeamInfo;
+	setAddEditTeamInfo: (addEditTeamInfo: AddEditTeamInfo) => void;
 	disabled: boolean;
 	onChange: (t: NewLeagueTeamWithoutRank) => void;
 	currentTeams: NewLeagueTeamWithoutRank[];
@@ -110,13 +112,6 @@ const SelectTeam = ({
 			}
 		},
 	);
-	const [season, setSeason] = useState(() => {
-		if (addEditTeamInfo.type === "addReal") {
-			return addEditTeamInfo.seasonReal;
-		}
-
-		return addEditTeamInfo.seasonLeague ?? 0;
-	});
 	const [allTeams, setAllTeams] = useState<
 		NewLeagueTeamWithoutRank[] | undefined
 	>();
@@ -128,6 +123,26 @@ const SelectTeam = ({
 		| undefined
 	>();
 	const [loadingTeams, setLoadingTeams] = useState(false);
+
+	const season =
+		(addEditTeamInfo.type === "addReal"
+			? addEditTeamInfo.seasonReal
+			: addEditTeamInfo.seasonLeague) ?? 0;
+	const setSeason = (newSeason: number) => {
+		let key: "seasonReal" | "seasonLeague";
+		if (addEditTeamInfo.type === "addReal") {
+			key = "seasonReal";
+		} else if (addEditTeamInfo.type === "addLeague") {
+			key = "seasonLeague";
+		} else {
+			throw new Error("Invalid setSeason call");
+		}
+
+		setAddEditTeamInfo({
+			...addEditTeamInfo,
+			[key]: newSeason,
+		});
+	};
 
 	const loadTeams = async (
 		league: ExhibitionLeagueWithSeasons,
@@ -326,6 +341,7 @@ const SelectTeam = ({
 
 const UpsertTeamModal = ({
 	addEditTeamInfo,
+	setAddEditTeamInfo,
 	teams,
 	confs,
 	divs,
@@ -335,6 +351,7 @@ const UpsertTeamModal = ({
 	realTeamInfo,
 }: {
 	addEditTeamInfo: AddEditTeamInfo;
+	setAddEditTeamInfo: (addEditTeamInfo: AddEditTeamInfo) => void;
 	teams: NewLeagueTeamWithoutRank[];
 	confs: Conf[];
 	divs: Div[];
@@ -458,6 +475,7 @@ const UpsertTeamModal = ({
 						key={addEditTeamInfo.type}
 						abbrev={controlledTeam?.abbrev}
 						addEditTeamInfo={addEditTeamInfo}
+						setAddEditTeamInfo={setAddEditTeamInfo}
 						disabled={!controlledTeam}
 						onChange={t => {
 							newControlledTeam(t);

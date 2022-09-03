@@ -937,6 +937,7 @@ const CustomizeTeams = ({
 						: addEditTeamInfo.type
 				}
 				addEditTeamInfo={addEditTeamInfo}
+				setAddEditTeamInfo={setAddEditTeamInfo}
 				confs={confs}
 				divs={divs}
 				teams={teams}

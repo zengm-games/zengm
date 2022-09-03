@@ -2,15 +2,18 @@ Customize Teams
 - add team modal
   - dropdowns at top to select team/custom, or season + team, or league + season + team
   - toggle option to show all teams, or just unused teams
-    - dedupe by abbrev + type + lid (for league)
+    - dedupe by abbrev + type + season (for league or real) + lid (for league)
+      - need to store type/season/lid in teams in CustomizeTeams
   - make sure tid is set correctly, somehow
   - if players are available for team (league/real), add a toggle to include them or not
   - show error if no leagues yet
 - under Reset, let it pull in a whole league
 - icon showing if team includes players
+- implement new league using players specified in team
 - if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
 - test
   - make sure editing works and doens't move to new div
+  - make sure real team info applies
 
 exhibition game
 - later

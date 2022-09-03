@@ -716,6 +716,7 @@ const CustomizeTeams = ({
 	initialTeams,
 	getDefaultConfsDivsTeams,
 	godModeLimits,
+	realTeamInfo,
 }: {
 	onCancel: () => void;
 	onSave: (obj: ConfsDivsTeams) => void;
@@ -723,8 +724,7 @@ const CustomizeTeams = ({
 	initialDivs: Div[];
 	initialTeams: NewLeagueTeamWithoutRank[];
 	getDefaultConfsDivsTeams: () => ConfsDivsTeams;
-	godModeLimits: View<"newLeague">["godModeLimits"];
-}) => {
+} & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
 	const [{ confs, divs, teams }, dispatch] = useReducer(reducer, {
 		confs: [...initialConfs],
 		divs: [...initialDivs],
@@ -973,6 +973,7 @@ const CustomizeTeams = ({
 					setAddEditTeamInfo({ ...addEditTeamInfo, type: "none" });
 				}}
 				godModeLimits={godModeLimits}
+				realTeamInfo={realTeamInfo}
 			/>
 		</>
 	);

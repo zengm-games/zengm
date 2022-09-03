@@ -944,6 +944,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						};
 					}}
 					godModeLimits={props.godModeLimits}
+					realTeamInfo={props.realTeamInfo}
 				/>
 			</m.div>
 		);

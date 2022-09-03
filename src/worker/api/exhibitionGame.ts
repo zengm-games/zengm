@@ -57,6 +57,10 @@ export const getSeasons = async (lid: number) => {
 	};
 };
 
+type ExhibitionTeamWithPop = ExhibitionTeam & {
+	pop: number;
+};
+
 const getSeasonInfoLeague = async ({
 	lid,
 	season,
@@ -125,7 +129,7 @@ const getSeasonInfoLeague = async ({
 	});
 	const playersByTid = groupBy(players, p => p.stats[0].tid);
 
-	const exhibitionTeams: ExhibitionTeam[] = await Promise.all(
+	const exhibitionTeams: ExhibitionTeamWithPop[] = await Promise.all(
 		teamSeasons.map(async teamSeason => {
 			const tid = teamSeason.tid;
 			const t = teams[tid];
@@ -226,6 +230,7 @@ const getSeasonInfoLeague = async ({
 				imgURL: teamSeason.imgURL ?? t.imgURL,
 				region: teamSeason.region ?? t.region,
 				name: teamSeason.name ?? t.name,
+				pop: teamSeason.pop ?? t.pop,
 				tid,
 				season,
 				seasonInfo: {
@@ -267,7 +272,7 @@ export const getSeasonInfo = async (
 		  },
 ) => {
 	let gameAttributes: Partial<GameAttributesLeague>;
-	let teams: ExhibitionTeam[];
+	let teams: ExhibitionTeamWithPop[];
 	if (options.type === "real") {
 		const info = await realRosters.getLeagueInfo({
 			phase: PHASE.PLAYOFFS,

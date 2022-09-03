@@ -1,8 +1,10 @@
+import orderBy from "lodash-es/orderBy";
 import { useEffect, useState } from "react";
+import { applyRealTeamInfos } from ".";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import type { Conf, Div, View } from "../../../common/types";
 import Modal from "../../components/Modal";
-import { helpers, logEvent } from "../../util";
+import { helpers, logEvent, toWorker } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
@@ -75,6 +77,7 @@ const UpsertTeamModal = ({
 	onCancel,
 	onSave,
 	godModeLimits,
+	realTeamInfo,
 }: {
 	addEditTeamInfo: AddEditTeamInfo;
 	teams: NewLeagueTeamWithoutRank[];
@@ -82,8 +85,7 @@ const UpsertTeamModal = ({
 	divs: Div[];
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
-	godModeLimits: View<"newLeague">["godModeLimits"];
-}) => {
+} & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
 	const [controlledTeam, setControlledTeam] = useState<
 		| {
 				tid: number;
@@ -102,53 +104,89 @@ const UpsertTeamModal = ({
 	>();
 
 	useEffect(() => {
-		const div = divs.find(div => div.did === addEditTeamInfo.did);
-		if (!div) {
-			throw new Error("Invalid did");
-		}
+		let mounted = true;
 
-		if (addEditTeamInfo.type === "none") {
-			setControlledTeam(undefined);
-			return;
-		}
+		const run = async () => {
+			const div = divs.find(div => div.did === addEditTeamInfo.did);
+			if (!div) {
+				throw new Error("Invalid did");
+			}
 
-		let t: NewLeagueTeamWithoutRank | undefined;
-		if (addEditTeamInfo.type === "addRandom") {
-			t = {
-				tid: -1,
-				region: "",
-				name: "",
-				abbrev: "NEW",
-				pop: 1,
-				cid: div.cid,
-				did: div.did,
-			};
-		} else if (addEditTeamInfo.type === "edit") {
-			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
-		}
+			if (addEditTeamInfo.type === "none") {
+				setControlledTeam(undefined);
+				return;
+			}
 
-		if (!t) {
-			throw new Error("Invalid team");
-		}
+			let t: NewLeagueTeamWithoutRank | undefined;
+			if (addEditTeamInfo.type === "edit") {
+				t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
+			} else if (addEditTeamInfo.type === "addRandom") {
+				t = {
+					tid: -1,
+					region: "",
+					name: "",
+					abbrev: "NEW",
+					pop: 1,
+					cid: div.cid,
+					did: div.did,
+				};
+			} else if (addEditTeamInfo.type === "addReal") {
+				const season = addEditTeamInfo.seasonReal;
+				const newInfo = await toWorker("exhibitionGame", "getSeasonInfo", {
+					type: "real",
+					season,
+					pidOffset: 0,
+				});
+				const newTeams = orderBy(
+					applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
+					["region", "name", "tid"],
+				);
+				console.log("newInfo", newInfo, newTeams);
+				t = {
+					...newTeams[0],
+					cid: div.cid,
+					did: div.did,
+				};
+			} else if (addEditTeamInfo.type === "addLeague") {
+				throw new Error("NOT IMPLEMENTED");
+			}
 
-		setControlledTeam({
-			...t,
-			region: t.region,
-			name: t.name,
-			abbrev: t.abbrev,
-			pop: String(t.pop),
-			stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
-			colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
-			jersey: t.jersey ?? DEFAULT_JERSEY,
-			did: String(t.did),
-			imgURL: t.imgURL ?? "",
-			imgURLSmall: t.imgURLSmall ?? "",
-		});
+			if (!mounted) {
+				return;
+			}
+
+			if (!t) {
+				throw new Error("Invalid team");
+			}
+
+			setControlledTeam({
+				...t,
+				region: t.region,
+				name: t.name,
+				abbrev: t.abbrev,
+				pop: String(t.pop),
+				stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
+				colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+				jersey: t.jersey ?? DEFAULT_JERSEY,
+				did: String(t.did),
+				imgURL: t.imgURL ?? "",
+				imgURLSmall: t.imgURLSmall ?? "",
+			});
+		};
+
+		run();
+
+		return () => {
+			console.log("close");
+			mounted = false;
+		};
 	}, [
 		addEditTeamInfo.type,
 		addEditTeamInfo.did,
 		divs,
 		addEditTeamInfo.tidEdit,
+		addEditTeamInfo.seasonReal,
+		realTeamInfo,
 		teams,
 	]);
 
@@ -263,7 +301,9 @@ const UpsertTeamModal = ({
 						</div>
 						<button className="d-none" type="submit"></button>
 					</form>
-				) : null}
+				) : (
+					"Loading..."
+				)}
 				<GodModeWarning
 					controlledTeam={controlledTeam}
 					godModeLimits={godModeLimits}
@@ -273,7 +313,11 @@ const UpsertTeamModal = ({
 				<button className="btn btn-secondary" onClick={onCancel}>
 					Cancel
 				</button>
-				<button className="btn btn-primary" onClick={save}>
+				<button
+					className="btn btn-primary"
+					onClick={save}
+					disabled={!controlledTeam}
+				>
 					Save
 				</button>
 			</Modal.Footer>

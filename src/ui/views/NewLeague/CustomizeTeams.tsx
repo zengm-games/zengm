@@ -16,6 +16,7 @@ import { Dropdown } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
 import { useLeagues } from "../Exhibition";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
+import { MAX_SEASON } from ".";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -447,13 +448,13 @@ const CardHeader = ({
 	);
 };
 
-type AddTeamType = "random" | "real" | "league";
+type AddTeamType = "addRandom" | "addReal" | "addLeague";
 
 const AddTeam = ({
-	showAddTeamModal,
+	showAddEditTeamModal,
 	did,
 }: {
-	showAddTeamModal: (did: number, type: AddTeamType) => void;
+	showAddEditTeamModal: (did: number, type: AddTeamType) => void;
 	did: number;
 }) => {
 	return (
@@ -468,15 +469,27 @@ const AddTeam = ({
 				<Dropdown.Menu>
 					<Dropdown.Item
 						onClick={() => {
-							showAddTeamModal(did, "random");
+							showAddEditTeamModal(did, "addRandom");
 						}}
 					>
 						Random players team
 					</Dropdown.Item>
 					{SPORT_HAS_REAL_PLAYERS ? (
-						<Dropdown.Item>Real historical team</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								showAddEditTeamModal(did, "addReal");
+							}}
+						>
+							Real historical team
+						</Dropdown.Item>
 					) : null}
-					<Dropdown.Item>Team from existing league</Dropdown.Item>
+					<Dropdown.Item
+						onClick={() => {
+							showAddEditTeamModal(did, "addLeague");
+						}}
+					>
+						Team from existing league
+					</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>
 		</div>
@@ -489,7 +502,7 @@ const Division = ({
 	confs,
 	teams,
 	dispatch,
-	showAddTeamModal,
+	showAddEditTeamModal,
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
@@ -500,7 +513,7 @@ const Division = ({
 	confs: Conf[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	showAddTeamModal: (did: number, type: AddTeamType) => void;
+	showAddEditTeamModal: (did: number, type: AddTeamType) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -580,7 +593,7 @@ const Division = ({
 				))}
 			</ul>
 
-			<AddTeam showAddTeamModal={showAddTeamModal} did={div.did} />
+			<AddTeam showAddEditTeamModal={showAddEditTeamModal} did={div.did} />
 		</div>
 	);
 };
@@ -591,7 +604,7 @@ const Conference = ({
 	divs,
 	teams,
 	dispatch,
-	showAddTeamModal,
+	showAddEditTeamModal,
 	editTeam,
 	disableMoveUp,
 	disableMoveDown,
@@ -602,7 +615,7 @@ const Conference = ({
 	divs: Div[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	showAddTeamModal: (did: number, type: AddTeamType) => void;
+	showAddEditTeamModal: (did: number, type: AddTeamType) => void;
 	editTeam: (tid: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
@@ -657,7 +670,7 @@ const Conference = ({
 							divs={divs}
 							confs={confs}
 							dispatch={dispatch}
-							showAddTeamModal={showAddTeamModal}
+							showAddEditTeamModal={showAddEditTeamModal}
 							editTeam={editTeam}
 							teams={teams.filter(t => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
@@ -708,62 +721,44 @@ const CustomizeTeams = ({
 		teams: [...initialTeams],
 	});
 
-	const [editingInfo, setEditingInfo] = useState<
-		| {
-				type: "none";
-		  }
-		| {
-				type: "add";
-				did: number;
-		  }
-		| {
-				type: "edit";
-				tid: number;
-		  }
-	>({
+	const [addEditTeamInfo, setAddEditTeamInfo] = useState<{
+		// Store all info in every object so we automatically use previous values when adding a second team
+		type: "none" | "addRandom" | "addReal" | "addLeague" | "edit";
+		did: number;
+		lid: number | undefined;
+		seasonLeague: number | undefined;
+		seasonReal: number;
+		tidEdit: number;
+	}>({
 		type: "none",
+		did: 0,
+		lid: undefined,
+		seasonLeague: undefined,
+		seasonReal: MAX_SEASON,
+		tidEdit: 0,
 	});
 
 	const [randomizing, setRandomizing] = useState(false);
 
 	const leagues = useLeagues();
 
-	const editTeam = (tid: number) => {
-		setEditingInfo({
+	const editTeam = (tidEdit: number) => {
+		setAddEditTeamInfo({
+			...addEditTeamInfo,
 			type: "edit",
-			tid,
+			tidEdit,
 		});
 	};
 
-	const showAddTeamModal = (did: number, type: AddTeamType) => {
+	const showAddEditTeamModal = (did: number, type: AddTeamType) => {
 		console.log(did, type);
-		if (type === "real") {
-		} else if (type === "league") {
-		} else {
-			setEditingInfo({
-				type: "add",
-				did,
-			});
-		}
+		setAddEditTeamInfo({ ...addEditTeamInfo, type, did });
 	};
 
-	let editingTeam: NewLeagueTeamWithoutRank | undefined;
-	if (editingInfo.type === "add") {
-		const div = divs.find(div => div.did === editingInfo.did);
-		if (div) {
-			editingTeam = {
-				tid: -1,
-				region: "",
-				name: "",
-				abbrev: "NEW",
-				pop: 1,
-				cid: div.cid,
-				did: div.did,
-			};
-		}
-	} else if (editingInfo.type === "edit") {
-		editingTeam = teams.find(t => t.tid === editingInfo.tid);
-	}
+	const editingTeam =
+		addEditTeamInfo.type === "edit"
+			? teams.find(t => t.tid === addEditTeamInfo.tidEdit)
+			: undefined;
 
 	const abbrevCounts = countBy(teams, "abbrev");
 	const abbrevsUsedMultipleTimes: string[] = [];
@@ -852,7 +847,7 @@ const CustomizeTeams = ({
 					divs={divs}
 					teams={teams}
 					dispatch={dispatch}
-					showAddTeamModal={showAddTeamModal}
+					showAddEditTeamModal={showAddEditTeamModal}
 					editTeam={editTeam}
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
@@ -960,7 +955,11 @@ const CustomizeTeams = ({
 			</StickyBottomButtons>
 
 			<UpsertTeamModal
-				key={editingInfo.type === "edit" ? editingInfo.tid : editingInfo.type}
+				key={
+					addEditTeamInfo.type === "edit"
+						? addEditTeamInfo.tidEdit
+						: addEditTeamInfo.type
+				}
 				t={editingTeam}
 				confs={confs}
 				divs={divs}
@@ -970,10 +969,10 @@ const CustomizeTeams = ({
 					} else {
 						dispatch({ type: "editTeam", t });
 					}
-					setEditingInfo({ type: "none" });
+					setAddEditTeamInfo({ ...addEditTeamInfo, type: "none" });
 				}}
 				onCancel={() => {
-					setEditingInfo({ type: "none" });
+					setAddEditTeamInfo({ ...addEditTeamInfo, type: "none" });
 				}}
 				godModeLimits={godModeLimits}
 			/>

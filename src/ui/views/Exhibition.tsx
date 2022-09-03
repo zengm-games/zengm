@@ -28,7 +28,7 @@ import {
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 import SettingsForm from "./Settings/SettingsForm";
 
-const getRandomSeason = (start: number, end: number) => {
+export const getRandomSeason = (start: number, end: number) => {
 	return Math.floor(Math.random() * (1 + end - start)) + start;
 };
 
@@ -80,7 +80,7 @@ const getGameAttributes = (gameAttributes?: Partial<GameAttributesLeague>) => {
 	return output;
 };
 
-type ExhibitionLeagueWithSeasons =
+export type ExhibitionLeagueWithSeasons =
 	| {
 			type: "real";
 			seasonStart: number;
@@ -459,7 +459,7 @@ type CachedSettings = {
 	teams: [CachedTeam, CachedTeam];
 };
 
-export const useLeagues = () => {
+const useLeagues = () => {
 	const [leagues, setLeagues] = useState<ExhibitionLeague[] | undefined>();
 
 	useLayoutEffect(() => {

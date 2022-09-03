@@ -1,13 +1,14 @@
 import orderBy from "lodash-es/orderBy";
-import { useEffect, useState } from "react";
-import { applyRealTeamInfos } from ".";
+import range from "lodash-es/range";
+import { useEffect, useRef, useState } from "react";
+import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import type { Conf, Div, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent, toWorker } from "../../util";
-import { useLeagues } from "../Exhibition";
+import { ExhibitionLeagueWithSeasons, getRandomSeason } from "../Exhibition";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
@@ -89,73 +90,236 @@ const SelectTeam = ({
 	addEditTeamInfo,
 	disabled,
 	onChange,
-	teams,
+	currentTeams,
+	realTeamInfo,
 }: {
 	abbrev: string | undefined;
 	addEditTeamInfo: AddEditTeamInfo;
 	disabled: boolean;
 	onChange: (t: NewLeagueTeamWithoutRank) => void;
-	teams: NewLeagueTeamWithoutRank[];
-}) => {
-	let availableTeams: NewLeagueTeamWithoutRank[];
+	currentTeams: NewLeagueTeamWithoutRank[];
+} & Pick<View<"newLeague">, "realTeamInfo">) => {
+	const [league, setLeague] = useState<ExhibitionLeagueWithSeasons | undefined>(
+		() => {
+			if (addEditTeamInfo.type === "addReal") {
+				return {
+					type: "real",
+					seasonStart: MIN_SEASON,
+					seasonEnd: MAX_SEASON,
+				};
+			}
+		},
+	);
+	const [season, setSeason] = useState(() => {
+		if (addEditTeamInfo.type === "addReal") {
+			return addEditTeamInfo.seasonReal;
+		}
 
-	if (addEditTeamInfo.type === "addRandom") {
-		const availableAbbrevs = getUnusedAbbrevs(teams);
-		const param = availableAbbrevs.map(abbrev => ({
+		return addEditTeamInfo.seasonLeague ?? 0;
+	});
+	const [allTeams, setAllTeams] = useState<
+		NewLeagueTeamWithoutRank[] | undefined
+	>();
+	const [leagues, setLeagues] = useState<
+		| {
+				lid: number;
+				name: string;
+		  }[]
+		| undefined
+	>();
+	const [loadingTeams, setLoadingTeams] = useState(false);
+
+	const loadTeams = async (
+		league: ExhibitionLeagueWithSeasons,
+		season: number,
+		tidInput?: number | "random",
+	) => {
+		setLoadingTeams(true);
+
+		const newInfo = await toWorker(
+			"exhibitionGame",
+			"getSeasonInfo",
+			league.type === "real"
+				? {
+						type: "real",
+						season,
+						pidOffset: 0,
+				  }
+				: {
+						type: "league",
+						lid: league.lid,
+						season,
+						pidOffset: 0,
+				  },
+		);
+		const newTeams = orderBy(
+			applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
+			["region", "name", "tid"],
+		).map(t => ({
+			...t,
 			tid: -1,
 			cid: -1,
 			did: -1,
-			abbrev,
 		}));
-		availableTeams = orderBy(
-			getTeamInfos(param).map(t => ({
-				...t,
-				popRank: -1,
-			})),
-			["region", "name"],
-		);
-	} else if (addEditTeamInfo.type === "addReal") {
-		throw new Error("Not implemented");
-	} else if (addEditTeamInfo.type === "addLeague") {
-		throw new Error("Not implemented");
-	} else {
+
+		let newTeam;
+		if (tidInput === "random") {
+			const index = Math.floor(Math.random() * newTeams.length);
+			newTeam = newTeams[index];
+		} else {
+			if (typeof tidInput === "number") {
+				newTeam = newTeams.find(t => t.tid === tidInput);
+			}
+			if (!newTeam) {
+				newTeam = newTeams.find(t => t.abbrev === abbrev) ?? newTeams[0];
+			}
+		}
+
+		setAllTeams(newTeams);
+		setLoadingTeams(false);
+
+		onChange(newTeam);
+	};
+
+	const awaitingInitialLoad = useRef(true);
+	useEffect(() => {
+		const run = async () => {
+			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
+			if (!awaitingInitialLoad.current) {
+				return;
+			}
+			awaitingInitialLoad.current = false;
+
+			if (addEditTeamInfo.type === "addRandom") {
+				const availableAbbrevs = getUnusedAbbrevs([]);
+				const param = availableAbbrevs.map(abbrev => ({
+					tid: -1,
+					cid: -1,
+					did: -1,
+					abbrev,
+				}));
+				setAllTeams(
+					orderBy(
+						getTeamInfos(param).map(t => ({
+							...t,
+							popRank: -1,
+						})),
+						["region", "name"],
+					),
+				);
+			} else if (addEditTeamInfo.type === "addReal") {
+				await loadTeams(league!, season);
+			} else if (addEditTeamInfo.type === "addLeague") {
+				const allLeagues = await toWorker(
+					"exhibitionGame",
+					"getLeagues",
+					undefined,
+				);
+				setLeagues(allLeagues);
+				const newLeague = allLeagues[0];
+
+				console.log("leagues", allLeagues, newLeague);
+			}
+		};
+
+		run();
+	}, []);
+
+	if (!addEditTeamInfo.type.startsWith("add")) {
 		return null;
 	}
-	const availableAbbrevs = availableTeams.map(t => t.abbrev);
-	const actualAbbrev = availableAbbrevs.includes(abbrev as any)
+
+	const availableTeams = allTeams;
+	const availableAbbrevs = availableTeams?.map(t => t.abbrev);
+	const actualAbbrev = availableAbbrevs?.includes(abbrev as any)
 		? abbrev
 		: "custom";
-	console.log(availableTeams);
+	console.log("availableTeams", availableTeams);
+
+	const actualDisabled =
+		disabled || (addEditTeamInfo.type !== "addRandom" && !league);
 
 	return (
 		<>
 			<label htmlFor="select-team-team">Team</label>
-			<select
-				id="select-team-team"
-				className="form-select"
-				disabled={disabled}
-				value={actualAbbrev}
-				onChange={event => {
-					const newAbbrev = event.target.value;
-					if (newAbbrev === "custom") {
-						onChange({ ...CUSTOM_TEAM });
-					} else {
-						const t = availableTeams.find(t => t.abbrev === newAbbrev);
-						if (t) {
+			<div className="input-group">
+				{addEditTeamInfo.type !== "addRandom" ? (
+					<select
+						className="form-select"
+						value={season}
+						onChange={async event => {
+							const value = parseInt(event.target.value);
+							setSeason(value);
+							await loadTeams(league!, value);
+						}}
+						disabled={actualDisabled}
+						style={{
+							maxWidth: 75,
+						}}
+					>
+						{league
+							? range(league.seasonEnd, league.seasonStart - 1).map(i => (
+									<option key={i} value={i}>
+										{i}
+									</option>
+							  ))
+							: null}
+					</select>
+				) : null}
+				<select
+					id="select-team-team"
+					className="form-select"
+					disabled={
+						actualDisabled || availableTeams === undefined || loadingTeams
+					}
+					value={actualAbbrev}
+					onChange={event => {
+						const newAbbrev = event.target.value;
+						if (newAbbrev === "custom") {
+							onChange({ ...CUSTOM_TEAM });
+						} else {
+							const t = availableTeams?.find(t => t.abbrev === newAbbrev);
+							if (t) {
+								onChange(t);
+							}
+						}
+					}}
+				>
+					{addEditTeamInfo.type === "addRandom" ? (
+						<option value="custom">Custom Team</option>
+					) : availableTeams === undefined ? (
+						<option value="loading">Loading...</option>
+					) : null}
+					{availableTeams?.map(t => (
+						<option key={t.abbrev} value={t.abbrev}>
+							{t.region} {t.name} ({t.abbrev})
+						</option>
+					))}
+				</select>
+				<button
+					className="btn btn-light-bordered"
+					type="button"
+					disabled={actualDisabled}
+					onClick={async () => {
+						if (league) {
+							const randomSeason = getRandomSeason(
+								league.seasonStart,
+								league.seasonEnd,
+							);
+							setSeason(randomSeason);
+							await loadTeams(league, randomSeason, "random");
+						} else if (availableTeams) {
+							const t =
+								availableTeams[
+									Math.floor(Math.random() * availableTeams.length)
+								];
 							onChange(t);
 						}
-					}
-				}}
-			>
-				{addEditTeamInfo.type === "addRandom" ? (
-					<option value="custom">Custom Team</option>
-				) : null}
-				{availableTeams.map(t => (
-					<option key={t.abbrev} value={t.abbrev}>
-						{t.region} {t.name} ({t.abbrev})
-					</option>
-				))}
-			</select>
+					}}
+				>
+					Random
+				</button>
+			</div>
 		</>
 	);
 };
@@ -214,75 +378,18 @@ const UpsertTeamModal = ({
 		}
 	};
 
-	const leagues = useLeagues();
-
 	useEffect(() => {
-		let mounted = true;
+		let t: NewLeagueTeamWithoutRank | undefined;
+		if (addEditTeamInfo.type === "edit") {
+			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
+		} else if (addEditTeamInfo.type === "addRandom") {
+			t = { ...CUSTOM_TEAM };
+		} else {
+			// Will be loaded asynchronously in SelectTeam
+		}
 
-		const run = async () => {
-			const div = divs.find(div => div.did === addEditTeamInfo.did);
-			if (!div) {
-				throw new Error("Invalid did");
-			}
-
-			if (addEditTeamInfo.type === "none") {
-				newControlledTeam(undefined);
-				return;
-			}
-
-			let t: NewLeagueTeamWithoutRank | undefined;
-			if (addEditTeamInfo.type === "edit") {
-				t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
-			} else if (addEditTeamInfo.type === "addRandom") {
-				t = { ...CUSTOM_TEAM };
-			} else if (addEditTeamInfo.type === "addReal") {
-				const season = addEditTeamInfo.seasonReal;
-				const newInfo = await toWorker("exhibitionGame", "getSeasonInfo", {
-					type: "real",
-					season,
-					pidOffset: 0,
-				});
-				const newTeams = orderBy(
-					applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
-					["region", "name", "tid"],
-				);
-				console.log("newInfo", newInfo, newTeams);
-				t = {
-					...newTeams[0],
-					// cid: div.cid,
-					// did: div.did,
-					cid: -1,
-					did: -1,
-				};
-			} else if (addEditTeamInfo.type === "addLeague") {
-				throw new Error("NOT IMPLEMENTED");
-			}
-
-			if (!mounted) {
-				return;
-			}
-
-			if (!t) {
-				throw new Error("Invalid team");
-			}
-
-			newControlledTeam(t);
-		};
-
-		run();
-
-		return () => {
-			mounted = false;
-		};
-	}, [
-		addEditTeamInfo.type,
-		addEditTeamInfo.did,
-		divs,
-		addEditTeamInfo.tidEdit,
-		addEditTeamInfo.seasonReal,
-		realTeamInfo,
-		teams,
-	]);
+		newControlledTeam(t);
+	}, [addEditTeamInfo.type, addEditTeamInfo.tidEdit, teams]);
 
 	const save = () => {
 		if (controlledTeam === undefined) {
@@ -345,17 +452,21 @@ const UpsertTeamModal = ({
 			<Modal.Header closeButton>
 				{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
 			</Modal.Header>
-			<Modal.Body className="border-bottom">
-				<SelectTeam
-					abbrev={controlledTeam?.abbrev}
-					addEditTeamInfo={addEditTeamInfo}
-					disabled={!controlledTeam}
-					onChange={t => {
-						newControlledTeam(t);
-					}}
-					teams={teams}
-				/>
-			</Modal.Body>
+			{addEditTeamInfo.type !== "edit" ? (
+				<Modal.Body className="border-bottom">
+					<SelectTeam
+						key={addEditTeamInfo.type}
+						abbrev={controlledTeam?.abbrev}
+						addEditTeamInfo={addEditTeamInfo}
+						disabled={!controlledTeam}
+						onChange={t => {
+							newControlledTeam(t);
+						}}
+						currentTeams={teams}
+						realTeamInfo={realTeamInfo}
+					/>
+				</Modal.Body>
+			) : null}
 			<Modal.Body>
 				{controlledTeam ? (
 					<form

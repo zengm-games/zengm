@@ -167,6 +167,7 @@ const SelectTeam = ({
 						pidOffset: 0,
 				  },
 		);
+		console.log("newInfo", newInfo);
 		const newTeams = orderBy(
 			applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
 			["region", "name", "tid"],
@@ -194,6 +195,24 @@ const SelectTeam = ({
 		setLoadingTeams(false);
 
 		onChange(newTeam);
+	};
+
+	const loadLeague = async (lid: number) => {
+		const { seasonStart, seasonEnd } = await toWorker(
+			"exhibitionGame",
+			"getSeasons",
+			lid,
+		);
+		const newLeague: ExhibitionLeagueWithSeasons = {
+			type: "league",
+			lid,
+			seasonStart,
+			seasonEnd,
+		};
+
+		setLeague(newLeague);
+
+		return newLeague;
 	};
 
 	const awaitingInitialLoad = useRef(true);
@@ -231,9 +250,10 @@ const SelectTeam = ({
 					undefined,
 				);
 				setLeagues(allLeagues);
-				const newLeague = allLeagues[0];
-
-				console.log("leagues", allLeagues, newLeague);
+				if (allLeagues.length > 0) {
+					const league = await loadLeague(allLeagues[0].lid);
+					await loadTeams(league, season);
+				}
 			}
 		};
 

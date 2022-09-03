@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
@@ -117,14 +117,17 @@ const SelectTeam = ({
 	const [loadingTeams, setLoadingTeams] = useState(false);
 
 	const season =
-		addEditTeamInfo.type === "addReal"
+		addEditTeamInfo.type === "add" && addEditTeamInfo.addType === "real"
 			? addEditTeamInfo.seasonReal
 			: addEditTeamInfo.seasonLeague;
 	const setSeason = (newSeason: number) => {
 		let key: "seasonReal" | "seasonLeague";
-		if (addEditTeamInfo.type === "addReal") {
+		if (addEditTeamInfo.type === "add" && addEditTeamInfo.addType === "real") {
 			key = "seasonReal";
-		} else if (addEditTeamInfo.type === "addLeague") {
+		} else if (
+			addEditTeamInfo.type === "add" &&
+			addEditTeamInfo.addType === "league"
+		) {
 			key = "seasonLeague";
 		} else {
 			throw new Error("Invalid setSeason call");
@@ -216,16 +219,9 @@ const SelectTeam = ({
 		return newLeague;
 	};
 
-	const awaitingInitialLoad = useRef(true);
 	useEffect(() => {
 		const run = async () => {
-			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
-			if (!awaitingInitialLoad.current) {
-				return;
-			}
-			awaitingInitialLoad.current = false;
-
-			if (addEditTeamInfo.type === "addRandom") {
+			if (addEditTeamInfo.addType === "random") {
 				const availableAbbrevs = getUnusedAbbrevs([]);
 				const param = availableAbbrevs.map(abbrev => ({
 					tid: -1,
@@ -242,10 +238,10 @@ const SelectTeam = ({
 						["region", "name"],
 					),
 				);
-			} else if (addEditTeamInfo.type === "addReal") {
+			} else if (addEditTeamInfo.addType === "real") {
 				const league = await loadLeague("real");
-				await loadTeams(league, season ?? league.seasonEnd);
-			} else if (addEditTeamInfo.type === "addLeague") {
+				await loadTeams(league, addEditTeamInfo.seasonReal);
+			} else if (addEditTeamInfo.addType === "league") {
 				const allLeagues = await toWorker(
 					"exhibitionGame",
 					"getLeagues",
@@ -254,15 +250,18 @@ const SelectTeam = ({
 				setLeagues(allLeagues);
 				if (allLeagues.length > 0) {
 					const league = await loadLeague(allLeagues[0].lid);
-					await loadTeams(league, season ?? league.seasonEnd);
+					await loadTeams(
+						league,
+						addEditTeamInfo.seasonLeague ?? league.seasonEnd,
+					);
 				}
 			}
 		};
 
 		run();
-	}, [addEditTeamInfo.type]);
+	}, [addEditTeamInfo.type, addEditTeamInfo.addType]);
 
-	if (!addEditTeamInfo.type.startsWith("add")) {
+	if (addEditTeamInfo.type !== "add") {
 		return null;
 	}
 
@@ -274,18 +273,18 @@ const SelectTeam = ({
 	console.log("availableTeams", availableTeams);
 
 	const actualDisabled =
-		disabled || (addEditTeamInfo.type !== "addRandom" && !league);
+		disabled || (addEditTeamInfo.addType !== "random" && !league);
 
 	return (
 		<>
 			<div className="mb-3">
 				<select
 					className="form-select"
-					value={addEditTeamInfo.type}
+					value={addEditTeamInfo.addType}
 					onChange={async event => {
 						setAddEditTeamInfo({
 							...addEditTeamInfo,
-							type: event.target.value as any,
+							addType: event.target.value as any,
 						});
 					}}
 					disabled={disabled}
@@ -293,13 +292,13 @@ const SelectTeam = ({
 						maxWidth: 200,
 					}}
 				>
-					<option value="addRandom">Random players team</option>
-					<option value="addReal">Real historical team</option>
-					<option value="addLeague">Team from existing league</option>
+					<option value="random">Random players team</option>
+					<option value="real">Real historical team</option>
+					<option value="league">Team from existing league</option>
 				</select>
 			</div>
 			<div className="input-group">
-				{addEditTeamInfo.type !== "addRandom" ? (
+				{addEditTeamInfo.addType !== "random" ? (
 					<select
 						className="form-select"
 						value={season}
@@ -340,7 +339,7 @@ const SelectTeam = ({
 						}
 					}}
 				>
-					{addEditTeamInfo.type === "addRandom" ? (
+					{addEditTeamInfo.addType === "random" ? (
 						<option value="custom">Custom Team</option>
 					) : availableTeams === undefined ? (
 						<option value="loading">Loading...</option>
@@ -439,7 +438,10 @@ const UpsertTeamModal = ({
 		let t: NewLeagueTeamWithoutRank | undefined;
 		if (addEditTeamInfo.type === "edit") {
 			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
-		} else if (addEditTeamInfo.type === "addRandom") {
+		} else if (
+			addEditTeamInfo.type === "add" &&
+			addEditTeamInfo.addType === "random"
+		) {
 			t = { ...CUSTOM_TEAM };
 		} else {
 			// Will be loaded asynchronously in SelectTeam
@@ -595,7 +597,7 @@ const UpsertTeamModal = ({
 					onClick={save}
 					disabled={!controlledTeam}
 				>
-					{addEditTeamInfo.type === "edit" ? "Save" : "Add Team"}
+					{addEditTeamInfo.type === "edit" ? "Save Team" : "Add Team"}
 				</button>
 			</Modal.Footer>
 		</Modal>

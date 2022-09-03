@@ -12,7 +12,6 @@ import { logEvent, toWorker } from "../../util";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 import { MAX_SEASON } from ".";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
@@ -445,8 +444,6 @@ const CardHeader = ({
 	);
 };
 
-type AddTeamType = "addRandom" | "addReal" | "addLeague";
-
 const AddTeam = ({
 	showAddEditTeamModal,
 	did,
@@ -672,7 +669,8 @@ const Conference = ({
 
 // Store all info in every object so we automatically use previous values when adding a second team
 export type AddEditTeamInfo = {
-	type: "none" | "addRandom" | "addReal" | "addLeague" | "edit";
+	type: "none" | "add" | "edit";
+	addType: "random" | "real" | "league";
 	did: number;
 	lid: number | undefined;
 	seasonLeague: number | undefined;
@@ -705,6 +703,7 @@ const CustomizeTeams = ({
 
 	const [addEditTeamInfo, setAddEditTeamInfo] = useState<AddEditTeamInfo>({
 		type: "none",
+		addType: "random",
 		did: 0,
 		lid: undefined,
 		seasonLeague: undefined,
@@ -723,11 +722,7 @@ const CustomizeTeams = ({
 	};
 
 	const showAddEditTeamModal = (did: number) => {
-		const newInfo = { ...addEditTeamInfo, did };
-		if (!newInfo.type.startsWith("add")) {
-			newInfo.type = "addRandom";
-		}
-		setAddEditTeamInfo(newInfo);
+		setAddEditTeamInfo({ ...addEditTeamInfo, type: "add", did });
 	};
 
 	const abbrevCounts = countBy(teams, "abbrev");

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import type { Conf, Div, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent } from "../../util";
 import TeamForm from "../ManageTeams/TeamForm";
+import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
 
 export const getGodModeWarnings = ({
@@ -67,26 +68,71 @@ const GodModeWarning = ({
 };
 
 const UpsertTeamModal = ({
-	t,
+	addEditTeamInfo,
+	teams,
 	confs,
 	divs,
 	onCancel,
 	onSave,
 	godModeLimits,
 }: {
-	t?: NewLeagueTeamWithoutRank;
+	addEditTeamInfo: AddEditTeamInfo;
+	teams: NewLeagueTeamWithoutRank[];
 	confs: Conf[];
 	divs: Div[];
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
 	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
-	const [controlledTeam, setControlledTeam] = useState(() => {
-		if (t === undefined) {
+	const [controlledTeam, setControlledTeam] = useState<
+		| {
+				tid: number;
+				region: string;
+				name: string;
+				abbrev: string;
+				pop: string;
+				stadiumCapacity: string;
+				colors: [string, string, string];
+				jersey: string;
+				did: string;
+				imgURL: string;
+				imgURLSmall: string;
+		  }
+		| undefined
+	>();
+
+	useEffect(() => {
+		const div = divs.find(div => div.did === addEditTeamInfo.did);
+		if (!div) {
+			throw new Error("Invalid did");
+		}
+
+		if (addEditTeamInfo.type === "none") {
+			setControlledTeam(undefined);
 			return;
 		}
 
-		return {
+		let t: NewLeagueTeamWithoutRank | undefined;
+		if (addEditTeamInfo.type === "addRandom") {
+			t = {
+				tid: -1,
+				region: "",
+				name: "",
+				abbrev: "NEW",
+				pop: 1,
+				cid: div.cid,
+				did: div.did,
+			};
+		} else if (addEditTeamInfo.type === "edit") {
+			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
+		}
+
+		if (!t) {
+			throw new Error("Invalid team");
+		}
+
+		setControlledTeam({
+			...t,
 			region: t.region,
 			name: t.name,
 			abbrev: t.abbrev,
@@ -95,13 +141,19 @@ const UpsertTeamModal = ({
 			colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
 			jersey: t.jersey ?? DEFAULT_JERSEY,
 			did: String(t.did),
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-		};
-	});
+			imgURL: t.imgURL ?? "",
+			imgURLSmall: t.imgURLSmall ?? "",
+		});
+	}, [
+		addEditTeamInfo.type,
+		addEditTeamInfo.did,
+		divs,
+		addEditTeamInfo.tidEdit,
+		teams,
+	]);
 
 	const save = () => {
-		if (t === undefined || controlledTeam === undefined) {
+		if (controlledTeam === undefined) {
 			return;
 		}
 		const did = parseInt(controlledTeam.did);
@@ -111,7 +163,7 @@ const UpsertTeamModal = ({
 		}
 
 		const edited = {
-			...t,
+			...controlledTeam,
 			region: controlledTeam.region,
 			name: controlledTeam.name,
 			abbrev: controlledTeam.abbrev,
@@ -154,9 +206,9 @@ const UpsertTeamModal = ({
 	};
 
 	return (
-		<Modal size="lg" show={t !== undefined} onHide={onCancel}>
+		<Modal size="lg" show={addEditTeamInfo.type !== "none"} onHide={onCancel}>
 			<Modal.Header closeButton>
-				{t !== undefined && t.tid >= 0 ? "Edit" : "Add"} Team
+				{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
 			</Modal.Header>
 			<Modal.Body>
 				{controlledTeam ? (

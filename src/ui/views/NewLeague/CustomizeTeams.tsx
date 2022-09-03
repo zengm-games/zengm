@@ -698,6 +698,16 @@ const Conference = ({
 	);
 };
 
+// Store all info in every object so we automatically use previous values when adding a second team
+export type AddEditTeamInfo = {
+	type: "none" | "addRandom" | "addReal" | "addLeague" | "edit";
+	did: number;
+	lid: number | undefined;
+	seasonLeague: number | undefined;
+	seasonReal: number;
+	tidEdit: number;
+};
+
 const CustomizeTeams = ({
 	onCancel,
 	onSave,
@@ -721,15 +731,7 @@ const CustomizeTeams = ({
 		teams: [...initialTeams],
 	});
 
-	const [addEditTeamInfo, setAddEditTeamInfo] = useState<{
-		// Store all info in every object so we automatically use previous values when adding a second team
-		type: "none" | "addRandom" | "addReal" | "addLeague" | "edit";
-		did: number;
-		lid: number | undefined;
-		seasonLeague: number | undefined;
-		seasonReal: number;
-		tidEdit: number;
-	}>({
+	const [addEditTeamInfo, setAddEditTeamInfo] = useState<AddEditTeamInfo>({
 		type: "none",
 		did: 0,
 		lid: undefined,
@@ -754,11 +756,6 @@ const CustomizeTeams = ({
 		console.log(did, type);
 		setAddEditTeamInfo({ ...addEditTeamInfo, type, did });
 	};
-
-	const editingTeam =
-		addEditTeamInfo.type === "edit"
-			? teams.find(t => t.tid === addEditTeamInfo.tidEdit)
-			: undefined;
 
 	const abbrevCounts = countBy(teams, "abbrev");
 	const abbrevsUsedMultipleTimes: string[] = [];
@@ -960,9 +957,10 @@ const CustomizeTeams = ({
 						? addEditTeamInfo.tidEdit
 						: addEditTeamInfo.type
 				}
-				t={editingTeam}
+				addEditTeamInfo={addEditTeamInfo}
 				confs={confs}
 				divs={divs}
+				teams={teams}
 				onSave={(t: NewLeagueTeamWithoutRank) => {
 					if (t.tid === -1) {
 						dispatch({ type: "addTeam", t });

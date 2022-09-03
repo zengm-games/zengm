@@ -101,17 +101,9 @@ const SelectTeam = ({
 	onChange: (t: NewLeagueTeamWithoutRank) => void;
 	currentTeams: NewLeagueTeamWithoutRank[];
 } & Pick<View<"newLeague">, "realTeamInfo">) => {
-	const [league, setLeague] = useState<ExhibitionLeagueWithSeasons | undefined>(
-		() => {
-			if (addEditTeamInfo.type === "addReal") {
-				return {
-					type: "real",
-					seasonStart: MIN_SEASON,
-					seasonEnd: MAX_SEASON,
-				};
-			}
-		},
-	);
+	const [league, setLeague] = useState<
+		ExhibitionLeagueWithSeasons | undefined
+	>();
 	const [allTeams, setAllTeams] = useState<
 		NewLeagueTeamWithoutRank[] | undefined
 	>();
@@ -125,9 +117,9 @@ const SelectTeam = ({
 	const [loadingTeams, setLoadingTeams] = useState(false);
 
 	const season =
-		(addEditTeamInfo.type === "addReal"
+		addEditTeamInfo.type === "addReal"
 			? addEditTeamInfo.seasonReal
-			: addEditTeamInfo.seasonLeague) ?? 0;
+			: addEditTeamInfo.seasonLeague;
 	const setSeason = (newSeason: number) => {
 		let key: "seasonReal" | "seasonLeague";
 		if (addEditTeamInfo.type === "addReal") {
@@ -197,18 +189,27 @@ const SelectTeam = ({
 		onChange(newTeam);
 	};
 
-	const loadLeague = async (lid: number) => {
-		const { seasonStart, seasonEnd } = await toWorker(
-			"exhibitionGame",
-			"getSeasons",
-			lid,
-		);
-		const newLeague: ExhibitionLeagueWithSeasons = {
-			type: "league",
-			lid,
-			seasonStart,
-			seasonEnd,
-		};
+	const loadLeague = async (lid: "real" | number) => {
+		let newLeague: ExhibitionLeagueWithSeasons;
+		if (lid === "real") {
+			newLeague = {
+				type: "real",
+				seasonStart: MIN_SEASON,
+				seasonEnd: MAX_SEASON,
+			};
+		} else {
+			const { seasonStart, seasonEnd } = await toWorker(
+				"exhibitionGame",
+				"getSeasons",
+				lid,
+			);
+			newLeague = {
+				type: "league",
+				lid,
+				seasonStart,
+				seasonEnd,
+			};
+		}
 
 		setLeague(newLeague);
 
@@ -242,7 +243,8 @@ const SelectTeam = ({
 					),
 				);
 			} else if (addEditTeamInfo.type === "addReal") {
-				await loadTeams(league!, season);
+				const league = await loadLeague("real");
+				await loadTeams(league, season ?? league.seasonEnd);
 			} else if (addEditTeamInfo.type === "addLeague") {
 				const allLeagues = await toWorker(
 					"exhibitionGame",
@@ -252,13 +254,13 @@ const SelectTeam = ({
 				setLeagues(allLeagues);
 				if (allLeagues.length > 0) {
 					const league = await loadLeague(allLeagues[0].lid);
-					await loadTeams(league, season);
+					await loadTeams(league, season ?? league.seasonEnd);
 				}
 			}
 		};
 
 		run();
-	}, []);
+	}, [addEditTeamInfo.type]);
 
 	if (!addEditTeamInfo.type.startsWith("add")) {
 		return null;
@@ -276,7 +278,6 @@ const SelectTeam = ({
 
 	return (
 		<>
-			<label htmlFor="select-team-team">Team</label>
 			<div className="input-group">
 				{addEditTeamInfo.type !== "addRandom" ? (
 					<select
@@ -302,7 +303,6 @@ const SelectTeam = ({
 					</select>
 				) : null}
 				<select
-					id="select-team-team"
 					className="form-select"
 					disabled={
 						actualDisabled || availableTeams === undefined || loadingTeams

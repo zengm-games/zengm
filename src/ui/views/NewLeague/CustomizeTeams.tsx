@@ -519,7 +519,7 @@ const Division = ({
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
 	showAddEditTeamModal: (did: number) => void;
-	editTeam: (tid: number) => void;
+	editTeam: (tid: number, did: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
@@ -587,7 +587,7 @@ const Division = ({
 						{t.players ? <PlayersButton players={t.players} /> : null}
 						<EditButton
 							onClick={() => {
-								editTeam(t.tid);
+								editTeam(t.tid, t.did);
 							}}
 						/>
 						<DeleteButton
@@ -622,7 +622,7 @@ const Conference = ({
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
 	showAddEditTeamModal: (did: number) => void;
-	editTeam: (tid: number) => void;
+	editTeam: (tid: number, did: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
@@ -750,11 +750,12 @@ const CustomizeTeams = ({
 
 	const [randomizing, setRandomizing] = useState(false);
 
-	const editTeam = (tidEdit: number) => {
+	const editTeam = (tidEdit: number, did: number) => {
 		setAddEditTeamInfo({
 			...addEditTeamInfo,
 			type: "edit",
 			tidEdit,
+			did,
 		});
 	};
 

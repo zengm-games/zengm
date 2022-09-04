@@ -5,7 +5,7 @@ import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
-import type { Conf, Div, View } from "../../../common/types";
+import type { Conf, Div, Player, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent, toWorker } from "../../util";
 import {
@@ -461,6 +461,8 @@ const UpsertTeamModal = ({
 				did: string;
 				imgURL: string;
 				imgURLSmall: string;
+				usePlayers?: boolean;
+				players?: Player[];
 		  }
 		| undefined
 	>();
@@ -600,6 +602,7 @@ const UpsertTeamModal = ({
 									"col-6",
 									"col-6",
 									"col-6",
+									"col-6",
 								]}
 								confs={confs}
 								divs={divs}
@@ -618,6 +621,11 @@ const UpsertTeamModal = ({
 													colors,
 												});
 										}
+									} else if (field === "usePlayers") {
+										setControlledTeam({
+											...controlledTeam,
+											usePlayers: !controlledTeam.usePlayers,
+										});
 									} else {
 										setControlledTeam({
 											...controlledTeam,
@@ -627,6 +635,7 @@ const UpsertTeamModal = ({
 								}}
 								hideStatus
 								t={controlledTeam}
+								showPlayers={!!controlledTeam.players}
 							/>
 						</div>
 						<button className="d-none" type="submit"></button>

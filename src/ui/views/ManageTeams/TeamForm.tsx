@@ -16,10 +16,12 @@ const TeamForm = ({
 	divs,
 	handleInputChange,
 	hideStatus,
+	showPlayers,
 	moveButton,
 	t,
 }: {
 	classNamesCol: [
+		string,
 		string,
 		string,
 		string,
@@ -42,14 +44,18 @@ const TeamForm = ({
 		event: { target: { value: string } },
 	) => void;
 	hideStatus?: boolean;
+	showPlayers?: boolean;
 	moveButton?: boolean;
 
 	// Really should just be ExpansionDraftSetupTeam, but need to update Manage Teams
-	t:
+	t: (
 		| Omit<View<"manageTeams">["teams"][number], "tid">
 		| (Omit<ExpansionDraftSetupTeam, "takeControl"> & {
 				disabled?: boolean;
-		  });
+		  })
+	) & {
+		usePlayers?: boolean;
+	};
 }) => {
 	const [faceWrapper, setFaceWrapper] = useState<HTMLDivElement | null>(null);
 	const face = useRef<Face | undefined>();
@@ -320,6 +326,29 @@ const TeamForm = ({
 							<option value="0">Active</option>
 							<option value="1">Inactive</option>
 						</select>
+					</div>
+				</div>
+			) : null}
+			{showPlayers ? (
+				<div className={classNamesCol[10]}>
+					<div className="mb-3">
+						<label className={classNameLabel}>Include Players</label>
+						<div
+							className="form-check form-switch"
+							title={t.usePlayers ? "Enabled" : "Disabled"}
+						>
+							<input
+								type="checkbox"
+								className="form-check-input"
+								checked={!!t.usePlayers}
+								onChange={e => handleInputChange("usePlayers", e)}
+								id="TeamForm-usePlayers"
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="TeamForm-usePlayers"
+							/>
+						</div>
 					</div>
 				</div>
 			) : null}

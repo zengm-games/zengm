@@ -266,6 +266,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 									"col-6 col-lg-1",
 									"col-6 col-lg-2",
 									"col-6 col-lg-1",
+									"d-none",
 								]}
 								classNameLabel="d-lg-none"
 								confs={props.confs}

@@ -1275,7 +1275,6 @@ const afterDBStream = async ({
 		activePlayers = activePlayers.filter(p => !replaceTids.has(p.tid));
 		activePlayers.push(...extraActivePlayers);
 	}
-	console.log("extraActivePlayers", extraActivePlayers, activePlayers);
 
 	await addDraftProspects({
 		players: activePlayers,

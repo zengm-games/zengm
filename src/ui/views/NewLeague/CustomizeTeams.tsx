@@ -339,7 +339,17 @@ const reducer = (state: State, action: Action): State => {
 	}
 };
 
-const PlayersButton = ({ players }: { players: Player[] }) => {
+const PlayersButton = ({
+	players,
+	usePlayers,
+}: {
+	players: Player[];
+	usePlayers?: boolean;
+}) => {
+	if (!usePlayers) {
+		return null;
+	}
+
 	return (
 		<OverlayTrigger
 			trigger="click"
@@ -584,7 +594,9 @@ const Division = ({
 								({t.abbrev})
 							</span>
 						</div>
-						{t.players ? <PlayersButton players={t.players} /> : null}
+						{t.players ? (
+							<PlayersButton players={t.players} usePlayers={t.usePlayers} />
+						) : null}
 						<EditButton
 							onClick={() => {
 								editTeam(t.tid, t.did);

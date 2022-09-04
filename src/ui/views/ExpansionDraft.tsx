@@ -242,6 +242,7 @@ const ExpansionDraft = ({
 													"col-6",
 													"col-6",
 													"col-6",
+													"d-none",
 												]}
 												confs={confs}
 												disableStadiumCapacity={!godMode}

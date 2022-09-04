@@ -18,6 +18,7 @@ export type NewLeagueTeam = {
 	cid: number;
 	did: number;
 	players?: Player[];
+	usePlayers?: boolean;
 };
 
 export type NewLeagueTeamWithoutRank = Omit<NewLeagueTeam, "popRank">;

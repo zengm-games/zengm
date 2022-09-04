@@ -181,6 +181,7 @@ const SelectTeam = ({
 			tid: -1,
 			cid: -1,
 			did: -1,
+			usePlayers: !!t.players,
 		}));
 
 		let newTeam;

@@ -11,8 +11,16 @@ Customize Teams
 - icon showing if team includes players
   - if players are available but not included, gray out icon in table
 - implement new league using players specified in team
-  - adjust season
-  - no stats, same reason as import
+  - adjust season/tid
+    - awards
+    - born
+    - draft
+    - injuries
+    - ratings
+    - salaries
+    - stats
+  - delete relatives, transactions
+  - how to handle contracts?
 - if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
 - new bulk options
   - random real teams (with or without repeated cities)
@@ -20,7 +28,7 @@ Customize Teams
   - all teams from one real season
 - test
   - make sure editing works and doens't move to new div
-  - make sure real team info applies
+  - make sure real player info applies
 
 exhibition game
 - later

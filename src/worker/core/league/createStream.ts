@@ -4,6 +4,7 @@ import {
 	applyRealTeamInfo,
 	DEFAULT_STADIUM_CAPACITY,
 	isSport,
+	MAX_SUPPORTED_LEAGUE_VERSION,
 	PHASE,
 	PLAYER,
 } from "../../../common";
@@ -45,6 +46,7 @@ import createRandomPlayers from "./create/createRandomPlayers";
 import getRealTeamPlayerData from "./create/getRealTeamPlayerData";
 import createGameAttributes from "./createGameAttributes";
 import initRepeatSeason from "./initRepeatSeason";
+import processPlayerNewLeague from "./processPlayerNewLeague";
 import remove from "./remove";
 
 export type TeamInfo = TeamBasic & {
@@ -165,7 +167,7 @@ class Buffer {
 	}
 }
 
-type PreProcessParams = {
+export type PreProcessParams = {
 	activeTids: number[];
 	averagePopulation: number | undefined;
 	hasRookieContracts: boolean | undefined;
@@ -213,58 +215,15 @@ const preProcess = async (
 			}
 		}
 	} else if (key === "players") {
-		if (realPlayerPhotos) {
-			// Do this before augment so it doesn't need to create a face
-			if (x.srID) {
-				if (realPlayerPhotos[x.srID]) {
-					x.imgURL = realPlayerPhotos[x.srID];
-				} else {
-					const name = x.name ?? `${x.firstName} ${x.lastName}`;
-
-					// Keep in sync with bbgm-rosters
-					const key = `dp_${x.draft.year}_${name
-						.replace(/ /g, "_")
-						.toLowerCase()}`;
-					x.imgURL = realPlayerPhotos[key];
-				}
-			}
-		}
-
-		const p: PlayerWithoutKey = await player.augmentPartialPlayer(
-			{ ...x },
+		x = await processPlayerNewLeague({
+			p: x,
+			activeTids,
+			hasRookieContracts,
+			noStartingInjuries,
+			realPlayerPhotos,
 			scoutingRank,
 			version,
-			true,
-		);
-		if (!x.contract) {
-			p.contract.temp = true;
-			if (!x.salaries) {
-				p.salaries = [];
-			}
-		}
-
-		// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts. Don't check draftPickAutoContract here because we want all rookie contracts to be labeled as such, not just rookie scale contracts.
-		if (p.tid >= 0 && (!x.contract || !hasRookieContracts)) {
-			const rookieContractLength = draft.getRookieContractLength(p.draft.round);
-			const rookieContractExp = p.draft.year + rookieContractLength;
-
-			if (rookieContractExp >= g.get("season")) {
-				(p as any).rookieContract = true;
-			}
-		}
-
-		if (p.tid >= 0 && !activeTids.includes(p.tid)) {
-			p.tid = PLAYER.FREE_AGENT;
-		}
-
-		if (noStartingInjuries && x.injury) {
-			p.injury = {
-				type: "Healthy",
-				gamesRemaining: 0,
-			};
-		}
-
-		x = p;
+		});
 	} else if (key === "scheduledEvents") {
 		if (averagePopulation !== undefined) {
 			if (x.type === "expansionDraft") {
@@ -1116,7 +1075,8 @@ const beforeDBStream = async ({
 	}
 
 	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
-		fileHasPlayers: keptKeys.has("players"),
+		fileHasPlayers:
+			keptKeys.has("players") || teamInfos.some(t => t.usePlayers),
 		fileHasTeams: !!filteredFromFile.teams,
 	});
 
@@ -1174,9 +1134,12 @@ const afterDBStream = async ({
 	activeTids,
 	extraFromStream,
 	fromFile,
+	hasRookieContracts,
 	gameAttributes,
 	getLeagueOptions,
 	lid,
+	noStartingInjuries,
+	realPlayerPhotos,
 	repeatSeason,
 	scoutingRank,
 	shuffleRosters,
@@ -1186,6 +1149,9 @@ const afterDBStream = async ({
 	teams,
 }: {
 	extraFromStream: ExtraFromStream;
+	hasRookieContracts: boolean;
+	noStartingInjuries: boolean;
+	realPlayerPhotos: RealPlayerPhotos | undefined;
 } & Pick<
 	CreateStreamProps,
 	"fromFile" | "getLeagueOptions" | "lid" | "shuffleRosters"
@@ -1236,13 +1202,42 @@ const afterDBStream = async ({
 	}
 
 	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
-	const activePlayers = fileHasPlayers
+	let activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
 				activeTids,
 				scoutingRank,
 				teams,
 		  });
+
+	// If players are specified for some team on import (from CustomizeTeams), replace the randomly generated players
+	const replaceTids = new Set();
+	const extraActivePlayers: PlayerWithoutKey[] = [];
+	for (const t of teamInfos) {
+		if (t.usePlayers && t.players) {
+			replaceTids.add(t.tid);
+			for (const p of t.players) {
+				delete p.pid;
+				p.tid = t.tid;
+				extraActivePlayers.push(
+					await processPlayerNewLeague({
+						p,
+						activeTids,
+						hasRookieContracts,
+						noStartingInjuries,
+						realPlayerPhotos,
+						scoutingRank,
+						version: MAX_SUPPORTED_LEAGUE_VERSION,
+					}),
+				);
+			}
+		}
+	}
+	if (replaceTids.size > 0) {
+		activePlayers = activePlayers.filter(p => !replaceTids.has(p.tid));
+		activePlayers.push(...extraActivePlayers);
+	}
+	console.log("extraActivePlayers", extraActivePlayers, activePlayers);
 
 	await addDraftProspects({
 		players: activePlayers,
@@ -1500,7 +1495,10 @@ const createStream = async (
 		fromFile,
 		gameAttributes,
 		getLeagueOptions,
+		hasRookieContracts: fromFile.hasRookieContracts,
 		lid,
+		noStartingInjuries,
+		realPlayerPhotos,
 		repeatSeason,
 		scoutingRank,
 		shuffleRosters,

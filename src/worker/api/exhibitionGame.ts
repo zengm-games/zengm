@@ -242,6 +242,9 @@ const getSeasonInfoLeague = async ({
 				region: teamSeason.region ?? t.region,
 				name: teamSeason.name ?? t.name,
 				pop: teamSeason.pop ?? t.pop,
+				colors: teamSeason.colors ?? t.colors,
+				jersey: teamSeason.jersey ?? t.jersey,
+				stadiumCapacity: teamSeason.stadiumCapacity ?? t.stadiumCapacity,
 				tid,
 				season,
 				seasonInfo: {

@@ -43,7 +43,18 @@ export type ExhibitionTeam = {
 	};
 	players: Player[];
 	ovr: number;
-} & Pick<Team, "abbrev" | "imgURL" | "region" | "name" | "tid" | "depth">;
+} & Pick<
+	Team,
+	| "abbrev"
+	| "imgURL"
+	| "region"
+	| "name"
+	| "tid"
+	| "depth"
+	| "colors"
+	| "jersey"
+	| "stadiumCapacity"
+>;
 
 type ExhibitionLeague = {
 	lid: number;

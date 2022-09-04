@@ -8,10 +8,18 @@ import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import type { Conf, Div, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent, toWorker } from "../../util";
-import { ExhibitionLeagueWithSeasons, getRandomSeason } from "../Exhibition";
+import {
+	ExhibitionLeagueWithSeasons,
+	getRandomSeason,
+	type ExhibitionTeam,
+} from "../Exhibition";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
+
+type UpsertTeam = NewLeagueTeamWithoutRank & {
+	seasonInfo?: ExhibitionTeam["seasonInfo"];
+};
 
 export const getGodModeWarnings = ({
 	is,
@@ -102,16 +110,13 @@ const SelectTeam = ({
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
 	disabled: boolean;
-	onChange: (t: NewLeagueTeamWithoutRank) => void;
-	currentTeams: NewLeagueTeamWithoutRank[];
+	onChange: (t: UpsertTeam) => void;
+	currentTeams: UpsertTeam[];
 } & Pick<View<"newLeague">, "realTeamInfo">) => {
-	console.log("addEditTeamInfo", addEditTeamInfo);
 	const [league, setLeague] = useState<
 		ExhibitionLeagueWithSeasons | undefined
 	>();
-	const [allTeams, setAllTeams] = useState<
-		NewLeagueTeamWithoutRank[] | undefined
-	>();
+	const [allTeams, setAllTeams] = useState<UpsertTeam[] | undefined>();
 	const [leagues, setLeagues] = useState<
 		| {
 				lid: number;
@@ -150,7 +155,6 @@ const SelectTeam = ({
 		tidInput?: number | "random",
 	) => {
 		setLoadingTeams(true);
-		console.log("loadTeams", league, season, tidInput);
 
 		const newInfo = await toWorker(
 			"exhibitionGame",
@@ -168,7 +172,7 @@ const SelectTeam = ({
 						pidOffset: 0,
 				  },
 		);
-		console.log("newInfo", newInfo);
+
 		const newTeams = orderBy(
 			applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
 			["region", "name", "tid"],
@@ -257,7 +261,6 @@ const SelectTeam = ({
 				if (allLeagues.length > 0) {
 					const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
 					const league = await loadLeague(lid);
-					console.log("hi", lid, league);
 					await loadTeams(
 						league,
 						addEditTeamInfo.seasonLeague ?? league.seasonEnd,
@@ -384,6 +387,13 @@ const SelectTeam = ({
 					{availableTeams?.map(t => (
 						<option key={t.abbrev} value={t.abbrev}>
 							{t.region} {t.name} ({t.abbrev})
+							{t.seasonInfo
+								? ` ${helpers.formatRecord(t.seasonInfo)}${
+										t.seasonInfo.roundsWonText
+											? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
+											: null
+								  }`
+								: null}
 						</option>
 					))}
 				</select>
@@ -428,11 +438,11 @@ const UpsertTeamModal = ({
 }: {
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
-	teams: NewLeagueTeamWithoutRank[];
+	teams: UpsertTeam[];
 	confs: Conf[];
 	divs: Div[];
 	onCancel: () => void;
-	onSave: (t: NewLeagueTeamWithoutRank) => void;
+	onSave: (t: UpsertTeam) => void;
 } & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
 	const [controlledTeam, setControlledTeam] = useState<
 		| {
@@ -451,7 +461,7 @@ const UpsertTeamModal = ({
 		| undefined
 	>();
 
-	const newControlledTeam = (t: NewLeagueTeamWithoutRank | undefined) => {
+	const newControlledTeam = (t: UpsertTeam | undefined) => {
 		if (!t) {
 			setControlledTeam(undefined);
 		} else {
@@ -472,7 +482,7 @@ const UpsertTeamModal = ({
 	};
 
 	useEffect(() => {
-		let t: NewLeagueTeamWithoutRank | undefined;
+		let t: UpsertTeam | undefined;
 		if (addEditTeamInfo.type === "edit") {
 			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
 		} else if (

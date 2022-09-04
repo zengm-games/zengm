@@ -7,6 +7,7 @@ Customize Teams
   - show error if no leagues yet
   - get rid of one of the useEffects in UpsertTeamModal?
   - how to identify these teams? like prefix with season or league number? just in the Customize Teams UI, or everywhere?
+  - all teams have same colors and jersey, when importing from league
 - icon showing if team includes players
   - if players are available but not included, gray out icon in table
 - if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name

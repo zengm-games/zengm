@@ -134,12 +134,17 @@ const getSeasonInfoLeague = async ({
 			const tid = teamSeason.tid;
 			const t = teams[tid];
 
-			const roundsWonText = helpers.roundsWonText(
-				teamSeason.playoffRoundsWon,
-				numGamesPlayoffSeries.length,
-				confs.length,
-				true,
-			);
+			let roundsWonText;
+			if (season === currentSeason && currentPhase < PHASE.PLAYOFFS) {
+				roundsWonText = "";
+			} else {
+				roundsWonText = helpers.roundsWonText(
+					teamSeason.playoffRoundsWon,
+					numGamesPlayoffSeries.length,
+					confs.length,
+					true,
+				);
+			}
 
 			const translatePids: Record<number, number> = {};
 

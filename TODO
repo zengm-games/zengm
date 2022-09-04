@@ -4,14 +4,12 @@ Customize Teams
     - dedupe by abbrev + type + season (for league or real) + lid (for league)
       - need to store type/season/lid in teams in CustomizeTeams
   - if players are available for team (league/real), add a toggle to include them or not
-    - if not included, gray out icon in table
   - show error if no leagues yet
   - get rid of one of the useEffects in UpsertTeamModal?
-  - for real team, seasonInfo should not have roundsWonText before playoffs
   - while switching type, should disable save button
   - how to identify these teams? like prefix with season or league number? just in the Customize Teams UI, or everywhere?
 - icon showing if team includes players
-  - click and show list of players
+  - if players are available but not included, gray out icon in table
 - implement new league using players specified in team
   - adjust season
   - no stats, same reason as import

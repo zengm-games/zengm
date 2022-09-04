@@ -85,6 +85,10 @@ const CUSTOM_TEAM = {
 	did: -1,
 };
 
+type SetAddEditTeamInfo = (
+	addEditTeamInfo: (info: AddEditTeamInfo) => AddEditTeamInfo,
+) => void;
+
 const SelectTeam = ({
 	abbrev,
 	addEditTeamInfo,
@@ -96,11 +100,12 @@ const SelectTeam = ({
 }: {
 	abbrev: string | undefined;
 	addEditTeamInfo: AddEditTeamInfo;
-	setAddEditTeamInfo: (addEditTeamInfo: AddEditTeamInfo) => void;
+	setAddEditTeamInfo: SetAddEditTeamInfo;
 	disabled: boolean;
 	onChange: (t: NewLeagueTeamWithoutRank) => void;
 	currentTeams: NewLeagueTeamWithoutRank[];
 } & Pick<View<"newLeague">, "realTeamInfo">) => {
+	console.log("addEditTeamInfo", addEditTeamInfo);
 	const [league, setLeague] = useState<
 		ExhibitionLeagueWithSeasons | undefined
 	>();
@@ -133,10 +138,10 @@ const SelectTeam = ({
 			throw new Error("Invalid setSeason call");
 		}
 
-		setAddEditTeamInfo({
-			...addEditTeamInfo,
+		setAddEditTeamInfo(info => ({
+			...info,
 			[key]: newSeason,
-		});
+		}));
 	};
 
 	const loadTeams = async (
@@ -145,6 +150,7 @@ const SelectTeam = ({
 		tidInput?: number | "random",
 	) => {
 		setLoadingTeams(true);
+		console.log("loadTeams", league, season, tidInput);
 
 		const newInfo = await toWorker(
 			"exhibitionGame",
@@ -249,7 +255,9 @@ const SelectTeam = ({
 				);
 				setLeagues(allLeagues);
 				if (allLeagues.length > 0) {
-					const league = await loadLeague(allLeagues[0].lid);
+					const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
+					const league = await loadLeague(lid);
+					console.log("hi", lid, league);
 					await loadTeams(
 						league,
 						addEditTeamInfo.seasonLeague ?? league.seasonEnd,
@@ -270,22 +278,21 @@ const SelectTeam = ({
 	const actualAbbrev = availableAbbrevs?.includes(abbrev as any)
 		? abbrev
 		: "custom";
-	console.log("availableTeams", availableTeams);
 
 	const actualDisabled =
 		disabled || (addEditTeamInfo.addType !== "random" && !league);
 
 	return (
 		<>
-			<div className="mb-3">
+			<div className="mb-3 d-flex">
 				<select
 					className="form-select"
 					value={addEditTeamInfo.addType}
 					onChange={async event => {
-						setAddEditTeamInfo({
-							...addEditTeamInfo,
+						setAddEditTeamInfo(info => ({
+							...info,
 							addType: event.target.value as any,
-						});
+						}));
 					}}
 					disabled={disabled}
 					style={{
@@ -296,8 +303,38 @@ const SelectTeam = ({
 					<option value="real">Real historical team</option>
 					<option value="league">Team from existing league</option>
 				</select>
+				{addEditTeamInfo.addType === "league" ? (
+					<select
+						className="form-select ms-2"
+						value={addEditTeamInfo.lid}
+						onChange={async event => {
+							const lid = parseInt(event.target.value);
+							setAddEditTeamInfo(info => ({
+								...info,
+								lid,
+							}));
+							const league = await loadLeague(lid);
+							setSeason(league.seasonEnd);
+							await loadTeams(league, league.seasonEnd);
+						}}
+						disabled={disabled}
+						style={{
+							maxWidth: 300,
+						}}
+					>
+						{leagues ? (
+							leagues.map(league => (
+								<option key={league.lid} value={league.lid}>
+									{league.name}
+								</option>
+							))
+						) : (
+							<option value="loading">Loading...</option>
+						)}
+					</select>
+				) : null}
 			</div>
-			<div className="input-group">
+			<div className="input-group" style={{ maxWidth: 508 }}>
 				{addEditTeamInfo.addType !== "random" ? (
 					<select
 						className="form-select"
@@ -390,7 +427,7 @@ const UpsertTeamModal = ({
 	realTeamInfo,
 }: {
 	addEditTeamInfo: AddEditTeamInfo;
-	setAddEditTeamInfo: (addEditTeamInfo: AddEditTeamInfo) => void;
+	setAddEditTeamInfo: SetAddEditTeamInfo;
 	teams: NewLeagueTeamWithoutRank[];
 	confs: Conf[];
 	divs: Div[];

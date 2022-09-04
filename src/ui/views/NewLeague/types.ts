@@ -1,4 +1,4 @@
-import type { Conf, Div } from "../../../common/types";
+import type { Conf, Div, Player } from "../../../common/types";
 
 // Keep in sync with BASIC_TEAM_KEYS
 export type NewLeagueTeam = {
@@ -17,6 +17,7 @@ export type NewLeagueTeam = {
 	jersey?: string;
 	cid: number;
 	did: number;
+	players?: Player[];
 };
 
 export type NewLeagueTeamWithoutRank = Omit<NewLeagueTeam, "popRank">;

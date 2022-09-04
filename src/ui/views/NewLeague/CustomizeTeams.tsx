@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import type { Dispatch } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types";
-import type { Conf, Div, View } from "../../../common/types";
+import type { Conf, Div, Player, View } from "../../../common/types";
 import classNames from "classnames";
 import { arrayMoveImmutable } from "array-move";
 import orderBy from "lodash-es/orderBy";
@@ -10,7 +10,7 @@ import countBy from "lodash-es/countBy";
 import { HelpPopover, StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
 import { MAX_SEASON } from ".";
 
@@ -339,6 +339,42 @@ const reducer = (state: State, action: Action): State => {
 	}
 };
 
+const PlayersButton = ({ players }: { players: Player[] }) => {
+	return (
+		<OverlayTrigger
+			trigger="click"
+			placement="auto"
+			overlay={
+				<Popover id={String(Math.random())}>
+					<Popover.Header>Top Players</Popover.Header>
+					<Popover.Body>
+						<ul className="list-unstyled mb-0">
+							{players.slice(0, 10).map(p => {
+								const ratings = p.ratings.at(-1)!;
+								return (
+									<li key={p.pid}>
+										{p.firstName} {p.lastName} - {ratings.ovr} ovr,{" "}
+										{ratings.pot} pot
+									</li>
+								);
+							})}
+						</ul>
+					</Popover.Body>
+				</Popover>
+			}
+			rootClose
+		>
+			<button
+				className="ms-2 btn btn-link p-0 border-0 text-reset"
+				title="Players"
+				type="button"
+			>
+				<span className="glyphicon glyphicon-user" />
+			</button>
+		</OverlayTrigger>
+	);
+};
+
 const EditButton = ({ onClick }: { onClick: () => void }) => {
 	return (
 		<button
@@ -548,6 +584,7 @@ const Division = ({
 								({t.abbrev})
 							</span>
 						</div>
+						{t.players ? <PlayersButton players={t.players} /> : null}
 						<EditButton
 							onClick={() => {
 								editTeam(t.tid);

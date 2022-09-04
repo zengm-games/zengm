@@ -1,18 +1,13 @@
 Customize Teams
 - add team modal
-  - dropdowns at top to select team/custom, or season + team, or league + season + team
   - toggle option to show all teams, or just unused teams
     - dedupe by abbrev + type + season (for league or real) + lid (for league)
       - need to store type/season/lid in teams in CustomizeTeams
-  - make sure tid is set correctly, somehow
   - if players are available for team (league/real), add a toggle to include them or not
   - show error if no leagues yet
-  - "Random" button for team, like exhibition game
   - get rid of one of the useEffects in UpsertTeamModal?
   - persist all the addEditTeamInfo values after submitting form
   - remember the "type" from last time when switching to "none", so can default to that
-  - when adding a team, if you change the division in the form, it doesn't work and instead puts them in the original division
-    - also always displays as if first division
   - for real team, seasonInfo should not have roundsWonText before playoffs
 - under Reset, let it pull in a whole league
 - icon showing if team includes players

@@ -474,7 +474,7 @@ const UpsertTeamModal = ({
 				stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
 				colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
 				jersey: t.jersey ?? DEFAULT_JERSEY,
-				did: String(t.did),
+				did: String(addEditTeamInfo.did),
 				imgURL: t.imgURL ?? "",
 				imgURLSmall: t.imgURLSmall ?? "",
 			});
@@ -501,7 +501,7 @@ const UpsertTeamModal = ({
 		if (controlledTeam === undefined) {
 			throw new Error("Invalid team");
 		}
-		const did = addEditTeamInfo.did;
+		const did = parseInt(controlledTeam.did);
 		const div = divs.find(div => div.did === did);
 		if (!div) {
 			throw new Error("Invalid div");

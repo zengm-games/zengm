@@ -110,7 +110,7 @@ const SelectTeam = ({
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
 	disabled: boolean;
-	onChange: (t: UpsertTeam) => void;
+	onChange: (t?: UpsertTeam) => void;
 	currentTeams: UpsertTeam[];
 } & Pick<View<"newLeague">, "realTeamInfo">) => {
 	const [league, setLeague] = useState<
@@ -155,6 +155,9 @@ const SelectTeam = ({
 		tidInput?: number | "random",
 	) => {
 		setLoadingTeams(true);
+
+		// This sets controlledTeam to undefined, which disables the Save Team button
+		onChange();
 
 		const newInfo = await toWorker(
 			"exhibitionGame",

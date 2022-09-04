@@ -1130,6 +1130,38 @@ const beforeDBStream = async ({
 	};
 };
 
+const adjustSeasonPlayer = (p: PlayerWithoutKey) => {
+	const season = g.get("season");
+
+	const playerSeason = p.ratings.at(-1)!.season;
+
+	const diff = season - playerSeason;
+
+	if (diff !== 0) {
+		for (const row of [
+			...p.awards,
+			...p.injuries,
+			...p.ratings,
+			...p.salaries,
+		]) {
+			row.season += diff;
+		}
+
+		p.born.year += diff;
+
+		p.draft = {
+			year: p.draft.year + diff,
+			tid: -1,
+			originalTid: -1,
+			round: 0,
+			pick: 0,
+			ovr: p.draft.ovr,
+			pot: p.draft.pot,
+			skills: p.draft.skills,
+		};
+	}
+};
+
 const afterDBStream = async ({
 	activeTids,
 	extraFromStream,
@@ -1217,19 +1249,25 @@ const afterDBStream = async ({
 		if (t.usePlayers && t.players) {
 			replaceTids.add(t.tid);
 			for (const p of t.players) {
+				delete p.contract;
 				delete p.pid;
+				delete p.relatives;
+				delete p.transactions;
+				p.stats = [];
 				p.tid = t.tid;
-				extraActivePlayers.push(
-					await processPlayerNewLeague({
-						p,
-						activeTids,
-						hasRookieContracts,
-						noStartingInjuries,
-						realPlayerPhotos,
-						scoutingRank,
-						version: MAX_SUPPORTED_LEAGUE_VERSION,
-					}),
-				);
+
+				const p2 = await processPlayerNewLeague({
+					p,
+					activeTids,
+					hasRookieContracts,
+					noStartingInjuries,
+					realPlayerPhotos,
+					scoutingRank,
+					version: MAX_SUPPORTED_LEAGUE_VERSION,
+				});
+				adjustSeasonPlayer(p2);
+
+				extraActivePlayers.push(p2);
 			}
 		}
 	}

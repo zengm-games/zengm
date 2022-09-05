@@ -13,6 +13,7 @@ import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
 import { MAX_SEASON } from ".";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -816,51 +817,59 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const randomize = (weightByPopulation: boolean) => async () => {
-		setRandomizing(true);
+	const randomize =
+		({
+			real,
+			weightByPopulation,
+		}: {
+			real: boolean;
+			weightByPopulation: boolean;
+		}) =>
+		async () => {
+			setRandomizing(true);
 
-		try {
-			// If there are no teams, auto reset to default first
-			let myDivs = divs;
-			let myTeams = teams;
-			let myConfs = confs;
-			if (myTeams.length === 0) {
-				const info = getDefaultConfsDivsTeams();
-				myDivs = info.divs;
-				myTeams = info.teams;
-				myConfs = info.confs;
-			}
+			try {
+				// If there are no teams, auto reset to default first
+				let myDivs = divs;
+				let myTeams = teams;
+				let myConfs = confs;
+				if (myTeams.length === 0) {
+					const info = getDefaultConfsDivsTeams();
+					myDivs = info.divs;
+					myTeams = info.teams;
+					myConfs = info.confs;
+				}
 
-			const numTeamsPerDiv = myDivs.map(
-				div => myTeams.filter(t => t.did === div.did).length,
-			);
+				const numTeamsPerDiv = myDivs.map(
+					div => myTeams.filter(t => t.did === div.did).length,
+				);
 
-			const response = await toWorker("main", "getRandomTeams", {
-				divs: myDivs,
-				numTeamsPerDiv,
-				weightByPopulation,
-			});
-
-			if (typeof response === "string") {
-				logEvent({
-					type: "error",
-					text: response,
-					saveToDb: false,
-				});
-			} else {
-				dispatch({
-					type: "setState",
-					teams: response,
+				const response = await toWorker("main", "getRandomTeams", {
 					divs: myDivs,
-					confs: myConfs,
+					numTeamsPerDiv,
+					weightByPopulation,
 				});
+
+				if (typeof response === "string") {
+					logEvent({
+						type: "error",
+						text: response,
+						saveToDb: false,
+					});
+				} else {
+					dispatch({
+						type: "setState",
+						teams: response,
+						divs: myDivs,
+						confs: myConfs,
+					});
+				}
+				setRandomizing(false);
+			} catch (error) {
+				setRandomizing(false);
+				throw error;
 			}
-			setRandomizing(false);
-		} catch (error) {
-			setRandomizing(false);
-			throw error;
-		}
-	};
+		};
 
 	return (
 		<>
@@ -905,12 +914,34 @@ const CustomizeTeams = ({
 					<Dropdown.Menu>
 						<Dropdown.Item onClick={resetClear}>Clear</Dropdown.Item>
 						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>
-						<Dropdown.Item onClick={randomize(false)}>
-							Random built-in teams
+						<Dropdown.Item
+							onClick={randomize({
+								real: false,
+								weightByPopulation: false,
+							})}
+						>
+							Randomize - random players
 						</Dropdown.Item>
-						<Dropdown.Item onClick={randomize(true)}>
-							Random built-in teams (population weighted)
+						<Dropdown.Item
+							onClick={randomize({
+								real: false,
+								weightByPopulation: true,
+							})}
+						>
+							Randomize - random players, population weighted
 						</Dropdown.Item>
+						{SPORT_HAS_REAL_PLAYERS ? (
+							<>
+								<Dropdown.Item
+									onClick={randomize({
+										real: true,
+										weightByPopulation: false,
+									})}
+								>
+									Randomize - real teams
+								</Dropdown.Item>
+							</>
+						) : null}
 					</Dropdown.Menu>
 				</Dropdown>
 				<div className="ms-2 pt-2">
@@ -920,17 +951,17 @@ const CustomizeTeams = ({
 							default values.
 						</p>
 						<p>
-							<b>Random built-in teams</b>: This replaces any teams you
-							currently have with random built-in teams. Those teams are grouped
-							into divisions based on their geographic location. Then, if your
-							division names are the same as the default division names and each
-							division has the same number of teams, it tries to assign each
-							group to a division name that makes sense.
+							<b>Randomize</b>: This replaces any teams you currently have with
+							random built-in teams. Those teams are grouped into divisions
+							based on their geographic location. Then, if your division names
+							are the same as the default division names and each division has
+							the same number of teams, it tries to assign each group to a
+							division name that makes sense.
 						</p>
 						<p>
-							<b>Random built-in teams (population weighted)</b>: Same as above,
-							except larger cities are more likely to be selected, so the set of
-							teams may feel a bit more realistic.
+							<b>Randomize, population weighted</b>: Same as above, except
+							larger cities are more likely to be selected, so the set of teams
+							may feel a bit more realistic.
 						</p>
 					</HelpPopover>
 				</div>

@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
 import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
@@ -467,25 +467,30 @@ const UpsertTeamModal = ({
 		| undefined
 	>();
 
-	const newControlledTeam = (t: UpsertTeam | undefined) => {
-		if (!t) {
-			setControlledTeam(undefined);
-		} else {
-			setControlledTeam({
-				...t,
-				region: t.region,
-				name: t.name,
-				abbrev: t.abbrev,
-				pop: String(t.pop),
-				stadiumCapacity: String(t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY),
-				colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
-				jersey: t.jersey ?? DEFAULT_JERSEY,
-				did: String(addEditTeamInfo.did),
-				imgURL: t.imgURL ?? "",
-				imgURLSmall: t.imgURLSmall ?? "",
-			});
-		}
-	};
+	const newControlledTeam = useCallback(
+		(t: UpsertTeam | undefined) => {
+			if (!t) {
+				setControlledTeam(undefined);
+			} else {
+				setControlledTeam({
+					...t,
+					region: t.region,
+					name: t.name,
+					abbrev: t.abbrev,
+					pop: String(t.pop),
+					stadiumCapacity: String(
+						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
+					),
+					colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+					jersey: t.jersey ?? DEFAULT_JERSEY,
+					did: String(addEditTeamInfo.did),
+					imgURL: t.imgURL ?? "",
+					imgURLSmall: t.imgURLSmall ?? "",
+				});
+			}
+		},
+		[addEditTeamInfo.did],
+	);
 
 	useEffect(() => {
 		let t: UpsertTeam | undefined;
@@ -501,7 +506,13 @@ const UpsertTeamModal = ({
 		}
 
 		newControlledTeam(t);
-	}, [addEditTeamInfo.type, addEditTeamInfo.tidEdit, teams]);
+	}, [
+		addEditTeamInfo.addType,
+		addEditTeamInfo.type,
+		addEditTeamInfo.tidEdit,
+		newControlledTeam,
+		teams,
+	]);
 
 	const save = () => {
 		if (controlledTeam === undefined) {

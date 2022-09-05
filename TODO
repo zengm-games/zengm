@@ -4,7 +4,6 @@ Customize Teams
     - dedupe by abbrev + type + season (for league or real) + lid (for league)
       - need to store type/season/lid in teams in CustomizeTeams
   - show error if no leagues yet
-  - get rid of one of the useEffects in UpsertTeamModal?
   - how to identify these teams? like prefix with season or league number? just in the Customize Teams UI, or everywhere?
 - if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
 - new bulk options

@@ -8,18 +8,10 @@ import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import type { Conf, Div, Player, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent, toWorker } from "../../util";
-import {
-	ExhibitionLeagueWithSeasons,
-	getRandomSeason,
-	type ExhibitionTeam,
-} from "../Exhibition";
+import { ExhibitionLeagueWithSeasons, getRandomSeason } from "../Exhibition";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
-
-type UpsertTeam = NewLeagueTeamWithoutRank & {
-	seasonInfo?: ExhibitionTeam["seasonInfo"];
-};
 
 export const getGodModeWarnings = ({
 	is,
@@ -110,13 +102,15 @@ const SelectTeam = ({
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
 	disabled: boolean;
-	onChange: (t?: UpsertTeam) => void;
-	currentTeams: UpsertTeam[];
+	onChange: (t?: NewLeagueTeamWithoutRank) => void;
+	currentTeams: NewLeagueTeamWithoutRank[];
 } & Pick<View<"newLeague">, "realTeamInfo">) => {
 	const [league, setLeague] = useState<
 		ExhibitionLeagueWithSeasons | undefined
 	>();
-	const [allTeams, setAllTeams] = useState<UpsertTeam[] | undefined>();
+	const [allTeams, setAllTeams] = useState<
+		NewLeagueTeamWithoutRank[] | undefined
+	>();
 	const [leagues, setLeagues] = useState<
 		| {
 				lid: number;
@@ -442,11 +436,11 @@ const UpsertTeamModal = ({
 }: {
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
-	teams: UpsertTeam[];
+	teams: NewLeagueTeamWithoutRank[];
 	confs: Conf[];
 	divs: Div[];
 	onCancel: () => void;
-	onSave: (t: UpsertTeam) => void;
+	onSave: (t: NewLeagueTeamWithoutRank) => void;
 } & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
 	const [controlledTeam, setControlledTeam] = useState<
 		| {
@@ -468,7 +462,7 @@ const UpsertTeamModal = ({
 	>();
 
 	const newControlledTeam = useCallback(
-		(t: UpsertTeam | undefined) => {
+		(t: NewLeagueTeamWithoutRank | undefined) => {
 			if (!t) {
 				setControlledTeam(undefined);
 			} else {
@@ -493,7 +487,7 @@ const UpsertTeamModal = ({
 	);
 
 	useEffect(() => {
-		let t: UpsertTeam | undefined;
+		let t: NewLeagueTeamWithoutRank | undefined;
 		if (addEditTeamInfo.type === "edit") {
 			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
 		} else if (

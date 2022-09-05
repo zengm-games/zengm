@@ -788,6 +788,26 @@ const CustomizeTeams = ({
 		}
 	}
 
+	const resetClear = () => {
+		dispatch({
+			type: "setState",
+			confs: [
+				{
+					cid: 0,
+					name: "New Conference",
+				},
+			],
+			divs: [
+				{
+					did: 0,
+					cid: 0,
+					name: "New Division",
+				},
+			],
+			teams: [],
+		});
+	};
+
 	const resetDefault = () => {
 		const info = getDefaultConfsDivsTeams();
 		dispatch({
@@ -883,6 +903,7 @@ const CustomizeTeams = ({
 						{randomizing ? <ProcessingSpinner /> : "Reset"}
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
+						<Dropdown.Item onClick={resetClear}>Clear</Dropdown.Item>
 						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>
 						<Dropdown.Item onClick={randomize(false)}>
 							Random built-in teams

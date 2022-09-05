@@ -1,6 +1,5 @@
 Customize Teams
 - add team modal
-  - show error if no leagues yet
   - how to identify these teams? like prefix with season or league number? just in the Customize Teams UI, or everywhere?
 - if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
 - new bulk options

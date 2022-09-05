@@ -263,6 +263,9 @@ const SelectTeam = ({
 						league,
 						addEditTeamInfo.seasonLeague ?? league.seasonEnd,
 					);
+				} else {
+					// If no leagues found, at least show something
+					onChange({ ...CUSTOM_TEAM });
 				}
 			}
 		};
@@ -289,7 +292,7 @@ const SelectTeam = ({
 
 	return (
 		<>
-			<div className="mb-3 d-flex">
+			<div className="d-flex align-items-center">
 				<select
 					className="form-select"
 					value={addEditTeamInfo.addType}
@@ -309,137 +312,145 @@ const SelectTeam = ({
 					<option value="league">Team from existing league</option>
 				</select>
 				{addEditTeamInfo.addType === "league" ? (
-					<select
-						className="form-select ms-2"
-						value={addEditTeamInfo.lid}
-						onChange={async event => {
-							const lid = parseInt(event.target.value);
-							setAddEditTeamInfo(info => ({
-								...info,
-								lid,
-							}));
-							const league = await loadLeague(lid);
-							setSeason(league.seasonEnd);
-							await loadTeams(league, league.seasonEnd);
-						}}
-						disabled={disabled}
-						style={{
-							maxWidth: 300,
-						}}
-					>
-						{leagues ? (
-							leagues.map(league => (
-								<option key={league.lid} value={league.lid}>
-									{league.name}
-								</option>
-							))
-						) : (
-							<option value="loading">Loading...</option>
-						)}
-					</select>
-				) : null}
-			</div>
-			<div className="input-group" style={{ maxWidth: 508 }}>
-				{addEditTeamInfo.addType !== "random" ? (
-					<select
-						className="form-select"
-						value={season}
-						onChange={async event => {
-							const value = parseInt(event.target.value);
-							setSeason(value);
-							await loadTeams(league!, value);
-						}}
-						disabled={actualDisabled}
-						style={{
-							maxWidth: 75,
-						}}
-					>
-						{league
-							? range(league.seasonEnd, league.seasonStart - 1).map(i => (
-									<option key={i} value={i}>
-										{i}
+					leagues?.length === 0 ? (
+						<div className="text-danger ms-2">No leagues found</div>
+					) : (
+						<select
+							className="form-select ms-2"
+							value={addEditTeamInfo.lid}
+							onChange={async event => {
+								const lid = parseInt(event.target.value);
+								setAddEditTeamInfo(info => ({
+									...info,
+									lid,
+								}));
+								const league = await loadLeague(lid);
+								setSeason(league.seasonEnd);
+								await loadTeams(league, league.seasonEnd);
+							}}
+							disabled={disabled}
+							style={{
+								maxWidth: 300,
+							}}
+						>
+							{leagues ? (
+								leagues.map(league => (
+									<option key={league.lid} value={league.lid}>
+										{league.name}
 									</option>
-							  ))
-							: null}
-					</select>
+								))
+							) : (
+								<option value="loading">Loading...</option>
+							)}
+						</select>
+					)
 				) : null}
-				<select
-					className="form-select"
-					disabled={
-						actualDisabled || availableTeams === undefined || loadingTeams
-					}
-					value={actualAbbrev}
-					onChange={event => {
-						const newAbbrev = event.target.value;
-						if (newAbbrev === "custom") {
-							onChange({ ...CUSTOM_TEAM });
-						} else {
-							const t = availableTeams?.find(t => t.abbrev === newAbbrev);
-							if (t) {
-								onChange(t);
+			</div>
+			{addEditTeamInfo.addType === "league" && leagues?.length === 0 ? null : (
+				<>
+					<div className="input-group mt-3" style={{ maxWidth: 508 }}>
+						{addEditTeamInfo.addType !== "random" ? (
+							<select
+								className="form-select"
+								value={season}
+								onChange={async event => {
+									const value = parseInt(event.target.value);
+									setSeason(value);
+									await loadTeams(league!, value);
+								}}
+								disabled={actualDisabled}
+								style={{
+									maxWidth: 75,
+								}}
+							>
+								{league
+									? range(league.seasonEnd, league.seasonStart - 1).map(i => (
+											<option key={i} value={i}>
+												{i}
+											</option>
+									  ))
+									: null}
+							</select>
+						) : null}
+						<select
+							className="form-select"
+							disabled={
+								actualDisabled || availableTeams === undefined || loadingTeams
 							}
-						}
-					}}
-				>
-					{addEditTeamInfo.addType === "random" ? (
-						<option value="custom">Custom Team</option>
-					) : availableTeams === undefined ? (
-						<option value="loading">Loading...</option>
-					) : null}
-					{availableTeams?.map(t => (
-						<option key={t.abbrev} value={t.abbrev}>
-							{t.region} {t.name} ({t.abbrev})
-							{t.seasonInfo
-								? ` ${helpers.formatRecord(t.seasonInfo)}${
-										t.seasonInfo.roundsWonText
-											? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
-											: ""
-								  }`
-								: null}
-						</option>
-					))}
-				</select>
-				<button
-					className="btn btn-light-bordered"
-					type="button"
-					disabled={actualDisabled}
-					onClick={async () => {
-						if (league) {
-							const randomSeason = getRandomSeason(
-								league.seasonStart,
-								league.seasonEnd,
-							);
-							setSeason(randomSeason);
-							await loadTeams(league, randomSeason, "random");
-						} else if (availableTeams) {
-							const t =
-								availableTeams[
-									Math.floor(Math.random() * availableTeams.length)
-								];
-							onChange(t);
-						}
-					}}
-				>
-					Random
-				</button>
-			</div>
-			<div className="form-check mt-1">
-				<input
-					className="form-check-input"
-					type="checkbox"
-					checked={addEditTeamInfo.hideDupeAbbrevs}
-					id="hideDupeAbbrevs"
-					onChange={() => {
-						setAddEditTeamInfo(info => ({
-							...info,
-							hideDupeAbbrevs: !info.hideDupeAbbrevs,
-						}));
-					}}
-				/>
-				<label className="form-check-label" htmlFor="hideDupeAbbrevs">
-					Hide teams with duplicate abbrevs
-				</label>
-			</div>
+							value={actualAbbrev}
+							onChange={event => {
+								const newAbbrev = event.target.value;
+								if (newAbbrev === "custom") {
+									onChange({ ...CUSTOM_TEAM });
+								} else {
+									const t = availableTeams?.find(t => t.abbrev === newAbbrev);
+									if (t) {
+										onChange(t);
+									}
+								}
+							}}
+						>
+							{addEditTeamInfo.addType === "random" ? (
+								<option value="custom">Custom Team</option>
+							) : availableTeams === undefined ? (
+								<option value="loading">Loading...</option>
+							) : null}
+							{availableTeams?.map(t => (
+								<option key={t.abbrev} value={t.abbrev}>
+									{t.region} {t.name} ({t.abbrev})
+									{t.seasonInfo
+										? ` ${helpers.formatRecord(t.seasonInfo)}${
+												t.seasonInfo.roundsWonText
+													? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
+													: ""
+										  }`
+										: null}
+								</option>
+							))}
+						</select>
+						<button
+							className="btn btn-light-bordered"
+							type="button"
+							disabled={actualDisabled}
+							onClick={async () => {
+								if (league) {
+									const randomSeason = getRandomSeason(
+										league.seasonStart,
+										league.seasonEnd,
+									);
+									setSeason(randomSeason);
+									await loadTeams(league, randomSeason, "random");
+								} else if (availableTeams) {
+									const t =
+										availableTeams[
+											Math.floor(Math.random() * availableTeams.length)
+										];
+									onChange(t);
+								}
+							}}
+						>
+							Random
+						</button>
+					</div>
+					<div className="form-check mt-1">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={addEditTeamInfo.hideDupeAbbrevs}
+							id="hideDupeAbbrevs"
+							onChange={() => {
+								setAddEditTeamInfo(info => ({
+									...info,
+									hideDupeAbbrevs: !info.hideDupeAbbrevs,
+								}));
+							}}
+						/>
+						<label className="form-check-label" htmlFor="hideDupeAbbrevs">
+							Hide teams with duplicate abbrevs
+						</label>
+					</div>
+				</>
+			)}
 		</>
 	);
 };

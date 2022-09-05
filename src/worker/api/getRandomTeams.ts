@@ -3,6 +3,7 @@ import { isSport } from "../../common";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
+import geographicCoordinates from "../core/team/geographicCoordinates";
 import { random } from "../util";
 
 type Clusters = {
@@ -260,28 +261,35 @@ const getRandomTeams = ({
 		numTeamsTotal += num;
 	}
 
-	let weightFunction: ((abbrev: string) => number) | undefined;
+	const teamInfosWithAbbrev = Object.entries(teamInfos).map(
+		([abbrev, info]) => ({
+			...info,
+			abbrev,
+		}),
+	);
+
+	let weightFunction: ((teamInfo: { pop: number }) => number) | undefined;
 	if (weightByPopulation) {
-		weightFunction = abbrev => teamInfos[abbrev].pop;
+		weightFunction = teamInfo => teamInfo.pop;
 	}
 
-	const abbrevsRemaining = new Set(Object.keys(teamInfos));
-	if (abbrevsRemaining.size < numTeamsTotal) {
-		return `There are only ${abbrevsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`;
+	const teamsRemaining = new Set(teamInfosWithAbbrev);
+	if (teamsRemaining.size < numTeamsTotal) {
+		return `There are only ${teamsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`;
 	}
-	const abbrevs: string[] = [];
+	const selectedTeamInfos: typeof teamInfosWithAbbrev = [];
 	for (let i = 0; i < numTeamsTotal; i++) {
-		const abbrev = random.choice(Array.from(abbrevsRemaining), weightFunction);
-		abbrevs.push(abbrev);
-		abbrevsRemaining.delete(abbrev);
+		const teamInfo = random.choice(Array.from(teamsRemaining), weightFunction);
+		selectedTeamInfos.push(teamInfo);
+		teamsRemaining.delete(teamInfo);
 	}
 
-	const teamInfoCluster = abbrevs.map(
-		abbrev =>
-			[teamInfos[abbrev].latitude, teamInfos[abbrev].longitude] as [
-				number,
-				number,
-			],
+	const teamInfoCluster = selectedTeamInfos.map(
+		teamInfo =>
+			[
+				geographicCoordinates[teamInfo.region].latitude,
+				geographicCoordinates[teamInfo.region].longitude,
+			] as [number, number],
 	);
 
 	const clusters = sortByDivs(
@@ -295,8 +303,8 @@ const getRandomTeams = ({
 	for (let i = 0; i < divs.length; i++) {
 		const div = divs[i];
 
-		const tidsSorted = orderBy(clusters[i].pointIndexes, abbrevIndex => {
-			const teamInfo = teamInfos[abbrevs[abbrevIndex]];
+		const tidsSorted = orderBy(clusters[i].pointIndexes, teamIndex => {
+			const teamInfo = selectedTeamInfos[teamIndex];
 			return `${teamInfo.region} ${teamInfo.name}`;
 		});
 
@@ -305,7 +313,7 @@ const getRandomTeams = ({
 				tid,
 				cid: div.cid,
 				did: div.did,
-				abbrev: abbrevs[tid],
+				abbrev: selectedTeamInfos[tid].abbrev,
 			});
 		}
 	}

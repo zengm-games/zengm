@@ -1,14 +1,8 @@
 Customize Teams
-- add team modal
-  - how to identify these teams? like prefix with season or league number? just in the Customize Teams UI, or everywhere?
-- if a player is pulled in twice (either same srID, or same pid from same lid) add season after his name
 - new bulk options
   - random real teams (with or without repeated cities)
   - all seasons of one real franchise
   - all teams from one real season
-- test
-  - make sure editing works and doens't move to new div
-  - make sure real player info applies
 
 exhibition game
 - later

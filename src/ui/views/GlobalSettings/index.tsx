@@ -78,7 +78,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			});
 			logEvent({
 				type: "success",
-				text: "Options successfully updated.",
+				text: "Settings successfully updated.",
 				saveToDb: false,
 			});
 		} catch (error) {

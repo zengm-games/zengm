@@ -583,6 +583,9 @@ const Division = ({
 				{teams.map(t => (
 					<li key={t.tid} className="list-group-item d-flex">
 						<div className="me-auto">
+							{t.season !== undefined ? (
+								<span className="text-muted">{t.season} </span>
+							) : null}
 							{t.region} {t.name}{" "}
 							<span
 								className={

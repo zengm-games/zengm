@@ -23,6 +23,7 @@ export type NewLeagueTeam = {
 	players?: Player[];
 	usePlayers?: boolean;
 	seasonInfo?: ExhibitionTeam["seasonInfo"];
+	season?: number;
 };
 
 export type NewLeagueTeamWithoutRank = Omit<NewLeagueTeam, "popRank">;

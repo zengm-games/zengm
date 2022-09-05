@@ -274,7 +274,11 @@ const SelectTeam = ({
 		return null;
 	}
 
-	const availableTeams = allTeams;
+	let availableTeams = allTeams;
+	if (availableTeams && addEditTeamInfo.hideDupeAbbrevs) {
+		const currentAbbrevs = new Set(currentTeams.map(t => t.abbrev));
+		availableTeams = availableTeams.filter(t => !currentAbbrevs.has(t.abbrev));
+	}
 	const availableAbbrevs = availableTeams?.map(t => t.abbrev);
 	const actualAbbrev = availableAbbrevs?.includes(abbrev as any)
 		? abbrev
@@ -418,6 +422,23 @@ const SelectTeam = ({
 				>
 					Random
 				</button>
+			</div>
+			<div className="form-check mt-1">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					checked={addEditTeamInfo.hideDupeAbbrevs}
+					id="hideDupeAbbrevs"
+					onChange={() => {
+						setAddEditTeamInfo(info => ({
+							...info,
+							hideDupeAbbrevs: !info.hideDupeAbbrevs,
+						}));
+					}}
+				/>
+				<label className="form-check-label" htmlFor="hideDupeAbbrevs">
+					Hide teams with duplicate abbrevs
+				</label>
 			</div>
 		</>
 	);

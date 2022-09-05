@@ -725,6 +725,7 @@ export type AddEditTeamInfo = {
 	seasonLeague: number | undefined;
 	seasonReal: number;
 	tidEdit: number;
+	hideDupeAbbrevs: boolean;
 };
 
 const CustomizeTeams = ({
@@ -758,6 +759,7 @@ const CustomizeTeams = ({
 		seasonLeague: undefined,
 		seasonReal: MAX_SEASON,
 		tidEdit: 0,
+		hideDupeAbbrevs: false,
 	});
 
 	const [randomizing, setRandomizing] = useState(false);

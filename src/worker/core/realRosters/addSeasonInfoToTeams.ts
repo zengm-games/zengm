@@ -1,10 +1,13 @@
 import { groupBy } from "../../../common/groupBy";
-import type { GetLeagueOptions, Player } from "../../../common/types";
+import type {
+	GameAttributesLeague,
+	GetLeagueOptions,
+	Player,
+} from "../../../common/types";
 import { g, helpers, local } from "../../util";
 import player from "../player";
 import stats from "../player/stats";
 import formatPlayerFactory from "./formatPlayerFactory";
-import type getGameAttributes from "./getGameAttributes";
 import type { Basketball } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 
@@ -16,7 +19,9 @@ const addSeasonInfoToTeams = async <
 >(
 	teams: T[],
 	basketball: Basketball,
-	gameAttributes: ReturnType<typeof getGameAttributes>,
+	gameAttributes:
+		| Pick<GameAttributesLeague, "confs" | "numGamesPlayoffSeries">
+		| undefined,
 	options: GetLeagueOptions,
 ) => {
 	if (options.type === "legends") {
@@ -98,26 +103,28 @@ const addSeasonInfoToTeams = async <
 			}
 
 			let roundsWonText;
-			const playoffSeries = basketball.playoffSeries[options.season];
-			if (playoffSeries) {
-				let playoffRoundsWon = -1;
-				for (const round of playoffSeries) {
-					const index = round.abbrevs.indexOf(abbrev);
-					if (index >= 0) {
-						playoffRoundsWon = round.round;
-						const otherIndex = index === 0 ? 1 : 0;
-						if (round.wons[index] > round.wons[otherIndex]) {
-							playoffRoundsWon += 1;
+			if (gameAttributes) {
+				const playoffSeries = basketball.playoffSeries[options.season];
+				if (playoffSeries) {
+					let playoffRoundsWon = -1;
+					for (const round of playoffSeries) {
+						const index = round.abbrevs.indexOf(abbrev);
+						if (index >= 0) {
+							playoffRoundsWon = round.round;
+							const otherIndex = index === 0 ? 1 : 0;
+							if (round.wons[index] > round.wons[otherIndex]) {
+								playoffRoundsWon += 1;
+							}
 						}
 					}
-				}
 
-				roundsWonText = helpers.roundsWonText(
-					playoffRoundsWon,
-					gameAttributes.numGamesPlayoffSeries!.length,
-					gameAttributes.confs.length,
-					true,
-				);
+					roundsWonText = helpers.roundsWonText(
+						playoffRoundsWon,
+						gameAttributes.numGamesPlayoffSeries!.length,
+						gameAttributes.confs.length,
+						true,
+					);
+				}
 			}
 
 			const seasonInfo = {

@@ -1,5 +1,6 @@
-import range from "lodash-es/range";
+import omit from "lodash-es/omit";
 import orderBy from "lodash-es/orderBy";
+import range from "lodash-es/range";
 import { isSport, PHASE } from "../../common";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
@@ -9,6 +10,9 @@ import { LATEST_SEASON, MIN_SEASON } from "../core/realRosters/getLeague";
 import geographicCoordinates from "../core/team/geographicCoordinates";
 import { random } from "../util";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types";
+import { groupBy } from "../../common/groupBy";
+import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams";
+import loadDataBasketball from "../core/realRosters/loadData.basketball";
 
 type Clusters = {
 	center: [number, number];
@@ -315,6 +319,44 @@ const getAllRealTeamInfos = async () => {
 	});
 };
 
+const augmentRealTeams = async (teams: MyTeam[]) => {
+	const basketball = await loadDataBasketball();
+
+	const output: NewLeagueTeamWithoutRank[] = [];
+
+	const teamsBySeason = groupBy(teams, "season");
+	for (const [seasonString, teamsSeason] of Object.entries(teamsBySeason)) {
+		const season = parseInt(seasonString);
+		if (Number.isNaN(season)) {
+			continue;
+		}
+
+		const teamsWithSeasonInfo = await addSeasonInfoToTeams(
+			teamsSeason as (MyTeam & { srID: string })[],
+			basketball,
+			undefined,
+			{
+				type: "real",
+				season,
+				phase: PHASE.PLAYOFFS,
+				randomDebuts: false,
+				realDraftRatings: "rookie",
+				realStats: "none",
+				includeSeasonInfo: true,
+			},
+		);
+
+		for (const t of teamsWithSeasonInfo) {
+			output.push({
+				...omit(t, "weight"),
+				usePlayers: true,
+			});
+		}
+	}
+
+	return teams.map(t => output.find(t2 => t.tid === t2.tid));
+};
+
 const getRandomTeams = async ({
 	divs,
 	numTeamsPerDiv,
@@ -398,6 +440,10 @@ const getRandomTeams = async ({
 				did: div.did,
 			});
 		}
+	}
+
+	if (real) {
+		return augmentRealTeams(teamInfosInput);
 	}
 
 	return teamInfosInput;

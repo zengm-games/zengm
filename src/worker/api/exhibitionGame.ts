@@ -291,7 +291,7 @@ export const getSeasonInfo = async (
 		const info = await realRosters.getLeagueInfo({
 			phase: PHASE.PLAYOFFS,
 			randomDebuts: false,
-			realDraftRatings: "draft",
+			realDraftRatings: "rookie",
 			realStats: "lastSeason",
 			includeSeasonInfo: true,
 			...options,

@@ -1,12 +1,15 @@
 Customize Teams
 - new bulk options
-  - random real teams
-    - add players/usePlayers/seasonInfo at end and delete weight
   - all seasons of one real franchise
   - all teams from one real season
 - ui is kind of confusing. i can select teams with real players by clicking random players and clicking customize, but i can't do the same thing by clicking real players
   - maybe rename to "current or historical league" and "fictional league"
 - random debuts mode should be possible even in a random players league. just take any players not on teams.
+- blog
+  - mix random/historical/league teams
+  - randomize real teams
+
+hockey 4 factors bug - im finding where some of the 3/2 PP's come from, it was 2/2, penalty, they pulled the goalie, scored, and its 3/2 https://discord.com/channels/@me/778760871911751700/1016137649565749338
 
 exhibition game
 - later

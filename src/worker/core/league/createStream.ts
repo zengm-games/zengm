@@ -45,6 +45,7 @@ import addDraftProspects from "./create/addDraftProspects";
 import createRandomPlayers from "./create/createRandomPlayers";
 import getRealTeamPlayerData from "./create/getRealTeamPlayerData";
 import createGameAttributes from "./createGameAttributes";
+import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague";
 import initRepeatSeason from "./initRepeatSeason";
 import processPlayerNewLeague from "./processPlayerNewLeague";
 import remove from "./remove";
@@ -1171,6 +1172,7 @@ const afterDBStream = async ({
 	getLeagueOptions,
 	lid,
 	noStartingInjuries,
+	randomization,
 	realPlayerPhotos,
 	repeatSeason,
 	scoutingRank,
@@ -1183,6 +1185,7 @@ const afterDBStream = async ({
 	extraFromStream: ExtraFromStream;
 	hasRookieContracts: boolean;
 	noStartingInjuries: boolean;
+	randomization: Settings["randomization"];
 	realPlayerPhotos: RealPlayerPhotos | undefined;
 } & Pick<
 	CreateStreamProps,
@@ -1274,6 +1277,27 @@ const afterDBStream = async ({
 	if (replaceTids.size > 0) {
 		activePlayers = activePlayers.filter(p => !replaceTids.has(p.tid));
 		activePlayers.push(...extraActivePlayers);
+	}
+
+	if (randomization === "debuts" || randomization === "debutsForever") {
+		const draftProspects = await initRandomDebutsForRandomPlayersLeague({
+			players: activePlayers,
+			numActiveTeams: gameAttributes.numActiveTeams,
+			phase: gameAttributes.phase,
+			season: gameAttributes.season,
+		});
+		for (const p of draftProspects) {
+			const p2 = await processPlayerNewLeague({
+				p,
+				activeTids,
+				hasRookieContracts,
+				noStartingInjuries,
+				realPlayerPhotos,
+				scoutingRank,
+				version: MAX_SUPPORTED_LEAGUE_VERSION,
+			});
+			activePlayers.push(p2);
+		}
 	}
 
 	await addDraftProspects({
@@ -1535,6 +1559,7 @@ const createStream = async (
 		hasRookieContracts: fromFile.hasRookieContracts,
 		lid,
 		noStartingInjuries,
+		randomization: settings.randomization,
 		realPlayerPhotos,
 		repeatSeason,
 		scoutingRank,

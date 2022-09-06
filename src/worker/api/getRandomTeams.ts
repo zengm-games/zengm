@@ -251,11 +251,14 @@ const sortByDivs = (
 };
 
 type MyTeam = ReturnType<typeof getTeamInfos>[number] & {
+	weight?: number;
 	season?: number;
 };
 
 const getAllRealTeamInfos = async () => {
-	const teamInfos: MyTeam[] = [];
+	const teamInfos: (MyTeam & {
+		weight: number;
+	})[] = [];
 
 	const seasons = range(MIN_SEASON, LATEST_SEASON + 1);
 
@@ -272,6 +275,7 @@ const getAllRealTeamInfos = async () => {
 		for (const t of teams) {
 			teamInfos.push({
 				...t,
+				weight: 1,
 				season,
 			});
 		}
@@ -284,12 +288,29 @@ const getAllRealTeamInfos = async () => {
 	const abbrevsSeen = new Set();
 	const regionsSeen = new Set();
 
+	// For any team with many duplicates removed, the remaining one should have a pretty high weight;
+	const infosByAbbrev: Record<string, typeof teamInfos[number]> = {};
+	const infosByRegion: Record<string, typeof teamInfos[number]> = {};
+
 	return teamInfos.filter(t => {
 		if (abbrevsSeen.has(t.abbrev) || regionsSeen.has(t.region)) {
+			const toAdd = [];
+			if (infosByAbbrev[t.abbrev]) {
+				toAdd.push(infosByAbbrev[t.abbrev]);
+			}
+			if (infosByRegion[t.region]) {
+				toAdd.push(infosByRegion[t.region]);
+			}
+			for (const t of toAdd) {
+				t.weight += 1 / toAdd.length;
+			}
+
 			return false;
 		}
 		abbrevsSeen.add(t.abbrev);
 		regionsSeen.add(t.region);
+		infosByAbbrev[t.abbrev] = t;
+		infosByRegion[t.region] = t;
 		return true;
 	});
 };
@@ -324,9 +345,13 @@ const getRandomTeams = async ({
 		);
 	}
 
-	let weightFunction: ((teamInfo: { pop: number }) => number) | undefined;
+	let weightFunction:
+		| ((teamInfo: { pop: number; weight?: number }) => number)
+		| undefined;
 	if (weightByPopulation) {
 		weightFunction = teamInfo => teamInfo.pop;
+	} else if (real) {
+		weightFunction = teamInfo => teamInfo.weight ?? 1;
 	}
 
 	const teamsRemaining = new Set(allTeamInfos);

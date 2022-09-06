@@ -936,6 +936,8 @@ const CustomizeTeams = ({
 								<Dropdown.Item
 									onClick={randomize({
 										real: true,
+
+										// Works if you set weightByPopulation to true, but not enough difference to matter, since big cities tend to be the ones with long franchise histories, so they get picked more anyway
 										weightByPopulation: false,
 									})}
 								>

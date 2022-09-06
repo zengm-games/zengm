@@ -8,6 +8,7 @@ import { realRosters } from "../core";
 import { LATEST_SEASON, MIN_SEASON } from "../core/realRosters/getLeague";
 import geographicCoordinates from "../core/team/geographicCoordinates";
 import { random } from "../util";
+import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types";
 
 type Clusters = {
 	center: [number, number];
@@ -250,9 +251,8 @@ const sortByDivs = (
 	return bestClusters;
 };
 
-type MyTeam = ReturnType<typeof getTeamInfos>[number] & {
+type MyTeam = NewLeagueTeamWithoutRank & {
 	weight?: number;
-	season?: number;
 };
 
 const getAllRealTeamInfos = async () => {

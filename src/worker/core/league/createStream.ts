@@ -16,6 +16,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	GetLeagueOptions,
 	League,
+	Player,
 	PlayerWithoutKey,
 	RealPlayerPhotos,
 	RealTeamInfo,
@@ -41,6 +42,8 @@ import {
 import g, { wrap } from "../../util/g";
 import type { Settings } from "../../views/settings";
 import { getAutoTicketPriceByTid } from "../game/attendance";
+import addRelatives from "../realRosters/addRelatives";
+import loadDataBasketball from "../realRosters/loadData.basketball";
 import addDraftProspects from "./create/addDraftProspects";
 import createRandomPlayers from "./create/createRandomPlayers";
 import getRealTeamPlayerData from "./create/getRealTeamPlayerData";
@@ -1280,8 +1283,11 @@ const afterDBStream = async ({
 	}
 
 	if (randomization === "debuts" || randomization === "debutsForever") {
+		const basketball = await loadDataBasketball();
+
 		const draftProspects = await initRandomDebutsForRandomPlayersLeague({
 			players: activePlayers,
+			basketball,
 			numActiveTeams: gameAttributes.numActiveTeams,
 			phase: gameAttributes.phase,
 			season: gameAttributes.season,
@@ -1298,6 +1304,19 @@ const afterDBStream = async ({
 			});
 			activePlayers.push(p2);
 		}
+	}
+
+	if (activePlayers.some(p => p.srID !== undefined)) {
+		const basketball = await loadDataBasketball();
+
+		// Add pids so addRelatives can work
+		let pid = 1;
+		for (const p of activePlayers) {
+			p.pid = pid;
+			pid += 1;
+		}
+
+		addRelatives(activePlayers as unknown as Player[], basketball.relatives);
 	}
 
 	await addDraftProspects({

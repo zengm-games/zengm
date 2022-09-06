@@ -5,24 +5,24 @@ import type {
 	GameAttributesLeagueWithHistory,
 	PlayerWithoutKey,
 } from "../../../common/types";
-import { defaultGameAttributes } from "../../util";
+import { defaultGameAttributes, random } from "../../util";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory";
-import loadDataBasketball from "../realRosters/loadData.basketball";
+import type { Basketball } from "../realRosters/loadData.basketball";
 
 // Code inside realPlayers is responsible for random debuts normally. But that only works for real players leagues, not random players leagues. So here is a standalone version. Maybe these should be used in realPlayers too, would be more DRY...
 const initRandomDebutsForRandomPlayersLeague = async ({
 	players,
+	basketball,
 	numActiveTeams,
 	phase,
 	season,
 }: {
+	basketball: Basketball;
 	players: PlayerWithoutKey[];
 } & Pick<
 	GameAttributesLeagueWithHistory,
 	"numActiveTeams" | "phase" | "season"
 >) => {
-	const basketball = await loadDataBasketball();
-
 	const formatPlayer = await formatPlayerFactory(
 		basketball,
 		{
@@ -40,8 +40,8 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 
 	const initialDraftYear = phase > PHASE.DRAFT ? season + 1 : season;
 
-	// @ts-expect-error
 	const seenSlugs = new Set<string>(
+		// @ts-expect-error
 		players.filter(p => p.srID !== undefined).map(p => p.srID),
 	);
 	const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
@@ -57,6 +57,8 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 				randomDebuts: true,
 			}),
 		);
+
+	random.shuffle(draftProspects);
 
 	// Normalize the size of draft classes, based on the number of teams and the number of expansion teams
 	let draftYear = initialDraftYear;

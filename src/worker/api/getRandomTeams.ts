@@ -292,6 +292,7 @@ const getRandomTeams = ({
 			] as [number, number],
 	);
 
+	// Clustering to assign divisions
 	const clusters = sortByDivs(
 		kmeansFixedSize(teamInfoCluster, numTeamsPerDiv),
 		divs,
@@ -317,8 +318,6 @@ const getRandomTeams = ({
 			});
 		}
 	}
-
-	// Clustering to assign divisions
 
 	return getTeamInfos(teamInfosInput);
 };

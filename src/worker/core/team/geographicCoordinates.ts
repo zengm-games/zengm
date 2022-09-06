@@ -5,6 +5,10 @@ const geographicCoordinates: Record<
 		longitude: number;
 	}
 > = {
+	Anderson: {
+		latitude: 40.1053,
+		longitude: -85.6803,
+	},
 	Atlanta: {
 		latitude: 33.7489954,
 		longitude: -84.3879824,
@@ -61,6 +65,14 @@ const geographicCoordinates: Record<
 		latitude: 42.331427,
 		longitude: -83.0457538,
 	},
+	"Fort Wayne": {
+		latitude: 41.0793,
+		longitude: -85.1394,
+	},
+	"Golden State": {
+		latitude: 37.7749295,
+		longitude: -122.4194155,
+	},
 	Hawaii: {
 		latitude: 19.8967662,
 		longitude: -155.5827818,
@@ -113,6 +125,10 @@ const geographicCoordinates: Record<
 		latitude: 45.5016889,
 		longitude: -73.567256,
 	},
+	"New Jersey": {
+		latitude: 40.7357,
+		longitude: -74.1724,
+	},
 	"New Orleans": {
 		latitude: 29.9510658,
 		longitude: -90.0715323,
@@ -153,6 +169,14 @@ const geographicCoordinates: Record<
 		latitude: 45.5051064,
 		longitude: -122.6750261,
 	},
+	Providence: {
+		latitude: 41.824,
+		longitude: -71.4128,
+	},
+	Rochester: {
+		latitude: 43.1566,
+		longitude: -77.6088,
+	},
 	Sacramento: {
 		latitude: 38.5815719,
 		longitude: -121.4943996,
@@ -177,9 +201,17 @@ const geographicCoordinates: Record<
 		latitude: 47.6062095,
 		longitude: -122.3320708,
 	},
+	Sheboygan: {
+		latitude: 43.7508,
+		longitude: -87.7145,
+	},
 	"St. Louis": {
 		latitude: 38.6270025,
 		longitude: -90.1994042,
+	},
+	Syracuse: {
+		latitude: 43.0481,
+		longitude: -76.1474,
 	},
 	Tampa: {
 		latitude: 27.950575,
@@ -188,6 +220,10 @@ const geographicCoordinates: Record<
 	Toronto: {
 		latitude: 43.653226,
 		longitude: -79.3831843,
+	},
+	"Tri-Cities": {
+		latitude: 41.5067,
+		longitude: -90.5151,
 	},
 	Utah: {
 		latitude: 39.3209801,
@@ -204,6 +240,10 @@ const geographicCoordinates: Record<
 	Washington: {
 		latitude: 38.9072,
 		longitude: -77.0369,
+	},
+	Waterloo: {
+		latitude: 42.4928,
+		longitude: -92.3426,
 	},
 };
 

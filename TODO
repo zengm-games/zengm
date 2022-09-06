@@ -1,7 +1,6 @@
 Customize Teams
 - new bulk options
   - random real teams
-    - add any regions from real team data to geographicCoordinates
     - select teams
       - no repeated abbrev, error if we run out
     - only add players to teams after we have selected teams, so we don't need

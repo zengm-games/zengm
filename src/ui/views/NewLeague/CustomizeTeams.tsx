@@ -435,7 +435,7 @@ const CardHeader = ({
 	const [controlledName, setControlledName] = useState(name);
 
 	return (
-		<div className={classNames("card-header", renaming ? "p-1" : undefined)}>
+		<div className={classNames("card-header", renaming ? "p-1" : "px-2")}>
 			{renaming ? (
 				<form
 					className="d-flex"
@@ -582,7 +582,7 @@ const Division = ({
 
 			<ul className="list-group list-group-flush">
 				{teams.map(t => (
-					<li key={t.tid} className="list-group-item d-flex">
+					<li key={t.tid} className="list-group-item d-flex px-2">
 						<div className="me-auto">
 							{t.season !== undefined ? (
 								<span className="text-muted">{t.season} </span>

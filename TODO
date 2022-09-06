@@ -1,9 +1,12 @@
 Customize Teams
 - new bulk options
   - random real teams
-    - select teams
-      - no repeated abbrev, error if we run out
-    - only add players to teams after we have selected teams, so we don't need
+    - don't just delete team-seasons up from due to abbrev/region collision. need to make the ones with deletes more common
+      - add a weight?
+      - do filtering later?
+    - typescript fix - ideally should return NewLeagueTeamWithoutRank
+    - add players at end, somehow
+  - does weighting real teams by population actually work?
   - all seasons of one real franchise
   - all teams from one real season
 

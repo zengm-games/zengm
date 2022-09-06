@@ -31,6 +31,7 @@ import getAwards from "./getAwards";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 import getInjury from "./getInjury";
 
+export const MIN_SEASON = 1947;
 export const LATEST_SEASON = 2023;
 export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2021;
 export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;

@@ -847,6 +847,7 @@ const CustomizeTeams = ({
 				const response = await toWorker("main", "getRandomTeams", {
 					divs: myDivs,
 					numTeamsPerDiv,
+					real,
 					weightByPopulation,
 				});
 

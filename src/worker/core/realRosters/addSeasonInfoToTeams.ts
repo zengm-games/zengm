@@ -4,13 +4,17 @@ import { g, helpers, local } from "../../util";
 import player from "../player";
 import stats from "../player/stats";
 import formatPlayerFactory from "./formatPlayerFactory";
-import type formatScheduledEvents from "./formatScheduledEvents";
 import type getGameAttributes from "./getGameAttributes";
 import type { Basketball } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 
-const addSeasonInfoToTeams = async (
-	teams: ReturnType<typeof formatScheduledEvents>["initialTeams"],
+const addSeasonInfoToTeams = async <
+	T extends {
+		tid: number;
+		srID: string;
+	},
+>(
+	teams: T[],
 	basketball: Basketball,
 	gameAttributes: ReturnType<typeof getGameAttributes>,
 	options: GetLeagueOptions,

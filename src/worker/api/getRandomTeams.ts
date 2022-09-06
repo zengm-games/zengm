@@ -261,11 +261,13 @@ const getRandomTeams = ({
 		numTeamsTotal += num;
 	}
 
-	const teamInfosWithAbbrev = Object.entries(teamInfos).map(
-		([abbrev, info]) => ({
-			...info,
+	const allTeamInfos = getTeamInfos(
+		Object.keys(teamInfos).map(abbrev => ({
+			tid: 0,
+			cid: 0,
+			did: 0,
 			abbrev,
-		}),
+		})),
 	);
 
 	let weightFunction: ((teamInfo: { pop: number }) => number) | undefined;
@@ -273,11 +275,11 @@ const getRandomTeams = ({
 		weightFunction = teamInfo => teamInfo.pop;
 	}
 
-	const teamsRemaining = new Set(teamInfosWithAbbrev);
+	const teamsRemaining = new Set(allTeamInfos);
 	if (teamsRemaining.size < numTeamsTotal) {
 		return `There are only ${teamsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`;
 	}
-	const selectedTeamInfos: typeof teamInfosWithAbbrev = [];
+	const selectedTeamInfos: typeof allTeamInfos = [];
 	for (let i = 0; i < numTeamsTotal; i++) {
 		const teamInfo = random.choice(Array.from(teamsRemaining), weightFunction);
 		selectedTeamInfos.push(teamInfo);
@@ -300,10 +302,10 @@ const getRandomTeams = ({
 	);
 
 	const teamInfosInput = [];
-
 	for (let i = 0; i < divs.length; i++) {
 		const div = divs[i];
 
+		// Sort teams within a division by region/name so they look nicer
 		const tidsSorted = orderBy(clusters[i].pointIndexes, teamIndex => {
 			const teamInfo = selectedTeamInfos[teamIndex];
 			return `${teamInfo.region} ${teamInfo.name}`;
@@ -311,15 +313,15 @@ const getRandomTeams = ({
 
 		for (const tid of tidsSorted) {
 			teamInfosInput.push({
+				...selectedTeamInfos[tid],
 				tid,
 				cid: div.cid,
 				did: div.did,
-				abbrev: selectedTeamInfos[tid].abbrev,
 			});
 		}
 	}
 
-	return getTeamInfos(teamInfosInput);
+	return teamInfosInput;
 };
 
 export default getRandomTeams;

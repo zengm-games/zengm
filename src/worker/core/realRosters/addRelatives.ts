@@ -26,10 +26,7 @@ const addRelatives = (
 		allRelativesBySlug = groupBy(allRelatives, "slug");
 	}
 
-	const playersBySlug = groupByUnique(
-		players.filter(p => p.srID !== undefined),
-		"srID",
-	);
+	const playersBySlug = groupBy(players, "srID");
 
 	for (const p of players) {
 		if (p.srID === undefined) {
@@ -43,16 +40,18 @@ const addRelatives = (
 
 		const relatives2 = [];
 		for (const relative of relatives) {
-			const p2 = playersBySlug[relative.slug2];
-			if (p2) {
-				const name =
-					(p2 as any).name ??
-					`${(p2 as any).firstName} ${(p2 as any).lastName}`;
-				relatives2.push({
-					type: relative.type,
-					name,
-					pid: p2.pid,
-				});
+			const playersTemp = playersBySlug[relative.slug2];
+			if (playersTemp) {
+				for (const p2 of playersTemp) {
+					const name =
+						(p2 as any).name ??
+						`${(p2 as any).firstName} ${(p2 as any).lastName}`;
+					relatives2.push({
+						type: relative.type,
+						name,
+						pid: p2.pid,
+					});
+				}
 			}
 		}
 

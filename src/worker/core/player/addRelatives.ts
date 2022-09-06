@@ -334,6 +334,10 @@ export const makeBrother = async (p: Player) => {
 };
 
 const addRelatives = async (p: Player) => {
+	if (p.real) {
+		return;
+	}
+
 	if (Math.random() < g.get("sonRate")) {
 		await makeSon(p);
 	}

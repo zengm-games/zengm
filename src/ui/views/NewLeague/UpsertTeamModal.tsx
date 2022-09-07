@@ -2,7 +2,11 @@ import orderBy from "lodash-es/orderBy";
 import range from "lodash-es/range";
 import { useCallback, useEffect, useState } from "react";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
-import { DEFAULT_JERSEY, DEFAULT_STADIUM_CAPACITY } from "../../../common";
+import {
+	DEFAULT_JERSEY,
+	DEFAULT_STADIUM_CAPACITY,
+	SPORT_HAS_REAL_PLAYERS,
+} from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import type { Conf, Div, Player, View } from "../../../common/types";
@@ -310,7 +314,9 @@ const SelectTeam = ({
 					}}
 				>
 					<option value="random">Random players team</option>
-					<option value="real">Real historical team</option>
+					{SPORT_HAS_REAL_PLAYERS ? (
+						<option value="real">Real historical teams</option>
+					) : null}
 					<option value="league">Team from existing league</option>
 				</select>
 				{addEditTeamInfo.addType === "league" ? (

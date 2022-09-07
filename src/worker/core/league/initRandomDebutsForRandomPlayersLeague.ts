@@ -6,6 +6,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 import { defaultGameAttributes, random } from "../../util";
+import type { Settings } from "../../views/settings";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory";
 import type { Basketball } from "../realRosters/loadData.basketball";
 
@@ -14,15 +15,19 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	players,
 	basketball,
 	numActiveTeams,
+	realDraftRatings,
 	phase,
 	season,
 }: {
 	basketball: Basketball;
 	players: PlayerWithoutKey[];
+	realDraftRatings: Settings["realDraftRatings"];
 } & Pick<
 	GameAttributesLeagueWithHistory,
 	"numActiveTeams" | "phase" | "season"
 >) => {
+	console.log("initRandomDebutsForRandomPlayersLeague");
+	console.log("realDraftRatings", realDraftRatings);
 	const formatPlayer = await formatPlayerFactory(
 		basketball,
 		{
@@ -30,7 +35,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 			season,
 			phase,
 			randomDebuts: true,
-			realDraftRatings: "rookie",
+			realDraftRatings,
 			realStats: "none",
 		},
 		season,

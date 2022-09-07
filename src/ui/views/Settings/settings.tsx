@@ -155,7 +155,7 @@ export const settings: Setting[] = (
 					{
 						category: "New League",
 						key: "randomization",
-						name: "Random Debuts",
+						name: "Randomization",
 						godModeRequired: "existingLeagueOnly",
 						showOnlyIf: ({
 							defaultNewLeagueSettings,
@@ -195,7 +195,9 @@ export const settings: Setting[] = (
 			name: "Real Draft Prospect Ratings",
 			godModeRequired: "existingLeagueOnly",
 			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
-				newLeague && hasPlayers && realPlayers,
+				newLeague &&
+				((hasPlayers && realPlayers) ||
+					(SPORT_HAS_REAL_PLAYERS && !hasPlayers && !realPlayers)),
 			type: "string",
 			values: [
 				{ key: "rookie", value: "Based on rookie season stats" },
@@ -204,16 +206,21 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
-						<b>Based on rookie season stats:</b> Player ratings for draft
+						This setting only applies to real players, it has no affect on
+						random players.
+					</p>
+					<p>
+						<b>Based on rookie season stats:</b> Player ratings for real draft
 						prospects are based on their rookie season stats. Players who
 						overperformed or underperformed their real draft positions as
 						rookies will be ranked differently than they were in reality.
 					</p>
 					<p>
-						<b>Based on draft position:</b> Player ratings for draft prospects
-						are based on the position they were drafted. Every #1 pick will have
-						a high rating, even if in reality he was a bust. Every late pick
-						will have a low rating, even if in reality he became a star.
+						<b>Based on draft position:</b> Player ratings for real draft
+						prospects are based on the position they were drafted. Every #1 pick
+						will have a high rating, even if in reality he was a bust. Every
+						late pick will have a low rating, even if in reality he became a
+						star.
 					</p>
 				</>
 			),

@@ -1,12 +1,10 @@
 Customize Teams
 - ui is kind of confusing. i can select teams with real players by clicking random players and clicking customize, but i can't do the same thing by clicking real players
   - maybe rename to "current or historical league" and "fictional league"
-- random debuts mode should be possible even in a random players league. just take any players not on teams.
-  - realDraftRatings available in settings and propagate to initRandomDebutsForRandomPlayersLeague
 - blog
   - mix random/historical/league teams
   - randomize real teams
-  - random debuts in random players league
+  - random debuts in random players league (and realDraftRatings)
 
 hockey 4 factors bug - im finding where some of the 3/2 PP's come from, it was 2/2, penalty, they pulled the goalie, scored, and its 3/2 https://discord.com/channels/@me/778760871911751700/1016137649565749338
 

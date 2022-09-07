@@ -7,6 +7,7 @@ import {
 	MAX_SUPPORTED_LEAGUE_VERSION,
 	PHASE,
 	PLAYER,
+	SPORT_HAS_REAL_PLAYERS,
 } from "../../../common";
 import type {
 	Conditions,
@@ -1024,7 +1025,10 @@ const beforeDBStream = async ({
 	};
 
 	// This setting is allowed to be undefined, so make it that way when appropriate
-	if (!getLeagueOptions || getLeagueOptions.type !== "real") {
+	if (
+		!SPORT_HAS_REAL_PLAYERS &&
+		(!getLeagueOptions || getLeagueOptions.type !== "real")
+	) {
 		delete gameAttributeOverrides.realDraftRatings;
 	}
 
@@ -1140,7 +1144,6 @@ const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 	const playerSeason = p.ratings!.at(-1)!.season;
 
 	const diff = season - playerSeason;
-	console.log("adjustSeasonPlayer", diff, season, playerSeason, p);
 
 	if (diff !== 0) {
 		const keys = ["awards", "injuries", "ratings", "salaries"] as const;
@@ -1292,6 +1295,7 @@ const afterDBStream = async ({
 			players: activePlayers,
 			basketball,
 			numActiveTeams: gameAttributes.numActiveTeams,
+			realDraftRatings: gameAttributes.realDraftRatings ?? "rookie",
 			phase: gameAttributes.phase,
 			season: gameAttributes.season,
 		});

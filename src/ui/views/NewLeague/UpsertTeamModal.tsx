@@ -271,6 +271,8 @@ const SelectTeam = ({
 		};
 
 		run();
+		// We only want this to run when changing the type
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [addEditTeamInfo.type, addEditTeamInfo.addType]);
 
 	if (addEditTeamInfo.type !== "add") {

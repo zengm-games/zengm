@@ -354,7 +354,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 		}
 	}
 
-	return teams.map(t => output.find(t2 => t.tid === t2.tid));
+	return teams.map(t => output.find(t2 => t.tid === t2.tid)!);
 };
 
 const getRandomTeams = async ({

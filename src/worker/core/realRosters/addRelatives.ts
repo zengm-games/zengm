@@ -1,4 +1,4 @@
-import { groupBy, groupByUnique } from "../../../common/groupBy";
+import { groupBy } from "../../../common/groupBy";
 import type { Relative } from "../../../common/types";
 import type { Basketball } from "./loadData.basketball";
 
@@ -26,6 +26,7 @@ const addRelatives = (
 		allRelativesBySlug = groupBy(allRelatives, "slug");
 	}
 
+	// Not groupByUnique because you could have two copies of the same player in a league, at least in 2022!
 	const playersBySlug = groupBy(players, "srID");
 
 	for (const p of players) {

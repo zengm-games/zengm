@@ -1134,35 +1134,38 @@ const beforeDBStream = async ({
 	};
 };
 
-const adjustSeasonPlayer = (p: PlayerWithoutKey) => {
+const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 	const season = g.get("season");
 
-	const playerSeason = p.ratings.at(-1)!.season;
+	const playerSeason = p.ratings!.at(-1)!.season;
 
 	const diff = season - playerSeason;
+	console.log("adjustSeasonPlayer", diff, season, playerSeason, p);
 
 	if (diff !== 0) {
-		for (const row of [
-			...p.awards,
-			...p.injuries,
-			...p.ratings,
-			...p.salaries,
-		]) {
-			row.season += diff;
+		const keys = ["awards", "injuries", "ratings", "salaries"] as const;
+		for (const key of keys) {
+			if (p[key]) {
+				for (const row of p[key]!) {
+					row.season += diff;
+				}
+			}
 		}
 
-		p.born.year += diff;
+		p.born!.year += diff;
 
-		p.draft = {
-			year: p.draft.year + diff,
-			tid: -1,
-			originalTid: -1,
-			round: 0,
-			pick: 0,
-			ovr: p.draft.ovr,
-			pot: p.draft.pot,
-			skills: p.draft.skills,
-		};
+		if (p.draft) {
+			p.draft = {
+				year: p.draft.year + diff,
+				tid: -1,
+				originalTid: -1,
+				round: 0,
+				pick: 0,
+				ovr: p.draft.ovr,
+				pot: p.draft.pot,
+				skills: p.draft.skills,
+			};
+		}
 	}
 };
 
@@ -1261,6 +1264,7 @@ const afterDBStream = async ({
 				delete p.transactions;
 				p.stats = [];
 				p.tid = t.tid;
+				adjustSeasonPlayer(p);
 
 				const p2 = await processPlayerNewLeague({
 					p,
@@ -1271,7 +1275,6 @@ const afterDBStream = async ({
 					scoutingRank,
 					version: MAX_SUPPORTED_LEAGUE_VERSION,
 				});
-				adjustSeasonPlayer(p2);
 
 				extraActivePlayers.push(p2);
 			}

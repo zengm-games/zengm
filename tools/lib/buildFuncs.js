@@ -1,4 +1,4 @@
-const parcelCSS = require("@parcel/css");
+const lightningCSS = require("lightningcss");
 const browserslist = require("browserslist");
 const crypto = require("crypto");
 const fs = require("fs");
@@ -69,12 +69,12 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 
 			const purgeCSSResult = purgeCSSResults[i].css;
 
-			const { code } = parcelCSS.transform({
+			const { code } = lightningCSS.transform({
 				filename: `${filename}.css`,
 				code: Buffer.from(purgeCSSResult),
 				minify: true,
 				sourceMap: false,
-				targets: parcelCSS.browserslistToTargets(
+				targets: lightningCSS.browserslistToTargets(
 					browserslist("Chrome >= 49, Firefox >= 78, Safari >= 11"),
 				),
 			});

@@ -1316,13 +1316,21 @@ const afterDBStream = async ({
 	if (activePlayers.some(p => p.srID !== undefined)) {
 		const basketball = await loadDataBasketball();
 
-		// Add pids so addRelatives can work
-		let pid = 1;
+		// Depending on how we got to this point, there may already be pids and here (normal real players league) or there may not (individual team selected from Customize Teams, or maybe random debuts in random players league)
+		let maxPid = 0;
 		for (const p of activePlayers) {
-			p.pid = pid;
-			pid += 1;
+			if (p.pid !== undefined && p.pid > maxPid) {
+				maxPid = p.pid;
+			}
+		}
+		for (const p of activePlayers) {
+			if (p.pid === undefined) {
+				maxPid += 1;
+				p.pid = maxPid;
+			}
 		}
 
+		// This is redundant for a normal real players league, but oh well, it's not very slow. Can't get rid of it in getLeague because that runs on all players, not just active. Can't get rid of it here because it's needed for other types of leagues
 		addRelatives(activePlayers as unknown as Player[], basketball.relatives);
 	}
 

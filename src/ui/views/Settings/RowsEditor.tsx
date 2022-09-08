@@ -1,5 +1,4 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { m, AnimatePresence } from "framer-motion";
 import { ChangeEvent, CSSProperties, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import type { InjuriesSetting, TragicDeaths } from "../../../common/types";
@@ -470,95 +469,98 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 									</>
 								)}
 							</div>
-							<AnimatePresence initial={false}>
-								{rows.map((row, i) => (
+							{/* <AnimatePresence mode="popLayout" initial={false}> */}
+							{rows.map((row, i) => {
+								/*
+									Would be nice to animate this, but there seem to sometimes be artifacts after a deleted row is removed :( https://discord.com/channels/290013534023057409/290015591216054273/1017153689972133992
+									Maybe related to https://github.com/framer/motion/issues/1624 https://github.com/framer/motion/issues/1534
 									<m.div
 										key={row.id}
 										initial={{ opacity: 0, y: -38 }}
 										animate={{ opacity: 1, y: 0 }}
-										exit={{}}
+										exit={{ opacity: 0 }}
 										layout
 										transition={{ duration: 0.2, type: "tween" }}
-									>
-										<div className="d-flex">
-											<div className="row g-2 flex-grow-1" key={i}>
-												{type === "injuries" ? (
-													<>
-														<div className="col-6">
-															<input
-																type="text"
-																className="form-control"
-																value={(row as any).name}
-																onChange={handleChange("name", i)}
-															/>
-														</div>
-														<div className="col-3">
-															<input
-																type="text"
-																className={classNames("form-control", {
-																	"is-invalid": isInvalidNumber(
-																		parseFloat(row.frequency),
-																	),
-																})}
-																value={row.frequency}
-																onChange={handleChange("frequency", i)}
-															/>
-														</div>
-														<div className="col-3">
-															<input
-																type="text"
-																className={classNames("form-control", {
-																	"is-invalid": isInvalidNumber(
-																		parseFloat((row as any).games),
-																	),
-																})}
-																value={(row as any).games}
-																onChange={handleChange("games", i)}
-															/>
-														</div>
-													</>
-												) : (
-													<>
-														<div className="col-9 col-md-10 col-xl-11">
-															<input
-																type="text"
-																className="form-control"
-																value={(row as any).reason}
-																onChange={handleChange("reason", i)}
-															/>
-														</div>
-														<div className="col-3 col-md-2 col-xl-1">
-															<input
-																type="text"
-																className={classNames("form-control", {
-																	"is-invalid": isInvalidNumber(
-																		parseFloat(row.frequency),
-																	),
-																})}
-																value={row.frequency}
-																onChange={handleChange("frequency", i)}
-															/>
-														</div>
-													</>
-												)}
-											</div>
-											<button
-												className="text-danger btn btn-link ps-2 pe-0 border-0"
-												onClick={() => {
-													setRows(rows =>
-														(rows as any[]).filter(row2 => row2 !== row),
-													);
-												}}
-												style={{ fontSize: 20 }}
-												title="Delete"
-												type="button"
-											>
-												<span className="glyphicon glyphicon-remove" />
-											</button>
+									>*/
+								return (
+									<div key={row.id} className="d-flex">
+										<div className="row g-2 flex-grow-1" key={i}>
+											{type === "injuries" ? (
+												<>
+													<div className="col-6">
+														<input
+															type="text"
+															className="form-control"
+															value={(row as any).name}
+															onChange={handleChange("name", i)}
+														/>
+													</div>
+													<div className="col-3">
+														<input
+															type="text"
+															className={classNames("form-control", {
+																"is-invalid": isInvalidNumber(
+																	parseFloat(row.frequency),
+																),
+															})}
+															value={row.frequency}
+															onChange={handleChange("frequency", i)}
+														/>
+													</div>
+													<div className="col-3">
+														<input
+															type="text"
+															className={classNames("form-control", {
+																"is-invalid": isInvalidNumber(
+																	parseFloat((row as any).games),
+																),
+															})}
+															value={(row as any).games}
+															onChange={handleChange("games", i)}
+														/>
+													</div>
+												</>
+											) : (
+												<>
+													<div className="col-9 col-md-10 col-xl-11">
+														<input
+															type="text"
+															className="form-control"
+															value={(row as any).reason}
+															onChange={handleChange("reason", i)}
+														/>
+													</div>
+													<div className="col-3 col-md-2 col-xl-1">
+														<input
+															type="text"
+															className={classNames("form-control", {
+																"is-invalid": isInvalidNumber(
+																	parseFloat(row.frequency),
+																),
+															})}
+															value={row.frequency}
+															onChange={handleChange("frequency", i)}
+														/>
+													</div>
+												</>
+											)}
 										</div>
-									</m.div>
-								))}
-							</AnimatePresence>
+										<button
+											className="text-danger btn btn-link ps-2 pe-0 border-0"
+											onClick={() => {
+												setRows(rows =>
+													(rows as any[]).filter(row2 => row2 !== row),
+												);
+											}}
+											style={{ fontSize: 20 }}
+											title="Delete"
+											type="button"
+										>
+											<span className="glyphicon glyphicon-remove" />
+										</button>
+									</div>
+								);
+							})}
 						</form>
 					) : (
 						<div className="mt-3 text-danger">

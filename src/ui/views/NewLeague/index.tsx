@@ -67,11 +67,13 @@ const animationVariants = {
 };
 
 export const applyRealTeamInfos = <
-	T extends Parameters<typeof applyRealTeamInfo>[0],
+	T extends Parameters<typeof applyRealTeamInfo>[0] & {
+		season?: number;
+	},
 >(
 	teams: T[],
 	realTeamInfo: RealTeamInfo | undefined,
-	season: number = new Date().getFullYear(),
+	season: number | "inTeamObject" = new Date().getFullYear(),
 ): T[] => {
 	if (!realTeamInfo) {
 		return teams;
@@ -80,7 +82,19 @@ export const applyRealTeamInfos = <
 	return teams.map(t => {
 		if (t.srID && realTeamInfo[t.srID]) {
 			const t2 = helpers.deepCopy(t);
-			applyRealTeamInfo(t2, realTeamInfo, season);
+
+			let teamSeason;
+			if (season === "inTeamObject") {
+				teamSeason = t2.season;
+				if (teamSeason === undefined) {
+					throw new Error("Missing season");
+				}
+			} else {
+				teamSeason = season;
+			}
+
+			applyRealTeamInfo(t2, realTeamInfo, teamSeason);
+
 			return t2;
 		}
 

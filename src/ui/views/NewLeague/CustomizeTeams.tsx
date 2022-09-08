@@ -12,7 +12,7 @@ import { logEvent, toWorker } from "../../util";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
-import { MAX_SEASON } from ".";
+import { applyRealTeamInfos, MAX_SEASON } from ".";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
@@ -858,9 +858,13 @@ const CustomizeTeams = ({
 						saveToDb: false,
 					});
 				} else {
+					const newTeams = real
+						? applyRealTeamInfos(response, realTeamInfo, "inTeamObject")
+						: response;
+
 					dispatch({
 						type: "setState",
-						teams: response,
+						teams: newTeams,
 						divs: myDivs,
 						confs: myConfs,
 					});

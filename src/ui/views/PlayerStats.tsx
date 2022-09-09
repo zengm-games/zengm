@@ -110,11 +110,19 @@ const PlayerStats = ({
 		}
 	}
 
+	let statsProperty: "careerStats" | "careerStatsPlayoffs" | "stats";
+	if (season === "career") {
+		statsProperty =
+			playoffs === "playoffs" ? "careerStatsPlayoffs" : "careerStats";
+	} else {
+		statsProperty = "stats";
+	}
+
 	if (isSport("baseball") && statType === "fielding") {
 		players = expandFieldingStats({
 			rows: players,
 			stats,
-			statsProperty: "stats",
+			statsProperty,
 		});
 	}
 
@@ -132,15 +140,14 @@ const PlayerStats = ({
 		let actualAbbrev;
 		let actualTid;
 		if (season === "career") {
-			p.stats = p.careerStats;
 			actualAbbrev = p.abbrev;
 			actualTid = p.tid;
-			if (playoffs === "playoffs") {
-				p.stats = p.careerStatsPlayoffs;
-			}
 		} else {
 			actualAbbrev = p.stats.abbrev;
 			actualTid = p.stats.tid;
+		}
+		if (statsProperty !== "stats") {
+			p.stats = p[statsProperty];
 		}
 
 		const statsRow = stats.map(stat =>

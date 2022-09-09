@@ -21,6 +21,18 @@ const teamInfos: {
 			hockey: "hockey3",
 		}),
 	},
+	ANC: {
+		region: "Anchorage",
+		name: "Glaciers",
+		pop: 0.5,
+		colors: ["#3bd0e8", "#f96b09", "#fabf09"],
+		jersey: bySport({
+			baseball: "baseball2:hat2",
+			basketball: "jersey4",
+			football: "football4",
+			hockey: "hockey",
+		}),
+	},
 	ATL: {
 		region: "Atlanta",
 		name: "Gold Club",

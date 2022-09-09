@@ -9,6 +9,10 @@ const geographicCoordinates: Record<
 		latitude: 35.0844,
 		longitude: -106.6504,
 	},
+	Anchorage: {
+		latitude: 61.2175,
+		longitude: -149.8978,
+	},
 	Anderson: {
 		latitude: 40.1053,
 		longitude: -85.6803,

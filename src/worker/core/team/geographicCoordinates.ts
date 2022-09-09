@@ -5,6 +5,10 @@ const geographicCoordinates: Record<
 		longitude: number;
 	}
 > = {
+	Albuquerque: {
+		latitude: 35.0844,
+		longitude: -106.6504,
+	},
 	Anderson: {
 		latitude: 40.1053,
 		longitude: -85.6803,

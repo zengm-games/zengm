@@ -9,6 +9,18 @@ const teamInfos: {
 		jersey: string;
 	};
 } = {
+	ABQ: {
+		region: "Albuquerque",
+		name: "Thunderbirds",
+		pop: 0.9,
+		colors: ["#ffd404", "#c80c2c", "#000000"],
+		jersey: bySport({
+			baseball: "baseball2:hat2",
+			basketball: "jersey2",
+			football: "football2",
+			hockey: "hockey3",
+		}),
+	},
 	ATL: {
 		region: "Atlanta",
 		name: "Gold Club",

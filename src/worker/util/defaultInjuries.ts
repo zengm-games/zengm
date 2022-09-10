@@ -54,7 +54,7 @@ const defaultInjuries = [
 		games: 1.09,
 	},
 	{
-		name: "Sprained Calf",
+		name: "Strained Calf",
 		frequency: 259,
 		games: 8.02,
 	},

@@ -177,6 +177,10 @@ const geographicCoordinates: Record<
 		latitude: 41.824,
 		longitude: -71.4128,
 	},
+	Quebec: {
+		latitude: 46.8131,
+		longitude: -71.2075,
+	},
 	Rochester: {
 		latitude: 43.1566,
 		longitude: -77.6088,

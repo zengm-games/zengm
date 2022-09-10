@@ -528,6 +528,18 @@ const teamInfos: {
 			hockey: "hockey",
 		}),
 	},
+	QUE: {
+		region: "Quebec",
+		name: "Voyageurs",
+		pop: 0.8,
+		colors: ["#00529f", "#eeb210", "#7b2c18"],
+		jersey: bySport({
+			baseball: "baseball2:hat2",
+			basketball: "jersey2",
+			football: "football2",
+			hockey: "hockey3",
+		}),
+	},
 	SF: {
 		region: "San Francisco",
 		name: "Unicorns",

@@ -24,7 +24,7 @@ const teamInfos: {
 	ANC: {
 		region: "Anchorage",
 		name: "Glaciers",
-		pop: 0.5,
+		pop: 0.4,
 		colors: ["#3bd0e8", "#f96b09", "#fabf09"],
 		jersey: bySport({
 			baseball: "baseball2:hat2",

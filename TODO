@@ -1,7 +1,5 @@
 FBGM performance after many pages in Edge https://old.reddit.com/r/Football_GM/comments/x7sjy5/lag_and_optimization/ini2jbe/?context=3
 
-PR/KR should less often be RB
-
 on player profile page, simming while scrolled to the right in a table resets the scroll
 - https://discord.com/channels/@me/673750689649917958/1004939436062146631
 - https://old.reddit.com/r/BasketballGM/comments/x7i40j/glitch_when_scrolling_right_on_player_stats/
@@ -164,16 +162,12 @@ frivolities
 
 highlight your team when viewing other team's schedule https://discord.com/channels/290013534023057409/331882115119448065/976114143700586537
 
-When playing an historical league, in all frivolities pages, maybe hide players that are not born yet/wait for their draft year to show them on these lists? https://discord.com/channels/290013534023057409/331882115119448065/977839132766273546
-
 In the "Trading block" page, add a feature like in the "Trade" page: when you select players the total salary of all players is shown (I suck at maths so it's hard for me to do it by myself) https://discord.com/channels/290013534023057409/331882115119448065/979653599879643166
 
 On Free Agents page, for players asking for more than my available cap space, add somewhere (maybe in the "asking for" column?) the amount of cap space I have to get rid to sign this player so I don't have to do the maths by myself https://discord.com/channels/290013534023057409/331882115119448065/979755636529168404
 - should be in another column, hidden by default
 
 League Finances page always shows the current  salary cap/ min payroll/luxury tax limit even when you go back in time - I'd rather have it display values from the past years (or also could be shown in roster page - previous years) https://discord.com/channels/290013534023057409/331882115119448065/979759314090754108
-
-when you click on an achievement popup after it's earned, have the page auto-scroll to that achievement. atm it stays at the top of the page https://discord.com/channels/290013534023057409/331882115119448065/979975214509195354
 
 add comparison to real player, for random player or draft prospect?
 - https://twitter.com/messages/1928999030-3723150857

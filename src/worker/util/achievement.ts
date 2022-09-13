@@ -54,7 +54,7 @@ async function add(
 		logEvent(
 			{
 				type: "achievement",
-				text: `"${achievement.name}" achievement awarded! <a href="/achievements">View all achievements.</a>`,
+				text: `"${achievement.name}" achievement awarded! <a href="/achievements#${achievement.slug}">View all achievements.</a>`,
 				saveToDb: false,
 			},
 			conditions,

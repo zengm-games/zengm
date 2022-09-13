@@ -72,12 +72,14 @@ const info = {
 		punting: [1, 1],
 	},
 	KR: {
-		rushing: [2, 1],
+		speed: [4, 1],
+		rushing: [-0.5, 1],
 		ballSecurity: [1, 1],
 	},
 	PR: {
-		rushing: [1, 1],
-		ballSecurity: [1, 1],
+		speed: [4, 1],
+		rushing: [-0.5, 1],
+		ballSecurity: [2, 1],
 	},
 };
 

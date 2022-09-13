@@ -43,8 +43,8 @@ export const getMostXPlayers = async ({
 	const playersAll: PlayersAll = [];
 
 	await iterate(
-		idb.league.transaction("players").store,
-		undefined,
+		idb.league.transaction("players").store.index("draft.year, retiredYear"),
+		IDBKeyRange.bound([-Infinity], [g.get("season") - 1, Infinity]),
 		undefined,
 		p => {
 			if (filter !== undefined && !filter(p)) {

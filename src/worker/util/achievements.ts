@@ -285,12 +285,12 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	const season = g.get("season");
 	const userTid = g.get("userTid");
 
+	const currentAwards = await idb.cache.awards.get(season);
+
 	// If we have current season in cache, use it
 	if (checkMvpCache?.season === season) {
-		return checkMvpCache.count === limit;
+		return currentAwards.mvp?.tid === userTid && checkMvpCache.count === limit;
 	}
-
-	const currentAwards = await idb.cache.awards.get(season);
 
 	// If we have last season in cache, use it
 	if (checkMvpCache?.season === season - 1) {
@@ -974,7 +974,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "mvp",
 		name: "10 MVPs",
-		desc: "Have your players collectively win 10 MVP awards.",
+		desc: "Have your players collectively win 10 MVP awards in a single league.",
 		category: "Awards",
 		check() {
 			return checkMvp(10, 1000);
@@ -984,7 +984,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "mvp_2",
 		name: "100 MVPs",
-		desc: "Have your players collectively win 100 MVP awards.",
+		desc: "Have your players collectively win 100 MVP awards in a single league.",
 		category: "Awards",
 		check() {
 			return checkMvp(100, 1000);
@@ -994,7 +994,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "mvp_3",
 		name: "1,000 MVPs",
-		desc: "Have your players collectively win 1,000 MVP awards.",
+		desc: "Have your players collectively win 1,000 MVP awards in a single league.",
 		category: "Awards",
 		check() {
 			return checkMvp(1000, 1000);

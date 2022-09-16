@@ -359,7 +359,7 @@ const play = async (
 			teams,
 			doPlayByPlay,
 			homeCourtFactor,
-			disableHomeCourtAdvantage,
+			disableHomeCourtAdvantage: disableHomeCourtAdvantage || allStarGame,
 			allStarGame,
 			baseInjuryRate,
 

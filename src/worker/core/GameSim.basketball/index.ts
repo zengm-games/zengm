@@ -254,6 +254,7 @@ class GameSim {
 		homeCourtFactor = 1,
 		allStarGame = false,
 		baseInjuryRate,
+		disableHomeCourtAdvantage = false,
 	}: {
 		gid: number;
 		day?: number;
@@ -262,6 +263,7 @@ class GameSim {
 		homeCourtFactor?: number;
 		allStarGame?: boolean;
 		baseInjuryRate: number;
+		disableHomeCourtAdvantage?: boolean;
 	}) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
@@ -317,7 +319,7 @@ class GameSim {
 			this.synergyFactor *= 2.5;
 		}
 
-		if (!this.allStarGame) {
+		if (!disableHomeCourtAdvantage) {
 			this.homeCourtAdvantage(homeCourtFactor);
 		}
 

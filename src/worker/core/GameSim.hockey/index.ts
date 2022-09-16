@@ -106,6 +106,7 @@ class GameSim {
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
 		baseInjuryRate,
+		disableHomeCourtAdvantage = false,
 	}: {
 		gid: number;
 		day?: number;
@@ -113,6 +114,7 @@ class GameSim {
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
 		baseInjuryRate: number;
+		disableHomeCourtAdvantage?: boolean;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
@@ -162,7 +164,9 @@ class GameSim {
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
 
-		this.homeCourtAdvantage(homeCourtFactor);
+		if (!disableHomeCourtAdvantage) {
+			this.homeCourtAdvantage(homeCourtFactor);
+		}
 
 		this.minutesSinceLineChange = [
 			{

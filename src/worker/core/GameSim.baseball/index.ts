@@ -78,6 +78,7 @@ class GameSim {
 		dh,
 		allStarGame = false,
 		baseInjuryRate,
+		disableHomeCourtAdvantage = false,
 	}: {
 		gid: number;
 		day?: number;
@@ -87,6 +88,7 @@ class GameSim {
 		dh: boolean;
 		allStarGame: boolean;
 		baseInjuryRate: number;
+		disableHomeCourtAdvantage?: boolean;
 	}) {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.id = gid;
@@ -100,7 +102,9 @@ class GameSim {
 			new Team(teams[1], dh, this.allStarGame),
 		];
 
-		this.homeCourtAdvantage(homeCourtFactor);
+		if (!disableHomeCourtAdvantage) {
+			this.homeCourtAdvantage(homeCourtFactor);
+		}
 
 		// Away team starts on offense
 		this.o = 1;

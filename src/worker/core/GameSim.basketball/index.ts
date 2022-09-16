@@ -240,6 +240,7 @@ class GameSim {
 
 	numPlayersOnCourt: number;
 	baseInjuryRate: number;
+	isOneTwos: boolean;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -254,6 +255,7 @@ class GameSim {
 		homeCourtFactor = 1,
 		allStarGame = false,
 		baseInjuryRate,
+		isOneTwos = false,
 	}: {
 		gid: number;
 		day?: number;
@@ -262,6 +264,7 @@ class GameSim {
 		homeCourtFactor?: number;
 		allStarGame?: boolean;
 		baseInjuryRate: number;
+		isOneTwos: boolean;
 	}) {
 		if (doPlayByPlay) {
 			this.playByPlay = [];
@@ -309,6 +312,7 @@ class GameSim {
 		this.elamActive = false;
 		this.elamDone = false;
 		this.elamTarget = 0;
+		this.isOneTwos = isOneTwos;
 
 		this.fatigueFactor = 0.055;
 
@@ -1350,7 +1354,7 @@ class GameSim {
 			}
 
 			if (inBonus) {
-				return this.doFt(shooter, 2); // fg, orb, or drb
+				return this.doFt(shooter, this.determineFtAmount()); // fg, orb, or drb
 			}
 
 			return "nonShootingFoul";
@@ -1358,6 +1362,21 @@ class GameSim {
 
 		// Shot!
 		return this.doShot(shooter, possessionLength); // fg, orb, or drb
+	}
+
+	/*
+	 * Determines the amount of FT a team gets.
+	 */
+	determineFtAmount(isThreePointer: boolean = false): number {
+		// default FT amount
+		var ft = 2;
+		if (this.isOneTwos) {
+			ft -= 1;
+		}
+		if (isThreePointer) {
+			ft += 1;
+		}
+		return ft;
 	}
 
 	/**
@@ -1606,12 +1625,11 @@ class GameSim {
 			const threePointer = type === "threePointer" && g.get("threePointers");
 
 			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
-
 			if (threePointer) {
-				return this.doFt(shooter, 3); // fg, orb, or drb
+				return this.doFt(shooter, this.determineFtAmount(true)); // fg, orb, or drb
 			}
 
-			return this.doFt(shooter, 2); // fg, orb, or drb
+			return this.doFt(shooter, this.determineFtAmount()); // fg, orb, or drb
 		}
 
 		// Miss
@@ -1716,7 +1734,10 @@ class GameSim {
 		const p = this.playersOnCourt[this.o][shooter];
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
-		this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
+		this.recordStat(this.o, p, "pts");
+		if (!this.isOneTwos) {
+			this.recordStat(this.o, p, "pts");
+		}
 
 		let fouler;
 		if (andOne) {

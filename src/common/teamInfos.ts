@@ -666,6 +666,129 @@ const teamInfos: {
 			hockey: "hockey",
 		}),
 	},
+
+	// 2022-09-16 - new teams
+
+	BEI: {
+		region: "Beijing",
+		name: "Celestials",
+		pop: 22.4,
+		colors: ["#381968", "#ffffff", "#6da8b5"],
+		jersey: bySport({
+			baseball: "baseball4:hat",
+			basketball: "jersey2",
+			football: "football2",
+			hockey: "hockey3",
+		}),
+	},
+	EDM: {
+		region: "Edmonton",
+		name: "River Rats",
+		pop: 1.3,
+		colors: ["#81cdea", "#1a66d6", "#efc997"],
+		jersey: bySport({
+			baseball: "baseball2:hat2",
+			basketball: "jersey5",
+			football: "football3",
+			hockey: "hockey4",
+		}),
+	},
+	LON: {
+		region: "London",
+		name: "Monarchs",
+		pop: 14.3,
+		colors: ["#10143d", "#ffffff", "#c9202a"],
+		jersey: bySport({
+			baseball: "baseball:hat3",
+			basketball: "jersey2",
+			football: "football4",
+			hockey: "hockey",
+		}),
+	},
+	MLB: {
+		region: "Melbourne",
+		name: "Convicts",
+		pop: 5,
+		colors: ["#ffe468", "#1d2605", "#f65e00"],
+		jersey: bySport({
+			baseball: "baseball4:hat",
+			basketball: "jersey3",
+			football: "football5",
+			hockey: "hockey4",
+		}),
+	},
+	MNL: {
+		region: "Manila",
+		name: "Monkey-Eating Eagles",
+		pop: 13.5,
+		colors: ["#351a06", "#ffb600", "#ddc194"],
+		jersey: bySport({
+			baseball: "baseball2:hat2",
+			basketball: "jersey4",
+			football: "football2",
+			hockey: "hockey3",
+		}),
+	},
+	NJ: {
+		region: "New Jersey",
+		name: "Swamp Dragons",
+		pop: 4.6, // Sum of counties around Newark
+		colors: ["#23c3be", "#9436c6", "#ea4242"],
+		jersey: bySport({
+			baseball: "baseball3:hat3",
+			basketball: "jersey5",
+			football: "football3",
+			hockey: "hockey2",
+		}),
+	},
+	PAR: {
+		region: "Paris",
+		name: "Pigeons",
+		pop: 11.1,
+		colors: ["#474754", "#4a997c", "#b18d7f"],
+		jersey: bySport({
+			baseball: "baseball4:hat",
+			basketball: "jersey2",
+			football: "football4",
+			hockey: "hockey3",
+		}),
+	},
+	RIO: {
+		region: "Rio de Janeiro",
+		name: "Capybaras",
+		pop: 12.3,
+		colors: ["#f9c922", "#40b265", "#e28e13"],
+		jersey: bySport({
+			baseball: "baseball3:hat2",
+			basketball: "jersey2",
+			football: "football5",
+			hockey: "hockey4",
+		}),
+	},
+	TOK: {
+		region: "Tokyo",
+		name: "Kaiju",
+		pop: 37.3,
+		colors: ["#ffffff", "#e23122", "#000000"],
+		jersey: bySport({
+			baseball: "baseball2:hat3",
+			basketball: "jersey",
+			football: "football2",
+			hockey: "hockey2",
+		}),
+	},
+	WPG: {
+		region: "Winnipeg",
+		name: "Warhawks",
+		pop: 0.8,
+		colors: ["#122075", "#b3bfc8", "#475584"],
+		jersey: bySport({
+			baseball: "baseball:hat",
+			basketball: "jersey5",
+			football: "football3",
+			hockey: "hockey",
+		}),
+	},
 };
 
 export default teamInfos;

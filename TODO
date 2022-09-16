@@ -1,3 +1,5 @@
+useLocalShallow -> useGlobalStatePartial
+
 relatives in imported draft class https://discord.com/channels/290013534023057409/290015591216054273/1019432648629829663
 - delete any outside of draft class
 - within draft class, rewrite pids on import

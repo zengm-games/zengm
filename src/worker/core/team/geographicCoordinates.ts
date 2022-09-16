@@ -29,6 +29,10 @@ const geographicCoordinates: Record<
 		latitude: 39.2903848,
 		longitude: -76.6121893,
 	},
+	Beijing: {
+		latitude: 39.9042,
+		longitude: 116.4074,
+	},
 	Boston: {
 		latitude: 42.3600825,
 		longitude: -71.0588801,
@@ -73,6 +77,10 @@ const geographicCoordinates: Record<
 		latitude: 42.331427,
 		longitude: -83.0457538,
 	},
+	Edmonton: {
+		latitude: 53.5461,
+		longitude: -113.4937,
+	},
 	"Fort Wayne": {
 		latitude: 41.0793,
 		longitude: -85.1394,
@@ -101,17 +109,29 @@ const geographicCoordinates: Record<
 		latitude: 39.0997265,
 		longitude: -94.5785667,
 	},
-	"Los Angeles": {
-		latitude: 34.0522342,
-		longitude: -118.2436849,
-	},
 	"Las Vegas": {
 		latitude: 36.1699412,
 		longitude: -115.1398296,
 	},
+	London: {
+		latitude: 51.5072,
+		longitude: -0.1276,
+	},
+	"Los Angeles": {
+		latitude: 34.0522342,
+		longitude: -118.2436849,
+	},
+	Manila: {
+		latitude: 14.5995,
+		longitude: 120.9842,
+	},
 	Memphis: {
 		latitude: 35.1495343,
 		longitude: -90.0489801,
+	},
+	Melbourne: {
+		latitude: -37.8136,
+		longitude: 144.9631,
 	},
 	Miami: {
 		latitude: 25.7616798,
@@ -161,6 +181,10 @@ const geographicCoordinates: Record<
 		latitude: 45.4215296,
 		longitude: -75.6971931,
 	},
+	Paris: {
+		latitude: 48.8566,
+		longitude: 2.3522,
+	},
 	Philadelphia: {
 		latitude: 39.9525839,
 		longitude: -75.1652215,
@@ -184,6 +208,10 @@ const geographicCoordinates: Record<
 	Quebec: {
 		latitude: 46.8131,
 		longitude: -71.2075,
+	},
+	"Rio de Janeiro": {
+		latitude: -22.9068,
+		longitude: -43.1729,
 	},
 	Rochester: {
 		latitude: 43.1566,
@@ -229,6 +257,10 @@ const geographicCoordinates: Record<
 		latitude: 27.950575,
 		longitude: -82.4571776,
 	},
+	Tokyo: {
+		latitude: 35.6762,
+		longitude: 139.6503,
+	},
 	Toronto: {
 		latitude: 43.653226,
 		longitude: -79.3831843,
@@ -256,6 +288,10 @@ const geographicCoordinates: Record<
 	Waterloo: {
 		latitude: 42.4928,
 		longitude: -92.3426,
+	},
+	Winnipeg: {
+		latitude: 49.8954,
+		longitude: -97.1385,
 	},
 };
 

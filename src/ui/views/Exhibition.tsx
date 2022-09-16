@@ -623,7 +623,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				style={{ maxWidth: 700, width: "100%" }}
 			>
 				<div className="col-12 col-sm-6">
-					<h2>{neutralCourt ? "Team 1" : swapHomeAway ? "Away" : "Home"}</h2>
+					<h2>{neutralCourt ? "Team 1" : swapHomeAway ? "Home" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
 						index={1}
@@ -636,7 +636,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
-					<h2>{neutralCourt ? "Team 2" : swapHomeAway ? "Home" : "Away"}</h2>
+					<h2>{neutralCourt ? "Team 2" : swapHomeAway ? "Away" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
 						index={0}

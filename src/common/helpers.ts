@@ -635,7 +635,7 @@ function getTeamsDefault(): TeamBasic[] {
 				abbrev: "TOR",
 			},
 			{
-				tid: 29,
+				tid: 28,
 				cid: 1,
 				did: 3,
 				abbrev: "VAN",

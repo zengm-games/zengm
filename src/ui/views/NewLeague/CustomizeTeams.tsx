@@ -7,7 +7,7 @@ import { arrayMoveImmutable } from "array-move";
 import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
-import { HelpPopover, StickyBottomButtons } from "../../components";
+import { StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
 import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
@@ -935,27 +935,6 @@ const CustomizeTeams = ({
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
-				<div className="ms-2 pt-2">
-					<HelpPopover title="Reset">
-						<p>
-							<b>Default</b>: Resets conferences, divisions, and teams to their
-							default values.
-						</p>
-						<p>
-							<b>Randomize</b>: This replaces any teams you currently have with
-							random built-in teams. Those teams are grouped into divisions
-							based on their geographic location. Then, if your division names
-							are the same as the default division names and each division has
-							the same number of teams, it tries to assign each group to a
-							division name that makes sense.
-						</p>
-						<p>
-							<b>Randomize, population weighted</b>: Same as above, except
-							larger cities are more likely to be selected, so the set of teams
-							may feel a bit more realistic.
-						</p>
-					</HelpPopover>
-				</div>
 				<form
 					className="btn-group ms-auto"
 					onSubmit={event => {

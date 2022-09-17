@@ -362,11 +362,13 @@ const getRandomTeams = async ({
 	numTeamsPerDiv,
 	real,
 	weightByPopulation,
+	northAmericaOnly,
 }: {
 	divs: Div[];
 	numTeamsPerDiv: number[];
 	real: boolean;
 	weightByPopulation: boolean;
+	northAmericaOnly: boolean;
 }) => {
 	let numTeamsTotal = 0;
 	for (const num of numTeamsPerDiv) {
@@ -384,6 +386,12 @@ const getRandomTeams = async ({
 				did: 0,
 				abbrev,
 			})),
+		);
+	}
+
+	if (northAmericaOnly) {
+		allTeamInfos = allTeamInfos.filter(
+			t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
 		);
 	}
 

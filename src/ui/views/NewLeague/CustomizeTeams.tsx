@@ -13,7 +13,7 @@ import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
 import { applyRealTeamInfos, MAX_SEASON } from ".";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
+import RandomizeTeamsModal from "./RandomizeTeamsModal";
 
 const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
 	return teams.map((t, i) => ({
@@ -766,7 +766,9 @@ const CustomizeTeams = ({
 		hideDupeAbbrevs: false,
 	});
 
-	const [randomizing, setRandomizing] = useState(false);
+	const [randomizingState, setRandomizingState] = useState<
+		undefined | "modal" | "randomizing"
+	>();
 
 	const editTeam = (tidEdit: number, did: number) => {
 		setAddEditTeamInfo({
@@ -817,64 +819,65 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const randomize =
-		({
-			real,
-			weightByPopulation,
-		}: {
-			real: boolean;
-			weightByPopulation: boolean;
-		}) =>
-		async () => {
-			setRandomizing(true);
+	const randomize = async ({
+		real,
+		weightByPopulation,
+		northAmericaOnly,
+	}: {
+		real: boolean;
+		weightByPopulation: boolean;
+		northAmericaOnly: boolean;
+	}) => {
+		setRandomizingState("randomizing");
 
-			try {
-				// If there are no teams, auto reset to default first
-				let myDivs = divs;
-				let myTeams = teams;
-				let myConfs = confs;
-				if (myTeams.length === 0) {
-					const info = getDefaultConfsDivsTeams();
-					myDivs = info.divs;
-					myTeams = info.teams;
-					myConfs = info.confs;
-				}
-
-				const numTeamsPerDiv = myDivs.map(
-					div => myTeams.filter(t => t.did === div.did).length,
-				);
-
-				const response = await toWorker("main", "getRandomTeams", {
-					divs: myDivs,
-					numTeamsPerDiv,
-					real,
-					weightByPopulation,
-				});
-
-				if (typeof response === "string") {
-					logEvent({
-						type: "error",
-						text: response,
-						saveToDb: false,
-					});
-				} else {
-					const newTeams = real
-						? applyRealTeamInfos(response, realTeamInfo, "inTeamObject")
-						: response;
-
-					dispatch({
-						type: "setState",
-						teams: newTeams,
-						divs: myDivs,
-						confs: myConfs,
-					});
-				}
-				setRandomizing(false);
-			} catch (error) {
-				setRandomizing(false);
-				throw error;
+		try {
+			// If there are no teams, auto reset to default first
+			let myDivs = divs;
+			let myTeams = teams;
+			let myConfs = confs;
+			if (myTeams.length === 0) {
+				const info = getDefaultConfsDivsTeams();
+				myDivs = info.divs;
+				myTeams = info.teams;
+				myConfs = info.confs;
 			}
-		};
+
+			const numTeamsPerDiv = myDivs.map(
+				div => myTeams.filter(t => t.did === div.did).length,
+			);
+
+			const response = await toWorker("main", "getRandomTeams", {
+				divs: myDivs,
+				numTeamsPerDiv,
+				real,
+				weightByPopulation,
+				northAmericaOnly,
+			});
+
+			if (typeof response === "string") {
+				logEvent({
+					type: "error",
+					text: response,
+					saveToDb: false,
+				});
+			} else {
+				const newTeams = real
+					? applyRealTeamInfos(response, realTeamInfo, "inTeamObject")
+					: response;
+
+				dispatch({
+					type: "setState",
+					teams: newTeams,
+					divs: myDivs,
+					confs: myConfs,
+				});
+			}
+			setRandomizingState(undefined);
+		} catch (error) {
+			setRandomizingState(undefined);
+			throw error;
+		}
+	};
 
 	return (
 		<>
@@ -912,43 +915,24 @@ const CustomizeTeams = ({
 					<Dropdown.Toggle
 						variant="danger"
 						id="customize-teams-reset"
-						disabled={randomizing}
+						disabled={randomizingState === "randomizing"}
 					>
-						{randomizing ? <ProcessingSpinner /> : "Reset"}
+						{randomizingState === "randomizing" ? (
+							<ProcessingSpinner />
+						) : (
+							"Reset"
+						)}
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
 						<Dropdown.Item onClick={resetClear}>Clear</Dropdown.Item>
 						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>
 						<Dropdown.Item
-							onClick={randomize({
-								real: false,
-								weightByPopulation: false,
-							})}
+							onClick={() => {
+								setRandomizingState("modal");
+							}}
 						>
-							Randomize - random players
+							Randomize...
 						</Dropdown.Item>
-						<Dropdown.Item
-							onClick={randomize({
-								real: false,
-								weightByPopulation: true,
-							})}
-						>
-							Randomize - random players, population weighted
-						</Dropdown.Item>
-						{SPORT_HAS_REAL_PLAYERS ? (
-							<>
-								<Dropdown.Item
-									onClick={randomize({
-										real: true,
-
-										// Works if you set weightByPopulation to true, but not enough difference to matter, since big cities tend to be the ones with long franchise histories, so they get picked more anyway
-										weightByPopulation: false,
-									})}
-								>
-									Randomize - real teams
-								</Dropdown.Item>
-							</>
-						) : null}
 					</Dropdown.Menu>
 				</Dropdown>
 				<div className="ms-2 pt-2">
@@ -1004,19 +988,27 @@ const CustomizeTeams = ({
 						className="btn btn-secondary"
 						type="button"
 						onClick={onCancel}
-						disabled={randomizing}
+						disabled={randomizingState === "randomizing"}
 					>
 						Cancel
 					</button>
 					<button
 						className="btn btn-primary me-2"
 						type="submit"
-						disabled={randomizing}
+						disabled={randomizingState === "randomizing"}
 					>
 						Save Teams
 					</button>
 				</form>
 			</StickyBottomButtons>
+
+			<RandomizeTeamsModal
+				onCancel={() => {
+					setRandomizingState(undefined);
+				}}
+				onRandomize={randomize}
+				show={randomizingState === "modal"}
+			/>
 
 			<UpsertTeamModal
 				key={

@@ -607,7 +607,9 @@ const UpsertTeamModal = ({
 	return (
 		<Modal size="lg" show={addEditTeamInfo.type !== "none"} onHide={onCancel}>
 			<Modal.Header closeButton>
-				{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
+				<Modal.Title>
+					{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
+				</Modal.Title>
 			</Modal.Header>
 			{addEditTeamInfo.type !== "edit" ? (
 				<Modal.Body className="border-bottom">

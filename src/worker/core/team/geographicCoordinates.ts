@@ -3,6 +3,7 @@ const geographicCoordinates: Record<
 	{
 		latitude: number;
 		longitude: number;
+		outsideNorthAmerica?: boolean;
 	}
 > = {
 	Albuquerque: {
@@ -32,6 +33,7 @@ const geographicCoordinates: Record<
 	Beijing: {
 		latitude: 39.9042,
 		longitude: 116.4074,
+		outsideNorthAmerica: true,
 	},
 	Boston: {
 		latitude: 42.3600825,
@@ -116,6 +118,7 @@ const geographicCoordinates: Record<
 	London: {
 		latitude: 51.5072,
 		longitude: -0.1276,
+		outsideNorthAmerica: true,
 	},
 	"Los Angeles": {
 		latitude: 34.0522342,
@@ -124,6 +127,7 @@ const geographicCoordinates: Record<
 	Manila: {
 		latitude: 14.5995,
 		longitude: 120.9842,
+		outsideNorthAmerica: true,
 	},
 	Memphis: {
 		latitude: 35.1495343,
@@ -132,6 +136,7 @@ const geographicCoordinates: Record<
 	Melbourne: {
 		latitude: -37.8136,
 		longitude: 144.9631,
+		outsideNorthAmerica: true,
 	},
 	Miami: {
 		latitude: 25.7616798,
@@ -184,6 +189,7 @@ const geographicCoordinates: Record<
 	Paris: {
 		latitude: 48.8566,
 		longitude: 2.3522,
+		outsideNorthAmerica: true,
 	},
 	Philadelphia: {
 		latitude: 39.9525839,
@@ -212,6 +218,7 @@ const geographicCoordinates: Record<
 	"Rio de Janeiro": {
 		latitude: -22.9068,
 		longitude: -43.1729,
+		outsideNorthAmerica: true,
 	},
 	Rochester: {
 		latitude: 43.1566,
@@ -260,6 +267,7 @@ const geographicCoordinates: Record<
 	Tokyo: {
 		latitude: 35.6762,
 		longitude: 139.6503,
+		outsideNorthAmerica: true,
 	},
 	Toronto: {
 		latitude: 43.653226,

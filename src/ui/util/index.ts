@@ -45,7 +45,7 @@ export {
 	localActions,
 	useLocal,
 	useLocalActions,
-	useLocalShallow,
+	useLocalPartial,
 } from "./local";
 export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as logEvent } from "./logEvent";

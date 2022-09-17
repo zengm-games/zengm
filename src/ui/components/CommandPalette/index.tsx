@@ -15,7 +15,7 @@ import {
 	realtimeUpdate,
 	safeLocalStorage,
 	toWorker,
-	useLocalShallow,
+	useLocalPartial,
 } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
 import orderBy from "lodash-es/orderBy";
@@ -596,14 +596,14 @@ const ComandPalette = ({
 		lid,
 		playMenuOptions,
 		teamInfoCache,
-	} = useLocalShallow(state => ({
-		challengeNoRatings: state.challengeNoRatings,
-		godMode: state.godMode,
-		hideDisabledTeams: state.hideDisabledTeams,
-		lid: state.lid,
-		playMenuOptions: state.playMenuOptions,
-		teamInfoCache: state.teamInfoCache,
-	}));
+	} = useLocalPartial([
+		"challengeNoRatings",
+		"godMode",
+		"hideDisabledTeams",
+		"lid",
+		"playMenuOptions",
+		"teamInfoCache",
+	]);
 	const inLeague = lid !== undefined;
 
 	const [searchText, setSearchText] = useState("");

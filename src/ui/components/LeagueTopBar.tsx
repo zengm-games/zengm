@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useLocalShallow, safeLocalStorage } from "../util";
+import { useLocalPartial, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 import { emitter } from "./Modal";
 
@@ -29,11 +29,11 @@ const hiddenStyle = {
 const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 const LeagueTopBar = memo(() => {
-	const { games, lid, liveGameInProgress } = useLocalShallow(state => ({
-		games: state.games,
-		lid: state.lid,
-		liveGameInProgress: state.liveGameInProgress,
-	}));
+	const { games, lid, liveGameInProgress } = useLocalPartial([
+		"games",
+		"lid",
+		"liveGameInProgress",
+	]);
 
 	const [show, setShow] = useState(() => {
 		const showTemp = safeLocalStorage.getItem("bbgmShowLeagueTopBar");

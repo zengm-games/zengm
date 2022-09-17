@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { helpers, PHASE } from "../../common";
 import type { Phase, PlayerContract } from "../../common/types";
-import { useLocal, useLocalShallow } from "../util";
+import { useLocal, useLocalPartial } from "../util";
 
 type ContractPlayer = {
 	draft: {
@@ -26,10 +26,7 @@ export const wasJustDrafted = (
 };
 
 const useJustDrafted = (p: ContractPlayer) => {
-	const { phase, season } = useLocalShallow(state => ({
-		phase: state.phase,
-		season: state.season,
-	}));
+	const { phase, season } = useLocalPartial(["phase", "season"]);
 
 	return wasJustDrafted(p, phase as any, season);
 };

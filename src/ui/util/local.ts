@@ -223,8 +223,17 @@ const useLocal = create<LocalStateWithActions>(set => ({
 	},
 }));
 
-const useLocalShallow = <T>(selector: (a: LocalStateUI) => T) =>
-	useLocal<T>(selector, shallow);
+const useLocalPartial = <Key extends keyof LocalStateUI>(keys: Key[]) => {
+	const selector = (state: LocalStateUI) => {
+		const obj = {} as Pick<LocalStateUI, Key>;
+		for (const key of keys) {
+			obj[key] = state[key];
+		}
+		return obj;
+	};
+
+	return useLocal(selector, shallow);
+};
 
 // This assumes the actions object never changes!
 const useLocalActions = () => useLocal(state => state.actions);
@@ -232,4 +241,4 @@ const useLocalActions = () => useLocal(state => state.actions);
 const local = useLocal;
 const localActions = local.getState().actions;
 
-export { local, localActions, useLocal, useLocalActions, useLocalShallow };
+export { local, localActions, useLocal, useLocalActions, useLocalPartial };

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useState } from "react";
 import { MOOD_TRAITS } from "../../common";
 import type { MoodComponents, MoodTrait } from "../../common/types";
-import { helpers, useLocalShallow } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
+import { helpers, useLocalPartial } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 import ResponsivePopover from "./ResponsivePopover";
 
 const componentText = (component: keyof MoodComponents, value: number) => {
@@ -113,10 +113,10 @@ type Props = {
 };
 
 const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
-	const { teamInfoCache, userTid } = useLocalShallow(state => ({
-		teamInfoCache: state.teamInfoCache,
-		userTid: state.userTid,
-	}));
+	const { teamInfoCache, userTid } = useLocalPartial([
+		"teamInfoCache",
+		"userTid",
+	]);
 
 	const playerIsOnUsersTeam = userTid === p.tid;
 	const canShowCurrent = p.mood.current && !playerIsOnUsersTeam;

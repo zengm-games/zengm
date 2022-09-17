@@ -8,7 +8,7 @@ import {
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, helpers, toWorker, useLocalShallow } from "../util";
+import { confirm, getCols, helpers, toWorker, useLocalPartial } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import {
@@ -59,9 +59,7 @@ const FreeAgents = ({
 
 	useTitleBar({ title: "Free Agents" });
 
-	const { gameSimInProgress } = useLocalShallow(state => ({
-		gameSimInProgress: state.gameSimInProgress,
-	}));
+	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
 	if (
 		(phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||

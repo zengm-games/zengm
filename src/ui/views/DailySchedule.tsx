@@ -1,7 +1,7 @@
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker, useLocalShallow } from "../util";
+import { toWorker, useLocalPartial } from "../util";
 import { DAILY_SCHEDULE } from "../../common";
 import { NoGamesMessage } from "./GameLog";
 import allowForceTie from "../../common/allowForceTie";
@@ -30,10 +30,7 @@ const DailySchedule = ({
 		},
 	});
 
-	const { gameSimInProgress } = useLocalShallow(state => ({
-		gameSimInProgress: state.gameSimInProgress,
-		godMode: state.godMode,
-	}));
+	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
 	let simToDay = null;
 	if (upcoming.length > 0 && !isToday) {

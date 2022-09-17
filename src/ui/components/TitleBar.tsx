@@ -1,7 +1,7 @@
 import Dropdown from "./Dropdown";
 import DropdownLinks from "./DropdownLinks";
 import NewWindowLink from "./NewWindowLink";
-import { useLocalShallow } from "../util";
+import { useLocalPartial } from "../util";
 import type { MenuItemHeader } from "../../common/types";
 
 const genPath = (parts: string[], season: string | undefined) => {
@@ -27,21 +27,21 @@ const TitleBar = () => {
 		moreInfoSeason,
 		moreInfoTid,
 		lid,
-	} = useLocalShallow(state => ({
-		title: state.title,
-		customMenu: state.customMenu,
-		hideNewWindow: state.hideNewWindow,
-		jumpTo: state.jumpTo,
-		jumpToSeason: state.jumpToSeason,
-		dropdownCustomOptions: state.dropdownCustomOptions,
-		dropdownCustomURL: state.dropdownCustomURL,
-		dropdownView: state.dropdownView,
-		dropdownFields: state.dropdownFields,
-		moreInfoAbbrev: state.moreInfoAbbrev,
-		moreInfoSeason: state.moreInfoSeason,
-		moreInfoTid: state.moreInfoTid,
-		lid: state.lid,
-	}));
+	} = useLocalPartial([
+		"title",
+		"customMenu",
+		"hideNewWindow",
+		"jumpTo",
+		"jumpToSeason",
+		"dropdownCustomOptions",
+		"dropdownCustomURL",
+		"dropdownView",
+		"dropdownFields",
+		"moreInfoAbbrev",
+		"moreInfoSeason",
+		"moreInfoTid",
+		"lid",
+	]);
 
 	if (title === undefined) {
 		return null;

@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, useLocalShallow } from "../util";
+import { getCols, helpers, useLocalPartial } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
@@ -27,9 +27,7 @@ export const genView = (
 			customMenu: frivolitiesMenu,
 		});
 
-		const { teamInfoCache } = useLocalShallow(state2 => ({
-			teamInfoCache: state2.teamInfoCache,
-		}));
+		const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 		const superCols = [
 			{

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { bySport, isSport, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import type { DraftType, PlayerStatType } from "../../common/types";
-import { helpers, useLocalShallow } from "../util";
+import { helpers, useLocalPartial } from "../util";
 
 const MoreLinks = (
 	props: (
@@ -61,10 +61,10 @@ const MoreLinks = (
 ) => {
 	const { keepSelfLink, page } = props;
 
-	const { godMode, season: currentSeason } = useLocalShallow(state2 => ({
-		godMode: state2.godMode,
-		season: state2.season,
-	}));
+	const { godMode, season: currentSeason } = useLocalPartial([
+		"godMode",
+		"season",
+	]);
 
 	let links: {
 		url: (string | number | undefined)[] | string;

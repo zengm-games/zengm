@@ -1,6 +1,6 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
-import { localActions, useLocalShallow } from "../util";
+import { localActions, useLocalPartial } from "../util";
 import CommandPalette from "./CommandPalette";
 import ErrorBoundary from "./ErrorBoundary";
 import Footer from "./Footer";
@@ -49,10 +49,7 @@ const KeepPreviousRenderWhileUpdating = memo(
 const Controller = () => {
 	const state = useViewData();
 
-	const { popup, showNagModal } = useLocalShallow(state2 => ({
-		popup: state2.popup,
-		showNagModal: state2.showNagModal,
-	}));
+	const { popup, showNagModal } = useLocalPartial(["popup", "showNagModal"]);
 
 	const closeNagModal = useCallback(() => {
 		localActions.update({

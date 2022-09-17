@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
-import { localActions, useLocalShallow } from "../util";
+import { localActions, useLocalPartial } from "../util";
 import type { LocalStateUI, MenuItemHeader } from "../../common/types";
 import { GAME_NAME } from "../../common";
 import { getResponsiveValue } from "../components/Dropdown";
@@ -34,10 +34,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
 } = {}) => {
-	const state = useLocalShallow(state2 => ({
-		hideDisabledTeams: state2.hideDisabledTeams,
-		teamInfoCache: state2.teamInfoCache,
-	}));
+	const state = useLocalPartial(["hideDisabledTeams", "teamInfoCache"]);
 
 	useEffect(() => {
 		const parts: string[] = [];

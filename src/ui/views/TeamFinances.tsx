@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
+import { getCols, helpers, logEvent, toWorker, useLocalPartial } from "../util";
 import type { View, Phase } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -521,9 +521,7 @@ const TeamFinances = ({
 		dropdownFields: { teams: abbrev, shows: show },
 	});
 
-	const { gameSimInProgress } = useLocalShallow(state => ({
-		gameSimInProgress: state.gameSimInProgress,
-	}));
+	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
 	const cols = getCols(["Pos", "Name"]).concat(
 		salariesSeasons.map(season => {

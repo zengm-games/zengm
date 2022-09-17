@@ -17,7 +17,7 @@ import {
 	localActions,
 	resetFileInput,
 	toWorker,
-	useLocalShallow,
+	useLocalPartial,
 } from "../util";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
@@ -125,10 +125,10 @@ const LeagueFileUpload = ({
 	}, []);
 
 	const leagueCreationID = useRef(Math.random());
-	const { leagueCreation, leagueCreationPercent } = useLocalShallow(state => ({
-		leagueCreation: state.leagueCreation,
-		leagueCreationPercent: state.leagueCreationPercent,
-	}));
+	const { leagueCreation, leagueCreationPercent } = useLocalPartial([
+		"leagueCreation",
+		"leagueCreationPercent",
+	]);
 
 	// Reset status when switching between file upload
 	useEffect(() => {

@@ -7,7 +7,7 @@ import {
 	isSport,
 	PLAYER_STATS_TABLES,
 } from "../../common";
-import { useLocalShallow } from "../util";
+import { useLocalPartial } from "../util";
 import type { LocalStateUI } from "../../common/types";
 
 export type ResponsiveOption = {
@@ -215,13 +215,13 @@ const useDropdownOptions = (
 	field: string,
 	customOptions?: DropdownOption[],
 ) => {
-	const state = useLocalShallow(state2 => ({
-		hideDisabledTeams: state2.hideDisabledTeams,
-		phase: state2.phase,
-		season: state2.season,
-		startingSeason: state2.startingSeason,
-		teamInfoCache: state2.teamInfoCache,
-	}));
+	const state = useLocalPartial([
+		"hideDisabledTeams",
+		"phase",
+		"season",
+		"startingSeason",
+		"teamInfoCache",
+	]);
 
 	const sortedTeams = getSortedTeams(state);
 

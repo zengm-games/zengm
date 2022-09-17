@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, useLocalShallow } from "../util";
+import { helpers, useLocalPartial } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 import { bySport, isSport } from "../../common";
@@ -73,9 +73,7 @@ const GamesList = ({
 	season: number;
 	tid: number;
 }) => {
-	const { teamInfoCache } = useLocalShallow(state => ({
-		teamInfoCache: state.teamInfoCache,
-	}));
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 	if (season < currentSeason && gamesList.games.length === 0) {
 		return <NoGamesMessage warnAboutDelete />;

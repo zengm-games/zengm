@@ -2,7 +2,7 @@ import classNames from "classnames";
 import range from "lodash-es/range";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { isSport, PHASE } from "../../common";
-import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
+import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../util";
 import BoxScore from "./BoxScore";
 
 const TeamNameLink = ({
@@ -313,11 +313,11 @@ const NextButton = ({
 		};
 	}, [abbrev, autoGoToNext, boxScore.season, nextGid, tid]);
 
-	const { phase, playMenuOptions, season } = useLocalShallow(state => ({
-		phase: state.phase,
-		playMenuOptions: state.playMenuOptions,
-		season: state.season,
-	}));
+	const { phase, playMenuOptions, season } = useLocalPartial([
+		"phase",
+		"playMenuOptions",
+		"season",
+	]);
 
 	const canPlay = playMenuOptions.some(
 		option => option.id === "day" || option.id === "week",

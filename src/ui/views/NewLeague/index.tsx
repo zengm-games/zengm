@@ -31,7 +31,7 @@ import {
 	realtimeUpdate,
 	toWorker,
 	safeLocalStorage,
-	useLocalShallow,
+	useLocalPartial,
 	analyticsEvent,
 } from "../../util";
 import type {
@@ -600,10 +600,10 @@ const NewLeague = (props: View<"newLeague">) => {
 	>("default");
 
 	const leagueCreationID = useRef(Math.random());
-	const { leagueCreation, leagueCreationPercent } = useLocalShallow(state => ({
-		leagueCreation: state.leagueCreation,
-		leagueCreationPercent: state.leagueCreationPercent,
-	}));
+	const { leagueCreation, leagueCreationPercent } = useLocalPartial([
+		"leagueCreation",
+		"leagueCreationPercent",
+	]);
 
 	const importing = props.lid !== undefined;
 

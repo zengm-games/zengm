@@ -1,4 +1,4 @@
-import { useLocalShallow } from "../util";
+import { useLocalPartial } from "../util";
 
 const StickyBottomButtons = ({
 	children,
@@ -7,9 +7,7 @@ const StickyBottomButtons = ({
 	children: any;
 	isInsideModal?: boolean;
 }) => {
-	const { stickyFooterAd } = useLocalShallow(state => ({
-		stickyFooterAd: state.stickyFooterAd,
-	}));
+	const { stickyFooterAd } = useLocalPartial(["stickyFooterAd"]);
 
 	let bottom;
 	if (isInsideModal) {

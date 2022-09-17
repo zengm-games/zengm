@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { toWorker, useLocalShallow } from "../util";
+import { toWorker, useLocalPartial } from "../util";
 
 type Team = {
 	tid: number;
@@ -53,10 +53,10 @@ const ForceWin = ({
 	const [state, setState] = useSavingState();
 	const [forceWin, setForceWin] = useState(game.forceWin);
 
-	const { godMode, teamInfoCache } = useLocalShallow(state => ({
-		godMode: state.godMode,
-		teamInfoCache: state.teamInfoCache,
-	}));
+	const { godMode, teamInfoCache } = useLocalPartial([
+		"godMode",
+		"teamInfoCache",
+	]);
 
 	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
 	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;

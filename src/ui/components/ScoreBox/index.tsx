@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { bySport, getBestPlayerBoxScore, isSport } from "../../../common";
-import { getCols, helpers, useLocalShallow } from "../../util";
+import { getCols, helpers, useLocalPartial } from "../../util";
 import React, { memo, ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
 import defaultGameAttributes from "../../../common/defaultGameAttributes";
@@ -81,15 +81,15 @@ const ScoreBox = memo(
 			season,
 			teamInfoCache,
 			userTid,
-		} = useLocalShallow(state => ({
-			challengeNoRatings: state.challengeNoRatings,
-			homeCourtAdvantage: state.homeCourtAdvantage,
-			numPeriods: state.numPeriods,
-			quarterLength: state.quarterLength,
-			season: state.season,
-			teamInfoCache: state.teamInfoCache,
-			userTid: state.userTid,
-		}));
+		} = useLocalPartial([
+			"challengeNoRatings",
+			"homeCourtAdvantage",
+			"numPeriods",
+			"quarterLength",
+			"season",
+			"teamInfoCache",
+			"userTid",
+		]);
 
 		let winner: -1 | 0 | 1 | undefined;
 		if (game.teams[0].pts !== undefined && game.teams[1].pts !== undefined) {

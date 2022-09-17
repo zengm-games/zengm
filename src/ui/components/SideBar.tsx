@@ -12,7 +12,7 @@ import {
 	localActions,
 	menuItems,
 	safeLocalStorage,
-	useLocalShallow,
+	useLocalPartial,
 } from "../util";
 import type {
 	MenuItemLink,
@@ -228,11 +228,11 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
 
-	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
-		godMode: state.godMode,
-		lid: state.lid,
-		sidebarOpen: state.sidebarOpen,
-	}));
+	const { godMode, lid, sidebarOpen } = useLocalPartial([
+		"godMode",
+		"lid",
+		"sidebarOpen",
+	]);
 
 	const getNode = useCallback((node2: HTMLDivElement) => {
 		if (node2 !== null) {

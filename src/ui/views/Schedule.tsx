@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { ForceWin, MoreLinks, ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker, useLocalShallow } from "../util";
+import { toWorker, useLocalPartial } from "../util";
 import allowForceTie from "../../common/allowForceTie";
 import { Dropdown } from "react-bootstrap";
 
@@ -24,10 +24,10 @@ const Schedule = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { gameSimInProgress, godMode } = useLocalShallow(state => ({
-		gameSimInProgress: state.gameSimInProgress,
-		godMode: state.godMode,
-	}));
+	const { gameSimInProgress, godMode } = useLocalPartial([
+		"gameSimInProgress",
+		"godMode",
+	]);
 
 	const [forcingAll, setForcingAll] = useState(false);
 	const [forceWinKey, setForceWinKey] = useState(0);

@@ -5,7 +5,7 @@ import {
 	localActions,
 	menuItems,
 	safeLocalStorage,
-	useLocalShallow,
+	useLocalPartial,
 } from "../util";
 import { useViewData } from "../util/viewManager";
 import DropdownLinks from "./DropdownLinks";
@@ -13,14 +13,12 @@ import LogoAndText from "./LogoAndText";
 import PlayMenu from "./PlayMenu";
 
 const PhaseStatusBlock = () => {
-	const { liveGameInProgress, phase, phaseText, statusText } = useLocalShallow(
-		state => ({
-			liveGameInProgress: state.liveGameInProgress,
-			phase: state.phase,
-			phaseText: state.phaseText,
-			statusText: state.statusText,
-		}),
-	);
+	const { liveGameInProgress, phase, phaseText, statusText } = useLocalPartial([
+		"liveGameInProgress",
+		"phase",
+		"phaseText",
+		"statusText",
+	]);
 
 	// Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
 	// game. This is needed because game sim happens before the results are displayed in liveGame.
@@ -84,17 +82,17 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		playMenuOptions,
 		popup,
 		username,
-	} = useLocalShallow(state => ({
-		lid: state.lid,
-		godMode: state.godMode,
-		gold: state.gold,
-		hasViewedALeague: state.hasViewedALeague,
-		sidebarOpen: state.sidebarOpen,
-		spectator: state.spectator,
-		playMenuOptions: state.playMenuOptions,
-		popup: state.popup,
-		username: state.username,
-	}));
+	} = useLocalPartial([
+		"lid",
+		"godMode",
+		"gold",
+		"hasViewedALeague",
+		"sidebarOpen",
+		"spectator",
+		"playMenuOptions",
+		"popup",
+		"username",
+	]);
 	const viewInfo = useViewData();
 
 	// Checking lid too helps with some flicker

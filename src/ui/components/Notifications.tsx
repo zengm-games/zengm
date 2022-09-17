@@ -3,7 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { emitter, Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
-import { useLocalShallow } from "../util";
+import { useLocalPartial } from "../util";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 
@@ -83,13 +83,11 @@ const unbind = emitter.on("notification", notification => {
 });
 
 const Notifications = () => {
-	const { stickyFooterAd, stickyFormButtons, userTids } = useLocalShallow(
-		state => ({
-			stickyFooterAd: state.stickyFooterAd,
-			stickyFormButtons: state.stickyFormButtons,
-			userTids: state.userTids,
-		}),
-	);
+	const { stickyFooterAd, stickyFormButtons, userTids } = useLocalPartial([
+		"stickyFooterAd",
+		"stickyFormButtons",
+		"userTids",
+	]);
 
 	const [notifications, setNotifications] = useState<Message[]>([]);
 

@@ -1084,7 +1084,10 @@ const beforeDBStream = async ({
 
 	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
 		fileHasPlayers:
-			keptKeys.has("players") || teamInfos.some(t => t.usePlayers),
+			keptKeys.has("players") ||
+			teamInfos.some(t => t.usePlayers) ||
+			randomization === "debuts" ||
+			randomization === "debutsForever",
 		fileHasTeams: !!filteredFromFile.teams,
 	});
 

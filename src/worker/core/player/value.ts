@@ -6,7 +6,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 import valueCombineOvrPot from "./valueCombineOvrPot";
-import { isSport } from "../../../common";
+import { bySport, isSport } from "../../../common";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
@@ -57,21 +57,29 @@ const value = (
 		pr.pot = p.ratings[s].pot;
 	}
 
-	// Normalize ovr/pot, other sports need testing
-	if (isSport("basketball")) {
-		const defaultOvrMean = 47;
-		const defaultOvrStd = 10;
-		if (options.ovrStd > 0) {
-			pr.ovr =
-				((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
-				defaultOvrMean;
-			pr.pot =
-				((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
-				defaultOvrMean;
-		} else {
-			pr.ovr = pr.ovr - options.ovrMean + defaultOvrMean;
-			pr.pot = pr.pot - options.ovrMean + defaultOvrMean;
-		}
+	// Normalize ovr/pot, these are values for a typical random players league
+	const defaultOvrMean = bySport({
+		baseball: 47,
+		basketball: 47,
+		football: 48,
+		hockey: 50,
+	});
+	const defaultOvrStd = bySport({
+		baseball: 11,
+		basketball: 10,
+		football: 11,
+		hockey: 11,
+	});
+	if (options.ovrStd > 0) {
+		pr.ovr =
+			((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+			defaultOvrMean;
+		pr.pot =
+			((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+			defaultOvrMean;
+	} else {
+		pr.ovr = pr.ovr - options.ovrMean + defaultOvrMean;
+		pr.pot = pr.pot - options.ovrMean + defaultOvrMean;
 	}
 
 	// From linear regression OVR ~ PER

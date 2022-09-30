@@ -1,6 +1,7 @@
 import { idb } from "../../db";
 import { defaultGameAttributes, g, local } from "../../util";
 import type { OwnerMood } from "../../../common/types";
+import { bySport } from "../../../common";
 
 /**
  * Update teamSeason.ownerMood based on performance this season, only for user's team.
@@ -53,9 +54,18 @@ const updateOwnerMood = async (): Promise<
 	const expectedProfit = 15 * salaryCapFactor;
 
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+	// Some sports are more random than others, so like a 60% winning percentage is more impressive then. I think it only matters a lot for baseball, so I picked that coeffiient by determining what factor is needed to make 110/162 wins as valuable as 70/82 wins, then adding a little more so like 95 win seasons are still pretty good.
+	const winsFactor = bySport({
+		baseball: 2.2,
+		basketball: 1,
+		football: 1,
+		hockey: 1,
+	});
+
 	const deltas = {
 		wins:
-			(0.25 * (t.seasonAttrs.won - g.get("numGames") / 2)) /
+			(winsFactor * (0.25 * (t.seasonAttrs.won - g.get("numGames") / 2))) /
 			(g.get("numGames") / 2),
 		playoffs: 0,
 		money: g.get("budget")

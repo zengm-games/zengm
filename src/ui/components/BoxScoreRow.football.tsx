@@ -47,7 +47,7 @@ const BoxScoreRow = ({
 						</span>
 					) : p.sv > 0 ? (
 						<span className="ms-2">
-							SV{exhibition ? null : ` (${p.seasonStats.sv + 1})`}
+							SV{exhibition ? null : ` (${p.seasonStats.sv})`}
 						</span>
 					) : null
 				) : null}

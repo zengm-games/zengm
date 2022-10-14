@@ -162,7 +162,9 @@ const Roster = ({
 				rowClassName={({ index, value: p }) =>
 					classNames({
 						separator:
-							(isSport("basketball") && index === numPlayersOnCourt - 1) ||
+							(isSport("basketball") &&
+								index === numPlayersOnCourt - 1 &&
+								season === currentSeason) ||
 							(!isSport("basketball") &&
 								playersSorted[index + 1] &&
 								p.ratings.pos !== playersSorted[index + 1].ratings.pos),

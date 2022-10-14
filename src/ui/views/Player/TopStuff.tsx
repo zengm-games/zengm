@@ -246,6 +246,7 @@ const TopStuff = ({
 	teamJersey,
 	teamName,
 	teamURL,
+	userTid,
 	willingToSign,
 }: Pick<
 	View<"player">,
@@ -267,6 +268,7 @@ const TopStuff = ({
 	| "teamJersey"
 	| "teamName"
 	| "teamURL"
+	| "userTid"
 	| "willingToSign"
 > & {
 	season?: number;
@@ -626,9 +628,50 @@ const TopStuff = ({
 								gap: "0.5em",
 							}}
 						>
-							{jerseyNumberInfos.map((info, i) => (
-								<JerseyNumber key={i} {...info} />
-							))}
+							{jerseyNumberInfos.map((info, i) => {
+								let onClick;
+								let extraText;
+								const t = info.t;
+								if (t && (t.tid === userTid || godMode)) {
+									const isCurrentTeamAndNumber =
+										info.end >= currentSeason && t.tid === player.tid;
+
+									// Don't allow retiring current number, cause it behaves weirdly
+									if (!isCurrentTeamAndNumber) {
+										onClick = async () => {
+											if (info.retiredIndex >= 0) {
+												await toWorker("main", "retiredJerseyNumberDelete", {
+													tid: t.tid,
+													i: info.retiredIndex,
+												});
+											} else {
+												await toWorker("main", "retiredJerseyNumberUpsert", {
+													tid: t.tid,
+													info: {
+														number: info.number,
+														seasonRetired: currentSeason,
+														seasonTeamInfo: info.end,
+														pid: player.pid,
+														text: "",
+													},
+												});
+											}
+										};
+										extraText = `click to ${
+											info.retiredIndex >= 0 ? "unretire" : "retire"
+										} jersey`;
+									}
+								}
+								return (
+									<JerseyNumber
+										key={i}
+										onClick={onClick}
+										extraText={extraText}
+										retired={info.retiredIndex >= 0}
+										{...info}
+									/>
+								);
+							})}
 						</div>
 					) : null}
 				</div>

@@ -2634,7 +2634,7 @@ const retiredJerseyNumberDelete = async ({
 	if (t.retiredJerseyNumbers) {
 		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter((row, j) => i !== j);
 		await idb.cache.teams.put(t);
-		await toUI("realtimeUpdate", [["retiredJerseys"]]);
+		await toUI("realtimeUpdate", [["retiredJerseys", "playerMovement"]]);
 	}
 };
 

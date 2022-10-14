@@ -16,6 +16,8 @@ const getValidTeamColors = (t?: { colors: any }) => {
 const JerseyNumber = ({
 	className,
 	number,
+	onClick,
+	extraText,
 	start,
 	end,
 	t,
@@ -23,6 +25,8 @@ const JerseyNumber = ({
 }: {
 	className?: string;
 	number: string;
+	onClick?: () => void;
+	extraText?: string;
 	start: number;
 	end: number;
 	t?: {
@@ -48,7 +52,9 @@ const JerseyNumber = ({
 	}
 
 	if (retired) {
-		text += " (retired)";
+		text += ` (retired${extraText ? `, ${extraText}` : ""})`;
+	} else if (extraText) {
+		text += ` (${extraText})`;
 	}
 
 	const border = retired
@@ -74,6 +80,7 @@ const JerseyNumber = ({
 				className={classNames(
 					"d-flex align-items-center justify-content-center",
 					className,
+					onClick ? "cursor-pointer" : undefined,
 				)}
 				style={{
 					width: 55,
@@ -83,6 +90,8 @@ const JerseyNumber = ({
 					color: colors[1],
 					fontSize,
 				}}
+				role={onClick ? "button" : undefined}
+				onClick={onClick}
 			>
 				{number}
 			</div>

@@ -278,7 +278,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			name: string;
 			region: string;
 		};
-		retired: boolean;
+		retiredIndex: number;
 	}[] = [];
 	let prevKey: string = "";
 	for (const ps of p.stats) {
@@ -312,20 +312,18 @@ export const getCommon = async (pid?: number, season?: number) => {
 			const prev = jerseyNumberInfos.at(-1)!;
 			prev.end = ps.season;
 		} else {
-			let retired = false;
 			const t2 = teams[ps.tid];
-			if (t2 && t2.retiredJerseyNumbers) {
-				retired = t2.retiredJerseyNumbers.some(
+			const retiredIndex =
+				t2?.retiredJerseyNumbers?.findIndex(
 					info => info.pid === pid && info.number === jerseyNumber,
-				);
-			}
+				) ?? -1;
 
 			jerseyNumberInfos.push({
 				number: jerseyNumber,
 				start: ps.season,
 				end: ps.season,
 				t,
-				retired,
+				retiredIndex,
 			});
 		}
 
@@ -497,6 +495,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		teamJersey,
 		teamName,
 		teamURL,
+		userTid,
 		willingToSign,
 	};
 };

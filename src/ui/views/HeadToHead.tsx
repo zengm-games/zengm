@@ -28,6 +28,7 @@ const HeadToHead = ({
 
 	const cols = getCols([
 		"Team",
+		"stat:gp",
 		"W",
 		"L",
 		...(otl ? ["OTL"] : []),
@@ -54,6 +55,7 @@ const HeadToHead = ({
 		};
 
 		return [
+			t.won + t.lost + t.tied + t.otl,
 			t.won,
 			t.lost,
 			...(otl ? [t.otl] : []),

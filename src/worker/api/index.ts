@@ -1410,17 +1410,28 @@ const getExportFilename = async (type: "league" | "players") => {
 	throw new Error("Not implemented");
 };
 
-const exportDraftClass = async (season: number) => {
+const exportDraftClass = async ({
+	season,
+	retiredPlayers,
+}: {
+	season: number;
+	retiredPlayers?: boolean;
+}) => {
 	const onlyUndrafted =
-		season > g.get("season") ||
-		(season === g.get("season") &&
-			g.get("phase") >= 0 &&
-			g.get("phase") <= PHASE.DRAFT_LOTTERY);
+		!retiredPlayers &&
+		(season > g.get("season") ||
+			(season === g.get("season") &&
+				g.get("phase") >= 0 &&
+				g.get("phase") <= PHASE.DRAFT_LOTTERY));
 
 	let players = await idb.getCopies.players(
-		{
-			draftYear: season,
-		},
+		retiredPlayers
+			? {
+					retiredYear: season,
+			  }
+			: {
+					draftYear: season,
+			  },
 		"noCopyCache",
 	);
 
@@ -1473,7 +1484,9 @@ const exportDraftClass = async (season: number) => {
 	}
 
 	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
-	const filename = `${GAME_ACRONYM}_draft_class_${leagueName}_${season}.json`;
+	const filename = `${GAME_ACRONYM}_${
+		retiredPlayers ? "retired" : "draft"
+	}_class_${leagueName}_${season}.json`;
 
 	return {
 		filename,

@@ -39,7 +39,7 @@ const ActionButton = ({
 	processingText?: string;
 	size?: "lg";
 	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
-	variant?: "primary" | "secondary" | "god-mode" | "danger";
+	variant?: "primary" | "secondary" | "god-mode" | "danger" | "light-bordered";
 }) => {
 	const minWidth = useRef(0);
 	const button = useRef<HTMLButtonElement>(null);

@@ -72,7 +72,7 @@ const DraftClass = ({
 							const { filename, json } = await toWorker(
 								"main",
 								"exportDraftClass",
-								season,
+								{ season },
 							);
 							downloadFile(filename, json, "application/json");
 

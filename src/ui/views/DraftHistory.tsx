@@ -172,11 +172,9 @@ const ExportButton = ({ season }: { season: number }) => {
 			onClick={async () => {
 				setExporting(true);
 
-				const { filename, json } = await toWorker(
-					"main",
-					"exportDraftClass",
+				const { filename, json } = await toWorker("main", "exportDraftClass", {
 					season,
-				);
+				});
 				downloadFile(filename, json, "application/json");
 
 				setExporting(false);

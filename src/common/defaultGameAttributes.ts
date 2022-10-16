@@ -99,12 +99,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	gameOver: false,
 	godMode: false,
 	godModeInPast: false,
-	salaryCap: 90000, // [thousands of dollars]
-	minPayroll: 60000, // [thousands of dollars]
-	luxuryPayroll: 100000, // [thousands of dollars]
+	salaryCap: 125000, // [thousands of dollars]
+	minPayroll: 80000, // [thousands of dollars]
+	luxuryPayroll: 140000, // [thousands of dollars]
 	luxuryTax: 1.5,
-	minContract: 750, // [thousands of dollars]
-	maxContract: 30000, // [thousands of dollars]
+	minContract: 1000, // [thousands of dollars]
+	maxContract: 42000, // [thousands of dollars]
 	minContractLength: 1,
 	maxContractLength: 5,
 	minRosterSize: 10,

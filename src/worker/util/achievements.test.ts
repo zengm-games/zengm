@@ -6,6 +6,7 @@ import g from "./g";
 import helpers from "./helpers";
 import achievements from "./achievements";
 import type { TeamSeason, Achievement } from "../../common/types";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 const get = (slug: string) => {
 	const achievement = achievements.find(
@@ -214,13 +215,13 @@ describe("worker/util/account/checkAchievement", () => {
 	});
 
 	describe("moneyball*", () => {
-		test("award moneyball and moneyball_2 for title with payroll <= $45M", async () => {
+		test("award moneyball and moneyball_2 for title with payroll <= half salary cap", async () => {
 			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
 			)) as TeamSeason;
 			teamSeason.playoffRoundsWon = 4;
-			teamSeason.expenses.salary.amount = 45000;
+			teamSeason.expenses.salary.amount = defaultGameAttributes.salaryCap / 2;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
@@ -245,13 +246,14 @@ describe("worker/util/account/checkAchievement", () => {
 			assert.strictEqual(awarded, false);
 		});
 
-		test("award moneyball but not moneyball_2 for title with payroll > $45M and <= $60M", async () => {
+		test("award moneyball but not moneyball_2 for title with payroll > half and <= two thirds of the salary cap", async () => {
 			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
 			)) as TeamSeason;
 			teamSeason.playoffRoundsWon = 4;
-			teamSeason.expenses.salary.amount = 60000;
+			teamSeason.expenses.salary.amount =
+				0.66 * defaultGameAttributes.salaryCap;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
@@ -261,13 +263,14 @@ describe("worker/util/account/checkAchievement", () => {
 			assert.strictEqual(awarded, false);
 		});
 
-		test("don't award either if payroll > $40M", async () => {
+		test("don't award either if payroll > two thirds of the salary cap", async () => {
 			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
 			)) as TeamSeason;
 			teamSeason.playoffRoundsWon = 4;
-			teamSeason.expenses.salary.amount = 60001;
+			teamSeason.expenses.salary.amount =
+				0.67 * defaultGameAttributes.salaryCap;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();

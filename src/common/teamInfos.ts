@@ -313,7 +313,7 @@ const teamInfos: {
 		region: "Oakland",
 		name: "Blue Oaks",
 		pop: 0.5,
-		colors: ["#0173f3", "#fefefe", "#010101"],
+		colors: ["#316bac", "#dddddd", "#111111"],
 		jersey: bySport({
 			baseball: "baseball:hat3",
 			basketball: "jersey3",

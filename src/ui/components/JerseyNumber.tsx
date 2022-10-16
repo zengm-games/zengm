@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { useRef } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const getValidTeamColors = (t?: { colors: any }) => {
@@ -71,8 +72,18 @@ const JerseyNumber = ({
 		fontSize = 17;
 	}
 
+	// On mobile, we show the jersey number popover on click, because there is no way to hover like on desktop. This means any onClick action (like toggling retirement) should happen only on subsequent clicks, while it's already open from the first click. That gets handled with onToggle, which fires before it opens, and gives us a chance to set preventNextClick.
+	const preventNextClick = useRef(false);
+
 	return (
 		<OverlayTrigger
+			onToggle={
+				window.mobile
+					? () => {
+							preventNextClick.current = true;
+					  }
+					: undefined
+			}
 			overlay={<Tooltip id={id}>{text}</Tooltip>}
 			placement="bottom"
 		>
@@ -91,7 +102,17 @@ const JerseyNumber = ({
 					fontSize,
 				}}
 				role={onClick ? "button" : undefined}
-				onClick={onClick}
+				onClick={
+					onClick
+						? () => {
+								if (preventNextClick.current) {
+									preventNextClick.current = false;
+								} else {
+									onClick();
+								}
+						  }
+						: undefined
+				}
 			>
 				{number}
 			</div>

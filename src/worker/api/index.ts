@@ -1463,7 +1463,7 @@ const exportDraftClass = async ({
 			lastName: p.lastName,
 			pid: p.pid,
 			pos: p.pos,
-			ratings: p.ratings.slice(0, 1),
+			ratings: [p.ratings[retiredPlayers ? p.ratings.length - 1 : 0]],
 			real: p.real,
 			relatives: p.relatives,
 			srID: p.srID,

@@ -1967,6 +1967,7 @@ class GameSim {
 		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 
 		this.recordStat(this.o, p, "pa");
+		this.recordStat(this.d, pitcher, "bf");
 
 		if (type === "intentional") {
 			this.recordStat(this.o, p, "ibb");
@@ -2034,6 +2035,7 @@ class GameSim {
 		const catcher = this.team[this.d].playersInGameByPos.C.p;
 
 		this.recordStat(this.o, batter, "pa");
+		this.recordStat(this.d, pitcher, "bf");
 		this.recordStat(this.o, batter, "so");
 		this.recordStat(this.d, pitcher, "soPit");
 		this.recordStat(this.d, catcher, "po", 1, "fielding");

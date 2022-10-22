@@ -52,7 +52,7 @@ const validateExpansionDraftSetup = async () => {
 		if (t.stadiumCapacity === undefined) {
 			stadiumCapacity = g.get("defaultStadiumCapacity");
 		} else {
-			const stadiumCapacity = parseInt(t.stadiumCapacity);
+			stadiumCapacity = parseInt(t.stadiumCapacity);
 			if (Number.isNaN(stadiumCapacity)) {
 				errors.push(`Invalid stadium capacity for ${t.abbrev}`);
 			}

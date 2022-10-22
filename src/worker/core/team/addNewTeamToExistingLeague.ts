@@ -17,6 +17,7 @@ const addNewTeamToExistingLeague = async (
 		imgURL: string | undefined;
 		firstSeasonAfterExpansion?: number;
 		tid?: number;
+		stadiumCapacity?: number;
 	},
 	{
 		expansionDraft,

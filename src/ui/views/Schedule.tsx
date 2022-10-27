@@ -158,7 +158,12 @@ const Schedule = ({
 				<div style={{ maxWidth: 510 }} className="flex-grow-1">
 					<h2>Completed Games</h2>
 					{completed.map(game => (
-						<ScoreBox className="mb-3" key={game.gid} game={game} />
+						<ScoreBox
+							boxScoreTeamOverride={`${abbrev}_${tid}`}
+							className="mb-3"
+							key={game.gid}
+							game={game}
+						/>
 					))}
 				</div>
 			</div>

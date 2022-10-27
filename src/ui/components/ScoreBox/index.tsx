@@ -47,6 +47,7 @@ const smallStyle = {
 const ScoreBox = memo(
 	({
 		actions = [],
+		boxScoreTeamOverride,
 		className,
 		game,
 		playersUpcoming,
@@ -60,6 +61,7 @@ const ScoreBox = memo(
 			onClick?: () => void;
 			text: ReactNode;
 		}[];
+		boxScoreTeamOverride?: string;
 		className?: string;
 		game: {
 			forceWin?: number;
@@ -179,6 +181,8 @@ const ScoreBox = memo(
 						"game_log",
 						allStarGame
 							? "special"
+							: boxScoreTeamOverride !== undefined
+							? boxScoreTeamOverride
 							: `${teamInfoCache[game.teams[0].tid]?.abbrev}_${
 									game.teams[0].tid
 							  }`,

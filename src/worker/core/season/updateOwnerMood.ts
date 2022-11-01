@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { defaultGameAttributes, g, local } from "../../util";
+import { g, local } from "../../util";
 import type { OwnerMood } from "../../../common/types";
 import { bySport } from "../../../common";
 

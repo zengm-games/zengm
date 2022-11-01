@@ -96,7 +96,14 @@ const writeTeamStats = async (results: GameResults) => {
 			facilitiesPaid = t.budget.facilities.amount / g.get("numGames");
 
 			const salaryCapFactor =
-				g.get("salaryCap") / defaultGameAttributes.salaryCap;
+				g.get("salaryCap") /
+				bySport({
+					// defaultGameAttributes.salaryCap, but frozen in time because otherwise various coefficients below would need to be updated when it changes
+					baseball: 175000,
+					basketball: 90000,
+					football: 200000,
+					hockey: 80000,
+				});
 
 			// Only different for hockey
 			let salaryCapFactor2;

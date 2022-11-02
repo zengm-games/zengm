@@ -3,7 +3,7 @@ import replace2 from "replace";
 import { babel } from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import * as rollup from "rollup";
 import workboxBuild from "workbox-build";
 

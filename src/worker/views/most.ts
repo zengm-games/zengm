@@ -1,10 +1,5 @@
 import { idb, iterate } from "../db";
-import {
-	defaultGameAttributes,
-	g,
-	helpers,
-	processPlayersHallOfFame,
-} from "../util";
+import { g, helpers, processPlayersHallOfFame } from "../util";
 import type {
 	UpdateEvents,
 	Player,
@@ -466,12 +461,7 @@ const updatePlayers = async (
 				}
 
 				if (
-					min >
-						g.get("numGames") *
-							(g.get("quarterLength") > 0
-								? g.get("quarterLength")
-								: defaultGameAttributes.quarterLength) *
-							g.get("numPeriods") &&
+					min > g.get("numGames") * helpers.effectiveGameLength() &&
 					(p.retiredYear === Infinity || p.ratings.length > 3)
 				) {
 					return { value: -valueTimesMin / min };

@@ -1,4 +1,4 @@
-import { g, helpers } from "../../util";
+import { helpers } from "../../util";
 import type {
 	TeamStatAttr,
 	TeamStatType,
@@ -130,9 +130,7 @@ const processStats = (
 				scale = false;
 			} else if (stat === "pace") {
 				if (ts.min > 0) {
-					row.pace =
-						(g.get("quarterLength") * g.get("numPeriods") * poss(ts)) /
-						(ts.min / 5);
+					row.pace = (helpers.effectiveGameLength() * poss(ts)) / (ts.min / 5);
 				} else {
 					row.pace = 0;
 				}

@@ -1,7 +1,5 @@
 show injury tooltip on click too
 
-check leaders cutoffs for low minutes https://discord.com/channels/290013534023057409/290015591216054273/1036126409099313192
-
 seasonLengthFactor uses defaultGameAttributes in writeTeamStats too
 
 store results of trading block in database

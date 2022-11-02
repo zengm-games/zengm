@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DataTable, SafeHtml, SkillsBlock } from "../../components";
+import { DataTable, InjuryIcon, SafeHtml, SkillsBlock } from "../../components";
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, groupAwards } from "../../util";
@@ -347,12 +347,12 @@ const Player2 = ({
 											<SeasonIcons season={r.season} awards={player.awards} />
 											{r.injuryIndex !== undefined &&
 											player.injuries[r.injuryIndex] ? (
-												<span
-													className="badge bg-danger badge-injury"
-													title={player.injuries[r.injuryIndex].type}
-												>
-													+
-												</span>
+												<InjuryIcon
+													injury={{
+														type: player.injuries[r.injuryIndex].type,
+														gamesRemaining: -1,
+													}}
+												/>
 											) : null}
 										</>
 									),

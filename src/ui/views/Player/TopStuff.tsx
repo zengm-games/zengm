@@ -9,6 +9,7 @@ import {
 	Weight,
 	JerseyNumber,
 	Mood,
+	InjuryIcon,
 } from "../../components";
 import {
 	confirm,
@@ -340,8 +341,6 @@ const TopStuff = ({
 			</div>
 		);
 	} else {
-		const gameOrWeek = bySport({ default: "game", football: "week" });
-
 		let skills;
 		if (season !== undefined) {
 			skills = player.ratings.find(row => row.season === season)?.skills;
@@ -353,16 +352,7 @@ const TopStuff = ({
 		statusInfo = (
 			<div className="d-flex align-items-center">
 				{injured ? (
-					<span
-						className="badge bg-danger badge-injury ms-0"
-						title={`${player.injury.type} (out ${
-							player.injury.gamesRemaining
-						} more ${
-							player.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
-						})`}
-					>
-						{player.injury.gamesRemaining}
-					</span>
+					<InjuryIcon className="ms-0" injury={player.injury} />
 				) : null}
 				<SkillsBlock
 					className={injured ? undefined : "skills-alone"}

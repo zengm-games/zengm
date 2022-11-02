@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { bySport } from "../../common";
 import { useLocal } from "../util";
@@ -61,10 +62,12 @@ const TruncatedSkills = ({
 }) => {
 	const remainingSkills = skills.slice(numSkillsBeforeTruncate);
 
+	const tooltipId = useId();
+
 	return (
 		<OverlayTrigger
 			overlay={
-				<Tooltip id="truncated-skills">
+				<Tooltip id={tooltipId}>
 					{numSkillsBeforeTruncate > 0 ? "..." : null}
 					{remainingSkills.join(" ")}
 				</Tooltip>

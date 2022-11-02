@@ -99,7 +99,6 @@ const LeagueFinances = ({
 				<button
 					className="btn btn-light-bordered btn-xs"
 					onClick={async () => {
-						console.log("click");
 						await toWorker("actions", "tradeFor", { tid: t.seasonAttrs.tid });
 					}}
 				>

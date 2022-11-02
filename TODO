@@ -1,5 +1,3 @@
-show injury tooltip on click too
-
 store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see

@@ -1,7 +1,7 @@
-import { bySport, isSport, PHASE, unwrapGameAttribute } from "../../../common";
+import { bySport, isSport, PHASE } from "../../../common";
 import { team } from "..";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type { GameResults } from "../../../common/types";
 import {
 	getActualAttendance,
@@ -223,15 +223,25 @@ const writeTeamStats = async (results: GameResults) => {
 				numGamesCurrent += Math.ceil((numGames * 3) / 4);
 			}
 			let numGamesDefault = 0;
-			for (const numGames of unwrapGameAttribute(
-				defaultGameAttributes,
-				"numGamesPlayoffSeries",
-			)) {
+			// defaultGameAttributes.numGamesPlayoffSeries, but frozen in time because otherwise various coefficients below would need to be updated when it changes
+			for (const numGames of bySport({
+				baseball: [3, 5, 7, 7],
+				basketball: [7, 7, 7, 7],
+				football: [1, 1, 1, 1],
+				hockey: [7, 7, 7, 7],
+			})) {
 				numGamesDefault += Math.ceil((numGames * 3) / 4);
 			}
 			seasonLengthFactor = numGamesDefault / numGamesCurrent;
 		} else {
-			seasonLengthFactor = defaultGameAttributes.numGames / g.get("numGames");
+			// defaultGameAttributes.numGames, but frozen in time because otherwise various coefficients below would need to be updated when it changes
+			seasonLengthFactor =
+				bySport({
+					baseball: 162,
+					basketball: 82,
+					football: 17,
+					hockey: 82,
+				}) / g.get("numGames");
 		}
 
 		merchRevenue *= fudgeFactor * seasonLengthFactor;

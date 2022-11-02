@@ -1,7 +1,5 @@
 show injury tooltip on click too
 
-seasonLengthFactor uses defaultGameAttributes in writeTeamStats too
-
 store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see

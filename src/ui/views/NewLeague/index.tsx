@@ -317,10 +317,30 @@ const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
 };
 
 const getNewTid = (prevTeamRegionName: string, newTeams: NewLeagueTeam[]) => {
-	const newTeamsSorted = orderBy(newTeams, ["region", "name"]);
-	const closestNewTeam = newTeamsSorted.find(
-		t => prevTeamRegionName <= `${t.region} ${t.name}`,
+	const newTeamsSorted = orderBy(
+		newTeams.filter(t => !t.disabled),
+		["region", "name"],
 	);
+
+	// First look for exact match
+	let closestNewTeam = newTeamsSorted.find(
+		t => prevTeamRegionName === `${t.region} ${t.name}`,
+	);
+
+	// Second look for exact region match
+	if (!closestNewTeam) {
+		closestNewTeam = newTeamsSorted.find(t =>
+			prevTeamRegionName.startsWith(t.region),
+		);
+	}
+
+	// Fallback, just get me something close
+	if (!closestNewTeam) {
+		closestNewTeam = newTeamsSorted.find(
+			t => prevTeamRegionName <= `${t.region} ${t.name}`,
+		);
+	}
+
 	return closestNewTeam ? closestNewTeam.tid : newTeams.length - 1;
 };
 

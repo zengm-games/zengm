@@ -56,22 +56,6 @@ if (window.enableLogging) {
   gtag('config', 'GOOGLE_ANALYTICS_ID', {
     cookie_domain: 'GOOGLE_ANALYTICS_COOKIE_DOMAIN'
   });
-
-  // Google Consumer Surveys
-  var TriggerPrompt = function(articleUrl, contentId) {
-    var ARTICLE_URL = articleUrl;
-    var CONTENT_ID = contentId || '';
-    var el = document.createElement('script');
-    var url = 'https://survey.g.doubleclick.net/survey?site=GOOGLE_SURVEYS_ID' +
-              '&url=' + encodeURIComponent(ARTICLE_URL) +
-              (CONTENT_ID ? '&cid=' + encodeURIComponent(CONTENT_ID) : '') +
-              '&random=' + (new Date).getTime() +
-              '&after=1';
-    el.setAttribute('src', url);
-    var head = document.getElementsByTagName('head')[0] ||
-        document.getElementsByTagName('body')[0];
-    head.appendChild(el);
-  };
 }
 
 window.releaseStage = "unknown";

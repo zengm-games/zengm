@@ -245,14 +245,12 @@ const showModal = () => {
 		!window.freestar.refreshAllSlots ||
 		!window.googletag ||
 		!window.googletag.pubads;
-	if (adBlock && r < 0.11) {
+	if (adBlock && r < 0.1) {
 		ads.showModal();
 		return;
 	}
 
-	if (r < 0.1) {
-		ads.showGcs();
-	} else if (r < 0.11) {
+	if (r < 0.01) {
 		ads.showModal();
 	}
 };

@@ -316,13 +316,17 @@ const sigmoid = (x: number, a: number, b: number): number => {
 };
 
 const quarterLengthFactor = () => {
-	if (g.get("quarterLength") <= 0) {
-		return 1;
+	let gameLength = g.get("numPeriods") * g.get("quarterLength");
+	if (g.get("elam")) {
+		gameLength -= g.get("elamMinutes");
+
+		// Assume 2.3 pts per minute
+		gameLength += g.get("elamPoints") / 2.3;
 	}
 
 	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	return Math.sqrt(
-		(g.get("numPeriods") * g.get("quarterLength")) /
+		gameLength /
 			(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength),
 	);
 };

@@ -2,6 +2,7 @@ import {
 	PLAYER,
 	helpers as commonHelpers,
 	timeBetweenGames,
+	isSport,
 } from "../../common";
 import { idb } from "../db";
 import g from "./g";
@@ -315,18 +316,22 @@ const sigmoid = (x: number, a: number, b: number): number => {
 	return 1 / (1 + Math.exp(-(a * (x - b))));
 };
 
-const quarterLengthFactor = () => {
+const effectiveGameLength = () => {
 	let gameLength = g.get("numPeriods") * g.get("quarterLength");
-	if (g.get("elam")) {
+	if (isSport("basketball") && g.get("elam")) {
 		gameLength -= g.get("elamMinutes");
 
 		// Assume 2.3 pts per minute
 		gameLength += g.get("elamPoints") / 2.3;
 	}
 
+	return gameLength;
+};
+
+const quarterLengthFactor = () => {
 	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	return Math.sqrt(
-		gameLength /
+		effectiveGameLength() /
 			(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength),
 	);
 };
@@ -350,6 +355,7 @@ const helpers = {
 	correctLinkLid,
 	defaultBudgetAmount,
 	defaultTicketPrice,
+	effectiveGameLength,
 	gb,
 	getAbbrev,
 	leagueUrl,

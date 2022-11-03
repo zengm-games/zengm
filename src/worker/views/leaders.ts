@@ -638,6 +638,9 @@ export const playerMeetsCategoryRequirements = ({
 		numPlayersOnCourtFactor *
 		helpers.quarterLengthFactor();
 
+	// Need to undo numPlayersOnCourtFactor for testing "min", because you don't get more minutes with less players on the court, unlike most other stats
+	const minFactor = 1 / numPlayersOnCourtFactor;
+
 	// Test if the player meets the minimum statistical requirements for this category
 	let pass = !cat.minStats && (!cat.filter || cat.filter(p));
 
@@ -669,19 +672,22 @@ export const playerMeetsCategoryRequirements = ({
 
 			// Special case GP
 			if (minStat === "gp") {
-				if (playerValue / gpTeam >= minValue / g.get("numGames")) {
+				if (playerValue / gpTeam >= minValue / defaultGameAttributes.numGames) {
 					pass = true;
 					break; // If one is true, don't need to check the others
 				}
-			}
-
-			// Other stats
-			if (
-				playerValue >=
-				Math.ceil((minValue * factor * gpTeam) / g.get("numGames"))
-			) {
-				pass = true;
-				break; // If one is true, don't need to check the others
+			} else {
+				// Other stats
+				if (
+					playerValue >=
+					Math.ceil(
+						(minValue * factor * (minStat === "min" ? minFactor : 1) * gpTeam) /
+							g.get("numGames"),
+					)
+				) {
+					pass = true;
+					break; // If one is true, don't need to check the others
+				}
 			}
 		}
 	}

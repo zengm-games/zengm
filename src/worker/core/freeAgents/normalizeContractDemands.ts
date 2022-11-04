@@ -149,7 +149,11 @@ const normalizeContractDemands = async ({
 			pid: p.pid,
 			dummy,
 			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
-			contractAmount: p.contract.amount,
+			contractAmount: helpers.bound(
+				p.contract.amount,
+				minContract,
+				maxContract,
+			),
 			p,
 		};
 	});

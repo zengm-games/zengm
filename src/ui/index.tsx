@@ -8,7 +8,7 @@ import { Controller, ErrorBoundary } from "./components";
 import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
-import { AD_DIVS, EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
 import Bugsnag from "@bugsnag/browser";
 window.bbgm = { api, ...util };
 const {
@@ -190,16 +190,6 @@ const render = () => {
 	);
 };
 
-const mobile = window.screen.width < 768;
-const adDivsMobile = [AD_DIVS.mobile];
-const adDivsDesktop = [
-	AD_DIVS.leaderboard,
-	AD_DIVS.rectangle1,
-	AD_DIVS.rectangle2,
-	AD_DIVS.rail,
-];
-const adDivs = mobile ? adDivsMobile : adDivsDesktop;
-
 const setupRoutes = () => {
 	let initialLoad = true;
 	router.start({
@@ -289,11 +279,9 @@ const setupRoutes = () => {
 				}
 
 				if (!initialLoad) {
-					if (window.freestar.refresh) {
+					if (window.freestar.refreshAllSlots) {
 						window.freestar.queue.push(() => {
-							// Would rather use refreshAllSlots, but it broke
-							// window.freestar.refreshAllSlots();
-							window.freestar.refresh(adDivs);
+							window.freestar.refreshAllSlots();
 						});
 					}
 				} else {

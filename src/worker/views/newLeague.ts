@@ -302,6 +302,31 @@ export const getDefaultSettings = () => {
 		),
 		saveFactor: unwrapGameAttribute(defaultGameAttributes, "saveFactor"),
 		assistFactor: unwrapGameAttribute(defaultGameAttributes, "assistFactor"),
+		foulFactor: unwrapGameAttribute(defaultGameAttributes, "foulFactor"),
+		groundFactor: unwrapGameAttribute(defaultGameAttributes, "groundFactor"),
+		lineFactor: unwrapGameAttribute(defaultGameAttributes, "lineFactor"),
+		flyFactor: unwrapGameAttribute(defaultGameAttributes, "flyFactor"),
+		powerFactor: unwrapGameAttribute(defaultGameAttributes, "powerFactor"),
+		throwOutFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"throwOutFactor",
+		),
+		strikeFactor: unwrapGameAttribute(defaultGameAttributes, "strikeFactor"),
+		balkFactor: unwrapGameAttribute(defaultGameAttributes, "balkFactor"),
+		wildPitchFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"wildPitchFactor",
+		),
+		passedBallFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"passedBallFactor",
+		),
+		hitByPitchFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"hitByPitchFactor",
+		),
+		swingFactor: unwrapGameAttribute(defaultGameAttributes, "swingFactor"),
+		contactFactor: unwrapGameAttribute(defaultGameAttributes, "contactFactor"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

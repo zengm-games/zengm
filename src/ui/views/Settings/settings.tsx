@@ -1370,6 +1370,51 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "foulFactor",
+			name: "Foul Ball Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability that a batted ball is foul is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "groundFactor",
+			name: "Ground Ball Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The likelihood of ground balls is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "lineFactor",
+			name: "Line Drive Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The likelihood of line drives is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "flyFactor",
+			name: "Fly Ball Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The likelihood of fly balls drives is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "powerFactor",
+			name: "Power Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The likelihood of hard line drives and deep fly balls is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
 			key: "threePointers",
 			name: "Three Pointers",
 			godModeRequired: "always",
@@ -1419,8 +1464,9 @@ export const settings: Setting[] = (
 			name: "Steal Tendency Factor",
 			godModeRequired: "always",
 			type: "float",
-			description:
-				"The baseline steal percentage is multiplied by this number.",
+			description: isSport("basketball")
+				? "The baseline steal percentage is multiplied by this number."
+				: "The probability of a player attempting a steal is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1467,7 +1513,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of calling a passing play is multiplied by this number.",
+				"The probability of calling a passing play is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1501,7 +1547,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of a quarterback scrambling on a passing play is multiplied by this number.",
+				"The probability of a quarterback scrambling on a passing play is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1546,7 +1592,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability to go for it on 4th down is multiplied by this number.",
+				"The probability to go for it on 4th down is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1555,7 +1601,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of doing an onside kick is multiplied by this number.",
+				"The probability of doing an onside kick is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1564,7 +1610,78 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of the kicking team recovering an onside kick is multiplied by this number.",
+				"The probability of the kicking team recovering an onside kick is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "throwOutFactor",
+			name: "Throw Out Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of the catcher successfully throwing out a stealing baserunner is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "strikeFactor",
+			name: "Strike Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of the pitcher throwing a strike is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "balkFactor",
+			name: "Balk Factor",
+			godModeRequired: "always",
+			type: "float",
+			description: "The probability of a balk is multipled by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "wildPitchFactor",
+			name: "Wild Pitch Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of a wild pitch is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "passedBallFactor",
+			name: "Passed Ball Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of a passed ball is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "hitByPitchFactor",
+			name: "Hit By Pitch Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of the batter being hit by a pitch is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "swingFactor",
+			name: "Swing Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of the batter swinging at a pitch is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "contactFactor",
+			name: "Contact Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of a swing making contact is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1573,7 +1690,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of the offense deflecting a shot is multiplied by this number",
+				"The probability of the offense deflecting a shot is multiplied by this number",
 		},
 		{
 			category: "Game Simulation",
@@ -1582,7 +1699,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline save percentage of each shot is multiplied by this number.",
+				"The save probability of each shot is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1591,7 +1708,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability that a shot is assisted is multiplied by this number.",
+				"The probability that a shot is assisted is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1599,8 +1716,9 @@ export const settings: Setting[] = (
 			name: "Hit Factor",
 			godModeRequired: "always",
 			type: "float",
-			description:
-				"The baseline probability of a hit happening is multiplied by this number.",
+			description: isSport("hockey")
+				? "The probability of a hit happening is multiplied by this number."
+				: "The probability that a ball in play is a hit is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1609,7 +1727,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of a giveaway happening is multiplied by this number.",
+				"The probability of a giveaway happening is multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -1618,7 +1736,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float",
 			description:
-				"The baseline probability of a takeaway happening is multiplied by this number.",
+				"The probability of a takeaway happening is multiplied by this number.",
 		},
 		{
 			category: "Players",

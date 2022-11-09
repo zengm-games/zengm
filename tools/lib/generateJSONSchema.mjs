@@ -1233,6 +1233,45 @@ const generateJSONSchema = (sport /*: string*/) => {
 							assistFactor: {
 								type: "number",
 							},
+							foulFactor: {
+								type: "number",
+							},
+							groundFactor: {
+								type: "number",
+							},
+							lineFactor: {
+								type: "number",
+							},
+							flyFactor: {
+								type: "number",
+							},
+							powerFactor: {
+								type: "number",
+							},
+							throwOutFactor: {
+								type: "number",
+							},
+							strikeFactor: {
+								type: "number",
+							},
+							balkFactor: {
+								type: "number",
+							},
+							wildPitchFactor: {
+								type: "number",
+							},
+							passedBallFactor: {
+								type: "number",
+							},
+							hitByPitchFactor: {
+								type: "number",
+							},
+							swingFactor: {
+								type: "number",
+							},
+							contactFactor: {
+								type: "number",
+							},
 						},
 					},
 				],

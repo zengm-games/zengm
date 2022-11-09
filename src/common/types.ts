@@ -625,6 +625,19 @@ export type GameAttributesLeague = {
 	deflectionFactor: number;
 	saveFactor: number;
 	assistFactor: number;
+	foulFactor: number;
+	groundFactor: number;
+	lineFactor: number;
+	flyFactor: number;
+	powerFactor: number;
+	throwOutFactor: number;
+	strikeFactor: number;
+	balkFactor: number;
+	wildPitchFactor: number;
+	passedBallFactor: number;
+	hitByPitchFactor: number;
+	swingFactor: number;
+	contactFactor: number;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

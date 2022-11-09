@@ -308,12 +308,12 @@ class GameSim {
 
 	// pitchQuality is from 0 to 1
 	doBattedBall(p: PlayerGameSim, pitchQuality: number) {
-		const foul = Math.random() < 0.25;
+		const foul = Math.random() < Math.min(0.9, 0.25 * g.get("foulFactor"));
 
 		const type = random.choice(["ground", "line", "fly"] as const, [
-			0.5,
-			0.5,
-			p.compositeRating.powerHitter,
+			0.5 * g.get("groundFactor"),
+			0.5 * g.get("lineFactor"),
+			p.compositeRating.powerHitter * g.get("flyFactor"),
 		]);
 		const direction = foul
 			? random.choice(
@@ -356,7 +356,9 @@ class GameSim {
 				speed = random.choice(["soft", "normal", "hard"] as const, [
 					0.5,
 					0.5,
-					(0.5 * (p.compositeRating.powerHitter + 0.5)) / 2 -
+					(g.get("powerFactor") *
+						(0.5 * (p.compositeRating.powerHitter + 0.5))) /
+						2 -
 						(pitchQuality - 0.5) / 4,
 				]);
 				this.playByPlay.logEvent({
@@ -380,8 +382,10 @@ class GameSim {
 						0.5,
 						(0.9 * (p.compositeRating.powerHitter + 0.5)) / 2 -
 							(pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter / 5 - (pitchQuality - 0.5) / 8,
-						p.compositeRating.powerHitter / 12 - (pitchQuality - 0.5) / 8,
+						(g.get("powerFactor") * p.compositeRating.powerHitter) / 5 -
+							(pitchQuality - 0.5) / 8,
+						(g.get("powerFactor") * p.compositeRating.powerHitter) / 12 -
+							(pitchQuality - 0.5) / 8,
 					],
 				);
 				this.playByPlay.logEvent({
@@ -917,7 +921,7 @@ class GameSim {
 				(catcher.compositeRating.arm + catcher.compositeRating.catcherDefense) -
 			0.5 * p.compositeRating.speed;
 
-		return prob;
+		return prob * g.get("throwOutFactor");
 	}
 
 	processSteals(stealing: [boolean, boolean, boolean]) {
@@ -992,7 +996,7 @@ class GameSim {
 	}
 
 	probBalk() {
-		return 0.0005;
+		return 0.0005 * g.get("balkFactor");
 	}
 
 	probWildPitch() {
@@ -1002,7 +1006,8 @@ class GameSim {
 			0.005 *
 			(1 -
 				(0.75 * pitcher.compositeRating.controlPitcher +
-					0.25 * catcher.compositeRating.catcherDefense))
+					0.25 * catcher.compositeRating.catcherDefense)) *
+			g.get("wildPitchFactor")
 		);
 	}
 
@@ -1013,14 +1018,17 @@ class GameSim {
 			0.001 *
 			(1 -
 				(0.25 * pitcher.compositeRating.controlPitcher +
-					0.75 * catcher.compositeRating.catcherDefense))
+					0.75 * catcher.compositeRating.catcherDefense)) *
+			g.get("passedBallFactor")
 		);
 	}
 
 	probHitByPitch() {
 		const p = this.team[this.d].playersInGameByPos.P.p;
 
-		return 0.007 * (1 - p.compositeRating.controlPitcher);
+		return (
+			0.007 * (1 - p.compositeRating.controlPitcher) * g.get("hitByPitchFactor")
+		);
 	}
 
 	probSteal(baseIndex: 0 | 1 | 2) {
@@ -1064,7 +1072,7 @@ class GameSim {
 			prob *= 0;
 		}
 
-		return prob;
+		return prob * g.get("stealFactor");
 	}
 
 	getPitchOutcome(pitcher: PlayerGameSim, batter: PlayerGameSim) {
@@ -1100,8 +1108,10 @@ class GameSim {
 			ballProb -= 0.1 * pitcher.compositeRating.controlPitcher;
 		}
 
+		const strikeProb = (1 - ballProb) * Math.max(0.1, g.get("strikeFactor"));
+
 		const ballOrStrike =
-			Math.random() < ballProb ? "ball" : ("strike" as const);
+			Math.random() < strikeProb ? "strike" : ("ball" as const);
 
 		let pitchQuality = helpers.bound(
 			random.gauss(
@@ -1132,19 +1142,25 @@ class GameSim {
 
 		if (ballOrStrike === "ball") {
 			const swingProb = pitchQuality - eyeAdjusted + swingProbAdjustment;
-			if (Math.random() < swingProb) {
+			if (Math.random() < swingProb * g.get("swingFactor")) {
 				swinging = true;
 				const contactProb = 0.4 + contactAdjusted - pitchQuality;
-				outcome = Math.random() < contactProb ? "contact" : "strike";
+				outcome =
+					Math.random() < contactProb * g.get("contactFactor")
+						? "contact"
+						: "strike";
 			} else {
 				outcome = "ball";
 			}
 		} else {
 			const swingProb = 0.75 - pitchQuality + eyeAdjusted + swingProbAdjustment;
-			if (Math.random() < swingProb) {
+			if (Math.random() < swingProb * g.get("swingFactor")) {
 				swinging = true;
 				const contactProb = 0.65 + contactAdjusted - pitchQuality;
-				outcome = Math.random() < contactProb ? "contact" : "strike";
+				outcome =
+					Math.random() < contactProb * g.get("contactFactor")
+						? "contact"
+						: "strike";
 			} else {
 				outcome = "strike";
 			}
@@ -1221,9 +1237,10 @@ class GameSim {
 		const fieldingFactor = 0.5 - numerator / denominator;
 
 		return (
-			0.21 +
-			0.075 * batter.compositeRating.contactHitter +
-			0.125 * fieldingFactor
+			(0.21 +
+				0.075 * batter.compositeRating.contactHitter +
+				0.125 * fieldingFactor) *
+			g.get("hitFactor")
 		);
 	}
 

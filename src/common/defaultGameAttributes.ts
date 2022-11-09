@@ -43,7 +43,24 @@ export const gameAttributesCache: GameAttributeKey[] = [
 ];
 
 const gameAttributesKeysSportSpecific = {
-	baseball: ["dh"] as GameAttributeKey[],
+	baseball: [
+		"dh",
+		"foulFactor",
+		"groundFactor",
+		"lineFactor",
+		"flyFactor",
+		"powerFactor",
+		"stealFactor",
+		"throwOutFactor",
+		"strikeFactor",
+		"balkFactor",
+		"wildPitchFactor",
+		"passedBallFactor",
+		"hitByPitchFactor",
+		"swingFactor",
+		"contactFactor",
+		"hitFactor",
+	] as GameAttributeKey[],
 	basketball: [
 		"threePointers",
 		"threePointTendencyFactor",
@@ -286,6 +303,21 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	deflectionFactor: 1,
 	saveFactor: 1,
 	assistFactor: 1,
+
+	// These are only for ZGMB, but for TypeScript define them here
+	foulFactor: 1,
+	groundFactor: 1,
+	lineFactor: 1,
+	flyFactor: 1,
+	powerFactor: 1,
+	throwOutFactor: 1,
+	strikeFactor: 1,
+	balkFactor: 1,
+	wildPitchFactor: 1,
+	passedBallFactor: 1,
+	hitByPitchFactor: 1,
+	swingFactor: 1,
+	contactFactor: 1,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

@@ -1758,7 +1758,7 @@ class GameSim {
 			ydsRaw += random.randInt(0, 109);
 		}
 
-		ydsRaw *= g.get("passYdsFactor");
+		ydsRaw = Math.round(ydsRaw * g.get("passYdsFactor"));
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
@@ -1893,7 +1893,7 @@ class GameSim {
 			ydsRaw += random.randInt(0, 109);
 		}
 
-		ydsRaw *= g.get("rushYdsFactor");
+		ydsRaw = Math.round(ydsRaw * g.get("rushYdsFactor"));
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 		const dt = random.randInt(2, 4) + Math.abs(yds) / 10;

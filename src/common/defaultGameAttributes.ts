@@ -89,7 +89,18 @@ const gameAttributesKeysSportSpecific = {
 		"onsideRecoveryFactor",
 		"pace",
 	] as GameAttributeKey[],
-	hockey: ["quarterLength", "ties", "pace"] as GameAttributeKey[],
+	hockey: [
+		"quarterLength",
+		"ties",
+		"hitFactor",
+		"giveawayFactor",
+		"takeawayFactor",
+		"blockFactor",
+		"deflectionFactor",
+		"saveFactor",
+		"assistFactor",
+		"pace",
+	] as GameAttributeKey[],
 };
 export const gameAttributesKeysOtherSports = new Set<GameAttributeKey>();
 for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
@@ -267,6 +278,14 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	fourthDownFactor: 1,
 	onsideFactor: 1,
 	onsideRecoveryFactor: 1,
+
+	// These are only for ZGMH, but for TypeScript define them here
+	hitFactor: 1,
+	giveawayFactor: 1,
+	takeawayFactor: 1,
+	deflectionFactor: 1,
+	saveFactor: 1,
+	assistFactor: 1,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

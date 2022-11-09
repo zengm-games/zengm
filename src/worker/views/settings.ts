@@ -124,6 +124,12 @@ const keys = [
 	"fourthDownFactor",
 	"onsideFactor",
 	"onsideRecoveryFactor",
+	"hitFactor",
+	"giveawayFactor",
+	"takeawayFactor",
+	"deflectionFactor",
+	"saveFactor",
+	"assistFactor",
 ] as const;
 
 export type Settings = Pick<
@@ -277,6 +283,12 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			fourthDownFactor: g.get("fourthDownFactor"),
 			onsideFactor: g.get("onsideFactor"),
 			onsideRecoveryFactor: g.get("onsideRecoveryFactor"),
+			hitFactor: g.get("hitFactor"),
+			giveawayFactor: g.get("giveawayFactor"),
+			takeawayFactor: g.get("takeawayFactor"),
+			deflectionFactor: g.get("deflectionFactor"),
+			saveFactor: g.get("saveFactor"),
+			assistFactor: g.get("assistFactor"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

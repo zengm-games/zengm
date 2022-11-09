@@ -619,6 +619,12 @@ export type GameAttributesLeague = {
 	fourthDownFactor: number;
 	onsideFactor: number;
 	onsideRecoveryFactor: number;
+	hitFactor: number;
+	giveawayFactor: number;
+	takeawayFactor: number;
+	deflectionFactor: number;
+	saveFactor: number;
+	assistFactor: number;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

@@ -287,6 +287,21 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"onsideRecoveryFactor",
 		),
+		hitFactor: unwrapGameAttribute(defaultGameAttributes, "hitFactor"),
+		giveawayFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"giveawayFactor",
+		),
+		takeawayFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"takeawayFactor",
+		),
+		deflectionFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"deflectionFactor",
+		),
+		saveFactor: unwrapGameAttribute(defaultGameAttributes, "saveFactor"),
+		assistFactor: unwrapGameAttribute(defaultGameAttributes, "assistFactor"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

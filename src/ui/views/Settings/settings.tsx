@@ -1359,7 +1359,8 @@ export const settings: Setting[] = (
 				basketball: "Average number of possessions per 48 minutes.",
 				football:
 					"The time between plays is divided by this number. So higher value -> shorter time between plays. And lower value -> longer time between plays.",
-				hockey: "",
+				hockey:
+					"The length of a possession is divided by this number. So higher value -> quicker shots. And lower value -> longer time between shots.",
 			}),
 			validator: value => {
 				if (value <= 0) {
@@ -1459,15 +1460,6 @@ export const settings: Setting[] = (
 				}
 			},
 		},
-		/*{
-			category: "Game Simulation",
-			key: "stealFactor",
-			name: "Steal Tendency Factor",
-			godModeRequired: "always",
-			type: "float",
-			description:
-				"The baseline steal percentage is multiplied by this number.",
-		},*/
 		{
 			category: "Game Simulation",
 			key: "passFactor",
@@ -1573,6 +1565,60 @@ export const settings: Setting[] = (
 			type: "float",
 			description:
 				"The baseline probability of the kicking team recovering an onside kick is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "deflectionFactor",
+			name: "Deflection Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of the offense deflecting a shot is multiplied by this number",
+		},
+		{
+			category: "Game Simulation",
+			key: "saveFactor",
+			name: "Save Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline save percentage of each shot is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "assistFactor",
+			name: "Assist Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability that a shot is assisted is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "hitFactor",
+			name: "Hit Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of a hit happening is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "giveawayFactor",
+			name: "Giveaway Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of a giveaway happening is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "takeawayFactor",
+			name: "Takeaway Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of a takeaway happening is multiplied by this number.",
 		},
 		{
 			category: "Players",

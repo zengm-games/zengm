@@ -1215,6 +1215,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 							onsideRecoveryFactor: {
 								type: "number",
 							},
+							hitFactor: {
+								type: "number",
+							},
+							giveawayFactor: {
+								type: "number",
+							},
+							takeawayFactor: {
+								type: "number",
+							},
+							deflectionFactor: {
+								type: "number",
+							},
+							saveFactor: {
+								type: "number",
+							},
+							assistFactor: {
+								type: "number",
+							},
 						},
 					},
 				],

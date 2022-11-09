@@ -1354,7 +1354,18 @@ export const settings: Setting[] = (
 			name: "Pace",
 			godModeRequired: "always",
 			type: "float",
-			description: "Average number of possessions per 48 minutes.",
+			description: bySport({
+				baseball: "",
+				basketball: "Average number of possessions per 48 minutes.",
+				football:
+					"The time between plays is divided by this number. So higher value -> shorter time between plays. And lower value -> longer time between plays.",
+				hockey: "",
+			}),
+			validator: value => {
+				if (value <= 0) {
+					throw new Error("Must be a positive number");
+				}
+			},
 		},
 		{
 			category: "Game Simulation",

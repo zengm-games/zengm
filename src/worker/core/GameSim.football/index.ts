@@ -715,6 +715,7 @@ class GameSim {
 
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		dt /= 60;
+		dt /= g.get("pace");
 
 		// Two minute warning
 		if (

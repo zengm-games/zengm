@@ -45,7 +45,6 @@ export const gameAttributesCache: GameAttributeKey[] = [
 const gameAttributesKeysSportSpecific = {
 	baseball: ["dh"] as GameAttributeKey[],
 	basketball: [
-		"pace",
 		"threePointers",
 		"threePointTendencyFactor",
 		"threePointAccuracyFactor",
@@ -69,14 +68,28 @@ const gameAttributesKeysSportSpecific = {
 		"quarterLength",
 		"ties",
 		"numPlayersOnCourt",
+		"pace",
 	] as GameAttributeKey[],
 	football: [
 		"fantasyPoints",
 		"foulRateFactor",
 		"quarterLength",
 		"ties",
+		"passFactor",
+		"rushYdsFactor",
+		"passYdsFactor",
+		"completionFactor",
+		"scrambleFactor",
+		"sackFactor",
+		"fumbleFactor",
+		"intFactor",
+		"fgAccuracyFactor",
+		"fourthDownFactor",
+		"onsideFactor",
+		"onsideRecoveryFactor",
+		"pace",
 	] as GameAttributeKey[],
-	hockey: ["quarterLength", "ties"] as GameAttributeKey[],
+	hockey: ["quarterLength", "ties", "pace"] as GameAttributeKey[],
 };
 export const gameAttributesKeysOtherSports = new Set<GameAttributeKey>();
 for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
@@ -304,6 +317,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				playIn: false,
 				fantasyPoints: "standard",
 				draftPickAutoContract: false,
+				pace: 1,
 		  }
 		: {};
 
@@ -337,6 +351,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContractPercent: 10,
 				draftPickAutoContractRounds: 2,
 				rookieContractLengths: [3],
+				pace: 1,
 		  }
 		: {};
 

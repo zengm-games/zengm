@@ -240,6 +240,20 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	difficulty: 0, // See constants.DIFFICULTY for values
 	lowestDifficulty: 0,
 	fantasyPoints: undefined,
+
+	// These are only for FBGM, but for TypeScript define them here
+	passFactor: 1,
+	rushYdsFactor: 1,
+	passYdsFactor: 1,
+	completionFactor: 1,
+	scrambleFactor: 1,
+	sackFactor: 1,
+	fumbleFactor: 1,
+	intFactor: 1,
+	fgAccuracyFactor: 1,
+	fourthDownFactor: 1,
+	onsideFactor: 1,
+	onsideRecoveryFactor: 1,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

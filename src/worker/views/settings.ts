@@ -112,6 +112,18 @@ const keys = [
 	"dh",
 	"draftLotteryCustomNumPicks",
 	"draftLotteryCustomChances",
+	"passFactor",
+	"rushYdsFactor",
+	"passYdsFactor",
+	"completionFactor",
+	"scrambleFactor",
+	"sackFactor",
+	"fumbleFactor",
+	"intFactor",
+	"fgAccuracyFactor",
+	"fourthDownFactor",
+	"onsideFactor",
+	"onsideRecoveryFactor",
 ] as const;
 
 export type Settings = Pick<
@@ -253,6 +265,18 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			dh: g.get("dh"),
 			draftLotteryCustomNumPicks: g.get("draftLotteryCustomNumPicks"),
 			draftLotteryCustomChances: g.get("draftLotteryCustomChances"),
+			passFactor: g.get("passFactor"),
+			rushYdsFactor: g.get("rushYdsFactor"),
+			passYdsFactor: g.get("passYdsFactor"),
+			completionFactor: g.get("completionFactor"),
+			scrambleFactor: g.get("scrambleFactor"),
+			sackFactor: g.get("sackFactor"),
+			fumbleFactor: g.get("fumbleFactor"),
+			intFactor: g.get("intFactor"),
+			fgAccuracyFactor: g.get("fgAccuracyFactor"),
+			fourthDownFactor: g.get("fourthDownFactor"),
+			onsideFactor: g.get("onsideFactor"),
+			onsideRecoveryFactor: g.get("onsideRecoveryFactor"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

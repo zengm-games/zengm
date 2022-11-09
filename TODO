@@ -1,3 +1,6 @@
+game sim settings for other sports
+- pace in all sports, except maybe baseball
+
 store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
@@ -59,9 +62,6 @@ runners should go on contact with 2 outs https://discord.com/channels/2900135340
 baseball injury lineup auto sort - only below injured player https://discord.com/channels/290013534023057409/290015591216054273/1009826420660392077
 
 fbgm timeout after extra point https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
-
-game sim settings for other sports
-- pace in all sports, except maybe baseball
 
 defensemen need more shots, wingers need less https://discord.com/channels/@me/662077709836484618/1004952271710326794
 - defensemen need more assists https://discord.com/channels/290013534023057409/816359356424912976/1010633509985063055
@@ -131,8 +131,6 @@ custom awards
   - GOAT formula
 
 baseballGM: roster composition on Trade page. WAR on resigning page? https://discord.com/channels/290013534023057409/331882115119448065/991842013798473749
-
-game sim tendencies for other sports
 
 don't show captains on All-Star History page unless it's a draft
 

@@ -342,7 +342,7 @@ class GameSim {
 				(ptsDown > 16 && this.clock <= 4) ||
 				(ptsDown > 24 && this.clock <= 6));
 		if (desperation) {
-			return 0.98;
+			return 0.98 * g.get("passFactor");
 		}
 
 		let offPassing = 0;
@@ -405,23 +405,23 @@ class GameSim {
 			passOdds = passOdds / runAtGoallineWeight;
 		}
 
-		return passOdds;
+		return passOdds * g.get("passFactor");
 	}
 
 	// Probability that a kickoff should be an onside kick
 	probOnside() {
 		if (this.awaitingAfterSafety) {
-			return 0;
+			return 0 * g.get("onsideFactor");
 		}
 
 		// Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
 		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
-			return 0.01;
+			return 0.01 * g.get("onsideFactor");
 		}
 
 		// Does game situation dictate an onside kick in the 4th quarter?
 		if (this.team[0].stat.ptsQtrs.length !== this.numPeriods) {
-			return 0;
+			return 0 * g.get("onsideFactor");
 		}
 
 		const numScoresDown = Math.ceil(
@@ -430,26 +430,26 @@ class GameSim {
 
 		if (numScoresDown <= 0 || numScoresDown >= 4) {
 			// Either winning, or being blown out so there's no point
-			return 0;
+			return 0 * g.get("onsideFactor");
 		}
 
 		if (this.clock < 2) {
-			return 1;
+			return 1 * g.get("onsideFactor");
 		}
 
 		if (numScoresDown >= 2 && this.clock < 2.5) {
-			return 0.9;
+			return 0.9 * g.get("onsideFactor");
 		}
 
 		if (numScoresDown >= 3 && this.clock < 3.5) {
-			return 0.8;
+			return 0.8 * g.get("onsideFactor");
 		}
 
 		if (numScoresDown >= 2 && this.clock < 5) {
-			return numScoresDown / 20;
+			return (numScoresDown / 20) * g.get("onsideFactor");
 		}
 
-		return 0;
+		return 0 * g.get("onsideFactor");
 	}
 
 	hurryUp() {
@@ -598,41 +598,45 @@ class GameSim {
 				const probMadeFieldGoal = this.probMadeFieldGoal();
 
 				// If it's 4th and short, maybe go for it
-				const probGoForIt = (() => {
-					// In overtime, if tied and a field goal would win, try it
-					if (
-						this.overtimeState !== "firstPossession" &&
-						ptsDown === 0 &&
-						probMadeFieldGoal >= 0.7
-					) {
+				let probGoForIt =
+					(() => {
+						// In overtime, if tied and a field goal would win, try it
+						if (
+							this.overtimeState !== "firstPossession" &&
+							ptsDown === 0 &&
+							probMadeFieldGoal >= 0.7
+						) {
+							return 0;
+						}
+						if (this.scrimmage < 40) {
+							return 0;
+						}
+						if (this.toGo <= 1) {
+							return 0.75;
+						}
+						if (this.toGo <= 2) {
+							return 0.5;
+						}
+						if (this.toGo <= 3) {
+							return 0.35;
+						}
+						if (this.toGo <= 4) {
+							return 0.2;
+						}
+						if (this.toGo <= 5) {
+							return 0.05;
+						}
+						if (this.toGo <= 7) {
+							return 0.01;
+						}
+						if (this.toGo <= 10) {
+							return 0.001;
+						}
 						return 0;
-					}
-					if (this.scrimmage < 40) {
-						return 0;
-					}
-					if (this.toGo <= 1) {
-						return 0.75;
-					}
-					if (this.toGo <= 2) {
-						return 0.5;
-					}
-					if (this.toGo <= 3) {
-						return 0.35;
-					}
-					if (this.toGo <= 4) {
-						return 0.2;
-					}
-					if (this.toGo <= 5) {
-						return 0.05;
-					}
-					if (this.toGo <= 7) {
-						return 0.01;
-					}
-					if (this.toGo <= 10) {
-						return 0.001;
-					}
-					return 0;
-				})();
+					})() * g.get("fourthDownFactor");
+				if (probGoForIt > 0.99) {
+					probGoForIt = 0.99;
+				}
 
 				if (Math.random() > probGoForIt) {
 					// If it's a makeable field goal, take it
@@ -1023,7 +1027,7 @@ class GameSim {
 				t: this.o,
 				names: [kicker.name],
 			});
-			const success = Math.random() < 0.1;
+			const success = Math.random() < 0.1 * g.get("onsideRecoveryFactor");
 
 			const p = success ? this.pickPlayer(this.o) : this.pickPlayer(this.d);
 
@@ -1328,9 +1332,15 @@ class GameSim {
 			baseProb = 0;
 		}
 
+		baseProb *= g.get("fgAccuracyFactor");
+		if (baseProb > 0.99) {
+			baseProb = 0.99;
+		}
+
 		// Accurate kickers get a boost. Max boost is the min of (.1, (1-baseProb)/2, and baseProb/2)
 		const baseBoost = (kicker.compositeRating.kickingAccuracy - 0.7) / 3;
 		const boost = Math.min(baseBoost, (1 - baseProb) / 2, baseProb / 2);
+
 		return baseProb + boost;
 	}
 
@@ -1440,7 +1450,9 @@ class GameSim {
 	}
 
 	probFumble(p: PlayerGameSim) {
-		return 0.0125 * (1.5 - p.compositeRating.ballSecurity);
+		return (
+			0.0125 * (1.5 - p.compositeRating.ballSecurity) * g.get("fumbleFactor")
+		);
 	}
 
 	doFumble(pFumbled: PlayerGameSim, spotYds: number) {
@@ -1631,21 +1643,23 @@ class GameSim {
 
 	probSack(qb: PlayerGameSim) {
 		return (
-			(0.06 * this.team[this.d].compositeRating.passRushing) /
-			(0.5 *
-				(qb.compositeRating.avoidingSacks +
-					this.team[this.o].compositeRating.passBlocking))
+			((0.06 * this.team[this.d].compositeRating.passRushing) /
+				(0.5 *
+					(qb.compositeRating.avoidingSacks +
+						this.team[this.o].compositeRating.passBlocking))) *
+			g.get("sackFactor")
 		);
 	}
 
 	probInt(qb: PlayerGameSim) {
 		return (
-			(((0.02 * this.team[this.d].compositeRating.passCoverage) /
+			((((0.02 * this.team[this.d].compositeRating.passCoverage) /
 				(0.5 *
 					(qb.compositeRating.passingVision +
 						qb.compositeRating.passingAccuracy))) *
 				this.team[this.d].compositeRating.passRushing) /
-			this.team[this.o].compositeRating.passBlocking
+				this.team[this.o].compositeRating.passBlocking) *
+			g.get("intFactor")
 		);
 	}
 
@@ -1668,13 +1682,16 @@ class GameSim {
 				this.team[this.o].compositeRating.passBlocking /
 					this.team[this.d].compositeRating.passRushing,
 			);
-		const p = 0.24 + 0.4 * factor ** 1.25;
+		const p = (0.24 + 0.4 * factor ** 1.25) * g.get("completionFactor");
 		return helpers.bound(p, 0, 0.95);
 	}
 
 	probScramble(qb?: PlayerGameSim) {
 		const qbOvrRB = qb?.ovrs.RB ?? 0;
-		return 0.01 + Math.max(0, (0.4 * (qbOvrRB - 30)) / 100);
+		return (
+			(0.01 + Math.max(0, (0.4 * (qbOvrRB - 30)) / 100)) *
+			g.get("scrambleFactor")
+		);
 	}
 
 	doPass() {
@@ -1739,6 +1756,8 @@ class GameSim {
 		if (Math.random() < target.compositeRating.speed * 0.03) {
 			ydsRaw += random.randInt(0, 109);
 		}
+
+		ydsRaw *= g.get("passYdsFactor");
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
@@ -1872,6 +1891,8 @@ class GameSim {
 		if (Math.random() < 0.01) {
 			ydsRaw += random.randInt(0, 109);
 		}
+
+		ydsRaw *= g.get("rushYdsFactor");
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 		const dt = random.randInt(2, 4) + Math.abs(yds) / 10;

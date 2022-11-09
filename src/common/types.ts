@@ -606,6 +606,19 @@ export type GameAttributesLeague = {
 				expansionTids: number[];
 				availablePids: number[];
 		  };
+
+	passFactor: number;
+	rushYdsFactor: number;
+	passYdsFactor: number;
+	completionFactor: number;
+	scrambleFactor: number;
+	sackFactor: number;
+	fumbleFactor: number;
+	intFactor: number;
+	fgAccuracyFactor: number;
+	fourthDownFactor: number;
+	onsideFactor: number;
+	onsideRecoveryFactor: number;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

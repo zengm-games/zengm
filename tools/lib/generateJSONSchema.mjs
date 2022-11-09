@@ -1179,6 +1179,42 @@ const generateJSONSchema = (sport /*: string*/) => {
 							expansionDraft: {
 								type: "object",
 							},
+							passFactor: {
+								type: "number",
+							},
+							rushYdsFactor: {
+								type: "number",
+							},
+							passYdsFactor: {
+								type: "number",
+							},
+							completionFactor: {
+								type: "number",
+							},
+							scrambleFactor: {
+								type: "number",
+							},
+							sackFactor: {
+								type: "number",
+							},
+							fumbleFactor: {
+								type: "number",
+							},
+							intFactor: {
+								type: "number",
+							},
+							fgAccuracyFactor: {
+								type: "number",
+							},
+							fourthDownFactor: {
+								type: "number",
+							},
+							onsideFactor: {
+								type: "number",
+							},
+							onsideRecoveryFactor: {
+								type: "number",
+							},
 						},
 					},
 				],

@@ -260,6 +260,33 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"draftLotteryCustomChances",
 		),
+		passFactor: unwrapGameAttribute(defaultGameAttributes, "passFactor"),
+		rushYdsFactor: unwrapGameAttribute(defaultGameAttributes, "rushYdsFactor"),
+		passYdsFactor: unwrapGameAttribute(defaultGameAttributes, "passYdsFactor"),
+		completionFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"completionFactor",
+		),
+		scrambleFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"scrambleFactor",
+		),
+		sackFactor: unwrapGameAttribute(defaultGameAttributes, "sackFactor"),
+		fumbleFactor: unwrapGameAttribute(defaultGameAttributes, "fumbleFactor"),
+		intFactor: unwrapGameAttribute(defaultGameAttributes, "intFactor"),
+		fgAccuracyFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"fgAccuracyFactor",
+		),
+		fourthDownFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"fourthDownFactor",
+		),
+		onsideFactor: unwrapGameAttribute(defaultGameAttributes, "onsideFactor"),
+		onsideRecoveryFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"onsideRecoveryFactor",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

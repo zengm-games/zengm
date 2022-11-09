@@ -1448,6 +1448,121 @@ export const settings: Setting[] = (
 				}
 			},
 		},
+		/*{
+			category: "Game Simulation",
+			key: "stealFactor",
+			name: "Steal Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline steal percentage is multiplied by this number.",
+		},*/
+		{
+			category: "Game Simulation",
+			key: "passFactor",
+			name: "Passing Tendency Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of calling a passing play is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "rushYdsFactor",
+			name: "Rushing Yards Factor",
+			godModeRequired: "always",
+			type: "float",
+			description: "The baseline yards per rush is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "passYdsFactor",
+			name: "Passing Yards Factor",
+			godModeRequired: "always",
+			type: "float",
+			description: "The baseline yards per pass is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "completionFactor",
+			name: "Completion Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline pass completion percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "scrambleFactor",
+			name: "QB Scramble Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of a quarterback scrambling on a passing play is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "sackFactor",
+			name: "Sack Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline sack probability is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "fumbleFactor",
+			name: "Fumble Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline fumble probability is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "intFactor",
+			name: "Interception Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline interception probability is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "fgAccuracyFactor",
+			name: "FG Accuracy Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline field goal accuracy percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "fourthDownFactor",
+			name: "4th Down Aggressiveness Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability to go for it on 4th down is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "onsideFactor",
+			name: "Onside Kick Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of doing an onside kick is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "onsideRecoveryFactor",
+			name: "Onside Recovery Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline probability of the kicking team recovering an onside kick is multiplied by this number.",
+		},
 		{
 			category: "Players",
 			key: "realPlayerDeterminism",

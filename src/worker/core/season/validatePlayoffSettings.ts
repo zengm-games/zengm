@@ -17,6 +17,12 @@ const validatePlayoffSettings = ({
 		throw new Error("Cannot have a negative number of byes");
 	}
 
+	if (numRounds === 2 && numPlayoffByes > 0 && byConf) {
+		throw new Error(
+			"You cannot have any byes in a two round playoff split by conference.",
+		);
+	}
+
 	if (numRounds === 1 && numPlayoffByes > 0) {
 		throw new Error("You cannot have any byes in a one round playoff.");
 	}

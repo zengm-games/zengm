@@ -1772,16 +1772,17 @@ class GameSim {
 
 		return "fg";
 	}
+
 	/**
 	 * Probability that a shot taken this possession is assisted.
 	 *
 	 * @return {number} Probability from 0 to 1.
 	 */
-
 	probAst() {
 		return (
-			(0.6 * (2 + this.team[this.o].compositeRating.passing)) /
-			(2 + this.team[this.d].compositeRating.defense)
+			((0.6 * (2 + this.team[this.o].compositeRating.passing)) /
+				(2 + this.team[this.d].compositeRating.defense)) *
+			g.get("assistFactor")
 		);
 	}
 

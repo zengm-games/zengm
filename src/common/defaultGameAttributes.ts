@@ -70,6 +70,7 @@ const gameAttributesKeysSportSpecific = {
 		"stealFactor",
 		"turnoverFactor",
 		"orbFactor",
+		"assistFactor",
 		"realPlayerDeterminism",
 		"foulRateFactor",
 		"foulsNeededToFoulOut",

@@ -715,7 +715,6 @@ class GameSim {
 
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		dt /= 60;
-		dt /= g.get("pace");
 
 		// Two minute warning
 		if (
@@ -786,6 +785,8 @@ class GameSim {
 			} else {
 				dtClockRunning = random.randInt(37, 62) / 60;
 			}
+
+			dtClockRunning /= g.get("pace");
 		}
 
 		// Check two minute warning again

@@ -1198,6 +1198,21 @@ const migrate = async ({
 			await store.delete("hardCap");
 		}
 	}
+
+	if (oldVersion <= 51) {
+		// Non-basketball sports may have had a basketball pace stored in gameAttributes if they were created before gameAttributesKeysSportSpecific
+		if (!isSport("basketball")) {
+			const store = transaction.objectStore("gameAttributes");
+			const pace = await store.get("pace");
+
+			if (pace?.value === 100) {
+				await store.put({
+					key: "pace",
+					value: 1,
+				});
+			}
+		}
+	}
 };
 
 const connectLeague = (lid: number) =>

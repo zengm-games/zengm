@@ -16,8 +16,6 @@ export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 	let worstRecord;
 	let bestWinp = -Infinity;
 	let worstWinp = Infinity;
-	let mostWon = 0;
-	let mostLost = 0;
 
 	const history: {
 		season: number;
@@ -84,24 +82,28 @@ export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 			championships += 1;
 		}
 
-		const winp = helpers.calcWinp(teamSeason);
+		if (teamSeason.gp > 0) {
+			const winp = helpers.calcWinp(teamSeason);
 
-		if (
-			winp > bestWinp &&
-			(teamSeason.season < g.get("season") || teamSeason.won >= mostWon)
-		) {
-			bestRecord = history.at(-1);
-			bestWinp = winp;
-			mostWon = teamSeason.won;
-		}
+			if (
+				!bestRecord ||
+				(winp >= bestWinp &&
+					(teamSeason.won > bestRecord.won ||
+						teamSeason.lost < bestRecord.lost))
+			) {
+				bestRecord = history.at(-1);
+				bestWinp = winp;
+			}
 
-		if (
-			winp < worstWinp &&
-			(teamSeason.season < g.get("season") || teamSeason.won >= mostLost)
-		) {
-			worstRecord = history.at(-1);
-			worstWinp = winp;
-			mostLost = teamSeason.lost;
+			if (
+				!worstRecord ||
+				(winp <= worstWinp &&
+					(teamSeason.lost > worstRecord.lost ||
+						teamSeason.won < worstRecord.won))
+			) {
+				worstRecord = history.at(-1);
+				worstWinp = winp;
+			}
 		}
 	}
 

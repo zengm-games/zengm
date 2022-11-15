@@ -36,7 +36,7 @@ const RandomizeTeamsModal = ({
 			</Modal.Header>
 			<Modal.Body>
 				<p>
-					This will replace your curren teams with a set of random teams
+					This will replace your current teams with a set of random teams
 					{SPORT_HAS_REAL_PLAYERS
 						? " - either completely random teams with fake players, or real teams from any season"
 						: null}

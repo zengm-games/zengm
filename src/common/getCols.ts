@@ -1186,6 +1186,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "VORP",
 		},
+		"stat:sovr": {
+			desc: "Statistical Overall",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "sOVR",
+		},
 		"stat:fgAtRim": {
 			desc: "At Rim Made",
 			sortSequence: ["desc", "asc"],

@@ -149,6 +149,51 @@ const calculatePER = (
 		ewa: EWA,
 	};
 };
+// just for fun
+const calculateSOVR = (
+	players: any[],
+	teamsByTid: Record<string, Team>,
+	league: any,
+) => {
+	const paceAdj: Record<number, number> = {};
+	for (const t of Object.values(teamsByTid)) {
+		paceAdj[t.tid] = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
+	}
+
+	const sOvr: number[] = [];
+
+	for (let i = 0; i < players.length; i++) {
+		const t_pace = paceAdj[players[i].tid];
+
+		const p_mp = t_pace * (players[i].stats.min + 5);
+		const p_orb = (36 * players[i].stats.orb) / p_mp;
+		const p_drb = (36 * players[i].stats.drb) / p_mp;
+		const p_trb = p_orb + p_drb;
+		const p_ast = (36 * players[i].stats.ast) / p_mp;
+		const p_tov = (36 * players[i].stats.tov) / p_mp;
+		const p_stl = (36 * players[i].stats.stl) / p_mp;
+		const p_blk = (36 * players[i].stats.blk) / p_mp;
+		const p_pf = (36 * players[i].stats.pf) / p_mp;
+		const p_pts = (36 * players[i].stats.pts) / p_mp;
+		const p_pm = (36 * players[i].stats.pm) / p_mp;
+		const p_const = 1;
+
+		// normalized
+		const pa_sovr =
+			37.97 * p_const +
+			0.54 * p_trb +
+			0.64 * p_ast +
+			-1.38 * p_tov +
+			5.23 * p_stl +
+			2.3 * p_blk +
+			-2.6 * p_pf +
+			0.96 * p_pts;
+		0.27 * p_pm; // normal
+		sOvr[i] = pa_sovr;
+	}
+
+	return { sovr: sOvr };
+};
 
 // https://www.basketball-reference.com/about/bpm2.html
 /**
@@ -749,6 +794,7 @@ const advStats = async () => {
 			"pf",
 			"drb",
 			"pts",
+			"pm",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -863,6 +909,7 @@ const advStats = async () => {
 		...calculatePercentages(players, teamsByTid),
 		...calculateRatings(players, teamsByTid, league),
 		...calculateBPM(players, teamsByTid, league),
+		...calculateSOVR(players, teamsByTid, league),
 	};
 	await advStatsSave(players, playersRaw, updatedStats);
 };

@@ -243,6 +243,7 @@ const roundOverrides: Record<
 		obpm: "oneDecimalPlace",
 		dbpm: "oneDecimalPlace",
 		vorp: "oneDecimalPlace",
+		sovr: "noDecimalPlace",
 		fgMax: "noDecimalPlace",
 		fgaMax: "noDecimalPlace",
 		tpMax: "noDecimalPlace",

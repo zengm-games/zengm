@@ -82,10 +82,6 @@ const value = (
 		pr.pot = pr.pot - options.ovrMean + defaultOvrMean;
 	}
 
-	// From linear regression OVR ~ PER
-	const slope = 1.531;
-	const intercept = 31.693;
-
 	// 1. Account for stats (and current ratings if not enough stats)
 	const ps = p.stats.filter(playerStats => !playerStats.playoffs);
 	let current = pr.ovr;
@@ -94,36 +90,39 @@ const value = (
 	if (isSport("basketball") && ps.length > 0) {
 		const ps1 = ps.at(-1); // Most recent stats
 
-		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
-		if (Object.hasOwn(ps1, "per")) {
-			if (ps.length === 1 || ps[0].min >= 2000) {
-				// Only one year of stats
-				current = intercept + slope * ps1.per;
+		// weights and values for the last few years
+		// this is a prior
+		let m0 = 2000;
+		let v0 = pr.ovr;
 
-				if (ps1.min < 2000) {
-					current = (current * ps1.min) / 2000 + pr.ovr * (1 - ps1.min / 2000);
-				}
-			} else {
+		let m1 = 0;
+		let v1 = 0;
+		const w1 = 1;
+
+		let m2 = 0;
+		let v2 = 0;
+		const w2 = 0.1;
+
+		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
+		if (Object.hasOwn(ps1, "sovr")) {
+			if (ps.length >= 1 && ps1.sovr > 0) {
+				// Only one year of stats
+				v1 = ps1.sovr;
+				m1 = w1 * ps1.min;
+				//console.log("ONE YEAR");
+			}
+			if (ps.length >= 2) {
 				// Two most recent seasons
 				const ps2 = ps[ps.length - 2];
 
-				if (Object.hasOwn(ps2, "per")) {
-					if (ps1.min + ps2.min > 0) {
-						current =
-							intercept +
-							(slope * (ps1.per * ps1.min + ps2.per * ps2.min)) /
-								(ps1.min + ps2.min);
-
-						if (ps1.min + ps2.min < 2000) {
-							current =
-								(current * (ps1.min + ps2.min)) / 2000 +
-								pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
-						}
-					}
+				if (Object.hasOwn(ps2, "sovr") && ps2.sovr > 0) {
+					v2 = ps2.sovr;
+					m2 = w2 * ps2.min;
+					//console.log("TWO YEAR");
 				}
 			}
-
-			current = 0.8 * pr.ovr + 0.2 * current; // Include some part of the ratings
+			const total_w = m0 + m1 + m2;
+			current = (m0 / total_w) * v0 + (m1 / total_w) * v1 + (m2 / total_w) * v2;
 		}
 	}
 

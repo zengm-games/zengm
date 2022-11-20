@@ -385,6 +385,7 @@ export const weightByMinutes = bySport({
 		"obpm",
 		"dbpm",
 		"bpm",
+		"sovr",
 	],
 	football: [],
 	hockey: [],

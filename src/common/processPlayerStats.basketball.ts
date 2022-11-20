@@ -9,6 +9,7 @@ const straightThrough = [
 	"obpm",
 	"dbpm",
 	"vorp",
+	"sovr",
 	"yearsWithTeam",
 	"astp",
 	"blkp",

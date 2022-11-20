@@ -41,7 +41,7 @@ const updateRoster = async (
 	) {
 		const stats = bySport({
 			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			basketball: ["gp", "min", "pts", "trb", "ast", "per", "sovr"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
 		});

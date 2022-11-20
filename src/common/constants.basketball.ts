@@ -275,6 +275,7 @@ const PLAYER_STATS_TABLES = {
 			"dbpm",
 			"bpm",
 			"vorp",
+			"sovr",
 		],
 	},
 	gameHighs: {

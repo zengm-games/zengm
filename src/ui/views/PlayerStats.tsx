@@ -1,4 +1,4 @@
-import { DataTable, MoreLinks } from "../components";
+import { DataTable, MoreLinks, PlusMinus } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
@@ -48,6 +48,10 @@ export const formatStatGameHigh = (
 				{helpers.roundStat(row[0], stat, statType === "totals")}
 			</a>
 		);
+	}
+
+	if (isSport("basketball") && (stat === "pm100" || stat === "onOff100")) {
+		return <PlusMinus>{ps[stat]}</PlusMinus>;
 	}
 
 	return helpers.roundStat(ps[stat], stat, statType === "totals");

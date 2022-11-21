@@ -1,11 +1,9 @@
 const PlusMinus = ({
 	children,
 	decimalPlaces = 1,
-	includePlus,
 }: {
 	children: number | null | undefined;
 	decimalPlaces?: number;
-	includePlus?: boolean;
 }) => {
 	if (children == undefined) {
 		return null;
@@ -28,7 +26,7 @@ const PlusMinus = ({
 							: undefined
 					}
 				>
-					{includePlus && children > 0 ? "+" : null}
+					{children > 0 ? "+" : null}
 					{formattedNumber}
 				</span>
 			) : (

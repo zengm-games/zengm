@@ -893,7 +893,7 @@ const sportSpecificCols = bySport<{
 			title: "+/-",
 		},
 		"stat:onOff100": {
-			desc: "Plus/Minus Per 100 Possessions, On Court Minus Off Court",
+			desc: "+/- Per 100 Possessions, On Minus Off",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "On-Off",

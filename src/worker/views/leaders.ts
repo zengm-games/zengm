@@ -285,6 +285,10 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				stat: "vorp",
 				minStats: { min: 2000 },
 			},
+			{
+				stat: "onOff100",
+				minStats: { min: 2000 },
+			},
 		],
 		football: [
 			{

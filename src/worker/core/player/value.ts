@@ -96,7 +96,7 @@ const value = (
 
 		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
 		if (Object.hasOwn(ps1, "per")) {
-			if (ps.length === 1 || ps[0].min >= 2000) {
+			if (ps.length === 1 || ps1.min >= 2000) {
 				// Only one year of stats
 				current = intercept + slope * ps1.per;
 

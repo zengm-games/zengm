@@ -236,6 +236,8 @@ const roundOverrides: Record<
 		ftp: "oneDecimalPlace",
 		ws48: "roundWinp",
 		pm: "plusMinus",
+		onoff: "plusMinus",
+		pmp: "plusMinus",
 		ftpFga: "roundWinp",
 		tpar: "roundWinp",
 		ftr: "roundWinp",

@@ -4,6 +4,8 @@ import type { PlayerStats, PlayerStatType } from "./types";
 const straightThrough = [
 	"gp",
 	"gs",
+	"onoff",
+	"pmp",
 	"per",
 	"ewa",
 	"obpm",

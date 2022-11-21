@@ -45,6 +45,37 @@ type Team = TeamFiltered<
 	number
 >;
 
+const calculateOnOff = (
+	players: any[],
+	teamsByTid: Record<string, Team>,
+	league: any,
+) => {
+	const OnOff: number[] = [];
+	const OnPerHund: number[] = [];
+
+	for (let i = 0; i < players.length; i++) {
+		const p = players[i].stats;
+		const t = teamsByTid[players[i].tid];
+
+		// should this acccount for variable team sizes instead of just (5)?
+		const tmin_avg = t.stats.min / 5;
+		const on_per_min = p.pm / (p.min + 1e-6);
+		const off_min = tmin_avg - p.min;
+
+		const mov = t.stats.pts - t.stats.oppPts;
+		const mov_without = mov - p.pm;
+		const off_per_min = mov_without / (off_min + 1e-6);
+		const per_min = on_per_min - off_per_min;
+
+		OnPerHund[i] = (100 / t.stats.pace) * 48 * on_per_min;
+		OnOff[i] = (100 / t.stats.pace) * 48 * per_min;
+	}
+	return {
+		pmp: OnPerHund,
+		onoff: OnOff,
+	};
+};
+
 const prls = {
 	PG: 11,
 	G: 10.75,
@@ -749,6 +780,7 @@ const advStats = async () => {
 			"pf",
 			"drb",
 			"pts",
+			"pm",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -859,6 +891,7 @@ const advStats = async () => {
 	const teamsByTid = groupByUnique(teams, "tid");
 
 	const updatedStats = {
+		...calculateOnOff(players, teamsByTid, league),
 		...calculatePER(players, teamsByTid, league),
 		...calculatePercentages(players, teamsByTid),
 		...calculateRatings(players, teamsByTid, league),

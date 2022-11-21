@@ -14,6 +14,8 @@ const stats = {
 		"usgp",
 		"drtg",
 		"ortg",
+		"pmp",
+		"onoff",
 		"dws",
 		"ows",
 		"obpm",

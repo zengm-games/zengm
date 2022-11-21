@@ -40,7 +40,6 @@ const stats = {
 		"ft",
 		"fta",
 		"pm",
-		"pmoff",
 		"orb",
 		"drb",
 		"ast",

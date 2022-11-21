@@ -216,9 +216,6 @@ const preProcess = async (
 					if (p.pm === undefined) {
 						p.pm = 0;
 					}
-					if (p.pmoff === undefined) {
-						p.pmoff = 0;
-					}
 				}
 			}
 		}

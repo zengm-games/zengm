@@ -266,7 +266,6 @@ const PLAYER_STATS_TABLES = {
 			"usgp",
 			//"pm",
 			"pmp",
-			//"pmoff",
 			"onoff",
 			"ortg",
 			"drtg",

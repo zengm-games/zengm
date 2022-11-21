@@ -57,10 +57,14 @@ const calculateOnOff = (
 		const p = players[i].stats;
 		const t = teamsByTid[players[i].tid];
 
+		// should this acccount for variable team sizes instead of just (5)?
 		const tmin_avg = t.stats.min / 5;
 		const on_per_min = p.pm / (p.min + 1e-6);
 		const off_min = tmin_avg - p.min;
-		const off_per_min = p.pmoff / (off_min + 1e-6);
+
+		const mov = t.stats.pts - t.stats.oppPts;
+		const mov_without = mov - p.pm;
+		const off_per_min = mov_without / (off_min + 1e-6);
 		const per_min = on_per_min - off_per_min;
 
 		OnPerHund[i] = (100 / t.stats.pace) * 48 * on_per_min;
@@ -777,7 +781,6 @@ const advStats = async () => {
 			"drb",
 			"pts",
 			"pm",
-			"pmoff",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),

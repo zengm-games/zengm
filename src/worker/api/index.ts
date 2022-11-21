@@ -1284,7 +1284,6 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 		"PF",
 		"PTS",
 		"+/-",
-		"Off",
 	];
 
 	await idb.cache.flush();
@@ -1344,7 +1343,6 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					p.pf,
 					p.pts,
 					p.pm,
-					p.pmoff,
 				]);
 			}
 		}

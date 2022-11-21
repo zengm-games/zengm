@@ -884,16 +884,16 @@ const sportSpecificCols = bySport<{
 			desc: "Plus/Minus",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "+/-On",
+			title: "+/-",
 		},
-		"stat:pmp": {
-			desc: "On-Court Per 100",
+		"stat:pm100": {
+			desc: "Plus/Minus Per 100 Possessions",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "On",
+			title: "+/-",
 		},
-		"stat:onoff": {
-			desc: "On-Off Per 100",
+		"stat:onOff100": {
+			desc: "Plus/Minus Per 100 Possessions, On Court Minus Off Court",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "On-Off",

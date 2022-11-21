@@ -45,34 +45,33 @@ type Team = TeamFiltered<
 	number
 >;
 
-const calculateOnOff = (
-	players: any[],
-	teamsByTid: Record<string, Team>,
-	league: any,
-) => {
-	const OnOff: number[] = [];
-	const OnPerHund: number[] = [];
+const calculateOnOff = (players: any[], teamsByTid: Record<string, Team>) => {
+	const pm100 = [];
+	const onOff100 = [];
+
+	const numPlayersOnCourt = g.get("numPlayersOnCourt");
+	const gameLength = helpers.effectiveGameLength();
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i].stats;
 		const t = teamsByTid[players[i].tid];
 
-		// should this acccount for variable team sizes instead of just (5)?
-		const tmin_avg = t.stats.min / 5;
-		const on_per_min = p.pm / (p.min + 1e-6);
-		const off_min = tmin_avg - p.min;
+		const tminAvg = t.stats.min / numPlayersOnCourt;
+		const onPerMin = p.pm / (p.min + 1e-6);
+		const offMin = tminAvg - p.min;
 
 		const mov = t.stats.pts - t.stats.oppPts;
-		const mov_without = mov - p.pm;
-		const off_per_min = mov_without / (off_min + 1e-6);
-		const per_min = on_per_min - off_per_min;
+		const movWithout = mov - p.pm;
+		const offPerMin = movWithout / (offMin + 1e-6);
+		const perMin = onPerMin - offPerMin;
 
-		OnPerHund[i] = (100 / t.stats.pace) * 48 * on_per_min;
-		OnOff[i] = (100 / t.stats.pace) * 48 * per_min;
+		pm100[i] = (100 / t.stats.pace) * gameLength * onPerMin;
+		onOff100[i] = (100 / t.stats.pace) * gameLength * perMin;
 	}
+
 	return {
-		pmp: OnPerHund,
-		onoff: OnOff,
+		pm100,
+		onOff100,
 	};
 };
 
@@ -891,7 +890,7 @@ const advStats = async () => {
 	const teamsByTid = groupByUnique(teams, "tid");
 
 	const updatedStats = {
-		...calculateOnOff(players, teamsByTid, league),
+		...calculateOnOff(players, teamsByTid),
 		...calculatePER(players, teamsByTid, league),
 		...calculatePercentages(players, teamsByTid),
 		...calculateRatings(players, teamsByTid, league),

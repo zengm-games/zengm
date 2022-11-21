@@ -2204,9 +2204,12 @@ class GameSim {
 				this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amt;
 
 				for (let i = 0; i < 2; i++) {
-					for (let j = 0; j < this.numPlayersOnCourt; j++) {
-						const k = this.playersOnCourt[i][j];
-						this.team[i].player[k].stat.pm += i === t ? amt : -amt;
+					for (let j = 0; j < this.team[i].player.length; j++) {
+						if (this.playersOnCourt[i].includes(j)) {
+							this.team[i].player[j].stat.pm += i === t ? amt : -amt;
+						} else {
+							this.team[i].player[j].stat.pmoff += i === t ? amt : -amt;
+						}
 					}
 				}
 

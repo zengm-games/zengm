@@ -884,7 +884,25 @@ const sportSpecificCols = bySport<{
 			desc: "Plus/Minus",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "+/-",
+			title: "+/-On",
+		},
+		"stat:pmp": {
+			desc: "On-Court Per 100",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "On",
+		},
+		"stat:pmoff": {
+			desc: "Plus/Minus Off Court",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "+/-Off",
+		},
+		"stat:onoff": {
+			desc: "On-Off Per 100",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "On-Off",
 		},
 		"stat:tpp": {
 			desc: "Three Point Percentage",

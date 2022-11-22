@@ -2,6 +2,7 @@ import { season } from "..";
 import {
 	DIFFICULTY,
 	gameAttributeHasHistory,
+	isSport,
 	PHASE,
 	unwrapGameAttribute,
 	WEBSITE_ROOT,
@@ -288,6 +289,12 @@ const createGameAttributes = async (
 			? "hard"
 			: "soft";
 		delete (gameAttributes as any).hardCap;
+	}
+
+	if (!isSport("basketball") && (version === undefined || version <= 51)) {
+		if (gameAttributes.pace === 100) {
+			gameAttributes.pace = 1;
+		}
 	}
 
 	return gameAttributes;

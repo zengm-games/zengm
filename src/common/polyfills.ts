@@ -80,7 +80,7 @@ if (POLYFILL_STREAMS) {
 	self.WritableStream = PolyfillWritableStream as any;
 
 	toPolyfillReadable = createReadableStreamWrapper(
-		PolyfillReadableStream,
+		PolyfillReadableStream as any,
 	) as any;
 	toPolyfillTransform = createTransformStreamWrapper(
 		PolyfillTransformStream as any,

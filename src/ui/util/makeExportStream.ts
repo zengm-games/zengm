@@ -111,6 +111,7 @@ const makeExportStream = async (
 		object: any,
 	) =>
 		controller.enqueue(
+			// @ts-expect-error Typescript 4.9 bug I think
 			`,${newline}${tab}"${name}":${space}${jsonStringify(object, 1)}`,
 		);
 

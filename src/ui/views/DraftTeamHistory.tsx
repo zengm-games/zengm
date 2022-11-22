@@ -89,9 +89,7 @@ const DraftTeamHistory = ({
 				`${p.draft.round}-${p.draft.pick}`,
 				p.preLotteryRank,
 				p.lotteryChange !== undefined ? (
-					<PlusMinus decimalPlaces={0} includePlus>
-						{p.lotteryChange}
-					</PlusMinus>
+					<PlusMinus decimalPlaces={0}>{p.lotteryChange}</PlusMinus>
 				) : undefined,
 				p.lotteryProb !== undefined ? (
 					<a href={helpers.leagueUrl(["draft_lottery", p.draft.year])}>

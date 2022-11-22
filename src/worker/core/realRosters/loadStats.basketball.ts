@@ -49,6 +49,8 @@ export type BasketballStats = {
 	qd?: number;
 	fxf?: number;
 	minAvailable?: number;
+	pm100?: number;
+	onOff100?: number;
 }[];
 
 let cachedJSON: BasketballStats;

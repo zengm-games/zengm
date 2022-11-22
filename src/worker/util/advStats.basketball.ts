@@ -53,15 +53,15 @@ const calculateOnOff = (players: any[], teamsByTid: Record<string, Team>) => {
 	const gameLength = helpers.effectiveGameLength();
 
 	for (let i = 0; i < players.length; i++) {
-		const p = players[i].stats;
+		const ps = players[i].stats;
 		const t = teamsByTid[players[i].tid];
 
 		const tminAvg = t.stats.min / numPlayersOnCourt;
-		const onPerMin = p.pm / (p.min + 1e-6);
-		const offMin = tminAvg - p.min;
+		const onPerMin = ps.pm / (ps.min + 1e-6);
+		const offMin = tminAvg - ps.min;
 
 		const mov = t.stats.pts - t.stats.oppPts;
-		const movWithout = mov - p.pm;
+		const movWithout = mov - ps.pm;
 		const offPerMin = movWithout / (offMin + 1e-6);
 		const perMin = onPerMin - offPerMin;
 

@@ -36,6 +36,7 @@ const genPlayerRows = (
 			key: p.pid,
 			data: [
 				<input
+					className="form-check-input"
 					type="checkbox"
 					title={p.untradableMsg}
 					checked={p.included}
@@ -45,6 +46,7 @@ const genPlayerRows = (
 					}}
 				/>,
 				<input
+					className="form-check-input"
 					type="checkbox"
 					title={p.untradableMsg ?? "Exclude this player from counter offers"}
 					checked={p.excluded || p.untradable}
@@ -89,6 +91,7 @@ const genPickRows = (
 			key: pick.dpid,
 			data: [
 				<input
+					className="form-check-input"
 					name="other-dpids"
 					type="checkbox"
 					checked={pick.included}
@@ -97,6 +100,7 @@ const genPickRows = (
 					}}
 				/>,
 				<input
+					className="form-check-input"
 					type="checkbox"
 					title="Exclude this pick from counter offers"
 					checked={pick.excluded}

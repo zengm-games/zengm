@@ -407,6 +407,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			key: p.pid,
 			data: [
 				<input
+					className="form-check-input"
 					type="checkbox"
 					checked={state.pids.includes(p.pid)}
 					disabled={p.untradable}
@@ -439,6 +440,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			key: pick.dpid,
 			data: [
 				<input
+					className="form-check-input"
 					type="checkbox"
 					checked={state.dpids.includes(pick.dpid)}
 					onChange={() => handleChangeAsset("dpids", pick.dpid)}

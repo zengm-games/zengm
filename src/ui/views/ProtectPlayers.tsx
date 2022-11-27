@@ -47,6 +47,7 @@ const PlayerList = ({
 			key: p.pid,
 			data: [
 				<input
+					className="form-check-input"
 					type="checkbox"
 					title={p.untradableMsg}
 					checked={protectedPids.includes(p.pid)}

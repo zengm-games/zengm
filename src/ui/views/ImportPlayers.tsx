@@ -184,6 +184,7 @@ const ImportPlayers = ({
 				{
 					value: (
 						<input
+							className="form-check-input"
 							type="checkbox"
 							title="Import player"
 							checked={checked}

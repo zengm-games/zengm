@@ -45,9 +45,6 @@ export const CustomMenuList = <T extends unknown>({
 
 			// For initial render of list, always align to top
 			scrollToOptions.align = "start";
-
-			// Smooth scroll everything but the initial render
-			scrollToOptions.smoothScroll = false;
 		} else {
 			// For scrolling with keyboard, align to top/bottom depending on scroll direction
 			scrollToOptions.align = "auto";

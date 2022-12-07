@@ -1783,12 +1783,30 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Elam Ending",
+			key: "elamOvertime",
+			name: "Overtime Only",
+			type: "bool",
+			descriptionLong: (
+				<>
+					If you enable this, then the "Minutes Left Trigger" setting doesn't do
+					anything, and instead the overtime period of a tied game will be an
+					untimed period played until a team scores "Target Points To Add"
+					points.
+				</>
+			),
+		},
+		{
+			category: "Elam Ending",
 			key: "elamMinutes",
 			name: "Minutes Left Trigger",
 			godModeRequired: "always",
 			type: "float",
 			validator: (value, output) => {
-				if ((output.elam || output.elamASG) && value > output.quarterLength) {
+				if (
+					(output.elam || output.elamASG) &&
+					!output.elamOvertime &&
+					value > output.quarterLength
+				) {
 					throw new Error(
 						"Value must be less than or equal to the quarter length",
 					);

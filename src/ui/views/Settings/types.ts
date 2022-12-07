@@ -62,6 +62,7 @@ export type Key =
 	| "elam"
 	| "elamASG"
 	| "elamMinutes"
+	| "elamOvertime"
 	| "elamPoints"
 	| "playerMoodTraits"
 	| "numPlayersOnCourt"

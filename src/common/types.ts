@@ -472,6 +472,7 @@ export type GameAttributesLeague = {
 	elam: boolean;
 	elamASG: boolean;
 	elamMinutes: number;
+	elamOvertime: boolean;
 	elamPoints: number;
 	equalizeRegions: boolean;
 	fantasyPoints?: "standard" | "ppr" | "halfPpr";

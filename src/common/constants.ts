@@ -433,6 +433,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"homeCourtAdvantage",
 	"elam",
 	"elamMinutes",
+	"elamOvertime",
 	"elamPoints",
 	"foulsUntilBonus",
 	"turnoverFactor",

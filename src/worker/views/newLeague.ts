@@ -166,6 +166,7 @@ export const getDefaultSettings = () => {
 		elam: unwrapGameAttribute(defaultGameAttributes, "elam"),
 		elamASG: unwrapGameAttribute(defaultGameAttributes, "elamASG"),
 		elamMinutes: unwrapGameAttribute(defaultGameAttributes, "elamMinutes"),
+		elamOvertime: unwrapGameAttribute(defaultGameAttributes, "elamOvertime"),
 		elamPoints: unwrapGameAttribute(defaultGameAttributes, "elamPoints"),
 		playerMoodTraits: unwrapGameAttribute(
 			defaultGameAttributes,

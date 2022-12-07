@@ -481,8 +481,11 @@ class GameSim {
 		if (
 			this.elam &&
 			!this.elamActive &&
-			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-			this.t <= g.get("elamMinutes")
+			((g.get("elamOvertime") &&
+				this.team[0].stat.ptsQtrs.length > this.numPeriods) ||
+				(!g.get("elamOvertime") &&
+					this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
+					this.t <= g.get("elamMinutes")))
 		) {
 			const maxPts = Math.max(
 				this.team[this.d].stat.pts,
@@ -551,9 +554,13 @@ class GameSim {
 		this.foulsLastTwoMinutes = [0, 0];
 		this.lastScoringPlay = [];
 		this.recordPlay("overtime");
+
+		// Check for elamOvertime
+		this.checkElamEnding();
+
 		this.jumpBall();
 
-		while (this.t > 0.5 / 60) {
+		while ((this.t > 0.5 / 60 || this.elamActive) && !this.elamDone) {
 			this.simPossession();
 		}
 	}

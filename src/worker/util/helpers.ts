@@ -318,7 +318,7 @@ const sigmoid = (x: number, a: number, b: number): number => {
 
 const effectiveGameLength = () => {
 	let gameLength = g.get("numPeriods") * g.get("quarterLength");
-	if (isSport("basketball") && g.get("elam")) {
+	if (isSport("basketball") && g.get("elam") && !g.get("elamOvertime")) {
 		gameLength -= g.get("elamMinutes");
 
 		// Assume 2.3 pts per minute

@@ -98,7 +98,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		if (i == 1) {
 			const tradeToUpdate = (await idb.cache.trade.get(0))!;
 			tradeToUpdate.teams[1].ovrAfter = s.teams[1].ovrAfter;
-			await idb.cache.trade.put({ ...tradeToUpdate });
+			await idb.cache.trade.put(tradeToUpdate);
 		}
 	}
 

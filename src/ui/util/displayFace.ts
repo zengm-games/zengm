@@ -34,7 +34,12 @@ const displayFace = ({
 		};
 	}
 
-	display(wrapper, face, overrides);
+	// Don't crash if displaying face fails
+	try {
+		display(wrapper, face, overrides);
+	} catch (error) {
+		console.error(error);
+	}
 };
 
 export default displayFace;

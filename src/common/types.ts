@@ -1663,6 +1663,7 @@ export type TradeTeam = {
 	tid: number;
 	warning?: string | null;
 	warningAmount?: number;
+	ovrAfter?: number;
 };
 
 export type TradeTeams = [TradeTeam, TradeTeam];

@@ -95,6 +95,11 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	}
 	for (const i of [0, 1] as const) {
 		s.teams[i].ovrAfter = await getTeamOvr(playersAfter[i]);
+		if (i == 1) {
+			const tradeToUpdate = (await idb.cache.trade.get(0))!;
+			tradeToUpdate.teams[1].ovrAfter = s.teams[1].ovrAfter;
+			await idb.cache.trade.put({ ...tradeToUpdate });
+		}
 	}
 
 	const overCap = [false, false];

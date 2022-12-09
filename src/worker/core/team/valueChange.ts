@@ -431,22 +431,28 @@ const refreshCache = async () => {
 		tid: number;
 		ovr: number;
 	}[] = [];
+	const currTrade = await idb.cache.trade.get(0);
 	for (const [tidString, players] of Object.entries(playersByTid)) {
+		let ovr;
 		const tid = parseInt(tidString);
-		const ovr = team.ovr(
-			players.map(p => ({
-				pid: p.pid,
-				value: p.value,
-				ratings: {
-					ovr: p.ratings.at(-1)!.ovr,
-					ovrs: p.ratings.at(-1)!.ovrs,
-					pos: p.ratings.at(-1)!.pos,
+		if (tid == currTrade?.teams[1].tid && currTrade.teams[1].ovrAfter) {
+			ovr = currTrade.teams[1].ovrAfter;
+		} else {
+			ovr = team.ovr(
+				players.map(p => ({
+					pid: p.pid,
+					value: p.value,
+					ratings: {
+						ovr: p.ratings.at(-1)!.ovr,
+						ovrs: p.ratings.at(-1)!.ovrs,
+						pos: p.ratings.at(-1)!.pos,
+					},
+				})),
+				{
+					fast: true,
 				},
-			})),
-			{
-				fast: true,
-			},
-		);
+			);
+		}
 
 		teamOvrs.push({ tid, ovr });
 	}

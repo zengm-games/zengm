@@ -463,8 +463,6 @@ const sumValues = (
 			playerValue = Math.max(0, playerValue);
 		}
 
-		// console.log(playerValue, p);
-
 		return memo + (playerValue > 1 ? playerValue ** EXPONENT : playerValue);
 	}, 0);
 };
@@ -580,7 +578,6 @@ const valueChange = async (
 	if (dpidsRemove.length > 2) {
 		return -1;
 	}
-
 	await player.updateOvrMeanStd();
 
 	// Get value and skills for each player on team or involved in the proposed transaction
@@ -656,22 +653,27 @@ const getModifiedPickRank = async (
 	).filter(p => pidsAdd.includes(p.pid));
 	players.push(...t2Players);
 	const newTeamOvr = await getTeamOvr(players);
+	console.log("New Team Ovr: " + newTeamOvr);
 	// potential speed up: use binary search instead of linear search on sorted arrays
 	let newTeamOvrRank = await cache.sortedTeamOvrs.findIndex(
-		t => newTeamOvr < t.ovr,
+		t => newTeamOvr > t.ovr,
 	);
 	newTeamOvrRank =
-		newTeamOvrRank == -1 ? cache.sortedTeamOvrs.length : newTeamOvrRank;
+		newTeamOvrRank == -1 ? cache.sortedTeamOvrs.length : newTeamOvrRank + 1;
+	console.log("New Team Ovr Rank:" + newTeamOvrRank);
 	const newTeamOvrWinp =
 		0.25 +
 		(0.5 * (cache.sortedTeamOvrs.length - 1 - newTeamOvrRank)) /
 			(cache.sortedTeamOvrs.length - 1);
+	console.log("New TeamOvrWinP:" + newTeamOvrWinp);
 	const newWp =
-		seasonFraction * (record[0] / cache.gp) +
-		(1 - seasonFraction) * newTeamOvrWinp;
+		cache.gp === 0
+			? newTeamOvrWinp
+			: seasonFraction * (record[0] / cache.gp) +
+			  (1 - seasonFraction) * newTeamOvrWinp;
 	let newEstPick = await cache.sortedWps.findIndex(wp => newWp < wp);
 	newEstPick = newEstPick == -1 ? cache.sortedTeamOvrs.length : newEstPick + 1;
-	console.log(newEstPick);
+	console.log("New Pick: " + newEstPick);
 	return newEstPick;
 };
 

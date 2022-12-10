@@ -189,8 +189,9 @@ const justDrafted = (
 const getPickNumber = (
 	dp: DraftPick,
 	season: number,
+	newEstPick: number,
+	tid: number,
 	tradingPartnerTid?: number,
-	newEstPick?: number,
 ) => {
 	const numPicksPerRound = getNumPicksPerRound();
 
@@ -198,7 +199,8 @@ const getPickNumber = (
 	if (dp.pick > 0) {
 		estPick = dp.pick;
 	} else {
-		const temp = newEstPick ?? cache.estPicks[dp.originalTid];
+		const temp =
+			dp.originalTid == tid ? newEstPick : cache.estPicks[dp.originalTid];
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
 		// tid rather than originalTid, because it's about what the user can control
@@ -256,15 +258,16 @@ const getPickInfo = (
 	dp: DraftPick,
 	estValues: TradePickValues,
 	rookieSalaries: any,
+	newEstPick: number,
+	tid: number,
 	tradingPartnerTid?: number,
-	newEstPick?: number,
 ): Asset => {
 	const season =
 		dp.season === "fantasy" || dp.season === "expansion"
 			? g.get("season")
 			: dp.season;
 
-	const estPick = getPickNumber(dp, season, tradingPartnerTid, newEstPick);
+	const estPick = getPickNumber(dp, season, newEstPick, tid, tradingPartnerTid);
 
 	let value;
 	const valuesTemp = estValues[season];
@@ -320,18 +323,18 @@ const getPicks = async ({
 	dpidsAdd,
 	dpidsRemove,
 	estValues,
+	newEstPick,
 	tid,
 	tradingPartnerTid,
-	newEstPick,
 }: {
 	add: Asset[];
 	remove: Asset[];
 	dpidsAdd: number[];
 	dpidsRemove: number[];
 	estValues: TradePickValues;
+	newEstPick: number;
 	tid: number;
 	tradingPartnerTid?: number;
-	newEstPick: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
 	if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
@@ -342,13 +345,13 @@ const getPicks = async ({
 			if (!dp) {
 				continue;
 			}
-			const newPickVal = dp.originalTid == tid ? newEstPick : undefined;
 			const pickInfo = getPickInfo(
 				dp,
 				estValues,
 				rookieSalaries,
+				newEstPick,
+				tid,
 				tradingPartnerTid,
-				newPickVal,
 			);
 			add.push(pickInfo);
 		}
@@ -363,6 +366,8 @@ const getPicks = async ({
 				dp,
 				estValues,
 				rookieSalaries,
+				newEstPick,
+				tid,
 				tradingPartnerTid,
 			);
 			remove.push(pickInfo);
@@ -666,6 +671,7 @@ const getModifiedPickRank = async (
 		(1 - seasonFraction) * newTeamOvrWinp;
 	let newEstPick = await cache.sortedWps.findIndex(wp => newWp < wp);
 	newEstPick = newEstPick == -1 ? cache.sortedTeamOvrs.length : newEstPick + 1;
+	console.log(newEstPick);
 	return newEstPick;
 };
 

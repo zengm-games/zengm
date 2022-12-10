@@ -629,11 +629,10 @@ const getModifiedPickRank = async (
 	players.push(...t2Players);
 	const newTeamOvr = await getTeamOvr(players);
 	// potential speed up: use binary search instead of linear search on sorted arrays
-	let newTeamOvrRank = await cache.sortedTeamOvrs.findIndex(
-		t => newTeamOvr > t.ovr,
-	);
-	newTeamOvrRank =
-		newTeamOvrRank == -1 ? cache.sortedTeamOvrs.length : newTeamOvrRank + 1;
+	const newTeamOvrRank =
+		cache.sortedTeamOvrs[cache.sortedTeamOvrs.length - 1].ovr > newTeamOvr
+			? cache.sortedTeamOvrs.length
+			: (await cache.sortedTeamOvrs.findIndex(t => newTeamOvr > t.ovr)) + 1;
 	const newTeamOvrWinp =
 		0.25 +
 		(0.5 * (cache.sortedTeamOvrs.length - 1 - newTeamOvrRank)) /
@@ -643,8 +642,10 @@ const getModifiedPickRank = async (
 			? newTeamOvrWinp
 			: seasonFraction * (record[0] / cache.gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
-	let newEstPick = await cache.sortedWps.findIndex(wp => newWp < wp);
-	newEstPick = newEstPick == -1 ? cache.sortedTeamOvrs.length : newEstPick + 1;
+	const newEstPick =
+		newWp > cache.sortedWps[cache.sortedWps.length - 1]
+			? cache.sortedWps.length
+			: (await cache.sortedWps.findIndex(wp => newWp < wp)) + 1;
 	return newEstPick;
 };
 

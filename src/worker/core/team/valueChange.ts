@@ -330,6 +330,7 @@ const getPicks = async ({
 			if (!dp) {
 				continue;
 			}
+
 			const pickInfo = getPickInfo(
 				dp,
 				estValues,

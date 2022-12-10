@@ -3,7 +3,7 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
 
-export const getTeamOvr = async (playersRaw: Player[]) => {
+const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {
 		attrs: ["value", "pid"],
 		fuzz: true,

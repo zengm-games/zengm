@@ -13,7 +13,6 @@ import type {
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
-import { getTeamOvr } from "../trade/summary";
 
 type Asset =
 	| {
@@ -39,11 +38,6 @@ let cache: {
 	estPicks: Record<number, number | undefined>;
 	estValues: TradePickValues;
 	gp: number;
-	sortedWps: number[];
-	sortedTeamOvrs: {
-		tid: number;
-		ovr: number;
-	}[];
 };
 
 const zscore = (value: number) =>
@@ -189,8 +183,6 @@ const justDrafted = (
 const getPickNumber = (
 	dp: DraftPick,
 	season: number,
-	newEstPick: number,
-	tid: number,
 	tradingPartnerTid?: number,
 ) => {
 	const numPicksPerRound = getNumPicksPerRound();
@@ -199,8 +191,7 @@ const getPickNumber = (
 	if (dp.pick > 0) {
 		estPick = dp.pick;
 	} else {
-		const temp =
-			dp.originalTid == tid ? newEstPick : cache.estPicks[dp.originalTid];
+		const temp = cache.estPicks[dp.originalTid];
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
 		// tid rather than originalTid, because it's about what the user can control
@@ -258,8 +249,6 @@ const getPickInfo = (
 	dp: DraftPick,
 	estValues: TradePickValues,
 	rookieSalaries: any,
-	newEstPick: number,
-	tid: number,
 	tradingPartnerTid?: number,
 ): Asset => {
 	const season =
@@ -267,7 +256,7 @@ const getPickInfo = (
 			? g.get("season")
 			: dp.season;
 
-	const estPick = getPickNumber(dp, season, newEstPick, tid, tradingPartnerTid);
+	const estPick = getPickNumber(dp, season, tradingPartnerTid);
 
 	let value;
 	const valuesTemp = estValues[season];
@@ -323,8 +312,6 @@ const getPicks = async ({
 	dpidsAdd,
 	dpidsRemove,
 	estValues,
-	newEstPick,
-	tid,
 	tradingPartnerTid,
 }: {
 	add: Asset[];
@@ -332,8 +319,6 @@ const getPicks = async ({
 	dpidsAdd: number[];
 	dpidsRemove: number[];
 	estValues: TradePickValues;
-	newEstPick: number;
-	tid: number;
 	tradingPartnerTid?: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
@@ -349,8 +334,6 @@ const getPicks = async ({
 				dp,
 				estValues,
 				rookieSalaries,
-				newEstPick,
-				tid,
 				tradingPartnerTid,
 			);
 			add.push(pickInfo);
@@ -366,8 +349,6 @@ const getPicks = async ({
 				dp,
 				estValues,
 				rookieSalaries,
-				newEstPick,
-				tid,
 				tradingPartnerTid,
 			);
 			remove.push(pickInfo);
@@ -457,6 +438,7 @@ const sumValues = (
 
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
 		playerValue += contractsFactor * p.contractValue;
+		// console.log(playerValue, p);
 
 		// if a player was just drafted and can be released, they shouldn't have negative value
 		if (p.type == "player" && p.justDrafted) {
@@ -559,8 +541,6 @@ const refreshCache = async () => {
 		estPicks,
 		estValues: await trade.getPickValues(),
 		gp,
-		sortedWps: sorted,
-		sortedTeamOvrs: teamOvrs,
 	};
 };
 
@@ -578,6 +558,7 @@ const valueChange = async (
 	if (dpidsRemove.length > 2) {
 		return -1;
 	}
+
 	await player.updateOvrMeanStd();
 
 	// Get value and skills for each player on team or involved in the proposed transaction
@@ -606,21 +587,13 @@ const valueChange = async (
 		tid,
 		tradingPartnerTid,
 	});
-	const newEstPick = await getModifiedPickRank(
-		tid,
-		tradingPartnerTid!,
-		pidsAdd,
-		pidsRemove,
-	);
 	await getPicks({
 		add,
 		remove,
 		dpidsAdd,
 		dpidsRemove,
 		estValues: cache.estValues,
-		tid,
 		tradingPartnerTid,
-		newEstPick,
 	});
 
 	// console.log("ADD");
@@ -632,49 +605,6 @@ const valueChange = async (
 	// console.log("Total", valuesRemove);
 
 	return valuesAdd - valuesRemove;
-};
-
-const getModifiedPickRank = async (
-	tid: number,
-	tradingPartnerTid: number,
-	pidsAdd: number[],
-	pidsRemove: number[],
-) => {
-	const teamSeason = await idb.cache.teamSeasons.indexGet(
-		"teamSeasonsBySeasonTid",
-		[tid, g.get("season")],
-	);
-	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
-	const seasonFraction = cache.gp / g.get("numGames");
-	const t1Players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const players = t1Players.filter(p => !pidsRemove.includes(p.pid));
-	const t2Players = (
-		await idb.cache.players.indexGetAll("playersByTid", tradingPartnerTid)
-	).filter(p => pidsAdd.includes(p.pid));
-	players.push(...t2Players);
-	const newTeamOvr = await getTeamOvr(players);
-	console.log("New Team Ovr: " + newTeamOvr);
-	// potential speed up: use binary search instead of linear search on sorted arrays
-	let newTeamOvrRank = await cache.sortedTeamOvrs.findIndex(
-		t => newTeamOvr > t.ovr,
-	);
-	newTeamOvrRank =
-		newTeamOvrRank == -1 ? cache.sortedTeamOvrs.length : newTeamOvrRank + 1;
-	console.log("New Team Ovr Rank:" + newTeamOvrRank);
-	const newTeamOvrWinp =
-		0.25 +
-		(0.5 * (cache.sortedTeamOvrs.length - 1 - newTeamOvrRank)) /
-			(cache.sortedTeamOvrs.length - 1);
-	console.log("New TeamOvrWinP:" + newTeamOvrWinp);
-	const newWp =
-		cache.gp === 0
-			? newTeamOvrWinp
-			: seasonFraction * (record[0] / cache.gp) +
-			  (1 - seasonFraction) * newTeamOvrWinp;
-	let newEstPick = await cache.sortedWps.findIndex(wp => newWp < wp);
-	newEstPick = newEstPick == -1 ? cache.sortedTeamOvrs.length : newEstPick + 1;
-	console.log("New Pick: " + newEstPick);
-	return newEstPick;
 };
 
 export default valueChange;

@@ -7,9 +7,6 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
-	MinimalPlayerRatings,
-	Player,
-	Phase,
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
@@ -376,7 +373,7 @@ const sumValues = (
 	const phase = g.get("phase");
 
 	return players.reduce((memo, p) => {
-		let playerValue = p.value;
+		let playerValue: number = p.value;
 
 		const treatAsFutureDraftPick =
 			p.type === "pick" && (season !== p.draftYear || phase <= PHASE.PLAYOFFS);
@@ -628,19 +625,16 @@ const getModifiedPickRank = async (
 	).filter(p => pidsAdd.includes(p.pid));
 	players.push(...t2Players);
 	const newTeamOvr = await getTeamOvr(players);
-	console.log("New Team Ovr: " + newTeamOvr);
 	// potential speed up: use binary search instead of linear search on sorted arrays
 	let newTeamOvrRank = await cache.sortedTeamOvrs.findIndex(
 		t => newTeamOvr > t.ovr,
 	);
 	newTeamOvrRank =
 		newTeamOvrRank == -1 ? cache.sortedTeamOvrs.length : newTeamOvrRank + 1;
-	console.log("New Team Ovr Rank:" + newTeamOvrRank);
 	const newTeamOvrWinp =
 		0.25 +
 		(0.5 * (cache.sortedTeamOvrs.length - 1 - newTeamOvrRank)) /
 			(cache.sortedTeamOvrs.length - 1);
-	console.log("New TeamOvrWinP:" + newTeamOvrWinp);
 	const newWp =
 		cache.gp === 0
 			? newTeamOvrWinp
@@ -648,7 +642,6 @@ const getModifiedPickRank = async (
 			  (1 - seasonFraction) * newTeamOvrWinp;
 	let newEstPick = await cache.sortedWps.findIndex(wp => newWp < wp);
 	newEstPick = newEstPick == -1 ? cache.sortedTeamOvrs.length : newEstPick + 1;
-	console.log("New Pick: " + newEstPick);
 	return newEstPick;
 };
 

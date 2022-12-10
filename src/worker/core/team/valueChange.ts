@@ -322,6 +322,7 @@ const getPicks = async ({
 			if (!dp) {
 				continue;
 			}
+
 			const pickInfo = getPickInfo(
 				dp,
 				estValues,
@@ -434,6 +435,7 @@ const sumValues = (
 
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
 		playerValue += contractsFactor * p.contractValue;
+		// console.log(playerValue, p);
 
 		return memo + (playerValue > 1 ? playerValue ** EXPONENT : playerValue);
 	}, 0);
@@ -550,6 +552,7 @@ const valueChange = async (
 	if (dpidsRemove.length > 2) {
 		return -1;
 	}
+
 	await player.updateOvrMeanStd();
 
 	// Get value and skills for each player on team or involved in the proposed transaction

@@ -693,7 +693,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 			});
 		}
 
-		if (boxScore.current.elam && boxScore.current.elamTarget === undefined) {
+		if (
+			boxScore.current.elam &&
+			!boxScore.current.elamOvertime &&
+			boxScore.current.elamTarget === undefined
+		) {
 			menuItems.push({
 				label: "Elam Ending",
 				key: "U",

@@ -7,6 +7,9 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
+	MinimalPlayerRatings,
+	Player,
+	Phase,
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
@@ -18,6 +21,7 @@ type Asset =
 			contractValue: number;
 			injury: PlayerInjury;
 			age: number;
+			justDrafted: boolean;
 	  }
 	| {
 			type: "pick";
@@ -97,6 +101,8 @@ const getPlayers = async ({
 	tid: number;
 	tradingPartnerTid?: number;
 }) => {
+	const season = g.get("season");
+	const phase = g.get("phase");
 	const difficultyFudgeFactor = helpers.bound(
 		1 + 0.1 * g.get("difficulty"),
 		0,
@@ -122,6 +128,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
+				justDrafted: justDrafted(p, phase, season),
 			});
 		} else {
 			// Only apply fudge factor to positive assets
@@ -136,6 +143,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
+				justDrafted: justDrafted(p, phase, season),
 			});
 		}
 	}
@@ -152,9 +160,24 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
+				justDrafted: justDrafted(p, phase, season),
 			});
 		}
 	}
+};
+
+const justDrafted = (
+	p: Player<MinimalPlayerRatings>,
+	phase: Phase,
+	season: number,
+) => {
+	return (
+		!!p.contract.rookie &&
+		((p.draft.year === season && phase >= PHASE.DRAFT) ||
+			(p.draft.year === season - 1 &&
+				phase < PHASE.REGULAR_SEASON &&
+				phase >= 0))
+	);
 };
 
 const getPickNumber = (
@@ -417,6 +440,11 @@ const sumValues = (
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
 		playerValue += contractsFactor * p.contractValue;
 		// console.log(playerValue, p);
+
+		// if a player was just drafted and can be released, they shouldn't have negative value
+		if (p.type == "player" && p.justDrafted) {
+			playerValue = Math.max(0, playerValue);
+		}
 
 		return memo + (playerValue > 1 ? playerValue ** EXPONENT : playerValue);
 	}, 0);

@@ -7,9 +7,6 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
-	MinimalPlayerRatings,
-	Player,
-	Phase,
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
@@ -128,7 +125,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(p, phase, season),
 			});
 		} else {
 			// Only apply fudge factor to positive assets
@@ -143,7 +140,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(p, phase, season),
 			});
 		}
 	}
@@ -160,24 +157,10 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(p, phase, season),
 			});
 		}
 	}
-};
-
-const justDrafted = (
-	p: Player<MinimalPlayerRatings>,
-	phase: Phase,
-	season: number,
-) => {
-	return (
-		!!p.contract.rookie &&
-		((p.draft.year === season && phase >= PHASE.DRAFT) ||
-			(p.draft.year === season - 1 &&
-				phase < PHASE.REGULAR_SEASON &&
-				phase >= 0))
-	);
 };
 
 const getPickNumber = (

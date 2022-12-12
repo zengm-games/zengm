@@ -1,7 +1,6 @@
 import classNames from "classnames";
-import { helpers, PHASE } from "../../common";
-import type { Phase, PlayerContract } from "../../common/types";
-import { useLocal, useLocalPartial } from "../util";
+import type { PlayerContract } from "../../common/types";
+import { helpers, useLocal, useLocalPartial } from "../util";
 
 type ContractPlayer = {
 	draft: {
@@ -10,25 +9,10 @@ type ContractPlayer = {
 	contract: PlayerContract;
 };
 
-// If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
-export const wasJustDrafted = (
-	p: ContractPlayer,
-	phase: Phase,
-	season: number,
-) => {
-	return (
-		!!p.contract.rookie &&
-		((p.draft.year === season && phase >= PHASE.DRAFT) ||
-			(p.draft.year === season - 1 &&
-				phase < PHASE.REGULAR_SEASON &&
-				phase >= 0))
-	);
-};
-
 const useJustDrafted = (p: ContractPlayer) => {
 	const { phase, season } = useLocalPartial(["phase", "season"]);
 
-	return wasJustDrafted(p, phase as any, season);
+	return helpers.justDrafted(p, phase as any, season);
 };
 
 const NON_GUARANTEED_CONTRACT_TEXT =

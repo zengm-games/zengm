@@ -17,14 +17,14 @@ import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { Phase, View } from "../../../common/types";
-import { Contract, wasJustDrafted } from "../../components/contract";
+import { Contract } from "../../components/contract";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
 	phase: Phase,
 	season: number,
 ) => {
-	const wasPlayerJustDrafted = wasJustDrafted(p, phase, season);
+	const wasPlayerJustDrafted = helpers.justDrafted(p, phase, season);
 
 	let releaseMessage;
 	if (wasPlayerJustDrafted) {

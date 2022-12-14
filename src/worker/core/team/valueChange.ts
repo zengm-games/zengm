@@ -32,7 +32,6 @@ type Asset =
 
 let prevValueChangeKey: number | undefined;
 let cache: {
-	estPicks: Record<number, number | undefined>;
 	estValues: TradePickValues;
 	gp: number;
 	sortedWps: number[];
@@ -163,21 +162,38 @@ const getPlayers = async ({
 	}
 };
 
-const getPickNumber = (
+const getPickNumber = async (
 	dp: DraftPick,
 	season: number,
-	newEstPick: number,
+	pidsAdd: number[],
+	pidsRemove: number[],
 	tid: number,
 	tradingPartnerTid?: number,
-) => {
+): Promise<number> => {
 	const numPicksPerRound = getNumPicksPerRound();
 
 	let estPick: number;
 	if (dp.pick > 0) {
 		estPick = dp.pick;
 	} else {
-		const temp =
-			dp.originalTid == tid ? newEstPick : cache.estPicks[dp.originalTid];
+		let temp = undefined;
+		// This first if case will only hit when valueChange is called when determining if a player should re-sign
+		// Think the dynamic reevaluation could lead to some unexpected behavior here (maybe teams start letting a
+		// lot of players walk to tank their pick/increase overall value) so I'm retaining the old behavior for this case
+		if (!tradingPartnerTid) {
+			temp = await getModifiedPickRank(tid, [], [], false);
+		} else if (dp.originalTid === tid) {
+			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove, true);
+		} else if (tradingPartnerTid && dp.originalTid === tradingPartnerTid) {
+			temp = await getModifiedPickRank(
+				tradingPartnerTid,
+				pidsRemove,
+				pidsAdd,
+				true,
+			);
+		} else {
+			temp = await getModifiedPickRank(dp.originalTid, [], [], false);
+		}
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
 		// tid rather than originalTid, because it's about what the user can control
@@ -231,20 +247,28 @@ const getPickNumber = (
 	return estPick;
 };
 
-const getPickInfo = (
+const getPickInfo = async (
 	dp: DraftPick,
 	estValues: TradePickValues,
 	rookieSalaries: any,
-	newEstPick: number,
+	pidsAdd: number[],
+	pidsRemove: number[],
 	tid: number,
 	tradingPartnerTid?: number,
-): Asset => {
+): Promise<Asset> => {
 	const season =
 		dp.season === "fantasy" || dp.season === "expansion"
 			? g.get("season")
 			: dp.season;
 
-	const estPick = getPickNumber(dp, season, newEstPick, tid, tradingPartnerTid);
+	const estPick = await getPickNumber(
+		dp,
+		season,
+		pidsAdd,
+		pidsRemove,
+		tid,
+		tradingPartnerTid,
+	);
 
 	let value;
 	const valuesTemp = estValues[season];
@@ -297,19 +321,21 @@ const getPickInfo = (
 const getPicks = async ({
 	add,
 	remove,
+	pidsAdd,
+	pidsRemove,
 	dpidsAdd,
 	dpidsRemove,
 	estValues,
-	newEstPick,
 	tid,
 	tradingPartnerTid,
 }: {
 	add: Asset[];
 	remove: Asset[];
+	pidsAdd: number[];
+	pidsRemove: number[];
 	dpidsAdd: number[];
 	dpidsRemove: number[];
 	estValues: TradePickValues;
-	newEstPick: number;
 	tid: number;
 	tradingPartnerTid?: number;
 }) => {
@@ -323,11 +349,12 @@ const getPicks = async ({
 				continue;
 			}
 
-			const pickInfo = getPickInfo(
+			const pickInfo = await getPickInfo(
 				dp,
 				estValues,
 				rookieSalaries,
-				newEstPick,
+				pidsAdd,
+				pidsRemove,
 				tid,
 				tradingPartnerTid,
 			);
@@ -340,11 +367,12 @@ const getPicks = async ({
 				continue;
 			}
 
-			const pickInfo = getPickInfo(
+			const pickInfo = await getPickInfo(
 				dp,
 				estValues,
 				rookieSalaries,
-				newEstPick,
+				pidsAdd,
+				pidsRemove,
 				tid,
 				tradingPartnerTid,
 			);
@@ -530,7 +558,6 @@ const refreshCache = async () => {
 	}
 
 	return {
-		estPicks,
 		estValues: await trade.getPickValues(),
 		gp,
 		sortedWps: sorted,
@@ -581,21 +608,16 @@ const valueChange = async (
 		tid,
 		tradingPartnerTid,
 	});
-	const newEstPick = await getModifiedPickRank(
-		tid,
-		tradingPartnerTid!,
-		pidsAdd,
-		pidsRemove,
-	);
 	await getPicks({
 		add,
 		remove,
+		pidsAdd,
+		pidsRemove,
 		dpidsAdd,
 		dpidsRemove,
 		estValues: cache.estValues,
 		tid,
 		tradingPartnerTid,
-		newEstPick,
 	});
 
 	// console.log("ADD");
@@ -611,9 +633,9 @@ const valueChange = async (
 
 const getModifiedPickRank = async (
 	tid: number,
-	tradingPartnerTid: number,
 	pidsAdd: number[],
 	pidsRemove: number[],
+	inTrade: boolean,
 ) => {
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
@@ -621,12 +643,16 @@ const getModifiedPickRank = async (
 	);
 	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
 	const seasonFraction = cache.gp / g.get("numGames");
-	const t1Players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const players = t1Players.filter(p => !pidsRemove.includes(p.pid));
-	const t2Players = (
-		await idb.cache.players.indexGetAll("playersByTid", tradingPartnerTid)
-	).filter(p => pidsAdd.includes(p.pid));
-	players.push(...t2Players);
+	let players = await idb.cache.players.indexGetAll("playersByTid", tid);
+	if (inTrade) {
+		players = players.filter(p => !pidsRemove.includes(p.pid));
+		await pidsAdd.forEach(async id => {
+			const p = await idb.cache.players.get(id);
+			if (p) {
+				players.push(p);
+			}
+		});
+	}
 	const newTeamOvr = await getTeamOvr(players);
 	// potential speed up: use binary search instead of linear search on sorted arrays
 	const newTeamOvrRank =

@@ -513,6 +513,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "playerStatsGraphs",
+				league: true,
+				commandPalette: true,
+				path: ["player_stats_graphs"],
+				text: "Player Stats Graphs",
+			},
+			{
+				type: "link",
 				league: true,
 				commandPalette: true,
 				commandPaletteOnly: true,

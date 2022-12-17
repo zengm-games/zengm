@@ -123,6 +123,12 @@ const TitleBar = () => {
 				{
 					type: "link",
 					league: true,
+					path: genPath(["player_stats_graphs", "all"], season),
+					text: "Player Stats Graphs",
+				},
+				{
+					type: "link",
+					league: true,
 					path: genPath(["player_ratings", "all"], season),
 					text: "Player Ratings",
 				},
@@ -160,6 +166,16 @@ const TitleBar = () => {
 						moreInfoSeason,
 					],
 					text: "Player Stats",
+				},
+				{
+					type: "link",
+					league: true,
+					path: [
+						"player_stats_graphs",
+						`${moreInfoAbbrev}_${moreInfoTid}`,
+						moreInfoSeason,
+					],
+					text: "Player Stats Graphs",
 				},
 				{
 					type: "link",

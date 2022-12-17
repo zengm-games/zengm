@@ -659,6 +659,45 @@ const playerStats = (params: Params) => {
 	};
 };
 
+const playerStatsGraphs = (params: Params) => {
+	let abbrev;
+
+	console.log("playersSTATSGRAPHS");
+	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+	} else if (params.abbrev && params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "perGame",
+		football: "passing",
+		hockey: "skater",
+	});
+
+	let season: "career" | "all" | number;
+	if (params.season === "career" || params.season === "all") {
+		season = params.season;
+	} else {
+		season = validateSeason(params.season);
+	}
+
+	return {
+		abbrev,
+		season,
+		statType: params.statType ?? defaultStatType,
+		playoffs,
+	};
+};
+
 const playerStatDists = (params: Params) => {
 	const defaultStatType = bySport({
 		baseball: "batting",
@@ -957,6 +996,7 @@ export default {
 	playerRatingDists: validateSeasonOnly,
 	playerRatings,
 	playerStatDists,
+	playerStatsGraphs,
 	playerStats,
 	playoffs: validateSeasonOnly,
 	powerRankings,

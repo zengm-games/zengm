@@ -71,6 +71,7 @@ import playerGameLog from "./playerGameLog";
 import playerRatingDists from "./playerRatingDists";
 import playerRatings from "./playerRatings";
 import playerStatDists from "./playerStatDists";
+import playerStatsGraphs from "./playerStatsGraphs";
 import playerStats from "./playerStats";
 import playoffs from "./playoffs";
 import powerRankings from "./powerRankings";
@@ -172,6 +173,7 @@ export default {
 	playerRatings,
 	playerStatDists,
 	playerStats,
+	playerStatsGraphs,
 	playoffs,
 	powerRankings,
 	protectPlayers,

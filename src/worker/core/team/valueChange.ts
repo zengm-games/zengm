@@ -35,10 +35,7 @@ let cache: {
 	estValues: TradePickValues;
 	gp: number;
 	sortedWps: number[];
-	sortedTeamOvrs: {
-		tid: number;
-		ovr: number;
-	}[];
+	sortedTeamOvrs: number[];
 };
 
 const zscore = (value: number) =>
@@ -181,18 +178,13 @@ const getPickNumber = async (
 		// Think the dynamic reevaluation could lead to some unexpected behavior here (maybe teams start letting a
 		// lot of players walk to tank their pick/increase overall value) so I'm retaining the old behavior for this case
 		if (tradingPartnerTid === undefined) {
-			temp = await getModifiedPickRank(tid, [], [], false);
+			temp = await getModifiedPickRank(tid, [], []);
 		} else if (dp.originalTid === tid) {
-			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove, true);
+			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
 		} else if (tradingPartnerTid && dp.originalTid === tradingPartnerTid) {
-			temp = await getModifiedPickRank(
-				tradingPartnerTid,
-				pidsRemove,
-				pidsAdd,
-				true,
-			);
+			temp = await getModifiedPickRank(tradingPartnerTid, pidsRemove, pidsAdd);
 		} else {
-			temp = await getModifiedPickRank(dp.originalTid, [], [], false);
+			temp = await getModifiedPickRank(dp.originalTid, [], []);
 		}
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
@@ -508,20 +500,11 @@ const refreshCache = async () => {
 
 	let gp = 0;
 
-	// Estimate the order of the picks by team
-	const wps = teams.map(t => {
-		let teamOvrRank = teamOvrs.findIndex(t2 => t2.tid === t.tid);
-		if (teamOvrRank < 0) {
-			// This happens if a team has no players on it - just assume they are the worst
-			teamOvrRank = teamOvrs.length;
-		}
-
-		// 25% to 75% based on rank
+	const wps = teamOvrs.map((teamOvrObj, rank) => {
 		const teamOvrWinp =
-			0.25 + (0.5 * (teams.length - 1 - teamOvrRank)) / (teams.length - 1);
-
+			0.25 + (0.5 * (teams.length - 1 - rank)) / (teams.length - 1);
 		const teamSeasons = allTeamSeasons.filter(
-			teamSeason => teamSeason.tid === t.tid,
+			teamSeason => teamSeason.tid === teamOvrObj.tid,
 		);
 		let record: [number, number];
 
@@ -532,7 +515,6 @@ const refreshCache = async () => {
 			const teamSeason = teamSeasons[0];
 			record = [teamSeason.won, teamSeason.lost];
 		}
-
 		gp = record[0] + record[1];
 
 		const seasonFraction = gp / g.get("numGames");
@@ -549,19 +531,11 @@ const refreshCache = async () => {
 	// Get rank order of wps http://stackoverflow.com/a/14834599/786644
 	const sorted = wps.slice().sort((a, b) => a - b);
 
-	// For each team, what is their estimated draft position?
-	const estPicks: Record<number, number | undefined> = {};
-	for (let i = 0; i < teams.length; i++) {
-		const wp = wps[i];
-		const rank = sorted.indexOf(wp) + 1;
-		estPicks[teams[i].tid] = rank;
-	}
-
 	return {
 		estValues: await trade.getPickValues(),
 		gp,
 		sortedWps: sorted,
-		sortedTeamOvrs: teamOvrs,
+		sortedTeamOvrs: teamOvrs.map(o => o.ovr),
 	};
 };
 
@@ -635,7 +609,6 @@ const getModifiedPickRank = async (
 	tid: number,
 	pidsAdd: number[],
 	pidsRemove: number[],
-	inTrade: boolean,
 ) => {
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
@@ -644,7 +617,7 @@ const getModifiedPickRank = async (
 	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
 	const seasonFraction = cache.gp / g.get("numGames");
 	let players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	if (inTrade) {
+	if (pidsAdd.length != 0 || pidsRemove.length != 0) {
 		players = players.filter(p => !pidsRemove.includes(p.pid));
 		await pidsAdd.forEach(async id => {
 			const p = await idb.cache.players.get(id);
@@ -656,9 +629,7 @@ const getModifiedPickRank = async (
 	const newTeamOvr = await getTeamOvr(players);
 	// potential speed up: use binary search instead of linear search on sorted arrays
 	const newTeamOvrRank =
-		cache.sortedTeamOvrs[cache.sortedTeamOvrs.length - 1].ovr > newTeamOvr
-			? cache.sortedTeamOvrs.length
-			: (await cache.sortedTeamOvrs.findIndex(t => newTeamOvr > t.ovr)) + 1;
+		helpers.binarySearch(cache.sortedTeamOvrs, newTeamOvr) + 1;
 	const newTeamOvrWinp =
 		0.25 +
 		(0.5 * (cache.sortedTeamOvrs.length - 1 - newTeamOvrRank)) /
@@ -668,10 +639,7 @@ const getModifiedPickRank = async (
 			? newTeamOvrWinp
 			: seasonFraction * (record[0] / cache.gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
-	const newEstPick =
-		newWp > cache.sortedWps[cache.sortedWps.length - 1]
-			? cache.sortedWps.length
-			: (await cache.sortedWps.findIndex(wp => newWp < wp)) + 1;
+	const newEstPick = helpers.binarySearch(cache.sortedWps, newWp) + 1;
 	return newEstPick;
 };
 

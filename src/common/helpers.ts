@@ -1366,8 +1366,33 @@ const sum = (values: (number | undefined)[]) => {
 	return total;
 };
 
+const binarySearch = (a: number[], searchNum: number): number => {
+	return binarySearch0(a, 0, a.length, searchNum);
+};
+
+// Like public version, but without range checks.
+const binarySearch0 = (
+	a: number[],
+	fromIndex: number,
+	toIndex: number,
+	searchNum: number,
+) => {
+	let low = fromIndex;
+	let high = toIndex - 1;
+
+	while (low <= high) {
+		const mid = (low + high) >>> 1;
+		const midVal = a[mid];
+
+		if (midVal < searchNum) low = mid + 1;
+		else if (midVal > searchNum) high = mid - 1;
+		else return mid; // key found
+	}
+	return low; // key not found.
+};
 export default {
 	addPopRank,
+	binarySearch,
 	getPopRanks,
 	gameScore,
 	getCountry,

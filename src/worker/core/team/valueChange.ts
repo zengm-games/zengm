@@ -174,16 +174,21 @@ const getPickNumber = async (
 		estPick = dp.pick;
 	} else {
 		let temp = undefined;
-		// This first if case will only hit when valueChange is called when determining if a player should re-sign
-		// Think the dynamic reevaluation could lead to some unexpected behavior here (maybe teams start letting a
-		// lot of players walk to tank their pick/increase overall value) so I'm retaining the old behavior for this case
 		if (tradingPartnerTid === undefined) {
+			// This first if case will only hit when valueChange is called to determine if a team should re-sign
+			// Think dynamic pick re-evaluation could lead to some unexpected behavior here (teams end up letting a
+			// lot of players walk to tank their pick/increase overall value) so the old behavior is retained for this case
 			temp = await getModifiedPickRank(tid, [], []);
 		} else if (dp.originalTid === tid) {
+			// If this draft pick belongs to the team evaluating the trade, re-evaluate it taking into account the new players
+			// on the team
 			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
-		} else if (tradingPartnerTid && dp.originalTid === tradingPartnerTid) {
+		} else if (dp.originalTid === tradingPartnerTid) {
+			// If this draft pick belongs to the team proposing the trade, the CPU should calculate that
+			// the pick its receiving could change in value given the players changing hands
 			temp = await getModifiedPickRank(tradingPartnerTid, pidsRemove, pidsAdd);
 		} else {
+			// This pick is unrelated to the team involved in the trade, so don't take player exchanges into account
 			temp = await getModifiedPickRank(dp.originalTid, [], []);
 		}
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;

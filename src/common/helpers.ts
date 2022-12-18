@@ -1366,16 +1366,20 @@ const sum = (values: (number | undefined)[]) => {
 	return total;
 };
 
-const binarySearch = (a: number[], searchNum: number): number => {
-	return binarySearch0(a, 0, a.length, searchNum);
+const binarySearch = (
+	a: number[],
+	searchNum: number,
+	ascending: boolean = true,
+): number => {
+	return binarySearch0(a, 0, a.length, searchNum, ascending);
 };
 
-// Like public version, but without range checks.
 const binarySearch0 = (
 	a: number[],
 	fromIndex: number,
 	toIndex: number,
 	searchNum: number,
+	ascending: boolean,
 ) => {
 	let low = fromIndex;
 	let high = toIndex - 1;
@@ -1384,8 +1388,9 @@ const binarySearch0 = (
 		const mid = (low + high) >>> 1;
 		const midVal = a[mid];
 
-		if (midVal < searchNum) low = mid + 1;
-		else if (midVal > searchNum) high = mid - 1;
+		if (ascending ? midVal < searchNum : midVal > searchNum) low = mid + 1;
+		else if (ascending ? midVal > searchNum : midVal < searchNum)
+			high = mid - 1;
 		else return mid; // key found
 	}
 	return low; // key not found.

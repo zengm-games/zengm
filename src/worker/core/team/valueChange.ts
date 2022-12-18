@@ -175,7 +175,7 @@ const getPickNumber = async (
 	} else {
 		let temp = undefined;
 		if (tradingPartnerTid === undefined) {
-			// This first if case will only hit when valueChange is called to determine if a team should re-sign
+			// This first if case will only hit when valueChange is called to determine if a team should re-sign a player
 			// Think dynamic pick re-evaluation could lead to some unexpected behavior here (teams end up letting a
 			// lot of players walk to tank their pick/increase overall value) so the old behavior is retained for this case
 			temp = await getModifiedPickRank(tid, [], []);

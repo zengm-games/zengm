@@ -1366,6 +1366,8 @@ const sum = (values: (number | undefined)[]) => {
 	return total;
 };
 
+// pulled from this stack overflow link and modified:
+// https://stackoverflow.com/questions/13306537/how-to-find-the-insertion-point-in-an-array-using-binary-search
 const binarySearch = (
 	a: number[],
 	searchNum: number,

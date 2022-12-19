@@ -506,6 +506,7 @@ const refreshCache = async () => {
 	let gp = 0;
 
 	const wps = teamOvrs.map((teamOvrObj, rank) => {
+		// 25% to 75% based on rank
 		const teamOvrWinp =
 			0.25 + (0.5 * (teams.length - 1 - rank)) / (teams.length - 1);
 		const teamSeasons = allTeamSeasons.filter(
@@ -632,10 +633,11 @@ const getModifiedPickRank = async (
 		});
 	}
 	const newTeamOvr = await getTeamOvr(players);
-	// potential speed up: use binary search instead of linear search on sorted arrays
-	const newTeamOvrRank = Math.max(
-		helpers.binarySearch(cache.sortedTeamOvrs, newTeamOvr, false),
-		1,
+	// we use binary search instead of indexOf to take advantage of the sorted array
+	const newTeamOvrRank = helpers.binarySearch(
+		cache.sortedTeamOvrs,
+		newTeamOvr,
+		false,
 	);
 	const newTeamOvrWinp =
 		0.25 +
@@ -646,10 +648,7 @@ const getModifiedPickRank = async (
 			? newTeamOvrWinp
 			: seasonFraction * (record[0] / cache.gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
-	const newEstPick = Math.max(
-		helpers.binarySearch(cache.sortedWps, newWp) + 1,
-		1,
-	);
+	const newEstPick = helpers.binarySearch(cache.sortedWps, newWp) + 1;
 	return newEstPick;
 };
 

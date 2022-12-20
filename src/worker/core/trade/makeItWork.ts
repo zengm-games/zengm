@@ -116,6 +116,7 @@ const tryAddAsset = async (
 		return;
 	}
 
+	const addAssetKey = Math.random();
 	// Calculate the value for each asset added to the trade, for use in forward selection
 	for (const asset of assets) {
 		const userPids = teams[0].pids.slice();
@@ -141,6 +142,7 @@ const tryAddAsset = async (
 			otherPids,
 			userDpids,
 			otherDpids,
+			addAssetKey,
 			teams[0].tid,
 		);
 	}

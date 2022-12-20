@@ -12,6 +12,7 @@ import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
 import { getTeamOvr } from "../trade/summary";
 import regression, { DataPoint, Result } from "regression";
+import isEqual from "lodash-es/isEqual";
 
 type Asset =
 	| {
@@ -35,6 +36,12 @@ let prevValueChangeKey: number | undefined;
 let cache: {
 	ovrToRankModel: Result;
 	estValues: TradePickValues;
+	cachedEstPick?: {
+		addAssetKey: number;
+		tid: number;
+		pidsExchanged: number[];
+		pick: number;
+	};
 };
 
 // Source: https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
@@ -43,9 +50,7 @@ const winPToPick = (winP: number) => {
 	const x0 = 0.4878517508315021;
 	const k = 10.626956987806935;
 	const b = -0.038756647038824504;
-	return (
-		g.get("numDraftPicksCurrent")! * (L / (1 + Math.exp(-k * (winP - x0))) + b)
-	);
+	return g.get("numActiveTeams") * (L / (1 + Math.exp(-k * (winP - x0))) + b);
 };
 
 const zscore = (value: number) =>
@@ -175,6 +180,7 @@ const getPickNumber = async (
 	pidsAdd: number[],
 	pidsRemove: number[],
 	tid: number,
+	addAssetKey: number,
 	tradingPartnerTid?: number,
 ): Promise<number> => {
 	const numPicksPerRound = getNumPicksPerRound();
@@ -183,25 +189,33 @@ const getPickNumber = async (
 	if (dp.pick > 0) {
 		estPick = dp.pick;
 	} else {
-		let temp = undefined;
 		if (tradingPartnerTid === undefined) {
 			// This first if case will only hit when valueChange is called to determine if a team should re-sign a player
 			// Think dynamic pick re-evaluation could lead to some unexpected behavior here (teams end up letting a
 			// lot of players walk to tank their pick/increase overall value) so the old behavior is retained for this case
-			temp = await getModifiedPickRank(tid, [], []);
+			estPick = await getModifiedPickRank(tid, [], [], addAssetKey);
 		} else if (dp.originalTid === tid) {
 			// If this draft pick belongs to the team evaluating the trade, re-evaluate it taking into account the new players
 			// on the team
-			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
+			estPick = await getModifiedPickRank(
+				tid,
+				pidsAdd,
+				pidsRemove,
+				addAssetKey,
+			);
 		} else if (dp.originalTid === tradingPartnerTid) {
 			// If this draft pick belongs to the team proposing the trade, the CPU should calculate that
 			// the pick its receiving could change in value given the players changing hands
-			temp = await getModifiedPickRank(tradingPartnerTid, pidsRemove, pidsAdd);
+			estPick = await getModifiedPickRank(
+				tradingPartnerTid,
+				pidsRemove,
+				pidsAdd,
+				addAssetKey,
+			);
 		} else {
 			// This pick is unrelated to the team involved in the trade, so don't take player exchanges into account
-			temp = await getModifiedPickRank(dp.originalTid, [], []);
+			estPick = await getModifiedPickRank(dp.originalTid, [], [], addAssetKey);
 		}
-		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
 		// tid rather than originalTid, because it's about what the user can control
 		const usersPick = dp.tid === g.get("userTid");
@@ -261,6 +275,7 @@ const getPickInfo = async (
 	pidsAdd: number[],
 	pidsRemove: number[],
 	tid: number,
+	addAssetKey: number,
 	tradingPartnerTid?: number,
 ): Promise<Asset> => {
 	const season =
@@ -274,6 +289,7 @@ const getPickInfo = async (
 		pidsAdd,
 		pidsRemove,
 		tid,
+		addAssetKey,
 		tradingPartnerTid,
 	);
 
@@ -334,6 +350,7 @@ const getPicks = async ({
 	dpidsRemove,
 	estValues,
 	tid,
+	addAssetKey,
 	tradingPartnerTid,
 }: {
 	add: Asset[];
@@ -344,6 +361,7 @@ const getPicks = async ({
 	dpidsRemove: number[];
 	estValues: TradePickValues;
 	tid: number;
+	addAssetKey: number;
 	tradingPartnerTid?: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
@@ -363,6 +381,7 @@ const getPicks = async ({
 				pidsAdd,
 				pidsRemove,
 				tid,
+				addAssetKey,
 				tradingPartnerTid,
 			);
 			add.push(pickInfo);
@@ -381,6 +400,7 @@ const getPicks = async ({
 				pidsAdd,
 				pidsRemove,
 				tid,
+				addAssetKey,
 				tradingPartnerTid,
 			);
 			remove.push(pickInfo);
@@ -526,6 +546,7 @@ const valueChange = async (
 	pidsRemove: number[],
 	dpidsAdd: number[],
 	dpidsRemove: number[],
+	addAssetKey: number = Math.random(),
 	tradingPartnerTid?: number,
 ): Promise<number> => {
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
@@ -570,6 +591,7 @@ const valueChange = async (
 		dpidsRemove,
 		estValues: cache.estValues,
 		tid,
+		addAssetKey,
 		tradingPartnerTid,
 	});
 
@@ -588,14 +610,24 @@ const getModifiedPickRank = async (
 	tid: number,
 	pidsAdd: number[],
 	pidsRemove: number[],
+	addAssetKey: number,
 ) => {
+	if (
+		cache.cachedEstPick !== undefined &&
+		cache.cachedEstPick.tid === tid &&
+		cache.cachedEstPick.addAssetKey === addAssetKey &&
+		isEqual(cache.cachedEstPick.pidsExchanged, pidsAdd.concat(pidsRemove))
+	) {
+		return cache.cachedEstPick.pick;
+	}
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
 	);
+	const teams = g.get("numActiveTeams");
 	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
 	const gp = record[0] + record[1];
-	const seasonFraction = (record[0] + record[1]) / g.get("numGames");
+	const seasonFraction = gp / g.get("numGames");
 	let players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	if (pidsAdd.length != 0 || pidsRemove.length != 0) {
 		players = players.filter(p => !pidsRemove.includes(p.pid));
@@ -607,12 +639,11 @@ const getModifiedPickRank = async (
 		});
 	}
 	const newTeamOvr = await getTeamOvr(players);
-	// we use binary search instead of indexOf to take advantage of the sorted array
-	const newTeamOvrRank = cache.ovrToRankModel.predict(newTeamOvr)[1];
-	const newTeamOvrWinp =
-		0.25 +
-		(0.5 * (g.get("numActiveTeams") - 1 - newTeamOvrRank)) /
-			g.get("numActiveTeams");
+	const newTeamOvrRank = Math.min(
+		Math.max(Math.round(cache.ovrToRankModel.predict(newTeamOvr)[1]), 1),
+		teams,
+	);
+	const newTeamOvrWinp = 0.25 + (0.5 * (teams - 1 - newTeamOvrRank)) / teams;
 	const newWp =
 		gp === 0
 			? newTeamOvrWinp
@@ -620,8 +651,14 @@ const getModifiedPickRank = async (
 			  (1 - seasonFraction) * newTeamOvrWinp;
 	const newEstPick = Math.min(
 		Math.max(Math.round(winPToPick(newWp)), 1),
-		g.get("numDraftPicksCurrent")!,
+		teams,
 	);
+	cache.cachedEstPick = {
+		addAssetKey,
+		tid,
+		pidsExchanged: pidsAdd.concat(pidsRemove),
+		pick: newEstPick,
+	};
 	return newEstPick;
 };
 

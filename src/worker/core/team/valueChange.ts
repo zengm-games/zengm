@@ -10,7 +10,6 @@ import type {
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
-import { getTeamOvr } from "../trade/summary";
 
 type Asset =
 	| {
@@ -632,7 +631,7 @@ const getModifiedPickRank = async (
 			}
 		});
 	}
-	const newTeamOvr = await getTeamOvr(players);
+	const newTeamOvr = team.ovr(players);
 	// we use binary search instead of indexOf to take advantage of the sorted array
 	const newTeamOvrRank = helpers.binarySearch(
 		cache.sortedTeamOvrs,

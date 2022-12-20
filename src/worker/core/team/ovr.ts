@@ -8,13 +8,20 @@ import ovrHockey from "./ovr.hockey";
 // wholeRoster=true is used for computing team value of the whole roster, like for determining who to draft or sign
 const ovr = (
 	players: {
-		pid: number | undefined;
+		pid?: number;
 		value: number;
-		ratings: {
-			ovr: number;
-			ovrs: Record<string, number> | undefined;
-			pos: string;
-		};
+		ratings:
+			| {
+					ovr: number;
+					ovrs?: Record<string, number>;
+					pos: string;
+			  }
+			| {
+					fuzz: number;
+					ovr: number;
+					ovrs?: Record<string, number>;
+					pos: string;
+			  }[];
 	}[],
 	options: {
 		fast?: boolean;

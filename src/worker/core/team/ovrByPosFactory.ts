@@ -5,6 +5,7 @@ import {
 	NUM_STARTING_PITCHERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball";
+import player from "../player";
 import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball";
 
 const DEFAULT_OVR = 0;
@@ -17,13 +18,20 @@ const ovrByPosFactory =
 	) =>
 	(
 		players: {
-			pid: number | undefined;
+			pid?: number;
 			value: number;
-			ratings: {
-				ovr: number;
-				ovrs: Record<string, number>;
-				pos: string;
-			};
+			ratings:
+				| {
+						ovr: number;
+						ovrs?: Record<string, number>;
+						pos: string;
+				  }
+				| {
+						fuzz: number;
+						ovr: number;
+						ovrs?: Record<string, number>;
+						pos: string;
+				  }[];
 		}[],
 		{
 			fast,
@@ -37,6 +45,15 @@ const ovrByPosFactory =
 	) => {
 		const playerInfo = orderBy(
 			players.map(p => {
+				let ratings;
+				let fuzz: number | undefined;
+				if (Array.isArray(p.ratings)) {
+					ratings = p.ratings.at(-1)!;
+					fuzz = ratings.fuzz;
+				} else {
+					ratings = p.ratings;
+				}
+
 				let pos;
 				if (
 					// This is slower than normal, so don't use in a tight loop like in getTeamOvrDiffs
@@ -68,11 +85,11 @@ const ovrByPosFactory =
 							// Any non-pitcher in a pitcher slot is assumed to be better placed on as a position player
 							pos = "RP";
 						} else {
-							pos = p.ratings.pos;
+							pos = ratings.pos;
 						}
 					}
 				} else {
-					pos = p.ratings.pos;
+					pos = ratings.pos;
 				}
 
 				if (wholeRoster) {
@@ -82,9 +99,14 @@ const ovrByPosFactory =
 					};
 				}
 
+				let value = ratings.ovrs?.[pos] ?? ratings.ovr;
+				if (fuzz !== undefined) {
+					value = player.fuzzRating(value, fuzz);
+				}
+
 				return {
 					pos,
-					value: p.ratings.ovrs?.[pos] ?? p.ratings.ovr,
+					value,
 				};
 			}),
 			"value",

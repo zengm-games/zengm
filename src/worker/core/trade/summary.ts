@@ -3,17 +3,6 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
 
-export const getTeamOvr = async (playersRaw: Player[]) => {
-	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["value", "pid"],
-		fuzz: true,
-		ratings: ["ovr", "pos", "ovrs"],
-		season: g.get("season"),
-	});
-
-	return team.ovr(players);
-};
-
 /**
  * Create a summary of the trade, for eventual display to the user.
  *
@@ -86,7 +75,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		}
 
 		const j = i === 0 ? 1 : 0;
-		s.teams[j].ovrBefore = await getTeamOvr(playersBefore);
+		s.teams[j].ovrBefore = team.ovr(playersBefore);
 
 		playersAfter[j].push(
 			...playersBefore.filter(p => !pids[i].includes(p.pid)),
@@ -94,7 +83,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		playersAfter[i].push(...playersBefore.filter(p => pids[i].includes(p.pid)));
 	}
 	for (const i of [0, 1] as const) {
-		s.teams[i].ovrAfter = await getTeamOvr(playersAfter[i]);
+		s.teams[i].ovrAfter = team.ovr(playersAfter[i]);
 	}
 
 	const overCap = [false, false];

@@ -136,6 +136,7 @@ const betweenAiTeams = async () => {
 	if ((g as any).aiTrades === false && g.get("aiTradesFactor") === 1) {
 		return false;
 	}
+	// console.time('foo');
 
 	// If aiTradesFactor is not an integer, use the fractional part as a probability. Like for 3.5, 50% of the times it will be 3, and 50% will be 4.
 	// Also scale so there are fewer trade attempts if there are fewer teams.
@@ -151,6 +152,7 @@ const betweenAiTeams = async () => {
 	if (remainder > 0 && Math.random() < remainder) {
 		numAttempts += 1;
 	}
+	// numAttempts *= 100;
 
 	if (numAttempts > 0) {
 		let valueChangeKey = Math.random();
@@ -162,6 +164,7 @@ const betweenAiTeams = async () => {
 			}
 		}
 	}
+	// console.timeEnd('foo');
 };
 
 export default betweenAiTeams;

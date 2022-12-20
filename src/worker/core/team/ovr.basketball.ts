@@ -1,9 +1,17 @@
+import { player } from "..";
+
 const ovr = (
-	players: {
-		ratings: {
-			ovr: number;
-			pos: string;
-		};
+	playersRaw: {
+		ratings:
+			| {
+					ovr: number;
+					pos: string;
+			  }
+			| {
+					fuzz: number;
+					ovr: number;
+					pos: string;
+			  }[];
 	}[],
 	{
 		playoffs = false,
@@ -13,6 +21,31 @@ const ovr = (
 		rating?: string;
 	},
 ) => {
+	let players: {
+		ratings: {
+			ovr: number;
+			pos: string;
+		};
+	}[];
+	if (playersRaw.length > 0 && Array.isArray(playersRaw[0].ratings)) {
+		players = playersRaw.map(p => {
+			const ratings = (p.ratings as any).at(-1)! as {
+				fuzz: number;
+				ovr: number;
+				pos: string;
+			};
+
+			return {
+				ratings: {
+					ovr: player.fuzzRating(ratings!.ovr, ratings!.fuzz),
+					pos: ratings!.pos,
+				},
+			};
+		});
+	} else {
+		players = playersRaw as any;
+	}
+
 	const ratings = players
 		.slice()
 		// Sort first, so non-ovr ratings are based on the top ovr players

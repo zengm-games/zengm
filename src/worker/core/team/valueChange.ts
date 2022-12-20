@@ -11,6 +11,7 @@ import type {
 import { groupBy } from "../../../common/groupBy";
 import { getNumPicksPerRound } from "../trade/getPickValues";
 import { getTeamOvr } from "../trade/summary";
+import regression, { DataPoint, Result } from "regression";
 
 type Asset =
 	| {
@@ -32,10 +33,19 @@ type Asset =
 
 let prevValueChangeKey: number | undefined;
 let cache: {
+	ovrToRankModel: Result;
 	estValues: TradePickValues;
-	gp: number;
-	sortedWps: number[];
-	sortedTeamOvrs: number[];
+};
+
+// Source: https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
+const winPToPick = (winP: number) => {
+	const L = 1.0687820005007198;
+	const x0 = 0.4878517508315021;
+	const k = 10.626956987806935;
+	const b = -0.038756647038824504;
+	return (
+		g.get("numDraftPicksCurrent")! * (L / (1 + Math.exp(-k * (winP - x0))) + b)
+	);
 };
 
 const zscore = (value: number) =>
@@ -496,52 +506,16 @@ const refreshCache = async () => {
 	}
 	teamOvrs.sort((a, b) => b.ovr - a.ovr);
 
-	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
-
-	const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
-		"teamSeasonsBySeasonTid",
-		[[g.get("season")], [g.get("season"), "Z"]],
-	);
-
-	let gp = 0;
-
-	const wps = teamOvrs.map((teamOvrObj, rank) => {
-		// 25% to 75% based on rank
-		const teamOvrWinp =
-			0.25 + (0.5 * (teams.length - 1 - rank)) / (teams.length - 1);
-		const teamSeasons = allTeamSeasons.filter(
-			teamSeason => teamSeason.tid === teamOvrObj.tid,
-		);
-		let record: [number, number];
-
-		if (teamSeasons.length === 0) {
-			// Expansion team?
-			record = [0, 0];
-		} else {
-			const teamSeason = teamSeasons[0];
-			record = [teamSeason.won, teamSeason.lost];
-		}
-		gp = record[0] + record[1];
-
-		const seasonFraction = gp / g.get("numGames");
-
-		// Weighted average of current season record and team rating, based on how much of the current season is complete
-		if (gp === 0) {
-			return teamOvrWinp;
-		}
-		return (
-			seasonFraction * (record[0] / gp) + (1 - seasonFraction) * teamOvrWinp
-		);
-	});
-
-	// Get rank order of wps http://stackoverflow.com/a/14834599/786644
-	const sorted = wps.slice().sort((a, b) => a - b);
+	const teamRanks: DataPoint[] = teamOvrs.map((team, index) => [
+		team.ovr,
+		index + 1,
+	]);
+	// generate a function using linear regression that maps team ovr -> estimated team rank
+	const ovrToRankModel = regression.linear(teamRanks);
 
 	return {
+		ovrToRankModel,
 		estValues: await trade.getPickValues(),
-		gp,
-		sortedWps: sorted,
-		sortedTeamOvrs: teamOvrs.map(o => o.ovr),
 	};
 };
 
@@ -552,7 +526,6 @@ const valueChange = async (
 	pidsRemove: number[],
 	dpidsAdd: number[],
 	dpidsRemove: number[],
-	valueChangeKey: number = Math.random(),
 	tradingPartnerTid?: number,
 ): Promise<number> => {
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
@@ -574,9 +547,9 @@ const valueChange = async (
 
 	const strategy = t.strategy;
 
-	if (prevValueChangeKey !== valueChangeKey || cache === undefined) {
+	if (prevValueChangeKey !== g.get("season") || cache === undefined) {
 		cache = await refreshCache();
-		prevValueChangeKey = valueChangeKey;
+		prevValueChangeKey = g.get("season");
 	}
 
 	await getPlayers({
@@ -621,7 +594,8 @@ const getModifiedPickRank = async (
 		[tid, g.get("season")],
 	);
 	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
-	const seasonFraction = cache.gp / g.get("numGames");
+	const gp = record[0] + record[1];
+	const seasonFraction = (record[0] + record[1]) / g.get("numGames");
 	let players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	if (pidsAdd.length != 0 || pidsRemove.length != 0) {
 		players = players.filter(p => !pidsRemove.includes(p.pid));
@@ -634,21 +608,20 @@ const getModifiedPickRank = async (
 	}
 	const newTeamOvr = await getTeamOvr(players);
 	// we use binary search instead of indexOf to take advantage of the sorted array
-	const newTeamOvrRank = helpers.binarySearch(
-		cache.sortedTeamOvrs,
-		newTeamOvr,
-		false,
-	);
+	const newTeamOvrRank = cache.ovrToRankModel.predict(newTeamOvr)[1];
 	const newTeamOvrWinp =
 		0.25 +
-		(0.5 * (cache.sortedTeamOvrs.length - 1 - newTeamOvrRank)) /
-			(cache.sortedTeamOvrs.length - 1);
+		(0.5 * (g.get("numActiveTeams") - 1 - newTeamOvrRank)) /
+			g.get("numActiveTeams");
 	const newWp =
-		cache.gp === 0
+		gp === 0
 			? newTeamOvrWinp
-			: seasonFraction * (record[0] / cache.gp) +
+			: seasonFraction * (record[0] / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
-	const newEstPick = helpers.binarySearch(cache.sortedWps, newWp) + 1;
+	const newEstPick = Math.min(
+		Math.max(Math.round(winPToPick(newWp)), 1),
+		g.get("numDraftPicksCurrent")!,
+	);
 	return newEstPick;
 };
 

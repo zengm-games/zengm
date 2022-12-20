@@ -4050,7 +4050,6 @@ const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 		teams[1].pids,
 		teams[0].dpids,
 		teams[1].dpids,
-		undefined,
 		g.get("userTid"),
 	);
 	const aiWillAcceptTrade = dv > 0;

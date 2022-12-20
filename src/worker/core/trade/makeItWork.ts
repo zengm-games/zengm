@@ -22,7 +22,6 @@ type Asset = AssetPlayer | AssetPick;
 const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
-	valueChangeKey: number,
 ): Promise<TradeTeams | void> => {
 	const assets: Asset[] = [];
 
@@ -142,7 +141,6 @@ const tryAddAsset = async (
 			otherPids,
 			userDpids,
 			otherDpids,
-			valueChangeKey,
 			teams[0].tid,
 		);
 	}
@@ -193,7 +191,6 @@ const makeItWork = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
 	maxAssetsToAdd = Infinity,
-	valueChangeKey: number = Math.random(),
 ): Promise<TradeTeams | undefined> => {
 	let initialSign: -1 | 1;
 	let added = 0;
@@ -204,7 +201,6 @@ const makeItWork = async (
 		teams[1].pids,
 		teams[0].dpids,
 		teams[1].dpids,
-		valueChangeKey,
 		teams[0].tid,
 	);
 
@@ -219,11 +215,7 @@ const makeItWork = async (
 	let prevTeams: TradeTeams = teams;
 	while (true) {
 		// Add assets until this trade is just barely good enough for the AI
-		const newTeams = await tryAddAsset(
-			prevTeams,
-			holdUserConstant,
-			valueChangeKey,
-		);
+		const newTeams = await tryAddAsset(prevTeams, holdUserConstant);
 
 		if (!newTeams) {
 			// No improvement to offer found
@@ -234,7 +226,6 @@ const makeItWork = async (
 				prevTeams[1].pids,
 				prevTeams[0].dpids,
 				prevTeams[1].dpids,
-				valueChangeKey,
 				prevTeams[0].tid,
 			);
 
@@ -253,7 +244,6 @@ const makeItWork = async (
 			newTeams[1].pids,
 			newTeams[0].dpids,
 			newTeams[1].dpids,
-			valueChangeKey,
 			newTeams[0].tid,
 		);
 
@@ -275,12 +265,7 @@ const makeItWork = async (
 
 				const newMaxAssetsToAdd = maxAssetsToAdd - added;
 				if (newMaxAssetsToAdd > 0) {
-					return makeItWork(
-						newTeams,
-						holdUserConstant,
-						newMaxAssetsToAdd,
-						valueChangeKey,
-					);
+					return makeItWork(newTeams, holdUserConstant, newMaxAssetsToAdd);
 				}
 				return newTeams;
 			}

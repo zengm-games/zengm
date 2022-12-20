@@ -27,7 +27,7 @@ const getAITids = async () => {
 		.map(t => t.tid);
 };
 
-const attempt = async (valueChangeKey: number) => {
+const attempt = async () => {
 	const aiTids = await getAITids();
 
 	if (aiTids.length === 0) {
@@ -85,7 +85,7 @@ const attempt = async (valueChangeKey: number) => {
 		},
 	];
 
-	const teams = await makeItWork(teams0, false, 5, valueChangeKey);
+	const teams = await makeItWork(teams0, false, 5);
 
 	if (!teams) {
 		return false;
@@ -114,7 +114,6 @@ const attempt = async (valueChangeKey: number) => {
 		teams[0].pids,
 		teams[1].dpids,
 		teams[0].dpids,
-		valueChangeKey,
 		teams[1].tid,
 	);
 	if (Math.abs(dv2) > 15) {
@@ -153,13 +152,8 @@ const betweenAiTeams = async () => {
 	}
 
 	if (numAttempts > 0) {
-		let valueChangeKey = Math.random();
-
 		for (let i = 0; i < numAttempts; i++) {
-			const tradeHappened = await attempt(valueChangeKey);
-			if (tradeHappened) {
-				valueChangeKey = Math.random();
-			}
+			await attempt();
 		}
 	}
 };

@@ -43,8 +43,6 @@ let cache: {
 		t2Pick?: number;
 	};
 };
-let callsToOvr: number | undefined;
-let timeSpentAssemblingTeams: number | undefined;
 
 // Source: https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
 const winPToPick = (winP: number) => {
@@ -538,9 +536,6 @@ const refreshCache = async () => {
 	}
 	teamOvrs.sort((a, b) => b.ovr - a.ovr);
 
-	callsToOvr = callsToOvr === undefined ? 30 : callsToOvr + 30;
-	console.log(`Calls to team.ovr: ${callsToOvr}`);
-
 	const teamRanks: DataPoint[] = teamOvrs.map((team, index) => [
 		team.ovr,
 		index + 1,
@@ -646,7 +641,6 @@ const getModifiedPickRank = async (
 	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
 	const gp = record[0] + record[1];
 	const seasonFraction = gp / g.get("numGames");
-	const start = performance.now();
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	let playerRatings = players.map(p => ({
 		pid: p.pid,
@@ -676,16 +670,7 @@ const getModifiedPickRank = async (
 			}
 		}
 	}
-	const end = performance.now();
-	const timeElapsed = (end - start) / 1000;
-	timeSpentAssemblingTeams =
-		timeSpentAssemblingTeams === undefined
-			? timeElapsed
-			: timeSpentAssemblingTeams + timeElapsed;
-	console.log(`Time spent copying players: ${timeSpentAssemblingTeams}`);
 	const newTeamOvr = team.ovr(playerRatings, { fast: true });
-	callsToOvr = callsToOvr === undefined ? 1 : callsToOvr + 1;
-	console.log(`Calls to team.ovr: ${callsToOvr}`);
 	const newTeamOvrRank = Math.min(
 		Math.max(Math.round(cache.ovrToRankModel.predict(newTeamOvr)[1]), 1),
 		teams,

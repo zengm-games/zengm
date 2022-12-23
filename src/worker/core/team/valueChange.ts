@@ -19,6 +19,7 @@ type Asset =
 			contractValue: number;
 			injury: PlayerInjury;
 			age: number;
+			justDrafted: boolean;
 	  }
 	| {
 			type: "pick";
@@ -140,7 +141,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: helpers.justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(p, g.get("phase"), g.get("season")),
 			});
 		} else {
 			// Only apply fudge factor to positive assets
@@ -155,7 +156,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: helpers.justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(p, g.get("phase"), g.get("season")),
 			});
 		}
 	}
@@ -172,7 +173,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: helpers.justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(p, g.get("phase"), g.get("season")),
 			});
 		}
 	}
@@ -604,6 +605,7 @@ const valueChange = async (
 		dpidsAdd,
 		dpidsRemove,
 		estValues: cache.estValues,
+		tid,
 		tradingPartnerTid,
 		addAssetKey,
 	});

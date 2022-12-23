@@ -44,6 +44,7 @@ let cache: {
 	};
 };
 let callsToOvr: number | undefined;
+let timeSpentAssemblingTeams: number | undefined;
 
 // Source: https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
 const winPToPick = (winP: number) => {
@@ -645,17 +646,44 @@ const getModifiedPickRank = async (
 	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
 	const gp = record[0] + record[1];
 	const seasonFraction = gp / g.get("numGames");
-	let players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	if (pidsAdd.length != 0 || pidsRemove.length != 0) {
-		players = players.filter(p => !pidsRemove.includes(p.pid));
-		await pidsAdd.forEach(async id => {
-			const p = await idb.cache.players.get(id);
-			if (p) {
-				players.push(p);
-			}
-		});
+	const start = performance.now();
+	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+	let playerRatings = players.map(p => ({
+		pid: p.pid,
+		value: p.value,
+		ratings: {
+			ovr: p.ratings.at(-1)!.ovr,
+			ovrs: p.ratings.at(-1)!.ovrs,
+			pos: p.ratings.at(-1)!.pos,
+		},
+	}));
+	if (pidsRemove.length != 0) {
+		playerRatings = playerRatings.filter(p => !pidsRemove.includes(p.pid));
 	}
-	const newTeamOvr = team.ovr(players);
+	if (pidsAdd.length != 0) {
+		for (const pid of pidsAdd) {
+			const p = await idb.cache.players.get(pid);
+			if (p) {
+				playerRatings.push({
+					pid: p.pid,
+					value: p.value,
+					ratings: {
+						ovr: p.ratings.at(-1)!.ovr,
+						ovrs: p.ratings.at(-1)!.ovrs,
+						pos: p.ratings.at(-1)!.pos,
+					},
+				});
+			}
+		}
+	}
+	const end = performance.now();
+	const timeElapsed = (end - start) / 1000;
+	timeSpentAssemblingTeams =
+		timeSpentAssemblingTeams === undefined
+			? timeElapsed
+			: timeSpentAssemblingTeams + timeElapsed;
+	console.log(`Time spent copying players: ${timeSpentAssemblingTeams}`);
+	const newTeamOvr = team.ovr(playerRatings, { fast: true });
 	callsToOvr = callsToOvr === undefined ? 1 : callsToOvr + 1;
 	console.log(`Calls to team.ovr: ${callsToOvr}`);
 	const newTeamOvrRank = Math.min(

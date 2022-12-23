@@ -1366,40 +1366,8 @@ const sum = (values: (number | undefined)[]) => {
 	return total;
 };
 
-// pulled from this stack overflow link and modified:
-// https://stackoverflow.com/questions/13306537/how-to-find-the-insertion-point-in-an-array-using-binary-search
-const binarySearch = (
-	a: number[],
-	searchNum: number,
-	ascending: boolean = true,
-): number => {
-	return binarySearch0(a, 0, a.length, searchNum, ascending);
-};
-
-const binarySearch0 = (
-	a: number[],
-	fromIndex: number,
-	toIndex: number,
-	searchNum: number,
-	ascending: boolean,
-) => {
-	let low = fromIndex;
-	let high = toIndex - 1;
-
-	while (low <= high) {
-		const mid = (low + high) >>> 1;
-		const midVal = a[mid];
-
-		if (ascending ? midVal < searchNum : midVal > searchNum) low = mid + 1;
-		else if (ascending ? midVal > searchNum : midVal < searchNum)
-			high = mid - 1;
-		else return mid; // key found
-	}
-	return low; // key not found.
-};
 export default {
 	addPopRank,
-	binarySearch,
 	getPopRanks,
 	gameScore,
 	getCountry,

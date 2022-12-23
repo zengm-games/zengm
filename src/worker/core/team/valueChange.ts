@@ -45,6 +45,9 @@ let cache: {
 };
 
 // Source: https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
+// This "win% to team ranking" is specific to basketball
+// I can run different simulations for the other sports to have models that more accurately represent
+// those leagues
 const winPToPick = (winP: number) => {
 	const L = 1.0687820005007198;
 	const x0 = 0.4878517508315021;

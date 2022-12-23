@@ -50,7 +50,8 @@ const winPToPick = (winP: number) => {
 	const x0 = 0.4878517508315021;
 	const k = 10.626956987806935;
 	const b = -0.038756647038824504;
-	return g.get("numActiveTeams") * (L / (1 + Math.exp(-k * (winP - x0))) + b);
+	const numPicksPerRound = getNumPicksPerRound();
+	return numPicksPerRound * (L / (1 + Math.exp(-k * (winP - x0))) + b);
 };
 
 const zscore = (value: number) =>
@@ -617,6 +618,16 @@ const getModifiedPickRank = async (
 	pidsRemove: number[],
 	addAssetKey?: number,
 ) => {
+	if (
+		addAssetKey != undefined &&
+		addAssetKey === cache.cachedEstimatedPicks.addAssetKey
+	) {
+		if (tid === cache.cachedEstimatedPicks.t1ID) {
+			return cache.cachedEstimatedPicks.t1Pick!;
+		} else if (tid === cache.cachedEstimatedPicks.t2ID) {
+			return cache.cachedEstimatedPicks.t2Pick!;
+		}
+	}
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
@@ -635,9 +646,6 @@ const getModifiedPickRank = async (
 			}
 		});
 	}
-	console.log(
-		`Calculation ovr for\ntid:${tid}\npidsAdd:${pidsAdd}\npidsRemove:${pidsRemove}\naddAssetKey:${addAssetKey}`,
-	);
 	const newTeamOvr = team.ovr(players);
 	callsToOvr = callsToOvr === undefined ? 1 : callsToOvr + 1;
 	console.log(`Calls to team.ovr: ${callsToOvr}`);
@@ -655,6 +663,21 @@ const getModifiedPickRank = async (
 		Math.max(Math.round(winPToPick(newWp)), 1),
 		teams,
 	);
+	if (addAssetKey != undefined) {
+		if (cache.cachedEstimatedPicks.addAssetKey === addAssetKey) {
+			cache.cachedEstimatedPicks = {
+				t2ID: tid,
+				t2Pick: newEstPick,
+				...cache.cachedEstimatedPicks,
+			};
+		} else {
+			cache.cachedEstimatedPicks = {
+				addAssetKey,
+				t1ID: tid,
+				t1Pick: newEstPick,
+			};
+		}
+	}
 	return newEstPick;
 };
 

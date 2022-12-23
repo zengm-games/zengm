@@ -1,8 +1,14 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type { TeamBasic, PlayerWithoutKey } from "./types";
+import type {
+	TeamBasic,
+	PlayerWithoutKey,
+	Phase,
+	PlayerContract,
+} from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash-es/orderBy";
 import isSport from "./isSport";
+import { PHASE } from "./constants";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -1366,6 +1372,26 @@ const sum = (values: (number | undefined)[]) => {
 	return total;
 };
 
+// If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
+const justDrafted = (
+	p: {
+		draft: {
+			year: number;
+		};
+		contract: PlayerContract;
+	},
+	phase: Phase,
+	season: number,
+) => {
+	return (
+		!!p.contract.rookie &&
+		((p.draft.year === season && phase >= PHASE.DRAFT) ||
+			(p.draft.year === season - 1 &&
+				phase < PHASE.REGULAR_SEASON &&
+				phase >= 0))
+	);
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1390,4 +1416,5 @@ export default {
 	formatRecord,
 	overtimeText,
 	sum,
+	justDrafted,
 };

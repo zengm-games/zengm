@@ -140,6 +140,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
+				justDrafted: helpers.justDrafted(p, phase, season),
 			});
 		} else {
 			// Only apply fudge factor to positive assets
@@ -154,6 +155,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
+				justDrafted: helpers.justDrafted(p, phase, season),
 			});
 		}
 	}
@@ -170,6 +172,7 @@ const getPlayers = async ({
 				contractValue: getContractValue(p.contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
+				justDrafted: helpers.justDrafted(p, phase, season),
 			});
 		}
 	}
@@ -494,6 +497,11 @@ const sumValues = (
 		playerValue += contractsFactor * p.contractValue;
 		// console.log(playerValue, p);
 
+		// if a player was just drafted and can be released, they shouldn't have negative value
+		if (p.type == "player" && p.justDrafted) {
+			playerValue = Math.max(0, playerValue);
+		}
+
 		return memo + (playerValue > 1 ? playerValue ** EXPONENT : playerValue);
 	}, 0);
 };
@@ -596,7 +604,6 @@ const valueChange = async (
 		dpidsAdd,
 		dpidsRemove,
 		estValues: cache.estValues,
-		tid,
 		tradingPartnerTid,
 		addAssetKey,
 	});

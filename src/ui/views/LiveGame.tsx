@@ -361,8 +361,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	const handlePlay = useCallback(() => {
 		setPaused(false);
-		pausedRef.current = false;
-		processToNextPause();
+
+		// Without pausedRef check, this was a race condition and could lead to incorrect post-game records (counting as 2 or more wins)
+		if (pausedRef.current) {
+			pausedRef.current = false;
+			processToNextPause();
+		}
+
 		setPlayIndex(prev => prev + 1);
 	}, [processToNextPause]);
 
@@ -688,7 +693,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 			});
 		}
 
-		if (boxScore.current.elam && boxScore.current.elamTarget === undefined) {
+		if (
+			boxScore.current.elam &&
+			!boxScore.current.elamOvertime &&
+			boxScore.current.elamTarget === undefined
+		) {
 			menuItems.push({
 				label: "Elam Ending",
 				key: "U",

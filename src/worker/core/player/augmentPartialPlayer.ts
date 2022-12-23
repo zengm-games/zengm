@@ -74,7 +74,6 @@ const augmentPartialPlayer = async (
 		"awards",
 		"born",
 		"college",
-		"face",
 		"firstName",
 		"gamesUntilTradable",
 		"hgt",
@@ -97,6 +96,10 @@ const augmentPartialPlayer = async (
 		if (p[key] === undefined) {
 			p[key] = pg[key];
 		}
+	}
+
+	if (!p.face || !p.face.accessories) {
+		p.face = pg.face;
 	}
 
 	if (p.retiredYear === null) {

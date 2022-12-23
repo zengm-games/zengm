@@ -34,8 +34,10 @@ export const boxScoreToLiveSim = async ({
 		resetStatsTeam.push(...team.stats.byPos);
 	}
 
-	boxScore.elam =
-		isSport("basketball") && (allStars ? g.get("elamASG") : g.get("elam"));
+	if (isSport("basketball")) {
+		boxScore.elam = allStars ? g.get("elamASG") : g.get("elam");
+		boxScore.elamOvertime = g.get("elamOvertime");
+	}
 
 	boxScore.overtime = "";
 	boxScore.quarter = `1st ${getPeriodName(boxScore.numPeriods)}`;

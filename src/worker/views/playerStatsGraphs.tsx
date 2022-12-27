@@ -1,10 +1,4 @@
-import {
-	helpers,
-	isSport,
-	PHASE,
-	PLAYER,
-	PLAYER_STATS_TABLES,
-} from "../../common";
+import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -78,7 +72,7 @@ const updatePlayers = async (
 			);
 		}
 
-		let players = await idb.getCopies.playersPlus(playersAll, {
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "firstName", "lastName"],
 			ratings: ["skills", "pos", "season"],
 			stats: statsTable.stats,

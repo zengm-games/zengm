@@ -35,7 +35,7 @@ function graphCreation(stats: any, statX: any, statY: any, minGames: number) {
 		tooltips: {
 			callbacks: {
 				label: function (tooltipItem: any, data: any) {
-					var label = data.labels[tooltipItem.index];
+					const label = data.labels[tooltipItem.index];
 					return (
 						label + ": (" + tooltipItem.xLabel + ", " + tooltipItem.yLabel + ")"
 					);

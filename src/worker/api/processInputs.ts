@@ -682,9 +682,7 @@ const playerStatsGraphs = (params: Params) => {
 		hockey: "skater",
 	});
 
-	let season: number;
-
-	season = validateSeason(params.season);
+	const season: number = validateSeason(params.season);
 
 	return {
 		abbrev,

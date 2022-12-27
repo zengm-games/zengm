@@ -54,7 +54,11 @@ const winPToPick = (winP: number) => {
 	const k = 10.626956987806935;
 	const b = -0.038756647038824504;
 	const numPicksPerRound = getNumPicksPerRound();
-	return numPicksPerRound * (L / (1 + Math.exp(-k * (winP - x0))) + b);
+	return helpers.bound(
+		numPicksPerRound * (L / (1 + Math.exp(-k * (winP - x0))) + b),
+		1,
+		numPicksPerRound,
+	);
 };
 
 const zscore = (value: number) =>
@@ -674,8 +678,9 @@ const getModifiedPickRank = async (
 		}
 	}
 	const newTeamOvr = team.ovr(playerRatings, { fast: true });
-	const newTeamOvrRank = Math.min(
-		Math.max(Math.round(cache.ovrToRankModel.predict(newTeamOvr)[1]), 1),
+	const newTeamOvrRank = helpers.bound(
+		cache.ovrToRankModel.predict(newTeamOvr)[1],
+		1,
 		teams,
 	);
 	const newTeamOvrWinp = 0.25 + (0.5 * (teams - 1 - newTeamOvrRank)) / teams;
@@ -684,10 +689,7 @@ const getModifiedPickRank = async (
 			? newTeamOvrWinp
 			: seasonFraction * (record[0] / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
-	const newEstPick = Math.min(
-		Math.max(Math.round(winPToPick(newWp)), 1),
-		teams,
-	);
+	const newEstPick = winPToPick(newWp);
 	if (addAssetKey != undefined) {
 		if (cache.cachedEstimatedPicks.addAssetKey === addAssetKey) {
 			cache.cachedEstimatedPicks = {

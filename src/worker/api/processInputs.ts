@@ -662,7 +662,6 @@ const playerStats = (params: Params) => {
 const playerStatsGraphs = (params: Params) => {
 	let abbrev;
 
-	console.log("playersSTATSGRAPHS");
 	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
 
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
@@ -683,12 +682,9 @@ const playerStatsGraphs = (params: Params) => {
 		hockey: "skater",
 	});
 
-	let season: "career" | "all" | number;
-	if (params.season === "career" || params.season === "all") {
-		season = params.season;
-	} else {
-		season = validateSeason(params.season);
-	}
+	let season: number;
+
+	season = validateSeason(params.season);
 
 	return {
 		abbrev,

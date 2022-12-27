@@ -12,7 +12,6 @@ import type {
 	ViewInput,
 	PlayerStatType,
 } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStatsGraphs">,

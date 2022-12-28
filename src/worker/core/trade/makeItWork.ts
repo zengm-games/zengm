@@ -143,7 +143,8 @@ const tryAddAsset = async (
 			userDpids,
 			otherDpids,
 			teams[0].tid,
-			asset.type === "player" ? undefined : addAssetKey,
+			addAssetKey,
+			asset.type === "player" ? asset.pid : undefined,
 		);
 	}
 	assets.sort((a, b) => b.dv - a.dv); // Find the asset that will push the trade value the smallest amount above 0

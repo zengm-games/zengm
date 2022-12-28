@@ -193,6 +193,7 @@ const getPickNumber = async (
 	tid: number,
 	tradingPartnerTid?: number,
 	addAssetKey?: number,
+	lastAddedPid?: number,
 ): Promise<number> => {
 	const numPicksPerRound = getNumPicksPerRound();
 
@@ -213,6 +214,7 @@ const getPickNumber = async (
 				pidsAdd,
 				pidsRemove,
 				addAssetKey,
+				lastAddedPid,
 			);
 		} else if (dp.originalTid === tradingPartnerTid) {
 			// If this draft pick belongs to the team proposing the trade, the CPU should calculate that
@@ -222,6 +224,7 @@ const getPickNumber = async (
 				pidsRemove,
 				pidsAdd,
 				addAssetKey,
+				lastAddedPid,
 			);
 		} else {
 			// This pick is unrelated to the team involved in the trade, so don't take player exchanges into account
@@ -289,6 +292,7 @@ const getPickInfo = async (
 	tid: number,
 	tradingPartnerTid?: number,
 	addAssetKey?: number,
+	lastAddedPid?: number,
 ): Promise<Asset> => {
 	const season =
 		dp.season === "fantasy" || dp.season === "expansion"
@@ -303,6 +307,7 @@ const getPickInfo = async (
 		tid,
 		tradingPartnerTid,
 		addAssetKey,
+		lastAddedPid,
 	);
 
 	let value;
@@ -364,6 +369,7 @@ const getPicks = async ({
 	tid,
 	tradingPartnerTid,
 	addAssetKey,
+	lastAddedPid,
 }: {
 	add: Asset[];
 	remove: Asset[];
@@ -375,6 +381,7 @@ const getPicks = async ({
 	tid: number;
 	tradingPartnerTid?: number;
 	addAssetKey?: number;
+	lastAddedPid?: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
 	if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
@@ -395,6 +402,7 @@ const getPicks = async ({
 				tid,
 				tradingPartnerTid,
 				addAssetKey,
+				lastAddedPid,
 			);
 			add.push(pickInfo);
 		}
@@ -414,6 +422,7 @@ const getPicks = async ({
 				tid,
 				tradingPartnerTid,
 				addAssetKey,
+				lastAddedPid,
 			);
 			remove.push(pickInfo);
 		}
@@ -566,6 +575,7 @@ const valueChange = async (
 	dpidsRemove: number[],
 	tradingPartnerTid?: number,
 	addAssetKey?: number,
+	lastAddedPid?: number,
 ): Promise<number> => {
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
 	if (dpidsRemove.length > 2) {
@@ -611,6 +621,7 @@ const valueChange = async (
 		tid,
 		tradingPartnerTid,
 		addAssetKey,
+		lastAddedPid,
 	});
 
 	// console.log("ADD");
@@ -629,6 +640,7 @@ const getModifiedPickRank = async (
 	pidsAdd: number[],
 	pidsRemove: number[],
 	addAssetKey?: number,
+	lastAddedPid?: number,
 ) => {
 	if (
 		addAssetKey != undefined &&
@@ -659,12 +671,14 @@ const getModifiedPickRank = async (
 		},
 	}));
 	if (pidsRemove.length != 0) {
-		playerRatings = playerRatings.filter(p => !pidsRemove.includes(p.pid));
+		playerRatings = playerRatings.filter(
+			p => !pidsRemove.includes(p.pid) || p.pid === lastAddedPid,
+		);
 	}
 	if (pidsAdd.length != 0) {
 		for (const pid of pidsAdd) {
 			const p = await idb.cache.players.get(pid);
-			if (p) {
+			if (p && p.pid != lastAddedPid) {
 				playerRatings.push({
 					pid: p.pid,
 					value: p.value,

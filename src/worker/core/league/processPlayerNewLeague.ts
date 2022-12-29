@@ -26,7 +26,7 @@ const processPlayerNewLeague = async ({
 	if (realPlayerPhotos) {
 		// Do this before augment so it doesn't need to create a face
 		if (p.srID) {
-			if (realPlayerPhotos[p.srID]) {
+			if (realPlayerPhotos[p.srID] !== undefined) {
 				p.imgURL = realPlayerPhotos[p.srID];
 			} else {
 				const name = p.name ?? `${p.firstName} ${p.lastName}`;
@@ -35,7 +35,9 @@ const processPlayerNewLeague = async ({
 				const key = `dp_${p.draft.year}_${name
 					.replace(/ /g, "_")
 					.toLowerCase()}`;
-				p.imgURL = realPlayerPhotos[key];
+				if (realPlayerPhotos[key] !== undefined) {
+					p.imgURL = realPlayerPhotos[key];
+				}
 			}
 		}
 	}

@@ -43,7 +43,8 @@ type Props = {
 };
 
 const parseLegacyName = (name: string) => {
-	const parts = name.split(" (")[0].split(" ");
+	// Used to be `const parts = name.split(" (")[0].split(" ");`, not sure why, but that messes up names with parentheses in them
+	const parts = name.split(" ");
 	let lastName = parts.at(-1)!;
 	let lastNameIndex = parts.length - 1;
 

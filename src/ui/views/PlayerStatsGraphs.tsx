@@ -2,31 +2,29 @@ import type { PlayerFiltered, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { useState, useEffect } from "react";
 import { Chart, registerables } from "chart.js";
+import { ScatterPlot } from "./ScatterPlot";
+
 Chart.register(...registerables);
 
-let chart: any = undefined;
+type GraphCreationProps = {
+	stats: any;
+	statX: string;
+	statY: string;
+	minGames: number;
+};
 
-function graphCreation(stats: any, statX: any, statY: any, minGames: number) {
-	const playerNames = stats.map(
+function GraphCreation(props: GraphCreationProps) {
+	const playerNames = props.stats.map(
 		(player: any) => player.firstName + " " + player.lastName,
 	);
-	const statsToShow = stats
+	const statsToShow = props.stats
 		.filter((player: PlayerFiltered) => {
-			return player.stats["gp"] > minGames;
+			return player.stats["gp"] > props.minGames;
 		})
 		.map((player: PlayerFiltered) => {
-			return { x: player.stats[statX], y: player.stats[statY] };
+			return { x: player.stats[props.statX], y: player.stats[props.statY] };
 		});
-	const data = {
-		labels: playerNames,
-		datasets: [
-			{
-				label: statX + " x " + statY,
-				data: statsToShow,
-				backgroundColor: "rgba(255, 99, 132, 1)",
-			},
-		],
-	};
+	const data = statsToShow;
 
 	const options: any = {
 		maintainAspectRatio: true,
@@ -44,15 +42,7 @@ function graphCreation(stats: any, statX: any, statY: any, minGames: number) {
 		},
 	};
 
-	if (chart) {
-		chart.destroy();
-	}
-
-	chart = new Chart("myChart", {
-		type: "scatter",
-		data: data,
-		options: options,
-	});
+	return <ScatterPlot data={data}></ScatterPlot>;
 }
 const PlayerStatsGraphs = ({
 	abbrev,
@@ -73,10 +63,6 @@ const PlayerStatsGraphs = ({
 			statTypesAdvNotCareer: statType,
 			playoffs,
 		},
-	});
-
-	useEffect(() => {
-		graphCreation(players, statToChartX, statToChartY, minimumGames);
 	});
 
 	const [statToChartX, setStatToChartX] = useState(() => stats[0]);
@@ -128,7 +114,12 @@ const PlayerStatsGraphs = ({
 				</div>
 			</div>
 			<div>
-				<canvas id="myChart"></canvas>
+				<GraphCreation
+					stats={players}
+					statX={statToChartX}
+					statY={statToChartY}
+					minGames={minimumGames}
+				/>
 			</div>
 		</div>
 	);

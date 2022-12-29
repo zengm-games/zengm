@@ -31,7 +31,6 @@ export const getTeamOvrDiffs = (
 	}));
 
 	const baseline = team.ovr(teamPlayers2, {
-		fast: true,
 		wholeRoster: true,
 	});
 
@@ -51,7 +50,6 @@ export const getTeamOvrDiffs = (
 				},
 			],
 			{
-				fast: true,
 				wholeRoster: true,
 			},
 		);

@@ -14,33 +14,18 @@ type GraphCreationProps = {
 };
 
 function GraphCreation(props: GraphCreationProps) {
-	const playerNames = props.stats.map(
-		(player: any) => player.firstName + " " + player.lastName,
-	);
 	const statsToShow = props.stats
 		.filter((player: PlayerFiltered) => {
 			return player.stats["gp"] > props.minGames;
 		})
 		.map((player: PlayerFiltered) => {
-			return { x: player.stats[props.statX], y: player.stats[props.statY] };
+			return {
+				x: player.stats[props.statX],
+				y: player.stats[props.statY],
+				label: player.firstName + " " + player.lastName,
+			};
 		});
 	const data = statsToShow;
-
-	const options: any = {
-		maintainAspectRatio: true,
-		responsive: true,
-		aspectRatio: 2.5,
-		tooltips: {
-			callbacks: {
-				label: function (tooltipItem: any, data: any) {
-					const label = data.labels[tooltipItem.index];
-					return (
-						label + ": (" + tooltipItem.xLabel + ", " + tooltipItem.yLabel + ")"
-					);
-				},
-			},
-		},
-	};
 
 	return <ScatterPlot data={data}></ScatterPlot>;
 }

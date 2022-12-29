@@ -5,10 +5,16 @@ import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import { Fragment, useCallback } from "react";
+import { Fragment, useCallback, useRef } from "react";
+
+type ToolTipData = {
+	x: number;
+	y: number;
+	label: string;
+};
 
 type ScatterPlotProps = {
-	data: any[];
+	data: ToolTipData[];
 };
 
 export const ScatterPlot = (props: ScatterPlotProps) => {
@@ -32,6 +38,18 @@ export const ScatterPlot = (props: ScatterPlotProps) => {
 	];
 
 	// tooltip handler
+	const {
+		showTooltip,
+		hideTooltip,
+		tooltipData,
+		tooltipOpen,
+		tooltipTop = 0,
+		tooltipLeft = 0,
+	} = useTooltip<ToolTipData>();
+
+	let tooltipTimeout = 1500;
+
+	const svgRef = useRef(null);
 
 	const margin = { top: 30, left: 60, right: 40, bottom: 40 };
 
@@ -51,8 +69,43 @@ export const ScatterPlot = (props: ScatterPlotProps) => {
 						range: [innerHeight + margin.top, margin.top],
 						nice: true,
 					});
+					const handleMouseMove = useCallback(
+						(event: any, data: any) => {
+							if (tooltipTimeout) clearTimeout(tooltipTimeout);
+							if (!svgRef.current) return;
+							const point = localPoint(svgRef.current, event);
+							if (!point) return;
+							const neighborRadius = 100;
+							const closest = localPoint(
+								(event.target as any).ownerSVGElement,
+								event,
+							);
+							if (closest) {
+								showTooltip({
+									tooltipLeft: xScale(x(closest.x)),
+									tooltipTop: yScale(y(closest.y)),
+									tooltipData: data,
+								});
+							}
+						},
+						[xScale, yScale, showTooltip, tooltipTimeout],
+					);
+					const handleMouseLeave = useCallback(() => {
+						tooltipTimeout = window.setTimeout(() => {
+							hideTooltip();
+						}, 1500);
+					}, [hideTooltip]);
 					return (
-						<svg width={width} height={HEIGHT}>
+						<svg width={width} height={HEIGHT} ref={svgRef}>
+							<rect
+								x={margin.left}
+								y={margin.top}
+								width={innerWidth}
+								height={innerHeight}
+								fill="transparent"
+								onMouseLeave={handleMouseLeave}
+								onTouchEnd={handleMouseLeave}
+							/>
 							<Group>
 								<AxisLeft
 									scale={yScale}
@@ -82,6 +135,8 @@ export const ScatterPlot = (props: ScatterPlotProps) => {
 												cx={xScale(x(d))}
 												cy={yScale(y(d))}
 												fillOpacity={0.8}
+												onMouseMove={event => handleMouseMove(event, d)}
+												onTouchMove={event => handleMouseMove(event, d)}
 												r={3}
 												fill={"#ff8906"}
 											/>
@@ -93,6 +148,28 @@ export const ScatterPlot = (props: ScatterPlotProps) => {
 					);
 				}}
 			</ParentSize>
+			{tooltipOpen &&
+				tooltipData &&
+				tooltipLeft != null &&
+				tooltipTop != null && (
+					<TooltipWithBounds left={tooltipLeft + 10} top={tooltipTop + 10}>
+						<h3>{tooltipData.label}</h3>
+						<div
+							style={{
+								display: "grid",
+								gridTemplateColumns: "1fr 1fr",
+								gridTemplateRows: "1fr",
+							}}
+						>
+							<div>stats x</div>
+							<div style={{ textAlign: "right" }}>x(tooltipData)</div>
+							<div>stats y</div>
+							<div style={{ textAlign: "right" }}>
+								{Math.round(y(tooltipData))}
+							</div>
+						</div>
+					</TooltipWithBounds>
+				)}
 		</div>
 	);
 };

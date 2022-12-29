@@ -454,9 +454,6 @@ const refreshCache = async () => {
 					pos: p.ratings.at(-1)!.pos,
 				},
 			})),
-			{
-				fast: true,
-			},
 		);
 
 		teamOvrs.push({ tid, ovr });

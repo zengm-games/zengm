@@ -17,7 +17,6 @@ const ovr = (
 		};
 	}[],
 	options: {
-		fast?: boolean;
 		playoffs?: boolean;
 		pos?: string;
 		rating?: string;
@@ -26,7 +25,6 @@ const ovr = (
 ) => {
 	return bySport({
 		baseball: ovrBaseball(players as any, {
-			fast: options.fast,
 			onlyPos: options.pos,
 			wholeRoster: options.wholeRoster,
 		}),

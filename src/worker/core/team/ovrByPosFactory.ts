@@ -26,42 +26,67 @@ const ovrByPosFactory =
 			};
 		}[],
 		{
-			fast,
 			onlyPos,
 			wholeRoster,
 		}: {
-			fast?: boolean;
 			onlyPos?: string;
 			wholeRoster?: boolean;
 		},
 	) => {
+		if (players.length === 0) {
+			return 0;
+		}
+
+		let baseballInfo:
+			| {
+					depthPitchers: number[];
+					startingPositionPlayers: number[];
+			  }
+			| undefined;
+		if (
+			bySport({
+				baseball: true,
+				basketball: false,
+				football: false,
+				hockey: false,
+			})
+		) {
+			// Use depth chart starters for position - important in baseball where subs are rare and cross position players are common
+
+			// Since this might be a hypothetical team (like in a trade evaluation), auto sort first, and then use that depth chart to assign starters
+			const depthDefense = getDepthDefense(players as any, true);
+			const depthPitchers = getDepthPitchers(players as any);
+
+			const startingPositionPlayers = depthDefense.slice(0, 9);
+
+			baseballInfo = {
+				depthPitchers,
+				startingPositionPlayers,
+			};
+		}
+
 		const playerInfo = orderBy(
 			players.map(p => {
 				let pos;
 				if (
-					// This is slower than normal, so don't use in a tight loop like in getTeamOvrDiffs
 					bySport({
-						baseball: !fast,
+						baseball: true,
 						basketball: false,
 						football: false,
 						hockey: false,
-					})
+					}) &&
+					baseballInfo
 				) {
-					// Use depth chart starters for position - important in baseball where subs are rare and cross position players are common
-
-					// Since this might be a hypothetical team (like in a trade evaluation), auto sort first, and then use that depth chart to assign starters
-					const depthDefense = getDepthDefense(players as any, true);
-					const depthPitchers = getDepthPitchers(players as any);
-
 					// First check position players
-					const startingPositionPlayers = depthDefense.slice(0, 9);
-					const index = startingPositionPlayers.indexOf(p.pid as any);
+					const index = baseballInfo.startingPositionPlayers.indexOf(
+						p.pid as any,
+					);
 					const posIndex = index + 2; // 0 is catcher
 					if (posIndex >= 2) {
 						pos = (POS_NUMBERS_INVERSE as any)[posIndex];
 					} else {
 						// Second check pitchers
-						const index = depthPitchers.indexOf(p.pid as any);
+						const index = baseballInfo.depthPitchers.indexOf(p.pid as any);
 						if (index < NUM_STARTING_PITCHERS) {
 							pos = "SP";
 						} else if (pos === "SP" || pos === "RP") {

@@ -33,10 +33,6 @@ const ovrByPosFactory =
 			wholeRoster?: boolean;
 		},
 	) => {
-		if (players.length === 0) {
-			return 0;
-		}
-
 		let baseballInfo:
 			| {
 					depthPitchers: number[];
@@ -49,7 +45,8 @@ const ovrByPosFactory =
 				basketball: false,
 				football: false,
 				hockey: false,
-			})
+			}) &&
+			players.length > 0
 		) {
 			// Use depth chart starters for position - important in baseball where subs are rare and cross position players are common
 

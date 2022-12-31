@@ -3541,6 +3541,7 @@ const updatePlayoffTeams = async (
 		seed: number | undefined;
 	}[],
 ) => {
+	console.log(teams);
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	if (playoffSeries) {
 		const { playIns, series } = playoffSeries;
@@ -3559,21 +3560,17 @@ const updatePlayoffTeams = async (
 
 		const tidsPlayoffs = new Set();
 
-		const checkMatchups = (matchups: typeof series[0], playIn?: boolean) => {
+		const checkMatchups = (matchups: typeof series[0]) => {
 			for (const matchup of matchups) {
 				const home = findTeam(matchup.home.seed, matchup.home.cid);
 				matchup.home.tid = home.tid;
 				matchup.home.cid = home.cid;
-				if (!playIn) {
-					tidsPlayoffs.add(home.tid);
-				}
-				if (matchup.away && !matchup.away.pendingPlayIn) {
+				tidsPlayoffs.add(home.tid);
+				if (matchup.away) {
 					const away = findTeam(matchup.away.seed, matchup.away.cid);
 					matchup.away.tid = away.tid;
 					matchup.away.cid = away.cid;
-					if (!playIn) {
-						tidsPlayoffs.add(away.tid);
-					}
+					tidsPlayoffs.add(away.tid);
 				}
 			}
 		};

@@ -2,7 +2,8 @@ import type { PlayerFiltered, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { useState, useEffect } from "react";
 import { Chart, registerables } from "chart.js";
-import { ScatterPlot } from "./ScatterPlot";
+import { StatGraph } from "./ScatterPlot";
+import { ParentSize } from "@visx/responsive";
 
 Chart.register(...registerables);
 
@@ -27,7 +28,9 @@ function GraphCreation(props: GraphCreationProps) {
 		});
 	const data = statsToShow;
 
-	return <ScatterPlot data={data}></ScatterPlot>;
+	return (
+		<StatGraph data={data} statX={props.statX} statY={props.statY}></StatGraph>
+	);
 }
 const PlayerStatsGraphs = ({
 	abbrev,

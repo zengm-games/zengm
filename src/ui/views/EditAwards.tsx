@@ -107,6 +107,7 @@ const EditAwards = ({
 				type == "poy" ||
 				type == "rpoy"
 			) {
+				// All these == and != undefined checks are because when exporting a league, undefined is changed to null
 				if (p?.pid == undefined) {
 					newAwards[type] = undefined;
 				} else {
@@ -127,7 +128,7 @@ const EditAwards = ({
 					const arrayPids: number[] = [];
 					for (const team of newAwards[type]) {
 						for (const element of team.players) {
-							if (element !== undefined) {
+							if (element != undefined) {
 								arrayPids.push(element.pid);
 							}
 						}
@@ -156,7 +157,7 @@ const EditAwards = ({
 					const arrayPids: number[] = [];
 					for (const team of newAwards[type]) {
 						for (const element of team.players) {
-							if (element !== undefined) {
+							if (element != undefined) {
 								arrayPids.push(element.pid);
 							}
 						}
@@ -188,7 +189,7 @@ const EditAwards = ({
 				} else {
 					const arrayPids: number[] = [];
 					for (const element of newAwards[type]) {
-						if (element !== undefined) {
+						if (element != undefined) {
 							arrayPids.push(element.pid);
 						}
 					}

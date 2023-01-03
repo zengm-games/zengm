@@ -34,7 +34,11 @@ let prevValueChangeKey: number | undefined;
 let cache: {
 	estPicks: Record<number, number | undefined>;
 	estValues: TradePickValues;
-	gp: number;
+	teamOvrs: {
+		tid: number;
+		ovr: number;
+	}[];
+	wps: number[];
 };
 
 const zscore = (value: number) =>
@@ -163,9 +167,12 @@ const getPlayers = async ({
 	}
 };
 
-const getPickNumber = (
+const getPickNumber = async (
 	dp: DraftPick,
 	season: number,
+	pidsAdd: number[],
+	pidsRemove: number[],
+	tid: number,
 	tradingPartnerTid?: number,
 ) => {
 	const numPicksPerRound = getNumPicksPerRound();
@@ -174,7 +181,14 @@ const getPickNumber = (
 	if (dp.pick > 0) {
 		estPick = dp.pick;
 	} else {
-		const temp = cache.estPicks[dp.originalTid];
+		let temp = cache.estPicks[dp.originalTid];
+		if (
+			tid != g.get("userTid") &&
+			dp.originalTid === tid &&
+			tradingPartnerTid === g.get("userTid")
+		) {
+			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
+		}
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
 		// tid rather than originalTid, because it's about what the user can control
@@ -228,29 +242,38 @@ const getPickNumber = (
 	return estPick;
 };
 
-const getPickInfo = (
+const getPickInfo = async (
 	dp: DraftPick,
-	estValues: TradePickValues,
 	rookieSalaries: any,
+	pidsAdd: number[],
+	pidsRemove: number[],
+	tid: number,
 	tradingPartnerTid?: number,
-): Asset => {
+): Promise<Asset> => {
 	const season =
 		dp.season === "fantasy" || dp.season === "expansion"
 			? g.get("season")
 			: dp.season;
 
-	const estPick = getPickNumber(dp, season, tradingPartnerTid);
+	const estPick = await getPickNumber(
+		dp,
+		season,
+		pidsAdd,
+		pidsRemove,
+		tid,
+		tradingPartnerTid,
+	);
 
 	let value;
-	const valuesTemp = estValues[season];
+	const valuesTemp = cache.estValues[season];
 	if (valuesTemp) {
 		value = valuesTemp[estPick - 1];
 	}
 	if (value === undefined) {
-		value = estValues.default[estPick - 1];
+		value = cache.estValues.default[estPick - 1];
 	}
 	if (value === undefined) {
-		value = estValues.default.at(-1);
+		value = cache.estValues.default.at(-1);
 	}
 	if (value === undefined) {
 		value = 20;
@@ -292,16 +315,20 @@ const getPickInfo = (
 const getPicks = async ({
 	add,
 	remove,
+	pidsAdd,
+	pidsRemove,
 	dpidsAdd,
 	dpidsRemove,
-	estValues,
+	tid,
 	tradingPartnerTid,
 }: {
 	add: Asset[];
 	remove: Asset[];
+	pidsAdd: number[];
+	pidsRemove: number[];
 	dpidsAdd: number[];
 	dpidsRemove: number[];
-	estValues: TradePickValues;
+	tid: number;
 	tradingPartnerTid?: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
@@ -314,10 +341,12 @@ const getPicks = async ({
 				continue;
 			}
 
-			const pickInfo = getPickInfo(
+			const pickInfo = await getPickInfo(
 				dp,
-				estValues,
 				rookieSalaries,
+				pidsAdd,
+				pidsRemove,
+				tid,
 				tradingPartnerTid,
 			);
 			add.push(pickInfo);
@@ -329,10 +358,12 @@ const getPicks = async ({
 				continue;
 			}
 
-			const pickInfo = getPickInfo(
+			const pickInfo = await getPickInfo(
 				dp,
-				estValues,
 				rookieSalaries,
+				pidsAdd,
+				pidsRemove,
+				tid,
 				tradingPartnerTid,
 			);
 			remove.push(pickInfo);
@@ -521,7 +552,8 @@ const refreshCache = async () => {
 	return {
 		estPicks,
 		estValues: await trade.getPickValues(),
-		gp,
+		teamOvrs,
+		wps: sorted,
 	};
 };
 
@@ -571,9 +603,11 @@ const valueChange = async (
 	await getPicks({
 		add,
 		remove,
+		pidsAdd,
+		pidsRemove,
 		dpidsAdd,
 		dpidsRemove,
-		estValues: cache.estValues,
+		tid,
 		tradingPartnerTid,
 	});
 
@@ -586,6 +620,67 @@ const valueChange = async (
 	// console.log("Total", valuesRemove);
 
 	return valuesAdd - valuesRemove;
+};
+
+const getModifiedPickRank = async (
+	tid: number,
+	pidsAdd: number[],
+	pidsRemove: number[],
+) => {
+	console.log("Hit!");
+	const teamSeason = await idb.cache.teamSeasons.indexGet(
+		"teamSeasonsBySeasonTid",
+		[tid, g.get("season")],
+	);
+	const teams = g.get("numActiveTeams");
+	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
+	const gp = record[0] + record[1];
+	const seasonFraction = gp / g.get("numGames");
+	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+	let playerRatings = players.map(p => ({
+		pid: p.pid,
+		value: p.value,
+		ratings: {
+			ovr: p.ratings.at(-1)!.ovr,
+			ovrs: p.ratings.at(-1)!.ovrs,
+			pos: p.ratings.at(-1)!.pos,
+		},
+	}));
+	if (pidsRemove.length != 0) {
+		playerRatings = playerRatings.filter(p => !pidsRemove.includes(p.pid));
+	}
+	if (pidsAdd.length != 0) {
+		for (const pid of pidsAdd) {
+			const p = await idb.cache.players.get(pid);
+			if (p != undefined) {
+				playerRatings.push({
+					pid: p.pid,
+					value: p.value,
+					ratings: {
+						ovr: p.ratings.at(-1)!.ovr,
+						ovrs: p.ratings.at(-1)!.ovrs,
+						pos: p.ratings.at(-1)!.pos,
+					},
+				});
+			}
+		}
+	}
+	const newTeamOvr = team.ovr(playerRatings);
+	const newTeamOvrRank =
+		newTeamOvr < cache.teamOvrs[cache.teamOvrs.length - 1].ovr
+			? cache.teamOvrs.length - 1
+			: cache.teamOvrs.findIndex(t => t.ovr < newTeamOvr);
+	const newTeamOvrWinp = 0.25 + (0.5 * (teams - 1 - newTeamOvrRank)) / teams;
+	const newWp =
+		gp === 0
+			? newTeamOvrWinp
+			: seasonFraction * (record[0] / gp) +
+			  (1 - seasonFraction) * newTeamOvrWinp;
+	const newRank =
+		newWp > cache.wps[cache.wps.length]
+			? cache.wps.length
+			: cache.wps.findIndex(wp => newWp < wp) + 1;
+	return newRank;
 };
 
 export default valueChange;

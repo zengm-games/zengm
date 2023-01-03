@@ -182,6 +182,8 @@ const getPickNumber = async (
 		estPick = dp.pick;
 	} else {
 		let temp = cache.estPicks[dp.originalTid];
+		// if trading with the user, make sure the pick is accurately judged
+		// based on what players are outgoing in the trade
 		if (
 			tid != g.get("userTid") &&
 			dp.originalTid === tid &&
@@ -627,7 +629,6 @@ const getModifiedPickRank = async (
 	pidsAdd: number[],
 	pidsRemove: number[],
 ) => {
-	console.log("Hit!");
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],

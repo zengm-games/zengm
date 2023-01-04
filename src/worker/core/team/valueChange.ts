@@ -40,6 +40,11 @@ let cache: {
 	}[];
 	wps: number[];
 };
+let cachedCalculatedPick: {
+	addAssetKey?: number;
+	tid?: number;
+	pick?: number;
+};
 
 const zscore = (value: number) =>
 	(value - local.playerOvrMean) / local.playerOvrStd;
@@ -174,6 +179,7 @@ const getPickNumber = async (
 	pidsRemove: number[],
 	tid: number,
 	tradingPartnerTid?: number,
+	addAssetKey?: number,
 ) => {
 	const numPicksPerRound = getNumPicksPerRound();
 
@@ -189,7 +195,7 @@ const getPickNumber = async (
 			dp.originalTid === tid &&
 			tradingPartnerTid === g.get("userTid")
 		) {
-			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
+			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove, addAssetKey);
 		}
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
@@ -251,6 +257,7 @@ const getPickInfo = async (
 	pidsRemove: number[],
 	tid: number,
 	tradingPartnerTid?: number,
+	addAssetKey?: number,
 ): Promise<Asset> => {
 	const season =
 		dp.season === "fantasy" || dp.season === "expansion"
@@ -264,6 +271,7 @@ const getPickInfo = async (
 		pidsRemove,
 		tid,
 		tradingPartnerTid,
+		addAssetKey,
 	);
 
 	let value;
@@ -323,6 +331,7 @@ const getPicks = async ({
 	dpidsRemove,
 	tid,
 	tradingPartnerTid,
+	addAssetKey,
 }: {
 	add: Asset[];
 	remove: Asset[];
@@ -332,6 +341,7 @@ const getPicks = async ({
 	dpidsRemove: number[];
 	tid: number;
 	tradingPartnerTid?: number;
+	addAssetKey?: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
 	if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
@@ -350,6 +360,7 @@ const getPicks = async ({
 				pidsRemove,
 				tid,
 				tradingPartnerTid,
+				addAssetKey,
 			);
 			add.push(pickInfo);
 		}
@@ -367,6 +378,7 @@ const getPicks = async ({
 				pidsRemove,
 				tid,
 				tradingPartnerTid,
+				addAssetKey,
 			);
 			remove.push(pickInfo);
 		}
@@ -568,6 +580,7 @@ const valueChange = async (
 	dpidsRemove: number[],
 	valueChangeKey: number = Math.random(),
 	tradingPartnerTid?: number,
+	addAssetKey?: number,
 ): Promise<number> => {
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
 	if (dpidsRemove.length > 2) {
@@ -611,6 +624,7 @@ const valueChange = async (
 		dpidsRemove,
 		tid,
 		tradingPartnerTid,
+		addAssetKey,
 	});
 
 	// console.log("ADD");
@@ -628,7 +642,14 @@ const getModifiedPickRank = async (
 	tid: number,
 	pidsAdd: number[],
 	pidsRemove: number[],
+	addAssetKey?: number,
 ) => {
+	if (
+		addAssetKey != undefined &&
+		addAssetKey === cachedCalculatedPick?.addAssetKey
+	) {
+		return cachedCalculatedPick.pick!;
+	}
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
@@ -681,6 +702,13 @@ const getModifiedPickRank = async (
 		newWp > cache.wps[cache.wps.length]
 			? cache.wps.length
 			: cache.wps.findIndex(wp => newWp < wp) + 1;
+	if (addAssetKey != undefined) {
+		cachedCalculatedPick = {
+			addAssetKey,
+			tid,
+			pick: newRank,
+		};
+	}
 	return newRank;
 };
 

@@ -660,18 +660,6 @@ const playerStats = (params: Params) => {
 };
 
 const playerStatsGraphs = (params: Params) => {
-	let abbrev;
-
-	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-	} else if (params.abbrev && params.abbrev === "watch") {
-		abbrev = "watch";
-	} else {
-		abbrev = "all";
-	}
-
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
@@ -682,12 +670,14 @@ const playerStatsGraphs = (params: Params) => {
 		hockey: "skater",
 	});
 
-	const season: number = validateSeason(params.season);
+	const seasonX: number = validateSeason(params.seasonX);
+	const seasonY: number = validateSeason(params.seasonY);
 
 	return {
-		abbrev,
-		season,
-		statType: params.statType ?? defaultStatType,
+		seasonX,
+		seasonY,
+		statTypeX: params.statTypeX ?? defaultStatType,
+		statTypeY: params.statTypeY ?? defaultStatType,
 		playoffs,
 	};
 };

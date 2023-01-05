@@ -25,7 +25,6 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	const HEIGHT = 400;
 
 	const x = (d: any): number => {
-		console.log(d.x);
 		return d.x;
 	};
 

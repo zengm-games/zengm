@@ -7,92 +7,105 @@ import type {
 	PlayerStatType,
 } from "../../common/types";
 
+async function getPlayerStats(
+	statTypeInput: any,
+	season: number,
+	playoffs: any,
+) {
+	let statsTable;
+	if (isSport("basketball")) {
+		statsTable = [
+			...PLAYER_STATS_TABLES.advanced.stats,
+			...PLAYER_STATS_TABLES.regular.stats,
+		];
+	} else {
+		statsTable = PLAYER_STATS_TABLES[statTypeInput].stats;
+	}
+
+	let statType: PlayerStatType;
+	if (isSport("basketball")) {
+		if (statTypeInput === "totals") {
+			statType = "totals";
+		} else if (statTypeInput === "per36") {
+			statType = "per36";
+		} else {
+			statType = "perGame";
+		}
+	} else {
+		statType = "totals";
+	}
+
+	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+	if (!statsTable) {
+		throw new Error(`Invalid statType: "${statTypeInput}"`);
+	}
+
+	let playersAll;
+
+	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+			PLAYER.FREE_AGENT,
+			Infinity,
+		]);
+	} else {
+		playersAll = await idb.getCopies.players(
+			{
+				activeSeason: typeof season === "number" ? season : undefined,
+			},
+			"noCopyCache",
+		);
+	}
+
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: ["pid", "firstName", "lastName"],
+		ratings: ["skills", "pos", "season"],
+		stats: statsTable,
+		season: typeof season === "number" ? season : undefined,
+		tid: undefined,
+		statType,
+		playoffs: playoffs === "playoffs",
+		regularSeason: playoffs !== "playoffs",
+		mergeStats: "totOnly",
+	});
+
+	const stats = statsTable;
+	return { players, stats };
+}
+
 const updatePlayers = async (
 	inputs: ViewInput<"playerStatsGraphs">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.get("season") &&
+		(inputs.seasonX === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
-		inputs.abbrev !== state.abbrev ||
-		inputs.season !== state.season ||
-		inputs.statType !== state.statType ||
+		inputs.seasonX !== state.seasonX ||
+		inputs.statTypeX !== state.statType ||
 		inputs.playoffs !== state.playoffs
 	) {
-		let statsTable;
-
-		if (isSport("basketball")) {
-			if (inputs.statType === "advanced") {
-				statsTable = PLAYER_STATS_TABLES.advanced;
-			} else if (inputs.statType === "shotLocations") {
-				statsTable = PLAYER_STATS_TABLES.shotLocations;
-			} else if (inputs.statType === "gameHighs") {
-				statsTable = PLAYER_STATS_TABLES.gameHighs;
-			} else {
-				statsTable = PLAYER_STATS_TABLES.regular;
-			}
-		} else {
-			statsTable = PLAYER_STATS_TABLES[inputs.statType];
-		}
-
-		let statType: PlayerStatType;
-		if (isSport("basketball")) {
-			if (inputs.statType === "totals") {
-				statType = "totals";
-			} else if (inputs.statType === "per36") {
-				statType = "per36";
-			} else {
-				statType = "perGame";
-			}
-		} else {
-			statType = "totals";
-		}
-
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-		if (!statsTable) {
-			throw new Error(`Invalid statType: "${inputs.statType}"`);
-		}
-
-		let playersAll;
-
-		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
-		} else {
-			playersAll = await idb.getCopies.players(
-				{
-					activeSeason:
-						typeof inputs.season === "number" ? inputs.season : undefined,
-				},
-				"noCopyCache",
-			);
-		}
-
-		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "firstName", "lastName"],
-			ratings: ["skills", "pos", "season"],
-			stats: statsTable.stats,
-			season: typeof inputs.season === "number" ? inputs.season : undefined,
-			tid: undefined,
-			statType,
-			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs !== "playoffs",
-			mergeStats: "totOnly",
-		});
-
-		const stats = statsTable.stats;
+		let statForXAxis = await getPlayerStats(
+			inputs.statTypeX,
+			inputs.seasonX,
+			inputs.playoffs,
+		);
+		let statForYAxis = await getPlayerStats(
+			inputs.statTypeY,
+			inputs.seasonY,
+			inputs.playoffs,
+		);
 
 		return {
-			abbrev: inputs.abbrev,
-			season: inputs.season,
-			statType: inputs.statType,
+			seasonX: inputs.seasonX,
+			seasonY: inputs.seasonY,
+			statTypeX: inputs.statTypeX,
+			statTypeY: inputs.statTypeY,
 			playoffs: inputs.playoffs,
-			players: players,
-			stats,
+			playersX: statForXAxis.players,
+			playersY: statForYAxis.players,
+			statsX: statForXAxis.stats,
+			statsY: statForYAxis.stats,
 		};
 	}
 };

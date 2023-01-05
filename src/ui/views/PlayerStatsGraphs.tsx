@@ -1,61 +1,106 @@
 import type { PlayerFiltered, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Chart, registerables } from "chart.js";
 import { StatGraph } from "./ScatterPlot";
-import { ParentSize } from "@visx/responsive";
+import useDropdownOptions from "../hooks/useDropdownOptions";
+import realtimeUpdate from "../util/realtimeUpdate";
+import { helpers } from "../util";
 
 Chart.register(...registerables);
 
 type GraphCreationProps = {
-	stats: any;
+	statsX: any;
+	statsY: any;
 	statX: string;
 	statY: string;
 	minGames: number;
 };
 
 function GraphCreation(props: GraphCreationProps) {
-	const statsToShow = props.stats
-		.filter((player: PlayerFiltered) => {
-			return player.stats["gp"] > props.minGames;
-		})
-		.map((player: PlayerFiltered) => {
-			return {
+	const playersYMappedByPid = props.statsY.reduce(function (
+		map: any,
+		obj: any,
+	) {
+		map[obj.pid] = obj;
+		return map;
+	},
+	{});
+	const statsToShowX = props.statsX.reduce(
+		(plotData: any[], player: PlayerFiltered) => {
+			if (player.stats["gp"] <= props.minGames) {
+				return plotData;
+			}
+			const playerY = playersYMappedByPid[player.pid] ?? null;
+			if (!playerY || playerY.stats["gp"] < props.minGames) {
+				return plotData;
+			}
+			plotData.push({
 				x: player.stats[props.statX],
-				y: player.stats[props.statY],
+				y: playerY.stats[props.statY],
 				label: player.firstName + " " + player.lastName,
-			};
-		});
-	const data = statsToShow;
+			});
+			return plotData;
+		},
+		[],
+	);
+	const data = statsToShowX;
 
 	return (
 		<StatGraph data={data} statX={props.statX} statY={props.statY}></StatGraph>
 	);
 }
 const PlayerStatsGraphs = ({
-	abbrev,
 	playoffs,
-	season,
-	statType,
-	players,
-	stats,
+	seasonX,
+	seasonY,
+	statTypeX,
+	statTypeY,
+	playersX,
+	playersY,
+	statsX,
+	statsY,
 }: View<"playerStatsGraphs">) => {
 	useTitleBar({
 		title: "Player Stats Graphics",
 		jumpTo: true,
-		jumpToSeason: season,
 		dropdownView: "player_stats_graphs",
 		dropdownFields: {
-			teamsAndAllWatch: abbrev,
-			seasons: season,
-			statTypesAdvNotCareer: statType,
 			playoffs,
 		},
 	});
 
-	const [statToChartX, setStatToChartX] = useState(() => stats[0]);
-	const [statToChartY, setStatToChartY] = useState(() => stats[1]);
+	const firstUpdate = useRef(true);
+
+	const seasons = useDropdownOptions("seasons").map(x => x.value);
+	const statTypes = useDropdownOptions("statTypesAdvNotCareer").map(x => x.key);
+
+	const [statToChartX, setStatToChartX] = useState(() => statsX[0]);
+	const [statToChartY, setStatToChartY] = useState(() => statsY[1]);
 	const [minimumGames, setMinimumGames] = useState(() => 0);
+	const [seasonXState, setSeasonX] = useState(() => seasons[0]);
+	const [seasonYState, setSeasonY] = useState(() => seasons[0]);
+	const [statTypeXState, setStatTypeX] = useState(() => statTypes[0]);
+	const [statTypeYState, setStatTypeY] = useState(() => statTypes[0]);
+
+	useLayoutEffect(() => {
+		if (firstUpdate.current) {
+			firstUpdate.current = false;
+			return;
+		}
+		firstUpdate.current = true;
+		realtimeUpdate(
+			[],
+			helpers.leagueUrl([
+				"player_stats_graphs",
+				seasonXState.toString(),
+				seasonYState.toString(),
+				statTypeXState,
+				statTypeYState,
+				playoffs,
+			]),
+		);
+	});
 
 	const handleMinGamesChange = (games: string) => {
 		const minGamesParsed: number = parseInt(games);
@@ -66,25 +111,65 @@ const PlayerStatsGraphs = ({
 		<div>
 			<div className="row">
 				<div className="col-sm-3 mb-3">
-					<label className="form-label">X axis</label>
+					<label className="form-label">X axis stat</label>
 					<select
 						className="form-select"
 						value={statToChartX}
 						onChange={event => setStatToChartX(event.target.value)}
 					>
-						{stats.map((x: string) => {
+						{statsX.map((x: string) => {
+							return <option>{x}</option>;
+						})}
+					</select>
+					<label className="form-label">X axis stat type</label>
+					<select
+						className="form-select"
+						value={statTypeXState.toString()}
+						onChange={event => setStatTypeX(event.target.value)}
+					>
+						{statTypes.map((x: any) => {
+							return <option>{x}</option>;
+						})}
+					</select>
+					<label className="form-label">X axis year</label>
+					<select
+						className="form-select"
+						value={seasonXState.toString()}
+						onChange={event => setSeasonX(event.target.value)}
+					>
+						{seasons.map((x: any) => {
 							return <option>{x}</option>;
 						})}
 					</select>
 				</div>
 				<div className="col-sm-3 mb-3">
-					<label className="form-label">Y axis</label>
+					<label className="form-label">Y axis stat</label>
 					<select
 						className="form-select"
 						value={statToChartY}
 						onChange={event => setStatToChartY(event.target.value)}
 					>
-						{stats.map((x: string) => {
+						{statsY.map((x: string) => {
+							return <option>{x}</option>;
+						})}
+					</select>
+					<label className="form-label">Y axis stat type</label>
+					<select
+						className="form-select"
+						value={statTypeYState.toString()}
+						onChange={event => setStatTypeY(event.target.value)}
+					>
+						{statTypes.map((x: any) => {
+							return <option>{x}</option>;
+						})}
+					</select>
+					<label className="form-label">Y axis year</label>
+					<select
+						className="form-select"
+						value={seasonYState.toString()}
+						onChange={event => setSeasonY(event.target.value)}
+					>
+						{seasons.map((x: any) => {
 							return <option>{x}</option>;
 						})}
 					</select>
@@ -103,7 +188,8 @@ const PlayerStatsGraphs = ({
 			</div>
 			<div>
 				<GraphCreation
-					stats={players}
+					statsX={playersX}
+					statsY={playersY}
 					statX={statToChartX}
 					statY={statToChartY}
 					minGames={minimumGames}

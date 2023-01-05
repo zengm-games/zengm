@@ -1,4 +1,10 @@
-import { isSport, PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import {
+	isSport,
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+	RATINGS,
+} from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -22,6 +28,7 @@ async function getPlayerStats(
 		statsTable = PLAYER_STATS_TABLES[statTypeInput].stats;
 	}
 
+	const ratings = [...RATINGS, "ovr", "pot"];
 	let statType: PlayerStatType;
 	if (isSport("basketball")) {
 		if (statTypeInput === "totals") {
@@ -57,8 +64,13 @@ async function getPlayerStats(
 	}
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["pid", "firstName", "lastName"],
-		ratings: ["skills", "pos", "season"],
+		attrs: [
+			"pid",
+			"firstName",
+			"lastName",
+			...(statTypeInput == "contract" ? ["contract"] : []),
+		],
+		ratings: ratings,
 		stats: statsTable,
 		season: typeof season === "number" ? season : undefined,
 		tid: undefined,
@@ -67,8 +79,14 @@ async function getPlayerStats(
 		regularSeason: playoffs !== "playoffs",
 		mergeStats: "totOnly",
 	});
-
-	const stats = statsTable;
+	let stats;
+	if (statTypeInput === "ratings") {
+		stats = ratings;
+	} else if (statTypeInput == "contract") {
+		stats = ["amount", "exp"];
+	} else {
+		stats = statsTable;
+	}
 	return { players, stats };
 }
 
@@ -82,7 +100,8 @@ const updatePlayers = async (
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		inputs.seasonX !== state.seasonX ||
-		inputs.statTypeX !== state.statType ||
+		inputs.statTypeX !== state.statTypeX ||
+		inputs.statTypeY !== state.statTypeY ||
 		inputs.playoffs !== state.playoffs
 	) {
 		let statForXAxis = await getPlayerStats(

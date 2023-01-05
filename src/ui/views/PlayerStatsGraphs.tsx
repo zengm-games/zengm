@@ -7,13 +7,25 @@ import useDropdownOptions from "../hooks/useDropdownOptions";
 import realtimeUpdate from "../util/realtimeUpdate";
 import { helpers } from "../util";
 
-Chart.register(...registerables);
+function getStatFromPlayer(player: any, stat: string, statType: string) {
+	if (statType == "ratings") {
+		return player.ratings[stat];
+	} else if (statType == "contract") {
+		if (player["contract"]) {
+			return player.contract[stat] ?? 0.0;
+		}
+		return 0.0;
+	}
+	return player.stats[stat];
+}
 
 type GraphCreationProps = {
 	statsX: any;
 	statsY: any;
 	statX: string;
 	statY: string;
+	statTypeX: string;
+	statTypeY: string;
 	minGames: number;
 };
 
@@ -36,9 +48,10 @@ function GraphCreation(props: GraphCreationProps) {
 				return plotData;
 			}
 			plotData.push({
-				x: player.stats[props.statX],
-				y: playerY.stats[props.statY],
+				x: getStatFromPlayer(player, props.statX, props.statTypeX),
+				y: getStatFromPlayer(playerY, props.statY, props.statTypeY),
 				label: player.firstName + " " + player.lastName,
+				link: helpers.leagueUrl(["player", player.pid]),
 			});
 			return plotData;
 		},
@@ -73,7 +86,11 @@ const PlayerStatsGraphs = ({
 	const firstUpdate = useRef(true);
 
 	const seasons = useDropdownOptions("seasons").map(x => x.value);
-	const statTypes = useDropdownOptions("statTypesAdvNotCareer").map(x => x.key);
+	const statTypes = [
+		...useDropdownOptions("statTypes").map(x => x.key),
+		"ratings",
+		"contract",
+	];
 
 	const [statToChartX, setStatToChartX] = useState(() => statsX[0]);
 	const [statToChartY, setStatToChartY] = useState(() => statsY[1]);
@@ -89,6 +106,7 @@ const PlayerStatsGraphs = ({
 			return;
 		}
 		firstUpdate.current = true;
+		console.log("update");
 		realtimeUpdate(
 			[],
 			helpers.leagueUrl([
@@ -192,6 +210,8 @@ const PlayerStatsGraphs = ({
 					statsY={playersY}
 					statX={statToChartX}
 					statY={statToChartY}
+					statTypeX={statTypeXState.toString()}
+					statTypeY={statTypeYState.toString()}
 					minGames={minimumGames}
 				/>
 			</div>

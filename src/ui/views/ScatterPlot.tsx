@@ -6,6 +6,7 @@ import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { Fragment, useCallback, useRef } from "react";
+import realtimeUpdate from "../util/realtimeUpdate";
 
 type ToolTipData = {
 	x: number;
@@ -90,6 +91,7 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 			hideTooltip();
 		}, 1500);
 	}, [hideTooltip]);
+
 	return (
 		<div>
 			<svg width={width} height={HEIGHT} ref={svgRef}>
@@ -122,16 +124,18 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 					{props.data.map((d: any, i: number) => {
 						return (
 							<Fragment key={i}>
-								<Circle
-									key={i}
-									cx={xScale(x(d))}
-									cy={yScale(y(d))}
-									fillOpacity={0.8}
-									onMouseMove={event => handleMouseMove(event, d)}
-									onTouchMove={event => handleMouseMove(event, d)}
-									r={3}
-									fill={"#ff8906"}
-								/>
+								<a href={d.link}>
+									<Circle
+										key={i}
+										cx={xScale(x(d))}
+										cy={yScale(y(d))}
+										fillOpacity={0.8}
+										onMouseMove={event => handleMouseMove(event, d)}
+										onTouchMove={event => handleMouseMove(event, d)}
+										r={3}
+										fill={"#ff8906"}
+									/>
+								</a>
 							</Fragment>
 						);
 					})}

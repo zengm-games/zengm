@@ -117,7 +117,6 @@ const tryAddAsset = async (
 		return;
 	}
 
-	const addAssetKey = Math.random();
 	// Calculate the value for each asset added to the trade, for use in forward selection
 	for (const asset of assets) {
 		const userPids = teams[0].pids.slice();
@@ -145,7 +144,6 @@ const tryAddAsset = async (
 			otherDpids,
 			valueChangeKey,
 			teams[0].tid,
-			asset.type === "draftPick" ? addAssetKey : undefined,
 		);
 	}
 	assets.sort((a, b) => b.dv - a.dv); // Find the asset that will push the trade value the smallest amount above 0

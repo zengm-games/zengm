@@ -1,6 +1,6 @@
 import type { PlayerFiltered, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { StatGraph } from "./ScatterPlot";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import realtimeUpdate from "../util/realtimeUpdate";

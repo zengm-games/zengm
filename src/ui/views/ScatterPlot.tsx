@@ -25,18 +25,18 @@ const calculateBestFitLine = (
 	xValues: number[],
 	yValues: number[],
 ): [number, number] => {
-	var sum_x = 0;
-	var sum_y = 0;
-	var sum_xy = 0;
-	var sum_xx = 0;
-	var count = 0;
+	let sum_x = 0;
+	let sum_y = 0;
+	let sum_xy = 0;
+	let sum_xx = 0;
+	let count = 0;
 
 	/*
 	 * We'll use those variables for faster read/write access.
 	 */
-	var x = 0;
-	var y = 0;
-	var values_length = xValues.length;
+	let x = 0;
+	let y = 0;
+	const values_length = xValues.length;
 
 	if (values_length != yValues.length) {
 		throw new Error(
@@ -54,7 +54,7 @@ const calculateBestFitLine = (
 	/*
 	 * Calculate the sum for each of the parts necessary.
 	 */
-	for (var v = 0; v < values_length; v++) {
+	for (let v = 0; v < values_length; v++) {
 		x = xValues[v];
 		y = yValues[v];
 		sum_x += x;
@@ -68,8 +68,8 @@ const calculateBestFitLine = (
 	 * Calculate m and b for the formular:
 	 * y = x * m + b
 	 */
-	var m = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
-	var b = sum_y / count - (m * sum_x) / count;
+	const m = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
+	const b = sum_y / count - (m * sum_x) / count;
 	return [m, b];
 };
 const ScatterPlot = (props: ScatterPlotProps) => {

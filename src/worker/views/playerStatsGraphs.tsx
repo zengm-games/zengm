@@ -111,12 +111,12 @@ const updatePlayers = async (
 		inputs.playoffsX !== state.playoffsX ||
 		inputs.playoffsY !== state.playoffsY
 	) {
-		let statForXAxis = await getPlayerStats(
+		const statForXAxis = await getPlayerStats(
 			inputs.statTypeX,
 			inputs.seasonX,
 			inputs.playoffsX,
 		);
-		let statForYAxis = await getPlayerStats(
+		const statForYAxis = await getPlayerStats(
 			inputs.statTypeY,
 			inputs.seasonY,
 			inputs.playoffsY,

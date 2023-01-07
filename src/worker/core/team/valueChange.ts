@@ -678,7 +678,7 @@ const getModifiedPickRank = async (
 			: seasonFraction * (record[0] / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
 	const newRank =
-		newWp > cache.wps[cache.wps.length]
+		newWp > cache.wps[cache.wps.length - 1]
 			? cache.wps.length
 			: cache.wps.findIndex(wp => newWp < wp) + 1;
 	return newRank;

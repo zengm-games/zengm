@@ -6,7 +6,6 @@ import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { Fragment, useCallback, useRef } from "react";
-import realtimeUpdate from "../util/realtimeUpdate";
 
 type ToolTipData = {
 	x: number;

@@ -634,8 +634,7 @@ const getModifiedPickRank = async (
 		[tid, g.get("season")],
 	);
 	const teams = g.get("numActiveTeams");
-	const record = teamSeason ? [teamSeason.won, teamSeason.lost] : [0, 0];
-	const gp = record[0] + record[1];
+	const gp = teamSeason?.gp ?? 0;
 	const seasonFraction = gp / g.get("numGames");
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	let playerRatings = players.map(p => ({
@@ -675,7 +674,7 @@ const getModifiedPickRank = async (
 	const newWp =
 		gp === 0
 			? newTeamOvrWinp
-			: seasonFraction * (record[0] / gp) +
+			: seasonFraction * ((teamSeason?.won ?? 0) / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
 	const newRank =
 		newWp > cache.wps[cache.wps.length - 1]

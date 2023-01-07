@@ -1,7 +1,6 @@
 import type { PlayerFiltered, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { Chart, registerables } from "chart.js";
 import { StatGraph } from "./ScatterPlot";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import realtimeUpdate from "../util/realtimeUpdate";
@@ -15,6 +14,10 @@ function getStatFromPlayer(player: any, stat: string, statType: string) {
 			return player.contract[stat] ?? 0.0;
 		}
 		return 0.0;
+	}
+	if (statType == "gameHighs") {
+		stat = player.stats[stat];
+		return Array.isArray(stat) ? stat[0] : stat;
 	}
 	return player.stats[stat];
 }
@@ -64,7 +67,8 @@ function GraphCreation(props: GraphCreationProps) {
 	);
 }
 const PlayerStatsGraphs = ({
-	playoffs,
+	playoffsX,
+	playoffsY,
 	seasonX,
 	seasonY,
 	statTypeX,
@@ -78,19 +82,17 @@ const PlayerStatsGraphs = ({
 		title: "Player Stats Graphics",
 		jumpTo: true,
 		dropdownView: "player_stats_graphs",
-		dropdownFields: {
-			playoffs,
-		},
 	});
 
 	const firstUpdate = useRef(true);
 
 	const seasons = useDropdownOptions("seasons").map(x => x.value);
 	const statTypes = [
-		...useDropdownOptions("statTypes").map(x => x.key),
+		...useDropdownOptions("statTypesAdv").map(x => x.key),
 		"ratings",
 		"contract",
 	];
+	const playoffs = useDropdownOptions("playoffs").map(x => x.key);
 
 	const initialStatXState = {
 		prevStat: statsX[0],
@@ -110,6 +112,8 @@ const PlayerStatsGraphs = ({
 	const [minimumGames, setMinimumGames] = useState(() => 0);
 	const [seasonXState, setSeasonX] = useState(() => seasonX);
 	const [seasonYState, setSeasonY] = useState(() => seasonY);
+	const [playoffsXState, setPlayoffsX] = useState(() => playoffsX);
+	const [playoffsYState, setPlayoffsY] = useState(() => playoffsY);
 
 	useLayoutEffect(() => {
 		if (firstUpdate.current) {
@@ -126,7 +130,8 @@ const PlayerStatsGraphs = ({
 				seasonYState.toString(),
 				statToChartX.statType,
 				statToChartY.statType,
-				playoffs,
+				playoffsXState,
+				playoffsYState,
 			]),
 		);
 	});
@@ -199,6 +204,16 @@ const PlayerStatsGraphs = ({
 							return <option>{x}</option>;
 						})}
 					</select>
+					<label className="form-label">Playoffs</label>
+					<select
+						className="form-select"
+						value={playoffsXState.toString()}
+						onChange={event => setPlayoffsX(event.target.value)}
+					>
+						{playoffs.map((x: any) => {
+							return <option>{x}</option>;
+						})}
+					</select>
 				</div>
 				<div className="col-sm-3 mb-3">
 					<label className="form-label">Y axis stat</label>
@@ -240,6 +255,16 @@ const PlayerStatsGraphs = ({
 						onChange={event => setSeasonY(Number(event.target.value))}
 					>
 						{seasons.map((x: any) => {
+							return <option>{x}</option>;
+						})}
+					</select>
+					<label className="form-label">Playoffs</label>
+					<select
+						className="form-select"
+						value={playoffsYState.toString()}
+						onChange={event => setPlayoffsY(event.target.value)}
+					>
+						{playoffs.map((x: any) => {
 							return <option>{x}</option>;
 						})}
 					</select>

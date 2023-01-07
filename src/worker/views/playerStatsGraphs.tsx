@@ -20,12 +20,17 @@ async function getPlayerStats(
 ) {
 	let statsTable;
 	if (isSport("basketball")) {
-		statsTable = [
-			...PLAYER_STATS_TABLES.advanced.stats,
-			...PLAYER_STATS_TABLES.regular.stats,
-		];
+		if (statTypeInput === "advanced") {
+			statsTable = PLAYER_STATS_TABLES.advanced;
+		} else if (statTypeInput === "shotLocations") {
+			statsTable = PLAYER_STATS_TABLES.shotLocations;
+		} else if (statTypeInput === "gameHighs") {
+			statsTable = PLAYER_STATS_TABLES.gameHighs;
+		} else {
+			statsTable = PLAYER_STATS_TABLES.regular;
+		}
 	} else {
-		statsTable = PLAYER_STATS_TABLES[statTypeInput].stats;
+		statsTable = PLAYER_STATS_TABLES[statTypeInput];
 	}
 
 	const ratings = [...RATINGS, "ovr", "pot"];
@@ -62,6 +67,7 @@ async function getPlayerStats(
 			"noCopyCache",
 		);
 	}
+	console.log(playoffs === "playoffs");
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -71,7 +77,7 @@ async function getPlayerStats(
 			...(statTypeInput == "contract" ? ["contract"] : []),
 		],
 		ratings: ratings,
-		stats: statsTable,
+		stats: statsTable.stats,
 		season: typeof season === "number" ? season : undefined,
 		tid: undefined,
 		statType,
@@ -85,7 +91,7 @@ async function getPlayerStats(
 	} else if (statTypeInput == "contract") {
 		stats = ["amount", "exp"];
 	} else {
-		stats = statsTable;
+		stats = statsTable.stats;
 	}
 	return { players, stats };
 }
@@ -102,17 +108,18 @@ const updatePlayers = async (
 		inputs.seasonX !== state.seasonX ||
 		inputs.statTypeX !== state.statTypeX ||
 		inputs.statTypeY !== state.statTypeY ||
-		inputs.playoffs !== state.playoffs
+		inputs.playoffsX !== state.playoffsX ||
+		inputs.playoffsY !== state.playoffsY
 	) {
 		let statForXAxis = await getPlayerStats(
 			inputs.statTypeX,
 			inputs.seasonX,
-			inputs.playoffs,
+			inputs.playoffsX,
 		);
 		let statForYAxis = await getPlayerStats(
 			inputs.statTypeY,
 			inputs.seasonY,
-			inputs.playoffs,
+			inputs.playoffsY,
 		);
 
 		return {
@@ -120,7 +127,8 @@ const updatePlayers = async (
 			seasonY: inputs.seasonY,
 			statTypeX: inputs.statTypeX,
 			statTypeY: inputs.statTypeY,
-			playoffs: inputs.playoffs,
+			playoffsX: inputs.playoffsX,
+			playoffsY: inputs.playoffsY,
 			playersX: statForXAxis.players,
 			playersY: statForYAxis.players,
 			statsX: statForXAxis.stats,

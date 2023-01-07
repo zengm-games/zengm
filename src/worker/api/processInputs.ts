@@ -660,8 +660,10 @@ const playerStats = (params: Params) => {
 };
 
 const playerStatsGraphs = (params: Params) => {
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+	const playoffsX =
+		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
+	const playoffsY =
+		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
 
 	const defaultStatType = bySport({
 		baseball: "batting",
@@ -678,7 +680,8 @@ const playerStatsGraphs = (params: Params) => {
 		seasonY,
 		statTypeX: params.statTypeX ?? defaultStatType,
 		statTypeY: params.statTypeY ?? defaultStatType,
-		playoffs,
+		playoffsX,
+		playoffsY,
 	};
 };
 

@@ -83,8 +83,6 @@ const PlayerStatsGraphs = ({
 		},
 	});
 
-	console.log(seasonX, seasonY, statTypeX, statTypeY);
-
 	const firstUpdate = useRef(true);
 
 	const seasons = useDropdownOptions("seasons").map(x => x.value);
@@ -94,52 +92,61 @@ const PlayerStatsGraphs = ({
 		"contract",
 	];
 
-	const [statToChartX, setStatToChartX] = useState(() => statsX[0]);
-	const [statToChartY, setStatToChartY] = useState(() => statsY[1]);
+	const initialStatXState = {
+		prevStat: statsX[0],
+		stat: statsX[0],
+		prevStatType: statTypeX,
+		statType: statTypeX,
+	};
+	const initialStatYState = {
+		prevStat: statsY[0],
+		stat: statsY[0],
+		prevStatType: statTypeY,
+		statType: statTypeY,
+	};
+
+	const [statToChartX, setStatToChartX] = useState(() => initialStatXState);
+	const [statToChartY, setStatToChartY] = useState(() => initialStatYState);
 	const [minimumGames, setMinimumGames] = useState(() => 0);
 	const [seasonXState, setSeasonX] = useState(() => seasonX);
 	const [seasonYState, setSeasonY] = useState(() => seasonY);
-	const initialStateTypeXState = {
-		prevState: statTypeX,
-		newState: statTypeX,
-	};
-	const initialStateTypeYState = {
-		prevState: statTypeY,
-		newState: statTypeY,
-	};
-	const [statTypeXState, setStatTypeX] = useState(() => initialStateTypeXState);
-	const [statTypeYState, setStatTypeY] = useState(() => initialStateTypeYState);
 
 	useLayoutEffect(() => {
 		if (firstUpdate.current) {
+			updateStatsIfStatTypeChange();
 			firstUpdate.current = false;
 			return;
 		}
 		firstUpdate.current = true;
-		console.log("update");
 		realtimeUpdate(
 			[],
 			helpers.leagueUrl([
 				"player_stats_graphs",
 				seasonXState.toString(),
 				seasonYState.toString(),
-				statTypeXState.newState,
-				statTypeYState.newState,
+				statToChartX.statType,
+				statToChartY.statType,
 				playoffs,
 			]),
 		);
 	});
 
-	useEffect(() => {
-		if (statTypeXState.prevState != statTypeXState.newState) {
-			console.log("wow");
-			setStatToChartX(statsX[0]);
+	function updateStatsIfStatTypeChange() {
+		if (statToChartX.prevStatType != statToChartX.statType) {
+			setStatToChartX({
+				...statToChartX,
+				stat: statsX[0],
+				prevStatType: statToChartX.statType,
+			});
 		}
-		if (statTypeYState.prevState != statTypeYState.newState) {
-			console.log("wow" + statTypeYState.newState);
-			setStatToChartY(statsY[0]);
+		if (statToChartY.prevStatType != statToChartY.statType) {
+			setStatToChartY({
+				...statToChartY,
+				stat: statsY[0],
+				prevStatType: statToChartY.statType,
+			});
 		}
-	});
+	}
 
 	const handleMinGamesChange = (games: string) => {
 		const minGamesParsed: number = parseInt(games);
@@ -148,14 +155,19 @@ const PlayerStatsGraphs = ({
 
 	return (
 		<div>
-			{statToChartY}
 			<div className="row">
 				<div className="col-sm-3 mb-3">
 					<label className="form-label">X axis stat</label>
 					<select
 						className="form-select"
-						value={statToChartX}
-						onChange={event => setStatToChartX(event.target.value)}
+						value={statToChartX.stat}
+						onChange={event =>
+							setStatToChartX({
+								...statToChartX,
+								prevStat: statToChartX.stat,
+								stat: event.target.value,
+							})
+						}
 					>
 						{statsX.map((x: string) => {
 							return <option>{x}</option>;
@@ -164,11 +176,12 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">X axis stat type</label>
 					<select
 						className="form-select"
-						value={statTypeXState.newState.toString()}
+						value={statToChartX.statType.toString()}
 						onChange={event =>
-							setStatTypeX({
-								prevState: statTypeXState.newState,
-								newState: event.target.value,
+							setStatToChartX({
+								...statToChartX,
+								prevStatType: statToChartX.statType,
+								statType: event.target.value,
 							})
 						}
 					>
@@ -191,8 +204,14 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis stat</label>
 					<select
 						className="form-select"
-						value={statToChartY}
-						onChange={event => setStatToChartY(event.target.value)}
+						value={statToChartY.stat}
+						onChange={event =>
+							setStatToChartY({
+								...statToChartY,
+								prevStat: statToChartY.stat,
+								stat: event.target.value,
+							})
+						}
 					>
 						{statsY.map((x: string) => {
 							return <option>{x}</option>;
@@ -201,11 +220,12 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis stat type</label>
 					<select
 						className="form-select"
-						value={statTypeYState.newState.toString()}
+						value={statToChartY.statType.toString()}
 						onChange={event =>
-							setStatTypeY({
-								prevState: statTypeYState.newState,
-								newState: event.target.value,
+							setStatToChartY({
+								...statToChartY,
+								prevStatType: statToChartY.statType,
+								statType: event.target.value,
 							})
 						}
 					>
@@ -240,10 +260,10 @@ const PlayerStatsGraphs = ({
 				<GraphCreation
 					statsX={playersX}
 					statsY={playersY}
-					statX={statToChartX}
-					statY={statToChartY}
-					statTypeX={statTypeXState.newState.toString()}
-					statTypeY={statTypeYState.newState.toString()}
+					statX={statToChartX.stat}
+					statY={statToChartY.stat}
+					statTypeX={statToChartX.statType.toString()}
+					statTypeY={statToChartY.statType.toString()}
 					minGames={minimumGames}
 				/>
 			</div>

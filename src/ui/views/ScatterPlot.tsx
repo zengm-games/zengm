@@ -29,7 +29,6 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	};
 
 	const y = (d: any): number => d.y;
-	const scale = scaleLinear({ range: [0, 1000] });
 	const xDomain = [
 		Math.min(...props.data.map(x)),
 		Math.max(...props.data.map(x)),
@@ -46,7 +45,7 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 		hideTooltip,
 		tooltipData,
 		tooltipOpen,
-		tooltipTop = 0,
+		tooltipTop = props.height,
 		tooltipLeft = 0,
 	} = useTooltip<ToolTipData>();
 
@@ -71,9 +70,6 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 		(event: any, data: any) => {
 			if (tooltipTimeout) clearTimeout(tooltipTimeout);
 			if (!svgRef.current) return;
-			const point = localPoint(svgRef.current, event);
-			if (!point) return;
-			const neighborRadius = 100;
 			const closest = localPoint((event.target as any).ownerSVGElement, event);
 			if (closest) {
 				showTooltip({
@@ -144,7 +140,7 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 				tooltipData &&
 				tooltipLeft != null &&
 				tooltipTop != null && (
-					<TooltipWithBounds left={tooltipLeft + 10} top={tooltipTop + 150}>
+					<TooltipWithBounds left={tooltipLeft + margin.left} top={tooltipTop}>
 						<h3>{tooltipData.label}</h3>
 						<div
 							style={{
@@ -156,9 +152,7 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 							<div>{props.statX ?? "X"}</div>
 							<div style={{ textAlign: "right" }}>{x(tooltipData)}</div>
 							<div>{props.statY ?? "X"}</div>
-							<div style={{ textAlign: "right" }}>
-								{Math.round(y(tooltipData))}
-							</div>
+							<div style={{ textAlign: "right" }}>{y(tooltipData)}</div>
 						</div>
 					</TooltipWithBounds>
 				)}

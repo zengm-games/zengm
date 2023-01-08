@@ -636,8 +636,16 @@ const getModifiedPickRank = async (
 	const teams = g.get("numActiveTeams");
 	const gp = teamSeason?.gp ?? 0;
 	const seasonFraction = gp / g.get("numGames");
+
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	let playerRatings = players.map(p => ({
+	const playersAfterTrade = players.filter(p => !pidsRemove.includes(p.pid));
+	for (const pid of pidsAdd) {
+		const p = await idb.cache.players.get(pid);
+		if (p) {
+			playersAfterTrade.push(p);
+		}
+	}
+	const playerRatings = playersAfterTrade.map(p => ({
 		pid: p.pid,
 		value: p.value,
 		ratings: {
@@ -646,25 +654,7 @@ const getModifiedPickRank = async (
 			pos: p.ratings.at(-1)!.pos,
 		},
 	}));
-	if (pidsRemove.length != 0) {
-		playerRatings = playerRatings.filter(p => !pidsRemove.includes(p.pid));
-	}
-	if (pidsAdd.length != 0) {
-		for (const pid of pidsAdd) {
-			const p = await idb.cache.players.get(pid);
-			if (p != undefined) {
-				playerRatings.push({
-					pid: p.pid,
-					value: p.value,
-					ratings: {
-						ovr: p.ratings.at(-1)!.ovr,
-						ovrs: p.ratings.at(-1)!.ovrs,
-						pos: p.ratings.at(-1)!.pos,
-					},
-				});
-			}
-		}
-	}
+
 	const newTeamOvr = team.ovr(playerRatings);
 	const newTeamOvrRank =
 		newTeamOvr < cache.teamOvrs[cache.teamOvrs.length - 1].ovr

@@ -633,7 +633,7 @@ const getModifiedPickRank = async (
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
 	);
-	const teams = g.get("numActiveTeams");
+	const numActiveTeams = g.get("numActiveTeams");
 	const gp = teamSeason?.gp ?? 0;
 	const seasonFraction = gp / g.get("numGames");
 
@@ -656,11 +656,12 @@ const getModifiedPickRank = async (
 	}));
 
 	const newTeamOvr = team.ovr(playerRatings);
-	const newTeamOvrRank =
+	const newTeamOvrIndex =
 		newTeamOvr < cache.teamOvrs[cache.teamOvrs.length - 1].ovr
 			? cache.teamOvrs.length - 1
 			: cache.teamOvrs.findIndex(t => t.ovr < newTeamOvr);
-	const newTeamOvrWinp = 0.25 + (0.5 * (teams - 1 - newTeamOvrRank)) / teams;
+	const newTeamOvrWinp =
+		0.25 + (0.5 * (numActiveTeams - 1 - newTeamOvrIndex)) / numActiveTeams;
 	const newWp =
 		gp === 0
 			? newTeamOvrWinp

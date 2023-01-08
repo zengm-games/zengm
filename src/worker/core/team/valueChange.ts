@@ -44,6 +44,14 @@ let cache: {
 const zscore = (value: number) =>
 	(value - local.playerOvrMean) / local.playerOvrStd;
 
+const ovrIndexToEstWinPercent = (teamOvrIndex: number) => {
+	return (
+		0.25 +
+		(0.5 * (g.get("numActiveTeams") - 1 - teamOvrIndex)) /
+			g.get("numActiveTeams")
+	);
+};
+
 const MIN_VALUE = bySport({
 	baseball: -0.75,
 	basketball: -0.5,
@@ -505,15 +513,14 @@ const refreshCache = async () => {
 
 	// Estimate the order of the picks by team
 	const wps = teams.map(t => {
-		let teamOvrRank = teamOvrs.findIndex(t2 => t2.tid === t.tid);
-		if (teamOvrRank < 0) {
+		let teamOvrIndex = teamOvrs.findIndex(t2 => t2.tid === t.tid);
+		if (teamOvrIndex < 0) {
 			// This happens if a team has no players on it - just assume they are the worst
-			teamOvrRank = teamOvrs.length;
+			teamOvrIndex = teamOvrs.length;
 		}
 
 		// 25% to 75% based on rank
-		const teamOvrWinp =
-			0.25 + (0.5 * (teams.length - 1 - teamOvrRank)) / (teams.length - 1);
+		const teamOvrWinp = ovrIndexToEstWinPercent(teamOvrIndex);
 
 		const teamSeasons = allTeamSeasons.filter(
 			teamSeason => teamSeason.tid === t.tid,
@@ -636,7 +643,6 @@ const getModifiedPickRank = async (
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
 	);
-	const numActiveTeams = g.get("numActiveTeams");
 	const gp = teamSeason?.gp ?? 0;
 	const seasonFraction = gp / g.get("numGames");
 
@@ -663,8 +669,7 @@ const getModifiedPickRank = async (
 		newTeamOvr < newTeamOvrs[newTeamOvrs.length - 1].ovr
 			? newTeamOvrs.length
 			: newTeamOvrs.findIndex(t => t.ovr < newTeamOvr);
-	const newTeamOvrWinp =
-		0.25 + (0.5 * (numActiveTeams - 1 - newTeamOvrIndex)) / numActiveTeams;
+	const newTeamOvrWinp = ovrIndexToEstWinPercent(newTeamOvrIndex);
 	const newWp =
 		gp === 0
 			? newTeamOvrWinp

@@ -32,7 +32,7 @@ type Asset =
 
 let prevValueChangeKey: number | undefined;
 let cache: {
-	estPicks: Record<number, number | undefined>;
+	estPicks: Record<number, number>;
 	estValues: TradePickValues;
 	teamOvrs: {
 		tid: number;
@@ -187,7 +187,8 @@ const getPickNumber = async (
 		if (
 			tid != g.get("userTid") &&
 			dp.originalTid === tid &&
-			tradingPartnerTid === g.get("userTid")
+			tradingPartnerTid === g.get("userTid") &&
+			pidsAdd.length + pidsRemove.length > 0
 		) {
 			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
 		}
@@ -544,7 +545,7 @@ const refreshCache = async () => {
 	const sorted = wps.slice().sort((a, b) => a - b);
 
 	// For each team, what is their estimated draft position?
-	const estPicks: Record<number, number | undefined> = {};
+	const estPicks: Record<number, number> = {};
 	for (let i = 0; i < teams.length; i++) {
 		const wp = wps[i];
 		const rank = sorted.indexOf(wp) + 1;
@@ -629,6 +630,8 @@ const getModifiedPickRank = async (
 	pidsAdd: number[],
 	pidsRemove: number[],
 ) => {
+	const newTeamOvrs = cache.teamOvrs.filter(t => t.tid != tid);
+	const newWps = cache.wps.filter((wp, i) => i != cache.estPicks[tid] - 1);
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
@@ -657,9 +660,9 @@ const getModifiedPickRank = async (
 
 	const newTeamOvr = team.ovr(playerRatings);
 	const newTeamOvrIndex =
-		newTeamOvr < cache.teamOvrs[cache.teamOvrs.length - 1].ovr
-			? cache.teamOvrs.length - 1
-			: cache.teamOvrs.findIndex(t => t.ovr < newTeamOvr);
+		newTeamOvr < newTeamOvrs[newTeamOvrs.length - 1].ovr
+			? newTeamOvrs.length
+			: newTeamOvrs.findIndex(t => t.ovr < newTeamOvr);
 	const newTeamOvrWinp =
 		0.25 + (0.5 * (numActiveTeams - 1 - newTeamOvrIndex)) / numActiveTeams;
 	const newWp =
@@ -668,9 +671,9 @@ const getModifiedPickRank = async (
 			: seasonFraction * ((teamSeason?.won ?? 0) / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
 	const newRank =
-		newWp > cache.wps[cache.wps.length - 1]
-			? cache.wps.length
-			: cache.wps.findIndex(wp => newWp < wp) + 1;
+		newWp > newWps[newWps.length - 1]
+			? newWps.length + 1
+			: newWps.findIndex(wp => newWp < wp) + 1;
 	return newRank;
 };
 

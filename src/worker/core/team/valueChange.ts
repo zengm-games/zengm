@@ -38,7 +38,10 @@ let cache: {
 		tid: number;
 		ovr: number;
 	}[];
-	wps: number[];
+	wps: {
+		tid: number;
+		wp: number;
+	}[];
 };
 
 const zscore = (value: number) =>
@@ -541,31 +544,31 @@ const refreshCache = async () => {
 
 		const seasonFraction = gp / g.get("numGames");
 
-		// Weighted average of current season record and team rating, based on how much of the current season is complete
-		if (gp === 0) {
-			return teamOvrWinp;
-		}
-		return (
-			seasonFraction * (record[0] / gp) + (1 - seasonFraction) * teamOvrWinp
-		);
+		return {
+			tid: t.tid,
+			// Weighted average of current season record and team rating, based on how much of the current season is complete
+			wp:
+				gp === 0
+					? teamOvrWinp
+					: seasonFraction * (record[0] / gp) +
+					  (1 - seasonFraction) * teamOvrWinp,
+		};
 	});
 
 	// Get rank order of wps http://stackoverflow.com/a/14834599/786644
-	const sorted = wps.slice().sort((a, b) => a - b);
+	wps.sort((a, b) => a.wp - b.wp);
 
 	// For each team, what is their estimated draft position?
 	const estPicks: Record<number, number> = {};
-	for (let i = 0; i < teams.length; i++) {
-		const wp = wps[i];
-		const rank = sorted.indexOf(wp) + 1;
-		estPicks[teams[i].tid] = rank;
+	for (let i = 0; i < wps.length; i++) {
+		estPicks[wps[i].tid] = i + 1;
 	}
 
 	return {
 		estPicks,
 		estValues: await trade.getPickValues(),
 		teamOvrs,
-		wps: sorted,
+		wps,
 	};
 };
 
@@ -643,7 +646,7 @@ const getModifiedPickRank = async (
 	// it's cleaner to determine this by temporarily removing the old team info from the cached lists
 	const newTeamOvrs = cache.teamOvrs.filter(t => t.tid !== tid);
 	// we know this team's old proj win%'s index based on what their old estimated pick was
-	const newWps = cache.wps.filter((wp, i) => i != cache.estPicks[tid] - 1);
+	const newWps = cache.wps.filter(w => w.tid != tid);
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],
@@ -681,9 +684,9 @@ const getModifiedPickRank = async (
 			: seasonFraction * ((teamSeason?.won ?? 0) / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
 	const newRank =
-		newWp > newWps[newWps.length - 1]
+		newWp > newWps[newWps.length - 1].wp
 			? newWps.length + 1
-			: newWps.findIndex(wp => newWp < wp) + 1;
+			: newWps.findIndex(w => newWp < w.wp) + 1;
 	return newRank;
 };
 

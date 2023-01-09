@@ -4,6 +4,8 @@ import type { Basketball } from "./loadData.basketball";
 
 let allRelativesBySlug: Record<string, Basketball["relatives"]> | undefined;
 
+// players: All players to add relatives to, and also all eligible players who may be relatives of other players. This is so leagues without all players don't get broken links.
+// allRelatives: From real players data file, all possible relatives
 const addRelatives = (
 	players: (
 		| {
@@ -57,7 +59,26 @@ const addRelatives = (
 		}
 
 		if (relatives2.length > 0) {
-			p.relatives = relatives2;
+			// Due to the possibility of having individual real teams in a random players league, addRelatives winds up being called a second time with just active players. In that case, merge the relatives lists.
+			if (p.relatives) {
+				const seenKeys = new Set();
+				p.relatives = [...p.relatives, ...relatives2].filter(relative => {
+					const key = JSON.stringify([
+						relative.type,
+						relative.pid,
+						relative.name,
+					]);
+
+					if (seenKeys.has(key)) {
+						return false;
+					}
+
+					seenKeys.add(key);
+					return true;
+				});
+			} else {
+				p.relatives = relatives2;
+			}
 		}
 	}
 };

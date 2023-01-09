@@ -198,7 +198,7 @@ const getPickNumber = async (
 		// based on what players are outgoing in the trade
 		// and just use the cached estimated pick if no players are being exchanged
 		if (
-			tid != g.get("userTid") &&
+			tid !== g.get("userTid") &&
 			dp.originalTid === tid &&
 			tradingPartnerTid === g.get("userTid") &&
 			pidsAdd.length + pidsRemove.length > 0
@@ -646,7 +646,7 @@ const getModifiedPickRank = async (
 	// it's cleaner to determine this by temporarily removing the old team info from the cached lists
 	const newTeamOvrs = cache.teamOvrs.filter(t => t.tid !== tid);
 	// we know this team's old proj win%'s index based on what their old estimated pick was
-	const newWps = cache.wps.filter(w => w.tid != tid);
+	const newWps = cache.wps.filter(w => w.tid !== tid);
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],

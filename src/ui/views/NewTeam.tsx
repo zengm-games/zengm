@@ -6,6 +6,7 @@ import type { View } from "../../common/types";
 import { PopText, RecordAndPlayoffs } from "../components";
 
 const NewTeam = ({
+	challengeNoRatings,
 	confs,
 	disabled,
 	expansion,
@@ -210,8 +211,12 @@ const NewTeam = ({
 									numPlayoffRounds={numPlayoffRounds}
 									playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
 								/>
-								<br />
-								Team rating: {t.ovr}/100
+								{!challengeNoRatings ? (
+									<>
+										<br />
+										Team rating: {t.ovr}/100
+									</>
+								) : null}
 							</>
 						)}
 						<br />

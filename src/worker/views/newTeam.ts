@@ -89,6 +89,7 @@ const updateTeamSelect = async () => {
 	}
 
 	return {
+		challengeNoRatings: g.get("challengeNoRatings"),
 		confs: g.get("confs", "current"),
 		disabled,
 		expansion,

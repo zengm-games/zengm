@@ -145,7 +145,9 @@ class Team<DH extends boolean> {
 			? NUM_BATTERS_PER_SIDE
 			: NUM_BATTERS_PER_SIDE - 1;
 		const bench = defense.slice(numPositionPlayers);
-		for (let i = 0; i < numPositionPlayers; i++) {
+		for (let j = 0; j < numPositionPlayers; j++) {
+			const i =
+				pitcherBattingOrder >= 0 && j >= pitcherBattingOrder ? j + 1 : j;
 			let p = lineup[i];
 			if (!p) {
 				throw new Error("Not enough players");

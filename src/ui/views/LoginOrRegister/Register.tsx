@@ -220,7 +220,6 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				<div className="mb-3 form-check">
 					<input
 						type="checkbox"
-						defaultChecked
 						className="form-check-input"
 						id="register-mailinglist"
 						name="mailinglist"

@@ -19,6 +19,7 @@ import {
 	draftTypeDescriptions,
 	getDraftLotteryProbs,
 } from "../../common/draftLottery";
+import useStickyXX from "../components/DataTable/useStickyXX";
 
 type Props = View<"draftLottery">;
 type State = {
@@ -132,6 +133,7 @@ const Row = ({
 
 	const userTeam = tid === userTid;
 
+	let revealedPickNumber = null;
 	const pickCols = range(NUM_PICKS).map(j => {
 		const prob = probs[i][j];
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
@@ -140,6 +142,7 @@ const Row = ({
 
 		if (pick !== undefined) {
 			highlighted = pick === j + 1;
+			revealedPickNumber = pick;
 		} else if (NUM_PICKS - 1 - j <= indRevealed) {
 			// Has this round been revealed?
 			// Is this pick revealed?
@@ -147,6 +150,7 @@ const Row = ({
 
 			if (ind === NUM_PICKS - 1 - j) {
 				highlighted = true;
+				revealedPickNumber = j + 1;
 			}
 		}
 
@@ -162,6 +166,7 @@ const Row = ({
 			</td>
 		);
 	});
+
 	const row = (
 		<tr
 			className={classNames({
@@ -175,6 +180,16 @@ const Row = ({
 				})}
 			>
 				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+			</td>
+			<td
+				className={classNames(
+					{
+						"table-info": userTeam,
+					},
+					"text-end",
+				)}
+			>
+				{revealedPickNumber}
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
 				{userTeam || spectator ? null : (
@@ -383,6 +398,8 @@ const DraftLotteryTable = (props: Props) => {
 
 	const showRigButton = showStartButton && godMode && rigged === undefined;
 
+	const { stickyClass, tableRef } = useStickyXX(2);
+
 	let table;
 
 	if (props.notEnoughTeams) {
@@ -418,9 +435,16 @@ const DraftLotteryTable = (props: Props) => {
 					</div>
 				) : null}
 				<ResponsiveTableWrapper nonfluid>
-					<table className="table table-striped table-borderless table-sm table-hover sticky-x">
+					<table
+						className={classNames(
+							"table table-striped table-borderless table-sm table-hover",
+							stickyClass,
+						)}
+						ref={tableRef}
+					>
 						<thead>
 							<tr>
+								<th />
 								<th />
 								<th className={props.spectator ? "p-0" : undefined} />
 								<th />
@@ -431,6 +455,9 @@ const DraftLotteryTable = (props: Props) => {
 							</tr>
 							<tr>
 								<th>Team</th>
+								<th title="Pick number" className="text-end">
+									#
+								</th>
 								<th className={props.spectator ? "p-0" : undefined} />
 								<th>Record</th>
 								<th>Chances</th>

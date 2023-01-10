@@ -1838,7 +1838,7 @@ const sportSpecificCols = bySport<{
 			title: "Ast",
 		},
 		"stat:defTckLoss": {
-			desc: "Tackes For Loss",
+			desc: "Tackles For Loss",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "TFL",

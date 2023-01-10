@@ -152,6 +152,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	maxContractLength: 5,
 	minRosterSize: 10,
 	maxRosterSize: 15,
+	softCapTradeSalaryMatch: 125,
 	numGames: 82, // per season
 	numGamesDiv: 16,
 	numGamesConf: 36,

@@ -144,12 +144,13 @@ const keys = [
 	"hitByPitchFactor",
 	"swingFactor",
 	"contactFactor",
+	"softCapTradeSalaryMatch",
 ] as const;
 
 export type Settings = Pick<
 	GameAttributesLeague,
 	Exclude<
-		typeof keys[number],
+		(typeof keys)[number],
 		| "repeatSeason"
 		| "realDraftRatings"
 		| "injuries"
@@ -317,6 +318,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			hitByPitchFactor: g.get("hitByPitchFactor"),
 			swingFactor: g.get("swingFactor"),
 			contactFactor: g.get("contactFactor"),
+			softCapTradeSalaryMatch: g.get("softCapTradeSalaryMatch"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

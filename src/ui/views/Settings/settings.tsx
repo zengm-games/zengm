@@ -807,7 +807,8 @@ export const settings: Setting[] = (
 						</a>
 						) and you can make trades that increase your payroll beyond the
 						salary cap as long as incoming salary is at most 125% of outgoing
-						salary.
+						salary (percent can be customized with the "Trade Salary Match"
+						setting).
 					</p>
 					<p>
 						<b>None:</b> There is no limit to your payroll. The "Salary Cap"
@@ -849,6 +850,32 @@ export const settings: Setting[] = (
 					</ol>
 				</>
 			),
+		},
+		{
+			category: "Finances",
+			key: "softCapTradeSalaryMatch",
+			name: "Trade Salary Match",
+			godModeRequired: "always",
+			type: "float",
+			decoration: "percent",
+			descriptionLong: (
+				<>
+					<p>
+						This only matters when the Salary Cap Type is set to "Soft cap"!
+					</p>
+					<p>
+						When a team is over the salary cap in a soft cap league, any trades
+						they make cannot return more than X% of the outgoing salary. The
+						default value is 125%. This is to prevent teams over the soft cap
+						from going much further over.
+					</p>
+				</>
+			),
+			validator: value => {
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0");
+				}
+			},
 		},
 		{
 			category: "Events",

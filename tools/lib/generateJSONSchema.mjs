@@ -1090,6 +1090,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							season: {
 								type: "integer",
 							},
+							softCapTradeSalaryMatch: {
+								type: "number",
+								minimum: 0,
+							},
 							sonRate: {
 								type: "number",
 								minimum: 0,

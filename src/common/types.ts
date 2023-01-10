@@ -43,14 +43,14 @@ type ViewsKeys = keyof typeof views;
 export type View<Name extends ViewsKeys> = Exclude<
 	Awaited<
 		Name extends ViewsKeys
-			? ReturnType<typeof views[Name]>
+			? ReturnType<(typeof views)[Name]>
 			: Record<string, unknown>
 	>,
 	void | { redirectUrl: string } | { errorMessage: string }
 >;
 
 export type ViewInput<T extends keyof typeof processInputs> = Exclude<
-	ReturnType<typeof processInputs[T]>,
+	ReturnType<(typeof processInputs)[T]>,
 	{ redirectUrl: string }
 >;
 
@@ -556,6 +556,7 @@ export type GameAttributesLeague = {
 	salaryCap: number;
 	salaryCapType: "hard" | "none" | "soft";
 	season: number;
+	softCapTradeSalaryMatch: number;
 	sonRate: number;
 	startingSeason: number;
 	stopOnInjury: boolean;

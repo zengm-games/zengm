@@ -328,6 +328,10 @@ export const getDefaultSettings = () => {
 		),
 		swingFactor: unwrapGameAttribute(defaultGameAttributes, "swingFactor"),
 		contactFactor: unwrapGameAttribute(defaultGameAttributes, "contactFactor"),
+		softCapTradeSalaryMatch: unwrapGameAttribute(
+			defaultGameAttributes,
+			"softCapTradeSalaryMatch",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

@@ -31,23 +31,53 @@ const updatePlayers = async (
 		let playersAll: Player[] = [];
 
 		if (typeof pid === "number") {
-			const target = await idb.getCopy.players(
-				{
-					pid,
-				},
-				"noCopyCache",
-			);
-
-			if (target) {
-				const pids = target.relatives.map(rel => rel.pid);
-				const otherPlayers = await idb.getCopies.players(
+			const pidsSeen = new Set();
+			const addPlayers = async (
+				pids: number[],
+				spider: "all" | "fatherOrSon" | "none",
+			) => {
+				const players = await idb.getCopies.players(
 					{
 						pids,
 					},
 					"noCopyCache",
 				);
-				playersAll = [target, ...otherPlayers];
-			}
+
+				const pidsNextNone = [];
+				const pidsNextFatherOrSon = [];
+
+				for (const p of players) {
+					playersAll.push(p);
+					pidsSeen.add(p.pid);
+
+					for (const relative of p.relatives) {
+						console.log(relative);
+						if (pidsSeen.has(relative.pid)) {
+							continue;
+						}
+
+						const fatherOrSon =
+							relative.type === "father" || relative.type === "son";
+
+						if (spider === "all" || (spider === "fatherOrSon" && fatherOrSon)) {
+							if (fatherOrSon) {
+								pidsNextFatherOrSon.push(relative.pid);
+							} else {
+								pidsNextNone.push(relative.pid);
+							}
+						}
+					}
+				}
+
+				if (pidsNextNone.length > 0) {
+					await addPlayers(pidsNextNone, "none");
+				}
+				if (pidsNextFatherOrSon.length > 0) {
+					await addPlayers(pidsNextFatherOrSon, "fatherOrSon");
+				}
+			};
+
+			await addPlayers([pid], "all");
 		} else {
 			playersAll = await idb.getCopies.players(
 				{

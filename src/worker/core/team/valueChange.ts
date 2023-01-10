@@ -51,8 +51,7 @@ const ovrIndexToEstWinPercent = (teamOvrIndex: number) => {
 	return (
 		0.25 +
 		(0.5 * (g.get("numActiveTeams") - 1 - teamOvrIndex)) /
-			g.get("numActiveTeams") -
-		1
+			(g.get("numActiveTeams") - 1)
 	);
 };
 
@@ -645,8 +644,8 @@ const getModifiedPickRank = async (
 	// later we need to find the new ranks of this team's ovr/estimated win%
 	// it's cleaner to determine this by temporarily removing the old team info from the cached lists
 	const newTeamOvrs = cache.teamOvrs.filter(t => t.tid !== tid);
-	// we know this team's old proj win%'s index based on what their old estimated pick was
 	const newWps = cache.wps.filter(w => w.tid !== tid);
+
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
 		[tid, g.get("season")],

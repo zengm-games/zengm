@@ -739,12 +739,41 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</div>
 							<div className="col-sm-3 mb-3">
 								<label className="form-label">Jersey Number</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "root", "jerseyNumber")}
-									value={jerseyNumber}
-								/>
+								<div className="input-group">
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "root", "jerseyNumber")}
+										value={jerseyNumber}
+									/>
+									<button
+										className="btn btn-secondary"
+										type="button"
+										disabled={!godMode}
+										onClick={async event => {
+											event.preventDefault();
+
+											const jerseyNumber = await toWorker(
+												"main",
+												"getRandomJerseyNumber",
+												{
+													pid: p.pid,
+													tid: p.tid,
+													pos: p.ratings[r].pos,
+												},
+											);
+
+											// Ugly, but needed for easy updating in root and stats
+											handleChange("root", "jerseyNumber", {
+												target: { value: jerseyNumber ?? "" },
+											});
+										}}
+										title="Picks a random jersey number, ignoring retired jersey numbers and other numbers already used by teammates"
+									>
+										Rand
+										<span className="d-inline d-md-none d-lg-inline">om</span>
+									</button>
+								</div>
 							</div>
 							<div className="col-sm-6 mb-3">
 								<label className="form-label">Country</label>

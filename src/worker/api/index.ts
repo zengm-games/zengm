@@ -1032,7 +1032,7 @@ const dunkSimNext = async (
 			}
 		}
 	} else {
-		const types: typeof type[] = ["event", "dunk", "round", "all"];
+		const types: (typeof type)[] = ["event", "dunk", "round", "all"];
 
 		// Each call to simNextDunkEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
 
@@ -1054,7 +1054,7 @@ const threeSimNext = async (
 	type: "event" | "rack" | "player" | "round" | "all",
 	conditions: Conditions,
 ) => {
-	const types: typeof type[] = ["event", "rack", "player", "round", "all"];
+	const types: (typeof type)[] = ["event", "rack", "player", "round", "all"];
 
 	// Each call to simNextThreeEvent returns one of `type`. Stopping condition is satisfied if we hit the requested `type`, or any `type` that is after it in `types`.
 
@@ -1611,6 +1611,34 @@ const getRandomCountry = async () => {
 
 	// Equal odds of every country, otherwise it's too commonly USA - no fun!
 	return withState(random.choice(playerBioInfo.frequencies)[0]);
+};
+
+const getRandomJerseyNumber = async ({
+	pid,
+	pos,
+	tid,
+}: {
+	pid: number | undefined;
+	pos: string;
+	tid: number;
+}) => {
+	const jerseyNumber = await player.genJerseyNumber(
+		{
+			pid,
+			tid,
+			ratings: [
+				{
+					pos,
+				},
+			],
+			stats: [],
+		},
+		undefined,
+		undefined,
+		true,
+	);
+
+	return jerseyNumber;
 };
 
 const getRandomName = async (country: string) => {
@@ -3560,7 +3588,7 @@ const updatePlayoffTeams = async (
 
 		const tidsPlayoffs = new Set();
 
-		const checkMatchups = (matchups: typeof series[0]) => {
+		const checkMatchups = (matchups: (typeof series)[0]) => {
 			for (const matchup of matchups) {
 				const home = findTeam(matchup.home.seed, matchup.home.cid);
 				matchup.home.tid = home.tid;
@@ -4224,6 +4252,7 @@ export default {
 		getPlayerWatch,
 		getRandomCollege,
 		getRandomCountry,
+		getRandomJerseyNumber,
 		getRandomName,
 		getRandomRatings,
 		getRandomTeams,

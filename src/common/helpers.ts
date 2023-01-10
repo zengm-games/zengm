@@ -1,10 +1,5 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type {
-	TeamBasic,
-	PlayerWithoutKey,
-	Phase,
-	PlayerContract,
-} from "./types";
+import type { TeamBasic, Phase, PlayerContract } from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash-es/orderBy";
 import isSport from "./isSport";
@@ -1222,7 +1217,10 @@ const getCountry = (bornLoc?: string) => {
 };
 
 const getJerseyNumber = (
-	p: PlayerWithoutKey,
+	p: {
+		jerseyNumber?: string;
+		stats: any[];
+	},
 	type: "mostCommon" | "current" = "current",
 ): string | undefined => {
 	if (type === "current") {

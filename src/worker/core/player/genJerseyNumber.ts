@@ -1,4 +1,3 @@
-import type { Player, PlayerWithoutKey } from "../../../common/types";
 import { idb } from "../../db";
 import range from "lodash-es/range";
 import { random, helpers } from "../../util";
@@ -383,30 +382,46 @@ const weightFunctionsByPosition = bySport({
 });
 
 const genJerseyNumber = async (
-	p: Player | PlayerWithoutKey,
+	p: {
+		pid?: number;
+		tid: number;
+		jerseyNumber?: string;
+		ratings: {
+			pos: string;
+		}[];
+		stats: any[];
+	},
 
 	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
 	teamJerseyNumbersInput?: string[],
 	retiredJerseyNumbersInput?: string[],
-): Promise<string | undefined> => {
-	const prevJerseyNumber = helpers.getJerseyNumber(p);
 
-	if (p.tid < 0) {
-		return prevJerseyNumber;
+	// When this is true, ignore current/previous jersey number
+	pickRandomNumber?: boolean,
+): Promise<string | undefined> => {
+	let prevJerseyNumber;
+	if (!pickRandomNumber) {
+		prevJerseyNumber = helpers.getJerseyNumber(p);
+
+		if (p.tid < 0) {
+			return prevJerseyNumber;
+		}
 	}
 
 	const teamJerseyNumbers: string[] = teamJerseyNumbersInput
 		? teamJerseyNumbersInput
 		: [];
 	if (!teamJerseyNumbersInput) {
-		const teammates = (
-			await idb.cache.players.indexGetAll("playersByTid", p.tid)
-		).filter(p2 => p2.pid !== p.pid);
-		for (const teammate of teammates) {
-			if (teammate.stats.length > 0) {
-				const teamJerseyNumber = teammate.stats.at(-1).jerseyNumber;
-				if (teamJerseyNumber) {
-					teamJerseyNumbers.push(teamJerseyNumber);
+		if (p.tid >= 0) {
+			const teammates = (
+				await idb.cache.players.indexGetAll("playersByTid", p.tid)
+			).filter(p2 => p2.pid !== p.pid);
+			for (const teammate of teammates) {
+				if (teammate.stats.length > 0) {
+					const teamJerseyNumber = teammate.stats.at(-1).jerseyNumber;
+					if (teamJerseyNumber) {
+						teamJerseyNumbers.push(teamJerseyNumber);
+					}
 				}
 			}
 		}
@@ -417,7 +432,7 @@ const genJerseyNumber = async (
 		: [];
 	if (!retiredJerseyNumbersInput) {
 		const t = await idb.cache.teams.get(p.tid);
-		if (t && t.retiredJerseyNumbers) {
+		if (t?.retiredJerseyNumbers) {
 			retiredJerseyNumbers.push(
 				...t.retiredJerseyNumbers.map(row => row.number),
 			);
@@ -445,7 +460,7 @@ const genJerseyNumber = async (
 	}
 
 	if (weightFunctionsByPosition) {
-		const pos = p.ratings.at(-1).pos;
+		const pos = p.ratings.at(-1)!.pos;
 		if ((weightFunctionsByPosition as any)[pos]) {
 			return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
 		}

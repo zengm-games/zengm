@@ -648,7 +648,7 @@ const getModifiedPickRank = async (
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
-		[tid, g.get("season")],
+		[g.get("season"), tid],
 	);
 	const gp = teamSeason?.gp ?? 0;
 	const seasonFraction = gp / g.get("numGames");
@@ -672,20 +672,26 @@ const getModifiedPickRank = async (
 	}));
 
 	const newTeamOvr = team.ovr(playerRatings);
-	const newTeamOvrIndex =
-		newTeamOvr < newTeamOvrs[newTeamOvrs.length - 1].ovr
-			? newTeamOvrs.length
-			: newTeamOvrs.findIndex(t => t.ovr < newTeamOvr);
+	let newTeamOvrIndex = newTeamOvrs.findIndex(t => t.ovr < newTeamOvr);
+	if (newTeamOvrIndex === -1) {
+		// Worst Team (no -1 because we already removed this team from newTeamOvrs)
+		newTeamOvrIndex = newTeamOvrs.length;
+	}
+
 	const newTeamOvrWinp = ovrIndexToEstWinPercent(newTeamOvrIndex);
 	const newWp =
 		gp === 0
 			? newTeamOvrWinp
 			: seasonFraction * ((teamSeason?.won ?? 0) / gp) +
 			  (1 - seasonFraction) * newTeamOvrWinp;
-	const newRank =
-		newWp > newWps[newWps.length - 1].wp
-			? newWps.length + 1
-			: newWps.findIndex(w => newWp < w.wp) + 1;
+
+	let newRank = newWps.findIndex(w => newWp < w.wp);
+	if (newRank === -1) {
+		// Best Team (no -1 because we already removed this team from newTeamOvrs)
+		newRank = newWps.length;
+	}
+	newRank += 1; // Index to rank
+
 	return newRank;
 };
 

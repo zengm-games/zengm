@@ -35,6 +35,7 @@ const roundOverrides: Record<
 	baseball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
+		yearsWithTeam: "noDecimalPlace",
 		pa: "noDecimalPlace",
 		ab: "noDecimalPlace",
 		r: "noDecimalPlace",

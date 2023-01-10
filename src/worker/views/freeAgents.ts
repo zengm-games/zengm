@@ -6,7 +6,7 @@ import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
 
 export const addMood = async (players: Player[]) => {
-	const moods: Awaited<ReturnType<typeof player["moodInfos"]>>[] = [];
+	const moods: Awaited<ReturnType<(typeof player)["moodInfos"]>>[] = [];
 	for (const p of players) {
 		moods.push(await player.moodInfos(p));
 	}
@@ -16,6 +16,13 @@ export const addMood = async (players: Player[]) => {
 		mood: moods[i],
 	}));
 };
+
+export const freeAgentStats = bySport({
+	baseball: ["gp", "keyStats", "war"],
+	basketball: ["min", "pts", "trb", "ast", "per"],
+	football: ["gp", "keyStats", "av"],
+	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+});
 
 const updateFreeAgents = async () => {
 	const userTid = g.get("userTid");
@@ -28,12 +35,6 @@ const updateFreeAgents = async () => {
 		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
 
 	const players = addFirstNameShort(
 		await idb.getCopies.playersPlus(playersAll, {
@@ -50,7 +51,7 @@ const updateFreeAgents = async () => {
 				"draft",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
-			stats,
+			stats: freeAgentStats,
 			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
@@ -82,7 +83,7 @@ const updateFreeAgents = async () => {
 		payroll: payroll / 1000,
 		phase: g.get("phase"),
 		players,
-		stats,
+		stats: freeAgentStats,
 		userPlayers,
 	};
 };

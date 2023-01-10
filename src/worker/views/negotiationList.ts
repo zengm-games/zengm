@@ -1,17 +1,12 @@
-import { bySport, PLAYER } from "../../common";
+import { PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
-import { addMood } from "./freeAgents";
+import { addMood, freeAgentStats } from "./freeAgents";
 
 const updateNegotiationList = async () => {
-	const stats = bySport({
-		baseball: ["yearsWithTeam", "gp", "keyStats"],
-		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
-		football: ["yearsWithTeam", "gp", "keyStats", "av"],
-		hockey: ["yearsWithTeam", "gp", "keyStats", "ops", "dps", "ps"],
-	});
+	const stats = ["yearsWithTeam", ...freeAgentStats];
 
 	const userTid = g.get("userTid");
 

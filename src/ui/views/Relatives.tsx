@@ -69,16 +69,7 @@ const Relatives = ({
 	const rows = players.map(p => {
 		const relationArray: string[] = [];
 		if (target) {
-			if (p.pid === pid) {
-				relationArray.push("Self");
-			} else {
-				const relation = target.relatives.find((rel: any) => rel.pid === p.pid);
-				if (relation) {
-					relationArray.push(helpers.upperCaseFirstLetter(relation.type));
-				} else {
-					relationArray.push("???");
-				}
-			}
+			relationArray.push(p.relationText);
 		}
 
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;

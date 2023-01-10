@@ -1,8 +1,56 @@
 import { idb } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player, ViewInput } from "../../common/types";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
+
+const getRelationText = (generation: number, directLine: boolean) => {
+	if (generation === 0) {
+		return directLine ? "Self" : "Brother";
+	}
+
+	if (generation === 1) {
+		return directLine ? "Father" : "Uncle";
+	}
+
+	if (generation === 2) {
+		return directLine ? "Grandfather" : "Great Uncle";
+	}
+
+	if (generation === 3) {
+		return directLine ? "Great Grandfather" : "2nd Great Uncle";
+	}
+
+	if (generation > 3) {
+		if (directLine) {
+			return `${helpers.ordinal(generation - 2)} Great Grandfather`;
+		} else {
+			return `${helpers.ordinal(generation - 1)} Great Uncle`;
+		}
+	}
+
+	if (generation === -1) {
+		return directLine ? "Son" : "Nephew";
+	}
+
+	if (generation === -2) {
+		return directLine ? "Grandson" : "Great Nephew";
+	}
+
+	if (generation === -3) {
+		return directLine ? "Great Grandson" : "2nd Great Nephew";
+	}
+
+	if (generation < -3) {
+		if (directLine) {
+			return `${helpers.ordinal(Math.abs(generation + 2))} Great Grandson`;
+		} else {
+			return `${helpers.ordinal(Math.abs(generation + 1))} Great Nephew`;
+		}
+	}
+
+	return "???";
+};
 
 const updatePlayers = async (
 	{ pid }: ViewInput<"relatives">,
@@ -29,55 +77,97 @@ const updatePlayers = async (
 		});
 
 		let playersAll: Player[] = [];
+		const generations: number[] = [];
+
+		// Anyone who is directly a father or son of the initial player
+		const fatherLinePids = new Set<number>();
+		const sonLinePids = new Set<number>();
 
 		if (typeof pid === "number") {
 			const pidsSeen = new Set();
+			fatherLinePids.add(pid);
+			sonLinePids.add(pid);
+
 			const addPlayers = async (
-				pids: number[],
-				spider: "all" | "fatherOrSon" | "none",
+				infos: {
+					pid: number;
+					generation: number;
+				}[],
 			) => {
 				const players = await idb.getCopies.players(
 					{
-						pids,
+						pids: infos.map(info => info.pid),
 					},
 					"noCopyCache",
 				);
 
-				const pidsNextNone = [];
-				const pidsNextFatherOrSon = [];
+				const infosNext: typeof infos = [];
 
 				for (const p of players) {
+					if (pidsSeen.has(p.pid)) {
+						continue;
+					}
+
+					const info = infos.find(info => info.pid === p.pid);
+					if (!info) {
+						continue;
+					}
+
 					playersAll.push(p);
+					generations.push(info.generation);
 					pidsSeen.add(p.pid);
 
 					for (const relative of p.relatives) {
-						console.log(relative);
 						if (pidsSeen.has(relative.pid)) {
 							continue;
 						}
 
-						const fatherOrSon =
-							relative.type === "father" || relative.type === "son";
-
-						if (spider === "all" || (spider === "fatherOrSon" && fatherOrSon)) {
-							if (fatherOrSon) {
-								pidsNextFatherOrSon.push(relative.pid);
-							} else {
-								pidsNextNone.push(relative.pid);
-							}
+						if (fatherLinePids.has(p.pid) && relative.type === "father") {
+							console.log(
+								`Direct relative from ${p.firstName} ${p.lastName} to`,
+								relative,
+							);
+							fatherLinePids.add(relative.pid);
 						}
+
+						if (sonLinePids.has(p.pid) && relative.type === "son") {
+							console.log(
+								`Direct relative from ${p.firstName} ${p.lastName} to`,
+								relative,
+							);
+							sonLinePids.add(relative.pid);
+						}
+
+						let generation = info.generation;
+						if (relative.type === "son") {
+							generation -= 1;
+						} else if (relative.type === "father") {
+							generation += 1;
+						}
+
+						infosNext.push({
+							pid: relative.pid,
+							generation,
+						});
 					}
 				}
 
-				if (pidsNextNone.length > 0) {
-					await addPlayers(pidsNextNone, "none");
-				}
-				if (pidsNextFatherOrSon.length > 0) {
-					await addPlayers(pidsNextFatherOrSon, "fatherOrSon");
+				if (infosNext.length > 0) {
+					await addPlayers(infosNext);
 				}
 			};
 
-			await addPlayers([pid], "all");
+			await addPlayers([
+				{
+					pid,
+					generation: 0,
+				},
+			]);
+			console.log(
+				playersAll.map(p => p.pid),
+				fatherLinePids,
+				sonLinePids,
+			);
 		} else {
 			playersAll = await idb.getCopies.players(
 				{
@@ -107,6 +197,22 @@ const updatePlayers = async (
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});
+		if (generations.length > 0) {
+			for (let i = 0; i < players.length; i++) {
+				if (generations[i] === undefined) {
+					break;
+				}
+				const p = players[i];
+				p.relationText = getRelationText(
+					generations[i],
+					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
+				);
+			}
+		}
+
+		console.log(
+			players.map(p => `${p.firstName} ${p.lastName} ||| ${p.generation}`),
+		);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

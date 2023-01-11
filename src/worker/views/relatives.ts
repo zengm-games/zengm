@@ -4,9 +4,13 @@ import type { UpdateEvents, Player, ViewInput } from "../../common/types";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
 
-const getRelationText = (generation: number, directLine: boolean) => {
+const getRelationText = (
+	generation: number,
+	directLine: boolean,
+	brother: boolean,
+) => {
 	if (generation === 0) {
-		return directLine ? "Self" : "Brother";
+		return directLine ? "Self" : brother ? "Brother" : "Cousin";
 	}
 
 	if (generation === 1) {
@@ -79,9 +83,12 @@ const updatePlayers = async (
 		let playersAll: Player[] = [];
 		const generations: number[] = [];
 
-		// Anyone who is directly a father or son of the initial player
+		// Anyone who is directly a father or son of the initial player, and their fathers/sons
 		const fatherLinePids = new Set<number>();
 		const sonLinePids = new Set<number>();
+
+		// Brothers of initial player, that's it
+		const brotherPids = new Set<number>();
 
 		if (typeof pid === "number") {
 			const pidsSeen = new Set();
@@ -93,7 +100,9 @@ const updatePlayers = async (
 					pid: number;
 					generation: number;
 				}[],
+				initial: boolean,
 			) => {
+				console.log("addPlayers", infos);
 				const players = await idb.getCopies.players(
 					{
 						pids: infos.map(info => info.pid),
@@ -102,6 +111,9 @@ const updatePlayers = async (
 				);
 
 				const infosNext: typeof infos = [];
+
+				// Make sure we don't add the same player to infosNext twice
+				const pidsSeenLocal = new Set();
 
 				for (const p of players) {
 					if (pidsSeen.has(p.pid)) {
@@ -118,10 +130,6 @@ const updatePlayers = async (
 					pidsSeen.add(p.pid);
 
 					for (const relative of p.relatives) {
-						if (pidsSeen.has(relative.pid)) {
-							continue;
-						}
-
 						if (fatherLinePids.has(p.pid) && relative.type === "father") {
 							console.log(
 								`Direct relative from ${p.firstName} ${p.lastName} to`,
@@ -138,11 +146,20 @@ const updatePlayers = async (
 							sonLinePids.add(relative.pid);
 						}
 
+						if (pidsSeenLocal.has(relative.pid)) {
+							continue;
+						}
+						pidsSeenLocal.add(relative.pid);
+
 						let generation = info.generation;
 						if (relative.type === "son") {
 							generation -= 1;
 						} else if (relative.type === "father") {
 							generation += 1;
+						}
+
+						if (initial && relative.type === "brother") {
+							brotherPids.add(relative.pid);
 						}
 
 						infosNext.push({
@@ -153,16 +170,19 @@ const updatePlayers = async (
 				}
 
 				if (infosNext.length > 0) {
-					await addPlayers(infosNext);
+					await addPlayers(infosNext, false);
 				}
 			};
 
-			await addPlayers([
-				{
-					pid,
-					generation: 0,
-				},
-			]);
+			await addPlayers(
+				[
+					{
+						pid,
+						generation: 0,
+					},
+				],
+				true,
+			);
 			console.log(
 				playersAll.map(p => p.pid),
 				fatherLinePids,
@@ -206,6 +226,7 @@ const updatePlayers = async (
 				p.relationText = getRelationText(
 					generations[i],
 					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
+					brotherPids.has(p.pid),
 				);
 			}
 		}

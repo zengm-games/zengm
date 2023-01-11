@@ -102,7 +102,6 @@ const updatePlayers = async (
 				}[],
 				initial: boolean,
 			) => {
-				console.log("addPlayers", infos);
 				const players = await idb.getCopies.players(
 					{
 						pids: infos.map(info => info.pid),
@@ -131,18 +130,10 @@ const updatePlayers = async (
 
 					for (const relative of p.relatives) {
 						if (fatherLinePids.has(p.pid) && relative.type === "father") {
-							console.log(
-								`Direct relative from ${p.firstName} ${p.lastName} to`,
-								relative,
-							);
 							fatherLinePids.add(relative.pid);
 						}
 
 						if (sonLinePids.has(p.pid) && relative.type === "son") {
-							console.log(
-								`Direct relative from ${p.firstName} ${p.lastName} to`,
-								relative,
-							);
 							sonLinePids.add(relative.pid);
 						}
 
@@ -182,11 +173,6 @@ const updatePlayers = async (
 					},
 				],
 				true,
-			);
-			console.log(
-				playersAll.map(p => p.pid),
-				fatherLinePids,
-				sonLinePids,
 			);
 		} else {
 			playersAll = await idb.getCopies.players(
@@ -230,10 +216,6 @@ const updatePlayers = async (
 				);
 			}
 		}
-
-		console.log(
-			players.map(p => `${p.firstName} ${p.lastName} ||| ${p.generation}`),
-		);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

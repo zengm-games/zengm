@@ -56,7 +56,7 @@
 		"dropbox": "^10.34.0",
 		"facesjs": "^3.7.3",
 		"flag-icons": "^6.6.6",
-		"framer-motion": "^8.3.3",
+		"framer-motion": "^8.4.0",
 		"html2canvas": "^1.4.1",
 		"idb": "dumbmatter/idb#autoIncrementKeyPath2-build",
 		"lodash-es": "^4.17.21",
@@ -80,7 +80,7 @@
 		"workbox-precaching": "^6.5.4",
 		"workbox-routing": "^6.5.4",
 		"workbox-window": "^6.5.4",
-		"zustand": "^4.2.0"
+		"zustand": "^4.3.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.20.12",
@@ -101,7 +101,7 @@
 		"@rollup/plugin-json": "^6.0.0",
 		"@rollup/plugin-node-resolve": "^15.0.1",
 		"@rollup/plugin-replace": "^5.0.2",
-		"@rollup/plugin-terser": "0.1.0",
+		"@rollup/plugin-terser": "0.3.0",
 		"@types/d3-dsv": "^3.0.1",
 		"@types/d3-scale": "^4.0.3",
 		"@types/dompurify": "^2.4.0",

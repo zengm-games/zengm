@@ -1,5 +1,5 @@
-import create from "zustand";
-import shallow from "zustand/shallow";
+import { create } from "zustand";
+import { shallow } from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
 import safeLocalStorage from "./safeLocalStorage";

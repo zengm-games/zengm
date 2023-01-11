@@ -4,7 +4,7 @@ import router, { Context, makeRegex } from "../router";
 import { local, localActions } from "./local";
 import realtimeUpdate from "./realtimeUpdate";
 import toWorker from "./toWorker";
-import create from "zustand";
+import { create } from "zustand";
 import routeInfos from "./routeInfos";
 
 /**

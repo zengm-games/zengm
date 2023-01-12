@@ -245,6 +245,7 @@ const Rigged = ({
 			<th />
 			<th />
 			<th />
+			<th />
 			{actualRigged.map((selected, i) => (
 				<td key={i}>
 					<select

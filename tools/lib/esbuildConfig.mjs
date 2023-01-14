@@ -79,6 +79,8 @@ const esbuildConfig = ({ nodeEnv, name }) => {
 
 		// This is needed because dropbox conditionally requries various node builtins, and esbuild chokes on that even though it never actually makes it to the browser
 		external: name === "ui" ? ["crypto", "util"] : undefined,
+
+		logLevel: nodeEnv === "development" ? "silent" : undefined,
 	};
 };
 

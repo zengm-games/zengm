@@ -75,9 +75,16 @@ const reducer = (files, { type, filename, error }) => {
 
 const File = ({ filename, info }) => {
 	if (info.error) {
-		return (
-			<Text>{`${logSymbols?.error} ${filename}: ${info.error.detail}`}</Text>
-		);
+		let errorText = info.error.pluginName
+			? `[plugin: ${info.error.pluginName}] `
+			: "";
+		if (info.error.detail) {
+			errorText += info.error.detail;
+		} else if (info.error.text) {
+			errorText += `${info.error.text} at ${info.error.location.file} (${info.error.location.line}:${info.error.location.column}):\n${info.error.location.lineText}`;
+		}
+
+		return <Text>{`${logSymbols?.error} ${filename}: ${errorText}`}</Text>;
 	}
 
 	const time = (

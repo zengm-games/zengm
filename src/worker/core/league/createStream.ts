@@ -329,22 +329,27 @@ const getSaveToDB = async ({
 					}
 				}
 
-				const processed = await preProcess(key, value, preProcessParams);
+				if (keptKeys.has(key)) {
+					const processed = await preProcess(key, value, preProcessParams);
 
-				if (
-					isPlayers &&
-					(processed.tid >= PLAYER.UNDRAFTED ||
-						processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
-				) {
-					extraFromStream.activePlayers.push(processed);
+					if (
+						isPlayers &&
+						(processed.tid >= PLAYER.UNDRAFTED ||
+							processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
+					) {
+						extraFromStream.activePlayers.push(processed);
 
-					if (!isSport("basketball") || typeof value.rosterOrder === "number") {
-						extraFromStream.teamHasRosterOrder.add(value.tid);
-					}
-				} else {
-					buffer.addRow([key, processed]);
-					if (buffer.isFull()) {
-						await buffer.flush();
+						if (
+							!isSport("basketball") ||
+							typeof value.rosterOrder === "number"
+						) {
+							extraFromStream.teamHasRosterOrder.add(value.tid);
+						}
+					} else {
+						buffer.addRow([key, processed]);
+						if (buffer.isFull()) {
+							await buffer.flush();
+						}
 					}
 				}
 			},

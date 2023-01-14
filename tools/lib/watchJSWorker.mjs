@@ -11,10 +11,21 @@ const pluginStartEnd = {
 				type: "start",
 			});
 		});
-		build.onEnd(() => {
-			parentPort.postMessage({
-				type: "end",
-			});
+		build.onEnd(result => {
+			if (result.errors.length) {
+				parentPort.postMessage({
+					type: "error",
+					error: result.errors[0],
+				});
+
+				// Save to file so it appears when reloading page
+				const js = `throw new Error(\`${result.errors[0].message}\`)`;
+				fs.writeFileSync(config.outfile, js);
+			} else {
+				parentPort.postMessage({
+					type: "end",
+				});
+			}
 		});
 	},
 };
@@ -28,20 +39,5 @@ const config = esbuildConfig({
 
 config.plugins.push(pluginStartEnd);
 
-await esbuild.build({
-	...config,
-	watch: {
-		onRebuild(error) {
-			if (error) {
-				parentPort.postMessage({
-					type: "error",
-					error,
-				});
-
-				// Save to file so it appears when reloading page
-				const js = `throw new Error(\`${error.message}\`)`;
-				fs.writeFileSync(config.outfile, js);
-			}
-		},
-	},
-});
+const ctx = await esbuild.context(config);
+await ctx.watch();

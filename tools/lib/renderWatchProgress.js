@@ -76,7 +76,7 @@ const reducer = (files, { type, filename, error }) => {
 const File = ({ filename, info }) => {
 	if (info.error) {
 		return (
-			<Text>{`${logSymbols?.error} ${filename}: ${info.error.stack}`}</Text>
+			<Text>{`${logSymbols?.error} ${filename}: ${info.error.detail}`}</Text>
 		);
 	}
 

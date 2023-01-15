@@ -75,16 +75,12 @@ const reducer = (files, { type, filename, error }) => {
 
 const File = ({ filename, info }) => {
 	if (info.error) {
-		let errorText = info.error.pluginName
-			? `[plugin: ${info.error.pluginName}] `
-			: "";
-		if (info.error.detail) {
-			errorText += info.error.detail;
-		} else if (info.error.text) {
-			errorText += `${info.error.text} at ${info.error.location.file} (${info.error.location.line}:${info.error.location.column}):\n${info.error.location.lineText}`;
-		}
-
-		return <Text>{`${logSymbols?.error} ${filename}: ${errorText}`}</Text>;
+		// Would be nice to capture ESBuild errors and show them here better
+		return (
+			<Text>{`${logSymbols?.error} ${filename}: ${
+				info.error.stack ?? "See error above from ESBuild"
+			}`}</Text>
+		);
 	}
 
 	const time = (

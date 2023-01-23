@@ -1,3 +1,6 @@
+FBGM awards - for the positions where AV is calculated by including awards results (OL and defense) use player ratings when calculating awards score for that position
+- only for the award that actually impacts AV (all league team) not for other awards, since they will implicitly have the all league results incorporated already
+
 option to disable easter eggs https://old.reddit.com/r/BasketballGM/comments/10d25on/what_are_the_chances_this_man_straight_up/j4m8tn1/?context=3
 
 FBGM - teams don't realize they lose possession at end of overtime period if tied https://discord.com/channels/290013534023057409/290015591216054273/1063923726980231242

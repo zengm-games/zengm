@@ -52,13 +52,15 @@ const resizeListener = () => {
 
 const Skyscraper = memo(() => {
 	useEffect(() => {
-		updateSkyscraperDisplay();
-		window.addEventListener("resize", resizeListener);
-		window.addEventListener("optimizedResize", updateSkyscraperDisplay);
-		return () => {
-			window.removeEventListener("resize", resizeListener);
-			window.removeEventListener("optimizedResize", updateSkyscraperDisplay);
-		};
+		if (!window.mobile) {
+			updateSkyscraperDisplay();
+			window.addEventListener("resize", resizeListener);
+			window.addEventListener("optimizedResize", updateSkyscraperDisplay);
+			return () => {
+				window.removeEventListener("resize", resizeListener);
+				window.removeEventListener("optimizedResize", updateSkyscraperDisplay);
+			};
+		}
 	}, []);
 
 	return (

@@ -30,8 +30,6 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
-	const mobile = window.screen.width < 768;
-
 	if (!hideAds) {
 		// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
 		const divsAll = [
@@ -56,7 +54,7 @@ const initAds = (goldUntil: number | undefined) => {
 				AD_DIVS.rectangle1,
 				AD_DIVS.rectangle2,
 			];
-			const divs = mobile ? divsMobile : divsDesktop;
+			const divs = window.mobile ? divsMobile : divsDesktop;
 
 			for (const id of divs) {
 				const div = document.getElementById(id);
@@ -105,7 +103,7 @@ const initAds = (goldUntil: number | undefined) => {
 				});
 			}
 
-			if (!mobile) {
+			if (!window.mobile) {
 				// Show the logo too
 				const logo = document.getElementById("bbgm-ads-logo");
 

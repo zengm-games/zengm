@@ -270,6 +270,11 @@ const Account = ({
 						today!
 					</p>
 
+					<p>
+						You can cancel a subscription at any time by clicking "Cancel" on
+						your account page.
+					</p>
+
 					{!loggedIn ? (
 						<p className="mb-0">
 							<a href="/account/login_or_register">

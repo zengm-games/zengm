@@ -343,3 +343,8 @@ table.table thead .sorting::after {
 #zen-gm_mobile_leaderboard {
 	background-color: rgba(33, 37, 41, 0.8);
 }
+
+// Otherwise it's just black, needs manual override. This breaks hover though :(
+.table-secondary {
+	background-color: $gray-100 !important;
+}

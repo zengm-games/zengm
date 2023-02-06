@@ -1,7 +1,6 @@
 import * as React from "react";
 import Bugsnag from "@bugsnag/browser";
 import useTitleBar from "../hooks/useTitleBar";
-import type { BugsnagErrorBoundary } from "@bugsnag/plugin-react";
 
 const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
 	console.log(error, info);
@@ -26,7 +25,8 @@ const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
 	);
 };
 
-let ErrorBoundaryBugsnag: BugsnagErrorBoundary;
+const ErrorBoundaryBugsnag =
+	Bugsnag.getPlugin("react")!.createErrorBoundary(React);
 
 const ErrorBoundary = ({
 	children,
@@ -35,11 +35,6 @@ const ErrorBoundary = ({
 	children: any;
 	local?: boolean;
 }) => {
-	if (!ErrorBoundaryBugsnag) {
-		ErrorBoundaryBugsnag =
-			Bugsnag.getPlugin("react")!.createErrorBoundary(React);
-	}
-
 	return (
 		<ErrorBoundaryBugsnag
 			FallbackComponent={local ? FallbackLocal : FallbackGlobal}

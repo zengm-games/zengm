@@ -77,6 +77,9 @@ const bundle = async () => {
 		format: "iife",
 		indent: false,
 		sourcemap: true,
+
+		// https://github.com/rollup/rollup/issues/4840
+		experimentalDeepDynamicChunkOptimization: true,
 	});
 };
 

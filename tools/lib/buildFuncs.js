@@ -226,7 +226,7 @@ const copyFiles = watch => {
 
 	// Remove the empty folders created by the "filter" function.
 	for (const folder of foldersToIgnore) {
-		fse.removeSync(`build/${folder}`);
+		fs.rmSync(`build/${folder}`, { recursive: true, force: true });
 	}
 
 	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
@@ -262,7 +262,7 @@ const genRev = () => {
 };
 
 const reset = () => {
-	fse.removeSync("build");
+	fs.rmSync("build", { recursive: true, force: true });
 	fs.mkdirSync("build/gen", { recursive: true });
 };
 

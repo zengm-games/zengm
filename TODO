@@ -1,3 +1,6 @@
+ai propose trades to user
+- list candidates on a new Trade Offers page?
+
 double overtime playoff games go into qbrec as a tie https://discord.com/channels/290013534023057409/290015591216054273/1069043500156469258
 
 FBGM awards - for the positions where AV is calculated by including awards results (OL and defense) use player ratings when calculating awards score for that position
@@ -439,9 +442,6 @@ customizable columns https://discord.com/channels/@me/914986660020748321
 dropbox integration - save league to cloud
 - add way to view leagues saved in dropbox account and select one from that list
 - add support for dropbox url in hash so that all the league creation stuff is pre-filled
-
-ai propose trades to user
-- list candidates on a new Trade Offers page?
 
 fbgm negative passes https://discord.com/channels/@me/625036115497451609/912909432919310336
 

@@ -75,7 +75,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 				minify: true,
 				sourceMap: false,
 				targets: lightningCSS.browserslistToTargets(
-					browserslist("Chrome >= 49, Firefox >= 78, Safari >= 11"),
+					browserslist("Chrome >= 55, Firefox >= 78, Safari >= 12"),
 				),
 			});
 

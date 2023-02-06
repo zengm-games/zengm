@@ -1,35 +1,6 @@
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Chrome 54
-// Inlined from MDN, since object.entries and object.values npm packages were somehow adding 50kb to each bundle
-if (!Object.entries) {
-	Object.entries = (obj: any) => {
-		const ownProps = Object.keys(obj);
-		let i = ownProps.length;
-		const resArray = new Array(i); // preallocate the Array
-
-		while (i--) {
-			resArray[i] = [ownProps[i], obj[ownProps[i]]];
-		}
-
-		return resArray;
-	};
-}
-if (!Object.values) {
-	Object.values = (obj: any) => {
-		const ownProps = Object.keys(obj);
-		let i = ownProps.length;
-		const resArray = new Array(i); // preallocate the Array
-
-		while (i--) {
-			resArray[i] = obj[ownProps[i]];
-		}
-
-		return resArray;
-	};
-}
-
-// Chrome 69, Safari 12
+// Chrome 69
 // https://github.com/behnammodi/polyfill/blob/1a5965edc0e2eaf8e6d87902cc719462e2a889fb/array.polyfill.js#L598-L622
 if (!Array.prototype.flat) {
 	Object.defineProperty(Array.prototype, "flat", {
@@ -59,7 +30,6 @@ if (!Array.prototype.flat) {
 }
 
 import {
-	CountQueuingStrategy as PolyfillCountQueuingStrategy,
 	ReadableStream as PolyfillReadableStream,
 	TransformStream as PolyfillTransformStream,
 	WritableStream as PolyfillWritableStream,
@@ -88,11 +58,6 @@ if (POLYFILL_STREAMS) {
 } else {
 	toPolyfillReadable = x => x;
 	toPolyfillTransform = x => x;
-}
-
-// Chrome 52
-if (self.CountQueuingStrategy === undefined) {
-	self.CountQueuingStrategy = PolyfillCountQueuingStrategy;
 }
 
 // Chrome 76, Safari 14.1

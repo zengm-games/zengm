@@ -12,14 +12,14 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "chrome",
-		browser_version: "80.0", // Works back to 49 currently (last release on XP and some old Mac versions). Importing league files only works back to 54
+		browser_version: "80.0", // Works back to 55 currently
 		os: "Windows",
 		os_version: "10",
 	},
 	{
 		base: "BrowserStack",
 		browser: "safari",
-		browser_version: "13.1", // Works back to 11 currently, although league creation only works in 12. Some people are still playing existing leagues in 11 though.
+		browser_version: "13.1", // Works back to 12 currently
 		os: "OS X",
 		os_version: "Catalina",
 	},

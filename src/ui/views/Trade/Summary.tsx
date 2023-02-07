@@ -68,7 +68,7 @@ export const SummaryTeam = ({
 				{summary.teams[t.other].trade.map(p => (
 					<li key={p.pid} className="d-flex">
 						<PlayerNameLabels pid={p.pid} legacyName={p.name} />
-						<div className="ms-1">
+						<div className="ms-2">
 							<ContractAmount p={p} />
 						</div>
 						{handleRemove ? (

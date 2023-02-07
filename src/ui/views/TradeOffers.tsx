@@ -1,10 +1,20 @@
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
+import { SummaryTeam } from "./Trade/Summary";
 
 const TradeOffers = (props: View<"tradeOffers">) => {
-	const { challengeNoRatings, challengeNoTrades, gameOver, phase, spectator } =
-		props;
+	const {
+		challengeNoRatings,
+		challengeNoTrades,
+		gameOver,
+		luxuryPayroll,
+		offers,
+		phase,
+		salaryCap,
+		salaryCapType,
+		spectator,
+	} = props;
 
 	useTitleBar({ title: "Trade Offers" });
 
@@ -43,7 +53,26 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 
 	return (
 		<>
-			<p>Hi</p>
+			{offers.map((summary, i) => {
+				return (
+					<div key={i} className="row">
+						{summary.teams.map((t, j) => {
+							return (
+								<div key={j} className="col">
+									<SummaryTeam
+										challengeNoRatings={challengeNoRatings}
+										luxuryPayroll={luxuryPayroll}
+										salaryCap={salaryCap}
+										salaryCapType={salaryCapType}
+										summary={summary}
+										t={t}
+									/>
+								</div>
+							);
+						})}
+					</div>
+				);
+			})}
 		</>
 	);
 };

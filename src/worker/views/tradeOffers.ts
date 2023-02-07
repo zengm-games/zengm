@@ -5,9 +5,10 @@ import isUntradable from "../core/trade/isUntradable";
 import makeItWork from "../core/trade/makeItWork";
 import summary from "../core/trade/summary";
 import { team } from "../core";
+import { getSummary } from "./trade";
 
 const getOffers = async (seed: number) => {
-	const NUM_OFFERS = 5;
+	const NUM_OFFERS = 10;
 	const NUM_TRIES_PER_TEAM = 10;
 
 	const userTid = g.get("userTid");
@@ -17,7 +18,7 @@ const getOffers = async (seed: number) => {
 	);
 	random.shuffle(teams, seed);
 
-	const offers: TradeTeams[] = [];
+	const offers: Awaited<ReturnType<typeof getSummary>>[] = [];
 
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", userTid)
@@ -35,27 +36,44 @@ const getOffers = async (seed: number) => {
 
 	for (const t of teams) {
 		for (let i = 0; i < NUM_TRIES_PER_TEAM; i++) {
-			const r = random.uniformSeed(seed + t.tid + i);
+			const r = random.uniformSeed(seed + NUM_TRIES_PER_TEAM * t.tid + i);
 			const pids: number[] = [];
 			const dpids: number[] = [];
 
 			if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 				// Weight by player value - good player more likely to be in trade
 				pids.push(
-					random.choice(players, p => p.value, seed + t.tid + i + 1).pid,
+					random.choice(
+						players,
+						p => p.value,
+						seed + NUM_TRIES_PER_TEAM * t.tid + i + 1,
+					).pid,
 				);
 			} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
 				dpids.push(
-					random.choice(draftPicks, undefined, seed + t.tid + i + 2).dpid,
+					random.choice(
+						draftPicks,
+						undefined,
+						seed + NUM_TRIES_PER_TEAM * t.tid + i + 2,
+					).dpid,
 				);
 			} else {
 				pids.push(
-					random.choice(players, p => p.value, seed + t.tid + i + 3).pid,
+					random.choice(
+						players,
+						p => p.value,
+						seed + NUM_TRIES_PER_TEAM * t.tid + i + 3,
+					).pid,
 				);
 				dpids.push(
-					random.choice(draftPicks, undefined, seed + t.tid + i + 4).dpid,
+					random.choice(
+						draftPicks,
+						undefined,
+						seed + NUM_TRIES_PER_TEAM * t.tid + i + 4,
+					).dpid,
 				);
 			}
+			console.log(pids);
 
 			const teams0: TradeTeams = [
 				{
@@ -97,20 +115,7 @@ const getOffers = async (seed: number) => {
 				continue;
 			}
 
-			// Make sure this is favorable to the AI
-			const dv2 = await team.valueChange(
-				teams[0].tid,
-				teams[1].pids,
-				teams[0].pids,
-				teams[1].dpids,
-				teams[0].dpids,
-				valueChangeKey,
-			);
-			if (Math.abs(dv2) < 10) {
-				continue;
-			}
-
-			offers.push(teams);
+			offers.push(await getSummary(teams));
 			break;
 		}
 
@@ -152,7 +157,11 @@ const updateTradeOffers = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
+			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			offers,
 			phase: g.get("phase"),
+			salaryCap: g.get("salaryCap") / 1000,
+			salaryCapType: g.get("salaryCapType"),
 			spectator: g.get("spectator"),
 		};
 	}

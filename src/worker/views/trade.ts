@@ -6,7 +6,7 @@ import { g, helpers } from "../util"; // This relies on vars being populated, so
 import type { TradeTeams } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 
-const getSummary = async (teams: TradeTeams) => {
+export const getSummary = async (teams: TradeTeams) => {
 	const summary = await trade.summary(teams);
 	const summary2 = {
 		enablePropose:

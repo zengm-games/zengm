@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import classNames from "classnames";
-import { SafeHtml } from "../../components";
+import { PlayerNameLabels, SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
 
@@ -78,12 +78,10 @@ const Summary = forwardRef(
 							<h4 className="fw-bold mb-1">{t.name} receive:</h4>
 							<ul className="list-unstyled mb-1">
 								{summary.teams[t.other].trade.map(p => (
-									<li key={`p${p.pid}`} className="d-flex">
-										<div>
-											<a href={helpers.leagueUrl(["player", p.pid])}>
-												{p.name}
-											</a>{" "}
-											({<ContractAmount p={p} />})
+									<li key={p.pid} className="d-flex">
+										<PlayerNameLabels pid={p.pid} legacyName={p.name} />
+										<div className="ms-1">
+											<ContractAmount p={p} />
 										</div>
 										<button
 											type="button"

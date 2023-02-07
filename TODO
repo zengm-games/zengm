@@ -4,6 +4,7 @@ ai propose trades to user
 - ui - similar to normal trade summary, but two teams side by side
   - also show if it's salary cap legal
   - and a button to negotiate
+- generating trade offers - would be nice if it knew the dv cutoff, if we are going to use that
 
 double overtime playoff games go into qbrec as a tie https://discord.com/channels/290013534023057409/290015591216054273/1069043500156469258
 

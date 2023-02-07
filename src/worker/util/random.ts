@@ -11,7 +11,11 @@ const uniform = (a: number, b: number): number => {
 };
 
 // https://stackoverflow.com/a/19303725/786644
-const uniformSeed = (seed: number): number => {
+const uniformSeed = (seed?: number): number => {
+	if (seed === undefined) {
+		return Math.random();
+	}
+
 	const x = Math.sin(seed) * 10000;
 	return x - Math.floor(x);
 };
@@ -39,7 +43,7 @@ const shuffle = (list: any[], seed?: number) => {
 	const l = list.length;
 
 	for (let i = 1; i < l; i++) {
-		const j = randInt(0, i, seed);
+		const j = randInt(0, i, seed !== undefined ? seed + i : undefined);
 
 		if (j !== i) {
 			const t = list[i]; // swap list[i] and list[j]
@@ -136,9 +140,19 @@ const truncGauss = (
 const choice = <T>(
 	x: readonly T[],
 	weightInput?: ((a: T, index: number) => number) | number[],
+	seed?: number,
 ): T => {
+	let seed2 = seed ?? 0;
+	const getSeed = () => {
+		if (seed === undefined) {
+			return undefined;
+		}
+		seed2 += 1;
+		return seed2;
+	};
+
 	if (weightInput === undefined) {
-		return x[Math.floor(Math.random() * x.length)];
+		return x[Math.floor(uniformSeed(getSeed()) * x.length)];
 	}
 
 	let weights;
@@ -161,7 +175,7 @@ const choice = <T>(
 		return array;
 	}, []);
 	const max = cumsums.at(-1)!;
-	const rand = Math.random() * max;
+	const rand = uniformSeed(getSeed()) * max;
 	const ind = cumsums.findIndex(cumsum => cumsum >= rand);
 	return x[ind];
 };

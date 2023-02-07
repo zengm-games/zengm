@@ -1,4 +1,4 @@
-import { useRef, useState, ReactNode } from "react";
+import { useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
@@ -14,7 +14,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { OvrChange } from "./Trade/Summary";
 
 type OfferType = Awaited<
-	ReturnType<typeof api["main"]["getTradingBlockOffers"]>
+	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
 >[0];
 
 type OfferProps = {
@@ -270,8 +270,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: props.initialDpid !== undefined ? [props.initialDpid] : [],
 	});
-
-	const beforeOffersRef = useRef<HTMLDivElement>(null);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
@@ -608,8 +606,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					/>
 				</div>
 			</div>
-
-			<div ref={beforeOffersRef} />
 
 			<div className="text-center">
 				<ActionButton

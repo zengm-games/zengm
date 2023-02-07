@@ -380,6 +380,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "tradeOffers",
+				league: true,
+				commandPalette: true,
+				path: ["trade_offers"],
+				text: "Trade Offers",
+			},
+			{
+				type: "link",
 				active: pageID =>
 					typeof pageID === "string" && pageID.startsWith("draft"),
 				league: true,

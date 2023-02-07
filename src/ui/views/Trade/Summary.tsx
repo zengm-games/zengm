@@ -42,6 +42,104 @@ export const OvrChange = ({
 	);
 };
 
+export const SummaryTeam = ({
+	challengeNoRatings,
+	handleRemove,
+	luxuryPayroll,
+	salaryCap,
+	salaryCapType,
+	summary,
+	t,
+}: Pick<
+	View<"trade">,
+	"luxuryPayroll" | "salaryCap" | "salaryCapType" | "summary"
+> & {
+	challengeNoRatings: boolean;
+	handleRemove?: (type: "player" | "pick", id: number) => void;
+	t: View<"trade">["summary"]["teams"][number];
+}) => {
+	const payrollColorCutoff =
+		salaryCapType === "none" ? luxuryPayroll : salaryCap;
+
+	return (
+		<>
+			<h4 className="fw-bold mb-1">{t.name} receive:</h4>
+			<ul className="list-unstyled mb-1">
+				{summary.teams[t.other].trade.map(p => (
+					<li key={p.pid} className="d-flex">
+						<PlayerNameLabels pid={p.pid} legacyName={p.name} />
+						<div className="ms-1">
+							<ContractAmount p={p} />
+						</div>
+						{handleRemove ? (
+							<button
+								type="button"
+								className="btn-close ms-1"
+								title="Remove player from trade"
+								onClick={() => {
+									handleRemove("player", p.pid);
+								}}
+							/>
+						) : undefined}
+					</li>
+				))}
+				{summary.teams[t.other].picks.map(pick => (
+					<li key={pick.dpid} className="d-flex">
+						<SafeHtml dirty={pick.desc} />
+						{handleRemove ? (
+							<button
+								type="button"
+								className="btn-close ms-1"
+								title="Remove pick from trade"
+								onClick={() => {
+									handleRemove("pick", pick.dpid);
+								}}
+							/>
+						) : undefined}
+					</li>
+				))}
+				{summary.teams[t.other].trade.length > 0 ? (
+					<li className="mt-1">
+						{helpers.formatCurrency(summary.teams[t.other].total, "M")} total
+					</li>
+				) : null}
+				{summary.teams[t.other].trade.length === 0 &&
+				summary.teams[t.other].picks.length === 0 ? (
+					<li>Nothing</li>
+				) : null}
+			</ul>
+			<ul className="list-unstyled">
+				<li>
+					Payroll after trade:{" "}
+					<span
+						className={
+							t.payrollAfterTrade > payrollColorCutoff
+								? "text-danger"
+								: undefined
+						}
+					>
+						{helpers.formatCurrency(t.payrollAfterTrade, "M")}
+					</span>
+				</li>
+				{salaryCapType !== "none" ? (
+					<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
+				) : (
+					<li>Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}</li>
+				)}
+				{!challengeNoRatings ? (
+					<li>
+						Team ovr:{" "}
+						<OvrChange
+							before={summary.teams[t.other].ovrBefore}
+							after={summary.teams[t.other].ovrAfter}
+						/>
+					</li>
+				) : null}
+			</ul>
+		</>
+	);
+};
+
 const Summary = forwardRef(
 	(
 		{
@@ -60,9 +158,6 @@ const Summary = forwardRef(
 		},
 		ref: any,
 	) => {
-		const payrollColorCutoff =
-			salaryCapType === "none" ? luxuryPayroll : salaryCap;
-
 		return (
 			<div className="row trade-items mb-3" ref={ref}>
 				{summary.teams.map((t, i) => {
@@ -75,78 +170,17 @@ const Summary = forwardRef(
 								"mb-md-3": i === 0,
 							})}
 						>
-							<h4 className="fw-bold mb-1">{t.name} receive:</h4>
-							<ul className="list-unstyled mb-1">
-								{summary.teams[t.other].trade.map(p => (
-									<li key={p.pid} className="d-flex">
-										<PlayerNameLabels pid={p.pid} legacyName={p.name} />
-										<div className="ms-1">
-											<ContractAmount p={p} />
-										</div>
-										<button
-											type="button"
-											className="btn-close ms-1"
-											title="Remove player from trade"
-											onClick={() => {
-												handleToggle(userOrOther, "player", "include", p.pid);
-											}}
-										/>
-									</li>
-								))}
-								{summary.teams[t.other].picks.map(pick => (
-									<li key={pick.dpid} className="d-flex">
-										<SafeHtml dirty={pick.desc} />
-										<button
-											type="button"
-											className="btn-close ms-1"
-											title="Remove pick from trade"
-											onClick={() => {
-												handleToggle(userOrOther, "pick", "include", pick.dpid);
-											}}
-										/>
-									</li>
-								))}
-								{summary.teams[t.other].trade.length > 0 ? (
-									<li className="mt-1">
-										{helpers.formatCurrency(summary.teams[t.other].total, "M")}{" "}
-										total
-									</li>
-								) : null}
-								{summary.teams[t.other].trade.length === 0 &&
-								summary.teams[t.other].picks.length === 0 ? (
-									<li>Nothing</li>
-								) : null}
-							</ul>
-							<ul className="list-unstyled">
-								<li>
-									Payroll after trade:{" "}
-									<span
-										className={
-											t.payrollAfterTrade > payrollColorCutoff
-												? "text-danger"
-												: undefined
-										}
-									>
-										{helpers.formatCurrency(t.payrollAfterTrade, "M")}
-									</span>
-								</li>
-								{salaryCapType !== "none" ? (
-									<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
-								) : (
-									<li>
-										Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}
-									</li>
-								)}
-								{!challengeNoRatings ? (
-									<li>
-										Team ovr:{" "}
-										<OvrChange
-											before={summary.teams[t.other].ovrBefore}
-											after={summary.teams[t.other].ovrAfter}
-										/>
-									</li>
-								) : null}
-							</ul>
+							<SummaryTeam
+								challengeNoRatings={challengeNoRatings}
+								luxuryPayroll={luxuryPayroll}
+								salaryCap={salaryCap}
+								salaryCapType={salaryCapType}
+								handleRemove={(type, id) => {
+									handleToggle(userOrOther, type, "include", id);
+								}}
+								summary={summary}
+								t={t}
+							/>
 						</div>
 					);
 				})}

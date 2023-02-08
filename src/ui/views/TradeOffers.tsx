@@ -2,7 +2,8 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { SummaryTeam } from "./Trade/Summary";
-import { toWorker } from "../util";
+import { toWorker, useLocalPartial } from "../util";
+import { Offer } from "./TradingBlock";
 
 const TradeOffers = (props: View<"tradeOffers">) => {
 	const {
@@ -18,6 +19,8 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 	} = props;
 
 	useTitleBar({ title: "Trade Offers" });
+
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 	if (spectator) {
 		return <p>You're not allowed to make trades in spectator mode.</p>;
@@ -53,49 +56,36 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 	}
 
 	return (
-		<div className="d-flex flex-wrap gap-5">
-			{offers.map((summary, i) => {
-				return (
-					<div
-						key={i}
-						style={{ width: 500 }}
-						className="border rounded p-2 h-100"
-					>
-						<div className="row">
-							{summary.teams.map((t, j) => {
-								return (
-									<div key={j} className="col">
-										<SummaryTeam
-											challengeNoRatings={challengeNoRatings}
-											luxuryPayroll={luxuryPayroll}
-											salaryCap={salaryCap}
-											salaryCapType={salaryCapType}
-											summary={summary}
-											t={t}
-										/>
-									</div>
-								);
-							})}
-						</div>
-						<button
-							type="submit"
-							className="btn btn-light-bordered mt-auto"
-							onClick={async () => {
+		<>
+			<div className="d-block d-xxl-none">
+				{offers.map((offer, i) => {
+					return (
+						<Offer
+							key={offer.tid}
+							challengeNoRatings={challengeNoRatings}
+							onNegotiate={async () => {
 								await toWorker("actions", "tradeFor", {
-									otherDpids: summary.teams[1].picks.map(dp => dp.dpid),
-									otherPids: summary.teams[1].trade.map(p => p.pid),
-									tid: summary.teams[1].tid,
-									userDpids: summary.teams[0].picks.map(dp => dp.dpid),
-									userPids: summary.teams[0].trade.map(p => p.pid),
+									otherDpids: offer.dpids,
+									otherPids: offer.pids,
+									tid: offer.tid,
+									userDpids: offer.dpidsUser,
+									userPids: offer.pidsUser,
 								});
 							}}
+							onRemove={() => {
+								console.log("Remove", i);
+							}}
+							salaryCap={salaryCap}
+							salaryCapType={salaryCapType}
+							teamInfo={teamInfoCache[offer.tid]}
+							{...offer}
 						>
-							Negotiate
-						</button>
-					</div>
-				);
-			})}
-		</div>
+							Offer details
+						</Offer>
+					);
+				})}
+			</div>
+		</>
 	);
 };
 

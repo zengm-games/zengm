@@ -17,8 +17,6 @@ const getOffers = async (seed: number) => {
 	);
 	random.shuffle(teams, seed);
 
-	const offers: TradeTeams[] = [];
-
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", userTid)
 	).filter(p => !isUntradable(p).untradable);
@@ -28,8 +26,10 @@ const getOffers = async (seed: number) => {
 	);
 
 	if (players.length === 0 && draftPicks.length === 0) {
-		return offers;
+		return [];
 	}
+
+	const offers: TradeTeams[] = [];
 
 	const valueChangeKey = Math.random();
 
@@ -123,7 +123,7 @@ const getOffers = async (seed: number) => {
 		}
 	}
 
-	return await augmentOffers(offers);
+	return augmentOffers(offers);
 };
 
 const updateTradeOffers = async (
@@ -156,10 +156,10 @@ const updateTradeOffers = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
-			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			luxuryPayroll: g.get("luxuryPayroll"),
 			offers,
 			phase: g.get("phase"),
-			salaryCap: g.get("salaryCap") / 1000,
+			salaryCap: g.get("salaryCap"),
 			salaryCapType: g.get("salaryCapType"),
 			spectator: g.get("spectator"),
 		};

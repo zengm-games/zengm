@@ -29,7 +29,7 @@ type OfferProps = {
 } & Omit<OfferType, "pids" | "dpids" | "picks" | "players"> &
 	Pick<
 		View<"tradingBlock">,
-		"challengeNoRatings" | "salaryCap" | "salaryCapType" | "stats"
+		"challengeNoRatings" | "salaryCap" | "salaryCapType"
 	>;
 
 const OfferPlayers = ({
@@ -102,7 +102,7 @@ const OfferPlayers = ({
 	return null;
 };
 
-const Offer = (props: OfferProps) => {
+export const Offer = (props: OfferProps) => {
 	const {
 		challengeNoRatings,
 		children,
@@ -610,7 +610,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 							}}
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}
-							stats={stats}
 							teamInfo={teamInfoCache[offer.tid]}
 							{...offer}
 						>

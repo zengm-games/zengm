@@ -14,7 +14,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { OvrChange } from "./Trade/Summary";
 
-type OfferType = Awaited<
+export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
 >[0];
 
@@ -193,7 +193,7 @@ const pickCols = getCols(["", "Draft Picks"], {
 	},
 });
 
-const pickScore = (
+export const pickScore = (
 	picks: {
 		round: number;
 		pick: number;
@@ -210,7 +210,7 @@ const pickScore = (
 	return score;
 };
 
-const playerScore = (
+export const playerScore = (
 	players: {
 		ratings: {
 			ovr: number;
@@ -229,7 +229,7 @@ export const OfferTable = ({
 	assetCols,
 	challengeNoRatings,
 	getAssetColContents,
-	handleClickNegotiate,
+	handleNegotiate,
 	handleRemove,
 	offers,
 	salaryCap,
@@ -237,7 +237,7 @@ export const OfferTable = ({
 }: {
 	assetCols: Col[];
 	getAssetColContents: (offer: OfferType) => any[];
-	handleClickNegotiate: (tid: number, pids: number[], dpids: number[]) => void;
+	handleNegotiate: (tid: number, pids: number[], dpids: number[]) => void;
 	handleRemove: (i: number) => void;
 	offers: OfferType[];
 } & Pick<
@@ -268,7 +268,7 @@ export const OfferTable = ({
 	offerCols[3].desc = "Other team's change in ovr rating";
 	offerCols[4].title = "Your Ovr";
 	offerCols[3].desc = "Your team's change in ovr rating";
-	offerCols.splice(6, 0, ...assetCols);
+	offerCols.splice(5, 0, ...assetCols);
 
 	const offerRows = offers.map((offer, i) => {
 		const salaryCapOrPayroll =
@@ -308,8 +308,8 @@ export const OfferTable = ({
 							searchValue: `${offer.summary.teams[1].ovrBefore} ${offer.summary.teams[1].ovrAfter}`,
 					  }
 					: null,
-				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
 				...getAssetColContents(offer),
+				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: offer.summary.warning ? (
 						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>
@@ -325,7 +325,7 @@ export const OfferTable = ({
 						type="submit"
 						className="btn btn-light-bordered"
 						onClick={() => {
-							handleClickNegotiate(offer.tid, offer.pids, offer.dpids);
+							handleNegotiate(offer.tid, offer.pids, offer.dpids);
 						}}
 					>
 						Negotiate
@@ -412,7 +412,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		}));
 	};
 
-	const handleClickNegotiate = async (
+	const handleNegotiate = async (
 		tid: number,
 		otherPids: number[],
 		otherDpids: number[],
@@ -607,7 +607,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 							sortType: "number",
 						},
 					})}
-					getAssetColContents={(offer: OfferType) => {
+					getAssetColContents={offer => {
 						return [
 							{
 								value: (
@@ -639,7 +639,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						];
 					}}
 					challengeNoRatings={challengeNoRatings}
-					handleClickNegotiate={handleClickNegotiate}
+					handleNegotiate={handleNegotiate}
 					handleRemove={handleRemove}
 					offers={state.offers}
 					salaryCap={salaryCap}
@@ -654,7 +654,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 							key={offer.tid}
 							challengeNoRatings={challengeNoRatings}
 							onNegotiate={() => {
-								handleClickNegotiate(offer.tid, offer.pids, offer.dpids);
+								handleNegotiate(offer.tid, offer.pids, offer.dpids);
 							}}
 							onRemove={() => {
 								handleRemove(i);

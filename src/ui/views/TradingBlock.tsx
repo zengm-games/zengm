@@ -1,7 +1,7 @@
 import { useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { ActionButton, DataTable, HelpPopover, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
@@ -21,6 +21,11 @@ type OfferProps = {
 	children: ReactNode;
 	onNegotiate: () => void;
 	onRemove: () => void;
+	teamInfo: {
+		abbrev: string;
+		name: string;
+		region: string;
+	};
 } & Omit<OfferType, "pids" | "dpids" | "picks" | "players"> &
 	Pick<
 		View<"tradingBlock">,
@@ -99,10 +104,8 @@ const OfferPlayers = ({
 
 const Offer = (props: OfferProps) => {
 	const {
-		abbrev,
 		challengeNoRatings,
 		children,
-		name,
 		onNegotiate,
 		onRemove,
 		ovrAfter,
@@ -110,11 +113,11 @@ const Offer = (props: OfferProps) => {
 		ovrAfterUser,
 		ovrBeforeUser,
 		payroll,
-		region,
 		salaryCap,
 		salaryCapType,
 		strategy,
 		tid,
+		teamInfo,
 		warning,
 	} = props;
 
@@ -127,8 +130,8 @@ const Offer = (props: OfferProps) => {
 		<div className="mt-4" style={{ maxWidth: 1125 }}>
 			<div className="d-flex align-items-center mb-2">
 				<h2 className="mb-0">
-					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
-						{region} {name}
+					<a href={helpers.leagueUrl(["roster", `${teamInfo.abbrev}_${tid}`])}>
+						{teamInfo.region} {teamInfo.name}
 					</a>
 				</h2>
 				<button
@@ -150,7 +153,8 @@ const Offer = (props: OfferProps) => {
 				{!challengeNoRatings ? (
 					<>
 						<div>
-							{abbrev} ovr: <OvrChange before={ovrBefore} after={ovrAfter} />
+							{teamInfo.abbrev} ovr:{" "}
+							<OvrChange before={ovrBefore} after={ovrAfter} />
 						</div>
 						<div>
 							Your ovr:{" "}
@@ -302,6 +306,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 
 	useTitleBar({ title: "Trading Block" });
 
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+
 	if (spectator) {
 		return <p>You're not allowed to make trades in spectator mode.</p>;
 	}
@@ -445,11 +451,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		const salaryCapOrPayroll =
 			salaryCapType === "none" ? offer.payroll : salaryCap - offer.payroll;
 
+		const t = teamInfoCache[offer.tid];
+
 		return {
 			key: offer.tid,
 			data: [
-				<a href={helpers.leagueUrl(["roster", `${offer.abbrev}_${offer.tid}`])}>
-					{offer.abbrev}
+				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${offer.tid}`])}>
+					{t.abbrev}
 				</a>,
 				helpers.formatRecord(offer),
 				offer.strategy,
@@ -603,6 +611,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}
 							stats={stats}
+							teamInfo={teamInfoCache[offer.tid]}
 							{...offer}
 						>
 							{offer.picks.length > 0 || offer.players.length > 0 ? (

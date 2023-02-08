@@ -1812,9 +1812,6 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 			const payroll = await team.getPayroll(tid);
 			return {
 				tid,
-				abbrev: t.abbrev,
-				region: t.region,
-				name: t.name,
 				strategy: t.strategy,
 				won: t.seasonAttrs.won,
 				lost: t.seasonAttrs.lost,

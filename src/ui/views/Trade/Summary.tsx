@@ -45,6 +45,7 @@ export const OvrChange = ({
 export const SummaryTeam = ({
 	challengeNoRatings,
 	handleRemove,
+	hideFinanceInfo,
 	luxuryPayroll,
 	salaryCap,
 	salaryCapType,
@@ -56,6 +57,7 @@ export const SummaryTeam = ({
 > & {
 	challengeNoRatings: boolean;
 	handleRemove?: (type: "player" | "pick", id: number) => void;
+	hideFinanceInfo?: boolean;
 	t: View<"trade">["summary"]["teams"][number];
 }) => {
 	const payrollColorCutoff =
@@ -109,19 +111,21 @@ export const SummaryTeam = ({
 				) : null}
 			</ul>
 			<ul className="list-unstyled">
-				<li>
-					Payroll after trade:{" "}
-					<span
-						className={
-							t.payrollAfterTrade > payrollColorCutoff
-								? "text-danger"
-								: undefined
-						}
-					>
-						{helpers.formatCurrency(t.payrollAfterTrade, "M")}
-					</span>
-				</li>
-				{salaryCapType !== "none" ? (
+				{!hideFinanceInfo ? (
+					<li>
+						Payroll after trade:{" "}
+						<span
+							className={
+								t.payrollAfterTrade > payrollColorCutoff
+									? "text-danger"
+									: undefined
+							}
+						>
+							{helpers.formatCurrency(t.payrollAfterTrade, "M")}
+						</span>
+					</li>
+				) : null}
+				{hideFinanceInfo ? null : salaryCapType !== "none" ? (
 					<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
 				) : (
 					<li>Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}</li>

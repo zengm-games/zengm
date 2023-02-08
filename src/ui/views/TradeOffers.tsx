@@ -78,14 +78,16 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}
 							teamInfo={teamInfoCache[offer.tid]}
+							hideTopTeamOvrs
 							{...offer}
 						>
-							<div className="row">
+							<div className="d-flex gap-5">
 								{offer.summary.teams.map((t, j) => {
 									return (
-										<div key={j} className="col">
+										<div key={j}>
 											<SummaryTeam
 												challengeNoRatings={challengeNoRatings}
+												hideFinanceInfo
 												luxuryPayroll={luxuryPayroll}
 												salaryCap={salaryCap}
 												salaryCapType={salaryCapType}

@@ -1754,8 +1754,6 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 	// Take the pids and dpids in each offer and get the info needed to display the offer
 	return Promise.all(
 		offers.map(async offerRaw => {
-			const summary = await trade.summary(offerRaw);
-
 			const tid = offerRaw[1].tid;
 			const t = teams.find(t => t.tid === tid);
 			if (!t) {

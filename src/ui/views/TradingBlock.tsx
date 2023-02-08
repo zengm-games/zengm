@@ -19,6 +19,7 @@ type OfferType = Awaited<
 
 type OfferProps = {
 	children: ReactNode;
+	hideTopTeamOvrs?: boolean;
 	onNegotiate: () => void;
 	onRemove: () => void;
 	teamInfo: {
@@ -106,6 +107,7 @@ export const Offer = (props: OfferProps) => {
 	const {
 		challengeNoRatings,
 		children,
+		hideTopTeamOvrs,
 		onNegotiate,
 		onRemove,
 		payroll,
@@ -146,7 +148,7 @@ export const Offer = (props: OfferProps) => {
 					{helpers.formatCurrency(salaryCapOrPayroll / 1000, "M")}{" "}
 					{salaryCapOrPayrollText}
 				</div>
-				{!challengeNoRatings ? (
+				{!challengeNoRatings && !hideTopTeamOvrs ? (
 					<>
 						<div>
 							{teamInfo.abbrev} ovr:{" "}

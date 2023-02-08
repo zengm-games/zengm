@@ -35,42 +35,19 @@ const getOffers = async (seed: number) => {
 
 	for (const t of teams) {
 		for (let i = 0; i < NUM_TRIES_PER_TEAM; i++) {
-			const r = random.uniformSeed(seed + NUM_TRIES_PER_TEAM * t.tid + i);
+			const seedBase = seed + NUM_TRIES_PER_TEAM * t.tid + i;
+			const r = random.uniformSeed(seedBase);
 			const pids: number[] = [];
 			const dpids: number[] = [];
 
 			if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 				// Weight by player value - good player more likely to be in trade
-				pids.push(
-					random.choice(
-						players,
-						p => p.value,
-						seed + NUM_TRIES_PER_TEAM * t.tid + i + 1,
-					).pid,
-				);
+				pids.push(random.choice(players, p => p.value, seedBase + 1).pid);
 			} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
-				dpids.push(
-					random.choice(
-						draftPicks,
-						undefined,
-						seed + NUM_TRIES_PER_TEAM * t.tid + i + 2,
-					).dpid,
-				);
+				dpids.push(random.choice(draftPicks, undefined, seedBase + 2).dpid);
 			} else {
-				pids.push(
-					random.choice(
-						players,
-						p => p.value,
-						seed + NUM_TRIES_PER_TEAM * t.tid + i + 3,
-					).pid,
-				);
-				dpids.push(
-					random.choice(
-						draftPicks,
-						undefined,
-						seed + NUM_TRIES_PER_TEAM * t.tid + i + 4,
-					).dpid,
-				);
+				pids.push(random.choice(players, p => p.value, seedBase + 3).pid);
+				dpids.push(random.choice(draftPicks, undefined, seedBase + 4).dpid);
 			}
 			console.log(pids);
 

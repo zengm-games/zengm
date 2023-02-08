@@ -2,6 +2,7 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { SummaryTeam } from "./Trade/Summary";
+import { toWorker } from "../util";
 
 const TradeOffers = (props: View<"tradeOffers">) => {
 	const {
@@ -52,28 +53,49 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 	}
 
 	return (
-		<>
+		<div className="d-flex flex-wrap gap-5">
 			{offers.map((summary, i) => {
 				return (
-					<div key={i} className="row">
-						{summary.teams.map((t, j) => {
-							return (
-								<div key={j} className="col">
-									<SummaryTeam
-										challengeNoRatings={challengeNoRatings}
-										luxuryPayroll={luxuryPayroll}
-										salaryCap={salaryCap}
-										salaryCapType={salaryCapType}
-										summary={summary}
-										t={t}
-									/>
-								</div>
-							);
-						})}
+					<div
+						key={i}
+						style={{ width: 500 }}
+						className="border rounded p-2 h-100"
+					>
+						<div className="row">
+							{summary.teams.map((t, j) => {
+								return (
+									<div key={j} className="col">
+										<SummaryTeam
+											challengeNoRatings={challengeNoRatings}
+											luxuryPayroll={luxuryPayroll}
+											salaryCap={salaryCap}
+											salaryCapType={salaryCapType}
+											summary={summary}
+											t={t}
+										/>
+									</div>
+								);
+							})}
+						</div>
+						<button
+							type="submit"
+							className="btn btn-light-bordered mt-auto"
+							onClick={async () => {
+								await toWorker("actions", "tradeFor", {
+									otherDpids: summary.teams[1].picks.map(dp => dp.dpid),
+									otherPids: summary.teams[1].trade.map(p => p.pid),
+									tid: summary.teams[1].tid,
+									userDpids: summary.teams[0].picks.map(dp => dp.dpid),
+									userPids: summary.teams[0].trade.map(p => p.pid),
+								});
+							}}
+						>
+							Negotiate
+						</button>
 					</div>
 				);
 			})}
-		</>
+		</div>
 	);
 };
 

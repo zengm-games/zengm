@@ -4,11 +4,10 @@ import type { TradeTeams, UpdateEvents, ViewInput } from "../../common/types";
 import isUntradable from "../core/trade/isUntradable";
 import makeItWork from "../core/trade/makeItWork";
 import summary from "../core/trade/summary";
-import { team } from "../core";
 import { getSummary } from "./trade";
 
 const getOffers = async (seed: number) => {
-	const NUM_OFFERS = 10;
+	const NUM_OFFERS = 5;
 	const NUM_TRIES_PER_TEAM = 10;
 
 	const userTid = g.get("userTid");

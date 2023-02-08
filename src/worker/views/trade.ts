@@ -16,6 +16,7 @@ export const getSummary = async (teams: TradeTeams) => {
 				teams[1].pids.length > 0 ||
 				teams[1].dpids.length > 0),
 		warning: summary.warning,
+		warningAmount: summary.warningAmount,
 		teams: [0, 1].map(i => {
 			return {
 				tid: teams[i].tid,

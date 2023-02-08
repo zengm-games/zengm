@@ -80,7 +80,22 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 							teamInfo={teamInfoCache[offer.tid]}
 							{...offer}
 						>
-							Offer details
+							<div className="row">
+								{offer.summary.teams.map((t, j) => {
+									return (
+										<div key={j} className="col">
+											<SummaryTeam
+												challengeNoRatings={challengeNoRatings}
+												luxuryPayroll={luxuryPayroll}
+												salaryCap={salaryCap}
+												salaryCapType={salaryCapType}
+												summary={offer.summary}
+												t={t}
+											/>
+										</div>
+									);
+								})}
+							</div>
 						</Offer>
 					);
 				})}

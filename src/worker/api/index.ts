@@ -122,6 +122,7 @@ import {
 } from "../views/customizePlayer";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings";
 import * as exhibitionGame from "./exhibitionGame";
+import { getSummary } from "../views/trade";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1821,17 +1822,12 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 				dpids: offerRaw[1].dpids,
 				pidsUser: offerRaw[0].pids,
 				dpidsUser: offerRaw[0].dpids,
-				warning: summary.warning,
-				warningAmount: summary.warningAmount,
-				ovrAfter: summary.teams[0].ovrAfter,
-				ovrBefore: summary.teams[0].ovrBefore,
-				ovrAfterUser: summary.teams[1].ovrAfter,
-				ovrBeforeUser: summary.teams[1].ovrBefore,
 				payroll,
 				picks: await formatPicks(offerRaw[1].dpids),
 				players: await formatPlayers(tid, offerRaw[1].pids),
 				picksUser: await formatPicks(offerRaw[0].dpids),
 				playersUser: await formatPlayers(g.get("userTid"), offerRaw[0].pids),
+				summary: await getSummary(offerRaw),
 			};
 		}),
 	);

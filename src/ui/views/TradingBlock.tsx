@@ -108,17 +108,13 @@ export const Offer = (props: OfferProps) => {
 		children,
 		onNegotiate,
 		onRemove,
-		ovrAfter,
-		ovrBefore,
-		ovrAfterUser,
-		ovrBeforeUser,
 		payroll,
 		salaryCap,
 		salaryCapType,
 		strategy,
+		summary,
 		tid,
 		teamInfo,
-		warning,
 	} = props;
 
 	const salaryCapOrPayroll =
@@ -154,17 +150,25 @@ export const Offer = (props: OfferProps) => {
 					<>
 						<div>
 							{teamInfo.abbrev} ovr:{" "}
-							<OvrChange before={ovrBefore} after={ovrAfter} />
+							<OvrChange
+								before={summary.teams[0].ovrBefore}
+								after={summary.teams[0].ovrAfter}
+							/>
 						</div>
 						<div>
 							Your ovr:{" "}
-							<OvrChange before={ovrBeforeUser} after={ovrAfterUser} />
+							<OvrChange
+								before={summary.teams[1].ovrBefore}
+								after={summary.teams[1].ovrAfter}
+							/>
 						</div>
 					</>
 				) : null}
 			</div>
 			{children}
-			{warning ? <p className="text-danger">{warning}</p> : null}
+			{summary.warning ? (
+				<p className="text-danger">{summary.warning}</p>
+			) : null}
 
 			<button
 				type="submit"
@@ -464,22 +468,25 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				!challengeNoRatings
 					? {
 							value: (
-								<OvrChange before={offer.ovrBefore} after={offer.ovrAfter} />
+								<OvrChange
+									before={offer.summary.teams[0].ovrBefore}
+									after={offer.summary.teams[0].ovrAfter}
+								/>
 							),
-							sortValue: offer.ovrAfter,
-							searchValue: `${offer.ovrBefore} ${offer.ovrAfter}`,
+							sortValue: offer.summary.teams[0].ovrAfter,
+							searchValue: `${offer.summary.teams[0].ovrBefore} ${offer.summary.teams[0].ovrAfter}`,
 					  }
 					: null,
 				!challengeNoRatings
 					? {
 							value: (
 								<OvrChange
-									before={offer.ovrBeforeUser}
-									after={offer.ovrAfterUser}
+									before={offer.summary.teams[1].ovrBefore}
+									after={offer.summary.teams[1].ovrAfter}
 								/>
 							),
-							sortValue: offer.ovrAfterUser,
-							searchValue: `${offer.ovrBeforeUser} ${offer.ovrAfterUser}`,
+							sortValue: offer.summary.teams[1].ovrAfter,
+							searchValue: `${offer.summary.teams[1].ovrBefore} ${offer.summary.teams[1].ovrAfter}`,
 					  }
 					: null,
 				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
@@ -511,13 +518,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					sortValue: pickScore(offer.picks),
 				},
 				{
-					value: offer.warning ? (
-						<HelpPopover className="fs-4">{offer.warning}</HelpPopover>
+					value: offer.summary.warning ? (
+						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>
 					) : null,
-					sortValue: offer.warningAmount ?? 0,
+					sortValue: offer.summary.warningAmount ?? 0,
 					classNames: classNames(
 						"text-center",
-						offer.warning ? "table-danger" : undefined,
+						offer.summary.warning ? "table-danger" : undefined,
 					),
 				},
 				<div className="d-flex align-items-center">

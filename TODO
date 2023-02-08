@@ -7,6 +7,10 @@ ai propose trades to user
 - generating trade offers - would be nice if it knew the dv cutoff, if we are going to use that
 - make sure it's deterministic until 10 games played
 - show basic player info without click
+- put in table similar to trading block
+  - use augmentOffers to format TradeTeams
+  - should share most code with trading block. <Offer> already is abstracted enough
+  - delete tid added to trade summary
 
 double overtime playoff games go into qbrec as a tie https://discord.com/channels/290013534023057409/290015591216054273/1069043500156469258
 

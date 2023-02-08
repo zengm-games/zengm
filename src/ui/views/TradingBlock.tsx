@@ -18,13 +18,10 @@ type OfferType = Awaited<
 >[0];
 
 type OfferProps = {
-	handleClickNegotiate: (
-		tid: number,
-		otherPids: number[],
-		otherDpids: number[],
-	) => Promise<void>;
+	children: ReactNode;
+	onNegotiate: () => void;
 	onRemove: () => void;
-} & OfferType &
+} & Omit<OfferType, "pids" | "dpids" | "picks" | "players"> &
 	Pick<
 		View<"tradingBlock">,
 		"challengeNoRatings" | "salaryCap" | "salaryCapType" | "stats"
@@ -35,8 +32,10 @@ const OfferPlayers = ({
 	challengeNoRatings,
 	players,
 	stats,
-}: Pick<OfferProps, "challengeNoRatings" | "players" | "stats"> & {
+}: Pick<OfferType, "players"> & {
 	className?: string;
+	challengeNoRatings: View<"tradingBlock">["challengeNoRatings"];
+	stats: View<"tradingBlock">["stats"];
 }) => {
 	if (players.length > 0) {
 		const cols = getCols(
@@ -102,50 +101,22 @@ const Offer = (props: OfferProps) => {
 	const {
 		abbrev,
 		challengeNoRatings,
-		dpids,
-		handleClickNegotiate,
+		children,
 		name,
+		onNegotiate,
 		onRemove,
 		ovrAfter,
 		ovrBefore,
 		ovrAfterUser,
 		ovrBeforeUser,
 		payroll,
-		picks,
-		pids,
-		players,
 		region,
 		salaryCap,
 		salaryCapType,
-		stats,
 		strategy,
 		tid,
 		warning,
 	} = props;
-
-	let offerPicks: ReactNode = null;
-	if (picks.length > 0) {
-		offerPicks = (
-			<div className="col-md-4">
-				<table className="table table-striped table-borderless table-sm">
-					<thead>
-						<tr>
-							<th>Draft Picks</th>
-						</tr>
-					</thead>
-					<tbody>
-						{picks.map(pick => (
-							<tr key={pick.dpid}>
-								<td>
-									<SafeHtml dirty={pick.desc} />
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			</div>
-		);
-	}
 
 	const salaryCapOrPayroll =
 		salaryCapType === "none" ? payroll : salaryCap - payroll;
@@ -188,28 +159,13 @@ const Offer = (props: OfferProps) => {
 					</>
 				) : null}
 			</div>
-			{picks.length > 0 || players.length > 0 ? (
-				<div className="row">
-					{players.length > 0 ? (
-						<div className="col-md-8">
-							<OfferPlayers
-								challengeNoRatings={challengeNoRatings}
-								players={players}
-								stats={stats}
-							/>
-						</div>
-					) : null}
-					{offerPicks}
-				</div>
-			) : (
-				<p>Nothing.</p>
-			)}
+			{children}
 			{warning ? <p className="text-danger">{warning}</p> : null}
 
 			<button
 				type="submit"
 				className="btn btn-light-bordered mb-4"
-				onClick={() => handleClickNegotiate(tid, pids, dpids)}
+				onClick={onNegotiate}
 			>
 				Negotiate
 			</button>
@@ -638,7 +594,9 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						<Offer
 							key={offer.tid}
 							challengeNoRatings={challengeNoRatings}
-							handleClickNegotiate={handleClickNegotiate}
+							onNegotiate={() => {
+								handleClickNegotiate(offer.tid, offer.pids, offer.dpids);
+							}}
 							onRemove={() => {
 								handleRemove(i);
 							}}
@@ -646,7 +604,43 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 							salaryCapType={salaryCapType}
 							stats={stats}
 							{...offer}
-						/>
+						>
+							{offer.picks.length > 0 || offer.players.length > 0 ? (
+								<div className="row">
+									{offer.players.length > 0 ? (
+										<div className="col-md-8">
+											<OfferPlayers
+												challengeNoRatings={challengeNoRatings}
+												players={offer.players}
+												stats={stats}
+											/>
+										</div>
+									) : null}
+									{offer.picks.length > 0 ? (
+										<div className="col-md-4">
+											<table className="table table-striped table-borderless table-sm">
+												<thead>
+													<tr>
+														<th>Draft Picks</th>
+													</tr>
+												</thead>
+												<tbody>
+													{offer.picks.map(pick => (
+														<tr key={pick.dpid}>
+															<td>
+																<SafeHtml dirty={pick.desc} />
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									) : null}
+								</div>
+							) : (
+								<p>Nothing.</p>
+							)}
+						</Offer>
 					);
 				})}
 			</div>

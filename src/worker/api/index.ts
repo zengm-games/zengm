@@ -1685,6 +1685,158 @@ const getRandomRatings = async ({
 	};
 };
 
+const getOffers = async (userPids: number[], userDpids: number[]) => {
+	// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
+	const teams = await idb.cache.teams.getAll();
+	const tids = orderBy(
+		teams.filter(t => !t.disabled),
+		["region", "name", "tid"],
+	).map(t => t.tid);
+	const offers = [];
+
+	for (const tid of tids) {
+		const teams: TradeTeams = [
+			{
+				tid: g.get("userTid"),
+				pids: userPids,
+				pidsExcluded: [],
+				dpids: userDpids,
+				dpidsExcluded: [],
+			},
+			{
+				tid,
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+		];
+
+		if (tid !== g.get("userTid")) {
+			const teams2 = await trade.makeItWork(
+				teams,
+				true,
+				4 + userPids.length + userDpids.length,
+			);
+
+			if (teams2) {
+				offers.push(teams2);
+			}
+		}
+	}
+
+	return offers;
+};
+
+const augmentOffers = async (offers: TradeTeams[]) => {
+	if (offers.length === 0) {
+		return [];
+	}
+
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["abbrev", "region", "name", "strategy", "tid"],
+			seasonAttrs: ["won", "lost", "tied", "otl"],
+			season: g.get("season"),
+			addDummySeason: true,
+			active: true,
+		},
+		"noCopyCache",
+	);
+	const stats = bySport({
+		baseball: ["gp", "keyStats", "war"],
+		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+	});
+
+	// Take the pids and dpids in each offer and get the info needed to display the offer
+	return Promise.all(
+		offers.map(async offerRaw => {
+			const summary = await trade.summary(offerRaw);
+			const offer = {
+				...offerRaw[1],
+				warning: summary.warning,
+				warningAmount: summary.warningAmount,
+				ovrBefore: summary.teams[0].ovrBefore,
+				ovrAfter: summary.teams[0].ovrAfter,
+				ovrBeforeUser: summary.teams[1].ovrBefore,
+				ovrAfterUser: summary.teams[1].ovrAfter,
+			};
+
+			const tid = offer.tid;
+			const t = teams.find(t => t.tid === tid);
+			if (!t) {
+				throw new Error("No team found");
+			}
+
+			let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
+			playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
+			const players = addFirstNameShort(
+				await idb.getCopies.playersPlus(playersAll, {
+					attrs: [
+						"pid",
+						"firstName",
+						"lastName",
+						"age",
+						"contract",
+						"injury",
+						"jerseyNumber",
+						"draft",
+					],
+					ratings: ["ovr", "pot", "skills", "pos"],
+					stats,
+					season: g.get("season"),
+					tid,
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+				}),
+			);
+			let picks = await idb.getCopies.draftPicks(
+				{
+					tid,
+				},
+				"noCopyCache",
+			);
+			picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
+
+			const picks2 = await Promise.all(
+				picks.map(async dp => {
+					return {
+						...dp,
+						desc: await helpers.pickDesc(dp, "short"),
+					};
+				}),
+			);
+
+			const payroll = await team.getPayroll(tid);
+			return {
+				tid,
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				strategy: t.strategy,
+				won: t.seasonAttrs.won,
+				lost: t.seasonAttrs.lost,
+				tied: t.seasonAttrs.tied,
+				otl: t.seasonAttrs.otl,
+				pids: offer.pids,
+				dpids: offer.dpids,
+				warning: offer.warning,
+				warningAmount: offer.warningAmount,
+				ovrAfter: offer.ovrAfter,
+				ovrBefore: offer.ovrBefore,
+				ovrAfterUser: offer.ovrAfterUser,
+				ovrBeforeUser: offer.ovrBeforeUser,
+				payroll,
+				picks: picks2,
+				players,
+			};
+		}),
+	);
+};
+
 const getTradingBlockOffers = async ({
 	pids,
 	dpids,
@@ -1692,162 +1844,6 @@ const getTradingBlockOffers = async ({
 	pids: number[];
 	dpids: number[];
 }) => {
-	const getOffers = async (userPids: number[], userDpids: number[]) => {
-		// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
-		const teams = await idb.cache.teams.getAll();
-		const tids = orderBy(
-			teams.filter(t => !t.disabled),
-			["region", "name", "tid"],
-		).map(t => t.tid);
-		const offers = [];
-
-		for (const tid of tids) {
-			const teams: TradeTeams = [
-				{
-					tid: g.get("userTid"),
-					pids: userPids,
-					pidsExcluded: [],
-					dpids: userDpids,
-					dpidsExcluded: [],
-				},
-				{
-					tid,
-					pids: [],
-					pidsExcluded: [],
-					dpids: [],
-					dpidsExcluded: [],
-				},
-			];
-
-			if (tid !== g.get("userTid")) {
-				const teams2 = await trade.makeItWork(
-					teams,
-					true,
-					4 + userPids.length + userDpids.length,
-				);
-
-				if (teams2) {
-					const summary = await trade.summary(teams2);
-					const team3 = {
-						...teams2[1],
-						warning: summary.warning,
-						warningAmount: summary.warningAmount,
-						ovrBefore: summary.teams[0].ovrBefore,
-						ovrAfter: summary.teams[0].ovrAfter,
-						ovrBeforeUser: summary.teams[1].ovrBefore,
-						ovrAfterUser: summary.teams[1].ovrAfter,
-					};
-					offers.push(team3);
-				}
-			}
-		}
-
-		return offers;
-	};
-
-	const augmentOffers = async (
-		offers: Awaited<ReturnType<typeof getOffers>>,
-	) => {
-		if (offers.length === 0) {
-			return [];
-		}
-
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["abbrev", "region", "name", "strategy", "tid"],
-				seasonAttrs: ["won", "lost", "tied", "otl"],
-				season: g.get("season"),
-				addDummySeason: true,
-				active: true,
-			},
-			"noCopyCache",
-		);
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
-
-		// Take the pids and dpids in each offer and get the info needed to display the offer
-		return Promise.all(
-			offers.map(async offer => {
-				const tid = offer.tid;
-				const t = teams.find(t => t.tid === tid);
-				if (!t) {
-					throw new Error("No team found");
-				}
-
-				let playersAll = await idb.cache.players.indexGetAll(
-					"playersByTid",
-					tid,
-				);
-				playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
-				const players = addFirstNameShort(
-					await idb.getCopies.playersPlus(playersAll, {
-						attrs: [
-							"pid",
-							"firstName",
-							"lastName",
-							"age",
-							"contract",
-							"injury",
-							"jerseyNumber",
-							"draft",
-						],
-						ratings: ["ovr", "pot", "skills", "pos"],
-						stats,
-						season: g.get("season"),
-						tid,
-						showNoStats: true,
-						showRookies: true,
-						fuzz: true,
-					}),
-				);
-				let picks = await idb.getCopies.draftPicks(
-					{
-						tid,
-					},
-					"noCopyCache",
-				);
-				picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
-
-				const picks2 = await Promise.all(
-					picks.map(async dp => {
-						return {
-							...dp,
-							desc: await helpers.pickDesc(dp, "short"),
-						};
-					}),
-				);
-
-				const payroll = await team.getPayroll(tid);
-				return {
-					tid,
-					abbrev: t.abbrev,
-					region: t.region,
-					name: t.name,
-					strategy: t.strategy,
-					won: t.seasonAttrs.won,
-					lost: t.seasonAttrs.lost,
-					tied: t.seasonAttrs.tied,
-					otl: t.seasonAttrs.otl,
-					pids: offer.pids,
-					dpids: offer.dpids,
-					warning: offer.warning,
-					warningAmount: offer.warningAmount,
-					ovrAfter: offer.ovrAfter,
-					ovrBefore: offer.ovrBefore,
-					ovrAfterUser: offer.ovrAfterUser,
-					ovrBeforeUser: offer.ovrBeforeUser,
-					payroll,
-					picks: picks2,
-					players,
-				};
-			}),
-		);
-	};
-
 	const offers = await getOffers(pids, dpids);
 	return augmentOffers(offers);
 };

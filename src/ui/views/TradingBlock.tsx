@@ -3,6 +3,7 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { ActionButton, DataTable, HelpPopover, SafeHtml } from "../components";
+import type { Col } from "../components/DataTable";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
 import classNames from "classnames";
@@ -224,6 +225,141 @@ const playerScore = (
 	return score;
 };
 
+export const OfferTable = ({
+	assetCols,
+	challengeNoRatings,
+	getAssetColContents,
+	handleClickNegotiate,
+	handleRemove,
+	offers,
+	salaryCap,
+	salaryCapType,
+}: {
+	assetCols: Col[];
+	getAssetColContents: (offer: OfferType) => any[];
+	handleClickNegotiate: (tid: number, pids: number[], dpids: number[]) => void;
+	handleRemove: (i: number) => void;
+	offers: OfferType[];
+} & Pick<
+	View<"tradingBlock">,
+	"challengeNoRatings" | "salaryCap" | "salaryCapType"
+>) => {
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+
+	const offerCols = getCols(
+		[
+			"Team",
+			"Record",
+			"Strategy",
+			"Ovr",
+			"Ovr",
+			salaryCapType === "none" ? "Payroll" : "Cap Space",
+			"Cap",
+			"Actions",
+		],
+		{
+			Actions: {
+				sortSequence: [],
+				width: "1px",
+			},
+		},
+	);
+	offerCols[3].title = "Other Ovr";
+	offerCols[3].desc = "Other team's change in ovr rating";
+	offerCols[4].title = "Your Ovr";
+	offerCols[3].desc = "Your team's change in ovr rating";
+	offerCols.splice(6, 0, ...assetCols);
+
+	const offerRows = offers.map((offer, i) => {
+		const salaryCapOrPayroll =
+			salaryCapType === "none" ? offer.payroll : salaryCap - offer.payroll;
+
+		const t = teamInfoCache[offer.tid];
+
+		return {
+			key: offer.tid,
+			data: [
+				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${offer.tid}`])}>
+					{t.abbrev}
+				</a>,
+				helpers.formatRecord(offer),
+				offer.strategy,
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange
+									before={offer.summary.teams[0].ovrBefore}
+									after={offer.summary.teams[0].ovrAfter}
+								/>
+							),
+							sortValue: offer.summary.teams[0].ovrAfter,
+							searchValue: `${offer.summary.teams[0].ovrBefore} ${offer.summary.teams[0].ovrAfter}`,
+					  }
+					: null,
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange
+									before={offer.summary.teams[1].ovrBefore}
+									after={offer.summary.teams[1].ovrAfter}
+								/>
+							),
+							sortValue: offer.summary.teams[1].ovrAfter,
+							searchValue: `${offer.summary.teams[1].ovrBefore} ${offer.summary.teams[1].ovrAfter}`,
+					  }
+					: null,
+				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
+				...getAssetColContents(offer),
+				{
+					value: offer.summary.warning ? (
+						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>
+					) : null,
+					sortValue: offer.summary.warningAmount ?? 0,
+					classNames: classNames(
+						"text-center",
+						offer.summary.warning ? "table-danger" : undefined,
+					),
+				},
+				<div className="d-flex align-items-center">
+					<button
+						type="submit"
+						className="btn btn-light-bordered"
+						onClick={() => {
+							handleClickNegotiate(offer.tid, offer.pids, offer.dpids);
+						}}
+					>
+						Negotiate
+					</button>
+					<button
+						type="button"
+						className="btn-close ms-2 p-0"
+						title="Remove offer from list"
+						onClick={() => {
+							handleRemove(i);
+						}}
+					/>
+				</div>,
+			],
+		};
+	});
+
+	if (offerRows.length === 0) {
+		return null;
+	}
+
+	return (
+		<DataTable
+			className="align-top-all"
+			clickable={false}
+			cols={offerCols}
+			defaultSort={[0, "asc"]}
+			name={`TradingBlock:Offers`}
+			rows={offerRows}
+			small={false}
+		/>
+	);
+};
+
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
 		asking: boolean;
@@ -420,138 +556,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		};
 	});
 
-	const offerCols = getCols(
-		[
-			"Team",
-			"Record",
-			"Strategy",
-			"Ovr",
-			"Ovr",
-			salaryCapType === "none" ? "Payroll" : "Cap Space",
-			"Players",
-			"Draft Picks",
-			"Cap",
-			"Actions",
-		],
-		{
-			Actions: {
-				sortSequence: [],
-				width: "1px",
-			},
-			"Draft Picks": {
-				sortSequence: ["desc", "asc"],
-				sortType: "number",
-			},
-			Players: {
-				sortSequence: ["desc", "asc"],
-				sortType: "number",
-			},
-		},
-	);
-	offerCols[3].title = "Other Ovr";
-	offerCols[3].desc = "Other team's change in ovr rating";
-	offerCols[4].title = "Your Ovr";
-	offerCols[3].desc = "Your team's change in ovr rating";
-
-	const offerRows = state.offers.map((offer, i) => {
-		const salaryCapOrPayroll =
-			salaryCapType === "none" ? offer.payroll : salaryCap - offer.payroll;
-
-		const t = teamInfoCache[offer.tid];
-
-		return {
-			key: offer.tid,
-			data: [
-				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${offer.tid}`])}>
-					{t.abbrev}
-				</a>,
-				helpers.formatRecord(offer),
-				offer.strategy,
-				!challengeNoRatings
-					? {
-							value: (
-								<OvrChange
-									before={offer.summary.teams[0].ovrBefore}
-									after={offer.summary.teams[0].ovrAfter}
-								/>
-							),
-							sortValue: offer.summary.teams[0].ovrAfter,
-							searchValue: `${offer.summary.teams[0].ovrBefore} ${offer.summary.teams[0].ovrAfter}`,
-					  }
-					: null,
-				!challengeNoRatings
-					? {
-							value: (
-								<OvrChange
-									before={offer.summary.teams[1].ovrBefore}
-									after={offer.summary.teams[1].ovrAfter}
-								/>
-							),
-							sortValue: offer.summary.teams[1].ovrAfter,
-							searchValue: `${offer.summary.teams[1].ovrBefore} ${offer.summary.teams[1].ovrAfter}`,
-					  }
-					: null,
-				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
-				{
-					value: (
-						<OfferPlayers
-							className="mb-0"
-							challengeNoRatings={challengeNoRatings}
-							players={offer.players}
-							stats={stats}
-						/>
-					),
-					searchValue: offer.players
-						.map(p => `${p.name} ${p.ratings.pos}`)
-						.join(" "),
-					sortValue: playerScore(offer.players),
-				},
-				{
-					value: (
-						<ul className="list-unstyled mb-0">
-							{offer.picks.map(pick => (
-								<li key={pick.dpid}>
-									<SafeHtml dirty={pick.desc} />
-								</li>
-							))}
-						</ul>
-					),
-					searchValue: offer.picks.map(pick => pick.desc).join(" "),
-					sortValue: pickScore(offer.picks),
-				},
-				{
-					value: offer.summary.warning ? (
-						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>
-					) : null,
-					sortValue: offer.summary.warningAmount ?? 0,
-					classNames: classNames(
-						"text-center",
-						offer.summary.warning ? "table-danger" : undefined,
-					),
-				},
-				<div className="d-flex align-items-center">
-					<button
-						type="submit"
-						className="btn btn-light-bordered"
-						onClick={() =>
-							handleClickNegotiate(offer.tid, offer.pids, offer.dpids)
-						}
-					>
-						Negotiate
-					</button>
-					<button
-						type="button"
-						className="btn-close ms-2 p-0"
-						title="Remove offer from list"
-						onClick={() => {
-							handleRemove(i);
-						}}
-					/>
-				</div>,
-			],
-		};
-	});
-
 	return (
 		<>
 			<p>
@@ -592,17 +596,55 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			</div>
 
 			<div className="d-none d-xxl-block">
-				{offerRows.length > 0 ? (
-					<DataTable
-						className="align-top-all"
-						clickable={false}
-						cols={offerCols}
-						defaultSort={[0, "asc"]}
-						name={`TradingBlock:Offers`}
-						rows={offerRows}
-						small={false}
-					/>
-				) : null}
+				<OfferTable
+					assetCols={getCols(["Players", "Draft Picks"], {
+						"Draft Picks": {
+							sortSequence: ["desc", "asc"],
+							sortType: "number",
+						},
+						Players: {
+							sortSequence: ["desc", "asc"],
+							sortType: "number",
+						},
+					})}
+					getAssetColContents={(offer: OfferType) => {
+						return [
+							{
+								value: (
+									<OfferPlayers
+										className="mb-0"
+										challengeNoRatings={challengeNoRatings}
+										players={offer.players}
+										stats={stats}
+									/>
+								),
+								searchValue: offer.players
+									.map(p => `${p.name} ${p.ratings.pos}`)
+									.join(" "),
+								sortValue: playerScore(offer.players),
+							},
+							{
+								value: (
+									<ul className="list-unstyled mb-0">
+										{offer.picks.map(pick => (
+											<li key={pick.dpid}>
+												<SafeHtml dirty={pick.desc} />
+											</li>
+										))}
+									</ul>
+								),
+								searchValue: offer.picks.map(pick => pick.desc).join(" "),
+								sortValue: pickScore(offer.picks),
+							},
+						];
+					}}
+					challengeNoRatings={challengeNoRatings}
+					handleClickNegotiate={handleClickNegotiate}
+					handleRemove={handleRemove}
+					offers={state.offers}
+					salaryCap={salaryCap}
+					salaryCapType={salaryCapType}
+				/>
 			</div>
 
 			<div className="d-block d-xxl-none">

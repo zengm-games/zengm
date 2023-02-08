@@ -8,6 +8,7 @@ ai propose trades to user
 - make sure it's deterministic until 10 games played
 - show basic player info without click
 - implement remove
+  - persist?
 - put in table similar to trading block
   - use augmentOffers to format TradeTeams
   - should share most code with trading block. <Offer> already is abstracted enough

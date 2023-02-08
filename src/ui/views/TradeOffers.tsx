@@ -57,6 +57,8 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 
 	return (
 		<>
+			<div className="d-none d-xxl-block"></div>
+
 			<div className="d-block d-xxl-none">
 				{offers.map((offer, i) => {
 					return (

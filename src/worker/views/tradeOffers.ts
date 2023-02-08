@@ -4,7 +4,7 @@ import type { TradeTeams, UpdateEvents, ViewInput } from "../../common/types";
 import isUntradable from "../core/trade/isUntradable";
 import makeItWork from "../core/trade/makeItWork";
 import summary from "../core/trade/summary";
-import { getSummary } from "./trade";
+import { augmentOffers } from "../api";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;
@@ -17,7 +17,7 @@ const getOffers = async (seed: number) => {
 	);
 	random.shuffle(teams, seed);
 
-	const offers: Awaited<ReturnType<typeof getSummary>>[] = [];
+	const offers: TradeTeams[] = [];
 
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", userTid)
@@ -114,7 +114,7 @@ const getOffers = async (seed: number) => {
 				continue;
 			}
 
-			offers.push(await getSummary(teams));
+			offers.push(teams);
 			break;
 		}
 
@@ -123,7 +123,7 @@ const getOffers = async (seed: number) => {
 		}
 	}
 
-	return offers;
+	return await augmentOffers(offers);
 };
 
 const updateTradeOffers = async (

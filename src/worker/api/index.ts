@@ -1728,7 +1728,7 @@ const getOffers = async (userPids: number[], userDpids: number[]) => {
 	return offers;
 };
 
-const augmentOffers = async (offers: TradeTeams[]) => {
+export const augmentOffers = async (offers: TradeTeams[]) => {
 	if (offers.length === 0) {
 		return [];
 	}
@@ -1754,61 +1754,60 @@ const augmentOffers = async (offers: TradeTeams[]) => {
 	return Promise.all(
 		offers.map(async offerRaw => {
 			const summary = await trade.summary(offerRaw);
-			const offer = {
-				...offerRaw[1],
-				warning: summary.warning,
-				warningAmount: summary.warningAmount,
-				ovrBefore: summary.teams[0].ovrBefore,
-				ovrAfter: summary.teams[0].ovrAfter,
-				ovrBeforeUser: summary.teams[1].ovrBefore,
-				ovrAfterUser: summary.teams[1].ovrAfter,
-			};
 
-			const tid = offer.tid;
+			const tid = offerRaw[1].tid;
 			const t = teams.find(t => t.tid === tid);
 			if (!t) {
 				throw new Error("No team found");
 			}
 
-			let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
-			playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
-			const players = addFirstNameShort(
-				await idb.getCopies.playersPlus(playersAll, {
-					attrs: [
-						"pid",
-						"firstName",
-						"lastName",
-						"age",
-						"contract",
-						"injury",
-						"jerseyNumber",
-						"draft",
-					],
-					ratings: ["ovr", "pot", "skills", "pos"],
-					stats,
-					season: g.get("season"),
-					tid,
-					showNoStats: true,
-					showRookies: true,
-					fuzz: true,
-				}),
-			);
-			let picks = await idb.getCopies.draftPicks(
-				{
-					tid,
-				},
-				"noCopyCache",
-			);
-			picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
+			const formatPicks = async (dpids: number[]) => {
+				let picks = await idb.getCopies.draftPicks(
+					{
+						tid,
+					},
+					"noCopyCache",
+				);
+				picks = picks.filter(dp => dpids.includes(dp.dpid));
 
-			const picks2 = await Promise.all(
-				picks.map(async dp => {
-					return {
-						...dp,
-						desc: await helpers.pickDesc(dp, "short"),
-					};
-				}),
-			);
+				return await Promise.all(
+					picks.map(async dp => {
+						return {
+							...dp,
+							desc: await helpers.pickDesc(dp, "short"),
+						};
+					}),
+				);
+			};
+
+			const formatPlayers = async (tid: number, pids: number[]) => {
+				let playersAll = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					tid,
+				);
+				playersAll = playersAll.filter(p => pids.includes(p.pid));
+				return addFirstNameShort(
+					await idb.getCopies.playersPlus(playersAll, {
+						attrs: [
+							"pid",
+							"firstName",
+							"lastName",
+							"age",
+							"contract",
+							"injury",
+							"jerseyNumber",
+							"draft",
+						],
+						ratings: ["ovr", "pot", "skills", "pos"],
+						stats,
+						season: g.get("season"),
+						tid,
+						showNoStats: true,
+						showRookies: true,
+						fuzz: true,
+					}),
+				);
+			};
 
 			const payroll = await team.getPayroll(tid);
 			return {
@@ -1821,17 +1820,21 @@ const augmentOffers = async (offers: TradeTeams[]) => {
 				lost: t.seasonAttrs.lost,
 				tied: t.seasonAttrs.tied,
 				otl: t.seasonAttrs.otl,
-				pids: offer.pids,
-				dpids: offer.dpids,
-				warning: offer.warning,
-				warningAmount: offer.warningAmount,
-				ovrAfter: offer.ovrAfter,
-				ovrBefore: offer.ovrBefore,
-				ovrAfterUser: offer.ovrAfterUser,
-				ovrBeforeUser: offer.ovrBeforeUser,
+				pids: offerRaw[1].pids,
+				dpids: offerRaw[1].dpids,
+				pidsUser: offerRaw[0].pids,
+				dpidsUser: offerRaw[0].dpids,
+				warning: summary.warning,
+				warningAmount: summary.warningAmount,
+				ovrAfter: summary.teams[0].ovrAfter,
+				ovrBefore: summary.teams[0].ovrBefore,
+				ovrAfterUser: summary.teams[1].ovrAfter,
+				ovrBeforeUser: summary.teams[1].ovrBefore,
 				payroll,
-				picks: picks2,
-				players,
+				picks: await formatPicks(offerRaw[1].dpids),
+				players: await formatPlayers(tid, offerRaw[1].pids),
+				picksUser: await formatPicks(offerRaw[0].dpids),
+				playersUser: await formatPlayers(g.get("userTid"), offerRaw[0].pids),
 			};
 		}),
 	);

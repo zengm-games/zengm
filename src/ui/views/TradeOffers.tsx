@@ -94,7 +94,7 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 
 	return (
 		<>
-			<div className="d-none d-xxl-block">
+			<div className="d-none d-lg-block">
 				<OfferTable
 					assetCols={[
 						{
@@ -153,7 +153,7 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 				/>
 			</div>
 
-			<div className="d-block d-xxl-none">
+			<div className="d-block d-lg-none">
 				{offers.map((offer, i) => {
 					return (
 						<Offer

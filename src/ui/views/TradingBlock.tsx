@@ -237,7 +237,13 @@ export const OfferTable = ({
 }: {
 	assetCols: Col[];
 	getAssetColContents: (offer: OfferType) => any[];
-	handleNegotiate: (tid: number, pids: number[], dpids: number[]) => void;
+	handleNegotiate: (tradeInfo: {
+		tid: number;
+		pids: number[];
+		pidsUser: number[];
+		dpids: number[];
+		dpidsUser: number[];
+	}) => void;
 	handleRemove: (i: number) => void;
 	offers: OfferType[];
 } & Pick<
@@ -325,7 +331,13 @@ export const OfferTable = ({
 						type="submit"
 						className="btn btn-light-bordered"
 						onClick={() => {
-							handleNegotiate(offer.tid, offer.pids, offer.dpids);
+							handleNegotiate({
+								tid: offer.tid,
+								pids: offer.pids,
+								pidsUser: [],
+								dpids: offer.dpids,
+								dpidsUser: [],
+							});
 						}}
 					>
 						Negotiate
@@ -639,7 +651,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						];
 					}}
 					challengeNoRatings={challengeNoRatings}
-					handleNegotiate={handleNegotiate}
+					handleNegotiate={async tradeInfo => {
+						await handleNegotiate(
+							tradeInfo.tid,
+							tradeInfo.pids,
+							tradeInfo.dpids,
+						);
+					}}
 					handleRemove={handleRemove}
 					offers={state.offers}
 					salaryCap={salaryCap}

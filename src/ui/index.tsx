@@ -1,6 +1,7 @@
 /* eslint-disable import/first */
 import "./util/initBugsnag";
 import "bbgm-polyfills"; // eslint-disable-line
+import "bbgm-polyfills-ui"; // eslint-disable-line
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api";

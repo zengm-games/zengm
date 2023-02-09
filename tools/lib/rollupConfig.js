@@ -36,6 +36,10 @@ module.exports = (
 					? path.resolve(root, "src/common/polyfills.ts")
 					: path.resolve(root, "src/common/polyfills-modern.ts"),
 
+				"bbgm-polyfills-ui": legacy
+					? path.resolve(root, "src/ui/util/polyfills.ts")
+					: path.resolve(root, "src/common/polyfills-noop.ts"),
+
 				"bbgm-debug":
 					nodeEnv === "production"
 						? path.resolve(root, "src/worker/core/debug/prod.ts")

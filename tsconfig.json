@@ -12,6 +12,7 @@
 		"paths": {
 			"league-schema": ["build/files/league-schema.json"],
 			"bbgm-polyfills": ["src/common/polyfills-modern.ts"],
+			"bbgm-polyfills-ui": ["src/common/polyfills-noop.ts"],
 			"bbgm-debug": ["src/worker/core/debug/index.ts"],
 			"ajv-hack": ["src/worker/ajvHack/index.ts"]
 		},

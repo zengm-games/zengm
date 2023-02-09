@@ -124,18 +124,14 @@ const LeagueTopBar = memo(() => {
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
 		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
 
-		let resizeObserver: ResizeObserver | undefined;
-		// Chrome 64 and Safari 13.1 support ResizeObserver
-		if (typeof ResizeObserver !== "undefined") {
-			// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
-			resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);
-			resizeObserver.observe(wrapperElement);
-		}
+		// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
+		const resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);
+		resizeObserver.observe(wrapperElement);
 
 		return () => {
 			wrapperElement.removeEventListener("wheel", handleWheel);
 			wrapperElement.removeEventListener("scroll", handleScroll);
-			resizeObserver?.unobserve(wrapperElement);
+			resizeObserver.unobserve(wrapperElement);
 		};
 	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
 

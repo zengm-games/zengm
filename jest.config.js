@@ -1,6 +1,7 @@
 module.exports = {
 	moduleNameMapper: {
 		"^bbgm-polyfills$": "<rootDir>/src/common/polyfills-modern.ts",
+		"^bbgm-polyfills-ui$": "<rootDir>/src/common/polyfills-noop.ts",
 		"^bbgm-debug$": "<rootDir>/src/worker/core/debug/index.ts",
 		"^ajv-hack$": "<rootDir>/src/worker/ajvHack/index.ts",
 

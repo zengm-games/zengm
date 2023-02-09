@@ -242,7 +242,8 @@ function goodIDB(cb) {
 function checkBrowser() {
   try {
     // Safari 10 https://bugs.webkit.org/show_bug.cgi?id=171041
-    eval("const s = Symbol(); let e = (e) => { for (let e of []) {}; }");
+    // async is for Chrome 54 and lower
+    eval("const s = Symbol(); let e = async (e) => { for (let e of []) {}; }");
     return true;
   } catch (err) {
     return false;

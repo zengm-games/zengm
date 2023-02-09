@@ -572,7 +572,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		<>
 			<p>
 				Select some assets you want to trade away and other teams will make you
-				trade offers.
+				trade proposals.
 			</p>
 
 			<div className="row mb-3">

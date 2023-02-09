@@ -380,11 +380,11 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "tradeOffers",
+				active: pageID => pageID === "tradeProposals",
 				league: true,
 				commandPalette: true,
-				path: ["trade_offers"],
-				text: "Trade Offers",
+				path: ["trade_proposals"],
+				text: "Trade Proposals",
 			},
 			{
 				type: "link",

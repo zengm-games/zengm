@@ -12,7 +12,7 @@ import {
 } from "./TradingBlock";
 import { useEffect, useState } from "react";
 
-const TradeOffers = (props: View<"tradeOffers">) => {
+const TradeProposals = (props: View<"tradeProposals">) => {
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
@@ -39,7 +39,7 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 		}
 	}, [offers, prevOffers]);
 
-	useTitleBar({ title: "Trade Offers" });
+	useTitleBar({ title: "Trade Proposals" });
 
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
@@ -111,8 +111,8 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 	return (
 		<>
 			<p>
-				These are trade offers from up to 5 AI teams. New teams will appear here
-				every 10 games.
+				These are trade proposals from up to 5 AI teams. New teams will appear
+				here every 10 games.
 			</p>
 			<div className="d-none d-lg-block">
 				<OfferTable
@@ -217,4 +217,4 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 	);
 };
 
-export default TradeOffers;
+export default TradeProposals;

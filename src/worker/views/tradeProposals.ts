@@ -102,7 +102,7 @@ const getOffers = async (seed: number) => {
 	return augmentOffers(offers);
 };
 
-const updateTradeOffers = async (
+const updateTradeProposals = async (
 	inputs: unknown,
 	updateEvents: UpdateEvents,
 ) => {
@@ -141,4 +141,4 @@ const updateTradeOffers = async (
 	}
 };
 
-export default updateTradeOffers;
+export default updateTradeProposals;

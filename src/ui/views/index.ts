@@ -97,7 +97,7 @@ import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
 import TragicDeaths from "./TragicDeaths";
 import Trade from "./Trade";
-import TradeOffers from "./TradeOffers";
+import TradeProposals from "./TradeProposals";
 import TradeSummary from "./TradeSummary";
 import TradingBlock from "./TradingBlock";
 import Transactions from "./Transactions";
@@ -202,7 +202,7 @@ export default {
 	TeamStatDists,
 	TeamStats,
 	Trade,
-	TradeOffers,
+	TradeProposals,
 	TradeSummary,
 	TradingBlock,
 	TragicDeaths,

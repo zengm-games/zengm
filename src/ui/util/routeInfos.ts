@@ -47,7 +47,7 @@ const routeInfos = {
 	"/l/:lid/free_agents": "freeAgents",
 	"/l/:lid/trade": "trade",
 	"/l/:lid/trading_block": "tradingBlock",
-	"/l/:lid/trade_offers": "tradeOffers",
+	"/l/:lid/trade_proposals": "tradeProposals",
 	"/l/:lid/edit_awards": "editAwards",
 	"/l/:lid/edit_awards/:season": "editAwards",
 	"/l/:lid/draft": "draft",

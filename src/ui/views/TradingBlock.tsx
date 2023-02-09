@@ -125,6 +125,10 @@ export const Offer = (props: OfferProps) => {
 	const salaryCapOrPayrollText =
 		salaryCapType === "none" ? "payroll" : "cap space";
 
+	if (!teamInfo) {
+		return null;
+	}
+
 	return (
 		<div className="mt-4" style={{ maxWidth: 1125 }}>
 			<div className="d-flex align-items-center mb-2">
@@ -281,6 +285,12 @@ export const OfferTable = ({
 			salaryCapType === "none" ? offer.payroll : salaryCap - offer.payroll;
 
 		const t = teamInfoCache[offer.tid];
+		if (!t) {
+			return {
+				key: offer.tid,
+				data: [],
+			};
+		}
 
 		return {
 			key: offer.tid,

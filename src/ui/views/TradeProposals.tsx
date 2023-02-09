@@ -24,11 +24,6 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 		salaryCapType,
 		spectator,
 	} = props;
-	console.log(
-		"ui offers",
-		offers[0].players,
-		structuredClone(offers[0].players),
-	);
 
 	const [removedTids, setRemovedTids] = useState<number[]>([]);
 	const [prevOffers, setPrevOffers] = useState(offers);
@@ -182,7 +177,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 			</div>
 
 			<div className="d-block d-lg-none">
-				{filteredOffers.map((offer, i) => {
+				{filteredOffers.map(offer => {
 					return (
 						<Offer
 							key={offer.tid}
@@ -191,7 +186,8 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 								handleNegotiate(offer);
 							}}
 							onRemove={() => {
-								console.log("Remove", i);
+								const tid = offer.tid;
+								setRemovedTids(prevTids => [...prevTids, tid]);
 							}}
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}

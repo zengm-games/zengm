@@ -2,6 +2,7 @@ import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
+import { orderBy } from "lodash-es";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {
@@ -58,7 +59,11 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			"playersByTid",
 			tids[i],
 		);
-		let players = playersBefore.filter(p => pids[i].includes(p.pid));
+		let players = orderBy(
+			playersBefore.filter(p => pids[i].includes(p.pid)),
+			"valueFuzz",
+			"desc",
+		);
 		players = await idb.getCopies.playersPlus(players, {
 			attrs: ["pid", "name", "contract", "draft"],
 			season: g.get("season"),
@@ -99,30 +104,28 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 
 	const overCap = [false, false];
 	const ratios = [0, 0];
-	await Promise.all(
-		[0, 1].map(async j => {
-			const k = j === 0 ? 1 : 0;
-			s.teams[j].name = `${g.get("teamInfoCache")[tids[j]]?.region} ${
-				g.get("teamInfoCache")[tids[j]]?.name
-			}`;
+	for (const j of [0, 1]) {
+		const k = j === 0 ? 1 : 0;
+		s.teams[j].name = `${g.get("teamInfoCache")[tids[j]]?.region} ${
+			g.get("teamInfoCache")[tids[j]]?.name
+		}`;
 
-			if (s.teams[j].total > 0) {
-				ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
-			} else if (s.teams[k].total > 0) {
-				ratios[j] = Infinity;
-			} else {
-				ratios[j] = 100;
-			}
+		if (s.teams[j].total > 0) {
+			ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
+		} else if (s.teams[k].total > 0) {
+			ratios[j] = Infinity;
+		} else {
+			ratios[j] = 100;
+		}
 
-			s.teams[j].payrollBeforeTrade = (await team.getPayroll(tids[j])) / 1000;
-			s.teams[j].payrollAfterTrade =
-				s.teams[j].payrollBeforeTrade + s.teams[k].total - s.teams[j].total;
+		s.teams[j].payrollBeforeTrade = (await team.getPayroll(tids[j])) / 1000;
+		s.teams[j].payrollAfterTrade =
+			s.teams[j].payrollBeforeTrade + s.teams[k].total - s.teams[j].total;
 
-			if (s.teams[j].payrollAfterTrade > g.get("salaryCap") / 1000) {
-				overCap[j] = true;
-			}
-		}),
-	);
+		if (s.teams[j].payrollAfterTrade > g.get("salaryCap") / 1000) {
+			overCap[j] = true;
+		}
+	}
 
 	const softCapTradeSalaryMatch = g.get("softCapTradeSalaryMatch");
 

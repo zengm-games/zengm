@@ -2,7 +2,7 @@ import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
-import { orderBy } from "lodash-es";
+import orderBy from "lodash-es/orderBy";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {

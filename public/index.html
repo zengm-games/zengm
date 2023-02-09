@@ -160,28 +160,15 @@ function withGoodWorker() {
   }
 }
 
-// Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
+// Browser compatibility checks! Used to be like https://gist.github.com/jensarps/15f270874889e1717b3d but now the buggy old IE/Safari IndexedDB implementations are not supported for other reasons, like checkBrowser.
 function goodIDB(cb) {
-  try {
-    if (typeof indexedDB === "undefined") {
-      cb("bad");
-      return;
-    }
-  } catch (err) {
-    console.error(err);
-    cb("open-failed");
+  if (typeof indexedDB === "undefined") {
+    cb("bad");
     return;
   }
 
   if (localStorage.getItem("goodIDB")) {
     cb("good");
-    return;
-  }
-
-  try {
-    IDBKeyRange.only([1]);
-  } catch (e) {
-    cb("bad");
     return;
   }
 
@@ -197,45 +184,8 @@ function goodIDB(cb) {
     }
   }
 
-  openRequest.onupgradeneeded = function (evt) {
-    var db = evt.target.result;
-    var one = db.createObjectStore('one', {
-      autoIncrement: true,
-      keyPath: 'key'
-    });
-    one.createIndex('one', 'one');
-    one.add({one: 1});
-    var two = db.createObjectStore('two', {
-      autoIncrement: true,
-      keyPath: 'key'
-    });
-    two.createIndex ('two', 'two');
-    two.add({two: 2});
-  };
-
   openRequest.onsuccess = function (evt) {
-    var db = evt.target.result;
-    var transaction;
-    try {
-      transaction = db.transaction(['one', 'two'], 'readwrite');
-    } catch (e) {
-      cb("bad");
-      return;
-    }
-
-    var count = 0;
-    transaction.objectStore('one').index('one').openCursor().onsuccess = function (evt) {
-      cursor = evt.target.result;
-      if (cursor) {
-        count += 1;
-        cursor.continue();
-      }
-    };
-
-    transaction.oncomplete = function () {
-      db.close();
-      cb(count === 1 ? "good" : "bad"); // Will be 2 in Safari 10 https://bugs.webkit.org/show_bug.cgi?id=158833
-    };
+    cb("good");
   };
 };
 

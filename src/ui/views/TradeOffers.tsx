@@ -18,26 +18,26 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 		challengeNoTrades,
 		gameOver,
 		luxuryPayroll,
-		offers: allOffers,
+		offers,
 		phase,
 		salaryCap,
 		salaryCapType,
 		spectator,
 	} = props;
 
-	const [offers, setOffers] = useState(allOffers);
-	const [prevOffers, setPrevOffers] = useState(allOffers);
+	const [removedTids, setRemovedTids] = useState<number[]>([]);
+	const [prevOffers, setPrevOffers] = useState(offers);
 
 	// Without this, we'd still see the old offers even after 10 games are played and there are new offers
 	useEffect(() => {
-		const tids = JSON.stringify(allOffers.map(offer => offer.tid).sort());
+		const tids = JSON.stringify(offers.map(offer => offer.tid).sort());
 		const prevTids = JSON.stringify(prevOffers.map(offer => offer.tid).sort());
 
 		if (tids !== prevTids) {
-			setOffers(allOffers);
-			setPrevOffers(allOffers);
+			setRemovedTids([]);
+			setPrevOffers(offers);
 		}
-	}, [allOffers, prevOffers]);
+	}, [offers, prevOffers]);
 
 	useTitleBar({ title: "Trade Offers" });
 
@@ -104,6 +104,10 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 		};
 	};
 
+	const filteredOffers = offers.filter(
+		offer => !removedTids.includes(offer.tid),
+	);
+
 	return (
 		<>
 			<p>
@@ -161,16 +165,17 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 					challengeNoRatings={challengeNoRatings}
 					handleNegotiate={handleNegotiate}
 					handleRemove={i => {
-						setOffers(prevOffers => prevOffers.filter((offer, j) => i !== j));
+						const tid = offers[i].tid;
+						setRemovedTids(prevTids => [...prevTids, tid]);
 					}}
-					offers={offers}
+					offers={filteredOffers}
 					salaryCap={salaryCap}
 					salaryCapType={salaryCapType}
 				/>
 			</div>
 
 			<div className="d-block d-lg-none">
-				{offers.map((offer, i) => {
+				{filteredOffers.map((offer, i) => {
 					return (
 						<Offer
 							key={offer.tid}

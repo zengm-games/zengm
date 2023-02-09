@@ -10,7 +10,7 @@ import {
 	pickScore,
 	playerScore,
 } from "./TradingBlock";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const TradeOffers = (props: View<"tradeOffers">) => {
 	const {
@@ -26,6 +26,18 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 	} = props;
 
 	const [offers, setOffers] = useState(allOffers);
+	const [prevOffers, setPrevOffers] = useState(allOffers);
+
+	// Without this, we'd still see the old offers even after 10 games are played and there are new offers
+	useEffect(() => {
+		const tids = JSON.stringify(allOffers.map(offer => offer.tid).sort());
+		const prevTids = JSON.stringify(prevOffers.map(offer => offer.tid).sort());
+
+		if (tids !== prevTids) {
+			setOffers(allOffers);
+			setPrevOffers(allOffers);
+		}
+	}, [allOffers, prevOffers]);
 
 	useTitleBar({ title: "Trade Offers" });
 
@@ -94,6 +106,10 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 
 	return (
 		<>
+			<p>
+				These are trade offers from up to 5 AI teams. New teams will appear here
+				every 10 games.
+			</p>
 			<div className="d-none d-lg-block">
 				<OfferTable
 					assetCols={[

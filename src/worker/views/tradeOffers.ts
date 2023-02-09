@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, random } from "../util";
-import type { TradeTeams, UpdateEvents, ViewInput } from "../../common/types";
+import type { TradeTeams, UpdateEvents } from "../../common/types";
 import isUntradable from "../core/trade/isUntradable";
 import makeItWork from "../core/trade/makeItWork";
 import summary from "../core/trade/summary";
@@ -49,7 +49,6 @@ const getOffers = async (seed: number) => {
 				pids.push(random.choice(players, p => p.value, seedBase + 3).pid);
 				dpids.push(random.choice(draftPicks, undefined, seedBase + 4).dpid);
 			}
-			console.log(pids);
 
 			const teams0: TradeTeams = [
 				{
@@ -104,7 +103,7 @@ const getOffers = async (seed: number) => {
 };
 
 const updateTradeOffers = async (
-	inputs: ViewInput<"tradingBlock">,
+	inputs: unknown,
 	updateEvents: UpdateEvents,
 ) => {
 	if (
@@ -127,7 +126,6 @@ const updateTradeOffers = async (
 			g.get("phase");
 
 		const offers = await getOffers(seed);
-		console.log("offers", offers);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

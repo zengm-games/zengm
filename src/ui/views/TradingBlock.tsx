@@ -334,9 +334,9 @@ export const OfferTable = ({
 							handleNegotiate({
 								tid: offer.tid,
 								pids: offer.pids,
-								pidsUser: [],
+								pidsUser: offer.pidsUser,
 								dpids: offer.dpids,
-								dpidsUser: [],
+								dpidsUser: offer.dpidsUser,
 							});
 						}}
 					>

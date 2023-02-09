@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { PlayerNameLabels, SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
+import { isSport } from "../../../common";
 
 // Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1
 export const OvrChange = ({
@@ -50,6 +51,7 @@ export const SummaryTeam = ({
 	luxuryPayroll,
 	salaryCap,
 	salaryCapType,
+	showInlinePlayerInfo,
 	summary,
 	t,
 }: Pick<
@@ -60,6 +62,7 @@ export const SummaryTeam = ({
 	handleRemove?: (type: "player" | "pick", id: number) => void;
 	hideFinanceInfo?: boolean;
 	hideTeamOvr?: boolean;
+	showInlinePlayerInfo?: boolean;
 	t: View<"trade">["summary"]["teams"][number];
 }) => {
 	const payrollColorCutoff =
@@ -69,24 +72,48 @@ export const SummaryTeam = ({
 		<>
 			<h4 className="fw-bold mb-1">{t.name} receive:</h4>
 			<ul className="list-unstyled mb-0">
-				{summary.teams[t.other].trade.map(p => (
-					<li key={p.pid} className="d-flex">
-						<PlayerNameLabels pid={p.pid} legacyName={p.name} />
-						<div className="ms-2">
-							<ContractAmount p={p} />
-						</div>
-						{handleRemove ? (
-							<button
-								type="button"
-								className="btn-close ms-1"
-								title="Remove player from trade"
-								onClick={() => {
-									handleRemove("player", p.pid);
-								}}
-							/>
-						) : undefined}
-					</li>
-				))}
+				{summary.teams[t.other].trade.map(p => {
+					return (
+						<li key={p.pid}>
+							<div className="d-flex">
+								<PlayerNameLabels
+									pos={p.ratings?.pos}
+									pid={p.pid}
+									legacyName={p.name}
+								/>
+								<div className="ms-2">
+									<ContractAmount p={p} />
+								</div>
+								{handleRemove ? (
+									<button
+										type="button"
+										className="btn-close ms-1"
+										title="Remove player from trade"
+										onClick={() => {
+											handleRemove("player", p.pid);
+										}}
+									/>
+								) : undefined}
+							</div>
+							{showInlinePlayerInfo ? (
+								<div className="ms-2">
+									{p.age} <span title="Years Old">yo</span>, {p.ratings.ovr}/
+									{p.ratings.pot},{" "}
+									{isSport("basketball") ? (
+										<>
+											{" "}
+											{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
+											{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
+											{helpers.roundStat(p.stats.ast, "ast")} ast
+										</>
+									) : (
+										<>{p.stats.keyStats}</>
+									)}
+								</div>
+							) : null}
+						</li>
+					);
+				})}
 				{summary.teams[t.other].picks.map(pick => (
 					<li key={pick.dpid} className="d-flex">
 						<SafeHtml dirty={pick.desc} />

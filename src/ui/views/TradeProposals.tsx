@@ -24,6 +24,11 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 		salaryCapType,
 		spectator,
 	} = props;
+	console.log(
+		"ui offers",
+		offers[0].players,
+		structuredClone(offers[0].players),
+	);
 
 	const [removedTids, setRemovedTids] = useState<number[]>([]);
 	const [prevOffers, setPrevOffers] = useState(offers);
@@ -139,6 +144,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 										luxuryPayroll={luxuryPayroll}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
+										showInlinePlayerInfo
 										summary={offer.summary}
 										t={offer.summary.teams[0]}
 									/>
@@ -154,6 +160,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 										luxuryPayroll={luxuryPayroll}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
+										showInlinePlayerInfo
 										summary={offer.summary}
 										t={offer.summary.teams[1]}
 									/>
@@ -202,6 +209,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 												luxuryPayroll={luxuryPayroll}
 												salaryCap={salaryCap}
 												salaryCapType={salaryCapType}
+												showInlinePlayerInfo
 												summary={offer.summary}
 												t={t}
 											/>

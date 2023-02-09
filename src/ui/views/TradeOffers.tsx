@@ -111,11 +111,33 @@ const TradeOffers = (props: View<"tradeOffers">) => {
 					getAssetColContents={offer => {
 						return [
 							{
-								value: "Incoming",
+								value: (
+									<SummaryTeam
+										challengeNoRatings={challengeNoRatings}
+										hideFinanceInfo
+										hideTeamOvr
+										luxuryPayroll={luxuryPayroll}
+										salaryCap={salaryCap}
+										salaryCapType={salaryCapType}
+										summary={offer.summary}
+										t={offer.summary.teams[0]}
+									/>
+								),
 								...getSearchSortValues(offer.players, offer.picks),
 							},
 							{
-								value: "Traded Away",
+								value: (
+									<SummaryTeam
+										challengeNoRatings={challengeNoRatings}
+										hideFinanceInfo
+										hideTeamOvr
+										luxuryPayroll={luxuryPayroll}
+										salaryCap={salaryCap}
+										salaryCapType={salaryCapType}
+										summary={offer.summary}
+										t={offer.summary.teams[1]}
+									/>
+								),
 								...getSearchSortValues(offer.playersUser, offer.picksUser),
 							},
 						];

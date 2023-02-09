@@ -46,6 +46,7 @@ export const SummaryTeam = ({
 	challengeNoRatings,
 	handleRemove,
 	hideFinanceInfo,
+	hideTeamOvr,
 	luxuryPayroll,
 	salaryCap,
 	salaryCapType,
@@ -58,6 +59,7 @@ export const SummaryTeam = ({
 	challengeNoRatings: boolean;
 	handleRemove?: (type: "player" | "pick", id: number) => void;
 	hideFinanceInfo?: boolean;
+	hideTeamOvr?: boolean;
 	t: View<"trade">["summary"]["teams"][number];
 }) => {
 	const payrollColorCutoff =
@@ -66,7 +68,7 @@ export const SummaryTeam = ({
 	return (
 		<>
 			<h4 className="fw-bold mb-1">{t.name} receive:</h4>
-			<ul className="list-unstyled mb-1">
+			<ul className="list-unstyled mb-0">
 				{summary.teams[t.other].trade.map(p => (
 					<li key={p.pid} className="d-flex">
 						<PlayerNameLabels pid={p.pid} legacyName={p.name} />
@@ -110,36 +112,38 @@ export const SummaryTeam = ({
 					<li>Nothing</li>
 				) : null}
 			</ul>
-			<ul className="list-unstyled">
-				{!hideFinanceInfo ? (
-					<li>
-						Payroll after trade:{" "}
-						<span
-							className={
-								t.payrollAfterTrade > payrollColorCutoff
-									? "text-danger"
-									: undefined
-							}
-						>
-							{helpers.formatCurrency(t.payrollAfterTrade, "M")}
-						</span>
-					</li>
-				) : null}
-				{hideFinanceInfo ? null : salaryCapType !== "none" ? (
-					<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
-				) : (
-					<li>Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}</li>
-				)}
-				{!challengeNoRatings ? (
-					<li>
-						Team ovr:{" "}
-						<OvrChange
-							before={summary.teams[t.other].ovrBefore}
-							after={summary.teams[t.other].ovrAfter}
-						/>
-					</li>
-				) : null}
-			</ul>
+			{!hideFinanceInfo || !hideTeamOvr ? (
+				<ul className="list-unstyled mt-1">
+					{!hideFinanceInfo ? (
+						<li>
+							Payroll after trade:{" "}
+							<span
+								className={
+									t.payrollAfterTrade > payrollColorCutoff
+										? "text-danger"
+										: undefined
+								}
+							>
+								{helpers.formatCurrency(t.payrollAfterTrade, "M")}
+							</span>
+						</li>
+					) : null}
+					{hideFinanceInfo ? null : salaryCapType !== "none" ? (
+						<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
+					) : (
+						<li>Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}</li>
+					)}
+					{!challengeNoRatings && !hideTeamOvr ? (
+						<li>
+							Team ovr:{" "}
+							<OvrChange
+								before={summary.teams[t.other].ovrBefore}
+								after={summary.teams[t.other].ovrAfter}
+							/>
+						</li>
+					) : null}
+				</ul>
+			) : null}
 		</>
 	);
 };

@@ -152,17 +152,17 @@ export const Offer = (props: OfferProps) => {
 				{!challengeNoRatings && !hideTopTeamOvrs ? (
 					<>
 						<div>
-							{teamInfo.abbrev} ovr:{" "}
-							<OvrChange
-								before={summary.teams[0].ovrBefore}
-								after={summary.teams[0].ovrAfter}
-							/>
-						</div>
-						<div>
 							Your ovr:{" "}
 							<OvrChange
 								before={summary.teams[1].ovrBefore}
 								after={summary.teams[1].ovrAfter}
+							/>
+						</div>
+						<div>
+							{teamInfo.abbrev} ovr:{" "}
+							<OvrChange
+								before={summary.teams[0].ovrBefore}
+								after={summary.teams[0].ovrAfter}
 							/>
 						</div>
 					</>
@@ -264,10 +264,10 @@ export const OfferTable = ({
 			},
 		},
 	);
-	offerCols[3].title = "Other Ovr";
-	offerCols[3].desc = "Other team's change in ovr rating";
-	offerCols[4].title = "Your Ovr";
+	offerCols[3].title = "Your Ovr";
 	offerCols[3].desc = "Your team's change in ovr rating";
+	offerCols[4].title = "Other Ovr";
+	offerCols[4].desc = "Other team's change in ovr rating";
 	offerCols.splice(5, 0, ...assetCols);
 
 	const offerRows = offers.map((offer, i) => {

@@ -1,18 +1,11 @@
 ai propose trades to user
 - list candidates on a new Trade Offers page?
 - should be semi stable, like every N games target a different player
-- ui - similar to normal trade summary, but two teams side by side
-  - also show if it's salary cap legal
-  - and a button to negotiate
 - generating trade offers - would be nice if it knew the dv cutoff, if we are going to use that
 - make sure it's deterministic until 10 games played
 - show basic player info without click
 - implement remove
   - persist?
-- put in table similar to trading block
-  - use augmentOffers to format TradeTeams
-  - should share most code with trading block. <Offer> already is abstracted enough
-  - delete tid added to trade summary
 
 double overtime playoff games go into qbrec as a tie https://discord.com/channels/290013534023057409/290015591216054273/1069043500156469258
 

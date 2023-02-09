@@ -19,7 +19,6 @@ export const getSummary = async (teams: TradeTeams) => {
 		warningAmount: summary.warningAmount,
 		teams: [0, 1].map(i => {
 			return {
-				tid: teams[i].tid,
 				name: summary.teams[i].name,
 				ovrAfter: summary.teams[i].ovrAfter,
 				ovrBefore: summary.teams[i].ovrBefore,

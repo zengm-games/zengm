@@ -304,24 +304,24 @@ export const OfferTable = ({
 					? {
 							value: (
 								<OvrChange
-									before={offer.summary.teams[0].ovrBefore}
-									after={offer.summary.teams[0].ovrAfter}
-								/>
-							),
-							sortValue: offer.summary.teams[0].ovrAfter,
-							searchValue: `${offer.summary.teams[0].ovrBefore} ${offer.summary.teams[0].ovrAfter}`,
-					  }
-					: null,
-				!challengeNoRatings
-					? {
-							value: (
-								<OvrChange
 									before={offer.summary.teams[1].ovrBefore}
 									after={offer.summary.teams[1].ovrAfter}
 								/>
 							),
 							sortValue: offer.summary.teams[1].ovrAfter,
 							searchValue: `${offer.summary.teams[1].ovrBefore} ${offer.summary.teams[1].ovrAfter}`,
+					  }
+					: null,
+				!challengeNoRatings
+					? {
+							value: (
+								<OvrChange
+									before={offer.summary.teams[0].ovrBefore}
+									after={offer.summary.teams[0].ovrAfter}
+								/>
+							),
+							sortValue: offer.summary.teams[0].ovrAfter,
+							searchValue: `${offer.summary.teams[0].ovrBefore} ${offer.summary.teams[0].ovrAfter}`,
 					  }
 					: null,
 				...getAssetColContents(offer),

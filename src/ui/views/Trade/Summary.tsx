@@ -97,8 +97,13 @@ export const SummaryTeam = ({
 							</div>
 							{showInlinePlayerInfo ? (
 								<div className="ms-2">
-									{p.age} <span title="Years Old">yo</span>, {p.ratings.ovr}/
-									{p.ratings.pot},{" "}
+									{p.age} <span title="Years Old">yo</span>
+									{!challengeNoRatings ? (
+										<>
+											, {p.ratings.ovr}/{p.ratings.pot}
+										</>
+									) : null}
+									,{" "}
 									{isSport("basketball") ? (
 										<>
 											{" "}

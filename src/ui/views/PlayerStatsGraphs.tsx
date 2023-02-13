@@ -83,9 +83,6 @@ const PlayerStatsGraphs = ({
 		jumpTo: true,
 		dropdownView: "player_stats_graphs",
 	});
-
-	console.log(statsX);
-
 	const firstUpdate = useRef(true);
 
 	const seasons = useDropdownOptions("seasons").map(x => x.value);

@@ -13,35 +13,37 @@ import type {
 	PlayerStatType,
 } from "../../common/types";
 
+function getStatsTableByType(statTypeInput: string) {
+	if (isSport("basketball")) {
+		if (statTypeInput === "advanced") {
+			return PLAYER_STATS_TABLES.advanced;
+		} else if (statTypeInput === "shotLocations") {
+			return PLAYER_STATS_TABLES.shotLocations;
+		} else if (statTypeInput === "gameHighs") {
+			return PLAYER_STATS_TABLES.gameHighs;
+		} else {
+			return PLAYER_STATS_TABLES.regular;
+		}
+	}
+	if (statTypeInput == "contract" || statTypeInput == "ratings") {
+		if (isSport("baseball")) {
+			return PLAYER_STATS_TABLES.batting;
+		} else if (isSport("football")) {
+			return PLAYER_STATS_TABLES.passing;
+		} else if (isSport("hockey")) {
+			return PLAYER_STATS_TABLES.skater;
+		}
+	} else {
+		return PLAYER_STATS_TABLES[statTypeInput];
+	}
+}
+
 async function getPlayerStats(
 	statTypeInput: any,
 	season: number,
 	playoffs: any,
 ) {
-	let statsTable;
-	if (isSport("basketball")) {
-		if (statTypeInput === "advanced") {
-			statsTable = PLAYER_STATS_TABLES.advanced;
-		} else if (statTypeInput === "shotLocations") {
-			statsTable = PLAYER_STATS_TABLES.shotLocations;
-		} else if (statTypeInput === "gameHighs") {
-			statsTable = PLAYER_STATS_TABLES.gameHighs;
-		} else {
-			statsTable = PLAYER_STATS_TABLES.regular;
-		}
-	} else {
-		if (statTypeInput == "contract" || statTypeInput == "ratings") {
-			if (isSport("baseball")) {
-				statsTable = PLAYER_STATS_TABLES.batting;
-			} else if (isSport("football")) {
-				statsTable = PLAYER_STATS_TABLES.passing;
-			} else if (isSport("hockey")) {
-				statsTable = PLAYER_STATS_TABLES.skater;
-			}
-		} else {
-			statsTable = PLAYER_STATS_TABLES[statTypeInput];
-		}
-	}
+	const statsTable = getStatsTableByType(statTypeInput);
 
 	const ratings = [...RATINGS, "ovr", "pot"];
 	let statType: PlayerStatType;

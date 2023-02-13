@@ -3031,6 +3031,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	ovr: {
+		desc: "Overall Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"Ovr Drop": {
 		desc: "Decrease in Overall Rating",
 		sortSequence: ["desc", "asc"],
@@ -3092,6 +3097,11 @@ const cols: {
 		desc: "Position",
 	},
 	Pot: {
+		desc: "Potential Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	pot: {
 		desc: "Potential Rating",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -3464,19 +3474,26 @@ const cols: {
 	...sportSpecificCols,
 };
 
-function getColTitles(titles: { actual: string; parsed: string }[]) {
+type Title = {
+	title: string;
+	desc: string;
+	value: string;
+};
+
+function getColTitles(titles: { actual: string; parsed: string }[]): Title[] {
 	return titles.map(title => {
 		if (!Object.hasOwn(cols, title.parsed)) {
 			return {
 				title: title.actual,
 				value: title.actual,
+				desc: title.actual,
 			};
 		}
 
 		return {
-			title: cols[title.parsed].title ?? title,
+			title: cols[title.parsed].title ?? title.actual,
 			value: title.actual,
-			desc: cols[title.parsed].desc,
+			desc: cols[title.parsed].desc ?? "",
 		};
 	});
 }

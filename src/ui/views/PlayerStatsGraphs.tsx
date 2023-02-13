@@ -6,6 +6,22 @@ import useDropdownOptions from "../hooks/useDropdownOptions";
 import realtimeUpdate from "../util/realtimeUpdate";
 import { getColTitles, helpers } from "../util";
 
+function addPrefixForStat(
+	statTypeX: string,
+	stat: any,
+): { actual: any; parsed: string } {
+	return statTypeX == "ratings"
+		? { actual: stat, parsed: `rating:${stat}` }
+		: {
+				actual: stat,
+				parsed: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		  };
+}
+
+function getStatsWithLabels(statsX: any[], statTypeX: string) {
+	return getColTitles(statsX.map(stat => addPrefixForStat(statTypeX, stat)));
+}
+
 function getStatFromPlayer(player: any, stat: string, statType: string) {
 	if (statType == "ratings") {
 		return player.ratings[stat];
@@ -62,9 +78,10 @@ function GraphCreation(props: GraphCreationProps) {
 	);
 	const data = statsToShowX;
 
-	return (
-		<StatGraph data={data} statX={props.statX} statY={props.statY}></StatGraph>
-	);
+	const labelX = getStatsWithLabels([props.statX], props.statTypeX)[0].desc;
+	const labelY = getStatsWithLabels([props.statY], props.statTypeY)[0].desc;
+
+	return <StatGraph data={data} statX={labelX} statY={labelY}></StatGraph>;
 }
 const PlayerStatsGraphs = ({
 	playoffsX,
@@ -114,30 +131,8 @@ const PlayerStatsGraphs = ({
 	const [playoffsXState, setPlayoffsX] = useState(() => playoffsX);
 	const [playoffsYState, setPlayoffsY] = useState(() => playoffsY);
 
-	const statsXEnriched = getColTitles(
-		statsX.map(stat =>
-			statTypeX == "ratings"
-				? { actual: stat, parsed: `rating:${stat}` }
-				: {
-						actual: stat,
-						parsed: `stat:${
-							stat.endsWith("Max") ? stat.replace("Max", "") : stat
-						}`,
-				  },
-		),
-	);
-	const statsYEnriched = getColTitles(
-		statsY.map(stat =>
-			statTypeY == "ratings"
-				? { actual: stat, parsed: `rating:${stat}` }
-				: {
-						actual: stat,
-						parsed: `stat:${
-							stat.endsWith("Max") ? stat.replace("Max", "") : stat
-						}`,
-				  },
-		),
-	);
+	const statsXEnriched = getStatsWithLabels(statsX, statTypeX);
+	const statsYEnriched = getStatsWithLabels(statsY, statTypeY);
 
 	useLayoutEffect(() => {
 		if (firstUpdate.current) {

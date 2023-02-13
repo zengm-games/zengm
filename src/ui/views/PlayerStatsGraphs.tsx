@@ -4,7 +4,7 @@ import { useState, useLayoutEffect, useRef } from "react";
 import { StatGraph } from "./ScatterPlot";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import realtimeUpdate from "../util/realtimeUpdate";
-import { helpers } from "../util";
+import { getColTitles, helpers } from "../util";
 
 function getStatFromPlayer(player: any, stat: string, statType: string) {
 	if (statType == "ratings") {
@@ -84,6 +84,8 @@ const PlayerStatsGraphs = ({
 		dropdownView: "player_stats_graphs",
 	});
 
+	console.log(statsX);
+
 	const firstUpdate = useRef(true);
 
 	const seasons = useDropdownOptions("seasons").map(x => x.value);
@@ -114,6 +116,31 @@ const PlayerStatsGraphs = ({
 	const [seasonYState, setSeasonY] = useState(() => seasonY);
 	const [playoffsXState, setPlayoffsX] = useState(() => playoffsX);
 	const [playoffsYState, setPlayoffsY] = useState(() => playoffsY);
+
+	const statsXEnriched = getColTitles(
+		statsX.map(stat =>
+			statTypeX == "ratings"
+				? { actual: stat, parsed: `rating:${stat}` }
+				: {
+						actual: stat,
+						parsed: `stat:${
+							stat.endsWith("Max") ? stat.replace("Max", "") : stat
+						}`,
+				  },
+		),
+	);
+	const statsYEnriched = getColTitles(
+		statsY.map(stat =>
+			statTypeY == "ratings"
+				? { actual: stat, parsed: `rating:${stat}` }
+				: {
+						actual: stat,
+						parsed: `stat:${
+							stat.endsWith("Max") ? stat.replace("Max", "") : stat
+						}`,
+				  },
+		),
+	);
 
 	useLayoutEffect(() => {
 		if (firstUpdate.current) {
@@ -174,8 +201,12 @@ const PlayerStatsGraphs = ({
 							})
 						}
 					>
-						{statsX.map((x: string) => {
-							return <option>{x}</option>;
+						{statsXEnriched.map((x: any) => {
+							return (
+								<option value={x.value} title={x.desc}>
+									{x.title}
+								</option>
+							);
 						})}
 					</select>
 					<label className="form-label">X axis stat type</label>
@@ -228,8 +259,12 @@ const PlayerStatsGraphs = ({
 							})
 						}
 					>
-						{statsY.map((x: string) => {
-							return <option>{x}</option>;
+						{statsYEnriched.map((x: any) => {
+							return (
+								<option value={x.value} title={x.desc}>
+									{x.title}
+								</option>
+							);
 						})}
 					</select>
 					<label className="form-label">Y axis stat type</label>

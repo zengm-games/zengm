@@ -3464,10 +3464,27 @@ const cols: {
 	...sportSpecificCols,
 };
 
-export default (
+function getColTitles(titles: { actual: string; parsed: string }[]) {
+	return titles.map(title => {
+		if (!Object.hasOwn(cols, title.parsed)) {
+			return {
+				title: title.actual,
+				value: title.actual,
+			};
+		}
+
+		return {
+			title: cols[title.parsed].title ?? title,
+			value: title.actual,
+			desc: cols[title.parsed].desc,
+		};
+	});
+}
+
+function getCols(
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
-): Col[] => {
+): Col[] {
 	return titles.map(title => {
 		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
@@ -3479,4 +3496,6 @@ export default (
 			...overrides[title],
 		};
 	});
-};
+}
+
+export { getCols, getColTitles };

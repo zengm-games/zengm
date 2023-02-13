@@ -30,7 +30,17 @@ async function getPlayerStats(
 			statsTable = PLAYER_STATS_TABLES.regular;
 		}
 	} else {
-		statsTable = PLAYER_STATS_TABLES[statTypeInput];
+		if (statTypeInput == "contract" || statTypeInput == "ratings") {
+			if (isSport("baseball")) {
+				statsTable = PLAYER_STATS_TABLES.batting;
+			} else if (isSport("football")) {
+				statsTable = PLAYER_STATS_TABLES.passing;
+			} else if (isSport("hockey")) {
+				statsTable = PLAYER_STATS_TABLES.skater;
+			}
+		} else {
+			statsTable = PLAYER_STATS_TABLES[statTypeInput];
+		}
 	}
 
 	const ratings = [...RATINGS, "ovr", "pot"];

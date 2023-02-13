@@ -82,12 +82,12 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	const y = (d: any): number => d.y;
 	const xDomain = [
 		Math.min(...props.data.map(x)),
-		Math.max(...props.data.map(x)),
+		Math.max(...props.data.map(x)) * 1.05,
 	];
 
 	const yDomain = [
 		Math.min(...props.data.map(y)),
-		Math.max(...props.data.map(y)),
+		Math.max(...props.data.map(y)) * 1.05,
 	];
 
 	// tooltip handler

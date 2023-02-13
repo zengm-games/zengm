@@ -7,19 +7,22 @@ import realtimeUpdate from "../util/realtimeUpdate";
 import { getColTitles, helpers } from "../util";
 
 function addPrefixForStat(
-	statTypeX: string,
+	statType: string,
 	stat: any,
 ): { actual: any; parsed: string } {
-	return statTypeX == "ratings"
-		? { actual: stat, parsed: `rating:${stat}` }
-		: {
-				actual: stat,
-				parsed: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
-		  };
+	if (statType == "ratings") {
+		return { actual: stat, parsed: `rating:${stat}` };
+	} else if (statType == "contract") {
+		return { actual: stat, parsed: stat };
+	}
+	return {
+		actual: stat,
+		parsed: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+	};
 }
 
-function getStatsWithLabels(statsX: any[], statTypeX: string) {
-	return getColTitles(statsX.map(stat => addPrefixForStat(statTypeX, stat)));
+function getStatsWithLabels(stats: any[], statTypeX: string) {
+	return getColTitles(stats.map(stat => addPrefixForStat(statTypeX, stat)));
 }
 
 function getStatFromPlayer(player: any, stat: string, statType: string) {

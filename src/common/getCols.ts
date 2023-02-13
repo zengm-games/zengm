@@ -2794,6 +2794,12 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	amount: {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+		title: "Amount",
+		desc: "Amount perceived in contract",
+	},
 	"Asking For": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -3031,11 +3037,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	ovr: {
-		desc: "Overall Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
 	"Ovr Drop": {
 		desc: "Decrease in Overall Rating",
 		sortSequence: ["desc", "asc"],
@@ -3097,11 +3098,6 @@ const cols: {
 		desc: "Position",
 	},
 	Pot: {
-		desc: "Potential Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
-	pot: {
 		desc: "Potential Rating",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -3256,6 +3252,18 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "Str",
+	},
+	"rating:ovr": {
+		desc: "Overall Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Overall",
+	},
+	"rating:pot": {
+		desc: "Potential Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Potential",
 	},
 	"stat:gp": {
 		desc: "Games Played",
@@ -3493,7 +3501,7 @@ function getColTitles(titles: { actual: string; parsed: string }[]): Title[] {
 		return {
 			title: cols[title.parsed].title ?? title.actual,
 			value: title.actual,
-			desc: cols[title.parsed].desc ?? "",
+			desc: cols[title.parsed].desc ?? cols[title.parsed].title ?? title.actual,
 		};
 	});
 }

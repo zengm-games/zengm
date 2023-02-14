@@ -107,11 +107,12 @@ const PlayerStatsGraphs = ({
 
 	const seasons = useDropdownOptions("seasons").map(x => x.value);
 	const statTypes = [
-		...useDropdownOptions("statTypesAdv").map(x => x.key),
-		"ratings",
-		"contract",
+		...useDropdownOptions("statTypesAdv"),
+		{ key: "contract", value: "Contract" },
+		{ key: "ratings", value: "Ratings" },
 	];
-	const playoffs = useDropdownOptions("playoffs").map(x => x.key);
+	console.log(statTypes);
+	const playoffs = useDropdownOptions("playoffs");
 
 	const initialStatXState = {
 		prevStat: statsX[0],
@@ -217,7 +218,11 @@ const PlayerStatsGraphs = ({
 						}
 					>
 						{statTypes.map((x: any) => {
-							return <option>{x}</option>;
+							return (
+								<option value={x.key}>
+									{Array.isArray(x.value) ? x.value[1].text : x.value}
+								</option>
+							);
 						})}
 					</select>
 					<label className="form-label">X axis year</label>
@@ -237,7 +242,11 @@ const PlayerStatsGraphs = ({
 						onChange={event => setPlayoffsX(event.target.value)}
 					>
 						{playoffs.map((x: any) => {
-							return <option>{x}</option>;
+							return (
+								<option value={x.key}>
+									{Array.isArray(x.value) ? x.value[1].text : x.value}
+								</option>
+							);
 						})}
 					</select>
 				</div>
@@ -275,7 +284,11 @@ const PlayerStatsGraphs = ({
 						}
 					>
 						{statTypes.map((x: any) => {
-							return <option>{x}</option>;
+							return (
+								<option value={x.key}>
+									{Array.isArray(x.value) ? x.value[1].text : x.value}
+								</option>
+							);
 						})}
 					</select>
 					<label className="form-label">Y axis year</label>
@@ -295,7 +308,11 @@ const PlayerStatsGraphs = ({
 						onChange={event => setPlayoffsY(event.target.value)}
 					>
 						{playoffs.map((x: any) => {
-							return <option>{x}</option>;
+							return (
+								<option value={x.key}>
+									{Array.isArray(x.value) ? x.value[1].text : x.value}
+								</option>
+							);
 						})}
 					</select>
 				</div>

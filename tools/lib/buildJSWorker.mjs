@@ -44,9 +44,6 @@ const buildFile = async (name, legacy, rev) => {
 		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${rev}.js`,
 		chunkFileNames: `chunk-${legacy ? "legacy-" : ""}[hash].js`,
 		dir: "build/gen",
-
-		// https://github.com/rollup/rollup/issues/4840
-		experimentalDeepDynamicChunkOptimization: true,
 	});
 
 	parentPort.postMessage("done");

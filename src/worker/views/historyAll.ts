@@ -69,6 +69,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+		console.log("awards", awards);
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,
@@ -100,7 +101,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			// Only check for finals result for seasons that are over
 			const series = playoffSeries.find(ps => ps.season === season);
 
-			type MyTeam = typeof teams[number];
+			type MyTeam = (typeof teams)[number];
 			const formatTeam = (t: MyTeam, seed: number) => {
 				const tid = t.tid;
 
@@ -211,6 +212,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				row[category].count = counts[category][pid];
 			}
 		}
+		console.log("seasons", seasons);
 
 		const awardNames = bySport({
 			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],

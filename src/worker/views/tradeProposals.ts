@@ -126,7 +126,6 @@ const updateTradeProposals = async (
 			g.get("phase");
 
 		const offers = await getOffers(seed);
-		console.log("offers", offers);
 
 		// offers[number].summary.trade includses players with no stats, and offers[number].players includes players with stats. Make them the same. Plus ratings and age!
 		const fixPlayers = (

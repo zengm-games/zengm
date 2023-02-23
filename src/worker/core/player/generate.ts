@@ -42,6 +42,14 @@ const generate = (
 
 	const weight = genWeight(ratings.hgt, (ratings as any).stre);
 
+	let genderAdjustedHeightInInches;
+	if (g.get("gender") === "female") {
+		// Ratio comes from average USA stats
+		genderAdjustedHeightInInches = Math.round(0.92 * heightInInches);
+	} else {
+		genderAdjustedHeightInInches = heightInInches;
+	}
+
 	const p = {
 		awards: [],
 		born: {
@@ -66,7 +74,7 @@ const generate = (
 		face: face.generate(race),
 		firstName,
 		gamesUntilTradable: 0,
-		hgt: heightInInches,
+		hgt: genderAdjustedHeightInInches,
 		imgURL: "",
 		// Custom rosters can define player image URLs to be used rather than vector faces
 		injury: {
@@ -96,6 +104,7 @@ const generate = (
 		valueFuzz: 0,
 		valueNoPotFuzz: 0,
 	};
+	console.log(p.firstName, p.lastName, p.hgt, p.weight);
 
 	return p;
 };

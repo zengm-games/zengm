@@ -188,7 +188,6 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 			}
 		}
 	}
-	console.log(countries);
 
 	let fractionSkipCollege = 0.98;
 	if (gPlayerBioInfo?.default?.fractionSkipCollege !== undefined) {

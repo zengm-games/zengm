@@ -1,10 +1,12 @@
 female
 - faces
 - heights/weights
-- rarer dunks
-- switch to female/male default names if playerBioInfo is default
 - test json URL in prod build
 - blog
+  - names
+  - faces
+  - heights/weights
+  - rarer dunks
 
 make cap space visible above the fold on trade page on mobile https://mail.google.com/mail/u/0/#inbox/FMfcgzGrcXqKVMHkvwNxkzXsrsbWwBKh
 

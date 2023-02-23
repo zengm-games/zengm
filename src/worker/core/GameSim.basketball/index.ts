@@ -3,7 +3,7 @@ import { getPeriodName, PHASE } from "../../../common";
 import range from "lodash-es/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 import getInjuryRate from "./getInjuryRate";
-import type { PlayerInjury } from "../../../common/types";
+import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
 
 type PlayType =
 	| "ast"
@@ -241,6 +241,8 @@ class GameSim {
 	numPlayersOnCourt: number;
 	baseInjuryRate: number;
 
+	gender: GameAttributesLeague["gender"];
+
 	/**
 	 * Initialize the two teams that are playing this game.
 	 *
@@ -290,6 +292,7 @@ class GameSim {
 
 		this.t = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
+		this.gender = g.get("gender");
 
 		// Needed because relationship between averagePossessionLength and number of actual possessions is not perfect
 		let paceFactor = g.get("pace") / 100;
@@ -2240,11 +2243,13 @@ class GameSim {
 	}
 
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[], extra?: any) {
-		let texts;
 		if (this.playByPlay !== undefined) {
 			const threePointerText = g.get("threePointers")
 				? "three pointer"
 				: "deep shot";
+
+			let texts;
+			let weights;
 
 			let showScore = false;
 			if (type === "injury") {
@@ -2270,19 +2275,17 @@ class GameSim {
 				texts = [
 					`He throws it down on ${dunkedOnName}!`,
 					"He slams it home",
-					"He slams it home",
-					"The layup is good",
 					"The layup is good",
 				];
+				weights = this.gender === "male" ? [1, 2, 2] : [1, 10, 1000];
 				showScore = true;
 			} else if (type === "fgAtRimAndOne") {
 				texts = [
 					"He throws it down on {1}, and a foul!",
 					"He slams it home, and a foul!",
-					"He slams it home, and a foul!",
-					"The layup is good, and a foul!",
 					"The layup is good, and a foul!",
 				];
+				weights = this.gender === "male" ? [1, 2, 2] : [1, 10, 1000];
 				showScore = true;
 			} else if (
 				type === "fgLowPost" ||
@@ -2303,6 +2306,9 @@ class GameSim {
 					"{0} blocked the layup attempt",
 					"{0} blocked the dunk attempt",
 				];
+				if (this.gender === "female") {
+					weights = [1, 0];
+				}
 			} else if (
 				type === "blkLowPost" ||
 				type === "blkMidRange" ||
@@ -2314,22 +2320,15 @@ class GameSim {
 					"He missed the layup",
 					"The layup attempt rolls out",
 					"No good",
-					"No good",
-					"No good",
 				];
+				weights = [1, 1, 3];
 			} else if (
 				type === "missLowPost" ||
 				type === "missMidRange" ||
 				type === "missTp"
 			) {
-				texts = [
-					"The shot rims out",
-					"No good",
-					"No good",
-					"No good",
-					"No good",
-					"He bricks it",
-				];
+				texts = ["The shot rims out", "No good", "He bricks it"];
+				weights = [1, 4, 1];
 			} else if (type === "orb") {
 				texts = ["{0} grabbed the offensive rebound"];
 			} else if (type === "drb") {
@@ -2379,7 +2378,7 @@ class GameSim {
 			}
 
 			if (texts) {
-				let text = random.choice(texts);
+				let text = random.choice(texts, weights);
 
 				if (names) {
 					for (let i = 0; i < names.length; i++) {

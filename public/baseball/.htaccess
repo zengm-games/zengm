@@ -1,7 +1,7 @@
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
   <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
-    Header set Cache-Control "max-age=31536000"
+    Header set Cache-Control "public,max-age=31536000"
   </IfModule>
 </FilesMatch>
 
@@ -13,7 +13,7 @@
 
 <FilesMatch "^(dark|light)-.*\.css$">
   <IfModule mod_headers.c>
-    Header set Cache-Control "max-age=31536000"
+    Header set Cache-Control "public,max-age=31536000"
   </IfModule>
 </FilesMatch>
 
@@ -26,6 +26,7 @@
 <FilesMatch "^(index.html|sw.js)$">
   <IfModule mod_headers.c>
     Header set Cache-Control "no-cache"
+    Header set Cloudflare-CDN-Cache-Control "public,max-age=86400"
   </IfModule>
 </FilesMatch>
 

@@ -26,6 +26,7 @@
 <FilesMatch "^(index.html|sw.js)$">
   <IfModule mod_headers.c>
     Header set Cache-Control "no-cache"
+    Header set Cloudflare-CDN-Cache-Control "public,max-age=86400"
   </IfModule>
 </FilesMatch>
 

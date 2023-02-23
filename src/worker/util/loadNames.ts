@@ -1,3 +1,4 @@
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 import {
 	DefaultNames,
 	getFrequencies,
@@ -32,6 +33,8 @@ const legacyConvert = (array: [string, number][]) => {
 let defaultNamesCountries: DefaultNames;
 
 let defaultNamesGroups: DefaultNames;
+
+let defaultFemaleNamesCountries: Record<string, Record<string, number>>;
 
 export const initDefaults = async (force?: boolean) => {
 	if (!defaultNamesCountries || !defaultNamesGroups || force) {
@@ -71,6 +74,9 @@ export const initDefaults = async (force?: boolean) => {
 			}
 		}
 
+		// @ts-ignore
+		defaultFemaleNamesCountries = undefined;
+
 		/*// https://stackoverflow.com/a/53593328
 		const JSONstringifyOrder = (obj, space) => {
 			var allKeys = [];
@@ -83,15 +89,14 @@ export const initDefaults = async (force?: boolean) => {
 		};
 		console.log(JSONstringifyOrder(defaultCountries, 4));*/
 	}
+};
 
-	return {
-		colleges: defaultColleges,
-		countries: defaultCountries,
-		groups,
-		races: defaultRaces,
-		namesCountries: defaultNamesCountries,
-		namesGroups: defaultNamesGroups,
-	};
+const initDefaultsFemale = async () => {
+	if (!defaultFemaleNamesCountries) {
+		const response = await fetch("/gen/names-female.json");
+		const names = await response.json();
+		defaultFemaleNamesCountries = names.countries;
+	}
 };
 
 const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
@@ -132,6 +137,11 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		};
 	}
 
+	const gender = Object.hasOwn(g, "gender")
+		? g.get("gender")
+		: defaultGameAttributes.gender;
+	const genderOverride = gender === "female" && gPlayerBioInfo === undefined;
+
 	const mergedCountries = mergeCountries(
 		gPlayerBioInfo,
 		defaultNamesCountries,
@@ -145,8 +155,20 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		{ first, last, colleges, fractionSkipCollege, races },
 	] of Object.entries(mergedCountries)) {
 		if (first && last) {
+			let actualFirst;
+			if (genderOverride) {
+				await initDefaultsFemale();
+
+				actualFirst = defaultFemaleNamesCountries[country];
+				if (!actualFirst) {
+					continue;
+				}
+			} else {
+				actualFirst = first;
+			}
+
 			countries[country] = {
-				first: toCumSumArray(first),
+				first: toCumSumArray(actualFirst),
 				last: toCumSumArray(last),
 			};
 			if (colleges) {
@@ -166,6 +188,7 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 			}
 		}
 	}
+	console.log(countries);
 
 	let fractionSkipCollege = 0.98;
 	if (gPlayerBioInfo?.default?.fractionSkipCollege !== undefined) {
@@ -191,7 +214,15 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 	// For documentation, getting the default list of country frequencies
 	// console.log(JSON.stringify(frequenciesObject, Object.keys(frequenciesObject).sort(), "\t"));
 
-	const frequencies = toCumSumArray(frequenciesObject);
+	let frequencies = toCumSumArray(frequenciesObject);
+
+	if (genderOverride) {
+		await initDefaultsFemale();
+
+		frequencies = frequencies.filter(
+			row => defaultFemaleNamesCountries[row[0]],
+		);
+	}
 
 	return {
 		countries,

@@ -238,6 +238,7 @@ const copyFiles = watch => {
 	}
 
 	fse.copySync("data/names.json", "build/gen/names.json");
+	fse.copySync("data/names-female.json", "build/gen/names-female.json");
 
 	fse.copySync("node_modules/flag-icons/flags/4x3", "build/img/flags");
 	const flagHtaccess = `<IfModule mod_headers.c>

@@ -56,6 +56,8 @@ const getOverrides = () => {
 		last: {},
 	};
 
+	const femaleNames = {};
+
 	const groups = {};
 
 	const filenames = fs.readdirSync(path.join(__dirname, "names-manual"));
@@ -82,7 +84,10 @@ const getOverrides = () => {
 			continue;
 		}
 
-		if (filename.startsWith("country-")) {
+		if (filename.endsWith("-female.csv")) {
+			const [, country] = filename.replace(".csv", "").split("-");
+			femaleNames[country] = getNames(filename);
+		} else if (filename.startsWith("country-")) {
 			const [, country, firstOrLast] = filename.replace(".csv", "").split("-");
 			names[firstOrLast][country] = getNames(filename);
 		} else if (filename.startsWith("group-")) {
@@ -104,12 +109,13 @@ const getOverrides = () => {
 	}
 
 	return {
-		overrides: names,
+		femaleNames,
 		groups,
+		overrides: names,
 	};
 };
 
-const { groups, overrides } = getOverrides();
+const { femaleNames, groups, overrides } = getOverrides();
 
 const fnsByCountry = combineNames([
 	basketball.fnsByCountry,
@@ -135,6 +141,13 @@ fs.writeFileSync(
 	JSONstringifyOrder({ countries: namesByCountry, groups }, "\t"),
 );
 console.log(`Wrote data to ${filename}`);
+
+const filenameFemale = path.join(__dirname, "../data/names-female.json");
+fs.writeFileSync(
+	filenameFemale,
+	JSONstringifyOrder({ countries: femaleNames }, "\t"),
+);
+console.log(`Wrote data to ${filenameFemale}`);
 
 for (const freq of [countriesBasketball, countriesFootball]) {
 	for (const country of dropped) {

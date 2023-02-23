@@ -800,6 +800,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							gameOver: {
 								type: "boolean",
 							},
+							gender: {
+								type: "string",
+								enum: ["female", "male"],
+							},
 							godMode: {
 								type: "boolean",
 							},

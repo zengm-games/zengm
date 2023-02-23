@@ -1234,6 +1234,33 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Players",
+			key: "gender",
+			name: "Gender",
+			showOnlyIf: ({ hasPlayers, realPlayers }) => !hasPlayers || !realPlayers,
+			type: "string",
+			values: [
+				{ key: "male", value: "Male" },
+				{ key: "female", value: "Female" },
+			],
+			descriptionLong: (
+				<>
+					<p>
+						In existing leagues, this only affects future generated players, not
+						existing players. Currently male and female players have only
+						cosmetic differences (names, faces, height/weight) but identical
+						ratings, so this is not meant to realistically simulate mixed
+						male/female leagues.
+					</p>
+					<p>
+						If you change this in a league with default Biographical Info, it
+						will switch to the male/female defaults. Female has fewer countries
+						and names in its database.
+					</p>
+				</>
+			),
+		},
+		{
+			category: "Players",
 			key: "playerBioInfo",
 			name: "Biographical Info",
 			godModeRequired: "always",

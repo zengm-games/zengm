@@ -481,6 +481,7 @@ export type GameAttributesLeague = {
 	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
+	gender: "female" | "male";
 	goatFormula?: string;
 	godMode: boolean;
 	godModeInPast: boolean;

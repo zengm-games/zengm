@@ -1,7 +1,6 @@
 female
 - faces
 - heights/weights
-- test json URL in prod build
 - blog
   - names
   - faces

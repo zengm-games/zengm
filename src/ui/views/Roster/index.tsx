@@ -13,24 +13,54 @@ import {
 	MoreLinks,
 } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
-import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
+import {
+	confirm,
+	getCols,
+	helpers,
+	logEvent,
+	toWorker,
+	useLocalPartial,
+} from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
-import type { Phase, View } from "../../../common/types";
+import type { GameAttributesLeague, Phase, View } from "../../../common/types";
 import { Contract } from "../../components/contract";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
 	phase: Phase,
 	season: number,
+	gender: GameAttributesLeague["gender"],
 ) => {
 	const wasPlayerJustDrafted = helpers.justDrafted(p, phase, season);
 
 	let releaseMessage;
 	if (wasPlayerJustDrafted) {
-		releaseMessage = `Are you sure you want to release ${p.firstName} ${p.lastName}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
+		releaseMessage = `Are you sure you want to release ${p.firstName} ${
+			p.lastName
+		}? ${helpers.pronoun(
+			gender,
+			"He",
+		)} will become a free agent and no longer take up a roster spot on your team. Because you just drafted ${helpers.pronoun(
+			gender,
+			"him",
+		)} and the regular season has not started yet, you will not have to pay ${helpers.pronoun(
+			gender,
+			"his",
+		)} contract.`;
 	} else {
-		releaseMessage = `Are you sure you want to release ${p.firstName} ${p.lastName}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp}.`;
+		releaseMessage = `Are you sure you want to release ${p.firstName} ${
+			p.lastName
+		}? ${helpers.pronoun(
+			gender,
+			"He",
+		)} will become a free agent and no longer take up a roster spot on your team, but you will still have to pay ${helpers.pronoun(
+			gender,
+			"his",
+		)} salary (and have it count against the salary cap) until ${helpers.pronoun(
+			gender,
+			"his",
+		)} contract expires in ${p.contract.exp}.`;
 	}
 
 	const proceed = await confirm(releaseMessage, {
@@ -80,6 +110,7 @@ const Roster = ({
 }: View<"roster">) => {
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
 	const [prevPlayers, setPrevPlayers] = useState(players);
+	const { gender } = useLocalPartial(["gender"]);
 
 	useTitleBar({
 		title: "Roster",
@@ -252,9 +283,11 @@ const Roster = ({
 								<HelpPopover title="Release Player">
 									<p>
 										To free up a roster spot, you can release a player from your
-										team. You will still have to pay his salary (and have it
-										count against the salary cap) until his contract expires
-										(you can view your released players' contracts in your{" "}
+										team. You will still have to pay{" "}
+										{helpers.pronoun(gender, "his")} salary (and have it count
+										against the salary cap) until{" "}
+										{helpers.pronoun(gender, "his")} contract expires (you can
+										view your released players' contracts in your{" "}
 										<a href={helpers.leagueUrl(["team_finances"])}>
 											Team Finances
 										</a>
@@ -263,8 +296,10 @@ const Roster = ({
 									{salaryCapType === "soft" ? (
 										<p>
 											However, if you just drafted a player and the regular
-											season has not started yet, his contract is not guaranteed
-											and you can release him for free.
+											season has not started yet,{" "}
+											{helpers.pronoun(gender, "his")} contract is not
+											guaranteed and you can release{" "}
+											{helpers.pronoun(gender, "him")} for free.
 										</p>
 									) : null}
 								</HelpPopover>
@@ -344,7 +379,9 @@ const Roster = ({
 									<button
 										className="btn btn-light-bordered btn-xs"
 										disabled={!p.canRelease}
-										onClick={() => handleRelease(p, phase, currentSeason)}
+										onClick={() =>
+											handleRelease(p, phase, currentSeason, gender)
+										}
 									>
 										Release
 									</button>

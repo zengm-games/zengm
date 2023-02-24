@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common";
-import { helpers } from ".";
+import { helpers, local } from ".";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
@@ -352,7 +352,12 @@ export const getText = (
 			text = `${getName(event.pid)} was injured on the play!`;
 
 			if (event.replacementPid !== undefined) {
-				text += ` ${getName(event.replacementPid)} comes on to replace him.`;
+				text += ` ${getName(
+					event.replacementPid,
+				)} comes on to replace ${helpers.pronoun(
+					local.getState().gender,
+					"him",
+				)}.`;
 			}
 
 			bold = true;

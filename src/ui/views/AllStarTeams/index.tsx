@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { DataTable } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../../util";
+import { getCols, helpers, toWorker, useLocalPartial } from "../../util";
 import type { View } from "../../../common/types";
 import EditAllStars from "./EditAllStars";
 import { wait } from "../../../common";
@@ -147,6 +147,8 @@ const AllStars = ({
 	type,
 	userTids,
 }: View<"allStarTeams">) => {
+	const { gender } = useLocalPartial(["gender"]);
+
 	const draftType =
 		!spectator &&
 		type === "draft" &&
@@ -315,8 +317,8 @@ const AllStars = ({
 				<p>
 					The players are split into two teams, captained by the top two
 					players. The teams are filled by a draft. Just for fun, if a captain
-					is on your team, you get to draft for him! Otherwise, the captains get
-					to choose.
+					is on your team, you get to draft for {helpers.pronoun(gender, "him")}
+					! Otherwise, the captains get to choose.
 				</p>
 			) : null}
 			{(type !== "draft" || actuallyFinalized) && nextGameIsAllStar ? (

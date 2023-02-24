@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, useLocal } from "../util";
+import { helpers, toWorker, useLocal, useLocalPartial } from "../util";
 import type { DunkAttempt, Player, View } from "../../common/types";
 import {
 	Height,
@@ -201,6 +201,8 @@ const Log = ({
 }: Pick<View<"allStarDunk">, "dunk" | "log" | "season">) => {
 	const logReverse = [...log].reverse();
 
+	const { gender } = useLocalPartial(["gender"]);
+
 	return (
 		<ul className="list-unstyled mb-0">
 			{dunk.winner !== undefined ? (
@@ -303,13 +305,14 @@ const Log = ({
 						<li key={key} className={classNameTop}>
 							{event.made ? (
 								<p>
-									The judges give him a {event.score}
+									The judges give {helpers.pronoun(gender, "him")} a{" "}
+									{event.score}
 									{event.score === 50 ? "!" : "."}
 								</p>
 							) : (
 								<p>
-									{p.name} failed to make a dunk, so the judges give him a{" "}
-									{event.score}.
+									{p.name} failed to make a dunk, so the judges give{" "}
+									{helpers.pronoun(gender, "him")} a {event.score}.
 								</p>
 							)}
 						</li>
@@ -358,7 +361,7 @@ const UserDunkForm = ({
 	const fields: {
 		key: keyof DunkAttempt;
 		label: string;
-		options: typeof dunkInfos["toss"];
+		options: (typeof dunkInfos)["toss"];
 	}[] = [
 		{
 			key: "toss",

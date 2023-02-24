@@ -920,6 +920,7 @@ export type LocalStateUI = {
 			},
 		];
 	}[];
+	gender: GameAttributesLeague["gender"];
 	fantasyPoints: GameAttributesLeague["fantasyPoints"];
 	fullNames: boolean;
 	gold?: boolean;

@@ -18,7 +18,12 @@ import {
 	realtimeUpdate,
 	getCols,
 } from "../../util";
-import type { Phase, Player, View } from "../../../common/types";
+import type {
+	GameAttributesLeague,
+	Phase,
+	Player,
+	View,
+} from "../../../common/types";
 import { bySport, isSport, PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import AwardsSummary from "./AwardsSummary";
@@ -26,9 +31,11 @@ import RatingsOverview from "./RatingsOverview";
 import Note from "./Note";
 
 const Relatives = ({
+	gender,
 	pid,
 	relatives,
 }: {
+	gender: GameAttributesLeague["gender"];
 	pid: number;
 	relatives: Player["relatives"];
 }) => {
@@ -46,7 +53,7 @@ const Relatives = ({
 			{relatives.slice(0, numToShow).map(rel => {
 				return (
 					<Fragment key={rel.pid}>
-						{helpers.upperCaseFirstLetter(rel.type)}:{" "}
+						{helpers.getRelativeType(gender, rel.type)}:{" "}
 						<a href={helpers.leagueUrl(["player", rel.pid])}>{rel.name}</a>
 						<br />
 					</Fragment>
@@ -98,7 +105,7 @@ const StatsSummary = ({
 		}
 	}
 
-	let ps: typeof p["stats"][number] | undefined;
+	let ps: (typeof p)["stats"][number] | undefined;
 	if (season !== undefined) {
 		// Specific season was requested
 		const playerStats = p.stats.filter(
@@ -230,6 +237,7 @@ const StatsSummary = ({
 const TopStuff = ({
 	currentSeason,
 	freeAgent,
+	gender,
 	godMode,
 	injured,
 	jerseyNumberInfos,
@@ -253,6 +261,7 @@ const TopStuff = ({
 	View<"player">,
 	| "currentSeason"
 	| "freeAgent"
+	| "gender"
 	| "godMode"
 	| "injured"
 	| "jerseyNumberInfos"
@@ -499,7 +508,11 @@ const TopStuff = ({
 									<br />
 								</>
 							)}
-							<Relatives pid={player.pid} relatives={player.relatives} />
+							<Relatives
+								gender={gender}
+								pid={player.pid}
+								relatives={player.relatives}
+							/>
 							{draftInfo}
 							{isSport("hockey") && college === "None" ? null : (
 								<>

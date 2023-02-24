@@ -104,7 +104,6 @@ const generate = (
 		valueFuzz: 0,
 		valueNoPotFuzz: 0,
 	};
-	console.log(p.firstName, p.lastName, p.hgt, p.weight);
 
 	return p;
 };

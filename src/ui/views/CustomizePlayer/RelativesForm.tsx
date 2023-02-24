@@ -1,19 +1,22 @@
 import { useMemo, useState } from "react";
 import { groupByUnique } from "../../../common/groupBy";
+import type { GameAttributesLeague } from "../../../common/types";
 import {
 	ActionButton,
 	HelpPopover,
 	RatingsStatsPopover,
 } from "../../components";
 import SelectMultiple from "../../components/SelectMultiple";
-import { toWorker } from "../../util";
+import { helpers, toWorker } from "../../util";
 
 const RelativesForm = ({
+	gender,
 	godMode,
 	handleChange,
 	initialPlayers,
 	relatives,
 }: {
+	gender: GameAttributesLeague["gender"];
 	godMode: boolean;
 	handleChange: (
 		type: string,
@@ -87,9 +90,15 @@ const RelativesForm = ({
 								value={type}
 								disabled={!godMode}
 							>
-								<option value="brother">Brother</option>
-								<option value="father">Father</option>
-								<option value="son">Son</option>
+								<option value="brother">
+									{helpers.getRelativeType(gender, "brother")}
+								</option>
+								<option value="father">
+									{helpers.getRelativeType(gender, "father")}
+								</option>
+								<option value="son">
+									{helpers.getRelativeType(gender, "son")}
+								</option>
 							</select>
 						</div>
 						<div className="me-2 flex-grow-1">

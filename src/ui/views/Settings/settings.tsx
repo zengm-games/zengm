@@ -968,18 +968,18 @@ export const settings: Setting[] = (
 		{
 			category: "Events",
 			key: "brotherRate",
-			name: "Brother Rate",
+			name: "Sibling Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the brother of an existing player.",
+				"The probability that a new player will be the sibling of an existing player.",
 		},
 		{
 			category: "Events",
 			key: "sonRate",
-			name: "Son Rate",
+			name: "Child Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the son of an existing player.",
+				"The probability that a new player will be the child of an existing player.",
 		},
 		{
 			category: "Events",

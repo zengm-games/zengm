@@ -1,35 +1,55 @@
 import { idb } from "../db";
 import { g, helpers, processPlayersHallOfFame } from "../util";
-import type { UpdateEvents, Player, ViewInput } from "../../common/types";
+import type {
+	UpdateEvents,
+	Player,
+	ViewInput,
+	GameAttributesLeague,
+} from "../../common/types";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
 
 const getRelationText = (
+	gender: GameAttributesLeague["gender"],
 	generation: number,
 	directLine: boolean,
 	brother: boolean,
 ) => {
 	if (generation === 0) {
-		return directLine ? "Self" : brother ? "Brother" : "Cousin";
+		return directLine
+			? "Self"
+			: brother
+			? helpers.getRelativeType(gender, "brother")
+			: "Cousin";
 	}
 
 	if (generation === 1) {
-		return directLine ? "Father" : "Uncle";
+		return directLine
+			? helpers.getRelativeType(gender, "father")
+			: helpers.getRelativeType(gender, "uncle");
 	}
 
 	if (generation === 2) {
-		return directLine ? "Grandfather" : "Great Uncle";
+		return directLine
+			? helpers.getRelativeType(gender, "grandfather")
+			: `Great ${helpers.getRelativeType(gender, "uncle")}`;
 	}
 
 	if (generation === 3) {
-		return directLine ? "Great Grandfather" : "2nd Great Uncle";
+		return directLine
+			? `Great ${helpers.getRelativeType(gender, "grandfather")}`
+			: `2nd Great ${helpers.getRelativeType(gender, "uncle")}`;
 	}
 
 	if (generation > 3) {
 		if (directLine) {
-			return `${helpers.ordinal(generation - 2)} Great Grandfather`;
+			return `${helpers.ordinal(
+				generation - 2,
+			)} Great ${helpers.getRelativeType(gender, "grandfather")}`;
 		} else {
-			return `${helpers.ordinal(generation - 1)} Great Uncle`;
+			return `${helpers.ordinal(
+				generation - 1,
+			)} Great ${helpers.getRelativeType(gender, "uncle")}`;
 		}
 	}
 
@@ -210,6 +230,7 @@ const updatePlayers = async (
 				}
 				const p = players[i];
 				p.relationText = getRelationText(
+					g.get("gender"),
 					generations[i],
 					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
 					brotherPids.has(p.pid),
@@ -219,6 +240,7 @@ const updatePlayers = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
+			gender: g.get("gender"),
 			pid,
 			players: addFirstNameShort(processPlayersHallOfFame(players)),
 			stats,

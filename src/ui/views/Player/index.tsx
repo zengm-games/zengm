@@ -226,6 +226,7 @@ const Player2 = ({
 	events,
 	feats,
 	freeAgent,
+	gender,
 	godMode,
 	injured,
 	jerseyNumberInfos,
@@ -285,6 +286,7 @@ const Player2 = ({
 			<TopStuff
 				currentSeason={currentSeason}
 				freeAgent={freeAgent}
+				gender={gender}
 				godMode={godMode}
 				injured={injured}
 				jerseyNumberInfos={jerseyNumberInfos}

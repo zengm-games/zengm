@@ -7,6 +7,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const Relatives = ({
 	challengeNoRatings,
+	gender,
 	pid,
 	players,
 	stats,
@@ -57,9 +58,9 @@ const Relatives = ({
 		"Peak Ovr",
 		...(target !== undefined ? ["Relation"] : []),
 		"Details",
-		"# Fathers",
-		"# Brothers",
-		"# Sons",
+		gender === "male" ? "# Fathers" : "# Mothers",
+		gender === "male" ? "# Brothers" : "# Sisters",
+		gender === "male" ? "# Sons" : "# Daughters",
 		"Year",
 		"Team",
 		...stats.map(stat => `stat:${stat}`),

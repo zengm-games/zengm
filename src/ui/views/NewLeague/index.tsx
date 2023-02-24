@@ -40,6 +40,7 @@ import type {
 	GetLeagueOptions,
 	Div,
 	Conf,
+	GameAttributesLeague,
 } from "../../../common/types";
 import classNames from "classnames";
 import { descriptions } from "../Settings/settings";
@@ -611,7 +612,7 @@ const getRebuildInfo = () => {
 	}
 };
 
-const getGenderOverride = (): "male" | "female" | undefined => {
+const getGenderOverride = (): GameAttributesLeague["gender"] | undefined => {
 	if (location.hash.startsWith("#gender=")) {
 		const gender = location.hash.replace("#gender=", "");
 		if (gender === "male" || gender === "female") {

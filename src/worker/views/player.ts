@@ -474,6 +474,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		currentSeason: g.get("season"),
 		customMenu,
 		freeAgent: p.tid === PLAYER.FREE_AGENT,
+		gender: g.get("gender"),
 		godMode: g.get("godMode"),
 		injured: p.injury.gamesRemaining > 0,
 		jerseyNumberInfos,

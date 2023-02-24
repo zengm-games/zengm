@@ -71,8 +71,9 @@ const Negotiation = ({
 					<a href={helpers.leagueUrl(["player", player.pid])}>{player.name}</a>{" "}
 					will become a free agent.
 				</b>{" "}
-				He will then be able to sign with any team, and you won't be able to go
-				over the salary cap to sign {helpers.pronoun(gender, "him")}.
+				{helpers.pronoun(gender, "He")} will then be able to sign with any team,
+				and you won't be able to go over the salary cap to sign{" "}
+				{helpers.pronoun(gender, "him")}.
 			</p>
 		);
 	} else if (salaryCapType !== "none") {

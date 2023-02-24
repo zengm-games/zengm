@@ -169,40 +169,56 @@ export const getText = (
 			break;
 		}
 		case "strikeOut": {
-			text = event.swinging ? "He goes down swinging" : "Called strike three";
+			text = event.swinging
+				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging`
+				: "Called strike three";
 			bold = true;
 			break;
 		}
 		case "bunt": {
 			const speedText = event.speed !== "normal" ? `${event.speed} ` : "";
-			text = `He lays down a ${speedText}bunt ${getDirectionInfield(
-				event.direction,
-			)}`;
+			text = `${helpers.pronoun(
+				local.getState().gender,
+				"He",
+			)} lays down a ${speedText}bunt ${getDirectionInfield(event.direction)}`;
 			break;
 		}
 		case "ground": {
 			const speedText = event.speed !== "normal" ? `${event.speed} ` : "";
-			text = `He hits a ${speedText}ground ball ${getDirectionInfield(
+			text = `${helpers.pronoun(
+				local.getState().gender,
+				"He",
+			)} hits a ${speedText}ground ball ${getDirectionInfield(
 				event.direction,
 			)}`;
 			break;
 		}
 		case "line": {
 			const speedText = event.speed !== "normal" ? `${event.speed} ` : "";
-			text = `He hits a ${speedText}line drive ${getDirectionInfield(
-				event.direction,
-			)}`;
+			text = `${helpers.pronoun(
+				local.getState().gender,
+				"He",
+			)} hits a ${speedText}line drive ${getDirectionInfield(event.direction)}`;
 			break;
 		}
 		case "fly": {
 			if (event.distance === "infield") {
-				text = `He hits a short popup ${getDirectionInfield(event.direction)}`;
+				text = `${helpers.pronoun(
+					local.getState().gender,
+					"He",
+				)} hits a short popup ${getDirectionInfield(event.direction)}`;
 			} else if (event.distance === "noDoubter") {
-				text = `He crushes it ${getDirectionOutfield(event.direction)}`;
+				text = `${helpers.pronoun(
+					local.getState().gender,
+					"He",
+				)} crushes it ${getDirectionOutfield(event.direction)}`;
 			} else {
 				const distanceText =
 					event.distance !== "normal" ? `${event.distance} ` : "";
-				text = `He hits a ${distanceText}fly ball ${getDirectionOutfield(
+				text = `${helpers.pronoun(
+					local.getState().gender,
+					"He",
+				)} hits a ${distanceText}fly ball ${getDirectionOutfield(
 					event.direction,
 				)}`;
 			}
@@ -222,7 +238,10 @@ export const getText = (
 			const runnerText = formatRunners(getName, event.runners, {
 				ignoreStationary: true,
 			});
-			text = `He's hit by the pitch! ${getName(event.pid)} takes 1st base${
+			text = `${helpers.pronoun(
+				local.getState().gender,
+				"He",
+			)}'s hit by the pitch! ${getName(event.pid)} takes 1st base${
 				runnerText ? `. ${runnerText}` : ""
 			}`;
 			bold = true;
@@ -249,9 +268,12 @@ export const getText = (
 		case "hitResult": {
 			text = "";
 			if (event.result === "error") {
-				text = `He reaches ${getBaseName(
-					event.numBases,
-				)} on an error by ${getName(event.pidError)}!`;
+				text = `${helpers.pronoun(
+					local.getState().gender,
+					"He",
+				)} reaches ${getBaseName(event.numBases)} on an error by ${getName(
+					event.pidError,
+				)}!`;
 			} else if (event.result === "hit") {
 				if (event.numBases === 1) {
 					text = "Single!";
@@ -282,9 +304,10 @@ export const getText = (
 				if (event.outs === NUM_OUTS_PER_INNING) {
 					text = "Fielder's choice,";
 				}
-				text = `He reaches ${getBaseName(
-					event.numBases,
-				)} on a fielder's choice`;
+				text = `${helpers.pronoun(
+					local.getState().gender,
+					"He",
+				)} reaches ${getBaseName(event.numBases)} on a fielder's choice`;
 			} else if (event.result === "doublePlay") {
 				text = "Double play!";
 			}

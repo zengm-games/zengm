@@ -43,7 +43,7 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 		case "loyalty":
 			throw new Error("Should never happen");
 		case "trades":
-			return "Worried he'll be traded away";
+			return "Worried about being traded away";
 		case "playingTime":
 			return "Wants more playing time";
 		case "rookieContract":

@@ -2273,16 +2273,22 @@ class GameSim {
 				const dunkedOnName = this.team[this.d].player[p].name;
 
 				texts = [
-					`He throws it down on ${dunkedOnName}!`,
-					"He slams it home",
+					`${helpers.pronoun(
+						this.gender,
+						"He",
+					)} throws it down on ${dunkedOnName}!`,
+					`${helpers.pronoun(this.gender, "He")} slams it home`,
 					"The layup is good",
 				];
 				weights = this.gender === "male" ? [1, 2, 2] : [1, 10, 1000];
 				showScore = true;
 			} else if (type === "fgAtRimAndOne") {
 				texts = [
-					"He throws it down on {1}, and a foul!",
-					"He slams it home, and a foul!",
+					`${helpers.pronoun(
+						this.gender,
+						"He",
+					)} throws it down on {1}, and a foul!`,
+					`${helpers.pronoun(this.gender, "He")} slams it home, and a foul!`,
 					"The layup is good, and a foul!",
 				];
 				weights = this.gender === "male" ? [1, 2, 2] : [1, 10, 1000];
@@ -2317,7 +2323,7 @@ class GameSim {
 				texts = ["Blocked by {0}!"];
 			} else if (type === "missAtRim") {
 				texts = [
-					"He missed the layup",
+					`${helpers.pronoun(this.gender, "He")} missed the layup"`,
 					"The layup attempt rolls out",
 					"No good",
 				];
@@ -2327,7 +2333,11 @@ class GameSim {
 				type === "missMidRange" ||
 				type === "missTp"
 			) {
-				texts = ["The shot rims out", "No good", "He bricks it"];
+				texts = [
+					"The shot rims out",
+					"No good",
+					`${helpers.pronoun(this.gender, "He")} bricks it`,
+				];
 				weights = [1, 4, 1];
 			} else if (type === "orb") {
 				texts = ["{0} grabbed the offensive rebound"];

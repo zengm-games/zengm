@@ -292,9 +292,13 @@ const Log = ({
 								</>
 							) : null}
 							{event.made ? (
-								<p className="text-success">He made it!</p>
+								<p className="text-success">
+									{helpers.pronoun(gender, "He")} made it!
+								</p>
 							) : (
-								<p className="text-danger">He missed it!</p>
+								<p className="text-danger">
+									{helpers.pronoun(gender, "He")} missed it!
+								</p>
 							)}
 						</li>
 					);

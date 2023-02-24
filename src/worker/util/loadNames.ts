@@ -89,6 +89,16 @@ export const initDefaults = async (force?: boolean) => {
 		};
 		console.log(JSONstringifyOrder(defaultCountries, 4));*/
 	}
+
+	// For TypeScript, not actually used anywhere
+	return {
+		colleges: defaultColleges,
+		countries: defaultCountries,
+		groups,
+		races: defaultRaces,
+		namesCountries: defaultNamesCountries,
+		namesGroups: defaultNamesGroups,
+	};
 };
 
 const initDefaultsFemale = async () => {

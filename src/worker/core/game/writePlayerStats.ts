@@ -152,7 +152,7 @@ const doInjury = async (
 			} ${p2.lastName}</a> ${
 				reaggravateExtraDays === undefined
 					? "was injured"
-					: "reaggravated his injury"
+					: `reaggravated ${helpers.pronoun(g.get("gender"), "his")} injury`
 			}! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} ${
 				p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
 			})`,

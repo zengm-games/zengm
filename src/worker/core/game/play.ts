@@ -219,7 +219,10 @@ const play = async (
 					logEvent(
 						{
 							type: "healed",
-							text: `${healedText} has recovered from his injury.`,
+							text: `${healedText} has recovered from ${helpers.pronoun(
+								g.get("gender"),
+								"his",
+							)} injury.`,
 							showNotification: false,
 							pids: [p.pid],
 							tids: [p.tid],

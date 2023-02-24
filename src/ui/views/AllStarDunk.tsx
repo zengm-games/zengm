@@ -258,7 +258,7 @@ const Log = ({
 					return (
 						<li key={key} className={classNameTop}>
 							<b>
-								{p.name} attempts his
+								{p.name} attempts {helpers.pronoun(gender, "his")}
 								{event.num === 1
 									? " first"
 									: event.num === 2

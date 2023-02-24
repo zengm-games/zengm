@@ -240,8 +240,9 @@ const Roster = ({
 								<HelpPopover title="Playing Time Modifier">
 									<p>
 										Your coach will divide up playing time based on ability and
-										stamina. If you want to influence his judgement, your
-										options are:
+										stamina. If you want to influence{" "}
+										{helpers.pronoun(gender, "his")} judgement, your options
+										are:
 									</p>
 									<p>
 										<span style={ptStyles["0"]}>0 No Playing Time</span>

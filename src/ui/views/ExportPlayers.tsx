@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -16,7 +16,7 @@ const ExportPlayers = ({
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [selected, setSelected] = useState<
 		{
-			p: typeof players[number];
+			p: (typeof players)[number];
 			season: number;
 		}[]
 	>([]);
@@ -26,6 +26,8 @@ const ExportPlayers = ({
 		dropdownView: "export_players",
 		dropdownFields: { seasons: season },
 	});
+
+	const { gender } = useLocalPartial(["gender"]);
 
 	const cols = getCols(["Name", "Pos", "Age", "Team", "Ovr", "Pot", ""], {
 		Name: {
@@ -39,7 +41,7 @@ const ExportPlayers = ({
 		},
 	});
 
-	const commonRows = (p: typeof players[number]) => {
+	const commonRows = (p: (typeof players)[number]) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return [
@@ -117,9 +119,10 @@ const ExportPlayers = ({
 				<p>Players can be selected from any season using the menu above.</p>
 			) : null}
 			<p>
-				When you export a player, it includes all of his seasons. Then when you
-				import, you will be able to select whichever season you want, including
-				the ability to select multiple seasons from the same player.
+				When you export a player, it includes all of{" "}
+				{helpers.pronoun(gender, "his")} seasons. Then when you import, you will
+				be able to select whichever season you want, including the ability to
+				select multiple seasons from the same player.
 			</p>
 
 			<div className="row">

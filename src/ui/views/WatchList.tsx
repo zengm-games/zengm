@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { ActionButton, DataTable, WatchBlock } from "../components";
 import type { View } from "../../common/types";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
@@ -33,6 +33,8 @@ const WatchList = ({
 		dropdownView: "watch_list",
 		dropdownFields: { statTypes: statType, playoffs, flagNote },
 	});
+
+	const { gender } = useLocalPartial(["gender"]);
 
 	const cols = getCols(
 		[
@@ -141,7 +143,10 @@ const WatchList = ({
 				On other pages, you can find the watch icon by clicking the info button{" "}
 				<span className="glyphicon glyphicon-stats" /> next to a player's name.
 			</p>
-			<p>You can edit a player's note near the top of his profile page.</p>
+			<p>
+				You can edit a player's note near the top of{" "}
+				{helpers.pronoun(gender, "his")} profile page.
+			</p>
 
 			<ActionButton
 				className="mb-3"

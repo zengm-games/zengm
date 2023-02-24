@@ -144,7 +144,7 @@ const Relatives = ({
 			) : (
 				<p>
 					These are the players with a relative in the league. Click "Details"
-					for a player to see his relatives.
+					for a player to see {helpers.pronoun(gender, "his")} relatives.
 				</p>
 			)}
 

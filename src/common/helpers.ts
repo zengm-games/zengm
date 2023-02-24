@@ -1413,6 +1413,32 @@ const getRelativeType = (
 	}
 };
 
+const pronoun = (
+	gender: GameAttributesLeague["gender"],
+	pronoun: "he" | "He" | "him" | "Him" | "his" | "His" | "himself" | "Himself",
+) => {
+	switch (pronoun) {
+		case "he":
+			return "she";
+		case "He":
+			return "She";
+		case "him":
+			return "her";
+		case "Him":
+			return "Her";
+		case "his":
+			return "her";
+		case "His":
+			return "her";
+		case "himself":
+			return "herself";
+		case "Himself":
+			return "Herself";
+		default:
+			return "???";
+	}
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1439,4 +1465,5 @@ export default {
 	sum,
 	justDrafted,
 	getRelativeType,
+	pronoun,
 };

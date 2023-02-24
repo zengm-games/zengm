@@ -63,7 +63,10 @@ const getReason = () => {
 		const gift2 = random.choice(gifts.filter(gift => gift !== gift1));
 
 		// Draco, an Athenian lawmaker, was reportedly smothered to death by gifts of cloaks and hats showered upon him by appreciative citizens
-		reason = `PLAYER_NAME was smothered to death by gifts of ${gift1} and ${gift2} showered upon him by appreciative fans.`;
+		reason = `PLAYER_NAME was smothered to death by gifts of ${gift1} and ${gift2} showered upon ${helpers.pronoun(
+			g.get("gender"),
+			"him",
+		)} by appreciative fans.`;
 	}
 
 	return reason;
@@ -93,12 +96,16 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		logRetiredEvent: false,
 	});
 
-	const text = getReason().replace(
-		"PLAYER_NAME",
-		`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
-			p.lastName
-		}</a>`,
-	);
+	const text = getReason()
+		.replace(
+			"PLAYER_NAME",
+			`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
+				p.lastName
+			}</a>`,
+		)
+		.replace(/PRONOUN_(\w*)/g, (match, pronoun) => {
+			return helpers.pronoun(g.get("gender"), pronoun);
+		});
 
 	p.diedYear = g.get("season");
 	await idb.cache.players.put(p);

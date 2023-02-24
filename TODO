@@ -1,4 +1,6 @@
 female
+- default male
+- pronouns
 - faces
   - restrict long hair for some hairs
 - blog
@@ -7,6 +9,7 @@ female
   - heights/weights
   - rarer dunks
   - /new_league/random#gender=female
+  - pronouns
 
 make cap space visible above the fold on trade page on mobile https://mail.google.com/mail/u/0/#inbox/FMfcgzGrcXqKVMHkvwNxkzXsrsbWwBKh
 

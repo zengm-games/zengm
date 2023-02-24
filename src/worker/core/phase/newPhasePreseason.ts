@@ -242,6 +242,7 @@ const newPhasePreseason = async (
 		const p = player.getPlayerFakeAge(players);
 
 		if (p) {
+			const gender = g.get("gender");
 			const years = random.randInt(1, 4);
 			const age0 = g.get("season") - p.born.year;
 			p.born.year -= years;
@@ -251,7 +252,16 @@ const newPhasePreseason = async (
 			} ${p.lastName}</a>`;
 			const reason = random.choice([
 				`A newly discovered Kenyan birth certificate suggests that ${name}`,
-				`In a televised press conference, the parents of ${name} explained how they faked his age as a child to make him perform better against younger competition. He`,
+				`In a televised press conference, the parents of ${name} explained how they faked ${helpers.pronoun(
+					gender,
+					"his",
+				)} age as a child to make ${helpers.pronoun(
+					gender,
+					"him",
+				)} perform better against younger competition. ${helpers.pronoun(
+					gender,
+					"He",
+				)}`,
 				`Internet sleuths on /r/${bySport({
 					baseball: "baseball",
 					basketball: "nba",
@@ -259,11 +269,23 @@ const newPhasePreseason = async (
 					hockey: "hockey",
 				})} uncovered evidence that ${name}`,
 				`Internet sleuths on Twitter uncovered evidence that ${name}`,
-				`In an emotional interview on 60 Minutes, ${name} admitted that he`,
-				`During a preseason locker room interview, ${name} accidentally revealed that he`,
-				`In a Reddit AMA, ${name} confirmed that he`,
+				`In an emotional interview on 60 Minutes, ${name} admitted that ${helpers.pronoun(
+					gender,
+					"he",
+				)}`,
+				`During a preseason locker room interview, ${name} accidentally revealed that ${helpers.pronoun(
+					gender,
+					"he",
+				)}`,
+				`In a Reddit AMA, ${name} confirmed that ${helpers.pronoun(
+					gender,
+					"he",
+				)}`,
 				`A recent Wikileaks report revealed that ${name}`,
-				`A foreign ID from the stolen luggage of ${name} revealed he`,
+				`A foreign ID from the stolen luggage of ${name} revealed ${helpers.pronoun(
+					gender,
+					"he",
+				)}`,
 			]);
 			logEvent(
 				{

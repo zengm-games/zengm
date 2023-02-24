@@ -318,7 +318,6 @@ const createRandomPlayers = async ({
 			}
 		}
 	}
-	console.log("createRandomPlayers result", players);
 
 	return players;
 };

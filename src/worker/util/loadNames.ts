@@ -35,11 +35,17 @@ const legacyConvert = (array: [string, number][]) => {
 	return obj;
 };
 
-let defaultNamesLoadedForGender: GameAttributesLeague["gender"];
-
-let defaultNamesCountries: DefaultNames;
-
-let defaultNamesGroups: DefaultNames;
+let cache:
+	| {
+			colleges: typeof defaultColleges;
+			countries: typeof defaultCountries;
+			gender: GameAttributesLeague["gender"];
+			groups: typeof groups;
+			races: typeof defaultRaces;
+			namesCountries: DefaultNames;
+			namesGroups: DefaultNames;
+	  }
+	| undefined;
 
 export const initDefaults = async (
 	options: {
@@ -55,12 +61,12 @@ export const initDefaults = async (
 
 	let myDefaultCountries = defaultCountries;
 
-	if (
-		!defaultNamesCountries ||
-		!defaultNamesGroups ||
-		options.force ||
-		defaultNamesLoadedForGender !== gender
-	) {
+	console.log("initDefaults", gender);
+
+	if (!cache || options.force || cache.gender !== gender) {
+		let defaultNamesCountries: DefaultNames;
+		let defaultNamesGroups: DefaultNames;
+
 		if (process.env.NODE_ENV === "test") {
 			const dummyNames = {
 				first: { FirstName: 1 },
@@ -112,9 +118,13 @@ export const initDefaults = async (
 			for (const [country, names] of Object.entries(defaultNamesCountries)) {
 				if (!femaleNames[country]) {
 					delete defaultNamesCountries[country];
-					delete myDefaultCountries[country];
 				} else {
 					names.first = femaleNames[country];
+				}
+			}
+			for (const country of Object.keys(myDefaultCountries)) {
+				if (!femaleNames[country]) {
+					delete myDefaultCountries[country];
 				}
 			}
 
@@ -123,8 +133,6 @@ export const initDefaults = async (
 				names.first = {};
 			}
 		}
-
-		defaultNamesLoadedForGender = gender;
 
 		/*// https://stackoverflow.com/a/53593328
 		const JSONstringifyOrder = (obj, space) => {
@@ -136,23 +144,25 @@ export const initDefaults = async (
 			allKeys.sort();
 			return JSON.stringify(obj, allKeys, space);
 		};
-		console.log(JSONstringifyOrder(defaultCountries, 4));*/
+		console.log(JSONstringifyOrder(myDefaultCountries, 4));*/
+
+		cache = {
+			colleges: defaultColleges,
+			countries: myDefaultCountries,
+			gender,
+			groups,
+			races: defaultRaces,
+			namesCountries: defaultNamesCountries,
+			namesGroups: defaultNamesGroups,
+		};
 	}
 
 	// For TypeScript and for worker/api
-	return {
-		colleges: defaultColleges,
-		countries: myDefaultCountries,
-		gender,
-		groups,
-		races: defaultRaces,
-		namesCountries: defaultNamesCountries,
-		namesGroups: defaultNamesGroups,
-	};
+	return cache;
 };
 
 const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
-	await initDefaults();
+	cache = await initDefaults();
 
 	let gPlayerBioInfo = Object.hasOwn(g, "playerBioInfo")
 		? g.get("playerBioInfo")
@@ -191,9 +201,9 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 
 	const mergedCountries = mergeCountries(
 		gPlayerBioInfo,
-		defaultNamesCountries,
-		defaultNamesGroups,
-		groups,
+		cache.namesCountries,
+		cache.namesGroups,
+		cache.groups,
 	);
 
 	const countries: PlayerBioInfoProcessed["countries"] = {};
@@ -243,7 +253,7 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		races = toCumSumArray(defaultRaces.USA);
 	}
 
-	const frequenciesObject = getFrequencies(gPlayerBioInfo, defaultCountries);
+	const frequenciesObject = getFrequencies(gPlayerBioInfo, cache.countries);
 
 	// For documentation, getting the default list of country frequencies
 	// console.log(JSON.stringify(frequenciesObject, Object.keys(frequenciesObject).sort(), "\t"));

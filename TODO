@@ -1,11 +1,8 @@
 female
-- blog
-  - names
-  - faces
-  - heights/weights
-  - rarer dunks
-  - /new_league/random#gender=female
-  - pronouns
+- update face editor
+- blog and test links
+- add clickable face to blog post
+- make onFaceJS an array or use events or something
 
 make cap space visible above the fold on trade page on mobile https://mail.google.com/mail/u/0/#inbox/FMfcgzGrcXqKVMHkvwNxkzXsrsbWwBKh
 

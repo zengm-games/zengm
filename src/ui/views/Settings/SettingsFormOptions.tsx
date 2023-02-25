@@ -464,6 +464,7 @@ const SettingsFormOptions = ({
 													disabled={!enabled || disabled}
 													godModeRequired={godModeRequired}
 													onChange={handleChangeRaw(key)}
+													gender={state.gender as any}
 												/>
 											);
 										}

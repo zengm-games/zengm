@@ -136,7 +136,8 @@ export type Key =
 	| "takeawayFactor"
 	| "blockFactor"
 	| "deflectionFactor"
-	| "saveFactor";
+	| "saveFactor"
+	| "gender";
 
 export type Category =
 	| "New League"

@@ -180,7 +180,6 @@ const name = async (
 	if (!frequencies || frequencies.length === 0) {
 		throw new Error("No countries in playerBioInfo");
 	}
-	console.log(playerBioInfo);
 
 	let country;
 	if (countryOverride && playerBioInfo.countries[countryOverride]) {

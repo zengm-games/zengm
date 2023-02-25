@@ -108,8 +108,8 @@ export const initDefaults = async (
 		// Handle female names
 		if (gender === "female") {
 			const response = await fetch("/gen/names-female.json");
-			const names = await response.json();
-			const femaleNames = names.countries as Record<
+			const parsed = await response.json();
+			const femaleNames = parsed.countries as Record<
 				string,
 				Record<string, number>
 			>;
@@ -122,13 +122,25 @@ export const initDefaults = async (
 					names.first = femaleNames[country];
 				}
 			}
+
+			// Handle countries where there are female first names specified, but male names all come from groups (like China)
+			for (const [country, first] of Object.entries(femaleNames)) {
+				if (!defaultNamesCountries[country]) {
+					defaultNamesCountries[country] = {
+						first,
+						last: {},
+					};
+				}
+			}
+
+			// Delete any straggling group-only countries with no female first names from myDefaultCountries
 			for (const country of Object.keys(myDefaultCountries)) {
 				if (!femaleNames[country]) {
 					delete myDefaultCountries[country];
 				}
 			}
 
-			// Currently groups only have male first names
+			// Currently groups only have male first names, so delete them. This is noticed downstream when groups are being added.
 			for (const names of Object.values(defaultNamesGroups)) {
 				names.first = {};
 			}

@@ -2323,7 +2323,7 @@ class GameSim {
 				texts = ["Blocked by {0}!"];
 			} else if (type === "missAtRim") {
 				texts = [
-					`${helpers.pronoun(this.gender, "He")} missed the layup"`,
+					`${helpers.pronoun(this.gender, "He")} missed the layup`,
 					"The layup attempt rolls out",
 					"No good",
 				];

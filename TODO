@@ -1,7 +1,5 @@
 female
-- default male
-- faces
-  - restrict long hair for some hairs
+- names editor initializes with male names even in female league
 - blog
   - names
   - faces

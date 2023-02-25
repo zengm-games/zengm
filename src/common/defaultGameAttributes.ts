@@ -266,7 +266,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	draftPickAutoContractPercent: 25,
 	draftPickAutoContractRounds: 1,
 	dh: "all",
-	gender: "female",
+	gender: "male",
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

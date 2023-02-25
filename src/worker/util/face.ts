@@ -35,8 +35,10 @@ const generate = (race?: Race) => {
 		};
 	}
 
+	const gender = g.get("gender");
+
 	let face = generateFace(overrides, {
-		gender: g.get("gender"),
+		gender,
 		race,
 	});
 
@@ -54,6 +56,7 @@ const generate = (race?: Race) => {
 			(!allowEyeBlack && face.accessories.id === "eye-black")
 		) {
 			face = generateFace(overrides, {
+				gender,
 				race,
 			});
 		}

@@ -61,8 +61,6 @@ export const initDefaults = async (
 
 	let myDefaultCountries = defaultCountries;
 
-	console.log("initDefaults", gender);
-
 	if (!cache || options.force || cache.gender !== gender) {
 		let defaultNamesCountries: DefaultNames;
 		let defaultNamesGroups: DefaultNames;

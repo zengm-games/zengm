@@ -481,6 +481,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"blockFactor",
 	"deflectionFactor",
 	"saveFactor",
+	"gender",
 ] as const;
 
 export {

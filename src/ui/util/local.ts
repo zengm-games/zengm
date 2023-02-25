@@ -183,6 +183,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 			const keys = [
 				"challengeNoRatings",
 				"fantasyPoints",
+				"gender",
 				"godMode",
 				"hideDisabledTeams",
 				"homeCourtAdvantage",

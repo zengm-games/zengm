@@ -6,6 +6,7 @@ import type {
 	Race,
 } from "../../common/types";
 import { bySport, DEFAULT_JERSEY, isSport } from "../../common";
+import g from "./g";
 
 const generate = (race?: Race) => {
 	let overrides: any;
@@ -35,6 +36,7 @@ const generate = (race?: Race) => {
 	}
 
 	let face = generateFace(overrides, {
+		gender: g.get("gender"),
 		race,
 	});
 

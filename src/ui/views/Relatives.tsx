@@ -7,6 +7,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const Relatives = ({
 	challengeNoRatings,
+	gender,
 	pid,
 	players,
 	stats,
@@ -57,9 +58,9 @@ const Relatives = ({
 		"Peak Ovr",
 		...(target !== undefined ? ["Relation"] : []),
 		"Details",
-		"# Fathers",
-		"# Brothers",
-		"# Sons",
+		gender === "male" ? "# Fathers" : "# Mothers",
+		gender === "male" ? "# Brothers" : "# Sisters",
+		gender === "male" ? "# Sons" : "# Daughters",
 		"Year",
 		"Team",
 		...stats.map(stat => `stat:${stat}`),
@@ -143,7 +144,7 @@ const Relatives = ({
 			) : (
 				<p>
 					These are the players with a relative in the league. Click "Details"
-					for a player to see his relatives.
+					for a player to see {helpers.pronoun(gender, "his")} relatives.
 				</p>
 			)}
 

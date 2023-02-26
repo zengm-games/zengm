@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, useLocal } from "../util";
+import { helpers, toWorker, useLocal, useLocalPartial } from "../util";
 import type { DunkAttempt, Player, View } from "../../common/types";
 import {
 	Height,
@@ -201,6 +201,8 @@ const Log = ({
 }: Pick<View<"allStarDunk">, "dunk" | "log" | "season">) => {
 	const logReverse = [...log].reverse();
 
+	const { gender } = useLocalPartial(["gender"]);
+
 	return (
 		<ul className="list-unstyled mb-0">
 			{dunk.winner !== undefined ? (
@@ -256,7 +258,7 @@ const Log = ({
 					return (
 						<li key={key} className={classNameTop}>
 							<b>
-								{p.name} attempts his
+								{p.name} attempts {helpers.pronoun(gender, "his")}
 								{event.num === 1
 									? " first"
 									: event.num === 2
@@ -290,9 +292,13 @@ const Log = ({
 								</>
 							) : null}
 							{event.made ? (
-								<p className="text-success">He made it!</p>
+								<p className="text-success">
+									{helpers.pronoun(gender, "He")} made it!
+								</p>
 							) : (
-								<p className="text-danger">He missed it!</p>
+								<p className="text-danger">
+									{helpers.pronoun(gender, "He")} missed it!
+								</p>
 							)}
 						</li>
 					);
@@ -303,13 +309,14 @@ const Log = ({
 						<li key={key} className={classNameTop}>
 							{event.made ? (
 								<p>
-									The judges give him a {event.score}
+									The judges give {helpers.pronoun(gender, "him")} a{" "}
+									{event.score}
 									{event.score === 50 ? "!" : "."}
 								</p>
 							) : (
 								<p>
-									{p.name} failed to make a dunk, so the judges give him a{" "}
-									{event.score}.
+									{p.name} failed to make a dunk, so the judges give{" "}
+									{helpers.pronoun(gender, "him")} a {event.score}.
 								</p>
 							)}
 						</li>
@@ -358,7 +365,7 @@ const UserDunkForm = ({
 	const fields: {
 		key: keyof DunkAttempt;
 		label: string;
-		options: typeof dunkInfos["toss"];
+		options: (typeof dunkInfos)["toss"];
 	}[] = [
 		{
 			key: "toss",

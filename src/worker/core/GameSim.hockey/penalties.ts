@@ -84,7 +84,7 @@ export const penalties: {
 		cumsumProbPerPossession: 0,
 	},
 	{
-		name: "closing his hand on the puck",
+		name: "closing hand on the puck",
 		type: "minor",
 		numPerSeason: 18,
 		probPerPossession: 0,

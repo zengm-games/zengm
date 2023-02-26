@@ -2744,10 +2744,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"# Fathers": {
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
 	HoF: {
 		desc: "Number of Players in the Hall of Fame",
 		sortSequence: ["desc", "asc"],
@@ -2757,12 +2753,28 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"# Daughters": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Fathers": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Mothers": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"# Players": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	"# Seasons": {
 		desc: "Number of Seasons",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Sisters": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

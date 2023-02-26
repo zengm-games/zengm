@@ -1,11 +1,19 @@
 import classNames from "classnames";
 import { useState } from "react";
 import { MOOD_TRAITS } from "../../common";
-import type { MoodComponents, MoodTrait } from "../../common/types";
+import type {
+	GameAttributesLeague,
+	MoodComponents,
+	MoodTrait,
+} from "../../common/types";
 import { helpers, useLocalPartial } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 import ResponsivePopover from "./ResponsivePopover";
 
-const componentText = (component: keyof MoodComponents, value: number) => {
+const componentText = (
+	component: keyof MoodComponents,
+	value: number,
+	gender: GameAttributesLeague["gender"],
+) => {
 	if (value === 0) {
 		return;
 	}
@@ -25,7 +33,7 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 			case "trades":
 				throw new Error("Should never happen");
 			case "playingTime":
-				return "Happy with his playing time";
+				return `Happy with ${helpers.pronoun(gender, "his")} playing time`;
 			case "rookieContract":
 				return "Eager to sign first non-rookie contract";
 		}
@@ -43,7 +51,7 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 		case "loyalty":
 			throw new Error("Should never happen");
 		case "trades":
-			return "Worried he'll be traded away";
+			return `Worried ${helpers.pronoun(gender, "he")}'ll be traded away`;
 		case "playingTime":
 			return "Wants more playing time";
 		case "rookieContract":
@@ -125,6 +133,8 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 
 	const [type, setType] = useState<"user" | "current">(initialType);
 
+	const { gender } = useLocalPartial(["gender"]);
+
 	const mood = p.mood[type];
 	const initialMood = p.mood[initialType];
 
@@ -149,7 +159,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 			signText = "sign with you";
 		}
 	} else {
-		signText = "re-sign with his current team";
+		signText = `re-sign with ${helpers.pronoun(gender, "his")} current team`;
 	}
 
 	const modalHeader = (
@@ -203,7 +213,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				<table>
 					<tbody>
 						{helpers.keys(componentsRounded).map(key => {
-							const text = componentText(key, componentsRounded[key]);
+							const text = componentText(key, componentsRounded[key], gender);
 							if (!text) {
 								return null;
 							}

@@ -253,7 +253,10 @@ const newPhaseBeforeDraft = async (
 								bestPlayer.pid,
 							])}">${bestPlayer.firstName} ${
 								bestPlayer.lastName
-							}</a> decided to retire in the prime of his career.`,
+							}</a> decided to retire in the prime of ${helpers.pronoun(
+								g.get("gender"),
+								"his",
+							)} career.`,
 							showNotification: true,
 							pids: [bestPlayer.pid],
 							tids: [tid],

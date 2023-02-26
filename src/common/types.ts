@@ -481,6 +481,7 @@ export type GameAttributesLeague = {
 	foulsUntilBonus: number[];
 	foulRateFactor: number;
 	gameOver: boolean;
+	gender: "female" | "male";
 	goatFormula?: string;
 	godMode: boolean;
 	godModeInPast: boolean;
@@ -919,6 +920,7 @@ export type LocalStateUI = {
 			},
 		];
 	}[];
+	gender: GameAttributesLeague["gender"];
 	fantasyPoints: GameAttributesLeague["fantasyPoints"];
 	fullNames: boolean;
 	gold?: boolean;

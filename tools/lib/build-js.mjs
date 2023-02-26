@@ -47,7 +47,12 @@ const buildJS = async () => {
 
 	build.setTimestamps(rev);
 
-	const jsonFiles = ["names", "real-player-data", "real-player-stats"];
+	const jsonFiles = [
+		"names",
+		"names-female",
+		"real-player-data",
+		"real-player-stats",
+	];
 	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
 		if (fs.existsSync(filePath)) {

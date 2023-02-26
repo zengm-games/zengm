@@ -109,7 +109,7 @@ const setGameAttributes = async (
 				);
 				const popRanks = helpers.getPopRanks(teamSeasons);
 
-				const keys: (keyof typeof teams[number]["budget"])[] = [
+				const keys: (keyof (typeof teams)[number]["budget"])[] = [
 					"scouting",
 					"coaching",
 					"health",
@@ -196,7 +196,9 @@ const setGameAttributes = async (
 	// Reset playerBioInfo caches
 	if (toUpdate.includes("playerBioInfo")) {
 		local.playerBioInfo = undefined;
-		await initDefaults(true);
+		await initDefaults({
+			force: true,
+		});
 	}
 };
 

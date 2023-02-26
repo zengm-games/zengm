@@ -4,7 +4,7 @@ import { timeBetweenGames } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import { HelpPopover } from "../../components";
 import CollapseArrow from "../../components/CollapseArrow";
-import { toWorker } from "../../util";
+import { helpers, toWorker, useLocalPartial } from "../../util";
 
 const Slider = ({
 	className,
@@ -78,6 +78,8 @@ const PlayThroughInjuriesSliders = ({
 }) => {
 	const [expanded, setExpanded] = useState(!window.mobile);
 
+	const { gender } = useLocalPartial(["gender"]);
+
 	return (
 		<div className="play-through-injuries">
 			<div className="d-flex align-items-center">
@@ -100,15 +102,19 @@ const PlayThroughInjuriesSliders = ({
 							season and playoffs.
 						</p>
 						<p>
-							The more games remaining on a player's injury, the worse he will
-							play. So if a player comes back at 90% performance and plays every
-							day until he's healthy, he will gradually improve each game until
-							he reaches 100%.
+							The more games remaining on a player's injury, the worse{" "}
+							{helpers.pronoun(gender, "he")} will play. So if a player comes
+							back at 90% performance and plays every day until{" "}
+							{helpers.pronoun(gender, "he")}'s healthy,{" "}
+							{helpers.pronoun(gender, "he")} will gradually improve each game
+							until
+							{helpers.pronoun(gender, "he")} reaches 100%.
 						</p>
 						<p>
 							Additionally, the injury rate is 50% higher when playing through
 							an injury, which includes the possibility of a player either
-							reaggravating his current injury or getting a new injury.
+							reaggravating {helpers.pronoun(gender, "his")} current injury or
+							getting a new injury.
 						</p>
 					</HelpPopover>
 				) : null}

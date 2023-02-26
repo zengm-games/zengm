@@ -968,18 +968,18 @@ export const settings: Setting[] = (
 		{
 			category: "Events",
 			key: "brotherRate",
-			name: "Brother Rate",
+			name: "Sibling Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the brother of an existing player.",
+				"The probability that a new player will be the sibling of an existing player.",
 		},
 		{
 			category: "Events",
 			key: "sonRate",
-			name: "Son Rate",
+			name: "Child Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the son of an existing player.",
+				"The probability that a new player will be the child of an existing player.",
 		},
 		{
 			category: "Events",
@@ -1231,6 +1231,33 @@ export const settings: Setting[] = (
 			description:
 				"When enabled, the matchups in each round of the playoffs will be reset so the best team always plays the worst team.",
 			type: "bool",
+		},
+		{
+			category: "Players",
+			key: "gender",
+			name: "Gender",
+			showOnlyIf: ({ hasPlayers, realPlayers }) => !hasPlayers || !realPlayers,
+			type: "string",
+			values: [
+				{ key: "male", value: "Male" },
+				{ key: "female", value: "Female" },
+			],
+			descriptionLong: (
+				<>
+					<p>
+						In existing leagues, this only affects future generated players, not
+						existing players. Currently male and female players have only
+						cosmetic differences (names, faces, height/weight) but identical
+						ratings, so this is not meant to realistically simulate mixed
+						male/female leagues.
+					</p>
+					<p>
+						If you change this in a league with default Biographical Info, it
+						will switch to the male/female defaults. Female has fewer countries
+						and names in its database.
+					</p>
+				</>
+			),
 		},
 		{
 			category: "Players",

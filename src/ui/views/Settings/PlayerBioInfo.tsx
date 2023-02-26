@@ -1,5 +1,8 @@
 import { ChangeEvent, useRef, useState } from "react";
-import type { PlayerBioInfo } from "../../../common/types";
+import type {
+	GameAttributesLeague,
+	PlayerBioInfo,
+} from "../../../common/types";
 import {
 	confirm,
 	helpers,
@@ -288,7 +291,7 @@ export const parseAndValidate = (state: PlayerBioInfoState) => {
 		}
 		output.frequencies[row.country] = frequency;
 
-		const country: typeof output["countries"][string] = {};
+		const country: (typeof output)["countries"][string] = {};
 		for (const type of ["first", "last"] as const) {
 			if (row.names[type].length === 0) {
 				throw new Error(
@@ -431,11 +434,13 @@ export type PageInfo =
 const PlayerBioInfo2 = ({
 	defaultValue,
 	disabled,
+	gender,
 	godModeRequired,
 	onChange,
 }: {
 	defaultValue: PlayerBioInfo | undefined;
 	disabled: boolean;
+	gender: GameAttributesLeague["gender"];
 	godModeRequired?: "always" | "existingLeagueOnly";
 	onChange: (playerBioInfo: PlayerBioInfo | undefined) => void;
 }) => {
@@ -462,11 +467,9 @@ const PlayerBioInfo2 = ({
 	};
 
 	const loadDefaults = async () => {
-		const defaults = await toWorker(
-			"main",
-			"getPlayerBioInfoDefaults",
-			undefined,
-		);
+		const defaults = await toWorker("main", "getPlayerBioInfoDefaults", {
+			gender,
+		});
 		setDefaults(defaults);
 
 		const infoState = formatPlayerBioInfoState(defaultValue, defaults);
@@ -481,7 +484,7 @@ const PlayerBioInfo2 = ({
 	};
 
 	const handleShow = async () => {
-		if (!defaults) {
+		if (!defaults || defaults.gender !== gender) {
 			await loadDefaults();
 		}
 
@@ -558,7 +561,7 @@ const PlayerBioInfo2 = ({
 						return row;
 					}
 
-					const extraProps: Partial<typeof data["countries"][number]> = {};
+					const extraProps: Partial<(typeof data)["countries"][number]> = {};
 					if (key === "country") {
 						// Just sets the default to false. Might be better to compare values, like it does in prune.
 						extraProps.defaultNames = false;

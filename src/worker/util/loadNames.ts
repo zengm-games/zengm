@@ -1,13 +1,19 @@
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 import {
 	DefaultNames,
 	getFrequencies,
 	mergeCountries,
 } from "../../common/names";
-import type { PlayerBioInfoProcessed, NamesLegacy } from "../../common/types";
+import type {
+	PlayerBioInfoProcessed,
+	NamesLegacy,
+	GameAttributesLeague,
+} from "../../common/types";
 import defaultColleges from "../data/defaultColleges";
 import { defaultCountries, groups } from "../data/defaultCountries";
 import defaultRaces from "../data/defaultRaces";
 import g from "./g";
+import helpers from "./helpers";
 
 const toCumSumArray = <T extends string>(
 	obj: Record<T, number>,
@@ -29,12 +35,36 @@ const legacyConvert = (array: [string, number][]) => {
 	return obj;
 };
 
-let defaultNamesCountries: DefaultNames;
+let cache:
+	| {
+			colleges: typeof defaultColleges;
+			countries: typeof defaultCountries;
+			gender: GameAttributesLeague["gender"];
+			groups: typeof groups;
+			races: typeof defaultRaces;
+			namesCountries: DefaultNames;
+			namesGroups: DefaultNames;
+	  }
+	| undefined;
 
-let defaultNamesGroups: DefaultNames;
+export const initDefaults = async (
+	options: {
+		gender?: GameAttributesLeague["gender"];
+		force?: boolean;
+	} = {},
+) => {
+	const gender =
+		options.gender ??
+		(Object.hasOwn(g, "gender")
+			? g.get("gender")
+			: defaultGameAttributes.gender);
 
-export const initDefaults = async (force?: boolean) => {
-	if (!defaultNamesCountries || !defaultNamesGroups || force) {
+	let myDefaultCountries = defaultCountries;
+
+	if (!cache || options.force || cache.gender !== gender) {
+		let defaultNamesCountries: DefaultNames;
+		let defaultNamesGroups: DefaultNames;
+
 		if (process.env.NODE_ENV === "test") {
 			const dummyNames = {
 				first: { FirstName: 1 },
@@ -61,13 +91,56 @@ export const initDefaults = async (force?: boolean) => {
 			defaultNamesGroups = names.groups;
 		}
 
+		myDefaultCountries = helpers.deepCopy(defaultCountries);
+
 		const possiblyMissingCountries = Object.keys(defaultNamesCountries);
 		for (const countries of Object.values(groups)) {
 			possiblyMissingCountries.push(...countries);
 		}
 		for (const country of possiblyMissingCountries) {
-			if (defaultCountries[country] === undefined) {
-				defaultCountries[country] = 0.2;
+			if (myDefaultCountries[country] === undefined) {
+				myDefaultCountries[country] = 0.2;
+			}
+		}
+
+		// Handle female names
+		if (gender === "female") {
+			const response = await fetch("/gen/names-female.json");
+			const parsed = await response.json();
+			const femaleNames = parsed.countries as Record<
+				string,
+				Record<string, number>
+			>;
+
+			// Delete countries with no female first names, and replace male first names with female first names that exist
+			for (const [country, names] of Object.entries(defaultNamesCountries)) {
+				if (!femaleNames[country]) {
+					delete defaultNamesCountries[country];
+				} else {
+					names.first = femaleNames[country];
+				}
+			}
+
+			// Handle countries where there are female first names specified, but male names all come from groups (like China)
+			for (const [country, first] of Object.entries(femaleNames)) {
+				if (!defaultNamesCountries[country]) {
+					defaultNamesCountries[country] = {
+						first,
+						last: {},
+					};
+				}
+			}
+
+			// Delete any straggling group-only countries with no female first names from myDefaultCountries
+			for (const country of Object.keys(myDefaultCountries)) {
+				if (!femaleNames[country]) {
+					delete myDefaultCountries[country];
+				}
+			}
+
+			// Currently groups only have male first names, so delete them. This is noticed downstream when groups are being added.
+			for (const names of Object.values(defaultNamesGroups)) {
+				names.first = {};
 			}
 		}
 
@@ -81,21 +154,25 @@ export const initDefaults = async (force?: boolean) => {
 			allKeys.sort();
 			return JSON.stringify(obj, allKeys, space);
 		};
-		console.log(JSONstringifyOrder(defaultCountries, 4));*/
+		console.log(JSONstringifyOrder(myDefaultCountries, 4));*/
+
+		cache = {
+			colleges: defaultColleges,
+			countries: myDefaultCountries,
+			gender,
+			groups,
+			races: defaultRaces,
+			namesCountries: defaultNamesCountries,
+			namesGroups: defaultNamesGroups,
+		};
 	}
 
-	return {
-		colleges: defaultColleges,
-		countries: defaultCountries,
-		groups,
-		races: defaultRaces,
-		namesCountries: defaultNamesCountries,
-		namesGroups: defaultNamesGroups,
-	};
+	// For TypeScript and for worker/api
+	return cache;
 };
 
 const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
-	await initDefaults();
+	cache = await initDefaults();
 
 	let gPlayerBioInfo = Object.hasOwn(g, "playerBioInfo")
 		? g.get("playerBioInfo")
@@ -134,9 +211,9 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 
 	const mergedCountries = mergeCountries(
 		gPlayerBioInfo,
-		defaultNamesCountries,
-		defaultNamesGroups,
-		groups,
+		cache.namesCountries,
+		cache.namesGroups,
+		cache.groups,
 	);
 
 	const countries: PlayerBioInfoProcessed["countries"] = {};
@@ -186,7 +263,7 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		races = toCumSumArray(defaultRaces.USA);
 	}
 
-	const frequenciesObject = getFrequencies(gPlayerBioInfo, defaultCountries);
+	const frequenciesObject = getFrequencies(gPlayerBioInfo, cache.countries);
 
 	// For documentation, getting the default list of country frequencies
 	// console.log(JSON.stringify(frequenciesObject, Object.keys(frequenciesObject).sort(), "\t"));

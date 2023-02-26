@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { Fragment, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
@@ -127,6 +127,8 @@ const Depth = ({
 		moreInfoSeason: season,
 		moreInfoTid: tid,
 	});
+
+	const { gender } = useLocalPartial(["gender"]);
 
 	if (pos !== prevPos) {
 		setSortedPids(undefined);
@@ -323,8 +325,8 @@ const Depth = ({
 					During the regular season, your starting goalie will automatically get
 					some rest days. Rest days are based on how many consecutive games your
 					starting goalie has played and how good your backup is. If your backup
-					is very bad, your starter will start more games, but his performance
-					will suffer.
+					is very bad, your starter will start more games, but{" "}
+					{helpers.pronoun(gender, "his")} performance will suffer.
 				</div>
 			) : null}
 

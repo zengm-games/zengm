@@ -410,6 +410,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const {
 		challengeNoRatings,
+		gender,
 		godMode,
 		originalTid,
 		playerMoodTraits,
@@ -1100,6 +1101,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Relatives</h2>
 
 						<RelativesForm
+							gender={gender}
 							godMode={godMode}
 							handleChange={handleChange}
 							initialPlayers={playersRelativesList}

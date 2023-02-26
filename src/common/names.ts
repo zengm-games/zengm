@@ -24,7 +24,10 @@ export const mergeCountries = (
 	for (const [group, info] of Object.entries(defaultNamesGroups)) {
 		for (const country of groups[group]) {
 			if (!mergedCountries[country]) {
-				mergedCountries[country] = info;
+				// Country might not exist for female names, which means there are no female first names, so we should not add a country for this group
+				if (Object.keys(info.first).length > 0) {
+					mergedCountries[country] = info;
+				}
 			} else {
 				mergedCountries[country] = helpers.deepCopy(mergedCountries[country]);
 				for (const firstOrLast of ["first", "last"] as const) {

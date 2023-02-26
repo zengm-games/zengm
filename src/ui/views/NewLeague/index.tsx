@@ -40,6 +40,7 @@ import type {
 	GetLeagueOptions,
 	Div,
 	Conf,
+	GameAttributesLeague,
 } from "../../../common/types";
 import classNames from "classnames";
 import { descriptions } from "../Settings/settings";
@@ -183,7 +184,7 @@ const legends = [
 		value: "1950s",
 	},
 ];
-type LegendKey = typeof legends[number]["key"];
+type LegendKey = (typeof legends)[number]["key"];
 
 const phases = [
 	{
@@ -611,6 +612,15 @@ const getRebuildInfo = () => {
 	}
 };
 
+const getGenderOverride = (): GameAttributesLeague["gender"] | undefined => {
+	if (location.hash.startsWith("#gender=")) {
+		const gender = location.hash.replace("#gender=", "");
+		if (gender === "male" || gender === "female") {
+			return gender;
+		}
+	}
+};
+
 const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
@@ -669,6 +679,17 @@ const NewLeague = (props: View<"newLeague">) => {
 				}
 			}
 
+			let settings;
+			const genderOverride = getGenderOverride();
+			if (genderOverride) {
+				settings = {
+					...props.defaultSettings,
+					gender: genderOverride,
+				};
+			} else {
+				settings = props.defaultSettings;
+			}
+
 			const { allKeys, keptKeys } = initKeptKeys({
 				newAllKeys: [],
 			});
@@ -693,7 +714,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				allKeys,
 				keptKeys,
 				expandOptions: false,
-				settings: props.defaultSettings,
+				settings,
 				rebuildAbbrevPending: rebuildInfo?.abbrev,
 			};
 		},

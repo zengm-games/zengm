@@ -1,5 +1,11 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type { TeamBasic, Phase, PlayerContract } from "./types";
+import type {
+	TeamBasic,
+	Phase,
+	PlayerContract,
+	GameAttributesLeague,
+	RelativeType,
+} from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash-es/orderBy";
 import isSport from "./isSport";
@@ -1390,6 +1396,53 @@ const justDrafted = (
 	);
 };
 
+const getRelativeType = (
+	gender: GameAttributesLeague["gender"],
+	type: RelativeType | "grandfather" | "uncle",
+) => {
+	if (type === "brother") {
+		return gender === "male" ? "Brother" : "Sister";
+	} else if (type === "son") {
+		return gender === "male" ? "Son" : "Daughter";
+	} else if (type === "father") {
+		return gender === "male" ? "Father" : "Mother";
+	} else if (type === "grandfather") {
+		return gender === "male" ? "Grandfather" : "Grandmother";
+	} else {
+		return gender === "male" ? "Uncle" : "Aunt";
+	}
+};
+
+const pronoun = (
+	gender: GameAttributesLeague["gender"],
+	pronoun: "he" | "He" | "him" | "Him" | "his" | "His" | "himself" | "Himself",
+) => {
+	if (gender === "female") {
+		switch (pronoun) {
+			case "he":
+				return "she";
+			case "He":
+				return "She";
+			case "him":
+				return "her";
+			case "Him":
+				return "Her";
+			case "his":
+				return "her";
+			case "His":
+				return "her";
+			case "himself":
+				return "herself";
+			case "Himself":
+				return "Herself";
+			default:
+				return "???";
+		}
+	}
+
+	return pronoun;
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1415,4 +1468,6 @@ export default {
 	overtimeText,
 	sum,
 	justDrafted,
+	getRelativeType,
+	pronoun,
 };

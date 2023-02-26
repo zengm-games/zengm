@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common";
-import { helpers } from ".";
+import { helpers, local } from ".";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
@@ -107,7 +107,10 @@ const getText = (
 		text = `Saved by ${event.names[0]}`;
 	}
 	if (event.type === "save-freeze") {
-		text = `Saved by ${event.names[0]}, and he freezes the puck`;
+		text = `Saved by ${event.names[0]}, and ${helpers.pronoun(
+			local.getState().gender,
+			"he",
+		)} freezes the puck`;
 	}
 	if (event.type === "faceoff") {
 		text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;

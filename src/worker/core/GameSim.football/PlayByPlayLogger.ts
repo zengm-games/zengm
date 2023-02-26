@@ -1,4 +1,5 @@
 import { getPeriodName } from "../../../common";
+import type { GameAttributesLeague } from "../../../common/types";
 import { g, helpers } from "../../util";
 import type { PlayType, TeamNum } from "./types";
 
@@ -44,10 +45,13 @@ class PlayByPlayLogger {
 
 	quarter: string;
 
+	gender: GameAttributesLeague["gender"];
+
 	constructor(active: boolean) {
 		this.active = active;
 		this.playByPlay = [];
 		this.quarter = "Q1";
+		this.gender = g.get("gender");
 	}
 
 	logEvent(
@@ -317,7 +321,12 @@ class PlayByPlayLogger {
 				}
 
 				if (safety) {
-					text = `${names[0]} completed a pass to ${names[1]} but he was tackled in the endzone for a safety!`;
+					text = `${names[0]} completed a pass to ${
+						names[1]
+					} but ${helpers.pronoun(
+						this.gender,
+						"he",
+					)} was tackled in the endzone for a safety!`;
 				} else {
 					const result = descriptionYdsTD(yds, td, touchdownText, showYdsOnTD);
 					text = `${names[0]} completed a pass to ${names[1]} for ${result}`;

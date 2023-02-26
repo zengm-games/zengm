@@ -1,6 +1,12 @@
 import classNames from "classnames";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
+import {
+	helpers,
+	logEvent,
+	realtimeUpdate,
+	toWorker,
+	useLocalPartial,
+} from "../util";
 import type { View } from "../../common/types";
 import { Mood, RatingsStatsPopover } from "../components";
 import { isSport } from "../../common";
@@ -50,6 +56,8 @@ const Negotiation = ({
 }: View<"negotiation">) => {
 	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
 
+	const { gender } = useLocalPartial(["gender"]);
+
 	let message;
 	if (resigning && salaryCapType === "soft") {
 		message = (
@@ -63,8 +71,9 @@ const Negotiation = ({
 					<a href={helpers.leagueUrl(["player", player.pid])}>{player.name}</a>{" "}
 					will become a free agent.
 				</b>{" "}
-				He will then be able to sign with any team, and you won't be able to go
-				over the salary cap to sign him.
+				{helpers.pronoun(gender, "He")} will then be able to sign with any team,
+				and you won't be able to go over the salary cap to sign{" "}
+				{helpers.pronoun(gender, "him")}.
 			</p>
 		);
 	} else if (salaryCapType !== "none") {

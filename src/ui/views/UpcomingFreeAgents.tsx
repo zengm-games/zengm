@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, useLocalPartial } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -20,6 +20,8 @@ const UpcomingFreeAgents = ({
 		dropdownView: "upcoming_free_agents",
 		dropdownFields: { seasonsUpcoming: season },
 	});
+
+	const { gender } = useLocalPartial(["gender"]);
 
 	const superCols = [
 		{
@@ -108,8 +110,10 @@ const UpcomingFreeAgents = ({
 				<p>
 					Keep in mind that many of these players will choose to re-sign with
 					their current team rather than become free agents. Also, even if a
-					player is &gt;99% willing to re-sign with his team, he still may
-					become a free agent if his team does not want him.
+					player is &gt;99% willing to re-sign with{" "}
+					{helpers.pronoun(gender, "his")} team, {helpers.pronoun(gender, "he")}{" "}
+					still may become a free agent if {helpers.pronoun(gender, "his")} team
+					does not want {helpers.pronoun(gender, "him")}.
 				</p>
 			) : null}
 

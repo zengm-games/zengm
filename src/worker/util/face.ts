@@ -6,6 +6,8 @@ import type {
 	Race,
 } from "../../common/types";
 import { bySport, DEFAULT_JERSEY, isSport } from "../../common";
+import g from "./g";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 const generate = (race?: Race) => {
 	let overrides: any;
@@ -34,7 +36,13 @@ const generate = (race?: Race) => {
 		};
 	}
 
+	// Careful, because this can be called from the team editor before a league is created
+	const gender = Object.hasOwn(g, "gender")
+		? g.get("gender")
+		: defaultGameAttributes.gender;
+
 	let face = generateFace(overrides, {
+		gender,
 		race,
 	});
 
@@ -52,6 +60,7 @@ const generate = (race?: Race) => {
 			(!allowEyeBlack && face.accessories.id === "eye-black")
 		) {
 			face = generateFace(overrides, {
+				gender,
 				race,
 			});
 		}

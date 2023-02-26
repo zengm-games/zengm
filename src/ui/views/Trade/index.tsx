@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, toWorker, useLocal } from "../../util";
+import { helpers, toWorker, useLocal, useLocalPartial } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import type { TradeClearType } from "./Buttons";
@@ -298,6 +298,8 @@ const Trade = (props: View<"trade">) => {
 		};
 	}, [updateSummaryHeight]);
 
+	const { gender } = useLocalPartial(["gender"]);
+
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
@@ -334,8 +336,8 @@ const Trade = (props: View<"trade">) => {
 					) : null}
 
 					<p>
-						If a player has been signed within the past 14 days, he is not
-						allowed to be traded.
+						If a player has been signed within the past 14 days,{" "}
+						{helpers.pronoun(gender, "he")} is not allowed to be traded.
 					</p>
 
 					<div className="d-flex mb-2">

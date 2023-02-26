@@ -52,6 +52,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 	fullNames: false,
 	gameSimInProgress: false,
 	games: [],
+	gender: defaultGameAttributes.gender,
 	gold: undefined,
 	godMode: false,
 	hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
@@ -182,6 +183,7 @@ const useLocal = create<LocalStateWithActions>(set => ({
 			const keys = [
 				"challengeNoRatings",
 				"fantasyPoints",
+				"gender",
 				"godMode",
 				"hideDisabledTeams",
 				"homeCourtAdvantage",

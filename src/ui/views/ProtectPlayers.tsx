@@ -1,7 +1,14 @@
 import { useState, FormEvent } from "react";
 import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, helpers, toWorker, realtimeUpdate, getCols } from "../util";
+import {
+	confirm,
+	helpers,
+	toWorker,
+	realtimeUpdate,
+	getCols,
+	useLocalPartial,
+} from "../util";
 import type { View } from "../../common/types";
 import { SafeHtml, DataTable } from "../components";
 import { PHASE } from "../../common";
@@ -29,6 +36,8 @@ const PlayerList = ({
 	tid: number;
 	upcomingFreeAgentsText: ReactNode;
 }) => {
+	const { gender } = useLocalPartial(["gender"]);
+
 	const cols = getCols([
 		"",
 		"Name",
@@ -92,8 +101,9 @@ const PlayerList = ({
 	return (
 		<>
 			<p>
-				Check the box to the left of a player to protect him. Any players who
-				are not protected may be selected in the expansion draft.
+				Check the box to the left of a player to protect{" "}
+				{helpers.pronoun(gender, "him")}. Any players who are not protected may
+				be selected in the expansion draft.
 			</p>
 			{upcomingFreeAgentsText}
 			<p>

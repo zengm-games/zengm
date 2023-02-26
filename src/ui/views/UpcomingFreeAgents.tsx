@@ -112,8 +112,8 @@ const UpcomingFreeAgents = ({
 					their current team rather than become free agents. Also, even if a
 					player is &gt;99% willing to re-sign with{" "}
 					{helpers.pronoun(gender, "his")} team, {helpers.pronoun(gender, "he")}{" "}
-					still may become a free agent if {helpers.pronoun(gender, "his")}
-					team does not want {helpers.pronoun(gender, "him")}.
+					still may become a free agent if {helpers.pronoun(gender, "his")} team
+					does not want {helpers.pronoun(gender, "him")}.
 				</p>
 			) : null}
 

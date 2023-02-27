@@ -1,5 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
+import { ACCOUNT_API_URL, fetchWrapper, GRACE_PERIOD } from "../../../common";
 import { ActionButton } from "../../components";
 import {
 	analyticsEvent,
@@ -33,7 +33,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			});
 
 			if (data.success) {
-				const currentTimestamp = Math.floor(Date.now() / 1000);
+				const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 				const gold = currentTimestamp <= data.gold_until;
 				localActions.update({
 					gold,

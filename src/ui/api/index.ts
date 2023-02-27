@@ -17,20 +17,29 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { AD_DIVS, GRACE_PERIOD } from "../../common";
+import { AD_DIVS } from "../../common";
 import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
-// Read from goldUntil rather than local because this is called before local is updated
-const initAds = (goldUntil: number | undefined) => {
-	let hideAds = false; // No ads for Gold members
-
-	const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
-
-	if (goldUntil === undefined || currentTimestamp < goldUntil) {
-		hideAds = true;
+let accountChecked = false;
+let uiRendered = false;
+const initAds = (type: "accountChecked" | "uiRendered") => {
+	// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
+	if (accountChecked && uiRendered) {
+		// Must have already ran somehow?
+		return;
+	}
+	if (type === "accountChecked") {
+		accountChecked = true;
+	} else if (type === "uiRendered") {
+		uiRendered = true;
+	}
+	if (!accountChecked || !uiRendered) {
+		return;
 	}
 
-	if (!hideAds) {
+	const gold = local.getState().gold;
+
+	if (!gold) {
 		// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
 		const divsAll = [
 			AD_DIVS.mobile,
@@ -165,12 +174,6 @@ const initGold = () => {
 				div.id = `${id}_disabled`;
 			}
 		}
-		console.log(
-			"initGold end",
-			"display",
-			document.getElementById("basketball-gm_mobile_leaderboard")?.style
-				.display,
-		);
 	});
 };
 

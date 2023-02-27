@@ -12,6 +12,7 @@ import {
 	gameAttributesArrayToObject,
 	DEFAULT_JERSEY,
 	POSITIONS,
+	GRACE_PERIOD,
 } from "../../common";
 import actions from "./actions";
 import leagueFileUpload, {
@@ -2147,14 +2148,14 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		(async () => {
 			// Account check needs to complete before initAds, though
 			await checkAccount(conditions);
-			await toUI("initAds", [local.goldUntil], conditions);
+			await toUI("initAds", ["accountChecked"], conditions);
 
 			// This might make another HTTP request, and is less urgent than ads
 			await checkChanges(conditions);
 		})();
 	} else {
 		// No need to run checkAccount and make another HTTP request
-		const currentTimestamp = Math.floor(Date.now() / 1000);
+		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		await toUI("updateLocal", [
 			{
 				gold: local.goldUntil < Infinity && currentTimestamp <= local.goldUntil,
@@ -2162,12 +2163,9 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 			},
 		]);
 
-		// Even if it's not the first host tab, show ads (still async). Why
-		// setTimeout? Cause horrible race condition with actually rendering the
-		// ad divs. Need to move them more fully into React to solve this.
-		setTimeout(() => {
-			toUI("initAds", [local.goldUntil], conditions);
-		}, 0);
+		(async () => {
+			await toUI("initAds", ["accountChecked"], conditions);
+		})();
 	}
 
 	// Send options to all new tabs

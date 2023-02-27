@@ -15,6 +15,7 @@ import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import { useViewData } from "../util/viewManager";
 import { isSport } from "../../common";
+import api from "../api";
 
 const loadFramerMotionFeatures = () =>
 	import("../util/framerMotionFeatures").then(res => res.default);
@@ -65,6 +66,11 @@ const Controller = () => {
 			document.body.appendChild(css);
 		}
 	}, [popup]);
+
+	useEffect(() => {
+		// Try to show ads on initial render
+		api.initAds("uiRendered");
+	}, []);
 
 	const {
 		Component,

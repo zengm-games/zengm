@@ -1,4 +1,4 @@
-import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
+import { ACCOUNT_API_URL, fetchWrapper, GRACE_PERIOD } from "../../common";
 import { idb } from "../db";
 import achievement from "./achievement";
 import local from "./local";
@@ -26,7 +26,7 @@ const checkAccount = async (
 		local.goldUntil = data.gold_until;
 		local.mailingList = !!data.mailing_list;
 		local.username = data.username === "" ? undefined : data.username;
-		const currentTimestamp = Math.floor(Date.now() / 1000);
+		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		await toUI("updateLocal", [
 			{
 				gold: currentTimestamp <= data.gold_until,

@@ -1270,6 +1270,44 @@ export const settings: Setting[] = (
 			customForm: true,
 		},
 		{
+			category: "Players",
+			key: "heightFactor",
+			name: "Height Factor",
+			type: "float",
+			descriptionLong: (
+				<>
+					<p>
+						This affects the displayed heights (in feet/inches or in cm) of
+						generated players (not existing players or real players). This does
+						not affect the height rating which actually impacts gameplay, so it
+						is purely a cosmetic setting. Use it if you want your league to have
+						taller/shorter displayed heights than normal.
+					</p>
+					<p>
+						This value is simply multiplied by the player's default generated
+						height (in inches/cm), so values greater than 1 mean players will be
+						taller than normal, and values less than 1 mean shorter than normal.
+					</p>
+					<p>
+						More info for women's leagues only: this setting is independent of
+						the Gender setting. If you switch from male to female, generated
+						female players will have lower heights and weight than male players,
+						even if you leave the Height Factor and Weight Factor set to 1. Only
+						change these settings if you want further changes to generated
+						heights/weights on top of that.
+					</p>
+				</>
+			),
+		},
+		{
+			category: "Players",
+			key: "weightFactor",
+			name: "Weight Factor",
+			type: "float",
+			descriptionLong:
+				"See Height Factor for an explanation, this works the same way.",
+		},
+		{
 			category: "All-Star",
 			key: "allStarGame",
 			name: "Game Scheduling",

@@ -137,7 +137,9 @@ export type Key =
 	| "blockFactor"
 	| "deflectionFactor"
 	| "saveFactor"
-	| "gender";
+	| "gender"
+	| "heightFactor"
+	| "weightFactor";
 
 export type Category =
 	| "New League"

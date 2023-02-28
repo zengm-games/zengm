@@ -333,6 +333,8 @@ export const getDefaultSettings = () => {
 			"softCapTradeSalaryMatch",
 		),
 		gender: unwrapGameAttribute(defaultGameAttributes, "gender"),
+		heightFactor: unwrapGameAttribute(defaultGameAttributes, "heightFactor"),
+		weightFactor: unwrapGameAttribute(defaultGameAttributes, "weightFactor"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

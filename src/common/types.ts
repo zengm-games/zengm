@@ -486,6 +486,7 @@ export type GameAttributesLeague = {
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
+	heightFactor: number;
 	hideDisabledTeams: boolean;
 	hofFactor: number;
 	homeCourtAdvantage: number;
@@ -577,6 +578,7 @@ export type GameAttributesLeague = {
 	tragicDeaths?: TragicDeaths;
 	userTid: number;
 	userTids: number[];
+	weightFactor: number;
 
 	threePointers: boolean;
 	threePointTendencyFactor: number;

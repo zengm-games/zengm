@@ -816,6 +816,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							gracePeriodEnd: {
 								type: "integer",
 							},
+							heightFactor: {
+								type: "number",
+							},
 							hideDisabledTeams: {
 								type: "boolean",
 							},
@@ -1159,6 +1162,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 									minimum: 0,
 								},
 								minItems: 1,
+							},
+							weightFactor: {
+								type: "number",
 							},
 							threePointers: {
 								type: "boolean",

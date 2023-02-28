@@ -35,6 +35,8 @@ const genWeight = (hgt: number, stre?: number, pos?: string) => {
 			MIN_WEIGHT;
 	}
 
+	weight *= g.get("weightFactor");
+
 	if (female) {
 		// Ratio comes from average USA stats, adjusted a bit down because they still seem to high
 		return Math.round(0.75 * weight);

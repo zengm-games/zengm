@@ -1475,16 +1475,7 @@ const afterDBStream = async ({
 	// Gregg Brown from DNBA, RIP. Make one player on Denver have his name, assuming it's a random players league, Denver exists, and there are no custom names.
 	if (!fileHasPlayers && !g.get("playerBioInfo")) {
 		let memorials;
-		if (isSport("basketball")) {
-			memorials = [
-				{
-					region: "Denver",
-					firstName: "Gregg",
-					lastName: "Brown",
-					bornLoc: "Australia",
-				},
-			];
-		} else if (isSport("hockey")) {
+		if (isSport("hockey")) {
 			// https://discord.com/channels/@me/896580823057326130
 			memorials = [
 				{

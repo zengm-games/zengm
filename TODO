@@ -1,3 +1,23 @@
+on player profile page, bold any stat/rating where player was league leader that season
+- store league leader stat/rating values for each season in some new table, like playerStatsLeadersCache
+- how to know which stats to compute and what to name it? match the playerStats page tables exactly
+- compute final leaders at end of regular season / playoffs
+  - how to determine eligibility for regular season?
+    - some are already encoded on leaders page, but not all
+      - could redefine how that is... store a default and overrides as necessary for individual stats, independent of leaders page
+  - how to determine eligibility for playoffs?
+    - https://www.basketball-reference.com/about/rate_stat_req.html has some
+- TOT rows only for players who played on multiple teams
+- playoffs and regular season
+- is floating point stuff an issue? maybe not if computed the same way
+- ratings too
+  - handle multiple entries for same year
+- existing leagues - don't compute for past seasons, but do have worker console code to recompute
+- real players leagues options
+  - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
+  - dynamically compute after league creation, reusing same function as for normal calculation
+  - dynamically compute before league creating, based on entire stats history (so it accounts for players not in the league, like for partial historical stats) but not requiring an extra JSON file to be precomputed and stored
+
 make cap space visible above the fold on trade page on mobile https://mail.google.com/mail/u/0/#inbox/FMfcgzGrcXqKVMHkvwNxkzXsrsbWwBKh
 
 jordan not in HoF when starting in 2003 during draft https://discord.com/channels/290013534023057409/290015591216054273/1073981357614706821
@@ -309,7 +329,6 @@ add option to show ratings rounded to every 10/20/whatever for less precision ht
 store pids of top 10 leaders in some key stats
 - update after each day
 - show dynamic "award" for being in top 10 all time of some statistic
-- bold in player stats table when league leader
 
 "award" column on player page, like baseball reference
 - requires storing top 10 of award votes

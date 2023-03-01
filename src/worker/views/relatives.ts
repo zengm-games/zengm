@@ -54,22 +54,32 @@ const getRelationText = (
 	}
 
 	if (generation === -1) {
-		return directLine ? "Son" : "Nephew";
+		return directLine
+			? helpers.getRelativeType(gender, "son")
+			: helpers.getRelativeType(gender, "nephew");
 	}
 
 	if (generation === -2) {
-		return directLine ? "Grandson" : "Great Nephew";
+		return directLine
+			? helpers.getRelativeType(gender, "grandson")
+			: `Great ${helpers.getRelativeType(gender, "nephew")}`;
 	}
 
 	if (generation === -3) {
-		return directLine ? "Great Grandson" : "2nd Great Nephew";
+		return directLine
+			? `Great ${helpers.getRelativeType(gender, "grandson")}`
+			: `2nd Great ${helpers.getRelativeType(gender, "nephew")}`;
 	}
 
 	if (generation < -3) {
 		if (directLine) {
-			return `${helpers.ordinal(Math.abs(generation + 2))} Great Grandson`;
+			return `${helpers.ordinal(
+				Math.abs(generation + 2),
+			)} Great ${helpers.getRelativeType(gender, "grandson")}`;
 		} else {
-			return `${helpers.ordinal(Math.abs(generation + 1))} Great Nephew`;
+			return `${helpers.ordinal(
+				Math.abs(generation + 1),
+			)} Great ${helpers.getRelativeType(gender, "nephew")}`;
 		}
 	}
 

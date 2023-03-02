@@ -1,8 +1,7 @@
-const chokidar = require("chokidar");
+import chokidar from "chokidar";
+import { buildCSS } from "./buildFuncs.mjs";
 
 const watchCSS = async (updateStart, updateEnd, updateError) => {
-	const { buildCSS } = await import("./buildFuncs.mjs");
-
 	const watcher = chokidar.watch("public/css", {});
 
 	const filenames = ["build/gen/light.css", "build/gen/dark.css"];
@@ -24,4 +23,4 @@ const watchCSS = async (updateStart, updateEnd, updateError) => {
 	watcher.on("change", myBuildCSS);
 };
 
-module.exports = watchCSS;
+export default watchCSS;

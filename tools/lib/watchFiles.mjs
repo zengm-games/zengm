@@ -1,12 +1,9 @@
-const chokidar = require("chokidar");
+import chokidar from "chokidar";
+import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.mjs";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
-const watchFiles = async (updateStart, updateEnd, updateError) => {
-	const { copyFiles, genRev, reset, setTimestamps } = await import(
-		"./buildFuncs.mjs"
-	);
-
+const watchFiles = (updateStart, updateEnd, updateError) => {
 	const watcher = chokidar.watch(
 		["public", "data", "node_modules/flag-icons"],
 		{},
@@ -36,4 +33,4 @@ const watchFiles = async (updateStart, updateEnd, updateError) => {
 	watcher.on("change", buildWatchFiles);
 };
 
-module.exports = watchFiles;
+export default watchFiles;

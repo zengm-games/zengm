@@ -1,18 +1,14 @@
-let logSymbols;
-import("log-symbols").then(module => {
-	logSymbols = module.default;
-});
-
-const fs = require("fs");
-const { render, Box, Text } = require("ink");
-const Spinner = require("ink-spinner").default;
-const React = require("react");
-const watchCSS = require("./watchCSS");
-const watchFiles = require("./watchFiles");
-const watchJS = require("./watchJS");
-const watchJSONSchema = require("./watchJSONSchema");
-
-const { useEffect, useReducer } = React;
+import logSymbols from "log-symbols";
+import fs from "node:fs";
+// eslint-disable-next-line import/no-unresolved
+import { render, Box, Text } from "ink";
+// eslint-disable-next-line import/no-unresolved
+import Spinner from "ink-spinner";
+import React, { useEffect, useReducer } from "react";
+import watchCSS from "./watchCSS.mjs";
+import watchFiles from "./watchFiles.mjs";
+import watchJS from "./watchJS.mjs";
+import watchJSONSchema from "./watchJSONSchema.mjs";
 
 const TIME_CUTOFF_GREEN = 10000; // 10 seconds
 const TIME_CUTOFF_YELLOW = 30000; // 30 seconds
@@ -159,15 +155,15 @@ const Watch = () => {
 			});
 		};
 
-		// Needs to run first, to create output folder (only async because of ESM issues)
-		watchFiles(updateStart, updateEnd, updateError).then(() => {
-			// Schema is needed for JS bunlde, and watchJSONSchema is async
-			watchJSONSchema(updateStart, updateEnd, updateError).then(() => {
-				watchJS(updateStart, updateEnd, updateError);
-			});
+		// Needs to run first, to create output folder
+		watchFiles(updateStart, updateEnd, updateError);
 
-			watchCSS(updateStart, updateEnd, updateError);
+		// Schema is needed for JS bunlde, and watchJSONSchema is async
+		watchJSONSchema(updateStart, updateEnd, updateError).then(() => {
+			watchJS(updateStart, updateEnd, updateError);
 		});
+
+		watchCSS(updateStart, updateEnd, updateError);
 	}, []);
 
 	useEffect(() => {
@@ -199,6 +195,6 @@ const Watch = () => {
 	);
 };
 
-module.exports = () => {
+export default () => {
 	render(<Watch />, { experimental: true });
 };

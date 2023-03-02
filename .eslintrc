@@ -26,10 +26,11 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".mjs", ".js", ".json", ".ts", ".tsx"]
+        "extensions": [".cjs", ".mjs", ".js", ".json", ".ts", ".tsx"]
       }
     },
     "import/extensions": [
+      ".cjs",
       ".js",
       ".mjs",
       ".jsx",

@@ -1,7 +1,7 @@
 import { csvParse } from "d3-dsv";
 import fs from "fs";
 import path from "path";
-import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.mjs";
+import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 

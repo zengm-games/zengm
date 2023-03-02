@@ -1,6 +1,6 @@
 import fs from "fs";
 import fse from "fs-extra";
-import { fileHash, genRev, setTimestamps } from "./buildFuncs.mjs";
+import { fileHash, genRev, setTimestamps } from "./buildFuncs.js";
 import replace from "replace";
 import { Worker } from "worker_threads";
 
@@ -14,7 +14,7 @@ const buildJS = async () => {
 			promises.push(
 				new Promise(resolve => {
 					const worker = new Worker(
-						new URL("./buildJSWorker.mjs", import.meta.url),
+						new URL("./buildJSWorker.js", import.meta.url),
 						{
 							workerData: {
 								legacy,

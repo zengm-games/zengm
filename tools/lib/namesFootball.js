@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import fs from "fs";
 import path from "path";
-import { juniors, provinces, states } from "./namesHelpers.mjs";
+import { juniors, provinces, states } from "./namesHelpers.js";
 
 const namesFootball = () => {
 	// Run this on the output of something like:

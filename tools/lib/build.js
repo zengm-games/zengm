@@ -5,10 +5,10 @@ import {
 	getSport,
 	minifyIndexHTML,
 	reset,
-} from "./buildFuncs.mjs";
-import generateJSONSchema from "./generateJSONSchema.mjs";
-import buildJS from "./build-js.mjs";
-import buildSW from "./build-sw.mjs";
+} from "./buildFuncs.js";
+import generateJSONSchema from "./generateJSONSchema.js";
+import buildJS from "./build-js.js";
+import buildSW from "./build-sw.js";
 
 export default async () => {
 	const sport = getSport();

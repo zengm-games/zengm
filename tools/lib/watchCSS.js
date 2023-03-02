@@ -1,5 +1,5 @@
 import chokidar from "chokidar";
-import { buildCSS } from "./buildFuncs.mjs";
+import { buildCSS } from "./buildFuncs.js";
 
 const watchCSS = async (updateStart, updateEnd, updateError) => {
 	const watcher = chokidar.watch("public/css", {});

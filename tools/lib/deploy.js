@@ -1,8 +1,8 @@
 import { spawn } from "child_process";
 import cloudflare from "cloudflare";
 import { readFile } from "fs/promises";
-import build from "./build.mjs";
-import { bySport } from "./buildFuncs.mjs";
+import build from "./build.js";
+import { bySport } from "./buildFuncs.js";
 
 const getSubdomain = () => {
 	if (process.argv[2] === "beta" || process.argv[2] === "play") {

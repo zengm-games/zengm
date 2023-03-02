@@ -1,5 +1,5 @@
 import fs from "fs";
-import generateJSONSchema from "./lib/generateJSONSchema.mjs";
+import generateJSONSchema from "./lib/generateJSONSchema.js";
 
 const jsonSchema = generateJSONSchema("test");
 fs.mkdirSync("build/files", { recursive: true });

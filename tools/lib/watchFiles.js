@@ -1,5 +1,5 @@
 import chokidar from "chokidar";
-import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.mjs";
+import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.js";
 
 // Would be better to only copy individual files on update, but this is fast enough
 

@@ -1,7 +1,7 @@
 import esbuild from "esbuild";
 import fs from "fs";
 import { parentPort, workerData } from "worker_threads";
-import esbuildConfig from "./esbuildConfig.mjs";
+import esbuildConfig from "./esbuildConfig.js";
 
 const pluginStartEnd = {
 	name: "start-end",

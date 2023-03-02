@@ -1,4 +1,4 @@
-import { bySport } from "./buildFuncs.mjs";
+import { bySport } from "./buildFuncs.js";
 
 const genRatings = (sport /*: string*/) => {
 	const properties = {

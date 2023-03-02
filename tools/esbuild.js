@@ -1,5 +1,5 @@
 import esbuild from "esbuild";
-import esbuildConfig from "./lib/esbuildConfig.mjs";
+import esbuildConfig from "./lib/esbuildConfig.js";
 
 /**
  * Currently this is not used for anything. Eventually maybe it can replace the current rollup build script. Would need to do:

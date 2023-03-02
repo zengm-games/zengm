@@ -1,5 +1,5 @@
 import alias from "@rollup/plugin-alias";
-import rollupConfig from "./rollupConfig.mjs";
+import rollupConfig from "./rollupConfig.js";
 
 const files = ["src/test/mocha.ts", "src/test/smoke.ts"];
 

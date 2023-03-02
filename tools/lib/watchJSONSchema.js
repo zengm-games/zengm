@@ -1,6 +1,6 @@
 import chokidar from "chokidar";
 import fs from "node:fs";
-import { getSport } from "./buildFuncs.mjs";
+import { getSport } from "./buildFuncs.js";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async modulePath => {
@@ -13,14 +13,14 @@ const watchJSONSchema = async (updateStart, updateEnd, updateError) => {
 
 	const sport = getSport();
 
-	const watcher = chokidar.watch("tools/lib/generateJSONSchema.mjs", {});
+	const watcher = chokidar.watch("tools/lib/generateJSONSchema.js", {});
 
 	const outFilename = "build/files/league-schema.json";
 
 	const buildJSONSchema = async () => {
 		try {
 			// Dynamically reload generateJSONSchema, cause that's what we're watching!
-			const generateJSONSchema = await importFresh("./generateJSONSchema.mjs");
+			const generateJSONSchema = await importFresh("./generateJSONSchema.js");
 
 			const jsonSchema = generateJSONSchema(sport);
 			const output = JSON.stringify(jsonSchema, null, 2);

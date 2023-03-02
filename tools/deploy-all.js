@@ -1,4 +1,4 @@
-import deploy from "./lib/deploy.mjs";
+import deploy from "./lib/deploy.js";
 
 const sports = ["basketball", "football", "baseball", "hockey"];
 

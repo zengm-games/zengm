@@ -2,11 +2,13 @@ on player profile page, bold any stat/rating where player was league leader that
 - store league leader stat/rating values for each season in some new table, like playerStatsLeadersCache
   - store age too, why not
   - game highs?
+- basketball is per game, others are total
 - how to know which stats to compute and what to name it? match the playerStats page tables exactly
 - compute final leaders at end of regular season / playoffs
   - how to determine eligibility for regular season?
     - some are already encoded on leaders page, but not all
       - could redefine how that is... store a default and overrides as necessary for individual stats, independent of leaders page
+      - also take sortAscending from leaders page
   - how to determine eligibility for playoffs?
     - https://www.basketball-reference.com/about/rate_stat_req.html has some
 - TOT rows only for players who played on multiple teams
@@ -19,6 +21,7 @@ on player profile page, bold any stat/rating where player was league leader that
   - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
   - dynamically compute after league creation, reusing same function as for normal calculation
   - dynamically compute before league creating, based on entire stats history (so it accounts for players not in the league, like for partial historical stats) but not requiring an extra JSON file to be precomputed and stored
+- make sure exporting/importing works
 
 option to rebase currency, after inflation goes crazy https://old.reddit.com/r/BasketballGM/comments/10qg3hy/monthly_suggestions_thread/jal48z4/?context=3
 - store "rebased amount" as separate variable, or by dividing all stored currency values? either way, overflow/rounding is a concern at some point

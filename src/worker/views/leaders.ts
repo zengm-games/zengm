@@ -18,7 +18,7 @@ import type {
 import { groupByUnique } from "../../common/groupBy";
 import range from "lodash-es/range";
 import addFirstNameShort from "../util/addFirstNameShort";
-import { NUM_OUTS_PER_INNING } from "../../common/constants.baseball";
+import { season } from "../core";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -33,7 +33,6 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 		baseball: [
 			{
 				stat: "ba",
-				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
 			},
 			{
 				stat: "hr",
@@ -61,15 +60,12 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "obp",
-				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
 			},
 			{
 				stat: "slg",
-				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
 			},
 			{
 				stat: "ops",
-				minStats: { pa: defaultGameAttributes.numGames * 3.1 },
 			},
 			{
 				stat: "tb",
@@ -82,10 +78,6 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "era",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "sho",
@@ -119,57 +111,27 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "fip",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "whip",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "h9",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "hr9",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "bb9",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "so9",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
 			},
 			{
 				stat: "pc9",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
-				sortAscending: true,
 			},
 			{
 				stat: "sow",
-				minStats: {
-					outs: defaultGameAttributes.numGames * NUM_OUTS_PER_INNING,
-				},
 			},
 			{
 				stat: "rbat",
@@ -190,15 +152,12 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 		basketball: [
 			{
 				stat: "pts",
-				minStats: { gp: 70, pts: 1400 },
 			},
 			{
 				stat: "trb",
-				minStats: { gp: 70, trb: 800 },
 			},
 			{
 				stat: "ast",
-				minStats: { gp: 70, ast: 400 },
 			},
 			{
 				stat: "fg",
@@ -208,7 +167,6 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "fgp",
-				minStats: { fg: 300 * g.get("twoPointAccuracyFactor") },
 			},
 			{
 				stat: "tp",
@@ -218,9 +176,6 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "tpp",
-				minStats: {
-					tp: Math.max(55 * Math.min(1, g.get("threePointTendencyFactor")), 12),
-				},
 			},
 			{
 				stat: "ft",
@@ -230,64 +185,49 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "ftp",
-				minStats: { ft: 125 },
 			},
 			{
 				stat: "blk",
-				minStats: { gp: 70, blk: 100 },
 			},
 			{
 				stat: "stl",
-				minStats: { gp: 70, stl: 125 },
 			},
 			{
 				stat: "min",
-				minStats: { gp: 70, min: 2000 },
 			},
 			{
 				stat: "per",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "ewa",
-				minStats: { min: 2000 },
 			},
 			{
-				titleOverride: "Win Shares / 48 Mins",
 				stat: "ws48",
-				minStats: { min: 2000 },
+				titleOverride: "Win Shares / 48 Mins",
 			},
 			{
 				stat: "ows",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "dws",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "ws",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "obpm",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "dbpm",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "bpm",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "vorp",
-				minStats: { min: 2000 },
 			},
 			{
 				stat: "onOff100",
-				minStats: { min: 2000 },
 			},
 		],
 		football: [
@@ -296,11 +236,9 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "pssYdsPerAtt",
-				minStats: { pss: 14 * 16 },
 			},
 			{
 				stat: "cmpPct",
-				minStats: { pss: 14 * 16 },
 			},
 			{
 				stat: "pssTD",
@@ -311,14 +249,12 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "qbRat",
-				minStats: { pss: 14 * 16 },
 			},
 			{
 				stat: "rusYds",
 			},
 			{
 				stat: "rusYdsPerAtt",
-				minStats: { rus: 6.25 * 16 },
 			},
 			{
 				stat: "rusTD",
@@ -329,7 +265,6 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "recYdsPerAtt",
-				minStats: { rec: 1.875 * 16 },
 			},
 			{
 				stat: "recTD",
@@ -374,14 +309,12 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "pm",
-				filter: p => p.ratings.pos !== "G",
 			},
 			{
 				stat: "pim",
 			},
 			{
 				stat: "min",
-				filter: p => p.ratings.pos !== "G",
 			},
 			{
 				stat: "blk",
@@ -397,12 +330,9 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			},
 			{
 				stat: "svPct",
-				minStats: { sv: 800 },
 			},
 			{
 				stat: "gaa",
-				minStats: { sv: 800 },
-				sortAscending: true,
 			},
 			{
 				stat: "so",
@@ -445,8 +375,19 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	}
 	const stats = Array.from(statsSet);
 
+	const leaderRequirements = season.getLeaderRequirements();
+
 	return {
-		categories,
+		categories: categories.map(category => {
+			if (leaderRequirements[category.stat]) {
+				return {
+					...category,
+					...leaderRequirements[category.stat],
+				};
+			}
+
+			return category;
+		}),
 		stats,
 	};
 };

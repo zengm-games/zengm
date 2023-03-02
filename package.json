@@ -21,7 +21,7 @@
 		"lint-js": "eslint \"*.{mjs,js,ts,tsx}\" \"public/*.js\" \"src/**/*.{mjs,js,ts,tsx}\" \"tools/**/*.{mjs,js,ts,tsx}\"",
 		"lint-ts": "node tools/pre-test.mjs && yarn run tsc",
 		"prettier": "prettier --write \"*.{mjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,js,json,scss,ts,tsx}\"",
-		"test": "node tools/pre-test.mjs && cross-env SPORT=basketball jest --testPathIgnorePatterns football && cross-env SPORT=football jest --testRegex \"football.*\\.test\\.[jt]sx?\"",
+		"test": "node tools/pre-test.mjs && cross-env SPORT=basketball jest --testPathIgnorePatterns football && cross-env SPORT=football jest --testRegex \"football.*\\.test\\.c?[jt]sx?\"",
 		"test-e2e": "node tools/pre-test.mjs && karma start karma.conf.js",
 		"test-e2e-watch": "node tools/pre-test.mjs && karma start karma.conf.js --auto-watch --no-single-run",
 		"test-e2e-browserstack": "node tools/pre-test.mjs && karma start karma-browserstack.conf.js",

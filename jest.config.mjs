@@ -16,6 +16,9 @@ export default {
 		"<rootDir>/node_modules/(?!lodash-es|d3-|fake-indexeddb)",
 	],
 
+	// Non-default value is needed to catch .cjs test file
+	testRegex: "\\.test\\.c?[jt]sx?$",
+
 	// This is not needed for most tests, but getting rid of it somehow slows down src/worker/core/league/create.test.ts so might as well keep it
 	testEnvironment: "jsdom",
 };

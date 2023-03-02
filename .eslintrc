@@ -84,12 +84,12 @@
     "react/react-in-jsx-scope": "off"
   },
   "overrides": [{
-    "files": "**/*.test.{js,ts}",
+    "files": "**/*.test.{cjs,js,ts}",
     "env": {
       "jest": true
     }
   }, {
-    "files": ["*.js", "tools/**/*.{js,ts}"],
+    "files": ["*.js", "tools/**/*.{cjs,js,ts}"],
     "env": {
       "node": true
     },

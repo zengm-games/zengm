@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	moduleNameMapper: {
 		"^bbgm-polyfills$": "<rootDir>/src/common/polyfills-modern.ts",
 		"^bbgm-polyfills-ui$": "<rootDir>/src/common/polyfills-noop.ts",

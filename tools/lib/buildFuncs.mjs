@@ -1,14 +1,26 @@
-const lightningCSS = require("lightningcss");
-const browserslist = require("browserslist");
-const crypto = require("crypto");
-const fs = require("fs");
-const fse = require("fs-extra");
-const htmlmin = require("html-minifier-terser");
-const sass = require("sass");
-const path = require("path");
-const { PurgeCSS } = require("purgecss");
-const replace = require("replace");
-const getSport = require("./getSport");
+import * as lightningCSS from "lightningcss";
+import browserslist from "browserslist";
+import { Buffer } from "node:buffer";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import fse from "fs-extra";
+import * as htmlmin from "html-minifier-terser";
+import sass from "sass";
+import path from "node:path";
+import { PurgeCSS } from "purgecss";
+import replace from "replace";
+
+const SPORTS = ["baseball", "basketball", "football", "hockey"];
+
+const getSport = () => {
+	if (SPORTS.includes(process.env.SPORT)) {
+		return process.env.SPORT;
+	}
+	if (process.env.SPORT === undefined) {
+		return "basketball";
+	}
+	throw new Error(`Invalid SPORT: ${process.env.SPORT}`);
+};
 
 const fileHash = contents => {
 	// https://github.com/sindresorhus/rev-hash
@@ -556,12 +568,13 @@ const minifyIndexHTML = async () => {
 	fs.writeFileSync("build/index.html", minified);
 };
 
-module.exports = {
+export {
 	bySport,
 	buildCSS,
 	copyFiles,
 	fileHash,
 	genRev,
+	getSport,
 	reset,
 	setTimestamps,
 	minifyIndexHTML,

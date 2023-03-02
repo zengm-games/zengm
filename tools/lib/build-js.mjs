@@ -1,10 +1,10 @@
 import fs from "fs";
 import fse from "fs-extra";
-import build from "./buildFuncs.js";
+import { fileHash, genRev, setTimestamps } from "./buildFuncs.mjs";
 import replace from "replace";
 import { Worker } from "worker_threads";
 
-const rev = build.genRev();
+const rev = genRev();
 console.log(rev);
 
 const buildJS = async () => {
@@ -45,7 +45,7 @@ const buildJS = async () => {
 		silent: true,
 	});
 
-	build.setTimestamps(rev);
+	setTimestamps(rev);
 
 	const jsonFiles = [
 		"names",
@@ -60,7 +60,7 @@ const buildJS = async () => {
 			const compressed = JSON.stringify(JSON.parse(string));
 			fs.writeFileSync(filePath, compressed);
 
-			const hash = build.fileHash(compressed);
+			const hash = fileHash(compressed);
 			const newFilename = filePath.replace(".json", `-${hash}.json`);
 			fse.moveSync(filePath, newFilename);
 

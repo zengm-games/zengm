@@ -1,5 +1,4 @@
-import buildFuncs from "./buildFuncs.js";
-const { bySport } = buildFuncs;
+import { bySport } from "./buildFuncs.mjs";
 
 const genRatings = (sport /*: string*/) => {
 	const properties = {

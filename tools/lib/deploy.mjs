@@ -2,8 +2,7 @@ import { spawn } from "child_process";
 import cloudflare from "cloudflare";
 import { readFile } from "fs/promises";
 import build from "./build.mjs";
-import buildFuncs from "./buildFuncs.js";
-import getSport from "./getSport.js";
+import { bySport } from "./buildFuncs.mjs";
 
 const getSubdomain = () => {
 	if (process.argv[2] === "beta" || process.argv[2] === "play") {
@@ -42,8 +41,8 @@ const deploy = async () => {
 	await build();
 
 	const subdomain = getSubdomain();
-	const sport = getSport();
-	const domain = buildFuncs.bySport({
+	const sport = build.getSport();
+	const domain = bySport({
 		baseball: `${subdomain === "play" ? "" : "beta."}baseball.zengm.com`,
 		basketball: `${subdomain}.basketball-gm.com`,
 		football: `${subdomain}.football-gm.com`,

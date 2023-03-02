@@ -1,6 +1,5 @@
 const chokidar = require("chokidar");
 const fs = require("fs");
-const getSport = require("./getSport");
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async modulePath => {
@@ -9,6 +8,8 @@ const importFresh = async modulePath => {
 };
 
 const watchJSONSchema = async (updateStart, updateEnd, updateError) => {
+	const { getSport } = await import("./buildFuncs.mjs");
+
 	fs.mkdirSync("build/files", { recursive: true });
 
 	const sport = getSport();

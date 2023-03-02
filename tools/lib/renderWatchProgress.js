@@ -159,15 +159,15 @@ const Watch = () => {
 			});
 		};
 
-		// Needs to run first, to create output folder
-		watchFiles(updateStart, updateEnd, updateError);
+		// Needs to run first, to create output folder (only async because of ESM issues)
+		watchFiles(updateStart, updateEnd, updateError).then(() => {
+			// Schema is needed for JS bunlde, and watchJSONSchema is async
+			watchJSONSchema(updateStart, updateEnd, updateError).then(() => {
+				watchJS(updateStart, updateEnd, updateError);
+			});
 
-		// Schema is needed for JS bunlde, and watchJSONSchema is async
-		watchJSONSchema(updateStart, updateEnd, updateError).then(() => {
-			watchJS(updateStart, updateEnd, updateError);
+			watchCSS(updateStart, updateEnd, updateError);
 		});
-
-		watchCSS(updateStart, updateEnd, updateError);
 	}, []);
 
 	useEffect(() => {

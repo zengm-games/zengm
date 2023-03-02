@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import babel from "@babel/core";
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import babelPluginSportFunctions from "../babel-plugin-sport-functions/index.js";
-import getSport from "./getSport.js";
+import { getSport } from "./buildFuncs.mjs";
 
 const babelCache = {};
 

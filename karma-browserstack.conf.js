@@ -1,4 +1,3 @@
-const karmaConfig = require("./tools/lib/karmaConfig");
 const browserStack = require("../../.browserstack.json"); // eslint-disable-line import/no-unresolved
 
 const customLaunchers = [
@@ -28,7 +27,9 @@ const customLaunchers = [
 	return acc;
 }, {});
 
-module.exports = function (config) {
+module.exports = async config => {
+	const karmaConfig = (await import("./tools/lib/karmaConfig.mjs")).default;
+
 	config.set({
 		...karmaConfig,
 		browserStack,

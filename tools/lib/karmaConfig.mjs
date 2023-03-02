@@ -1,5 +1,5 @@
-const alias = require("@rollup/plugin-alias");
-const rollupConfig = require("./rollupConfig");
+import alias from "@rollup/plugin-alias";
+import rollupConfig from "./rollupConfig.mjs";
 
 const files = ["src/test/mocha.ts", "src/test/smoke.ts"];
 
@@ -12,7 +12,7 @@ rollupConfigTemp.plugins.unshift(
 	}),
 );
 
-module.exports = {
+export default {
 	frameworks: ["mocha", "source-map-support"],
 
 	files: files.map(pattern => {

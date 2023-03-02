@@ -1,21 +1,18 @@
-const path = require("path");
-const alias = require("@rollup/plugin-alias");
-const babel = require("@rollup/plugin-babel").default;
-const blacklist = require("rollup-plugin-blacklist");
-const commonjs = require("@rollup/plugin-commonjs");
-const json = require("@rollup/plugin-json");
-const resolve = require("@rollup/plugin-node-resolve").default;
-const replace = require("@rollup/plugin-replace");
-const terser = require("@rollup/plugin-terser");
-const visualizer = require("rollup-plugin-visualizer").visualizer;
-const getSport = require("./getSport");
+import path from "node:path";
+import alias from "@rollup/plugin-alias";
+import { babel } from "@rollup/plugin-babel";
+import blacklist from "rollup-plugin-blacklist";
+import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
+import resolve from "@rollup/plugin-node-resolve";
+import replace from "@rollup/plugin-replace";
+import terser from "@rollup/plugin-terser";
+import { visualizer } from "rollup-plugin-visualizer";
+import getSport from "./getSport.js";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
-module.exports = (
-	nodeEnv,
-	{ blacklistOptions, statsFilename, legacy } = {},
-) => {
+export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 	const sport = getSport();
 
 	// This gets used in babel.config.mjs, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
@@ -23,6 +20,7 @@ module.exports = (
 		process.env.NODE_ENV = nodeEnv;
 	}
 
+	const __dirname = path.dirname(new URL(import.meta.url).pathname);
 	const root = path.resolve(__dirname, "../..");
 
 	const plugins = [

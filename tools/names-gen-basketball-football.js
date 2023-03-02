@@ -1,7 +1,7 @@
 import namesBasketball from "./lib/namesBasketball.js";
 import namesFootball from "./lib/namesFootball.js";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 

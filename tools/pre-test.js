@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import generateJSONSchema from "./lib/generateJSONSchema.js";
 
 const jsonSchema = generateJSONSchema("test");

@@ -1,8 +1,8 @@
-import fs from "fs";
+import fs from "node:fs";
 import fse from "fs-extra";
 import { fileHash, genRev, setTimestamps } from "./buildFuncs.js";
 import replace from "replace";
-import { Worker } from "worker_threads";
+import { Worker } from "node:worker_threads";
 
 const rev = genRev();
 console.log(rev);

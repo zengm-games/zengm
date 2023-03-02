@@ -1,5 +1,5 @@
 import { IDBKeyRange } from "fake-indexeddb";
-import fs from "fs";
+import fs from "node:fs";
 
 // When mockIDBLeague is used, sometimes IDBKeyRange still gets called even though there is no actual database
 global.IDBKeyRange = IDBKeyRange;

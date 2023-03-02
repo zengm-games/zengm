@@ -1,6 +1,6 @@
 import { load } from "cheerio";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 // Scrape all https://www.basketball-reference.com/friv/colleges.fcgi?college=acadia
 const folder = "/media/external/BBGM/basketball-colleges/html";

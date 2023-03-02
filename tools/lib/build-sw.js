@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import replace2 from "replace";
 import { babel } from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";

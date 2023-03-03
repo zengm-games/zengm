@@ -3,7 +3,6 @@ import {
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	PLAYER_SUMMARY,
-	isSport,
 	DEFAULT_JERSEY,
 } from "../../common";
 import { player } from "../core";
@@ -58,6 +57,15 @@ const fixRatingsStatsAbbrevs = async (p: {
 	}
 };
 
+const getPlayerProfileStats = () => {
+	const stats = [];
+	for (const info of Object.values(PLAYER_STATS_TABLES)) {
+		stats.push(...info.stats);
+	}
+
+	return Array.from(new Set(stats));
+};
+
 export const getCommon = async (pid?: number, season?: number) => {
 	if (pid === undefined) {
 		// https://stackoverflow.com/a/59923262/786644
@@ -71,31 +79,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 	const statSummary = Object.values(PLAYER_SUMMARY);
 
 	const statTables = Object.values(PLAYER_STATS_TABLES);
-	let stats = Array.from(
-		new Set(
-			statTables.reduce<string[]>((allStats, currentStats) => {
-				return allStats.concat(currentStats.stats);
-			}, []),
-		),
-	);
-
-	// Needed because shot locations tables are "special" for now, unfortunately
-	if (isSport("basketball")) {
-		stats = stats.concat([
-			"fgAtRim",
-			"fgaAtRim",
-			"fgpAtRim",
-			"fgLowPost",
-			"fgaLowPost",
-			"fgpLowPost",
-			"fgMidRange",
-			"fgaMidRange",
-			"fgpMidRange",
-			"tp",
-			"tpa",
-			"tpp",
-		]);
-	}
+	const stats = getPlayerProfileStats();
 
 	const pRaw = await idb.getCopy.players(
 		{

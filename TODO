@@ -2,8 +2,7 @@ on player profile page, bold any stat/rating where player was league leader that
 - store league leader stat/rating values for each season in some new table, like playerStatsLeadersCache
   - store age too, why not
   - game highs?
-- does highlighting work with +/-?
-  - same question for game high links
+- does highlighting work with game high links?
 - test highlighting in both light and dark mode
 - how to know which stats to compute and what to name it? match the playerStats page tables exactly
   - getPlayerProfileStats

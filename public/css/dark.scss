@@ -348,3 +348,13 @@ table.table thead .sorting::after {
 .table-secondary {
 	background-color: $gray-100 !important;
 }
+
+.highlight-leader {
+	color: $yellow;
+
+	// Override these colors for +/- stats
+	.text-success,
+	.text-danger {
+		color: $yellow !important;
+	}
+}

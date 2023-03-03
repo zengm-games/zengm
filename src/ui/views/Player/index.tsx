@@ -242,7 +242,7 @@ const MaybeBold = ({
 	children: ReactNode;
 }) => {
 	if (bold) {
-		return <b className="text-yellow">{children}</b>;
+		return <b className="highlight-leader">{children}</b>;
 	}
 
 	return children as JSX.Element;

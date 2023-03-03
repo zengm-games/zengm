@@ -6,6 +6,7 @@ on player profile page, bold any stat/rating where player was league leader that
 - basketball is per game, others are total
 - how to know which stats to compute and what to name it? match the playerStats page tables exactly
   - getPlayerProfileStats
+- if table is shown and has a highlighted stat in it, show some text at top saying "Bold indicates league leader"
 - getLeaderRequirements
   - add all other stats
   - how to handle playoffs?
@@ -15,8 +16,6 @@ on player profile page, bold any stat/rating where player was league leader that
 - is floating point stuff an issue? maybe not if computed the same way
 - existing leagues - don't compute for past seasons, but do have worker console code to recompute
 - real players leagues
-  - handle missing data (shot locations, blocks against)
-    - for blocks against, include 0 as possibility only if sortAscending
   - how to do?
     - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
     - dynamically compute after league creation, reusing same function as for normal calculation (could also be deferred)

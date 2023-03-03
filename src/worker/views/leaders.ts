@@ -637,6 +637,11 @@ export const playerMeetsCategoryRequirements = ({
 		}
 	}
 
+	// Unless we're sorting ascending, ignore value of 0 because that could mean missing data
+	if (pass && !cat.sortAscending && playerStats[cat.stat] === 0) {
+		pass = false;
+	}
+
 	return pass;
 };
 

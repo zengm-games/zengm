@@ -138,6 +138,8 @@ const StatsTable = ({
 		];
 	}
 
+	const leadersType = playoffs ? "playoffs" : "regularSeason";
+
 	return (
 		<HideableSection title={name}>
 			<ul className="nav nav-tabs border-bottom-0">
@@ -215,7 +217,9 @@ const StatsTable = ({
 							</MaybeBold>,
 							...stats.map(stat => (
 								<MaybeBold
-									bold={!ps.hasTot && leaders[ps.season]?.stats.has(stat)}
+									bold={
+										!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)
+									}
 								>
 									{formatStatGameHigh(ps, stat)}
 								</MaybeBold>

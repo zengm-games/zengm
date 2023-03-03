@@ -21,6 +21,16 @@ const max = (rows: any[], getValue: (row: any) => number) => {
 	return current;
 };
 
+const splitRegularSeasonPlayoffs = (p: any) => {
+	for (const row of p.stats) {
+		if (row.playoffs) {
+			p.playoffs = row;
+		} else {
+			p.regularSeason = row;
+		}
+	}
+};
+
 const getPlayerStatsLeadersCache = async (season: number) => {
 	const playersRaw = await idb.getCopies.players(
 		{
@@ -40,11 +50,16 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 		stats: ["tid", ...stats],
 		season,
 		mergeStats: "totOnly",
+		playoffs: true,
 	});
+	for (const p of players) {
+		splitRegularSeasonPlayoffs(p);
+	}
 
 	const leadersCache = {
 		age: max(players, p => p.age),
-		stats: {} as Record<string, number | undefined>,
+		regularSeason: {} as Record<string, number | undefined>,
+		playoffs: {} as Record<string, number | undefined>,
 		ratings: {} as Record<string, number | undefined>,
 		ratingsFuzz: {} as Record<string, number | undefined>,
 	};
@@ -63,36 +78,45 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 		football: "totals",
 		hockey: "totals",
 	});
-	const playoffs = false;
 
-	const gamesPlayedCache = new GamesPlayedCache();
-	await gamesPlayedCache.loadSeasons([season], playoffs);
-	console.log("gamesPlayedCache", gamesPlayedCache);
+	for (const type of ["regularSeason", "playoffs"] as const) {
+		const playoffs = type === "playoffs";
 
-	for (const stat of stats) {
-		leadersCache.stats[stat] = max(
-			players.filter(p => {
-				const pass = playerMeetsCategoryRequirements({
-					career: false,
-					cat: {
-						stat,
-						...requirements[stat],
-					},
-					gamesPlayedCache,
-					p,
-					playerStats: p.stats,
-					playoffs,
-					season,
-					statType,
-				});
+		const gamesPlayedCache = new GamesPlayedCache();
+		await gamesPlayedCache.loadSeasons([season], playoffs);
+		console.log("gamesPlayedCache", gamesPlayedCache);
 
-				return pass;
-			}),
-			p => p.stats[stat],
-		);
+		for (const stat of stats) {
+			leadersCache[type][stat] = max(
+				players.filter(p => {
+					const playerStats = p[type];
+					if (!playerStats) {
+						// Maybe no playoff stats
+						return false;
+					}
+
+					const pass = playerMeetsCategoryRequirements({
+						career: false,
+						cat: {
+							stat,
+							...requirements[stat],
+						},
+						gamesPlayedCache,
+						p,
+						playerStats,
+						playoffs,
+						season,
+						statType,
+					});
+
+					return pass;
+				}),
+				p => p[type][stat],
+			);
+		}
 	}
 
-	console.log("leadersCache", leadersCache);
+	console.log("leadersCache", season, leadersCache);
 
 	return leadersCache;
 };
@@ -110,8 +134,9 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 		string,
 		| {
 				attrs: Set<string>;
+				regularSeason: Set<string>;
+				playoffs: Set<string>;
 				ratings: Set<string>;
-				stats: Set<string>;
 		  }
 		| undefined
 	> = {};
@@ -119,24 +144,27 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 		const p = await idb.getCopy.playersPlus(pRaw, {
 			attrs: ["age"],
 			// pos is for getLeaderRequirements
-			ratings: ["fuzz", "pos", ...ratings],
+			ratings: ["pos", ...ratings],
 			// tid is for GamesPlayedCache lookup
 			stats: ["tid", ...stats],
 			season,
 			mergeStats: "totOnly",
 			fuzz: true,
+			playoffs: true,
 		});
 		if (!p) {
 			// Could be a season where player is a draft prospect or free agent
 			continue;
 		}
+		splitRegularSeasonPlayoffs(p);
 
 		const leadersCache = await getPlayerStatsLeadersCache(season);
 
 		const leader = {
 			attrs: new Set<string>(),
+			regularSeason: new Set<string>(),
+			playoffs: new Set<string>(),
 			ratings: new Set<string>(),
-			stats: new Set<string>(),
 		};
 
 		if (p.age === leadersCache.age) {
@@ -152,9 +180,13 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 			}
 		}
 
-		for (const stat of stats) {
-			if (p.stats[stat] === leadersCache.stats[stat]) {
-				leader.stats.add(stat);
+		for (const type of ["regularSeason", "playoffs"] as const) {
+			if (p[type]) {
+				for (const stat of stats) {
+					if (p[type][stat] === leadersCache[type][stat]) {
+						leader[type].add(stat);
+					}
+				}
 			}
 		}
 

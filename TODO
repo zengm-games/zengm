@@ -6,12 +6,9 @@ on player profile page, bold any stat/rating where player was league leader that
 - basketball is per game, others are total
 - how to know which stats to compute and what to name it? match the playerStats page tables exactly
   - getPlayerProfileStats
-- compute final leaders at end of regular season / playoffs
-  - how to determine eligibility for regular season?
-    - some are already encoded on leaders page, but not all
-      - could redefine how that is... store a default and overrides as necessary for individual stats, independent of leaders page
-      - also take sortAscending from leaders page
-  - how to determine eligibility for playoffs?
+- getLeaderRequirements
+  - add all other stats
+  - how to handle playoffs?
     - https://www.basketball-reference.com/about/rate_stat_req.html has some
   - for current season, only calculate when we need it (when viewing player page), set some flag when simming a game to indicate values are stale
 - playoffs and regular season

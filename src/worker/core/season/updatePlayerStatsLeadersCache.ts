@@ -1,9 +1,14 @@
-import { RATINGS } from "../../../common";
-import type { Player } from "../../../common/types";
+import { bySport, RATINGS } from "../../../common";
+import type { Player, PlayerStatType } from "../../../common/types";
 import { idb } from "../../db";
 import { g } from "../../util";
+import {
+	GamesPlayedCache,
+	playerMeetsCategoryRequirements,
+} from "../../views/leaders";
 import { getPlayerProfileStats } from "../../views/player";
 import player from "../player";
+import getLeaderRequirements from "./getLeaderRequirements";
 
 const max = (rows: any[], getValue: (row: any) => number) => {
 	let current: number | undefined;
@@ -25,11 +30,14 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 	);
 
 	const stats = getPlayerProfileStats();
+	const ratings = ["ovr", "pot", ...RATINGS];
 
 	const players = await idb.getCopies.playersPlus(playersRaw, {
 		attrs: ["age"],
-		ratings: ["ovr", "pot", "fuzz", ...RATINGS],
-		stats,
+		// pos is for getLeaderRequirements
+		ratings: ["fuzz", "pos", ...ratings],
+		// tid is for GamesPlayedCache lookup
+		stats: ["tid", ...stats],
 		season,
 		mergeStats: "totOnly",
 	});
@@ -48,8 +56,40 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 		);
 	}
 
+	const requirements = getLeaderRequirements();
+	const statType: PlayerStatType = bySport({
+		baseball: "totals",
+		basketball: "perGame",
+		football: "totals",
+		hockey: "totals",
+	});
+	const playoffs = false;
+
+	const gamesPlayedCache = new GamesPlayedCache();
+	await gamesPlayedCache.loadSeasons([season], playoffs);
+	console.log("gamesPlayedCache", gamesPlayedCache);
+
 	for (const stat of stats) {
-		leadersCache.stats[stat] = max(players, p => p.stats[stat]);
+		leadersCache.stats[stat] = max(
+			players.filter(p => {
+				const pass = playerMeetsCategoryRequirements({
+					career: false,
+					cat: {
+						stat,
+						...requirements[stat],
+					},
+					gamesPlayedCache,
+					p,
+					playerStats: p.stats,
+					playoffs,
+					season,
+					statType,
+				});
+
+				return pass;
+			}),
+			p => p.stats[stat],
+		);
 	}
 
 	console.log("leadersCache", leadersCache);
@@ -78,8 +118,10 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 	for (const season of seasons) {
 		const p = await idb.getCopy.playersPlus(pRaw, {
 			attrs: ["age"],
-			ratings: ["ovr", "pot", "fuzz", ...RATINGS],
-			stats,
+			// pos is for getLeaderRequirements
+			ratings: ["fuzz", "pos", ...ratings],
+			// tid is for GamesPlayedCache lookup
+			stats: ["tid", ...stats],
 			season,
 			mergeStats: "totOnly",
 			fuzz: true,

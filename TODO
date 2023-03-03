@@ -2,6 +2,7 @@ on player profile page, bold any stat/rating where player was league leader that
 - store league leader stat/rating values for each season in some new table, like playerStatsLeadersCache
   - store age too, why not
   - game highs?
+- does highlighting work with +/-?
 - basketball is per game, others are total
 - how to know which stats to compute and what to name it? match the playerStats page tables exactly
   - getPlayerProfileStats
@@ -13,17 +14,17 @@ on player profile page, bold any stat/rating where player was league leader that
   - how to determine eligibility for playoffs?
     - https://www.basketball-reference.com/about/rate_stat_req.html has some
   - for current season, only calculate when we need it (when viewing player page), set some flag when simming a game to indicate values are stale
-- TOT rows only for players who played on multiple teams
 - playoffs and regular season
 - is floating point stuff an issue? maybe not if computed the same way
-- ratings too
-  - handle multiple entries for same year
-  - store both with and without fuzz
 - existing leagues - don't compute for past seasons, but do have worker console code to recompute
-- real players leagues options
-  - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
-  - dynamically compute after league creation, reusing same function as for normal calculation
-  - dynamically compute before league creating, based on entire stats history (so it accounts for players not in the league, like for partial historical stats) but not requiring an extra JSON file to be precomputed and stored
+- real players leagues
+  - handle missing data (shot locations, blocks against)
+    - for blocks against, include 0 as possibility only if sortAscending
+  - how to do?
+    - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
+    - dynamically compute after league creation, reusing same function as for normal calculation (could also be deferred)
+    - dynamically compute before league creating, based on entire stats history (so it accounts for players not in the league, like for partial historical stats) but not requiring an extra JSON file to be precomputed and stored
+- confirm max age/ratings only include players on teams, not free agents
 - test for all sports
   - getLeaderRequirements
 - make sure exporting/importing works

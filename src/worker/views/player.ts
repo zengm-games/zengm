@@ -27,6 +27,7 @@ import type {
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import findLast from "lodash-es/findLast";
+import { getPlayerLeaders } from "../core/season/updatePlayerStatsLeadersCache";
 
 const fixRatingsStatsAbbrevs = async (p: {
 	ratings?: {
@@ -57,7 +58,7 @@ const fixRatingsStatsAbbrevs = async (p: {
 	}
 };
 
-const getPlayerProfileStats = () => {
+export const getPlayerProfileStats = () => {
 	const stats = [];
 	for (const info of Object.values(PLAYER_STATS_TABLES)) {
 		stats.push(...info.stats);
@@ -462,6 +463,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		godMode: g.get("godMode"),
 		injured: p.injury.gamesRemaining > 0,
 		jerseyNumberInfos,
+		pRaw,
 		phase: g.get("phase"),
 		pid, // Needed for state.pid check
 		player: p,
@@ -559,10 +561,14 @@ const updatePlayer = async (
 			});
 		}
 
+		const leaders = await getPlayerLeaders(topStuff.pRaw);
+		console.log("leaders", leaders);
+
 		return {
 			...topStuff,
 			events,
 			feats,
+			leaders,
 			ratings: RATINGS,
 		};
 	}

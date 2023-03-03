@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { DataTable, InjuryIcon, SafeHtml, SkillsBlock } from "../../components";
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -39,6 +39,7 @@ const StatsTable = ({
 	stats,
 	superCols,
 	HideableSection,
+	leaders,
 }: {
 	name: string;
 	onlyShowIf?: string[];
@@ -46,6 +47,7 @@ const StatsTable = ({
 	stats: string[];
 	superCols?: any[];
 	HideableSection: ReturnType<typeof hideableSectionFactory>;
+	leaders: View<"player">["leaders"];
 }) => {
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
@@ -208,8 +210,16 @@ const StatsTable = ({
 								season={ps.season}
 								tid={ps.tid}
 							/>,
-							ps.age,
-							...stats.map(stat => formatStatGameHigh(ps, stat)),
+							<MaybeBold bold={leaders[ps.season]?.attrs.has("age")}>
+								{ps.age}
+							</MaybeBold>,
+							...stats.map(stat => (
+								<MaybeBold
+									bold={!ps.hasTot && leaders[ps.season]?.stats.has(stat)}
+								>
+									{formatStatGameHigh(ps, stat)}
+								</MaybeBold>
+							)),
 						],
 						classNames: className,
 					};
@@ -218,6 +228,20 @@ const StatsTable = ({
 			/>
 		</HideableSection>
 	);
+};
+
+const MaybeBold = ({
+	bold,
+	children,
+}: {
+	bold: boolean | undefined;
+	children: ReactNode;
+}) => {
+	if (bold) {
+		return <b className="text-yellow">{children}</b>;
+	}
+
+	return children as JSX.Element;
 };
 
 const Player2 = ({
@@ -230,6 +254,7 @@ const Player2 = ({
 	godMode,
 	injured,
 	jerseyNumberInfos,
+	leaders,
 	phase,
 	player,
 	ratings,
@@ -316,6 +341,7 @@ const Player2 = ({
 					superCols={superCols}
 					p={player}
 					HideableSection={HideableSection}
+					leaders={leaders}
 				/>
 			))}
 
@@ -364,12 +390,26 @@ const Player2 = ({
 									season={r.season}
 									tid={r.tid}
 								/>,
-								r.age,
+								<MaybeBold bold={leaders[r.season]?.attrs.has("age")}>
+									{r.age}
+								</MaybeBold>,
 								r.pos,
-								showRatings ? r.ovr : null,
-								showRatings ? r.pot : null,
+								showRatings ? (
+									<MaybeBold bold={leaders[r.season]?.ratings.has("ovr")}>
+										{r.ovr}
+									</MaybeBold>
+								) : null,
+								showRatings ? (
+									<MaybeBold bold={leaders[r.season]?.ratings.has("pot")}>
+										{r.pot}
+									</MaybeBold>
+								) : null,
 								...ratings.map(rating =>
-									showRatings ? (r as any)[rating] : null,
+									showRatings ? (
+										<MaybeBold bold={leaders[r.season]?.ratings.has("rating")}>
+											{(r as any)[rating]}
+										</MaybeBold>
+									) : null,
 								),
 								<SkillsBlock className="skills-alone" skills={r.skills} />,
 							],

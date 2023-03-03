@@ -18,6 +18,7 @@ on player profile page, bold any stat/rating where player was league leader that
 - is floating point stuff an issue? maybe not if computed the same way
 - ratings too
   - handle multiple entries for same year
+  - store both with and without fuzz
 - existing leagues - don't compute for past seasons, but do have worker console code to recompute
 - real players leagues options
   - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
@@ -315,8 +316,6 @@ some way to run an exhibition game between two teams within a league
 - https://old.reddit.com/r/BasketballGM/comments/t3v3bj/monthly_suggestions_thread/hz8u5yb/
 
 pot skills - show % likelihood of achieving a skill tag, based on pot bootstrap
-
-When I set brother and son rate to 1 in the offseason and generate a new draft class, the last names and birthplace of the ALL players still on their rookie contracts change https://discord.com/channels/290013534023057409/290015591216054273/962927125508288512
 
 column title typos in trading block table https://discord.com/channels/290013534023057409/290015591216054273/960753790728957953
 
@@ -876,6 +875,7 @@ scheduled events documentation
 
 better asian names
 - https://old.reddit.com/message/messages/xjbi7a
+- not just for the built-in name database, need a concept of per-country (maybe per-player) ordering of given/family name
 
 https://discord.com/channels/290013534023057409/331882115119448065/792603966063902741
 

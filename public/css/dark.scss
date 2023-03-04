@@ -352,9 +352,10 @@ table.table thead .sorting::after {
 .highlight-leader {
 	color: $yellow;
 
-	// Override these colors for +/- stats
+	// Override these colors for +/- stats and game high links
 	.text-success,
-	.text-danger {
+	.text-danger,
+	a {
 		color: $yellow !important;
 	}
 }

@@ -2,7 +2,34 @@ import { bySport } from "../../../common";
 import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball";
 import { defaultGameAttributes, g } from "../../util";
 
+// https://www.basketball-reference.com/about/rate_stat_req.html has some info for basketball, can use as rough guide
 const getLeaderRequirements = () => {
+	const basketballPerGameStats = {
+		minStats: { gp: 58 },
+	};
+	const basketballAdvancedStats = {
+		minStats: { min: 1500 },
+	};
+	const basketballAdvancedShootingStats = {
+		minStats: { fga: 500 },
+	};
+	const basketballMinTp = Math.max(
+		55 * Math.min(1, g.get("threePointTendencyFactor")),
+		12,
+	);
+	const basketballTpStats = {
+		minStats: {
+			tp: basketballMinTp,
+		},
+	};
+	const basketballMinFg = 300 * g.get("twoPointAccuracyFactor");
+	const basketballFgStats = {
+		minStats: { fg: basketballMinFg },
+	};
+	const basketballFt = {
+		minStats: { ft: 125 },
+	};
+
 	return bySport<
 		Record<
 			string,
@@ -81,67 +108,102 @@ const getLeaderRequirements = () => {
 		},
 		basketball: {
 			pts: {
-				minStats: { gp: 70, pts: 1400 },
+				minStats: { gp: 58, pts: 1400 },
 			},
 			trb: {
-				minStats: { gp: 70, trb: 800 },
+				minStats: { gp: 58, trb: 800 },
 			},
 			ast: {
-				minStats: { gp: 70, ast: 400 },
+				minStats: { gp: 58, ast: 400 },
 			},
-			fgp: {
-				minStats: { fg: 300 * g.get("twoPointAccuracyFactor") },
-			},
-			tpp: {
-				minStats: {
-					tp: Math.max(55 * Math.min(1, g.get("threePointTendencyFactor")), 12),
-				},
-			},
-			ftp: {
-				minStats: { ft: 125 },
-			},
+			orb: basketballPerGameStats,
+			drb: basketballPerGameStats,
+			tov: basketballPerGameStats,
+			ba: basketballPerGameStats,
+			pf: basketballPerGameStats,
+			fg: basketballFgStats,
+			fga: basketballFgStats,
+			fgp: basketballFgStats,
+			"2p": basketballFgStats,
+			"2pa": basketballFgStats,
+			"2pp": basketballFgStats,
+			tp: basketballTpStats,
+			tpa: basketballTpStats,
+			tpp: basketballTpStats,
+			ft: basketballFt,
+			fta: basketballFt,
+			ftp: basketballFt,
+			fgAtRim: { minStats: { fgAtRim: basketballMinFg / 5 } },
+			fgaAtRim: { minStats: { fgAtRim: basketballMinFg / 5 } },
+			fgpAtRim: { minStats: { fgAtRim: basketballMinFg / 5 } },
+			fgLowPost: { minStats: { fgLowPost: basketballMinFg / 5 } },
+			fgaLowPost: { minStats: { fgLowPost: basketballMinFg / 5 } },
+			fgpLowPost: { minStats: { fgLowPost: basketballMinFg / 5 } },
+			fgMidRange: { minStats: { fgMidRange: basketballMinFg / 5 } },
+			fgaMidRange: { minStats: { fgMidRange: basketballMinFg / 5 } },
+			fgpMidRange: { minStats: { fgMidRange: basketballMinFg / 5 } },
 			blk: {
-				minStats: { gp: 70, blk: 100 },
+				minStats: { gp: 58, blk: 100 },
 			},
 			stl: {
-				minStats: { gp: 70, stl: 125 },
+				minStats: { gp: 58, stl: 125 },
 			},
 			min: {
-				minStats: { gp: 70, min: 2000 },
+				minStats: { gp: 58, min: 1500 },
 			},
-			per: {
-				minStats: { min: 2000 },
-			},
-			ewa: {
-				minStats: { min: 2000 },
-			},
-			ws48: {
-				minStats: { min: 2000 },
-			},
-			ows: {
-				minStats: { min: 2000 },
-			},
-			dws: {
-				minStats: { min: 2000 },
-			},
-			ws: {
-				minStats: { min: 2000 },
-			},
-			obpm: {
-				minStats: { min: 2000 },
-			},
-			dbpm: {
-				minStats: { min: 2000 },
-			},
-			bpm: {
-				minStats: { min: 2000 },
-			},
-			vorp: {
-				minStats: { min: 2000 },
-			},
-			onOff100: {
-				minStats: { min: 2000 },
-			},
+			per: basketballAdvancedStats,
+			ewa: basketballAdvancedStats,
+			ws48: basketballAdvancedStats,
+			ows: basketballAdvancedStats,
+			dws: basketballAdvancedStats,
+			ws: basketballAdvancedStats,
+			obpm: basketballAdvancedStats,
+			dbpm: basketballAdvancedStats,
+			bpm: basketballAdvancedStats,
+			vorp: basketballAdvancedStats,
+			onOff100: basketballAdvancedStats,
+			gp: {},
+			gs: {},
+			dd: {},
+			td: {},
+			qd: {},
+			fxf: {},
+			orbp: basketballAdvancedStats,
+			drbp: basketballAdvancedStats,
+			trbp: basketballAdvancedStats,
+			astp: basketballAdvancedStats,
+			stlp: basketballAdvancedStats,
+			blkp: basketballAdvancedStats,
+			tovp: basketballAdvancedStats,
+			usgp: basketballAdvancedStats,
+			pm100: basketballAdvancedStats,
+			ortg: basketballAdvancedStats,
+			drtg: basketballAdvancedStats,
+			minMax: {},
+			fgMax: {},
+			fgaMax: {},
+			tpMax: {},
+			tpaMax: {},
+			"2pMax": {},
+			"2paMax": {},
+			ftMax: {},
+			ftaMax: {},
+			orbMax: {},
+			drbMax: {},
+			trbMax: {},
+			astMax: {},
+			tovMax: {},
+			stlMax: {},
+			blkMax: {},
+			baMax: {},
+			pfMax: {},
+			ptsMax: {},
+			pmMax: {},
+			gmscMax: {},
+			tsp: basketballAdvancedShootingStats,
+			efg: basketballAdvancedShootingStats,
+			tpar: basketballAdvancedShootingStats,
+			ftr: basketballAdvancedShootingStats,
 		},
 		football: {
 			pssYdsPerAtt: {

@@ -86,6 +86,10 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 		await gamesPlayedCache.loadSeasons([season], playoffs);
 
 		for (const stat of stats) {
+			if (type === "regularSeason" && !requirements[stat]) {
+				console.log("Missing requirements", stat);
+			}
+
 			leadersCache[type][stat] = max(
 				players.filter(p => {
 					const playerStats = p[type];
@@ -195,7 +199,6 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 					} else {
 						value = p[type][stat];
 					}
-					console.log(type, stat, value, leadersCache[type][stat]);
 
 					if (value === leadersCache[type][stat]) {
 						leader[type].add(stat);

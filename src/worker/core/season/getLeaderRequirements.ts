@@ -1,6 +1,6 @@
 import { bySport } from "../../../common";
 import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball";
-import { defaultGameAttributes, g } from "../../util";
+import { defaultGameAttributes, g, helpers } from "../../util";
 
 // This is for league leaders pages and player profile page stat tables
 // https://www.basketball-reference.com/about/rate_stat_req.html has some info for basketball, can use as rough guide
@@ -38,6 +38,9 @@ const getLeaderRequirements = () => {
 				minStats?: Record<string, number>;
 				sortAscending?: true;
 				filter?: (p: any) => boolean;
+
+				// For non-numeric stats and other stats that need to have a custom sort, like qbRec
+				sortValue?: (value: any) => number;
 			}
 		>
 	>({
@@ -296,6 +299,9 @@ const getLeaderRequirements = () => {
 			krYds: {},
 			krTD: {},
 			krLng: {},
+			qbRec: {
+				sortValue: value => helpers.getRecordNumericValue(value),
+			},
 		},
 		hockey: {
 			pm: {

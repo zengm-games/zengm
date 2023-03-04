@@ -10,15 +10,33 @@ import { getPlayerProfileStats } from "../../views/player";
 import player from "../player";
 import getLeaderRequirements from "./getLeaderRequirements";
 
-const max = (rows: any[], getValue: (row: any) => number, min?: boolean) => {
-	let current: number | undefined;
+const max = (
+	rows: any[],
+	getValue: (row: any) => number,
+	statInfo?: ReturnType<typeof getLeaderRequirements>["string"],
+) => {
+	let current:
+		| {
+				sortValue: number;
+				value: any;
+		  }
+		| undefined;
 	for (const row of rows) {
 		const value = getValue(row);
-		if (current === undefined || (min ? value < current : value > current)) {
-			current = value;
+		const sortValue = statInfo?.sortValue ? statInfo.sortValue(value) : value;
+		if (
+			current === undefined ||
+			(statInfo?.sortAscending
+				? sortValue < current.sortValue
+				: sortValue > current.sortValue)
+		) {
+			current = {
+				sortValue,
+				value,
+			};
 		}
 	}
-	return current;
+	return current?.value;
 };
 
 const splitRegularSeasonPlayoffs = (p: any) => {
@@ -58,10 +76,10 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 
 	const leadersCache = {
 		age: max(players, p => p.age),
-		regularSeason: {} as Record<string, number | undefined>,
-		playoffs: {} as Record<string, number | undefined>,
-		ratings: {} as Record<string, number | undefined>,
-		ratingsFuzz: {} as Record<string, number | undefined>,
+		regularSeason: {} as Record<string, unknown>,
+		playoffs: {} as Record<string, unknown>,
+		ratings: {} as Record<string, unknown>,
+		ratingsFuzz: {} as Record<string, unknown>,
 	};
 
 	for (const rating of ["ovr", "pot", ...RATINGS]) {
@@ -124,7 +142,7 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 
 					return value;
 				},
-				statInfo.sortAscending,
+				statInfo,
 			);
 		}
 	}

@@ -121,6 +121,14 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 						return false;
 					}
 
+					// Ignore byPos fielding stats, too annoying to compute
+					if (
+						Array.isArray(playerStats[stat]) &&
+						!player.stats.max.includes(stat)
+					) {
+						return false;
+					}
+
 					const pass = playerMeetsCategoryRequirements({
 						career: false,
 						cat: statInfo,

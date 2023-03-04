@@ -362,9 +362,22 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 		}
 	}
 
+	const leaderRequirements = season.getLeaderRequirements();
+
+	const augmentedCategories = categories.map(category => {
+		if (leaderRequirements[category.stat]) {
+			return {
+				...category,
+				...leaderRequirements[category.stat],
+			};
+		}
+
+		return category;
+	});
+
 	// Always include GP, since it's used to scale minStats based on season length
 	const statsSet = new Set<string>(["gp"]);
-	for (const { minStats, stat } of categories) {
+	for (const { minStats, stat } of augmentedCategories) {
 		statsSet.add(stat);
 
 		if (minStats) {
@@ -375,19 +388,8 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	}
 	const stats = Array.from(statsSet);
 
-	const leaderRequirements = season.getLeaderRequirements();
-
 	return {
-		categories: categories.map(category => {
-			if (leaderRequirements[category.stat]) {
-				return {
-					...category,
-					...leaderRequirements[category.stat],
-				};
-			}
-
-			return category;
-		}),
+		categories: augmentedCategories,
 		stats,
 	};
 };

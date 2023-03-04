@@ -32,6 +32,12 @@ const SeasonLink = ({
 	);
 };
 
+const highlightLeaderText = (
+	<>
+		<span className="highlight-leader">Bold</span> indicates league leader
+	</>
+);
+
 const StatsTable = ({
 	name,
 	onlyShowIf,
@@ -140,8 +146,26 @@ const StatsTable = ({
 
 	const leadersType = playoffs ? "playoffs" : "regularSeason";
 
+	let hasLeader = false;
+	LEADERS_LOOP: for (const row of Object.values(leaders)) {
+		if (row?.attrs.has("age")) {
+			hasLeader = true;
+			break;
+		}
+
+		for (const stat of stats) {
+			if (row?.[leadersType].has(stat)) {
+				hasLeader = true;
+				break LEADERS_LOOP;
+			}
+		}
+	}
+
 	return (
-		<HideableSection title={name}>
+		<HideableSection
+			title={name}
+			description={hasLeader ? highlightLeaderText : null}
+		>
 			<ul className="nav nav-tabs border-bottom-0">
 				{hasRegularSeasonStats ? (
 					<li className="nav-item">
@@ -242,7 +266,7 @@ const MaybeBold = ({
 	children: ReactNode;
 }) => {
 	if (bold) {
-		return <b className="highlight-leader">{children}</b>;
+		return <span className="highlight-leader">{children}</span>;
 	}
 
 	return children as JSX.Element;
@@ -310,6 +334,14 @@ const Player2 = ({
 
 	const HideableSection = hideableSectionFactory(undefined);
 
+	let hasLeader = false;
+	for (const row of Object.values(leaders)) {
+		if (row && (row.attrs.has("age") || row.ratings.size > 0)) {
+			hasLeader = true;
+			break;
+		}
+	}
+
 	return (
 		<>
 			<TopStuff
@@ -349,7 +381,10 @@ const Player2 = ({
 				/>
 			))}
 
-			<HideableSection title="Ratings">
+			<HideableSection
+				title="Ratings"
+				description={hasLeader ? highlightLeaderText : null}
+			>
 				<DataTable
 					className="mb-3"
 					cols={getCols([

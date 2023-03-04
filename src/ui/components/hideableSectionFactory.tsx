@@ -47,11 +47,13 @@ const hideableSectionFactory =
 	({
 		children,
 		className,
+		description,
 		title,
 		titleExtraKey,
 	}: {
 		children: ReactNode;
 		className?: string;
+		description?: ReactNode;
 		title: string;
 		titleExtraKey?: string | number;
 	}) => {
@@ -64,15 +66,22 @@ const hideableSectionFactory =
 		return (
 			<>
 				<div
-					className={classNames("d-flex", className, show ? "mb-2" : "mb-3")}
+					className={classNames(
+						"d-flex align-items-center flex-wrap gap-2 row-gap-0",
+						className,
+						show ? "mb-2" : "mb-3",
+					)}
 				>
-					<h2
-						className="mb-0 text-nowrap"
-						style={{ overflow: "hidden", textOverflow: "ellipsis" }}
-					>
-						{title}
-					</h2>
-					{hideableSectionButton}
+					<div className="d-flex" style={{ minWidth: 0 }}>
+						<h2
+							className="mb-0 text-nowrap"
+							style={{ overflow: "hidden", textOverflow: "ellipsis" }}
+						>
+							{title}
+						</h2>
+						{hideableSectionButton}
+					</div>
+					{show ? <div className="text-nowrap">{description}</div> : null}
 				</div>
 				{show ? children : null}
 			</>

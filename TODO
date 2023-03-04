@@ -3,7 +3,8 @@ on player profile page, bold any stat/rating where player was league leader that
 - how to know which stats to compute and what to name it? match the playerStats page tables exactly
   - getPlayerProfileStats
 - getLeaderRequirements
-  - add all other stats
+  - baseball
+  - hockey
   - for current season, only calculate when we need it (when viewing player page), set some flag when simming a game to indicate values are stale
 - existing leagues - don't compute for past seasons, but do have worker console code to recompute
 - real players leagues

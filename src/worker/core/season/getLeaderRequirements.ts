@@ -31,6 +31,16 @@ const getLeaderRequirements = () => {
 		minStats: { ft: 125 },
 	};
 
+	const footballPssStats = {
+		minStats: { pss: 14 * defaultGameAttributes.numGames },
+	};
+	const footballRusStats = {
+		minStats: { rus: 6.25 * defaultGameAttributes.numGames },
+	};
+	const footballRecStats = {
+		minStats: { rec: 1.875 * defaultGameAttributes.numGames },
+	};
+
 	return bySport<
 		Record<
 			string,
@@ -213,20 +223,56 @@ const getLeaderRequirements = () => {
 			ftr: basketballAdvancedShootingStats,
 		},
 		football: {
-			pssYdsPerAtt: {
-				minStats: { pss: 14 * 16 },
+			pssYdsPerAtt: footballPssStats,
+			cmpPct: footballPssStats,
+			qbRat: footballPssStats,
+			rusYdsPerAtt: footballRusStats,
+			recYdsPerAtt: footballRecStats,
+			pssTDPct: footballPssStats,
+			pssIntPct: {
+				...footballPssStats,
+				sortAscending: true,
 			},
-			cmpPct: {
-				minStats: { pss: 14 * 16 },
+			pssAdjYdsPerAtt: footballPssStats,
+			pssYdsPerCmp: footballPssStats,
+			pssYdsPerGame: footballPssStats,
+			pssNetYdsPerAtt: footballPssStats,
+			pssAdjNetYdsPerAtt: footballPssStats,
+			pssSkPct: {
+				...footballPssStats,
+				sortAscending: true,
 			},
-			qbRat: {
-				minStats: { pss: 14 * 16 },
+			rusYdsPerGame: footballRusStats,
+			rusPerGame: footballRusStats,
+			recYdsPerRec: footballRecStats,
+			recPerGame: footballRecStats,
+			recYdsPerGame: footballRecStats,
+			recCatchPct: footballRecStats,
+			ydsPerTouch: footballRecStats,
+			fgPct: {
+				minStats: {
+					fga: defaultGameAttributes.numGames,
+				},
 			},
-			rusYdsPerAtt: {
-				minStats: { rus: 6.25 * 16 },
+			xpPct: {
+				minStats: {
+					xpa: defaultGameAttributes.numGames,
+				},
 			},
-			recYdsPerAtt: {
-				minStats: { rec: 1.875 * 16 },
+			pntYdsPerAtt: {
+				minStats: {
+					pnt: 2.5 * defaultGameAttributes.numGames,
+				},
+			},
+			prYdsPerAtt: {
+				minStats: {
+					pr: 1.25 * defaultGameAttributes.numGames,
+				},
+			},
+			krYdsPerAtt: {
+				minStats: {
+					kr: 1.25 * defaultGameAttributes.numGames,
+				},
 			},
 			gp: {},
 			gs: {},
@@ -299,8 +345,9 @@ const getLeaderRequirements = () => {
 			krYds: {},
 			krTD: {},
 			krLng: {},
+			allPurposeYds: {},
 			qbRec: {
-				sortValue: value => helpers.getRecordNumericValue(value),
+				sortValue: helpers.getRecordNumericValue,
 			},
 		},
 		hockey: {

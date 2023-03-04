@@ -2,6 +2,7 @@ import { isValidElement } from "react";
 // @ts-expect-error
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
+import { helpers } from "../../util";
 
 const getSortVal = (
 	value: any = null,
@@ -112,31 +113,7 @@ const getSortVal = (
 		}
 
 		if (sortType === "record") {
-			if (sortVal === null) {
-				return -Infinity;
-			}
-
-			let [won, lost, otl, tied] = sortVal.split("-").map(num => parseInt(num));
-
-			// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
-			if (typeof otl === "number" && typeof tied !== "number") {
-				tied = otl;
-				otl = 0;
-			}
-
-			if (typeof otl !== "number") {
-				otl = 0;
-			}
-			if (typeof tied !== "number") {
-				tied = 0;
-			}
-
-			if (won + lost + otl + tied > 0) {
-				// Sort by wins, winp
-				return won + (won + 0.5 * tied) / (won + lost + otl + tied);
-			}
-
-			return 0;
+			return helpers.getRecordNumericValue(sortVal);
 		}
 
 		return sortVal;

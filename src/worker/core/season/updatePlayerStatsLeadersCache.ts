@@ -10,11 +10,11 @@ import { getPlayerProfileStats } from "../../views/player";
 import player from "../player";
 import getLeaderRequirements from "./getLeaderRequirements";
 
-const max = (rows: any[], getValue: (row: any) => number) => {
+const max = (rows: any[], getValue: (row: any) => number, min?: boolean) => {
 	let current: number | undefined;
 	for (const row of rows) {
 		const value = getValue(row);
-		if (current === undefined || value > current) {
+		if (current === undefined || (min ? value < current : value > current)) {
 			current = value;
 		}
 	}
@@ -90,6 +90,11 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 				console.log("Missing requirements", stat);
 			}
 
+			const statInfo = {
+				stat,
+				...requirements[stat],
+			};
+
 			leadersCache[type][stat] = max(
 				players.filter(p => {
 					const playerStats = p[type];
@@ -100,10 +105,7 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 
 					const pass = playerMeetsCategoryRequirements({
 						career: false,
-						cat: {
-							stat,
-							...requirements[stat],
-						},
+						cat: statInfo,
 						gamesPlayedCache,
 						p,
 						playerStats,
@@ -122,6 +124,7 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 
 					return value;
 				},
+				statInfo.sortAscending,
 			);
 		}
 	}

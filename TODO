@@ -8,7 +8,6 @@ on player profile page, bold any stat/rating where player was league leader that
   - how to handle playoffs?
     - https://www.basketball-reference.com/about/rate_stat_req.html has some
   - for current season, only calculate when we need it (when viewing player page), set some flag when simming a game to indicate values are stale
-  - any basketball ascending? tovp?
 - is floating point stuff an issue? maybe not if computed the same way
 - existing leagues - don't compute for past seasons, but do have worker console code to recompute
 - real players leagues

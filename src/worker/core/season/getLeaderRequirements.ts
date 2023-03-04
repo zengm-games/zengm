@@ -174,7 +174,10 @@ const getLeaderRequirements = () => {
 			astp: basketballAdvancedStats,
 			stlp: basketballAdvancedStats,
 			blkp: basketballAdvancedStats,
-			tovp: basketballAdvancedStats,
+			tovp: {
+				...basketballAdvancedStats,
+				sortAscending: true,
+			},
 			usgp: basketballAdvancedStats,
 			pm100: basketballAdvancedStats,
 			ortg: basketballAdvancedStats,

@@ -15,7 +15,7 @@ const defaultLocal: Local = {
 	playerOvrMean: 47,
 	playerOvrStd: 10,
 	playerOvrMeanStdStale: true,
-	playerStatsSeasonLeaders: undefined,
+	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
@@ -37,8 +37,8 @@ const local: Local & {
 	playerOvrMean: defaultLocal.playerOvrMean,
 	playerOvrStd: defaultLocal.playerOvrStd,
 	playerOvrMeanStdStale: defaultLocal.playerOvrMeanStdStale,
-	playerStatsSeasonLeaders: defaultLocal.playerStatsSeasonLeaders,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
+	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
 	username: defaultLocal.username,
@@ -55,8 +55,8 @@ const local: Local & {
 		local.playerOvrMean = defaultLocal.playerOvrMean;
 		local.playerOvrStd = defaultLocal.playerOvrStd;
 		local.playerOvrMeanStdStale = defaultLocal.playerOvrMeanStdStale;
-		local.playerStatsSeasonLeaders = defaultLocal.playerStatsSeasonLeaders;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
+		local.seasonLeaders = defaultLocal.seasonLeaders;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;
 		local.username = defaultLocal.username;

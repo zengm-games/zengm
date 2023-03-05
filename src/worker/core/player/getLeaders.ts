@@ -1,6 +1,6 @@
 import { bySport, PHASE, PLAYER, RATINGS } from "../../../common";
 import type {
-	PlayerStatsSeasonLeaders,
+	SeasonLeaders,
 	Player,
 	PlayerStatType,
 } from "../../../common/types";
@@ -53,7 +53,7 @@ const splitRegularSeasonPlayoffs = (p: any) => {
 	}
 };
 
-const getPlayerStatsSeasonLeaders = async (season: number) => {
+const getSeasonLeaders = async (season: number) => {
 	if (season < g.get("startingSeason")) {
 		// Ignore any partial data from historical seasons before this league existed
 		return;
@@ -64,14 +64,11 @@ const getPlayerStatsSeasonLeaders = async (season: number) => {
 		season > currentSeason ||
 		(season === currentSeason && g.get("phase") <= PHASE.PLAYOFFS);
 	if (seasonInProgress) {
-		if (local.playerStatsSeasonLeaders) {
-			return local.playerStatsSeasonLeaders;
+		if (local.seasonLeaders) {
+			return local.seasonLeaders;
 		}
 	} else {
-		const leadersCache = await idb.league.get(
-			"playerStatsSeasonLeaders",
-			season,
-		);
+		const leadersCache = await idb.league.get("seasonLeaders", season);
 		if (leadersCache) {
 			return leadersCache;
 		}
@@ -110,7 +107,7 @@ const getPlayerStatsSeasonLeaders = async (season: number) => {
 		splitRegularSeasonPlayoffs(p);
 	}
 
-	const leadersCache: PlayerStatsSeasonLeaders = {
+	const leadersCache: SeasonLeaders = {
 		season,
 		age: max(players, p => p.age),
 		regularSeason: {},
@@ -194,9 +191,9 @@ const getPlayerStatsSeasonLeaders = async (season: number) => {
 
 	if (seasonInProgress) {
 		// Cache until next game sim
-		local.playerStatsSeasonLeaders = leadersCache;
+		local.seasonLeaders = leadersCache;
 	} else {
-		await idb.league.add("playerStatsSeasonLeaders", leadersCache);
+		await idb.league.add("seasonLeaders", leadersCache);
 	}
 
 	return leadersCache;
@@ -240,7 +237,7 @@ const getLeaders = async (pRaw: Player) => {
 		}
 		splitRegularSeasonPlayoffs(p);
 
-		const leadersCache = await getPlayerStatsSeasonLeaders(season);
+		const leadersCache = await getSeasonLeaders(season);
 		if (!leadersCache) {
 			continue;
 		}

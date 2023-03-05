@@ -1287,7 +1287,7 @@ export type Local = {
 	playerOvrMean: number;
 	playerOvrStd: number;
 	playerOvrMeanStdStale: boolean;
-	playerStatsSeasonLeaders: PlayerStatsSeasonLeaders | undefined;
+	seasonLeaders: SeasonLeaders | undefined;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
@@ -1787,7 +1787,7 @@ export type HeadToHead = {
 
 export type GetCopyType = "noCopyCache";
 
-export type PlayerStatsSeasonLeaders = {
+export type SeasonLeaders = {
 	season: number;
 	age: number;
 	regularSeason: Record<string, unknown>;

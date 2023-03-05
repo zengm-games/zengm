@@ -37,7 +37,7 @@ import type {
 	ScheduledEvent,
 	HeadToHead,
 	DraftPick,
-	PlayerStatsSeasonLeaders,
+	SeasonLeaders,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 
@@ -98,10 +98,6 @@ export interface LeagueDB extends DBSchema {
 		value: PlayerFeat;
 		autoIncrementKeyPath: "fid";
 	};
-	playerStatsSeasonLeaders: {
-		key: number;
-		value: PlayerStatsSeasonLeaders;
-	};
 	players: {
 		key: number;
 		value: Player<MinimalPlayerRatings>;
@@ -136,6 +132,10 @@ export interface LeagueDB extends DBSchema {
 		indexes: {
 			season: number;
 		};
+	};
+	seasonLeaders: {
+		key: number;
+		value: SeasonLeaders;
 	};
 	teamSeasons: {
 		key: number;
@@ -433,7 +433,7 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		keyPath: "pid",
 		autoIncrement: true,
 	});
-	db.createObjectStore("playerStatsSeasonLeaders", {
+	db.createObjectStore("seasonLeaders", {
 		keyPath: "season",
 	});
 	db.createObjectStore("playoffSeries", {
@@ -1223,7 +1223,7 @@ const migrate = async ({
 	}
 
 	if (oldVersion <= 52) {
-		db.createObjectStore("playerStatsSeasonLeaders", {
+		db.createObjectStore("seasonLeaders", {
 			keyPath: "season",
 		});
 	}

@@ -383,7 +383,7 @@ const Player2 = ({
 
 			<HideableSection
 				title="Ratings"
-				description={hasLeader ? highlightLeaderText : null}
+				description={hasLeader && showRatings ? highlightLeaderText : null}
 			>
 				<DataTable
 					className="mb-3"

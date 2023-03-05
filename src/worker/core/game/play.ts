@@ -126,6 +126,9 @@ const play = async (
 			}
 		}
 
+		// Invalidate leaders cache, if it exists
+		local.playerStatsSeasonLeaders = undefined;
+
 		if (g.get("phase") === PHASE.PLAYOFFS) {
 			// Update playoff series W/L
 			await updatePlayoffSeries(results, conditions);

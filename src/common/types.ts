@@ -1287,6 +1287,7 @@ export type Local = {
 	playerOvrMean: number;
 	playerOvrStd: number;
 	playerOvrMeanStdStale: boolean;
+	playerStatsSeasonLeaders: PlayerStatsSeasonLeaders | undefined;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

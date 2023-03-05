@@ -54,11 +54,6 @@ const splitRegularSeasonPlayoffs = (p: any) => {
 };
 
 const getSeasonLeaders = async (season: number) => {
-	if (season < g.get("startingSeason")) {
-		// Ignore any partial data from historical seasons before this league existed
-		return;
-	}
-
 	const currentSeason = g.get("season");
 	const seasonInProgress =
 		season > currentSeason ||
@@ -71,6 +66,11 @@ const getSeasonLeaders = async (season: number) => {
 		const leadersCache = await idb.league.get("seasonLeaders", season);
 		if (leadersCache) {
 			return leadersCache;
+		}
+
+		if (season < g.get("startingSeason")) {
+			// Ignore any partial data from historical seasons before this league existed, unless it's already cached (like from initializing real players league)
+			return;
 		}
 	}
 

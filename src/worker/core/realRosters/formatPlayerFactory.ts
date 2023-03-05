@@ -336,7 +336,7 @@ const formatPlayerFactory = async (
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
 
 		type StatsRow = Omit<
-			BasketballStats[number],
+			BasketballStats["stats"][number],
 			"slug" | "abbrev" | "playoffs"
 		> & {
 			playoffs: boolean;
@@ -346,7 +346,7 @@ const formatPlayerFactory = async (
 		};
 		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {
-			let statsTemp: BasketballStats | undefined;
+			let statsTemp: BasketballStats["stats"] | undefined;
 
 			const statsSeason =
 				options.phase > PHASE.REGULAR_SEASON
@@ -355,7 +355,7 @@ const formatPlayerFactory = async (
 			const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
 
 			if (options.realStats === "lastSeason") {
-				statsTemp = basketballStats.filter(
+				statsTemp = basketballStats.stats.filter(
 					row =>
 						row.slug === slug &&
 						row.season === statsSeason &&
@@ -366,7 +366,7 @@ const formatPlayerFactory = async (
 				options.realStats === "allActive" ||
 				options.realStats === "all"
 			) {
-				statsTemp = basketballStats.filter(
+				statsTemp = basketballStats.stats.filter(
 					row =>
 						row.slug === slug &&
 						row.season <= statsSeason &&

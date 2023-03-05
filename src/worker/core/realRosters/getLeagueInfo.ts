@@ -64,12 +64,20 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 
 		const stores =
 			options.season >= 2020
-				? ["teams", "players", "gameAttributes", "startingSeason", "draftPicks"]
+				? [
+						"teams",
+						"players",
+						"gameAttributes",
+						"startingSeason",
+						"seasonLeaders",
+						"draftPicks",
+				  ]
 				: [
 						"teams",
 						"players",
 						"gameAttributes",
 						"startingSeason",
+						"seasonLeaders",
 						"scheduledEvents",
 				  ];
 

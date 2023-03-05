@@ -6,6 +6,7 @@ import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
 // Why this rather than ExpirationPlugin with maxEntries? It's smaller code, but more importantly, ExpirationPlugin adds to cache before checking maxEntries. With maxEntries of 1 and several MB per resource, that could prematurely trigger a quota error.
+// Why this rather than normal precaching? Because on mobile we don't use real player stats by default, so it saves space if we never have to download that file. And if user plays only random players, that saves even more space. On the downside, this means real player data won't be cached until it's used, which could be confusing if you're offline.
 class CacheOnlyOneItemPlugin {
 	constructor(cacheName) {
 		this._cacheName = cacheName;

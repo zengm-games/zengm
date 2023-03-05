@@ -1,7 +1,9 @@
 import loadDataBasketball, { Basketball } from "./loadData.basketball";
+import loadStatsBasketball from "./loadStats.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import { groupBy } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
+import range from "lodash-es/range";
 import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,
@@ -436,7 +438,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		let playoffSeries;
 		let playoffSeriesRange: [number, number] | undefined;
 		if (options.realStats === "all") {
-			playoffSeriesRange = [1947, options.season - 1];
+			playoffSeriesRange = [MIN_SEASON, options.season - 1];
 			if (options.phase >= PHASE.PLAYOFFS) {
 				playoffSeriesRange[1] += 1;
 			}
@@ -723,9 +725,40 @@ const getLeague = async (options: GetLeagueOptions) => {
 			allRetiredJerseyNumbers: basketball.retiredJerseyNumbers,
 		});
 
+		let seasonLeaders;
+		if (options.realStats !== "none") {
+			let seasonLeadersSeasons;
+
+			if (options.realStats === "lastSeason") {
+				// Different from mostRecentLeadersSeason to keep in sync with the season that player stats get pulled from in formatPlayer
+				const statsSeason =
+					options.phase > PHASE.REGULAR_SEASON
+						? options.season
+						: options.season - 1;
+
+				seasonLeadersSeasons = [statsSeason];
+			} else {
+				const mostRecentLeadersSeason =
+					options.phase > PHASE.PLAYOFFS ? options.season : options.season - 1;
+
+				seasonLeadersSeasons = range(MIN_SEASON, mostRecentLeadersSeason + 1);
+			}
+
+			const basketballStats = await loadStatsBasketball();
+			seasonLeaders = [];
+			for (const season of seasonLeadersSeasons) {
+				if (basketballStats.seasonLeaders[season]) {
+					seasonLeaders.push({
+						season,
+						...basketballStats.seasonLeaders[season],
+					});
+				}
+			}
+		}
+
 		return {
 			version: MAX_SUPPORTED_LEAGUE_VERSION,
-			startingSeason: options.realStats === "all" ? 1947 : options.season,
+			startingSeason: options.realStats === "all" ? MIN_SEASON : options.season,
 			players,
 			teams: initialTeams,
 			scheduledEvents,
@@ -734,6 +767,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			draftLotteryResults,
 			playoffSeries,
 			awards,
+			seasonLeaders,
 		};
 	} else if (options.type === "legends") {
 		const NUM_PLAYERS_PER_TEAM = 15;

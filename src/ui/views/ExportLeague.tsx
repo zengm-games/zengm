@@ -13,6 +13,7 @@ import type {
 	Team,
 	View,
 } from "../../common/types";
+import type { LeagueDBStoreNames } from "../../worker/db/connectLeague";
 import { ActionButton, MoreLinks, ProgressBarText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, safeLocalStorage, toWorker, useLocal } from "../util";
@@ -264,7 +265,7 @@ const getExportInfo = (
 	stats: View<"exportLeague">["stats"],
 	checked: Record<ExportLeagueKey, boolean>,
 ) => {
-	const storesSet = new Set<string>();
+	const storesSet = new Set<LeagueDBStoreNames>();
 
 	const storesByKey = {
 		players: ["players", "releasedPlayers", "awards"],
@@ -283,11 +284,12 @@ const getExportInfo = (
 			"playerFeats",
 			"allStars",
 			"scheduledEvents",
+			"seasonLeaders",
 		],
 		newsFeedTransactions: ["events"],
 		newsFeedOther: ["events"],
 		games: ["games"],
-	};
+	} satisfies Record<string, LeagueDBStoreNames[]>;
 
 	for (const key of helpers.keys(storesByKey)) {
 		if (checked[key]) {

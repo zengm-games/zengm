@@ -1,10 +1,8 @@
-const leaguePartDescriptions: { [key: string]: string } = {
+const leaguePartDescriptions: Record<string, string> = {
 	gameAttributes: "League settings",
 	startingSeason: "Starting season",
 	players: "Players, including ratings and stats",
 	teams: "Teams",
-	teamSeason: "Team seasons history",
-	teamStats: "Team stats history",
 	allStars: "All-Star Game history",
 	awards: "Awards history",
 	games: "Box scores",
@@ -21,6 +19,7 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	scheduledEvents:
 		"Scheduled events, like expansion and league rule changes. For more control, go to Tools > Scheduled Events after creating your league.",
 	headToHeads: "Team head-to-head results",
+	seasonLeaders: "Season leaders cache",
 };
 
 const LeaguePartPicker = ({

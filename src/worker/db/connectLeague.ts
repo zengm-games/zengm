@@ -165,9 +165,11 @@ export interface LeagueDB extends DBSchema {
 	};
 }
 
+export type LeagueDBStoreNames = StoreNames<LeagueDB>;
+
 type VersionChangeTransaction = IDBPTransaction<
 	LeagueDB,
-	StoreNames<LeagueDB>[],
+	LeagueDBStoreNames[],
 	"versionchange"
 >;
 

@@ -105,7 +105,7 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 
 		for (const stat of stats) {
 			if (type === "regularSeason" && !requirements[stat]) {
-				console.log("Missing requirements", stat);
+				throw new Error(`Missing leader requirements for ${stat}`);
 			}
 
 			const statInfo = {

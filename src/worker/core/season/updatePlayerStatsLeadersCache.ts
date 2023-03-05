@@ -206,7 +206,8 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 			ratings: new Set<string>(),
 		};
 
-		if (p.age === leadersCache.age) {
+		// Oldest player must have been on a team this season
+		if ((p.regularSeason || p.playoffs) && p.age === leadersCache.age) {
 			leader.attrs.add("age");
 		}
 

@@ -7,7 +7,6 @@ on player profile page, bold any stat/rating where player was league leader that
     - store playerStatsLeadersCache values in JSON file, so it can be quickly used, and also is correct for leagues with only partial history (which is the default!)
     - dynamically compute after league creation, reusing same function as for normal calculation (could also be deferred)
     - dynamically compute before league creating, based on entire stats history (so it accounts for players not in the league, like for partial historical stats) but not requiring an extra JSON file to be precomputed and stored
-- confirm max age/ratings only include players on teams, not free agents
 - test for all sports
   - getLeaderRequirements
     - change "Missing requirements" to error after done adding all

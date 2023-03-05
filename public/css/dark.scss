@@ -349,7 +349,7 @@ table.table thead .sorting::after {
 	background-color: $gray-100 !important;
 }
 
-$highlight-leader-color: lighten($yellow, 20%);
+$highlight-leader-color: lighten($yellow, 18%);
 .highlight-leader {
 	color: $highlight-leader-color;
 

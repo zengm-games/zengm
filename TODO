@@ -1,6 +1,9 @@
 on player profile page, bold any stat/rating where player was league leader that season
 - store league leader stat/rating values for each season in some new table, like playerStatsLeadersCache
 - for current season, only calculate when we need it (when viewing player page), set some flag when simming a game to indicate values are stale
+  - if it's faster, use only players from cache unless it's the final calculation for a season
+    - is this fast enough to not persist at all until final calculation?
+- maybe calculate on first load to handle upgrades and real players
 - existing leagues - don't compute for past seasons, but do have worker console code to recompute
 - real players leagues
   - how to do?
@@ -9,7 +12,7 @@ on player profile page, bold any stat/rating where player was league leader that
     - dynamically compute before league creating, based on entire stats history (so it accounts for players not in the league, like for partial historical stats) but not requiring an extra JSON file to be precomputed and stored
 - make sure exporting/importing works
 
-on player stats page, filter to ignore players who don't qualify for league leader (ideally in the sorted category)
+on player stats page, filter to ignore players who don't qualify for league leader (ideally in the sorted category), like basketball-reference
 
 option to rebase currency, after inflation goes crazy https://old.reddit.com/r/BasketballGM/comments/10qg3hy/monthly_suggestions_thread/jal48z4/?context=3
 - store "rebased amount" as separate variable, or by dividing all stored currency values? either way, overflow/rounding is a concern at some point

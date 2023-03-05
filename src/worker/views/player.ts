@@ -561,8 +561,10 @@ const updatePlayer = async (
 			});
 		}
 
+		console.time("foo");
 		const leaders = await getPlayerLeaders(topStuff.pRaw);
 		console.log("leaders", leaders);
+		console.timeEnd("foo");
 
 		return {
 			...topStuff,

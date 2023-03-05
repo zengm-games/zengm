@@ -1785,3 +1785,12 @@ export type HeadToHead = {
 };
 
 export type GetCopyType = "noCopyCache";
+
+export type PlayerStatsLeadersCache = {
+	season: number;
+	age: number;
+	regularSeason: Record<string, unknown>;
+	playoffs: Record<string, unknown>;
+	ratings: Record<string, unknown>;
+	ratingsFuzz: Record<string, unknown>;
+};

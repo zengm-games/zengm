@@ -1,5 +1,9 @@
-import { bySport, RATINGS } from "../../../common";
-import type { Player, PlayerStatType } from "../../../common/types";
+import { bySport, PHASE, RATINGS } from "../../../common";
+import type {
+	PlayerStatsLeadersCache,
+	Player,
+	PlayerStatType,
+} from "../../../common/types";
 import { idb } from "../../db";
 import { g } from "../../util";
 import {
@@ -50,6 +54,25 @@ const splitRegularSeasonPlayoffs = (p: any) => {
 };
 
 const getPlayerStatsLeadersCache = async (season: number) => {
+	if (season < g.get("startingSeason")) {
+		// Ignore any partial data from historical seasons before this league existed
+		return;
+	}
+
+	const currentSeason = g.get("season");
+	const seasonInProgress =
+		season > currentSeason ||
+		(season === currentSeason && g.get("phase") <= PHASE.PLAYOFFS);
+	if (!seasonInProgress) {
+		const leadersCache = await idb.league.get(
+			"playerStatsLeadersCache",
+			season,
+		);
+		if (leadersCache) {
+			return leadersCache;
+		}
+	}
+
 	const playersRaw = await idb.getCopies.players(
 		{
 			activeSeason: season,
@@ -74,12 +97,13 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 		splitRegularSeasonPlayoffs(p);
 	}
 
-	const leadersCache = {
+	const leadersCache: PlayerStatsLeadersCache = {
+		season,
 		age: max(players, p => p.age),
-		regularSeason: {} as Record<string, unknown>,
-		playoffs: {} as Record<string, unknown>,
-		ratings: {} as Record<string, unknown>,
-		ratingsFuzz: {} as Record<string, unknown>,
+		regularSeason: {},
+		playoffs: {},
+		ratings: {},
+		ratingsFuzz: {},
 	};
 
 	for (const rating of ["ovr", "pot", ...RATINGS]) {
@@ -157,6 +181,10 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 
 	console.log("leadersCache", season, leadersCache);
 
+	if (!seasonInProgress) {
+		await idb.league.add("playerStatsLeadersCache", leadersCache);
+	}
+
 	return leadersCache;
 };
 
@@ -198,6 +226,9 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 		splitRegularSeasonPlayoffs(p);
 
 		const leadersCache = await getPlayerStatsLeadersCache(season);
+		if (!leadersCache) {
+			continue;
+		}
 
 		const leader = {
 			attrs: new Set<string>(),

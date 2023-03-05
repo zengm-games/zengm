@@ -1,4 +1,4 @@
-import { bySport, PHASE, RATINGS } from "../../../common";
+import { bySport, PHASE, PLAYER, RATINGS } from "../../../common";
 import type {
 	PlayerStatsLeadersCache,
 	Player,
@@ -73,12 +73,21 @@ const getPlayerStatsLeadersCache = async (season: number) => {
 		}
 	}
 
-	const playersRaw = await idb.getCopies.players(
-		{
-			activeSeason: season,
-		},
-		"noCopyCache",
-	);
+	// If seasonInProgress, do it the fast way (ignore player deaths or whatever), because this is just transient
+	let playersRaw;
+	if (seasonInProgress) {
+		playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
+			PLAYER.FREE_AGENT,
+			Infinity,
+		]);
+	} else {
+		playersRaw = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
+	}
 
 	const stats = getPlayerProfileStats();
 	const ratings = ["ovr", "pot", ...RATINGS];

@@ -11,8 +11,8 @@ import {
 	playerMeetsCategoryRequirements,
 } from "../../views/leaders";
 import { getPlayerProfileStats } from "../../views/player";
-import player from "../player";
-import getLeaderRequirements from "./getLeaderRequirements";
+import player from ".";
+import getLeaderRequirements from "../season/getLeaderRequirements";
 
 const max = (
 	rows: any[],
@@ -203,7 +203,7 @@ const getPlayerStatsSeasonLeaders = async (season: number) => {
 };
 
 // Return the attrs/ratings/stats this player is the leader in, by season
-export const getPlayerLeaders = async (pRaw: Player) => {
+const getLeaders = async (pRaw: Player) => {
 	const seasons = new Set<number>();
 	for (const row of [...pRaw.stats, ...pRaw.ratings]) {
 		seasons.add(row.season);
@@ -289,6 +289,4 @@ export const getPlayerLeaders = async (pRaw: Player) => {
 	return leaders;
 };
 
-const updatePlayerStatsSeasonLeaders = async (season: number) => {};
-
-export default updatePlayerStatsSeasonLeaders;
+export default getLeaders;

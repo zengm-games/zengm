@@ -18,6 +18,7 @@ import genMoodTraits from "./genMoodTraits";
 import genRandomFreeAgent from "./genRandomFreeAgent";
 import genWeight from "./genWeight";
 import generate from "./generate";
+import getLeaders from "../player/getLeaders";
 import getPlayerFakeAge from "./getPlayerFakeAge";
 import heightToRating from "./heightToRating";
 import injury from "./injury";
@@ -63,6 +64,7 @@ export default {
 	genMoodTraits,
 	genWeight,
 	generate,
+	getLeaders,
 	getPlayerFakeAge,
 	heightToRating,
 	injury,

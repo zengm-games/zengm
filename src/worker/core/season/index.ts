@@ -12,7 +12,6 @@ import getSchedule from "./getSchedule";
 import newSchedule from "./newSchedule";
 import newSchedulePlayoffsDay from "./newSchedulePlayoffsDay";
 import setSchedule from "./setSchedule";
-import updatePlayerStatsSeasonLeaders from "./updatePlayerStatsSeasonLeaders";
 import updateOwnerMood from "./updateOwnerMood";
 import validatePlayoffSettings from "./validatePlayoffSettings";
 
@@ -31,7 +30,6 @@ export default {
 	newSchedule,
 	newSchedulePlayoffsDay,
 	setSchedule,
-	updatePlayerStatsSeasonLeaders,
 	updateOwnerMood,
 	validatePlayoffSettings,
 };

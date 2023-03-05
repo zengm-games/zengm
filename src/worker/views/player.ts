@@ -27,7 +27,6 @@ import type {
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import findLast from "lodash-es/findLast";
-import { getPlayerLeaders } from "../core/season/updatePlayerStatsSeasonLeaders";
 
 const fixRatingsStatsAbbrevs = async (p: {
 	ratings?: {
@@ -561,7 +560,7 @@ const updatePlayer = async (
 			});
 		}
 
-		const leaders = await getPlayerLeaders(topStuff.pRaw);
+		const leaders = await player.getLeaders(topStuff.pRaw);
 
 		return {
 			...topStuff,

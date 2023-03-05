@@ -435,9 +435,6 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		keyPath: "pid",
 		autoIncrement: true,
 	});
-	db.createObjectStore("seasonLeaders", {
-		keyPath: "season",
-	});
 	db.createObjectStore("playoffSeries", {
 		keyPath: "season",
 	});
@@ -448,6 +445,9 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	db.createObjectStore("schedule", {
 		keyPath: "gid",
 		autoIncrement: true,
+	});
+	db.createObjectStore("seasonLeaders", {
+		keyPath: "season",
 	});
 	const teamSeasonsStore = db.createObjectStore("teamSeasons", {
 		keyPath: "rid",

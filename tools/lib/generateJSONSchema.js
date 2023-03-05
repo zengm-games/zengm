@@ -1887,6 +1887,40 @@ const generateJSONSchema = (sport /*: string*/) => {
 					required: ["type", "season", "phase", "info"],
 				},
 			},
+			seasonLeaders: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						season: {
+							type: "integer",
+						},
+						age: {
+							type: "integer",
+						},
+						regularSeason: {
+							type: "object",
+						},
+						playoffs: {
+							type: "object",
+						},
+						ratings: {
+							type: "object",
+						},
+						ratingsFuzz: {
+							type: "object",
+						},
+					},
+					required: [
+						"season",
+						"age",
+						"regularSeason",
+						"playoffs",
+						"ratings",
+						"ratingsFuzz",
+					],
+				},
+			},
 			teams: {
 				type: "array",
 				items: {

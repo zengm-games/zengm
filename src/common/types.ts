@@ -1786,7 +1786,7 @@ export type HeadToHead = {
 
 export type GetCopyType = "noCopyCache";
 
-export type PlayerStatsLeadersCache = {
+export type PlayerStatsSeasonLeaders = {
 	season: number;
 	age: number;
 	regularSeason: Record<string, unknown>;

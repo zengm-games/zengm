@@ -15,16 +15,6 @@ const Header = memo(() => {
 					marginBottom: 5,
 				}}
 			/>
-			<div
-				className="banner-ad"
-				id={`${AD_DIVS.mobile}_disabled`}
-				style={{
-					display: "none",
-					textAlign: "center",
-					minHeight: 50,
-					marginBottom: 5,
-				}}
-			/>
 		</>
 	);
 });

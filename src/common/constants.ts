@@ -333,7 +333,7 @@ const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
 
 const AD_DIVS = bySport({
 	basketball: {
-		mobile: "basketball-gm_mobile_leaderboard",
+		mobile: "basketball-gm_stn_player",
 		leaderboard: "basketball-gm_leaderboard_atf",
 		rectangle1: "basketball-gm_mrec_btf_1",
 		rectangle2: "basketball-gm_mrec_btf_2",

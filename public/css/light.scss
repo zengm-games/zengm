@@ -1338,25 +1338,6 @@ a.anchor {
 	}
 }
 
-#basketball-gm_mobile_leaderboard,
-#football-gm_mobile_leaderboard,
-#zen-gm_mobile_leaderboard {
-	z-index: 1000; // Behind sidebar
-	bottom: 0;
-	padding-top: 2px;
-	position: fixed;
-	left: 0;
-	right: 0;
-	text-align: center;
-	background-color: rgba(247, 247, 247, 0.8);
-	vertical-align: bottom !important;
-	width: 100vw;
-
-	// override inline styles in JS file
-	margin-bottom: 0 !important;
-	height: 52px;
-}
-
 .SortableHelper {
 	display: flex;
 }

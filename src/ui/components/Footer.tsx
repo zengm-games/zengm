@@ -36,81 +36,95 @@ const footerLinks = [
 const Footer = memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
-		<footer className="footer-wrapper mt-auto mb-3" id="main-footer">
-			<p className="clearfix" />
+		<>
+			<footer className="footer-wrapper mt-auto" id="main-footer">
+				<p className="clearfix" />
 
-			<div
-				className="banner-ad"
-				style={{
-					position: "relative",
-				}}
-			>
 				<div
-					id={`${AD_DIVS.rectangle1}_disabled`}
+					className="banner-ad"
 					style={{
-						display: "none",
-						textAlign: "center",
-						height: "250px",
-						position: "absolute",
-						top: "5px",
-						left: 0,
-					}}
-				/>
-				<div
-					id="bbgm-ads-logo"
-					style={{
-						display: "none",
-						height: "250px",
-						margin: "5px 320px 0 320px",
-						alignItems: "center",
-						justifyContent: "center",
+						position: "relative",
 					}}
 				>
-					<img
-						alt=""
-						src={`https://zengm.com/files/logo-${process.env.SPORT}.svg`}
+					<div
+						id={`${AD_DIVS.rectangle1}_disabled`}
 						style={{
-							maxHeight: "100%",
-							maxWidth: "100%",
+							display: "none",
+							textAlign: "center",
+							height: "250px",
+							position: "absolute",
+							top: "5px",
+							left: 0,
+						}}
+					/>
+					<div
+						id="bbgm-ads-logo"
+						style={{
+							display: "none",
+							height: "250px",
+							margin: "5px 320px 0 320px",
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+					>
+						<img
+							alt=""
+							src={`https://zengm.com/files/logo-${process.env.SPORT}.svg`}
+							style={{
+								maxHeight: "100%",
+								maxWidth: "100%",
+							}}
+						/>
+					</div>
+					<div
+						id={`${AD_DIVS.rectangle2}_disabled`}
+						style={{
+							display: "none",
+							textAlign: "center",
+							height: "250px",
+							position: "absolute",
+							top: "5px",
+							right: 0,
 						}}
 					/>
 				</div>
-				<div
-					id={`${AD_DIVS.rectangle2}_disabled`}
-					style={{
-						display: "none",
-						textAlign: "center",
-						height: "250px",
-						position: "absolute",
-						top: "5px",
-						right: 0,
-					}}
-				/>
-			</div>
 
-			<div className="clearfix" />
-			<hr />
+				<div className="clearfix" />
+				<hr />
 
-			<div className="float-sm-start">
-				{footerLinks.map(({ hideMobile, url, title }, i) => {
-					return (
-						<span
-							key={url}
-							className={hideMobile ? "d-none d-sm-inline-block" : undefined}
-						>
-							{i > 0 ? " · " : null}
-							<a href={url} rel="noopener noreferrer" target="_blank">
-								{title}
-							</a>
-						</span>
-					);
-				})}
-				<br />
-			</div>
-			<div className="float-sm-end text-muted">
-				{GAME_ACRONYM} v{window.bbgmVersion}
-			</div>
-		</footer>
+				<div className="d-sm-flex">
+					<div>
+						{footerLinks.map(({ hideMobile, url, title }, i) => {
+							return (
+								<span
+									key={url}
+									className={
+										hideMobile ? "d-none d-sm-inline-block" : undefined
+									}
+								>
+									{i > 0 ? " · " : null}
+									<a href={url} rel="noopener noreferrer" target="_blank">
+										{title}
+									</a>
+								</span>
+							);
+						})}
+					</div>
+					<div className="ms-auto ms-sm-none text-muted mb-3">
+						{GAME_ACRONYM} v{window.bbgmVersion}
+					</div>
+				</div>
+				{window.mobile ? (
+					<div
+						className="banner-ad"
+						id={`${AD_DIVS.mobile}_disabled`}
+						style={{
+							display: "none",
+						}}
+					/>
+				) : null}
+			</footer>
+		</>
 	);
 });
 

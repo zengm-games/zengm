@@ -4,6 +4,7 @@ import {
 	autoPlayDialog,
 	confirm,
 	confirmDeleteAllLeagues,
+	getScript,
 	local,
 	localActions,
 	realtimeUpdate,
@@ -17,7 +18,7 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { AD_DIVS } from "../../common";
+import { AD_DIVS, bySport } from "../../common";
 import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 let accountChecked = false;
@@ -54,6 +55,16 @@ const initAds = (type: "accountChecked" | "uiRendered") => {
 				div.id = id;
 			}
 		}
+
+		const freestarUrl = `https://a.pub.network/${bySport({
+			basketball: "basketball-gm-com",
+			football: "football-gm-com",
+			default: "zengm-com",
+		})}${window.freestar.debug ? "/qa/pubfig.min.js" : "/pubfig.min.js"}`;
+		getScript(freestarUrl);
+		window.freestar.initCallback = () => {
+			window.freestar.newAdSlots(window.freestar.config.enabled_slots);
+		};
 
 		window.freestar.queue.push(() => {
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
@@ -95,7 +106,7 @@ const initAds = (type: "accountChecked" | "uiRendered") => {
 				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
 				const footer = document.getElementById("main-footer");
 				if (footer) {
-					footer.style.paddingBottom = "52px";
+					footer.style.paddingBottom = "95px";
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything

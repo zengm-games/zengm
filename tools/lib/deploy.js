@@ -5,14 +5,21 @@ import build from "./build.js";
 import { bySport, getSport } from "./buildFuncs.js";
 
 const getSubdomain = () => {
-	if (process.argv[2] === "beta" || process.argv[2] === "play") {
-		return process.argv[2];
+	const inputSubdomain = process.argv[2];
+
+	// test is basketball-gm.com only
+	const validSubdomains = ["beta", "play", "test"];
+
+	if (validSubdomains.includes(inputSubdomain)) {
+		return inputSubdomain;
 	}
-	if (process.argv[2] === undefined) {
+	if (inputSubdomain === undefined) {
 		return "play";
 	}
 	throw new Error(
-		`Invalid subdomain ${process.argv[2]} - should be either beta or play (default is play)`,
+		`Invalid subdomain ${inputSubdomain} - should be ${validSubdomains.join(
+			"/",
+		)} (default is play)`,
 	);
 };
 

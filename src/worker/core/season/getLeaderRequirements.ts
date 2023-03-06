@@ -313,7 +313,10 @@ const getLeaderRequirements = () => {
 			usgp: basketballAdvancedStats,
 			pm100: basketballAdvancedStats,
 			ortg: basketballAdvancedStats,
-			drtg: basketballAdvancedStats,
+			drtg: {
+				...basketballAdvancedStats,
+				sortAscending: true,
+			},
 			minMax: {},
 			fgMax: {},
 			fgaMax: {},

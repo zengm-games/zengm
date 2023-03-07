@@ -1,6 +1,7 @@
 import type { ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalPartial } from "../util";
 import orderBy from "lodash-es/orderBy";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 
 const setUserTid = async (userTid: number) => {
 	await toWorker("main", "updateGameAttributes", {
@@ -59,7 +60,7 @@ const MultiTeamMenu = () => {
 
 	let bottom = 0;
 	if (state.stickyFooterAd) {
-		bottom += 52;
+		bottom += MOBILE_AD_BOTTOM_MARGIN;
 	}
 
 	return (

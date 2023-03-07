@@ -103,11 +103,12 @@ const initAds = (type: "accountChecked" | "uiRendered") => {
 					stickyFooterAd: true,
 				});
 
-				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+				/*// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+				// This was needed for the normal floating ad, but isn't for the video ad, because if you scroll down far enough you get an inline ad
 				const footer = document.getElementById("main-footer");
 				if (footer) {
-					footer.style.paddingBottom = "95px";
-				}
+					footer.style.paddingBottom = `${MOBILE_AD_BOTTOM_MARGIN}px`;
+				}*/
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything
 				// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?

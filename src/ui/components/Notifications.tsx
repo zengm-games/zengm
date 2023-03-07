@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { emitter, Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
 import { useLocalPartial } from "../util";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 
@@ -156,8 +157,8 @@ const Notifications = () => {
 		buttonBottom += 49;
 	}
 	if (stickyFooterAd) {
-		ulBottom += 52;
-		buttonBottom += 52;
+		ulBottom += MOBILE_AD_BOTTOM_MARGIN;
+		buttonBottom += MOBILE_AD_BOTTOM_MARGIN;
 	}
 
 	return (

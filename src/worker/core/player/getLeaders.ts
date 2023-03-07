@@ -193,7 +193,8 @@ const getSeasonLeaders = async (season: number) => {
 		// Cache until next game sim
 		local.seasonLeaders = leadersCache;
 	} else {
-		await idb.league.add("seasonLeaders", leadersCache);
+		// put rather than add in case two players are opened at once
+		await idb.league.put("seasonLeaders", leadersCache);
 	}
 
 	return leadersCache;

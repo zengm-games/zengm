@@ -95,19 +95,21 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 };
 
 const applyNewCountry = async (p: Player, relative: Player) => {
-	const newCountry = p.born.loc !== relative.born.loc;
-	if (newCountry) {
-		const { college, firstName, race } = await player.name(
-			helpers.getCountry(relative.born.loc),
-		);
+	const relativeCountry = helpers.getCountry(relative.born.loc);
+	const newCountry = helpers.getCountry(p.born.loc) !== relativeCountry;
 
-		p.born.loc = relative.born.loc;
+	if (newCountry) {
+		const { college, firstName, race } = await player.name(relativeCountry);
+
 		p.college = college;
 		p.firstName = firstName;
 
 		// Generate new name and face
 		p.face = face.generate(race);
 	}
+
+	// Make them the same state/province, if USA/Canada
+	p.born.loc = relative.born.loc;
 };
 
 export const makeSon = async (p: Player) => {

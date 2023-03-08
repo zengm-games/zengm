@@ -157,6 +157,9 @@ export const makeSon = async (p: Player) => {
 		typeof fatherSuffixNumber === "number" ? fatherSuffixNumber + 1 : 2;
 	const sonSuffix = getSuffix(sonSuffixNumber);
 
+	// Call this before giving the Jr. the father's first name, so father's name doesn't get overwritten
+	await applyNewCountry(p, father);
+
 	// Only rename to be a Jr if the father has no son yet (first is always Jr)
 	if (!hasRelative(father, "son")) {
 		p.firstName = father.firstName;
@@ -168,8 +171,6 @@ export const makeSon = async (p: Player) => {
 	} else {
 		p.lastName = fatherLastName;
 	}
-
-	await applyNewCountry(p, father);
 
 	// Handle case where father has other sons
 	if (hasRelative(father, "son")) {

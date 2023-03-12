@@ -2,13 +2,14 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
-import { league, expansionDraft, phase, team } from "../core";
+import { league, expansionDraft, phase, team, player } from "../core";
 import type {
 	ScheduledEvent,
 	Conditions,
 	RealTeamInfo,
 } from "../../common/types";
 import { PHASE, applyRealTeamInfo } from "../../common";
+import local from "./local";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -383,6 +384,31 @@ const processContraction = async (
 	return [text];
 };
 
+const processUnretirePlayer = async (pid: number) => {
+	const p = await idb.getCopy.players({ pid }, "noCopyCache");
+	if (!p) {
+		throw new Error(`No player found for scheduled event: ${pid}`);
+	}
+
+	p.retiredYear = Infinity;
+	player.addToFreeAgents(p);
+	await idb.cache.players.put(p);
+
+	const ratings = p.ratings.at(-1)!;
+	const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+
+	// Only show notification if it's an above average player
+	if (ovr > local.playerOvrMean) {
+		const text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+			p.firstName
+		} ${p.lastName}</a> has come out of retirement and is now a free agent.`;
+
+		return [text];
+	}
+
+	return [];
+};
+
 const processScheduledEvents = async (
 	season: number,
 	phase: number,
@@ -428,6 +454,10 @@ const processScheduledEvents = async (
 			);
 		} else if (scheduledEvent.type === "contraction") {
 			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));
+		} else if (scheduledEvent.type === "unretirePlayer") {
+			eventLogTexts.push(
+				...(await processUnretirePlayer(scheduledEvent.info.pid)),
+			);
 		} else {
 			throw new Error(
 				`Unknown scheduled event type: ${(scheduledEvent as any).type}`,

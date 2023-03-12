@@ -19,7 +19,10 @@ const updateScheduledEvents = async (
 			await Promise.all(
 				scheduledEvents.map(async event => {
 					if (event.type === "unretirePlayer") {
-						const p = await idb.getCopy.players({ pid: event.info.pid });
+						const p = await idb.getCopy.players(
+							{ pid: event.info.pid },
+							"noCopyCache",
+						);
 						if (p) {
 							return {
 								...event,

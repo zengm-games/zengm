@@ -182,7 +182,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			if (retiredUntil !== undefined) {
 				scheduledEvents.push({
 					type: "unretirePlayer",
-					season: retiredUntil,
+					season: retiredUntil - 1,
 					phase: PHASE.FREE_AGENCY,
 					info: {
 						pid: p.pid,

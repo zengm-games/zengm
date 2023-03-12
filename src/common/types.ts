@@ -389,6 +389,14 @@ export type ScheduledEventWithoutKey =
 			info: {
 				tid: number;
 			};
+	  }
+	| {
+			type: "unretirePlayer";
+			season: number;
+			phase: Phase;
+			info: {
+				pid: number;
+			};
 	  };
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };

@@ -173,11 +173,25 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const players = groupedRatings.map(ratings =>
-			formatPlayer(ratings, {
+		const players = groupedRatings.map(ratings => {
+			const p = formatPlayer(ratings, {
 				randomDebuts: options.randomDebuts,
-			}),
-		);
+			});
+
+			const retiredUntil = ratings.at(-1)?.retiredUntil;
+			if (retiredUntil !== undefined) {
+				scheduledEvents.push({
+					type: "unretirePlayer",
+					season: retiredUntil,
+					phase: PHASE.FREE_AGENCY,
+					info: {
+						pid: p.pid,
+					},
+				});
+			}
+
+			return p;
+		});
 
 		// Manually add HoF to retired players who do eventually make the HoF, but have not yet been inducted by the tim ethis season started
 		if (hofSlugs.size > 0) {

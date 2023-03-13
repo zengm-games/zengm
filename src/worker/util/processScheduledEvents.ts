@@ -2,7 +2,7 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
-import { league, expansionDraft, phase, team, player } from "../core";
+import { league, expansionDraft, phase, team, player, finances } from "../core";
 import type {
 	ScheduledEvent,
 	Conditions,
@@ -388,6 +388,34 @@ const processUnretirePlayer = async (pid: number) => {
 	const p = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (!p) {
 		throw new Error(`No player found for scheduled event: ${pid}`);
+	}
+
+	// Player might need some new ratings rows added
+	const lastRatingsSeason = p.ratings.at(-1)!.season;
+	const diff = g.get("season") - lastRatingsSeason;
+	if (diff > 0) {
+		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+			"teamSeasonsByTidSeason",
+			[
+				[g.get("userTid"), g.get("season") - 2],
+				[g.get("userTid"), g.get("season")],
+			],
+		);
+		const scoutingRank = finances.getRankLastThree(
+			teamSeasons,
+			"expenses",
+			"scouting",
+		);
+
+		// Add rows one at a time, since we want to store full ratings history
+		for (let i = 0; i < diff; i++) {
+			player.addRatingsRow(p, scoutingRank);
+
+			// Adjust season, since addRatingsRow always adds in current season
+			p.ratings.at(-1)!.season -= diff - i - 1;
+
+			await player.develop(p, 1);
+		}
 	}
 
 	p.retiredYear = Infinity;

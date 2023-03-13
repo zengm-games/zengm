@@ -1,17 +1,20 @@
 import useTitleBar from "../hooks/useTitleBar";
-import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
+import type { View, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal, toWorker } from "../util";
-import { DataTable } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import { PHASE_TEXT } from "../../common";
 import { settings } from "./Settings/settings";
 import { Dropdown } from "react-bootstrap";
 
 const godModeOptions: Partial<
-	Record<typeof settings[number]["key"], typeof settings[number]>
+	Record<(typeof settings)[number]["key"], (typeof settings)[number]>
 > = {};
 for (const option of settings) {
 	godModeOptions[option.key] = option;
 }
+
+type AugmentedScheduledEvent =
+	View<"scheduledEvents">["scheduledEvents"][number];
 
 const gameAttributeName = (key: string) => {
 	if ((godModeOptions as any)[key]) {
@@ -65,7 +68,7 @@ const teamInfoKey = (key: string) => {
 	return key;
 };
 
-const formatSeason = (scheduledEvent: ScheduledEvent) => {
+const formatSeason = (scheduledEvent: AugmentedScheduledEvent) => {
 	const phaseText = PHASE_TEXT[scheduledEvent.phase]
 		? helpers.upperCaseFirstLetter(PHASE_TEXT[scheduledEvent.phase])
 		: "???";
@@ -78,7 +81,7 @@ const formatSeason = (scheduledEvent: ScheduledEvent) => {
 	);
 };
 
-const formatType = (type: ScheduledEvent["type"]) => {
+const formatType = (type: AugmentedScheduledEvent["type"]) => {
 	if (type === "contraction") {
 		return "Contraction";
 	}
@@ -94,6 +97,10 @@ const formatType = (type: ScheduledEvent["type"]) => {
 	if (type === "teamInfo") {
 		return "Team info";
 	}
+
+	if (type === "unretirePlayer") {
+		return "Unretire player";
+	}
 };
 
 const TeamNameBlock = ({
@@ -101,8 +108,8 @@ const TeamNameBlock = ({
 	current,
 	teamInfoCache,
 }: {
-	all: ScheduledEvent[];
-	current: ScheduledEvent;
+	all: AugmentedScheduledEvent[];
+	current: AugmentedScheduledEvent;
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
 	if (current.type !== "contraction" && current.type !== "teamInfo") {
@@ -161,8 +168,8 @@ const ViewEvent = ({
 	current,
 	teamInfoCache,
 }: {
-	all: ScheduledEvent[];
-	current: ScheduledEvent;
+	all: AugmentedScheduledEvent[];
+	current: AugmentedScheduledEvent;
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
 	if (current.type === "contraction") {
@@ -243,6 +250,16 @@ const ViewEvent = ({
 					</tbody>
 				</table>
 			</>
+		);
+	}
+
+	if (current.type === "unretirePlayer") {
+		return (
+			<PlayerNameLabels
+				pid={current.info.pid}
+				skills={current.info.skills}
+				legacyName={current.info.name}
+			/>
 		);
 	}
 
@@ -333,6 +350,9 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 					</Dropdown.Item>
 					<Dropdown.Item onClick={bulkDelete("styleOfPlay")}>
 						Style of play changes
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("unretirePlayer")}>
+						Unretire players
 					</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>

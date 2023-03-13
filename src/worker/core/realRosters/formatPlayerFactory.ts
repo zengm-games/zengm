@@ -12,6 +12,7 @@ import nerfDraftProspect from "./nerfDraftProspect";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 import { getEWA } from "../../util/advStats.basketball";
+import findLast from "lodash-es/findLast";
 
 const MINUTES_PER_GAME = 48;
 
@@ -120,7 +121,9 @@ const formatPlayerFactory = async (
 
 		let tid: number;
 		let jerseyNumber: string | undefined;
-		if (draftProspect) {
+		if (ratings.retiredUntil !== undefined) {
+			tid = PLAYER.RETIRED;
+		} else if (draftProspect) {
 			tid = PLAYER.UNDRAFTED;
 		} else if (!legends && ratings.season < season) {
 			tid = PLAYER.RETIRED;
@@ -402,8 +405,24 @@ const formatPlayerFactory = async (
 			awards.some(award => award.type === "Inducted into the Hall of Fame")
 				? 1
 				: undefined;
-		const retiredYear = tid === PLAYER.RETIRED ? ratings.season : Infinity;
 		const diedYear = tid === PLAYER.RETIRED ? bio.diedYear : undefined;
+
+		let retiredYear;
+		if (ratings.retiredUntil !== undefined) {
+			const lastNonRetiredSeason = findLast(
+				allRatings,
+				row => row.season < ratings.season && row.retiredUntil === undefined,
+			);
+			console.log("lastNonRetiredSeason", lastNonRetiredSeason);
+			if (lastNonRetiredSeason) {
+				retiredYear = lastNonRetiredSeason.season;
+			} else {
+				// Maybe only one ratings row was passed, so we don't have full history - well, it was sometime before this year!
+				retiredYear = ratings.season - 1;
+			}
+		} else {
+			retiredYear = tid === PLAYER.RETIRED ? ratings.season : Infinity;
+		}
 
 		pid += 1;
 

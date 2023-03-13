@@ -19,6 +19,7 @@ export type Ratings = {
 	pss: number;
 	reb: number;
 	abbrev_if_new_row?: string;
+	retiredUntil?: number;
 };
 
 export type Basketball = {

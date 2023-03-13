@@ -95,19 +95,21 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 };
 
 const applyNewCountry = async (p: Player, relative: Player) => {
-	const newCountry = p.born.loc !== relative.born.loc;
-	if (newCountry) {
-		const { college, firstName, race } = await player.name(
-			helpers.getCountry(relative.born.loc),
-		);
+	const relativeCountry = helpers.getCountry(relative.born.loc);
+	const newCountry = helpers.getCountry(p.born.loc) !== relativeCountry;
 
-		p.born.loc = relative.born.loc;
+	if (newCountry) {
+		const { college, firstName, race } = await player.name(relativeCountry);
+
 		p.college = college;
 		p.firstName = firstName;
 
 		// Generate new name and face
 		p.face = face.generate(race);
 	}
+
+	// Make them the same state/province, if USA/Canada
+	p.born.loc = relative.born.loc;
 };
 
 export const makeSon = async (p: Player) => {
@@ -157,6 +159,9 @@ export const makeSon = async (p: Player) => {
 		typeof fatherSuffixNumber === "number" ? fatherSuffixNumber + 1 : 2;
 	const sonSuffix = getSuffix(sonSuffixNumber);
 
+	// Call this before giving the Jr. the father's first name, so father's name doesn't get overwritten
+	await applyNewCountry(p, father);
+
 	// Only rename to be a Jr if the father has no son yet (first is always Jr)
 	if (!hasRelative(father, "son")) {
 		p.firstName = father.firstName;
@@ -168,8 +173,6 @@ export const makeSon = async (p: Player) => {
 	} else {
 		p.lastName = fatherLastName;
 	}
-
-	await applyNewCountry(p, father);
 
 	// Handle case where father has other sons
 	if (hasRelative(father, "son")) {

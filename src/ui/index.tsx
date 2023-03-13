@@ -260,6 +260,11 @@ const setupRoutes = () => {
 							page_location: `${location.origin}${pagePath}`,
 						});
 
+						// https://help.freestar.com/help/how-to-track-virtual-page-views
+						window.freestar.queue.push(() => {
+							window.freestar.trackPageview();
+						});
+
 						// https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
 						// gtag('set', 'page_path', pagePath);
 						// gtag('event', 'page_view');

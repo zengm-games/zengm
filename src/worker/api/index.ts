@@ -843,6 +843,10 @@ const deleteScheduledEvents = async (type: string) => {
 			if (event.type === "contraction") {
 				await idb.cache.scheduledEvents.delete(event.id);
 			}
+		} else if (type === "unretirePlayer") {
+			if (event.type === "unretirePlayer") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
 		} else if (type === "teamInfo") {
 			if (event.type === "teamInfo") {
 				await deleteFromTeamInfoScheduledEvent(

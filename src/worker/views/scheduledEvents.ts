@@ -15,8 +15,35 @@ const updateScheduledEvents = async (
 			"noCopyCache",
 		);
 
+		const augmented = (
+			await Promise.all(
+				scheduledEvents.map(async event => {
+					if (event.type === "unretirePlayer") {
+						const p = await idb.getCopy.players(
+							{ pid: event.info.pid },
+							"noCopyCache",
+						);
+						if (p) {
+							return {
+								...event,
+								info: {
+									pid: event.info.pid,
+									name: `${p.firstName} ${p.lastName}`,
+									skills: p.ratings.at(-1)!.skills,
+								},
+							};
+						} else {
+							return [];
+						}
+					}
+
+					return event;
+				}),
+			)
+		).flat();
+
 		return {
-			scheduledEvents,
+			scheduledEvents: augmented,
 		};
 	}
 };

@@ -51,7 +51,11 @@ const finalize = async (
 	await updateStatus();
 	updateEvents.push("newPhase");
 
-	if (phase === PHASE.PRESEASON || phase === PHASE.DRAFT_LOTTERY) {
+	if (
+		phase === PHASE.PRESEASON ||
+		phase === PHASE.DRAFT_LOTTERY ||
+		phase === PHASE.FREE_AGENCY
+	) {
 		// Needs to be here rather than in newPhasePreseason so g.season is set correctly and wrapped game attributes will therefore update correctly.
 		await processScheduledEvents(g.get("season"), phase, conditions);
 	}

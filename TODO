@@ -1,6 +1,7 @@
-on player profile page, bold any stat/rating where player was league leader that season
-- blog
-  - performance
+player rights owned by team
+- players in other league, or otherwise out of league
+- >1st round draft picks, optionally for N years
+- real players who didn't join team immediately
 
 on player stats page, filter to ignore players who don't qualify for league leader (ideally in the sorted category), like basketball-reference
 

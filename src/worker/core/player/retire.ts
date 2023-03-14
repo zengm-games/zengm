@@ -43,7 +43,7 @@ const retire = async (
 	}
 
 	// Add to Hall of Fame?
-	if (conditions && madeHof(p)) {
+	if (conditions && !p.hof && madeHof(p)) {
 		p.hof = 1;
 		p.awards.push({
 			season: g.get("season"),

@@ -1,3 +1,4 @@
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 import { useLocalPartial } from "../util";
 
 const StickyBottomButtons = ({
@@ -15,7 +16,7 @@ const StickyBottomButtons = ({
 	} else {
 		bottom = 0;
 		if (stickyFooterAd) {
-			bottom += 52;
+			bottom += MOBILE_AD_BOTTOM_MARGIN;
 		}
 	}
 

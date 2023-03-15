@@ -17,7 +17,7 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types";
-import { AD_DIVS } from "../../common";
+import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 import { updateSkyscraperDisplay } from "../components/Skyscraper";
 
 let accountChecked = false;
@@ -95,7 +95,7 @@ const initAds = (type: "accountChecked" | "uiRendered") => {
 				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
 				const footer = document.getElementById("main-footer");
 				if (footer) {
-					footer.style.paddingBottom = "52px";
+					footer.style.paddingBottom = `${MOBILE_AD_BOTTOM_MARGIN}px`;
 				}
 
 				// Hack to hopefully stop the Microsoft ad from breaking everything

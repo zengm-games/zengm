@@ -21,7 +21,6 @@ const footerLinks = [
 	{
 		url: "https://github.com/zengm-games/zengm",
 		title: "GitHub",
-		hideMobile: true,
 	},
 	{
 		url: `https://www.reddit.com/r/${SUBREDDIT_NAME}/`,
@@ -91,24 +90,27 @@ const Footer = memo(() => {
 			<div className="clearfix" />
 			<hr />
 
-			<div className="float-sm-start">
-				{footerLinks.map(({ hideMobile, url, title }, i) => {
-					return (
-						<span
-							key={url}
-							className={hideMobile ? "d-none d-sm-inline-block" : undefined}
-						>
-							{i > 0 ? " · " : null}
-							<a href={url} rel="noopener noreferrer" target="_blank">
-								{title}
-							</a>
-						</span>
-					);
-				})}
-				<br />
-			</div>
-			<div className="float-sm-end text-muted">
-				{GAME_ACRONYM} v{window.bbgmVersion}
+			<div
+				className="d-flex flex-wrap justify-content-between"
+				style={{
+					columnGap: "1rem",
+				}}
+			>
+				<div>
+					{footerLinks.map(({ url, title }, i) => {
+						return (
+							<span key={url}>
+								{i > 0 ? " · " : null}
+								<a href={url} rel="noopener noreferrer" target="_blank">
+									{title}
+								</a>
+							</span>
+						);
+					})}
+				</div>
+				<div className="text-muted">
+					{GAME_ACRONYM} v{window.bbgmVersion}
+				</div>
 			</div>
 		</footer>
 	);

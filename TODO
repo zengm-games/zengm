@@ -1,3 +1,8 @@
+goalie fatigue
+- rather than no goalie fatigue in playoffs, maybe make it a small amount of fatigue?
+  - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
+- or, apply constant fatigue to all goalies in playoffs?
+
 player rights owned by team
 - players in other league, or otherwise out of league
 - >1st round draft picks, optionally for N years
@@ -793,8 +798,6 @@ New bug: if you have a pop-up window open with the roster page or whatever, and 
 teams in hockey ignoring salary cap? maybe just to sign goalie? https://discord.com/channels/290013534023057409/290015591216054273/817944239442624522
 
 hockey
-- rather than no goalie fatigue in playoffs, maybe make it a small amount of fatigue?
-  - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
 - game sim performance
 - ovr PR
 

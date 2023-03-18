@@ -1,4 +1,4 @@
-import { useEffect, MouseEvent, forwardRef } from "react";
+import { useEffect, type MouseEvent, forwardRef } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";

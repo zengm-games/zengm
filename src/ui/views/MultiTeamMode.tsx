@@ -1,4 +1,4 @@
-import { useCallback, ChangeEvent, useRef } from "react";
+import { useCallback, type ChangeEvent, useRef } from "react";
 import { bySport, isSport, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, logEvent, helpers } from "../util";

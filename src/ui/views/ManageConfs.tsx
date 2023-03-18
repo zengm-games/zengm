@@ -1,4 +1,9 @@
-import { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
+import {
+	useState,
+	type ChangeEvent,
+	type FormEvent,
+	type MouseEvent,
+} from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";

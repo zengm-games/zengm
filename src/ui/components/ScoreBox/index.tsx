@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { bySport, getBestPlayerBoxScore, isSport } from "../../../common";
 import { getCols, helpers, useLocalPartial } from "../../util";
-import React, { memo, ReactNode } from "react";
+import React, { memo, type ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
 import defaultGameAttributes from "../../../common/defaultGameAttributes";
 import PlayerNameLabels from "../PlayerNameLabels";

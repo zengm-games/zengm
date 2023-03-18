@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import classNames from "classnames";
 import { AnimatePresence, m } from "framer-motion";
-import { ChangeEvent, Fragment, ReactNode, useState } from "react";
+import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
 import { isSport } from "../../../common";
 import { HelpPopover } from "../../components";
 import gameSimPresets from "./gameSimPresets";
@@ -11,8 +11,8 @@ import {
 	getVisibleCategories,
 	settingIsEnabled,
 	settingNeedsGodMode,
-	SpecialStateOthers,
-	State,
+	type SpecialStateOthers,
+	type State,
 } from "./SettingsForm";
 import type { Decoration, FieldType, Key, Values } from "./types";
 

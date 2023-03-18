@@ -2,7 +2,7 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
 import { getCols, helpers } from "../util";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
-import { MouseEvent, useState } from "react";
+import { type MouseEvent, useState } from "react";
 import type { SortBy } from "./DataTable";
 import updateSortBys from "./DataTable/updateSortBys";
 

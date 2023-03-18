@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { ajaxErrorMsg } from "./LoginOrRegister";

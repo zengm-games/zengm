@@ -12,7 +12,10 @@ import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import type { Conf, Div, Player, View } from "../../../common/types";
 import Modal from "../../components/Modal";
 import { helpers, logEvent, toWorker } from "../../util";
-import { ExhibitionLeagueWithSeasons, getRandomSeason } from "../Exhibition";
+import {
+	type ExhibitionLeagueWithSeasons,
+	getRandomSeason,
+} from "../Exhibition";
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";

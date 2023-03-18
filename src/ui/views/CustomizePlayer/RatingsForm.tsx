@@ -1,4 +1,4 @@
-import { Fragment, ChangeEvent, useState, useEffect } from "react";
+import { Fragment, type ChangeEvent, useState, useEffect } from "react";
 import { bySport, RATINGS } from "../../../common";
 import { getCols, helpers, toWorker } from "../../util";
 

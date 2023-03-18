@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { MouseEvent, useCallback, useEffect, useState } from "react";
+import { type MouseEvent, useCallback, useEffect, useState } from "react";
 import { GAME_NAME, WEBSITE_ROOT } from "../../../common";
 
 const Storage = () => {

@@ -1,5 +1,10 @@
 import classNames from "classnames";
-import { ButtonHTMLAttributes, MouseEvent, ReactNode, useRef } from "react";
+import {
+	type ButtonHTMLAttributes,
+	type MouseEvent,
+	type ReactNode,
+	useRef,
+} from "react";
 
 export const ProcessingSpinner = ({
 	text = "Processing",

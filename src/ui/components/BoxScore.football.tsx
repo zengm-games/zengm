@@ -1,4 +1,10 @@
-import { memo, Fragment, MouseEvent, ReactNode, useState } from "react";
+import {
+	memo,
+	Fragment,
+	type MouseEvent,
+	type ReactNode,
+	useState,
+} from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, processPlayerStats } from "../util";
 import { filterPlayerStats, getPeriodName, helpers } from "../../common";

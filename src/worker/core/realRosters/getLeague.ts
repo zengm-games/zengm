@@ -1,4 +1,4 @@
-import loadDataBasketball, { Basketball } from "./loadData.basketball";
+import loadDataBasketball, { type Basketball } from "./loadData.basketball";
 import loadStatsBasketball from "./loadStats.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import { groupBy } from "../../../common/groupBy";

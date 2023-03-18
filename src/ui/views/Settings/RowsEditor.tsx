@@ -1,5 +1,5 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { ChangeEvent, CSSProperties, useRef, useState } from "react";
+import { type ChangeEvent, type CSSProperties, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import type { InjuriesSetting, TragicDeaths } from "../../../common/types";
 import {

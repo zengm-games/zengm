@@ -2,9 +2,9 @@ import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash-es/orderBy";
 import {
-	SyntheticEvent,
-	MouseEvent,
-	ReactNode,
+	type SyntheticEvent,
+	type MouseEvent,
+	type ReactNode,
 	useState,
 	useEffect,
 	useCallback,

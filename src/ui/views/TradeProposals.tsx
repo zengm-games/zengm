@@ -6,7 +6,7 @@ import { toWorker, useLocalPartial } from "../util";
 import {
 	Offer,
 	OfferTable,
-	OfferType,
+	type OfferType,
 	pickScore,
 	playerScore,
 } from "./TradingBlock";

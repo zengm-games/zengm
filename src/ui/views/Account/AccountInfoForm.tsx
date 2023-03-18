@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { ActionButton } from "../../components";
 import { helpers, realtimeUpdate } from "../../util";

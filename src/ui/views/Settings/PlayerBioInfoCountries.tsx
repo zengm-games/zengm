@@ -3,12 +3,12 @@ import { Dropdown } from "react-bootstrap";
 import { downloadFile, helpers, resetFileInput } from "../../util";
 import classNames from "classnames";
 import {
-	Defaults,
+	type Defaults,
 	formatPlayerBioInfoState,
 	isInvalidNumber,
-	PageInfo,
+	type PageInfo,
 	parseAndValidate,
-	PlayerBioInfoState,
+	type PlayerBioInfoState,
 	prune,
 } from "./PlayerBioInfo";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
@@ -259,7 +259,7 @@ const Controls = ({
 					<PlayerBioInfoSortButton
 						type="countries"
 						onClick={(field, direction) => {
-							let countries: typeof infoState["countries"];
+							let countries: (typeof infoState)["countries"];
 							if (field === "country") {
 								countries = orderBy(infoState.countries, field, direction);
 							} else {

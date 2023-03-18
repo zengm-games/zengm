@@ -7,7 +7,7 @@ import {
 	GamesPlayedCache,
 	getCategoriesAndStats,
 	iterateAllPlayers,
-	Leader,
+	type Leader,
 	playerMeetsCategoryRequirements,
 } from "./leaders";
 import addFirstNameShort from "../util/addFirstNameShort";

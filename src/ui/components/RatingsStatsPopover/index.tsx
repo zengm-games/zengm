@@ -1,5 +1,11 @@
 import classNames from "classnames";
-import { forwardRef, RefObject, useCallback, useEffect, useState } from "react";
+import {
+	forwardRef,
+	type RefObject,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";

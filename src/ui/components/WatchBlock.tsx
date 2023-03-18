@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { memo, SyntheticEvent } from "react";
+import { memo, type SyntheticEvent } from "react";
 import { toWorker } from "../util";
 
 type Props = {

@@ -3,7 +3,7 @@ import {
 	getTopPlayers,
 	leagueLeaders,
 	teamAwards,
-	AwardsByPlayer,
+	type AwardsByPlayer,
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
 } from "./awards";

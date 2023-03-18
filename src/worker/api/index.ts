@@ -93,7 +93,7 @@ import type {
 import orderBy from "lodash-es/orderBy";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
-	AwardsByPlayer,
+	type AwardsByPlayer,
 	deleteAwardsByPlayer,
 	saveAwardsByPlayer,
 } from "../core/season/awards";

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState, ReactNode, useRef } from "react";
+import { useState, type ReactNode, useRef } from "react";
 import { GAME_NAME, isSport, WEBSITE_ROOT } from "../../common";
 import {
 	gameAttributesKeysGameState,

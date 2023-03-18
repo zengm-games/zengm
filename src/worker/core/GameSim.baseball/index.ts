@@ -1201,12 +1201,12 @@ class GameSim {
 		const infielders = ["1B", "2B", "3B", "SS"] as const;
 		if (battedBallInfo.type === "ground") {
 			if (outfielders.includes(hitToPos as any)) {
-				return true;
+				return 1;
 			}
 
 			const posToTakeRatingsFrom = (
 				infielders.includes(hitToPos as any) ? hitToPos : "2B"
-			) as typeof infielders[number];
+			) as (typeof infielders)[number];
 
 			defenseWeights.infieldRange =
 				infoDefense[posToTakeRatingsFrom].infieldRange[0];
@@ -1216,7 +1216,7 @@ class GameSim {
 		} else {
 			const posToTakeRatingsFrom = (
 				outfielders.includes(hitToPos as any) ? hitToPos : "LF"
-			) as typeof outfielders[number];
+			) as (typeof outfielders)[number];
 
 			defenseWeights.outfieldRange =
 				infoDefense[posToTakeRatingsFrom].outfieldRange[0];

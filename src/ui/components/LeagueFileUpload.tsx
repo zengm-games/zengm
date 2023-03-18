@@ -3,8 +3,8 @@ import {
 	useReducer,
 	useRef,
 	useState,
-	ChangeEvent,
-	MouseEvent,
+	type ChangeEvent,
+	type MouseEvent,
 } from "react";
 import { ProgressBarText } from ".";
 import {

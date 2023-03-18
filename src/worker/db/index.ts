@@ -1,7 +1,7 @@
 import type { IDBPDatabase } from "idb";
 import Cache from "./Cache";
-import connectLeague, { LeagueDB } from "./connectLeague";
-import connectMeta, { MetaDB } from "./connectMeta";
+import connectLeague, { type LeagueDB } from "./connectLeague";
+import connectMeta, { type MetaDB } from "./connectMeta";
 import * as getCopies from "./getCopies";
 import * as getCopy from "./getCopy";
 

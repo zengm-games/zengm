@@ -1,4 +1,10 @@
-import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import {
+	type ChangeEvent,
+	type FormEvent,
+	Fragment,
+	useEffect,
+	useState,
+} from "react";
 import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalPartial } from "../util";
@@ -593,7 +599,7 @@ const TeamFinances = ({
 	// This happens for expansion teams before they have a TeamSeason
 	const noSeasonData = barData.length === 0;
 
-	type Row = typeof barData[number];
+	type Row = (typeof barData)[number];
 	const classNameOverride = (row: Row) =>
 		row.champ ? "bar-graph-3" : undefined;
 	const champSuffix = (row: Row) => (row.champ ? ", won championship" : "");

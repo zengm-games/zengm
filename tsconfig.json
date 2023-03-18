@@ -19,7 +19,7 @@
 		"esModuleInterop": true,
 		"strict": true,
 		"useUnknownInCatchVariables": false,
-		"importsNotUsedAsValues": "error",
+		"verbatimModuleSyntax": true,
 		"module": "es2020",
 		"noImplicitOverride": true
 	}

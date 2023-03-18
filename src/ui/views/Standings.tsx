@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { CSSProperties, Fragment } from "react";
+import { type CSSProperties, Fragment } from "react";
 import {
 	ResponsiveTableWrapper,
 	MovOrDiff,

@@ -1,6 +1,6 @@
 import type { UpdateEvents } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
-import router, { Context, makeRegex } from "../router";
+import router, { type Context, makeRegex } from "../router";
 import { local, localActions } from "./local";
 import realtimeUpdate from "./realtimeUpdate";
 import toWorker from "./toWorker";

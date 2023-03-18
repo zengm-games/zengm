@@ -1,5 +1,5 @@
 import type { Face } from "facesjs";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import orderBy from "lodash-es/orderBy";
 import { Modal } from "react-bootstrap";
 import teamInfos from "../../../common/teamInfos";

@@ -1,4 +1,4 @@
-import { Fragment, useReducer, FormEvent } from "react";
+import { Fragment, useReducer, type FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";

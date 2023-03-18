@@ -3,7 +3,7 @@ import {
 	getTopPlayers,
 	leagueLeaders,
 	teamAwards,
-	AwardsByPlayer,
+	type AwardsByPlayer,
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
 } from "./awards";
@@ -192,7 +192,7 @@ const getRealFinalsMvp = async (
 			tid: number;
 			fakeWAR: number;
 			gpF: number[];
-		} & Record<typeof keysToSum[number], number>
+		} & Record<(typeof keysToSum)[number], number>
 	> = new Map();
 
 	const total = {

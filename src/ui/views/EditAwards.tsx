@@ -1,4 +1,4 @@
-import { FormEvent, useState, useEffect } from "react";
+import { type FormEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";

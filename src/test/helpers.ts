@@ -1,6 +1,6 @@
 import { isSport } from "../common";
 import { Cache, idb } from "../worker/db";
-import { STORES, Store } from "../worker/db/Cache";
+import { STORES, type Store } from "../worker/db/Cache";
 import { g, helpers } from "../worker/util";
 import defaultGameAttributes, {
 	footballOverrides,

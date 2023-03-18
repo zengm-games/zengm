@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, safeLocalStorage, toWorker } from "../../util";
 import RealData from "./RealData";

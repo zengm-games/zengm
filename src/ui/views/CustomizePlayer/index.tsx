@@ -1,5 +1,11 @@
 import orderBy from "lodash-es/orderBy";
-import { useState, FormEvent, ChangeEvent, MouseEvent, ReactNode } from "react";
+import {
+	useState,
+	type FormEvent,
+	type ChangeEvent,
+	type MouseEvent,
+	type ReactNode,
+} from "react";
 import {
 	PHASE,
 	PLAYER,

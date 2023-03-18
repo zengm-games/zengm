@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { groupBy } from "../../../common/groupBy";
 import { ActionButton, StickyBottomButtons } from "../../components";
 import { confirm, localActions, logEvent } from "../../util";
@@ -208,9 +208,9 @@ export const SPECIAL_STATE_ALL = [
 	...SPECIAL_STATE_BOOLEANS,
 	...SPECIAL_STATE_OTHERS,
 ];
-export type SpecialStateOthers = typeof SPECIAL_STATE_OTHERS[number];
-type SpecialStateBoolean = typeof SPECIAL_STATE_BOOLEANS[number];
-type SpecialStateAll = typeof SPECIAL_STATE_ALL[number];
+export type SpecialStateOthers = (typeof SPECIAL_STATE_OTHERS)[number];
+type SpecialStateBoolean = (typeof SPECIAL_STATE_BOOLEANS)[number];
+type SpecialStateAll = (typeof SPECIAL_STATE_ALL)[number];
 
 export type State = Record<Exclude<Key, SpecialStateAll>, string> &
 	Record<SpecialStateBoolean, boolean> &

@@ -82,7 +82,7 @@ const newPhaseRegularSeason = async (
 					type: "info",
 				});
 			} else {
-				const nagged = await idb.meta.get("attributes", "nagged");
+				const nagged = (await idb.meta.get("attributes", "nagged")) as number;
 
 				if (
 					g.get("season") === g.get("startingSeason") + 3 &&

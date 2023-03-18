@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import {
 	Component,
-	ChangeEvent,
+	type ChangeEvent,
 	useCallback,
 	useEffect,
 	useMemo,

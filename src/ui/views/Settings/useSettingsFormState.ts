@@ -1,14 +1,14 @@
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import type { Settings } from "../../../worker/views/settings";
 import gameSimPresets from "./gameSimPresets";
 import { settings } from "./settings";
 import {
 	encodeDecodeFunctions,
-	SpecialStateOthers,
+	type SpecialStateOthers,
 	SPECIAL_STATE_ALL,
 	SPECIAL_STATE_BOOLEANS,
 	SPECIAL_STATE_OTHERS,
-	State,
+	type State,
 } from "./SettingsForm";
 import type { FieldType, Key } from "./types";
 

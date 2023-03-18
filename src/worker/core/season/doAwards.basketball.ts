@@ -1,7 +1,7 @@
 import orderBy from "lodash-es/orderBy";
 import {
-	AwardsByPlayer,
-	GetTopPlayersOptions,
+	type AwardsByPlayer,
+	type GetTopPlayersOptions,
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,

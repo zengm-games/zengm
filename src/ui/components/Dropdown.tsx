@@ -2,7 +2,7 @@ import findLast from "lodash-es/findLast";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
-	ResponsiveOption,
+	type ResponsiveOption,
 } from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 import NextPrevButtons from "./NextPrevButtons";

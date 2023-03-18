@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { DataTable, InjuryIcon, SafeHtml, SkillsBlock } from "../../components";
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";

@@ -1,4 +1,6 @@
-import loadStatsBasketball, { BasketballStats } from "./loadStats.basketball";
+import loadStatsBasketball, {
+	type BasketballStats,
+} from "./loadStats.basketball";
 import { helpers, PHASE, PLAYER } from "../../../common";
 import type {
 	GetLeagueOptions,

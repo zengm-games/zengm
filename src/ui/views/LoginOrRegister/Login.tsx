@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper, GRACE_PERIOD } from "../../../common";
 import { ActionButton } from "../../components";
 import {

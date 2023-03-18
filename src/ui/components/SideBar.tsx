@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import {
 	memo,
-	ReactNode,
+	type ReactNode,
 	useCallback,
 	useEffect,
 	useState,
-	MouseEvent,
+	type MouseEvent,
 } from "react";
 import {
 	helpers,

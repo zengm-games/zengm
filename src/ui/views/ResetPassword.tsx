@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useEffect, useState, ReactNode, FormEvent } from "react";
+import { useEffect, useState, type ReactNode, type FormEvent } from "react";
 import { ACCOUNT_API_URL, EMAIL_ADDRESS, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, realtimeUpdate } from "../util";

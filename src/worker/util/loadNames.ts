@@ -1,6 +1,6 @@
 import defaultGameAttributes from "../../common/defaultGameAttributes";
 import {
-	DefaultNames,
+	type DefaultNames,
 	getFrequencies,
 	mergeCountries,
 } from "../../common/names";

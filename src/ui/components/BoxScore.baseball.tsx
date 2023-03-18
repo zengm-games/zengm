@@ -1,7 +1,7 @@
 import {
 	Fragment,
-	MouseEvent,
-	ReactNode,
+	type MouseEvent,
+	type ReactNode,
 	useState,
 	useEffect,
 	useMemo,
@@ -15,10 +15,10 @@ import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
 import orderBy from "lodash-es/orderBy";
 import {
-	BoxScorePlayer,
+	type BoxScorePlayer,
 	getText,
 	playersByPid,
-	SportState,
+	type SportState,
 } from "../util/processLiveGameEvents.baseball";
 import PlayerNameLabels from "./PlayerNameLabels";
 import processStats, {

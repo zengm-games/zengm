@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { emitter, Message } from "../util/notify";
+import { emitter, type Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
 import { useLocalPartial } from "../util";
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";

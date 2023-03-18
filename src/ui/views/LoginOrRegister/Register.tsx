@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FormEvent, useRef, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import {
 	analyticsEvent,

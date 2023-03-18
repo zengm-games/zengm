@@ -1,8 +1,8 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { type ChangeEvent, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers, logEvent } from "../../util";
 import classNames from "classnames";
-import { isInvalidNumber, PlayerBioInfoState } from "./PlayerBioInfo";
+import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo";
 import {
 	PlayerBioInfoRowButton,
 	smallColStyle,

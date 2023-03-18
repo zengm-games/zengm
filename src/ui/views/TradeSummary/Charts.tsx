@@ -1,4 +1,4 @@
-import { Fragment, MouseEvent } from "react";
+import { Fragment, type MouseEvent } from "react";
 import type { ScaleLinear } from "d3-scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
@@ -51,7 +51,7 @@ const Chart = ({
 		left: 30,
 	};
 
-	type TooltipData = typeof seasonsToPlot[number]["teams"][number];
+	type TooltipData = (typeof seasonsToPlot)[number]["teams"][number];
 
 	const {
 		tooltipData,

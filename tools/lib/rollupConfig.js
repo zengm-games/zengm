@@ -15,7 +15,7 @@ const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 	const sport = getSport();
 
-	// This gets used in babel.config.mjs, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
+	// This gets used in babel.config.js, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
 	if (nodeEnv !== "test") {
 		process.env.NODE_ENV = nodeEnv;
 	}

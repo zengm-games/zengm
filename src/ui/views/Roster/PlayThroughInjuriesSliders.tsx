@@ -107,8 +107,7 @@ const PlayThroughInjuriesSliders = ({
 							back at 90% performance and plays every day until{" "}
 							{helpers.pronoun(gender, "he")}'s healthy,{" "}
 							{helpers.pronoun(gender, "he")} will gradually improve each game
-							until
-							{helpers.pronoun(gender, "he")} reaches 100%.
+							until {helpers.pronoun(gender, "he")} reaches 100%.
 						</p>
 						<p>
 							Additionally, the injury rate is 50% higher when playing through

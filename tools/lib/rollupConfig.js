@@ -1,5 +1,4 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import alias from "@rollup/plugin-alias";
 import { babel } from "@rollup/plugin-babel";
 import blacklist from "rollup-plugin-blacklist";
@@ -10,6 +9,7 @@ import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import { getSport } from "./buildFuncs.js";
+import { getDirname } from "./getDirname.js";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
@@ -21,10 +21,8 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 		process.env.NODE_ENV = nodeEnv;
 	}
 
-	const __dirname = path.dirname(
-		path.normalize(fileURLToPath(import.meta.url)),
-	);
-	const root = path.normalize(path.join(__dirname, "..", ".."));
+	const __dirname = getDirname(import.meta.url);
+	const root = path.join(__dirname, "..", "..");
 
 	const plugins = [
 		alias({

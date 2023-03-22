@@ -1,8 +1,9 @@
 import { csvParse } from "d3-dsv";
 import fs from "node:fs";
 import path from "node:path";
+import { getDirname } from "./lib/getDirname.js";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = getDirname(new URL(import.meta.url));
 
 const csv = fs.readFileSync(path.join(__dirname, "races.csv"), "utf8");
 const rows = csvParse(csv);
@@ -32,14 +33,14 @@ const defaultRaces: Record<string, Record<Race, number>> = ${JSON.stringify(
 )};
 
 if (isSport("hockey")) {
-	defaultRaces.USA = {
-		asian: 2,
-		black: 2,
-		brown: 3,
-		white: 93,
-	};
-	defaultRaces.Germany = defaultRaces.USA;
-	defaultRaces.Spain = defaultRaces.USA;
+    defaultRaces.USA = {
+        asian: 2,
+        black: 2,
+        brown: 3,
+        white: 93,
+    };
+    defaultRaces.Germany = defaultRaces.USA;
+    defaultRaces.Spain = defaultRaces.USA;
 }
 
 `;

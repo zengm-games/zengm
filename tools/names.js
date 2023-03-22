@@ -1,9 +1,10 @@
 import { csvParse } from "d3-dsv";
 import fs from "node:fs";
 import path from "node:path";
+import { getDirname } from "./lib/getDirname.js";
 import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.js";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = getDirname(new URL(import.meta.url));
 
 const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(

@@ -1,4 +1,5 @@
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import alias from "@rollup/plugin-alias";
 import { babel } from "@rollup/plugin-babel";
 import blacklist from "rollup-plugin-blacklist";
@@ -20,8 +21,10 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 		process.env.NODE_ENV = nodeEnv;
 	}
 
-	const __dirname = path.dirname(new URL(import.meta.url).pathname);
-	const root = path.resolve(__dirname, "../..");
+	const __dirname = path.dirname(
+		path.normalize(fileURLToPath(import.meta.url)),
+	);
+	const root = path.normalize(path.join(__dirname, "..", ".."));
 
 	const plugins = [
 		alias({

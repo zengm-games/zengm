@@ -3,7 +3,8 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
-    "extraFileExtensions": [".mjs"]
+    "extraFileExtensions": [".mjs"],
+    "tsconfigRootDir": "./"
   },
   "ignorePatterns": ["src/worker/ajvHack/esbuild.js"],
   "env": {

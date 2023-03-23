@@ -2,7 +2,7 @@ import path from "node:path";
 import { Worker } from "node:worker_threads";
 import { getDirname } from "./getDirname.js";
 
-const __dirname = getDirname(new URL(import.meta.url));
+const __dirname = getDirname(import.meta.url);
 
 const watchJS = (updateStart, updateEnd, updateError) => {
 	for (const name of ["ui", "worker"]) {

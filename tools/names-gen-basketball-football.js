@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getDirname } from "./lib/getDirname.js";
 
-const __dirname = getDirname(new URL(import.meta.url));
+const __dirname = getDirname(import.meta.url);
 
 const basketball = namesBasketball();
 fs.writeFileSync(

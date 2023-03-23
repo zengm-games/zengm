@@ -4,7 +4,7 @@ import path from "node:path";
 import { getDirname } from "./lib/getDirname.js";
 import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.js";
 
-const __dirname = getDirname(new URL(import.meta.url));
+const __dirname = getDirname(import.meta.url);
 
 const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(

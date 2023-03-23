@@ -229,7 +229,7 @@ class GameSim {
 				const players = this.team[t].depth[pos];
 
 				// Handle rest days for goalie
-				if (pos === "G" && g.get("phase") !== PHASE.PLAYOFFS) {
+				if (pos === "G") {
 					const starter = players.find(p => !p.injured);
 					if (
 						starter &&

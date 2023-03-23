@@ -182,8 +182,13 @@ export const processTeam = (
 					false,
 				) * injuryFactor;
 
-			if (isSport("hockey") && k === "goalkeeping" && !playoffs) {
-				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
+			if (isSport("hockey") && k === "goalkeeping") {
+				let numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
+
+				if (playoffs) {
+					numConsecutiveGamesG /= 2;
+				}
+
 				if (p.numConsecutiveGamesG !== undefined) {
 					(p2 as any).numConsecutiveGamesG = p.numConsecutiveGamesG;
 				}

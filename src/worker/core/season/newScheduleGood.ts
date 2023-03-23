@@ -191,7 +191,7 @@ const initScheduleCounts = (teams: MyTeam[]) => {
 	const scheduleCounts: Record<
 		number,
 		Record<
-			typeof LEVELS[number],
+			(typeof LEVELS)[number],
 			{
 				home: number;
 				away: number;
@@ -274,7 +274,7 @@ const finalize = ({
 			(numTeams * numGamesConf2) % 2 === 1;
 	}
 
-	const getLevel = (t0: MyTeam, t1: MyTeam): typeof LEVELS[number] => {
+	const getLevel = (t0: MyTeam, t1: MyTeam): (typeof LEVELS)[number] => {
 		if (numGamesDiv !== null && t0.seasonAttrs.did === t1.seasonAttrs.did) {
 			return "div";
 		} else if (
@@ -300,7 +300,10 @@ const finalize = ({
 
 		const skippedGameTids: number[] = [];
 
-		const allowOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
+		const allowOneGameRemaining = (
+			t: MyTeam,
+			level: (typeof LEVELS)[number],
+		) => {
 			if (level === "div") {
 				return allowOneTeamWithOneGameRemaining.div[t.seasonAttrs.did];
 			}
@@ -310,7 +313,10 @@ const finalize = ({
 			return allowOneTeamWithOneGameRemaining.other;
 		};
 
-		const applyOneGameRemaining = (t: MyTeam, level: typeof LEVELS[number]) => {
+		const applyOneGameRemaining = (
+			t: MyTeam,
+			level: (typeof LEVELS)[number],
+		) => {
 			if (level === "div") {
 				allowOneTeamWithOneGameRemaining.div[t.seasonAttrs.did] = false;
 			} else if (level === "conf") {
@@ -326,7 +332,7 @@ const finalize = ({
 			// Track number of games left for each team in each category
 			const excessGamesRemainingByTid: Record<
 				number,
-				typeof numGamesTargetsByDid[number]["excess"]
+				(typeof numGamesTargetsByDid)[number]["excess"]
 			> = {};
 			for (const t of teams) {
 				excessGamesRemainingByTid[t.tid] = {
@@ -484,7 +490,7 @@ const finalize = ({
 			random.shuffle(tidsEither);
 
 			const tidsDoneIndexesByLevel: Record<
-				typeof LEVELS[number],
+				(typeof LEVELS)[number],
 				Record<number, number[]>
 			> = {
 				div: {},
@@ -493,7 +499,7 @@ const finalize = ({
 			};
 
 			// This can differ even for teams in the same division, because if numGamesLevel*numTeams is odd, somebody gets an extra game at some other level
-			const maxHomeOrAway = (tid: number, level: typeof LEVELS[number]) => {
+			const maxHomeOrAway = (tid: number, level: (typeof LEVELS)[number]) => {
 				// Use scheduleCounts rather than scheduleCounts2 because scheduleCounts2 gets mutated in the tidsEither for loop and is inconsistent when this is called (game removed from either before placed in home/away)
 				const numGamesAtLevel =
 					scheduleCounts[tid][level].away +
@@ -685,11 +691,11 @@ const newScheduleGood = (
 		}
 	}
 
-	/*console.log("teamsGroupedByDid", teamsGroupedByDid);
+	console.log("teamsGroupedByDid", teamsGroupedByDid);
 	console.log("numGamesTargetsByDid", numGamesTargetsByDid);
 	console.log("scheduleCounts", scheduleCounts);
 	console.log("tidsDone", tidsDone);
-	console.log("tidsEither", tidsEither);*/
+	console.log("tidsEither", tidsEither);
 
 	// Everything above is deterministic, but below is where randomness is introduced
 	const tidsDone2 = finalize({

@@ -53,6 +53,7 @@ import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomP
 import initRepeatSeason from "./initRepeatSeason";
 import processPlayerNewLeague from "./processPlayerNewLeague";
 import remove from "./remove";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -871,7 +872,7 @@ const finalizeActivePlayers = async ({
 	fileHasPlayers: boolean;
 }) => {
 	// If no players were uploaded in custom league file, add some relatives!
-	if (!fileHasPlayers) {
+	if (!fileHasPlayers && g.get("numTeams") < TOO_MANY_TEAMS_TOO_SLOW) {
 		const players0 = await idb.cache.players.getAll();
 		for (const p of players0) {
 			await player.addRelatives(p);

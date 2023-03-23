@@ -1,11 +1,19 @@
-add conference finals mvp to league history https://discord.com/channels/@me/673750689649917958/1087730776046571630
 
-schedule failing to generate in large league https://discord.com/channels/@me/994804438919295057/1087152130638483526
+add conference finals mvp to league history https://discord.com/channels/@me/673750689649917958/1087730776046571630
 
 goalie fatigue
 - rather than no goalie fatigue in playoffs, maybe make it a small amount of fatigue?
   - if i do this, make sure to start best goalie (with fatigue? without fatigue?) in elimination games
+    - fatigue applies half in elimination game?
 - or, apply constant fatigue to all goalies in playoffs?
+
+schedule failing to generate in large league https://discord.com/channels/@me/994804438919295057/1087152130638483526
+- based on https://raw.githubusercontent.com/nicidob/bbgm/master/cbb_roster_2019.json
+- somehow related to numGames, it works with higher numbers (like 36) but not with lower numbers (like 12)
+  - for lower numbers (down to 1) seems to work with odd numbers but not even numbers
+  - for odd number, it seems to work on 1st try. for odd numbers, it has to search, and seems to work better for high numbers
+  - this happens because for even number of teams, it wants to make home=away for all teams, while for odd it knows it can be off by one. that off by one gives it wiggle room when balancing home/away. without that wiggle room, the algorithm searches for one existing game it can swap home/away of and still be valid. but with a small number of games, it may be fairly unlikely you'll find one you can swap
+    - not easy to fix... would have to better pick home/away games so this doens't happen in the first place (rather than random) or allow a chain of swaps rather than one swap to fix it
 
 player rights owned by team
 - players in other league, or otherwise out of league

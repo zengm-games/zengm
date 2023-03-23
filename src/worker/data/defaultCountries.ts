@@ -111,6 +111,7 @@ if (process.env.NODE_ENV === "test") {
 			Vietnam: 1,
 		},
 		basketball: {
+			Albania: 2,
 			Algeria: 1,
 			Angola: 8,
 			Argentina: 71,
@@ -129,7 +130,7 @@ if (process.env.NODE_ENV === "test") {
 			"Cape Verde": 5,
 			"Central African Republic": 9,
 			Chad: 5,
-			China: 30,
+			China: 34,
 			Colombia: 15,
 			Congo: 34,
 			Croatia: 216,

@@ -691,11 +691,11 @@ const newScheduleGood = (
 		}
 	}
 
-	console.log("teamsGroupedByDid", teamsGroupedByDid);
+	/*console.log("teamsGroupedByDid", teamsGroupedByDid);
 	console.log("numGamesTargetsByDid", numGamesTargetsByDid);
 	console.log("scheduleCounts", scheduleCounts);
 	console.log("tidsDone", tidsDone);
-	console.log("tidsEither", tidsEither);
+	console.log("tidsEither", tidsEither);*/
 
 	// Everything above is deterministic, but below is where randomness is introduced
 	const tidsDone2 = finalize({

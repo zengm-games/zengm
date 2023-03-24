@@ -3,6 +3,7 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, orderTeams } from "../../util";
 import type { PlayoffSeriesTeam } from "../../../common/types";
 import { season } from "..";
+import { isSport } from "../../../common";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -202,10 +203,31 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	// Which teams won?
 	let teamsWon: PlayoffSeriesTeam[] = [];
 	for (const { home, away } of series[rnd]) {
+		let teamWon;
 		if (home.won >= numGamesToWin || !away) {
-			teamsWon.push(helpers.deepCopy(home));
+			teamWon = helpers.deepCopy(home);
 		} else {
-			teamsWon.push(helpers.deepCopy(away));
+			teamWon = helpers.deepCopy(away);
+		}
+		teamsWon.push(teamWon);
+
+		// In hockey, if team won by more than 1 game, goalie fatigue resets
+		if (isSport("hockey")) {
+			if (!away || Math.abs(home.won - away.won) > 1) {
+				const players = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					teamWon.tid,
+				);
+				for (const p of players) {
+					if (
+						p.numConsecutiveGamesG !== undefined &&
+						p.numConsecutiveGamesG !== 0
+					) {
+						p.numConsecutiveGamesG = 0;
+						await idb.cache.players.put(p);
+					}
+				}
+			}
 		}
 	}
 
@@ -315,25 +337,23 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	await idb.cache.playoffSeries.put(playoffSeries);
 
 	// Update hype for winning a series
-	await Promise.all(
-		teamsWon.map(async ({ tid }) => {
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
-				"teamSeasonsBySeasonTid",
-				[g.get("season"), tid],
-			);
-			if (!teamSeason) {
-				throw new Error("No team season");
-			}
-			teamSeason.playoffRoundsWon = playoffSeries.currentRound;
-			teamSeason.hype += 0.05;
+	for (const { tid } of teamsWon) {
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsBySeasonTid",
+			[g.get("season"), tid],
+		);
+		if (!teamSeason) {
+			throw new Error("No team season");
+		}
+		teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+		teamSeason.hype += 0.05;
 
-			if (teamSeason.hype > 1) {
-				teamSeason.hype = 1;
-			}
+		if (teamSeason.hype > 1) {
+			teamSeason.hype = 1;
+		}
 
-			await idb.cache.teamSeasons.put(teamSeason);
-		}),
-	);
+		await idb.cache.teamSeasons.put(teamSeason);
+	}
 
 	// Next time, the schedule for the first day of the next round will be set
 	return newSchedulePlayoffsDay();

@@ -1,8 +1,9 @@
 import { csvParse } from "d3-dsv";
 import fs from "node:fs";
 import path from "node:path";
+import { getDirname } from "./lib/getDirname.js";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = getDirname(import.meta.url);
 
 const csv = fs.readFileSync(path.join(__dirname, "races.csv"), "utf8");
 const rows = csvParse(csv);

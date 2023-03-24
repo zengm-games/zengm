@@ -2,8 +2,9 @@ import namesBasketball from "./lib/namesBasketball.js";
 import namesFootball from "./lib/namesFootball.js";
 import fs from "node:fs";
 import path from "node:path";
+import { getDirname } from "./lib/getDirname.js";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = getDirname(import.meta.url);
 
 const basketball = namesBasketball();
 fs.writeFileSync(

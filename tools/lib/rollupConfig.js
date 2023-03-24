@@ -9,6 +9,7 @@ import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import { getSport } from "./buildFuncs.js";
+import { getDirname } from "./getDirname.js";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
@@ -20,8 +21,8 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 		process.env.NODE_ENV = nodeEnv;
 	}
 
-	const __dirname = path.dirname(new URL(import.meta.url).pathname);
-	const root = path.resolve(__dirname, "../..");
+	const __dirname = getDirname(import.meta.url);
+	const root = path.join(__dirname, "..", "..");
 
 	const plugins = [
 		alias({

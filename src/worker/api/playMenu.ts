@@ -100,6 +100,10 @@ const playAmount = async (
 	amount: "day" | "week" | "month" | "untilPreseason",
 	conditions: Conditions,
 ) => {
+	if (lock.get("gameSim")) {
+		return;
+	}
+
 	let numDays;
 
 	if (amount === "day") {

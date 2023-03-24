@@ -95,6 +95,7 @@ if (isSport("hockey")) {
 	defaultRaces.Spain = defaultRaces.USA;
 }
 
+defaultRaces["Albania"] = defaultRaces["Lithuania"];
 defaultRaces["Algeria"] = defaultRaces["India"];
 defaultRaces["American Samoa"] = defaultRaces["India"];
 defaultRaces["Angola"] = defaultRaces["Nigeria"];
@@ -203,5 +204,6 @@ defaultRaces["Uzbekistan"] = defaultRaces["Lithuania"];
 defaultRaces["Venezuela"] = defaultRaces["Argentina"];
 defaultRaces["Vietnam"] = defaultRaces["China"];
 defaultRaces["Virgin Islands"] = defaultRaces["South Africa"];
+defaultRaces["Wales"] = defaultRaces["Germany"];
 
 export default defaultRaces;

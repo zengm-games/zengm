@@ -251,7 +251,7 @@ const Draft = ({
 										break;
 									}
 
-									if (userTids.includes(p2.draft.tid)) {
+									if (p2.pid === -1 && userTids.includes(p2.draft.tid)) {
 										numUserPicksBefore += 1;
 									}
 								}

@@ -119,4 +119,12 @@ if (league.draftPicks) {
 	}
 }
 
+if (league.scheduledEvents) {
+	for (const event of league.scheduledEvents) {
+		if (typeof event.season === "number") {
+			event.season += diff;
+		}
+	}
+}
+
 console.log(JSON.stringify(league, null, 2));

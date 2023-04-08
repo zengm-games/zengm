@@ -15,7 +15,7 @@ const getPos = () => {
 		cumsum += count;
 
 		if (rand < cumsum) {
-			// Hacky - make more defensemen
+			// Hacky - make more defense
 			if (pos === "C" && Math.random() < 0.25) {
 				return "D";
 			}

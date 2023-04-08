@@ -82,7 +82,7 @@ const posNames = bySport<Record<string, string> | undefined>({
 	},
 	hockey: {
 		F: "Forwards",
-		D: "Defensemen",
+		D: "Defense",
 		G: "Goalies",
 	},
 	default: undefined,
@@ -226,7 +226,7 @@ const Depth = ({
 					</>
 				) : null}
 				{isSport("hockey")
-					? "There are four lines of forwards (centers and wings) and three lines of defensemen. The top lines play the most. All the players in a line will generally play together, but when injuries or other disruptions occur, a player will be moved up from below."
+					? "There are four lines of forwards (centers and wings) and three lines of defensive players. The top lines play the most. All the players in a line will generally play together, but when injuries or other disruptions occur, a player will be moved up from below."
 					: null}
 			</p>
 

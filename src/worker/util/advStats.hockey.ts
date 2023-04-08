@@ -37,7 +37,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			gc: 0,
 			min: 0,
 		},
-		defensemen: {
+		defense: {
 			gc: 0,
 			min: 0,
 		},
@@ -63,8 +63,8 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			sumsByType.forwards.gc += gcPlayer;
 			sumsByType.forwards.min += p.stats.min;
 		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
-			sumsByType.defensemen.gc += gcPlayer;
-			sumsByType.defensemen.min += p.stats.min;
+			sumsByType.defense.gc += gcPlayer;
+			sumsByType.defense.min += p.stats.min;
 		}
 
 		if (!sumsByPosition[t.tid]) {
@@ -116,7 +116,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 					p.ratings.pos,
 				)
 					? "forwards"
-					: "defensemen";
+					: "defense";
 
 				// Offensive point shares
 				const marginalGoals =

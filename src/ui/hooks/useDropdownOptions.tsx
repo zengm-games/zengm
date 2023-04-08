@@ -178,7 +178,7 @@ if (isSport("baseball")) {
 if (isSport("hockey")) {
 	Object.assign(dropdownValues, {
 		F: "Forwards",
-		D: "Defensemen",
+		D: "Defense",
 		G: "Goalies",
 	});
 }

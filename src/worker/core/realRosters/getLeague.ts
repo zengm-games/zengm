@@ -600,6 +600,71 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
+		// If starting in a playoff where there is a play-in tournament, add the play-in tournament before
+		if (options.phase === PHASE.PLAYOFFS && playoffSeries) {
+			const playIns = basketball.playIns[options.season];
+			if (playIns) {
+				const getTidAndWinp = (abbrev: string) => {
+					const t = initialTeams.find(
+						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
+					);
+					if (!t) {
+						throw new Error("Missing team");
+					}
+					const teamSeason = basketball.teamSeasons[options.season][abbrev];
+					if (!teamSeason) {
+						throw new Error("Missing teamSeason");
+					}
+					const winp = helpers.calcWinp(teamSeason);
+
+					return {
+						tid: t.tid,
+						winp,
+					};
+				};
+
+				const currentPlayoffSeries = playoffSeries.at(-1);
+				if (currentPlayoffSeries) {
+					console.log(currentPlayoffSeries, playIns);
+
+					currentPlayoffSeries.playIns = playIns.map((playIn, cid) => {
+						console.log("playIn", playIn);
+
+						return playIn.map(matchup => {
+							return {
+								home: {
+									cid,
+									seed: matchup.seeds[0],
+									won: 0,
+									...getTidAndWinp(matchup.abbrevs[0]),
+								},
+								away: {
+									cid,
+									seed: matchup.seeds[1],
+									won: 0,
+									...getTidAndWinp(matchup.abbrevs[1]),
+								},
+							};
+						});
+					});
+					console.log("REMOVE 7/8 SEEDS FROM SERIES");
+
+					const playInSeeds = [7, 8];
+					for (const round of currentPlayoffSeries.series) {
+						for (const matchup of round) {
+							if (matchup.away && playInSeeds.includes(matchup.away.seed)) {
+								matchup.away.pendingPlayIn = true;
+							}
+						}
+					}
+
+					currentPlayoffSeries.currentRound = -1;
+
+					console.log("after", currentPlayoffSeries);
+				}
+			}
+		}
+
 		const awards = getAwards(basketball.awards, players, initialTeams, options);
 
 		// Mark players as retired - don't delete, so we have full season stats and awards.

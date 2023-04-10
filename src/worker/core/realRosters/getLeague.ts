@@ -625,11 +625,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 				const currentPlayoffSeries = playoffSeries.at(-1);
 				if (currentPlayoffSeries) {
-					console.log(currentPlayoffSeries, playIns);
-
 					currentPlayoffSeries.playIns = playIns.map((playIn, cid) => {
-						console.log("playIn", playIn);
-
 						return playIn.map(matchup => {
 							return {
 								home: {
@@ -647,20 +643,28 @@ const getLeague = async (options: GetLeagueOptions) => {
 							};
 						});
 					});
-					console.log("REMOVE 7/8 SEEDS FROM SERIES");
 
 					const playInSeeds = [7, 8];
 					for (const round of currentPlayoffSeries.series) {
 						for (const matchup of round) {
-							if (matchup.away && playInSeeds.includes(matchup.away.seed)) {
-								matchup.away.pendingPlayIn = true;
+							const away = matchup.away;
+							if (away && playInSeeds.includes(away.seed)) {
+								away.pendingPlayIn = true;
+
+								// Needs to be the correct tid from the 7/8 play-in seeds, or it won't be recognized correctly
+								const playInGames = currentPlayoffSeries.playIns[away.cid];
+								for (const matchup of playInGames) {
+									if (matchup.home.seed === away.seed) {
+										away.tid = matchup.home.tid;
+									} else if (matchup.away.seed === away.seed) {
+										away.tid = matchup.away.tid;
+									}
+								}
 							}
 						}
 					}
 
 					currentPlayoffSeries.currentRound = -1;
-
-					console.log("after", currentPlayoffSeries);
 				}
 			}
 		}

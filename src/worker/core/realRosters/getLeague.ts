@@ -651,14 +651,27 @@ const getLeague = async (options: GetLeagueOptions) => {
 							if (away && playInSeeds.includes(away.seed)) {
 								away.pendingPlayIn = true;
 
-								// Needs to be the correct tid from the 7/8 play-in seeds, or it won't be recognized correctly
 								const playInGames = currentPlayoffSeries.playIns[away.cid];
+								let tid;
 								for (const matchup of playInGames) {
 									if (matchup.home.seed === away.seed) {
-										away.tid = matchup.home.tid;
+										tid = matchup.home.tid;
+										break;
 									} else if (matchup.away.seed === away.seed) {
-										away.tid = matchup.away.tid;
+										tid = matchup.away.tid;
+										break;
 									}
+								}
+
+								// Update teamSeason for this team - they did not make the playoffs yet!
+								const teamSeason = initialTeams[away.tid].seasons?.at(-1);
+								if (teamSeason) {
+									teamSeason.playoffRoundsWon = -1;
+								}
+
+								// Needs to be the correct tid from the 7/8 play-in seeds, or it won't be recognized correctly
+								if (tid !== undefined) {
+									away.tid = tid;
 								}
 							}
 						}

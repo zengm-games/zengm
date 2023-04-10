@@ -387,11 +387,22 @@ const checkParticipationAchievement = async (
 	}
 };
 
-const clearInjury = async (pid: number | "all") => {
+const clearInjury = async (pid: number | any[] | "all") => {
 	if (pid === "all") {
 		const players = await idb.cache.players.getAll();
 		for (const p of players) {
 			if (p.injury.gamesRemaining > 0) {
+				p.injury = {
+					type: "Healthy",
+					gamesRemaining: 0,
+				};
+				await idb.cache.players.put(p);
+			}
+		}
+	} else if (Array.isArray(pid)) {
+		for (const pids of pid) {
+			const p = await idb.cache.players.get(pids);
+			if (p) {
 				p.injury = {
 					type: "Healthy",
 					gamesRemaining: 0,

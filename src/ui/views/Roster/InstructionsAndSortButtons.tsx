@@ -51,28 +51,46 @@ const InstructionsAndSortButtons = ({
 								Reset playing time
 							</button>
 						) : null}
-						{godMode ? (
-							<button
-								className="btn btn-outline-god-mode"
-								onClick={async () => {
-									const proceed = await confirm(
-										`Are you sure you want to delete all ${players.length} players on this team?`,
-										{
-											okText: "Delete Players",
-										},
-									);
-									if (proceed) {
+					</div>
+					<div className="mt-2">
+						<div className="btn-group">
+							{godMode ? (
+								<button
+									className="btn btn-outline-god-mode"
+									onClick={async () => {
 										await toWorker(
 											"main",
-											"removePlayers",
+											"clearInjury",
 											players.map(p => p.pid),
 										);
-									}
-								}}
-							>
-								Delete players
-							</button>
-						) : null}
+									}}
+								>
+									Heal Injuries
+								</button>
+							) : null}
+							{godMode ? (
+								<button
+									className="btn btn-outline-god-mode"
+									onClick={async () => {
+										const proceed = await confirm(
+											`Are you sure you want to delete all ${players.length} players on this team?`,
+											{
+												okText: "Delete Players",
+											},
+										);
+										if (proceed) {
+											await toWorker(
+												"main",
+												"removePlayers",
+												players.map(p => p.pid),
+											);
+										}
+									}}
+								>
+									Delete players
+								</button>
+							) : null}
+						</div>
 					</div>
 					{editable ? (
 						<div className="form-check mt-2">

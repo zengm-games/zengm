@@ -657,7 +657,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 									if (matchup.home.seed === away.seed) {
 										tid = matchup.home.tid;
 										break;
-									} else if (matchup.away.seed === away.seed) {
+									} else if (matchup.away?.seed === away.seed) {
 										tid = matchup.away.tid;
 										break;
 									}

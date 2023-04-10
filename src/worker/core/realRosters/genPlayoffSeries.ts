@@ -24,6 +24,7 @@ const genPlayoffSeries = (
 		winp: number;
 		seed: number;
 		won: number;
+		pendingPlayIn?: boolean;
 	};
 
 	const firstRoundMatchups: {
@@ -34,7 +35,7 @@ const genPlayoffSeries = (
 
 	const genTeam = (
 		abbrev: string,
-		series: typeof basketball.playoffSeries[number][number],
+		series: (typeof basketball.playoffSeries)[number][number],
 		i: number,
 	) => {
 		firstRoundAbbrevs.add(abbrev);
@@ -59,7 +60,7 @@ const genPlayoffSeries = (
 		};
 	};
 
-	const genHomeAway = (series: typeof firstRound[number]) => {
+	const genHomeAway = (series: (typeof firstRound)[number]) => {
 		const teams = series.abbrevs.map((abbrev, i) => genTeam(abbrev, series, i));
 
 		let home;
@@ -100,7 +101,7 @@ const genPlayoffSeries = (
 		}
 	}
 	const numRounds = Math.log2(firstRoundMatchups.length);
-	const series: typeof firstRoundMatchups[] = [];
+	const series: (typeof firstRoundMatchups)[] = [];
 	for (let i = 0; i <= numRounds; i++) {
 		series.push([]);
 	}
@@ -195,6 +196,7 @@ const genPlayoffSeries = (
 
 	return {
 		currentRound: completeBracket ? numRounds - 1 : 0,
+		playIns: undefined as typeof series | undefined,
 		season,
 		series,
 	};

@@ -91,7 +91,7 @@ const Injuries = ({
 				<button
 					className="btn btn-god-mode mb-3"
 					onClick={async () => {
-						await toWorker("main", "clearInjury", "all");
+						await toWorker("main", "clearInjuries", "all");
 					}}
 				>
 					Heal All Injuries

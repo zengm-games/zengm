@@ -588,7 +588,7 @@ const TopStuff = ({
 							<button
 								className="btn btn-outline-god-mode"
 								onClick={async () => {
-									await toWorker("main", "clearInjury", player.pid);
+									await toWorker("main", "clearInjuries", [player.pid]);
 								}}
 							>
 								Heal Injury

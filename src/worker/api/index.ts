@@ -387,7 +387,7 @@ const checkParticipationAchievement = async (
 	}
 };
 
-const clearInjury = async (pid: number | any[] | "all") => {
+const clearInjuries = async (pid: number[] | "all") => {
 	if (pid === "all") {
 		const players = await idb.cache.players.getAll();
 		for (const p of players) {
@@ -399,7 +399,7 @@ const clearInjury = async (pid: number | any[] | "all") => {
 				await idb.cache.players.put(p);
 			}
 		}
-	} else if (Array.isArray(pid)) {
+	} else {
 		for (const pids of pid) {
 			const p = await idb.cache.players.get(pids);
 			if (p) {
@@ -409,15 +409,6 @@ const clearInjury = async (pid: number | any[] | "all") => {
 				};
 				await idb.cache.players.put(p);
 			}
-		}
-	} else {
-		const p = await idb.cache.players.get(pid);
-		if (p) {
-			p.injury = {
-				type: "Healthy",
-				gamesRemaining: 0,
-			};
-			await idb.cache.players.put(p);
 		}
 	}
 
@@ -4220,7 +4211,7 @@ export default {
 		checkAccount: checkAccount2,
 		checkParticipationAchievement,
 		clearTrade,
-		clearInjury,
+		clearInjuries,
 		clearWatchList,
 		countNegotiations,
 		createLeague,

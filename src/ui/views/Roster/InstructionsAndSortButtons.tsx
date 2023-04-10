@@ -34,41 +34,37 @@ const InstructionsAndSortButtons = ({
 
 			{editable || godMode ? (
 				<div className="mb-3">
-					<div className="btn-group">
+					<div className="d-flex flex-wrap gap-2">
 						{editable ? (
-							<button
-								className="btn btn-light-bordered"
-								onClick={handleAutoSort}
-							>
-								Auto sort roster
-							</button>
+							<div className="btn-group">
+								<button
+									className="btn btn-light-bordered"
+									onClick={handleAutoSort}
+								>
+									Auto sort roster
+								</button>
+								<button
+									className="btn btn-light-bordered"
+									onClick={handleResetPT}
+								>
+									Reset playing time
+								</button>
+							</div>
 						) : null}
-						{editable ? (
-							<button
-								className="btn btn-light-bordered"
-								onClick={handleResetPT}
-							>
-								Reset playing time
-							</button>
-						) : null}
-					</div>
-					<div className="mt-2">
-						<div className="btn-group">
-							{godMode ? (
+						{godMode ? (
+							<div className="btn-group">
 								<button
 									className="btn btn-outline-god-mode"
 									onClick={async () => {
 										await toWorker(
 											"main",
-											"clearInjury",
+											"clearInjuries",
 											players.map(p => p.pid),
 										);
 									}}
 								>
-									Heal Injuries
+									Heal injuries
 								</button>
-							) : null}
-							{godMode ? (
 								<button
 									className="btn btn-outline-god-mode"
 									onClick={async () => {
@@ -89,8 +85,8 @@ const InstructionsAndSortButtons = ({
 								>
 									Delete players
 								</button>
-							) : null}
-						</div>
+							</div>
+						) : null}
 					</div>
 					{editable ? (
 						<div className="form-check mt-2">

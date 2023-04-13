@@ -87,11 +87,13 @@ export const HeadlineScore = ({
 		<div
 			className={
 				small
-					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-3"
+					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-2"
+					: liveGameSim
+					? "d-none d-md-block"
 					: undefined
 			}
 		>
-			<h2 className={small ? "mb-0" : "mb-1"}>
+			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
 				{t0.playoffs ? (
 					<span className="text-muted">{t0.playoffs.seed}. </span>
 				) : null}

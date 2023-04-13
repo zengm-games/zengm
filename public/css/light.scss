@@ -728,12 +728,14 @@ tr.table-warning:hover > td {
 @include media-breakpoint-down(md) {
 	.live-game-affix-mobile {
 		position: sticky;
-		top: 52px;
+		top: 51px; // 52px leaves a gap for some reason
 
-		// We only want these to apply on mobile
+		// We only want these to apply on mobile, so easier to use these here rather than normal utility classes
 		padding: ($spacer * 0.25) 0;
-		margin-top: $spacer * 3;
 		background-color: $white;
+
+		// Puts it over sticky column headers
+		z-index: 1;
 	}
 }
 

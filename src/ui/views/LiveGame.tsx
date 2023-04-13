@@ -728,6 +728,38 @@ export const LiveGame = (props: View<"liveGame">) => {
 					: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
 			</p>
 
+			{boxScore.current.gid >= 0 ? (
+				<div className="live-game-affix-mobile mb-3 d-md-none">
+					<HeadlineScore boxScore={boxScore.current} small />
+					<div className="d-flex align-items-center">
+						<PlayPauseNext
+							className="me-2"
+							disabled={boxScore.current.gameOver}
+							fastForwardAlignRight
+							fastForwards={fastForwardMenuItems}
+							onPlay={handlePlay}
+							onPause={handlePause}
+							onNext={handleNextPlay}
+							paused={paused}
+							titlePlay="Resume Simulation"
+							titlePause="Pause Simulation"
+							titleNext="Show Next Play"
+						/>
+						<input
+							type="range"
+							className="form-range flex-grow-1"
+							disabled={boxScore.current.gameOver}
+							min="1"
+							max="33"
+							step="1"
+							value={speed}
+							onChange={handleSpeedChange}
+							title="Speed"
+						/>
+					</div>
+				</div>
+			) : null}
+
 			<div className="row">
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
@@ -743,40 +775,32 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</div>
 				<div className="col-md-3">
 					<div className="live-game-affix">
-						{boxScore.current.gid >= 0 ? (
-							<div className="live-game-affix-mobile mb-3">
-								<div className="d-md-none">
-									<HeadlineScore boxScore={boxScore.current} small />
-								</div>
-								<div className="d-flex align-items-center">
-									<PlayPauseNext
-										className="me-2"
-										disabled={boxScore.current.gameOver}
-										fastForwardAlignRight
-										fastForwards={fastForwardMenuItems}
-										onPlay={handlePlay}
-										onPause={handlePause}
-										onNext={handleNextPlay}
-										paused={paused}
-										titlePlay="Resume Simulation"
-										titlePause="Pause Simulation"
-										titleNext="Show Next Play"
-									/>
-									<input
-										type="range"
-										className="form-range flex-grow-1"
-										disabled={boxScore.current.gameOver}
-										min="1"
-										max="33"
-										step="1"
-										value={speed}
-										onChange={handleSpeedChange}
-										title="Speed"
-									/>
-								</div>
-							</div>
-						) : null}
-
+						<div className="d-none d-md-flex align-items-center mb-3">
+							<PlayPauseNext
+								className="me-2"
+								disabled={boxScore.current.gameOver}
+								fastForwardAlignRight
+								fastForwards={fastForwardMenuItems}
+								onPlay={handlePlay}
+								onPause={handlePause}
+								onNext={handleNextPlay}
+								paused={paused}
+								titlePlay="Resume Simulation"
+								titlePause="Pause Simulation"
+								titleNext="Show Next Play"
+							/>
+							<input
+								type="range"
+								className="form-range flex-grow-1"
+								disabled={boxScore.current.gameOver}
+								min="1"
+								max="33"
+								step="1"
+								value={speed}
+								onChange={handleSpeedChange}
+								title="Speed"
+							/>
+						</div>
 						<div
 							className="live-game-playbyplay"
 							ref={c => {

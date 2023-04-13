@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { memo, type SyntheticEvent } from "react";
-import { toWorker } from "../util";
+import { toWorker, useLocalPartial } from "../util";
 
 type Props = {
 	className?: string;
@@ -12,10 +12,14 @@ type Props = {
 };
 
 const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
+	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+
 	const handleClick = async (event: SyntheticEvent) => {
 		event.preventDefault();
-		const newWatch = watch + 1;
-		onChange?.(newWatch);
+		const newWatch = (watch + 1) % (numWatchColors + 1);
+		if (onChange) {
+			onChange(newWatch);
+		}
 		await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
 	};
 

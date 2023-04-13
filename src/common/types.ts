@@ -953,6 +953,7 @@ export type LocalStateUI = {
 	lid?: number;
 	liveGameInProgress: boolean;
 	numPeriods: number;
+	numWatchColors: number;
 	phase: number;
 	phaseText: string;
 	playMenuOptions: Option[];

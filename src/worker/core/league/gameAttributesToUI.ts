@@ -19,6 +19,7 @@ const gameAttributesToUI = async (
 		"homeCourtAdvantage",
 		"lid",
 		"numPeriods",
+		"numWatchColors",
 		"phase",
 		"quarterLength",
 		"season",

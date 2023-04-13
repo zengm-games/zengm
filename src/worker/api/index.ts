@@ -3513,13 +3513,13 @@ const updatePlayerWatch = async ({
 	watch,
 }: {
 	pid: number;
-	watch: number | undefined;
+	watch: number;
 }) => {
 	let p;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
 		if (!p) {
-			return false;
+			return;
 		}
 	} else {
 		p = await idb.cache.players.get(pid);
@@ -3528,7 +3528,7 @@ const updatePlayerWatch = async ({
 		p = await idb.league.get("players", pid);
 	}
 	if (p) {
-		if (watch === undefined || watch > g.get("numWatchColors")) {
+		if (watch < 1 || watch > g.get("numWatchColors")) {
 			delete p.watch;
 		} else {
 			p.watch = watch;

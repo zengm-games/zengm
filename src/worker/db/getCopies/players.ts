@@ -367,7 +367,7 @@ const getCopies = async (
 		return mergeByPk(
 			fromDB,
 			fromCacheAll.filter(
-				p => (watch && p.watch === 1) || (note && p.noteBool === 1),
+				p => (watch && p.watch !== undefined) || (note && p.noteBool === 1),
 			),
 			"players",
 			type,

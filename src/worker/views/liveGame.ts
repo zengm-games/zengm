@@ -7,7 +7,7 @@ import {
 	type TeamSeasonOverride,
 } from "./gameLog";
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
-import { getPeriodName, isSport, PHASE } from "../../common";
+import { isSport, PHASE } from "../../common";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -40,7 +40,8 @@ export const boxScoreToLiveSim = async ({
 	}
 
 	boxScore.overtime = "";
-	boxScore.quarter = `1st ${getPeriodName(boxScore.numPeriods)}`;
+	boxScore.quarter = "";
+	boxScore.quarterShort = "";
 	boxScore.time = `${g.get("quarterLength")}:00`;
 	boxScore.gameOver = false;
 
@@ -75,7 +76,7 @@ export const boxScoreToLiveSim = async ({
 		}
 
 		await setTeamInfo(t, i, allStars, boxScore, teamSeasonOverrides?.[i]);
-		t.ptsQtrs = isSport("baseball") ? [] : [0];
+		t.ptsQtrs = [];
 
 		for (const stat of resetStatsTeam) {
 			if (Object.hasOwn(t, stat)) {

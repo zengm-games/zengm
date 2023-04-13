@@ -40,8 +40,8 @@ const processLiveGameEvents = ({
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
 
-			const ptsQtrs = boxScore.teams[0].ptsQtrs;
-			if (ptsQtrs.length > boxScore.numPeriods) {
+			const quarter = boxScore.teams[0].ptsQtrs.length;
+			if (quarter > boxScore.numPeriods) {
 				overtimes += 1;
 				if (overtimes === 1) {
 					boxScore.overtime = " (OT)";
@@ -49,10 +49,15 @@ const processLiveGameEvents = ({
 					boxScore.overtime = ` (${overtimes}OT)`;
 				}
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
+				boxScore.quarterShort = overtimes === 1 ? "OT" : `${overtimes}OT`;
 			} else {
-				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} ${getPeriodName(
+				boxScore.quarter = `${helpers.ordinal(quarter)} ${getPeriodName(
 					boxScore.numPeriods,
 				)}`;
+				boxScore.quarterShort = `${getPeriodName(
+					boxScore.numPeriods,
+					true,
+				)}${quarter}`;
 			}
 
 			boxScore.time = e.time;

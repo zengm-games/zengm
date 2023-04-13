@@ -116,18 +116,34 @@ export const HeadlineScore = ({
 			</h2>
 			{liveGameSim ? (
 				<div className={small ? undefined : "mb-2"}>
-					{boxScore.gameOver
-						? "Final score"
-						: boxScore.elamTarget !== undefined
-						? `Elam Ending target: ${boxScore.elamTarget} points`
-						: isSport("baseball")
-						? `${
-								boxScore.teams[0].ptsQtrs.length ===
-								boxScore.teams[1].ptsQtrs.length
-									? "Bottom"
-									: "Top"
-						  } of the ${boxScore.quarter}`
-						: `${boxScore.quarter}, ${boxScore.time} remaining`}
+					<span className="d-none d-sm-inline">
+						{boxScore.gameOver
+							? "Final score"
+							: boxScore.elamTarget !== undefined
+							? `Elam Ending target: ${boxScore.elamTarget} points`
+							: isSport("baseball")
+							? `${
+									boxScore.teams[0].ptsQtrs.length ===
+									boxScore.teams[1].ptsQtrs.length
+										? "Bottom"
+										: "Top"
+							  } of the ${boxScore.quarter}`
+							: `${boxScore.quarter}, ${boxScore.time} remaining`}
+					</span>
+					<span className="d-sm-none">
+						{boxScore.gameOver
+							? "F"
+							: boxScore.elamTarget !== undefined
+							? `Elam Ending target: ${boxScore.elamTarget} points`
+							: isSport("baseball")
+							? `${
+									boxScore.teams[0].ptsQtrs.length ===
+									boxScore.teams[1].ptsQtrs.length
+										? "B"
+										: "T"
+							  }${boxScore.quarterShort}`
+							: `${boxScore.quarterShort}, ${boxScore.time}`}
+					</span>
 				</div>
 			) : null}
 		</div>

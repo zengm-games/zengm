@@ -22,7 +22,7 @@ const processLiveGameEvents = ({
 		const actualT = e.t === 0 ? 1 : 0;
 
 		// Hacky quarter stuff, ugh
-		if (e.text && e.text.startsWith("Start of")) {
+		if ((e.text && e.text.startsWith("Start of")) || boxScore.quarter === "") {
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
 			const quarter = boxScore.teams[0].ptsQtrs.length;
@@ -34,11 +34,16 @@ const processLiveGameEvents = ({
 					boxScore.overtime = ` (${overtimes}OT)`;
 				}
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
+				boxScore.quarterShort = overtimes === 1 ? "OT" : `${overtimes}OT`;
 			} else {
 				boxScore.quarter = `${helpers.ordinal(quarter)} ${getPeriodName(
 					boxScore.numPeriods,
 				)}`;
-				quarters.push(`Q${quarter}`);
+				boxScore.quarterShort = `${getPeriodName(
+					boxScore.numPeriods,
+					true,
+				)}${quarter}`;
+				quarters.push(boxScore.quarterShort);
 			}
 		}
 

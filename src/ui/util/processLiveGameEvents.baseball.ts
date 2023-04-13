@@ -427,6 +427,7 @@ const processLiveGameEvents = ({
 	boxScore: {
 		gid: number;
 		quarter: string;
+		quarterShort: string;
 		numPeriods: number;
 		overtime?: string;
 		teams: [BoxScoreTeam, BoxScoreTeam];
@@ -465,14 +466,14 @@ const processLiveGameEvents = ({
 			boxScore.teams[actualT].ptsQtrs.push(0);
 
 			if (actualT === 0) {
-				const ptsQtrs = boxScore.teams[0].ptsQtrs;
-				if (ptsQtrs.length > boxScore.numPeriods) {
+				const inning = boxScore.teams[0].ptsQtrs.length;
+				if (inning > boxScore.numPeriods) {
 					overtimes += 1;
 					boxScore.overtime = ` (${boxScore.numPeriods + overtimes})`;
 				}
-				boxScore.quarter = `${helpers.ordinal(ptsQtrs.length)} ${getPeriodName(
-					boxScore.numPeriods,
-				)}`;
+				const ordinal = helpers.ordinal(inning);
+				boxScore.quarter = `${ordinal} ${getPeriodName(boxScore.numPeriods)}`;
+				boxScore.quarterShort = `${inning}`;
 			}
 
 			Object.assign(sportState, DEFAULT_SPORT_STATE);

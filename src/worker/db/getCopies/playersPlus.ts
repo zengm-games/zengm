@@ -82,8 +82,10 @@ const processAttrs = (
 				1000; // [millions of dollars]
 		} else if (attr === "abbrev") {
 			output.abbrev = helpers.getAbbrev(p.tid);
-		} else if (attr === "hof" || attr === "watch") {
+		} else if (attr === "hof") {
 			output[attr] = !!p[attr];
+		} else if (attr === "watch") {
+			output[attr] = p[attr] ?? 0;
 		} else if (
 			attr === "injury" &&
 			season !== undefined &&

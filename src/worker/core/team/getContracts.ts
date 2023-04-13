@@ -24,7 +24,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 			injury: p.injury,
 			jerseyNumber:
 				p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : undefined,
-			watch: !!p.watch,
+			watch: p.watch ?? 0,
 			amount: p.contract.amount,
 			exp: p.contract.exp,
 			released: false,
@@ -55,7 +55,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 				pos: p.ratings.at(-1).pos,
 				injury: p.injury,
 				jerseyNumber: undefined,
-				watch: !!p.watch,
+				watch: p.watch ?? 0,
 				// undefined check is for old leagues, can delete eventually
 				amount: releasedPlayer.contract.amount,
 				exp: releasedPlayer.contract.exp,
@@ -73,7 +73,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 					gamesRemaining: 0,
 				},
 				jerseyNumber: undefined,
-				watch: false,
+				watch: 0,
 				amount: releasedPlayer.contract.amount,
 				exp: releasedPlayer.contract.exp,
 				released: true,

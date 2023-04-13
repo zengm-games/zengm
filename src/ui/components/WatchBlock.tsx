@@ -5,25 +5,25 @@ import { toWorker } from "../util";
 type Props = {
 	className?: string;
 	pid: number;
-	watch: boolean;
+	watch: number;
 
 	// Not needed if you pass watch down all the way from a worker view, only needed if you're handling it in the UI only
-	onChange?: (watch: boolean) => void;
+	onChange?: (watch: number) => void;
 };
 
 const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 	const handleClick = async (event: SyntheticEvent) => {
 		event.preventDefault();
-		const newWatch = !watch;
+		const newWatch = watch + 1;
 		onChange?.(newWatch);
 		await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
 	};
 
-	if (watch) {
+	if (watch > 0) {
 		return (
 			<span
 				className={classNames(
-					"glyphicon glyphicon-flag watch watch-active",
+					`glyphicon glyphicon-flag watch watch-active-${watch}`,
 					className,
 				)}
 				onClick={handleClick}

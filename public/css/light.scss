@@ -503,9 +503,38 @@ $jersey-number-width: 15px;
 	text-decoration: none;
 }
 
-.watch-active,
-.watch-active:hover {
-	color: $danger;
+// Same as bar-graph
+.watch-active-1,
+.watch-active-1:hover {
+	color: $red;
+}
+.watch-active-2,
+.watch-active-2:hover {
+	color: $green;
+}
+.watch-active-3,
+.watch-active-3:hover {
+	color: $blue;
+}
+.watch-active-4,
+.watch-active-4:hover {
+	color: $yellow;
+}
+.watch-active-5,
+.watch-active-5:hover {
+	color: $indigo;
+}
+.watch-active-6,
+.watch-active-6:hover {
+	color: $pink;
+}
+.watch-active-7,
+.watch-active-7:hover {
+	color: $cyan;
+}
+.watch-active-8,
+.watch-active-8:hover {
+	color: $orange;
 }
 
 .pt-modifier-select {

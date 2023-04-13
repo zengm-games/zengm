@@ -534,6 +534,7 @@ export type GameAttributesLeague = {
 	numPlayoffByes: number;
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
+	numWatchColors: number;
 	playIn: boolean;
 	playerMoodTraits: boolean;
 	pointsFormula: string;
@@ -1176,7 +1177,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	valueNoPot: number;
 	valueFuzz: number;
 	valueNoPotFuzz: number;
-	watch?: 1; // Would rather be boolean, but can't index boolean
+	watch?: number;
 	weight: number;
 	yearsFreeAgent: number;
 
@@ -1360,7 +1361,7 @@ export type ContractInfo = {
 	amount: number;
 	exp: number;
 	released: boolean;
-	watch: boolean;
+	watch: number;
 };
 
 export type ReleasedPlayerWithoutKey = {

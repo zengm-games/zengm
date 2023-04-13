@@ -16,15 +16,16 @@ const Icon = forwardRef<
 	HTMLElement,
 	{
 		onClick?: () => void;
-		watch?: boolean;
+		watch: number;
 	}
 >(({ onClick, watch }, ref) => {
 	return (
 		<span
 			ref={ref}
-			className={classNames("glyphicon glyphicon-stats watch", {
-				"watch-active": watch,
-			})}
+			className={classNames(
+				"glyphicon glyphicon-stats watch",
+				watch === 0 ? undefined : `watch-active-${watch}`,
+			)}
 			data-no-row-highlight="true"
 			title="View ratings and stats"
 			onClick={onClick}
@@ -36,7 +37,7 @@ type Props = {
 	disableNameLink?: boolean;
 	pid: number;
 	season?: number;
-	watch?: boolean;
+	watch?: number;
 };
 
 const RatingsStatsPopover = ({
@@ -73,7 +74,7 @@ const RatingsStatsPopover = ({
 
 	// If watch is undefined, fetch it from worker
 	const LOCAL_WATCH = watch === undefined;
-	const [localWatch, setLocalWatch] = useState(false);
+	const [localWatch, setLocalWatch] = useState(0);
 	useEffect(() => {
 		const run = async () => {
 			if (LOCAL_WATCH) {

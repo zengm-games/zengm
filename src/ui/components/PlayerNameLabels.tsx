@@ -26,7 +26,7 @@ type Props = {
 	style?: {
 		[key: string]: string;
 	};
-	watch?: boolean;
+	watch?: number;
 
 	firstName?: string;
 	lastName?: string;

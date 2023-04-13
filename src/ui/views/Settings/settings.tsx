@@ -2052,6 +2052,19 @@ export const settings: Setting[] = (
 				"This will hide inactive teams from dropdown menus at the top of many pages, such as the roster page.",
 		},
 		{
+			category: "UI",
+			key: "numWatchColors",
+			name: "# Watch List Colors",
+			type: "int",
+			description:
+				"If you have more than one color, you can cycle through them by clicking a player's watch flag.",
+			validator: value => {
+				if (value < 1 || value > 8) {
+					throw new Error("Value must be between 1 and 8");
+				}
+			},
+		},
+		{
 			category: "Players",
 			key: "goatFormula",
 			name: "GOAT Formula",

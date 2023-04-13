@@ -138,7 +138,7 @@ const getActualPlayerInfo = (
 		retiredYear: p.retiredYear,
 		skills: ratings.skills,
 		stat,
-		watch: !!p.watch,
+		watch: p.watch ?? 0,
 	};
 };
 
@@ -257,7 +257,7 @@ type CommonActualPlayer = {
 	pot: number;
 	retiredYear: number;
 	skills: string[];
-	watch: boolean;
+	watch: number;
 	stat: number;
 };
 

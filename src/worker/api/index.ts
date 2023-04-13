@@ -1584,28 +1584,28 @@ const getPlayerBioInfoDefaults = initDefaults;
 
 const getPlayerWatch = async (pid: number) => {
 	if (Number.isNaN(pid)) {
-		return false;
+		return 0;
 	}
 
 	let p;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
 		if (!p) {
-			return false;
+			return 0;
 		}
 	} else {
 		p = await idb.cache.players.get(pid);
 	}
 
 	if (p) {
-		return !!p.watch;
+		return p.watch ?? 0;
 	}
 	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
 	if (p2) {
-		return !!p2.watch;
+		return p2.watch ?? 0;
 	}
 
-	return false;
+	return 0;
 };
 
 const getRandomCollege = async () => {
@@ -3513,7 +3513,7 @@ const updatePlayerWatch = async ({
 	watch,
 }: {
 	pid: number;
-	watch: boolean;
+	watch: number | undefined;
 }) => {
 	let p;
 	if (local.exhibitionGamePlayers) {
@@ -3528,10 +3528,10 @@ const updatePlayerWatch = async ({
 		p = await idb.league.get("players", pid);
 	}
 	if (p) {
-		if (watch) {
-			p.watch = 1;
-		} else {
+		if (watch === undefined || watch > g.get("numWatchColors")) {
 			delete p.watch;
+		} else {
+			p.watch = watch;
 		}
 		if (!local.exhibitionGamePlayers) {
 			await idb.cache.players.put(p);

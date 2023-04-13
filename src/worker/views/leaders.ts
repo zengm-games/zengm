@@ -664,7 +664,7 @@ export type Leader = {
 	skills: string[];
 	tid: number;
 	userTeam: boolean;
-	watch: boolean;
+	watch: number;
 };
 
 export const leadersAddFirstNameShort = <

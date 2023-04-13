@@ -66,7 +66,6 @@ export const settings: Setting[] = (
 			category: "New League",
 			key: "realStats",
 			name: "Historical Stats",
-			godModeRequired: "existingLeagueOnly",
 			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
 				newLeague && hasPlayers && realPlayers,
 			type: "string",
@@ -85,7 +84,6 @@ export const settings: Setting[] = (
 			category: "New League",
 			key: "randomization",
 			name: "Randomization",
-			godModeRequired: "existingLeagueOnly",
 			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
 				newLeague && hasPlayers && realPlayers,
 			type: "string",
@@ -128,7 +126,6 @@ export const settings: Setting[] = (
 			category: "New League",
 			key: "randomization",
 			name: "Randomization",
-			godModeRequired: "existingLeagueOnly",
 			showOnlyIf: ({
 				defaultNewLeagueSettings,
 				newLeague,
@@ -156,7 +153,6 @@ export const settings: Setting[] = (
 						category: "New League",
 						key: "randomization",
 						name: "Randomization",
-						godModeRequired: "existingLeagueOnly",
 						showOnlyIf: ({
 							defaultNewLeagueSettings,
 							newLeague,
@@ -193,7 +189,6 @@ export const settings: Setting[] = (
 			category: "New League",
 			key: "realDraftRatings",
 			name: "Real Draft Prospect Ratings",
-			godModeRequired: "existingLeagueOnly",
 			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
 				newLeague &&
 				((hasPlayers && realPlayers) ||
@@ -229,7 +224,6 @@ export const settings: Setting[] = (
 			category: "New League",
 			key: "equalizeRegions",
 			name: "Equalize Region Populations",
-			godModeRequired: "existingLeagueOnly",
 			showOnlyIf: ({ newLeague }) => newLeague,
 			type: "bool",
 		},
@@ -237,9 +231,18 @@ export const settings: Setting[] = (
 			category: "New League",
 			key: "noStartingInjuries",
 			name: "No Starting Injuries",
-			godModeRequired: "existingLeagueOnly",
+			godModeRequired: "always",
 			showOnlyIf: ({ newLeague, hasPlayers }) => newLeague && hasPlayers,
 			type: "bool",
+		},
+		{
+			category: "New League",
+			key: "giveMeWorstRoster",
+			name: "Give Me The Worst Roster",
+			showOnlyIf: ({ newLeague }) => newLeague,
+			type: "bool",
+			description:
+				"This swaps your roster with the roster of the worst team in the league, based on team ovr rating.",
 		},
 		{
 			category: "Schedule",

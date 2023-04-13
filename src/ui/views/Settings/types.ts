@@ -143,7 +143,8 @@ export type Key =
 	| "allStarDunk"
 	| "allStarThree"
 	| "minRetireAge"
-	| "numWatchColors";
+	| "numWatchColors"
+	| "giveMeWorstRoster";
 
 export type Category =
 	| "New League"

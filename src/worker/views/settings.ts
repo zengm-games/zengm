@@ -152,6 +152,7 @@ const keys = [
 	"allStarThree",
 	"minRetireAge",
 	"numWatchColors",
+	"giveMeWorstRoster",
 ] as const;
 
 export type Settings = Pick<
@@ -164,6 +165,7 @@ export type Settings = Pick<
 		| "tragicDeaths"
 		| "goatFormula"
 		| "numActiveTeams"
+		| "giveMeWorstRoster"
 	>
 > & {
 	repeatSeason: boolean;
@@ -178,6 +180,7 @@ export type Settings = Pick<
 	tragicDeaths: TragicDeaths;
 	goatFormula: string;
 	confs?: Conf[];
+	giveMeWorstRoster: boolean;
 
 	// undefined in DefaultNewLeagueSettings - then it is not possible to validate some settings that depend on it
 	numActiveTeams: number | undefined;
@@ -338,6 +341,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
 			randomization: "none",
 			realStats: "none",
+			giveMeWorstRoster: false,
 		};
 
 		return {

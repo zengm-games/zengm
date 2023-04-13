@@ -232,7 +232,6 @@ type State = {
 	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
 	keptKeys: string[];
-	pickWorstRoster: boolean;
 	settings: Omit<Settings, "numActiveTeams">;
 	rebuildAbbrevPending?: string;
 };
@@ -304,9 +303,6 @@ type Action =
 			gameAttributes: Record<string, unknown>;
 			defaultSettings: State["settings"];
 			startingSeason: number;
-	  }
-	| {
-			type: "togglePickWorstRoster";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -356,7 +352,8 @@ const getSettingsFromGameAttributes = (
 			if (
 				key === "noStartingInjuries" ||
 				key === "randomization" ||
-				key === "realStats"
+				key === "realStats" ||
+				key === "giveMeWorstRoster"
 			) {
 				continue;
 			}
@@ -586,12 +583,6 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
-		case "togglePickWorstRoster":
-			return {
-				...state,
-				pickWorstRoster: !state.pickWorstRoster,
-			};
-
 		default:
 			throw new Error();
 	}
@@ -713,7 +704,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				pendingInitialLeagueInfo: true,
 				allKeys,
 				keptKeys,
-				pickWorstRoster: false,
 				settings,
 				rebuildAbbrevPending: rebuildInfo?.abbrev,
 			};
@@ -823,7 +813,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					version: state.basicInfo?.version,
 				},
 				leagueCreationID: leagueCreationID.current,
-				pickWorstRoster: state.pickWorstRoster,
 			});
 
 			let type: string = state.customize;
@@ -1338,22 +1327,6 @@ const NewLeague = (props: View<"newLeague">) => {
 									) : null}
 								</select>
 								<span className="text-muted">{descriptions.difficulty}</span>
-								<div className="form-check form-switch mt-1 mb-0">
-									<input
-										id="pick-worst-team"
-										className="form-check-input"
-										type="checkbox"
-										checked={state.pickWorstRoster}
-										onChange={() => {
-											dispatch({
-												type: "togglePickWorstRoster",
-											});
-										}}
-									/>
-									<label className="form-check-label" htmlFor="pick-worst-team">
-										Give me the worst roster in the league
-									</label>
-								</div>
 							</div>
 
 							<div className="text-center mt-3">

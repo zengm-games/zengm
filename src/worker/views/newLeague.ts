@@ -342,6 +342,7 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"numWatchColors",
 		),
+		giveMeWorstRoster: false,
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

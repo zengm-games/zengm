@@ -983,6 +983,15 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Events",
+			key: "minRetireAge",
+			name: "Minimum Retirement Age",
+			godModeRequired: "always",
+			type: "int",
+			description:
+				"This affects players who remain unsigned for more than 1 season, and also (if you set it high enough) players on teams who are old and declining in production.",
+		},
+		{
+			category: "Events",
 			key: "forceRetireAge",
 			name: "Force Retire at Age",
 			godModeRequired: "always",

@@ -16,7 +16,8 @@ const shouldRetire = (
 	const pot = 1.1 * p.value;
 
 	if (isSport("basketball")) {
-		const maxAge = 33;
+		let maxAge = 33;
+		maxAge = Math.max(maxAge, g.get("minRetireAge"));
 		const minPot = 40;
 
 		// Only players older than maxAge or without a contract will retire
@@ -55,12 +56,13 @@ const shouldRetire = (
 			}
 		}
 	} else {
-		const maxAge = bySport({
+		let maxAge = bySport({
 			baseball: 36,
 			basketball: 0,
 			football: pos === "QB" || pos === "P" || pos === "K" ? 35 : 32,
 			hockey: 36,
 		});
+		maxAge = Math.max(maxAge, g.get("minRetireAge"));
 		const minPot = 50;
 
 		// Only players older than maxAge or without a contract will retire

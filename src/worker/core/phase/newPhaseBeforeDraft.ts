@@ -391,7 +391,8 @@ const newPhaseBeforeDraft = async (
 
 			// Update "free agent years" counter and retire players who have been free agents for more than one years
 			if (p.tid === PLAYER.FREE_AGENT) {
-				if (p.yearsFreeAgent >= 1) {
+				const age = g.get("season") - p.born.year;
+				if (p.yearsFreeAgent >= 1 && age >= g.get("minRetireAge")) {
 					await player.retire(p, conditions);
 					update = true;
 				} else {

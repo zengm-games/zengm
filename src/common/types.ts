@@ -516,6 +516,7 @@ export type GameAttributesLeague = {
 	minContract: number;
 	minContractLength: number;
 	minPayroll: number;
+	minRetireAge: number;
 	minRosterSize: number;
 	names?: NamesLegacy;
 	nextPhase?: Phase;

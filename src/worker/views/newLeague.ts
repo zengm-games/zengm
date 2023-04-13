@@ -337,6 +337,7 @@ export const getDefaultSettings = () => {
 		weightFactor: unwrapGameAttribute(defaultGameAttributes, "weightFactor"),
 		allStarDunk: unwrapGameAttribute(defaultGameAttributes, "allStarDunk"),
 		allStarThree: unwrapGameAttribute(defaultGameAttributes, "allStarThree"),
+		minRetireAge: unwrapGameAttribute(defaultGameAttributes, "minRetireAge"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

@@ -255,7 +255,7 @@ const GameLog = ({
 							)}
 						</div>
 
-						<div className="col-md-2">
+						<div className="col-md-2 mt-3 mt-md-0">
 							<GamesList
 								abbrev={abbrev}
 								currentSeason={currentSeason}

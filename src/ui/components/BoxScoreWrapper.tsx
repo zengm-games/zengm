@@ -63,7 +63,13 @@ const TeamLogo = ({
 	) : null;
 };
 
-const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
+export const HeadlineScore = ({
+	boxScore,
+	small,
+}: {
+	boxScore: any;
+	small?: boolean;
+}) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
@@ -73,11 +79,19 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 	const t1 =
 		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
-	const className = `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
+	const className = small
+		? "d-none"
+		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
 
 	return (
-		<>
-			<h2>
+		<div
+			className={
+				small
+					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-3"
+					: undefined
+			}
+		>
+			<h2 className={small ? "mb-0" : "mb-1"}>
 				{t0.playoffs ? (
 					<span className="text-muted">{t0.playoffs.seed}. </span>
 				) : null}
@@ -99,7 +113,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 				{boxScore.overtime}
 			</h2>
 			{liveGameSim ? (
-				<div className="mb-2">
+				<div className={small ? undefined : "mb-2"}>
 					{boxScore.gameOver
 						? "Final score"
 						: boxScore.elamTarget !== undefined
@@ -114,7 +128,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 						: `${boxScore.quarter}, ${boxScore.time} remaining`}
 				</div>
 			) : null}
-		</>
+		</div>
 	);
 };
 

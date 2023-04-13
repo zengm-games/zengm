@@ -717,7 +717,6 @@ tr.table-warning:hover > td {
 }
 @include media-breakpoint-up(md) {
 	.live-game-affix {
-		position: -webkit-sticky;
 		position: sticky;
 		margin-top: 0;
 		top: 60px;
@@ -726,11 +725,21 @@ tr.table-warning:hover > td {
 		overflow: auto;
 	}
 }
+@include media-breakpoint-down(md) {
+	.live-game-affix-mobile {
+		position: sticky;
+		top: 52px;
+
+		// We only want these to apply on mobile
+		padding: ($spacer * 0.25) 0;
+		margin-top: $spacer * 3;
+		background-color: $white;
+	}
+}
 
 // Keep in sync with trade/index.tsx
 @include media-breakpoint-up(md) {
 	.trade-affix {
-		position: -webkit-sticky;
 		position: sticky;
 		top: 60px;
 	}
@@ -1678,4 +1687,8 @@ table.sticky-xxx {
 
 .row-gap-0 {
 	row-gap: 0 !important;
+}
+
+.row-gap-3 {
+	row-gap: 1rem !important;
 }

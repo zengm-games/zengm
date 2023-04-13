@@ -20,6 +20,7 @@ import type { View } from "../../common/types";
 import { bySport, getPeriodName, isSport } from "../../common";
 import useLocalStorageState from "use-local-storage-state";
 import type { SportState } from "../util/processLiveGameEvents.baseball";
+import { HeadlineScore } from "../components/BoxScoreWrapper";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -743,24 +744,27 @@ export const LiveGame = (props: View<"liveGame">) => {
 				<div className="col-md-3">
 					<div className="live-game-affix">
 						{boxScore.current.gid >= 0 ? (
-							<div className="d-flex align-items-center mb-3">
-								<PlayPauseNext
-									className="me-2"
-									disabled={boxScore.current.gameOver}
-									fastForwardAlignRight
-									fastForwards={fastForwardMenuItems}
-									onPlay={handlePlay}
-									onPause={handlePause}
-									onNext={handleNextPlay}
-									paused={paused}
-									titlePlay="Resume Simulation"
-									titlePause="Pause Simulation"
-									titleNext="Show Next Play"
-								/>
-								<div className="mb-3 flex-grow-1 mb-0">
+							<div className="live-game-affix-mobile mb-3">
+								<div className="d-md-none">
+									<HeadlineScore boxScore={boxScore.current} small />
+								</div>
+								<div className="d-flex align-items-center">
+									<PlayPauseNext
+										className="me-2"
+										disabled={boxScore.current.gameOver}
+										fastForwardAlignRight
+										fastForwards={fastForwardMenuItems}
+										onPlay={handlePlay}
+										onPause={handlePause}
+										onNext={handleNextPlay}
+										paused={paused}
+										titlePlay="Resume Simulation"
+										titlePause="Pause Simulation"
+										titleNext="Show Next Play"
+									/>
 									<input
 										type="range"
-										className="form-range"
+										className="form-range flex-grow-1"
 										disabled={boxScore.current.gameOver}
 										min="1"
 										max="33"

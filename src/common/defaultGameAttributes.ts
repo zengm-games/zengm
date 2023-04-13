@@ -274,7 +274,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	gender: "male",
 	heightFactor: 1,
 	weightFactor: 1,
-	numWatchColors: 2,
+	numWatchColors: 1,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

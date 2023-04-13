@@ -7,21 +7,6 @@ ADD TO SCHEMA and Key type:
 for random players leagues, option to start with worst team
 - https://old.reddit.com/r/BasketballGM/comments/11epofn/monthly_suggestions_thread/jafm4v2/
 
-add an option for number of watch list colors
-- watch: boolean
-- watch?: boolean
-- RatingsStatsPopover fetches from server if watch is undefined, so use 0 as no watch
-- click would cycle through colors
-  - numWatchColors needs to be available in UI for WatchBlock
-- https://old.reddit.com/r/BasketballGM/comments/11epofn/monthly_suggestions_thread/jafm4v2/
-- confirm works
-  - local vs worker watch
-  - sorting on watch list table
-  - overflow
-  - change number of colors
-    - handle existing numbers outside of bounds?
-  - make sure 0 not being saved to database
-
 show score when viewing play-by-play on mobile https://old.reddit.com/r/BasketballGM/comments/11epofn/monthly_suggestions_thread/jbaxqgl/
 
 random debuts and ratings based on draft position together don't work

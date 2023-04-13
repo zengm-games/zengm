@@ -74,7 +74,11 @@ const WatchList = ({
 		return {
 			key: p.pid,
 			data: [
-				<WatchBlock pid={p.pid} watch={p.watch} />,
+				{
+					value: <WatchBlock pid={p.pid} watch={p.watch} />,
+					searchValue: p.watch,
+					sortValue: p.watch,
+				},
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,

@@ -770,8 +770,6 @@ const NewLeague = (props: View<"newLeague">) => {
 		const startingSeasonFromInput =
 			state.customize === "default" ? startingSeason : undefined;
 
-		const actualPickWorstRoster = showPickWorstRoster && state.pickWorstRoster;
-
 		try {
 			let getLeagueOptions: GetLeagueOptions | undefined;
 			if (state.customize === "real") {
@@ -825,7 +823,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					version: state.basicInfo?.version,
 				},
 				leagueCreationID: leagueCreationID.current,
-				pickWorstRoster: actualPickWorstRoster,
+				pickWorstRoster: state.pickWorstRoster,
 			});
 
 			let type: string = state.customize;
@@ -1075,12 +1073,6 @@ const NewLeague = (props: View<"newLeague">) => {
 	}
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
-
-	const showPickWorstRoster =
-		state.customize === "default" ||
-		(state.loadingLeagueFile === false &&
-			!showLoadingIndicator &&
-			!state.keptKeys.includes("players"));
 
 	return (
 		<AnimatePresence mode="popLayout" initial={false}>
@@ -1346,27 +1338,22 @@ const NewLeague = (props: View<"newLeague">) => {
 									) : null}
 								</select>
 								<span className="text-muted">{descriptions.difficulty}</span>
-								{showPickWorstRoster ? (
-									<div className="form-check form-switch mt-1 mb-0">
-										<input
-											id="pick-worst-team"
-											className="form-check-input"
-											type="checkbox"
-											checked={state.pickWorstRoster}
-											onChange={() => {
-												dispatch({
-													type: "togglePickWorstRoster",
-												});
-											}}
-										/>
-										<label
-											className="form-check-label"
-											htmlFor="pick-worst-team"
-										>
-											Give me the worst roster in the league
-										</label>
-									</div>
-								) : null}
+								<div className="form-check form-switch mt-1 mb-0">
+									<input
+										id="pick-worst-team"
+										className="form-check-input"
+										type="checkbox"
+										checked={state.pickWorstRoster}
+										onChange={() => {
+											dispatch({
+												type: "togglePickWorstRoster",
+											});
+										}}
+									/>
+									<label className="form-check-label" htmlFor="pick-worst-team">
+										Give me the worst roster in the league
+									</label>
+								</div>
 							</div>
 
 							<div className="text-center mt-3">

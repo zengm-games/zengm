@@ -4,7 +4,7 @@ import { PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
 
-const getTeamOvr = async (tid: number) => {
+export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: ["value", "pid"],

@@ -232,7 +232,7 @@ type State = {
 	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
 	keptKeys: string[];
-	expandOptions: boolean;
+	pickWorstRoster: boolean;
 	settings: Omit<Settings, "numActiveTeams">;
 	rebuildAbbrevPending?: string;
 };
@@ -306,7 +306,7 @@ type Action =
 			startingSeason: number;
 	  }
 	| {
-			type: "toggleExpandOptions";
+			type: "togglePickWorstRoster";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -586,10 +586,10 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
-		case "toggleExpandOptions":
+		case "togglePickWorstRoster":
 			return {
 				...state,
-				expandOptions: !state.expandOptions,
+				pickWorstRoster: !state.pickWorstRoster,
 			};
 
 		default:
@@ -713,7 +713,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				pendingInitialLeagueInfo: true,
 				allKeys,
 				keptKeys,
-				expandOptions: false,
+				pickWorstRoster: false,
 				settings,
 				rebuildAbbrevPending: rebuildInfo?.abbrev,
 			};
@@ -770,6 +770,8 @@ const NewLeague = (props: View<"newLeague">) => {
 		const startingSeasonFromInput =
 			state.customize === "default" ? startingSeason : undefined;
 
+		const actualPickWorstRoster = showPickWorstRoster && state.pickWorstRoster;
+
 		try {
 			let getLeagueOptions: GetLeagueOptions | undefined;
 			if (state.customize === "real") {
@@ -823,6 +825,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					version: state.basicInfo?.version,
 				},
 				leagueCreationID: leagueCreationID.current,
+				pickWorstRoster: actualPickWorstRoster,
 			});
 
 			let type: string = state.customize;
@@ -1073,6 +1076,12 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
+	const showPickWorstRoster =
+		state.customize === "default" ||
+		(state.loadingLeagueFile === false &&
+			!showLoadingIndicator &&
+			!state.keptKeys.includes("players"));
+
 	return (
 		<AnimatePresence mode="popLayout" initial={false}>
 			{subPage ? (
@@ -1306,11 +1315,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										numActiveTeams={displayedTeams.length}
 									/>
 								) : (
-									<span className="text-muted">
-										Region population: equal
-										<br />
-										Size: normal
-									</span>
+									<span className="text-muted">Population: equal</span>
 								)}
 							</div>
 
@@ -1341,6 +1346,27 @@ const NewLeague = (props: View<"newLeague">) => {
 									) : null}
 								</select>
 								<span className="text-muted">{descriptions.difficulty}</span>
+								{showPickWorstRoster ? (
+									<div className="form-check form-switch mt-1 mb-0">
+										<input
+											id="pick-worst-team"
+											className="form-check-input"
+											type="checkbox"
+											checked={state.pickWorstRoster}
+											onChange={() => {
+												dispatch({
+													type: "togglePickWorstRoster",
+												});
+											}}
+										/>
+										<label
+											className="form-check-label"
+											htmlFor="pick-worst-team"
+										>
+											Give me the worst roster in the league
+										</label>
+									</div>
+								) : null}
 							</div>
 
 							<div className="text-center mt-3">

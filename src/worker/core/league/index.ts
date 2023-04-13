@@ -9,6 +9,7 @@ import initRepeatSeason from "./initRepeatSeason";
 import loadGameAttributes from "./loadGameAttributes";
 import remove from "./remove";
 import setGameAttributes from "./setGameAttributes";
+import swapWorstRoster from "./swapWorstRoster";
 import updateMeta from "./updateMeta";
 
 export default {
@@ -23,5 +24,6 @@ export default {
 	loadGameAttributes,
 	remove,
 	setGameAttributes,
+	swapWorstRoster,
 	updateMeta,
 };

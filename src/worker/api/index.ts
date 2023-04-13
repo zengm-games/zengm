@@ -453,6 +453,7 @@ const createLeague = async (
 		fromFile,
 		startingSeasonFromInput,
 		leagueCreationID,
+		pickWorstRoster,
 	}: {
 		name: string;
 		tid: number;
@@ -476,6 +477,7 @@ const createLeague = async (
 		};
 		startingSeasonFromInput: string | undefined;
 		leagueCreationID: number;
+		pickWorstRoster: boolean;
 	},
 	conditions: Conditions,
 ): Promise<number> => {
@@ -588,6 +590,10 @@ const createLeague = async (
 	});
 
 	delete (self as any).stream0;
+
+	if (pickWorstRoster) {
+		await league.swapWorstRoster();
+	}
 
 	toUI(
 		"updateLocal",

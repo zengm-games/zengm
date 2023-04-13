@@ -139,7 +139,11 @@ export type Key =
 	| "saveFactor"
 	| "gender"
 	| "heightFactor"
-	| "weightFactor";
+	| "weightFactor"
+	| "allStarDunk"
+	| "allStarThree"
+	| "minRetireAge"
+	| "numWatchColors";
 
 export type Category =
 	| "New League"

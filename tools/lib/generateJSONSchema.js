@@ -612,6 +612,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							aiTradesFactor: {
 								type: "number",
 							},
+							allStarDunk: {
+								type: "boolean",
+							},
 							allStarGame: {
 								// boolean is legacy
 								anyOf: [
@@ -628,6 +631,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							allStarNum: {
 								type: "number",
+							},
+							allStarThree: {
+								type: "boolean",
 							},
 							allStarType: {
 								type: "string",
@@ -899,6 +905,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "integer",
 								minimum: 0,
 							},
+							minRetireAge: {
+								type: "integer",
+							},
 							minRosterSize: {
 								type: "integer",
 								minimum: 0,
@@ -910,6 +919,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 									last: {},
 								},
 								required: ["first", "last"],
+							},
+							numWatchColors: {
+								type: "integer",
 							},
 							otherTeamsWantToHire: {
 								type: "boolean",

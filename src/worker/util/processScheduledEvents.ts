@@ -261,6 +261,42 @@ const processGameAttributes = async (
 		);
 	}
 
+	const prevAllStarType = g.get("allStarType");
+	if (info.draftType !== undefined && info.allStarType !== prevAllStarType) {
+		if (info.allStarType === "draft") {
+			texts.push("All-Star teams will now be selected by a draft.");
+		} else if (info.allStarType === "byConf") {
+			texts.push("All-Star teams will now be selected by conference.");
+		} else if (info.allStarType === "top") {
+			texts.push(
+				"All-Star teams will now be made up of the top players in the league, regardless of conference.",
+			);
+		}
+	}
+
+	const prevAllStarDunk = g.get("allStarDunk");
+	if (info.allStarDunk !== undefined && info.allStarDunk !== prevAllStarDunk) {
+		if (info.allStarDunk) {
+			texts.push("A slam dunk contest has been added to the All-Star events.");
+		} else {
+			texts.push("The slam dunk contest has been removed.");
+		}
+	}
+
+	const prevAllStarThree = g.get("allStarThree");
+	if (
+		info.allStarThree !== undefined &&
+		info.allStarThree !== prevAllStarThree
+	) {
+		if (info.allStarDunk) {
+			texts.push(
+				"A three-point contest has been added to the All-Star events.",
+			);
+		} else {
+			texts.push("The three-point contest has been removed.");
+		}
+	}
+
 	const prevFoulsUntilBonus = g.get("foulsUntilBonus");
 	if (
 		info.foulsUntilBonus !== undefined &&

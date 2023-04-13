@@ -452,6 +452,8 @@ export type GameAttributesLeague = {
 	allStarGame: number | null;
 	allStarNum: number;
 	allStarType: "draft" | "byConf" | "top";
+	allStarDunk: boolean;
+	allStarThree: boolean;
 	autoDeleteOldBoxScores: boolean;
 	brotherRate: number;
 	budget: boolean;

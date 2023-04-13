@@ -335,6 +335,8 @@ export const getDefaultSettings = () => {
 		gender: unwrapGameAttribute(defaultGameAttributes, "gender"),
 		heightFactor: unwrapGameAttribute(defaultGameAttributes, "heightFactor"),
 		weightFactor: unwrapGameAttribute(defaultGameAttributes, "weightFactor"),
+		allStarDunk: unwrapGameAttribute(defaultGameAttributes, "allStarDunk"),
+		allStarThree: unwrapGameAttribute(defaultGameAttributes, "allStarThree"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

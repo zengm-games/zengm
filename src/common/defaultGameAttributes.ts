@@ -88,6 +88,8 @@ const gameAttributesKeysSportSpecific = {
 		"ties",
 		"numPlayersOnCourt",
 		"pace",
+		"allStarDunk",
+		"allStarThree",
 	] as GameAttributeKey[],
 	football: [
 		"fantasyPoints",
@@ -195,6 +197,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	allStarGame: 0.7,
 	allStarNum: 12,
 	allStarType: "draft",
+	allStarDunk: true,
+	allStarThree: true,
 	budget: true,
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,

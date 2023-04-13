@@ -68,7 +68,7 @@ const create = async (conditions: Conditions) => {
 		const numPlayersNeeded = numTeams * allStarNum;
 		let count = 0;
 
-		const addPlayer = (p: typeof candidates[number]) => {
+		const addPlayer = (p: (typeof candidates)[number]) => {
 			const obj: AllStarPlayer = {
 				pid: p.pid,
 				tid: p.tid,
@@ -288,7 +288,7 @@ const create = async (conditions: Conditions) => {
 	});
 	await saveAwardsByPlayer(awardsByPlayer, conditions);
 
-	const assignTopPlayerToTeam = (team: typeof allStars["teams"][number]) => {
+	const assignTopPlayerToTeam = (team: (typeof allStars)["teams"][number]) => {
 		const ind = allStars.remaining.findIndex(({ pid }) => healthyPids.has(pid));
 		team.push(allStars.remaining[ind]);
 		allStars.remaining.splice(ind, 1);
@@ -364,130 +364,134 @@ const create = async (conditions: Conditions) => {
 			Infinity,
 		]);
 
-		const dunkers = orderBy(
-			activePlayers.filter(p => p.injury.gamesRemaining === 0),
-			[
-				p => (p.pid === prevWinnerDunk ? 1 : 0),
-				p => {
-					const ratings = p.ratings.at(-1) as PlayerRatings;
-					return ratings.dnk + 2 * ratings.jmp;
-				},
-			],
-			["desc", "desc"],
-		)
-			.slice(0, g.get("numPlayersDunk"))
-			.map(p => ({
+		if (g.get("allStarDunk")) {
+			const dunkers = orderBy(
+				activePlayers.filter(p => p.injury.gamesRemaining === 0),
+				[
+					p => (p.pid === prevWinnerDunk ? 1 : 0),
+					p => {
+						const ratings = p.ratings.at(-1) as PlayerRatings;
+						return ratings.dnk + 2 * ratings.jmp;
+					},
+				],
+				["desc", "desc"],
+			)
+				.slice(0, g.get("numPlayersDunk"))
+				.map(p => ({
+					pid: p.pid,
+					tid: p.tid,
+					name: `${p.firstName} ${p.lastName}`,
+				}));
+
+			if (dunkers.length >= MIN_PLAYERS_CONTEST) {
+				random.shuffle(dunkers);
+
+				const controlling = [];
+				for (let i = 0; i < dunkers.length; i++) {
+					if (dunkers[i].tid === g.get("userTid")) {
+						controlling.push(i);
+					}
+				}
+
+				const orderedByHeight = orderBy(
+					activePlayers,
+					p => p.ratings.at(-1)!.hgt,
+					"desc",
+				);
+
+				// Don't always take the tallest/shortest, add some randomness
+				const numToPickFrom = Math.min(20, orderedByHeight.length);
+				const indexes = range(numToPickFrom);
+				random.shuffle(indexes);
+
+				// -1 is because we want to turn .at(0) into .at(-1)
+				const shortIndexes = [-indexes[0] - 1, -indexes[1] - 1];
+
+				random.shuffle(indexes);
+				const longIndexes = [indexes[0], indexes[1]];
+
+				allStars.dunk = {
+					players: dunkers,
+					rounds: [
+						// First round
+						{
+							dunkers: range(dunkers.length),
+							dunks: [],
+						},
+					],
+					controlling,
+					pidsShort: [
+						orderedByHeight.at(shortIndexes[0])!.pid,
+						orderedByHeight.at(shortIndexes[1])!.pid,
+					],
+					pidsTall: [
+						orderedByHeight[longIndexes[0]].pid,
+						orderedByHeight[longIndexes[1]].pid,
+					],
+				};
+			}
+		}
+
+		if (g.get("allStarThree")) {
+			// Half qualify by taking a lot of threes. Half qualify by ratings.
+			const numStats = Math.floor(g.get("numPlayersThree") / 2);
+			const numRatings = g.get("numPlayersThree") - numStats;
+
+			const shootersStats = orderBy(
+				activePlayers.filter(p => p.injury.gamesRemaining === 0),
+				[
+					p => {
+						const stats = p.stats.at(-1);
+						return stats.tp;
+					},
+					p => {
+						const ratings = p.ratings.at(-1) as PlayerRatings;
+						return ratings.tp;
+					},
+				],
+				["desc", "desc"],
+			).slice(0, numStats);
+
+			const shootersRatings = orderBy(
+				activePlayers.filter(
+					p => p.injury.gamesRemaining === 0 && !shootersStats.includes(p),
+				),
+				[
+					// Include last year's winner here too
+					p => (p.pid === prevWinnerThree ? 1 : 0),
+					p => {
+						const ratings = p.ratings.at(-1) as PlayerRatings;
+						return ratings.tp;
+					},
+				],
+				["desc", "desc"],
+			).slice(0, numRatings);
+
+			const shooters = [...shootersStats, ...shootersRatings].map(p => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,
 			}));
 
-		if (dunkers.length >= MIN_PLAYERS_CONTEST) {
-			random.shuffle(dunkers);
+			if (shooters.length >= MIN_PLAYERS_CONTEST) {
+				random.shuffle(shooters);
 
-			const controlling = [];
-			for (let i = 0; i < dunkers.length; i++) {
-				if (dunkers[i].tid === g.get("userTid")) {
-					controlling.push(i);
-				}
+				allStars.three = {
+					players: shooters,
+					rounds: [
+						// First round
+						{
+							indexes: range(shooters.length),
+							results: [
+								{
+									index: 0,
+									racks: [[]],
+								},
+							],
+						},
+					],
+				};
 			}
-
-			const orderedByHeight = orderBy(
-				activePlayers,
-				p => p.ratings.at(-1)!.hgt,
-				"desc",
-			);
-
-			// Don't always take the tallest/shortest, add some randomness
-			const numToPickFrom = Math.min(20, orderedByHeight.length);
-			const indexes = range(numToPickFrom);
-			random.shuffle(indexes);
-
-			// -1 is because we want to turn .at(0) into .at(-1)
-			const shortIndexes = [-indexes[0] - 1, -indexes[1] - 1];
-
-			random.shuffle(indexes);
-			const longIndexes = [indexes[0], indexes[1]];
-
-			allStars.dunk = {
-				players: dunkers,
-				rounds: [
-					// First round
-					{
-						dunkers: range(dunkers.length),
-						dunks: [],
-					},
-				],
-				controlling,
-				pidsShort: [
-					orderedByHeight.at(shortIndexes[0])!.pid,
-					orderedByHeight.at(shortIndexes[1])!.pid,
-				],
-				pidsTall: [
-					orderedByHeight[longIndexes[0]].pid,
-					orderedByHeight[longIndexes[1]].pid,
-				],
-			};
-		}
-
-		// Half qualify by taking a lot of threes. Half qualify by ratings.
-		const numStats = Math.floor(g.get("numPlayersThree") / 2);
-		const numRatings = g.get("numPlayersThree") - numStats;
-
-		const shootersStats = orderBy(
-			activePlayers.filter(p => p.injury.gamesRemaining === 0),
-			[
-				p => {
-					const stats = p.stats.at(-1);
-					return stats.tp;
-				},
-				p => {
-					const ratings = p.ratings.at(-1) as PlayerRatings;
-					return ratings.tp;
-				},
-			],
-			["desc", "desc"],
-		).slice(0, numStats);
-
-		const shootersRatings = orderBy(
-			activePlayers.filter(
-				p => p.injury.gamesRemaining === 0 && !shootersStats.includes(p),
-			),
-			[
-				// Include last year's winner here too
-				p => (p.pid === prevWinnerThree ? 1 : 0),
-				p => {
-					const ratings = p.ratings.at(-1) as PlayerRatings;
-					return ratings.tp;
-				},
-			],
-			["desc", "desc"],
-		).slice(0, numRatings);
-
-		const shooters = [...shootersStats, ...shootersRatings].map(p => ({
-			pid: p.pid,
-			tid: p.tid,
-			name: `${p.firstName} ${p.lastName}`,
-		}));
-
-		if (shooters.length >= MIN_PLAYERS_CONTEST) {
-			random.shuffle(shooters);
-
-			allStars.three = {
-				players: shooters,
-				rounds: [
-					// First round
-					{
-						indexes: range(shooters.length),
-						results: [
-							{
-								index: 0,
-								racks: [[]],
-							},
-						],
-					},
-				],
-			};
 		}
 	}
 

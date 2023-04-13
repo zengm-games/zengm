@@ -2068,6 +2068,12 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "All-Star",
+			key: "allStarDunk",
+			name: "Enable Dunk Contest",
+			type: "bool",
+		},
+		{
+			category: "All-Star",
 			key: "numPlayersDunk",
 			name: "# Players In Dunk Contest",
 			type: "int",
@@ -2076,6 +2082,12 @@ export const settings: Setting[] = (
 					throw new Error("Value must be greater than 2");
 				}
 			},
+		},
+		{
+			category: "All-Star",
+			key: "allStarThree",
+			name: "Enable 3pt Contest",
+			type: "bool",
 		},
 		{
 			category: "All-Star",

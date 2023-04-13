@@ -148,6 +148,8 @@ const keys = [
 	"gender",
 	"heightFactor",
 	"weightFactor",
+	"allStarDunk",
+	"allStarThree",
 ] as const;
 
 export type Settings = Pick<
@@ -325,6 +327,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			gender: g.get("gender"),
 			heightFactor: g.get("heightFactor"),
 			weightFactor: g.get("weightFactor"),
+			allStarDunk: g.get("allStarDunk"),
+			allStarThree: g.get("allStarThree"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

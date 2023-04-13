@@ -8,7 +8,7 @@ import { isSport } from "../../common";
 const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {
 		return {
-			value: "???",
+			value: "",
 			sortValue: undefined,
 		};
 	}
@@ -31,7 +31,7 @@ const PlayerTeam = ({
 	season: number;
 }) => {
 	if (!p) {
-		return "???";
+		return "";
 	}
 
 	return (
@@ -238,15 +238,26 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					</a>
 					{isSport("basketball") ? (
 						<>
-							{" "}
-							|{" "}
-							<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
-								Dunk Contest
-							</a>{" "}
-							|{" "}
-							<a href={helpers.leagueUrl(["all_star", "three", row.season])}>
-								Three-Point Contest
-							</a>
+							{row.dunk ? (
+								<>
+									{" "}
+									|{" "}
+									<a href={helpers.leagueUrl(["all_star", "dunk", row.season])}>
+										Dunk Contest
+									</a>
+								</>
+							) : null}
+							{row.three ? (
+								<>
+									{" "}
+									|{" "}
+									<a
+										href={helpers.leagueUrl(["all_star", "three", row.season])}
+									>
+										Three-Point Contest
+									</a>
+								</>
+							) : null}
 						</>
 					) : null}
 				</>,

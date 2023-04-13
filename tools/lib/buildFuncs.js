@@ -61,6 +61,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 
 						/^dark-select/,
 						/^bar-graph/,
+						/^watch-active/,
 						/^dashboard-top-link-other/,
 					],
 				},

@@ -224,11 +224,6 @@ a.god-mode.active {
 	background-color: darken($purple, 45) !important;
 }
 
-.watch-active,
-.watch-active:hover {
-	color: darken($green, 10);
-}
-
 @keyframes oscillate-bg {
 	0% {
 		background-color: darken($success, 20);

@@ -425,25 +425,33 @@ const BoxScore = ({
 				teams={boxScore.teams}
 			/>
 
-			{boxScore.teams.map(t => (
-				<Fragment key={t.abbrev}>
-					<h2>
-						{t.season !== undefined ? `${t.season} ` : null}
-						{t.region} {t.name}
-					</h2>
-					{["Batting", "Pitching"].map(title => (
-						<StatsTable
-							key={title}
-							Row={Row}
-							exhibition={boxScore.exhibition}
-							forceRowUpdate={forceRowUpdate}
-							title={title}
-							type={title.toLowerCase() as any}
-							t={t}
-						/>
-					))}
-				</Fragment>
-			))}
+			{boxScore.teams.map((t, i) => {
+				return (
+					<div
+						key={t.abbrev}
+						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
+						style={{
+							scrollMarginTop: 136,
+						}}
+					>
+						<h2>
+							{t.season !== undefined ? `${t.season} ` : null}
+							{t.region} {t.name}
+						</h2>
+						{["Batting", "Pitching"].map(title => (
+							<StatsTable
+								key={title}
+								Row={Row}
+								exhibition={boxScore.exhibition}
+								forceRowUpdate={forceRowUpdate}
+								title={title}
+								type={title.toLowerCase() as any}
+								t={t}
+							/>
+						))}
+					</div>
+				);
+			})}
 		</div>
 	);
 };

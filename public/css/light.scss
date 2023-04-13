@@ -730,10 +730,6 @@ tr.table-warning:hover > td {
 		position: sticky;
 		top: 51px; // 52px leaves a gap for some reason
 
-		// We only want these to apply on mobile, so easier to use these here rather than normal utility classes
-		padding: ($spacer * 0.25) 0;
-		background-color: $white;
-
 		// Puts it over sticky column headers
 		z-index: 1;
 	}

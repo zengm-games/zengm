@@ -224,9 +224,16 @@ const BoxScore = ({
 
 	return (
 		<>
-			{boxScore.teams.map((t: any) => {
+			{boxScore.teams.map((t: any, i: number) => {
 				return (
-					<div key={t.abbrev} className="mb-3">
+					<div
+						key={t.abbrev}
+						className="mb-3"
+						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
+						style={{
+							scrollMarginTop: 136,
+						}}
+					>
 						<h2>
 							{t.tid >= 0 ? (
 								<a

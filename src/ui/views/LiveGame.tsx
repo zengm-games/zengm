@@ -717,6 +717,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 		processToNextPause,
 	]);
 
+	const scrollTop = useRef<HTMLDivElement>(null);
+
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -730,37 +732,89 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			{boxScore.current.gid >= 0 ? (
 				<div className="live-game-affix-mobile mb-3 d-md-none">
-					<HeadlineScore boxScore={boxScore.current} small />
-					<div className="d-flex align-items-center">
-						<PlayPauseNext
-							className="me-2"
-							disabled={boxScore.current.gameOver}
-							fastForwardAlignRight
-							fastForwards={fastForwardMenuItems}
-							onPlay={handlePlay}
-							onPause={handlePause}
-							onNext={handleNextPlay}
-							paused={paused}
-							titlePlay="Resume Simulation"
-							titlePause="Pause Simulation"
-							titleNext="Show Next Play"
-						/>
-						<input
-							type="range"
-							className="form-range flex-grow-1"
-							disabled={boxScore.current.gameOver}
-							min="1"
-							max="33"
-							step="1"
-							value={speed}
-							onChange={handleSpeedChange}
-							title="Speed"
-						/>
+					<div className="bg-white pt-2">
+						<HeadlineScore boxScore={boxScore.current} small />
+						<div className="d-flex align-items-center">
+							<PlayPauseNext
+								className="me-2"
+								disabled={boxScore.current.gameOver}
+								fastForwardAlignRight
+								fastForwards={fastForwardMenuItems}
+								onPlay={handlePlay}
+								onPause={handlePause}
+								onNext={handleNextPlay}
+								paused={paused}
+								titlePlay="Resume Simulation"
+								titlePause="Pause Simulation"
+								titleNext="Show Next Play"
+							/>
+							<input
+								type="range"
+								className="form-range flex-grow-1"
+								disabled={boxScore.current.gameOver}
+								min="1"
+								max="33"
+								step="1"
+								value={speed}
+								onChange={handleSpeedChange}
+								title="Speed"
+							/>
+						</div>
+					</div>
+					<div className="d-flex">
+						<div className="ms-auto btn-group">
+							<button
+								className="btn btn-light-bordered"
+								onClick={() => {
+									scrollTop.current?.scrollIntoView();
+								}}
+							>
+								Top
+							</button>
+							{!isSport("football") ? (
+								<>
+									<button
+										className="btn btn-light-bordered"
+										onClick={() => {
+											document
+												.getElementById("scroll-team-1")
+												?.scrollIntoView();
+										}}
+									>
+										{boxScore.current.teams[0].abbrev}
+									</button>
+									<button
+										className="btn btn-light-bordered"
+										onClick={() => {
+											document
+												.getElementById("scroll-team-2")
+												?.scrollIntoView();
+										}}
+									>
+										{boxScore.current.teams[1].abbrev}
+									</button>
+								</>
+							) : null}
+							<button
+								className="btn btn-light-bordered"
+								onClick={() => {
+									playByPlayDiv.current?.scrollIntoView();
+								}}
+							>
+								Plays
+							</button>
+						</div>
 					</div>
 				</div>
 			) : null}
 
-			<div className="row">
+			<div
+				className="row"
+				ref={scrollTop}
+				style={{
+					scrollMarginTop: 174,
+				}}
+			>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper
@@ -805,6 +859,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 							className="live-game-playbyplay"
 							ref={c => {
 								playByPlayDiv.current = c;
+							}}
+							style={{
+								scrollMarginTop: 174,
 							}}
 						/>
 					</div>

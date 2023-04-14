@@ -747,6 +747,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 								titlePlay="Resume Simulation"
 								titlePause="Pause Simulation"
 								titleNext="Show Next Play"
+								// Since we have two PlayPauseNexts rendered, ignore shortcuts on one
+								ignoreKeyboardShortcuts
 							/>
 							<input
 								type="range"

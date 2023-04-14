@@ -14,6 +14,7 @@ const PlayPauseNext = ({
 	titlePlay = "Play",
 	titlePause = "Pause",
 	titleNext = "Next",
+	ignoreKeyboardShortcuts,
 }: {
 	className?: string;
 	disabled?: boolean;
@@ -30,43 +31,54 @@ const PlayPauseNext = ({
 	titlePlay?: string;
 	titlePause?: string;
 	titleNext?: string;
+	ignoreKeyboardShortcuts?: boolean;
 }) => {
 	useEffect(() => {
-		const handleKeydown = (event: KeyboardEvent) => {
-			// alt + letter
-			if (
-				!disabled &&
-				event.altKey &&
-				!event.ctrlKey &&
-				!event.shiftKey &&
-				!event.isComposing &&
-				!event.metaKey
-			) {
-				if (paused) {
-					const option = fastForwards?.find(
-						option2 => `Key${option2.key}` === event.code,
-					);
+		if (!ignoreKeyboardShortcuts) {
+			const handleKeydown = (event: KeyboardEvent) => {
+				// alt + letter
+				if (
+					!disabled &&
+					event.altKey &&
+					!event.ctrlKey &&
+					!event.shiftKey &&
+					!event.isComposing &&
+					!event.metaKey
+				) {
+					if (paused) {
+						const option = fastForwards?.find(
+							option2 => `Key${option2.key}` === event.code,
+						);
 
-					if (option) {
-						option.onClick();
-					} else if (event.code === "KeyB") {
-						onPlay();
-					} else if (event.code === "KeyN") {
-						onNext();
-					}
-				} else {
-					if (event.code === "KeyB") {
-						onPause();
+						if (option) {
+							option.onClick();
+						} else if (event.code === "KeyB") {
+							onPlay();
+						} else if (event.code === "KeyN") {
+							onNext();
+						}
+					} else {
+						if (event.code === "KeyB") {
+							onPause();
+						}
 					}
 				}
-			}
-		};
+			};
 
-		document.addEventListener("keydown", handleKeydown);
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	}, [fastForwards, disabled, onPause, onNext, onPlay, paused]);
+			document.addEventListener("keydown", handleKeydown);
+			return () => {
+				document.removeEventListener("keydown", handleKeydown);
+			};
+		}
+	}, [
+		fastForwards,
+		disabled,
+		ignoreKeyboardShortcuts,
+		onPause,
+		onNext,
+		onPlay,
+		paused,
+	]);
 
 	return (
 		<div className={classNames("btn-group", className)}>

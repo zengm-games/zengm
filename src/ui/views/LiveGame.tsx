@@ -80,7 +80,11 @@ const updatePhaseAndLeagueTopBar = () => {
 };
 
 const getSeconds = (time: string) => {
-	const [min, sec] = time.split(":").map(x => parseInt(x));
+	const parts = time.split(":").map(x => parseInt(x));
+	if (parts.length < 2) {
+		return 0;
+	}
+	const [min, sec] = parts;
 	return min * 60 + sec;
 };
 

@@ -26,8 +26,35 @@ const stringifyClusters = (clusters: Clusters) => {
 	return JSON.stringify(clusters2);
 };
 
-const calcDistance = (a: [number, number], b: [number, number]) =>
-	(a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
+/*const calcDistance = (a: [number, number], b: [number, number]) =>
+	(a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;*/
+
+/*// Haversine distance http://www.movable-type.co.uk/scripts/gis-faq-5.1.html
+const calcDistance = (x: [number, number], y: [number, number]) => {
+	const lat1 = x[0] * Math.PI / 180;
+	const lon1 = x[1] * Math.PI / 180;
+	const lat2 = y[0] * Math.PI / 180;
+	const lon2 = y[1] * Math.PI / 180;
+
+	const dlat = lat2 - lat1;
+	const dlon = lon2 - lon1;
+	const a = Math.sin(dlat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) ** 2;
+	const c = Math.asin(Math.min(1, Math.sqrt(a)));
+
+	// Don't need to scale for the size of the earth because we're always on earth
+	return 2 * c * 6371;
+}*/
+
+const calcDistance = (a: [number, number], b: [number, number]) => {
+	// Factor makes it so 60 degrees (on original scale) is now 0, so that's where the discontinuity is. Not perfect for all situations, but mostly works to put Asian/Australian teams in the western conference
+	const factor = 300;
+	const lat1 = a[0];
+	const lon1 = (a[1] + factor) % 360;
+	const lat2 = b[0];
+	const lon2 = (b[1] + factor) % 360;
+
+	return (lat1 - lat2) ** 2 + (lon1 - lon2) ** 2;
+};
 
 // This is normal k-means clustering, just with some very crudely imposed static cluster sizes. Still seems to work pretty well, assuing `points` is fairly small and `NUM_TRIES` is fairly large.
 const kmeansFixedSize = (
@@ -293,8 +320,8 @@ const getAllRealTeamInfos = async () => {
 	const regionsSeen = new Set();
 
 	// For any team with many duplicates removed, the remaining one should have a pretty high weight;
-	const infosByAbbrev: Record<string, typeof teamInfos[number]> = {};
-	const infosByRegion: Record<string, typeof teamInfos[number]> = {};
+	const infosByAbbrev: Record<string, (typeof teamInfos)[number]> = {};
+	const infosByRegion: Record<string, (typeof teamInfos)[number]> = {};
 
 	return teamInfos.filter(t => {
 		if (abbrevsSeen.has(t.abbrev) || regionsSeen.has(t.region)) {

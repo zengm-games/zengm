@@ -1,7 +1,3 @@
-longutide issues with clustering teams
-- currently the clustering is done based on latitude/longitude, with east as positive and west as negative for longitude. so places like tokyo are "closer" to the east coast of the US than the west coast. weird implications:
-  - tokyo is counted as furthest from the west coast and closest to the east coast, which impacts the generation of clusters, and the assigning of divisions with names like "atlantic", "pacific", etc. - asian cities wind up in atlantic
-
 in football (and to a lesser extent, hockey and baseball) it's hard to watch a live sim on mobile because it keeps getting bumped off the screen as rows are added to the box score or scoring summary
 
 random debuts and ratings based on draft position together don't work

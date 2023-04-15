@@ -31,7 +31,9 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 					className,
 				)}
 				onClick={handleClick}
-				title="Remove from Watch List"
+				title={
+					numWatchColors > 1 ? "Cycle Watch List" : "Remove from Watch List"
+				}
 			/>
 		);
 	}

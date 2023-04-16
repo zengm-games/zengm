@@ -131,6 +131,7 @@ const Input = ({
 						disabled={selectValue !== "custom"}
 						onChange={onChange}
 						value={parsed[1]}
+						inputMode="numeric"
 					/>
 				</div>
 			);
@@ -146,7 +147,21 @@ const Input = ({
 			);
 		}
 	} else {
-		inputElement = <input type="text" {...commonProps} />;
+		const numericTypes = [
+			"float",
+			"float1000",
+			"floatOrNull",
+			"int",
+			"intOrNull",
+		];
+
+		inputElement = (
+			<input
+				type="text"
+				{...commonProps}
+				inputMode={numericTypes.includes(type) ? "numeric" : undefined}
+			/>
+		);
 	}
 
 	if (decoration === "currency") {
@@ -442,6 +457,7 @@ const SettingsFormOptions = ({
 															type="text"
 															onChange={handleChange(key, type)}
 															value={state[key]}
+															inputMode="numeric"
 														/>
 														<div className="input-group-text">Games</div>
 													</div>

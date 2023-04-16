@@ -1130,6 +1130,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										onChange={event => {
 											setStartingSeason(event.target.value);
 										}}
+										inputMode="numeric"
 									/>
 								</div>
 							) : null}

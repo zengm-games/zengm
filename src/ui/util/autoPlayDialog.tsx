@@ -69,6 +69,7 @@ const Confirm = confirmable(
 										setSeason(event.target.value);
 									}}
 									value={season}
+									inputMode="numeric"
 								/>
 							</div>
 							<div className="col">

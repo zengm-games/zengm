@@ -52,9 +52,9 @@ export type Basketball = {
 				height: number;
 				college: string;
 				draftYear: number;
-				draftRound: number;
-				draftPick: number;
-				draftAbbrev: string;
+				draftRound?: number;
+				draftPick?: number;
+				draftAbbrev?: string;
 		  }
 		| undefined
 	>;

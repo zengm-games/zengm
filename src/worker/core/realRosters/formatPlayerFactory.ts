@@ -7,7 +7,7 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types";
-import { LATEST_SEASON, LATEST_SEASON_WITH_DRAFT_POSITIONS } from "./getLeague";
+import { LATEST_SEASON } from "./getLeague";
 import getOnlyRatings from "./getOnlyRatings";
 import type { Basketball, Ratings } from "./loadData.basketball";
 import nerfDraftProspect from "./nerfDraftProspect";
@@ -328,11 +328,7 @@ const formatPlayerFactory = async (
 				nerfDraftProspect(currentRatings);
 			}
 
-			if (
-				options.type === "real" &&
-				options.realDraftRatings === "draft" &&
-				draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
-			) {
+			if (options.type === "real" && options.realDraftRatings === "draft") {
 				const age = currentRatings.season! - bornYear;
 				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
 			}

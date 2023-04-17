@@ -35,7 +35,6 @@ import getInjury from "./getInjury";
 
 export const MIN_SEASON = 1947;
 export const LATEST_SEASON = 2023;
-export const LATEST_SEASON_WITH_DRAFT_POSITIONS = 2021;
 export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 
@@ -314,16 +313,32 @@ const getLeague = async (options: GetLeagueOptions) => {
 				} else {
 					// Draft prospect
 					p.tid = PLAYER.UNDRAFTED;
-
 					const rookieRatings = basketball.ratings.find(
 						row => row.slug === p.srID,
 					);
 					if (!rookieRatings) {
 						throw new Error(`No ratings found for "${p.srID}"`);
 					}
-					const ratings = getOnlyRatings(rookieRatings);
-					nerfDraftProspect(ratings);
-					p.ratings = [ratings];
+					const currentRatings = getOnlyRatings(rookieRatings);
+					nerfDraftProspect(currentRatings);
+					p.ratings = [currentRatings];
+					const bio = basketball.bios[p.srID];
+					if (
+						options.type === "real" &&
+						options.realDraftRatings === "draft" &&
+						bio
+					) {
+						const age = p.draft.year + 1 - p.born.year;
+						setDraftProspectRatingsBasedOnDraftPosition(
+							currentRatings,
+							age,
+							bio,
+						);
+					}
+
+					// Not sure why this is needed here but not above for active players, or why this needs to be below the setDraftProspectRatingsBasedOnDraftPosition call
+					p.draft.round = -1;
+					p.draft.year = -1;
 				}
 			}
 		}
@@ -796,11 +811,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				const currentRatings = p.ratings[0];
 				currentRatings.season = options.season;
 				nerfDraftProspect(currentRatings);
-				if (
-					options.type === "real" &&
-					options.realDraftRatings === "draft" &&
-					p.draft.year <= LATEST_SEASON_WITH_DRAFT_POSITIONS
-				) {
+				if (options.type === "real" && options.realDraftRatings === "draft") {
 					const age = currentRatings.season! - p.born.year;
 					setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
 						draftRound: p.draft.round,

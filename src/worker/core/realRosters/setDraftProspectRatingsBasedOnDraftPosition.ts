@@ -22,66 +22,11 @@ for (let i = 0; i < N; i++) {
 console.log(`const VALUE_BY_PICK = ${JSON.stringify(sums.map(sum => parseFloat(sum.toFixed(1))).slice(0, 60))};\nconst VALUE_UNDRAFTED = ${sums[63].toFixed(1)};`);
 */
 const VALUE_BY_PICK = [
-	64.3,
-	61.7,
-	60.1,
-	58.9,
-	58.1,
-	57.3,
-	56.7,
-	56.1,
-	55.5,
-	55.1,
-	54.7,
-	54.3,
-	53.9,
-	53.5,
-	53.2,
-	52.9,
-	52.6,
-	52.3,
-	52,
-	51.7,
-	51.5,
-	51.2,
-	51,
-	50.7,
-	50.5,
-	50.3,
-	50,
-	49.8,
-	49.6,
-	49.3,
-	49.1,
-	48.9,
-	48.6,
-	48.4,
-	48.2,
-	48,
-	47.8,
-	47.5,
-	47.3,
-	47.1,
-	46.8,
-	46.6,
-	46.3,
-	46.1,
-	45.8,
-	45.5,
-	45.2,
-	44.9,
-	44.6,
-	44.2,
-	43.9,
-	43.5,
-	43.1,
-	42.6,
-	42.2,
-	41.7,
-	41.2,
-	40.7,
-	40.2,
-	39.6,
+	64.3, 61.7, 60.1, 58.9, 58.1, 57.3, 56.7, 56.1, 55.5, 55.1, 54.7, 54.3, 53.9,
+	53.5, 53.2, 52.9, 52.6, 52.3, 52, 51.7, 51.5, 51.2, 51, 50.7, 50.5, 50.3, 50,
+	49.8, 49.6, 49.3, 49.1, 48.9, 48.6, 48.4, 48.2, 48, 47.8, 47.5, 47.3, 47.1,
+	46.8, 46.6, 46.3, 46.1, 45.8, 45.5, 45.2, 44.9, 44.6, 44.2, 43.9, 43.5, 43.1,
+	42.6, 42.2, 41.7, 41.2, 40.7, 40.2, 39.6,
 ];
 const VALUE_UNDRAFTED = 36.6;
 
@@ -95,12 +40,17 @@ const getValue = (ratings: Record<RatingKey, number>, age: number) => {
 const setDraftProspectRatingsBasedOnDraftPosition = (
 	ratings: Record<RatingKey, number>,
 	age: number,
-	bio: { draftRound: number; draftPick: number },
+	bio: { draftRound?: number; draftPick?: number },
 ) => {
 	// In theory this should change with draft class, but doesn't seem to matter too much
 	const numTeams = 30;
 
 	let index;
+
+	if (bio.draftRound === undefined || bio.draftPick === undefined) {
+		// Draft must not have happened yet
+		return;
+	}
 
 	if (bio.draftRound < 1 || bio.draftPick < 1) {
 		index = Infinity;

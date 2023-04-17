@@ -13,6 +13,7 @@ import {
 import { getPlayerProfileStats } from "../../views/player";
 import player from ".";
 import getLeaderRequirements from "../season/getLeaderRequirements";
+import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache";
 
 const max = (
 	rows: any[],
@@ -63,7 +64,9 @@ const getSeasonLeaders = async (season: number) => {
 			return local.seasonLeaders;
 		}
 	} else {
-		const leadersCache = await idb.league.get("seasonLeaders", season);
+		const leadersCache =
+			(await idb.cache.seasonLeaders.get(season)) ??
+			(await idb.league.get("seasonLeaders", season));
 		if (leadersCache) {
 			return leadersCache;
 		}
@@ -194,7 +197,12 @@ const getSeasonLeaders = async (season: number) => {
 		local.seasonLeaders = leadersCache;
 	} else {
 		// put rather than add in case two players are opened at once
-		await idb.league.put("seasonLeaders", leadersCache);
+		if (g.get("season") - NUM_SEASON_LEADERS_CACHE <= leadersCache.season) {
+			// Add to cache when appropriate
+			await idb.cache.seasonLeaders.put(leadersCache);
+		} else {
+			await idb.league.put("seasonLeaders", leadersCache);
+		}
 	}
 
 	return leadersCache;

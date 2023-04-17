@@ -33,11 +33,14 @@ import type {
 	Team,
 	Trade,
 	EventBBGMWithoutKey,
+	SeasonLeaders,
 } from "../../common/types";
 import type { IDBPTransaction } from "idb";
 import type { LeagueDB } from "./connectLeague";
 import getAll from "./getAll";
 import { league } from "../core";
+
+export const NUM_SEASON_LEADERS_CACHE = 50;
 
 type Status = "empty" | "error" | "filling" | "full";
 
@@ -59,6 +62,7 @@ export type Store =
 	| "releasedPlayers"
 	| "schedule"
 	| "scheduledEvents"
+	| "seasonLeaders"
 	| "teamSeasons"
 	| "teamStats"
 	| "teams"
@@ -92,6 +96,7 @@ export const STORES: Store[] = [
 	"releasedPlayers",
 	"schedule",
 	"scheduledEvents",
+	"seasonLeaders",
 	"teamSeasons",
 	"teamStats",
 	"teams",
@@ -265,6 +270,8 @@ class Cache {
 	schedule: StoreAPI<ScheduleGameWithoutKey, ScheduleGame, number>;
 
 	scheduledEvents: StoreAPI<ScheduledEventWithoutKey, ScheduledEvent, number>;
+
+	seasonLeaders: StoreAPI<SeasonLeaders, SeasonLeaders, number>;
 
 	teamSeasons: StoreAPI<TeamSeasonWithoutKey, TeamSeason, number>;
 
@@ -444,6 +451,25 @@ class Cache {
 						.getAll(this._season);
 				},
 			},
+			seasonLeaders: {
+				pk: "season",
+				pkType: "number",
+				autoIncrement: false,
+				// Get enough for any non-retired player
+				getData: (tx: IDBPTransaction<LeagueDB>) => {
+					if (this._season === undefined) {
+						throw new Error("this._season is undefined");
+					}
+					return tx
+						.objectStore("seasonLeaders")
+						.getAll(
+							IDBKeyRange.bound(
+								this._season - NUM_SEASON_LEADERS_CACHE,
+								Infinity,
+							),
+						);
+				},
+			},
 			teamSeasons: {
 				pk: "rid",
 				pkType: "number",
@@ -534,6 +560,7 @@ class Cache {
 		this.releasedPlayers = new StoreAPI(this, "releasedPlayers");
 		this.schedule = new StoreAPI(this, "schedule");
 		this.scheduledEvents = new StoreAPI(this, "scheduledEvents");
+		this.seasonLeaders = new StoreAPI(this, "seasonLeaders");
 		this.teamSeasons = new StoreAPI(this, "teamSeasons");
 		this.teamStats = new StoreAPI(this, "teamStats");
 		this.teams = new StoreAPI(this, "teams");

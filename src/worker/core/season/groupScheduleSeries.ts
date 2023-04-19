@@ -57,16 +57,18 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 	}[] = [];
 
 	const numGamesTotal = tids.length;
-	const tidsFinal: [number, number][] = [];
+	const dailyMatchups: [number, number][][] = [];
 	const seriesKeys = helpers.keys(seriesGroupedByTeams);
+	let numGamesScheduled = 0;
 
-	while (tidsFinal.length < numGamesTotal) {
+	while (numGamesScheduled < numGamesTotal) {
 		// Schedule games from ongoingSeries
-		console.log(ongoingSeries.length);
+		const tidsToday: [number, number][] = [];
+		dailyMatchups.push(tidsToday);
 		for (const series of ongoingSeries) {
-			tidsFinal.push([...series.matchup]);
-
+			tidsToday.push([...series.matchup]);
 			series.numGamesLeft -= 1;
+			numGamesScheduled += 1;
 		}
 
 		// Remove any series that are over
@@ -108,7 +110,39 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		}
 	}
 
-	return tidsFinal;
+	// Start on 2nd to last day, see what we can move to the last day. Keep repeating, going further back each time. This is to make the end of season schedule less "jagged" (fewer teams that end the season early)
+	for (
+		let startIndex = dailyMatchups.length - 2;
+		startIndex >= 0;
+		startIndex--
+	) {
+		for (let i = startIndex; i < dailyMatchups.length - 1; i++) {
+			const today = dailyMatchups[i];
+			const tomorrow = dailyMatchups[i + 1];
+
+			const tidsTomorrow = new Set(tomorrow.flat());
+
+			const toRemove = [];
+			for (let k = 0; k < today.length; k++) {
+				const matchup = today[k];
+				if (!tidsTomorrow.has(matchup[0]) && !tidsTomorrow.has(matchup[1])) {
+					tomorrow.push(matchup);
+					toRemove.push(k);
+				}
+			}
+
+			// Remove from end, so indexes don't change
+			toRemove.reverse();
+			for (const index of toRemove) {
+				today.splice(index, 1);
+			}
+		}
+	}
+
+	// Some jaggedness remains, so just reverse it and put it at the beginning of the season. Not ideal, but it's less weird there.
+	dailyMatchups.reverse();
+
+	return dailyMatchups.flat();
 };
 
 export default groupScheduleSeries;

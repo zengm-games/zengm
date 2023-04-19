@@ -179,6 +179,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	brotherRate: 0.02,
 	forceRetireAge: 0,
 	minRetireAge: 26,
+	groupScheduleSeries: false,
 
 	salaryCapType: "soft",
 
@@ -452,6 +453,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContractPercent: 20,
 				draftPickAutoContractRounds: 4,
 				draftPickAutoContract: false,
+				groupScheduleSeries: true,
 		  }
 		: {};
 

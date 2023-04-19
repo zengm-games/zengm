@@ -496,6 +496,7 @@ export type GameAttributesLeague = {
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
+	groupScheduleSeries: boolean;
 	heightFactor: number;
 	hideDisabledTeams: boolean;
 	hofFactor: number;

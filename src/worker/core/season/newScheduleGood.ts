@@ -4,7 +4,6 @@ import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type { Div, GameAttributesLeague } from "../../../common/types";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";
-import { isSport } from "../../../common";
 import groupScheduleSeries from "./groupScheduleSeries";
 
 type MyTeam = {
@@ -752,7 +751,7 @@ const newSchedule = (
 		throw new Error("newScheduleGood double fail");
 	}
 
-	if (isSport("baseball") || true) {
+	if (g.get("groupScheduleSeries")) {
 		// Group schedule into series
 		tids = groupScheduleSeries(tids);
 	} else {

@@ -343,6 +343,10 @@ export const getDefaultSettings = () => {
 			"numWatchColors",
 		),
 		giveMeWorstRoster: false,
+		groupScheduleSeries: unwrapGameAttribute(
+			defaultGameAttributes,
+			"groupScheduleSeries",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

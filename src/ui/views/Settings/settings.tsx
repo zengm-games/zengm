@@ -298,7 +298,7 @@ export const settings: Setting[] = (
 			type: "int",
 			validator: (value, output) => {
 				if (!isSport("football") && value < output.numPlayersOnCourt) {
-					throw new Error("Value cannot be less than # Players On Court");
+					throw new Error(`Value cannot be less than # Players On ${COURT}`);
 				}
 				if (isSport("hockey") && value < 12) {
 					// Game sim crashes with fewer than 12 players currently. Otherwise, should be no limit.
@@ -1218,6 +1218,26 @@ export const settings: Setting[] = (
 			},
 		},
 		{
+			category: "Schedule",
+			key: "groupScheduleSeries",
+			name: "Group Games Into Series",
+			type: "bool",
+			descriptionLong: (
+				<>
+					<p>
+						When enabled, matchups between the same teams will be grouped into 3
+						or 4 game series, similar to a MLB schedule. It's really only
+						noticeable when the same teams play multiple games against each
+						other on the same home {COURT}, such as in a 162 game baseball
+						season with 30 teams.
+					</p>
+					<p>
+						This does not change the games scheduled, it only reorders them.
+					</p>
+				</>
+			),
+		},
+		{
 			category: "Playoffs",
 			key: "playoffsByConf",
 			name: "Split By Conference",
@@ -2078,7 +2098,7 @@ export const settings: Setting[] = (
 		{
 			category: "Game Simulation",
 			key: "numPlayersOnCourt",
-			name: "# Players On Court",
+			name: `# Players On ${COURT}`,
 			godModeRequired: "always",
 			type: "int",
 			description: "By default BBGM is 5-on-5, but you can change that here",

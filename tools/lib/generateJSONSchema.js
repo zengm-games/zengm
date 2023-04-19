@@ -821,6 +821,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							gracePeriodEnd: {
 								type: "integer",
 							},
+							groupScheduleSeries: {
+								type: "boolean",
+							},
 							heightFactor: {
 								type: "number",
 							},

@@ -10,39 +10,39 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 	};
 
 	// Group all games between same teams with same home/away
-	const matchupsGroupedByTeams: Record<MatchupKey, [number, number][]> = {};
+	const matchupsGroupedByTeams: Record<MatchupKey, number> = {};
 	for (const matchup of tids) {
 		const key = matchupToKey(matchup);
 		if (!matchupsGroupedByTeams[key]) {
-			matchupsGroupedByTeams[key] = [];
+			matchupsGroupedByTeams[key] = 0;
 		}
-		matchupsGroupedByTeams[key].push(matchup);
+		matchupsGroupedByTeams[key] += 1;
 	}
 
 	// Divide into groups of 3 or 4
 	const seriesGroupedByTeams: Record<MatchupKey, (1 | 2 | 3 | 4)[]> = {};
 	for (const key of helpers.keys(matchupsGroupedByTeams)) {
-		const matchups = matchupsGroupedByTeams[key];
+		let numGamesLeft = matchupsGroupedByTeams[key];
 		seriesGroupedByTeams[key] = [];
 
 		// Take series of 3 or 4 as long as possible
-		while (matchups.length > 0) {
+		while (numGamesLeft > 0) {
 			let targetLength: 1 | 2 | 3 | 4;
-			if (matchups.length === 1) {
+			if (numGamesLeft === 1) {
 				targetLength = 1;
-			} else if (matchups.length === 2) {
+			} else if (numGamesLeft === 2) {
 				targetLength = 2;
 			} else if (
-				matchups.length === 3 ||
-				matchups.length === 6 ||
-				matchups.length === 9
+				numGamesLeft === 3 ||
+				numGamesLeft === 6 ||
+				numGamesLeft === 9
 			) {
 				targetLength = 3;
 			} else {
 				targetLength = 4;
 			}
 
-			matchups.splice(0, targetLength);
+			numGamesLeft -= targetLength;
 			seriesGroupedByTeams[key].push(targetLength);
 		}
 	}

@@ -5,15 +5,14 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 	const matchupToKey = (matchup: [number, number]) =>
 		`${matchup[0]}-${matchup[1]}` as const;
 	type MatchupKey = ReturnType<typeof matchupToKey>;
-	const keyToMatchup = (key: MatchupKey) => {
-		const parts = key.split("-");
-		return [parseInt(parts[0]), parseInt(parts[1])] as const;
-	};
+
+	const matchupsByKey: Record<MatchupKey, [number, number]> = {};
 
 	// Group all games between same teams with same home/away
 	const matchupsGroupedByTeams: Record<MatchupKey, number> = {};
 	for (const matchup of tids) {
 		const key = matchupToKey(matchup);
+		matchupsByKey[key] = matchup;
 		if (!matchupsGroupedByTeams[key]) {
 			matchupsGroupedByTeams[key] = 0;
 		}
@@ -98,7 +97,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 				continue;
 			}
 
-			const matchup = keyToMatchup(key);
+			const matchup = matchupsByKey[key];
 
 			if (tidsForTomorrow.has(matchup[0]) || tidsForTomorrow.has(matchup[1])) {
 				continue;

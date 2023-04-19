@@ -1,3 +1,4 @@
+import orderBy from "lodash-es/orderBy";
 import { helpers, random } from "../../util";
 
 const groupScheduleSeries = (tids: [number, number][]) => {
@@ -58,7 +59,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 
 	const numGamesTotal = tids.length;
 	const dailyMatchups: [number, number][][] = [];
-	const seriesKeys = helpers.keys(seriesGroupedByTeams);
+	let seriesKeys = helpers.keys(seriesGroupedByTeams);
 	let numGamesScheduled = 0;
 
 	while (numGamesScheduled < numGamesTotal) {
@@ -83,6 +84,13 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 
 		// Shuffle each day so it doesn't keep picking the same team first
 		random.shuffle(seriesKeys);
+
+		// Order by number of series reamining, otherwise it tends to have some bunched series against the same team at the end of the season
+		seriesKeys = orderBy(
+			seriesKeys,
+			key => seriesGroupedByTeams[key].length,
+			"desc",
+		);
 
 		for (const key of seriesKeys) {
 			const seriesAvailable = seriesGroupedByTeams[key];

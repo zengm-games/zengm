@@ -751,7 +751,8 @@ const newSchedule = (
 		throw new Error("newScheduleGood double fail");
 	}
 
-	if (g.get("groupScheduleSeries")) {
+	// Extra check is for unit tests
+	if (Object.hasOwn(g, "groupScheduleSeries") && g.get("groupScheduleSeries")) {
 		// Group schedule into series
 		tids = groupScheduleSeries(tids);
 	} else {

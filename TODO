@@ -1,3 +1,19 @@
+group baseball games into series
+- add setting
+- try building up schedule more incrementally, to allow overlapping series if that would help
+  - split into series same as before (but maybe store integers representing length, rahter than the matchup arrays)
+  - then randomly pick some to start
+  - take a day off. any series that end, discard
+  - next day - schedule games from the ongoing series
+  - loop over the unstarted series and see if any are among teams that are not in an ongoing series. if so, start them
+  - continue until done
+- works, but results in 30% longer season
+  - 90 -> 120 for basketball
+  - 175 -> 230 for baseball
+  - should this result in 30% longer injuries?
+    - not in playoffs
+    - maybe a bit shorter than 30%, because they could overflow to the playoffs
+
 in football (and to a lesser extent, hockey and baseball) it's hard to watch a live sim on mobile because it keeps getting bumped off the screen as rows are added to the box score or scoring summary
 
 schedule failing to generate in large league https://discord.com/channels/@me/994804438919295057/1087152130638483526
@@ -253,6 +269,7 @@ frivolities
   - biggest upsets https://old.reddit.com/r/BasketballGM/comments/10088fu/monthly_suggestions_thread/j415bre/
 - best dunk (scan dunk contest for highest difficulty dunnk completed, and show actual score and probability too)
 - similar to roster continuity, one showing home grown percentage of roster https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/iz2d3xs/
+- longest win/loss streaks
 
 highlight your team when viewing other team's schedule https://discord.com/channels/290013534023057409/331882115119448065/976114143700586537
 

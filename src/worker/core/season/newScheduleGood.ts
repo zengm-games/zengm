@@ -4,6 +4,8 @@ import { groupByUnique } from "../../../common/groupBy";
 import orderBy from "lodash-es/orderBy";
 import type { Div, GameAttributesLeague } from "../../../common/types";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";
+import { isSport } from "../../../common";
+import groupScheduleSeries from "./groupScheduleSeries";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -750,39 +752,44 @@ const newSchedule = (
 		throw new Error("newScheduleGood double fail");
 	}
 
-	// Order the schedule so that it takes fewer days to play
-	random.shuffle(tids);
-	const days: [number, number][][] = [[]];
-	const tidsInDays: number[][] = [[]];
-	let jMax = 0;
+	if (isSport("baseball") || true) {
+		// Group schedule into series
+		tids = groupScheduleSeries(tids);
+	} else {
+		// Order the schedule so that it takes fewer days to play
+		random.shuffle(tids);
+		const days: [number, number][][] = [[]];
+		const tidsInDays: number[][] = [[]];
+		let jMax = 0;
 
-	for (let i = 0; i < tids.length; i++) {
-		let used = false;
+		for (let i = 0; i < tids.length; i++) {
+			let used = false;
 
-		for (let j = 0; j <= jMax; j++) {
-			if (
-				!tidsInDays[j].includes(tids[i][0]) &&
-				!tidsInDays[j].includes(tids[i][1])
-			) {
-				tidsInDays[j].push(tids[i][0]);
-				tidsInDays[j].push(tids[i][1]);
-				days[j].push(tids[i]);
-				used = true;
-				break;
+			for (let j = 0; j <= jMax; j++) {
+				if (
+					!tidsInDays[j].includes(tids[i][0]) &&
+					!tidsInDays[j].includes(tids[i][1])
+				) {
+					tidsInDays[j].push(tids[i][0]);
+					tidsInDays[j].push(tids[i][1]);
+					days[j].push(tids[i]);
+					used = true;
+					break;
+				}
+			}
+
+			if (!used) {
+				days.push([tids[i]]);
+				tidsInDays.push([tids[i][0], tids[i][1]]);
+				jMax += 1;
 			}
 		}
 
-		if (!used) {
-			days.push([tids[i]]);
-			tidsInDays.push([tids[i][0], tids[i][1]]);
-			jMax += 1;
-		}
+		// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
+		random.shuffle(days);
+
+		tids = days.flat();
 	}
-
-	random.shuffle(days);
-
-	// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
-	tids = days.flat();
 
 	return {
 		tids,

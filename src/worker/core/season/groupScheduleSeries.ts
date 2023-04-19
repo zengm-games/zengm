@@ -1,32 +1,29 @@
-import { random } from "../../util";
+import { helpers, random } from "../../util";
 
 const groupScheduleSeries = (tids: [number, number][]) => {
+	const matchupToKey = (matchup: [number, number]) =>
+		`${matchup[0]}-${matchup[1]}` as const;
+	type MatchupKey = ReturnType<typeof matchupToKey>;
+	const keyToMatchup = (key: MatchupKey) => {
+		const parts = key.split("-");
+		return [parseInt(parts[0]), parseInt(parts[1])] as const;
+	};
+
 	// Group all games between same teams with same home/away
-	const matchupsGroupedByTeams: Record<string, [number, number][]> = {};
+	const matchupsGroupedByTeams: Record<MatchupKey, [number, number][]> = {};
 	for (const matchup of tids) {
-		const key = `${matchup[0]}-${matchup[1]}`;
+		const key = matchupToKey(matchup);
 		if (!matchupsGroupedByTeams[key]) {
 			matchupsGroupedByTeams[key] = [];
 		}
 		matchupsGroupedByTeams[key].push(matchup);
 	}
-	console.log(
-		"matchupsGroupedByTeams",
-		structuredClone(matchupsGroupedByTeams),
-	);
 
 	// Divide into groups of 3 or 4
-	const seriesGroupedByTeams: Record<
-		string,
-		Record<1 | 2 | 3 | 4, [number, number][][]>
-	> = {};
-	for (const [key, matchups] of Object.entries(matchupsGroupedByTeams)) {
-		seriesGroupedByTeams[key] = {
-			1: [],
-			2: [],
-			3: [],
-			4: [],
-		};
+	const seriesGroupedByTeams: Record<MatchupKey, (1 | 2 | 3 | 4)[]> = {};
+	for (const key of helpers.keys(matchupsGroupedByTeams)) {
+		const matchups = matchupsGroupedByTeams[key];
+		seriesGroupedByTeams[key] = [];
 
 		// Take series of 3 or 4 as long as possible
 		while (matchups.length > 0) {
@@ -45,125 +42,71 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 				targetLength = 4;
 			}
 
-			seriesGroupedByTeams[key][targetLength].push(
-				matchups.splice(0, targetLength),
-			);
+			matchups.splice(0, targetLength);
+			seriesGroupedByTeams[key].push(targetLength);
 		}
 	}
-	console.log("seriesGroupedByTeams", structuredClone(seriesGroupedByTeams));
+	for (const series of Object.values(seriesGroupedByTeams)) {
+		// Randomize, or all the short series will be at the end
+		random.shuffle(series);
+	}
 
-	// Take a set of concurrent series (no duplicate teams) of same length (if possible)
-	const allConcurrentSeries: [number, number][][][] = [];
-	const seriesKeys = Object.keys(seriesGroupedByTeams);
-	while (true) {
-		const concurrentSeries: [number, number][][] = [];
-		const tidsUsed = new Map<number, number>();
+	let ongoingSeries: {
+		matchup: readonly [number, number];
+		numGamesLeft: number;
+	}[] = [];
 
+	const numGamesTotal = tids.length;
+	const tidsFinal: [number, number][] = [];
+	const seriesKeys = helpers.keys(seriesGroupedByTeams);
+
+	while (tidsFinal.length < numGamesTotal) {
+		// Schedule games from ongoingSeries
+		console.log(ongoingSeries.length);
+		for (const series of ongoingSeries) {
+			tidsFinal.push([...series.matchup]);
+
+			series.numGamesLeft -= 1;
+		}
+
+		// Remove any series that are over
+		ongoingSeries = ongoingSeries.filter(series => series.numGamesLeft > 0);
+
+		// Add new series from teams not yet in an ongoing series for tomorrow
+		const tidsForTomorrow = new Set();
+		for (const series of ongoingSeries) {
+			tidsForTomorrow.add(series.matchup[0]);
+			tidsForTomorrow.add(series.matchup[1]);
+		}
+
+		// Shuffle each day so it doesn't keep picking the same team first
 		random.shuffle(seriesKeys);
 
-		let maxLength = 0;
 		for (const key of seriesKeys) {
-			// Find the longest series, if one exists
-			for (const length of [4, 3, 2, 1] as const) {
-				if (seriesGroupedByTeams[key][length].length > 0) {
-					const [tid1, tid2] = seriesGroupedByTeams[key][length][0][0];
-					if (tidsUsed.has(tid1) || tidsUsed.has(tid2)) {
-						// Skip if team is already playing in another concurrent series
-						break;
-					}
-
-					const series = seriesGroupedByTeams[key][length].pop();
-					if (series) {
-						// We're using this series
-						const seriesLength = series.length;
-						tidsUsed.set(tid1, seriesLength);
-						tidsUsed.set(tid2, seriesLength);
-						if (seriesLength > maxLength) {
-							maxLength = seriesLength;
-						}
-
-						concurrentSeries.push(series);
-						break;
-					}
-				}
-			}
-		}
-
-		// If possible, add some other short series
-		if (maxLength > 1) {
-			for (const key of seriesKeys) {
-				// Skip 4 game series, but maybe another can fit in
-				for (const length of [3, 2, 1] as const) {
-					if (seriesGroupedByTeams[key][length].length > 0) {
-						const [tid1, tid2] = seriesGroupedByTeams[key][length][0][0];
-						const numGames1 = (tidsUsed.get(tid1) ?? 0) + length;
-						const numGames2 = (tidsUsed.get(tid2) ?? 0) + length;
-						if (numGames1 > maxLength || numGames2 > maxLength) {
-							// Skip if this series would be too long to play concurrently
-							break;
-						}
-
-						const series = seriesGroupedByTeams[key][length].pop();
-						if (series) {
-							// We're using this series
-							tidsUsed.set(tid1, numGames1);
-							tidsUsed.set(tid2, numGames2);
-
-							concurrentSeries.push(series);
-							console.log("add", key, length);
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		if (concurrentSeries.length === 0) {
-			// Couldn't find any series, that means they are all handled already
-			break;
-		}
-
-		allConcurrentSeries.push(concurrentSeries);
-	}
-	random.shuffle(allConcurrentSeries);
-	console.log("allConcurrentSeries", structuredClone(allConcurrentSeries));
-
-	// Interleave games of the series
-	const matchupsGroupedByDay: [number, number][][] = [];
-	for (const concurrentSeries of allConcurrentSeries) {
-		while (true) {
-			const tidsUsed = new Set();
-			const matchupsDay: [number, number][] = [];
-
-			for (const series of concurrentSeries) {
-				const matchup = series[0];
-				if (matchup) {
-					// Make sure we haven't already used this team today, for the case where e.g. some teams have a 4-game series, but other teams have 2 2-game series
-					const [tid1, tid2] = matchup;
-					if (!tidsUsed.has(tid1) && !tidsUsed.has(tid2)) {
-						matchupsDay.push(matchup);
-						tidsUsed.add(tid1);
-						tidsUsed.add(tid2);
-						series.shift();
-					}
-				}
+			const seriesAvailable = seriesGroupedByTeams[key];
+			if (seriesAvailable.length === 0) {
+				continue;
 			}
 
-			if (matchupsDay.length > 0) {
-				matchupsGroupedByDay.push(matchupsDay);
-			} else {
-				break;
+			const matchup = keyToMatchup(key);
+
+			if (tidsForTomorrow.has(matchup[0]) || tidsForTomorrow.has(matchup[1])) {
+				continue;
 			}
+
+			const numGames = seriesAvailable.pop();
+			if (numGames === undefined) {
+				continue;
+			}
+
+			ongoingSeries.push({
+				matchup,
+				numGamesLeft: numGames,
+			});
+			tidsForTomorrow.add(matchup[0]);
+			tidsForTomorrow.add(matchup[1]);
 		}
 	}
-	console.log("matchupsGroupedByDay", structuredClone(matchupsGroupedByDay));
-
-	// Randomly append all series games
-	const tidsFinal: [number, number][] = [];
-	for (const matchupsDay of matchupsGroupedByDay) {
-		tidsFinal.push(...matchupsDay);
-	}
-	console.log("tidsFinal", structuredClone(tidsFinal));
 
 	return tidsFinal;
 };

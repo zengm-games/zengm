@@ -1,18 +1,11 @@
 group baseball games into series
 - add setting
-- try building up schedule more incrementally, to allow overlapping series if that would help
-  - split into series same as before (but maybe store integers representing length, rahter than the matchup arrays)
-  - then randomly pick some to start
-  - take a day off. any series that end, discard
-  - next day - schedule games from the ongoing series
-  - loop over the unstarted series and see if any are among teams that are not in an ongoing series. if so, start them
-  - continue until done
-- works, but results in 30% longer season
-  - 90 -> 120 for basketball
-  - 175 -> 230 for baseball
-  - should this result in 30% longer injuries?
-    - not in playoffs
-    - maybe a bit shorter than 30%, because they could overflow to the playoffs
+- get rid of stringify/unstringify matchupkey
+- does it leave too many weird days at the end of the season with few games?
+  - reverse, so weird part is at beginning and less meaningful. then try to move teams that don't play on 1st day forward in the schedule, it possible
+  - or don't reverse and instead push games down if possible - like if 2 teams are playing on day 161 but not on day 162, move the game to day 162. if possible keep repeating that until somewhere in the middle of the schedule. then maybe just stop, or randomly stop at different points
+- test # days in basketball (current is like 90)
+- there are still more 1/2 game series than normal - this doesn't change the number of games scheduled between teams, it just groups the existing schedule into series
 
 in football (and to a lesser extent, hockey and baseball) it's hard to watch a live sim on mobile because it keeps getting bumped off the screen as rows are added to the box score or scoring summary
 

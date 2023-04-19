@@ -21,7 +21,6 @@ const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
  */
 const setSchedule = async (tids: [number, number][]) => {
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-	console.log("setSchedule", tids);
 
 	const oldPlayoffGames: Record<string, ScheduleGame> = {};
 	if (playoffs) {

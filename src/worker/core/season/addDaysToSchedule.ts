@@ -28,7 +28,6 @@ const addDaysToSchedule = (
 		}
 	}
 
-	let dayGames = [];
 	return games.map(game => {
 		const { awayTid, homeTid } = game;
 
@@ -44,10 +43,7 @@ const addDaysToSchedule = (
 		) {
 			day += 1;
 			dayTids.clear();
-			console.log("dayGames", dayGames);
-			dayGames = [];
 		}
-		dayGames.push([homeTid, awayTid]);
 
 		dayTids.add(homeTid);
 		dayTids.add(awayTid);

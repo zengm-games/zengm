@@ -560,9 +560,7 @@ const updatePlayer = async (
 			});
 		}
 
-		console.time("FOO");
 		const leaders = await player.getLeaders(topStuff.pRaw);
-		console.timeEnd("FOO");
 
 		return {
 			...topStuff,

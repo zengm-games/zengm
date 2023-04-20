@@ -59,33 +59,41 @@ const getBest = <T extends PlayerWithoutKey>(
 	const skipSalaryCapCheck =
 		salaryCapType === "none" && Math.random() < 2 / numActiveTeams;
 
-	let keyPositionsNeeded;
-	if (KEY_POSITIONS_NEEDED) {
-		keyPositionsNeeded = [...KEY_POSITIONS_NEEDED];
-		const positionCounts = {
-			injured: {} as Record<string, number>,
-			healthy: {} as Record<string, number>,
-		};
-
-		for (const p of playersOnRoster) {
-			const pos = p.ratings.at(-1)!.pos;
-			const injured = p.injury.gamesRemaining > 0;
-			const object = positionCounts[injured ? "injured" : "healthy"];
-			if (object[pos] === undefined) {
-				object[pos] = 1;
-			} else {
-				object[pos] += 1;
+	let keyPositionsNeededCache: string[] | undefined;
+	const getKeyPositionsNeeded = () => {
+		if (KEY_POSITIONS_NEEDED) {
+			if (keyPositionsNeededCache) {
+				return keyPositionsNeededCache;
 			}
+
+			const allKeyPositionsNeeded = [...KEY_POSITIONS_NEEDED];
+			const positionCounts = {
+				injured: {} as Record<string, number>,
+				healthy: {} as Record<string, number>,
+			};
+
+			for (const p of playersOnRoster) {
+				const pos = p.ratings.at(-1)!.pos;
+				const injured = p.injury.gamesRemaining > 0;
+				const object = positionCounts[injured ? "injured" : "healthy"];
+				if (object[pos] === undefined) {
+					object[pos] = 1;
+				} else {
+					object[pos] += 1;
+				}
+			}
+
+			keyPositionsNeededCache = allKeyPositionsNeeded.filter(pos => {
+				const injured = positionCounts.injured[pos] ?? 0;
+				const healthy = positionCounts.healthy[pos] ?? 0;
+
+				// If we already have 3 injured ones, maybe don't sign another? idk
+				return injured <= 3 && healthy === 0;
+			});
+
+			return keyPositionsNeededCache;
 		}
-
-		keyPositionsNeeded = keyPositionsNeeded.filter(pos => {
-			const injured = positionCounts.injured[pos] ?? 0;
-			const healthy = positionCounts.healthy[pos] ?? 0;
-
-			// If we already have 3 injured ones, maybe don't sign another? idk
-			return injured <= 3 && healthy === 0;
-		});
-	}
+	};
 
 	for (const p of playersSorted) {
 		const salaryCapCheck =
@@ -102,11 +110,10 @@ const getBest = <T extends PlayerWithoutKey>(
 
 		// If none of the other checks were true and we can afford this player and it's at a position we have nobody at (like hockey goalie), go for it
 		const shouldAddPlayerPosition =
-			keyPositionsNeeded &&
 			!shouldAddPlayerNormal &&
 			!shouldAddPlayerMinContract &&
 			(salaryCapCheck || p.contract.amount <= minContract) &&
-			keyPositionsNeeded.includes(p.ratings.at(-1)!.pos);
+			getKeyPositionsNeeded()?.includes(p.ratings.at(-1)!.pos);
 
 		if (
 			shouldAddPlayerNormal ||

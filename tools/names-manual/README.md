@@ -22,7 +22,7 @@ See the CSV files in this directory for examples.
 https://forebears.io/canada/surnames is a good data source. Here is a script you can use/modify in the JS console on that site to get the names data for forenames:
 
 ```js
-var MAX_NUM_NAMES = Infinity;
+var MAX_NUM_NAMES = 500;
 var names = [];
 for (const tr of document.getElementsByClassName("forename-table")[0].getElementsByTagName("tr")) {
 	if (tr.children.length < 4) {
@@ -68,7 +68,7 @@ if (names.length > 0) {
 And surnames:
 
 ```js
-var MAX_NUM_NAMES = Infinity;
+var MAX_NUM_NAMES = 500;
 var names = [];
 for (const tr of document.getElementsByClassName("forename-table")[0].getElementsByTagName("tr")) {
 	if (tr.children.length < 3) {

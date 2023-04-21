@@ -3,7 +3,112 @@ import { player, freeAgents } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
-import type { Player } from "../../../common/types";
+import type { MinimalPlayerRatings, Player } from "../../../common/types";
+import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest";
+
+export const dropPlayers = async (
+	players: Player<MinimalPlayerRatings>[],
+	numToDrop: number,
+) => {
+	// Automatically drop lowest value players until we reach g.get("maxRosterSize")
+
+	// Only drop player from a position there is an excess of (no dropping your only kicker)
+	let counts;
+	let countsHealthyKey;
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: true,
+		})
+	) {
+		counts = { ...POSITION_COUNTS };
+		for (const pos of Object.keys(counts)) {
+			counts[pos] = 0;
+		}
+
+		if (KEY_POSITIONS_NEEDED) {
+			countsHealthyKey = {} as Record<string, number>;
+			for (const pos of KEY_POSITIONS_NEEDED) {
+				countsHealthyKey[pos] = 0;
+			}
+		}
+
+		for (const p of players) {
+			const pos = p.ratings.at(-1)!.pos;
+
+			if (counts[pos] !== undefined) {
+				counts[pos] += 1;
+			}
+
+			if (
+				countsHealthyKey?.[pos] !== undefined &&
+				p.injury.gamesRemaining === 0
+			) {
+				countsHealthyKey[pos] += 1;
+			}
+		}
+
+		let validPositions = [];
+		for (const [pos, count] of Object.entries(counts)) {
+			if (count > POSITION_COUNTS[count]) {
+				validPositions.push(pos);
+			}
+		}
+
+		// Should be impossible, but just in case, include all players except K/P
+		if (validPositions.length === 0) {
+			validPositions = Object.keys(POSITION_COUNTS).filter(
+				pos => pos !== "K" && pos !== "P",
+			);
+		}
+	}
+
+	players.sort((a, b) => a.value - b.value); // Lowest first
+
+	const releasedPIDs = [];
+	for (const p of players) {
+		if (
+			counts &&
+			bySport({
+				baseball: true,
+				basketball: false,
+				football: true,
+				hockey: true,
+			})
+		) {
+			const pos = p.ratings.at(-1)!.pos;
+
+			if (countsHealthyKey) {
+				// If this is a key position and there is only one healthy player, keep the healthy player
+				if (countsHealthyKey[pos] <= 1 && p.injury.gamesRemaining === 0) {
+					continue;
+				}
+			}
+
+			// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
+			if (counts[pos] <= 1) {
+				continue;
+			}
+
+			counts[pos] -= 1;
+
+			if (countsHealthyKey?.[pos] !== undefined) {
+				countsHealthyKey[pos] -= 1;
+			}
+		}
+
+		await player.release(p, false);
+		releasedPIDs.push(p.pid);
+
+		if (releasedPIDs.length >= numToDrop) {
+			break;
+		}
+	}
+
+	return releasedPIDs;
+};
 
 /**
  * Check roster size limits
@@ -46,76 +151,11 @@ const checkRosterSizes = async (
 					["trade"],
 				)}">trades</a>) before continuing.`;
 			} else {
-				// Automatically drop lowest value players until we reach g.get("maxRosterSize")
-
-				// Only drop player from a position there is an excess of (no dropping your only kicker)
-				let counts;
-				if (
-					bySport({
-						baseball: true,
-						basketball: false,
-						football: true,
-						hockey: true,
-					})
-				) {
-					counts = { ...POSITION_COUNTS };
-					for (const pos of Object.keys(counts)) {
-						counts[pos] = 0;
-					}
-
-					for (const p of players) {
-						const pos = p.ratings.at(-1)!.pos;
-
-						if (counts[pos] !== undefined) {
-							counts[pos] += 1;
-						}
-					}
-
-					let validPositions = [];
-					for (const [pos, count] of Object.entries(counts)) {
-						if (count > POSITION_COUNTS[count]) {
-							validPositions.push(pos);
-						}
-					}
-
-					// Should be impossible, but just in case, include all players except K/P
-					if (validPositions.length === 0) {
-						validPositions = Object.keys(POSITION_COUNTS).filter(
-							pos => pos !== "K" && pos !== "P",
-						);
-					}
-				}
-
-				players.sort((a, b) => a.value - b.value); // Lowest first
-
-				let i = -1;
-				while (numPlayersOnRoster > g.get("maxRosterSize")) {
-					i += 1;
-					const p = players[i];
-
-					if (
-						counts &&
-						bySport({
-							baseball: true,
-							basketball: false,
-							football: true,
-							hockey: true,
-						})
-					) {
-						const pos = p.ratings.at(-1)!.pos;
-
-						// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
-						if (counts[pos] <= 1) {
-							continue;
-						}
-
-						counts[pos] -= 1;
-					}
-
-					await player.release(p, false);
-					releasedPIDs.push(p.pid);
-					numPlayersOnRoster -= 1;
-				}
+				const releasedPIDsTemp = await dropPlayers(
+					players,
+					numPlayersOnRoster - g.get("maxRosterSize"),
+				);
+				releasedPIDs.push(...releasedPIDsTemp);
 			}
 		} else if (numPlayersOnRoster < g.get("minRosterSize")) {
 			if (userTeamAndActive) {

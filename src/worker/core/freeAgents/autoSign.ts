@@ -55,6 +55,9 @@ const autoSign = async () => {
 		if (Math.random() < probSkip) {
 			continue;
 		}
+		if (t.tid !== g.get("userTid")) {
+			continue;
+		}
 
 		const playersOnRoster = await idb.cache.players.indexGetAll(
 			"playersByTid",
@@ -65,13 +68,6 @@ const autoSign = async () => {
 		const payroll = await team.getPayroll(t.tid);
 		const p = getBest(playersOnRoster, playersSorted, payroll);
 		if (p) {
-			console.log(
-				"sign this player",
-				t.tid,
-				p.pid,
-				p.ratings.at(-1)!.pos,
-				p.ratings.at(-1)!.ovr,
-			);
 			// Remove from list of free agents
 			playersSorted = playersSorted.filter(p2 => p2 !== p);
 

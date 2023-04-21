@@ -4,8 +4,8 @@ import { DRAFT_BY_TEAM_OVR, bySport } from "../../../common";
 import { getTeamOvrDiffs } from "../draft/runPicks";
 import orderBy from "lodash-es/orderBy";
 
-// In some sports, extra check for certain important rare positions in case the only one was traded away
-const KEY_POSITIONS_NEEDED = bySport({
+// In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position.
+export const KEY_POSITIONS_NEEDED = bySport({
 	baseball: undefined,
 	basketball: undefined,
 	football: ["QB", "K", "P"],
@@ -36,7 +36,7 @@ const getBest = <T extends PlayerWithoutKey>(
 				return false;
 			}
 
-			if (p.contract.amount <= minContract) {
+			if (p.contract.amount <= minContract && p.injury.gamesRemaining === 0) {
 				seenMinContractAtPos.add(pos);
 			}
 
@@ -110,6 +110,7 @@ const getBest = <T extends PlayerWithoutKey>(
 
 		// If none of the other checks were true and we can afford this player and it's at a position we have nobody at (like hockey goalie), go for it
 		const shouldAddPlayerPosition =
+			p.injury.gamesRemaining === 0 &&
 			!shouldAddPlayerNormal &&
 			!shouldAddPlayerMinContract &&
 			(salaryCapCheck || p.contract.amount <= minContract) &&

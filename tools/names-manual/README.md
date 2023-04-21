@@ -19,4 +19,87 @@ Except possibly for very large countries, anything more than 500 names is excess
 
 See the CSV files in this directory for examples.
 
-https://forebears.io/canada/surnames is a good data source.
+https://forebears.io/canada/surnames is a good data source. Here is a script you can use/modify in the JS console on that site to get the names data for forenames:
+
+```js
+var MAX_NUM_NAMES = Infinity;
+var names = [];
+for (const tr of document.getElementsByClassName("forename-table")[0].getElementsByTagName("tr")) {
+	if (tr.children.length < 4) {
+		continue;
+	}
+
+	const mPct = tr.children[1].getElementsByClassName("m")[0]?.style.width ?? 0;
+	const fPct = tr.children[1].getElementsByClassName("f")[0]?.style.width ?? 0;
+	const sex = parseInt(mPct) > parseInt(fPct) ? "m" : "f";
+	if (sex === "f") {
+		continue;
+	}
+
+	const name = tr.children[2].textContent;
+
+	const frequency = parseInt(tr.children[3].textContent.replaceAll(",", ""));
+
+    names.push({
+		name,
+		frequency,
+	});
+
+	if (names.length > MAX_NUM_NAMES) {
+		break;
+	}
+}
+
+if (names.length > 0) {
+	const minFrequency = names.at(-1).frequency;
+	for (const row of names) {
+		row.frequency = Math.round(row.frequency / minFrequency);
+	}
+	let output = "Name,Frequency\n";
+	for (const row of names) {
+		output += `${row.name},${row.frequency}\n`
+	}
+	console.log(output);
+} else {
+	console.log("No names found");
+}
+```
+
+And surnames:
+
+```js
+var MAX_NUM_NAMES = Infinity;
+var names = [];
+for (const tr of document.getElementsByClassName("forename-table")[0].getElementsByTagName("tr")) {
+	if (tr.children.length < 3) {
+		continue;
+	}
+
+	const name = tr.children[1].textContent;
+
+	const frequency = parseInt(tr.children[2].textContent.replaceAll(",", ""));
+
+    names.push({
+		name,
+		frequency,
+	});
+
+	if (names.length > MAX_NUM_NAMES) {
+		break;
+	}
+}
+
+if (names.length > 0) {
+	const minFrequency = names.at(-1).frequency;
+	for (const row of names) {
+		row.frequency = Math.round(row.frequency / minFrequency);
+	}
+	let output = "Name,Frequency\n";
+	for (const row of names) {
+		output += `${row.name},${row.frequency}\n`
+	}
+	console.log(output);
+} else {
+	console.log("No names found");
+}
+```

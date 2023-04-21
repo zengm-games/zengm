@@ -131,7 +131,7 @@ const Input = ({
 						disabled={selectValue !== "custom"}
 						onChange={onChange}
 						value={parsed[1]}
-						inputMode="numeric"
+						inputMode="decimal"
 					/>
 				</div>
 			);
@@ -147,20 +147,16 @@ const Input = ({
 			);
 		}
 	} else {
-		const numericTypes = [
-			"float",
-			"float1000",
-			"floatOrNull",
-			"int",
-			"intOrNull",
-		];
+		const inputModes: Partial<Record<typeof type, "decimal" | "numeric">> = {
+			float: "decimal",
+			float1000: "decimal",
+			floatOrNull: "decimal",
+			int: "numeric",
+			intOrNull: "numeric",
+		};
 
 		inputElement = (
-			<input
-				type="text"
-				{...commonProps}
-				inputMode={numericTypes.includes(type) ? "numeric" : undefined}
-			/>
+			<input type="text" {...commonProps} inputMode={inputModes[type]} />
 		);
 	}
 

@@ -55,9 +55,6 @@ const autoSign = async () => {
 		if (Math.random() < probSkip) {
 			continue;
 		}
-		if (t.tid !== g.get("userTid")) {
-			continue;
-		}
 
 		const playersOnRoster = await idb.cache.players.indexGetAll(
 			"playersByTid",

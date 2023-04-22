@@ -444,9 +444,9 @@ const augmentPartialPlayer = async (
 
 	// Version 49/50
 	for (const key of ["hof", "watch"] as const) {
-		if (p[key]) {
+		if (p[key] === true) {
 			p[key] = 1;
-		} else {
+		} else if (p[key] === false) {
 			delete p[key];
 		}
 	}

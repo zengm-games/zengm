@@ -599,7 +599,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 				},
 			},
 			gameAttributes: {
-				oneOf: [
+				anyOf: [
 					{
 						type: "array",
 					},
@@ -690,7 +690,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 
 							dh: {
-								oneOf: [
+								anyOf: [
 									{
 										type: "string",
 										enum: ["all", "none"],
@@ -1578,7 +1578,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 						},
 						hof: {
-							oneOf: [
+							anyOf: [
 								{
 									type: "boolean",
 								},
@@ -1776,12 +1776,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 						},
 						watch: {
-							oneOf: [
+							anyOf: [
 								{
 									type: "boolean",
 								},
 								{
-									const: 1,
+									type: "number",
 								},
 							],
 						},

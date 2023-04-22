@@ -277,6 +277,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 				p.draft.year = draftYears[i];
 				p.born.year += diff;
 
+				p.draft.tid = -1;
+				p.draft.originalTid = -1;
+				p.draft.round = 0;
+				p.draft.pick = 0;
+
 				if (
 					p.draft.year < options.season ||
 					(p.draft.year === options.season && options.phase > PHASE.DRAFT)
@@ -335,10 +340,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 							bio,
 						);
 					}
-
-					// Not sure why this is needed here but not above for active players, or why this needs to be below the setDraftProspectRatingsBasedOnDraftPosition call
-					p.draft.round = -1;
-					p.draft.year = -1;
 				}
 			}
 		}

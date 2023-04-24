@@ -191,7 +191,7 @@ const updateTeamFinances = async (
 			tid: inputs.tid,
 			show: inputs.show,
 			salaryCap: g.get("salaryCap") / 1000,
-			minContract: g.get("minContract"),
+			minContract: g.get("minContract") / 1000,
 			minPayroll: g.get("minPayroll") / 1000,
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTax: g.get("luxuryTax"),

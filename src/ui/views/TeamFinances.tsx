@@ -438,10 +438,9 @@ const PayrollInfo = ({
 					<p>
 						The salary cap is a hard cap, meaning that you cannot exceed it,
 						even when re-signing your own players or making trades. The only
-						exception is that you can always sign players to minimum contracts
-						($
-						{minContract}
-						k/year), so you are never stuck with a team too small to play.
+						exception is that you can always sign players to minimum contracts (
+						{helpers.formatCurrency(minContract, "M")}/year), so you are never
+						stuck with a team too small to play.
 					</p>
 					<p>
 						Teams with payrolls below the minimum payroll limit will be assessed
@@ -452,11 +451,10 @@ const PayrollInfo = ({
 				<HelpPopover title="Payroll Limits">
 					<p>
 						The salary cap is a soft cap, meaning that you can exceed it to
-						re-sign your own players, to sign free agents to minimum contracts
-						($
-						{minContract}
-						k/year), and when making certain trades; however, you cannot exceed
-						the salary cap to sign a free agent for more than the minimum.
+						re-sign your own players, to sign free agents to minimum contracts (
+						{helpers.formatCurrency(minContract, "M")}/year), and when making
+						certain trades; however, you cannot exceed the salary cap to sign a
+						free agent for more than the minimum.
 					</p>
 					<p>
 						Teams with payrolls below the minimum payroll limit will be assessed

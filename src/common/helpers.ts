@@ -904,10 +904,10 @@ function deepCopy<T>(obj: T): T {
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-function leagueUrlFactory(
+const leagueUrlFactory = (
 	lid: number,
 	components: (number | string | undefined)[],
-): string {
+) => {
 	let url = `/l/${lid}`;
 
 	for (let i = 0; i < components.length; i++) {
@@ -917,7 +917,7 @@ function leagueUrlFactory(
 	}
 
 	return url;
-}
+};
 
 /**
  * Format a number as currency, correctly handling negative values.
@@ -928,11 +928,11 @@ function leagueUrlFactory(
  * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
  * @return {string} Formatted currency string.
  */
-function formatCurrency(
+const formatCurrency = (
 	amount: number,
 	append: string = "",
 	precision: number = 2,
-): string {
+) => {
 	const sign = amount < 0 ? "-" : "";
 	let abs = Math.abs(amount);
 
@@ -977,7 +977,7 @@ function formatCurrency(
 	}
 
 	return `${sign}$${numberString}${append}`;
-}
+};
 
 /**
  * Bound a number so that it can't exceed min and max values.

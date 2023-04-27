@@ -156,18 +156,6 @@ const play = async (
 		const updateEvents: UpdateEvents = ["gameSim"];
 
 		if (dayOver) {
-			const phase = g.get("phase");
-			if (
-				phase === PHASE.REGULAR_SEASON ||
-				phase === PHASE.AFTER_TRADE_DEADLINE
-			) {
-				await freeAgents.decreaseDemands();
-				await freeAgents.autoSign();
-			}
-			if (phase === PHASE.REGULAR_SEASON) {
-				await trade.betweenAiTeams();
-			}
-
 			// Budget is just for ticket prices
 			await finances.updateRanks(["budget", "expenses", "revenues"]);
 
@@ -274,6 +262,19 @@ const play = async (
 				}
 
 				updateEvents.push("playerMovement");
+			}
+
+			// Do this stuff after injuries, so autoSign knows the injury status of players for the next game
+			const phase = g.get("phase");
+			if (
+				phase === PHASE.REGULAR_SEASON ||
+				phase === PHASE.AFTER_TRADE_DEADLINE
+			) {
+				await freeAgents.decreaseDemands();
+				await freeAgents.autoSign();
+			}
+			if (phase === PHASE.REGULAR_SEASON) {
+				await trade.betweenAiTeams();
 			}
 		}
 

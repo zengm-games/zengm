@@ -43,7 +43,7 @@ function createLogger(
 			result = await saveEvent(event);
 		}
 
-		if (showNotification && event.type !== "sisyphus" && event.text) {
+		if (showNotification && event.text) {
 			showEvent(
 				{
 					extraClass,

@@ -278,7 +278,11 @@ export type EventBBGMWithoutKey =
 			tids: number[];
 			season: number;
 			wonTitle: boolean;
-			score?: number;
+
+			// For TypeScript, never actually used
+			score?: undefined;
+			text?: undefined;
+			dpids?: undefined;
 	  }
 	| {
 			type: "trade";

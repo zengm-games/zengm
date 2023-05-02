@@ -279,7 +279,7 @@ const doThanosMode = async (conditions: Conditions) => {
 
 const doSisyphusMode = async (conditions: Conditions) => {
 	const { swappedTid } = await league.swapWorstRoster(true);
-	let text = "Sisphyus Mode activated! ";
+	let text = "Sisyphus Mode activated! ";
 	const tids = [g.get("userTid")];
 	if (swappedTid !== undefined) {
 		const teamInfo = g.get("teamInfoCache")[swappedTid];
@@ -395,7 +395,7 @@ const newPhaseBeforeDraft = async (
 
 	await doThanosMode(conditions);
 
-	if (t?.tid === g.get("userTid")) {
+	if (g.get("challengeSisyphusMode") && t?.tid === g.get("userTid")) {
 		await doSisyphusMode(conditions);
 	}
 

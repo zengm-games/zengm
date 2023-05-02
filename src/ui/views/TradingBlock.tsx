@@ -208,8 +208,8 @@ export const pickScore = (
 		// Assume roughly 30 teams
 		const imputedPick = pick > 0 ? pick : 15;
 
-		// Assume no more than 50 rounds or 100 teams
-		score += 50 - round + (1 - imputedPick / 100);
+		// Assume no more than 20 rounds or 100 teams. Exponent is tuned so that you need about 4 second round picks to equal 1 first round pick.
+		score += (20 - round + (1 - imputedPick / 100)) ** 25;
 	}
 	return score;
 };

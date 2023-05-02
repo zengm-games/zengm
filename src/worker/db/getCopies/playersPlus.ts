@@ -174,6 +174,10 @@ const processAttrs = (
 					output.latestTransaction = `God Mode in ${transaction.season}`;
 				} else if (transaction.type === "import") {
 					output.latestTransaction = `Imported in ${transaction.season}`;
+				} else if (transaction.type === "sisyphus") {
+					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
+					const url = helpers.leagueUrl(["roster", abbrev, transaction.season]);
+					output.latestTransaction = `Sisyphus Mode with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				}
 			} else {
 				output.latestTransaction = "";

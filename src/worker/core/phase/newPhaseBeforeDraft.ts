@@ -279,7 +279,7 @@ const doThanosMode = async (conditions: Conditions) => {
 
 const doSisyphusMode = async (conditions: Conditions) => {
 	console.log("doSisyphusMode");
-	const { swappedTid } = await league.swapWorstRoster();
+	const { swappedTid } = await league.swapWorstRoster(true);
 	let text = "Sisphyus Mode activated! ";
 	const tids = [g.get("userTid")];
 	if (swappedTid !== undefined) {

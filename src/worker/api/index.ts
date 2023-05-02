@@ -590,7 +590,7 @@ const createLeague = async (
 	delete (self as any).stream0;
 
 	if (settings.giveMeWorstRoster) {
-		await league.swapWorstRoster();
+		await league.swapWorstRoster(false);
 	}
 
 	toUI(

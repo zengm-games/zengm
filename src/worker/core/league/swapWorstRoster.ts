@@ -6,7 +6,7 @@ import player from "../player";
 import { PHASE } from "../../../common";
 
 // Swap the user's roster with the roster of the worst team in the league, by ovr
-const swapWorstRoster = async () => {
+const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 	const teams = g
 		.get("teamInfoCache")
 		.map((t, tid) => {
@@ -69,16 +69,21 @@ const swapWorstRoster = async () => {
 				player.addStatsRow(p, phase === PHASE.PLAYOFFS);
 			}
 
+			if (addSisyphusLogs) {
+				if (!p.transactions) {
+					p.transactions = [];
+				}
+				p.transactions.push({
+					season: g.get("season"),
+					phase: g.get("phase"),
+					tid: newTid,
+					type: "sisyphus",
+					fromTid: oldTid,
+				});
+			}
+
 			await idb.cache.players.put(p);
 		}
-	}
-	for (const p of userTeam) {
-		p.tid = worstTid;
-		await idb.cache.players.put(p);
-	}
-	for (const p of worstTeam) {
-		p.tid = userTid;
-		await idb.cache.players.put(p);
 	}
 
 	return {

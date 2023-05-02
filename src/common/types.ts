@@ -1175,6 +1175,13 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 				tid: number;
 				type: "import";
 		  }
+		| {
+				season: number;
+				phase: number;
+				tid: number;
+				type: "sisyphus";
+				fromTid: number;
+		  }
 	)[]; // Only optional cause I'm worried about upgrades
 	value: number;
 	valueNoPot: number;

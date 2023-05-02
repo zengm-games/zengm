@@ -183,6 +183,127 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 	await idb.cache.teamSeasons.put(teamSeason);
 };
 
+const doThanosMode = async (conditions: Conditions) => {
+	const thanosCooldownEnd = g.get("thanosCooldownEnd");
+	if (
+		(thanosCooldownEnd === undefined || g.get("season") >= thanosCooldownEnd) &&
+		Math.random() < g.get("challengeThanosMode") / 100
+	) {
+		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
+			0,
+			Infinity,
+		]);
+		random.shuffle(activePlayers);
+		const snappedPlayers = activePlayers.slice(0, activePlayers.length / 2);
+
+		const userSnappedPlayers = [];
+
+		for (const p of snappedPlayers) {
+			// Real players are retired, random players are  killed
+			if (p.tid === g.get("userTid")) {
+				userSnappedPlayers.push(p);
+			}
+
+			let action;
+			let type: LogEventType;
+			if (p.real) {
+				action = "retired due to";
+				type = "retired";
+			} else {
+				p.diedYear = g.get("season");
+				action = "was killed in";
+				type = "tragedy";
+			}
+			logEvent(
+				{
+					type,
+					text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+						p.firstName
+					} ${p.lastName}</a> ${action} a Thanos snap.`,
+					showNotification: false,
+					pids: [p.pid],
+					tids: [p.tid],
+					score: 20,
+				},
+				conditions,
+			);
+
+			await player.retire(p, conditions, {
+				logRetiredEvent: false,
+			});
+			await idb.cache.players.put(p);
+		}
+
+		let text = "A Thanos event has occured! ";
+		const numPlayers = userSnappedPlayers.length;
+		if (numPlayers === 0) {
+			text += "Somehow your team did not lose any players.";
+		} else {
+			text += `Your team lost ${numPlayers} player${
+				numPlayers === 1 ? "" : "s"
+			}: `;
+			for (let i = 0; i < numPlayers; i++) {
+				const p = userSnappedPlayers[i];
+				if (i > 0 && numPlayers === 2) {
+					text += " and ";
+				} else if (i > 0 && i === numPlayers - 1) {
+					text += ", and ";
+				} else if (i > 0) {
+					text += ", ";
+				}
+
+				text += `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+					p.firstName
+				} ${p.lastName}</a>`;
+			}
+			text += ".";
+		}
+		logEvent(
+			{
+				type: "tragedy",
+				text,
+				showNotification: true,
+				pids: [],
+				tids: [g.get("userTid")],
+				persistent: true,
+			},
+			conditions,
+		);
+
+		// Make sure another event won't happen within the next 2 seasons to prevent running out of players
+		await league.setGameAttributes({
+			thanosCooldownEnd: g.get("season") + 3,
+		});
+	}
+};
+
+const doSisyphusMode = async (conditions: Conditions) => {
+	console.log("doSisyphusMode");
+	const { swappedTid } = await league.swapWorstRoster();
+	let text = "Sisphyus Mode activated! ";
+	const tids = [g.get("userTid")];
+	if (swappedTid !== undefined) {
+		const teamInfo = g.get("teamInfoCache")[swappedTid];
+		text += `Your roster has been swapped with the worst team in the league, the ${teamInfo.region} ${teamInfo.name}`;
+		tids.push(swappedTid);
+	} else {
+		text +=
+			"But somehow your roster is already the worst in the league, so it didn't do anything.";
+	}
+
+	logEvent(
+		{
+			type: "tragedy",
+			text,
+			showNotification: true,
+			pids: [],
+			tids,
+			persistent: true,
+		},
+		conditions,
+	);
+};
+
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
 	liveGameInProgress: boolean = false,
@@ -272,97 +393,10 @@ const newPhaseBeforeDraft = async (
 		}
 	}
 
-	const thanosCooldownEnd = g.get("thanosCooldownEnd");
-	if (
-		g.get("challengeThanosMode") &&
-		(thanosCooldownEnd === undefined || g.get("season") >= thanosCooldownEnd) &&
-		Math.random() < 0.2
-	) {
-		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
-			0,
-			Infinity,
-		]);
-		random.shuffle(activePlayers);
-		const snappedPlayers = activePlayers.slice(0, activePlayers.length / 2);
+	await doThanosMode(conditions);
 
-		const userSnappedPlayers = [];
-
-		for (const p of snappedPlayers) {
-			// Real players are retired, random players are  killed
-			if (p.tid === g.get("userTid")) {
-				userSnappedPlayers.push(p);
-			}
-
-			let action;
-			let type: LogEventType;
-			if (p.real) {
-				action = "retired due to";
-				type = "retired";
-			} else {
-				p.diedYear = g.get("season");
-				action = "was killed in";
-				type = "tragedy";
-			}
-			logEvent(
-				{
-					type,
-					text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-						p.firstName
-					} ${p.lastName}</a> ${action} a Thanos snap.`,
-					showNotification: false,
-					pids: [p.pid],
-					tids: [p.tid],
-					score: 20,
-				},
-				conditions,
-			);
-
-			await player.retire(p, conditions, {
-				logRetiredEvent: false,
-			});
-			await idb.cache.players.put(p);
-		}
-
-		let text = "A Thanos event has occured! ";
-		const numPlayers = userSnappedPlayers.length;
-		if (numPlayers === 0) {
-			text += "Somehow your team did not lose any players.";
-		} else {
-			text += `Your team lost ${numPlayers} player${
-				numPlayers === 1 ? "" : "s"
-			}: `;
-			for (let i = 0; i < numPlayers; i++) {
-				const p = userSnappedPlayers[i];
-				if (i > 0 && numPlayers === 2) {
-					text += " and ";
-				} else if (i > 0 && i === numPlayers - 1) {
-					text += ", and ";
-				} else if (i > 0) {
-					text += ", ";
-				}
-
-				text += `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-					p.firstName
-				} ${p.lastName}</a>`;
-			}
-			text += ".";
-		}
-		logEvent(
-			{
-				type: "tragedy",
-				text,
-				showNotification: true,
-				pids: [],
-				tids: [g.get("userTid")],
-				persistent: true,
-			},
-			conditions,
-		);
-
-		// Make sure another event won't happen within the next 2 seasons to prevent running out of players
-		await league.setGameAttributes({
-			thanosCooldownEnd: g.get("season") + 3,
-		});
+	if (t?.tid === g.get("userTid")) {
+		await doSisyphusMode(conditions);
 	}
 
 	if (!g.get("repeatSeason")) {

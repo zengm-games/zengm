@@ -297,6 +297,12 @@ const createGameAttributes = async (
 		}
 	}
 
+	if (typeof gameAttributes.challengeThanosMode === "boolean") {
+		gameAttributes.challengeThanosMode = gameAttributes.challengeThanosMode
+			? 20
+			: 0;
+	}
+
 	return gameAttributes;
 };
 

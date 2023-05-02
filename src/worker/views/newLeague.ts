@@ -151,6 +151,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"challengeFiredMissPlayoffs",
 		),
+		challengeSisyphusMode: unwrapGameAttribute(
+			defaultGameAttributes,
+			"challengeSisyphusMode",
+		),
 		challengeThanosMode: unwrapGameAttribute(
 			defaultGameAttributes,
 			"challengeThanosMode",

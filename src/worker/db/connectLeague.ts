@@ -1229,6 +1229,16 @@ const migrate = async ({
 			keyPath: "season",
 		});
 	}
+
+	if (oldVersion <= 53) {
+		const store = transaction.objectStore("gameAttributes");
+		const challengeThanosMode = await store.get("challengeThanosMode");
+
+		await store.put({
+			key: "challengeThanosMode",
+			value: challengeThanosMode?.value ? 20 : 0,
+		});
+	}
 };
 
 const connectLeague = (lid: number) =>

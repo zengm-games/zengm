@@ -1171,11 +1171,28 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Challenge Modes",
-			key: "challengeThanosMode",
-			name: "Thanos Mode",
+			key: "challengeSisyphusMode",
+			name: "Sisyphus Mode",
 			type: "bool",
 			description:
-				"At the end of the playoffs, there's a 20% chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
+				"After you reach the top of the mountain (win a championship), your roster is swapped with the worst team in the league.",
+		},
+		{
+			category: "Challenge Modes",
+			key: "challengeThanosMode",
+			name: "Thanos Mode",
+			type: "float",
+			decoration: "percent",
+			description:
+				"At the end of the playoffs, there's some percentage chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
+			validator: value => {
+				if (value > 100) {
+					throw new Error("Value cannot be greater than 100%");
+				}
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0%");
+				}
+			},
 		},
 		{
 			category: "Game Modes",

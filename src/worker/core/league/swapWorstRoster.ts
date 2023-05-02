@@ -28,7 +28,9 @@ const swapWorstRoster = async () => {
 	const worstTid = teamsSorted[0].tid;
 
 	if (userTid === worstTid) {
-		return;
+		return {
+			swappedTid: undefined,
+		};
 	}
 
 	const season = g.get("season");
@@ -78,6 +80,10 @@ const swapWorstRoster = async () => {
 		p.tid = userTid;
 		await idb.cache.players.put(p);
 	}
+
+	return {
+		swappedTid: worstTid,
+	};
 };
 
 export default swapWorstRoster;

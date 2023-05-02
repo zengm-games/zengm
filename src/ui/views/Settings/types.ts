@@ -53,6 +53,7 @@ export type Key =
 	| "challengeLoseBestPlayer"
 	| "challengeFiredLuxuryTax"
 	| "challengeFiredMissPlayoffs"
+	| "challengeSisyphusMode"
 	| "challengeThanosMode"
 	| "realPlayerDeterminism"
 	| "repeatSeason"

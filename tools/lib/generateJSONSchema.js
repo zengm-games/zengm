@@ -670,8 +670,18 @@ const generateJSONSchema = (sport /*: string*/) => {
 							challengeFiredMissPlayoffs: {
 								type: "boolean",
 							},
-							challengeThanosMode: {
+							challengeSisyphusMode: {
 								type: "boolean",
+							},
+							challengeThanosMode: {
+								anyOf: [
+									{
+										type: "boolean",
+									},
+									{
+										type: "number",
+									},
+								],
 							},
 							confs: wrap({
 								type: "array",

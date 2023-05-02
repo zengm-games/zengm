@@ -278,13 +278,12 @@ const doThanosMode = async (conditions: Conditions) => {
 };
 
 const doSisyphusMode = async (conditions: Conditions) => {
-	console.log("doSisyphusMode");
 	const { swappedTid } = await league.swapWorstRoster(true);
 	let text = "Sisphyus Mode activated! ";
 	const tids = [g.get("userTid")];
 	if (swappedTid !== undefined) {
 		const teamInfo = g.get("teamInfoCache")[swappedTid];
-		text += `Your roster has been swapped with the worst team in the league, the ${teamInfo.region} ${teamInfo.name}`;
+		text += `Your roster has been swapped with the worst team in the league, the ${teamInfo.region} ${teamInfo.name}.`;
 		tids.push(swappedTid);
 	} else {
 		text +=
@@ -293,12 +292,13 @@ const doSisyphusMode = async (conditions: Conditions) => {
 
 	logEvent(
 		{
-			type: "tragedy",
+			type: "sisyphusTeam",
 			text,
 			showNotification: true,
 			pids: [],
 			tids,
 			persistent: true,
+			score: 20,
 		},
 		conditions,
 	);

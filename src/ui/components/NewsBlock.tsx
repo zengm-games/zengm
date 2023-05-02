@@ -21,7 +21,8 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	);
 };
 
-const logoStyle = { height: 36, width: 36 };
+const logoStyle = { maxHeight: 28, maxWidth: 28 };
+const topStyle = { height: 36 };
 
 const NewsBlock = ({
 	event,
@@ -53,15 +54,11 @@ const NewsBlock = ({
 			teamName = (
 				<>
 					{teamInfo.imgURL || teamInfo.imgURLSmall ? (
-						<a
-							href={rosterURL}
-							className="p-1 d-flex align-items-center"
-							style={logoStyle}
-						>
+						<a href={rosterURL} className="p-1">
 							<img
-								className="mw-100 mh-100"
 								src={teamInfo.imgURLSmall ?? teamInfo.imgURL}
 								alt=""
+								style={logoStyle}
 							/>
 						</a>
 					) : null}
@@ -86,12 +83,12 @@ const NewsBlock = ({
 			]);
 
 			return (
-				<a key={tid} href={rosterURL} className="p-1" style={logoStyle}>
+				<a key={tid} href={rosterURL} className="p-1">
 					{teamInfo.imgURL || teamInfo.imgURLSmall ? (
 						<img
-							className="mw-100 mh-100"
 							src={teamInfo.imgURLSmall ?? teamInfo.imgURL}
 							alt=""
+							style={logoStyle}
 						/>
 					) : (
 						teamInfo.abbrev
@@ -110,6 +107,7 @@ const NewsBlock = ({
 						? "table-info"
 						: "card-header p-0",
 				)}
+				style={topStyle}
 			>
 				{teamName}
 				<Badge type={event.type} />

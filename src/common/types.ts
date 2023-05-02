@@ -278,6 +278,7 @@ export type EventBBGMWithoutKey =
 			tids: number[];
 			season: number;
 			wonTitle: boolean;
+			score?: number;
 	  }
 	| {
 			type: "trade";
@@ -789,6 +790,7 @@ export type LogEventType =
 	| "retiredJersey"
 	| "screenshot"
 	| "sisyphus"
+	| "sisyphusTeam"
 	| "success"
 	| "teamContraction"
 	| "teamExpansion"

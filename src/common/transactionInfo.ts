@@ -104,6 +104,10 @@ export const types: Partial<
 		text: "Fraud",
 		category: "rare",
 	},
+	sisyphusTeam: {
+		text: "Sisyphus Mode",
+		category: "rare",
+	},
 	tragedy: {
 		text: "Tragic Death",
 		category: "rare",

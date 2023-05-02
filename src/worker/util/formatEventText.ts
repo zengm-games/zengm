@@ -174,6 +174,32 @@ const formatEventText = async (event: EventBBGM) => {
 		return text;
 	}
 
+	if (event.type === "sisyphus") {
+		const teamNames = await Promise.all(
+			event.tids.map(async tid => {
+				const teamInfo = await getTeamInfoBySeason(tid, event.season);
+				return teamInfo
+					? `<a href="${helpers.leagueUrl([
+							"roster",
+							`${teamInfo.abbrev}_${tid}`,
+							event.season,
+					  ])}">${teamInfo.name}</a>`
+					: "???";
+			}),
+		);
+
+		const p = await idb.getCopy.players({ pid: event.pids[0] }, "noCopyCache");
+		const playerName = p
+			? `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
+					p.lastName
+			  }</a>`
+			: "???";
+
+		return `Sisyphus Mode sent ${playerName} from the ${teamNames[1]} to the ${
+			teamNames[0]
+		} after the ${teamNames[event.wonTitle ? 1 : 0]} won the title.`;
+	}
+
 	if (event.text) {
 		return helpers.correctLinkLid(g.get("lid"), event.text);
 	}

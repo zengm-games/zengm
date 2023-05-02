@@ -260,7 +260,7 @@ export type DiscriminateUnion<
 
 export type EventBBGMWithoutKey =
 	| {
-			type: Exclude<LogEventType, "trade">;
+			type: Exclude<LogEventType, "sisyphus" | "trade">;
 			text: string;
 			pids?: number[];
 			dpids?: number[];
@@ -271,6 +271,13 @@ export type EventBBGMWithoutKey =
 			// < 20: somewhat important
 			// >= 20: very important
 			score?: number;
+	  }
+	| {
+			type: "sisyphus";
+			pids: number[];
+			tids: number[];
+			season: number;
+			wonTitle: boolean;
 	  }
 	| {
 			type: "trade";
@@ -781,6 +788,7 @@ export type LogEventType =
 	| "retiredList"
 	| "retiredJersey"
 	| "screenshot"
+	| "sisyphus"
 	| "success"
 	| "teamContraction"
 	| "teamExpansion"

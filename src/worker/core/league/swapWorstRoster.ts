@@ -1,6 +1,6 @@
 import orderBy from "lodash-es/orderBy";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, logEvent } from "../../util";
 import { getTeamOvr } from "../../views/newTeam";
 import player from "../player";
 import { PHASE } from "../../../common";
@@ -70,6 +70,14 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 			}
 
 			if (addSisyphusLogs) {
+				await logEvent({
+					type: "sisyphus",
+					showNotification: false,
+					pids: [p.pid],
+					tids: [newTid, oldTid],
+					wonTitle: userTid === oldTid,
+				});
+
 				if (!p.transactions) {
 					p.transactions = [];
 				}

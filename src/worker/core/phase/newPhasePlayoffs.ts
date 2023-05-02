@@ -11,7 +11,7 @@ const newPhasePlayoffs = async (
 	conditions: Conditions,
 	liveGameSim: boolean = false,
 ): Promise<PhaseReturn> => {
-	achievement.check("afterRegularSeason", conditions);
+	await achievement.check("afterRegularSeason", conditions);
 
 	// In case this was somehow set already
 	local.playingUntilEndOfRound = false;

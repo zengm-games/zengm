@@ -313,7 +313,8 @@ const newPhaseBeforeDraft = async (
 		await setChampNoPlayoffs(conditions);
 	}
 
-	achievement.check("afterPlayoffs", conditions);
+	await achievement.check("afterPlayoffs", conditions);
+
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -493,7 +494,7 @@ const newPhaseBeforeDraft = async (
 		}
 
 		await team.updateStrategies();
-		achievement.check("afterAwards", conditions);
+		await achievement.check("afterAwards", conditions);
 		const response = await season.updateOwnerMood();
 		if (response) {
 			await genMessage(response.deltas, response.cappedDeltas);
@@ -509,7 +510,7 @@ const newPhaseBeforeDraft = async (
 	}
 
 	if (g.get("gameOver")) {
-		achievement.check("afterFired", conditions);
+		await achievement.check("afterFired", conditions);
 	}
 
 	await doInflation(conditions);

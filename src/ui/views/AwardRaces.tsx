@@ -27,15 +27,7 @@ const AwardRaces = ({
 		},
 	});
 
-	const globalCols = getCols([
-		"#",
-		"Name",
-		"Pos",
-		"Age",
-		"Team",
-		"Record",
-		"Ovr",
-	]);
+	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
 
 	return (
 		<>
@@ -44,9 +36,11 @@ const AwardRaces = ({
 			<div className="row" style={{ marginTop: -14 }}>
 				{awardCandidates.map(({ name, players, stats }) => {
 					const mip = name === "Most Improved Player";
+					const roy = name === "Rookie of the Year";
 
 					const cols = [
 						...globalCols,
+						...getCols([roy ? "Pick" : "Record", "Ovr"]),
 						...getCols(stats.map(stat => `stat:${stat}`)),
 					];
 
@@ -72,9 +66,15 @@ const AwardRaces = ({
 
 						const t = teams.find(t => t.tid === tid);
 
-						let record = null;
-						if (t) {
-							record = helpers.formatRecord(t.seasonAttrs);
+						let recordOrPick = null;
+						if (roy) {
+							if (p.draft.round > 0) {
+								recordOrPick = `${p.draft.round}-${p.draft.pick}`;
+							}
+						} else {
+							if (t) {
+								recordOrPick = helpers.formatRecord(t.seasonAttrs);
+							}
 						}
 
 						const data = [
@@ -103,7 +103,7 @@ const AwardRaces = ({
 									{abbrev}
 								</a>
 							</>,
-							record,
+							recordOrPick,
 						];
 
 						const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;

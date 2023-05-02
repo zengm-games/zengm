@@ -403,7 +403,10 @@ const formatPlayerFactory = async (
 			awards.some(award => award.type === "Inducted into the Hall of Fame")
 				? 1
 				: undefined;
-		const diedYear = tid === PLAYER.RETIRED ? bio.diedYear : undefined;
+		const diedYear =
+			tid === PLAYER.RETIRED && bio.diedYear <= season
+				? bio.diedYear
+				: undefined;
 
 		let retiredYear;
 		if (ratings.retiredUntil !== undefined) {

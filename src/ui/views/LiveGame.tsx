@@ -79,7 +79,11 @@ const updatePhaseAndLeagueTopBar = () => {
 	toWorker("main", "uiUpdateLocal", { liveGameInProgress: false });
 };
 
-const getSeconds = (time: string) => {
+const getSeconds = (time: string | undefined) => {
+	if (!time) {
+		return 0;
+	}
+
 	const parts = time.split(":").map(x => parseInt(x));
 	if (parts.length < 2) {
 		return 0;

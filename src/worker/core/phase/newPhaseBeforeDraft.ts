@@ -173,6 +173,7 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 				g.get("teamInfoCache")[tid]?.name
 			}</a> finished in 1st place and are league champions!`,
 			showNotification: true,
+			hideInLiveGame: true,
 			tids: [tid],
 			score: 20,
 			saveToDb: true,
@@ -295,6 +296,7 @@ const doSisyphusMode = async (conditions: Conditions) => {
 			type: "sisyphusTeam",
 			text,
 			showNotification: true,
+			hideInLiveGame: true,
 			pids: [],
 			tids,
 			persistent: true,

@@ -3876,7 +3876,14 @@ const upsertCustomizedPlayer = async (
 	// In case that develop call reset position, re-apply it here
 	p.ratings[r].pos = selectedPos;
 
-	if (isSport("football")) {
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: true,
+		})
+	) {
 		if (
 			p.ratings[r].ovrs &&
 			Object.hasOwn(p.ratings[r].ovrs, selectedPos) &&

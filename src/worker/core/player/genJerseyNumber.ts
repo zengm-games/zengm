@@ -357,6 +357,7 @@ const weightFunction = bySport({
 	},
 });
 
+// Would be nice if this handled prefixed jersey numbers, but that would make it a bit slower so idk if it's worth it
 const genFootballWeightFunction = (boost: number[]) => {
 	const boostString = boost.map(String);
 	return (jerseyNumber: string) => {
@@ -398,6 +399,9 @@ const genJerseyNumber = async (
 
 	// When this is true, ignore current/previous jersey number
 	pickRandomNumber?: boolean,
+
+	// When all jersey numbers are retired, it will add a prefix and try again
+	prefix?: number,
 ): Promise<string | undefined> => {
 	let prevJerseyNumber;
 	if (!pickRandomNumber) {
@@ -439,7 +443,14 @@ const genJerseyNumber = async (
 		}
 	}
 
-	const candidates = VALID_JERSEY_NUMBERS.filter(
+	let validJerseyNumbers;
+	if (prefix === undefined) {
+		validJerseyNumbers = VALID_JERSEY_NUMBERS;
+	} else {
+		validJerseyNumbers = range(0, 100).map(i => String(prefix * 100 + i));
+	}
+
+	const candidates = validJerseyNumbers.filter(
 		jerseyNumber =>
 			!teamJerseyNumbers.includes(jerseyNumber) &&
 			!retiredJerseyNumbers.includes(jerseyNumber),
@@ -448,15 +459,21 @@ const genJerseyNumber = async (
 	if (
 		prevJerseyNumber &&
 		(candidates.includes(prevJerseyNumber) ||
-			!VALID_JERSEY_NUMBERS.includes(prevJerseyNumber))
+			!validJerseyNumbers.includes(prevJerseyNumber))
 	) {
 		// Keep old jersey number, if it is available or if prevJerseyNumber is not a valid jersey number (must have been manually edited)
 		return prevJerseyNumber;
 	}
 
 	if (candidates.length === 0) {
-		// No valid jersey number left!
-		return;
+		// No valid jersey number left! Try again with a larger prefix (so it'll pick numbers like 1XX rather than XX, then 2XX, 3XX, etc.)
+		return genJerseyNumber(
+			p,
+			teamJerseyNumbersInput,
+			retiredJerseyNumbersInput,
+			pickRandomNumber,
+			(prefix ?? 0) + 1,
+		);
 	}
 
 	if (weightFunctionsByPosition) {

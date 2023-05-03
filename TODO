@@ -1,5 +1,3 @@
-hide sisyphus mode notification until after live sim finishes
-
 starting auto play during fantasy draft is broken
 - expansion draft too? but it does auto play through that in real players leagues
 
@@ -68,8 +66,6 @@ dedicated page listing all owned draft picks, including links to trades where th
 sticky score when scrolling box score during live sim https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j2airjl/
 
 show totals for pts/reb/ast/etc in play by play like "J. Brown Driving layup (12 pts) D. White (3 AST)" https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j26zhxu/
-
-Noticing the game retiring active players jersey and then forcing the player to wear another number https://discord.com/channels/290013534023057409/290015591216054273/1059251062088945674
 
 wild pitch score in bottom of extra innings does not end game
 - https://discord.com/channels/290013534023057409/944392892905037885/1054912900692717608
@@ -361,8 +357,6 @@ sticky columns sometimes fail on mobile
 - seen in safari and android chrome
 - probably only for 2+ columns - so a JS problem in useStickyXX
 - "It usually happens when I try to sort other columns and sometimes somehow get fixed when I sort another one" https://discord.com/channels/290013534023057409/290015591216054273/943644259498745926
-
-after the Free Agency period, if a player signs with a new team and manually gets a new jersey # then the jersey # also changes for the team that he previously played for https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 
 build statues for players https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hqsowkj/
 - https://old.reddit.com/message/messages/1akmgqt
@@ -1177,6 +1171,7 @@ salaries wrong after expansion draft? https://cdn.discordapp.com/attachments/290
 
 When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
 - need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
+- https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 
 Add game log to player page
 

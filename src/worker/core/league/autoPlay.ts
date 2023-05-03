@@ -15,7 +15,7 @@ import { idb } from "../../db";
 const autoPlay = async (conditions: Conditions = {}) => {
 	let currentPhase = g.get("phase");
 
-	// No newPhase call is triggered after expansion draft, so this check comes first
+	// No newPhase call is triggered after expansion/fantasy draft, so this check comes first
 	if (currentPhase === PHASE.EXPANSION_DRAFT) {
 		if (g.get("expansionDraft").phase === "protection") {
 			await expansionDraft.start();
@@ -23,6 +23,10 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		if (g.get("expansionDraft").phase === "draft") {
 			await draft.runPicks({ type: "untilEnd" }, conditions);
 		}
+
+		currentPhase = g.get("phase");
+	} else if (currentPhase === PHASE.FANTASY_DRAFT) {
+		await draft.runPicks({ type: "untilEnd" }, conditions);
 
 		currentPhase = g.get("phase");
 	}

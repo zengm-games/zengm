@@ -21,6 +21,7 @@ const Chart = ({
 	phase,
 	season,
 	seasonsToPlot,
+	stat,
 	teams,
 	title,
 	valueKey,
@@ -32,6 +33,7 @@ const Chart = ({
 	"phase" | "season" | "seasonsToPlot" | "teams"
 > & {
 	className?: string;
+	stat: string;
 	title: string;
 	valueKey: "ptsPct" | "winp" | "stat" | "statTeam";
 	xDomain: [number, number];
@@ -207,6 +209,11 @@ const Chart = ({
 						tied: tooltipData.tied,
 					})}
 					{tooltipData.roundsWonText ? `, ${tooltipData.roundsWonText}` : null}
+					<br />
+					{helpers.roundStat(tooltipData.stat ?? 0, "ws")} {stat} (total)
+					<br />
+					{helpers.roundStat(tooltipData.statTeam ?? 0, "ws")} {stat} (with{" "}
+					{tooltipData.abbrev})
 				</TooltipWithBounds>
 			) : null}
 			<div
@@ -271,6 +278,7 @@ const Charts = ({
 				phase={phase}
 				season={season}
 				seasonsToPlot={seasonsToPlot}
+				stat={stat}
 				teams={teams}
 				title={`Team ${
 					usePts ? "point" : "winning"
@@ -287,6 +295,7 @@ const Charts = ({
 				phase={phase}
 				season={season}
 				seasonsToPlot={seasonsToPlot}
+				stat={stat}
 				teams={teams}
 				title={`${stat} by assets received in trade (total)`}
 				valueKey={"stat"}
@@ -299,6 +308,7 @@ const Charts = ({
 				phase={phase}
 				season={season}
 				seasonsToPlot={seasonsToPlot}
+				stat={stat}
 				teams={teams}
 				title={`${stat} by assets received in trade (with team)`}
 				valueKey={"statTeam"}

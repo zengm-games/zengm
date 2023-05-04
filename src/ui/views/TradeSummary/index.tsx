@@ -15,7 +15,6 @@ const TradeSummary = ({
 	teams,
 	usePts,
 }: View<"tradeSummary">) => {
-	console.log("seasonsToPlot", seasonsToPlot);
 	useTitleBar({
 		title: "Trade Summary",
 	});

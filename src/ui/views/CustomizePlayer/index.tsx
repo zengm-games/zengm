@@ -5,6 +5,7 @@ import {
 	type ChangeEvent,
 	type MouseEvent,
 	type ReactNode,
+	useEffect,
 } from "react";
 import {
 	PHASE,
@@ -83,7 +84,6 @@ const copyValidValues = (
 		}
 	}
 
-	let updatedRatingsOrAge = false;
 	{
 		// @ts-expect-error
 		const age = parseInt(source.age);
@@ -91,7 +91,6 @@ const copyValidValues = (
 			const bornYear = season - age;
 			if (bornYear !== target.born.year) {
 				target.born.year = bornYear;
-				updatedRatingsOrAge = true;
 			}
 		}
 	}
@@ -99,6 +98,12 @@ const copyValidValues = (
 	target.born.loc = source.born.loc;
 
 	target.college = source.college;
+
+	if (source.pos === undefined) {
+		delete target.pos;
+	} else {
+		target.pos = source.pos;
+	}
 
 	{
 		// @ts-expect-error
@@ -219,17 +224,11 @@ const copyValidValues = (
 	{
 		const r = source.ratings.length - 1;
 		for (const rating of Object.keys(source.ratings[r])) {
-			if (rating === "pos") {
-				if (target.ratings[r].pos !== source.ratings[r].pos) {
-					target.ratings[r].pos = source.ratings[r].pos;
-					target.pos = source.ratings[r].pos; // Keep this way forever because fun
-				}
-			} else if (RATINGS.includes(rating)) {
+			if (RATINGS.includes(rating)) {
 				const val = helpers.bound(parseInt(source.ratings[r][rating]), 0, 100);
 				if (!Number.isNaN(val)) {
 					if (target.ratings[r][rating] !== val) {
 						target.ratings[r][rating] = val;
-						updatedRatingsOrAge = true;
 					}
 				}
 			} else if (rating === "locked") {
@@ -248,8 +247,6 @@ const copyValidValues = (
 			return rel;
 		})
 		.filter(rel => !Number.isNaN(rel.pid));
-
-	return updatedRatingsOrAge;
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
@@ -270,6 +267,17 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		};
 	});
 
+	const [autoPos, setAutoPos] = useState(props.initialAutoPos);
+
+	const lastRatings = state.p.ratings.at(-1);
+	useEffect(() => {
+		(async () => {
+			const pos = await toWorker("main", "getAutoPos", lastRatings);
+
+			setAutoPos(pos);
+		})();
+	}, [lastRatings]);
+
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setState(prevState => ({
@@ -280,13 +288,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		const p = props.p;
 
 		// Copy over values from state, if they're valid
-		const updatedRatingsOrAge = copyValidValues(
-			state.p,
-			p,
-			props.minContract,
-			props.phase,
-			props.season,
-		);
+		copyValidValues(state.p, p, props.minContract, props.phase, props.season);
 
 		// Only save image URL if it's selected
 		if (state.appearanceOption !== "Image URL") {
@@ -298,7 +300,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				p,
 				originalTid: props.originalTid,
 				season: props.season,
-				updatedRatingsOrAge,
 			});
 
 			realtimeUpdate([], helpers.leagueUrl(["player", pid]));
@@ -346,6 +347,12 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						p.stats.at(-1).jerseyNumber = val;
 					} else {
 						p.jerseyNumber = val;
+					}
+				} else if (field === "pos") {
+					if (val === "auto") {
+						delete p.pos;
+					} else {
+						p.pos = val;
 					}
 				} else {
 					p[field] = val;
@@ -506,7 +513,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		setState(prevState => {
 			const p = prevState.p;
 			const oldRatings = p.ratings[r];
-			const pos = p.ratings[r].pos;
+			const pos = p.pos ?? autoPos;
 
 			const extraKeys = bySport({
 				baseball: ["spd"],
@@ -686,63 +693,43 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-sm-3 mb-3">
-								<label className="form-label">Position</label>
-								<div className="input-group">
-									<select
-										className="form-select"
-										onChange={handleChange.bind(null, "rating", "pos")}
-										value={p.ratings[r].pos}
-										disabled={!godMode && p.tid !== PLAYER.RETIRED}
-									>
-										{POSITIONS.filter(pos => {
-											if (
-												isSport("football") &&
-												bannedPositions.includes(pos)
-											) {
-												return false;
-											}
-											return true;
-										}).map(pos => {
-											return (
-												<option key={pos} value={pos}>
-													{pos}
-												</option>
-											);
-										})}
-									</select>
-									<button
-										className="btn btn-secondary"
-										type="button"
-										disabled={!godMode}
-										onClick={async event => {
-											event.preventDefault();
-
-											const pos = await toWorker(
-												"main",
-												"getAutoPos",
-												p.ratings[r],
-											);
-
-											setState(prevState => {
-												const p = {
-													...prevState.p,
-												};
-												p.ratings = [...p.ratings];
-												p.ratings[r] = {
-													...p.ratings[r],
-													pos,
-												};
-
-												return {
-													...prevState,
-													p,
-												};
-											});
-										}}
-									>
-										Auto
-									</button>
-								</div>
+								<label className="form-label">
+									Position{" "}
+									<HelpPopover title="Position">
+										<p>
+											Leave this set to Auto and it will automatically determine
+											the player's position based on their ratings. That
+											position can also change in the future as the player's
+											ratings change.
+										</p>
+										<p>
+											If you change this to manually specify a position, then
+											the player's position will never change in the future.
+										</p>
+									</HelpPopover>
+								</label>
+								<select
+									className="form-select"
+									onChange={handleChange.bind(null, "root", "pos")}
+									value={p.pos ?? "auto"}
+									disabled={!godMode && p.tid !== PLAYER.RETIRED}
+								>
+									<option value="auto">
+										Auto{autoPos !== undefined ? ` (${autoPos})` : null}
+									</option>
+									{POSITIONS.filter(pos => {
+										if (isSport("football") && bannedPositions.includes(pos)) {
+											return false;
+										}
+										return true;
+									}).map(pos => {
+										return (
+											<option key={pos} value={pos}>
+												{pos}
+											</option>
+										);
+									})}
+								</select>
 							</div>
 							<div className="col-sm-3 mb-3">
 								<label className="form-label">Jersey Number</label>
@@ -765,7 +752,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 												{
 													pid: p.pid,
 													tid: p.tid,
-													pos: p.ratings[r].pos,
+													pos: p.pos ?? autoPos,
 												},
 											);
 
@@ -1045,10 +1032,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										{
 											age: (p as any).age,
 											pos: bySport({
-												baseball: p.ratings[r].pos,
+												baseball: p.pos ?? autoPos,
 												basketball: undefined,
-												football: p.ratings[r].pos,
-												hockey: p.ratings[r].pos,
+												football: p.pos ?? autoPos,
+												hockey: p.pos ?? autoPos,
 											}),
 										},
 									);

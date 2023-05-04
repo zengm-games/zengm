@@ -170,11 +170,14 @@ const updateCustomizePlayer = async (
 			currentPlayers.map(formatPlayerRelativesList),
 		);
 
+		const initialAutoPos = player.pos(p.ratings.at(-1));
+
 		return {
 			appearanceOption,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			gender: g.get("gender"),
 			godMode: g.get("godMode"),
+			initialAutoPos,
 			minContract: g.get("minContract"),
 			originalTid,
 			p,

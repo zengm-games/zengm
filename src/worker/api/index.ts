@@ -3798,12 +3798,10 @@ const upsertCustomizedPlayer = async (
 		p,
 		originalTid,
 		season,
-		updatedRatingsOrAge,
 	}: {
 		p: Player | PlayerWithoutKey;
 		originalTid: number | undefined;
 		season: number;
-		updatedRatingsOrAge: boolean;
 	},
 	conditions: Conditions,
 ): Promise<number> => {
@@ -3865,35 +3863,9 @@ const upsertCustomizedPlayer = async (
 		});
 	}
 
-	// Recalculate player ovr, pot, and values if necessary
-	const selectedPos = p.ratings[r].pos;
-
-	if (updatedRatingsOrAge || !Object.hasOwn(p, "pid")) {
-		await player.develop(p, 0);
-		await player.updateValues(p);
-	}
-
-	// In case that develop call reset position, re-apply it here
-	p.ratings[r].pos = selectedPos;
-
-	if (
-		bySport({
-			baseball: true,
-			basketball: false,
-			football: true,
-			hockey: true,
-		})
-	) {
-		if (
-			p.ratings[r].ovrs &&
-			Object.hasOwn(p.ratings[r].ovrs, selectedPos) &&
-			p.ratings[r].pots &&
-			Object.hasOwn(p.ratings[r].pots, selectedPos)
-		) {
-			p.ratings[r].ovr = p.ratings[r].ovrs[selectedPos];
-			p.ratings[r].pot = p.ratings[r].pots[selectedPos];
-		}
-	}
+	// Recalculate player pos, ovr, pot, and values if necessary
+	await player.develop(p, 0);
+	await player.updateValues(p);
 
 	// Add regular season or playoffs stat row, if necessary
 	if (p.tid >= 0 && p.tid !== originalTid && g.get("phase") <= PHASE.PLAYOFFS) {

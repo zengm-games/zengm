@@ -59,7 +59,7 @@ const ovr = (
 		a * Math.exp(b * 9) * ratings[9];
 
 	if (rating) {
-		// In this case, we're ultimately using the value to compute a rank, so we don't care about the scale. And bounding the scale to be positive below makes it often 0.
+		// In this case, we're ultimately using the value to compute a rank or some other relative score, so we don't care about the scale
 		return predictedMOV;
 	}
 

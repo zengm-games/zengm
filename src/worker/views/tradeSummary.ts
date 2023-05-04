@@ -54,6 +54,7 @@ const findStatSum = (
 	statsIndex: number | undefined, // undefined means it was a traded draft pick, so include all stats
 	season: number,
 	phase: Phase,
+	tid: number,
 	statSumsBySeason?: Record<number, number>,
 ) => {
 	// >= 0 check is for rookies traded after the draft, where they have no stats entry so it is -1
@@ -73,6 +74,7 @@ const findStatSum = (
 	}
 
 	let statSum = 0;
+	let statSumTeam = 0;
 	for (let i = 0; i < allStats.length; i++) {
 		const row = allStats[i];
 
@@ -91,6 +93,10 @@ const findStatSum = (
 			statsIndex === -1
 		) {
 			statSum += stat;
+
+			if (row.tid === tid) {
+				statSumTeam += stat;
+			}
 		}
 
 		// Including before trade
@@ -107,7 +113,10 @@ const findStatSum = (
 			}
 		}
 	}
-	return statSum;
+	return {
+		stat: statSum,
+		statTeam: statSumTeam,
+	};
 };
 
 const getActualPlayerInfo = (
@@ -116,16 +125,18 @@ const getActualPlayerInfo = (
 	statsIndex: number | undefined,
 	season: number,
 	phase: Phase,
+	tid: number,
 	statSumsBySeason?: Record<number, number>,
 	draftPick: boolean = false,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
 
-	const stat = findStatSum(
+	const { stat, statTeam } = findStatSum(
 		p.stats,
 		statsIndex,
 		season,
 		phase,
+		tid,
 		statSumsBySeason,
 	);
 
@@ -138,6 +149,7 @@ const getActualPlayerInfo = (
 		retiredYear: p.retiredYear,
 		skills: ratings.skills,
 		stat,
+		statTeam,
 		watch: p.watch ?? 0,
 	};
 };
@@ -259,6 +271,7 @@ type CommonActualPlayer = {
 	skills: string[];
 	watch: number;
 	stat: number;
+	statTeam: number;
 };
 
 type CommonPick = {
@@ -315,6 +328,7 @@ export const processAssets = async (
 					asset.statsIndex,
 					event.season,
 					event.phase,
+					event.tids[i],
 					statSumsBySeason ? statSumsBySeason[i] : undefined,
 				);
 
@@ -360,6 +374,7 @@ export const processAssets = async (
 					undefined,
 					event.season,
 					event.phase,
+					event.tids[i],
 					statSumsBySeason ? statSumsBySeason[i] : undefined,
 					true,
 				);

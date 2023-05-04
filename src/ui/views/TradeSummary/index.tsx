@@ -16,6 +16,7 @@ const TradeSummary = ({
 	usePts,
 }: View<"tradeSummary">) => {
 	console.log("seasonsToPlot", seasonsToPlot);
+	console.log("teams", teams);
 	useTitleBar({
 		title: "Trade Summary",
 	});
@@ -74,6 +75,8 @@ const TradeSummary = ({
 												{asset.age} years old
 												<br />
 												{helpers.roundStat(asset.stat, "ws")} {stat} after trade
+												({helpers.roundStat(asset.statTeam, "ws")} with{" "}
+												{t.abbrev})
 											</div>
 										</div>
 									);
@@ -124,6 +127,8 @@ const TradeSummary = ({
 												{asset.age} years old
 												<br />
 												{helpers.roundStat(asset.stat, "ws")} {stat} after trade
+												({helpers.roundStat(asset.statTeam, "ws")} with{" "}
+												{t.abbrev})
 											</div>
 										</div>
 									);

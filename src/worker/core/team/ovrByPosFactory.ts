@@ -161,7 +161,7 @@ const ovrByPosFactory =
 		}
 
 		if (onlyPos || wholeRoster) {
-			// In this case, we're ultimately using the value to compute a rank or some other relative score, so we don't care about the scale. And bounding the scale to be positive below makes it always 0.
+			// In this case, we're ultimately using the value to compute a rank or some other relative score, so we don't care about the scale
 			return predictedMOV;
 		}
 

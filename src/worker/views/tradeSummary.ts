@@ -438,11 +438,12 @@ const updateTradeSummary = async (
 			const assets = await processAssets(event, i, statSumsBySeason);
 
 			let statSum = 0;
+			let statSumTeam = 0;
 			for (const asset of assets) {
 				// https://github.com/microsoft/TypeScript/issues/21732
-				const stat = (asset as any).stat;
-				if (typeof stat === "number") {
-					statSum += stat;
+				if (asset.type === "player" || asset.type === "realizedPick") {
+					statSum += asset.stat;
+					statSumTeam += asset.statTeam;
 				}
 			}
 
@@ -453,6 +454,7 @@ const updateTradeSummary = async (
 				tid,
 				assets,
 				statSum,
+				statSumTeam,
 			});
 		}
 

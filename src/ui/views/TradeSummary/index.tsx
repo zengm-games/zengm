@@ -16,7 +16,6 @@ const TradeSummary = ({
 	usePts,
 }: View<"tradeSummary">) => {
 	console.log("seasonsToPlot", seasonsToPlot);
-	console.log("teams", teams);
 	useTitleBar({
 		title: "Trade Summary",
 	});
@@ -137,7 +136,10 @@ const TradeSummary = ({
 								return "???";
 							})}
 							<b>
-								Total {stat} after trade: {helpers.roundStat(t.statSum, "ws")}
+								{helpers.roundStat(t.statSum, "ws")} {stat} after trade (total)
+								<br />
+								{helpers.roundStat(t.statSumTeam, "ws")} {stat} after trade
+								(with {t.abbrev})
 							</b>
 						</div>
 					))}

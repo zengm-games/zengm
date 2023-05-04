@@ -49,13 +49,22 @@ const findRatingsRow = (
 	}
 };
 
+type StatSumsBySeason = Record<
+	number,
+	{
+		stat: number;
+		statTeam: number;
+	}
+>;
+type StatSumsBySeasons = [StatSumsBySeason, StatSumsBySeason];
+
 const findStatSum = (
 	allStats: PlayerStats[],
 	statsIndex: number | undefined, // undefined means it was a traded draft pick, so include all stats
 	season: number,
 	phase: Phase,
 	tid: number,
-	statSumsBySeason?: Record<number, number>,
+	statSumsBySeason?: StatSumsBySeason,
 ) => {
 	// >= 0 check is for rookies traded after the draft, where they have no stats entry so it is -1
 	let index = statsIndex !== undefined && statsIndex >= 0 ? statsIndex : 0;
@@ -107,9 +116,15 @@ const findStatSum = (
 					g.get("phase") >= PHASE.REGULAR_SEASON)
 			) {
 				if (statSumsBySeason[row.season] === undefined) {
-					statSumsBySeason[row.season] = 0;
+					statSumsBySeason[row.season] = {
+						stat: 0,
+						statTeam: 0,
+					};
 				}
-				statSumsBySeason[row.season] += stat;
+				statSumsBySeason[row.season].stat += stat;
+				if (row.tid === tid) {
+					statSumsBySeason[row.season].statTeam += stat;
+				}
 			}
 		}
 	}
@@ -126,7 +141,7 @@ const getActualPlayerInfo = (
 	season: number,
 	phase: Phase,
 	tid: number,
-	statSumsBySeason?: Record<number, number>,
+	statSumsBySeason?: StatSumsBySeason,
 	draftPick: boolean = false,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
@@ -158,7 +173,7 @@ const getSeasonsToPlot = async (
 	season: number,
 	phase: Phase,
 	tids: [number, number],
-	statSumsBySeason: [Record<number, number>, Record<number, number>],
+	statSumsBySeason: StatSumsBySeasons,
 ) => {
 	// Default range of the plot, relative to the season of the trade
 	const start = season - (phase <= PHASE.PLAYOFFS ? 2 : 1);
@@ -193,16 +208,15 @@ const getSeasonsToPlot = async (
 			name?: string;
 			roundsWonText?: string;
 			season: number;
-			stat: number;
+			stat?: number;
+			statTeam?: number;
 		};
 		const teams: [Team, Team] = [
 			{
 				season: i,
-				stat: 0,
 			},
 			{
 				season: i,
-				stat: 0,
 			},
 		];
 		for (let j = 0; j < tids.length; j++) {
@@ -242,7 +256,12 @@ const getSeasonsToPlot = async (
 				};
 			}
 
-			teams[j].stat = statSumsBySeason[j][i];
+			if (statSumsBySeason[j][i]?.stat > 0) {
+				teams[j].stat = statSumsBySeason[j][i]?.stat;
+			}
+			if (statSumsBySeason[j][i]?.statTeam > 0) {
+				teams[j].statTeam = statSumsBySeason[j][i]?.statTeam;
+			}
 		}
 
 		seasons.push({
@@ -283,12 +302,10 @@ type CommonPick = {
 
 type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;
 
-type StatSumsBySeason = [Record<number, number>, Record<number, number>];
-
 export const processAssets = async (
 	event: TradeEvent,
 	i: number,
-	statSumsBySeason?: StatSumsBySeason,
+	statSumsBySeason?: StatSumsBySeasons,
 ) => {
 	if (!event.teams || event.phase === undefined) {
 		throw new Error("Invalid event");
@@ -426,7 +443,7 @@ const updateTradeSummary = async (
 
 		const teams = [];
 
-		const statSumsBySeason: StatSumsBySeason = [{}, {}];
+		const statSumsBySeason: StatSumsBySeasons = [{}, {}];
 
 		for (let i = 0; i < event.tids.length; i++) {
 			const tid = event.tids[i];

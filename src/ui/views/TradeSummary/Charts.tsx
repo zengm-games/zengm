@@ -33,7 +33,7 @@ const Chart = ({
 > & {
 	className?: string;
 	title: string;
-	valueKey: "ptsPct" | "winp" | "stat";
+	valueKey: "ptsPct" | "winp" | "stat" | "statTeam";
 	xDomain: [number, number];
 	yScale: ScaleLinear<number, number, never>;
 	yTickFormat?: (x: number) => string;
@@ -288,8 +288,20 @@ const Charts = ({
 				season={season}
 				seasonsToPlot={seasonsToPlot}
 				teams={teams}
-				title={`${stat} by assets received in trade`}
+				title={`${stat} by assets received in trade (total)`}
 				valueKey={"stat"}
+				xDomain={xDomain}
+				yScale={yScale2}
+			/>
+
+			<Chart
+				className="mt-3"
+				phase={phase}
+				season={season}
+				seasonsToPlot={seasonsToPlot}
+				teams={teams}
+				title={`${stat} by assets received in trade (with team)`}
+				valueKey={"statTeam"}
 				xDomain={xDomain}
 				yScale={yScale2}
 			/>

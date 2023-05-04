@@ -271,11 +271,18 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const lastRatings = state.p.ratings.at(-1);
 	useEffect(() => {
+		let mounted = true;
 		(async () => {
 			const pos = await toWorker("main", "getAutoPos", lastRatings);
 
-			setAutoPos(pos);
+			if (mounted) {
+				setAutoPos(pos);
+			}
 		})();
+
+		return () => {
+			mounted = false;
+		};
 	}, [lastRatings]);
 
 	const handleSubmit = async (event: FormEvent) => {
@@ -1087,6 +1094,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							challengeNoRatings={challengeNoRatings}
 							godMode={godMode}
 							handleChange={handleChange}
+							pos={p.pos ?? autoPos}
 							ratingsRow={p.ratings[r]}
 						/>
 

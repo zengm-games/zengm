@@ -46,6 +46,7 @@ const RatingsForm = ({
 	challengeNoRatings,
 	godMode,
 	handleChange,
+	pos,
 	ratingsRow,
 }: {
 	challengeNoRatings: boolean;
@@ -55,6 +56,7 @@ const RatingsForm = ({
 		field: string,
 		event: ChangeEvent<HTMLInputElement>,
 	) => void;
+	pos: string;
 	ratingsRow: any;
 }) => {
 	const [ovr, setOvr] = useState(ratingsRow.ovr);
@@ -71,7 +73,7 @@ const RatingsForm = ({
 
 			const newOvr = await toWorker("main", "ovr", {
 				ratings: boundedRatings,
-				pos: boundedRatings.pos,
+				pos,
 			});
 			if (mounted) {
 				setOvr(newOvr);
@@ -81,7 +83,7 @@ const RatingsForm = ({
 		return () => {
 			mounted = false;
 		};
-	}, [ratingsRow]);
+	}, [pos, ratingsRow]);
 
 	const hideRatings = !godMode && challengeNoRatings;
 

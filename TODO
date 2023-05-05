@@ -1,3 +1,10 @@
+trade summary
+- show how player left team
+  - player.transactions - does it contain enough info to know if it came before/after the current trade? eid?
+  - if not, then scan event log for player, and look for next eid
+  - if trade, link to trade
+  - https://old.reddit.com/r/BasketballGM/comments/137wce5/version_202305040893_trade_summaries_now_include/jiwqha3/?context=3
+
 Show records and logos on mobile game sim? https://discord.com/channels/@me/994804438919295057/1100621506033225829
 
 minimum target for hockey should be 2 goalies https://discord.com/channels/290013534023057409/1098793454676480050/1099076259000111114

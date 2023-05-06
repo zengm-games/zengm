@@ -108,18 +108,17 @@ var timeoutID = setTimeout(function () {
 }, 6000);
 
 function checkModern() {
-  // Chrome 67, Firefox 102, Safari 14.1
-  if (typeof TransformStream === "undefined") {
+  // Chrome 93, Firefox 92, Safari 15.4
+  if (Object.hasOwn === undefined) {
     return false;
   }
 
-  try {
-    // Chrome 80, Firefox 74, Safari 13.1
-    eval("var x = {}; x ?? x?.y;");
-    return true;
-  } catch (err) {
+  // Chrome 71, Firefox 105, Safari 14.1
+  if (typeof TextDecoderStream === "undefined") {
     return false;
   }
+
+  return true;
 };
 
 function withGoodBrowser() {
@@ -136,7 +135,7 @@ function withGoodBrowser() {
   } else  {
     // Need SystemJS for chunk loading
     var systemJsLoaderTag = document.createElement("script");
-    systemJsLoaderTag.src = "https://unpkg.com/systemjs@6.11.0/dist/s.min.js";
+    systemJsLoaderTag.src = "https://unpkg.com/systemjs@6.14.1/dist/s.min.js";
     systemJsLoaderTag.addEventListener("load", function () {
       System.import("/gen/ui-legacy-" + bbgmVersion + ".js");
     });

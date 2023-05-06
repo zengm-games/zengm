@@ -1,4 +1,3 @@
-import findLast from "lodash-es/findLast";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
@@ -14,7 +13,7 @@ export const getResponsiveValue = (
 	windowWidth: number,
 ) => {
 	if (Array.isArray(val)) {
-		return findLast(val, row => windowWidth >= row.minWidth)!.text;
+		return val.findLast(row => windowWidth >= row.minWidth)!.text;
 	}
 
 	return val;

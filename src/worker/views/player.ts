@@ -26,7 +26,6 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
-import findLast from "lodash-es/findLast";
 
 const fixRatingsStatsAbbrevs = async (p: {
 	ratings?: {
@@ -428,8 +427,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			p.experience = Math.max(0, p.experience + offset2);
 
 			// Jersey number
-			const stats = findLast(
-				p.stats,
+			const stats = p.stats.findLast(
 				row => row.season === season && !row.playoffs,
 			);
 			if (stats) {

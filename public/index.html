@@ -108,8 +108,8 @@ var timeoutID = setTimeout(function () {
 }, 6000);
 
 function checkModern() {
-  // Chrome 93, Firefox 92, Safari 15.4
-  if (Object.hasOwn === undefined) {
+  // Chrome 97, Firefox 104, Safari 15.4
+  if (Array.prototype.findLast === undefined) {
     return false;
   }
 

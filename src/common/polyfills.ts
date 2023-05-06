@@ -115,6 +115,22 @@ if (!Array.prototype.at) {
 	}
 }
 
+// Chrome 97, Firefox 104, Safari 15.4
+if (!Array.prototype.findLast) {
+	Object.defineProperty(Array.prototype, "findLast", {
+		value: function (cb: any) {
+			for (let i = this.length - 1; i >= 0; i--) {
+				if (cb(this[i])) {
+					return this[i];
+				}
+			}
+		},
+		configurable: true,
+		enumerable: false,
+		writable: true,
+	});
+}
+
 // Chrome 93, Firefox 92, Safari 15.4
 if (!Object.hasOwn) {
 	Object.defineProperty(Object, "hasOwn", {

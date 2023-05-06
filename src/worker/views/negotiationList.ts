@@ -10,8 +10,9 @@ const updateNegotiationList = async () => {
 
 	const userTid = g.get("userTid");
 
-	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
+	let negotiations = await idb.cache.negotiations.getAll();
 
+	// For Multi Team Mode, might have other team's negotiations going on
 	negotiations = negotiations.filter(
 		negotiation => negotiation.tid === userTid,
 	);

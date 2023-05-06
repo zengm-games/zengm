@@ -14,7 +14,6 @@ import nerfDraftProspect from "./nerfDraftProspect";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 import { getEWA } from "../../util/advStats.basketball";
-import findLast from "lodash-es/findLast";
 
 const MINUTES_PER_GAME = 48;
 
@@ -410,8 +409,7 @@ const formatPlayerFactory = async (
 
 		let retiredYear;
 		if (ratings.retiredUntil !== undefined) {
-			const lastNonRetiredSeason = findLast(
-				allRatings,
+			const lastNonRetiredSeason = allRatings.findLast(
 				row => row.season < ratings.season && row.retiredUntil === undefined,
 			);
 			console.log("lastNonRetiredSeason", lastNonRetiredSeason);

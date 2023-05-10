@@ -3798,10 +3798,12 @@ const upsertCustomizedPlayer = async (
 		p,
 		originalTid,
 		season,
+		recomputePosOvrPot,
 	}: {
 		p: Player | PlayerWithoutKey;
 		originalTid: number | undefined;
 		season: number;
+		recomputePosOvrPot: boolean;
 	},
 	conditions: Conditions,
 ): Promise<number> => {
@@ -3864,8 +3866,10 @@ const upsertCustomizedPlayer = async (
 	}
 
 	// Recalculate player pos, ovr, pot, and values if necessary
-	await player.develop(p, 0);
-	await player.updateValues(p);
+	if (recomputePosOvrPot || !Object.hasOwn(p, "pid")) {
+		await player.develop(p, 0);
+		await player.updateValues(p);
+	}
 
 	// Add regular season or playoffs stat row, if necessary
 	if (p.tid >= 0 && p.tid !== originalTid && g.get("phase") <= PHASE.PLAYOFFS) {

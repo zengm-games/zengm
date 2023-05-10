@@ -84,6 +84,7 @@ const copyValidValues = (
 		}
 	}
 
+	let recomputePosOvrPot = false;
 	{
 		// @ts-expect-error
 		const age = parseInt(source.age);
@@ -91,6 +92,7 @@ const copyValidValues = (
 			const bornYear = season - age;
 			if (bornYear !== target.born.year) {
 				target.born.year = bornYear;
+				recomputePosOvrPot = true;
 			}
 		}
 	}
@@ -99,10 +101,27 @@ const copyValidValues = (
 
 	target.college = source.college;
 
+	const ovrByPos = bySport({
+		baseball: true,
+		basketball: false,
+		football: true,
+		hockey: true,
+	});
+
 	if (source.pos === undefined) {
-		delete target.pos;
+		if (target.pos !== undefined) {
+			delete target.pos;
+			if (ovrByPos) {
+				recomputePosOvrPot = true;
+			}
+		}
 	} else {
-		target.pos = source.pos;
+		if (target.pos !== source.pos) {
+			target.pos = source.pos;
+			if (ovrByPos) {
+				recomputePosOvrPot = true;
+			}
+		}
 	}
 
 	{
@@ -229,6 +248,7 @@ const copyValidValues = (
 				if (!Number.isNaN(val)) {
 					if (target.ratings[r][rating] !== val) {
 						target.ratings[r][rating] = val;
+						recomputePosOvrPot = true;
 					}
 				}
 			} else if (rating === "locked") {
@@ -247,6 +267,8 @@ const copyValidValues = (
 			return rel;
 		})
 		.filter(rel => !Number.isNaN(rel.pid));
+
+	return recomputePosOvrPot;
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
@@ -295,7 +317,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		const p = props.p;
 
 		// Copy over values from state, if they're valid
-		copyValidValues(state.p, p, props.minContract, props.phase, props.season);
+		const recomputePosOvrPot = copyValidValues(
+			state.p,
+			p,
+			props.minContract,
+			props.phase,
+			props.season,
+		);
 
 		// Only save image URL if it's selected
 		if (state.appearanceOption !== "Image URL") {
@@ -307,6 +335,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				p,
 				originalTid: props.originalTid,
 				season: props.season,
+				recomputePosOvrPot,
 			});
 
 			realtimeUpdate([], helpers.leagueUrl(["player", pid]));

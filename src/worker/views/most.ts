@@ -178,6 +178,9 @@ const updatePlayers = async (
 		}[] = [];
 		let extraProps: any;
 
+		const challengeNoRatingsText =
+			' Because you\'re using the "no visible ratings" challenge mode, only retired players are shown here.';
+
 		if (type === "at_pick") {
 			if (arg === undefined) {
 				throw new Error("Pick must be specified in the URL");
@@ -323,8 +326,7 @@ const updatePlayers = async (
 			description =
 				"These are the players who had the biggest single season increases in ovr rating.";
 			if (g.get("challengeNoRatings")) {
-				description +=
-					' Because you\'re using the "no visible ratings" challenge mode, only retired players are shown here.';
+				description += challengeNoRatingsText;
 			}
 			extraCols.push(
 				{
@@ -354,6 +356,51 @@ const updatePlayers = async (
 						p.ratings[i - 1].fuzz,
 					);
 					const prog = ovr - prevOvr;
+					if (prog > maxProg) {
+						maxProg = prog;
+						maxSeason = p.ratings[i].season;
+					}
+				}
+				return {
+					value: maxProg,
+					extra: {
+						season: maxSeason,
+						age: maxSeason - p.born.year,
+					},
+				};
+			};
+		} else if (type === "progs_career") {
+			title = "Career Progs";
+			description =
+				"These are the players who had the biggest improvements from draft prospect to peak, by ovr rating.";
+			if (g.get("challengeNoRatings")) {
+				description += challengeNoRatingsText;
+			}
+			extraCols.push(
+				{
+					key: ["most", "extra", "season"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "value"],
+					colName: "Prog",
+				},
+			);
+
+			filter = p =>
+				p.ratings.length > 1 &&
+				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
+			getValue = p => {
+				let maxProg = -Infinity;
+				let maxSeason = p.ratings[0].season;
+				const ovr0 = player.fuzzRating(p.ratings[0].ovr, p.ratings[0].fuzz);
+				for (let i = 1; i < p.ratings.length; i++) {
+					const ovr = player.fuzzRating(p.ratings[i].ovr, p.ratings[i].fuzz);
+					const prog = ovr - ovr0;
 					if (prog > maxProg) {
 						maxProg = prog;
 						maxSeason = p.ratings[i].season;
@@ -696,8 +743,7 @@ const updatePlayers = async (
 			description =
 				"These are the players who experienced the largest ovr drops after injuries.";
 			if (g.get("challengeNoRatings")) {
-				description +=
-					' Because you\'re using the "no visible ratings" challenge mode, only retired players are shown here.';
+				description += challengeNoRatingsText;
 			}
 			extraCols.push({
 				key: ["most", "extra", "type"],

@@ -148,6 +148,11 @@ export const frivolities = {
 			description: "Players who made the most money.",
 		},
 		{
+			urlParts: ["most", "progs_career"],
+			name: "Career Progs",
+			description: "The biggest improvements from draft prospect to peak.",
+		},
+		{
 			urlParts: ["most", "goat"],
 			name: "GOAT Lab",
 			description:

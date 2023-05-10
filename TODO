@@ -1,3 +1,30 @@
+frivolities
+- players
+  - Best/Worst MVP, DPOY, ROY, 6MOY, MIP, AS https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
+    - Also, best to never get there https://old.reddit.com/r/BasketballGM/comments/wd2soz/monthly_suggestions_thread/iig6kdf/
+  - oldest/youngest of any award https://discord.com/channels/290013534023057409/994079396065452132/994079523605860442
+  - would need history of salaryCap
+    - most overpaid, most underpaid (career total)
+    - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
+    - worst contract
+  - GOAT Lab for seasons
+  - highest ovr at each age https://discord.com/channels/290013534023057409/331882115119448065/868031573205876778
+  - best rookie season https://old.reddit.com/r/BasketballGM/comments/p5stae/best_rookie_seasons_frivolty/
+- team seasons
+  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
+  - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
+  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
+  - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
+  - lowest payroll for championship https://old.reddit.com/r/BasketballGM/comments/ttdazd/monthly_suggestions_thread/i6cctm4/
+- oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
+- Youngest and Oldest ever to achieve certain statistical feats like triple doubles and 50 pointers https://discord.com/channels/290013534023057409/331882115119448065/904435732842700810
+- playoffs
+  - playoff seeding, like number of times an 8 seed won @Tuxie93
+  - biggest upsets https://old.reddit.com/r/BasketballGM/comments/10088fu/monthly_suggestions_thread/j415bre/
+- best dunk (scan dunk contest for highest difficulty dunnk completed, and show actual score and probability too)
+- similar to roster continuity, one showing home grown percentage of roster https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/iz2d3xs/
+- longest win/loss streaks
+
 trade summary
 - show how player left team
   - player.transactions - does it contain enough info to know if it came before/after the current trade? eid?
@@ -236,33 +263,6 @@ take advantage of the ability to bring people back to life
 derived variables in GOAT lab
 
 unify league leaders and award stat leader code, to allow things like BA leader in baseball
-
-frivolities
-- players
-  - Best/Worst MVP, DPOY, ROY, 6MOY, MIP, AS https://old.reddit.com/r/BasketballGM/comments/ovhv1i/monthly_suggestions_thread/h7iovrv/
-    - Also, best to never get there https://old.reddit.com/r/BasketballGM/comments/wd2soz/monthly_suggestions_thread/iig6kdf/
-  - oldest/youngest of any award https://discord.com/channels/290013534023057409/994079396065452132/994079523605860442
-  - would need history of salaryCap
-    - most overpaid, most underpaid (career total)
-    - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
-    - worst contract
-  - GOAT Lab for seasons
-  - highest ovr at each age https://discord.com/channels/290013534023057409/331882115119448065/868031573205876778
-  - best rookie season https://old.reddit.com/r/BasketballGM/comments/p5stae/best_rookie_seasons_frivolty/
-- team seasons
-  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
-  - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons
-  - oldest/youngest champions https://old.reddit.com/r/BasketballGM/comments/o668ok/a_teams_average_age_weighted_by_minutes_played_is/h2rbp7g/?context=3
-  - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
-  - lowest payroll for championship https://old.reddit.com/r/BasketballGM/comments/ttdazd/monthly_suggestions_thread/i6cctm4/
-- oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
-- Youngest and Oldest ever to achieve certain statistical feats like triple doubles and 50 pointers https://discord.com/channels/290013534023057409/331882115119448065/904435732842700810
-- playoffs
-  - playoff seeding, like number of times an 8 seed won @Tuxie93
-  - biggest upsets https://old.reddit.com/r/BasketballGM/comments/10088fu/monthly_suggestions_thread/j415bre/
-- best dunk (scan dunk contest for highest difficulty dunnk completed, and show actual score and probability too)
-- similar to roster continuity, one showing home grown percentage of roster https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/iz2d3xs/
-- longest win/loss streaks
 
 highlight your team when viewing other team's schedule https://discord.com/channels/290013534023057409/331882115119448065/976114143700586537
 

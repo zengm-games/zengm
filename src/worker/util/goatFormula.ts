@@ -1,4 +1,5 @@
 import { AWARD_NAMES, bySport, isSport } from "../../common";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
 import stats from "../core/player/stats";
 import { weightByMinutes } from "../db/getCopies/playersPlus";
@@ -55,19 +56,6 @@ AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
-const MIN_GP_SEASON = bySport({
-	baseball: 20,
-	basketball: 10,
-	football: 5,
-	hockey: 10,
-});
-const MIN_GP_TOTAL = bySport({
-	baseball: 50,
-	basketball: 50,
-	football: 10,
-	hockey: 50,
-});
-
 const evaluate = (
 	p: Player<MinimalPlayerRatings>,
 	formula: string | undefined,
@@ -80,6 +68,14 @@ const evaluate = (
 				season: number;
 		  },
 ) => {
+	const MIN_GP_SEASON = bySport({
+		baseball: 40,
+		basketball: 20,
+		football: 7,
+		hockey: 20,
+	});
+	const MIN_GP_TOTAL = defaultGameAttributes.numGames;
+
 	const goatFormula =
 		formula ??
 		(info.type === "career"
@@ -104,6 +100,10 @@ const evaluate = (
 		let minSumPlayoffs = 0;
 
 		for (const row of p.stats) {
+			if (info.type === "season" && row.season !== info.season) {
+				continue;
+			}
+
 			// Don't check row.min being 0, since that is true for some historical stats before 1952
 			if (row.gp === 0) {
 				continue;
@@ -117,14 +117,16 @@ const evaluate = (
 					object[playoffs] += row[stat];
 				}
 			} else {
-				if (row.gp >= MIN_GP_SEASON) {
-					if (row[stat] > object[peak]) {
-						object[peak] = row[stat];
-					}
+				if (info.type === "career") {
+					if (row.gp >= MIN_GP_SEASON) {
+						if (row[stat] > object[peak]) {
+							object[peak] = row[stat];
+						}
 
-					const perGame = row[stat] / row.gp;
-					if (perGame > object[peakPerGame]) {
-						object[peakPerGame] = perGame;
+						const perGame = row[stat] / row.gp;
+						if (perGame > object[peakPerGame]) {
+							object[peakPerGame] = perGame;
+						}
 					}
 				}
 
@@ -181,13 +183,15 @@ const evaluate = (
 	}
 
 	// Ignore career totals from low games guys
-	if (object.gp < MIN_GP_TOTAL) {
+	const minGp = info.type === "season" ? MIN_GP_SEASON : MIN_GP_TOTAL;
+	const minGpPlayoffs = info.type === "season" ? 0 : MIN_GP_TOTAL / 2;
+	if (object.gp < minGp) {
 		for (const stat of STAT_VARIABLES) {
 			object[stat] = 0;
 			object[`${stat}PerGame`] = 0;
 		}
 	}
-	if (object.gpPlayoffs < MIN_GP_TOTAL / 2) {
+	if (object.gpPlayoffs < minGpPlayoffs) {
 		for (const stat of STAT_VARIABLES) {
 			object[`${stat}Playoffs`] = 0;
 			object[`${stat}PlayoffsPerGame`] = 0;

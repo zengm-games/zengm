@@ -8,11 +8,14 @@ frivolities
     - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
     - worst contract
   - GOAT Lab for seasons
+    - filter awards for season in goatFormula evaluate
     - hide peak/career variables - any others?
+      - also peak text
     - support multiple entries from same player
       - other frivolities might need that too
     - need to sum up seasons split over multiple teams
-      - reuse merge function in playersPlus
+      - reuse merge function in playersPlus, or reuse career merge from goatFormula?
+        - use MIN_GP_SEASON
     - make "best season" row target that season
       - other frivolities might need that too
       - star/ring icon only for that season too

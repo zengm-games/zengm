@@ -11,6 +11,11 @@ const shouldRetire = (
 ): boolean => {
 	const age = g.get("season") - p.born.year;
 
+	const forceRetireAge = g.get("forceRetireAge");
+	if (forceRetireAge >= g.get("draftAges")[1] && age >= forceRetireAge) {
+		return true;
+	}
+
 	if (age < g.get("minRetireAge")) {
 		return false;
 	}
@@ -82,11 +87,6 @@ const shouldRetire = (
 				return true;
 			}
 		}
-	}
-
-	const forceRetireAge = g.get("forceRetireAge");
-	if (forceRetireAge >= g.get("draftAges")[1] && age >= forceRetireAge) {
-		return true;
 	}
 
 	return false;

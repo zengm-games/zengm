@@ -105,8 +105,20 @@ export const getMostXPlayers = async ({
 		}
 	}
 
+	const processedPlayers = addFirstNameShort(processPlayersHallOfFame(ordered));
+	console.log(players, processedPlayers);
+
+	for (const p of processedPlayers) {
+		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
+		if (bestSeasonOverride !== undefined) {
+			p.awards = (p.awards as any[]).filter(
+				row => row.season === bestSeasonOverride,
+			);
+		}
+	}
+
 	return {
-		players: addFirstNameShort(processPlayersHallOfFame(ordered)),
+		players: processedPlayers,
 		stats,
 	};
 };

@@ -33,7 +33,6 @@ const Most = ({
 	const hasBestSeasonOverride = players.some(
 		p => p.most?.extra?.bestSeasonOverride !== undefined,
 	);
-	console.log(players);
 
 	const superCols = [
 		{

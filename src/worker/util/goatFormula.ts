@@ -165,17 +165,24 @@ const evaluate = (
 
 	for (const [short, long] of Object.entries(AWARD_VARIABLES)) {
 		if (short === "numSeasons") {
-			const seasons = new Set();
-			for (const row of p.stats) {
-				if (row.min > 0) {
-					seasons.add(row.season);
+			if (info.type === "season") {
+				object[short] = 1;
+			} else {
+				const seasons = new Set();
+				for (const row of p.stats) {
+					if (row.min > 0) {
+						seasons.add(row.season);
+					}
 				}
+				object[short] = seasons.size;
 			}
-			object[short] = seasons.size;
 		} else {
 			object[short] = 0;
-			for (const { type } of p.awards) {
-				if (type === long) {
+			for (const row of p.awards) {
+				if (info.type === "season" && row.season !== info.season) {
+					continue;
+				}
+				if (row.type === long) {
 					object[short] += 1;
 				}
 			}

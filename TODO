@@ -8,7 +8,6 @@ frivolities
     - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
     - worst contract
   - GOAT Lab for seasons
-    - filter awards for season in goatFormula evaluate
     - hide peak/career variables - any others?
       - also peak text
     - support multiple entries from same player
@@ -587,7 +586,9 @@ playoffsByConf should support numConfs!=2
 
 no attendance in baseball https://discord.com/channels/290013534023057409/290015591216054273/1012536651110686742
 
-player being let out of the penalty box at start of overtime? https://discord.com/channels/@me/778760871911751700/879161429335367760
+player being let out of the penalty box at start of overtime?
+- https://discord.com/channels/@me/778760871911751700/879161429335367760
+- https://discord.com/channels/@me/778760871911751700/1106014082819178637
 
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938

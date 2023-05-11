@@ -2113,6 +2113,14 @@ export const settings: Setting[] = (
 			maxWidth: true,
 		},
 		{
+			category: "Players",
+			key: "goatSeasonFormula",
+			name: "GOAT Season Formula",
+			type: "string",
+			description: "See Tools > Frivolities > GOAT Season for details.",
+			maxWidth: true,
+		},
+		{
 			category: "Game Simulation",
 			key: "numPlayersOnCourt",
 			name: `# Players On ${COURT}`,

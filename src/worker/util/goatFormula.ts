@@ -13,6 +13,13 @@ const DEFAULT_FORMULA = bySport({
 	hockey: "20 * mvp + ops + dps + gps",
 });
 
+const DEFAULT_FORMULA_SEASON = bySport({
+	baseball: "war",
+	basketball: "pts/gp + 2 * ast/gp + dws",
+	football: "defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
+	hockey: "ops + dps + gps",
+});
+
 const BANNED_STAT_VARIABLES = new Set(
 	bySport({
 		baseball: ["minAvailable", "poSo", "rfld"],
@@ -61,8 +68,23 @@ const MIN_GP_TOTAL = bySport({
 	hockey: 50,
 });
 
-const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
-	const goatFormula = formula ?? g.get("goatFormula") ?? DEFAULT_FORMULA;
+const evaluate = (
+	p: Player<MinimalPlayerRatings>,
+	formula: string | undefined,
+	info:
+		| {
+				type: "career";
+		  }
+		| {
+				type: "season";
+				season: number;
+		  },
+) => {
+	const goatFormula =
+		formula ??
+		(info.type === "career"
+			? g.get("goatFormula") ?? DEFAULT_FORMULA
+			: g.get("goatSeasonFormula") ?? DEFAULT_FORMULA_SEASON);
 
 	const object: Record<string, number> = {};
 
@@ -191,6 +213,7 @@ const evaluate = (p: Player<MinimalPlayerRatings>, formula?: string) => {
 export default {
 	AWARD_VARIABLES,
 	DEFAULT_FORMULA,
+	DEFAULT_FORMULA_SEASON,
 	STAT_VARIABLES,
 	evaluate,
 };

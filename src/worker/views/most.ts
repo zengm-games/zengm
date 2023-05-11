@@ -164,7 +164,8 @@ const updatePlayers = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		type !== state.type ||
-		(type === "goat" && updateEvents.includes("g.goatFormula"))
+		(type === "goat" && updateEvents.includes("g.goatFormula")) ||
+		(type === "goat_season" && updateEvents.includes("g.goatSeasonFormula"))
 	) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
@@ -255,7 +256,7 @@ const updatePlayers = async (
 				colName: "GOAT",
 			});
 			extraProps = {
-				goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
+				formula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
 				awards: goatFormula.AWARD_VARIABLES,
 				stats: goatFormula.STAT_VARIABLES,
 			};
@@ -263,11 +264,62 @@ const updatePlayers = async (
 			getValue = (p: Player<MinimalPlayerRatings>) => {
 				let value = 0;
 				try {
-					value = goatFormula.evaluate(p);
+					value = goatFormula.evaluate(p, undefined, {
+						type: "career",
+					});
 				} catch (error) {}
 
 				return {
 					value,
+				};
+			};
+		} else if (type === "goat_season") {
+			title = "GOAT Season";
+			description =
+				"Define your own formula to rank the greatest seasons of all time.";
+			extraCols.push(
+				{
+					key: ["most", "value"],
+					colName: "GOAT",
+				},
+				{
+					key: ["most", "season"],
+					colName: "Season",
+				},
+			);
+			extraProps = {
+				formula:
+					g.get("goatSeasonFormula") ?? goatFormula.DEFAULT_FORMULA_SEASON,
+				awards: goatFormula.AWARD_VARIABLES,
+				stats: goatFormula.STAT_VARIABLES,
+			};
+
+			getValue = (p: Player<MinimalPlayerRatings>) => {
+				const seasons = Array.from(
+					new Set(p.stats.filter(row => !row.playoffs).map(row => row.season)),
+				);
+
+				let maxValue = -Infinity;
+				let maxSeason = 0;
+				if (p.pid === 2112) {
+					try {
+						for (const season of seasons) {
+							const value = goatFormula.evaluate(p, undefined, {
+								type: "season",
+								season,
+							});
+							console.log(season, value);
+							if (value > maxValue) {
+								maxValue = value;
+								maxSeason = season;
+							}
+						}
+					} catch (error) {}
+				}
+
+				return {
+					value: maxValue,
+					season: maxSeason,
 				};
 			};
 		} else if (type === "teams") {

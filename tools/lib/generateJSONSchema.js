@@ -828,6 +828,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							goatFormula: {
 								type: "string",
 							},
+							goatSeasonFormula: {
+								type: "string",
+							},
 							gracePeriodEnd: {
 								type: "integer",
 							},

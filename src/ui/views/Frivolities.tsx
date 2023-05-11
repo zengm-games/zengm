@@ -159,6 +159,12 @@ export const frivolities = {
 				"Define your own formula to rank the greatest players of all time.",
 		},
 		{
+			urlParts: ["most", "goat_season"],
+			name: "GOAT Season",
+			description:
+				"Define your own formula to rank the greatest seasons of all time.",
+		},
+		{
 			urlParts: ["most", "hall_of_good"],
 			name: "Hall of Good",
 			description: "The best retired players who didn't make the Hall of Fame.",

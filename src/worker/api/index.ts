@@ -2884,7 +2884,13 @@ const setForceWinAll = async ({
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
-const setGOATFormula = async (formula: string) => {
+const setGOATFormula = async ({
+	formula,
+	type,
+}: {
+	formula: string;
+	type: "season" | "career";
+}) => {
 	// Arbitrary player for testing
 	const players = await idb.cache.players.getAll();
 	const p = players[0];
@@ -2893,13 +2899,30 @@ const setGOATFormula = async (formula: string) => {
 	}
 
 	// Confirm it actually works
-	goatFormula.evaluate(p, formula);
+	goatFormula.evaluate(
+		p,
+		formula,
+		type === "season"
+			? {
+					type,
+					season: g.get("season"),
+			  }
+			: {
+					type,
+			  },
+	);
 
-	await league.setGameAttributes({
-		goatFormula: formula,
-	});
-
-	await toUI("realtimeUpdate", [["g.goatFormula"]]);
+	if (type === "career") {
+		await league.setGameAttributes({
+			goatFormula: formula,
+		});
+		await toUI("realtimeUpdate", [["g.goatFormula"]]);
+	} else {
+		await league.setGameAttributes({
+			goatSeasonFormula: formula,
+		});
+		await toUI("realtimeUpdate", [["g.goatSeasonFormula"]]);
+	}
 };
 
 const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {

@@ -61,6 +61,9 @@ const setGameAttributes = async (
 	if (gameAttributes.goatFormula === goatFormula.DEFAULT_FORMULA) {
 		gameAttributes.goatFormula = undefined;
 	}
+	if (gameAttributes.goatSeasonFormula === goatFormula.DEFAULT_FORMULA_SEASON) {
+		gameAttributes.goatSeasonFormula = undefined;
+	}
 
 	for (const key of helpers.keys(gameAttributes)) {
 		if (gameAttributesKeysOtherSports.has(key)) {

@@ -244,6 +244,7 @@ export const getDefaultSettings = () => {
 		fantasyPoints: unwrapGameAttribute(defaultGameAttributes, "fantasyPoints"),
 		tragicDeaths: defaultTragicDeaths,
 		goatFormula: goatFormula.DEFAULT_FORMULA,
+		goatSeasonFormula: goatFormula.DEFAULT_FORMULA_SEASON,
 		draftPickAutoContract: unwrapGameAttribute(
 			defaultGameAttributes,
 			"draftPickAutoContract",

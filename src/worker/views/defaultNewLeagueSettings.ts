@@ -15,6 +15,7 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			...getDefaultSettings(),
 			numActiveTeams: undefined,
 			goatFormula: goatFormula.DEFAULT_FORMULA,
+			goatFormulaSeason: goatFormula.DEFAULT_FORMULA_SEASON,
 		};
 
 		return {

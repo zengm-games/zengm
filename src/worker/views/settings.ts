@@ -108,6 +108,7 @@ const keys = [
 	"numPlayersThree",
 	"fantasyPoints",
 	"goatFormula",
+	"goatSeasonFormula",
 	"draftPickAutoContract",
 	"draftPickAutoContractPercent",
 	"draftPickAutoContractRounds",
@@ -181,6 +182,7 @@ export type Settings = Pick<
 	injuries: InjuriesSetting;
 	tragicDeaths: TragicDeaths;
 	goatFormula: string;
+	goatSeasonFormula: string;
 	confs?: Conf[];
 	giveMeWorstRoster: boolean;
 
@@ -294,6 +296,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			fantasyPoints: g.get("fantasyPoints"),
 			tragicDeaths: g.get("tragicDeaths") ?? defaultTragicDeaths,
 			goatFormula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
+			goatSeasonFormula:
+				g.get("goatSeasonFormula") ?? goatFormula.DEFAULT_FORMULA_SEASON,
 			draftPickAutoContract: g.get("draftPickAutoContract"),
 			draftPickAutoContractPercent: g.get("draftPickAutoContractPercent"),
 			draftPickAutoContractRounds: g.get("draftPickAutoContractRounds"),

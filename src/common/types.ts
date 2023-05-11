@@ -506,6 +506,7 @@ export type GameAttributesLeague = {
 	gameOver: boolean;
 	gender: "female" | "male";
 	goatFormula?: string;
+	goatSeasonFormula?: string;
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
@@ -1720,6 +1721,7 @@ export type UpdateEvents = (
 	| "allStarThree"
 	| "firstRun"
 	| "g.goatFormula"
+	| "g.goatSeasonFormula"
 	| "gameAttributes"
 	| "gameSim"
 	| "leagues"

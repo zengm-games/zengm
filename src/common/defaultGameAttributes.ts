@@ -257,6 +257,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	realDraftRatings: undefined,
 	hideDisabledTeams: false,
 	goatFormula: undefined,
+	goatSeasonFormula: undefined,
 	inflationAvg: 0,
 	inflationMax: 0,
 	inflationMin: 0,

@@ -144,11 +144,13 @@ const Most = ({
 				</p>
 			) : null}
 
-			{type === "goat" ? (
+			{type === "goat" || type === "goat_season" ? (
 				<GOATFormula
+					key={type}
 					awards={extraProps.awards}
-					formula={extraProps.goatFormula}
+					formula={extraProps.formula}
 					stats={extraProps.stats}
+					type={type === "goat_season" ? "season" : "career"}
 				/>
 			) : null}
 

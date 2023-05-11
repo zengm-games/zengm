@@ -6,10 +6,12 @@ const GOATFormula = ({
 	awards,
 	formula,
 	stats,
+	type,
 }: {
 	awards: Record<string, string>;
 	formula: string;
 	stats: string[];
+	type: "career" | "season";
 }) => {
 	const [goatFormula, setGoatFormula] = useState(formula);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -33,7 +35,10 @@ const GOATFormula = ({
 					setErrorMessage(undefined);
 
 					try {
-						await toWorker("main", "setGOATFormula", goatFormula);
+						await toWorker("main", "setGOATFormula", {
+							formula: goatFormula,
+							type,
+						});
 					} catch (error) {
 						setErrorMessage(error.message);
 					}

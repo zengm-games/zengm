@@ -286,7 +286,7 @@ const updatePlayers = async (
 					colName: "GOAT",
 				},
 				{
-					key: ["most", "extra", "season"],
+					key: ["most", "extra", "bestSeasonOverride"],
 					colName: "Season",
 				},
 			);
@@ -315,7 +315,7 @@ const updatePlayers = async (
 								return {
 									value,
 									extra: {
-										season,
+										bestSeasonOverride: season,
 									},
 								};
 							} catch (error) {}

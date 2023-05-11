@@ -30,13 +30,18 @@ const Most = ({
 }: View<"most">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
 
+	const hasBestSeasonOverride = players.some(
+		p => p.most?.extra?.bestSeasonOverride !== undefined,
+	);
+	console.log(players);
+
 	const superCols = [
 		{
 			title: "",
 			colspan: 7 + extraCols.length,
 		},
 		{
-			title: "Best Season",
+			title: hasBestSeasonOverride ? "Season Stats" : "Best Seasons",
 			colspan: 2 + stats.length,
 		},
 		{

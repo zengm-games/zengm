@@ -6,6 +6,13 @@ const processPlayersHallOfFame = <
 		careerStats: any;
 		ratings: any;
 		stats: any[];
+
+		// For most.ts
+		most?: {
+			extra?: {
+				bestSeasonOverride?: number | undefined;
+			};
+		};
 	},
 >(
 	players: T[],
@@ -23,6 +30,7 @@ const processPlayersHallOfFame = <
 				}
 			}
 		}
+		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
 
 		const hasSeasonWithGamesPlayed = p.stats.some(ps => ps.gp > 0);
 
@@ -37,10 +45,16 @@ const processPlayersHallOfFame = <
 				football: ps.av,
 				hockey: ps.ps,
 			});
-			if (ewa > bestEWA) {
-				if (!hasSeasonWithGamesPlayed || ps.gp > 0) {
+			if (bestSeasonOverride !== undefined) {
+				if (ps.season === bestSeasonOverride) {
 					bestStats = ps;
-					bestEWA = ewa;
+				}
+			} else {
+				if (ewa > bestEWA) {
+					if (!hasSeasonWithGamesPlayed || ps.gp > 0) {
+						bestStats = ps;
+						bestEWA = ewa;
+					}
 				}
 			}
 			if (Object.hasOwn(teamSums, tid)) {

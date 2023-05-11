@@ -30,12 +30,12 @@ export const getMostXPlayers = async ({
 	sortParams,
 }: {
 	filter?: (p: Player) => boolean;
-	getValue: (p: Player) => Most | undefined;
+	getValue: (p: Player) => Most | Most[] | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
 	sortParams?: any;
 }) => {
 	const LIMIT = 100;
-	const playersAll: PlayersAll = [];
+	let playersAll: PlayersAll = [];
 
 	await iterate(
 		idb.league.transaction("players").store.index("draft.year, retiredYear"),
@@ -51,15 +51,18 @@ export const getMostXPlayers = async ({
 				return;
 			}
 
-			playersAll.push({
-				...p,
-				most,
-			});
+			const mosts = Array.isArray(most) ? most : [most];
+
+			for (const row of mosts) {
+				playersAll.push({
+					...p,
+					most: row,
+				});
+			}
+
 			playersAll.sort((a, b) => b.most.value - a.most.value);
 
-			if (playersAll.length > LIMIT) {
-				playersAll.pop();
-			}
+			playersAll = playersAll.slice(0, LIMIT);
 		},
 	);
 
@@ -299,28 +302,24 @@ const updatePlayers = async (
 					new Set(p.stats.filter(row => !row.playoffs).map(row => row.season)),
 				);
 
-				let maxValue = -Infinity;
-				let maxSeason = 0;
-				if (p.pid === 2112) {
-					try {
-						for (const season of seasons) {
-							const value = goatFormula.evaluate(p, undefined, {
-								type: "season",
-								season,
-							});
-							console.log(season, value);
-							if (value > maxValue) {
-								maxValue = value;
-								maxSeason = season;
-							}
+				return seasons
+					.map(season => {
+						if (p.pid === 1193) {
+							try {
+								const value = goatFormula.evaluate(p, undefined, {
+									type: "season",
+									season,
+								});
+								return {
+									value,
+									season,
+								};
+							} catch (error) {}
 						}
-					} catch (error) {}
-				}
 
-				return {
-					value: maxValue,
-					season: maxSeason,
-				};
+						return [];
+					})
+					.flat();
 			};
 		} else if (type === "teams") {
 			title = "Most Teams";

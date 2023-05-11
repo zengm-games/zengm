@@ -319,20 +319,19 @@ const updatePlayers = async (
 
 				return seasons
 					.map(season => {
-						if (p.pid === 1193) {
-							try {
-								const value = goatFormula.evaluate(p, undefined, {
-									type: "season",
-									season,
-								});
-								return {
-									value,
-									extra: {
-										bestSeasonOverride: season,
-									},
-								};
-							} catch (error) {}
-						}
+						try {
+							const value = goatFormula.evaluate(p, undefined, {
+								type: "season",
+								season,
+							});
+							return {
+								value,
+								extra: {
+									// If this is set, it will specify the season to use for the "Best Season" section, rather than picking the best season by the normal metric. Useful if you want to display a list of seasons (like goat_season)
+									bestSeasonOverride: season,
+								},
+							};
+						} catch (error) {}
 
 						return [];
 					})

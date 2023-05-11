@@ -15,11 +15,11 @@ const DEFAULT_FORMULA = bySport({
 });
 
 const DEFAULT_FORMULA_SEASON = bySport({
-	baseball: "2 * mvp + war",
-	basketball: "2 * mvp + pts/gp + 2 * ast/gp + dws",
+	baseball: "5 * mvp + war",
+	basketball: "5 * mvp + pts/gp + 2 * ast/gp + dws",
 	football:
-		"2 * mvp + defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
-	hockey: "2 * mvp + ops + dps + gps",
+		"5 * mvp + defTckSolo + defTckAst + 3 * pssTD + 10 * (rusTD + recTD)",
+	hockey: "5 * mvp + ops + dps + gps",
 });
 
 const BANNED_STAT_VARIABLES = new Set(

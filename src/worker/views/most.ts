@@ -286,14 +286,16 @@ const updatePlayers = async (
 					colName: "GOAT",
 				},
 				{
-					key: ["most", "season"],
+					key: ["most", "extra", "season"],
 					colName: "Season",
 				},
 			);
+			const awards = goatFormula.AWARD_VARIABLES;
+			delete awards.numSeasons;
 			extraProps = {
 				formula:
 					g.get("goatSeasonFormula") ?? goatFormula.DEFAULT_FORMULA_SEASON,
-				awards: goatFormula.AWARD_VARIABLES,
+				awards,
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
@@ -312,7 +314,9 @@ const updatePlayers = async (
 								});
 								return {
 									value,
-									season,
+									extra: {
+										season,
+									},
 								};
 							} catch (error) {}
 						}

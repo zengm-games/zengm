@@ -104,9 +104,11 @@ const GOATFormula = ({
 						))}
 					</ul>
 					<p>
-						The above variables all are career totals. If you want something
-						besides career totals, you can put any of these suffixes at the end
-						of a stat, such as <code>{exampleStat}PerGame</code>.
+						The above variables all are{" "}
+						{type === "career" ? "career" : "season"} totals. If you want
+						something besides {type === "career" ? "career" : "season"} totals,
+						you can put any of these suffixes at the end of a stat, such as{" "}
+						<code>{exampleStat}PerGame</code>.
 					</p>
 					<ul className="list-unstyled">
 						<li>
@@ -118,20 +120,28 @@ const GOATFormula = ({
 						<li>
 							<code>PlayoffsPerGame</code> - per game playoff stat
 						</li>
-						<li>
-							<code>Peak</code> - total value of stat's single season peak
-						</li>
-						<li>
-							<code>PeakPerGame</code> - per-game value of stat's single season
-							peak
-						</li>
+						{type === "career" ? (
+							<>
+								<li>
+									<code>Peak</code> - total value of stat's single season peak
+								</li>
+								<li>
+									<code>PeakPerGame</code> - per-game value of stat's single
+									season peak
+								</li>
+							</>
+						) : null}
 					</ul>
-					<p>
-						Seasons with very few games played are ignored for the{" "}
-						<code>Peak</code> and <code>PeakPerGame</code> variables, and
-						careers with very few games played are ignored for the career total
-						variables.
-					</p>
+					{type === "career" ? (
+						<p>
+							Seasons with very few games played are ignored for the{" "}
+							<code>Peak</code> and <code>PeakPerGame</code> variables, and
+							careers with very few games played are ignored for the career
+							total variables.
+						</p>
+					) : (
+						<p>Seasons with very few games played are ignored.</p>
+					)}
 				</details>
 			</div>
 		</div>

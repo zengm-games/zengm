@@ -8,8 +8,6 @@ frivolities
     - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
     - worst contract
   - GOAT Lab for seasons
-    - hide peak/career variables - any others?
-      - also peak text
     - return array from getValue for any other frivolities?
     - make "best season" row target that season
       - other frivolities might need that too

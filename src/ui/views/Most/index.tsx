@@ -60,14 +60,14 @@ const Most = ({
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const rows = players.map(p => {
+	const rows = players.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
 		const draftPick =
 			p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "";
 
 		return {
-			key: p.pid,
+			key: i,
 			data: [
 				p.rank,
 				wrappedPlayerNameLabels({

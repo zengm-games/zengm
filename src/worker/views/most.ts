@@ -397,7 +397,7 @@ const updatePlayers = async (
 			}
 			extraCols.push(
 				{
-					key: ["most", "extra", "season"],
+					key: ["most", "extra", "bestSeasonOverride"],
 					colName: "Season",
 				},
 				{
@@ -414,27 +414,36 @@ const updatePlayers = async (
 				p.ratings.length > 1 &&
 				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
 			getValue = p => {
-				let maxProg = -Infinity;
-				let maxSeason = p.ratings[0].season;
-				for (let i = 1; i < p.ratings.length; i++) {
-					const ovr = player.fuzzRating(p.ratings[i].ovr, p.ratings[i].fuzz);
-					const prevOvr = player.fuzzRating(
-						p.ratings[i - 1].ovr,
-						p.ratings[i - 1].fuzz,
-					);
-					const prog = ovr - prevOvr;
-					if (prog > maxProg) {
-						maxProg = prog;
-						maxSeason = p.ratings[i].season;
-					}
-				}
-				return {
-					value: maxProg,
-					extra: {
-						season: maxSeason,
-						age: maxSeason - p.born.year,
-					},
-				};
+				// Handle duplicate entries, like due to injury - we only want the first one
+				const seasonsSeen = new Set<number>();
+
+				return p.ratings
+					.map((row, i) => {
+						if (i === 0) {
+							return [];
+						}
+
+						if (seasonsSeen.has(row.season)) {
+							return [];
+						}
+						seasonsSeen.add(row.season);
+
+						const ovr = player.fuzzRating(row.ovr, row.fuzz);
+						const prevOvr = player.fuzzRating(
+							p.ratings[i - 1].ovr,
+							p.ratings[i - 1].fuzz,
+						);
+						const prog = ovr - prevOvr;
+
+						return {
+							value: prog,
+							extra: {
+								bestSeasonOverride: row.season,
+								age: row.season - p.born.year,
+							},
+						};
+					})
+					.flat();
 			};
 		} else if (type === "progs_career") {
 			title = "Career Progs";

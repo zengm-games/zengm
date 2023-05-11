@@ -40,7 +40,7 @@ const Most = ({
 			colspan: 7 + extraCols.length,
 		},
 		{
-			title: hasBestSeasonOverride ? "Season Stats" : "Best Seasons",
+			title: hasBestSeasonOverride ? "Season Stats" : "Best Season",
 			colspan: 2 + stats.length,
 		},
 		{

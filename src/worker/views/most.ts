@@ -91,6 +91,7 @@ export const getMostXPlayers = async ({
 		ratings: ["ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],
 		fuzz: true,
+		mergeStats: "totOnly",
 	});
 
 	const ordered = sortParams ? orderBy(players, ...sortParams) : players;

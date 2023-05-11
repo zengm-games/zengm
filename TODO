@@ -10,7 +10,6 @@ frivolities
   - GOAT Lab for seasons
     - return array from getValue for any other frivolities?
     - make "best season" row target that season
-      - make sure it merges stats
       - then maybe don't need the dedicated season col
       - other frivolities might need that too
       - star/ring icon only for that season too

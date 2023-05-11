@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { bySport } from "../../../common";
 import { getCols, toWorker } from "../../util";
+import { ActionButton } from "../../components";
 
 const GOATFormula = ({
 	awards,
@@ -15,6 +16,7 @@ const GOATFormula = ({
 }) => {
 	const [goatFormula, setGoatFormula] = useState(formula);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const [submitting, setSubmitting] = useState(false);
 
 	const cols = getCols(stats.map(stat => `stat:${stat}`));
 
@@ -33,6 +35,7 @@ const GOATFormula = ({
 					event.preventDefault();
 
 					setErrorMessage(undefined);
+					setSubmitting(true);
 
 					try {
 						await toWorker("main", "setGOATFormula", {
@@ -42,6 +45,7 @@ const GOATFormula = ({
 					} catch (error) {
 						setErrorMessage(error.message);
 					}
+					setSubmitting(false);
 				}}
 			>
 				<div className="mb-2 overflow-auto small-scrollbar">
@@ -58,9 +62,13 @@ const GOATFormula = ({
 						}}
 					/>
 				</div>
-				<button type="submit" className="btn btn-primary">
+				<ActionButton
+					type="submit"
+					processing={submitting}
+					processingText="Updating"
+				>
 					Save
-				</button>
+				</ActionButton>
 				{errorMessage ? (
 					<p className="text-danger mt-2 mb-0">{errorMessage}</p>
 				) : null}

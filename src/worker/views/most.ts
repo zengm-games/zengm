@@ -304,7 +304,9 @@ const updatePlayers = async (
 					colName: "Season",
 				},
 			);
-			const awards = goatFormula.AWARD_VARIABLES;
+			const awards = {
+				...goatFormula.AWARD_VARIABLES,
+			};
 			delete awards.numSeasons;
 			extraProps = {
 				formula:

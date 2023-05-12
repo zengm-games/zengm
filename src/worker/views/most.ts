@@ -900,6 +900,36 @@ const updatePlayers = async (
 				return college === arg;
 			};
 			getValue = playerValue;
+		} else if (type === "rookies") {
+			title = "Best Rookies";
+			description = "These are the players who had the best rookie seasons.";
+			extraCols.push(
+				{
+					key: ["most", "extra", "bestSeasonOverride"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+			);
+
+			filter = p =>
+				p.stats.length > 1 && p.stats[0].season === p.draft.year + 1;
+			getValue = p => {
+				const row = p.stats[0];
+				const value = getValueStatsRow(row);
+
+				return {
+					value: value,
+					extra: {
+						tid: row.tid,
+						bestSeasonOverride: row.season,
+						age: row.season - p.born.year,
+					},
+				};
+			};
+			after = tidAndSeasonToAbbrev;
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

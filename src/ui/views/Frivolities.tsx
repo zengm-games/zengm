@@ -143,6 +143,11 @@ export const frivolities = {
 			description: "Largest single season ovr increases.",
 		},
 		{
+			urlParts: ["most", "rookies"],
+			name: "Best Rookies",
+			description: "The best rookie seasons.",
+		},
+		{
 			urlParts: ["most", "earnings"],
 			name: "Career Earnings",
 			description: "Players who made the most money.",

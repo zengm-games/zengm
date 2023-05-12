@@ -106,7 +106,6 @@ export const getMostXPlayers = async ({
 	}
 
 	const processedPlayers = addFirstNameShort(processPlayersHallOfFame(ordered));
-	console.log(players, processedPlayers);
 
 	for (const p of processedPlayers) {
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
@@ -138,7 +137,9 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 const tidAndSeasonToAbbrev = async (most: Most) => {
 	let abbrev;
 
-	const { season, tid } = most.extra as any;
+	const extra = most.extra as any;
+	const tid = extra.tid;
+	const season = extra.bestSeasonOverride ?? extra.season;
 	const teamSeason = await idb.league
 		.transaction("teamSeasons")
 		.store.index("season, tid")
@@ -729,7 +730,7 @@ const updatePlayers = async (
 				colName: "Age",
 			});
 			extraCols.push({
-				key: ["most", "extra", "season"],
+				key: ["most", "extra", "bestSeasonOverride"],
 				colName: "Season",
 			});
 			extraCols.push({
@@ -807,7 +808,7 @@ const updatePlayers = async (
 					value: oldest ? maxAge : -maxAge,
 					extra: {
 						age: maxAge,
-						season,
+						bestSeasonOverride: season,
 						ovr: maxOvr,
 						tid,
 					},

@@ -67,6 +67,7 @@ export const TeamColumn = ({
 }) => {
 	const rankMinWidth = 8 + 7 * (String(maxRank).length - 1);
 
+	// Why is this one column, rather than two (one for rank, one for team) which would be simpler and avoid rankMinWidth? Because the header on the dashboard table - colspan 2 works weirdly, and colspan 1 leaves padding on the left.
 	return (
 		<td className="py-1" style={tdStyle}>
 			<div className="d-flex align-items-center">

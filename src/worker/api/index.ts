@@ -3889,9 +3889,13 @@ const upsertCustomizedPlayer = async (
 	}
 
 	// Recalculate player pos, ovr, pot, and values if necessary
-	if (recomputePosOvrPot || !Object.hasOwn(p, "pid")) {
-		await player.develop(p, 0);
-		await player.updateValues(p);
+	const originalPot = p.ratings.at(-1).pot;
+	await player.develop(p, 0);
+	await player.updateValues(p);
+	if (!recomputePosOvrPot) {
+		// Make sure not to randomly change pot if it was not necessary (no ratings/age change, and in non-basketball sports no pos change).
+		// Why do this here, rather than just calling develop only if this stuff changed? Because develop handles PlayerRatings.pos being set to the right value too, and that can change in BBGM even if no ratings change.
+		p.ratings.at(-1).pot = originalPot;
 	}
 
 	// Add regular season or playoffs stat row, if necessary

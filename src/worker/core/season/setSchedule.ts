@@ -52,7 +52,7 @@ const setSchedule = async (tids: [number, number][]) => {
 			}
 		}
 
-		idb.cache.schedule.add(game);
+		await idb.cache.schedule.add(game);
 	}
 
 	// Add upcoming games

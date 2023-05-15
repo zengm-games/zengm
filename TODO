@@ -1084,16 +1084,7 @@ start in any phase
     - need to improve LeagueMenu so fetching leagueInfo depends on both season and phase forms
   - start before expansion draft
   - start before draft lottery
-  - support starting after playoffs even if there is an expansion draft
-    - for 1947/48, ignore weird 2nd round picks and clone 1st round order for 2nd round
-    - expansion team should be selectable
-  - add player stats if phase after regular season
-    - advanced stats will require team stats too... sum up from players?
-    - advanced stats and other missing values, calculate on load?
   - what about changes to settings (like playoff settings, etc), does it need to store previous season's value too?
-  - what about seasons with expansion teams?
-    - tricky for draft, since it should have expansion draft as already happened... maybe disable those years
-      - could get results of expansion draft and assing those players to team!
 
 trade stuff
 - more penalty for bad contracts

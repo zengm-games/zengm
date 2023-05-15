@@ -360,15 +360,17 @@ const PlayersButton = ({
 					<Popover.Header>Top Players</Popover.Header>
 					<Popover.Body>
 						<ul className="list-unstyled mb-0">
-							{players.slice(0, 10).map(p => {
-								const ratings = p.ratings.at(-1)!;
-								return (
-									<li key={p.pid}>
-										{p.firstName} {p.lastName} - {ratings.ovr} ovr,{" "}
-										{ratings.pot} pot
-									</li>
-								);
-							})}
+							{orderBy(players, p => p.ratings.at(-1).ovr, "desc")
+								.slice(0, 10)
+								.map(p => {
+									const ratings = p.ratings.at(-1)!;
+									return (
+										<li key={p.pid}>
+											{p.firstName} {p.lastName} - {ratings.ovr} ovr,{" "}
+											{ratings.pot} pot
+										</li>
+									);
+								})}
 						</ul>
 					</Popover.Body>
 				</Popover>

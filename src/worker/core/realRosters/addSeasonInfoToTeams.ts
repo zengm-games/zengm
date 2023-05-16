@@ -86,6 +86,9 @@ const addSeasonInfoToTeams = async <
 				awards: [],
 				injury,
 				ptModifier: 1,
+
+				// Any past salaries are not relevant
+				salaries: p.salaries?.filter(row => row.season >= options.season),
 			} as unknown as Player;
 
 			delete (p2 as any).name;

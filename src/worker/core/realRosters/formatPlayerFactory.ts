@@ -412,7 +412,6 @@ const formatPlayerFactory = async (
 			const lastNonRetiredSeason = allRatings.findLast(
 				row => row.season < ratings.season && row.retiredUntil === undefined,
 			);
-			console.log("lastNonRetiredSeason", lastNonRetiredSeason);
 			if (lastNonRetiredSeason) {
 				retiredYear = lastNonRetiredSeason.season;
 			} else {

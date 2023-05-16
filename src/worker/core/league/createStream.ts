@@ -1147,10 +1147,7 @@ const beforeDBStream = async ({
 	};
 };
 
-const adjustSeasonPlayer = (
-	p: Partial<PlayerWithoutKey>,
-	salaryCapFactor: number,
-) => {
+const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 	const season = g.get("season");
 
 	const playerSeason = p.ratings!.at(-1)!.season;
@@ -1163,17 +1160,8 @@ const adjustSeasonPlayer = (
 			if (p[key]) {
 				for (const row of p[key]!) {
 					row.season += diff;
-
-					if (key === "salaries") {
-						row.amount = Math.round(row.amount * salaryCapFactor);
-					}
 				}
 			}
-		}
-
-		if (p.contract) {
-			p.contract.exp += diff;
-			p.contract.amount = Math.round(p.contract.amount * salaryCapFactor);
 		}
 
 		p.born!.year += diff;
@@ -1282,32 +1270,16 @@ const afterDBStream = async ({
 		if (t.usePlayers && t.players) {
 			replaceTids.add(t.tid);
 
-			if (typeof t.season !== "number") {
-				throw new Error("Missing season");
-			}
-			const basketball = await loadDataBasketball();
-			let seasonSalaryCap;
-			for (const row of basketball.scheduledEventsGameAttributes) {
-				if (row.type === "gameAttributes" && row.season < t.season) {
-					if (row.info.salaryCap !== undefined) {
-						seasonSalaryCap = row.info.salaryCap;
-					}
-				} else {
-					break;
-				}
-			}
-			if (seasonSalaryCap === undefined) {
-				throw new Error("Missing seasonSalaryCap");
-			}
-			const salaryCapFactor = g.get("salaryCap") / seasonSalaryCap;
-
 			for (const p of t.players) {
 				delete p.pid;
 				delete p.relatives;
 				delete p.transactions;
+				delete p.contract;
+				delete p.salaries;
+				delete p.awards;
 				p.stats = [];
 				p.tid = t.tid;
-				adjustSeasonPlayer(p, salaryCapFactor);
+				adjustSeasonPlayer(p);
 
 				const p2 = await processPlayerNewLeague({
 					p,

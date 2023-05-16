@@ -1,5 +1,6 @@
-when creating a league with differnet historical teams
-  - what about if they're teams from a real league? need to adjust differently then...
+when creating a league with differnet historical teams, would be nice to use real player salaries
+- needs to handle teams from your leagues too
+- ideal: add salaryCap to teamInfo and use that to adjust
 
 fielder's choice stay at 1st https://discord.com/channels/290013534023057409/290015591216054273/1107165858834415656
 

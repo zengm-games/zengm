@@ -6,7 +6,10 @@ import type {
 import { FIRST_SEASON_WITH_ALEXNOOB_ROSTERS } from "./getLeague";
 
 type MyGameAttributes = Partial<GameAttributesLeague> &
-	Pick<GameAttributesLeague, "confs" | "divs" | "numGamesPlayoffSeries">;
+	Pick<
+		GameAttributesLeague,
+		"confs" | "divs" | "numGames" | "numGamesPlayoffSeries"
+	>;
 
 const getGameAttributes = (
 	initialGameAttributes: any,

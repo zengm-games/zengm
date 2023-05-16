@@ -1,13 +1,15 @@
+import { PLAYER, unwrapGameAttribute } from "../../../common";
 import { groupBy } from "../../../common/groupBy";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 	Player,
 } from "../../../common/types";
-import { g, helpers, local } from "../../util";
+import { defaultGameAttributes, g, helpers, local } from "../../util";
 import player from "../player";
 import stats from "../player/stats";
 import formatPlayerFactory from "./formatPlayerFactory";
+import getInjury from "./getInjury";
 import type { Basketball } from "./loadData.basketball";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 
@@ -20,7 +22,7 @@ const addSeasonInfoToTeams = async <
 	teams: T[],
 	basketball: Basketball,
 	gameAttributes:
-		| Pick<GameAttributesLeague, "confs" | "numGamesPlayoffSeries">
+		| Pick<GameAttributesLeague, "confs" | "numGames" | "numGamesPlayoffSeries">
 		| undefined,
 	options: GetLeagueOptions,
 ) => {
@@ -38,6 +40,28 @@ const addSeasonInfoToTeams = async <
 		-1 + (options.pidOffset ?? 0),
 	);
 
+	const getUnwrappedGameAttributeOrDefault = <
+		Key extends keyof NonNullable<typeof gameAttributes>,
+	>(
+		key: Key,
+	): GameAttributesLeague[Key] => {
+		if (!gameAttributes) {
+			return defaultGameAttributes[key] as any;
+		}
+
+		return unwrapGameAttribute(gameAttributes, key);
+	};
+
+	const commonInjuryOptions = {
+		injuries: basketball.injuries,
+		season: options.season,
+		phase: options.phase,
+		numGames: getUnwrappedGameAttributeOrDefault("numGames"),
+		numGamesPlayoffSeries: getUnwrappedGameAttributeOrDefault(
+			"numGamesPlayoffSeries",
+		),
+	};
+
 	const ratings = basketball.ratings.filter(
 		row => row.season === options.season,
 	);
@@ -45,14 +69,22 @@ const addSeasonInfoToTeams = async <
 		.map(row => formatPlayer(row))
 		.filter(p => p.tid >= 0)
 		.map(p => {
+			const injury = getInjury({
+				...commonInjuryOptions,
+				slug: p.srID,
+				draftProspect: p.tid === PLAYER.UNDRAFTED,
+				draftYear: p.draft.year,
+			}) ?? {
+				gamesRemaining: 0,
+				type: "Healthy",
+			};
+
 			const p2 = {
 				...p,
 				firstName: "",
 				lastName: "",
-				injury: {
-					gamesRemaining: 0,
-					type: "Healthy",
-				},
+				awards: [],
+				injury,
 				ptModifier: 1,
 			} as unknown as Player;
 

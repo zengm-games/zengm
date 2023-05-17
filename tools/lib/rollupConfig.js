@@ -79,8 +79,8 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 	if (nodeEnv === "production") {
 		plugins.push(
 			terser({
-				output: {
-					comments: /^I DON'T WANT ANY COMMENTS$/,
+				format: {
+					comments: false,
 				},
 			}),
 		);

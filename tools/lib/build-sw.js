@@ -65,8 +65,8 @@ const bundle = async () => {
 			}),
 			resolve(),
 			terser({
-				output: {
-					comments: /^I DON'T WANT ANY COMMENTS$/,
+				format: {
+					comments: false,
 				},
 			}),
 		],

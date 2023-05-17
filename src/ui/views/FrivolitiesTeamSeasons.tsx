@@ -30,6 +30,7 @@ const FrivolitiesTeamSeasons = ({
 		...(ties ? ["T"] : []),
 		...(usePts ? ["PTS", "PTS%"] : ["%"]),
 		`stat:${isSport("basketball") ? "mov" : "diff"}`,
+		"Ovr",
 		...extraCols.map(x => x.colName),
 		"Links",
 	]);
@@ -66,6 +67,7 @@ const FrivolitiesTeamSeasons = ({
 						: ts,
 					isSport("basketball") ? "mov" : "diff",
 				),
+				ts.ovr,
 				...extraCols.map(x => {
 					let value = getValue(ts, x.key);
 					if (x.colName === "AvgAge") {

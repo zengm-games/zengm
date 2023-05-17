@@ -54,6 +54,8 @@ export const getMostXTeamSeasons = async ({
 		},
 	);
 
+	const challengeNoRatings = g.get("challengeNoRatings");
+
 	const teamSeasons = await Promise.all(
 		teamSeasonsAll.map(async ts => {
 			return {
@@ -79,6 +81,7 @@ export const getMostXTeamSeasons = async ({
 				pts: 0,
 				oppPts: 0,
 				most: after ? await after(ts.most) : ts.most,
+				ovr: !challengeNoRatings ? ts.ovrEnd : undefined,
 			};
 		}),
 	);

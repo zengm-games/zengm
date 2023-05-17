@@ -816,23 +816,16 @@ const NewLeague = (props: View<"newLeague">) => {
 			});
 
 			let type: string = state.customize;
-			let type2 = type;
 			if (type === "real") {
 				type = String(state.season);
-				type2 += `-${state.season}`;
 			}
 			if (type === "legends") {
 				type = String(state.legend);
-				type2 += `-${state.legend}`;
 			}
 			analyticsEvent("new_league", {
 				league_type: type,
 				team: teamRegionName,
 				league_id: lid,
-			});
-			analyticsEvent("select_content", {
-				content_type: "new_league",
-				item_id: type2,
 			});
 
 			realtimeUpdate([], `/l/${lid}`);

@@ -5,7 +5,7 @@ import {
 } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
-import { isSport } from "../../../common";
+import { DEPTH_CHART_NAME, isSport } from "../../../common";
 import { Contract } from "../../components/contract";
 
 const StartingLineup = ({
@@ -89,7 +89,11 @@ const StartingLineup = ({
 				</table>
 			</ResponsiveTableWrapper>
 			<div />
-			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
+			{DEPTH_CHART_NAME ? (
+				<a href={helpers.leagueUrl(["depth"])}>» {DEPTH_CHART_NAME}</a>
+			) : (
+				<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
+			)}
 		</>
 	);
 };

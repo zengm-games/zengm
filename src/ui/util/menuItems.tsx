@@ -2,6 +2,7 @@ import { takeScreenshot, toWorker } from ".";
 import {
 	bySport,
 	DAILY_SCHEDULE,
+	DEPTH_CHART_NAME,
 	isSport,
 	SPORT_HAS_REAL_PLAYERS,
 	WEBSITE_ROOT,
@@ -9,25 +10,23 @@ import {
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 import { frivolities } from "../views/Frivolities";
 
-const depthChart: MenuItemLink[] = [
-	{
-		type: "link",
-		active: (pageID, pathname) =>
-			pageID === "depth" &&
-			(!isSport("baseball") ||
-				!pathname ||
-				(!pathname.includes("/D") && !pathname.includes("/P"))),
-		league: true,
-		commandPalette: true,
-		path: ["depth"],
-		text: bySport({
-			baseball: "Batting Order",
-			basketball: "",
-			football: "Depth Chart",
-			hockey: "Lines",
-		}),
-	},
-];
+const depthChart: MenuItemLink[] =
+	DEPTH_CHART_NAME !== undefined
+		? [
+				{
+					type: "link",
+					active: (pageID, pathname) =>
+						pageID === "depth" &&
+						(!isSport("baseball") ||
+							!pathname ||
+							(!pathname.includes("/D") && !pathname.includes("/P"))),
+					league: true,
+					commandPalette: true,
+					path: ["depth"],
+					text: DEPTH_CHART_NAME,
+				},
+		  ]
+		: [];
 
 if (isSport("baseball")) {
 	depthChart.push(

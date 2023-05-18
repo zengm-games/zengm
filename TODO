@@ -1,3 +1,11 @@
+finances revamp
+- count, not $
+- exponential decline in effect
+- how do AI teams set it?
+  - does it change over time?
+- still need 3 yr avg
+  - show in ui
+
 when creating a league with differnet historical teams, would be nice to use real player salaries
 - needs to handle teams from your leagues too
 - ideal: add salaryCap to teamInfo and use that to adjust
@@ -91,8 +99,6 @@ increase scrambling yards per carry https://discord.com/channels/290013534023057
 show previous salary on re-signing table https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/izjihq3/
 
 dedicated page listing all owned draft picks, including links to trades where they were acquired https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j1a3nws/
-
-sticky score when scrolling box score during live sim https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j2airjl/
 
 show totals for pts/reb/ast/etc in play by play like "J. Brown Driving layup (12 pts) D. White (3 AST)" https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j26zhxu/
 

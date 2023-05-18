@@ -486,6 +486,13 @@ const EXHIBITION_GAME_SETTINGS = [
 
 const MOBILE_AD_BOTTOM_MARGIN = 52;
 
+export const DEPTH_CHART_NAME = bySport({
+	baseball: "Batting Order",
+	basketball: undefined,
+	football: "Depth Chart",
+	hockey: "Lines",
+});
+
 export {
 	AD_DIVS,
 	ALL_STAR_GAME_ONLY,

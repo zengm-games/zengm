@@ -113,26 +113,25 @@ const PlayerStatsGraphs = ({
 	];
 	const playoffs = useDropdownOptions("playoffs");
 
-	const initialStatXState = {
-		prevStat: statsX[0],
-		stat: statsX[0],
-		prevStatType: statTypeX,
-		statType: statTypeX,
-	};
-	const initialStatYState = {
-		prevStat: statsY[0],
-		stat: statsY[0],
-		prevStatType: statTypeY,
-		statType: statTypeY,
-	};
-
-	const [statToChartX, setStatToChartX] = useState(() => initialStatXState);
-	const [statToChartY, setStatToChartY] = useState(() => initialStatYState);
-	const [minimumGames, setMinimumGames] = useState(() => 0);
-	const [seasonXState, setSeasonX] = useState(() => seasonX);
-	const [seasonYState, setSeasonY] = useState(() => seasonY);
-	const [playoffsXState, setPlayoffsX] = useState(() => playoffsX);
-	const [playoffsYState, setPlayoffsY] = useState(() => playoffsY);
+	const [state, setState] = useState([
+		{
+			prevStat: statsX[0],
+			stat: statsX[0],
+			prevStatType: statTypeX,
+			statType: statTypeX,
+			playoffs: playoffsX,
+			season: seasonX,
+		},
+		{
+			prevStat: statsY[0],
+			stat: statsY[0],
+			prevStatType: statTypeY,
+			statType: statTypeY,
+			playoffs: playoffsY,
+			season: seasonY,
+		},
+	] as const);
+	const [minGames, setMinGames] = useState("0");
 
 	const statsXEnriched = getStatsWithLabels(statsX, statTypeX);
 	const statsYEnriched = getStatsWithLabels(statsY, statTypeY);
@@ -148,37 +147,59 @@ const PlayerStatsGraphs = ({
 			[],
 			helpers.leagueUrl([
 				"player_stats_graphs",
-				seasonXState,
-				seasonYState,
-				statToChartX.statType,
-				statToChartY.statType,
-				playoffsXState,
-				playoffsYState,
+				state[0].season,
+				state[1].season,
+				state[0].statType,
+				state[1].statType,
+				state[0].playoffs,
+				state[1].playoffs,
 			]),
 		);
 	});
 
+	const setStateX = (newState: Partial<(typeof state)[0]>) => {
+		setState(prevState => {
+			return [
+				{
+					...prevState[0],
+					...newState,
+				},
+				prevState[1],
+			];
+		});
+	};
+
+	const setStateY = (newState: Partial<(typeof state)[0]>) => {
+		setState(prevState => {
+			return [
+				prevState[0],
+				{
+					...prevState[1],
+					...newState,
+				},
+			];
+		});
+	};
+
 	function updateStatsIfStatTypeChange() {
-		if (statToChartX.prevStatType != statToChartX.statType) {
-			setStatToChartX({
-				...statToChartX,
+		if (state[0].prevStatType != state[0].statType) {
+			setStateX({
 				stat: statsX[0],
-				prevStatType: statToChartX.statType,
+				prevStatType: state[0].statType,
 			});
 		}
-		if (statToChartY.prevStatType != statToChartY.statType) {
-			setStatToChartY({
-				...statToChartY,
+		if (state[1].prevStatType != state[1].statType) {
+			setStateY({
 				stat: statsY[0],
-				prevStatType: statToChartY.statType,
+				prevStatType: state[1].statType,
 			});
 		}
 	}
 
-	const handleMinGamesChange = (games: string) => {
-		const minGamesParsed: number = parseInt(games);
-		setMinimumGames(isNaN(minGamesParsed) ? 0 : minGamesParsed);
-	};
+	let minGamesInteger = parseInt(minGames);
+	if (Number.isNaN(minGamesInteger)) {
+		minGamesInteger = 0;
+	}
 
 	return (
 		<div>
@@ -187,11 +208,10 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">X axis stat</label>
 					<select
 						className="form-select"
-						value={statToChartX.stat}
+						value={state[0].stat}
 						onChange={event =>
-							setStatToChartX({
-								...statToChartX,
-								prevStat: statToChartX.stat,
+							setStateX({
+								prevStat: state[0].stat,
 								stat: event.target.value,
 							})
 						}
@@ -207,11 +227,10 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">X axis stat type</label>
 					<select
 						className="form-select"
-						value={statToChartX.statType}
+						value={state[0].statType}
 						onChange={event =>
-							setStatToChartX({
-								...statToChartX,
-								prevStatType: statToChartX.statType,
+							setStateX({
+								prevStatType: state[0].statType,
 								statType: event.target.value,
 							})
 						}
@@ -227,8 +246,10 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">X axis year</label>
 					<select
 						className="form-select"
-						value={seasonXState}
-						onChange={event => setSeasonX(Number(event.target.value))}
+						value={state[0].season}
+						onChange={event =>
+							setStateX({ season: parseInt(event.target.value) })
+						}
 					>
 						{seasons.map((x: any) => {
 							return <option>{x}</option>;
@@ -237,8 +258,8 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Playoffs</label>
 					<select
 						className="form-select"
-						value={playoffsXState}
-						onChange={event => setPlayoffsX(event.target.value)}
+						value={state[0].playoffs}
+						onChange={event => setStateX({ playoffs: event.target.value })}
 					>
 						{playoffs.map((x: any) => {
 							return (
@@ -253,11 +274,10 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis stat</label>
 					<select
 						className="form-select"
-						value={statToChartY.stat}
+						value={state[1].stat}
 						onChange={event =>
-							setStatToChartY({
-								...statToChartY,
-								prevStat: statToChartY.stat,
+							setStateY({
+								prevStat: state[1].stat,
 								stat: event.target.value,
 							})
 						}
@@ -273,11 +293,10 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis stat type</label>
 					<select
 						className="form-select"
-						value={statToChartY.statType}
+						value={state[1].statType}
 						onChange={event =>
-							setStatToChartY({
-								...statToChartY,
-								prevStatType: statToChartY.statType,
+							setStateY({
+								prevStatType: state[1].statType,
 								statType: event.target.value,
 							})
 						}
@@ -293,8 +312,10 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis year</label>
 					<select
 						className="form-select"
-						value={seasonYState}
-						onChange={event => setSeasonY(Number(event.target.value))}
+						value={state[1].season}
+						onChange={event =>
+							setStateY({ season: parseInt(event.target.value) })
+						}
 					>
 						{seasons.map((x: any) => {
 							return <option>{x}</option>;
@@ -303,8 +324,8 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Playoffs</label>
 					<select
 						className="form-select"
-						value={playoffsYState}
-						onChange={event => setPlayoffsY(event.target.value)}
+						value={state[1].playoffs}
+						onChange={event => setStateY({ playoffs: event.target.value })}
 					>
 						{playoffs.map((x: any) => {
 							return (
@@ -322,8 +343,8 @@ const PlayerStatsGraphs = ({
 					<input
 						type="text"
 						className="form-control"
-						onChange={event => handleMinGamesChange(event.target.value)}
-						value={minimumGames}
+						onChange={event => setMinGames(event.target.value)}
+						value={minGames}
 						inputMode="numeric"
 					/>
 				</div>
@@ -332,11 +353,11 @@ const PlayerStatsGraphs = ({
 				<GraphCreation
 					statsX={playersX}
 					statsY={playersY}
-					statX={statToChartX.stat}
-					statY={statToChartY.stat}
-					statTypeX={statToChartX.statType}
-					statTypeY={statToChartY.statType}
-					minGames={minimumGames}
+					statX={state[0].stat}
+					statY={state[1].stat}
+					statTypeX={state[0].statType}
+					statTypeY={state[1].statType}
+					minGames={minGamesInteger}
 				/>
 			</div>
 		</div>

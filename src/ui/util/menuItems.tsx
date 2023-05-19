@@ -488,14 +488,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerBios",
-				league: true,
-				commandPalette: true,
-				path: ["player_bios"],
-				text: "Player Bios",
-			},
-			{
-				type: "link",
 				active: pageID => pageID === "playerRatings",
 				league: true,
 				commandPalette: true,
@@ -517,14 +509,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 				path: ["player_stats"],
 				text: "Player Stats",
-			},
-			{
-				type: "link",
-				active: pageID => pageID === "playerStatsGraphs",
-				league: true,
-				commandPalette: true,
-				path: ["player_stats_graphs"],
-				text: "Player Stats Graphs",
 			},
 			{
 				type: "link",
@@ -551,6 +535,22 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					}),
 				],
 				text: "Career Totals",
+			},
+			{
+				type: "link",
+				active: pageID => pageID === "playerBios",
+				league: true,
+				commandPalette: true,
+				path: ["player_bios"],
+				text: "Player Bios",
+			},
+			{
+				type: "link",
+				active: pageID => pageID === "playerStatsGraphs",
+				league: true,
+				commandPalette: true,
+				path: ["player_stats_graphs"],
+				text: "Player Graphs",
 			},
 			{
 				type: "link",

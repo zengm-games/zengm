@@ -1,3 +1,40 @@
+chart feature
+- where in menu?
+- dark mode
+- default stats
+- other sports
+  - do stat types work?
+  - how do position-specific stats look?
+- do game highs work?
+- reg/playoffs boolean
+- minimum games played - should it be some other criteria, like league leaders?
+- contract -> bio
+  - add age
+  - remove exp
+- firstUpdate needed?
+- tooltip
+  - location
+  - rounding of stat
+  - mobile?
+  - PlayerNameLabels
+- console errors
+- in top menu, show long name of stat in addition to abbrev?
+  - tooltip should be short abbrev, axis should be both
+- click should make tooltip persistent
+- name in tooltip should be clickable to player page
+- how is it setting y range? for example Contract exp
+- url of page
+- only fetch stat/rating needed from playersPlus
+- getStatsTableByType seems weird
+- bigger points to make clicking/hovering easier?
+- option to highlight players on a certain team
+  - how to handle TOT?
+  - how to handle career totals
+  - how to handle disabled teams
+- in addition to x and y axis stats, let user pick one for size of the circles
+- when changing stat type, keep the stat the same if there is an exact match (like in bbgm changing per game to per 36)
+- why doesn't year include career and all seasons? should be same as player stats
+
 finances revamp
 - count, not $
 - exponential decline in effect

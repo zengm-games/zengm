@@ -59,7 +59,6 @@ async function getPlayerStats(
 		statType = "totals";
 	}
 
-	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!statsTable) {
 		throw new Error(`Invalid statType: "${statTypeInput}"`);
 	}
@@ -79,7 +78,6 @@ async function getPlayerStats(
 			"noCopyCache",
 		);
 	}
-	console.log(playoffs === "playoffs");
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [

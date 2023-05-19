@@ -30,9 +30,9 @@ function getStatFromPlayer(player: any, stat: string, statType: string) {
 		return player.ratings[stat];
 	} else if (statType == "contract") {
 		if (player["contract"]) {
-			return player.contract[stat] ?? 0.0;
+			return player.contract[stat] ?? 0;
 		}
-		return 0.0;
+		return 0;
 	}
 	if (statType == "gameHighs") {
 		stat = player.stats[stat];
@@ -84,7 +84,7 @@ function GraphCreation(props: GraphCreationProps) {
 	const labelX = getStatsWithLabels([props.statX], props.statTypeX)[0].desc;
 	const labelY = getStatsWithLabels([props.statY], props.statTypeY)[0].desc;
 
-	return <StatGraph data={data} statX={labelX} statY={labelY}></StatGraph>;
+	return <StatGraph data={data} statX={labelX} statY={labelY} />;
 }
 const PlayerStatsGraphs = ({
 	playoffsX,
@@ -99,7 +99,7 @@ const PlayerStatsGraphs = ({
 	statsY,
 }: View<"playerStatsGraphs">) => {
 	useTitleBar({
-		title: "Player Stats Graphics",
+		title: "Player Graphs",
 		jumpTo: true,
 		dropdownView: "player_stats_graphs",
 	});
@@ -111,7 +111,6 @@ const PlayerStatsGraphs = ({
 		{ key: "contract", value: "Contract" },
 		{ key: "ratings", value: "Ratings" },
 	];
-	console.log(statTypes);
 	const playoffs = useDropdownOptions("playoffs");
 
 	const initialStatXState = {
@@ -149,8 +148,8 @@ const PlayerStatsGraphs = ({
 			[],
 			helpers.leagueUrl([
 				"player_stats_graphs",
-				seasonXState.toString(),
-				seasonYState.toString(),
+				seasonXState,
+				seasonYState,
 				statToChartX.statType,
 				statToChartY.statType,
 				playoffsXState,
@@ -208,7 +207,7 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">X axis stat type</label>
 					<select
 						className="form-select"
-						value={statToChartX.statType.toString()}
+						value={statToChartX.statType}
 						onChange={event =>
 							setStatToChartX({
 								...statToChartX,
@@ -238,7 +237,7 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Playoffs</label>
 					<select
 						className="form-select"
-						value={playoffsXState.toString()}
+						value={playoffsXState}
 						onChange={event => setPlayoffsX(event.target.value)}
 					>
 						{playoffs.map((x: any) => {
@@ -274,7 +273,7 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis stat type</label>
 					<select
 						className="form-select"
-						value={statToChartY.statType.toString()}
+						value={statToChartY.statType}
 						onChange={event =>
 							setStatToChartY({
 								...statToChartY,
@@ -294,7 +293,7 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Y axis year</label>
 					<select
 						className="form-select"
-						value={seasonYState.toString()}
+						value={seasonYState}
 						onChange={event => setSeasonY(Number(event.target.value))}
 					>
 						{seasons.map((x: any) => {
@@ -304,7 +303,7 @@ const PlayerStatsGraphs = ({
 					<label className="form-label">Playoffs</label>
 					<select
 						className="form-select"
-						value={playoffsYState.toString()}
+						value={playoffsYState}
 						onChange={event => setPlayoffsY(event.target.value)}
 					>
 						{playoffs.map((x: any) => {
@@ -325,6 +324,7 @@ const PlayerStatsGraphs = ({
 						className="form-control"
 						onChange={event => handleMinGamesChange(event.target.value)}
 						value={minimumGames}
+						inputMode="numeric"
 					/>
 				</div>
 			</div>
@@ -334,8 +334,8 @@ const PlayerStatsGraphs = ({
 					statsY={playersY}
 					statX={statToChartX.stat}
 					statY={statToChartY.stat}
-					statTypeX={statToChartX.statType.toString()}
-					statTypeY={statToChartY.statType.toString()}
+					statTypeX={statToChartX.statType}
+					statTypeY={statToChartY.statType}
 					minGames={minimumGames}
 				/>
 			</div>

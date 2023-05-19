@@ -86,6 +86,103 @@ function GraphCreation(props: GraphCreationProps) {
 
 	return <StatGraph data={data} statX={labelX} statY={labelY} />;
 }
+
+type AxisState = {
+	prevStat: string;
+	stat: string;
+	prevStatType: string;
+	statType: string;
+	playoffs: string;
+	season: number;
+};
+
+const PickStat = ({
+	state,
+	setState,
+	stats,
+}: {
+	state: AxisState;
+	setState: (state: Partial<AxisState>) => void;
+	stats: string[];
+}) => {
+	const statsXEnriched = getStatsWithLabels(stats, state.statType);
+
+	const seasons = useDropdownOptions("seasons").map(x => x.value);
+	const statTypes = [
+		...useDropdownOptions("statTypesAdv"),
+		{ key: "contract", value: "Contract" },
+		{ key: "ratings", value: "Ratings" },
+	];
+	const playoffs = useDropdownOptions("playoffs");
+
+	return (
+		<>
+			<label className="form-label">Stat</label>
+			<select
+				className="form-select"
+				value={state.stat}
+				onChange={event =>
+					setState({
+						prevStat: state.stat,
+						stat: event.target.value,
+					})
+				}
+			>
+				{statsXEnriched.map((x: any) => {
+					return (
+						<option value={x.value} title={x.desc}>
+							{x.title}
+						</option>
+					);
+				})}
+			</select>
+			<label className="form-label">Type</label>
+			<select
+				className="form-select"
+				value={state.statType}
+				onChange={event =>
+					setState({
+						prevStatType: state.statType,
+						statType: event.target.value,
+					})
+				}
+			>
+				{statTypes.map((x: any) => {
+					return (
+						<option value={x.key}>
+							{Array.isArray(x.value) ? x.value[1].text : x.value}
+						</option>
+					);
+				})}
+			</select>
+			<label className="form-label">Season</label>
+			<select
+				className="form-select"
+				value={state.season}
+				onChange={event => setState({ season: parseInt(event.target.value) })}
+			>
+				{seasons.map((x: any) => {
+					return <option>{x}</option>;
+				})}
+			</select>
+			<label className="form-label">Playoffs</label>
+			<select
+				className="form-select"
+				value={state.playoffs}
+				onChange={event => setState({ playoffs: event.target.value })}
+			>
+				{playoffs.map((x: any) => {
+					return (
+						<option value={x.key}>
+							{Array.isArray(x.value) ? x.value[1].text : x.value}
+						</option>
+					);
+				})}
+			</select>
+		</>
+	);
+};
+
 const PlayerStatsGraphs = ({
 	playoffsX,
 	playoffsY,
@@ -105,14 +202,6 @@ const PlayerStatsGraphs = ({
 	});
 	const firstUpdate = useRef(true);
 
-	const seasons = useDropdownOptions("seasons").map(x => x.value);
-	const statTypes = [
-		...useDropdownOptions("statTypesAdv"),
-		{ key: "contract", value: "Contract" },
-		{ key: "ratings", value: "Ratings" },
-	];
-	const playoffs = useDropdownOptions("playoffs");
-
 	const [state, setState] = useState([
 		{
 			prevStat: statsX[0],
@@ -130,11 +219,8 @@ const PlayerStatsGraphs = ({
 			playoffs: playoffsY,
 			season: seasonY,
 		},
-	] as const);
+	] as [AxisState, AxisState]);
 	const [minGames, setMinGames] = useState("0");
-
-	const statsXEnriched = getStatsWithLabels(statsX, statTypeX);
-	const statsYEnriched = getStatsWithLabels(statsY, statTypeY);
 
 	useLayoutEffect(() => {
 		if (firstUpdate.current) {
@@ -157,7 +243,7 @@ const PlayerStatsGraphs = ({
 		);
 	});
 
-	const setStateX = (newState: Partial<(typeof state)[0]>) => {
+	const setStateX = (newState: Partial<AxisState>) => {
 		setState(prevState => {
 			return [
 				{
@@ -169,7 +255,7 @@ const PlayerStatsGraphs = ({
 		});
 	};
 
-	const setStateY = (newState: Partial<(typeof state)[0]>) => {
+	const setStateY = (newState: Partial<AxisState>) => {
 		setState(prevState => {
 			return [
 				prevState[0],
@@ -205,136 +291,10 @@ const PlayerStatsGraphs = ({
 		<div>
 			<div className="row">
 				<div className="col-sm-3 mb-3">
-					<label className="form-label">X axis stat</label>
-					<select
-						className="form-select"
-						value={state[0].stat}
-						onChange={event =>
-							setStateX({
-								prevStat: state[0].stat,
-								stat: event.target.value,
-							})
-						}
-					>
-						{statsXEnriched.map((x: any) => {
-							return (
-								<option value={x.value} title={x.desc}>
-									{x.title}
-								</option>
-							);
-						})}
-					</select>
-					<label className="form-label">X axis stat type</label>
-					<select
-						className="form-select"
-						value={state[0].statType}
-						onChange={event =>
-							setStateX({
-								prevStatType: state[0].statType,
-								statType: event.target.value,
-							})
-						}
-					>
-						{statTypes.map((x: any) => {
-							return (
-								<option value={x.key}>
-									{Array.isArray(x.value) ? x.value[1].text : x.value}
-								</option>
-							);
-						})}
-					</select>
-					<label className="form-label">X axis year</label>
-					<select
-						className="form-select"
-						value={state[0].season}
-						onChange={event =>
-							setStateX({ season: parseInt(event.target.value) })
-						}
-					>
-						{seasons.map((x: any) => {
-							return <option>{x}</option>;
-						})}
-					</select>
-					<label className="form-label">Playoffs</label>
-					<select
-						className="form-select"
-						value={state[0].playoffs}
-						onChange={event => setStateX({ playoffs: event.target.value })}
-					>
-						{playoffs.map((x: any) => {
-							return (
-								<option value={x.key}>
-									{Array.isArray(x.value) ? x.value[1].text : x.value}
-								</option>
-							);
-						})}
-					</select>
+					<PickStat stats={statsX} state={state[0]} setState={setStateX} />
 				</div>
 				<div className="col-sm-3 mb-3">
-					<label className="form-label">Y axis stat</label>
-					<select
-						className="form-select"
-						value={state[1].stat}
-						onChange={event =>
-							setStateY({
-								prevStat: state[1].stat,
-								stat: event.target.value,
-							})
-						}
-					>
-						{statsYEnriched.map((x: any) => {
-							return (
-								<option value={x.value} title={x.desc}>
-									{x.title}
-								</option>
-							);
-						})}
-					</select>
-					<label className="form-label">Y axis stat type</label>
-					<select
-						className="form-select"
-						value={state[1].statType}
-						onChange={event =>
-							setStateY({
-								prevStatType: state[1].statType,
-								statType: event.target.value,
-							})
-						}
-					>
-						{statTypes.map((x: any) => {
-							return (
-								<option value={x.key}>
-									{Array.isArray(x.value) ? x.value[1].text : x.value}
-								</option>
-							);
-						})}
-					</select>
-					<label className="form-label">Y axis year</label>
-					<select
-						className="form-select"
-						value={state[1].season}
-						onChange={event =>
-							setStateY({ season: parseInt(event.target.value) })
-						}
-					>
-						{seasons.map((x: any) => {
-							return <option>{x}</option>;
-						})}
-					</select>
-					<label className="form-label">Playoffs</label>
-					<select
-						className="form-select"
-						value={state[1].playoffs}
-						onChange={event => setStateY({ playoffs: event.target.value })}
-					>
-						{playoffs.map((x: any) => {
-							return (
-								<option value={x.key}>
-									{Array.isArray(x.value) ? x.value[1].text : x.value}
-								</option>
-							);
-						})}
-					</select>
+					<PickStat stats={statsY} state={state[1]} setState={setStateY} />
 				</div>
 			</div>
 			<div className="row">

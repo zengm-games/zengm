@@ -1,10 +1,30 @@
 finances revamp
 - count, not $
 - exponential decline in effect
-- how do AI teams set it?
-  - does it change over time?
-- still need 3 yr avg
-  - show in ui
+- 2 yr avg
+  - show avg in ui
+  - store cumsum and numgames for current and prev season
+- get rid of adjustForInflation
+  - what about ticket prices? does this affect them? maybe always adjust ticket prices
+- on mobile, move settings to top of team finances page
+- what should the exact numbers be?
+  - different cost/effect for different categories?
+- TeamSeason.expenses and revenues no longer need to store rank
+- updateRanks
+  - instead, update the average of past 2 seasons
+- helpers.defaultBudgetAmount
+- autoBudgetSettings
+  - call each year for AI teams
+    - does it change over time?
+- upgrade
+  - TeamSeason.expenses and revenues
+    - import
+    - existing league
+  - Team.budget
+    - import
+    - existing league
+- blog
+  - rank isn't fun, like ebay bidding
 
 when creating a league with differnet historical teams, would be nice to use real player salaries
 - needs to handle teams from your leagues too

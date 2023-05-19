@@ -76,10 +76,22 @@ const routeInfos = {
 	"/l/:lid/player_ratings/:abbrev": "playerRatings",
 	"/l/:lid/player_ratings/:abbrev/:season": "playerRatings",
 	"/l/:lid/player_stats": "playerStats",
+	"/l/:lid/player_stats_graphs": "playerStatsGraphs",
 	"/l/:lid/player_stats/:abbrev": "playerStats",
 	"/l/:lid/player_stats/:abbrev/:season": "playerStats",
 	"/l/:lid/player_stats/:abbrev/:season/:statType": "playerStats",
 	"/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs": "playerStats",
+	"/l/:lid/player_stats_graphs/": "playerStatsGraphs",
+	"/l/:lid/player_stats_graphs/:seasonX": "playerStatsGraphs",
+	"/l/:lid/player_stats_graphs/:seasonX/:seasonY": "playerStatsGraphs",
+	"/l/:lid/player_stats_graphs/:seasonX/:seasonY/:statTypeX":
+		"playerStatsGraphs",
+	"/l/:lid/player_stats_graphs/:seasonX/:seasonY/:statTypeX/:statTypeY":
+		"playerStatsGraphs",
+	"/l/:lid/player_stats_graphs/:seasonX/:seasonY/:statTypeX/:statTypeY/:playoffsX":
+		"playerStatsGraphs",
+	"/l/:lid/player_stats_graphs/:seasonX/:seasonY/:statTypeX/:statTypeY/:playoffsX/:playoffsY":
+		"playerStatsGraphs",
 	"/l/:lid/team_stats": "teamStats",
 	"/l/:lid/team_stats/:season": "teamStats",
 	"/l/:lid/team_stats/:season/:teamOpponent": "teamStats",

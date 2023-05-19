@@ -2806,6 +2806,12 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	amount: {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+		title: "Amount",
+		desc: "Amount perceived in contract",
+	},
 	"Asking For": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -3259,6 +3265,18 @@ const cols: {
 		sortType: "number",
 		title: "Str",
 	},
+	"rating:ovr": {
+		desc: "Overall Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Overall",
+	},
+	"rating:pot": {
+		desc: "Potential Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Potential",
+	},
 	"stat:gp": {
 		desc: "Games Played",
 		sortSequence: ["desc", "asc"],
@@ -3476,10 +3494,34 @@ const cols: {
 	...sportSpecificCols,
 };
 
-export default (
+type Title = {
+	title: string;
+	desc: string;
+	value: string;
+};
+
+function getColTitles(titles: { actual: string; parsed: string }[]): Title[] {
+	return titles.map(title => {
+		if (!Object.hasOwn(cols, title.parsed)) {
+			return {
+				title: title.actual,
+				value: title.actual,
+				desc: title.actual,
+			};
+		}
+
+		return {
+			title: cols[title.parsed].title ?? title.actual,
+			value: title.actual,
+			desc: cols[title.parsed].desc ?? cols[title.parsed].title ?? title.actual,
+		};
+	});
+}
+
+function getCols(
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
-): Col[] => {
+): Col[] {
 	return titles.map(title => {
 		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
@@ -3491,4 +3533,6 @@ export default (
 			...overrides[title],
 		};
 	});
-};
+}
+
+export { getCols, getColTitles };

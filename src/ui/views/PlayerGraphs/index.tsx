@@ -1,12 +1,12 @@
-import type { PlayerFiltered, View } from "../../common/types";
-import useTitleBar from "../hooks/useTitleBar";
+import type { PlayerFiltered, View } from "../../../common/types";
+import useTitleBar from "../../hooks/useTitleBar";
 import { useState, useLayoutEffect, useRef } from "react";
 import { StatGraph } from "./ScatterPlot";
 import useDropdownOptions, {
 	type DropdownOption,
-} from "../hooks/useDropdownOptions";
-import realtimeUpdate from "../util/realtimeUpdate";
-import { getColTitles, helpers } from "../util";
+} from "../../hooks/useDropdownOptions";
+import realtimeUpdate from "../../util/realtimeUpdate";
+import { getColTitles, helpers } from "../../util";
 
 function addPrefixForStat(
 	statType: string,
@@ -186,7 +186,7 @@ const PickStat = ({
 	);
 };
 
-const PlayerStatsGraphs = ({
+const PlayerGraphs = ({
 	playoffsX,
 	playoffsY,
 	seasonX,
@@ -197,11 +197,11 @@ const PlayerStatsGraphs = ({
 	playersY,
 	statsX,
 	statsY,
-}: View<"playerStatsGraphs">) => {
+}: View<"playerGraphs">) => {
 	useTitleBar({
 		title: "Player Graphs",
 		jumpTo: true,
-		dropdownView: "player_stats_graphs",
+		dropdownView: "player_graphs",
 	});
 	const firstUpdate = useRef(true);
 
@@ -235,7 +235,7 @@ const PlayerStatsGraphs = ({
 		realtimeUpdate(
 			[],
 			helpers.leagueUrl([
-				"player_stats_graphs",
+				"player_graphs",
 				state[0].season,
 				state[1].season,
 				state[0].statType,
@@ -327,4 +327,4 @@ const PlayerStatsGraphs = ({
 	);
 };
 
-export default PlayerStatsGraphs;
+export default PlayerGraphs;

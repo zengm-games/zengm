@@ -546,10 +546,10 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerStatsGraphs",
+				active: pageID => pageID === "playerGraphs",
 				league: true,
 				commandPalette: true,
-				path: ["player_stats_graphs"],
+				path: ["player_graphs"],
 				text: "Player Graphs",
 			},
 			{

@@ -659,7 +659,7 @@ const playerStats = (params: Params) => {
 	};
 };
 
-const playerStatsGraphs = (params: Params) => {
+const playerGraphs = (params: Params) => {
 	const playoffsX =
 		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
 	const playoffsY =
@@ -983,7 +983,7 @@ export default {
 	playerRatingDists: validateSeasonOnly,
 	playerRatings,
 	playerStatDists,
-	playerStatsGraphs,
+	playerGraphs,
 	playerStats,
 	playoffs: validateSeasonOnly,
 	powerRankings,

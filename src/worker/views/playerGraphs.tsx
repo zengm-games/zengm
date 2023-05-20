@@ -106,7 +106,7 @@ async function getPlayerStats(
 }
 
 const updatePlayers = async (
-	inputs: ViewInput<"playerStatsGraphs">,
+	inputs: ViewInput<"playerGraphs">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {

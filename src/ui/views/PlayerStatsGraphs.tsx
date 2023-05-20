@@ -40,7 +40,7 @@ function getStatFromPlayer(player: any, stat: string, statType: string) {
 		stat = player.stats[stat];
 		return Array.isArray(stat) ? stat[0] : stat;
 	}
-	return player.stats[stat];
+	return helpers.roundStat(player.stats[stat], stat, statType === "totals");
 }
 
 type GraphCreationProps = {
@@ -74,7 +74,7 @@ function GraphCreation(props: GraphCreationProps) {
 			plotData.push({
 				x: getStatFromPlayer(player, props.statX, props.statTypeX),
 				y: getStatFromPlayer(playerY, props.statY, props.statTypeY),
-				label: player.firstName + " " + player.lastName,
+				label: player.name,
 				link: helpers.leagueUrl(["player", player.pid]),
 			});
 			return plotData;

@@ -82,8 +82,7 @@ async function getPlayerStats(
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
-			"firstName",
-			"lastName",
+			"name",
 			...(statTypeInput == "contract" ? ["contract"] : []),
 		],
 		ratings: ratings,

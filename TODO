@@ -14,6 +14,8 @@ chart feature
 - firstUpdate needed?
 - tooltip
   - location
+  - style like on trade summary
+    - share code?
   - mobile?
   - PlayerNameLabels
 - console errors

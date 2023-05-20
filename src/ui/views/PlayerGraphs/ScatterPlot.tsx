@@ -5,16 +5,16 @@ import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import { Fragment, useCallback, useRef } from "react";
+import { Fragment, useRef, type MouseEvent } from "react";
 
-type ToolTipData = {
+type TooltipData = {
 	x: number;
 	y: number;
 	label: string;
 };
 
 type ScatterPlotProps = {
-	data: ToolTipData[];
+	data: TooltipData[];
 	width: number;
 	height: number;
 	statX?: string;
@@ -96,11 +96,9 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 		hideTooltip,
 		tooltipData,
 		tooltipOpen,
-		tooltipTop = props.height,
-		tooltipLeft = 0,
-	} = useTooltip<ToolTipData>();
-
-	let tooltipTimeout = 1500;
+		tooltipTop,
+		tooltipLeft,
+	} = useTooltip<TooltipData>();
 
 	const svgRef = useRef(null);
 
@@ -126,26 +124,16 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 		return m * x + b;
 	};
 
-	const handleMouseMove = useCallback(
-		(event: any, data: any) => {
-			if (tooltipTimeout) clearTimeout(tooltipTimeout);
-			if (!svgRef.current) return;
-			const closest = localPoint((event.target as any).ownerSVGElement, event);
-			if (closest) {
-				showTooltip({
-					tooltipLeft: xScale(x(closest.x)),
-					tooltipTop: yScale(y(closest.y)),
-					tooltipData: data,
-				});
-			}
-		},
-		[xScale, yScale, showTooltip, tooltipTimeout],
-	);
-	const handleMouseLeave = useCallback(() => {
-		tooltipTimeout = window.setTimeout(() => {
-			hideTooltip();
-		}, 1500);
-	}, [hideTooltip]);
+	const handleMouseOver = (event: MouseEvent, data: TooltipData) => {
+		const coords = localPoint((event.target as any).ownerSVGElement, event);
+		if (coords) {
+			showTooltip({
+				tooltipLeft: coords.x,
+				tooltipTop: coords.y,
+				tooltipData: data,
+			});
+		}
+	};
 
 	return (
 		<div>
@@ -156,8 +144,6 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 					width={innerWidth}
 					height={innerHeight}
 					fill="transparent"
-					onMouseLeave={handleMouseLeave}
-					onTouchEnd={handleMouseLeave}
 				/>
 				<Group>
 					<AxisLeft scale={yScale} left={margin.left} label={props.statY} />
@@ -193,8 +179,8 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 										cx={xScale(x(d))}
 										cy={yScale(y(d))}
 										fillOpacity={0.8}
-										onMouseMove={event => handleMouseMove(event, d)}
-										onTouchMove={event => handleMouseMove(event, d)}
+										onMouseOver={event => handleMouseOver(event, d)}
+										onMouseOut={hideTooltip}
 										r={3}
 										fill={"#c93232"}
 									/>
@@ -204,26 +190,23 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 					})}
 				</Group>
 			</svg>
-			{tooltipOpen &&
-				tooltipData &&
-				tooltipLeft != null &&
-				tooltipTop != null && (
-					<TooltipWithBounds left={tooltipLeft + margin.left} top={tooltipTop}>
-						<h3>{tooltipData.label}</h3>
-						<div
-							style={{
-								display: "grid",
-								gridTemplateColumns: "1fr 1fr",
-								gridTemplateRows: "1fr",
-							}}
-						>
-							<div>{props.statX ?? "X"}</div>
-							<div style={{ textAlign: "right" }}>{x(tooltipData)}</div>
-							<div>{props.statY ?? "X"}</div>
-							<div style={{ textAlign: "right" }}>{y(tooltipData)}</div>
-						</div>
-					</TooltipWithBounds>
-				)}
+			{tooltipOpen && tooltipData ? (
+				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
+					<h3>{tooltipData.label}</h3>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "1fr 1fr",
+							gridTemplateRows: "1fr",
+						}}
+					>
+						<div>{props.statX ?? "X"}</div>
+						<div style={{ textAlign: "right" }}>{x(tooltipData)}</div>
+						<div>{props.statY ?? "X"}</div>
+						<div style={{ textAlign: "right" }}>{y(tooltipData)}</div>
+					</div>
+				</TooltipWithBounds>
+			) : null}
 		</div>
 	);
 };

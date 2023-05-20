@@ -2,7 +2,9 @@ import type { PlayerFiltered, View } from "../../common/types";
 import useTitleBar from "../hooks/useTitleBar";
 import { useState, useLayoutEffect, useRef } from "react";
 import { StatGraph } from "./ScatterPlot";
-import useDropdownOptions from "../hooks/useDropdownOptions";
+import useDropdownOptions, {
+	type DropdownOption,
+} from "../hooks/useDropdownOptions";
 import realtimeUpdate from "../util/realtimeUpdate";
 import { getColTitles, helpers } from "../util";
 
@@ -96,6 +98,15 @@ type AxisState = {
 	season: number;
 };
 
+// For responsive ones, render the last one, which should be the longest
+const OptionDropdown = ({ value }: { value: DropdownOption }) => {
+	return (
+		<option value={value.key}>
+			{Array.isArray(value.value) ? value.value.at(-1)!.text : value.value}
+		</option>
+	);
+};
+
 const PickStat = ({
 	state,
 	setState,
@@ -107,7 +118,7 @@ const PickStat = ({
 }) => {
 	const statsXEnriched = getStatsWithLabels(stats, state.statType);
 
-	const seasons = useDropdownOptions("seasons").map(x => x.value);
+	const seasons = useDropdownOptions("seasons");
 	const statTypes = [
 		...useDropdownOptions("statTypesAdv"),
 		{ key: "contract", value: "Contract" },
@@ -128,9 +139,9 @@ const PickStat = ({
 					})
 				}
 			>
-				{statsXEnriched.map((x: any) => {
+				{statsXEnriched.map((x, i) => {
 					return (
-						<option value={x.value} title={x.desc}>
+						<option key={i} value={x.value} title={x.desc}>
 							{x.title}
 						</option>
 					);
@@ -147,12 +158,8 @@ const PickStat = ({
 					})
 				}
 			>
-				{statTypes.map((x: any) => {
-					return (
-						<option value={x.key}>
-							{Array.isArray(x.value) ? x.value[1].text : x.value}
-						</option>
-					);
+				{statTypes.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 			<label className="form-label">Season</label>
@@ -161,8 +168,8 @@ const PickStat = ({
 				value={state.season}
 				onChange={event => setState({ season: parseInt(event.target.value) })}
 			>
-				{seasons.map((x: any) => {
-					return <option>{x}</option>;
+				{seasons.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 			<label className="form-label">Playoffs</label>
@@ -171,12 +178,8 @@ const PickStat = ({
 				value={state.playoffs}
 				onChange={event => setState({ playoffs: event.target.value })}
 			>
-				{playoffs.map((x: any) => {
-					return (
-						<option value={x.key}>
-							{Array.isArray(x.value) ? x.value[1].text : x.value}
-						</option>
-					);
+				{playoffs.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 		</>

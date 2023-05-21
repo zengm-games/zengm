@@ -97,7 +97,7 @@ const ScatterPlot = (
 
 	const svgRef = useRef(null);
 
-	const margin = { top: 10, left: 60, right: 40, bottom: 60 };
+	const margin = { top: 10, left: 60, right: 10, bottom: 60 };
 	const width = props.width - margin.left - margin.right;
 	const xScale = scaleLinear({
 		domain: xDomain,
@@ -129,6 +129,10 @@ const ScatterPlot = (
 		}
 	};
 
+	const axisLabelProps = {
+		fontSize: "1em",
+	};
+
 	return (
 		<div>
 			<svg
@@ -141,37 +145,42 @@ const ScatterPlot = (
 						axisClassName="chart-axis"
 						scale={yScale}
 						label={props.descY}
+						labelProps={axisLabelProps}
+						tickLabelProps={axisLabelProps}
 					/>
 					<AxisBottom
 						axisClassName="chart-axis"
 						scale={xScale}
 						top={HEIGHT}
 						label={props.descX}
+						labelProps={{
+							...axisLabelProps,
+							dy: "1.5em",
+						}}
+						tickLabelProps={axisLabelProps}
 					/>
 					<LinePath
 						y={d => yScale(avg(d))}
 						x={d => xScale(d)}
-						stroke={"#3b55d4"}
+						stroke={"var(--bs-red)"}
 						data={xDomain}
 						opacity={0.7}
-						strokeWidth={2}
+						strokeWidth={4}
 					/>
 					{props.data.map((d, i) => {
 						return (
-							<Fragment key={i}>
-								<a href={helpers.leagueUrl(["player", d.pid])}>
-									<Circle
-										key={i}
-										cx={xScale(x(d))}
-										cy={yScale(y(d))}
-										fillOpacity={0.8}
-										onMouseOver={event => handleMouseOver(event, d)}
-										onMouseOut={hideTooltip}
-										r={5}
-										fill={"var(--bs-blue)"}
-									/>
-								</a>
-							</Fragment>
+							<a key={i} href={helpers.leagueUrl(["player", d.pid])}>
+								<Circle
+									key={i}
+									cx={xScale(x(d))}
+									cy={yScale(y(d))}
+									fillOpacity={0.8}
+									onMouseOver={event => handleMouseOver(event, d)}
+									onMouseOut={hideTooltip}
+									r={5}
+									fill={"var(--bs-blue)"}
+								/>
+							</a>
 						);
 					})}
 				</Group>

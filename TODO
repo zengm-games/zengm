@@ -20,7 +20,6 @@ chart feature
   - tooltip should be short abbrev, axis should be both
 - click should make tooltip persistent
 - name in tooltip should be clickable to player page
-- axis label font size/color
 - how is it setting y range? for example Contract exp
 - only fetch stat/rating needed from playersPlus
 - getStatsTableByType seems weird

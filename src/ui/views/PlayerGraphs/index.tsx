@@ -133,61 +133,76 @@ const PickStat = ({
 	const playoffs = useDropdownOptions("playoffs");
 
 	return (
-		<div className="d-flex align-items-center">
-			<div className="text-nowrap fw-bold me-2">{label}</div>
-			<div className="input-group">
-				<select
-					className="form-select"
-					value={state.season}
-					onChange={event => setState({ season: parseInt(event.target.value) })}
-				>
-					{seasons.map(x => {
-						return <OptionDropdown key={x.key} value={x} />;
-					})}
-				</select>
-				<select
-					className="form-select"
-					value={state.statType}
-					onChange={event =>
-						setState({
-							prevStatType: state.statType,
-							statType: event.target.value,
-						})
-					}
-				>
-					{statTypes.map(x => {
-						return <OptionDropdown key={x.key} value={x} />;
-					})}
-				</select>
-				<select
-					className="form-select"
-					value={state.stat}
-					onChange={event =>
-						setState({
-							prevStat: state.stat,
-							stat: event.target.value,
-						})
-					}
-				>
-					{statsXEnriched.map((x, i) => {
-						return (
-							<option key={i} value={x.stat} title={x.desc}>
-								{x.title}
-								{x.desc !== undefined ? ` (${x.desc})` : null}
-							</option>
-						);
-					})}
-				</select>
-				<select
-					className="form-select"
-					value={state.playoffs}
-					onChange={event => setState({ playoffs: event.target.value })}
-				>
-					{playoffs.map(x => {
-						return <OptionDropdown key={x.key} value={x} />;
-					})}
-				</select>
-			</div>
+		<div
+			className="input-group"
+			style={{
+				maxWidth: 600,
+			}}
+		>
+			<span className="input-group-text">
+				{label}
+				<span className="d-none d-sm-inline">-axis</span>
+			</span>
+			<select
+				className="form-select"
+				value={state.season}
+				onChange={event => setState({ season: parseInt(event.target.value) })}
+				style={{
+					maxWidth: 70,
+				}}
+			>
+				{seasons.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
+				})}
+			</select>
+			<select
+				className="form-select"
+				value={state.statType}
+				onChange={event =>
+					setState({
+						prevStatType: state.statType,
+						statType: event.target.value,
+					})
+				}
+				style={{
+					maxWidth: 130,
+				}}
+			>
+				{statTypes.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
+				})}
+			</select>
+			<select
+				className="form-select"
+				value={state.stat}
+				onChange={event =>
+					setState({
+						prevStat: state.stat,
+						stat: event.target.value,
+					})
+				}
+			>
+				{statsXEnriched.map((x, i) => {
+					return (
+						<option key={i} value={x.stat} title={x.desc}>
+							{x.title}
+							{x.desc !== undefined ? ` (${x.desc})` : null}
+						</option>
+					);
+				})}
+			</select>
+			<select
+				className="form-select"
+				value={state.playoffs}
+				onChange={event => setState({ playoffs: event.target.value })}
+				style={{
+					maxWidth: 130,
+				}}
+			>
+				{playoffs.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
+				})}
+			</select>
 		</div>
 	);
 };
@@ -303,30 +318,31 @@ const PlayerGraphs = ({
 	}
 
 	return (
-		<div>
+		<div className="d-flex flex-column gap-3">
 			<PickStat
-				label="x-axis"
+				label="x"
 				stats={statsX}
 				state={state[0]}
 				setState={setStateX}
 			/>
 			<PickStat
-				label="y-axis"
+				label="y"
 				stats={statsY}
 				state={state[1]}
 				setState={setStateY}
 			/>
-			<div className="row">
-				<div className="col-sm-3 mb-3">
-					<label className="form-label">Minimum games played</label>
-					<input
-						type="text"
-						className="form-control"
-						onChange={event => setMinGames(event.target.value)}
-						value={minGames}
-						inputMode="numeric"
-					/>
-				</div>
+			<div className="input-group">
+				<span className="input-group-text">Minimum games played</span>
+				<input
+					type="text"
+					className="form-control"
+					onChange={event => setMinGames(event.target.value)}
+					value={minGames}
+					inputMode="numeric"
+					style={{
+						maxWidth: 70,
+					}}
+				/>
 			</div>
 			<div>
 				<GraphCreation

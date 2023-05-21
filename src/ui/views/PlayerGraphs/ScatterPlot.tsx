@@ -16,7 +16,6 @@ type TooltipData = {
 type ScatterPlotProps = {
 	data: TooltipData[];
 	width: number;
-	height: number;
 	statX?: string;
 	statY?: string;
 };
@@ -105,14 +104,14 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	const margin = { top: 30, left: 60, right: 40, bottom: 60 };
 	const width = props.width - margin.left - margin.right;
 	const innerWidth = props.width - margin.left - margin.right;
-	const innerHeight = props.height - margin.top - margin.bottom;
+	const innerHeight = HEIGHT - margin.top - margin.bottom;
 	const xScale = scaleLinear({
 		domain: xDomain,
 		range: [margin.left, innerWidth + margin.left],
 	});
 	const yScale = scaleLinear({
 		domain: yDomain,
-		range: [innerHeight + margin.top, margin.top],
+		range: [innerHeight, 0],
 		nice: true,
 	});
 
@@ -127,6 +126,7 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	const handleMouseOver = (event: MouseEvent, data: TooltipData) => {
 		const coords = localPoint((event.target as any).ownerSVGElement, event);
 		if (coords) {
+			console.log(coords);
 			showTooltip({
 				tooltipLeft: coords.x,
 				tooltipTop: coords.y,
@@ -213,13 +213,12 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 
 export const StatGraph = (props: any) => {
 	return (
-		<div>
+		<div className="position-relative">
 			<ParentSize>
 				{parent => (
 					<ScatterPlot
 						data={props.data}
 						width={parent.width}
-						height={parent.height}
 						statX={props.statX}
 						statY={props.statY}
 					/>

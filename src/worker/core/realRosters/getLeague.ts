@@ -192,28 +192,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			return p;
 		});
 
-		// Manually add HoF to retired players who do eventually make the HoF, but have not yet been inducted by the tim ethis season started
-		if (hofSlugs.size > 0) {
-			for (const p of players) {
-				if (hofSlugs.has(p.srID) && !p.hof && p.tid === PLAYER.RETIRED) {
-					p.hof = 1;
-					if (!p.awards) {
-						p.awards = [];
-					}
-
-					const season =
-						options.phase <= PHASE.PLAYOFFS
-							? options.season - 1
-							: options.season;
-
-					p.awards.push({
-						type: "Inducted into the Hall of Fame",
-						season,
-					});
-				}
-			}
-		}
-
 		// Find draft prospects, which can't include any active players
 		const lastPID = Math.max(...players.map(p => p.pid));
 		const draftProspects = await getDraftProspects(
@@ -719,6 +697,29 @@ const getLeague = async (options: GetLeagueOptions) => {
 				if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
 					p.tid = PLAYER.RETIRED;
 					(p as any).retiredYear = options.season;
+				}
+			}
+		}
+
+		// Manually add HoF to retired players who do eventually make the HoF, but have not yet been inducted by the tim ethis season started.
+		// This needs to be after the code above which sets retired players, otherwise starting after the playoffs will result in players who retired that year never making the HoF.
+		if (hofSlugs.size > 0) {
+			for (const p of players) {
+				if (hofSlugs.has(p.srID) && !p.hof && p.tid === PLAYER.RETIRED) {
+					p.hof = 1;
+					if (!p.awards) {
+						p.awards = [];
+					}
+
+					const season =
+						options.phase <= PHASE.PLAYOFFS
+							? options.season - 1
+							: options.season;
+
+					p.awards.push({
+						type: "Inducted into the Hall of Fame",
+						season,
+					});
 				}
 			}
 		}

@@ -114,6 +114,7 @@ const updatePlayers = async (
 		(inputs.seasonX === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
+		// Purposely skip checking statX, statY, minGames - those are only used client side, they in the URL for usability
 		inputs.seasonX !== state.seasonX ||
 		inputs.statTypeX !== state.statTypeX ||
 		inputs.statTypeY !== state.statTypeY ||
@@ -142,6 +143,9 @@ const updatePlayers = async (
 			playersY: statForYAxis.players,
 			statsX: statForXAxis.stats,
 			statsY: statForYAxis.stats,
+			statX: inputs.statX,
+			statY: inputs.statY,
+			minGames: inputs.minGames,
 		};
 	}
 };

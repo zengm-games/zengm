@@ -665,23 +665,45 @@ const playerGraphs = (params: Params) => {
 	const playoffsY =
 		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
 
-	const defaultStatType = bySport({
-		baseball: "batting",
-		basketball: "perGame",
-		football: "passing",
-		hockey: "skater",
-	});
-
 	const seasonX: number = validateSeason(params.seasonX);
 	const seasonY: number = validateSeason(params.seasonY);
+
+	let minGames = parseInt(params.minGames!);
+	if (Number.isNaN(minGames)) {
+		minGames = Math.round(g.get("numGames") * 0.2);
+	}
 
 	return {
 		seasonX,
 		seasonY,
-		statTypeX: params.statTypeX ?? defaultStatType,
-		statTypeY: params.statTypeY ?? defaultStatType,
+		statTypeX:
+			params.statTypeX ??
+			bySport({
+				baseball: "batting",
+				basketball: "perGame",
+				football: "passing",
+				hockey: "skater",
+			}),
+		statTypeY:
+			params.statTypeY ??
+			bySport({
+				baseball: "batting",
+				basketball: "advanced",
+				football: "passing",
+				hockey: "skater",
+			}),
 		playoffsX,
 		playoffsY,
+		statX: params.statX ?? "gp",
+		statY:
+			params.statX ??
+			bySport({
+				baseball: "war",
+				basketball: "ws",
+				football: "av",
+				hockey: "ps",
+			}),
+		minGames,
 	};
 };
 

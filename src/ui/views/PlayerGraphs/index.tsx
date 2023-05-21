@@ -203,6 +203,9 @@ const PlayerGraphs = ({
 	playersY,
 	statsX,
 	statsY,
+	statX,
+	statY,
+	minGames: initialMinGames,
 }: View<"playerGraphs">) => {
 	useTitleBar({
 		title: "Player Graphs",
@@ -213,23 +216,23 @@ const PlayerGraphs = ({
 
 	const [state, setState] = useState([
 		{
-			prevStat: statsX[0],
-			stat: statsX[0],
+			prevStat: statX,
+			stat: statX,
 			prevStatType: statTypeX,
 			statType: statTypeX,
 			playoffs: playoffsX,
 			season: seasonX,
 		},
 		{
-			prevStat: statsY[0],
-			stat: statsY[0],
+			prevStat: statY,
+			stat: statY,
 			prevStatType: statTypeY,
 			statType: statTypeY,
 			playoffs: playoffsY,
 			season: seasonY,
 		},
 	] as [AxisState, AxisState]);
-	const [minGames, setMinGames] = useState("0");
+	const [minGames, setMinGames] = useState(String(initialMinGames));
 
 	useLayoutEffect(() => {
 		if (firstUpdate.current) {
@@ -248,6 +251,9 @@ const PlayerGraphs = ({
 				state[1].statType,
 				state[0].playoffs,
 				state[1].playoffs,
+				state[0].stat,
+				state[1].stat,
+				minGames,
 			]),
 		);
 	});

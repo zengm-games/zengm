@@ -12,6 +12,12 @@ import type { Col } from "../../components/DataTable";
 
 const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType == "ratings") {
+		if (stat === "ovr") {
+			return "Ovr";
+		}
+		if (stat === "pot") {
+			return "Pot";
+		}
 		return `rating:${stat}`;
 	} else if (statType == "contract") {
 		return stat;

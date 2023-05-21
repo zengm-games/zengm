@@ -3265,18 +3265,6 @@ const cols: {
 		sortType: "number",
 		title: "Str",
 	},
-	"rating:ovr": {
-		desc: "Overall Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "Overall",
-	},
-	"rating:pot": {
-		desc: "Potential Rating",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "Potential",
-	},
 	"stat:gp": {
 		desc: "Games Played",
 		sortSequence: ["desc", "asc"],

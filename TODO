@@ -33,7 +33,7 @@ chart feature
 - url should include stat and minGamesPlayed
 - prevStatType needed?
 - axis labels centering messed up
-- team dropdown, like player stats page
+- button to swap x/y axis
 - go over all PR changes, are they really needed?
   - statTypesAdvNotCareer
   - getCols new attrs

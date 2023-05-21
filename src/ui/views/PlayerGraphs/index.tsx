@@ -1,4 +1,4 @@
-import type { PlayerFiltered, View } from "../../../common/types";
+import type { View } from "../../../common/types";
 import useTitleBar from "../../hooks/useTitleBar";
 import { useState, useLayoutEffect, useRef } from "react";
 import { StatGraph, type TooltipData } from "./ScatterPlot";
@@ -6,26 +6,21 @@ import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions";
 import realtimeUpdate from "../../util/realtimeUpdate";
-import { getColTitles, helpers } from "../../util";
+import { getCols, helpers } from "../../util";
 import { groupByUnique } from "../../../common/groupBy";
+import type { Col } from "../../components/DataTable";
 
-function addPrefixForStat(
-	statType: string,
-	stat: any,
-): { actual: any; parsed: string } {
+const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType == "ratings") {
-		return { actual: stat, parsed: `rating:${stat}` };
+		return `rating:${stat}`;
 	} else if (statType == "contract") {
-		return { actual: stat, parsed: stat };
+		return stat;
 	}
-	return {
-		actual: stat,
-		parsed: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
-	};
-}
+	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
+};
 
 function getStatsWithLabels(stats: any[], statTypeX: string) {
-	return getColTitles(stats.map(stat => addPrefixForStat(statTypeX, stat)));
+	return getCols(stats.map(stat => addPrefixForStat(statTypeX, stat)));
 }
 
 function getStatFromPlayer(player: any, stat: string, statType: string) {
@@ -106,15 +101,22 @@ const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 };
 
 const PickStat = ({
+	label,
 	state,
 	setState,
 	stats,
 }: {
+	label: string;
 	state: AxisState;
 	setState: (state: Partial<AxisState>) => void;
 	stats: string[];
 }) => {
-	const statsXEnriched = getStatsWithLabels(stats, state.statType);
+	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {
+		stat: string;
+	})[];
+	for (let i = 0; i < statsXEnriched.length; i++) {
+		statsXEnriched[i].stat = stats[i];
+	}
 
 	const seasons = useDropdownOptions("seasons");
 	const statTypes = [
@@ -125,62 +127,62 @@ const PickStat = ({
 	const playoffs = useDropdownOptions("playoffs");
 
 	return (
-		<>
-			<label className="form-label">Stat</label>
-			<select
-				className="form-select"
-				value={state.stat}
-				onChange={event =>
-					setState({
-						prevStat: state.stat,
-						stat: event.target.value,
-					})
-				}
-			>
-				{statsXEnriched.map((x, i) => {
-					return (
-						<option key={i} value={x.value} title={x.desc}>
-							{x.title} ({x.desc})
-						</option>
-					);
-				})}
-			</select>
-			<label className="form-label">Type</label>
-			<select
-				className="form-select"
-				value={state.statType}
-				onChange={event =>
-					setState({
-						prevStatType: state.statType,
-						statType: event.target.value,
-					})
-				}
-			>
-				{statTypes.map(x => {
-					return <OptionDropdown key={x.key} value={x} />;
-				})}
-			</select>
-			<label className="form-label">Season</label>
-			<select
-				className="form-select"
-				value={state.season}
-				onChange={event => setState({ season: parseInt(event.target.value) })}
-			>
-				{seasons.map(x => {
-					return <OptionDropdown key={x.key} value={x} />;
-				})}
-			</select>
-			<label className="form-label">Playoffs</label>
-			<select
-				className="form-select"
-				value={state.playoffs}
-				onChange={event => setState({ playoffs: event.target.value })}
-			>
-				{playoffs.map(x => {
-					return <OptionDropdown key={x.key} value={x} />;
-				})}
-			</select>
-		</>
+		<div className="d-flex align-items-center">
+			<div className="text-nowrap fw-bold me-2">{label}</div>
+			<div className="input-group">
+				<select
+					className="form-select"
+					value={state.season}
+					onChange={event => setState({ season: parseInt(event.target.value) })}
+				>
+					{seasons.map(x => {
+						return <OptionDropdown key={x.key} value={x} />;
+					})}
+				</select>
+				<select
+					className="form-select"
+					value={state.statType}
+					onChange={event =>
+						setState({
+							prevStatType: state.statType,
+							statType: event.target.value,
+						})
+					}
+				>
+					{statTypes.map(x => {
+						return <OptionDropdown key={x.key} value={x} />;
+					})}
+				</select>
+				<select
+					className="form-select"
+					value={state.stat}
+					onChange={event =>
+						setState({
+							prevStat: state.stat,
+							stat: event.target.value,
+						})
+					}
+				>
+					{statsXEnriched.map((x, i) => {
+						return (
+							<option key={i} value={x.stat} title={x.desc}>
+								{x.title}
+								{x.desc !== undefined ? ` (${x.desc})` : null}
+							</option>
+						);
+					})}
+				</select>
+				<select
+					className="form-select"
+					value={state.playoffs}
+					onChange={event => setState({ playoffs: event.target.value })}
+				>
+					{playoffs.map(x => {
+						return <OptionDropdown key={x.key} value={x} />;
+					})}
+				</select>
+			</div>
+		</div>
 	);
 };
 
@@ -290,14 +292,18 @@ const PlayerGraphs = ({
 
 	return (
 		<div>
-			<div className="row">
-				<div className="col-sm-3 mb-3">
-					<PickStat stats={statsX} state={state[0]} setState={setStateX} />
-				</div>
-				<div className="col-sm-3 mb-3">
-					<PickStat stats={statsY} state={state[1]} setState={setStateY} />
-				</div>
-			</div>
+			<PickStat
+				label="x-axis"
+				stats={statsX}
+				state={state[0]}
+				setState={setStateX}
+			/>
+			<PickStat
+				label="y-axis"
+				stats={statsY}
+				state={state[1]}
+				setState={setStateY}
+			/>
 			<div className="row">
 				<div className="col-sm-3 mb-3">
 					<label className="form-label">Minimum games played</label>

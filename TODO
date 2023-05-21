@@ -30,10 +30,12 @@ chart feature
 - in addition to x and y axis stats, let user pick one for size of the circles
 - when changing stat type, keep the stat the same if there is an exact match (like in bbgm changing per game to per 36)
 - why doesn't year include career and all seasons? should be same as player stats
-- url should include stat
+- url should include stat and minGamesPlayed
+- prevStatType needed?
+- axis labels centering messed up
+- team dropdown, like player stats page
 - go over all PR changes, are they really needed?
   - statTypesAdvNotCareer
-  - getColTitles
   - getCols new attrs
 
 finances revamp

@@ -18,7 +18,7 @@ export type TooltipData = {
 type ScatterPlotProps = {
 	data: TooltipData[];
 	descShort: [string, string];
-	descLong: [string, string];
+	descLong: [string | undefined, string | undefined];
 	stat: [string, string];
 	statType: [string, string];
 };
@@ -121,6 +121,13 @@ const ScatterPlot = (
 		fontSize: "1em",
 	};
 
+	const labels = ([0, 1] as const).map(
+		i =>
+			`${props.descShort[i]}${
+				props.descLong[i] !== undefined ? ` (${props.descLong[i]})` : ""
+			}`,
+	);
+
 	return (
 		<div>
 			<svg
@@ -132,7 +139,7 @@ const ScatterPlot = (
 					<AxisLeft
 						axisClassName="chart-axis"
 						scale={yScale}
-						label={`${props.descShort[1]} (${props.descLong[1]})`}
+						label={labels[1]}
 						labelProps={axisLabelProps}
 						tickLabelProps={axisLabelProps}
 					/>
@@ -140,7 +147,7 @@ const ScatterPlot = (
 						axisClassName="chart-axis"
 						scale={xScale}
 						top={HEIGHT}
-						label={`${props.descShort[0]} (${props.descLong[0]})`}
+						label={labels[0]}
 						labelProps={{
 							...axisLabelProps,
 							dy: "1.5em",

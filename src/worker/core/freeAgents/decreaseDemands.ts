@@ -17,6 +17,10 @@ const decreaseDemands = async () => {
 	);
 
 	const minContract = g.get("minContract");
+	const minContractExp =
+		g.get("season") +
+		g.get("minContractLength") +
+		(g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0);
 
 	for (const p of players) {
 		const baseAmount = 50 * Math.sqrt(g.get("maxContract") / 20000);
@@ -42,6 +46,10 @@ const decreaseDemands = async () => {
 			} else {
 				p.contract.exp = g.get("season") + 1;
 			}
+		}
+
+		if (p.contract.exp < minContractExp) {
+			p.contract.exp = minContractExp;
 		}
 
 		// Free agents' resistance to signing decays after every regular season game

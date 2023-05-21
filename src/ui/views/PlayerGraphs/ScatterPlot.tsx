@@ -6,18 +6,23 @@ import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { Fragment, useRef, type MouseEvent } from "react";
+import { helpers } from "../../util";
 
 type TooltipData = {
 	x: number;
 	y: number;
 	label: string;
+	link: string;
 };
 
 type ScatterPlotProps = {
 	data: TooltipData[];
-	width: number;
-	statX?: string;
-	statY?: string;
+	descX: string;
+	descY: string;
+	statX: string;
+	statY: string;
+	statTypeX: string;
+	statTypeY: string;
 };
 
 const calculateBestFitLine = (
@@ -30,9 +35,6 @@ const calculateBestFitLine = (
 	let sum_xx = 0;
 	let count = 0;
 
-	/*
-	 * We'll use those variables for faster read/write access.
-	 */
 	let x = 0;
 	let y = 0;
 	const values_length = xValues.length;
@@ -43,16 +45,10 @@ const calculateBestFitLine = (
 		);
 	}
 
-	/*
-	 * Nothing to do.
-	 */
 	if (values_length === 0) {
 		return [0, 0];
 	}
 
-	/*
-	 * Calculate the sum for each of the parts necessary.
-	 */
 	for (let v = 0; v < values_length; v++) {
 		x = xValues[v];
 		y = yValues[v];
@@ -63,15 +59,15 @@ const calculateBestFitLine = (
 		count++;
 	}
 
-	/*
-	 * Calculate m and b for the formular:
-	 * y = x * m + b
-	 */
 	const m = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
 	const b = sum_y / count - (m * sum_x) / count;
 	return [m, b];
 };
-const ScatterPlot = (props: ScatterPlotProps) => {
+const ScatterPlot = (
+	props: ScatterPlotProps & {
+		width: number;
+	},
+) => {
 	const HEIGHT = 400;
 
 	const x = (d: any): number => {
@@ -144,13 +140,13 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 					<AxisLeft
 						axisClassName="chart-axis"
 						scale={yScale}
-						label={props.statY}
+						label={props.descY}
 					/>
 					<AxisBottom
 						axisClassName="chart-axis"
 						scale={xScale}
 						top={HEIGHT}
-						label={props.statX}
+						label={props.descX}
 					/>
 					<LinePath
 						y={d => yScale(avg(d))}
@@ -190,10 +186,22 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 							gridTemplateRows: "1fr",
 						}}
 					>
-						<div>{props.statX ?? "X"}</div>
-						<div style={{ textAlign: "right" }}>{x(tooltipData)}</div>
-						<div>{props.statY ?? "X"}</div>
-						<div style={{ textAlign: "right" }}>{y(tooltipData)}</div>
+						<div>{props.descX}</div>
+						<div className="text-end">
+							{helpers.roundStat(
+								tooltipData.x,
+								props.statX,
+								props.statTypeX === "totals",
+							)}
+						</div>
+						<div>{props.descY}</div>
+						<div className="text-end">
+							{helpers.roundStat(
+								tooltipData.y,
+								props.statY,
+								props.statTypeY === "totals",
+							)}
+						</div>
 					</div>
 				</TooltipWithBounds>
 			) : null}
@@ -201,18 +209,11 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	);
 };
 
-export const StatGraph = (props: any) => {
+export const StatGraph = (props: ScatterPlotProps) => {
 	return (
 		<div className="position-relative">
 			<ParentSize>
-				{parent => (
-					<ScatterPlot
-						data={props.data}
-						width={parent.width}
-						statX={props.statX}
-						statY={props.statY}
-					/>
-				)}
+				{parent => <ScatterPlot width={parent.width} {...props} />}
 			</ParentSize>
 		</div>
 	);

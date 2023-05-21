@@ -40,7 +40,7 @@ function getStatFromPlayer(player: any, stat: string, statType: string) {
 		stat = player.stats[stat];
 		return Array.isArray(stat) ? stat[0] : stat;
 	}
-	return helpers.roundStat(player.stats[stat], stat, statType === "totals");
+	return player.stats[stat];
 }
 
 type GraphCreationProps = {
@@ -83,10 +83,20 @@ function GraphCreation(props: GraphCreationProps) {
 	);
 	const data = statsToShowX;
 
-	const labelX = getStatsWithLabels([props.statX], props.statTypeX)[0].desc;
-	const labelY = getStatsWithLabels([props.statY], props.statTypeY)[0].desc;
+	const descX = getStatsWithLabels([props.statX], props.statTypeX)[0].desc;
+	const descY = getStatsWithLabels([props.statY], props.statTypeY)[0].desc;
 
-	return <StatGraph data={data} statX={labelX} statY={labelY} />;
+	return (
+		<StatGraph
+			data={data}
+			statX={props.statX}
+			statY={props.statY}
+			statTypeX={props.statTypeX}
+			statTypeY={props.statTypeY}
+			descX={descX}
+			descY={descY}
+		/>
+	);
 }
 
 type AxisState = {

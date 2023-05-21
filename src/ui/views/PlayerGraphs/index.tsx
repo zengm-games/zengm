@@ -7,6 +7,7 @@ import useDropdownOptions, {
 } from "../../hooks/useDropdownOptions";
 import realtimeUpdate from "../../util/realtimeUpdate";
 import { getColTitles, helpers } from "../../util";
+import { groupByUnique } from "../../../common/groupBy";
 
 function addPrefixForStat(
 	statType: string,
@@ -51,34 +52,26 @@ type GraphCreationProps = {
 };
 
 function GraphCreation(props: GraphCreationProps) {
-	const playersYMappedByPid = props.players[1].reduce(function (
-		map: any,
-		obj: any,
-	) {
-		map[obj.pid] = obj;
-		return map;
-	},
-	{});
-	const statsToShowX = props.players[0].reduce(
-		(plotData: TooltipData[], player: PlayerFiltered) => {
-			if (player.stats["gp"] <= props.minGames) {
-				return plotData;
-			}
-			const playerY = playersYMappedByPid[player.pid] ?? null;
-			if (!playerY || playerY.stats["gp"] < props.minGames) {
-				return plotData;
-			}
-			plotData.push({
-				x: getStatFromPlayer(player, props.stat[0], props.statType[0]),
-				y: getStatFromPlayer(playerY, props.stat[1], props.statType[1]),
-				name: player.name,
-				pid: player.pid,
-			});
-			return plotData;
-		},
-		[],
-	);
-	const data = statsToShowX;
+	const playersYByPid = groupByUnique<any>(props.players[1], "pid");
+
+	const data: TooltipData[] = [];
+	for (const p of props.players[0]) {
+		if (p.stats.gp <= props.minGames) {
+			continue;
+		}
+
+		const p2 = playersYByPid[p.pid];
+		if (!p2 || p2.stats.gp < props.minGames) {
+			continue;
+		}
+
+		data.push({
+			x: getStatFromPlayer(p, props.stat[0], props.statType[0]),
+			y: getStatFromPlayer(p2, props.stat[1], props.statType[1]),
+			name: p.name,
+			pid: p.pid,
+		});
+	}
 
 	const titleX = getStatsWithLabels([props.stat[0]], props.statType[0])[0];
 	const titleY = getStatsWithLabels([props.stat[1]], props.statType[1])[0];
@@ -147,7 +140,7 @@ const PickStat = ({
 				{statsXEnriched.map((x, i) => {
 					return (
 						<option key={i} value={x.value} title={x.desc}>
-							{x.title}
+							{x.title} ({x.desc})
 						</option>
 					);
 				})}

@@ -16,9 +16,8 @@ chart feature
   - mobile?
   - PlayerNameLabels
 - console errors
-- in top menu, show long name of stat in addition to abbrev?
-  - tooltip should be short abbrev, axis should be both
 - click should make tooltip persistent
+  - need a close button then
 - name in tooltip should be clickable to player page
 - how is it setting y range? for example Contract exp
 - only fetch stat/rating needed from playersPlus

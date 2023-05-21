@@ -325,11 +325,11 @@ table.table thead .sorting::after {
 .chart-axis {
 	line,
 	path {
-		stroke: lighten($secondary, 10%);
+		stroke: lighten($secondary, 30%);
 	}
 
 	text {
-		fill: lighten($secondary, 10%);
+		fill: lighten($secondary, 30%);
 	}
 }
 

@@ -44,17 +44,14 @@ function getStatFromPlayer(player: any, stat: string, statType: string) {
 }
 
 type GraphCreationProps = {
-	statsX: any;
-	statsY: any;
-	statX: string;
-	statY: string;
-	statTypeX: string;
-	statTypeY: string;
+	players: [any, any];
+	stat: [string, string];
+	statType: [string, string];
 	minGames: number;
 };
 
 function GraphCreation(props: GraphCreationProps) {
-	const playersYMappedByPid = props.statsY.reduce(function (
+	const playersYMappedByPid = props.players[1].reduce(function (
 		map: any,
 		obj: any,
 	) {
@@ -62,7 +59,7 @@ function GraphCreation(props: GraphCreationProps) {
 		return map;
 	},
 	{});
-	const statsToShowX = props.statsX.reduce(
+	const statsToShowX = props.players[0].reduce(
 		(plotData: TooltipData[], player: PlayerFiltered) => {
 			if (player.stats["gp"] <= props.minGames) {
 				return plotData;
@@ -72,9 +69,9 @@ function GraphCreation(props: GraphCreationProps) {
 				return plotData;
 			}
 			plotData.push({
-				x: getStatFromPlayer(player, props.statX, props.statTypeX),
-				y: getStatFromPlayer(playerY, props.statY, props.statTypeY),
-				label: player.name,
+				x: getStatFromPlayer(player, props.stat[0], props.statType[0]),
+				y: getStatFromPlayer(playerY, props.stat[1], props.statType[1]),
+				name: player.name,
 				pid: player.pid,
 			});
 			return plotData;
@@ -83,18 +80,16 @@ function GraphCreation(props: GraphCreationProps) {
 	);
 	const data = statsToShowX;
 
-	const descX = getStatsWithLabels([props.statX], props.statTypeX)[0].desc;
-	const descY = getStatsWithLabels([props.statY], props.statTypeY)[0].desc;
+	const titleX = getStatsWithLabels([props.stat[0]], props.statType[0])[0];
+	const titleY = getStatsWithLabels([props.stat[1]], props.statType[1])[0];
 
 	return (
 		<StatGraph
 			data={data}
-			statX={props.statX}
-			statY={props.statY}
-			statTypeX={props.statTypeX}
-			statTypeY={props.statTypeY}
-			descX={descX}
-			descY={descY}
+			descShort={[titleX.title, titleY.title]}
+			descLong={[titleX.desc, titleY.desc]}
+			stat={props.stat}
+			statType={props.statType}
 		/>
 	);
 }
@@ -324,12 +319,9 @@ const PlayerGraphs = ({
 			</div>
 			<div>
 				<GraphCreation
-					statsX={playersX}
-					statsY={playersY}
-					statX={state[0].stat}
-					statY={state[1].stat}
-					statTypeX={state[0].statType}
-					statTypeY={state[1].statType}
+					players={[playersX, playersY]}
+					stat={[state[0].stat, state[1].stat]}
+					statType={[state[0].statType, state[1].statType]}
 					minGames={minGamesInteger}
 				/>
 			</div>

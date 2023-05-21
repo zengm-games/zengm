@@ -5,62 +5,53 @@ import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import { Fragment, useRef, type MouseEvent } from "react";
+import { useRef, type MouseEvent } from "react";
 import { helpers } from "../../util";
 
 export type TooltipData = {
 	x: number;
 	y: number;
-	label: string;
 	pid: number;
+	name: string;
 };
 
 type ScatterPlotProps = {
 	data: TooltipData[];
-	descX: string;
-	descY: string;
-	statX: string;
-	statY: string;
-	statTypeX: string;
-	statTypeY: string;
+	descShort: [string, string];
+	descLong: [string, string];
+	stat: [string, string];
+	statType: [string, string];
 };
 
 const calculateBestFitLine = (
-	xValues: number[],
-	yValues: number[],
+	points: {
+		x: number;
+		y: number;
+	}[],
 ): [number, number] => {
+	const numPoints = points.length;
+
+	if (numPoints === 0) {
+		return [0, 0];
+	}
+
 	let sum_x = 0;
 	let sum_y = 0;
 	let sum_xy = 0;
 	let sum_xx = 0;
-	let count = 0;
 
-	let x = 0;
-	let y = 0;
-	const values_length = xValues.length;
-
-	if (values_length != yValues.length) {
-		throw new Error(
-			"The parameters values_x and values_y need to have same size!",
-		);
-	}
-
-	if (values_length === 0) {
-		return [0, 0];
-	}
-
-	for (let v = 0; v < values_length; v++) {
-		x = xValues[v];
-		y = yValues[v];
+	for (const point of points) {
+		const { x, y } = point;
 		sum_x += x;
 		sum_y += y;
 		sum_xx += x * x;
 		sum_xy += x * y;
-		count++;
 	}
 
-	const m = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
-	const b = sum_y / count - (m * sum_x) / count;
+	const m =
+		(numPoints * sum_xy - sum_x * sum_y) / (numPoints * sum_xx - sum_x * sum_x);
+	const b = sum_y / numPoints - (m * sum_x) / numPoints;
+
 	return [m, b];
 };
 const ScatterPlot = (
@@ -110,10 +101,7 @@ const ScatterPlot = (
 		nice: true,
 	});
 
-	const [m, b] = calculateBestFitLine(
-		props.data.map(x => x.x),
-		props.data.map(x => x.y),
-	);
+	const [m, b] = calculateBestFitLine(props.data);
 	const avg = (x: number) => {
 		return m * x + b;
 	};
@@ -144,7 +132,7 @@ const ScatterPlot = (
 					<AxisLeft
 						axisClassName="chart-axis"
 						scale={yScale}
-						label={props.descY}
+						label={`${props.descShort[1]} (${props.descLong[1]})`}
 						labelProps={axisLabelProps}
 						tickLabelProps={axisLabelProps}
 					/>
@@ -152,7 +140,7 @@ const ScatterPlot = (
 						axisClassName="chart-axis"
 						scale={xScale}
 						top={HEIGHT}
-						label={props.descX}
+						label={`${props.descShort[0]} (${props.descLong[0]})`}
 						labelProps={{
 							...axisLabelProps,
 							dy: "1.5em",
@@ -187,31 +175,19 @@ const ScatterPlot = (
 			</svg>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
-					<h3>{tooltipData.label}</h3>
-					<div
-						style={{
-							display: "grid",
-							gridTemplateColumns: "1fr 1fr",
-							gridTemplateRows: "1fr",
-						}}
-					>
-						<div>{props.descX}</div>
-						<div className="text-end">
-							{helpers.roundStat(
-								tooltipData.x,
-								props.statX,
-								props.statTypeX === "totals",
-							)}
-						</div>
-						<div>{props.descY}</div>
-						<div className="text-end">
-							{helpers.roundStat(
-								tooltipData.y,
-								props.statY,
-								props.statTypeY === "totals",
-							)}
-						</div>
-					</div>
+					<h3>{tooltipData.name}</h3>
+					{([0, 1] as const).map(i => {
+						return (
+							<div key={i}>
+								{helpers.roundStat(
+									tooltipData[i === 0 ? "x" : "y"],
+									props.stat[i],
+									props.statType[i] === "totals",
+								)}{" "}
+								{props.descShort[i]}
+							</div>
+						);
+					})}
 				</TooltipWithBounds>
 			) : null}
 		</div>

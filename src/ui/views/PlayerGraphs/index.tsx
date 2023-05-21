@@ -1,7 +1,7 @@
 import type { PlayerFiltered, View } from "../../../common/types";
 import useTitleBar from "../../hooks/useTitleBar";
 import { useState, useLayoutEffect, useRef } from "react";
-import { StatGraph } from "./ScatterPlot";
+import { StatGraph, type TooltipData } from "./ScatterPlot";
 import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions";
@@ -63,7 +63,7 @@ function GraphCreation(props: GraphCreationProps) {
 	},
 	{});
 	const statsToShowX = props.statsX.reduce(
-		(plotData: any[], player: PlayerFiltered) => {
+		(plotData: TooltipData[], player: PlayerFiltered) => {
 			if (player.stats["gp"] <= props.minGames) {
 				return plotData;
 			}
@@ -75,7 +75,7 @@ function GraphCreation(props: GraphCreationProps) {
 				x: getStatFromPlayer(player, props.statX, props.statTypeX),
 				y: getStatFromPlayer(playerY, props.statY, props.statTypeY),
 				label: player.name,
-				link: helpers.leagueUrl(["player", player.pid]),
+				pid: player.pid,
 			});
 			return plotData;
 		},

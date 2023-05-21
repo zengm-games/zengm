@@ -8,11 +8,11 @@ import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { Fragment, useRef, type MouseEvent } from "react";
 import { helpers } from "../../util";
 
-type TooltipData = {
+export type TooltipData = {
 	x: number;
 	y: number;
 	label: string;
-	link: string;
+	pid: number;
 };
 
 type ScatterPlotProps = {
@@ -159,7 +159,7 @@ const ScatterPlot = (
 					{props.data.map((d, i) => {
 						return (
 							<Fragment key={i}>
-								<a href={d.link}>
+								<a href={helpers.leagueUrl(["player", d.pid])}>
 									<Circle
 										key={i}
 										cx={xScale(x(d))}

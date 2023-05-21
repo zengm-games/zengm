@@ -102,7 +102,7 @@ const Chart = ({
 
 					return (
 						<svg
-							width={width + margin.left + margin.right}
+							width={parent.width}
 							height={HEIGHT + margin.top + margin.bottom}
 						>
 							<Group transform={`translate(${margin.left},${margin.top})`}>

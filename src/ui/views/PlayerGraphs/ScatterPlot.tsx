@@ -1,5 +1,5 @@
 import { scaleLinear } from "@visx/scale";
-import { Axis, AxisLeft } from "@visx/axis";
+import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Circle, LinePath } from "@visx/shape";
 import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
@@ -101,17 +101,16 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 
 	const svgRef = useRef(null);
 
-	const margin = { top: 30, left: 60, right: 40, bottom: 60 };
+	const margin = { top: 10, left: 60, right: 40, bottom: 60 };
 	const width = props.width - margin.left - margin.right;
-	const innerWidth = props.width - margin.left - margin.right;
-	const innerHeight = HEIGHT - margin.top - margin.bottom;
 	const xScale = scaleLinear({
 		domain: xDomain,
-		range: [margin.left, innerWidth + margin.left],
+		range: [0, width],
+		nice: true,
 	});
 	const yScale = scaleLinear({
 		domain: yDomain,
-		range: [innerHeight, 0],
+		range: [HEIGHT, 0],
 		nice: true,
 	});
 
@@ -136,29 +135,21 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 
 	return (
 		<div>
-			<svg width={width} height={HEIGHT} ref={svgRef}>
-				<rect
-					x={margin.left}
-					y={margin.top}
-					width={innerWidth}
-					height={innerHeight}
-					fill="transparent"
-				/>
-				<Group>
-					<AxisLeft scale={yScale} left={margin.left} label={props.statY} />
-					<Axis
-						orientation="top"
-						scale={xScale}
-						top={margin.top}
-						numTicks={5}
-						tickStroke="transparent"
-						stroke="transparent"
+			<svg
+				width={props.width}
+				height={HEIGHT + margin.top + margin.bottom}
+				ref={svgRef}
+			>
+				<Group transform={`translate(${margin.left},${margin.top})`}>
+					<AxisLeft
+						axisClassName="chart-axis"
+						scale={yScale}
+						label={props.statY}
 					/>
-					<Axis
-						orientation="bottom"
+					<AxisBottom
+						axisClassName="chart-axis"
 						scale={xScale}
-						top={innerHeight + margin.top}
-						numTicks={5}
+						top={HEIGHT}
 						label={props.statX}
 					/>
 					<LinePath
@@ -169,7 +160,7 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 						opacity={0.7}
 						strokeWidth={2}
 					/>
-					{props.data.map((d: any, i: number) => {
+					{props.data.map((d, i) => {
 						return (
 							<Fragment key={i}>
 								<a href={d.link}>
@@ -180,8 +171,8 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 										fillOpacity={0.8}
 										onMouseOver={event => handleMouseOver(event, d)}
 										onMouseOut={hideTooltip}
-										r={3}
-										fill={"#c93232"}
+										r={5}
+										fill={"var(--bs-blue)"}
 									/>
 								</a>
 							</Fragment>

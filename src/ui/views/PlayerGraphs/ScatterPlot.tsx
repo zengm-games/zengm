@@ -126,7 +126,6 @@ const ScatterPlot = (props: ScatterPlotProps) => {
 	const handleMouseOver = (event: MouseEvent, data: TooltipData) => {
 		const coords = localPoint((event.target as any).ownerSVGElement, event);
 		if (coords) {
-			console.log(coords);
 			showTooltip({
 				tooltipLeft: coords.x,
 				tooltipTop: coords.y,

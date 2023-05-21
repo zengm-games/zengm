@@ -273,6 +273,14 @@ const normalizeContractDemands = async ({
 		rookieSalaries = draft.getRookieSalaries();
 	}
 
+	let offset = g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0;
+	if (nextSeason) {
+		// Otherwise the season+phase combo appears off when setting contract expiration in newPhasePreseason
+		offset -= 1;
+	}
+	const minNewContractExp =
+		g.get("season") + g.get("minContractLength") + offset;
+
 	for (const info of playerInfos) {
 		if (
 			(type === "freeAgentsOnly" ||
@@ -337,6 +345,9 @@ const normalizeContractDemands = async ({
 				amount,
 				exp,
 			};
+			if (p.tid === PLAYER.FREE_AGENT && p.contract.exp < minNewContractExp) {
+				p.contract.exp = minNewContractExp;
+			}
 
 			if (labelAsRookieContract) {
 				p.contract.rookie = true;

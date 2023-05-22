@@ -320,7 +320,7 @@ const PlayerGraphs = ({
 							updateUrl(newState, minGames);
 						}}
 					>
-						Swap x and y axes
+						Swap x and y{<span className="d-none d-sm-inline"> axes</span>}
 					</button>
 					<div
 						className="input-group"

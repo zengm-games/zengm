@@ -127,7 +127,7 @@ const ScatterPlot = (
 	});
 
 	const { m, b, rSquared } = linearRegression(props.data);
-	console.log(m, b, rSquared);
+
 	const avg = (x: number) => {
 		return m * x + b;
 	};

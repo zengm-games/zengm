@@ -10,17 +10,18 @@ chart feature
 - contract -> bio
   - add age
   - remove exp
+  - contract amount for past seasons
 - tooltip
   - style like on trade summary
     - share code?
   - mobile?
   - PlayerNameLabels
+  - click should make tooltip persistent
+    - need a close button then
 - console errors
-- click should make tooltip persistent
-  - need a close button then
+  - sometimes happen when switching stats
 - how is it setting y range? for example Contract exp
 - getStatsTableByType seems weird
-- bigger points to make clicking/hovering easier?
 - option to highlight players on a certain team
   - how to handle TOT?
   - how to handle career totals

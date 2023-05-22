@@ -124,6 +124,7 @@ import {
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings";
 import * as exhibitionGame from "./exhibitionGame";
 import { getSummary } from "../views/trade";
+import { getStats, statTypes } from "../views/playerGraphs";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1562,6 +1563,16 @@ const getLeagueName = () => {
 
 const getLeagues = () => {
 	return idb.meta.getAll("leagues");
+};
+
+const getPlayerGraphStat = (statTypeInput?: string) => {
+	const statType = statTypeInput ?? random.choice(statTypes);
+	const stats = getStats(statType);
+	console.log(statType, stats);
+	return {
+		statType,
+		stat: random.choice(stats),
+	};
 };
 
 const getPlayersCommandPalette = async () => {
@@ -4257,6 +4268,7 @@ export default {
 		getLeagueInfo,
 		getLeagueName,
 		getLeagues,
+		getPlayerGraphStat,
 		getPlayersCommandPalette,
 		getLocal,
 		getPlayerBioInfoDefaults,

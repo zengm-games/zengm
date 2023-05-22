@@ -68,9 +68,7 @@ export const makeRegex = (path: string) => {
 	for (const part of parts) {
 		if (part.startsWith(":")) {
 			keys.push(part.slice(1));
-
-			// Used to be + rather than * to only notice parts with actual content, but that seemed dumb and broke the random button on Player Graphs
-			regexString += "/([^/]*?)";
+			regexString += "/([^/]+?)";
 		} else {
 			regexString += `/${part}`;
 		}

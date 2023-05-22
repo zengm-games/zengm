@@ -14,6 +14,38 @@ import type {
 	PlayerStatType,
 } from "../../common/types";
 
+export const statTypes = bySport({
+	baseball: [
+		"contract",
+		"ratings",
+		"batting",
+		"pitching",
+		"fielding",
+		"advanced",
+		"gameHighs",
+	],
+	basketball: [
+		"contract",
+		"ratings",
+		"perGame",
+		"per36",
+		"totals",
+		"shotLocations",
+		"advanced",
+		"gameHighs",
+	],
+	football: [
+		"contract",
+		"ratings",
+		"passing",
+		"rushing",
+		"defense",
+		"kicking",
+		"returns",
+	],
+	hockey: ["contract", "ratings", "skater", "goalie", "advanced", "gameHighs"],
+});
+
 const getStatsTableByType = (statTypePlus: string) => {
 	// Keep in sync with statTypesAdv
 	if (isSport("basketball")) {
@@ -40,50 +72,29 @@ const getStatsTableByType = (statTypePlus: string) => {
 	}
 };
 
+export const getStats = (statTypePlus: string) => {
+	const statsTable = getStatsTableByType(statTypePlus);
+
+	let stats: string[];
+	if (statTypePlus === "ratings") {
+		stats = ["ovr", "pot", ...RATINGS];
+	} else if (statTypePlus == "contract") {
+		stats = ["amount", "exp"];
+	} else {
+		if (!statsTable) {
+			throw new Error(`Invalid statType: "${statTypePlus}"`);
+		}
+		stats = statsTable.stats;
+	}
+
+	return stats;
+};
+
 async function getPlayerStats(
 	statTypeInput: any,
 	season: number,
 	playoffs: any,
 ) {
-	const statTypes = bySport({
-		baseball: [
-			"contract",
-			"ratings",
-			"batting",
-			"pitching",
-			"fielding",
-			"advanced",
-			"gameHighs",
-		],
-		basketball: [
-			"contract",
-			"ratings",
-			"perGame",
-			"per36",
-			"totals",
-			"shotLocations",
-			"advanced",
-			"gameHighs",
-		],
-		football: [
-			"contract",
-			"ratings",
-			"passing",
-			"rushing",
-			"defense",
-			"kicking",
-			"returns",
-		],
-		hockey: [
-			"contract",
-			"ratings",
-			"skater",
-			"goalie",
-			"advanced",
-			"gameHighs",
-		],
-	});
-
 	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
 	const statTypePlus = statTypes.includes(statTypeInput)
 		? statTypeInput
@@ -137,14 +148,7 @@ async function getPlayerStats(
 		regularSeason: playoffs !== "playoffs",
 		mergeStats: "totOnly",
 	});
-	let stats: string[];
-	if (statTypePlus === "ratings") {
-		stats = ratings;
-	} else if (statTypePlus == "contract") {
-		stats = ["amount", "exp"];
-	} else {
-		stats = statsTable.stats;
-	}
+	const stats = getStats(statTypePlus);
 	return { players, stats, statType: statTypePlus };
 }
 
@@ -177,12 +181,14 @@ const updatePlayers = async (
 			inputs.playoffsY,
 		);
 
-		const statX = statForXAxis.stats.includes(inputs.statX)
-			? inputs.statX
-			: random.choice(statForXAxis.stats);
-		const statY = statForYAxis.stats.includes(inputs.statY)
-			? inputs.statY
-			: random.choice(statForYAxis.stats);
+		const statX =
+			inputs.statX !== undefined && statForXAxis.stats.includes(inputs.statX)
+				? inputs.statX
+				: random.choice(statForXAxis.stats);
+		const statY =
+			inputs.statY !== undefined && statForYAxis.stats.includes(inputs.statY)
+				? inputs.statY
+				: random.choice(statForYAxis.stats);
 
 		return {
 			seasonX: inputs.seasonX,

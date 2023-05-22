@@ -5,7 +5,7 @@ import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions";
 import realtimeUpdate from "../../util/realtimeUpdate";
-import { getCols, helpers } from "../../util";
+import { getCols, helpers, toWorker } from "../../util";
 import { groupByUnique } from "../../../common/groupBy";
 import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
@@ -175,11 +175,17 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.statType}
-				onChange={event =>
-					updateUrl({
+				onChange={async event => {
+					const { stat } = await toWorker(
+						"main",
+						"getPlayerGraphStat",
+						event.target.value,
+					);
+					await updateUrl({
+						[`stat${xyCapital}`]: stat,
 						[`statType${xyCapital}`]: event.target.value,
-					})
-				}
+					});
+				}}
 				style={{
 					maxWidth: 130,
 				}}
@@ -222,10 +228,16 @@ const PickStat = ({
 			</select>
 			<button
 				className="btn btn-secondary"
-				onClick={() => {
-					updateUrl({
-						[`stat${xyCapital}`]: "",
-						[`statType${xyCapital}`]: "",
+				onClick={async () => {
+					const { stat, statType } = await toWorker(
+						"main",
+						"getPlayerGraphStat",
+						undefined,
+					);
+
+					await updateUrl({
+						[`stat${xyCapital}`]: stat,
+						[`statType${xyCapital}`]: statType,
 					});
 				}}
 			>

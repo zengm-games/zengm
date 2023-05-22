@@ -679,11 +679,11 @@ const playerGraphs = (params: Params) => {
 		playoffsY,
 		minGames,
 
-		// Defaults to random stat if this is not a valid stat
-		statTypeX: params.statTypeX ?? "",
-		statTypeY: params.statTypeY ?? "",
-		statX: params.statX ?? "",
-		statY: params.statY ?? "",
+		// Defaults to random stat if undefined
+		statTypeX: params.statTypeX,
+		statTypeY: params.statTypeY,
+		statX: params.statX,
+		statY: params.statY,
 	};
 };
 

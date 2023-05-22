@@ -24,7 +24,6 @@ chart feature
   - how to handle disabled teams
 - in addition to x and y axis stats, let user pick one for size of the circles
 - why doesn't year include career?
-- axis labels centering messed up
 - if x and y are pulling the same season and type, reuse rather than recompute in worker
 - go over all PR changes, are they really needed?
   - statTypesAdvNotCareer

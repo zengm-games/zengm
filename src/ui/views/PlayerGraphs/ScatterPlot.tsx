@@ -141,7 +141,7 @@ const ScatterPlot = (
 		}
 	};
 
-	const axisLabelProps = {
+	const fontSizeProps = {
 		fontSize: "1em",
 	};
 
@@ -166,8 +166,13 @@ const ScatterPlot = (
 						axisClassName="chart-axis"
 						scale={yScale}
 						label={labels[1]}
-						labelProps={axisLabelProps}
-						tickLabelProps={axisLabelProps}
+						labelProps={{
+							...fontSizeProps,
+
+							// Weird that this is required to center label
+							textAnchor: "middle",
+						}}
+						tickLabelProps={fontSizeProps}
 					/>
 					<AxisBottom
 						axisClassName="chart-axis"
@@ -175,10 +180,13 @@ const ScatterPlot = (
 						top={HEIGHT}
 						label={labels[0]}
 						labelProps={{
-							...axisLabelProps,
+							...fontSizeProps,
 							dy: "1.5em",
+
+							// Weird that this is required to center label
+							textAnchor: "middle",
 						}}
-						tickLabelProps={axisLabelProps}
+						tickLabelProps={fontSizeProps}
 					/>
 					<LinePath
 						y={d => yScale(avg(d))}

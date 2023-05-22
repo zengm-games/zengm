@@ -1,12 +1,9 @@
 chart feature
-- default stats
+- randomize statType default?
 - other sports
   - confirm defaults in processInputs work
   - do stat types work?
   - how do position-specific stats look?
-- do game highs work?
-- reg/playoffs boolean
-- minimum games played - should it be some other criteria, like league leaders?
 - contract -> bio
   - add age
   - remove exp
@@ -18,8 +15,6 @@ chart feature
   - PlayerNameLabels
   - click should make tooltip persistent
     - need a close button then
-- console errors
-  - sometimes happen when switching stats
 - on backend, update x and y independently, for performance
 - how is it setting y range? for example Contract exp
 - getStatsTableByType seems weird
@@ -28,8 +23,7 @@ chart feature
   - how to handle career totals
   - how to handle disabled teams
 - in addition to x and y axis stats, let user pick one for size of the circles
-- when changing stat type, keep the stat the same if there is an exact match (like in bbgm changing per game to per 36)
-- why doesn't year include career and all seasons? should be same as player stats
+- why doesn't year include career?
 - axis labels centering messed up
 - if x and y are pulling the same season and type, reuse rather than recompute in worker
 - go over all PR changes, are they really needed?

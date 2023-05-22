@@ -6,7 +6,7 @@ import {
 	RATINGS,
 } from "../../common";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, random } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -45,7 +45,7 @@ async function getPlayerStats(
 ) {
 	const statsTable = getStatsTableByType(statTypeInput);
 
-	const ratings = [...RATINGS, "ovr", "pot"];
+	const ratings = ["ovr", "pot", ...RATINGS];
 	let statType: PlayerStatType;
 	if (isSport("basketball")) {
 		if (statTypeInput === "totals") {
@@ -134,6 +134,13 @@ const updatePlayers = async (
 			inputs.playoffsY,
 		);
 
+		const statX = statForXAxis.stats.includes(inputs.statX)
+			? inputs.statX
+			: random.choice(statForXAxis.stats);
+		const statY = statForYAxis.stats.includes(inputs.statY)
+			? inputs.statY
+			: random.choice(statForYAxis.stats);
+
 		return {
 			seasonX: inputs.seasonX,
 			seasonY: inputs.seasonY,
@@ -145,8 +152,8 @@ const updatePlayers = async (
 			playersY: statForYAxis.players,
 			statsX: statForXAxis.stats,
 			statsY: statForYAxis.stats,
-			statX: inputs.statX,
-			statY: inputs.statY,
+			statX,
+			statY,
 			minGames: inputs.minGames,
 		};
 	} else if (

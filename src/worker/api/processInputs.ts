@@ -693,16 +693,11 @@ const playerGraphs = (params: Params) => {
 			}),
 		playoffsX,
 		playoffsY,
-		statX: params.statX ?? "gp",
-		statY:
-			params.statY ??
-			bySport({
-				baseball: "war",
-				basketball: "ws",
-				football: "av",
-				hockey: "ps",
-			}),
 		minGames,
+
+		// Defaults to random stat if this is not a valid stat
+		statX: params.statX ?? "",
+		statY: params.statY ?? "",
 	};
 };
 

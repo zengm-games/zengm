@@ -118,12 +118,10 @@ const ScatterPlot = (
 	const xScale = scaleLinear({
 		domain: xDomain,
 		range: [0, width],
-		nice: true,
 	});
 	const yScale = scaleLinear({
 		domain: yDomain,
 		range: [HEIGHT, 0],
-		nice: true,
 	});
 
 	const { m, b, rSquared } = linearRegression(props.data);

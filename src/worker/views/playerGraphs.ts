@@ -16,7 +16,7 @@ import type {
 
 export const statTypes = bySport({
 	baseball: [
-		"contract",
+		"bio",
 		"ratings",
 		"batting",
 		"pitching",
@@ -25,7 +25,7 @@ export const statTypes = bySport({
 		"gameHighs",
 	],
 	basketball: [
-		"contract",
+		"bio",
 		"ratings",
 		"perGame",
 		"per36",
@@ -35,7 +35,7 @@ export const statTypes = bySport({
 		"gameHighs",
 	],
 	football: [
-		"contract",
+		"bio",
 		"ratings",
 		"passing",
 		"rushing",
@@ -43,10 +43,14 @@ export const statTypes = bySport({
 		"kicking",
 		"returns",
 	],
-	hockey: ["contract", "ratings", "skater", "goalie", "advanced", "gameHighs"],
+	hockey: ["bio", "ratings", "skater", "goalie", "advanced", "gameHighs"],
 });
 
 const getStatsTableByType = (statTypePlus: string) => {
+	if (statTypePlus == "bio" || statTypePlus == "ratings") {
+		return;
+	}
+
 	// Keep in sync with statTypesAdv
 	if (isSport("basketball")) {
 		if (statTypePlus === "advanced") {
@@ -59,17 +63,8 @@ const getStatsTableByType = (statTypePlus: string) => {
 			return PLAYER_STATS_TABLES.regular;
 		}
 	}
-	if (statTypePlus == "contract" || statTypePlus == "ratings") {
-		if (isSport("baseball")) {
-			return PLAYER_STATS_TABLES.batting;
-		} else if (isSport("football")) {
-			return PLAYER_STATS_TABLES.passing;
-		} else if (isSport("hockey")) {
-			return PLAYER_STATS_TABLES.skater;
-		}
-	} else {
-		return PLAYER_STATS_TABLES[statTypePlus];
-	}
+
+	return PLAYER_STATS_TABLES[statTypePlus];
 };
 
 export const getStats = (statTypePlus: string) => {
@@ -78,8 +73,8 @@ export const getStats = (statTypePlus: string) => {
 	let stats: string[];
 	if (statTypePlus === "ratings") {
 		stats = ["ovr", "pot", ...RATINGS];
-	} else if (statTypePlus == "contract") {
-		stats = ["amount", "exp"];
+	} else if (statTypePlus == "bio") {
+		stats = ["Age", "Contract", "Pick"];
 	} else {
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
@@ -102,7 +97,7 @@ async function getPlayerStats(
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
-	const ratings = ["ovr", "pot", ...RATINGS];
+	const ratings = statTypePlus === "ratings" ? ["ovr", "pot", ...RATINGS] : [];
 	let statType: PlayerStatType;
 	if (isSport("basketball")) {
 		if (statTypePlus === "totals") {
@@ -115,11 +110,6 @@ async function getPlayerStats(
 	} else {
 		statType = "totals";
 	}
-
-	if (!statsTable) {
-		throw new Error(`Invalid statType: "${statTypeInput}"`);
-	}
-	console.log(statTypeInput, statTypePlus, statType, statsTable);
 
 	let playersAll;
 
@@ -138,9 +128,13 @@ async function getPlayerStats(
 	}
 
 	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["pid", "name", ...(statTypePlus == "contract" ? ["contract"] : [])],
+		attrs: [
+			"pid",
+			"name",
+			...(statTypePlus == "bio" ? ["age", "salaries", "draft"] : []),
+		],
 		ratings: ratings,
-		stats: statsTable.stats,
+		stats: statsTable?.stats ?? ["gp"],
 		season: typeof season === "number" ? season : undefined,
 		tid: undefined,
 		statType,

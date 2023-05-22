@@ -11,7 +11,7 @@ import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
 
 const addPrefixForStat = (statType: string, stat: string) => {
-	if (statType == "ratings") {
+	if (statType === "ratings") {
 		if (stat === "ovr") {
 			return "Ovr";
 		}
@@ -19,7 +19,7 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			return "Pot";
 		}
 		return `rating:${stat}`;
-	} else if (statType == "contract") {
+	} else if (statType === "bio") {
 		return stat;
 	}
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
@@ -29,20 +29,26 @@ const getStatsWithLabels = (stats: string[], statTypeX: string) => {
 	return getCols(stats.map(stat => addPrefixForStat(statTypeX, stat)));
 };
 
-const getStatFromPlayer = (player: any, stat: string, statType: string) => {
+const getStatFromPlayer = (p: any, stat: string, statType: string) => {
 	if (statType == "ratings") {
-		return player.ratings[stat];
-	} else if (statType == "contract") {
-		if (player["contract"]) {
-			return player.contract[stat] ?? 0;
+		return p.ratings[stat];
+	} else if (statType == "bio") {
+		if (stat === "Age") {
+			return p.age ?? 0;
+		}
+		if (stat === "Contract") {
+			return 666;
+		}
+		if (stat === "Pick") {
+			return p.draft.pick;
 		}
 		return 0;
 	}
 	if (statType == "gameHighs") {
-		stat = player.stats[stat];
+		stat = p.stats[stat];
 		return Array.isArray(stat) ? stat[0] : stat;
 	}
-	return player.stats[stat];
+	return p.stats[stat];
 };
 
 type GraphCreationProps = {
@@ -140,7 +146,7 @@ const PickStat = ({
 	const statTypes = [
 		// Keep in sync with statTypes in playerGraphs.ts
 		...useDropdownOptions("statTypesAdv"),
-		{ key: "contract", value: "Contract" },
+		{ key: "bio", value: "Bio" },
 		{ key: "ratings", value: "Ratings" },
 	];
 	const playoffs = useDropdownOptions("playoffs");

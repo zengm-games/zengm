@@ -1,4 +1,5 @@
 chart feature
+- switch from stat to ratings -> error
 - other sports
   - confirm defaults in processInputs work
   - do stat types work?

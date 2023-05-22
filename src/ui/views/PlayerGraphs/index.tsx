@@ -262,8 +262,10 @@ const PlayerGraphs = ({
 	};
 
 	let minGamesInteger = parseInt(minGames);
+	let minGamesError = false;
 	if (Number.isNaN(minGamesInteger)) {
 		minGamesInteger = 0;
+		minGamesError = true;
 	}
 
 	return (
@@ -321,7 +323,10 @@ const PlayerGraphs = ({
 						<span className="input-group-text">Minimum games played</span>
 						<input
 							type="text"
-							className="form-control"
+							className={classNames(
+								"form-control",
+								minGamesError ? "is-invalid" : undefined,
+							)}
 							onChange={event => {
 								updateUrl({
 									minGames: event.target.value,

@@ -182,14 +182,15 @@ const PickStat = ({
 				className="form-select"
 				value={state.statType}
 				onChange={async event => {
+					const newStatType = event.target.value;
 					const { stat } = await toWorker(
 						"main",
 						"getPlayerGraphStat",
-						event.target.value,
+						newStatType,
 					);
 					await updateUrl({
 						[`stat${xyCapital}`]: stat,
-						[`statType${xyCapital}`]: event.target.value,
+						[`statType${xyCapital}`]: newStatType,
 					});
 				}}
 				style={{

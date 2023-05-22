@@ -1568,7 +1568,6 @@ const getLeagues = () => {
 const getPlayerGraphStat = (statTypeInput?: string) => {
 	const statType = statTypeInput ?? random.choice(statTypes);
 	const stats = getStats(statType);
-	console.log(statType, stats);
 	return {
 		statType,
 		stat: random.choice(stats),

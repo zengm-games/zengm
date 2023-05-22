@@ -271,7 +271,7 @@ const PlayerGraphs = ({
 				state[1].playoffs,
 				state[0].stat,
 				state[1].stat,
-				minGames,
+				`${minGames}g`,
 			]),
 		);
 	});

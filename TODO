@@ -10,7 +10,6 @@ chart feature
 - contract -> bio
   - add age
   - remove exp
-- firstUpdate needed?
 - tooltip
   - style like on trade summary
     - share code?

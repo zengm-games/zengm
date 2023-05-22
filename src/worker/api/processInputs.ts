@@ -696,7 +696,7 @@ const playerGraphs = (params: Params) => {
 		playoffsY,
 		statX: params.statX ?? "gp",
 		statY:
-			params.statX ??
+			params.statY ??
 			bySport({
 				baseball: "war",
 				basketball: "ws",

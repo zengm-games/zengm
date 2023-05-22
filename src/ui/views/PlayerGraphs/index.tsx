@@ -1,6 +1,6 @@
 import type { View } from "../../../common/types";
 import useTitleBar from "../../hooks/useTitleBar";
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState } from "react";
 import { StatGraph, type TooltipData } from "./ScatterPlot";
 import useDropdownOptions, {
 	type DropdownOption,
@@ -230,21 +230,16 @@ const PlayerGraphs = ({
 		jumpTo: true,
 		dropdownView: "player_graphs",
 	});
-	const firstUpdate = useRef(true);
 
 	const [state, setState] = useState([
 		{
-			prevStat: statX,
 			stat: statX,
-			prevStatType: statTypeX,
 			statType: statTypeX,
 			playoffs: playoffsX,
 			season: seasonX,
 		},
 		{
-			prevStat: statY,
 			stat: statY,
-			prevStatType: statTypeY,
 			statType: statTypeY,
 			playoffs: playoffsY,
 			season: seasonY,
@@ -252,68 +247,50 @@ const PlayerGraphs = ({
 	] as [AxisState, AxisState]);
 	const [minGames, setMinGames] = useState(String(initialMinGames));
 
-	useLayoutEffect(() => {
-		if (firstUpdate.current) {
-			updateStatsIfStatTypeChange();
-			firstUpdate.current = false;
-			return;
-		}
-		firstUpdate.current = true;
-		realtimeUpdate(
-			[],
-			helpers.leagueUrl([
-				"player_graphs",
-				state[0].season,
-				state[1].season,
-				state[0].statType,
-				state[1].statType,
-				state[0].playoffs,
-				state[1].playoffs,
-				state[0].stat,
-				state[1].stat,
-				`${minGames}g`,
-			]),
-		);
-	});
+	const updateUrl = (state: [AxisState, AxisState], minGames: string) => {
+		const url = helpers.leagueUrl([
+			"player_graphs",
+			state[0].season,
+			state[1].season,
+			state[0].statType,
+			state[1].statType,
+			state[0].playoffs,
+			state[1].playoffs,
+			state[0].stat,
+			state[1].stat,
+			`${minGames}g`,
+		]);
+
+		realtimeUpdate([], url);
+	};
 
 	const setStateX = (newState: Partial<AxisState>) => {
 		setState(prevState => {
-			return [
+			const updated = [
 				{
 					...prevState[0],
 					...newState,
 				},
 				prevState[1],
-			];
+			] as typeof prevState;
+			updateUrl(updated, minGames);
+			return updated;
 		});
 	};
 
 	const setStateY = (newState: Partial<AxisState>) => {
 		setState(prevState => {
-			return [
+			const updated = [
 				prevState[0],
 				{
 					...prevState[1],
 					...newState,
 				},
-			];
+			] as typeof prevState;
+			updateUrl(updated, minGames);
+			return updated;
 		});
 	};
-
-	function updateStatsIfStatTypeChange() {
-		if (state[0].prevStatType != state[0].statType) {
-			setStateX({
-				stat: statsX[0],
-				prevStatType: state[0].statType,
-			});
-		}
-		if (state[1].prevStatType != state[1].statType) {
-			setStateY({
-				stat: statsY[0],
-				prevStatType: state[1].statType,
-			});
-		}
-	}
 
 	let minGamesInteger = parseInt(minGames);
 	if (Number.isNaN(minGamesInteger)) {
@@ -348,7 +325,10 @@ const PlayerGraphs = ({
 					<input
 						type="text"
 						className="form-control"
-						onChange={event => setMinGames(event.target.value)}
+						onChange={event => {
+							setMinGames(event.target.value);
+							updateUrl(state, event.target.value);
+						}}
 						value={minGames}
 						inputMode="numeric"
 						style={{

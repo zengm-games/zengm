@@ -259,8 +259,13 @@ const PlayerGraphs = ({
 			`${toUpdate.minGames ?? minGames}g`,
 		]);
 
-		await realtimeUpdate([], url);
+		await realtimeUpdate([], url, undefined, true);
 	};
+
+	if (location.pathname.endsWith("/player_graphs")) {
+		// Set initial URL, for ctrl+r and reloading
+		updateUrl({});
+	}
 
 	let minGamesInteger = parseInt(minGames);
 	let minGamesError = false;

@@ -5,6 +5,7 @@ chart feature
   - do stat types work?
   - how do position-specific stats look?
 - do game highs work?
+- is best fit line working? try swapping axes at http://localhost/l/16/player_graphs/2023/2023/per36/advanced/regularSeason/regularSeason/efg/tpar/1g
 - reg/playoffs boolean
 - minimum games played - should it be some other criteria, like league leaders?
 - contract -> bio
@@ -28,9 +29,7 @@ chart feature
 - in addition to x and y axis stats, let user pick one for size of the circles
 - when changing stat type, keep the stat the same if there is an exact match (like in bbgm changing per game to per 36)
 - why doesn't year include career and all seasons? should be same as player stats
-- prevStatType needed?
 - axis labels centering messed up
-- button to swap x/y axis
 - if x and y are pulling the same season and type, reuse rather than recompute in worker
 - go over all PR changes, are they really needed?
   - statTypesAdvNotCareer

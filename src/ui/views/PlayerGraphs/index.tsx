@@ -90,9 +90,7 @@ function GraphCreation(props: GraphCreationProps) {
 }
 
 type AxisState = {
-	prevStat: string;
 	stat: string;
-	prevStatType: string;
 	statType: string;
 	playoffs: string;
 	season: number;
@@ -163,7 +161,6 @@ const PickStat = ({
 				value={state.statType}
 				onChange={event =>
 					setState({
-						prevStatType: state.statType,
 						statType: event.target.value,
 					})
 				}
@@ -180,7 +177,6 @@ const PickStat = ({
 				value={state.stat}
 				onChange={event =>
 					setState({
-						prevStat: state.stat,
 						stat: event.target.value,
 					})
 				}
@@ -315,26 +311,38 @@ const PlayerGraphs = ({
 						setState={setStateY}
 					/>
 				</div>
-				<div
-					className="input-group"
-					style={{
-						width: "unset",
-					}}
-				>
-					<span className="input-group-text">Minimum games played</span>
-					<input
-						type="text"
-						className="form-control"
-						onChange={event => {
-							setMinGames(event.target.value);
-							updateUrl(state, event.target.value);
+				<div className="d-flex d-lg-block">
+					<button
+						className="btn btn-secondary me-3 me-lg-0 mb-lg-3"
+						onClick={() => {
+							const newState: typeof state = [state[1], state[0]];
+							setState(newState);
+							updateUrl(newState, minGames);
 						}}
-						value={minGames}
-						inputMode="numeric"
+					>
+						Swap x and y axes
+					</button>
+					<div
+						className="input-group"
 						style={{
-							maxWidth: 70,
+							width: "unset",
 						}}
-					/>
+					>
+						<span className="input-group-text">Minimum games played</span>
+						<input
+							type="text"
+							className="form-control"
+							onChange={event => {
+								setMinGames(event.target.value);
+								updateUrl(state, event.target.value);
+							}}
+							value={minGames}
+							inputMode="numeric"
+							style={{
+								maxWidth: 70,
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 			<div>

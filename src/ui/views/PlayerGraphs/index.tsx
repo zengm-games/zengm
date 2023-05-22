@@ -9,6 +9,7 @@ import realtimeUpdate from "../../util/realtimeUpdate";
 import { getCols, helpers } from "../../util";
 import { groupByUnique } from "../../../common/groupBy";
 import type { Col } from "../../components/DataTable";
+import classNames from "classnames";
 
 const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType == "ratings") {
@@ -107,11 +108,13 @@ const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 };
 
 const PickStat = ({
+	className,
 	label,
 	state,
 	setState,
 	stats,
 }: {
+	className?: string;
 	label: string;
 	state: AxisState;
 	setState: (state: Partial<AxisState>) => void;
@@ -134,7 +137,7 @@ const PickStat = ({
 
 	return (
 		<div
-			className="input-group"
+			className={classNames("input-group", className)}
 			style={{
 				maxWidth: 600,
 			}}
@@ -318,31 +321,41 @@ const PlayerGraphs = ({
 	}
 
 	return (
-		<div className="d-flex flex-column gap-3">
-			<PickStat
-				label="x"
-				stats={statsX}
-				state={state[0]}
-				setState={setStateX}
-			/>
-			<PickStat
-				label="y"
-				stats={statsY}
-				state={state[1]}
-				setState={setStateY}
-			/>
-			<div className="input-group">
-				<span className="input-group-text">Minimum games played</span>
-				<input
-					type="text"
-					className="form-control"
-					onChange={event => setMinGames(event.target.value)}
-					value={minGames}
-					inputMode="numeric"
+		<>
+			<div className="d-flex gap-3 align-items-start mb-3 flex-wrap">
+				<div>
+					<PickStat
+						className="mb-3"
+						label="x"
+						stats={statsX}
+						state={state[0]}
+						setState={setStateX}
+					/>
+					<PickStat
+						label="y"
+						stats={statsY}
+						state={state[1]}
+						setState={setStateY}
+					/>
+				</div>
+				<div
+					className="input-group"
 					style={{
-						maxWidth: 70,
+						width: "unset",
 					}}
-				/>
+				>
+					<span className="input-group-text">Minimum games played</span>
+					<input
+						type="text"
+						className="form-control"
+						onChange={event => setMinGames(event.target.value)}
+						value={minGames}
+						inputMode="numeric"
+						style={{
+							maxWidth: 70,
+						}}
+					/>
+				</div>
 			</div>
 			<div>
 				<GraphCreation
@@ -352,7 +365,7 @@ const PlayerGraphs = ({
 					minGames={minGamesInteger}
 				/>
 			</div>
-		</div>
+		</>
 	);
 };
 

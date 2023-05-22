@@ -105,17 +105,29 @@ const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 	);
 };
 
+type UpdateUrlParam = {
+	seasonX?: number;
+	seasonY?: number;
+	statTypeX?: string;
+	statTypeY?: string;
+	playoffsX?: string;
+	playoffsY?: string;
+	statX?: string;
+	statY?: string;
+	minGames?: string;
+};
+
 const PickStat = ({
 	className,
 	label,
 	state,
-	setState,
+	updateUrl,
 	stats,
 }: {
 	className?: string;
-	label: string;
+	label: "x" | "y";
 	state: AxisState;
-	setState: (state: Partial<AxisState>) => void;
+	updateUrl: (state: UpdateUrlParam) => void;
 	stats: string[];
 }) => {
 	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {
@@ -133,6 +145,8 @@ const PickStat = ({
 	];
 	const playoffs = useDropdownOptions("playoffs");
 
+	const xyCapital = label === "x" ? "X" : "Y";
+
 	return (
 		<div
 			className={classNames("input-group", className)}
@@ -147,7 +161,9 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.season}
-				onChange={event => setState({ season: parseInt(event.target.value) })}
+				onChange={event =>
+					updateUrl({ [`season${xyCapital}`]: parseInt(event.target.value) })
+				}
 				style={{
 					maxWidth: 70,
 				}}
@@ -160,8 +176,8 @@ const PickStat = ({
 				className="form-select"
 				value={state.statType}
 				onChange={event =>
-					setState({
-						statType: event.target.value,
+					updateUrl({
+						[`statType${xyCapital}`]: event.target.value,
 					})
 				}
 				style={{
@@ -176,8 +192,8 @@ const PickStat = ({
 				className="form-select"
 				value={state.stat}
 				onChange={event =>
-					setState({
-						stat: event.target.value,
+					updateUrl({
+						[`stat${xyCapital}`]: event.target.value,
 					})
 				}
 			>
@@ -193,7 +209,9 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.playoffs}
-				onChange={event => setState({ playoffs: event.target.value })}
+				onChange={event =>
+					updateUrl({ [`playoffs${xyCapital}`]: event.target.value })
+				}
 				style={{
 					maxWidth: 130,
 				}}
@@ -219,7 +237,7 @@ const PlayerGraphs = ({
 	statsY,
 	statX,
 	statY,
-	minGames: initialMinGames,
+	minGames,
 }: View<"playerGraphs">) => {
 	useTitleBar({
 		title: "Player Graphs",
@@ -227,65 +245,21 @@ const PlayerGraphs = ({
 		dropdownView: "player_graphs",
 	});
 
-	const [state, setState] = useState([
-		{
-			stat: statX,
-			statType: statTypeX,
-			playoffs: playoffsX,
-			season: seasonX,
-		},
-		{
-			stat: statY,
-			statType: statTypeY,
-			playoffs: playoffsY,
-			season: seasonY,
-		},
-	] as [AxisState, AxisState]);
-	const [minGames, setMinGames] = useState(String(initialMinGames));
-
-	const updateUrl = (state: [AxisState, AxisState], minGames: string) => {
+	const updateUrl = async (toUpdate: UpdateUrlParam) => {
 		const url = helpers.leagueUrl([
 			"player_graphs",
-			state[0].season,
-			state[1].season,
-			state[0].statType,
-			state[1].statType,
-			state[0].playoffs,
-			state[1].playoffs,
-			state[0].stat,
-			state[1].stat,
-			`${minGames}g`,
+			toUpdate.seasonX ?? seasonX,
+			toUpdate.seasonY ?? seasonY,
+			toUpdate.statTypeX ?? statTypeX,
+			toUpdate.statTypeY ?? statTypeY,
+			toUpdate.playoffsX ?? playoffsX,
+			toUpdate.playoffsY ?? playoffsY,
+			toUpdate.statX ?? statX,
+			toUpdate.statY ?? statY,
+			`${toUpdate.minGames ?? minGames}g`,
 		]);
 
-		realtimeUpdate([], url);
-	};
-
-	const setStateX = (newState: Partial<AxisState>) => {
-		setState(prevState => {
-			const updated = [
-				{
-					...prevState[0],
-					...newState,
-				},
-				prevState[1],
-			] as typeof prevState;
-			updateUrl(updated, minGames);
-			return updated;
-		});
-	};
-
-	const setStateY = (newState: Partial<AxisState>) => {
-		setState(prevState => {
-			const updated = [
-				prevState[0],
-				{
-					...prevState[1],
-					...newState,
-				},
-			] as typeof prevState;
-			updateUrl(updated, minGames);
-			return updated;
-		});
+		await realtimeUpdate([], url);
 	};
 
 	let minGamesInteger = parseInt(minGames);
@@ -301,23 +275,40 @@ const PlayerGraphs = ({
 						className="mb-3"
 						label="x"
 						stats={statsX}
-						state={state[0]}
-						setState={setStateX}
+						state={{
+							season: seasonX,
+							statType: statTypeX,
+							playoffs: playoffsX,
+							stat: statX,
+						}}
+						updateUrl={updateUrl}
 					/>
 					<PickStat
 						label="y"
 						stats={statsY}
-						state={state[1]}
-						setState={setStateY}
+						state={{
+							season: seasonY,
+							statType: statTypeY,
+							playoffs: playoffsY,
+							stat: statY,
+						}}
+						updateUrl={updateUrl}
 					/>
 				</div>
 				<div className="d-flex d-lg-block">
 					<button
 						className="btn btn-secondary me-3 me-lg-0 mb-lg-3"
 						onClick={() => {
-							const newState: typeof state = [state[1], state[0]];
-							setState(newState);
-							updateUrl(newState, minGames);
+							updateUrl({
+								seasonX: seasonY,
+								seasonY: seasonX,
+								statTypeX: statTypeY,
+								statTypeY: statTypeX,
+								playoffsX: playoffsY,
+								playoffsY: playoffsX,
+								statX: statY,
+								statY: statX,
+							});
 						}}
 					>
 						Swap x and y{<span className="d-none d-sm-inline"> axes</span>}
@@ -333,8 +324,9 @@ const PlayerGraphs = ({
 							type="text"
 							className="form-control"
 							onChange={event => {
-								setMinGames(event.target.value);
-								updateUrl(state, event.target.value);
+								updateUrl({
+									minGames: event.target.value,
+								});
 							}}
 							value={minGames}
 							inputMode="numeric"
@@ -348,8 +340,8 @@ const PlayerGraphs = ({
 			<div>
 				<GraphCreation
 					players={[playersX, playersY]}
-					stat={[state[0].stat, state[1].stat]}
-					statType={[state[0].statType, state[1].statType]}
+					stat={[statX, statY]}
+					statType={[statTypeX, statTypeY]}
 					minGames={minGamesInteger}
 				/>
 			</div>

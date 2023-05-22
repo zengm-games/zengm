@@ -1,4 +1,5 @@
 chart feature
+- minGames what if empty/string? needs to be string on worker side
 - default stats
 - other sports
   - confirm defaults in processInputs work
@@ -20,6 +21,7 @@ chart feature
     - need a close button then
 - console errors
   - sometimes happen when switching stats
+- on backend, update x and y independently, for performance
 - how is it setting y range? for example Contract exp
 - getStatsTableByType seems weird
 - option to highlight players on a certain team

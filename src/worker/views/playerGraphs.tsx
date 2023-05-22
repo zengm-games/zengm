@@ -94,7 +94,7 @@ async function getPlayerStats(
 		regularSeason: playoffs !== "playoffs",
 		mergeStats: "totOnly",
 	});
-	let stats;
+	let stats: string[];
 	if (statTypeInput === "ratings") {
 		stats = ratings;
 	} else if (statTypeInput == "contract") {
@@ -110,12 +110,14 @@ const updatePlayers = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
+	console.log("inputs", inputs);
 	if (
 		(inputs.seasonX === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		// Purposely skip checking statX, statY, minGames - those are only used client side, they in the URL for usability
 		inputs.seasonX !== state.seasonX ||
+		inputs.seasonY !== state.seasonY ||
 		inputs.statTypeX !== state.statTypeX ||
 		inputs.statTypeY !== state.statTypeY ||
 		inputs.playoffsX !== state.playoffsX ||
@@ -146,6 +148,30 @@ const updatePlayers = async (
 			statX: inputs.statX,
 			statY: inputs.statY,
 			minGames: inputs.minGames,
+		};
+	} else if (
+		inputs.minGames !== state.minGames ||
+		inputs.statX !== state.statX ||
+		inputs.statY !== state.statY
+	) {
+		return {
+			statX: inputs.statX,
+			statY: inputs.statY,
+			minGames: inputs.minGames,
+		} as {
+			seasonX: number;
+			seasonY: number;
+			statTypeX: string;
+			statTypeY: string;
+			playoffsX: string;
+			playoffsY: string;
+			playersX: any[];
+			playersY: any[];
+			statsX: string[];
+			statsY: string[];
+			statX: string;
+			statY: string;
+			minGames: number;
 		};
 	}
 };

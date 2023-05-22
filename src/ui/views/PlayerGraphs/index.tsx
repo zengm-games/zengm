@@ -1,6 +1,5 @@
 import type { View } from "../../../common/types";
 import useTitleBar from "../../hooks/useTitleBar";
-import { useState } from "react";
 import { StatGraph, type TooltipData } from "./ScatterPlot";
 import useDropdownOptions, {
 	type DropdownOption,

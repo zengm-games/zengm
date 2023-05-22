@@ -159,6 +159,7 @@ const updatePlayers = async (
 			statY: inputs.statY,
 			minGames: inputs.minGames,
 		} as {
+			// We can assert this because we know the above block runs on first render, so this is just updating an existing state, so we don't want TypeScript to get confused
 			seasonX: number;
 			seasonY: number;
 			statTypeX: string;
@@ -171,7 +172,7 @@ const updatePlayers = async (
 			statsY: string[];
 			statX: string;
 			statY: string;
-			minGames: number;
+			minGames: string;
 		};
 	}
 };

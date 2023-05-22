@@ -1,5 +1,5 @@
 chart feature
-- minGames what if empty/string? needs to be string on worker side
+- minGames error state UI
 - default stats
 - other sports
   - confirm defaults in processInputs work

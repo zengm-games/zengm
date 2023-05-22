@@ -23,16 +23,22 @@ type ScatterPlotProps = {
 	statType: [string, string];
 };
 
-const calculateBestFitLine = (
+const linearRegression = (
 	points: {
 		x: number;
 		y: number;
 	}[],
-): [number, number] => {
+) => {
 	const numPoints = points.length;
 
+	let rSquared = 1;
+
 	if (numPoints === 0) {
-		return [0, 0];
+		return {
+			m: 0,
+			b: 0,
+			rSquared,
+		};
 	}
 
 	let sum_x = 0;
@@ -52,8 +58,27 @@ const calculateBestFitLine = (
 		(numPoints * sum_xy - sum_x * sum_y) / (numPoints * sum_xx - sum_x * sum_x);
 	const b = sum_y / numPoints - (m * sum_x) / numPoints;
 
-	return [m, b];
+	if (numPoints > 1) {
+		const yAvg = sum_y / numPoints;
+
+		let sumSquaresTotal = 0;
+		for (const point of points) {
+			sumSquaresTotal += Math.pow(point.y - yAvg, 2);
+		}
+
+		let sumSquaresResidual = 0;
+		for (const point of points) {
+			sumSquaresResidual += Math.pow(point.y - (m * point.x + b), 2);
+		}
+
+		if (sumSquaresResidual !== 0) {
+			rSquared = 1 - sumSquaresResidual / sumSquaresTotal;
+		}
+	}
+
+	return { m, b, rSquared };
 };
+
 const ScatterPlot = (
 	props: ScatterPlotProps & {
 		width: number;
@@ -101,7 +126,8 @@ const ScatterPlot = (
 		nice: true,
 	});
 
-	const [m, b] = calculateBestFitLine(props.data);
+	const { m, b, rSquared } = linearRegression(props.data);
+	console.log(m, b, rSquared);
 	const avg = (x: number) => {
 		return m * x + b;
 	};
@@ -127,6 +153,8 @@ const ScatterPlot = (
 				props.descLong[i] !== undefined ? ` (${props.descLong[i]})` : ""
 			}`,
 	);
+
+	const rSquaredRounded = Math.round(100 * rSquared) / 100;
 
 	return (
 		<div>
@@ -178,6 +206,24 @@ const ScatterPlot = (
 							</a>
 						);
 					})}
+					<text
+						x="10"
+						y="10"
+						style={{
+							fill: "var(--bs-black)",
+						}}
+					>
+						R
+						<tspan
+							baselineShift="super"
+							style={{
+								fontSize: 10,
+							}}
+						>
+							2
+						</tspan>{" "}
+						= {rSquaredRounded}
+					</text>
 				</Group>
 			</svg>
 			{tooltipOpen && tooltipData ? (

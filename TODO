@@ -5,7 +5,6 @@ chart feature
   - do stat types work?
   - how do position-specific stats look?
 - do game highs work?
-- is best fit line working? try swapping axes at http://localhost/l/16/player_graphs/2023/2023/per36/advanced/regularSeason/regularSeason/efg/tpar/1g
 - reg/playoffs boolean
 - minimum games played - should it be some other criteria, like league leaders?
 - contract -> bio

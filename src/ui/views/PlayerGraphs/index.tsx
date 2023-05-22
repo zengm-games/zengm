@@ -272,12 +272,12 @@ const PlayerGraphs = ({
 		const url = helpers.leagueUrl([
 			"player_graphs",
 			toUpdate.seasonX ?? seasonX,
-			toUpdate.seasonY ?? seasonY,
 			toUpdate.statTypeX ?? statTypeX,
-			toUpdate.statTypeY ?? statTypeY,
 			toUpdate.playoffsX ?? playoffsX,
-			toUpdate.playoffsY ?? playoffsY,
 			toUpdate.statX ?? statX,
+			toUpdate.seasonY ?? seasonY,
+			toUpdate.statTypeY ?? statTypeY,
+			toUpdate.playoffsY ?? playoffsY,
 			toUpdate.statY ?? statY,
 			`${toUpdate.minGames ?? minGames}g`,
 		]);

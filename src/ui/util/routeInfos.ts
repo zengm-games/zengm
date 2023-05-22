@@ -77,7 +77,7 @@ const routeInfos = {
 	"/l/:lid/player_ratings/:abbrev/:season": "playerRatings",
 	"/l/:lid/player_stats": "playerStats",
 	"/l/:lid/player_graphs": "playerGraphs",
-	"/l/:lid/player_graphs/:seasonX/:seasonY/:statTypeX/:statTypeY/:playoffsX/:playoffsY/:statX/:statY/:minGames":
+	"/l/:lid/player_graphs/:seasonX/:statTypeX/:playoffsX/:statX/:seasonY/:statTypeY/:playoffsY/:statY/:minGames":
 		"playerGraphs",
 	"/l/:lid/team_stats": "teamStats",
 	"/l/:lid/team_stats/:season": "teamStats",

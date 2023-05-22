@@ -675,27 +675,13 @@ const playerGraphs = (params: Params) => {
 	return {
 		seasonX,
 		seasonY,
-		statTypeX:
-			params.statTypeX ??
-			bySport({
-				baseball: "batting",
-				basketball: "perGame",
-				football: "passing",
-				hockey: "skater",
-			}),
-		statTypeY:
-			params.statTypeY ??
-			bySport({
-				baseball: "batting",
-				basketball: "advanced",
-				football: "passing",
-				hockey: "skater",
-			}),
 		playoffsX,
 		playoffsY,
 		minGames,
 
 		// Defaults to random stat if this is not a valid stat
+		statTypeX: params.statTypeX ?? "",
+		statTypeY: params.statTypeY ?? "",
 		statX: params.statX ?? "",
 		statY: params.statY ?? "",
 	};

@@ -138,6 +138,7 @@ const PickStat = ({
 
 	const seasons = useDropdownOptions("seasons");
 	const statTypes = [
+		// Keep in sync with statTypes in playerGraphs.ts
 		...useDropdownOptions("statTypesAdv"),
 		{ key: "contract", value: "Contract" },
 		{ key: "ratings", value: "Ratings" },

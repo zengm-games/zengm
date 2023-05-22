@@ -25,11 +25,11 @@ const addPrefixForStat = (statType: string, stat: string) => {
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
 
-function getStatsWithLabels(stats: any[], statTypeX: string) {
+const getStatsWithLabels = (stats: string[], statTypeX: string) => {
 	return getCols(stats.map(stat => addPrefixForStat(statTypeX, stat)));
-}
+};
 
-function getStatFromPlayer(player: any, stat: string, statType: string) {
+const getStatFromPlayer = (player: any, stat: string, statType: string) => {
 	if (statType == "ratings") {
 		return player.ratings[stat];
 	} else if (statType == "contract") {
@@ -43,7 +43,7 @@ function getStatFromPlayer(player: any, stat: string, statType: string) {
 		return Array.isArray(stat) ? stat[0] : stat;
 	}
 	return player.stats[stat];
-}
+};
 
 type GraphCreationProps = {
 	players: [any, any];
@@ -52,7 +52,7 @@ type GraphCreationProps = {
 	minGames: number;
 };
 
-function GraphCreation(props: GraphCreationProps) {
+const GraphCreation = (props: GraphCreationProps) => {
 	const playersYByPid = groupByUnique<any>(props.players[1], "pid");
 
 	const data: TooltipData[] = [];
@@ -86,7 +86,7 @@ function GraphCreation(props: GraphCreationProps) {
 			statType={props.statType}
 		/>
 	);
-}
+};
 
 type AxisState = {
 	stat: string;
@@ -220,6 +220,17 @@ const PickStat = ({
 					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
+			<button
+				className="btn btn-secondary"
+				onClick={() => {
+					updateUrl({
+						[`stat${xyCapital}`]: "",
+						[`statType${xyCapital}`]: "",
+					});
+				}}
+			>
+				Random stat
+			</button>
 		</div>
 	);
 };

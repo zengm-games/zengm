@@ -1,5 +1,7 @@
 chart feature
-- randomize button
+- URL can get out of sync
+  - random button - blank slot stays in URL
+  - swapping to another stat type with the stat not part of it, then the original one stays in URL and it is random
 - other sports
   - confirm defaults in processInputs work
   - do stat types work?

@@ -3177,6 +3177,10 @@ const cols: {
 		sortType: "number",
 	},
 	"Runner Up": {},
+	Salary: {
+		sortSequence: ["desc", "asc"],
+		sortType: "currency",
+	},
 	Season: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",

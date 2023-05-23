@@ -79,6 +79,21 @@ const linearRegression = (
 	return { m, b, rSquared };
 };
 
+const getFormattedStat = (value: number, stat: string, statType: string) => {
+	if (statType === "bio") {
+		if (stat === "salary") {
+			return helpers.formatCurrency(value, "M");
+		}
+		if (stat === "draftPosition") {
+			return helpers.ordinal(value);
+		}
+	}
+	if (statType === "bio" || statType === "ratings") {
+		return value;
+	}
+	return helpers.roundStat(value, stat, statType === "totals");
+};
+
 const ScatterPlot = (
 	props: ScatterPlotProps & {
 		width: number;
@@ -238,10 +253,10 @@ const ScatterPlot = (
 					{([0, 1] as const).map(i => {
 						return (
 							<div key={i}>
-								{helpers.roundStat(
+								{getFormattedStat(
 									tooltipData[i === 0 ? "x" : "y"],
 									props.stat[i],
-									props.statType[i] === "totals",
+									props.statType[i],
 								)}{" "}
 								{props.descShort[i]}
 							</div>

@@ -151,7 +151,6 @@ const updatePlayers = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	console.log("inputs", inputs);
 	if (
 		(inputs.seasonX === g.get("season") &&
 			(updateEvents.includes("gameSim") ||

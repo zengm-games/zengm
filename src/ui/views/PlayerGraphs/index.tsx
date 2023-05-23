@@ -27,7 +27,7 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			return "Draft Pick";
 		}
 		if (stat === "salary") {
-			return "Contract";
+			return "Salary";
 		}
 	}
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;

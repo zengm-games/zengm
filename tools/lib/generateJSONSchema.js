@@ -1020,7 +1020,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							numGamesPlayoffSeries: wrap({
 								type: "array",
-								minItems: 1,
 								items: {
 									type: "integer",
 									minimum: 1,

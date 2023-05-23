@@ -149,4 +149,17 @@ if (!Object.hasOwn) {
 // Chrome 71, Firefox 105, Safari 14.1
 import "./polyfill-TextEncoderDecoderStream";
 
+// Chrome 71
+// https://github.com/feross/queue-microtask/blob/2a5e7b9874c5f075e62975862e5e4a673f149786/index.js
+/*! queue-microtask. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
+if (typeof queueMicrotask !== "function") {
+	let promise: Promise<unknown>;
+	self.queueMicrotask = cb =>
+		(promise || (promise = Promise.resolve())).then(cb).catch(err =>
+			setTimeout(() => {
+				throw err;
+			}, 0),
+		);
+}
+
 import "./polyfills-modern";

@@ -26,10 +26,9 @@ const processAttrs = (
 ) => {
 	const getSalary = () => {
 		let total = 0;
-		const s = season ?? g.get("season");
 
 		for (const salary of p.salaries) {
-			if (salary.season === s) {
+			if (salary.season === season || season === undefined) {
 				total += salary.amount / 1000;
 			}
 		}
@@ -65,6 +64,16 @@ const processAttrs = (
 			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid]?.abbrev;
 			output.draft.originalAbbrev =
 				g.get("teamInfoCache")[output.draft.originalTid]?.abbrev;
+		} else if (attr === "draftPosition") {
+			// Estimate pick number from draft round and pick. Would be better to store the real value
+			if (p.draft.round > 0 && p.draft.pick > 0) {
+				output.draftPosition =
+					p.draft.pick + (p.draft.round - 1) * g.get("numActiveTeams");
+			} else {
+				// Undrafted
+				output.draftPosition =
+					g.get("numDraftRounds") * g.get("numActiveTeams") + 1;
+			}
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);

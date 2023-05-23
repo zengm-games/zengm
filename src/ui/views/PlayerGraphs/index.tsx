@@ -20,7 +20,15 @@ const addPrefixForStat = (statType: string, stat: string) => {
 		}
 		return `rating:${stat}`;
 	} else if (statType === "bio") {
-		return stat;
+		if (stat === "age") {
+			return "Age";
+		}
+		if (stat === "draftPosition") {
+			return "Draft Pick";
+		}
+		if (stat === "salary") {
+			return "Contract";
+		}
 	}
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
@@ -33,16 +41,7 @@ const getStatFromPlayer = (p: any, stat: string, statType: string) => {
 	if (statType == "ratings") {
 		return p.ratings[stat];
 	} else if (statType == "bio") {
-		if (stat === "Age") {
-			return p.age ?? 0;
-		}
-		if (stat === "Contract") {
-			return 666;
-		}
-		if (stat === "Pick") {
-			return p.draft.pick;
-		}
-		return 0;
+		return p[stat] ?? 0;
 	}
 	if (statType == "gameHighs") {
 		stat = p.stats[stat];

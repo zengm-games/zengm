@@ -74,7 +74,7 @@ export const getStats = (statTypePlus: string) => {
 	if (statTypePlus === "ratings") {
 		stats = ["ovr", "pot", ...RATINGS];
 	} else if (statTypePlus == "bio") {
-		stats = ["Age", "Contract", "Pick"];
+		stats = ["age", "salary", "draftPosition"];
 	} else {
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
@@ -131,7 +131,7 @@ async function getPlayerStats(
 		attrs: [
 			"pid",
 			"name",
-			...(statTypePlus == "bio" ? ["age", "salaries", "draft"] : []),
+			...(statTypePlus == "bio" ? ["age", "salary", "draftPosition"] : []),
 		],
 		ratings: ratings,
 		stats: statsTable?.stats ?? ["gp"],

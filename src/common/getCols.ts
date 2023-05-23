@@ -2902,6 +2902,9 @@ const cols: {
 		noSearch: true,
 		sortSequence: [],
 	},
+	"Draft Pick": {
+		sortType: "number",
+	},
 	"Draft Picks": {
 		sortSequence: [],
 	},
@@ -2920,7 +2923,6 @@ const cols: {
 	},
 	Exp: {
 		desc: "Contract Expiration",
-		sortSequence: ["asc", "desc"],
 		sortType: "number",
 	},
 	Experience: {

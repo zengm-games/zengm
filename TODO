@@ -1,15 +1,12 @@
 chart feature
 - other sports
-  - confirm defaults in processInputs work
   - do stat types work?
   - how do position-specific stats look?
 - contract -> bio
-  - pick
-    - how to handle round
-    - how to handle undrafted
-  - contract amount for past seasons
   - formatting in tooltip
-  - capitalization of slugs in URL
+    - rounding
+    - undrafted players (and axis too)
+    - $ for salary (and axis too)
 - tooltip
   - style like on trade summary
     - share code?

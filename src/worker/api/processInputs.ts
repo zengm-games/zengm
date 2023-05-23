@@ -668,6 +668,7 @@ const playerGraphs = (params: Params) => {
 	const seasonX: number = validateSeason(params.seasonX);
 	const seasonY: number = validateSeason(params.seasonY);
 
+	// String because we're storing the state of the form input field here
 	const minGames =
 		params.minGames?.replace(/g$/, "") ??
 		String(Math.round(g.get("numGames") * 0.2));

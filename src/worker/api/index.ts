@@ -2068,8 +2068,8 @@ const importPlayers = async ({
 			],
 			weight: p.weight,
 
-			// Particularly important because stats are ignored
-			jerseyNumber: p.stats.at(-1)?.jerseyNumber ?? p.jerseyNumber,
+			// Particularly important because stats are ignored, so jersey number is lost without this
+			jerseyNumber: p.stats?.at(-1)?.jerseyNumber ?? p.jerseyNumber,
 		};
 
 		// Only add injury if the season wasn't chaned by the user. These variables copied from ImportPlayers init

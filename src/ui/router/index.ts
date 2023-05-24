@@ -81,9 +81,11 @@ export const makeRegex = (path: string) => {
 	};
 };
 
-const findAnchor = (e: NonStandardEvent): HTMLAnchorElement | undefined => {
+const findAnchor = (
+	e: NonStandardEvent,
+): HTMLAnchorElement | SVGAElement | undefined => {
 	// Find link element
-	let el: HTMLElement = e.target as HTMLElement;
+	let el = e.target as HTMLElement | SVGElement;
 	const eventPath = e.path || (e.composedPath ? e.composedPath() : null);
 	if (eventPath) {
 		for (const eventTarget of eventPath) {
@@ -104,13 +106,13 @@ const findAnchor = (e: NonStandardEvent): HTMLAnchorElement | undefined => {
 
 	// Fallback if the eventPath stuff didn't do anything (cross browser)
 	while (el && el.nodeName.toUpperCase() !== "A") {
-		el = el.parentNode as HTMLAnchorElement;
+		el = el.parentNode as HTMLAnchorElement | SVGAElement;
 	}
 	if (!el || el.nodeName.toUpperCase() !== "A") {
 		return;
 	}
 
-	return el as HTMLAnchorElement;
+	return el as HTMLAnchorElement | SVGAElement;
 };
 
 const sameOrigin = (href: string) => {
@@ -287,9 +289,12 @@ class Router {
 			return;
 		}
 
+		// There are various special cases for SVGs, not everything will work right
+		const svg = anchor instanceof SVGAElement;
+
 		// ensure non-hash for the same path
 		const link = anchor.getAttribute("href");
-		if (samePath(anchor) && (anchor.hash || link === "#")) {
+		if (!svg && samePath(anchor) && (anchor.hash || link === "#")) {
 			return;
 		}
 
@@ -297,17 +302,24 @@ class Router {
 			return;
 		}
 
-		if (anchor.target) {
+		// string check is needed otherwise links inside an SVG (like in Player Graphs) will always get caught here
+		if (typeof anchor.target === "string" && anchor.target.startsWith("_")) {
 			return;
 		}
 
-		if (!sameOrigin(anchor.href)) {
+		if (!svg && !sameOrigin(anchor.href)) {
 			return;
 		}
 
 		// rebuild path
-		let path = anchor.pathname + anchor.search + (anchor.hash || "");
-		path = path[0] !== "/" ? `/${path}` : path;
+		let path;
+		if (svg) {
+			// Special case for SVG links
+			path = anchor.href.baseVal;
+		} else {
+			path = anchor.pathname + anchor.search + (anchor.hash || "");
+			path = path[0] !== "/" ? `/${path}` : path;
+		}
 
 		e.preventDefault();
 

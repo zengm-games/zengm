@@ -1,4 +1,4 @@
-chart feature
+player graphs
 - other sports
   - do stat types work?
   - how do position-specific stats look?
@@ -13,17 +13,20 @@ chart feature
   - click should make tooltip persistent
     - need a close button then
 - getStatsTableByType seems weird
-- option to highlight players on a certain team
-  - how to handle TOT?
-  - how to handle career totals
-  - how to handle disabled teams
-- option to pick individual team for each axis
-- in addition to x and y axis stats, let user pick one for size of the circles
 - why doesn't year include career?
-- if x and y are pulling the same season and type, reuse rather than recompute in worker
 - go over all PR changes, are they really needed?
   - statTypesAdvNotCareer
   - getCols new attrs
+- later
+  - in addition to x and y axis stats, let user pick one for size of the circles
+  - option to highlight players on a certain team
+    - how to handle TOT?
+    - how to handle career totals
+    - how to handle disabled teams
+  - option to pick individual team for each axis
+  - if x and y are pulling the same season and type, reuse rather than recompute in worker
+  - Minimum games played - replace with eligible leaders?
+    - see playerMeetsCategoryRequirements
 
 finances revamp
 - count, not $

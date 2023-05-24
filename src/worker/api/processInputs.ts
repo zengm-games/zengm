@@ -665,8 +665,10 @@ const playerGraphs = (params: Params) => {
 	const playoffsY: "playoffs" | "regularSeason" =
 		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
 
-	const seasonX: number = validateSeason(params.seasonX);
-	const seasonY: number = validateSeason(params.seasonY);
+	const seasonX: number | "career" =
+		params.seasonX === "career" ? "career" : validateSeason(params.seasonX);
+	const seasonY: number | "career" =
+		params.seasonY === "career" ? "career" : validateSeason(params.seasonY);
 
 	// String because we're storing the state of the form input field here
 	const minGames =

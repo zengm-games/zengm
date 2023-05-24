@@ -97,7 +97,7 @@ type AxisState = {
 	stat: string;
 	statType: string;
 	playoffs: string;
-	season: number;
+	season: number | "career";
 };
 
 // For responsive ones, render the last one, which should be the longest
@@ -110,8 +110,8 @@ const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 };
 
 type UpdateUrlParam = {
-	seasonX?: number;
-	seasonY?: number;
+	seasonX?: number | "career";
+	seasonY?: number | "career";
 	statTypeX?: string;
 	statTypeY?: string;
 	playoffsX?: string;
@@ -167,12 +167,18 @@ const PickStat = ({
 				className="form-select"
 				value={state.season}
 				onChange={event =>
-					updateUrl({ [`season${xyCapital}`]: parseInt(event.target.value) })
+					updateUrl({
+						[`season${xyCapital}`]:
+							event.target.value === "career"
+								? "career"
+								: parseInt(event.target.value),
+					})
 				}
 				style={{
 					maxWidth: 70,
 				}}
 			>
+				<option value="career">Career</option>
 				{seasons.map(x => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}

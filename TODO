@@ -14,7 +14,6 @@ player graphs
   - click should make tooltip persistent
     - need a close button then
 - getStatsTableByType seems weird
-- why doesn't year include career?
 - go over all PR changes, are they really needed?
   - getCols new attrs
 - later

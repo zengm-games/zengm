@@ -87,7 +87,7 @@ export const getStats = (statTypePlus: string) => {
 
 const getPlayerStats = async (
 	statTypeInput: string | undefined,
-	season: number,
+	season: number | "career",
 	playoffs: "playoffs" | "regularSeason",
 ) => {
 	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
@@ -143,6 +143,14 @@ const getPlayerStats = async (
 		regularSeason: playoffs !== "playoffs",
 		mergeStats: "totOnly",
 	});
+
+	if (season === "career") {
+		for (const p of players) {
+			p.stats = p.careerStats;
+			delete p.careerStats;
+		}
+	}
+
 	const stats = getStats(statTypePlus);
 	return { players, stats, statType: statTypePlus };
 };
@@ -175,6 +183,7 @@ const updatePlayers = async (
 			inputs.statX !== undefined && statForAxis.stats.includes(inputs.statX)
 				? inputs.statX
 				: random.choice(statForAxis.stats);
+		console.log("updatePlayers", axis, statForAxis);
 
 		return {
 			[season]: inputs[season],
@@ -206,8 +215,8 @@ const updateClientSide = (
 			minGames: inputs.minGames,
 		} as {
 			// We can assert this because we know the above block runs on first render, so this is just updating an existing state, so we don't want TypeScript to get confused
-			seasonX: number;
-			seasonY: number;
+			seasonX: number | "career";
+			seasonY: number | "career";
 			statTypeX: string;
 			statTypeY: string;
 			playoffsX: "playoffs" | "regularSeason";

@@ -1,4 +1,5 @@
 player graphs
+- y stat changing on game sim
 - other sports
   - do stat types work?
   - how do position-specific stats look?
@@ -25,6 +26,10 @@ player graphs
   - if x and y are pulling the same season and type, reuse rather than recompute in worker
   - Minimum games played - replace with eligible leaders?
     - see playerMeetsCategoryRequirements
+
+catchers never commit errors? https://discord.com/channels/290013534023057409/944392892905037885/1111059257614401587
+- sim bad throws on steals
+- ground balls and infield flies never go to C/P?
 
 finances revamp
 - count, not $

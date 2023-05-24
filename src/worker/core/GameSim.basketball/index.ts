@@ -1309,13 +1309,22 @@ class GameSim {
 
 	getNumFoulsUntilBonus() {
 		const foulsUntilBonus = g.get("foulsUntilBonus");
+
+		// Different cutoff for OT/regulation
+		const normal =
+			foulsUntilBonus[this.overtimes >= 1 ? 1 : 0] -
+			this.foulsThisQuarter[this.d];
+
+		// Also check last 2 minutes limit, when appropriate;
 		if (this.t <= 2) {
-			return foulsUntilBonus[2] - this.foulsLastTwoMinutes[this.d];
+			return Math.min(
+				normal,
+				foulsUntilBonus[2] - this.foulsLastTwoMinutes[this.d],
+			);
 		}
-		if (this.overtimes >= 1) {
-			return foulsUntilBonus[1] - this.foulsThisQuarter[this.d];
-		}
-		return foulsUntilBonus[0] - this.foulsThisQuarter[this.d];
+
+		// Not in last 2 minutes
+		return normal;
 	}
 
 	/**

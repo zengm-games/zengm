@@ -253,7 +253,8 @@ const PickStat = ({
 					});
 				}}
 			>
-				Random stat
+				<span className="d-none d-sm-inline">Random stat</span>
+				<span className="d-sm-none">Rand</span>
 			</button>
 		</div>
 	);

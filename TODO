@@ -1,5 +1,4 @@
 player graphs
-- test race condition on form change, if fetching data is slow
 - other sports
   - do stat types work?
   - how do position-specific stats look?

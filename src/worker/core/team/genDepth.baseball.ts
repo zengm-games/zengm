@@ -54,8 +54,11 @@ const findMaxBy = <T extends unknown>(
 
 	const addToOutput = (x: (typeof output)[number]) => {
 		for (let i = 0; i < count - 1; i++) {
-			if (output[i] === undefined || output[i].score < x.score) {
+			if (output[i] === undefined) {
 				output[i] = x;
+				return;
+			} else if (output[i].score < x.score) {
+				output.splice(i, 0, x);
 				return;
 			}
 		}

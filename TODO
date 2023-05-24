@@ -12,7 +12,6 @@ chart feature
   - PlayerNameLabels
   - click should make tooltip persistent
     - need a close button then
-- on backend, update x and y independently, for performance
 - getStatsTableByType seems weird
 - option to highlight players on a certain team
   - how to handle TOT?

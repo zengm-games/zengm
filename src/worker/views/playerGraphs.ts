@@ -148,65 +148,61 @@ const getPlayerStats = async (
 };
 
 const updatePlayers = async (
+	axis: "X" | "Y",
 	inputs: ViewInput<"playerGraphs">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
+	const season = `season${axis}` as const;
+	const statType = `statType${axis}` as const;
+	const playoffs = `playoffs${axis}` as const;
 	if (
-		(inputs.seasonX === g.get("season") &&
+		(inputs[season] === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		// Purposely skip checking statX, statY, minGames - those are only used client side, they in the URL for usability
-		inputs.seasonX !== state.seasonX ||
-		inputs.seasonY !== state.seasonY ||
-		inputs.statTypeX !== state.statTypeX ||
-		inputs.statTypeY !== state.statTypeY ||
-		inputs.playoffsX !== state.playoffsX ||
-		inputs.playoffsY !== state.playoffsY
+		inputs[season] !== state[season] ||
+		inputs[statType] !== state[statType] ||
+		inputs[playoffs] !== state[playoffs]
 	) {
-		const statForXAxis = await getPlayerStats(
-			inputs.statTypeX,
-			inputs.seasonX,
-			inputs.playoffsX,
-		);
-		const statForYAxis = await getPlayerStats(
-			inputs.statTypeY,
-			inputs.seasonY,
-			inputs.playoffsY,
+		const statForAxis = await getPlayerStats(
+			inputs[statType],
+			inputs[season],
+			inputs[playoffs],
 		);
 
-		const statX =
-			inputs.statX !== undefined && statForXAxis.stats.includes(inputs.statX)
+		const stat =
+			inputs.statX !== undefined && statForAxis.stats.includes(inputs.statX)
 				? inputs.statX
-				: random.choice(statForXAxis.stats);
-		const statY =
-			inputs.statY !== undefined && statForYAxis.stats.includes(inputs.statY)
-				? inputs.statY
-				: random.choice(statForYAxis.stats);
+				: random.choice(statForAxis.stats);
 
 		return {
-			seasonX: inputs.seasonX,
-			seasonY: inputs.seasonY,
-			statTypeX: statForXAxis.statType,
-			statTypeY: statForYAxis.statType,
-			playoffsX: inputs.playoffsX,
-			playoffsY: inputs.playoffsY,
-			playersX: statForXAxis.players,
-			playersY: statForYAxis.players,
-			statsX: statForXAxis.stats,
-			statsY: statForYAxis.stats,
-			statX,
-			statY,
+			[season]: inputs[season],
+			[statType]: statForAxis.statType,
+			[playoffs]: inputs[playoffs],
+			[`players${axis}`]: statForAxis.players,
+			[`stats${axis}`]: statForAxis.stats,
+			[`stat${axis}`]: stat,
 			minGames: inputs.minGames,
 		};
-	} else if (
+	}
+};
+
+const updateClientSide = (
+	inputs: ViewInput<"playerGraphs">,
+	state: any,
+	x: Awaited<ReturnType<typeof updatePlayers>>,
+	y: Awaited<ReturnType<typeof updatePlayers>>,
+) => {
+	if (
 		inputs.minGames !== state.minGames ||
 		inputs.statX !== state.statX ||
 		inputs.statY !== state.statY
 	) {
+		// Check x and y for statX and statY in case they were already specified there, such as randomly selecting from statForAxis
 		return {
-			statX: inputs.statX,
-			statY: inputs.statY,
+			statX: x?.statX ?? inputs.statX,
+			statY: y?.statY ?? inputs.statY,
 			minGames: inputs.minGames,
 		} as {
 			// We can assert this because we know the above block runs on first render, so this is just updating an existing state, so we don't want TypeScript to get confused
@@ -227,4 +223,13 @@ const updatePlayers = async (
 	}
 };
 
-export default updatePlayers;
+export default async (
+	inputs: ViewInput<"playerGraphs">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
+	const x = await updatePlayers("X", inputs, updateEvents, state);
+	const y = await updatePlayers("Y", inputs, updateEvents, state);
+
+	return Object.assign({}, x, y, updateClientSide(inputs, state, x, y));
+};

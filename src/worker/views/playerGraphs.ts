@@ -85,15 +85,16 @@ export const getStats = (statTypePlus: string) => {
 	return stats;
 };
 
-async function getPlayerStats(
-	statTypeInput: any,
+const getPlayerStats = async (
+	statTypeInput: string | undefined,
 	season: number,
-	playoffs: any,
-) {
+	playoffs: "playoffs" | "regularSeason",
+) => {
 	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
-	const statTypePlus = statTypes.includes(statTypeInput)
-		? statTypeInput
-		: random.choice(statTypes);
+	const statTypePlus =
+		statTypeInput !== undefined && statTypes.includes(statTypeInput)
+			? statTypeInput
+			: random.choice(statTypes);
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
@@ -144,7 +145,7 @@ async function getPlayerStats(
 	});
 	const stats = getStats(statTypePlus);
 	return { players, stats, statType: statTypePlus };
-}
+};
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerGraphs">,
@@ -213,8 +214,8 @@ const updatePlayers = async (
 			seasonY: number;
 			statTypeX: string;
 			statTypeY: string;
-			playoffsX: string;
-			playoffsY: string;
+			playoffsX: "playoffs" | "regularSeason";
+			playoffsY: "playoffs" | "regularSeason";
 			playersX: any[];
 			playersY: any[];
 			statsX: string[];

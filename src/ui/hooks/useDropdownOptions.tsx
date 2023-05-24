@@ -329,13 +329,6 @@ const useDropdownOptions = (
 				...(field === "statTypesAdv" ? ["advanced", "gameHighs"] : []),
 			],
 		});
-	} else if (field === "statTypesAdvNotCareer") {
-		keys = bySport({
-			baseball: ["batting", "pitching", "fielding", "advanced"],
-			basketball: ["perGame", "per36", "totals", "advanced"],
-			football: ["passing", "rushing", "defense", "kicking", "returns"],
-			hockey: ["skater", "goalie", "advanced", "gameHighs"],
-		});
 	} else if (field === "statTypesStrict") {
 		keys = bySport({
 			baseball: ["totals"],

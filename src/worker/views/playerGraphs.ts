@@ -179,11 +179,13 @@ const updatePlayers = async (
 			inputs[playoffs],
 		);
 
+		const statKey = `stat${axis}` as const;
+		const inputStat = inputs[statKey];
+
 		const stat =
-			inputs.statX !== undefined && statForAxis.stats.includes(inputs.statX)
-				? inputs.statX
+			inputStat !== undefined && statForAxis.stats.includes(inputStat)
+				? inputStat
 				: random.choice(statForAxis.stats);
-		console.log("updatePlayers", axis, statForAxis);
 
 		return {
 			[season]: inputs[season],
@@ -191,7 +193,7 @@ const updatePlayers = async (
 			[playoffs]: inputs[playoffs],
 			[`players${axis}`]: statForAxis.players,
 			[`stats${axis}`]: statForAxis.stats,
-			[`stat${axis}`]: stat,
+			[statKey]: stat,
 			minGames: inputs.minGames,
 		};
 	}

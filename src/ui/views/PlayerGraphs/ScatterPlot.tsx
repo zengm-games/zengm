@@ -211,18 +211,24 @@ const ScatterPlot = (
 						strokeWidth={4}
 					/>
 					{props.data.map((d, i) => {
-						return (
+						const circle = (
+							<Circle
+								key={i}
+								cx={xScale(x(d))}
+								cy={yScale(y(d))}
+								fillOpacity={0.8}
+								onMouseOver={event => handleMouseOver(event, d)}
+								onMouseOut={hideTooltip}
+								r={6}
+								fill={"var(--bs-blue)"}
+							/>
+						);
+
+						return window.mobile ? (
+							circle
+						) : (
 							<a key={i} href={helpers.leagueUrl(["player", d.p.pid])}>
-								<Circle
-									key={i}
-									cx={xScale(x(d))}
-									cy={yScale(y(d))}
-									fillOpacity={0.8}
-									onMouseOver={event => handleMouseOver(event, d)}
-									onMouseOut={hideTooltip}
-									r={5}
-									fill={"var(--bs-blue)"}
-								/>
+								{circle}
 							</a>
 						);
 					})}

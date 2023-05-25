@@ -216,7 +216,8 @@ const ScatterPlot = (
 							/>
 						);
 
-						return window.mobile ? (
+						// https://stackoverflow.com/a/4819886 so we detect tablets too, rather than using window.mobile just based on screen size
+						return "ontouchstart" in window ? (
 							circle
 						) : (
 							<a key={i} href={helpers.leagueUrl(["player", d.p.pid])}>

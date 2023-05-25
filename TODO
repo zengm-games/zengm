@@ -1,4 +1,5 @@
 player graphs
+- better detect touch devices like tablets
 - later
   - click to make tooltip persistent
   - in addition to x and y axis stats, let user pick one for size of the circles

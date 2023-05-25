@@ -14,6 +14,7 @@ import type {
 	PlayerStatType,
 } from "../../common/types";
 import { POS_NUMBERS } from "../../common/constants.baseball";
+import maxBy from "lodash-es/maxBy";
 
 export const statTypes = bySport({
 	baseball: [
@@ -149,12 +150,18 @@ const getPlayerStats = async (
 		playoffs: playoffs === "playoffs",
 		regularSeason: playoffs !== "playoffs",
 		mergeStats: "totOnly",
+		fuzz: true,
 	});
 
 	if (season === "career") {
 		for (const p of players) {
 			p.stats = p.careerStats;
 			delete p.careerStats;
+
+			// Show row from max ovr season
+			if (p.ratings) {
+				p.ratings = maxBy(p.ratings, row => row.ovr);
+			}
 		}
 	}
 
@@ -245,6 +252,7 @@ const updatePlayers = async (
 			inputStat !== undefined && statForAxis.stats.includes(inputStat)
 				? inputStat
 				: random.choice(statForAxis.stats);
+		console.log(statForAxis.players);
 
 		return {
 			[season]: inputs[season],

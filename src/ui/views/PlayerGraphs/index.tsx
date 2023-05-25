@@ -74,8 +74,7 @@ const GraphCreation = (props: GraphCreationProps) => {
 		data.push({
 			x: getStatFromPlayer(p, props.stat[0], props.statType[0]),
 			y: getStatFromPlayer(p2, props.stat[1], props.statType[1]),
-			name: p.name,
-			pid: p.pid,
+			p,
 		});
 	}
 

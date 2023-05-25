@@ -71,8 +71,9 @@ const processAttrs = (
 					p.draft.pick + (p.draft.round - 1) * g.get("numActiveTeams");
 			} else {
 				// Undrafted
-				output.draftPosition =
-					g.get("numDraftRounds") * g.get("numActiveTeams") + 1;
+				output.draftPosition = Math.round(
+					(0.5 + g.get("numDraftRounds")) * g.get("numActiveTeams"),
+				);
 			}
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {

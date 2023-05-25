@@ -132,7 +132,16 @@ const getPlayerStats = async (
 		attrs: [
 			"pid",
 			"name",
-			...(statTypePlus == "bio" ? ["age", "salary", "draftPosition"] : []),
+			...(statTypePlus == "bio"
+				? [
+						"age",
+						"salary",
+						"draftPosition",
+
+						// draft is needed to know who is undrafted, for the tooltip
+						"draft",
+				  ]
+				: []),
 		],
 		ratings: ratings,
 		stats: statsTable?.stats ?? ["gp"],

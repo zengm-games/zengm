@@ -11,8 +11,7 @@ import { helpers } from "../../util";
 export type TooltipData = {
 	x: number;
 	y: number;
-	pid: number;
-	name: string;
+	p: any;
 };
 
 type ScatterPlotProps = {
@@ -213,7 +212,7 @@ const ScatterPlot = (
 					/>
 					{props.data.map((d, i) => {
 						return (
-							<a key={i} href={helpers.leagueUrl(["player", d.pid])}>
+							<a key={i} href={helpers.leagueUrl(["player", d.p.pid])}>
 								<Circle
 									key={i}
 									cx={xScale(x(d))}
@@ -249,16 +248,26 @@ const ScatterPlot = (
 			</svg>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
-					<h3>{tooltipData.name}</h3>
+					<h3>{tooltipData.p.name}</h3>
 					{([0, 1] as const).map(i => {
+						const undraftedOverride =
+							props.statType[i] === "bio" &&
+							props.stat[i] === "draftPosition" &&
+							tooltipData.p.draft.round === 0;
 						return (
 							<div key={i}>
-								{getFormattedStat(
-									tooltipData[i === 0 ? "x" : "y"],
-									props.stat[i],
-									props.statType[i],
-								)}{" "}
-								{props.descShort[i]}
+								{undraftedOverride ? (
+									"Undrafted"
+								) : (
+									<>
+										{getFormattedStat(
+											tooltipData[i === 0 ? "x" : "y"],
+											props.stat[i],
+											props.statType[i],
+										)}{" "}
+										{props.descShort[i]}
+									</>
+								)}
 							</div>
 						);
 					})}

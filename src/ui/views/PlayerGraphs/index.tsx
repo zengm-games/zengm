@@ -187,11 +187,10 @@ const PickStat = ({
 				value={state.statType}
 				onChange={async event => {
 					const newStatType = event.target.value;
-					const { stat } = await toWorker(
-						"main",
-						"getPlayerGraphStat",
-						newStatType,
-					);
+					const { stat } = await toWorker("main", "getPlayerGraphStat", {
+						statType: newStatType,
+						stat: state.stat,
+					});
 					await updateUrl({
 						[`stat${xyCapital}`]: stat,
 						[`statType${xyCapital}`]: newStatType,
@@ -243,7 +242,7 @@ const PickStat = ({
 					const { stat, statType } = await toWorker(
 						"main",
 						"getPlayerGraphStat",
-						undefined,
+						{},
 					);
 
 					await updateUrl({

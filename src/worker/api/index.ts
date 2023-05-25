@@ -1565,12 +1565,16 @@ const getLeagues = () => {
 	return idb.meta.getAll("leagues");
 };
 
-const getPlayerGraphStat = (statTypeInput?: string) => {
-	const statType = statTypeInput ?? random.choice(statTypes);
+const getPlayerGraphStat = (prev: { statType?: string; stat?: string }) => {
+	const statType = prev.statType ?? random.choice(statTypes);
 	const stats = getStats(statType);
+	const stat =
+		prev.stat !== undefined && stats.includes(prev.stat)
+			? prev.stat
+			: random.choice(stats);
 	return {
 		statType,
-		stat: random.choice(stats),
+		stat,
 	};
 };
 

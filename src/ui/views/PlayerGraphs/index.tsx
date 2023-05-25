@@ -62,12 +62,12 @@ const GraphCreation = (props: GraphCreationProps) => {
 
 	const data: TooltipData[] = [];
 	for (const p of props.players[0]) {
-		if (p.stats.gp <= props.minGames) {
+		if (!p.stats || p.stats.gp <= props.minGames) {
 			continue;
 		}
 
 		const p2 = playersYByPid[p.pid];
-		if (!p2 || p2.stats.gp < props.minGames) {
+		if (!p2 || !p2.stats || p2.stats.gp < props.minGames) {
 			continue;
 		}
 

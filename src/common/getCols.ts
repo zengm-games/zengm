@@ -2806,12 +2806,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
-	amount: {
-		sortSequence: ["desc", "asc"],
-		sortType: "currency",
-		title: "Amount",
-		desc: "Amount perceived in contract",
-	},
 	"Asking For": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",

@@ -3,8 +3,6 @@ player graphs
   - do stat types work?
   - how do position-specific stats look?
 - getStatsTableByType seems weird
-- go over all PR changes, are they really needed?
-  - getCols new attrs
 - later
   - click to make tooltip persistent
   - in addition to x and y axis stats, let user pick one for size of the circles

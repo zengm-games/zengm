@@ -100,20 +100,12 @@ const ScatterPlot = (
 ) => {
 	const HEIGHT = 400;
 
-	const x = (d: any): number => {
-		return d.x;
-	};
+	const xVals = props.data.map(point => point.x);
+	const yVals = props.data.map(point => point.y);
 
-	const y = (d: any): number => d.y;
-	const xDomain = [
-		Math.min(...props.data.map(x)),
-		Math.max(...props.data.map(x)) * 1.05,
-	];
+	const xDomain = [Math.min(...xVals), Math.max(...xVals)];
 
-	const yDomain = [
-		Math.min(...props.data.map(y)),
-		Math.max(...props.data.map(y)) * 1.05,
-	];
+	const yDomain = [Math.min(...yVals), Math.max(...yVals)];
 
 	// tooltip handler
 	const {
@@ -214,8 +206,8 @@ const ScatterPlot = (
 						const circle = (
 							<Circle
 								key={i}
-								cx={xScale(x(d))}
-								cy={yScale(y(d))}
+								cx={xScale(d.x)}
+								cy={yScale(d.y)}
 								fillOpacity={0.8}
 								onMouseOver={event => handleMouseOver(event, d)}
 								onMouseOut={hideTooltip}

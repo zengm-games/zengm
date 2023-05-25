@@ -19,6 +19,11 @@ export const sumByPos = (array: (number | undefined)[] | undefined) => {
 };
 
 export const outsToInnings = (outs: number) => {
+	// Not sure why this is needed, but it happens sometimes
+	if (outs === undefined) {
+		return 0;
+	}
+
 	const completeInnings = Math.floor(outs / 3);
 	const fractionalInnings = outs % 3;
 	return completeInnings + fractionalInnings / 10;

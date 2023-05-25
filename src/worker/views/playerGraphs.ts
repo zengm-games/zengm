@@ -196,7 +196,6 @@ const getPlayerStats = async (
 			);
 		}
 	}
-	console.log(statTypePlus, statTypeInput, players);
 
 	if (statsTable?.onlyShowIf && !isSport("basketball")) {
 		// Ensure some non-zero stat for this position

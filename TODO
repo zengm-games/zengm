@@ -1,7 +1,8 @@
 player graphs
 - other sports
-  - do stat types work?
-  - how do position-specific stats look?
+  - broken baseball fielding stats
+    - Inn
+    - Fld%
 - getStatsTableByType seems weird
 - later
   - click to make tooltip persistent

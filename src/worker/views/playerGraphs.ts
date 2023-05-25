@@ -79,7 +79,8 @@ export const getStats = (statTypePlus: string) => {
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
 		}
-		stats = statsTable.stats;
+		// Remove pos for fielding stats
+		stats = statsTable.stats.filter(stat => stat !== "pos");
 	}
 
 	return stats;
@@ -128,6 +129,8 @@ const getPlayerStats = async (
 		);
 	}
 
+	const statKeys = statsTable?.stats ?? ["gp"];
+
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
@@ -144,7 +147,7 @@ const getPlayerStats = async (
 				: []),
 		],
 		ratings: ratings,
-		stats: statsTable?.stats ?? ["gp"],
+		stats: statKeys,
 		season: typeof season === "number" ? season : undefined,
 		tid: undefined,
 		statType,
@@ -159,6 +162,24 @@ const getPlayerStats = async (
 			delete p.careerStats;
 		}
 	}
+
+	// Sum up fielding stats, rather than by position
+	if (isSport("baseball") && statTypePlus === "fielding") {
+		for (const p of players) {
+			for (const stat of statKeys) {
+				if (Array.isArray(p.stats[stat])) {
+					let sum = 0;
+					for (const value of p.stats[stat]) {
+						if (value !== undefined) {
+							sum += value;
+						}
+					}
+					p.stats[stat] = sum;
+				}
+			}
+		}
+	}
+	console.log(statTypePlus, statTypeInput, players);
 
 	if (statsTable?.onlyShowIf && !isSport("basketball")) {
 		// Ensure some non-zero stat for this position

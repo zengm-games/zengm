@@ -128,7 +128,7 @@ const getPlayerStats = async (
 		);
 	}
 
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"name",
@@ -158,6 +158,25 @@ const getPlayerStats = async (
 			p.stats = p.careerStats;
 			delete p.careerStats;
 		}
+	}
+
+	if (statsTable?.onlyShowIf && !isSport("basketball")) {
+		// Ensure some non-zero stat for this position
+		const onlyShowIf = statsTable.onlyShowIf;
+
+		players = players.filter(p => {
+			for (const stat of onlyShowIf) {
+				// Array check is for byPos stats
+				if (
+					(typeof p.stats[stat] === "number" && p.stats[stat] > 0) ||
+					(Array.isArray(p.stats[stat]) && p.stats[stat].length > 0)
+				) {
+					return true;
+				}
+			}
+
+			return false;
+		});
 	}
 
 	const stats = getStats(statTypePlus);

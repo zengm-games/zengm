@@ -151,11 +151,11 @@ const TitleBar = () => {
 					type: "link",
 					league: true,
 					path: [
-						"player_bios",
+						"player_ratings",
 						`${moreInfoAbbrev}_${moreInfoTid}`,
 						moreInfoSeason,
 					],
-					text: "Player Bios",
+					text: "Player Ratings",
 				},
 				{
 					type: "link",
@@ -171,21 +171,21 @@ const TitleBar = () => {
 					type: "link",
 					league: true,
 					path: [
-						"player_graphs",
+						"player_bios",
 						`${moreInfoAbbrev}_${moreInfoTid}`,
 						moreInfoSeason,
 					],
-					text: "Player Graphs",
+					text: "Player Bios",
 				},
 				{
 					type: "link",
 					league: true,
 					path: [
-						"player_ratings",
+						"player_graphs",
 						`${moreInfoAbbrev}_${moreInfoTid}`,
 						moreInfoSeason,
 					],
-					text: "Player Ratings",
+					text: "Player Graphs",
 				},
 			],
 		});

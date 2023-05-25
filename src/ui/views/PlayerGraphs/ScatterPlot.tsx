@@ -251,7 +251,7 @@ const ScatterPlot = (
 						const undraftedOverride =
 							props.statType[i] === "bio" &&
 							props.stat[i] === "draftPosition" &&
-							tooltipData.p.draft?.round === 0;
+							tooltipData.p.draft.round === 0;
 						return (
 							<div key={i}>
 								{undraftedOverride ? (

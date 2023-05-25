@@ -1,8 +1,8 @@
 player graphs
+- axis range http://localhost/l/92/player_graphs/2023/batting/regularSeason/gp/2023/fielding/regularSeason/fldp/32g
 - other sports
   - broken baseball fielding stats
     - Inn
-    - Fld%
 - getStatsTableByType seems weird
 - later
   - click to make tooltip persistent

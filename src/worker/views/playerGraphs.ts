@@ -7,12 +7,13 @@ import {
 	RATINGS,
 } from "../../common";
 import { idb } from "../db";
-import { g, random } from "../util";
+import { g, helpers, random } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerStatType,
 } from "../../common/types";
+import { POS_NUMBERS } from "../../common/constants.baseball";
 
 export const statTypes = bySport({
 	baseball: [
@@ -163,9 +164,19 @@ const getPlayerStats = async (
 		}
 	}
 
-	// Sum up fielding stats, rather than by position
+	// HACKY! Sum up fielding stats, rather than by position
 	if (isSport("baseball") && statTypePlus === "fielding") {
 		for (const p of players) {
+			// Ignore DH games played, so that filtering on GP in the Player Graphs UI does something reasonable. Otherwise DHs with 0 fielding stats appear in all the fielding graphs.
+			const dhIndex = POS_NUMBERS.DH - 1;
+			p.stats.gp = 0;
+			for (let i = 0; i < p.stats.gpF.length; i++) {
+				if (i !== dhIndex && p.stats.gpF[i] !== undefined) {
+					p.stats.gp += p.stats.gpF[i];
+				}
+			}
+
+			// Sum up stats
 			for (const stat of statKeys) {
 				if (Array.isArray(p.stats[stat])) {
 					let sum = 0;
@@ -177,6 +188,12 @@ const getPlayerStats = async (
 					p.stats[stat] = sum;
 				}
 			}
+
+			// Fix Fld%
+			p.stats.fldp = helpers.ratio(
+				(p.stats.po ?? 0) + (p.stats.a ?? 0),
+				(p.stats.po ?? 0) + (p.stats.a ?? 0) + (p.stats.e ?? 0),
+			);
 		}
 	}
 	console.log(statTypePlus, statTypeInput, players);

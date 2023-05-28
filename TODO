@@ -1,9 +1,11 @@
 finances revamp
 - count, not $
-- exponential decline in effect
+- exponential increase in cost, average effect is at 5, cost at 5 is $25m in default BBGM
+  - or exponential decrease in effect? or linear?
 - 2 yr avg
   - show avg in ui
   - store cumsum and numgames for current and prev season
+- UI should show current effect and long term effect (after 3 years)
 - get rid of adjustForInflation
   - what about ticket prices? does this affect them? maybe always adjust ticket prices
 - on mobile, move settings to top of team finances page
@@ -16,6 +18,7 @@ finances revamp
 - autoBudgetSettings
   - call each year for AI teams
     - does it change over time?
+- show all levels on league finances table
 - upgrade
   - TeamSeason.expenses and revenues
     - import
@@ -25,6 +28,8 @@ finances revamp
     - existing league
 - blog
   - rank isn't fun, like ebay bidding
+  - level is clearer than some arbitrary $ amount that could change with inflation
+  - exponential cost makes maxing out a hard decision
 
 running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
 

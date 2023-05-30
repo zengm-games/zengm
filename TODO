@@ -31,12 +31,14 @@ finances revamp
   - level is clearer than some arbitrary $ amount that could change with inflation
   - exponential cost makes maxing out a hard decision
 
-running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
+FBGM game sim tweaks
+- running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
+- decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
+- increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
 
 team graphs
 
 player graphs
-- better detect touch devices like tablets
 - later
   - click to make tooltip persistent
   - in addition to x and y axis stats, let user pick one for size of the circles
@@ -138,10 +140,6 @@ live reloading with EventSource somehow
 rather than showing percentage for match, show actual $ amount https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/izf14l0/
 
 still too much overtime scoring https://discord.com/channels/290013534023057409/331882115119448065/1061049070753435799
-
-decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
-
-increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
 
 show previous salary on re-signing table https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/izjihq3/
 

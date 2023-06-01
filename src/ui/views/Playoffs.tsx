@@ -177,7 +177,7 @@ const Playoffs = ({
 						))}
 					</tbody>
 					<tfoot>
-						<tr className="text-center text-muted">
+						<tr className="text-center text-body-secondary">
 							{numGamesPlayoffSeriesReflected.map((numGames, i) => {
 								let text = null;
 								if (numGames !== undefined) {

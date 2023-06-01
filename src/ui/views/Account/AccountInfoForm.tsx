@@ -212,7 +212,7 @@ const AccountInfoForm = ({
 								{state.editUsername ? "Cancel" : "Edit"}
 							</button>
 						</div>
-						<span className="form-text text-muted">
+						<span className="form-text text-body-secondary">
 							{fields.username.description}
 						</span>
 						<span

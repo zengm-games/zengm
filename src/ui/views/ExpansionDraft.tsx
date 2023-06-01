@@ -368,7 +368,7 @@ const ExpansionDraft = ({
 					</div>
 				</div>
 				{disableNumProtectedPlayersChange ? (
-					<div className="form-text text-muted mt-2 mb-0">
+					<div className="form-text text-body-secondary mt-2 mb-0">
 						If you're taking control of a team, you can't change these settings
 						unless you enable{" "}
 						<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.

@@ -531,7 +531,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					onChange={handleChange.bind(null, "root", "imgURL")}
 					value={p.imgURL}
 				/>
-				<span className="text-muted">
+				<span className="text-body-secondary">
 					Your image must be hosted externally. If you need to upload an image,
 					try using{" "}
 					<a href="http://imgur.com/" rel="noopener noreferrer" target="_blank">

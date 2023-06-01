@@ -736,7 +736,7 @@ export const ScoreTable = ({
 											(roundResult as any).scores.length > 1 ? (
 												<>
 													{" "}
-													<span className="text-muted">
+													<span className="text-body-secondary">
 														({(roundResult as any).scores.join("+")})
 													</span>
 												</>

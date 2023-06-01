@@ -168,7 +168,7 @@ const Team = ({
 				"fw-bold": won,
 				"table-info": highlightUser,
 				"table-warning": won && extraHighlight && !highlightUser,
-				"text-muted": lost,
+				"text-body-secondary": lost,
 			})}
 		>
 			<TeamLogo team={team} lost={lost} />
@@ -193,7 +193,7 @@ const Team = ({
 				<div className="me-1 overflow-hidden">
 					<a
 						className={classNames({
-							"text-muted": lost,
+							"text-body-secondary": lost,
 						})}
 						href={helpers.leagueUrl([
 							"roster",
@@ -211,7 +211,7 @@ const Team = ({
 						)}
 					</a>
 					<br />
-					<span className="text-muted">
+					<span className="text-body-secondary">
 						{helpers.formatRecord(team.regularSeason)}
 					</span>
 				</div>

@@ -36,7 +36,7 @@ $sidebar-width: 150px;
 	cursor: pointer;
 	@extend .mt-3;
 	@extend .mb-1;
-	@extend .text-muted;
+	@extend .text-body-secondary;
 
 	&:hover {
 		text-decoration: none;

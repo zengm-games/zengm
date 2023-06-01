@@ -108,7 +108,7 @@ const Footer = memo(() => {
 						);
 					})}
 				</div>
-				<div className="text-muted">
+				<div className="text-body-secondary">
 					{GAME_ACRONYM} v{window.bbgmVersion}
 				</div>
 			</div>

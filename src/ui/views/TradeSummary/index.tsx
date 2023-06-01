@@ -115,7 +115,7 @@ const TradeSummary = ({
 												/>
 											</div>
 											<div>
-												<span className="text-muted">
+												<span className="text-body-secondary">
 													via <PickText asset={asset} season={season} />
 												</span>
 												<br />

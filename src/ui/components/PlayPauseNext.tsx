@@ -129,7 +129,9 @@ const PlayPauseNext = ({
 							>
 								{item.label}
 								{item.key ? (
-									<span className="text-muted kbd">Alt+{item.key}</span>
+									<span className="text-body-secondary kbd">
+										Alt+{item.key}
+									</span>
 								) : null}
 							</Dropdown.Item>
 						))}

@@ -95,7 +95,7 @@ export const HeadlineScore = ({
 		>
 			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
 				{t0.playoffs ? (
-					<span className="text-muted">{t0.playoffs.seed}. </span>
+					<span className="text-body-secondary">{t0.playoffs.seed}. </span>
 				) : null}
 				<TeamNameLink season={boxScore.season} t={t0}>
 					{t0.season !== undefined ? `${t0.season} ` : null}
@@ -104,7 +104,7 @@ export const HeadlineScore = ({
 				</TeamNameLink>{" "}
 				{t0.pts},{" "}
 				{t1.playoffs ? (
-					<span className="text-muted">{t1.playoffs.seed}. </span>
+					<span className="text-body-secondary">{t1.playoffs.seed}. </span>
 				) : null}
 				<TeamNameLink season={boxScore.season} t={t1}>
 					{t1.season !== undefined ? `${t1.season} ` : null}
@@ -533,7 +533,7 @@ const DetailedScore = ({
 										key={qtr}
 										className={
 											i < qtrs.length - (isSport("baseball") ? 3 : 1)
-												? "text-muted"
+												? "text-body-secondary"
 												: undefined
 										}
 									>

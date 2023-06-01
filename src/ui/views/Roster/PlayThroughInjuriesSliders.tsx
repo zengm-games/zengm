@@ -58,7 +58,9 @@ const Slider = ({
 				) : (
 					<>
 						{value} {timeBetweenGames(value)}{" "}
-						<span className="text-muted">({rounded}% performance)</span>
+						<span className="text-body-secondary">
+							({rounded}% performance)
+						</span>
 					</>
 				)}
 			</div>

@@ -144,7 +144,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						name="username"
 						{...fields.username.inputProps}
 					/>
-					<span className="form-text text-muted">
+					<span className="form-text text-body-secondary">
 						{fields.username.description}
 					</span>
 					<span

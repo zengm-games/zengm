@@ -425,7 +425,7 @@ const RenderOption = ({
 						}}
 					/>
 					{title}
-					<p className="text-muted">{desc}</p>
+					<p className="text-body-secondary">{desc}</p>
 				</label>
 			</div>
 			{children
@@ -712,7 +712,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							/>
 							Streaming download
 							{HAS_FILE_SYSTEM_ACCESS_API ? (
-								<p className="text-muted">
+								<p className="text-body-secondary">
 									Keep this enabled unless you're having trouble getting your
 									browser to download an export. If that happens to you, please{" "}
 									<a
@@ -725,7 +725,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 									, because ideally it should always work with this enabled.
 								</p>
 							) : (
-								<p className="text-muted">
+								<p className="text-body-secondary">
 									This works better for large leagues, but is not supported well
 									in your browser so it might fail.
 								</p>

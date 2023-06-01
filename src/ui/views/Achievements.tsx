@@ -33,7 +33,9 @@ const CompletionTable = ({ achievements }: View<"achievements">) => {
 	return (
 		<>
 			<h2 className="mt-4">Completion Status</h2>
-			<p className="text-muted text-small">(Ignoring the Meta achievements)</p>
+			<p className="text-body-secondary text-small">
+				(Ignoring the Meta achievements)
+			</p>
 			<table className="table table-nonfluid">
 				<tbody>
 					{levels.map(level => (
@@ -60,7 +62,7 @@ const achievementClassNames = (
 	} & {
 		total: number;
 	},
-	difficultyRequired?: typeof DIFFICULTIES[number],
+	difficultyRequired?: (typeof DIFFICULTIES)[number],
 ) => {
 	return {
 		"list-group-item-light":

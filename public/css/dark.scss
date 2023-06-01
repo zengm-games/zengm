@@ -29,7 +29,7 @@ $cyan: lighten(#17a2b8, 20);
 
 $primary: $orange;
 $secondary: $gray-300;
-$text-muted: $gray-400;
+$body-secondary-color: $gray-400; // Previously was $text-muted before Bootstrap 5.3
 $input-placeholder-color: $gray-400;
 
 $table-bg-scale: 70%;

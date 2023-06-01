@@ -337,7 +337,7 @@ const ScoringSummary = memo(
 							prevQuarter = event.quarter;
 							quarterHeader = (
 								<tr>
-									<td className="text-muted" colSpan={5}>
+									<td className="text-body-secondary" colSpan={5}>
 										{quarterText}
 									</td>
 								</tr>
@@ -354,12 +354,16 @@ const ScoringSummary = memo(
 										{event.t === 0 ? (
 											<>
 												<b>{event.score[0]}</b>-
-												<span className="text-muted">{event.score[1]}</span>
+												<span className="text-body-secondary">
+													{event.score[1]}
+												</span>
 											</>
 										) : (
 											<>
-												<span className="text-muted">{event.score[0]}</span>-
-												<b>{event.score[1]}</b>
+												<span className="text-body-secondary">
+													{event.score[0]}
+												</span>
+												-<b>{event.score[1]}</b>
 											</>
 										)}
 									</td>

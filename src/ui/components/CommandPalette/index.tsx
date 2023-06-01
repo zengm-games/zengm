@@ -81,7 +81,7 @@ const MODES: { key: "@" | "/" | "!"; description: string }[] = [
 		description: "leagues",
 	},
 ];
-type Mode = typeof MODES[number];
+type Mode = (typeof MODES)[number];
 
 // Tiebreaker - original sort order, rather than alphabetical (default)
 const baseSort = () => 0;
@@ -808,7 +808,7 @@ const ComandPalette = ({
 
 			<Modal.Body className="py-2 px-0">
 				{searchText === "" && !mode ? (
-					<p className="text-muted px-3 pb-2 mb-2 border-bottom">
+					<p className="text-body-secondary px-3 pb-2 mb-2 border-bottom">
 						<ModeText inLeague={inLeague} />
 					</p>
 				) : null}

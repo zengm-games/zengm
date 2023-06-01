@@ -587,7 +587,7 @@ const Division = ({
 					<li key={t.tid} className="list-group-item d-flex px-2">
 						<div className="me-auto">
 							{t.season !== undefined ? (
-								<span className="text-muted">{t.season} </span>
+								<span className="text-body-secondary">{t.season} </span>
 							) : null}
 							{t.region} {t.name}{" "}
 							<span

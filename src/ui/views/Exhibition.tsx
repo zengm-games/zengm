@@ -75,7 +75,7 @@ const playerRowClassName = (i: number) => {
 
 export type ExhibitionGameAttributes = Pick<
 	GameAttributesLeague,
-	typeof EXHIBITION_GAME_SETTINGS[number]
+	(typeof EXHIBITION_GAME_SETTINGS)[number]
 >;
 
 const getGameAttributes = (gameAttributes?: Partial<GameAttributesLeague>) => {
@@ -411,9 +411,9 @@ const SelectTeam = ({
 								disableNameLink
 								season={season}
 							/>{" "}
-							<span className="text-muted">-</span> {ratings.pos}{" "}
-							<span className="text-muted">-</span> {ratings.ovr} ovr
-							<div className="exhibition-stats text-muted">
+							<span className="text-body-secondary">-</span> {ratings.pos}{" "}
+							<span className="text-body-secondary">-</span> {ratings.ovr} ovr
+							<div className="exhibition-stats text-body-secondary">
 								<PlayerStatsSummary stats={stats} />
 							</div>
 						</li>

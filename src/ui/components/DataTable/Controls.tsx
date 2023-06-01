@@ -133,7 +133,7 @@ const Controls = ({
 					}}
 					title="Actions"
 				>
-					<span className="glyphicon glyphicon-option-vertical text-muted" />
+					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
 					<Dropdown.Item onClick={onSelectColumns}>

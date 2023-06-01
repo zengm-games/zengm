@@ -66,7 +66,7 @@ const SeasonIcons = ({
 				classNameIcon = "glyphicon glyphicon-star text-yellow";
 			} else if (countAllStar > 0) {
 				title = "All-Star";
-				classNameIcon = "glyphicon glyphicon-star text-muted";
+				classNameIcon = "glyphicon glyphicon-star text-body-secondary";
 			}
 		}
 	} else {
@@ -90,7 +90,7 @@ const SeasonIcons = ({
 				if (countMVP > 0) {
 					classNameIcon = "glyphicon glyphicon-star text-yellow";
 				} else {
-					classNameIcon = "glyphicon glyphicon-star text-muted";
+					classNameIcon = "glyphicon glyphicon-star text-body-secondary";
 				}
 			}
 		}

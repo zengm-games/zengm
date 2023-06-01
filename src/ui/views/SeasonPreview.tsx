@@ -164,7 +164,7 @@ const TeamList = ({
 						</div>
 					) : null}
 					{t.players.map(p => (
-						<div key={p.pid} className="text-muted mt-2">
+						<div key={p.pid} className="text-body-secondary mt-2">
 							<PlayerNameLabels
 								pid={p.pid}
 								season={season}

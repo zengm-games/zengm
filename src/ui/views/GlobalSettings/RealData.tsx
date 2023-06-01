@@ -36,7 +36,7 @@ const RealData = ({
 						value={realTeamInfo}
 						rows={10}
 					/>
-					<div className="text-muted mt-1">
+					<div className="text-body-secondary mt-1">
 						These settings will be applied for each new season in all of your
 						"Real Players" and "Legends" leagues, including existing leagues.
 					</div>
@@ -52,7 +52,7 @@ const RealData = ({
 						value={realPlayerPhotos}
 						rows={10}
 					/>
-					<div className="text-muted mt-1">
+					<div className="text-body-secondary mt-1">
 						These photos will be used in any new "Real Players" or "Legends"
 						league you create. Existing leagues will not be affected.
 					</div>

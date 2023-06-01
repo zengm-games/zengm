@@ -485,7 +485,7 @@ const highlightZeroNegative = (amount: number) => {
 	const formattedValue = helpers.formatCurrency(amount, "M");
 
 	if (amount === 0) {
-		return { classNames: "text-muted", value: formattedValue };
+		return { classNames: "text-body-secondary", value: formattedValue };
 	}
 	if (amount < 0) {
 		return { classNames: "text-danger", value: formattedValue };

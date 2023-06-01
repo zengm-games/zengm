@@ -282,7 +282,7 @@ const ScoringSummary = ({
 						prevT = event.t;
 						quarterHeader = (
 							<tr>
-								<td className="text-muted" colSpan={4}>
+								<td className="text-body-secondary" colSpan={4}>
 									{event.t === 0 ? "Top" : "Bottom"}{" "}
 									{helpers.ordinal(event.inning)}
 								</td>
@@ -299,12 +299,16 @@ const ScoringSummary = ({
 									{event.t === 0 ? (
 										<>
 											<b>{event.score[0]}</b>-
-											<span className="text-muted">{event.score[1]}</span>
+											<span className="text-body-secondary">
+												{event.score[1]}
+											</span>
 										</>
 									) : (
 										<>
-											<span className="text-muted">{event.score[0]}</span>-
-											<b>{event.score[1]}</b>
+											<span className="text-body-secondary">
+												{event.score[0]}
+											</span>
+											-<b>{event.score[1]}</b>
 										</>
 									)}
 								</td>
@@ -367,7 +371,7 @@ const BatterAndPitcher = ({
 						/>
 					) : null}
 					<br />
-					<span className="text-muted">{pitcherStats(pitcher)}</span>
+					<span className="text-body-secondary">{pitcherStats(pitcher)}</span>
 				</div>
 			</div>
 			<div className="col-6">
@@ -384,7 +388,7 @@ const BatterAndPitcher = ({
 						/>
 					) : null}
 					<br />
-					<span className="text-muted">{batterStats(batter)}</span>
+					<span className="text-body-secondary">{batterStats(batter)}</span>
 				</div>
 			</div>
 		</div>

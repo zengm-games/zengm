@@ -151,7 +151,7 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 
 	return (
 		<span
-			className="glyphicon glyphicon-star-empty p-1 text-muted"
+			className="glyphicon glyphicon-star-empty p-1 text-body-secondary"
 			data-no-row-highlight="true"
 			onClick={toggle}
 			style={glyphiconStyle}
@@ -303,7 +303,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						title="Actions"
 					>
 						<span
-							className="glyphicon glyphicon-option-vertical text-muted p-2"
+							className="glyphicon glyphicon-option-vertical text-body-secondary p-2"
 							data-no-row-highlight="true"
 						/>
 					</Dropdown.Toggle>

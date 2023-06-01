@@ -24,7 +24,9 @@ const Item = SortableElement(
 				title = "No Title";
 			}
 		} else {
-			title = <span className="text-muted">Not Currently Available</span>;
+			title = (
+				<span className="text-body-secondary">Not Currently Available</span>
+			);
 		}
 
 		return (

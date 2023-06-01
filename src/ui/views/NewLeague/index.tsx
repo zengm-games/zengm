@@ -1181,7 +1181,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												{invalidSeasonPhaseMessage}
 											</div>
 										) : (
-											<div className="text-muted mt-1">
+											<div className="text-body-secondary mt-1">
 												{state.season} in BBGM is the {state.season - 1}-
 												{String(state.season).slice(2)} season.
 											</div>
@@ -1284,13 +1284,13 @@ const NewLeague = (props: View<"newLeague">) => {
 								</div>
 								{!state.settings.equalizeRegions ? (
 									<PopText
-										className="text-muted"
+										className="text-body-secondary"
 										tid={state.tid}
 										teams={displayedTeams}
 										numActiveTeams={displayedTeams.length}
 									/>
 								) : (
-									<span className="text-muted">Population: equal</span>
+									<span className="text-body-secondary">Population: equal</span>
 								)}
 							</div>
 
@@ -1320,7 +1320,9 @@ const NewLeague = (props: View<"newLeague">) => {
 										</option>
 									) : null}
 								</select>
-								<span className="text-muted">{descriptions.difficulty}</span>
+								<span className="text-body-secondary">
+									{descriptions.difficulty}
+								</span>
 							</div>
 
 							<div className="text-center mt-3">

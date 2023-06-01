@@ -157,7 +157,7 @@ const RetiredJerseyNumbers = ({
 								value={editing.seasonTeamInfo}
 								onChange={handleChange("seasonTeamInfo")}
 							/>
-							<span className="form-text text-muted">
+							<span className="form-text text-body-secondary">
 								This is used to determine the team region, name, and colors used
 								to show the retired jersey.
 							</span>

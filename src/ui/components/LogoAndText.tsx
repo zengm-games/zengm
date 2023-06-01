@@ -11,8 +11,8 @@ const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
 		<a
 			className={
 				inLeague
-					? "navbar-brand text-muted d-none d-md-inline ms-md-2 ms-lg-0"
-					: "navbar-brand text-muted"
+					? "navbar-brand text-body-secondary d-none d-md-inline ms-md-2 ms-lg-0"
+					: "navbar-brand text-body-secondary"
 			}
 			href="/"
 		>

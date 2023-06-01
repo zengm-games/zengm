@@ -207,7 +207,7 @@ const StatsTable = ({
 				hideAllControls
 				name={`Player:${name}`}
 				rows={playerStats.map((ps, i) => {
-					const className = ps.hasTot ? "text-muted" : undefined;
+					const className = ps.hasTot ? "text-body-secondary" : undefined;
 
 					return {
 						key: i,

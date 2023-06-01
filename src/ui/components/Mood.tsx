@@ -63,7 +63,7 @@ const highlightColor = (sum: number) =>
 	classNames({
 		"text-danger": sum < 0,
 		"text-success": sum > 0,
-		"text-muted": sum === 0,
+		"text-body-secondary": sum === 0,
 	});
 
 const plusMinus = (sum: number) => `${sum > 0 ? "+" : ""}${sum}`;
@@ -280,7 +280,10 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 					{initialMood.traits.join(" ")}
 				</div>
 				{showProbWilling ? (
-					<span className="text-muted ms-1" data-no-row-highlight="true">
+					<span
+						className="text-body-secondary ms-1"
+						data-no-row-highlight="true"
+					>
 						{roundedProbWilling}%
 					</span>
 				) : null}

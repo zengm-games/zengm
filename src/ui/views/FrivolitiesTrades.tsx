@@ -171,7 +171,10 @@ const FrivolitiesTrades = ({
 												challengeNoRatings={challengeNoRatings}
 											/>
 											<br />
-											<span className="text-muted" style={{ paddingLeft: 24 }}>
+											<span
+												className="text-body-secondary"
+												style={{ paddingLeft: 24 }}
+											>
 												via <PickText asset={asset} season={trade.season} />
 											</span>
 										</li>

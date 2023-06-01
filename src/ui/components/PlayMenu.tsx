@@ -99,7 +99,7 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 						>
 							{option.label}
 							{option.key ? (
-								<span className="text-muted kbd">
+								<span className="text-body-secondary kbd">
 									Alt+{option.key.toUpperCase()}
 								</span>
 							) : null}

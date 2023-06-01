@@ -293,7 +293,7 @@ const Option = ({
 				) : null}
 			</div>
 			{description && !showDescriptionLong ? (
-				<div className="text-muted settings-description mt-1">
+				<div className="text-body-secondary settings-description mt-1">
 					{description}
 				</div>
 			) : null}
@@ -311,7 +311,7 @@ const Option = ({
 							duration: 0.3,
 							type: "tween",
 						}}
-						className="text-muted settings-description mt-1"
+						className="text-body-secondary settings-description mt-1"
 					>
 						{descriptionLong}
 					</m.div>

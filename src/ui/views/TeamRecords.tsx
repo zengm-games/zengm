@@ -158,7 +158,7 @@ const TeamRecords = ({
 					...categories.map(category => (t as any)[category]),
 				],
 				classNames: {
-					"text-muted": !t.root,
+					"text-body-secondary": !t.root,
 					"table-info": byType === "by_team" && t.root && t.tid === userTid,
 				},
 			};

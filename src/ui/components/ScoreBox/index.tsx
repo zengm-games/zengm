@@ -398,7 +398,7 @@ const ScoreBox = memo(
 												{teamName}
 											</a>
 											{!small ? (
-												<div className="text-muted text-truncate">
+												<div className="text-body-secondary text-truncate">
 													{getRecord(t)}
 													{hasOvrs ? (
 														<>
@@ -471,7 +471,7 @@ const ScoreBox = memo(
 									</div>
 									{p ? (
 										<div
-											className="align-self-stretch border-start ps-2 flex-grow-1 text-muted d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
+											className="align-self-stretch border-start ps-2 flex-grow-1 text-body-secondary d-none d-sm-flex align-items-center overflow-hidden text-nowrap"
 											style={{
 												backgroundColor: "var(--bs-white)",
 												width: 200,
@@ -498,7 +498,7 @@ const ScoreBox = memo(
 				</div>
 				{small && overtimes ? (
 					<div
-						className="text-end text-muted px-1 d-flex align-items-center"
+						className="text-end text-body-secondary px-1 d-flex align-items-center"
 						style={{ height: 28 }}
 					>
 						{overtimes}
@@ -541,7 +541,7 @@ const ScoreBox = memo(
 						</div>
 					</div>
 					{!small && overtimes ? (
-						<div className="text-muted p-1">{overtimes}</div>
+						<div className="text-body-secondary p-1">{overtimes}</div>
 					) : null}
 				</div>
 			);

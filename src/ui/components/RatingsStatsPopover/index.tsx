@@ -129,7 +129,7 @@ const RatingsStatsPopover = ({
 		nameBlock = (
 			<div className="d-flex">
 				{jerseyNumber ? (
-					<div className="text-muted jersey-number-popover align-self-end me-1">
+					<div className="text-body-secondary jersey-number-popover align-self-end me-1">
 						{jerseyNumber}
 					</div>
 				) : null}

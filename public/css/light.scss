@@ -1675,7 +1675,7 @@ table.sticky-xxx {
 	transform: rotate(45deg);
 }
 
-// Without this, text-muted doesn't apply to striped rows. That's used for hasTot
+// Without this, text-body-secondary doesn't apply to striped rows. That's used for hasTot
 .table-striped > tbody > tr:nth-of-type(odd) > * {
 	color: inherit;
 }

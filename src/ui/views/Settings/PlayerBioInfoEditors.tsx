@@ -382,7 +382,7 @@ export const CollegesEditor = ({
 									: "Value must be blank (default) or between 0 and 1."}
 							</span>
 						) : (
-							<span className="form-text text-muted">
+							<span className="form-text text-body-secondary">
 								{defaults
 									? "By default, USA and Canada have their own default fraction that override this value."
 									: `Leave blank to use the current default value (${defaultFractionSkipCollege}).`}
@@ -794,7 +794,7 @@ export const FlagEditor = ({
 								setFlagEdited(event.target.value);
 							}}
 						/>
-						<span className="form-text text-muted">
+						<span className="form-text text-body-secondary">
 							Enter the URL to an image of a flag. Leave blank to use the
 							default built-in flag for this country.
 						</span>

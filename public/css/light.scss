@@ -88,6 +88,7 @@ $flag-icon-css-path: "/img/flags";
 // Taken from bootstrap.scss, but with unused things deleted. PurgeCSS would do the same thing from just importing the main bootstrap.scss file, but it has some false positives (such as offcanvas placeholder).
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/variables-dark";
 @import "node_modules/bootstrap/scss/maps";
 @import "node_modules/bootstrap/scss/mixins";
 @import "node_modules/bootstrap/scss/utilities";

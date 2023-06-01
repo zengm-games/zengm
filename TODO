@@ -1,3 +1,6 @@
+bootstrap 5.3
+- text-muted no more? https://blog.getbootstrap.com/2023/05/30/bootstrap-5-3-0/
+
 finances revamp
 - count, not $
 - exponential increase in cost, average effect is at 5, cost at 5 is $25m in default BBGM

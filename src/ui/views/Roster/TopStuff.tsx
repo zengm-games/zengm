@@ -22,8 +22,7 @@ const TeamRating = ({
 	const [showCurrent, setShowCurrent] = useState(true);
 
 	if (ovr === ovrCurrent) {
-		// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-		return <>{`${ovr}/100`}</>;
+		return `${ovr}/100`;
 	}
 
 	const title = showCurrent

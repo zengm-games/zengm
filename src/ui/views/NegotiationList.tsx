@@ -54,8 +54,6 @@ const NegotiationList = ({
 
 	const rows = players.map(p => {
 		const negotiateButtons = (
-			// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-			// @ts-expect-error
 			<NegotiateButtons
 				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}
 				capSpace={capSpace}

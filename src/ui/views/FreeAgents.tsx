@@ -119,8 +119,6 @@ const FreeAgents = ({
 				wrappedContractExp(p),
 				{
 					value: (
-						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-expect-error
 						<NegotiateButtons
 							canGoOverCap={salaryCapType === "none"}
 							capSpace={capSpace}

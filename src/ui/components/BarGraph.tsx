@@ -74,7 +74,6 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 			// If stacked, add up all the components
 			let value = 0;
 			for (const key of y) {
-				// @ts-expect-error
 				value += row[key];
 			}
 			return value;

@@ -152,8 +152,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					searchValue: rowResultText,
 					sortValue: rowResultText,
 					value: (
-						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-						// @ts-expect-error
 						<ResultText
 							gid={row.gid}
 							overtimes={row.overtimes}

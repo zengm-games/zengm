@@ -16,8 +16,7 @@ const Winner = ({
 	userTid: number;
 }) => {
 	if (!award) {
-		// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-		return finals ? <>???</> : <p>???</p>;
+		return finals ? "???" : <p>???</p>;
 	}
 
 	const stats = defense ? ["trb", "blk", "stl"] : ["pts", "trb", "ast"];

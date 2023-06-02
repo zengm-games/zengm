@@ -1,5 +1,10 @@
 bootstrap 5.3
-- text-body-secondary no more? https://blog.getbootstrap.com/2023/05/30/bootstrap-5-3-0/
+- sort arrows in table headers
+- deprecated:
+  - $list-group-item-bg-scale
+
+bootstrap real dark mode
+- table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants
 
 finances revamp
 - count, not $

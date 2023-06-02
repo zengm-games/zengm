@@ -1,7 +1,5 @@
 bootstrap 5.3
 - sort arrows in table headers
-- deprecated:
-  - $list-group-item-bg-scale
 
 bootstrap real dark mode
 - table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants

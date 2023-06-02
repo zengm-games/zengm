@@ -35,7 +35,7 @@ $input-placeholder-color: $gray-400;
 $table-bg-scale: 70%;
 $table-hover-bg-factor: 0.1;
 
-$list-group-item-bg-scale: 70%;
+$border-color: $gray-200;
 
 // Otherwise, it complains about contrast for buttons
 $min-contrast-ratio: 3;
@@ -66,6 +66,48 @@ $alert-border-scale: 60%;
 		--#{$prefix}alert-border-color: #{$alert-border};
 		--#{$prefix}alert-link-color: #{$alert-color};
 	}
+}
+$list-group-item-bg-scale: 70%;
+@mixin list-group-item-variant($state, $background, $color) {
+	.list-group-item-#{$state} {
+		color: $color !important;
+		background-color: $background !important;
+		border: var(--bs-border-width) solid var(--bs-border-color) !important;
+
+		&.list-group-item-action {
+			&:hover,
+			&:focus {
+				color: $color !important;
+				background-color: shade-color($background, 10%) !important;
+			}
+
+			&.active {
+				color: $white !important;
+				background-color: $color !important;
+				border-color: $color !important;
+			}
+		}
+	}
+}
+@each $state, $value in $theme-colors {
+	$list-group-variant-bg: shift-color($value, $list-group-item-bg-scale);
+	$list-group-variant-color: shift-color($value, $list-group-item-color-scale);
+	@if (
+		contrast-ratio($list-group-variant-bg, $list-group-variant-color) <
+			$min-contrast-ratio
+	) {
+		$list-group-variant-color: mix(
+			$value,
+			color-contrast($list-group-variant-bg),
+			abs($list-group-item-color-scale)
+		);
+	}
+
+	@include list-group-item-variant(
+		$state,
+		$list-group-variant-bg,
+		$list-group-variant-color
+	);
 }
 
 .btn {

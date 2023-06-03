@@ -168,6 +168,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 
 const calcBaseChange = (age: number, coachingRank: number): number => {
 	let val: number;
+	let variance: number;
 
 	if (age <= 21) {
 		val = 2;
@@ -189,24 +190,24 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 		val = -6;
 	}
 
-	// Noise
+	// Age based variance
 	if (age <= 23) {
 		val += helpers.bound(random.realGauss(0, 5), -4, 20);
+		variance = 20;
 	} else if (age <= 25) {
 		val += helpers.bound(random.realGauss(0, 5), -4, 10);
+		variance = 12;
 	} else {
 		val += helpers.bound(random.realGauss(0, 3), -2, 4);
+		variance = 8;
 	}
 
 	// Modulate by coaching. g.get("numActiveTeams") doesn't exist when upgrading DB, but that doesn't matter
 	if (Object.hasOwn(g, "numActiveTeams")) {
 		const numActiveTeams = g.get("numActiveTeams");
 		if (numActiveTeams > 1) {
-			if (val >= 0) {
-				val *= ((coachingRank - 1) * -0.5) / (numActiveTeams - 1) + 1.25;
-			} else {
-				val *= ((coachingRank - 1) * 0.5) / (numActiveTeams - 1) + 0.75;
-			}
+			// Vary base change by up to 25% of variance
+			val += (((coachingRank - 1) * -0.5) / (numActiveTeams - 1) + 0.25) * variance;
 		}
 	}
 

@@ -1,3 +1,5 @@
+when negotiating with re-sign players, don't remove from list when you press cancel https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jiffpkf/
+
 bootstrap real dark mode
 - table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants
 
@@ -40,6 +42,12 @@ FBGM game sim tweaks
 - increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
 
 team graphs
+
+game of the year
+- something based on margin of victory, overtimes, how good the teams are, how the best players performed
+- add ability to save important box scores
+  - performance of deleting box scores each year?
+- https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jj0zlpi/
 
 player graphs
 - later
@@ -488,6 +496,13 @@ new achievements
 - lose series after being up 3-1 or 3-0
 - brick wall 2 https://twitter.com/IcarusGant/status/1632834755241684997
 - win title X years after sisyphus mode
+- https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/
+  - Expansion to Champion 3: win the title in the first year of an expansion team
+  - No Loyalty: Win a championship with no players having spent 5 years on your team
+  - No Loyalty 2: Win a championship with no players having spent 3 years on your team
+  - No Loyalty 3: Win a championship with no players having played for your team before
+  - Ascendance: Win the championship after missing the playoffs
+  - Ascendance 2: Win the championship after being the worst team in the league
 
 hockey ovr revamp
 - ovrs for skater and goalie. determine skater positions like BBGM, including possibility of hybrid positions like F. cause there's really a fair amount of overlap in what players do

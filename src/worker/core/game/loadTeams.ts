@@ -16,6 +16,7 @@ import {
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
 import { P_FATIGUE_DAILY_REDUCTION } from "./writePlayerStats";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
@@ -36,6 +37,7 @@ export const processTeam = (
 		depth?: any;
 	},
 	teamSeason: {
+		gp: number;
 		won: number;
 		lost: number;
 		tied: number;
@@ -44,7 +46,7 @@ export const processTeam = (
 		did: number;
 		expenses: {
 			health: {
-				rank: number;
+				level: number;
 			};
 		};
 	},
@@ -122,7 +124,7 @@ export const processTeam = (
 			def: 0,
 			reb: 0,
 		},
-		healthRank: finances.getRankLastThree([teamSeason], "expenses", "health"),
+		healthRank: finances.getLevelLastThree([teamSeason], "health"),
 		compositeRating,
 		depth: teamInput.depth,
 	};
@@ -375,6 +377,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					depth,
 				},
 				{
+					gp: 0,
 					cid: -1,
 					did: -1,
 					won: 0,
@@ -383,7 +386,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					otl: 0,
 					expenses: {
 						health: {
-							rank: 1,
+							level: DEFAULT_LEVEL,
 						},
 					},
 				},

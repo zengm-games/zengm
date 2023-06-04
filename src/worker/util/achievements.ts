@@ -72,8 +72,8 @@ const checkMoneyball = async (maxPayroll: number) => {
 			t &&
 			t.seasonAttrs.playoffRoundsWon ===
 				g.get("numGamesPlayoffSeries", "current").length &&
-			t.seasonAttrs.expenses.salary.amount <= maxPayroll &&
-			t.seasonAttrs.expenses.salary.amount > 0
+			t.seasonAttrs.expenses.salary <= maxPayroll &&
+			t.seasonAttrs.expenses.salary > 0
 		) // To handle leagues started at the beginning of the playoffs
 	);
 };

@@ -736,64 +736,36 @@ const processTeamInfos = ({
 					teamSeason.revenues === undefined ||
 					teamSeason.expenses === undefined
 				) {
-					const defaultRank = (teams.filter(t => !t.disabled).length + 1) / 2;
 					if (teamSeason.revenues === undefined) {
 						teamSeason.revenues = {
-							luxuryTaxShare: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							merch: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							sponsor: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							ticket: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							nationalTv: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							localTv: {
-								amount: 0,
-								rank: defaultRank,
-							},
+							luxuryTaxShare: 0,
+							merch: 0,
+							sponsor: 0,
+							ticket: 0,
+							nationalTv: 0,
+							localTv: 0,
 						};
 					}
 					if (teamSeason.expenses === undefined) {
 						teamSeason.expenses = {
-							salary: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							luxuryTax: {
-								amount: 0,
-								rank: defaultRank,
-							},
-							minTax: {
-								amount: 0,
-								rank: defaultRank,
-							},
+							salary: 0,
+							luxuryTax: 0,
+							minTax: 0,
 							scouting: {
 								amount: 0,
-								rank: defaultRank,
+								level: 0,
 							},
 							coaching: {
 								amount: 0,
-								rank: defaultRank,
+								level: 0,
 							},
 							health: {
 								amount: 0,
-								rank: defaultRank,
+								level: 0,
 							},
 							facilities: {
 								amount: 0,
-								rank: defaultRank,
+								level: 0,
 							},
 						};
 					}
@@ -846,11 +818,7 @@ const processTeamInfos = ({
 
 		// Save scoutingRank for later
 		if (i === userTid) {
-			scoutingRank = finances.getRankLastThree(
-				teamSeasonsLocal,
-				"expenses",
-				"scouting",
-			);
+			scoutingRank = finances.getLevelLastThree(teamSeasonsLocal, "scouting");
 		}
 	}
 
@@ -1454,7 +1422,7 @@ const afterDBStream = async ({
 		const teams = await idb.cache.teams.getAll();
 		for (const t of teams) {
 			if (!t.disabled && t.autoTicketPrice !== false) {
-				t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(t.tid);
+				t.budget.ticketPrice = await getAutoTicketPriceByTid(t.tid);
 			}
 		}
 	}

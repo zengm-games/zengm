@@ -221,7 +221,7 @@ describe("worker/util/account/checkAchievement", () => {
 				[g.get("userTid"), g.get("season")],
 			)) as TeamSeason;
 			teamSeason.playoffRoundsWon = 4;
-			teamSeason.expenses.salary.amount = defaultGameAttributes.salaryCap / 2;
+			teamSeason.expenses.salary = defaultGameAttributes.salaryCap / 2;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
@@ -252,8 +252,7 @@ describe("worker/util/account/checkAchievement", () => {
 				[g.get("userTid"), g.get("season")],
 			)) as TeamSeason;
 			teamSeason.playoffRoundsWon = 4;
-			teamSeason.expenses.salary.amount =
-				0.66 * defaultGameAttributes.salaryCap;
+			teamSeason.expenses.salary = 0.66 * defaultGameAttributes.salaryCap;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
@@ -269,8 +268,7 @@ describe("worker/util/account/checkAchievement", () => {
 				[g.get("userTid"), g.get("season")],
 			)) as TeamSeason;
 			teamSeason.playoffRoundsWon = 4;
-			teamSeason.expenses.salary.amount =
-				0.67 * defaultGameAttributes.salaryCap;
+			teamSeason.expenses.salary = 0.67 * defaultGameAttributes.salaryCap;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();

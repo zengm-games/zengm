@@ -118,9 +118,8 @@ const moodComponents = async (
 
 	{
 		// FACILITIES: -2 to 2, based on facilities expenses rank
-		const facilitiesRank = finances.getRankLastThree(
+		const facilitiesRank = finances.getLevelLastThree(
 			teamSeasons,
-			"expenses",
 			"facilities",
 		);
 		const facilities0to1 = (teams.length - facilitiesRank) / (teams.length - 1);

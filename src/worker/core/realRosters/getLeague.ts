@@ -496,10 +496,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 					}
 				}
 
-				const numActiveTeams = initialTeamsSeason.filter(
-					t => !t.disabled,
-				).length;
-
 				for (const t of initialTeamsSeason) {
 					const t2 = initialTeams.find(t2 => t2.tid === t.tid);
 					if (!t2) {
@@ -515,7 +511,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 					const teamSeason = team.genSeasonRow(
 						t,
 						undefined,
-						numActiveTeams,
 						season,
 						defaultGameAttributes.defaultStadiumCapacity,
 					);
@@ -581,7 +576,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 					const teamSeason = team.genSeasonRow(
 						t,
 						undefined,
-						activeTeams.length,
 						options.season,
 						defaultGameAttributes.defaultStadiumCapacity,
 					);

@@ -45,26 +45,26 @@ describe("worker/core/finances/assessPayrollMinLuxury", () => {
 
 			if (teamSeasons[i].payrollEndOfSeason > g.get("luxuryPayroll")) {
 				assert.strictEqual(
-					teamSeasons[i].expenses.luxuryTax.amount,
+					teamSeasons[i].expenses.luxuryTax,
 					g.get("luxuryTax") *
 						(teamSeasons[i].payrollEndOfSeason - g.get("luxuryPayroll")),
 				);
 				assert.strictEqual(
-					teamSeasons[i].expenses.luxuryTax.amount,
+					teamSeasons[i].expenses.luxuryTax,
 					g.get("luxuryTax") * 1,
 				);
 			} else {
-				assert.strictEqual(teamSeasons[i].expenses.luxuryTax.amount, 0);
+				assert.strictEqual(teamSeasons[i].expenses.luxuryTax, 0);
 			}
 
 			if (teamSeasons[i].payrollEndOfSeason < g.get("minPayroll")) {
 				assert.strictEqual(
-					teamSeasons[i].expenses.minTax.amount,
+					teamSeasons[i].expenses.minTax,
 					g.get("minPayroll") - teamSeasons[i].payrollEndOfSeason,
 				);
-				assert.strictEqual(teamSeasons[i].expenses.minTax.amount, 1);
+				assert.strictEqual(teamSeasons[i].expenses.minTax, 1);
 			} else {
-				assert.strictEqual(teamSeasons[i].expenses.minTax.amount, 0);
+				assert.strictEqual(teamSeasons[i].expenses.minTax, 0);
 			}
 		}
 	});

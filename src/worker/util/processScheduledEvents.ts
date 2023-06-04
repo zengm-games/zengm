@@ -437,11 +437,7 @@ const processUnretirePlayer = async (pid: number) => {
 				[g.get("userTid"), g.get("season")],
 			],
 		);
-		const scoutingRank = finances.getRankLastThree(
-			teamSeasons,
-			"expenses",
-			"scouting",
-		);
+		const scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
 
 		// Add rows one at a time, since we want to store full ratings history
 		for (let i = 0; i < diff; i++) {

@@ -1425,11 +1425,6 @@ export type SortType =
 	| "record"
 	| "string";
 
-export type BudgetItem = {
-	amount: number;
-	rank: number;
-};
-
 export type Team = {
 	tid: number;
 	cid: number;
@@ -1443,7 +1438,7 @@ export type Team = {
 	jersey?: string;
 	budget: Record<
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
-		BudgetItem
+		number
 	>;
 	strategy: "contending" | "rebuilding";
 	depth?:
@@ -1614,21 +1609,23 @@ export type TeamSeasonWithoutKey = {
 	pop: number;
 	stadiumCapacity: number;
 	revenues: {
-		luxuryTaxShare: BudgetItem;
-		merch: BudgetItem;
-		sponsor: BudgetItem;
-		ticket: BudgetItem;
-		nationalTv: BudgetItem;
-		localTv: BudgetItem;
+		luxuryTaxShare: number;
+		merch: number;
+		sponsor: number;
+		ticket: number;
+		nationalTv: number;
+		localTv: number;
 	};
-	expenses: {
-		salary: BudgetItem;
-		luxuryTax: BudgetItem;
-		minTax: BudgetItem;
-		scouting: BudgetItem;
-		coaching: BudgetItem;
-		health: BudgetItem;
-		facilities: BudgetItem;
+	expenses: Record<
+		"scouting" | "coaching" | "health" | "facilities",
+		{
+			amount: number;
+			level: number;
+		}
+	> & {
+		luxuryTax: number;
+		minTax: number;
+		salary: number;
 	};
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;

@@ -30,10 +30,10 @@ const processAttrs = <
 			// Always copy, because we mutate below to convert units
 			output.budget = helpers.deepCopy(t.budget);
 
-			for (const [key, value] of Object.entries(output.budget)) {
+			for (const key of helpers.keys(output.budget)) {
 				if (key !== "ticketPrice") {
 					// ticketPrice is the only thing in dollars always
-					value.amount /= 1000;
+					output.budget[key] /= 1000;
 				}
 			}
 		} else {
@@ -114,10 +114,15 @@ const processSeasonAttrs = async <
 
 			const revenue = helpers
 				.keys(ts.revenues)
-				.reduce((memo, rev) => memo + ts.revenues[rev].amount, 0);
-			const expense = helpers
-				.keys(ts.expenses)
-				.reduce((memo, rev) => memo + ts.expenses[rev].amount, 0);
+				.reduce((memo, rev) => memo + ts.revenues[rev], 0);
+			const expense = helpers.keys(ts.expenses).reduce((memo, rev) => {
+				const value = ts.expenses[rev];
+				if (typeof value === "number") {
+					return memo + value;
+				}
+
+				return memo + value.amount;
+			}, 0);
 
 			for (const temp of seasonAttrs) {
 				const attr: string = temp;
@@ -141,7 +146,7 @@ const processSeasonAttrs = async <
 				} else if (attr === "profit") {
 					row.profit = (revenue - expense) / 1000; // [millions of dollars]
 				} else if (attr === "salaryPaid") {
-					row.salaryPaid = ts.expenses.salary.amount / 1000; // [millions of dollars]
+					row.salaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
 				} else if (attr === "payroll") {
 					if (season === g.get("season")) {
 						row.payroll = (await team.getPayroll(t.tid)) / 1000;

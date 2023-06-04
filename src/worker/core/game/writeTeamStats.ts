@@ -9,6 +9,7 @@ import {
 	getAutoTicketPrice,
 	getBaseAttendance,
 } from "./attendance";
+import { levelToAmount } from "../../../common/budgetLevels";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -65,13 +66,11 @@ const writeTeamStats = async (results: GameResults) => {
 					stadiumCapacity: teamSeason.stadiumCapacity,
 					teamSeasons,
 				});
-				if (ticketPrice !== t.budget.ticketPrice.amount) {
-					t.budget.ticketPrice.amount = ticketPrice;
-				}
+				t.budget.ticketPrice = ticketPrice;
 			}
 
 			adjustedTicketPrice = getAdjustedTicketPrice(
-				t.budget.ticketPrice.amount,
+				t.budget.ticketPrice,
 				playoffs,
 			);
 		}
@@ -89,14 +88,19 @@ const writeTeamStats = async (results: GameResults) => {
 
 		if (g.get("phase") !== PHASE.PLAYOFFS) {
 			// All in [thousands of dollars]
+			const salaryCap = g.get("salaryCap");
 			salaryPaid = payroll / g.get("numGames");
-			scoutingPaid = t.budget.scouting.amount / g.get("numGames");
-			coachingPaid = t.budget.coaching.amount / g.get("numGames");
-			healthPaid = t.budget.health.amount / g.get("numGames");
-			facilitiesPaid = t.budget.facilities.amount / g.get("numGames");
+			scoutingPaid =
+				levelToAmount(t.budget.scouting, salaryCap) / g.get("numGames");
+			coachingPaid =
+				levelToAmount(t.budget.coaching, salaryCap) / g.get("numGames");
+			healthPaid =
+				levelToAmount(t.budget.health, salaryCap) / g.get("numGames");
+			facilitiesPaid =
+				levelToAmount(t.budget.facilities, salaryCap) / g.get("numGames");
 
 			const salaryCapFactor =
-				g.get("salaryCap") /
+				salaryCap /
 				bySport({
 					// defaultGameAttributes.salaryCap, but frozen in time because otherwise various coefficients below would need to be updated when it changes
 					baseball: 175000,
@@ -109,7 +113,7 @@ const writeTeamStats = async (results: GameResults) => {
 			let salaryCapFactor2;
 			if (isSport("hockey")) {
 				// Legacy, should probably adjust other params
-				salaryCapFactor2 = g.get("salaryCap") / 90000;
+				salaryCapFactor2 = salaryCap / 90000;
 			} else {
 				salaryCapFactor2 = salaryCapFactor;
 			}
@@ -272,16 +276,22 @@ const writeTeamStats = async (results: GameResults) => {
 		}
 
 		teamSeason.gp += 1;
-		teamSeason.revenues.merch.amount += merchRevenue;
-		teamSeason.revenues.sponsor.amount += sponsorRevenue;
-		teamSeason.revenues.nationalTv.amount += nationalTvRevenue;
-		teamSeason.revenues.localTv.amount += localTvRevenue;
-		teamSeason.revenues.ticket.amount += ticketRevenue;
-		teamSeason.expenses.salary.amount += salaryPaid;
+		teamSeason.revenues.merch += merchRevenue;
+		teamSeason.revenues.sponsor += sponsorRevenue;
+		teamSeason.revenues.nationalTv += nationalTvRevenue;
+		teamSeason.revenues.localTv += localTvRevenue;
+		teamSeason.revenues.ticket += ticketRevenue;
+
+		teamSeason.expenses.salary += salaryPaid;
 		teamSeason.expenses.scouting.amount += scoutingPaid;
 		teamSeason.expenses.coaching.amount += coachingPaid;
 		teamSeason.expenses.health.amount += healthPaid;
 		teamSeason.expenses.facilities.amount += facilitiesPaid;
+
+		teamSeason.expenses.scouting.level += t.budget.scouting;
+		teamSeason.expenses.coaching.level += t.budget.coaching;
+		teamSeason.expenses.health.level += t.budget.health;
+		teamSeason.expenses.facilities.level += t.budget.facilities;
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({

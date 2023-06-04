@@ -57,7 +57,7 @@ const facilitiesFactor = (teamSeasons: TeamSeason[]) =>
 	1 +
 	(0.075 *
 		(g.get("numActiveTeams") -
-			finances.getRankLastThree(teamSeasons, "expenses", "facilities"))) /
+			finances.getLevelLastThree(teamSeasons, "facilities"))) /
 		(g.get("numActiveTeams") - 1);
 
 // teamSeasons is last 3 seasons

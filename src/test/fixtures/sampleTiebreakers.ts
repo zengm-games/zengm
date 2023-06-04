@@ -92,85 +92,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5225.473393522918,
-						rank: 22,
-					},
-					sponsor: {
-						amount: 17418.24464507639,
-						rank: 22,
-					},
-					ticket: {
-						amount: 60776.40396,
-						rank: 20,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 17418.24464507639,
-						rank: 22,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5225.473393522918,
+					sponsor: 17418.24464507639,
+					ticket: 60776.40396,
+					nationalTv: 20500,
+					localTv: 17418.24464507639,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 47250.000000000044,
-						rank: 20,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 14900.000000000013,
-						rank: 11,
+						level: 11,
 					},
 					coaching: {
 						amount: 14900.000000000013,
-						rank: 11,
+						level: 11,
 					},
 					health: {
 						amount: 14900.000000000013,
-						rank: 11,
+						level: 11,
 					},
 					facilities: {
 						amount: 14900.000000000013,
-						rank: 11,
+						level: 11,
 					},
 				},
 				payrollEndOfSeason: 47250,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 41.38,
-				rank: 11,
-			},
-			scouting: {
-				amount: 14900,
-				rank: 11,
-			},
-			coaching: {
-				amount: 14900,
-				rank: 11,
-			},
-			health: {
-				amount: 14900,
-				rank: 11,
-			},
-			facilities: {
-				amount: 14900,
-				rank: 11,
-			},
+			ticketPrice: 41.38,
+			scouting: 14900,
+			coaching: 14900,
+			health: 14900,
+			facilities: 14900,
 		},
 		strategy: "contending",
 	},
@@ -239,85 +197,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 6168.8410854305885,
-						rank: 14,
-					},
-					sponsor: {
-						amount: 20562.803618101963,
-						rank: 14,
-					},
-					ticket: {
-						amount: 66269.28263,
-						rank: 15,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 20562.803618101963,
-						rank: 14,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 6168.8410854305885,
+					sponsor: 20562.803618101963,
+					ticket: 66269.28263,
+					nationalTv: 20500,
+					localTv: 20562.803618101963,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 27257.317073170743,
-						rank: 30,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 12700,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 12700,
 					scouting: {
 						amount: 11480,
-						rank: 22,
+						level: 22,
 					},
 					coaching: {
 						amount: 11480,
-						rank: 22,
+						level: 22,
 					},
 					health: {
 						amount: 11480,
-						rank: 22,
+						level: 22,
 					},
 					facilities: {
 						amount: 11480,
-						rank: 22,
+						level: 22,
 					},
 				},
 				payrollEndOfSeason: 27300,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 31.9,
-				rank: 22,
-			},
-			scouting: {
-				amount: 11480,
-				rank: 22,
-			},
-			coaching: {
-				amount: 11480,
-				rank: 22,
-			},
-			health: {
-				amount: 11480,
-				rank: 22,
-			},
-			facilities: {
-				amount: 11480,
-				rank: 22,
-			},
+			ticketPrice: 31.9,
+			scouting: 11480,
+			coaching: 11480,
+			health: 11480,
+			facilities: 11480,
 		},
 		strategy: "rebuilding",
 	},
@@ -414,85 +330,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 8962.543828615424,
-						rank: 4,
-					},
-					sponsor: {
-						amount: 29875.146095384745,
-						rank: 3,
-					},
-					ticket: {
-						amount: 77778.96073,
-						rank: 5,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 29875.146095384745,
-						rank: 4,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 8962.543828615424,
+					sponsor: 29875.146095384745,
+					ticket: 77778.96073,
+					nationalTv: 20500,
+					localTv: 29875.146095384745,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 42599.99999999996,
-						rank: 21,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 15520.000000000022,
-						rank: 9,
+						level: 9,
 					},
 					coaching: {
 						amount: 15520.000000000022,
-						rank: 9,
+						level: 9,
 					},
 					health: {
 						amount: 15520.000000000022,
-						rank: 9,
+						level: 9,
 					},
 					facilities: {
 						amount: 15520.000000000022,
-						rank: 9,
+						level: 9,
 					},
 				},
 				payrollEndOfSeason: 42600,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 43.1,
-				rank: 9,
-			},
-			scouting: {
-				amount: 15520,
-				rank: 9,
-			},
-			coaching: {
-				amount: 15520,
-				rank: 9,
-			},
-			health: {
-				amount: 15520,
-				rank: 9,
-			},
-			facilities: {
-				amount: 15520,
-				rank: 9,
-			},
+			ticketPrice: 43.1,
+			scouting: 15520,
+			coaching: 15520,
+			health: 15520,
+			facilities: 15520,
 		},
 		strategy: "rebuilding",
 	},
@@ -561,85 +435,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 7125.697348655277,
-						rank: 10,
-					},
-					sponsor: {
-						amount: 23752.324495517598,
-						rank: 10,
-					},
-					ticket: {
-						amount: 75998.52341999998,
-						rank: 6,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 23752.324495517598,
-						rank: 10,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 7125.697348655277,
+					sponsor: 23752.324495517598,
+					ticket: 75998.52341999998,
+					nationalTv: 20500,
+					localTv: 23752.324495517598,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 32631.707317073142,
-						rank: 26,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 7350,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 7350,
 					scouting: {
 						amount: 17070.000000000022,
-						rank: 4,
+						level: 4,
 					},
 					coaching: {
 						amount: 17070.000000000022,
-						rank: 4,
+						level: 4,
 					},
 					health: {
 						amount: 17070.000000000022,
-						rank: 4,
+						level: 4,
 					},
 					facilities: {
 						amount: 17070.000000000022,
-						rank: 4,
+						level: 4,
 					},
 				},
 				payrollEndOfSeason: 32650,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 47.41,
-				rank: 4,
-			},
-			scouting: {
-				amount: 17070,
-				rank: 4,
-			},
-			coaching: {
-				amount: 17070,
-				rank: 4,
-			},
-			health: {
-				amount: 17070,
-				rank: 4,
-			},
-			facilities: {
-				amount: 17070,
-				rank: 4,
-			},
+			ticketPrice: 47.41,
+			scouting: 17070,
+			coaching: 17070,
+			health: 17070,
+			facilities: 17070,
 		},
 		strategy: "rebuilding",
 	},
@@ -736,85 +568,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5744.3660363444815,
-						rank: 17,
-					},
-					sponsor: {
-						amount: 19147.886787814947,
-						rank: 17,
-					},
-					ticket: {
-						amount: 60191.326059999985,
-						rank: 22,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 19147.886787814947,
-						rank: 17,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5744.3660363444815,
+					sponsor: 19147.886787814947,
+					ticket: 60191.326059999985,
+					nationalTv: 20500,
+					localTv: 19147.886787814947,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 60299.999999999935,
-						rank: 10,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 9310.00000000001,
-						rank: 29,
+						level: 29,
 					},
 					coaching: {
 						amount: 9310.00000000001,
-						rank: 29,
+						level: 29,
 					},
 					health: {
 						amount: 9310.00000000001,
-						rank: 29,
+						level: 29,
 					},
 					facilities: {
 						amount: 9310.00000000001,
-						rank: 29,
+						level: 29,
 					},
 				},
 				payrollEndOfSeason: 60300,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 25.86,
-				rank: 29,
-			},
-			scouting: {
-				amount: 9310,
-				rank: 29,
-			},
-			coaching: {
-				amount: 9310,
-				rank: 29,
-			},
-			health: {
-				amount: 9310,
-				rank: 29,
-			},
-			facilities: {
-				amount: 9310,
-				rank: 29,
-			},
+			ticketPrice: 25.86,
+			scouting: 9310,
+			coaching: 9310,
+			health: 9310,
+			facilities: 9310,
 		},
 		strategy: "rebuilding",
 	},
@@ -911,85 +701,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5289.253243346485,
-						rank: 21,
-					},
-					sponsor: {
-						amount: 17630.844144488285,
-						rank: 21,
-					},
-					ticket: {
-						amount: 60376.65181000001,
-						rank: 21,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 17630.844144488285,
-						rank: 21,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5289.253243346485,
+					sponsor: 17630.844144488285,
+					ticket: 60376.65181000001,
+					nationalTv: 20500,
+					localTv: 17630.844144488285,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 65750.00000000006,
-						rank: 3,
-					},
-					luxuryTax: {
-						amount: 1125,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 10550.000000000013,
-						rank: 25,
+						level: 25,
 					},
 					coaching: {
 						amount: 10550.000000000013,
-						rank: 25,
+						level: 25,
 					},
 					health: {
 						amount: 10550.000000000013,
-						rank: 25,
+						level: 25,
 					},
 					facilities: {
 						amount: 10550.000000000013,
-						rank: 25,
+						level: 25,
 					},
 				},
 				payrollEndOfSeason: 65750,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 29.31,
-				rank: 25,
-			},
-			scouting: {
-				amount: 10550,
-				rank: 25,
-			},
-			coaching: {
-				amount: 10550,
-				rank: 25,
-			},
-			health: {
-				amount: 10550,
-				rank: 25,
-			},
-			facilities: {
-				amount: 10550,
-				rank: 25,
-			},
+			ticketPrice: 29.31,
+			scouting: 10550,
+			coaching: 10550,
+			health: 10550,
+			facilities: 10550,
 		},
 		strategy: "contending",
 	},
@@ -1058,85 +806,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 7177.059719725409,
-						rank: 9,
-					},
-					sponsor: {
-						amount: 23923.53239908471,
-						rank: 9,
-					},
-					ticket: {
-						amount: 75297.18344000001,
-						rank: 7,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 23923.53239908471,
-						rank: 9,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 7177.059719725409,
+					sponsor: 23923.53239908471,
+					ticket: 75297.18344000001,
+					nationalTv: 20500,
+					localTv: 23923.53239908471,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 41743.90243902441,
-						rank: 22,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 15829.999999999998,
-						rank: 8,
+						level: 8,
 					},
 					coaching: {
 						amount: 15829.999999999998,
-						rank: 8,
+						level: 8,
 					},
 					health: {
 						amount: 15829.999999999998,
-						rank: 8,
+						level: 8,
 					},
 					facilities: {
 						amount: 15829.999999999998,
-						rank: 8,
+						level: 8,
 					},
 				},
 				payrollEndOfSeason: 41750,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 43.97,
-				rank: 8,
-			},
-			scouting: {
-				amount: 15830,
-				rank: 8,
-			},
-			coaching: {
-				amount: 15830,
-				rank: 8,
-			},
-			health: {
-				amount: 15830,
-				rank: 8,
-			},
-			facilities: {
-				amount: 15830,
-				rank: 8,
-			},
+			ticketPrice: 43.97,
+			scouting: 15830,
+			coaching: 15830,
+			health: 15830,
+			facilities: 15830,
 		},
 		strategy: "rebuilding",
 	},
@@ -1233,85 +939,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 4377.671768428117,
-						rank: 26,
-					},
-					sponsor: {
-						amount: 14592.239228093718,
-						rank: 26,
-					},
-					ticket: {
-						amount: 50895.638969999985,
-						rank: 26,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 14592.239228093718,
-						rank: 26,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 4377.671768428117,
+					sponsor: 14592.239228093718,
+					ticket: 50895.638969999985,
+					nationalTv: 20500,
+					localTv: 14592.239228093718,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 69800.00000000004,
-						rank: 2,
-					},
-					luxuryTax: {
-						amount: 7200,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 11789.999999999989,
-						rank: 21,
+						level: 21,
 					},
 					coaching: {
 						amount: 11789.999999999989,
-						rank: 21,
+						level: 21,
 					},
 					health: {
 						amount: 11789.999999999989,
-						rank: 21,
+						level: 21,
 					},
 					facilities: {
 						amount: 11789.999999999989,
-						rank: 21,
+						level: 21,
 					},
 				},
 				payrollEndOfSeason: 69800,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 32.76,
-				rank: 21,
-			},
-			scouting: {
-				amount: 11790,
-				rank: 21,
-			},
-			coaching: {
-				amount: 11790,
-				rank: 21,
-			},
-			health: {
-				amount: 11790,
-				rank: 21,
-			},
-			facilities: {
-				amount: 11790,
-				rank: 21,
-			},
+			ticketPrice: 32.76,
+			scouting: 11790,
+			coaching: 11790,
+			health: 11790,
+			facilities: 11790,
 		},
 		strategy: "contending",
 	},
@@ -1380,85 +1044,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 7541.583695662629,
-						rank: 7,
-					},
-					sponsor: {
-						amount: 25138.612318875435,
-						rank: 7,
-					},
-					ticket: {
-						amount: 73116.33601,
-						rank: 10,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 25138.612318875435,
-						rank: 7,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 7541.583695662629,
+					sponsor: 25138.612318875435,
+					ticket: 73116.33601,
+					nationalTv: 20500,
+					localTv: 25138.612318875435,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 39319.51219512195,
-						rank: 23,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 650,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 650,
 					scouting: {
 						amount: 13970.000000000013,
-						rank: 14,
+						level: 14,
 					},
 					coaching: {
 						amount: 13970.000000000013,
-						rank: 14,
+						level: 14,
 					},
 					health: {
 						amount: 13970.000000000013,
-						rank: 14,
+						level: 14,
 					},
 					facilities: {
 						amount: 13970.000000000013,
-						rank: 14,
+						level: 14,
 					},
 				},
 				payrollEndOfSeason: 39350,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 38.79,
-				rank: 14,
-			},
-			scouting: {
-				amount: 13970,
-				rank: 14,
-			},
-			coaching: {
-				amount: 13970,
-				rank: 14,
-			},
-			health: {
-				amount: 13970,
-				rank: 14,
-			},
-			facilities: {
-				amount: 13970,
-				rank: 14,
-			},
+			ticketPrice: 38.79,
+			scouting: 13970,
+			coaching: 13970,
+			health: 13970,
+			facilities: 13970,
 		},
 		strategy: "rebuilding",
 	},
@@ -1527,85 +1149,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5692.277387132416,
-						rank: 18,
-					},
-					sponsor: {
-						amount: 18974.257957108053,
-						rank: 18,
-					},
-					ticket: {
-						amount: 64519.47683000001,
-						rank: 16,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 18974.257957108053,
-						rank: 18,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5692.277387132416,
+					sponsor: 18974.257957108053,
+					ticket: 64519.47683000001,
+					nationalTv: 20500,
+					localTv: 18974.257957108053,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 61099.99999999991,
-						rank: 8,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 15209.999999999975,
-						rank: 10,
+						level: 10,
 					},
 					coaching: {
 						amount: 15209.999999999975,
-						rank: 10,
+						level: 10,
 					},
 					health: {
 						amount: 15209.999999999975,
-						rank: 10,
+						level: 10,
 					},
 					facilities: {
 						amount: 15209.999999999975,
-						rank: 10,
+						level: 10,
 					},
 				},
 				payrollEndOfSeason: 61100,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 42.24,
-				rank: 10,
-			},
-			scouting: {
-				amount: 15210,
-				rank: 10,
-			},
-			coaching: {
-				amount: 15210,
-				rank: 10,
-			},
-			health: {
-				amount: 15210,
-				rank: 10,
-			},
-			facilities: {
-				amount: 15210,
-				rank: 10,
-			},
+			ticketPrice: 42.24,
+			scouting: 15210,
+			coaching: 15210,
+			health: 15210,
+			facilities: 15210,
 		},
 		strategy: "rebuilding",
 	},
@@ -1702,85 +1282,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 4108.155466164591,
-						rank: 29,
-					},
-					sponsor: {
-						amount: 13693.851553881974,
-						rank: 29,
-					},
-					ticket: {
-						amount: 47564.13225999999,
-						rank: 29,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 13693.851553881974,
-						rank: 29,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 4108.155466164591,
+					sponsor: 13693.851553881974,
+					ticket: 47564.13225999999,
+					nationalTv: 20500,
+					localTv: 13693.851553881974,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 48920.731707317005,
-						rank: 19,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 9620,
-						rank: 28,
+						level: 28,
 					},
 					coaching: {
 						amount: 9620,
-						rank: 28,
+						level: 28,
 					},
 					health: {
 						amount: 9620,
-						rank: 28,
+						level: 28,
 					},
 					facilities: {
 						amount: 9620,
-						rank: 28,
+						level: 28,
 					},
 				},
 				payrollEndOfSeason: 49000,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 26.72,
-				rank: 28,
-			},
-			scouting: {
-				amount: 9620,
-				rank: 28,
-			},
-			coaching: {
-				amount: 9620,
-				rank: 28,
-			},
-			health: {
-				amount: 9620,
-				rank: 28,
-			},
-			facilities: {
-				amount: 9620,
-				rank: 28,
-			},
+			ticketPrice: 26.72,
+			scouting: 9620,
+			coaching: 9620,
+			health: 9620,
+			facilities: 9620,
 		},
 		strategy: "rebuilding",
 	},
@@ -1849,85 +1387,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 8898.582239670075,
-						rank: 5,
-					},
-					sponsor: {
-						amount: 28179.045222446657,
-						rank: 5,
-					},
-					ticket: {
-						amount: 79021.48061,
-						rank: 4,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 29709.68741267938,
-						rank: 5,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 8898.582239670075,
+					sponsor: 28179.045222446657,
+					ticket: 79021.48061,
+					nationalTv: 20500,
+					localTv: 29709.68741267938,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 30107.3170731707,
-						rank: 28,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 9850,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 9850,
 					scouting: {
 						amount: 17379.999999999993,
-						rank: 3,
+						level: 3,
 					},
 					coaching: {
 						amount: 17379.999999999993,
-						rank: 3,
+						level: 3,
 					},
 					health: {
 						amount: 17379.999999999993,
-						rank: 3,
+						level: 3,
 					},
 					facilities: {
 						amount: 17379.999999999993,
-						rank: 3,
+						level: 3,
 					},
 				},
 				payrollEndOfSeason: 30150,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 48.28,
-				rank: 3,
-			},
-			scouting: {
-				amount: 17380,
-				rank: 3,
-			},
-			coaching: {
-				amount: 17380,
-				rank: 3,
-			},
-			health: {
-				amount: 17380,
-				rank: 3,
-			},
-			facilities: {
-				amount: 17380,
-				rank: 3,
-			},
+			ticketPrice: 48.28,
+			scouting: 17380,
+			coaching: 17380,
+			health: 17380,
+			facilities: 17380,
 		},
 		strategy: "rebuilding",
 	},
@@ -2024,85 +1520,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 12683.062999999998,
-						rank: 1,
-					},
-					sponsor: {
-						amount: 32710.21,
-						rank: 2,
-					},
-					ticket: {
-						amount: 81246.94667000002,
-						rank: 2,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 56164.735665548425,
-						rank: 1,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 12683.062999999998,
+					sponsor: 32710.21,
+					ticket: 81246.94667000002,
+					nationalTv: 20500,
+					localTv: 56164.735665548425,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 62800.000000000044,
-						rank: 6,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 18000.000000000025,
-						rank: 1,
+						level: 1,
 					},
 					coaching: {
 						amount: 18000.000000000025,
-						rank: 1,
+						level: 1,
 					},
 					health: {
 						amount: 18000.000000000025,
-						rank: 1,
+						level: 1,
 					},
 					facilities: {
 						amount: 18000.000000000025,
-						rank: 1,
+						level: 1,
 					},
 				},
 				payrollEndOfSeason: 62800,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 50.0,
-				rank: 1,
-			},
-			scouting: {
-				amount: 18000,
-				rank: 1,
-			},
-			coaching: {
-				amount: 18000,
-				rank: 1,
-			},
-			health: {
-				amount: 18000,
-				rank: 1,
-			},
-			facilities: {
-				amount: 18000,
-				rank: 1,
-			},
+			ticketPrice: 50.0,
+			scouting: 18000,
+			coaching: 18000,
+			health: 18000,
+			facilities: 18000,
 		},
 		strategy: "rebuilding",
 	},
@@ -2199,85 +1653,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 7182.2195811308675,
-						rank: 8,
-					},
-					sponsor: {
-						amount: 23940.731937102893,
-						rank: 8,
-					},
-					ticket: {
-						amount: 73997.83286000001,
-						rank: 9,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 23940.731937102893,
-						rank: 8,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 7182.2195811308675,
+					sponsor: 23940.731937102893,
+					ticket: 73997.83286000001,
+					nationalTv: 20500,
+					localTv: 23940.731937102893,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 95300.00000000017,
-						rank: 1,
-					},
-					luxuryTax: {
-						amount: 45450,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 16139.999999999975,
-						rank: 7,
+						level: 7,
 					},
 					coaching: {
 						amount: 16139.999999999975,
-						rank: 7,
+						level: 7,
 					},
 					health: {
 						amount: 16139.999999999975,
-						rank: 7,
+						level: 7,
 					},
 					facilities: {
 						amount: 16139.999999999975,
-						rank: 7,
+						level: 7,
 					},
 				},
 				payrollEndOfSeason: 95300,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 44.83,
-				rank: 7,
-			},
-			scouting: {
-				amount: 16140,
-				rank: 7,
-			},
-			coaching: {
-				amount: 16140,
-				rank: 7,
-			},
-			health: {
-				amount: 16140,
-				rank: 7,
-			},
-			facilities: {
-				amount: 16140,
-				rank: 7,
-			},
+			ticketPrice: 44.83,
+			scouting: 16140,
+			coaching: 16140,
+			health: 16140,
+			facilities: 16140,
 		},
 		strategy: "contending",
 	},
@@ -2374,85 +1786,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 4407.942360533238,
-						rank: 25,
-					},
-					sponsor: {
-						amount: 14693.141201777458,
-						rank: 25,
-					},
-					ticket: {
-						amount: 51258.98103000001,
-						rank: 25,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 14693.141201777458,
-						rank: 25,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 4407.942360533238,
+					sponsor: 14693.141201777458,
+					ticket: 51258.98103000001,
+					nationalTv: 20500,
+					localTv: 14693.141201777458,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 58099.99999999994,
-						rank: 14,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 12409.999999999985,
-						rank: 19,
+						level: 19,
 					},
 					coaching: {
 						amount: 12409.999999999985,
-						rank: 19,
+						level: 19,
 					},
 					health: {
 						amount: 12409.999999999985,
-						rank: 19,
+						level: 19,
 					},
 					facilities: {
 						amount: 12409.999999999985,
-						rank: 19,
+						level: 19,
 					},
 				},
 				payrollEndOfSeason: 58100,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 34.48,
-				rank: 19,
-			},
-			scouting: {
-				amount: 12410,
-				rank: 19,
-			},
-			coaching: {
-				amount: 12410,
-				rank: 19,
-			},
-			health: {
-				amount: 12410,
-				rank: 19,
-			},
-			facilities: {
-				amount: 12410,
-				rank: 19,
-			},
+			ticketPrice: 34.48,
+			scouting: 12410,
+			coaching: 12410,
+			health: 12410,
+			facilities: 12410,
 		},
 		strategy: "rebuilding",
 	},
@@ -2521,85 +1891,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 6785.367854530426,
-						rank: 13,
-					},
-					sponsor: {
-						amount: 22617.892848434756,
-						rank: 13,
-					},
-					ticket: {
-						amount: 71888.52716,
-						rank: 11,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 22617.892848434756,
-						rank: 13,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 6785.367854530426,
+					sponsor: 22617.892848434756,
+					ticket: 71888.52716,
+					nationalTv: 20500,
+					localTv: 22617.892848434756,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 59249.99999999992,
-						rank: 13,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 14279.999999999993,
-						rank: 13,
+						level: 13,
 					},
 					coaching: {
 						amount: 14279.999999999993,
-						rank: 13,
+						level: 13,
 					},
 					health: {
 						amount: 14279.999999999993,
-						rank: 13,
+						level: 13,
 					},
 					facilities: {
 						amount: 14279.999999999993,
-						rank: 13,
+						level: 13,
 					},
 				},
 				payrollEndOfSeason: 59250,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 39.66,
-				rank: 13,
-			},
-			scouting: {
-				amount: 14280,
-				rank: 13,
-			},
-			coaching: {
-				amount: 14280,
-				rank: 13,
-			},
-			health: {
-				amount: 14280,
-				rank: 13,
-			},
-			facilities: {
-				amount: 14280,
-				rank: 13,
-			},
+			ticketPrice: 39.66,
+			scouting: 14280,
+			coaching: 14280,
+			health: 14280,
+			facilities: 14280,
 		},
 		strategy: "rebuilding",
 	},
@@ -2668,85 +1996,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 10384.28277714964,
-						rank: 3,
-					},
-					sponsor: {
-						amount: 29736.378557287928,
-						rank: 4,
-					},
-					ticket: {
-						amount: 81661.62959999999,
-						rank: 1,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 39305.42821935103,
-						rank: 2,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 10384.28277714964,
+					sponsor: 29736.378557287928,
+					ticket: 81661.62959999999,
+					nationalTv: 20500,
+					localTv: 39305.42821935103,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 33975.609756097605,
-						rank: 25,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 6000,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 6000,
 					scouting: {
 						amount: 17689.999999999985,
-						rank: 2,
+						level: 2,
 					},
 					coaching: {
 						amount: 17689.999999999985,
-						rank: 2,
+						level: 2,
 					},
 					health: {
 						amount: 17689.999999999985,
-						rank: 2,
+						level: 2,
 					},
 					facilities: {
 						amount: 17689.999999999985,
-						rank: 2,
+						level: 2,
 					},
 				},
 				payrollEndOfSeason: 34000,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 49.14,
-				rank: 2,
-			},
-			scouting: {
-				amount: 17690,
-				rank: 2,
-			},
-			coaching: {
-				amount: 17690,
-				rank: 2,
-			},
-			health: {
-				amount: 17690,
-				rank: 2,
-			},
-			facilities: {
-				amount: 17690,
-				rank: 2,
-			},
+			ticketPrice: 49.14,
+			scouting: 17690,
+			coaching: 17690,
+			health: 17690,
+			facilities: 17690,
 		},
 		strategy: "rebuilding",
 	},
@@ -2815,85 +2101,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 6142.1266615842005,
-						rank: 15,
-					},
-					sponsor: {
-						amount: 20473.755538613997,
-						rank: 15,
-					},
-					ticket: {
-						amount: 70371.92516,
-						rank: 12,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 20473.755538613997,
-						rank: 15,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 6142.1266615842005,
+					sponsor: 20473.755538613997,
+					ticket: 70371.92516,
+					nationalTv: 20500,
+					localTv: 20473.755538613997,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 59750.00000000005,
-						rank: 11,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 16450.00000000002,
-						rank: 6,
+						level: 6,
 					},
 					coaching: {
 						amount: 16450.00000000002,
-						rank: 6,
+						level: 6,
 					},
 					health: {
 						amount: 16450.00000000002,
-						rank: 6,
+						level: 6,
 					},
 					facilities: {
 						amount: 16450.00000000002,
-						rank: 6,
+						level: 6,
 					},
 				},
 				payrollEndOfSeason: 59750,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 45.69,
-				rank: 6,
-			},
-			scouting: {
-				amount: 16450,
-				rank: 6,
-			},
-			coaching: {
-				amount: 16450,
-				rank: 6,
-			},
-			health: {
-				amount: 16450,
-				rank: 6,
-			},
-			facilities: {
-				amount: 16450,
-				rank: 6,
-			},
+			ticketPrice: 45.69,
+			scouting: 16450,
+			coaching: 16450,
+			health: 16450,
+			facilities: 16450,
 		},
 		strategy: "rebuilding",
 	},
@@ -2990,85 +2234,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 4239.0772068352935,
-						rank: 27,
-					},
-					sponsor: {
-						amount: 14130.257356117645,
-						rank: 27,
-					},
-					ticket: {
-						amount: 49311.04962000003,
-						rank: 27,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 14130.257356117645,
-						rank: 27,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 4239.0772068352935,
+					sponsor: 14130.257356117645,
+					ticket: 49311.04962000003,
+					nationalTv: 20500,
+					localTv: 14130.257356117645,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 32137.80487804876,
-						rank: 27,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 7850,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 7850,
 					scouting: {
 						amount: 13339.999999999985,
-						rank: 16,
+						level: 16,
 					},
 					coaching: {
 						amount: 13339.999999999985,
-						rank: 16,
+						level: 16,
 					},
 					health: {
 						amount: 13339.999999999985,
-						rank: 16,
+						level: 16,
 					},
 					facilities: {
 						amount: 13339.999999999985,
-						rank: 16,
+						level: 16,
 					},
 				},
 				payrollEndOfSeason: 32150,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 37.07,
-				rank: 16,
-			},
-			scouting: {
-				amount: 13340,
-				rank: 16,
-			},
-			coaching: {
-				amount: 13340,
-				rank: 16,
-			},
-			health: {
-				amount: 13340,
-				rank: 16,
-			},
-			facilities: {
-				amount: 13340,
-				rank: 16,
-			},
+			ticketPrice: 37.07,
+			scouting: 13340,
+			coaching: 13340,
+			health: 13340,
+			facilities: 13340,
 		},
 		strategy: "rebuilding",
 	},
@@ -3137,85 +2339,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5373.043704714983,
-						rank: 20,
-					},
-					sponsor: {
-						amount: 17910.14568238327,
-						rank: 20,
-					},
-					ticket: {
-						amount: 60872.20792000001,
-						rank: 19,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 17910.14568238327,
-						rank: 20,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5373.043704714983,
+					sponsor: 17910.14568238327,
+					ticket: 60872.20792000001,
+					nationalTv: 20500,
+					localTv: 17910.14568238327,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 54231.70731707314,
-						rank: 16,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 10239.999999999993,
-						rank: 26,
+						level: 26,
 					},
 					coaching: {
 						amount: 10239.999999999993,
-						rank: 26,
+						level: 26,
 					},
 					health: {
 						amount: 10239.999999999993,
-						rank: 26,
+						level: 26,
 					},
 					facilities: {
 						amount: 10239.999999999993,
-						rank: 26,
+						level: 26,
 					},
 				},
 				payrollEndOfSeason: 54250,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 28.45,
-				rank: 26,
-			},
-			scouting: {
-				amount: 10240,
-				rank: 26,
-			},
-			coaching: {
-				amount: 10240,
-				rank: 26,
-			},
-			health: {
-				amount: 10240,
-				rank: 26,
-			},
-			facilities: {
-				amount: 10240,
-				rank: 26,
-			},
+			ticketPrice: 28.45,
+			scouting: 10240,
+			coaching: 10240,
+			health: 10240,
+			facilities: 10240,
 		},
 		strategy: "rebuilding",
 	},
@@ -3284,85 +2444,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5223.103150770333,
-						rank: 23,
-					},
-					sponsor: {
-						amount: 17410.34383590112,
-						rank: 23,
-					},
-					ticket: {
-						amount: 58562.475139999995,
-						rank: 24,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 17410.34383590112,
-						rank: 23,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5223.103150770333,
+					sponsor: 17410.34383590112,
+					ticket: 58562.475139999995,
+					nationalTv: 20500,
+					localTv: 17410.34383590112,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 64549.99999999999,
-						rank: 5,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 9929.999999999995,
-						rank: 27,
+						level: 27,
 					},
 					coaching: {
 						amount: 9929.999999999995,
-						rank: 27,
+						level: 27,
 					},
 					health: {
 						amount: 9929.999999999995,
-						rank: 27,
+						level: 27,
 					},
 					facilities: {
 						amount: 9929.999999999995,
-						rank: 27,
+						level: 27,
 					},
 				},
 				payrollEndOfSeason: 64550,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 27.59,
-				rank: 27,
-			},
-			scouting: {
-				amount: 9930,
-				rank: 27,
-			},
-			coaching: {
-				amount: 9930,
-				rank: 27,
-			},
-			health: {
-				amount: 9930,
-				rank: 27,
-			},
-			facilities: {
-				amount: 9930,
-				rank: 27,
-			},
+			ticketPrice: 27.59,
+			scouting: 9930,
+			coaching: 9930,
+			health: 9930,
+			facilities: 9930,
 		},
 		strategy: "rebuilding",
 	},
@@ -3431,85 +2549,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 3985.507186492732,
-						rank: 30,
-					},
-					sponsor: {
-						amount: 13285.023954975763,
-						rank: 30,
-					},
-					ticket: {
-						amount: 47148.30403,
-						rank: 30,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 13285.023954975763,
-						rank: 30,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 3985.507186492732,
+					sponsor: 13285.023954975763,
+					ticket: 47148.30403,
+					nationalTv: 20500,
+					localTv: 13285.023954975763,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 52525.609756097576,
-						rank: 17,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 9000.000000000013,
-						rank: 30,
+						level: 30,
 					},
 					coaching: {
 						amount: 9000.000000000013,
-						rank: 30,
+						level: 30,
 					},
 					health: {
 						amount: 9000.000000000013,
-						rank: 30,
+						level: 30,
 					},
 					facilities: {
 						amount: 9000.000000000013,
-						rank: 30,
+						level: 30,
 					},
 				},
 				payrollEndOfSeason: 52550,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 25.0,
-				rank: 30,
-			},
-			scouting: {
-				amount: 9000,
-				rank: 30,
-			},
-			coaching: {
-				amount: 9000,
-				rank: 30,
-			},
-			health: {
-				amount: 9000,
-				rank: 30,
-			},
-			facilities: {
-				amount: 9000,
-				rank: 30,
-			},
+			ticketPrice: 25.0,
+			scouting: 9000,
+			coaching: 9000,
+			health: 9000,
+			facilities: 9000,
 		},
 		strategy: "rebuilding",
 	},
@@ -3606,85 +2682,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 6820.906075666903,
-						rank: 11,
-					},
-					sponsor: {
-						amount: 22736.35358555635,
-						rank: 11,
-					},
-					ticket: {
-						amount: 67547.54769,
-						rank: 14,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 22736.35358555635,
-						rank: 11,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 6820.906075666903,
+					sponsor: 22736.35358555635,
+					ticket: 67547.54769,
+					nationalTv: 20500,
+					localTv: 22736.35358555635,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 62700.000000000065,
-						rank: 7,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 12720.000000000018,
-						rank: 18,
+						level: 18,
 					},
 					coaching: {
 						amount: 12720.000000000018,
-						rank: 18,
+						level: 18,
 					},
 					health: {
 						amount: 12720.000000000018,
-						rank: 18,
+						level: 18,
 					},
 					facilities: {
 						amount: 12720.000000000018,
-						rank: 18,
+						level: 18,
 					},
 				},
 				payrollEndOfSeason: 62700,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 35.34,
-				rank: 18,
-			},
-			scouting: {
-				amount: 12720,
-				rank: 18,
-			},
-			coaching: {
-				amount: 12720,
-				rank: 18,
-			},
-			health: {
-				amount: 12720,
-				rank: 18,
-			},
-			facilities: {
-				amount: 12720,
-				rank: 18,
-			},
+			ticketPrice: 35.34,
+			scouting: 12720,
+			coaching: 12720,
+			health: 12720,
+			facilities: 12720,
 		},
 		strategy: "contending",
 	},
@@ -3781,85 +2815,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5495.378649841739,
-						rank: 19,
-					},
-					sponsor: {
-						amount: 18317.9288328058,
-						rank: 19,
-					},
-					ticket: {
-						amount: 62159.518319999996,
-						rank: 18,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 18317.9288328058,
-						rank: 19,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5495.378649841739,
+					sponsor: 18317.9288328058,
+					ticket: 62159.518319999996,
+					nationalTv: 20500,
+					localTv: 18317.9288328058,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 49831.70731707311,
-						rank: 18,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 13659.99999999999,
-						rank: 15,
+						level: 15,
 					},
 					coaching: {
 						amount: 13659.99999999999,
-						rank: 15,
+						level: 15,
 					},
 					health: {
 						amount: 13659.99999999999,
-						rank: 15,
+						level: 15,
 					},
 					facilities: {
 						amount: 13659.99999999999,
-						rank: 15,
+						level: 15,
 					},
 				},
 				payrollEndOfSeason: 49850,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 37.93,
-				rank: 15,
-			},
-			scouting: {
-				amount: 13660,
-				rank: 15,
-			},
-			coaching: {
-				amount: 13660,
-				rank: 15,
-			},
-			health: {
-				amount: 13660,
-				rank: 15,
-			},
-			facilities: {
-				amount: 13660,
-				rank: 15,
-			},
+			ticketPrice: 37.93,
+			scouting: 13660,
+			coaching: 13660,
+			health: 13660,
+			facilities: 13660,
 		},
 		strategy: "rebuilding",
 	},
@@ -3956,85 +2948,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 6794.9437646193965,
-						rank: 12,
-					},
-					sponsor: {
-						amount: 22649.812548731326,
-						rank: 12,
-					},
-					ticket: {
-						amount: 68891.94847999999,
-						rank: 13,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 22649.812548731326,
-						rank: 12,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 6794.9437646193965,
+					sponsor: 22649.812548731326,
+					ticket: 68891.94847999999,
+					nationalTv: 20500,
+					localTv: 22649.812548731326,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 54949.999999999935,
-						rank: 15,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 13030.000000000005,
-						rank: 17,
+						level: 17,
 					},
 					coaching: {
 						amount: 13030.000000000005,
-						rank: 17,
+						level: 17,
 					},
 					health: {
 						amount: 13030.000000000005,
-						rank: 17,
+						level: 17,
 					},
 					facilities: {
 						amount: 13030.000000000005,
-						rank: 17,
+						level: 17,
 					},
 				},
 				payrollEndOfSeason: 54950,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 36.21,
-				rank: 17,
-			},
-			scouting: {
-				amount: 13030,
-				rank: 17,
-			},
-			coaching: {
-				amount: 13030,
-				rank: 17,
-			},
-			health: {
-				amount: 13030,
-				rank: 17,
-			},
-			facilities: {
-				amount: 13030,
-				rank: 17,
-			},
+			ticketPrice: 36.21,
+			scouting: 13030,
+			coaching: 13030,
+			health: 13030,
+			facilities: 13030,
 		},
 		strategy: "rebuilding",
 	},
@@ -4103,85 +3053,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5138.20513545399,
-						rank: 24,
-					},
-					sponsor: {
-						amount: 17127.350451513306,
-						rank: 24,
-					},
-					ticket: {
-						amount: 59241.53921,
-						rank: 23,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 17127.350451513306,
-						rank: 24,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5138.20513545399,
+					sponsor: 17127.350451513306,
+					ticket: 59241.53921,
+					nationalTv: 20500,
+					localTv: 17127.350451513306,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 34869.51219512197,
-						rank: 24,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 5100,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 5100,
 					scouting: {
 						amount: 11170.000000000007,
-						rank: 23,
+						level: 23,
 					},
 					coaching: {
 						amount: 11170.000000000007,
-						rank: 23,
+						level: 23,
 					},
 					health: {
 						amount: 11170.000000000007,
-						rank: 23,
+						level: 23,
 					},
 					facilities: {
 						amount: 11170.000000000007,
-						rank: 23,
+						level: 23,
 					},
 				},
 				payrollEndOfSeason: 34900,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 31.03,
-				rank: 23,
-			},
-			scouting: {
-				amount: 11170,
-				rank: 23,
-			},
-			coaching: {
-				amount: 11170,
-				rank: 23,
-			},
-			health: {
-				amount: 11170,
-				rank: 23,
-			},
-			facilities: {
-				amount: 11170,
-				rank: 23,
-			},
+			ticketPrice: 31.03,
+			scouting: 11170,
+			coaching: 11170,
+			health: 11170,
+			facilities: 11170,
 		},
 		strategy: "rebuilding",
 	},
@@ -4278,85 +3186,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 5947.465006086699,
-						rank: 16,
-					},
-					sponsor: {
-						amount: 19824.88335362233,
-						rank: 16,
-					},
-					ticket: {
-						amount: 64371.56887,
-						rank: 17,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 19824.88335362233,
-						rank: 16,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 5947.465006086699,
+					sponsor: 19824.88335362233,
+					ticket: 64371.56887,
+					nationalTv: 20500,
+					localTv: 19824.88335362233,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 59326.82926829266,
-						rank: 12,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 10859.999999999982,
-						rank: 24,
+						level: 24,
 					},
 					coaching: {
 						amount: 10859.999999999982,
-						rank: 24,
+						level: 24,
 					},
 					health: {
 						amount: 10859.999999999982,
-						rank: 24,
+						level: 24,
 					},
 					facilities: {
 						amount: 10859.999999999982,
-						rank: 24,
+						level: 24,
 					},
 				},
 				payrollEndOfSeason: 59400,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 30.17,
-				rank: 24,
-			},
-			scouting: {
-				amount: 10860,
-				rank: 24,
-			},
-			coaching: {
-				amount: 10860,
-				rank: 24,
-			},
-			health: {
-				amount: 10860,
-				rank: 24,
-			},
-			facilities: {
-				amount: 10860,
-				rank: 24,
-			},
+			ticketPrice: 30.17,
+			scouting: 10860,
+			coaching: 10860,
+			health: 10860,
+			facilities: 10860,
 		},
 		strategy: "rebuilding",
 	},
@@ -4453,85 +3319,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 11268.032272184066,
-						rank: 2,
-					},
-					sponsor: {
-						amount: 33351.1656030547,
-						rank: 1,
-					},
-					ticket: {
-						amount: 81105.93552000001,
-						rank: 3,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 37560.10757394689,
-						rank: 3,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 11268.032272184066,
+					sponsor: 33351.1656030547,
+					ticket: 81105.93552000001,
+					nationalTv: 20500,
+					localTv: 37560.10757394689,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 60650.000000000065,
-						rank: 9,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 16759.99999999998,
-						rank: 5,
+						level: 5,
 					},
 					coaching: {
 						amount: 16759.99999999998,
-						rank: 5,
+						level: 5,
 					},
 					health: {
 						amount: 16759.99999999998,
-						rank: 5,
+						level: 5,
 					},
 					facilities: {
 						amount: 16759.99999999998,
-						rank: 5,
+						level: 5,
 					},
 				},
 				payrollEndOfSeason: 60650,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 46.55,
-				rank: 5,
-			},
-			scouting: {
-				amount: 16760,
-				rank: 5,
-			},
-			coaching: {
-				amount: 16760,
-				rank: 5,
-			},
-			health: {
-				amount: 16760,
-				rank: 5,
-			},
-			facilities: {
-				amount: 16760,
-				rank: 5,
-			},
+			ticketPrice: 46.55,
+			scouting: 16760,
+			coaching: 16760,
+			health: 16760,
+			facilities: 16760,
 		},
 		strategy: "contending",
 	},
@@ -4600,85 +3424,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 4165.522765392742,
-						rank: 28,
-					},
-					sponsor: {
-						amount: 13885.075884642476,
-						rank: 28,
-					},
-					ticket: {
-						amount: 48870.62208000001,
-						rank: 28,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 13885.075884642476,
-						rank: 28,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 4165.522765392742,
+					sponsor: 13885.075884642476,
+					ticket: 48870.62208000001,
+					nationalTv: 20500,
+					localTv: 13885.075884642476,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 27875.609756097605,
-						rank: 29,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 12100,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 12100,
 					scouting: {
 						amount: 12100.00000000002,
-						rank: 20,
+						level: 20,
 					},
 					coaching: {
 						amount: 12100.00000000002,
-						rank: 20,
+						level: 20,
 					},
 					health: {
 						amount: 12100.00000000002,
-						rank: 20,
+						level: 20,
 					},
 					facilities: {
 						amount: 12100.00000000002,
-						rank: 20,
+						level: 20,
 					},
 				},
 				payrollEndOfSeason: 27900,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 33.62,
-				rank: 20,
-			},
-			scouting: {
-				amount: 12100,
-				rank: 20,
-			},
-			coaching: {
-				amount: 12100,
-				rank: 20,
-			},
-			health: {
-				amount: 12100,
-				rank: 20,
-			},
-			facilities: {
-				amount: 12100,
-				rank: 20,
-			},
+			ticketPrice: 33.62,
+			scouting: 12100,
+			coaching: 12100,
+			health: 12100,
+			facilities: 12100,
 		},
 		strategy: "rebuilding",
 	},
@@ -4775,85 +3557,43 @@ export default [
 					exp: 0,
 				},
 				revenues: {
-					merch: {
-						amount: 7558.653681169904,
-						rank: 6,
-					},
-					sponsor: {
-						amount: 25195.512270566345,
-						rank: 6,
-					},
-					ticket: {
-						amount: 74028.38337000001,
-						rank: 8,
-					},
-					nationalTv: {
-						amount: 20500,
-						rank: 1,
-					},
-					localTv: {
-						amount: 25195.512270566345,
-						rank: 6,
-					},
-					luxuryTaxShare: {
-						amount: 0,
-						rank: 1,
-					},
+					merch: 7558.653681169904,
+					sponsor: 25195.512270566345,
+					ticket: 74028.38337000001,
+					nationalTv: 20500,
+					localTv: 25195.512270566345,
+					luxuryTaxShare: 0,
 				},
 				expenses: {
-					salary: {
-						amount: 64700.00000000006,
-						rank: 4,
-					},
-					luxuryTax: {
-						amount: 0,
-						rank: 1,
-					},
-					minTax: {
-						amount: 0,
-						rank: 1,
-					},
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
 					scouting: {
 						amount: 14589.999999999973,
-						rank: 12,
+						level: 12,
 					},
 					coaching: {
 						amount: 14589.999999999973,
-						rank: 12,
+						level: 12,
 					},
 					health: {
 						amount: 14589.999999999973,
-						rank: 12,
+						level: 12,
 					},
 					facilities: {
 						amount: 14589.999999999973,
-						rank: 12,
+						level: 12,
 					},
 				},
 				payrollEndOfSeason: 64700,
 			},
 		],
 		budget: {
-			ticketPrice: {
-				amount: 40.52,
-				rank: 12,
-			},
-			scouting: {
-				amount: 14590,
-				rank: 12,
-			},
-			coaching: {
-				amount: 14590,
-				rank: 12,
-			},
-			health: {
-				amount: 14590,
-				rank: 12,
-			},
-			facilities: {
-				amount: 14590,
-				rank: 12,
-			},
+			ticketPrice: 40.52,
+			scouting: 14590,
+			coaching: 14590,
+			health: 14590,
+			facilities: 14590,
 		},
 		strategy: "contending",
 	},

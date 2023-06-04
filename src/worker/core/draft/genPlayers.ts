@@ -29,11 +29,7 @@ const genPlayers = async (
 				[g.get("userTid"), g.get("season")],
 			],
 		);
-		scoutingRank = finances.getRankLastThree(
-			teamSeasons,
-			"expenses",
-			"scouting",
-		);
+		scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
 	}
 
 	const allDraftProspects = await idb.cache.players.indexGetAll(

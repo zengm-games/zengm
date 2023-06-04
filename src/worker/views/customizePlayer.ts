@@ -88,11 +88,7 @@ const updateCustomizePlayer = async (
 					[g.get("userTid"), g.get("season")],
 				],
 			);
-			const scoutingRank = finances.getRankLastThree(
-				teamSeasons,
-				"expenses",
-				"scouting",
-			);
+			const scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
 			const name = await player.name();
 			p = player.generate(
 				PLAYER.FREE_AGENT,

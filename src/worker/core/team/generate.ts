@@ -5,6 +5,7 @@ import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
 } from "../../../common";
+import finances from "../finances";
 
 /**
  * Create a new team object.
@@ -30,44 +31,12 @@ const generate = (tm: any): Team => {
 		imgURLSmall: tm.imgURLSmall === "" ? undefined : tm.imgURLSmall,
 
 		budget: {
-			ticketPrice: {
-				amount: Object.hasOwn(tm, "budget")
-					? tm.budget.ticketPrice.amount
-					: helpers.defaultTicketPrice(tm.popRank),
-				rank: Object.hasOwn(tm, "budget")
-					? tm.budget.ticketPrice.rank
-					: tm.popRank,
-			},
-			scouting: {
-				amount: Object.hasOwn(tm, "budget")
-					? tm.budget.scouting.amount
-					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: Object.hasOwn(tm, "budget")
-					? tm.budget.scouting.rank
-					: tm.popRank,
-			},
-			coaching: {
-				amount: Object.hasOwn(tm, "budget")
-					? tm.budget.coaching.amount
-					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: Object.hasOwn(tm, "budget")
-					? tm.budget.coaching.rank
-					: tm.popRank,
-			},
-			health: {
-				amount: Object.hasOwn(tm, "budget")
-					? tm.budget.health.amount
-					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: Object.hasOwn(tm, "budget") ? tm.budget.health.rank : tm.popRank,
-			},
-			facilities: {
-				amount: Object.hasOwn(tm, "budget")
-					? tm.budget.facilities.amount
-					: helpers.defaultBudgetAmount(tm.popRank),
-				rank: Object.hasOwn(tm, "budget")
-					? tm.budget.facilities.rank
-					: tm.popRank,
-			},
+			ticketPrice:
+				tm.budget?.ticketPrice ?? helpers.defaultTicketPrice(tm.popRank),
+			scouting: finances.defaultBudgetLevel(),
+			coaching: finances.defaultBudgetLevel(),
+			health: finances.defaultBudgetLevel(),
+			facilities: finances.defaultBudgetLevel(),
 		},
 		strategy,
 		depth: tm.depth,

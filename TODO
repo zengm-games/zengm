@@ -1,40 +1,47 @@
-when negotiating with re-sign players, don't remove from list when you press cancel https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jiffpkf/
-
-bootstrap real dark mode
-- table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants
-
 finances revamp
-- count, not $
-- exponential increase in cost, average effect is at 5, cost at 5 is $25m in default BBGM
-  - or exponential decrease in effect? or linear?
-- 2 yr avg
+- levelToAmount probably needs to be tweaked, to handle that the average is not right in the middle
+- 3 yr avg
   - show avg in ui
-  - store cumsum and numgames for current and prev season
-- UI should show current effect and long term effect (after 3 years)
-- get rid of adjustForInflation
-  - what about ticket prices? does this affect them? maybe always adjust ticket prices
+- UI should show annual cost, current effect (projected out 3 years), and long term effect (after 3 years)
+- adjustForInflation just for ticket prices
+  - always enable if setting auto ticket price
 - on mobile, move settings to top of team finances page
+- any getRankLastThree uses?
+- check anywhere defaultRank is referenced
+  - what should "default level" be?
+- check any variables containing Rank
+- default for no budget mode?
+  - DEFAULT_LEVEL?
 - what should the exact numbers be?
   - different cost/effect for different categories?
 - TeamSeason.expenses and revenues no longer need to store rank
 - updateRanks
-  - instead, update the average of past 2 seasons
+  - needed at all?
 - helpers.defaultBudgetAmount
-- autoBudgetSettings
-  - call each year for AI teams
-    - does it change over time?
+- for AI teams, after resetTicketPrice in newPhasePreseason, have something that sets the budget levels, using defaultBudgetLevel
+  - defaultBudgetLevel should take some args to help determine the proper value
+- check league finances
 - show all levels on league finances table
 - upgrade
   - TeamSeason.expenses and revenues
     - import
     - existing league
+    - schema
   - Team.budget
     - import
     - existing league
+    - schema
 - blog
   - rank isn't fun, like ebay bidding
   - level is clearer than some arbitrary $ amount that could change with inflation
   - exponential cost makes maxing out a hard decision
+
+heck json schema header metadata for hockey
+
+when negotiating with re-sign players, don't remove from list when you press cancel https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jiffpkf/
+
+bootstrap real dark mode
+- table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants
 
 FBGM game sim tweaks
 - running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ

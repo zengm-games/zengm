@@ -25,6 +25,7 @@ import { connectLeague, idb } from "../db";
 import { getPlayersActiveSeason } from "../db/getCopies/players";
 import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
+import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -338,8 +339,8 @@ export const getSeasonInfo = async (
 };
 
 type ExhibitionGamePhase =
-	| typeof PHASE["REGULAR_SEASON"]
-	| typeof PHASE["PLAYOFFS"];
+	| (typeof PHASE)["REGULAR_SEASON"]
+	| (typeof PHASE)["PLAYOFFS"];
 
 export const simExhibitionGame = async (
 	{
@@ -389,6 +390,7 @@ export const simExhibitionGame = async (
 					depth,
 				},
 				{
+					gp: 0,
 					won: t.seasonInfo?.won ?? 0,
 					lost: t.seasonInfo?.lost ?? 0,
 					tied: t.seasonInfo?.tied ?? 0,
@@ -397,7 +399,7 @@ export const simExhibitionGame = async (
 					did: 0,
 					expenses: {
 						health: {
-							rank: 1,
+							level: DEFAULT_LEVEL,
 						},
 					},
 				},

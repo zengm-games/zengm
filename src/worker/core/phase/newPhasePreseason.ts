@@ -142,11 +142,7 @@ const newPhasePreseason = async (
 		// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
 		// This is done BEFORE a new season row is added.
 		if (tid === g.get("userTid")) {
-			scoutingRank = finances.getRankLastThree(
-				teamSeasons2,
-				"expenses",
-				"scouting",
-			);
+			scoutingRank = finances.getLevelLastThree(teamSeasons2, "scouting");
 		}
 
 		const newSeason = team.genSeasonRow(t, prevSeason);
@@ -197,7 +193,7 @@ const newPhasePreseason = async (
 			local.autoPlayUntil ||
 			g.get("spectator")
 		) {
-			await team.autoBudgetSettings(t, popRanks[i]);
+			await team.resetTicketPrice(t, popRanks[i]);
 			t.adjustForInflation = true;
 			t.autoTicketPrice = true;
 			t.keepRosterSorted = true;
@@ -226,9 +222,8 @@ const newPhasePreseason = async (
 
 	const coachingRanks: Record<number, number> = {};
 	for (const teamSeason of teamSeasons) {
-		coachingRanks[teamSeason.tid] = finances.getRankLastThree(
+		coachingRanks[teamSeason.tid] = finances.getLevelLastThree(
 			[teamSeason],
-			"expenses",
 			"coaching",
 		);
 	}

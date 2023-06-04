@@ -9,11 +9,9 @@ import { DEFAULT_JERSEY } from "../../../common";
 const genSeasonRow = (
 	t: Team | TeamBasic,
 	prevSeason?: TeamSeasonWithoutKey,
-	numActiveTeams: number = g.get("numActiveTeams"),
 	season: number = g.get("season"),
 	defaultStadiumCapacity: number = g.get("defaultStadiumCapacity"),
 ): TeamSeasonWithoutKey => {
-	const defaultRank = (numActiveTeams + 1) / 2;
 	const newSeason = {
 		tid: t.tid,
 		cid: t.cid,
@@ -56,59 +54,32 @@ const genSeasonRow = (
 		pop: 1,
 		stadiumCapacity: defaultStadiumCapacity,
 		revenues: {
-			luxuryTaxShare: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			merch: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			sponsor: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			ticket: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			nationalTv: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			localTv: {
-				amount: 0,
-				rank: defaultRank,
-			},
+			luxuryTaxShare: 0,
+			merch: 0,
+			sponsor: 0,
+			ticket: 0,
+			nationalTv: 0,
+			localTv: 0,
 		},
 		expenses: {
-			salary: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			luxuryTax: {
-				amount: 0,
-				rank: defaultRank,
-			},
-			minTax: {
-				amount: 0,
-				rank: defaultRank,
-			},
+			salary: 0,
+			luxuryTax: 0,
+			minTax: 0,
 			scouting: {
 				amount: 0,
-				rank: defaultRank,
+				level: 0,
 			},
 			coaching: {
 				amount: 0,
-				rank: defaultRank,
+				level: 0,
 			},
 			health: {
 				amount: 0,
-				rank: defaultRank,
+				level: 0,
 			},
 			facilities: {
 				amount: 0,
-				rank: defaultRank,
+				level: 0,
 			},
 		},
 		payrollEndOfSeason: -1,

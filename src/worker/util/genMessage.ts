@@ -66,7 +66,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	// Check for some challenge modes that can result in being fired
 	if (g.get("challengeFiredLuxuryTax")) {
 		const latestSeason = teamSeasons.at(-1)!;
-		if (latestSeason.expenses.luxuryTax.amount > 0) {
+		if (latestSeason.expenses.luxuryTax > 0) {
 			m +=
 				'<p>You paid the luxury tax with the "You\'re fired if you pay the luxury tax" challenge mode enabled!</p>';
 			fired = true;

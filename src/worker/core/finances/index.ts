@@ -1,9 +1,11 @@
 import assessPayrollMinLuxury from "./assessPayrollMinLuxury";
-import getRankLastThree from "./getRankLastThree";
+import defaultBudgetLevel from "./defaultBudgetLevel";
+import getLevelLastThree from "./getLevelLastThree";
 import updateRanks from "./updateRanks";
 
 export default {
 	assessPayrollMinLuxury,
-	getRankLastThree,
+	defaultBudgetLevel,
+	getLevelLastThree,
 	updateRanks,
 };

@@ -1,5 +1,4 @@
 import addNewTeamToExistingLeague from "./addNewTeamToExistingLeague";
-import autoBudgetSettings from "./autoBudgetSettings";
 import avgAge from "./avgAge";
 import checkRosterSizes from "./checkRosterSizes";
 import deleteUnreadMessages from "./deleteUnreadMessages";
@@ -17,6 +16,7 @@ import ovr from "./ovr";
 import processStats from "./processStats";
 import ptsMax from "./ptsMax";
 import ptsPct from "./ptsPct";
+import resetTicketPrice from "./resetTicketPrice";
 import rosterAutoSort from "./rosterAutoSort";
 import switchTo from "./switchTo";
 import stats from "./stats";
@@ -26,7 +26,6 @@ import valueChange from "./valueChange";
 
 export default {
 	addNewTeamToExistingLeague,
-	autoBudgetSettings,
 	avgAge,
 	checkRosterSizes,
 	deleteUnreadMessages,
@@ -44,6 +43,7 @@ export default {
 	processStats,
 	ptsMax,
 	ptsPct,
+	resetTicketPrice,
 	rosterAutoSort,
 	switchTo,
 	stats,

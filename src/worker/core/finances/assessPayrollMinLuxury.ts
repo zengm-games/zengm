@@ -36,15 +36,15 @@ const assessPayrollMinLuxury = async () => {
 
 		// Assess minimum payroll tax and luxury tax
 		if (payroll < g.get("minPayroll")) {
-			teamSeason.expenses.minTax.amount = g.get("minPayroll") - payroll;
-			teamSeason.cash -= teamSeason.expenses.minTax.amount;
+			teamSeason.expenses.minTax = g.get("minPayroll") - payroll;
+			teamSeason.cash -= teamSeason.expenses.minTax;
 
 			logEvent({
 				type: "minPayroll",
 				text: `The ${rosterLink(
 					tid,
 				)} paid a minimum payroll penalty of ${helpers.formatCurrency(
-					teamSeason.expenses.minTax.amount / 1000,
+					teamSeason.expenses.minTax / 1000,
 					"M",
 				)} for having a payroll under ${helpers.formatCurrency(
 					g.get("minPayroll") / 1000,
@@ -61,8 +61,8 @@ const assessPayrollMinLuxury = async () => {
 			// Only apply luxury tax if hard cap is disabled!
 			const amount = g.get("luxuryTax") * (payroll - g.get("luxuryPayroll"));
 			collectedTax += amount;
-			teamSeason.expenses.luxuryTax.amount = amount;
-			teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
+			teamSeason.expenses.luxuryTax = amount;
+			teamSeason.cash -= teamSeason.expenses.luxuryTax;
 
 			logEvent({
 				type: "luxuryTax",
@@ -87,7 +87,6 @@ const assessPayrollMinLuxury = async () => {
 			? g.get("luxuryPayroll")
 			: g.get("salaryCap");
 
-	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
 	const payteams = Object.values(payrolls).filter(
 		x => x !== undefined && x <= payrollCutoff,
 	);
@@ -103,10 +102,7 @@ const assessPayrollMinLuxury = async () => {
 			}
 
 			if (payroll <= payrollCutoff) {
-				teamSeason.revenues.luxuryTaxShare = {
-					amount: distribute,
-					rank: defaultRank,
-				};
+				teamSeason.revenues.luxuryTaxShare = distribute;
 				teamSeason.cash += distribute;
 
 				logEvent({
@@ -125,10 +121,7 @@ const assessPayrollMinLuxury = async () => {
 					score: 10,
 				});
 			} else {
-				teamSeason.revenues.luxuryTaxShare = {
-					amount: 0,
-					rank: defaultRank,
-				};
+				teamSeason.revenues.luxuryTaxShare = 0;
 			}
 		}
 	}

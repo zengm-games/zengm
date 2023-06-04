@@ -1932,11 +1932,7 @@ const handleUploadedDraftClass = async ({
 			[g.get("userTid"), g.get("season")],
 		],
 	);
-	const scoutingRank = finances.getRankLastThree(
-		teamSeasons,
-		"expenses",
-		"scouting",
-	);
+	const scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
 
 	// Delete old players from draft class
 	const oldPlayers = await idb.cache.players.indexGetAll(
@@ -3163,11 +3159,11 @@ const uiUpdateLocal = async (obj: Partial<LocalStateUI>) => {
 };
 
 const updateBudget = async ({
-	budgetAmounts,
+	budgetLevels,
 	adjustForInflation,
 	autoTicketPrice,
 }: {
-	budgetAmounts: {
+	budgetLevels: {
 		coaching: number;
 		facilities: number;
 		health: number;
@@ -3184,15 +3180,15 @@ const updateBudget = async ({
 		throw new Error("Invalid tid");
 	}
 
-	for (const key of helpers.keys(budgetAmounts)) {
+	for (const key of helpers.keys(budgetLevels)) {
 		// Check for NaN before updating
-		if (budgetAmounts[key] === budgetAmounts[key]) {
-			t.budget[key].amount = budgetAmounts[key];
+		if (budgetLevels[key] === budgetLevels[key]) {
+			t.budget[key] = budgetLevels[key];
 		}
 	}
 
 	if (autoTicketPrice && t.autoTicketPrice === false) {
-		t.budget.ticketPrice.amount = await getAutoTicketPriceByTid(userTid);
+		t.budget.ticketPrice = await getAutoTicketPriceByTid(userTid);
 	}
 
 	t.adjustForInflation = adjustForInflation;

@@ -87,10 +87,7 @@ const updateTeamFinances = async (
 		// Add in luxuryTaxShare if it's missing
 		for (const teamSeason of teamSeasons) {
 			if (!teamSeason.revenues.luxuryTaxShare) {
-				teamSeason.revenues.luxuryTaxShare = {
-					amount: 0,
-					rank: 15,
-				};
+				teamSeason.revenues.luxuryTaxShare = 0;
 			}
 		}
 
@@ -104,13 +101,18 @@ const updateTeamFinances = async (
 				const outputKey = `revenues${helpers.upperCaseFirstLetter(
 					key,
 				)}` as const;
-				output[outputKey] = teamSeason.revenues[key].amount;
+				output[outputKey] = teamSeason.revenues[key];
 			}
 			for (const key of helpers.keys(teamSeason.expenses)) {
 				const outputKey = `expenses${helpers.upperCaseFirstLetter(
 					key,
 				)}` as const;
-				output[outputKey] = teamSeason.expenses[key].amount;
+				const value = teamSeason.expenses[key];
+				if (typeof value === "number") {
+					output[outputKey] = value;
+				} else {
+					output[outputKey] = value.amount;
+				}
 			}
 			return output;
 		};

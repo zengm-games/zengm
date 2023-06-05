@@ -1616,16 +1616,20 @@ export type TeamSeasonWithoutKey = {
 		nationalTv: number;
 		localTv: number;
 	};
-	expenses: Record<
-		"scouting" | "coaching" | "health" | "facilities",
-		{
-			amount: number;
-			level: number;
-		}
-	> & {
+	expenses: {
 		luxuryTax: number;
 		minTax: number;
 		salary: number;
+		coaching: number;
+		health: number;
+		facilities: number;
+		scouting: number;
+	};
+	expensesLevels: {
+		coaching: number;
+		health: number;
+		facilities: number;
+		scouting: number;
 	};
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;

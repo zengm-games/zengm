@@ -7,12 +7,7 @@ const getLevelLastThree = <
 >(
 	teamSeasons: {
 		gp: number;
-		expenses: Record<
-			Item,
-			{
-				level: number;
-			}
-		>;
+		expensesLevels: Record<Item, number>;
 	}[],
 	item: Item,
 ): number => {
@@ -23,7 +18,7 @@ const getLevelLastThree = <
 		let levelSum = 0;
 		let gpSum = 0;
 		for (const row of upToLastThreeTeamSeasons) {
-			levelSum += row.expenses[item].level;
+			levelSum += row.expensesLevels[item];
 			gpSum += row.gp;
 		}
 

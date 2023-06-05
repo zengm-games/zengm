@@ -65,22 +65,16 @@ const genSeasonRow = (
 			salary: 0,
 			luxuryTax: 0,
 			minTax: 0,
-			scouting: {
-				amount: 0,
-				level: 0,
-			},
-			coaching: {
-				amount: 0,
-				level: 0,
-			},
-			health: {
-				amount: 0,
-				level: 0,
-			},
-			facilities: {
-				amount: 0,
-				level: 0,
-			},
+			scouting: 0,
+			coaching: 0,
+			health: 0,
+			facilities: 0,
+		},
+		expensesLevels: {
+			scouting: 0,
+			coaching: 0,
+			health: 0,
+			facilities: 0,
 		},
 		payrollEndOfSeason: -1,
 		ownerMood: {

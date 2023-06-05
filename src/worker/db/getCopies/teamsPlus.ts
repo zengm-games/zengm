@@ -115,14 +115,9 @@ const processSeasonAttrs = async <
 			const revenue = helpers
 				.keys(ts.revenues)
 				.reduce((memo, rev) => memo + ts.revenues[rev], 0);
-			const expense = helpers.keys(ts.expenses).reduce((memo, rev) => {
-				const value = ts.expenses[rev];
-				if (typeof value === "number") {
-					return memo + value;
-				}
-
-				return memo + value.amount;
-			}, 0);
+			const expense = helpers
+				.keys(ts.expenses)
+				.reduce((memo, rev) => memo + ts.expenses[rev], 0);
 
 			for (const temp of seasonAttrs) {
 				const attr: string = temp;

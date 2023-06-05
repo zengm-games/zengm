@@ -732,43 +732,34 @@ const processTeamInfos = ({
 						money: 0,
 					};
 				}
-				if (
-					teamSeason.revenues === undefined ||
-					teamSeason.expenses === undefined
-				) {
-					if (teamSeason.revenues === undefined) {
-						teamSeason.revenues = {
-							luxuryTaxShare: 0,
-							merch: 0,
-							sponsor: 0,
-							ticket: 0,
-							nationalTv: 0,
-							localTv: 0,
-						};
-					}
-					if (teamSeason.expenses === undefined) {
-						teamSeason.expenses = {
-							salary: 0,
-							luxuryTax: 0,
-							minTax: 0,
-							scouting: {
-								amount: 0,
-								level: 0,
-							},
-							coaching: {
-								amount: 0,
-								level: 0,
-							},
-							health: {
-								amount: 0,
-								level: 0,
-							},
-							facilities: {
-								amount: 0,
-								level: 0,
-							},
-						};
-					}
+				if (teamSeason.revenues === undefined) {
+					teamSeason.revenues = {
+						luxuryTaxShare: 0,
+						merch: 0,
+						sponsor: 0,
+						ticket: 0,
+						nationalTv: 0,
+						localTv: 0,
+					};
+				}
+				if (teamSeason.expenses === undefined) {
+					teamSeason.expenses = {
+						salary: 0,
+						luxuryTax: 0,
+						minTax: 0,
+						scouting: 0,
+						coaching: 0,
+						health: 0,
+						facilities: 0,
+					};
+				}
+				if (teamSeason.expensesLevels === undefined) {
+					teamSeason.expensesLevels = {
+						scouting: 0,
+						coaching: 0,
+						health: 0,
+						facilities: 0,
+					};
 				}
 			}
 		} else if (!t.disabled) {

@@ -44,10 +44,8 @@ export const processTeam = (
 		otl: number;
 		cid: number;
 		did: number;
-		expenses: {
-			health: {
-				level: number;
-			};
+		expensesLevels: {
+			health: number;
 		};
 	},
 	players: Player<MinimalPlayerRatings>[],
@@ -384,10 +382,8 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					lost: 0,
 					tied: 0,
 					otl: 0,
-					expenses: {
-						health: {
-							level: DEFAULT_LEVEL,
-						},
+					expensesLevels: {
+						health: DEFAULT_LEVEL,
 					},
 				},
 				players,

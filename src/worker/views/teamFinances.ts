@@ -107,12 +107,7 @@ const updateTeamFinances = async (
 				const outputKey = `expenses${helpers.upperCaseFirstLetter(
 					key,
 				)}` as const;
-				const value = teamSeason.expenses[key];
-				if (typeof value === "number") {
-					output[outputKey] = value;
-				} else {
-					output[outputKey] = value.amount;
-				}
+				output[outputKey] = teamSeason.expenses[key];
 			}
 			return output;
 		};

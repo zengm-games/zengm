@@ -397,10 +397,8 @@ export const simExhibitionGame = async (
 					otl: t.seasonInfo?.otl ?? 0,
 					cid: 0,
 					did: 0,
-					expenses: {
-						health: {
-							level: DEFAULT_LEVEL,
-						},
+					expensesLevels: {
+						health: DEFAULT_LEVEL,
 					},
 				},
 				t.players,

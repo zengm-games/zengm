@@ -3,7 +3,7 @@ finances revamp
 - 3 yr avg
   - show avg in ui
 - UI should show annual cost, current effect (projected out 3 years), and long term effect (after 3 years)
-  - for the effect UI, DRY the effect calculation code (like multiplying by 2 for mood) so it never falls out of sync
+  - for the effect UI, use the facilitiesEffect etc functions in budgetLevels.ts
 - adjustForInflation just for ticket prices
   - always enable if setting auto ticket price
 - on mobile, move settings to top of team finances page

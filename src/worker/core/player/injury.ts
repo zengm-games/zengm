@@ -1,6 +1,6 @@
 import { defaultInjuries, g, helpers, random } from "../../util";
 import type { InjuriesSetting, PlayerInjury } from "../../../common/types";
-import { levelToEffect } from "../../../common/budgetLevels";
+import { healthEffect } from "../../../common/budgetLevels";
 
 let prevInjuries: InjuriesSetting | undefined;
 
@@ -22,12 +22,10 @@ const injury = (healthLevel: number): PlayerInjury => {
 		prevInjuries = injuries;
 	}
 
-	const healthLevelEffect = levelToEffect(healthLevel);
-
 	const rand = random.uniform(0, cumSums.at(-1)!);
 	const i = cumSums.findIndex(cs => cs >= rand);
 	const gamesRemaining = Math.round(
-		(1 + 0.35 * healthLevelEffect) *
+		(1 + 0.35 * healthEffect(healthLevel)) *
 			random.uniform(0.25, 1.75) *
 			injuries[i].games,
 	);

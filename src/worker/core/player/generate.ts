@@ -13,7 +13,7 @@ const generate = (
 	age: number,
 	draftYear: number,
 	newLeague: boolean,
-	scoutingRank: number,
+	scoutingLevel: number,
 	{
 		college,
 		country,
@@ -36,7 +36,7 @@ const generate = (
 ): PlayerWithoutKey<MinimalPlayerRatings> => {
 	const { heightInInches, ratings } = genRatings(
 		newLeague ? g.get("startingSeason") : draftYear,
-		scoutingRank,
+		scoutingLevel,
 	);
 	// lastName += `-${genPos}`;
 

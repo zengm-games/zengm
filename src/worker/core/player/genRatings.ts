@@ -7,15 +7,15 @@ import genRatingsFootball from "./genRatings.football";
 import genRatingsHockey from "./genRatings.hockey";
 import pos from "./pos";
 
-const genRatings = (season: number, scoutingRank: number) => {
+const genRatings = (season: number, scoutingLevel: number) => {
 	const { heightInInches, ratings } = bySport<{
 		heightInInches: number;
 		ratings: MinimalPlayerRatings;
 	}>({
-		baseball: genRatingsBaseball(season, scoutingRank),
-		basketball: genRatingsBasketball(season, scoutingRank),
-		football: genRatingsFootball(season, scoutingRank),
-		hockey: genRatingsHockey(season, scoutingRank),
+		baseball: genRatingsBaseball(season, scoutingLevel),
+		basketball: genRatingsBasketball(season, scoutingLevel),
+		football: genRatingsFootball(season, scoutingLevel),
+		hockey: genRatingsHockey(season, scoutingLevel),
 	});
 
 	// Should correspond to defaultGameAttributes.draftAges[0], but maybe they will diverge in the future..

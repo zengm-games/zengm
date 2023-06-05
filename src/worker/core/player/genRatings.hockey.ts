@@ -140,7 +140,7 @@ const defaultOvrsOrPots = {
 
 const genRatings = (
 	season: number,
-	scoutingRank: number,
+	scoutingLevel: number,
 ): {
 	heightInInches: number;
 	ratings: PlayerRatings;
@@ -190,7 +190,7 @@ const genRatings = (
 		fcf: rawRatings.fcf,
 		diq: rawRatings.diq,
 		glk: rawRatings.glk,
-		fuzz: genFuzz(scoutingRank),
+		fuzz: genFuzz(scoutingLevel),
 		ovr: 0,
 		pos,
 		pot: 0,

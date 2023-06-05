@@ -2,15 +2,16 @@ import assert from "node:assert/strict";
 import testHelpers from "../../../test/helpers";
 import player from "./index";
 import { g } from "../../util";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 describe("worker/core/player/getPlayerFakeAge", () => {
 	test("pick appropriate player to have a fake age", () => {
 		testHelpers.resetG();
 		const players: any = [
-			player.generate(0, 19, g.get("season"), false, 15.5),
-			player.generate(0, 25, g.get("season"), false, 15.5), // Should get filtered out, too old
-			player.generate(0, 22, g.get("season"), false, 15.5),
-			player.generate(0, 20, g.get("season"), false, 15.5),
+			player.generate(0, 19, g.get("season"), false, DEFAULT_LEVEL),
+			player.generate(0, 25, g.get("season"), false, DEFAULT_LEVEL), // Should get filtered out, too old
+			player.generate(0, 22, g.get("season"), false, DEFAULT_LEVEL),
+			player.generate(0, 20, g.get("season"), false, DEFAULT_LEVEL),
 		];
 		players[0].pid = 0;
 		players[0].born.loc = "Ghana";

@@ -6,6 +6,7 @@ import loadTeams from "../game/loadTeams";
 import { g, helpers } from "../../util";
 import testHelpers from "../../../test/helpers";
 import Play from "./Play";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 export const genTwoTeams = async () => {
 	testHelpers.resetG();
@@ -13,8 +14,8 @@ export const genTwoTeams = async () => {
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 2);
 	await testHelpers.resetCache({
 		players: [
-			...range(50).map(() => player.generate(0, 25, 2010, true, 15.5)),
-			...range(50).map(() => player.generate(1, 25, 2010, true, 15.5)),
+			...range(50).map(() => player.generate(0, 25, 2010, true, DEFAULT_LEVEL)),
+			...range(50).map(() => player.generate(1, 25, 2010, true, DEFAULT_LEVEL)),
 		],
 		teams: teamsDefault.map(team.generate),
 		teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),

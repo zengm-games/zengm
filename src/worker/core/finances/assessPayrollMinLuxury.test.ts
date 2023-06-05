@@ -3,6 +3,7 @@ import testHelpers from "../../../test/helpers";
 import { finances, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 describe("worker/core/finances/assessPayrollMinLuxury", () => {
 	test("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
@@ -14,9 +15,9 @@ describe("worker/core/finances/assessPayrollMinLuxury", () => {
 
 		// One player per team is all that's needed for payroll calculation.
 		const players = [
-			player.generate(0, 30, 2017, true, 15.5),
-			player.generate(1, 30, 2017, true, 15.5),
-			player.generate(2, 30, 2017, true, 15.5),
+			player.generate(0, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(1, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(2, 30, 2017, true, DEFAULT_LEVEL),
 		];
 		players[0].contract.amount = g.get("luxuryPayroll") + 1;
 		players[1].contract.amount =

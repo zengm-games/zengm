@@ -8,6 +8,7 @@ import type {
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
 } from "../../../common/types";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 describe("worker/core/team/checkRosterSizes", () => {
 	beforeAll(() => {
@@ -25,7 +26,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 			const tid = parseInt(tidString);
 
 			for (let i = 0; i < info[tidString]; i++) {
-				const p = player.generate(tid, 30, 2017, true, 15.5);
+				const p = player.generate(tid, 30, 2017, true, DEFAULT_LEVEL);
 
 				if (tid === PLAYER.FREE_AGENT) {
 					p.contract.amount = g.get("minContract");

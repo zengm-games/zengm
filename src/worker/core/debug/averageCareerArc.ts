@@ -1,4 +1,5 @@
 import { player } from "..";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 import { g } from "../../util";
 
 const averageCareerArc = async (ratingToSave: string) => {
@@ -19,7 +20,7 @@ const averageCareerArc = async (ratingToSave: string) => {
 	}
 
 	for (let i = 0; i < numPlayers; i++) {
-		const p = player.generate(0, 19, g.get("season"), true, 15);
+		const p = player.generate(0, 19, g.get("season"), true, DEFAULT_LEVEL);
 
 		for (let k = 0; k < numSeasons; k++) {
 			averageOvr[k] += p.ratings[0].ovr;

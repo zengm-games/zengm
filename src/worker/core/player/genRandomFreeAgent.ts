@@ -5,6 +5,7 @@ import generate from "./generate";
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import name from "./name";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const genRandomFreeAgent = async (): Promise<Player> => {
 	let minAge = 25;
@@ -41,7 +42,7 @@ const genRandomFreeAgent = async (): Promise<Player> => {
 			age,
 			draftYear,
 			false,
-			15.5,
+			DEFAULT_LEVEL,
 			await name(),
 		);
 		p.ratings[0].season = g.get("season"); // HACK!!!

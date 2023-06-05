@@ -4,6 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
 import { idb } from "..";
 import { g, helpers } from "../../util";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 describe("worker/db/getCopies/teamsPlus", () => {
 	beforeAll(async () => {
@@ -11,7 +12,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		g.setWithoutSavingToDB("season", 2013);
 		const teamsDefault = helpers.getTeamsDefault();
 		await testHelpers.resetCache({
-			players: [player.generate(4, 30, 2010, true, 15.5)],
+			players: [player.generate(4, 30, 2010, true, DEFAULT_LEVEL)],
 			teams: teamsDefault.map(team.generate),
 			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),
 			teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
@@ -256,13 +257,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
-			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+			typeAssert<IsExact<(typeof teams)[number], Exclude<typeof t, undefined>>>(
 				true,
 			);
 
 			typeAssert<
 				IsExact<
-					typeof teams[number],
+					(typeof teams)[number],
 					{
 						tid: number;
 						abbrev: string;
@@ -294,13 +295,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
-			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+			typeAssert<IsExact<(typeof teams)[number], Exclude<typeof t, undefined>>>(
 				true,
 			);
 
 			typeAssert<
 				IsExact<
-					typeof teams[number],
+					(typeof teams)[number],
 					{
 						tid: number;
 						abbrev: string;
@@ -323,13 +324,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
-			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+			typeAssert<IsExact<(typeof teams)[number], Exclude<typeof t, undefined>>>(
 				true,
 			);
 
 			typeAssert<
 				IsExact<
-					typeof teams[number],
+					(typeof teams)[number],
 					{
 						tid: number;
 						abbrev: string;
@@ -357,13 +358,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
-			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+			typeAssert<IsExact<(typeof teams)[number], Exclude<typeof t, undefined>>>(
 				true,
 			);
 
 			typeAssert<
 				IsExact<
-					typeof teams[number],
+					(typeof teams)[number],
 					{
 						tid: number;
 						abbrev: string;
@@ -392,13 +393,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
-			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+			typeAssert<IsExact<(typeof teams)[number], Exclude<typeof t, undefined>>>(
 				true,
 			);
 
 			typeAssert<
 				IsExact<
-					typeof teams[number],
+					(typeof teams)[number],
 					{
 						seasonAttrs: {
 							season: number;
@@ -432,13 +433,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				stats: ["gp", "fg", "fgp"],
 			});
 
-			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+			typeAssert<IsExact<(typeof teams)[number], Exclude<typeof t, undefined>>>(
 				true,
 			);
 
 			typeAssert<
 				IsExact<
-					typeof teams[number],
+					(typeof teams)[number],
 					{
 						tid: number;
 						abbrev: string;

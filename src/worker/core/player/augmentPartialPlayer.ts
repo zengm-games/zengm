@@ -35,7 +35,7 @@ const addStatsRowWrapped = async (
  */
 const augmentPartialPlayer = async (
 	p: any,
-	scoutingRank: number,
+	scoutingLevel: number,
 	version: number | undefined,
 	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
@@ -65,7 +65,7 @@ const augmentPartialPlayer = async (
 		age,
 		g.get("startingSeason") - (age - 18),
 		true,
-		scoutingRank,
+		scoutingLevel,
 		await name(),
 	);
 

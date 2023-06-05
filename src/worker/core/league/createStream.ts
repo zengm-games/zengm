@@ -1218,7 +1218,7 @@ const afterDBStream = async ({
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
 				activeTids,
-				scoutingRank,
+				scoutingLevel: scoutingRank,
 				teams,
 		  });
 

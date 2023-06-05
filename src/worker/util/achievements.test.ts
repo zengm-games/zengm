@@ -7,6 +7,7 @@ import helpers from "./helpers";
 import achievements from "./achievements";
 import type { TeamSeason, Achievement } from "../../common/types";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
+import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 
 const get = (slug: string) => {
 	const achievement = achievements.find(
@@ -32,8 +33,8 @@ describe("worker/util/account/checkAchievement", () => {
 		const teamsDefault = helpers.getTeamsDefault();
 		await testHelpers.resetCache({
 			players: [
-				player.generate(0, 30, 2010, true, 15.5),
-				player.generate(0, 30, 2010, true, 15.5),
+				player.generate(0, 30, 2010, true, DEFAULT_LEVEL),
+				player.generate(0, 30, 2010, true, DEFAULT_LEVEL),
 			],
 			teams: teamsDefault.map(team.generate),
 			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),

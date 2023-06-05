@@ -4,13 +4,14 @@ import testHelpers from "../../../test/helpers";
 import { player } from "../../core";
 import { idb } from "..";
 import { g, helpers } from "../../util";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 describe("worker/db/getCopies/playersPlus", () => {
 	let p: any;
 	beforeAll(async () => {
 		testHelpers.resetG();
 		g.setWithoutSavingToDB("season", 2011);
-		p = player.generate(PLAYER.UNDRAFTED, 19, 2011, false, 28);
+		p = player.generate(PLAYER.UNDRAFTED, 19, 2011, false, DEFAULT_LEVEL);
 		p.tid = 4;
 		g.setWithoutSavingToDB("season", 2012);
 		await testHelpers.resetCache({
@@ -30,12 +31,12 @@ describe("worker/db/getCopies/playersPlus", () => {
 		stats[2].gp = 8;
 		stats[2].fg = 56;
 		await player.develop(p, 0);
-		player.addRatingsRow(p, 15);
+		player.addRatingsRow(p);
 		await player.develop(p, 0);
-		player.addRatingsRow(p, 15);
+		player.addRatingsRow(p);
 		p.ratings[2].season = 2013;
 		await player.develop(p, 0);
-		player.addRatingsRow(p, 15);
+		player.addRatingsRow(p);
 		p.ratings[3].season = 2014;
 		await player.develop(p, 0);
 	});

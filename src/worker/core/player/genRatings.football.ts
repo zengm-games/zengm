@@ -255,13 +255,13 @@ const defaultOvrsOrPots = {
  * Generate initial ratings for a newly-created
  *
  * @param {number} season [description]
- * @param {number} scoutingRank Between 1 and g.get("numActiveTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+ * @param {number} scoutingLevel Between 1 and g.get("numActiveTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @param {number} tid [description]
  * @return {Object} Ratings object
  */
 const genRatings = (
 	season: number,
-	scoutingRank: number,
+	scoutingLevel: number,
 ): {
 	heightInInches: number;
 	ratings: PlayerRatings;
@@ -382,7 +382,7 @@ const genRatings = (
 		kac: rawRatings.kac,
 		ppw: rawRatings.ppw,
 		pac: rawRatings.pac,
-		fuzz: genFuzz(scoutingRank),
+		fuzz: genFuzz(scoutingLevel),
 		ovr: 0,
 		pos,
 		pot: 0,

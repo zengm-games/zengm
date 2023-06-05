@@ -125,6 +125,7 @@ import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDi
 import * as exhibitionGame from "./exhibitionGame";
 import { getSummary } from "../views/trade";
 import { getStats, statTypes } from "../views/playerGraphs";
+import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1932,7 +1933,7 @@ const handleUploadedDraftClass = async ({
 			[g.get("userTid"), g.get("season")],
 		],
 	);
-	const scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
+	const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
 
 	// Delete old players from draft class
 	const oldPlayers = await idb.cache.players.indexGetAll(
@@ -1978,7 +1979,7 @@ const handleUploadedDraftClass = async ({
 		// Make sure player object is fully defined
 		const p2 = await player.augmentPartialPlayer(
 			p,
-			scoutingRank,
+			scoutingLevel,
 			uploadedFile.version,
 		);
 		p2.draft.year = draftYear;
@@ -1996,7 +1997,7 @@ const handleUploadedDraftClass = async ({
 	}
 
 	// "Top off" the draft class if not enough players imported
-	await draft.genPlayers(draftYear, scoutingRank);
+	await draft.genPlayers(draftYear, scoutingLevel);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
@@ -2144,11 +2145,9 @@ const importPlayers = async ({
 			player.setContract(p2, p2.contract, tid >= 0);
 		}
 
-		const scoutingRank = (g.get("numActiveTeams") + 1) / 2;
-
 		const p3 = await player.augmentPartialPlayer(
 			p2,
-			scoutingRank,
+			DEFAULT_LEVEL,
 			leagueFile.version,
 		);
 		await player.updateValues(p3);
@@ -3886,7 +3885,7 @@ const upsertCustomizedPlayer = async (
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
 	if (originalTid === PLAYER.RETIRED && p.tid !== PLAYER.RETIRED) {
 		if (g.get("season") - p.ratings[r].season > 0) {
-			player.addRatingsRow(p, 15);
+			player.addRatingsRow(p);
 		}
 	}
 

@@ -6,18 +6,19 @@ import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";
 import type { Relative } from "../../../common/types";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const season = 2017;
 
 const genFathers = () => {
 	return range(season - 40, season - 20).map(season2 =>
-		player.generate(PLAYER.RETIRED, 50, season2, true, 15.5),
+		player.generate(PLAYER.RETIRED, 50, season2, true, DEFAULT_LEVEL),
 	);
 };
 
 const genBrothers = () => {
 	return range(season - 5, season + 1).map(season2 =>
-		player.generate(0, 50, season2, true, 15.5),
+		player.generate(0, 50, season2, true, DEFAULT_LEVEL),
 	);
 };
 
@@ -42,7 +43,7 @@ describe("worker/core/player/addRelatives", () => {
 		test("make player the brother of another player", async () => {
 			await testHelpers.resetCache({
 				players: [
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
 					...genBrothers(),
 				],
 			});
@@ -68,7 +69,9 @@ describe("worker/core/player/addRelatives", () => {
 
 		test("skip player if no possible brother exists", async () => {
 			await testHelpers.resetCache({
-				players: [player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5)],
+				players: [
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
+				],
 			});
 			const p = await getPlayer(0);
 			await makeBrother(p);
@@ -88,8 +91,8 @@ describe("worker/core/player/addRelatives", () => {
 
 			await testHelpers.resetCache({
 				players: [
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
-					player.generate(PLAYER.RETIRED, 50, season - 30, true, 15.5), // Father
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
+					player.generate(PLAYER.RETIRED, 50, season - 30, true, DEFAULT_LEVEL), // Father
 					...initialBrothers,
 				],
 			});
@@ -132,7 +135,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					initialPlayer,
-					player.generate(PLAYER.RETIRED, 50, season - 30, true, 15.5), // Father
+					player.generate(PLAYER.RETIRED, 50, season - 30, true, DEFAULT_LEVEL), // Father
 					...genBrothers(),
 				],
 			});
@@ -153,7 +156,7 @@ describe("worker/core/player/addRelatives", () => {
 
 		test("handle case where both have fathers", async () => {
 			const players = [
-				player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
 				...genBrothers(),
 			];
 
@@ -196,7 +199,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					initialP,
-					player.generate(PLAYER.RETIRED, 25, season - 6, true, 15.5), // Extra brother - 6 years ago means never picked by makeBrother
+					player.generate(PLAYER.RETIRED, 25, season - 6, true, DEFAULT_LEVEL), // Extra brother - 6 years ago means never picked by makeBrother
 					...initialBrothers,
 				],
 			});
@@ -238,7 +241,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					initialPlayer,
-					player.generate(PLAYER.RETIRED, 25, season - 5, true, 15.5), // Extra brother
+					player.generate(PLAYER.RETIRED, 25, season - 5, true, DEFAULT_LEVEL), // Extra brother
 					...genBrothers(),
 				],
 			});
@@ -256,7 +259,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					// Son
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5), // Fathers
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Fathers
 					...genFathers(),
 				],
 			});
@@ -284,7 +287,9 @@ describe("worker/core/player/addRelatives", () => {
 
 		test("skip player if no possible father exists", async () => {
 			await testHelpers.resetCache({
-				players: [player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5)],
+				players: [
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
+				],
 			});
 			const son = await getPlayer(0);
 			await makeSon(son);
@@ -295,7 +300,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					// Son
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5), // Fathers
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Fathers
 					...genFathers(),
 				],
 			});
@@ -321,8 +326,8 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [
 					// Son
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5), // Brother
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5), // Fathers
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Brother
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Fathers
 					...genFathers(),
 				],
 			});
@@ -381,12 +386,12 @@ describe("worker/core/player/addRelatives", () => {
 		test("handle case where father already has a son", async () => {
 			const initialFathers = genFathers();
 			const initialOtherSons = initialFathers.map(() =>
-				player.generate(0, 25, season, true, 15.5),
+				player.generate(0, 25, season, true, DEFAULT_LEVEL),
 			);
 			await testHelpers.resetCache({
 				players: [
 					// Son
-					player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5), // Other sons (one for each potential father)
+					player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Other sons (one for each potential father)
 					...initialOtherSons, // Fathers
 					...initialFathers,
 				],

@@ -13,6 +13,7 @@ import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { g } from "../../util";
 import createRandomPlayers from "../league/create/createRandomPlayers";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const printQuartiles = async (age?: number) => {
 	if (age !== undefined) {
@@ -22,7 +23,7 @@ const printQuartiles = async (age?: number) => {
 
 	const players = await createRandomPlayers({
 		activeTids: range(30),
-		scoutingRank: 15.5,
+		scoutingLevel: DEFAULT_LEVEL,
 		teams: range(30).map(tid => ({ tid })),
 	});
 

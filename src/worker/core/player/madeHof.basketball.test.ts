@@ -2,11 +2,12 @@ import assert from "node:assert/strict";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import madeHofBasketball from "./madeHof.basketball";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 describe("worker/core/player/madeHof.basketball", () => {
 	test("narrowly make HoF based on dominance factor", () => {
 		testHelpers.resetG();
-		const p = player.generate(0, 19, 2012, false, 15.5);
+		const p = player.generate(0, 19, 2012, false, DEFAULT_LEVEL);
 		p.stats = [
 			{
 				dws: 5,
@@ -53,7 +54,7 @@ describe("worker/core/player/madeHof.basketball", () => {
 	});
 
 	test("narrowly miss HoF based on dominance factor", () => {
-		const p = player.generate(0, 19, 2012, false, 15.5);
+		const p = player.generate(0, 19, 2012, false, DEFAULT_LEVEL);
 		p.stats = [
 			{
 				dws: 4,

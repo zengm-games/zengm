@@ -62,12 +62,12 @@ const updateRandomDebutsForever = async (
 			[g.get("userTid"), g.get("season")],
 		],
 	);
-	const scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
+	const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
 
 	for (const p of draftProspects) {
 		const p2 = await player.augmentPartialPlayer(
 			p,
-			scoutingRank,
+			scoutingLevel,
 			MAX_SUPPORTED_LEAGUE_VERSION,
 			true,
 		);

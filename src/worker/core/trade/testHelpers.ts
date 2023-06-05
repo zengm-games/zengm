@@ -1,6 +1,7 @@
 import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 import { player, trade } from "..";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const beforeTests = async () => {
 	testHelpers.resetG();
@@ -11,12 +12,12 @@ const beforeTests = async () => {
 	await testHelpers.resetCache({
 		players: [
 			// Two players per team
-			player.generate(0, 30, 2017, true, 15.5),
-			player.generate(0, 30, 2017, true, 15.5),
-			player.generate(1, 30, 2017, true, 15.5),
-			player.generate(1, 30, 2017, true, 15.5),
-			player.generate(2, 30, 2017, true, 15.5),
-			player.generate(2, 30, 2017, true, 15.5),
+			player.generate(0, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(0, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(1, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(1, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(2, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(2, 30, 2017, true, DEFAULT_LEVEL),
 		],
 
 		trade: [

@@ -12,11 +12,11 @@ import { g, random } from "../../../util";
 
 const createRandomPlayers = async ({
 	activeTids,
-	scoutingRank,
+	scoutingLevel,
 	teams,
 }: {
 	activeTids: number[];
-	scoutingRank: number;
+	scoutingLevel: number;
 	teams: Pick<Team, "tid" | "retiredJerseyNumbers">[];
 }) => {
 	const players: PlayerWithoutKey[] = [];
@@ -52,7 +52,7 @@ const createRandomPlayers = async ({
 	) {
 		let draftClass = await draft.genPlayersWithoutSaving(
 			g.get("season"),
-			scoutingRank,
+			scoutingLevel,
 			[],
 		);
 

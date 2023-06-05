@@ -10,7 +10,7 @@ N = 1000;
 sums = undefined;
 for (let i = 0; i < N; i++) {
     console.log(i);
-    const players = await bbgm.draft.genPlayersWithoutSaving(0, 15.5, []);
+    const players = await bbgm.draft.genPlayersWithoutSaving(0, 34, []);
     const values = players.map(p => bbgm.player.valueCombineOvrPot(p.ratings[0].ovr, p.ratings[0].pot, -p.born.year)).sort((a, b) => b - a);
     if (sums === undefined) {
         sums = Array(values.length).fill(0);

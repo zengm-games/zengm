@@ -3,6 +3,7 @@ import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async (pid: number) => {
@@ -23,27 +24,27 @@ const beforeTests = async () => {
 	await testHelpers.resetCache({
 		players: [
 			// Free agents
-			player.generate(PLAYER.FREE_AGENT, 30, 2017, true, 15.5),
-			player.generate(PLAYER.FREE_AGENT, 30, 2017, true, 15.5),
+			player.generate(PLAYER.FREE_AGENT, 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(PLAYER.FREE_AGENT, 30, 2017, true, DEFAULT_LEVEL),
 
 			// Non free agent
-			player.generate(12, 30, 2017, true, 15.5),
+			player.generate(12, 30, 2017, true, DEFAULT_LEVEL),
 
 			// User's team - 14 players
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
-			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
 		],
 		teams,
 	});

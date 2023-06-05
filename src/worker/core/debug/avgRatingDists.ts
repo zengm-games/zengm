@@ -1,5 +1,6 @@
 import range from "lodash-es/range";
 import { draft, player } from "..";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const avgRatingDists = async (numPlayers: number = 100) => {
 	const NUM_SEASONS = 20;
@@ -26,7 +27,11 @@ const avgRatingDists = async (numPlayers: number = 100) => {
 
 	for (let i = 0; i < numPlayers; i++) {
 		if (playersToProcess.length === 0) {
-			const players = await draft.genPlayersWithoutSaving(2019, 15.5, []);
+			const players = await draft.genPlayersWithoutSaving(
+				2019,
+				DEFAULT_LEVEL,
+				[],
+			);
 			playersToProcess = players;
 		}
 

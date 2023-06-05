@@ -88,7 +88,7 @@ const updateCustomizePlayer = async (
 					[g.get("userTid"), g.get("season")],
 				],
 			);
-			const scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
+			const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
 			const name = await player.name();
 			p = player.generate(
 				PLAYER.FREE_AGENT,
@@ -97,7 +97,7 @@ const updateCustomizePlayer = async (
 					? g.get("season") - 1
 					: g.get("season"),
 				false,
-				scoutingRank,
+				scoutingLevel,
 				name,
 			);
 			appearanceOption = "Cartoon Face";

@@ -49,7 +49,7 @@ const developOneSeason = async (p: Player) => {
 
 const genPlayersWithoutSaving = async (
 	draftYear: number,
-	scoutingRank: number,
+	scoutingLevel: number,
 	existingPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
 	forceScrubs?: boolean,
 ): Promise<PlayerWithoutKey<MinimalPlayerRatings>[]> => {
@@ -109,7 +109,7 @@ const genPlayersWithoutSaving = async (
 			baseAge,
 			draftYear,
 			false,
-			scoutingRank,
+			scoutingLevel,
 			name,
 		);
 

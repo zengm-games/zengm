@@ -40,7 +40,7 @@ const maxRatingDists = async (numPlayers: number = 100) => {
 		}
 
 		for (let j = 0; j < 20; j++) {
-			await player.develop(p, 1, false, 15.5, true);
+			await player.develop(p, 1, false, DEFAULT_LEVEL, true);
 			p.born.year -= 1; // Aging after develop
 
 			for (const key of Object.keys(ratings)) {

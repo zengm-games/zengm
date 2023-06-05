@@ -123,7 +123,7 @@ describe("worker/core/player/addRelatives", () => {
 				20,
 				season,
 				true,
-				15.5,
+				DEFAULT_LEVEL,
 			);
 			initialPlayer.firstName = "Foo";
 			initialPlayer.lastName = "HasFather Jr.";
@@ -184,7 +184,7 @@ describe("worker/core/player/addRelatives", () => {
 				20,
 				season,
 				true,
-				15.5,
+				DEFAULT_LEVEL,
 			);
 			const initialBrothers = genBrothers();
 
@@ -231,7 +231,7 @@ describe("worker/core/player/addRelatives", () => {
 				20,
 				season,
 				true,
-				15.5,
+				DEFAULT_LEVEL,
 			);
 			initialPlayer.relatives.push({
 				type: "brother",

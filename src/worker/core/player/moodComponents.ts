@@ -1,5 +1,6 @@
 import { finances } from "..";
 import { isSport, PHASE, PLAYER } from "../../../common";
+import { levelToEffect } from "../../../common/budgetLevels";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
@@ -117,13 +118,13 @@ const moodComponents = async (
 	}
 
 	{
-		// FACILITIES: -2 to 2, based on facilities expenses rank
-		const facilitiesRank = finances.getLevelLastThree(
+		// FACILITIES: -2 to 2, based on facilities level
+		const facilitiesLevel = finances.getLevelLastThree(
 			teamSeasons,
 			"facilities",
 		);
-		const facilities0to1 = (teams.length - facilitiesRank) / (teams.length - 1);
-		components.facilities = -2 + facilities0to1 * 4;
+		const facilitiesEffect = levelToEffect(facilitiesLevel);
+		components.facilities = 2 * facilitiesEffect;
 	}
 
 	{

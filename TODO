@@ -10,6 +10,9 @@ finances revamp
 - check anywhere defaultRank is referenced
   - what should "default level" be?
 - check any variables containing Rank
+  - scoutingRank
+  - coachingRank
+  - healthRank
 - default for no budget mode?
   - DEFAULT_LEVEL?
 - what should the exact numbers be?

@@ -12,7 +12,6 @@ finances revamp
   - what should "default level" be?
 - check any variables containing Rank
   - scoutingRank
-  - coachingRank
 - getLevelLastThree in loadTeams needs more seasons
   - defer to when healthLevel is actually needed, rather than do in loadTeams?
 - default for no budget mode?
@@ -27,6 +26,8 @@ finances revamp
   - defaultBudgetLevel should take some args to help determine the proper value
 - check league finances
 - show all levels on league finances table
+- make sure exhibition games work
+- if only one teamSeason, average in with default?
 - upgrade
   - TeamSeason.expenses and revenues
     - import

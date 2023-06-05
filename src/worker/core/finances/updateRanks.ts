@@ -45,6 +45,7 @@ const updateObj = <T extends string>(
  * @param {Promise}
  */
 const updateRanks = async (types: BudgetTypes[]) => {
+	return;
 	const teamSeasons =
 		types.includes("expenses") || types.includes("revenues")
 			? await idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [

@@ -1,6 +1,7 @@
 import limitRating from "./limitRating";
-import { g, helpers, random } from "../../util";
+import { helpers, random } from "../../util";
 import type { PlayerRatings, RatingKey } from "../../../common/types.hockey";
+import { coachingEffect } from "../../../common/budgetLevels";
 
 type RatingFormula = {
 	ageModifier: (age: number) => number;
@@ -141,7 +142,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	},
 };
 
-const calcBaseChange = (age: number, coachingRank: number): number => {
+const calcBaseChange = (age: number, coachingLevel: number): number => {
 	let val: number;
 
 	if (age <= 21) {
@@ -173,14 +174,7 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 		val += helpers.bound(random.realGauss(0, 3), -2, 4);
 	}
 
-	// Modulate by coaching. g.get("numActiveTeams") doesn't exist when upgrading DB, but that doesn't matter
-	if (Object.hasOwn(g, "numActiveTeams")) {
-		if (val >= 0) {
-			val *= ((coachingRank - 1) * -0.5) / (g.get("numActiveTeams") - 1) + 1.25;
-		} else {
-			val *= ((coachingRank - 1) * 0.5) / (g.get("numActiveTeams") - 1) + 0.75;
-		}
-	}
+	val *= 1 + (val > 0 ? 1 : -1) * coachingEffect(coachingLevel);
 
 	return val;
 };
@@ -188,7 +182,7 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 const developSeason = (
 	ratings: PlayerRatings,
 	age: number,
-	coachingRank: number = (g.get("numActiveTeams") + 1) / 2,
+	coachingLevel: number,
 ) => {
 	// In young players, height can sometimes increase
 	if (age <= 21) {
@@ -203,7 +197,7 @@ const developSeason = (
 		}
 	}
 
-	const baseChange = calcBaseChange(age, coachingRank);
+	const baseChange = calcBaseChange(age, coachingLevel);
 
 	for (const key of helpers.keys(ratingsFormulas)) {
 		const posCoeff = ratingsFormulas[key].posCoeff(ratings.pos);

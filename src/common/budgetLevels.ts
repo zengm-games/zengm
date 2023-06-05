@@ -39,7 +39,7 @@ export const healthEffect = (level: number) => {
 };
 export const coachingEffect = (level: number) => {
 	const effect = levelToEffect(level);
-	return effect;
+	return 0.25 * effect;
 };
 export const scoutingEffect = (level: number) => {
 	const effect = levelToEffect(level);

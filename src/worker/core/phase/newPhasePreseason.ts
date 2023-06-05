@@ -218,7 +218,7 @@ const newPhasePreseason = async (
 		throw new Error("scoutingRank should be defined");
 	}
 
-	const coachingRanks: Record<number, number> = {};
+	const coachingLevels: Record<number, number> = {};
 	for (const t of teams) {
 		const teamSeasons = await idb.getCopies.teamSeasons(
 			{
@@ -227,8 +227,10 @@ const newPhasePreseason = async (
 			},
 			"noCopyCache",
 		);
-		coachingRanks[t.tid] = finances.getLevelLastThree(teamSeasons, "coaching");
+		coachingLevels[t.tid] = finances.getLevelLastThree(teamSeasons, "coaching");
 	}
+	console.log("coachingLevels", coachingLevels);
+
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,
 		Infinity,
@@ -309,7 +311,7 @@ const newPhasePreseason = async (
 		if (!repeatSeason) {
 			// Update ratings
 			player.addRatingsRow(p, scoutingRank);
-			await player.develop(p, 1, false, coachingRanks[p.tid]);
+			await player.develop(p, 1, false, coachingLevels[p.tid]);
 		} else {
 			const info = repeatSeason.players[p.pid];
 			if (info) {

@@ -25,7 +25,6 @@ import { connectLeague, idb } from "../db";
 import { getPlayersActiveSeason } from "../db/getCopies/players";
 import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
-import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -397,9 +396,6 @@ export const simExhibitionGame = async (
 					otl: t.seasonInfo?.otl ?? 0,
 					cid: 0,
 					did: 0,
-					expensesLevels: {
-						health: DEFAULT_LEVEL,
-					},
 				},
 				t.players,
 				true,

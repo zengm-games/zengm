@@ -1,4 +1,4 @@
-import { allStar, finances, player, team } from "..";
+import { allStar, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type {
@@ -16,7 +16,6 @@ import {
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
 import { P_FATIGUE_DAILY_REDUCTION } from "./writePlayerStats";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
@@ -44,9 +43,6 @@ export const processTeam = (
 		otl: number;
 		cid: number;
 		did: number;
-		expensesLevels: {
-			health: number;
-		};
 	},
 	players: Player<MinimalPlayerRatings>[],
 	exhibitionGame?: boolean,
@@ -122,7 +118,6 @@ export const processTeam = (
 			def: 0,
 			reb: 0,
 		},
-		healthRank: finances.getLevelLastThree([teamSeason], "health"),
 		compositeRating,
 		depth: teamInput.depth,
 	};
@@ -382,9 +377,6 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					lost: 0,
 					tied: 0,
 					otl: 0,
-					expensesLevels: {
-						health: DEFAULT_LEVEL,
-					},
 				},
 				players,
 			);

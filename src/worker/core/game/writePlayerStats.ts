@@ -1,5 +1,5 @@
 import { bySport, isSport, PHASE } from "../../../common";
-import { player } from "..";
+import { finances, player } from "..";
 import { idb } from "../../db";
 import {
 	g,
@@ -22,12 +22,20 @@ const gameOrWeek = bySport({ default: "game", football: "week" });
 const doInjury = async (
 	p: any,
 	p2: Player,
-	healthRank: number,
 	pidsInjuredOneGameOrLess: Set<number>,
 	injuryTexts: string[],
 	conditions: Conditions,
 ) => {
-	p2.injury = player.injury(healthRank);
+	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+		"teamSeasonsByTidSeason",
+		[
+			[p2.tid, g.get("season") - 2],
+			[p2.tid, g.get("season")],
+		],
+	);
+	const healthLevel = finances.getLevelLastThree(teamSeasons, "health");
+
+	p2.injury = player.injury(healthLevel);
 
 	// Is this a reinjury or not?
 	let reaggravateExtraDays;
@@ -516,7 +524,6 @@ const writePlayerStats = async (
 					const output = await doInjury(
 						p,
 						p2,
-						t.healthRank,
 						pidsInjuredOneGameOrLess,
 						injuryTexts,
 						conditions,

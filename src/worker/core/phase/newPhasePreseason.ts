@@ -229,7 +229,6 @@ const newPhasePreseason = async (
 		);
 		coachingLevels[t.tid] = finances.getLevelLastThree(teamSeasons, "coaching");
 	}
-	console.log("coachingLevels", coachingLevels);
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,

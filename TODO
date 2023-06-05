@@ -4,14 +4,13 @@ finances revamp
   - show avg in ui
 - UI should show annual cost, current effect (projected out 3 years), and long term effect (after 3 years)
   - for the effect UI, use the facilitiesEffect etc functions in budgetLevels.ts
+  - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
 - adjustForInflation just for ticket prices
   - always enable if setting auto ticket price
 - on mobile, move settings to top of team finances page
 - any getRankLastThree uses?
 - check anywhere defaultRank is referenced
   - what should "default level" be?
-- check any variables containing Rank
-  - scoutingRank
 - check any references to 15.5
 - getLevelLastThree make sure it always has 3 seasons
 - what should the exact numbers be?

@@ -180,7 +180,7 @@ export type PreProcessParams = {
 	noStartingInjuries: boolean;
 	realPlayerPhotos: RealPlayerPhotos | undefined;
 	realTeamInfo: RealTeamInfo | undefined;
-	scoutingRank: number;
+	scoutingLevel: number;
 	version: number | undefined;
 };
 
@@ -194,7 +194,7 @@ const preProcess = async (
 		noStartingInjuries,
 		realPlayerPhotos,
 		realTeamInfo,
-		scoutingRank,
+		scoutingLevel,
 		version,
 	}: PreProcessParams,
 ) => {
@@ -227,7 +227,7 @@ const preProcess = async (
 			hasRookieContracts,
 			noStartingInjuries,
 			realPlayerPhotos,
-			scoutingRank,
+			scoutingLevel,
 			version,
 		});
 	} else if (key === "scheduledEvents") {
@@ -626,7 +626,7 @@ const processTeamInfos = ({
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
 	const teamStats: TeamStatsWithoutKey[] = [];
 
-	let scoutingRank: number | undefined;
+	let scoutingLevel: number | undefined;
 
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
@@ -807,18 +807,18 @@ const processTeamInfos = ({
 			teamStats.push(ts);
 		}
 
-		// Save scoutingRank for later
+		// Save scoutingLevel for later
 		if (i === userTid) {
-			scoutingRank = finances.getLevelLastThree(teamSeasonsLocal, "scouting");
+			scoutingLevel = finances.getLevelLastThree(teamSeasonsLocal, "scouting");
 		}
 	}
 
-	if (scoutingRank === undefined) {
-		throw new Error("scoutingRank should be defined");
+	if (scoutingLevel === undefined) {
+		throw new Error("scoutingLevel should be defined");
 	}
 
 	return {
-		scoutingRank,
+		scoutingLevel,
 		teams,
 		teamSeasons,
 		teamStats,
@@ -1062,7 +1062,7 @@ const beforeDBStream = async ({
 	Object.assign(g, gameAttributes);
 
 	// Needs to be done after g is set
-	const { scoutingRank, teams, teamSeasons, teamStats } = processTeamInfos({
+	const { scoutingLevel, teams, teamSeasons, teamStats } = processTeamInfos({
 		realTeamInfo,
 		season: gameAttributes.season,
 		teamInfos,
@@ -1098,7 +1098,7 @@ const beforeDBStream = async ({
 		realPlayerPhotos,
 		realTeamInfo,
 		repeatSeason,
-		scoutingRank,
+		scoutingLevel,
 		teamInfos,
 		teamSeasons,
 		teamStats,
@@ -1152,7 +1152,7 @@ const afterDBStream = async ({
 	randomization,
 	realPlayerPhotos,
 	repeatSeason,
-	scoutingRank,
+	scoutingLevel,
 	shuffleRosters,
 	teamInfos,
 	teamSeasons,
@@ -1173,7 +1173,7 @@ const afterDBStream = async ({
 		| "activeTids"
 		| "gameAttributes"
 		| "repeatSeason"
-		| "scoutingRank"
+		| "scoutingLevel"
 		| "teamInfos"
 		| "teamSeasons"
 		| "teamStats"
@@ -1218,7 +1218,7 @@ const afterDBStream = async ({
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
 				activeTids,
-				scoutingLevel: scoutingRank,
+				scoutingLevel,
 				teams,
 		  });
 
@@ -1246,7 +1246,7 @@ const afterDBStream = async ({
 					hasRookieContracts,
 					noStartingInjuries,
 					realPlayerPhotos,
-					scoutingRank,
+					scoutingLevel,
 					version: MAX_SUPPORTED_LEAGUE_VERSION,
 				});
 
@@ -1277,7 +1277,7 @@ const afterDBStream = async ({
 				hasRookieContracts,
 				noStartingInjuries,
 				realPlayerPhotos,
-				scoutingRank,
+				scoutingLevel,
 				version: MAX_SUPPORTED_LEAGUE_VERSION,
 			});
 			activePlayers.push(p2);
@@ -1307,7 +1307,7 @@ const afterDBStream = async ({
 
 	await addDraftProspects({
 		players: activePlayers,
-		scoutingRank,
+		scoutingLevel,
 	});
 
 	// Unless we got strategy from a league file, calculate it here
@@ -1503,7 +1503,7 @@ const createStream = async (
 		realPlayerPhotos,
 		realTeamInfo,
 		repeatSeason,
-		scoutingRank,
+		scoutingLevel,
 		teamInfos,
 		teamSeasons,
 		teamStats,
@@ -1534,7 +1534,7 @@ const createStream = async (
 			noStartingInjuries,
 			realPlayerPhotos,
 			realTeamInfo,
-			scoutingRank,
+			scoutingLevel,
 			version: fromFile.version,
 		},
 		setLeagueCreationStatus,
@@ -1558,7 +1558,7 @@ const createStream = async (
 		randomization: settings.randomization,
 		realPlayerPhotos,
 		repeatSeason,
-		scoutingRank,
+		scoutingLevel,
 		shuffleRosters,
 		teamInfos,
 		teamSeasons,

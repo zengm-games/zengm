@@ -10,7 +10,7 @@ const processPlayerNewLeague = async ({
 	hasRookieContracts,
 	noStartingInjuries,
 	realPlayerPhotos,
-	scoutingRank,
+	scoutingLevel,
 	version,
 }: {
 	p: any;
@@ -20,7 +20,7 @@ const processPlayerNewLeague = async ({
 	| "hasRookieContracts"
 	| "noStartingInjuries"
 	| "realPlayerPhotos"
-	| "scoutingRank"
+	| "scoutingLevel"
 	| "version"
 >) => {
 	if (realPlayerPhotos) {
@@ -44,7 +44,7 @@ const processPlayerNewLeague = async ({
 
 	const p2: PlayerWithoutKey = await player.augmentPartialPlayer(
 		{ ...p },
-		scoutingRank,
+		scoutingLevel,
 		version,
 		true,
 	);

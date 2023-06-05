@@ -5,10 +5,10 @@ import { g } from "../../../util";
 
 const addDraftProspects = async ({
 	players,
-	scoutingRank,
+	scoutingLevel,
 }: {
 	players: PlayerWithoutKey[];
-	scoutingRank: number;
+	scoutingLevel: number;
 }) => {
 	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 	const existingDraftClasses: [any[], any[], any[]] = [[], [], []];
@@ -32,7 +32,7 @@ const addDraftProspects = async ({
 		) {
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + seasonOffset,
-				scoutingRank,
+				scoutingLevel,
 				existingDraftClasses[0],
 			);
 			players.push(...draftClass);
@@ -41,7 +41,7 @@ const addDraftProspects = async ({
 		{
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + 1 + seasonOffset,
-				scoutingRank,
+				scoutingLevel,
 				existingDraftClasses[1],
 			);
 			players.push(...draftClass);
@@ -50,7 +50,7 @@ const addDraftProspects = async ({
 		{
 			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + 2 + seasonOffset,
-				scoutingRank,
+				scoutingLevel,
 				existingDraftClasses[2],
 			);
 			players.push(...draftClass);

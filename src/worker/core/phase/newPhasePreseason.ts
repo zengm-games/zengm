@@ -12,6 +12,7 @@ import type {
 	Conditions,
 	PhaseReturn,
 	RealTeamInfo,
+	TeamSeason,
 } from "../../../common/types";
 import { groupBy } from "../../../common/groupBy";
 
@@ -32,10 +33,6 @@ const newPhasePreseason = async (
 	]);
 
 	const teams = await idb.cache.teams.getAll();
-	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-		"teamSeasonsBySeasonTid",
-		[[g.get("season") - 1], [g.get("season")]],
-	);
 
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
 		| RealTeamInfo
@@ -126,23 +123,24 @@ const newPhasePreseason = async (
 			continue;
 		}
 
-		const tid = t.tid;
-		// Only actually need 3 seasons for userTid, but get it for all just in case there is a
-		// skipped season (alternatively could use cursor to just find most recent season, but this
-		// is not performance critical code)
-		const teamSeasons2 = await idb.getCopies.teamSeasons(
-			{
-				tid,
-				seasons: [g.get("season") - 3, g.get("season") - 1],
-			},
-			"noCopyCache",
-		);
-		const prevSeason = teamSeasons2.at(-1);
-
+		let prevSeason: TeamSeason | undefined;
 		// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
 		// This is done BEFORE a new season row is added.
-		if (tid === g.get("userTid")) {
-			scoutingRank = finances.getLevelLastThree(teamSeasons2, "scouting");
+		if (t.tid === g.get("userTid")) {
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					tid: t.tid,
+					seasons: [g.get("season") - 3, g.get("season") - 1],
+				},
+				"noCopyCache",
+			);
+			scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
+			prevSeason = teamSeasons.at(-1);
+		} else {
+			prevSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[t.tid, g.get("season") - 1],
+			);
 		}
 
 		const newSeason = team.genSeasonRow(t, prevSeason);
@@ -176,7 +174,7 @@ const newPhasePreseason = async (
 		newSeason.pop = t.pop;
 
 		await idb.cache.teamSeasons.add(newSeason);
-		await idb.cache.teamStats.add(team.genStatsRow(tid));
+		await idb.cache.teamStats.add(team.genStatsRow(t.tid));
 
 		if (t.disabled) {
 			// Active teams are persisted below
@@ -221,11 +219,15 @@ const newPhasePreseason = async (
 	}
 
 	const coachingRanks: Record<number, number> = {};
-	for (const teamSeason of teamSeasons) {
-		coachingRanks[teamSeason.tid] = finances.getLevelLastThree(
-			[teamSeason],
-			"coaching",
+	for (const t of teams) {
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{
+				tid: t.tid,
+				seasons: [g.get("season") - 3, g.get("season") - 1],
+			},
+			"noCopyCache",
 		);
+		coachingRanks[t.tid] = finances.getLevelLastThree(teamSeasons, "coaching");
 	}
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,

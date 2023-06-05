@@ -4,24 +4,13 @@ import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 
-/**
- * Generate a set of draft prospects.
- *
- * This is called after draft classes are moved up a year, to create the new draft class. It's also called 3 times when a new league starts, to create 3 future draft classes.
- *
- * @memberOf core.draft
- * @param {number} draftYear Year for the draft class.
- * @param {?number=} scoutingRank Between 1 and g.get("numActiveTeams"), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
- * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
- * @return {Promise}
- */
 const genPlayers = async (
 	draftYear: number,
-	scoutingRank: number | undefined | null = null,
+	scoutingLevel?: number,
 	forceScrubs?: boolean,
 ) => {
-	// If scoutingRank is not supplied, have to hit the DB to get it
-	if (scoutingRank === undefined || scoutingRank === null) {
+	// If scoutingLevel is not supplied, have to hit the DB to get it
+	if (scoutingLevel === undefined) {
 		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 			"teamSeasonsByTidSeason",
 			[
@@ -29,7 +18,7 @@ const genPlayers = async (
 				[g.get("userTid"), g.get("season")],
 			],
 		);
-		scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
+		scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
 	}
 
 	const allDraftProspects = await idb.cache.players.indexGetAll(
@@ -59,7 +48,7 @@ const genPlayers = async (
 
 	const players = await genPlayersWithoutSaving(
 		draftYear,
-		scoutingRank,
+		scoutingLevel,
 		existingPlayers,
 		forceScrubs,
 	);
@@ -82,7 +71,7 @@ const genPlayers = async (
 				19,
 				draftYear,
 				false,
-				scoutingRank,
+				scoutingLevel,
 			);
 			p.born.year = draftYear - 48;
 			p.born.loc = "Los Angeles, CA";
@@ -133,7 +122,7 @@ const genPlayers = async (
 				19,
 				draftYear,
 				false,
-				scoutingRank,
+				scoutingLevel,
 			);
 			p.born.year = draftYear - 47;
 			p.born.loc = "Honolulu, HI";
@@ -185,7 +174,7 @@ const genPlayers = async (
 				19,
 				draftYear,
 				false,
-				scoutingRank,
+				scoutingLevel,
 			);
 			p.born.year = draftYear - 70;
 			p.born.loc = "Queens, NY";

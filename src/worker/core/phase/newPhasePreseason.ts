@@ -51,7 +51,7 @@ const newPhasePreseason = async (
 	};
 
 	let updatedTeams = false;
-	let scoutingRank: number | undefined;
+	let scoutingLevel: number | undefined;
 	for (const t of teams) {
 		// Check if we need to override team info based on a season-specific entry in realTeamInfo
 		if (realTeamInfo && t.srID && realTeamInfo[t.srID]) {
@@ -124,7 +124,7 @@ const newPhasePreseason = async (
 		}
 
 		let prevSeason: TeamSeason | undefined;
-		// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+		// Only need scoutingLevel for the user's team to calculate fuzz when ratings are updated below.
 		// This is done BEFORE a new season row is added.
 		if (t.tid === g.get("userTid")) {
 			const teamSeasons = await idb.getCopies.teamSeasons(
@@ -134,7 +134,7 @@ const newPhasePreseason = async (
 				},
 				"noCopyCache",
 			);
-			scoutingRank = finances.getLevelLastThree(teamSeasons, "scouting");
+			scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
 			prevSeason = teamSeasons.at(-1);
 		} else {
 			prevSeason = await idb.cache.teamSeasons.indexGet(
@@ -214,8 +214,8 @@ const newPhasePreseason = async (
 		});
 	}
 
-	if (scoutingRank === undefined) {
-		throw new Error("scoutingRank should be defined");
+	if (scoutingLevel === undefined) {
+		throw new Error("scoutingLevel should be defined");
 	}
 
 	const coachingLevels: Record<number, number> = {};
@@ -310,7 +310,7 @@ const newPhasePreseason = async (
 
 		if (!repeatSeason) {
 			// Update ratings
-			player.addRatingsRow(p, scoutingRank);
+			player.addRatingsRow(p, scoutingLevel);
 			await player.develop(p, 1, false, coachingLevels[p.tid]);
 		} else {
 			const info = repeatSeason.players[p.pid];

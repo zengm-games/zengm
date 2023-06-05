@@ -298,7 +298,7 @@ const newPhaseResignPlayers = async (
 	}
 
 	// Generate a new draft class, while leaving existing players in that draft class in place
-	await draft.genPlayers(g.get("season") + 3, undefined);
+	await draft.genPlayers(g.get("season") + 3);
 
 	// Delete any old undrafted players that still somehow exist
 	const toRemove = [];

@@ -74,25 +74,24 @@ const FinancesForm = ({
 		}
 	}, [state.dirty, t]);
 
+	const setStateValue = (
+		name: Exclude<keyof typeof state, "dirty" | "saving">,
+		value: any,
+	) => {
+		setState(state2 => ({
+			...state2,
+			dirty: true,
+			[name]: value,
+		}));
+	};
+
 	const handleChange =
 		(name: Exclude<keyof typeof state, "dirty" | "saving">) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
 			if (name === "adjustForInflation" || name === "autoTicketPrice") {
-				setState(
-					state2 =>
-						({
-							...state2,
-							dirty: true,
-							[name]: event.target.checked,
-						} as any),
-				);
-				return;
+				setStateValue(name, event.target.checked);
 			} else {
-				setState(state2 => ({
-					...state2,
-					dirty: true,
-					[name]: event.target.value,
-				}));
+				setStateValue(name, event.target.value);
 			}
 		};
 
@@ -195,35 +194,66 @@ const FinancesForm = ({
 				Click the ? above to see what exactly each category does. Effects are
 				based on your average level over the past three seasons.
 			</p>
-			{expenseCategories.map(expenseCategory => {
-				return (
-					<div className="d-flex" key={expenseCategory.key}>
-						<div className="finances-settings-label">
-							{expenseCategory.title}
-						</div>
-						<div className="input-group input-group-xs finances-settings-field">
-							<div className="input-group-text">$</div>
-							<input
-								type="text"
-								className="form-control"
-								disabled={formDisabled || challengeNoRatings}
-								onChange={handleChange(expenseCategory.key)}
-								value={state[expenseCategory.key]}
-							/>
-							<div className="input-group-text">M</div>
-						</div>
-						<div className="finances-settings-text-small">
-							Current spending rate: ???
-							<br />
-							{noSeasonData || phase === PHASE.PRESEASON ? (
+			<div className="d-flex flex-column gap-2">
+				{expenseCategories.map(expenseCategory => {
+					const value = state[expenseCategory.key];
+					const valueInt = parseInt(state[expenseCategory.key]);
+					return (
+						<div className="d-flex" key={expenseCategory.key}>
+							<div className="finances-settings-label">
+								{expenseCategory.title}
+							</div>
+							<div
+								className="input-group"
+								style={{
+									width: 120,
+								}}
+							>
+								<input
+									type="text"
+									className="form-control"
+									disabled={formDisabled || challengeNoRatings}
+									onChange={handleChange(expenseCategory.key)}
+									value={value}
+								/>
+								<button
+									className="btn btn-secondary"
+									type="button"
+									disabled={
+										formDisabled || Number.isNaN(valueInt) || valueInt >= 100
+									}
+									onClick={() => {
+										setStateValue(expenseCategory.key, valueInt + 1);
+									}}
+								>
+									+
+								</button>
+								<button
+									className="btn btn-secondary"
+									type="button"
+									disabled={
+										formDisabled || Number.isNaN(valueInt) || valueInt <= 1
+									}
+									onClick={() => {
+										setStateValue(expenseCategory.key, valueInt - 1);
+									}}
+								>
+									−
+								</button>
+							</div>
+							<div className="finances-settings-text-small">
+								Current spending rate: ???
 								<br />
-							) : (
-								`Spent this season: ???`
-							)}
+								{noSeasonData || phase === PHASE.PRESEASON ? (
+									<br />
+								) : (
+									`Spent this season: ???`
+								)}
+							</div>
 						</div>
-					</div>
-				);
-			})}
+					);
+				})}
+			</div>
 			<h3 className="mt-3">
 				Ticket Price{" "}
 				<HelpPopover title="Revenue Settings">
@@ -233,7 +263,12 @@ const FinancesForm = ({
 				</HelpPopover>
 			</h3>
 			<div className="d-flex">
-				<div className="input-group input-group-xs finances-settings-field">
+				<div
+					className="input-group"
+					style={{
+						width: 115,
+					}}
+				>
 					<div className="input-group-text">$</div>
 					{state.autoTicketPrice ? (
 						<input
@@ -313,6 +348,7 @@ const FinancesForm = ({
 					<button
 						className="btn btn-large btn-primary"
 						disabled={formDisabled || state.saving}
+						type="submit"
 					>
 						Save Expense Levels
 						<br />

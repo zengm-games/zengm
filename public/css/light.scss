@@ -645,9 +645,6 @@ $jersey-number-width: 15px;
 	padding-left: 1em;
 }
 
-.finances-settings-field {
-	width: 115px;
-}
 .finances-settings button {
 	display: none;
 }
@@ -1474,20 +1471,6 @@ code {
 hr {
 	background-color: $black;
 	opacity: 0.1;
-}
-
-// Based on input-group-sm from _input-group.scss
-.input-group-xs > .form-control,
-.input-group-xs > .form-select,
-.input-group-xs > .input-group-text,
-.input-group-xs > .btn {
-	padding: $input-padding-y-sm $input-padding-x-sm;
-	@include font-size($input-font-size-sm);
-	@include border-radius($input-border-radius-sm);
-	height: 27px;
-}
-.input-group-xs > .form-select {
-	padding-right: $form-select-padding-x + $form-select-indicator-padding;
 }
 
 // Add !important to bg color so they can be used in table on achievements page

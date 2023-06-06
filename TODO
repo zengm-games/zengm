@@ -16,6 +16,9 @@ finances revamp
   - .finances-settings classes still needed?
   - why does toggling auto ticket price change the ticket price, shouldn't the auto value be saved already?
   - ticket price rank
+- click and hold on +/- button
+  - desktop
+  - mobile
 - on mobile, move settings to top of team finances page
 - updateRanks
   - needed at all? no, but we should have something that updates the AI levels every year
@@ -41,6 +44,7 @@ finances revamp
   - level is clearer than some arbitrary $ amount that could change with inflation
   - exponential cost makes maxing out a hard decision
   - show exactly how (old) rank corresponds to (new) level, in table and chart
+  - expenses are spread out over the regular season
 
 default new league settings in non-basketball sports shows basketball-only options for randomizaion
 

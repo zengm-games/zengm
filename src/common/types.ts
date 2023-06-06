@@ -1437,6 +1437,7 @@ export type Team = {
 	colors: [string, string, string];
 	jersey?: string;
 	budget: Record<
+		// ticketPrice is in dollars, others are levels
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
 		number
 	>;

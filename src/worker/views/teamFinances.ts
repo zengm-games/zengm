@@ -178,6 +178,7 @@ const updateTeamFinances = async (
 		}, 0);
 
 		const autoTicketPrice = await getAutoTicketPriceByTid(inputs.tid);
+		console.log("t", t);
 
 		return {
 			abbrev: inputs.abbrev,

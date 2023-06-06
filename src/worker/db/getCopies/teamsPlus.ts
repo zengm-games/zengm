@@ -27,15 +27,7 @@ const processAttrs = <
 ) => {
 	for (const attr of attrs) {
 		if (attr === "budget") {
-			// Always copy, because we mutate below to convert units
 			output.budget = helpers.deepCopy(t.budget);
-
-			for (const key of helpers.keys(output.budget)) {
-				if (key !== "ticketPrice") {
-					// ticketPrice is the only thing in dollars always
-					output.budget[key] /= 1000;
-				}
-			}
 		} else {
 			// @ts-expect-error
 			output[attr] = t[attr];

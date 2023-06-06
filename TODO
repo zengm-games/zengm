@@ -1,5 +1,4 @@
 finances revamp
-- levelToAmount probably needs to be tweaked, to handle that the average is not right in the middle
 - 3 yr avg
   - show avg in ui
 - UI should show annual cost, current effect (projected out 3 years), and long term effect (after 3 years)

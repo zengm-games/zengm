@@ -180,90 +180,6 @@ const FinancesForm = ({
 		<form onSubmit={handleSubmit} className="mb-3">
 			{warningMessage}
 			<h3>
-				Ticket Price{" "}
-				<HelpPopover title="Revenue Settings">
-					Set your ticket price too high, and attendance will decrease and some
-					fans will resent you for it. Set it too low, and you're not maximizing
-					your profit.
-				</HelpPopover>
-			</h3>
-			<div className="d-flex">
-				<div className="input-group input-group-xs finances-settings-field">
-					<div className="input-group-text">$</div>
-					{state.autoTicketPrice ? (
-						<input
-							type="text"
-							className="form-control"
-							disabled
-							value={formatTicketPrice(autoTicketPrice)}
-						/>
-					) : (
-						<input
-							type="text"
-							className="form-control"
-							disabled={formDisabled || state.autoTicketPrice}
-							onChange={handleChange("ticketPrice")}
-							value={state.ticketPrice}
-						/>
-					)}
-				</div>
-				<div className="finances-settings-text">Leaguewide rank: ???</div>
-			</div>
-			{phase === PHASE.PLAYOFFS ? (
-				<div className="mb-1 text-warning" style={paddingLeft85}>
-					Playoffs price:{" "}
-					{helpers.formatCurrency(
-						getAdjustedTicketPrice(
-							state.autoTicketPrice
-								? autoTicketPrice
-								: parseFloat(state.ticketPrice),
-							true,
-						),
-					)}
-				</div>
-			) : null}
-			<div className="mt-1 mb-3 d-flex">
-				<div className="form-check">
-					<label className="form-check-label">
-						<input
-							className="form-check-input"
-							onChange={handleChange("autoTicketPrice")}
-							type="checkbox"
-							checked={state.autoTicketPrice}
-							disabled={formDisabled}
-						/>
-						Auto ticket price
-					</label>
-					<HelpPopover title="Auto ticket price" className="ms-1">
-						<p>
-							When enabled, your ticket price will be set to the maximum value
-							possible while still selling out most games.
-						</p>
-						<p>
-							In the playoffs, ticket prices automatically adjust to account for
-							increased demand. That happens regardless of the "auto ticket
-							price" setting.
-						</p>
-					</HelpPopover>
-				</div>
-				<div className="form-check ms-4">
-					<label className="form-check-label">
-						<input
-							className="form-check-input"
-							onChange={handleChange("adjustForInflation")}
-							type="checkbox"
-							checked={state.adjustForInflation || state.autoTicketPrice}
-							disabled={formDisabled || state.autoTicketPrice}
-						/>
-						Auto adjust for inflation
-					</label>
-					<HelpPopover title="Inflation adjustment" className="ms-1">
-						When enabled, your ticket price will automatically change whenever
-						the salary cap changes.
-					</HelpPopover>
-				</div>
-			</div>
-			<h3>
 				Expense Levels{" "}
 				<HelpPopover title="Expense Levels">
 					<p>Scouting: Controls the accuracy of displayed player ratings.</p>
@@ -308,15 +224,99 @@ const FinancesForm = ({
 					</div>
 				);
 			})}
+			<h3 className="mt-3">
+				Ticket Price{" "}
+				<HelpPopover title="Revenue Settings">
+					Set your ticket price too high, and attendance will decrease and some
+					fans will resent you for it. Set it too low, and you're not maximizing
+					your profit.
+				</HelpPopover>
+			</h3>
+			<div className="d-flex">
+				<div className="input-group input-group-xs finances-settings-field">
+					<div className="input-group-text">$</div>
+					{state.autoTicketPrice ? (
+						<input
+							type="text"
+							className="form-control"
+							disabled
+							value={formatTicketPrice(autoTicketPrice)}
+						/>
+					) : (
+						<input
+							type="text"
+							className="form-control"
+							disabled={formDisabled || state.autoTicketPrice}
+							onChange={handleChange("ticketPrice")}
+							value={state.ticketPrice}
+						/>
+					)}
+				</div>
+				<div className="finances-settings-text">Leaguewide rank: ???</div>
+			</div>
+			{phase === PHASE.PLAYOFFS ? (
+				<div className="mb-1 text-warning" style={paddingLeft85}>
+					Playoffs price:{" "}
+					{helpers.formatCurrency(
+						getAdjustedTicketPrice(
+							state.autoTicketPrice
+								? autoTicketPrice
+								: parseFloat(state.ticketPrice),
+							true,
+						),
+					)}
+				</div>
+			) : null}
+			<div className="mt-1 d-flex">
+				<div className="form-check">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							onChange={handleChange("autoTicketPrice")}
+							type="checkbox"
+							checked={state.autoTicketPrice}
+							disabled={formDisabled}
+						/>
+						Auto ticket price
+					</label>
+					<HelpPopover title="Auto ticket price" className="ms-1">
+						<p>
+							When enabled, your ticket price will be set to the maximum value
+							possible while still selling out most games.
+						</p>
+						<p>
+							In the playoffs, ticket prices automatically adjust to account for
+							increased demand. That happens regardless of the "auto ticket
+							price" setting.
+						</p>
+					</HelpPopover>
+				</div>
+				<div className="form-check ms-4">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							onChange={handleChange("adjustForInflation")}
+							type="checkbox"
+							checked={state.adjustForInflation || state.autoTicketPrice}
+							disabled={formDisabled || state.autoTicketPrice}
+						/>
+						Auto adjust for inflation
+					</label>
+					<HelpPopover title="Inflation adjustment" className="ms-1">
+						When enabled, your ticket price will automatically change whenever
+						the salary cap changes.
+					</HelpPopover>
+				</div>
+			</div>
 			{tid === userTid && !spectator ? (
 				<div className="mt-5" style={paddingLeft85}>
 					<button
 						className="btn btn-large btn-primary"
 						disabled={formDisabled || state.saving}
 					>
-						Save Ticket Price
+						Save Expense Levels
 						<br />
-						and Expense Levels
+						and Ticket Price
 					</button>
 				</div>
 			) : null}

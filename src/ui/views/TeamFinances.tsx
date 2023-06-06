@@ -130,7 +130,7 @@ const FinancesForm = ({
 
 		await toWorker("main", "updateBudget", {
 			budgetLevels: budgetAmounts,
-			adjustForInflation: state.adjustForInflation,
+			adjustForInflation: state.adjustForInflation || state.autoTicketPrice,
 			autoTicketPrice: state.autoTicketPrice,
 		});
 
@@ -149,24 +149,23 @@ const FinancesForm = ({
 
 	const warningMessage =
 		gameSimInProgress && tid === userTid && !spectator ? (
-			<p className="text-danger">Stop game simulation to edit.</p>
+			<div className="text-danger mb-2">Stop game simulation to edit.</div>
 		) : null;
 
 	const formDisabled = gameSimInProgress || tid !== userTid || spectator;
 
 	return (
 		<form onSubmit={handleSubmit} className="mb-3">
+			{warningMessage}
 			<h3>
-				Revenue Settings{" "}
+				Ticket Price{" "}
 				<HelpPopover title="Revenue Settings">
 					Set your ticket price too high, and attendance will decrease and some
 					fans will resent you for it. Set it too low, and you're not maximizing
 					your profit.
 				</HelpPopover>
 			</h3>
-			{warningMessage}
 			<div className="d-flex">
-				<div className="finances-settings-label">Ticket Price</div>
 				<div className="input-group input-group-xs finances-settings-field">
 					<div className="input-group-text">$</div>
 					{state.autoTicketPrice ? (
@@ -201,7 +200,7 @@ const FinancesForm = ({
 					)}
 				</div>
 			) : null}
-			<div className="mt-1 mb-3" style={paddingLeft85}>
+			<div className="mt-1 mb-3 d-flex">
 				<div className="form-check">
 					<label className="form-check-label">
 						<input
@@ -225,6 +224,22 @@ const FinancesForm = ({
 						</p>
 					</HelpPopover>
 				</div>
+				<div className="form-check ms-4">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							onChange={handleChange("adjustForInflation")}
+							type="checkbox"
+							checked={state.adjustForInflation || state.autoTicketPrice}
+							disabled={formDisabled || state.autoTicketPrice}
+						/>
+						Auto adjust for inflation
+					</label>
+					<HelpPopover title="Inflation adjustment" className="ms-1">
+						When enabled, your ticket price will automatically change whenever
+						the salary cap changes.
+					</HelpPopover>
+				</div>
 			</div>
 			<h3>
 				Expense Settings{" "}
@@ -242,7 +257,6 @@ const FinancesForm = ({
 				Click the ? above to see what exactly each category does. Effects are
 				based on your spending rank over the past three seasons.
 			</p>
-			{warningMessage}
 			<div className="d-flex">
 				<div className="finances-settings-label">Scouting</div>
 				<div className="input-group input-group-xs finances-settings-field">
@@ -333,26 +347,6 @@ const FinancesForm = ({
 					) : (
 						`Spent this season: ???`
 					)}
-				</div>
-			</div>
-			<div className="mt-1" style={paddingLeft85}>
-				<div className="form-check">
-					<label className="form-check-label">
-						<input
-							className="form-check-input"
-							onChange={handleChange("adjustForInflation")}
-							type="checkbox"
-							checked={state.adjustForInflation}
-							disabled={formDisabled}
-						/>
-						Auto adjust for inflation
-					</label>
-					<HelpPopover title="Inflation adjustment" className="ms-1">
-						When enabled, all your revenue and expense settings will
-						automatically change whenever the salary cap changes. This will
-						generally maintain your ranks, although expansion teams and changes
-						made by AI teams can still result in your ranks changing.
-					</HelpPopover>
 				</div>
 			</div>
 			{tid === userTid && !spectator ? (

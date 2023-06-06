@@ -1,6 +1,4 @@
 finances revamp
-- 3 yr avg
-  - show avg in ui
 - UI
   - should show
     - current level
@@ -14,8 +12,7 @@ finances revamp
     - use functions in common/budgetLevels.ts to compute
     - facilities affects two things
     - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
-- adjustForInflation just for ticket prices
-  - always enable if setting auto ticket price
+- ticket price rank
 - on mobile, move settings to top of team finances page
 - updateRanks
   - needed at all? no, but we should have something that updates the AI levels every year

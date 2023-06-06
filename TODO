@@ -1,8 +1,17 @@
 finances revamp
 - 3 yr avg
   - show avg in ui
-- UI should show annual cost, current effect (projected out 3 years), and long term effect (after 3 years)
-  - for the effect UI, use the facilitiesEffect etc functions in budgetLevels.ts
+- UI
+  - should show
+    - current level
+    - avg last 3 seasons level
+    - current annual cost
+    - current effect (based on last 3 seasons)
+    - future effect (if current level is maintained for 3 full seasons)
+  - how to display?
+    - what is essential info, what can be hidden under a tooltip/panel?
+  - effects display info
+    - use functions in common/budgetLevels.ts to compute
     - facilities affects two things
     - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
 - adjustForInflation just for ticket prices
@@ -33,7 +42,11 @@ finances revamp
   - exponential cost makes maxing out a hard decision
   - show exactly how (old) rank corresponds to (new) level, in table and chart
 
-heck json schema header metadata for hockey
+default new league settings in non-basketball sports shows basketball-only options for randomizaion
+
+auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
+
+check json schema header metadata for hockey
 
 when negotiating with re-sign players, don't remove from list when you press cancel https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jiffpkf/
 

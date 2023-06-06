@@ -1,5 +1,5 @@
 import { PHASE } from "../../common";
-import { team } from "../core";
+import { finances, team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { TeamSeason, UpdateEvents, ViewInput } from "../../common/types";
@@ -150,7 +150,7 @@ const updateTeamFinances = async (
 		}
 
 		// Get stuff for the finances form
-		const t = await idb.getCopy.teamsPlus(
+		const tTemp = await idb.getCopy.teamsPlus(
 			{
 				attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
 				seasonAttrs: ["expenses"],
@@ -160,14 +160,31 @@ const updateTeamFinances = async (
 			},
 			"noCopyCache",
 		);
+		console.log("t", tTemp);
 
-		if (!t) {
+		if (!tTemp) {
 			throw new Error("Team not found");
 		}
+
+		const t = tTemp as typeof tTemp & {
+			autoTicketPrice: boolean;
+			expensesLevelsLastThree: TeamSeason["expensesLevels"];
+		};
 
 		// undefined is true (for upgrades), and AI teams are always true
 		t.autoTicketPrice =
 			t.autoTicketPrice !== false || !g.get("userTids").includes(inputs.tid);
+
+		const teamSeasonsLastThree = teamSeasons.slice(-3);
+		t.expensesLevelsLastThree = {
+			coaching: finances.getLevelLastThree(teamSeasonsLastThree, "coaching"),
+			facilities: finances.getLevelLastThree(
+				teamSeasonsLastThree,
+				"facilities",
+			),
+			health: finances.getLevelLastThree(teamSeasonsLastThree, "health"),
+			scouting: finances.getLevelLastThree(teamSeasonsLastThree, "scouting"),
+		};
 
 		const maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {
 			if (teamSeason.stadiumCapacity > max) {

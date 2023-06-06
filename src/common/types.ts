@@ -1628,8 +1628,8 @@ export type TeamSeasonWithoutKey = {
 	};
 	expensesLevels: {
 		coaching: number;
-		health: number;
 		facilities: number;
+		health: number;
 		scouting: number;
 	};
 	payrollEndOfSeason: number;

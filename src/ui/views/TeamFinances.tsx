@@ -56,7 +56,7 @@ const FinancesForm = ({
 		scouting: String(t.budget.scouting),
 		ticketPrice: formatTicketPrice(t.budget.ticketPrice),
 		adjustForInflation: t.adjustForInflation,
-		autoTicketPrice: !!t.autoTicketPrice,
+		autoTicketPrice: t.autoTicketPrice,
 	});
 
 	useEffect(() => {
@@ -69,7 +69,7 @@ const FinancesForm = ({
 				scouting: String(t.budget.scouting),
 				ticketPrice: formatTicketPrice(t.budget.ticketPrice),
 				adjustForInflation: t.adjustForInflation,
-				autoTicketPrice: !!t.autoTicketPrice,
+				autoTicketPrice: t.autoTicketPrice,
 			}));
 		}
 	}, [state.dirty, t]);

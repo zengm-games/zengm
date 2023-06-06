@@ -25,13 +25,14 @@ const writeTeamStats = async (results: GameResults) => {
 	for (const t1 of [0, 1]) {
 		const t2 = t1 === 1 ? 0 : 1;
 		const payroll = await team.getPayroll(results.team[t1].id);
-		const [t, teamSeasons] = await Promise.all([
-			idb.cache.teams.get(results.team[t1].id),
-			idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
+		const t = await idb.cache.teams.get(results.team[t1].id);
+		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+			"teamSeasonsByTidSeason",
+			[
 				[results.team[t1].id, g.get("season") - 2],
 				[results.team[t1].id, g.get("season")],
-			]),
-		]);
+			],
+		);
 		const teamSeason = teamSeasons.at(-1)!;
 		const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;

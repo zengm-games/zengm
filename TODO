@@ -4,8 +4,8 @@ finances revamp
   - show avg in ui
 - UI should show annual cost, current effect (projected out 3 years), and long term effect (after 3 years)
   - for the effect UI, use the facilitiesEffect etc functions in budgetLevels.ts
-  - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
-  - facilities also affects attendance, see facilitiesFactor
+    - facilities affects two things
+    - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
 - adjustForInflation just for ticket prices
   - always enable if setting auto ticket price
 - on mobile, move settings to top of team finances page
@@ -35,6 +35,7 @@ finances revamp
   - rank isn't fun, like ebay bidding
   - level is clearer than some arbitrary $ amount that could change with inflation
   - exponential cost makes maxing out a hard decision
+  - show exactly how (old) rank corresponds to (new) level, in table and chart
 
 heck json schema header metadata for hockey
 

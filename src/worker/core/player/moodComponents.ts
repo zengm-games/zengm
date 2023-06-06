@@ -1,6 +1,6 @@
 import { finances } from "..";
 import { isSport, PHASE, PLAYER } from "../../../common";
-import { facilitiesEffect } from "../../../common/budgetLevels";
+import { facilitiesEffectMood } from "../../../common/budgetLevels";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
@@ -123,7 +123,7 @@ const moodComponents = async (
 			teamSeasons,
 			"facilities",
 		);
-		components.facilities = facilitiesEffect(facilitiesLevel);
+		components.facilities = facilitiesEffectMood(facilitiesLevel);
 	}
 
 	{

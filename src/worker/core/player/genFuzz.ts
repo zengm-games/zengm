@@ -5,10 +5,10 @@ const genFuzz = (souctingLevel: number): number => {
 	const effect = scoutingEffect(souctingLevel);
 
 	// 1 to 3
-	const stddev = 2 * (1 + effect);
+	const stddev = 2 * (1 + (9 / 7) * effect);
 
 	// 1 to 8
-	const cutoff = 4.5 * (1 + (14 / 9) * effect);
+	const cutoff = 4.5 * (1 + effect);
 
 	let fuzz = random.gauss(0, stddev);
 

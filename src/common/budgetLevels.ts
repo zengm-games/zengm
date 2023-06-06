@@ -29,9 +29,15 @@ export const levelToAmount = (level: number, salaryCap: number) => {
 };
 
 // Scale the output of levelToEffect for use in game - these functions are centralized here so they can be used in the UI too
-export const facilitiesEffect = (level: number) => {
+export const facilitiesEffectMood = (level: number) => {
 	const effect = levelToEffect(level);
 	return 2 * effect;
+};
+export const facilitiesEffectAttendance = (level: number) => {
+	const effect = levelToEffect(level);
+
+	// 0 to 0.075
+	return 0.0375 + 0.0375 * effect;
 };
 export const healthEffect = (level: number) => {
 	const effect = levelToEffect(level);
@@ -43,5 +49,5 @@ export const coachingEffect = (level: number) => {
 };
 export const scoutingEffect = (level: number) => {
 	const effect = levelToEffect(level);
-	return 0.5 * effect;
+	return (7 / 9) * effect;
 };

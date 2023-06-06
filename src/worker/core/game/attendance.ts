@@ -1,5 +1,6 @@
 import { finances } from "..";
 import { bySport, DEFAULT_STADIUM_CAPACITY, isSport } from "../../../common";
+import { facilitiesEffectAttendance } from "../../../common/budgetLevels";
 import getAdjustedTicketPrice, {
 	PLAYOFF_ATTENDANCE_FACTOR,
 } from "../../../common/getAdjustedTicketPrice";
@@ -53,12 +54,10 @@ const SPORT_FACTOR = bySport({
 
 const TICKET_PRICE_FACTOR = 45 * 50;
 
-const facilitiesFactor = (teamSeasons: TeamSeason[]) =>
-	1 +
-	(0.075 *
-		(g.get("numActiveTeams") -
-			finances.getLevelLastThree(teamSeasons, "facilities"))) /
-		(g.get("numActiveTeams") - 1);
+const facilitiesFactor = (teamSeasons: TeamSeason[]) => {
+	const level = finances.getLevelLastThree(teamSeasons, "facilities");
+	return 1 + facilitiesEffectAttendance(level);
+};
 
 // teamSeasons is last 3 seasons
 export const getActualAttendance = ({

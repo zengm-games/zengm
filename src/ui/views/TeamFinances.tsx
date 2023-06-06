@@ -136,7 +136,7 @@ const FinancesForm = ({
 
 		logEvent({
 			type: "success",
-			text: "Team finances updated.",
+			text: "Saved team finance settings.",
 			saveToDb: false,
 		});
 
@@ -153,6 +153,28 @@ const FinancesForm = ({
 		) : null;
 
 	const formDisabled = gameSimInProgress || tid !== userTid || spectator;
+
+	const expenseCategories: {
+		key: "scouting" | "coaching" | "health" | "facilities";
+		title: string;
+	}[] = [
+		{
+			key: "scouting",
+			title: "Scouting",
+		},
+		{
+			key: "coaching",
+			title: "Coaching",
+		},
+		{
+			key: "health",
+			title: "Health",
+		},
+		{
+			key: "facilities",
+			title: "Facilities",
+		},
+	];
 
 	return (
 		<form onSubmit={handleSubmit} className="mb-3">
@@ -242,8 +264,8 @@ const FinancesForm = ({
 				</div>
 			</div>
 			<h3>
-				Expense Settings{" "}
-				<HelpPopover title="Expense Settings">
+				Expense Levels{" "}
+				<HelpPopover title="Expense Levels">
 					<p>Scouting: Controls the accuracy of displayed player ratings.</p>
 					<p>Coaching: Better coaches mean better player development.</p>
 					<p>Health: A good team of doctors speeds recovery from injuries.</p>
@@ -255,109 +277,46 @@ const FinancesForm = ({
 			</h3>
 			<p>
 				Click the ? above to see what exactly each category does. Effects are
-				based on your spending rank over the past three seasons.
+				based on your average level over the past three seasons.
 			</p>
-			<div className="d-flex">
-				<div className="finances-settings-label">Scouting</div>
-				<div className="input-group input-group-xs finances-settings-field">
-					<div className="input-group-text">$</div>
-					<input
-						type="text"
-						className="form-control"
-						disabled={formDisabled || challengeNoRatings}
-						onChange={handleChange("scouting")}
-						value={state.scouting}
-					/>
-					<div className="input-group-text">M</div>
-				</div>
-				<div className="finances-settings-text-small">
-					Current spending rate: ???
-					<br />
-					{noSeasonData || phase === PHASE.PRESEASON ? (
-						<br />
-					) : (
-						`Spent this season: ???`
-					)}
-				</div>
-			</div>
-			<div className="d-flex">
-				<div className="finances-settings-label">Coaching</div>
-				<div className="input-group input-group-xs finances-settings-field">
-					<div className="input-group-text">$</div>
-					<input
-						type="text"
-						className="form-control"
-						disabled={formDisabled}
-						onChange={handleChange("coaching")}
-						value={state.coaching}
-					/>
-					<div className="input-group-text">M</div>
-				</div>
-				<div className="finances-settings-text-small">
-					Current spending rate: ???
-					<br />
-					{noSeasonData || phase === PHASE.PRESEASON ? (
-						<br />
-					) : (
-						`Spent this season: ???`
-					)}
-				</div>
-			</div>
-			<div className="d-flex">
-				<div className="finances-settings-label">Health</div>
-				<div className="input-group input-group-xs finances-settings-field">
-					<div className="input-group-text">$</div>
-					<input
-						type="text"
-						className="form-control"
-						disabled={formDisabled}
-						onChange={handleChange("health")}
-						value={state.health}
-					/>
-					<div className="input-group-text">M</div>
-				</div>
-				<div className="finances-settings-text-small">
-					Current spending rate: ???
-					<br />
-					{noSeasonData || phase === PHASE.PRESEASON ? (
-						<br />
-					) : (
-						`Spent this season: ???`
-					)}
-				</div>
-			</div>
-			<div className="d-flex">
-				<div className="finances-settings-label">Facilities</div>
-				<div className="input-group input-group-xs finances-settings-field">
-					<div className="input-group-text">$</div>
-					<input
-						type="text"
-						className="form-control"
-						disabled={formDisabled}
-						onChange={handleChange("facilities")}
-						value={state.facilities}
-					/>
-					<div className="input-group-text">M</div>
-				</div>
-				<div className="finances-settings-text-small">
-					Current spending rate: ???
-					<br />
-					{noSeasonData || phase === PHASE.PRESEASON ? (
-						<br />
-					) : (
-						`Spent this season: ???`
-					)}
-				</div>
-			</div>
+			{expenseCategories.map(expenseCategory => {
+				return (
+					<div className="d-flex" key={expenseCategory.key}>
+						<div className="finances-settings-label">
+							{expenseCategory.title}
+						</div>
+						<div className="input-group input-group-xs finances-settings-field">
+							<div className="input-group-text">$</div>
+							<input
+								type="text"
+								className="form-control"
+								disabled={formDisabled || challengeNoRatings}
+								onChange={handleChange(expenseCategory.key)}
+								value={state[expenseCategory.key]}
+							/>
+							<div className="input-group-text">M</div>
+						</div>
+						<div className="finances-settings-text-small">
+							Current spending rate: ???
+							<br />
+							{noSeasonData || phase === PHASE.PRESEASON ? (
+								<br />
+							) : (
+								`Spent this season: ???`
+							)}
+						</div>
+					</div>
+				);
+			})}
 			{tid === userTid && !spectator ? (
 				<div className="mt-5" style={paddingLeft85}>
 					<button
 						className="btn btn-large btn-primary"
 						disabled={formDisabled || state.saving}
 					>
-						Save Revenue and
+						Save Ticket Price
 						<br />
-						Expense Settings
+						and Expense Levels
 					</button>
 				</div>
 			) : null}

@@ -6,13 +6,16 @@ finances revamp
     - current annual cost
     - current effect (based on last 3 seasons)
     - future effect (if current level is maintained for 3 full seasons)
+  - +/- buttons with popover showing the effect
   - how to display?
     - what is essential info, what can be hidden under a tooltip/panel?
   - effects display info
     - use functions in common/budgetLevels.ts to compute
     - facilities affects two things
     - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
-- ticket price rank
+  - .finances-settings classes still needed?
+  - why does toggling auto ticket price change the ticket price, shouldn't the auto value be saved already?
+  - ticket price rank
 - on mobile, move settings to top of team finances page
 - updateRanks
   - needed at all? no, but we should have something that updates the AI levels every year

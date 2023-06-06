@@ -6,13 +6,6 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 
-/**
- * Add a new row of ratings to a player object.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @param {number} scoutingLevel Between 1 and g.get("numActiveTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
- */
 const addRatingsRow = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 	scoutingLevel?: number,

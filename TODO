@@ -8,16 +8,13 @@ finances revamp
 - adjustForInflation just for ticket prices
   - always enable if setting auto ticket price
 - on mobile, move settings to top of team finances page
-- any getRankLastThree uses?
-- what should the exact numbers be?
-  - different cost/effect for different categories?
-- TeamSeason.expenses and revenues no longer need to store rank
 - updateRanks
-  - needed at all?
+  - needed at all? no, but we should have something that updates the AI levels every year
 - helpers.defaultBudgetAmount
 - for AI teams, after resetTicketPrice in newPhasePreseason, have something that sets the budget levels, using defaultBudgetLevel
   - defaultBudgetLevel should take some args to help determine the proper value
 - check league finances
+  - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
 - show all levels on league finances table
 - make sure exhibition games work
 - if only one teamSeason, average in with default?

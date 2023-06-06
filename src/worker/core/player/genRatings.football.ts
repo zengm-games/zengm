@@ -251,14 +251,6 @@ const defaultOvrsOrPots = {
 	PR: 0,
 };
 
-/**
- * Generate initial ratings for a newly-created
- *
- * @param {number} season [description]
- * @param {number} scoutingLevel Between 1 and g.get("numActiveTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
- * @param {number} tid [description]
- * @return {Object} Ratings object
- */
 const genRatings = (
 	season: number,
 	scoutingLevel: number,

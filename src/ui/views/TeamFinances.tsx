@@ -8,10 +8,11 @@ import {
 import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalPartial } from "../util";
-import type { View, Phase } from "../../common/types";
+import type { View } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import type { DataTableRow } from "../components/DataTable";
+import { MAX_LEVEL } from "../../common/budgetLevels";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -33,40 +34,42 @@ const FinancesForm = ({
 	t,
 	tid,
 	userTid,
-}: {
-	autoTicketPrice: number;
-	challengeNoRatings: boolean;
+}: Pick<
+	View<"teamFinances">,
+	| "autoTicketPrice"
+	| "challengeNoRatings"
+	| "spectator"
+	| "phase"
+	| "t"
+	| "tid"
+	| "userTid"
+> & {
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
-	spectator: boolean;
-	phase: Phase;
-	t: any;
-	tid: number;
-	userTid: number;
 }) => {
 	const [state, setState] = useState({
 		dirty: false,
 		saving: false,
-		coaching: String(t.budget.coaching.amount),
-		facilities: String(t.budget.facilities.amount),
-		health: String(t.budget.health.amount),
-		scouting: String(t.budget.scouting.amount),
-		ticketPrice: formatTicketPrice(t.budget.ticketPrice.amount),
+		coaching: String(t.budget.coaching),
+		facilities: String(t.budget.facilities),
+		health: String(t.budget.health),
+		scouting: String(t.budget.scouting),
+		ticketPrice: formatTicketPrice(t.budget.ticketPrice),
 		adjustForInflation: t.adjustForInflation,
-		autoTicketPrice: t.autoTicketPrice,
+		autoTicketPrice: !!t.autoTicketPrice,
 	});
 
 	useEffect(() => {
 		if (!state.dirty) {
 			setState(state2 => ({
 				...state2,
-				coaching: String(t.budget.coaching.amount),
-				facilities: String(t.budget.facilities.amount),
-				health: String(t.budget.health.amount),
-				scouting: String(t.budget.scouting.amount),
-				ticketPrice: formatTicketPrice(t.budget.ticketPrice.amount),
+				coaching: String(t.budget.coaching),
+				facilities: String(t.budget.facilities),
+				health: String(t.budget.health),
+				scouting: String(t.budget.scouting),
+				ticketPrice: formatTicketPrice(t.budget.ticketPrice),
 				adjustForInflation: t.adjustForInflation,
-				autoTicketPrice: t.autoTicketPrice,
+				autoTicketPrice: !!t.autoTicketPrice,
 			}));
 		}
 	}, [state.dirty, t]);
@@ -101,24 +104,20 @@ const FinancesForm = ({
 		const budgetAmounts = {
 			// Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
 			coaching: helpers.bound(
-				Math.round(parseFloat(state.coaching) * 100) * 10,
-				0,
-				Infinity,
+				Math.round(parseFloat(state.coaching)),
+				1,
+				MAX_LEVEL,
 			),
 			facilities: helpers.bound(
-				Math.round(parseFloat(state.facilities) * 100) * 10,
-				0,
-				Infinity,
+				Math.round(parseFloat(state.facilities)),
+				1,
+				MAX_LEVEL,
 			),
-			health: helpers.bound(
-				Math.round(parseFloat(state.health) * 100) * 10,
-				0,
-				Infinity,
-			),
+			health: helpers.bound(Math.round(parseFloat(state.health)), 1, MAX_LEVEL),
 			scouting: helpers.bound(
-				Math.round(parseFloat(state.scouting) * 100) * 10,
-				0,
-				Infinity,
+				Math.round(parseFloat(state.scouting)),
+				1,
+				MAX_LEVEL,
 			),
 
 			// Already in [dollars]
@@ -187,9 +186,7 @@ const FinancesForm = ({
 						/>
 					)}
 				</div>
-				<div className="finances-settings-text">
-					Leaguewide rank: #{t.budget.ticketPrice.rank}
-				</div>
+				<div className="finances-settings-text">Leaguewide rank: ???</div>
 			</div>
 			{phase === PHASE.PLAYOFFS ? (
 				<div className="mb-1 text-warning" style={paddingLeft85}>
@@ -260,12 +257,12 @@ const FinancesForm = ({
 					<div className="input-group-text">M</div>
 				</div>
 				<div className="finances-settings-text-small">
-					Current spending rate: #{t.budget.scouting.rank}
+					Current spending rate: ???
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
 						<br />
 					) : (
-						`Spent this season: #${t.seasonAttrs.expenses.scouting.rank}`
+						`Spent this season: ???`
 					)}
 				</div>
 			</div>
@@ -283,12 +280,12 @@ const FinancesForm = ({
 					<div className="input-group-text">M</div>
 				</div>
 				<div className="finances-settings-text-small">
-					Current spending rate: #{t.budget.coaching.rank}
+					Current spending rate: ???
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
 						<br />
 					) : (
-						`Spent this season: #${t.seasonAttrs.expenses.coaching.rank}`
+						`Spent this season: ???`
 					)}
 				</div>
 			</div>
@@ -306,12 +303,12 @@ const FinancesForm = ({
 					<div className="input-group-text">M</div>
 				</div>
 				<div className="finances-settings-text-small">
-					Current spending rate: #{t.budget.health.rank}
+					Current spending rate: ???
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
 						<br />
 					) : (
-						`Spent this season: #${t.seasonAttrs.expenses.health.rank}`
+						`Spent this season: ???`
 					)}
 				</div>
 			</div>
@@ -329,12 +326,12 @@ const FinancesForm = ({
 					<div className="input-group-text">M</div>
 				</div>
 				<div className="finances-settings-text-small">
-					Current spending rate: #{t.budget.facilities.rank}
+					Current spending rate: ???
 					<br />
 					{noSeasonData || phase === PHASE.PRESEASON ? (
 						<br />
 					) : (
-						`Spent this season: #${t.seasonAttrs.expenses.facilities.rank}`
+						`Spent this season: ???`
 					)}
 				</div>
 			</div>

@@ -215,6 +215,7 @@ const FinancesForm = ({
 									disabled={formDisabled || challengeNoRatings}
 									onChange={handleChange(expenseCategory.key)}
 									value={value}
+									inputMode="numeric"
 								/>
 								<button
 									className="btn btn-secondary"
@@ -284,6 +285,7 @@ const FinancesForm = ({
 							disabled={formDisabled || state.autoTicketPrice}
 							onChange={handleChange("ticketPrice")}
 							value={state.ticketPrice}
+							inputMode="decimal"
 						/>
 					)}
 				</div>

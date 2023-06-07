@@ -48,6 +48,8 @@ finances revamp
   - show exactly how (old) rank corresponds to (new) level, in table and chart
   - expenses are spread out over the regular season
 
+get rid of ability to create multiple usernames with same email
+
 default new league settings in non-basketball sports shows basketball-only options for randomizaion
 
 auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
@@ -185,7 +187,9 @@ wild pitch score in bottom of extra innings does not end game
 - https://discord.com/channels/290013534023057409/944392892905037885/1054912900692717608
 - https://mail.google.com/mail/u/0/#inbox/FMfcgzGrcFbgqMTCpKJRBfxBTxFrsWhS
 
-offsetting penalties result in negative penalties in summary https://discord.com/channels/290013534023057409/290015591216054273/1049805430030860328
+offsetting penalties result in negative penalties in summary
+- https://discord.com/channels/290013534023057409/290015591216054273/1049805430030860328
+- https://discord.com/channels/290013534023057409/290015591216054273/1115811359943299132
 
 Update Game Simulation Presets, it goes from 1947 to 2020 right now
 

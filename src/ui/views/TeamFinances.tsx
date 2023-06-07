@@ -199,8 +199,11 @@ const FinancesForm = ({
 					const value = state[expenseCategory.key];
 					const valueInt = parseInt(state[expenseCategory.key]);
 					return (
-						<div className="d-flex" key={expenseCategory.key}>
-							<div className="finances-settings-label">
+						<div
+							className="d-flex align-items-center"
+							key={expenseCategory.key}
+						>
+							<div className="finances-settings-label me-3 text-end overflow-hidden">
 								{expenseCategory.title}
 							</div>
 							<div
@@ -242,7 +245,7 @@ const FinancesForm = ({
 									−
 								</button>
 							</div>
-							<div className="finances-settings-text-small">
+							<div className="ms-3 finances-settings-text-small">
 								Current spending rate: ???
 								<br />
 								{noSeasonData || phase === PHASE.PRESEASON ? (
@@ -263,7 +266,7 @@ const FinancesForm = ({
 					your profit.
 				</HelpPopover>
 			</h3>
-			<div className="d-flex">
+			<div className="d-flex align-items-center">
 				<div
 					className="input-group"
 					style={{
@@ -289,7 +292,7 @@ const FinancesForm = ({
 						/>
 					)}
 				</div>
-				<div className="finances-settings-text">Leaguewide rank: ???</div>
+				<div className="ms-3">Leaguewide rank: ???</div>
 			</div>
 			{phase === PHASE.PLAYOFFS ? (
 				<div className="mb-1 text-warning" style={paddingLeft85}>
@@ -304,7 +307,7 @@ const FinancesForm = ({
 					)}
 				</div>
 			) : null}
-			<div className="mt-1 d-flex">
+			<div className="mt-2 d-flex">
 				<div className="form-check">
 					<label className="form-check-label">
 						<input

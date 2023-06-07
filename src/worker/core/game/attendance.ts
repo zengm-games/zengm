@@ -56,7 +56,7 @@ const TICKET_PRICE_FACTOR = 45 * 50;
 
 const facilitiesFactor = (teamSeasons: TeamSeason[]) => {
 	const level = finances.getLevelLastThree(teamSeasons, "facilities");
-	return 1 + facilitiesEffectAttendance(level);
+	return 1.0375 + facilitiesEffectAttendance(level);
 };
 
 // teamSeasons is last 3 seasons

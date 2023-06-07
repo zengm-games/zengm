@@ -15,6 +15,8 @@ import type { DataTableRow } from "../components/DataTable";
 import {
 	MAX_LEVEL,
 	coachingEffect,
+	facilitiesEffectAttendance,
+	facilitiesEffectMood,
 	healthEffect,
 	levelToAmount,
 	scoutingEffect,
@@ -32,10 +34,19 @@ const formatTicketPrice = (ticketPrice: number) => {
 
 type BudgetKey = "scouting" | "coaching" | "health" | "facilities";
 
+const roundEffect = (effect: number) => {
+	return `${effect >= 0 ? "+" : ""}${effect.toLocaleString("en-US", {
+		maximumFractionDigits: 1,
+		minimumFractionDigits: 0,
+	})}`;
+};
+
 const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 	if (type === "scouting") {
 		const effect = scoutingEffect(level);
-		return <>Displayed ratings may be off by up to {Math.round(effect)}</>;
+		return (
+			<>Displayed ratings may be off by up to {Math.round(effect)} points</>
+		);
 	}
 
 	if (type === "coaching") {
@@ -44,20 +55,7 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal progs";
 		}
 
-		if (effect > 0) {
-			return (
-				<>
-					{helpers.roundOneDecimalPlace(100 * effect)}% better progs than normal
-				</>
-			);
-		}
-
-		return (
-			<>
-				{helpers.roundOneDecimalPlace(Math.abs(100 * effect))}% worse progs than
-				normal
-			</>
-		);
+		return <>{roundEffect(Math.abs(100 * effect))}% progs</>;
 	}
 
 	if (type === "health") {
@@ -66,24 +64,17 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal injury duration";
 		}
 
-		if (effect > 0) {
-			return (
-				<>
-					{helpers.roundOneDecimalPlace(100 * effect)}% longer injuries than
-					normal
-				</>
-			);
-		}
-
-		return (
-			<>
-				{helpers.roundOneDecimalPlace(Math.abs(100 * effect))}% shorter injuries
-				than normal
-			</>
-		);
+		return <>{roundEffect(Math.abs(100 * effect))}% injury duration</>;
 	}
 
-	return "";
+	const effectMood = facilitiesEffectMood(level);
+	const effectAttendance = facilitiesEffectAttendance(level);
+	return (
+		<>
+			{roundEffect(effectMood)} player mood,{" "}
+			{roundEffect(Math.abs(100 * effectAttendance))}% ticket demand
+		</>
+	);
 };
 
 const FinancesForm = ({
@@ -259,7 +250,7 @@ const FinancesForm = ({
 			<div className="d-flex flex-column gap-2">
 				{expenseCategories.map(expenseCategory => {
 					const level = state[expenseCategory.key];
-					const levelInt = parseInt(state[expenseCategory.key]);
+					const levelInt = Math.round(parseFloat(state[expenseCategory.key]));
 					return (
 						<div
 							className="d-flex align-items-center"

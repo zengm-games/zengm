@@ -1,10 +1,10 @@
 finances revamp
 - UI
-  - how to display?
-    - what is essential info, what can be hidden under a tooltip/panel?
-  - .finances-settings classes still needed?
+  - what is essential info, what can be hidden under a tooltip/panel?
   - why does toggling auto ticket price change the ticket price, shouldn't the auto value be saved already?
-  - ticket price rank
+  - ticket price
+    - rank
+    - estimated attendance
   - highlight numbers in colors?
   - god mode exception for scouting
 - click and hold on +/- button

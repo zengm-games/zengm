@@ -5,7 +5,7 @@ export const DEFAULT_LEVEL = 34;
 
 // https://www.wolframalpha.com/input?i2d=true&i=1.1*Piecewise%5B%7B%7Btanh%5C%2840%29%5C%2840%293Divide%5Bx%2C100%5D-1%5C%2841%29%5C%2841%29%2Cx%3EDivide%5B100%2C3%5D%7D%2C%7B%5C%2840%293Divide%5Bx%2C100%5D-1%5C%2841%29%2Cx%3C%3DDivide%5B100%2C3%5D%7D%7D%5Dfrom+1+to+100
 // Level should be the 3 year average, from getLevelLastThree
-const levelToEffect = (level: number) => {
+export const levelToEffect = (level: number) => {
 	if (Number.isNaN(level)) {
 		return 0;
 	}

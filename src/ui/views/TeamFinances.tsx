@@ -4,10 +4,18 @@ import {
 	Fragment,
 	useEffect,
 	useState,
+	type ReactNode,
 } from "react";
 import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, logEvent, toWorker, useLocalPartial } from "../util";
+import {
+	getCols,
+	gradientStyleFactory,
+	helpers,
+	logEvent,
+	toWorker,
+	useLocalPartial,
+} from "../util";
 import type { View } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -19,6 +27,7 @@ import {
 	facilitiesEffectMood,
 	healthEffect,
 	levelToAmount,
+	levelToEffect,
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
 } from "../../common/budgetLevels";
@@ -45,15 +54,31 @@ const roundEffect = (effect: number, includePlusSign: boolean) => {
 	)}`;
 };
 
+const GradientStyle = ({
+	children,
+	level,
+}: {
+	children: ReactNode;
+	level: number;
+}) => {
+	const gradientStyle = gradientStyleFactory(-0.9, -0.05, 0.05, 0.9);
+
+	return <span style={gradientStyle(levelToEffect(level))}>{children}</span>;
+};
+
 const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 	if (type === "scouting") {
 		const effectCutoff = scoutingEffectCutoff(level);
 		const effectStddev = scoutingEffectStddev(level);
 		return (
 			<>
-				Ratings error stddev: {roundEffect(effectStddev, false)}
+				Ratings error stddev:{" "}
+				<GradientStyle level={level}>
+					{roundEffect(effectStddev, false)}
+				</GradientStyle>
 				<br />
-				Maximum ratings error: {effectCutoff}
+				Maximum ratings error:{" "}
+				<GradientStyle level={level}>{effectCutoff}</GradientStyle>
 			</>
 		);
 	}
@@ -66,9 +91,15 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 
 		return (
 			<>
-				{roundEffect(100 * effect, true)}% positive progs
+				<GradientStyle level={level}>
+					{roundEffect(100 * effect, true)}%
+				</GradientStyle>{" "}
+				positive progs
 				<br />
-				{roundEffect(-100 * effect, true)}% negative progs
+				<GradientStyle level={level}>
+					{roundEffect(-100 * effect, true)}%
+				</GradientStyle>{" "}
+				negative progs
 			</>
 		);
 	}
@@ -79,16 +110,29 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal injury duration";
 		}
 
-		return <>{roundEffect(100 * effect, true)}% injury duration</>;
+		return (
+			<>
+				<GradientStyle level={level}>
+					{roundEffect(100 * effect, true)}%
+				</GradientStyle>{" "}
+				injury duration
+			</>
+		);
 	}
 
 	const effectMood = facilitiesEffectMood(level);
 	const effectAttendance = facilitiesEffectAttendance(level);
 	return (
 		<>
-			{roundEffect(effectMood, true)} player mood
+			<GradientStyle level={level}>
+				{roundEffect(effectMood, true)}
+			</GradientStyle>{" "}
+			player mood
 			<br />
-			{roundEffect(100 * effectAttendance, true)}% ticket demand
+			<GradientStyle level={level}>
+				{roundEffect(100 * effectAttendance, true)}%
+			</GradientStyle>{" "}
+			ticket demand
 		</>
 	);
 };
@@ -250,6 +294,10 @@ const FinancesForm = ({
 			<h2>
 				Expense levels{" "}
 				<HelpPopover title="Expense levels">
+					<p>
+						Expense levels can be set between 1 and 100. 34 is neutral, and at
+						the high end there are diminishing returns to increasing the level.
+					</p>
 					<p>Effects are based on your spending over the past 3 seasons.</p>
 				</HelpPopover>
 			</h2>

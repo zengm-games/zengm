@@ -19,7 +19,8 @@ import {
 	facilitiesEffectMood,
 	healthEffect,
 	levelToAmount,
-	scoutingEffect,
+	scoutingEffectCutoff,
+	scoutingEffectStddev,
 } from "../../common/budgetLevels";
 
 const paddingLeft85 = { paddingLeft: 85 };
@@ -34,20 +35,25 @@ const formatTicketPrice = (ticketPrice: number) => {
 
 type BudgetKey = "scouting" | "coaching" | "health" | "facilities";
 
-const roundEffect = (effect: number) => {
-	return `${effect >= 0 ? "+" : ""}${effect.toLocaleString("en-US", {
-		maximumFractionDigits: 1,
-		minimumFractionDigits: 0,
-	})}`;
+const roundEffect = (effect: number, includePlusSign: boolean) => {
+	return `${includePlusSign && effect >= 0 ? "+" : ""}${effect.toLocaleString(
+		"en-US",
+		{
+			maximumFractionDigits: 2,
+			minimumFractionDigits: 0,
+		},
+	)}`;
 };
 
 const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 	if (type === "scouting") {
-		const effect = Math.round(scoutingEffect(level));
+		const effectCutoff = scoutingEffectCutoff(level);
+		const effectStddev = scoutingEffectStddev(level);
 		return (
 			<>
-				Displayed ratings may be wrong by up to {effect}{" "}
-				{effect === 1 ? "point" : "points"}
+				Ratings error stddev: {roundEffect(effectStddev, false)}
+				<br />
+				Maximum ratings error: {effectCutoff}
 			</>
 		);
 	}
@@ -58,7 +64,13 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal progs";
 		}
 
-		return <>{roundEffect(100 * effect)}% progs</>;
+		return (
+			<>
+				{roundEffect(100 * effect, true)}% positive progs
+				<br />
+				{roundEffect(-100 * effect, true)}% negative progs
+			</>
+		);
 	}
 
 	if (type === "health") {
@@ -67,16 +79,16 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal injury duration";
 		}
 
-		return <>{roundEffect(100 * effect)}% injury duration</>;
+		return <>{roundEffect(100 * effect, true)}% injury duration</>;
 	}
 
 	const effectMood = facilitiesEffectMood(level);
 	const effectAttendance = facilitiesEffectAttendance(level);
 	return (
 		<>
-			{roundEffect(effectMood)} player mood
+			{roundEffect(effectMood, true)} player mood
 			<br />
-			{roundEffect(100 * effectAttendance)}% ticket demand
+			{roundEffect(100 * effectAttendance, true)}% ticket demand
 		</>
 	);
 };

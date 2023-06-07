@@ -51,9 +51,15 @@ export const coachingEffect = (level: number) => {
 	const effect = levelToEffect(level);
 	return 0.25 * effect;
 };
-export const scoutingEffect = (level: number) => {
+export const scoutingEffectCutoff = (level: number) => {
 	const effect = levelToEffect(level);
 
 	// 1 to 8
-	return (1 - effect) * 3.5 + 1;
+	return Math.round((1 - effect) * 3.5 + 1);
+};
+export const scoutingEffectStddev = (level: number) => {
+	const effect = levelToEffect(level);
+
+	// 1 to 3
+	return 2 - effect;
 };

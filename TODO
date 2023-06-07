@@ -1,6 +1,5 @@
 finances revamp
 - UI
-  - show something about stddev of fuzz, otherwise the rounding makes it look like the levels don't do anything except at a small number of cutoffs
   - how to display?
     - what is essential info, what can be hidden under a tooltip/panel?
   - .finances-settings classes still needed?

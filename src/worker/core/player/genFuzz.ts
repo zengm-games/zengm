@@ -1,14 +1,15 @@
-import { scoutingEffect } from "../../../common/budgetLevels";
+import {
+	scoutingEffectCutoff,
+	scoutingEffectStddev,
+} from "../../../common/budgetLevels";
 import { random } from "../../util";
 
 const genFuzz = (souctingLevel: number): number => {
-	const effect = scoutingEffect(souctingLevel);
-
 	// 1 to 8
-	const cutoff = effect;
+	const cutoff = scoutingEffectCutoff(souctingLevel);
 
 	// 1 to 3
-	const stddev = ((effect - 1) * 3) / 7;
+	const stddev = scoutingEffectStddev(souctingLevel);
 
 	let fuzz = random.gauss(0, stddev);
 

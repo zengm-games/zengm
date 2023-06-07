@@ -15,6 +15,7 @@ import type { DataTableRow } from "../components/DataTable";
 import {
 	MAX_LEVEL,
 	coachingEffect,
+	healthEffect,
 	levelToAmount,
 	scoutingEffect,
 } from "../../common/budgetLevels";
@@ -60,7 +61,26 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 	}
 
 	if (type === "health") {
-		return "";
+		const effect = healthEffect(level);
+		if (effect === 0) {
+			return "Normal injury duration";
+		}
+
+		if (effect > 0) {
+			return (
+				<>
+					{helpers.roundOneDecimalPlace(100 * effect)}% longer injuries than
+					normal
+				</>
+			);
+		}
+
+		return (
+			<>
+				{helpers.roundOneDecimalPlace(Math.abs(100 * effect))}% shorter injuries
+				than normal
+			</>
+		);
 	}
 
 	return "";

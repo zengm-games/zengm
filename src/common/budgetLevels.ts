@@ -6,7 +6,7 @@ export const DEFAULT_LEVEL = 34;
 // https://www.wolframalpha.com/input?i2d=true&i=1.1*Piecewise%5B%7B%7Btanh%5C%2840%29%5C%2840%293Divide%5Bx%2C100%5D-1%5C%2841%29%5C%2841%29%2Cx%3EDivide%5B100%2C3%5D%7D%2C%7B%5C%2840%293Divide%5Bx%2C100%5D-1%5C%2841%29%2Cx%3C%3DDivide%5B100%2C3%5D%7D%7D%5Dfrom+1+to+100
 // Level should be the 3 year average, from getLevelLastThree
 const levelToEffect = (level: number) => {
-	const x = (3 * (level - 1)) / (MAX_LEVEL - 1) - 1;
+	const x = (3 * (Math.round(level) - 1)) / (MAX_LEVEL - 1) - 1;
 
 	// Overshoot to handle the sigmoid positive part never quite reaching 1, and probably no team drops all the way down to level 1
 	const scale = 1.1;
@@ -23,7 +23,7 @@ export const levelToAmount = (level: number, salaryCap: number) => {
 		Math.round(
 			20 +
 				(salaryCap / 90000) * 1330 +
-				(900 * (salaryCap / 90000) * (level - 1)) / (MAX_LEVEL - 1),
+				(900 * (salaryCap / 90000) * (Math.round(level) - 1)) / (MAX_LEVEL - 1),
 		) * 10
 	);
 };

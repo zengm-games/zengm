@@ -1,9 +1,6 @@
 finances revamp
 - UI
   - should show
-    - current level - t.budget
-    - avg last 3 seasons level - t.expensesLevelsLastThree
-    - current annual cost - levelToAmount
     - current effect (based on last 3 seasons)
       - use functions in common/budgetLevels.ts to compute
       - facilities affects two things
@@ -11,7 +8,6 @@ finances revamp
     - future effect (if current level is maintained for 3 full seasons)
       - same as current effect, but use current level rather than last 3 seasons level
     - allow decimal level? no
-  - +/- buttons with popover showing the effect
   - how to display?
     - what is essential info, what can be hidden under a tooltip/panel?
   - .finances-settings classes still needed?
@@ -48,13 +44,14 @@ finances revamp
   - show exactly how (old) rank corresponds to (new) level, in table and chart
   - expenses are spread out over the regular season
 
+little bugs
+- create player, don't edit ratings at all -> pot is 0 https://old.reddit.com/r/BasketballGM/comments/142hfid/bro_is_a_0_potential_and_still_got_more_potential/jn9mbnu/?context=3
+- auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
+- check json schema header metadata for hockey
+
 get rid of ability to create multiple usernames with same email
 
 default new league settings in non-basketball sports shows basketball-only options for randomizaion
-
-auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
-
-check json schema header metadata for hockey
 
 when negotiating with re-sign players, don't remove from list when you press cancel https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jiffpkf/
 

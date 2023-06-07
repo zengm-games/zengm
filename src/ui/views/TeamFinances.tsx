@@ -12,7 +12,7 @@ import type { View } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import type { DataTableRow } from "../components/DataTable";
-import { MAX_LEVEL } from "../../common/budgetLevels";
+import { MAX_LEVEL, levelToAmount } from "../../common/budgetLevels";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -28,8 +28,8 @@ const FinancesForm = ({
 	autoTicketPrice,
 	challengeNoRatings,
 	gameSimInProgress,
-	noSeasonData,
 	phase,
+	salaryCap,
 	spectator,
 	t,
 	tid,
@@ -38,14 +38,14 @@ const FinancesForm = ({
 	View<"teamFinances">,
 	| "autoTicketPrice"
 	| "challengeNoRatings"
-	| "spectator"
 	| "phase"
+	| "salaryCap"
+	| "spectator"
 	| "t"
 	| "tid"
 	| "userTid"
 > & {
 	gameSimInProgress: boolean;
-	noSeasonData: boolean;
 }) => {
 	const [state, setState] = useState({
 		dirty: false,
@@ -246,13 +246,14 @@ const FinancesForm = ({
 								</button>
 							</div>
 							<div className="ms-3 finances-settings-text-small">
-								Current spending rate: ???
-								<br />
-								{noSeasonData || phase === PHASE.PRESEASON ? (
-									<br />
-								) : (
-									`Spent this season: ???`
+								Current annual cost:{" "}
+								{helpers.formatCurrency(
+									levelToAmount(valueInt, salaryCap * 1000) / 1000,
+									"M",
 								)}
+								<br />
+								Average level last 3 seasons:{" "}
+								{t.expensesLevelsLastThree[expenseCategory.key]}
 							</div>
 						</div>
 					);
@@ -772,9 +773,9 @@ const TeamFinances = ({
 							autoTicketPrice={autoTicketPrice}
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
-							noSeasonData={noSeasonData}
-							spectator={spectator}
 							phase={phase}
+							salaryCap={salaryCap}
+							spectator={spectator}
 							t={t}
 							tid={tid}
 							userTid={userTid}

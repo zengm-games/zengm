@@ -484,6 +484,17 @@ const roundOverrides: Record<
 	},
 });
 
+const roundOneDecimalPlace = (value: number) => {
+	if (value === 100) {
+		return "100";
+	}
+
+	return value.toLocaleString("en-US", {
+		maximumFractionDigits: 1,
+		minimumFractionDigits: 1,
+	});
+};
+
 const roundStat = (
 	value: number | string,
 	stat: string,
@@ -521,14 +532,7 @@ const roundStat = (
 		}
 
 		if (roundOverrides[stat] === "oneDecimalPlace") {
-			if (value === 100) {
-				return "100";
-			}
-
-			return value.toLocaleString("en-US", {
-				maximumFractionDigits: 1,
-				minimumFractionDigits: 1,
-			});
+			return roundOneDecimalPlace(value);
 		}
 
 		if (roundOverrides[stat] === "twoDecimalPlaces") {
@@ -610,6 +614,7 @@ const helpers = {
 	...commonHelpers,
 	leagueUrl,
 	plusMinus,
+	roundOneDecimalPlace,
 	roundStat,
 	yearRanges,
 };

@@ -14,6 +14,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import type { DataTableRow } from "../components/DataTable";
 import {
 	MAX_LEVEL,
+	coachingEffect,
 	levelToAmount,
 	scoutingEffect,
 } from "../../common/budgetLevels";
@@ -37,7 +38,25 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 	}
 
 	if (type === "coaching") {
-		return "";
+		const effect = coachingEffect(level);
+		if (effect === 0) {
+			return "Normal progs";
+		}
+
+		if (effect > 0) {
+			return (
+				<>
+					{helpers.roundOneDecimalPlace(100 * effect)}% better progs than normal
+				</>
+			);
+		}
+
+		return (
+			<>
+				{helpers.roundOneDecimalPlace(Math.abs(100 * effect))}% worse progs than
+				normal
+			</>
+		);
 	}
 
 	if (type === "health") {
@@ -270,10 +289,12 @@ const FinancesForm = ({
 							</div>
 							<div className="ms-3 finances-settings-text-small">
 								Current annual cost:{" "}
-								{helpers.formatCurrency(
-									levelToAmount(levelInt, salaryCap * 1000) / 1000,
-									"M",
-								)}
+								{Number.isNaN(levelInt)
+									? "???"
+									: helpers.formatCurrency(
+											levelToAmount(levelInt, salaryCap * 1000) / 1000,
+											"M",
+									  )}
 								<br />
 								Average level last 3 seasons:{" "}
 								{t.expensesLevelsLastThree[expenseCategory.key]}
@@ -284,7 +305,8 @@ const FinancesForm = ({
 									level={t.expensesLevelsLastThree[expenseCategory.key]}
 								/>
 								<br />
-								At level {levelInt} for 3 seasons:{" "}
+								At level {Number.isNaN(levelInt) ? "???" : levelInt} for 3
+								seasons:{" "}
 								<BudgetEffect type={expenseCategory.key} level={levelInt} />
 							</div>
 						</div>

@@ -1,13 +1,6 @@
 finances revamp
 - UI
-  - should show
-    - current effect (based on last 3 seasons)
-      - use functions in common/budgetLevels.ts to compute
-      - facilities affects two things
-      - how to display fuzz one, like X% more/less ratings fuzz than average, and link to something about fuzz or show in tooltip
-    - future effect (if current level is maintained for 3 full seasons)
-      - same as current effect, but use current level rather than last 3 seasons level
-    - allow decimal level? no
+  - show something about stddev of fuzz, otherwise the rounding makes it look like the levels don't do anything except at a small number of cutoffs
   - how to display?
     - what is essential info, what can be hidden under a tooltip/panel?
   - .finances-settings classes still needed?

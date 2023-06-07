@@ -43,9 +43,12 @@ const roundEffect = (effect: number) => {
 
 const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 	if (type === "scouting") {
-		const effect = scoutingEffect(level);
+		const effect = Math.round(scoutingEffect(level));
 		return (
-			<>Displayed ratings may be off by up to {Math.round(effect)} points</>
+			<>
+				Displayed ratings may be wrong by up to {effect}{" "}
+				{effect === 1 ? "point" : "points"}
+			</>
 		);
 	}
 
@@ -55,7 +58,7 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal progs";
 		}
 
-		return <>{roundEffect(Math.abs(100 * effect))}% progs</>;
+		return <>{roundEffect(100 * effect)}% progs</>;
 	}
 
 	if (type === "health") {
@@ -64,15 +67,16 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 			return "Normal injury duration";
 		}
 
-		return <>{roundEffect(Math.abs(100 * effect))}% injury duration</>;
+		return <>{roundEffect(100 * effect)}% injury duration</>;
 	}
 
 	const effectMood = facilitiesEffectMood(level);
 	const effectAttendance = facilitiesEffectAttendance(level);
 	return (
 		<>
-			{roundEffect(effectMood)} player mood,{" "}
-			{roundEffect(Math.abs(100 * effectAttendance))}% ticket demand
+			{roundEffect(effectMood)} player mood
+			<br />
+			{roundEffect(100 * effectAttendance)}% ticket demand
 		</>
 	);
 };
@@ -231,107 +235,101 @@ const FinancesForm = ({
 	return (
 		<form onSubmit={handleSubmit} className="mb-3">
 			{warningMessage}
-			<h3>
-				Expense Levels{" "}
-				<HelpPopover title="Expense Levels">
-					<p>Scouting: Controls the accuracy of displayed player ratings.</p>
-					<p>Coaching: Better coaches mean better player development.</p>
-					<p>Health: A good team of doctors speeds recovery from injuries.</p>
-					<p>
-						Facilities: Better training facilities make your players happier and
-						other players envious; stadium renovations increase attendance.
-					</p>
+			<h2>
+				Expense levels{" "}
+				<HelpPopover title="Expense levels">
+					<p>Effects are based on your spending over the past 3 seasons.</p>
 				</HelpPopover>
-			</h3>
-			<p>
-				Click the ? above to see what exactly each category does. Effects are
-				based on your average level over the past three seasons.
-			</p>
-			<div className="d-flex flex-column gap-2">
+			</h2>
+			<div className="d-flex flex-column gap-3">
 				{expenseCategories.map(expenseCategory => {
 					const level = state[expenseCategory.key];
 					const levelInt = Math.round(parseFloat(state[expenseCategory.key]));
+					const levelThree = t.expensesLevelsLastThree[expenseCategory.key];
 					return (
 						<div
 							className="d-flex align-items-center"
 							key={expenseCategory.key}
 						>
-							<div className="finances-settings-label me-3 text-end overflow-hidden">
-								{expenseCategory.title}
-							</div>
-							<div
-								className="input-group"
-								style={{
-									width: 120,
-								}}
-							>
-								<input
-									type="text"
-									className="form-control"
-									disabled={formDisabled || challengeNoRatings}
-									onChange={handleChange(expenseCategory.key)}
-									value={level}
-									inputMode="numeric"
-								/>
-								<button
-									className="btn btn-secondary"
-									type="button"
-									disabled={
-										formDisabled || Number.isNaN(levelInt) || levelInt >= 100
-									}
-									onClick={() => {
-										setStateValue(expenseCategory.key, levelInt + 1);
+							<div>
+								<h3>{expenseCategory.title} expense level</h3>
+								<div
+									className="input-group mb-1"
+									style={{
+										width: 120,
 									}}
 								>
-									+
-								</button>
-								<button
-									className="btn btn-secondary"
-									type="button"
-									disabled={
-										formDisabled || Number.isNaN(levelInt) || levelInt <= 1
-									}
-									onClick={() => {
-										setStateValue(expenseCategory.key, levelInt - 1);
-									}}
-								>
-									−
-								</button>
+									<input
+										type="text"
+										className="form-control"
+										disabled={formDisabled || challengeNoRatings}
+										onChange={handleChange(expenseCategory.key)}
+										value={level}
+										inputMode="numeric"
+									/>
+									<button
+										className="btn btn-secondary"
+										type="button"
+										disabled={
+											formDisabled || Number.isNaN(levelInt) || levelInt >= 100
+										}
+										onClick={() => {
+											setStateValue(expenseCategory.key, levelInt + 1);
+										}}
+									>
+										+
+									</button>
+									<button
+										className="btn btn-secondary"
+										type="button"
+										disabled={
+											formDisabled || Number.isNaN(levelInt) || levelInt <= 1
+										}
+										onClick={() => {
+											setStateValue(expenseCategory.key, levelInt - 1);
+										}}
+									>
+										−
+									</button>
+								</div>
+								<div>Average of last 3 seasons: {levelThree}</div>
+								<div>
+									Current annual cost:{" "}
+									{Number.isNaN(levelInt)
+										? "???"
+										: helpers.formatCurrency(
+												levelToAmount(levelInt, salaryCap * 1000) / 1000,
+												"M",
+										  )}
+								</div>
 							</div>
-							<div className="ms-3 finances-settings-text-small">
-								Current annual cost:{" "}
-								{Number.isNaN(levelInt)
-									? "???"
-									: helpers.formatCurrency(
-											levelToAmount(levelInt, salaryCap * 1000) / 1000,
-											"M",
-									  )}
-								<br />
-								Average level last 3 seasons:{" "}
-								{t.expensesLevelsLastThree[expenseCategory.key]}
-								<br />
-								Current:{" "}
-								<BudgetEffect
-									type={expenseCategory.key}
-									level={t.expensesLevelsLastThree[expenseCategory.key]}
-								/>
-								<br />
-								At level {Number.isNaN(levelInt) ? "???" : levelInt} for 3
-								seasons:{" "}
-								<BudgetEffect type={expenseCategory.key} level={levelInt} />
+							<div className="row ms-3" style={{ width: 350 }}>
+								<div className="col-6">
+									<h4>Current effect</h4>
+									<BudgetEffect type={expenseCategory.key} level={levelThree} />
+								</div>
+								{levelInt !== levelThree ? (
+									<div className="col-6">
+										<h4>
+											After 3 years at level{" "}
+											{Number.isNaN(levelInt) ? "???" : levelInt}
+										</h4>
+										<BudgetEffect type={expenseCategory.key} level={levelInt} />
+									</div>
+								) : null}
 							</div>
 						</div>
 					);
 				})}
 			</div>
-			<h3 className="mt-3">
-				Ticket Price{" "}
+			<h2 className="mt-4">
+				Ticket price{" "}
 				<HelpPopover title="Revenue Settings">
 					Set your ticket price too high, and attendance will decrease and some
 					fans will resent you for it. Set it too low, and you're not maximizing
 					your profit.
 				</HelpPopover>
-			</h3>
+			</h2>
 			<div className="d-flex align-items-center">
 				<div
 					className="input-group"

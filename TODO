@@ -13,6 +13,8 @@ finances revamp
   - .finances-settings classes still needed?
   - why does toggling auto ticket price change the ticket price, shouldn't the auto value be saved already?
   - ticket price rank
+  - highlight numbers in colors?
+  - god mode exception for scouting
 - click and hold on +/- button
   - desktop
   - mobile
@@ -43,6 +45,7 @@ finances revamp
   - exponential cost makes maxing out a hard decision
   - show exactly how (old) rank corresponds to (new) level, in table and chart
   - expenses are spread out over the regular season
+  - how exactly to interpret
 
 little bugs
 - create player, don't edit ratings at all -> pot is 0 https://old.reddit.com/r/BasketballGM/comments/142hfid/bro_is_a_0_potential_and_still_got_more_potential/jn9mbnu/?context=3

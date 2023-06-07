@@ -49,5 +49,7 @@ export const coachingEffect = (level: number) => {
 };
 export const scoutingEffect = (level: number) => {
 	const effect = levelToEffect(level);
-	return (7 / 9) * effect;
+
+	// 1 to 8
+	return (1 - effect) * 3.5 + 1;
 };

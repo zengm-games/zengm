@@ -12,7 +12,11 @@ import type { View } from "../../common/types";
 import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import type { DataTableRow } from "../components/DataTable";
-import { MAX_LEVEL, levelToAmount } from "../../common/budgetLevels";
+import {
+	MAX_LEVEL,
+	levelToAmount,
+	scoutingEffect,
+} from "../../common/budgetLevels";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -22,6 +26,25 @@ const formatTicketPrice = (ticketPrice: number) => {
 		return ticketPrice.toFixed(2);
 	}
 	return String(ticketPrice);
+};
+
+type BudgetKey = "scouting" | "coaching" | "health" | "facilities";
+
+const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
+	if (type === "scouting") {
+		const effect = scoutingEffect(level);
+		return <>Displayed ratings may be off by up to {Math.round(effect)}</>;
+	}
+
+	if (type === "coaching") {
+		return "";
+	}
+
+	if (type === "health") {
+		return "";
+	}
+
+	return "";
 };
 
 const FinancesForm = ({
@@ -154,7 +177,7 @@ const FinancesForm = ({
 	const formDisabled = gameSimInProgress || tid !== userTid || spectator;
 
 	const expenseCategories: {
-		key: "scouting" | "coaching" | "health" | "facilities";
+		key: BudgetKey;
 		title: string;
 	}[] = [
 		{
@@ -196,8 +219,8 @@ const FinancesForm = ({
 			</p>
 			<div className="d-flex flex-column gap-2">
 				{expenseCategories.map(expenseCategory => {
-					const value = state[expenseCategory.key];
-					const valueInt = parseInt(state[expenseCategory.key]);
+					const level = state[expenseCategory.key];
+					const levelInt = parseInt(state[expenseCategory.key]);
 					return (
 						<div
 							className="d-flex align-items-center"
@@ -217,17 +240,17 @@ const FinancesForm = ({
 									className="form-control"
 									disabled={formDisabled || challengeNoRatings}
 									onChange={handleChange(expenseCategory.key)}
-									value={value}
+									value={level}
 									inputMode="numeric"
 								/>
 								<button
 									className="btn btn-secondary"
 									type="button"
 									disabled={
-										formDisabled || Number.isNaN(valueInt) || valueInt >= 100
+										formDisabled || Number.isNaN(levelInt) || levelInt >= 100
 									}
 									onClick={() => {
-										setStateValue(expenseCategory.key, valueInt + 1);
+										setStateValue(expenseCategory.key, levelInt + 1);
 									}}
 								>
 									+
@@ -236,10 +259,10 @@ const FinancesForm = ({
 									className="btn btn-secondary"
 									type="button"
 									disabled={
-										formDisabled || Number.isNaN(valueInt) || valueInt <= 1
+										formDisabled || Number.isNaN(levelInt) || levelInt <= 1
 									}
 									onClick={() => {
-										setStateValue(expenseCategory.key, valueInt - 1);
+										setStateValue(expenseCategory.key, levelInt - 1);
 									}}
 								>
 									−
@@ -248,12 +271,21 @@ const FinancesForm = ({
 							<div className="ms-3 finances-settings-text-small">
 								Current annual cost:{" "}
 								{helpers.formatCurrency(
-									levelToAmount(valueInt, salaryCap * 1000) / 1000,
+									levelToAmount(levelInt, salaryCap * 1000) / 1000,
 									"M",
 								)}
 								<br />
 								Average level last 3 seasons:{" "}
 								{t.expensesLevelsLastThree[expenseCategory.key]}
+								<br />
+								Current:{" "}
+								<BudgetEffect
+									type={expenseCategory.key}
+									level={t.expensesLevelsLastThree[expenseCategory.key]}
+								/>
+								<br />
+								At level {levelInt} for 3 seasons:{" "}
+								<BudgetEffect type={expenseCategory.key} level={levelInt} />
 							</div>
 						</div>
 					);

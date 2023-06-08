@@ -343,91 +343,92 @@ const FinancesForm = ({
 					const levelInt = Math.round(parseFloat(state[expenseCategory.key]));
 					const levelThree = t.expenseLevelsLastThree[expenseCategory.key];
 					return (
-						<div
-							className="d-flex align-items-center"
-							key={expenseCategory.key}
-						>
-							<div>
-								<h3>{expenseCategory.title} expense level</h3>
-								<div
-									className="input-group mb-1"
-									style={{
-										width: 120,
-									}}
-								>
-									<input
-										type="text"
-										className="form-control"
-										disabled={formDisabled || challengeNoRatings}
-										onChange={handleChange(expenseCategory.key)}
-										value={level}
-										inputMode="numeric"
-									/>
-									<button
-										className="btn btn-secondary"
-										type="button"
-										disabled={
-											formDisabled || Number.isNaN(levelInt) || levelInt >= 100
-										}
-										onClick={() => {
-											setStateValue(expenseCategory.key, levelInt + 1);
-										}}
-									>
-										+
-									</button>
-									<button
-										className="btn btn-secondary"
-										type="button"
-										disabled={
-											formDisabled || Number.isNaN(levelInt) || levelInt <= 1
-										}
-										onClick={() => {
-											setStateValue(expenseCategory.key, levelInt - 1);
-										}}
-									>
-										−
-									</button>
-								</div>
-								<div>Average of last 3 seasons: {levelThree}</div>
+						<div key={expenseCategory.key}>
+							<h3>{expenseCategory.title} expense level</h3>
+							<div className="d-flex">
 								<div>
-									Current annual cost:{" "}
-									{Number.isNaN(levelInt)
-										? "???"
-										: helpers.formatCurrency(
-												levelToAmount(levelInt, salaryCap * 1000) / 1000,
-												"M",
-										  )}
-								</div>
-							</div>
-							<div className="row ms-3" style={{ width: 350 }}>
-								{expenseCategory.key === "scouting" && godMode ? (
-									<div className="col-12">
-										Scouting does nothing in God Mode because you always see
-										accurate ratings.
+									<div
+										className="input-group mb-1"
+										style={{
+											width: 120,
+										}}
+									>
+										<input
+											type="text"
+											className="form-control"
+											disabled={formDisabled || challengeNoRatings}
+											onChange={handleChange(expenseCategory.key)}
+											value={level}
+											inputMode="numeric"
+										/>
+										<button
+											className="btn btn-secondary"
+											type="button"
+											disabled={
+												formDisabled ||
+												Number.isNaN(levelInt) ||
+												levelInt >= 100
+											}
+											onClick={() => {
+												setStateValue(expenseCategory.key, levelInt + 1);
+											}}
+										>
+											+
+										</button>
+										<button
+											className="btn btn-secondary"
+											type="button"
+											disabled={
+												formDisabled || Number.isNaN(levelInt) || levelInt <= 1
+											}
+											onClick={() => {
+												setStateValue(expenseCategory.key, levelInt - 1);
+											}}
+										>
+											−
+										</button>
 									</div>
-								) : (
-									<>
-										<div className="col-6">
-											<h4>Current effect</h4>
-											<BudgetEffect
-												type={expenseCategory.key}
-												level={levelThree}
-											/>
+									<div>Average of last 3 seasons: {levelThree}</div>
+									<div>
+										Current annual cost:{" "}
+										{Number.isNaN(levelInt)
+											? "???"
+											: helpers.formatCurrency(
+													levelToAmount(levelInt, salaryCap * 1000) / 1000,
+													"M",
+											  )}
+									</div>
+								</div>
+								<div className="row ms-3" style={{ width: 350 }}>
+									{expenseCategory.key === "scouting" && godMode ? (
+										<div className="col-12">
+											Scouting does nothing in God Mode because you always see
+											accurate ratings.
 										</div>
-										{levelInt !== levelThree ? (
+									) : (
+										<>
 											<div className="col-6">
-												<h4>
-													After 3 years at level{" "}
-													{Number.isNaN(levelInt) ? "???" : levelInt}
-												</h4>
+												<h4>Current effect</h4>
 												<BudgetEffect
 													type={expenseCategory.key}
-													level={levelInt}
+													level={levelThree}
 												/>
 											</div>
-										) : null}
-									</>
-								)}
+											{levelInt !== levelThree ? (
+												<div className="col-6">
+													<h4>
+														After 3 years at level{" "}
+														{Number.isNaN(levelInt) ? "???" : levelInt}
+													</h4>
+													<BudgetEffect
+														type={expenseCategory.key}
+														level={levelInt}
+													/>
+												</div>
+											) : null}
+										</>
+									)}
+								</div>
 							</div>
 						</div>
 					);

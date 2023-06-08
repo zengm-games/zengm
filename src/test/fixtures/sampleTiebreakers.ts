@@ -108,7 +108,7 @@ export default [
 					health: 14900.000000000013,
 					facilities: 14900.000000000013,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -207,7 +207,7 @@ export default [
 					health: 11480,
 					facilities: 11480,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -334,7 +334,7 @@ export default [
 					health: 15520.000000000022,
 					facilities: 15520.000000000022,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -433,7 +433,7 @@ export default [
 					health: 17070.000000000022,
 					facilities: 17070.000000000022,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -560,7 +560,7 @@ export default [
 					health: 9310.00000000001,
 					facilities: 9310.00000000001,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -687,7 +687,7 @@ export default [
 					health: 10550.000000000013,
 					facilities: 10550.000000000013,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -786,7 +786,7 @@ export default [
 					health: 15829.999999999998,
 					facilities: 15829.999999999998,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -913,7 +913,7 @@ export default [
 					health: 11789.999999999989,
 					facilities: 11789.999999999989,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1012,7 +1012,7 @@ export default [
 					health: 13970.000000000013,
 					facilities: 13970.000000000013,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1111,7 +1111,7 @@ export default [
 					health: 15209.999999999975,
 					facilities: 15209.999999999975,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1238,7 +1238,7 @@ export default [
 					health: 9620,
 					facilities: 9620,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1337,7 +1337,7 @@ export default [
 					health: 17379.999999999993,
 					facilities: 17379.999999999993,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1464,7 +1464,7 @@ export default [
 					health: 18000.000000000025,
 					facilities: 18000.000000000025,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1591,7 +1591,7 @@ export default [
 					health: 16139.999999999975,
 					facilities: 16139.999999999975,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1718,7 +1718,7 @@ export default [
 					health: 12409.999999999985,
 					facilities: 12409.999999999985,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1817,7 +1817,7 @@ export default [
 					health: 14279.999999999993,
 					facilities: 14279.999999999993,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -1916,7 +1916,7 @@ export default [
 					health: 17689.999999999985,
 					facilities: 17689.999999999985,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2015,7 +2015,7 @@ export default [
 					health: 16450.00000000002,
 					facilities: 16450.00000000002,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2142,7 +2142,7 @@ export default [
 					health: 13339.999999999985,
 					facilities: 13339.999999999985,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2241,7 +2241,7 @@ export default [
 					health: 10239.999999999993,
 					facilities: 10239.999999999993,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2340,7 +2340,7 @@ export default [
 					health: 9929.999999999995,
 					facilities: 9929.999999999995,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2439,7 +2439,7 @@ export default [
 					health: 9000.000000000013,
 					facilities: 9000.000000000013,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2566,7 +2566,7 @@ export default [
 					health: 12720.000000000018,
 					facilities: 12720.000000000018,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2693,7 +2693,7 @@ export default [
 					health: 13659.99999999999,
 					facilities: 13659.99999999999,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2820,7 +2820,7 @@ export default [
 					health: 13030.000000000005,
 					facilities: 13030.000000000005,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -2919,7 +2919,7 @@ export default [
 					health: 11170.000000000007,
 					facilities: 11170.000000000007,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -3046,7 +3046,7 @@ export default [
 					health: 10859.999999999982,
 					facilities: 10859.999999999982,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -3173,7 +3173,7 @@ export default [
 					health: 16759.99999999998,
 					facilities: 16759.99999999998,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -3272,7 +3272,7 @@ export default [
 					health: 12100.00000000002,
 					facilities: 12100.00000000002,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,
@@ -3399,7 +3399,7 @@ export default [
 					health: 14589.999999999973,
 					facilities: 14589.999999999973,
 				},
-				expensesLevels: {
+				expenseLevels: {
 					scouting: 0,
 					coaching: 0,
 					health: 0,

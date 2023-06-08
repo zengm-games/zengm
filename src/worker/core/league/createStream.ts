@@ -753,8 +753,8 @@ const processTeamInfos = ({
 						facilities: 0,
 					};
 				}
-				if (teamSeason.expensesLevels === undefined) {
-					teamSeason.expensesLevels = {
+				if (teamSeason.expenseLevels === undefined) {
+					teamSeason.expenseLevels = {
 						scouting: 0,
 						coaching: 0,
 						health: 0,

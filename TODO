@@ -9,7 +9,6 @@ finances revamp
 - click and hold on +/- button
   - desktop
   - mobile
-- expensesLevels -> expenseLevels
 - on mobile, move settings to top of team finances page
 - updateRanks
   - needed at all? no, but we should have something that updates the AI levels every year
@@ -57,6 +56,7 @@ FBGM game sim tweaks
 - running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
 - decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
 - increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
+- INT distribution more top heavy, fewer to LBs?
 
 team graphs
 

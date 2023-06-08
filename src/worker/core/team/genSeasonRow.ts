@@ -70,7 +70,7 @@ const genSeasonRow = (
 			health: 0,
 			facilities: 0,
 		},
-		expensesLevels: {
+		expenseLevels: {
 			scouting: 0,
 			coaching: 0,
 			health: 0,

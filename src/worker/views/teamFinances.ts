@@ -168,7 +168,7 @@ const updateTeamFinances = async (
 
 		const t = tTemp as typeof tTemp & {
 			autoTicketPrice: boolean;
-			expensesLevelsLastThree: TeamSeason["expensesLevels"];
+			expenseLevelsLastThree: TeamSeason["expenseLevels"];
 		};
 
 		// undefined is true (for upgrades), and AI teams are always true
@@ -176,7 +176,7 @@ const updateTeamFinances = async (
 			t.autoTicketPrice !== false || !g.get("userTids").includes(inputs.tid);
 
 		const teamSeasonsLastThree = teamSeasons.slice(-3);
-		t.expensesLevelsLastThree = {
+		t.expenseLevelsLastThree = {
 			coaching: finances.getLevelLastThree(teamSeasonsLastThree, "coaching"),
 			facilities: finances.getLevelLastThree(
 				teamSeasonsLastThree,

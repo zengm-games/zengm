@@ -307,7 +307,7 @@ const FinancesForm = ({
 				{expenseCategories.map(expenseCategory => {
 					const level = state[expenseCategory.key];
 					const levelInt = Math.round(parseFloat(state[expenseCategory.key]));
-					const levelThree = t.expensesLevelsLastThree[expenseCategory.key];
+					const levelThree = t.expenseLevelsLastThree[expenseCategory.key];
 					return (
 						<div
 							className="d-flex align-items-center"

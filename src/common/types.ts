@@ -1626,7 +1626,7 @@ export type TeamSeasonWithoutKey = {
 		facilities: number;
 		scouting: number;
 	};
-	expensesLevels: {
+	expenseLevels: {
 		coaching: number;
 		facilities: number;
 		health: number;

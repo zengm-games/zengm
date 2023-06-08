@@ -40,6 +40,7 @@ import type {
 	SeasonLeaders,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
+import { budgetAmountToLevel, DEFAULT_LEVEL } from "../../common/budgetLevels";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -1238,6 +1239,93 @@ const migrate = async ({
 			key: "challengeThanosMode",
 			value: challengeThanosMode?.value ? 20 : 0,
 		});
+	}
+
+	if (oldVersion <= 54) {
+		const budgetKeys = [
+			"ticketPrice",
+			"scouting",
+			"coaching",
+			"health",
+			"facilities",
+		] as const;
+		const revenuesKeys = [
+			"luxuryTaxShare",
+			"merch",
+			"sponsor",
+			"ticket",
+			"nationalTv",
+			"localTv",
+		] as const;
+		const expensesKeys = [
+			"luxuryTax",
+			"minTax",
+			"salary",
+			"coaching",
+			"health",
+			"facilities",
+			"scouting",
+		] as const;
+		const expenseLevelsKeys = [
+			"coaching",
+			"facilities",
+			"health",
+			"scouting",
+		] as const;
+
+		type OldBudgetItem = {
+			amount: number;
+			rank: number;
+		};
+
+		const store = transaction.objectStore("gameAttributes");
+		const salaryCap: number =
+			(await store.get("salaryCap"))?.value ?? defaultGameAttributes.salaryCap;
+
+		const budgetsByTid: Record<number, Team["budget"]> = {};
+
+		await iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+			// Compute equivalent levels for the budget values
+			for (const key of budgetKeys) {
+				const value = t.budget[key] as unknown as OldBudgetItem;
+				if (typeof value !== "number") {
+					t.budget[key] = budgetAmountToLevel(value.amount, salaryCap);
+				}
+			}
+
+			budgetsByTid[t.tid] = t.budget;
+
+			return t;
+		});
+
+		await iterate(
+			transaction.objectStore("teamSeasons"),
+			undefined,
+			undefined,
+			ts => {
+				// Move the amount to root, no more storing rank
+				for (const key of revenuesKeys) {
+					const value = ts.revenues[key] as unknown as OldBudgetItem;
+					if (typeof value !== "number") {
+						ts.revenues[key] = value.amount;
+					}
+				}
+				for (const key of expensesKeys) {
+					const value = ts.expenses[key] as unknown as OldBudgetItem;
+					if (typeof value !== "number") {
+						ts.expenses[key] = value.amount;
+					}
+				}
+
+				// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+				ts.expenseLevels = {} as any;
+				for (const key of expenseLevelsKeys) {
+					ts.expenseLevels[key] = ts.gp * budgetsByTid[ts.tid][key];
+				}
+
+				return ts;
+			},
+		);
 	}
 };
 

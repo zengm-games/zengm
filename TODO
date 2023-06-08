@@ -10,9 +10,14 @@ team finances
   - Team.budget
     - import
     - existing league
+    - import and existing league should share code for the budget import
+      - compute equivalent level for a budget amount, relative to salary cap
   - test
     - import
     - existing league
+- make sure historical leagues work
+  - new league
+  - upgraded
 - blog
   - rank isn't fun, like ebay bidding
   - transparent UI shows effect
@@ -29,6 +34,8 @@ team finances
 little bugs
 - create player, don't edit ratings at all -> pot is 0 https://old.reddit.com/r/BasketballGM/comments/142hfid/bro_is_a_0_potential_and_still_got_more_potential/jn9mbnu/?context=3
 - auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
+
+Player.draft.pot and Player.draft.ovr needed? either use ratings row from that season, or if not found, make them null?
 
 get rid of ability to create multiple usernames with same email
 

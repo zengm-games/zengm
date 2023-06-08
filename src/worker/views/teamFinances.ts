@@ -220,6 +220,7 @@ const updateTeamFinances = async (
 			contractTotals,
 			salariesSeasons,
 			phase: g.get("phase"),
+			godMode: g.get("godMode"),
 		};
 	}
 };

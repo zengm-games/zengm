@@ -141,6 +141,7 @@ const FinancesForm = ({
 	autoTicketPrice,
 	challengeNoRatings,
 	gameSimInProgress,
+	godMode,
 	phase,
 	salaryCap,
 	spectator,
@@ -151,6 +152,7 @@ const FinancesForm = ({
 	View<"teamFinances">,
 	| "autoTicketPrice"
 	| "challengeNoRatings"
+	| "godMode"
 	| "phase"
 	| "salaryCap"
 	| "spectator"
@@ -364,19 +366,34 @@ const FinancesForm = ({
 								</div>
 							</div>
 							<div className="row ms-3" style={{ width: 350 }}>
-								<div className="col-6">
-									<h4>Current effect</h4>
-									<BudgetEffect type={expenseCategory.key} level={levelThree} />
-								</div>
-								{levelInt !== levelThree ? (
-									<div className="col-6">
-										<h4>
-											After 3 years at level{" "}
-											{Number.isNaN(levelInt) ? "???" : levelInt}
-										</h4>
-										<BudgetEffect type={expenseCategory.key} level={levelInt} />
+								{expenseCategory.key === "scouting" && godMode ? (
+									<div className="col-12">
+										Scouting does nothing in God Mode because you always see
+										accurate ratings.
 									</div>
-								) : null}
+								) : (
+									<>
+										<div className="col-6">
+											<h4>Current effect</h4>
+											<BudgetEffect
+												type={expenseCategory.key}
+												level={levelThree}
+											/>
+										</div>
+										{levelInt !== levelThree ? (
+											<div className="col-6">
+												<h4>
+													After 3 years at level{" "}
+													{Number.isNaN(levelInt) ? "???" : levelInt}
+												</h4>
+												<BudgetEffect
+													type={expenseCategory.key}
+													level={levelInt}
+												/>
+											</div>
+										) : null}
+									</>
+								)}
 							</div>
 						</div>
 					);
@@ -617,6 +634,7 @@ const TeamFinances = ({
 	challengeNoRatings,
 	contractTotals,
 	contracts,
+	godMode,
 	luxuryPayroll,
 	luxuryTax,
 	maxStadiumCapacity,
@@ -896,6 +914,7 @@ const TeamFinances = ({
 							autoTicketPrice={autoTicketPrice}
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
+							godMode={godMode}
 							phase={phase}
 							salaryCap={salaryCap}
 							spectator={spectator}

@@ -4,7 +4,7 @@ import {
 	applyRealTeamInfo,
 	DEFAULT_STADIUM_CAPACITY,
 	isSport,
-	MAX_SUPPORTED_LEAGUE_VERSION,
+	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	SPORT_HAS_REAL_PLAYERS,
@@ -1247,7 +1247,7 @@ const afterDBStream = async ({
 					noStartingInjuries,
 					realPlayerPhotos,
 					scoutingLevel,
-					version: MAX_SUPPORTED_LEAGUE_VERSION,
+					version: LEAGUE_DATABASE_VERSION,
 				});
 
 				extraActivePlayers.push(p2);
@@ -1278,7 +1278,7 @@ const afterDBStream = async ({
 				noStartingInjuries,
 				realPlayerPhotos,
 				scoutingLevel,
-				version: MAX_SUPPORTED_LEAGUE_VERSION,
+				version: LEAGUE_DATABASE_VERSION,
 			});
 			activePlayers.push(p2);
 		}

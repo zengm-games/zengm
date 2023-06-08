@@ -13,7 +13,7 @@ import type {
 import { defaultGameAttributes, helpers, random } from "../../util";
 import {
 	isSport,
-	MAX_SUPPORTED_LEAGUE_VERSION,
+	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	unwrapGameAttribute,
@@ -860,7 +860,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		return {
-			version: MAX_SUPPORTED_LEAGUE_VERSION,
+			version: LEAGUE_DATABASE_VERSION,
 			startingSeason: options.realStats === "all" ? MIN_SEASON : options.season,
 			players,
 			teams: initialTeams,

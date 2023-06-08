@@ -1,4 +1,4 @@
-import { GAME_ACRONYM, MAX_SUPPORTED_LEAGUE_VERSION } from "../../../common";
+import { GAME_ACRONYM, LEAGUE_DATABASE_VERSION } from "../../../common";
 import { confirm, downloadFile, local, toWorker } from "../../util";
 
 const ExportButton = () => (
@@ -28,7 +28,7 @@ const ExportButton = () => (
 			downloadFile(
 				`${GAME_ACRONYM}_default_settings.json`,
 				JSON.stringify(
-					{ version: MAX_SUPPORTED_LEAGUE_VERSION, gameAttributes: settings },
+					{ version: LEAGUE_DATABASE_VERSION, gameAttributes: settings },
 					null,
 					2,
 				),

@@ -13,7 +13,7 @@ import {
 	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
-	MAX_SUPPORTED_LEAGUE_VERSION,
+	LEAGUE_DATABASE_VERSION,
 } from "../../../common";
 import {
 	ActionButton,
@@ -567,7 +567,7 @@ const reducer = (state: State, action: Action): State => {
 					hasRookieContracts: true,
 					startingSeason: action.startingSeason,
 					teams: action.teams,
-					version: MAX_SUPPORTED_LEAGUE_VERSION,
+					version: LEAGUE_DATABASE_VERSION,
 				},
 				file: undefined,
 				url: undefined,

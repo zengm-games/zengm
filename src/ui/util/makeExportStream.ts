@@ -2,7 +2,7 @@ import { openDB } from "idb";
 import type { IDBPCursorWithValue } from "idb";
 import {
 	gameAttributesArrayToObject,
-	MAX_SUPPORTED_LEAGUE_VERSION,
+	LEAGUE_DATABASE_VERSION,
 } from "../../common";
 import {
 	gameAttributesCache,
@@ -75,7 +75,7 @@ const makeExportStream = async (
 	// Don't worry about upgrades or anything, because this function will only be called if the league database already exists
 	const leagueDB = await openDB<LeagueDB>(
 		`league${lid}`,
-		MAX_SUPPORTED_LEAGUE_VERSION,
+		LEAGUE_DATABASE_VERSION,
 		{
 			blocking() {
 				leagueDB.close();
@@ -150,7 +150,7 @@ const makeExportStream = async (
 				}
 
 				await controller.enqueue(
-					`{${newline}${tab}"version":${space}${MAX_SUPPORTED_LEAGUE_VERSION}`,
+					`{${newline}${tab}"version":${space}${LEAGUE_DATABASE_VERSION}`,
 				);
 
 				// If name is specified, include it in meta object. Currently this is only used when importing leagues, to set the name

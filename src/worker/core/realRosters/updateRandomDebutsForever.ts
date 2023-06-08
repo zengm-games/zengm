@@ -4,7 +4,7 @@ import { g, random } from "../../util";
 import getDraftProspects from "./getDraftProspects";
 import loadDataBasketball from "./loadData.basketball";
 import addRelatives from "./addRelatives";
-import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE } from "../../../common";
+import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common";
 
 const updateRandomDebutsForever = async (
 	draftYear: number,
@@ -68,7 +68,7 @@ const updateRandomDebutsForever = async (
 		const p2 = await player.augmentPartialPlayer(
 			p,
 			scoutingLevel,
-			MAX_SUPPORTED_LEAGUE_VERSION,
+			LEAGUE_DATABASE_VERSION,
 			true,
 		);
 		await player.updateValues(p2);

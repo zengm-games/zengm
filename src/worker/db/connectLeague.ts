@@ -5,7 +5,7 @@ import {
 	DIFFICULTY,
 	gameAttributesArrayToObject,
 	isSport,
-	MAX_SUPPORTED_LEAGUE_VERSION,
+	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	unwrapGameAttribute,
@@ -1244,7 +1244,7 @@ const migrate = async ({
 const connectLeague = (lid: number) =>
 	connectIndexedDB<LeagueDB>({
 		name: `league${lid}`,
-		version: MAX_SUPPORTED_LEAGUE_VERSION,
+		version: LEAGUE_DATABASE_VERSION,
 		lid,
 		create,
 		migrate,

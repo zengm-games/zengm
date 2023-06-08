@@ -101,7 +101,12 @@ import { getScore } from "../core/player/checkJerseyNumberRetirement";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
 import type { Settings } from "../views/settings";
-import { getAutoTicketPriceByTid } from "../core/game/attendance";
+import {
+	getActualAttendance,
+	getAdjustedTicketPrice,
+	getAutoTicketPriceByTid,
+	getBaseAttendance,
+} from "../core/game/attendance";
 import goatFormula from "../util/goatFormula";
 import getRandomTeams from "./getRandomTeams";
 import { withState } from "../core/player/name";
@@ -1625,6 +1630,42 @@ const getPlayerWatch = async (pid: number) => {
 	}
 
 	return 0;
+};
+
+const getProjectedAttendance = async ({
+	ticketPrice,
+	tid,
+}: {
+	ticketPrice: number;
+	tid: number;
+}) => {
+	if (Number.isNaN(ticketPrice)) {
+		return 0;
+	}
+
+	const teamSeason = await idb.cache.teamSeasons.indexGet(
+		"teamSeasonsByTidSeason",
+		[tid, g.get("season")],
+	);
+	if (!teamSeason) {
+		return 0;
+	}
+
+	const baseAttendance = getBaseAttendance({
+		hype: teamSeason.hype,
+		pop: teamSeason.pop,
+		playoffs: false,
+	});
+	const adjustedTicketPrice = getAdjustedTicketPrice(ticketPrice, false);
+	const attendance = getActualAttendance({
+		baseAttendance,
+		randomize: false,
+		stadiumCapacity: teamSeason.stadiumCapacity,
+		teamSeasons: [],
+		adjustedTicketPrice,
+	});
+
+	return attendance;
 };
 
 const getRandomCollege = async () => {
@@ -4271,6 +4312,7 @@ export default {
 		getLocal,
 		getPlayerBioInfoDefaults,
 		getPlayerWatch,
+		getProjectedAttendance,
 		getRandomCollege,
 		getRandomCountry,
 		getRandomJerseyNumber,

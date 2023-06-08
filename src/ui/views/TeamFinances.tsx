@@ -303,6 +303,27 @@ const FinancesForm = ({
 			? otherTeamTicketPrices.length + 1
 			: ticketPriceRankIndex + 1;
 
+	const [projectedAttendance, setProjectedAttendance] = useState<
+		number | undefined
+	>();
+	useEffect(() => {
+		let mounted = true;
+		(async () => {
+			const attendance = await toWorker("main", "getProjectedAttendance", {
+				tid,
+				ticketPrice: ticketPriceForRank,
+			});
+
+			if (mounted) {
+				setProjectedAttendance(attendance);
+			}
+		})();
+
+		return () => {
+			mounted = false;
+		};
+	}, [ticketPriceForRank, tid]);
+
 	return (
 		<form onSubmit={handleSubmit} className="mb-3">
 			{warningMessage}
@@ -446,7 +467,15 @@ const FinancesForm = ({
 						/>
 					)}
 				</div>
-				<div className="ms-3">Leaguewide rank: #{ticketPriceRank}</div>
+				<div className="ms-3">
+					<div>Ticket price rank: #{ticketPriceRank}</div>
+					<div>
+						Projected attendance:{" "}
+						{projectedAttendance !== undefined
+							? helpers.numberWithCommas(projectedAttendance)
+							: ""}
+					</div>
+				</div>
 			</div>
 			{phase === PHASE.PLAYOFFS ? (
 				<div className="mb-1 text-warning" style={paddingLeft85}>

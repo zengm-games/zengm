@@ -1,9 +1,10 @@
 finances revamp
 - ticket price UI
-  - estimated attendance
   - playoffs stuff still looks ok?
 - mobile
   - move settings to top of team finances page?
+- submit button positioning
+- something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
 - helpers.defaultBudgetAmount
 - for AI teams, after resetTicketPrice in newPhasePreseason, have something that sets the budget levels, using defaultBudgetLevel
   - defaultBudgetLevel should take some args to help determine the proper value

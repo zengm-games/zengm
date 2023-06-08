@@ -44,7 +44,7 @@ const LeagueFinances = ({
 				"Team",
 				"Pop",
 				"Avg Attendance",
-				...(showTicketPrice ? ["Ticket Price"] : []),
+				"Ticket Price",
 				"Revenue (YTD)",
 				"Profit (YTD)",
 				"Cash",
@@ -80,9 +80,9 @@ const LeagueFinances = ({
 			),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
-			...(showTicketPrice
-				? [helpers.formatCurrency(t.budget.ticketPrice, "", 2)]
-				: []),
+			showTicketPrice
+				? helpers.formatCurrency(t.budget.ticketPrice, "", 2)
+				: null,
 			...(budget
 				? [
 						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),

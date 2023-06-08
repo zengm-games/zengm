@@ -1,10 +1,8 @@
 team finances
 - mobile
   - move settings to top of team finances page?
-- submit button positioning
 - check league finances, are teams making/losing appropriate amounts of money?
   - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
-- make sure exhibition games work
 - upgrade
   - TeamSeason.expenses and revenues
     - import
@@ -14,6 +12,13 @@ team finances
     - import
     - existing league
     - schema
+  - test
+    - schema
+      - old format budget
+      - new format budget
+      - old format expenses
+      - new format expenses
+      - new format expenseLevels
 - blog
   - rank isn't fun, like ebay bidding
   - transparent UI shows effect
@@ -45,7 +50,8 @@ FBGM game sim tweaks
 - running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
 - decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
 - increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
-- INT distribution more top heavy, fewer to LBs?
+- INT distribution more top heavy, fewer to LB/DL?
+  - also DL should be eligible for some pssDef, just not very many (tipped passes at the line don't count as pssDef, so pssDef and INT can't use exactly the same method to calculate)
 
 team graphs
 

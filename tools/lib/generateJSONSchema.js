@@ -1974,7 +1974,73 @@ const generateJSONSchema = (sport /*: string*/) => {
 						imgURL: {
 							type: "string",
 						},
-						budget: {},
+						budget: {
+							anyOf: [
+								{
+									type: "object",
+									properties: {
+										ticketPrice: {
+											$ref: "#/definitions/budgetItem",
+										},
+										scouting: {
+											$ref: "#/definitions/budgetItem",
+										},
+										coaching: {
+											$ref: "#/definitions/budgetItem",
+										},
+										health: {
+											$ref: "#/definitions/budgetItem",
+										},
+										facilities: {
+											$ref: "#/definitions/budgetItem",
+										},
+									},
+									required: [
+										"ticketPrice",
+										"scouting",
+										"coaching",
+										"health",
+										"facilities",
+									],
+								},
+								{
+									type: "object",
+									properties: {
+										ticketPrice: {
+											type: "number",
+											minimum: 0,
+										},
+										scouting: {
+											type: "integer",
+											minimum: 1,
+											maximum: 100,
+										},
+										coaching: {
+											type: "integer",
+											minimum: 1,
+											maximum: 100,
+										},
+										health: {
+											type: "integer",
+											minimum: 1,
+											maximum: 100,
+										},
+										facilities: {
+											type: "integer",
+											minimum: 1,
+											maximum: 100,
+										},
+									},
+									required: [
+										"ticketPrice",
+										"scouting",
+										"coaching",
+										"health",
+										"facilities",
+									],
+								},
+							],
+						},
 						strategy: {},
 						pop: {
 							type: "number",

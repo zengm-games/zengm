@@ -478,7 +478,7 @@ const FinancesForm = ({
 				</div>
 			</div>
 			{phase === PHASE.PLAYOFFS ? (
-				<div className="mb-1 text-warning" style={paddingLeft85}>
+				<div className="mt-1 text-warning">
 					Playoffs price:{" "}
 					{helpers.formatCurrency(
 						getAdjustedTicketPrice(
@@ -490,7 +490,7 @@ const FinancesForm = ({
 					)}
 				</div>
 			) : null}
-			<div className="mt-2 d-flex">
+			<div className="mt-1 d-flex">
 				<div className="form-check">
 					<label className="form-check-label">
 						<input

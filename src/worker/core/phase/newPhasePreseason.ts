@@ -192,14 +192,27 @@ const newPhasePreseason = async (
 			g.get("spectator")
 		) {
 			await team.resetTicketPrice(t, popRanks[i]);
+
+			// Sometimes update budget items for AI teams
+			for (const key of [
+				"scouting",
+				"coaching",
+				"health",
+				"facilities",
+			] as const) {
+				if (Math.random() < 0.5) {
+					t.budget[key] = finances.defaultBudgetLevel(popRanks[i]);
+				}
+			}
+
 			t.adjustForInflation = true;
 			t.autoTicketPrice = true;
 			t.keepRosterSorted = true;
 			t.playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES;
+
 			await idb.cache.teams.put(t);
 		}
 	}
-	await finances.updateRanks(["budget"]);
 
 	if (updatedTeams) {
 		await league.setGameAttributes({

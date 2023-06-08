@@ -9,8 +9,9 @@ const updateLeagueFinances = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
+		(inputs.season === g.get("season") &&
+			(updateEvents.includes("gameSim") ||
+				updateEvents.includes("newPhase"))) ||
 		state.season !== inputs.season
 	) {
 		const players = await idb.cache.players.indexGetAll("playersByTid", [

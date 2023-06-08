@@ -9,7 +9,7 @@ import {
 } from "../../util";
 import { wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
-import { finances, draft, team } from "..";
+import { draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
 import { unwrapGameAttribute } from "../../../common";
 import { getAutoTicketPriceByTid } from "../game/attendance";
@@ -143,14 +143,13 @@ const setGameAttributes = async (
 						}
 					} else {
 						await team.resetTicketPrice(t, popRank, value);
+						updated = true;
 					}
 
 					if (updated) {
 						await idb.cache.teams.put(t);
 					}
 				}
-
-				await finances.updateRanks(["budget"]);
 			}
 		}
 

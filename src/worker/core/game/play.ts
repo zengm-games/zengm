@@ -2,7 +2,6 @@ import { ALL_STAR_GAME_ONLY, isSport, PHASE } from "../../../common";
 import {
 	GameSim,
 	allStar,
-	finances,
 	freeAgents,
 	phase,
 	player,
@@ -156,9 +155,6 @@ const play = async (
 		const updateEvents: UpdateEvents = ["gameSim"];
 
 		if (dayOver) {
-			// Budget is just for ticket prices
-			await finances.updateRanks(["budget", "expenses", "revenues"]);
-
 			local.minFractionDiffs = undefined;
 
 			const healedTexts: string[] = [];

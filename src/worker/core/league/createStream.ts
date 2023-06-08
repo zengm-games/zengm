@@ -1417,7 +1417,6 @@ const afterDBStream = async ({
 			}
 		}
 	}
-	await finances.updateRanks(["budget"]);
 
 	// Set numDraftPicksCurrent, for upgrading leagues
 	if (g.get("phase") === PHASE.DRAFT) {

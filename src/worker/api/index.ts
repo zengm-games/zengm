@@ -3235,7 +3235,6 @@ const updateBudget = async ({
 	t.autoTicketPrice = autoTicketPrice;
 
 	await idb.cache.teams.put(t);
-	await finances.updateRanks(["budget"]);
 	await toUI("realtimeUpdate", [["teamFinances"]]);
 };
 

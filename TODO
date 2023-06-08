@@ -1,9 +1,7 @@
-finances revamp
+team finances
 - mobile
   - move settings to top of team finances page?
 - submit button positioning
-- something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
-- helpers.defaultBudgetAmount
 - for AI teams, after resetTicketPrice in newPhasePreseason, have something that sets the budget levels, using defaultBudgetLevel
   - defaultBudgetLevel should take some args to help determine the proper value
   - updateRanks
@@ -29,6 +27,8 @@ finances revamp
   - expenses are spread out over the regular season
   - how exactly to interpret
   - league finances
+- later
+  - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
 
 little bugs
 - create player, don't edit ratings at all -> pot is 0 https://old.reddit.com/r/BasketballGM/comments/142hfid/bro_is_a_0_potential_and_still_got_more_potential/jn9mbnu/?context=3

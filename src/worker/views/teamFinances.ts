@@ -196,6 +196,19 @@ const updateTeamFinances = async (
 
 		const autoTicketPrice = await getAutoTicketPriceByTid(inputs.tid);
 
+		const otherTeamTicketPrices = [];
+		const teams = await idb.cache.teams.getAll();
+		for (const t of teams) {
+			if (!t.disabled && t.tid !== inputs.tid) {
+				if (t.autoTicketPrice) {
+					otherTeamTicketPrices.push(await getAutoTicketPriceByTid(t.tid));
+				} else {
+					otherTeamTicketPrices.push(t.budget.ticketPrice);
+				}
+			}
+		}
+		otherTeamTicketPrices.sort((a, b) => b - a);
+
 		return {
 			abbrev: inputs.abbrev,
 			autoTicketPrice,
@@ -221,6 +234,7 @@ const updateTeamFinances = async (
 			salariesSeasons,
 			phase: g.get("phase"),
 			godMode: g.get("godMode"),
+			otherTeamTicketPrices,
 		};
 	}
 };

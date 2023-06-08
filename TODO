@@ -1,11 +1,7 @@
 finances revamp
 - ticket price UI
-  - why does toggling auto ticket price change the ticket price, shouldn't the auto value be saved already?
-  - rank
   - estimated attendance
-- click and hold on +/- button
-  - desktop
-  - mobile
+  - playoffs stuff still looks ok?
 - mobile
   - move settings to top of team finances page?
 - helpers.defaultBudgetAmount

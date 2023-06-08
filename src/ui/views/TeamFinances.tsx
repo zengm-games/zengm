@@ -142,6 +142,7 @@ const FinancesForm = ({
 	challengeNoRatings,
 	gameSimInProgress,
 	godMode,
+	otherTeamTicketPrices,
 	phase,
 	salaryCap,
 	spectator,
@@ -153,6 +154,7 @@ const FinancesForm = ({
 	| "autoTicketPrice"
 	| "challengeNoRatings"
 	| "godMode"
+	| "otherTeamTicketPrices"
 	| "phase"
 	| "salaryCap"
 	| "spectator"
@@ -289,6 +291,17 @@ const FinancesForm = ({
 			title: "Facilities",
 		},
 	];
+
+	const ticketPriceForRank = state.autoTicketPrice
+		? autoTicketPrice
+		: parseFloat(state.ticketPrice);
+	const ticketPriceRankIndex = otherTeamTicketPrices.findIndex(
+		price => price < ticketPriceForRank,
+	);
+	const ticketPriceRank =
+		ticketPriceRankIndex < 0
+			? otherTeamTicketPrices.length + 1
+			: ticketPriceRankIndex + 1;
 
 	return (
 		<form onSubmit={handleSubmit} className="mb-3">
@@ -433,7 +446,7 @@ const FinancesForm = ({
 						/>
 					)}
 				</div>
-				<div className="ms-3">Leaguewide rank: ???</div>
+				<div className="ms-3">Leaguewide rank: #{ticketPriceRank}</div>
 			</div>
 			{phase === PHASE.PLAYOFFS ? (
 				<div className="mb-1 text-warning" style={paddingLeft85}>
@@ -641,6 +654,7 @@ const TeamFinances = ({
 	minContract,
 	minPayroll,
 	numGames,
+	otherTeamTicketPrices,
 	spectator,
 	payroll,
 	phase,
@@ -915,6 +929,7 @@ const TeamFinances = ({
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
 							godMode={godMode}
+							otherTeamTicketPrices={otherTeamTicketPrices}
 							phase={phase}
 							salaryCap={salaryCap}
 							spectator={spectator}

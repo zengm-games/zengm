@@ -165,10 +165,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 		};
 	}
 
-	const upperCaseFirstLetterSport = `${sport
-		.charAt(0)
-		.toUpperCase()}${sport.slice(1)}`;
-
 	const depth = bySport({
 		baseball: {
 			depth: {
@@ -337,11 +333,23 @@ const generateJSONSchema = (sport /*: string*/) => {
 		},
 	});
 
+	const websitePlay = bySport({
+		baseball: "baseball.zengm.com",
+		basketball: "play.basketball-gm.com",
+		football: "play.football-gm.com",
+		hockey: "hockey.zengm.com",
+	});
+
 	return {
 		$schema: "http://json-schema.org/draft-07/schema#",
-		$id: `https://play.${sport}-gm.com/files/league-schema.json`,
-		title: `${upperCaseFirstLetterSport} GM League File Schema`,
-		description: `For use at https://play.${sport}-gm.com/`,
+		$id: `https://${websitePlay}/files/league-schema.json`,
+		title: `${bySport({
+			baseball: "ZenGM Baseball",
+			basketball: "Basketball GM",
+			football: "Footbal lGM",
+			hockey: "ZenGM Hockey",
+		})} League File Schema`,
+		description: `For use at https://${websitePlay}/`,
 
 		definitions: {
 			budgetItem: {

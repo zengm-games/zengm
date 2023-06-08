@@ -4,21 +4,15 @@ team finances
 - check league finances, are teams making/losing appropriate amounts of money?
   - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
 - upgrade
-  - TeamSeason.expenses and revenues
+  - TeamSeason.expenses, expenseLevels, and revenues
     - import
     - existing league
-    - schema
   - Team.budget
     - import
     - existing league
-    - schema
   - test
-    - schema
-      - old format budget
-      - new format budget
-      - old format expenses
-      - new format expenses
-      - new format expenseLevels
+    - import
+    - existing league
 - blog
   - rank isn't fun, like ebay bidding
   - transparent UI shows effect

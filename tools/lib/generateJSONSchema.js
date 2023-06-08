@@ -2247,70 +2247,179 @@ const generateJSONSchema = (sport /*: string*/) => {
 										minimum: 0,
 									},
 									revenues: {
-										type: "object",
-										properties: {
-											luxuryTaxShare: {
-												$ref: "#/definitions/budgetItem",
+										anyOf: [
+											{
+												type: "object",
+												properties: {
+													luxuryTaxShare: {
+														$ref: "#/definitions/budgetItem",
+													},
+													merch: {
+														$ref: "#/definitions/budgetItem",
+													},
+													sponsor: {
+														$ref: "#/definitions/budgetItem",
+													},
+													ticket: {
+														$ref: "#/definitions/budgetItem",
+													},
+													nationalTv: {
+														$ref: "#/definitions/budgetItem",
+													},
+													localTv: {
+														$ref: "#/definitions/budgetItem",
+													},
+												},
+												required: [
+													"luxuryTaxShare",
+													"merch",
+													"sponsor",
+													"ticket",
+													"nationalTv",
+													"localTv",
+												],
 											},
-											merch: {
-												$ref: "#/definitions/budgetItem",
+											{
+												type: "object",
+												properties: {
+													luxuryTaxShare: {
+														type: "number",
+														minimum: 0,
+													},
+													merch: {
+														type: "number",
+														minimum: 0,
+													},
+													sponsor: {
+														type: "number",
+														minimum: 0,
+													},
+													ticket: {
+														type: "number",
+														minimum: 0,
+													},
+													nationalTv: {
+														type: "number",
+														minimum: 0,
+													},
+													localTv: {
+														type: "number",
+														minimum: 0,
+													},
+												},
+												required: [
+													"luxuryTaxShare",
+													"merch",
+													"sponsor",
+													"ticket",
+													"nationalTv",
+													"localTv",
+												],
 											},
-											sponsor: {
-												$ref: "#/definitions/budgetItem",
-											},
-											ticket: {
-												$ref: "#/definitions/budgetItem",
-											},
-											nationalTv: {
-												$ref: "#/definitions/budgetItem",
-											},
-											localTv: {
-												$ref: "#/definitions/budgetItem",
-											},
-										},
-										required: [
-											"luxuryTaxShare",
-											"merch",
-											"sponsor",
-											"ticket",
-											"nationalTv",
-											"localTv",
 										],
 									},
 									expenses: {
+										anyOf: [
+											{
+												type: "object",
+												properties: {
+													salary: {
+														$ref: "#/definitions/budgetItem",
+													},
+													luxuryTax: {
+														$ref: "#/definitions/budgetItem",
+													},
+													minTax: {
+														$ref: "#/definitions/budgetItem",
+													},
+													scouting: {
+														$ref: "#/definitions/budgetItem",
+													},
+													coaching: {
+														$ref: "#/definitions/budgetItem",
+													},
+													health: {
+														$ref: "#/definitions/budgetItem",
+													},
+													facilities: {
+														$ref: "#/definitions/budgetItem",
+													},
+												},
+												required: [
+													"salary",
+													"luxuryTax",
+													"minTax",
+													"scouting",
+													"coaching",
+													"health",
+													"facilities",
+												],
+											},
+											{
+												type: "object",
+												properties: {
+													salary: {
+														type: "number",
+														minimum: 0,
+													},
+													luxuryTax: {
+														type: "number",
+														minimum: 0,
+													},
+													minTax: {
+														type: "number",
+														minimum: 0,
+													},
+													scouting: {
+														type: "number",
+														minimum: 0,
+													},
+													coaching: {
+														type: "number",
+														minimum: 0,
+													},
+													health: {
+														type: "number",
+														minimum: 0,
+													},
+													facilities: {
+														type: "number",
+														minimum: 0,
+													},
+												},
+												required: [
+													"salary",
+													"luxuryTax",
+													"minTax",
+													"scouting",
+													"coaching",
+													"health",
+													"facilities",
+												],
+											},
+										],
+									},
+									expenseLevels: {
 										type: "object",
 										properties: {
-											salary: {
-												$ref: "#/definitions/budgetItem",
-											},
-											luxuryTax: {
-												$ref: "#/definitions/budgetItem",
-											},
-											minTax: {
-												$ref: "#/definitions/budgetItem",
-											},
 											scouting: {
-												$ref: "#/definitions/budgetItem",
+												type: "number",
+												minimum: 0,
 											},
 											coaching: {
-												$ref: "#/definitions/budgetItem",
+												type: "number",
+												minimum: 0,
 											},
 											health: {
-												$ref: "#/definitions/budgetItem",
+												type: "number",
+												minimum: 0,
 											},
 											facilities: {
-												$ref: "#/definitions/budgetItem",
+												type: "number",
+												minimum: 0,
 											},
 										},
-										required: [
-											"salary",
-											"luxuryTax",
-											"minTax",
-											"scouting",
-											"coaching",
-											"health",
-											"facilities",
-										],
+										required: ["scouting", "coaching", "health", "facilities"],
 									},
 									payrollEndOfSeason: {
 										type: "integer",

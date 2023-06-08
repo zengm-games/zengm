@@ -33,10 +33,10 @@ const generate = (tm: any): Team => {
 		budget: {
 			ticketPrice:
 				tm.budget?.ticketPrice ?? helpers.defaultTicketPrice(tm.popRank),
-			scouting: finances.defaultBudgetLevel(),
-			coaching: finances.defaultBudgetLevel(),
-			health: finances.defaultBudgetLevel(),
-			facilities: finances.defaultBudgetLevel(),
+			scouting: finances.defaultBudgetLevel(tm.popRank),
+			coaching: finances.defaultBudgetLevel(tm.popRank),
+			health: finances.defaultBudgetLevel(tm.popRank),
+			facilities: finances.defaultBudgetLevel(tm.popRank),
 		},
 		strategy,
 		depth: tm.depth,

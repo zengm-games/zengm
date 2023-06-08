@@ -3,9 +3,9 @@ team finances
   - move settings to top of team finances page?
 - submit button positioning
 - for AI teams, after resetTicketPrice in newPhasePreseason, have something that sets the budget levels, using defaultBudgetLevel
-  - defaultBudgetLevel should take some args to help determine the proper value
   - updateRanks
     - needed at all? no, but we should have something that updates the AI levels every year
+    - maybe update only X% of the time it checks
 - check league finances, are teams making/losing appropriate amounts of money?
   - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
 - make sure exhibition games work

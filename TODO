@@ -13,9 +13,8 @@ finances revamp
   - defaultBudgetLevel should take some args to help determine the proper value
   - updateRanks
     - needed at all? no, but we should have something that updates the AI levels every year
-- check league finances
+- check league finances, are teams making/losing appropriate amounts of money?
   - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
-- on league finances page, keep columns same every year, just make them empty when appropriate
 - make sure exhibition games work
 - upgrade
   - TeamSeason.expenses and revenues

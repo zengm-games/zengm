@@ -2845,6 +2845,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Coaching: {
+		desc: "Coaching Level",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	College: {},
 	Conference: {},
 	Contract: {
@@ -2921,6 +2926,11 @@ const cols: {
 	},
 	Experience: {
 		desc: "Number of Years in the League",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Facilities: {
+		desc: "Facilities Level",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -3019,6 +3029,11 @@ const cols: {
 	},
 	Hard: {
 		desc: "Hard Difficulty",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Health: {
+		desc: "Health Level",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -3174,6 +3189,11 @@ const cols: {
 	Salary: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
+	},
+	Scouting: {
+		desc: "Scouting Level",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	Season: {
 		sortSequence: ["desc", "asc"],

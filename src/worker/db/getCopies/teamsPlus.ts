@@ -178,6 +178,32 @@ const processSeasonAttrs = async <
 				} else if (attr === "avgAge") {
 					// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
 					row.avgAge = ts[attr];
+				} else if (attr === "expenseLevels") {
+					if (ts.season === g.get("season")) {
+						// For current season, we want the current values, not what we spent this season. That's what we want on League Finances at least, which is the only place this is used for now.
+						row.expenseLevels = {
+							coaching: t.budget.coaching,
+							facilities: t.budget.facilities,
+							health: t.budget.health,
+							scouting: t.budget.scouting,
+						};
+					} else {
+						if (ts.gp > 0) {
+							row.expenseLevels = {
+								coaching: Math.round(ts.expenseLevels.coaching / ts.gp),
+								facilities: Math.round(ts.expenseLevels.facilities / ts.gp),
+								health: Math.round(ts.expenseLevels.health / ts.gp),
+								scouting: Math.round(ts.expenseLevels.scouting / ts.gp),
+							};
+						} else {
+							row.expenseLevels = {
+								coaching: 0,
+								facilities: 0,
+								health: 0,
+								scouting: 0,
+							};
+						}
+					}
 				} else {
 					// @ts-expect-error
 					row[attr] = ts[attr];

@@ -50,6 +50,10 @@ const LeagueFinances = ({
 				"Cash",
 				"Payroll",
 				...capSpaceColNames,
+				"Scouting",
+				"Coaching",
+				"Health",
+				"Facilities",
 		  ])
 		: getCols([
 				"Team",
@@ -106,6 +110,13 @@ const LeagueFinances = ({
 				</button>,
 			);
 		}
+
+		data.push(
+			t.seasonAttrs.expenseLevels.scouting,
+			t.seasonAttrs.expenseLevels.coaching,
+			t.seasonAttrs.expenseLevels.health,
+			t.seasonAttrs.expenseLevels.facilities,
+		);
 
 		return {
 			key: t.tid,

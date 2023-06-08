@@ -36,6 +36,7 @@ const updateLeagueFinances = async (
 						"name",
 						"imgURL",
 						"imgURLSmall",
+						"expenseLevels",
 					],
 					season: inputs.season,
 				},

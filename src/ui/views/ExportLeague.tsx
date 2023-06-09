@@ -534,12 +534,23 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 										<p>
 											URL: <a href={url}>{url}</a>
 										</p>
-										<p className="mb-0">
-											You can use this URL when{" "}
-											<a href="/new_league">making a new custom league</a>, just
-											select "Enter league file URL" under "Customize" and paste
-											in the URL.
-										</p>
+										{url.startsWith("https://dl.") ? (
+											<p className="mb-0">
+												You can use this URL when{" "}
+												<a href="/new_league">making a new custom league</a>,
+												just select "Enter league file URL" under "Customize"
+												and paste in the URL.
+											</p>
+										) : (
+											<p className="mb-0 text-danger">
+												For some users Dropbox is now returning URLs that don't
+												work with the built-in "Enter league file URL" feature.
+												Unfortunately this is one of those URLs - to use it to{" "}
+												<a href="/new_league">make a new custom league</a>, you
+												will have to download it and then upload it as a file,
+												not a URL.
+											</p>
+										)}
 									</>
 								) : (
 									<>

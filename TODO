@@ -1,13 +1,9 @@
 team finances
-- check league finances, are teams making/losing appropriate amounts of money?
 - test IDB upgrade again
 - new league should stat with 2 seasons history baked in, so you can't just instantly change your effect
   - field in first TeamSeason?
-- make sure historical leagues work
-  - historical teamseason generation needs to be edited?
-  - new league
-  - upgraded
-- make sure levelToAmount and amountToLevel are kept in sync
+  - also use for historical leagues, otherwise with full stats it counts as 0 for past seasons because of 0 gp
+- test other sports
 - blog
   - rank isn't fun, like ebay bidding
   - transparent UI shows effect

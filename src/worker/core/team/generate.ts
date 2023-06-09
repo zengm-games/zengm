@@ -30,9 +30,8 @@ const generate = (tm: any): Team => {
 		imgURL: tm.imgURL ?? "",
 		imgURLSmall: tm.imgURLSmall === "" ? undefined : tm.imgURLSmall,
 
-		budget: {
-			ticketPrice:
-				tm.budget?.ticketPrice ?? helpers.defaultTicketPrice(tm.popRank),
+		budget: tm.budget ?? {
+			ticketPrice: helpers.defaultTicketPrice(tm.popRank),
 			scouting: finances.defaultBudgetLevel(tm.popRank),
 			coaching: finances.defaultBudgetLevel(tm.popRank),
 			health: finances.defaultBudgetLevel(tm.popRank),

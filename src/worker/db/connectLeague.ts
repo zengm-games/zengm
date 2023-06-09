@@ -1242,37 +1242,6 @@ const migrate = async ({
 	}
 
 	if (oldVersion <= 54) {
-		const budgetKeys = [
-			"ticketPrice",
-			"scouting",
-			"coaching",
-			"health",
-			"facilities",
-		] as const;
-		const revenuesKeys = [
-			"luxuryTaxShare",
-			"merch",
-			"sponsor",
-			"ticket",
-			"nationalTv",
-			"localTv",
-		] as const;
-		const expensesKeys = [
-			"luxuryTax",
-			"minTax",
-			"salary",
-			"coaching",
-			"health",
-			"facilities",
-			"scouting",
-		] as const;
-		const expenseLevelsKeys = [
-			"coaching",
-			"facilities",
-			"health",
-			"scouting",
-		] as const;
-
 		type OldBudgetItem = {
 			amount: number;
 			rank: number;
@@ -1286,10 +1255,14 @@ const migrate = async ({
 
 		await iterate(transaction.objectStore("teams"), undefined, undefined, t => {
 			// Compute equivalent levels for the budget values
-			for (const key of budgetKeys) {
+			for (const key of helpers.keys(t.budget)) {
 				const value = t.budget[key] as unknown as OldBudgetItem;
 				if (typeof value !== "number") {
-					t.budget[key] = amountToLevel(value.amount, salaryCap);
+					if (key === "ticketPrice") {
+						t.budget[key] = value.amount;
+					} else {
+						t.budget[key] = amountToLevel(value.amount, salaryCap);
+					}
 				}
 			}
 
@@ -1304,13 +1277,13 @@ const migrate = async ({
 			undefined,
 			ts => {
 				// Move the amount to root, no more storing rank
-				for (const key of revenuesKeys) {
+				for (const key of helpers.keys(ts.revenues)) {
 					const value = ts.revenues[key] as unknown as OldBudgetItem;
 					if (typeof value !== "number") {
 						ts.revenues[key] = value.amount;
 					}
 				}
-				for (const key of expensesKeys) {
+				for (const key of helpers.keys(ts.expenses)) {
 					const value = ts.expenses[key] as unknown as OldBudgetItem;
 					if (typeof value !== "number") {
 						ts.expenses[key] = value.amount;
@@ -1318,6 +1291,12 @@ const migrate = async ({
 				}
 
 				// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+				const expenseLevelsKeys = [
+					"coaching",
+					"facilities",
+					"health",
+					"scouting",
+				] as const;
 				ts.expenseLevels = {} as any;
 				for (const key of expenseLevelsKeys) {
 					ts.expenseLevels[key] = ts.gp * budgetsByTid[ts.tid][key];

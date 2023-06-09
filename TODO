@@ -1,12 +1,6 @@
 team finances
 - check league finances, are teams making/losing appropriate amounts of money?
-- upgrade
-  - TeamSeason.expenses, expenseLevels, and revenues
-    - import
-  - Team.budget
-    - import
-  - test
-    - import
+- test IDB upgrade again
 - new league should stat with 2 seasons history baked in, so you can't just instantly change your effect
   - field in first TeamSeason?
 - make sure historical leagues work
@@ -30,6 +24,7 @@ team finances
 little bugs
 - create player, don't edit ratings at all -> pot is 0 https://old.reddit.com/r/BasketballGM/comments/142hfid/bro_is_a_0_potential_and_still_got_more_potential/jn9mbnu/?context=3
 - auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
+- color of trade response message can be wrong (like green for rejected trade) https://discord.com/channels/290013534023057409/290013534023057409/1116329185120632832
 
 Player.draft.pot and Player.draft.ovr needed? either use ratings row from that season, or if not found, make them null?
 

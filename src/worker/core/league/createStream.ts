@@ -54,6 +54,7 @@ import initRepeatSeason from "./initRepeatSeason";
 import processPlayerNewLeague from "./processPlayerNewLeague";
 import remove from "./remove";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
+import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -596,16 +597,21 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 };
 
 const processTeamInfos = ({
+	gameAttributes,
 	realTeamInfo,
-	season,
 	teamInfos,
 	userTid,
 }: {
+	gameAttributes: {
+		salaryCap: number;
+		season: number;
+	};
 	realTeamInfo: RealTeamInfo | undefined;
-	season: number;
 	teamInfos: any[];
 	userTid: number;
 }) => {
+	const { salaryCap, season } = gameAttributes;
+
 	if (realTeamInfo) {
 		for (const t of teamInfos) {
 			applyRealTeamInfo(t, realTeamInfo, season);
@@ -620,6 +626,28 @@ const processTeamInfos = ({
 			}
 		}
 	}
+
+	// Version 55 upgrade
+	const budgetsByTid: Record<number, Team["budget"]> = {};
+	for (const t of teamInfos) {
+		if (t.budget) {
+			for (const key of Object.keys(t.budget)) {
+				const value = t.budget[key];
+				if (typeof value !== "number") {
+					if (key === "ticketPrice") {
+						t.budget[key] = value.amount;
+					} else {
+						t.budget[key] = amountToLevel(
+							value?.amount ?? DEFAULT_LEVEL,
+							salaryCap,
+						);
+					}
+				}
+			}
+			budgetsByTid[t.tid] = t.budget;
+		}
+	}
+	console.log(budgetsByTid);
 
 	const teams = teamInfos.map(t => team.generate(t));
 
@@ -648,6 +676,34 @@ const processTeamInfos = ({
 			}
 
 			for (const teamSeason of teamSeasonsLocal) {
+				// Version 55 upgrade
+				// Move the amount to root, no more storing rank
+				for (const type of ["revenues", "expenses"] as const) {
+					if (teamSeason[type]) {
+						for (const key of Object.keys(teamSeason[type])) {
+							const value = (teamSeason[type] as any)[key];
+							if (typeof value !== "number") {
+								(teamSeason[type] as any)[key] = value?.amount ?? 0;
+							}
+						}
+					}
+				}
+				if (!teamSeason.expenseLevels && teamSeason.gp !== undefined) {
+					// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+					const expenseLevelsKeys = [
+						"coaching",
+						"facilities",
+						"health",
+						"scouting",
+					] as const;
+					teamSeason.expenseLevels = {} as any;
+					for (const key of expenseLevelsKeys) {
+						teamSeason.expenseLevels[key] =
+							teamSeason.gp *
+							(budgetsByTid[teamSeason.tid][key] ?? DEFAULT_LEVEL);
+					}
+				}
+
 				// See similar code in teamsPlus
 				const copyFromTeamIfUndefined = [
 					// For upgrades, or manually edited league files
@@ -1063,8 +1119,8 @@ const beforeDBStream = async ({
 
 	// Needs to be done after g is set
 	const { scoutingLevel, teams, teamSeasons, teamStats } = processTeamInfos({
+		gameAttributes,
 		realTeamInfo,
-		season: gameAttributes.season,
 		teamInfos,
 		userTid: tid,
 	});

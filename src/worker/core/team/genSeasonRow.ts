@@ -11,8 +11,8 @@ const genSeasonRow = (
 	prevSeason?: TeamSeasonWithoutKey,
 	season: number = g.get("season"),
 	defaultStadiumCapacity: number = g.get("defaultStadiumCapacity"),
-): TeamSeasonWithoutKey => {
-	const newSeason = {
+) => {
+	const newSeason: TeamSeasonWithoutKey = {
 		tid: t.tid,
 		cid: t.cid,
 		did: t.did,
@@ -90,7 +90,6 @@ const genSeasonRow = (
 	}
 
 	if (typeof t.imgURLSmall === "string") {
-		// @ts-expect-error
 		newSeason.imgURLSmall = t.imgURLSmall;
 	}
 
@@ -119,6 +118,11 @@ const genSeasonRow = (
 				newSeason.ownerMood = (g as any).ownerMood;
 			}
 		}
+	}
+
+	// First season, initialize firstSeasonBudget
+	if (!prevSeason && season === g.get("season") && (t as Team).budget) {
+		newSeason.firstSeasonBudget = (t as Team).budget;
 	}
 
 	return newSeason;

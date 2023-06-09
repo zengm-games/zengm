@@ -1626,7 +1626,15 @@ export type TeamSeasonWithoutKey = {
 		facilities: number;
 		scouting: number;
 	};
+	// These are cumsums per game, divide by gp for the average
 	expenseLevels: {
+		coaching: number;
+		facilities: number;
+		health: number;
+		scouting: number;
+	};
+	// If this exists, that means this is the first row in a new league and these budget levels should be used for the past 2 seasons when computing the average. These are levels, not cumsum values like expenseLevels!
+	firstSeasonBudget?: {
 		coaching: number;
 		facilities: number;
 		health: number;

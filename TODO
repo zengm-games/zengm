@@ -1,14 +1,16 @@
 team finances
 - test IDB upgrade again
-- new league should stat with 2 seasons history baked in, so you can't just instantly change your effect
-  - field in first TeamSeason?
+- firstSeasonBudget
   - also use for historical leagues, otherwise with full stats it counts as 0 for past seasons because of 0 gp
 - test other sports
 - blog
   - rank isn't fun, like ebay bidding
-  - transparent UI shows effect
   - inflation is confusing
   - exponential cost makes maxing out a hard decision
+  - transparent UI
+    - shows effect
+    - shows 3 yr avg
+  - can't have immediate huge effects in new league - average of past 2 seasons is baked in
   - show exactly how (old) rank corresponds to (new) level, in table and chart
   - expenses are spread out over the regular season
   - how exactly to interpret

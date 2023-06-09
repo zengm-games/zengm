@@ -1643,10 +1643,14 @@ const getProjectedAttendance = async ({
 		return 0;
 	}
 
-	const teamSeason = await idb.cache.teamSeasons.indexGet(
+	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
-		[tid, g.get("season")],
+		[
+			[tid, g.get("season") - 2],
+			[tid, g.get("season")],
+		],
 	);
+	const teamSeason = teamSeasons.at(-1);
 	if (!teamSeason) {
 		return 0;
 	}
@@ -1661,7 +1665,7 @@ const getProjectedAttendance = async ({
 		baseAttendance,
 		randomize: false,
 		stadiumCapacity: teamSeason.stadiumCapacity,
-		teamSeasons: [],
+		teamSeasons,
 		adjustedTicketPrice,
 	});
 

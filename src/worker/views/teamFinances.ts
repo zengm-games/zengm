@@ -160,7 +160,6 @@ const updateTeamFinances = async (
 			},
 			"noCopyCache",
 		);
-		console.log("t", tTemp);
 
 		if (!tTemp) {
 			throw new Error("Team not found");
@@ -175,7 +174,8 @@ const updateTeamFinances = async (
 		t.autoTicketPrice =
 			t.autoTicketPrice !== false || !g.get("userTids").includes(inputs.tid);
 
-		const teamSeasonsLastThree = teamSeasons.slice(-3);
+		// Undo reverse from above
+		const teamSeasonsLastThree = teamSeasons.slice(0, 3).reverse();
 		t.expenseLevelsLastThree = {
 			coaching: finances.getLevelLastThree(teamSeasonsLastThree, "coaching"),
 			facilities: finances.getLevelLastThree(

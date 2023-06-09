@@ -1,7 +1,10 @@
 team finances
 - test IDB upgrade again
 - firstSeasonBudget
-  - also use for historical leagues, otherwise with full stats it counts as 0 for past seasons because of 0 gp
+  - test expansion team
+    - exploit if you do it after the draft - the TeamSeason isn't created until simming to preseason, so you could max it out at 100 and then get free credit for 2 years of that next season. maybe need to store this in the team object to avoid this problem?
+  - handle upgrading a league prior to 3 seasons being played? most important for real players leagues with history
+- expenseLevels for upgraded leagues mid season?
 - test other sports
 - blog
   - rank isn't fun, like ebay bidding

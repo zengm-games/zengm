@@ -19,12 +19,25 @@ const getLevelLastThree = (
 			gpSum += row.gp;
 		}
 
-		// If we have less than three seasons and the first one has firstSeasonBudget, add dummy values
-		const numSeasonsMissing = NUM_SEASONS - teamSeasons.length;
-		if (numSeasonsMissing > 0) {
-			const firstSeason = upToLastThreeTeamSeasons[0];
-			if (firstSeason?.firstSeasonBudget) {
-				const gp = g.get("numGames");
+		// If we have less than three seasons and the first one has firstSeasonBudget, add dummy values. This is not necessarily the first entry in  upToLastThreeTeamSeasons! Imagine a real players league started with full history. There will be dummy TeamSeason entries with no expenseLevels in them, and firstSeasonBudget will be in the latest season. It needs to override those dummy entries.
+		const firstSeasonIndex = upToLastThreeTeamSeasons.findIndex(
+			row => row.firstSeasonBudget,
+		);
+		const firstSeason = upToLastThreeTeamSeasons[firstSeasonIndex];
+		if (firstSeason?.firstSeasonBudget) {
+			const gp = g.get("numGames");
+
+			// Handle leagues started after regular season
+			if (firstSeason.gp === 0) {
+				gpSum = gp;
+			}
+			if (firstSeason.expenseLevels[item] === 0) {
+				levelSum += firstSeason.firstSeasonBudget[item] * gp;
+			}
+
+			// Handle any seasons from before the league existed
+			const numFullSeasonsMissing = firstSeasonIndex;
+			if (numFullSeasonsMissing > 0) {
 				levelSum += firstSeason.firstSeasonBudget[item] * gp;
 				gpSum += gp;
 			}

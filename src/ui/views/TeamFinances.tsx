@@ -533,15 +533,15 @@ const FinancesForm = ({
 				</div>
 			</div>
 			{tid === userTid && !spectator ? (
-				<div className="mt-5" style={paddingLeft85}>
+				<div className="mt-4" style={paddingLeft85}>
 					<button
 						className="btn btn-large btn-primary"
 						disabled={formDisabled || state.saving}
 						type="submit"
 					>
-						Save Expense Levels
+						Save expense levels
 						<br />
-						and Ticket Price
+						and ticket price
 					</button>
 				</div>
 			) : null}

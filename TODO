@@ -1,6 +1,4 @@
 team finances
-- mobile
-  - move settings to top of team finances page?
 - check league finances, are teams making/losing appropriate amounts of money?
 - upgrade
   - TeamSeason.expenses, expenseLevels, and revenues

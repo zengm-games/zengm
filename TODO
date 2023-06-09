@@ -3,21 +3,18 @@ team finances
   - move settings to top of team finances page?
 - check league finances, are teams making/losing appropriate amounts of money?
   - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
+  - currently it's picking levels between 1 and 100, but in the old system the costs were equivalent to 1 to 68. is that a problem?
 - upgrade
   - TeamSeason.expenses, expenseLevels, and revenues
     - import
-    - existing league
   - Team.budget
     - import
-    - existing league
-    - import and existing league should share code for the budget import
-      - compute equivalent level for a budget amount, relative to salary cap
   - test
     - import
-    - existing league
 - new league should stat with 2 seasons history baked in, so you can't just instantly change your effect
   - field in first TeamSeason?
 - make sure historical leagues work
+  - historical teamseason generation needs to be edited?
   - new league
   - upgraded
 - make sure levelToAmount and amountToLevel are kept in sync

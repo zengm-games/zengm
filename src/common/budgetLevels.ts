@@ -1,3 +1,5 @@
+import helpers from "./helpers";
+
 export const MAX_LEVEL = 100;
 
 // At this level, the effect is 0
@@ -29,6 +31,19 @@ export const levelToAmount = (level: number, salaryCap: number) => {
 				(salaryCap / 90000) * 1330 +
 				(900 * (salaryCap / 90000) * (Math.round(level) - 1)) / (MAX_LEVEL - 1),
 		) * 10
+	);
+};
+
+// For upgrading old league files
+export const amountToLevel = (amount: number, salaryCap: number) => {
+	return helpers.bound(
+		Math.round(
+			((amount / 10 - 20 - (salaryCap / 90000) * 1330) * (MAX_LEVEL - 1)) /
+				((900 * salaryCap) / 90000) +
+				1,
+		),
+		1,
+		MAX_LEVEL,
 	);
 };
 

@@ -18,6 +18,7 @@ team finances
 - make sure historical leagues work
   - new league
   - upgraded
+- make sure levelToAmount and amountToLevel are kept in sync
 - blog
   - rank isn't fun, like ebay bidding
   - transparent UI shows effect

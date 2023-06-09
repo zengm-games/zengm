@@ -40,7 +40,7 @@ import type {
 	SeasonLeaders,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
-import { budgetAmountToLevel, DEFAULT_LEVEL } from "../../common/budgetLevels";
+import { amountToLevel } from "../../common/budgetLevels";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -1289,7 +1289,7 @@ const migrate = async ({
 			for (const key of budgetKeys) {
 				const value = t.budget[key] as unknown as OldBudgetItem;
 				if (typeof value !== "number") {
-					t.budget[key] = budgetAmountToLevel(value.amount, salaryCap);
+					t.budget[key] = amountToLevel(value.amount, salaryCap);
 				}
 			}
 

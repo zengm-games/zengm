@@ -2,8 +2,6 @@ team finances
 - mobile
   - move settings to top of team finances page?
 - check league finances, are teams making/losing appropriate amounts of money?
-  - does it make sense for levelToAmount to have that constant term? if so, it should probably always be modulated by salaryCap, not constant on top of that, right?
-  - currently it's picking levels between 1 and 100, but in the old system the costs were equivalent to 1 to 68. is that a problem?
 - upgrade
   - TeamSeason.expenses, expenseLevels, and revenues
     - import

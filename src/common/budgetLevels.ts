@@ -25,10 +25,10 @@ export const levelToEffect = (level: number) => {
 };
 
 export const levelToAmount = (level: number, salaryCap: number) => {
+	// Denominator uses 2 * DEFAULT_LEVEL rather than MAX_LEVEL to allow for extra space at the top, and to keep DEFAULT_LEVEL in the middle
 	return (
 		Math.round(
-			20 +
-				(salaryCap / 90000) * 1330 +
+			(salaryCap / 90000) * 1345 +
 				(900 * (salaryCap / 90000) * (Math.round(level) - 1)) /
 					(2 * DEFAULT_LEVEL - 1),
 		) * 10
@@ -39,8 +39,7 @@ export const levelToAmount = (level: number, salaryCap: number) => {
 export const amountToLevel = (amount: number, salaryCap: number) => {
 	return helpers.bound(
 		Math.round(
-			((amount / 10 - 20 - (salaryCap / 90000) * 1330) *
-				(2 * DEFAULT_LEVEL - 1)) /
+			((amount / 10 - (salaryCap / 90000) * 1345) * (2 * DEFAULT_LEVEL - 1)) /
 				((900 * salaryCap) / 90000) +
 				1,
 		),
@@ -48,8 +47,6 @@ export const amountToLevel = (amount: number, salaryCap: number) => {
 		MAX_LEVEL,
 	);
 };
-self.levelToAmount = levelToAmount;
-self.amountToLevel = amountToLevel;
 
 // Scale the output of levelToEffect for use in game - these functions are centralized here so they can be used in the UI too
 export const facilitiesEffectMood = (level: number) => {

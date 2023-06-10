@@ -19,20 +19,20 @@ const getLevelLastThree = async (
 				teamSeasons?: TeamSeasonWithoutKey[];
 		  },
 ) => {
-	const NUM_SEASONS = 3;
-
-	const teamSeasons =
-		extra.teamSeasons ??
-		(await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-			[(extra as any).tid, g.get("season") - 2],
-			[(extra as any).tid, g.get("season")],
-		]));
-	const t = extra.t ?? (await idb.cache.teams.get((extra as any).tid));
-	if (!t) {
-		throw new Error("Should never happen");
-	}
-
 	if (g.get("budget")) {
+		const NUM_SEASONS = 3;
+
+		const teamSeasons =
+			extra.teamSeasons ??
+			(await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
+				[(extra as any).tid, g.get("season") - 2],
+				[(extra as any).tid, g.get("season")],
+			]));
+		const t = extra.t ?? (await idb.cache.teams.get((extra as any).tid));
+		if (!t) {
+			throw new Error("Should never happen");
+		}
+
 		// Ideally up to 3 seasons would be passed to this form, but in case there's more, this handles it
 		const upToLastThreeTeamSeasons = teamSeasons.slice(-NUM_SEASONS);
 

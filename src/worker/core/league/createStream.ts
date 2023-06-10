@@ -596,7 +596,7 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 	return values;
 };
 
-const processTeamInfos = ({
+const processTeamInfos = async ({
 	gameAttributes,
 	realTeamInfo,
 	teamInfos,
@@ -864,7 +864,10 @@ const processTeamInfos = ({
 
 		// Save scoutingLevel for later
 		if (i === userTid) {
-			scoutingLevel = finances.getLevelLastThree(teamSeasonsLocal, "scouting");
+			scoutingLevel = await finances.getLevelLastThree("scouting", {
+				t,
+				teamSeasons: teamSeasonsLocal,
+			});
 		}
 	}
 
@@ -1117,12 +1120,13 @@ const beforeDBStream = async ({
 	Object.assign(g, gameAttributes);
 
 	// Needs to be done after g is set
-	const { scoutingLevel, teams, teamSeasons, teamStats } = processTeamInfos({
-		gameAttributes,
-		realTeamInfo,
-		teamInfos,
-		userTid: tid,
-	});
+	const { scoutingLevel, teams, teamSeasons, teamStats } =
+		await processTeamInfos({
+			gameAttributes,
+			realTeamInfo,
+			teamInfos,
+			userTid: tid,
+		});
 
 	// Update after applying real team info
 	if (realTeamInfo) {

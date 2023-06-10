@@ -7,7 +7,9 @@ team finances
   - handle upgrading a league prior to 3 seasons being played? most important for real players leagues with history
   - Team.initialBudget
     - how to handle starting in playoffs or after playoffs, where there is 0 GP? distinct from the case where the upcoming season has 0 GP so far
-- expenseLevels for upgraded leagues mid season?
+    - upgrade
+    - import
+    - schema
 - test other sports
 - blog
   - rank isn't fun, like ebay bidding

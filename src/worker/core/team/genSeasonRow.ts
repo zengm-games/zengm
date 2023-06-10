@@ -120,13 +120,6 @@ const genSeasonRow = (
 		}
 	}
 
-	// First season, initialize firstSeasonBudget
-	if (!prevSeason && (t as Team).budget) {
-		newSeason.firstSeasonBudget = {
-			...(t as Team).budget,
-		};
-	}
-
 	return newSeason;
 };
 

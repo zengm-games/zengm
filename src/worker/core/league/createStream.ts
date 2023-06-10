@@ -664,24 +664,14 @@ const processTeamInfos = ({
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal.at(-1);
 
-			if (last && !t.disabled) {
-				if (last.season !== g.get("season")) {
-					last.season = g.get("season");
+			if (last && last.season !== g.get("season") && !t.disabled) {
+				last.season = g.get("season");
 
-					// Remove any past seasons that claim to be from this season or a future season
-					teamSeasonsLocal = [
-						...teamSeasonsLocal.filter(ts => ts.season < last.season),
-						last,
-					];
-				}
-
-				// If this is true, that means the budget was created in team.generate, meaning this is a new league and we need to set firstSeasonBudget on the current teamSeason
-				const initFirstSeasonBudget = t.budget && !teamInfo.budget;
-				if (initFirstSeasonBudget) {
-					last.firstSeasonBudget = {
-						...t.budget,
-					};
-				}
+				// Remove any past seasons that claim to be from this season or a future season
+				teamSeasonsLocal = [
+					...teamSeasonsLocal.filter(ts => ts.season < last.season),
+					last,
+				];
 			}
 
 			for (const teamSeason of teamSeasonsLocal) {

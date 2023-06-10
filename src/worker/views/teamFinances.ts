@@ -176,14 +176,24 @@ const updateTeamFinances = async (
 
 		// Undo reverse from above
 		const teamSeasonsLastThree = teamSeasons.slice(0, 3).reverse();
+		console.log("teamSeasonsLastThree", teamSeasonsLastThree);
 		t.expenseLevelsLastThree = {
-			coaching: finances.getLevelLastThree(teamSeasonsLastThree, "coaching"),
-			facilities: finances.getLevelLastThree(
-				teamSeasonsLastThree,
-				"facilities",
-			),
-			health: finances.getLevelLastThree(teamSeasonsLastThree, "health"),
-			scouting: finances.getLevelLastThree(teamSeasonsLastThree, "scouting"),
+			coaching: await finances.getLevelLastThree("coaching", {
+				tid: inputs.tid,
+				teamSeasons: teamSeasonsLastThree,
+			}),
+			facilities: await finances.getLevelLastThree("facilities", {
+				tid: inputs.tid,
+				teamSeasons: teamSeasonsLastThree,
+			}),
+			health: await finances.getLevelLastThree("health", {
+				tid: inputs.tid,
+				teamSeasons: teamSeasonsLastThree,
+			}),
+			scouting: await finances.getLevelLastThree("scouting", {
+				tid: inputs.tid,
+				teamSeasons: teamSeasonsLastThree,
+			}),
 		};
 
 		const maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {

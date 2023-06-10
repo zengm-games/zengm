@@ -54,23 +54,28 @@ const SPORT_FACTOR = bySport({
 
 const TICKET_PRICE_FACTOR = 45 * 50;
 
-const facilitiesFactor = (teamSeasons: TeamSeason[]) => {
-	const level = finances.getLevelLastThree(teamSeasons, "facilities");
+const facilitiesFactor = async (tid: number, teamSeasons: TeamSeason[]) => {
+	const level = await finances.getLevelLastThree("facilities", {
+		tid,
+		teamSeasons,
+	});
 	return 1.0375 + facilitiesEffectAttendance(level);
 };
 
 // teamSeasons is last 3 seasons
-export const getActualAttendance = ({
+export const getActualAttendance = async ({
 	baseAttendance,
 	randomize,
 	stadiumCapacity,
 	teamSeasons,
+	tid,
 	adjustedTicketPrice,
 }: {
 	baseAttendance: number;
 	randomize: boolean;
 	stadiumCapacity: number;
 	teamSeasons: TeamSeason[];
+	tid: number;
 	adjustedTicketPrice: number;
 }) => {
 	const relativeTicketPrice = adjustedTicketPrice * salaryCapFactor();
@@ -87,7 +92,7 @@ export const getActualAttendance = ({
 	attendance *= TICKET_PRICE_FACTOR / relativeTicketPrice ** 2;
 
 	// Attendance depends on facilities
-	attendance *= facilitiesFactor(teamSeasons);
+	attendance *= await facilitiesFactor(tid, teamSeasons);
 
 	attendance = helpers.bound(attendance, 0, stadiumCapacity);
 	attendance = Math.round(attendance);
@@ -96,18 +101,20 @@ export const getActualAttendance = ({
 };
 
 // Takes attendance (stadiumCapacity) and returns ticketPrice, rather than taking adjustedTicketPrice and returning attendance. This assumes baseAttendance was calculated with playoffs: false
-const getActualAttendanceInverted = ({
+const getActualAttendanceInverted = async ({
 	baseAttendance,
 	stadiumCapacity,
 	teamSeasons,
+	tid,
 }: {
 	baseAttendance: number;
 	stadiumCapacity: number;
 	teamSeasons: TeamSeason[];
+	tid: number;
 }) => {
 	let temp = stadiumCapacity;
 
-	temp /= facilitiesFactor(teamSeasons);
+	temp /= await facilitiesFactor(tid, teamSeasons);
 	temp /= TICKET_PRICE_FACTOR;
 	temp /= SPORT_FACTOR;
 	temp /= baseAttendance;
@@ -122,16 +129,18 @@ const getActualAttendanceInverted = ({
 	return Math.round(ticketPrice * 100) / 100;
 };
 
-export const getAutoTicketPrice = ({
+export const getAutoTicketPrice = async ({
 	hype,
 	pop,
 	stadiumCapacity,
 	teamSeasons,
+	tid,
 }: {
 	hype: number;
 	pop: number;
 	stadiumCapacity: number;
 	teamSeasons: TeamSeason[];
+	tid: number;
 }) => {
 	if (stadiumCapacity <= 0) {
 		return 50;
@@ -147,6 +156,7 @@ export const getAutoTicketPrice = ({
 		baseAttendance,
 		stadiumCapacity,
 		teamSeasons,
+		tid,
 	});
 };
 
@@ -185,5 +195,6 @@ export const getAutoTicketPriceByTid = async (tid: number) => {
 		pop,
 		stadiumCapacity,
 		teamSeasons,
+		tid,
 	});
 };

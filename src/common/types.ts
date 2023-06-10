@@ -1425,6 +1425,12 @@ export type SortType =
 	| "record"
 	| "string";
 
+type TeamBudget = Record<
+	// ticketPrice is in dollars, others are levels
+	"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
+	number
+>;
+
 export type Team = {
 	tid: number;
 	cid: number;
@@ -1436,11 +1442,9 @@ export type Team = {
 	imgURLSmall?: string;
 	colors: [string, string, string];
 	jersey?: string;
-	budget: Record<
-		// ticketPrice is in dollars, others are levels
-		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
-		number
-	>;
+	budget: TeamBudget;
+	// initialBudget is for when starting a new league, it can use initialBudget as values for the past 2 seasons when no data exists
+	initialBudget: TeamBudget;
 	strategy: "contending" | "rebuilding";
 	depth?:
 		| {
@@ -1628,13 +1632,6 @@ export type TeamSeasonWithoutKey = {
 	};
 	// These are cumsums per game, divide by gp for the average
 	expenseLevels: {
-		coaching: number;
-		facilities: number;
-		health: number;
-		scouting: number;
-	};
-	// If this exists, that means this is the first row in a new league and these budget levels should be used for the past 2 seasons when computing the average. These are levels, not cumsum values like expenseLevels!
-	firstSeasonBudget?: {
 		coaching: number;
 		facilities: number;
 		health: number;

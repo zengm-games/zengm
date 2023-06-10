@@ -119,10 +119,10 @@ const moodComponents = async (
 
 	{
 		// FACILITIES: -2 to 2, based on facilities level
-		const facilitiesLevel = finances.getLevelLastThree(
+		const facilitiesLevel = await finances.getLevelLastThree("facilities", {
+			t,
 			teamSeasons,
-			"facilities",
-		);
+		});
 		components.facilities = facilitiesEffectMood(facilitiesLevel);
 	}
 

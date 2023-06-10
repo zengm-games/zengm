@@ -1,46 +1,70 @@
 import { g } from "../../util";
-import type { TeamSeasonWithoutKey } from "../../../common/types";
+import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { PHASE } from "../../../common";
+import { idb } from "../../db";
 
-const getLevelLastThree = (
-	teamSeasons: TeamSeasonWithoutKey[],
-	item: keyof TeamSeasonWithoutKey["expenseLevels"],
-): number => {
+const getLevelLastThree = async (
+	key: keyof TeamSeasonWithoutKey["expenseLevels"],
+
+	// We either need to be provided t and teamSeasons, or we need the tid to fetch whatever is missing
+	extra:
+		| {
+				t: Team;
+				teamSeasons: TeamSeasonWithoutKey[];
+		  }
+		| {
+				tid: number;
+				t?: Team;
+				teamSeasons?: TeamSeasonWithoutKey[];
+		  },
+) => {
 	const NUM_SEASONS = 3;
+
+	const teamSeasons =
+		extra.teamSeasons ??
+		(await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
+			[(extra as any).tid, g.get("season") - 2],
+			[(extra as any).tid, g.get("season")],
+		]));
+	const t = extra.t ?? (await idb.cache.teams.get((extra as any).tid));
+	if (!t) {
+		throw new Error("Should never happen");
+	}
 
 	if (g.get("budget")) {
 		// Ideally up to 3 seasons would be passed to this form, but in case there's more, this handles it
 		const upToLastThreeTeamSeasons = teamSeasons.slice(-NUM_SEASONS);
 
+		let numSeasonsToImpute = 0;
 		let levelSum = 0;
 		let gpSum = 0;
 		for (const row of upToLastThreeTeamSeasons) {
-			levelSum += row.expenseLevels[item];
-			gpSum += row.gp;
+			if (row.gp === 0 && row.expenseLevels[key] === 0) {
+				if (
+					g.get("season") === row.season &&
+					g.get("phase") > PHASE.REGULAR_SEASON
+				) {
+					// Could be dummy row, like in real players league with history. Could be a row from the current season when starting a real players league after the regular season. In both cases, we want to impute the spending that would have happened that season
+					numSeasonsToImpute += 1;
+				}
+
+				// Otherwise, this is probably a season that hadn't started yet, so 0 expense and 0 GP is normal
+			} else {
+				// Normal case
+				levelSum += row.expenseLevels[key];
+				gpSum += row.gp;
+			}
 		}
 
-		// If we have less than three seasons and the first one has firstSeasonBudget, add dummy values. This is not necessarily the first entry in  upToLastThreeTeamSeasons! Imagine a real players league started with full history. There will be dummy TeamSeason entries with no expenseLevels in them, and firstSeasonBudget will be in the latest season. It needs to override those dummy entries.
-		const firstSeasonIndex = upToLastThreeTeamSeasons.findIndex(
-			row => row.firstSeasonBudget,
-		);
-		const firstSeason = upToLastThreeTeamSeasons[firstSeasonIndex];
-		if (firstSeason?.firstSeasonBudget) {
-			const gp = g.get("numGames");
+		// In addition to the blank seasons found above, impute when there are not enough rows passed
+		numSeasonsToImpute += NUM_SEASONS - upToLastThreeTeamSeasons.length;
 
-			// Handle leagues started after regular season
-			if (firstSeason.gp === 0) {
-				gpSum = gp;
-			}
-			if (firstSeason.expenseLevels[item] === 0) {
-				levelSum += firstSeason.firstSeasonBudget[item] * gp;
-			}
+		const numGames = g.get("numGames");
 
-			// Handle any seasons from before the league existed
-			const numFullSeasonsMissing = firstSeasonIndex;
-			if (numFullSeasonsMissing > 0) {
-				levelSum += firstSeason.firstSeasonBudget[item] * gp;
-				gpSum += gp;
-			}
+		if (numSeasonsToImpute > 0) {
+			levelSum += t.initialBudget[key] * numSeasonsToImpute * numGames;
+			gpSum += numSeasonsToImpute * numGames;
 		}
 
 		if (gpSum > 0) {

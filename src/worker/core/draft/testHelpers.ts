@@ -31,6 +31,7 @@ const loadTeamSeasons = async () => {
 			keepRosterSorted: true,
 			colors: ["#000000", "#000000", "#000000"],
 			playThroughInjuries: [0, 0],
+			initialBudget: partialT.budget,
 		} as Team;
 
 		const teamSeasons = seasons.map(teamSeason => ({

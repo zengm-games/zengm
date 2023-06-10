@@ -26,14 +26,9 @@ const doInjury = async (
 	injuryTexts: string[],
 	conditions: Conditions,
 ) => {
-	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-		"teamSeasonsByTidSeason",
-		[
-			[p2.tid, g.get("season") - 2],
-			[p2.tid, g.get("season")],
-		],
-	);
-	const healthLevel = finances.getLevelLastThree(teamSeasons, "health");
+	const healthLevel = await finances.getLevelLastThree("health", {
+		tid: p2.tid,
+	});
 
 	p2.injury = player.injury(healthLevel);
 

@@ -134,7 +134,10 @@ const newPhasePreseason = async (
 				},
 				"noCopyCache",
 			);
-			scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
+			scoutingLevel = await finances.getLevelLastThree("scouting", {
+				t,
+				teamSeasons,
+			});
 			prevSeason = teamSeasons.at(-1);
 		} else {
 			prevSeason = await idb.cache.teamSeasons.indexGet(
@@ -240,7 +243,10 @@ const newPhasePreseason = async (
 			},
 			"noCopyCache",
 		);
-		coachingLevels[t.tid] = finances.getLevelLastThree(teamSeasons, "coaching");
+		coachingLevels[t.tid] = await finances.getLevelLastThree("coaching", {
+			t,
+			teamSeasons,
+		});
 	}
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [

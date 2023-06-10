@@ -81,14 +81,9 @@ const updateCustomizePlayer = async (
 		let p: PlayerWithoutKey;
 		if (inputs.pid === null) {
 			// Generate new player as basis
-			const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-				"teamSeasonsByTidSeason",
-				[
-					[g.get("userTid"), g.get("season") - 2],
-					[g.get("userTid"), g.get("season")],
-				],
-			);
-			const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
+			const scoutingLevel = await finances.getLevelLastThree("scouting", {
+				tid: g.get("userTid"),
+			});
 			const name = await player.name();
 			p = player.generate(
 				PLAYER.FREE_AGENT,

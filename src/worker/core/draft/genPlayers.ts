@@ -11,14 +11,9 @@ const genPlayers = async (
 ) => {
 	// If scoutingLevel is not supplied, have to hit the DB to get it
 	if (scoutingLevel === undefined) {
-		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-			"teamSeasonsByTidSeason",
-			[
-				[g.get("userTid"), g.get("season") - 2],
-				[g.get("userTid"), g.get("season")],
-			],
-		);
-		scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
+		scoutingLevel = await finances.getLevelLastThree("scouting", {
+			tid: g.get("userTid"),
+		});
 	}
 
 	const allDraftProspects = await idb.cache.players.indexGetAll(

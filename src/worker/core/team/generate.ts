@@ -18,6 +18,14 @@ import finances from "../finances";
 const generate = (tm: any): Team => {
 	const strategy = Object.hasOwn(tm, "strategy") ? tm.strategy : "rebuilding";
 
+	const budget = tm.budget ?? {
+		ticketPrice: helpers.defaultTicketPrice(tm.popRank),
+		scouting: finances.defaultBudgetLevel(tm.popRank),
+		coaching: finances.defaultBudgetLevel(tm.popRank),
+		health: finances.defaultBudgetLevel(tm.popRank),
+		facilities: finances.defaultBudgetLevel(tm.popRank),
+	};
+
 	const t: Team = {
 		tid: tm.tid,
 		cid: tm.cid,
@@ -30,12 +38,9 @@ const generate = (tm: any): Team => {
 		imgURL: tm.imgURL ?? "",
 		imgURLSmall: tm.imgURLSmall === "" ? undefined : tm.imgURLSmall,
 
-		budget: tm.budget ?? {
-			ticketPrice: helpers.defaultTicketPrice(tm.popRank),
-			scouting: finances.defaultBudgetLevel(tm.popRank),
-			coaching: finances.defaultBudgetLevel(tm.popRank),
-			health: finances.defaultBudgetLevel(tm.popRank),
-			facilities: finances.defaultBudgetLevel(tm.popRank),
+		budget,
+		initialBudget: tm.initialBudget ?? {
+			...budget,
 		},
 		strategy,
 		depth: tm.depth,

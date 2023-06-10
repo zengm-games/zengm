@@ -3,7 +3,10 @@ team finances
 - firstSeasonBudget
   - test expansion team
     - exploit if you do it after the draft - the TeamSeason isn't created until simming to preseason, so you could max it out at 100 and then get free credit for 2 years of that next season. maybe need to store this in the team object to avoid this problem?
+      - is there any situation where a real players league has a team with no TeamSeason, maybe after playoffs start?
   - handle upgrading a league prior to 3 seasons being played? most important for real players leagues with history
+  - Team.initialBudget
+    - how to handle starting in playoffs or after playoffs, where there is 0 GP? distinct from the case where the upcoming season has 0 GP so far
 - expenseLevels for upgraded leagues mid season?
 - test other sports
 - blog

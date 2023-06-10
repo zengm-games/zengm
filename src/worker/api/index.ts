@@ -1661,11 +1661,12 @@ const getProjectedAttendance = async ({
 		playoffs: false,
 	});
 	const adjustedTicketPrice = getAdjustedTicketPrice(ticketPrice, false);
-	const attendance = getActualAttendance({
+	const attendance = await getActualAttendance({
 		baseAttendance,
 		randomize: false,
 		stadiumCapacity: teamSeason.stadiumCapacity,
 		teamSeasons,
+		tid: teamSeason.tid,
 		adjustedTicketPrice,
 	});
 
@@ -1971,14 +1972,9 @@ const handleUploadedDraftClass = async ({
 	}
 
 	// Get scouting rank, which is used in a couple places below
-	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-		"teamSeasonsByTidSeason",
-		[
-			[g.get("userTid"), g.get("season") - 2],
-			[g.get("userTid"), g.get("season")],
-		],
-	);
-	const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
+	const scoutingLevel = await finances.getLevelLastThree("scouting", {
+		tid: g.get("userTid"),
+	});
 
 	// Delete old players from draft class
 	const oldPlayers = await idb.cache.players.indexGetAll(

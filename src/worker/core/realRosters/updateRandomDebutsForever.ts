@@ -55,14 +55,9 @@ const updateRandomDebutsForever = async (
 		p.born.year += diff;
 	}
 
-	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-		"teamSeasonsByTidSeason",
-		[
-			[g.get("userTid"), g.get("season") - 2],
-			[g.get("userTid"), g.get("season")],
-		],
-	);
-	const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
+	const scoutingLevel = await finances.getLevelLastThree("scouting", {
+		tid: g.get("userTid"),
+	});
 
 	for (const p of draftProspects) {
 		const p2 = await player.augmentPartialPlayer(

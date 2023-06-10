@@ -430,14 +430,9 @@ const processUnretirePlayer = async (pid: number) => {
 	const lastRatingsSeason = p.ratings.at(-1)!.season;
 	const diff = g.get("season") - lastRatingsSeason;
 	if (diff > 0) {
-		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-			"teamSeasonsByTidSeason",
-			[
-				[g.get("userTid"), g.get("season") - 2],
-				[g.get("userTid"), g.get("season")],
-			],
-		);
-		const scoutingLevel = finances.getLevelLastThree(teamSeasons, "scouting");
+		const scoutingLevel = await finances.getLevelLastThree("scouting", {
+			tid: g.get("userTid"),
+		});
 
 		// Add rows one at a time, since we want to store full ratings history
 		for (let i = 0; i < diff; i++) {

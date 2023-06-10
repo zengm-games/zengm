@@ -61,11 +61,12 @@ const writeTeamStats = async (results: GameResults) => {
 			});
 
 			if (t.autoTicketPrice !== false || !g.get("userTids").includes(t.tid)) {
-				const ticketPrice = getAutoTicketPrice({
+				const ticketPrice = await getAutoTicketPrice({
 					hype: teamSeason.hype,
 					pop: teamSeason.pop,
 					stadiumCapacity: teamSeason.stadiumCapacity,
 					teamSeasons,
+					tid: teamSeason.tid,
 				});
 				t.budget.ticketPrice = ticketPrice;
 			}
@@ -168,11 +169,12 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// Attendance: base on home team
 		if (t1 === 0) {
-			attendance = getActualAttendance({
+			attendance = await getActualAttendance({
 				baseAttendance,
 				randomize: true,
 				stadiumCapacity: teamSeason.stadiumCapacity,
 				teamSeasons,
+				tid: teamSeason.tid,
 				adjustedTicketPrice,
 			});
 		}

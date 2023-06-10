@@ -40,13 +40,19 @@ const getLevelLastThree = async (
 		let levelSum = 0;
 		let gpSum = 0;
 		for (const row of upToLastThreeTeamSeasons) {
-			if (row.gp === 0 && row.expenseLevels[key] === 0) {
-				if (
-					g.get("season") === row.season &&
-					g.get("phase") > PHASE.REGULAR_SEASON
-				) {
-					// Could be dummy row, like in real players league with history. Could be a row from the current season when starting a real players league after the regular season. In both cases, we want to impute the spending that would have happened that season
-					numSeasonsToImpute += 1;
+			if (row.expenseLevels[key] === 0) {
+				if (row.gp === 0) {
+					if (
+						g.get("season") === row.season &&
+						g.get("phase") > PHASE.REGULAR_SEASON
+					) {
+						// If there are no GP and no expenses, treat as if there is no row at all, unless it's still the preseason or regular season of the current year
+						numSeasonsToImpute += 1;
+					}
+				} else {
+					// Could be dummy row, like in real players league with history. Could be a row from the current season when starting a real players league after the regular season. We have GP but no expenses, so impute expenses only.
+					levelSum += t.initialBudget[key] * row.gp;
+					gpSum += row.gp;
 				}
 
 				// Otherwise, this is probably a season that hadn't started yet, so 0 expense and 0 GP is normal

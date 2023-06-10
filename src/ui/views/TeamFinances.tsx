@@ -359,9 +359,21 @@ const FinancesForm = ({
 											width: 120,
 										}}
 									>
+										<button
+											className="btn btn-secondary"
+											type="button"
+											disabled={
+												formDisabled || Number.isNaN(levelInt) || levelInt <= 1
+											}
+											onClick={() => {
+												setStateValue(expenseCategory.key, levelInt - 1);
+											}}
+										>
+											−
+										</button>
 										<input
 											type="text"
-											className="form-control"
+											className="form-control text-center"
 											disabled={formDisabled || challengeNoRatings}
 											onChange={handleChange(expenseCategory.key)}
 											value={level}
@@ -380,18 +392,6 @@ const FinancesForm = ({
 											}}
 										>
 											+
-										</button>
-										<button
-											className="btn btn-secondary"
-											type="button"
-											disabled={
-												formDisabled || Number.isNaN(levelInt) || levelInt <= 1
-											}
-											onClick={() => {
-												setStateValue(expenseCategory.key, levelInt - 1);
-											}}
-										>
-											−
 										</button>
 									</div>
 									<div>Average of last 3 seasons: {levelThree}</div>

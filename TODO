@@ -1,6 +1,9 @@
 team finances
 - later
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
+  - some kind of estimates for revenue, expenses, and profit for the year
+
+tweak attendance formula so selling out isn't always the best option for auto ticket price
 
 little bugs
 - create player, don't edit ratings at all -> pot is 0 https://old.reddit.com/r/BasketballGM/comments/142hfid/bro_is_a_0_potential_and_still_got_more_potential/jn9mbnu/?context=3

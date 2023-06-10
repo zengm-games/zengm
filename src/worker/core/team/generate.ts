@@ -19,11 +19,11 @@ const generate = (tm: any): Team => {
 	const strategy = Object.hasOwn(tm, "strategy") ? tm.strategy : "rebuilding";
 
 	const budget = tm.budget ?? {
-		ticketPrice: helpers.defaultTicketPrice(tm.popRank),
-		scouting: finances.defaultBudgetLevel(tm.popRank),
 		coaching: finances.defaultBudgetLevel(tm.popRank),
-		health: finances.defaultBudgetLevel(tm.popRank),
 		facilities: finances.defaultBudgetLevel(tm.popRank),
+		health: finances.defaultBudgetLevel(tm.popRank),
+		scouting: finances.defaultBudgetLevel(tm.popRank),
+		ticketPrice: helpers.defaultTicketPrice(tm.popRank),
 	};
 
 	const t: Team = {
@@ -40,7 +40,10 @@ const generate = (tm: any): Team => {
 
 		budget,
 		initialBudget: tm.initialBudget ?? {
-			...budget,
+			coaching: budget.coaching,
+			facilities: budget.facilities,
+			health: budget.health,
+			scouting: budget.scouting,
 		},
 		strategy,
 		depth: tm.depth,

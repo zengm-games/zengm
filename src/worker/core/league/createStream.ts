@@ -645,6 +645,8 @@ const processTeamInfos = async ({
 				}
 			}
 			budgetsByTid[t.tid] = t.budget;
+
+			// initialBudget will be created in team.generate below
 		}
 	}
 

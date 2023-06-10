@@ -1266,6 +1266,13 @@ const migrate = async ({
 				}
 			}
 
+			t.initialBudget = {
+				coaching: t.budget.coaching,
+				facilities: t.budget.facilities,
+				health: t.budget.health,
+				scouting: t.budget.scouting,
+			};
+
 			budgetsByTid[t.tid] = t.budget;
 
 			return t;

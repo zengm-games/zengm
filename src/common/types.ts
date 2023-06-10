@@ -1425,12 +1425,6 @@ export type SortType =
 	| "record"
 	| "string";
 
-type TeamBudget = Record<
-	// ticketPrice is in dollars, others are levels
-	"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
-	number
->;
-
 export type Team = {
 	tid: number;
 	cid: number;
@@ -1442,9 +1436,16 @@ export type Team = {
 	imgURLSmall?: string;
 	colors: [string, string, string];
 	jersey?: string;
-	budget: TeamBudget;
+	budget: Record<
+		// ticketPrice is in dollars, others are levels
+		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
+		number
+	>;
 	// initialBudget is for when starting a new league, it can use initialBudget as values for the past 2 seasons when no data exists
-	initialBudget: TeamBudget;
+	initialBudget: Record<
+		"scouting" | "coaching" | "health" | "facilities",
+		number
+	>;
 	strategy: "contending" | "rebuilding";
 	depth?:
 		| {

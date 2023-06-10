@@ -2049,6 +2049,32 @@ const generateJSONSchema = (sport /*: string*/) => {
 								},
 							],
 						},
+						initialBudget: {
+							type: "object",
+							properties: {
+								scouting: {
+									type: "integer",
+									minimum: 1,
+									maximum: 100,
+								},
+								coaching: {
+									type: "integer",
+									minimum: 1,
+									maximum: 100,
+								},
+								health: {
+									type: "integer",
+									minimum: 1,
+									maximum: 100,
+								},
+								facilities: {
+									type: "integer",
+									minimum: 1,
+									maximum: 100,
+								},
+							},
+							required: ["scouting", "coaching", "health", "facilities"],
+						},
 						strategy: {},
 						pop: {
 							type: "number",

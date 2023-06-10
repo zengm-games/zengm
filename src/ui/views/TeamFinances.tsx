@@ -21,6 +21,7 @@ import { getAdjustedTicketPrice, PHASE } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import type { DataTableRow } from "../components/DataTable";
 import {
+	DEFAULT_LEVEL,
 	MAX_LEVEL,
 	coachingEffect,
 	facilitiesEffectAttendance,
@@ -331,8 +332,9 @@ const FinancesForm = ({
 				Expense levels{" "}
 				<HelpPopover title="Expense levels">
 					<p>
-						Expense levels can be set between 1 and 100. 34 is neutral, and at
-						the high end there are diminishing returns to increasing the level.
+						Expense levels can be set between 1 and {MAX_LEVEL}. {DEFAULT_LEVEL}{" "}
+						is neutral, and at the high end there are diminishing returns to
+						increasing the level.
 					</p>
 					<p>Effects are based on your spending over the past 3 seasons.</p>
 				</HelpPopover>
@@ -340,7 +342,11 @@ const FinancesForm = ({
 			<div className="d-flex flex-column gap-3">
 				{expenseCategories.map(expenseCategory => {
 					const level = state[expenseCategory.key];
-					const levelInt = Math.round(parseFloat(state[expenseCategory.key]));
+					const levelInt = helpers.bound(
+						Math.round(parseFloat(state[expenseCategory.key])),
+						1,
+						MAX_LEVEL,
+					);
 					const levelThree = t.expenseLevelsLastThree[expenseCategory.key];
 					return (
 						<div key={expenseCategory.key}>
@@ -367,7 +373,7 @@ const FinancesForm = ({
 											disabled={
 												formDisabled ||
 												Number.isNaN(levelInt) ||
-												levelInt >= 100
+												levelInt >= MAX_LEVEL
 											}
 											onClick={() => {
 												setStateValue(expenseCategory.key, levelInt + 1);

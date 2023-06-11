@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import fse from "fs-extra";
 import * as htmlmin from "html-minifier-terser";
-import sass from "sass";
+import * as sass from "sass";
 import path from "node:path";
 import { PurgeCSS } from "purgecss";
 import replace from "replace";

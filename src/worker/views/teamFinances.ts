@@ -176,7 +176,6 @@ const updateTeamFinances = async (
 
 		// Undo reverse from above
 		const teamSeasonsLastThree = teamSeasons.slice(0, 3).reverse();
-		console.log("teamSeasonsLastThree", teamSeasonsLastThree);
 		t.expenseLevelsLastThree = {
 			coaching: await finances.getLevelLastThree("coaching", {
 				tid: inputs.tid,

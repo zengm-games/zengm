@@ -507,6 +507,7 @@ soccer-style team names
 - implementation
   - add two field allongside abbrev/region/name - customMedium and customLong
     - customMedium is a medium length name. if undefined, Region is used. could be defined to disambiguate two teams in the same reason, like "LA Earthquakes" and "LA Lowriders"
+      - already manually using LA Lowriders in achievements.ts
     - customLong is a long name. if undefined, Region Name is used. could be defined to have european-style team names
   - ...this still results in weird situations, like not knowing how to use the medium name in a sentence since it might be the city or it might be the team name, like is it plural or not?
 - usually process in UI. maybe will need some in worker, like for notifications

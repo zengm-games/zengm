@@ -1,8 +1,3 @@
-2023 playoffs
-- make sure starting before lottery and before draft both work
-  - update docs: const MAX_PHASE = PHASE.DRAFT;
-- haslem in file? deleted from latest alexnoob
-
 team finances
 - later
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes

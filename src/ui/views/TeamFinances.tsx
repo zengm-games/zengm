@@ -961,6 +961,7 @@ const TeamFinances = ({
 				{budget ? (
 					<div className="col-lg-5 col-md-6 col-sm-7">
 						<FinancesForm
+							key={tid}
 							autoTicketPrice={autoTicketPrice}
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}

@@ -628,7 +628,6 @@ const processTeamInfos = async ({
 	}
 
 	// Version 55 upgrade
-	const budgetsByTid: Record<number, Team["budget"]> = {};
 	for (const t of teamInfos) {
 		if (t.budget) {
 			for (const key of Object.keys(t.budget)) {
@@ -644,13 +643,18 @@ const processTeamInfos = async ({
 					}
 				}
 			}
-			budgetsByTid[t.tid] = t.budget;
 
 			// initialBudget will be created in team.generate below
 		}
 	}
 
 	const teams = teamInfos.map(t => team.generate(t));
+
+	// Version 55 upgrade
+	const budgetsByTid: Record<number, Team["budget"]> = {};
+	for (const t of teams) {
+		budgetsByTid[t.tid] = t.budget;
+	}
 
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
 	const teamStats: TeamStatsWithoutKey[] = [];
@@ -706,8 +710,9 @@ const processTeamInfos = async ({
 						otl: teamSeason.otl ?? 0,
 					});
 					for (const key of expenseLevelsKeys) {
+						// Careful, teamSeason.tid might not be defined for imported leagues yet!
 						teamSeason.expenseLevels[key] =
-							gp * (budgetsByTid[teamSeason.tid][key] ?? DEFAULT_LEVEL);
+							gp * (budgetsByTid[t.tid]?.[key] ?? DEFAULT_LEVEL);
 					}
 				}
 

@@ -1521,7 +1521,13 @@ const generateFace = async (country: string | undefined) => {
 };
 
 const getAutoPos = (ratings: any) => {
-	return player.pos(ratings);
+	const boundedRatings = {
+		...ratings,
+	};
+	for (const key of RATINGS) {
+		boundedRatings[key] = player.limitRating(boundedRatings[key]);
+	}
+	return player.pos(boundedRatings);
 };
 
 const getDefaultInjuries = () => {

@@ -6,7 +6,6 @@ team finances
 tweak attendance formula so selling out isn't always the best option for auto ticket price
 
 little bugs
-- auto position returns different results if you put 100 and 300 in a field even though it will be capped to 100 https://discord.com/channels/290013534023057409/290015591216054273/1115470232543305739
 - color of trade response message can be wrong (like green for rejected trade) https://discord.com/channels/290013534023057409/290013534023057409/1116329185120632832
 
 Player.draft.pot and Player.draft.ovr needed? either use ratings row from that season, or if not found, make them null?

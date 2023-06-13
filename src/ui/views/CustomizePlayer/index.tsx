@@ -84,7 +84,9 @@ const copyValidValues = (
 		}
 	}
 
-	let recomputePosOvrPot = false;
+	// Always recompute for a new player
+	let recomputePosOvrPot = target.pid === undefined;
+
 	{
 		// @ts-expect-error
 		const age = parseInt(source.age);

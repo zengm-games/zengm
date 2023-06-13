@@ -244,8 +244,8 @@ const getSeasonsToPlot = async (
 					...teams[j],
 					won: teamSeason.won,
 					lost: teamSeason.lost,
-					tied: teamSeason.tied ?? 0,
-					otl: teamSeason.otl ?? 0,
+					tied: teamSeason.tied,
+					otl: teamSeason.otl,
 					winp: helpers.calcWinp(teamSeason),
 					ptsPct: team.ptsPct(teamSeason),
 					champ:

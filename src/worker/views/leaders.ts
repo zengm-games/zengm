@@ -429,10 +429,7 @@ export class GamesPlayedCache {
 			const cache: Record<number, number> = {};
 			for (const teamSeason of teamSeasons) {
 				const gpRegularSeason =
-					teamSeason.won +
-					teamSeason.lost +
-					(teamSeason.tied ?? 0) +
-					(teamSeason.otl ?? 0);
+					teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl;
 				if (playoffs) {
 					if (teamSeason.gp < gpRegularSeason) {
 						cache[teamSeason.tid] = 0;

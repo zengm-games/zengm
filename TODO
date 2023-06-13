@@ -1,7 +1,15 @@
 team finances
+- TeamSeason.gp includes playoffs?
+  - gpHome?
+  - could fix in upgrade
+  - delete TeamSeason.gp from types and code?
+    - ts.gp
+    - teamSeason.gp
 - later
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
   - some kind of estimates for revenue, expenses, and profit for the year
+
+check if a player is willing to re-sign on negotiation page, in case negotiation started before something changed https://old.reddit.com/r/BasketballGM/comments/1486fso/all_i_know_is_pain/jnyyrta/
 
 tweak attendance formula so selling out isn't always the best option for auto ticket price
 

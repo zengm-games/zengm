@@ -698,10 +698,10 @@ const processTeamInfos = async ({
 						"scouting",
 					] as const;
 					teamSeason.expenseLevels = {} as any;
+					const gp = helpers.getTeamSeasonGp(teamSeason);
 					for (const key of expenseLevelsKeys) {
 						teamSeason.expenseLevels[key] =
-							teamSeason.gp *
-							(budgetsByTid[teamSeason.tid][key] ?? DEFAULT_LEVEL);
+							gp * (budgetsByTid[teamSeason.tid][key] ?? DEFAULT_LEVEL);
 					}
 				}
 

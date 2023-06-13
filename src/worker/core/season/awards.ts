@@ -186,11 +186,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	> = {};
 	for (const teamSeason of teamSeasons) {
 		teamInfos[teamSeason.tid] = {
-			gp:
-				teamSeason.won +
-				teamSeason.lost +
-				(teamSeason.tied ?? 0) +
-				(teamSeason.otl ?? 0),
+			gp: teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl,
 			winp: helpers.calcWinp(teamSeason),
 		};
 	}

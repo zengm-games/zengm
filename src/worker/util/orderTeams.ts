@@ -203,8 +203,8 @@ export const breakTies = <T extends BaseTeam>(
 						if (factor > 0) {
 							won += factor * t2.seasonAttrs.won;
 							lost += factor * t2.seasonAttrs.lost;
-							tied += factor * (t2.seasonAttrs.tied ?? 0);
-							otl += factor * (t2.seasonAttrs.otl ?? 0);
+							tied += factor * t2.seasonAttrs.tied;
+							otl += factor * t2.seasonAttrs.otl;
 						}
 					}
 				}

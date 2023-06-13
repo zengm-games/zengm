@@ -132,8 +132,8 @@ const moodComponents = async (
 			const projectedRecord = {
 				won: currentTeamSeason.won,
 				lost: currentTeamSeason.lost,
-				tied: currentTeamSeason.tied ?? 0,
-				otl: currentTeamSeason.otl ?? 0,
+				tied: currentTeamSeason.tied,
+				otl: currentTeamSeason.otl,
 			};
 
 			// If a custom league file starts after the regular season, don't assume all teams have 0 winning percentage
@@ -154,8 +154,8 @@ const moodComponents = async (
 					const previousRecord = {
 						won: previousSeason ? previousSeason.won : 0,
 						lost: previousSeason ? previousSeason.lost : 0,
-						tied: previousSeason ? previousSeason.tied ?? 0 : 1,
-						otl: previousSeason ? previousSeason.otl ?? 0 : 0,
+						tied: previousSeason ? previousSeason.tied : 1,
+						otl: previousSeason ? previousSeason.otl : 0,
 					};
 
 					const fractionComplete =

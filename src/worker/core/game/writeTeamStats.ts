@@ -183,7 +183,8 @@ const writeTeamStats = async (results: GameResults) => {
 		let ticketRevenue = (adjustedTicketPrice * attendance) / 1000; // [thousands of dollars]
 
 		// Hype - relative to the expectations of prior seasons
-		if (teamSeason.gp > 5 && g.get("phase") !== PHASE.PLAYOFFS) {
+		const gp = helpers.getTeamSeasonGp(teamSeason);
+		if (gp > 5 && g.get("phase") !== PHASE.PLAYOFFS) {
 			let winp = helpers.calcWinp(teamSeason);
 			let winpOld = 0; // Avg winning percentage of last 0-2 seasons (as available)
 
@@ -270,15 +271,10 @@ const writeTeamStats = async (results: GameResults) => {
 			// Only home team gets attendance...
 			teamSeason.att += attendance; // This is only used for attendance tracking
 
-			if (teamSeason.gpHome === undefined) {
-				teamSeason.gpHome = Math.round(teamSeason.gp / 2);
-			}
-
 			// See also team.js and teamFinances.js
 			teamSeason.gpHome += 1;
 		}
 
-		teamSeason.gp += 1;
 		teamSeason.revenues.merch += merchRevenue;
 		teamSeason.revenues.sponsor += sponsorRevenue;
 		teamSeason.revenues.nationalTv += nationalTvRevenue;

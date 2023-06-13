@@ -650,7 +650,7 @@ const getModifiedPickRank = async (
 		"teamSeasonsBySeasonTid",
 		[g.get("season"), tid],
 	);
-	const gp = teamSeason?.gp ?? 0;
+	const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
 	const seasonFraction = gp / g.get("numGames");
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);

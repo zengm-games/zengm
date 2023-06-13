@@ -68,7 +68,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 622645,
 				cash: 24488.366643675654,
@@ -167,7 +166,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1017849,
 				cash: 58186.41387846379,
@@ -294,7 +292,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1025000,
 				cash: 72311.7967493849,
@@ -393,7 +390,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 891596,
 				cash: 52867.16244261731,
@@ -520,7 +516,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1025000,
 				cash: 37191.46567197439,
@@ -647,7 +642,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 921028,
 				cash: 22352.593342323053,
@@ -746,7 +740,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1004576,
 				cash: 55757.40551887043,
@@ -873,7 +866,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 583357,
 				cash: -9202.21080538443,
@@ -972,7 +964,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1025000,
 				cash: 65585.63214829154,
@@ -1071,7 +1062,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 797211,
 				cash: 16720.27013134855,
@@ -1198,7 +1188,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 589223,
 				cash: 22159.259126611483,
@@ -1297,7 +1286,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 982103,
 				cash: 66831.47841162534,
@@ -1424,7 +1412,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1025000,
 				cash: 78504.95533554856,
@@ -1551,7 +1538,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 888237,
 				cash: -45748.483684663326,
@@ -1678,7 +1664,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 565153,
 				cash: 7813.205794088158,
@@ -1777,7 +1762,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 975042,
 				cash: 38039.68071139992,
@@ -1876,7 +1860,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 992049,
 				cash: 80852.10939769106,
@@ -1975,7 +1958,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 777757,
 				cash: 22411.5628988122,
@@ -2102,7 +2084,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 459847,
 				cash: 18962.83666102178,
@@ -2201,7 +2182,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 946393,
 				cash: 37373.83567240833,
@@ -2300,7 +2280,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 972320,
 				cash: 24836.265962572583,
@@ -2399,7 +2378,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 574196,
 				cash: 19678.249370346693,
@@ -2526,7 +2504,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1023751,
 				cash: 36761.160936779605,
@@ -2653,7 +2630,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 812717,
 				cash: 30319.0473183802,
@@ -2780,7 +2756,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1025000,
 				cash: 44416.517342082036,
@@ -2879,7 +2854,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 860339,
 				cash: 44484.93305335862,
@@ -3006,7 +2980,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 979779,
 				cash: 37701.97131503867,
@@ -3133,7 +3106,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1025000,
 				cash: 66095.24096918566,
@@ -3232,7 +3204,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 494481,
 				cash: 22930.686858580142,
@@ -3359,7 +3330,6 @@ export default [
 		seasons: [
 			{
 				season: 2016,
-				gp: 82,
 				gpHome: 41,
 				att: 1005222,
 				cash: 39418.06159230258,

@@ -1812,16 +1812,13 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["abbrev", "region", "name", "strategy", "tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season: g.get("season"),
-			addDummySeason: true,
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["abbrev", "region", "name", "strategy", "tid"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
+		season: g.get("season"),
+		addDummySeason: true,
+		active: true,
+	});
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
@@ -2479,15 +2476,12 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did"],
+		season: g.get("season"),
+		active: true,
+	});
 
 	const newSchedule = season.newSchedule(teams, {
 		notify: true,

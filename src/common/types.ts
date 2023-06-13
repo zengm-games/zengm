@@ -1583,8 +1583,7 @@ export type TeamSeasonWithoutKey = {
 	rid?: number;
 	tid: number;
 	season: number;
-	gp: number;
-	gpHome: number;
+	gpHome: number; // Includes playoff games! Used for attendance average
 	att: number;
 	cash: number;
 	won: number;

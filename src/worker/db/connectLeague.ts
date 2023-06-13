@@ -1289,6 +1289,10 @@ const migrate = async ({
 				if (ts.otl === undefined) {
 					ts.otl = 0;
 				}
+				const gp = helpers.getTeamSeasonGp(ts);
+				if (ts.gpHome === undefined) {
+					ts.gpHome = Math.round(gp / 2);
+				}
 
 				// Move the amount to root, no more storing rank
 				for (const key of helpers.keys(ts.revenues)) {
@@ -1312,7 +1316,6 @@ const migrate = async ({
 					"scouting",
 				] as const;
 				ts.expenseLevels = {} as any;
-				const gp = helpers.getTeamSeasonGp(ts);
 				for (const key of expenseLevelsKeys) {
 					ts.expenseLevels[key] = gp * budgetsByTid[ts.tid][key];
 				}

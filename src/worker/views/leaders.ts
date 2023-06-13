@@ -394,6 +394,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	};
 };
 
+console.log("AAA");
 // Calculate the number of games played for each team, which is used to test if a player qualifies as a league leader
 export class GamesPlayedCache {
 	regularSeasonCache: Record<number, Record<number, number>>;
@@ -419,31 +420,17 @@ export class GamesPlayedCache {
 				continue;
 			}
 
-			const teamSeasons = await idb.getCopies.teamSeasons(
-				{
-					season,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				stats: ["gp"],
+				season,
+				playoffs,
+				regularSeason: !playoffs,
+			});
 
 			const cache: Record<number, number> = {};
-			for (const teamSeason of teamSeasons) {
-				const gpRegularSeason =
-					teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl;
-				if (playoffs) {
-					if (teamSeason.gp < gpRegularSeason) {
-						cache[teamSeason.tid] = 0;
-					} else {
-						cache[teamSeason.tid] = teamSeason.gp - gpRegularSeason;
-					}
-				} else {
-					// Don't count playoff games
-					if (teamSeason.gp > gpRegularSeason) {
-						cache[teamSeason.tid] = gpRegularSeason;
-					} else {
-						cache[teamSeason.tid] = teamSeason.gp;
-					}
-				}
+			for (const t of teams) {
+				cache[t.tid] = t.stats.gp;
 			}
 
 			if (playoffs) {

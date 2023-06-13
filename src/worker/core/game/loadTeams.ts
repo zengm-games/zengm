@@ -36,7 +36,6 @@ export const processTeam = (
 		depth?: any;
 	},
 	teamSeason: {
-		gp: number;
 		won: number;
 		lost: number;
 		tied: number;
@@ -370,7 +369,6 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					depth,
 				},
 				{
-					gp: 0,
 					cid: -1,
 					did: -1,
 					won: 0,

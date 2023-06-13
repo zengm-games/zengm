@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 import { PHASE } from "../../../common";
@@ -40,8 +40,9 @@ const getLevelLastThree = async (
 		let levelSum = 0;
 		let gpSum = 0;
 		for (const row of upToLastThreeTeamSeasons) {
+			const gp = helpers.getTeamSeasonGp(row);
 			if (row.expenseLevels[key] === 0) {
-				if (row.gp === 0) {
+				if (gp === 0) {
 					if (
 						g.get("season") === row.season &&
 						g.get("phase") > PHASE.REGULAR_SEASON
@@ -51,15 +52,15 @@ const getLevelLastThree = async (
 					}
 				} else {
 					// Could be dummy row, like in real players league with history. Could be a row from the current season when starting a real players league after the regular season. We have GP but no expenses, so impute expenses only.
-					levelSum += t.initialBudget[key] * row.gp;
-					gpSum += row.gp;
+					levelSum += t.initialBudget[key] * gp;
+					gpSum += gp;
 				}
 
 				// Otherwise, this is probably a season that hadn't started yet, so 0 expense and 0 GP is normal
 			} else {
 				// Normal case
 				levelSum += row.expenseLevels[key];
-				gpSum += row.gp;
+				gpSum += gp;
 			}
 		}
 

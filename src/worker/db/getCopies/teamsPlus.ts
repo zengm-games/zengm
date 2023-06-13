@@ -116,16 +116,7 @@ const processSeasonAttrs = async <
 				if (attr === "winp") {
 					row.winp = helpers.calcWinp(ts);
 				} else if (attr === "att") {
-					row.att = 0;
-
-					if (ts.gpHome === undefined) {
-						ts.gpHome = Math.round(ts.gp / 2);
-					}
-
-					// See also game.js and teamFinances.js
-					if (ts.gpHome > 0) {
-						row.att = ts.att / ts.gpHome;
-					}
+					row.att = ts.gpHome > 0 ? ts.att / ts.gpHome : 0;
 				} else if (attr === "cash") {
 					row.cash = ts.cash / 1000; // [millions of dollars]
 				} else if (attr === "revenue") {
@@ -188,12 +179,13 @@ const processSeasonAttrs = async <
 							scouting: t.budget.scouting,
 						};
 					} else {
-						if (ts.gp > 0) {
+						const gp = helpers.getTeamSeasonGp(ts);
+						if (gp > 0) {
 							row.expenseLevels = {
-								coaching: Math.round(ts.expenseLevels.coaching / ts.gp),
-								facilities: Math.round(ts.expenseLevels.facilities / ts.gp),
-								health: Math.round(ts.expenseLevels.health / ts.gp),
-								scouting: Math.round(ts.expenseLevels.scouting / ts.gp),
+								coaching: Math.round(ts.expenseLevels.coaching / gp),
+								facilities: Math.round(ts.expenseLevels.facilities / gp),
+								health: Math.round(ts.expenseLevels.health / gp),
+								scouting: Math.round(ts.expenseLevels.scouting / gp),
 							};
 						} else {
 							row.expenseLevels = {

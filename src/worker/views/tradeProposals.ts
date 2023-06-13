@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g, random } from "../util";
+import { g, helpers, random } from "../util";
 import type { TradeTeams, UpdateEvents } from "../../common/types";
 import isUntradable from "../core/trade/isUntradable";
 import makeItWork from "../core/trade/makeItWork";
@@ -116,7 +116,7 @@ const updateTradeProposals = async (
 			"teamSeasonsByTidSeason",
 			[g.get("userTid"), g.get("season")],
 		);
-		const gp = teamSeason?.gp ?? 0;
+		const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
 
 		const NUM_GAMES_BEFORE_NEW_OFFERS = 10;
 

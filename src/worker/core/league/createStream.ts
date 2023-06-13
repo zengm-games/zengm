@@ -689,7 +689,7 @@ const processTeamInfos = async ({
 						}
 					}
 				}
-				if (!teamSeason.expenseLevels && teamSeason.gp !== undefined) {
+				if (!teamSeason.expenseLevels) {
 					// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
 					const expenseLevelsKeys = [
 						"coaching",
@@ -698,7 +698,13 @@ const processTeamInfos = async ({
 						"scouting",
 					] as const;
 					teamSeason.expenseLevels = {} as any;
-					const gp = helpers.getTeamSeasonGp(teamSeason);
+					const gp = helpers.getTeamSeasonGp({
+						// This is needed in case teamSeason is still partial
+						won: teamSeason.won ?? 0,
+						lost: teamSeason.lost ?? 0,
+						tied: teamSeason.tied ?? 0,
+						otl: teamSeason.otl ?? 0,
+					});
 					for (const key of expenseLevelsKeys) {
 						teamSeason.expenseLevels[key] =
 							gp * (budgetsByTid[teamSeason.tid][key] ?? DEFAULT_LEVEL);
@@ -730,7 +736,6 @@ const processTeamInfos = async ({
 				}
 
 				const defaultZero = [
-					"gp",
 					"gpHome",
 					"att",
 					"won",

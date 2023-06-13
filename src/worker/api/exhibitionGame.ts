@@ -389,7 +389,6 @@ export const simExhibitionGame = async (
 					depth,
 				},
 				{
-					gp: 0,
 					won: t.seasonInfo?.won ?? 0,
 					lost: t.seasonInfo?.lost ?? 0,
 					tied: t.seasonInfo?.tied ?? 0,

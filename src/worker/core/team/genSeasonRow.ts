@@ -23,7 +23,6 @@ const genSeasonRow = (
 		colors: t.colors,
 		jersey: t.jersey ?? DEFAULT_JERSEY,
 		season,
-		gp: 0,
 		gpHome: 0,
 		att: 0,
 		cash: 10000,

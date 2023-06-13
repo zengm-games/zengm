@@ -1,10 +1,5 @@
 team finances
-- TeamSeason.gp includes playoffs?
-  - gpHome?
-  - could fix in upgrade
-  - delete TeamSeason.gp from types and code?
-    - ts.gp
-    - teamSeason.gp
+- make sure avg is computed right for playoff teams
 - later
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
   - some kind of estimates for revenue, expenses, and profit for the year

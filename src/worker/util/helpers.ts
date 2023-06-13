@@ -6,11 +6,7 @@ import {
 } from "../../common";
 import { idb } from "../db";
 import g from "./g";
-import type {
-	DraftPick,
-	PlayoffSeriesTeam,
-	TeamSeasonWithoutKey,
-} from "../../common/types";
+import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 const augmentSeries = async (
@@ -258,13 +254,14 @@ const pickDesc = async (dp: DraftPick, short?: "short") => {
 			"teamSeasonsByTidSeason",
 			[dp.originalTid, currentSeason],
 		);
-		if (!teamSeason || teamSeason.gp === 0) {
+		const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
+		if (gp === 0) {
 			teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[dp.originalTid, currentSeason - 1],
 			);
 		}
-		if (teamSeason && teamSeason.gp > 0) {
+		if (teamSeason && helpers.getTeamSeasonGp(teamSeason) > 0) {
 			const record = commonHelpers.formatRecord(teamSeason);
 			extras.push(record);
 		}
@@ -338,7 +335,12 @@ const daysLeft = (freeAgents: boolean, days?: number) => {
 	return `${actualDays} ${dayWeek} left`;
 };
 
-const getTeamSeasonGp = (teamSeason: TeamSeasonWithoutKey) => {
+const getTeamSeasonGp = (teamSeason: {
+	won: number;
+	lost: number;
+	tied: number;
+	otl: number;
+}) => {
 	return teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl;
 };
 

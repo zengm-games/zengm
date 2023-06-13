@@ -82,7 +82,8 @@ export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 			championships += 1;
 		}
 
-		if (teamSeason.gp > 0) {
+		const gp = helpers.getTeamSeasonGp(teamSeason);
+		if (gp > 0) {
 			const winp = helpers.calcWinp(teamSeason);
 
 			if (

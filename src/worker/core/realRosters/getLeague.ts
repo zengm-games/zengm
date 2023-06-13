@@ -529,7 +529,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 					for (const key of keys) {
 						teamSeason[key] = teamSeasonData[key];
 					}
-					teamSeason.gp = teamSeason.won + teamSeason.lost;
 					teamSeason.gpHome = teamSeason.wonHome + teamSeason.lostHome;
 
 					if (

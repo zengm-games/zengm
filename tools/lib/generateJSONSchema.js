@@ -2151,10 +2151,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 									season: {
 										type: "integer",
 									},
-									gp: {
-										type: "integer",
-										minimum: 0,
-									},
 									gpHome: {
 										type: "integer",
 										minimum: 0,

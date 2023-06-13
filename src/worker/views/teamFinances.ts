@@ -113,8 +113,7 @@ const updateTeamFinances = async (
 		};
 
 		const barData = teamSeasons.slice(0, showInt).map(teamSeason => {
-			const gpHome = teamSeason.gpHome ?? Math.round(teamSeason.gp / 2);
-			const att = teamSeason.att / gpHome;
+			const att = teamSeason.att / teamSeason.gpHome;
 
 			const numPlayoffRounds = g.get(
 				"numGamesPlayoffSeries",

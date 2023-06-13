@@ -1,3 +1,4 @@
+import { helpers } from "../../util";
 import evaluatePointsFormula from "./evaluatePointsFormula";
 
 const ptsMax = (ts: {
@@ -8,7 +9,7 @@ const ptsMax = (ts: {
 	season: number;
 }) => {
 	const dummyRow = {
-		won: ts.won + ts.lost + ts.tied + ts.otl,
+		won: helpers.getTeamSeasonGp(ts),
 		lost: 0,
 		tied: 0,
 		otl: 0,

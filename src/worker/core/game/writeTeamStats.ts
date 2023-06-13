@@ -281,16 +281,19 @@ const writeTeamStats = async (results: GameResults) => {
 		teamSeason.revenues.localTv += localTvRevenue;
 		teamSeason.revenues.ticket += ticketRevenue;
 
-		teamSeason.expenses.salary += salaryPaid;
-		teamSeason.expenses.scouting += scoutingPaid;
-		teamSeason.expenses.coaching += coachingPaid;
-		teamSeason.expenses.health += healthPaid;
-		teamSeason.expenses.facilities += facilitiesPaid;
+		// Non-zero expenses only in playoffs
+		if (g.get("phase") !== PHASE.PLAYOFFS) {
+			teamSeason.expenses.salary += salaryPaid;
+			teamSeason.expenses.scouting += scoutingPaid;
+			teamSeason.expenses.coaching += coachingPaid;
+			teamSeason.expenses.health += healthPaid;
+			teamSeason.expenses.facilities += facilitiesPaid;
 
-		teamSeason.expenseLevels.scouting += t.budget.scouting;
-		teamSeason.expenseLevels.coaching += t.budget.coaching;
-		teamSeason.expenseLevels.health += t.budget.health;
-		teamSeason.expenseLevels.facilities += t.budget.facilities;
+			teamSeason.expenseLevels.scouting += t.budget.scouting;
+			teamSeason.expenseLevels.coaching += t.budget.coaching;
+			teamSeason.expenseLevels.health += t.budget.health;
+			teamSeason.expenseLevels.facilities += t.budget.facilities;
+		}
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({

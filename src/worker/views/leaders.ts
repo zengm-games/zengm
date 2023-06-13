@@ -394,7 +394,6 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	};
 };
 
-console.log("AAA");
 // Calculate the number of games played for each team, which is used to test if a player qualifies as a league leader
 export class GamesPlayedCache {
 	regularSeasonCache: Record<number, Record<number, number>>;

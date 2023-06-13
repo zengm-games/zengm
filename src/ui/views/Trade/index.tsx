@@ -33,6 +33,7 @@ const Trade = (props: View<"trade">) => {
 	) => {
 		setState(prevState => ({
 			...prevState,
+			accepted: false,
 			message: null,
 			prevTeams: undefined,
 		}));
@@ -131,6 +132,7 @@ const Trade = (props: View<"trade">) => {
 	const handleChangeTeam = async (tid: number) => {
 		setState(prevState => ({
 			...prevState,
+			accepted: false,
 			message: null,
 			prevTeams: undefined,
 		}));
@@ -175,6 +177,7 @@ const Trade = (props: View<"trade">) => {
 
 		setState(prevState => ({
 			...prevState,
+			accepted: false,
 			asking: true,
 			message: null,
 			prevTeams: undefined,
@@ -201,6 +204,7 @@ const Trade = (props: View<"trade">) => {
 	const handleClickClear = async (type: TradeClearType) => {
 		setState(prevState => ({
 			...prevState,
+			accepted: false,
 			message: null,
 			prevTeams: undefined,
 		}));

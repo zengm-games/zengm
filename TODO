@@ -5,12 +5,7 @@ team finances
 
 tweak attendance formula so selling out isn't always the best option for auto ticket price
 
-little bugs
-- color of trade response message can be wrong (like green for rejected trade) https://discord.com/channels/290013534023057409/290013534023057409/1116329185120632832
-
 Player.draft.pot and Player.draft.ovr needed? either use ratings row from that season, or if not found, make them null?
-
-get rid of ability to create multiple usernames with same email
 
 default new league settings in non-basketball sports shows basketball-only options for randomizaion
 

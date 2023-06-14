@@ -1707,6 +1707,16 @@ if (isSport("basketball")) {
 			srIDs: ["DET"],
 			name: "Detroit",
 		},
+		{
+			season: 2022,
+			srIDs: ["WAS"],
+			name: "Washington",
+		},
+		{
+			season: 2023,
+			srIDs: ["SAS"],
+			name: "San Antonio",
+		},
 	];
 
 	const checkValidRebuild = async (

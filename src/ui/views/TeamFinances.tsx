@@ -348,6 +348,11 @@ const FinancesForm = ({
 						MAX_LEVEL,
 					);
 					const levelThree = t.expenseLevelsLastThree[expenseCategory.key];
+
+					const formDisabledKey =
+						formDisabled ||
+						(expenseCategory.key === "scouting" && challengeNoRatings);
+
 					return (
 						<div key={expenseCategory.key}>
 							<h3>{expenseCategory.title} expense level</h3>
@@ -363,7 +368,9 @@ const FinancesForm = ({
 											className="btn btn-secondary"
 											type="button"
 											disabled={
-												formDisabled || Number.isNaN(levelInt) || levelInt <= 1
+												formDisabledKey ||
+												Number.isNaN(levelInt) ||
+												levelInt <= 1
 											}
 											onClick={() => {
 												setStateValue(expenseCategory.key, levelInt - 1);
@@ -374,7 +381,7 @@ const FinancesForm = ({
 										<input
 											type="text"
 											className="form-control text-center"
-											disabled={formDisabled || challengeNoRatings}
+											disabled={formDisabledKey}
 											onChange={handleChange(expenseCategory.key)}
 											value={level}
 											inputMode="numeric"
@@ -383,7 +390,7 @@ const FinancesForm = ({
 											className="btn btn-secondary"
 											type="button"
 											disabled={
-												formDisabled ||
+												formDisabledKey ||
 												Number.isNaN(levelInt) ||
 												levelInt >= MAX_LEVEL
 											}

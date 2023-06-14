@@ -3,8 +3,6 @@ team finances
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
   - some kind of estimates for revenue, expenses, and profit for the year
 
-check if a player is willing to re-sign on negotiation page, in case negotiation started before something changed https://old.reddit.com/r/BasketballGM/comments/1486fso/all_i_know_is_pain/jnyyrta/
-
 tweak attendance formula so selling out isn't always the best option for auto ticket price
 
 Player.draft.pot and Player.draft.ovr needed? either use ratings row from that season, or if not found, make them null?

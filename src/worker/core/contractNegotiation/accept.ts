@@ -61,6 +61,12 @@ const accept = async (
 		throw new Error("Invalid pid");
 	}
 
+	// Make sure the user didn't do something in another tab to change the willingness to negotiate, such as trading away players
+	const mood = await player.moodInfo(p, g.get("userTid"));
+	if (!mood.willing) {
+		return "Player is no longer willing to negotiate.";
+	}
+
 	const contract: PlayerContract = {
 		amount,
 		exp,

@@ -1424,11 +1424,18 @@ class GameSim {
 				const goalie = this.lines[t].G.flat().find(
 					p => !currentlyOnIce.includes(p),
 				);
+				if (!goalie) {
+					throw new Error("noPullGoalie failed - goalie not found");
+				}
 
-				const sub = this.playersOnIce[t].C[1];
-
-				if (!goalie || !sub) {
-					return;
+				// Ideally sub out the 2nd center, since that is normally the extra skater. But in penalty situations, there may not be a 2nd center. Then look for the last winger, or the 1st center, or the last defenseman.
+				const sub =
+					this.playersOnIce[t].C[1] ??
+					this.playersOnIce[t].W.at(-1) ??
+					this.playersOnIce[t].C.at(-1) ??
+					this.playersOnIce[t].D.at(-1);
+				if (!sub) {
+					throw new Error("noPullGoalie failed - skater not found");
 				}
 
 				this.playersOnIce[t].G = [goalie];

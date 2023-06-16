@@ -26,6 +26,7 @@ FBGM game sim tweaks
 - INT distribution more top heavy, fewer to LB/DL?
   - also DL should be eligible for some pssDef, just not very many (tipped passes at the line don't count as pssDef, so pssDef and INT can't use exactly the same method to calculate)
 - in overtime, kick FG if it will win the game and odds of success are over X% https://old.reddit.com/r/Football_GM/comments/14alrwx/when_the_ai_doesnt_like_to_kick_gamewinning_field/
+- down yardage wrong after fumble recovery https://discord.com/channels/290013534023057409/290015591216054273/1119262876809560094
 
 BBGM box score minutes played should be MM:SS like in ZGMH https://old.reddit.com/r/BasketballGM/comments/14aff4g/box_score_idea/
 - same for any individual game, like in game log, stat feats, etc. but not averages

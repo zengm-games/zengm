@@ -86,13 +86,12 @@ const LeagueFinances = ({
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
 			...(budget
 				? [
-						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
-						helpers.formatCurrency(t.seasonAttrs.profit, "M"),
-						helpers.formatCurrency(t.seasonAttrs.cash, "M"),
-
 						showTicketPrice
 							? helpers.formatCurrency(t.budget.ticketPrice, "", 2)
 							: null,
+						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
+						helpers.formatCurrency(t.seasonAttrs.profit, "M"),
+						helpers.formatCurrency(t.seasonAttrs.cash, "M"),
 				  ]
 				: []),
 			helpers.formatCurrency(payroll, "M"),

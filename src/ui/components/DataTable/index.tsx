@@ -163,7 +163,8 @@ const DataTable = ({
 						let found = false;
 
 						for (let i = 0; i < row.data.length; i++) {
-							if (cols[i].noSearch) {
+							// cols[i] might be undefined if number of columns in a table changed
+							if (cols[i]?.noSearch) {
 								continue;
 							}
 
@@ -181,7 +182,8 @@ const DataTable = ({
 					// Filter
 					if (state.enableFilters) {
 						for (let i = 0; i < row.data.length; i++) {
-							if (cols[i].noSearch) {
+							// cols[i] might be undefined if number of columns in a table changed
+							if (cols[i]?.noSearch) {
 								continue;
 							}
 

@@ -1539,13 +1539,12 @@ class GameSim {
 		return dt;
 	}
 
-	doInterception(qb: PlayerGameSim, ydsPass: number) {
+	doInterception(qb: PlayerGameSim, ydsPass: number, p: PlayerGameSim) {
 		this.currentPlay.addEvent({
 			type: "possessionChange",
 			yds: ydsPass,
 		});
 
-		const p = this.pickPlayer(this.d, "passCoverage");
 		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
 
 		if (Math.random() < 0.075) {
@@ -1653,9 +1652,10 @@ class GameSim {
 		);
 	}
 
-	probInt(qb: PlayerGameSim) {
+	probInt(qb: PlayerGameSim, defender: PlayerGameSim) {
 		return (
-			((((0.02 * this.team[this.d].compositeRating.passCoverage) /
+			((((0.004 * this.team[this.d].compositeRating.passCoverage +
+				0.022 * defender.compositeRating.passCoverage) /
 				(0.5 *
 					(qb.compositeRating.passingVision +
 						qb.compositeRating.passingAccuracy))) *
@@ -1771,9 +1771,9 @@ class GameSim {
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
-		const defender = this.pickPlayer(d, "passCoverage", ["CB", "S", "LB"]);
+		const defender = this.pickPlayer(d, "passCoverage", undefined, 2);
 		const complete = Math.random() < this.probComplete(qb, target, defender);
-		const interception = Math.random() < this.probInt(qb);
+		const interception = Math.random() < this.probInt(qb, defender);
 
 		this.checkPenalties("pass", {
 			ballCarrier: target,
@@ -1788,7 +1788,7 @@ class GameSim {
 		});
 
 		if (interception) {
-			dt += this.doInterception(qb, yds);
+			dt += this.doInterception(qb, yds, defender);
 		} else {
 			dt += Math.abs(yds) / 20;
 

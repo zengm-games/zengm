@@ -1718,7 +1718,7 @@ class GameSim {
 		});
 		let dt = random.randInt(2, 6);
 
-		if (Math.random() < this.probFumble(qb)) {
+		if (Math.random() < 0.75 && Math.random() < this.probFumble(qb)) {
 			const yds = this.currentPlay.boundedYds(random.randInt(-1, -10));
 			return dt + this.doFumble(qb, yds);
 		}

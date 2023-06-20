@@ -1,3 +1,13 @@
+FBGM game sim tweaks
+- decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
+- increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
+- INT distribution more top heavy, fewer to LB/DL?
+  - also DL should be eligible for some pssDef, just not very many (tipped passes at the line don't count as pssDef, so pssDef and INT can't use exactly the same method to calculate)
+- in overtime, kick FG if it will win the game and odds of success are over X% https://old.reddit.com/r/Football_GM/comments/14alrwx/when_the_ai_doesnt_like_to_kick_gamewinning_field/
+- down yardage wrong after fumble recovery https://discord.com/channels/290013534023057409/290015591216054273/1119262876809560094
+- done
+  - fewer QB fumbles
+
 team finances
 - later
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
@@ -13,15 +23,6 @@ when negotiating with re-sign players, don't remove from list when you press can
 
 bootstrap real dark mode
 - table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants
-
-FBGM game sim tweaks
-- running QBs have too many fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
-- decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
-- increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
-- INT distribution more top heavy, fewer to LB/DL?
-  - also DL should be eligible for some pssDef, just not very many (tipped passes at the line don't count as pssDef, so pssDef and INT can't use exactly the same method to calculate)
-- in overtime, kick FG if it will win the game and odds of success are over X% https://old.reddit.com/r/Football_GM/comments/14alrwx/when_the_ai_doesnt_like_to_kick_gamewinning_field/
-- down yardage wrong after fumble recovery https://discord.com/channels/290013534023057409/290015591216054273/1119262876809560094
 
 BBGM box score minutes played should be MM:SS like in ZGMH https://old.reddit.com/r/BasketballGM/comments/14aff4g/box_score_idea/
 - same for any individual game, like in game log, stat feats, etc. but not averages

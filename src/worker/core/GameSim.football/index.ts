@@ -1738,12 +1738,20 @@ class GameSim {
 			Math.random() < 0.2 ? "catching" : "gettingOpen",
 			["WR", "TE", "RB"],
 		);
+
+		// RB passes are often short, so 50% chance of a decrease in yardage, which is more severe for players with low gettingOpen
+		const rbFactor =
+			this.playersOnField[o].RB?.includes(target) && Math.random() < 0.75
+				? target.compositeRating.gettingOpen
+				: 1;
+
 		let ydsRaw = Math.round(
 			random.truncGauss(
-				8.2 *
+				rbFactor *
+					8.3 *
 					(this.team[o].compositeRating.passBlocking /
 						this.team[d].compositeRating.passRushing),
-				7,
+				rbFactor * 7,
 				-5,
 				100,
 			),

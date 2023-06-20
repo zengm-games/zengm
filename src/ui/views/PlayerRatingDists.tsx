@@ -27,7 +27,7 @@ const PlayerRatingDists = ({
 			<p>
 				These <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a> show
 				the league-wide distributions of player ratings for all active players
-				in the selected season. The five vertical lines in each plot represent
+				in the selected season. The seven vertical lines in each plot represent
 				the minimum of the scale (0), the minimum, the first{" "}
 				<a href="http://en.wikipedia.org/wiki/Quartile">quartile</a>, the
 				median, the third quartile, the maximum, and the maximum of the scale

@@ -96,8 +96,8 @@ const PlayerStatDists = ({
 						.{" "}
 					</>
 				) : null}
-				The five vertical lines in each plot represent the minimum of the scale,
-				the minimum, the first{" "}
+				The seven vertical lines in each plot represent the minimum of the
+				scale, the minimum, the first{" "}
 				<a href="http://en.wikipedia.org/wiki/Quartile">quartile</a>, the
 				median, the third quartile, the maximum, and the maximum of the scale.
 			</p>

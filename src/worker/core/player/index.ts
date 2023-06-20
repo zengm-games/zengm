@@ -9,6 +9,7 @@ import checkStatisticalFeat from "./checkStatisticalFeat";
 import compositeRating from "./compositeRating";
 import contractSeasonsRemaining from "./contractSeasonsRemaining";
 import develop from "./develop";
+import developSeason from "./developSeason";
 import fuzzRating from "./fuzzRating";
 import fuzzOvrs from "./fuzzOvrs";
 import genContract from "./genContract";
@@ -55,6 +56,7 @@ export default {
 	compositeRating,
 	contractSeasonsRemaining,
 	develop,
+	developSeason,
 	fuzzRating,
 	fuzzOvrs,
 	genContract,

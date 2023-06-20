@@ -1691,7 +1691,7 @@ class GameSim {
 	probScramble(qb?: PlayerGameSim) {
 		const qbOvrRB = qb?.ovrs.RB ?? 0;
 		return (
-			(0.01 + Math.max(0, (0.4 * (qbOvrRB - 30)) / 100)) *
+			(0.01 + Math.max(0, (0.35 * (qbOvrRB - 30)) / 100)) *
 			g.get("scrambleFactor")
 		);
 	}
@@ -1883,6 +1883,9 @@ class GameSim {
 			}
 		}
 
+		// Scrambles tend to be longer runs
+		const scrambleModifier = qbScramble ? 3 : 1;
+
 		const p = this.pickPlayer(o, "rushing", positions);
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.playByPlay.logEvent("handoff", {
@@ -1891,10 +1894,11 @@ class GameSim {
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
 		const meanYds =
-			(3.5 *
-				0.5 *
-				(p.compositeRating.rushing +
-					this.team[o].compositeRating.runBlocking)) /
+			(scrambleModifier *
+				(3.5 *
+					0.5 *
+					(p.compositeRating.rushing +
+						this.team[o].compositeRating.runBlocking))) /
 			this.team[d].compositeRating.runStopping;
 		let ydsRaw = Math.round(random.truncGauss(meanYds, 6, -5, 15));
 

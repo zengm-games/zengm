@@ -275,7 +275,6 @@ const PlayerGraphs = ({
 }: View<"playerGraphs">) => {
 	useTitleBar({
 		title: "Player Graphs",
-		jumpTo: true,
 		dropdownView: "player_graphs",
 	});
 

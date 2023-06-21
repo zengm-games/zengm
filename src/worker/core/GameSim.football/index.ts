@@ -592,6 +592,16 @@ class GameSim {
 			return "fieldGoalLate";
 		}
 
+		// If a field goal will win it in overtime and odds of success are high, go for it
+		if (
+			(this.overtimeState === "secondPossession" ||
+				this.overtimeState === "bothTeamsPossessed") &&
+			ptsDown < 3 &&
+			this.probMadeFieldGoal() >= 0.9
+		) {
+			return "fieldGoal";
+		}
+
 		if (this.down === 4) {
 			// Don't kick a FG when we really need a touchdown!
 			if (!needTouchdown) {

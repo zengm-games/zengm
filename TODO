@@ -1,11 +1,11 @@
 FBGM game sim tweaks
-- in overtime, kick FG if it will win the game and odds of success are over X% https://old.reddit.com/r/Football_GM/comments/14alrwx/when_the_ai_doesnt_like_to_kick_gamewinning_field/
 - down yardage wrong after fumble recovery https://discord.com/channels/290013534023057409/290015591216054273/1119262876809560094
 - done
-  - fewer QB fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
   - decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
-  - increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
   - interceptions depend more on the defender's ratings, and are more top-heavy (league leaders average more INTs)
+  - increase QB scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
+  - fewer QB fumbles https://mail.google.com/mail/u/0/#inbox/FMfcgzGsmNSSltTxzttjxSrPPQrkgflZ
+  - in overtime, kick FG if it will win the game and odds of success are over X% https://old.reddit.com/r/Football_GM/comments/14alrwx/when_the_ai_doesnt_like_to_kick_gamewinning_field/
 
 link from main page to create a real/random league (real teams from different seasons mixed together)
 - what to call it? "
@@ -13,6 +13,11 @@ link from main page to create a real/random league (real teams from different se
 - customize and random buttons for team should work
 - need some way to pick new random teams - maybe add a Regenerate button
 - random debuts by default, unless user has overridden that setting in their defaults
+- contracts too high, maybe something about rookie contracts?
+
+add undrafted players to draft history page
+
+add random debuts option to legends leagues https://twitter.com/messages/1928999030-766833475089408000
 
 team finances
 - later

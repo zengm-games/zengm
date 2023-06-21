@@ -1,3 +1,5 @@
+check gray text in TOT stat rows https://discord.com/channels/290013534023057409/290015591216054273/1120780910170742939
+
 FBGM game sim tweaks
 - in overtime, kick FG if it will win the game and odds of success are over X% https://old.reddit.com/r/Football_GM/comments/14alrwx/when_the_ai_doesnt_like_to_kick_gamewinning_field/
 - down yardage wrong after fumble recovery https://discord.com/channels/290013534023057409/290015591216054273/1119262876809560094
@@ -6,6 +8,13 @@ FBGM game sim tweaks
   - decrease RB yards per catch https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
   - increase scrambling yards per carry https://discord.com/channels/290013534023057409/331882115119448065/1060446696288550963
   - interceptions depend more on the defender's ratings, and are more top-heavy (league leaders average more INTs)
+
+link from main page to create a real/random league (real teams from different seasons mixed together)
+- what to call it? "
+- explanation in panel like "Legends mode"
+- customize and random buttons for team should work
+- need some way to pick new random teams - maybe add a Regenerate button
+- random debuts by default, unless user has overridden that setting in their defaults
 
 team finances
 - later

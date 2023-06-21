@@ -1650,3 +1650,8 @@ table.sticky-xxx {
 .row-gap-3 {
 	row-gap: 1rem !important;
 }
+
+tr.text-body-secondary td {
+	// Without these, then applying this to a table row (like for TOT stat rows) does not override the color from the striped table class
+	color: var(--bs-secondary-color) !important;
+}

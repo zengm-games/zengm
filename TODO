@@ -7,6 +7,7 @@ link from main page to create a real/random league (real teams from different se
 - need some way to pick new random teams - maybe add a Regenerate button
 - random debuts by default, unless user has overridden that setting in their defaults
 - contracts too high, maybe something about rookie contracts?
+- show season in dropdown on new league page
 
 add undrafted players to draft history page
 

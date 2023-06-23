@@ -211,7 +211,13 @@ const phases = [
 
 type State = {
 	creating: boolean;
-	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
+	customize:
+		| "default"
+		| "custom-rosters"
+		| "custom-url"
+		| "legends"
+		| "real"
+		| "crossEra";
 	season: number;
 	phase: number;
 	name: string;
@@ -636,11 +642,12 @@ const NewLeague = (props: View<"newLeague">) => {
 			if (importing) {
 				customize = "custom-rosters";
 			}
-			if (props.type === "real") {
-				customize = "real";
-			}
-			if (props.type === "legends") {
-				customize = "legends";
+			if (
+				props.type === "real" ||
+				props.type === "legends" ||
+				props.type === "crossEra"
+			) {
+				customize = props.type;
 			}
 
 			const basicInfo = undefined;
@@ -719,6 +726,8 @@ const NewLeague = (props: View<"newLeague">) => {
 		title = "New Random Players League";
 	} else if (props.type === "legends") {
 		title = "New Legends League";
+	} else if (props.type === "crossEra") {
+		title = "New Cross-Era League";
 	} else {
 		title = "New Real Players League";
 	}
@@ -758,7 +767,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			: false;
 
 		const startingSeasonFromInput =
-			state.customize === "default" ? startingSeason : undefined;
+			state.customize === "default" || state.customize === "crossEra"
+				? startingSeason
+				: undefined;
 
 		try {
 			let getLeagueOptions: GetLeagueOptions | undefined;
@@ -1026,7 +1037,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.file === undefined && state.url === undefined) ||
 				state.loadingLeagueFile)) ||
 		((state.customize === "real" || state.customize === "legends") &&
-			state.pendingInitialLeagueInfo);
+			state.pendingInitialLeagueInfo) ||
+		state.customize === "crossEra";
 	const showLoadingIndicator =
 		disableWhileLoadingLeagueFile &&
 		(state.loadingLeagueFile ||
@@ -1107,7 +1119,8 @@ const NewLeague = (props: View<"newLeague">) => {
 								/>
 							</div>
 
-							{state.customize === "default" ? (
+							{state.customize === "default" ||
+							state.customize === "crossEra" ? (
 								<div className="mb-3">
 									<label
 										className="form-label"
@@ -1255,7 +1268,8 @@ const NewLeague = (props: View<"newLeague">) => {
 											);
 										})}
 									</select>
-									{state.customize === "default" ? (
+									{state.customize === "default" ||
+									state.customize === "crossEra" ? (
 										<button
 											className="btn btn-light-bordered"
 											disabled={disableWhileLoadingLeagueFile}
@@ -1370,7 +1384,8 @@ const NewLeague = (props: View<"newLeague">) => {
 
 						{props.type === "custom" ||
 						props.type === "real" ||
-						props.type === "legends" ? (
+						props.type === "legends" ||
+						props.type === "crossEra" ? (
 							<div
 								className={classNames(
 									"col-sm-6 order-first order-sm-last mb-3 mb-sm-0",
@@ -1434,6 +1449,26 @@ const NewLeague = (props: View<"newLeague">) => {
 											</ul>
 										</>
 									) : null}
+									{props.type === "crossEra" ? (
+										<>
+											<ul className="list-group list-group-flush">
+												<li className="list-group-item bg-light">
+													<h3>Mix historical teams in one league</h3>
+													<p>
+														Cross-era leagues are filled with real historical
+														teams from different seasons. Each league you create
+														is different!
+													</p>
+													<h3>Real/random draft classes</h3>
+													<p className="mb-0">
+														By default, "Random Debuts" is enabled, meaning that
+														any real players not in the initial teams will be
+														randomly placed in future draft classes.
+													</p>
+												</li>
+											</ul>
+										</>
+									) : null}
 									{props.type === "custom" ? (
 										<div
 											className="card-body"
@@ -1465,6 +1500,9 @@ const NewLeague = (props: View<"newLeague">) => {
 													</option>
 													{SPORT_HAS_REAL_PLAYERS ? (
 														<option value="real">Real players and teams</option>
+													) : null}
+													{SPORT_HAS_LEGENDS ? (
+														<option value="crossEra">Cross-era</option>
 													) : null}
 													{SPORT_HAS_LEGENDS ? (
 														<option value="legends">Legends</option>

@@ -501,7 +501,7 @@ const negotiationList = () => {
 };
 
 const newLeague = (params: Params) => {
-	let type: "custom" | "random" | "real" | "legends" = "custom";
+	let type: "custom" | "random" | "real" | "legends" | "crossEra" = "custom";
 	let lid;
 	if (params.x === "random") {
 		type = "random";
@@ -509,6 +509,8 @@ const newLeague = (params: Params) => {
 		type = "real";
 	} else if (params.x === "legends") {
 		type = "legends";
+	} else if (params.x === "cross_era") {
+		type = "crossEra";
 	} else if (params.x !== undefined) {
 		lid = parseInt(params.x);
 		if (Number.isNaN(lid)) {

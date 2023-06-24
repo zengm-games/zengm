@@ -5,7 +5,6 @@ link from main page to create a real/random league (real teams from different se
 - random debuts by default, unless user has overridden that setting in their defaults
   - set in gameAttributes in handleNewLeagueInfo call?
 - contracts too high, maybe something about rookie contracts?
-- show season in dropdown on new league page
 - appropriately disable "Regenerate Historical Teams" button
 - use pendingInitialLeagueInfo for initial load?
 - make it work from custom league page

@@ -1264,7 +1264,9 @@ const NewLeague = (props: View<"newLeague">) => {
 												<option key={t.tid} value={t.tid}>
 													{showLoadingIndicator
 														? "Loading..."
-														: `${t.region} ${t.name}`}
+														: `${t.region} ${t.name}${
+																t.season !== undefined ? ` (${t.season})` : ""
+														  }`}
 												</option>
 											);
 										})}

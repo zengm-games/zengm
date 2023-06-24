@@ -287,6 +287,13 @@ type Action =
 			divs: Div[];
 	  }
 	| {
+			type: "setTeamsCrossEra";
+			teams: NewLeagueTeam[];
+			confs: Conf[];
+			divs: Div[];
+			defaultSettings: State["settings"];
+	  }
+	| {
 			type: "setTid";
 			tid: number;
 	  }
@@ -458,10 +465,30 @@ const reducer = (state: State, action: Action): State => {
 				divs: action.divs,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
+			};
+		}
 
-				// For crossEra
+		case "setTeamsCrossEra": {
+			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
+
+			const settings = {
+				...action.defaultSettings,
+			};
+
+			// What we want - change the default randomization value from "none" to "debuts". This mostly does that, unless the user has specified "none" in the global default settings, in which case we can't distinguish that from nothing being selected. Probably nobody will notice the difference.
+			if (settings.randomization === "none") {
+				settings.randomization = "debuts";
+			}
+
+			return {
+				...state,
+				confs: action.confs,
+				divs: action.divs,
+				teams: action.teams,
+				tid: getNewTid(prevTeamRegionName, action.teams),
 				loadingLeagueFile: false,
 				pendingInitialLeagueInfo: false,
+				settings,
 			};
 		}
 
@@ -975,13 +1002,14 @@ const NewLeague = (props: View<"newLeague">) => {
 			);
 
 			dispatch({
-				type: "setTeams",
+				type: "setTeamsCrossEra",
 				confs: DEFAULT_CONFS,
 				divs: DEFAULT_DIVS,
 				teams: helpers.addPopRank(newTeams),
+				defaultSettings: props.defaultSettings,
 			});
 		}
-	}, [props.realTeamInfo]);
+	}, [props.defaultSettings, props.realTeamInfo]);
 
 	useEffect(() => {
 		if (state.customize === "crossEra") {

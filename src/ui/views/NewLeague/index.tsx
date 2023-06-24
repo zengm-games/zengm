@@ -309,7 +309,6 @@ type Action =
 			gameAttributes: Record<string, unknown>;
 			defaultSettings: State["settings"];
 			startingSeason: number;
-			randomization?: "none" | "shuffle" | "debuts" | "debutsForever";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -459,6 +458,10 @@ const reducer = (state: State, action: Action): State => {
 				divs: action.divs,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
+
+				// For crossEra
+				loadingLeagueFile: false,
+				pendingInitialLeagueInfo: false,
 			};
 		}
 
@@ -550,10 +553,6 @@ const reducer = (state: State, action: Action): State => {
 				action.gameAttributes,
 				action.defaultSettings,
 			);
-
-			if (action.randomization !== undefined) {
-				newSettings.randomization = action.randomization;
-			}
 
 			const confs = unwrapGameAttribute(action.gameAttributes, "confs");
 			const divs = unwrapGameAttribute(action.gameAttributes, "divs");
@@ -949,7 +948,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				),
 				gameAttributes: leagueInfo.gameAttributes,
 				defaultSettings: props.defaultSettings,
-				randomization: leagueInfo.randomization,
 				startingSeason: leagueInfo.startingSeason,
 			});
 		},
@@ -976,20 +974,14 @@ const NewLeague = (props: View<"newLeague">) => {
 				"inTeamObject",
 			);
 
-			handleNewLeagueInfo({
-				// Because we want to put this in a useEffect but not run it every time state.season changes, we'll worry about this later
-				startingSeason: 0,
-
-				gameAttributes: {
-					confs: DEFAULT_CONFS,
-					divs: DEFAULT_DIVS,
-				},
-				randomization: "debuts",
-				stores: ["gameAttributes", "players", "teams"],
-				teams: newTeams,
+			dispatch({
+				type: "setTeams",
+				confs: DEFAULT_CONFS,
+				divs: DEFAULT_DIVS,
+				teams: helpers.addPopRank(newTeams),
 			});
 		}
-	}, [handleNewLeagueInfo, props.realTeamInfo]);
+	}, [props.realTeamInfo]);
 
 	useEffect(() => {
 		if (state.customize === "crossEra") {

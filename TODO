@@ -6,6 +6,9 @@ link from main page to create a real/random league (real teams from different se
 - season 0?
 - contracts too high, maybe something about rookie contracts?
 - appropriately disable "Regenerate Historical Teams" button
+- random debuts automatic
+  - should show up as selected when we click "Customize"
+  - should work as default if no "Customize"
 - make it work from custom league page
   - should regenerate when selected
   - checkboxes unselected?

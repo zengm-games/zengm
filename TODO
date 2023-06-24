@@ -7,6 +7,7 @@ link from main page to create a real/random league (real teams from different se
 - contracts too high, maybe something about rookie contracts?
 - appropriately disable "Regenerate Historical Teams" button
 - use pendingInitialLeagueInfo for initial load?
+- ActionButton for regenerate
 - make it work from custom league page
   - checkboxes unselected?
     - stores: [], okay in handleNewLeagueInfo?

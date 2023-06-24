@@ -1043,7 +1043,9 @@ const NewLeague = (props: View<"newLeague">) => {
 	const showLoadingIndicator =
 		disableWhileLoadingLeagueFile &&
 		(state.loadingLeagueFile ||
-			((state.customize === "real" || state.customize === "legends") &&
+			((state.customize === "real" ||
+				state.customize === "legends" ||
+				state.customize === "crossEra") &&
 				state.pendingInitialLeagueInfo));
 
 	const bannedExpansionSeasons = [
@@ -1317,7 +1319,6 @@ const NewLeague = (props: View<"newLeague">) => {
 										onClick={async () => {
 											dispatch({ type: "loadingLeagueFile" });
 
-											console.log("before");
 											const response = await toWorker(
 												"main",
 												"getRandomTeams",
@@ -1329,7 +1330,6 @@ const NewLeague = (props: View<"newLeague">) => {
 													northAmericaOnly: false,
 												},
 											);
-											console.log("after", response);
 
 											if (typeof response === "string") {
 												throw new Error(`Error randomizing teams: ${response}`);
@@ -1341,8 +1341,10 @@ const NewLeague = (props: View<"newLeague">) => {
 												);
 
 												handleNewLeagueInfo({
-													startingSeason: state.season,
+													// startingSeason and stores values doesn't matter here
+													startingSeason: 0,
 													stores: [],
+
 													gameAttributes: {
 														confs: DEFAULT_CONFS,
 														divs: DEFAULT_DIVS,

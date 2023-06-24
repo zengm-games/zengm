@@ -36,4 +36,5 @@ export type LeagueInfo = {
 		divs: Div[];
 	};
 	teams: NewLeagueTeamWithoutRank[];
+	randomization?: "none" | "shuffle" | "debuts" | "debutsForever";
 };

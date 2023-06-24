@@ -309,6 +309,7 @@ type Action =
 			gameAttributes: Record<string, unknown>;
 			defaultSettings: State["settings"];
 			startingSeason: number;
+			randomization?: "none" | "shuffle" | "debuts" | "debutsForever";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -549,6 +550,10 @@ const reducer = (state: State, action: Action): State => {
 				action.gameAttributes,
 				action.defaultSettings,
 			);
+
+			if (action.randomization !== undefined) {
+				newSettings.randomization = action.randomization;
+			}
 
 			const confs = unwrapGameAttribute(action.gameAttributes, "confs");
 			const divs = unwrapGameAttribute(action.gameAttributes, "divs");
@@ -943,6 +948,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			),
 			gameAttributes: leagueInfo.gameAttributes,
 			defaultSettings: props.defaultSettings,
+			randomization: leagueInfo.randomization,
 			startingSeason: leagueInfo.startingSeason,
 		});
 	};
@@ -1341,14 +1347,14 @@ const NewLeague = (props: View<"newLeague">) => {
 												);
 
 												handleNewLeagueInfo({
-													// startingSeason and stores values doesn't matter here
-													startingSeason: 0,
-													stores: [],
+													stores: ["gameAttributes", "players", "teams"],
 
 													gameAttributes: {
 														confs: DEFAULT_CONFS,
 														divs: DEFAULT_DIVS,
 													},
+													randomization: "debuts",
+													startingSeason: state.season,
 													teams: newTeams,
 												});
 											}

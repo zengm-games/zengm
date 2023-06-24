@@ -1197,16 +1197,7 @@ const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 		p.born!.year += diff;
 
 		if (p.draft) {
-			p.draft = {
-				year: p.draft.year + diff,
-				tid: -1,
-				originalTid: -1,
-				round: 0,
-				pick: 0,
-				ovr: p.draft.ovr,
-				pot: p.draft.pot,
-				skills: p.draft.skills,
-			};
+			p.draft.year += diff;
 		}
 	}
 };
@@ -1296,6 +1287,8 @@ const afterDBStream = async ({
 	// If players are specified for some team on import (from CustomizeTeams), replace the randomly generated players
 	const replaceTids = new Set();
 	const extraActivePlayers: PlayerWithoutKey[] = [];
+	const draftPickAutoContract = g.get("draftPickAutoContract");
+	const rookieSalaries = draftPickAutoContract ? draft.getRookieSalaries() : [];
 	for (const t of teamInfos) {
 		if (t.usePlayers && t.players) {
 			replaceTids.add(t.tid);
@@ -1320,6 +1313,32 @@ const afterDBStream = async ({
 					scoutingLevel,
 					version: LEAGUE_DATABASE_VERSION,
 				});
+
+				// This may not be ideal for a season before the rookie contract scale existed, but whatever
+				if ((p2 as any).rookieContract && draftPickAutoContract) {
+					const pickIndex =
+						(p2.draft.round - 1) * g.get("numActiveTeams") + p2.draft.pick - 1;
+					player.setContract(
+						p2,
+						{
+							amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1),
+							exp: p2.contract.exp,
+						},
+						true,
+					);
+					p2.contract.rookie = true;
+				}
+
+				// Do this after processPlayerNewLeague so it can impute rookie contract status based on draft round
+				if (p2.draft) {
+					p2.draft = {
+						...p2.draft,
+						tid: -1,
+						originalTid: -1,
+						round: 0,
+						pick: 0,
+					};
+				}
 
 				extraActivePlayers.push(p2);
 			}

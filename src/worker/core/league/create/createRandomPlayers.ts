@@ -103,7 +103,7 @@ const createRandomPlayers = async ({
 			};
 
 			if (round === 0) {
-				// Guarantee contracts for undrafted players are overwritten below
+				// Guaranteed contracts for undrafted players are overwritten below
 				p.contract.exp = -Infinity;
 			} else {
 				let years;

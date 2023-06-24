@@ -1,13 +1,6 @@
-check FBGM MVP/DPOY formula - weighted towards INT and PD too much? https://discord.com/channels/290013534023057409/569726303926878219/1121513509042270329
-
 link from main page to create a real/random league (real teams from different seasons mixed together)
 - contracts too high, maybe something about rookie contracts?
 - appropriately disable "Regenerate Historical Teams" button
-- make it work from custom league page
-  - should regenerate when selected
-  - weird things happen when switching from real to crossEra
-  - checkboxes unselected?
-    - stores: [], okay in handleNewLeagueInfo?
 - make sure real team info works
 - thank twitter users for name
 

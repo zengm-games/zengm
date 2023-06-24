@@ -412,7 +412,10 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "setCustomize": {
-			const allKeys = action.customize === "default" ? [] : state.allKeys;
+			const allKeys =
+				action.customize === "default" || action.customize === "crossEra"
+					? []
+					: state.allKeys;
 			return {
 				...state,
 				customize: action.customize,
@@ -1387,7 +1390,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										variant="light-bordered"
 										type="button"
 										disabled={disableWhileLoadingLeagueFile}
-										processing={state.loadingLeagueFile}
+										processing={showLoadingIndicator}
 										onClick={generateCrossEraTeams}
 										processingText="Generating Teams"
 									>
@@ -1576,6 +1579,7 @@ const NewLeague = (props: View<"newLeague">) => {
 															newCustomize !== "real" &&
 															newCustomize !== "legends"
 														) {
+															console.log("CLEAR");
 															dispatch({ type: "clearLeagueFile" });
 														}
 													}}

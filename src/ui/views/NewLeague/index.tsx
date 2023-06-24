@@ -1,6 +1,6 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
-import { useState, useReducer, useRef } from "react";
+import { useState, useReducer, useRef, useCallback, useEffect } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -935,23 +935,67 @@ const NewLeague = (props: View<"newLeague">) => {
 		}
 	};
 
-	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
-		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
+	const handleNewLeagueInfo = useCallback(
+		(leagueInfo: LeagueInfo) => {
+			const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
 
-		dispatch({
-			type: "newLeagueInfo",
-			allKeys: leagueInfo.stores,
-			teams: applyRealTeamInfos(
-				newTeams,
-				props.realTeamInfo,
-				leagueInfo.startingSeason,
-			),
-			gameAttributes: leagueInfo.gameAttributes,
-			defaultSettings: props.defaultSettings,
-			randomization: leagueInfo.randomization,
-			startingSeason: leagueInfo.startingSeason,
+			dispatch({
+				type: "newLeagueInfo",
+				allKeys: leagueInfo.stores,
+				teams: applyRealTeamInfos(
+					newTeams,
+					props.realTeamInfo,
+					leagueInfo.startingSeason,
+				),
+				gameAttributes: leagueInfo.gameAttributes,
+				defaultSettings: props.defaultSettings,
+				randomization: leagueInfo.randomization,
+				startingSeason: leagueInfo.startingSeason,
+			});
+		},
+		[props.defaultSettings, props.realTeamInfo],
+	);
+
+	const generateCrossEraTeams = useCallback(async () => {
+		dispatch({ type: "loadingLeagueFile" });
+
+		const response = await toWorker("main", "getRandomTeams", {
+			divs: DEFAULT_DIVS,
+			numTeamsPerDiv: Array(DEFAULT_DIVS.length).fill(5),
+			real: true,
+			weightByPopulation: false,
+			northAmericaOnly: false,
 		});
-	};
+
+		if (typeof response === "string") {
+			throw new Error(`Error randomizing teams: ${response}`);
+		} else {
+			const newTeams = applyRealTeamInfos(
+				response,
+				props.realTeamInfo,
+				"inTeamObject",
+			);
+
+			handleNewLeagueInfo({
+				// Because we want to put this in a useEffect but not run it every time state.season changes, we'll worry about this later
+				startingSeason: 0,
+
+				gameAttributes: {
+					confs: DEFAULT_CONFS,
+					divs: DEFAULT_DIVS,
+				},
+				randomization: "debuts",
+				stores: ["gameAttributes", "players", "teams"],
+				teams: newTeams,
+			});
+		}
+	}, [handleNewLeagueInfo, props.realTeamInfo]);
+
+	useEffect(() => {
+		if (state.customize === "crossEra") {
+			generateCrossEraTeams();
+		}
+	}, [generateCrossEraTeams, state.customize]);
 
 	let pageTitle = title;
 	if (currentScreen === "teams") {
@@ -1318,50 +1362,17 @@ const NewLeague = (props: View<"newLeague">) => {
 									<span className="text-body-secondary">Population: equal</span>
 								)}
 								{state.customize === "crossEra" ? (
-									<button
-										className="btn btn-light-bordered mt-1"
+									<ActionButton
+										className="mt-1"
+										variant="light-bordered"
 										type="button"
-										disabled={false && disableWhileLoadingLeagueFile}
-										onClick={async () => {
-											dispatch({ type: "loadingLeagueFile" });
-
-											const response = await toWorker(
-												"main",
-												"getRandomTeams",
-												{
-													divs: DEFAULT_DIVS,
-													numTeamsPerDiv: Array(DEFAULT_DIVS.length).fill(5),
-													real: true,
-													weightByPopulation: false,
-													northAmericaOnly: false,
-												},
-											);
-
-											if (typeof response === "string") {
-												throw new Error(`Error randomizing teams: ${response}`);
-											} else {
-												const newTeams = applyRealTeamInfos(
-													response,
-													props.realTeamInfo,
-													"inTeamObject",
-												);
-
-												handleNewLeagueInfo({
-													stores: ["gameAttributes", "players", "teams"],
-
-													gameAttributes: {
-														confs: DEFAULT_CONFS,
-														divs: DEFAULT_DIVS,
-													},
-													randomization: "debuts",
-													startingSeason: state.season,
-													teams: newTeams,
-												});
-											}
-										}}
+										disabled={disableWhileLoadingLeagueFile}
+										processing={state.loadingLeagueFile}
+										onClick={generateCrossEraTeams}
+										processingText="Generating Teams"
 									>
 										Regenerate Historical Teams
-									</button>
+									</ActionButton>
 								) : null}
 							</div>
 

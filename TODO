@@ -1,12 +1,13 @@
 check FBGM MVP/DPOY formula - weighted towards INT and PD too much? https://discord.com/channels/290013534023057409/569726303926878219/1121513509042270329
 
 link from main page to create a real/random league (real teams from different seasons mixed together)
-- customize and random buttons for team should work
+- customize button
+  - can't just assume DEFAULT_DIVS and DEFAULT_CONFS!
+- season 0?
 - contracts too high, maybe something about rookie contracts?
 - appropriately disable "Regenerate Historical Teams" button
-- use pendingInitialLeagueInfo for initial load?
-- ActionButton for regenerate
 - make it work from custom league page
+  - should regenerate when selected
   - checkboxes unselected?
     - stores: [], okay in handleNewLeagueInfo?
 - make sure real team info works

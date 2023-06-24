@@ -1306,6 +1306,18 @@ const NewLeague = (props: View<"newLeague">) => {
 								) : (
 									<span className="text-body-secondary">Population: equal</span>
 								)}
+								{state.customize === "crossEra" ? (
+									<button
+										className="btn btn-light-bordered mt-1"
+										type="button"
+										disabled={disableWhileLoadingLeagueFile}
+										onClick={() => {
+											console.log("HERE");
+										}}
+									>
+										Regenerate Historical Teams
+									</button>
+								) : null}
 							</div>
 
 							<div className="mb-3">

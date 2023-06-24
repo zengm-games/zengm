@@ -1038,7 +1038,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				state.loadingLeagueFile)) ||
 		((state.customize === "real" || state.customize === "legends") &&
 			state.pendingInitialLeagueInfo) ||
-		state.customize === "crossEra";
+		(state.customize === "crossEra" &&
+			(state.loadingLeagueFile || state.pendingInitialLeagueInfo));
 	const showLoadingIndicator =
 		disableWhileLoadingLeagueFile &&
 		(state.loadingLeagueFile ||
@@ -1310,9 +1311,43 @@ const NewLeague = (props: View<"newLeague">) => {
 									<button
 										className="btn btn-light-bordered mt-1"
 										type="button"
-										disabled={disableWhileLoadingLeagueFile}
-										onClick={() => {
-											console.log("HERE");
+										disabled={false && disableWhileLoadingLeagueFile}
+										onClick={async () => {
+											dispatch({ type: "loadingLeagueFile" });
+
+											console.log("before");
+											const response = await toWorker(
+												"main",
+												"getRandomTeams",
+												{
+													divs: DEFAULT_DIVS,
+													numTeamsPerDiv: Array(DEFAULT_DIVS.length).fill(5),
+													real: true,
+													weightByPopulation: false,
+													northAmericaOnly: false,
+												},
+											);
+											console.log("after", response);
+
+											if (typeof response === "string") {
+												throw new Error(`Error randomizing teams: ${response}`);
+											} else {
+												const newTeams = applyRealTeamInfos(
+													response,
+													props.realTeamInfo,
+													"inTeamObject",
+												);
+
+												handleNewLeagueInfo({
+													startingSeason: state.season,
+													stores: [],
+													gameAttributes: {
+														confs: DEFAULT_CONFS,
+														divs: DEFAULT_DIVS,
+													},
+													teams: newTeams,
+												});
+											}
 										}}
 									>
 										Regenerate Historical Teams

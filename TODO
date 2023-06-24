@@ -2,12 +2,16 @@ check FBGM MVP/DPOY formula - weighted towards INT and PD too much? https://disc
 
 link from main page to create a real/random league (real teams from different seasons mixed together)
 - customize and random buttons for team should work
-- need some way to pick new random teams - maybe add a Regenerate button
 - random debuts by default, unless user has overridden that setting in their defaults
+  - set in gameAttributes in handleNewLeagueInfo call?
 - contracts too high, maybe something about rookie contracts?
 - show season in dropdown on new league page
+- appropriately disable "Regenerate Historical Teams" button
+- use pendingInitialLeagueInfo for initial load?
 - make it work from custom league page
   - checkboxes unselected?
+    - stores: [], okay in handleNewLeagueInfo?
+- make sure real team info works
 - thank twitter users for name
 
 hockey all-star game should be higher scoring https://discord.com/channels/@me/849090991151513620/1121340961495187476

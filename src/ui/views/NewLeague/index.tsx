@@ -1548,12 +1548,12 @@ const NewLeague = (props: View<"newLeague">) => {
 													<p>
 														Cross-era leagues are filled with real historical
 														teams from different seasons. Each league you create
-														is different!
+														has a new set of teams.
 													</p>
 													<h3>Real/random draft classes</h3>
 													<p className="mb-0">
 														By default, "Random Debuts" is enabled, meaning that
-														any real players not in the initial teams will be
+														any real players not on the initial teams will be
 														randomly placed in future draft classes.
 													</p>
 												</li>

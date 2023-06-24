@@ -48,7 +48,7 @@ import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
 import type { LeagueInfo, NewLeagueTeam } from "./types";
 import CustomizeSettings from "./CustomizeSettings";
-import CustomizeTeams from "./CustomizeTeams";
+import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams";
 import type { Settings } from "../../../worker/views/settings";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload";
 
@@ -999,7 +999,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			throw new Error(`Error randomizing teams: ${response}`);
 		} else {
 			const newTeams = applyRealTeamInfos(
-				response,
+				makeTIDsSequential(response),
 				props.realTeamInfo,
 				"inTeamObject",
 			);

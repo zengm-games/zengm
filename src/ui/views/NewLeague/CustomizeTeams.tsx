@@ -15,7 +15,9 @@ import { ProcessingSpinner } from "../../components/ActionButton";
 import { applyRealTeamInfos, MAX_SEASON } from ".";
 import RandomizeTeamsModal from "./RandomizeTeamsModal";
 
-const makeTIDsSequential = <T extends { tid: number }>(teams: T[]): T[] => {
+export const makeTIDsSequential = <T extends { tid: number }>(
+	teams: T[],
+): T[] => {
 	return teams.map((t, i) => ({
 		...t,
 		tid: i,

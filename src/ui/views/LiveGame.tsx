@@ -404,10 +404,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 		};
 
 		const playUntilLastTwoMinutes = () => {
+			// quarters.current.length can be 0 early in the game
+			const initialQuarter = Math.max(1, quarters.current.length);
+
 			const quartersToPlay =
-				quarters.current.length >= boxScore.current.numPeriods
+				initialQuarter >= boxScore.current.numPeriods
 					? 0
-					: boxScore.current.numPeriods - quarters.current.length;
+					: boxScore.current.numPeriods - initialQuarter;
 			for (let i = 0; i < quartersToPlay; i++) {
 				playSeconds(Infinity);
 			}

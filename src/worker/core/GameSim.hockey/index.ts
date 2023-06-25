@@ -98,6 +98,7 @@ class GameSim {
 
 	pulledGoalie: [boolean, boolean];
 	baseInjuryRate: number;
+	allStarGame: boolean;
 
 	constructor({
 		gid,
@@ -105,6 +106,7 @@ class GameSim {
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
+		allStarGame = false,
 		baseInjuryRate,
 		disableHomeCourtAdvantage = false,
 	}: {
@@ -113,6 +115,7 @@ class GameSim {
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
+		allStarGame?: boolean;
 		baseInjuryRate: number;
 		disableHomeCourtAdvantage?: boolean;
 	}) {
@@ -121,6 +124,7 @@ class GameSim {
 		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 		this.baseInjuryRate = baseInjuryRate;
+		this.allStarGame = allStarGame;
 
 		this.synergyFactor = 1;
 
@@ -1274,14 +1278,20 @@ class GameSim {
 		this.minutesSinceLineChange[t][pos] = 0;
 		this.currentLine[t][pos] += 1;
 
-		// Sometimes skip the 3rd line of forwards
-		if (pos === "F" && this.currentLine[t][pos] === 2 && Math.random() < 0.1) {
-			this.currentLine[t][pos] = 0;
-		}
+		if (!this.allStarGame) {
+			// Sometimes skip the 3rd line of forwards
+			if (
+				pos === "F" &&
+				this.currentLine[t][pos] === 2 &&
+				Math.random() < 0.1
+			) {
+				this.currentLine[t][pos] = 0;
+			}
 
-		// Sometimes skip the 4th line of forwards
-		if (pos === "F" && this.currentLine[t][pos] >= 3 && Math.random() < 0.5) {
-			this.currentLine[t][pos] = 0;
+			// Sometimes skip the 4th line of forwards
+			if (pos === "F" && this.currentLine[t][pos] >= 3 && Math.random() < 0.5) {
+				this.currentLine[t][pos] = 0;
+			}
 		}
 
 		let newLine = this.lines[t][pos][this.currentLine[t][pos]];

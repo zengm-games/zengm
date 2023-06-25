@@ -31,9 +31,8 @@ const DangerZone = ({
 					</p>
 
 					<ActionButton
-						className="border-0"
 						type="submit"
-						variant="god-mode"
+						variant="light-bordered"
 						disabled={!canRegenerateSchedule || regeneratingSchedule}
 						processing={regeneratingSchedule}
 						onClick={async () => {

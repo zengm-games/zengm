@@ -568,6 +568,12 @@ const player = (params: Params) => {
 	};
 };
 
+const playerRatingsOverride = (params: Params) => {
+	return {
+		pid: params.pid !== undefined ? parseInt(params.pid) : undefined,
+	};
+};
+
 const playerFeats = (params: Params) => {
 	let abbrev;
 
@@ -991,6 +997,7 @@ export default {
 	playerRatings,
 	playerStatDists,
 	playerGraphs,
+	playerRatingsOverride,
 	playerStats,
 	playoffs: validateSeasonOnly,
 	powerRankings,

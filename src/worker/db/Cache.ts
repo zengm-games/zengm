@@ -16,6 +16,7 @@ import type {
 	MinimalPlayerRatings,
 	Negotiation,
 	Player,
+	PlayerHistoricRatings,
 	PlayerWithoutKey,
 	PlayerFeat,
 	PlayerFeatWithoutKey,
@@ -58,6 +59,7 @@ export type Store =
 	| "negotiations"
 	| "playerFeats"
 	| "players"
+	| "playerHistoricRatings"
 	| "playoffSeries"
 	| "releasedPlayers"
 	| "schedule"
@@ -92,6 +94,7 @@ export const STORES: Store[] = [
 	"negotiations",
 	"playerFeats",
 	"players",
+	"playerHistoricRatings",
 	"playoffSeries",
 	"releasedPlayers",
 	"schedule",
@@ -263,6 +266,12 @@ class Cache {
 		number
 	>;
 
+	playerHistoricRatings: StoreAPI<
+		PlayerHistoricRatings,
+		PlayerHistoricRatings,
+		number
+	>;
+
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 
 	releasedPlayers: StoreAPI<ReleasedPlayerWithoutKey, ReleasedPlayer, number>;
@@ -408,6 +417,16 @@ class Cache {
 						key: ["draft.year", "retiredYear"],
 					},
 				],
+			},
+			playerHistoricRatings: {
+				pk: "pid",
+				pkType: "number",
+				autoIncrement: true,
+				getData: async (tx: IDBPTransaction<LeagueDB>) => {
+					return await Promise.all([
+						tx.objectStore("playerHistoricRatings").getAll(),
+					]);
+				},
 			},
 			playoffSeries: {
 				pk: "season",
@@ -556,6 +575,7 @@ class Cache {
 		this.negotiations = new StoreAPI(this, "negotiations");
 		this.playerFeats = new StoreAPI(this, "playerFeats");
 		this.players = new StoreAPI(this, "players");
+		this.playerHistoricRatings = new StoreAPI(this, "playerHistoricRatings");
 		this.playoffSeries = new StoreAPI(this, "playoffSeries");
 		this.releasedPlayers = new StoreAPI(this, "releasedPlayers");
 		this.schedule = new StoreAPI(this, "schedule");

@@ -663,6 +663,15 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "playerRatingsOverride",
+				godMode: true,
+				league: true,
+				commandPalette: true,
+				path: ["player_ratings_override"],
+				text: "Player Ratings Override",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "exportLeague",
 				league: true,
 				commandPalette: true,

@@ -758,11 +758,14 @@ class GameSim {
 			r -= 0.5 * pulledGoalieFactor;
 		}
 
-		if (
-			r <
+		let probBlock =
 			(0.1 + 0.35 * this.team[this.d].compositeRating.blocking) *
-				g.get("blockFactor")
-		) {
+			g.get("blockFactor");
+		if (this.allStarGame) {
+			probBlock /= 2;
+		}
+
+		if (r < probBlock) {
 			const blocker = this.pickPlayer(this.d, "blocking", ["C", "W", "D"]);
 			this.recordStat(this.d, blocker, "blk", 1);
 			this.playByPlay.logEvent({
@@ -879,10 +882,10 @@ class GameSim {
 				1,
 			);
 
-			// In All-Star Game, twice as many goals
+			// In All-Star Game, more goals
 			if (this.allStarGame) {
 				const gap = 1 - savePercentage;
-				savePercentage = 1 - 2 * gap;
+				savePercentage = 1 - 1.9 * gap;
 			}
 
 			if (r < savePercentage) {

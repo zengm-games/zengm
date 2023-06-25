@@ -571,7 +571,8 @@ class GameSim {
 	isHit() {
 		return (
 			Math.random() <
-			0.3 *
+			(this.allStarGame ? 0.1 : 1) *
+				0.3 *
 				(this.team[this.o].compositeRating.hitting +
 					this.team[this.d].compositeRating.hitting) *
 				g.get("hitFactor")
@@ -675,6 +676,11 @@ class GameSim {
 
 		let dt = Math.random() * (maxLength - 0.017) + 0.017;
 		dt /= g.get("pace");
+
+		// Faster pace (more shots) in ASG
+		if (this.allStarGame) {
+			dt /= 2;
+		}
 
 		if (this.clock - dt < 0) {
 			dt = this.clock;
@@ -861,16 +867,25 @@ class GameSim {
 			const shotQualityProbComponent2 = -0.025 * shotQualityProbComponent; // -0.025 to 0.025
 
 			// Save percentage does not depend on defenders https://www.tsn.ca/defencemen-and-their-impact-on-team-save-percentage-1.567469
-			if (
-				r <
+			let savePercentage = helpers.bound(
 				Math.min(
 					0.99,
 					(0.9 +
 						shotQualityProbComponent2 +
 						goalie.compositeRating.goalkeeping * 0.07) *
 						g.get("saveFactor"),
-				)
-			) {
+				),
+				0,
+				1,
+			);
+
+			// In All-Star Game, twice as many goals
+			if (this.allStarGame) {
+				const gap = 1 - savePercentage;
+				savePercentage = 1 - 2 * gap;
+			}
+
+			if (r < savePercentage) {
 				const saveType = Math.random() < 0.5 ? "save-freeze" : "save";
 
 				this.recordStat(this.d, goalie, "sv");
@@ -968,6 +983,10 @@ class GameSim {
 	}
 
 	checkPenalty() {
+		if (this.allStarGame && Math.random() < 0.9) {
+			return false;
+		}
+
 		const r = Math.random();
 
 		const penalty = penalties.find(

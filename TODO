@@ -1435,9 +1435,6 @@ player stats popover
 fuzz doesn't really make sense
 - have it decrease as a player plays. so high only for draft prospects or unknowns
 
-add copy league function
-- https://old.reddit.com/message/messages/nmnr87
-
 better trade finder AI
 - handle salary matching constraint
 - use in trading block, and betweenAiTeams
@@ -2184,17 +2181,6 @@ fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd
   add entry for fantasy draft summary to draft history dropdown?
-league settings
-  enable/disable trading rules
-cross-league play
-mobile UI, bootstrap 3
-  do something about hover tooltips
-    injury
-    skills
-      for injury and skills, maybe make the whole block a hyperlink that opens a popover
-        make sure to use on player page too.. can i use helpers.playerName.. there too?
-    table headers
-    others?
 some kind of playoff series overview page, including box scores for easy access
 A year-to-date comparison of team finances with the previous year.
 dashboard info should be on a widget accessible from any screen

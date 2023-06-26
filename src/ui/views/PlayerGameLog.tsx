@@ -153,14 +153,14 @@ const PlayerGameLog = ({
 		let oppTidCounter = -1;
 		const classes = [
 			"",
-			"table-secondary",
 			"table-info",
 			"table-primary",
 			"table-success",
+			"table-light",
 			"table-danger",
 			"table-warning",
+			"table-secondary",
 			"table-active",
-			"table-light",
 		];
 		for (let i = 0; i < playoffGames.length; i++) {
 			const game = playoffGames[i];

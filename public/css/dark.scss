@@ -404,6 +404,7 @@ table.table thead .sorting::after {
 // Otherwise it's just black, needs manual override. This breaks hover though :(
 .table-secondary {
 	background-color: $gray-100 !important;
+	--bs-table-bg: $gray-100 !important;
 }
 
 $highlight-leader-color: lighten($yellow, 18%);

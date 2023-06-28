@@ -607,6 +607,16 @@ class GameSim {
 			if (!needTouchdown) {
 				const probMadeFieldGoal = this.probMadeFieldGoal();
 
+				// If it's late in the 4th quarter, some scores heavily favor kicking a FG - the FG will take the lead, or when the FG will make the "number of scores" lead much better (like going from up 4 to up 7, or up 6 to up 9)
+				if (
+					probMadeFieldGoal >= 0.5 &&
+					quarter === this.numPeriods &&
+					this.clock <= 6 &&
+					((ptsDown >= 0 && ptsDown <= 2) || (ptsDown <= -4 && ptsDown >= -8))
+				) {
+					return "fieldGoal";
+				}
+
 				// If it's 4th and short, maybe go for it
 				let probGoForIt =
 					(() => {

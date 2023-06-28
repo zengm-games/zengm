@@ -60,6 +60,62 @@ describe("worker/core/GameSim.football", () => {
 		assert.strictEqual(game.getPlayType(), "fieldGoalLate");
 	});
 
+	test("kick a field goal on 4th down to take the lead late in the game", async () => {
+		const game = await initGameSim();
+
+		const situationsToAlwaysKick = [
+			{
+				ptsDown: 2,
+				clock: 2,
+			},
+			{
+				ptsDown: 1,
+				clock: 2,
+			},
+			{
+				ptsDown: 0,
+				clock: 2,
+			},
+			{
+				ptsDown: -4,
+				clock: 2,
+			},
+			{
+				ptsDown: -5,
+				clock: 2,
+			},
+			{
+				ptsDown: -6,
+				clock: 2,
+			},
+			{
+				ptsDown: -7,
+				clock: 2,
+			},
+			{
+				ptsDown: -8,
+				clock: 2,
+			},
+		];
+
+		// 4th quarter, 4th down, ball on the opp 20 yard line
+		for (const { ptsDown, clock } of situationsToAlwaysKick) {
+			game.awaitingKickoff = undefined;
+			game.o = 0;
+			game.d = 1;
+			game.team[0].stat.pts = 10;
+			game.team[0].stat.ptsQtrs = [0, 0, 0, game.team[0].stat.pts];
+			game.team[1].stat.pts = game.team[0].stat.pts + ptsDown;
+			game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts];
+			game.scrimmage = 80;
+			game.clock = clock;
+			game.down = 4;
+			game.currentPlay = new Play(game);
+		}
+
+		assert.strictEqual(game.getPlayType(), "fieldGoal");
+	});
+
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {
 		const game = await initGameSim();
 

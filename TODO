@@ -1,13 +1,7 @@
-FBGM add logic for 4th down decisions late in game https://mail.google.com/mail/u/0/#inbox/FMfcgzGsnLNNFrRFKLDVHvBGrXksRvrN
-- how late is "late"? should it gradually reach that state?
-- down 2 or less - FG preference
-- down 4 or more - TD preference
-- down 3 - either
-
-randomization setting to allow random debuts without shuffling current rosters https://old.reddit.com/r/BasketballGM/comments/14i4u0w/new_league_type_in_version_202306241075_crossera/jpreu89/?context=3
-- confirm it still works with cross era
-- with KeepCurrent, should be able to keep stats of players
-  - but maybe not for HoF or other players?
+random debuts + keep stats
+- no awards? https://old.reddit.com/r/BasketballGM/comments/14lao2n/version_202306280612_added_a_new_type_of_random/jpvintd/
+  - is it supposed to work that way, even with no random debuts?
+- contracts? https://old.reddit.com/r/BasketballGM/comments/14lao2n/version_202306280612_added_a_new_type_of_random/jpvze7z/
 
 accessibility
 - team finances graphs don't show up on screen reader https://discord.com/channels/@me/1121892283986477237/1121898840245682316

@@ -62,6 +62,7 @@ describe("worker/core/GameSim.football", () => {
 
 	test("kick a field goal on 4th down to take the lead late in the game", async () => {
 		const game = await initGameSim();
+		game.probMadeFieldGoal = () => 0.75;
 
 		const situationsToAlwaysKick = [
 			{
@@ -111,9 +112,9 @@ describe("worker/core/GameSim.football", () => {
 			game.clock = clock;
 			game.down = 4;
 			game.currentPlay = new Play(game);
-		}
 
-		assert.strictEqual(game.getPlayType(), "fieldGoal");
+			assert.strictEqual(game.getPlayType(), "fieldGoal");
+		}
 	});
 
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {

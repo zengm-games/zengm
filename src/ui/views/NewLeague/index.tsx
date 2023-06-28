@@ -478,7 +478,7 @@ const reducer = (state: State, action: Action): State => {
 				...action.defaultSettings,
 			};
 
-			// What we want - change the default randomization value from "none" to "debuts". This mostly does that, unless the user has specified "none" in the global default settings, in which case we can't distinguish that from nothing being selected. Probably nobody will notice the difference.
+			// What we want - change the default randomization value from "none" to "debuts". This mostly does that, unless the user has specified "none" in the global default settings, in which case we can't distinguish that from nothing being selected. Probably nobody will notice the difference. Using "debuts" rather than "debutsKeepCurrent" because really they're the same in this context (meaningless not to keep current players) so only "debuts" is exposed in the settings UI.
 			if (settings.randomization === "none") {
 				settings.randomization = "debuts";
 			}
@@ -814,7 +814,12 @@ const NewLeague = (props: View<"newLeague">) => {
 					phase: state.phase,
 					randomDebuts:
 						settings.randomization === "debuts" ||
-						settings.randomization === "debutsForever",
+						settings.randomization === "debutsKeepCurrent" ||
+						settings.randomization === "debutsForever" ||
+						settings.randomization === "debutsForeverKeepCurrent",
+					randomDebutsKeepCurrent:
+						settings.randomization === "debutsKeepCurrent" ||
+						settings.randomization === "debutsForeverKeepCurrent",
 					realDraftRatings: settings.realDraftRatings,
 					realStats: settings.realStats,
 				};
@@ -1233,7 +1238,17 @@ const NewLeague = (props: View<"newLeague">) => {
 														phase: value2,
 														randomDebuts:
 															state.settings.randomization === "debuts" ||
-															state.settings.randomization === "debutsForever",
+															state.settings.randomization ===
+																"debutsKeepCurrent" ||
+															state.settings.randomization ===
+																"debutsForever" ||
+															state.settings.randomization ===
+																"debutsForeverKeepCurrent",
+														randomDebutsKeepCurrent:
+															state.settings.randomization ===
+																"debutsKeepCurrent" ||
+															state.settings.randomization ===
+																"debutsForeverKeepCurrent",
 														realDraftRatings: state.settings.realDraftRatings,
 
 														// Adding historical seasons just screws up tid

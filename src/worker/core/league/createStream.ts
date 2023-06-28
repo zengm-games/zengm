@@ -407,7 +407,13 @@ const finalizeGameAttributes = async ({
 	gameAttributes: any;
 	gameAttributeOverrides: GameAttributeOverrides;
 	getLeagueOptions: GetLeagueOptions | undefined;
-	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
+	randomization:
+		| "none"
+		| "shuffle"
+		| "debuts"
+		| "debutsKeepCurrent"
+		| "debutsForever"
+		| "debutsForeverKeepCurrent";
 	startingSeason: number;
 	teamsCameFromFile: boolean;
 	teamInfos: TeamInfo[];
@@ -1349,7 +1355,12 @@ const afterDBStream = async ({
 		activePlayers.push(...extraActivePlayers);
 	}
 
-	if (randomization === "debuts" || randomization === "debutsForever") {
+	if (
+		randomization === "debuts" ||
+		randomization === "debutsKeepCurrent" ||
+		randomization === "debutsForever" ||
+		randomization === "debutsForeverKeepCurrent"
+	) {
 		const basketball = await loadDataBasketball();
 
 		const draftProspects = await initRandomDebutsForRandomPlayersLeague({

@@ -239,9 +239,17 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		if (options.randomDebuts) {
-			const toRandomize = players.filter(
-				p => p.tid !== PLAYER.FREE_AGENT && p.tid !== PLAYER.RETIRED,
-			);
+			const toRandomize = players.filter(p => {
+				if (p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.RETIRED) {
+					return false;
+				}
+
+				if (options.randomDebutsKeepCurrent) {
+					return p.tid < 0;
+				}
+
+				return true;
+			});
 
 			const draftYears = toRandomize.map(p => p.draft.year);
 			random.shuffle(draftYears);

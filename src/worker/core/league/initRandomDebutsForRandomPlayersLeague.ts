@@ -33,6 +33,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 			season,
 			phase,
 			randomDebuts: true,
+			randomDebutsKeepCurrent: false,
 			realDraftRatings,
 			realStats: "none",
 		},

@@ -90,7 +90,15 @@ export const settings: Setting[] = (
 			values: [
 				{ key: "none", value: "None" },
 				{ key: "debuts", value: "Random debuts" },
+				{
+					key: "debutsKeepCurrent",
+					value: "Random debuts (keep current rosters)",
+				},
 				{ key: "debutsForever", value: "Random debuts forever" },
+				{
+					key: "debutsForeverKeepCurrent",
+					value: "Random debuts forever (keep current rosters)",
+				},
 				{ key: "shuffle", value: "Shuffle rosters" },
 			],
 			descriptionLong: (
@@ -106,6 +114,10 @@ export const settings: Setting[] = (
 						again and add them to future draft classes.
 					</p>
 					<p>
+						<b>(keep current rosters)</b> means that the current rosters will
+						not be randomized, only future draft classes.
+					</p>
+					<p>
 						<b>Shuffle rosters:</b> All active players are placed on random
 						teams.
 					</p>
@@ -117,7 +129,18 @@ export const settings: Setting[] = (
 					output.realStats !== "none"
 				) {
 					throw new Error(
-						'Random debuts mode currently only works with "Historical Stats" set to "None"',
+						'Random debuts only works with "Historical Stats" set to "None"',
+					);
+				}
+				if (
+					(value === "debutsKeepCurrent" ||
+						value === "debutsForeverKeepCurrent") &&
+					output.realStats !== "none" &&
+					output.realStats !== "lastSeason" &&
+					output.realStats !== "allActive"
+				) {
+					throw new Error(
+						'Random debuts (keep current rosters) only works with "Historical Stats" set to "None", "Last season, active players only", or "All seasons, active players only"',
 					);
 				}
 			},

@@ -177,7 +177,13 @@ export type Settings = Pick<
 		GameAttributesLeague["realDraftRatings"],
 		undefined
 	>;
-	randomization: "none" | "shuffle" | "debuts" | "debutsForever";
+	randomization:
+		| "none"
+		| "shuffle"
+		| "debuts"
+		| "debutsKeepCurrent"
+		| "debutsForever"
+		| "debutsForeverKeepCurrent";
 	realStats: GetLeagueOptionsReal["realStats"];
 	injuries: InjuriesSetting;
 	tragicDeaths: TragicDeaths;

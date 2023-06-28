@@ -1767,6 +1767,7 @@ export type GetLeagueOptionsReal = {
 	season: number;
 	phase: number;
 	randomDebuts: boolean;
+	randomDebutsKeepCurrent: boolean;
 	realDraftRatings: "draft" | "rookie";
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
 

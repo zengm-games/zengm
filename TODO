@@ -5,7 +5,9 @@ FBGM add logic for 4th down decisions late in game https://mail.google.com/mail/
 - down 3 - either
 
 randomization setting to allow random debuts without shuffling current rosters https://old.reddit.com/r/BasketballGM/comments/14i4u0w/new_league_type_in_version_202306241075_crossera/jpreu89/?context=3
-- it was supposed to do this in the first place, damn it
+- confirm it still works with cross era
+- with KeepCurrent, should be able to keep stats of players
+  - but maybe not for HoF or other players?
 
 accessibility
 - team finances graphs don't show up on screen reader https://discord.com/channels/@me/1121892283986477237/1121898840245682316

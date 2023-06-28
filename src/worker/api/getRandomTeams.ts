@@ -299,6 +299,7 @@ const getAllRealTeamInfos = async () => {
 			season,
 			phase: PHASE.PLAYOFFS,
 			randomDebuts: false,
+			randomDebutsKeepCurrent: false,
 			realDraftRatings: "draft",
 			realStats: "none",
 		});
@@ -367,6 +368,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 				season,
 				phase: PHASE.PLAYOFFS,
 				randomDebuts: false,
+				randomDebutsKeepCurrent: false,
 				realDraftRatings: "rookie",
 				realStats: "none",
 				includeSeasonInfo: true,

@@ -11,6 +11,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					season: 1956,
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
+					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
 				})
@@ -25,6 +26,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					season: 2021,
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
+					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
 				})
@@ -41,6 +43,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					season: 2004,
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
+					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
 				})
@@ -54,6 +57,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					season: 2004,
 					phase: PHASE.DRAFT_LOTTERY,
 					randomDebuts: false,
+					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
 				})
@@ -70,6 +74,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					season: 1950,
 					phase: PHASE.PRESEASON,
 					randomDebuts: false,
+					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
 				})
@@ -83,6 +88,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					season: 1950,
 					phase: PHASE.DRAFT_LOTTERY,
 					randomDebuts: false,
+					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
 				})

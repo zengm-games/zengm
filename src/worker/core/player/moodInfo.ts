@@ -63,13 +63,12 @@ const moodInfo = async (
 		sumAndStuff -= 3;
 	}
 
-	let contractAmount =
-		overrides.contractAmount !== undefined
-			? overrides.contractAmount
-			: p.contract.amount;
+	let contractAmount = overrides.contractAmount ?? p.contract.amount;
 
-	// Up to 50% penalty for bad mood
-	if (contractAmount > g.get("minContract")) {
+	// Up to 50% penalty for bad mood, except if this is a rookie contract
+	const autoRookieContract =
+		components.rookieContract > 0 && g.get("draftPickAutoContract");
+	if (!autoRookieContract && contractAmount > g.get("minContract")) {
 		contractAmount *= helpers.bound(1 + (0.5 * -sumComponents) / 10, 1, 1.5);
 	}
 

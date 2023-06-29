@@ -1594,7 +1594,6 @@ const NewLeague = (props: View<"newLeague">) => {
 															newCustomize !== "real" &&
 															newCustomize !== "legends"
 														) {
-															console.log("CLEAR");
 															dispatch({ type: "clearLeagueFile" });
 														}
 													}}

@@ -12,14 +12,14 @@ const getCopies = async (
 	type?: GetCopyType,
 ): Promise<PlayerHistoricRatings[]> => {
 	let playerRatings;
-	if (pid !== undefined) {
+	if (pid === undefined) {
 		playerRatings = [];
 	}
 	playerRatings = mergeByPk(
 		await idb.league
 			.transaction("playerHistoricRatings")
 			.store.index("pid")
-			.getAll(),
+			.getAll(pid),
 		(await idb.cache.playerHistoricRatings.getAll()).filter(playerRatings => {
 			return playerRatings.pid === pid;
 		}),

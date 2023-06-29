@@ -9,3 +9,4 @@ export { default as playersPlus } from "./playersPlus";
 export { default as playoffSeries } from "./playoffSeries";
 export { default as teamsPlus } from "./teamsPlus";
 export { default as teamSeasons } from "./teamSeasons";
+export { default as playerHistoricRatings } from "./playerHistoricRatings";

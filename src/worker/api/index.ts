@@ -3884,11 +3884,18 @@ const updatePlayerRatingsOverride = async (
 	console.log(newRatings);
 	const playerHistoricRatings: PlayerHistoricRatings = {
 		pid: input.pid,
-		season: 0 + input.season,
+		season: input.season,
 		playerRatings: newRatings,
 	};
 	console.log(playerHistoricRatings);
 	await idb.cache.playerHistoricRatings.put(playerHistoricRatings);
+};
+
+const deletePlayerHistoricRating = async (phrid: number | undefined) => {
+	console.log(phrid);
+	if (phrid !== undefined) {
+		await idb.cache.playerHistoricRatings.delete(phrid);
+	}
 };
 
 const upsertCustomizedPlayer = async (
@@ -4307,6 +4314,7 @@ export default {
 		createTrade,
 		deleteOldData,
 		deleteScheduledEvents,
+		deletePlayerHistoricRating,
 		discardUnsavedProgress,
 		draftLottery,
 		draftUser,

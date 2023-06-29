@@ -4,14 +4,7 @@ import { DataTable } from "../components";
 import { getCols, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import { useState } from "react";
 import type { DataTableRow } from "../components/DataTable";
-import { g } from "src/worker/util";
-
-const getPlayer = (player?: Player) => {
-	if (player == undefined) {
-		return;
-	}
-	return player;
-};
+import useTitleBar from "../hooks/useTitleBar";
 
 type InputRow = {
 	season?: number;
@@ -22,18 +15,24 @@ type InputRow = {
 	}[];
 };
 
-const getInputRow = (ratings: any[], pid: number): InputRow => {
+const getInputRow = (ratings: any[], pid: number, player: Player): InputRow => {
+	const playerRatings = player.ratings[player.ratings.length - 1];
 	let row = {
 		pid: pid,
 		ratings: ratings.map(rating => {
 			return {
-				rating: 50,
+				rating: playerRatings[rating],
 				name: rating,
 			};
 		}),
 	};
 
 	return row;
+};
+
+const deletePlayerRatings = async (r: PlayerHistoricRatings) => {
+	toWorker("main", "deletePlayerHistoricRating", r.phrid);
+	realtimeUpdate();
 };
 
 const getHistoricRatingsColumns = (
@@ -48,6 +47,18 @@ const getHistoricRatingsColumns = (
 					value: r.season,
 				},
 				...cols.map(rating => r.playerRatings[rating]),
+				{
+					value: (
+						<>
+							<button
+								className="btn btn-light-bordered btn-xs"
+								onClick={() => deletePlayerRatings(r)}
+							>
+								Delete
+							</button>
+						</>
+					),
+				},
 			],
 		};
 	});
@@ -60,10 +71,28 @@ const PlayerRatingsOverride = ({
 	cols,
 	godMode,
 }: View<"playerRatingsOverride">) => {
+	useTitleBar({
+		title: "Player Ratings Override",
+		jumpTo: true,
+	});
+
 	const savePlayerRatingsOverride = async () => {
 		try {
+			if (
+				playerHistoricRatings.filter(phr => phr.season == newRatings.season)
+					.length > 0
+			) {
+				console.log("yoo");
+				logEvent({
+					type: "error",
+					text: "You cannot have two overrides in the same season. Please delete the previous one",
+					saveToDb: false,
+				});
+				return;
+			}
 			console.log("save");
 			await toWorker("main", "updatePlayerRatingsOverride", newRatings);
+			realtimeUpdate();
 		} catch (error) {
 			console.log(error);
 			logEvent({
@@ -148,42 +177,57 @@ const PlayerRatingsOverride = ({
 		});
 	};
 
-	const handleChange = () => (p: any) => {
+	const handleChange = (p: Player | null) => {
 		console.log("wowo");
-		setPlayer(p);
-		const url = helpers.leagueUrl(["player_ratings_override", p.pid]);
-		console.log("wow");
-		realtimeUpdate([], url, undefined, true);
+		if (p != undefined) {
+			setPlayer(p);
+			setNewRatings(getInputRow(cols, p.pid, p));
+			const url = helpers.leagueUrl(["player_ratings_override", p?.pid ?? ""]);
+			console.log("wow");
+			updateUrl(url);
+		}
 	};
+
+	const updateUrl = async (url: string) => {
+		await realtimeUpdate([], url, undefined, true);
+	};
+
+	console.log("newReload");
+
 	const [playerSelected, setPlayer] = useState(player);
-	const inputRow = getInputRow(cols, playerSelected.pid);
+	console.log(player.pid, playerSelected.pid);
+	const inputRow = getInputRow(cols, playerSelected.pid, player);
 	const [newRatings, setNewRatings] = useState(inputRow);
 	console.log(newRatings);
 	return (
 		<div>
-			<SelectMultiple
-				options={players}
-				value={playerSelected}
-				getOptionLabel={p => p.lastName + " " + p.firstName}
-				getOptionValue={(p: Player) => String(p.pid)}
-				onChange={handleChange()}
-			/>
+			<div className="col-lg-4 col-md-6 mb-3">
+				<SelectMultiple
+					options={players}
+					value={playerSelected}
+					getOptionLabel={p => p.lastName + " " + p.firstName}
+					getOptionValue={(p: Player) => String(p.pid)}
+					onChange={(event: Player | null) => handleChange(event)}
+				/>
+			</div>
 
-			<DataTable
-				cols={[
-					...getCols(["Year", ...cols.map(rating => `rating:${rating}`)]),
-					{ title: "Save" },
-				]}
-				defaultSort={[0, "asc"]}
-				defaultStickyCols={2}
-				clickable={false}
-				hideAllControls
-				name="Player:Ratings"
-				rows={[
-					...getHistoricRatingsColumns(playerHistoricRatings, cols),
-					...getInputRowColumns(newRatings),
-				]}
-			></DataTable>
+			<div>
+				<DataTable
+					cols={[
+						...getCols(["Year", ...cols.map(rating => `rating:${rating}`)]),
+						{ title: "Save" },
+					]}
+					defaultSort={[0, "asc"]}
+					defaultStickyCols={0}
+					clickable={false}
+					hideAllControls
+					name="Player:Ratings"
+					rows={[
+						...getHistoricRatingsColumns(playerHistoricRatings, cols),
+						...getInputRowColumns(newRatings),
+					]}
+				></DataTable>
+			</div>
 		</div>
 	);
 };

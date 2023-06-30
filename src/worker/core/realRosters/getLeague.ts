@@ -324,6 +324,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 							bio,
 						);
 					}
+
+					// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
+					p.stats = [];
+					p.awards = [];
+					p.salaries = [];
 				}
 			}
 		}

@@ -99,7 +99,6 @@ const getDraftProspects = async (
 		.map(ratings =>
 			formatPlayer(ratings, {
 				draftProspect: true,
-				randomDebuts: options.randomDebuts,
 			}),
 		);
 

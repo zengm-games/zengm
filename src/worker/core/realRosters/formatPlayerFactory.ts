@@ -60,14 +60,10 @@ const formatPlayerFactory = async (
 		ratingsInput: Ratings[] | Ratings,
 		{
 			draftProspect,
-			legends,
 			hasQueens,
-			randomDebuts,
 		}: {
 			draftProspect?: boolean;
-			legends?: boolean;
 			hasQueens?: boolean;
-			randomDebuts?: boolean;
 		} = {},
 	) => {
 		const allRatings = Array.isArray(ratingsInput)
@@ -85,6 +81,8 @@ const formatPlayerFactory = async (
 
 		// For alexnoob draft prospects who already have their draft ratings set for the correct season, as opposed to other rookies who need them set based on their rookie ratings
 		const draftRatingsAlreadySet = bio.draftYear === ratings.season;
+
+		const legends = options.type === "legends";
 
 		let draft;
 		if (draftProspect || legends) {
@@ -206,12 +204,12 @@ const formatPlayerFactory = async (
 		let contract: PlayerContract | undefined;
 		let awards;
 		let salaries;
-		if (legends) {
+		if (options.type === "legends") {
 			contract = {
 				amount: 6000,
 				exp: season + 3,
 			};
-		} else if (!randomDebuts) {
+		} else if (!options.randomDebuts) {
 			const salaryRows = basketball.salaries.filter(row => {
 				if (row.slug !== slug) {
 					return false;

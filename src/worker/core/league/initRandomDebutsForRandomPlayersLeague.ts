@@ -58,7 +58,6 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 		.map(ratings =>
 			formatPlayer(ratings, {
 				draftProspect: true,
-				randomDebuts: true,
 			}),
 		);
 

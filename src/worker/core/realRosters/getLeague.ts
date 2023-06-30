@@ -173,9 +173,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		const players = groupedRatings.map(ratings => {
-			const p = formatPlayer(ratings, {
-				randomDebuts: options.randomDebuts,
-			});
+			const p = formatPlayer(ratings);
 
 			const retiredUntil = ratings.at(-1)?.retiredUntil;
 			if (retiredUntil !== undefined) {
@@ -913,7 +911,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			)
 			.map(ratings =>
 				formatPlayer(ratings, {
-					legends: true,
 					hasQueens,
 				}),
 			)

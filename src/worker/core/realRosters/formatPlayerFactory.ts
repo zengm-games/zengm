@@ -209,7 +209,7 @@ const formatPlayerFactory = async (
 				amount: 6000,
 				exp: season + 3,
 			};
-		} else if (!options.randomDebuts) {
+		} else if (!options.randomDebuts || options.randomDebutsKeepCurrent) {
 			const salaryRows = basketball.salaries.filter(row => {
 				if (row.slug !== slug) {
 					return false;

@@ -8,7 +8,7 @@ const getCopy = async (
 	const result = await idb.getCopies.playerHistoricRatings({
 		pid,
 	});
-	if (result.length > 0) {
+	if (result.length > 0 && pid == 2816) {
 		console.log("bitch");
 		console.log(result);
 	}

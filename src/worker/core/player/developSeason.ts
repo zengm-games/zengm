@@ -73,8 +73,10 @@ const developSeason = async (
 			);
 		}
 	} else if (overridenRatings !== undefined) {
-		console.log(overridenRatings);
-		console.log("yoope");
+		if (overrideData!!.pid == 2816) {
+			console.log(overridenRatings);
+			console.log("yo mama");
+		}
 		for (const key of RATINGS) {
 			(ratings as any)[key] = limitRating(
 				1.0 * overridenRatings.playerRatings[key] +

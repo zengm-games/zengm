@@ -930,9 +930,11 @@ const leagueUrlFactory = (
  */
 const formatCurrency = (
 	amount: number,
-	append: string = "",
+	initialUnits: "M" | "" = "",
 	precision: number = 2,
 ) => {
+	const baseExponent = initialUnits === "M" ? 6 : 0; // Input unit is in millions
+
 	const sign = amount < 0 ? "-" : "";
 	let abs = Math.abs(amount);
 
@@ -940,27 +942,29 @@ const formatCurrency = (
 		return "$0";
 	}
 
-	// Keep in sync with getSortVal
-	if (append === "M") {
-		if (abs > 1000) {
-			const currencySuffixes = ["M", "B", "T", "Q"];
+	let append = "";
 
-			const suffixIndex = Math.floor(Math.log10(abs) / 3);
-			if (suffixIndex < currencySuffixes.length) {
-				append = currencySuffixes[suffixIndex];
-				abs /= 1000 ** suffixIndex;
-			} else {
-				// Scientific notation
-				const baseExponent = 6; // Input unit is in millions
-				const exponent = Math.floor(Math.log10(abs));
-				append = `e${exponent + baseExponent}`;
-				abs /= 10 ** exponent;
-			}
-		} else if (abs < 1) {
-			abs *= 1000;
-			append = "k";
-			precision = 0;
+	// Keep in sync with getSortVal
+	if (abs > 1000) {
+		const currencySuffixes = ["", "k", "M", "B", "T", "Q"];
+
+		const exponent = Math.floor(Math.log10(abs));
+		const suffixIndex = Math.floor((exponent + baseExponent) / 3);
+		if (suffixIndex < currencySuffixes.length) {
+			append = currencySuffixes[suffixIndex];
+			abs /= 1000 ** (suffixIndex - baseExponent / 3);
+		} else {
+			// Scientific notation
+			append = `e${exponent + baseExponent}`;
+			abs /= 10 ** exponent;
 		}
+	} else if (abs < 1) {
+		abs *= 1000;
+		append = "k";
+		precision = 0;
+	} else {
+		// No scaling needed!
+		append = initialUnits;
 	}
 
 	let numberString = abs.toFixed(precision);

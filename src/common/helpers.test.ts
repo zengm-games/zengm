@@ -56,6 +56,26 @@ describe("common/helpers", () => {
 			assert.strictEqual(helpers.formatCurrency(64, "M", 2), "$64M");
 		});
 
+		test("large numbers and scientific notation", () => {
+			assert.strictEqual(helpers.formatCurrency(64.363, "", 2), "$64.36");
+			assert.strictEqual(helpers.formatCurrency(64000, "", 2), "$64k");
+			assert.strictEqual(helpers.formatCurrency(6400000, "", 2), "$6.4M");
+			assert.strictEqual(helpers.formatCurrency(6400000000, "", 2), "$6.4B");
+			assert.strictEqual(helpers.formatCurrency(6400000000000, "", 2), "$6.4T");
+			assert.strictEqual(
+				helpers.formatCurrency(6400000000000000, "", 2),
+				"$6.4Q",
+			);
+			assert.strictEqual(
+				helpers.formatCurrency(6400000000000000000, "", 2),
+				"$6.4e18",
+			);
+			assert.strictEqual(
+				helpers.formatCurrency(64000000000000000000, "", 2),
+				"$6.4e19",
+			);
+		});
+
 		test("large numbers and scientific notation, in millions", () => {
 			assert.strictEqual(helpers.formatCurrency(64363, "M", 2), "$64.36B");
 			assert.strictEqual(helpers.formatCurrency(64363000, "M", 2), "$64.36T");

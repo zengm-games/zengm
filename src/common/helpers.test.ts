@@ -38,35 +38,23 @@ describe("common/helpers", () => {
 		});
 
 		test("append a string, if supplied", () => {
-			assert.strictEqual(
-				helpers.formatCurrency(64363.764376, "Q"),
-				"$64363.76Q",
-			);
-			assert.strictEqual(
-				helpers.formatCurrency(0.794, "whatever"),
-				"$0.79whatever",
-			);
+			assert.strictEqual(helpers.formatCurrency(64.764376, "M"), "$64.76M");
+			assert.strictEqual(helpers.formatCurrency(64363.764376, "M"), "$64.36B");
 		});
 
 		test("round to any precision", () => {
 			assert.strictEqual(
-				helpers.formatCurrency(64363.764376, "Q", 5),
-				"$64363.76438Q",
+				helpers.formatCurrency(64363.764376, "M", 5),
+				"$64.36376B",
 			);
-			assert.strictEqual(
-				helpers.formatCurrency(0.794, "whatever", 0),
-				"$1whatever",
-			);
+			assert.strictEqual(helpers.formatCurrency(0.794123, "M", 0), "$794k");
 		});
 
 		test("truncate trailing 0s", () => {
-			assert.strictEqual(
-				helpers.formatCurrency(64363.99, "Q", 2),
-				"$64363.99Q",
-			);
-			assert.strictEqual(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9Q");
-			assert.strictEqual(helpers.formatCurrency(64363.0, "Q", 2), "$64363Q");
-			assert.strictEqual(helpers.formatCurrency(64363, "Q", 2), "$64363Q");
+			assert.strictEqual(helpers.formatCurrency(64.99, "M", 2), "$64.99M");
+			assert.strictEqual(helpers.formatCurrency(64.9, "M", 2), "$64.9M");
+			assert.strictEqual(helpers.formatCurrency(64.0, "M", 2), "$64M");
+			assert.strictEqual(helpers.formatCurrency(64, "M", 2), "$64M");
 		});
 	});
 

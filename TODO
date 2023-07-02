@@ -1,3 +1,14 @@
+formatCurrency powers
+- getSortVal
+
+names of playoff rounds
+- centralize to one place
+- where are all the places it's used?
+  - "made conference finals"
+  - "conference champs"
+  - notifications about winning rounds or buzzer beaters
+- should it be possible to customize, like is it 2nd round or quarterfinals?
+
 accessibility
 - team finances graphs don't show up on screen reader https://discord.com/channels/@me/1121892283986477237/1121898840245682316
 

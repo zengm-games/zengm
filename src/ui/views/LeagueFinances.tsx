@@ -87,7 +87,7 @@ const LeagueFinances = ({
 			...(budget
 				? [
 						showTicketPrice
-							? helpers.formatCurrency(t.budget.ticketPrice, "", 2)
+							? helpers.formatCurrency(t.budget.ticketPrice, "")
 							: null,
 						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
 						helpers.formatCurrency(t.seasonAttrs.profit, "M"),

@@ -941,25 +941,26 @@ const formatCurrency = (
 	}
 
 	// Keep in sync with getSortVal
-	if (append === "M" && abs > 1000) {
-		abs /= 1000;
-		append = "B";
-
+	if (append === "M") {
 		if (abs > 1000) {
-			abs /= 1000;
-			append = "T";
+			const currencySuffixes = ["M", "B", "T", "Q"];
 
-			if (abs > 1000) {
-				abs /= 1000;
-				append = "Q";
+			const suffixIndex = Math.floor(Math.log10(abs) / 3);
+			if (suffixIndex < currencySuffixes.length) {
+				append = currencySuffixes[suffixIndex];
+				abs /= 1000 ** suffixIndex;
+			} else {
+				// Scientific notation
+				const baseExponent = 6; // Input unit is in millions
+				const exponent = Math.floor(Math.log10(abs));
+				append = `e${exponent + baseExponent}`;
+				abs /= 10 ** exponent;
 			}
+		} else if (abs < 1) {
+			abs *= 1000;
+			append = "k";
+			precision = 0;
 		}
-	}
-
-	if (append === "M" && abs < 1 && abs !== 0) {
-		abs *= 1000;
-		append = "k";
-		precision = 0;
 	}
 
 	let numberString = abs.toFixed(precision);

@@ -39,7 +39,6 @@ describe("common/helpers", () => {
 
 		test("append a string, if supplied", () => {
 			assert.strictEqual(helpers.formatCurrency(64.764376, "M"), "$64.76M");
-			assert.strictEqual(helpers.formatCurrency(64363.764376, "M"), "$64.36B");
 		});
 
 		test("round to any precision", () => {
@@ -55,6 +54,27 @@ describe("common/helpers", () => {
 			assert.strictEqual(helpers.formatCurrency(64.9, "M", 2), "$64.9M");
 			assert.strictEqual(helpers.formatCurrency(64.0, "M", 2), "$64M");
 			assert.strictEqual(helpers.formatCurrency(64, "M", 2), "$64M");
+		});
+
+		test("large numbers and scientific notation, in millions", () => {
+			assert.strictEqual(helpers.formatCurrency(64363, "M", 2), "$64.36B");
+			assert.strictEqual(helpers.formatCurrency(64363000, "M", 2), "$64.36T");
+			assert.strictEqual(
+				helpers.formatCurrency(64363000000, "M", 2),
+				"$64.36Q",
+			);
+			assert.strictEqual(
+				helpers.formatCurrency(643630000000, "M", 2),
+				"$643.63Q",
+			);
+			assert.strictEqual(
+				helpers.formatCurrency(6436300000000, "M", 2),
+				"$6.44e18",
+			);
+			assert.strictEqual(
+				helpers.formatCurrency(64363000000000, "M", 2),
+				"$6.44e19",
+			);
 		});
 	});
 

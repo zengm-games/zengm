@@ -295,12 +295,12 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return posMultiplier * p.currentStats.av;
 };
 export const dpoyScore = (p: PlayerFiltered) => {
-	const posBonus = p.pos === "LB" ? 5 : 0;
+	const posBonus = p.pos === "LB" ? 8 : 0;
 	return (
 		posBonus +
 		p.currentStats.av +
-		1.5 * p.currentStats.defSk +
-		p.currentStats.defTck / 12 +
+		1.75 * p.currentStats.defSk +
+		p.currentStats.defTck / 10 +
 		p.currentStats.defInt * 4 +
 		p.currentStats.defPssDef +
 		5 *

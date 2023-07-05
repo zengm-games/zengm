@@ -1,4 +1,49 @@
+bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
+
 Color the payroll red when over luxury tax and add a projected fine underneath https://discord.com/channels/290013534023057409/331882115119448065/1125131826697093181
+
+add ROY to draft history page https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jn8asg3/
+- also don't show 0 WS guys before season starts
+
+custom awards
+- fields
+  - formula
+  - abbrev
+  - short name
+  - long name
+  - some way to filter for SMOY
+  - MIP filter
+  - stats range (regular season, playoffs, semifinals, finals)
+  - team or individual
+  - if team
+    - way to specify if it's position based or not
+    - number of players per team
+    - how many teams
+  - active (so order/name/etc can be maintained for awards that no longer exist)
+  - order (for listing in player profile page)
+  - show in league history table?
+    - might need some other UI ones too
+  - SeasonIcon color
+- should be able to add/edit/delete awards over time, and still have awards races page show the old awards
+- extra things that get stored in player awards, but not in awards object
+  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
+  - see awardsOrder in groupAwards for list
+    - All-Star
+    - Won Championship
+    - Dunk Contest
+    - Three Point Contest
+    - Hall of Fame
+- UI to update
+  - award races
+  - groupAwards
+  - awards editor
+  - player profile
+  - league history table
+  - season summary
+  - awards records
+  - team records
+  - GOAT formula
+- add triple crown for baseball, like league leader awards
 
 names of playoff rounds
 - centralize to one place
@@ -267,42 +312,6 @@ put GOAT formula in advanced stats? https://discord.com/channels/290013534023057
 use TeamAbbrevLink more places
 - maybe default to reading from local state if no abbrev
 - if available, would be nice to put team region+name in title
-
-custom awards
-- fields
-  - formula
-  - abbrev
-  - short name
-  - long name
-  - some way to filter for SMOY
-  - stats range (regular season, playoffs, semifinals, finals)
-  - team or individual
-  - if team
-    - way to specify if it's position based or not
-    - number of players per team
-    - how many teams
-  - active (so order/name/etc can be maintained for awards that no longer exist)
-  - order (for listing in player profile page)
-  - show in league history table?
-    - might need some other UI ones too
-  - SeasonIcon color
-- extra things that get stored in player awards, but not in awards object
-  - All-Star
-  - Won Championship
-  - Dunk Contest
-  - Three Point Contest
-  - Hall of Fame
-- UI to update
-  - award races
-  - groupAwards
-  - awards editor
-  - player profile
-  - league history table
-  - season summary
-  - awards records
-  - team records
-  - GOAT formula
-- would be nice to support awards that only are awarded some years, like the triple crown
 
 baseballGM: roster composition on Trade page. WAR on resigning page? https://discord.com/channels/290013534023057409/331882115119448065/991842013798473749
 

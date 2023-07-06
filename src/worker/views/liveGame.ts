@@ -126,6 +126,13 @@ export const boxScoreToLiveSim = async ({
 		boxScore.scoringSummary = [];
 	}
 
+	// For ZGMH, if we don't start with events hidden, scoring summary flickers
+	if (isSport("hockey")) {
+		for (const event of boxScore.scoringSummary) {
+			event.hide = true;
+		}
+	}
+
 	return {
 		confetti,
 		events: playByPlay,

@@ -137,6 +137,7 @@ const getPlayerStats = async (
 		attrs: [
 			"pid",
 			"name",
+			"tid",
 
 			// draft is needed to know who is undrafted, for the tooltip
 			"draft",
@@ -217,6 +218,17 @@ const getPlayerStats = async (
 		});
 	}
 
+	if (g.get("challengeNoRatings") && ratings.length > 0) {
+		for (const p of players) {
+			console.log(p);
+			if (p.tid !== PLAYER.RETIRED) {
+				for (const key of ratings) {
+					p.ratings[key] = 50;
+				}
+			}
+		}
+	}
+
 	const stats = getStats(statTypePlus);
 	return { players, stats, statType: statTypePlus };
 };
@@ -252,7 +264,6 @@ const updatePlayers = async (
 			inputStat !== undefined && statForAxis.stats.includes(inputStat)
 				? inputStat
 				: random.choice(statForAxis.stats);
-		console.log(statForAxis.players);
 
 		return {
 			[season]: inputs[season],

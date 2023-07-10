@@ -60,9 +60,11 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 			// Remove obsolete stats row if necessary
 			const lastStats = p.stats.at(-1);
 			if (
+				lastStats &&
 				lastStats.tid === oldTid &&
 				lastStats.gp === 0 &&
-				lastStats.season === season
+				lastStats.season === season &&
+				phase <= PHASE.PLAYOFFS
 			) {
 				p.stats.pop();
 				p.statsTids = Array.from(new Set(p.stats.map(row => row.tid)));

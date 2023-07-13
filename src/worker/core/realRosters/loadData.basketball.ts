@@ -68,7 +68,7 @@ export type Basketball = {
 		slug: string;
 		start: number;
 		exp: number;
-		amount: number;
+		amounts: number[];
 	}[];
 	injuries: Record<
 		string,

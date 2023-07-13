@@ -32,6 +32,7 @@ import getGameAttributes from "./getGameAttributes";
 import getAwards from "./getAwards";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
 import getInjury from "./getInjury";
+import { averageSalary } from "./averageSalary";
 
 export const MIN_SEASON = 1947;
 export const LATEST_SEASON = 2023;
@@ -789,12 +790,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 					row => row.start <= options.season + 1 && row.slug === p.srID,
 				);
 				if (salaryRow) {
-					p.contract = {
-						amount: salaryRow.amount / 1000,
-						exp: salaryRow.exp,
-						rookie: true,
-					};
-
 					let minYears =
 						defaultGameAttributes.rookieContractLengths[dp.round - 1] ??
 						defaultGameAttributes.rookieContractLengths[
@@ -804,13 +799,22 @@ const getLeague = async (options: GetLeagueOptions) => {
 					// Offset because it starts next season
 					minYears += 1;
 
-					if (p.contract.exp < options.season + minYears) {
-						p.contract.exp = options.season + minYears;
+					let exp = salaryRow.exp;
+
+					// Bound at 5 year contract
+					if (exp > options.season + 5) {
+						exp = options.season + 5;
 					}
 
-					if (p.contract.exp > options.season + 5) {
-						// Bound at 5 year contract
-						p.contract.exp = options.season + 5;
+					p.contract = {
+						amount: averageSalary(salaryRow, options.season + 1, exp),
+						exp,
+						rookie: true,
+					};
+
+					// Bound at minYears, but do this after calling averageSalary in case a player was released before minYears
+					if (p.contract.exp < options.season + minYears) {
+						p.contract.exp = options.season + minYears;
 					}
 				}
 

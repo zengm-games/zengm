@@ -7,10 +7,10 @@ export const averageSalary = (
 	exp: number,
 ) => {
 	if (start < row.start) {
-		throw new Error("Invalid start");
+		start = row.start;
 	}
 	if (exp > row.exp) {
-		throw new Error("Invalid exp");
+		exp = row.exp;
 	}
 
 	const amountStart = start - row.start;

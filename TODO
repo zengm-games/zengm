@@ -1,5 +1,21 @@
+random events
+- probability of expansion draft vote
+  - pick 2 random teams
+  - cluster to realign conferences
+  - god mode option to rig the vote
+- probability of random relocation
+  - realign conferences?
+  - user's team too?
+    - user gets to pick from a few locations
+- in real players league, wait until no scheduled events, like inflation
+- if default values are non-zero, should be able to turn off without god mode
+  - support range of values without god mode
+  - maybe any value is fine without god mode
+
 more randomization options
 - teams from only a certain decade, or after a certain year
+
+when auto playing, scrolling to the right on stats tables in player pages doesn't work, it resets every day https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jrvgs2r/?context=3
 
 bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
 
@@ -1959,8 +1975,6 @@ Tools > Export Stats only has latest team, for in-season trades
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
 
-make positions edited in god mode sticky, like custom roster
-
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 
 more detailed negotiation screen https://www.reddit.com/r/BasketballGM/comments/416o5g/well_this_is_new/cz11w9v?context=3
@@ -1970,8 +1984,6 @@ delete most negotiation code
     make sure re-signing is handled okay still
     make sure multi team mode is handled okay still
     get rid of negotiations object store
-
-bold highest values in career on player stats tables like wikipedia https://www.reddit.com/r/BasketballGM/comments/4rgn0p/two_statrelated_suggestions/
 
 Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www.reddit.com/r/BasketballGM/comments/3t4kl6/suggestion_add_free_agents_to_teams_dropdown_menu/
 

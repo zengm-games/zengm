@@ -1393,7 +1393,10 @@ export type ReleasedPlayerWithoutKey = {
 	rid?: number;
 	pid: number;
 	tid: number;
-	contract: PlayerContract;
+	contract: {
+		amount: number;
+		exp: number;
+	};
 };
 
 export type ReleasedPlayer = ReleasedPlayerWithoutKey & {

@@ -1877,7 +1877,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 						},
 						contract: {
-							$ref: "#/definitions/playerContract",
+							// Don't use #/definitions/playerContract because that requires positive amount, but some people use a negative amount here for various purposes
+							type: "object",
+							properties: {
+								amount: {
+									type: "number",
+								},
+								exp: {
+									type: "number",
+								},
+							},
+							required: ["amount", "exp"],
 						},
 					},
 					required: ["pid", "tid", "contract"],

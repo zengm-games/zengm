@@ -10,6 +10,7 @@ import type { View, ExpansionDraftSetupTeam } from "../../common/types";
 import { DEFAULT_JERSEY, PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal";
+import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld";
 
 const ExpansionDraft = ({
 	builtInTeams,
@@ -311,14 +312,17 @@ const ExpansionDraft = ({
 									}}
 								>
 									<option value="">Blank Team</option>
-									{builtInTeams
-										.filter(t => !currentAbbrevs.includes(t.abbrev))
-										.map(t => (
+									<TeamsSplitNorthAmericaWorld
+										teams={builtInTeams.filter(
+											t => !currentAbbrevs.includes(t.abbrev),
+										)}
+										option={t => (
 											<option key={t.abbrev} value={t.abbrev}>
 												{t.region} {t.name}
 												{t.tid !== undefined ? " (inactive)" : ""}
 											</option>
-										))}
+										)}
+									/>
 								</select>
 								<button
 									type="button"

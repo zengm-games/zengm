@@ -1,3 +1,10 @@
+separate NA and other continents in dropdowns
+- outsideNorthAmerica
+- MoveModal
+- expansion draft
+- Add Team when customizing new league
+  - "Random" button doesn't work
+
 random events
 - probability of expansion draft vote
   - pick 2 random teams
@@ -7,10 +14,11 @@ random events
   - realign conferences?
   - user's team too?
     - user gets to pick from a few locations
-- in real players league, wait until no scheduled events, like inflation
+- in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
+- options for only teams in north america - use outsideNorthAmerica
 - if default values are non-zero, should be able to turn off without god mode
-  - support range of values without god mode
   - maybe any value is fine without god mode
+- if default values are non-zero, should be 0 in upgraded and imported (old version only) leagues
 
 more randomization options
 - teams from only a certain decade, or after a certain year

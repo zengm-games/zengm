@@ -7,7 +7,7 @@ import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
 import { realRosters } from "../core";
 import { LATEST_SEASON, MIN_SEASON } from "../core/realRosters/getLeague";
-import geographicCoordinates from "../core/team/geographicCoordinates";
+import geographicCoordinates from "../../common/geographicCoordinates";
 import { random } from "../util";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types";
 import { groupBy } from "../../common/groupBy";

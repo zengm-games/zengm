@@ -6,6 +6,7 @@ import teamInfos from "../../../common/teamInfos";
 import getTeamInfos from "../../../common/getTeamInfos";
 import { JerseyNumber } from "../../components";
 import { displayFace, toWorker } from "../../util";
+import geographicCoordinates from "../../../common/geographicCoordinates";
 
 export type MoveModalTeam = {
 	abbrev: string;
@@ -101,11 +102,29 @@ const MoveModal = ({
 								}}
 								value={selectedRegion}
 							>
-								{moveOptions.map((t, i) => (
-									<option key={i} value={i}>
-										{t.region}
-									</option>
-								))}
+								<optgroup label="North America">
+									{moveOptions
+										.filter(
+											t =>
+												!geographicCoordinates[t.region]?.outsideNorthAmerica,
+										)
+										.map((t, i) => (
+											<option key={i} value={i}>
+												{t.region}
+											</option>
+										))}
+								</optgroup>
+								<optgroup label="World">
+									{moveOptions
+										.filter(
+											t => geographicCoordinates[t.region]?.outsideNorthAmerica,
+										)
+										.map((t, i) => (
+											<option key={i} value={i}>
+												{t.region}
+											</option>
+										))}
+								</optgroup>
 							</select>
 							<div className="mt-2">Population: {selectedTeam.pop} million</div>
 						</div>

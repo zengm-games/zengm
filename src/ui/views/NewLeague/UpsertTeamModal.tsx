@@ -19,6 +19,7 @@ import {
 import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
+import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld";
 
 export const getGodModeWarnings = ({
 	is,
@@ -406,18 +407,29 @@ const SelectTeam = ({
 							) : availableTeams === undefined ? (
 								<option value="loading">Loading...</option>
 							) : null}
-							{availableTeams?.map(t => (
-								<option key={t.abbrev} value={t.abbrev}>
-									{t.region} {t.name} ({t.abbrev})
-									{t.seasonInfo
-										? ` ${helpers.formatRecord(t.seasonInfo)}${
-												t.seasonInfo.roundsWonText
-													? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
-													: ""
-										  }`
-										: null}
-								</option>
-							))}
+							{addEditTeamInfo.addType === "random" && availableTeams ? (
+								<TeamsSplitNorthAmericaWorld
+									teams={availableTeams}
+									option={t => (
+										<option key={t.abbrev} value={t.abbrev}>
+											{t.region} {t.name} ({t.abbrev})
+										</option>
+									)}
+								/>
+							) : (
+								availableTeams?.map(t => (
+									<option key={t.abbrev} value={t.abbrev}>
+										{t.region} {t.name} ({t.abbrev})
+										{t.seasonInfo
+											? ` ${helpers.formatRecord(t.seasonInfo)}${
+													t.seasonInfo.roundsWonText
+														? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
+														: ""
+											  }`
+											: null}
+									</option>
+								))
+							)}
 						</select>
 						<button
 							className="btn btn-light-bordered"

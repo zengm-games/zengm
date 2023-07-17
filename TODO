@@ -1,9 +1,6 @@
 separate NA and other continents in dropdowns
-- outsideNorthAmerica
-- MoveModal
+- TeamsSplitNorthAmericaWorld
 - expansion draft
-- Add Team when customizing new league
-  - "Random" button doesn't work
 
 random events
 - probability of expansion draft vote

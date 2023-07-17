@@ -436,7 +436,7 @@ const SelectTeam = ({
 							type="button"
 							disabled={actualDisabled}
 							onClick={async () => {
-								if (league) {
+								if (addEditTeamInfo.addType !== "random" && league) {
 									const randomSeason = getRandomSeason(
 										league.seasonStart,
 										league.seasonEnd,

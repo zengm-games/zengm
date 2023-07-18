@@ -1143,7 +1143,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	}
 	if (state.season === MAX_SEASON && state.phase > MAX_PHASE) {
 		invalidSeasonPhaseMessage = `Sorry, I'm not allowed to share the results of the ${MAX_SEASON} ${
-			(PHASE_TEXT as any)[MAX_PHASE]
+			MAX_PHASE === PHASE.PRESEASON ? "season" : (PHASE_TEXT as any)[MAX_PHASE]
 		} yet.`;
 	}
 

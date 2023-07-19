@@ -12,6 +12,8 @@ random events
 - if default values are non-zero, should be able to turn off without god mode
   - maybe any value is fine without god mode
 - if default values are non-zero, should be 0 in upgraded and imported (old version only) leagues
+- make sure auto play works
+- handle no more teams left (including NA only)
 
 more randomization options
 - teams from only a certain decade, or after a certain year

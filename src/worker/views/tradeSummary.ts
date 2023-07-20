@@ -84,6 +84,7 @@ const findStatSum = (
 
 	let statSum = 0;
 	let statSumTeam = 0;
+	let seenOtherTeam = false;
 	for (let i = 0; i < allStats.length; i++) {
 		const row = allStats[i];
 
@@ -103,8 +104,10 @@ const findStatSum = (
 		) {
 			statSum += stat;
 
-			if (row.tid === tid) {
+			if (row.tid === tid && !seenOtherTeam) {
 				statSumTeam += stat;
+			} else {
+				seenOtherTeam = true;
 			}
 		}
 

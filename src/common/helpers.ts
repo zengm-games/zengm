@@ -1413,15 +1413,23 @@ const getRelativeType = (
 ) => {
 	const isMale = gender === "male";
 
-	return {
-		brother: isMale ? "Brother" : "Sister",
-		son: isMale ? "Son" : "Daughter",
-		father: isMale ? "Father" : "Mother",
-		grandfather: isMale ? "Grandfather" : "Grandmother",
-		grandson: isMale ? "Grandson" : "Granddaughter",
-		nephew: isMale ? "Nephew" : "Niece",
-		uncle: isMale ? "Uncle" : "Aunt",
-	}[type];
+	switch (type) {
+		case "brother":
+			return isMale ? "Brother" : "Sister";
+		case "son":
+			return isMale ? "Son" : "Daughter";
+		case "father":
+			return isMale ? "Father" : "Mother";
+		case "grandfather":
+			return isMale ? "Grandfather" : "Grandmother";
+		case "grandson":
+			return isMale ? "Grandson" : "Granddaughter";
+		case "nephew":
+			return isMale ? "Nephew" : "Niece";
+		case "uncle":
+		default:
+			return isMale ? "Uncle" : "Aunt";
+	}
 };
 
 const pronoun = (

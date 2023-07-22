@@ -122,29 +122,38 @@ describe("common/helpers", () => {
 
 	describe("getRelativeType", () => {
 		it("should return the correct relative type for a male gender", () => {
-			expect(helpers.getRelativeType("male", "brother")).toBe("Brother");
-			expect(helpers.getRelativeType("male", "son")).toBe("Son");
-			expect(helpers.getRelativeType("male", "father")).toBe("Father");
-			expect(helpers.getRelativeType("male", "grandfather")).toBe(
+			assert.strictEqual(helpers.getRelativeType("male", "brother"), "Brother");
+			assert.strictEqual(helpers.getRelativeType("male", "son"), "Son");
+			assert.strictEqual(helpers.getRelativeType("male", "father"), "Father");
+			assert.strictEqual(
+				helpers.getRelativeType("male", "grandfather"),
 				"Grandfather",
 			);
-			expect(helpers.getRelativeType("male", "grandson")).toBe("Grandson");
-			expect(helpers.getRelativeType("male", "nephew")).toBe("Nephew");
-			expect(helpers.getRelativeType("male", "uncle")).toBe("Uncle");
+			assert.strictEqual(
+				helpers.getRelativeType("male", "grandson"),
+				"Grandson",
+			);
+			assert.strictEqual(helpers.getRelativeType("male", "nephew"), "Nephew");
+			assert.strictEqual(helpers.getRelativeType("male", "uncle"), "Uncle");
 		});
 
 		it("should return the correct relative type for a female gender", () => {
-			expect(helpers.getRelativeType("female", "brother")).toBe("Sister");
-			expect(helpers.getRelativeType("female", "son")).toBe("Daughter");
-			expect(helpers.getRelativeType("female", "father")).toBe("Mother");
-			expect(helpers.getRelativeType("female", "grandfather")).toBe(
+			assert.strictEqual(
+				helpers.getRelativeType("female", "brother"),
+				"Sister",
+			);
+			assert.strictEqual(helpers.getRelativeType("female", "son"), "Daughter");
+			assert.strictEqual(helpers.getRelativeType("female", "father"), "Mother");
+			assert.strictEqual(
+				helpers.getRelativeType("female", "grandfather"),
 				"Grandmother",
 			);
-			expect(helpers.getRelativeType("female", "grandson")).toBe(
+			assert.strictEqual(
+				helpers.getRelativeType("female", "grandson"),
 				"Granddaughter",
 			);
-			expect(helpers.getRelativeType("female", "nephew")).toBe("Niece");
-			expect(helpers.getRelativeType("female", "uncle")).toBe("Aunt");
+			assert.strictEqual(helpers.getRelativeType("female", "nephew"), "Niece");
+			assert.strictEqual(helpers.getRelativeType("female", "uncle"), "Aunt");
 		});
 	});
 
@@ -152,22 +161,31 @@ describe("common/helpers", () => {
 		it("should construct a valid URL with components", () => {
 			const lid = 123;
 			const components = ["team", 45, "roster", undefined, "stats"];
-			const expectedUrl = "/l/123/team/45/roster/stats";
-			expect(helpers.leagueUrlFactory(lid, components)).toBe(expectedUrl);
+			const assertedUrl = "/l/123/team/45/roster/stats";
+			assert.strictEqual(
+				helpers.leagueUrlFactory(lid, components),
+				assertedUrl,
+			);
 		});
 
 		it("should construct a valid URL without undefined components", () => {
 			const lid = 456;
 			const components = ["players", undefined, "schedule", "results"];
-			const expectedUrl = "/l/456/players/schedule/results";
-			expect(helpers.leagueUrlFactory(lid, components)).toBe(expectedUrl);
+			const assertedUrl = "/l/456/players/schedule/results";
+			assert.strictEqual(
+				helpers.leagueUrlFactory(lid, components),
+				assertedUrl,
+			);
 		});
 
 		it("should construct a valid URL with only the league ID", () => {
 			const lid = 789;
 			const components: (number | string | undefined)[] = [];
-			const expectedUrl = "/l/789";
-			expect(helpers.leagueUrlFactory(lid, components)).toBe(expectedUrl);
+			const assertedUrl = "/l/789";
+			assert.strictEqual(
+				helpers.leagueUrlFactory(lid, components),
+				assertedUrl,
+			);
 		});
 	});
 });

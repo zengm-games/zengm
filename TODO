@@ -1,7 +1,7 @@
 random events
 - probability of expansion draft vote
   - pick 2 random teams
-  - cluster to realign conferences
+  - add to smallest division, prioritize by closest by lat/long if values available
   - god mode option to rig the vote
 - probability of random relocation
   - realign conferences?
@@ -14,6 +14,12 @@ random events
 - if default values are non-zero, should be 0 in upgraded and imported (old version only) leagues
 - make sure auto play works
 - handle no more teams left (including NA only)
+- settings
+  - probability of expansion
+  - number of teams per expansion
+  - geo: NA only, NA first, no preference
+  - probability to relocate
+  - realign divisions after relocation
 
 check RAM usage https://discord.com/channels/290013534023057409/290015591216054273/1131288638941040680
 

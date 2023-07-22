@@ -467,6 +467,12 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	autoDeleteOldBoxScores: boolean;
+	autoExpandProb: number;
+	autoExpandNumTeams: number;
+	autoExpandGeo: "naFirst" | "naOnly" | "any";
+	autoRelocateProb: number;
+	autoRelocateGeo: "naFirst" | "naOnly" | "any";
+	autoRelocateRealign: boolean;
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;

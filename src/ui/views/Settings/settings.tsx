@@ -1046,6 +1046,79 @@ export const settings: Setting[] = (
 			),
 		},
 		{
+			category: "Events",
+			key: "autoExpandProb",
+			name: "Auto Expansion Probability",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"Probability each offseason that there will be expansion teams.",
+			validator: value => {
+				if (value < 0 || value > 1) {
+					throw new Error("Value must be between 0 and 1");
+				}
+			},
+		},
+		{
+			category: "Events",
+			key: "autoExpandGeo",
+			name: "Auto Expansion Regions",
+			godModeRequired: "always",
+			type: "string",
+			values: [
+				{ key: "naFirst", value: "North America first" },
+				{ key: "naOnly", value: "North America only" },
+				{ key: "any", value: "Anywhere" },
+			],
+		},
+		{
+			category: "Events",
+			key: "autoExpandNumTeams",
+			name: "Auto Expansion # Teams",
+			godModeRequired: "always",
+			type: "int",
+			validator: value => {
+				if (value < 1) {
+					throw new Error("Value must be greater than 0");
+				}
+			},
+		},
+		{
+			category: "Events",
+			key: "autoRelocateProb",
+			name: "Auto Relocation Probability",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"Probability each offseason that a team will relocate to a new region.",
+			validator: value => {
+				if (value < 0 || value > 1) {
+					throw new Error("Value must be between 0 and 1");
+				}
+			},
+		},
+		{
+			category: "Events",
+			key: "autoRelocateGeo",
+			name: "Auto Relocation Regions",
+			godModeRequired: "always",
+			type: "string",
+			values: [
+				{ key: "naFirst", value: "North America first" },
+				{ key: "naOnly", value: "North America only" },
+				{ key: "any", value: "Anywhere" },
+			],
+			descriptionLong:
+				'"North America first" means teams won\'t relocate outside of North America unless another team is already outside North America.',
+		},
+		{
+			category: "Events",
+			key: "autoRelocateRealign",
+			name: "Realign Divs After Auto Relocation",
+			godModeRequired: "always",
+			type: "bool",
+		},
+		{
 			category: "Rookie Contracts",
 			key: "draftPickAutoContract",
 			name: "Rookie Salary Scale",

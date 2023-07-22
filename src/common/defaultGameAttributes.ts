@@ -278,6 +278,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	heightFactor: 1,
 	weightFactor: 1,
 	numWatchColors: 1,
+	autoExpandProb: 0,
+	autoExpandNumTeams: 2,
+	autoExpandGeo: "naFirst",
+	autoRelocateProb: 0,
+	autoRelocateGeo: "naFirst",
+	autoRelocateRealign: true,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

@@ -119,4 +119,32 @@ describe("common/helpers", () => {
 			);
 		});
 	});
+
+	describe("getRelativeType", () => {
+		it("should return the correct relative type for a male gender", () => {
+			expect(helpers.getRelativeType("male", "brother")).toBe("Brother");
+			expect(helpers.getRelativeType("male", "son")).toBe("Son");
+			expect(helpers.getRelativeType("male", "father")).toBe("Father");
+			expect(helpers.getRelativeType("male", "grandfather")).toBe(
+				"Grandfather",
+			);
+			expect(helpers.getRelativeType("male", "grandson")).toBe("Grandson");
+			expect(helpers.getRelativeType("male", "nephew")).toBe("Nephew");
+			expect(helpers.getRelativeType("male", "uncle")).toBe("Uncle");
+		});
+
+		it("should return the correct relative type for a female gender", () => {
+			expect(helpers.getRelativeType("female", "brother")).toBe("Sister");
+			expect(helpers.getRelativeType("female", "son")).toBe("Daughter");
+			expect(helpers.getRelativeType("female", "father")).toBe("Mother");
+			expect(helpers.getRelativeType("female", "grandfather")).toBe(
+				"Grandmother",
+			);
+			expect(helpers.getRelativeType("female", "grandson")).toBe(
+				"Granddaughter",
+			);
+			expect(helpers.getRelativeType("female", "nephew")).toBe("Niece");
+			expect(helpers.getRelativeType("female", "uncle")).toBe("Aunt");
+		});
+	});
 });

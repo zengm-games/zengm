@@ -147,4 +147,27 @@ describe("common/helpers", () => {
 			expect(helpers.getRelativeType("female", "uncle")).toBe("Aunt");
 		});
 	});
+
+	describe("leagueUrlFactory", () => {
+		it("should construct a valid URL with components", () => {
+			const lid = 123;
+			const components = ["team", 45, "roster", undefined, "stats"];
+			const expectedUrl = "/l/123/team/45/roster/stats";
+			expect(helpers.leagueUrlFactory(lid, components)).toBe(expectedUrl);
+		});
+
+		it("should construct a valid URL without undefined components", () => {
+			const lid = 456;
+			const components = ["players", undefined, "schedule", "results"];
+			const expectedUrl = "/l/456/players/schedule/results";
+			expect(helpers.leagueUrlFactory(lid, components)).toBe(expectedUrl);
+		});
+
+		it("should construct a valid URL with only the league ID", () => {
+			const lid = 789;
+			const components: (number | string | undefined)[] = [];
+			const expectedUrl = "/l/789";
+			expect(helpers.leagueUrlFactory(lid, components)).toBe(expectedUrl);
+		});
+	});
 });

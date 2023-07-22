@@ -908,12 +908,18 @@ const leagueUrlFactory = (
 	lid: number,
 	components: (number | string | undefined)[],
 ) => {
+	const filteredComponents = [];
+
+	for (const component of components) {
+		if (component !== undefined) {
+			filteredComponents.push(component);
+		}
+	}
+
 	let url = `/l/${lid}`;
 
-	for (let i = 0; i < components.length; i++) {
-		if (components[i] !== undefined) {
-			url += `/${components[i]}`;
-		}
+	if (filteredComponents.length > 0) {
+		url += `/${filteredComponents.join("/")}`;
 	}
 
 	return url;

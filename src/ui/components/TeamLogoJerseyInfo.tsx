@@ -56,7 +56,7 @@ export const TeamLogoJerseyInfo = ({
 				<div
 					className="mx-2"
 					ref={setFaceWrapper}
-					style={{ maxWidth: 100, marginTop: -25 }}
+					style={{ width: 100, marginTop: -25 }}
 				/>
 				<JerseyNumber
 					number={"35"}

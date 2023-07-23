@@ -41,6 +41,11 @@ const getRealignInfo = (
 		});
 	}
 
+	// Indexed on did, so there are gaps unless we filter out undefined. Then it's no longer indexed by did but that's fine.
+	for (let cid = 0; cid < current.length; cid++) {
+		current[cid] = current[cid].filter(row => row !== undefined);
+	}
+
 	return current;
 };
 
@@ -85,7 +90,12 @@ const updateRelocate = async () => {
 	const canRealign = teams.every(
 		t => !!geographicCoordinates[t.region] || t.tid === autoRelocate.tid,
 	);
-	let realignInfo;
+	let realignInfo:
+		| undefined
+		| {
+				current: ReturnType<typeof getRealignInfo>;
+				realigned: ReturnType<typeof getRealignInfo>;
+		  };
 	if (canRealign) {
 		const current = getRealignInfo(teams, newTeam);
 		const realigned: typeof current = [];

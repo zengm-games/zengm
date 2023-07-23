@@ -83,6 +83,7 @@ import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
 import ProtectPlayers from "./ProtectPlayers";
 import Relatives from "./Relatives";
+import Relocate from "./Relocate";
 import ResetPassword from "./ResetPassword";
 import Roster from "./Roster";
 import RosterContinuity from "./RosterContinuity";
@@ -190,6 +191,7 @@ export default {
 	PowerRankings,
 	ProtectPlayers,
 	Relatives,
+	Relocate,
 	ResetPassword,
 	Roster,
 	RosterContinuity,

@@ -5,8 +5,13 @@ random events
   - god mode option to rig the vote
 - random relocation screen
   - realign conferences
+    - show divs/confs as you toggle
+    - only show if all teams are known
+    - need to store in g because there is randomness
+    - if we don't know geo coordinates of div, shuffle them to try to maintain the max number of teams in same div
   - god mode override
   - results
+  - have scheduled events use this system?
 - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
 - options for only teams in north america - use outsideNorthAmerica
 - if default values are non-zero, should be able to turn off without god mode

@@ -280,11 +280,11 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	heightFactor: 1,
 	weightFactor: 1,
 	numWatchColors: 1,
-	autoExpandProb: 0,
+	autoExpandProb: 1,
 	autoExpandNumTeams: 2,
 	autoExpandGeo: "naFirst",
 	autoRelocate: undefined,
-	autoRelocateProb: 0,
+	autoRelocateProb: 1,
 	autoRelocateGeo: "naFirst",
 	autoRelocateRealign: true,
 

@@ -22,6 +22,9 @@ import type {
 	GameAttributesLeague,
 } from "../../../common/types";
 import setGameAttributes from "../league/setGameAttributes";
+import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
+import geographicCoordinates from "../../../common/geographicCoordinates";
+import getTeamInfos from "../../../common/getTeamInfos";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -44,6 +47,16 @@ const upcomingScheduledEventBlocksInflation = async () => {
 				}
 			}
 		}
+	});
+};
+
+const upcomingScheduledEventBlocksRelocate = async () => {
+	const scheduledEvents = await idb.getCopies.scheduledEvents(
+		undefined,
+		"noCopyCache",
+	);
+	return scheduledEvents.some(event => {
+		return event.type === "teamInfo";
 	});
 };
 
@@ -118,6 +131,64 @@ const doInflation = async (conditions: Conditions) => {
 	}
 };
 
+const doRelocate = async () => {
+	const autoRelocateProb = g.get("autoRelocateProb");
+
+	if (Math.random() > autoRelocateProb) {
+		return;
+	}
+
+	if (await upcomingScheduledEventBlocksRelocate()) {
+		return;
+	}
+
+	const autoRelocateGeo = g.get("autoRelocateGeo");
+
+	const currentTeams = await idb.cache.teams.getAll();
+
+	const northAmericaOnly =
+		autoRelocateGeo === "naOnly" ||
+		(autoRelocateGeo === "naFirst" &&
+			currentTeams.every(
+				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			));
+
+	const candidateAbbrevs = getUnusedAbbrevs(currentTeams);
+	const candidateTeams = getTeamInfos(
+		candidateAbbrevs.map(abbrev => {
+			return {
+				tid: -1,
+				cid: -1,
+				did: -1,
+				abbrev,
+			};
+		}),
+	).filter(t => {
+		if (!northAmericaOnly) {
+			return true;
+		}
+
+		return !geographicCoordinates[t.region].outsideNorthAmerica;
+	});
+
+	if (candidateTeams.length === 0) {
+		return;
+	}
+
+	const currentTeam = random.choice(currentTeams, t => 1 / (t.pop ?? 1));
+
+	const newTeam = random.choice(candidateTeams, t => t.pop);
+
+	// console.log(`${currentTeam.region} ${currentTeam.name} -> ${newTeam.region} ${newTeam.name}`);
+	await league.setGameAttributes({
+		autoRelocate: {
+			phase: "vote",
+			tid: currentTeam.tid,
+			abbrev: newTeam.abbrev,
+		},
+	});
+};
+
 const setChampNoPlayoffs = async (conditions: Conditions) => {
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -169,9 +240,8 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 				"roster",
 				`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
 				g.get("season"),
-			])}">${
-				g.get("teamInfoCache")[tid]?.name
-			}</a> finished in 1st place and are league champions!`,
+			])}">${g.get("teamInfoCache")[tid]
+				?.name}</a> finished in 1st place and are league champions!`,
 			showNotification: true,
 			hideInLiveGame: true,
 			tids: [tid],
@@ -516,6 +586,8 @@ const newPhaseBeforeDraft = async (
 	}
 
 	await doInflation(conditions);
+
+	await doRelocate();
 
 	// Don't redirect if we're viewing a live game now
 	let redirect;

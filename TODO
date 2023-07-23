@@ -3,10 +3,10 @@ random events
   - pick 2 random teams
   - add to smallest division, prioritize by closest by lat/long if values available
   - god mode option to rig the vote
-- probability of random relocation
-  - realign conferences?
-  - user's team too?
-    - user gets to pick from a few locations
+- random relocation screen
+  - realign conferences
+  - god mode override
+  - results
 - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
 - options for only teams in north america - use outsideNorthAmerica
 - if default values are non-zero, should be able to turn off without god mode
@@ -14,6 +14,10 @@ random events
 - if default values are non-zero, should be 0 in upgraded and imported (old version only) leagues
 - make sure auto play works
 - handle no more teams left (including NA only)
+- make sure relocation updates news feed, similar to scheduled event
+- state variables (like g.expansionDraft)
+  - gameAttributesKeysGameState
+  - schema
 - settings
   - probability of expansion
   - number of teams per expansion

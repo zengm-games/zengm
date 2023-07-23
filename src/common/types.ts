@@ -470,6 +470,13 @@ export type GameAttributesLeague = {
 	autoExpandProb: number;
 	autoExpandNumTeams: number;
 	autoExpandGeo: "naFirst" | "naOnly" | "any";
+	autoRelocate:
+		| {
+				phase: "vote";
+				tid: number;
+				abbrev: string;
+		  }
+		| undefined;
 	autoRelocateProb: number;
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;

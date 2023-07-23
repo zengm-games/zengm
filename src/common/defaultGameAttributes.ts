@@ -34,6 +34,8 @@ export const gameAttributesKeysGameState: GameAttributeKey[] = [
 	"season",
 	"startingSeason",
 	"numDraftPicksCurrent",
+	"expansionDraft",
+	"autoRelocate",
 ];
 export const gameAttributesKeysTeams: GameAttributeKey[] = ["confs", "divs"];
 export const gameAttributesCache: GameAttributeKey[] = [
@@ -281,6 +283,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	autoExpandProb: 0,
 	autoExpandNumTeams: 2,
 	autoExpandGeo: "naFirst",
+	autoRelocate: undefined,
 	autoRelocateProb: 0,
 	autoRelocateGeo: "naFirst",
 	autoRelocateRealign: true,

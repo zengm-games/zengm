@@ -8,9 +8,7 @@ random events
     - only show if all teams are known
     - need to store in g because there is randomness?
     - if we don't know geo coordinates of div, shuffle them to try to maintain the max number of teams in same div
-    - actually apply in worker api
   - god mode override
-  - results
   - ui for result
     - rigging
     - tied vote - no

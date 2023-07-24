@@ -2603,6 +2603,26 @@ const relocateVote = async ({
 		await idb.cache.teams.put(t);
 
 		if (realign) {
+			const divs = g.get("divs");
+			const confs = g.get("confs");
+			for (const conf of confs) {
+				let index = 0;
+				for (const div of divs) {
+					if (div.cid !== conf.cid) {
+						continue;
+					}
+					const teams = realign[div.cid][index];
+					for (const { tid } of teams) {
+						const t = await idb.cache.teams.get(tid);
+						if (t) {
+							t.cid = div.cid;
+							t.did = div.did;
+							await idb.cache.teams.put(t);
+						}
+					}
+					index += 1;
+				}
+			}
 		}
 
 		await league.setGameAttributes({

@@ -1405,20 +1405,24 @@ const getRelativeType = (
 	gender: GameAttributesLeague["gender"],
 	type: RelativeType | "grandfather" | "uncle" | "grandson" | "nephew",
 ) => {
-	if (type === "brother") {
-		return gender === "male" ? "Brother" : "Sister";
-	} else if (type === "son") {
-		return gender === "male" ? "Son" : "Daughter";
-	} else if (type === "father") {
-		return gender === "male" ? "Father" : "Mother";
-	} else if (type === "grandfather") {
-		return gender === "male" ? "Grandfather" : "Grandmother";
-	} else if (type === "grandson") {
-		return gender === "male" ? "Grandson" : "Granddaughter";
-	} else if (type === "nephew") {
-		return gender === "male" ? "Nephew" : "Niece";
-	} else {
-		return gender === "male" ? "Uncle" : "Aunt";
+	const isMale = gender === "male";
+
+	switch (type) {
+		case "brother":
+			return isMale ? "Brother" : "Sister";
+		case "son":
+			return isMale ? "Son" : "Daughter";
+		case "father":
+			return isMale ? "Father" : "Mother";
+		case "grandfather":
+			return isMale ? "Grandfather" : "Grandmother";
+		case "grandson":
+			return isMale ? "Grandson" : "Granddaughter";
+		case "nephew":
+			return isMale ? "Nephew" : "Niece";
+		case "uncle":
+		default:
+			return isMale ? "Uncle" : "Aunt";
 	}
 };
 

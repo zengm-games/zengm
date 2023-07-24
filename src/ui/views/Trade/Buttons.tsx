@@ -46,7 +46,7 @@ const Buttons = ({
 				<div className="mb-2">
 					<label className="god-mode god-mode-text mb-0">
 						<input
-							className="form-check-input"
+							className="form-check-input me-1"
 							type="checkbox"
 							onChange={handleClickForceTrade}
 							checked={forceTrade}

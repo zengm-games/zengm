@@ -17,6 +17,7 @@ const Relocate = ({
 	const brandedTeam = rebrandTeam ? newTeam : currentTeam;
 
 	const [realign, setRealign] = useState(true);
+	const [override, setOverride] = useState(false);
 
 	const [status, setStatus] = useState<
 		| {
@@ -52,13 +53,6 @@ const Relocate = ({
 			...results,
 		});
 	};
-
-	console.log({
-		currentTeam,
-		godMode,
-		newTeam,
-		realignInfo,
-	});
 
 	return (
 		<>
@@ -175,25 +169,43 @@ const Relocate = ({
 
 			<p>This move must be approved by a majority of teams. How do you vote?</p>
 
-			<div className="d-flex gap-3">
-				<button
-					className="btn btn-lg btn-success"
-					disabled={status.type !== "init"}
-					onClick={() => {
-						vote(true);
-					}}
-				>
-					Move to {newTeam.region}
-				</button>
-				<button
-					className="btn btn-lg btn-danger"
-					disabled={status.type !== "init"}
-					onClick={() => {
-						vote(false);
-					}}
-				>
-					Stay in {currentTeam.region}
-				</button>
+			<div className="text-center d-inline-block">
+				<div className="d-flex gap-3">
+					<button
+						className="btn btn-lg btn-success"
+						disabled={status.type !== "init"}
+						onClick={() => {
+							vote(true);
+						}}
+					>
+						Move to {newTeam.region}
+					</button>
+					<button
+						className="btn btn-lg btn-danger"
+						disabled={status.type !== "init"}
+						onClick={() => {
+							vote(false);
+						}}
+					>
+						Stay in {currentTeam.region}
+					</button>
+				</div>
+				{godMode ? (
+					<div className="mt-3">
+						<label className="god-mode god-mode-text mb-0">
+							<input
+								className="form-check-input me-1"
+								type="checkbox"
+								onChange={() => {
+									setOverride(checked => !checked);
+								}}
+								checked={override}
+								disabled={status.type !== "init"}
+							/>
+							Force result
+						</label>
+					</div>
+				) : null}
 			</div>
 		</>
 	);

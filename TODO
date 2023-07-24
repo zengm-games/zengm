@@ -8,9 +8,8 @@ random events
     - only show if all teams are known
     - need to store in g because there is randomness?
     - if we don't know geo coordinates of div, shuffle them to try to maintain the max number of teams in same div
-  - god mode override
   - ui for result
-    - rigging
+    - test god mode override
     - tied vote - no
 - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
 - options for only teams in north america - use outsideNorthAmerica

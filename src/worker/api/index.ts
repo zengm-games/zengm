@@ -2630,6 +2630,8 @@ const relocateVote = async ({
 		});
 	}
 
+	await updatePlayMenu();
+
 	return result;
 };
 

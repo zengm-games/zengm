@@ -650,7 +650,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							autoDeleteOldBoxScores: {
 								type: "boolean",
 							},
-							autoExpandProb: {
+							/*autoExpandProb: {
 								type: "number",
 								minimum: 0,
 								maximum: 1,
@@ -662,6 +662,21 @@ const generateJSONSchema = (sport /*: string*/) => {
 							autoExpandGeo: {
 								type: "string",
 								enum: ["naFirst", "naOnly", "any"],
+							},*/
+							autoRelocate: {
+								properties: {
+									phase: {
+										const: "vote",
+									},
+									tid: {
+										type: "integer",
+										minimum: 0,
+									},
+									abbrev: {
+										type: "string",
+									},
+								},
+								required: ["phase", "tid", "abbrev"],
 							},
 							autoRelocateProb: {
 								type: "number",

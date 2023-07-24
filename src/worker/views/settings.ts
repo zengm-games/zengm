@@ -156,9 +156,9 @@ const keys = [
 	"numWatchColors",
 	"giveMeWorstRoster",
 	"groupScheduleSeries",
-	"autoExpandProb",
+	/*"autoExpandProb",
 	"autoExpandNumTeams",
-	"autoExpandGeo",
+	"autoExpandGeo",*/
 	"autoRelocateProb",
 	"autoRelocateGeo",
 	"autoRelocateRealign",
@@ -356,9 +356,9 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			minRetireAge: g.get("minRetireAge"),
 			numWatchColors: g.get("numWatchColors"),
 			groupScheduleSeries: g.get("groupScheduleSeries"),
-			autoExpandProb: g.get("autoExpandProb"),
+			/*autoExpandProb: g.get("autoExpandProb"),
 			autoExpandNumTeams: g.get("autoExpandNumTeams"),
-			autoExpandGeo: g.get("autoExpandGeo"),
+			autoExpandGeo: g.get("autoExpandGeo"),*/
 			autoRelocateProb: g.get("autoRelocateProb"),
 			autoRelocateGeo: g.get("autoRelocateGeo"),
 			autoRelocateRealign: g.get("autoRelocateRealign"),

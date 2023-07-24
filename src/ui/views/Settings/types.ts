@@ -146,9 +146,9 @@ export type Key =
 	| "minRetireAge"
 	| "numWatchColors"
 	| "giveMeWorstRoster"
-	| "autoExpandProb"
+	/*| "autoExpandProb"
 	| "autoExpandNumTeams"
-	| "autoExpandGeo"
+	| "autoExpandGeo"*/
 	| "autoRelocateProb"
 	| "autoRelocateGeo"
 	| "autoRelocateRealign";

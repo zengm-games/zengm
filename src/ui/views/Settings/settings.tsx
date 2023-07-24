@@ -1045,7 +1045,7 @@ export const settings: Setting[] = (
 				</>
 			),
 		},
-		{
+		/*{
 			category: "Events",
 			key: "autoExpandProb",
 			name: "Auto Expansion Probability",
@@ -1082,7 +1082,7 @@ export const settings: Setting[] = (
 					throw new Error("Value must be greater than 0");
 				}
 			},
-		},
+		},*/
 		{
 			category: "Events",
 			key: "autoRelocateProb",

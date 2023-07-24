@@ -352,7 +352,7 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"groupScheduleSeries",
 		),
-		autoExpandProb: unwrapGameAttribute(
+		/*autoExpandProb: unwrapGameAttribute(
 			defaultGameAttributes,
 			"autoExpandProb",
 		),
@@ -360,7 +360,7 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"autoExpandNumTeams",
 		),
-		autoExpandGeo: unwrapGameAttribute(defaultGameAttributes, "autoExpandGeo"),
+		autoExpandGeo: unwrapGameAttribute(defaultGameAttributes, "autoExpandGeo"),*/
 		autoRelocateProb: unwrapGameAttribute(
 			defaultGameAttributes,
 			"autoRelocateProb",

@@ -1109,7 +1109,7 @@ export const settings: Setting[] = (
 				{ key: "any", value: "Anywhere" },
 			],
 			descriptionLong:
-				'"North America first" means teams won\'t relocate outside of North America unless another team is already outside North America.',
+				'"North America first" means teams won\'t relocate outside of North America unless another team is already outside of North America or all of the North American teams are already taken.',
 		},
 		{
 			category: "Events",

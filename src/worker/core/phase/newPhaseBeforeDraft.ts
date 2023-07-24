@@ -146,15 +146,8 @@ const doRelocate = async () => {
 
 	const currentTeams = await idb.cache.teams.getAll();
 
-	const northAmericaOnly =
-		autoRelocateGeo === "naOnly" ||
-		(autoRelocateGeo === "naFirst" &&
-			currentTeams.every(
-				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
-			));
-
 	const candidateAbbrevs = getUnusedAbbrevs(currentTeams);
-	const candidateTeams = getTeamInfos(
+	const allCandidateTeams = getTeamInfos(
 		candidateAbbrevs.map(abbrev => {
 			return {
 				tid: -1,
@@ -163,7 +156,20 @@ const doRelocate = async () => {
 				abbrev,
 			};
 		}),
-	).filter(t => {
+	);
+
+	// For naFirst - northAmericaOnly if all current teams are inside NA and there is some candidate team available inside NA
+	const northAmericaOnly =
+		autoRelocateGeo === "naOnly" ||
+		(autoRelocateGeo === "naFirst" &&
+			currentTeams.every(
+				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			) &&
+			allCandidateTeams.some(
+				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			));
+
+	const candidateTeams = allCandidateTeams.filter(t => {
 		if (!northAmericaOnly) {
 			return true;
 		}

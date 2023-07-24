@@ -6,10 +6,14 @@ random events
 - random relocation screen
   - realign conferences
     - only show if all teams are known
-    - need to store in g because there is randomness
+    - need to store in g because there is randomness?
     - if we don't know geo coordinates of div, shuffle them to try to maintain the max number of teams in same div
+    - actually apply in worker api
   - god mode override
   - results
+  - ui for result
+    - rigging
+    - tied vote - no
 - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
 - options for only teams in north america - use outsideNorthAmerica
 - if default values are non-zero, should be able to turn off without god mode
@@ -18,6 +22,7 @@ random events
 - make sure auto play works
 - handle no more teams left (including NA only)
 - make sure relocation updates news feed, similar to scheduled event
+  - also failed vote
 - state variables (like g.expansionDraft)
   - gameAttributesKeysGameState
   - schema

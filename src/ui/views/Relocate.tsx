@@ -27,6 +27,8 @@ const Relocate = ({
 		  }
 		| {
 				type: "results";
+				for: number;
+				against: number;
 		  }
 	>({ type: "init" });
 
@@ -38,14 +40,16 @@ const Relocate = ({
 			type: "voted",
 		});
 
-		await toWorker("main", "relocateVote", {
-			realign,
+		const results = await toWorker("main", "relocateVote", {
+			override: false,
+			realign: realign ? realignInfo?.realigned : undefined,
 			rebrandTeam,
 			userVote,
 		});
 
 		setStatus({
 			type: "results",
+			...results,
 		});
 	};
 

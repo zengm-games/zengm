@@ -119,4 +119,73 @@ describe("common/helpers", () => {
 			);
 		});
 	});
+
+	describe("getRelativeType", () => {
+		it("should return the correct relative type for a male gender", () => {
+			assert.strictEqual(helpers.getRelativeType("male", "brother"), "Brother");
+			assert.strictEqual(helpers.getRelativeType("male", "son"), "Son");
+			assert.strictEqual(helpers.getRelativeType("male", "father"), "Father");
+			assert.strictEqual(
+				helpers.getRelativeType("male", "grandfather"),
+				"Grandfather",
+			);
+			assert.strictEqual(
+				helpers.getRelativeType("male", "grandson"),
+				"Grandson",
+			);
+			assert.strictEqual(helpers.getRelativeType("male", "nephew"), "Nephew");
+			assert.strictEqual(helpers.getRelativeType("male", "uncle"), "Uncle");
+		});
+
+		it("should return the correct relative type for a female gender", () => {
+			assert.strictEqual(
+				helpers.getRelativeType("female", "brother"),
+				"Sister",
+			);
+			assert.strictEqual(helpers.getRelativeType("female", "son"), "Daughter");
+			assert.strictEqual(helpers.getRelativeType("female", "father"), "Mother");
+			assert.strictEqual(
+				helpers.getRelativeType("female", "grandfather"),
+				"Grandmother",
+			);
+			assert.strictEqual(
+				helpers.getRelativeType("female", "grandson"),
+				"Granddaughter",
+			);
+			assert.strictEqual(helpers.getRelativeType("female", "nephew"), "Niece");
+			assert.strictEqual(helpers.getRelativeType("female", "uncle"), "Aunt");
+		});
+	});
+
+	describe("leagueUrlFactory", () => {
+		it("should construct a valid URL with components", () => {
+			const lid = 123;
+			const components = ["team", 45, "roster", undefined, "stats"];
+			const assertedUrl = "/l/123/team/45/roster/stats";
+			assert.strictEqual(
+				helpers.leagueUrlFactory(lid, components),
+				assertedUrl,
+			);
+		});
+
+		it("should construct a valid URL without undefined components", () => {
+			const lid = 456;
+			const components = ["players", undefined, "schedule", "results"];
+			const assertedUrl = "/l/456/players/schedule/results";
+			assert.strictEqual(
+				helpers.leagueUrlFactory(lid, components),
+				assertedUrl,
+			);
+		});
+
+		it("should construct a valid URL with only the league ID", () => {
+			const lid = 789;
+			const components: (number | string | undefined)[] = [];
+			const assertedUrl = "/l/789";
+			assert.strictEqual(
+				helpers.leagueUrlFactory(lid, components),
+				assertedUrl,
+			);
+		});
+	});
 });

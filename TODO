@@ -3,6 +3,9 @@ random events
   - pick 2 random teams
   - add to smallest division, prioritize by closest by lat/long if values available
   - god mode option to rig the vote
+  - state variables (like g.expansionDraft)
+    - gameAttributesKeysGameState
+    - schema
 - random relocation screen
   - realign conferences
     - only show if all teams are known
@@ -12,17 +15,15 @@ random events
     - test god mode override
     - tied vote - no
 - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
-- if default values are non-zero, should be 0 in upgraded and imported (old version only) leagues
 - make sure auto play works
 - handle no more teams left (including NA only)
 - make sure relocation updates news feed, similar to scheduled event
   - also failed vote
-- state variables (like g.expansionDraft)
-  - gameAttributesKeysGameState
-  - schema
 - test import league for schema errors
 - later
   - have scheduled events use this voting system?
+
+"Show players you can afford now" is messed up by units in billions https://discord.com/channels/290013534023057409/290015591216054273/1132626707480858636
 
 check RAM usage https://discord.com/channels/290013534023057409/290015591216054273/1131288638941040680
 

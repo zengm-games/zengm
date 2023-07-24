@@ -347,7 +347,6 @@ const ImportPlayers = ({
 						version: leagueFile.version,
 					});
 
-					console.log("leagueFile", leagueFile);
 					const rawPlayers: any[] = leagueFile.players ?? [];
 
 					const players = rawPlayers.map(p => {
@@ -384,7 +383,11 @@ const ImportPlayers = ({
 							tid = p.tid;
 						}
 
-						if (tid < PLAYER.UNDRAFTED || tid >= teamInfoCache.length) {
+						if (
+							tid < PLAYER.UNDRAFTED ||
+							tid >= teamInfoCache.length ||
+							(tid >= 0 && teamInfoCache[tid].disabled)
+						) {
 							tid = PLAYER.FREE_AGENT;
 						}
 

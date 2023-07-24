@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { helpers } from "../util";
+import { helpers, toWorker } from "../util";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
 import classNames from "classnames";
 
@@ -17,6 +17,37 @@ const Relocate = ({
 	const brandedTeam = rebrandTeam ? newTeam : currentTeam;
 
 	const [realign, setRealign] = useState(true);
+
+	const [status, setStatus] = useState<
+		| {
+				type: "init";
+		  }
+		| {
+				type: "voted";
+		  }
+		| {
+				type: "results";
+		  }
+	>({ type: "init" });
+
+	const vote = async (userVote: boolean) => {
+		if (status.type !== "init") {
+			return;
+		}
+		setStatus({
+			type: "voted",
+		});
+
+		await toWorker("main", "relocateVote", {
+			realign,
+			rebrandTeam,
+			userVote,
+		});
+
+		setStatus({
+			type: "results",
+		});
+	};
 
 	console.log({
 		currentTeam,
@@ -37,7 +68,7 @@ const Relocate = ({
 				>
 					{currentTeam.region} {currentTeam.name}
 				</a>{" "}
-				woud like to move to <b>{newTeam.region}</b>.
+				want to move to <b>{newTeam.region}</b>.
 			</div>
 
 			<div className="d-flex flex-wrap gap-5 mb-5">
@@ -52,6 +83,7 @@ const Relocate = ({
 							className="form-check-input"
 							id="relocate-reband"
 							checked={rebrandTeam}
+							disabled={status.type !== "init"}
 							onChange={() => {
 								setRebrandTeam(checked => !checked);
 							}}
@@ -66,56 +98,65 @@ const Relocate = ({
 					<div>
 						<h3>Divisions after relocation</h3>
 
-						{realignInfo.current.map((conf, i) => {
-							return (
-								<div
-									key={i}
-									className={classNames("d-flex gap-3", {
-										"mt-3": i > 0,
-									})}
-								>
-									{conf.map((div, j) => {
-										return (
-											<ul
-												key={j}
-												className="list-unstyled mb-0"
-												style={{ width: 170 }}
-											>
-												{div.map(t => {
-													let teamName = `${t.region} ${t.name}`;
-													if (t.tid === newTeam.tid) {
-														if (!rebrandTeam) {
-															teamName = `${t.region} ${currentTeam.name}`;
+						{(realign ? realignInfo.realigned : realignInfo.current).map(
+							(conf, i) => {
+								return (
+									<div
+										key={i}
+										className={classNames("d-flex gap-3", {
+											"mt-2": i > 0,
+										})}
+									>
+										{conf.map((div, j) => {
+											return (
+												<ul
+													key={j}
+													className="list-unstyled mb-0"
+													style={{ width: 170 }}
+												>
+													{div.map(t => {
+														let teamName = `${t.region} ${t.name}`;
+														if (t.tid === newTeam.tid) {
+															if (!rebrandTeam) {
+																teamName = `${t.region} ${currentTeam.name}`;
+															}
 														}
-													}
 
-													return (
-														<li
-															key={t.tid}
-															className={classNames(
-																"text-nowrap overflow-hidden",
-																{
-																	"text-success": t.tid === newTeam.tid,
-																},
-															)}
-															style={{ textOverflow: "ellipsis" }}
-														>
-															{teamName}
-														</li>
-													);
-												})}
-											</ul>
-										);
-									})}
-								</div>
-							);
-						})}
+														return (
+															<li
+																key={t.tid}
+																className={classNames(
+																	"text-nowrap overflow-hidden",
+																	{
+																		"text-success": t.tid === newTeam.tid,
+																		"text-info":
+																			realign &&
+																			t.tid !== newTeam.tid &&
+																			!realignInfo.current[i][j].some(
+																				t2 => t2.tid === t.tid,
+																			),
+																	},
+																)}
+																style={{ textOverflow: "ellipsis" }}
+															>
+																{teamName}
+															</li>
+														);
+													})}
+												</ul>
+											);
+										})}
+									</div>
+								);
+							},
+						)}
 						<div className="form-check mt-2">
 							<input
 								type="checkbox"
 								className="form-check-input"
 								id="relocate-realign"
 								checked={realign}
+								disabled={status.type !== "init"}
 								onChange={() => {
 									setRealign(checked => !checked);
 								}}
@@ -129,6 +170,27 @@ const Relocate = ({
 			</div>
 
 			<p>This move must be approved by a majority of teams. How do you vote?</p>
+
+			<div className="d-flex gap-3">
+				<button
+					className="btn btn-lg btn-success"
+					disabled={status.type !== "init"}
+					onClick={() => {
+						vote(true);
+					}}
+				>
+					Move to {newTeam.region}
+				</button>
+				<button
+					className="btn btn-lg btn-danger"
+					disabled={status.type !== "init"}
+					onClick={() => {
+						vote(false);
+					}}
+				>
+					Stay in {currentTeam.region}
+				</button>
+			</div>
 		</>
 	);
 };

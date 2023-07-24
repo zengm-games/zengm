@@ -3,6 +3,7 @@ import getTeamInfos from "../../common/getTeamInfos";
 import { idb } from "../db";
 import geographicCoordinates from "../../common/geographicCoordinates";
 import { kmeansFixedSize, sortByDivs } from "../core/team/cluster";
+import { orderBy } from "lodash-es";
 
 const getRealignInfo = (
 	teams: {
@@ -43,7 +44,9 @@ const getRealignInfo = (
 
 	// Indexed on did, so there are gaps unless we filter out undefined. Then it's no longer indexed by did but that's fine.
 	for (let cid = 0; cid < current.length; cid++) {
-		current[cid] = current[cid].filter(row => row !== undefined);
+		current[cid] = current[cid]
+			.filter(row => row !== undefined)
+			.map(row => orderBy(row, ["region", "name"]));
 	}
 
 	return current;
@@ -100,6 +103,7 @@ const updateRelocate = async () => {
 		const current = getRealignInfo(teams, newTeam);
 		const realigned: typeof current = [];
 
+		const confs = g.get("confs");
 		const divs = g.get("divs");
 		const numTeamsPerDiv = divs.map(
 			div => teams.filter(t => t.did === div.did).length,
@@ -119,6 +123,30 @@ const updateRelocate = async () => {
 			numTeamsPerDiv,
 		);
 		console.log("clusters", clusters);
+
+		for (const div of divs) {
+			const tids = clusters[div.did].pointIndexes;
+			if (tids) {
+				const conf = confs[div.cid];
+				if (!realigned[conf.cid]) {
+					realigned[conf.cid] = [];
+				}
+				realigned[conf.cid].push(
+					orderBy(
+						tids.map(tid => {
+							const t =
+								tid === newTeam.tid ? newTeam : teams.find(t => t.tid === tid)!;
+							return {
+								tid,
+								region: t.region,
+								name: t.name,
+							};
+						}),
+						["region", "name"],
+					),
+				);
+			}
+		}
 
 		realignInfo = {
 			current,

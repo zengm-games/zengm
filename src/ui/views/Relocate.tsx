@@ -6,6 +6,8 @@ import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
 import classNames from "classnames";
 
 const Relocate = ({
+	autoRelocateRealign,
+	autoRelocateRebrand,
 	currentTeam,
 	godMode,
 	newTeam,
@@ -13,10 +15,10 @@ const Relocate = ({
 }: View<"relocate">) => {
 	useTitleBar({ title: "Team Relocation Vote" });
 
-	const [rebrandTeam, setRebrandTeam] = useState(true);
+	const [rebrandTeam, setRebrandTeam] = useState(autoRelocateRebrand);
 	const brandedTeam = rebrandTeam ? newTeam : currentTeam;
 
-	const [realign, setRealign] = useState(true);
+	const [realign, setRealign] = useState(autoRelocateRealign);
 	const [override, setOverride] = useState(false);
 
 	const [status, setStatus] = useState<

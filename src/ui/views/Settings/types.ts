@@ -151,6 +151,7 @@ export type Key =
 	| "autoExpandGeo"*/
 	| "autoRelocateProb"
 	| "autoRelocateGeo"
+	| "autoRelocateRebrand"
 	| "autoRelocateRealign";
 
 export type Category =

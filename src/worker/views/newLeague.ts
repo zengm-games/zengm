@@ -373,6 +373,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"autoRelocateRealign",
 		),
+		autoRelocateRebrand: unwrapGameAttribute(
+			defaultGameAttributes,
+			"autoRelocateRebrand",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

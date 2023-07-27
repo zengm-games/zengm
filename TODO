@@ -16,6 +16,7 @@ random events
     - tied vote - no
 - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
 - make sure auto play works
+  - use settings for defaults for realign/rebrand
 - handle no more teams left (including NA only)
 - make sure relocation updates news feed, similar to scheduled event
   - also failed vote

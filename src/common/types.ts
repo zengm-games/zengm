@@ -480,6 +480,7 @@ export type GameAttributesLeague = {
 	autoRelocateProb: number;
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;
+	autoRelocateRebrand: boolean;
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;

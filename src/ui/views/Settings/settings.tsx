@@ -1113,6 +1113,13 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Events",
+			key: "autoRelocateRebrand",
+			name: "Rebrand Taams After Auto Relocation",
+			godModeRequired: "always",
+			type: "bool",
+		},
+		{
+			category: "Events",
 			key: "autoRelocateRealign",
 			name: "Realign Divs After Auto Relocation",
 			godModeRequired: "always",

@@ -690,6 +690,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							autoRelocateRealign: {
 								type: "boolean",
 							},
+							autoRelocateRebrand: {
+								type: "boolean",
+							},
 							brotherRate: {
 								type: "number",
 								minimum: 0,

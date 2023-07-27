@@ -675,6 +675,16 @@ const generateJSONSchema = (sport /*: string*/) => {
 									abbrev: {
 										type: "string",
 									},
+									realigned: {
+										type: "array",
+										items: {
+											type: "array",
+											items: {
+												type: "integer",
+												minimum: 0,
+											},
+										},
+									},
 								},
 								required: ["phase", "tid", "abbrev"],
 							},

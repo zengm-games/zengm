@@ -475,6 +475,7 @@ export type GameAttributesLeague = {
 				phase: "vote";
 				tid: number;
 				abbrev: string;
+				realigned?: number[][];
 		  }
 		| undefined;
 	autoRelocateProb: number;

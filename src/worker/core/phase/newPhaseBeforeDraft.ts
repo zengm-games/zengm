@@ -25,6 +25,7 @@ import setGameAttributes from "../league/setGameAttributes";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
 import geographicCoordinates from "../../../common/geographicCoordinates";
 import getTeamInfos from "../../../common/getTeamInfos";
+import { kmeansFixedSize, sortByDivs } from "../team/cluster";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -185,12 +186,58 @@ const doRelocate = async () => {
 
 	const newTeam = random.choice(candidateTeams, t => t.pop);
 
+	const getRealignedDivs = () => {
+		// We can only automatically realign divisions if we know where every region is
+		const canRealign = currentTeams.every(
+			t => !!geographicCoordinates[t.region] || t.tid === currentTeam.tid,
+		);
+
+		if (!canRealign) {
+			return;
+		}
+
+		// List of team IDs in each division, indexed by did
+		const realigned: number[][] = [];
+
+		const divs = g.get("divs");
+		const numTeamsPerDiv = divs.map(
+			div => currentTeams.filter(t => t.did === div.did).length,
+		);
+
+		const coordinates = currentTeams.map(temp => {
+			const t = temp.tid === newTeam.tid ? newTeam : temp;
+			return [
+				geographicCoordinates[t.region].latitude,
+				geographicCoordinates[t.region].longitude,
+			] as [number, number];
+		});
+
+		const clusters = sortByDivs(
+			kmeansFixedSize(coordinates, numTeamsPerDiv),
+			divs,
+			numTeamsPerDiv,
+		);
+		console.log("clusters", clusters);
+
+		for (const div of divs) {
+			const tids = clusters[div.did].pointIndexes;
+			if (tids) {
+				realigned[div.did] = tids;
+			}
+		}
+
+		return realigned;
+	};
+
+	const realigned = getRealignedDivs();
+
 	// console.log(`${currentTeam.region} ${currentTeam.name} -> ${newTeam.region} ${newTeam.name}`);
 	await league.setGameAttributes({
 		autoRelocate: {
 			phase: "vote",
 			tid: currentTeam.tid,
 			abbrev: newTeam.abbrev,
+			realigned,
 		},
 	});
 };

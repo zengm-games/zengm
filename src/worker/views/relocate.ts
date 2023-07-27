@@ -1,8 +1,6 @@
 import { g, helpers } from "../util";
 import getTeamInfos from "../../common/getTeamInfos";
 import { idb } from "../db";
-import geographicCoordinates from "../../common/geographicCoordinates";
-import { kmeansFixedSize, sortByDivs } from "../core/team/cluster";
 import { orderBy } from "lodash-es";
 
 const getRealignInfo = (
@@ -89,43 +87,21 @@ const updateRelocate = async () => {
 
 	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
 
-	// We can only automatically realign divisions if we know where every region is
-	const canRealign = teams.every(
-		t => !!geographicCoordinates[t.region] || t.tid === autoRelocate.tid,
-	);
 	let realignInfo:
 		| undefined
 		| {
 				current: ReturnType<typeof getRealignInfo>;
 				realigned: ReturnType<typeof getRealignInfo>;
 		  };
-	if (canRealign) {
+	if (autoRelocate.realigned) {
 		const current = getRealignInfo(teams, newTeam);
 		const realigned: typeof current = [];
 
 		const confs = g.get("confs");
 		const divs = g.get("divs");
-		const numTeamsPerDiv = divs.map(
-			div => teams.filter(t => t.did === div.did).length,
-		);
-
-		const coordinates = teams.map(temp => {
-			const t = temp.tid === newTeam.tid ? newTeam : temp;
-			return [
-				geographicCoordinates[t.region].latitude,
-				geographicCoordinates[t.region].longitude,
-			] as [number, number];
-		});
-
-		const clusters = sortByDivs(
-			kmeansFixedSize(coordinates, numTeamsPerDiv),
-			divs,
-			numTeamsPerDiv,
-		);
-		console.log("clusters", clusters);
 
 		for (const div of divs) {
-			const tids = clusters[div.did].pointIndexes;
+			const tids = autoRelocate.realigned[div.did];
 			if (tids) {
 				const conf = confs[div.cid];
 				if (!realigned[conf.cid]) {

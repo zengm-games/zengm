@@ -190,7 +190,7 @@ const getRandomTeams = async ({
 		kmeansFixedSize(teamInfoCluster, numTeamsPerDiv),
 		divs,
 		numTeamsPerDiv,
-	);
+	).clusters;
 
 	const teamInfosInput = [];
 	for (let i = 0; i < divs.length; i++) {

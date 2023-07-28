@@ -176,7 +176,10 @@ export const sortByDivs = (
 	const numTeams = numTeamsPerDiv[0];
 	for (const numTeams2 of numTeamsPerDiv) {
 		if (numTeams !== numTeams2) {
-			return clusters;
+			return {
+				geoSorted: false,
+				clusters,
+			};
 		}
 	}
 
@@ -212,7 +215,10 @@ export const sortByDivs = (
 	// Bail out if any div has a non-default name
 	for (const div of divs) {
 		if (!DEFAULT_COORDS[div.name]) {
-			return clusters;
+			return {
+				geoSorted: false,
+				clusters,
+			};
 		}
 	}
 
@@ -267,5 +273,8 @@ export const sortByDivs = (
 	if (!bestClusters) {
 		throw new Error("undefind bestClusters");
 	}
-	return bestClusters;
+	return {
+		geoSorted: true,
+		clusters: bestClusters,
+	};
 };

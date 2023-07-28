@@ -197,7 +197,7 @@ const doRelocate = async () => {
 		}
 
 		// List of team IDs in each division, indexed by did
-		const realigned: number[][] = [];
+		let realigned: number[][] = [];
 
 		const divs = g.get("divs");
 		const numTeamsPerDiv = divs.map(
@@ -212,7 +212,7 @@ const doRelocate = async () => {
 			] as [number, number];
 		});
 
-		const clusters = sortByDivs(
+		const { clusters, geoSorted } = sortByDivs(
 			kmeansFixedSize(coordinates, numTeamsPerDiv),
 			divs,
 			numTeamsPerDiv,
@@ -224,6 +224,78 @@ const doRelocate = async () => {
 			if (tids) {
 				realigned[div.did] = tids;
 			}
+		}
+
+		if (!geoSorted) {
+			// If, for whatever reason, we can't sort clusters geographically (like knowing the location of Atlantic vs Pacific), then try to keep as many teams in the same division as they were previously. Ideally we would test all permutations, but for many divisions that would be slow, so do it a shittier way.
+			const original = divs.map(() => [] as number[]);
+			for (const t of currentTeams) {
+				original[t.did].push(t.tid);
+			}
+
+			const dids = divs.map(div => div.did);
+
+			const getBestDid = (tids: number[], didsUsed: Set<number>) => {
+				let bestScore2 = -Infinity;
+				let bestDid;
+				for (let did = 0; did < original.length; did++) {
+					if (didsUsed.has(did)) {
+						continue;
+					}
+
+					let score = 0;
+					for (const tid of tids) {
+						if (original[did].includes(tid)) {
+							score += 1;
+						}
+					}
+
+					if (score > bestScore2) {
+						bestScore2 = score;
+						bestDid = did;
+					}
+				}
+
+				if (bestDid === undefined) {
+					throw new Error("Should never happen");
+				}
+
+				return {
+					did: bestDid,
+					score: bestScore2,
+				};
+			};
+
+			let bestScore = -Infinity;
+			let bestRealigned;
+
+			// Try a few times with random ordered dids, that's probably good enough
+			for (let iteration = 0; iteration < 20; iteration++) {
+				random.shuffle(dids);
+
+				let score = 0;
+				const attempt = divs.map(() => [] as number[]);
+				const didsUsed = new Set<number>();
+
+				for (const did of dids) {
+					const tids = realigned[did];
+					const result = getBestDid(tids, didsUsed);
+					didsUsed.add(result.did);
+					attempt[result.did] = tids;
+					score += result.score;
+				}
+
+				if (score > bestScore) {
+					bestScore = score;
+					bestRealigned = attempt;
+				}
+			}
+
+			if (bestRealigned === undefined) {
+				throw new Error("Should never happen");
+			}
+
+			realigned = bestRealigned;
 		}
 
 		return realigned;

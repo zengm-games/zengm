@@ -9,7 +9,6 @@ random events
 - random relocation screen
   - realign conferences
     - only show if all teams are known
-    - if we don't know geo coordinates of div, shuffle them to try to maintain the max number of teams in same div
   - ui for result
     - test god mode override
     - tied vote - no
@@ -23,6 +22,8 @@ random events
 - test import league for schema errors
 - later
   - have scheduled events use this voting system?
+
+abbreviation of names with periods in them - C.J. -> C.. https://old.reddit.com/r/BasketballGM/comments/15be3x7/interesting_name_quirk_that_might_be_a_bug/jtpxeta/?context=3
 
 "Show players you can afford now" is messed up by units in billions https://discord.com/channels/290013534023057409/290015591216054273/1132626707480858636
 

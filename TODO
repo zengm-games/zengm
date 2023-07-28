@@ -7,9 +7,9 @@ random events
     - gameAttributesKeysGameState
     - schema
   - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
+  - auto play
+- set default value correctly
 - lock manage teams/confs
-- make sure auto play works
-  - use settings for defaults for realign/rebrand
 - handle no more teams left (including NA only)
 - make sure relocation updates news feed, similar to scheduled event
   - also failed vote

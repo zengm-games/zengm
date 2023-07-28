@@ -44,6 +44,16 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		}
 	}
 
+	const autoRelocate = g.get("autoRelocate");
+	if (autoRelocate) {
+		await team.relocateVote({
+			override: false,
+			realign: g.get("autoRelocateRealign"),
+			rebrandTeam: g.get("autoRelocateRebrand"),
+			userVote: Math.random() < 0.5,
+		});
+	}
+
 	if (currentPhase === PHASE.PRESEASON) {
 		await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
 	} else if (

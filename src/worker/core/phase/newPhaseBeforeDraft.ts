@@ -217,7 +217,6 @@ const doRelocate = async () => {
 			divs,
 			numTeamsPerDiv,
 		);
-		console.log("clusters", clusters);
 
 		for (const div of divs) {
 			const tids = clusters[div.did].pointIndexes;

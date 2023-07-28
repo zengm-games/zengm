@@ -45,7 +45,7 @@ const Relocate = ({
 		});
 
 		const results = await toWorker("main", "relocateVote", {
-			override: false,
+			override,
 			realign,
 			rebrandTeam,
 			userVote,

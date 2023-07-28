@@ -11,9 +11,7 @@ random events
   - lock manage teams/confs
   - handle no more teams left (including NA only)
   - test import league for schema errors
-- set default value correctly
-- make sure relocation updates news feed, similar to scheduled event
-  - also failed vote
+  - news feed for any result
 - later
   - have scheduled events use this voting system?
 

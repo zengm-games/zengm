@@ -1,6 +1,6 @@
 import getTeamInfos from "../../../common/getTeamInfos";
 import { idb } from "../../db";
-import { g, updatePlayMenu, random, toUI } from "../../util";
+import { g, updatePlayMenu, random, toUI, logEvent, helpers } from "../../util";
 import league from "../league";
 
 const relocateVote = async ({
@@ -52,15 +52,27 @@ const relocateVote = async ({
 		}
 	}
 
+	const newTeam = getTeamInfos([
+		{
+			tid: t.tid,
+			cid: -1,
+			did: -1,
+			abbrev: autoRelocate.abbrev,
+		},
+	])[0];
+
+	let eventText;
+
 	if (result.for > result.against) {
-		const newTeam = getTeamInfos([
-			{
-				tid: t.tid,
-				cid: -1,
-				did: -1,
-				abbrev: autoRelocate.abbrev,
-			},
-		])[0];
+		eventText = `The ${t.region} ${
+			t.name
+		} are now the <a href="${helpers.leagueUrl([
+			"roster",
+			t.abbrev,
+			g.get("season"),
+		])}">${newTeam.region} ${newTeam.name}</a> after a successful ${
+			result.for
+		}-${result.against} vote.`;
 
 		t.abbrev = newTeam.abbrev;
 		t.region = newTeam.region;
@@ -91,6 +103,14 @@ const relocateVote = async ({
 				}
 			}
 		}
+	} else {
+		eventText = `The <a href="${helpers.leagueUrl([
+			"roster",
+			t.abbrev,
+			g.get("season"),
+		])}">${t.region} ${t.name}</a> wanted to move to ${
+			newTeam.region
+		}, but they lost the vote ${result.against}-${result.for}.`;
 	}
 
 	await league.setGameAttributes({
@@ -100,6 +120,14 @@ const relocateVote = async ({
 	await updatePlayMenu();
 
 	await toUI("realtimeUpdate", [["team"]]);
+
+	logEvent({
+		text: eventText,
+		type: "teamRelocation",
+		tids: [t.tid],
+		showNotification: false,
+		score: 20,
+	});
 
 	return result;
 };

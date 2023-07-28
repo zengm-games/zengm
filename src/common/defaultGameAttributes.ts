@@ -284,7 +284,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	autoExpandNumTeams: 2,
 	autoExpandGeo: "naFirst",*/
 	autoRelocate: undefined,
-	autoRelocateProb: 1,
+	autoRelocateProb: 0,
 	autoRelocateGeo: "naFirst",
 	autoRelocateRebrand: true,
 	autoRelocateRealign: true,

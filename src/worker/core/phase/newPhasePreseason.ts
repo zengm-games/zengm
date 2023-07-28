@@ -70,7 +70,7 @@ const newPhasePreseason = async (
 				await idb.cache.teams.put(t);
 
 				if (t.region !== old.region) {
-					const text = `the ${old.region} ${
+					const text = `The ${old.region} ${
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
@@ -79,7 +79,7 @@ const newPhasePreseason = async (
 					])}">${t.region} ${t.name}</a>.`;
 
 					logEvent({
-						text: helpers.upperCaseFirstLetter(text),
+						text,
 						type: "teamRelocation",
 						tids: [t.tid],
 						showNotification: false,

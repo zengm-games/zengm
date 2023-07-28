@@ -12,7 +12,12 @@ import { PHASE } from "../../common";
 const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
 
-const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
+const ManageTeams = ({
+	autoRelocate,
+	confs,
+	divs,
+	phase,
+}: View<"manageConfs">) => {
 	const [liveConfs, setLiveConfs] = useState(confs);
 	const [liveDivs, setLiveDivs] = useState(divs);
 	const [saving, setSaving] = useState(false);
@@ -116,6 +121,16 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 			<p>
 				Wait until after your fantasy or expansion draft to edit conferences and
 				divisions.
+			</p>
+		);
+	}
+
+	if (autoRelocate) {
+		return (
+			<p>
+				You cannot edit conferences/divisions while a{" "}
+				<a href={helpers.leagueUrl(["relocate"])}>team relocation vote</a> is
+				pending.
 			</p>
 		);
 	}

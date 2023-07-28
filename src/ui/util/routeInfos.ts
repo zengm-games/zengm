@@ -200,6 +200,7 @@ const routeInfos = {
 	"/l/:lid/daily_schedule/:season/:day": "dailySchedule",
 	"/l/:lid/season_preview": "seasonPreview",
 	"/l/:lid/season_preview/:season": "seasonPreview",
+	"/l/:lid/relocate": "relocate",
 };
 
 export default routeInfos;

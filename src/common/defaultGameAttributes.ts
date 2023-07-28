@@ -34,6 +34,8 @@ export const gameAttributesKeysGameState: GameAttributeKey[] = [
 	"season",
 	"startingSeason",
 	"numDraftPicksCurrent",
+	"expansionDraft",
+	"autoRelocate",
 ];
 export const gameAttributesKeysTeams: GameAttributeKey[] = ["confs", "divs"];
 export const gameAttributesCache: GameAttributeKey[] = [
@@ -278,6 +280,14 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	heightFactor: 1,
 	weightFactor: 1,
 	numWatchColors: 1,
+	/*autoExpandProb: 1,
+	autoExpandNumTeams: 2,
+	autoExpandGeo: "naFirst",*/
+	autoRelocate: undefined,
+	autoRelocateProb: 0,
+	autoRelocateGeo: "naFirst",
+	autoRelocateRebrand: true,
+	autoRelocateRealign: true,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

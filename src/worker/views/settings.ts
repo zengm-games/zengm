@@ -156,6 +156,13 @@ const keys = [
 	"numWatchColors",
 	"giveMeWorstRoster",
 	"groupScheduleSeries",
+	/*"autoExpandProb",
+	"autoExpandNumTeams",
+	"autoExpandGeo",*/
+	"autoRelocateProb",
+	"autoRelocateGeo",
+	"autoRelocateRealign",
+	"autoRelocateRebrand",
 ] as const;
 
 export type Settings = Pick<
@@ -350,6 +357,13 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			minRetireAge: g.get("minRetireAge"),
 			numWatchColors: g.get("numWatchColors"),
 			groupScheduleSeries: g.get("groupScheduleSeries"),
+			/*autoExpandProb: g.get("autoExpandProb"),
+			autoExpandNumTeams: g.get("autoExpandNumTeams"),
+			autoExpandGeo: g.get("autoExpandGeo"),*/
+			autoRelocateProb: g.get("autoRelocateProb"),
+			autoRelocateGeo: g.get("autoRelocateGeo"),
+			autoRelocateRealign: g.get("autoRelocateRealign"),
+			autoRelocateRebrand: g.get("autoRelocateRebrand"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

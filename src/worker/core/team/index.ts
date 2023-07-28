@@ -16,6 +16,7 @@ import ovr from "./ovr";
 import processStats from "./processStats";
 import ptsMax from "./ptsMax";
 import ptsPct from "./ptsPct";
+import relocateVote from "./relocateVote";
 import resetTicketPrice from "./resetTicketPrice";
 import rosterAutoSort from "./rosterAutoSort";
 import switchTo from "./switchTo";
@@ -43,6 +44,7 @@ export default {
 	processStats,
 	ptsMax,
 	ptsPct,
+	relocateVote,
 	resetTicketPrice,
 	rosterAutoSort,
 	switchTo,

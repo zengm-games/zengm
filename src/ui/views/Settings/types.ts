@@ -145,7 +145,14 @@ export type Key =
 	| "allStarThree"
 	| "minRetireAge"
 	| "numWatchColors"
-	| "giveMeWorstRoster";
+	| "giveMeWorstRoster"
+	/*| "autoExpandProb"
+	| "autoExpandNumTeams"
+	| "autoExpandGeo"*/
+	| "autoRelocateProb"
+	| "autoRelocateGeo"
+	| "autoRelocateRebrand"
+	| "autoRelocateRealign";
 
 export type Category =
 	| "New League"

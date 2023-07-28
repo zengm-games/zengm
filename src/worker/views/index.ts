@@ -77,6 +77,7 @@ import playoffs from "./playoffs";
 import powerRankings from "./powerRankings";
 import protectPlayers from "./protectPlayers";
 import relatives from "./relatives";
+import relocate from "./relocate";
 import resetPassword from "./resetPassword";
 import roster from "./roster";
 import rosterContinuity from "./rosterContinuity";
@@ -179,6 +180,7 @@ export default {
 	powerRankings,
 	protectPlayers,
 	relatives,
+	relocate,
 	resetPassword,
 	roster,
 	rosterContinuity,

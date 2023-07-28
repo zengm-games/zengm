@@ -165,6 +165,10 @@ const updatePlayMenu = async () => {
 			url: helpers.leagueUrl(["expansion_draft"]),
 			label: "Continue expansion draft setup",
 		},
+		relocate: {
+			url: helpers.leagueUrl(["relocate"]),
+			label: "Vote on proposed team relocation",
+		},
 	};
 
 	let keys: string[] = [];
@@ -314,6 +318,10 @@ const updatePlayMenu = async () => {
 
 	const unreadMessage = await lock.unreadMessage();
 	const negotiationInProgress = await lock.negotiationInProgress();
+
+	if (g.get("autoRelocate")) {
+		keys = ["relocate"];
+	}
 
 	if (g.get("expansionDraft").phase === "protection") {
 		keys = ["expansionDraft"];

@@ -1,19 +1,27 @@
 random events
 - probability of expansion draft vote
   - pick 2 random teams
-  - cluster to realign conferences
+  - add to smallest division, prioritize by closest by lat/long if values available
   - god mode option to rig the vote
-- probability of random relocation
-  - realign conferences?
-  - user's team too?
-    - user gets to pick from a few locations
-- in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
-- options for only teams in north america - use outsideNorthAmerica
-- if default values are non-zero, should be able to turn off without god mode
-  - maybe any value is fine without god mode
-- if default values are non-zero, should be 0 in upgraded and imported (old version only) leagues
-- make sure auto play works
-- handle no more teams left (including NA only)
+  - state variables (like g.expansionDraft)
+    - gameAttributesKeysGameState
+    - schema
+  - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
+  - auto play
+  - lock manage teams/confs
+  - handle no more teams left (including NA only)
+  - test import league for schema errors
+  - news feed for any result
+- later
+  - have scheduled events use this voting system?
+
+abbreviation of names with periods in them - C.J. -> C.. https://old.reddit.com/r/BasketballGM/comments/15be3x7/interesting_name_quirk_that_might_be_a_bug/jtpxeta/?context=3
+
+"Show players you can afford now" is messed up by units in billions https://discord.com/channels/290013534023057409/290015591216054273/1132626707480858636
+
+groundhog day but allow players to change teams https://old.reddit.com/chat/channel/216205321_7a3f1d9d693f1871f394d353bfb5757d1ad3b766
+- free agency would be needed, but no draft
+- https://discord.com/channels/290013534023057409/847310240566870017/1133216000175767633
 
 check RAM usage https://discord.com/channels/290013534023057409/290015591216054273/1131288638941040680
 
@@ -320,9 +328,6 @@ too easy to trade up at bbgm draft?
 traded players being put in starting lineup for no reason? https://discord.com/channels/290013534023057409/331882115119448065/999033358749290587
 
 add some way to delete players after exporting them https://discord.com/channels/@me/753599190856368209/999457177259479050
-
-groundhog day but allow players to change teams https://old.reddit.com/chat/channel/216205321_7a3f1d9d693f1871f394d353bfb5757d1ad3b766
-- free agency would be needed, but no draft
 
 in real players league, start at draft should give you the option to start at your team's first pick, with other teams picks being made like IRL https://mail.google.com/mail/u/0/?zx=82hreb1i3vdd#inbox/FMfcgzGpGwsMgptrrHzfvcVQTTWJMchN
 

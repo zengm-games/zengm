@@ -22,6 +22,10 @@ import type {
 	GameAttributesLeague,
 } from "../../../common/types";
 import setGameAttributes from "../league/setGameAttributes";
+import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
+import geographicCoordinates from "../../../common/geographicCoordinates";
+import getTeamInfos from "../../../common/getTeamInfos";
+import { kmeansFixedSize, sortByDivs } from "../team/cluster";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -44,6 +48,16 @@ const upcomingScheduledEventBlocksInflation = async () => {
 				}
 			}
 		}
+	});
+};
+
+const upcomingScheduledEventBlocksRelocate = async () => {
+	const scheduledEvents = await idb.getCopies.scheduledEvents(
+		undefined,
+		"noCopyCache",
+	);
+	return scheduledEvents.some(event => {
+		return event.type === "teamInfo";
 	});
 };
 
@@ -118,6 +132,187 @@ const doInflation = async (conditions: Conditions) => {
 	}
 };
 
+const doRelocate = async () => {
+	const autoRelocateProb = g.get("autoRelocateProb");
+
+	if (Math.random() > autoRelocateProb) {
+		return;
+	}
+
+	if (await upcomingScheduledEventBlocksRelocate()) {
+		return;
+	}
+
+	const autoRelocateGeo = g.get("autoRelocateGeo");
+
+	const currentTeams = await idb.cache.teams.getAll();
+
+	const candidateAbbrevs = getUnusedAbbrevs(currentTeams);
+	const allCandidateTeams = getTeamInfos(
+		candidateAbbrevs.map(abbrev => {
+			return {
+				tid: -1,
+				cid: -1,
+				did: -1,
+				abbrev,
+			};
+		}),
+	);
+
+	// For naFirst - northAmericaOnly if all current teams are inside NA and there is some candidate team available inside NA
+	const northAmericaOnly =
+		autoRelocateGeo === "naOnly" ||
+		(autoRelocateGeo === "naFirst" &&
+			currentTeams.every(
+				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			) &&
+			allCandidateTeams.some(
+				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			));
+
+	const candidateTeams = allCandidateTeams.filter(t => {
+		if (!northAmericaOnly) {
+			return true;
+		}
+
+		return !geographicCoordinates[t.region].outsideNorthAmerica;
+	});
+
+	if (candidateTeams.length === 0) {
+		return;
+	}
+
+	const currentTeam = random.choice(currentTeams, t => 1 / (t.pop ?? 1));
+
+	const newTeam = random.choice(candidateTeams, t => t.pop);
+
+	const getRealignedDivs = () => {
+		// We can only automatically realign divisions if we know where every region is
+		const canRealign = currentTeams.every(
+			t => !!geographicCoordinates[t.region] || t.tid === currentTeam.tid,
+		);
+
+		if (!canRealign) {
+			return;
+		}
+
+		// List of team IDs in each division, indexed by did
+		let realigned: number[][] = [];
+
+		const divs = g.get("divs");
+		const numTeamsPerDiv = divs.map(
+			div => currentTeams.filter(t => t.did === div.did).length,
+		);
+
+		const coordinates = currentTeams.map(temp => {
+			const t = temp.tid === newTeam.tid ? newTeam : temp;
+			return [
+				geographicCoordinates[t.region].latitude,
+				geographicCoordinates[t.region].longitude,
+			] as [number, number];
+		});
+
+		const { clusters, geoSorted } = sortByDivs(
+			kmeansFixedSize(coordinates, numTeamsPerDiv),
+			divs,
+			numTeamsPerDiv,
+		);
+
+		for (const div of divs) {
+			const tids = clusters[div.did].pointIndexes;
+			if (tids) {
+				realigned[div.did] = tids;
+			}
+		}
+
+		if (!geoSorted) {
+			// If, for whatever reason, we can't sort clusters geographically (like knowing the location of Atlantic vs Pacific), then try to keep as many teams in the same division as they were previously. Ideally we would test all permutations, but for many divisions that would be slow, so do it a shittier way.
+			const original = divs.map(() => [] as number[]);
+			for (const t of currentTeams) {
+				original[t.did].push(t.tid);
+			}
+
+			const dids = divs.map(div => div.did);
+
+			const getBestDid = (tids: number[], didsUsed: Set<number>) => {
+				let bestScore2 = -Infinity;
+				let bestDid;
+				for (let did = 0; did < original.length; did++) {
+					if (didsUsed.has(did)) {
+						continue;
+					}
+
+					let score = 0;
+					for (const tid of tids) {
+						if (original[did].includes(tid)) {
+							score += 1;
+						}
+					}
+
+					if (score > bestScore2) {
+						bestScore2 = score;
+						bestDid = did;
+					}
+				}
+
+				if (bestDid === undefined) {
+					throw new Error("Should never happen");
+				}
+
+				return {
+					did: bestDid,
+					score: bestScore2,
+				};
+			};
+
+			let bestScore = -Infinity;
+			let bestRealigned;
+
+			// Try a few times with random ordered dids, that's probably good enough
+			for (let iteration = 0; iteration < 20; iteration++) {
+				random.shuffle(dids);
+
+				let score = 0;
+				const attempt = divs.map(() => [] as number[]);
+				const didsUsed = new Set<number>();
+
+				for (const did of dids) {
+					const tids = realigned[did];
+					const result = getBestDid(tids, didsUsed);
+					didsUsed.add(result.did);
+					attempt[result.did] = tids;
+					score += result.score;
+				}
+
+				if (score > bestScore) {
+					bestScore = score;
+					bestRealigned = attempt;
+				}
+			}
+
+			if (bestRealigned === undefined) {
+				throw new Error("Should never happen");
+			}
+
+			realigned = bestRealigned;
+		}
+
+		return realigned;
+	};
+
+	const realigned = getRealignedDivs();
+
+	// console.log(`${currentTeam.region} ${currentTeam.name} -> ${newTeam.region} ${newTeam.name}`);
+	await league.setGameAttributes({
+		autoRelocate: {
+			phase: "vote",
+			tid: currentTeam.tid,
+			abbrev: newTeam.abbrev,
+			realigned,
+		},
+	});
+};
+
 const setChampNoPlayoffs = async (conditions: Conditions) => {
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -169,9 +364,8 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 				"roster",
 				`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
 				g.get("season"),
-			])}">${
-				g.get("teamInfoCache")[tid]?.name
-			}</a> finished in 1st place and are league champions!`,
+			])}">${g.get("teamInfoCache")[tid]
+				?.name}</a> finished in 1st place and are league champions!`,
 			showNotification: true,
 			hideInLiveGame: true,
 			tids: [tid],
@@ -516,6 +710,8 @@ const newPhaseBeforeDraft = async (
 	}
 
 	await doInflation(conditions);
+
+	await doRelocate();
 
 	// Don't redirect if we're viewing a live game now
 	let redirect;

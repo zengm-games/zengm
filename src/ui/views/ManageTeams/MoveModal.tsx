@@ -1,12 +1,10 @@
-import type { Face } from "facesjs";
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import orderBy from "lodash-es/orderBy";
 import { Modal } from "react-bootstrap";
 import teamInfos from "../../../common/teamInfos";
 import getTeamInfos from "../../../common/getTeamInfos";
-import { JerseyNumber } from "../../components";
-import { displayFace, toWorker } from "../../util";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld";
+import { TeamLogoJerseyInfo } from "../../components/TeamLogoJerseyInfo";
 
 export type MoveModalTeam = {
 	abbrev: string;
@@ -61,34 +59,6 @@ const MoveModal = ({
 
 	const brandedTeam = rebrandTeam ? selectedTeam : currentTeam;
 
-	const [faceWrapper, setFaceWrapper] = useState<HTMLDivElement | null>(null);
-	const face = useRef<Face | undefined>();
-
-	useEffect(() => {
-		const renderFace = async () => {
-			if (!face.current) {
-				face.current = await toWorker("main", "generateFace", undefined);
-			}
-
-			if (faceWrapper && face.current) {
-				displayFace({
-					colors: brandedTeam.colors,
-					face: face.current,
-					jersey: brandedTeam.jersey,
-					wrapper: faceWrapper,
-				});
-			}
-		};
-
-		renderFace();
-	}, [faceWrapper, brandedTeam]);
-
-	const logoStyle: CSSProperties = {};
-	if (brandedTeam.imgURL) {
-		logoStyle.display = "inline";
-		logoStyle.backgroundImage = `url('${brandedTeam.imgURL}')`;
-	}
-
 	return (
 		<Modal show={show} onHide={onHide} scrollable>
 			<Modal.Body>
@@ -124,32 +94,15 @@ const MoveModal = ({
 								}}
 							/>
 							<label className="form-check-label" htmlFor="move-modal-reband">
-								Rebrand Team
+								Rebrand team
 							</label>
 						</div>
 					</div>
 					<div className="mt-4 mt-sm-0 ms-sm-5">
-						<h3 className="position-relative" style={{ zIndex: 1 }}>
-							{selectedTeam.region} {brandedTeam.name} ({selectedTeam.abbrev})
-						</h3>
-						<div className="d-flex">
-							<div className="team-picture" style={logoStyle} />
-							<div
-								className="mx-2"
-								ref={setFaceWrapper}
-								style={{ maxWidth: 100, marginTop: -25 }}
-							/>
-							<JerseyNumber
-								number={"35"}
-								start={2002}
-								end={2004}
-								t={{
-									colors: brandedTeam.colors,
-									name: brandedTeam.name,
-									region: brandedTeam.region,
-								}}
-							/>
-						</div>
+						<TeamLogoJerseyInfo
+							brandedTeam={brandedTeam}
+							selectedTeam={selectedTeam}
+						/>
 					</div>
 				</div>
 			</Modal.Body>

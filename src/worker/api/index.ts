@@ -2524,6 +2524,15 @@ const releasePlayer = async ({
 	});
 };
 
+const relocateVote = (params: {
+	override: boolean;
+	realign: boolean;
+	rebrandTeam: boolean;
+	userVote: boolean;
+}) => {
+	return team.relocateVote(params);
+};
+
 const removeLastTeam = async () => {
 	const tid = g.get("numTeams") - 1;
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -4335,6 +4344,7 @@ export default {
 		regenerateDraftClass,
 		regenerateSchedule,
 		releasePlayer,
+		relocateVote,
 		cloneLeague,
 		removeLeague,
 		removePlayers,

@@ -7,8 +7,6 @@ random events
     - gameAttributesKeysGameState
     - schema
 - random relocation screen
-  - realign conferences
-    - only show if all teams are known
   - ui for result
     - test god mode override
     - tied vote - no

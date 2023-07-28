@@ -2613,11 +2613,11 @@ const relocateVote = async ({
 				}
 			}
 		}
-
-		await league.setGameAttributes({
-			autoRelocate: undefined,
-		});
 	}
+
+	await league.setGameAttributes({
+		autoRelocate: undefined,
+	});
 
 	await updatePlayMenu();
 

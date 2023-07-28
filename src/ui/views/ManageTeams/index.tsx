@@ -164,6 +164,16 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 	useTitleBar({ title: "Manage Teams" });
 
+	if (props.autoRelocate) {
+		return (
+			<p>
+				You cannot edit teams while a{" "}
+				<a href={helpers.leagueUrl(["relocate"])}>team relocation vote</a> is
+				pending.
+			</p>
+		);
+	}
+
 	const disableStatus =
 		!props.godMode ||
 		![

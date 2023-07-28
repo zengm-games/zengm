@@ -47,6 +47,7 @@ const updateTeamInfo = async () => {
 	});
 
 	return {
+		autoRelocate: !!g.get("autoRelocate"),
 		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
 		confs: g.get("confs"),
 		divs: g.get("divs"),

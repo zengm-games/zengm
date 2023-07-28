@@ -5,6 +5,7 @@ const updateConfs = async () => {
 	const divs = g.get("divs");
 
 	return {
+		autoRelocate: !!g.get("autoRelocate"),
 		confs,
 		divs,
 		phase: g.get("phase"),

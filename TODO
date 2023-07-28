@@ -8,12 +8,12 @@ random events
     - schema
   - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
   - auto play
+  - lock manage teams/confs
+  - handle no more teams left (including NA only)
+  - test import league for schema errors
 - set default value correctly
-- lock manage teams/confs
-- handle no more teams left (including NA only)
 - make sure relocation updates news feed, similar to scheduled event
   - also failed vote
-- test import league for schema errors
 - later
   - have scheduled events use this voting system?
 

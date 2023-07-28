@@ -1112,7 +1112,7 @@ export const settings: Setting[] = (
 		{
 			category: "Events",
 			key: "autoRelocateRebrand",
-			name: "Rebrand Taams After Auto Relocation",
+			name: "Rebrand Teams After Auto Relocation",
 			type: "bool",
 		},
 		{

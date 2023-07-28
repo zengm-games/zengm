@@ -1087,7 +1087,6 @@ export const settings: Setting[] = (
 			category: "Events",
 			key: "autoRelocateProb",
 			name: "Auto Relocation Probability",
-			godModeRequired: "always",
 			type: "float",
 			description:
 				"Probability each offseason that a team will relocate to a new region.",
@@ -1101,7 +1100,6 @@ export const settings: Setting[] = (
 			category: "Events",
 			key: "autoRelocateGeo",
 			name: "Auto Relocation Regions",
-			godModeRequired: "always",
 			type: "string",
 			values: [
 				{ key: "naFirst", value: "North America first" },
@@ -1115,14 +1113,12 @@ export const settings: Setting[] = (
 			category: "Events",
 			key: "autoRelocateRebrand",
 			name: "Rebrand Taams After Auto Relocation",
-			godModeRequired: "always",
 			type: "bool",
 		},
 		{
 			category: "Events",
 			key: "autoRelocateRealign",
 			name: "Realign Divs After Auto Relocation",
-			godModeRequired: "always",
 			type: "bool",
 		},
 		{

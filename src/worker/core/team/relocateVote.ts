@@ -1,6 +1,6 @@
 import getTeamInfos from "../../../common/getTeamInfos";
 import { idb } from "../../db";
-import { g, updatePlayMenu, random } from "../../util";
+import { g, updatePlayMenu, random, toUI } from "../../util";
 import league from "../league";
 
 const relocateVote = async ({
@@ -98,6 +98,8 @@ const relocateVote = async ({
 	});
 
 	await updatePlayMenu();
+
+	await toUI("realtimeUpdate", [["team"]]);
 
 	return result;
 };

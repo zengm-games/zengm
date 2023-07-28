@@ -6,11 +6,7 @@ random events
   - state variables (like g.expansionDraft)
     - gameAttributesKeysGameState
     - schema
-- random relocation screen
-  - ui for result
-    - test god mode override
-    - tied vote - no
-- in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
+  - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
 - lock manage teams/confs
 - make sure auto play works
   - use settings for defaults for realign/rebrand

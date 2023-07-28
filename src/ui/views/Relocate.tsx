@@ -4,6 +4,7 @@ import type { View } from "../../common/types";
 import { helpers, toWorker } from "../util";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
 import classNames from "classnames";
+import { wait } from "../../common";
 
 const Relocate = ({
 	autoRelocateRealign,
@@ -50,6 +51,8 @@ const Relocate = ({
 			userVote,
 		});
 
+		await wait(2000);
+
 		setStatus({
 			type: "results",
 			...results,
@@ -58,7 +61,7 @@ const Relocate = ({
 
 	return (
 		<>
-			<div className="mb-5">
+			<div className="mb-5 fs-5">
 				The{" "}
 				<a
 					href={helpers.leagueUrl([
@@ -169,46 +172,64 @@ const Relocate = ({
 				) : null}
 			</div>
 
-			<p>This move must be approved by a majority of teams. How do you vote?</p>
-
-			<div className="text-center d-inline-block">
-				<div className="d-flex gap-3">
-					<button
-						className="btn btn-lg btn-success"
-						disabled={status.type !== "init"}
-						onClick={() => {
-							vote(true);
-						}}
-					>
-						Move to {newTeam.region}
-					</button>
-					<button
-						className="btn btn-lg btn-danger"
-						disabled={status.type !== "init"}
-						onClick={() => {
-							vote(false);
-						}}
-					>
-						Stay in {currentTeam.region}
-					</button>
-				</div>
-				{godMode ? (
-					<div className="mt-3">
-						<label className="god-mode god-mode-text mb-0">
-							<input
-								className="form-check-input me-1"
-								type="checkbox"
-								onChange={() => {
-									setOverride(checked => !checked);
+			{status.type === "init" ? (
+				<div>
+					<p className="fs-5">
+						This move must be approved by a majority of teams. How do you vote?
+					</p>
+					<div className="text-center d-inline-block">
+						<div className="d-flex gap-3">
+							<button
+								className="btn btn-lg btn-success"
+								onClick={() => {
+									vote(true);
 								}}
-								checked={override}
-								disabled={status.type !== "init"}
-							/>
-							Force result
-						</label>
+							>
+								Move to {newTeam.region}
+							</button>
+							<button
+								className="btn btn-lg btn-danger"
+								onClick={() => {
+									vote(false);
+								}}
+							>
+								Stay in {currentTeam.region}
+							</button>
+						</div>
+						{godMode ? (
+							<div className="mt-3">
+								<label className="god-mode god-mode-text mb-0">
+									<input
+										className="form-check-input me-1"
+										type="checkbox"
+										onChange={() => {
+											setOverride(checked => !checked);
+										}}
+										checked={override}
+									/>
+									Force result
+								</label>
+							</div>
+						) : null}
 					</div>
-				) : null}
-			</div>
+				</div>
+			) : status.type === "voted" ? (
+				<div className="d-flex align-items-center">
+					<div className="spinner-border" />
+					<div className="ms-2 fs-4">Gathering votes...</div>
+				</div>
+			) : (
+				<div>
+					{status.for > status.against ? (
+						<h2 className="text-success">Relocation approved!</h2>
+					) : (
+						<h2 className="text-danger">Relocation deined!</h2>
+					)}
+					<p>
+						Final vote: {status.for} for, {status.against} against.
+					</p>
+				</div>
+			)}
 		</>
 	);
 };

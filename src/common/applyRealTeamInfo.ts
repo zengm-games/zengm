@@ -11,7 +11,9 @@ const POTENTIAL_OVERRIDES = [
 	"imgURLSmall",
 ] as const;
 
-type MyTeam = Partial<Pick<Team, typeof POTENTIAL_OVERRIDES[number] | "srID">>;
+type MyTeam = Partial<
+	Pick<Team, (typeof POTENTIAL_OVERRIDES)[number] | "srID">
+>;
 
 const applyToObject = (t: MyTeam, realInfo: IndividualRealTeamInfo) => {
 	let updated = false;
@@ -39,53 +41,53 @@ const applyRealTeamInfo = (
 	realTeamInfo: RealTeamInfo,
 	season: number,
 	options: {
-		exactSeason?: boolean;
-
 		// Would be nice to use seasonOverride like this, instead of season, for updating objects with a specified season already in them
 		srIDOverride?: string;
+
+		// When true, only do something if this season is explicitly listed in the real team info, otherwise assume prior values were correctly applied
+		exactSeason?: boolean;
 	} = {},
 ) => {
 	const srID = options.srIDOverride ?? t.srID;
 
-	let updated = false;
 	if (!realTeamInfo || !srID || !realTeamInfo[srID]) {
-		return updated;
+		return false;
 	}
 
 	const realInfoRoot = realTeamInfo[srID];
 
-	// Apply the base attributes first
-	if (!options.exactSeason) {
-		updated = applyToObject(t, realInfoRoot);
-	}
-
-	// Need to add a season override?
-	if (!realInfoRoot.seasons) {
-		return updated;
-	}
-
-	const realInfoSeasons = realInfoRoot.seasons;
+	const realInfoSeasons = realInfoRoot.seasons ?? {};
 
 	// Available seasons that are less than or equal to the input season
 	const seasons = Object.keys(realInfoSeasons)
 		.map(x => parseInt(x))
 		.filter(x => !Number.isNaN(x))
 		.filter(x => x <= season);
+
 	if (seasons.length === 0) {
-		return updated;
+		return false;
 	}
 
-	// Max available season up to the input season
-	const seasonToUse = Math.max(...seasons);
-	if (options.exactSeason && season !== seasonToUse) {
-		return updated;
+	// Sort ascending
+	seasons.sort((a, b) => a - b);
+
+	// Only apply this current season, for efficiency
+	if (options.exactSeason) {
+		if (!seasons.includes(season)) {
+			return false;
+		}
+
+		return applyToObject(t, realInfoSeasons[seasons.at(-1)!]);
 	}
-	const realInfoSeason = realInfoSeasons[seasonToUse];
 
-	// Apply, like above
-	const updated2 = applyToObject(t, realInfoSeason);
+	// Merge prior seasons, in case there is a partial one and applyToObject above applied something from the root (like updating imgURLSmall without updating imgURL, would default to root imgURL otherwise)
+	const realInfoMerged = Object.assign(
+		{},
+		realInfoRoot,
+		...seasons.map(season => realInfoSeasons[season]),
+	) as IndividualRealTeamInfo;
 
-	return updated || updated2;
+	return applyToObject(t, realInfoMerged);
 };
 
 export default applyRealTeamInfo;

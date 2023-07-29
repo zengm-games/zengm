@@ -65,6 +65,10 @@ const applyRealTeamInfo = (
 		.filter(x => x <= season);
 
 	if (seasons.length === 0) {
+		if (!options.exactSeason) {
+			return applyToObject(t, realInfoRoot);
+		}
+
 		return false;
 	}
 

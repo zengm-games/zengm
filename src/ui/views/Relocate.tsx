@@ -223,7 +223,7 @@ const Relocate = ({
 					{status.for > status.against ? (
 						<h2 className="text-success">Relocation approved!</h2>
 					) : (
-						<h2 className="text-danger">Relocation deined!</h2>
+						<h2 className="text-danger">Relocation denied!</h2>
 					)}
 					<p>
 						Final vote: {status.for} for, {status.against} against.

@@ -182,7 +182,10 @@ const doRelocate = async () => {
 		return;
 	}
 
-	const currentTeam = random.choice(currentTeams, t => 1 / (t.pop ?? 1));
+	const currentTeam = random.choice(
+		currentTeams.filter(t => !t.disabled),
+		t => 1 / (t.pop ?? 1),
+	);
 
 	const newTeam = random.choice(candidateTeams, t => t.pop);
 

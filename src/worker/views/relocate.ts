@@ -24,26 +24,32 @@ const getRealignInfo = (
 		name: string;
 	}[][][] = [];
 
+	const confs = g.get("confs");
+	const divs = g.get("divs");
+
 	for (const t of teams) {
-		if (!current[t.cid]) {
-			current[t.cid] = [];
+		const confIndex = confs.findIndex(conf => conf.cid === t.cid);
+		const divIndex = divs.findIndex(div => div.did === t.did);
+
+		if (!current[confIndex]) {
+			current[confIndex] = [];
 		}
-		if (!current[t.cid][t.did]) {
-			current[t.cid][t.did] = [];
+		if (!current[confIndex][divIndex]) {
+			current[confIndex][divIndex] = [];
 		}
 
 		const t2 = t.tid === override.tid ? override : t;
 
-		current[t.cid][t.did].push({
+		current[confIndex][divIndex].push({
 			tid: t2.tid,
 			region: t2.region,
 			name: t2.name,
 		});
 	}
 
-	// Indexed on did, so there are gaps unless we filter out undefined. Then it's no longer indexed by did but that's fine.
-	for (let cid = 0; cid < current.length; cid++) {
-		current[cid] = current[cid]
+	// Indexed on divIndex, so there are gaps unless we filter out undefined. Then it's no longer indexed by divIndex but that's fine.
+	for (let confIndex = 0; confIndex < current.length; confIndex++) {
+		current[confIndex] = current[confIndex]
 			.filter(row => row !== undefined)
 			.map(row => orderBy(row, ["region", "name"]));
 	}
@@ -103,14 +109,15 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 			const confs = g.get("confs");
 			const divs = g.get("divs");
 
-			for (const div of divs) {
-				const tids = autoRelocate.realigned[div.did];
+			for (let i = 0; i < divs.length; i++) {
+				const div = divs[i];
+				const tids = autoRelocate.realigned[i];
 				if (tids) {
-					const conf = confs[div.cid];
-					if (!realigned[conf.cid]) {
-						realigned[conf.cid] = [];
+					const confIndex = confs.findIndex(conf => conf.cid === div.cid);
+					if (!realigned[confIndex]) {
+						realigned[confIndex] = [];
 					}
-					realigned[conf.cid].push(
+					realigned[confIndex].push(
 						orderBy(
 							tids.map(tid => {
 								const t =

@@ -217,11 +217,12 @@ const doRelocate = async () => {
 			divs,
 			numTeamsPerDiv,
 		);
+		console.log("clusters", clusters);
 
-		for (const div of divs) {
-			const tids = clusters[div.did].pointIndexes;
+		for (let i = 0; i < divs.length; i++) {
+			const tids = clusters[i].pointIndexes;
 			if (tids) {
-				realigned[div.did] = tids;
+				realigned[i] = tids;
 			}
 		}
 
@@ -229,22 +230,25 @@ const doRelocate = async () => {
 			// If, for whatever reason, we can't sort clusters geographically (like knowing the location of Atlantic vs Pacific), then try to keep as many teams in the same division as they were previously. Ideally we would test all permutations, but for many divisions that would be slow, so do it a shittier way.
 			const original = divs.map(() => [] as number[]);
 			for (const t of currentTeams) {
-				original[t.did].push(t.tid);
+				const divIndex = divs.findIndex(div => t.did === div.did);
+				original[divIndex].push(t.tid);
 			}
 
-			const dids = divs.map(div => div.did);
+			const divIndexes = divs.map((div, i) => i);
 
 			const getBestDid = (tids: number[], didsUsed: Set<number>) => {
 				let bestScore2 = -Infinity;
-				let bestDid;
-				for (let did = 0; did < original.length; did++) {
+				let bestDid: number | undefined;
+				for (let divIndex = 0; divIndex < original.length; divIndex++) {
+					const did = divs[divIndex].did;
+
 					if (didsUsed.has(did)) {
 						continue;
 					}
 
 					let score = 0;
 					for (const tid of tids) {
-						if (original[did].includes(tid)) {
+						if (original[divIndex].includes(tid)) {
 							score += 1;
 						}
 					}
@@ -261,6 +265,7 @@ const doRelocate = async () => {
 
 				return {
 					did: bestDid,
+					divIndex: divs.findIndex(div => div.did === bestDid),
 					score: bestScore2,
 				};
 			};
@@ -270,17 +275,17 @@ const doRelocate = async () => {
 
 			// Try a few times with random ordered dids, that's probably good enough
 			for (let iteration = 0; iteration < 20; iteration++) {
-				random.shuffle(dids);
+				random.shuffle(divIndexes);
 
 				let score = 0;
 				const attempt = divs.map(() => [] as number[]);
 				const didsUsed = new Set<number>();
 
-				for (const did of dids) {
-					const tids = realigned[did];
+				for (const divIndex of divIndexes) {
+					const tids = realigned[divIndex];
 					const result = getBestDid(tids, didsUsed);
 					didsUsed.add(result.did);
-					attempt[result.did] = tids;
+					attempt[result.divIndex] = tids;
 					score += result.score;
 				}
 

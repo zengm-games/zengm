@@ -91,8 +91,9 @@ const relocateVote = async ({
 		const realigned = autoRelocate.realigned;
 		if (realign && realigned) {
 			const divs = g.get("divs");
-			for (const div of divs) {
-				const tids = realigned[div.did];
+			for (let i = 0; i < divs.length; i++) {
+				const div = divs[i];
+				const tids = realigned[i];
 				for (const tid of tids) {
 					const t = await idb.cache.teams.get(tid);
 					if (t) {

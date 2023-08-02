@@ -301,6 +301,60 @@ const geographicCoordinates: Record<
 		latitude: 49.8954,
 		longitude: -97.1385,
 	},
+	Belgrade: {
+		latitude: 44.8125,
+		longitude: 20.4612,
+		outsideNorthAmerica: true,
+	},
+	Berlin: {
+		latitude: 52.52,
+		longitude: 13.405,
+		outsideNorthAmerica: true,
+	},
+	"Buenos Aires": {
+		latitude: -34.6037,
+		longitude: -58.3816,
+		outsideNorthAmerica: true,
+	},
+	Cairo: {
+		latitude: 30.0444,
+		longitude: 31.2357,
+		outsideNorthAmerica: true,
+	},
+	Jakarta: {
+		latitude: -6.2088,
+		longitude: 106.8456,
+		outsideNorthAmerica: true,
+	},
+	Kaunas: {
+		latitude: 54.8985,
+		longitude: 23.9036,
+		outsideNorthAmerica: true,
+	},
+	Kentucky: {
+		latitude: 38.2527,
+		longitude: -85.7585,
+	},
+	Madrid: {
+		latitude: 40.4168,
+		longitude: -3.7038,
+		outsideNorthAmerica: true,
+	},
+	Rome: {
+		latitude: 41.9028,
+		longitude: 12.4964,
+		outsideNorthAmerica: true,
+	},
+	Singapore: {
+		latitude: 1.3521,
+		longitude: 103.8198,
+		outsideNorthAmerica: true,
+	},
+	Sydney: {
+		latitude: -33.8688,
+		longitude: 151.2093,
+		outsideNorthAmerica: true,
+	},
 };
 
 export default geographicCoordinates;

@@ -104,6 +104,18 @@ const relocateVote = async ({
 				}
 			}
 		}
+
+		const teams = await idb.cache.teams.getAll();
+		await league.setGameAttributes({
+			teamInfoCache: teams.map(t => ({
+				abbrev: t.abbrev,
+				disabled: t.disabled,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				name: t.name,
+				region: t.region,
+			})),
+		});
 	} else {
 		eventText = `The <a href="${helpers.leagueUrl([
 			"roster",

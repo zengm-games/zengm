@@ -322,6 +322,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 		title: "Achievements",
 	});
 	const username = useLocal(state => state.username);
+	console.log("RENDER", username);
 	const loggedIn = !!username;
 
 	useEffect(() => {

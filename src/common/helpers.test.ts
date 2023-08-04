@@ -96,6 +96,10 @@ describe("common/helpers", () => {
 				"$6.44e19",
 			);
 		});
+
+		test("$1000M", () => {
+			assert.strictEqual(helpers.formatCurrency(1000, "M"), "$1B");
+		});
 	});
 
 	describe("getPopRanks", () => {

@@ -945,7 +945,7 @@ const formatCurrency = (
 	let append = "";
 
 	// Keep in sync with getSortVal
-	if (abs > 1000) {
+	if (abs >= 1000) {
 		const currencySuffixes = ["", "k", "M", "B", "T", "Q"];
 
 		const exponent = Math.floor(Math.log10(abs));

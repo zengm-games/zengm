@@ -4,7 +4,7 @@ import { AD_DIVS } from "../../common";
 const widthCutoff = 1200 + 190;
 
 let displayed = false;
-export const updateSkyscraperDisplay = () => {
+export const updateSkyscraperDisplay = (initial: boolean) => {
 	const div = document.getElementById(AD_DIVS.rail);
 
 	if (div) {
@@ -12,16 +12,33 @@ export const updateSkyscraperDisplay = () => {
 
 		if (document.documentElement.clientWidth >= widthCutoff && !gold) {
 			if (!displayed) {
-				window.freestar.queue.push(() => {
+				const before = () => {
 					div.style.display = "block";
-					window.freestar.newAdSlots([
-						{
-							placementName: AD_DIVS.rail,
-							slotId: AD_DIVS.rail,
-						},
-					]);
+				};
+				const after = () => {
 					displayed = true;
-				});
+				};
+
+				if (initial) {
+					// On initial load, we can batch ad request with others
+					before();
+					window.freestar.config.enabled_slots.push({
+						placementName: AD_DIVS.rail,
+						slotId: AD_DIVS.rail,
+					});
+					after();
+				} else {
+					window.freestar.queue.push(() => {
+						before();
+						window.freestar.newAdSlots([
+							{
+								placementName: AD_DIVS.rail,
+								slotId: AD_DIVS.rail,
+							},
+						]);
+						after();
+					});
+				}
 			}
 		} else {
 			if (displayed || gold) {
@@ -53,12 +70,16 @@ const resizeListener = () => {
 const Skyscraper = memo(() => {
 	useEffect(() => {
 		if (!window.mobile) {
-			updateSkyscraperDisplay();
+			const callback = () => {
+				updateSkyscraperDisplay(false);
+			};
+
+			callback();
 			window.addEventListener("resize", resizeListener);
-			window.addEventListener("optimizedResize", updateSkyscraperDisplay);
+			window.addEventListener("optimizedResize", callback);
 			return () => {
 				window.removeEventListener("resize", resizeListener);
-				window.removeEventListener("optimizedResize", updateSkyscraperDisplay);
+				window.removeEventListener("optimizedResize", callback);
 			};
 		}
 	}, []);

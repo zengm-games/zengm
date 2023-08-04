@@ -77,7 +77,7 @@ const initAds = (type: "accountChecked" | "uiRendered") => {
 			const rail = document.getElementById(AD_DIVS.rail);
 			if (rail) {
 				delete rail.dataset.gold;
-				updateSkyscraperDisplay();
+				updateSkyscraperDisplay(true);
 			}
 
 			for (const id of divs) {
@@ -148,7 +148,7 @@ const initGold = () => {
 		const rail = document.getElementById(AD_DIVS.rail);
 		if (rail) {
 			rail.dataset.gold = "true";
-			updateSkyscraperDisplay();
+			updateSkyscraperDisplay(false);
 		}
 
 		localActions.update({

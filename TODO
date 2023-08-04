@@ -1,5 +1,7 @@
 vertical ad showing on mobile https://old.reddit.com/r/BasketballGM/comments/15h4k9g/vertical_ads/
-- fixed now?
+- i think it's blockthrough
+  - how is blockthrough supposed to know about responsive ads showing/hiding?
+  - is there a better way than _disabled to handle gold?
 
 trade value in legends league - trading block offering nothing gets you players https://www.instagram.com/direct/t/102694951131118/
 
@@ -28,6 +30,7 @@ groundhog day but allow players to change teams https://old.reddit.com/chat/chan
 - https://discord.com/channels/290013534023057409/847310240566870017/1133216000175767633
 
 check RAM usage https://discord.com/channels/290013534023057409/290015591216054273/1131288638941040680
+- https://discord.com/channels/290013534023057409/290015591216054273/1137013149845958728
 
 more randomization options
 - teams from only a certain decade, or after a certain year

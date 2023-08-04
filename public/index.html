@@ -19,9 +19,7 @@
 window.bbgmVersion = "REV_GOES_HERE";
 window.useSharedWorker = typeof SharedWorker !== 'undefined';
 
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
-// https://medium.com/@rchr/detecting-mobile-browsers-with-one-line-of-javascript-109713d5869c
-window.mobile = window.screen.width < 768 || window.screen.height < 768 || navigator.userAgent.indexOf("Mobi") > -1;
+window.mobile = window.screen.width < 768 || window.screen.height < 768;
 
 function loadCSS(filename){
   var el = document.createElement("link");

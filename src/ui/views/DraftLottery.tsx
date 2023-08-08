@@ -426,15 +426,6 @@ const DraftLotteryTable = (props: Props) => {
 		table = (
 			<>
 				<p />
-				{tooSlow ? (
-					<div className="alert alert-warning d-inline-block">
-						<p>
-							<b>Warning:</b> Computing exact odds for so many teams and picks
-							is too slow, so estimates are shown. The lottery will still run
-							correctly though.
-						</p>
-					</div>
-				) : null}
 				<ResponsiveTableWrapper nonfluid>
 					<table
 						className={classNames(
@@ -491,6 +482,13 @@ const DraftLotteryTable = (props: Props) => {
 						</tbody>
 					</table>
 				</ResponsiveTableWrapper>
+				{tooSlow ? (
+					<p className="text-warning">
+						<b>Warning:</b> Computing exact odds for so many teams and picks is
+						too slow, so estimates are shown. The lottery will still run
+						correctly though.
+					</p>
+				) : null}
 			</>
 		);
 	} else {

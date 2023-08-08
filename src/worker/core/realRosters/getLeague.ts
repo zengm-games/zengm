@@ -35,7 +35,7 @@ import getInjury from "./getInjury";
 import { averageSalary } from "./averageSalary";
 
 export const MIN_SEASON = 1947;
-export const LATEST_SEASON = 2023;
+export const LATEST_SEASON = 2024;
 export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 

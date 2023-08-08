@@ -51,9 +51,19 @@ const updateLeadersYears = async (
 		let allLeaders = seasons
 			.map(season => ({
 				season,
+				linkSeason: false,
 				leaders: [] as MyLeader[],
 			}))
 			.reverse();
+
+		for (const row of allLeaders) {
+			const awards = await idb.getCopy.awards({
+				season: row.season,
+			});
+			if (awards) {
+				row.linkSeason = true;
+			}
+		}
 
 		const leadersBySeason = groupByUnique(allLeaders, "season");
 

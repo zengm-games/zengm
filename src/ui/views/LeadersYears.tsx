@@ -44,17 +44,21 @@ const LeadersYears = ({
 					title: helpers.ordinal(rank),
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
-				} as Col),
+				}) as Col,
 		),
 	];
 
 	const totals = statType === "totals";
 
-	const rows = allLeaders.map(({ season, leaders }) => {
+	const rows = allLeaders.map(({ season, leaders, linkSeason }) => {
 		return {
 			key: season,
 			data: [
-				<a href={helpers.leagueUrl(["history", season])}>{season}</a>,
+				linkSeason ? (
+					<a href={helpers.leagueUrl(["history", season])}>{season}</a>
+				) : (
+					season
+				),
 				...leaders.map(p => ({
 					value: (
 						<>

@@ -67,7 +67,11 @@ const LeadersProgressive = ({
 		return {
 			key: season,
 			data: [
-				<a href={helpers.leagueUrl(["history", season])}>{season}</a>,
+				row.linkSeason ? (
+					<a href={helpers.leagueUrl(["history", season])}>{season}</a>
+				) : (
+					season
+				),
 				...leaderTypes
 					.map((type, i) => {
 						const p = row[type];

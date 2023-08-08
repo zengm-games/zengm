@@ -73,11 +73,21 @@ const updateLeadersProgressive = async (
 
 		let allLeaders = seasons.map(season => ({
 			season,
+			linkSeason: false,
 			yearByYear: undefined as MyLeader | undefined,
 			active: undefined as MyLeader | undefined,
 			career: undefined as MyLeader | undefined,
 			singleSeason: undefined as MyLeader | undefined,
 		}));
+
+		for (const row of allLeaders) {
+			const awards = await idb.getCopy.awards({
+				season: row.season,
+			});
+			if (awards) {
+				row.linkSeason = true;
+			}
+		}
 
 		const leadersBySeason = groupByUnique(allLeaders, "season");
 

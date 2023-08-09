@@ -1006,13 +1006,14 @@ allow import/export of league settings from New League page
 
 add some more built-in teams
 - maybe: Providence, Columbus, Louisville, Nashville, Raleigh
-- foreign: Delhi, Shanghai, Cairo, Karachi, Buenos Aires, Istanbul, Lagos, Kinshasa, Moscow, Bogotá, Jakarta, Lima, Bangkok, Seoul, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Madrid, Singapore, Milan, Berlin, Rome, Athens, Belgrade, Vilnius, Zagreb, Warsaw
+- foreign: Delhi, Shanghai, Karachi, Istanbul, Lagos, Kinshasa, Moscow, Bogotá, Jakarta, Lima, Bangkok, Seoul, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Milan, Athens, Zagreb, Warsaw
 - Houston Asterisks
 - next batch
   - Famous European cities:
     - Lisbon
     - Athens
     - Moscow
+    - Barcelona
   - Famous cities from the rest of the world:
     - Hong Kong
     - Delhi or some other Indian city
@@ -1026,6 +1027,7 @@ add some more built-in teams
   - Cities from Eastern European countries where basketball is popular:
     - Zagreb
     - Sarajevo
+  - Redo some of the BBGM default teams
   - Antarctica Penguins
 
 "find players" form

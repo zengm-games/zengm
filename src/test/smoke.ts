@@ -49,8 +49,9 @@ describe("Smoke Tests", () => {
 		return new Promise(resolve => {
 			intervalID = window.setInterval(() => {
 				if (g.get("season") === 2017) {
-					clearInterval(intervalID); // Wait to let it finish whatever DB activity might still be ongoing (like flushing cache)
+					clearInterval(intervalID);
 
+					// Wait to let it finish whatever DB activity might still be ongoing (like flushing cache)
 					setTimeout(resolve, 5000);
 				}
 			}, 500);

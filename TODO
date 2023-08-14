@@ -3,6 +3,9 @@ vertical ad showing on mobile https://old.reddit.com/r/BasketballGM/comments/15h
   - how is blockthrough supposed to know about responsive ads showing/hiding?
   - is there a better way than _disabled to handle gold?
 
+replace parseFloat with a version that supports commas as decimal separator
+- https://old.reddit.com/r/BasketballGM/comments/15pvxwt/auto_relocation_probability_setting_is_not_being/
+
 trade value in legends league - trading block offering nothing gets you players https://www.instagram.com/direct/t/102694951131118/
 
 random debuts should work in legends mode - corban

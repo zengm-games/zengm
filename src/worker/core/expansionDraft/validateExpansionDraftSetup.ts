@@ -43,7 +43,7 @@ const validateExpansionDraftSetup = async () => {
 			}
 		}
 
-		const pop = parseFloat(t.pop);
+		const pop = helpers.localeParseFloat(t.pop);
 		if (Number.isNaN(pop)) {
 			errors.push(`Invalid population for ${t.abbrev}`);
 		}

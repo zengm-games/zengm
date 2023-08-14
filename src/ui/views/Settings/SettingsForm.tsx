@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useState, type FormEvent, useEffect } from "react";
 import { groupBy } from "../../../common/groupBy";
 import { ActionButton, StickyBottomButtons } from "../../components";
-import { confirm, localActions, logEvent } from "../../util";
+import { confirm, localActions, logEvent, helpers } from "../../util";
 import { settings } from "./settings";
 import type { Key, Values } from "./types";
 import type { Settings } from "../../../worker/views/settings";
@@ -24,7 +24,7 @@ export const encodeDecodeFunctions = {
 	float: {
 		stringify: (value: number) => String(value),
 		parse: (value: string) => {
-			const parsed = parseFloat(value);
+			const parsed = helpers.localeParseFloat(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid number`);
 			}
@@ -34,7 +34,7 @@ export const encodeDecodeFunctions = {
 	float1000: {
 		stringify: (value: number) => String(value / 1000),
 		parse: (value: string) => {
-			const parsed = parseFloat(value) * 1000;
+			const parsed = helpers.localeParseFloat(value) * 1000;
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid number`);
 			}
@@ -48,7 +48,7 @@ export const encodeDecodeFunctions = {
 				return null;
 			}
 
-			const parsed = parseFloat(value);
+			const parsed = helpers.localeParseFloat(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid number`);
 			}
@@ -87,7 +87,7 @@ export const encodeDecodeFunctions = {
 	rangePercent: {
 		stringify: (value: number) => String(value),
 		parse: (value: string) => {
-			const parsed = parseFloat(value);
+			const parsed = helpers.localeParseFloat(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid number`);
 			}
@@ -104,7 +104,7 @@ export const encodeDecodeFunctions = {
 		},
 		parse: (value: string) => {
 			const parts = JSON.parse(value);
-			const numberPart = parseFloat(parts[1]);
+			const numberPart = helpers.localeParseFloat(parts[1]);
 			if (Number.isNaN(numberPart)) {
 				throw new Error(`"${numberPart}" is not a valid number`);
 			}

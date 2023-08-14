@@ -221,25 +221,31 @@ const FinancesForm = ({
 		const budgetAmounts = {
 			// Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
 			coaching: helpers.bound(
-				Math.round(parseFloat(state.coaching)),
+				Math.round(helpers.localeParseFloat(state.coaching)),
 				1,
 				MAX_LEVEL,
 			),
 			facilities: helpers.bound(
-				Math.round(parseFloat(state.facilities)),
+				Math.round(helpers.localeParseFloat(state.facilities)),
 				1,
 				MAX_LEVEL,
 			),
-			health: helpers.bound(Math.round(parseFloat(state.health)), 1, MAX_LEVEL),
+			health: helpers.bound(
+				Math.round(helpers.localeParseFloat(state.health)),
+				1,
+				MAX_LEVEL,
+			),
 			scouting: helpers.bound(
-				Math.round(parseFloat(state.scouting)),
+				Math.round(helpers.localeParseFloat(state.scouting)),
 				1,
 				MAX_LEVEL,
 			),
 
 			// Already in [dollars]
 			ticketPrice: helpers.bound(
-				parseFloat(parseFloat(state.ticketPrice).toFixed(2)),
+				helpers.localeParseFloat(
+					helpers.localeParseFloat(state.ticketPrice).toFixed(2),
+				),
 				0,
 				Infinity,
 			),
@@ -295,7 +301,7 @@ const FinancesForm = ({
 
 	const ticketPriceForRank = state.autoTicketPrice
 		? autoTicketPrice
-		: parseFloat(state.ticketPrice);
+		: helpers.localeParseFloat(state.ticketPrice);
 	const ticketPriceRankIndex = otherTeamTicketPrices.findIndex(
 		price => price < ticketPriceForRank,
 	);
@@ -343,7 +349,7 @@ const FinancesForm = ({
 				{expenseCategories.map(expenseCategory => {
 					const level = state[expenseCategory.key];
 					const levelInt = helpers.bound(
-						Math.round(parseFloat(state[expenseCategory.key])),
+						Math.round(helpers.localeParseFloat(state[expenseCategory.key])),
 						1,
 						MAX_LEVEL,
 					);
@@ -498,7 +504,7 @@ const FinancesForm = ({
 						getAdjustedTicketPrice(
 							state.autoTicketPrice
 								? autoTicketPrice
-								: parseFloat(state.ticketPrice),
+								: helpers.localeParseFloat(state.ticketPrice),
 							true,
 						),
 					)}

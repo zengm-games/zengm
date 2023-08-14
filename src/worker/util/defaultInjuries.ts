@@ -1,6 +1,7 @@
 // See data/injuries.ods for basketball data
 
 import { isSport } from "../../common";
+import helpers from "./helpers";
 
 const defaultInjuries = [
 	{
@@ -253,7 +254,7 @@ const defaultInjuries = [
 // Hack for football
 if (isSport("football")) {
 	for (const row of defaultInjuries) {
-		row.games = parseFloat((row.games / 3).toFixed(2));
+		row.games = helpers.localeParseFloat((row.games / 3).toFixed(2));
 	}
 } else if (isSport("baseball")) {
 	for (const row of defaultInjuries) {

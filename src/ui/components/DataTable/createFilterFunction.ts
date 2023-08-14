@@ -1,6 +1,7 @@
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import type { SortType } from "../../../common/types";
+import { helpers } from "../../util";
 
 // searchType is assumed to be equal to sortType, unless it's specified
 const createFilterFunction = (
@@ -48,7 +49,7 @@ const createFilterFunction = (
 						number = undefined;
 					}
 				} else {
-					number = parseFloat(number);
+					number = helpers.localeParseFloat(number);
 				}
 			}
 
@@ -91,7 +92,9 @@ const createFilterFunction = (
 				};
 
 				if (typeof number === "number") {
-					const numericVal = parseFloat(getSortVal(value, sortType));
+					const numericVal = helpers.localeParseFloat(
+						getSortVal(value, sortType),
+					);
 
 					if (Number.isNaN(numericVal)) {
 						continue;
@@ -135,7 +138,9 @@ const createFilterFunction = (
 				};
 
 				if (typeof number === "number") {
-					const numericVal = parseFloat(getSortVal(value, sortType));
+					const numericVal = helpers.localeParseFloat(
+						getSortVal(value, sortType),
+					);
 
 					if (Number.isNaN(numericVal)) {
 						continue;

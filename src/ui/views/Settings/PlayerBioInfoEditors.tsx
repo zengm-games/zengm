@@ -21,7 +21,7 @@ const parseAndValidateRaces = (races: RaceRow[]) => {
 			throw new Error(`Invalid race "${row.race}"`);
 		}
 
-		const number = parseFloat(row.frequency);
+		const number = helpers.localeParseFloat(row.frequency);
 		if (Number.isNaN(number)) {
 			throw new Error(
 				`Invalid frequency "${row.frequency}" for race "${row.race}"`,
@@ -126,7 +126,9 @@ export const RacesEditor = ({
 								<input
 									type="text"
 									className={classNames("form-control", {
-										"is-invalid": isInvalidNumber(parseFloat(rows.frequency)),
+										"is-invalid": isInvalidNumber(
+											helpers.localeParseFloat(rows.frequency),
+										),
 									})}
 									value={rows.frequency}
 									onChange={handleChange("frequency", i)}
@@ -158,7 +160,7 @@ const isInvalidFractionSkipCollege = (
 		// Can be empty string if not default
 		return false;
 	}
-	const number = parseFloat(fractionSkipCollege);
+	const number = helpers.localeParseFloat(fractionSkipCollege);
 	return Number.isNaN(number) || number < 0 || number > 1;
 };
 
@@ -168,7 +170,7 @@ const parseAndValidateColleges = (
 	defaults: boolean,
 ) => {
 	for (const row of colleges) {
-		const number = parseFloat(row.frequency);
+		const number = helpers.localeParseFloat(row.frequency);
 		if (Number.isNaN(number)) {
 			throw new Error(
 				`Invalid frequency "${row.frequency}" for college "${row.name}"`,
@@ -425,7 +427,9 @@ export const CollegesEditor = ({
 									<input
 										type="text"
 										className={classNames("form-control", {
-											"is-invalid": isInvalidNumber(parseFloat(row.frequency)),
+											"is-invalid": isInvalidNumber(
+												helpers.localeParseFloat(row.frequency),
+											),
 										})}
 										value={row.frequency}
 										onChange={handleChange("frequency", i)}
@@ -475,7 +479,7 @@ const parseAndValidateNames = (names: NameRows) => {
 		}
 
 		for (const row of names[key]) {
-			const number = parseFloat(row.frequency);
+			const number = helpers.localeParseFloat(row.frequency);
 			if (Number.isNaN(number)) {
 				throw new Error(
 					`Invalid frequency "${row.frequency}" for ${key} name "${row.name}"`,
@@ -690,7 +694,7 @@ export const NamesEditor = ({
 											type="text"
 											className={classNames("form-control", {
 												"is-invalid": isInvalidNumber(
-													parseFloat(row.frequency),
+													helpers.localeParseFloat(row.frequency),
 												),
 											})}
 											value={row.frequency}

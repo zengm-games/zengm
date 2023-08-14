@@ -19,7 +19,7 @@ for (let i = 0; i < N; i++) {
         sums[j] += values[j] / N;
     }
 }
-console.log(`const VALUE_BY_PICK = ${JSON.stringify(sums.map(sum => parseFloat(sum.toFixed(1))).slice(0, 60))};\nconst VALUE_UNDRAFTED = ${sums[63].toFixed(1)};`);
+console.log(`const VALUE_BY_PICK = ${JSON.stringify(sums.map(sum => helpers.localeParseFloat(sum.toFixed(1))).slice(0, 60))};\nconst VALUE_UNDRAFTED = ${sums[63].toFixed(1)};`);
 */
 const VALUE_BY_PICK = [
 	64.3, 61.7, 60.1, 58.9, 58.1, 57.3, 56.7, 56.1, 55.5, 55.1, 54.7, 54.3, 53.9,

@@ -134,7 +134,7 @@ const setGameAttributes = async (
 									helpers.defaultTicketPrice(popRank, value) /
 									helpers.defaultTicketPrice(popRank);
 
-								t.budget.ticketPrice = parseFloat(
+								t.budget.ticketPrice = helpers.localeParseFloat(
 									(t.budget.ticketPrice * factor).toFixed(2),
 								);
 							}

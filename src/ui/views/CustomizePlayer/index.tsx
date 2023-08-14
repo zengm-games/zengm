@@ -145,8 +145,8 @@ const copyValidValues = (
 
 	{
 		// Allow any value, even above or below normal limits, but round to $10k and convert from M to k
-		// @ts-expect-error
 		let amount =
+			// @ts-expect-error
 			Math.round(100 * helpers.localeParseFloat(source.contract.amount)) * 10;
 		if (Number.isNaN(amount)) {
 			amount = minContract;

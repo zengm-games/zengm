@@ -911,7 +911,7 @@ class Cache {
 			if (Array.isArray(min)) {
 				keyParsed = parseInfinity(keyString);
 			} else if (typeof min === "number") {
-				keyParsed = parseFloat(keyString);
+				keyParsed = helpers.localeParseFloat(keyString);
 
 				if (Number.isNaN(keyParsed)) {
 					throw new Error(

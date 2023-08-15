@@ -11,6 +11,7 @@
  */
 
 import { isSport } from "../../common";
+import helpers from "./helpers";
 
 const BINARY_MINUS = "-";
 const UNARY_MINUS = "#";
@@ -195,7 +196,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 			} else if (operators[token] !== undefined) {
 				processed.push(token);
 			} else {
-				const float = parseFloat(token);
+				const float = helpers.localeParseFloat(token);
 				if (Number.isNaN(float)) {
 					throw new Error(`Invalid variable "${token}"`);
 				}

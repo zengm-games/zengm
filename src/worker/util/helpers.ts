@@ -109,7 +109,7 @@ const defaultTicketPrice = (
 	popRank: number = g.get("numActiveTeams"),
 	salaryCap: number = g.get("salaryCap"),
 ) => {
-	return parseFloat(
+	return helpers.localeParseFloat(
 		(
 			1 +
 			(salaryCap / 90000) * 36 +

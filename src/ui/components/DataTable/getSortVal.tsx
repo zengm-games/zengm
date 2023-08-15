@@ -50,7 +50,7 @@ const getSortVal = (
 			}
 
 			if (typeof sortVal !== "number") {
-				return parseFloat(sortVal);
+				return helpers.localeParseFloat(sortVal);
 			}
 
 			return val;
@@ -96,7 +96,7 @@ const getSortVal = (
 			}
 
 			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-			const parsedNumber = parseFloat(sortVal.replace("$", ""));
+			const parsedNumber = helpers.localeParseFloat(sortVal.replace("$", ""));
 
 			if (!exportCSV) {
 				// This gets called by filter functions, which expect it to be in millions

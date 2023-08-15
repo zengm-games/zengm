@@ -2084,7 +2084,7 @@ const importPlayers = async ({
 			born: p.born,
 			college: p.college,
 			contract: {
-				amount: parseFloat(contractAmount) * 1000,
+				amount: helpers.localeParseFloat(contractAmount) * 1000,
 				exp: parseInt(contractExp),
 			},
 			draft: {
@@ -3760,7 +3760,7 @@ const updateTeamInfo = async (
 		t.colors = newTeam.colors;
 		t.jersey = newTeam.jersey;
 
-		t.pop = parseFloat(newTeam.pop as string);
+		t.pop = helpers.localeParseFloat(newTeam.pop as string);
 		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string);
 
 		const disableTeam = newTeam.disabled && !t.disabled;

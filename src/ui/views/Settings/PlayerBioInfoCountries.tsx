@@ -412,7 +412,7 @@ export const CountriesEditor = ({
 											type="text"
 											className={classNames("form-control", {
 												"is-invalid": isInvalidNumber(
-													parseFloat(country.frequency),
+													helpers.localeParseFloat(country.frequency),
 												),
 											})}
 											value={country.frequency}

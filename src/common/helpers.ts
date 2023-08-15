@@ -1027,9 +1027,16 @@ function ordinal(x?: number | null): string {
 	return x.toString() + suffix;
 }
 
+// On iOS in some locales, the inputMode="decimal" keyboard contians a , as the decimal separator rather than .
+const localeParseFloat = (string: string) => {
+	return parseFloat(
+		typeof string === "string" ? string.replaceAll(",", ".") : string,
+	);
+};
+
 // Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (x: number | string): string => {
-	const y = typeof x === "string" ? parseFloat(x) : x;
+	const y = typeof x === "string" ? localeParseFloat(x) : x;
 
 	return y.toLocaleString("en-US", { maximumFractionDigits: 10 });
 };
@@ -1512,4 +1519,5 @@ export default {
 	getRelativeType,
 	pronoun,
 	getRecordNumericValue,
+	localeParseFloat,
 };

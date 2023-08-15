@@ -426,7 +426,7 @@ const reducer = (state: State, action: Action): State => {
 		case "setDifficulty":
 			return {
 				...state,
-				difficulty: parseFloat(action.difficulty),
+				difficulty: helpers.localeParseFloat(action.difficulty),
 			};
 
 		case "setPhase":
@@ -914,13 +914,13 @@ const NewLeague = (props: View<"newLeague">) => {
 
 				// God, I hate being permissive...
 				if (typeof t.pop !== "number") {
-					t.pop = parseFloat(t.pop);
+					t.pop = helpers.localeParseFloat(t.pop);
 				}
 				if (Number.isNaN(t.pop)) {
 					t.pop = 1;
 				}
 
-				t.pop = parseFloat(t.pop.toFixed(2));
+				t.pop = helpers.localeParseFloat(t.pop.toFixed(2));
 			}
 
 			newTeams = helpers.addPopRank(newTeams);

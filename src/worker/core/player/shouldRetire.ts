@@ -9,8 +9,8 @@ import type {
 const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
-	const season = g.get("season");
-	const age = season - p.born.year;
+	const age = g.get("season");
+	-p.born.year;
 
 	const forceRetireAge = g.get("forceRetireAge");
 	const forceRetireSeason = g.get("forceRetireSeason");
@@ -20,7 +20,6 @@ const shouldRetire = (
 	}
 
 	if (p.stats.length >= forceRetireSeason) {
-		console.log(p.salaries.length);
 		return true;
 	}
 

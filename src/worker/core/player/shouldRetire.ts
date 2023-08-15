@@ -11,7 +11,6 @@ const shouldRetire = (
 ): boolean => {
 	const age = g.get("season") -p.born.year;
 	
-
 	const forceRetireAge = g.get("forceRetireAge");
 	const forceRetireSeason = g.get("forceRetireSeason");
 

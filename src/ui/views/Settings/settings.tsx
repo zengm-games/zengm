@@ -1027,6 +1027,15 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Events",
+			key: "forceRetireSeason",
+			name: "Force Retire After Season",
+			godModeRequired: "always",
+			type: "int",
+			description:
+				"Players who have played this many seasons will retire at the end of the season. A value of 0 will disable this setting.",
+		},
+		{
+			category: "Events",
 			key: "hofFactor",
 			name: "Hall of Fame Threshold Factor",
 			type: "float",

@@ -180,6 +180,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	sonRate: 0.02,
 	brotherRate: 0.02,
 	forceRetireAge: 0,
+	forceRetireSeason: 0,
 	minRetireAge: 26,
 	groupScheduleSeries: false,
 

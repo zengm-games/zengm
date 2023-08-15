@@ -21,17 +21,24 @@ const createRandomPlayers = async ({
 }) => {
 	const players: PlayerWithoutKey[] = [];
 
-	// Generate past 20 years of draft classes, unless forceRetireAge/draftAges make that infeasible
+	// Generate past 20 years of draft classes, unless forceRetireSeason/forceRetireAge/draftAges make that infeasible
 	let seasonsSimmed = 20;
 	const forceRetireAge = g.get("forceRetireAge");
 	const draftAges = g.get("draftAges");
+	const forceRetireSeason = g.get("forceRetireSeason");
 	const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2);
 	const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
-	if (forceRetireAgeDiff > 0 && forceRetireAgeDiff < seasonsSimmed) {
-		seasonsSimmed = forceRetireAgeDiff;
+	let forceRetireDiff;
+	if (forceRetireSeason > 0 && forceRetireAgeDiff > 0) {
+		forceRetireDiff = Math.min(forceRetireSeason, forceRetireAgeDiff);
+	} else {
+		forceRetireDiff = Math.max(forceRetireSeason, forceRetireAgeDiff);
+	}
+	if (forceRetireDiff > 0 && forceRetireDiff < seasonsSimmed) {
+		seasonsSimmed = forceRetireDiff;
 	} else {
 		// Maybe add some extra seasons, for leagues when players start young
-		const estimatedRetireAge = forceRetireAgeDiff > 0 ? forceRetireAge : 35;
+		const estimatedRetireAge = forceRetireDiff > 0 ? forceRetireAge : 35;
 		const estimatedRetireAgeDiff = estimatedRetireAge - averageDraftAge;
 		if (estimatedRetireAgeDiff > seasonsSimmed) {
 			seasonsSimmed = estimatedRetireAgeDiff;

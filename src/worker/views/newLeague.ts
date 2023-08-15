@@ -67,6 +67,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"forceRetireAge",
 		),
+		forceRetireSeason: unwrapGameAttribute(
+			defaultGameAttributes,
+			"forceRetireSeason",
+		),
 		salaryCapType: unwrapGameAttribute(defaultGameAttributes, "salaryCapType"),
 		numGamesPlayoffSeries: unwrapGameAttribute(
 			defaultGameAttributes,

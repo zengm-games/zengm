@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import { toWorker } from "../../util";
+import { helpers, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 
 type Player = View<"roster">["players"][number];
@@ -32,7 +32,7 @@ const handlePtChange = async (
 	userTid: number,
 	event: ChangeEvent<HTMLSelectElement>,
 ) => {
-	const ptModifier = parseFloat(event.currentTarget.value);
+	const ptModifier = helpers.localeParseFloat(event.currentTarget.value);
 
 	if (Number.isNaN(ptModifier)) {
 		return;
@@ -56,7 +56,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 		{ text: "++", ptModifier: "1.5" },
 	];
 
-	const values = ptModifiers.map(x => parseFloat(x.ptModifier));
+	const values = ptModifiers.map(x => helpers.localeParseFloat(x.ptModifier));
 	const index = values.findIndex(ptModifier => ptModifier > p.ptModifier);
 	let value;
 	if (index === 0) {

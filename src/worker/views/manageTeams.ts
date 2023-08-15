@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { helpers, g } from "../util";
 import orderBy from "lodash-es/orderBy";
 import { DEFAULT_JERSEY } from "../../common";
 
@@ -38,7 +38,7 @@ const updateTeamInfo = async () => {
 			imgURL: t.imgURL,
 			imgURLSmall: t.imgURLSmall ?? "",
 			colors: t.colors,
-			pop: parseFloat(pop.toFixed(6)),
+			pop: helpers.localeParseFloat(pop.toFixed(6)),
 			stadiumCapacity: t.stadiumCapacity ?? t.seasonAttrs.stadiumCapacity,
 			jersey: t.jersey ?? DEFAULT_JERSEY,
 			did: t.did,

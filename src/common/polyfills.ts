@@ -162,4 +162,22 @@ if (typeof queueMicrotask !== "function") {
 		);
 }
 
+// Chrome 85, Safari 13.1
+if (!String.prototype.replaceAll) {
+	(String as any).prototype.replaceAll = function (
+		str: string | RegExp,
+		newStr: string,
+	) {
+		// If a regex pattern
+		if (
+			Object.prototype.toString.call(str).toLowerCase() === "[object regexp]"
+		) {
+			return this.replace(str, newStr);
+		}
+
+		// If a string
+		return this.replace(new RegExp(str, "g"), newStr);
+	};
+}
+
 import "./polyfills-modern";

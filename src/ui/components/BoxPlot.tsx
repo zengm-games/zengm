@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { helpers } from "../util";
 
 const quartile = (data: number[], quart: 1 | 2 | 3) => {
 	if (quart === 1 || quart === 2 || quart === 3) {
@@ -27,7 +28,7 @@ const scaleValue = (v: number, scale: [number, number]) => {
 };
 
 const round = (value: number) => {
-	return parseFloat(String(value)).toFixed(1);
+	return helpers.localeParseFloat(String(value)).toFixed(1);
 };
 
 const boxPlotElementStyle = (color: string, style: CSSProperties) => {

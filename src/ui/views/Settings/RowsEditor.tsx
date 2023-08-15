@@ -255,14 +255,14 @@ const parseAndValidate = <Type extends "injuries" | "tragicDeaths">(
 		if (type === "injuries") {
 			return {
 				name: row.name,
-				frequency: parseFloat(row.frequency),
-				games: parseFloat(row.games),
+				frequency: helpers.localeParseFloat(row.frequency),
+				games: helpers.localeParseFloat(row.games),
 			};
 		}
 
 		return {
 			reason: row.reason,
-			frequency: parseFloat(row.frequency),
+			frequency: helpers.localeParseFloat(row.frequency),
 		};
 	}) as any as Rows<Type>;
 
@@ -500,7 +500,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 															type="text"
 															className={classNames("form-control", {
 																"is-invalid": isInvalidNumber(
-																	parseFloat(row.frequency),
+																	helpers.localeParseFloat(row.frequency),
 																),
 															})}
 															value={row.frequency}
@@ -512,7 +512,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 															type="text"
 															className={classNames("form-control", {
 																"is-invalid": isInvalidNumber(
-																	parseFloat((row as any).games),
+																	helpers.localeParseFloat((row as any).games),
 																),
 															})}
 															value={(row as any).games}
@@ -535,7 +535,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 															type="text"
 															className={classNames("form-control", {
 																"is-invalid": isInvalidNumber(
-																	parseFloat(row.frequency),
+																	helpers.localeParseFloat(row.frequency),
 																),
 															})}
 															value={row.frequency}

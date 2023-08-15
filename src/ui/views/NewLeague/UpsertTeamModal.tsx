@@ -33,7 +33,7 @@ export const getGodModeWarnings = ({
 	};
 	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
-	const pop = t ? parseFloat(t.pop) : NaN;
+	const pop = t ? helpers.localeParseFloat(t.pop) : NaN;
 	const stadiumCapacity = t ? parseInt(t.stadiumCapacity) : NaN;
 
 	const errors = [];
@@ -580,7 +580,7 @@ const UpsertTeamModal = ({
 			region: controlledTeam.region,
 			name: controlledTeam.name,
 			abbrev: controlledTeam.abbrev,
-			pop: parseFloat(controlledTeam.pop),
+			pop: helpers.localeParseFloat(controlledTeam.pop),
 			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
 			colors: controlledTeam.colors,
 			jersey: controlledTeam.jersey,

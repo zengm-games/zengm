@@ -9,6 +9,7 @@ import type {
 const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
+  
 	const season = g.get("season");
 	const originalSeason = g.get("startingSeason");
 	const forceRetireAge = g.get("forceRetireAge");

@@ -9,17 +9,35 @@ import type {
 const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
-	const age = g.get("season");
-	-p.born.year;
-
+	const season = g.get("season");
+	const originalSeason = g.get("startingSeason");
 	const forceRetireAge = g.get("forceRetireAge");
 	const forceRetireSeason = g.get("forceRetireSeason");
+
+	const age = season - p.born.year;
 
 	if (forceRetireAge >= g.get("draftAges")[1] && age >= forceRetireAge) {
 		return true;
 	}
 
-	if (p.stats.length >= forceRetireSeason) {
+	//check how many unique seasons the player has played in
+	let uniqueSeasons = 0;
+	const seasonArray = new Array(season).fill(0);
+	p.stats.forEach(item => {
+		if (seasonArray[item.year] == 0) {
+			uniqueSeasons++;
+		}
+		seasonArray[item.year]++;
+	});
+
+	//if the player has played less unique seasons than the force retire number give them 1 more
+	//season of eligibility
+	let redshirt = 0;
+	if (uniqueSeasons < forceRetireSeason && originalSeason < p.draft.year) {
+		redshirt = 1;
+	}
+
+	if (season - p.draft.year - redshirt >= forceRetireSeason) {
 		return true;
 	}
 

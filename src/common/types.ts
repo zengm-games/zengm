@@ -515,7 +515,7 @@ export type GameAttributesLeague = {
 	equalizeRegions: boolean;
 	fantasyPoints?: "standard" | "ppr" | "halfPpr";
 	forceRetireAge: number;
-	forceRetireSeason: number;
+	forceRetireSeasons: number;
 	foulsNeededToFoulOut: number;
 	foulsUntilBonus: number[];
 	foulRateFactor: number;

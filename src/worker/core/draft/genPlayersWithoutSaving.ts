@@ -63,19 +63,19 @@ const genPlayersWithoutSaving = async (
 		normalNumPlayers,
 	);
 
-	// Based on draftAges, forceRetireAge, and forceRetireSeason settings, check how many players we need per draft class to fill the league. KEEP IN SYNC WITH LEAGUE CREATION seasonsSimmed
+	// Based on draftAges, forceRetireAge, and forceRetireSeasons settings, check how many players we need per draft class to fill the league. KEEP IN SYNC WITH LEAGUE CREATION seasonsSimmed
 	const draftAges = g.get("draftAges");
 	const forceRetireAge = g.get("forceRetireAge");
-	const forceRetireSeason = g.get("forceRetireSeason");
+	const forceRetireSeasons = g.get("forceRetireSeasons");
 	const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2); // Ideally this would be more intelligently determined, based on getFractionPerYear
 	const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
 	let forceRetireDiff = 0;
-	if (forceRetireAgeDiff > 0 && forceRetireSeason > 0) {
-		forceRetireDiff = Math.min(forceRetireAgeDiff, forceRetireSeason);
+	if (forceRetireAgeDiff > 0 && forceRetireSeasons > 0) {
+		forceRetireDiff = Math.min(forceRetireAgeDiff, forceRetireSeasons);
 	} else {
-		forceRetireDiff = Math.max(forceRetireAgeDiff, forceRetireSeason);
+		forceRetireDiff = Math.max(forceRetireAgeDiff, forceRetireSeasons);
 	}
-	if (forceRetireAgeDiff > 0 || forceRetireSeason > 0) {
+	if (forceRetireAgeDiff > 0 || forceRetireSeasons > 0) {
 		const numActivePlayers =
 			(g.get("maxRosterSize") + 1) * g.get("numActiveTeams");
 		const numSeasonsPerPlayer = forceRetireDiff;

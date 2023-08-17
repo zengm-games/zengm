@@ -1027,12 +1027,12 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Events",
-			key: "forceRetireSeason",
-			name: "Force Retire After Season",
+			key: "forceRetireSeasons",
+			name: "Force Retire After Seasons",
 			godModeRequired: "always",
 			type: "int",
 			description:
-				"Players who have played this many seasons will retire at the end of the season. A value of 0 will disable this setting.",
+				'Players who have played this many seasons will retire at the end of the season. A value of 0 will disable this setting. There can be up to 1 "redshirt" year that does not count towards this limit if the player played no games for an entire season.',
 		},
 		{
 			category: "Events",

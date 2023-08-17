@@ -1,3 +1,5 @@
+settings for magnitude of budget effects https://old.reddit.com/r/Football_GM/comments/15scd9z/revert_to_version_v202308021178/
+
 ticket prices under $1 showing up as like $900k on league finances page https://old.reddit.com/r/BasketballGM/comments/15qm73l/adjusted_for_inflation_thats_more_than_12_million/
 
 add free throw accuracy factor https://discord.com/channels/290013534023057409/290015591216054273/1140785958342639646
@@ -6,6 +8,7 @@ vertical ad showing on mobile https://old.reddit.com/r/BasketballGM/comments/15h
 - i think it's blockthrough
   - how is blockthrough supposed to know about responsive ads showing/hiding?
   - is there a better way than _disabled to handle gold?
+- if no problem now, is it because blockthrough is still not showing anything?
 - other sports need same solution as BBGM
 
 trade value in legends league - trading block offering nothing gets you players https://www.instagram.com/direct/t/102694951131118/
@@ -38,6 +41,10 @@ add projected cap space to league finances page https://discord.com/channels/290
 
 more randomization options
 - teams from only a certain decade, or after a certain year
+
+contract extensions, available if player mood is high enough and contract is expiring
+
+cancelling expansion draft in real players league breaks tids? https://mail.google.com/mail/u/0/#inbox/FMfcgzGtwggXJHtMpFDRKPDccCjSnCQc
 
 when auto playing, scrolling to the right on stats tables in player pages doesn't work, it resets every day https://old.reddit.com/r/BasketballGM/comments/13472xb/monthly_suggestions_thread/jrvgs2r/?context=3
 
@@ -1214,8 +1221,6 @@ centralize player action buttons
 - show in player stats/ratings/bios tables? and roster, player profile?
 - button group, or single button with dropdown
 - help popover in column explains stuff, and text on confirm windows
-
-contract extensions, available if player mood is high enough and contract is expiring
 
 No trades or other finance/roster moves while job offers
 - https://old.reddit.com/r/BasketballGM/comments/iz8bvk/exploit_1_get_job_offer_2_trade_all_of_your_stars/

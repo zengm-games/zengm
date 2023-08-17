@@ -7,12 +7,41 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types"; // Players meeting one of these cutoffs might retire
 
+const checkforceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+	// No redshirt seasons before league was created, since we have no stats then
+	const firstPossibleRedshirtSeason = Math.max(
+		g.get("startingSeason"),
+		p.draft.year + 1,
+	);
+
+	// Initialize with all possible seasons played, in case a player was unsigned an entire year so there is no entry in p.stats
+	const redshirtSeasons = new Set(
+		range(firstPossibleRedshirtSeason, g.get("season") + 1),
+	);
+
+	// If a season has games played, it can't be a redshirt season
+	for (const row of p.stats) {
+		if (row.gp > 0) {
+			redshirtSeasons.delete(row.season);
+		}
+	}
+
+	const NUM_REDSHIRT_YEARS_ALLOWED = 1;
+	const numRedshirtSeasons = Math.min(
+		NUM_REDSHIRT_YEARS_ALLOWED,
+		redshirtSeasons.size,
+	);
+	const numSeasonsInLeague = g.get("season") - p.draft.year;
+
+	return numSeasonsInLeague - numRedshirtSeasons >= g.get("forceRetireSeasons");
+};
+
 const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
 	const season = g.get("season");
 	const forceRetireAge = g.get("forceRetireAge");
-	const forceRetireSeason = g.get("forceRetireSeason");
+	const forceRetireSeasons = g.get("forceRetireSeasons");
 
 	const age = season - p.born.year;
 
@@ -20,7 +49,7 @@ const shouldRetire = (
 		return true;
 	}
 
-	if (forceRetireSeason > 0 && checkForceRetireSeason(p)) {
+	if (forceRetireSeasons > 0 && checkforceRetireSeasons(p)) {
 		return true;
 	}
 
@@ -98,27 +127,6 @@ const shouldRetire = (
 	}
 
 	return false;
-};
-
-const checkForceRetireSeason = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
-	// Initialize with all possible seasons played, in case a player was unsigned an entire year so there is no entry in p.stats
-	const redshirtSeasons = new Set(range(p.draft.year + 1, g.get("season") + 1));
-
-	// If a season has games played, it can't be a redshirt season
-	for (const row of p.stats) {
-		if (row.gp > 0) {
-			redshirtSeasons.delete(row.season);
-		}
-	}
-
-	const NUM_REDSHIRT_YEARS_ALLOWED = 1;
-	const numRedshirtSeasons = Math.min(
-		NUM_REDSHIRT_YEARS_ALLOWED,
-		redshirtSeasons.size,
-	);
-	const numSeasonsInLeague = g.get("season") - p.draft.year;
-
-	return numSeasonsInLeague - numRedshirtSeasons >= g.get("forceRetireSeason");
 };
 
 export default shouldRetire;

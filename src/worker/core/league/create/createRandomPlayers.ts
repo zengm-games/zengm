@@ -21,18 +21,18 @@ const createRandomPlayers = async ({
 }) => {
 	const players: PlayerWithoutKey[] = [];
 
-	// Generate past 20 years of draft classes, unless forceRetireSeason/forceRetireAge/draftAges make that infeasible
+	// Generate past 20 years of draft classes, unless forceRetireSeasons/forceRetireAge/draftAges make that infeasible
 	let seasonsSimmed = 20;
 	const forceRetireAge = g.get("forceRetireAge");
 	const draftAges = g.get("draftAges");
-	const forceRetireSeason = g.get("forceRetireSeason");
+	const forceRetireSeasons = g.get("forceRetireSeasons");
 	const averageDraftAge = Math.round((draftAges[0] + draftAges[1]) / 2);
 	const forceRetireAgeDiff = forceRetireAge - averageDraftAge;
 	let forceRetireDiff;
-	if (forceRetireSeason > 0 && forceRetireAgeDiff > 0) {
-		forceRetireDiff = Math.min(forceRetireSeason, forceRetireAgeDiff);
+	if (forceRetireSeasons > 0 && forceRetireAgeDiff > 0) {
+		forceRetireDiff = Math.min(forceRetireSeasons, forceRetireAgeDiff);
 	} else {
-		forceRetireDiff = Math.max(forceRetireSeason, forceRetireAgeDiff);
+		forceRetireDiff = Math.max(forceRetireSeasons, forceRetireAgeDiff);
 	}
 	if (forceRetireDiff > 0 && forceRetireDiff < seasonsSimmed) {
 		seasonsSimmed = forceRetireDiff;

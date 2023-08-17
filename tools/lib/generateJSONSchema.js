@@ -858,7 +858,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							forceRetireAge: {
 								type: "integer",
 							},
-							forceRetireSeason: {
+							forceRetireSeasons: {
 								type: "integer",
 							},
 							foulsNeededToFoulOut: {

@@ -28,7 +28,7 @@ export type Key =
 	| "brotherRate"
 	| "sonRate"
 	| "forceRetireAge"
-	| "forceRetireSeason"
+	| "forceRetireSeasons"
 	| "homeCourtAdvantage"
 	| "rookieContractLengths"
 	| "rookiesCanRefuse"

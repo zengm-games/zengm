@@ -22,13 +22,12 @@ const shouldRetire = (
 	}
 
 	//check how many unique seasons the player has played in
-	let uniqueSeasons = 0;
-	const seasonArray = new Array(season).fill(0);
+	const seasonArray = new Array(season - originalSeason).fill(0);
 	p.stats.forEach(item => {
-		if (seasonArray[item.year] == 0) {
+		if (seasonArray[item.year - originalSeason] == 0) {
 			uniqueSeasons++;
 		}
-		seasonArray[item.year]++;
+		seasonArray[item.year - originalSeason]++;
 	});
 
 	//if the player has played less unique seasons than the force retire number give them 1 more

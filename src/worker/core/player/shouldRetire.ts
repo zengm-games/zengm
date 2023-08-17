@@ -1,5 +1,6 @@
 import { bySport, isSport, PLAYER } from "../../../common";
 import { g, random } from "../../util";
+import range from "lodash-es/range";
 import type {
 	MinimalPlayerRatings,
 	Player,
@@ -10,7 +11,6 @@ const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
 	const season = g.get("season");
-	const originalSeason = g.get("startingSeason");
 	const forceRetireAge = g.get("forceRetireAge");
 	const forceRetireSeason = g.get("forceRetireSeason");
 
@@ -20,15 +20,7 @@ const shouldRetire = (
 		return true;
 	}
 
-	if (
-		forceRetireSeason > 0 &&
-		checkIfShouldForceRetireSeasons(
-			p,
-			season,
-			originalSeason,
-			forceRetireSeason,
-		)
-	) {
+	if (forceRetireSeason > 0 && checkForceRetireSeason(p)) {
 		return true;
 	}
 
@@ -108,34 +100,25 @@ const shouldRetire = (
 	return false;
 };
 
-const checkIfShouldForceRetireSeasons = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
-	season: number,
-	originalSeason: number,
-	forceRetireSeason: number,
-): boolean => {
-	//check how many unique seasons the player has played in
-	let uniqueSeasons = 0;
+const checkForceRetireSeason = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+	// Initialize with all possible seasons played, in case a player was unsigned an entire year so there is no entry in p.stats
+	const redshirtSeasons = new Set(range(p.draft.year + 1, g.get("season") + 1));
 
-	const seasonArray = new Array(season - originalSeason).fill(0);
-	p.stats.forEach(item => {
-		if (seasonArray[item.year - originalSeason] == 0) {
-			uniqueSeasons++;
+	// If a season has games played, it can't be a redshirt season
+	for (const row of p.stats) {
+		if (row.gp > 0) {
+			redshirtSeasons.delete(row.season);
 		}
-		seasonArray[item.year - originalSeason]++;
-	});
-
-	//if the player has played less unique seasons than the force retire number give them 1 more
-	//season of eligibility
-	let redshirt = 0;
-	if (uniqueSeasons < forceRetireSeason && originalSeason < p.draft.year) {
-		redshirt = 1;
 	}
 
-	if (season - p.draft.year - redshirt >= forceRetireSeason) {
-		return true;
-	} else {
-		return false;
-	}
+	const NUM_REDSHIRT_YEARS_ALLOWED = 1;
+	const numRedshirtSeasons = Math.min(
+		NUM_REDSHIRT_YEARS_ALLOWED,
+		redshirtSeasons.size,
+	);
+	const numSeasonsInLeague = g.get("season") - p.draft.year;
+
+	return numSeasonsInLeague - numRedshirtSeasons >= g.get("forceRetireSeason");
 };
+
 export default shouldRetire;

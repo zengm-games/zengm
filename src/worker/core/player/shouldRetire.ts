@@ -9,7 +9,6 @@ import type {
 const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
-  
 	const season = g.get("season");
 	const originalSeason = g.get("startingSeason");
 	const forceRetireAge = g.get("forceRetireAge");
@@ -21,23 +20,15 @@ const shouldRetire = (
 		return true;
 	}
 
-	//check how many unique seasons the player has played in
-	const seasonArray = new Array(season - originalSeason).fill(0);
-	p.stats.forEach(item => {
-		if (seasonArray[item.year - originalSeason] == 0) {
-			uniqueSeasons++;
-		}
-		seasonArray[item.year - originalSeason]++;
-	});
-
-	//if the player has played less unique seasons than the force retire number give them 1 more
-	//season of eligibility
-	let redshirt = 0;
-	if (uniqueSeasons < forceRetireSeason && originalSeason < p.draft.year) {
-		redshirt = 1;
-	}
-
-	if (season - p.draft.year - redshirt >= forceRetireSeason) {
+	if (
+		forceRetireSeason > 0 &&
+		checkIfShouldForceRetireSeasons(
+			p,
+			season,
+			originalSeason,
+			forceRetireSeason,
+		)
+	) {
 		return true;
 	}
 
@@ -117,4 +108,34 @@ const shouldRetire = (
 	return false;
 };
 
+const checkIfShouldForceRetireSeasons = (
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
+	season: number,
+	originalSeason: number,
+	forceRetireSeason: number,
+): boolean => {
+	//check how many unique seasons the player has played in
+	let uniqueSeasons = 0;
+
+	const seasonArray = new Array(season - originalSeason).fill(0);
+	p.stats.forEach(item => {
+		if (seasonArray[item.year - originalSeason] == 0) {
+			uniqueSeasons++;
+		}
+		seasonArray[item.year - originalSeason]++;
+	});
+
+	//if the player has played less unique seasons than the force retire number give them 1 more
+	//season of eligibility
+	let redshirt = 0;
+	if (uniqueSeasons < forceRetireSeason && originalSeason < p.draft.year) {
+		redshirt = 1;
+	}
+
+	if (season - p.draft.year - redshirt >= forceRetireSeason) {
+		return true;
+	} else {
+		return false;
+	}
+};
 export default shouldRetire;

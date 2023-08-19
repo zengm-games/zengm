@@ -97,6 +97,10 @@ describe("common/helpers", () => {
 			);
 		});
 
+		test("number under 1 with no unit", () => {
+			assert.strictEqual(helpers.formatCurrency(0.5, ""), "$0.50");
+		});
+
 		test("$1000M", () => {
 			assert.strictEqual(helpers.formatCurrency(1000, "M"), "$1B");
 		});

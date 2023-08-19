@@ -958,7 +958,7 @@ const formatCurrency = (
 			append = `e${exponent + baseExponent}`;
 			abs /= 10 ** exponent;
 		}
-	} else if (abs < 1) {
+	} else if (abs < 1 && initialUnits === "M") {
 		abs *= 1000;
 		append = "k";
 		precision = 0;

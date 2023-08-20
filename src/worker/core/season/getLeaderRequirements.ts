@@ -28,7 +28,7 @@ const getLeaderRequirements = () => {
 		minStats: { fg: basketballMinFg },
 	};
 	const basketballFt = {
-		minStats: { ft: 125 },
+		minStats: { ft: 125 * g.get("ftAccuracyFactor") },
 	};
 
 	const footballPssStats = {

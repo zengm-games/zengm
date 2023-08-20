@@ -43,6 +43,7 @@ export type Key =
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"
 	| "twoPointAccuracyFactor"
+	| "ftAccuracyFactor"
 	| "blockFactor"
 	| "stealFactor"
 	| "turnoverFactor"

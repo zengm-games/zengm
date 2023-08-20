@@ -1700,6 +1700,15 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "ftAccuracyFactor",
+			name: "FT Accuracy Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The baseline rate for free throw percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
 			key: "blockFactor",
 			name: "Block Tendency Factor",
 			godModeRequired: "always",

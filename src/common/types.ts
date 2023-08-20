@@ -627,6 +627,7 @@ export type GameAttributesLeague = {
 	threePointTendencyFactor: number;
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
+	ftAccuracyFactor: number;
 	blockFactor: number;
 	stealFactor: number;
 	turnoverFactor: number;

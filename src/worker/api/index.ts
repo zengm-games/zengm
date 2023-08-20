@@ -920,6 +920,7 @@ const deleteScheduledEvents = async (type: string) => {
 						"threePointTendencyFactor",
 						"threePointAccuracyFactor",
 						"twoPointAccuracyFactor",
+						"ftAccuracyFactor",
 						"blockFactor",
 						"stealFactor",
 						"turnoverFactor",

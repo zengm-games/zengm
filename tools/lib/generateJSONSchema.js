@@ -1268,6 +1268,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							twoPointAccuracyFactor: {
 								type: "number",
 							},
+							ftAccuracyFactor: {
+								type: "number",
+							},
 							blockFactor: {
 								type: "number",
 							},

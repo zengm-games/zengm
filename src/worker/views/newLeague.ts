@@ -120,6 +120,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"twoPointAccuracyFactor",
 		),
+		ftAccuracyFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"ftAccuracyFactor",
+		),
 		blockFactor: unwrapGameAttribute(defaultGameAttributes, "blockFactor"),
 		stealFactor: unwrapGameAttribute(defaultGameAttributes, "stealFactor"),
 		turnoverFactor: unwrapGameAttribute(

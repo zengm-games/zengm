@@ -2036,7 +2036,10 @@ class GameSim {
 		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 
 		const ftp = helpers.bound(
-			this.team[this.o].player[p].compositeRating.shootingFT * 0.6 + 0.45,
+			g.get("ftAccuracyFactor") *
+				this.team[this.o].player[p].compositeRating.shootingFT *
+				0.6 +
+				0.45,
 			0,
 			0.95,
 		);

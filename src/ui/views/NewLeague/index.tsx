@@ -251,6 +251,7 @@ type Action =
 	  }
 	| {
 			type: "clearLeagueFile";
+			defaultSettings: State["settings"];
 	  }
 	| {
 			type: "setCustomize";
@@ -407,6 +408,10 @@ const reducer = (state: State, action: Action): State => {
 				url: undefined,
 				loadingLeagueFile: false,
 				keptKeys: [],
+				settings: {
+					// This is to reset the randomization setting, which is changed for legends and cross-era leagues
+					...action.defaultSettings,
+				},
 				teams: teamsDefault,
 				tid: getNewTid(getTeamRegionName(state.teams, state.tid), teamsDefault),
 			};
@@ -441,11 +446,12 @@ const reducer = (state: State, action: Action): State => {
 				keptKeys: action.keptKeys,
 			};
 
-		case "setLegend":
+		case "setLegend": {
 			return {
 				...state,
 				legend: action.legend,
 			};
+		}
 
 		case "setName":
 			return {
@@ -898,7 +904,10 @@ const NewLeague = (props: View<"newLeague">) => {
 		output?: LeagueFileUploadOutput,
 	) => {
 		if (err) {
-			dispatch({ type: "clearLeagueFile" });
+			dispatch({
+				type: "clearLeagueFile",
+				defaultSettings: props.defaultSettings,
+			});
 			return;
 		}
 
@@ -970,7 +979,11 @@ const NewLeague = (props: View<"newLeague">) => {
 	};
 
 	const handleNewLeagueInfo = useCallback(
-		(leagueInfo: LeagueInfo) => {
+		(
+			leagueInfo: LeagueInfo & {
+				randomization?: "debuts";
+			},
+		) => {
 			const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
 
 			dispatch({
@@ -982,7 +995,13 @@ const NewLeague = (props: View<"newLeague">) => {
 					leagueInfo.startingSeason,
 				),
 				gameAttributes: leagueInfo.gameAttributes,
-				defaultSettings: props.defaultSettings,
+				defaultSettings:
+					leagueInfo.randomization === undefined
+						? props.defaultSettings
+						: {
+								...props.defaultSettings,
+								randomization: leagueInfo.randomization,
+						  },
 				startingSeason: leagueInfo.startingSeason,
 			});
 		},
@@ -1314,7 +1333,12 @@ const NewLeague = (props: View<"newLeague">) => {
 										onLoading={legend => {
 											dispatch({ type: "setLegend", legend });
 										}}
-										onDone={handleNewLeagueInfo}
+										onDone={info => {
+											handleNewLeagueInfo({
+												...info,
+												randomization: "debuts",
+											});
+										}}
 									/>
 								</div>
 							) : null}
@@ -1546,6 +1570,11 @@ const NewLeague = (props: View<"newLeague">) => {
 														from only one decade, or the greatest players of all
 														time.
 													</p>
+													<p>
+														By default, "Random Debuts" is enabled, meaning that
+														any real players not on the initial teams will be
+														randomly placed in future draft classes.
+													</p>
 													<p className="mb-0">
 														<a href="https://zengm.com/blog/2020/05/legends-leagues/">
 															More details
@@ -1594,7 +1623,10 @@ const NewLeague = (props: View<"newLeague">) => {
 															newCustomize !== "real" &&
 															newCustomize !== "legends"
 														) {
-															dispatch({ type: "clearLeagueFile" });
+															dispatch({
+																type: "clearLeagueFile",
+																defaultSettings: props.defaultSettings,
+															});
 														}
 													}}
 													value={state.customize}

@@ -55,6 +55,9 @@ const getGameAttributes = (
 			}
 		}
 
+		// Random debuts by default
+		gameAttributes.randomization = "debuts";
+
 		return gameAttributes as MyGameAttributes;
 	}
 

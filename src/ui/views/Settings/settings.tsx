@@ -145,33 +145,47 @@ export const settings: Setting[] = (
 				}
 			},
 		},
-		{
-			category: "New League",
-			key: "randomization",
-			name: "Randomization",
-			showOnlyIf: ({
-				defaultNewLeagueSettings,
-				newLeague,
-				hasPlayers,
-				realPlayers,
-			}) =>
-				newLeague && hasPlayers && !realPlayers && !defaultNewLeagueSettings,
-			type: "string",
-			values: [
-				{ key: "none", value: "None" },
-				{ key: "shuffle", value: "Shuffle rosters" },
-			],
-			descriptionLong: (
-				<>
-					<p>
-						<b>Shuffle rosters:</b> All active players are placed on random
-						teams.
-					</p>
-				</>
-			),
-		},
 		...(SPORT_HAS_REAL_PLAYERS
 			? ([
+					{
+						category: "New League",
+						key: "randomization",
+						name: "Randomization",
+						showOnlyIf: ({
+							defaultNewLeagueSettings,
+							newLeague,
+							hasPlayers,
+							realPlayers,
+						}) =>
+							newLeague &&
+							hasPlayers &&
+							!realPlayers &&
+							!defaultNewLeagueSettings,
+						type: "string",
+						values: [
+							{ key: "none", value: "None" },
+							{ key: "debuts", value: "Random debuts" },
+							{ key: "debutsForever", value: "Random debuts forever" },
+							{ key: "shuffle", value: "Shuffle rosters" },
+						],
+						descriptionLong: (
+							<>
+								<p>
+									<p>
+										<b>Random debuts:</b> Any real players not in your league
+										will appear as draft prospects.
+									</p>
+									<p>
+										<b>Random debuts forever:</b> Like random debuts, except
+										when it runs out of draft prospects, it will randomize all
+										real players again and add them to future draft classes.
+									</p>
+									<b>Shuffle rosters:</b> All active players are placed on
+									random teams.
+								</p>
+							</>
+						),
+					},
 					{
 						category: "New League",
 						key: "randomization",
@@ -207,7 +221,36 @@ export const settings: Setting[] = (
 						),
 					},
 			  ] as Setting[])
-			: []),
+			: ([
+					{
+						category: "New League",
+						key: "randomization",
+						name: "Randomization",
+						showOnlyIf: ({
+							defaultNewLeagueSettings,
+							newLeague,
+							hasPlayers,
+							realPlayers,
+						}) =>
+							newLeague &&
+							hasPlayers &&
+							!realPlayers &&
+							!defaultNewLeagueSettings,
+						type: "string",
+						values: [
+							{ key: "none", value: "None" },
+							{ key: "shuffle", value: "Shuffle rosters" },
+						],
+						descriptionLong: (
+							<>
+								<p>
+									<b>Shuffle rosters:</b> All active players are placed on
+									random teams.
+								</p>
+							</>
+						),
+					},
+			  ] as Setting[])),
 		{
 			category: "New League",
 			key: "realDraftRatings",

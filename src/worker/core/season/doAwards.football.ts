@@ -310,9 +310,14 @@ export const dpoyScore = (p: PlayerFiltered) => {
 	);
 };
 
-const rookieFilter = (p: PlayerFiltered) => {
-	// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-	return p.draft.year === p.currentStats.season - 1;
+// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+const royFilter = (p: PlayerFiltered) => {
+	const repeatSeason = g.get("repeatSeason");
+	return (
+		p.draft.year === p.currentStats.season - 1 ||
+		(repeatSeason !== undefined &&
+			p.draft.year === repeatSeason.startingSeason - 1)
+	);
 };
 
 const doAwards = async (conditions: Conditions) => {
@@ -397,7 +402,7 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			allowNone: true,
 			amount: Infinity,
-			filter: rookieFilter,
+			filter: royFilter,
 			score: mvpScore,
 		},
 		players,
@@ -408,7 +413,7 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			allowNone: true,
 			amount: Infinity,
-			filter: rookieFilter,
+			filter: royFilter,
 			score: dpoyScore,
 		},
 		players,

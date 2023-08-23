@@ -1325,6 +1325,7 @@ const migrate = async ({
 		);
 	}
 
+	// Bug here! But leave so upgrade below works
 	if (oldVersion <= 55) {
 		const store = transaction.objectStore("gameAttributes");
 		const repeatSeason = await store.get("repeatSeason");
@@ -1337,6 +1338,29 @@ const migrate = async ({
 					...repeatSeason,
 				},
 			});
+		}
+	}
+
+	// Fix old broken upgrade
+	if (oldVersion <= 56) {
+		const store = transaction.objectStore("gameAttributes");
+		const repeatSeason = (await store.get("repeatSeason"))?.value;
+
+		if (repeatSeason && repeatSeason.type === "playersAndRosters") {
+			if (repeatSeason.value === undefined) {
+				await store.put({
+					key: "repeatSeason",
+					value: undefined,
+				});
+			} else {
+				await store.put({
+					key: "repeatSeason",
+					value: {
+						type: "playersAndRosters",
+						...repeatSeason.value,
+					},
+				});
+			}
 		}
 	}
 };

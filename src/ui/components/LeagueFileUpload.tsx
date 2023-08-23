@@ -15,6 +15,7 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../util";
+import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {
@@ -152,6 +153,11 @@ const LeagueFileUpload = ({
 				type: "schemaErrors",
 				schemaErrors,
 			});
+		}
+
+		// Handle whatever upgrades we can ASAP, so CustomizeSettings in a new league has the best chance to work (and other stuff too)
+		if (basicInfo?.gameAttributes) {
+			simpleGameAttributesUpgrade(basicInfo.gameAttributes, basicInfo.version);
 		}
 
 		if (

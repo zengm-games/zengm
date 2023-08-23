@@ -27,7 +27,6 @@ random events
   - have scheduled events use this voting system?
 
 groundhog day but allow players to change teams https://old.reddit.com/chat/channel/216205321_7a3f1d9d693f1871f394d353bfb5757d1ad3b766
-- free agency would be needed, but no draft
 - https://discord.com/channels/290013534023057409/847310240566870017/1133216000175767633
 - repeatSeason: boolean -> two options
   - import
@@ -35,14 +34,7 @@ groundhog day but allow players to change teams https://old.reddit.com/chat/chan
   - schema
 - make sure importing old file with boolean repeatSeason and changing settings works!
   - challengeThanosMode too
-- test
-  - draft class is being moved to free agency, i think
-    - would be better if draft class was just moved to the next year, and no new one created
-  - auto play
-  - play menu
-  - injuries heal in offseason
-  - what happens with draft prospects, do they disappear or what?
-  - what happens with trading picks?
+- recompute values (no pot) on settings change
 
 add projected cap space to league finances page https://discord.com/channels/290013534023057409/331882115119448065/1137919802145505310
 
@@ -158,6 +150,8 @@ player graphs
 catchers never commit errors? https://discord.com/channels/290013534023057409/944392892905037885/1111059257614401587
 - sim bad throws on steals
 - ground balls and infield flies never go to C/P?
+
+SS/2B/Catcher/Pitcher never catch infield flies? https://discord.com/channels/290013534023057409/290015591216054273/1143744265554501652
 
 when creating a league with differnet historical teams, would be nice to use real player salaries
 - needs to handle teams from your leagues too

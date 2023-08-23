@@ -17,18 +17,22 @@ const newPhaseResignPlayers = async (
 ): Promise<PhaseReturn> => {
 	await idb.cache.negotiations.clear();
 
+	const repeatSeasonType = g.get("repeatSeason")?.type;
+
 	// Reset contract demands of current free agents and undrafted players
 	// KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
 	const existingFreeAgents = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.FREE_AGENT,
 	);
-	const undraftedPlayers = (
-		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-			[g.get("season")],
-			[g.get("season"), Infinity],
-		])
-	).filter(p => p.tid === PLAYER.UNDRAFTED);
+	const undraftedPlayers = !repeatSeasonType
+		? (
+				await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+					[g.get("season")],
+					[g.get("season"), Infinity],
+				])
+		  ).filter(p => p.tid === PLAYER.UNDRAFTED)
+		: [];
 
 	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
 		player.addToFreeAgents(p);
@@ -267,38 +271,49 @@ const newPhaseResignPlayers = async (
 		}
 	}
 
-	// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
 	const draftProspects = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.UNDRAFTED,
 	);
 
-	for (const p of draftProspects) {
-		if (p.draft.year !== g.get("season") + 1) {
-			continue;
+	if (repeatSeasonType === "players") {
+		// Bump up age of draft prospects, so they stay the same
+		for (const p of draftProspects) {
+			p.draft.year += 1;
+			p.born.year += 1;
+			p.ratings.at(-1)!.season += 1;
+			await player.updateValues(p);
+			await idb.cache.players.put(p);
+		}
+	} else {
+		// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
+		for (const p of draftProspects) {
+			if (p.draft.year !== g.get("season") + 1) {
+				continue;
+			}
+
+			p.ratings[0].fuzz /= Math.sqrt(2);
+			await player.develop(p, 0); // Update skills/pot based on fuzz
+
+			await player.updateValues(p);
+			await idb.cache.players.put(p);
 		}
 
-		p.ratings[0].fuzz /= Math.sqrt(2);
-		await player.develop(p, 0); // Update skills/pot based on fuzz
+		for (const p of draftProspects) {
+			if (p.draft.year !== g.get("season") + 2) {
+				continue;
+			}
 
-		await player.updateValues(p);
-		await idb.cache.players.put(p);
-	}
+			p.ratings[0].fuzz /= Math.sqrt(2);
+			await player.develop(p, 0); // Update skills/pot based on fuzz
 
-	for (const p of draftProspects) {
-		if (p.draft.year !== g.get("season") + 2) {
-			continue;
+			await player.updateValues(p);
+			await idb.cache.players.put(p);
 		}
 
-		p.ratings[0].fuzz /= Math.sqrt(2);
-		await player.develop(p, 0); // Update skills/pot based on fuzz
-
-		await player.updateValues(p);
-		await idb.cache.players.put(p);
+		// Generate a new draft class, while leaving existing players in that draft class in place
+		await draft.genPlayers(g.get("season") + 3);
 	}
-
-	// Generate a new draft class, while leaving existing players in that draft class in place
-	await draft.genPlayers(g.get("season") + 3);
 
 	// Delete any old undrafted players that still somehow exist
 	const toRemove = [];

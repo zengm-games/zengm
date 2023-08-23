@@ -249,7 +249,8 @@ const play = async (
 			// Tragic deaths only happen during the regular season!
 			if (
 				g.get("phase") !== PHASE.PLAYOFFS &&
-				Math.random() < g.get("tragicDeathRate")
+				Math.random() < g.get("tragicDeathRate") &&
+				!g.get("repeatSeason")
 			) {
 				await player.killOne(conditions);
 

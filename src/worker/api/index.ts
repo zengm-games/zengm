@@ -2036,7 +2036,7 @@ const handleUploadedDraftClass = async ({
 			delete p2.pid;
 		}
 
-		await player.updateValues(p);
+		await player.updateValues(p2);
 
 		await idb.cache.players.add(p2);
 	}
@@ -3360,27 +3360,17 @@ const updateGameAttributesGodMode = async (
 		"repeatSeason",
 	);
 
+	const currentRepeatSeasonType = g.get("repeatSeason")?.type ?? "disabled";
 	const repeatSeason = settings.repeatSeason;
-	let initRepeatSeason;
-	if (repeatSeason !== "disabled") {
-		const prevRepeatSeason = g.get("repeatSeason");
-		if (prevRepeatSeason && !repeatSeason) {
-			// Disable Groundhog Day
-			gameAttributes.repeatSeason = undefined;
-		} else if (!prevRepeatSeason && repeatSeason) {
-			// Enable Groundhog Day
-			if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {
-				throw new Error("Groundhog Day can only be enabled before the draft");
-			}
-			initRepeatSeason = repeatSeason;
 
-			// Will be enabled later, don't pass through a boolean
-			delete gameAttributes.repeatSeason;
-		} else {
-			// No change, don't pass through a boolean
-			delete gameAttributes.repeatSeason;
+	if (repeatSeason !== "disabled" && repeatSeason !== currentRepeatSeasonType) {
+		if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {
+			throw new Error("Groundhog Day can only be enabled before the draft");
 		}
 	}
+
+	// Will be handled in setRepeatSeason, don't pass through a string
+	delete gameAttributes.repeatSeason;
 
 	// Check schedule, unless it'd be too slow
 	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
@@ -3401,8 +3391,9 @@ const updateGameAttributesGodMode = async (
 	}
 
 	await league.setGameAttributes(gameAttributes);
-	if (initRepeatSeason) {
-		await league.initRepeatSeason(initRepeatSeason);
+
+	if (repeatSeason !== currentRepeatSeasonType) {
+		await league.setRepeatSeason(repeatSeason);
 	}
 
 	await idb.cache.flush();

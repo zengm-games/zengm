@@ -5,7 +5,7 @@ import createStream from "./createStream";
 import getName from "./getName";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 import initAutoPlay from "./initAutoPlay";
-import initRepeatSeason from "./initRepeatSeason";
+import setRepeatSeason from "./setRepeatSeason";
 import loadGameAttributes from "./loadGameAttributes";
 import remove from "./remove";
 import setGameAttributes from "./setGameAttributes";
@@ -20,7 +20,7 @@ export default {
 	getName,
 	getValidNumGamesPlayoffSeries,
 	initAutoPlay,
-	initRepeatSeason,
+	setRepeatSeason,
 	loadGameAttributes,
 	remove,
 	setGameAttributes,

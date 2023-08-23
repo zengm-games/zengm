@@ -1,16 +1,21 @@
-import { g, helpers } from "../../util";
+import { defaultGameAttributes, g, helpers } from "../../util";
 import setGameAttributes from "./setGameAttributes";
 import type { GameAttributesLeague } from "../../../common/types";
 import { PLAYER } from "../../../common";
 import { idb } from "../../db";
+import player from "../player";
 
-const initRepeatSeason = async (type: "players" | "playersAndRosters") => {
+const setRepeatSeason = async (
+	type: "players" | "playersAndRosters" | "disabled",
+) => {
+	const allPlayers = await idb.cache.players.getAll();
+
 	if (type === "playersAndRosters") {
 		const players: Extract<
 			Exclude<GameAttributesLeague["repeatSeason"], undefined>,
 			{ type: "playersAndRosters" }
 		>["players"] = {};
-		for (const p of await idb.cache.players.getAll()) {
+		for (const p of allPlayers) {
 			if (p.tid >= PLAYER.FREE_AGENT) {
 				players[p.pid] = {
 					tid: p.tid,
@@ -28,7 +33,7 @@ const initRepeatSeason = async (type: "players" | "playersAndRosters") => {
 				players,
 			},
 		});
-	} else {
+	} else if (type === "players") {
 		await setGameAttributes({
 			numSeasonsFutureDraftPicks: 0,
 			repeatSeason: {
@@ -36,7 +41,19 @@ const initRepeatSeason = async (type: "players" | "playersAndRosters") => {
 				startingSeason: g.get("season"),
 			},
 		});
+	} else {
+		await setGameAttributes({
+			numSeasonsFutureDraftPicks:
+				defaultGameAttributes.numSeasonsFutureDraftPicks,
+			repeatSeason: undefined,
+		});
+	}
+
+	// Recompute player values, since with repeatSeason enabled, age and pot are ignored in player value
+	for (const p of allPlayers) {
+		await player.updateValues(p);
+		await idb.cache.players.put(p);
 	}
 };
 
-export default initRepeatSeason;
+export default setRepeatSeason;

@@ -4,7 +4,7 @@ import type {
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types";
-import { local } from "../../util";
+import { g, local } from "../../util";
 import updateOvrMeanStd from "./updateOvrMeanStd";
 
 const updateValues = async (
@@ -12,19 +12,10 @@ const updateValues = async (
 ) => {
 	await updateOvrMeanStd();
 
-	p.value = value(p, {
-		ovrMean: local.playerOvrMean,
-		ovrStd: local.playerOvrStd,
-	});
 	p.valueNoPot = value(p, {
 		ovrMean: local.playerOvrMean,
 		ovrStd: local.playerOvrStd,
 		noPot: true,
-	});
-	p.valueFuzz = value(p, {
-		ovrMean: local.playerOvrMean,
-		ovrStd: local.playerOvrStd,
-		fuzz: true,
 	});
 	p.valueNoPotFuzz = value(p, {
 		ovrMean: local.playerOvrMean,
@@ -32,6 +23,22 @@ const updateValues = async (
 		noPot: true,
 		fuzz: true,
 	});
+
+	// If we're repeating the season, potential and age don't matter;
+	if (g.get("repeatSeason")) {
+		p.value = p.valueNoPot;
+		p.valueFuzz = p.valueNoPotFuzz;
+	} else {
+		p.value = value(p, {
+			ovrMean: local.playerOvrMean,
+			ovrStd: local.playerOvrStd,
+		});
+		p.valueFuzz = value(p, {
+			ovrMean: local.playerOvrMean,
+			ovrStd: local.playerOvrStd,
+			fuzz: true,
+		});
+	}
 };
 
 export default updateValues;

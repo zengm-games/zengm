@@ -28,8 +28,8 @@ random events
 
 groundhog day but allow players to change teams https://old.reddit.com/chat/channel/216205321_7a3f1d9d693f1871f394d353bfb5757d1ad3b766
 - https://discord.com/channels/290013534023057409/847310240566870017/1133216000175767633
-- recompute values (no pot) on settings change
-  - do it in initRepeatSeason, and make that also handle disabling
+- blog
+  - recomputed values
 
 add projected cap space to league finances page https://discord.com/channels/290013534023057409/331882115119448065/1137919802145505310
 

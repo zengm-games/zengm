@@ -1152,6 +1152,21 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							repeatSeason: {
 								type: "object",
+								properties: {
+									type: {
+										type: "string",
+										enum: ["playersAndRosters", "players"],
+									},
+									startingSeason: {
+										type: "number",
+									},
+									players: {
+										type: "object",
+									},
+								},
+
+								// Type would be required, but upgrades
+								required: ["startingSeason"],
 							},
 							riggedLootery: {
 								type: "array",

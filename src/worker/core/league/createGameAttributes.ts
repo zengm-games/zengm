@@ -303,6 +303,10 @@ const createGameAttributes = async (
 			: 0;
 	}
 
+	if (gameAttributes.repeatSeason && !gameAttributes.repeatSeason.type) {
+		(gameAttributes.repeatSeason as any).type = "playersAndRosters";
+	}
+
 	return gameAttributes;
 };
 

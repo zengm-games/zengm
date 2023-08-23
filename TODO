@@ -28,11 +28,7 @@ random events
 
 groundhog day but allow players to change teams https://old.reddit.com/chat/channel/216205321_7a3f1d9d693f1871f394d353bfb5757d1ad3b766
 - https://discord.com/channels/290013534023057409/847310240566870017/1133216000175767633
-- repeatSeason: boolean -> two options
-  - import
-  - upgrade
-  - schema
-- make sure importing old file with boolean repeatSeason and changing settings works!
+- make sure importing old file with old repeatSeason and changing settings works!
   - challengeThanosMode too
 - recompute values (no pot) on settings change
 

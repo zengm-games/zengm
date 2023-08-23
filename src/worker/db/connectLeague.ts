@@ -1324,6 +1324,21 @@ const migrate = async ({
 			},
 		);
 	}
+
+	if (oldVersion <= 55) {
+		const store = transaction.objectStore("gameAttributes");
+		const repeatSeason = await store.get("repeatSeason");
+
+		if (repeatSeason) {
+			await store.put({
+				key: "repeatSeason",
+				value: {
+					type: "playersAndRosters",
+					...repeatSeason,
+				},
+			});
+		}
+	}
 };
 
 const connectLeague = (lid: number) =>

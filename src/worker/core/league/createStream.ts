@@ -55,6 +55,7 @@ import processPlayerNewLeague from "./processPlayerNewLeague";
 import remove from "./remove";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels";
+import setGameAttributes from "./setGameAttributes";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1469,7 +1470,15 @@ const afterDBStream = async ({
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created
-	if (repeatSeason !== "disabled" && g.get("repeatSeason") === undefined) {
+	const currentRepeatSeason = g.get("repeatSeason");
+	if (repeatSeason === "disabled" && currentRepeatSeason !== undefined) {
+		await setGameAttributes({
+			repeatSeason: undefined,
+		});
+	} else if (
+		repeatSeason !== "disabled" &&
+		currentRepeatSeason?.type !== repeatSeason
+	) {
 		await initRepeatSeason(repeatSeason);
 	}
 

@@ -1469,8 +1469,8 @@ const afterDBStream = async ({
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created
-	if (repeatSeason && g.get("repeatSeason") === undefined) {
-		await initRepeatSeason();
+	if (repeatSeason !== "disabled" && g.get("repeatSeason") === undefined) {
+		await initRepeatSeason(repeatSeason);
 	}
 
 	const skipNewPhase = fromFile.gameAttributes?.phase !== undefined;

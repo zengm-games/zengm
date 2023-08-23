@@ -171,7 +171,9 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"realPlayerDeterminism",
 		),
-		repeatSeason: !!unwrapGameAttribute(defaultGameAttributes, "repeatSeason"),
+		repeatSeason:
+			unwrapGameAttribute(defaultGameAttributes, "repeatSeason")?.type ??
+			"disabled",
 		ties: unwrapGameAttribute(defaultGameAttributes, "ties"),
 		otl: unwrapGameAttribute(defaultGameAttributes, "otl"),
 		spectator: unwrapGameAttribute(defaultGameAttributes, "spectator"),

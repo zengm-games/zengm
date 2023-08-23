@@ -3361,8 +3361,8 @@ const updateGameAttributesGodMode = async (
 	);
 
 	const repeatSeason = settings.repeatSeason;
-	let initRepeatSeason = false;
-	if (typeof repeatSeason === "boolean") {
+	let initRepeatSeason;
+	if (repeatSeason !== "disabled") {
 		const prevRepeatSeason = g.get("repeatSeason");
 		if (prevRepeatSeason && !repeatSeason) {
 			// Disable Groundhog Day
@@ -3372,7 +3372,7 @@ const updateGameAttributesGodMode = async (
 			if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {
 				throw new Error("Groundhog Day can only be enabled before the draft");
 			}
-			initRepeatSeason = true;
+			initRepeatSeason = repeatSeason;
 
 			// Will be enabled later, don't pass through a boolean
 			delete gameAttributes.repeatSeason;
@@ -3402,7 +3402,7 @@ const updateGameAttributesGodMode = async (
 
 	await league.setGameAttributes(gameAttributes);
 	if (initRepeatSeason) {
-		await league.initRepeatSeason();
+		await league.initRepeatSeason(initRepeatSeason);
 	}
 
 	await idb.cache.flush();

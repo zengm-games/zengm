@@ -604,7 +604,9 @@ const newPhaseBeforeDraft = async (
 		await doSisyphusMode(conditions);
 	}
 
-	if (!g.get("repeatSeason")) {
+	const repeatSeasonType = g.get("repeatSeason")?.type;
+
+	if (repeatSeasonType !== "playersAndRosters") {
 		// Do annual tasks for each player, like checking for retirement
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
@@ -617,34 +619,36 @@ const newPhaseBeforeDraft = async (
 		for (const p of players) {
 			let update = false;
 
-			if (player.shouldRetire(p)) {
-				if (p.tid >= 0) {
-					if (!retiredPlayersByTeam[p.tid]) {
-						retiredPlayersByTeam[p.tid] = [];
+			if (!repeatSeasonType) {
+				if (player.shouldRetire(p)) {
+					if (p.tid >= 0) {
+						if (!retiredPlayersByTeam[p.tid]) {
+							retiredPlayersByTeam[p.tid] = [];
+						}
+						retiredPlayersByTeam[p.tid].push(p);
 					}
-					retiredPlayersByTeam[p.tid].push(p);
-				}
-				await player.retire(p, conditions);
-				update = true;
-			}
-
-			// Update "free agent years" counter and retire players who have been free agents for more than one years
-			if (p.tid === PLAYER.FREE_AGENT) {
-				const age = g.get("season") - p.born.year;
-				if (p.yearsFreeAgent >= 1 && age >= g.get("minRetireAge")) {
 					await player.retire(p, conditions);
 					update = true;
-				} else {
-					p.yearsFreeAgent += 1;
 				}
 
-				update = true;
-			} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-				p.yearsFreeAgent = 0;
-				update = true;
+				// Update "free agent years" counter and retire players who have been free agents for more than one years
+				if (p.tid === PLAYER.FREE_AGENT) {
+					const age = g.get("season") - p.born.year;
+					if (p.yearsFreeAgent >= 1 && age >= g.get("minRetireAge")) {
+						await player.retire(p, conditions);
+						update = true;
+					} else {
+						p.yearsFreeAgent += 1;
+					}
+
+					update = true;
+				} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+					p.yearsFreeAgent = 0;
+					update = true;
+				}
 			}
 
-			// Heal injures
+			// Heal injures - this happens for repeatSeasonType === "players" too!
 			if (p.injury.gamesRemaining > 0 || p.injury.type !== "Healthy") {
 				// This doesn't use g.get("numGames") because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
 				if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
@@ -704,12 +708,14 @@ const newPhaseBeforeDraft = async (
 			await genMessage(response.deltas, response.cappedDeltas);
 		}
 
-		if (
-			g.get("draftType") === "noLottery" ||
-			g.get("draftType") === "noLotteryReverse" ||
-			g.get("draftType") === "random"
-		) {
-			await draft.genOrder(false, conditions);
+		if (!repeatSeasonType) {
+			if (
+				g.get("draftType") === "noLottery" ||
+				g.get("draftType") === "noLotteryReverse" ||
+				g.get("draftType") === "random"
+			) {
+				await draft.genOrder(false, conditions);
+			}
 		}
 	}
 

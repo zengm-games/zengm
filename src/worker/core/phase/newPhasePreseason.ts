@@ -20,7 +20,7 @@ const newPhasePreseason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
 	const repeatSeason = g.get("repeatSeason");
-	if (!repeatSeason) {
+	if (repeatSeason?.type !== "playersAndRosters") {
 		await freeAgents.autoSign();
 	}
 	await league.setGameAttributes({
@@ -331,19 +331,21 @@ const newPhasePreseason = async (
 			player.addRatingsRow(p, scoutingLevel);
 			await player.develop(p, 1, false, coachingLevels[p.tid]);
 		} else {
-			const info = repeatSeason.players[p.pid];
-			if (info) {
-				p.tid = info.tid;
-				p.injury = helpers.deepCopy(info.injury);
-				p.contract = helpers.deepCopy(info.contract);
+			if (repeatSeason.type === "playersAndRosters") {
+				const info = repeatSeason.players[p.pid];
+				if (info) {
+					p.tid = info.tid;
+					p.injury = helpers.deepCopy(info.injury);
+					p.contract = helpers.deepCopy(info.contract);
 
-				p.contract.exp += g.get("season") - repeatSeason.startingSeason;
-				p.salaries.push({
-					season: p.contract.exp,
-					amount: p.contract.amount,
-				});
-			} else {
-				p.tid = PLAYER.FREE_AGENT;
+					p.contract.exp += g.get("season") - repeatSeason.startingSeason;
+					p.salaries.push({
+						season: p.contract.exp,
+						amount: p.contract.amount,
+					});
+				} else {
+					p.tid = PLAYER.FREE_AGENT;
+				}
 			}
 
 			// First entry for last season, so it skips injuries
@@ -378,7 +380,7 @@ const newPhasePreseason = async (
 		await idb.cache.players.put(p);
 	}
 
-	if (!repeatSeason) {
+	if (repeatSeason?.type !== "playersAndRosters") {
 		await freeAgents.normalizeContractDemands({
 			type: "dummyExpiringContracts",
 

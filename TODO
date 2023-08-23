@@ -32,8 +32,17 @@ groundhog day but allow players to change teams https://old.reddit.com/chat/chan
 - repeatSeason: boolean -> two options
   - import
   - upgrade
+  - schema
 - make sure importing old file with boolean repeatSeason and changing settings works!
   - challengeThanosMode too
+- test
+  - draft class is being moved to free agency, i think
+    - would be better if draft class was just moved to the next year, and no new one created
+  - auto play
+  - play menu
+  - injuries heal in offseason
+  - what happens with draft prospects, do they disappear or what?
+  - what happens with trading picks?
 
 add projected cap space to league finances page https://discord.com/channels/290013534023057409/331882115119448065/1137919802145505310
 

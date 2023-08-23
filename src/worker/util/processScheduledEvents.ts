@@ -469,7 +469,7 @@ const processScheduledEvents = async (
 	phase: number,
 	conditions: Conditions,
 ) => {
-	if (g.get("repeatSeason")) {
+	if (g.get("repeatSeason")?.type === "playersAndRosters") {
 		return;
 	}
 

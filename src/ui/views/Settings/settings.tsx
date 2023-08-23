@@ -2185,9 +2185,30 @@ export const settings: Setting[] = (
 			key: "repeatSeason",
 			name: "Groundhog Day",
 			godModeRequired: "always",
-			type: "bool",
-			description:
-				"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions. Groundhog Day can be enabled at any point in the season prior to the draft.",
+			type: "string",
+			values: [
+				{ key: "disabled", value: "Disabled" },
+				{ key: "playersAndRosters", value: "Players and rosters" },
+				{ key: "players", value: "Players only" },
+			],
+			descriptionLong: (
+				<>
+					<p>Play the same season over and over again!</p>
+					<p>
+						<b>Players and rosters:</b> Next season will start immediately after
+						the playoffs, with the same exact players and rosters as the
+						previous season. No player development, no persistent transactions.
+						Groundhog Day can be enabled at any point in the season prior to the
+						draft. teams.
+					</p>
+					<p>
+						<b>Players only:</b> The same players exist at the same ages/ratings
+						every year. No player development, no draft, no retirement. But
+						transactions do persist across seasons, and free agency still
+						exists.
+					</p>
+				</>
+			),
 		},
 		{
 			category: "General",

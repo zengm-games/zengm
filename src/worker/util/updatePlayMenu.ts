@@ -288,11 +288,16 @@ const updatePlayMenu = async () => {
 			keys.unshift("viewAllStar");
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
-		if (g.get("repeatSeason")) {
+		const repeatSeasonType = g.get("repeatSeason")?.type;
+		if (repeatSeasonType === "playersAndRosters") {
 			keys = ["untilPreseason"];
 		} else {
-			if (g.get("draftType") === "freeAgents") {
-				// Special case in actions.ts will call the draft phases before this automatically
+			if (
+				g.get("draftType") === "freeAgents" ||
+				repeatSeasonType === "players"
+			) {
+				// For draftType freeAgents - special case in actions.ts will call the draft phases before this automatically
+				// For repeatSeasonType players - there is no draft
 				keys = ["untilResignPlayers"];
 			} else {
 				// Offseason - pre draft

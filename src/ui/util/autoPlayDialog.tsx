@@ -32,7 +32,14 @@ const Confirm = confirmable(
 				continue;
 			}
 
-			if (repeatSeason && phaseInt >= PHASE.DRAFT) {
+			if (repeatSeason === "playersAndRosters" && phaseInt >= PHASE.DRAFT) {
+				continue;
+			}
+
+			if (
+				repeatSeason === "players" &&
+				(phaseInt === PHASE.DRAFT || phaseInt === PHASE.AFTER_DRAFT)
+			) {
 				continue;
 			}
 
@@ -109,7 +116,7 @@ const confirmFunction = createConfirmation(Confirm);
 // Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
 const autoPlayDialog = (
 	currentSeason: number,
-	repeatSeason: boolean,
+	repeatSeason: "players" | "playersAndRosters" | undefined,
 ): {
 	phase: string;
 	season: string;

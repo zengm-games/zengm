@@ -375,7 +375,7 @@ const getSettingsFromGameAttributes = (
 			const value = unwrapGameAttribute(gameAttributes, key);
 			if (value !== undefined) {
 				if (key === "repeatSeason") {
-					newSettings[key] = !!value;
+					newSettings[key] = (value as any)?.type;
 				} else {
 					(newSettings[key] as any) = value;
 				}

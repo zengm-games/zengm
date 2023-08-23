@@ -180,7 +180,9 @@ export type Settings = Pick<
 		| "giveMeWorstRoster"
 	>
 > & {
-	repeatSeason: boolean;
+	repeatSeason:
+		| NonNullable<GameAttributesLeague["repeatSeason"]>["type"]
+		| "disabled";
 	noStartingInjuries: boolean;
 	realDraftRatings: Exclude<
 		GameAttributesLeague["realDraftRatings"],
@@ -272,7 +274,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeSisyphusMode: g.get("challengeSisyphusMode"),
 			challengeThanosMode: g.get("challengeThanosMode"),
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
-			repeatSeason: !!g.get("repeatSeason"),
+			repeatSeason: g.get("repeatSeason")?.type ?? "disabled",
 			ties: g.get("ties"),
 			otl: g.get("otl"),
 			spectator: g.get("spectator"),

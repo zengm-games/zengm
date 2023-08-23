@@ -65,8 +65,11 @@ const autoPlay = async (conditions: Conditions = {}) => {
 	} else if (currentPhase === PHASE.PLAYOFFS) {
 		await game.play(100, conditions);
 	} else if (currentPhase === PHASE.DRAFT_LOTTERY) {
-		if (g.get("repeatSeason")) {
+		const type = g.get("repeatSeason")?.type;
+		if (type === "playersAndRosters") {
 			await phase.newPhase(PHASE.PRESEASON, conditions);
+		} else if (type === "players") {
+			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 		} else {
 			await phase.newPhase(PHASE.DRAFT, conditions);
 		}

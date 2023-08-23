@@ -585,6 +585,7 @@ export type GameAttributesLeague = {
 	repeatSeason:
 		| undefined
 		| {
+				type: "playersAndRosters";
 				startingSeason: number;
 				players: Record<
 					number,
@@ -594,6 +595,10 @@ export type GameAttributesLeague = {
 						injury: PlayerInjury;
 					}
 				>;
+		  }
+		| {
+				type: "players";
+				startingSeason: number;
 		  };
 	riggedLottery?: (number | null)[];
 	rookieContractLengths: number[];

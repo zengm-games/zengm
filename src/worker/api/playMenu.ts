@@ -141,8 +141,11 @@ const playAmount = async (
 		}
 
 		await freeAgents.play(numDays, conditions);
-	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY && g.get("repeatSeason")) {
-		await phase.newPhase(PHASE.PRESEASON, conditions);
+	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
+		const type = g.get("repeatSeason")?.type;
+		if (type === "playersAndRosters") {
+			await phase.newPhase(PHASE.PRESEASON, conditions);
+		}
 	}
 };
 
@@ -236,6 +239,7 @@ const playMenu = {
 		await runDraft({ type: "untilEnd" }, conditions);
 	},
 	untilResignPlayers: async (param: unknown, conditions: Conditions) => {
+		console.log("untilResignPlayers");
 		if (
 			g.get("draftType") === "freeAgents" &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY
@@ -243,7 +247,11 @@ const playMenu = {
 			await phase.newPhase(PHASE.DRAFT, conditions);
 			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
 		}
-		if (g.get("phase") === PHASE.AFTER_DRAFT) {
+		if (
+			g.get("phase") === PHASE.AFTER_DRAFT ||
+			(g.get("phase") === PHASE.DRAFT_LOTTERY &&
+				g.get("repeatSeason")?.type === "players")
+		) {
 			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 		}
 	},

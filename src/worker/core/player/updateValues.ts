@@ -25,7 +25,7 @@ const updateValues = async (
 	});
 
 	// If we're repeating the season, potential and age don't matter;
-	if (g.get("repeatSeason")) {
+	if (Object.hasOwn(g, "repeatSeason") && g.get("repeatSeason")) {
 		p.value = p.valueNoPot;
 		p.valueFuzz = p.valueNoPotFuzz;
 	} else {

@@ -441,6 +441,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"threePointTendencyFactor",
 	"threePointAccuracyFactor",
 	"twoPointAccuracyFactor",
+	"ftAccuracyFactor",
 	"foulRateFactor",
 	"threePointers",
 	"blockFactor",

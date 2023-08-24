@@ -12,11 +12,11 @@
 	},
 	"scripts": {
 		"start": "node tools/server.js",
-		"build": "yarn run ajv-hack && node tools/build.js",
+		"build": "node tools/build.js",
 		"deploy": "yarn run lint && yarn test && node tools/deploy.js",
 		"deploy-all": "yarn run lint && yarn test && node tools/deploy-all.js",
 		"start-watch": "concurrently --kill-others \"yarn run start\" \"yarn run watch\"",
-		"watch": "yarn run ajv-hack && node --loader=import-jsx --no-warnings tools/watch.js",
+		"watch": "node --loader=import-jsx --no-warnings tools/watch.js",
 		"lint": "concurrently --raw \"yarn run lint-js\" \"yarn run lint-ts\"",
 		"lint-js": "eslint \"*.{mjs,js,ts,tsx}\" \"public/*.js\" \"src/**/*.{mjs,js,ts,tsx}\" \"tools/**/*.{mjs,js,ts,tsx}\"",
 		"lint-ts": "node tools/pre-test.js && yarn run tsc",
@@ -26,8 +26,7 @@
 		"test-e2e-watch": "node tools/pre-test.js && karma start karma.conf.js --auto-watch --no-single-run",
 		"test-e2e-browserstack": "node tools/pre-test.js && karma start karma-browserstack.conf.js",
 		"postinstall": "patch-package",
-		"prepare": "husky install",
-		"ajv-hack": "node_modules/.bin/esbuild src/worker/ajvHack/index.ts --bundle --log-level=error --target=es2017 --format=esm --outfile=src/worker/ajvHack/esbuild.js"
+		"prepare": "husky install"
 	},
 	"lint-staged": {
 		"*.{js,cjs,mjs,jsx,json,scss,ts,tsx}": "prettier --write"
@@ -86,7 +85,6 @@
 	"devDependencies": {
 		"@babel/core": "^7.22.10",
 		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
-		"@babel/plugin-proposal-object-rest-spread": "^7.20.7",
 		"@babel/plugin-proposal-optional-chaining": "^7.21.0",
 		"@babel/plugin-syntax-typescript": "^7.22.5",
 		"@babel/plugin-transform-modules-commonjs": "^7.22.5",

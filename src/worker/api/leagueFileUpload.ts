@@ -1,6 +1,6 @@
 import type { ValidateFunction } from "ajv";
 // eslint-disable-next-line import/no-unresolved
-import Ajv from "ajv-hack";
+import Ajv from "ajv";
 import JSONParserText from "./JSONParserText";
 
 // This is dynamically resolved with rollup-plugin-alias

@@ -44,7 +44,7 @@ const POLYFILL_STREAMS = !self.WritableStream || !self.TransformStream;
 export let toPolyfillReadable: (stream: ReadableStream) => ReadableStream;
 export let toPolyfillTransform: (stream: TransformStream) => TransformStream;
 if (POLYFILL_STREAMS) {
-	// Chrome 67, Firefox 102, Safari 14.1 (those are for TransformStream, which was the last implemented in some browsers, so that's the cutoff for removing all of these polyfills)
+	// Firefox 102, Safari 14.1 (those are for TransformStream, which was the last implemented in some browsers, so that's the cutoff for removing all of these polyfills)
 	self.ReadableStream = PolyfillReadableStream as any;
 	self.TransformStream = PolyfillTransformStream as any;
 	self.WritableStream = PolyfillWritableStream as any;

@@ -61,9 +61,7 @@ const LeagueTopBar = memo(() => {
 			keepScrollToRightRef.current &&
 			wrapperElement &&
 			wrapperElement.scrollLeft + wrapperElement.offsetWidth <
-				wrapperElement.scrollWidth &&
-			// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
-			wrapperElement.scrollTo
+				wrapperElement.scrollWidth
 		) {
 			wrapperElement.scrollTo({
 				left: wrapperElement.scrollWidth,
@@ -87,9 +85,7 @@ const LeagueTopBar = memo(() => {
 				event.altKey ||
 				event.ctrlKey ||
 				event.metaKey ||
-				event.shiftKey ||
-				// Chrome 61 supports scrollTo, so after making that the minimum supported version, this check is no longer needed
-				!wrapperElement.scrollTo
+				event.shiftKey
 			) {
 				return;
 			}

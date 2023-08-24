@@ -19,7 +19,6 @@ module.exports = legacy => {
 					loose: true,
 				},
 			], // Chrome 80, Safari 13.1
-			"@babel/plugin-proposal-object-rest-spread", // Chrome 60
 		);
 	}
 

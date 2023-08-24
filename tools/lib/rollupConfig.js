@@ -43,8 +43,6 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 					nodeEnv === "production"
 						? path.resolve(root, "src/worker/core/debug/prod.ts")
 						: path.resolve(root, "src/worker/core/debug/index.ts"),
-
-				"ajv-hack": path.resolve(root, "src/worker/ajvHack/esbuild.js"),
 			},
 		}),
 		replace({

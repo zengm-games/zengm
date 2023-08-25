@@ -19,7 +19,11 @@ const updateTeamFinances = async (
 		inputs.show !== state.show
 	) {
 		const contractsRaw = await team.getContracts(inputs.tid);
-		const payroll = (await team.getPayroll(contractsRaw)) / 1000;
+		let payroll = await team.getPayroll(contractsRaw);
+		const luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll) / 1000;
+		const minPayrollAmount = finances.getMinPayrollAmount(payroll) / 1000;
+		payroll /= 1000;
+
 		let showInt;
 
 		if (inputs.show === "all") {
@@ -228,8 +232,10 @@ const updateTeamFinances = async (
 			salaryCap: g.get("salaryCap") / 1000,
 			minContract: g.get("minContract") / 1000,
 			minPayroll: g.get("minPayroll") / 1000,
+			minPayrollAmount,
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTax: g.get("luxuryTax"),
+			luxuryTaxAmount,
 			userTid: g.get("userTid"),
 			budget: g.get("budget"),
 			spectator: g.get("spectator"),

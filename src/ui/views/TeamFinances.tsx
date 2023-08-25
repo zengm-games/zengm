@@ -571,8 +571,10 @@ const FinancesForm = ({
 const PayrollInfo = ({
 	luxuryPayroll,
 	luxuryTax,
+	luxuryTaxAmount,
 	minContract,
 	minPayroll,
+	minPayrollAmount,
 	payroll,
 	salaryCap,
 	salaryCapType,
@@ -580,8 +582,10 @@ const PayrollInfo = ({
 	View<"teamFinances">,
 	| "luxuryPayroll"
 	| "luxuryTax"
+	| "luxuryTaxAmount"
 	| "minContract"
 	| "minPayroll"
+	| "minPayrollAmount"
 	| "payroll"
 	| "salaryCap"
 	| "salaryCapType"
@@ -589,7 +593,16 @@ const PayrollInfo = ({
 	const parts = [
 		<>
 			{payroll > minPayroll ? "above" : "below"} the minimum payroll limit (
-			<b>{helpers.formatCurrency(minPayroll, "M")}</b>)
+			<b>{helpers.formatCurrency(minPayroll, "M")}</b>
+			{minPayrollAmount > 0 ? (
+				<>
+					,{" "}
+					<span className="text-danger">
+						projected penalty: {helpers.formatCurrency(minPayrollAmount, "M")}
+					</span>
+				</>
+			) : null}
+			)
 		</>,
 	];
 
@@ -606,7 +619,16 @@ const PayrollInfo = ({
 		parts.push(
 			<>
 				{payroll > luxuryPayroll ? "above" : "below"} the luxury tax limit (
-				<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>)
+				<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>
+				{luxuryTaxAmount > 0 ? (
+					<>
+						,{" "}
+						<span className="text-danger">
+							projected penalty: {helpers.formatCurrency(luxuryTaxAmount, "M")}
+						</span>
+					</>
+				) : null}
+				)
 			</>,
 		);
 	}
@@ -699,9 +721,11 @@ const TeamFinances = ({
 	godMode,
 	luxuryPayroll,
 	luxuryTax,
+	luxuryTaxAmount,
 	maxStadiumCapacity,
 	minContract,
 	minPayroll,
+	minPayrollAmount,
 	numGames,
 	otherTeamTicketPrices,
 	spectator,
@@ -805,8 +829,10 @@ const TeamFinances = ({
 			<PayrollInfo
 				luxuryPayroll={luxuryPayroll}
 				luxuryTax={luxuryTax}
+				luxuryTaxAmount={luxuryTaxAmount}
 				minContract={minContract}
 				minPayroll={minPayroll}
+				minPayrollAmount={minPayrollAmount}
 				payroll={payroll}
 				salaryCap={salaryCap}
 				salaryCapType={salaryCapType}

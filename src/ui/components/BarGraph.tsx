@@ -74,7 +74,7 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 			// If stacked, add up all the components
 			let value = 0;
 			for (const key of y) {
-				value += row[key];
+				value += (row as any)[key];
 			}
 			return value;
 		});

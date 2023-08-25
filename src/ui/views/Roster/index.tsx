@@ -88,7 +88,11 @@ const Roster = ({
 	currentSeason,
 	editable,
 	godMode,
+	luxuryPayroll,
+	luxuryTaxAmount,
 	maxRosterSize,
+	minPayroll,
+	minPayrollAmount,
 	numConfs,
 	numPlayersOnCourt,
 	numPlayoffRounds,
@@ -163,6 +167,10 @@ const Roster = ({
 				currentSeason={currentSeason}
 				editable={editable}
 				godMode={godMode}
+				luxuryPayroll={luxuryPayroll}
+				luxuryTaxAmount={luxuryTaxAmount}
+				minPayroll={minPayroll}
+				minPayrollAmount={minPayrollAmount}
 				numConfs={numConfs}
 				numPlayoffRounds={numPlayoffRounds}
 				openRosterSpots={maxRosterSize - players.length}

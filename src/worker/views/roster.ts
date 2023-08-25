@@ -1,5 +1,5 @@
 import { bySport, isSport, PHASE, POSITIONS } from "../../common";
-import { season, team } from "../core";
+import { finances, season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -122,6 +122,8 @@ const updateRoster = async (
 
 		let players: any[];
 		let payroll: number | undefined;
+		let luxuryTaxAmount: number | undefined;
+		let minPayrollAmount: number | undefined;
 
 		if (inputs.season === g.get("season")) {
 			const schedule = await season.getSchedule();
@@ -130,7 +132,10 @@ const updateRoster = async (
 			const playersAll = await addMood(
 				await idb.cache.players.indexGetAll("playersByTid", inputs.tid),
 			);
-			payroll = (await team.getPayroll(inputs.tid)) / 1000;
+			payroll = await team.getPayroll(inputs.tid);
+			luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll) / 1000;
+			minPayrollAmount = finances.getMinPayrollAmount(payroll) / 1000;
+			payroll /= 1000;
 
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;
@@ -253,6 +258,10 @@ const updateRoster = async (
 			numConfs: g.get("confs", "current").length,
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
 			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
+			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			luxuryTaxAmount,
+			minPayroll: g.get("minPayroll") / 1000,
+			minPayrollAmount,
 			payroll,
 			phase: g.get("phase"),
 			playoffs: inputs.playoffs,

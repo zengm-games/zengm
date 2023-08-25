@@ -1,6 +1,8 @@
 import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
+import getLuxuryTaxAmount from "./getLuxuryTaxAmount";
+import getMinPayrollAmount from "./getMinPayrollAmount";
 
 const rosterLink = (tid: number) =>
 	`<a href="${helpers.leagueUrl([
@@ -34,17 +36,19 @@ const assessPayrollMinLuxury = async () => {
 		// Store payroll
 		teamSeason.payrollEndOfSeason = payroll;
 
-		// Assess minimum payroll tax and luxury tax
-		if (payroll < g.get("minPayroll")) {
-			teamSeason.expenses.minTax = g.get("minPayroll") - payroll;
-			teamSeason.cash -= teamSeason.expenses.minTax;
+		const luxuryTaxAmount = getLuxuryTaxAmount(payroll);
+		const minPayrollAmount = getMinPayrollAmount(payroll);
+
+		if (minPayrollAmount > 0) {
+			teamSeason.expenses.minTax = minPayrollAmount;
+			teamSeason.cash -= minPayrollAmount;
 
 			logEvent({
 				type: "minPayroll",
 				text: `The ${rosterLink(
 					tid,
 				)} paid a minimum payroll penalty of ${helpers.formatCurrency(
-					teamSeason.expenses.minTax / 1000,
+					minPayrollAmount / 1000,
 					"M",
 				)} for having a payroll under ${helpers.formatCurrency(
 					g.get("minPayroll") / 1000,
@@ -54,14 +58,11 @@ const assessPayrollMinLuxury = async () => {
 				showNotification: tid === g.get("userTid"),
 				score: 10,
 			});
-		} else if (
-			payroll > g.get("luxuryPayroll") &&
-			g.get("salaryCapType") !== "hard"
-		) {
-			// Only apply luxury tax if hard cap is disabled!
-			const amount = g.get("luxuryTax") * (payroll - g.get("luxuryPayroll"));
-			collectedTax += amount;
-			teamSeason.expenses.luxuryTax = amount;
+		}
+
+		if (luxuryTaxAmount > 0) {
+			collectedTax += luxuryTaxAmount;
+			teamSeason.expenses.luxuryTax = luxuryTaxAmount;
 			teamSeason.cash -= teamSeason.expenses.luxuryTax;
 
 			logEvent({
@@ -69,7 +70,7 @@ const assessPayrollMinLuxury = async () => {
 				text: `The ${rosterLink(
 					tid,
 				)} paid a luxury tax of ${helpers.formatCurrency(
-					amount / 1000,
+					luxuryTaxAmount / 1000,
 					"M",
 				)} for having a payroll above ${helpers.formatCurrency(
 					g.get("luxuryPayroll") / 1000,

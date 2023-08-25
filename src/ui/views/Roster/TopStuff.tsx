@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from "react";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import {
 	RecordAndPlayoffs,
 	RosterComposition,
@@ -44,6 +45,73 @@ const TeamRating = ({
 	);
 };
 
+const PayrollAndPenalties = ({
+	luxuryPayroll,
+	luxuryTaxAmount,
+	minPayroll,
+	minPayrollAmount,
+	payroll,
+}: Pick<
+	View<"roster">,
+	| "luxuryPayroll"
+	| "luxuryTaxAmount"
+	| "minPayroll"
+	| "minPayrollAmount"
+	| "payroll"
+>) => {
+	const payrollString = helpers.formatCurrency(payroll ?? 0, "M");
+
+	if (luxuryTaxAmount === undefined || minPayrollAmount === undefined) {
+		return payrollString;
+	}
+
+	if (luxuryTaxAmount === 0 && minPayrollAmount === 0) {
+		return payrollString;
+	}
+
+	return (
+		<OverlayTrigger
+			trigger="click"
+			placement="auto"
+			overlay={
+				<Popover>
+					<Popover.Body>
+						{luxuryTaxAmount > 0 ? (
+							<p>
+								Payroll is over the luxury tax limit of{" "}
+								{helpers.formatCurrency(luxuryPayroll, "M")}. Projected penalty:{" "}
+								<span className="text-danger">
+									{helpers.formatCurrency(luxuryTaxAmount, "M")}
+								</span>
+							</p>
+						) : null}
+						{minPayrollAmount > 0 ? (
+							<p>
+								Payroll is under the minimum payroll limit of{" "}
+								{helpers.formatCurrency(minPayroll, "M")}. Projected penalty:{" "}
+								<span className="text-danger">
+									{helpers.formatCurrency(minPayrollAmount, "M")}
+								</span>
+							</p>
+						) : null}
+					</Popover.Body>
+				</Popover>
+			}
+			rootClose
+		>
+			<button
+				className="btn btn-link p-0 border-0 text-danger"
+				style={{
+					// Without this, alignment is a bit off compared to the text version
+					verticalAlign: "baseline",
+				}}
+			>
+				{payrollString}
+			</button>
+		</OverlayTrigger>
+	);
+};
+
 const TopStuff = ({
 	abbrev,
 	budget,
@@ -51,6 +119,10 @@ const TopStuff = ({
 	currentSeason,
 	editable,
 	godMode,
+	luxuryPayroll,
+	luxuryTaxAmount,
+	minPayroll,
+	minPayrollAmount,
 	numConfs,
 	numPlayoffRounds,
 	openRosterSpots,
@@ -72,6 +144,10 @@ const TopStuff = ({
 	| "currentSeason"
 	| "editable"
 	| "godMode"
+	| "luxuryPayroll"
+	| "luxuryTaxAmount"
+	| "minPayroll"
+	| "minPayrollAmount"
 	| "numConfs"
 	| "numPlayoffRounds"
 	| "payroll"
@@ -167,7 +243,14 @@ const TopStuff = ({
 							<div className="mt-3">
 								{openRosterSpots} open roster spots
 								<br />
-								Payroll: {helpers.formatCurrency(payroll ?? 0, "M")}
+								Payroll:{" "}
+								<PayrollAndPenalties
+									luxuryPayroll={luxuryPayroll}
+									luxuryTaxAmount={luxuryTaxAmount}
+									minPayroll={minPayroll}
+									minPayrollAmount={minPayrollAmount}
+									payroll={payroll}
+								/>
 								<br />
 								{salaryCapType !== "none" ? (
 									<>

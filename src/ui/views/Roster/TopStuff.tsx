@@ -46,12 +46,15 @@ const TeamRating = ({
 };
 
 const PayrollAndPenalties = ({
+	isCurrentSeason,
 	luxuryPayroll,
 	luxuryTaxAmount,
 	minPayroll,
 	minPayrollAmount,
 	payroll,
-}: Pick<
+}: {
+	isCurrentSeason: boolean;
+} & Pick<
 	View<"roster">,
 	| "luxuryPayroll"
 	| "luxuryTaxAmount"
@@ -76,24 +79,49 @@ const PayrollAndPenalties = ({
 			overlay={
 				<Popover>
 					<Popover.Body>
-						{luxuryTaxAmount > 0 ? (
-							<p>
-								Payroll is over the luxury tax limit of{" "}
-								{helpers.formatCurrency(luxuryPayroll, "M")}. Projected penalty:{" "}
-								<span className="text-danger">
-									{helpers.formatCurrency(luxuryTaxAmount, "M")}
-								</span>
-							</p>
-						) : null}
-						{minPayrollAmount > 0 ? (
-							<p>
-								Payroll is under the minimum payroll limit of{" "}
-								{helpers.formatCurrency(minPayroll, "M")}. Projected penalty:{" "}
-								<span className="text-danger">
-									{helpers.formatCurrency(minPayrollAmount, "M")}
-								</span>
-							</p>
-						) : null}
+						{isCurrentSeason ? (
+							<>
+								{luxuryTaxAmount > 0 ? (
+									<p>
+										Payroll is over the luxury tax limit of{" "}
+										{helpers.formatCurrency(luxuryPayroll, "M")}. Projected
+										penalty:{" "}
+										<span className="text-danger">
+											{helpers.formatCurrency(luxuryTaxAmount, "M")}
+										</span>
+									</p>
+								) : null}
+								{minPayrollAmount > 0 ? (
+									<p>
+										Payroll is under the minimum payroll limit of{" "}
+										{helpers.formatCurrency(minPayroll, "M")}. Projected
+										penalty:{" "}
+										<span className="text-danger">
+											{helpers.formatCurrency(minPayrollAmount, "M")}
+										</span>
+									</p>
+								) : null}
+							</>
+						) : (
+							<>
+								{luxuryTaxAmount > 0 ? (
+									<p>
+										Luxury tax paid:{" "}
+										<span className="text-danger">
+											{helpers.formatCurrency(luxuryTaxAmount, "M")}
+										</span>
+									</p>
+								) : null}
+								{minPayrollAmount > 0 ? (
+									<p>
+										Minimum payroll tax paid:{" "}
+										<span className="text-danger">
+											{helpers.formatCurrency(minPayrollAmount, "M")}
+										</span>
+									</p>
+								) : null}
+							</>
+						)}
 					</Popover.Body>
 				</Popover>
 			}
@@ -209,6 +237,8 @@ const TopStuff = ({
 		marginOfVictory = t.stats.pts - t.stats.oppPts;
 	}
 
+	const isCurrentSeason = season === currentSeason;
+
 	return (
 		<>
 			{t.name !== t.seasonAttrs.name || t.region !== t.seasonAttrs.region ? (
@@ -239,38 +269,35 @@ const TopStuff = ({
 							: {t.seasonAttrs.avgAge!.toFixed(1)}
 						</div>
 
-						{season === currentSeason ? (
-							<div className="mt-3">
-								{openRosterSpots} open roster spots
-								<br />
-								Payroll:{" "}
+						{isCurrentSeason ? (
+							<div className="mt-3">{openRosterSpots} open roster spots</div>
+						) : null}
+						{payroll !== undefined ? (
+							<div>
+								{isCurrentSeason ? "Payroll" : "End of season payroll"}:{" "}
 								<PayrollAndPenalties
+									isCurrentSeason={isCurrentSeason}
 									luxuryPayroll={luxuryPayroll}
 									luxuryTaxAmount={luxuryTaxAmount}
 									minPayroll={minPayroll}
 									minPayrollAmount={minPayrollAmount}
 									payroll={payroll}
 								/>
-								<br />
-								{salaryCapType !== "none" ? (
-									<>
-										Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-										<br />
-									</>
-								) : null}
-								{budget ? (
-									<>
-										Profit: {helpers.formatCurrency(profit, "M")}
-										<br />
-									</>
-								) : null}
-								{showTradeFor ? `Strategy: ${t.strategy}` : null}
 							</div>
+						) : null}
+						{isCurrentSeason && salaryCapType !== "none" ? (
+							<div>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</div>
+						) : null}
+						{isCurrentSeason && budget ? (
+							<div>Profit: {helpers.formatCurrency(profit, "M")}</div>
+						) : null}
+						{isCurrentSeason && showTradeFor ? (
+							<div>Strategy: ${t.strategy}</div>
 						) : null}
 					</div>
 				</div>
 				<div className="d-md-flex">
-					{season === currentSeason ? (
+					{isCurrentSeason ? (
 						<div className="ms-sm-5 mt-3 mt-sm-0">
 							<RosterComposition players={players} />
 						</div>

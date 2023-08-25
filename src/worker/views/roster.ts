@@ -219,6 +219,18 @@ const updateRoster = async (
 			for (const p of players) {
 				p.canRelease = false;
 			}
+
+			const teamSeason = await idb.getCopy.teamSeasons({
+				season: inputs.season,
+				tid: inputs.tid,
+			});
+
+			// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value
+			if (teamSeason && teamSeason.payrollEndOfSeason > 0) {
+				payroll = teamSeason.payrollEndOfSeason / 1000;
+				luxuryTaxAmount = teamSeason.expenses.luxuryTax / 1000;
+				minPayrollAmount = teamSeason.expenses.minTax / 1000;
+			}
 		}
 
 		const playoffsOvr =

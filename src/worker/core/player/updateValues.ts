@@ -24,8 +24,11 @@ const updateValues = async (
 		fuzz: true,
 	});
 
-	// If we're repeating the season, potential and age don't matter;
-	if (Object.hasOwn(g, "repeatSeason") && g.get("repeatSeason")) {
+	// If we're repeating the season, potential and age don't matter. But for the one that resets rosters every year, pretend they do, cause it's fun to consider what trades might be possible and then have them reset. Eventually this should be an option.
+	if (
+		Object.hasOwn(g, "repeatSeason") &&
+		g.get("repeatSeason")?.type === "players"
+	) {
 		p.value = p.valueNoPot;
 		p.valueFuzz = p.valueNoPotFuzz;
 	} else {

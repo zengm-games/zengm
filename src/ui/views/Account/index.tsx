@@ -82,14 +82,10 @@ const StripeButton = ({ email }: { email: string }) => {
 				Subscribe to ZenGM Gold - $5/month
 			</button>
 			<div className="alert alert-info mt-3 mb-0">
-				If you would rather pay for multiple months at once rather than
-				subscribe, send money by{" "}
-				<a href="https://www.paypal.com/" className="fw-bold">
-					PayPal
-				</a>{" "}
-				to{" "}
-				<a href="mailto:jeremy@zengm.com" className="fw-bold">
-					jeremy@zengm.com
+				If you would rather make a single payment rather than subscribe, send
+				money by{" "}
+				<a href="https://paypal.me/zengmgames" className="fw-bold">
+					PayPal to jeremy@zengm.com
 				</a>{" "}
 				and include your username in the message. I will then manually credit
 				your account with however many months you pay for.

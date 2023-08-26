@@ -103,43 +103,49 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 					realigned: ReturnType<typeof getRealignInfo>;
 			  };
 		if (autoRelocate.realigned) {
-			const current = getRealignInfo(teams, newTeam);
-			const realigned: typeof current = [];
+			// Old version would try to realign disabled teams and then crash, so check for that
+			const invalidRealign = autoRelocate.realigned
+				.flat()
+				.some(tid => !teams.find(t => t.tid === tid));
+			if (!invalidRealign) {
+				const current = getRealignInfo(teams, newTeam);
+				const realigned: typeof current = [];
 
-			const confs = g.get("confs");
-			const divs = g.get("divs");
+				const confs = g.get("confs");
+				const divs = g.get("divs");
 
-			for (let i = 0; i < divs.length; i++) {
-				const div = divs[i];
-				const tids = autoRelocate.realigned[i];
-				if (tids) {
-					const confIndex = confs.findIndex(conf => conf.cid === div.cid);
-					if (!realigned[confIndex]) {
-						realigned[confIndex] = [];
+				for (let i = 0; i < divs.length; i++) {
+					const div = divs[i];
+					const tids = autoRelocate.realigned[i];
+					if (tids) {
+						const confIndex = confs.findIndex(conf => conf.cid === div.cid);
+						if (!realigned[confIndex]) {
+							realigned[confIndex] = [];
+						}
+						realigned[confIndex].push(
+							orderBy(
+								tids.map(tid => {
+									const t =
+										tid === newTeam.tid
+											? newTeam
+											: teams.find(t => t.tid === tid)!;
+									return {
+										tid,
+										region: t.region,
+										name: t.name,
+									};
+								}),
+								["region", "name"],
+							),
+						);
 					}
-					realigned[confIndex].push(
-						orderBy(
-							tids.map(tid => {
-								const t =
-									tid === newTeam.tid
-										? newTeam
-										: teams.find(t => t.tid === tid)!;
-								return {
-									tid,
-									region: t.region,
-									name: t.name,
-								};
-							}),
-							["region", "name"],
-						),
-					);
 				}
-			}
 
-			realignInfo = {
-				current,
-				realigned,
-			};
+				realignInfo = {
+					current,
+					realigned,
+				};
+			}
 		}
 
 		return {

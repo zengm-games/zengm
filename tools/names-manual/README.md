@@ -22,84 +22,59 @@ See the CSV files in this directory for examples.
 https://forebears.io/canada/surnames is a good data source. Here is a script you can use/modify in the JS console on that site to get the names data for forenames:
 
 ```js
-var MAX_NUM_NAMES = 500;
-var names = [];
-for (const tr of document.getElementsByClassName("forename-table")[0].getElementsByTagName("tr")) {
-	if (tr.children.length < 4) {
-		continue;
-	}
+{
+    const MAX_NUM_NAMES = 50;
 
-	const mPct = tr.children[1].getElementsByClassName("m")[0]?.style.width ?? 0;
-	const fPct = tr.children[1].getElementsByClassName("f")[0]?.style.width ?? 0;
-	const sex = parseInt(mPct) > parseInt(fPct) ? "m" : "f";
-	if (sex === "f") {
-		continue;
-	}
+    const rows = document.querySelectorAll(".forename-table tbody tr");
+    const output = [];
+    for (const row of rows) {
+        if (row.children.length > 1) {
+            const name = row.children[2].textContent;
+            const frequency = parseInt(row.children[3].textContent.replaceAll(",", ""));
+            const malePct = parseInt(row.children[1].querySelector(".m")?.textContent ?? "0");
+            
+            if (malePct >= 75) {
+                output.push({
+                    name,
+                    frequency,
+                });
 
-	const name = tr.children[2].textContent;
+                if (output.length >= MAX_NUM_NAMES) {
+                    break;
+                }
+            }
+        }
+    }
 
-	const frequency = parseInt(tr.children[3].textContent.replaceAll(",", ""));
-
-    names.push({
-		name,
-		frequency,
-	});
-
-	if (names.length > MAX_NUM_NAMES) {
-		break;
-	}
-}
-
-if (names.length > 0) {
-	const minFrequency = names.at(-1).frequency;
-	for (const row of names) {
-		row.frequency = Math.round(row.frequency / minFrequency);
-	}
-	let output = "Name,Frequency\n";
-	for (const row of names) {
-		output += `${row.name},${row.frequency}\n`
-	}
-	console.log(output);
-} else {
-	console.log("No names found");
+    const minFrequency = Math.min(...output.map(row => row.frequency));
+    console.log(`Name,Frequency\n${output.map(row => `${row.name},${Math.round(row.frequency / minFrequency)}\n`).join("")}`);
 }
 ```
 
 And surnames:
 
 ```js
-var MAX_NUM_NAMES = 500;
-var names = [];
-for (const tr of document.getElementsByClassName("forename-table")[0].getElementsByTagName("tr")) {
-	if (tr.children.length < 3) {
-		continue;
-	}
+{
+    const MAX_NUM_NAMES = 50;
 
-	const name = tr.children[1].textContent;
+    const rows = document.querySelectorAll(".forename-table tbody tr");
+    const output = [];
+    for (const row of rows) {
+        if (row.children.length > 1) {
+            const name = row.children[1].textContent;
+            const frequency = parseInt(row.children[2].textContent.replaceAll(",", ""));
+            output.push({
+                name,
+                frequency,
+            });
 
-	const frequency = parseInt(tr.children[2].textContent.replaceAll(",", ""));
+            if (output.length >= MAX_NUM_NAMES) {
+                break;
+            }
+        }
+    }
 
-    names.push({
-		name,
-		frequency,
-	});
-
-	if (names.length > MAX_NUM_NAMES) {
-		break;
-	}
-}
-
-if (names.length > 0) {
-	const minFrequency = names.at(-1).frequency;
-	for (const row of names) {
-		row.frequency = Math.round(row.frequency / minFrequency);
-	}
-	let output = "Name,Frequency\n";
-	for (const row of names) {
-		output += `${row.name},${row.frequency}\n`
-	}
-	console.log(output);
-} else {
-	console.log("No names found");
+    const minFrequency = Math.min(...output.map(row => row.frequency));
+    console.log(`Name,Frequency\n${output.map(row => `${row.name},${Math.round(row.frequency / minFrequency)}\n`).join("")}`);
 }
 ```

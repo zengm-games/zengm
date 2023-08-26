@@ -146,6 +146,7 @@ const doRelocate = async () => {
 	const autoRelocateGeo = g.get("autoRelocateGeo");
 
 	const currentTeams = await idb.cache.teams.getAll();
+	const activeTeams = currentTeams.filter(t => !t.disabled);
 
 	const candidateAbbrevs = getUnusedAbbrevs(currentTeams);
 	const allCandidateTeams = getTeamInfos(
@@ -163,7 +164,7 @@ const doRelocate = async () => {
 	const northAmericaOnly =
 		autoRelocateGeo === "naOnly" ||
 		(autoRelocateGeo === "naFirst" &&
-			currentTeams.every(
+			activeTeams.every(
 				t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
 			) &&
 			allCandidateTeams.some(
@@ -182,16 +183,13 @@ const doRelocate = async () => {
 		return;
 	}
 
-	const currentTeam = random.choice(
-		currentTeams.filter(t => !t.disabled),
-		t => 1 / (t.pop ?? 1),
-	);
+	const currentTeam = random.choice(activeTeams, t => 1 / (t.pop ?? 1));
 
 	const newTeam = random.choice(candidateTeams, t => t.pop);
 
 	const getRealignedDivs = () => {
 		// We can only automatically realign divisions if we know where every region is
-		const canRealign = currentTeams.every(
+		const canRealign = activeTeams.every(
 			t => !!geographicCoordinates[t.region] || t.tid === currentTeam.tid,
 		);
 
@@ -204,10 +202,10 @@ const doRelocate = async () => {
 
 		const divs = g.get("divs");
 		const numTeamsPerDiv = divs.map(
-			div => currentTeams.filter(t => t.did === div.did).length,
+			div => activeTeams.filter(t => t.did === div.did).length,
 		);
 
-		const coordinates = currentTeams.map(temp => {
+		const coordinates = activeTeams.map(temp => {
 			const t = temp.tid === newTeam.tid ? newTeam : temp;
 			return [
 				geographicCoordinates[t.region].latitude,
@@ -220,19 +218,19 @@ const doRelocate = async () => {
 			divs,
 			numTeamsPerDiv,
 		);
-		console.log("clusters", clusters);
 
 		for (let i = 0; i < divs.length; i++) {
-			const tids = clusters[i].pointIndexes;
-			if (tids) {
-				realigned[i] = tids;
+			const pointIndexes = clusters[i].pointIndexes;
+			if (pointIndexes) {
+				// Map to tids
+				realigned[i] = pointIndexes.map(i => activeTeams[i].tid);
 			}
 		}
 
 		if (!geoSorted) {
 			// If, for whatever reason, we can't sort clusters geographically (like knowing the location of Atlantic vs Pacific), then try to keep as many teams in the same division as they were previously. Ideally we would test all permutations, but for many divisions that would be slow, so do it a shittier way.
 			const original = divs.map(() => [] as number[]);
-			for (const t of currentTeams) {
+			for (const t of activeTeams) {
 				const divIndex = divs.findIndex(div => t.did === div.did);
 				original[divIndex].push(t.tid);
 			}

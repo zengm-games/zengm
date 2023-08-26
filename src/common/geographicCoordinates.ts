@@ -99,6 +99,10 @@ const geographicCoordinates: Record<
 		latitude: 29.7604267,
 		longitude: -95.3698028,
 	},
+	Indiana: {
+		latitude: 39.768403,
+		longitude: -86.158068,
+	},
 	Indianapolis: {
 		latitude: 39.768403,
 		longitude: -86.158068,
@@ -147,6 +151,10 @@ const geographicCoordinates: Record<
 		longitude: -87.9064736,
 	},
 	Minneapolis: {
+		latitude: 44.977753,
+		longitude: -93.2650108,
+	},
+	Minnesota: {
 		latitude: 44.977753,
 		longitude: -93.2650108,
 	},

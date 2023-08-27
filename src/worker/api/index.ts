@@ -3608,7 +3608,10 @@ const updatePlayerWatch = async ({
 		p = await idb.league.get("players", pid);
 	}
 	if (p) {
-		if (watch < 1 || watch > g.get("numWatchColors")) {
+		if (
+			watch < 1 ||
+			(!local.exhibitionGamePlayers && watch > g.get("numWatchColors"))
+		) {
 			delete p.watch;
 		} else {
 			p.watch = watch;

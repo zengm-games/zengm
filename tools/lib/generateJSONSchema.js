@@ -664,6 +664,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								enum: ["naFirst", "naOnly", "any"],
 							},*/
 							autoRelocate: {
+								type: "object",
 								properties: {
 									phase: {
 										const: "vote",

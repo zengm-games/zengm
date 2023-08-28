@@ -232,6 +232,9 @@ class Cache {
 				key: string[];
 				unique?: boolean;
 			}[];
+
+			// Should be true if we want to fetch data from getData on a new season, even with autoSave disabled. This happens if you use this._season in getData such that there are objects for future seasons left out of the cache.
+			getDataWithAutoSaveDisabled?: boolean;
 		}
 	>;
 
@@ -450,6 +453,7 @@ class Cache {
 						.index("season")
 						.getAll(this._season);
 				},
+				getDataWithAutoSaveDisabled: true,
 			},
 			seasonLeaders: {
 				pk: "season",
@@ -673,10 +677,17 @@ class Cache {
 		}
 	}
 
-	async _loadStore(store: Store, transaction: IDBPTransaction<LeagueDB>) {
+	// append is for autoSave false in rare situations
+	async _loadStore(
+		store: Store,
+		transaction: IDBPTransaction<LeagueDB>,
+		append?: boolean,
+	) {
 		const storeInfo = this.storeInfos[store];
-		this._deletes[store] = new Set();
-		this._dirtyRecords[store] = new Set();
+		if (!append) {
+			this._deletes[store] = new Set();
+			this._dirtyRecords[store] = new Set();
+		}
 
 		// Load data and do maxIds calculation in parallel
 		await Promise.all([
@@ -685,7 +696,9 @@ class Cache {
 				const data = storeInfo.getData
 					? await storeInfo.getData(transaction)
 					: [];
-				this._data[store] = {};
+				if (!append) {
+					this._data[store] = {};
+				}
 
 				for (const row of data) {
 					const key = row[storeInfo.pk];
@@ -712,18 +725,11 @@ class Cache {
 
 	// Load database from disk and save in cache, wiping out any prior values in cache
 	async fill(season?: number) {
-		if (!local.autoSave) {
-			return;
-		}
-
 		//console.log('fill start');
 		//performance.mark('fillStart');
 		this._validateStatus("empty", "full");
 
 		this._setStatus("filling");
-
-		// @ts-expect-error
-		this._data = {};
 
 		// This is crap and should be fixed ASAP
 		this._season = season;
@@ -752,10 +758,22 @@ class Cache {
 			throw new Error("Undefined season");
 		}
 
-		for (const store of STORES) {
-			await this._loadStore(store, idb.league.transaction([store]));
+		if (local.autoSave) {
+			// @ts-expect-error
+			this._data = {};
 		}
-		this._dirty = false;
+
+		for (const store of STORES) {
+			if (local.autoSave) {
+				await this._loadStore(store, idb.league.transaction([store]));
+			} else if (this.storeInfos[store].getDataWithAutoSaveDisabled) {
+				await this._loadStore(store, idb.league.transaction([store]), true);
+			}
+		}
+
+		if (local.autoSave) {
+			this._dirty = false;
+		}
 
 		this._setStatus("full");
 		//performance.measure('fillTime', 'fillStart');

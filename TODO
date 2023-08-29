@@ -1,7 +1,6 @@
 on player stats page, a combined regular season and playoff stat option https://discord.com/channels/290013534023057409/331882115119448065/1143632853687599175
-- tab on player page too?
-  - leader highlight?
-  - team should be labeled TOT only if multiple teams that year
+- on player stats page, combined for an individual season doesn't work, returns array stats
+- leader highlight on player page?
 - game highs on player stats page still work?
 - blog
   - player stats

@@ -602,7 +602,24 @@ const getPlayerStats = (
 		// Defaults from latest entry
 		for (const attr of ignoredKeys) {
 			if (attr === "tid" && mergeStats === "totAndTeams") {
-				statSums[attr] = PLAYER.TOT;
+				// In combined mode, if all teams are the same (like same regular season and playoffs team), then keep the tid there
+				if (seasonType === "combined") {
+					let allSame = true;
+					const firstTid = rowsToMerge[0].tid;
+					for (const row of rowsToMerge) {
+						if (row.tid !== firstTid) {
+							allSame = false;
+							break;
+						}
+					}
+					if (allSame) {
+						statSums[attr] = firstTid;
+					} else {
+						statSums[attr] = PLAYER.TOT;
+					}
+				} else {
+					statSums[attr] = PLAYER.TOT;
+				}
 			} else {
 				statSums[attr] = rowsToMerge.at(-1)[attr];
 			}

@@ -114,10 +114,18 @@ const PlayerStats = ({
 		}
 	}
 
-	let statsProperty: "careerStats" | "careerStatsPlayoffs" | "stats";
+	let statsProperty:
+		| "careerStats"
+		| "careerStatsPlayoffs"
+		| "careerStatsCombined"
+		| "stats";
 	if (season === "career") {
 		statsProperty =
-			playoffs === "playoffs" ? "careerStatsPlayoffs" : "careerStats";
+			playoffs === "playoffs"
+				? "careerStatsPlayoffs"
+				: playoffs === "all"
+				? "careerStatsCombined"
+				: "careerStats";
 	} else {
 		statsProperty = "stats";
 	}

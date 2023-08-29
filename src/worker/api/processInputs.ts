@@ -644,7 +644,6 @@ const playerStats = (params: Params) => {
 	} else {
 		playoffs = "regularSeason";
 	}
-	console.log(params, playoffs);
 
 	const defaultStatType = bySport({
 		baseball: "batting",

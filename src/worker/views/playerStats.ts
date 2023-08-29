@@ -113,8 +113,8 @@ const updatePlayers = async (
 			tid,
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
-			regularSeason:
-				inputs.playoffs === "all" ? "all" : inputs.playoffs !== "playoffs",
+			regularSeason: inputs.playoffs === "regularSeason",
+			combined: inputs.playoffs === "all",
 			mergeStats: "totOnly",
 		});
 
@@ -139,19 +139,12 @@ const updatePlayers = async (
 		// Only keep players who actually played
 		if (inputs.abbrev !== "watch" && isSport("basketball")) {
 			players = players.filter(p => {
-				if (inputs.statType === "gameHighs") {
-					if (inputs.season !== "career") {
-						return p.stats.gp > 0;
-					} else if (inputs.playoffs !== "playoffs") {
-						return p.careerStats.gp > 0;
-					}
-					return p.careerStatsPlayoffs.gp > 0;
-				}
-
 				if (inputs.season !== "career") {
 					return p.stats.gp > 0;
 				} else if (inputs.playoffs === "playoffs") {
 					return p.careerStatsPlayoffs.gp > 0;
+				} else if (inputs.playoffs === "all") {
+					return p.careerStatsCombined.gp > 0;
 				} else {
 					return p.careerStats.gp > 0;
 				}
@@ -164,10 +157,16 @@ const updatePlayers = async (
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;
 
-			let obj: "careerStatsPlayoffs" | "careerStats" | "stats";
+			let obj:
+				| "careerStatsPlayoffs"
+				| "careerStatsCombined"
+				| "careerStats"
+				| "stats";
 			if (inputs.season === "career") {
 				if (inputs.playoffs === "playoffs") {
 					obj = "careerStatsPlayoffs";
+				} else if (inputs.playoffs === "all") {
+					obj = "careerStatsCombined";
 				} else {
 					obj = "careerStats";
 				}

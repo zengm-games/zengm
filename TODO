@@ -1,13 +1,15 @@
 on player stats page, a combined regular season and playoff stat option https://discord.com/channels/290013534023057409/331882115119448065/1143632853687599175
 - leader highlight on player page?
-  - should not require any more data, should check if it's the leader for the reg season and playoffs combined
-    - from getLeaderRequirements
-      - sortValue - not sure what to do about this...
-      - sortAscending - could send list of these 
-      - could precompute this stuff before sending leaders data to the UI
+  - don't automatically upgrade old leagues
+  - same as regular season before playoffs
+    - not worth storing in database, just dynamically know that somehow when loading or in UI
+  - only needs to be computed when playoffs are computed
+  - recompute for real players
+- test other sports
 - blog
   - player stats
   - player profile
+  - how to add bold combined leaders to player pages in old leagues
 
 settings for magnitude of budget effects https://old.reddit.com/r/Football_GM/comments/15scd9z/revert_to_version_v202308021178/
 

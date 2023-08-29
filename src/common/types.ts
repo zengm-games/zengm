@@ -1864,6 +1864,7 @@ export type SeasonLeaders = {
 	age: number;
 	regularSeason: Record<string, unknown>;
 	playoffs: Record<string, unknown>;
+	combined?: Record<string, unknown>;
 	ratings: Record<string, unknown>;
 	ratingsFuzz: Record<string, unknown>;
 };

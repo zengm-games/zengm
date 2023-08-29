@@ -44,9 +44,12 @@ const max = (
 	return current?.value;
 };
 
-const splitRegularSeasonPlayoffs = (p: any) => {
+const splitRegularSeasonPlayoffsCombined = (p: any) => {
 	for (const row of p.stats) {
-		if (row.playoffs) {
+		if (row.playoffs === "combined") {
+			p.combined = row;
+		}
+		if (row.playoffs === true) {
 			p.playoffs = row;
 		} else {
 			p.regularSeason = row;
@@ -107,7 +110,7 @@ const getSeasonLeaders = async (season: number) => {
 		playoffs: true,
 	});
 	for (const p of players) {
-		splitRegularSeasonPlayoffs(p);
+		splitRegularSeasonPlayoffsCombined(p);
 	}
 
 	const leadersCache: SeasonLeaders = {
@@ -244,7 +247,7 @@ const getLeaders = async (pRaw: Player) => {
 			// Could be a season where player is a draft prospect or free agent
 			continue;
 		}
-		splitRegularSeasonPlayoffs(p);
+		splitRegularSeasonPlayoffsCombined(p);
 
 		const leadersCache = await getSeasonLeaders(season);
 		if (!leadersCache) {
@@ -255,6 +258,7 @@ const getLeaders = async (pRaw: Player) => {
 			attrs: new Set<string>(),
 			regularSeason: new Set<string>(),
 			playoffs: new Set<string>(),
+			combined: new Set<string>(),
 			ratings: new Set<string>(),
 		};
 
@@ -272,8 +276,9 @@ const getLeaders = async (pRaw: Player) => {
 			}
 		}
 
-		for (const type of ["regularSeason", "playoffs"] as const) {
-			if (p[type]) {
+		for (const type of ["regularSeason", "playoffs", "combined"] as const) {
+			const leadersCacheType = leadersCache[type];
+			if (leadersCacheType && p[type]) {
 				for (const stat of stats) {
 					let value;
 					if (player.stats.max.includes(stat) && p[type][stat]) {
@@ -282,7 +287,7 @@ const getLeaders = async (pRaw: Player) => {
 						value = p[type][stat];
 					}
 
-					if (value === leadersCache[type][stat]) {
+					if (value === leadersCacheType[stat]) {
 						leader[type].add(stat);
 					}
 				}

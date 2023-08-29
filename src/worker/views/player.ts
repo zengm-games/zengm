@@ -147,6 +147,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 				})[];
 				stats: Stats[];
 				careerStats: Stats;
+				careerStatsCombined: Stats;
 				careerStatsPlayoffs: Stats;
 				jerseyNumber?: string;
 				experience: number;
@@ -198,6 +199,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		],
 		stats: ["season", "tid", "abbrev", "age", "jerseyNumber", ...stats],
 		playoffs: true,
+		combined: true,
 		showRookies: true,
 		fuzz: true,
 		mergeStats: "totAndTeams",
@@ -234,9 +236,9 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 	let teamName = "";
 	if (p.tid >= 0) {
-		teamName = `${g.get("teamInfoCache")[p.tid]?.region} ${
-			g.get("teamInfoCache")[p.tid]?.name
-		}`;
+		teamName = `${g.get("teamInfoCache")[p.tid]?.region} ${g.get(
+			"teamInfoCache",
+		)[p.tid]?.name}`;
 	} else if (p.tid === PLAYER.FREE_AGENT) {
 		teamName = "Free Agent";
 	} else if (

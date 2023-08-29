@@ -59,13 +59,15 @@ const StatsTable = ({
 	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
 
 	// Show playoffs by default if that's all we have
-	const [playoffs, setPlayoffs] = useState(!hasRegularSeasonStats);
+	const [playoffs, setPlayoffs] = useState<boolean | "combined">(
+		!hasRegularSeasonStats,
+	);
 
 	// If game sim means we switch from having no stats to having some stats, make sure we're showing what we have
-	if (hasRegularSeasonStats && !hasPlayoffStats && playoffs) {
+	if (hasRegularSeasonStats && !hasPlayoffStats && playoffs === true) {
 		setPlayoffs(false);
 	}
-	if (!hasRegularSeasonStats && hasPlayoffStats && !playoffs) {
+	if (!hasRegularSeasonStats && hasPlayoffStats && playoffs === false) {
 		setPlayoffs(true);
 	}
 
@@ -74,7 +76,12 @@ const StatsTable = ({
 	}
 
 	let playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
-	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
+	const careerStats =
+		playoffs === "combined"
+			? p.careerStatsCombined
+			: playoffs
+			? p.careerStatsPlayoffs
+			: p.careerStats;
 
 	if (onlyShowIf !== undefined) {
 		let display = false;
@@ -144,19 +151,26 @@ const StatsTable = ({
 		];
 	}
 
-	const leadersType = playoffs ? "playoffs" : "regularSeason";
+	const leadersType =
+		playoffs === "combined"
+			? undefined
+			: playoffs
+			? "playoffs"
+			: "regularSeason";
 
 	let hasLeader = false;
-	LEADERS_LOOP: for (const row of Object.values(leaders)) {
-		if (row?.attrs.has("age")) {
-			hasLeader = true;
-			break;
-		}
-
-		for (const stat of stats) {
-			if (row?.[leadersType].has(stat)) {
+	if (leadersType) {
+		LEADERS_LOOP: for (const row of Object.values(leaders)) {
+			if (row?.attrs.has("age")) {
 				hasLeader = true;
-				break LEADERS_LOOP;
+				break;
+			}
+
+			for (const stat of stats) {
+				if (row?.[leadersType].has(stat)) {
+					hasLeader = true;
+					break LEADERS_LOOP;
+				}
 			}
 		}
 	}
@@ -171,8 +185,8 @@ const StatsTable = ({
 					<li className="nav-item">
 						<button
 							className={classNames("nav-link", {
-								active: !playoffs,
-								"border-bottom": !playoffs,
+								active: playoffs === false,
+								"border-bottom": playoffs === false,
 							})}
 							onClick={() => {
 								setPlayoffs(false);
@@ -186,14 +200,29 @@ const StatsTable = ({
 					<li className="nav-item">
 						<button
 							className={classNames("nav-link", {
-								active: playoffs,
-								"border-bottom": playoffs,
+								active: playoffs === true,
+								"border-bottom": playoffs === true,
 							})}
 							onClick={() => {
 								setPlayoffs(true);
 							}}
 						>
 							Playoffs
+						</button>
+					</li>
+				) : null}
+				{hasRegularSeasonStats && hasPlayoffStats ? (
+					<li className="nav-item">
+						<button
+							className={classNames("nav-link", {
+								active: playoffs === "combined",
+								"border-bottom": playoffs === "combined",
+							})}
+							onClick={() => {
+								setPlayoffs("combined");
+							}}
+						>
+							Combined
 						</button>
 					</li>
 				) : null}
@@ -225,7 +254,7 @@ const StatsTable = ({
 										<SeasonIcons
 											season={ps.season}
 											awards={p.awards}
-											playoffs={playoffs}
+											playoffs={playoffs === true}
 										/>
 									</>
 								),
@@ -242,7 +271,9 @@ const StatsTable = ({
 							...stats.map(stat => (
 								<MaybeBold
 									bold={
-										!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)
+										!ps.hasTot &&
+										leadersType &&
+										leaders[ps.season]?.[leadersType].has(stat)
 									}
 								>
 									{formatStatGameHigh(ps, stat)}

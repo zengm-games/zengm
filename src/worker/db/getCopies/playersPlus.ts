@@ -608,7 +608,8 @@ const getPlayerStats = (
 			}
 		}
 
-		if (mergeStats === "totAndTeams") {
+		// totAndTeams doesn't make sense for "combined" because the goal is to see the combined output
+		if (mergeStats === "totAndTeams" && seasonType !== "combined") {
 			// Return individual stats rows and the merged row
 			return [
 				...rowsToMerge.map(row => ({

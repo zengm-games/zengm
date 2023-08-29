@@ -411,7 +411,7 @@ export const weightByMinutes = bySport({
 const reduceCareerStats = (
 	careerStats: any[],
 	attr: string,
-	playoffs: boolean,
+	playoffs: boolean | "all",
 ) => {
 	let initialValue: null | (number | undefined)[] | number;
 	let type: "max" | "byPos" | "normal";
@@ -432,7 +432,11 @@ const reduceCareerStats = (
 	const weightAttrByMinutes = weightByMinutes.includes(attr);
 
 	return careerStats
-		.filter(cs => cs.playoffs === playoffs && cs.tid !== PLAYER.TOT)
+		.filter(
+			cs =>
+				(playoffs === "all" || cs.playoffs === playoffs) &&
+				cs.tid !== PLAYER.TOT,
+		)
 		.reduce((memo, cs) => {
 			if (cs[attr] === undefined) {
 				return memo;
@@ -477,7 +481,7 @@ const getPlayerStats = (
 	season: number | undefined,
 	tid: number | undefined,
 	playoffs: boolean,
-	regularSeason: boolean,
+	regularSeason: boolean | "all",
 	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
 	const rows = helpers.deepCopy(
@@ -490,7 +494,9 @@ const getPlayerStats = (
 			const seasonCheck = season === undefined || ps.season === season;
 			const tidCheck = tid === undefined || ps.tid === tid;
 			const playoffsCheck =
-				(playoffs && ps.playoffs) || (regularSeason && !ps.playoffs);
+				(playoffs && ps.playoffs) ||
+				(regularSeason && !ps.playoffs) ||
+				regularSeason === "all";
 			return seasonCheck && tidCheck && playoffsCheck;
 		}),
 	);
@@ -502,7 +508,9 @@ const getPlayerStats = (
 
 	let thereAreRowsToMerge = false;
 	const seasonInfoKey = (row: { season: number; playoffs: true }) =>
-		JSON.stringify([row.season, row.playoffs]);
+		JSON.stringify(
+			regularSeason === "all" ? [row.season] : [row.season, row.playoffs],
+		);
 	type SeasonInfo = {
 		season: number;
 		playoffs: boolean;
@@ -530,8 +538,6 @@ const getPlayerStats = (
 			seasonInfosByKey[key] = seasonInfo;
 		}
 	}
-
-	// Merged playoffs can only happen with God Mode forcing a player to switch teams during playoffs
 	const getMerged = (rowsToMerge: any[]) => {
 		// Aggregate annual stats and ignore other things
 		const ignoredKeys = [
@@ -546,7 +552,12 @@ const getPlayerStats = (
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.includes(attr)) {
-				statSums[attr] = reduceCareerStats(rowsToMerge, attr, false);
+				// Merged playoffs can only happen with God Mode forcing a player to switch teams during playoffs
+				statSums[attr] = reduceCareerStats(
+					rowsToMerge,
+					attr,
+					regularSeason === "all" ? "all" : false,
+				);
 			}
 		}
 
@@ -565,6 +576,8 @@ const getPlayerStats = (
 		for (const attr of ignoredKeys) {
 			if (attr === "tid" && mergeStats === "totAndTeams") {
 				statSums[attr] = PLAYER.TOT;
+			} else if (attr === "playoffs" && regularSeason === "all") {
+				statSums[attr] = false;
 			} else {
 				statSums[attr] = rowsToMerge.at(-1)[attr];
 			}
@@ -652,6 +665,9 @@ const processStats = (
 		regularSeason,
 		mergeStats,
 	);
+	if (p.pid === 609) {
+		console.log("playerStats", playerStats);
+	}
 
 	// oldStats crap
 	if (oldStats && season !== undefined && playerStats.length === 0) {
@@ -685,6 +701,9 @@ const processStats = (
 
 		return processPlayerStats(p, ps, stats, statType);
 	});
+	if (p.pid === 609) {
+		console.log("output.stats", output.stats);
+	}
 
 	if (
 		season !== undefined &&
@@ -737,6 +756,9 @@ const processStats = (
 				statType,
 			);
 		}
+	}
+	if (p.pid === 609) {
+		console.log("end", output);
 	}
 };
 

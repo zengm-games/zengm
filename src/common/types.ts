@@ -1248,7 +1248,7 @@ export type PlayersPlusOptions = {
 	ratings?: string[];
 	stats?: string[];
 	playoffs?: boolean;
-	regularSeason?: boolean;
+	regularSeason?: boolean | "all";
 	showNoStats?: boolean;
 	showRookies?: boolean;
 	showDraftProspectRookieRatings?: boolean;

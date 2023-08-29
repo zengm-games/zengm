@@ -113,7 +113,8 @@ const updatePlayers = async (
 			tid,
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs !== "playoffs",
+			regularSeason:
+				inputs.playoffs === "all" ? "all" : inputs.playoffs !== "playoffs",
 			mergeStats: "totOnly",
 		});
 
@@ -151,11 +152,9 @@ const updatePlayers = async (
 					return p.stats.gp > 0;
 				} else if (inputs.playoffs === "playoffs") {
 					return p.careerStatsPlayoffs.gp > 0;
-				} else if (inputs.playoffs !== "playoffs") {
+				} else {
 					return p.careerStats.gp > 0;
 				}
-
-				return false;
 			});
 		} else if (
 			inputs.abbrev !== "watch" &&

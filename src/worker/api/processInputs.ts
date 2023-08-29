@@ -636,8 +636,15 @@ const playerStats = (params: Params) => {
 		abbrev = "all";
 	}
 
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+	let playoffs: "playoffs" | "regularSeason" | "all";
+	if (params.playoffs === "playoffs") {
+		playoffs = "playoffs";
+	} else if (params.playoffs === "all") {
+		playoffs = "all";
+	} else {
+		playoffs = "regularSeason";
+	}
+	console.log(params, playoffs);
 
 	const defaultStatType = bySport({
 		baseball: "batting",

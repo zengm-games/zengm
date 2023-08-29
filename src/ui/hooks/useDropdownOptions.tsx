@@ -161,7 +161,7 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	either: "Either",
 	skater: "Skaters",
 	goalie: "Goalies",
-	"all|||playoffsAll": makeNormalResponsive("All", "All Games"),
+	"all|||playoffsAll": "Combined",
 	current: "Current",
 	overview: "Overview",
 	gameLog: "Game Log",
@@ -303,7 +303,7 @@ const useDropdownOptions = (
 	} else if (field === "playoffs") {
 		keys = ["regularSeason", "playoffs"];
 	} else if (field === "playoffsAll") {
-		keys = ["all|||playoffsAll", "regularSeason", "playoffs"];
+		keys = ["regularSeason", "playoffs", "all|||playoffsAll"];
 	} else if (field === "shows") {
 		keys = ["10", "all|||seasons"];
 	} else if (field === "statTypes" || field === "statTypesAdv") {

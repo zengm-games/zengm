@@ -710,6 +710,9 @@ const processStats = (
 		combined,
 		mergeStats,
 	);
+	if (p.pid === 1308) {
+		console.log("playerStats", playerStats);
+	}
 
 	// oldStats crap
 	if (oldStats && season !== undefined && playerStats.length === 0) {
@@ -747,7 +750,9 @@ const processStats = (
 
 	if (
 		season !== undefined &&
-		((playoffs && !regularSeason) || (!playoffs && regularSeason))
+		((playoffs && !regularSeason && !combined) ||
+			(!playoffs && regularSeason && !combined) ||
+			(!playoffs && !regularSeason && combined))
 	) {
 		// Take last value, in case player was traded/signed to team twice in a season
 		output.stats = output.stats.at(-1);

@@ -1,7 +1,10 @@
 on player stats page, a combined regular season and playoff stat option https://discord.com/channels/290013534023057409/331882115119448065/1143632853687599175
-- on player stats page, combined for an individual season doesn't work, returns array stats
 - leader highlight on player page?
-- game highs on player stats page still work?
+  - should not require any more data, should check if it's the leader for the reg season and playoffs combined
+    - from getLeaderRequirements
+      - sortValue - not sure what to do about this...
+      - sortAscending - could send list of these 
+      - could precompute this stuff before sending leaders data to the UI
 - blog
   - player stats
   - player profile

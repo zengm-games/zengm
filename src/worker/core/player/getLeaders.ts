@@ -203,9 +203,6 @@ const getSeasonLeaders = async (season: number) => {
 				},
 				statInfo,
 			);
-			if (stat === "pts") {
-				console.log("leader", type, stat, leadersCache[type][stat]);
-			}
 		}
 	}
 
@@ -241,6 +238,7 @@ const getLeaders = async (pRaw: Player) => {
 				attrs: Set<string>;
 				regularSeason: Set<string>;
 				playoffs: Set<string>;
+				combined: Set<string>;
 				ratings: Set<string>;
 		  }
 		| undefined
@@ -256,6 +254,7 @@ const getLeaders = async (pRaw: Player) => {
 			mergeStats: "totOnly",
 			fuzz: true,
 			playoffs: true,
+			combined: true,
 		});
 		if (!p) {
 			// Could be a season where player is a draft prospect or free agent

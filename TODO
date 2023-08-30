@@ -3,9 +3,9 @@ on player stats page, a combined regular season and playoff stat option https://
   - don't automatically upgrade old leagues
   - same as regular season before playoffs
     - not worth storing in database, just dynamically know that somehow when loading or in UI
-  - only needs to be computed when playoffs are computed
   - recompute for real players
     - confirm same results as before for non-combined
+- support on leaders pages too
 - test other sports
 - blog
   - player stats

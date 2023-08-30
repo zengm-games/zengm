@@ -153,8 +153,8 @@ const StatsTable = ({
 
 	const leadersType =
 		playoffs === "combined"
-			? undefined
-			: playoffs
+			? "combined"
+			: playoffs === true
 			? "playoffs"
 			: "regularSeason";
 
@@ -271,9 +271,7 @@ const StatsTable = ({
 							...stats.map(stat => (
 								<MaybeBold
 									bold={
-										!ps.hasTot &&
-										leadersType &&
-										leaders[ps.season]?.[leadersType].has(stat)
+										!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)
 									}
 								>
 									{formatStatGameHigh(ps, stat)}

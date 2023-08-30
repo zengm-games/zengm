@@ -1,10 +1,9 @@
 on player stats page, a combined regular season and playoff stat option https://discord.com/channels/290013534023057409/331882115119448065/1143632853687599175
-- test other sports
 - blog
-  - player stats, roster, leaders, watch list, player graphs, depth
-  - player profile
   - how to add bold combined leaders to player pages in old leagues
     - await bbgm.idb.league.clear("seasonLeaders");
+
+in baseball, injured player still takes base https://discord.com/channels/290013534023057409/290015591216054273/1146156888262721598
 
 ad ideas
 - remove bottom ads

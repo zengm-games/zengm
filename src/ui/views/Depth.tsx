@@ -122,7 +122,7 @@ const Depth = ({
 			default: "Depth Chart",
 		}),
 		dropdownView: "depth",
-		dropdownFields: { depth: pos, teams: abbrev, playoffs },
+		dropdownFields: { depth: pos, teams: abbrev, playoffsCombined: playoffs },
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
 		moreInfoTid: tid,

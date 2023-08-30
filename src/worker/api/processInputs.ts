@@ -81,7 +81,7 @@ export const validateSeason = (season?: number | string): number => {
 
 type SeasonType = "playoffs" | "regularSeason" | "combined";
 const validateSeasonType = (
-	seasonType: unknown,
+	seasonType: string | undefined,
 	defaultType: SeasonType = "regularSeason",
 ): SeasonType => {
 	if (seasonType === "playoffs") {
@@ -157,10 +157,7 @@ const depth = (params: Params) => {
 
 	const pos = params.pos ?? DEFAULT_POS;
 
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
-
-	return { abbrev, playoffs, pos, tid };
+	return { abbrev, playoffs: validateSeasonType(params.playoffs), pos, tid };
 };
 
 const draft = () => {

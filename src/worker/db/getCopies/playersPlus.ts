@@ -710,9 +710,6 @@ const processStats = (
 		combined,
 		mergeStats,
 	);
-	if (p.pid === 1308) {
-		console.log("playerStats", playerStats);
-	}
 
 	// oldStats crap
 	if (oldStats && season !== undefined && playerStats.length === 0) {

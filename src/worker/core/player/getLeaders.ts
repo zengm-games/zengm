@@ -110,7 +110,7 @@ const getSeasonLeaders = async (season: number) => {
 		stats: ["tid", ...stats],
 		season,
 		mergeStats: "totOnly",
-		playoffs: !regularSeasonOnly,
+		playoffs: true, // Always true, or it tries to return an object for stats rather than array
 		combined: !regularSeasonOnly,
 	});
 	for (const p of players) {
@@ -229,6 +229,9 @@ const getLeaders = async (pRaw: Player) => {
 		seasons.add(row.season);
 	}
 
+	const currentSeason = g.get("season");
+	const currentPhase = g.get("phase");
+
 	const stats = getPlayerProfileStats();
 	const ratings = ["ovr", "pot", ...RATINGS];
 
@@ -244,6 +247,9 @@ const getLeaders = async (pRaw: Player) => {
 		| undefined
 	> = {};
 	for (const season of seasons) {
+		const regularSeasonOnly =
+			season === currentSeason && currentPhase < PHASE.PLAYOFFS;
+
 		const p = await idb.getCopy.playersPlus(pRaw, {
 			attrs: ["age"],
 			// pos is for getLeaderRequirements
@@ -253,8 +259,8 @@ const getLeaders = async (pRaw: Player) => {
 			season,
 			mergeStats: "totOnly",
 			fuzz: true,
-			playoffs: true,
-			combined: true,
+			playoffs: true, // Always true, or it tries to return an object for stats rather than array
+			combined: !regularSeasonOnly,
 		});
 		if (!p) {
 			// Could be a season where player is a draft prospect or free agent
@@ -305,6 +311,11 @@ const getLeaders = async (pRaw: Player) => {
 					}
 				}
 			}
+		}
+
+		if (regularSeasonOnly) {
+			// Combined and regular season leaders are the same, but until the playoffs start, seasonLeaders is not calculated for combined stats
+			leader.combined = leader.regularSeason;
 		}
 
 		leaders[season] = leader;

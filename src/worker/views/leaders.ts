@@ -440,7 +440,21 @@ export class GamesPlayedCache {
 		}
 	}
 
-	get(season: number, playoffs: boolean, tid: number, career: boolean) {
+	get(
+		season: number,
+		type: "regularSeason" | "playoffs" | "combined",
+		tid: number,
+		career: boolean,
+	): number {
+		if (type === "combined") {
+			return (
+				this.get(season, "regularSeason", tid, career) +
+				this.get(season, "playoffs", tid, career)
+			);
+		}
+
+		const playoffs = type === "playoffs";
+
 		if (career) {
 			if (playoffs) {
 				// Arbitrary - two full playoffs runs
@@ -589,7 +603,7 @@ export const playerMeetsCategoryRequirements = ({
 
 			const gpTeam = gamesPlayedCache.get(
 				season,
-				playoffs,
+				playoffs ? "playoffs" : "regularSeason",
 				playerStats.tid,
 				career,
 			);

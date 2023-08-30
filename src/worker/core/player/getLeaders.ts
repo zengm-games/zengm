@@ -59,9 +59,10 @@ const splitRegularSeasonPlayoffsCombined = (p: any) => {
 
 const getSeasonLeaders = async (season: number) => {
 	const currentSeason = g.get("season");
+	const currentPhase = g.get("phase");
 	const seasonInProgress =
 		season > currentSeason ||
-		(season === currentSeason && g.get("phase") <= PHASE.PLAYOFFS);
+		(season === currentSeason && currentPhase <= PHASE.PLAYOFFS);
 	if (seasonInProgress) {
 		if (local.seasonLeaders) {
 			return local.seasonLeaders;
@@ -113,11 +114,12 @@ const getSeasonLeaders = async (season: number) => {
 		splitRegularSeasonPlayoffsCombined(p);
 	}
 
-	const leadersCache: SeasonLeaders = {
+	const leadersCache: SeasonLeaders & { combined: Record<string, unknown> } = {
 		season,
 		age: max(players, p => p.age),
 		regularSeason: {},
 		playoffs: {},
+		combined: {},
 		ratings: {},
 		ratingsFuzz: {},
 	};
@@ -137,11 +139,22 @@ const getSeasonLeaders = async (season: number) => {
 		hockey: "totals",
 	});
 
-	for (const type of ["regularSeason", "playoffs"] as const) {
-		const playoffs = type === "playoffs";
+	const gamesPlayedCache = new GamesPlayedCache();
 
-		const gamesPlayedCache = new GamesPlayedCache();
-		await gamesPlayedCache.loadSeasons([season], playoffs);
+	// "combined" comes last so loadSeasons can run for regularSeason and playoffs first, otherwise it won't work
+	for (const type of ["regularSeason", "playoffs", "combined"] as const) {
+		if (type !== "combined") {
+			await gamesPlayedCache.loadSeasons([season], type === "playoffs");
+		}
+
+		// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
+		if (
+			seasonInProgress &&
+			currentPhase < PHASE.PLAYOFFS &&
+			type !== "regularSeason"
+		) {
+			continue;
+		}
 
 		for (const stat of stats) {
 			if (type === "regularSeason" && !requirements[stat]) {
@@ -175,7 +188,9 @@ const getSeasonLeaders = async (season: number) => {
 						gamesPlayedCache,
 						p,
 						playerStats,
-						playoffs,
+
+						// For combined, use regular season requirements
+						playoffs: type === "playoffs",
 						season,
 						statType,
 					});

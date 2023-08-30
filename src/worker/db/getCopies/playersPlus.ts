@@ -434,9 +434,9 @@ const reduceCareerStats = (
 	return careerStats
 		.filter(
 			cs =>
-				(seasonType === "combined" ||
-					(cs.playoffs && seasonType === "playoffs") ||
-					(!cs.playoffs && seasonType === "regularSeason")) &&
+				((cs.playoffs === "combined" && seasonType === "combined") ||
+					(cs.playoffs === true && seasonType === "playoffs") ||
+					(cs.playoffs === false && seasonType === "regularSeason")) &&
 				cs.tid !== PLAYER.TOT,
 		)
 		.reduce((memo, cs) => {

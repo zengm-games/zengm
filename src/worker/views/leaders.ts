@@ -555,7 +555,7 @@ export const playerMeetsCategoryRequirements = ({
 	gamesPlayedCache,
 	p,
 	playerStats,
-	playoffs,
+	seasonType,
 	season,
 	statType,
 }: {
@@ -564,7 +564,7 @@ export const playerMeetsCategoryRequirements = ({
 	gamesPlayedCache: GamesPlayedCache;
 	p: PlayerFiltered;
 	playerStats: Record<string, any>;
-	playoffs: boolean;
+	seasonType: "regularSeason" | "playoffs" | "combined";
 	season: number;
 	statType: PlayerStatType;
 }) => {
@@ -603,7 +603,7 @@ export const playerMeetsCategoryRequirements = ({
 
 			const gpTeam = gamesPlayedCache.get(
 				season,
-				playoffs ? "playoffs" : "regularSeason",
+				seasonType,
 				playerStats.tid,
 				career,
 			);
@@ -782,7 +782,7 @@ const updateLeaders = async (
 					gamesPlayedCache,
 					p,
 					playerStats,
-					playoffs,
+					seasonType: inputs.playoffs,
 					season: season === "career" ? g.get("season") : season,
 					statType: inputs.statType,
 				});

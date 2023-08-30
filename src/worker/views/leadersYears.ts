@@ -121,7 +121,7 @@ const updateLeadersYears = async (
 				gamesPlayedCache,
 				p,
 				playerStats: p.stats,
-				playoffs,
+				seasonType: inputs.playoffs,
 				season,
 				statType: inputs.statType,
 			});

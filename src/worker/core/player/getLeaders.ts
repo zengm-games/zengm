@@ -188,9 +188,7 @@ const getSeasonLeaders = async (season: number) => {
 						gamesPlayedCache,
 						p,
 						playerStats,
-
-						// For combined, use regular season requirements
-						playoffs: type === "playoffs",
+						seasonType: type,
 						season,
 						statType,
 					});

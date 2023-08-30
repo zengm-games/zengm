@@ -143,7 +143,7 @@ const updateLeadersProgressive = async (
 							gamesPlayedCache,
 							p,
 							playerStats: p.stats,
-							playoffs,
+							seasonType: inputs.playoffs,
 							season,
 							statType: inputs.statType,
 						});
@@ -197,7 +197,7 @@ const updateLeadersProgressive = async (
 						gamesPlayedCache,
 						p,
 						playerStats,
-						playoffs,
+						seasonType: inputs.playoffs,
 						season,
 						statType: inputs.statType,
 					});

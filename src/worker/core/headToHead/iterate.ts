@@ -21,14 +21,16 @@ const blankInfo = (tid: number, tid2: number, season: number) => ({
 const iterate2 = async (
 	options: {
 		tid: number | "all";
-		type: "regularSeason" | "playoffs" | "all";
+		type: "regularSeason" | "playoffs" | "combined";
 		season: number | "all";
 	},
 	cb: (info: ReturnType<typeof blankInfo>) => void,
 ) => {
 	const processHeadToHeadTeam = (headToHead: HeadToHead, tid2: number) => {
-		const numPlayoffRounds = g.get("numGamesPlayoffSeries", headToHead.season)
-			.length;
+		const numPlayoffRounds = g.get(
+			"numGamesPlayoffSeries",
+			headToHead.season,
+		).length;
 
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			if (tid === tid2) {
@@ -38,7 +40,7 @@ const iterate2 = async (
 			const info = blankInfo(tid, tid2, headToHead.season);
 
 			let found = false;
-			if (options.type === "regularSeason" || options.type === "all") {
+			if (options.type === "regularSeason" || options.type === "combined") {
 				let record;
 				let rowIsFirstTid = false;
 				if (tid < tid2) {
@@ -67,7 +69,7 @@ const iterate2 = async (
 				}
 			}
 
-			if (options.type === "playoffs" || options.type === "all") {
+			if (options.type === "playoffs" || options.type === "combined") {
 				let record;
 				let rowIsFirstTid = false;
 				if (tid < tid2) {
@@ -80,7 +82,7 @@ const iterate2 = async (
 				if (record) {
 					found = true;
 
-					let outcome: typeof record["result"];
+					let outcome: (typeof record)["result"];
 					if (rowIsFirstTid) {
 						info.won += record.lost;
 						info.lost += record.won;

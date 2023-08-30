@@ -22,7 +22,7 @@ const HeadToHead = ({
 		dropdownFields: {
 			teams: abbrev,
 			seasonsAndAll: season,
-			playoffsAll: type,
+			playoffsCombined: type,
 		},
 	});
 

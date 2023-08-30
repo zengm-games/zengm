@@ -76,7 +76,7 @@ const PlayerStats = ({
 			teamsAndAllWatch: abbrev,
 			seasonsAndCareer: season,
 			statTypesAdv: statType,
-			playoffsAll: playoffs,
+			playoffsCombined: playoffs,
 		},
 	});
 

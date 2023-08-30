@@ -114,7 +114,7 @@ const updatePlayers = async (
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs === "regularSeason",
-			combined: inputs.playoffs === "all",
+			combined: inputs.playoffs === "combined",
 			mergeStats: "totOnly",
 		});
 
@@ -143,7 +143,7 @@ const updatePlayers = async (
 					return p.stats.gp > 0;
 				} else if (inputs.playoffs === "playoffs") {
 					return p.careerStatsPlayoffs.gp > 0;
-				} else if (inputs.playoffs === "all") {
+				} else if (inputs.playoffs === "combined") {
 					return p.careerStatsCombined.gp > 0;
 				} else {
 					return p.careerStats.gp > 0;
@@ -165,7 +165,7 @@ const updatePlayers = async (
 			if (inputs.season === "career") {
 				if (inputs.playoffs === "playoffs") {
 					obj = "careerStatsPlayoffs";
-				} else if (inputs.playoffs === "all") {
+				} else if (inputs.playoffs === "combined") {
 					obj = "careerStatsCombined";
 				} else {
 					obj = "careerStats";

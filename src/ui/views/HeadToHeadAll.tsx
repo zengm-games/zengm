@@ -20,7 +20,7 @@ const HeadToHeadAll = ({
 		dropdownView: "head2head_all",
 		dropdownFields: {
 			seasonsAndAll: season,
-			playoffsAll: type,
+			playoffsCombined: type,
 		},
 	});
 

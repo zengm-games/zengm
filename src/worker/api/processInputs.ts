@@ -79,6 +79,22 @@ export const validateSeason = (season?: number | string): number => {
 	return season;
 };
 
+type SeasonType = "playoffs" | "regularSeason" | "combined";
+const validateSeasonType = (
+	seasonType: unknown,
+	defaultType: SeasonType = "regularSeason",
+): SeasonType => {
+	if (seasonType === "playoffs") {
+		return "playoffs";
+	} else if (seasonType === "regularSeason") {
+		return "regularSeason";
+	} else if (seasonType === "combined") {
+		return "combined";
+	} else {
+		return defaultType;
+	}
+};
+
 const account = (params: Params, ctxBBGM: any) => {
 	return {
 		goldMessage: ctxBBGM.goldResult ? ctxBBGM.goldResult.message : undefined,
@@ -278,18 +294,9 @@ const headToHeadAll = (params: Params) => {
 		season = "all";
 	}
 
-	let type: "playoffs" | "regularSeason" | "all";
-	if (params.type === "playoffs") {
-		type = "playoffs";
-	} else if (params.type === "regularSeason") {
-		type = "regularSeason";
-	} else {
-		type = "all";
-	}
-
 	return {
 		season,
-		type,
+		type: validateSeasonType(params.type, "combined"),
 	};
 };
 
@@ -636,15 +643,6 @@ const playerStats = (params: Params) => {
 		abbrev = "all";
 	}
 
-	let playoffs: "playoffs" | "regularSeason" | "all";
-	if (params.playoffs === "playoffs") {
-		playoffs = "playoffs";
-	} else if (params.playoffs === "all") {
-		playoffs = "all";
-	} else {
-		playoffs = "regularSeason";
-	}
-
 	const defaultStatType = bySport({
 		baseball: "batting",
 		basketball: "perGame",
@@ -663,7 +661,7 @@ const playerStats = (params: Params) => {
 		abbrev,
 		season,
 		statType: params.statType ?? defaultStatType,
-		playoffs,
+		playoffs: validateSeasonType(params.playoffs),
 	};
 };
 

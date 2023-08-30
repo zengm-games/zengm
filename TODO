@@ -1,6 +1,8 @@
 on player stats page, a combined regular season and playoff stat option https://discord.com/channels/290013534023057409/331882115119448065/1143632853687599175
+- 1947 FT% leader - requirements weirdness?
+  - for league in 1947 playoffs, it works. then sim to preseason, and it seems there is no requirement for leader, #1 is 2/2
 - leader highlight on player page?
-  - recompute for real players
+  - recompute for real players - await bbgm.debug.recomputeRealSeasonLeaders()
     - confirm same results as before for non-combined
 - test other sports
 - blog

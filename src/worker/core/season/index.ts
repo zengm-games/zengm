@@ -9,6 +9,7 @@ import getLeaderRequirements from "./getLeaderRequirements";
 import getNumPlayoffTeams from "./getNumPlayoffTeams";
 import getPlayoffsByConf from "./getPlayoffsByConf";
 import getSchedule from "./getSchedule";
+import getSeasonLeaders from "./getSeasonLeaders";
 import newSchedule from "./newSchedule";
 import newSchedulePlayoffsDay from "./newSchedulePlayoffsDay";
 import setSchedule from "./setSchedule";
@@ -27,6 +28,7 @@ export default {
 	getNumPlayoffTeams,
 	getPlayoffsByConf,
 	getSchedule,
+	getSeasonLeaders,
 	newSchedule,
 	newSchedulePlayoffsDay,
 	setSchedule,

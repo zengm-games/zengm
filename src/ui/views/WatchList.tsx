@@ -31,7 +31,11 @@ const WatchList = ({
 	useTitleBar({
 		title: "Watch List",
 		dropdownView: "watch_list",
-		dropdownFields: { statTypes: statType, playoffs, flagNote },
+		dropdownFields: {
+			statTypes: statType,
+			playoffsCombined: playoffs,
+			flagNote,
+		},
 	});
 
 	const { gender } = useLocalPartial(["gender"]);

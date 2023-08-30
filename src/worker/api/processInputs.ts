@@ -913,10 +913,7 @@ const watchList = (params: Params) => {
 		flagNote = "flag";
 	}
 
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
-
-	return { playoffs, statType, flagNote };
+	return { playoffs: validateSeasonType(params.playoffs), statType, flagNote };
 };
 
 const powerRankings = (params: Params) => {

@@ -48,8 +48,7 @@ const splitRegularSeasonPlayoffsCombined = (p: any) => {
 	for (const row of p.stats) {
 		if (row.playoffs === "combined") {
 			p.combined = row;
-		}
-		if (row.playoffs === true) {
+		} else if (row.playoffs === true) {
 			p.playoffs = row;
 		} else {
 			p.regularSeason = row;
@@ -100,6 +99,9 @@ const getSeasonLeaders = async (season: number) => {
 	const stats = getPlayerProfileStats();
 	const ratings = ["ovr", "pot", ...RATINGS];
 
+	// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
+	const regularSeasonOnly = seasonInProgress && currentPhase < PHASE.PLAYOFFS;
+
 	const players = await idb.getCopies.playersPlus(playersRaw, {
 		attrs: ["age"],
 		// pos is for getLeaderRequirements
@@ -108,7 +110,8 @@ const getSeasonLeaders = async (season: number) => {
 		stats: ["tid", ...stats],
 		season,
 		mergeStats: "totOnly",
-		playoffs: true,
+		playoffs: !regularSeasonOnly,
+		combined: !regularSeasonOnly,
 	});
 	for (const p of players) {
 		splitRegularSeasonPlayoffsCombined(p);
@@ -147,12 +150,7 @@ const getSeasonLeaders = async (season: number) => {
 			await gamesPlayedCache.loadSeasons([season], type === "playoffs");
 		}
 
-		// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
-		if (
-			seasonInProgress &&
-			currentPhase < PHASE.PLAYOFFS &&
-			type !== "regularSeason"
-		) {
+		if (regularSeasonOnly && type !== "regularSeason") {
 			continue;
 		}
 
@@ -205,6 +203,9 @@ const getSeasonLeaders = async (season: number) => {
 				},
 				statInfo,
 			);
+			if (stat === "pts") {
+				console.log("leader", type, stat, leadersCache[type][stat]);
+			}
 		}
 	}
 

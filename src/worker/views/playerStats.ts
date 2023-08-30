@@ -117,7 +117,6 @@ const updatePlayers = async (
 			combined: inputs.playoffs === "all",
 			mergeStats: "totOnly",
 		});
-		console.log("hi", players);
 
 		if (inputs.season === "all") {
 			players = players

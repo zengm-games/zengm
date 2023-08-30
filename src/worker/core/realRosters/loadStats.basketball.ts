@@ -1,7 +1,7 @@
 import type { SeasonLeaders } from "../../../common/types";
 
 export type BasketballStats = {
-	seasonLeaders: Record<number, Omit<SeasonLeaders, "season">>;
+	seasonLeaders: Record<number, Omit<SeasonLeaders, "season" | "ratingsFuzz">>;
 	stats: {
 		slug: string;
 		season: number;

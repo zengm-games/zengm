@@ -113,7 +113,10 @@ const getSeasonLeaders = async (season: number) => {
 		splitRegularSeasonPlayoffsCombined(p);
 	}
 
-	const leadersCache: SeasonLeaders & { combined: Record<string, unknown> } = {
+	const leadersCache: SeasonLeaders & {
+		combined: Record<string, unknown>;
+		ratingsFuzz: Record<string, unknown>;
+	} = {
 		season,
 		age: max(players, p => p.age),
 		regularSeason: {},

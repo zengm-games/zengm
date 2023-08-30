@@ -1866,5 +1866,7 @@ export type SeasonLeaders = {
 	playoffs: Record<string, unknown>;
 	combined?: Record<string, unknown>;
 	ratings: Record<string, unknown>;
-	ratingsFuzz: Record<string, unknown>;
+
+	// Optional because we can't compute this for real players leagues without scanning the whole history (slow, tedious) and probably nobody cares
+	ratingsFuzz?: Record<string, unknown>;
 };

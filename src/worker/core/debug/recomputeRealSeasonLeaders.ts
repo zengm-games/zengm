@@ -4,9 +4,9 @@ import { idb } from "src/worker/db";
 import { g, local } from "src/worker/util";
 import { LATEST_SEASON, MIN_SEASON } from "../realRosters/getLeague";
 import type { SeasonLeaders } from "src/common/types";
-import gameSimPresets from "src/ui/views/Settings/gameSimPresets";
 import { league, season } from "..";
 import { PHASE } from "src/common";
+import loadData from "../realRosters/loadData.basketball";
 
 const recomputeRealSeasonLeaders = async () => {
 	// Clear any existing seasonLeaders, so it gets recomputed
@@ -17,6 +17,8 @@ const recomputeRealSeasonLeaders = async () => {
 	const currentSeason = g.get("season");
 	const currentPhase = g.get("phase");
 	const output: Record<number, SeasonLeaders> = {};
+
+	const realData = await loadData();
 
 	for (let season2 = MIN_SEASON; season2 <= LATEST_SEASON; season2++) {
 		if (season2 === currentSeason && currentPhase <= PHASE.PLAYOFFS) {
@@ -30,12 +32,21 @@ const recomputeRealSeasonLeaders = async () => {
 			throw new Error("Should never happen");
 		}
 
+		// Set season and phase, so that GamesPlayedCache uses numGames
+		await league.setGameAttributes({
+			season: season2,
+			phase: PHASE.DRAFT_LOTTERY,
+		});
+
 		// Apply game sim settings
-		const presets = (gameSimPresets as any)[season2];
-		if (presets) {
+		// All the ones we're interested in (not confs/divs/whatever) are in phase 0 currently
+		const scheduledEvent = realData.scheduledEventsGameAttributes.find(
+			row => row.season === season2 && row.phase === 0,
+		);
+		if (scheduledEvent) {
+			const presets = scheduledEvent.info as any;
 			await league.setGameAttributes(presets);
-		} else {
-			console.log(`No game sim presets found for ${season2}`);
+			console.log(`Apply settings`, presets);
 		}
 
 		// Compute seasonLeaders
@@ -43,11 +54,21 @@ const recomputeRealSeasonLeaders = async () => {
 		if (seasonLeaders) {
 			// Season is redundant, since it's the key of the main output
 			delete (seasonLeaders as any).season;
+
+			// ratingsFuzz is useless because we don't know what fuzz is in this league
+			delete (seasonLeaders as any).ratingsFuzz;
+
 			output[season2] = seasonLeaders;
 		} else {
 			console.log(`No seasonLeaders found for ${season2}`);
 		}
 	}
+
+	// Reset
+	await league.setGameAttributes({
+		season: currentSeason,
+		phase: currentPhase,
+	});
 
 	console.log(output);
 	console.log(JSON.stringify(output));

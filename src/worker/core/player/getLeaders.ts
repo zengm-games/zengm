@@ -72,12 +72,13 @@ const getLeaders = async (pRaw: Player) => {
 			leader.attrs.add("age");
 		}
 
-		for (const rating of ratings) {
-			if (
-				p.ratings[rating] ===
-				leadersCache[g.get("godMode") ? "ratings" : "ratingsFuzz"][rating]
-			) {
-				leader.ratings.add(rating);
+		const ratingsCache =
+			leadersCache[g.get("godMode") ? "ratings" : "ratingsFuzz"];
+		if (ratingsCache) {
+			for (const rating of ratings) {
+				if (p.ratings[rating] === ratingsCache[rating]) {
+					leader.ratings.add(rating);
+				}
 			}
 		}
 

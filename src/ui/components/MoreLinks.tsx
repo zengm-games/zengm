@@ -50,7 +50,7 @@ const MoreLinks = (
 		  }
 		| {
 				type: "leaders";
-				playoffs: "playoffs" | "regularSeason";
+				playoffs: "playoffs" | "regularSeason" | "combined";
 				season: number | "career" | "all";
 				statType: PlayerStatType;
 		  }

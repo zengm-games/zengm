@@ -19,7 +19,7 @@ const LeadersProgressive = ({
 		dropdownFields: {
 			stats: stat,
 			statTypesStrict: statType,
-			playoffs,
+			playoffsCombined: playoffs,
 		},
 		dropdownCustomOptions: {
 			stats: formatStatsDropdown(stats),

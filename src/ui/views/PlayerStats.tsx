@@ -123,7 +123,7 @@ const PlayerStats = ({
 		statsProperty =
 			playoffs === "playoffs"
 				? "careerStatsPlayoffs"
-				: playoffs === "all"
+				: playoffs === "combined"
 				? "careerStatsCombined"
 				: "careerStats";
 	} else {

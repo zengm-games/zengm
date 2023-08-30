@@ -696,7 +696,6 @@ const updateLeaders = async (
 		inputs.statType !== state.statType
 	) {
 		const { categories, stats } = getCategoriesAndStats();
-		const playoffs = inputs.playoffs === "playoffs";
 
 		const outputCategories = categories.map(category => ({
 			titleOverride: category.titleOverride,
@@ -715,7 +714,16 @@ const updateLeaders = async (
 		} else {
 			seasons = [inputs.season];
 		}
-		await gamesPlayedCache.loadSeasons(seasons, playoffs);
+
+		if (inputs.playoffs === "combined") {
+			await gamesPlayedCache.loadSeasons(seasons, false);
+			await gamesPlayedCache.loadSeasons(seasons, true);
+		} else {
+			await gamesPlayedCache.loadSeasons(
+				seasons,
+				inputs.playoffs === "playoffs",
+			);
+		}
 
 		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
 			const p = await idb.getCopy.playersPlus(pRaw, {
@@ -732,8 +740,9 @@ const updateLeaders = async (
 				ratings: ["skills", "pos"],
 				stats: ["abbrev", "tid", ...stats],
 				season: season === "career" ? undefined : season,
-				playoffs,
-				regularSeason: !playoffs,
+				playoffs: inputs.playoffs === "playoffs",
+				regularSeason: inputs.playoffs === "regularSeason",
+				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly",
 				statType: inputs.statType,
 			});
@@ -751,8 +760,10 @@ const updateLeaders = async (
 
 			let playerStats;
 			if (season === "career") {
-				if (playoffs) {
+				if (inputs.playoffs === "playoffs") {
 					playerStats = p.careerStatsPlayoffs;
+				} else if (inputs.playoffs === "combined") {
+					playerStats = p.careerStatsCombined;
 				} else {
 					playerStats = p.careerStats;
 				}

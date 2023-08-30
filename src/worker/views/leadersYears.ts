@@ -42,7 +42,6 @@ const updateLeadersYears = async (
 		const allStats = allCategories.map(cat => cat.stat);
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
-		const playoffs = inputs.playoffs === "playoffs";
 
 		const cat = categories[0];
 
@@ -68,7 +67,15 @@ const updateLeadersYears = async (
 		const leadersBySeason = groupByUnique(allLeaders, "season");
 
 		const gamesPlayedCache = new GamesPlayedCache();
-		await gamesPlayedCache.loadSeasons(seasons, playoffs);
+		if (inputs.playoffs === "combined") {
+			await gamesPlayedCache.loadSeasons(seasons, false);
+			await gamesPlayedCache.loadSeasons(seasons, true);
+		} else {
+			await gamesPlayedCache.loadSeasons(
+				seasons,
+				inputs.playoffs === "playoffs",
+			);
+		}
 
 		await iterateAllPlayers("all", async (pRaw, season) => {
 			if (typeof season !== "number") {
@@ -94,8 +101,9 @@ const updateLeadersYears = async (
 				ratings: ["skills", "pos"],
 				stats: ["abbrev", "tid", ...stats],
 				season,
-				playoffs,
-				regularSeason: !playoffs,
+				playoffs: inputs.playoffs === "playoffs",
+				regularSeason: inputs.playoffs === "regularSeason",
+				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly",
 				statType: inputs.statType,
 			});

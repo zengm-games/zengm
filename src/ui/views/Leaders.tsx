@@ -131,7 +131,7 @@ const Leaders = ({
 		dropdownFields: {
 			seasonsAndCareer: season,
 			statTypesStrict: statType,
-			playoffs,
+			playoffsCombined: playoffs,
 		},
 	});
 

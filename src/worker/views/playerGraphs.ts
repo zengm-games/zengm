@@ -91,7 +91,7 @@ export const getStats = (statTypePlus: string) => {
 const getPlayerStats = async (
 	statTypeInput: string | undefined,
 	season: number | "career",
-	playoffs: "playoffs" | "regularSeason",
+	playoffs: "playoffs" | "regularSeason" | "combined",
 ) => {
 	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
 	const statTypePlus =
@@ -149,7 +149,8 @@ const getPlayerStats = async (
 		tid: undefined,
 		statType,
 		playoffs: playoffs === "playoffs",
-		regularSeason: playoffs !== "playoffs",
+		regularSeason: playoffs === "regularSeason",
+		combined: playoffs === "combined",
 		mergeStats: "totOnly",
 		fuzz: true,
 	});
@@ -299,8 +300,8 @@ const updateClientSide = (
 			seasonY: number | "career";
 			statTypeX: string;
 			statTypeY: string;
-			playoffsX: "playoffs" | "regularSeason";
-			playoffsY: "playoffs" | "regularSeason";
+			playoffsX: "playoffs" | "regularSeason" | "combined";
+			playoffsY: "playoffs" | "regularSeason" | "combined";
 			playersX: any[];
 			playersY: any[];
 			statsX: string[];

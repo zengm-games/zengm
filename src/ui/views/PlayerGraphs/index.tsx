@@ -147,7 +147,7 @@ const PickStat = ({
 		{ key: "bio", value: "Bio" },
 		{ key: "ratings", value: "Ratings" },
 	];
-	const playoffs = useDropdownOptions("playoffs");
+	const playoffs = useDropdownOptions("playoffsCombined");
 
 	const xyCapital = label === "x" ? "X" : "Y";
 

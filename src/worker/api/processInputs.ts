@@ -660,10 +660,8 @@ const playerStats = (params: Params) => {
 };
 
 const playerGraphs = (params: Params) => {
-	const playoffsX: "playoffs" | "regularSeason" =
-		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
-	const playoffsY: "playoffs" | "regularSeason" =
-		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
+	const playoffsX = validateSeasonType(params.playoffsX);
+	const playoffsY = validateSeasonType(params.playoffsY);
 
 	const seasonX: number | "career" =
 		params.seasonX === "career" ? "career" : validateSeason(params.seasonX);

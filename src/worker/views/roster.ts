@@ -153,7 +153,8 @@ const updateRoster = async (
 				attrs,
 				ratings,
 				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs !== "playoffs",
+				regularSeason: inputs.playoffs === "regularSeason",
+				combined: inputs.playoffs === "combined",
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,
@@ -170,7 +171,7 @@ const updateRoster = async (
 			}
 
 			for (const p of players) {
-				// Can alway release player, even if below the minimum roster limit, cause why not .Except in the playoffs.
+				// Can alway release player, even if below the minimum roster limit, cause why not. Except in the playoffs.
 				if (
 					inputs.tid === g.get("userTid") &&
 					(g.get("phase") !== PHASE.PLAYOFFS ||
@@ -201,7 +202,8 @@ const updateRoster = async (
 				attrs,
 				ratings,
 				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs !== "playoffs",
+				regularSeason: inputs.playoffs === "regularSeason",
+				combined: inputs.playoffs === "combined",
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,

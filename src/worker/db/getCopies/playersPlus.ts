@@ -505,7 +505,7 @@ const getPlayerStats = (
 	);
 
 	// Can't merge if there's only 1 row!
-	if (mergeStats === "none" || rows.length <= 1) {
+	if ((mergeStats === "none" || rows.length <= 1) && !combined) {
 		return rows;
 	}
 

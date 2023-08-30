@@ -736,10 +736,7 @@ const roster = (params: Params) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	const season = validateSeason(params.season);
 
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
-
-	return { abbrev, playoffs, season, tid };
+	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
 };
 
 const schedule = (params: Params) => {

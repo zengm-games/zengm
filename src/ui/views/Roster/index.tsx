@@ -122,7 +122,7 @@ const Roster = ({
 		dropdownFields: {
 			teams: abbrev,
 			seasons: season,
-			playoffs,
+			playoffsCombined: playoffs,
 		},
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,

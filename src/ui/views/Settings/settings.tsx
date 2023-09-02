@@ -1097,7 +1097,7 @@ export const settings: Setting[] = (
 				</>
 			),
 		},
-		/*{
+		{
 			category: "Events",
 			key: "autoExpandProb",
 			name: "Auto Expansion Probability",
@@ -1117,6 +1117,8 @@ export const settings: Setting[] = (
 			name: "Auto Expansion Regions",
 			godModeRequired: "always",
 			type: "string",
+			descriptionLong:
+				'"North America first" means the league won\'t expand outside of North America unless another team is already outside of North America or all of the North American teams are already taken.',
 			values: [
 				{ key: "naFirst", value: "North America first" },
 				{ key: "naOnly", value: "North America only" },
@@ -1129,12 +1131,27 @@ export const settings: Setting[] = (
 			name: "Auto Expansion # Teams",
 			godModeRequired: "always",
 			type: "int",
+			description: "Number of teams to be added in each expansion draft.",
 			validator: value => {
 				if (value < 1) {
 					throw new Error("Value must be greater than 0");
 				}
 			},
-		},*/
+		},
+		{
+			category: "Events",
+			key: "autoExpandMaxNumTeams",
+			name: "Auto Expansion Max Total # Teams",
+			godModeRequired: "always",
+			type: "int",
+			description:
+				"Once your league reaches this size, there will be no more automatic expansion teams. Expansion will also stop if all the built-in teams have been used.",
+			validator: value => {
+				if (value < 1) {
+					throw new Error("Value must be greater than 0");
+				}
+			},
+		},
 		{
 			category: "Events",
 			key: "autoRelocateProb",

@@ -168,8 +168,8 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		return (
 			<p>
 				You cannot edit teams while a{" "}
-				<a href={helpers.leagueUrl(["relocate"])}>team relocation vote</a> is
-				pending.
+				<a href={helpers.leagueUrl(["auto_relocate"])}>team relocation vote</a>{" "}
+				is pending.
 			</p>
 		);
 	}

@@ -17,18 +17,14 @@ trade value in legends league - trading block offering nothing gets you players 
 
 random events
 - probability of expansion draft vote
-  - pick 2 random teams
   - add to smallest division, prioritize by closest by lat/long if values available
   - god mode option to rig the vote
-  - state variables (like g.expansionDraft)
-    - gameAttributesKeysGameState
-    - schema
   - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
   - auto play
-  - lock manage teams/confs
-  - handle no more teams left (including NA only)
   - test import league for schema errors
   - news feed for any result
+  - check schema works
+  - make sure auto relocate still works
 - later
   - have scheduled events use this voting system?
 

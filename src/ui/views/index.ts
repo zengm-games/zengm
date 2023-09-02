@@ -6,6 +6,7 @@ import AllStarDunk from "./AllStarDunk";
 import AllStarHistory from "./AllStarHistory";
 import AllStarTeams from "./AllStarTeams";
 import AllStarThree from "./AllStarThree";
+import AutoRelocate from "./AutoRelocate";
 import AwardRaces from "./AwardRaces";
 import AwardsRecords from "./AwardsRecords";
 import Colleges from "./Colleges";
@@ -83,7 +84,6 @@ import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
 import ProtectPlayers from "./ProtectPlayers";
 import Relatives from "./Relatives";
-import Relocate from "./Relocate";
 import ResetPassword from "./ResetPassword";
 import Roster from "./Roster";
 import RosterContinuity from "./RosterContinuity";
@@ -115,6 +115,7 @@ export default {
 	AllStarHistory,
 	AllStarTeams,
 	AllStarThree,
+	AutoRelocate,
 	AwardRaces,
 	AwardsRecords,
 	Colleges,
@@ -191,7 +192,6 @@ export default {
 	PowerRankings,
 	ProtectPlayers,
 	Relatives,
-	Relocate,
 	ResetPassword,
 	Roster,
 	RosterContinuity,

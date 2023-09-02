@@ -650,19 +650,38 @@ const generateJSONSchema = (sport /*: string*/) => {
 							autoDeleteOldBoxScores: {
 								type: "boolean",
 							},
-							/*autoExpandProb: {
+							autoExpand: {
+								type: "object",
+								properties: {
+									phase: {
+										const: "vote",
+									},
+									abbrevs: {
+										type: "array",
+										items: {
+											type: "string",
+										},
+									},
+								},
+								required: ["phase", "abbrevs"],
+							},
+							autoExpandProb: {
 								type: "number",
 								minimum: 0,
 								maximum: 1,
 							},
 							autoExpandNumTeams: {
 								type: "integer",
-								minimum: 0,
+								minimum: 1,
+							},
+							autoExpandMaxNumTeams: {
+								type: "integer",
+								minimum: 1,
 							},
 							autoExpandGeo: {
 								type: "string",
 								enum: ["naFirst", "naOnly", "any"],
-							},*/
+							},
 							autoRelocate: {
 								type: "object",
 								properties: {

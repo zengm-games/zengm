@@ -6,14 +6,14 @@ import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
 import classNames from "classnames";
 import { wait } from "../../common";
 
-const Relocate = ({
+const AutoRelocate = ({
 	autoRelocateRealign,
 	autoRelocateRebrand,
 	currentTeam,
 	godMode,
 	newTeam,
 	realignInfo,
-}: View<"relocate">) => {
+}: View<"autoRelocate">) => {
 	useTitleBar({ title: "Team Relocation Vote" });
 
 	const [rebrandTeam, setRebrandTeam] = useState(autoRelocateRebrand);
@@ -234,4 +234,4 @@ const Relocate = ({
 	);
 };
 
-export default Relocate;
+export default AutoRelocate;

@@ -129,8 +129,8 @@ const ManageTeams = ({
 		return (
 			<p>
 				You cannot edit conferences/divisions while a{" "}
-				<a href={helpers.leagueUrl(["relocate"])}>team relocation vote</a> is
-				pending.
+				<a href={helpers.leagueUrl(["auto_relocate"])}>team relocation vote</a>{" "}
+				is pending.
 			</p>
 		);
 	}

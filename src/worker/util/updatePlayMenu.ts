@@ -22,14 +22,7 @@ const updatePlayMenu = async () => {
 		? local.autoPlayUntil.season - g.get("season")
 		: 0;
 
-	const allOptions: {
-		[key: string]: {
-			id?: string;
-			label: string;
-			url?: string;
-			key?: string;
-		};
-	} = {
+	const allOptions = {
 		stop: {
 			label: "Stop",
 			key: "s",
@@ -165,13 +158,25 @@ const updatePlayMenu = async () => {
 			url: helpers.leagueUrl(["expansion_draft"]),
 			label: "Continue expansion draft setup",
 		},
-		relocate: {
-			url: helpers.leagueUrl(["relocate"]),
+		autoRelocate: {
+			url: helpers.leagueUrl(["auto_relocate"]),
 			label: "Vote on proposed team relocation",
 		},
-	};
+		autoExpand: {
+			url: helpers.leagueUrl(["auto_expand"]),
+			label: "Vote on proposed league expansion",
+		},
+	} satisfies Record<
+		string,
+		{
+			id?: string;
+			label: string;
+			url?: string;
+			key?: string;
+		}
+	>;
 
-	let keys: string[] = [];
+	let keys: (keyof typeof allOptions)[] = [];
 
 	if (
 		g.get("phase") === PHASE.DRAFT ||
@@ -199,7 +204,7 @@ const updatePlayMenu = async () => {
 		g.get("phase") === PHASE.REGULAR_SEASON ||
 		g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
 	) {
-		const untilMore: string[] = [];
+		const untilMore: typeof keys = [];
 
 		const schedule = await season.getSchedule();
 		const tradeDeadlineIndex = schedule.findIndex(
@@ -223,7 +228,7 @@ const updatePlayMenu = async () => {
 		}
 
 		// Regular season - pre trading deadline
-		keys = bySport({
+		keys = bySport<typeof keys>({
 			football: ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"],
 			default: [
 				"day",
@@ -325,7 +330,11 @@ const updatePlayMenu = async () => {
 	const negotiationInProgress = await lock.negotiationInProgress();
 
 	if (g.get("autoRelocate")) {
-		keys = ["relocate"];
+		keys = ["autoRelocate"];
+	}
+
+	if (g.get("autoExpand")) {
+		keys = ["autoExpand"];
 	}
 
 	if (g.get("expansionDraft").phase === "protection") {
@@ -363,6 +372,7 @@ const updatePlayMenu = async () => {
 
 	const someOptions: Option[] = keys.map(id => {
 		let code;
+		// @ts-expect-error
 		if (allOptions[id].key) {
 			// @ts-expect-error
 			code = `Key${allOptions[id].key.toUpperCase()}`;

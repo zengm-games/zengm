@@ -2525,6 +2525,10 @@ const releasePlayer = async ({
 	});
 };
 
+const expandVote = (params: { override: boolean; userVote: boolean }) => {
+	return team.expandVote(params);
+};
+
 const relocateVote = (params: {
 	override: boolean;
 	realign: boolean;
@@ -4339,6 +4343,7 @@ export default {
 		regenerateDraftClass,
 		regenerateSchedule,
 		releasePlayer,
+		expandVote,
 		relocateVote,
 		cloneLeague,
 		removeLeague,

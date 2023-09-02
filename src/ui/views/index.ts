@@ -6,6 +6,7 @@ import AllStarDunk from "./AllStarDunk";
 import AllStarHistory from "./AllStarHistory";
 import AllStarTeams from "./AllStarTeams";
 import AllStarThree from "./AllStarThree";
+import AutoExpand from "./AutoExpand";
 import AutoRelocate from "./AutoRelocate";
 import AwardRaces from "./AwardRaces";
 import AwardsRecords from "./AwardsRecords";
@@ -115,6 +116,7 @@ export default {
 	AllStarHistory,
 	AllStarTeams,
 	AllStarThree,
+	AutoExpand,
 	AutoRelocate,
 	AwardRaces,
 	AwardsRecords,

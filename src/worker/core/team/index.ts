@@ -4,6 +4,7 @@ import checkRosterSizes from "./checkRosterSizes";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 import disable from "./disable";
 import evaluatePointsFormula from "./evaluatePointsFormula";
+import expandVote from "./expandVote";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
 import generate from "./generate";
@@ -32,6 +33,7 @@ export default {
 	deleteUnreadMessages,
 	disable,
 	evaluatePointsFormula,
+	expandVote,
 	genSeasonRow,
 	genStatsRow,
 	generate,

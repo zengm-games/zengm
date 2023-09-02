@@ -6,6 +6,102 @@ import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
 import classNames from "classnames";
 import { wait } from "../../common";
 
+export const AutoRelocateExpandSubmit = ({
+	godMode,
+	override,
+	setOverride,
+	status,
+	vote,
+	voteTextNo,
+	voteTextYes,
+	resultTextYes,
+	resultTextNo,
+}: {
+	godMode: boolean;
+	override: boolean;
+	setOverride: (cb: (checked: boolean) => boolean) => void;
+	status:
+		| {
+				type: "init";
+		  }
+		| {
+				type: "voted";
+		  }
+		| {
+				type: "results";
+				for: number;
+				against: number;
+		  };
+	vote: (userVote: boolean) => void;
+	voteTextNo: string;
+	voteTextYes: string;
+	resultTextYes: string;
+	resultTextNo: string;
+}) => {
+	return (
+		<>
+			{status.type === "init" ? (
+				<div>
+					<p className="fs-5">
+						This must be approved by a majority of teams. How do you vote?
+					</p>
+					<div className="text-center d-inline-block">
+						<div className="d-flex gap-3">
+							<button
+								className="btn btn-lg btn-success"
+								onClick={() => {
+									vote(true);
+								}}
+							>
+								{voteTextYes}
+							</button>
+							<button
+								className="btn btn-lg btn-danger"
+								onClick={() => {
+									vote(false);
+								}}
+							>
+								{voteTextNo}
+							</button>
+						</div>
+						{godMode ? (
+							<div className="mt-3">
+								<label className="god-mode god-mode-text mb-0">
+									<input
+										className="form-check-input me-1"
+										type="checkbox"
+										onChange={() => {
+											setOverride(checked => !checked);
+										}}
+										checked={override}
+									/>
+									Force result
+								</label>
+							</div>
+						) : null}
+					</div>
+				</div>
+			) : status.type === "voted" ? (
+				<div className="d-flex align-items-center">
+					<div className="spinner-border" />
+					<div className="ms-2 fs-4">Gathering votes...</div>
+				</div>
+			) : (
+				<div>
+					{status.for > status.against ? (
+						<h2 className="text-success">{resultTextYes}</h2>
+					) : (
+						<h2 className="text-danger">{resultTextNo}</h2>
+					)}
+					<p>
+						Final vote: {status.for} for, {status.against} against.
+					</p>
+				</div>
+			)}
+		</>
+	);
+};
+
 const AutoRelocate = ({
 	autoRelocateRealign,
 	autoRelocateRebrand,
@@ -172,64 +268,17 @@ const AutoRelocate = ({
 				) : null}
 			</div>
 
-			{status.type === "init" ? (
-				<div>
-					<p className="fs-5">
-						This move must be approved by a majority of teams. How do you vote?
-					</p>
-					<div className="text-center d-inline-block">
-						<div className="d-flex gap-3">
-							<button
-								className="btn btn-lg btn-success"
-								onClick={() => {
-									vote(true);
-								}}
-							>
-								Move to {newTeam.region}
-							</button>
-							<button
-								className="btn btn-lg btn-danger"
-								onClick={() => {
-									vote(false);
-								}}
-							>
-								Stay in {currentTeam.region}
-							</button>
-						</div>
-						{godMode ? (
-							<div className="mt-3">
-								<label className="god-mode god-mode-text mb-0">
-									<input
-										className="form-check-input me-1"
-										type="checkbox"
-										onChange={() => {
-											setOverride(checked => !checked);
-										}}
-										checked={override}
-									/>
-									Force result
-								</label>
-							</div>
-						) : null}
-					</div>
-				</div>
-			) : status.type === "voted" ? (
-				<div className="d-flex align-items-center">
-					<div className="spinner-border" />
-					<div className="ms-2 fs-4">Gathering votes...</div>
-				</div>
-			) : (
-				<div>
-					{status.for > status.against ? (
-						<h2 className="text-success">Relocation approved!</h2>
-					) : (
-						<h2 className="text-danger">Relocation denied!</h2>
-					)}
-					<p>
-						Final vote: {status.for} for, {status.against} against.
-					</p>
-				</div>
-			)}
+			<AutoRelocateExpandSubmit
+				godMode={godMode}
+				override={override}
+				setOverride={setOverride}
+				status={status}
+				vote={vote}
+				voteTextYes={`Move to ${newTeam.region}`}
+				voteTextNo={`Stay in ${currentTeam.region}`}
+				resultTextYes="Relocation approved!"
+				resultTextNo="Relocation denied!"
+			/>
 		</>
 	);
 };

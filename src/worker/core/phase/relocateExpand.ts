@@ -288,7 +288,7 @@ export const doExpand = async () => {
 	const { activeTeams, allCandidateTeams } = await getTeams();
 
 	const numTeamsUntilLimit =
-		activeTeams.length - g.get("autoExpandMaxNumTeams");
+		g.get("autoExpandMaxNumTeams") - activeTeams.length;
 	if (numTeamsUntilLimit <= 0) {
 		return;
 	}

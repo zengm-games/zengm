@@ -3,27 +3,7 @@ import { idb } from "../../db";
 import { g, updatePlayMenu, random, toUI, logEvent, helpers } from "../../util";
 import league from "../league";
 
-const relocateVote = async ({
-	override,
-	realign,
-	rebrandTeam,
-	userVote,
-}: {
-	override: boolean;
-	realign: boolean;
-	rebrandTeam: boolean;
-	userVote: boolean;
-}) => {
-	const autoRelocate = g.get("autoRelocate");
-	if (!autoRelocate) {
-		throw new Error("Should never happen");
-	}
-
-	const t = await idb.cache.teams.get(autoRelocate.tid);
-	if (!t) {
-		throw new Error("Invalid tid");
-	}
-
+export const getVoteResult = (userVote: boolean, override: boolean) => {
 	const numActiveTeams = g.get("numActiveTeams");
 
 	const result = {
@@ -50,6 +30,32 @@ const relocateVote = async ({
 		while (result.for > result.against !== userVote) {
 			runVote();
 		}
+	}
+
+	return result;
+};
+
+const relocateVote = async ({
+	override,
+	realign,
+	rebrandTeam,
+	userVote,
+}: {
+	override: boolean;
+	realign: boolean;
+	rebrandTeam: boolean;
+	userVote: boolean;
+}) => {
+	const autoRelocate = g.get("autoRelocate");
+	if (!autoRelocate) {
+		throw new Error("Should never happen");
+	}
+
+	const result = getVoteResult(userVote, override);
+
+	const t = await idb.cache.teams.get(autoRelocate.tid);
+	if (!t) {
+		throw new Error("Invalid tid");
 	}
 
 	const newTeam = getTeamInfos([

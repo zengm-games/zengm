@@ -185,7 +185,15 @@ const doRelocate = async () => {
 
 	const currentTeam = random.choice(activeTeams, t => 1 / (t.pop ?? 1));
 
-	const newTeam = random.choice(candidateTeams, t => t.pop);
+	const newTeam = random.choice(
+		candidateTeams.filter(t => t.region !== currentTeam.region),
+		t => t.pop,
+	);
+
+	// Could happen if the region check results in no candidate teams working
+	if (!newTeam) {
+		return;
+	}
 
 	const getRealignedDivs = () => {
 		// We can only automatically realign divisions if we know where every region is

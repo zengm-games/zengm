@@ -93,9 +93,9 @@ export const AutoRelocateExpandSubmit = ({
 					) : (
 						<h2 className="text-danger">{resultTextNo}</h2>
 					)}
-					<p>
+					<div>
 						Final vote: {status.for} for, {status.against} against.
-					</p>
+					</div>
 				</div>
 			)}
 		</>

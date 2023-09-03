@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker } from "../util";
+import { helpers, toWorker } from "../util";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
 import { wait } from "../../common";
 import { AutoRelocateExpandSubmit } from "./AutoRelocate";
@@ -76,6 +76,15 @@ const AutoExpand = ({ godMode, newTeams }: View<"autoExpand">) => {
 				resultTextYes="Expansion approved!"
 				resultTextNo="Expansion denied!"
 			/>
+
+			{status.type === "results" && status.for > status.against ? (
+				<a
+					href={helpers.leagueUrl(["protect_players"])}
+					className="btn btn-primary mt-5"
+				>
+					Proceed to the expanasion draft
+				</a>
+			) : null}
 		</>
 	);
 };

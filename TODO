@@ -1,8 +1,7 @@
 random events
 - probability of expansion draft vote
   - make sure auto relocate still works
-  - don't redirect after vote is over - why is that happening?
-    - instead, show link to protect players page
+  - after success vote, show link to protect players page
   - set default value
 - blog
   - finds closest/smallest div

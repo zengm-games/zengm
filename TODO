@@ -20,16 +20,13 @@ trade value in legends league - trading block offering nothing gets you players 
 
 random events
 - probability of expansion draft vote
-  - add to smallest division, prioritize by closest by lat/long if values available
-  - god mode option to rig the vote
-  - in real players league, wait until no scheduled events, like upcomingScheduledEventBlocksInflation
-  - auto play
   - test import league for schema errors
-  - news feed for any result
   - check schema works
   - make sure auto relocate still works
   - test with reviving a disabled team
   - don't redirect after vote is over - why is that happening?
+    - instead, show link to protect players page
+  - when multiple divs have same min size, pick the one closest (if coordinates exist for all regions)
 - later
   - have scheduled events use this voting system?
 

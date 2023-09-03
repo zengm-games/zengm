@@ -101,6 +101,11 @@ const expandVote = async (
 			throw new Error(errors.join("; "));
 		}
 
+		// Need to clear autoExpand before newPhase or autoPlay might call expandVote again
+		await league.setGameAttributes({
+			autoExpand: undefined,
+		});
+
 		await phase.newPhase(PHASE.EXPANSION_DRAFT, conditions);
 	} else {
 		const numTeams = autoExpand.abbrevs.length;
@@ -117,11 +122,11 @@ const expandVote = async (
 			showNotification: false,
 			score: 20,
 		});
-	}
 
-	await league.setGameAttributes({
-		autoExpand: undefined,
-	});
+		await league.setGameAttributes({
+			autoExpand: undefined,
+		});
+	}
 
 	await updatePlayMenu();
 

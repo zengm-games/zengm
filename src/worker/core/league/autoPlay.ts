@@ -23,12 +23,8 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		if (g.get("expansionDraft").phase === "draft") {
 			await draft.runPicks({ type: "untilEnd" }, conditions);
 		}
-
-		currentPhase = g.get("phase");
 	} else if (currentPhase === PHASE.FANTASY_DRAFT) {
 		await draft.runPicks({ type: "untilEnd" }, conditions);
-
-		currentPhase = g.get("phase");
 	}
 
 	// If game over and user's team is disabled, need to pick a new team or there will be errors
@@ -53,6 +49,20 @@ const autoPlay = async (conditions: Conditions = {}) => {
 			userVote: Math.random() < 0.5,
 		});
 	}
+
+	const autoExpand = g.get("autoExpand");
+	if (autoExpand) {
+		await team.expandVote(
+			{
+				override: false,
+				userVote: Math.random() < 0.5,
+			},
+			conditions,
+		);
+	}
+
+	// In case anything above changed it
+	currentPhase = g.get("phase");
 
 	if (currentPhase === PHASE.PRESEASON) {
 		await phase.newPhase(PHASE.REGULAR_SEASON, conditions);

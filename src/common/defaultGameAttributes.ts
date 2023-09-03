@@ -285,7 +285,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	weightFactor: 1,
 	numWatchColors: 1,
 	autoExpand: undefined,
-	autoExpandProb: 1,
+	autoExpandProb: 0,
 	autoExpandNumTeams: 2,
 	autoExpandMaxNumTeams: 40,
 	autoExpandGeo: "naFirst",

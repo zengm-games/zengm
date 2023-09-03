@@ -1,3 +1,16 @@
+random events
+- probability of expansion draft vote
+  - test import league for schema errors
+  - make sure auto relocate still works
+  - test with reviving a disabled team
+  - don't redirect after vote is over - why is that happening?
+    - instead, show link to protect players page
+  - set default value
+- blog
+  - finds closest/smallest div
+- later
+  - have scheduled events use this voting system?
+
 two teams in same region should have populations in sync
 - did it used to work for NY/LA already? https://discord.com/channels/290013534023057409/290015591216054273/1147611862599487609
 
@@ -17,18 +30,6 @@ vertical ad showing on mobile https://old.reddit.com/r/BasketballGM/comments/15h
 - other sports need same solution as BBGM
 
 trade value in legends league - trading block offering nothing gets you players https://www.instagram.com/direct/t/102694951131118/
-
-random events
-- probability of expansion draft vote
-  - test import league for schema errors
-  - check schema works
-  - make sure auto relocate still works
-  - test with reviving a disabled team
-  - don't redirect after vote is over - why is that happening?
-    - instead, show link to protect players page
-  - when multiple divs have same min size, pick the one closest (if coordinates exist for all regions)
-- later
-  - have scheduled events use this voting system?
 
 add projected cap space to league finances page https://discord.com/channels/290013534023057409/331882115119448065/1137919802145505310
 

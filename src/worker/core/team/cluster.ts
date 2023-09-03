@@ -33,7 +33,36 @@ const calcDistance = (x: [number, number], y: [number, number]) => {
 	return 2 * c * 6371;
 }*/
 
-const calcDistance = (a: [number, number], b: [number, number]) => {
+// Rough estimates, see "conference coordinates.ods"
+export const DEFAULT_COORDS: Record<string, [number, number]> = {
+	// basketball
+	Atlantic: [42.5, -74.5],
+	Central: [43.3, -87.2],
+	Southeast: [32.4, -82],
+	Southwest: [31.9, -97.2],
+	Northwest: [44.9, -112.4],
+	Pacific: [35.5, -121.4],
+
+	// football
+	East: [38.3, -75.7],
+	North: [42.1, -85.7],
+	South: [31.5, -87.9],
+	West: [38.7, -119.7],
+
+	// hockey
+	Metropolitan: [39.5, -75.2],
+
+	// extra
+	Northeast: [43.7, -74.1],
+};
+if (isSport("hockey")) {
+	// Override basketball ones with same names
+	DEFAULT_COORDS.Atlantic = [41.4, -81.2];
+	DEFAULT_COORDS.Central = [42.5, -100.8];
+	DEFAULT_COORDS.Pacific = [40.68, -123.38];
+}
+
+export const calcDistance = (a: [number, number], b: [number, number]) => {
 	// Factor makes it so 60 degrees (on original scale) is now 0, so that's where the discontinuity is. Not perfect for all situations, but mostly works to put Asian/Australian teams in the western conference
 	const factor = 300;
 	const lat1 = a[0];
@@ -181,35 +210,6 @@ export const sortByDivs = (
 				clusters,
 			};
 		}
-	}
-
-	// Rough estimates, see "conference coordinates.ods"
-	const DEFAULT_COORDS: Record<string, [number, number]> = {
-		// basketball
-		Atlantic: [42.5, -74.5],
-		Central: [43.3, -87.2],
-		Southeast: [32.4, -82],
-		Southwest: [31.9, -97.2],
-		Northwest: [44.9, -112.4],
-		Pacific: [35.5, -121.4],
-
-		// football
-		East: [38.3, -75.7],
-		North: [42.1, -85.7],
-		South: [31.5, -87.9],
-		West: [38.7, -119.7],
-
-		// hockey
-		Metropolitan: [39.5, -75.2],
-
-		// extra
-		Northeast: [43.7, -74.1],
-	};
-	if (isSport("hockey")) {
-		// Override basketball ones with same names
-		DEFAULT_COORDS.Atlantic = [41.4, -81.2];
-		DEFAULT_COORDS.Central = [42.5, -100.8];
-		DEFAULT_COORDS.Pacific = [40.68, -123.38];
 	}
 
 	// Bail out if any div has a non-default name

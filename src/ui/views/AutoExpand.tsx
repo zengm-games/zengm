@@ -82,7 +82,7 @@ const AutoExpand = ({ godMode, newTeams }: View<"autoExpand">) => {
 					href={helpers.leagueUrl(["protect_players"])}
 					className="btn btn-primary mt-5"
 				>
-					Proceed to the expanasion draft
+					Proceed to the expansion draft
 				</a>
 			) : null}
 		</>

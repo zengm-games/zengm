@@ -1,8 +1,6 @@
 random events
 - probability of expansion draft vote
-  - test import league for schema errors
   - make sure auto relocate still works
-  - test with reviving a disabled team
   - don't redirect after vote is over - why is that happening?
     - instead, show link to protect players page
   - set default value

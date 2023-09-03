@@ -17,11 +17,14 @@ const upcomingScheduledEventBlocksRelocateExpand = async () => {
 	});
 };
 
-const getTeams = async () => {
+const getTeams = async (disabledTeamsCountAsUnused: boolean) => {
 	const currentTeams = await idb.cache.teams.getAll();
 	const activeTeams = currentTeams.filter(t => !t.disabled);
 
-	const candidateAbbrevs = getUnusedAbbrevs(currentTeams);
+	const candidateAbbrevs = getUnusedAbbrevs(
+		currentTeams,
+		disabledTeamsCountAsUnused,
+	);
 	const allCandidateTeams = getTeamInfos(
 		candidateAbbrevs.map(abbrev => {
 			return {
@@ -111,7 +114,7 @@ export const doRelocate = async () => {
 		return;
 	}
 
-	const { activeTeams, allCandidateTeams } = await getTeams();
+	const { activeTeams, allCandidateTeams } = await getTeams(false);
 
 	const autoRelocateGeo = g.get("autoRelocateGeo");
 
@@ -285,7 +288,7 @@ export const doExpand = async () => {
 		return;
 	}
 
-	const { activeTeams, allCandidateTeams } = await getTeams();
+	const { activeTeams, allCandidateTeams } = await getTeams(true);
 
 	const numTeamsUntilLimit =
 		g.get("autoExpandMaxNumTeams") - activeTeams.length;

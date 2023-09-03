@@ -296,9 +296,9 @@ export const doExpand = async () => {
 	const autoExpandGeo = g.get("autoExpandGeo");
 
 	// autoExpandNumTeams can never put us over numTeamsUntilLimit
-	let autoExpandNumTeams = random.randInt(
-		1,
-		Math.min(numTeamsUntilLimit, g.get("autoExpandNumTeams")),
+	let autoExpandNumTeams = Math.min(
+		numTeamsUntilLimit,
+		g.get("autoExpandNumTeams"),
 	);
 
 	let candidateTeams: typeof allCandidateTeams = [];

@@ -2525,8 +2525,11 @@ const releasePlayer = async ({
 	});
 };
 
-const expandVote = (params: { override: boolean; userVote: boolean }) => {
-	return team.expandVote(params);
+const expandVote = (
+	params: { override: boolean; userVote: boolean },
+	conditions: Conditions,
+) => {
+	return team.expandVote(params, conditions);
 };
 
 const relocateVote = (params: {

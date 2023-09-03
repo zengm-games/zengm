@@ -28,6 +28,8 @@ random events
   - news feed for any result
   - check schema works
   - make sure auto relocate still works
+  - test with reviving a disabled team
+  - don't redirect after vote is over - why is that happening?
 - later
   - have scheduled events use this voting system?
 

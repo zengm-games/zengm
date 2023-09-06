@@ -292,7 +292,7 @@ const TopStuff = ({
 							<div>Profit: {helpers.formatCurrency(profit, "M")}</div>
 						) : null}
 						{isCurrentSeason && showTradeFor ? (
-							<div>Strategy: ${t.strategy}</div>
+							<div>Strategy: {t.strategy}</div>
 						) : null}
 					</div>
 				</div>

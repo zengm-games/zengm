@@ -15,7 +15,7 @@ const Storage = () => {
 		let mounted = true;
 
 		const check = async () => {
-			if (navigator.storage && navigator.storage.persisted) {
+			if (navigator.storage?.persisted) {
 				const persisted = await navigator.storage.persisted();
 
 				if (!mounted) {
@@ -42,7 +42,7 @@ const Storage = () => {
 	const onClick = useCallback(async (event: MouseEvent) => {
 		event.preventDefault();
 
-		if (navigator.storage && navigator.storage.persist) {
+		if (navigator.storage?.persist) {
 			setStatus("loading...");
 
 			const persisted = await navigator.storage.persist();

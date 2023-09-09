@@ -3,7 +3,12 @@ import { confirmable, createConfirmation } from "react-confirm";
 import { helpers } from "../../util";
 import Modal from "../../components/Modal";
 
-const Confirm = confirmable(({ show, proceed, p }: any) => {
+const Confirm = confirmable<
+	{
+		p: any;
+	},
+	string | undefined
+>(({ show, proceed, p }) => {
 	const numbers = Object.keys(p.retirableJerseyNumbers);
 	const [number, setNumber] = useState(() => {
 		let maxSeasons = -Infinity;
@@ -30,7 +35,7 @@ const Confirm = confirmable(({ show, proceed, p }: any) => {
 		}, 0);
 	}, []);
 
-	const cancel = () => proceed();
+	const cancel = () => proceed(undefined);
 	const ok = () => proceed(number);
 
 	return (
@@ -76,9 +81,7 @@ const Confirm = confirmable(({ show, proceed, p }: any) => {
 
 const confirmFunction = createConfirmation(Confirm);
 
-// Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
-const playerRetireJerseyNumberDialog = (p: any): string | undefined => {
-	// @ts-expect-error
+const playerRetireJerseyNumberDialog = (p: any) => {
 	return confirmFunction({
 		p,
 	});

@@ -9,7 +9,7 @@ import UpsertTeamModal from "./UpsertTeamModal";
 import countBy from "lodash-es/countBy";
 import { StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
-import confirmDeleteWithChlidren from "./confirmDeleteWithChlidren";
+import confirmDeleteWithChildren from "./confirmDeleteWithChildren";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
 import { applyRealTeamInfos, MAX_SEASON } from ".";
@@ -559,7 +559,7 @@ const Division = ({
 									})`,
 								};
 							});
-						const { proceed, key } = await confirmDeleteWithChlidren({
+						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${div.name}" division is deleted, what should happen to its teams?`,
 							deleteButtonText: "Delete Division",
 							deleteChildrenText: `Delete all teams in the "${div.name}" division`,
@@ -663,7 +663,7 @@ const Conference = ({
 								key: conf2.cid,
 								text: `Move divisions to "${conf2.name}" conference`,
 							}));
-						const { proceed, key } = await confirmDeleteWithChlidren({
+						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${conf.name}" conference is deleted, what should happen to its divisions?`,
 							deleteButtonText: "Delete Conference",
 							deleteChildrenText: `Delete all divisions in the "${conf.name}" conference`,

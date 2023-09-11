@@ -2311,8 +2311,14 @@ class GameSim {
 
 		const t = this.team[this.d];
 
-		const saveSituation = this.inning === this.numInnings && saveOutsNeeded < 9;
-		const candidate = t.getBestReliefPitcher(saveSituation);
+		// Try to put in the closer if this is a save situation, or a tie game in the 9th+ inning, or we are winning in extra innings
+		const closerSituation =
+			(this.inning === this.numInnings &&
+				(saveOutsNeeded < 9 ||
+					this.team[this.o].t.stat.pts === this.team[this.d].t.stat.pts)) ||
+			(this.inning > this.numInnings &&
+				this.team[this.o].t.stat.pts >= this.team[this.d].t.stat.pts);
+		const candidate = t.getBestReliefPitcher(closerSituation);
 		if (!candidate) {
 			return;
 		}
@@ -2393,6 +2399,9 @@ class GameSim {
 
 		if (sub) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
+			if (candidate.p.id === 498) {
+				console.log("sub in closer", this.inning, this.outs);
+			}
 
 			this.playByPlay.logEvent({
 				type: "reliefPitcher",

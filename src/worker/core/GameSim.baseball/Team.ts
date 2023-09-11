@@ -261,7 +261,7 @@ class Team<DH extends boolean> {
 		}
 	}
 
-	getBestReliefPitcher(saveSituation: boolean):
+	getBestReliefPitcher(closerSituation: boolean):
 		| {
 				p: PlayerGameSim;
 				value: number;
@@ -280,7 +280,7 @@ class Team<DH extends boolean> {
 			}))
 			.filter(p => p.p.subIndex === undefined);
 
-		const choiceWeight = (p: typeof availablePitchers[number]) =>
+		const choiceWeight = (p: (typeof availablePitchers)[number]) =>
 			0.01 + p.value ** 2;
 
 		const healthyPitchers = availablePitchers.filter(p => !p.p.injured);
@@ -290,16 +290,18 @@ class Team<DH extends boolean> {
 		}
 
 		const closer =
-			healthyPitchers.find(p => p.index >= NUM_STARTING_PITCHERS) ??
+			healthyPitchers.find(p => !p.starter) ??
 			random.choice(healthyPitchers, choiceWeight) ??
 			random.choice(availablePitchers);
 
-		if (saveSituation) {
+		if (closerSituation) {
 			return closer;
 		}
 
+		const skipCloser = Math.random() < 0.9;
+
 		const reliever = random.choice(
-			healthyPitchers.filter(p => !p.starter),
+			healthyPitchers.filter(p => !p.starter && (!skipCloser || p !== closer)),
 			choiceWeight,
 		);
 

@@ -127,4 +127,4 @@ if (league.scheduledEvents) {
 	}
 }
 
-console.log(JSON.stringify(league, null, 2));
+console.log(JSON.stringify(league));

@@ -19,6 +19,7 @@ module.exports = legacy => {
 					loose: true,
 				},
 			], // Chrome 80, Safari 13.1
+			["@babel/plugin-transform-class-properties", { loose: true }], // Chrome 74, Safari 14.1
 		);
 	}
 

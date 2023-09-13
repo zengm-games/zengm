@@ -1,4 +1,5 @@
 import { GAME_NAME, WEBSITE_ROOT } from "../../common";
+import { ads } from "../util";
 import GameLinks from "./GameLinks";
 import Modal from "./Modal";
 
@@ -8,10 +9,7 @@ type Props = {
 };
 
 const NagModal = ({ close, show }: Props) => {
-	const adBlock =
-		!window.freestar.refreshAllSlots ||
-		!window.googletag ||
-		!window.googletag.pubads;
+	const adBlock = ads.adBlock();
 	return (
 		<Modal show={show} onHide={close}>
 			<Modal.Header closeButton>

@@ -499,7 +499,6 @@ if (window.enableLogging) {
 			default: "zengm-com",
 		},
 	)}";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
-  freestar.initCallback = function () { freestar.newAdSlots(freestar.config.enabled_slots); }
 }
 </script>`;
 

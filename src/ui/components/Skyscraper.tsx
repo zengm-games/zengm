@@ -1,60 +1,9 @@
 import { memo, useEffect } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 import { AD_DIVS } from "../../common";
-
-const widthCutoff = 1200 + 190;
-
-let displayed = false;
-export const updateSkyscraperDisplay = (initial: boolean) => {
-	const div = document.getElementById(AD_DIVS.rail);
-
-	if (div) {
-		const gold = !!div.dataset.gold;
-
-		if (document.documentElement.clientWidth >= widthCutoff && !gold) {
-			if (!displayed) {
-				const before = () => {
-					div.style.display = "block";
-				};
-				const after = () => {
-					displayed = true;
-				};
-
-				if (initial) {
-					// On initial load, we can batch ad request with others
-					before();
-					window.freestar.config.enabled_slots.push({
-						placementName: AD_DIVS.rail,
-						slotId: AD_DIVS.rail,
-					});
-					after();
-				} else {
-					window.freestar.queue.push(() => {
-						before();
-						window.freestar.newAdSlots([
-							{
-								placementName: AD_DIVS.rail,
-								slotId: AD_DIVS.rail,
-							},
-						]);
-						after();
-					});
-				}
-			}
-		} else {
-			if (displayed || gold) {
-				window.freestar.queue.push(() => {
-					div.style.display = "none";
-					window.freestar.deleteAdSlots(AD_DIVS.rail);
-					displayed = false;
-				});
-			}
-		}
-	}
-};
+import { ads } from "../util";
 
 // https://developer.mozilla.org/en-US/docs/Web/Events/resize
 let running = false;
-
 const resizeListener = () => {
 	if (running) {
 		return;
@@ -71,7 +20,7 @@ const Skyscraper = memo(() => {
 	useEffect(() => {
 		if (!window.mobile) {
 			const callback = () => {
-				updateSkyscraperDisplay(false);
+				ads.skyscraper.updateDislay(false);
 			};
 
 			callback();

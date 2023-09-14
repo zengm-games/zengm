@@ -54,6 +54,7 @@ custom awards
     - might need some other UI ones too
   - SeasonIcon color
 - should be able to add/edit/delete awards over time, and still have awards races page show the old awards
+  - only allow delete if an award has not been assigned yet. otherwise, only allow disabling
 - extra things that get stored in player awards, but not in awards object
   - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
   - see awardsOrder in groupAwards for list
@@ -126,12 +127,6 @@ player graphs
   - if x and y are pulling the same season and type, reuse rather than recompute in worker
   - Minimum games played - replace with eligible leaders?
     - see playerMeetsCategoryRequirements
-
-catchers never commit errors? https://discord.com/channels/290013534023057409/944392892905037885/1111059257614401587
-- sim bad throws on steals
-- ground balls and infield flies never go to C/P?
-
-SS/2B/Catcher/Pitcher never catch infield flies? https://discord.com/channels/290013534023057409/290015591216054273/1143744265554501652
 
 when creating a league with differnet historical teams, would be nice to use real player salaries
 - needs to handle teams from your leagues too

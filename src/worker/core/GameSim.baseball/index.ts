@@ -183,15 +183,30 @@ class GameSim {
 			if (distance === "infield") {
 				switch (direction) {
 					case "farLeft":
-						return POS_NUMBERS["3B"];
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["3B"]],
+							[0.05, 0.05, 0.9],
+						);
 					case "farRight":
-						return POS_NUMBERS["1B"];
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["1B"]],
+							[0.05, 0.05, 0.9],
+						);
 					case "middle":
-						return POS_NUMBERS.CF;
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["2B"], POS_NUMBERS.SS],
+							[0.05, 0.05, 0.45, 0.45],
+						);
 					case "left":
-						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS.LF, POS_NUMBERS.SS],
+							[0.05, 0.05, 0.5, 0.4],
+						);
 					case "right":
-						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS.RF, POS_NUMBERS["2B"]],
+							[0.05, 0.05, 0.5, 0.4],
+						);
 				}
 			} else {
 				switch (direction) {
@@ -241,7 +256,10 @@ class GameSim {
 					case "farRight":
 						return POS_NUMBERS["1B"];
 					case "middle":
-						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS.SS]);
+						return random.choice(
+							[POS_NUMBERS.P, POS_NUMBERS["2B"], POS_NUMBERS.SS],
+							[0.02, 0.49, 0.49],
+						);
 					case "left":
 						return random.choice([POS_NUMBERS["3B"], POS_NUMBERS.SS]);
 					case "right":
@@ -278,15 +296,35 @@ class GameSim {
 			} else {
 				switch (direction) {
 					case "farLeft":
-						return POS_NUMBERS["3B"];
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["3B"]],
+							[0.05, 0.05, 0.9],
+						);
 					case "farRight":
-						return POS_NUMBERS["1B"];
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["1B"]],
+							[0.05, 0.05, 0.9],
+						);
 					case "middle":
-						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS.SS]);
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["2B"], POS_NUMBERS.SS],
+							[0.05, 0.05, 0.45, 0.45],
+						);
 					case "left":
-						return random.choice([POS_NUMBERS["3B"], POS_NUMBERS.SS]);
+						return random.choice(
+							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["3B"], POS_NUMBERS.SS],
+							[0.05, 0.05, 0.2, 0.7],
+						);
 					case "right":
-						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS["1B"]]);
+						return random.choice(
+							[
+								POS_NUMBERS.C,
+								POS_NUMBERS.P,
+								POS_NUMBERS["1B"],
+								POS_NUMBERS["2B"],
+							],
+							[0.05, 0.05, 0.2, 0.7],
+						);
 				}
 			}
 		}
@@ -2399,9 +2437,6 @@ class GameSim {
 
 		if (sub) {
 			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
-			if (candidate.p.id === 498) {
-				console.log("sub in closer", this.inning, this.outs);
-			}
 
 			this.playByPlay.logEvent({
 				type: "reliefPitcher",

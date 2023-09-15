@@ -1,5 +1,17 @@
+how should scouting budget work in no ratings mode?
+- disables it, but the number/expense is still there, and changes over time. i think it's from the old days where you'd want some standard value there. but now it's kind of weird because the value is not always the same, especially for AI teams
+
+search filter on settings
+
 when adding team, check if there is already a team in that city, and if so copy their population https://discord.com/channels/290013534023057409/290015591216054273/1152067960895193099
 - use sameRegionOverrides
+- situations
+  - expansion team from UI (need pop before showing)
+  - expansion team from scheduled event
+  - expansion team from vote
+  - relocation vote
+  - relocation from UI
+  - manual edit from UI
 
 in baseball, injured player still takes base https://discord.com/channels/290013534023057409/290015591216054273/1146156888262721598
 

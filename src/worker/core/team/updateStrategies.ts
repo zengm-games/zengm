@@ -13,7 +13,7 @@ const updateStrategies = async () => {
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		if (t.tid === g.get("userTid") || t.disabled) {
+		if (t.disabled) {
 			continue;
 		}
 

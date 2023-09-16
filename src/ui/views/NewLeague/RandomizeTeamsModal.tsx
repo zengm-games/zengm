@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
+import { SelectSeasonRange } from "./SelectSeasonRange";
+import { MAX_SEASON, MIN_SEASON } from ".";
 
 const RandomizeTeamsModal = ({
 	onCancel,
@@ -12,12 +14,16 @@ const RandomizeTeamsModal = ({
 		real: boolean;
 		weightByPopulation: boolean;
 		northAmericaOnly: boolean;
+		seasonRange: [number, number];
 	}) => void;
 	show: boolean;
 }) => {
 	const [real, setReal] = useState(false);
 	const [weightByPopulation, setWeightByPopulation] = useState(true);
 	const [northAmericaOnly, setNorthAmericaOnly] = useState(false);
+	const [seasonStart, setSeasonStart] = useState(MIN_SEASON);
+	const [seasonEnd, setSeasonEnd] = useState(MAX_SEASON);
+	const seasonRange: [number, number] = [seasonStart, seasonEnd];
 
 	const actualNorthAmericaOnly = northAmericaOnly || real;
 
@@ -26,6 +32,7 @@ const RandomizeTeamsModal = ({
 			real,
 			weightByPopulation,
 			northAmericaOnly: actualNorthAmericaOnly,
+			seasonRange,
 		});
 	};
 
@@ -80,7 +87,7 @@ const RandomizeTeamsModal = ({
 							Weight by population
 						</label>
 					</div>
-					<div className="form-check form-switch">
+					<div className="form-check form-switch mb-3">
 						<input
 							className="form-check-input"
 							type="checkbox"
@@ -99,6 +106,18 @@ const RandomizeTeamsModal = ({
 							North America only
 						</label>
 					</div>
+					{real ? (
+						<div className="d-flex align-items-center">
+							<label htmlFor="select-season-range" className="me-2">
+								Season range
+							</label>
+							<SelectSeasonRange
+								id="select-season-range"
+								seasonRange={seasonRange}
+								setters={[setSeasonStart, setSeasonEnd]}
+							/>
+						</div>
+					) : null}
 				</form>
 			</Modal.Body>
 			<Modal.Footer>

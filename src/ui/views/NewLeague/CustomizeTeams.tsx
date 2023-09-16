@@ -827,10 +827,12 @@ const CustomizeTeams = ({
 		real,
 		weightByPopulation,
 		northAmericaOnly,
+		seasonRange,
 	}: {
 		real: boolean;
 		weightByPopulation: boolean;
 		northAmericaOnly: boolean;
+		seasonRange: [number, number];
 	}) => {
 		setRandomizingState("randomizing");
 
@@ -856,6 +858,7 @@ const CustomizeTeams = ({
 				real,
 				weightByPopulation,
 				northAmericaOnly,
+				seasonRange,
 			});
 
 			if (typeof response === "string") {

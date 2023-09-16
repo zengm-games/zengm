@@ -6,7 +6,6 @@ import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
 import type { Div } from "../../common/types";
 import { realRosters } from "../core";
-import { LATEST_SEASON, MIN_SEASON } from "../core/realRosters/getLeague";
 import geographicCoordinates from "../../common/geographicCoordinates";
 import { random } from "../util";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types";
@@ -19,12 +18,12 @@ type MyTeam = NewLeagueTeamWithoutRank & {
 	weight?: number;
 };
 
-const getAllRealTeamInfos = async () => {
+const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 	const teamInfos: (MyTeam & {
 		weight: number;
 	})[] = [];
 
-	const seasons = range(MIN_SEASON, LATEST_SEASON + 1);
+	const seasons = range(seasonRange[0], seasonRange[1] + 1);
 
 	for (const season of seasons) {
 		const { teams } = await realRosters.getLeagueInfo({
@@ -125,12 +124,14 @@ const getRandomTeams = async ({
 	real,
 	weightByPopulation,
 	northAmericaOnly,
+	seasonRange,
 }: {
 	divs: Div[];
 	numTeamsPerDiv: number[];
 	real: boolean;
 	weightByPopulation: boolean;
 	northAmericaOnly: boolean;
+	seasonRange: [number, number]; // Only does something if real is true
 }) => {
 	let numTeamsTotal = 0;
 	for (const num of numTeamsPerDiv) {
@@ -139,7 +140,7 @@ const getRandomTeams = async ({
 
 	let allTeamInfos: MyTeam[];
 	if (real) {
-		allTeamInfos = await getAllRealTeamInfos();
+		allTeamInfos = await getAllRealTeamInfos(seasonRange);
 	} else {
 		allTeamInfos = getTeamInfos(
 			Object.keys(teamInfos).map(abbrev => ({
@@ -168,7 +169,11 @@ const getRandomTeams = async ({
 
 	const teamsRemaining = new Set(allTeamInfos);
 	if (teamsRemaining.size < numTeamsTotal) {
-		return `There are only ${teamsRemaining.size} built-in teams, so your current set of ${numTeamsTotal} teams cannot be replaced by random built-in teams.`;
+		return `There are only ${teamsRemaining.size} built-in ${
+			real ? `franchises from ${seasonRange[0]}-${seasonRange[1]}` : "teams"
+		}, so a league of ${numTeamsTotal} teams cannot be created.${
+			real ? " Delete some teams or select a wider range of seasons." : ""
+		}`;
 	}
 	const selectedTeamInfos: typeof allTeamInfos = [];
 	for (let i = 0; i < numTeamsTotal; i++) {

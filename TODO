@@ -1,3 +1,8 @@
+set min/max years for random historical teams
+- kind of weird, like if you pick just the 90s there are only 28 teams available so it fails
+- cross era league page
+  - handle case where not enough teams are found
+
 how should scouting budget work in no ratings mode?
 - disables it, but the number/expense is still there, and changes over time. i think it's from the old days where you'd want some standard value there. but now it's kind of weird because the value is not always the same, especially for AI teams
 
@@ -34,9 +39,6 @@ vertical ad showing on mobile https://old.reddit.com/r/BasketballGM/comments/15h
 trade value in legends league - trading block offering nothing gets you players https://www.instagram.com/direct/t/102694951131118/
 
 add projected cap space to league finances page https://discord.com/channels/290013534023057409/331882115119448065/1137919802145505310
-
-more randomization options
-- teams from only a certain decade, or after a certain year
 
 contract extensions, available if player mood is high enough and contract is expiring
 
@@ -415,12 +417,6 @@ stop on injury spoils live sim https://discord.com/channels/290013534023057409/2
 1 and 1 free throws option https://old.reddit.com/r/BasketballGM/comments/t3v3bj/monthly_suggestions_thread/i01a2dk/
 
 finances graphs direction https://old.reddit.com/r/BasketballGM/comments/t3v3bj/monthly_suggestions_thread/hzvlxlq/
-
-some way to run an exhibition game between two teams within a league
-- any two teams from any season
-- across leagues?
-- need way to customize roster before, at least to get rid of some players who may have been traded/inactive?
-- https://old.reddit.com/r/BasketballGM/comments/t3v3bj/monthly_suggestions_thread/hz8u5yb/
 
 pot skills - show % likelihood of achieving a skill tag, based on pot bootstrap
 

@@ -855,6 +855,7 @@ const CustomizeTeams = ({
 			const response = await toWorker("main", "getRandomTeams", {
 				divInfo: {
 					type: "explicit",
+					confs: myConfs,
 					divs: myDivs,
 					numTeamsPerDiv,
 				},
@@ -872,8 +873,8 @@ const CustomizeTeams = ({
 				});
 			} else {
 				const newTeams = real
-					? applyRealTeamInfos(response, realTeamInfo, "inTeamObject")
-					: response;
+					? applyRealTeamInfos(response.teams, realTeamInfo, "inTeamObject")
+					: response.teams;
 
 				dispatch({
 					type: "setState",

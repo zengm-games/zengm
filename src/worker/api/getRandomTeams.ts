@@ -4,7 +4,7 @@ import range from "lodash-es/range";
 import { PHASE } from "../../common";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
-import type { Div } from "../../common/types";
+import type { Conf, Div } from "../../common/types";
 import { realRosters } from "../core";
 import geographicCoordinates from "../../common/geographicCoordinates";
 import { random } from "../util";
@@ -128,6 +128,7 @@ const getRandomTeams = async ({
 	divInfo:
 		| {
 				type: "explicit";
+				confs: Conf[];
 				divs: Div[];
 				numTeamsPerDiv: number[];
 		  }
@@ -139,9 +140,11 @@ const getRandomTeams = async ({
 	northAmericaOnly: boolean;
 	seasonRange: [number, number]; // Only does something if real is true
 }) => {
+	let confs;
 	let divs;
 	let numTeamsPerDiv;
 	if (divInfo.type === "explicit") {
+		confs = divInfo.confs;
 		divs = divInfo.divs;
 		numTeamsPerDiv = divInfo.numTeamsPerDiv;
 	} else {
@@ -155,6 +158,7 @@ const getRandomTeams = async ({
 			realDraftRatings: "draft",
 			realStats: "none",
 		});
+		confs = gameAttributes.confs;
 		divs = gameAttributes.divs;
 		numTeamsPerDiv = divs.map(
 			div => teams.filter(t => t.did === div.did).length,
@@ -225,7 +229,7 @@ const getRandomTeams = async ({
 		numTeamsPerDiv,
 	).clusters;
 
-	const teamInfosInput = [];
+	let teamsOutput = [];
 	for (let i = 0; i < divs.length; i++) {
 		const div = divs[i];
 
@@ -236,7 +240,7 @@ const getRandomTeams = async ({
 		});
 
 		for (const tid of tidsSorted) {
-			teamInfosInput.push({
+			teamsOutput.push({
 				...selectedTeamInfos[tid],
 				tid,
 				cid: div.cid,
@@ -246,10 +250,14 @@ const getRandomTeams = async ({
 	}
 
 	if (real) {
-		return augmentRealTeams(teamInfosInput);
+		teamsOutput = await augmentRealTeams(teamsOutput);
 	}
 
-	return teamInfosInput;
+	return {
+		confs,
+		divs,
+		teams: teamsOutput,
+	};
 };
 
 export default getRandomTeams;

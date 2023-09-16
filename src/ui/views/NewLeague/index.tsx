@@ -1033,15 +1033,15 @@ const NewLeague = (props: View<"newLeague">) => {
 			throw new Error(`Error randomizing teams: ${response}`);
 		} else {
 			const newTeams = applyRealTeamInfos(
-				makeTIDsSequential(response),
+				makeTIDsSequential(response.teams),
 				props.realTeamInfo,
 				"inTeamObject",
 			);
 
 			dispatch({
 				type: "setTeamsCrossEra",
-				confs: DEFAULT_CONFS,
-				divs: DEFAULT_DIVS,
+				confs: response.confs,
+				divs: response.divs,
 				teams: helpers.addPopRank(newTeams),
 				defaultSettings: props.defaultSettings,
 			});
@@ -1613,6 +1613,14 @@ const NewLeague = (props: View<"newLeague">) => {
 														Cross-era leagues are filled with real historical
 														teams from different seasons. Each league you create
 														has a new set of teams.
+													</p>
+													<h3>
+														Pick a range of historical seasons to draw from
+													</h3>
+													<p>
+														League structure (number of
+														teams/divisions/conferences) is based on the upper
+														end of the selected season range.
 													</p>
 													<h3>Real/random draft classes</h3>
 													<p className="mb-0">

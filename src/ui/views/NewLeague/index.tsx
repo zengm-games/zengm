@@ -1,13 +1,6 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
-import {
-	useState,
-	useReducer,
-	useRef,
-	useCallback,
-	useEffect,
-	useMemo,
-} from "react";
+import { useState, useReducer, useRef, useCallback, useEffect } from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -1018,12 +1011,12 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(MIN_SEASON);
 	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(MAX_SEASON);
-	const seasonRange: [number, number] = useMemo(
-		() => [seasonCrossEraStart, seasonCrossEraEnd],
-		[seasonCrossEraStart, seasonCrossEraEnd],
-	);
+	const seasonRange: [number, number] = [
+		seasonCrossEraStart,
+		seasonCrossEraEnd,
+	];
 
-	const generateCrossEraTeams = useCallback(async () => {
+	const generateCrossEraTeams = async () => {
 		dispatch({ type: "loadingLeagueFile" });
 
 		const response = await toWorker("main", "getRandomTeams", {
@@ -1052,13 +1045,15 @@ const NewLeague = (props: View<"newLeague">) => {
 				defaultSettings: props.defaultSettings,
 			});
 		}
-	}, [props.defaultSettings, props.realTeamInfo, seasonRange]);
+	};
 
+	// This handles initial load
 	useEffect(() => {
 		if (state.customize === "crossEra") {
 			generateCrossEraTeams();
 		}
-	}, [generateCrossEraTeams, state.customize]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	let pageTitle = title;
 	if (currentScreen === "teams") {
@@ -1651,6 +1646,9 @@ const NewLeague = (props: View<"newLeague">) => {
 																type: "clearLeagueFile",
 																defaultSettings: props.defaultSettings,
 															});
+														}
+														if (newCustomize === "crossEra") {
+															generateCrossEraTeams();
 														}
 													}}
 													value={state.customize}

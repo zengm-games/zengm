@@ -119,21 +119,48 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 };
 
 const getRandomTeams = async ({
-	divs,
-	numTeamsPerDiv,
+	divInfo,
 	real,
 	weightByPopulation,
 	northAmericaOnly,
 	seasonRange,
 }: {
-	divs: Div[];
-	numTeamsPerDiv: number[];
+	divInfo:
+		| {
+				type: "explicit";
+				divs: Div[];
+				numTeamsPerDiv: number[];
+		  }
+		| {
+				type: "autoSeasonRange";
+		  };
 	real: boolean;
 	weightByPopulation: boolean;
 	northAmericaOnly: boolean;
 	seasonRange: [number, number]; // Only does something if real is true
 }) => {
-	console.log("getRandomTeams", seasonRange);
+	let divs;
+	let numTeamsPerDiv;
+	if (divInfo.type === "explicit") {
+		divs = divInfo.divs;
+		numTeamsPerDiv = divInfo.numTeamsPerDiv;
+	} else {
+		// Automatically get info for a real players league started at the end of seasonRange
+		const { gameAttributes, teams } = await realRosters.getLeagueInfo({
+			type: "real",
+			season: seasonRange[1],
+			phase: PHASE.PLAYOFFS,
+			randomDebuts: false,
+			randomDebutsKeepCurrent: false,
+			realDraftRatings: "draft",
+			realStats: "none",
+		});
+		divs = gameAttributes.divs;
+		numTeamsPerDiv = divs.map(
+			div => teams.filter(t => t.did === div.did).length,
+		);
+	}
+
 	let numTeamsTotal = 0;
 	for (const num of numTeamsPerDiv) {
 		numTeamsTotal += num;

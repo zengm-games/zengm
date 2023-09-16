@@ -1020,8 +1020,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		dispatch({ type: "loadingLeagueFile" });
 
 		const response = await toWorker("main", "getRandomTeams", {
-			divs: DEFAULT_DIVS,
-			numTeamsPerDiv: Array(DEFAULT_DIVS.length).fill(5),
+			divInfo: {
+				type: "autoSeasonRange",
+			},
 			real: true,
 			weightByPopulation: false,
 			northAmericaOnly: false,

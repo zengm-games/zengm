@@ -5,6 +5,7 @@ set min/max years for random historical teams
     - uncaught error currently
   - handle custom number of teams/confs/divs rather than resetting
     - or automatically use teams/confs/divs from last year in range
+    - need to return divs/confs from getRandomTeams too, then
   - hide selects behind a button with a label on it, so it's clear what they are
 
 how should scouting budget work in no ratings mode?

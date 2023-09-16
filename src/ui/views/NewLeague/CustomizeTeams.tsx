@@ -853,8 +853,11 @@ const CustomizeTeams = ({
 			);
 
 			const response = await toWorker("main", "getRandomTeams", {
-				divs: myDivs,
-				numTeamsPerDiv,
+				divInfo: {
+					type: "explicit",
+					divs: myDivs,
+					numTeamsPerDiv,
+				},
 				real,
 				weightByPopulation,
 				northAmericaOnly,

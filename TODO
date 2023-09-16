@@ -1,8 +1,3 @@
-set min/max years for random historical teams
-- kind of weird, like if you pick just the 90s there are only 28 teams available so it fails
-- cross era league page
-  - hide selects behind a button with a label on it, so it's clear what they are
-
 how should scouting budget work in no ratings mode?
 - disables it, but the number/expense is still there, and changes over time. i think it's from the old days where you'd want some standard value there. but now it's kind of weird because the value is not always the same, especially for AI teams
 

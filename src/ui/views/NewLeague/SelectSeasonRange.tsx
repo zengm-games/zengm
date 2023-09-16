@@ -1,12 +1,15 @@
 import range from "lodash-es/range";
 import { MAX_SEASON, MIN_SEASON } from ".";
+import classNames from "classnames";
 
 export const SelectSeasonRange = ({
+	className,
 	id,
 	disabled,
 	seasonRange,
 	setters,
 }: {
+	className?: string;
 	id?: string;
 	disabled?: boolean;
 	seasonRange: [number, number];
@@ -15,7 +18,10 @@ export const SelectSeasonRange = ({
 	const allSeasons = range(MIN_SEASON, MAX_SEASON + 1);
 
 	return (
-		<div className="input-group" style={{ width: 180 }}>
+		<div
+			className={classNames("input-group", className)}
+			style={{ width: 180 }}
+		>
 			{([0, 1] as const).map(i => {
 				return (
 					<select

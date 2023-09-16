@@ -1009,6 +1009,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		[props.defaultSettings, props.realTeamInfo],
 	);
 
+	const [showSeasonRange, setShowSeasonRange] = useState(false);
 	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(MIN_SEASON);
 	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(MAX_SEASON);
 	const seasonRange: [number, number] = [
@@ -1437,8 +1438,16 @@ const NewLeague = (props: View<"newLeague">) => {
 								)}
 								{state.customize === "crossEra" ? (
 									<div className="d-flex mt-1">
+										{showSeasonRange ? (
+											<SelectSeasonRange
+												className="me-auto"
+												disabled={disableWhileLoadingLeagueFile}
+												seasonRange={seasonRange}
+												setters={[setSeasonCrossEraStart, setSeasonCrossEraEnd]}
+											/>
+										) : null}
 										<ActionButton
-											variant="light-bordered"
+											variant="secondary"
 											type="button"
 											disabled={disableWhileLoadingLeagueFile}
 											processing={showLoadingIndicator}
@@ -1447,13 +1456,17 @@ const NewLeague = (props: View<"newLeague">) => {
 										>
 											Regenerate Historical Teams
 										</ActionButton>
-										<div className="ms-auto">
-											<SelectSeasonRange
+										{showSeasonRange ? null : (
+											<button
+												className="btn btn-secondary ms-auto"
 												disabled={disableWhileLoadingLeagueFile}
-												seasonRange={seasonRange}
-												setters={[setSeasonCrossEraStart, setSeasonCrossEraEnd]}
-											/>
-										</div>
+												onClick={() => {
+													setShowSeasonRange(true);
+												}}
+											>
+												Set season range
+											</button>
+										)}
 									</div>
 								) : null}
 							</div>

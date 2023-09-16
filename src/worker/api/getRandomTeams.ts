@@ -133,6 +133,7 @@ const getRandomTeams = async ({
 	northAmericaOnly: boolean;
 	seasonRange: [number, number]; // Only does something if real is true
 }) => {
+	console.log("getRandomTeams", seasonRange);
 	let numTeamsTotal = 0;
 	for (const num of numTeamsPerDiv) {
 		numTeamsTotal += num;

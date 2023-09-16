@@ -1,6 +1,13 @@
 import { m, AnimatePresence } from "framer-motion";
 import orderBy from "lodash-es/orderBy";
-import { useState, useReducer, useRef, useCallback, useEffect } from "react";
+import {
+	useState,
+	useReducer,
+	useRef,
+	useCallback,
+	useEffect,
+	useMemo,
+} from "react";
 import {
 	DIFFICULTY,
 	applyRealTeamInfo,
@@ -51,6 +58,7 @@ import CustomizeSettings from "./CustomizeSettings";
 import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams";
 import type { Settings } from "../../../worker/views/settings";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload";
+import { SelectSeasonRange } from "./SelectSeasonRange";
 
 const animationVariants = {
 	visible: {
@@ -1008,6 +1016,13 @@ const NewLeague = (props: View<"newLeague">) => {
 		[props.defaultSettings, props.realTeamInfo],
 	);
 
+	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(MIN_SEASON);
+	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(MAX_SEASON);
+	const seasonRange: [number, number] = useMemo(
+		() => [seasonCrossEraStart, seasonCrossEraEnd],
+		[seasonCrossEraStart, seasonCrossEraEnd],
+	);
+
 	const generateCrossEraTeams = useCallback(async () => {
 		dispatch({ type: "loadingLeagueFile" });
 
@@ -1017,6 +1032,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			real: true,
 			weightByPopulation: false,
 			northAmericaOnly: false,
+			seasonRange,
 		});
 
 		if (typeof response === "string") {
@@ -1036,7 +1052,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				defaultSettings: props.defaultSettings,
 			});
 		}
-	}, [props.defaultSettings, props.realTeamInfo]);
+	}, [props.defaultSettings, props.realTeamInfo, seasonRange]);
 
 	useEffect(() => {
 		if (state.customize === "crossEra") {
@@ -1424,17 +1440,25 @@ const NewLeague = (props: View<"newLeague">) => {
 									<span className="text-body-secondary">Population: equal</span>
 								)}
 								{state.customize === "crossEra" ? (
-									<ActionButton
-										className="mt-1"
-										variant="light-bordered"
-										type="button"
-										disabled={disableWhileLoadingLeagueFile}
-										processing={showLoadingIndicator}
-										onClick={generateCrossEraTeams}
-										processingText="Selecting Teams"
-									>
-										Regenerate Historical Teams
-									</ActionButton>
+									<div className="d-flex mt-1">
+										<ActionButton
+											variant="light-bordered"
+											type="button"
+											disabled={disableWhileLoadingLeagueFile}
+											processing={showLoadingIndicator}
+											onClick={generateCrossEraTeams}
+											processingText="Selecting Teams"
+										>
+											Regenerate Historical Teams
+										</ActionButton>
+										<div className="ms-auto">
+											<SelectSeasonRange
+												disabled={disableWhileLoadingLeagueFile}
+												seasonRange={seasonRange}
+												setters={[setSeasonCrossEraStart, setSeasonCrossEraEnd]}
+											/>
+										</div>
+									</div>
 								) : null}
 							</div>
 

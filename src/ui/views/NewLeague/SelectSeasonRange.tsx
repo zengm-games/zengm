@@ -3,10 +3,12 @@ import { MAX_SEASON, MIN_SEASON } from ".";
 
 export const SelectSeasonRange = ({
 	id,
+	disabled,
 	seasonRange,
 	setters,
 }: {
-	id: string;
+	id?: string;
+	disabled?: boolean;
 	seasonRange: [number, number];
 	setters: [(season: number) => void, (season: number) => void];
 }) => {
@@ -20,6 +22,7 @@ export const SelectSeasonRange = ({
 						key={i}
 						id={i === 0 ? id : undefined}
 						className="form-select"
+						disabled={disabled}
 						value={seasonRange[i]}
 						onChange={event => {
 							const newSeason = parseInt(event.target.value);

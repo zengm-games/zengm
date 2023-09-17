@@ -50,20 +50,15 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 
 	// Unique abbrevs - don't have to worry about rewriting due to collision, and how that impacts real team data. Unique regions - just feels right.
 	const abbrevsSeen = new Set();
-	const regionsSeen = new Set();
 
 	// For any team with many duplicates removed, the remaining one should have a pretty high weight;
 	const infosByAbbrev: Record<string, (typeof teamInfos)[number]> = {};
-	const infosByRegion: Record<string, (typeof teamInfos)[number]> = {};
 
 	return teamInfos.filter(t => {
-		if (abbrevsSeen.has(t.abbrev) || regionsSeen.has(t.region)) {
+		if (abbrevsSeen.has(t.abbrev)) {
 			const toAdd = [];
 			if (infosByAbbrev[t.abbrev]) {
 				toAdd.push(infosByAbbrev[t.abbrev]);
-			}
-			if (infosByRegion[t.region]) {
-				toAdd.push(infosByRegion[t.region]);
 			}
 			for (const t of toAdd) {
 				t.weight += 1 / toAdd.length;
@@ -72,9 +67,7 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 			return false;
 		}
 		abbrevsSeen.add(t.abbrev);
-		regionsSeen.add(t.region);
 		infosByAbbrev[t.abbrev] = t;
-		infosByRegion[t.region] = t;
 		return true;
 	});
 };

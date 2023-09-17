@@ -1,3 +1,5 @@
+@use "sass:math";
+
 // These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
 $dropdown-link-active-color: #fff; // Matches hover
 $dropdown-link-active-bg: #343a40; // Matches hover: $gray-100
@@ -57,7 +59,7 @@ $alert-border-scale: 60%;
 		$alert-color: mix(
 			$value,
 			color-contrast($alert-background),
-			abs($alert-color-scale)
+			math.abs($alert-color-scale)
 		);
 	}
 	.alert-#{$state} {
@@ -99,7 +101,7 @@ $list-group-item-bg-scale: 70%;
 		$list-group-variant-color: mix(
 			$value,
 			color-contrast($list-group-variant-bg),
-			abs($list-group-item-color-scale)
+			math.abs($list-group-item-color-scale)
 		);
 	}
 

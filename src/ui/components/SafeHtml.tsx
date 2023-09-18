@@ -1,6 +1,4 @@
-import createDOMPurify from "dompurify";
-const DOMPurify = createDOMPurify(window);
-DOMPurify.setConfig({ ADD_ATTR: ["target"] });
+import { sanitize } from "../util";
 
 const SafeHtml = ({
 	dirty,
@@ -9,7 +7,7 @@ const SafeHtml = ({
 	dirty: string;
 	htmlIsSafe?: boolean;
 }) => {
-	const clean = htmlIsSafe ? dirty : DOMPurify.sanitize(dirty);
+	const clean = htmlIsSafe ? dirty : sanitize(dirty);
 
 	return (
 		<span

@@ -59,6 +59,7 @@ export { default as requestPersistentStorage } from "./requestPersistentStorage"
 export { default as resetFileInput } from "./resetFileInput";
 export { default as routes } from "./routes";
 export { default as safeLocalStorage } from "./safeLocalStorage";
+export { default as sanitize } from "./sanitize";
 export { default as takeScreenshot } from "./takeScreenshot";
 export { default as toWorker } from "./toWorker";
 export { default as unregisterServiceWorkers } from "./unregisterServiceWorkers";

@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
 } from "../hooks/useDropdownOptions";
-import { helpers, realtimeUpdate } from "../util";
+import { helpers, realtimeUpdate, sanitize } from "../util";
 import NextPrevButtons from "./NextPrevButtons";
 import type { LocalStateUI } from "../../common/types";
 
@@ -51,7 +51,7 @@ const Select = ({
 			el.style.display = "inline";
 			el.className = "dropdown-select";
 			const el2 = document.createElement("option");
-			el2.innerHTML = getResponsiveValue2(currentValue);
+			el2.innerHTML = sanitize(getResponsiveValue2(currentValue));
 			el.appendChild(el2);
 
 			document.body.appendChild(el);

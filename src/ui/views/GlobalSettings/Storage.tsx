@@ -84,8 +84,9 @@ const Storage = () => {
 			{status === "failed" ? (
 				<p>
 					Sorry, this feature can be tricky to get working in some browsers. If
-					you bookmark this page, it might work if you press "Enable" again.
-					Otherwise, check back later after playing more and maybe it will work.
+					you bookmark this page or add {GAME_NAME} to your home screen, it
+					might work if you press "Enable" again. Otherwise, check back later
+					after playing more and maybe it will work.
 				</p>
 			) : null}
 			{status === "loading..." ||

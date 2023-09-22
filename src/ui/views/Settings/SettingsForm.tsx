@@ -311,8 +311,10 @@ const SettingsForm = ({
 		}
 	};
 
+	const [filterText, setFilterText] = useState("");
+
 	// Filter out the new league only ones when appropriate
-	const filteredSettings = settings.filter(setting => {
+	let filteredSettings = settings.filter(setting => {
 		return (
 			(!settingsShown || settingsShown.includes(setting.key)) &&
 			(!setting.showOnlyIf ||
@@ -324,6 +326,23 @@ const SettingsForm = ({
 				}))
 		);
 	});
+
+	// Ignore all-whitespace filterText
+	if (filterText !== "" && /\S/.test(filterText)) {
+		const words = filterText
+			.split(" ")
+			.map(word => word.trim().toLowerCase())
+			.filter(word => word !== "");
+
+		filteredSettings = filteredSettings.filter(setting => {
+			const category = setting.category.toLowerCase();
+			const name = setting.name.toLowerCase();
+
+			return words.every(word => {
+				return category.includes(word) || name.includes(word);
+			});
+		});
+	}
 
 	const [submitting, setSubmitting] = useState(false);
 
@@ -465,49 +484,64 @@ const SettingsForm = ({
 				/>
 
 				<StickyBottomButtons isInsideModal={isInsideModal}>
-					{!hideGodModeToggle ? (
-						<div className="btn-group">
-							<button
-								className={classNames(
-									"btn",
-									godMode ? "btn-secondary" : "btn-god-mode",
-								)}
-								onClick={handleGodModeToggle}
-								type="button"
-								disabled={submitting}
-							>
-								{godMode ? "Disable God Mode" : "Enable God Mode"}
-							</button>
-							{showGodModeSettingsButton ? (
-								<GodModeSettingsButton
-									className="d-none d-sm-block"
-									godMode={godMode}
+					<div className="d-flex justify-content-between w-100">
+						{!hideGodModeToggle ? (
+							<div className="btn-group">
+								<button
+									className={classNames(
+										"btn text-nowrap",
+										godMode ? "btn-secondary" : "btn-god-mode",
+									)}
+									onClick={handleGodModeToggle}
+									type="button"
 									disabled={submitting}
-									onClick={toggleGodModeSettings}
 								>
-									{showGodModeSettings ? "Hide" : "Show"} God Mode settings
-								</GodModeSettingsButton>
-							) : null}
-						</div>
-					) : null}
-					<div className="btn-group ms-auto">
-						{onCancel ? (
-							<button
-								className="btn btn-secondary"
-								type="button"
-								disabled={submitting}
-								onClick={onCancel}
-							>
-								Cancel
-							</button>
+									{godMode ? "Disable God Mode" : "Enable God Mode"}
+								</button>
+								{showGodModeSettingsButton ? (
+									<GodModeSettingsButton
+										className="d-none d-sm-block text-nowrap"
+										godMode={godMode}
+										disabled={submitting}
+										onClick={toggleGodModeSettings}
+									>
+										{showGodModeSettings ? "Hide" : "Show"} God Mode settings
+									</GodModeSettingsButton>
+								) : null}
+							</div>
 						) : null}
-						<ActionButton
-							type="submit"
-							disabled={submitting}
-							processing={!!newLeague && submitting}
-						>
-							{saveText}
-						</ActionButton>
+
+						<input
+							type="text"
+							className="form-control mx-3"
+							placeholder="Filter settings..."
+							style={{ maxWidth: 300 }}
+							value={filterText}
+							onChange={event => {
+								setFilterText(event.target.value);
+							}}
+						/>
+
+						<div className="btn-group">
+							{onCancel ? (
+								<button
+									className="btn btn-secondary text-nowrap"
+									type="button"
+									disabled={submitting}
+									onClick={onCancel}
+								>
+									Cancel
+								</button>
+							) : null}
+							<ActionButton
+								className="text-nowrap"
+								type="submit"
+								disabled={submitting}
+								processing={!!newLeague && submitting}
+							>
+								{saveText}
+							</ActionButton>
+						</div>
 					</div>
 				</StickyBottomButtons>
 			</form>

@@ -1,7 +1,12 @@
+very high difficulty glitches https://discord.com/channels/290013534023057409/290015591216054273/1153134421411639437
+- AI trade weirdness
+- game sim is slow
+
 how should scouting budget work in no ratings mode?
 - disables it, but the number/expense is still there, and changes over time. i think it's from the old days where you'd want some standard value there. but now it's kind of weird because the value is not always the same, especially for AI teams
 
 search filter on settings
+- should support description/descriptionLong
 
 when adding team, check if there is already a team in that city, and if so copy their population https://discord.com/channels/290013534023057409/290015591216054273/1152067960895193099
 - use sameRegionOverrides

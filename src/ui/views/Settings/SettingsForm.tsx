@@ -14,6 +14,7 @@ import type {
 import SettingsFormOptions from "./SettingsFormOptions";
 import categories from "./categories";
 import useSettingsFormState from "./useSettingsFormState";
+import getSearchVal from "../../components/DataTable/getSearchVal";
 
 export const encodeDecodeFunctions = {
 	bool: {
@@ -338,8 +339,21 @@ const SettingsForm = ({
 			const category = setting.category.toLowerCase();
 			const name = setting.name.toLowerCase();
 
+			// getSearchVal is just to look inside React components
+			const description = setting.description
+				? getSearchVal(setting.description)
+				: "";
+			const descriptionLong = setting.descriptionLong
+				? getSearchVal(setting.descriptionLong)
+				: "";
+
 			return words.every(word => {
-				return category.includes(word) || name.includes(word);
+				return (
+					category.includes(word) ||
+					name.includes(word) ||
+					description.includes(word) ||
+					descriptionLong.includes(word)
+				);
 			});
 		});
 	}

@@ -89,6 +89,10 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 					mvp: p.awards.filter(
 						(award: any) => award.type === "Most Valuable Player",
 					).length,
+					roy: p.awards.filter((award: any) => {
+						// "includes" to handle OROY and DROY in FBGM
+						return award.type.includes("Rookie of the Year");
+					}).length,
 					champ: p.awards.filter(
 						(award: any) => award.type === "Won Championship",
 					).length,

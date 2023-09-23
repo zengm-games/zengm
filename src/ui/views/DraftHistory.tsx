@@ -18,9 +18,9 @@ const Summary = ({
 	const col = getCols([`stat:${summaryStat}`])[0];
 	const statText = <span title={col.desc}>{col.title}</span>;
 
-	const formatStat = (p: typeof players[number]) =>
+	const formatStat = (p: (typeof players)[number]) =>
 		helpers.roundStat(p.careerStats[summaryStat], summaryStat);
-	const formatDraft = (p: typeof players[number]) =>
+	const formatDraft = (p: (typeof players)[number]) =>
 		p.draft.round === 0 ? "undrafted" : `${p.draft.round}-${p.draft.pick}`;
 
 	const firstPick = players.find(
@@ -43,6 +43,24 @@ const Summary = ({
 					{firstPick.firstName} {firstPick.lastName}
 				</a>{" "}
 				({formatStat(firstPick)} {statText})
+			</>,
+		);
+	}
+
+	const roys = players.filter(p => p.awardCounts.roy > 0);
+	if (roys.length > 0) {
+		summaryRows.push(
+			<>
+				<b>Rookie of the Year:</b>{" "}
+				{roys.map((p, i) => (
+					<Fragment key={p.pid}>
+						<a href={helpers.leagueUrl(["player", p.pid])}>
+							{p.firstNameShort} {p.lastName}
+						</a>{" "}
+						({formatStat(p)}, {formatDraft(p)})
+						{i < roys.length - 1 ? ", " : null}
+					</Fragment>
+				))}
 			</>,
 		);
 	}
@@ -268,9 +286,9 @@ const DraftHistory = ({
 				}),
 				p.pos,
 				{
-					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
-						teamInfoCache[p.draft.originalTid]?.abbrev
-					}`,
+					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${teamInfoCache[
+						p.draft.originalTid
+					]?.abbrev}`,
 					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
 					value: (
 						<DraftAbbrev

@@ -45,9 +45,6 @@ when auto playing, scrolling to the right on stats tables in player pages doesn'
 
 bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
 
-add ROY to draft history page https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jn8asg3/
-- also don't show 0 WS guys before season starts
-
 custom awards
 - fields
   - formula
@@ -67,6 +64,8 @@ custom awards
   - show in league history table?
     - might need some other UI ones too
   - SeasonIcon color
+  - some way to label as an "important" award like MVP equivalent, ROY equivalent
+    - football has two ROY equivalents, so that shouldn't be unique
 - should be able to add/edit/delete awards over time, and still have awards races page show the old awards
   - only allow delete if an award has not been assigned yet. otherwise, only allow disabling
 - extra things that get stored in player awards, but not in awards object

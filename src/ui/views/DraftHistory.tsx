@@ -65,7 +65,10 @@ const Summary = ({
 		);
 	}
 
-	if (mostStat.length > 0) {
+	if (
+		mostStat.length > 0 &&
+		mostStat.some(p => p.careerStats[summaryStat] !== 0)
+	) {
 		summaryRows.push(
 			<>
 				<b>

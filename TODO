@@ -1,3 +1,10 @@
+hockey positions revamp
+- make centers and wings more similar, centers are just better at faceoffs and maybe defense
+  - more offensive defensemen
+  - defensemen need more shots, wingers need less https://discord.com/channels/@me/662077709836484618/1004952271710326794
+    - defensemen need more assists https://discord.com/channels/290013534023057409/816359356424912976/1010633509985063055
+    - point distribution discussion https://mail.google.com/mail/u/0/#inbox/FMfcgzGqQJfsRgnzBpRXKxGQkFmqCnNr
+
 very high difficulty glitches https://discord.com/channels/290013534023057409/290015591216054273/1153134421411639437
 - AI trade weirdness
 - game sim is slow
@@ -21,6 +28,7 @@ ad ideas
 - remove bottom ads
 - no ads for first N minutes if 0 leagues
 - minimum refresh time
+  - or just get rid of refresh, since freestar refresh time is fast
 - refactor
   - class fields browser support https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields#browser_compatibility
 
@@ -209,8 +217,6 @@ option to rebase currency, after inflation goes crazy https://old.reddit.com/r/B
 
 make cap space visible above the fold on trade page on mobile https://mail.google.com/mail/u/0/#inbox/FMfcgzGrcXqKVMHkvwNxkzXsrsbWwBKh
 
-jordan not in HoF when starting in 2003 during draft https://discord.com/channels/290013534023057409/290015591216054273/1073981357614706821
-
 weird trade logic in historical leagues https://discord.com/channels/290013534023057409/290015591216054273/1073365659330809977
 
 FBGM awards - for the positions where AV is calculated by including awards results (OL and defense) use player ratings when calculating awards score for that position
@@ -221,8 +227,6 @@ option to disable easter eggs https://old.reddit.com/r/BasketballGM/comments/10d
 FBGM - teams don't realize they lose possession at end of overtime period if tied https://discord.com/channels/290013534023057409/290015591216054273/1063923726980231242
 
 exporting player stats as CSV does not handle players with multiple teams - ideally should show all and TOT, just like normal tables https://discord.com/channels/290013534023057409/290015591216054273/1064365877836914690
-
-live reloading with EventSource somehow
 
 rather than showing percentage for match, show actual $ amount https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/izf14l0/
 
@@ -250,13 +254,6 @@ add team filter to countries frivolity https://discord.com/channels/@me/66207770
 
 expansion team in BBGM league not signing draft pick
 - https://discord.com/channels/@me/673750689649917958/1045026873723334768
-
-hockey positions revamp
-- make centers and wings more similar, centers are just better at faceoffs and maybe defense
-  - more offensive defensemen
-  - defensemen need more shots, wingers need less https://discord.com/channels/@me/662077709836484618/1004952271710326794
-    - defensemen need more assists https://discord.com/channels/290013534023057409/816359356424912976/1010633509985063055
-    - point distribution discussion https://mail.google.com/mail/u/0/#inbox/FMfcgzGqQJfsRgnzBpRXKxGQkFmqCnNr
 
 option to disable all-star redirect, along with phase redirects
 

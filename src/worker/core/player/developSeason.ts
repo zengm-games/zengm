@@ -8,6 +8,7 @@ import { bySport, isSport, RATINGS } from "../../../common";
 import loadDataBasketball from "../realRosters/loadData.basketball";
 import type { Ratings } from "../realRosters/loadData.basketball";
 import limitRating from "./limitRating";
+import { idb } from "src/worker/db";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 // Cache for performance
@@ -18,6 +19,10 @@ const developSeason = async (
 	age: number,
 	srID: string | undefined,
 	coachingLevel: number = DEFAULT_LEVEL,
+	overrideData?: {
+		pid: number;
+		season: number;
+	},
 ) => {
 	bySport({
 		baseball: developSeasonBaseball(ratings as any, age, coachingLevel),
@@ -30,34 +35,52 @@ const developSeason = async (
 		return;
 	}
 
+	const overridenRatings =
+		overrideData !== undefined
+			? await idb.getCopy.playerHistoricRatings({
+					pid: overrideData.pid,
+					season: overrideData.season,
+			  })
+			: undefined;
+
 	const realPlayerDeterminism =
 		helpers.bound(g.get("realPlayerDeterminism"), 0, 1) ** 2;
-	if (realPlayerDeterminism === 0 || srID === undefined) {
+	if (
+		(realPlayerDeterminism === 0 || srID === undefined) &&
+		overridenRatings === undefined
+	) {
 		return;
 	}
 
-	const basketball = await loadDataBasketball();
-	const bio = basketball.bios[srID];
-	if (!bio) {
-		return;
-	}
-
-	if (!groupedRatings) {
-		groupedRatings = {};
-		for (const row of basketball.ratings) {
-			groupedRatings[`${row.slug}_${row.season}`] = row;
+	if (srID != undefined && overridenRatings === undefined) {
+		const basketball = await loadDataBasketball();
+		const bio = basketball.bios[srID];
+		if (!bio) {
+			return;
 		}
-	}
-
-	// Find real ratings with same age - can't just use season to look it up, because legends and random debut
-	const targetSeason = bio.bornYear + age;
-	const realRatings = groupedRatings[`${srID}_${targetSeason}`];
-
-	if (realRatings) {
+		if (!groupedRatings) {
+			groupedRatings = {};
+			for (const row of basketball.ratings) {
+				groupedRatings[`${row.slug}_${row.season}`] = row;
+			}
+		}
+		const targetSeason = bio.bornYear + age;
+		const realRatings = groupedRatings[`${srID}_${targetSeason}`];
 		for (const key of RATINGS) {
 			(ratings as any)[key] = limitRating(
 				realPlayerDeterminism * (realRatings as any)[key] +
 					(1 - realPlayerDeterminism) * (ratings as any)[key],
+			);
+		}
+	} else if (overridenRatings !== undefined) {
+		if (overrideData!!.pid == 2816) {
+			console.log(overridenRatings);
+			console.log("yo mama");
+		}
+		for (const key of RATINGS) {
+			(ratings as any)[key] = limitRating(
+				1.0 * overridenRatings.playerRatings[key] +
+					(1 - 1.0) * (ratings as any)[key],
 			);
 		}
 	}

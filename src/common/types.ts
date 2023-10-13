@@ -1242,6 +1242,14 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	pFatigue?: number;
 };
 
+export type PlayerHistoricRatings = {
+	phrid?: number;
+	pid: number;
+	srId?: string;
+	season: number;
+	playerRatings: any;
+};
+
 export type Player<PlayerRatings = any> = {
 	pid: number;
 } & PlayerWithoutKey<PlayerRatings>;
@@ -1558,11 +1566,21 @@ import type {
 	TeamStatAttr as TeamStatAttrBaseball,
 	TeamStatAttrByPos as TeamStatAttrByPosBaseball,
 } from "./types.baseball";
-import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
-import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
-import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
+import type {
+	TeamStatAttr as TeamStatAttrBasketball,
+	PlayerRatings as PlayerRatingsBasketball,
+} from "./types.basketball";
+import type {
+	PlayerRatings as PlayerRatingsFootball,
+	TeamStatAttr as TeamStatAttrFootball,
+} from "./types.football";
+import type {
+	TeamStatAttr as TeamStatAttrHockey,
+	PlayerRatings as PlayerRatingsHockey,
+} from "./types.hockey";
 import type { TIEBREAKERS } from "./constants";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions";
+
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

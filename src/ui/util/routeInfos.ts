@@ -50,6 +50,8 @@ const routeInfos = {
 	"/l/:lid/trade_proposals": "tradeProposals",
 	"/l/:lid/edit_awards": "editAwards",
 	"/l/:lid/edit_awards/:season": "editAwards",
+	"/l/:lid/player_ratings_override": "playerRatingsOverride",
+	"/l/:lid/player_ratings_override/:pid": "playerRatingsOverride",
 	"/l/:lid/draft": "draft",
 	"/l/:lid/draft_history": "draftHistory",
 	"/l/:lid/draft_history/:season": "draftHistory",

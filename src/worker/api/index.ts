@@ -89,6 +89,7 @@ import type {
 	DunkAttempt,
 	AllStarPlayer,
 	League,
+	PlayerHistoricRatings,
 } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import {
@@ -3879,6 +3880,35 @@ const updateAwards = async (
 	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season, false);
 };
 
+const updatePlayerRatingsOverride = async (
+	input: any,
+	conditions: Conditions,
+): Promise<any> => {
+	console.log("yo");
+	const ratings = RATINGS;
+	let newRatings: any = {};
+	console.log(input);
+	ratings.forEach((rating: string) => {
+		const r = input.ratings.find((rat: any) => rat.name === rating);
+		newRatings[r.name] = r.rating;
+	});
+	console.log(newRatings);
+	const playerHistoricRatings: PlayerHistoricRatings = {
+		pid: input.pid,
+		season: input.season,
+		playerRatings: newRatings,
+	};
+	console.log(playerHistoricRatings);
+	await idb.cache.playerHistoricRatings.put(playerHistoricRatings);
+};
+
+const deletePlayerHistoricRating = async (phrid: number | undefined) => {
+	console.log(phrid);
+	if (phrid !== undefined) {
+		await idb.cache.playerHistoricRatings.delete(phrid);
+	}
+};
+
 const upsertCustomizedPlayer = async (
 	{
 		p,
@@ -4295,6 +4325,7 @@ export default {
 		createTrade,
 		deleteOldData,
 		deleteScheduledEvents,
+		deletePlayerHistoricRating,
 		discardUnsavedProgress,
 		draftLottery,
 		draftUser,
@@ -4376,6 +4407,7 @@ export default {
 		tradeCounterOffer,
 		uiUpdateLocal,
 		updateAwards,
+		updatePlayerRatingsOverride,
 		updateBudget,
 		updateConfsDivs,
 		updateDefaultSettingsOverrides,

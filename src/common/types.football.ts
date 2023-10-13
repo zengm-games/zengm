@@ -2,7 +2,7 @@ import type teamStats from "../worker/core/team/stats.football";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
-	| typeof teamStats["raw"][number]
+	| (typeof teamStats)["raw"][number]
 	| "mov"
 	| "oppMov"
 	| "ptsPerGame"

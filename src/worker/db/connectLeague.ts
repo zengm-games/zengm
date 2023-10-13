@@ -38,6 +38,7 @@ import type {
 	HeadToHead,
 	DraftPick,
 	SeasonLeaders,
+	PlayerHistoricRatings,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 import { amountToLevel } from "../../common/budgetLevels";
@@ -115,6 +116,14 @@ export interface LeagueDB extends DBSchema {
 	playoffSeries: {
 		key: number;
 		value: PlayoffSeries;
+	};
+	playerHistoricRatings: {
+		key: number;
+		autoIncrementKeyPath: "phrid";
+		value: PlayerHistoricRatings;
+		indexes: {
+			pid: number;
+		};
 	};
 	releasedPlayers: {
 		key: number;
@@ -470,6 +479,13 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	db.createObjectStore("allStars", {
 		keyPath: "season",
 	});
+	const playerHistoricRatingsStore = db.createObjectStore(
+		"playerHistoricRatings",
+		{
+			keyPath: "phrid",
+			autoIncrement: true,
+		},
+	);
 	eventStore.createIndex("season", "season", {
 		unique: false,
 	});
@@ -517,6 +533,10 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		unique: false,
 	});
 	teamStatsStore.createIndex("tid", "tid", {
+		unique: false,
+	});
+
+	playerHistoricRatingsStore.createIndex("pid", "pid", {
 		unique: false,
 	});
 

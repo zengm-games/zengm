@@ -156,6 +156,7 @@ export type Basketball = {
 
 let cachedJSON: Basketball;
 const loadData = async () => {
+	//here
 	if (cachedJSON) {
 		return cachedJSON;
 	}

@@ -2,6 +2,7 @@ export { default as allStars } from "./allStars";
 export { default as awards } from "./awards";
 export { default as draftLotteryResults } from "./draftLotteryResults";
 export { default as draftPicks } from "./draftPicks";
+export { default as playerHistoricRatings } from "./playerHistoricRatings";
 export { default as events } from "./events";
 export { default as games } from "./games";
 export { default as headToHeads } from "./headToHeads";

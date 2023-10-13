@@ -80,6 +80,7 @@ import PlayerRatingDists from "./PlayerRatingDists";
 import PlayerRatings from "./PlayerRatings";
 import PlayerStatDists from "./PlayerStatDists";
 import PlayerGraphs from "./PlayerGraphs";
+import PlayerRatingsOverride from "./PlayerRatingsOverride";
 import PlayerStats from "./PlayerStats";
 import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
@@ -189,6 +190,7 @@ export default {
 	PlayerRatings,
 	PlayerStatDists,
 	PlayerGraphs: PlayerGraphs,
+	PlayerRatingsOverride: PlayerRatingsOverride,
 	PlayerStats,
 	Playoffs,
 	PowerRankings,

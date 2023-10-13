@@ -110,6 +110,7 @@ const develop = async (
 			pot: number;
 			skills: string[];
 		};
+		pid: number;
 		pos?: string;
 		ratings: MinimalPlayerRatings[];
 		tid: number;
@@ -131,7 +132,10 @@ const develop = async (
 		}
 
 		if (!ratings.locked) {
-			await developSeason(ratings, age, p.srID, coachingLevel);
+			await developSeason(ratings, age, p.srID, coachingLevel, {
+				pid: p.pid,
+				season: ratings.season,
+			});
 		}
 	}
 

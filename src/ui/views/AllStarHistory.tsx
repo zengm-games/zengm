@@ -24,10 +24,13 @@ const PlayerTeam = ({
 	p,
 	season,
 }: {
-	p: {
-		abbrev: string;
-		tid: number;
-	};
+	children: any;
+	p:
+		| {
+				abbrev: string;
+				tid: number;
+		  }
+		| undefined;
 	season: number;
 }) => {
 	if (!p) {
@@ -168,7 +171,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 				{
 					classNames: classNamesCaptain1,
 					value: (
-						// @ts-expect-error
 						<PlayerTeam p={row.captain1} season={row.season}>
 							{row.captain1 ? row.captain1.abbrev : "???"}
 						</PlayerTeam>
@@ -181,7 +183,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 				{
 					classNames: classNamesCaptain2,
 					value: (
-						// @ts-expect-error
 						<PlayerTeam p={row.captain2} season={row.season}>
 							{row.captain2 ? row.captain2.abbrev : "???"}
 						</PlayerTeam>
@@ -194,7 +195,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 				{
 					classNames: classNamesMVP,
 					value: (
-						// @ts-expect-error
 						<PlayerTeam p={row.mvp} season={row.season}>
 							{row.mvp ? row.mvp.abbrev : "???"}
 						</PlayerTeam>
@@ -209,7 +209,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 							{
 								classNames: classNamesDunk,
 								value: (
-									// @ts-expect-error
 									<PlayerTeam p={row.dunk} season={row.season}>
 										{row.dunk ? row.dunk.abbrev : "???"}
 									</PlayerTeam>
@@ -222,7 +221,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 							{
 								classNames: classNamesThree,
 								value: (
-									// @ts-expect-error
 									<PlayerTeam p={row.three} season={row.season}>
 										{row.three ? row.three.abbrev : "???"}
 									</PlayerTeam>

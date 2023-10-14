@@ -74,8 +74,6 @@ class GameSim {
 
 	playByPlay: PlayByPlayLogger;
 
-	twoPointConversionTeam: number | undefined;
-
 	minutesSinceLineChange: [
 		{
 			F: number;
@@ -1406,11 +1404,11 @@ class GameSim {
 		let substitutions = false;
 
 		for (const t of teamNums) {
-			if (options.type === "starters" || options.type === "newPeriod") {
+			if (options.type === "starters") {
 				this.playersOnIce[t].C = this.lines[t].F[0].slice(0, 1);
 				this.playersOnIce[t].W = this.lines[t].F[0].slice(1, 3);
-				this.playersOnIce[t].D = this.lines[t].D[0];
-				this.playersOnIce[t].G = this.lines[t].G[0];
+				this.playersOnIce[t].D = [...this.lines[t].D[0]];
+				this.playersOnIce[t].G = [...this.lines[t].G[0]];
 			} else if (options.type === "penaltyOver") {
 				if (options.t !== t) {
 					continue;
@@ -1490,7 +1488,14 @@ class GameSim {
 					| "defensiveLineChange"
 					| undefined;
 
-				if (this.clock >= 1 || options.type === "penalty") {
+				if (options.type === "newPeriod") {
+					// Like starters, except someone might be in the penalty box
+
+					// Put in the top line by pretending the last line is in
+					this.currentLine[t].F = NUM_LINES.F - 1;
+					this.currentLine[t].D = NUM_LINES.D - 1;
+					lineChangeEvent = "fullLineChange";
+				} else if (this.clock >= 1 || options.type === "penalty") {
 					if (
 						(this.minutesSinceLineChange[t].F >= 0.7 && Math.random() < 0.75) ||
 						options.type === "penalty"
@@ -1531,11 +1536,13 @@ class GameSim {
 					}
 					substitutions = true;
 
-					this.playByPlay.logEvent({
-						type: lineChangeEvent,
-						clock: this.clock,
-						t,
-					});
+					if (options.type !== "newPeriod") {
+						this.playByPlay.logEvent({
+							type: lineChangeEvent,
+							clock: this.clock,
+							t,
+						});
+					}
 				}
 			}
 

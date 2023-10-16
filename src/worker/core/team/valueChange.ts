@@ -461,9 +461,9 @@ const sumValues = (
 			}
 		}
 
-		// Really bad players will just get no PT
+		// Really bad players will just get no PT, but don't to count them as 0 because then AI thinks it can't find a trade
 		if (playerValue < 0) {
-			playerValue = 0;
+			playerValue /= 20;
 		}
 
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;

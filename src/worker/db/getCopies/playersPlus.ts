@@ -412,6 +412,7 @@ const reduceCareerStats = (
 	careerStats: any[],
 	attr: string,
 	seasonType: "playoffs" | "regularSeason" | "combined",
+	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
 	let initialValue: null | (number | undefined)[] | number;
 	let type: "max" | "byPos" | "normal";
@@ -437,7 +438,10 @@ const reduceCareerStats = (
 				((cs.playoffs === "combined" && seasonType === "combined") ||
 					(cs.playoffs === true && seasonType === "playoffs") ||
 					(cs.playoffs === false && seasonType === "regularSeason")) &&
-				cs.tid !== PLAYER.TOT,
+				// Combined only has TOT, even for totAndTeams, so keep TOT combined rows
+				(mergeStats !== "totAndTeams" ||
+					cs.playoffs === "combined" ||
+					cs.tid !== PLAYER.TOT),
 		)
 		.reduce((memo, cs) => {
 			if (cs[attr] === undefined) {
@@ -584,7 +588,12 @@ const getPlayerStats = (
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.includes(attr)) {
-				statSums[attr] = reduceCareerStats(rowsToMerge, attr, seasonType);
+				statSums[attr] = reduceCareerStats(
+					rowsToMerge,
+					attr,
+					seasonType,
+					mergeStats,
+				);
 			}
 		}
 
@@ -768,6 +777,7 @@ const processStats = (
 						careerStats,
 						attr,
 						"regularSeason",
+						mergeStats,
 					);
 				}
 				if (playoffs) {
@@ -775,6 +785,7 @@ const processStats = (
 						careerStats,
 						attr,
 						"playoffs",
+						mergeStats,
 					);
 				}
 				if (combined) {
@@ -782,6 +793,7 @@ const processStats = (
 						careerStats,
 						attr,
 						"combined",
+						mergeStats,
 					);
 				}
 			}

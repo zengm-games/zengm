@@ -1,3 +1,24 @@
+Add option that allows you to change how long overtime is before a tie happens
+- make sure ties work in UI for all sports
+- make sure multiple overtimes work in UI for all sports
+- UI explain
+  - after maxOvertimes, in regular season it's a tie, in playoffs game continues
+- simpleGameAttributesUpgrade
+  - make sure it handles entry with history
+- IDB upgrade
+  - make sure it handles entry with history
+- schema test
+- how are clutch plays to tie the game handled
+- new nfl overtime rule
+- https://old.reddit.com/r/BasketballGM/comments/vompxc/monthly_suggestions_thread/ifcp3ob/
+- https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jze6l6k/
+
+expansion teams should come in with retiredJerseyNumbers, if they exist (NJ in 1977)
+
+retired jersey numbers for real players leagues are based on the date the jersey was retired, meaning it'll never happen for already-retired players because BBGM only checks right after retirement
+- could make it bump up the date for retired players, same as it does for HoF
+- but there are some special honorary ones that'd be weird if it happened that way, so maybe those need to be manually annotated first
+
 some way to view draft picks when trades are not allowed https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jynpvco/
 - show trade page with disabled buttons?
 
@@ -325,8 +346,6 @@ runners should go on contact with 2 outs https://discord.com/channels/2900135340
 baseball injury lineup auto sort - only below injured player https://discord.com/channels/290013534023057409/290015591216054273/1009826420660392077
 
 fbgm timeout after extra point https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
-
-Add option that allows you to change how long overtime is https://old.reddit.com/r/BasketballGM/comments/vompxc/monthly_suggestions_thread/ifcp3ob/
 
 allow customizing height/weight formula https://old.reddit.com/r/BasketballGM/comments/vompxc/monthly_suggestions_thread/if8nwab/
 
@@ -687,10 +706,6 @@ playoffsByConf should support numConfs!=2
   - 1950 nba playoffs
 
 no attendance in baseball https://discord.com/channels/290013534023057409/290015591216054273/1012536651110686742
-
-player being let out of the penalty box at start of overtime?
-- https://discord.com/channels/@me/778760871911751700/879161429335367760
-- https://discord.com/channels/@me/778760871911751700/1106014082819178637
 
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938

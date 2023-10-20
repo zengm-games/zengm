@@ -243,6 +243,12 @@ class GameSim {
 
 	gender: GameAttributesLeague["gender"];
 
+	// In the playoffs, no ties so maxOvertimes is infinity. Otherwise, just go with the setting
+	maxOvertimes =
+		g.get("phase") === PHASE.PLAYOFFS
+			? Infinity
+			: g.get("maxOvertimes", "current") ?? Infinity;
+
 	/**
 	 * Initialize the two teams that are playing this game.
 	 *
@@ -398,14 +404,15 @@ class GameSim {
 		this.simRegulation();
 
 		// Play overtime periods if necessary
-		while (this.team[0].stat.pts === this.team[1].stat.pts) {
+		let numOvertimes = 0;
+		while (
+			this.team[0].stat.pts === this.team[1].stat.pts &&
+			numOvertimes < this.maxOvertimes
+		) {
 			this.checkGameTyingShot();
 			this.simOvertime();
 
-			// More than one overtime only if no ties are allowed or if it's the playoffs
-			if (g.get("phase") !== PHASE.PLAYOFFS && g.get("ties", "current")) {
-				break;
-			}
+			numOvertimes += 1;
 		}
 
 		this.recordPlay("gameOver");

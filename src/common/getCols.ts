@@ -3219,7 +3219,6 @@ const cols: {
 		sortType: "currency",
 	},
 	Trade: {
-		desc: "Ties",
 		noSearch: true,
 	},
 	OTL: {

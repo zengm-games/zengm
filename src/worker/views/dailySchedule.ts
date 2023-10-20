@@ -144,7 +144,7 @@ const updateDailySchedule = async (
 			isToday,
 			phase: g.get("phase"),
 			season: inputs.season,
-			ties: g.get("ties", "current"),
+			ties: season.hasTies("current"),
 			topPlayers,
 			upcoming,
 			userTid: g.get("userTid"),

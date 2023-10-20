@@ -8,6 +8,7 @@ import { idb } from "../db";
 import g from "./g";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
+import hasTies from "../core/season/hasTies";
 
 const augmentSeries = async (
 	series: {
@@ -23,6 +24,8 @@ const augmentSeries = async (
 		"noCopyCache",
 	);
 
+	const ties = hasTies(season);
+
 	const setAll = (obj: PlayoffSeriesTeam) => {
 		obj.abbrev = g.get("teamInfoCache")[obj.tid]?.abbrev;
 		obj.region = g.get("teamInfoCache")[obj.tid]?.region;
@@ -30,7 +33,7 @@ const augmentSeries = async (
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
-			tied: g.get("ties", season) ? 0 : undefined,
+			tied: ties ? 0 : undefined,
 			otl: g.get("otl", season) ? 0 : undefined,
 		};
 
@@ -50,7 +53,7 @@ const augmentSeries = async (
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
 
-			if (g.get("ties", season)) {
+			if (ties) {
 				obj.regularSeason.tied = teamSeason.tied;
 			}
 			if (g.get("otl", season)) {

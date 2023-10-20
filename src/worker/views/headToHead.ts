@@ -2,6 +2,7 @@ import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
 import { idb } from "../db";
+import hasTies from "../core/season/hasTies";
 
 const updateHeadToHead = async (
 	{ abbrev, season, tid, type }: ViewInput<"headToHead">,
@@ -27,7 +28,7 @@ const updateHeadToHead = async (
 			"finalsWon",
 			"finalsLost",
 		] as const;
-		type TeamInfo = Record<typeof simpleSums[number], number> & {
+		type TeamInfo = Record<(typeof simpleSums)[number], number> & {
 			tid: number;
 		};
 
@@ -112,7 +113,7 @@ const updateHeadToHead = async (
 			season,
 			teams,
 			tid,
-			ties: g.get("ties", season === "all" ? "current" : season) || ties,
+			ties: hasTies(season === "all" ? "current" : season) || ties,
 			otl: g.get("otl", season === "all" ? "current" : season) || otl,
 			totals,
 			type,

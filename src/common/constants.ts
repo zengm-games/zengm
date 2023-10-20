@@ -28,7 +28,7 @@ const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-const LEAGUE_DATABASE_VERSION = 57;
+const LEAGUE_DATABASE_VERSION = 58;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
@@ -422,7 +422,7 @@ const ALL_STAR_GAME_ONLY = bySport({
 const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
 
 const EXHIBITION_GAME_SETTINGS = [
-	"ties",
+	"maxOvertimes",
 	"dh",
 	"numPlayersOnCourt",
 	"foulsNeededToFoulOut",

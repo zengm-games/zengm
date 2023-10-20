@@ -8,9 +8,8 @@ export const getMaxPlayoffSeed = async (
 	playoffSeason: number,
 	playoffsByConf: boolean,
 ) => {
-	const { numPlayoffTeams, numPlayInTeams } = await season.getNumPlayoffTeams(
-		playoffSeason,
-	);
+	const { numPlayoffTeams, numPlayInTeams } =
+		await season.getNumPlayoffTeams(playoffSeason);
 	const numTotalPlayoffs = numPlayoffTeams + numPlayInTeams;
 
 	const maxPlayoffSeed = playoffsByConf
@@ -203,7 +202,7 @@ const updateStandings = async (
 			rankingGroups,
 			season: inputs.season,
 			showTiebreakers,
-			ties: g.get("ties", inputs.season) || ties,
+			ties: season.hasTies(inputs.season) || ties,
 			otl: g.get("otl", inputs.season) || otl,
 			tiebreakers: getTiebreakers(inputs.season),
 			type: inputs.type,

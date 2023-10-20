@@ -413,7 +413,7 @@ export type ScheduledEventWithoutKey =
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };
 
-type GameAttributeWithHistory<T> = {
+export type GameAttributeWithHistory<T> = {
 	start: number;
 	value: T;
 }[];
@@ -550,6 +550,7 @@ export type GameAttributesLeague = {
 	luxuryTax: number;
 	maxContract: number;
 	maxContractLength: number;
+	maxOvertimes: number | null; // null means infinite overtimes (no ties)
 	maxRosterSize: number;
 	minContract: number;
 	minContractLength: number;
@@ -627,7 +628,6 @@ export type GameAttributesLeague = {
 		imgURLSmall: string | undefined;
 		disabled: boolean | undefined;
 	}[];
-	ties: boolean;
 	tradeDeadline: number;
 	tragicDeathRate: number;
 	tragicDeaths?: TragicDeaths;
@@ -705,17 +705,18 @@ export type GameAttributesLeagueWithHistory = Omit<
 	GameAttributesLeague,
 	| "confs"
 	| "divs"
+	| "maxOvertimes"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
 	| "playoffsNumTeamsDiv"
 	| "pointsFormula"
 	| "tiebreakers"
-	| "ties"
 	| "userTid"
 > & {
 	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
 	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
+	maxOvertimes: GameAttributeWithHistory<GameAttributesLeague["maxOvertimes"]>;
 	numGamesPlayoffSeries: GameAttributeWithHistory<
 		GameAttributesLeague["numGamesPlayoffSeries"]
 	>;
@@ -730,7 +731,6 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["pointsFormula"]
 	>;
 	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
-	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
 

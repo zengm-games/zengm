@@ -174,7 +174,7 @@ export const getDefaultSettings = () => {
 		repeatSeason:
 			unwrapGameAttribute(defaultGameAttributes, "repeatSeason")?.type ??
 			"disabled",
-		ties: unwrapGameAttribute(defaultGameAttributes, "ties"),
+		maxOvertimes: unwrapGameAttribute(defaultGameAttributes, "maxOvertimes"),
 		otl: unwrapGameAttribute(defaultGameAttributes, "otl"),
 		spectator: unwrapGameAttribute(defaultGameAttributes, "spectator"),
 		elam: unwrapGameAttribute(defaultGameAttributes, "elam"),

@@ -89,7 +89,6 @@ const gameAttributesKeysSportSpecific = {
 		"numPlayersDunk",
 		"numPlayersThree",
 		"quarterLength",
-		"ties",
 		"numPlayersOnCourt",
 		"pace",
 		"allStarDunk",
@@ -99,7 +98,6 @@ const gameAttributesKeysSportSpecific = {
 		"fantasyPoints",
 		"foulRateFactor",
 		"quarterLength",
-		"ties",
 		"passFactor",
 		"rushYdsFactor",
 		"passYdsFactor",
@@ -116,7 +114,6 @@ const gameAttributesKeysSportSpecific = {
 	] as GameAttributeKey[],
 	hockey: [
 		"quarterLength",
-		"ties",
 		"hitFactor",
 		"giveawayFactor",
 		"takeawayFactor",
@@ -188,8 +185,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	salaryCapType: "soft",
 
-	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
-	ties: wrap(false),
+	maxOvertimes: wrap(null),
 	otl: wrap(false),
 
 	draftType: "nba2019",
@@ -364,7 +360,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numPlayoffByes: wrap(2),
 				stopOnInjuryGames: 1,
 				salaryCapType: "hard",
-				ties: wrap(true),
+				maxOvertimes: wrap(1),
 				draftType: "noLottery",
 				numDraftRounds: 7,
 				draftAges: [21, 22],

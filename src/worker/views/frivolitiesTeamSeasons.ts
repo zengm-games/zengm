@@ -4,6 +4,7 @@ import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
 import { isSport, PHASE } from "../../common";
 import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
+import hasTies from "../core/season/hasTies";
 
 type Most = {
 	value: number;
@@ -375,7 +376,7 @@ const updateFrivolitiesTeamSeasons = async (
 			description,
 			extraCols,
 			teamSeasons,
-			ties: g.get("ties"),
+			ties: hasTies(Infinity),
 			otl: g.get("otl"),
 			title,
 			type,

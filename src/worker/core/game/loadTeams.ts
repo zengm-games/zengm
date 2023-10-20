@@ -1,4 +1,4 @@
-import { allStar, player, team } from "..";
+import { allStar, player, season, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import type {
@@ -105,7 +105,7 @@ export const processTeam = (
 		pace: 0,
 		won: teamSeason.won,
 		lost: teamSeason.lost,
-		tied: g.get("ties", "current") ? teamSeason.tied : undefined,
+		tied: season.hasTies("current") ? teamSeason.tied : undefined,
 		otl: g.get("otl", "current") ? teamSeason.otl : undefined,
 		cid: teamSeason.cid,
 		did: teamSeason.did,

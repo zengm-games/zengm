@@ -2181,9 +2181,16 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
-			key: "ties",
-			name: "Ties (Regular Season Only)",
-			type: "bool",
+			key: "maxOvertimes",
+			name: "Max # Overtime Periods",
+			type: "intOrNull",
+			description:
+				"If a game is still tied after this many overtimes, the result is a tie. Set to 0 to disable overtime. Leave blank for infinite overtimes and no ties. In the playoffs there are never ties, regardless of this setting.",
+			validator: value => {
+				if (typeof value === "number" && value < 0) {
+					throw new Error("Cannot be negative");
+				}
+			},
 		},
 		{
 			category: "Game Simulation",

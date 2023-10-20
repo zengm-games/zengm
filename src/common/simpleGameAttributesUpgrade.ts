@@ -1,5 +1,8 @@
 import isSport from "./isSport";
-import type { GameAttributesLeagueWithHistory } from "./types";
+import type {
+	GameAttributeWithHistory,
+	GameAttributesLeagueWithHistory,
+} from "./types";
 
 // Ideally all upgrade stuff would be here, because this also gets called before showing the setting screen when importing a league... maybe some day!
 const simpleGameAttributesUpgrade = (
@@ -28,6 +31,33 @@ const simpleGameAttributesUpgrade = (
 	if (gameAttributes.repeatSeason && !gameAttributes.repeatSeason.type) {
 		(gameAttributes.repeatSeason as any).type = "playersAndRosters";
 	}
+
+	const ties = (gameAttributes as any).ties as
+		| boolean
+		| GameAttributeWithHistory<boolean>
+		| undefined;
+	if (ties !== undefined) {
+		let maxOvertimes: GameAttributesLeagueWithHistory["maxOvertimes"];
+
+		if (ties === true || ties === false) {
+			maxOvertimes = [
+				{
+					start: -Infinity,
+					value: ties ? 1 : null,
+				},
+			];
+		} else {
+			maxOvertimes = ties.map(row => {
+				return {
+					start: row.start,
+					value: row.value ? 1 : null,
+				};
+			});
+		}
+
+		gameAttributes.maxOvertimes = maxOvertimes;
+	}
+	delete (gameAttributes as any).ties;
 };
 
 export default simpleGameAttributesUpgrade;

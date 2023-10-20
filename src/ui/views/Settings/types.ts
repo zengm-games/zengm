@@ -59,7 +59,7 @@ export type Key =
 	| "challengeThanosMode"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
-	| "ties"
+	| "maxOvertimes"
 	| "otl"
 	| "spectator"
 	| "elam"

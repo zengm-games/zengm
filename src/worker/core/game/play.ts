@@ -391,7 +391,7 @@ const play = async (
 				!allowForceTie({
 					homeTid: game.homeTid,
 					awayTid: game.awayTid,
-					ties: g.get("ties", "current"),
+					ties: season.hasTies("current"),
 					phase: g.get("phase"),
 					elam: g.get("elam"),
 					elamASG: g.get("elamASG"),

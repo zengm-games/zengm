@@ -1,5 +1,5 @@
 import { bySport, isSport, PHASE } from "../../../common";
-import { team } from "..";
+import { season, team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { GameResults } from "../../../common/types";
@@ -21,6 +21,8 @@ const writeTeamStats = async (results: GameResults) => {
 	let baseAttendance = 0;
 	let attendance = 0;
 	let adjustedTicketPrice = 0;
+
+	const ties = season.hasTies("current");
 
 	for (const t1 of [0, 1]) {
 		const t2 = t1 === 1 ? 0 : 1;
@@ -423,7 +425,7 @@ const writeTeamStats = async (results: GameResults) => {
 			} else {
 				teamSeason.streak = -1;
 			}
-		} else if (g.get("ties", "current") && g.get("phase") !== PHASE.PLAYOFFS) {
+		} else if (ties && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.tied += 1;
 
 			if (results.team[0].did === results.team[1].did) {

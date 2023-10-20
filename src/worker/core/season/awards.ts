@@ -20,6 +20,7 @@ import type {
 	TeamFiltered,
 } from "../../../common/types";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
+import season from ".";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -290,6 +291,8 @@ const teamAwards = async (
 		throw new Error("No teams found");
 	}
 
+	const ties = season.hasTies("current");
+
 	const bestRecord = {
 		tid: teams[0].tid,
 		abbrev: teams[0].seasonAttrs.abbrev,
@@ -297,7 +300,7 @@ const teamAwards = async (
 		name: teams[0].seasonAttrs.name,
 		won: teams[0].seasonAttrs.won,
 		lost: teams[0].seasonAttrs.lost,
-		tied: g.get("ties", "current") ? teams[0].seasonAttrs.tied : undefined,
+		tied: ties ? teams[0].seasonAttrs.tied : undefined,
 		otl: g.get("otl", "current") ? teams[0].seasonAttrs.otl : undefined,
 	};
 	const bestRecordConfs = await Promise.all(
@@ -319,7 +322,7 @@ const teamAwards = async (
 				name: t.seasonAttrs.name,
 				won: t.seasonAttrs.won,
 				lost: t.seasonAttrs.lost,
-				tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
+				tied: ties ? t.seasonAttrs.tied : undefined,
 				otl: g.get("otl", "current") ? t.seasonAttrs.otl : undefined,
 			};
 		}),

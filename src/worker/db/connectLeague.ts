@@ -38,6 +38,8 @@ import type {
 	HeadToHead,
 	DraftPick,
 	SeasonLeaders,
+	GameAttributeWithHistory,
+	GameAttributesLeagueWithHistory,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 import { amountToLevel } from "../../common/budgetLevels";
@@ -1362,6 +1364,41 @@ const migrate = async ({
 				});
 			}
 		}
+	}
+
+	if (oldVersion <= 57) {
+		const store = transaction.objectStore("gameAttributes");
+		const ties = (await store.get("ties"))?.value as
+			| boolean
+			| GameAttributeWithHistory<boolean>
+			| undefined;
+
+		if (ties !== undefined) {
+			let maxOvertimes: GameAttributesLeagueWithHistory["maxOvertimes"];
+
+			if (ties === true || ties === false) {
+				maxOvertimes = [
+					{
+						start: -Infinity,
+						value: ties ? 1 : null,
+					},
+				];
+			} else {
+				maxOvertimes = ties.map(row => {
+					return {
+						start: row.start,
+						value: row.value ? 1 : null,
+					};
+				});
+			}
+
+			await store.put({
+				key: "maxOvertimes",
+				value: maxOvertimes,
+			});
+		}
+
+		await store.delete("ties");
 	}
 };
 

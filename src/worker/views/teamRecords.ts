@@ -3,6 +3,7 @@ import { g, helpers } from "../util";
 import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import { isSport } from "../../common";
+import { season } from "../core";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -555,7 +556,7 @@ const updateTeamRecords = async (
 			byType,
 			filter,
 			teams,
-			ties: g.get("ties") || ties,
+			ties: season.hasTies(Infinity) || ties,
 			otl: g.get("otl") || otl,
 			usePts,
 			userTid: g.get("userTid"),

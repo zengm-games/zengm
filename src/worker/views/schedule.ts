@@ -171,7 +171,7 @@ const updateUpcoming = async (
 			elamASG: g.get("elamASG"),
 			phase: g.get("phase"),
 			tid: inputs.tid,
-			ties: g.get("ties", "current"),
+			ties: season.hasTies("current"),
 			upcoming,
 		};
 	}

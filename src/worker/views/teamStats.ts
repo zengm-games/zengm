@@ -7,7 +7,7 @@ import type {
 	TeamSeasonAttr,
 } from "../../common/types";
 import { TEAM_STATS_TABLES, bySport } from "../../common";
-import { team } from "../core";
+import { season, team } from "../core";
 
 export const getStats = async ({
 	season,
@@ -278,7 +278,7 @@ const updateTeams = async (
 			usePts,
 		});
 
-		let ties = g.get("ties", inputs.season);
+		let ties = season.hasTies(inputs.season);
 		let otl = g.get("otl", inputs.season);
 		for (const t of teams) {
 			if (t.seasonAttrs.tied > 0) {

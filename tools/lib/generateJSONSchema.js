@@ -1154,6 +1154,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "number",
 								minimum: 0,
 							},
+							maxOvertimes: wrap({
+								anyOf: [
+									{
+										type: "integer",
+										minimum: 0,
+									},
+									{
+										type: "null",
+									},
+								],
+							}),
 							numPeriods: {
 								type: "number",
 								minimum: 0,
@@ -1246,9 +1257,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "array",
 								minItems: 1,
 							},
-							ties: wrap({
-								type: "boolean",
-							}),
 							otl: wrap({
 								type: "boolean",
 							}),

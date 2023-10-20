@@ -3,6 +3,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { averageTeamStats, getStats, ignoreStats } from "./teamStats";
 import range from "lodash-es/range";
 import { PHASE, TEAM_STATS_TABLES } from "../../common";
+import { season } from "../core";
 
 const updateLeagueStats = async (
 	inputs: ViewInput<"leagueStats">,
@@ -86,7 +87,7 @@ const updateLeagueStats = async (
 			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
-			ties: g.get("ties") || ties,
+			ties: season.hasTies(Infinity) || ties,
 			otl: g.get("otl") || otl,
 			usePts,
 		};

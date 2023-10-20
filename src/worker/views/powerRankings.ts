@@ -3,6 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
 import { POSITIONS, RATINGS, isSport } from "../../common";
+import hasTies from "../core/season/hasTies";
 
 const otherToRanks = (
 	teams: {
@@ -192,7 +193,7 @@ const updatePowerRankings = async (
 			playoffs,
 			season,
 			teams: teamsWithRankings,
-			ties: g.get("ties", season) || ties,
+			ties: hasTies(season) || ties,
 			otl: g.get("otl", season) || otl,
 			userTid: g.get("userTid"),
 		};

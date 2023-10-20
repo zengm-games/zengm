@@ -10,6 +10,7 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
+import GameSimBase from "../GameSimBase";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -25,20 +26,12 @@ type OccupiedBase = {
 
 // self.hrTypes = {};
 
-class GameSim {
-	id: number;
-
-	day: number | undefined;
-
+class GameSim extends GameSimBase {
 	team: [Team<boolean>, Team<boolean>];
 
 	numInnings: number;
 
 	inning: number;
-
-	overtime: boolean;
-
-	overtimes: number;
 
 	bases!: [
 		OccupiedBase | undefined,
@@ -66,9 +59,6 @@ class GameSim {
 	winEligiblePid: number | undefined;
 	lossEligiblePid: number | undefined;
 
-	allStarGame: boolean;
-	baseInjuryRate: number;
-
 	constructor({
 		gid,
 		day,
@@ -90,11 +80,14 @@ class GameSim {
 		baseInjuryRate: number;
 		disableHomeCourtAdvantage?: boolean;
 	}) {
+		super({
+			gid,
+			day,
+			allStarGame,
+			baseInjuryRate,
+		});
+
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
-		this.id = gid;
-		this.day = day;
-		this.allStarGame = allStarGame;
-		this.baseInjuryRate = baseInjuryRate;
 
 		// If a team plays twice in a day, this needs to be a deep copy
 		this.team = [
@@ -113,8 +106,6 @@ class GameSim {
 		this.numInnings = g.get("numPeriods");
 
 		this.inning = 1;
-		this.overtime = false;
-		this.overtimes = 0;
 
 		this.resetNewInning();
 

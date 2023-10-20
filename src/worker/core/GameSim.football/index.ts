@@ -22,6 +22,7 @@ import thisPeriodHasTwoMinuteWarning from "./thisPeriodHasTwoMinuteWarning";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Play from "./Play";
 import LngTracker from "./LngTracker";
+import GameSimBase from "../GameSimBase";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -41,20 +42,12 @@ const fatigue = (energy: number): number => {
 	return energy;
 };
 
-class GameSim {
-	id: number;
-
-	day: number | undefined;
-
+class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnField: [PlayersOnField, PlayersOnField];
 
 	subsEveryN: number;
-
-	overtime: boolean;
-
-	overtimes: number;
 
 	/**
 	 * "initialKickoff" -> (right after kickoff) "firstPossession" -> (after next call to possessionChange) -> "secondPossession" -> (after next call to possessionChange) -> "bothTeamPossessed" -> (based on conditions below) "over"
@@ -101,7 +94,6 @@ class GameSim {
 	currentPlay: Play;
 
 	lngTracker: LngTracker;
-	baseInjuryRate: number;
 
 	constructor({
 		gid,
@@ -120,11 +112,15 @@ class GameSim {
 		disableHomeCourtAdvantage?: boolean;
 		baseInjuryRate: number;
 	}) {
+		super({
+			gid,
+			day,
+			allStarGame: false,
+			baseInjuryRate,
+		});
+
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
-		this.id = gid;
-		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
-		this.baseInjuryRate = baseInjuryRate;
 
 		this.playersOnField = [{}, {}];
 
@@ -137,8 +133,6 @@ class GameSim {
 		this.updatePlayersOnField("starters");
 		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
-		this.overtime = false;
-		this.overtimes = 0;
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
 

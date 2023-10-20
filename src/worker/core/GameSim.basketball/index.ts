@@ -4,6 +4,7 @@ import range from "lodash-es/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 import getInjuryRate from "./getInjuryRate";
 import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
+import GameSimBase from "../GameSimBase";
 
 type PlayType =
 	| "ast"
@@ -179,11 +180,7 @@ const getSortedIndexes = (ovrs: number[]) => {
 // Use if denominator of prob might be 0
 const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
 
-class GameSim {
-	id: number;
-
-	day: number | undefined;
-
+class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnCourt: [number[], number[]];
@@ -191,8 +188,6 @@ class GameSim {
 	startersRecorded: boolean;
 
 	subsEveryN: number;
-
-	overtimes: number;
 
 	t: number;
 
@@ -226,8 +221,6 @@ class GameSim {
 
 	playByPlay: any[] | undefined;
 
-	allStarGame: boolean;
-
 	elam: boolean;
 
 	elamActive: boolean;
@@ -239,15 +232,8 @@ class GameSim {
 	fatigueFactor: number;
 
 	numPlayersOnCourt: number;
-	baseInjuryRate: number;
 
 	gender: GameAttributesLeague["gender"];
-
-	// In the playoffs, no ties so maxOvertimes is infinity. Otherwise, just go with the setting
-	maxOvertimes =
-		g.get("phase") === PHASE.PLAYOFFS
-			? Infinity
-			: g.get("maxOvertimes", "current") ?? Infinity;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -273,14 +259,18 @@ class GameSim {
 		baseInjuryRate: number;
 		disableHomeCourtAdvantage?: boolean;
 	}) {
+		super({
+			gid,
+			day,
+			allStarGame,
+			baseInjuryRate,
+		});
+
 		if (doPlayByPlay) {
 			this.playByPlay = [];
 		}
 
-		this.id = gid;
-		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
-		this.baseInjuryRate = baseInjuryRate;
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.numPlayersOnCourt = g.get("numPlayersOnCourt");
@@ -293,8 +283,6 @@ class GameSim {
 		this.updatePlayersOnCourt();
 		this.updateSynergy();
 		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
-
-		this.overtimes = 0; // Number of overtime periods that have taken place
 
 		this.t = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
@@ -315,7 +303,6 @@ class GameSim {
 
 		this.lastScoringPlay = [];
 		this.clutchPlays = [];
-		this.allStarGame = allStarGame;
 		this.elam = this.allStarGame ? g.get("elamASG") : g.get("elam");
 		this.elamActive = false;
 		this.elamDone = false;

@@ -21,6 +21,7 @@ import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
+import GameSimBase from "../GameSimBase";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -51,18 +52,10 @@ type TeamCurrentLine = {
 	D: number;
 	G: number;
 };
-class GameSim {
-	id: number;
-
-	day: number | undefined;
-
+class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnIce: [PlayersOnIce, PlayersOnIce];
-
-	overtime: boolean;
-
-	overtimes: number;
 
 	clock: number;
 
@@ -95,8 +88,6 @@ class GameSim {
 	synergyFactor: number;
 
 	pulledGoalie: [boolean, boolean];
-	baseInjuryRate: number;
-	allStarGame: boolean;
 
 	constructor({
 		gid,
@@ -117,12 +108,15 @@ class GameSim {
 		baseInjuryRate: number;
 		disableHomeCourtAdvantage?: boolean;
 	}) {
+		super({
+			gid,
+			day,
+			allStarGame,
+			baseInjuryRate,
+		});
+
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
-		this.id = gid;
-		this.day = day;
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
-		this.baseInjuryRate = baseInjuryRate;
-		this.allStarGame = allStarGame;
 
 		this.synergyFactor = 1;
 
@@ -161,8 +155,6 @@ class GameSim {
 		this.d = 1;
 		this.updatePlayersOnIce({ type: "starters" });
 
-		this.overtime = false;
-		this.overtimes = 0;
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
 

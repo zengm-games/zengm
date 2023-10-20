@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import Play from "./Play";
 import { genTwoTeams, initGameSim } from "./index.test";
+import { PHASE } from "../../../common";
+import { g } from "../../util";
 
 describe("worker/core/GameSim.football/Play", () => {
 	beforeAll(async () => {
@@ -711,6 +713,31 @@ describe("worker/core/GameSim.football/Play", () => {
 			play.commit();
 
 			assert.deepEqual(game.overtimeState, "over");
+		});
+
+		test("touchdown on first possession -> not over in playoffs", async () => {
+			g.setWithoutSavingToDB("phase", PHASE.PLAYOFFS);
+
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "rusTD",
+				p,
+			});
+
+			play.commit();
+
+			assert.deepEqual(game.overtimeState, "firstPossession");
+
+			// Reset everything
+			await genTwoTeams();
 		});
 
 		test("FG on first possession -> not over", async () => {

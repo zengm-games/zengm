@@ -1,4 +1,6 @@
 import type GameSim from ".";
+import { PHASE } from "../../../common";
+import { g } from "../../util";
 import getBestPenaltyResult from "./getBestPenaltyResult";
 import type { PlayerGameSim, TeamNum } from "./types";
 
@@ -771,8 +773,9 @@ class Play {
 
 		if (event.type.endsWith("TD")) {
 			if (
-				state.overtimeState === "initialKickoff" ||
-				state.overtimeState === "firstPossession"
+				(state.overtimeState === "initialKickoff" ||
+					state.overtimeState === "firstPossession") &&
+				g.get("phase") !== PHASE.PLAYOFFS
 			) {
 				state.overtimeState = "over";
 			}

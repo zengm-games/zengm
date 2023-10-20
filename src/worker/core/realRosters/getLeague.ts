@@ -833,8 +833,17 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		addRelatives(players, basketball.relatives);
 		addFreeAgents(players, options.season);
+
+		// Add retired jersey numbers for expansion teams too
+		const initialAndFutureTeams = [...initialTeams];
+		for (const event of scheduledEvents) {
+			if (event.type === "expansionDraft") {
+				initialAndFutureTeams.push(...event.info.teams);
+			}
+		}
+
 		addRetiredJerseyNumbers({
-			teams: initialTeams,
+			teams: initialAndFutureTeams,
 			players,
 			season: options.season,
 			phase: options.phase,

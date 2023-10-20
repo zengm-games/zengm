@@ -1502,9 +1502,8 @@ const NewLeague = (props: View<"newLeague">) => {
 								</span>
 							</div>
 
-							<div className="text-center mt-3">
+							<div className="mt-3 d-flex flex-wrap justify-content-center gap-2">
 								<ActionButton
-									className="me-2"
 									size="lg"
 									type="submit"
 									disabled={

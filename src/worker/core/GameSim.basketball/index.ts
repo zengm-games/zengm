@@ -1891,7 +1891,8 @@ class GameSim extends GameSimBase {
 
 		const winner = this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1;
 		const loser = winner === 0 ? 1 : 0;
-		let margin = this.team[winner].stat.pts - this.team[loser].stat.pts;
+		const finalMargin = this.team[winner].stat.pts - this.team[loser].stat.pts;
+		let margin = finalMargin;
 
 		// work backwards from last scoring plays, check if any resulted in a tie-break or lead change
 		let pts = 0;
@@ -1947,10 +1948,14 @@ class GameSim extends GameSimBase {
 			if (margin <= 0) {
 				const team = this.team[play.team];
 				const player = this.team[play.team].player[play.player];
+
+				const winningOrTying =
+					finalMargin === 0 ? "game-tying" : "game-winning";
+
 				let eventText = `<a href="${helpers.leagueUrl([
 					"player",
 					player.id,
-				])}">${player.name}</a> made a game-winning ${shotType}`;
+				])}">${player.name}</a> made a ${winningOrTying} ${shotType}`;
 
 				if (!this.elamActive) {
 					if (play.time > 0) {

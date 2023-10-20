@@ -2058,14 +2058,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "object",
 						},
 					},
-					required: [
-						"season",
-						"age",
-						"regularSeason",
-						"playoffs",
-						"ratings",
-						"ratingsFuzz",
-					],
+					required: ["season", "age", "regularSeason", "playoffs", "ratings"],
 				},
 			},
 			teams: {

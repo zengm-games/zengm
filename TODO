@@ -1,12 +1,6 @@
 Add option that allows you to change how long overtime is before a tie happens
 - make sure ties work in UI for all sports
 - make sure multiple overtimes work in UI for all sports
-- UI explain
-  - after maxOvertimes, in regular season it's a tie, in playoffs game continues
-- simpleGameAttributesUpgrade
-  - make sure it handles entry with history
-- IDB upgrade
-  - make sure it handles entry with history
 - schema test
 - how are clutch plays to tie the game handled
 - new nfl overtime rule

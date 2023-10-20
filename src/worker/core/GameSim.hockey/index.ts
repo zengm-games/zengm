@@ -513,6 +513,10 @@ class GameSim extends GameSimBase {
 
 	simOvertime() {
 		this.clock = g.get("quarterLength");
+		this.minutesSinceLineChange[0].F = 0;
+		this.minutesSinceLineChange[0].D = 0;
+		this.minutesSinceLineChange[1].F = 0;
+		this.minutesSinceLineChange[1].D = 0;
 
 		if (this.clock <= 0) {
 			this.clock = defaultGameAttributes.quarterLength;

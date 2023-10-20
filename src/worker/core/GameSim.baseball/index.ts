@@ -2124,7 +2124,11 @@ class GameSim extends GameSimBase {
 	}
 
 	run() {
-		this.simGame();
+		let gameOver = false;
+		while (!gameOver) {
+			gameOver = this.simSide();
+		}
+
 		this.playByPlay.logEvent({
 			type: "gameOver",
 		});
@@ -2508,7 +2512,7 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	simGame() {
+	simSide() {
 		this.playByPlay.logEvent({
 			type: "sideStart",
 			inning: this.inning,
@@ -2520,7 +2524,7 @@ class GameSim extends GameSimBase {
 			this.simPlateAppearance();
 
 			if (this.gameIsOverDuringInning()) {
-				break;
+				return true;
 			}
 
 			if (this.outs >= NUM_OUTS_PER_INNING) {
@@ -2534,7 +2538,7 @@ class GameSim extends GameSimBase {
 						this.team[0].t.stat.pts > this.team[1].t.stat.pts
 					) {
 						// No need to play bottom of inning, home team is already up
-						break;
+						return true;
 					}
 				} else {
 					if (
@@ -2542,27 +2546,28 @@ class GameSim extends GameSimBase {
 						this.team[0].t.stat.pts !== this.team[1].t.stat.pts
 					) {
 						// Game over, all innings used up
-						break;
+						return true;
 					}
 				}
 
 				if (this.o === 0) {
-					this.inning += 1;
-					if (this.inning > this.numInnings) {
-						this.overtime = true;
-						this.overtimes += 1;
+					if (this.inning >= this.numInnings) {
+						if (this.overtimes >= this.maxOvertimes) {
+							// Tie
+							return true;
+						} else {
+							this.overtime = true;
+							this.overtimes += 1;
+						}
 					}
+
+					this.inning += 1;
 				}
 
 				this.possessionChange();
 				this.resetNewInning();
 				this.checkReliefPitcher(true);
-				this.playByPlay.logEvent({
-					type: "sideStart",
-					inning: this.inning,
-					t: this.o,
-					pitcherPid: this.team[this.d].playersInGameByPos.P.p.id,
-				});
+				return false;
 			} else {
 				this.checkReliefPitcher(false);
 			}

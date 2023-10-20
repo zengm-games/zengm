@@ -398,7 +398,6 @@ class GameSim extends GameSimBase {
 		) {
 			this.checkGameTyingShot();
 			this.simOvertime();
-
 			numOvertimes += 1;
 		}
 

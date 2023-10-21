@@ -834,11 +834,20 @@ const getLeague = async (options: GetLeagueOptions) => {
 		addRelatives(players, basketball.relatives);
 		addFreeAgents(players, options.season);
 
-		// Add retired jersey numbers for expansion teams too
+		// Add retired jersey numbers for expansion teams too - but not for teams that are going to disband and then return again later (seenAbbrevs check)
 		const initialAndFutureTeams = [...initialTeams];
+		const seenAbbrevs = new Set(
+			initialTeams.map(t => oldAbbrevTo2020BBGMAbbrev(t.srID)),
+		);
 		for (const event of scheduledEvents) {
 			if (event.type === "expansionDraft") {
-				initialAndFutureTeams.push(...event.info.teams);
+				for (const t of event.info.teams) {
+					const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
+					if (!seenAbbrevs.has(abbrev)) {
+						initialAndFutureTeams.push(t);
+						seenAbbrevs.add(abbrev);
+					}
+				}
 			}
 		}
 

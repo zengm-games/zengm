@@ -1,3 +1,11 @@
+New overtime rules in FootballGM aren't ending the game on the third score if both teams score on their first two possessions. https://discord.com/channels/290013534023057409/290015591216054273/1165506432213471322
+
+Salary cap soft isn't deleted in scheduled events for league finance changes. The only way to delete it is to delete all scheduled future events. https://discord.com/channels/290013534023057409/290015591216054273/1165502045269282816
+
+The new cba made roster spots 18 now (+1 in real player leagues) https://discord.com/channels/290013534023057409/290015591216054273/1165501403444289627
+
+Biggest busts and draft class rankings don't show NBA history and are empty in new leagues, but best player at every pick and biggest steals do. https://discord.com/channels/290013534023057409/290015591216054273/1165499365771726898
+
 if you're fired the year an expansion team joins, you can only join one of the new expansion teams https://discord.com/channels/290013534023057409/290015591216054273/1164984525307269180
 
 retired jersey numbers for real players leagues are based on the date the jersey was retired, meaning it'll never happen for already-retired players because BBGM only checks right after retirement https://discord.com/channels/290013534023057409/290015591216054273/1164793638518276117
@@ -17,10 +25,6 @@ hockey positions revamp
   - defensemen need more shots, wingers need less https://discord.com/channels/@me/662077709836484618/1004952271710326794
     - defensemen need more assists https://discord.com/channels/290013534023057409/816359356424912976/1010633509985063055
     - point distribution discussion https://mail.google.com/mail/u/0/#inbox/FMfcgzGqQJfsRgnzBpRXKxGQkFmqCnNr
-
-very high difficulty glitches https://discord.com/channels/290013534023057409/290015591216054273/1153134421411639437
-- AI trade weirdness
-- game sim is slow
 
 how should scouting budget work in no ratings mode?
 - disables it, but the number/expense is still there, and changes over time. i think it's from the old days where you'd want some standard value there. but now it's kind of weird because the value is not always the same, especially for AI teams

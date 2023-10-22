@@ -22,6 +22,7 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Play from "./Play";
 import LngTracker from "./LngTracker";
 import GameSimBase from "../GameSimBase";
+import { PHASE } from "../../../common";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -79,6 +80,7 @@ class GameSim extends GameSimBase {
 	awaitingAfterSafety: boolean;
 
 	awaitingKickoff: TeamNum | undefined;
+	recievedLastHalfKickoff: TeamNum;
 
 	scrimmage: number;
 
@@ -139,6 +141,7 @@ class GameSim extends GameSimBase {
 		this.awaitingAfterTouchdown = false;
 		this.awaitingAfterSafety = false;
 		this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
+		this.recievedLastHalfKickoff = this.awaitingKickoff;
 		this.down = 1;
 		this.toGo = 10;
 		this.scrimmage = 20;
@@ -249,7 +252,6 @@ class GameSim extends GameSimBase {
 	}
 
 	simRegulation() {
-		const oAfterHalftime = this.d;
 		let quarter = 1;
 
 		while (true) {
@@ -264,8 +266,11 @@ class GameSim extends GameSimBase {
 				this.awaitingKickoff = this.o;
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
-				this.o = oAfterHalftime;
-				this.d = this.o === 0 ? 1 : 0;
+
+				this.d = this.recievedLastHalfKickoff;
+				this.o = this.d === 0 ? 1 : 0;
+				this.recievedLastHalfKickoff = this.o;
+				this.awaitingKickoff = this.o;
 			} else if (quarter > this.numPeriods) {
 				break;
 			}
@@ -281,15 +286,20 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		this.clock = Math.ceil((g.get("quarterLength") * 2) / 3); // 10 minutes by default, but scales
+		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
-		if (this.clock === 0) {
-			this.clock = 10;
+		// 10 minutes in regular season, 15 in playoffs
+		this.clock = Math.ceil(g.get("quarterLength") * (playoffs ? 1 : 2 / 3));
+		if (this.clock <= 0) {
+			this.clock = playoffs ? 15 : 10;
 		}
 
 		this.overtime = true;
 		this.overtimes += 1;
-		this.overtimeState = "initialKickoff";
+		if (this.overtimeState === undefined) {
+			// Only set this in first overtime
+			this.overtimeState = "initialKickoff";
+		}
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
 		this.timeouts = [2, 2];
@@ -298,11 +308,12 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 			overtimes: this.overtimes,
 		});
-		this.o = Math.random() < 0.5 ? 0 : 1;
-		this.d = this.o === 0 ? 1 : 0;
+
+		this.d = this.recievedLastHalfKickoff;
+		this.o = this.d === 0 ? 1 : 0;
+		this.recievedLastHalfKickoff = this.o;
 		this.awaitingKickoff = this.o;
 
-		// @ts-expect-error
 		while (this.clock > 0 && this.overtimeState !== "over") {
 			this.simPlay();
 		}

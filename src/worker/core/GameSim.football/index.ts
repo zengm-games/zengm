@@ -141,6 +141,8 @@ class GameSim extends GameSimBase {
 		this.awaitingAfterTouchdown = false;
 		this.awaitingAfterSafety = false;
 		this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
+		this.d = this.awaitingKickoff;
+		this.o = this.awaitingKickoff === 0 ? 1 : 0;
 		this.lastHalfAwaitingKickoff = this.awaitingKickoff;
 		this.down = 1;
 		this.toGo = 10;

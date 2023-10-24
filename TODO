@@ -1,4 +1,14 @@
-New overtime rules in FootballGM aren't ending the game on the third score if both teams score on their first two possessions. https://discord.com/channels/290013534023057409/290015591216054273/1165506432213471322
+button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
+- handle contract history
+- option to have it ignore rookie contracts
+- put in danger zone
+- maybe build into fantasy draft too?
+
+FBGM
+- re-evaluate team value formula, especially WR now that speed matters more
+- if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
+  - it really should be based on probability of making XP and probability of making TP making TP
+  - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
 
 Salary cap soft isn't deleted in scheduled events for league finance changes. The only way to delete it is to delete all scheduled future events. https://discord.com/channels/290013534023057409/290015591216054273/1165502045269282816
 

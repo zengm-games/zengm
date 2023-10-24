@@ -80,7 +80,7 @@ class GameSim extends GameSimBase {
 	awaitingAfterSafety: boolean;
 
 	awaitingKickoff: TeamNum | undefined;
-	recievedLastHalfKickoff: TeamNum;
+	lastHalfAwaitingKickoff: TeamNum;
 
 	scrimmage: number;
 
@@ -141,7 +141,7 @@ class GameSim extends GameSimBase {
 		this.awaitingAfterTouchdown = false;
 		this.awaitingAfterSafety = false;
 		this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
-		this.recievedLastHalfKickoff = this.awaitingKickoff;
+		this.lastHalfAwaitingKickoff = this.awaitingKickoff;
 		this.down = 1;
 		this.toGo = 10;
 		this.scrimmage = 20;
@@ -263,14 +263,13 @@ class GameSim extends GameSimBase {
 
 			// Who gets the ball after halftime?
 			if (isFirstPeriodAfterHalftime(quarter, this.numPeriods)) {
-				this.awaitingKickoff = this.o;
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
 
-				this.d = this.recievedLastHalfKickoff;
-				this.o = this.d === 0 ? 1 : 0;
-				this.recievedLastHalfKickoff = this.o;
-				this.awaitingKickoff = this.o;
+				this.d = this.lastHalfAwaitingKickoff === 0 ? 1 : 0;
+				this.o = this.lastHalfAwaitingKickoff;
+				this.awaitingKickoff = this.d;
+				this.lastHalfAwaitingKickoff = this.d;
 			} else if (quarter > this.numPeriods) {
 				break;
 			}
@@ -299,6 +298,10 @@ class GameSim extends GameSimBase {
 		if (this.overtimeState === undefined) {
 			// Only set this in first overtime
 			this.overtimeState = "initialKickoff";
+
+			// Coin flip in initial overtime
+			this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
+			this.lastHalfAwaitingKickoff = this.awaitingKickoff;
 		}
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
@@ -309,10 +312,10 @@ class GameSim extends GameSimBase {
 			overtimes: this.overtimes,
 		});
 
-		this.d = this.recievedLastHalfKickoff;
-		this.o = this.d === 0 ? 1 : 0;
-		this.recievedLastHalfKickoff = this.o;
-		this.awaitingKickoff = this.o;
+		this.d = this.lastHalfAwaitingKickoff === 0 ? 1 : 0;
+		this.o = this.lastHalfAwaitingKickoff;
+		this.awaitingKickoff = this.d;
+		this.lastHalfAwaitingKickoff = this.d;
 
 		while (this.clock > 0 && this.overtimeState !== "over") {
 			this.simPlay();

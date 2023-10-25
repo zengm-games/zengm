@@ -2182,10 +2182,17 @@ export const settings: Setting[] = (
 		{
 			category: "Game Simulation",
 			key: "maxOvertimes",
-			name: "Max # Overtime Periods",
+			name: `Max # ${
+				isSport("baseball") ? "Extra Innings" : "Overtime Periods"
+			}`,
 			type: "intOrNull",
-			description:
-				"If a game is still tied after this many overtimes, the result is a tie. Set to 0 to disable overtime. Leave blank for infinite overtimes and no ties. In the playoffs there are never ties, regardless of this setting.",
+			description: `If a game is still tied after this many ${
+				isSport("baseball") ? "extra innings" : "overtimes"
+			}, the result is a tie. Set to 0 to disable ${
+				isSport("baseball") ? "extra innings" : "overtime"
+			}. Leave blank for infinite ${
+				isSport("baseball") ? "extra innings" : "overtimes"
+			} and no ties. In the playoffs there are never ties, regardless of this setting.`,
 			validator: value => {
 				if (typeof value === "number" && value < 0) {
 					throw new Error("Cannot be negative");

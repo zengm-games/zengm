@@ -57,7 +57,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			// This is 10, not 9, because it's doing half the distance to the goal
 			assert.strictEqual(
@@ -114,7 +114,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(
 				play.state.current.scrimmage,
@@ -175,7 +175,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(
 				play.state.current.scrimmage,
@@ -234,7 +234,7 @@ describe("worker/core/GameSim.football/Play", () => {
 					"before penalty application",
 				);
 
-				play.adjudicatePenalties();
+				play.adjudicatePenalties(false);
 
 				assert.deepStrictEqual(
 					play.state.current.pts,
@@ -286,7 +286,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			assert.deepStrictEqual(
 				play.state.current.pts,
@@ -353,7 +353,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			assert.deepStrictEqual(
 				play.state.current.pts,
@@ -399,7 +399,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				defender: undefined,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 1);
 			assert.strictEqual(play.state.current.toGo, 10);
@@ -439,7 +439,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			assert.deepStrictEqual(play.state.current.pts, [1, 0]);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			assert.deepStrictEqual(play.state.current.pts, [0, 0]);
 		});
@@ -482,7 +482,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before declining penalty",
 			);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			assert.deepStrictEqual(
 				play.state.current.awaitingKickoff,
@@ -536,7 +536,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(
 				play.state.current.down,
@@ -588,7 +588,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(
 				play.state.current.down,
@@ -643,7 +643,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			assert.strictEqual(po.stat.pssYds, 10);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			assert.strictEqual(play.state.current.scrimmage, 45);
 
@@ -676,7 +676,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				t: game.o,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(game.awaitingAfterTouchdown, true);
 
@@ -710,7 +710,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.deepEqual(game.overtimeState, "over");
 		});
@@ -732,7 +732,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.deepEqual(game.overtimeState, "firstPossession");
 
@@ -758,7 +758,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				late: false,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.deepEqual(game.overtimeState, "firstPossession");
 		});
@@ -781,7 +781,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				late: false,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.deepEqual(game.overtimeState, "over");
 		});
@@ -801,7 +801,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.deepEqual(game.overtimeState, "over");
 		});
@@ -832,7 +832,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				p,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.deepEqual(game.overtimeState, "firstPossession");
 		});
@@ -894,7 +894,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			// Not sure this makes sense. Should the tack-on foul always be tack-on? If so, should it be 2nd and 18 maybe? Or 3rd and 18? I dunno
 			assert.strictEqual(play.state.current.down, 2);
@@ -959,7 +959,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(
 				play.state.current.scrimmage,
@@ -1032,7 +1032,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(
 				play.state.current.scrimmage,
@@ -1102,7 +1102,7 @@ describe("worker/core/GameSim.football/Play", () => {
 
 			assert.deepStrictEqual(play.state.current.pts, [6, 0]);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 2);
 			assert.strictEqual(play.state.current.toGo, 7);
@@ -1165,7 +1165,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 2);
 			assert.strictEqual(play.state.current.toGo, 7);
@@ -1241,7 +1241,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"game state, before penalty application",
 			);
 
-			play.adjudicatePenalties();
+			play.adjudicatePenalties(false);
 
 			assert.deepStrictEqual(
 				play.state.current.pts,
@@ -1255,7 +1255,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"game state, after penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 2);
 			assert.strictEqual(play.state.current.toGo, 7);
@@ -1323,7 +1323,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				"before penalty application",
 			);
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 1);
 			assert.strictEqual(play.state.current.toGo, 10);
@@ -1358,7 +1358,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				yds: -7,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.o, 1);
 			assert.strictEqual(play.state.current.down, 1);
@@ -1400,7 +1400,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				lost: false,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 3);
 			assert.strictEqual(play.state.current.toGo, 3);
@@ -1439,7 +1439,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				lost: false,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 3);
 			assert.strictEqual(play.state.current.toGo, 5);
@@ -1469,7 +1469,7 @@ describe("worker/core/GameSim.football/Play", () => {
 				yds: 2,
 			});
 
-			play.commit();
+			play.commit(false);
 
 			assert.strictEqual(play.state.current.down, 3);
 			assert.strictEqual(play.state.current.toGo, 5);

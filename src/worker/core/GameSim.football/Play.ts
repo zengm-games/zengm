@@ -186,6 +186,7 @@ type PlayState = Pick<
 	| "awaitingAfterSafety"
 	| "awaitingAfterTouchdown"
 	| "overtimeState"
+	| "playUntimedPossession"
 >;
 
 type StatChange = Parameters<GameSim["recordStat"]>;
@@ -201,6 +202,7 @@ export class State {
 	awaitingAfterSafety: PlayState["awaitingAfterSafety"];
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 	overtimeState: PlayState["overtimeState"];
+	playUntimedPossession: PlayState["playUntimedPossession"];
 
 	downIncremented: boolean;
 	firstDownLine: number;
@@ -243,6 +245,7 @@ export class State {
 		this.awaitingAfterSafety = gameSim.awaitingAfterSafety;
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
 		this.overtimeState = gameSim.overtimeState;
+		this.playUntimedPossession = gameSim.playUntimedPossession;
 
 		this.downIncremented = downIncremented;
 		this.firstDownLine = firstDownLine ?? this.scrimmage + this.toGo;
@@ -317,6 +320,7 @@ type WrappedPenaltyEvent = {
 	statChanges: StatChange[];
 	penaltyInfo: {
 		halfDistanceToGoal: boolean;
+		onDefense: boolean;
 		penYdsSigned: number;
 		placeOnOne: boolean;
 	};
@@ -563,8 +567,11 @@ class Play {
 
 		const placeOnOne = side === "def" && state.scrimmage + penYdsSigned > 99;
 
+		const onDefense = event.t === state.d;
+
 		return {
 			halfDistanceToGoal,
+			onDefense,
 			penYdsSigned,
 			placeOnOne,
 		};
@@ -953,7 +960,7 @@ class Play {
 		return this.penaltyRollbacks.length;
 	}
 
-	adjudicatePenalties() {
+	adjudicatePenalties(timeExpiredAtEndOfHalf: boolean) {
 		const penalties = this.events.filter(
 			event => event.event.type === "penalty",
 		) as WrappedPenaltyEvent[];
@@ -1146,6 +1153,14 @@ class Play {
 								state.isClockRunning = false;
 							} else {
 								this.updateState(state, penalty.event);
+
+								if (timeExpiredAtEndOfHalf) {
+									console.log("timeExpiredAtEndOfHalf");
+								}
+								if (penalty.penaltyInfo.onDefense && timeExpiredAtEndOfHalf) {
+									console.log("playUntimedPossession");
+									state.playUntimedPossession = true;
+								}
 							}
 
 							this.checkDownAtEndOfPlay(state);
@@ -1263,9 +1278,9 @@ class Play {
 		}
 	}
 
-	commit() {
+	commit(timeExpiredAtEndOfHalf: boolean) {
 		this.checkDownAtEndOfPlay(this.state.current);
-		this.adjudicatePenalties();
+		this.adjudicatePenalties(timeExpiredAtEndOfHalf);
 
 		if (this.state.current.turnoverOnDowns) {
 			this.g.playByPlay.logEvent("turnoverOnDowns", {
@@ -1273,29 +1288,23 @@ class Play {
 			});
 		}
 
-		const {
-			down,
-			toGo,
-			scrimmage,
-			o,
-			d,
-			isClockRunning,
-			awaitingKickoff,
-			awaitingAfterSafety,
-			awaitingAfterTouchdown,
-			overtimeState,
-		} = this.state.current;
+		const keysToApply = [
+			"down",
+			"toGo",
+			"scrimmage",
+			"o",
+			"d",
+			"isClockRunning",
+			"awaitingKickoff",
+			"awaitingAfterSafety",
+			"awaitingAfterTouchdown",
+			"overtimeState",
+			"playUntimedPossession",
+		] as const;
 
-		this.g.down = down;
-		this.g.toGo = toGo;
-		this.g.scrimmage = scrimmage;
-		this.g.o = o;
-		this.g.d = d;
-		this.g.isClockRunning = isClockRunning;
-		this.g.awaitingKickoff = awaitingKickoff;
-		this.g.awaitingAfterSafety = awaitingAfterSafety;
-		this.g.awaitingAfterTouchdown = awaitingAfterTouchdown;
-		this.g.overtimeState = overtimeState;
+		for (const key of keysToApply) {
+			(this as any).g[key] = this.state.current[key];
+		}
 	}
 }
 

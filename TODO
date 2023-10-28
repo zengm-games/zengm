@@ -1,3 +1,17 @@
+scheduled events for roster size changes https://discord.com/channels/290013534023057409/290015591216054273/1167345210955681802
+- 15 in 2006
+- 17 in some time
+- 18 in 2024
+
+untimed down for penalty
+- offense should never decline penalty if it means the game ends and they lose within 1 score
+  - playUntimedPossession is in results, passed to getBestPenaltyResult
+
+FBGM
+- more running plays on 3rd/4th and short?
+- show timeouts in play-by-play
+- inappropriate half the distance to the goal https://discord.com/channels/290013534023057409/290015591216054273/1167368228369072158
+
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history
 - option to have it ignore rookie contracts

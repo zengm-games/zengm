@@ -224,7 +224,7 @@ describe("worker/core/GameSim.football", () => {
 		game.checkPenalties = () => false;
 
 		game.doPass();
-		game.currentPlay.commit();
+		game.currentPlay.commit(false);
 
 		assert.strictEqual(game.team[0].stat.defSk, 0);
 		assert.strictEqual(game.team[1].stat.defSk, 1);
@@ -253,7 +253,7 @@ describe("worker/core/GameSim.football", () => {
 		game.checkPenalties = () => false;
 
 		game.doPass();
-		game.currentPlay.commit();
+		game.currentPlay.commit(false);
 
 		assert.strictEqual(game.team[0].stat.defInt, 0);
 		assert.strictEqual(game.team[1].stat.defInt, 1);

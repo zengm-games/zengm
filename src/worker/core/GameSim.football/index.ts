@@ -15,9 +15,6 @@ import type {
 	TeamNum,
 	Formation,
 } from "./types";
-import isFirstPeriodAfterHalftime from "./isFirstPeriodAfterHalftime";
-import possessionEndsAfterThisPeriod from "./possessionEndsAfterThisPeriod";
-import thisPeriodHasTwoMinuteWarning from "./thisPeriodHasTwoMinuteWarning";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import Play from "./Play";
 import LngTracker from "./LngTracker";
@@ -95,6 +92,9 @@ class GameSim extends GameSimBase {
 	currentPlay: Play;
 
 	lngTracker: LngTracker;
+
+	// For penalties at the end of a half
+	playUntimedPossession = false;
 
 	constructor({
 		gid,
@@ -253,18 +253,30 @@ class GameSim extends GameSimBase {
 		return out;
 	}
 
+	isFirstPeriodAfterHalftime(quarter: number) {
+		return this.numPeriods % 2 === 0 && quarter === this.numPeriods / 2 + 1;
+	}
+
+	kickoffAfterEndOfPeriod(quarter: number) {
+		return (
+			this.isFirstPeriodAfterHalftime(quarter + 1) || quarter >= this.numPeriods
+		);
+	}
+
 	simRegulation() {
 		let quarter = 1;
 
 		while (true) {
-			while (this.clock > 0 || this.awaitingAfterTouchdown) {
+			while (
+				this.clock > 0 ||
+				this.awaitingAfterTouchdown ||
+				this.playUntimedPossession
+			) {
 				this.simPlay();
 			}
 
-			quarter += 1;
-
 			// Who gets the ball after halftime?
-			if (isFirstPeriodAfterHalftime(quarter, this.numPeriods)) {
+			if (this.isFirstPeriodAfterHalftime(quarter + 1)) {
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
 
@@ -272,16 +284,18 @@ class GameSim extends GameSimBase {
 				this.o = this.lastHalfAwaitingKickoff;
 				this.awaitingKickoff = this.d;
 				this.lastHalfAwaitingKickoff = this.d;
-			} else if (quarter > this.numPeriods) {
+			} else if (quarter === this.numPeriods) {
 				break;
 			}
+
+			quarter += 1;
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
 			this.clock = g.get("quarterLength");
 			this.playByPlay.logEvent("quarter", {
 				clock: this.clock,
-				quarter: this.team[0].stat.ptsQtrs.length,
+				quarter,
 			});
 		}
 	}
@@ -319,7 +333,10 @@ class GameSim extends GameSimBase {
 		this.awaitingKickoff = this.d;
 		this.lastHalfAwaitingKickoff = this.d;
 
-		while (this.clock > 0 && this.overtimeState !== "over") {
+		while (
+			(this.clock > 0 || this.playUntimedPossession) &&
+			this.overtimeState !== "over"
+		) {
 			this.simPlay();
 		}
 	}
@@ -464,8 +481,7 @@ class GameSim extends GameSimBase {
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
 		return (
-			((isFirstPeriodAfterHalftime(quarter + 1, this.numPeriods) &&
-				this.scrimmage >= 50) ||
+			((this.kickoffAfterEndOfPeriod(quarter) && this.scrimmage >= 50) ||
 				(quarter === this.numPeriods && ptsDown >= 0)) &&
 			this.clock <= 2
 		);
@@ -593,7 +609,7 @@ class GameSim extends GameSimBase {
 		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
 			this.clock <= 10 / 60 &&
-			possessionEndsAfterThisPeriod(quarter, this.numPeriods) &&
+			this.kickoffAfterEndOfPeriod(quarter) &&
 			!needTouchdown &&
 			this.probMadeFieldGoal() >= 0.02
 		) {
@@ -699,6 +715,9 @@ class GameSim extends GameSimBase {
 	}
 
 	simPlay() {
+		// Reset before calling Play, so Play can set to true if necessary for the next play
+		this.playUntimedPossession = false;
+
 		this.currentPlay = new Play(this);
 
 		if (!this.awaitingAfterTouchdown) {
@@ -739,61 +758,55 @@ class GameSim extends GameSimBase {
 			throw new Error(`Unknown playType "${playType}"`);
 		}
 
-		this.currentPlay.commit();
-
-		const quarter = this.team[0].stat.ptsQtrs.length;
 		dt /= 60;
+		const quarter = this.team[0].stat.ptsQtrs.length;
+
+		const clockAtEndOfPlay = this.clock - dt;
+
+		const timeExpiredAtEndOfHalf =
+			clockAtEndOfPlay <= 0 && this.kickoffAfterEndOfPeriod(quarter);
+
+		this.currentPlay.commit(timeExpiredAtEndOfHalf);
 
 		// Two minute warning
+		let twoMinuteWarningHappening = false;
 		if (
-			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
-			this.clock - dt <= 2 &&
+			this.kickoffAfterEndOfPeriod(quarter) &&
+			clockAtEndOfPlay <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
 			this.twoMinuteWarningHappened = true;
 			this.isClockRunning = false;
 			this.playByPlay.logEvent("twoMinuteWarning", {
-				clock: this.clock - dt,
+				clock: clockAtEndOfPlay,
 			});
+
+			// So we know it happened this possession, and no random timeout should be used
+			twoMinuteWarningHappening = true;
 		}
 
-		const clockAtEndOfPlay = this.clock - dt;
-		if (clockAtEndOfPlay > 0) {
-			let twoMinuteWarningHappening = false;
-			if (
-				thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
-				clockAtEndOfPlay <= 2 &&
-				!this.twoMinuteWarningHappened
-			) {
-				twoMinuteWarningHappening = true;
+		if (clockAtEndOfPlay > 0 && !twoMinuteWarningHappening) {
+			// Timeouts - small chance at any time
+			if (Math.random() < 0.01) {
+				this.doTimeout(this.o);
+			} else if (Math.random() < 0.003) {
+				this.doTimeout(this.d);
 			}
 
-			if (!twoMinuteWarningHappening) {
-				// Timeouts - small chance at any time
-				if (Math.random() < 0.01) {
-					this.doTimeout(this.o);
-				} else if (Math.random() < 0.003) {
-					this.doTimeout(this.d);
-				}
+			// Timeouts - late in game when clock is running
+			if (this.kickoffAfterEndOfPeriod(quarter) && this.isClockRunning) {
+				const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
-				// Timeouts - late in game when clock is running
-				if (
-					thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
-					this.isClockRunning
-				) {
-					const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-
-					// No point in the 4th quarter of a blowout
-					if (diff < 24 || quarter < this.numPeriods) {
-						if (diff > 0) {
-							// If offense is winning, defense uses timeouts when near the end
-							if (this.clock < 2.5) {
-								this.doTimeout(this.d);
-							}
-						} else if (this.clock < 1.5) {
-							// If offense is losing or tied, offense uses timeouts when even nearer the end
-							this.doTimeout(this.o);
+				// No point in the 4th quarter of a blowout
+				if (diff < 24 || quarter < this.numPeriods) {
+					if (diff > 0) {
+						// If offense is winning, defense uses timeouts when near the end
+						if (this.clock < 2.5) {
+							this.doTimeout(this.d);
 						}
+					} else if (this.clock < 1.5) {
+						// If offense is losing or tied, offense uses timeouts when even nearer the end
+						this.doTimeout(this.o);
 					}
 				}
 			}
@@ -819,8 +832,8 @@ class GameSim extends GameSimBase {
 
 		// Check two minute warning again
 		if (
-			thisPeriodHasTwoMinuteWarning(quarter, this.numPeriods) &&
-			this.clock - dt - dtClockRunning <= 2 &&
+			this.kickoffAfterEndOfPeriod(quarter) &&
+			clockAtEndOfPlay - dtClockRunning <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
 			this.twoMinuteWarningHappened = true;
@@ -830,7 +843,7 @@ class GameSim extends GameSimBase {
 			});
 
 			// Clock only runs until it hits 2 minutes exactly
-			dtClockRunning = helpers.bound(this.clock - dt - 2, 0, Infinity);
+			dtClockRunning = helpers.bound(clockAtEndOfPlay - 2, 0, Infinity);
 		}
 
 		// Clock

@@ -492,12 +492,24 @@ const useLeagues = () => {
 const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	// Default state comes from cache of last exhibition game, if possible
 	const defaultState = useMemo(() => {
+		let settings: CachedSettings | undefined;
 		try {
 			const json = safeLocalStorage.getItem(CACHE_KEY);
 			if (json) {
-				return JSON.parse(json) as CachedSettings;
+				settings = JSON.parse(json) as CachedSettings;
 			}
 		} catch (error) {}
+
+		if (settings) {
+			// Add default, in case there is a new setting
+			if (settings.gameAttributesInfo.type === "custom") {
+				settings.gameAttributesInfo.custom = {
+					...defaultSettings,
+					...settings.gameAttributesInfo.custom,
+				};
+			}
+			return settings;
+		}
 
 		return {
 			gameAttributesInfo: {
@@ -508,6 +520,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			swapHomeAway: false,
 			teams: undefined,
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const leagues = useLeagues();

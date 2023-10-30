@@ -2033,7 +2033,6 @@ class GameSim extends GameSimBase {
 	doFt(shooter: PlayerNumOnCourt, amount: number) {
 		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 
-		console.log("ftAccuracyFactor", g.get("ftAccuracyFactor"));
 		const ftp = helpers.bound(
 			g.get("ftAccuracyFactor") *
 				this.team[this.o].player[p].compositeRating.shootingFT *

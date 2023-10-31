@@ -4,6 +4,7 @@ import madeHof from "./madeHof";
 import type { Conditions, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { player } from "..";
+import addAward from "./addAward";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.
@@ -45,7 +46,7 @@ const retire = async (
 	// Add to Hall of Fame?
 	if (conditions && !p.hof && madeHof(p)) {
 		p.hof = 1;
-		p.awards.push({
+		addAward(p, {
 			season: g.get("season"),
 			type: "Inducted into the Hall of Fame",
 		});

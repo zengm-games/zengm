@@ -721,7 +721,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 							? options.season - 1
 							: options.season;
 
-					p.awards.push({
+					player.addAward(p as any, {
 						type: "Inducted into the Hall of Fame",
 						season,
 					});

@@ -1127,11 +1127,13 @@ export type MinimalPlayerRatings = {
 	locked?: boolean;
 };
 
+export type PlayerAward = {
+	season: number;
+	type: string;
+};
+
 export type PlayerWithoutKey<PlayerRatings = any> = {
-	awards: {
-		season: number;
-		type: string;
-	}[];
+	awards: PlayerAward[];
 	born: {
 		year: number;
 		loc: string;

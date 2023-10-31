@@ -23,6 +23,7 @@ import type {
 } from "../../../common/types";
 import setGameAttributes from "../league/setGameAttributes";
 import { doExpand, doRelocate } from "./relocateExpand";
+import addAward from "../player/addAward";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -339,7 +340,7 @@ const newPhaseBeforeDraft = async (
 		const players = await idb.cache.players.indexGetAll("playersByTid", t.tid);
 
 		for (const p of players) {
-			p.awards.push({
+			addAward(p, {
 				season: g.get("season"),
 				type: "Won Championship",
 			});

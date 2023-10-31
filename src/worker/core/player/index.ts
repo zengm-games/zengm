@@ -1,3 +1,4 @@
+import addAward from "./addAward";
 import addRatingsRow from "./addRatingsRow";
 import addRelatives from "./addRelatives";
 import addStatsRow from "./addStatsRow";
@@ -45,6 +46,7 @@ import value from "./value";
 import valueCombineOvrPot from "./valueCombineOvrPot";
 
 export default {
+	addAward,
 	addRatingsRow,
 	addRelatives,
 	addStatsRow,

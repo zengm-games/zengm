@@ -21,6 +21,7 @@ import type {
 } from "../../../common/types";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
 import season from ".";
+import player from "../player";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -511,7 +512,7 @@ const saveAwardsByPlayer = async (
 		if (p && pid != undefined) {
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {
-					p.awards.push({
+					player.addAward(p, {
 						season,
 						type: awardByPlayer.type,
 					});

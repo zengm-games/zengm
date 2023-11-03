@@ -3,11 +3,6 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 - 17 in some time
 - 18 in 2024
 
-untimed down for penalty
-- offense should never decline penalty if it means the game ends and they lose within 1 score
-  - playUntimedPossession is in results, passed to getBestPenaltyResult
-  - tricky logic to get perfectly right - depends on who was defense at time of penalty (stored in penaltyInfo.onDefense) and if this is the end of the game or not (FG at end of half while losing is fine, but not at end of game)
-
 FBGM
 - more running plays on 3rd/4th and short?
 - show timeouts in play-by-play

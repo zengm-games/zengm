@@ -1178,10 +1178,15 @@ class Play {
 				})
 				.flat();
 
+			const gameCanEndAtEndOfPeriod =
+				this.g.team[0].stat.ptsQtrs.length >= this.g.numPeriods;
+
 			const result = getBestPenaltyResult(
 				results,
 				this.state.initial,
 				choosingTeam,
+				timeExpiredAtEndOfHalf,
+				gameCanEndAtEndOfPeriod,
 			);
 
 			if (result.decisions.length > 1) {

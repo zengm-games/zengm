@@ -1154,11 +1154,7 @@ class Play {
 							} else {
 								this.updateState(state, penalty.event);
 
-								if (timeExpiredAtEndOfHalf) {
-									console.log("timeExpiredAtEndOfHalf");
-								}
 								if (penalty.penaltyInfo.onDefense && timeExpiredAtEndOfHalf) {
-									console.log("playUntimedPossession");
 									state.playUntimedPossession = true;
 								}
 							}

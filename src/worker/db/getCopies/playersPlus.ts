@@ -330,6 +330,13 @@ const processRatings = (
 						tidTemp = ps.tid;
 					}
 				}
+				if (
+					pr.season === g.get("season") &&
+					tidTemp === undefined &&
+					p.tid >= 0
+				) {
+					tidTemp = p.tid;
+				}
 
 				if (attr === "abbrev") {
 					if (tidTemp !== undefined) {

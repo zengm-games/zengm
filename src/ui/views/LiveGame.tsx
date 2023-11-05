@@ -19,7 +19,8 @@ import { helpers, processLiveGameEvents, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { bySport, getPeriodName, isSport } from "../../common";
 import useLocalStorageState from "use-local-storage-state";
-import type { SportState } from "../util/processLiveGameEvents.baseball";
+import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/processLiveGameEvents.baseball";
+import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football";
 import { HeadlineScore } from "../components/BoxScoreWrapper";
 
 type PlayerRowProps = {
@@ -92,20 +93,12 @@ const getSeconds = (time: string | undefined) => {
 	return min * 60 + sec;
 };
 
-export const DEFAULT_SPORT_STATE = isSport("baseball")
-	? ({
-			bases: [undefined, undefined, undefined] as [
-				number | undefined,
-				number | undefined,
-				number | undefined,
-			],
-			outs: 0,
-			balls: 0,
-			strikes: 0,
-			batterPid: -1,
-			pitcherPid: -1,
-	  } as SportState)
-	: undefined;
+const DEFAULT_SPORT_STATE = bySport<any>({
+	baseball: DEFAULT_SPORT_STATE_BASEBALL,
+	basketball: undefined,
+	football: DEFAULT_SPORT_STATE_FOOTBALL,
+	hockey: undefined,
+});
 
 export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
@@ -251,10 +244,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			if (events.current && events.current.length > 0) {
 				if (!pausedRef.current) {
-					setTimeout(() => {
-						processToNextPause();
-						setPlayIndex(prev => prev + 1);
-					}, 4000 / 1.2 ** speedRef.current);
+					setTimeout(
+						() => {
+							processToNextPause();
+							setPlayIndex(prev => prev + 1);
+						},
+						4000 / 1.2 ** speedRef.current,
+					);
 				}
 			} else {
 				boxScore.current.time = "0:00";
@@ -547,7 +543,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 							label: "Next baserunner",
 							key: "T",
 							onClick: () => {
-								const initialBases = sportState.current?.bases ?? [];
+								const sportStateBaseball =
+									sportState.current as typeof DEFAULT_SPORT_STATE_BASEBALL;
+								const initialBases = sportStateBaseball.bases ?? [];
 								const initialBaserunners = new Set(
 									initialBases.filter(pid => pid !== undefined),
 								);
@@ -562,7 +560,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 									numPlays += 1;
 
 									// Any new baserunner -> stop
-									const baserunners = (sportState.current?.bases ?? []).filter(
+									const baserunners = (sportStateBaseball.bases ?? []).filter(
 										pid => pid !== undefined,
 									);
 									if (baserunners.length === 0) {

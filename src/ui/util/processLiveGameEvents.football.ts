@@ -1,17 +1,37 @@
 import { getPeriodName } from "../../common";
 import { helpers } from "../../ui/util";
 
+export type SportState = {
+	t: 0 | 1;
+	numPlays: number;
+	initialScrimmage: number;
+	scrimmage: number;
+	plays: unknown[];
+	text: string;
+};
+
+export const DEFAULT_SPORT_STATE: SportState = {
+	t: 0,
+	numPlays: 0,
+	initialScrimmage: 0,
+	scrimmage: 0,
+	plays: [],
+	text: "",
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
 	boxScore,
 	overtimes,
 	quarters,
+	sportState,
 }: {
 	events: any[];
 	boxScore: any;
 	overtimes: number;
 	quarters: string[];
+	sportState: SportState;
 }) => {
 	let stop = false;
 	let text;
@@ -86,8 +106,9 @@ const processLiveGameEvents = ({
 			boxScore.time = e.time;
 			stop = true;
 		} else if (e.type === "clock") {
-			if (typeof e.awaitingKickoff === "number") {
-				text = `${e.time} - ${boxScore.teams[actualT].abbrev} kicking off`;
+			let textWithoutTime;
+			if (e.awaitingKickoff !== undefined) {
+				textWithoutTime = `${boxScore.teams[actualT].abbrev} kicking off`;
 			} else {
 				let fieldPos = "";
 				if (e.scrimmage === 50) {
@@ -98,13 +119,26 @@ const processLiveGameEvents = ({
 					fieldPos = `own ${e.scrimmage}`;
 				}
 
-				text = `${e.time} - ${
+				textWithoutTime = `${
 					boxScore.teams[actualT].abbrev
 				} ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
 			}
+			text = `${e.time} - ${textWithoutTime}`;
 
 			boxScore.time = e.time;
 			stop = true;
+
+			if (e.awaitingKickoff !== undefined || sportState.t !== actualT) {
+				sportState.t = actualT;
+				sportState.numPlays = 0;
+				sportState.initialScrimmage = e.scrimmage;
+				sportState.scrimmage = e.scrimmage;
+				sportState.plays = [];
+				sportState.text = textWithoutTime;
+			} else {
+				sportState.text = textWithoutTime;
+				sportState.scrimmage = e.scrimmage;
+			}
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
@@ -148,6 +182,7 @@ const processLiveGameEvents = ({
 		overtimes,
 		possessionChange,
 		quarters,
+		sportState,
 		text,
 	};
 };

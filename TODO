@@ -12,6 +12,11 @@ FBGM show field during game
     - some minimum height of field, but expand dynamically for long drives
     - draw vertical lines for scrimmage and togo
     - light mode
+    - how to update numPlays
+      - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
+    - how does drive tracker handle turnover reversed on penalty?
+    - need to set sportState.drive to undefined when doing a kickoff at start of half/overtime
+      - unify logic with kickoffAfterEndOfPeriod
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

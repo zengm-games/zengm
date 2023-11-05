@@ -25,7 +25,7 @@ const processLiveGameEvents = ({
 			overtimes,
 			quarters,
 			sportState,
-		}) as any,
+		}),
 		basketball: processLiveGameEventsBasketball({
 			events,
 			boxScore,
@@ -37,6 +37,7 @@ const processLiveGameEvents = ({
 			boxScore,
 			overtimes,
 			quarters,
+			sportState,
 		}),
 		hockey: processLiveGameEventsHockey({
 			events,

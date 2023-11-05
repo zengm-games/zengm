@@ -4,7 +4,6 @@ import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
-import { DEFAULT_SPORT_STATE } from "../views/LiveGame";
 import {
 	NUM_OUTS_PER_INNING,
 	POS_NUMBERS_INVERSE,
@@ -413,6 +412,19 @@ export type SportState = {
 	strikes: number;
 	batterPid: number;
 	pitcherPid: number;
+};
+
+export const DEFAULT_SPORT_STATE: SportState = {
+	bases: [undefined, undefined, undefined] as [
+		number | undefined,
+		number | undefined,
+		number | undefined,
+	],
+	outs: 0,
+	balls: 0,
+	strikes: 0,
+	batterPid: -1,
+	pitcherPid: -1,
 };
 
 // Mutates boxScore!!!

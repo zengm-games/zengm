@@ -15,6 +15,7 @@ import updateSortBys from "./DataTable/updateSortBys";
 import { getSortClassName } from "./DataTable/Header";
 import range from "lodash-es/range";
 import classNames from "classnames";
+import type { SportState } from "../util/processLiveGameEvents.football";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -386,20 +387,31 @@ const ScoringSummary = memo(
 	},
 );
 
-const FieldAndDrive = ({ boxScore }: { boxScore: BoxScore }) => {
-	const t = 0;
-	const t2 = 1;
+const FieldAndDrive = ({
+	boxScore,
+	sportState,
+}: {
+	boxScore: BoxScore;
+	sportState: SportState;
+}) => {
+	const t = sportState.t;
+	const t2 = t === 0 ? 1 : 0;
 
 	// 12 is for 2 endzones and 10 10-yard areas in between
 	const NUM_SECTIONS = 12;
-
 	const DEFAULT_HEIGHT = 200;
-	console.log(boxScore);
+
+	const yards = sportState.scrimmage - sportState.initialScrimmage;
+
 	return (
 		<div className="mb-3">
-			<div className="d-flex">
-				LOGO 1st & 10, own 20
-				<div className="ms-auto">Drive: 5 plays, 62 yards</div>
+			<div className="d-flex mb-1">
+				{sportState.text}
+				<div className="ms-auto">
+					Drive: {sportState.numPlays} play
+					{sportState.numPlays === 1 ? "" : "s"}, {yards} yard
+					{yards === 1 ? "" : "s"}
+				</div>
 			</div>
 			<div
 				className="d-flex align-items-stretch"
@@ -471,12 +483,22 @@ const FieldAndDrive = ({ boxScore }: { boxScore: BoxScore }) => {
 	);
 };
 
-const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
+const BoxScore = ({
+	boxScore,
+	sportState,
+	Row,
+}: {
+	boxScore: BoxScore;
+	sportState: SportState;
+	Row: any;
+}) => {
 	const liveGameSim = (boxScore as any).won?.name === undefined;
 
 	return (
 		<div className="mb-3">
-			{liveGameSim ? <FieldAndDrive boxScore={boxScore} /> : undefined}
+			{liveGameSim ? (
+				<FieldAndDrive boxScore={boxScore} sportState={sportState} />
+			) : undefined}
 
 			<h2>Scoring Summary</h2>
 			<ScoringSummary

@@ -11,15 +11,18 @@ FBGM show field during game
     - different colors for positive and negative plays
     - some minimum height of field, but expand dynamically for long drives
     - would be nice to show the kickoff as a drive - kick and return as 2 bars
-      - fumbles too
+      - fumbles during return too
+      - onside kick?
     - light mode
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
     - how does drive tracker handle turnover reversed on penalty?
-    - need to set sportState.drive to undefined when doing a kickoff at start of half/overtime
+    - "Start of 3rd quarter" and similar should clear drive
       - unify logic with kickoffAfterEndOfPeriod
-    - need to set scrimmage and toGo for kickoffs and extra points/2pt, currently they are weird
+    - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - send additional clock event?
+        - need to know if it's xp or 2pt, for scrimmage
+        - need to know not to print the "1st & 10" line
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

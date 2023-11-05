@@ -4,6 +4,9 @@ import { g } from "../../util";
 import getBestPenaltyResult from "./getBestPenaltyResult";
 import type { PlayerGameSim, TeamNum } from "./types";
 
+export const SCRIMMAGE_KICKOFF = 35;
+const SCRIMMAGE_KICKOFF_SAFETY = 20;
+
 type PlayEvent =
 	| {
 			type: "k";
@@ -661,6 +664,7 @@ class Play {
 		} else if (event.type === "fg" || event.type === "xp") {
 			if (event.type === "xp" || event.made) {
 				state.awaitingKickoff = this.state.initial.o;
+				state.scrimmage = SCRIMMAGE_KICKOFF;
 			}
 
 			if (event.type === "xp" && !event.made) {
@@ -684,10 +688,12 @@ class Play {
 
 			state.twoPointConversionTeam = undefined;
 			state.awaitingKickoff = event.t;
+			state.scrimmage = SCRIMMAGE_KICKOFF;
 			state.awaitingAfterTouchdown = false;
 			state.isClockRunning = false;
 		} else if (event.type === "defSft") {
 			state.awaitingKickoff = state.o;
+			state.scrimmage = SCRIMMAGE_KICKOFF_SAFETY;
 			state.awaitingAfterSafety = true;
 			state.isClockRunning = false;
 		} else if (event.type === "fmb") {

@@ -16,7 +16,7 @@ import type {
 	Formation,
 } from "./types";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
-import Play from "./Play";
+import Play, { SCRIMMAGE_KICKOFF } from "./Play";
 import LngTracker from "./LngTracker";
 import GameSimBase from "../GameSimBase";
 import { PHASE } from "../../../common";
@@ -146,7 +146,7 @@ class GameSim extends GameSimBase {
 		this.lastHalfAwaitingKickoff = this.awaitingKickoff;
 		this.down = 1;
 		this.toGo = 10;
-		this.scrimmage = 0;
+		this.scrimmage = SCRIMMAGE_KICKOFF;
 		this.timeouts = [3, 3];
 		this.twoMinuteWarningHappened = false;
 		this.currentPlay = new Play(this);
@@ -284,6 +284,7 @@ class GameSim extends GameSimBase {
 				this.o = this.lastHalfAwaitingKickoff;
 				this.awaitingKickoff = this.d;
 				this.lastHalfAwaitingKickoff = this.d;
+				this.scrimmage = SCRIMMAGE_KICKOFF;
 			} else if (quarter === this.numPeriods) {
 				break;
 			}
@@ -318,6 +319,7 @@ class GameSim extends GameSimBase {
 			// Coin flip in initial overtime
 			this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
 			this.lastHalfAwaitingKickoff = this.awaitingKickoff;
+			this.scrimmage = SCRIMMAGE_KICKOFF;
 		}
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
@@ -332,6 +334,7 @@ class GameSim extends GameSimBase {
 		this.o = this.lastHalfAwaitingKickoff;
 		this.awaitingKickoff = this.d;
 		this.lastHalfAwaitingKickoff = this.d;
+		this.scrimmage = SCRIMMAGE_KICKOFF;
 
 		while (
 			(this.clock > 0 || this.playUntimedPossession) &&
@@ -720,6 +723,13 @@ class GameSim extends GameSimBase {
 
 		this.currentPlay = new Play(this);
 
+		console.log(
+			"simPlay",
+			this.awaitingAfterTouchdown,
+			this.scrimmage,
+			this.down,
+			this.toGo,
+		);
 		if (!this.awaitingAfterTouchdown) {
 			this.playByPlay.logClock({
 				awaitingKickoff: this.awaitingKickoff,

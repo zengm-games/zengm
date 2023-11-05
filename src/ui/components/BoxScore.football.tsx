@@ -457,6 +457,19 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 	);
 };
 
+const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
+	return (
+		<div
+			className="position-absolute h-100"
+			style={{
+				width: 2,
+				backgroundColor: color,
+				left: `${((10 + yards) * 10) / NUM_SECTIONS}%`,
+			}}
+		/>
+	);
+};
+
 const FieldAndDrive = ({
 	boxScore,
 	sportState,
@@ -486,6 +499,11 @@ const FieldAndDrive = ({
 				}}
 			>
 				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
+				<VerticalLine color="var(--bs-blue)" yards={sportState.scrimmage} />
+				<VerticalLine
+					color="var(--bs-yellow)"
+					yards={sportState.scrimmage + sportState.toGo}
+				/>
 			</div>
 		</div>
 	);

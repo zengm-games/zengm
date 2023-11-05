@@ -428,13 +428,21 @@ const FieldAndDrive = ({ boxScore }: { boxScore: BoxScore }) => {
 						style.transform = "rotate(180deg)";
 					}
 
+					let yardLine: number | undefined;
+					if (i > 1 && i <= 6) {
+						yardLine = (i - 1) * 10;
+					} else if (i > 6 && i <= 10) {
+						yardLine = 100 - (i - 1) * 10;
+					}
+
 					return (
 						<div
 							key={i}
-							className={classNames({
+							className={classNames("d-flex", {
 								"border-start": i > 0,
 								"bg-success": !endzoneTeam,
-								"d-flex align-items-center": endzoneTeam,
+								"align-items-center": endzoneTeam,
+								"flex-column justify-content-between": yardLine !== undefined,
 							})}
 							style={style}
 						>
@@ -445,6 +453,15 @@ const FieldAndDrive = ({ boxScore }: { boxScore: BoxScore }) => {
 								>
 									{endzoneTeam.name}
 								</div>
+							) : null}
+							{yardLine !== undefined ? (
+								<>
+									{range(2).map(i => (
+										<div key={i} style={{ marginLeft: "-.5rem" }}>
+											{yardLine}
+										</div>
+									))}
+								</>
 							) : null}
 						</div>
 					);

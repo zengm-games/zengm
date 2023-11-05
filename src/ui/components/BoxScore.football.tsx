@@ -387,6 +387,76 @@ const ScoringSummary = memo(
 	},
 );
 
+// 12 is for 2 endzones and 10 10-yard areas in between
+const NUM_SECTIONS = 12;
+const DEFAULT_HEIGHT = 200;
+
+const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
+	return (
+		<div className="d-flex align-items-stretch position-absolute w-100">
+			{range(NUM_SECTIONS).map(i => {
+				const style: CSSProperties = {
+					width: `${(1 / 12) * 100}%`,
+				};
+				const ENDZONE_OFFENSE = i === 0;
+				const ENDZONE_DEFENSE = i === NUM_SECTIONS - 1;
+
+				const endzoneTeam = ENDZONE_OFFENSE
+					? t
+					: ENDZONE_DEFENSE
+					? t2
+					: undefined;
+				if (endzoneTeam) {
+					style.backgroundColor = endzoneTeam.colors[0];
+					style.color = endzoneTeam.colors[1];
+					style.writingMode = "vertical-lr";
+				}
+				if (ENDZONE_OFFENSE) {
+					style.transform = "rotate(180deg)";
+				}
+
+				let yardLine: number | undefined;
+				if (i > 1 && i <= 6) {
+					yardLine = (i - 1) * 10;
+				} else if (i > 6 && i <= 10) {
+					yardLine = 100 - (i - 1) * 10;
+				}
+
+				return (
+					<div
+						key={i}
+						className={classNames("d-flex", {
+							"border-start": i > 0,
+							"bg-success": !endzoneTeam,
+							"align-items-center": endzoneTeam,
+							"flex-column justify-content-between": yardLine !== undefined,
+						})}
+						style={style}
+					>
+						{endzoneTeam ? (
+							<div
+								className="fs-2 text-center overflow-hidden"
+								style={{ height: DEFAULT_HEIGHT, whiteSpace: "nowrap" }}
+							>
+								{endzoneTeam.name}
+							</div>
+						) : null}
+						{yardLine !== undefined ? (
+							<>
+								{range(2).map(i => (
+									<div key={i} style={{ marginLeft: "-.5rem" }}>
+										{yardLine}
+									</div>
+								))}
+							</>
+						) : null}
+					</div>
+				);
+			})}
+		</div>
+	);
+};
+
 const FieldAndDrive = ({
 	boxScore,
 	sportState,
@@ -396,10 +466,6 @@ const FieldAndDrive = ({
 }) => {
 	const t = sportState.t;
 	const t2 = t === 0 ? 1 : 0;
-
-	// 12 is for 2 endzones and 10 10-yard areas in between
-	const NUM_SECTIONS = 12;
-	const DEFAULT_HEIGHT = 200;
 
 	const yards = sportState.scrimmage - sportState.initialScrimmage;
 
@@ -414,70 +480,12 @@ const FieldAndDrive = ({
 				</div>
 			</div>
 			<div
-				className="d-flex align-items-stretch"
+				className="position-relative"
 				style={{
 					minHeight: DEFAULT_HEIGHT,
 				}}
 			>
-				{range(NUM_SECTIONS).map(i => {
-					const style: CSSProperties = {
-						width: `${(1 / 12) * 100}%`,
-					};
-					const ENDZONE_OFFENSE = i === 0;
-					const ENDZONE_DEFENSE = i === NUM_SECTIONS - 1;
-
-					const endzoneTeam = ENDZONE_OFFENSE
-						? boxScore.teams[t]
-						: ENDZONE_DEFENSE
-						? boxScore.teams[t2]
-						: undefined;
-					if (endzoneTeam) {
-						style.backgroundColor = endzoneTeam.colors[0];
-						style.color = endzoneTeam.colors[1];
-						style.writingMode = "vertical-lr";
-					}
-					if (ENDZONE_OFFENSE) {
-						style.transform = "rotate(180deg)";
-					}
-
-					let yardLine: number | undefined;
-					if (i > 1 && i <= 6) {
-						yardLine = (i - 1) * 10;
-					} else if (i > 6 && i <= 10) {
-						yardLine = 100 - (i - 1) * 10;
-					}
-
-					return (
-						<div
-							key={i}
-							className={classNames("d-flex", {
-								"border-start": i > 0,
-								"bg-success": !endzoneTeam,
-								"align-items-center": endzoneTeam,
-								"flex-column justify-content-between": yardLine !== undefined,
-							})}
-							style={style}
-						>
-							{endzoneTeam ? (
-								<div
-									className="fs-2 text-center overflow-hidden"
-									style={{ height: DEFAULT_HEIGHT, whiteSpace: "nowrap" }}
-								>
-									{endzoneTeam.name}
-								</div>
-							) : null}
-							{yardLine !== undefined ? (
-								<>
-									{range(2).map(i => (
-										<div key={i} style={{ marginLeft: "-.5rem" }}>
-											{yardLine}
-										</div>
-									))}
-								</>
-							) : null}
-						</div>
-					);
-				})}
+				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
 			</div>
 		</div>
 	);

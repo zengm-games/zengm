@@ -57,8 +57,13 @@ const processLiveGameEvents = ({
 		// Swap teams order, so home team is at bottom in box score
 		const actualT = e.t === 0 ? 1 : 0;
 
-		if (e.quarter !== undefined && !quarters.includes(e.quarter)) {
-			quarters.push(e.quarter);
+		if (
+			(e.quarter !== undefined && !quarters.includes(e.quarter)) ||
+			quarters.length === 0
+		) {
+			const quarterText = e.quarter ?? "Q1";
+
+			quarters.push(quarterText);
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
 

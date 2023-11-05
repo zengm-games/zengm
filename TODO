@@ -11,6 +11,9 @@ FBGM show field during game
     - different colors for positive and negative plays
     - some minimum height of field, but expand dynamically for long drives
     - draw vertical lines for scrimmage and togo
+      - not when awaitingKickoff
+    - would be nice to show the kickoff as a drive - kick and return as 2 bars
+      - fumbles too
     - light mode
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always

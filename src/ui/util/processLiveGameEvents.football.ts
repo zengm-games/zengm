@@ -2,6 +2,7 @@ import { getPeriodName } from "../../common";
 import { helpers } from "../../ui/util";
 
 export type SportState = {
+	awaitingKickoff: boolean;
 	t: 0 | 1;
 	numPlays: number;
 	initialScrimmage: number;
@@ -11,6 +12,7 @@ export type SportState = {
 };
 
 export const DEFAULT_SPORT_STATE: SportState = {
+	awaitingKickoff: true,
 	t: 0,
 	numPlays: 0,
 	initialScrimmage: 0,
@@ -107,7 +109,8 @@ const processLiveGameEvents = ({
 			stop = true;
 		} else if (e.type === "clock") {
 			let textWithoutTime;
-			if (e.awaitingKickoff !== undefined) {
+			const awaitingKickoff = e.awaitingKickoff !== undefined;
+			if (awaitingKickoff) {
 				textWithoutTime = `${boxScore.teams[actualT].abbrev} kicking off`;
 			} else {
 				let fieldPos = "";
@@ -132,13 +135,11 @@ const processLiveGameEvents = ({
 				sportState.t = actualT;
 				sportState.numPlays = 0;
 				sportState.initialScrimmage = e.scrimmage;
-				sportState.scrimmage = e.scrimmage;
 				sportState.plays = [];
-				sportState.text = textWithoutTime;
-			} else {
-				sportState.text = textWithoutTime;
-				sportState.scrimmage = e.scrimmage;
 			}
+			sportState.awaitingKickoff = awaitingKickoff;
+			sportState.text = textWithoutTime;
+			sportState.scrimmage = e.scrimmage;
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {

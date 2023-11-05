@@ -486,11 +486,13 @@ const FieldAndDrive = ({
 		<div className="mb-3">
 			<div className="d-flex mb-1">
 				{sportState.text}
-				<div className="ms-auto">
-					Drive: {sportState.numPlays} play
-					{sportState.numPlays === 1 ? "" : "s"}, {yards} yard
-					{yards === 1 ? "" : "s"}
-				</div>
+				{!sportState.awaitingKickoff ? (
+					<div className="ms-auto">
+						Drive: {sportState.numPlays} play
+						{sportState.numPlays === 1 ? "" : "s"}, {yards} yard
+						{yards === 1 ? "" : "s"}
+					</div>
+				) : null}
 			</div>
 			<div
 				className="position-relative"

@@ -500,10 +500,12 @@ const FieldAndDrive = ({
 			>
 				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
 				<VerticalLine color="var(--bs-blue)" yards={sportState.scrimmage} />
-				<VerticalLine
-					color="var(--bs-yellow)"
-					yards={sportState.scrimmage + sportState.toGo}
-				/>
+				{sportState.toGo !== undefined ? (
+					<VerticalLine
+						color="var(--bs-yellow)"
+						yards={sportState.scrimmage + sportState.toGo}
+					/>
+				) : null}
 			</div>
 		</div>
 	);

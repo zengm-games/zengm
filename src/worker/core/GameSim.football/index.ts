@@ -146,7 +146,7 @@ class GameSim extends GameSimBase {
 		this.lastHalfAwaitingKickoff = this.awaitingKickoff;
 		this.down = 1;
 		this.toGo = 10;
-		this.scrimmage = 35;
+		this.scrimmage = 0;
 		this.timeouts = [3, 3];
 		this.twoMinuteWarningHappened = false;
 		this.currentPlay = new Play(this);

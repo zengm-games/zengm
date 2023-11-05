@@ -7,7 +7,7 @@ export type SportState = {
 	numPlays: number;
 	initialScrimmage: number;
 	scrimmage: number;
-	toGo: number;
+	toGo: number | undefined;
 	plays: unknown[];
 	text: string;
 };
@@ -18,7 +18,7 @@ export const DEFAULT_SPORT_STATE: SportState = {
 	numPlays: 0,
 	initialScrimmage: 0,
 	scrimmage: 0,
-	toGo: 0,
+	toGo: undefined,
 	plays: [],
 	text: "",
 };
@@ -138,7 +138,7 @@ const processLiveGameEvents = ({
 			boxScore.time = e.time;
 			stop = true;
 
-			if (e.awaitingKickoff !== undefined || sportState.t !== actualT) {
+			if (awaitingKickoff || sportState.t !== actualT) {
 				sportState.t = actualT;
 				sportState.numPlays = 0;
 				sportState.initialScrimmage = e.scrimmage;
@@ -147,7 +147,7 @@ const processLiveGameEvents = ({
 			sportState.awaitingKickoff = awaitingKickoff;
 			sportState.text = textWithoutTime;
 			sportState.scrimmage = e.scrimmage;
-			sportState.toGo = e.toGo;
+			sportState.toGo = awaitingKickoff ? undefined : e.toGo;
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {

@@ -1,3 +1,21 @@
+FBGM show field during game
+- UI
+  - top bar
+    - logo of team with ball
+    - 1st and 10, ATL 40
+    - right: Drive: 5 plays, 15 yards
+  - render a rudimentary football field
+    - draw a horizontal line for each play on drive. hover over it for play details
+    - start of play should have some minimum width, or maybe a separate symbol, so there is room to see 0 yard plays too
+      - maybe include down and distance there?
+    - different colors for positive and negative plays
+    - some minimum height of field, but expand dynamically for long drives
+    - draw vertical lines for scrimmage and togo
+    - light mode
+
+use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
+- box scores
+
 scheduled events for roster size changes https://discord.com/channels/290013534023057409/290015591216054273/1167345210955681802
 - 15 in 2006
 - 17 in some time

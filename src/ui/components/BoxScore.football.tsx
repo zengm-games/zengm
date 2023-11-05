@@ -4,6 +4,7 @@ import {
 	type MouseEvent,
 	type ReactNode,
 	useState,
+	type CSSProperties,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, processPlayerStats } from "../util";
@@ -12,6 +13,8 @@ import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
 import updateSortBys from "./DataTable/updateSortBys";
 import { getSortClassName } from "./DataTable/Header";
+import range from "lodash-es/range";
+import classNames from "classnames";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -26,6 +29,7 @@ type ScoringSummaryEvent = {
 
 type Team = {
 	abbrev: string;
+	colors: [string, string, string];
 	name: string;
 	region: string;
 	players: any[];
@@ -382,9 +386,81 @@ const ScoringSummary = memo(
 	},
 );
 
-const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
+const FieldAndDrive = ({ boxScore }: { boxScore: BoxScore }) => {
+	const t = 0;
+	const t2 = 1;
+
+	// 12 is for 2 endzones and 10 10-yard areas in between
+	const NUM_SECTIONS = 12;
+
+	const DEFAULT_HEIGHT = 200;
+	console.log(boxScore);
 	return (
 		<div className="mb-3">
+			<div className="d-flex">
+				LOGO 1st & 10, own 20
+				<div className="ms-auto">Drive: 5 plays, 62 yards</div>
+			</div>
+			<div
+				className="d-flex align-items-stretch"
+				style={{
+					minHeight: DEFAULT_HEIGHT,
+				}}
+			>
+				{range(NUM_SECTIONS).map(i => {
+					const style: CSSProperties = {
+						width: `${(1 / 12) * 100}%`,
+					};
+					const ENDZONE_OFFENSE = i === 0;
+					const ENDZONE_DEFENSE = i === NUM_SECTIONS - 1;
+
+					const endzoneTeam = ENDZONE_OFFENSE
+						? boxScore.teams[t]
+						: ENDZONE_DEFENSE
+						? boxScore.teams[t2]
+						: undefined;
+					if (endzoneTeam) {
+						style.backgroundColor = endzoneTeam.colors[0];
+						style.color = endzoneTeam.colors[1];
+						style.writingMode = "vertical-lr";
+					}
+					if (ENDZONE_OFFENSE) {
+						style.transform = "rotate(180deg)";
+					}
+
+					return (
+						<div
+							key={i}
+							className={classNames({
+								"border-start": i > 0,
+								"bg-success": !endzoneTeam,
+								"d-flex align-items-center": endzoneTeam,
+							})}
+							style={style}
+						>
+							{endzoneTeam ? (
+								<div
+									className="fs-2 text-center overflow-hidden"
+									style={{ height: DEFAULT_HEIGHT, whiteSpace: "nowrap" }}
+								>
+									{endzoneTeam.name}
+								</div>
+							) : null}
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
+};
+
+const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
+	const liveGameSim = (boxScore as any).won?.name === undefined;
+
+	return (
+		<div className="mb-3">
+			{liveGameSim ? <FieldAndDrive boxScore={boxScore} /> : undefined}
+
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}

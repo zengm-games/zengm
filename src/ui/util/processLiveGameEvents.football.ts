@@ -7,7 +7,7 @@ export type SportState = {
 	numPlays: number;
 	initialScrimmage: number;
 	scrimmage: number;
-	toGo: number | undefined;
+	toGo: number;
 	plays: unknown[];
 	text: string;
 };
@@ -18,7 +18,7 @@ export const DEFAULT_SPORT_STATE: SportState = {
 	numPlays: 0,
 	initialScrimmage: 0,
 	scrimmage: 0,
-	toGo: undefined,
+	toGo: 0,
 	plays: [],
 	text: "",
 };
@@ -147,7 +147,7 @@ const processLiveGameEvents = ({
 			sportState.awaitingKickoff = awaitingKickoff;
 			sportState.text = textWithoutTime;
 			sportState.scrimmage = e.scrimmage;
-			sportState.toGo = awaitingKickoff ? undefined : e.toGo;
+			sportState.toGo = e.toGo;
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {

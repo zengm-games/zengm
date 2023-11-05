@@ -18,7 +18,7 @@ FBGM show field during game
     - how does drive tracker handle turnover reversed on penalty?
     - need to set sportState.drive to undefined when doing a kickoff at start of half/overtime
       - unify logic with kickoffAfterEndOfPeriod
-    - need to set scrimmage for kickoffs and extra points/2pt (also toGo), currently they are weird
+    - need to set scrimmage and toGo for kickoffs and extra points/2pt, currently they are weird
       - send additional clock event?
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers

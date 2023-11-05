@@ -500,7 +500,7 @@ const FieldAndDrive = ({
 			>
 				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
 				<VerticalLine color="var(--bs-blue)" yards={sportState.scrimmage} />
-				{sportState.toGo !== undefined ? (
+				{!sportState.awaitingKickoff ? (
 					<VerticalLine
 						color="var(--bs-yellow)"
 						yards={sportState.scrimmage + sportState.toGo}

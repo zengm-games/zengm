@@ -43,6 +43,8 @@ FBGM show field during game
       - for scoring plays, show in yellow
     - scoring tab
       - on scoring plays, add another tab to the end of the bar saying like "7 pts" or whatever
+        - use getScoreInfo on any event text for an event with the scoringSummary property, and then put that in SportState.play
+    - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

@@ -6,6 +6,7 @@ import type { PlayerGameSim, TeamNum } from "./types";
 
 export const SCRIMMAGE_KICKOFF = 35;
 const SCRIMMAGE_KICKOFF_SAFETY = 20;
+const SCRIMMAGE_XP = 85;
 
 type PlayEvent =
 	| {
@@ -664,7 +665,7 @@ class Play {
 		} else if (event.type === "fg" || event.type === "xp") {
 			if (event.type === "xp" || event.made) {
 				state.awaitingKickoff = this.state.initial.o;
-				state.scrimmage = SCRIMMAGE_KICKOFF;
+				state.scrimmage = SCRIMMAGE_XP;
 			}
 
 			if (event.type === "xp" && !event.made) {

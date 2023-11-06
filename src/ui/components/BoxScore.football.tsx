@@ -224,6 +224,41 @@ const StatsTable = ({
 	);
 };
 
+const getScoreInfo = (text: string) => {
+	let type: "XP" | "FG" | "TD" | "2P" | "SF" | null = null;
+	let points = 0;
+
+	if (text.includes("extra point")) {
+		type = "XP";
+		if (text.includes("made")) {
+			points = 1;
+		}
+	} else if (text.includes("field goal")) {
+		type = "FG";
+		if (text.includes("made")) {
+			points = 3;
+		}
+	} else if (text.includes("touchdown")) {
+		type = "TD";
+		points = 6;
+	} else if (text.toLowerCase().includes("two point")) {
+		type = "2P";
+		if (!text.includes("failed")) {
+			points = 2;
+		}
+	} else if (text.includes("safety")) {
+		type = "SF";
+
+		// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
+		points = 2;
+	}
+
+	return {
+		type,
+		points,
+	};
+};
+
 // Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
 	const processedEvents: {
@@ -243,48 +278,34 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 
 		const otherT = event.t === 0 ? 1 : 0;
 
-		let scoreType: "XP" | "FG" | "TD" | "2P" | "SF" | null = null;
-		if (event.text.includes("extra point")) {
-			scoreType = "XP";
-			if (event.text.includes("made")) {
-				score[event.t] += 1;
-			}
-		} else if (event.text.includes("field goal")) {
-			scoreType = "FG";
-			if (event.text.includes("made")) {
-				score[event.t] += 3;
-			}
-		} else if (event.text.includes("touchdown")) {
-			scoreType = "TD";
-			score[event.t] += 6;
-		} else if (event.text.toLowerCase().includes("two point")) {
-			scoreType = "2P";
-			if (!event.text.includes("failed")) {
-				score[event.t] += 2;
-			}
-		} else if (event.text.includes("safety")) {
-			scoreType = "SF";
-
+		const scoreInfo = getScoreInfo(event.text);
+		if (scoreInfo.type === "SF") {
 			// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
-			score[otherT] += 2;
+			score[otherT] += scoreInfo.points;
+		} else {
+			score[event.t] += scoreInfo.points;
 		}
 
 		const prevEvent: any = processedEvents.at(-1);
 
-		if (prevEvent && scoreType === "XP") {
+		if (prevEvent && scoreInfo.type === "XP") {
 			prevEvent.score = score.slice();
 			prevEvent.text += ` (${event.text})`;
-		} else if (prevEvent && scoreType === "2P" && event.t === prevEvent.t) {
+		} else if (
+			prevEvent &&
+			scoreInfo.type === "2P" &&
+			event.t === prevEvent.t
+		) {
 			prevEvent.score = score.slice();
 			prevEvent.text += ` (${event.text})`;
 		} else {
 			processedEvents.push({
-				t: scoreType === "SF" ? otherT : event.t, // See comment above about safety teams
+				t: scoreInfo.type === "SF" ? otherT : event.t, // See comment above about safety teams
 				quarter: event.quarter,
 				time: event.time,
 				text: event.text,
 				score: helpers.deepCopy(score),
-				scoreType,
+				scoreType: scoreInfo.type,
 			});
 		}
 	}

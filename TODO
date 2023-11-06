@@ -1,33 +1,30 @@
 FBGM show field during game
 - UI
   - render a rudimentary football field
-    - first line in popover
-      - normal play - down and distance and scrimmage
-      - kickoff - "ATL kicking off"
-      - kick return - nothing
-      - turnover - nothing
-    - PlayBar tab
-      - normal play - down and distance
-      - kickoff - Kickoff
-      - kick return - Return
-      - turnover - Turnover! in red
-    - for kickoff, show "ATL kicking off" in top of popover, rather than down and distance
-      - unify logic with generating text for play-by-play
-    - would be nice to show the kickoff as a drive - kick and return as 2 bars
-      - fumbles during return too
-      - onside kick?
-      - split kickoff/punt and return into two separate plays
-        - could send a special "split" event that is like clock but does not do anything in the play-by-play
-        - could send detailed event info and implement client-side logic
+    - later
+      - split some plays into multiple sub-plays
+        - play types
+          - kick/punt return
+            - PlayBar tab - "Return"
+            - first line in popover - nothing
+          - turnover
+            - PlayBar tab - "Turnover!" in red
+            - first line in popover - nothing
+          - onside kick?
+        - implementation
+          - could send a special "split" event that is like clock but does not do anything in the play-by-play
+          - could send detailed event info and implement client-side logic
+      - tricky to handle penalties - might need to invalidate some sub-plays
     - light mode
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
-    - how does drive tracker handle turnover reversed on penalty?
-      - turnover should happen within the current drive, so it should show up as a play (probably a distinct play from whatever happened before the turnover), and then next drive should start the next clock tick if the play stands
     - how to handle fumble after a reception/run of some yards
       - event.scrimmage is now with reversed field, need to account for that when updating yards
+        - kick/punt return has same problem
       - need to somehow mark that it's a turnover
         - make red, negative play doesn't need its own color
+          - undo if penalty overturns turnover
+          - undo if there is a 2nd turnover
     - "Start of 3rd quarter" and similar should clear drive
       - unify logic with kickoffAfterEndOfPeriod
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
@@ -39,8 +36,9 @@ FBGM show field during game
     - add alt+a to advance one play (to next "clock" entry)
       - alt+n already has that tooltip, but that's one event not one play
     - would be nice to make "1st & 10" gray box have dynamic width in play log
-    - for scoring plays, show in green with some abbreviation of type (FG/XP/etc - see scoreType)
+    - for scoring plays, show in yellow with some abbreviation of type (FG/XP/etc - see scoreType)
     - somehow show text of last event, so you can just look at the field and see everything
+    - subtlely different colors for run/pass plays?
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

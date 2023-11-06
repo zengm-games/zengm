@@ -19,25 +19,28 @@ FBGM show field during game
       - customization options
         - show logo in center of field https://github.com/zengm-games/zengm/pull/458
         - grass color https://github.com/zengm-games/zengm/pull/458#issuecomment-1796496940
-    - light mode
+    - minor features
+      - light mode
+      - add alt+a to advance one play (to next "clock" entry)
+        - alt+n already has that tooltip, but that's one event not one play
+      - somewhere show text of last event, so you can just look at the field and see everything
+    - glitches
+      - fg scrimmage weirdness makes play look like negative
+      - defensive penalty or time out showing up as turnover, because the t property changes
+        - looking at event.t is not a way to determine who has the ball
+      - "Start of 3rd quarter" and similar should clear drive
+        - unify logic with kickoffAfterEndOfPeriod
+      - punt/kick out of back of endzone - cap bar width
+        - also make sure logic for a kick in the endzone is correct
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
-    - "Start of 3rd quarter" and similar should clear drive
-      - unify logic with kickoffAfterEndOfPeriod
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar
         - don't count towards numPlays
         - send additional clock event?
           - need to know if it's xp or 2pt, for scrimmage
           - need to know not to print the "1st & 10" line
-    - add alt+a to advance one play (to next "clock" entry)
-      - alt+n already has that tooltip, but that's one event not one play
-    - somehow show text of last event, so you can just look at the field and see everything
-    - subtlely different colors for run/pass plays?
-    - punt/kick out of back of endzone - cap bar width
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
-    - fg scrimmage weirdness makes play look like negative
-    - make scoring tab dynamic width
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

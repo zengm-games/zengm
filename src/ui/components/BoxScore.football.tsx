@@ -524,54 +524,56 @@ const PlayBar = forwardRef<
 
 		return (
 			<div
-				ref={ref}
-				className={`d-flex ${
-					score ? "rounded" : negative ? "rounded-end" : "rounded-start"
-				} text-white ${first ? "mt-4" : "mt-1"}${last ? " mb-4" : ""}`}
+				className={`d-flex ${first ? "mt-4" : "mt-1"}${last ? " mb-4" : ""}`}
 				style={{
 					// For some reason this puts it above the field background and below dropdown menus
 					zIndex: 0,
-
-					backgroundColor: turnover
-						? "var(--bs-red)"
-						: score
-						? "var(--bs-yellow)"
-						: intendedChangeOfPossession
-						? "var(--bs-gray-200)"
-						: "var(--bs-blue)",
-					marginLeft,
-					width: `calc(${(score ? 2 : 1) * TAG_WIDTH}px + ${yardsPercent}%)`,
 				}}
-				{...props}
 			>
 				<div
-					className={`${
-						negative
-							? "text-start ps-1 rounded-end float-end"
-							: "text-end pe-1 rounded-start"
-					}`}
+					ref={ref}
+					className={`${negative ? "rounded-end" : "rounded-start"}`}
 					style={{
-						width: TAG_WIDTH,
-						[borderStyleName]: "2px solid var(--bs-blue)",
 						backgroundColor: turnover
 							? "var(--bs-red)"
 							: score
 							? "var(--bs-yellow)"
-							: "var(--bs-gray-400)",
-						color: turnover ? "var(--bs-black)" : "var(--bs-white)",
+							: intendedChangeOfPossession
+							? "var(--bs-gray-200)"
+							: "var(--bs-blue)",
+						marginLeft,
+						width: `calc(${TAG_WIDTH}px + ${yardsPercent}%)`,
 					}}
+					{...props}
 				>
-					{kickoff ? "Kickoff" : `${helpers.ordinal(play.down)} & ${play.toGo}`}
-				</div>
-				{score ? (
 					<div
 						className={`${
 							negative
-								? "text-end pe-1 rounded-start me-auto"
-								: "text-start ps-1 rounded-end ms-auto"
+								? "text-start ps-1 rounded-end float-end"
+								: "text-end pe-1 rounded-start"
 						}`}
 						style={{
 							width: TAG_WIDTH,
+							[borderStyleName]: "2px solid var(--bs-blue)",
+							backgroundColor: turnover
+								? "var(--bs-red)"
+								: score
+								? "var(--bs-yellow)"
+								: "var(--bs-gray-400)",
+							color: turnover ? "var(--bs-black)" : "var(--bs-white)",
+						}}
+					>
+						{kickoff
+							? "Kickoff"
+							: `${helpers.ordinal(play.down)} & ${play.toGo}`}
+					</div>
+				</div>
+				{score ? (
+					<div
+						className={`px-1 ${
+							negative ? "text-end rounded-start" : "text-start rounded-end"
+						}`}
+						style={{
 							backgroundColor: "var(--bs-yellow)",
 							color: "var(--bs-white)",
 						}}

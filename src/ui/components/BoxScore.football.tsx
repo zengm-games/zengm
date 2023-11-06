@@ -482,6 +482,45 @@ const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
 	);
 };
 
+const PlayBar = ({
+	first,
+	last,
+	play,
+}: {
+	first: boolean;
+	last: boolean;
+	play: SportState["plays"][number];
+}) => {
+	const TAG_WIDTH = 60;
+
+	return (
+		<div
+			className={`rounded-start text-white ${first ? "mt-4" : "mt-1"}${
+				last ? " mb-4" : ""
+			}`}
+			style={{
+				// For some reason this puts it above the field background and below dropdown menus
+				zIndex: 0,
+
+				backgroundColor: "var(--bs-blue)",
+				marginLeft: `calc(${yardLineToPercent(
+					play.scrimmage,
+				)}% - ${TAG_WIDTH}px)`,
+				width: `calc(${TAG_WIDTH}px + ${yardsToPercent(play.yards)}%)`,
+			}}
+		>
+			<div
+				className="bg-secondary text-white text-end pe-1 rounded-start"
+				style={{
+					width: TAG_WIDTH,
+				}}
+			>
+				{helpers.ordinal(play.down)} & {play.toGo}
+			</div>
+		</div>
+	);
+};
+
 const FieldAndDrive = ({
 	boxScore,
 	sportState,
@@ -493,8 +532,6 @@ const FieldAndDrive = ({
 	const t2 = t === 0 ? 1 : 0;
 
 	const yards = sportState.scrimmage - sportState.initialScrimmage;
-
-	const TAG_WIDTH = 60;
 
 	return (
 		<div className="mb-3">
@@ -545,33 +582,11 @@ const FieldAndDrive = ({
 							}
 							rootClose
 						>
-							<div
-								key={i}
-								className={`rounded-start text-white ${
-									i === 0 ? "mt-4" : "mt-1"
-								}${i === sportState.plays.length - 1 ? " mb-4" : ""}`}
-								style={{
-									// For some reason this puts it above the field background and below dropdown menus
-									zIndex: 0,
-
-									backgroundColor: "var(--bs-blue)",
-									marginLeft: `calc(${yardLineToPercent(
-										play.scrimmage,
-									)}% - ${TAG_WIDTH}px)`,
-									width: `calc(${TAG_WIDTH}px + ${yardsToPercent(
-										play.yards,
-									)}%)`,
-								}}
-							>
-								<div
-									className="bg-secondary text-white text-end pe-1 rounded-start"
-									style={{
-										width: TAG_WIDTH,
-									}}
-								>
-									{helpers.ordinal(play.down)} & {play.toGo}
-								</div>
-							</div>
+							<PlayBar
+								first={i === 0}
+								last={i === sportState.plays.length - 1}
+								play={play}
+							/>
 						</OverlayTrigger>
 					);
 				})}

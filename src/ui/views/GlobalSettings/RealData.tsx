@@ -53,8 +53,17 @@ const RealData = ({
 						rows={10}
 					/>
 					<div className="text-body-secondary mt-1">
-						These photos will be used in any new "Real Players" or "Legends"
-						league you create. Existing leagues will not be affected.
+						<p>
+							These photos will be used in any new "Real Players" or "Legends"
+							league you create. Existing leagues will not be affected.
+						</p>
+						<p>
+							Value can be either URL to player image, or Face object, similar
+							to what can be generated at{" "}
+							<a href="https://zengm.com/facesjs/">
+								https://zengm.com/facesjs/
+							</a>
+						</p>
 					</div>
 				</div>
 			</div>

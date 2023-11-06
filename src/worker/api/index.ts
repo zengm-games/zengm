@@ -3517,9 +3517,9 @@ const updateOptions = async (
 			);
 		}
 		for (const [key, value] of Object.entries(realPlayerPhotos)) {
-			if (typeof value !== "string") {
+			if (typeof value !== "string" && typeof value !== "object") {
 				throw new Error(
-					`Invalid data format in real player photos - value for "${key}" is not a string`,
+					`Invalid data format in real player photos - value for "${key}" is not a string or Face object`,
 				);
 			}
 		}

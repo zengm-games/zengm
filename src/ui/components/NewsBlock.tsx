@@ -98,6 +98,11 @@ const NewsBlock = ({
 		});
 	}
 
+	let colors: [string, string, string] | undefined;
+	if (event.p && event.p.face) {
+		colors = event.p.face.teamColors as [string, string, string];
+	}
+
 	return (
 		<div className="card">
 			<div
@@ -113,7 +118,8 @@ const NewsBlock = ({
 				<Badge type={event.type} />
 			</div>
 			<div className="d-flex">
-				{event.p && event.p.imgURL !== "/img/blank-face.png" ? (
+				{event.p &&
+				(event.p.imgURL !== "/img/blank-face.png" || event.p.face) ? (
 					<div
 						style={{
 							maxHeight: 90,
@@ -122,7 +128,11 @@ const NewsBlock = ({
 						}}
 						className="flex-shrink-0"
 					>
-						<PlayerPicture face={event.p.face} imgURL={event.p.imgURL} />
+						<PlayerPicture
+							face={event.p.face}
+							imgURL={event.p.imgURL}
+							colors={colors}
+						/>
 					</div>
 				) : null}
 				<div className="p-2">

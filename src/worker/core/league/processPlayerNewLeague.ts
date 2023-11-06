@@ -27,7 +27,11 @@ const processPlayerNewLeague = async ({
 		// Do this before augment so it doesn't need to create a face
 		if (p.srID) {
 			if (realPlayerPhotos[p.srID] !== undefined) {
-				p.imgURL = realPlayerPhotos[p.srID];
+				if (typeof realPlayerPhotos[p.srID] === "string") {
+					p.imgURL = realPlayerPhotos[p.srID];
+				} else if (typeof realPlayerPhotos[p.srID] === "object") {
+					p.face = realPlayerPhotos[p.srID];
+				}
 			} else {
 				const name = p.name ?? `${p.firstName} ${p.lastName}`;
 
@@ -36,7 +40,11 @@ const processPlayerNewLeague = async ({
 					.replace(/ /g, "_")
 					.toLowerCase()}`;
 				if (realPlayerPhotos[key] !== undefined) {
-					p.imgURL = realPlayerPhotos[key];
+					if (typeof realPlayerPhotos[key] === "string") {
+						p.imgURL = realPlayerPhotos[p.srID];
+					} else if (typeof realPlayerPhotos[key] === "object") {
+						p.face = realPlayerPhotos[p.srID];
+					}
 				}
 			}
 		}

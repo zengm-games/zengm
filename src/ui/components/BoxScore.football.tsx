@@ -458,6 +458,14 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 	);
 };
 
+const yardsToPercent = (yards: number) => {
+	return (yards * 10) / NUM_SECTIONS;
+};
+
+const yardLineToPercent = (yards: number) => {
+	return ((10 + yards) * 10) / NUM_SECTIONS;
+};
+
 const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
 	return (
 		<div
@@ -465,7 +473,7 @@ const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
 			style={{
 				width: 2,
 				backgroundColor: color,
-				left: `${((10 + yards) * 10) / NUM_SECTIONS}%`,
+				left: `${yardLineToPercent(yards)}%`,
 			}}
 		/>
 	);
@@ -513,13 +521,27 @@ const FieldAndDrive = ({
 					const bar = (
 						<div
 							key={i}
-							className="bg-secondary text-white"
+							className="text-white position-relative"
 							style={{
 								// For some reason this puts it above the field background and below dropdown menus
 								zIndex: 0,
+
+								backgroundColor: "var(--bs-blue)",
+								marginLeft: `${yardLineToPercent(play.scrimmage)}%`,
+								width: `${yardsToPercent(play.yards)}%`,
 							}}
 						>
-							{helpers.ordinal(play.down)} & {play.toGo}
+							&nbsp;
+							<div
+								className="position-absolute bg-secondary text-white text-end pe-1 rounded-start"
+								style={{
+									left: -60,
+									top: 0,
+									width: 60,
+								}}
+							>
+								{helpers.ordinal(play.down)} & {play.toGo}
+							</div>
 						</div>
 					);
 

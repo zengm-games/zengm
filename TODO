@@ -1,6 +1,16 @@
 FBGM show field during game
 - UI
   - render a rudimentary football field
+    - first line in popover
+      - normal play - down and distance and scrimmage
+      - kickoff - "ATL kicking off"
+      - kick return - nothing
+      - turnover - nothing
+    - PlayBar tab
+      - normal play - down and distance
+      - kickoff - Kickoff
+      - kick return - Return
+      - turnover - Turnover! in red
     - for kickoff, show "ATL kicking off" in top of popover, rather than down and distance
       - unify logic with generating text for play-by-play
     - would be nice to show the kickoff as a drive - kick and return as 2 bars

@@ -606,10 +606,18 @@ const FieldAndDrive = ({
 								<Popover>
 									<Popover.Body>
 										<ul className="mb-0 list-unstyled">
-											<li>
-												{helpers.ordinal(play.down)} & {play.toGo},{" "}
-												{scrimmageToFieldPos(play.scrimmage)}
-											</li>
+											{sportState.awaitingKickoff ? (
+												i === 0 ? (
+													<li>
+														{boxScore.teams[sportState.t].abbrev} kicking off
+													</li>
+												) : null
+											) : (
+												<li>
+													{helpers.ordinal(play.down)} & {play.toGo},{" "}
+													{scrimmageToFieldPos(play.scrimmage)}
+												</li>
+											)}
 											{play.texts.map((text, j) => (
 												<li key={j}>{text}</li>
 											))}

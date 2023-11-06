@@ -35,15 +35,9 @@ FBGM show field during game
     - somehow show text of last event, so you can just look at the field and see everything
     - subtlely different colors for run/pass plays?
     - punt/kick out of back of endzone - cap bar width
-    - bar color
-      - normal: blue
-      - kickoff/punt: black/gray (to distinguish from normal play)
-        - if there is an odd number of turnovers (not including ones overturned by penalty), make it red
-      - turnover: red
-      - for scoring plays, show in yellow
     - scoring tab
       - on scoring plays, add another tab to the end of the bar saying like "7 pts" or whatever
-        - use getScoreInfo on any event text for an event with the scoringSummary property, and then put that in SportState.play
+        - text is already in "score" variable in PlayBar, just need to render it
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers

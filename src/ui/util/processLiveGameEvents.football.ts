@@ -14,6 +14,7 @@ export type SportState = {
 		scrimmage: number;
 		yards: number;
 		texts: string[];
+		scoreInfos: ReturnType<typeof getScoreInfo>[];
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -40,6 +41,41 @@ export const scrimmageToFieldPos = (scrimmage: number) => {
 	} else {
 		return `own ${scrimmage}`;
 	}
+};
+
+export const getScoreInfo = (text: string) => {
+	let type: "XP" | "FG" | "TD" | "2P" | "SF" | null = null;
+	let points = 0;
+
+	if (text.includes("extra point")) {
+		type = "XP";
+		if (text.includes("made")) {
+			points = 1;
+		}
+	} else if (text.includes("field goal")) {
+		type = "FG";
+		if (text.includes("made")) {
+			points = 3;
+		}
+	} else if (text.includes("touchdown")) {
+		type = "TD";
+		points = 6;
+	} else if (text.toLowerCase().includes("two point")) {
+		type = "2P";
+		if (!text.includes("failed")) {
+			points = 2;
+		}
+	} else if (text.includes("safety")) {
+		type = "SF";
+
+		// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
+		points = 2;
+	}
+
+	return {
+		type,
+		points,
+	};
 };
 
 // Mutates boxScore!!!
@@ -159,6 +195,13 @@ const processLiveGameEvents = ({
 				// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
 				play.yards = currentScrimmage - play.scrimmage;
 			}
+
+			if (e.scoringSummary) {
+				const scoreInfo = getScoreInfo(text);
+				if (scoreInfo.type !== null && scoreInfo.points > 0) {
+					play.scoreInfos.push(scoreInfo);
+				}
+			}
 		} else if (e.type === "clock") {
 			let textWithoutTime;
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
@@ -193,6 +236,7 @@ const processLiveGameEvents = ({
 				scrimmage: e.scrimmage,
 				yards: 0,
 				texts: [],
+				scoreInfos: [],
 			});
 
 			const prevPlay = sportState.plays.at(-2);

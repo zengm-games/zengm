@@ -17,6 +17,7 @@ import { getSortClassName } from "./DataTable/Header";
 import range from "lodash-es/range";
 import classNames from "classnames";
 import {
+	getScoreInfo,
 	scrimmageToFieldPos,
 	type SportState,
 } from "../util/processLiveGameEvents.football";
@@ -222,41 +223,6 @@ const StatsTable = ({
 			))}
 		</>
 	);
-};
-
-const getScoreInfo = (text: string) => {
-	let type: "XP" | "FG" | "TD" | "2P" | "SF" | null = null;
-	let points = 0;
-
-	if (text.includes("extra point")) {
-		type = "XP";
-		if (text.includes("made")) {
-			points = 1;
-		}
-	} else if (text.includes("field goal")) {
-		type = "FG";
-		if (text.includes("made")) {
-			points = 3;
-		}
-	} else if (text.includes("touchdown")) {
-		type = "TD";
-		points = 6;
-	} else if (text.toLowerCase().includes("two point")) {
-		type = "2P";
-		if (!text.includes("failed")) {
-			points = 2;
-		}
-	} else if (text.includes("safety")) {
-		type = "SF";
-
-		// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
-		points = 2;
-	}
-
-	return {
-		type,
-		points,
-	};
 };
 
 // Condenses TD + XP/2P into one event rather than two
@@ -535,7 +501,18 @@ const PlayBar = forwardRef<
 		const turnover = intendedChangeOfPossession
 			? t === play.t && !first
 			: t !== play.t;
-		let score = false;
+
+		let score;
+		if (play.scoreInfos.length > 0) {
+			let points = 0;
+			for (const scoreInfo of play.scoreInfos) {
+				points += scoreInfo.points;
+			}
+			score = `${play.scoreInfos
+				.map(info => info.type)
+				.join("+")}, ${points} pts`;
+			console.log(score);
+		}
 
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
 		const yardsPercent = yardsToPercent(play.yards);

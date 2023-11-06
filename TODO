@@ -16,6 +16,9 @@ FBGM show field during game
           - could send detailed event info and implement client-side logic
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
+      - customization options
+        - show logo in center of field https://github.com/zengm-games/zengm/pull/458
+        - grass color https://github.com/zengm-games/zengm/pull/458#issuecomment-1796496940
     - light mode
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
@@ -37,9 +40,9 @@ FBGM show field during game
       - kickoff/punt: black/gray (to distinguish from normal play)
         - if there is an odd number of turnovers (not including ones overturned by penalty), make it red
       - turnover: red
-      - for scoring plays, show in yellow with some abbreviation of type (FG/XP/etc - see scoreType)
-    - tab color
-      - if bar color is red/yellow (turnover or score), make the tab that color too
+      - for scoring plays, show in yellow
+    - scoring tab
+      - on scoring plays, add another tab to the end of the bar saying like "7 pts" or whatever
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

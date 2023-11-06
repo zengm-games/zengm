@@ -554,7 +554,7 @@ const PlayBar = forwardRef<
 				{...props}
 			>
 				<div
-					className={`bg-secondary text-white border-2 ${
+					className={`border-2 ${
 						negative
 							? "text-start ps-1 rounded-end float-end"
 							: "text-end pe-1 rounded-start"
@@ -562,6 +562,12 @@ const PlayBar = forwardRef<
 					style={{
 						width: TAG_WIDTH,
 						[borderStyleName]: "2px solid var(--bs-blue",
+						backgroundColor: turnover
+							? "var(--bs-red)"
+							: score
+							? "var(--bs-yellow)"
+							: "var(--bs-gray-400)",
+						color: turnover ? "var(--bs-black)" : "var(--bs-white)",
 					}}
 				>
 					{kickoff ? "Kickoff" : `${helpers.ordinal(play.down)} & ${play.toGo}`}

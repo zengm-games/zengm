@@ -495,7 +495,7 @@ const FieldAndDrive = ({
 				) : null}
 			</div>
 			<div
-				className="position-relative"
+				className="position-relative d-flex flex-column gap-2"
 				style={{
 					minHeight: DEFAULT_HEIGHT,
 				}}
@@ -508,6 +508,18 @@ const FieldAndDrive = ({
 						yards={sportState.scrimmage + sportState.toGo}
 					/>
 				) : null}
+				{sportState.plays.map(play => {
+					return (
+						<div
+							className="bg-secondary text-white"
+							style={{
+								zIndex: 1000,
+							}}
+						>
+							{helpers.ordinal(play.down)} & {play.toGo}
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);

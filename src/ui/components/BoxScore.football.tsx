@@ -487,6 +487,7 @@ const PlayBar = forwardRef<
 	HTMLDivElement,
 	{
 		first: boolean;
+		kickoff: boolean;
 		last: boolean;
 		play: SportState["plays"][number];
 	}
@@ -494,6 +495,7 @@ const PlayBar = forwardRef<
 	(
 		{
 			first,
+			kickoff,
 			last,
 			play,
 			...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
@@ -549,7 +551,7 @@ const PlayBar = forwardRef<
 						width: TAG_WIDTH,
 					}}
 				>
-					{helpers.ordinal(play.down)} & {play.toGo}
+					{kickoff ? "Kickoff" : `${helpers.ordinal(play.down)} & ${play.toGo}`}
 				</div>
 			</div>
 		);
@@ -619,6 +621,7 @@ const FieldAndDrive = ({
 						>
 							<PlayBar
 								first={i === 0}
+								kickoff={sportState.awaitingKickoff}
 								last={i === sportState.plays.length - 1}
 								play={play}
 							/>

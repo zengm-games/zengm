@@ -1,3 +1,4 @@
+import type GameSim from ".";
 import { getPeriodName } from "../../../common";
 import type { GameAttributesLeague } from "../../../common/types";
 import { g, helpers } from "../../util";
@@ -47,11 +48,14 @@ class PlayByPlayLogger {
 
 	gender: GameAttributesLeague["gender"];
 
-	constructor(active: boolean) {
+	g: GameSim;
+
+	constructor(gameSim: GameSim, active: boolean) {
 		this.active = active;
 		this.playByPlay = [];
 		this.quarter = "Q1";
 		this.gender = g.get("gender");
+		this.g = gameSim;
 	}
 
 	logEvent(
@@ -459,6 +463,9 @@ class PlayByPlayLogger {
 					t,
 					time: formatClock(clock),
 					quarter: this.quarter,
+
+					// Send current scrimmage, for use in FieldAndDrive updating
+					scrimmage: this.g.currentPlay.state.current.scrimmage,
 				};
 
 				if (injuredPID !== undefined) {

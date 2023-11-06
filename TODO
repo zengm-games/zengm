@@ -1,6 +1,7 @@
 FBGM show field during game
 - UI
   - render a rudimentary football field
+    - split kickoff/punt and return into two separate plays
     - would be nice to show the kickoff as a drive - kick and return as 2 bars
       - fumbles during return too
       - onside kick?
@@ -9,22 +10,28 @@ FBGM show field during game
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
     - how does drive tracker handle turnover reversed on penalty?
       - turnover should happen within the current drive, so it should show up as a play (probably a distinct play from whatever happened before the turnover), and then next drive should start the next clock tick if the play stands
+    - how to handle fumble after a reception/run of some yards
+      - event.scrimmage is now with reversed field, need to account for that when updating yards
+      - need to somehow mark that it's a turnover
+        - make red, negative play doesn't need its own color
     - "Start of 3rd quarter" and similar should clear drive
       - unify logic with kickoffAfterEndOfPeriod
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
-      - send additional clock event?
-        - need to know if it's xp or 2pt, for scrimmage
-        - need to know not to print the "1st & 10" line
+      - extra point or 2 point conversion should be treated as a separate play bar
+        - don't count towards numPlays
+        - send additional clock event?
+          - need to know if it's xp or 2pt, for scrimmage
+          - need to know not to print the "1st & 10" line
     - add alt+a to advance one play (to next "clock" entry)
       - alt+n already has that tooltip, but that's one event not one play
-    - would be nice if yards from a play updated live, rather than waiting for next clock event
-      - clock is not perfectly reliable, because it could happen after a change of possession, in which case we never get a chance to show the result of the last play
     - would be nice to make "1st & 10" gray box have dynamic width in play log
     - for scoring plays, show in green with some abbreviation of type (FG/XP/etc - see scoreType)
     - somehow show text of last event, so you can just look at the field and see everything
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores
+
+hockey - AI should always sign backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1170939243728736296
 
 scheduled events for roster size changes https://discord.com/channels/290013534023057409/290015591216054273/1167345210955681802
 - 15 in 2006

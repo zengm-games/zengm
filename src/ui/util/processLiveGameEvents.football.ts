@@ -133,11 +133,17 @@ const processLiveGameEvents = ({
 			stop = true;
 
 			const play = sportState.plays.at(-1);
-			play!.texts.push(
+			if (!play) {
+				throw new Error("Should never happen");
+			}
+			play.texts.push(
 				text
 					.replace("ABBREV0", boxScore.teams[1].abbrev)
 					.replace("ABBREV1", boxScore.teams[0].abbrev),
 			);
+
+			// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
+			play.yards = e.scrimmage - play.scrimmage;
 		} else if (e.type === "clock") {
 			let textWithoutTime;
 			const awaitingKickoff = e.awaitingKickoff !== undefined;

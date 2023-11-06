@@ -504,6 +504,9 @@ const PlayBar = forwardRef<
 
 		const negative = play.yards < 0;
 
+		let turnover = false;
+		let score = false;
+
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
 		const yardsPercent = yardsToPercent(play.yards);
 
@@ -526,7 +529,11 @@ const PlayBar = forwardRef<
 					// For some reason this puts it above the field background and below dropdown menus
 					zIndex: 0,
 
-					backgroundColor: negative ? "var(--bs-red)" : "var(--bs-blue)",
+					backgroundColor: score
+						? "var(--bs-yellow)"
+						: turnover
+						? "var(--bs-red)"
+						: "var(--bs-blue)",
 					marginLeft,
 					width: `calc(${TAG_WIDTH}px + ${yardsPercent}%)`,
 				}}

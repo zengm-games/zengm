@@ -35,10 +35,9 @@ FBGM show field during game
     - somehow show text of last event, so you can just look at the field and see everything
     - subtlely different colors for run/pass plays?
     - punt/kick out of back of endzone - cap bar width
-    - scoring tab
-      - on scoring plays, add another tab to the end of the bar saying like "7 pts" or whatever
-        - text is already in "score" variable in PlayBar, just need to render it
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
+    - fg scrimmage weirdness makes play look like negative
+    - make scoring tab dynamic width
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

@@ -502,16 +502,9 @@ const PlayBar = forwardRef<
 			? t === play.t && !first
 			: t !== play.t;
 
-		let score;
+		let score: string | undefined;
 		if (play.scoreInfos.length > 0) {
-			let points = 0;
-			for (const scoreInfo of play.scoreInfos) {
-				points += scoreInfo.points;
-			}
-			score = `${play.scoreInfos
-				.map(info => info.type)
-				.join("+")}, ${points} pts`;
-			console.log(score);
+			score = `${play.scoreInfos.map(info => info.type).join("+")}`;
 		}
 
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
@@ -532,9 +525,9 @@ const PlayBar = forwardRef<
 		return (
 			<div
 				ref={ref}
-				className={`${negative ? "rounded-end" : "rounded-start"} text-white ${
-					first ? "mt-4" : "mt-1"
-				}${last ? " mb-4" : ""}`}
+				className={`d-flex ${
+					score ? "rounded" : negative ? "rounded-end" : "rounded-start"
+				} text-white ${first ? "mt-4" : "mt-1"}${last ? " mb-4" : ""}`}
 				style={{
 					// For some reason this puts it above the field background and below dropdown menus
 					zIndex: 0,
@@ -547,19 +540,19 @@ const PlayBar = forwardRef<
 						? "var(--bs-gray-200)"
 						: "var(--bs-blue)",
 					marginLeft,
-					width: `calc(${TAG_WIDTH}px + ${yardsPercent}%)`,
+					width: `calc(${(score ? 2 : 1) * TAG_WIDTH}px + ${yardsPercent}%)`,
 				}}
 				{...props}
 			>
 				<div
-					className={`border-2 ${
+					className={`${
 						negative
 							? "text-start ps-1 rounded-end float-end"
 							: "text-end pe-1 rounded-start"
 					}`}
 					style={{
 						width: TAG_WIDTH,
-						[borderStyleName]: "2px solid var(--bs-blue",
+						[borderStyleName]: "2px solid var(--bs-blue)",
 						backgroundColor: turnover
 							? "var(--bs-red)"
 							: score
@@ -570,6 +563,22 @@ const PlayBar = forwardRef<
 				>
 					{kickoff ? "Kickoff" : `${helpers.ordinal(play.down)} & ${play.toGo}`}
 				</div>
+				{score ? (
+					<div
+						className={`${
+							negative
+								? "text-end pe-1 rounded-start me-auto"
+								: "text-start ps-1 rounded-end ms-auto"
+						}`}
+						style={{
+							width: TAG_WIDTH,
+							backgroundColor: "var(--bs-yellow)",
+							color: "var(--bs-white)",
+						}}
+					>
+						{score}
+					</div>
+				) : null}
 			</div>
 		);
 	},

@@ -14,17 +14,11 @@ FBGM show field during game
         - implementation
           - could send a special "split" event that is like clock but does not do anything in the play-by-play
           - could send detailed event info and implement client-side logic
-      - tricky to handle penalties - might need to invalidate some sub-plays
+          - tricky to handle penalties - might need to invalidate some sub-plays
+      - would be nice to make "1st & 10" gray box have dynamic width in play log
     - light mode
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
-    - how to handle fumble after a reception/run of some yards
-      - event.scrimmage is now with reversed field, need to account for that when updating yards
-        - kick/punt return has same problem
-      - need to somehow mark that it's a turnover
-        - make red, negative play doesn't need its own color
-          - undo if penalty overturns turnover
-          - undo if there is a 2nd turnover
     - "Start of 3rd quarter" and similar should clear drive
       - unify logic with kickoffAfterEndOfPeriod
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
@@ -35,10 +29,19 @@ FBGM show field during game
           - need to know not to print the "1st & 10" line
     - add alt+a to advance one play (to next "clock" entry)
       - alt+n already has that tooltip, but that's one event not one play
-    - would be nice to make "1st & 10" gray box have dynamic width in play log
     - for scoring plays, show in yellow with some abbreviation of type (FG/XP/etc - see scoreType)
     - somehow show text of last event, so you can just look at the field and see everything
     - subtlely different colors for run/pass plays?
+    - bar color
+      - normal: blue
+      - kickoff/punt: black/gray (to distinguish from normal play)
+        - if there is an odd number of turnovers (not including ones overturned by penalty), make it red
+      - turnover: red
+        - detect by looking at current offensive team, if that is different than the one at start of play. because that handles double turnovers
+          - for kickoff/punt, same logic but 1 change of possession is normal, anything else is abnormal (red) - well, after the kick at least, need an exception for the kick
+    - how to handle fumble after a reception/run of some yards
+      - event.scrimmage is now with reversed field, need to account for that when updating yards
+        - kick/punt return has same problem
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

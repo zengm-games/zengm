@@ -490,6 +490,7 @@ const PlayBar = forwardRef<
 		kickoff: boolean;
 		last: boolean;
 		play: SportState["plays"][number];
+		t: 0 | 1;
 	}
 >(
 	(
@@ -498,6 +499,7 @@ const PlayBar = forwardRef<
 			kickoff,
 			last,
 			play,
+			t,
 			...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
 		},
 		ref,
@@ -506,7 +508,12 @@ const PlayBar = forwardRef<
 
 		const negative = play.yards < 0;
 
-		let turnover = false;
+		// True if this is a kickoff or punt
+		let intendedChangeOfPossession = false;
+
+		const turnover = intendedChangeOfPossession
+			? t === play.t && !first
+			: t !== play.t;
 		let score = false;
 
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
@@ -531,10 +538,12 @@ const PlayBar = forwardRef<
 					// For some reason this puts it above the field background and below dropdown menus
 					zIndex: 0,
 
-					backgroundColor: score
-						? "var(--bs-yellow)"
-						: turnover
+					backgroundColor: turnover
 						? "var(--bs-red)"
+						: score
+						? "var(--bs-yellow)"
+						: intendedChangeOfPossession
+						? "var(--bs-gray-200)"
 						: "var(--bs-blue)",
 					marginLeft,
 					width: `calc(${TAG_WIDTH}px + ${yardsPercent}%)`,
@@ -632,6 +641,7 @@ const FieldAndDrive = ({
 								kickoff={sportState.awaitingKickoff}
 								last={i === sportState.plays.length - 1}
 								play={play}
+								t={sportState.t}
 							/>
 						</OverlayTrigger>
 					);

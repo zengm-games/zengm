@@ -14,6 +14,9 @@ export type SportState = {
 		scrimmage: number;
 		yards: number;
 		texts: string[];
+
+		// Team with the ball after the play ends
+		t: 0 | 1;
 	}[];
 	text: string;
 };
@@ -141,6 +144,7 @@ const processLiveGameEvents = ({
 					.replace("ABBREV0", boxScore.teams[1].abbrev)
 					.replace("ABBREV1", boxScore.teams[0].abbrev),
 			);
+			play.t = actualT;
 
 			// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
 			play.yards = e.scrimmage - play.scrimmage;
@@ -172,6 +176,7 @@ const processLiveGameEvents = ({
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
 			sportState.plays.push({
+				t: actualT,
 				down: e.down,
 				toGo: e.toGo,
 				scrimmage: e.scrimmage,

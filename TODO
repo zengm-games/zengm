@@ -23,13 +23,12 @@ FBGM show field during game
       - send additional clock event?
         - need to know if it's xp or 2pt, for scrimmage
         - need to know not to print the "1st & 10" line
-    - log plays
-      - collect everything between "clock" entries and concatenate text
     - add alt+a to advance one play (to next "clock" entry)
+      - alt+n already has that tooltip, but that's one event not one play
     - would be nice if yards from a play updated live, rather than waiting for next clock event
       - clock is not perfectly reliable, because it could happen after a change of possession, in which case we never get a chance to show the result of the last play
-    - need to do something to handle negative plays
     - would be nice to make "1st & 10" gray box have dynamic width in play log
+    - for scoring plays, show in green with some abbreviation of type (FG/XP/etc - see scoreType)
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

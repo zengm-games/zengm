@@ -5,6 +5,7 @@ import {
 	type ReactNode,
 	useState,
 	type CSSProperties,
+	forwardRef,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, processPlayerStats } from "../util";
@@ -242,7 +243,7 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 
 		const otherT = event.t === 0 ? 1 : 0;
 
-		let scoreType: string | null = null;
+		let scoreType: "XP" | "FG" | "TD" | "2P" | "SF" | null = null;
 		if (event.text.includes("extra point")) {
 			scoreType = "XP";
 			if (event.text.includes("made")) {
@@ -462,7 +463,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 };
 
 const yardsToPercent = (yards: number) => {
-	return (yards * 10) / NUM_SECTIONS;
+	return (Math.abs(yards) * 10) / NUM_SECTIONS;
 };
 
 const yardLineToPercent = (yards: number) => {
@@ -482,44 +483,71 @@ const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
 	);
 };
 
-const PlayBar = ({
-	first,
-	last,
-	play,
-}: {
-	first: boolean;
-	last: boolean;
-	play: SportState["plays"][number];
-}) => {
-	const TAG_WIDTH = 60;
+const PlayBar = forwardRef<
+	HTMLDivElement,
+	{
+		first: boolean;
+		last: boolean;
+		play: SportState["plays"][number];
+	}
+>(
+	(
+		{
+			first,
+			last,
+			play,
+			...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
+		},
+		ref,
+	) => {
+		const TAG_WIDTH = 60;
 
-	return (
-		<div
-			className={`rounded-start text-white ${first ? "mt-4" : "mt-1"}${
-				last ? " mb-4" : ""
-			}`}
-			style={{
-				// For some reason this puts it above the field background and below dropdown menus
-				zIndex: 0,
+		const negative = play.yards < 0;
 
-				backgroundColor: "var(--bs-blue)",
-				marginLeft: `calc(${yardLineToPercent(
-					play.scrimmage,
-				)}% - ${TAG_WIDTH}px)`,
-				width: `calc(${TAG_WIDTH}px + ${yardsToPercent(play.yards)}%)`,
-			}}
-		>
+		const yardLinePercent = yardLineToPercent(play.scrimmage);
+		const yardsPercent = yardsToPercent(play.yards);
+
+		let marginLeft;
+		if (negative) {
+			marginLeft = `calc(${yardLinePercent}% - ${yardsPercent}%)`;
+		} else {
+			marginLeft = `calc(${yardLineToPercent(
+				play.scrimmage,
+			)}% - ${TAG_WIDTH}px)`;
+		}
+
+		return (
 			<div
-				className="bg-secondary text-white text-end pe-1 rounded-start"
+				ref={ref}
+				className={`${negative ? "rounded-end" : "rounded-start"} text-white ${
+					first ? "mt-4" : "mt-1"
+				}${last ? " mb-4" : ""}`}
 				style={{
-					width: TAG_WIDTH,
+					// For some reason this puts it above the field background and below dropdown menus
+					zIndex: 0,
+
+					backgroundColor: negative ? "var(--bs-red)" : "var(--bs-blue)",
+					marginLeft,
+					width: `calc(${TAG_WIDTH}px + ${yardsPercent}%)`,
 				}}
+				{...props}
 			>
-				{helpers.ordinal(play.down)} & {play.toGo}
+				<div
+					className={`bg-secondary text-white ${
+						negative
+							? "text-start ps-1 rounded-end float-end"
+							: "text-end pe-1 rounded-start"
+					}`}
+					style={{
+						width: TAG_WIDTH,
+					}}
+				>
+					{helpers.ordinal(play.down)} & {play.toGo}
+				</div>
 			</div>
-		</div>
-	);
-};
+		);
+	},
+);
 
 const FieldAndDrive = ({
 	boxScore,

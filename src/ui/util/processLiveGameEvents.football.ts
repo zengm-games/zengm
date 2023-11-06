@@ -144,7 +144,11 @@ const processLiveGameEvents = ({
 					.replace("ABBREV0", boxScore.teams[1].abbrev)
 					.replace("ABBREV1", boxScore.teams[0].abbrev),
 			);
-			play.t = actualT;
+
+			// Two minute warning and some other similar events have no associated team
+			if (e.t !== undefined) {
+				play.t = actualT;
+			}
 
 			// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
 			play.yards = e.scrimmage - play.scrimmage;

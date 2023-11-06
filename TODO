@@ -32,7 +32,6 @@ FBGM show field during game
     - for scoring plays, show in yellow with some abbreviation of type (FG/XP/etc - see scoreType)
     - somehow show text of last event, so you can just look at the field and see everything
     - subtlely different colors for run/pass plays?
-    - i think two minute warning event has "t" in it and is applied to play.t - should not!
     - bar color
       - normal: blue
       - kickoff/punt: black/gray (to distinguish from normal play)

@@ -166,6 +166,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			quarters.current = output.quarters;
 			possessionChange.current = output.possessionChange;
 			sportState.current = output.sportState;
+			console.log("sportState", output.sportState);
 
 			if (text !== undefined) {
 				if (isSport("baseball")) {

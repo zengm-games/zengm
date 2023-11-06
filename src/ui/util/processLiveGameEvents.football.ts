@@ -8,7 +8,13 @@ export type SportState = {
 	initialScrimmage: number;
 	scrimmage: number;
 	toGo: number;
-	plays: unknown[];
+	plays: {
+		down: number;
+		toGo: number;
+		scrimmage: number;
+		yards: number;
+		texts: string[];
+	}[];
 	text: string;
 };
 
@@ -55,6 +61,7 @@ const processLiveGameEvents = ({
 
 	while (!stop && events.length > 0) {
 		e = events.shift();
+		console.log("e", e);
 
 		// Swap teams order, so home team is at bottom in box score
 		const actualT = e.t === 0 ? 1 : 0;
@@ -114,6 +121,9 @@ const processLiveGameEvents = ({
 			text = e.text.replace("(ABBREV)", `(${boxScore.teams[actualT].abbrev})`);
 			boxScore.time = e.time;
 			stop = true;
+
+			const play = sportState.plays.at(-1);
+			play!.texts.push(text);
 		} else if (e.type === "clock") {
 			let textWithoutTime;
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
@@ -148,6 +158,18 @@ const processLiveGameEvents = ({
 			sportState.text = textWithoutTime;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
+			sportState.plays.push({
+				down: e.down,
+				toGo: e.toGo,
+				scrimmage: e.scrimmage,
+				yards: 0,
+				texts: [],
+			});
+
+			const prevPlay = sportState.plays.at(-2);
+			if (prevPlay) {
+				prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
+			}
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {

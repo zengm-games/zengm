@@ -465,7 +465,10 @@ class PlayByPlayLogger {
 					quarter: this.quarter,
 
 					// Send current scrimmage, for use in FieldAndDrive updating
-					scrimmage: this.g.currentPlay.state.current.scrimmage,
+					scrimmage:
+						t !== undefined
+							? this.g.currentPlay.state.current.scrimmage
+							: undefined,
 				};
 
 				if (injuredPID !== undefined) {

@@ -145,13 +145,20 @@ const processLiveGameEvents = ({
 					.replace("ABBREV1", boxScore.teams[0].abbrev),
 			);
 
-			// Two minute warning and some other similar events have no associated team
+			// Two minute warning and some other similar events have no associated team, so for those don't update t
 			if (e.t !== undefined) {
 				play.t = actualT;
 			}
 
-			// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
-			play.yards = e.scrimmage - play.scrimmage;
+			if (e.scrimmage !== undefined) {
+				const reversedField = play.t !== sportState.t;
+				const currentScrimmage = reversedField
+					? 100 - e.scrimmage
+					: e.scrimmage;
+
+				// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
+				play.yards = currentScrimmage - play.scrimmage;
+			}
 		} else if (e.type === "clock") {
 			let textWithoutTime;
 			const awaitingKickoff = e.awaitingKickoff !== undefined;

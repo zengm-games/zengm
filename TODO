@@ -32,6 +32,7 @@ FBGM show field during game
     - for scoring plays, show in yellow with some abbreviation of type (FG/XP/etc - see scoreType)
     - somehow show text of last event, so you can just look at the field and see everything
     - subtlely different colors for run/pass plays?
+    - punt/kick out of back of endzone - cap bar width
     - bar color
       - normal: blue
       - kickoff/punt: black/gray (to distinguish from normal play)
@@ -40,11 +41,8 @@ FBGM show field during game
         - detect by looking at current offensive team, if that is different than the one at start of play. because that handles double turnovers
           - for kickoff/punt, same logic but 1 change of possession is normal, anything else is abnormal (red) - well, after the kick at least, need an exception for the kick
         - make PlayBar text or background red too, or something. in case it's a turnover with 0 yards
-          - red background with border to go over scrimmage line?
-    - how to handle fumble after a reception/run of some yards
-      - event.scrimmage is now with reversed field, need to account for that when updating yards
-        - can identify with t and Play.t, like turnover?
-        - kick/punt return has same problem
+    - tab color
+      - if bar color is red/yellow (turnover or score), make the tab that color too, with a border on the side to match up with scrimmage
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

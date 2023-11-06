@@ -519,14 +519,17 @@ const PlayBar = forwardRef<
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
 		const yardsPercent = yardsToPercent(play.yards);
 
+		// -2 is to account for border
 		let marginLeft;
 		if (negative) {
 			marginLeft = `calc(${yardLinePercent}% - ${yardsPercent}%)`;
 		} else {
-			marginLeft = `calc(${yardLineToPercent(
-				play.scrimmage,
-			)}% - ${TAG_WIDTH}px)`;
+			marginLeft = `calc(${yardLineToPercent(play.scrimmage)}% - ${
+				TAG_WIDTH - 2
+			}px)`;
 		}
+
+		const borderStyleName = negative ? "borderLeft" : ("borderRight" as const);
 
 		return (
 			<div
@@ -551,13 +554,14 @@ const PlayBar = forwardRef<
 				{...props}
 			>
 				<div
-					className={`bg-secondary text-white ${
+					className={`bg-secondary text-white border-2 ${
 						negative
 							? "text-start ps-1 rounded-end float-end"
 							: "text-end pe-1 rounded-start"
 					}`}
 					style={{
 						width: TAG_WIDTH,
+						[borderStyleName]: "2px solid var(--bs-blue",
 					}}
 				>
 					{kickoff ? "Kickoff" : `${helpers.ordinal(play.down)} & ${play.toGo}`}

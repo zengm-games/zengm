@@ -1,14 +1,6 @@
 FBGM show field during game
 - UI
-  - top bar
-    - logo of team with ball
-    - 1st and 10, ATL 40
-    - right: Drive: 5 plays, 15 yards
   - render a rudimentary football field
-    - draw a horizontal line for each play on drive. hover over it for play details
-    - start of play should have some minimum width, or maybe a separate symbol, so there is room to see 0 yard plays too
-      - maybe include down and distance there?
-    - different colors for positive and negative plays
     - would be nice to show the kickoff as a drive - kick and return as 2 bars
       - fumbles during return too
       - onside kick?
@@ -29,6 +21,7 @@ FBGM show field during game
       - clock is not perfectly reliable, because it could happen after a change of possession, in which case we never get a chance to show the result of the last play
     - would be nice to make "1st & 10" gray box have dynamic width in play log
     - for scoring plays, show in green with some abbreviation of type (FG/XP/etc - see scoreType)
+    - somehow show text of last event, so you can just look at the field and see everything
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

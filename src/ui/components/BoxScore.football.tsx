@@ -16,6 +16,7 @@ import { getSortClassName } from "./DataTable/Header";
 import range from "lodash-es/range";
 import classNames from "classnames";
 import type { SportState } from "../util/processLiveGameEvents.football";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 
 type Quarter = `Q${number}` | "OT";
 
@@ -508,16 +509,42 @@ const FieldAndDrive = ({
 						yards={sportState.scrimmage + sportState.toGo}
 					/>
 				) : null}
-				{sportState.plays.map(play => {
-					return (
+				{sportState.plays.map((play, i) => {
+					const bar = (
 						<div
+							key={i}
 							className="bg-secondary text-white"
 							style={{
-								zIndex: 1000,
+								// For some reason this puts it above the field background and below dropdown menus
+								zIndex: 0,
 							}}
 						>
 							{helpers.ordinal(play.down)} & {play.toGo}
 						</div>
+					);
+
+					return play.texts.length === 0 ? (
+						bar
+					) : (
+						<OverlayTrigger
+							key={i}
+							trigger={["click", "hover"]}
+							placement="auto"
+							overlay={
+								<Popover>
+									<Popover.Body>
+										<ul className="mb-0 list-unstyled">
+											{play.texts.map((text, j) => (
+												<li key={j}>{text}</li>
+											))}
+										</ul>
+									</Popover.Body>
+								</Popover>
+							}
+							rootClose
+						>
+							{bar}
+						</OverlayTrigger>
 					);
 				})}
 			</div>

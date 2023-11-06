@@ -9,7 +9,6 @@ FBGM show field during game
     - start of play should have some minimum width, or maybe a separate symbol, so there is room to see 0 yard plays too
       - maybe include down and distance there?
     - different colors for positive and negative plays
-    - some minimum height of field, but expand dynamically for long drives
     - would be nice to show the kickoff as a drive - kick and return as 2 bars
       - fumbles during return too
       - onside kick?
@@ -30,7 +29,7 @@ FBGM show field during game
     - would be nice if yards from a play updated live, rather than waiting for next clock event
       - clock is not perfectly reliable, because it could happen after a change of possession, in which case we never get a chance to show the result of the last play
     - need to do something to handle negative plays
-    - would be nice to make "1st & 10" dynamic width in play log
+    - would be nice to make "1st & 10" gray box have dynamic width in play log
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

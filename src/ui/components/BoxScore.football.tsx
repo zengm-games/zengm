@@ -15,7 +15,10 @@ import updateSortBys from "./DataTable/updateSortBys";
 import { getSortClassName } from "./DataTable/Header";
 import range from "lodash-es/range";
 import classNames from "classnames";
-import type { SportState } from "../util/processLiveGameEvents.football";
+import {
+	scrimmageToFieldPos,
+	type SportState,
+} from "../util/processLiveGameEvents.football";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
 type Quarter = `Q${number}` | "OT";
@@ -394,7 +397,7 @@ const DEFAULT_HEIGHT = 200;
 
 const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 	return (
-		<div className="d-flex align-items-stretch position-absolute w-100">
+		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
 			{range(NUM_SECTIONS).map(i => {
 				const style: CSSProperties = {
 					width: `${(1 / 12) * 100}%`,
@@ -429,7 +432,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 						className={classNames("d-flex", {
 							"border-start": i > 0,
 							"bg-success": !endzoneTeam,
-							"align-items-center": endzoneTeam,
+							"align-items-center justify-content-center": endzoneTeam,
 							"flex-column justify-content-between": yardLine !== undefined,
 						})}
 						style={style}
@@ -437,7 +440,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 						{endzoneTeam ? (
 							<div
 								className="fs-2 text-center overflow-hidden"
-								style={{ height: DEFAULT_HEIGHT, whiteSpace: "nowrap" }}
+								style={{ whiteSpace: "nowrap" }}
 							>
 								{endzoneTeam.name}
 							</div>
@@ -491,6 +494,8 @@ const FieldAndDrive = ({
 
 	const yards = sportState.scrimmage - sportState.initialScrimmage;
 
+	const TAG_WIDTH = 60;
+
 	return (
 		<div className="mb-3">
 			<div className="d-flex mb-1">
@@ -504,7 +509,7 @@ const FieldAndDrive = ({
 				) : null}
 			</div>
 			<div
-				className="position-relative d-flex flex-column gap-2"
+				className="position-relative d-flex flex-column"
 				style={{
 					minHeight: DEFAULT_HEIGHT,
 				}}
@@ -518,36 +523,7 @@ const FieldAndDrive = ({
 					/>
 				) : null}
 				{sportState.plays.map((play, i) => {
-					const bar = (
-						<div
-							key={i}
-							className="text-white position-relative"
-							style={{
-								// For some reason this puts it above the field background and below dropdown menus
-								zIndex: 0,
-
-								backgroundColor: "var(--bs-blue)",
-								marginLeft: `${yardLineToPercent(play.scrimmage)}%`,
-								width: `${yardsToPercent(play.yards)}%`,
-							}}
-						>
-							&nbsp;
-							<div
-								className="position-absolute bg-secondary text-white text-end pe-1 rounded-start"
-								style={{
-									left: -60,
-									top: 0,
-									width: 60,
-								}}
-							>
-								{helpers.ordinal(play.down)} & {play.toGo}
-							</div>
-						</div>
-					);
-
-					return play.texts.length === 0 ? (
-						bar
-					) : (
+					return (
 						<OverlayTrigger
 							key={i}
 							trigger={["click", "hover"]}
@@ -556,6 +532,10 @@ const FieldAndDrive = ({
 								<Popover>
 									<Popover.Body>
 										<ul className="mb-0 list-unstyled">
+											<li>
+												{helpers.ordinal(play.down)} & {play.toGo},{" "}
+												{scrimmageToFieldPos(play.scrimmage)}
+											</li>
 											{play.texts.map((text, j) => (
 												<li key={j}>{text}</li>
 											))}
@@ -565,7 +545,33 @@ const FieldAndDrive = ({
 							}
 							rootClose
 						>
-							{bar}
+							<div
+								key={i}
+								className={`rounded-start text-white ${
+									i === 0 ? "mt-4" : "mt-1"
+								}${i === sportState.plays.length - 1 ? " mb-4" : ""}`}
+								style={{
+									// For some reason this puts it above the field background and below dropdown menus
+									zIndex: 0,
+
+									backgroundColor: "var(--bs-blue)",
+									marginLeft: `calc(${yardLineToPercent(
+										play.scrimmage,
+									)}% - ${TAG_WIDTH}px)`,
+									width: `calc(${TAG_WIDTH}px + ${yardsToPercent(
+										play.yards,
+									)}%)`,
+								}}
+							>
+								<div
+									className="bg-secondary text-white text-end pe-1 rounded-start"
+									style={{
+										width: TAG_WIDTH,
+									}}
+								>
+									{helpers.ordinal(play.down)} & {play.toGo}
+								</div>
+							</div>
 						</OverlayTrigger>
 					);
 				})}

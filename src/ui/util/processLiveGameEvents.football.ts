@@ -29,6 +29,16 @@ export const DEFAULT_SPORT_STATE: SportState = {
 	text: "",
 };
 
+export const scrimmageToFieldPos = (scrimmage: number) => {
+	if (scrimmage === 50) {
+		return "50 yd line";
+	} else if (scrimmage > 50) {
+		return `opp ${100 - scrimmage}`;
+	} else {
+		return `own ${scrimmage}`;
+	}
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
@@ -123,21 +133,18 @@ const processLiveGameEvents = ({
 			stop = true;
 
 			const play = sportState.plays.at(-1);
-			play!.texts.push(text);
+			play!.texts.push(
+				text
+					.replace("ABBREV0", boxScore.teams[1].abbrev)
+					.replace("ABBREV1", boxScore.teams[0].abbrev),
+			);
 		} else if (e.type === "clock") {
 			let textWithoutTime;
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
 			if (awaitingKickoff) {
 				textWithoutTime = `${boxScore.teams[actualT].abbrev} kicking off`;
 			} else {
-				let fieldPos = "";
-				if (e.scrimmage === 50) {
-					fieldPos = "50 yd line";
-				} else if (e.scrimmage > 50) {
-					fieldPos = `opp ${100 - e.scrimmage}`;
-				} else {
-					fieldPos = `own ${e.scrimmage}`;
-				}
+				const fieldPos = scrimmageToFieldPos(e.scrimmage);
 
 				textWithoutTime = `${
 					boxScore.teams[actualT].abbrev

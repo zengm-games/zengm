@@ -519,6 +519,11 @@ const processLiveGameEvents = ({
 				) {
 					play.t = actualT;
 				}
+				if (e.type === "penalty") {
+					// Penalty could have changed possession
+					const actualT2 = e.possessionAfterPenalty === 0 ? 1 : 0;
+					play.t = actualT2;
+				}
 
 				if (e.type === "kickoff") {
 					// yds is the distance kicked to
@@ -537,7 +542,11 @@ const processLiveGameEvents = ({
 					let reversedField = play.t !== sportState.t;
 
 					// Penalty on offense
-					if (e.type === "penalty" && actualT === play.t) {
+					if (
+						e.type === "penalty" &&
+						actualT === play.t &&
+						e.decision === "accept"
+					) {
 						reversedField = !reversedField;
 					}
 

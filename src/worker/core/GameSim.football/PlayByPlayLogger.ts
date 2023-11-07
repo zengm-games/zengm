@@ -176,6 +176,7 @@ type PlayByPlayEventInput =
 			offsetStatus: "offset" | "overrule" | undefined;
 			penaltyName: string;
 			placeOnOne: boolean;
+			possessionAfterPenalty: TeamNum;
 			spotFoul: boolean;
 			t: TeamNum;
 			tackOn: boolean;

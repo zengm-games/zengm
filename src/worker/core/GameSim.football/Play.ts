@@ -1231,6 +1231,7 @@ class Play {
 						names: penalty.event.p ? [penalty.event.p.name] : [],
 						offsetStatus,
 						penaltyName: penalty.event.name,
+						possessionAfterPenalty: result.state.o,
 						placeOnOne: penalty.penaltyInfo.placeOnOne,
 						spotFoul,
 						t: penalty.event.t,

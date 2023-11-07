@@ -35,9 +35,6 @@ FBGM show field during game
       - somewhere show text of last event, so you can just look at the field and see everything
     - glitches
       - fg scrimmage weirdness makes play look like negative
-      - defensive penalty or time out showing up as turnover, because the t property changes
-        - looking at event.t is not a way to determine who has the ball
-        - we know the turnover ones swap to t, but that can be reversed by penalty. penalty accepted event should return which team has the ball
       - "Start of 3rd quarter" and similar should clear drive
         - unify logic with kickoffAfterEndOfPeriod
       - punt/kick out of back of endzone - cap bar width
@@ -52,7 +49,7 @@ FBGM show field during game
           - need to know if it's xp or 2pt, for scrimmage
           - need to know not to print the "1st & 10" line
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
-    - fix intendedChangeOfPossession
+    - turnover logic in PlayBar doesn't make sense. instead, track number of changes of possession in play object, and use that.
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

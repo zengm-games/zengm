@@ -1,6 +1,8 @@
 import { g, helpers, random } from "../../util";
 import { POSITIONS } from "../../../common/constants.football";
-import PlayByPlayLogger from "./PlayByPlayLogger";
+import PlayByPlayLogger, {
+	type PlayByPlayEventScore,
+} from "./PlayByPlayLogger";
 import getCompositeFactor from "./getCompositeFactor";
 import getPlayers from "./getPlayers";
 import formations from "./formations";
@@ -220,26 +222,24 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const scoringSummaryAndRemove = this.playByPlay.playByPlay.filter(
-			event => event.scoringSummary || event.type === "removeLastScore",
-		);
-
-		const scoringSummary: any[] = [];
+		const scoringSummary: PlayByPlayEventScore[] = [];
 
 		// Remove any scores that were negated by penalties
-		for (let i = 0; i < scoringSummaryAndRemove.length; i++) {
-			const current = scoringSummaryAndRemove[i];
-			const next = scoringSummaryAndRemove[i + 1];
+		for (let i = 0; i < this.playByPlay.scoringSummary.length; i++) {
+			const current = this.playByPlay.scoringSummary[i];
+			const next = this.playByPlay.scoringSummary[i + 1];
 
+			// Must have been reversed by a penalty
 			if (next && next.type === "removeLastScore") {
 				continue;
 			}
 
-			if (current.scoringSummary) {
-				const y = { ...current };
-				delete y.scoringSummary;
-				scoringSummary.push(y);
+			// No longer need to store this
+			if (current.type === "removeLastScore") {
+				continue;
 			}
+
+			scoringSummary.push(current);
 		}
 
 		const out = {

@@ -1,6 +1,94 @@
+import { isScoringPlay } from "../../../common/isScoringPlay.football";
 import type { TeamNum } from "./types";
 
+export type PlayByPlayEventInputScore =
+	| {
+			type: "kickoffReturn";
+			automaticFirstDown?: boolean;
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "puntReturn";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "fumbleRecovery";
+			clock: number;
+			lost: boolean;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			td: boolean;
+			touchback: boolean;
+			yds: number;
+	  }
+	| {
+			type: "interception";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			td: boolean;
+			touchback: boolean;
+			yds: number;
+	  }
+	| {
+			type: "passComplete";
+			clock: number;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "run";
+			clock: number;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "onsideKickRecovery";
+			clock: number;
+			names: string[];
+			success: boolean;
+			t: TeamNum;
+			td: boolean;
+	  }
+	| {
+			type: "extraPoint" | "fieldGoal";
+			clock: number;
+			made: boolean;
+			names: string[];
+			t: TeamNum;
+			yds: number;
+	  }
+	| {
+			type: "sack";
+			clock: number;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			yds: number;
+	  }
+	| {
+			type: "twoPointConversionFailed";
+			clock: number;
+			t: TeamNum;
+	  };
+
 type PlayByPlayEventInput =
+	| PlayByPlayEventInputScore
 	| {
 			type: "quarter";
 			clock: number;
@@ -31,15 +119,6 @@ type PlayByPlayEventInput =
 			yds: number;
 	  }
 	| {
-			type: "kickoffReturn";
-			automaticFirstDown?: boolean;
-			clock: number;
-			names: string[];
-			t: TeamNum;
-			td: boolean;
-			yds: number;
-	  }
-	| {
 			type: "punt";
 			clock: number;
 			names: string[];
@@ -48,25 +127,9 @@ type PlayByPlayEventInput =
 			yds: number;
 	  }
 	| {
-			type: "puntReturn";
-			clock: number;
-			names: string[];
-			t: TeamNum;
-			td: boolean;
-			yds: number;
-	  }
-	| {
 			type: "extraPointAttempt";
 			clock: number;
 			t: TeamNum;
-	  }
-	| {
-			type: "extraPoint" | "fieldGoal";
-			clock: number;
-			made: boolean;
-			names: string[];
-			t: TeamNum;
-			yds: number;
 	  }
 	| {
 			type: "fumble";
@@ -75,47 +138,10 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 	  }
 	| {
-			type: "fumbleRecovery";
-			clock: number;
-			lost: boolean;
-			names: string[];
-			safety: boolean;
-			t: TeamNum;
-			td: boolean;
-			touchback: boolean;
-			yds: number;
-	  }
-	| {
-			type: "interception";
-			clock: number;
-			names: string[];
-			t: TeamNum;
-			td: boolean;
-			touchback: boolean;
-			yds: number;
-	  }
-	| {
-			type: "sack";
-			clock: number;
-			names: string[];
-			safety: boolean;
-			t: TeamNum;
-			yds: number;
-	  }
-	| {
 			type: "dropback";
 			clock: number;
 			names: string[];
 			t: TeamNum;
-	  }
-	| {
-			type: "passComplete";
-			clock: number;
-			names: string[];
-			safety: boolean;
-			t: TeamNum;
-			td: boolean;
-			yds: number;
 	  }
 	| {
 			type: "passIncomplete";
@@ -131,27 +157,10 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 	  }
 	| {
-			type: "run";
-			clock: number;
-			names: string[];
-			safety: boolean;
-			t: TeamNum;
-			td: boolean;
-			yds: number;
-	  }
-	| {
 			type: "onsideKick";
 			clock: number;
 			names: string[];
 			t: TeamNum;
-	  }
-	| {
-			type: "onsideKickRecovery";
-			clock: number;
-			names: string[];
-			success: boolean;
-			t: TeamNum;
-			td: boolean;
 	  }
 	| {
 			type: "penalty";
@@ -200,11 +209,6 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 	  }
 	| {
-			type: "twoPointConversionFailed";
-			clock: number;
-			t: TeamNum;
-	  }
-	| {
 			type: "turnoverOnDowns";
 			clock: number;
 	  };
@@ -237,20 +241,45 @@ export type PlayByPlayEvent =
 			toGo: number;
 	  };
 
+export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
+	quarter: number;
+};
+
 class PlayByPlayLogger {
 	active: boolean;
 
-	playByPlay: PlayByPlayEvent[];
+	playByPlay: PlayByPlayEvent[] = [];
+
+	scoringSummary: (
+		| PlayByPlayEventScore
+		| {
+				type: "removeLastScore";
+		  }
+	)[] = [];
+
+	quarter = 1;
 
 	constructor(active: boolean) {
 		this.active = active;
-		this.playByPlay = [];
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
-		this.playByPlay.push({
-			...event,
-		});
+		if (event.type === "quarter" || event.type === "overtime") {
+			this.quarter += 1;
+		}
+
+		if (this.active) {
+			this.playByPlay.push({
+				...event,
+			});
+		}
+
+		if (isScoringPlay(event)) {
+			this.scoringSummary.push({
+				...event,
+				quarter: this.quarter,
+			});
+		}
 	}
 
 	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
@@ -312,7 +341,13 @@ class PlayByPlayLogger {
 	}
 
 	removeLastScore() {
-		this.playByPlay.push({
+		if (this.active) {
+			this.playByPlay.push({
+				type: "removeLastScore",
+			});
+		}
+
+		this.scoringSummary.push({
 			type: "removeLastScore",
 		});
 	}

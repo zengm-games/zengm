@@ -17,20 +17,14 @@ import { getSortClassName } from "./DataTable/Header";
 import range from "lodash-es/range";
 import classNames from "classnames";
 import {
+	formatClock,
 	getScoreInfo,
+	getText,
 	scrimmageToFieldPos,
 	type SportState,
 } from "../util/processLiveGameEvents.football";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-
-type ScoringSummaryEvent = {
-	hide: boolean;
-	quarter: string;
-	t: 0 | 1;
-	text: string;
-	time: number;
-	type: string;
-};
+import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 
 type Team = {
 	abbrev: string;
@@ -43,7 +37,7 @@ type Team = {
 
 type BoxScore = {
 	gid: number;
-	scoringSummary: ScoringSummaryEvent[];
+	scoringSummary: PlayByPlayEventScore[];
 	teams: [Team, Team];
 	numPeriods?: number;
 	exhibition?: boolean;
@@ -224,50 +218,55 @@ const StatsTable = ({
 };
 
 // Condenses TD + XP/2P into one event rather than two
-const processEvents = (events: ScoringSummaryEvent[]) => {
+const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 	const processedEvents: {
 		quarter: string;
 		score: [number, number];
 		scoreType: string | null;
 		t: 0 | 1;
 		text: string;
-		time: number;
+		time: string;
 	}[] = [];
 	const score = [0, 0] as [number, number];
 
 	for (const event of events) {
-		if (event.hide) {
+		const text = getText(event, numPeriods);
+		if (text === undefined) {
 			continue;
 		}
 
-		const otherT = event.t === 0 ? 1 : 0;
+		const actualT = event.t === 0 ? 1 : 0;
+		const otherT = actualT === 0 ? 1 : 0;
 
-		const scoreInfo = getScoreInfo(event.text);
+		const scoreInfo = getScoreInfo(text);
 		if (scoreInfo.type === "SF") {
 			// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
 			score[otherT] += scoreInfo.points;
 		} else {
-			score[event.t] += scoreInfo.points;
+			score[actualT] += scoreInfo.points;
 		}
 
 		const prevEvent: any = processedEvents.at(-1);
 
 		if (prevEvent && scoreInfo.type === "XP") {
 			prevEvent.score = score.slice();
-			prevEvent.text += ` (${event.text})`;
+			prevEvent.text += ` (${text})`;
 		} else if (
 			prevEvent &&
 			scoreInfo.type === "2P" &&
 			event.t === prevEvent.t
 		) {
 			prevEvent.score = score.slice();
-			prevEvent.text += ` (${event.text})`;
+			prevEvent.text += ` (${text})`;
 		} else {
 			processedEvents.push({
-				t: scoreInfo.type === "SF" ? otherT : event.t, // See comment above about safety teams
-				quarter: event.quarter,
-				time: event.time,
-				text: event.text,
+				t: scoreInfo.type === "SF" ? otherT : actualT, // See comment above about safety teams
+				quarter:
+					event.quarter <= numPeriods
+						? `Q${event.quarter}`
+						: `OT${event.quarter - numPeriods}`,
+				time: formatClock(event.clock),
+				text,
 				score: helpers.deepCopy(score),
 				scoreType: scoreInfo.type,
 			});
@@ -277,14 +276,8 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 	return processedEvents;
 };
 
-const getCount = (events: ScoringSummaryEvent[]) => {
-	let count = 0;
-	for (const event of events) {
-		if (!event.hide) {
-			count += 1;
-		}
-	}
-	return count;
+const getCount = (events: PlayByPlayEventScore[]) => {
+	return events.length;
 };
 
 const ScoringSummary = memo(
@@ -294,13 +287,13 @@ const ScoringSummary = memo(
 		teams,
 	}: {
 		count: number;
-		events: ScoringSummaryEvent[];
+		events: PlayByPlayEventScore[];
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
 		let prevQuarter: string;
 
-		const processedEvents = processEvents(events);
+		const processedEvents = processEvents(events, numPeriods);
 
 		if (processedEvents.length === 0) {
 			return <p>None</p>;

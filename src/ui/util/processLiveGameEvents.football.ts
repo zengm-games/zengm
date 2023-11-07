@@ -1,4 +1,5 @@
 import { getPeriodName } from "../../common";
+import { isScoringPlay } from "../../common/isScoringPlay.football";
 import { helpers, local } from "../../ui/util";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 
@@ -80,7 +81,7 @@ export const getScoreInfo = (text: string) => {
 };
 
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30
-const formatClock = (clock: number) => {
+export const formatClock = (clock: number) => {
 	const secNum = Math.ceil((clock % 1) * 60);
 
 	let sec;
@@ -112,7 +113,7 @@ const descriptionYdsTD = (
 	return `${yds} yards`;
 };
 
-const getText = (boxScore: any, event: PlayByPlayEvent) => {
+export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	// Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
 	let touchdownText = "a touchdown";
 	let showYdsOnTD = true;
@@ -132,7 +133,7 @@ const getText = (boxScore: any, event: PlayByPlayEvent) => {
 		text = `${event.names[0]} was injured!`;
 	} else if (event.type === "quarter") {
 		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
-			boxScore.numPeriods,
+			numPeriods,
 		)}`;
 	} else if (event.type === "overtime") {
 		text = `Start of ${
@@ -355,12 +356,7 @@ const processLiveGameEvents = ({
 		// Swap teams order, so home team is at bottom in box score
 		const actualT = (e as any).t === 0 ? 1 : 0;
 
-		const scoringSummary =
-			(e as any).safety ||
-			(e as any).td ||
-			e.type === "extraPoint" ||
-			e.type === "twoPointConversionFailed" ||
-			(e.type === "fieldGoal" && e.made);
+		const scoringSummary = isScoringPlay(e);
 
 		let quarterText;
 		if (quarters.length === 0) {
@@ -474,7 +470,7 @@ const processLiveGameEvents = ({
 		} else if (e.type === "removeLastScore") {
 			boxScore.scoringSummary.pop();
 		} else if (e.type !== "init") {
-			const initialText = getText(boxScore, e);
+			const initialText = getText(e, boxScore.numPeriods);
 			if (initialText !== undefined) {
 				if (e.type === "injury") {
 					const p = boxScore.teams[actualT].players.find(
@@ -558,10 +554,7 @@ const processLiveGameEvents = ({
 		if (scoringSummary) {
 			boxScore.scoringSummary.push({
 				...e,
-				t: actualT,
-				text,
-				quarter: quarters.at(-1),
-				time: formatClock((e as any).clock),
+				quarter: quarters.length,
 			});
 		}
 	}

@@ -1,8 +1,6 @@
 FBGM move event text generation to UI
 - twoPointConversionTeam
-- scoringSummary persistence
-  - modify so ScoringSummary operates from raw events
-  - move logic for scoringSummary from processLiveGameEvents to common
+- support displaying box scores with old scoringSummary format
 - to fix after
   - possessionChangeTexts
   - ABBREV replace stuff

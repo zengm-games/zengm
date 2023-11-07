@@ -217,7 +217,7 @@ const StatsTable = ({
 	);
 };
 
-// Condenses TD + XP/2P into one event rather than two
+// Condenses TD + XP/2P into one event rather than two, and normalizes scoring summary events into consistent format (old style format had the text in it already, new one is just raw metadata from game sim)
 const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 	const processedEvents: {
 		quarter: string;
@@ -230,12 +230,24 @@ const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 	const score = [0, 0] as [number, number];
 
 	for (const event of events) {
-		const text = getText(event, numPeriods);
+		let text: string | undefined;
+
+		const oldEvent = event as any;
+		const isOldFormat = oldEvent.text !== undefined;
+		if (isOldFormat) {
+			// This is an old format entry, with the text already generated!
+			text = oldEvent.text;
+		} else {
+			// This is a new format entry, with metadata that needs to be turned into text
+			text = getText(event, numPeriods);
+		}
+
 		if (text === undefined) {
 			continue;
 		}
 
-		const actualT = event.t === 0 ? 1 : 0;
+		// Old format already had team IDs swapped!
+		const actualT = isOldFormat ? event.t : event.t === 0 ? 1 : 0;
 		const otherT = actualT === 0 ? 1 : 0;
 
 		const scoreInfo = getScoreInfo(text);
@@ -261,11 +273,12 @@ const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 		} else {
 			processedEvents.push({
 				t: scoreInfo.type === "SF" ? otherT : actualT, // See comment above about safety teams
-				quarter:
-					event.quarter <= numPeriods
-						? `Q${event.quarter}`
-						: `OT${event.quarter - numPeriods}`,
-				time: formatClock(event.clock),
+				quarter: isOldFormat
+					? oldEvent.quarter
+					: event.quarter <= numPeriods
+					? `Q${event.quarter}`
+					: `OT${event.quarter - numPeriods}`,
+				time: isOldFormat ? oldEvent.time : formatClock(event.clock),
 				text,
 				score: helpers.deepCopy(score),
 				scoreType: scoreInfo.type,

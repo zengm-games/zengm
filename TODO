@@ -1,13 +1,12 @@
 FBGM move event text generation to UI
 - twoPointConversionTeam
-- support displaying box scores with old scoringSummary format
 - to fix after
   - possessionChangeTexts
   - ABBREV replace stuff
   - bold text
-  - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones
-    - scoring plays might need it too
+  - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
   - too many formatClock calls
+  - refactor getScoreInfo
 
 FBGM show field during game
 - UI

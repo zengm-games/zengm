@@ -1,39 +1,6 @@
 import type { PlayerInjury } from "../../../common/types";
 import type { Position } from "../../../common/types.football";
 
-export type PlayType =
-	| "quarter"
-	| "overtime"
-	| "gameOver"
-	| "injury"
-	| "kickoff"
-	| "kickoffReturn"
-	| "punt"
-	| "puntReturn"
-	| "extraPointAttempt"
-	| "extraPoint"
-	| "fieldGoal"
-	| "fumble"
-	| "fumbleRecovery"
-	| "interception"
-	| "sack"
-	| "dropback"
-	| "passComplete"
-	| "passIncomplete"
-	| "handoff"
-	| "run"
-	| "onsideKick"
-	| "onsideKickRecovery"
-	| "penalty"
-	| "penaltyCount"
-	| "timeout"
-	| "twoMinuteWarning"
-	| "kneel"
-	| "flag"
-	| "twoPointConversion"
-	| "twoPointConversionFailed"
-	| "turnoverOnDowns";
-
 export type TeamNum = 0 | 1;
 
 export type CompositeRating =

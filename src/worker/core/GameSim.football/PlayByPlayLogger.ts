@@ -2,7 +2,7 @@ import type GameSim from ".";
 import { getPeriodName } from "../../../common";
 import type { GameAttributesLeague } from "../../../common/types";
 import { g, helpers } from "../../util";
-import type { PlayType, TeamNum } from "./types";
+import type { TeamNum } from "./types";
 
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 const formatClock = (clock: number) => {
@@ -37,6 +37,215 @@ const descriptionYdsTD = (
 	return `${yds} yards`;
 };
 
+type PlayByPlayEventInput =
+	| {
+			type: "quarter";
+			clock: number;
+			quarter: number;
+	  }
+	| {
+			type: "overtime";
+			clock: number;
+			overtimes: number;
+	  }
+	| {
+			type: "gameOver";
+			clock: number;
+	  }
+	| {
+			type: "injury";
+			clock: number;
+			injuredPID: number;
+			names: string[];
+			t: TeamNum;
+	  }
+	| {
+			type: "kickoff";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			touchback: boolean;
+			yds: number;
+	  }
+	| {
+			type: "kickoffReturn";
+			automaticFirstDown?: boolean;
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "punt";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			touchback: boolean;
+			yds: number;
+	  }
+	| {
+			type: "puntReturn";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "extraPointAttempt";
+			clock: number;
+			t: TeamNum;
+	  }
+	| {
+			type: "extraPoint" | "fieldGoal";
+			clock: number;
+			made: boolean;
+			names: string[];
+			t: TeamNum;
+			yds: number;
+	  }
+	| {
+			type: "fumble";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+	  }
+	| {
+			type: "fumbleRecovery";
+			clock: number;
+			lost: boolean;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			td: boolean;
+			touchback: boolean;
+			yds: number;
+	  }
+	| {
+			type: "interception";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			td: boolean;
+			touchback: boolean;
+			yds: number;
+	  }
+	| {
+			type: "sack";
+			clock: number;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			yds: number;
+	  }
+	| {
+			type: "dropback";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+	  }
+	| {
+			type: "passComplete";
+			clock: number;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "passIncomplete";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			yds: number;
+	  }
+	| {
+			type: "handoff";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+	  }
+	| {
+			type: "run";
+			clock: number;
+			names: string[];
+			safety: boolean;
+			t: TeamNum;
+			td: boolean;
+			yds: number;
+	  }
+	| {
+			type: "onsideKick";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+	  }
+	| {
+			type: "onsideKickRecovery";
+			clock: number;
+			names: string[];
+			success: boolean;
+			t: TeamNum;
+			td: boolean;
+	  }
+	| {
+			type: "penalty";
+			automaticFirstDown: boolean;
+			clock: number;
+			decision: "accept" | "decline";
+			halfDistanceToGoal: boolean;
+			names: string[];
+			offsetStatus: "offset" | "overrule" | undefined;
+			penaltyName: string;
+			placeOnOne: boolean;
+			spotFoul: boolean;
+			t: TeamNum;
+			tackOn: boolean;
+			yds: number;
+	  }
+	| {
+			type: "penaltyCount";
+			clock: number;
+			count: number;
+			offsetStatus: "offset" | "overrule" | undefined;
+	  }
+	| {
+			type: "timeout";
+			clock: number;
+			offense: boolean;
+			t: TeamNum;
+	  }
+	| {
+			type: "twoMinuteWarning";
+			clock: number;
+	  }
+	| {
+			type: "kneel";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+	  }
+	| {
+			type: "flag";
+			clock: number;
+	  }
+	| {
+			type: "twoPointConversion";
+			clock: number;
+			t: TeamNum;
+	  }
+	| {
+			type: "twoPointConversionFailed";
+			clock: number;
+			t: TeamNum;
+	  }
+	| {
+			type: "turnoverOnDowns";
+			clock: number;
+	  };
+
 class PlayByPlayLogger {
 	active: boolean;
 
@@ -58,64 +267,13 @@ class PlayByPlayLogger {
 		this.g = gameSim;
 	}
 
-	logEvent(
-		type: PlayType,
-		{
-			automaticFirstDown,
-			clock,
-			count,
-			decision,
-			injuredPID,
-			lost,
-			made,
-			names,
-			offense,
-			offsetStatus,
-			penaltyName,
-			quarter,
-			overtimes,
-			safety,
-			success,
-			t,
-			tackOn,
-			td,
-			touchback,
-			yds,
-			spotFoul,
-			halfDistanceToGoal,
-			placeOnOne,
-		}: {
-			automaticFirstDown?: boolean;
-			clock: number;
-			count?: number;
-			decision?: "accept" | "decline";
-			injuredPID?: number;
-			lost?: boolean;
-			made?: boolean;
-			names?: string[];
-			offense?: boolean;
-			offsetStatus?: "offset" | "overrule";
-			penaltyName?: string;
-			quarter?: number;
-			overtimes?: number;
-			safety?: boolean;
-			success?: boolean;
-			t?: TeamNum;
-			tackOn?: boolean;
-			td?: boolean;
-			touchback?: boolean;
-			yds?: number;
-			spotFoul?: boolean;
-			halfDistanceToGoal?: boolean;
-			placeOnOne?: boolean;
-		},
-	) {
+	logEvent(e: PlayByPlayEventInput) {
 		// Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
 		let touchdownText = "a touchdown";
 		let showYdsOnTD = true;
 
 		if (this.twoPointConversionTeam !== undefined) {
-			if (this.twoPointConversionTeam === t) {
+			if (this.twoPointConversionTeam === (e as any).t) {
 				touchdownText = "a two point conversion";
 				showYdsOnTD = false;
 			} else {
@@ -126,361 +284,218 @@ class PlayByPlayLogger {
 		let text;
 
 		if (this.playByPlay !== undefined) {
-			if (type === "injury") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} was injured!`;
-			} else if (type === "quarter") {
-				if (quarter === undefined) {
-					throw new Error("Missing quarter");
-				}
-
-				text = `Start of ${helpers.ordinal(quarter)} ${getPeriodName(
+			if (e.type === "injury") {
+				text = `${e.names[0]} was injured!`;
+			} else if (e.type === "quarter") {
+				text = `Start of ${helpers.ordinal(e.quarter)} ${getPeriodName(
 					g.get("numPeriods"),
 				)}`;
 
-				this.quarter = `Q${quarter}`;
-			} else if (type === "overtime") {
-				if (overtimes === undefined) {
-					throw new Error("Missing overtimes");
-				}
-				this.quarter = `OT${overtimes}`;
+				this.quarter = `Q${e.quarter}`;
+			} else if (e.type === "overtime") {
+				this.quarter = `OT${e.overtimes}`;
 				text = `Start of ${
-					overtimes === 1 ? "" : `${helpers.ordinal(overtimes)} `
+					e.overtimes === 1 ? "" : `${helpers.ordinal(e.overtimes)} `
 				} overtime`;
-			} else if (type === "gameOver") {
+			} else if (e.type === "gameOver") {
 				text = "End of game";
-			} else if (type === "kickoff") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} kicked off${
-					touchback
+			} else if (e.type === "kickoff") {
+				text = `${e.names[0]} kicked off${
+					e.touchback
 						? " for a touchback"
-						: yds < 0
+						: e.yds < 0
 						? " into the end zone"
-						: ` to the ${yds} yard line`
+						: ` to the ${e.yds} yard line`
 				}`;
-			} else if (type === "kickoffReturn") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} returned the kickoff ${yds} yards${
-					td ? " for a touchdown!" : ""
+			} else if (e.type === "kickoffReturn") {
+				text = `${e.names[0]} returned the kickoff ${e.yds} yards${
+					e.td ? " for a touchdown!" : ""
 				}`;
-			} else if (type === "onsideKick") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} gets ready to attempt an onside kick`;
-			} else if (type === "onsideKickRecovery") {
-				if (success === undefined) {
-					throw new Error("Missing success");
-				}
-
-				if (td === undefined) {
-					throw new Error("Missing td");
-				}
-
+			} else if (e.type === "onsideKick") {
+				text = `${e.names[0]} gets ready to attempt an onside kick`;
+			} else if (e.type === "onsideKickRecovery") {
 				text = `The onside kick was recovered by ${
-					success
+					e.success
 						? "the kicking team!"
-						: `the receiving team${td ? " and returned for a touchdown!" : ""}`
+						: `the receiving team${
+								e.td ? " and returned for a touchdown!" : ""
+						  }`
 				}`;
-			} else if (type === "punt") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} punted ${yds} yards${
-					touchback ? " for a touchback" : yds < 0 ? " into the end zone" : ""
+			} else if (e.type === "punt") {
+				text = `${e.names[0]} punted ${e.yds} yards${
+					e.touchback
+						? " for a touchback"
+						: e.yds < 0
+						? " into the end zone"
+						: ""
 				}`;
-			} else if (type === "puntReturn") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} returned the punt ${yds} yards${
-					td ? " for a touchdown!" : ""
+			} else if (e.type === "puntReturn") {
+				text = `${e.names[0]} returned the punt ${e.yds} yards${
+					e.td ? " for a touchdown!" : ""
 				}`;
-			} else if (type === "extraPoint") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} ${made ? "made" : "missed"} the extra point`;
-			} else if (type === "fieldGoal") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} ${
-					made ? "made" : "missed"
-				} a ${yds} yard field goal`;
-			} else if (type === "fumble") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} fumbled the ball!`;
-			} else if (type === "fumbleRecovery") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				if (safety || touchback) {
+			} else if (e.type === "extraPoint") {
+				text = `${e.names[0]} ${e.made ? "made" : "missed"} the extra point`;
+			} else if (e.type === "fieldGoal") {
+				text = `${e.names[0]} ${e.made ? "made" : "missed"} a ${
+					e.yds
+				} yard field goal`;
+			} else if (e.type === "fumble") {
+				text = `${e.names[0]} fumbled the ball!`;
+			} else if (e.type === "fumbleRecovery") {
+				if (e.safety || e.touchback) {
 					text = `${
-						names[0]
+						e.names[0]
 					} recovered the fumble in the endzone, resulting in a ${
-						safety ? "safety!" : "touchback"
+						e.safety ? "safety!" : "touchback"
 					}`;
-				} else if (lost) {
-					text = `${names[0]} recovered the fumble for the defense ${
-						td && yds < 1
+				} else if (e.lost) {
+					text = `${e.names[0]} recovered the fumble for the defense ${
+						e.td && e.yds < 1
 							? `in the endzone for ${touchdownText}!`
-							: `and returned it ${yds} yards${
-									td ? ` for ${touchdownText}!` : ""
+							: `and returned it ${e.yds} yards${
+									e.td ? ` for ${touchdownText}!` : ""
 							  }`
 					}`;
 				} else {
-					text = `${names[0]} recovered the fumble for the offense${
-						td ? ` and carried it into the endzone for ${touchdownText}!` : ""
+					text = `${e.names[0]} recovered the fumble for the offense${
+						e.td ? ` and carried it into the endzone for ${touchdownText}!` : ""
 					}`;
 				}
-			} else if (type === "interception") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} intercepted the pass `;
-				if (touchback) {
+			} else if (e.type === "interception") {
+				text = `${e.names[0]} intercepted the pass `;
+				if (e.touchback) {
 					text += "in the endzone";
 				} else {
-					text += `and returned it ${yds} yards${
-						td ? ` for ${touchdownText}!` : ""
+					text += `and returned it ${e.yds} yards${
+						e.td ? ` for ${touchdownText}!` : ""
 					}`;
 				}
-			} else if (type === "sack") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `${names[0]} was sacked by ${names[1]} for a ${
-					safety ? "safety!" : `${Math.abs(yds)} yard loss`
+			} else if (e.type === "sack") {
+				text = `${e.names[0]} was sacked by ${e.names[1]} for a ${
+					e.safety ? "safety!" : `${Math.abs(e.yds)} yard loss`
 				}`;
-			} else if (type === "dropback") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} drops back to pass`;
-			} else if (type === "passComplete") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (td === undefined) {
-					throw new Error("Missing td");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				if (safety) {
-					text = `${names[0]} completed a pass to ${
-						names[1]
+			} else if (e.type === "dropback") {
+				text = `${e.names[0]} drops back to pass`;
+			} else if (e.type === "passComplete") {
+				if (e.safety) {
+					text = `${e.names[0]} completed a pass to ${
+						e.names[1]
 					} but ${helpers.pronoun(
 						this.gender,
 						"he",
 					)} was tackled in the endzone for a safety!`;
 				} else {
-					const result = descriptionYdsTD(yds, td, touchdownText, showYdsOnTD);
-					text = `${names[0]} completed a pass to ${names[1]} for ${result}`;
+					const result = descriptionYdsTD(
+						e.yds,
+						e.td,
+						touchdownText,
+						showYdsOnTD,
+					);
+					text = `${e.names[0]} completed a pass to ${e.names[1]} for ${result}`;
 				}
-			} else if (type === "passIncomplete") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `Incomplete pass to ${names[1]}`;
-			} else if (type === "handoff") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (names.length > 1) {
+			} else if (e.type === "passIncomplete") {
+				text = `Incomplete pass to ${e.names[1]}`;
+			} else if (e.type === "handoff") {
+				if (e.names.length > 1) {
 					// If names.length is 1, its a QB keeper, no need to log the handoff
-					text = `${names[0]} hands the ball off to ${names[1]}`;
+					text = `${e.names[0]} hands the ball off to ${e.names[1]}`;
 				}
-			} else if (type === "run") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (td === undefined) {
-					throw new Error("Missing td");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				if (safety) {
-					text = `${names[0]} was tackled in the endzone for a safety!`;
+			} else if (e.type === "run") {
+				if (e.safety) {
+					text = `${e.names[0]} was tackled in the endzone for a safety!`;
 				} else {
-					const result = descriptionYdsTD(yds, td, touchdownText, showYdsOnTD);
-					text = `${names[0]} rushed for ${result}`;
+					const result = descriptionYdsTD(
+						e.yds,
+						e.td,
+						touchdownText,
+						showYdsOnTD,
+					);
+					text = `${e.names[0]} rushed for ${result}`;
 				}
-			} else if (type === "penaltyCount") {
-				if (count === undefined) {
-					throw new Error("Missing count");
-				}
-
-				text = `There are ${count} ${
-					offsetStatus === "offset" ? "offsetting " : ""
+			} else if (e.type === "penaltyCount") {
+				text = `There are ${e.count} ${
+					e.offsetStatus === "offset" ? "offsetting " : ""
 				}fouls on the play${
-					offsetStatus === "offset"
+					e.offsetStatus === "offset"
 						? ", the previous down will be replayed"
 						: ""
 				}`;
-			} else if (type === "penalty") {
-				if (decision === undefined) {
-					throw new Error("Missing decision");
-				}
-
-				if (automaticFirstDown === undefined) {
-					throw new Error("Missing automaticFirstDown");
-				}
-
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				if (penaltyName === undefined) {
-					throw new Error("Missing penaltyName");
-				}
-
-				if (yds === undefined) {
-					throw new Error("Missing yds");
-				}
-
-				text = `Penalty, ABBREV${t} - ${penaltyName.toLowerCase()}${
-					names.length > 0 ? ` on ${names[0]}` : ""
+			} else if (e.type === "penalty") {
+				text = `Penalty, ABBREV${e.t} - ${e.penaltyName.toLowerCase()}${
+					e.names.length > 0 ? ` on ${e.names[0]}` : ""
 				}`;
 
-				if (offsetStatus !== "offset") {
-					const spotFoulText = tackOn
+				if (e.offsetStatus !== "offset") {
+					const spotFoulText = e.tackOn
 						? " from the end of the play"
-						: spotFoul
+						: e.spotFoul
 						? " from the spot of the foul"
 						: "";
-					const automaticFirstDownText = automaticFirstDown
+					const automaticFirstDownText = e.automaticFirstDown
 						? " and an automatic first down"
 						: "";
-					if (halfDistanceToGoal) {
+					if (e.halfDistanceToGoal) {
 						text += `, half the distance to the goal${spotFoulText}`;
-					} else if (placeOnOne) {
+					} else if (e.placeOnOne) {
 						text += `, the ball will be placed at the 1 yard line${automaticFirstDownText}`;
 					} else {
-						text += `, ${yds} yards${spotFoulText}${automaticFirstDownText}`;
+						text += `, ${e.yds} yards${spotFoulText}${automaticFirstDownText}`;
 					}
 
 					let decisionText;
-					if (offsetStatus === "overrule") {
-						decisionText = decision === "accept" ? "enforced" : "overruled";
+					if (e.offsetStatus === "overrule") {
+						decisionText = e.decision === "accept" ? "enforced" : "overruled";
 					} else {
-						decisionText = decision === "accept" ? "accepted" : "declined";
+						decisionText = e.decision === "accept" ? "accepted" : "declined";
 					}
 
 					text += ` - ${decisionText}`;
 				}
-			} else if (type === "timeout") {
-				text = `Time out, ${offense ? "offense" : "defense"}`;
-			} else if (type === "twoMinuteWarning") {
+			} else if (e.type === "timeout") {
+				text = `Time out, ${e.offense ? "offense" : "defense"}`;
+			} else if (e.type === "twoMinuteWarning") {
 				text = "Two minute warning";
-			} else if (type === "kneel") {
-				if (names === undefined) {
-					throw new Error("Missing names");
-				}
-
-				text = `${names[0]} kneels`;
-			} else if (type === "flag") {
+			} else if (e.type === "kneel") {
+				text = `${e.names[0]} kneels`;
+			} else if (e.type === "flag") {
 				text = "Flag on the play";
-			} else if (type === "extraPointAttempt") {
+			} else if (e.type === "extraPointAttempt") {
 				text = "Extra point attempt";
-			} else if (type === "twoPointConversion") {
+			} else if (e.type === "twoPointConversion") {
 				text = "Two point conversion attempt";
-			} else if (type === "twoPointConversionFailed") {
+			} else if (e.type === "twoPointConversionFailed") {
 				text = "Two point conversion failed";
-			} else if (type === "turnoverOnDowns") {
+			} else if (e.type === "turnoverOnDowns") {
 				text = "Turnover on downs";
 			} else {
-				throw new Error(`No text for "${type}"`);
+				throw new Error(`No text for "${e.type}"`);
 			}
 
 			if (text) {
 				const event: any = {
 					type: "text",
 					text,
-					t,
-					time: formatClock(clock),
+					t: (e as any).t,
+					time: formatClock(e.clock),
 					quarter: this.quarter,
 
 					// Send current scrimmage, for use in FieldAndDrive updating
 					scrimmage:
-						t !== undefined
+						(e as any).t !== undefined
 							? this.g.currentPlay.state.current.scrimmage
 							: undefined,
 				};
 
-				if (injuredPID !== undefined) {
-					event.injuredPID = injuredPID;
+				if ((e as any).injuredPID !== undefined) {
+					event.injuredPID = (e as any).injuredPID;
 				}
 
 				if (
-					safety ||
-					td ||
-					type === "extraPoint" ||
-					type === "twoPointConversionFailed" ||
-					(made && type === "fieldGoal")
+					(e as any).safety ||
+					(e as any).td ||
+					e.type === "extraPoint" ||
+					e.type === "twoPointConversionFailed" ||
+					(e.type === "fieldGoal" && e.made)
 				) {
 					event.scoringSummary = true;
 				}
@@ -490,13 +505,7 @@ class PlayByPlayLogger {
 		}
 	}
 
-	logStat(
-		qtr: number,
-		t: number,
-		pid: number | undefined | null,
-		s: string,
-		amt: number,
-	) {
+	logStat(t: number, pid: number | undefined | null, s: string, amt: number) {
 		if (!this.active) {
 			return;
 		}

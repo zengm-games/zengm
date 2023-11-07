@@ -194,7 +194,8 @@ class GameSim extends GameSimBase {
 			numOvertimes += 1;
 		}
 
-		this.playByPlay.logEvent("gameOver", {
+		this.playByPlay.logEvent({
+			type: "gameOver",
 			clock: this.clock,
 		});
 		// this.checkGameWinner();
@@ -294,7 +295,8 @@ class GameSim extends GameSimBase {
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
 			this.clock = g.get("quarterLength");
-			this.playByPlay.logEvent("quarter", {
+			this.playByPlay.logEvent({
+				type: "quarter",
 				clock: this.clock,
 				quarter,
 			});
@@ -325,7 +327,8 @@ class GameSim extends GameSimBase {
 		this.team[1].stat.ptsQtrs.push(0);
 		this.timeouts = [2, 2];
 		this.twoMinuteWarningHappened = false;
-		this.playByPlay.logEvent("overtime", {
+		this.playByPlay.logEvent({
+			type: "overtime",
 			clock: this.clock,
 			overtimes: this.overtimes,
 		});
@@ -723,13 +726,6 @@ class GameSim extends GameSimBase {
 
 		this.currentPlay = new Play(this);
 
-		console.log(
-			"simPlay",
-			this.awaitingAfterTouchdown,
-			this.scrimmage,
-			this.down,
-			this.toGo,
-		);
 		if (!this.awaitingAfterTouchdown) {
 			this.playByPlay.logClock({
 				awaitingKickoff: this.awaitingKickoff,
@@ -787,7 +783,8 @@ class GameSim extends GameSimBase {
 		) {
 			this.twoMinuteWarningHappened = true;
 			this.isClockRunning = false;
-			this.playByPlay.logEvent("twoMinuteWarning", {
+			this.playByPlay.logEvent({
+				type: "twoMinuteWarning",
 				clock: clockAtEndOfPlay,
 			});
 
@@ -848,7 +845,8 @@ class GameSim extends GameSimBase {
 		) {
 			this.twoMinuteWarningHappened = true;
 			this.isClockRunning = false;
-			this.playByPlay.logEvent("twoMinuteWarning", {
+			this.playByPlay.logEvent({
+				type: "twoMinuteWarning",
 				clock: 2,
 			});
 
@@ -1056,7 +1054,8 @@ class GameSim extends GameSimBase {
 
 		this.timeouts[t] -= 1;
 		this.isClockRunning = false;
-		this.playByPlay.logEvent("timeout", {
+		this.playByPlay.logEvent({
+			type: "timeout",
 			clock: this.clock,
 			offense: t === this.o,
 			t,
@@ -1075,10 +1074,11 @@ class GameSim extends GameSimBase {
 				type: "onsideKick",
 				kickTo,
 			});
-			this.playByPlay.logEvent("onsideKick", {
+			this.playByPlay.logEvent({
+				type: "onsideKick",
 				clock: this.clock,
-				t: this.o,
 				names: [kicker.name],
+				t: this.o,
 			});
 			const success = Math.random() < 0.1 * g.get("onsideRecoveryFactor");
 
@@ -1115,11 +1115,12 @@ class GameSim extends GameSimBase {
 				});
 			}
 
-			this.playByPlay.logEvent("onsideKickRecovery", {
+			this.playByPlay.logEvent({
+				type: "onsideKickRecovery",
 				clock: this.clock,
-				t: this.currentPlay.state.current.o,
 				names: [p.name],
 				success,
+				t: this.currentPlay.state.current.o,
 				td,
 			});
 		} else {
@@ -1132,10 +1133,11 @@ class GameSim extends GameSimBase {
 				type: "k",
 				kickTo,
 			});
-			this.playByPlay.logEvent("kickoff", {
+			this.playByPlay.logEvent({
+				type: "kickoff",
 				clock: this.clock,
-				t: this.o,
 				names: [kicker.name],
+				t: this.o,
 				touchback,
 				yds: kickTo,
 			});
@@ -1181,10 +1183,11 @@ class GameSim extends GameSimBase {
 					});
 				}
 
-				this.playByPlay.logEvent("kickoffReturn", {
+				this.playByPlay.logEvent({
+					type: "kickoffReturn",
 					clock: this.clock,
-					t: this.currentPlay.state.current.o,
 					names: [kickReturner.name],
+					t: this.currentPlay.state.current.o,
 					td,
 					yds: returnLength,
 				});
@@ -1225,10 +1228,11 @@ class GameSim extends GameSimBase {
 			yds: distance,
 		});
 
-		this.playByPlay.logEvent("punt", {
+		this.playByPlay.logEvent({
+			type: "punt",
 			clock: this.clock,
-			t: this.o,
 			names: [punter.name],
+			t: this.o,
 			touchback,
 			yds: distance,
 		});
@@ -1275,10 +1279,11 @@ class GameSim extends GameSimBase {
 				});
 			}
 
-			this.playByPlay.logEvent("puntReturn", {
+			this.playByPlay.logEvent({
+				type: "puntReturn",
 				clock: this.clock,
-				t: this.currentPlay.state.current.o,
 				names: [puntReturner.name],
+				t: this.currentPlay.state.current.o,
 				td,
 				yds: returnLength,
 			});
@@ -1401,7 +1406,8 @@ class GameSim extends GameSimBase {
 		const extraPoint = playType === "extraPoint";
 
 		if (extraPoint) {
-			this.playByPlay.logEvent("extraPointAttempt", {
+			this.playByPlay.logEvent({
+				type: "extraPointAttempt",
 				clock: this.clock,
 				t: this.o,
 			});
@@ -1444,11 +1450,12 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
+		this.playByPlay.logEvent({
+			type: extraPoint ? "extraPoint" : "fieldGoal",
 			clock: this.clock,
-			t: this.o,
 			made,
 			names: [kicker.name],
+			t: this.o,
 			yds: distance,
 		});
 
@@ -1469,7 +1476,8 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay.twoPointConversionTeam = twoPointConversionTeam;
 
-		this.playByPlay.logEvent("twoPointConversion", {
+		this.playByPlay.logEvent({
+			type: "twoPointConversion",
 			clock: this.clock,
 			t: twoPointConversionTeam,
 		});
@@ -1491,7 +1499,8 @@ class GameSim extends GameSimBase {
 
 		if (ptsBefore === ptsAfter) {
 			// Must have failed!
-			this.playByPlay.logEvent("twoPointConversionFailed", {
+			this.playByPlay.logEvent({
+				type: "twoPointConversionFailed",
 				clock: this.clock,
 				t: twoPointConversionTeam,
 			});
@@ -1518,10 +1527,11 @@ class GameSim extends GameSimBase {
 			yds: spotYds,
 		});
 
-		this.playByPlay.logEvent("fumble", {
+		this.playByPlay.logEvent({
+			type: "fumble",
 			clock: this.clock,
-			t: o,
 			names: [pFumbled.name, pForced.name],
+			t: o,
 		});
 
 		const lost = Math.random() > 0.5;
@@ -1572,12 +1582,13 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		this.playByPlay.logEvent("fumbleRecovery", {
+		this.playByPlay.logEvent({
+			type: "fumbleRecovery",
 			clock: this.clock,
 			lost,
-			t: tRecovered,
 			names: [pRecovered.name],
 			safety,
+			t: tRecovered,
 			td,
 			touchback,
 			yds,
@@ -1631,10 +1642,11 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		this.playByPlay.logEvent("interception", {
+		this.playByPlay.logEvent({
+			type: "interception",
 			clock: this.clock,
-			t: this.currentPlay.state.current.o,
 			names: [p.name],
+			t: this.currentPlay.state.current.o,
 			td,
 			touchback,
 			yds,
@@ -1682,11 +1694,12 @@ class GameSim extends GameSimBase {
 			this.doSafety(p);
 		}
 
-		this.playByPlay.logEvent("sack", {
+		this.playByPlay.logEvent({
+			type: "sack",
 			clock: this.clock,
-			t: this.currentPlay.state.initial.o,
 			names: [qb.name, p.name],
 			safety,
+			t: this.currentPlay.state.initial.o,
 			yds,
 		});
 
@@ -1762,10 +1775,11 @@ class GameSim extends GameSimBase {
 		this.currentPlay.addEvent({
 			type: "dropback",
 		});
-		this.playByPlay.logEvent("dropback", {
+		this.playByPlay.logEvent({
+			type: "dropback",
 			clock: this.clock,
-			t: o,
 			names: [qb.name],
+			t: o,
 		});
 		let dt = random.randInt(2, 6);
 
@@ -1853,18 +1867,19 @@ class GameSim extends GameSimBase {
 
 				// Don't log here, because we need to log all the stats first, otherwise live box score will update slightly out of order
 				const completeEvent = {
+					type: "passComplete",
 					clock: this.clock,
-					t: o,
-					names: [qb.name, target.name],
+					names: [qb.name, target.name] as string[],
 					safety,
+					t: o,
 					td,
 					yds,
-				};
+				} as const;
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
 				if (!td && !safety) {
 					if (Math.random() < this.probFumble(target)) {
-						this.playByPlay.logEvent("passComplete", completeEvent);
+						this.playByPlay.logEvent(completeEvent);
 						return dt + this.doFumble(target, 0);
 					}
 				}
@@ -1877,7 +1892,7 @@ class GameSim extends GameSimBase {
 					});
 				}
 
-				this.playByPlay.logEvent("passComplete", completeEvent);
+				this.playByPlay.logEvent(completeEvent);
 
 				if (safety) {
 					this.doSafety();
@@ -1892,10 +1907,11 @@ class GameSim extends GameSimBase {
 					defender: Math.random() < 0.28 ? defender : undefined,
 				});
 
-				this.playByPlay.logEvent("passIncomplete", {
+				this.playByPlay.logEvent({
+					type: "passIncomplete",
 					clock: this.clock,
-					t: o,
 					names: [qb.name, target.name],
+					t: o,
 					yds,
 				});
 			}
@@ -1939,7 +1955,8 @@ class GameSim extends GameSimBase {
 
 		const p = this.pickPlayer(o, "rushing", positions);
 		const qb = this.getTopPlayerOnField(o, "QB");
-		this.playByPlay.logEvent("handoff", {
+		this.playByPlay.logEvent({
+			type: "handoff",
 			clock: this.clock,
 			t: o,
 			names: p === qb ? [qb.name] : [qb.name, p.name],
@@ -1995,11 +2012,12 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		this.playByPlay.logEvent("run", {
+		this.playByPlay.logEvent({
+			type: "run",
 			clock: this.clock,
-			t: o,
 			names: [p.name],
 			safety,
+			t: o,
 			td,
 			yds,
 		});
@@ -2022,10 +2040,11 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
-		this.playByPlay.logEvent("kneel", {
+		this.playByPlay.logEvent({
+			type: "kneel",
 			clock: this.clock,
-			t: o,
 			names: [qb.name],
+			t: o,
 		});
 
 		const dt = random.randInt(42, 44);
@@ -2191,7 +2210,8 @@ class GameSim extends GameSimBase {
 				tackOn: penInfo.tackOn,
 			});
 
-			this.playByPlay.logEvent("flag", {
+			this.playByPlay.logEvent({
+				type: "flag",
 				clock: this.clock,
 			});
 		}
@@ -2282,11 +2302,12 @@ class GameSim extends GameSimBase {
 
 					p.injured = true;
 					p.newInjury = true;
-					this.playByPlay.logEvent("injury", {
+					this.playByPlay.logEvent({
+						type: "injury",
 						clock: this.clock,
-						t,
-						names: [`${p.pos} ${p.name} (ABBREV)`],
 						injuredPID: p.id,
+						names: [`${p.pos} ${p.name} (ABBREV)`],
+						t,
 					});
 				}
 			}
@@ -2347,7 +2368,7 @@ class GameSim extends GameSimBase {
 
 			if (s === "pts") {
 				this.team[t].stat.ptsQtrs[qtr] += signedAmount;
-				this.playByPlay.logStat(qtr, t, undefined, "pts", signedAmount);
+				this.playByPlay.logStat(t, undefined, "pts", signedAmount);
 
 				if (remove) {
 					this.playByPlay.removeLastScore();
@@ -2356,7 +2377,7 @@ class GameSim extends GameSimBase {
 
 			if (p !== undefined && s !== "min") {
 				const logAmount = isLng ? p.stat[s] : signedAmount;
-				this.playByPlay.logStat(qtr, t, p.id, s, logAmount);
+				this.playByPlay.logStat(t, p.id, s, logAmount);
 			}
 		}
 	}

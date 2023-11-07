@@ -1197,7 +1197,8 @@ class Play {
 			);
 
 			if (result.decisions.length > 1) {
-				this.g.playByPlay.logEvent("penaltyCount", {
+				this.g.playByPlay.logEvent({
+					type: "penaltyCount",
 					clock: this.g.clock,
 					count: result.decisions.length,
 					offsetStatus,
@@ -1221,19 +1222,20 @@ class Play {
 						spotFoul = false;
 					}
 
-					this.g.playByPlay.logEvent("penalty", {
+					this.g.playByPlay.logEvent({
+						type: "penalty",
+						automaticFirstDown: penalty.event.automaticFirstDown,
 						clock: this.g.clock,
 						decision,
-						offsetStatus,
-						t: penalty.event.t,
-						names: penalty.event.p ? [penalty.event.p.name] : [],
-						automaticFirstDown: penalty.event.automaticFirstDown,
-						penaltyName: penalty.event.name,
-						yds,
-						spotFoul,
 						halfDistanceToGoal: penalty.penaltyInfo.halfDistanceToGoal,
+						names: penalty.event.p ? [penalty.event.p.name] : [],
+						offsetStatus,
+						penaltyName: penalty.event.name,
 						placeOnOne: penalty.penaltyInfo.placeOnOne,
+						spotFoul,
+						t: penalty.event.t,
 						tackOn: result.tackOn,
+						yds,
 					});
 				}
 			}
@@ -1291,7 +1293,8 @@ class Play {
 		this.adjudicatePenalties(timeExpiredAtEndOfHalf);
 
 		if (this.state.current.turnoverOnDowns) {
-			this.g.playByPlay.logEvent("turnoverOnDowns", {
+			this.g.playByPlay.logEvent({
+				type: "turnoverOnDowns",
 				clock: this.g.clock,
 			});
 		}

@@ -17,7 +17,8 @@ export type SportState = {
 		yards: number;
 		texts: string[];
 		scoreInfos: ReturnType<typeof getScoreInfo>[];
-		intendedChangeOfPossession: boolean; // For punts and kickoffs
+		intendedPossessionChange: boolean; // For punts and kickoffs
+		numPossessionChanges: number;
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -436,7 +437,8 @@ const processLiveGameEvents = ({
 				yards: 0,
 				texts: [],
 				scoreInfos: [],
-				intendedChangeOfPossession: false,
+				intendedPossessionChange: awaitingKickoff,
+				numPossessionChanges: 0,
 			});
 
 			const prevPlay = sportState.plays.at(-2);
@@ -517,12 +519,18 @@ const processLiveGameEvents = ({
 					e.type === "fumbleRecovery" ||
 					e.type === "interception"
 				) {
-					play.t = actualT;
+					if (play.t !== actualT) {
+						play.t = actualT;
+						play.numPossessionChanges += 1;
+					}
 				}
 				if (e.type === "penalty") {
 					// Penalty could have changed possession
 					const actualT2 = e.possessionAfterPenalty === 0 ? 1 : 0;
-					play.t = actualT2;
+					if (play.t !== actualT2) {
+						play.t = actualT2;
+						play.numPossessionChanges += 1;
+					}
 				}
 
 				if (e.type === "kickoff") {
@@ -559,7 +567,7 @@ const processLiveGameEvents = ({
 					e.type === "onsideKick" ||
 					e.type === "punt"
 				) {
-					play.intendedChangeOfPossession = true;
+					play.intendedPossessionChange = true;
 				}
 
 				if (scoringSummary) {

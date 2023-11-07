@@ -33,6 +33,7 @@ FBGM show field during game
       - add alt+a to advance one play (to next "clock" entry)
         - alt+n already has that tooltip, but that's one event not one play
       - somewhere show text of last event, so you can just look at the field and see everything
+      - for missed FG, treat it for tag as turnover, and also show score tag in red
     - glitches
       - fg scrimmage weirdness makes play look like negative
       - "Start of 3rd quarter" and similar should clear drive
@@ -49,7 +50,7 @@ FBGM show field during game
           - need to know if it's xp or 2pt, for scrimmage
           - need to know not to print the "1st & 10" line
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
-    - turnover logic in PlayBar doesn't make sense. instead, track number of changes of possession in play object, and use that.
+      - could ignore extraPoint and twoPointConversionTeam events, maybe
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

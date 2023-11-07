@@ -499,9 +499,18 @@ const PlayBar = forwardRef<
 
 		const negative = play.yards < 0;
 
-		const turnover = play.intendedChangeOfPossession
-			? t === play.t && !first
-			: t !== play.t;
+		let turnover;
+		if (play.intendedPossessionChange) {
+			if (play.numPossessionChanges <= 1) {
+				turnover = false;
+			} else {
+				// Even number of possession changes mean the kicking/punting team got the ball back somehow
+				turnover = play.numPossessionChanges % 2 === 0;
+			}
+		} else {
+			// Odd number of possession changes mean the defense got the ball back somehow
+			turnover = play.numPossessionChanges % 2 === 1;
+		}
 
 		let score: string | undefined;
 		if (play.scoreInfos.length > 0) {
@@ -539,7 +548,7 @@ const PlayBar = forwardRef<
 							? "var(--bs-red)"
 							: score
 							? "var(--bs-yellow)"
-							: play.intendedChangeOfPossession
+							: play.intendedPossessionChange
 							? "var(--bs-gray-200)"
 							: "var(--bs-blue)",
 						marginLeft,

@@ -266,7 +266,7 @@ const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 		} else if (
 			prevEvent &&
 			scoreInfo.type === "2P" &&
-			event.t === prevEvent.t
+			actualT === prevEvent.t
 		) {
 			prevEvent.score = score.slice();
 			prevEvent.text += ` (${text})`;

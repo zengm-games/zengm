@@ -1,5 +1,4 @@
 FBGM move event text generation to UI
-- twoPointConversionTeam
 - to fix after
   - possessionChangeTexts
   - ABBREV replace stuff
@@ -43,10 +42,11 @@ FBGM show field during game
         - unify logic with kickoffAfterEndOfPeriod
       - punt/kick out of back of endzone - cap bar width
         - also make sure logic for a kick in the endzone is correct
+      - some of the yard stuff is wrong. like an interception doesn't occur relative to the line of scrimmage, but instead is relative to where the turnover happens. so we can't just look at event.yds and adjust that from scrimmage. possibly fumbles too?
     - how to update numPlays
       - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
-      - extra point or 2 point conversion should be treated as a separate play bar
+      - extra point or 2 point conversion should be treated as a separate play bar?
         - don't count towards numPlays
         - send additional clock event?
           - need to know if it's xp or 2pt, for scrimmage

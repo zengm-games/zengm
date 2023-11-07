@@ -98,6 +98,8 @@ class GameSim extends GameSimBase {
 	// For penalties at the end of a half
 	playUntimedPossession = false;
 
+	twoPointConversionTeam: TeamNum | undefined;
+
 	constructor({
 		gid,
 		day,
@@ -502,7 +504,7 @@ class GameSim extends GameSimBase {
 		const quarter = this.team[0].stat.ptsQtrs.length;
 
 		if (this.awaitingAfterTouchdown) {
-			if (ptsDown === 2 && Math.random() < 0.7) {
+			if (true || (ptsDown === 2 && Math.random() < 0.7)) {
 				return "twoPointConversion";
 			}
 
@@ -1474,7 +1476,7 @@ class GameSim extends GameSimBase {
 			t: twoPointConversionTeam,
 		});
 
-		this.playByPlay.twoPointConversionTeam = twoPointConversionTeam;
+		this.twoPointConversionTeam = twoPointConversionTeam;
 
 		this.playByPlay.logEvent({
 			type: "twoPointConversion",
@@ -1506,7 +1508,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		this.playByPlay.twoPointConversionTeam = undefined;
+		this.twoPointConversionTeam = undefined;
 
 		return 0;
 	}
@@ -1591,6 +1593,7 @@ class GameSim extends GameSimBase {
 			t: tRecovered,
 			td,
 			touchback,
+			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
 		});
 
@@ -1649,6 +1652,7 @@ class GameSim extends GameSimBase {
 			t: this.currentPlay.state.current.o,
 			td,
 			touchback,
+			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
 		});
 
@@ -1873,6 +1877,7 @@ class GameSim extends GameSimBase {
 					safety,
 					t: o,
 					td,
+					twoPointConversionTeam: this.twoPointConversionTeam,
 					yds,
 				} as const;
 
@@ -2019,6 +2024,7 @@ class GameSim extends GameSimBase {
 			safety,
 			t: o,
 			td,
+			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
 		});
 

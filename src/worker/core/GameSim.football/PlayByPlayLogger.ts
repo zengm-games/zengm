@@ -28,6 +28,7 @@ export type PlayByPlayEventInputScore =
 			t: TeamNum;
 			td: boolean;
 			touchback: boolean;
+			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
 	  }
 	| {
@@ -37,6 +38,7 @@ export type PlayByPlayEventInputScore =
 			t: TeamNum;
 			td: boolean;
 			touchback: boolean;
+			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
 	  }
 	| {
@@ -46,6 +48,7 @@ export type PlayByPlayEventInputScore =
 			safety: boolean;
 			t: TeamNum;
 			td: boolean;
+			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
 	  }
 	| {
@@ -55,6 +58,7 @@ export type PlayByPlayEventInputScore =
 			safety: boolean;
 			t: TeamNum;
 			td: boolean;
+			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
 	  }
 	| {

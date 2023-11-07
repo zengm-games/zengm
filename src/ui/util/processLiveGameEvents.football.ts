@@ -118,14 +118,15 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	let touchdownText = "a touchdown";
 	let showYdsOnTD = true;
 
-	/*if (this.twoPointConversionTeam !== undefined) {
-		if (this.twoPointConversionTeam === (event as any).t) {
+	const eAny = event as any;
+	if (eAny.twoPointConversionTeam !== undefined) {
+		if (eAny.twoPointConversionTeam === eAny.t) {
 			touchdownText = "a two point conversion";
 			showYdsOnTD = false;
 		} else {
 			touchdownText = "two points";
 		}
-	}*/
+	}
 
 	let text: string | undefined;
 

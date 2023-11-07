@@ -120,7 +120,7 @@ class GameSim extends GameSimBase {
 			baseInjuryRate,
 		});
 
-		this.playByPlay = new PlayByPlayLogger(this, doPlayByPlay);
+		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];

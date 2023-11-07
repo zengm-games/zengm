@@ -23,11 +23,9 @@ import {
 } from "../util/processLiveGameEvents.football";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
-type Quarter = `Q${number}` | "OT";
-
 type ScoringSummaryEvent = {
 	hide: boolean;
-	quarter: Quarter;
+	quarter: string;
 	t: 0 | 1;
 	text: string;
 	time: number;
@@ -228,7 +226,7 @@ const StatsTable = ({
 // Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
 	const processedEvents: {
-		quarter: Quarter;
+		quarter: string;
 		score: [number, number];
 		scoreType: string | null;
 		t: 0 | 1;
@@ -300,7 +298,7 @@ const ScoringSummary = memo(
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
-		let prevQuarter: Quarter;
+		let prevQuarter: string;
 
 		const processedEvents = processEvents(events);
 
@@ -496,7 +494,7 @@ const PlayBar = forwardRef<
 		const negative = play.yards < 0;
 
 		// True if this is a kickoff or punt
-		let intendedChangeOfPossession = false;
+		const intendedChangeOfPossession = false;
 
 		const turnover = intendedChangeOfPossession
 			? t === play.t && !first

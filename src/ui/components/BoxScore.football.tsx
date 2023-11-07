@@ -499,10 +499,7 @@ const PlayBar = forwardRef<
 
 		const negative = play.yards < 0;
 
-		// True if this is a kickoff or punt
-		const intendedChangeOfPossession = false;
-
-		const turnover = intendedChangeOfPossession
+		const turnover = play.intendedChangeOfPossession
 			? t === play.t && !first
 			: t !== play.t;
 
@@ -542,7 +539,7 @@ const PlayBar = forwardRef<
 							? "var(--bs-red)"
 							: score
 							? "var(--bs-yellow)"
-							: intendedChangeOfPossession
+							: play.intendedChangeOfPossession
 							? "var(--bs-gray-200)"
 							: "var(--bs-blue)",
 						marginLeft,

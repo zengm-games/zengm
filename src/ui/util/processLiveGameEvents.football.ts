@@ -17,6 +17,7 @@ export type SportState = {
 		yards: number;
 		texts: string[];
 		scoreInfos: ReturnType<typeof getScoreInfo>[];
+		intendedChangeOfPossession: boolean; // For punts and kickoffs
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -435,6 +436,7 @@ const processLiveGameEvents = ({
 				yards: 0,
 				texts: [],
 				scoreInfos: [],
+				intendedChangeOfPossession: false,
 			});
 
 			const prevPlay = sportState.plays.at(-2);
@@ -541,6 +543,14 @@ const processLiveGameEvents = ({
 
 					// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
 					play.yards += (reversedField ? -1 : 1) * e.yds;
+				}
+
+				if (
+					e.type === "kickoff" ||
+					e.type === "onsideKick" ||
+					e.type === "punt"
+				) {
+					play.intendedChangeOfPossession = true;
 				}
 
 				if (scoringSummary) {

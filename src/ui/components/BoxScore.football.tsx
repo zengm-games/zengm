@@ -481,7 +481,6 @@ const PlayBar = forwardRef<
 		kickoff: boolean;
 		last: boolean;
 		play: SportState["plays"][number];
-		t: 0 | 1;
 	}
 >(
 	(
@@ -490,7 +489,6 @@ const PlayBar = forwardRef<
 			kickoff,
 			last,
 			play,
-			t,
 			...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
 		},
 		ref,
@@ -670,7 +668,6 @@ const FieldAndDrive = ({
 								kickoff={sportState.awaitingKickoff}
 								last={i === sportState.plays.length - 1}
 								play={play}
-								t={sportState.t}
 							/>
 						</OverlayTrigger>
 					);

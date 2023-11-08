@@ -35,13 +35,11 @@ FBGM show field during game
       - somewhere show text of last event, so you can just look at the field and see everything
       - for missed FG, treat it for tag as turnover, and also show score tag in red
     - glitches
-      - fg scrimmage weirdness makes play look like negative
       - "Start of 3rd quarter" and similar should clear drive
         - unify logic with kickoffAfterEndOfPeriod
       - punt/kick out of back of endzone - cap bar width
         - also make sure logic for a kick in the endzone is correct
-    - how to update numPlays
-      - accepted penalties only count as a play if they are added on to the end of the play. this means we sometimes need to decrease numPlays when a penalty gets accepted, but not always
+      - penalty yardage is not being assessed correctly in UI for width of play bar yards. it's just being added to end of play, when it could be either from the spot of the foul or a tack on at the end. penalty event should have enough info to handle this.
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar?
         - don't count towards numPlays

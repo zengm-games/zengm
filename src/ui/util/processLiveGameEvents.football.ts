@@ -6,8 +6,6 @@ import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByP
 export type SportState = {
 	awaitingKickoff: boolean;
 	t: 0 | 1;
-	numPlays: number;
-	initialScrimmage: number;
 	scrimmage: number;
 	toGo: number;
 	plays: {
@@ -20,6 +18,8 @@ export type SportState = {
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		numPossessionChanges: number;
 		flag: boolean;
+		countsTowardsNumPlays: boolean;
+		countsTowardsYards: boolean;
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -30,8 +30,6 @@ export type SportState = {
 export const DEFAULT_SPORT_STATE: SportState = {
 	awaitingKickoff: true,
 	t: 0,
-	numPlays: 0,
-	initialScrimmage: 0,
 	scrimmage: 0,
 	toGo: 0,
 	plays: [],
@@ -422,8 +420,6 @@ const processLiveGameEvents = ({
 
 			if (awaitingKickoff || sportState.t !== actualT) {
 				sportState.t = actualT;
-				sportState.numPlays = 0;
-				sportState.initialScrimmage = e.scrimmage;
 				sportState.plays = [];
 			}
 			sportState.awaitingKickoff = awaitingKickoff;
@@ -441,6 +437,8 @@ const processLiveGameEvents = ({
 				intendedPossessionChange: awaitingKickoff,
 				numPossessionChanges: 0,
 				flag: false,
+				countsTowardsNumPlays: false,
+				countsTowardsYards: false,
 			});
 
 			const prevPlay = sportState.plays.at(-2);
@@ -535,11 +533,22 @@ const processLiveGameEvents = ({
 					}
 
 					play.flag = true;
+
+					// For penalties before the snap, still count them
+					play.countsTowardsNumPlays = true;
+					play.countsTowardsYards = true;
+				} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
+					// Offsetting penalties don't make it this far in the penalty event, because they have no associated text. But we can find them here. No play since the down is replayed.
+					// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays).
+					play.countsTowardsNumPlays = false;
+				} else if (e.type === "dropback" || e.type === "handoff") {
+					play.countsTowardsNumPlays = true;
+					play.countsTowardsYards = true;
 				}
 
 				if (e.type === "kickoff") {
 					// yds is the distance kicked to
-					play.yards = 100 - sportState.initialScrimmage - e.yds;
+					play.yards = 100 - sportState.scrimmage - e.yds;
 				} else if (
 					e.type === "kickoffReturn" ||
 					e.type === "punt" ||

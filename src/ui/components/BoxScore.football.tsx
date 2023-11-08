@@ -614,7 +614,16 @@ const FieldAndDrive = ({
 	const t = sportState.t;
 	const t2 = t === 0 ? 1 : 0;
 
-	const yards = sportState.scrimmage - sportState.initialScrimmage;
+	let yards = 0;
+	let numPlays = 0;
+	for (const play of sportState.plays) {
+		if (play.countsTowardsYards) {
+			yards += play.yards;
+		}
+		if (play.countsTowardsNumPlays) {
+			numPlays += 1;
+		}
+	}
 
 	return (
 		<div className="mb-3">
@@ -622,8 +631,8 @@ const FieldAndDrive = ({
 				{sportState.text}
 				{!sportState.awaitingKickoff ? (
 					<div className="ms-auto">
-						Drive: {sportState.numPlays} play
-						{sportState.numPlays === 1 ? "" : "s"}, {yards} yard
+						Drive: {numPlays} play
+						{numPlays === 1 ? "" : "s"}, {yards} yard
 						{yards === 1 ? "" : "s"}
 					</div>
 				) : null}

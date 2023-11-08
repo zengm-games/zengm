@@ -528,20 +528,32 @@ const processLiveGameEvents = ({
 				if (e.type === "flag") {
 					play.numFlags += 1;
 				} else if (e.type === "penalty") {
-					// Penalty could have changed possession
-					const actualT2 = e.possessionAfterPenalty === 0 ? 1 : 0;
-					if (play.t !== actualT2) {
-						play.t = actualT2;
-						play.numPossessionChanges += 1;
-					}
+					// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penatly, which ruins the drama.
+					// Same for change of possession, don't want to show it early if 2 penatlies.
+					if (e.decision === "accept") {
+						// Penalty could have changed possession
+						const actualT2 = e.possessionAfter === 0 ? 1 : 0;
+						if (play.t !== actualT2) {
+							play.t = actualT2;
+							play.numPossessionChanges += 1;
+						}
 
-					// For penalties before the snap, still count them
-					play.countsTowardsNumPlays = true;
-					play.countsTowardsYards = true;
+						// For penalties before the snap, still count them
+						play.countsTowardsNumPlays = true;
+						play.countsTowardsYards = true;
+
+						const reversedField = play.t !== sportState.t;
+						let scrimmageAfter = e.scrimmageAfter;
+						if (reversedField) {
+							scrimmageAfter = 100 - scrimmageAfter;
+						}
+						play.yards = scrimmageAfter - sportState.scrimmage;
+					}
 				} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
-					// Offsetting penalties don't make it this far in the penalty event, because they have no associated text. But we can find them here. No play since the down is replayed.
+					// Offsetting penalties don't make it this far in the penalty event, because they have no associated text. But we can find them here in penaltyCount. No play since the down is replayed.
 					// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
 					play.countsTowardsNumPlays = false;
+					play.yards = 0;
 				} else if (e.type === "dropback" || e.type === "handoff") {
 					play.countsTowardsNumPlays = true;
 					play.countsTowardsYards = true;
@@ -558,19 +570,9 @@ const processLiveGameEvents = ({
 					e.type === "interception" ||
 					e.type === "sack" ||
 					e.type === "passComplete" ||
-					e.type === "run" ||
-					e.type === "penalty"
+					e.type === "run"
 				) {
-					let reversedField = play.t !== sportState.t;
-
-					// Penalty on offense
-					if (
-						e.type === "penalty" &&
-						actualT === play.t &&
-						e.decision === "accept"
-					) {
-						reversedField = !reversedField;
-					}
+					const reversedField = play.t !== sportState.t;
 
 					if (e.type === "interception") {
 						// e.yds in interception is the return yards, ydsPass is where the interception actually happens

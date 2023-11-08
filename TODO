@@ -39,8 +39,10 @@ FBGM show field during game
         - unify logic with kickoffAfterEndOfPeriod
       - punt/kick out of back of endzone - cap bar width
         - also make sure logic for a kick in the endzone is correct
-      - penalty yardage is not being assessed correctly in UI for width of play bar yards. it's just being added to end of play, when it could be either from the spot of the foul or a tack on at the end. penalty event should have enough info to handle this.
-        - test for offsetting penalties too
+      - penalty yardage after change of possession (reversedField)
+        - seems to not work for penalty on punt return
+      - scoring play overturned by penalty - should not show in yellow?
+        - same for turnover overturned by penalty?
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar?
         - don't count towards numPlays
@@ -49,6 +51,7 @@ FBGM show field during game
           - need to know not to print the "1st & 10" line
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
       - could ignore extraPoint and twoPointConversionTeam events, maybe
+    - test that scrimmage+yards of previous play equals scrimmage of next play
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

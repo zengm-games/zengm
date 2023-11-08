@@ -589,16 +589,20 @@ const PlayBar = forwardRef<
 						{score}
 					</div>
 				) : null}
-				{play.flag ? (
-					<span
-						className="glyphicon glyphicon-stop text-warning"
-						style={{
-							// Center icon vertically
-							lineHeight: "unset",
-							top: "unset",
-						}}
-					/>
-				) : null}
+				{play.numFlags > 0
+					? range(play.numFlags).map(i => (
+							<span
+								key={i}
+								className="glyphicon glyphicon-stop text-warning"
+								style={{
+									// Center icon vertically
+									lineHeight: "unset",
+									top: "unset",
+								}}
+								title="Flag on the play"
+							/>
+					  ))
+					: null}
 			</div>
 		);
 	},

@@ -17,7 +17,7 @@ export type SportState = {
 		scoreInfos: ReturnType<typeof getScoreInfo>[];
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		numPossessionChanges: number;
-		flag: boolean;
+		numFlags: 0;
 		countsTowardsNumPlays: boolean;
 		countsTowardsYards: boolean;
 
@@ -436,7 +436,7 @@ const processLiveGameEvents = ({
 				scoreInfos: [],
 				intendedPossessionChange: awaitingKickoff,
 				numPossessionChanges: 0,
-				flag: false,
+				numFlags: 0,
 				countsTowardsNumPlays: false,
 				countsTowardsYards: false,
 			});
@@ -524,7 +524,10 @@ const processLiveGameEvents = ({
 						play.numPossessionChanges += 1;
 					}
 				}
-				if (e.type === "penalty") {
+
+				if (e.type === "flag") {
+					play.numFlags += 1;
+				} else if (e.type === "penalty") {
 					// Penalty could have changed possession
 					const actualT2 = e.possessionAfterPenalty === 0 ? 1 : 0;
 					if (play.t !== actualT2) {
@@ -532,14 +535,12 @@ const processLiveGameEvents = ({
 						play.numPossessionChanges += 1;
 					}
 
-					play.flag = true;
-
 					// For penalties before the snap, still count them
 					play.countsTowardsNumPlays = true;
 					play.countsTowardsYards = true;
 				} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
 					// Offsetting penalties don't make it this far in the penalty event, because they have no associated text. But we can find them here. No play since the down is replayed.
-					// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays).
+					// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
 					play.countsTowardsNumPlays = false;
 				} else if (e.type === "dropback" || e.type === "handoff") {
 					play.countsTowardsNumPlays = true;

@@ -40,8 +40,11 @@ FBGM show field during game
       - do punts ever go out the back of the endzone?
       - penalty yardage after change of possession (reversedField)
         - seems to not work for penalty on punt return
-      - scoring play overturned by penalty - should not show in yellow?
-        - same for turnover overturned by penalty?
+      - scoring play overturned by penalty - should not show in yellow
+        - looks really weird now for TD when yardage changes and it's a TD but not in the endzone
+        - try looking for removeLastScore or whatever event
+        - same for turnover overturned by penalty
+          - check if team is what it's supposed to be (make sure to account for punt/kickoff), or if team changes after processing penalty
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar?
         - don't count towards numPlays
@@ -52,8 +55,6 @@ FBGM show field during game
       - could ignore extraPoint and twoPointConversionTeam events, maybe
     - test that scrimmage+yards of previous play equals scrimmage of next play
       - ones that are wrong
-        - some single fumbles, but not all
-          - maybe only happens for a fumble that occurs right after a handoff
         - what about multiple turnovers in the same play, might need reversedField adjustment to ydsBefore
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers

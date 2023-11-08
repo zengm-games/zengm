@@ -1998,15 +1998,6 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
-		// Fumble after run... only if nothing else is going on, too complicated otherwise
-		if (!td && !safety) {
-			if (Math.random() < this.probFumble(p)) {
-				this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
-
-				return dt + this.doFumble(p, 0);
-			}
-		}
-
 		if (td) {
 			this.currentPlay.addEvent({
 				type: "rusTD",
@@ -2030,6 +2021,15 @@ class GameSim extends GameSimBase {
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
 		});
+
+		// Fumble after run... only if nothing else is going on, too complicated otherwise
+		if (!td && !safety) {
+			if (Math.random() < this.probFumble(p)) {
+				this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
+
+				return dt + this.doFumble(p, 0);
+			}
+		}
 
 		return dt;
 	}

@@ -37,8 +37,7 @@ FBGM show field during game
     - glitches
       - "Start of 3rd quarter" and similar should clear drive
         - unify logic with kickoffAfterEndOfPeriod
-      - punt/kick out of back of endzone - cap bar width
-        - also make sure logic for a kick in the endzone is correct
+      - do punts ever go out the back of the endzone?
       - penalty yardage after change of possession (reversedField)
         - seems to not work for penalty on punt return
       - scoring play overturned by penalty - should not show in yellow?

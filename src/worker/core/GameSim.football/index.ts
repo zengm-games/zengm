@@ -1127,10 +1127,10 @@ class GameSim extends GameSimBase {
 			});
 		} else {
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
-			const touchback = Math.random() > 0.5;
 			const kickTo = this.awaitingAfterSafety
 				? random.randInt(15, 35)
-				: random.randInt(-9, 10);
+				: random.randInt(-10, 10);
+			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() > 0.8);
 			this.currentPlay.addEvent({
 				type: "k",
 				kickTo,
@@ -1143,6 +1143,7 @@ class GameSim extends GameSimBase {
 				touchback,
 				yds: kickTo,
 			});
+			console.log(touchback, kickTo);
 
 			this.currentPlay.addEvent({
 				type: "possessionChange",

@@ -43,6 +43,8 @@ FBGM show field during game
       - scoring play overturned by penalty - should not show in yellow
         - looks really weird now for TD when yardage changes and it's a TD but not in the endzone
         - try looking for removeLastScore or whatever event
+          - works, but happens 1 tick after penalty yardage is shown. is it possible to put this in the penalty event?
+            - if so, be careful about offsetting penalties
         - same for turnover overturned by penalty
           - check if team is what it's supposed to be (make sure to account for punt/kickoff), or if team changes after processing penalty
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird

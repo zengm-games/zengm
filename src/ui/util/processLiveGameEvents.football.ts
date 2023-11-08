@@ -478,8 +478,15 @@ const processLiveGameEvents = ({
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
 		} else if (e.type === "removeLastScore") {
+			console.log("REMOVE LAST SCORE");
 			boxScore.scoringSummary.pop();
+			sportState.plays.at(-1)!.scoreInfos.pop();
 		} else if (e.type !== "init") {
+			const play = sportState.plays.at(-1);
+			if (!play) {
+				throw new Error("Should never happen");
+			}
+
 			const initialText = getText(e, boxScore.numPeriods);
 			if (initialText !== undefined) {
 				if (e.type === "injury") {
@@ -507,101 +514,97 @@ const processLiveGameEvents = ({
 				boxScore.time = formatClock(e.clock);
 				stop = true;
 
-				const play = sportState.plays.at(-1);
-				if (!play) {
-					throw new Error("Should never happen");
-				}
 				play.texts.push(
 					text
 						.replace("ABBREV0", boxScore.teams[1].abbrev)
 						.replace("ABBREV1", boxScore.teams[0].abbrev),
 				);
+			}
 
-				// Update team with possession
-				if (
-					e.type === "kickoffReturn" ||
-					e.type === "puntReturn" ||
-					e.type === "fumbleRecovery" ||
-					e.type === "interception"
-				) {
-					if (play.t !== actualT) {
-						play.t = actualT;
+			// Update team with possession
+			if (
+				e.type === "kickoffReturn" ||
+				e.type === "puntReturn" ||
+				e.type === "fumbleRecovery" ||
+				e.type === "interception"
+			) {
+				if (play.t !== actualT) {
+					play.t = actualT;
+					play.numPossessionChanges += 1;
+				}
+			}
+
+			if (e.type === "flag") {
+				play.numFlags += 1;
+			} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
+				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penatly, which ruins the drama.
+				// Same for change of possession, don't want to show it early if 2 penatlies.
+				if (e.decision === "accept") {
+					// Penalty could have changed possession
+					const actualT2 = e.possessionAfter === 0 ? 1 : 0;
+					if (play.t !== actualT2) {
+						play.t = actualT2;
 						play.numPossessionChanges += 1;
 					}
-				}
 
-				if (e.type === "flag") {
-					play.numFlags += 1;
-				} else if (e.type === "penalty") {
-					// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penatly, which ruins the drama.
-					// Same for change of possession, don't want to show it early if 2 penatlies.
-					if (e.decision === "accept") {
-						// Penalty could have changed possession
-						const actualT2 = e.possessionAfter === 0 ? 1 : 0;
-						if (play.t !== actualT2) {
-							play.t = actualT2;
-							play.numPossessionChanges += 1;
-						}
-
-						// For penalties before the snap, still count them
-						play.countsTowardsNumPlays = true;
-						play.countsTowardsYards = true;
-
-						const reversedField = play.t !== sportState.t;
-						let scrimmageAfter = e.scrimmageAfter;
-						if (reversedField) {
-							scrimmageAfter = 100 - scrimmageAfter;
-						}
-						play.yards = scrimmageAfter - sportState.scrimmage;
-					}
-				} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
-					// Offsetting penalties don't make it this far in the penalty event, because they have no associated text. But we can find them here in penaltyCount. No play since the down is replayed.
-					// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
-					play.countsTowardsNumPlays = false;
-					play.yards = 0;
-				} else if (e.type === "dropback" || e.type === "handoff") {
+					// For penalties before the snap, still count them
 					play.countsTowardsNumPlays = true;
 					play.countsTowardsYards = true;
-				}
 
-				if (e.type === "kickoff") {
-					// yds is the distance kicked to
-					play.yards = 100 - sportState.scrimmage - e.yds;
-				} else if (
-					e.type === "kickoffReturn" ||
-					e.type === "punt" ||
-					e.type === "puntReturn" ||
-					e.type === "fumbleRecovery" ||
-					e.type === "interception" ||
-					e.type === "sack" ||
-					e.type === "passComplete" ||
-					e.type === "run" ||
-					e.type === "kneel"
-				) {
 					const reversedField = play.t !== sportState.t;
-
-					if (e.type === "interception" || e.type === "fumbleRecovery") {
-						// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
-						play.yards += e.ydsBefore;
+					let scrimmageAfter = e.scrimmageAfter;
+					if (reversedField) {
+						scrimmageAfter = 100 - scrimmageAfter;
 					}
+					play.yards = scrimmageAfter - sportState.scrimmage;
+				}
+			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
+				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
+				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
+				play.countsTowardsNumPlays = false;
+				play.yards = 0;
+			} else if (e.type === "dropback" || e.type === "handoff") {
+				play.countsTowardsNumPlays = true;
+				play.countsTowardsYards = true;
+			}
 
-					// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
-					play.yards += (reversedField ? -1 : 1) * e.yds;
+			if (e.type === "kickoff") {
+				// yds is the distance kicked to
+				play.yards = 100 - sportState.scrimmage - e.yds;
+			} else if (
+				e.type === "kickoffReturn" ||
+				e.type === "punt" ||
+				e.type === "puntReturn" ||
+				e.type === "fumbleRecovery" ||
+				e.type === "interception" ||
+				e.type === "sack" ||
+				e.type === "passComplete" ||
+				e.type === "run" ||
+				e.type === "kneel"
+			) {
+				const reversedField = play.t !== sportState.t;
+
+				if (e.type === "interception" || e.type === "fumbleRecovery") {
+					// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
+					play.yards += e.ydsBefore;
 				}
 
-				if (
-					e.type === "kickoff" ||
-					e.type === "onsideKick" ||
-					e.type === "punt"
-				) {
-					play.intendedPossessionChange = true;
-				}
+				// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
+				play.yards += (reversedField ? -1 : 1) * e.yds;
+			}
 
-				if (scoringSummary) {
-					const scoreInfo = getScoreInfo(text);
-					if (scoreInfo.type !== null && scoreInfo.points > 0) {
-						play.scoreInfos.push(scoreInfo);
-					}
+			if (
+				e.type === "kickoff" ||
+				e.type === "onsideKick" ||
+				e.type === "punt"
+			) {
+				play.intendedPossessionChange = true;
+			}
+
+			if (scoringSummary) {
+				const scoreInfo = getScoreInfo(text);
+				if (scoreInfo.type !== null && scoreInfo.points > 0) {
+					play.scoreInfos.push(scoreInfo);
 				}
 			}
 		}

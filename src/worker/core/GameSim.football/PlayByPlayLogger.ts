@@ -30,6 +30,7 @@ export type PlayByPlayEventInputScore =
 			touchback: boolean;
 			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
+			ydsBefore: number;
 	  }
 	| {
 			type: "interception";
@@ -40,7 +41,7 @@ export type PlayByPlayEventInputScore =
 			touchback: boolean;
 			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
-			ydsPass: number;
+			ydsBefore: number;
 	  }
 	| {
 			type: "passComplete";
@@ -205,6 +206,7 @@ type PlayByPlayEventInput =
 			clock: number;
 			names: string[];
 			t: TeamNum;
+			yds: number;
 	  }
 	| {
 			type: "flag";

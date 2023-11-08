@@ -443,6 +443,11 @@ const processLiveGameEvents = ({
 
 			const prevPlay = sportState.plays.at(-2);
 			if (prevPlay) {
+				if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
+					console.log("YARDS MISMATCH");
+					console.log(prevPlay.yards, e.scrimmage - prevPlay.scrimmage);
+					debugger;
+				}
 				prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 			}
 		} else if (e.type === "stat") {
@@ -570,13 +575,14 @@ const processLiveGameEvents = ({
 					e.type === "interception" ||
 					e.type === "sack" ||
 					e.type === "passComplete" ||
-					e.type === "run"
+					e.type === "run" ||
+					e.type === "kneel"
 				) {
 					const reversedField = play.t !== sportState.t;
 
-					if (e.type === "interception") {
-						// e.yds in interception is the return yards, ydsPass is where the interception actually happens
-						play.yards += e.ydsPass;
+					if (e.type === "interception" || e.type === "fumbleRecovery") {
+						// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
+						play.yards += e.ydsBefore;
 					}
 
 					// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event

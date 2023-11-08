@@ -51,11 +51,17 @@ FBGM show field during game
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
       - could ignore extraPoint and twoPointConversionTeam events, maybe
     - test that scrimmage+yards of previous play equals scrimmage of next play
+      - ones that are wrong
+        - some single fumbles, but not all
+          - maybe only happens for a fumble that occurs right after a handoff
+        - what about multiple turnovers in the same play, might need reversedField adjustment to ydsBefore
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores
 
-hockey - AI should always sign backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1170939243728736296
+hockey
+- AI should always sign backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1170939243728736296
+- sub out goalies if they're performing badly in a game https://mail.google.com/mail/u/0/#inbox/FMfcgzGtxSvvjwxTVJGWmxftgHClmhhT?compose=VpCqJXKbbdqKZCHqLrSpgWhCKdmkXtZbvDLhlvtPxPZCWDGNKlKCjkltGnbrzGQvkwGllPg
 
 scheduled events for roster size changes https://discord.com/channels/290013534023057409/290015591216054273/1167345210955681802
 - 15 in 2006

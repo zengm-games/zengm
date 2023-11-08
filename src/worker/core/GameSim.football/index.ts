@@ -1596,6 +1596,7 @@ class GameSim extends GameSimBase {
 			touchback,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
+			ydsBefore: spotYds,
 		});
 
 		if (fumble) {
@@ -1655,7 +1656,7 @@ class GameSim extends GameSimBase {
 			touchback,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
-			ydsPass,
+			ydsBefore: ydsPass,
 		});
 
 		if (fumble) {
@@ -2053,6 +2054,7 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 			names: [qb.name],
 			t: o,
+			yds,
 		});
 
 		const dt = random.randInt(42, 44);

@@ -558,6 +558,11 @@ const processLiveGameEvents = ({
 						reversedField = !reversedField;
 					}
 
+					if (e.type === "interception") {
+						// e.yds in interception is the return yards, ydsPass is where the interception actually happens
+						play.yards += e.ydsPass;
+					}
+
 					// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
 					play.yards += (reversedField ? -1 : 1) * e.yds;
 				}

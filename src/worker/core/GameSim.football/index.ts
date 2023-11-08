@@ -1654,6 +1654,7 @@ class GameSim extends GameSimBase {
 			touchback,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
+			ydsPass,
 		});
 
 		if (fumble) {

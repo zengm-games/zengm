@@ -40,6 +40,7 @@ export type PlayByPlayEventInputScore =
 			touchback: boolean;
 			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
+			ydsPass: number;
 	  }
 	| {
 			type: "passComplete";

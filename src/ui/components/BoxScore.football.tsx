@@ -589,6 +589,16 @@ const PlayBar = forwardRef<
 						{score}
 					</div>
 				) : null}
+				{play.flag ? (
+					<span
+						className="glyphicon glyphicon-stop text-warning"
+						style={{
+							// Center icon vertically
+							lineHeight: "unset",
+							top: "unset",
+						}}
+					/>
+				) : null}
 			</div>
 		);
 	},

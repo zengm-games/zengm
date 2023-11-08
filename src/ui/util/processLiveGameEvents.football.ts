@@ -19,6 +19,7 @@ export type SportState = {
 		scoreInfos: ReturnType<typeof getScoreInfo>[];
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		numPossessionChanges: number;
+		flag: boolean;
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -439,6 +440,7 @@ const processLiveGameEvents = ({
 				scoreInfos: [],
 				intendedPossessionChange: awaitingKickoff,
 				numPossessionChanges: 0,
+				flag: false,
 			});
 
 			const prevPlay = sportState.plays.at(-2);
@@ -531,6 +533,8 @@ const processLiveGameEvents = ({
 						play.t = actualT2;
 						play.numPossessionChanges += 1;
 					}
+
+					play.flag = true;
 				}
 
 				if (e.type === "kickoff") {

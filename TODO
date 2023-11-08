@@ -34,7 +34,6 @@ FBGM show field during game
         - alt+n already has that tooltip, but that's one event not one play
       - somewhere show text of last event, so you can just look at the field and see everything
       - for missed FG, treat it for tag as turnover, and also show score tag in red
-      - show flag icon when a penalty happens
     - glitches
       - fg scrimmage weirdness makes play look like negative
       - "Start of 3rd quarter" and similar should clear drive

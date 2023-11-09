@@ -521,7 +521,17 @@ const PlayBar = forwardRef<
 
 		let score: string | undefined;
 		if (play.scoreInfos.length > 0) {
-			score = `${play.scoreInfos.map(info => info.type).join("+")}`;
+			console.log("scoreInfos", play.scoreInfos);
+			score = `${play.scoreInfos
+				.map(info => {
+					if (info.type === "FG" && info.points === 0) {
+						turnover = true;
+						return "Missed FG";
+					}
+
+					return info.type;
+				})
+				.join("+")}`;
 		}
 
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
@@ -539,20 +549,20 @@ const PlayBar = forwardRef<
 
 		const borderStyleName = negative ? "borderLeft" : ("borderRight" as const);
 
-		const scoreTag = (
+		const scoreTag = score ? (
 			<div
 				className={`px-1 ${
 					negative ? "text-end rounded-start" : "text-start rounded-end"
 				}`}
 				style={{
-					backgroundColor: lightGreen,
-					color: "#000",
+					backgroundColor: turnover ? red : lightGreen,
+					color: turnover ? "#fff" : "#000",
 					width: negative ? TAG_WIDTH : undefined,
 				}}
 			>
 				{score}
 			</div>
-		);
+		) : null;
 
 		return (
 			<div

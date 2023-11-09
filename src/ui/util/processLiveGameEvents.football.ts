@@ -628,9 +628,13 @@ const processLiveGameEvents = ({
 				play.intendedPossessionChange = true;
 			}
 
-			if (scoringSummary && text) {
+			// Extra fieldGoal check is to include missed field goals
+			if ((e.type === "fieldGoal" || scoringSummary) && text) {
 				const scoreInfo = getScoreInfo(text);
-				if (scoreInfo.type !== null && scoreInfo.points > 0) {
+				if (
+					scoreInfo.type !== null &&
+					(scoreInfo.points > 0 || scoreInfo.type === "FG")
+				) {
 					play.scoreInfos.push(scoreInfo);
 				}
 			}

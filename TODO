@@ -29,7 +29,6 @@ FBGM show field during game
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
     - minor improvements
-      - for missed FG, treat it for tag as turnover, and also show score tag in red
       - what do ASG endzones look like?
     - glitches
       - "Start of 3rd quarter" and similar should clear drive

@@ -521,14 +521,29 @@ const PlayBar = forwardRef<
 		// -2 is to account for border
 		let marginLeft;
 		if (negative) {
-			marginLeft = `calc(${yardLinePercent}% - ${yardsPercent}%)`;
-		} else {
-			marginLeft = `calc(${yardLineToPercent(play.scrimmage)}% - ${
-				TAG_WIDTH - 2
+			marginLeft = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
+				score ? TAG_WIDTH : 0
 			}px)`;
+		} else {
+			marginLeft = `calc(${yardLinePercent}% - ${TAG_WIDTH - 2}px)`;
 		}
 
 		const borderStyleName = negative ? "borderLeft" : ("borderRight" as const);
+
+		const scoreTag = (
+			<div
+				className={`px-1 ${
+					negative ? "text-end rounded-start" : "text-start rounded-end"
+				}`}
+				style={{
+					backgroundColor: "var(--bs-yellow)",
+					color: "var(--bs-white)",
+					width: negative ? TAG_WIDTH : undefined,
+				}}
+			>
+				{score}
+			</div>
+		);
 
 		return (
 			<div
@@ -540,7 +555,9 @@ const PlayBar = forwardRef<
 			>
 				<div
 					ref={ref}
-					className={`${negative ? "rounded-end" : "rounded-start"}`}
+					className={`d-flex${negative ? " rounded-end" : ""}${
+						!negative || score ? " rounded-start" : ""
+					}`}
 					style={{
 						backgroundColor: turnover
 							? "var(--bs-red)"
@@ -550,14 +567,17 @@ const PlayBar = forwardRef<
 							? "var(--bs-gray-200)"
 							: "var(--bs-blue)",
 						marginLeft,
-						width: `calc(${TAG_WIDTH}px + ${yardsPercent}%)`,
+						width: `calc(${
+							(score && negative ? 2 : 1) * TAG_WIDTH
+						}px + ${yardsPercent}%)`,
 					}}
 					{...props}
 				>
+					{score && negative ? scoreTag : null}
 					<div
 						className={`${
 							negative
-								? "text-start ps-1 rounded-end float-end"
+								? "text-start ps-1 rounded-end ms-auto"
 								: "text-end pe-1 rounded-start"
 						}`}
 						style={{
@@ -576,19 +596,7 @@ const PlayBar = forwardRef<
 							: `${helpers.ordinal(play.down)} & ${play.toGo}`}
 					</div>
 				</div>
-				{score ? (
-					<div
-						className={`px-1 ${
-							negative ? "text-end rounded-start" : "text-start rounded-end"
-						}`}
-						style={{
-							backgroundColor: "var(--bs-yellow)",
-							color: "var(--bs-white)",
-						}}
-					>
-						{score}
-					</div>
-				) : null}
+				{score && !negative ? scoreTag : null}
 				{play.numFlags > 0
 					? range(play.numFlags).map(i => (
 							<span

@@ -34,8 +34,8 @@ FBGM show field during game
         - alt+n already has that tooltip, but that's one event not one play
       - somewhere show text of last event, so you can just look at the field and see everything
       - for missed FG, treat it for tag as turnover, and also show score tag in red
-      - fumble return for TD looks weird - need to show score tag on left
       - should yellow be for score? bc it's used for penalty too, maybe confusing
+      - td return for defense - show in red, why is it not that already?
       - what do ASG endzones look like?
     - glitches
       - "Start of 3rd quarter" and similar should clear drive

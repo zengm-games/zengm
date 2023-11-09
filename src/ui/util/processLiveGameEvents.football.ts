@@ -478,9 +478,8 @@ const processLiveGameEvents = ({
 				boxScore.teams[actualT][e.s] += e.amt;
 			}
 		} else if (e.type === "removeLastScore") {
-			console.log("REMOVE LAST SCORE");
+			// This happens a tick after sportState is updated, which I think is okay
 			boxScore.scoringSummary.pop();
-			sportState.plays.at(-1)!.scoreInfos.pop();
 		} else if (e.type !== "init") {
 			const play = sportState.plays.at(-1);
 			if (!play) {
@@ -534,6 +533,14 @@ const processLiveGameEvents = ({
 				}
 			}
 
+			const removeLastScoreIfNecessary = () => {
+				// If there was a score on this play, reverse it in sportState. We want to do this now, rather than waiting for removeLastScore, so the play bar in the field doesn't look weird (still showing a score, but yardage has gone in the opposite direction from the penalty)
+				if (events.find(e => e.type === "removeLastScore")) {
+					// Remove last score
+					sportState.plays.at(-1)!.scoreInfos.pop();
+				}
+			};
+
 			if (e.type === "flag") {
 				play.numFlags += 1;
 			} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
@@ -557,12 +564,16 @@ const processLiveGameEvents = ({
 						scrimmageAfter = 100 - scrimmageAfter;
 					}
 					play.yards = scrimmageAfter - sportState.scrimmage;
+
+					removeLastScoreIfNecessary();
 				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
 				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
 				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
 				play.countsTowardsNumPlays = false;
 				play.yards = 0;
+
+				removeLastScoreIfNecessary();
 			} else if (e.type === "dropback" || e.type === "handoff") {
 				play.countsTowardsNumPlays = true;
 				play.countsTowardsYards = true;
@@ -601,7 +612,7 @@ const processLiveGameEvents = ({
 				play.intendedPossessionChange = true;
 			}
 
-			if (scoringSummary) {
+			if (scoringSummary && text) {
 				const scoreInfo = getScoreInfo(text);
 				if (scoreInfo.type !== null && scoreInfo.points > 0) {
 					play.scoreInfos.push(scoreInfo);

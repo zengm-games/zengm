@@ -533,11 +533,28 @@ const processLiveGameEvents = ({
 				}
 			}
 
-			const removeLastScoreIfNecessary = () => {
-				// If there was a score on this play, reverse it in sportState. We want to do this now, rather than waiting for removeLastScore, so the play bar in the field doesn't look weird (still showing a score, but yardage has gone in the opposite direction from the penalty)
-				if (events.find(e => e.type === "removeLastScore")) {
-					// Remove last score
-					sportState.plays.at(-1)!.scoreInfos.pop();
+			// A penalty might overturn a score or a turnover or multiple turnovers. In this case, we want to immediately update the play bar on the field, so it's no longer showing a turnover or score erroneously (looks weird after yardage changes). But we don't have the event for the actual reverted turnover/score yet. Solution? Look ahead and find it!
+			const removeLastScoreOrTurnoversIfNecessary = () => {
+				// Look at all events up until the next "clock" event, which is the start of the next play
+				for (const event of events) {
+					if (event.type === "clock") {
+						break;
+					}
+
+					// For turnovers, look for a negative interception or a negative fumble recovery
+					if (event.type === "stat") {
+						if (
+							event.amt === -1 &&
+							(event.s === "defInt" || event.s === "defFmbRec")
+						) {
+							sportState.plays.at(-1)!.numPossessionChanges -= 1;
+						}
+					}
+
+					// For scoring, there is a dedicated removeLastScore event which we can use rather than looking for negative values of scoring stats
+					if (event.type === "removeLastScore") {
+						sportState.plays.at(-1)!.scoreInfos.pop();
+					}
 				}
 			};
 
@@ -551,7 +568,6 @@ const processLiveGameEvents = ({
 					const actualT2 = e.possessionAfter === 0 ? 1 : 0;
 					if (play.t !== actualT2) {
 						play.t = actualT2;
-						play.numPossessionChanges += 1;
 					}
 
 					// For penalties before the snap, still count them
@@ -565,7 +581,7 @@ const processLiveGameEvents = ({
 					}
 					play.yards = scrimmageAfter - sportState.scrimmage;
 
-					removeLastScoreIfNecessary();
+					removeLastScoreOrTurnoversIfNecessary();
 				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
 				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
@@ -573,7 +589,7 @@ const processLiveGameEvents = ({
 				play.countsTowardsNumPlays = false;
 				play.yards = 0;
 
-				removeLastScoreIfNecessary();
+				removeLastScoreOrTurnoversIfNecessary();
 			} else if (e.type === "dropback" || e.type === "handoff") {
 				play.countsTowardsNumPlays = true;
 				play.countsTowardsYards = true;

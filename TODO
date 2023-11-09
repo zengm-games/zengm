@@ -34,14 +34,11 @@ FBGM show field during game
         - alt+n already has that tooltip, but that's one event not one play
       - somewhere show text of last event, so you can just look at the field and see everything
       - for missed FG, treat it for tag as turnover, and also show score tag in red
+      - fumble return for TD looks weird - need to show score tag on left
     - glitches
       - "Start of 3rd quarter" and similar should clear drive
         - unify logic with kickoffAfterEndOfPeriod
       - do punts ever go out the back of the endzone?
-      - same for turnover overturned by penalty - should not show in red
-        - check if team is what it's supposed to be (make sure to account for punt/kickoff), or if team changes after processing penalty
-        - could scan upcoming stat entries and find one reversing a turnover
-          - keep track of number of turnovers, in case there were multiple
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar?
         - don't count towards numPlays

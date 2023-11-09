@@ -6,6 +6,7 @@ import type {
 	AllStars,
 	Game,
 } from "../../common/types";
+import { DEFAULT_TEAM_COLORS } from "../../common";
 
 export type TeamSeasonOverride = {
 	region?: string;
@@ -89,6 +90,10 @@ export const setTeamInfo = async (
 			t.abbrev = "";
 			t.imgURL = "";
 		}
+	}
+
+	if (!t.colors) {
+		t.colors = DEFAULT_TEAM_COLORS;
 	}
 };
 

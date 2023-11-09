@@ -7,7 +7,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
-import { DEFAULT_JERSEY, PHASE } from "../../common";
+import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS, PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld";
@@ -32,7 +32,7 @@ const ExpansionDraft = ({
 		region: "",
 		name: "",
 		imgURL: "",
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: DEFAULT_TEAM_COLORS,
 		jersey: DEFAULT_JERSEY,
 		pop: "1",
 		stadiumCapacity: "25000",

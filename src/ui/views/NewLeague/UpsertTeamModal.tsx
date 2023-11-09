@@ -5,6 +5,7 @@ import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
+	DEFAULT_TEAM_COLORS,
 	SPORT_HAS_REAL_PLAYERS,
 } from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
@@ -530,7 +531,7 @@ const UpsertTeamModal = ({
 					stadiumCapacity: String(
 						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
 					),
-					colors: t.colors ?? ["#000000", "#cccccc", "#ffffff"],
+					colors: t.colors ?? DEFAULT_TEAM_COLORS,
 					jersey: t.jersey ?? DEFAULT_JERSEY,
 					did: String(addEditTeamInfo.did),
 					imgURL: t.imgURL ?? "",

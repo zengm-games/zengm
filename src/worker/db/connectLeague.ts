@@ -2,6 +2,7 @@ import { unwrap } from "idb";
 import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	DEFAULT_TEAM_COLORS,
 	DIFFICULTY,
 	gameAttributesArrayToObject,
 	isSport,
@@ -899,7 +900,7 @@ const migrate = async ({
 					) {
 						t.colors = teamsDefault[t.tid].colors;
 					} else {
-						t.colors = ["#000000", "#cccccc", "#ffffff"];
+						t.colors = DEFAULT_TEAM_COLORS;
 					}
 
 					return t;

@@ -1,3 +1,4 @@
+import { DEFAULT_TEAM_COLORS } from "../../common";
 import { idb } from "../db";
 
 const getTeamInfoBySeason = async (tid: number, season: number) => {
@@ -34,7 +35,7 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 	if (ts) {
 		return {
 			abbrev: ts.abbrev,
-			colors: ts.colors ?? ["#000000", "#cccccc", "#ffffff"],
+			colors: ts.colors ?? DEFAULT_TEAM_COLORS,
 			jersey: ts.jersey,
 			name: ts.name,
 			region: ts.region,

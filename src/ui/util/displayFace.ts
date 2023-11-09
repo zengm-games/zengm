@@ -1,9 +1,9 @@
 import { display } from "facesjs";
 import type { Face } from "facesjs";
-import { DEFAULT_JERSEY, isSport } from "../../common";
+import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS, isSport } from "../../common";
 
 const displayFace = ({
-	colors = ["#000000", "#cccccc", "#ffffff"],
+	colors = DEFAULT_TEAM_COLORS,
 	face,
 	jersey = DEFAULT_JERSEY,
 	wrapper,

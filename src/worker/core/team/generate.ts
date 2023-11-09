@@ -3,6 +3,7 @@ import type { Team } from "../../../common/types";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	DEFAULT_TEAM_COLORS,
 	isSport,
 } from "../../../common";
 import finances from "../finances";
@@ -47,7 +48,7 @@ const generate = (tm: any): Team => {
 		},
 		strategy,
 		depth: tm.depth,
-		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
+		colors: tm.colors ? tm.colors : DEFAULT_TEAM_COLORS,
 		jersey: tm.jersey ?? DEFAULT_JERSEY,
 		pop: tm.pop ?? 0,
 		stadiumCapacity: tm.stadiumCapacity ?? g.get("defaultStadiumCapacity"),

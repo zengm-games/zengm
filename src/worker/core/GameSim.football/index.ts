@@ -1143,7 +1143,6 @@ class GameSim extends GameSimBase {
 				touchback,
 				yds: kickTo,
 			});
-			console.log(touchback, kickTo);
 
 			this.currentPlay.addEvent({
 				type: "possessionChange",

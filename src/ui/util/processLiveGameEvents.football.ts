@@ -590,7 +590,11 @@ const processLiveGameEvents = ({
 				play.yards = 0;
 
 				removeLastScoreOrTurnoversIfNecessary();
-			} else if (e.type === "dropback" || e.type === "handoff") {
+			} else if (
+				e.type === "dropback" ||
+				e.type === "handoff" ||
+				e.type === "kneel"
+			) {
 				play.countsTowardsNumPlays = true;
 				play.countsTowardsYards = true;
 			}

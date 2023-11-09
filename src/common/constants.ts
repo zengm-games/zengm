@@ -494,6 +494,12 @@ export const DEPTH_CHART_NAME = bySport({
 	hockey: "Lines",
 });
 
+export const DEFAULT_TEAM_COLORS: [string, string, string] = [
+	"#000000",
+	"#cccccc",
+	"#ffffff",
+];
+
 export {
 	AD_DIVS,
 	ALL_STAR_GAME_ONLY,

@@ -521,7 +521,6 @@ const PlayBar = forwardRef<
 
 		let score: string | undefined;
 		if (play.scoreInfos.length > 0) {
-			console.log("scoreInfos", play.scoreInfos);
 			score = `${play.scoreInfos
 				.map(info => {
 					if (info.type === "FG" && info.points === 0) {

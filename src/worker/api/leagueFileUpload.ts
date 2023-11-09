@@ -10,6 +10,7 @@ import { helpers, toUI } from "../util";
 import { highWaterMark } from "../core/league/createStream";
 import type { Conditions } from "../../common/types";
 import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
+import { DEFAULT_TEAM_COLORS } from "../../common";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([
@@ -222,7 +223,7 @@ const getBasicInfo = async ({
 			};
 
 			if (!t.colors) {
-				t.colors = ["#000000", "#cccccc", "#ffffff"];
+				t.colors = DEFAULT_TEAM_COLORS;
 			}
 
 			if (t.seasons?.length > 0) {

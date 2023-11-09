@@ -28,8 +28,6 @@ FBGM show field during game
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
-    - minor improvements
-      - what do ASG endzones look like?
     - glitches
       - "Start of 3rd quarter" and similar should clear drive
         - unify logic with kickoffAfterEndOfPeriod

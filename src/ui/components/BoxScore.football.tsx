@@ -393,6 +393,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 			{range(NUM_SECTIONS).map(i => {
 				const style: CSSProperties = {
 					width: `${(1 / 12) * 100}%`,
+					borderLeft: i > 0 ? "1px solid #495057" : undefined,
 				};
 				const ENDZONE_OFFENSE = i === 0;
 				const ENDZONE_DEFENSE = i === NUM_SECTIONS - 1;
@@ -406,6 +407,8 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 					style.backgroundColor = endzoneTeam.colors[0];
 					style.color = endzoneTeam.colors[1];
 					style.writingMode = "vertical-lr";
+				} else {
+					style.backgroundColor = darkGreen;
 				}
 				if (ENDZONE_OFFENSE) {
 					style.transform = "rotate(180deg)";
@@ -422,8 +425,6 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 					<div
 						key={i}
 						className={classNames("d-flex", {
-							"border-start": i > 0,
-							"bg-success": !endzoneTeam,
 							"align-items-center justify-content-center": endzoneTeam,
 							"flex-column justify-content-between": yardLine !== undefined,
 						})}
@@ -440,7 +441,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 						{yardLine !== undefined ? (
 							<>
 								{range(2).map(i => (
-									<div key={i} style={{ marginLeft: "-.5rem" }}>
+									<div key={i} style={{ marginLeft: "-.5rem", color: "#fff" }}>
 										{yardLine}
 									</div>
 								))}
@@ -473,6 +474,14 @@ const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
 		/>
 	);
 };
+
+const blue = "#80bdff";
+const yellow = "#ffc107";
+const lightGreen = "lightgreen";
+const darkGreen = "#1e7e34";
+const lightGray = "#adb5bd";
+const darkGray = "#495057";
+const red = "#dc3545";
 
 const PlayBar = forwardRef<
 	HTMLDivElement,
@@ -536,8 +545,8 @@ const PlayBar = forwardRef<
 					negative ? "text-end rounded-start" : "text-start rounded-end"
 				}`}
 				style={{
-					backgroundColor: "var(--bs-yellow)",
-					color: "var(--bs-white)",
+					backgroundColor: lightGreen,
+					color: "#000",
 					width: negative ? TAG_WIDTH : undefined,
 				}}
 			>
@@ -560,12 +569,12 @@ const PlayBar = forwardRef<
 					}`}
 					style={{
 						backgroundColor: turnover
-							? "var(--bs-red)"
+							? red
 							: score
-							? "var(--bs-yellow)"
+							? lightGreen
 							: play.intendedPossessionChange
-							? "var(--bs-gray-200)"
-							: "var(--bs-blue)",
+							? darkGray
+							: blue,
 						marginLeft,
 						width: `calc(${
 							(score && negative ? 2 : 1) * TAG_WIDTH
@@ -582,13 +591,9 @@ const PlayBar = forwardRef<
 						}`}
 						style={{
 							width: TAG_WIDTH,
-							[borderStyleName]: "2px solid var(--bs-blue)",
-							backgroundColor: turnover
-								? "var(--bs-red)"
-								: score
-								? "var(--bs-yellow)"
-								: "var(--bs-gray-400)",
-							color: turnover ? "var(--bs-black)" : "var(--bs-white)",
+							[borderStyleName]: `2px solid ${blue}`,
+							backgroundColor: turnover ? red : score ? lightGreen : lightGray,
+							color: turnover ? "#fff" : "#000",
 						}}
 					>
 						{kickoff
@@ -648,10 +653,10 @@ const FieldAndDrive = ({
 				}}
 			>
 				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
-				<VerticalLine color="var(--bs-blue)" yards={sportState.scrimmage} />
+				<VerticalLine color={blue} yards={sportState.scrimmage} />
 				{!sportState.awaitingKickoff ? (
 					<VerticalLine
-						color="var(--bs-yellow)"
+						color={yellow}
 						yards={sportState.scrimmage + sportState.toGo}
 					/>
 				) : null}

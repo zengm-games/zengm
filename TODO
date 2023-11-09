@@ -7,6 +7,8 @@ FBGM move event text generation to UI
   - too many formatClock calls
   - refactor getScoreInfo
 
+for a player traded mid-season, link on player profile game log page to team goes to TOT_-8
+
 FBGM show field during game
 - UI
   - render a rudimentary football field
@@ -25,17 +27,9 @@ FBGM show field during game
           - could send detailed event info and implement client-side logic
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
-      - customization options
-        - show logo in center of field https://github.com/zengm-games/zengm/pull/458
-        - grass color https://github.com/zengm-games/zengm/pull/458#issuecomment-1796496940
+        - same for score tag on negative play (defense or kick return)
     - minor improvements
-      - light mode
-      - add alt+a to advance one play (to next "clock" entry)
-        - alt+n already has that tooltip, but that's one event not one play
-      - somewhere show text of last event, so you can just look at the field and see everything
       - for missed FG, treat it for tag as turnover, and also show score tag in red
-      - should yellow be for score? bc it's used for penalty too, maybe confusing
-      - td return for defense - show in red, why is it not that already?
       - what do ASG endzones look like?
     - glitches
       - "Start of 3rd quarter" and similar should clear drive

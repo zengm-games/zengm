@@ -35,6 +35,8 @@ FBGM show field during game
       - somewhere show text of last event, so you can just look at the field and see everything
       - for missed FG, treat it for tag as turnover, and also show score tag in red
       - fumble return for TD looks weird - need to show score tag on left
+      - should yellow be for score? bc it's used for penalty too, maybe confusing
+      - what do ASG endzones look like?
     - glitches
       - "Start of 3rd quarter" and similar should clear drive
         - unify logic with kickoffAfterEndOfPeriod

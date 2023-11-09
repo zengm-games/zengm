@@ -629,18 +629,10 @@ const FieldAndDrive = ({
 		}
 	}
 
+	const latestText = sportState.plays.at(-1)?.texts.at(-1);
+
 	return (
 		<div className="mb-3">
-			<div className="d-flex mb-1">
-				{sportState.text}
-				{!sportState.awaitingKickoff ? (
-					<div className="ms-auto">
-						Drive: {numPlays} play
-						{numPlays === 1 ? "" : "s"}, {yards} yard
-						{yards === 1 ? "" : "s"}
-					</div>
-				) : null}
-			</div>
 			<div
 				className="position-relative d-flex flex-column"
 				style={{
@@ -696,6 +688,17 @@ const FieldAndDrive = ({
 					);
 				})}
 			</div>
+			<div className="d-flex mt-1">
+				{sportState.text}
+				{!sportState.awaitingKickoff ? (
+					<div className="ms-auto">
+						Drive: {numPlays} play
+						{numPlays === 1 ? "" : "s"}, {yards} yard
+						{yards === 1 ? "" : "s"}
+					</div>
+				) : null}
+			</div>
+			<div>{latestText ?? <br />}</div>
 		</div>
 	);
 };

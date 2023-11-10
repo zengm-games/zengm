@@ -611,18 +611,36 @@ const PlayBar = forwardRef<
 					</div>
 				</div>
 				{score && !negative ? scoreTag : null}
-				{play.numFlags > 0
-					? range(play.numFlags).map(i => (
-							<span
+				{play.flags.length > 0
+					? play.flags.map((flagInfo, i) => (
+							<OverlayTrigger
 								key={i}
-								className="glyphicon glyphicon-stop text-warning"
-								style={{
-									// Center icon vertically
-									lineHeight: "unset",
-									top: "unset",
-								}}
-								title="Flag on the play"
-							/>
+								trigger={["click", "hover"]}
+								placement="auto"
+								overlay={
+									<Popover>
+										<Popover.Body>
+											{flagInfo?.text ?? "Flag on the play"}
+										</Popover.Body>
+									</Popover>
+								}
+								rootClose
+							>
+								<span
+									className="glyphicon glyphicon-stop"
+									style={{
+										color: !flagInfo
+											? yellow
+											: flagInfo.accept
+											? red
+											: lightGray,
+
+										// Center icon vertically
+										lineHeight: "unset",
+										top: "unset",
+									}}
+								/>
+							</OverlayTrigger>
 					  ))
 					: null}
 			</div>

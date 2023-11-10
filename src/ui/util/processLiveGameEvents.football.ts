@@ -17,7 +17,7 @@ export type SportState = {
 		scoreInfos: ReturnType<typeof getScoreInfo>[];
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		numPossessionChanges: number;
-		numFlags: 0;
+		flags: (null | { text: string; accept: boolean })[];
 		countsTowardsNumPlays: boolean;
 		countsTowardsYards: boolean;
 
@@ -263,7 +263,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "penaltyCount") {
 		text = `There are ${event.count} ${
 			event.offsetStatus === "offset" ? "offsetting " : ""
-		}fouls on the play${
+		}penalties on the play${
 			event.offsetStatus === "offset"
 				? ", the previous down will be replayed"
 				: ""
@@ -441,7 +441,7 @@ const processLiveGameEvents = ({
 				scoreInfos: [],
 				intendedPossessionChange: awaitingKickoff,
 				numPossessionChanges: 0,
-				numFlags: 0,
+				flags: [],
 				countsTowardsNumPlays: false,
 				countsTowardsYards: false,
 			});
@@ -572,11 +572,12 @@ const processLiveGameEvents = ({
 			};
 
 			if (e.type === "flag") {
-				play.numFlags += 1;
+				play.flags.push(null);
 			} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
 				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penatly, which ruins the drama.
 				// Same for change of possession, don't want to show it early if 2 penatlies.
-				if (e.decision === "accept") {
+				const accept = e.decision === "accept";
+				if (accept) {
 					// Penalty could have changed possession
 					const actualT2 = e.possessionAfter === 0 ? 1 : 0;
 					if (play.t !== actualT2) {
@@ -596,6 +597,16 @@ const processLiveGameEvents = ({
 
 					removeLastScoreOrTurnoversIfNecessary();
 				}
+
+				const flagIndex = play.flags.indexOf(null);
+				if (flagIndex >= 0) {
+					play.flags[flagIndex] = {
+						text: text!
+							.replace("ABBREV0", boxScore.teams[1].abbrev)
+							.replace("ABBREV1", boxScore.teams[0].abbrev),
+						accept,
+					};
+				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
 				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
 				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
@@ -603,6 +614,13 @@ const processLiveGameEvents = ({
 				play.yards = 0;
 
 				removeLastScoreOrTurnoversIfNecessary();
+
+				play.flags = play.flags.map(() => {
+					return {
+						text: text!,
+						accept: false,
+					};
+				});
 			} else if (
 				e.type === "dropback" ||
 				e.type === "handoff" ||

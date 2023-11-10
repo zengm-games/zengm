@@ -32,7 +32,6 @@ FBGM show field during game
       - extra point or 2 point conversion should be treated as a separate play bar?
         - somehow don't count towards numPlays and yards
         - scoreInfos -> scoreInfo (can only be one per play in this case)
-        - i know penalties don't work, but the yardage display seems really weird
         - maybe don't show "1st & 10" in tag on XP/2pt, could just leave tag blank
         - test with 2pt
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
@@ -60,7 +59,7 @@ FBGM
 - show timeouts in UI somewhere
   - all games
 - make it harder to gain yards in the red zone https://discord.com/channels/290013534023057409/331882115119448065/1171978572940976210
-- penalties on XP/2pt need to be handled differently. if you switch from one to the other, the penalties tack on to that starting position.
+- penalties on XP/2pt need to be handled differently. if you switch from one to the other, the penalties tack on to that starting position. so currently they are disabled
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

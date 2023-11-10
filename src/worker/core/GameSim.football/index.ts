@@ -1439,17 +1439,22 @@ class GameSim extends GameSimBase {
 		}
 
 		this.updatePlayersOnField("fieldGoal");
-		const penInfo = this.checkPenalties("beforeSnap");
 
-		if (penInfo) {
-			return 0;
+		if (!extraPoint) {
+			const penInfo = this.checkPenalties("beforeSnap");
+
+			if (penInfo) {
+				return 0;
+			}
 		}
 
 		const distance = 100 - this.scrimmage + 17;
 		const kicker = this.getTopPlayerOnField(this.o, "K");
 		const made = Math.random() < this.probMadeFieldGoal(kicker);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
-		this.checkPenalties("fieldGoal");
+		if (!extraPoint) {
+			this.checkPenalties("fieldGoal");
+		}
 
 		if (extraPoint) {
 			this.currentPlay.addEvent({

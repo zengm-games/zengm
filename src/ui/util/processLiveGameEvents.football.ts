@@ -14,7 +14,7 @@ export type SportState = {
 		scrimmage: number;
 		yards: number;
 		texts: string[];
-		scoreInfos: ReturnType<typeof getScoreInfo>[];
+		scoreInfo: ReturnType<typeof getScoreInfo> | undefined;
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		numPossessionChanges: number;
 		flags: (null | { text: string; accept: boolean })[];
@@ -443,7 +443,7 @@ const processLiveGameEvents = ({
 				scrimmage: e.scrimmage,
 				yards: 0,
 				texts: [],
-				scoreInfos: [],
+				scoreInfo: undefined,
 				intendedPossessionChange: awaitingKickoff,
 				numPossessionChanges: 0,
 				flags: [],
@@ -574,7 +574,7 @@ const processLiveGameEvents = ({
 
 					// For scoring, there is a dedicated removeLastScore event which we can use rather than looking for negative values of scoring stats
 					if (event.type === "removeLastScore") {
-						sportState.plays.at(-1)!.scoreInfos.pop();
+						sportState.plays.at(-1)!.scoreInfo = undefined;
 					}
 				}
 			};
@@ -678,7 +678,7 @@ const processLiveGameEvents = ({
 					scoreInfo.type !== null &&
 					(scoreInfo.points > 0 || scoreInfo.type === "FG")
 				) {
-					play.scoreInfos.push(scoreInfo);
+					play.scoreInfo = scoreInfo;
 				}
 			}
 		}

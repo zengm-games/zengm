@@ -31,7 +31,6 @@ FBGM show field during game
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar?
         - somehow don't count towards numPlays and yards
-        - scoreInfos -> scoreInfo (can only be one per play in this case)
         - maybe don't show "1st & 10" in tag on XP/2pt, could just leave tag blank
         - test with 2pt
     - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT

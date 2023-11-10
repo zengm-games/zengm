@@ -520,17 +520,11 @@ const PlayBar = forwardRef<
 		}
 
 		let score: string | undefined;
-		if (play.scoreInfos.length > 0) {
-			score = `${play.scoreInfos
-				.map(info => {
-					if (info.type === "FG" && info.points === 0) {
-						turnover = true;
-						return "Missed FG";
-					}
-
-					return info.type;
-				})
-				.join("+")}`;
+		if (play.scoreInfo?.type) {
+			score =
+				play.scoreInfo.type === "FG" && play.scoreInfo.points === 0
+					? "Missed FG"
+					: play.scoreInfo.type;
 		}
 
 		const yardLinePercent = yardLineToPercent(play.scrimmage);

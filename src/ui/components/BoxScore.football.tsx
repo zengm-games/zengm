@@ -731,7 +731,9 @@ const FieldAndDrive = ({
 					sportState.newPeriodText
 				) : (
 					<>
-						{sportState.text}
+						{sportState.awaitingAfterTouchdown
+							? "After touchdown"
+							: sportState.text}
 						{!sportState.awaitingKickoff ? (
 							<div className="ms-auto">
 								Drive: {numPlays} play

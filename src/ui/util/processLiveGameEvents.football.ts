@@ -4,6 +4,7 @@ import { helpers, local } from "../../ui/util";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 
 export type SportState = {
+	awaitingAfterTouchdown: boolean;
 	awaitingKickoff: boolean;
 	t: 0 | 1;
 	scrimmage: number;
@@ -29,6 +30,7 @@ export type SportState = {
 };
 
 export const DEFAULT_SPORT_STATE: SportState = {
+	awaitingAfterTouchdown: false,
 	awaitingKickoff: true,
 	t: 0,
 	scrimmage: 0,
@@ -423,16 +425,15 @@ const processLiveGameEvents = ({
 
 				boxScore.time = time;
 				stop = true;
-			} else {
-				textWithoutTime = "After touchdown";
 			}
 
 			if (awaitingKickoff || sportState.t !== actualT) {
 				sportState.t = actualT;
 				sportState.plays = [];
 			}
+			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
 			sportState.awaitingKickoff = awaitingKickoff;
-			sportState.text = textWithoutTime;
+			sportState.text = textWithoutTime ?? "";
 			sportState.newPeriodText = undefined;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
@@ -452,7 +453,7 @@ const processLiveGameEvents = ({
 			});
 
 			// After touchdown, scrimmage is moved weirdly for the XP
-			if (!e.awaitingAfterTouchdown) {
+			if (!sportState.awaitingAfterTouchdown) {
 				const prevPlay = sportState.plays.at(-2);
 				if (prevPlay) {
 					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
@@ -540,6 +541,7 @@ const processLiveGameEvents = ({
 						.replace("ABBREV1", boxScore.teams[0].abbrev),
 				);
 			}
+			console.log(e);
 
 			// Update team with possession
 			if (
@@ -593,8 +595,10 @@ const processLiveGameEvents = ({
 					}
 
 					// For penalties before the snap, still count them
-					play.countsTowardsNumPlays = true;
-					play.countsTowardsYards = true;
+					if (!sportState.awaitingAfterTouchdown) {
+						play.countsTowardsNumPlays = true;
+						play.countsTowardsYards = true;
+					}
 
 					const reversedField = play.t !== sportState.t;
 					let scrimmageAfter = e.scrimmageAfter;
@@ -634,8 +638,10 @@ const processLiveGameEvents = ({
 				e.type === "handoff" ||
 				e.type === "kneel"
 			) {
-				play.countsTowardsNumPlays = true;
-				play.countsTowardsYards = true;
+				if (!sportState.awaitingAfterTouchdown) {
+					play.countsTowardsNumPlays = true;
+					play.countsTowardsYards = true;
+				}
 			}
 
 			if (e.type === "kickoff") {

@@ -503,6 +503,7 @@ const PlayBar = forwardRef<
 		ref,
 	) => {
 		const TAG_WIDTH = 60;
+		const SCORE_TAG_WIDTH = 30;
 
 		const negative = play.yards < 0;
 
@@ -534,7 +535,7 @@ const PlayBar = forwardRef<
 		let marginLeft;
 		if (negative) {
 			marginLeft = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
-				score ? TAG_WIDTH : 0
+				score ? SCORE_TAG_WIDTH : 0
 			}px)`;
 		} else {
 			marginLeft = `calc(${yardLinePercent}% - ${TAG_WIDTH - 2}px)`;
@@ -550,7 +551,7 @@ const PlayBar = forwardRef<
 				style={{
 					backgroundColor: turnover ? red : lightGreen,
 					color: turnover ? "#fff" : "#000",
-					width: negative ? TAG_WIDTH : undefined,
+					width: negative ? SCORE_TAG_WIDTH : undefined,
 				}}
 			>
 				{score}
@@ -580,7 +581,7 @@ const PlayBar = forwardRef<
 							: blue,
 						marginLeft,
 						width: `calc(${
-							(score && negative ? 2 : 1) * TAG_WIDTH
+							(score && negative ? SCORE_TAG_WIDTH : 0) + TAG_WIDTH
 						}px + ${yardsPercent}%)`,
 					}}
 					{...props}

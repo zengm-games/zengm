@@ -195,6 +195,7 @@ type PlayByPlayEventInput =
 			type: "timeout";
 			clock: number;
 			offense: boolean;
+			numLeft: number;
 			t: TeamNum;
 	  }
 	| {

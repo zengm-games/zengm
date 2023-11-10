@@ -1060,6 +1060,7 @@ class GameSim extends GameSimBase {
 			type: "timeout",
 			clock: this.clock,
 			offense: t === this.o,
+			numLeft: this.timeouts[t],
 			t,
 		});
 	}

@@ -298,7 +298,9 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			text += ` - ${decisionText}`;
 		}
 	} else if (event.type === "timeout") {
-		text = `Time out, ${event.offense ? "offense" : "defense"}`;
+		text = `Timeout, ${event.offense ? "offense" : "defense"} (${
+			event.numLeft
+		} remaining)`;
 	} else if (event.type === "twoMinuteWarning") {
 		text = "Two minute warning";
 	} else if (event.type === "kneel") {

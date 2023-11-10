@@ -507,18 +507,7 @@ const PlayBar = forwardRef<
 
 		const negative = play.yards < 0;
 
-		let turnover;
-		if (play.intendedPossessionChange) {
-			if (play.numPossessionChanges <= 1) {
-				turnover = false;
-			} else {
-				// Even number of possession changes mean the kicking/punting team got the ball back somehow
-				turnover = play.numPossessionChanges % 2 === 0;
-			}
-		} else {
-			// Odd number of possession changes mean the defense got the ball back somehow
-			turnover = play.numPossessionChanges % 2 === 1;
-		}
+		const turnover = play.turnover;
 
 		let score: string | undefined;
 		if (play.scoreInfo?.type) {
@@ -531,6 +520,8 @@ const PlayBar = forwardRef<
 		const yardLinePercent = yardLineToPercent(play.scrimmage);
 		const yardsPercent = yardsToPercent(play.yards);
 
+		const showTag = !play.subPlay;
+
 		// -2 is to account for border
 		let marginLeft;
 		if (negative) {
@@ -538,7 +529,9 @@ const PlayBar = forwardRef<
 				score ? SCORE_TAG_WIDTH : 0
 			}px)`;
 		} else {
-			marginLeft = `calc(${yardLinePercent}% - ${TAG_WIDTH - 2}px)`;
+			marginLeft = `calc(${yardLinePercent}% - ${
+				showTag ? TAG_WIDTH - 2 : 0
+			}px)`;
 		}
 
 		const borderStyleName = negative ? "borderLeft" : ("borderRight" as const);
@@ -568,8 +561,10 @@ const PlayBar = forwardRef<
 			>
 				<div
 					ref={ref}
-					className={`d-flex${negative ? " rounded-end" : ""}${
-						!negative || score ? " rounded-start" : ""
+					className={`d-flex${negative && showTag ? " rounded-end" : ""}${
+						(!negative && showTag) || (negative && score)
+							? " rounded-start"
+							: ""
 					}`}
 					style={{
 						backgroundColor: turnover
@@ -581,30 +576,42 @@ const PlayBar = forwardRef<
 							: blue,
 						marginLeft,
 						width: `calc(${
-							(score && negative ? SCORE_TAG_WIDTH : 0) + TAG_WIDTH
+							(score && negative ? SCORE_TAG_WIDTH : 0) +
+							(showTag ? TAG_WIDTH : 0)
 						}px + ${yardsPercent}%)`,
 					}}
 					{...props}
 				>
 					{score && negative ? scoreTag : null}
-					<div
-						className={`${
-							negative
-								? "text-start ps-1 rounded-end ms-auto"
-								: "text-end pe-1 rounded-start"
-						}`}
-						style={{
-							width: TAG_WIDTH,
-							[borderStyleName]: `2px solid ${blue}`,
-							backgroundColor: turnover ? red : score ? lightGreen : lightGray,
-							color: turnover ? "#fff" : "#000",
-						}}
-					>
-						{play.tagOverride ??
-							(kickoff
-								? "Kickoff"
-								: `${helpers.ordinal(play.down)} & ${play.toGo}`)}
-					</div>
+					{showTag ? (
+						<div
+							className={`${
+								negative
+									? "text-start ps-1 rounded-end ms-auto"
+									: "text-end pe-1 rounded-start"
+							}`}
+							style={{
+								width: TAG_WIDTH,
+								[borderStyleName]: `2px solid ${blue}`,
+								backgroundColor: turnover
+									? red
+									: score
+									? lightGreen
+									: play.intendedPossessionChange
+									? darkGray
+									: lightGray,
+								color:
+									turnover || play.intendedPossessionChange ? "#fff" : "#000",
+							}}
+						>
+							{play.tagOverride ??
+								(kickoff
+									? "Kickoff"
+									: `${helpers.ordinal(play.down)} & ${play.toGo}`)}
+						</div>
+					) : (
+						<>&nbsp;</>
+					)}
 				</div>
 				{score && !negative ? scoreTag : null}
 				{play.flags.length > 0
@@ -665,7 +672,8 @@ const FieldAndDrive = ({
 		}
 	}
 
-	const latestText = sportState.plays.at(-1)?.texts.at(-1);
+	const latestPlay = sportState.plays.at(-1);
+	const latestText = latestPlay?.texts.at(-1);
 
 	return (
 		<div className="mb-3">
@@ -678,7 +686,10 @@ const FieldAndDrive = ({
 				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
 				{!sportState.newPeriodText ? (
 					<>
-						<VerticalLine color={blue} yards={sportState.scrimmage} />
+						<VerticalLine
+							color={blue}
+							yards={sportState.scrimmage ?? sportState.scrimmage}
+						/>
 						{!sportState.awaitingKickoff ? (
 							<VerticalLine
 								color={yellow}

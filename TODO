@@ -28,6 +28,12 @@ FBGM show field during game
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
+    - sub plays
+      - test with penalty during return
+      - for interception/fumble, need to set yards on prevPlay before adding new play
+        - fumble might already be working, idk
+      - fumble on kick return?
+      - 2+ turnovers?
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

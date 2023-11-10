@@ -17,11 +17,12 @@ export type SportState = {
 		texts: string[];
 		scoreInfo: ReturnType<typeof getScoreInfo> | undefined;
 		intendedPossessionChange: boolean; // For punts and kickoffs
-		numPossessionChanges: number;
+		turnover: boolean;
 		flags: (null | { text: string; accept: boolean })[];
 		countsTowardsNumPlays: boolean;
 		countsTowardsYards: boolean;
 		tagOverride: string | undefined;
+		subPlay: boolean; // subPlay is like a kick return or turnover return
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -406,6 +407,60 @@ const processLiveGameEvents = ({
 			}
 		}
 
+		const addNewPlay = ({
+			down,
+			toGo,
+			scrimmage,
+			intendedPossessionChange,
+			subPlay,
+		}: {
+			down: number;
+			toGo: number;
+			scrimmage: number;
+			intendedPossessionChange: boolean;
+			subPlay: boolean;
+		}) => {
+			sportState.plays.push({
+				t: actualT,
+				down,
+				toGo,
+				scrimmage,
+				yards: 0,
+				texts: [],
+				scoreInfo: undefined,
+				intendedPossessionChange,
+				turnover: false,
+				flags: [],
+				countsTowardsNumPlays: false,
+				countsTowardsYards: false,
+				tagOverride: undefined,
+				subPlay,
+			});
+		};
+
+		// Update team with possession
+		if (
+			e.type === "kickoffReturn" ||
+			e.type === "puntReturn" ||
+			e.type === "fumbleRecovery" ||
+			e.type === "interception"
+		) {
+			const prevPlay = sportState.plays.at(-1)!;
+			if (e.type === "fumbleRecovery" || e.type === "interception") {
+				prevPlay.turnover = true;
+			}
+
+			const scrimmage = sportState.scrimmage + prevPlay.yards;
+
+			addNewPlay({
+				down: prevPlay.down,
+				toGo: prevPlay.toGo,
+				scrimmage,
+				intendedPossessionChange: false,
+				subPlay: true,
+			});
+		}
+
 		if (e.type === "clock") {
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
 			let textWithoutTime;
@@ -438,20 +493,12 @@ const processLiveGameEvents = ({
 			sportState.newPeriodText = undefined;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
-			sportState.plays.push({
-				t: actualT,
+			addNewPlay({
 				down: e.down,
 				toGo: e.toGo,
 				scrimmage: e.scrimmage,
-				yards: 0,
-				texts: [],
-				scoreInfo: undefined,
 				intendedPossessionChange: awaitingKickoff,
-				numPossessionChanges: 0,
-				flags: [],
-				countsTowardsNumPlays: false,
-				countsTowardsYards: false,
-				tagOverride: undefined,
+				subPlay: false,
 			});
 
 			// After touchdown, scrimmage is moved weirdly for the XP
@@ -543,20 +590,6 @@ const processLiveGameEvents = ({
 						.replace("ABBREV1", boxScore.teams[0].abbrev),
 				);
 			}
-			console.log(e);
-
-			// Update team with possession
-			if (
-				e.type === "kickoffReturn" ||
-				e.type === "puntReturn" ||
-				e.type === "fumbleRecovery" ||
-				e.type === "interception"
-			) {
-				if (play.t !== actualT) {
-					play.t = actualT;
-					play.numPossessionChanges += 1;
-				}
-			}
 
 			// A penalty might overturn a score or a turnover or multiple turnovers. In this case, we want to immediately update the play bar on the field, so it's no longer showing a turnover or score erroneously (looks weird after yardage changes). But we don't have the event for the actual reverted turnover/score yet. Solution? Look ahead and find it!
 			const removeLastScoreOrTurnoversIfNecessary = () => {
@@ -572,7 +605,7 @@ const processLiveGameEvents = ({
 							event.amt === -1 &&
 							(event.s === "defInt" || event.s === "defFmbRec")
 						) {
-							sportState.plays.at(-1)!.numPossessionChanges -= 1;
+							sportState.plays.pop();
 						}
 					}
 
@@ -704,6 +737,8 @@ const processLiveGameEvents = ({
 			});
 		}
 	}
+
+	window.sportState = sportState;
 
 	return {
 		overtimes,

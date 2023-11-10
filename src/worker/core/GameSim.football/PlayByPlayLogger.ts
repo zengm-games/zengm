@@ -246,6 +246,7 @@ export type PlayByPlayEvent =
 	| {
 			type: "clock";
 			awaitingKickoff: TeamNum | undefined;
+			awaitingAfterTouchdown: boolean;
 			clock: number;
 			down: number;
 			scrimmage: number;
@@ -310,6 +311,7 @@ class PlayByPlayLogger {
 
 	logClock({
 		awaitingKickoff,
+		awaitingAfterTouchdown,
 		clock,
 		down,
 		scrimmage,
@@ -317,6 +319,7 @@ class PlayByPlayLogger {
 		toGo,
 	}: {
 		awaitingKickoff: TeamNum | undefined;
+		awaitingAfterTouchdown: boolean;
 		clock: number;
 		down: number;
 		scrimmage: number;
@@ -330,6 +333,7 @@ class PlayByPlayLogger {
 		this.playByPlay.push({
 			type: "clock",
 			awaitingKickoff,
+			awaitingAfterTouchdown,
 			clock,
 			down,
 			scrimmage,

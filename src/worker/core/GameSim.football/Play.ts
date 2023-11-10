@@ -6,6 +6,8 @@ import type { PlayerGameSim, TeamNum } from "./types";
 
 export const SCRIMMAGE_KICKOFF = 35;
 const SCRIMMAGE_KICKOFF_SAFETY = 20;
+export const SCRIMMAGE_EXTRA_POINT = 85;
+export const SCRIMMAGE_TWO_POINT_CONVERSION = 98;
 
 type PlayEvent =
 	| {
@@ -679,8 +681,6 @@ class Play {
 			state.isClockRunning = false;
 		} else if (event.type === "twoPointConversion") {
 			state.twoPointConversionTeam = event.t;
-			state.down = 1;
-			state.scrimmage = 98;
 		} else if (event.type === "twoPointConversionDone") {
 			// Reset off/def teams in case there was a turnover during the conversion attempt
 			state.o = event.t;

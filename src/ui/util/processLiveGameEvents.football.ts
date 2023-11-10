@@ -404,23 +404,28 @@ const processLiveGameEvents = ({
 		}
 
 		if (e.type === "clock") {
-			const time = formatClock(e.clock);
-
-			let textWithoutTime;
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
-			if (awaitingKickoff) {
-				textWithoutTime = `${boxScore.teams[actualT].abbrev} kicking off`;
+			let textWithoutTime;
+
+			if (!e.awaitingAfterTouchdown) {
+				const time = formatClock(e.clock);
+
+				if (awaitingKickoff) {
+					textWithoutTime = `${boxScore.teams[actualT].abbrev} kicking off`;
+				} else {
+					const fieldPos = scrimmageToFieldPos(e.scrimmage);
+
+					textWithoutTime = `${
+						boxScore.teams[actualT].abbrev
+					} ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
+				}
+				text = `${time} - ${textWithoutTime}`;
+
+				boxScore.time = time;
+				stop = true;
 			} else {
-				const fieldPos = scrimmageToFieldPos(e.scrimmage);
-
-				textWithoutTime = `${
-					boxScore.teams[actualT].abbrev
-				} ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
+				textWithoutTime = "After touchdown";
 			}
-			text = `${time} - ${textWithoutTime}`;
-
-			boxScore.time = time;
-			stop = true;
 
 			if (awaitingKickoff || sportState.t !== actualT) {
 				sportState.t = actualT;
@@ -446,14 +451,17 @@ const processLiveGameEvents = ({
 				countsTowardsYards: false,
 			});
 
-			const prevPlay = sportState.plays.at(-2);
-			if (prevPlay) {
-				if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
-					console.log("YARDS MISMATCH");
-					console.log(prevPlay.yards, e.scrimmage - prevPlay.scrimmage);
-					debugger;
+			// After touchdown, scrimmage is moved weirdly for the XP
+			if (!e.awaitingAfterTouchdown) {
+				const prevPlay = sportState.plays.at(-2);
+				if (prevPlay) {
+					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
+						console.log("YARDS MISMATCH");
+						console.log(prevPlay.yards, e.scrimmage - prevPlay.scrimmage);
+						debugger;
+					}
+					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 				}
-				prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 			}
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
@@ -683,6 +691,7 @@ const processLiveGameEvents = ({
 		}
 	}
 
+	window.sportState = sportState;
 	return {
 		overtimes,
 		possessionChange,

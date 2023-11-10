@@ -18,7 +18,11 @@ import type {
 	Formation,
 } from "./types";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
-import Play, { SCRIMMAGE_KICKOFF } from "./Play";
+import Play, {
+	SCRIMMAGE_EXTRA_POINT,
+	SCRIMMAGE_KICKOFF,
+	SCRIMMAGE_TWO_POINT_CONVERSION,
+} from "./Play";
 import LngTracker from "./LngTracker";
 import GameSimBase from "../GameSimBase";
 import { PHASE } from "../../../common";
@@ -732,18 +736,28 @@ class GameSim extends GameSimBase {
 
 		this.currentPlay = new Play(this);
 
-		if (!this.awaitingAfterTouchdown) {
-			this.playByPlay.logClock({
-				awaitingKickoff: this.awaitingKickoff,
-				clock: this.clock,
-				down: this.down,
-				scrimmage: this.scrimmage,
-				t: this.o,
-				toGo: this.toGo,
-			});
+		const playType = this.getPlayType();
+
+		if (playType === "extraPoint") {
+			this.scrimmage = SCRIMMAGE_EXTRA_POINT;
+			this.down = 1;
+			this.toGo = 100 - this.scrimmage;
+		} else if (playType === "twoPointConversion") {
+			this.scrimmage = SCRIMMAGE_TWO_POINT_CONVERSION;
+			this.down = 1;
+			this.toGo = 100 - this.scrimmage;
 		}
 
-		const playType = this.getPlayType();
+		this.playByPlay.logClock({
+			awaitingKickoff: this.awaitingKickoff,
+			awaitingAfterTouchdown: this.awaitingAfterTouchdown,
+			clock: this.clock,
+			down: this.down,
+			scrimmage: this.scrimmage,
+			t: this.o,
+			toGo: this.toGo,
+		});
+
 		let dt;
 
 		if (playType === "kickoff") {
@@ -1311,13 +1325,13 @@ class GameSim extends GameSimBase {
 		return dt;
 	}
 
-	probMadeFieldGoal(kickerInput?: PlayerGameSim, extraPoint?: boolean) {
+	probMadeFieldGoal(kickerInput?: PlayerGameSim) {
 		const kicker =
 			kickerInput !== undefined
 				? kickerInput
 				: this.team[this.o].depth.K.find(p => !p.injured);
 		let baseProb = 0;
-		let distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
+		let distance = 100 - this.scrimmage + 17;
 
 		if (!kicker) {
 			// Would take an absurd amount of injuries to get here, but technically possible
@@ -1431,9 +1445,9 @@ class GameSim extends GameSimBase {
 			return 0;
 		}
 
-		const distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
+		const distance = 100 - this.scrimmage + 17;
 		const kicker = this.getTopPlayerOnField(this.o, "K");
-		const made = Math.random() < this.probMadeFieldGoal(kicker, extraPoint);
+		const made = Math.random() < this.probMadeFieldGoal(kicker);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
 		this.checkPenalties("fieldGoal");
 

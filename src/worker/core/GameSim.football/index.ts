@@ -1224,7 +1224,11 @@ class GameSim extends GameSimBase {
 		const puntReturner = this.getTopPlayerOnField(this.d, "PR");
 		const adjustment = (punter.compositeRating.punting - 0.6) * 20; // 100 ratings - 8 yd bonus. 0 ratings - 12 yard penalty
 
-		const distance = Math.round(random.truncGauss(44 + adjustment, 8, 25, 90));
+		const maxDistance = 109 - this.scrimmage;
+		const distance = Math.min(
+			Math.round(random.truncGauss(44 + adjustment, 8, 25, 90)),
+			maxDistance,
+		);
 		let dt = random.randInt(5, 9);
 
 		this.checkPenalties("punt");

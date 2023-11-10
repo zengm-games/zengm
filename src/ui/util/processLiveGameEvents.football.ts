@@ -21,6 +21,7 @@ export type SportState = {
 		flags: (null | { text: string; accept: boolean })[];
 		countsTowardsNumPlays: boolean;
 		countsTowardsYards: boolean;
+		tagOverride: string | undefined;
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -450,6 +451,7 @@ const processLiveGameEvents = ({
 				flags: [],
 				countsTowardsNumPlays: false,
 				countsTowardsYards: false,
+				tagOverride: undefined,
 			});
 
 			// After touchdown, scrimmage is moved weirdly for the XP
@@ -686,6 +688,12 @@ const processLiveGameEvents = ({
 				) {
 					play.scoreInfo = scoreInfo;
 				}
+			}
+
+			if (e.type === "extraPointAttempt") {
+				play.tagOverride = "XPA";
+			} else if (e.type === "twoPointConversion") {
+				play.tagOverride = "2PA";
 			}
 		}
 

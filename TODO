@@ -28,7 +28,6 @@ FBGM show field during game
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
-    - maybe don't show "1st & 10" in tag on XP/2pt, could just leave tag blank
     - reverse score tag can be smaller, since there is only one score per play now
     - test that scrimmage+yards of previous play equals scrimmage of next play
       - ones that are wrong

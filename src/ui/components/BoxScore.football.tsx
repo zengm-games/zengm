@@ -599,9 +599,10 @@ const PlayBar = forwardRef<
 							color: turnover ? "#fff" : "#000",
 						}}
 					>
-						{kickoff
-							? "Kickoff"
-							: `${helpers.ordinal(play.down)} & ${play.toGo}`}
+						{play.tagOverride ??
+							(kickoff
+								? "Kickoff"
+								: `${helpers.ordinal(play.down)} & ${play.toGo}`)}
 					</div>
 				</div>
 				{score && !negative ? scoreTag : null}

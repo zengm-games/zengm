@@ -662,12 +662,16 @@ const FieldAndDrive = ({
 				}}
 			>
 				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
-				<VerticalLine color={blue} yards={sportState.scrimmage} />
-				{!sportState.awaitingKickoff ? (
-					<VerticalLine
-						color={yellow}
-						yards={sportState.scrimmage + sportState.toGo}
-					/>
+				{!sportState.newPeriodText ? (
+					<>
+						<VerticalLine color={blue} yards={sportState.scrimmage} />
+						{!sportState.awaitingKickoff ? (
+							<VerticalLine
+								color={yellow}
+								yards={sportState.scrimmage + sportState.toGo}
+							/>
+						) : null}
+					</>
 				) : null}
 				{sportState.plays.map((play, i) => {
 					return (
@@ -711,14 +715,20 @@ const FieldAndDrive = ({
 				})}
 			</div>
 			<div className="d-flex mt-1">
-				{sportState.text}
-				{!sportState.awaitingKickoff ? (
-					<div className="ms-auto">
-						Drive: {numPlays} play
-						{numPlays === 1 ? "" : "s"}, {yards} yard
-						{yards === 1 ? "" : "s"}
-					</div>
-				) : null}
+				{sportState.newPeriodText ? (
+					sportState.newPeriodText
+				) : (
+					<>
+						{sportState.text}
+						{!sportState.awaitingKickoff ? (
+							<div className="ms-auto">
+								Drive: {numPlays} play
+								{numPlays === 1 ? "" : "s"}, {yards} yard
+								{yards === 1 ? "" : "s"}
+							</div>
+						) : null}
+					</>
+				)}
 			</div>
 			<div>{latestText ?? <br />}</div>
 		</div>

@@ -29,8 +29,6 @@ FBGM show field during game
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
     - glitches
-      - "Start of 3rd quarter" and similar should clear drive
-        - unify logic with kickoffAfterEndOfPeriod
       - do punts ever go out the back of the endzone?
     - need to set scrimmage and toGo for extra points/2pt, currently they are weird
       - extra point or 2 point conversion should be treated as a separate play bar?

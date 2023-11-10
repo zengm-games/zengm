@@ -25,6 +25,7 @@ export type SportState = {
 		t: 0 | 1;
 	}[];
 	text: string;
+	newPeriodText: string | undefined;
 };
 
 export const DEFAULT_SPORT_STATE: SportState = {
@@ -34,6 +35,7 @@ export const DEFAULT_SPORT_STATE: SportState = {
 	toGo: 0,
 	plays: [],
 	text: "",
+	newPeriodText: undefined,
 };
 
 export const scrimmageToFieldPos = (scrimmage: number) => {
@@ -426,6 +428,7 @@ const processLiveGameEvents = ({
 			}
 			sportState.awaitingKickoff = awaitingKickoff;
 			sportState.text = textWithoutTime;
+			sportState.newPeriodText = undefined;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
 			sportState.plays.push({
@@ -482,6 +485,14 @@ const processLiveGameEvents = ({
 		} else if (e.type === "removeLastScore") {
 			// This happens a tick after sportState is updated, which I think is okay
 			boxScore.scoringSummary.pop();
+		} else if (e.type === "quarter" || e.type === "overtime") {
+			text = getText(e, boxScore.numPeriods);
+			boxScore.time = formatClock(e.clock);
+			stop = true;
+			if (e.startsWithKickoff) {
+				sportState.newPeriodText = text;
+				sportState.plays = [];
+			}
 		} else if (e.type !== "init") {
 			const play = sportState.plays.at(-1);
 			if (!play) {

@@ -301,6 +301,7 @@ class GameSim extends GameSimBase {
 				type: "quarter",
 				clock: this.clock,
 				quarter,
+				startsWithKickoff: this.kickoffAfterEndOfPeriod(quarter - 1),
 			});
 		}
 	}
@@ -333,6 +334,9 @@ class GameSim extends GameSimBase {
 			type: "overtime",
 			clock: this.clock,
 			overtimes: this.overtimes,
+			startsWithKickoff: this.kickoffAfterEndOfPeriod(
+				this.numPeriods + this.overtimes - 1,
+			),
 		});
 
 		this.d = this.lastHalfAwaitingKickoff === 0 ? 1 : 0;

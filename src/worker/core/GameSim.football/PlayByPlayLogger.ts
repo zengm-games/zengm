@@ -99,11 +99,13 @@ type PlayByPlayEventInput =
 			type: "quarter";
 			clock: number;
 			quarter: number;
+			startsWithKickoff: boolean;
 	  }
 	| {
 			type: "overtime";
 			clock: number;
 			overtimes: number;
+			startsWithKickoff: boolean;
 	  }
 	| {
 			type: "gameOver";

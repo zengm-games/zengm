@@ -28,13 +28,8 @@ FBGM show field during game
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
-    - need to set scrimmage and toGo for extra points/2pt, currently they are weird
-      - extra point or 2 point conversion should be treated as a separate play bar?
-        - maybe don't show "1st & 10" in tag on XP/2pt, could just leave tag blank
-        - should show yardage gained for 2pt
-    - after score, stop updating yardage unless there is an accepted penalty, then start updating again. this means the line won't jump around for the XP/2PT
-      - could ignore extraPoint and twoPointConversionTeam events, maybe
-        - also consider penalties on those plays - should not move scrimmage of the TD play
+    - maybe don't show "1st & 10" in tag on XP/2pt, could just leave tag blank
+    - reverse score tag can be smaller, since there is only one score per play now
     - test that scrimmage+yards of previous play equals scrimmage of next play
       - ones that are wrong
         - what about multiple turnovers in the same play, might need reversedField adjustment to ydsBefore

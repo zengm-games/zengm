@@ -734,10 +734,9 @@ class GameSim extends GameSimBase {
 		// Reset before calling Play, so Play can set to true if necessary for the next play
 		this.playUntimedPossession = false;
 
-		this.currentPlay = new Play(this);
-
 		const playType = this.getPlayType();
 
+		// Set these before creating a new Play so they are updated in there too
 		if (playType === "extraPoint") {
 			this.scrimmage = SCRIMMAGE_EXTRA_POINT;
 			this.down = 1;
@@ -747,6 +746,8 @@ class GameSim extends GameSimBase {
 			this.down = 1;
 			this.toGo = 100 - this.scrimmage;
 		}
+
+		this.currentPlay = new Play(this);
 
 		this.playByPlay.logClock({
 			awaitingKickoff: this.awaitingKickoff,

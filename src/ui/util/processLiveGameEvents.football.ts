@@ -448,6 +448,9 @@ const processLiveGameEvents = ({
 			const prevPlay = sportState.plays.at(-1)!;
 			if (e.type === "fumbleRecovery" || e.type === "interception") {
 				prevPlay.turnover = true;
+
+				// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
+				prevPlay.yards += e.ydsBefore;
 			}
 
 			const scrimmage = sportState.scrimmage + prevPlay.yards;
@@ -694,11 +697,6 @@ const processLiveGameEvents = ({
 				e.type === "kneel"
 			) {
 				const reversedField = play.t !== sportState.t;
-
-				if (e.type === "interception" || e.type === "fumbleRecovery") {
-					// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
-					play.yards += e.ydsBefore;
-				}
 
 				// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
 				play.yards += (reversedField ? -1 : 1) * e.yds;

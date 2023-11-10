@@ -28,9 +28,6 @@ FBGM show field during game
           - tricky to handle penalties - might need to invalidate some sub-plays
       - would be nice to make "1st & 10" gray box have dynamic width in play log
         - same for score tag on negative play (defense or kick return)
-    - test that scrimmage+yards of previous play equals scrimmage of next play
-      - ones that are wrong
-        - what about multiple turnovers in the same play, might need reversedField adjustment to ydsBefore
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

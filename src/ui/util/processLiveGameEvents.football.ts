@@ -458,11 +458,11 @@ const processLiveGameEvents = ({
 			if (!sportState.awaitingAfterTouchdown) {
 				const prevPlay = sportState.plays.at(-2);
 				if (prevPlay) {
-					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
+					/*if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
 						console.log("YARDS MISMATCH");
 						console.log(prevPlay.yards, e.scrimmage - prevPlay.scrimmage);
 						debugger;
-					}
+					}*/
 					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 				}
 			}
@@ -705,7 +705,6 @@ const processLiveGameEvents = ({
 		}
 	}
 
-	window.sportState = sportState;
 	return {
 		overtimes,
 		possessionChange,

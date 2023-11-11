@@ -14,10 +14,14 @@ FBGM show field during game
   - would be nice to make "1st & 10" gray box have dynamic width in play log
     - same for score tag on negative play (defense or kick return)
   - some indication of direction in the bars? idk, only confusing on weird plays
+  - lost info in removeLastScoreOrTurnoversIfNecessary
+    - rather than removing a row from sportState.plays, might be better to mark it as overturned
+    - but when rolling back for penalties, we kind of need to delete, because that lets us show the penalty in the main bar, not in a sub-play bar
 - set turnover rates back to normal
 - scrimmage mismatch still happens, <1 per game
-  - touchback not being applied properly
-  - fumbleRecovery and interceptionReturn can be touchbacks
+  - punt return, penalty (such as offsides) results in the punting team keeping the ball - looks like that penalty gets applied on the punt return bar. would be better if the punt return bar was deleted
+    - need something like removeLastScoreOrTurnoversIfNecessary for punt returns too
+- sub-play messes up flag realization, so they remain yellow forever if on parent of sub-play
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

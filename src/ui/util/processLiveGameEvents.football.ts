@@ -730,8 +730,18 @@ const processLiveGameEvents = ({
 			) {
 				const reversedField = play.t !== sportState.t;
 
-				// Temporarily update with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
-				play.yards += (reversedField ? -1 : 1) * e.yds;
+				// Temporarily update play.yards with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
+				if (
+					(e.type === "fumbleRecovery" || e.type === "interceptionReturn") &&
+					e.touchback
+				) {
+					const SCRIMMAGE_TOUCHBACK = 20;
+
+					// Not sure why this doesn't need to be adjusted for reversedField, but I tested it and this works!
+					play.yards = SCRIMMAGE_TOUCHBACK - play.scrimmage;
+				} else {
+					play.yards += (reversedField ? -1 : 1) * e.yds;
+				}
 			}
 
 			if (

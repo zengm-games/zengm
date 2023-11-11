@@ -454,10 +454,7 @@ const processLiveGameEvents = ({
 			e.type === "interceptionReturn"
 		) {
 			const prevPlay = sportState.plays.at(-1)!;
-			if (
-				e.type === "interceptionReturn" ||
-				(e.type === "fumbleRecovery" && e.lost)
-			) {
+			if (e.type === "fumbleRecovery" && e.lost) {
 				prevPlay.turnover = true;
 			}
 			if (e.type === "fumbleRecovery") {
@@ -574,6 +571,11 @@ const processLiveGameEvents = ({
 			let play = sportState.plays.at(-1);
 			if (!play) {
 				throw new Error("Should never happen");
+			}
+
+			if (e.type === "interception") {
+				// Interceptions are always turnovers, so set it here. But for fumbles we need to wait for the recovery, done elsewhere
+				play.turnover = true;
 			}
 
 			const initialText = getText(e, boxScore.numPeriods);

@@ -14,7 +14,8 @@ FBGM show field during game
   - same for score tag on negative play (defense or kick return)
 - sub plays
   - fumble on kick return?
-  - 2+ turnovers?
+  - in sub-play popover, should not say down on first line
+    - instead of "own" and "opp" use abbrev?
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

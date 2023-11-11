@@ -557,7 +557,7 @@ const processLiveGameEvents = ({
 				sportState.plays = [];
 			}
 		} else if (e.type !== "init") {
-			const play = sportState.plays.at(-1);
+			let play = sportState.plays.at(-1);
 			if (!play) {
 				throw new Error("Should never happen");
 			}
@@ -611,6 +611,12 @@ const processLiveGameEvents = ({
 							(event.s === "defInt" || event.s === "defFmbRec")
 						) {
 							sportState.plays.pop();
+
+							// If we removed a sub-play, then the parent play can't be a turnover
+							const prevPlay = sportState.plays.at(-1);
+							if (prevPlay?.turnover) {
+								prevPlay.turnover = false;
+							}
 						}
 					}
 
@@ -628,13 +634,21 @@ const processLiveGameEvents = ({
 				// Same for change of possession, don't want to show it early if 2 penatlies.
 				const accept = e.decision === "accept";
 				if (accept) {
-					// Penalty could have changed possession
+					/*// Penalty could have changed possession
 					const actualT2 = e.possessionAfter === 0 ? 1 : 0;
 					if (play.t !== actualT2) {
 						play.t = actualT2;
+					}*/
+
+					removeLastScoreOrTurnoversIfNecessary();
+
+					// play might have been removed by removeLastScoreOrTurnoversIfNecessary
+					play = sportState.plays.at(-1);
+					if (!play) {
+						throw new Error("Should never happen");
 					}
 
-					// For penalties before the snap, still count them
+					// For penalties before the snap, still count them (except awaitingAfterTouchdown, where these should never be true)
 					if (!sportState.awaitingAfterTouchdown) {
 						play.countsTowardsNumPlays = true;
 						play.countsTowardsYards = true;
@@ -646,8 +660,6 @@ const processLiveGameEvents = ({
 						scrimmageAfter = 100 - scrimmageAfter;
 					}
 					play.yards = scrimmageAfter - play.scrimmage;
-
-					removeLastScoreOrTurnoversIfNecessary();
 				}
 
 				const flagIndex = play.flags.indexOf(null);
@@ -660,12 +672,18 @@ const processLiveGameEvents = ({
 					};
 				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
+				removeLastScoreOrTurnoversIfNecessary();
+
+				// play might have been removed by removeLastScoreOrTurnoversIfNecessary
+				play = sportState.plays.at(-1);
+				if (!play) {
+					throw new Error("Should never happen");
+				}
+
 				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
 				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
 				play.countsTowardsNumPlays = false;
 				play.yards = 0;
-
-				removeLastScoreOrTurnoversIfNecessary();
 
 				play.flags = play.flags.map(() => {
 					return {

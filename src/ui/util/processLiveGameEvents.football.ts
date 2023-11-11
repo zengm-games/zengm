@@ -199,13 +199,15 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		text = `${event.names[0]} fumbled the ball!`;
 	} else if (event.type === "fumbleRecovery") {
 		if (event.safety || event.touchback) {
-			text = `${
+			text = `${event.lost ? "Turnover! " : ""}${
 				event.names[0]
 			} recovered the fumble in the endzone, resulting in a ${
 				event.safety ? "safety!" : "touchback"
 			}`;
 		} else if (event.lost) {
-			text = `${event.names[0]} recovered the fumble for ABBREV${event.t} ${
+			text = `Turnover! ${event.names[0]} recovered the fumble for ABBREV${
+				event.t
+			} ${
 				event.td && event.yds < 1
 					? `in the endzone for ${touchdownText}!`
 					: `and returned it ${event.yds} yards${
@@ -356,9 +358,8 @@ const processLiveGameEvents = ({
 	const possessionChangeTexts = [
 		" kicked off ",
 		" punted ",
-		" recovered the fumble for the defense",
-		" recovered the fumble in the endzone, resulting in a safety!",
-		" intercepted the pass ",
+		"Intercepted ",
+		"Turnover!",
 		" gets ready to attempt an onside kick",
 		"Turnover on downs",
 	];

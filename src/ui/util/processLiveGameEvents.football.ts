@@ -205,7 +205,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				event.safety ? "safety!" : "touchback"
 			}`;
 		} else if (event.lost) {
-			text = `${event.names[0]} recovered the fumble for the defense ${
+			text = `${event.names[0]} recovered the fumble for ABBREV${event.t} ${
 				event.td && event.yds < 1
 					? `in the endzone for ${touchdownText}!`
 					: `and returned it ${event.yds} yards${
@@ -213,7 +213,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 					  }`
 			}`;
 		} else {
-			text = `${event.names[0]} recovered the fumble for the offense${
+			text = `${event.names[0]} recovered the fumble for ABBREV${event.t}${
 				event.td ? ` and carried it into the endzone for ${touchdownText}!` : ""
 			}`;
 		}
@@ -591,18 +591,14 @@ const processLiveGameEvents = ({
 					!!initialText.match(/missed.*yard field goal/);
 
 				// Must include parens so it does not collide with ABBREV0 and ABBREV1 for penalties lol
-				text = initialText.replace(
-					"(ABBREV)",
-					`(${boxScore.teams[actualT].abbrev})`,
-				);
+				text = initialText
+					.replace("(ABBREV)", `(${boxScore.teams[actualT].abbrev})`)
+					.replace("ABBREV0", boxScore.teams[1].abbrev)
+					.replace("ABBREV1", boxScore.teams[0].abbrev);
 				boxScore.time = formatClock(e.clock);
 				stop = true;
 
-				play.texts.push(
-					text
-						.replace("ABBREV0", boxScore.teams[1].abbrev)
-						.replace("ABBREV1", boxScore.teams[0].abbrev),
-				);
+				play.texts.push(text);
 			}
 
 			// A penalty might overturn a score or a turnover or multiple turnovers. In this case, we want to immediately update the play bar on the field, so it's no longer showing a turnover or score erroneously (looks weird after yardage changes). But we don't have the event for the actual reverted turnover/score yet. Solution? Look ahead and find it!
@@ -674,9 +670,7 @@ const processLiveGameEvents = ({
 				const flagIndex = play.flags.indexOf(null);
 				if (flagIndex >= 0) {
 					play.flags[flagIndex] = {
-						text: text!
-							.replace("ABBREV0", boxScore.teams[1].abbrev)
-							.replace("ABBREV1", boxScore.teams[0].abbrev),
+						text: text!,
 						accept,
 					};
 				}

@@ -212,9 +212,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 						.replace("accepted", "<b>accepted</b>")
 						.replace("declined", "<b>declined</b>")
 						.replace("enforced", "<b>enforced</b>")
-						.replace("overruled", "<b>overruled</b>")
-						.replace("ABBREV0", boxScore.current.teams[1].abbrev)
-						.replace("ABBREV1", boxScore.current.teams[0].abbrev);
+						.replace("overruled", "<b>overruled</b>");
 				} else {
 					const node = document.createTextNode(text);
 					if (

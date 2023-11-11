@@ -218,7 +218,12 @@ const StatsTable = ({
 };
 
 // Condenses TD + XP/2P into one event rather than two, and normalizes scoring summary events into consistent format (old style format had the text in it already, new one is just raw metadata from game sim)
-const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
+const processEvents = (
+	events: PlayByPlayEventScore[],
+	numPeriods: number,
+	abbrev0: string,
+	abbrev1: string,
+) => {
 	const processedEvents: {
 		quarter: string;
 		score: [number, number];
@@ -239,15 +244,17 @@ const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 			text = oldEvent.text;
 		} else {
 			// This is a new format entry, with metadata that needs to be turned into text
-			text = getText(event, numPeriods);
+			text = getText(event, numPeriods)
+				?.replace("ABBREV0", abbrev0)
+				?.replace("ABBREV1", abbrev1);
 		}
 
 		if (text === undefined) {
 			continue;
 		}
 
-		// Old format already had team IDs swapped!
-		const actualT = isOldFormat ? event.t : event.t === 0 ? 1 : 0;
+		// Somehow actualT doesn't need to be swapped? idk
+		const actualT = event.t;
 		const otherT = actualT === 0 ? 1 : 0;
 
 		const scoreInfo = getScoreInfo(text);
@@ -295,10 +302,14 @@ const getCount = (events: PlayByPlayEventScore[]) => {
 
 const ScoringSummary = memo(
 	({
+		abbrev0,
+		abbrev1,
 		events,
 		numPeriods,
 		teams,
 	}: {
+		abbrev0: string;
+		abbrev1: string;
 		count: number;
 		events: PlayByPlayEventScore[];
 		numPeriods: number;
@@ -306,7 +317,7 @@ const ScoringSummary = memo(
 	}) => {
 		let prevQuarter: string;
 
-		const processedEvents = processEvents(events, numPeriods);
+		const processedEvents = processEvents(events, numPeriods, abbrev0, abbrev1);
 
 		if (processedEvents.length === 0) {
 			return <p>None</p>;
@@ -790,6 +801,8 @@ const BoxScore = ({
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
+				abbrev0={boxScore.teams[0].abbrev}
+				abbrev1={boxScore.teams[1].abbrev}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
 				numPeriods={boxScore.numPeriods ?? 4}

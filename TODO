@@ -10,14 +10,12 @@ FBGM move event text generation to UI
 for a player traded mid-season, link on player profile game log page to team goes to TOT_-8
 
 FBGM show field during game
-- would be nice to make "1st & 10" gray box have dynamic width in play log
-  - same for score tag on negative play (defense or kick return)
-- sub plays
-  - fumble on kick return?
+- later
+  - would be nice to make "1st & 10" gray box have dynamic width in play log
+    - same for score tag on negative play (defense or kick return)
+  - some indication of direction in the bars? idk, only confusing on weird plays
 - set turnover rates back to normal
 - scrimmage mismatch still happens, <1 per game
-- ABBREV1 in scoring summary
-- some indication of direction in the bars? idk, only confusing on weird plays
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores
@@ -38,6 +36,7 @@ FBGM
   - all games
 - make it harder to gain yards in the red zone https://discord.com/channels/290013534023057409/331882115119448065/1171978572940976210
 - penalties on XP/2pt need to be handled differently. if you switch from one to the other, the penalties tack on to that starting position. so currently they are disabled
+- add fumbles on kick/punt returns
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

@@ -1543,6 +1543,7 @@ class GameSim extends GameSimBase {
 	}
 
 	probFumble(p: PlayerGameSim) {
+		return 0.5;
 		return (
 			0.0125 * (1.5 - p.compositeRating.ballSecurity) * g.get("fumbleFactor")
 		);
@@ -1635,6 +1636,15 @@ class GameSim extends GameSimBase {
 	}
 
 	doInterception(qb: PlayerGameSim, ydsPass: number, p: PlayerGameSim) {
+		this.playByPlay.logEvent({
+			type: "interception",
+			clock: this.clock,
+			names: [p.name],
+			t: this.currentPlay.state.current.o,
+			twoPointConversionTeam: this.twoPointConversionTeam,
+			yds: ydsPass,
+		});
+
 		this.currentPlay.addEvent({
 			type: "possessionChange",
 			yds: ydsPass,
@@ -1676,7 +1686,7 @@ class GameSim extends GameSimBase {
 		}
 
 		this.playByPlay.logEvent({
-			type: "interception",
+			type: "interceptionReturn",
 			clock: this.clock,
 			names: [p.name],
 			t: this.currentPlay.state.current.o,
@@ -1684,7 +1694,6 @@ class GameSim extends GameSimBase {
 			touchback,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
-			ydsBefore: ydsPass,
 		});
 
 		if (fumble) {
@@ -1752,6 +1761,7 @@ class GameSim extends GameSimBase {
 	}
 
 	probInt(qb: PlayerGameSim, defender: PlayerGameSim) {
+		return 0.5;
 		return (
 			((((0.004 * this.team[this.d].compositeRating.passCoverage +
 				0.022 * defender.compositeRating.passCoverage) /

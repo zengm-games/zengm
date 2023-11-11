@@ -37,11 +37,18 @@ export type PlayByPlayEventInputScore =
 			clock: number;
 			names: string[];
 			t: TeamNum;
+			twoPointConversionTeam: TeamNum | undefined;
+			yds: number;
+	  }
+	| {
+			type: "interceptionReturn";
+			clock: number;
+			names: string[];
+			t: TeamNum;
 			td: boolean;
 			touchback: boolean;
 			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
-			ydsBefore: number;
 	  }
 	| {
 			type: "passComplete";

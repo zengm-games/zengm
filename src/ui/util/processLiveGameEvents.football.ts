@@ -218,11 +218,13 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			}`;
 		}
 	} else if (event.type === "interception") {
-		text = `${event.names[0]} intercepted the pass `;
+		text = `Intercepted by ${event.names[0]}!`;
+	} else if (event.type === "interceptionReturn") {
+		text = `${event.names[0]} `;
 		if (event.touchback) {
-			text += "in the endzone";
+			text += "stays in the endzone for a touchback";
 		} else {
-			text += `and returned it ${event.yds} yards${
+			text += `returned the interception ${event.yds} yards${
 				event.td ? ` for ${touchdownText}!` : ""
 			}`;
 		}
@@ -448,15 +450,17 @@ const processLiveGameEvents = ({
 			e.type === "kickoffReturn" ||
 			e.type === "puntReturn" ||
 			e.type === "fumbleRecovery" ||
-			e.type === "interception"
+			e.type === "interceptionReturn"
 		) {
 			const prevPlay = sportState.plays.at(-1)!;
-			if (e.type === "fumbleRecovery" || e.type === "interception") {
-				if (e.type === "interception" || e.lost) {
-					prevPlay.turnover = true;
-				}
-
-				// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
+			if (
+				e.type === "interceptionReturn" ||
+				(e.type === "fumbleRecovery" && e.lost)
+			) {
+				prevPlay.turnover = true;
+			}
+			if (e.type === "fumbleRecovery") {
+				// e.yds in fumble is the return yards, ydsBefore is where the turnover actually happens
 				prevPlay.yards += e.ydsBefore;
 			}
 
@@ -714,6 +718,7 @@ const processLiveGameEvents = ({
 				e.type === "puntReturn" ||
 				e.type === "fumbleRecovery" ||
 				e.type === "interception" ||
+				e.type === "interceptionReturn" ||
 				e.type === "sack" ||
 				e.type === "passComplete" ||
 				e.type === "run" ||

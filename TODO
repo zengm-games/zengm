@@ -15,8 +15,10 @@ FBGM show field during game
 - sub plays
   - fumble on kick return?
   - "for the offense" - replacce with abbrev
-- separate "interception" event like fumble, for UI to show in popover of first play
-- Alt+C skipping fumbles?
+- Alt+C skipping fumbles? and now interceptions too, maybe since splitting into two events somehow
+- set turnover rates back to normal
+- scrimmage mismatch still happens, <1 per game
+- ABBREV1 in scoring summary
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

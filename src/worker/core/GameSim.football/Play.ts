@@ -8,6 +8,8 @@ export const SCRIMMAGE_KICKOFF = 35;
 const SCRIMMAGE_KICKOFF_SAFETY = 20;
 export const SCRIMMAGE_EXTRA_POINT = 85;
 export const SCRIMMAGE_TWO_POINT_CONVERSION = 98;
+const SCRIMMAGE_TOUCHBACK_KICKOFF = 25;
+const SCRIMMAGE_TOUCHBACK = 20;
 
 type PlayEvent =
 	| {
@@ -625,7 +627,7 @@ class Play {
 		} else if (event.type === "k" || event.type === "onsideKick") {
 			state.scrimmage = 100 - event.kickTo;
 		} else if (event.type === "touchbackKick") {
-			state.scrimmage = 25;
+			state.scrimmage = SCRIMMAGE_TOUCHBACK_KICKOFF;
 		} else if (event.type === "kr") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "onsideKickRecovery") {
@@ -636,9 +638,9 @@ class Play {
 		} else if (event.type === "p") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "touchbackPunt") {
-			state.scrimmage = 20;
+			state.scrimmage = SCRIMMAGE_TOUCHBACK;
 		} else if (event.type === "touchbackInt") {
-			state.scrimmage = 20;
+			state.scrimmage = SCRIMMAGE_TOUCHBACK;
 		} else if (event.type === "pr") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "rus") {
@@ -774,7 +776,7 @@ class Play {
 		if (event.type === "fmbRec") {
 			if (state.scrimmage <= 0) {
 				if (event.lost) {
-					state.scrimmage = 20;
+					state.scrimmage = SCRIMMAGE_TOUCHBACK;
 					touchback = true;
 				} else {
 					safety = true;

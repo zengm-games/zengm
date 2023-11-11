@@ -16,6 +16,8 @@ FBGM show field during game
   - some indication of direction in the bars? idk, only confusing on weird plays
 - set turnover rates back to normal
 - scrimmage mismatch still happens, <1 per game
+  - touchback not being applied properly
+  - fumbleRecovery and interceptionReturn can be touchbacks
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

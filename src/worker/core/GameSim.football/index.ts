@@ -1150,7 +1150,7 @@ class GameSim extends GameSimBase {
 			const kickTo = this.awaitingAfterSafety
 				? random.randInt(15, 35)
 				: random.randInt(-10, 10);
-			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() > 0.8);
+			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() < 0.8);
 			this.currentPlay.addEvent({
 				type: "k",
 				kickTo,

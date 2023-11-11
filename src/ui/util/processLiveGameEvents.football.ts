@@ -524,6 +524,7 @@ const processLiveGameEvents = ({
 					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
 						console.log("YARDS MISMATCH");
 						console.log(prevPlay.yards, e.scrimmage - prevPlay.scrimmage);
+						console.log(e, sportState);
 						debugger;
 					}
 					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;

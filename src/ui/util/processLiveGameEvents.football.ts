@@ -447,13 +447,15 @@ const processLiveGameEvents = ({
 		) {
 			const prevPlay = sportState.plays.at(-1)!;
 			if (e.type === "fumbleRecovery" || e.type === "interception") {
-				prevPlay.turnover = true;
+				if (e.type === "interception" || e.lost) {
+					prevPlay.turnover = true;
+				}
 
 				// e.yds in interception/fumble is the return yards, ydsBefore is where the turnover actually happens
 				prevPlay.yards += e.ydsBefore;
 			}
 
-			const scrimmage = sportState.scrimmage + prevPlay.yards;
+			const scrimmage = prevPlay.scrimmage + prevPlay.yards;
 
 			addNewPlay({
 				down: prevPlay.down,

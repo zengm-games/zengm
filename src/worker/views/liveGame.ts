@@ -162,7 +162,6 @@ const updatePlayByPlay = async (
 		const boxScore: any = helpers.deepCopy(
 			await idb.cache.games.get(inputs.gid),
 		);
-		console.log(boxScore);
 
 		const allStarGame =
 			boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;

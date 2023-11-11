@@ -522,10 +522,7 @@ const processLiveGameEvents = ({
 				const prevPlay = sportState.plays.at(-2);
 				if (prevPlay) {
 					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
-						console.log("YARDS MISMATCH");
-						console.log(prevPlay.yards, e.scrimmage - prevPlay.scrimmage);
-						console.log(e, sportState);
-						debugger;
+						throw new Error("Yards mismatch");
 					}
 					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 				}
@@ -678,15 +675,23 @@ const processLiveGameEvents = ({
 					play.yards = scrimmageAfter - play.scrimmage;
 				}
 
-				const flagIndex = play.flags.indexOf(null);
-				if (flagIndex >= 0) {
-					play.flags[flagIndex] = {
-						text: text!,
-						accept,
-					};
-				} else {
-					console.log("MISSING FLAG INDEX");
-					debugger;
+				// Realize the flag by replacing the blank flag with the penalty details. Need to search prior plays in case the current play is a sub-play (like interception return, but flag was for offsides before the interception)
+				let flagFound = false;
+				for (let i = sportState.plays.length - 1; i >= 0; i--) {
+					const flagPlay = sportState.plays[i];
+					const flagIndex = flagPlay.flags.indexOf(null);
+					if (flagIndex >= 0) {
+						flagPlay.flags[flagIndex] = {
+							text: text!,
+							accept,
+						};
+
+						flagFound = true;
+						break;
+					}
+				}
+				if (!flagFound) {
+					throw new Error("Flag not found");
 				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
 				removeLastScoreOrTurnoversOrPuntReturnIfNecessary();

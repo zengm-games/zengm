@@ -18,8 +18,6 @@ FBGM show field during game
     - rather than removing a row from sportState.plays, might be better to mark it as overturned
     - but when rolling back for penalties, we kind of need to delete, because that lets us show the penalty in the main bar, not in a sub-play bar
 - set turnover rates back to normal
-- orphan flags
-  - sub-play messes up flag realization, so they remain yellow forever if on parent of sub-play
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

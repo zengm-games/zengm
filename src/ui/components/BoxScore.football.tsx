@@ -716,8 +716,16 @@ const FieldAndDrive = ({
 												) : null
 											) : (
 												<li>
-													{helpers.ordinal(play.down)} & {play.toGo},{" "}
-													{scrimmageToFieldPos(play.scrimmage)}
+													{!play.subPlay ? (
+														<>
+															{helpers.ordinal(play.down)} & {play.toGo},{" "}
+														</>
+													) : null}
+													{scrimmageToFieldPos(
+														play.scrimmage,
+														boxScore.teams[t].abbrev,
+														boxScore.teams[t2].abbrev,
+													)}
 												</li>
 											)}
 											{play.texts.map((text, j) => (

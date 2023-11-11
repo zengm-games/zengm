@@ -1543,7 +1543,6 @@ class GameSim extends GameSimBase {
 	}
 
 	probFumble(p: PlayerGameSim) {
-		return 0.5;
 		return (
 			0.0125 * (1.5 - p.compositeRating.ballSecurity) * g.get("fumbleFactor")
 		);
@@ -1761,7 +1760,6 @@ class GameSim extends GameSimBase {
 	}
 
 	probInt(qb: PlayerGameSim, defender: PlayerGameSim) {
-		return 0.5;
 		return (
 			((((0.004 * this.team[this.d].compositeRating.passCoverage +
 				0.022 * defender.compositeRating.passCoverage) /

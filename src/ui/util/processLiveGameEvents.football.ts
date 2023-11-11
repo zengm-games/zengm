@@ -789,8 +789,6 @@ const processLiveGameEvents = ({
 		}
 	}
 
-	window.sportState = sportState;
-
 	return {
 		overtimes,
 		possessionChange,

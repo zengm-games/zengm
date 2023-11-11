@@ -610,7 +610,8 @@ const processLiveGameEvents = ({
 			}
 
 			// A penalty might overturn a score or a turnover or multiple turnovers. In this case, we want to immediately update the play bar on the field, so it's no longer showing a turnover or score erroneously (looks weird after yardage changes). But we don't have the event for the actual reverted turnover/score yet. Solution? Look ahead and find it!
-			const removeLastScoreOrTurnoversIfNecessary = () => {
+			// We also need to handle punt returns here, in the case where a penalty on the play results in another down for the kicking team. Basically, anything that adds a subplay needs to be here, except kickoff returns because currently penalties there are always assessed on the return.
+			const removeLastScoreOrTurnoversOrPuntReturnIfNecessary = () => {
 				// Look at all events up until the next "clock" event, which is the start of the next play
 				for (const event of events) {
 					if (event.type === "clock") {
@@ -621,7 +622,9 @@ const processLiveGameEvents = ({
 					if (event.type === "stat") {
 						if (
 							event.amt === -1 &&
-							(event.s === "defInt" || event.s === "defFmbRec")
+							(event.s === "defInt" ||
+								event.s === "defFmbRec" ||
+								event.s === "pnt")
 						) {
 							sportState.plays.pop();
 
@@ -653,7 +656,7 @@ const processLiveGameEvents = ({
 						play.t = actualT2;
 					}*/
 
-					removeLastScoreOrTurnoversIfNecessary();
+					removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
 
 					// play might have been removed by removeLastScoreOrTurnoversIfNecessary
 					play = sportState.plays.at(-1);
@@ -681,9 +684,12 @@ const processLiveGameEvents = ({
 						text: text!,
 						accept,
 					};
+				} else {
+					console.log("MISSING FLAG INDEX");
+					debugger;
 				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
-				removeLastScoreOrTurnoversIfNecessary();
+				removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
 
 				// play might have been removed by removeLastScoreOrTurnoversIfNecessary
 				play = sportState.plays.at(-1);

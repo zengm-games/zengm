@@ -18,6 +18,7 @@ import range from "lodash-es/range";
 import classNames from "classnames";
 import {
 	formatClock,
+	formatDownAndDistance,
 	getScoreInfo,
 	getText,
 	scrimmageToFieldPos,
@@ -522,7 +523,8 @@ const PlayBar = forwardRef<
 		},
 		ref,
 	) => {
-		const TAG_WIDTH = 60;
+		const goalToGo = play.toGo + play.scrimmage >= 100;
+		const TAG_WIDTH = goalToGo ? 75 : 60;
 		const SCORE_TAG_WIDTH = 30;
 
 		const negative = play.yards < 0;
@@ -627,7 +629,11 @@ const PlayBar = forwardRef<
 							{play.tagOverride ??
 								(kickoff
 									? "Kickoff"
-									: `${helpers.ordinal(play.down)} & ${play.toGo}`)}
+									: formatDownAndDistance(
+											play.down,
+											play.toGo,
+											play.scrimmage,
+									  ))}
 						</div>
 					) : (
 						<>&nbsp;</>

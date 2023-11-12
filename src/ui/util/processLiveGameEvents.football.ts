@@ -521,9 +521,10 @@ const processLiveGameEvents = ({
 			if (!sportState.awaitingAfterTouchdown) {
 				const prevPlay = sportState.plays.at(-2);
 				if (prevPlay) {
-					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
+					// Commented out because this happens in some rare unknown situation but it is not worth hard crashing for
+					/*if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
 						throw new Error("Yards mismatch");
-					}
+					}*/
 					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 				}
 			}

@@ -1,3 +1,9 @@
+clinching playoffs is wrong if you change numGames during season - uses changed value
+- https://discord.com/channels/290013534023057409/290015591216054273/1173151736609910824
+- need to add history to numGames
+
+for a player traded mid-season, link on player profile game log page to team goes to TOT_-8
+
 FBGM move event text generation to UI
 - to fix after
   - possessionChangeTexts
@@ -6,8 +12,6 @@ FBGM move event text generation to UI
   - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
   - too many formatClock calls
   - refactor getScoreInfo
-
-for a player traded mid-season, link on player profile game log page to team goes to TOT_-8
 
 FBGM show field during game
 - later
@@ -38,6 +42,7 @@ FBGM
 - make it harder to gain yards in the red zone https://discord.com/channels/290013534023057409/331882115119448065/1171978572940976210
 - penalties on XP/2pt need to be handled differently. if you switch from one to the other, the penalties tack on to that starting position. so currently they are disabled
 - add fumbles on kick/punt returns
+- punt shouldn't so commonly be touchbacks
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

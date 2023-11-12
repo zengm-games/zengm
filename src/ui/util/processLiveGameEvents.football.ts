@@ -535,10 +535,15 @@ const processLiveGameEvents = ({
 			if (!sportState.awaitingAfterTouchdown) {
 				const prevPlay = sportState.plays.at(-2);
 				if (prevPlay) {
-					// Commented out because this happens in some rare unknown situation but it is not worth hard crashing for
-					/*if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
-						throw new Error("Yards mismatch");
-					}*/
+					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
+						console.log(
+							"Yards mismatch",
+							prevPlay.yards,
+							e.scrimmage,
+							sportState,
+							e,
+						);
+					}
 					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 				}
 			}
@@ -706,7 +711,7 @@ const processLiveGameEvents = ({
 					}
 				}
 				if (!flagFound) {
-					throw new Error("Flag not found");
+					console.log("Flag not found", sportState.plays, e);
 				}
 			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
 				removeLastScoreOrTurnoversOrPuntReturnIfNecessary();

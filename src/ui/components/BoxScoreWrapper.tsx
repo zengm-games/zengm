@@ -1,17 +1,27 @@
 import classNames from "classnames";
 import range from "lodash-es/range";
-import { useCallback, useEffect, useState, useRef } from "react";
+import {
+	useCallback,
+	useEffect,
+	useState,
+	useRef,
+	type CSSProperties,
+} from "react";
 import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../util";
 import BoxScore from "./BoxScore";
 
 const TeamNameLink = ({
 	children,
+	className,
 	season,
+	style,
 	t,
 }: {
 	children: any;
+	className?: string;
 	season: number;
+	style?: CSSProperties;
 	t: {
 		abbrev: string;
 		name: string;
@@ -20,7 +30,11 @@ const TeamNameLink = ({
 	};
 }) => {
 	return t.tid >= 0 ? (
-		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}>
+		<a
+			href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}
+			className={className}
+			style={style}
+		>
 			{children}
 		</a>
 	) : (
@@ -48,15 +62,14 @@ const TeamLogo = ({
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
 		<div className="w-100 d-none d-lg-flex justify-content-center">
 			<div>
-				<div style={{ height: 100 }} className="d-flex align-items-center">
-					<TeamNameLink season={season} t={t}>
-						<img
-							src={t.imgURL}
-							alt=""
-							style={{ maxWidth: 120, maxHeight: 100 }}
-						/>
-					</TeamNameLink>
-				</div>
+				<TeamNameLink
+					season={season}
+					t={t}
+					className="d-flex align-items-center justify-content-center"
+					style={{ height: 100, width: 120 }}
+				>
+					<img className="mw-100 mh-100" src={t.imgURL} alt="" />
+				</TeamNameLink>
 				<div className="mt-1 mb-3 fw-bold">{helpers.formatRecord(t)}</div>
 			</div>
 		</div>

@@ -107,6 +107,16 @@ export const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
+export const formatDownAndDistance = (
+	down: number,
+	toGo: number,
+	scrimmage: number,
+) => {
+	const toGoText = scrimmage + toGo >= 100 ? "goal" : toGo;
+
+	return `${helpers.ordinal(down)} & ${toGoText}`;
+};
+
 const descriptionYdsTD = (
 	yds: number,
 	td: boolean,
@@ -491,7 +501,11 @@ const processLiveGameEvents = ({
 
 					textWithoutTime = `${
 						boxScore.teams[actualT].abbrev
-					} ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
+					} ball, ${formatDownAndDistance(
+						e.down,
+						e.toGo,
+						e.scrimmage,
+					)}, ${fieldPos}`;
 				}
 				text = `${time} - ${textWithoutTime}`;
 

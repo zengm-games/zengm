@@ -18,6 +18,7 @@ import range from "lodash-es/range";
 import classNames from "classnames";
 import {
 	formatClock,
+	formatDownAndDistance,
 	getScoreInfo,
 	getText,
 	scrimmageToFieldPos,
@@ -223,6 +224,7 @@ const processEvents = (
 	numPeriods: number,
 	abbrev0: string,
 	abbrev1: string,
+	liveGameSim: boolean,
 ) => {
 	const processedEvents: {
 		quarter: string;
@@ -253,8 +255,8 @@ const processEvents = (
 			continue;
 		}
 
-		// Somehow actualT doesn't need to be swapped? idk
-		const actualT = event.t;
+		// gameLog.ts swaps these, but liveGame.ts doesn't (because they come from the raw events in FBGM, but not in the other games - ugh)
+		const actualT = liveGameSim ? (event.t === 0 ? 1 : 0) : event.t;
 		const otherT = actualT === 0 ? 1 : 0;
 
 		const scoreInfo = getScoreInfo(text);
@@ -305,6 +307,7 @@ const ScoringSummary = memo(
 		abbrev0,
 		abbrev1,
 		events,
+		liveGameSim,
 		numPeriods,
 		teams,
 	}: {
@@ -312,12 +315,19 @@ const ScoringSummary = memo(
 		abbrev1: string;
 		count: number;
 		events: PlayByPlayEventScore[];
+		liveGameSim: boolean;
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
 		let prevQuarter: string;
 
-		const processedEvents = processEvents(events, numPeriods, abbrev0, abbrev1);
+		const processedEvents = processEvents(
+			events,
+			numPeriods,
+			abbrev0,
+			abbrev1,
+			liveGameSim,
+		);
 
 		if (processedEvents.length === 0) {
 			return <p>None</p>;
@@ -513,7 +523,8 @@ const PlayBar = forwardRef<
 		},
 		ref,
 	) => {
-		const TAG_WIDTH = 60;
+		const goalToGo = play.toGo + play.scrimmage >= 100;
+		const TAG_WIDTH = goalToGo ? 75 : 60;
 		const SCORE_TAG_WIDTH = 30;
 
 		const negative = play.yards < 0;
@@ -618,7 +629,11 @@ const PlayBar = forwardRef<
 							{play.tagOverride ??
 								(kickoff
 									? "Kickoff"
-									: `${helpers.ordinal(play.down)} & ${play.toGo}`)}
+									: formatDownAndDistance(
+											play.down,
+											play.toGo,
+											play.scrimmage,
+									  ))}
 						</div>
 					) : (
 						<>&nbsp;</>
@@ -805,6 +820,7 @@ const BoxScore = ({
 				abbrev1={boxScore.teams[1].abbrev}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
+				liveGameSim={liveGameSim}
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>

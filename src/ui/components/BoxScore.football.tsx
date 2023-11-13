@@ -483,14 +483,23 @@ const yardLineToPercent = (yards: number) => {
 	return ((10 + yards) * 10) / NUM_SECTIONS;
 };
 
-const VerticalLine = ({ color, yards }: { color: string; yards: number }) => {
+const VerticalLine = ({
+	color,
+	driveDirection,
+	yards,
+}: {
+	color: string;
+	driveDirection: boolean;
+	yards: number;
+}) => {
+	const yardsNormalized = driveDirection ? yards : 100 - yards;
 	return (
 		<div
 			className="position-absolute h-100"
 			style={{
 				width: 2,
 				backgroundColor: color,
-				left: `${yardLineToPercent(yards)}%`,
+				left: `${yardLineToPercent(yardsNormalized)}%`,
 			}}
 		/>
 	);
@@ -510,6 +519,7 @@ const PlayBar = forwardRef<
 		first: boolean;
 		kickoff: boolean;
 		last: boolean;
+		driveDirection: boolean;
 		play: SportState["plays"][number];
 	}
 >(
@@ -519,6 +529,7 @@ const PlayBar = forwardRef<
 			kickoff,
 			last,
 			play,
+			driveDirection,
 			...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
 		},
 		ref,
@@ -528,6 +539,8 @@ const PlayBar = forwardRef<
 		const SCORE_TAG_WIDTH = 30;
 
 		const negative = play.yards < 0;
+
+		const barGoingLeft = driveDirection === negative;
 
 		const turnover = play.turnover;
 
@@ -544,47 +557,93 @@ const PlayBar = forwardRef<
 
 		const showTag = !play.subPlay;
 
-		// -2 is to account for border
-		let marginLeft;
-		if (negative) {
-			marginLeft = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
-				score ? SCORE_TAG_WIDTH : 0
-			}px)`;
+		// Extra 2px is to account for border
+		let margin;
+		if (driveDirection) {
+			if (negative) {
+				margin = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
+					score ? SCORE_TAG_WIDTH : 0
+				}px)`;
+			} else {
+				margin = `calc(${yardLinePercent}% - ${showTag ? TAG_WIDTH - 2 : 0}px)`;
+			}
 		} else {
-			marginLeft = `calc(${yardLinePercent}% - ${
-				showTag ? TAG_WIDTH - 2 : 0
-			}px)`;
+			if (negative) {
+				margin = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
+					(score ? SCORE_TAG_WIDTH : 0) + 2
+				}px)`;
+			} else {
+				margin = `calc(${yardLinePercent}% - ${showTag ? TAG_WIDTH : 0}px)`;
+			}
 		}
 
-		const borderStyleName = negative ? "borderLeft" : ("borderRight" as const);
+		const borderStyleName = barGoingLeft
+			? "borderLeft"
+			: ("borderRight" as const);
 
 		const scoreTag = score ? (
 			<div
 				className={`px-1 ${
-					negative ? "text-end rounded-start" : "text-start rounded-end"
+					barGoingLeft ? "text-end rounded-start" : "text-start rounded-end"
 				}`}
 				style={{
 					backgroundColor: turnover ? red : lightGreen,
 					color: turnover ? "#fff" : "#000",
-					width: negative ? SCORE_TAG_WIDTH : undefined,
+					width: barGoingLeft ? SCORE_TAG_WIDTH : undefined,
 				}}
 			>
 				{score}
 			</div>
 		) : null;
 
+		const flags =
+			play.flags.length > 0
+				? play.flags.map((flagInfo, i) => (
+						<OverlayTrigger
+							key={i}
+							trigger={["click", "hover"]}
+							placement="auto"
+							overlay={
+								<Popover>
+									<Popover.Body>
+										{flagInfo?.text ?? "Flag on the play"}
+									</Popover.Body>
+								</Popover>
+							}
+							rootClose
+						>
+							<span
+								className="glyphicon glyphicon-stop"
+								style={{
+									color: !flagInfo ? yellow : flagInfo.accept ? red : lightGray,
+
+									// Center icon vertically
+									lineHeight: "unset",
+									top: "unset",
+								}}
+							/>
+						</OverlayTrigger>
+				  ))
+				: null;
+		if (flags && !driveDirection) {
+			flags.reverse();
+		}
+
 		return (
 			<div
-				className={`d-flex ${first ? "mt-4" : "mt-1"}${last ? " mb-4" : ""}`}
+				className={`d-flex ${!driveDirection ? "justify-content-end " : ""}${
+					first ? "mt-4" : "mt-1"
+				}${last ? " mb-4" : ""}`}
 				style={{
 					// For some reason this puts it above the field background and below dropdown menus
 					zIndex: 0,
 				}}
 			>
+				{!driveDirection ? flags : null}
 				<div
 					ref={ref}
-					className={`d-flex${negative && showTag ? " rounded-end" : ""}${
-						(!negative && showTag) || (negative && score)
+					className={`d-flex${barGoingLeft && showTag ? " rounded-end" : ""}${
+						(!barGoingLeft && showTag) || (barGoingLeft && score)
 							? " rounded-start"
 							: ""
 					}`}
@@ -596,19 +655,19 @@ const PlayBar = forwardRef<
 							: play.intendedPossessionChange
 							? darkGray
 							: blue,
-						marginLeft,
+						[driveDirection ? "marginLeft" : "marginRight"]: margin,
 						width: `calc(${
-							(score && negative ? SCORE_TAG_WIDTH : 0) +
+							(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
 							(showTag ? TAG_WIDTH : 0)
 						}px + ${yardsPercent}%)`,
 					}}
 					{...props}
 				>
-					{score && negative ? scoreTag : null}
+					{score && barGoingLeft ? scoreTag : null}
 					{showTag ? (
 						<div
 							className={`${
-								negative
+								barGoingLeft
 									? "text-start ps-1 rounded-end ms-auto"
 									: "text-end pe-1 rounded-start"
 							}`}
@@ -639,39 +698,8 @@ const PlayBar = forwardRef<
 						<>&nbsp;</>
 					)}
 				</div>
-				{score && !negative ? scoreTag : null}
-				{play.flags.length > 0
-					? play.flags.map((flagInfo, i) => (
-							<OverlayTrigger
-								key={i}
-								trigger={["click", "hover"]}
-								placement="auto"
-								overlay={
-									<Popover>
-										<Popover.Body>
-											{flagInfo?.text ?? "Flag on the play"}
-										</Popover.Body>
-									</Popover>
-								}
-								rootClose
-							>
-								<span
-									className="glyphicon glyphicon-stop"
-									style={{
-										color: !flagInfo
-											? yellow
-											: flagInfo.accept
-											? red
-											: lightGray,
-
-										// Center icon vertically
-										lineHeight: "unset",
-										top: "unset",
-									}}
-								/>
-							</OverlayTrigger>
-					  ))
-					: null}
+				{score && !barGoingLeft ? scoreTag : null}
+				{driveDirection ? flags : null}
 			</div>
 		);
 	},
@@ -701,6 +729,9 @@ const FieldAndDrive = ({
 	const latestPlay = sportState.plays.at(-1);
 	const latestText = latestPlay?.texts.at(-1);
 
+	// true means the drive is going from left to right, left means the opposite
+	const driveDirection = sportState.t === 0;
+
 	return (
 		<div className="mb-3">
 			<div
@@ -709,17 +740,19 @@ const FieldAndDrive = ({
 					minHeight: DEFAULT_HEIGHT,
 				}}
 			>
-				<FieldBackground t={boxScore.teams[t]} t2={boxScore.teams[t2]} />
+				<FieldBackground t={boxScore.teams[0]} t2={boxScore.teams[1]} />
 				{!sportState.newPeriodText ? (
 					<>
 						<VerticalLine
 							color={blue}
 							yards={sportState.scrimmage ?? sportState.scrimmage}
+							driveDirection={driveDirection}
 						/>
 						{!sportState.awaitingKickoff ? (
 							<VerticalLine
 								color={yellow}
 								yards={sportState.scrimmage + sportState.toGo}
+								driveDirection={driveDirection}
 							/>
 						) : null}
 					</>
@@ -767,6 +800,7 @@ const FieldAndDrive = ({
 								first={i === 0}
 								kickoff={sportState.awaitingKickoff}
 								last={i === sportState.plays.length - 1}
+								driveDirection={driveDirection}
 								play={play}
 							/>
 						</OverlayTrigger>

@@ -1,5 +1,3 @@
-for a player traded mid-season, link on player profile game log page to team goes to TOT_-8
-
 FBGM move event text generation to UI
 - to fix after
   - possessionChangeTexts
@@ -41,6 +39,10 @@ FBGM
 - in live sim, put a ball under the team with possession currently
 - punt shouldn't so commonly be touchbacks
 - OL stats
+- re-evaluate team value formula, especially WR now that speed matters more
+- if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
+  - it really should be based on probability of making XP and probability of making TP making TP
+  - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history
@@ -48,19 +50,9 @@ button to randomize all contracts as if a new league https://old.reddit.com/r/nb
 - put in danger zone
 - maybe build into fantasy draft too?
 
-FBGM
-- re-evaluate team value formula, especially WR now that speed matters more
-- if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
-  - it really should be based on probability of making XP and probability of making TP making TP
-  - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
-
 Salary cap soft isn't deleted in scheduled events for league finance changes. The only way to delete it is to delete all scheduled future events. https://discord.com/channels/290013534023057409/290015591216054273/1165502045269282816
 
-The new cba made roster spots 18 now (+1 in real player leagues) https://discord.com/channels/290013534023057409/290015591216054273/1165501403444289627
-
 Biggest busts and draft class rankings don't show NBA history and are empty in new leagues, but best player at every pick and biggest steals do. https://discord.com/channels/290013534023057409/290015591216054273/1165499365771726898
-
-if you're fired the year an expansion team joins, you can only join one of the new expansion teams https://discord.com/channels/290013534023057409/290015591216054273/1164984525307269180
 
 retired jersey numbers for real players leagues are based on the date the jersey was retired, meaning it'll never happen for already-retired players because BBGM only checks right after retirement https://discord.com/channels/290013534023057409/290015591216054273/1164793638518276117
 - could make it bump up the date for retired players, same as it does for HoF

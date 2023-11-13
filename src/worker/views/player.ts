@@ -430,7 +430,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 			// Jersey number
 			const stats = p.stats.findLast(
-				row => row.season === season && !row.playoffs,
+				row => row.season === season && !row.playoffs && row.tid >= 0,
 			);
 			if (stats) {
 				if (stats.jerseyNumber !== undefined) {

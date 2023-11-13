@@ -213,7 +213,10 @@ const getSemiFinalsMvp = async (
 // Not great to use defaultGameAttributes here, because it messes up for non-default settings. Would be better to use the real value, but that's not stored for previous seasons. For completed seasons, might be good to have a flag indicating that, and then just make winpScale 1.
 
 export const mvpScore = (p: PlayerFiltered) => {
-	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
+	const winpScale = Math.min(
+		p.teamInfo.gp / defaultGameAttributes.numGames[0].value,
+		1,
+	);
 	return (
 		winpScale * p.teamInfo.winp +
 		p.currentStats.ewa / 22 +
@@ -223,9 +226,12 @@ export const mvpScore = (p: PlayerFiltered) => {
 };
 
 export const smoyScore = (p: PlayerFiltered) => {
-	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
+	const winpScale = Math.min(
+		p.teamInfo.gp / defaultGameAttributes.numGames[0].value,
+		1,
+	);
 	const perGameScale = Math.min(
-		p.currentStats.gp / defaultGameAttributes.numGames,
+		p.currentStats.gp / defaultGameAttributes.numGames[0].value,
 		1,
 	);
 	return (
@@ -239,7 +245,7 @@ export const smoyScore = (p: PlayerFiltered) => {
 
 export const royScore = (p: PlayerFiltered) => {
 	const perGameScale = Math.min(
-		p.currentStats.gp / defaultGameAttributes.numGames,
+		p.currentStats.gp / defaultGameAttributes.numGames[0].value,
 		1,
 	);
 	return (
@@ -250,9 +256,12 @@ export const royScore = (p: PlayerFiltered) => {
 };
 
 export const dpoyScore = (p: PlayerFiltered) => {
-	const winpScale = Math.min(p.teamInfo.gp / defaultGameAttributes.numGames, 1);
+	const winpScale = Math.min(
+		p.teamInfo.gp / defaultGameAttributes.numGames[0].value,
+		1,
+	);
 	const perGameScale = Math.min(
-		p.currentStats.gp / defaultGameAttributes.numGames,
+		p.currentStats.gp / defaultGameAttributes.numGames[0].value,
 		1,
 	);
 

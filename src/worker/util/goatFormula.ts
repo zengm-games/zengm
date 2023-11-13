@@ -75,7 +75,7 @@ const evaluate = (
 		football: 7,
 		hockey: 20,
 	});
-	const MIN_GP_TOTAL = defaultGameAttributes.numGames;
+	const MIN_GP_TOTAL = defaultGameAttributes.numGames[0].value;
 
 	const goatFormula =
 		formula ??

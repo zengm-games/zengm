@@ -578,7 +578,7 @@ export const playerMeetsCategoryRequirements = ({
 
 	// To handle changes in number of games, playing time, etc
 	const factor =
-		(g.get("numGames") / defaultGameAttributes.numGames) *
+		(g.get("numGames") / defaultGameAttributes.numGames[0].value) *
 		numPlayersOnCourtFactor *
 		helpers.quarterLengthFactor();
 
@@ -616,7 +616,10 @@ export const playerMeetsCategoryRequirements = ({
 
 			// Special case GP
 			if (minStat === "gp") {
-				if (playerValue / gpTeam >= minValue / defaultGameAttributes.numGames) {
+				if (
+					playerValue / gpTeam >=
+					minValue / defaultGameAttributes.numGames[0].value
+				) {
 					pass = true;
 					break; // If one is true, don't need to check the others
 				}

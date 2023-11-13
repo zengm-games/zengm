@@ -40,7 +40,7 @@ const madeHof = (
 
 	const scaleFactor =
 		(helpers.quarterLengthFactor() * g.get("numGames")) /
-		defaultGameAttributes.numGames;
+		defaultGameAttributes.numGames[0].value;
 
 	// Final formula
 	return score > 100 * scaleFactor * g.get("hofFactor");

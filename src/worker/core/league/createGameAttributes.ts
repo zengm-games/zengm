@@ -257,7 +257,7 @@ const createGameAttributes = async (
 	{
 		const info = getInitialNumGamesConfDivSettings(teamInfos, {
 			divs: unwrapGameAttribute(gameAttributes, "divs"),
-			numGames: gameAttributes.numGames,
+			numGames: unwrapGameAttribute(gameAttributes, "numGames"),
 			numGamesConf: gameAttributes.numGamesConf,
 			numGamesDiv: gameAttributes.numGamesDiv,
 		});

@@ -449,14 +449,15 @@ const newPhaseBeforeDraft = async (
 
 			// Heal injures - this happens for repeatSeasonType === "players" too!
 			if (p.injury.gamesRemaining > 0 || p.injury.type !== "Healthy") {
+				const numGames = defaultGameAttributes.numGames[0].value;
 				// This doesn't use g.get("numGames") because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
-				if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
+				if (p.injury.gamesRemaining <= numGames) {
 					p.injury = {
 						type: "Healthy",
 						gamesRemaining: 0,
 					};
 				} else {
-					p.injury.gamesRemaining -= defaultGameAttributes.numGames;
+					p.injury.gamesRemaining -= numGames;
 				}
 
 				update = true;

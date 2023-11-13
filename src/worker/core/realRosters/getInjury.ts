@@ -51,7 +51,7 @@ const getGamesToHeal = ({
 	}
 
 	if (passedAfterPlayoffs) {
-		gamesToHeal += defaultGameAttributes.numGames;
+		gamesToHeal += defaultGameAttributes.numGames[0].value;
 	}
 
 	if (passedFreeAgency) {

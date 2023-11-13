@@ -156,7 +156,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	minRosterSize: 10,
 	maxRosterSize: 15,
 	softCapTradeSalaryMatch: 125,
-	numGames: 82, // per season
+	numGames: wrap(82), // per season
 	numGamesDiv: 16,
 	numGamesConf: 36,
 	otherTeamsWantToHire: false,
@@ -352,7 +352,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("football")
 		? {
-				numGames: 17,
+				numGames: wrap(17),
 				numGamesDiv: 6,
 				numGamesConf: 6,
 				quarterLength: 15,
@@ -438,7 +438,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("baseball")
 		? {
-				numGames: 162,
+				numGames: wrap(162),
 				numGamesDiv: 76,
 				numGamesConf: null,
 				numGamesPlayoffSeries: wrap([3, 5, 7, 7]),

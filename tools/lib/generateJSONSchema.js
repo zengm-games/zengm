@@ -1076,10 +1076,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "integer",
 								minimum: 0,
 							},
-							numGames: {
+							numGames: wrap({
 								type: "integer",
 								minimum: 0,
-							},
+							}),
 							numGamesDiv: {
 								anyOf: [
 									{

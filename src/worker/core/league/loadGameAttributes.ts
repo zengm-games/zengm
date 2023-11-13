@@ -13,6 +13,7 @@ export const ALWAYS_WRAP = [
 	"confs",
 	"divs",
 	"maxOvertimes",
+	"numGames",
 	"numGamesPlayoffSeries",
 	"numPlayoffByes",
 	"otl",

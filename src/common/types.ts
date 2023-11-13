@@ -706,6 +706,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "confs"
 	| "divs"
 	| "maxOvertimes"
+	| "numGames"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
@@ -717,6 +718,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
 	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
 	maxOvertimes: GameAttributeWithHistory<GameAttributesLeague["maxOvertimes"]>;
+	numGames: GameAttributeWithHistory<GameAttributesLeague["numGames"]>;
 	numGamesPlayoffSeries: GameAttributeWithHistory<
 		GameAttributesLeague["numGamesPlayoffSeries"]
 	>;

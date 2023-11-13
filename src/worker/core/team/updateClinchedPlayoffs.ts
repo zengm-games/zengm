@@ -29,7 +29,7 @@ const getClinchedPlayoffs = async (
 			const gp = helpers.getTeamSeasonGp(t2);
 
 			// Will be wrong if a team is missing a game due to scheduling constraints
-			const gamesLeft = g.get("numGames") - gp;
+			const gamesLeft = g.get("numGames", "current") - gp;
 
 			const stats = teamStats.get(t2.tid);
 
@@ -122,7 +122,7 @@ const getClinchedPlayoffs = async (
 				const gp = helpers.getTeamSeasonGp(t2);
 
 				// Will be wrong if a team is missing a game due to scheduling constraints
-				const gamesLeft = g.get("numGames") - gp;
+				const gamesLeft = g.get("numGames", "current") - gp;
 
 				const stats = teamStats.get(t2.tid);
 

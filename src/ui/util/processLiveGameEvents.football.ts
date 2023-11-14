@@ -768,8 +768,8 @@ const processLiveGameEvents = ({
 				) {
 					const SCRIMMAGE_TOUCHBACK = 20;
 
-					// Not sure why this doesn't need to be adjusted for reversedField, but I tested it and this works!
-					play.yards = SCRIMMAGE_TOUCHBACK - play.scrimmage;
+					// (100 - play.scrimmage) is for the case when scrimmage is further than 100 (never happens?) or less than 100 (presumably momentum carried defender a yard or two into the endzone)
+					play.yards = -SCRIMMAGE_TOUCHBACK + (100 - play.scrimmage);
 				} else {
 					play.yards += (reversedField ? -1 : 1) * e.yds;
 				}

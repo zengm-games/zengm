@@ -1,3 +1,16 @@
+better advancing to change of possession - do it before prior drive ends, if possible https://old.reddit.com/r/Football_GM/comments/17tnpwu/big_fbgm_live_sim_update_in_version_202311120683/k92vk93/?context=3
+- on new quarter with kickoff
+- on punt
+- on interception
+- on lost fumble
+- on made/missed FG
+- on made/missed XP
+- on made/missed 2Pt
+  - how to idenfity? awaitingKickoff?
+- how to deal with penalty?
+
+some sportState live sim for basketball/hockey
+
 FBGM move event text generation to UI
 - to fix after
   - possessionChangeTexts
@@ -43,6 +56,10 @@ FBGM
 - if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
   - it really should be based on probability of making XP and probability of making TP making TP
   - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
+- too much parity? https://old.reddit.com/r/Football_GM/comments/17fvo5h/i_love_this_game_but_the_level_of_parity_is_out/
+
+more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
+- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

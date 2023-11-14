@@ -364,16 +364,6 @@ const processLiveGameEvents = ({
 	let text;
 	let possessionChange: boolean = false;
 
-	// Would be better to use event type, if it was available here like in hockey
-	const possessionChangeTexts = [
-		" kicked off ",
-		" punted ",
-		"Intercepted ",
-		"Turnover!",
-		" gets ready to attempt an onside kick",
-		"Turnover on downs",
-	];
-
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 		if (!e) {
@@ -611,10 +601,6 @@ const processLiveGameEvents = ({
 					};
 				}
 
-				possessionChange =
-					possessionChangeTexts.some(text => initialText.includes(text)) ||
-					!!initialText.match(/missed.*yard field goal/);
-
 				// Must include parens so it does not collide with ABBREV0 and ABBREV1 for penalties lol
 				text = initialText
 					.replace("(ABBREV)", `(${boxScore.teams[actualT].abbrev})`)
@@ -799,6 +785,21 @@ const processLiveGameEvents = ({
 			} else if (e.type === "twoPointConversion") {
 				play.tagOverride = "2PA";
 			}
+		}
+
+		if (text !== undefined) {
+			// This is designed to stop at the end of the previous possession, so you can see the prior drive leading up to it. Only exception is the start of a new quarter/overtime, because the drive is cleared before that.
+			// This ignores the possibility of penalties, which can delay or overturn the change of possession. I think that's fine, most people are probably interested in potential changes of possession too.
+			possessionChange =
+				((e.type === "quarter" || e.type === "overtime") &&
+					e.startsWithKickoff) ||
+				e.type === "punt" ||
+				e.type === "interception" ||
+				(e.type === "fumbleRecovery" && e.lost) ||
+				e.type === "turnoverOnDowns" ||
+				e.type === "fieldGoal" ||
+				e.type === "extraPoint" ||
+				(e as any).twoPointConversionTeam !== undefined;
 		}
 
 		if (scoringSummary) {

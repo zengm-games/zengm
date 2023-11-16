@@ -1,3 +1,13 @@
+wrong team abbrev various places
+- box score https://discord.com/channels/290013534023057409/331882115119448065/852551515931017236
+- getTeamInfoBySeason or fixRatingsStatsAbbrevs
+- any abbrev returned in stats or ratings from playersPlus is wrong
+- using team*Cache from UI is probably wrong too
+- draft team in player info https://discord.com/channels/290013534023057409/290015591216054273/1174433419682394303
+
+get rid of lodash
+- https://github.com/angus-c/just
+
 some sportState live sim for basketball/hockey
 
 FBGM move event text generation to UI
@@ -846,12 +856,6 @@ Adjust team rating based on the adjusted ovr of players who are playing through 
 in garbage time, rest players who are playing through injuries
 
 https://en.wikipedia.org/wiki/Three_stars_(ice_hockey)
-
-wrong team abbrev various places
-- box score https://discord.com/channels/290013534023057409/331882115119448065/852551515931017236
-- getTeamInfoBySeason or fixRatingsStatsAbbrevs
-- any abbrev returned in stats or ratings from playersPlus is wrong
-- using team*Cache from UI is probably wrong too
 
 if DRAFT_BY_TEAM_OVR, use position value in draft rankings somehow
 

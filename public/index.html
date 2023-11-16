@@ -128,20 +128,14 @@ function withGoodBrowser() {
   startupWorker.innerHTML = "Loading backend...";
 
   var body = document.getElementsByTagName('body').item(0);
+  var script = document.createElement('script');
+  script.type = "module"; // Needs to be module for modulepreload
   if (checkModern()) {
-    var script = document.createElement('script');
-    script.type = "module"; // Needs to be module for modulepreload
     script.src = "/gen/ui-" + bbgmVersion + ".js";
-    body.appendChild(script);
   } else  {
-    // Need SystemJS for chunk loading
-    var systemJsLoaderTag = document.createElement("script");
-    systemJsLoaderTag.src = "https://unpkg.com/systemjs@6.14.1/dist/s.min.js";
-    systemJsLoaderTag.addEventListener("load", function () {
-      System.import("/gen/ui-legacy-" + bbgmVersion + ".js");
-    });
-    body.appendChild(systemJsLoaderTag);
+    script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";
   }
+  body.appendChild(script);
 }
 
 var count = 0;

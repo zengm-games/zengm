@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { maxBy, minBy, omit, range } from "./utils";
+import { countBy, maxBy, minBy, omit, range } from "./utils";
 
 describe("common/utils", () => {
 	test("range", () => {
@@ -55,5 +55,12 @@ describe("common/utils", () => {
 			a: 1,
 			c: 3,
 		});
+	});
+
+	test("countBy", () => {
+		assert.deepStrictEqual(
+			countBy([6.1, 4.2, 6.3], x => Math.floor(x)),
+			{ 4: 1, 6: 2 },
+		);
 	});
 });

@@ -1,5 +1,5 @@
-import countBy from "lodash-es/countBy";
 import type { TeamFiltered } from "../../../common/types";
+import { countBy } from "../../../common/utils";
 import { g } from "../../util";
 
 /**

@@ -96,3 +96,21 @@ export const omit = <T extends Record<string, unknown>, U extends keyof T>(
 	}
 	return output as Omit<T, U>;
 };
+
+export const countBy = <T extends unknown>(
+	items: T[],
+	iteratee: (item: T) => number | string,
+) => {
+	const output: Record<string, number> = {};
+	for (const item of items) {
+		const key = iteratee(item);
+
+		if (output[key] === undefined) {
+			output[key] = 1;
+		} else {
+			output[key] += 1;
+		}
+	}
+
+	return output;
+};

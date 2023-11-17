@@ -1,5 +1,5 @@
 import { bySport } from "../../common";
-import { groupBy } from "../../common/groupBy";
+import { groupBy } from "../../common/utils";
 import type { Player } from "../../common/types";
 import helpers from "./helpers";
 

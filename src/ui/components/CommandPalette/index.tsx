@@ -1,7 +1,7 @@
 import ago from "s-ago";
 import { matchSorter } from "match-sorter";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 import type {
 	LocalStateUI,
 	MenuItemHeader,

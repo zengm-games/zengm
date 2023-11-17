@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import testHelpers from "../../../test/helpers";
 import newScheduleGood from "./newScheduleGood";
 import { g, helpers } from "../../util";
-import range from "lodash-es/range";
+import { range } from "../../../common/utils";
 
 describe("worker/core/season/newScheduleGood", () => {
 	let defaultTeams: {

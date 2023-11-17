@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { groupByUnique } from "../../../common/groupBy";
+import { groupByUnique } from "../../../common/utils";
 import type { GameAttributesLeague } from "../../../common/types";
 import {
 	ActionButton,

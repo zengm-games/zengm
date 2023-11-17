@@ -6,7 +6,7 @@ import useDropdownOptions, {
 } from "../../hooks/useDropdownOptions";
 import realtimeUpdate from "../../util/realtimeUpdate";
 import { getCols, helpers, toWorker } from "../../util";
-import { groupByUnique } from "../../../common/groupBy";
+import { groupByUnique } from "../../../common/utils";
 import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
 

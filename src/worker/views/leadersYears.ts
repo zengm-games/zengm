@@ -1,8 +1,7 @@
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import { groupByUnique } from "../../common/groupBy";
-import range from "lodash-es/range";
+import { groupByUnique, range } from "../../common/utils";
 import {
 	GamesPlayedCache,
 	getCategoriesAndStats,

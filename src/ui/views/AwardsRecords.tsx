@@ -1,4 +1,4 @@
-import { groupBy } from "../../common/groupBy";
+import { groupBy } from "../../common/utils";
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";

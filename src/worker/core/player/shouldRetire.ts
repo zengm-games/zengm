@@ -1,11 +1,11 @@
 import { bySport, isSport, PLAYER } from "../../../common";
 import { g, random } from "../../util";
-import range from "lodash-es/range";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types"; // Players meeting one of these cutoffs might retire
+import { range } from "../../../common/utils";
 
 const checkforceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	// No redshirt seasons before league was created, since we have no stats then

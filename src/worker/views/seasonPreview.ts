@@ -3,7 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
-import { groupBy } from "../../common/groupBy";
+import { groupBy } from "../../common/utils";
 
 const updateSeasonPreview = async (
 	{ season }: ViewInput<"seasonPreview">,

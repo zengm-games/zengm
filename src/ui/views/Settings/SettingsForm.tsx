@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useState, type FormEvent, useEffect } from "react";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 import { ActionButton, StickyBottomButtons } from "../../components";
 import { confirm, localActions, logEvent, helpers } from "../../util";
 import { settings } from "./settings";

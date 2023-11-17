@@ -8,7 +8,7 @@ import type {
 	PlayerInjury,
 	DraftPick,
 } from "../../../common/types";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 import { getNumPicksPerRound } from "../trade/getPickValues";
 
 type Asset =

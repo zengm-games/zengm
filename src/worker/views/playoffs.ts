@@ -6,7 +6,7 @@ import type {
 	ViewInput,
 	PlayoffSeries,
 } from "../../common/types";
-import { groupBy } from "../../common/groupBy";
+import { groupBy } from "../../common/utils";
 
 type SeriesTeam = {
 	abbrev: string;

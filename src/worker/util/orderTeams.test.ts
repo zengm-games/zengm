@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import helpers from "./helpers";
-import range from "lodash-es/range";
 import { breakTies } from "./orderTeams";
 import type { HeadToHead } from "../../common/types";
+import { range } from "../../common/utils";
 
 const baseTeams = range(4).map(tid => ({
 	tid,

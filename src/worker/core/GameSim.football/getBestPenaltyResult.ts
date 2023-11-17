@@ -1,8 +1,8 @@
-import range from "lodash-es/range";
 import orderBy from "lodash-es/orderBy";
 import type { State } from "./Play";
 import type { TeamNum } from "./types";
 import { random } from "../../util";
+import { range } from "../../../common/utils";
 
 // Sort by looking at a bunch of different factors in order of importance
 const getBestPenaltyResult = <

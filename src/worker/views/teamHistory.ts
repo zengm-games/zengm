@@ -9,7 +9,7 @@ import type {
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
-import { groupByUnique } from "../../common/groupBy";
+import { groupByUnique } from "../../common/utils";
 
 export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 	let bestRecord;

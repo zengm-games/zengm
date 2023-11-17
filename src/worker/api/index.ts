@@ -121,7 +121,7 @@ import omit from "lodash-es/omit";
 import addFirstNameShort from "../util/addFirstNameShort";
 import statsBaseball from "../core/team/stats.baseball";
 import { extraRatings } from "../views/playerRatings";
-import { groupByUnique } from "../../common/groupBy";
+import { groupByUnique } from "../../common/utils";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,

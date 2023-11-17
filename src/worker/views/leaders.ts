@@ -15,8 +15,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import { groupByUnique } from "../../common/groupBy";
-import range from "lodash-es/range";
+import { groupByUnique, range } from "../../common/utils";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { season } from "../core";
 

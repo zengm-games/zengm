@@ -1,6 +1,6 @@
 // Ideally, firstNameShort should be the first letter of a name, like "A." for Allen. But if there is an Allen and an Arnold with the same last name, it should be "Al." and "Ar.". See addFirstNameShort.test.ts for more.
 
-import { groupBy } from "../../common/groupBy";
+import { groupBy } from "../../common/utils";
 
 class TrieNode {
 	key: string | undefined;

@@ -1,6 +1,5 @@
 import omit from "lodash-es/omit";
 import orderBy from "lodash-es/orderBy";
-import range from "lodash-es/range";
 import { PHASE } from "../../common";
 import getTeamInfos from "../../common/getTeamInfos";
 import teamInfos from "../../common/teamInfos";
@@ -9,7 +8,7 @@ import { realRosters } from "../core";
 import geographicCoordinates from "../../common/geographicCoordinates";
 import { random } from "../util";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types";
-import { groupBy } from "../../common/groupBy";
+import { groupBy, range } from "../../common/utils";
 import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams";
 import loadDataBasketball from "../core/realRosters/loadData.basketball";
 import { kmeansFixedSize, sortByDivs } from "../core/team/cluster";

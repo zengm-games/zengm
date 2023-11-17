@@ -14,8 +14,7 @@ import { bySport, isSport } from "../../../common";
 import { idb } from "../../db";
 import orderBy from "lodash-es/orderBy";
 import type { PlayerRatings } from "../../../common/types.basketball";
-import range from "lodash-es/range";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy, range } from "../../../common/utils";
 import { getPosByGpF } from "../season/doAwards.baseball";
 
 const MIN_PLAYERS_CONTEST = 2;

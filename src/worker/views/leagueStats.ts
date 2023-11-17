@@ -1,9 +1,9 @@
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { averageTeamStats, getStats, ignoreStats } from "./teamStats";
-import range from "lodash-es/range";
 import { PHASE, TEAM_STATS_TABLES } from "../../common";
 import { season } from "../core";
+import { range } from "../../common/utils";
 
 const updateLeagueStats = async (
 	inputs: ViewInput<"leagueStats">,

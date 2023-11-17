@@ -1,7 +1,7 @@
-import range from "lodash-es/range";
 import { useCallback, useEffect, useRef } from "react";
 import type { StickyCols } from ".";
 import getStickyColsClass from "./getStickyColsClass";
+import { range } from "../../../common/utils";
 
 // >1 sticky column requires some JS to compute the left offset of all besides the first sticky column (whose offset is always 0)
 const useStickyXX = (stickyCols: StickyCols) => {

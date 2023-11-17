@@ -1,6 +1,6 @@
-import range from "lodash-es/range";
 import { draft, player } from "..";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { range } from "../../../common/utils";
 
 const avgRatingDists = async (numPlayers: number = 100) => {
 	const NUM_SEASONS = 20;

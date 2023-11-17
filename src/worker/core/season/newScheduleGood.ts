@@ -1,6 +1,5 @@
-import range from "lodash-es/range";
 import { g, helpers, random } from "../../../worker/util";
-import { groupByUnique } from "../../../common/groupBy";
+import { groupByUnique, range } from "../../../common/utils";
 import orderBy from "lodash-es/orderBy";
 import type { Div, GameAttributesLeague } from "../../../common/types";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";

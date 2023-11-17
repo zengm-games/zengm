@@ -1,8 +1,8 @@
-import range from "lodash-es/range";
 import { PHASE } from "../../../common";
 import { g, random } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
+import { range } from "../../../common/utils";
 
 /**
  * Sort teams in place in correct order for lottery.

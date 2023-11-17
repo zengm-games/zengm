@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 import type { View } from "../../../common/types";
 import type { Settings } from "../../../worker/views/settings";
 import { MoreLinks } from "../../components";
@@ -60,8 +60,8 @@ const DefaultNewLeagueSettings = ({
 				}
 
 				if (setting.hidden) {
-					const partner = settings.find(setting =>
-						setting?.partners?.includes(key as Key),
+					const partner = settings.find(
+						setting => setting?.partners?.includes(key as Key),
 					);
 					if (partner) {
 						return [key, partner.key];

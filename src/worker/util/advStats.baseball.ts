@@ -5,8 +5,7 @@ import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
 import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
-import { groupByUnique } from "../../common/groupBy";
-import range from "lodash-es/range";
+import { groupByUnique, range } from "../../common/utils";
 
 const teamStats = [
 	"h",

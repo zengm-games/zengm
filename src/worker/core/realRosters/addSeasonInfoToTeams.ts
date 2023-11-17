@@ -1,5 +1,5 @@
 import { PLAYER, unwrapGameAttribute } from "../../../common";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,

@@ -1,7 +1,7 @@
 import { idb } from "../../db";
-import range from "lodash-es/range";
 import { random, helpers } from "../../util";
 import { bySport, isSport } from "../../../common";
+import { range } from "../../../common/utils";
 
 // Football/hockey gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(i => String(i));

@@ -8,12 +8,12 @@
  * It's in jest rather than node.js because jest has all the imports and crap set up.
  */
 
-import range from "lodash-es/range";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { g } from "../../util";
 import createRandomPlayers from "../league/create/createRandomPlayers";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { range } from "../../../common/utils";
 
 const printQuartiles = async (age?: number) => {
 	if (age !== undefined) {
@@ -45,8 +45,8 @@ describe.skip("worker/core/player/genRatings", () => {
 	test("this is not actually a test, see comment at the top of the file", async () => {
 		await printQuartiles();
 
-		for (const age of range(0, 50, 5)) {
+		/*for (const age of range(0, 50, 5)) {
 			await printQuartiles(age);
-		}
+		}*/
 	});
 });

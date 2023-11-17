@@ -1,4 +1,3 @@
-import range from "lodash-es/range";
 import { g, helpers, orderTeams } from "../../util";
 import type {
 	TeamFiltered,
@@ -10,6 +9,7 @@ import genPlayoffSeeds from "./genPlayoffSeeds";
 import { idb } from "../../db";
 import getPlayoffsByConf from "./getPlayoffsByConf";
 import validatePlayoffSettings from "./validatePlayoffSettings";
+import { range } from "../../../common/utils";
 
 type MyTeam = TeamFiltered<
 	["tid"],

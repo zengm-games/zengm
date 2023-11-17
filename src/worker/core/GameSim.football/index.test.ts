@@ -1,4 +1,3 @@
-import range from "lodash-es/range";
 import assert from "node:assert/strict";
 import GameSim from ".";
 import { player, team } from "..";
@@ -7,6 +6,7 @@ import { g, helpers } from "../../util";
 import testHelpers from "../../../test/helpers";
 import Play from "./Play";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { range } from "../../../common/utils";
 
 export const genTwoTeams = async () => {
 	testHelpers.resetG();

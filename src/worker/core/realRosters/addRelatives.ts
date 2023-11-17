@@ -1,4 +1,4 @@
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 import type { Relative } from "../../../common/types";
 import type { Basketball } from "./loadData.basketball";
 

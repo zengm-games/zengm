@@ -1,4 +1,4 @@
-// Why not use lodash? groupByUnique doesn't exist there.
+// Why not use lodash? groupByUnique doesn't exist there, and these are smaller
 
 export const groupBy = <T extends Record<string, unknown>>(
 	rows: T[],
@@ -34,4 +34,18 @@ export const groupByUnique = <T extends Record<string, unknown>>(
 	}
 
 	return grouped;
+};
+
+export const range = (start: number, stop?: number) => {
+	if (stop === undefined) {
+		stop = start;
+		start = 0;
+	}
+
+	const output = [];
+	for (let current = start; current < stop; current++) {
+		output.push(current);
+	}
+
+	return output;
 };

@@ -9,7 +9,7 @@ import {
 	mvpScore,
 } from "../core/season/doAwards.football";
 import advStatsSave from "./advStatsSave";
-import { groupByUnique } from "../../common/groupBy";
+import { groupByUnique } from "../../common/utils";
 
 type Team = TeamFiltered<
 	["tid"],

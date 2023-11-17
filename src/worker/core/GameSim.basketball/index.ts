@@ -1,10 +1,10 @@
 import { g, helpers, random } from "../../util";
 import { getPeriodName, PHASE } from "../../../common";
-import range from "lodash-es/range";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 import getInjuryRate from "./getInjuryRate";
 import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
 import GameSimBase from "../GameSimBase";
+import { range } from "../../../common/utils";
 
 type PlayType =
 	| "ast"
@@ -965,8 +965,8 @@ class GameSim extends GameSimBase {
 							this.numPlayersOnCourt >= 5
 								? 2
 								: this.numPlayersOnCourt >= 3
-								? 1
-								: 0;
+								  ? 1
+								  : 0;
 						if (
 							(numG < cutoff && numPG === 0) ||
 							(numF < cutoff && numC === 0)

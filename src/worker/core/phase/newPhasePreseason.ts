@@ -14,7 +14,7 @@ import type {
 	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types";
-import { groupBy } from "../../../common/groupBy";
+import { groupBy } from "../../../common/utils";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

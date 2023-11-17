@@ -7,7 +7,7 @@ import type {
 	PlayerContract,
 	UpdateEvents,
 } from "../../common/types";
-import range from "lodash-es/range";
+import { range } from "../../common/utils";
 
 const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	let growthFactor = 0.15;

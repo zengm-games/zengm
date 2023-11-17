@@ -1,6 +1,6 @@
-import range from "lodash-es/range";
 import { isSport, POSITIONS } from "../../../common";
 import type { Team } from "../../../common/types";
+import { range } from "../../../common/utils";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <

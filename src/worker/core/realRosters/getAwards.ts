@@ -1,5 +1,5 @@
 import { AWARD_NAMES, PHASE, PLAYER } from "../../../common";
-import { groupByUnique } from "../../../common/groupBy";
+import { groupByUnique } from "../../../common/utils";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,

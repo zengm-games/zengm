@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import range from "lodash-es/range";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
@@ -7,6 +6,7 @@ import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";
 import type { Relative } from "../../../common/types";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { range } from "../../../common/utils";
 
 const season = 2017;
 

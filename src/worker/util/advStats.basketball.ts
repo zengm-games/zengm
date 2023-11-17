@@ -3,7 +3,7 @@ import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
-import { groupByUnique } from "../../common/groupBy";
+import { groupByUnique } from "../../common/utils";
 import helpers from "./helpers";
 
 type Team = TeamFiltered<

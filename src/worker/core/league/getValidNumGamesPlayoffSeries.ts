@@ -1,4 +1,4 @@
-import range from "lodash-es/range";
+import { range } from "../../../common/utils";
 
 const getValidNumPlayoffRounds = (
 	numPlayoffRounds: number,

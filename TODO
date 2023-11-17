@@ -45,7 +45,13 @@ FBGM
 - penalties on XP/2pt need to be handled differently. if you switch from one to the other, the penalties tack on to that starting position. so currently they are disabled
 - add fumbles on kick/punt returns
 - in live sim, put a ball under the team with possession currently
-- punt shouldn't so commonly be touchbacks
+- better punts
+  - punt shouldn't so commonly be touchbacks
+  - punt should be shorter if you're backed up in your own endzone
+  - blocked punts
+- blocked fg/xp
+  - count as missed field goal
+  - chance for either team to return (very slim for offense)
 - OL stats
 - re-evaluate team value formula, especially WR now that speed matters more
 - if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
@@ -55,6 +61,7 @@ FBGM
 - add "awards" for leaders, like other sports https://twitter.com/the_daymion/status/1724093113621524759
 - reduce number of bye weeks - see how baseball schedule is divided into series
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
+- jersey number probability - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
@@ -1754,8 +1761,6 @@ Can DL get more sacks and TFLs in FBGM? Tackle numbers on the DL are realistic n
 infinite AV is possible
 - https://media.discordapp.net/attachments/331882115119448065/600596243055509516/unknown.png?width=1440&height=423
 
-blocked fg too uncommon?
-
 Just started playing the other day and it's pretty fun! A lot different than BBGM but the roster management is fun even if the games can feel kind of random. Few things stood out. Not sure if this is just for balance purposes, but teams are WAY stricter about giving up next year's 1st round picks than in real life. I can package 3 amazing players and the best I get offered is a 1st 4 years in the future. Meanwhile IRL 1st rounders get traded for much less (Cooper for a 1st straight up).
 
 Also I wonder if there is a way to present a player's value in regards to the position they play. What I mean is if I want to draft a good RB in the game I have to invest an early pick, but in the NFL teams find starting RBs day 3 on a pretty regular basis (although the argument there is OL is more important for the run game than the RB) so that might actually be pretty complicated to implement.
@@ -1814,11 +1819,6 @@ game sim
     - clock management, strategy
   - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
   - log clutch plays
-  - blocked fg
-    - count as missed field goal
-    - chance for either team to return (very slim for offense)
-  - blocked punt
-  - missed fg/xp return
 
 AV advanced stat
 - OL and defense

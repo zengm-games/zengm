@@ -1,6 +1,6 @@
-import orderBy from "lodash-es/orderBy";
 import bySport from "./bySport";
 import processPlayerStats from "./processPlayerStats";
+import { orderBy } from "./utils";
 
 const getBestPlayerBoxScore = (players: any[]) => {
 	if (players.length === 0) {

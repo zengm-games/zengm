@@ -20,7 +20,7 @@ import {
 } from "../../common/dunkContest";
 import classNames from "classnames";
 import { getHeightString } from "../components/Height";
-import range from "lodash-es/range";
+import { range } from "../../common/utils";
 
 export const EditContestants = ({
 	allPossibleContestants,
@@ -262,8 +262,8 @@ const Log = ({
 								{event.num === 1
 									? " first"
 									: event.num === 2
-									? " second"
-									: null}{" "}
+									  ? " second"
+									  : null}{" "}
 								dunk
 							</b>{" "}
 							({event.try === 3 ? "final" : helpers.ordinal(event.try)} try)

@@ -5,8 +5,8 @@ import { PlayPauseNext } from "../components";
 import { useEffect, useState } from "react";
 import { isSport } from "../../common";
 import { ContestantProfiles, EditContestants, ScoreTable } from "./AllStarDunk";
-import range from "lodash-es/range";
 import classNames from "classnames";
+import { range } from "../../common/utils";
 
 const NUM_BALLS_PER_RACK = 5;
 

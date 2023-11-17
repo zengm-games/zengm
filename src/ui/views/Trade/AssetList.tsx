@@ -1,4 +1,3 @@
-import range from "lodash-es/range";
 import { DataTable, SafeHtml } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
@@ -9,6 +8,7 @@ import {
 } from "../../components/contract";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import type { HandleToggle } from ".";
+import { range } from "../../../common/utils";
 
 type HandleBulk = (
 	type: "check" | "clear",

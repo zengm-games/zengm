@@ -4,8 +4,8 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocal } from "../util";
 import { DataTable, LeagueFileUpload, MoreLinks } from "../components";
 import type { View } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { orderBy } from "../../common/utils";
 
 const ImportPlayers = ({
 	challengeNoRatings,

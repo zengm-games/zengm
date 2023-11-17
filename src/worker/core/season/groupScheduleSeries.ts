@@ -1,4 +1,4 @@
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../../common/utils";
 import { helpers, random } from "../../util";
 
 const groupScheduleSeries = (tids: [number, number][]) => {

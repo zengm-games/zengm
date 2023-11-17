@@ -9,8 +9,8 @@ import type {
 	PlayerInjury,
 } from "../../common/types";
 import { bySport, isSport, PHASE } from "../../common";
-import orderBy from "lodash-es/orderBy";
 import { sortByPos } from "./roster";
+import { orderBy } from "../../common/utils";
 
 const stats = bySport({
 	baseball: ["keyStats"],
@@ -105,9 +105,8 @@ const updateAllStarTeams = async (
 			return returnValue;
 		}
 
-		const { finalized, gid, teams, teamNames, remaining } = await augment(
-			allStars,
-		);
+		const { finalized, gid, teams, teamNames, remaining } =
+			await augment(allStars);
 
 		const nextGameIsAllStar =
 			season === g.get("season") && (await allStar.nextGameIsAllStar());

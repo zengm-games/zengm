@@ -1,5 +1,4 @@
 import { unwrap } from "idb";
-import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_TEAM_COLORS,
@@ -44,6 +43,7 @@ import type {
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 import { amountToLevel } from "../../common/budgetLevels";
+import { orderBy } from "../../common/utils";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {

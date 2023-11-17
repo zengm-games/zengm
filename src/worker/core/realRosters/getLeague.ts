@@ -1,8 +1,7 @@
 import loadDataBasketball, { type Basketball } from "./loadData.basketball";
 import loadStatsBasketball from "./loadStats.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
-import { groupBy, range } from "../../../common/utils";
-import orderBy from "lodash-es/orderBy";
+import { groupBy, orderBy, range } from "../../../common/utils";
 import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,

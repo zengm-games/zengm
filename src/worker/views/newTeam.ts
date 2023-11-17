@@ -1,8 +1,8 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import { PHASE } from "../../common";
-import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
+import { orderBy } from "../../common/utils";
 
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -68,7 +68,7 @@ const updateTeamSelect = async () => {
 		// If not in god mode, user must have been fired or team folded
 
 		// Only get option of 5 worst
-		teams = orderBy(teams, "seasonAttrs.winp", "asc").slice(0, 5);
+		teams = orderBy(teams, t => t.seasonAttrs.winp, "asc").slice(0, 5);
 	}
 
 	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);

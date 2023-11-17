@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import {
 	type AwardsByPlayer,
 	type GetTopPlayersOptions,
@@ -17,6 +16,7 @@ import type {
 	AwardPlayerDefense,
 	Awards,
 } from "../../../common/types.basketball";
+import { orderBy } from "../../../common/utils";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 	return {

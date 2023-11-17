@@ -4,7 +4,7 @@ import type { View } from "../../common/types";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
 import SelectMultiple from "../components/SelectMultiple";
 import { AWARD_NAMES, bySport, isSport, SIMPLE_AWARDS } from "../../common";
-import range from "lodash-es/range";
+import { range } from "../../common/utils";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {

@@ -6,12 +6,11 @@ import type {
 	ViewInput,
 	MinimalPlayerRatings,
 } from "../../common/types";
-import { groupBy } from "../../common/utils";
+import { groupBy, orderBy } from "../../common/utils";
 import { player } from "../core";
 import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
 import goatFormula from "../util/goatFormula";
-import orderBy from "lodash-es/orderBy";
 import addFirstNameShort from "../util/addFirstNameShort";
 
 type Most = {

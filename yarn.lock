@@ -6053,6 +6053,11 @@ jsonpointer@^5.0.0:
     object.assign "^4.1.4"
     object.values "^1.1.6"
 
+just-order-by@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/just-order-by/-/just-order-by-1.0.0.tgz#81e13ea43462f5956087a8bedae88fe1f54b2463"
+  integrity sha512-m83kcBMoX43jRLDzR6J7NzIpEEpMmMmh0xwVSMKpXObIFh6ejxpQ02HXc9gCq5cFWHbL5gZ3yRHRGYgMGpoUnA==
+
 karma-browserstack-launcher@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/karma-browserstack-launcher/-/karma-browserstack-launcher-1.6.0.tgz#2f6000647073e77ae296653b8830b279669766ef"
@@ -6293,11 +6298,6 @@ locate-path@^7.1.0:
   integrity sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==
   dependencies:
     p-locate "^6.0.0"
-
-lodash-es@^4.17.21:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
-  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash.debounce@^4.0.8:
   version "4.0.8"

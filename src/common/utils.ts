@@ -1,3 +1,5 @@
+import justOrderBy from "just-order-by";
+
 // Why not use lodash? groupByUnique doesn't exist there, and these are smaller
 
 export const groupBy = <T extends Record<string, unknown>>(
@@ -113,4 +115,31 @@ export const countBy = <T extends unknown>(
 	}
 
 	return output;
+};
+
+export const orderBy = <
+	Item extends unknown,
+	Key extends keyof Item | ((item: Item) => number | string),
+	AscDesc extends "asc" | "desc",
+>(
+	items: Item[],
+	keys: Key | Key[],
+	orders?: AscDesc | AscDesc[],
+): Item[] => {
+	const keysArray = Array.isArray(keys) ? keys : [keys];
+	const ordersArray = typeof orders === "string" ? [orders] : orders;
+
+	type OrderParams = NonNullable<Parameters<typeof justOrderBy<Item>>[1]>;
+	type OrderParam = OrderParams[number];
+
+	const params = keysArray.map((key, i) => {
+		const param: OrderParam = {
+			property: key,
+			order: ordersArray?.[i],
+		};
+
+		return param;
+	});
+
+	return justOrderBy(items, params as OrderParams);
 };

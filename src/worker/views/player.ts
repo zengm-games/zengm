@@ -25,7 +25,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../common/utils";
 
 const fixRatingsStatsAbbrevs = async (p: {
 	ratings?: {

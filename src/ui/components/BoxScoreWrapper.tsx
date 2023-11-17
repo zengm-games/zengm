@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import range from "lodash-es/range";
 import {
 	useCallback,
 	useEffect,
@@ -10,6 +9,7 @@ import {
 import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../util";
 import BoxScore from "./BoxScore";
+import { range } from "../../common/utils";
 
 const TeamNameLink = ({
 	children,
@@ -102,8 +102,8 @@ export const HeadlineScore = ({
 				small
 					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-2"
 					: liveGameSim
-					? "d-none d-md-block"
-					: undefined
+					  ? "d-none d-md-block"
+					  : undefined
 			}
 		>
 			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
@@ -133,29 +133,29 @@ export const HeadlineScore = ({
 						{boxScore.gameOver
 							? "Final score"
 							: boxScore.elamTarget !== undefined
-							? `Elam Ending target: ${boxScore.elamTarget} points`
-							: isSport("baseball")
-							? `${
-									boxScore.teams[0].ptsQtrs.length ===
-									boxScore.teams[1].ptsQtrs.length
-										? "Bottom"
-										: "Top"
-							  } of the ${boxScore.quarter}`
-							: `${boxScore.quarter}, ${boxScore.time} remaining`}
+							  ? `Elam Ending target: ${boxScore.elamTarget} points`
+							  : isSport("baseball")
+							    ? `${
+											boxScore.teams[0].ptsQtrs.length ===
+											boxScore.teams[1].ptsQtrs.length
+												? "Bottom"
+												: "Top"
+							      } of the ${boxScore.quarter}`
+							    : `${boxScore.quarter}, ${boxScore.time} remaining`}
 					</span>
 					<span className="d-sm-none">
 						{boxScore.gameOver
 							? "F"
 							: boxScore.elamTarget !== undefined
-							? `Elam Ending target: ${boxScore.elamTarget} points`
-							: isSport("baseball")
-							? `${
-									boxScore.teams[0].ptsQtrs.length ===
-									boxScore.teams[1].ptsQtrs.length
-										? "B"
-										: "T"
-							  }${boxScore.quarterShort}`
-							: `${boxScore.quarterShort}, ${boxScore.time}`}
+							  ? `Elam Ending target: ${boxScore.elamTarget} points`
+							  : isSport("baseball")
+							    ? `${
+											boxScore.teams[0].ptsQtrs.length ===
+											boxScore.teams[1].ptsQtrs.length
+												? "B"
+												: "T"
+							      }${boxScore.quarterShort}`
+							    : `${boxScore.quarterShort}, ${boxScore.time}`}
 					</span>
 				</div>
 			) : null}

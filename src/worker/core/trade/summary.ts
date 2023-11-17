@@ -2,7 +2,7 @@ import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../../common/utils";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {
@@ -106,9 +106,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	const ratios = [0, 0];
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
-		s.teams[j].name = `${g.get("teamInfoCache")[tids[j]]?.region} ${
-			g.get("teamInfoCache")[tids[j]]?.name
-		}`;
+		s.teams[j].name = `${g.get("teamInfoCache")[tids[j]]?.region} ${g.get(
+			"teamInfoCache",
+		)[tids[j]]?.name}`;
 
 		if (s.teams[j].total > 0) {
 			ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);

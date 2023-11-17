@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
-import orderBy from "lodash-es/orderBy";
 import {
 	type SyntheticEvent,
 	type MouseEvent,
@@ -29,6 +28,7 @@ import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
+import { orderBy } from "../../../common/utils";
 
 export type SortBy = [number, SortOrder];
 

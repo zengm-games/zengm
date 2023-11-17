@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import {
 	useState,
 	type FormEvent,
@@ -24,6 +23,7 @@ import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
 import posRatings from "../../../common/posRatings";
+import { orderBy } from "../../../common/utils";
 
 // A player can never have KR or PR as his main position
 const bannedPositions = ["KR", "PR"];

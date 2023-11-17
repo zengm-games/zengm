@@ -3,7 +3,7 @@ import { bySport, isSport, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, logEvent, helpers } from "../util";
 import type { View } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../common/utils";
 
 const handleAutoSort = async (tids: number[]) => {
 	await toWorker("main", "autoSortRoster", { tids });

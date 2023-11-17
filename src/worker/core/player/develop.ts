@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import { bySport, isSport, PLAYER, POSITIONS } from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";
@@ -11,6 +10,7 @@ import potEstimator from "./potEstimator";
 import { BANNED_POSITIONS } from "./pos.baseball";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { orderBy } from "../../../common/utils";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 

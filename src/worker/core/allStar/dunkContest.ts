@@ -1,10 +1,10 @@
-import orderBy from "lodash-es/orderBy";
 import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
 import { dunkInfos, getValidMoves } from "../../../common/dunkContest";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import { saveAwardsByPlayer } from "../season/awards";
 import { getNextRoundType } from "./contest";
+import { orderBy } from "../../../common/utils";
 
 export const HIGHEST_POSSIBLE_SCORE = 50;
 export const LOWEST_POSSIBLE_SCORE = 5;

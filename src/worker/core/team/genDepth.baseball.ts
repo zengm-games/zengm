@@ -2,8 +2,7 @@ import { idb } from "../../db";
 import { g, helpers, local, random } from "../../util";
 import type { Position } from "../../../common/types.baseball";
 import type { Player, PlayerFiltered } from "../../../common/types";
-import { groupByUnique } from "../../../common/utils";
-import orderBy from "lodash-es/orderBy";
+import { groupByUnique, orderBy } from "../../../common/utils";
 
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {

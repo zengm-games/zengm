@@ -1,9 +1,9 @@
-import orderBy from "lodash-es/orderBy";
 import { idb } from "../../db";
 import { g, logEvent } from "../../util";
 import { getTeamOvr } from "../../views/newTeam";
 import player from "../player";
 import { PHASE } from "../../../common";
+import { orderBy } from "../../../common/utils";
 
 // Swap the user's roster with the roster of the worst team in the league, by ovr
 const swapWorstRoster = async (addSisyphusLogs: boolean) => {

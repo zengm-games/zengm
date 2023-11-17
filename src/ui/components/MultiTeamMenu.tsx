@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalPartial } from "../util";
-import orderBy from "lodash-es/orderBy";
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
+import { orderBy } from "../../common/utils";
 
 const setUserTid = async (userTid: number) => {
 	await toWorker("main", "updateGameAttributes", {

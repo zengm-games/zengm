@@ -1,5 +1,5 @@
-import orderBy from "lodash-es/orderBy";
 import { PHASE } from "../../../common";
+import { orderBy } from "../../../common/utils";
 import { idb } from "../../db";
 import { g } from "../../util";
 
@@ -14,8 +14,8 @@ const getOrder = async () => {
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? "fantasy"
 			: g.get("phase") === PHASE.EXPANSION_DRAFT
-			? "expansion"
-			: g.get("season");
+			  ? "expansion"
+			  : g.get("season");
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		season,

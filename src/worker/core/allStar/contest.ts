@@ -1,7 +1,7 @@
 import { getNumRounds, isDunkContest } from "../../../common/dunkContest";
+import { orderBy } from "../../../common/utils";
 import * as dunkContest from "./dunkContest";
 import * as threeContest from "./threeContest";
-import orderBy from "lodash-es/orderBy";
 
 export const getNextRoundType = (contest: {
 	players: {

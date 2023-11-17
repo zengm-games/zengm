@@ -1,10 +1,10 @@
-import orderBy from "lodash-es/orderBy";
 import { bySport } from "../../../common";
 import { POSITION_COUNTS } from "../../../common/constants";
 import {
 	NUM_STARTING_PITCHERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball";
+import { orderBy } from "../../../common/utils";
 import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball";
 
 const DEFAULT_OVR = 0;

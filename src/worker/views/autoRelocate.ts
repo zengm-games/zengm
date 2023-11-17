@@ -1,8 +1,8 @@
 import { g, helpers } from "../util";
 import getTeamInfos from "../../common/getTeamInfos";
 import { idb } from "../db";
-import orderBy from "lodash-es/orderBy";
 import type { UpdateEvents } from "../../common/types";
+import { orderBy } from "../../common/utils";
 
 const getRealignInfo = (
 	teams: {

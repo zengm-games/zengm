@@ -7,9 +7,9 @@ import type {
 	RelativeType,
 } from "./types";
 import getTeamInfos from "./getTeamInfos";
-import orderBy from "lodash-es/orderBy";
 import isSport from "./isSport";
 import { PHASE } from "./constants";
+import { orderBy } from "./utils";
 
 const getPopRanks = (
 	teamSeasons: {

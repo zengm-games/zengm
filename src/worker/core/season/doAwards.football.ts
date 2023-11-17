@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import {
 	getPlayers,
 	getTopPlayers,
@@ -13,6 +12,7 @@ import { g } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 
 import type { AwardPlayer, Awards } from "../../../common/types.football";
+import { orderBy } from "../../../common/utils";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {

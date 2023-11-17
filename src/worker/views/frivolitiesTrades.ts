@@ -7,8 +7,8 @@ import type {
 	EventBBGM,
 	Phase,
 } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
 import { processAssets } from "./tradeSummary";
+import { orderBy } from "../../common/utils";
 
 type Most = {
 	value: number;

@@ -1,5 +1,4 @@
-import { groupBy } from "../../common/utils";
-import orderBy from "lodash-es/orderBy";
+import { groupBy, orderBy } from "../../common/utils";
 import { helpers } from ".";
 import type { TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";

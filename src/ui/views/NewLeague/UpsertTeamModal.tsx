@@ -1,5 +1,3 @@
-import orderBy from "lodash-es/orderBy";
-import range from "lodash-es/range";
 import { useCallback, useEffect, useState } from "react";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
 import {
@@ -21,6 +19,7 @@ import TeamForm from "../ManageTeams/TeamForm";
 import type { AddEditTeamInfo } from "./CustomizeTeams";
 import type { NewLeagueTeamWithoutRank } from "./types";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld";
+import { orderBy, range } from "../../../common/utils";
 
 export const getGodModeWarnings = ({
 	is,

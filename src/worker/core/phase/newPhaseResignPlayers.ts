@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import { bySport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
 import {
 	contractNegotiation,
@@ -11,6 +10,7 @@ import {
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
+import { orderBy } from "../../../common/utils";
 
 const newPhaseResignPlayers = async (
 	conditions: Conditions,

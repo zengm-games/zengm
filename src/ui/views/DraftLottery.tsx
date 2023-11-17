@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import range from "lodash-es/range";
 import { useEffect, useReducer, useRef } from "react";
 import {
 	DraftAbbrev,
@@ -20,6 +19,7 @@ import {
 	getDraftLotteryProbs,
 } from "../../common/draftLottery";
 import useStickyXX from "../components/DataTable/useStickyXX";
+import { range } from "../../common/utils";
 
 type Props = View<"draftLottery">;
 type State = {

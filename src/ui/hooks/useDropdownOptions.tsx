@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import {
 	PHASE,
 	TEAM_STATS_TABLES,
@@ -9,6 +8,7 @@ import {
 } from "../../common";
 import { useLocalPartial } from "../util";
 import type { LocalStateUI } from "../../common/types";
+import { orderBy } from "../../common/utils";
 
 export type ResponsiveOption = {
 	minWidth: number;
@@ -41,7 +41,7 @@ export const getSortedTeams = ({
 	const array = [
 		...orderBy(
 			teamInfoCache.filter(t => !t.disabled),
-			["region", "name", "tid"],
+			["region", "name"],
 		),
 	];
 
@@ -49,7 +49,7 @@ export const getSortedTeams = ({
 		array.push(
 			...orderBy(
 				teamInfoCache.filter(t => t.disabled),
-				["region", "name", "tid"],
+				["region", "name"],
 			),
 		);
 	}

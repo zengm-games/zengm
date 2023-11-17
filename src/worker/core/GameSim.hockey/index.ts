@@ -14,13 +14,12 @@ import type {
 	TeamGameSim,
 	TeamNum,
 } from "./types";
-import orderBy from "lodash-es/orderBy";
 import getCompositeFactor from "./getCompositeFactor";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
 import PenaltyBox from "./PenaltyBox";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate";
 import GameSimBase from "../GameSimBase";
-import { range } from "../../../common/utils";
+import { orderBy, range } from "../../../common/utils";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

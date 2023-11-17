@@ -4,9 +4,7 @@ import type { NewLeagueTeamWithoutRank } from "./types";
 import type { Conf, Div, Player, View } from "../../../common/types";
 import classNames from "classnames";
 import { arrayMoveImmutable } from "array-move";
-import orderBy from "lodash-es/orderBy";
 import UpsertTeamModal from "./UpsertTeamModal";
-import countBy from "lodash-es/countBy";
 import { StickyBottomButtons } from "../../components";
 import { logEvent, toWorker } from "../../util";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren";
@@ -14,6 +12,7 @@ import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton";
 import { applyRealTeamInfos, MAX_SEASON } from ".";
 import RandomizeTeamsModal from "./RandomizeTeamsModal";
+import { countBy, orderBy } from "../../../common/utils";
 
 export const makeTIDsSequential = <T extends { tid: number }>(
 	teams: T[],

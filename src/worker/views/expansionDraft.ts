@@ -2,9 +2,9 @@ import { g, helpers, newLeagueGodModeLimits } from "../util";
 import getTeamInfos from "../../common/getTeamInfos";
 import type { ExpansionDraftSetupTeam } from "../../common/types";
 import { idb } from "../db";
-import orderBy from "lodash-es/orderBy";
 import getUnusedAbbrevs from "../../common/getUnusedAbbrevs";
 import { bySport, DEFAULT_JERSEY } from "../../common";
+import { orderBy } from "../../common/utils";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");

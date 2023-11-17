@@ -1,8 +1,8 @@
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { headToHead } from "../core";
-import orderBy from "lodash-es/orderBy";
 import { PHASE } from "../../common";
+import { orderBy } from "../../common/utils";
 
 const updateHeadToHeadAll = async (
 	{ season, type }: ViewInput<"headToHeadAll">,
@@ -16,7 +16,7 @@ const updateHeadToHeadAll = async (
 		type !== state.type
 	) {
 		const simpleSums = ["won", "lost", "tied", "otl"] as const;
-		type TeamInfo = Record<typeof simpleSums[number], number> & {
+		type TeamInfo = Record<(typeof simpleSums)[number], number> & {
 			winp: number;
 		};
 

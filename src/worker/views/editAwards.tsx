@@ -1,6 +1,6 @@
-import orderBy from "lodash-es/orderBy";
 import { bySport, PHASE } from "../../common";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { orderBy } from "../../common/utils";
 import { idb } from "../db";
 import { g } from "../util";
 

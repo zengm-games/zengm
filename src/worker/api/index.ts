@@ -90,7 +90,6 @@ import type {
 	AllStarPlayer,
 	League,
 } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	type AwardsByPlayer,
@@ -120,7 +119,7 @@ import toolsMenu from "./toolsMenu";
 import addFirstNameShort from "../util/addFirstNameShort";
 import statsBaseball from "../core/team/stats.baseball";
 import { extraRatings } from "../views/playerRatings";
-import { groupByUnique, omit } from "../../common/utils";
+import { groupByUnique, omit, orderBy } from "../../common/utils";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,

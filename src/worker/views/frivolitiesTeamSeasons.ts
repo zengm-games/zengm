@@ -2,9 +2,9 @@ import { idb, iterate } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
 import { isSport, PHASE } from "../../common";
-import orderBy from "lodash-es/orderBy";
 import { team } from "../core";
 import hasTies from "../core/season/hasTies";
+import { orderBy } from "../../common/utils";
 
 type Most = {
 	value: number;

@@ -1,7 +1,7 @@
 import ago from "s-ago";
 import { matchSorter } from "match-sorter";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { groupBy } from "../../../common/utils";
+import { groupBy, orderBy } from "../../../common/utils";
 import type {
 	LocalStateUI,
 	MenuItemHeader,
@@ -18,7 +18,6 @@ import {
 	useLocalPartial,
 } from "../../util";
 import { getText, makeAnchorProps } from "../SideBar";
-import orderBy from "lodash-es/orderBy";
 import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
 import Modal from "../Modal";
 

@@ -6,8 +6,8 @@ import type {
 	MinimalPlayerRatings,
 } from "../../common/types";
 import { bySport, PHASE } from "../../common";
-import orderBy from "lodash-es/orderBy";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { orderBy } from "../../common/utils";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
@@ -43,7 +43,7 @@ const updateFrivolitiesDraftClasses = async (
 				value: number;
 			};
 		};
-		const draftClasses: typeof draftClass[] = [];
+		const draftClasses: (typeof draftClass)[] = [];
 
 		await iterate(
 			idb.league.transaction("players").store.index("draft.year, retiredYear"),

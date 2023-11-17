@@ -8,7 +8,7 @@ import type {
 	PlayerWithoutKey,
 	Player,
 } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../common/utils";
 
 export const formatPlayerRelativesList = (p: Player) => {
 	let firstSeason;

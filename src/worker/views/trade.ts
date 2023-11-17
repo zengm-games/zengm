@@ -1,10 +1,10 @@
-import orderBy from "lodash-es/orderBy";
 import { bySport, PHASE } from "../../common";
 import { team, trade } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
 import type { TradeTeams } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { orderBy } from "../../common/utils";
 
 export const getSummary = async (teams: TradeTeams) => {
 	const summary = await trade.summary(teams);
@@ -216,9 +216,8 @@ const updateTrade = async () => {
 
 	teams2 = orderBy(teams2, ["region", "name", "tid"]);
 
-	const userTeamName = `${g.get("teamInfoCache")[g.get("userTid")]?.region} ${
-		g.get("teamInfoCache")[g.get("userTid")]?.name
-	}`;
+	const userTeamName = `${g.get("teamInfoCache")[g.get("userTid")]
+		?.region} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
 
 	// If the season is over, can't trade players whose contracts are expired
 	const showResigningMsg =

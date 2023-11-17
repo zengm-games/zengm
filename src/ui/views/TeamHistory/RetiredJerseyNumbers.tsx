@@ -2,10 +2,10 @@ import { useState, type ChangeEvent } from "react";
 import { JerseyNumber } from "../../components";
 import { helpers, confirm, toWorker, logEvent } from "../../util";
 import type { View } from "../../../common/types";
-import orderBy from "lodash-es/orderBy";
 import { PLAYER } from "../../../common";
 import classNames from "classnames";
 import useLocalStorageState from "use-local-storage-state";
+import { orderBy } from "../../../common/utils";
 
 const PAGE_SIZE = 12;
 

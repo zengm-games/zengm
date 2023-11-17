@@ -1,5 +1,4 @@
 import { m, AnimatePresence } from "framer-motion";
-import orderBy from "lodash-es/orderBy";
 import { useState, useReducer, useRef, useCallback, useEffect } from "react";
 import {
 	DIFFICULTY,
@@ -52,6 +51,7 @@ import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams";
 import type { Settings } from "../../../worker/views/settings";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload";
 import { SelectSeasonRange } from "./SelectSeasonRange";
+import { orderBy } from "../../../common/utils";
 
 const animationVariants = {
 	visible: {

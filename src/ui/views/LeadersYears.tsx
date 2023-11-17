@@ -3,9 +3,9 @@ import { getCols, helpers } from "../util";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
-import range from "lodash-es/range";
 import type { Col } from "../components/DataTable";
 import { makeNormalResponsive } from "../hooks/useDropdownOptions";
+import { range } from "../../common/utils";
 
 export const formatStatsDropdown = (stats: string[]) =>
 	stats.map(stat => {

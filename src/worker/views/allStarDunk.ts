@@ -2,8 +2,8 @@ import { allStar } from "../core";
 import type { DunkAttempt, UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
-import orderBy from "lodash-es/orderBy";
 import { isSport, PHASE } from "../../common";
+import { orderBy } from "../../common/utils";
 
 const getShortTall = async (pids: [number, number]) => {
 	if (!pids) {

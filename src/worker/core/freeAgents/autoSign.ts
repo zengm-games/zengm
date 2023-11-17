@@ -1,9 +1,9 @@
-import orderBy from "lodash-es/orderBy";
 import { isSport, PLAYER } from "../../../common";
 import { player, team } from "..";
 import getBest from "./getBest";
 import { idb } from "../../db";
 import { g, local, random } from "../../util";
+import { orderBy } from "../../../common/utils";
 
 /**
  * AI teams sign free agents.

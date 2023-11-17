@@ -6,7 +6,7 @@ import type { View } from "../../common/types";
 import { bySport, PLAYER } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../common/utils";
 
 const Summary = ({
 	players,

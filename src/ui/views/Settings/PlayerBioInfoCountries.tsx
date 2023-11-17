@@ -15,7 +15,6 @@ import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
 import { IMPORT_FILE_STYLE } from "./RowsEditor";
 import { CountryFlag } from "../../components";
 import Modal from "../../components/Modal";
-import orderBy from "lodash-es/orderBy";
 
 export const smallColStyle = {
 	marginLeft: 10,

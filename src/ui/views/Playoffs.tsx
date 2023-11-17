@@ -2,9 +2,9 @@ import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers, toWorker } from "../util";
-import range from "lodash-es/range";
 import { useState } from "react";
 import classNames from "classnames";
+import { range } from "../../common/utils";
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 

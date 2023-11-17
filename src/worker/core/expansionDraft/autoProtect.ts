@@ -1,7 +1,7 @@
 import { idb } from "../../db";
-import orderBy from "lodash-es/orderBy";
 import { g } from "../../util";
 import { PHASE } from "../../../common";
+import { orderBy } from "../../../common/utils";
 
 const autoProtect = async (tid: number): Promise<number[]> => {
 	const expansionDraft = g.get("expansionDraft");

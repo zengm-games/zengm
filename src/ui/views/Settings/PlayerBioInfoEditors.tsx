@@ -9,7 +9,7 @@ import {
 } from "./PlayerBioInfoCountries";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
 import Modal from "../../components/Modal";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../../common/utils";
 
 type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];
 

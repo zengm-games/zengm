@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import range from "lodash-es/range";
 import { type SyntheticEvent, type MouseEvent, Fragment } from "react";
 import type { Col, SortBy, SuperCol } from ".";
+import { range } from "../../../common/utils";
 
 const FilterHeader = ({
 	colOrder,

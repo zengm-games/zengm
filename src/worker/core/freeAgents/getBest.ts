@@ -2,7 +2,7 @@ import { g } from "../../util";
 import type { PlayerWithoutKey } from "../../../common/types";
 import { DRAFT_BY_TEAM_OVR, bySport } from "../../../common";
 import { getTeamOvrDiffs } from "../draft/runPicks";
-import orderBy from "lodash-es/orderBy";
+import { orderBy } from "../../../common/utils";
 
 // In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position.
 export const KEY_POSITIONS_NEEDED = bySport({

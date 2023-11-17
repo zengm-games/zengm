@@ -1,6 +1,6 @@
-import range from "lodash-es/range";
 import { MAX_SEASON, MIN_SEASON } from ".";
 import classNames from "classnames";
+import { range } from "../../../common/utils";
 
 export const SelectSeasonRange = ({
 	className,

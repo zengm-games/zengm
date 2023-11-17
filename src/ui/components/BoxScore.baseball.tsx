@@ -13,7 +13,6 @@ import { PLAYER_GAME_STATS } from "../../common/constants.baseball";
 import { sortByStats, StatsHeader } from "./BoxScore.football";
 import updateSortBys from "./DataTable/updateSortBys";
 import type { SortBy } from "./DataTable";
-import orderBy from "lodash-es/orderBy";
 import {
 	type BoxScorePlayer,
 	getText,
@@ -28,6 +27,7 @@ import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
+import { orderBy } from "../../common/utils";
 
 type Team = {
 	abbrev: string;

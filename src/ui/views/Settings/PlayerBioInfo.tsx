@@ -14,7 +14,6 @@ import { godModeRequiredMessage } from "./SettingsFormOptions";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
 import isEqual from "lodash-es/isEqual";
-import orderBy from "lodash-es/orderBy";
 import {
 	CollegesEditor,
 	FlagEditor,
@@ -23,6 +22,7 @@ import {
 } from "./PlayerBioInfoEditors";
 import { CountriesEditor } from "./PlayerBioInfoCountries";
 import Modal from "../../components/Modal";
+import { orderBy } from "../../../common/utils";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 

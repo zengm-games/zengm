@@ -7,12 +7,12 @@ import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
-import range from "lodash-es/range";
 import {
 	NUM_ACTIVE_BATTERS,
 	NUM_ACTIVE_PITCHERS,
 	NUM_STARTING_PITCHERS,
 } from "../../common/constants.baseball";
+import { range } from "../../common/utils";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", { pos });
@@ -462,23 +462,23 @@ const Depth = ({
 											  p.lineupPos !== "DH" &&
 											  p.lineupPos !== p.ratings.pos
 											: isSport("baseball") && (pos === "D" || pos === "DP")
-											? rowLabels?.[index] !== undefined &&
-											  rowLabels[index] !== "DH" &&
-											  rowLabels[index] !== p.ratings.pos
-											: !isSport("baseball") &&
-											  p.pid >= 0 &&
-											  pos !== "KR" &&
-											  pos !== "PR" &&
-											  !positions.includes(p.ratings.pos),
+											  ? rowLabels?.[index] !== undefined &&
+											    rowLabels[index] !== "DH" &&
+											    rowLabels[index] !== p.ratings.pos
+											  : !isSport("baseball") &&
+											    p.pid >= 0 &&
+											    pos !== "KR" &&
+											    pos !== "PR" &&
+											    !positions.includes(p.ratings.pos),
 								})}
 							>
 								{isSport("baseball") && (pos === "D" || pos === "DP")
 									? p.ratings.pos
 									: p.pid >= 0
-									? lineupPos
-									: p.pid === -1
-									? "P"
-									: null}
+									  ? lineupPos
+									  : p.pid === -1
+									    ? "P"
+									    : null}
 							</td>
 							<td>{p.age}</td>
 							{isSport("baseball") && pos !== "P" ? (

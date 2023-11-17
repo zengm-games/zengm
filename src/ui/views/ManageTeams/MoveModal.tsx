@@ -1,10 +1,10 @@
 import { useState } from "react";
-import orderBy from "lodash-es/orderBy";
 import { Modal } from "react-bootstrap";
 import teamInfos from "../../../common/teamInfos";
 import getTeamInfos from "../../../common/getTeamInfos";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld";
 import { TeamLogoJerseyInfo } from "../../components/TeamLogoJerseyInfo";
+import { orderBy } from "../../../common/utils";
 
 export type MoveModalTeam = {
 	abbrev: string;

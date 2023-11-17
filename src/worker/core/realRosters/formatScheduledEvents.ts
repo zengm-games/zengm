@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import { helpers } from "../../util";
 import type {
 	ScheduledEventWithoutKey,
@@ -8,6 +7,7 @@ import type {
 import { gameAttributeHasHistory, PHASE } from "../../../common";
 import { ALWAYS_WRAP } from "../league/loadGameAttributes";
 import { wrap } from "../../util/g";
+import { orderBy } from "../../../common/utils";
 
 const processGameAttributes = (
 	events: any[],

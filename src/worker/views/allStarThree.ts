@@ -2,8 +2,8 @@ import { allStar } from "../core";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
-import orderBy from "lodash-es/orderBy";
 import { isSport, PHASE } from "../../common";
+import { orderBy } from "../../common/utils";
 
 const updateAllStarThree = async (
 	{ season }: ViewInput<"allStarThree">,

@@ -2,8 +2,8 @@ import { player, season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
-import orderBy from "lodash-es/orderBy";
 import { bySport, PHASE } from "../../common";
+import { orderBy } from "../../common/utils";
 
 export const getUpcoming = async ({
 	day,

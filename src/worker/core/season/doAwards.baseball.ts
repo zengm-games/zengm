@@ -11,7 +11,6 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type { AwardPlayer, Awards } from "../../../common/types.baseball";
-import orderBy from "lodash-es/orderBy";
 import {
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
@@ -19,6 +18,7 @@ import {
 import processPlayerStats, {
 	NUM_OUTS_PER_GAME,
 } from "../../../common/processPlayerStats.baseball";
+import { orderBy } from "../../../common/utils";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer | undefined => {
 	if (!p) {

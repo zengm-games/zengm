@@ -1,9 +1,9 @@
-import orderBy from "lodash-es/orderBy";
 import { PHASE } from "../../../common";
 import type {
 	GetLeagueOptionsReal,
 	ScheduledEventWithoutKey,
 } from "../../../common/types";
+import { orderBy } from "../../../common/utils";
 import { defaultGameAttributes } from "../../util";
 import formatPlayerFactory from "./formatPlayerFactory";
 import type { Basketball } from "./loadData.basketball";

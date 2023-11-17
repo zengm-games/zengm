@@ -1,10 +1,10 @@
-import orderBy from "lodash-es/orderBy";
 import {
 	NUM_ACTIVE_BATTERS,
 	NUM_ACTIVE_PITCHERS,
 	NUM_STARTING_PITCHERS,
 } from "../../../common/constants.baseball";
 import type { Position } from "../../../common/types.baseball";
+import { orderBy } from "../../../common/utils";
 import { random } from "../../util";
 import { lineupSort } from "../team/genDepth.baseball";
 import { fatigueFactor } from "./fatigueFactor";

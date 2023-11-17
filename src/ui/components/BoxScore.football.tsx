@@ -14,7 +14,6 @@ import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
 import updateSortBys from "./DataTable/updateSortBys";
 import { getSortClassName } from "./DataTable/Header";
-import range from "lodash-es/range";
 import classNames from "classnames";
 import {
 	formatClock,
@@ -26,6 +25,7 @@ import {
 } from "../util/processLiveGameEvents.football";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger";
+import { range } from "../../common/utils";
 
 type Team = {
 	abbrev: string;
@@ -285,8 +285,8 @@ const processEvents = (
 				quarter: isOldFormat
 					? oldEvent.quarter
 					: event.quarter <= numPeriods
-					? `Q${event.quarter}`
-					: `OT${event.quarter - numPeriods}`,
+					  ? `Q${event.quarter}`
+					  : `OT${event.quarter - numPeriods}`,
 				time: isOldFormat ? oldEvent.time : formatClock(event.clock),
 				text,
 				score: helpers.deepCopy(score),
@@ -422,8 +422,8 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 				const endzoneTeam = ENDZONE_OFFENSE
 					? t
 					: ENDZONE_DEFENSE
-					? t2
-					: undefined;
+					  ? t2
+					  : undefined;
 				if (endzoneTeam) {
 					style.backgroundColor = endzoneTeam.colors[0];
 					style.color = endzoneTeam.colors[1];
@@ -651,10 +651,10 @@ const PlayBar = forwardRef<
 						backgroundColor: turnover
 							? red
 							: score
-							? lightGreen
-							: play.intendedPossessionChange
-							? darkGray
-							: blue,
+							  ? lightGreen
+							  : play.intendedPossessionChange
+							    ? darkGray
+							    : blue,
 						[driveDirection ? "marginLeft" : "marginRight"]: margin,
 						width: `calc(${
 							(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
@@ -677,10 +677,10 @@ const PlayBar = forwardRef<
 								backgroundColor: turnover
 									? red
 									: score
-									? lightGreen
-									: play.intendedPossessionChange
-									? darkGray
-									: lightGray,
+									  ? lightGreen
+									  : play.intendedPossessionChange
+									    ? darkGray
+									    : lightGray,
 								color:
 									turnover || play.intendedPossessionChange ? "#fff" : "#000",
 							}}

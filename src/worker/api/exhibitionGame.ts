@@ -1,4 +1,3 @@
-import orderBy from "lodash-es/orderBy";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_STADIUM_CAPACITY,
@@ -7,7 +6,7 @@ import {
 	PHASE,
 	unwrapGameAttribute,
 } from "../../common";
-import { groupBy } from "../../common/utils";
+import { groupBy, orderBy } from "../../common/utils";
 import type {
 	Conditions,
 	GameAttributesLeague,

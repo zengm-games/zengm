@@ -5,14 +5,6 @@ wrong team abbrev various places
 - using team*Cache from UI is probably wrong too
 - draft team in player info https://discord.com/channels/290013534023057409/290015591216054273/1174433419682394303
 
-get rid of lodash
-- https://github.com/angus-c/just
-- get rid of patch
-- look for orderBy params with . in it
-- make sure oldest and youngest peaks work
-- test playerbioinfo isequal stuff
-- test dashboard headlines throttle
-
 some sportState live sim for basketball/hockey
 
 FBGM move event text generation to UI

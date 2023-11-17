@@ -13,8 +13,7 @@ import {
 import { godModeRequiredMessage } from "./SettingsFormOptions";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
-// @ts-ignore
-import isEqual from "@ngard/tiny-isequal";
+import isEqual from "fast-deep-equal";
 import {
 	CollegesEditor,
 	FlagEditor,

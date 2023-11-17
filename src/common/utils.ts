@@ -141,6 +141,10 @@ export const orderBy = <
 	type OrderParam = OrderParams[number];
 
 	const params = keysArray.map((key, i) => {
+		if (typeof key === "string" && key.includes(".")) {
+			throw new Error(`Invalid nested key ${key}`);
+		}
+
 		const param: OrderParam = {
 			property: key,
 			order: ordersArray?.[i],

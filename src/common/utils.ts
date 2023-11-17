@@ -49,3 +49,37 @@ export const range = (start: number, stop?: number) => {
 
 	return output;
 };
+
+const maxMinByFactory = (type: "max" | "min") => {
+	const max = type === "max";
+
+	return <T extends unknown>(
+		items: T[],
+		iteratee: keyof T | ((item: T) => number),
+	) => {
+		let bestItem = undefined;
+		let bestScore = max ? -Infinity : Infinity;
+
+		const iterateeString = typeof iteratee === "string";
+
+		for (const item of items) {
+			let score;
+			if (iterateeString) {
+				score = (item as any)[iteratee];
+			} else {
+				score = (iteratee as any)(item);
+			}
+
+			if ((max && score > bestScore) || (!max && score < bestScore)) {
+				bestItem = item;
+				bestScore = score;
+			}
+		}
+
+		return bestItem;
+	};
+};
+
+export const maxBy = maxMinByFactory("max");
+
+export const minBy = maxMinByFactory("min");

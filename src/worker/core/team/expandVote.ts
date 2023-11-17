@@ -1,4 +1,3 @@
-import minBy from "lodash-es/minBy";
 import { PHASE } from "../../../common";
 import getTeamInfos from "../../../common/getTeamInfos";
 import type { Conditions } from "../../../common/types";
@@ -10,6 +9,7 @@ import phase from "../phase";
 import { getVoteResult } from "./relocateVote";
 import geographicCoordinates from "../../../common/geographicCoordinates";
 import { DEFAULT_COORDS, calcDistance } from "./cluster";
+import { minBy } from "../../../common/utils";
 
 const getBestDid = (
 	teams: {

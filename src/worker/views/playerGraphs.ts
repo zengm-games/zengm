@@ -14,7 +14,7 @@ import type {
 	PlayerStatType,
 } from "../../common/types";
 import { POS_NUMBERS } from "../../common/constants.baseball";
-import maxBy from "lodash-es/maxBy";
+import { maxBy } from "../../common/utils";
 
 export const statTypes = bySport({
 	baseball: [

@@ -2,8 +2,8 @@ import { bySport, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";
-import maxBy from "lodash-es/maxBy";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { maxBy } from "../../common/utils";
 
 const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	// Update every time because anything could change this (unless all players from class are retired)

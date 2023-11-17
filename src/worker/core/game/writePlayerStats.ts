@@ -12,8 +12,8 @@ import {
 } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
-import maxBy from "lodash-es/maxBy";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
+import { maxBy } from "../../../common/utils";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -251,8 +251,8 @@ const writePlayerStats = async (
 			result.team[0].stat.pts > result.team[1].stat.pts
 				? 0
 				: result.team[0].stat.pts < result.team[1].stat.pts
-				? 1
-				: undefined;
+				  ? 1
+				  : undefined;
 
 		const qbgResults = new Map<number, "W" | "L" | "OTL" | "T">();
 		if (isSport("football") || isSport("hockey")) {

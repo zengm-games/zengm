@@ -6,10 +6,10 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../common/types";
-import maxBy from "lodash-es/maxBy";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { getDraftLotteryProbs } from "../../common/draftLottery";
 import { getNumToPick } from "../core/draft/genOrder";
+import { maxBy } from "../../common/utils";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,

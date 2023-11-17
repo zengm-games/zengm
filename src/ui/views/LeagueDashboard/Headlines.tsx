@@ -2,9 +2,9 @@ import { m, AnimatePresence } from "framer-motion";
 import { NewsBlock } from "../../components";
 import { helpers, useLocal } from "../../util";
 import type { View } from "../../../common/types";
-import throttle from "lodash-es/throttle";
 import { Component, createElement, memo } from "react";
 import type { ComponentType } from "react";
+import { throttle } from "throttle-debounce";
 
 // Similar to react-throttle-render
 const throttleRender = (wait: number) => {
@@ -21,9 +21,8 @@ const throttleRender = (wait: number) => {
 					props,
 				};
 
-				this.throttledSetState = throttle(
-					(nextState: State) => this.setState(nextState),
-					wait,
+				this.throttledSetState = throttle(wait, (nextState: State) =>
+					this.setState(nextState),
 				);
 			}
 

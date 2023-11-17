@@ -2253,6 +2253,11 @@
   resolved "https://registry.yarnpkg.com/@types/stripe-v3/-/stripe-v3-3.1.32.tgz#5d546c528d5b9211d1315e10a0ae301f34826c36"
   integrity sha512-apFOWwf8CDNNtLuD9r+yPxW4NfK7rSUlpOTyoAZ7ZUHNGuMtmW4HbRFxsCJEQdVm9ZY3nf/w/GdYaqYlaS4nTg==
 
+"@types/throttle-debounce@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@types/throttle-debounce/-/throttle-debounce-5.0.2.tgz#3489d91673a4be830c2c9e2acf1f6cdab724102c"
+  integrity sha512-pDzSNulqooSKvSNcksnV72nk8p7gRqN8As71Sp28nov1IgmPKWbOEIwAWvBME5pPTtaXJAvG3O4oc76HlQ4kqQ==
+
 "@types/tough-cookie@*":
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.5.tgz#cb6e2a691b70cb177c6e3ae9c1d2e8b2ea8cd304"
@@ -8119,6 +8124,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
+
+throttle-debounce@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-5.0.0.tgz#a17a4039e82a2ed38a5e7268e4132d6960d41933"
+  integrity sha512-2iQTSgkkc1Zyk0MeVrt/3BvuOXYPl/R8Z0U2xxo9rjwNciaHDG3R+Lm6dh4EeUci49DanvBnuqI6jshoQQRGEg==
 
 through@2, through@~2.3, through@~2.3.1:
   version "2.3.8"

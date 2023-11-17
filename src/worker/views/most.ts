@@ -6,7 +6,7 @@ import type {
 	ViewInput,
 	MinimalPlayerRatings,
 } from "../../common/types";
-import { groupBy, orderBy } from "../../common/utils";
+import { groupBy, orderBy, type OrderBySortParams } from "../../common/utils";
 import { player } from "../core";
 import { bySport, PLAYER } from "../../common";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
@@ -22,7 +22,7 @@ type PlayersAll = (Player<MinimalPlayerRatings> & {
 	most: Most;
 })[];
 
-export const getMostXPlayers = async ({
+const getMostXPlayers = async ({
 	filter,
 	getValue,
 	after,
@@ -31,7 +31,7 @@ export const getMostXPlayers = async ({
 	filter?: (p: Player) => boolean;
 	getValue: (p: Player) => Most | Most[] | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
-	sortParams?: any;
+	sortParams?: OrderBySortParams;
 }) => {
 	const LIMIT = 100;
 	let playersAll: PlayersAll = [];
@@ -186,7 +186,7 @@ const updatePlayers = async (
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
 		let after: Parameters<typeof getMostXPlayers>[0]["after"];
-		let sortParams: any;
+		let sortParams: OrderBySortParams | undefined;
 		let title: string;
 		let description: string | undefined;
 		const extraCols: {
@@ -744,7 +744,7 @@ const updatePlayers = async (
 			});
 
 			sortParams = [
-				["most.value", "most.extra.ovr"],
+				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
 				["desc", "desc"],
 			];
 

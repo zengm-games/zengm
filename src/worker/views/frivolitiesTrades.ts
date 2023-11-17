@@ -8,7 +8,7 @@ import type {
 	Phase,
 } from "../../common/types";
 import { processAssets } from "./tradeSummary";
-import { orderBy } from "../../common/utils";
+import { orderBy, type OrderBySortParams } from "../../common/utils";
 
 type Most = {
 	value: number;
@@ -74,7 +74,7 @@ const getMostXRows = async ({
 }: {
 	filter?: (event: TradeEvent) => boolean;
 	getValue: (ts: [Team, Team]) => Most;
-	sortParams?: any;
+	sortParams: OrderBySortParams;
 }) => {
 	const LIMIT = 100;
 	const trades: Trade[] = [];

@@ -4,14 +4,14 @@ import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
 import { isSport, PHASE } from "../../common";
 import { team } from "../core";
 import hasTies from "../core/season/hasTies";
-import { orderBy } from "../../common/utils";
+import { orderBy, type OrderBySortParams } from "../../common/utils";
 
 type Most = {
 	value: number;
 	extra?: Record<string, unknown>;
 };
 
-export const getMostXTeamSeasons = async ({
+const getMostXTeamSeasons = async ({
 	filter,
 	getValue,
 	after,
@@ -20,7 +20,7 @@ export const getMostXTeamSeasons = async ({
 	filter?: (ts: TeamSeason) => boolean;
 	getValue: (ts: TeamSeason) => Most | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
-	sortParams?: any;
+	sortParams: OrderBySortParams;
 }) => {
 	const LIMIT = 100;
 	const teamSeasonsAll: (TeamSeason & {

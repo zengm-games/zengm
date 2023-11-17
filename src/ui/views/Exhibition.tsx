@@ -25,7 +25,7 @@ import {
 } from "../util";
 import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
 import SettingsForm from "./Settings/SettingsForm";
-import { orderBy } from "../../common/utils";
+import { orderBy, range } from "../../common/utils";
 
 export const getRandomSeason = (start: number, end: number) => {
 	return Math.floor(Math.random() * (1 + end - start)) + start;

@@ -941,7 +941,7 @@ class GameSim extends GameSimBase {
 		this.team[this.o].compositeRating.receiving = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["WR", "TE", "RB"],
-			orderField: "ovrs.WR",
+			orderFunc: p => p.ovrs.WR,
 			weightsMain: [5, 3, 2],
 			weightsBonus: [0.5, 0.25],
 			valFunc: p => p.ovrs.WR / 100,
@@ -949,7 +949,7 @@ class GameSim extends GameSimBase {
 		this.team[this.o].compositeRating.rushing = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["RB", "WR", "QB"],
-			orderField: "ovrs.RB",
+			orderFunc: p => p.ovrs.RB,
 			weightsMain: [1],
 			weightsBonus: [0.1],
 			valFunc: p => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
@@ -959,7 +959,7 @@ class GameSim extends GameSimBase {
 		this.team[this.o].compositeRating.passBlocking = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["OL", "TE", "RB"],
-			orderField: "ovrs.OL",
+			orderFunc: p => p.ovrs.OL,
 			weightsMain: [5, 4, 3, 3, 3],
 			weightsBonus: [1, 0.5],
 			valFunc: p => (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
@@ -967,7 +967,7 @@ class GameSim extends GameSimBase {
 		this.team[this.o].compositeRating.runBlocking = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["OL", "TE", "RB"],
-			orderField: "ovrs.OL",
+			orderFunc: p => p.ovrs.OL,
 			weightsMain: [5, 4, 3, 3, 3],
 			weightsBonus: [1, 0.5],
 			valFunc: p => (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
@@ -975,7 +975,7 @@ class GameSim extends GameSimBase {
 		this.team[this.d].compositeRating.passRushing = getCompositeFactor({
 			playersOnField: this.playersOnField[this.d],
 			positions: ["DL", "LB"],
-			orderField: "ovrs.DL",
+			orderFunc: p => p.ovrs.DL,
 			weightsMain: [5, 4, 3, 2, 1],
 			weightsBonus: [],
 			valFunc: p => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
@@ -983,7 +983,7 @@ class GameSim extends GameSimBase {
 		this.team[this.d].compositeRating.runStopping = getCompositeFactor({
 			playersOnField: this.playersOnField[this.d],
 			positions: ["DL", "LB", "S"],
-			orderField: "ovrs.DL",
+			orderFunc: p => p.ovrs.DL,
 			weightsMain: [5, 4, 3, 2, 2, 1, 1],
 			weightsBonus: [0.5, 0.5],
 			valFunc: p => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
@@ -991,7 +991,7 @@ class GameSim extends GameSimBase {
 		this.team[this.d].compositeRating.passCoverage = getCompositeFactor({
 			playersOnField: this.playersOnField[this.d],
 			positions: ["CB", "S", "LB"],
-			orderField: "ovrs.CB",
+			orderFunc: p => p.ovrs.CB,
 			weightsMain: [5, 4, 3, 2],
 			weightsBonus: [1, 0.5],
 			valFunc: p => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,

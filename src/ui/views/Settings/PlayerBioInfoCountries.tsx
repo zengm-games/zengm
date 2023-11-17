@@ -15,6 +15,7 @@ import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
 import { IMPORT_FILE_STYLE } from "./RowsEditor";
 import { CountryFlag } from "../../components";
 import Modal from "../../components/Modal";
+import { orderBy } from "../../../common/utils";
 
 export const smallColStyle = {
 	marginLeft: 10,

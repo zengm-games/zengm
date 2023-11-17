@@ -7,14 +7,14 @@ import { orderBy } from "../../../common/utils";
 const getCompositeFactor = ({
 	playersOnField,
 	positions,
-	orderField,
+	orderFunc,
 	weightsMain,
 	weightsBonus,
 	valFunc,
 }: {
 	playersOnField: PlayersOnField;
 	positions: Position[];
-	orderField: string;
+	orderFunc: (a: PlayerGameSim) => number;
 	weightsMain: number[];
 	weightsBonus: number[];
 	valFunc: (a: PlayerGameSim) => number;
@@ -22,7 +22,7 @@ const getCompositeFactor = ({
 	const maxNum = weightsMain.length + weightsBonus.length;
 	const players = orderBy(
 		getPlayers(playersOnField, positions),
-		orderField,
+		orderFunc,
 		"desc",
 	).slice(0, maxNum);
 	let factor = 0;

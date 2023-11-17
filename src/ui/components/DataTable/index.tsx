@@ -199,17 +199,19 @@ const DataTable = ({
 					return true;
 			  });
 
+		const sortKeys = state.sortBys.map(sortBy => (row: DataTableRow) => {
+			let i = sortBy[0];
+
+			if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
+				i = 0;
+			}
+
+			return getSortVal(row.data[i], cols[i].sortType);
+		});
+
 		const rowsOrdered = orderBy(
 			rowsFiltered,
-			state.sortBys.map(sortBy => row => {
-				let i = sortBy[0];
-
-				if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
-					i = 0;
-				}
-
-				return getSortVal(row.data[i], cols[i].sortType);
-			}),
+			sortKeys,
 			state.sortBys.map(sortBy => sortBy[1]),
 		);
 

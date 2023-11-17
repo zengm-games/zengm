@@ -101,11 +101,19 @@ export const omit = <T extends Record<string, unknown>, U extends keyof T>(
 
 export const countBy = <T extends unknown>(
 	items: T[],
-	iteratee: (item: T) => number | string,
+	iteratee: string | ((item: T) => number | string),
 ) => {
 	const output: Record<string, number> = {};
+
+	const iterateeString = typeof iteratee === "string";
+
 	for (const item of items) {
-		const key = iteratee(item);
+		let key;
+		if (iterateeString) {
+			key = (item as any)[iteratee];
+		} else {
+			key = (iteratee as any)(item);
+		}
 
 		if (output[key] === undefined) {
 			output[key] = 1;
@@ -143,3 +151,6 @@ export const orderBy = <
 
 	return justOrderBy(items, params as OrderParams);
 };
+
+type OrderByParams = Parameters<typeof orderBy>;
+export type OrderBySortParams = [OrderByParams[1], OrderByParams[2]];

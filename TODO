@@ -8,6 +8,8 @@ wrong team abbrev various places
 get rid of lodash
 - https://github.com/angus-c/just
 - get rid of patch
+- look for orderBy params with . in it
+- make sure oldest and youngest peaks work
 
 some sportState live sim for basketball/hockey
 

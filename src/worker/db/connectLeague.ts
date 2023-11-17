@@ -214,7 +214,11 @@ const upgrade29 = (tx: IDBTransaction) => {
 				event2: any,
 			) => {
 				// Index brings them back maybe out of order
-				p.stats = orderBy(event2.target.result, ["season", "playoffs", "psid"]);
+				p.stats = orderBy(event2.target.result as any[], [
+					"season",
+					"playoffs",
+					"psid",
+				]);
 				cursor.update(p);
 				cursor.continue();
 			};

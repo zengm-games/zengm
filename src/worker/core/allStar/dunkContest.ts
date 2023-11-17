@@ -174,7 +174,11 @@ const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {
 			}
 
 			// If there are parts with higher difficulty, move up to the next highest one
-			const candidate = orderBy(candidates, "difficulty", "asc")[0];
+			const candidate = orderBy(
+				candidates,
+				candidate => candidate[1].difficulty,
+				"asc",
+			)[0];
 			newDunk[part] = candidate[0];
 
 			if (getDunkScoreRaw(newDunk) > minScoreNeeded) {

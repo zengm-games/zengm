@@ -117,11 +117,10 @@ import type { IDBPIndex, IDBPObjectStore } from "idb";
 import type { LeagueDB } from "../db/connectLeague";
 import playMenu from "./playMenu";
 import toolsMenu from "./toolsMenu";
-import omit from "lodash-es/omit";
 import addFirstNameShort from "../util/addFirstNameShort";
 import statsBaseball from "../core/team/stats.baseball";
 import { extraRatings } from "../views/playerRatings";
-import { groupByUnique } from "../../common/utils";
+import { groupByUnique, omit } from "../../common/utils";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,

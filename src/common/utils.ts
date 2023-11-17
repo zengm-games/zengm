@@ -83,3 +83,16 @@ const maxMinByFactory = (type: "max" | "min") => {
 export const maxBy = maxMinByFactory("max");
 
 export const minBy = maxMinByFactory("min");
+
+export const omit = <T extends Record<string, unknown>, U extends keyof T>(
+	object: T,
+	remove: U,
+) => {
+	const output: any = {};
+	for (const key of Object.keys(object)) {
+		if (remove !== key) {
+			output[key] = object[key];
+		}
+	}
+	return output as Omit<T, U>;
+};

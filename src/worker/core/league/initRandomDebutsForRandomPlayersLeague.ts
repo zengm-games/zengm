@@ -1,4 +1,3 @@
-import omit from "lodash-es/omit";
 import orderBy from "lodash-es/orderBy";
 import { PHASE } from "../../../common";
 import type {
@@ -9,6 +8,7 @@ import { defaultGameAttributes, random } from "../../util";
 import type { Settings } from "../../views/settings";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory";
 import type { Basketball } from "../realRosters/loadData.basketball";
+import { omit } from "../../../common/utils";
 
 // Code inside realPlayers is responsible for random debuts normally. But that only works for real players leagues, not random players leagues. So here is a standalone version. Maybe these should be used in realPlayers too, would be more DRY...
 const initRandomDebutsForRandomPlayersLeague = async ({

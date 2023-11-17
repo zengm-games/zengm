@@ -84,7 +84,7 @@ export const monteCarloPot = async ({
 		maxOvrs.push(maxOvr);
 	}
 
-	return orderBy(maxOvrs)[Math.floor(0.75 * NUM_SIMULATIONS)];
+	return maxOvrs.sort((a, b) => a - b)[Math.floor(0.75 * NUM_SIMULATIONS)];
 };
 
 /**

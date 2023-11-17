@@ -13,6 +13,7 @@ import type {
 	GetCopyType,
 } from "../../../common/types";
 import { DEFAULT_POINTS_FORMULA } from "../../../common";
+import { orderBy } from "../../../common/utils";
 
 const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,

@@ -13,7 +13,8 @@ import {
 import { godModeRequiredMessage } from "./SettingsFormOptions";
 import type { initDefaults } from "../../../worker/util/loadNames";
 import { getFrequencies, mergeCountries } from "../../../common/names";
-import isEqual from "lodash-es/isEqual";
+// @ts-ignore
+import isEqual from "@ngard/tiny-isequal";
 import {
 	CollegesEditor,
 	FlagEditor,

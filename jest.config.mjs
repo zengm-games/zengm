@@ -11,9 +11,7 @@ export default {
 	setupFilesAfterEnv: ["./src/test/jest.ts", "./src/worker/index.ts"],
 
 	// https://stackoverflow.com/a/43197503/786644
-	transformIgnorePatterns: [
-		"<rootDir>/node_modules/(?!lodash-es|d3-|fake-indexeddb)",
-	],
+	transformIgnorePatterns: ["<rootDir>/node_modules/(?!d3-|fake-indexeddb)"],
 
 	// Non-default value is needed to catch .cjs test file
 	testRegex: "\\.test\\.c?[jt]sx?$",

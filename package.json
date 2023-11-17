@@ -36,6 +36,7 @@
 		"@bugsnag/plugin-react": "^7.19.0",
 		"@juggle/resize-observer": "^3.4.0",
 		"@mattiasbuelens/web-streams-adapter": "^0.1.0",
+		"@ngard/tiny-isequal": "^1.1.0",
 		"@tanstack/react-virtual": "^3.0.0-beta.68",
 		"@visx/axis": "^3.5.0",
 		"@visx/curve": "^3.3.0",

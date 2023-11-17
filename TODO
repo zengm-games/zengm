@@ -10,6 +10,7 @@ get rid of lodash
 - get rid of patch
 - look for orderBy params with . in it
 - make sure oldest and youngest peaks work
+- test playerbioinfo isequal stuff
 
 some sportState live sim for basketball/hockey
 

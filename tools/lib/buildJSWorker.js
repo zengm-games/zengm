@@ -4,7 +4,7 @@ import { parentPort, workerData } from "node:worker_threads";
 
 const LODASH_BLACKLIST = [
 	/^lodash$/,
-	/^lodash-es$/,
+	/^lodash-es/,
 
 	// lodash/debounce and lodash/memoize are used by visx
 	/^lodash\/(?!debounce|memoize)/,

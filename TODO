@@ -49,6 +49,7 @@ FBGM
   - punt shouldn't so commonly be touchbacks
   - punt should be shorter if you're backed up in your own endzone
   - blocked punts
+    - pntBlk exists for some reason
 - blocked fg/xp
   - count as missed field goal
   - chance for either team to return (very slim for offense)
@@ -62,6 +63,12 @@ FBGM
 - reduce number of bye weeks - see how baseball schedule is divided into series
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
 - jersey number probability - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
+- options to enable canadian football, and then put that as a preset for new leagues
+
+better clock handling in BBGM - calculate time as you go in the play
+- assist should imply some minimum time
+- offensive rebound putback should be fast
+- end of game sometimes things happen unrealistically fast
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is

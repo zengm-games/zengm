@@ -11,6 +11,7 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||

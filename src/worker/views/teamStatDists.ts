@@ -9,6 +9,7 @@ const updateTeams = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
@@ -208,8 +209,8 @@ const updateTeams = async (
 		);
 
 		type Keys =
-			| keyof typeof teams[number]["seasonAttrs"]
-			| keyof typeof teams[number]["stats"];
+			| keyof (typeof teams)[number]["seasonAttrs"]
+			| keyof (typeof teams)[number]["stats"];
 		type StatsAll = Record<Keys, number[]>;
 		const statsAll = teams.reduce((memo: StatsAll, t) => {
 			for (const cat of ["seasonAttrs", "stats"] as const) {

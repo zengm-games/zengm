@@ -30,6 +30,7 @@ const updateStandings = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
 		inputs.type !== state.type

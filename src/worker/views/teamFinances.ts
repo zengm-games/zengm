@@ -12,6 +12,7 @@ const updateTeamFinances = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("teamFinances") ||

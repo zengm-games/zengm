@@ -11,6 +11,7 @@ const updateLeagueStats = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		inputs.tid !== state.tid ||
 		inputs.playoffs !== state.playoffs ||

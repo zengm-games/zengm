@@ -94,6 +94,7 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		(inputs.season === g.get("season") &&
 			updateEvents.includes("playerMovement")) ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||

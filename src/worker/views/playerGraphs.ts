@@ -244,6 +244,7 @@ const updatePlayers = async (
 	const statType = `statType${axis}` as const;
 	const playoffs = `playoffs${axis}` as const;
 	if (
+		updateEvents.includes("firstRun") ||
 		(inputs[season] === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||

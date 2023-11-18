@@ -10,6 +10,7 @@ const updateInjuries = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		((inputs.season === g.get("season") || inputs.season === "current") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||

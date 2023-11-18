@@ -9,6 +9,7 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.season !== state.season

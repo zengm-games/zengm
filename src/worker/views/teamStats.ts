@@ -255,6 +255,7 @@ const updateTeams = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||

@@ -85,6 +85,7 @@ const updateNegotiation = async (
 	state: any,
 ) => {
 	if (
+		updateEvents.includes("firstRun") ||
 		!state.player ||
 		(state.player && inputs.pid !== state.player.pid) ||
 		updateEvents.includes("gameSim") ||

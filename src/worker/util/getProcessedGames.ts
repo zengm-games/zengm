@@ -13,28 +13,16 @@ import type { Game } from "../../common/types";
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
 const getProcessedGames = async ({
-	abbrev,
+	tid,
 	season,
 	loadedGames = [],
 	includeAllStarGame = false,
 }: {
-	abbrev: string;
+	tid: number;
 	season: number;
 	loadedGames?: Game[];
 	includeAllStarGame?: boolean;
 }) => {
-	let tid;
-
-	if (abbrev === "special") {
-		tid = -1;
-	} else {
-		tid = g.get("teamInfoCache").findIndex(t => t.abbrev === abbrev);
-
-		if (tid < 0) {
-			throw new Error(`Invalid abbrev: "${abbrev}"`);
-		}
-	}
-
 	let maxGid;
 
 	if (loadedGames.length > 0) {

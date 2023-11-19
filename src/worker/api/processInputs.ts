@@ -273,12 +273,16 @@ const frivolitiesTrades = (params: Params) => {
 };
 
 const gameLog = (params: Params) => {
-	const abbrev =
-		params.abbrev === "special" ? "special" : validateAbbrev(params.abbrev)[1];
+	const [tid, abbrev] =
+		params.abbrev === "special"
+			? [-1, "special"]
+			: validateAbbrev(params.abbrev);
+
 	return {
-		abbrev,
 		gid: params.gid !== undefined ? parseInt(params.gid) : -1,
 		season: validateSeason(params.season),
+		tid,
+		abbrev,
 	};
 };
 

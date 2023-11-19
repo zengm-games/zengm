@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, useLocalPartial } from "../util";
+import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 import { bySport, isSport } from "../../common";
@@ -73,8 +73,6 @@ const GamesList = ({
 	season: number;
 	tid: number;
 }) => {
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
-
 	if (season < currentSeason && gamesList.games.length === 0) {
 		return <NoGamesMessage warnAboutDelete />;
 	}
@@ -89,7 +87,7 @@ const GamesList = ({
 				</tr>
 			</thead>
 			<tbody>
-				{gamesList.abbrev !== abbrev ? (
+				{gamesList.tid !== tid ? (
 					<tr>
 						<td colSpan={3}>Loading...</td>
 					</tr>
@@ -116,13 +114,17 @@ const GamesList = ({
 							overtimeText === ""
 								? ""
 								: isSport("baseball")
-								? ` (${overtimeText})`
-								: ` ${overtimeText}`;
+								  ? ` (${overtimeText})`
+								  : ` ${overtimeText}`;
 
-						const oppAbbrev =
-							abbrev === "special"
-								? "ASG"
-								: teamInfoCache[gm.teams[other].tid]?.abbrev;
+						const oppAbbrev = gamesList.abbrevs[gm.teams[other].tid];
+
+						const url = helpers.leagueUrl([
+							"game_log",
+							abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
+							season,
+							gm.gid,
+						]);
 
 						return (
 							<tr
@@ -130,26 +132,14 @@ const GamesList = ({
 								className={gm.gid === gid ? "table-info" : undefined}
 							>
 								<td className="game-log-cell">
-									<a
-										href={helpers.leagueUrl([
-											"game_log",
-											abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
-											season,
-											gm.gid,
-										])}
-									>
+									<a href={url}>
 										{home ? "" : "@"}
 										{oppAbbrev}
 									</a>
 								</td>
 								<td className={classNames("game-log-cell")}>
 									<a
-										href={helpers.leagueUrl([
-											"game_log",
-											abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
-											season,
-											gm.gid,
-										])}
+										href={url}
 										className={
 											gm.forceWin !== undefined ? "alert-god-mode" : undefined
 										}
@@ -158,14 +148,7 @@ const GamesList = ({
 									</a>
 								</td>
 								<td className="game-log-cell">
-									<a
-										href={helpers.leagueUrl([
-											"game_log",
-											abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
-											season,
-											gm.gid,
-										])}
-									>
+									<a href={url}>
 										{gm.teams[user].pts}-{gm.teams[other].pts}
 										{overtimes}
 									</a>

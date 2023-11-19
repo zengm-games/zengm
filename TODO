@@ -1,8 +1,10 @@
 wrong team abbrev various places
-- box score https://discord.com/channels/290013534023057409/331882115119448065/852551515931017236
-- getTeamInfoBySeason or fixRatingsStatsAbbrevs
+- functions for helping
+  - loadAbbrevs in gameLog - gets all abbrevs by tid for one season
+  - getTeamInfoBySeason - gets all info for one team/season
+  - fixRatingsStatsAbbrevs - updates abbrevs in player object
 - any abbrev returned in stats or ratings from playersPlus is wrong
-- using team*Cache from UI is probably wrong too
+- using teamInfoCache from UI is probably wrong too
 - draft team in player info https://discord.com/channels/290013534023057409/290015591216054273/1174433419682394303
 
 some sportState live sim for basketball/hockey
@@ -63,7 +65,7 @@ FBGM
 - reduce number of bye weeks - see how baseball schedule is divided into series
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
 - jersey number probability - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
-- options to enable canadian football, and then put that as a preset for new leagues
+- options to enable canadian/arena football, and then put that as a preset for new leagues
 
 better clock handling in BBGM - calculate time as you go in the play
 - assist should imply some minimum time

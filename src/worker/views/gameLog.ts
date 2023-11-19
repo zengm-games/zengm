@@ -6,7 +6,7 @@ import type {
 	AllStars,
 	Game,
 } from "../../common/types";
-import { DEFAULT_TEAM_COLORS } from "../../common";
+import { DEFAULT_TEAM_COLORS, PHASE } from "../../common";
 
 export type TeamSeasonOverride = {
 	region?: string;
@@ -223,7 +223,7 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
 		abbrev: inputs.abbrev,
 		currentSeason: g.get("season"),
 		season: inputs.season,
-		tid: g.get("teamInfoCache").findIndex(t => t.abbrev === inputs.abbrev),
+		tid: inputs.tid,
 	};
 };
 
@@ -250,6 +250,37 @@ const updateBoxScore = async (
 	}
 };
 
+const loadAbbrevs = async (season: number) => {
+	const abbrevs: Record<number, string> = {};
+	abbrevs[-2] = "ASG";
+	abbrevs[-1] = "ASG";
+
+	let loaded = false;
+
+	// For historical seasons, look up old abbrevs
+	if (g.get("season") !== season || g.get("phase") >= PHASE.PLAYOFFS) {
+		const teamSeasons = await idb.getCopies.teamSeasons({
+			season,
+		});
+		if (teamSeasons.length > 0) {
+			for (const row of teamSeasons) {
+				abbrevs[row.tid] = row.abbrev;
+			}
+			loaded = true;
+		}
+	}
+
+	// If no old abbrevs found, or if this is the current season, use cache
+	if (!loaded) {
+		const teamInfoCache = g.get("teamInfoCache");
+		for (let tid = 0; tid < teamInfoCache.length; tid++) {
+			abbrevs[tid] = teamInfoCache[tid].abbrev;
+		}
+	}
+
+	return abbrevs;
+};
+
 /**
  * Update the game log list, as necessary.
  *
@@ -261,37 +292,45 @@ const updateBoxScore = async (
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
 const updateGamesList = async (
-	{ abbrev, season }: ViewInput<"gameLog">,
+	{ season, tid }: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
-	state: {
+	{
+		gamesList,
+	}: {
 		gamesList?: {
+			abbrevs: Record<number, string>;
 			games: Game[];
-			abbrev: string;
+			tid: number;
 			season: number;
 		};
 	},
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		!state.gamesList ||
-		abbrev !== state.gamesList.abbrev ||
-		season !== state.gamesList.season ||
+		!gamesList ||
+		tid !== gamesList.tid ||
+		season !== gamesList.season ||
 		(updateEvents.includes("gameSim") && season === g.get("season"))
 	) {
 		let games: Game[];
+		let abbrevs: Record<number, string>;
 
-		if (
-			state.gamesList &&
-			(abbrev !== state.gamesList.abbrev || season !== state.gamesList.season)
-		) {
+		if (gamesList && (tid !== gamesList.tid || season !== gamesList.season)) {
 			// Switching to a new list
 			games = [];
 		} else {
-			games = state.gamesList ? state.gamesList.games : [];
+			games = gamesList ? gamesList.games : [];
+		}
+
+		if (!gamesList || season !== gamesList.season) {
+			// Load abbrevs for this season
+			abbrevs = await loadAbbrevs(season);
+		} else {
+			abbrevs = gamesList.abbrevs;
 		}
 
 		const newGames = await getProcessedGames({
-			abbrev,
+			tid,
 			season,
 			loadedGames: games,
 		});
@@ -306,8 +345,9 @@ const updateGamesList = async (
 
 		return {
 			gamesList: {
+				abbrevs,
 				games,
-				abbrev,
+				tid,
 				season,
 			},
 		};

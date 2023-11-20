@@ -19,7 +19,8 @@
 		"strict": true,
 		"useUnknownInCatchVariables": false,
 		"verbatimModuleSyntax": true,
-		"module": "es2020",
-		"noImplicitOverride": true
+		"module": "esnext",
+		"noImplicitOverride": true,
+		"isolatedModules": true
 	}
 }

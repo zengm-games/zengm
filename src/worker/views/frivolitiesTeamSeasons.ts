@@ -167,6 +167,8 @@ const updateFrivolitiesTeamSeasons = async (
 		const pointsFormula = g.get("pointsFormula");
 		const usePts = pointsFormula !== "";
 
+		const mostValue = (x: any) => x.most.value;
+
 		if (type === "best_non_playoff") {
 			title = "Best Non-Playoff Teams";
 			description =
@@ -179,7 +181,7 @@ const updateFrivolitiesTeamSeasons = async (
 				return { value: helpers.calcWinp(ts) };
 			};
 			sortParams = [
-				["most.value", "mov"],
+				[mostValue, "mov"],
 				["desc", "desc"],
 			];
 		} else if (type === "worst_playoff") {
@@ -206,7 +208,7 @@ const updateFrivolitiesTeamSeasons = async (
 				roundsWonText: getRoundsWonText(ts),
 			});
 			sortParams = [
-				["most.value", "mov"],
+				[mostValue, "mov"],
 				["desc", "asc"],
 			];
 		} else if (type === "worst_finals") {
@@ -246,7 +248,7 @@ const updateFrivolitiesTeamSeasons = async (
 				};
 			};
 			sortParams = [
-				["most.value", "mov"],
+				[mostValue, "mov"],
 				["desc", "asc"],
 			];
 		} else if (type === "worst_champ") {
@@ -282,7 +284,7 @@ const updateFrivolitiesTeamSeasons = async (
 				};
 			};
 			sortParams = [
-				["most.value", "mov"],
+				[mostValue, "mov"],
 				["desc", "asc"],
 			];
 		} else if (type === "best") {
@@ -305,7 +307,7 @@ const updateFrivolitiesTeamSeasons = async (
 				roundsWonText: getRoundsWonText(ts),
 			});
 			sortParams = [
-				["most.value", "mov"],
+				[mostValue, "mov"],
 				["desc", "desc"],
 			];
 		} else if (type === "worst") {
@@ -316,7 +318,7 @@ const updateFrivolitiesTeamSeasons = async (
 				value: -helpers.calcWinp(ts),
 			});
 			sortParams = [
-				["most.value", "mov"],
+				[mostValue, "mov"],
 				["desc", "asc"],
 			];
 		} else if (type === "old_champ" || type === "young_champ") {
@@ -358,7 +360,7 @@ const updateFrivolitiesTeamSeasons = async (
 				};
 			};
 			sortParams = [
-				["most.value", "winp"],
+				[mostValue, "winp"],
 				["desc", "desc"],
 			];
 		} else {

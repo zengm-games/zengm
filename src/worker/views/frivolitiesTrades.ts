@@ -168,7 +168,7 @@ const frivolitiesTrades = async (
 				}
 				return { value: scoreMax };
 			};
-			sortParams = [["most.value"], ["desc"]];
+			sortParams = [[(x: any) => x.most.value], ["desc"]];
 		} else if (type === "lopsided") {
 			title = "Most Lopsided Trades";
 			description =
@@ -179,7 +179,7 @@ const frivolitiesTrades = async (
 
 				return { value };
 			};
-			sortParams = [["most.value"], ["desc"]];
+			sortParams = [[(x: any) => x.most.value], ["desc"]];
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

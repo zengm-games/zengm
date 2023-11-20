@@ -142,6 +142,11 @@ export const orderBy = <
 	keys: Key | Key[],
 	orders?: AscDesc | AscDesc[],
 ): Item[] => {
+	// Sometimes this happens and lodash supported it
+	if (items === undefined) {
+		return [];
+	}
+
 	const keysArray = Array.isArray(keys) ? keys : [keys];
 	const ordersArray = typeof orders === "string" ? [orders] : orders;
 

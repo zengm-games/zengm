@@ -23,26 +23,14 @@ type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 type ShouldBeValue = any;
 
 const ReorderHandle = SortableHandle(
-	({
-		highlight,
-		isDragged,
-		selected,
-	}: {
-		highlight: boolean;
-		isDragged: boolean;
-		selected: boolean;
-	}) => {
+	({ isDragged }: { isDragged: boolean }) => {
 		return (
-			<td
-				className={classNames("roster-handle", {
-					"table-info": !selected && highlight,
-					"table-secondary": !selected && !highlight,
-					"user-select-none": isDragged,
-					"bg-primary": selected,
-				})}
+			<a
+				className={classNames("d-block w-100")}
 				data-movable-handle
 				style={{
 					cursor: isDragged ? "grabbing" : "grab",
+					height: 27,
 				}}
 			/>
 		);
@@ -88,11 +76,16 @@ const Row = SortableElement(
 				{disabled2 ? (
 					<td className="p-0" />
 				) : (
-					<ReorderHandle
-						highlight={highlight}
-						isDragged={isDragged}
-						selected={selected}
-					/>
+					<td
+						className={classNames("roster-handle p-0", {
+							"table-info": !selected && highlight,
+							"table-secondary": !selected && !highlight,
+							"user-select-none": isDragged,
+							"bg-primary": selected,
+						})}
+					>
+						<ReorderHandle isDragged={isDragged} />
+					</td>
 				)}
 				{row({
 					index: i,

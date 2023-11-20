@@ -45,8 +45,16 @@ export const range = (start: number, stop?: number) => {
 	}
 
 	const output = [];
-	for (let current = start; current < stop; current++) {
-		output.push(current);
+
+	const backwards = start > stop;
+	if (backwards) {
+		for (let current = start; current > stop; current--) {
+			output.push(current);
+		}
+	} else {
+		for (let current = start; current < stop; current++) {
+			output.push(current);
+		}
 	}
 
 	return output;

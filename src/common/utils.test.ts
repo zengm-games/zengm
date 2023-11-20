@@ -6,6 +6,7 @@ describe("common/utils", () => {
 		assert.deepStrictEqual(range(5), [0, 1, 2, 3, 4]);
 		assert.deepStrictEqual(range(0), []);
 		assert.deepStrictEqual(range(2, 5), [2, 3, 4]);
+		assert.deepStrictEqual(range(5, 2), [5, 4, 3]);
 	});
 
 	test("maxBy and minBy", () => {

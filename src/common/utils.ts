@@ -1,5 +1,14 @@
 // Why not use lodash? groupByUnique doesn't exist there, and these are smaller
 
+// iteratee can be a function taking item and returning number/string, or a number/string of a property of item
+const getValueByIteratee = (iteratee: any, item: any) => {
+	if (typeof iteratee === "function") {
+		return iteratee(item);
+	}
+
+	return item[iteratee];
+};
+
 export const groupBy = <T extends Record<string, unknown>>(
 	rows: T[],
 	key: string | ((row: T) => string | number),
@@ -7,7 +16,7 @@ export const groupBy = <T extends Record<string, unknown>>(
 	const grouped: Record<string, T[]> = {};
 
 	for (const row of rows) {
-		const keyValue = (typeof key === "string" ? row[key] : key(row)) as any;
+		const keyValue = getValueByIteratee(key, row);
 		if (Object.hasOwn(grouped, keyValue)) {
 			grouped[keyValue].push(row);
 		} else {
@@ -25,7 +34,7 @@ export const groupByUnique = <T extends Record<string, unknown>>(
 	const grouped: Record<string, T> = {};
 
 	for (const row of rows) {
-		const keyValue = (typeof key === "string" ? row[key] : key(row)) as any;
+		const keyValue = getValueByIteratee(key, row);
 		if (Object.hasOwn(grouped, keyValue)) {
 			throw new Error(`Duplicate primary key "${keyValue}"`);
 		} else {
@@ -56,15 +65,6 @@ export const range = (start: number, stop?: number) => {
 	}
 
 	return output;
-};
-
-// iteratee can be a function taking item and returning number/string, or a number/string of a property of item
-const getValueByIteratee = (iteratee: any, item: any) => {
-	if (typeof iteratee === "function") {
-		return iteratee(item);
-	}
-
-	return item[iteratee];
 };
 
 const maxMinByFactory = (type: "max" | "min") => {

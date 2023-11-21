@@ -1,5 +1,3 @@
-import justOrderBy from "just-order-by";
-
 // Why not use lodash? groupByUnique doesn't exist there, and these are smaller
 
 export const groupBy = <T extends Record<string, unknown>>(
@@ -60,6 +58,15 @@ export const range = (start: number, stop?: number) => {
 	return output;
 };
 
+// iteratee can be a function taking item and returning number/string, or a number/string of a property of item
+const getValueByIteratee = (iteratee: any, item: any) => {
+	if (typeof iteratee === "function") {
+		return iteratee(item);
+	}
+
+	return item[iteratee];
+};
+
 const maxMinByFactory = (type: "max" | "min") => {
 	const max = type === "max";
 
@@ -70,15 +77,8 @@ const maxMinByFactory = (type: "max" | "min") => {
 		let bestItem = undefined;
 		let bestScore = max ? -Infinity : Infinity;
 
-		const iterateeString = typeof iteratee === "string";
-
 		for (const item of items) {
-			let score;
-			if (iterateeString) {
-				score = (item as any)[iteratee];
-			} else {
-				score = (iteratee as any)(item);
-			}
+			const score = getValueByIteratee(iteratee, item) as number;
 
 			if ((max && score > bestScore) || (!max && score < bestScore)) {
 				bestItem = item;
@@ -113,15 +113,8 @@ export const countBy = <T extends unknown>(
 ) => {
 	const output: Record<string, number> = {};
 
-	const iterateeString = typeof iteratee === "string";
-
 	for (const item of items) {
-		let key;
-		if (iterateeString) {
-			key = (item as any)[iteratee];
-		} else {
-			key = (iteratee as any)(item);
-		}
+		const key = getValueByIteratee(iteratee, item);
 
 		if (output[key] === undefined) {
 			output[key] = 1;
@@ -133,11 +126,40 @@ export const countBy = <T extends unknown>(
 	return output;
 };
 
-export const orderBy = <
-	Item extends unknown,
-	Key extends keyof Item | ((item: Item) => number | string),
-	AscDesc extends "asc" | "desc",
->(
+// Rather than just `keyof Item` it should only be a key whose property is a number or string
+type OrderByKey<Item> = keyof Item | ((item: Item) => number | string);
+type AscDesc = "asc" | "desc";
+
+const createSortFunction = <Item extends unknown, Key extends OrderByKey<Item>>(
+	keys: Key | Key[],
+	orders?: AscDesc | AscDesc[],
+) => {
+	const keysArray = Array.isArray(keys) ? keys : [keys];
+	const ordersArray = typeof orders === "string" ? [orders] : orders;
+
+	return (a: Item, b: Item) => {
+		for (let i = 0; i < keysArray.length; i++) {
+			const key = keysArray[i];
+			const order = ordersArray?.[i];
+
+			const valueA = getValueByIteratee(key, a) ?? Infinity;
+			const valueB = getValueByIteratee(key, b) ?? Infinity;
+
+			const descending = order === "desc";
+
+			if (valueA < valueB) {
+				return descending ? 1 : -1;
+			}
+
+			if (valueA > valueB) {
+				return descending ? -1 : 1;
+			}
+		}
+		return 0;
+	};
+};
+
+export const orderBy = <Item extends unknown, Key extends OrderByKey<Item>>(
 	items: Item[],
 	keys: Key | Key[],
 	orders?: AscDesc | AscDesc[],
@@ -147,26 +169,9 @@ export const orderBy = <
 		return [];
 	}
 
-	const keysArray = Array.isArray(keys) ? keys : [keys];
-	const ordersArray = typeof orders === "string" ? [orders] : orders;
+	const copied = items.slice();
 
-	type OrderParams = NonNullable<Parameters<typeof justOrderBy<Item>>[1]>;
-	type OrderParam = OrderParams[number];
-
-	const params = keysArray.map((key, i) => {
-		if (typeof key === "string" && key.includes(".")) {
-			throw new Error(`Invalid nested key ${key}`);
-		}
-
-		const param: OrderParam = {
-			property: key,
-			order: ordersArray?.[i],
-		};
-
-		return param;
-	});
-
-	return justOrderBy(items, params as OrderParams);
+	return copied.sort(createSortFunction(keys, orders));
 };
 
 type OrderByParams = Parameters<typeof orderBy>;

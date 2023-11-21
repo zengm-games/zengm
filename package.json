@@ -60,7 +60,6 @@
 		"framer-motion": "^10.16.5",
 		"html2canvas": "^1.4.1",
 		"idb": "dumbmatter/idb#autoIncrementKeyPath2-build",
-		"just-order-by": "^1.0.0",
 		"match-sorter": "^6.3.1",
 		"nanoevents": "^8.0.0",
 		"promise-worker-bi": "^4.1.1",

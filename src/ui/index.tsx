@@ -281,9 +281,7 @@ const setupRoutes = () => {
 					util.ads.trackPageview();
 				}
 
-				if (!initialLoad) {
-					util.ads.refreshAll();
-				} else {
+				if (initialLoad) {
 					initialLoad = false;
 				}
 			}
@@ -340,6 +338,9 @@ const setupRoutes = () => {
 				);
 				const errorPage = genStaticPage("error", "Error", ErrorPage, false);
 				errorPage(context);
+			} else {
+				// No ads on error
+				util.ads.refreshAll();
 			}
 		},
 		routes,

@@ -506,6 +506,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 
 		type: "object",
 
+		required: ["version"],
+
 		properties: {
 			version: {
 				type: "integer",

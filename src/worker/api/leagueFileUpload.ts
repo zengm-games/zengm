@@ -10,7 +10,7 @@ import { helpers, toUI } from "../util";
 import { highWaterMark } from "../core/league/createStream";
 import type { Conditions } from "../../common/types";
 import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
-import { DEFAULT_TEAM_COLORS } from "../../common";
+import { DEFAULT_TEAM_COLORS, LEAGUE_DATABASE_VERSION } from "../../common";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([
@@ -87,7 +87,13 @@ const makeValidators = () => {
 		verbose: true,
 	});
 
-	const validators: Record<string, ValidateFunction> = {};
+	const validators: Record<
+		string,
+		{
+			required: boolean;
+			validate: ValidateFunction;
+		}
+	> = {};
 
 	const baseSchema = {
 		$schema: schema.$schema,
@@ -115,7 +121,10 @@ const makeValidators = () => {
 			$id: `${baseSchema.$id}#${part}`,
 			...subset,
 		};
-		validators[part] = ajv.compile(partSchema);
+		validators[part] = {
+			required: schema.required.includes(part),
+			validate: ajv.compile(partSchema),
+		};
 	}
 
 	return validators;
@@ -166,6 +175,13 @@ const getBasicInfo = async ({
 
 	const reader = await stream.pipeThrough(parseJSON()).getReader();
 
+	const requiredPartsNotYetSeen = new Set();
+	for (const [key, { required }] of Object.entries(validators)) {
+		if (required) {
+			requiredPartsNotYetSeen.add(key);
+		}
+	}
+
 	while (true) {
 		const { value, done } = (await reader.read()) as any;
 		if (done) {
@@ -191,10 +207,14 @@ const getBasicInfo = async ({
 		}
 
 		if (validators[value.key]) {
-			const validate = validators[value.key];
+			const { validate, required } = validators[value.key];
 			validate(value.value);
 			if (validate.errors) {
 				schemaErrors.push(...validate.errors);
+			}
+
+			if (required) {
+				requiredPartsNotYetSeen.delete(value.key);
 			}
 		}
 
@@ -243,6 +263,14 @@ const getBasicInfo = async ({
 		} else if (includePlayersInBasicInfo && value.key === "players") {
 			basicInfo.players!.push(value.value);
 		}
+	}
+
+	for (const key of requiredPartsNotYetSeen) {
+		let message = `"${key}" is required in the root of a JSON file, but is missing.`;
+		if (key === "version") {
+			message += ` The latest version is ${LEAGUE_DATABASE_VERSION}, that's probably what you want if this is a new file you're making.`;
+		}
+		schemaErrors.push(message);
 	}
 
 	toUI(

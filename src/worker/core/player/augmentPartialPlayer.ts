@@ -208,7 +208,7 @@ const augmentPartialPlayer = async (
 	}
 
 	// Height rescaling
-	if (version === undefined || version <= 23) {
+	if (isSport("basketball") && (version === undefined || version <= 23)) {
 		for (const r of p.ratings) {
 			r.hgt = heightToRating(p.hgt);
 		}

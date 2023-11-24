@@ -1,11 +1,20 @@
 move text generation from worker to UI for basketball
 
+how much space does it actually take to store full game log
+- make sure events are concise
+  - replace names with pids in events
+  - remove unneeded properties (see below about clock in FBGM)
+
 some sportState live sim for basketball/hockey
-- chart showing margin vs time or win probability vs time (toggle button to switch
+- chart showing margin vs time or win probability vs time (toggle button to switch)
   - win probability derive from (margin, time, ovrs)
-    - team with possession matters too, at least late in the game
+    - complications
+      - team with possession matters too, at least late in the game - so we need the whole play-by-play
+      - for free throws, probability would adjust before any FT is taken, and then again after every shot
     - for other sports... other stuff matters, like scrimmage/down/distance in football, or pitcher in baseball, or power play in hockey. so maybe make this basketball only for now?
   - store margins in box score, or sportState?
+  - both charts have same x-axis and same tooltip
+  - if win probaiblity is too hard, just do margin
 - in basketball, show mini scoring summary (last N plays) next to chart
   - highlight abbrev (in jersey colors like a pill box) in scoring plays
     - do this in normal play-by-play too

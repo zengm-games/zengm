@@ -117,17 +117,14 @@ export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 class PlayByPlayLogger {
 	active: boolean;
 
-	playByPlay: PlayByPlayEvent[];
+	playByPlay: PlayByPlayEvent[] = [];
 
-	scoringSummary: PlayByPlayEventScore[];
+	scoringSummary: PlayByPlayEventScore[] = [];
 
-	quarter: number;
+	quarter = 1;
 
 	constructor(active: boolean) {
 		this.active = active;
-		this.playByPlay = [];
-		this.scoringSummary = [];
-		this.quarter = 1;
 	}
 
 	logEvent(event: PlayByPlayEventInput) {

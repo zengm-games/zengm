@@ -14,17 +14,14 @@ import { DataTable, TeamLogoInline } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
-
-// Would be better to use random.choice, but it is in worker only
-const choice = <T extends unknown>(array: T[]): T =>
-	array[Math.floor(Math.random() * array.length)];
+import random from "../../common/random";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({
-	baseball: choice(["basketball", "football", "hockey"]),
-	basketball: choice(["baseball", "football", "hockey"]),
-	football: choice(["baseball", "basketball", "hockey"]),
-	hockey: choice(["baseball", "basketball", "football"]),
+	baseball: random.choice(["basketball", "football", "hockey"]),
+	basketball: random.choice(["baseball", "football", "hockey"]),
+	football: random.choice(["baseball", "basketball", "hockey"]),
+	hockey: random.choice(["baseball", "basketball", "football"]),
 });
 
 const difficultyText = (difficulty: number | undefined) => {

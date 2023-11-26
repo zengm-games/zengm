@@ -1,51 +1,12 @@
 import { g, helpers, random } from "../../util";
-import { getPeriodName, PHASE } from "../../../common";
+import { PHASE } from "../../../common";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 import getInjuryRate from "./getInjuryRate";
 import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
 import GameSimBase from "../GameSimBase";
 import { range } from "../../../common/utils";
+import PlayByPlayLogger from "./PlayByPlayLogger";
 
-type PlayType =
-	| "ast"
-	| "blkAtRim"
-	| "blkLowPost"
-	| "blkMidRange"
-	| "blkTp"
-	| "drb"
-	| "fgaAtRim"
-	| "fgaLowPost"
-	| "fgaMidRange"
-	| "fgaTp"
-	| "fgAtRim"
-	| "fgAtRimAndOne"
-	| "fgLowPost"
-	| "fgLowPostAndOne"
-	| "fgMidRange"
-	| "fgMidRangeAndOne"
-	| "foulOut"
-	| "ft"
-	| "gameOver"
-	| "injury"
-	| "jumpBall"
-	| "missAtRim"
-	| "missFt"
-	| "missLowPost"
-	| "missMidRange"
-	| "missTp"
-	| "orb"
-	| "overtime"
-	| "pfNonShooting"
-	| "pfBonus"
-	| "pfFG"
-	| "pfTP"
-	| "pfAndOne"
-	| "quarter"
-	| "stl"
-	| "sub"
-	| "tov"
-	| "tp"
-	| "tpAndOne";
 type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
 type Stat =
 	| "ast"
@@ -185,8 +146,6 @@ class GameSim extends GameSimBase {
 
 	playersOnCourt: [number[], number[]];
 
-	startersRecorded: boolean;
-
 	subsEveryN: number;
 
 	t: number;
@@ -219,7 +178,7 @@ class GameSim extends GameSimBase {
 
 	d: TeamNum;
 
-	playByPlay: any[] | undefined;
+	playByPlay: PlayByPlayLogger;
 
 	elam: boolean;
 
@@ -266,9 +225,7 @@ class GameSim extends GameSimBase {
 			baseInjuryRate,
 		});
 
-		if (doPlayByPlay) {
-			this.playByPlay = [];
-		}
+		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
@@ -278,9 +235,10 @@ class GameSim extends GameSimBase {
 			range(this.numPlayersOnCourt),
 			range(this.numPlayersOnCourt),
 		];
-		this.startersRecorded = false; // Used to track whether the *real* starters have been recorded or not.
 
-		this.updatePlayersOnCourt();
+		this.updatePlayersOnCourt({
+			recordStarters: true,
+		});
 		this.updateSynergy();
 		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
@@ -401,7 +359,9 @@ class GameSim extends GameSimBase {
 			numOvertimes += 1;
 		}
 
-		this.recordPlay("gameOver");
+		this.playByPlay.logEvent({
+			type: "gameOver",
+		});
 
 		this.checkGameWinner();
 
@@ -434,16 +394,10 @@ class GameSim extends GameSimBase {
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: this.clutchPlays,
-			playByPlay: this.playByPlay,
+			playByPlay: this.playByPlay.getPlayByPlay(this.team),
+			scoringSummary: this.playByPlay.scoringSummary,
 			numPlayersOnCourt: this.numPlayersOnCourt,
 		};
-
-		if (out.playByPlay !== undefined) {
-			out.playByPlay.unshift({
-				type: "init",
-				boxScore: this.team,
-			});
-		}
 
 		return out;
 	}
@@ -467,9 +421,12 @@ class GameSim extends GameSimBase {
 		// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
 		this.o = Math.random() < prob ? 1 : 0;
 		this.d = this.o === 0 ? 1 : 0;
-		this.recordPlay("jumpBall", this.d, [
-			this.team[this.d].player[jumpers[this.d]].name,
-		]);
+		this.playByPlay.logEvent({
+			type: "jumpBall",
+			t: this.d,
+			pid: this.team[this.d].player[jumpers[this.d]].id,
+			clock: this.t,
+		});
 		return this.d;
 	}
 
@@ -489,12 +446,10 @@ class GameSim extends GameSimBase {
 			);
 			this.elamTarget = maxPts + g.get("elamPoints");
 			this.elamActive = true;
-			if (this.playByPlay) {
-				this.playByPlay.push({
-					type: "elamActive",
-					target: this.elamTarget,
-				});
-			}
+			this.playByPlay.logEvent({
+				type: "elamActive",
+				target: this.elamTarget,
+			});
 		}
 	}
 
@@ -531,7 +486,11 @@ class GameSim extends GameSimBase {
 			this.foulsLastTwoMinutes = [0, 0];
 			this.lastScoringPlay = [];
 			this.t = g.get("quarterLength");
-			this.recordPlay("quarter");
+			this.playByPlay.logEvent({
+				type: "period",
+				period: this.team[0].stat.ptsQtrs.length,
+				clock: this.t,
+			});
 		}
 	}
 
@@ -549,7 +508,11 @@ class GameSim extends GameSimBase {
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 		this.lastScoringPlay = [];
-		this.recordPlay("overtime");
+		this.playByPlay.logEvent({
+			type: "overtime",
+			period: this.team[0].stat.ptsQtrs.length,
+			clock: this.t,
+		});
 
 		// Check for elamOvertime
 		this.checkElamEnding();
@@ -809,7 +772,13 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {boolean} true if a substitution occurred, false otherwise.
 	 */
-	updatePlayersOnCourt(shooter?: PlayerNumOnCourt) {
+	updatePlayersOnCourt({
+		recordStarters = false,
+		shooter = undefined,
+	}: {
+		recordStarters?: boolean;
+		shooter?: PlayerNumOnCourt;
+	} = {}) {
 		let substitutions = false;
 		let blowout = false;
 		const lateGame = this.isLateGame();
@@ -989,7 +958,7 @@ class GameSim extends GameSimBase {
 						this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
 						this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
 
-						// Keep track of deviations from the normal starting lineup for the play-by-play
+						/*// Keep track of deviations from the normal starting lineup for the play-by-play
 						if (this.playByPlay !== undefined) {
 							this.playByPlay.push({
 								type: "sub",
@@ -997,14 +966,17 @@ class GameSim extends GameSimBase {
 								on: this.team[t].player[b].id,
 								off: this.team[t].player[p].id,
 							});
-						}
+						}*/
 
 						// It's only a "substitution" if it's not the starting lineup
-						if (this.startersRecorded) {
-							this.recordPlay("sub", t, [
-								this.team[t].player[b].name,
-								this.team[t].player[p].name,
-							]);
+						if (!recordStarters) {
+							this.playByPlay.logEvent({
+								type: "sub",
+								t,
+								pid: this.team[t].player[b].id,
+								pidOff: this.team[t].player[p].id,
+								clock: this.t,
+							});
 						}
 
 						break;
@@ -1014,7 +986,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
-		if (!this.startersRecorded) {
+		if (recordStarters) {
 			for (const t of teamNums) {
 				for (let p = 0; p < this.team[t].player.length; p++) {
 					if (this.playersOnCourt[t].includes(p)) {
@@ -1022,8 +994,6 @@ class GameSim extends GameSimBase {
 					}
 				}
 			}
-
-			this.startersRecorded = true;
 		}
 
 		return substitutions;
@@ -1286,8 +1256,11 @@ class GameSim extends GameSimBase {
 						this.team[t].player[p].injured = true;
 						this.team[t].player[p].newInjury = true;
 						newInjury = true;
-						this.recordPlay("injury", t, [this.team[t].player[p].name], {
-							injuredPID: this.team[t].player[p].id,
+						this.playByPlay.logEvent({
+							type: "injury",
+							t,
+							pid: this.team[t].player[p].id,
+							clock: this.t,
 						});
 					}
 				}
@@ -1358,9 +1331,9 @@ class GameSim extends GameSimBase {
 			const inBonus = numFoulsUntilBonus <= 1;
 
 			if (inBonus) {
-				this.doPf(this.d, "pfBonus", shooter);
+				this.doPf({ t: this.d, type: "pfBonus", shooter });
 			} else {
-				this.doPf(this.d, "pfNonShooting");
+				this.doPf({ t: this.d, type: "pfNonShooting" });
 			}
 
 			if (inBonus) {
@@ -1403,7 +1376,12 @@ class GameSim extends GameSimBase {
 			return this.doStl(p); // "stl"
 		}
 
-		this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
+		this.playByPlay.logEvent({
+			type: "tov",
+			t: this.o,
+			pid: this.team[this.o].player[p].id,
+			clock: this.t,
+		});
 		return "tov";
 	}
 
@@ -1431,10 +1409,13 @@ class GameSim extends GameSimBase {
 		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
-		this.recordPlay("stl", this.d, [
-			this.team[this.d].player[p].name,
-			this.team[this.o].player[pStoleFrom].name,
-		]);
+		this.playByPlay.logEvent({
+			type: "stl",
+			t: this.d,
+			pid: this.team[this.d].player[p].id,
+			pidTov: this.team[this.o].player[pStoleFrom].id,
+			clock: this.t,
+		});
 		return "stl";
 	}
 
@@ -1513,7 +1494,12 @@ class GameSim extends GameSimBase {
 			}
 			probMake *= g.get("threePointAccuracyFactor");
 
-			this.recordPlay("fgaTp", this.o, [this.team[this.o].player[p].name]);
+			this.playByPlay.logEvent({
+				type: "fgaTp",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
 		} else {
 			const r1 =
 				0.8 *
@@ -1539,9 +1525,12 @@ class GameSim extends GameSimBase {
 					this.team[this.o].player[p].compositeRating.shootingMidRange * 0.32 +
 					0.42;
 				probAndOne = 0.05;
-				this.recordPlay("fgaMidRange", this.o, [
-					this.team[this.o].player[p].name,
-				]);
+				this.playByPlay.logEvent({
+					type: "fgaMidRange",
+					t: this.o,
+					pid: this.team[this.o].player[p].id,
+					clock: this.t,
+				});
 			} else if (r2 > r3) {
 				// Dunk, fast break or half court
 				type = "atRim";
@@ -1550,7 +1539,12 @@ class GameSim extends GameSimBase {
 					this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 +
 					0.54;
 				probAndOne = 0.25;
-				this.recordPlay("fgaAtRim", this.o, [this.team[this.o].player[p].name]);
+				this.playByPlay.logEvent({
+					type: "fgaTp",
+					t: this.o,
+					pid: this.team[this.o].player[p].id,
+					clock: this.t,
+				});
 			} else {
 				// Post up
 				type = "lowPost";
@@ -1559,9 +1553,12 @@ class GameSim extends GameSimBase {
 					this.team[this.o].player[p].compositeRating.shootingLowPost * 0.32 +
 					0.34;
 				probAndOne = 0.15;
-				this.recordPlay("fgaLowPost", this.o, [
-					this.team[this.o].player[p].name,
-				]);
+				this.playByPlay.logEvent({
+					type: "fgaTp",
+					t: this.o,
+					pid: this.team[this.o].player[p].id,
+					clock: this.t,
+				});
 			}
 
 			// Better shooting in the ASG, why not?
@@ -1619,7 +1616,7 @@ class GameSim extends GameSimBase {
 		if (probMissAndFoul > Math.random()) {
 			const threePointer = type === "threePointer" && g.get("threePointers");
 
-			this.doPf(this.d, threePointer ? "pfTP" : "pfFG", shooter);
+			this.doPf({ t: this.d, type: threePointer ? "pfTP" : "pfFG", shooter });
 
 			if (threePointer) {
 				return this.doFt(shooter, 3); // fg, orb, or drb
@@ -1633,20 +1630,36 @@ class GameSim extends GameSimBase {
 
 		if (type === "atRim") {
 			this.recordStat(this.o, p, "fgaAtRim");
-			this.recordPlay("missAtRim", this.o, [this.team[this.o].player[p].name]);
+			this.playByPlay.logEvent({
+				type: "missAtRim",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
-			this.recordPlay("missLowPost", this.o, [
-				this.team[this.o].player[p].name,
-			]);
+			this.playByPlay.logEvent({
+				type: "missLowPost",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
 		} else if (type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
-			this.recordPlay("missMidRange", this.o, [
-				this.team[this.o].player[p].name,
-			]);
+			this.playByPlay.logEvent({
+				type: "missMidRange",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
 		} else if (type === "threePointer") {
 			this.recordStat(this.o, p, "tpa");
-			this.recordPlay("missTp", this.o, [this.team[this.o].player[p].name]);
+			this.playByPlay.logEvent({
+				type: "missTp",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
 		}
 
 		if (this.t > 0.5 / 60 || this.elamActive) {
@@ -1695,17 +1708,33 @@ class GameSim extends GameSimBase {
 		this.recordStat(this.d, p2, "blk");
 
 		if (type === "atRim") {
-			this.recordPlay("blkAtRim", this.d, [this.team[this.d].player[p2].name]);
+			this.playByPlay.logEvent({
+				type: "blkAtRim",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
 		} else if (type === "lowPost") {
-			this.recordPlay("blkLowPost", this.d, [
-				this.team[this.d].player[p2].name,
-			]);
+			this.playByPlay.logEvent({
+				type: "blkLowPost",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
 		} else if (type === "midRange") {
-			this.recordPlay("blkMidRange", this.d, [
-				this.team[this.d].player[p2].name,
-			]);
+			this.playByPlay.logEvent({
+				type: "blkMidRange",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
 		} else if (type === "threePointer") {
-			this.recordPlay("blkTp", this.d, [this.team[this.d].player[p2].name]);
+			this.playByPlay.logEvent({
+				type: "blkTp",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
 		}
 
 		return this.doReb(); // orb or drb
@@ -1728,37 +1757,67 @@ class GameSim extends GameSimBase {
 		andOne: boolean = false,
 	) {
 		const p = this.playersOnCourt[this.o][shooter];
+		const pid = this.team[this.o].player[p].id;
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
 		this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
 
 		let fouler;
+		let pidFoul;
 		if (andOne) {
 			fouler = pickPlayer(this.ratingArray("fouling", this.d));
+			const p2 = this.playersOnCourt[this.d][fouler];
+			pidFoul = this.team[this.d].player[p2].id;
 		}
 
-		const names = [this.team[this.o].player[p].name];
-		if (fouler !== undefined) {
-			const p2 = this.playersOnCourt[this.d][fouler];
-			names.push(this.team[this.d].player[p2].name);
+		let pAst;
+		let pidAst;
+		if (passer !== undefined) {
+			pAst = this.playersOnCourt[this.o][passer];
+			pidAst = this.team[this.o].player[pAst].id;
 		}
 
 		if (type === "atRim") {
+			// Randomly pick a name to be dunked on
+			let pidDefense;
+			if (pidFoul !== undefined) {
+				pidDefense = pidFoul;
+			} else {
+				const ratios = this.ratingArray("blocking", this.d, 5);
+				const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+				pidDefense = this.team[this.d].player[p].id;
+			}
+
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.recordStat(this.o, p, "fgAtRim");
-			this.recordPlay(andOne ? "fgAtRimAndOne" : "fgAtRim", this.o, names);
+			this.playByPlay.logEvent({
+				type: andOne ? "fgAtRimAndOne" : "fgAtRim",
+				t: this.o,
+				pid,
+				pidDefense,
+				pidAst,
+				clock: this.t,
+			});
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
 			this.recordStat(this.o, p, "fgLowPost");
-			this.recordPlay(andOne ? "fgLowPostAndOne" : "fgLowPost", this.o, names);
+			this.playByPlay.logEvent({
+				type: andOne ? "fgLowPostAndOne" : "fgLowPost",
+				t: this.o,
+				pid,
+				pidAst,
+				clock: this.t,
+			});
 		} else if (type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
 			this.recordStat(this.o, p, "fgMidRange");
-			this.recordPlay(
-				andOne ? "fgMidRangeAndOne" : "fgMidRange",
-				this.o,
-				names,
-			);
+			this.playByPlay.logEvent({
+				type: andOne ? "fgMidRangeAndOne" : "fgMidRange",
+				t: this.o,
+				pid,
+				pidAst,
+				clock: this.t,
+			});
 		} else if (type === "threePointer") {
 			if (g.get("threePointers")) {
 				this.recordStat(this.o, p, "pts"); // Extra point for 3's
@@ -1766,19 +1825,23 @@ class GameSim extends GameSimBase {
 
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
-			this.recordPlay(andOne ? "tpAndOne" : "tp", this.o, names);
+			this.playByPlay.logEvent({
+				type: andOne ? "tpAndOne" : "tp",
+				t: this.o,
+				pid,
+				pidAst,
+				clock: this.t,
+			});
 		}
 
 		this.recordLastScore(this.o, p, type, this.t);
 
-		if (passer !== undefined) {
-			const p2 = this.playersOnCourt[this.o][passer];
-			this.recordStat(this.o, p2, "ast");
-			this.recordPlay("ast", this.o, [this.team[this.o].player[p2].name]);
+		if (pAst !== undefined) {
+			this.recordStat(this.o, pAst, "ast");
 		}
 
 		if (andOne && !this.elamDone) {
-			this.doPf(this.d, "pfAndOne", shooter, fouler);
+			this.doPf({ t: this.d, type: "pfAndOne", shooter, fouler });
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
 
@@ -2050,7 +2113,12 @@ class GameSim extends GameSimBase {
 				// Between 60% and 90%
 				this.recordStat(this.o, p, "ft");
 				this.recordStat(this.o, p, "pts");
-				this.recordPlay("ft", this.o, [this.team[this.o].player[p].name]);
+				this.playByPlay.logEvent({
+					type: "ft",
+					t: this.o,
+					pid: this.team[this.o].player[p].id,
+					clock: this.t,
+				});
 				outcome = "fg";
 				this.recordLastScore(this.o, p, "ft", this.t);
 
@@ -2058,7 +2126,12 @@ class GameSim extends GameSimBase {
 					break;
 				}
 			} else {
-				this.recordPlay("missFt", this.o, [this.team[this.o].player[p].name]);
+				this.playByPlay.logEvent({
+					type: "missFt",
+					t: this.o,
+					pid: this.team[this.o].player[p].id,
+					clock: this.t,
+				});
 				outcome = null;
 			}
 		}
@@ -2076,36 +2149,62 @@ class GameSim extends GameSimBase {
 	 * @param {number} t Team (0 or 1, this.o or this.d).
 	 */
 	doPf(
-		t: TeamNum,
-		type: "pfNonShooting" | "pfBonus" | "pfFG" | "pfTP" | "pfAndOne",
-		shooter?: PlayerNumOnCourt,
-		fouler?: PlayerNumOnCourt,
+		info:
+			| {
+					t: TeamNum;
+					type: "pfNonShooting";
+					shooter?: undefined;
+					fouler?: PlayerNumOnCourt;
+			  }
+			| {
+					t: TeamNum;
+					type: "pfBonus" | "pfFG" | "pfTP" | "pfAndOne";
+					shooter: PlayerNumOnCourt;
+					fouler?: PlayerNumOnCourt;
+			  },
 	) {
-		if (fouler === undefined) {
-			fouler = pickPlayer(this.ratingArray("fouling", t));
-		}
+		const t = info.t;
+		const fouler = info.fouler ?? pickPlayer(this.ratingArray("fouling", t));
 		const p = this.playersOnCourt[t][fouler];
-		this.recordStat(this.d, p, "pf");
+		this.recordStat(t, p, "pf");
 
-		const names = [this.team[this.d].player[p].name];
-		if (shooter !== undefined) {
-			names.push(
-				this.team[this.o].player[this.playersOnCourt[this.o][shooter]].name,
-			);
+		if (info.type === "pfNonShooting" || info.type === "pfAndOne") {
+			this.playByPlay.logEvent({
+				type: info.type,
+				t,
+				pid: this.team[t].player[p].id,
+				clock: this.t,
+			});
+		} else {
+			this.playByPlay.logEvent({
+				type: info.type,
+				t,
+				pid: this.team[t].player[p].id,
+				pidShooting:
+					this.team[this.o].player[
+						this.playersOnCourt[this.o][(info as any).shooter]
+					].id,
+				clock: this.t,
+			});
 		}
-		this.recordPlay(type, this.d, names);
 
 		// Foul out
 		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
 		if (
 			foulsNeededToFoulOut > 0 &&
-			this.team[this.d].player[p].stat.pf >= foulsNeededToFoulOut
+			this.team[t].player[p].stat.pf >= foulsNeededToFoulOut
 		) {
-			// self.foulOut = (self.foulOut ?? 0) + 1;
-			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
+			this.playByPlay.logEvent({
+				type: "foulOut",
+				t,
+				pid: this.team[t].player[p].id,
+				clock: this.t,
+			});
 
 			// Force substitutions now
-			this.updatePlayersOnCourt(shooter);
+			this.updatePlayersOnCourt({
+				shooter: info.shooter,
+			});
 			this.updateSynergy();
 		}
 
@@ -2140,14 +2239,24 @@ class GameSim extends GameSimBase {
 			ratios = this.ratingArray("rebounding", this.d, 3);
 			p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 			this.recordStat(this.d, p, "drb");
-			this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
+			this.playByPlay.logEvent({
+				type: "drb",
+				t: this.d,
+				pid: this.team[this.d].player[p].id,
+				clock: this.t,
+			});
 			return "drb";
 		}
 
 		ratios = this.ratingArray("rebounding", this.o, 5);
 		p = this.playersOnCourt[this.o][pickPlayer(ratios)];
 		this.recordStat(this.o, p, "orb");
-		this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);
+		this.playByPlay.logEvent({
+			type: "orb",
+			t: this.o,
+			pid: this.team[this.o].player[p].id,
+			clock: this.t,
+		});
 		return "orb";
 	}
 
@@ -2212,227 +2321,33 @@ class GameSim extends GameSimBase {
 	recordStat(t: TeamNum, p: number, s: Stat, amt: number = 1) {
 		this.team[t].player[p].stat[s] += amt;
 
-		if (
-			s !== "gs" &&
-			s !== "courtTime" &&
-			s !== "benchTime" &&
-			s !== "energy"
-		) {
-			this.team[t].stat[s] += amt; // Record quarter-by-quarter scoring too
+		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
+			if (s !== "gs") {
+				this.team[t].stat[s] += amt; // Record quarter-by-quarter scoring too
 
-			if (s === "pts") {
-				this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amt;
+				if (s === "pts") {
+					this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] +=
+						amt;
 
-				for (let i = 0; i < 2; i++) {
-					for (let j = 0; j < this.numPlayersOnCourt; j++) {
-						const k = this.playersOnCourt[i][j];
-						this.team[i].player[k].stat.pm += i === t ? amt : -amt;
+					for (let i = 0; i < 2; i++) {
+						for (let j = 0; j < this.numPlayersOnCourt; j++) {
+							const k = this.playersOnCourt[i][j];
+							this.team[i].player[k].stat.pm += i === t ? amt : -amt;
+						}
 					}
-				}
 
-				if (
-					this.elamActive &&
-					(this.team[this.d].stat.pts >= this.elamTarget ||
-						this.team[this.o].stat.pts >= this.elamTarget)
-				) {
-					this.elamDone = true;
+					if (
+						this.elamActive &&
+						(this.team[this.d].stat.pts >= this.elamTarget ||
+							this.team[this.o].stat.pts >= this.elamTarget)
+					) {
+						this.elamDone = true;
+					}
 				}
 			}
 
 			if (this.playByPlay !== undefined) {
-				this.playByPlay.push({
-					type: "stat",
-					qtr: this.team[t].stat.ptsQtrs.length - 1,
-					t,
-					p,
-					s,
-					amt,
-				});
-			}
-		}
-	}
-
-	recordPlay(type: PlayType, t?: TeamNum, names?: string[], extra?: any) {
-		if (this.playByPlay !== undefined) {
-			const threePointerText = g.get("threePointers")
-				? "three pointer"
-				: "deep shot";
-
-			let texts;
-			let weights;
-
-			let showScore = false;
-			if (type === "injury") {
-				texts = ["{0} was injured!"];
-			} else if (type === "tov") {
-				texts = ["{0} turned the ball over"];
-			} else if (type === "stl") {
-				texts = ["{0} stole the ball from {1}"];
-			} else if (type === "fgaAtRim") {
-				texts = ["{0} elevates for a shot at the rim"];
-			} else if (type === "fgaLowPost") {
-				texts = ["{0} attempts a low post shot"];
-			} else if (type === "fgaMidRange") {
-				texts = ["{0} attempts a mid-range shot"];
-			} else if (type === "fgaTp") {
-				texts = [`{0} attempts a ${threePointerText}`];
-			} else if (type === "fgAtRim") {
-				// Randomly pick a name to be dunked on
-				const ratios = this.ratingArray("blocking", this.d, 5);
-				const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-				const dunkedOnName = this.team[this.d].player[p].name;
-
-				texts = [
-					`${helpers.pronoun(
-						this.gender,
-						"He",
-					)} throws it down on ${dunkedOnName}!`,
-					`${helpers.pronoun(this.gender, "He")} slams it home`,
-					"The layup is good",
-				];
-				weights = this.gender === "male" ? [1, 2, 2] : [1, 10, 1000];
-				showScore = true;
-			} else if (type === "fgAtRimAndOne") {
-				texts = [
-					`${helpers.pronoun(
-						this.gender,
-						"He",
-					)} throws it down on {1}, and a foul!`,
-					`${helpers.pronoun(this.gender, "He")} slams it home, and a foul!`,
-					"The layup is good, and a foul!",
-				];
-				weights = this.gender === "male" ? [1, 2, 2] : [1, 10, 1000];
-				showScore = true;
-			} else if (
-				type === "fgLowPost" ||
-				type === "fgMidRange" ||
-				type === "tp"
-			) {
-				texts = ["It's good!"];
-				showScore = true;
-			} else if (
-				type === "fgLowPostAndOne" ||
-				type === "fgMidRangeAndOne" ||
-				type === "tpAndOne"
-			) {
-				texts = ["It's good, and a foul!"];
-				showScore = true;
-			} else if (type === "blkAtRim") {
-				texts = [
-					"{0} blocked the layup attempt",
-					"{0} blocked the dunk attempt",
-				];
-				if (this.gender === "female") {
-					weights = [1, 0];
-				}
-			} else if (
-				type === "blkLowPost" ||
-				type === "blkMidRange" ||
-				type === "blkTp"
-			) {
-				texts = ["Blocked by {0}!"];
-			} else if (type === "missAtRim") {
-				texts = [
-					`${helpers.pronoun(this.gender, "He")} missed the layup`,
-					"The layup attempt rolls out",
-					"No good",
-				];
-				weights = [1, 1, 3];
-			} else if (
-				type === "missLowPost" ||
-				type === "missMidRange" ||
-				type === "missTp"
-			) {
-				texts = [
-					"The shot rims out",
-					"No good",
-					`${helpers.pronoun(this.gender, "He")} bricks it`,
-				];
-				weights = [1, 4, 1];
-			} else if (type === "orb") {
-				texts = ["{0} grabbed the offensive rebound"];
-			} else if (type === "drb") {
-				texts = ["{0} grabbed the defensive rebound"];
-			} else if (type === "ast") {
-				texts = ["(assist: {0})"];
-			} else if (type === "quarter") {
-				const period = this.team[0].stat.ptsQtrs.length;
-				texts = [
-					`Start of ${helpers.ordinal(period)} ${getPeriodName(
-						this.numPeriods,
-					)}`,
-				];
-			} else if (type === "overtime") {
-				const count = this.team[0].stat.ptsQtrs.length - this.numPeriods;
-				texts = [
-					`Start of ${
-						count === 1 ? "" : `${helpers.ordinal(count)} `
-					} overtime`,
-				];
-			} else if (type === "gameOver") {
-				texts = ["End of game"];
-			} else if (type === "ft") {
-				texts = ["{0} made a free throw"];
-				showScore = true;
-			} else if (type === "missFt") {
-				texts = ["{0} missed a free throw"];
-			} else if (type === "pfNonShooting") {
-				texts = ["Non-shooting foul on {0}"];
-			} else if (type === "pfBonus") {
-				texts = [
-					"Non-shooting foul on {0}. They are in the penalty, so two FTs for {1}",
-				];
-			} else if (type === "pfFG") {
-				texts = ["Shooting foul on {0}, two FTs for {1}"];
-			} else if (type === "pfTP") {
-				texts = ["Shooting foul on {0}, three FTs for {1}"];
-			} else if (type === "pfAndOne") {
-				// More description is already in the shot text
-				texts = ["Foul on {0}"];
-			} else if (type === "foulOut") {
-				texts = ["{0} fouled out"];
-			} else if (type === "sub") {
-				texts = ["Substitution: {0} for {1}"];
-			} else if (type === "jumpBall") {
-				texts = ["{0} won the jump ball"];
-			}
-
-			if (texts) {
-				let text = random.choice(texts, weights);
-
-				if (names) {
-					for (let i = 0; i < names.length; i++) {
-						text = text.replace(`{${i}}`, names[i]);
-					}
-				}
-
-				if (type === "ast") {
-					// Find most recent made shot, count assist for it
-					for (let i = this.playByPlay.length - 1; i >= 0; i--) {
-						if (this.playByPlay[i].type === "text") {
-							this.playByPlay[i].text += ` ${text}`;
-							break;
-						}
-					}
-				} else {
-					const sec = Math.floor((this.t % 1) * 60);
-					const secString = sec < 10 ? `0${sec}` : `${sec}`;
-
-					// Show score after scoring plays
-					if (showScore) {
-						text += ` (${this.team[1].stat.pts}-${this.team[0].stat.pts})`;
-					}
-
-					this.playByPlay.push({
-						type: "text",
-						text,
-						t,
-						time: `${Math.floor(this.t)}:${secString}`,
-						...extra,
-					});
-				}
-			} else {
-				throw new Error(`No text for ${type}`);
+				this.playByPlay.logStat(t, p, s, amt);
 			}
 		}
 	}

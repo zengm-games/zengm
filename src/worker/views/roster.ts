@@ -26,7 +26,6 @@ const updateRoster = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	console.log("updateRoster", updateEvents);
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("watchList") ||

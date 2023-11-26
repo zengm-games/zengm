@@ -5,7 +5,7 @@ import type { HeadToHead } from "../../common/types";
 import { team } from "../core";
 import { idb } from "../db";
 import g from "./g";
-import random from "./random";
+import random from "../../common/random";
 
 export const getTiebreakers = (season: number) => {
 	const tiebreakers = [...g.get("tiebreakers", season)];

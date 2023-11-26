@@ -1,0 +1,352 @@
+type TeamNum = 0 | 1;
+
+type PlayByPlayEventInputScore =
+	| {
+			type: "fgAtRim";
+			t: TeamNum;
+			pid: number;
+			pidDefense: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgAtRimAndOne";
+			t: TeamNum;
+			pid: number;
+			pidDefense: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgLowPost";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgLowPostAndOne";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgMidRange";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgMidRangeAndOne";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "ft";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "tp";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "tpAndOne";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  };
+
+type PlayByPlayEventInputNoScore =
+	| {
+			type: "blkAtRim";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "blkLowPost";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "blkMidRange";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "blkTp";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "drb";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "fgaAtRim";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "fgaLowPost";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "fgaMidRange";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "fgaTp";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "foulOut";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "gameOver";
+	  }
+	| {
+			type: "injury";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "jumpBall";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missAtRim";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missFt";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missLowPost";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missMidRange";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missTp";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "orb";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "overtime";
+			clock: number;
+			period: number;
+	  }
+	| {
+			type: "pfNonShooting";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "pfBonus";
+			t: TeamNum;
+			pid: number;
+			pidShooting: number;
+			clock: number;
+	  }
+	| {
+			type: "pfFG";
+			t: TeamNum;
+			pid: number;
+			pidShooting: number;
+			clock: number;
+	  }
+	| {
+			type: "pfTP";
+			t: TeamNum;
+			pid: number;
+			pidShooting: number;
+			clock: number;
+	  }
+	| {
+			type: "pfAndOne";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "period";
+			clock: number;
+			period: number;
+	  }
+	| {
+			type: "stl";
+			t: TeamNum;
+			pid: number;
+			pidTov: number;
+			clock: number;
+	  }
+	| {
+			type: "sub";
+			t: TeamNum;
+			pid: number;
+			pidOff: number;
+			clock: number;
+	  }
+	| {
+			type: "tov";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "elamActive";
+			target: number;
+	  };
+
+type PlayByPlayEventInput =
+	| PlayByPlayEventInputScore
+	| PlayByPlayEventInputNoScore;
+
+// Only add period to scoring events, since they are used for scoringSummary
+type PlayByPlayEventScore = PlayByPlayEventInputScore & { period: number };
+
+export type PlayByPlayEvent =
+	| (
+			| PlayByPlayEventScore
+			| PlayByPlayEventInputNoScore
+			| {
+					type: "stat";
+					t: TeamNum;
+					p: number | undefined | null;
+					s: string;
+					amt: number;
+			  }
+	  )
+	| {
+			type: "init";
+			boxScore: any;
+	  };
+
+const scoringTypes = [
+	"fgAtRim",
+	"fgAtRimAndOne",
+	"fgLowPost",
+	"fgLowPostAndOne",
+	"fgMidRange",
+	"fgMidRangeAndOne",
+	"ft",
+	"tp",
+];
+
+const isScoringPlay = (
+	event: PlayByPlayEventInput,
+): event is PlayByPlayEventInputScore => {
+	return scoringTypes.includes(event.type);
+};
+
+class PlayByPlayLogger {
+	active: boolean;
+
+	playByPlay: PlayByPlayEvent[] = [];
+
+	scoringSummary: PlayByPlayEventScore[] = [];
+
+	period = 1;
+
+	constructor(active: boolean) {
+		this.active = active;
+	}
+
+	logEvent(event: PlayByPlayEventInput) {
+		if (event.type === "period" || event.type === "overtime") {
+			this.period = event.period;
+		}
+
+		if (isScoringPlay(event)) {
+			const event2 = {
+				...event,
+				period: this.period,
+			};
+			this.scoringSummary.push(event2);
+			if (this.active) {
+				this.playByPlay.push(event2);
+			}
+		} else {
+			if (this.active) {
+				this.playByPlay.push(event);
+			}
+		}
+	}
+
+	logStat(t: TeamNum, p: number | undefined | null, s: string, amt: number) {
+		if (!this.active) {
+			return;
+		}
+
+		this.playByPlay.push({
+			type: "stat",
+			t,
+			p,
+			s,
+			amt,
+		});
+	}
+
+	getPlayByPlay(boxScore: any): PlayByPlayEvent[] | undefined {
+		if (!this.active) {
+			return;
+		}
+
+		return [
+			{
+				type: "init",
+				boxScore,
+			},
+			...this.playByPlay,
+		];
+	}
+}
+
+export default PlayByPlayLogger;

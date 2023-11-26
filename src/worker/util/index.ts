@@ -29,7 +29,7 @@ export { default as newLeagueGodModeLimits } from "./newLeagueGodModeLimits";
 export { default as processPlayerStats } from "./processPlayerStats";
 export { default as processPlayersHallOfFame } from "./processPlayersHallOfFame";
 export { default as processScheduledEvents } from "./processScheduledEvents";
-export { default as random } from "./random";
+export { default as random } from "../../common/random";
 export { default as recomputeLocalUITeamOvrs } from "./recomputeLocalUITeamOvrs";
 export { default as orderTeams } from "./orderTeams";
 export { default as toUI } from "./toUI";

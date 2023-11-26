@@ -105,10 +105,6 @@ export const boxScoreToLiveSim = async ({
 					p[stat] = 0;
 				}
 			}
-
-			if (isSport("basketball")) {
-				p.inGame = j < (boxScore.numPlayersOnCourt || 5);
-			}
 		}
 	}
 	makeAbbrevsUnique(boxScore.teams);

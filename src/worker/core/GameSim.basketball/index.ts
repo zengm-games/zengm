@@ -395,8 +395,8 @@ class GameSim extends GameSimBase {
 			team: this.team,
 			clutchPlays: this.clutchPlays,
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
-			scoringSummary: this.playByPlay.scoringSummary,
 			numPlayersOnCourt: this.numPlayersOnCourt,
+			// scoringSummary: this.playByPlay.scoringSummary,
 		};
 
 		return out;

@@ -1,4 +1,8 @@
 how much space does it actually take to store full game log
+- options
+  - none
+  - scoringSummary
+  - playByPlay (but no init needed)
 - make sure events are concise
   - replace names with pids in events
   - remove unneeded properties (see below about clock in FBGM)

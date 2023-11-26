@@ -25,7 +25,6 @@ export const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
 		numPeriods: number;
-		threePointers: boolean;
 		teams: [{ pts: number }, { pts: number }];
 	},
 ) => {
@@ -33,10 +32,6 @@ export const getText = (
 	let weights;
 
 	let showScore = false;
-
-	const threePointerText = boxScore.threePointers
-		? "three pointer"
-		: "deep shot";
 
 	if (event.type === "period") {
 		texts = [
@@ -66,7 +61,10 @@ export const getText = (
 	} else if (event.type === "fgaMidRange") {
 		texts = [`${getName(event.pid)} attempts a mid-range shot`];
 	} else if (event.type === "fgaTp") {
-		texts = [`${getName(event.pid)} attempts a ${threePointerText}`];
+		texts = [`${getName(event.pid)} attempts a three pointer`];
+	} else if (event.type === "fgaTpFake") {
+		// This is for when threePointers is false
+		texts = [`${getName(event.pid)} attempts a deep shot`];
 	} else if (event.type === "fgAtRim") {
 		const he = getPronoun("He");
 

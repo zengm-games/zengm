@@ -121,6 +121,12 @@ type PlayByPlayEventInputNoScore =
 			clock: number;
 	  }
 	| {
+			type: "fgaTpFake";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
 			type: "foulOut";
 			t: TeamNum;
 			pid: number;

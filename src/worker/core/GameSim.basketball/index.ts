@@ -1495,7 +1495,7 @@ class GameSim extends GameSimBase {
 			probMake *= g.get("threePointAccuracyFactor");
 
 			this.playByPlay.logEvent({
-				type: "fgaTp",
+				type: g.get("threePointers") ? "fgaTp" : "fgaTpFake",
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
 				clock: this.t,
@@ -1540,7 +1540,7 @@ class GameSim extends GameSimBase {
 					0.54;
 				probAndOne = 0.25;
 				this.playByPlay.logEvent({
-					type: "fgaTp",
+					type: "fgaAtRim",
 					t: this.o,
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
@@ -1554,7 +1554,7 @@ class GameSim extends GameSimBase {
 					0.34;
 				probAndOne = 0.15;
 				this.playByPlay.logEvent({
-					type: "fgaTp",
+					type: "fgaLowPost",
 					t: this.o,
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,

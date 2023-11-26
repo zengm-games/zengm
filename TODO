@@ -1,5 +1,5 @@
 move text generation from worker to UI for basketball
-- boxScore.threePointers or different event type
+- playersByPid is not properly cleared if you leave game sim before playing it all, leading to bugs
 - stats - use pid rather than p
 
 how much space does it actually take to store full game log

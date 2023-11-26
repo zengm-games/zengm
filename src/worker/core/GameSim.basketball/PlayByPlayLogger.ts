@@ -265,7 +265,7 @@ export type PlayByPlayEvent =
 			| {
 					type: "stat";
 					t: TeamNum;
-					p: number | undefined | null;
+					pid: number | undefined | null;
 					s: string;
 					amt: number;
 			  }
@@ -326,7 +326,7 @@ class PlayByPlayLogger {
 		}
 	}
 
-	logStat(t: TeamNum, p: number | undefined | null, s: string, amt: number) {
+	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
 		if (!this.active) {
 			return;
 		}
@@ -334,7 +334,7 @@ class PlayByPlayLogger {
 		this.playByPlay.push({
 			type: "stat",
 			t,
-			p,
+			pid,
 			s,
 			amt,
 		});

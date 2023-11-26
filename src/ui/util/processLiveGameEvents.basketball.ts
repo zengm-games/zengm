@@ -286,7 +286,8 @@ const processLiveGameEvents = ({
 				e.s === "pf" ||
 				e.s === "pts"
 			) {
-				boxScore.teams[actualT].players[e.p!][e.s] += e.amt;
+				const p = playersByPid![e.pid!];
+				(p as any)[e.s] += e.amt;
 				boxScore.teams[actualT][e.s] += e.amt;
 
 				if (e.s === "pts") {
@@ -300,7 +301,8 @@ const processLiveGameEvents = ({
 					}
 				}
 			} else if (e.s === "gs") {
-				boxScore.teams[actualT].players[e.p!].inGame = true;
+				const p = playersByPid![e.pid!];
+				p.inGame = true;
 			}
 		} else if (e.type !== "init") {
 			text = getText(e, boxScore);

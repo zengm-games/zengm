@@ -2347,7 +2347,7 @@ class GameSim extends GameSimBase {
 			}
 
 			if (this.playByPlay !== undefined) {
-				this.playByPlay.logStat(t, p, s, amt);
+				this.playByPlay.logStat(t, this.team[t].player[p].id, s, amt);
 			}
 		}
 	}

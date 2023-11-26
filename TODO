@@ -1,6 +1,3 @@
-move text generation from worker to UI for basketball
-- stats - use pid rather than p
-
 how much space does it actually take to store full game log
 - make sure events are concise
   - replace names with pids in events
@@ -28,6 +25,10 @@ some sportState live sim for basketball/hockey
 - should this just be for live games, or all box scores? what is impact on file size?
 
 unify PlayByPlayLogger
+
+unify processLiveGameEvents
+- make it a class, to more easily handle stuff like playersByPid
+- replace any .find with playersByPid
 
 FBGM move event text generation to UI
 - to fix after

@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common";
-import random from "../../common/random";
+import { choice } from "../../common/random";
 import { helpers, local } from "../../ui/util";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger";
 
@@ -177,7 +177,7 @@ export const getText = (
 	}
 
 	if (texts) {
-		let text = random.choice(texts, weights);
+		let text = choice(texts, weights);
 
 		const eAny = event as any;
 		if (eAny.pidAst !== undefined) {

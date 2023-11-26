@@ -6,12 +6,12 @@
  * @param {number} b Maximum number that can be returned.
  * @return {number} Random number from uniform distribution.
  */
-const uniform = (a: number, b: number): number => {
+export const uniform = (a: number, b: number): number => {
 	return Math.random() * (b - a) + a;
 };
 
 // https://stackoverflow.com/a/19303725/786644
-const uniformSeed = (seed?: number): number => {
+export const uniformSeed = (seed?: number): number => {
 	if (seed === undefined) {
 		return Math.random();
 	}
@@ -28,7 +28,7 @@ const uniformSeed = (seed?: number): number => {
  * @param {number} b Maximum integer that can be returned.
  * @return {number} Random integer between a and b.
  */
-const randInt = (a: number, b: number, seed?: number): number => {
+export const randInt = (a: number, b: number, seed?: number): number => {
 	const r = seed === undefined ? Math.random() : uniformSeed(seed);
 	return Math.floor(r * (1 + b - a)) + a;
 };
@@ -39,7 +39,7 @@ const randInt = (a: number, b: number, seed?: number): number => {
  * @memberOf util.random
  * @param {array} list List to be shuffled in place.
  */
-const shuffle = (list: any[], seed?: number) => {
+export const shuffle = (list: any[], seed?: number) => {
 	const l = list.length;
 
 	for (let i = 1; i < l; i++) {
@@ -66,7 +66,7 @@ const shuffle = (list: any[], seed?: number) => {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-const gauss = (mu: number = 0, sigma: number = 1): number => {
+export const gauss = (mu: number = 0, sigma: number = 1): number => {
 	return (
 		(Math.random() * 2 -
 			1 +
@@ -95,7 +95,7 @@ const gauss = (mu: number = 0, sigma: number = 1): number => {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-const realGauss = (mu: number = 0, sigma: number = 1): number => {
+export const realGauss = (mu: number = 0, sigma: number = 1): number => {
 	let radius;
 	let z1;
 	let z2;
@@ -110,7 +110,7 @@ const realGauss = (mu: number = 0, sigma: number = 1): number => {
 	return z1 * marsaglia * sigma + mu;
 };
 
-const truncGauss = (
+export const truncGauss = (
 	mu: number = 0,
 	sigma: number = 1,
 	lowerBound: number = -Infinity,
@@ -137,7 +137,7 @@ const truncGauss = (
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-const choice = <T>(
+export const choice = <T>(
 	x: readonly T[],
 	weightInput?: ((a: T, index: number) => number) | number[],
 	seed?: number,
@@ -192,7 +192,7 @@ const choice = <T>(
  * by fitting the same data.  5'3" and 7'9" are the shortest and tallest anyone should
  * reasonably expect to see.  Anything beyond that comes around less than 1 in 700 draft classes.
  */
-const heightDist = (): number => {
+export const heightDist = (): number => {
 	const r = Math.random();
 
 	if (r < 0.000000000051653) {
@@ -412,16 +412,4 @@ const heightDist = (): number => {
 	}
 
 	return 108;
-};
-
-export default {
-	randInt,
-	shuffle,
-	gauss,
-	realGauss,
-	truncGauss,
-	uniform,
-	uniformSeed,
-	choice,
-	heightDist,
 };

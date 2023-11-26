@@ -1,8 +1,6 @@
 move text generation from worker to UI for basketball
 - stats - use pid rather than p
 
-refactor random module to export individual functions
-
 how much space does it actually take to store full game log
 - make sure events are concise
   - replace names with pids in events

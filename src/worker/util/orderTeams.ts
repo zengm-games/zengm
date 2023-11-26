@@ -1,11 +1,11 @@
 import { groupBy, orderBy } from "../../common/utils";
-import { helpers } from ".";
+import helpers from "./helpers";
 import type { TIEBREAKERS } from "../../common";
 import type { HeadToHead } from "../../common/types";
 import { team } from "../core";
 import { idb } from "../db";
 import g from "./g";
-import random from "../../common/random";
+import { uniformSeed } from "../../common/random";
 
 export const getTiebreakers = (season: number) => {
 	const tiebreakers = [...g.get("tiebreakers", season)];
@@ -470,7 +470,7 @@ export const breakTies = <T extends BaseTeam>(
 		coinFlip: [
 			[
 				(t: T) =>
-					random.uniformSeed(
+					uniformSeed(
 						t.tid + options.season + (t.seasonAttrs.won + t.seasonAttrs.winp),
 					),
 				"asc",

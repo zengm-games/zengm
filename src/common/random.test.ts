@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import random from "./random";
+import * as random from "./random";
 import helpers from "./helpers";
 
 describe("worker/util/random", () => {

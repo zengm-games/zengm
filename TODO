@@ -1,14 +1,4 @@
-how much space does it actually take to store full game log
-- options
-  - none
-  - scoringSummary
-  - playByPlay (but no init needed)
-- make sure events are concise
-  - replace names with pids in events
-  - remove unneeded properties (see below about clock in FBGM)
-- could get rid of separate scoringSummary
-  - could put points in event
-    - use this to replace showScore
+no need to track scoringSummary at all for basketball
 
 some sportState live sim for basketball/hockey
 - chart showing margin vs time or win probability vs time (toggle button to switch)
@@ -20,6 +10,8 @@ some sportState live sim for basketball/hockey
   - store margins in box score, or sportState?
   - both charts have same x-axis and same tooltip
   - if win probaiblity is too hard, just do margin
+  - use data in playByPlay if it is available to generate chart
+    - cache in sportState? idk, sportState is usually for temporary stuff, but this would be based on the entire play-by-play
 - in basketball, show mini scoring summary (last N plays) next to chart
   - highlight abbrev (in jersey colors like a pill box) in scoring plays
     - do this in normal play-by-play too
@@ -27,6 +19,13 @@ some sportState live sim for basketball/hockey
 - for most sports, margin is derivable from scoringSummary, but not basketball
   - for basketball, store margin in scoringSummary or elsewhere? and for other sports?
 - should this just be for live games, or all box scores? what is impact on file size?
+
+storing playByPlay
+- options
+  - all teams
+  - only my team
+  - none (default)
+- don't include init
 
 unify PlayByPlayLogger
 

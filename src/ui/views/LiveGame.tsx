@@ -102,6 +102,83 @@ const DEFAULT_SPORT_STATE = bySport<any>({
 	hockey: undefined,
 });
 
+type PlayByPlayEntry = {
+	key: number;
+	text: string;
+	score: ReactNode | undefined;
+	t: 0 | 1 | undefined;
+	time: string;
+};
+
+const PlayByPlay = ({
+	boxScore,
+	entries,
+	playByPlayDivRef,
+}: {
+	boxScore: any;
+	entries: PlayByPlayEntry[];
+	playByPlayDivRef: React.MutableRefObject<HTMLDivElement | null>;
+}) => {
+	useEffect(() => {
+		const setPlayByPlayDivHeight = () => {
+			if (playByPlayDivRef.current) {
+				// Keep in sync with .live-game-affix
+				if (window.matchMedia("(min-width:768px)").matches) {
+					playByPlayDivRef.current.style.height = `${
+						window.innerHeight - 113
+					}px`;
+				} else if (playByPlayDivRef.current.style.height !== "") {
+					playByPlayDivRef.current.style.removeProperty("height");
+				}
+			}
+		};
+
+		// Keep height of plays list equal to window
+		setPlayByPlayDivHeight();
+		window.addEventListener("optimizedResize", setPlayByPlayDivHeight);
+
+		return () => {
+			window.removeEventListener("optimizedResize", setPlayByPlayDivHeight);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	return (
+		<div
+			className="live-game-playbyplay d-flex flex-column gap-3"
+			ref={playByPlayDivRef}
+			style={{
+				scrollMarginTop: 174,
+			}}
+		>
+			{entries.map(row => (
+				<div key={row.key} className="d-flex">
+					<TeamLogoInline
+						className="flex-shrink-0 mt-1"
+						imgURL={
+							row.t === undefined ? undefined : boxScore.teams[row.t].imgURL
+						}
+						imgURLSmall={
+							row.t === undefined
+								? undefined
+								: boxScore.teams[row.t].imgURLSmall
+						}
+						includePlaceholderIfNoLogo
+						size={24}
+					/>
+					<div className="mx-2 flex-grow-1">
+						<div className="d-flex">
+							<div className="text-body-secondary">{row.time}</div>
+							{row.score ? <div className="ms-auto">{row.score}</div> : null}
+						</div>
+						{row.text}
+					</div>
+				</div>
+			))}
+		</div>
+	);
+};
+
 export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
@@ -132,15 +209,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);
 
-	const playByPlayEntries = useRef<
-		{
-			key: number;
-			text: string;
-			score: ReactNode | undefined;
-			t: 0 | 1 | undefined;
-			time: string;
-		}[]
-	>([]);
+	const playByPlayEntries = useRef<PlayByPlayEntry[]>([]);
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
@@ -342,24 +411,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 	useEffect(() => {
 		componentIsMounted.current = true;
 
-		const setPlayByPlayDivHeight = () => {
-			if (playByPlayDiv.current) {
-				// Keep in sync with .live-game-affix
-				if (window.matchMedia("(min-width:768px)").matches) {
-					playByPlayDiv.current.style.height = `${window.innerHeight - 113}px`;
-				} else if (playByPlayDiv.current.style.height !== "") {
-					playByPlayDiv.current.style.removeProperty("height");
-				}
-			}
-		};
-
-		// Keep height of plays list equal to window
-		setPlayByPlayDivHeight();
-		window.addEventListener("optimizedResize", setPlayByPlayDivHeight);
-
 		return () => {
 			componentIsMounted.current = false;
-			window.removeEventListener("optimizedResize", setPlayByPlayDivHeight);
 			updatePhaseAndLeagueTopBar();
 		};
 	}, []);
@@ -894,44 +947,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 								title="Speed"
 							/>
 						</div>
-						<div
-							className="live-game-playbyplay d-flex flex-column gap-3"
-							ref={c => {
-								playByPlayDiv.current = c;
-							}}
-							style={{
-								scrollMarginTop: 174,
-							}}
-						>
-							{playByPlayEntries.current.map(row => (
-								<div key={row.key} className="d-flex">
-									<TeamLogoInline
-										className="flex-shrink-0 mt-1"
-										imgURL={
-											row.t === undefined
-												? undefined
-												: boxScore.current.teams[row.t].imgURL
-										}
-										imgURLSmall={
-											row.t === undefined
-												? undefined
-												: boxScore.current.teams[row.t].imgURLSmall
-										}
-										includePlaceholderIfNoLogo
-										size={24}
-									/>
-									<div className="mx-2 flex-grow-1">
-										<div className="d-flex">
-											<div className="text-body-secondary">{row.time}</div>
-											{row.score ? (
-												<div className="ms-auto">{row.score}</div>
-											) : null}
-										</div>
-										{row.text}
-									</div>
-								</div>
-							))}
-						</div>
+						<PlayByPlay
+							boxScore={boxScore.current}
+							entries={playByPlayEntries.current}
+							playByPlayDivRef={playByPlayDiv}
+						/>
 					</div>
 				</div>
 			</div>

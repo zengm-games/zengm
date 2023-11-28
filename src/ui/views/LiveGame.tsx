@@ -8,6 +8,7 @@ import {
 	useRef,
 	useState,
 	type ReactNode,
+	memo,
 } from "react";
 import {
 	BoxScoreRow,
@@ -110,6 +111,37 @@ type PlayByPlayEntry = {
 	time: string;
 };
 
+const PlayByPlayEntry = memo(
+	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntry }) => {
+		console.log("render", entry.key);
+		return (
+			<div className="d-flex">
+				<TeamLogoInline
+					className="flex-shrink-0 mt-1"
+					imgURL={
+						entry.t === undefined ? undefined : boxScore.teams[entry.t].imgURL
+					}
+					imgURLSmall={
+						entry.t === undefined
+							? undefined
+							: boxScore.teams[entry.t].imgURLSmall
+					}
+					includePlaceholderIfNoLogo
+					size={24}
+				/>
+				<div className="mx-2 flex-grow-1">
+					<div className="d-flex">
+						<div className="text-body-secondary">{entry.time}</div>
+						{entry.score ? <div className="ms-auto">{entry.score}</div> : null}
+					</div>
+					{entry.text}
+				</div>
+			</div>
+		);
+	},
+	() => true,
+);
+
 const PlayByPlay = ({
 	boxScore,
 	entries,
@@ -119,6 +151,7 @@ const PlayByPlay = ({
 	entries: PlayByPlayEntry[];
 	playByPlayDivRef: React.MutableRefObject<HTMLDivElement | null>;
 }) => {
+	console.log("render PlayByPlay");
 	useEffect(() => {
 		const setPlayByPlayDivHeight = () => {
 			if (playByPlayDivRef.current) {
@@ -151,29 +184,8 @@ const PlayByPlay = ({
 				scrollMarginTop: 174,
 			}}
 		>
-			{entries.map(row => (
-				<div key={row.key} className="d-flex">
-					<TeamLogoInline
-						className="flex-shrink-0 mt-1"
-						imgURL={
-							row.t === undefined ? undefined : boxScore.teams[row.t].imgURL
-						}
-						imgURLSmall={
-							row.t === undefined
-								? undefined
-								: boxScore.teams[row.t].imgURLSmall
-						}
-						includePlaceholderIfNoLogo
-						size={24}
-					/>
-					<div className="mx-2 flex-grow-1">
-						<div className="d-flex">
-							<div className="text-body-secondary">{row.time}</div>
-							{row.score ? <div className="ms-auto">{row.score}</div> : null}
-						</div>
-						{row.text}
-					</div>
-				</div>
+			{entries.map(entry => (
+				<PlayByPlayEntry key={entry.key} boxScore={boxScore} entry={entry} />
 			))}
 		</div>
 	);

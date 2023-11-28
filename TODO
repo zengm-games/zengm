@@ -14,7 +14,13 @@ better play by play log
   - see commented out stuff in LiveGame
 - test exhibition game logo - should be small logo not big logo!
 - end of game, period and quarter should be bold and not show time
-- slow!
+- slow! should take about 10 seconds at fastest speed to sim game, instead takes 32
+  - virtualize?
+    - might be tricky
+    - breaks ctrl+f
+  - go back to editing DOM?
+    - then i still can't use jsx in processLiveGameEvents text output
+  - maybe not that slow in prod mode, benchmark
 
 no need to track scoringSummary at all for basketball
 

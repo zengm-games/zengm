@@ -105,9 +105,10 @@ const DEFAULT_SPORT_STATE = bySport<any>({
 
 type PlayByPlayEntry = {
 	key: number;
-	text: string;
 	score: ReactNode | undefined;
 	t: 0 | 1 | undefined;
+	text: string;
+	textOnly: boolean;
 	time: string;
 };
 
@@ -126,14 +127,22 @@ const PlayByPlayEntry = memo(
 							? undefined
 							: boxScore.teams[entry.t].imgURLSmall
 					}
-					includePlaceholderIfNoLogo
 					size={24}
 				/>
-				<div className="mx-2 flex-grow-1">
-					<div className="d-flex">
-						<div className="text-body-secondary">{entry.time}</div>
-						{entry.score ? <div className="ms-auto">{entry.score}</div> : null}
-					</div>
+				<div
+					className={classNames(
+						"flex-grow-1 me-2",
+						entry.textOnly ? "fw-bold" : "ms-2",
+					)}
+				>
+					{!entry.textOnly ? (
+						<div className="d-flex">
+							<div className="text-body-secondary">{entry.time}</div>
+							{entry.score ? (
+								<div className="ms-auto">{entry.score}</div>
+							) : null}
+						</div>
+					) : null}
 					{entry.text}
 				</div>
 			</div>
@@ -347,6 +356,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					score,
 					t: output.t,
 					text,
+					textOnly: output.textOnly,
 					time: boxScore.current.time,
 				});
 			}

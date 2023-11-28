@@ -207,6 +207,8 @@ const processLiveGameEvents = ({
 	let stop = false;
 	let text;
 	let t: 0 | 1 | undefined;
+	let textOnly = false;
+
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 		if (!e) {
@@ -297,6 +299,11 @@ const processLiveGameEvents = ({
 		} else if (e.type !== "init") {
 			text = getText(e, boxScore);
 			t = actualT;
+			textOnly =
+				e.type === "gameOver" ||
+				e.type === "period" ||
+				e.type === "overtime" ||
+				e.type === "elamActive";
 
 			let time;
 			if (eAny.clock !== undefined) {
@@ -335,6 +342,7 @@ const processLiveGameEvents = ({
 		quarters,
 		t,
 		text,
+		textOnly,
 	};
 };
 

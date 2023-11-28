@@ -168,8 +168,8 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			event.touchback
 				? " for a touchback"
 				: event.yds < 0
-				? " into the end zone"
-				: ` to the ${event.yds} yard line`
+				  ? " into the end zone"
+				  : ` to the ${event.yds} yard line`
 		}`;
 	} else if (event.type === "kickoffReturn") {
 		text = `${event.names[0]} returned the kickoff ${event.yds} yards${
@@ -190,8 +190,8 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			event.touchback
 				? " for a touchback"
 				: event.yds < 0
-				? " into the end zone"
-				: ""
+				  ? " into the end zone"
+				  : ""
 		}`;
 	} else if (event.type === "puntReturn") {
 		text = `${event.names[0]} returned the punt ${event.yds} yards${
@@ -291,7 +291,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				: ""
 		}`;
 	} else if (event.type === "penalty") {
-		text = `Penalty, ABBREV${event.t} - ${event.penaltyName.toLowerCase()}${
+		text = `Penalty - ${event.penaltyName.toLowerCase()}${
 			event.names.length > 0 ? ` on ${event.names[0]}` : ""
 		}`;
 
@@ -299,8 +299,8 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			const spotFoulText = event.tackOn
 				? " from the end of the play"
 				: event.spotFoul
-				? " from the spot of the foul"
-				: "";
+				  ? " from the spot of the foul"
+				  : "";
 			const automaticFirstDownText = event.automaticFirstDown
 				? " and an automatic first down"
 				: "";
@@ -362,6 +362,8 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
+	let t: 0 | 1 | undefined;
+	let textOnly = false;
 	let possessionChange: boolean = false;
 
 	while (!stop && events.length > 0) {
@@ -371,7 +373,8 @@ const processLiveGameEvents = ({
 		}
 
 		// Swap teams order, so home team is at bottom in box score
-		const actualT = (e as any).t === 0 ? 1 : 0;
+		const eAny = e as any;
+		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 		const otherT = actualT === 0 ? 1 : 0;
 
 		const scoringSummary = isScoringPlay(e);
@@ -428,6 +431,9 @@ const processLiveGameEvents = ({
 			intendedPossessionChange: boolean;
 			subPlay: boolean;
 		}) => {
+			if (actualT === undefined) {
+				throw new Error("Should never happen");
+			}
 			sportState.plays.push({
 				t: actualT,
 				down,
@@ -475,41 +481,41 @@ const processLiveGameEvents = ({
 
 		if (e.type === "clock") {
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
-			let textWithoutTime;
 
 			if (!e.awaitingAfterTouchdown) {
 				const time = formatClock(e.clock);
 
 				if (awaitingKickoff) {
-					textWithoutTime = `${boxScore.teams[actualT].abbrev} kicking off`;
+					text = `Kick off`;
 				} else {
 					const fieldPos = scrimmageToFieldPos(
 						e.scrimmage,
-						boxScore.teams[actualT].abbrev,
+						boxScore.teams[actualT!].abbrev,
 						boxScore.teams[otherT].abbrev,
 					);
 
-					textWithoutTime = `${
-						boxScore.teams[actualT].abbrev
-					} ball, ${formatDownAndDistance(
+					text = `${formatDownAndDistance(
 						e.down,
 						e.toGo,
 						e.scrimmage,
 					)}, ${fieldPos}`;
 				}
-				text = `${time} - ${textWithoutTime}`;
+				t = actualT;
 
 				boxScore.time = time;
 				stop = true;
 			}
 
-			if (awaitingKickoff || sportState.t !== actualT) {
+			if (
+				actualT !== undefined &&
+				(awaitingKickoff || sportState.t !== actualT)
+			) {
 				sportState.t = actualT;
 				sportState.plays = [];
 			}
 			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
 			sportState.awaitingKickoff = awaitingKickoff;
-			sportState.text = textWithoutTime ?? "";
+			sportState.text = text ?? "";
 			sportState.newPeriodText = undefined;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
@@ -540,15 +546,15 @@ const processLiveGameEvents = ({
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
+				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[actualT].ptsQtrs = ptsQtrs;
+				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
-			if (boxScore.teams[actualT][e.s] !== undefined && e.s !== "min") {
+			if (boxScore.teams[actualT!][e.s] !== undefined && e.s !== "min") {
 				if (e.pid !== undefined) {
-					const p = boxScore.teams[actualT].players.find(
+					const p = boxScore.teams[actualT!].players.find(
 						(p2: any) => p2.pid === e.pid,
 					);
 					if (p === undefined) {
@@ -562,13 +568,14 @@ const processLiveGameEvents = ({
 						}
 					}
 				}
-				boxScore.teams[actualT][e.s] += e.amt;
+				boxScore.teams[actualT!][e.s] += e.amt;
 			}
 		} else if (e.type === "removeLastScore") {
 			// This happens a tick after sportState is updated, which I think is okay
 			boxScore.scoringSummary.pop();
 		} else if (e.type === "quarter" || e.type === "overtime") {
 			text = getText(e, boxScore.numPeriods);
+			textOnly = true;
 			boxScore.time = formatClock(e.clock);
 			stop = true;
 			if (e.startsWithKickoff) {
@@ -589,7 +596,7 @@ const processLiveGameEvents = ({
 			const initialText = getText(e, boxScore.numPeriods);
 			if (initialText !== undefined) {
 				if (e.type === "injury") {
-					const p = boxScore.teams[actualT].players.find(
+					const p = boxScore.teams[actualT!].players.find(
 						(p2: any) => p2.pid === e.injuredPID,
 					);
 					if (p === undefined) {
@@ -601,13 +608,13 @@ const processLiveGameEvents = ({
 					};
 				}
 
-				// Must include parens so it does not collide with ABBREV0 and ABBREV1 for penalties lol
 				text = initialText
-					.replace("(ABBREV)", `(${boxScore.teams[actualT].abbrev})`)
 					.replace("ABBREV0", boxScore.teams[1].abbrev)
 					.replace("ABBREV1", boxScore.teams[0].abbrev);
 				boxScore.time = formatClock(e.clock);
 				stop = true;
+				t = actualT;
+				textOnly = e.type === "twoMinuteWarning" || e.type === "gameOver";
 
 				play.texts.push(text);
 			}
@@ -815,7 +822,9 @@ const processLiveGameEvents = ({
 		possessionChange,
 		quarters,
 		sportState,
+		t,
 		text,
+		textOnly,
 	};
 };
 

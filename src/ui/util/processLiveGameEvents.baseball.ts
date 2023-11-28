@@ -128,6 +128,8 @@ export const getText = (
 	getName: (pid: number) => string,
 ) => {
 	let text;
+	let t: 0 | 1 | undefined;
+	let textOnly = false;
 
 	let bold = false;
 

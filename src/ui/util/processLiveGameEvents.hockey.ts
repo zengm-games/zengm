@@ -135,8 +135,8 @@ const getText = (
 			event.penaltyType === "major"
 				? "Major"
 				: event.penaltyType === "minor"
-				? "Minor"
-				: "Double minor";
+				  ? "Minor"
+				  : "Double minor";
 		text = `${type} penalty on ${event.names[0]} for ${event.penaltyName}`;
 	}
 	if (event.type === "penaltyOver") {
@@ -185,6 +185,8 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
+	let t: 0 | 1 | undefined;
+	let textOnly = false;
 	let prevGoal: PlayByPlayEvent | undefined;
 
 	while (!stop && events.length > 0) {

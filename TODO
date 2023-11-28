@@ -1,6 +1,23 @@
 better play by play log
 - test other sports
-  - baseball showScore
+  - football
+    - score not showing
+    - textOnly
+    - when/where show down/distance/scrimmage?
+      - maybe only show time with those events
+        - then what to do with score?
+      - maybe bold the down/distance
+    - "Intercepted" and others should have other team showing
+  - hockey
+    - actualT can be undefined
+    - t
+    - textOnly
+  - baseball
+    - actualT can be undefined
+    - showScore in LiveGame
+    - t
+    - textOnly
+    - bold = false
 - make text JSX, get rid of any processing in LiveGame
   - test performance
   - see commented out stuff in LiveGame

@@ -2352,7 +2352,7 @@ class GameSim extends GameSimBase {
 						type: "injury",
 						clock: this.clock,
 						injuredPID: p.id,
-						names: [`${p.pos} ${p.name} (ABBREV)`],
+						names: [`${p.pos} ${p.name}`],
 						t,
 					});
 				}

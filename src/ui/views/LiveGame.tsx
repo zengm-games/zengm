@@ -117,22 +117,20 @@ const PlayByPlayEntry = memo(
 		console.log("render", entry.key);
 		return (
 			<div className="d-flex">
-				<TeamLogoInline
-					className="flex-shrink-0 mt-1"
-					imgURL={
-						entry.t === undefined ? undefined : boxScore.teams[entry.t].imgURL
-					}
-					imgURLSmall={
-						entry.t === undefined
-							? undefined
-							: boxScore.teams[entry.t].imgURLSmall
-					}
-					size={24}
-				/>
+				{entry.t !== undefined ? (
+					<TeamLogoInline
+						className="flex-shrink-0 mt-1"
+						imgURL={boxScore.teams[entry.t].imgURL}
+						imgURLSmall={boxScore.teams[entry.t].imgURLSmall}
+						includePlaceholderIfNoLogo
+						size={24}
+					/>
+				) : null}
 				<div
 					className={classNames(
 						"flex-grow-1 me-2",
-						entry.textOnly ? "fw-bold" : "ms-2",
+						entry.textOnly ? "fw-bold" : undefined,
+						entry.t !== undefined ? "ms-2" : undefined,
 					)}
 				>
 					{!entry.textOnly ? (

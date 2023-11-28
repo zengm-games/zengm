@@ -355,7 +355,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					t: output.t,
 					text,
 					textOnly: output.textOnly,
-					time: output.hideTime ? undefined : boxScore.current.time,
+					time: isSport("football") ? undefined : boxScore.current.time,
 				});
 			}
 

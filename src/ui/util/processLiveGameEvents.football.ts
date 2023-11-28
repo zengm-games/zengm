@@ -364,7 +364,6 @@ const processLiveGameEvents = ({
 	let text;
 	let t: 0 | 1 | undefined;
 	let textOnly = false;
-	let hideTime = true;
 	let possessionChange: boolean = false;
 
 	while (!stop && events.length > 0) {
@@ -483,11 +482,12 @@ const processLiveGameEvents = ({
 		if (e.type === "clock") {
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
 
+			let textWithoutTime;
 			if (!e.awaitingAfterTouchdown) {
 				const time = formatClock(e.clock);
 
 				if (awaitingKickoff) {
-					text = `Kick off`;
+					textWithoutTime = "Kick off";
 				} else {
 					const fieldPos = scrimmageToFieldPos(
 						e.scrimmage,
@@ -495,15 +495,15 @@ const processLiveGameEvents = ({
 						boxScore.teams[otherT].abbrev,
 					);
 
-					text = `${formatDownAndDistance(
+					textWithoutTime = `${formatDownAndDistance(
 						e.down,
 						e.toGo,
 						e.scrimmage,
 					)}, ${fieldPos}`;
 				}
 				t = actualT;
-				hideTime = false;
 
+				text = `${time}, ${textWithoutTime}`;
 				boxScore.time = time;
 				stop = true;
 			}
@@ -517,7 +517,7 @@ const processLiveGameEvents = ({
 			}
 			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
 			sportState.awaitingKickoff = awaitingKickoff;
-			sportState.text = text ?? "";
+			sportState.text = textWithoutTime ?? "";
 			sportState.newPeriodText = undefined;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;
@@ -820,7 +820,6 @@ const processLiveGameEvents = ({
 	}
 
 	return {
-		hideTime,
 		overtimes,
 		possessionChange,
 		quarters,

@@ -1,7 +1,7 @@
 better play by play log
 - test other sports
   - football
-    - maybe bold the down/distance, use JSX to put time inline (not bold), and replace hideTime with just never putting it in entry for football
+    - maybe bold the down/distance, use JSX to put time inline (not bold)
     - "Intercepted" and others should have other team showing
     - benchmark
   - hockey

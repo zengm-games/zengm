@@ -32,8 +32,6 @@ export const getText = (
 	let texts;
 	let weights;
 
-	let showScore = false;
-
 	if (event.type === "period") {
 		texts = [
 			`Start of ${helpers.ordinal(event.period)} ${getPeriodName(
@@ -75,7 +73,6 @@ export const getText = (
 			"The layup is good",
 		];
 		weights = local.getState().gender === "male" ? [1, 2, 2] : [1, 10, 1000];
-		showScore = true;
 	} else if (event.type === "fgAtRimAndOne") {
 		const he = getPronoun("He");
 
@@ -85,21 +82,18 @@ export const getText = (
 			"The layup is good, and a foul!",
 		];
 		weights = local.getState().gender === "male" ? [1, 2, 2] : [1, 10, 1000];
-		showScore = true;
 	} else if (
 		event.type === "fgLowPost" ||
 		event.type === "fgMidRange" ||
 		event.type === "tp"
 	) {
 		texts = ["It's good!"];
-		showScore = true;
 	} else if (
 		event.type === "fgLowPostAndOne" ||
 		event.type === "fgMidRangeAndOne" ||
 		event.type === "tpAndOne"
 	) {
 		texts = ["It's good, and a foul!"];
-		showScore = true;
 	} else if (event.type === "blkAtRim") {
 		texts = [
 			`${getName(event.pid)} blocked the layup attempt`,
@@ -136,7 +130,6 @@ export const getText = (
 		texts = ["End of game"];
 	} else if (event.type === "ft") {
 		texts = [`${getName(event.pid)} made a free throw`];
-		showScore = true;
 	} else if (event.type === "missFt") {
 		texts = [`${getName(event.pid)} missed a free throw`];
 	} else if (event.type === "pfNonShooting") {
@@ -184,11 +177,6 @@ export const getText = (
 			text += ` (assist: ${getName(eAny.pidAst)})`;
 		}
 
-		// Show score after scoring plays
-		if (showScore) {
-			text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1].pts})`;
-		}
-
 		return text;
 	} else {
 		throw new Error(`No text for ${event.type}`);
@@ -218,6 +206,7 @@ const processLiveGameEvents = ({
 	}
 	let stop = false;
 	let text;
+	let t: 0 | 1 | undefined;
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 		if (!e) {
@@ -227,7 +216,8 @@ const processLiveGameEvents = ({
 		const eAny = e as any;
 
 		// Swap teams order, so home team is at bottom in box score
-		const actualT = eAny.t === 0 ? 1 : 0;
+		// WEIRD IF t IS UNDEFINED!
+		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 
 		// Hacky quarter stuff, ugh
 		if (
@@ -262,9 +252,9 @@ const processLiveGameEvents = ({
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
+				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[actualT].ptsQtrs = ptsQtrs;
+				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -288,7 +278,7 @@ const processLiveGameEvents = ({
 			) {
 				const p = playersByPid![e.pid!];
 				(p as any)[e.s] += e.amt;
-				boxScore.teams[actualT][e.s] += e.amt;
+				boxScore.teams[actualT!][e.s] += e.amt;
 
 				if (e.s === "pts") {
 					for (let j = 0; j < 2; j++) {
@@ -306,18 +296,13 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			text = getText(e, boxScore);
+			t = actualT;
 
 			let time;
 			if (eAny.clock !== undefined) {
 				const sec = Math.floor((eAny.clock % 1) * 60);
 				const secString = sec < 10 ? `0${sec}` : `${sec}`;
 				time = `${Math.floor(eAny.clock)}:${secString}`;
-			}
-
-			if (time && e.type !== "period" && e.type !== "overtime") {
-				text = `${boxScore.elamTarget === undefined ? `${time} - ` : ""}${
-					boxScore.teams[actualT].abbrev
-				} - ${text}`;
 			}
 
 			if (e.type === "injury") {
@@ -348,6 +333,7 @@ const processLiveGameEvents = ({
 	return {
 		overtimes,
 		quarters,
+		t,
 		text,
 	};
 };

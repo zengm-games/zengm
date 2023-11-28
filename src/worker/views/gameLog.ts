@@ -13,6 +13,7 @@ export type TeamSeasonOverride = {
 	name?: string;
 	abbrev?: string;
 	imgURL?: string;
+	imgURLSmall?: string;
 	colors?: [string, string, string];
 };
 
@@ -78,17 +79,25 @@ export const setTeamInfo = async (
 				(Object.hasOwn(g, "teamInfoCache")
 					? g.get("teamInfoCache")[t.tid]?.imgURL
 					: "");
+			t.imgURLSmall =
+				teamSeason.imgURLSmall ??
+				(Object.hasOwn(g, "teamInfoCache")
+					? g.get("teamInfoCache")[t.tid]?.imgURLSmall
+					: "");
 			t.colors = teamSeason.colors;
 		} else if (Object.hasOwn(g, "teamInfoCache")) {
 			t.region = g.get("teamInfoCache")[t.tid]?.region;
 			t.name = g.get("teamInfoCache")[t.tid]?.name;
 			t.abbrev = g.get("teamInfoCache")[t.tid]?.abbrev;
 			t.imgURL = g.get("teamInfoCache")[t.tid]?.imgURL;
+			t.imgURL = g.get("teamInfoCache")[t.tid]?.imgURL;
+			t.imgURLSmall = g.get("teamInfoCache")[t.tid]?.imgURLSmall;
 		} else {
 			t.region = "";
 			t.name = "";
 			t.abbrev = "";
 			t.imgURL = "";
+			// imgURLSmall can be undefined. Probably imgURL should be too.
 		}
 	}
 

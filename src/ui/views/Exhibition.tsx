@@ -46,6 +46,7 @@ export type ExhibitionTeam = {
 	Team,
 	| "abbrev"
 	| "imgURL"
+	| "imgURLSmall"
 	| "region"
 	| "name"
 	| "tid"

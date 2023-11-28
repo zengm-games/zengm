@@ -1,3 +1,21 @@
+better play by play log
+- show stuff in columns
+  - ESPN: Time / Play / ATL / CHI
+    - Play includes small logo to the left
+    - Score is shown on every row, one is bold for scoring plays
+  - Yahoo: Logo / Time / Score, then below that the play text is shown spread over the last 2 cols
+    - Score is only shown for scoring plays
+- need to know scoring plays
+  - showScore in LiveGame is already there
+- test other sports
+  - baseball showScore
+- make text JSX, get rid of any processing in LiveGame
+  - test performance
+  - see commented out stuff in LiveGame
+- test exhibition game logo - should be small logo not big logo!
+- end of game, period and quarter should be bold and not show time
+- slow!
+
 no need to track scoringSummary at all for basketball
 
 some sportState live sim for basketball/hockey

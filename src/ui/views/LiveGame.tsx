@@ -7,12 +7,14 @@ import {
 	useMemo,
 	useRef,
 	useState,
+	type ReactNode,
 } from "react";
 import {
 	BoxScoreRow,
 	BoxScoreWrapper,
 	Confetti,
 	PlayPauseNext,
+	TeamLogoInline,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, processLiveGameEvents, toWorker } from "../util";
@@ -130,6 +132,16 @@ export const LiveGame = (props: View<"liveGame">) => {
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);
 
+	const playByPlayEntries = useRef<
+		{
+			key: number;
+			text: string;
+			score: ReactNode | undefined;
+			t: 0 | 1 | undefined;
+			time: string;
+		}[]
+	>([]);
+
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
 		(force?: boolean): number => {
@@ -160,7 +172,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				isSport("baseball") && output.sportState.outs > prevOuts!;
 			const currentPts =
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
-			const showScore = isSport("baseball") && currentPts !== prevPts;
+			const showScore = currentPts !== prevPts;
 
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
@@ -183,7 +195,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 						}`;
 					}
 
-					if (showScore) {
+					if (isSport("baseball") && showScore) {
 						if (!text.endsWith("!") && !text.endsWith(".")) {
 							text += ",";
 						}
@@ -206,7 +218,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					}
 				}
 
-				const p = document.createElement("p");
+				/*const p = document.createElement("p");
 				if (isSport("football") && text.startsWith("Penalty")) {
 					p.innerHTML = text
 						.replace("accepted", "<b>accepted</b>")
@@ -230,14 +242,32 @@ export const LiveGame = (props: View<"liveGame">) => {
 					} else {
 						p.appendChild(node);
 					}
-				}
+				}*/
 
-				if (playByPlayDiv.current) {
-					playByPlayDiv.current.insertBefore(
-						p,
-						playByPlayDiv.current.firstChild,
-					);
-				}
+				const score =
+					showScore && output.t === 0 ? (
+						<>
+							<span className="highlight-leader">
+								{boxScore.current.teams[0].pts}
+							</span>{" "}
+							- {boxScore.current.teams[1].pts}
+						</>
+					) : showScore && output.t === 1 ? (
+						<>
+							{boxScore.current.teams[0].pts} -{" "}
+							<span className="highlight-leader">
+								{boxScore.current.teams[1].pts}
+							</span>
+						</>
+					) : undefined;
+
+				playByPlayEntries.current.unshift({
+					key: playByPlayEntries.current.length,
+					score,
+					t: output.t,
+					text,
+					time: boxScore.current.time,
+				});
 			}
 
 			if (events.current && events.current.length > 0) {
@@ -643,8 +673,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 								boxScore.current.elamTarget !== undefined
 									? "game"
 									: boxScore.current.overtime
-									? "period"
-									: getPeriodName(boxScore.current.numPeriods)
+									  ? "period"
+									  : getPeriodName(boxScore.current.numPeriods)
 							}`,
 							key: "Q",
 							onClick: () => {
@@ -865,14 +895,43 @@ export const LiveGame = (props: View<"liveGame">) => {
 							/>
 						</div>
 						<div
-							className="live-game-playbyplay"
+							className="live-game-playbyplay d-flex flex-column gap-3"
 							ref={c => {
 								playByPlayDiv.current = c;
 							}}
 							style={{
 								scrollMarginTop: 174,
 							}}
-						/>
+						>
+							{playByPlayEntries.current.map(row => (
+								<div key={row.key} className="d-flex">
+									<TeamLogoInline
+										className="flex-shrink-0 mt-1"
+										imgURL={
+											row.t === undefined
+												? undefined
+												: boxScore.current.teams[row.t].imgURL
+										}
+										imgURLSmall={
+											row.t === undefined
+												? undefined
+												: boxScore.current.teams[row.t].imgURLSmall
+										}
+										includePlaceholderIfNoLogo
+										size={24}
+									/>
+									<div className="mx-2 flex-grow-1">
+										<div className="d-flex">
+											<div className="text-body-secondary">{row.time}</div>
+											{row.score ? (
+												<div className="ms-auto">{row.score}</div>
+											) : null}
+										</div>
+										{row.text}
+									</div>
+								</div>
+							))}
+						</div>
 					</div>
 				</div>
 			</div>

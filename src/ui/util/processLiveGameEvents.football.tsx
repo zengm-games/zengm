@@ -1,6 +1,6 @@
 import { getPeriodName } from "../../common";
 import { isScoringPlay } from "../../common/isScoringPlay.football";
-import { helpers, local } from "../../ui/util";
+import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 
 export type SportState = {
@@ -482,12 +482,12 @@ const processLiveGameEvents = ({
 		if (e.type === "clock") {
 			const awaitingKickoff = e.awaitingKickoff !== undefined;
 
-			let textWithoutTime;
+			const textParts = [];
 			if (!e.awaitingAfterTouchdown) {
 				const time = formatClock(e.clock);
 
 				if (awaitingKickoff) {
-					textWithoutTime = "Kick off";
+					textParts.push("Kick off");
 				} else {
 					const fieldPos = scrimmageToFieldPos(
 						e.scrimmage,
@@ -495,15 +495,21 @@ const processLiveGameEvents = ({
 						boxScore.teams[otherT].abbrev,
 					);
 
-					textWithoutTime = `${formatDownAndDistance(
-						e.down,
-						e.toGo,
-						e.scrimmage,
-					)}, ${fieldPos}`;
+					textParts.push(formatDownAndDistance(e.down, e.toGo, e.scrimmage));
+					textParts.push(fieldPos);
 				}
 				t = actualT;
 
-				text = `${time}, ${textWithoutTime}`;
+				text = (
+					<>
+						{time}
+						{textParts.map((part, i) => (
+							<span className={`ps-3${i === 0 ? " fw-bold" : ""}`} key={i}>
+								{part}
+							</span>
+						))}
+					</>
+				);
 				boxScore.time = time;
 				stop = true;
 			}
@@ -517,7 +523,7 @@ const processLiveGameEvents = ({
 			}
 			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
 			sportState.awaitingKickoff = awaitingKickoff;
-			sportState.text = textWithoutTime ?? "";
+			sportState.text = textParts.join(", ");
 			sportState.newPeriodText = undefined;
 			sportState.scrimmage = e.scrimmage;
 			sportState.toGo = e.toGo;

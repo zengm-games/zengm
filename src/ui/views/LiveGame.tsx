@@ -107,7 +107,7 @@ type PlayByPlayEntry = {
 	key: number;
 	score: ReactNode | undefined;
 	t: 0 | 1 | undefined;
-	text: string;
+	text: ReactNode;
 	textOnly: boolean;
 	time: string;
 };

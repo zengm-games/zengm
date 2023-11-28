@@ -26,6 +26,7 @@ better play by play log
   - go back to editing DOM?
     - then i still can't use jsx in processLiveGameEvents text output
   - maybe not that slow in prod mode, benchmark
+- colored text for football interceptions, hockey power plays, maybe baseball outs
 
 no need to track scoringSummary at all for basketball
 

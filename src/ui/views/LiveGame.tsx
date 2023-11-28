@@ -135,10 +135,10 @@ const PlayByPlayEntry = memo(
 				>
 					{!entry.textOnly ? (
 						<div className="d-flex">
-							<div className="text-body-secondary">{entry.time}</div>
-							{entry.score ? (
-								<div className="ms-auto">{entry.score}</div>
+							{entry.time ? (
+								<div className="text-body-secondary me-auto">{entry.time}</div>
 							) : null}
+							{entry.score ? <div>{entry.score}</div> : null}
 						</div>
 					) : null}
 					{entry.text}
@@ -355,7 +355,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					t: output.t,
 					text,
 					textOnly: output.textOnly,
-					time: boxScore.current.time,
+					time: output.hideTime ? undefined : boxScore.current.time,
 				});
 			}
 

@@ -364,6 +364,7 @@ const processLiveGameEvents = ({
 	let text;
 	let t: 0 | 1 | undefined;
 	let textOnly = false;
+	let hideTime = true;
 	let possessionChange: boolean = false;
 
 	while (!stop && events.length > 0) {
@@ -501,6 +502,7 @@ const processLiveGameEvents = ({
 					)}, ${fieldPos}`;
 				}
 				t = actualT;
+				hideTime = false;
 
 				boxScore.time = time;
 				stop = true;
@@ -818,6 +820,7 @@ const processLiveGameEvents = ({
 	}
 
 	return {
+		hideTime,
 		overtimes,
 		possessionChange,
 		quarters,

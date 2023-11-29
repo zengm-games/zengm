@@ -286,19 +286,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 							endWithPeriod ? "." : ""
 						}`;
 					}
-				}
-
-				const p = document.createElement("p");
-				const node = document.createTextNode(text);
-				if (
-					(isSport("hockey") &&
-						(text.includes("Goal!") || text.includes("penalty"))) ||
-				) {
-					const b = document.createElement("b");
-					b.appendChild(node);
-					p.appendChild(b);
-				} else {
-					p.appendChild(node);
 				}*/
 
 				const score =

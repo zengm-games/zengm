@@ -2,22 +2,20 @@ better play by play log
 - test other sports
   - baseball
     - pitch events logo
-    - showScore in LiveGame
-    - does this UI make sense?
-    - benchmark
-- make text JSX, get rid of any processing in LiveGame
-  - test performance
-  - see commented out stuff in LiveGame
-- slow! should take about 10 seconds at fastest speed to sim game, instead takes 32
-  - virtualize?
-    - might be tricky
-    - breaks ctrl+f
-  - go back to editing DOM?
-    - then i still can't use jsx in processLiveGameEvents text output
-  - maybe not that slow in prod mode, benchmark
-- colored text for football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs, maybe baseball/hockey/football scores
-
-no need to track scoringSummary at all for basketball
+    - showOuts stuff - where to display?
+    - benchmark - no low hanging find fruit!
+- commented out stuff in LiveGame
+- colored text
+  - red: football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs
+  - green: baseball/hockey/football scores
+    - should score be shown more prominently, somehow?
+- blog
+  - UI differences across sports
+  - performance
+    - old way
+    - new way - has some advantages
+    - virtualize? breaks ctrl+f
+    - in hockey/football, found some ways to optimize performance to offset the change
 
 some sportState live sim for basketball/hockey
 - chart showing margin vs time or win probability vs time (toggle button to switch)

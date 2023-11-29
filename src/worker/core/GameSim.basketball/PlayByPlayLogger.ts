@@ -297,7 +297,7 @@ class PlayByPlayLogger {
 
 	playByPlay: PlayByPlayEvent[] = [];
 
-	scoringSummary: PlayByPlayEventScore[] = [];
+	// scoringSummary: PlayByPlayEventScore[] = [];
 
 	period = 1;
 
@@ -315,7 +315,7 @@ class PlayByPlayLogger {
 				...event,
 				period: this.period,
 			};
-			this.scoringSummary.push(event2);
+			// this.scoringSummary.push(event2);
 			if (this.active) {
 				this.playByPlay.push(event2);
 			}

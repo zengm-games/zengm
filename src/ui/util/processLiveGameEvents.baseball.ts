@@ -471,13 +471,14 @@ const processLiveGameEvents = ({
 			continue;
 		}
 
+		const eAny = e as any;
+
 		// Swap teams order, so home team is at bottom in box score
-		// @ts-expect-error
-		const actualT = e.t === 0 ? 1 : 0;
+		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 
 		if (e.type === "sideStart") {
 			quarters.push(e.inning);
-			boxScore.teams[actualT].ptsQtrs.push(0);
+			boxScore.teams[actualT!].ptsQtrs.push(0);
 
 			if (actualT === 0) {
 				const inning = boxScore.teams[0].ptsQtrs.length;
@@ -535,9 +536,9 @@ const processLiveGameEvents = ({
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
+				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[actualT].ptsQtrs = ptsQtrs;
+				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -549,7 +550,7 @@ const processLiveGameEvents = ({
 					p[e.s] += e.amt;
 				}
 			}
-			if (Object.hasOwn(boxScore.teams[actualT], e.s)) {
+			if (Object.hasOwn(boxScore.teams[actualT!], e.s)) {
 				// @ts-expect-error
 				boxScore.teams[actualT][e.s] += e.amt;
 			}

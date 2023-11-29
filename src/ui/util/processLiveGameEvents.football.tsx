@@ -399,8 +399,9 @@ const processLiveGameEvents = ({
 			continue;
 		}
 
-		// Swap teams order, so home team is at bottom in box score
 		const eAny = e as any;
+
+		// Swap teams order, so home team is at bottom in box score
 		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 		const otherT = actualT === 0 ? 1 : 0;
 

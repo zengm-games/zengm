@@ -219,9 +219,10 @@ const processLiveGameEvents = ({
 			continue;
 		}
 
+		const eAny = e as any;
+
 		// Swap teams order, so home team is at bottom in box score
-		// @ts-expect-error
-		const actualT = e.t === 0 ? 1 : 0;
+		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 
 		if (e.type !== "init" && !quarters.includes(e.quarter)) {
 			quarters.push(e.quarter);
@@ -256,9 +257,9 @@ const processLiveGameEvents = ({
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
+				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[actualT].ptsQtrs = ptsQtrs;
+				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -268,11 +269,11 @@ const processLiveGameEvents = ({
 					(p as any)[e.s] += e.amt;
 				}
 			}
-			if (boxScore.teams[actualT][e.s] !== undefined) {
-				boxScore.teams[actualT][e.s] += e.amt;
+			if (boxScore.teams[actualT!][e.s] !== undefined) {
+				boxScore.teams[actualT!][e.s] += e.amt;
 			}
 		} else if (e.type === "playersOnIce") {
-			for (const p of boxScore.teams[actualT].players) {
+			for (const p of boxScore.teams[actualT!].players) {
 				p.inGame = e.pids.includes(p.pid);
 			}
 		} else if (e.type !== "init") {

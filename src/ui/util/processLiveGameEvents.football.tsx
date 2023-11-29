@@ -235,17 +235,15 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				event.safety ? "safety!" : "touchback"
 			}`;
 		} else if (event.lost) {
-			text = `Turnover! ${event.names[0]} recovered the fumble for ABBREV${
-				event.t
-			} ${
+			text = `Turnover! ${event.names[0]} recovered the fumble${
 				event.td && event.yds < 1
-					? `in the endzone for ${touchdownText}!`
-					: `and returned it ${event.yds} yards${
+					? ` in the endzone for ${touchdownText}!`
+					: ` and returned it ${event.yds} yards${
 							event.td ? ` for ${touchdownText}!` : ""
 					  }`
 			}`;
 		} else {
-			text = `${event.names[0]} recovered the fumble for ABBREV${event.t}${
+			text = `${event.names[0]} recovered the fumble${
 				event.td ? ` and carried it into the endzone for ${touchdownText}!` : ""
 			}`;
 		}
@@ -633,9 +631,7 @@ const processLiveGameEvents = ({
 					};
 				}
 
-				text = initialText
-					.replace("ABBREV0", boxScore.teams[1].abbrev)
-					.replace("ABBREV1", boxScore.teams[0].abbrev);
+				text = initialText;
 				boxScore.time = formatClock(e.clock);
 				stop = true;
 				t = actualT;

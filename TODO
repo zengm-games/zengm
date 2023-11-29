@@ -64,7 +64,6 @@ unify processLiveGameEvents
 
 FBGM move event text generation to UI
 - to fix after
-  - ABBREV replace stuff
   - bold text
   - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
   - too many formatClock calls

@@ -246,9 +246,7 @@ const processEvents = (
 			text = oldEvent.text;
 		} else {
 			// This is a new format entry, with metadata that needs to be turned into text
-			text = getText(event, numPeriods)
-				?.replace("ABBREV0", abbrev0)
-				?.replace("ABBREV1", abbrev1);
+			text = getText(event, numPeriods);
 		}
 
 		if (text === undefined) {

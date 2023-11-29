@@ -412,6 +412,7 @@ export type SportState = {
 	strikes: number;
 	batterPid: number;
 	pitcherPid: number;
+	o: 0 | 1;
 };
 
 export const DEFAULT_SPORT_STATE: SportState = {
@@ -425,6 +426,7 @@ export const DEFAULT_SPORT_STATE: SportState = {
 	strikes: 0,
 	batterPid: -1,
 	pitcherPid: -1,
+	o: 0,
 };
 
 // Mutates boxScore!!!
@@ -493,6 +495,8 @@ const processLiveGameEvents = ({
 			Object.assign(sportState, DEFAULT_SPORT_STATE);
 			sportState.pitcherPid = e.pitcherPid;
 			sportState.batterPid = -1;
+			sportState.o = actualT!;
+			t = actualT;
 		} else if (e.type === "reliefPitcher") {
 			sportState.pitcherPid = e.pidOn;
 		} else if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
@@ -564,7 +568,6 @@ const processLiveGameEvents = ({
 
 			const output = getText(e, getName);
 			text = output.bold ? <b>{output.text}</b> : output.text;
-			t = actualT;
 			textOnly =
 				e.type === "sideStart" ||
 				e.type === "sideOver" ||

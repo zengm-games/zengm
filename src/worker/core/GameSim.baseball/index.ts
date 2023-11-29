@@ -2519,6 +2519,9 @@ class GameSim extends GameSimBase {
 			t: this.o,
 			pitcherPid: this.team[this.d].playersInGameByPos.P.p.id,
 		});
+		if (this.inning > 1) {
+			this.checkReliefPitcher(true);
+		}
 
 		while (true) {
 			this.simPlateAppearance();
@@ -2566,7 +2569,6 @@ class GameSim extends GameSimBase {
 
 				this.possessionChange();
 				this.resetNewInning();
-				this.checkReliefPitcher(true);
 				return false;
 			} else {
 				this.checkReliefPitcher(false);

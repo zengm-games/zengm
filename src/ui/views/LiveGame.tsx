@@ -308,9 +308,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 				playByPlayEntries.current.unshift({
 					key: playByPlayEntries.current.length,
 					score,
-					t: output.t,
 					text,
 					textOnly: output.textOnly,
+
+					// For baseball, always show logo of the batting team
+					t: isSport("baseball") ? sportState.current.o : output.t,
 
 					// Baseball has no time, football it's displayed with down/distance before play. In both cases, skip showing time for individual entries.
 					time:

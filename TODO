@@ -1,9 +1,9 @@
 better play by play log
 - test other sports
   - baseball
-    - pitch events logo
     - showOuts stuff - where to display?
-    - benchmark - no low hanging find fruit!
+    - would it be better with no logos?
+    - t needed in any event? maybe just sideStart
 - commented out stuff in LiveGame
 - colored text
   - red: football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs
@@ -16,6 +16,8 @@ better play by play log
     - new way - has some advantages
     - virtualize? breaks ctrl+f
     - in hockey/football, found some ways to optimize performance to offset the change
+- in live sim, put a ball under the team with possession currently
+  - show it for the last value that came through of output.t from processLiveGameEvents
 
 some sportState live sim for basketball/hockey
 - chart showing margin vs time or win probability vs time (toggle button to switch)
@@ -86,7 +88,6 @@ FBGM
 - make it harder to gain yards in the red zone https://discord.com/channels/290013534023057409/331882115119448065/1171978572940976210
 - penalties on XP/2pt need to be handled differently. if you switch from one to the other, the penalties tack on to that starting position. so currently they are disabled
 - add fumbles on kick/punt returns
-- in live sim, put a ball under the team with possession currently
 - better punts
   - punt shouldn't so commonly be touchbacks
   - punt should be shorter if you're backed up in your own endzone

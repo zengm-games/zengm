@@ -26,7 +26,7 @@ export type SportState = {
 		toGo: number;
 		scrimmage: number;
 		yards: number;
-		texts: string[];
+		texts: ReactNode[];
 		scoreInfo: ReturnType<typeof getScoreInfo> | undefined;
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		turnover: boolean;
@@ -40,7 +40,7 @@ export type SportState = {
 		t: 0 | 1;
 	}[];
 	text: string;
-	newPeriodText: string | undefined;
+	newPeriodText: ReactNode | undefined;
 };
 
 export const DEFAULT_SPORT_STATE: SportState = {
@@ -169,7 +169,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		}
 	}
 
-	let text: string | undefined;
+	let text: ReactNode | undefined;
 
 	if (event.type === "injury") {
 		text = `${event.names[0]} was injured!`;
@@ -309,10 +309,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				: ""
 		}`;
 	} else if (event.type === "penalty") {
-		text = `Penalty - ${event.penaltyName.toLowerCase()}${
-			event.names.length > 0 ? ` on ${event.names[0]}` : ""
-		}`;
-
+		let decisionText;
 		if (event.offsetStatus !== "offset") {
 			const spotFoulText = event.tackOn
 				? " from the end of the play"
@@ -330,15 +327,27 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				text += `, ${event.yds} yards${spotFoulText}${automaticFirstDownText}`;
 			}
 
-			let decisionText;
+			let innerText;
 			if (event.offsetStatus === "overrule") {
-				decisionText = event.decision === "accept" ? "enforced" : "overruled";
+				innerText = event.decision === "accept" ? "enforced" : "overruled";
 			} else {
-				decisionText = event.decision === "accept" ? "accepted" : "declined";
+				innerText = event.decision === "accept" ? "accepted" : "declined";
 			}
-
-			text += ` - ${decisionText}`;
+			decisionText = (
+				<>
+					{" "}
+					- <b>{innerText}</b>
+				</>
+			);
 		}
+
+		text = (
+			<>
+				Penalty - {event.penaltyName.toLowerCase()}
+				{event.names.length > 0 ? ` on ${event.names[0]}` : ""}
+				{decisionText}
+			</>
+		);
 	} else if (event.type === "timeout") {
 		text = `Timeout, ${event.offense ? "offense" : "defense"} (${
 			event.numLeft

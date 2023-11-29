@@ -259,9 +259,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				quarters: quarters.current,
 				sportState: sportState.current,
 			});
-			let text = output.text;
-			const showOuts =
-				isSport("baseball") && output.sportState.outs > prevOuts!;
+			const text = output.text;
 			const currentPts =
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 			const showScore = currentPts !== prevPts;
@@ -273,6 +271,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			if (text !== undefined) {
 				/*if (isSport("baseball")) {
+					const showOuts =
+						isSport("baseball") && output.sportState.outs > prevOuts!;
 					if (showOuts) {
 						let endWithPeriod = true;
 						if (!text.endsWith("!") && !text.endsWith(".")) {
@@ -289,29 +289,16 @@ export const LiveGame = (props: View<"liveGame">) => {
 				}
 
 				const p = document.createElement("p");
-				if (isSport("football") && text.startsWith("Penalty")) {
-					p.innerHTML = text
-						.replace("accepted", "<b>accepted</b>")
-						.replace("declined", "<b>declined</b>")
-						.replace("enforced", "<b>enforced</b>")
-						.replace("overruled", "<b>overruled</b>");
+				const node = document.createTextNode(text);
+				if (
+					(isSport("hockey") &&
+						(text.includes("Goal!") || text.includes("penalty"))) ||
+				) {
+					const b = document.createElement("b");
+					b.appendChild(node);
+					p.appendChild(b);
 				} else {
-					const node = document.createTextNode(text);
-					if (
-						text === "End of game" ||
-						text.startsWith("Start of") ||
-						(isSport("basketball") &&
-							text.startsWith("Elam Ending activated! First team to")) ||
-						(isSport("hockey") &&
-							(text.includes("Goal!") || text.includes("penalty"))) ||
-						output.bold
-					) {
-						const b = document.createElement("b");
-						b.appendChild(node);
-						p.appendChild(b);
-					} else {
-						p.appendChild(node);
-					}
+					p.appendChild(node);
 				}*/
 
 				const score =

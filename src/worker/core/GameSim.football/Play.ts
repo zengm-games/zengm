@@ -1299,6 +1299,7 @@ class Play {
 			this.g.playByPlay.logEvent({
 				type: "turnoverOnDowns",
 				clock: this.g.clock,
+				t: this.state.current.d,
 			});
 		}
 

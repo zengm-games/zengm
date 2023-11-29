@@ -230,6 +230,7 @@ type PlayByPlayEventInput =
 	| {
 			type: "turnoverOnDowns";
 			clock: number;
+			t: TeamNum;
 	  };
 
 export type PlayByPlayEvent =

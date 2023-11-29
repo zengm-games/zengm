@@ -2,7 +2,6 @@ better play by play log
 - test other sports
   - football
     - benchmark
-    - turnover on downs should have e.t
   - hockey
     - actualT can be undefined
     - t
@@ -25,7 +24,7 @@ better play by play log
   - go back to editing DOM?
     - then i still can't use jsx in processLiveGameEvents text output
   - maybe not that slow in prod mode, benchmark
-- colored text for football interceptions/fumble turnovers, hockey power plays, maybe baseball outs, maybe baseball/hockey/football scores
+- colored text for football interceptions/fumble/downs turnovers, hockey power plays, maybe baseball outs, maybe baseball/hockey/football scores
 
 no need to track scoringSummary at all for basketball
 

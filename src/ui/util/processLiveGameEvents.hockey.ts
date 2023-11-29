@@ -4,6 +4,20 @@ import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
+import type { PlayerInjury } from "../../common/types";
+
+let playersByPidGid: number | undefined;
+let playersByPid:
+	| Record<
+			number,
+			{
+				name: string;
+				inGame: boolean;
+				inPenaltyBox: boolean;
+				injury: PlayerInjury;
+			}
+	  >
+	| undefined;
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
 const cmpTime = (t1: string, t2: string) => {
@@ -172,6 +186,7 @@ const processLiveGameEvents = ({
 }: {
 	events: PlayByPlayEvent[];
 	boxScore: {
+		gid: number;
 		quarter: string;
 		quarterShort: string;
 		numPeriods: number;
@@ -183,6 +198,15 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: number[];
 }) => {
+	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+		playersByPidGid = boxScore.gid;
+		playersByPid = {};
+		for (const t of boxScore.teams) {
+			for (const p of t.players) {
+				playersByPid[p.pid] = p;
+			}
+		}
+	}
 	let stop = false;
 	let text;
 	let t: 0 | 1 | undefined;
@@ -229,16 +253,6 @@ const processLiveGameEvents = ({
 			}
 		}
 
-		const findPlayer = (pid: number) => {
-			const p = boxScore.teams[actualT].players.find(
-				(p2: any) => p2.pid === pid,
-			);
-			if (p === undefined) {
-				console.log("Can't find player", e);
-			}
-			return p;
-		};
-
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
@@ -249,9 +263,9 @@ const processLiveGameEvents = ({
 
 			// Everything else
 			if (e.pid != undefined) {
-				const p = findPlayer(e.pid);
-				if (p && p[e.s] !== undefined) {
-					p[e.s] += e.amt;
+				const p = playersByPid[e.pid];
+				if ((p as any)?.[e.s] !== undefined) {
+					(p as any)[e.s] += e.amt;
 				}
 			}
 			if (boxScore.teams[actualT][e.s] !== undefined) {
@@ -263,16 +277,16 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				const p = findPlayer(e.injuredPID);
+				const p = playersByPid[e.injuredPID];
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,
 				};
 			} else if (e.type === "penalty") {
-				const p = findPlayer(e.penaltyPID);
+				const p = playersByPid[e.penaltyPID];
 				p.inPenaltyBox = true;
 			} else if (e.type === "penaltyOver") {
-				const p = findPlayer(e.penaltyPID);
+				const p = playersByPid[e.penaltyPID];
 				p.inPenaltyBox = false;
 			}
 

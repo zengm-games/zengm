@@ -452,11 +452,8 @@ const processLiveGameEvents = ({
 	quarters: number[];
 	sportState: SportState;
 }) => {
-	let stop = false;
-	let text;
-	let bold = false;
-
 	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {
 			for (const p of t.players) {
@@ -464,6 +461,9 @@ const processLiveGameEvents = ({
 			}
 		}
 	}
+	let stop = false;
+	let text;
+	let bold = false;
 
 	while (!stop && events.length > 0) {
 		const e = events.shift();
@@ -544,7 +544,7 @@ const processLiveGameEvents = ({
 			if (e.pid != undefined) {
 				const p = playersByPid[e.pid];
 				// @ts-expect-error
-				if (p && p[e.s] !== undefined) {
+				if (p?.[e.s] !== undefined) {
 					// @ts-expect-error
 					p[e.s] += e.amt;
 				}

@@ -7,7 +7,7 @@ const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
 };
 
-let gid: number | undefined;
+let playersByPidGid: number | undefined;
 let playersByPid:
 	| Record<
 			number,
@@ -195,8 +195,8 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: string[];
 }) => {
-	if (boxScore.gid !== gid) {
-		gid = boxScore.gid;
+	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {
 			for (const p of t.players) {
@@ -278,7 +278,7 @@ const processLiveGameEvents = ({
 				e.s === "pf" ||
 				e.s === "pts"
 			) {
-				const p = playersByPid![e.pid!];
+				const p = playersByPid[e.pid!];
 				(p as any)[e.s] += e.amt;
 				boxScore.teams[actualT!][e.s] += e.amt;
 
@@ -293,7 +293,7 @@ const processLiveGameEvents = ({
 					}
 				}
 			} else if (e.s === "gs") {
-				const p = playersByPid![e.pid!];
+				const p = playersByPid[e.pid!];
 				p.inGame = true;
 			}
 		} else if (e.type !== "init") {
@@ -313,7 +313,7 @@ const processLiveGameEvents = ({
 			}
 
 			if (e.type === "injury") {
-				const p = playersByPid![e.pid];
+				const p = playersByPid[e.pid];
 				if (p) {
 					(p as any).injury = {
 						type: "Injured",
@@ -323,8 +323,8 @@ const processLiveGameEvents = ({
 			}
 
 			if (e.type === "sub") {
-				playersByPid![e.pid].inGame = true;
-				playersByPid![e.pidOff].inGame = false;
+				playersByPid[e.pid].inGame = true;
+				playersByPid[e.pidOff].inGame = false;
 			} else if (e.type === "elamActive") {
 				boxScore.elamTarget = e.target;
 			}

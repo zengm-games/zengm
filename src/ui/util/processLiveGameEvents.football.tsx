@@ -4,7 +4,7 @@ import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 import type { ReactNode } from "react";
 
-let gid: number | undefined;
+let playersByPidGid: number | undefined;
 let playersByPid:
 	| Record<
 			number,
@@ -378,8 +378,8 @@ const processLiveGameEvents = ({
 	quarters: string[];
 	sportState: SportState;
 }) => {
-	if (boxScore.gid !== gid) {
-		gid = boxScore.gid;
+	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {
 			for (const p of t.players) {
@@ -589,7 +589,7 @@ const processLiveGameEvents = ({
 			// Everything else
 			if (boxScore.teams[actualT!][e.s] !== undefined && e.s !== "min") {
 				if (e.pid != undefined) {
-					const p = playersByPid![e.pid] as any;
+					const p = playersByPid[e.pid] as any;
 					if (e.s.endsWith("Lng")) {
 						p[e.s] = e.amt;
 					} else {
@@ -624,7 +624,7 @@ const processLiveGameEvents = ({
 			const initialText = getText(e, boxScore.numPeriods);
 			if (initialText !== undefined) {
 				if (e.type === "injury") {
-					const p = playersByPid![e.injuredPID] as any;
+					const p = playersByPid[e.injuredPID] as any;
 					p.injury = {
 						type: "Injured",
 						gamesRemaining: -1,

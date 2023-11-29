@@ -4,6 +4,17 @@ import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 import type { ReactNode } from "react";
 
+let gid: number | undefined;
+let playersByPid:
+	| Record<
+			number,
+			{
+				name: string;
+				inGame: boolean;
+			}
+	  >
+	| undefined;
+
 export type SportState = {
 	awaitingAfterTouchdown: boolean;
 	awaitingKickoff: boolean;
@@ -369,6 +380,15 @@ const processLiveGameEvents = ({
 	quarters: string[];
 	sportState: SportState;
 }) => {
+	if (boxScore.gid !== gid) {
+		gid = boxScore.gid;
+		playersByPid = {};
+		for (const t of boxScore.teams) {
+			for (const p of t.players) {
+				playersByPid[p.pid] = p;
+			}
+		}
+	}
 	let stop = false;
 	let text;
 	let t: 0 | 1 | undefined;
@@ -570,19 +590,12 @@ const processLiveGameEvents = ({
 
 			// Everything else
 			if (boxScore.teams[actualT!][e.s] !== undefined && e.s !== "min") {
-				if (e.pid !== undefined) {
-					const p = boxScore.teams[actualT!].players.find(
-						(p2: any) => p2.pid === e.pid,
-					);
-					if (p === undefined) {
-						console.log("Can't find player", e);
-					}
-					if (p) {
-						if (e.s.endsWith("Lng")) {
-							p[e.s] = e.amt;
-						} else {
-							p[e.s] += e.amt;
-						}
+				if (e.pid != undefined) {
+					const p = playersByPid![e.pid] as any;
+					if (e.s.endsWith("Lng")) {
+						p[e.s] = e.amt;
+					} else {
+						p[e.s] += e.amt;
 					}
 				}
 				boxScore.teams[actualT!][e.s] += e.amt;
@@ -613,12 +626,7 @@ const processLiveGameEvents = ({
 			const initialText = getText(e, boxScore.numPeriods);
 			if (initialText !== undefined) {
 				if (e.type === "injury") {
-					const p = boxScore.teams[actualT!].players.find(
-						(p2: any) => p2.pid === e.injuredPID,
-					);
-					if (p === undefined) {
-						console.log("Can't find injured player", e);
-					}
+					const p = playersByPid![e.injuredPID] as any;
 					p.injury = {
 						type: "Injured",
 						gamesRemaining: -1,

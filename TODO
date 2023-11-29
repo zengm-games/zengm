@@ -60,6 +60,7 @@ unify PlayByPlayLogger
 unify processLiveGameEvents
 - make it a class, to more easily handle stuff like playersByPid
 - replace any .find with playersByPid
+- replace names in events with pids, like basketball
 
 FBGM move event text generation to UI
 - to fix after

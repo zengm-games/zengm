@@ -1639,7 +1639,7 @@ class GameSim extends GameSimBase {
 			type: "interception",
 			clock: this.clock,
 			names: [p.name],
-			t: this.currentPlay.state.current.o,
+			t: this.currentPlay.state.current.d,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds: ydsPass,
 		});

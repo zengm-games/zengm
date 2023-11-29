@@ -119,7 +119,11 @@ const PlayByPlayEntry = memo(
 			<div className="d-flex">
 				{entry.t !== undefined ? (
 					<TeamLogoInline
-						className="flex-shrink-0 mt-1"
+						className={classNames("flex-shrink-0", {
+							// If there is a time line, then add some margin to the top, looks better.
+							// If it's just score and no time, then that's football, and no margin looks more consistent. So don't check score here.
+							"mt-1": !entry.textOnly && entry.time,
+						})}
 						imgURL={boxScore.teams[entry.t].imgURL}
 						imgURLSmall={boxScore.teams[entry.t].imgURLSmall}
 						includePlaceholderIfNoLogo
@@ -128,7 +132,7 @@ const PlayByPlayEntry = memo(
 				) : null}
 				<div
 					className={classNames(
-						"flex-grow-1 me-2",
+						"flex-grow-1 align-self-center me-2",
 						entry.textOnly ? "fw-bold" : undefined,
 						entry.t !== undefined ? "ms-2" : undefined,
 					)}

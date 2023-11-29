@@ -1,8 +1,6 @@
 better play by play log
 - test other sports
   - football
-    - maybe bold the down/distance, use JSX to put time inline (not bold)
-    - "Intercepted" and others should have other team showing
     - benchmark
     - turnover on downs should have e.t
   - hockey
@@ -27,7 +25,7 @@ better play by play log
   - go back to editing DOM?
     - then i still can't use jsx in processLiveGameEvents text output
   - maybe not that slow in prod mode, benchmark
-- colored text for football interceptions, hockey power plays, maybe baseball outs
+- colored text for football interceptions/fumble turnovers, hockey power plays, maybe baseball outs, maybe baseball/hockey/football scores
 
 no need to track scoringSummary at all for basketball
 

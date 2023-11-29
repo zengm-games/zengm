@@ -565,6 +565,7 @@ const processLiveGameEvents = ({
 
 			const output = getText(e, getName);
 			text = output.text;
+			t = actualT;
 			bold = output.bold;
 
 			stop = true;
@@ -576,6 +577,7 @@ const processLiveGameEvents = ({
 		overtimes,
 		quarters,
 		sportState,
+		t,
 		text,
 	};
 };

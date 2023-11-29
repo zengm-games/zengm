@@ -1,16 +1,10 @@
 better play by play log
 - test other sports
-  - football
-    - benchmark
-  - hockey
-    - t
-    - textOnly
-    - benchmark
   - baseball
     - showScore in LiveGame
-    - t
     - textOnly
     - bold = false
+    - output.bold
     - benchmark
 - make text JSX, get rid of any processing in LiveGame
   - test performance
@@ -22,7 +16,7 @@ better play by play log
   - go back to editing DOM?
     - then i still can't use jsx in processLiveGameEvents text output
   - maybe not that slow in prod mode, benchmark
-- colored text for football interceptions/fumble/downs turnovers, hockey power plays, maybe baseball outs, maybe baseball/hockey/football scores
+- colored text for football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs, maybe baseball/hockey/football scores
 
 no need to track scoringSummary at all for basketball
 

@@ -65,8 +65,6 @@ const getText = (
 ) => {
 	let text;
 
-	let showTeamAndClock = true;
-
 	if (event.type === "injury") {
 		text = `${event.names[0]} was injured!`;
 	}
@@ -74,18 +72,15 @@ const getText = (
 		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
 			boxScore.numPeriods,
 		)}`;
-		showTeamAndClock = false;
 	}
 	if (event.type === "overtime") {
 		const overtimes = event.quarter - boxScore.numPeriods;
 		text = `Start of ${
 			overtimes === 1 ? "" : `${helpers.ordinal(overtimes)} `
 		} overtime`;
-		showTeamAndClock = false;
 	}
 	if (event.type === "gameOver") {
 		text = "End of game";
-		showTeamAndClock = false;
 	}
 	if (event.type === "hit") {
 		text = `${event.names[0]} hit ${event.names[1]}`;
@@ -165,13 +160,6 @@ const getText = (
 
 	if (text === undefined) {
 		throw new Error(`Invalid event type "${event.type}"`);
-	}
-
-	if (showTeamAndClock) {
-		const actualT = (event as any).t === 0 ? 1 : 0;
-		text = `${formatClock((event as any).clock)} - ${
-			boxScore.teams[actualT].abbrev
-		} - ${text}`;
 	}
 
 	return text;
@@ -296,6 +284,9 @@ const processLiveGameEvents = ({
 			}
 
 			text = getText(e, boxScore);
+			t = actualT;
+			textOnly =
+				e.type === "gameOver" || e.type === "quarter" || e.type === "overtime";
 			boxScore.time = formatClock(e.clock);
 			stop = true;
 		}
@@ -328,7 +319,9 @@ const processLiveGameEvents = ({
 	return {
 		overtimes,
 		quarters,
+		t,
 		text,
+		textOnly,
 	};
 };
 

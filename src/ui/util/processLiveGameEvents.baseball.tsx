@@ -128,8 +128,6 @@ export const getText = (
 	getName: (pid: number) => string,
 ) => {
 	let text;
-	let t: 0 | 1 | undefined;
-	let textOnly = false;
 
 	let bold = false;
 
@@ -463,7 +461,8 @@ const processLiveGameEvents = ({
 	}
 	let stop = false;
 	let text;
-	let bold = false;
+	let t: 0 | 1 | undefined;
+	let textOnly = false;
 
 	while (!stop && events.length > 0) {
 		const e = events.shift();
@@ -564,21 +563,24 @@ const processLiveGameEvents = ({
 			}
 
 			const output = getText(e, getName);
-			text = output.text;
+			text = output.bold ? <b>{output.text}</b> : output.text;
 			t = actualT;
-			bold = output.bold;
+			textOnly =
+				e.type === "sideStart" ||
+				e.type === "sideOver" ||
+				e.type === "gameOver";
 
 			stop = true;
 		}
 	}
 
 	return {
-		bold,
 		overtimes,
 		quarters,
 		sportState,
 		t,
 		text,
+		textOnly,
 	};
 };
 

@@ -1,10 +1,9 @@
 better play by play log
 - test other sports
   - baseball
+    - pitch events logo
     - showScore in LiveGame
-    - textOnly
-    - bold = false
-    - output.bold
+    - does this UI make sense?
     - benchmark
 - make text JSX, get rid of any processing in LiveGame
   - test performance

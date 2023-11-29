@@ -272,7 +272,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			sportState.current = output.sportState;
 
 			if (text !== undefined) {
-				if (isSport("baseball")) {
+				/*if (isSport("baseball")) {
 					if (showOuts) {
 						let endWithPeriod = true;
 						if (!text.endsWith("!") && !text.endsWith(".")) {
@@ -286,31 +286,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 							endWithPeriod ? "." : ""
 						}`;
 					}
-
-					if (isSport("baseball") && showScore) {
-						if (!text.endsWith("!") && !text.endsWith(".")) {
-							text += ",";
-						}
-
-						const tied =
-							boxScore.current.teams[0].pts === boxScore.current.teams[1].pts;
-						const leader =
-							boxScore.current.teams[0].pts > boxScore.current.teams[1].pts
-								? 0
-								: 1;
-						const other = leader === 0 ? 1 : 0;
-
-						if (tied) {
-							text += " The game is tied ";
-						} else {
-							text += ` ${boxScore.current.teams[leader].abbrev} leads `;
-						}
-
-						text += `${boxScore.current.teams[leader].pts}-${boxScore.current.teams[other].pts}.`;
-					}
 				}
 
-				/*const p = document.createElement("p");
+				const p = document.createElement("p");
 				if (isSport("football") && text.startsWith("Penalty")) {
 					p.innerHTML = text
 						.replace("accepted", "<b>accepted</b>")
@@ -359,7 +337,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 					t: output.t,
 					text,
 					textOnly: output.textOnly,
-					time: isSport("football") ? undefined : boxScore.current.time,
+
+					// Baseball has no time, football it's displayed with down/distance before play. In both cases, skip showing time for individual entries.
+					time:
+						isSport("football") || isSport("baseball")
+							? undefined
+							: boxScore.current.time,
 				});
 			}
 

@@ -14,12 +14,14 @@ import { range } from "../../common/utils";
 const TeamNameLink = ({
 	children,
 	className,
+	possession,
 	season,
 	style,
 	t,
 }: {
 	children: any;
 	className?: string;
+	possession: boolean;
 	season: number;
 	style?: CSSProperties;
 	t: {
@@ -29,16 +31,25 @@ const TeamNameLink = ({
 		tid: number;
 	};
 }) => {
-	return t.tid >= 0 ? (
-		<a
-			href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}
-			className={className}
-			style={style}
-		>
-			{children}
-		</a>
-	) : (
-		<>{children}</>
+	const possessionPrefix = possession ? (
+		<span className="text-warning">● </span>
+	) : null;
+
+	return (
+		<>
+			{possessionPrefix}
+			{t.tid >= 0 ? (
+				<a
+					href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}
+					className={className}
+					style={style}
+				>
+					{children}
+				</a>
+			) : (
+				<>{children}</>
+			)}
+		</>
 	);
 };
 
@@ -63,6 +74,7 @@ const TeamLogo = ({
 		<div className="w-100 d-none d-lg-flex justify-content-center">
 			<div>
 				<TeamNameLink
+					possession={false}
 					season={season}
 					t={t}
 					className="d-flex align-items-center justify-content-center"
@@ -110,7 +122,11 @@ export const HeadlineScore = ({
 				{t0.playoffs ? (
 					<span className="text-body-secondary">{t0.playoffs.seed}. </span>
 				) : null}
-				<TeamNameLink season={boxScore.season} t={t0}>
+				<TeamNameLink
+					season={boxScore.season}
+					t={t0}
+					possession={boxScore.possession === 0}
+				>
 					{t0.season !== undefined ? `${t0.season} ` : null}
 					<span className={className}>{t0.region} </span>
 					{t0.name}
@@ -119,7 +135,11 @@ export const HeadlineScore = ({
 				{t1.playoffs ? (
 					<span className="text-body-secondary">{t1.playoffs.seed}. </span>
 				) : null}
-				<TeamNameLink season={boxScore.season} t={t1}>
+				<TeamNameLink
+					season={boxScore.season}
+					t={t1}
+					possession={boxScore.possession === 1}
+				>
 					{t1.season !== undefined ? `${t1.season} ` : null}
 					<span className={className}>{t1.region} </span>
 					{t1.name}

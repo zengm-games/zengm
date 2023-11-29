@@ -106,6 +106,7 @@ const DEFAULT_SPORT_STATE = bySport<any>({
 type PlayByPlayEntry = {
 	key: number;
 	score: ReactNode | undefined;
+	outs: number | undefined;
 	t: 0 | 1 | undefined;
 	text: ReactNode;
 	textOnly: boolean;
@@ -114,7 +115,6 @@ type PlayByPlayEntry = {
 
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntry }) => {
-		console.log("render", entry.key);
 		return (
 			<div className="d-flex">
 				{entry.t !== undefined ? (
@@ -146,6 +146,11 @@ const PlayByPlayEntry = memo(
 						</div>
 					) : null}
 					{entry.text}
+					{entry.outs !== undefined ? (
+						<div className="fw-bold text-danger">
+							{entry.outs} out{entry.outs === 1 ? "" : "s"}
+						</div>
+					) : null}
 				</div>
 			</div>
 		);
@@ -162,7 +167,6 @@ const PlayByPlay = ({
 	entries: PlayByPlayEntry[];
 	playByPlayDivRef: React.MutableRefObject<HTMLDivElement | null>;
 }) => {
-	console.log("render PlayByPlay");
 	useEffect(() => {
 		const setPlayByPlayDivHeight = () => {
 			if (playByPlayDivRef.current) {
@@ -264,29 +268,21 @@ export const LiveGame = (props: View<"liveGame">) => {
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 			const showScore = currentPts !== prevPts;
 
+			if (output.t !== undefined) {
+				// possession is the latest value of t we've seen (ignore undefined values, which could happen on things like a flag in football that don't have an associated team)
+				boxScore.current.possession = output.t;
+			}
+
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
 			possessionChange.current = output.possessionChange;
 			sportState.current = output.sportState;
 
 			if (text !== undefined) {
-				/*if (isSport("baseball")) {
-					const showOuts =
-						isSport("baseball") && output.sportState.outs > prevOuts!;
-					if (showOuts) {
-						let endWithPeriod = true;
-						if (!text.endsWith("!") && !text.endsWith(".")) {
-							text += ",";
-							endWithPeriod = false;
-						}
-
-						const outs = output.sportState.outs;
-
-						text += ` ${outs} out${outs === 1 ? "" : "s"}${
-							endWithPeriod ? "." : ""
-						}`;
-					}
-				}*/
+				let outs;
+				if (isSport("baseball") && output.sportState.outs > prevOuts) {
+					outs = output.sportState.outs;
+				}
 
 				const score =
 					showScore && output.t === 0 ? (
@@ -308,6 +304,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				playByPlayEntries.current.unshift({
 					key: playByPlayEntries.current.length,
 					score,
+					outs,
 					text,
 					textOnly: output.textOnly,
 
@@ -335,6 +332,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			} else {
 				boxScore.current.time = "0:00";
 				boxScore.current.gameOver = true;
+				boxScore.current.possession = undefined;
 				if (boxScore.current.scoringSummary) {
 					for (const event of boxScore.current.scoringSummary) {
 						event.hide = false;

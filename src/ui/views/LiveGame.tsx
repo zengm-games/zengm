@@ -335,17 +335,17 @@ export const LiveGame = (props: View<"liveGame">) => {
 				const score =
 					showScore && output.t === 0 ? (
 						<>
-							<span className="highlight-leader">
-								{boxScore.current.teams[0].pts}
-							</span>{" "}
-							- {boxScore.current.teams[1].pts}
+							<b>{boxScore.current.teams[0].pts}</b>-
+							<span className="text-body-secondary">
+								{boxScore.current.teams[1].pts}
+							</span>
 						</>
 					) : showScore && output.t === 1 ? (
 						<>
-							{boxScore.current.teams[0].pts} -{" "}
-							<span className="highlight-leader">
-								{boxScore.current.teams[1].pts}
+							<span className="text-body-secondary">
+								{boxScore.current.teams[0].pts}
 							</span>
+							-<b>{boxScore.current.teams[1].pts}</b>
 						</>
 					) : undefined;
 

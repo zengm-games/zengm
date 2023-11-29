@@ -2,6 +2,7 @@ import { getPeriodName } from "../../common";
 import { isScoringPlay } from "../../common/isScoringPlay.football";
 import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
+import type { ReactNode } from "react";
 
 export type SportState = {
 	awaitingAfterTouchdown: boolean;
@@ -18,7 +19,7 @@ export type SportState = {
 		scoreInfo: ReturnType<typeof getScoreInfo> | undefined;
 		intendedPossessionChange: boolean; // For punts and kickoffs
 		turnover: boolean;
-		flags: (null | { text: string; accept: boolean })[];
+		flags: (null | { text: ReactNode; accept: boolean })[];
 		countsTowardsNumPlays: boolean;
 		countsTowardsYards: boolean;
 		tagOverride: string | undefined;
@@ -56,33 +57,41 @@ export const scrimmageToFieldPos = (
 	}
 };
 
-export const getScoreInfo = (text: string) => {
-	let type: "XP" | "FG" | "TD" | "2P" | "SF" | null = null;
+export const getScoreInfo = (event: PlayByPlayEvent) => {
+	let type: "XP" | "FG" | "TD" | "2P" | "SF" | undefined;
 	let points = 0;
 
-	if (text.includes("extra point")) {
+	const eAny = event as any;
+
+	if (event.type === "extraPoint") {
 		type = "XP";
-		if (text.includes("made")) {
+		if (event.made) {
 			points = 1;
 		}
-	} else if (text.includes("field goal")) {
+	} else if (event.type === "fieldGoal") {
 		type = "FG";
-		if (text.includes("made")) {
+		if (event.made) {
 			points = 3;
 		}
-	} else if (text.includes("touchdown")) {
-		type = "TD";
-		points = 6;
-	} else if (text.toLowerCase().includes("two point")) {
-		type = "2P";
-		if (!text.includes("failed")) {
+	} else if (eAny.td) {
+		if (eAny.twoPointConversionTeam !== undefined) {
+			type = "2P";
 			points = 2;
+		} else {
+			type = "TD";
+			points = 6;
 		}
-	} else if (text.includes("safety")) {
+	} else if (event.type === "twoPointConversionFailed") {
+		type = "2P";
+	} else if (eAny.safety) {
 		type = "SF";
 
 		// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
 		points = 2;
+	}
+
+	if (type === undefined) {
+		return undefined;
 	}
 
 	return {
@@ -785,12 +794,9 @@ const processLiveGameEvents = ({
 			}
 
 			// Extra fieldGoal check is to include missed field goals
-			if ((e.type === "fieldGoal" || scoringSummary) && text) {
-				const scoreInfo = getScoreInfo(text);
-				if (
-					scoreInfo.type !== null &&
-					(scoreInfo.points > 0 || scoreInfo.type === "FG")
-				) {
+			if (scoringSummary || (e as any).type === "fieldGoal") {
+				const scoreInfo = getScoreInfo(e);
+				if (scoreInfo && (scoreInfo.points > 0 || scoreInfo.type === "FG")) {
 					play.scoreInfo = scoreInfo;
 				}
 			}

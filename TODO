@@ -4,6 +4,7 @@ better play by play log
     - maybe bold the down/distance, use JSX to put time inline (not bold)
     - "Intercepted" and others should have other team showing
     - benchmark
+    - turnover on downs should have e.t
   - hockey
     - actualT can be undefined
     - t
@@ -69,7 +70,6 @@ FBGM move event text generation to UI
   - bold text
   - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
   - too many formatClock calls
-  - refactor getScoreInfo
 
 FBGM show field during game
 - later

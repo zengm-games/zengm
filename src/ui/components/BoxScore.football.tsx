@@ -259,39 +259,41 @@ const processEvents = (
 		const actualT = liveGameSim ? (event.t === 0 ? 1 : 0) : event.t;
 		const otherT = actualT === 0 ? 1 : 0;
 
-		const scoreInfo = getScoreInfo(text);
-		if (scoreInfo.type === "SF") {
-			// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
-			score[otherT] += scoreInfo.points;
-		} else {
-			score[actualT] += scoreInfo.points;
-		}
+		const scoreInfo = getScoreInfo(event);
+		if (scoreInfo) {
+			if (scoreInfo.type === "SF") {
+				// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
+				score[otherT] += scoreInfo.points;
+			} else {
+				score[actualT] += scoreInfo.points;
+			}
 
-		const prevEvent: any = processedEvents.at(-1);
+			const prevEvent: any = processedEvents.at(-1);
 
-		if (prevEvent && scoreInfo.type === "XP") {
-			prevEvent.score = score.slice();
-			prevEvent.text += ` (${text})`;
-		} else if (
-			prevEvent &&
-			scoreInfo.type === "2P" &&
-			actualT === prevEvent.t
-		) {
-			prevEvent.score = score.slice();
-			prevEvent.text += ` (${text})`;
-		} else {
-			processedEvents.push({
-				t: scoreInfo.type === "SF" ? otherT : actualT, // See comment above about safety teams
-				quarter: isOldFormat
-					? oldEvent.quarter
-					: event.quarter <= numPeriods
-					  ? `Q${event.quarter}`
-					  : `OT${event.quarter - numPeriods}`,
-				time: isOldFormat ? oldEvent.time : formatClock(event.clock),
-				text,
-				score: helpers.deepCopy(score),
-				scoreType: scoreInfo.type,
-			});
+			if (prevEvent && scoreInfo.type === "XP") {
+				prevEvent.score = score.slice();
+				prevEvent.text += ` (${text})`;
+			} else if (
+				prevEvent &&
+				scoreInfo.type === "2P" &&
+				actualT === prevEvent.t
+			) {
+				prevEvent.score = score.slice();
+				prevEvent.text += ` (${text})`;
+			} else {
+				processedEvents.push({
+					t: scoreInfo.type === "SF" ? otherT : actualT, // See comment above about safety teams
+					quarter: isOldFormat
+						? oldEvent.quarter
+						: event.quarter <= numPeriods
+						  ? `Q${event.quarter}`
+						  : `OT${event.quarter - numPeriods}`,
+					time: isOldFormat ? oldEvent.time : formatClock(event.clock),
+					text,
+					score: helpers.deepCopy(score),
+					scoreType: scoreInfo.type,
+				});
+			}
 		}
 	}
 

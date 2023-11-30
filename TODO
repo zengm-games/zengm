@@ -2,13 +2,10 @@ better play by play log
 - test other sports
   - baseball
     - t needed in any event? maybe just sideStart
-- colored text
-  - red: hockey penalty, maybe baseball outs
-  - how does it work for scores removed by penalty in football?
 - blog
   - UI differences across sports
     - baseball: outs and runs
-    - hockey: penalties in red
+    - hockey: penalties and pulled goalies in red
     - football: icons for flags; red for turnovers
   - performance
     - old way
@@ -38,6 +35,8 @@ some sportState live sim for basketball/hockey
 - should this just be for live games, or all box scores? what is impact on file size?
 
 storing playByPlay
+- first go over all events and make sure they are reasonable and minimal
+  - replace names in events with pids, like basketball
 - options
   - all teams
   - only my team
@@ -48,8 +47,6 @@ unify PlayByPlayLogger
 
 unify processLiveGameEvents
 - make it a class, to more easily handle stuff like playersByPid
-- replace any .find with playersByPid
-- replace names in events with pids, like basketball
 
 FBGM move event text generation to UI
 - to fix after

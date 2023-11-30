@@ -125,7 +125,8 @@ const getText = (
 		text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;
 	}
 	if (event.type === "goal") {
-		text = "Goal!!!";
+		// text empty because PlayByPlayEntry handles it
+		text = "";
 		if (event.names.length > 1) {
 			text += ` (assist: ${event.names.slice(1).join(", ")})`;
 		}

@@ -117,6 +117,29 @@ type PlayByPlayEntry = {
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntry }) => {
 		console.log("entry", entry);
+		let scoreBlock = null;
+		if (entry.score) {
+			if (isSport("basketball")) {
+				scoreBlock = entry.score;
+			} else {
+				scoreBlock = (
+					<>
+						<span className="fw-bold text-success">
+							{bySport({
+								baseball: `${entry.scoreDiff} run${
+									entry.scoreDiff === 1 ? "" : "s"
+								} score${entry.scoreDiff === 1 ? "s" : ""}!`,
+								basketball: "",
+								football: "Score!",
+								hockey: "Goal!",
+							})}
+						</span>{" "}
+						{entry.score}
+					</>
+				);
+			}
+		}
+
 		return (
 			<div className="d-flex">
 				{entry.t !== undefined ? (
@@ -144,26 +167,13 @@ const PlayByPlayEntry = memo(
 							{entry.time ? (
 								<div className="text-body-secondary me-auto">{entry.time}</div>
 							) : null}
-							{isSport("basketball") && entry.score ? (
-								<div>{entry.score}</div>
-							) : null}
+							{isSport("basketball") ? scoreBlock : null}
 						</div>
 					) : null}
+					{isSport("hockey") ? scoreBlock : null}
 					{entry.text}
-					{!isSport("basketball") && entry.score ? (
-						<div>
-							<span className="fw-bold text-success">
-								{bySport({
-									baseball: `${entry.scoreDiff} run${
-										entry.scoreDiff === 1 ? "" : "s"
-									} score${entry.scoreDiff === 1 ? "s" : ""}!`,
-									basketball: "",
-									football: "Score!",
-									hockey: "Goal!",
-								})}
-							</span>{" "}
-							{entry.score}
-						</div>
+					{!isSport("basketball") && !isSport("hockey") ? (
+						<div>{scoreBlock}</div>
 					) : null}
 					{entry.outs !== undefined ? (
 						<div className="fw-bold text-danger">

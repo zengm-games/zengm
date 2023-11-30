@@ -1,12 +1,3 @@
-better play by play log
-- blog
-  - performance
-    - old way
-    - new way - has some advantages
-    - virtualize? breaks ctrl+f
-    - in hockey/football, found some ways to optimize performance to offset the change
-  - possession icon
-
 somehow show count of goals and HR inline for baseball and hockey https://discord.com/channels/@me/778760871911751700/1179618240507420783
 
 some sportState live sim for basketball/hockey

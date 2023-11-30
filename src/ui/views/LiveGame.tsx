@@ -349,6 +349,26 @@ export const LiveGame = (props: View<"liveGame">) => {
 					}
 				}
 
+				let time;
+				// Baseball has no time, football it's displayed with down/distance before play. In both cases, skip showing time for individual entries.
+				if (
+					bySport({
+						baseball: false,
+						basketball: true,
+						football: false,
+						hockey: true,
+					})
+				) {
+					if (
+						isSport("basketball") &&
+						boxScore.current.elamTarget !== undefined
+					) {
+						time = `Target: ${boxScore.current.elamTarget}`;
+					} else {
+						time = boxScore.current.time;
+					}
+				}
+
 				playByPlayEntries.current.unshift({
 					key: playByPlayEntries.current.length,
 					score,
@@ -357,14 +377,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 					outs,
 					text,
 					textOnly: output.textOnly,
-
 					t,
-
-					// Baseball has no time, football it's displayed with down/distance before play. In both cases, skip showing time for individual entries.
-					time:
-						isSport("football") || isSport("baseball")
-							? undefined
-							: boxScore.current.time,
+					time,
 				});
 			}
 

@@ -5,8 +5,8 @@ better play by play log
 - colored text
   - red: football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs
   - football flag - unify with drive chart UI
-  - for football, instead of "Score!" show score type
   - how does it work for scores removed by penalty in football?
+  - use long text for scoreType, like Touchdown rather than TD
 - blog
   - UI differences across sports
   - performance
@@ -64,6 +64,8 @@ FBGM show field during game
   - lost info in removeLastScoreOrTurnoversIfNecessary
     - rather than removing a row from sportState.plays, might be better to mark it as overturned
     - but when rolling back for penalties, we kind of need to delete, because that lets us show the penalty in the main bar, not in a sub-play bar
+
+plural helper function
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

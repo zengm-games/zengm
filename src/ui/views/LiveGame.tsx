@@ -107,6 +107,7 @@ type PlayByPlayEntry = {
 	key: number;
 	score: ReactNode | undefined;
 	scoreDiff: number;
+	scoreType: string | undefined;
 	outs: number | undefined;
 	t: 0 | 1 | undefined;
 	text: ReactNode;
@@ -116,7 +117,6 @@ type PlayByPlayEntry = {
 
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntry }) => {
-		console.log("entry", entry);
 		let scoreBlock = null;
 		if (entry.score) {
 			if (isSport("basketball")) {
@@ -130,7 +130,7 @@ const PlayByPlayEntry = memo(
 									entry.scoreDiff === 1 ? "" : "s"
 								} score${entry.scoreDiff === 1 ? "s" : ""}!`,
 								basketball: "",
-								football: "Score!",
+								football: `${entry.scoreType ?? "???"}!`,
 								hockey: "Goal!",
 							})}
 						</span>{" "}
@@ -317,6 +317,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				const t = isSport("baseball") ? sportState.current.o : output.t;
 
 				let score;
+				let scoreType;
 				if (scoreDiff !== 0) {
 					score =
 						t === 0 ? (
@@ -334,12 +335,18 @@ export const LiveGame = (props: View<"liveGame">) => {
 								-<b>{boxScore.current.teams[1].pts}</b>
 							</>
 						) : undefined;
+
+					if (isSport("football")) {
+						scoreType = sportState.current.plays.at(-1)?.scoreInfo?.type;
+						console.log("scoreType", scoreType);
+					}
 				}
 
 				playByPlayEntries.current.unshift({
 					key: playByPlayEntries.current.length,
 					score,
 					scoreDiff,
+					scoreType,
 					outs,
 					text,
 					textOnly: output.textOnly,

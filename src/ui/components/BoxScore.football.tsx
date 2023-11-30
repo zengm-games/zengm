@@ -231,13 +231,13 @@ const processEvents = (
 		score: [number, number];
 		scoreType: string | null;
 		t: 0 | 1;
-		text: string;
+		text: ReactNode;
 		time: string;
 	}[] = [];
 	const score = [0, 0] as [number, number];
 
 	for (const event of events) {
-		let text: string | undefined;
+		let text: ReactNode | undefined;
 
 		const oldEvent = event as any;
 		const isOldFormat = oldEvent.text !== undefined;

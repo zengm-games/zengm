@@ -1,7 +1,8 @@
 import { getPeriodName } from "../../common";
 import { choice } from "../../common/random";
-import { helpers, local } from "../../ui/util";
+import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger";
+import type { ReactNode } from "react";
 
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
@@ -29,7 +30,7 @@ export const getText = (
 		teams: [{ pts: number }, { pts: number }];
 	},
 ) => {
-	let texts;
+	let texts: ReactNode[] | undefined;
 	let weights;
 
 	if (event.type === "period") {
@@ -158,7 +159,9 @@ export const getText = (
 		// More description is already in the shot text
 		texts = [`Foul on ${getName(event.pid)}`];
 	} else if (event.type === "foulOut") {
-		texts = [`${getName(event.pid)} fouled out`];
+		texts = [
+			<span className="text-danger">{getName(event.pid)} fouled out</span>,
+		];
 	} else if (event.type === "sub") {
 		texts = [
 			`Substitution: ${getName(event.pid)} for ${getName(event.pidOff)}`,

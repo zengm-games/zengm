@@ -243,20 +243,26 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				event.safety ? "safety!" : "touchback"
 			}`;
 		} else if (event.lost) {
-			text = `Turnover! ${event.names[0]} recovered the fumble${
-				event.td && event.yds < 1
-					? ` in the endzone for ${touchdownText}!`
-					: ` and returned it ${event.yds} yards${
-							event.td ? ` for ${touchdownText}!` : ""
-					  }`
-			}`;
+			text = (
+				<>
+					<span className="text-danger">Turnover!</span> {event.names[0]}{" "}
+					recovered the fumble
+					{event.td && event.yds < 1
+						? ` in the endzone for ${touchdownText}!`
+						: ` and returned it ${event.yds} yards${
+								event.td ? ` for ${touchdownText}!` : ""
+						  }`}
+				</>
+			);
 		} else {
 			text = `${event.names[0]} recovered the fumble${
 				event.td ? ` and carried it into the endzone for ${touchdownText}!` : ""
 			}`;
 		}
 	} else if (event.type === "interception") {
-		text = `Intercepted by ${event.names[0]}!`;
+		text = (
+			<span className="text-danger">Intercepted by {event.names[0]}!</span>
+		);
 	} else if (event.type === "interceptionReturn") {
 		text = `${event.names[0]} `;
 		if (event.touchback) {
@@ -384,7 +390,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "twoPointConversionFailed") {
 		text = "Two-point conversion failed";
 	} else if (event.type === "turnoverOnDowns") {
-		text = "Turnover on downs";
+		text = <span className="text-danger">Turnover on downs</span>;
 	} else {
 		throw new Error(`No text for "${event.type}"`);
 	}

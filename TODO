@@ -3,11 +3,13 @@ better play by play log
   - baseball
     - t needed in any event? maybe just sideStart
 - colored text
-  - red: football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs
+  - red: hockey penalty, maybe baseball outs
   - how does it work for scores removed by penalty in football?
 - blog
   - UI differences across sports
-    - flags in football
+    - baseball: outs and runs
+    - hockey: penalties in red
+    - football: icons for flags; red for turnovers
   - performance
     - old way
     - new way - has some advantages

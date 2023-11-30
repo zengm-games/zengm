@@ -1,18 +1,13 @@
 better play by play log
-- test other sports
-  - baseball
-    - t needed in any event? maybe just sideStart
 - blog
-  - UI differences across sports
-    - baseball: outs and runs
-    - hockey: penalties and pulled goalies in red
-    - football: icons for flags; red for turnovers
   - performance
     - old way
     - new way - has some advantages
     - virtualize? breaks ctrl+f
     - in hockey/football, found some ways to optimize performance to offset the change
   - possession icon
+
+somehow show count of goals and HR inline for baseball and hockey https://discord.com/channels/@me/778760871911751700/1179618240507420783
 
 some sportState live sim for basketball/hockey
 - chart showing margin vs time or win probability vs time (toggle button to switch)
@@ -855,6 +850,7 @@ show best performer(s) by score on schedule page https://discord.com/channels/29
 - make sure it agrees with all star MVP, finals MVP
 - how to pick stats to display? give each stat a point value, add up score, pick highest total score for player, and then pick stats as highest individual stat scores for player
 - player of the game in box score https://discord.com/channels/@me/810011526097534977/820501123944939530
+  - 3 stars for hockey
 
 ratings distributions by position https://discord.com/channels/290013534023057409/331882115119448065/862853531231977513
 

@@ -21,26 +21,17 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "injury";
-			t: TeamNum;
 			pid: number;
 			replacementPid: number | undefined;
 	  }
 	| {
 			type: "reliefPitcher";
-			t: TeamNum;
 			pidOff: number;
 			pidOn: number;
 	  }
 	| {
 			type: "plateAppearance";
-			t: TeamNum;
 			pid: number;
-	  }
-	| {
-			type: "pitch";
-			t: TeamNum;
-			pid: number;
-			pitchType: string;
 	  }
 	| {
 			type: "foul";
@@ -66,7 +57,6 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "bunt" | "ground" | "line";
-			t: TeamNum;
 			pid: number;
 			direction:
 				| "left"
@@ -80,7 +70,6 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "fly";
-			t: TeamNum;
 			pid: number;
 			direction:
 				| "left"
@@ -95,10 +84,10 @@ type PlayByPlayEventInput =
 	| {
 			type: "hitResult";
 			result: "flyOut" | "throwOut" | "fieldersChoice" | "doublePlay" | "hit";
-			t: TeamNum;
 			pid: number;
 			posDefense: (keyof typeof POS_NUMBERS_INVERSE)[]; // Like for a double play, this could be [6, 4, 3]
 			runners: Runner[];
+			t: TeamNum;
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
@@ -107,11 +96,11 @@ type PlayByPlayEventInput =
 	| {
 			type: "hitResult";
 			result: "error";
-			t: TeamNum;
 			pid: number;
 			pidError: number;
 			posDefense: (keyof typeof POS_NUMBERS_INVERSE)[]; // Like for a double play, this could be [6, 4, 3]
 			runners: Runner[];
+			t: TeamNum;
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
@@ -119,17 +108,17 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "walk";
-			t: TeamNum;
 			pid: number;
 			runners: Runner[];
+			t: TeamNum;
 			intentional: boolean;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "hitByPitch";
-			t: TeamNum;
 			pid: number;
 			runners: Runner[];
+			t: TeamNum;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
@@ -153,14 +142,13 @@ type PlayByPlayEventInput =
 	  }
 	| {
 			type: "balk" | "wildPitch" | "passedBall";
-			t: TeamNum;
 			pid: number;
 			runners: Runner[];
+			t: TeamNum;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
 			type: "sub";
-			t: TeamNum;
 			pidOff: number;
 			pidOn: number;
 	  };

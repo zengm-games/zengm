@@ -370,7 +370,6 @@ class GameSim extends GameSimBase {
 				speed = random.choice(["soft", "normal", "hard"] as const);
 				this.playByPlay.logEvent({
 					type,
-					t: this.o,
 					pid: p.id,
 					direction,
 					speed,
@@ -392,7 +391,6 @@ class GameSim extends GameSimBase {
 				]);
 				this.playByPlay.logEvent({
 					type,
-					t: this.o,
 					pid: p.id,
 					direction,
 					speed,
@@ -419,7 +417,6 @@ class GameSim extends GameSimBase {
 				);
 				this.playByPlay.logEvent({
 					type,
-					t: this.o,
 					pid: p.id,
 					direction,
 					distance,
@@ -931,9 +928,9 @@ class GameSim extends GameSimBase {
 		this.recordStat(this.d, p, stat);
 		this.playByPlay.logEvent({
 			type,
-			t: this.d,
 			pid: p.id,
 			runners: this.finalizeRunners(runners),
+			t: this.o,
 			...this.getSportState(),
 		});
 	}
@@ -1869,11 +1866,11 @@ class GameSim extends GameSimBase {
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result: "error",
-						t: this.o,
 						pid: batter.id,
 						pidError,
 						posDefense,
 						runners: this.finalizeRunners(runners),
+						t: this.o,
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),
@@ -1905,10 +1902,10 @@ class GameSim extends GameSimBase {
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result,
-						t: this.o,
 						pid: batter.id,
 						posDefense,
 						runners: this.finalizeRunners(runners),
+						t: this.o,
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),
@@ -2026,9 +2023,9 @@ class GameSim extends GameSimBase {
 			this.playByPlay.logEvent({
 				type: "walk",
 				intentional: type === "intentional",
-				t: this.o,
 				pid: p.id,
 				runners: this.finalizeRunners(runners),
+				t: this.o,
 				...this.getSportState(),
 			});
 		} else {
@@ -2036,9 +2033,9 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.d, pitcher, "hbpPit");
 			this.playByPlay.logEvent({
 				type: "hitByPitch",
-				t: this.o,
 				pid: p.id,
 				runners: this.finalizeRunners(runners),
+				t: this.o,
 				...this.getSportState(),
 			});
 		}
@@ -2279,7 +2276,6 @@ class GameSim extends GameSimBase {
 		const p = t.getBatter().p;
 		this.playByPlay.logEvent({
 			type: "plateAppearance",
-			t: this.o,
 			pid: p.id,
 		});
 
@@ -2435,7 +2431,6 @@ class GameSim extends GameSimBase {
 
 			this.playByPlay.logEvent({
 				type: "reliefPitcher",
-				t: this.d,
 				pidOn: candidate.p.id,
 				pidOff: pitcher.id,
 			});
@@ -2487,7 +2482,6 @@ class GameSim extends GameSimBase {
 
 				this.playByPlay.logEvent({
 					type: "injury",
-					t: info.t,
 					pid: p.id,
 					replacementPid: replacementPlayer?.id,
 				});

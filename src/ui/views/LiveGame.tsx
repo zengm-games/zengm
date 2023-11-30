@@ -126,7 +126,10 @@ const PlayByPlayEntry = memo(
 					<>
 						<span
 							className={`fw-bold ${
-								entry.scoreDiff >= 0 ? "text-success" : "text-danger"
+								entry.scoreDiff >= 0 &&
+								(!isSport("football") || entry.scoreType !== "Safety")
+									? "text-success"
+									: "text-danger"
 							}`}
 						>
 							{bySport({
@@ -323,15 +326,24 @@ export const LiveGame = (props: View<"liveGame">) => {
 				let score;
 				let scoreType;
 				if (scoreDiff !== 0) {
+					// Swap team for safety
+					const scoreT =
+						isSport("football") &&
+						sportState.current.plays.at(-1)?.scoreInfo?.type === "SF"
+							? t === 0
+								? 1
+								: 0
+							: t;
+
 					score =
-						t === 0 ? (
+						scoreT === 0 ? (
 							<>
 								<b>{boxScore.current.teams[0].pts}</b>-
 								<span className="text-body-secondary">
 									{boxScore.current.teams[1].pts}
 								</span>
 							</>
-						) : t === 1 ? (
+						) : scoreT === 1 ? (
 							<>
 								<span className="text-body-secondary">
 									{boxScore.current.teams[0].pts}
@@ -345,7 +357,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 						scoreType =
 							sportState.current.plays.at(-1)?.scoreInfo?.long ??
 							"Penalty overturned score";
-						console.log("scoreType", scoreType, scoreDiff);
 					}
 				}
 

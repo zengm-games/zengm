@@ -1,3 +1,5 @@
+subs shouldn't happen after offensive rebound https://old.reddit.com/r/BasketballGM/comments/18829x9/substitution_on_offensive_rebounds_shouldnt_be/
+
 somehow show count of goals and HR inline for baseball and hockey https://discord.com/channels/@me/778760871911751700/1179618240507420783
 
 some sportState live sim for basketball/hockey
@@ -13,8 +15,6 @@ some sportState live sim for basketball/hockey
   - use data in playByPlay if it is available to generate chart
     - cache in sportState? idk, sportState is usually for temporary stuff, but this would be based on the entire play-by-play
 - in basketball, show mini scoring summary (last N plays) next to chart
-  - highlight abbrev (in jersey colors like a pill box) in scoring plays
-    - do this in normal play-by-play too
   - in sportState or scoringSummary?
 - for most sports, margin is derivable from scoringSummary, but not basketball
   - for basketball, store margin in scoringSummary or elsewhere? and for other sports?
@@ -90,6 +90,7 @@ FBGM
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
 - jersey number probability - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
 - options to enable canadian/arena football, and then put that as a preset for new leagues
+- completed pass + pass inferference at end of game when trailing - should take penalty even if fewer yards, but seems to not https://mail.google.com/mail/u/0/#inbox/FMfcgzGwHpWBjWmMMknKPFPrTBdNGkTq
 
 better clock handling in BBGM - calculate time as you go in the play
 - assist should imply some minimum time

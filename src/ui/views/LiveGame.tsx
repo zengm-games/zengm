@@ -124,7 +124,11 @@ const PlayByPlayEntry = memo(
 			} else {
 				scoreBlock = (
 					<>
-						<span className="fw-bold text-success">
+						<span
+							className={`fw-bold ${
+								entry.scoreDiff >= 0 ? "text-success" : "text-danger"
+							}`}
+						>
 							{bySport({
 								baseball: `${entry.scoreDiff} run${
 									entry.scoreDiff === 1 ? "" : "s"
@@ -337,8 +341,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 						) : undefined;
 
 					if (isSport("football")) {
-						scoreType = sportState.current.plays.at(-1)?.scoreInfo?.long;
-						console.log("scoreType", scoreType);
+						// If no score type, then it must be a penalty overturning a score
+						scoreType =
+							sportState.current.plays.at(-1)?.scoreInfo?.long ??
+							"Penalty overturned score";
+						console.log("scoreType", scoreType, scoreDiff);
 					}
 				}
 

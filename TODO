@@ -4,10 +4,10 @@ better play by play log
     - t needed in any event? maybe just sideStart
 - colored text
   - red: football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs
-  - football flag - unify with drive chart UI
   - how does it work for scores removed by penalty in football?
 - blog
   - UI differences across sports
+    - flags in football
   - performance
     - old way
     - new way - has some advantages

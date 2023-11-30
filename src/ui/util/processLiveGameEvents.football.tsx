@@ -335,12 +335,18 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				text += `, ${event.yds} yards${spotFoulText}${automaticFirstDownText}`;
 			}
 
-			let innerText;
-			if (event.offsetStatus === "overrule") {
-				innerText = event.decision === "accept" ? "enforced" : "overruled";
-			} else {
-				innerText = event.decision === "accept" ? "accepted" : "declined";
-			}
+			const innerText =
+				event.decision === "accept" ? (
+					<>
+						{event.offsetStatus === "overrule" ? "enforced" : "accepted"}{" "}
+						<span className="glyphicon glyphicon-stop text-danger" />
+					</>
+				) : (
+					<>
+						{event.offsetStatus === "overrule" ? "overruled" : "declined"}{" "}
+						<span className="glyphicon glyphicon-stop text-secondary" />
+					</>
+				);
 			decisionText = (
 				<>
 					{" "}
@@ -365,7 +371,12 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "kneel") {
 		text = `${event.names[0]} kneels`;
 	} else if (event.type === "flag") {
-		text = "Flag on the play";
+		text = (
+			<>
+				<span className="glyphicon glyphicon-stop text-warning" /> Flag on the
+				play <span className="glyphicon glyphicon-stop text-warning" />
+			</>
+		);
 	} else if (event.type === "extraPointAttempt") {
 		text = "Extra point attempt";
 	} else if (event.type === "twoPointConversion") {

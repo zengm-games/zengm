@@ -337,7 +337,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 						) : undefined;
 
 					if (isSport("football")) {
-						scoreType = sportState.current.plays.at(-1)?.scoreInfo?.type;
+						scoreType = sportState.current.plays.at(-1)?.scoreInfo?.long;
 						console.log("scoreType", scoreType);
 					}
 				}

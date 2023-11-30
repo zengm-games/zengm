@@ -2116,7 +2116,7 @@ class GameSim extends GameSimBase {
 			playYds: 0,
 		},
 	): boolean {
-		// No penalties during two point conversion, because it is not handled well currently (no logic to support retrying conversion/xp)
+		// No penalties during two-point conversion, because it is not handled well currently (no logic to support retrying conversion/xp)
 		if (this.currentPlay.state.current.twoPointConversionTeam !== undefined) {
 			return false;
 		}

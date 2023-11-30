@@ -6,7 +6,6 @@ better play by play log
   - red: football interceptions/fumble/downs turnovers, hockey penalty, maybe baseball outs
   - football flag - unify with drive chart UI
   - how does it work for scores removed by penalty in football?
-  - use long text for scoreType, like Touchdown rather than TD
 - blog
   - UI differences across sports
   - performance

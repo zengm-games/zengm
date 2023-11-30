@@ -70,32 +70,39 @@ export const scrimmageToFieldPos = (
 
 export const getScoreInfo = (event: PlayByPlayEvent) => {
 	let type: "XP" | "FG" | "TD" | "2P" | "SF" | undefined;
+	let long: string | undefined;
 	let points = 0;
 
 	const eAny = event as any;
 
 	if (event.type === "extraPoint") {
 		type = "XP";
+		long = "Extra point";
 		if (event.made) {
 			points = 1;
 		}
 	} else if (event.type === "fieldGoal") {
 		type = "FG";
+		long = "Field goal";
 		if (event.made) {
 			points = 3;
 		}
 	} else if (eAny.td) {
 		if (eAny.twoPointConversionTeam !== undefined) {
 			type = "2P";
+			long = "Two-point conversion";
 			points = 2;
 		} else {
 			type = "TD";
+			long = "Touchdown";
 			points = 6;
 		}
 	} else if (event.type === "twoPointConversionFailed") {
 		type = "2P";
+		long = "Two-point conversion";
 	} else if (eAny.safety) {
 		type = "SF";
+		long = "Safety";
 
 		// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
 		points = 2;
@@ -107,6 +114,7 @@ export const getScoreInfo = (event: PlayByPlayEvent) => {
 
 	return {
 		type,
+		long,
 		points,
 	};
 };
@@ -162,7 +170,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	const eAny = event as any;
 	if (eAny.twoPointConversionTeam !== undefined) {
 		if (eAny.twoPointConversionTeam === eAny.t) {
-			touchdownText = "a two point conversion";
+			touchdownText = "a two-point conversion";
 			showYdsOnTD = false;
 		} else {
 			touchdownText = "two points";
@@ -361,9 +369,9 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "extraPointAttempt") {
 		text = "Extra point attempt";
 	} else if (event.type === "twoPointConversion") {
-		text = "Two point conversion attempt";
+		text = "Two-point conversion attempt";
 	} else if (event.type === "twoPointConversionFailed") {
-		text = "Two point conversion failed";
+		text = "Two-point conversion failed";
 	} else if (event.type === "turnoverOnDowns") {
 		text = "Turnover on downs";
 	} else {

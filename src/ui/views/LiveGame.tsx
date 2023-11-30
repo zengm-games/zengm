@@ -106,6 +106,7 @@ const DEFAULT_SPORT_STATE = bySport<any>({
 type PlayByPlayEntry = {
 	key: number;
 	score: ReactNode | undefined;
+	scoreDiff: number;
 	outs: number | undefined;
 	t: 0 | 1 | undefined;
 	text: ReactNode;
@@ -115,6 +116,7 @@ type PlayByPlayEntry = {
 
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntry }) => {
+		console.log("entry", entry);
 		return (
 			<div className="d-flex">
 				{entry.t !== undefined ? (
@@ -142,10 +144,27 @@ const PlayByPlayEntry = memo(
 							{entry.time ? (
 								<div className="text-body-secondary me-auto">{entry.time}</div>
 							) : null}
-							{entry.score ? <div>{entry.score}</div> : null}
+							{isSport("basketball") && entry.score ? (
+								<div>{entry.score}</div>
+							) : null}
 						</div>
 					) : null}
 					{entry.text}
+					{!isSport("basketball") && entry.score ? (
+						<div>
+							<span className="fw-bold text-success">
+								{bySport({
+									baseball: `${entry.scoreDiff} run${
+										entry.scoreDiff === 1 ? "" : "s"
+									} score${entry.scoreDiff === 1 ? "s" : ""}!`,
+									basketball: "",
+									football: "Score!",
+									hockey: "Goal!",
+								})}
+							</span>{" "}
+							{entry.score}
+						</div>
+					) : null}
 					{entry.outs !== undefined ? (
 						<div className="fw-bold text-danger">
 							{entry.outs} out{entry.outs === 1 ? "" : "s"}
@@ -266,7 +285,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			const text = output.text;
 			const currentPts =
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
-			const showScore = currentPts !== prevPts;
+			const scoreDiff = currentPts - prevPts;
 
 			if (output.t !== undefined) {
 				// possession is the latest value of t we've seen (ignore undefined values, which could happen on things like a flag in football that don't have an associated team)
@@ -284,32 +303,38 @@ export const LiveGame = (props: View<"liveGame">) => {
 					outs = output.sportState.outs;
 				}
 
-				const score =
-					showScore && output.t === 0 ? (
-						<>
-							<b>{boxScore.current.teams[0].pts}</b>-
-							<span className="text-body-secondary">
-								{boxScore.current.teams[1].pts}
-							</span>
-						</>
-					) : showScore && output.t === 1 ? (
-						<>
-							<span className="text-body-secondary">
-								{boxScore.current.teams[0].pts}
-							</span>
-							-<b>{boxScore.current.teams[1].pts}</b>
-						</>
-					) : undefined;
+				// For baseball, always show logo of the batting team, since t is not always sent in output (or maybe never sent)
+				const t = isSport("baseball") ? sportState.current.o : output.t;
+
+				let score;
+				if (scoreDiff !== 0) {
+					score =
+						t === 0 ? (
+							<>
+								<b>{boxScore.current.teams[0].pts}</b>-
+								<span className="text-body-secondary">
+									{boxScore.current.teams[1].pts}
+								</span>
+							</>
+						) : t === 1 ? (
+							<>
+								<span className="text-body-secondary">
+									{boxScore.current.teams[0].pts}
+								</span>
+								-<b>{boxScore.current.teams[1].pts}</b>
+							</>
+						) : undefined;
+				}
 
 				playByPlayEntries.current.unshift({
 					key: playByPlayEntries.current.length,
 					score,
+					scoreDiff,
 					outs,
 					text,
 					textOnly: output.textOnly,
 
-					// For baseball, always show logo of the batting team
-					t: isSport("baseball") ? sportState.current.o : output.t,
+					t,
 
 					// Baseball has no time, football it's displayed with down/distance before play. In both cases, skip showing time for individual entries.
 					time:

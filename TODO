@@ -8,6 +8,8 @@ better play by play log
     - should score be shown more prominently, somehow?
     - could show "Score!" in green on the left, and actual score to the right of it
       - maybe also show it below the play, like baseball outs
+    - for football, instead of "Score!" show score type
+    - how does it work for scores removed by penalty in football?
 - blog
   - UI differences across sports
   - performance

@@ -14,14 +14,12 @@ import { range } from "../../common/utils";
 const TeamNameLink = ({
 	children,
 	className,
-	possession,
 	season,
 	style,
 	t,
 }: {
 	children: any;
 	className?: string;
-	possession: boolean;
 	season: number;
 	style?: CSSProperties;
 	t: {
@@ -31,13 +29,8 @@ const TeamNameLink = ({
 		tid: number;
 	};
 }) => {
-	const possessionPrefix = possession ? (
-		<span className="text-warning">● </span>
-	) : null;
-
 	return (
 		<>
-			{possessionPrefix}
 			{t.tid >= 0 ? (
 				<a
 					href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}
@@ -74,7 +67,6 @@ const TeamLogo = ({
 		<div className="w-100 d-none d-lg-flex justify-content-center">
 			<div>
 				<TeamNameLink
-					possession={false}
 					season={season}
 					t={t}
 					className="d-flex align-items-center justify-content-center"
@@ -119,27 +111,37 @@ export const HeadlineScore = ({
 			}
 		>
 			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
+				{boxScore.possession !== undefined ? (
+					<span
+						className={
+							boxScore.possession === 0 ? "text-warning" : "text-white"
+						}
+					>
+						●{" "}
+					</span>
+				) : null}
 				{t0.playoffs ? (
 					<span className="text-body-secondary">{t0.playoffs.seed}. </span>
 				) : null}
-				<TeamNameLink
-					season={boxScore.season}
-					t={t0}
-					possession={boxScore.possession === 0}
-				>
+				<TeamNameLink season={boxScore.season} t={t0}>
 					{t0.season !== undefined ? `${t0.season} ` : null}
 					<span className={className}>{t0.region} </span>
 					{t0.name}
 				</TeamNameLink>{" "}
 				{t0.pts},{" "}
+				{boxScore.possession !== undefined ? (
+					<span
+						className={
+							boxScore.possession === 1 ? "text-warning" : "text-white"
+						}
+					>
+						●{" "}
+					</span>
+				) : null}
 				{t1.playoffs ? (
 					<span className="text-body-secondary">{t1.playoffs.seed}. </span>
 				) : null}
-				<TeamNameLink
-					season={boxScore.season}
-					t={t1}
-					possession={boxScore.possession === 1}
-				>
+				<TeamNameLink season={boxScore.season} t={t1}>
 					{t1.season !== undefined ? `${t1.season} ` : null}
 					<span className={className}>{t1.region} </span>
 					{t1.name}

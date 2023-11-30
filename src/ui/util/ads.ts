@@ -63,21 +63,27 @@ type AdState = "none" | "gold" | "initializing" | "initialized";
 class Ads {
 	private accountChecked = false;
 	private uiRendered = false;
+	private initAfterLoadingDone = false;
 	skyscraper = new Skyscraper();
 	private state: AdState = "none";
 
-	init(type: "accountChecked" | "uiRendered") {
+	setLoadingDone(type: "accountChecked" | "uiRendered") {
+		this[type] = true;
+		if (this.initAfterLoadingDone) {
+			this.init();
+		}
+	}
+
+	private init() {
 		// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
-		if (this.accountChecked && this.uiRendered) {
+		if (this.state !== "none") {
 			// Must have already ran somehow?
 			return;
 		}
-		if (type === "accountChecked") {
-			this.accountChecked = true;
-		} else if (type === "uiRendered") {
-			this.uiRendered = true;
-		}
+
 		if (!this.accountChecked || !this.uiRendered) {
+			// We got the first pageview, but we're not done loading stuff, so render first ad after we finish loading
+			this.initAfterLoadingDone = true;
 			return;
 		}
 
@@ -246,11 +252,14 @@ class Ads {
 		});
 	}
 
+	// If ads are not yet displayed, this will display them
 	refreshAll() {
 		if (this.state === "initialized") {
 			window.freestar.queue.push(() => {
 				window.freestar.refreshAllSlots?.();
 			});
+		} else if (this.state === "none") {
+			this.init();
 		}
 	}
 }

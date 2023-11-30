@@ -19,7 +19,7 @@ import type {
 } from "../../common/types";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
-	ads.init(type);
+	ads.setLoadingDone(type);
 };
 
 const initGold = () => {

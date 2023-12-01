@@ -20,6 +20,9 @@ module.exports = legacy => {
 				},
 			], // Chrome 80, Safari 13.1
 			["@babel/plugin-transform-class-properties", { loose: true }], // Chrome 74, Safari 14.1
+
+			// Used in nanoevents and maybe other dependencies
+			"@babel/plugin-transform-logical-assignment-operators", // Chrome 85, Firefox 79, Safari 14
 		);
 	}
 

@@ -89,6 +89,7 @@
 		"@babel/plugin-proposal-optional-chaining": "^7.21.0",
 		"@babel/plugin-syntax-typescript": "^7.23.3",
 		"@babel/plugin-transform-class-properties": "^7.23.3",
+		"@babel/plugin-transform-logical-assignment-operators": "^7.23.4",
 		"@babel/plugin-transform-modules-commonjs": "^7.23.3",
 		"@babel/preset-react": "^7.23.3",
 		"@babel/preset-typescript": "^7.23.3",

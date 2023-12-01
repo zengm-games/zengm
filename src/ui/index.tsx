@@ -340,7 +340,9 @@ const setupRoutes = () => {
 				errorPage(context);
 			} else {
 				// No ads on error
-				util.ads.refreshAll();
+				if (!context.state.noTrack) {
+					util.ads.refreshAll();
+				}
 			}
 		},
 		routes,

@@ -7,6 +7,7 @@ import processTrade from "./processTrade";
 import summary from "./summary";
 import type { TradeTeams } from "../../../common/types";
 import { isSport } from "../../../common";
+import Bugsnag from "@bugsnag/browser";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();
@@ -59,8 +60,19 @@ const attempt = async (valueChangeKey: number) => {
 	const dpids: number[] = [];
 
 	if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
-		// Weight by player value - good player more likely to be in trade
-		pids.push(random.choice(players, p => p.value).pid);
+		try {
+			// Weight by player value - good player more likely to be in trade
+			pids.push(random.choice(players, p => p.value).pid);
+		} catch (error) {
+			Bugsnag.notify(new Error("Custom - trade player"), event => {
+				event.addMetadata("custom", {
+					draftPicks: draftPicks.map(p => ({ dpid: p.dpid })),
+					players: players.map(p => ({ pid: p.pid, value: p.value })),
+				});
+			});
+
+			throw error;
+		}
 	} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
 		dpids.push(random.choice(draftPicks).dpid);
 	} else {

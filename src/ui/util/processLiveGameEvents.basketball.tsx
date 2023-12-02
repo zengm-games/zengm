@@ -3,6 +3,7 @@ import { choice } from "../../common/random";
 import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger";
 import type { ReactNode } from "react";
+import Bugsnag from "@bugsnag/browser";
 
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
@@ -295,8 +296,19 @@ const processLiveGameEvents = ({
 					}
 				}
 			} else if (e.s === "gs") {
-				const p = playersByPid[e.pid!];
-				p.inGame = true;
+				try {
+					const p = playersByPid[e.pid!];
+					p.inGame = true;
+				} catch (error) {
+					Bugsnag.notify(new Error("Custom - live player"), event => {
+						event.addMetadata("custom", {
+							eventPid: e.pid,
+							playerPids: playersByPid ? Object.keys(playersByPid) : null,
+						});
+					});
+
+					throw error;
+				}
 			}
 		} else if (e.type !== "init") {
 			text = getText(e, boxScore);

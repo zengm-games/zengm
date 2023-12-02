@@ -277,15 +277,15 @@ export const LiveGame = (props: View<"liveGame">) => {
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
 		(force?: boolean): number => {
-			if (!componentIsMounted.current || (pausedRef.current && !force)) {
+			if (
+				!componentIsMounted.current ||
+				(pausedRef.current && !force) ||
+				!events.current
+			) {
 				return 0;
 			}
 
 			const startSeconds = getSeconds(boxScore.current.time);
-
-			if (!events.current) {
-				throw new Error("events.current is undefined");
-			}
 
 			// Save here since it is mutated in processLiveGameEvents
 			const prevOuts = sportState.current?.outs;

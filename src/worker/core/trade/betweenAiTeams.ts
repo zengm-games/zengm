@@ -76,8 +76,19 @@ const attempt = async (valueChangeKey: number) => {
 	} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
 		dpids.push(random.choice(draftPicks).dpid);
 	} else {
-		pids.push(random.choice(players, p => p.value).pid);
-		dpids.push(random.choice(draftPicks).dpid);
+		try {
+			pids.push(random.choice(players, p => p.value).pid);
+			dpids.push(random.choice(draftPicks).dpid);
+		} catch (error) {
+			Bugsnag.notify(new Error("Custom - trade player 2"), event => {
+				event.addMetadata("custom", {
+					draftPicks: draftPicks.map(p => ({ dpid: p.dpid })),
+					players: players.map(p => ({ pid: p.pid, value: p.value })),
+				});
+			});
+
+			throw error;
+		}
 	}
 
 	const teams0: TradeTeams = [

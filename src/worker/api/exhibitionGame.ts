@@ -22,7 +22,14 @@ import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball";
 import { connectLeague, idb } from "../db";
 import { getPlayersActiveSeason } from "../db/getCopies/players";
-import { defaultGameAttributes, g, helpers, local, toUI } from "../util";
+import {
+	defaultGameAttributes,
+	g,
+	helpers,
+	local,
+	random,
+	toUI,
+} from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
 
 export const getLeagues = async () => {
@@ -410,8 +417,11 @@ export const simExhibitionGame = async (
 		}
 	}
 
+	// Hacky, but if you send the same gid once, processLiveGameEvents won't reset playersByPid
+	const gid = random.randInt(0, 1000000000);
+
 	const result = new GameSim({
-		gid: 0,
+		gid,
 		day: -1,
 		teams: teamsProcessed,
 		doPlayByPlay: true,

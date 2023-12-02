@@ -66,8 +66,8 @@ const attempt = async (valueChangeKey: number) => {
 		} catch (error) {
 			Bugsnag.notify(new Error("Custom - trade player"), event => {
 				event.addMetadata("custom", {
-					draftPicks: draftPicks.map(p => ({ dpid: p.dpid })),
-					players: players.map(p => ({ pid: p.pid, value: p.value })),
+					draftPicks: draftPicks.map(p => ({ dpid: p?.dpid })),
+					players: players.map(p => ({ pid: p?.pid, value: p?.value })),
 				});
 			});
 
@@ -82,8 +82,8 @@ const attempt = async (valueChangeKey: number) => {
 		} catch (error) {
 			Bugsnag.notify(new Error("Custom - trade player 2"), event => {
 				event.addMetadata("custom", {
-					draftPicks: draftPicks.map(p => ({ dpid: p.dpid })),
-					players: players.map(p => ({ pid: p.pid, value: p.value })),
+					draftPicks: draftPicks.map(p => ({ dpid: p?.dpid })),
+					players: players.map(p => ({ pid: p?.pid, value: p?.value })),
 				});
 			});
 

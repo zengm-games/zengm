@@ -1751,7 +1751,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 						moodTraits: {
 							type: "array",
 							items: {
-								type: "string",
+								enum: ["F", "L", "$", "W"],
 							},
 						},
 						name: {

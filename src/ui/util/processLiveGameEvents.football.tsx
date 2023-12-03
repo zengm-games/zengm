@@ -237,11 +237,19 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		text = `${event.names[0]} fumbled the ball!`;
 	} else if (event.type === "fumbleRecovery") {
 		if (event.safety || event.touchback) {
-			text = `${event.lost ? "Turnover! " : ""}${
-				event.names[0]
-			} recovered the fumble in the endzone, resulting in a ${
-				event.safety ? "safety!" : "touchback"
-			}`;
+			text = (
+				<>
+					{event.lost ? (
+						<>
+							<span className="text-danger">Turnover!</span>{" "}
+						</>
+					) : (
+						""
+					)}
+					${event.names[0]} recovered the fumble in the endzone, resulting in a{" "}
+					{event.safety ? "safety!" : "touchback"}
+				</>
+			);
 		} else if (event.lost) {
 			text = (
 				<>

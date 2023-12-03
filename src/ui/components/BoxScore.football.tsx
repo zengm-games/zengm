@@ -268,16 +268,17 @@ const processEvents = (
 
 			const prevEvent: any = processedEvents.at(-1);
 
-			if (prevEvent && scoreInfo.type === "XP") {
-				prevEvent.score = score.slice();
-				prevEvent.text += ` (${text})`;
-			} else if (
+			if (
 				prevEvent &&
-				scoreInfo.type === "2P" &&
-				actualT === prevEvent.t
+				(scoreInfo.type === "XP" ||
+					(scoreInfo.type === "2P" && actualT === prevEvent.t))
 			) {
 				prevEvent.score = score.slice();
-				prevEvent.text += ` (${text})`;
+				prevEvent.text = (
+					<>
+						{prevEvent.text} ({text})
+					</>
+				);
 			} else {
 				processedEvents.push({
 					t: scoreInfo.type === "SF" ? otherT : actualT, // See comment above about safety teams

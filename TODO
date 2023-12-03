@@ -6,6 +6,7 @@ playoff leader requirements - should be more than 1 game https://old.reddit.com/
 subs shouldn't happen after offensive rebound https://old.reddit.com/r/BasketballGM/comments/18829x9/substitution_on_offensive_rebounds_shouldnt_be/
 
 somehow show count of goals and HR inline for baseball and hockey https://discord.com/channels/@me/778760871911751700/1179618240507420783
+- others too... like for basketball stats it should be this game's stats
 
 some sportState live sim for basketball/hockey
 - chart showing margin vs time or win probability vs time (toggle button to switch)
@@ -97,6 +98,14 @@ FBGM
 - jersey number probability - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
 - options to enable canadian/arena football, and then put that as a preset for new leagues
 - completed pass + pass inferference at end of game when trailing - should take penalty even if fewer yards, but seems to not https://mail.google.com/mail/u/0/#inbox/FMfcgzGwHpWBjWmMMknKPFPrTBdNGkTq
+- weird penalty decline on punt return https://discord.com/channels/290013534023057409/290015591216054273/1180657662170501170
+- winning team late in game seems to be playing hurry up offense https://discord.com/channels/290013534023057409/290015591216054273/1180661367531905144
+- kneeling logic
+  - instead of scrimmage 10 cutoff, estimate if there is enough room to kneel out the clock, depending on how many times we need to kneel and the distance in doKneel. if not enough room, should very strongly favor running plays
+- late game clock management
+  - in hurryUp, should try to end play out of bounds
+  - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
+- move some TFL from LB to DL https://discord.com/channels/290013534023057409/569726303926878219/1180748752215085138
 
 better clock handling in BBGM - calculate time as you go in the play
 - assist should imply some minimum time

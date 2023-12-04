@@ -283,6 +283,9 @@ const setupRoutes = () => {
 
 				if (initialLoad) {
 					initialLoad = false;
+				} else {
+					// This will only do something if ads are already initialized, so it's (mostly) safe to call here even though this could be an error page, since at least it won't show on an error page for the initial pageview
+					util.ads.refreshAll();
 				}
 			}
 		},
@@ -338,11 +341,9 @@ const setupRoutes = () => {
 				);
 				const errorPage = genStaticPage("error", "Error", ErrorPage, false);
 				errorPage(context);
-			} else {
-				// No ads on error
-				if (!context.state.noTrack) {
-					util.ads.refreshAll();
-				}
+			} else if (!context.state.noTrack) {
+				// If this is not an error page, initialize ads. init() will do nothing if it's already initialized
+				util.ads.init();
 			}
 		},
 		routes,

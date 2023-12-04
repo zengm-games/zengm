@@ -74,7 +74,7 @@ class Ads {
 		}
 	}
 
-	private init() {
+	init() {
 		// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
 		if (this.state !== "none") {
 			// Must have already ran somehow?
@@ -258,8 +258,6 @@ class Ads {
 			window.freestar.queue.push(() => {
 				window.freestar.refreshAllSlots?.();
 			});
-		} else if (this.state === "none") {
-			this.init();
 		}
 	}
 }

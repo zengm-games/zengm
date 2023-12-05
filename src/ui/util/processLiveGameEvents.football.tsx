@@ -108,15 +108,52 @@ export const getScoreInfo = (event: PlayByPlayEvent) => {
 		points = 2;
 	}
 
-	if (type === undefined) {
-		return undefined;
+	if (type !== undefined && long !== undefined) {
+		return {
+			type,
+			long,
+			points,
+		};
+	}
+};
+
+// This is needed for scoringSummary in box scores from back when the events were stored as text
+export const getScoreInfoOld = (text: string) => {
+	let type: "XP" | "FG" | "TD" | "2P" | "SF" | undefined;
+	let points = 0;
+
+	if (text.includes("extra point")) {
+		type = "XP";
+		if (text.includes("made")) {
+			points = 1;
+		}
+	} else if (text.includes("field goal")) {
+		type = "FG";
+		if (text.includes("made")) {
+			points = 3;
+		}
+	} else if (text.includes("touchdown")) {
+		type = "TD";
+		points = 6;
+	} else if (text.toLowerCase().includes("two point")) {
+		type = "2P";
+		if (!text.includes("failed")) {
+			points = 2;
+		}
+	} else if (text.includes("safety")) {
+		type = "SF";
+
+		// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
+		points = 2;
 	}
 
-	return {
-		type,
-		long,
-		points,
-	};
+	if (type !== undefined) {
+		return {
+			type,
+			long: "",
+			points,
+		};
+	}
 };
 
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30

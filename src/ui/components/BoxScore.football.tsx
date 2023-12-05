@@ -19,6 +19,7 @@ import {
 	formatClock,
 	formatDownAndDistance,
 	getScoreInfo,
+	getScoreInfoOld,
 	getText,
 	scrimmageToFieldPos,
 	type SportState,
@@ -222,8 +223,6 @@ const StatsTable = ({
 const processEvents = (
 	events: PlayByPlayEventScore[],
 	numPeriods: number,
-	abbrev0: string,
-	abbrev1: string,
 	liveGameSim: boolean,
 ) => {
 	const processedEvents: {
@@ -257,7 +256,9 @@ const processEvents = (
 		const actualT = liveGameSim ? (event.t === 0 ? 1 : 0) : event.t;
 		const otherT = actualT === 0 ? 1 : 0;
 
-		const scoreInfo = getScoreInfo(event);
+		const scoreInfo = isOldFormat
+			? getScoreInfoOld(oldEvent.text)
+			: getScoreInfo(event);
 		if (scoreInfo) {
 			if (scoreInfo.type === "SF") {
 				// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
@@ -305,15 +306,11 @@ const getCount = (events: PlayByPlayEventScore[]) => {
 
 const ScoringSummary = memo(
 	({
-		abbrev0,
-		abbrev1,
 		events,
 		liveGameSim,
 		numPeriods,
 		teams,
 	}: {
-		abbrev0: string;
-		abbrev1: string;
 		count: number;
 		events: PlayByPlayEventScore[];
 		liveGameSim: boolean;
@@ -322,13 +319,7 @@ const ScoringSummary = memo(
 	}) => {
 		let prevQuarter: string;
 
-		const processedEvents = processEvents(
-			events,
-			numPeriods,
-			abbrev0,
-			abbrev1,
-			liveGameSim,
-		);
+		const processedEvents = processEvents(events, numPeriods, liveGameSim);
 
 		if (processedEvents.length === 0) {
 			return <p>None</p>;
@@ -851,8 +842,6 @@ const BoxScore = ({
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
-				abbrev0={boxScore.teams[0].abbrev}
-				abbrev1={boxScore.teams[1].abbrev}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
 				liveGameSim={liveGameSim}

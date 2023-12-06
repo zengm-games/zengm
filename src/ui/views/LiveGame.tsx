@@ -151,6 +151,7 @@ const PlayByPlayEntry = memo(
 			<div className="d-flex">
 				{entry.t !== undefined ? (
 					<TeamLogoInline
+						alt={boxScore.teams[entry.t].abbrev}
 						className={classNames("flex-shrink-0", {
 							// If there is a time line, then add some margin to the top, looks better.
 							// If it's just score and no time, then that's football, and no margin looks more consistent. So don't check score here.

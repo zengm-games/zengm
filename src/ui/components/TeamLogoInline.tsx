@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 const TeamLogoInline = ({
+	alt,
 	className,
 	imgURL,
 	imgURLSmall,
@@ -8,6 +9,7 @@ const TeamLogoInline = ({
 	size = 24,
 	style,
 }: {
+	alt?: string;
 	className?: string;
 	imgURL?: string;
 	imgURLSmall?: string;
@@ -28,7 +30,7 @@ const TeamLogoInline = ({
 			style={{ height: size, width: size, ...style }}
 		>
 			{actualImgURL ? (
-				<img className="mw-100 mh-100" src={actualImgURL} alt="" />
+				<img className="mw-100 mh-100" src={actualImgURL} alt={alt} />
 			) : null}
 		</div>
 	);

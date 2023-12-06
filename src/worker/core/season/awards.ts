@@ -369,7 +369,7 @@ const leagueLeaders = (
 					maxPlayer.currentStats[cat.stat]
 					? currentPlayer
 					: maxPlayer;
-			}, players[0]);
+			});
 
 		if (p) {
 			awardsByPlayer.push({

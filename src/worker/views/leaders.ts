@@ -418,6 +418,39 @@ export class GamesPlayedCache {
 				continue;
 			}
 
+			// In the playoffs, if we're in the first round or later (not the play-in), set the number of games to the minimum number of games to win a first round series (or the number of games so far). That way you won't see someone who played like 1 game in the play-in tournament leading in points per game after the entire playoffs.
+			let minGpPlayoffs = 0;
+			if (playoffs) {
+				const playoffSeries = await idb.getCopy.playoffSeries(
+					{ season },
+					"noCopyCache",
+				);
+
+				// This only matters if there is a play-in tournament
+				if (playoffSeries?.playIns) {
+					// Find any non-bye first round series and see how many games have been played so far
+					for (const series of playoffSeries.series[0]) {
+						if (series.away) {
+							// Number of games played so far - can't require more than this!
+							const numGamesFirstRoundSoFar = series.home.won + series.away.won;
+
+							// Number of games in a first round sweep
+							const numGamesMinAfterFirstRound = helpers.numGamesToWinSeries(
+								g.get("numGamesPlayoffSeries", season)[0],
+							);
+
+							minGpPlayoffs = Math.min(
+								numGamesFirstRoundSoFar,
+								numGamesMinAfterFirstRound,
+							);
+
+							// No need to look for more, since series schedules are always in sync (all series play on same days)
+							break;
+						}
+					}
+				}
+			}
+
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
 				stats: ["gp"],
@@ -428,7 +461,11 @@ export class GamesPlayedCache {
 
 			const cache: Record<number, number> = {};
 			for (const t of teams) {
-				cache[t.tid] = t.stats.gp;
+				if (playoffs) {
+					cache[t.tid] = Math.max(minGpPlayoffs, t.stats.gp);
+				} else {
+					cache[t.tid] = t.stats.gp;
+				}
 			}
 
 			if (playoffs) {
@@ -444,11 +481,11 @@ export class GamesPlayedCache {
 		type: "regularSeason" | "playoffs" | "combined",
 		tid: number,
 		career: boolean,
-	): number {
+	): number | null {
 		if (type === "combined") {
 			return (
-				this.get(season, "regularSeason", tid, career) +
-				this.get(season, "playoffs", tid, career)
+				(this.get(season, "regularSeason", tid, career) ?? 0) +
+				(this.get(season, "playoffs", tid, career) ?? 0)
 			);
 		}
 

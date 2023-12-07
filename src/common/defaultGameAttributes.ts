@@ -397,6 +397,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				fantasyPoints: "standard",
 				draftPickAutoContract: false,
 				pace: 1,
+				hofFactor: 1.2,
 		  }
 		: {};
 

@@ -55,6 +55,18 @@ export const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
+// false means assign possession to other team
+const newPossessionTypes: Record<string, boolean> = {
+	faceoff: true,
+	gv: false,
+	tk: true,
+	slapshot: true,
+	wristshot: true,
+	shot: true,
+	reboundShot: true,
+	deflection: true,
+};
+
 const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
@@ -196,6 +208,7 @@ const processLiveGameEvents = ({
 		quarterShort: string;
 		numPeriods: number;
 		overtime?: string;
+		possession: 0 | 1 | undefined;
 		teams: any;
 		time: string;
 		scoringSummary: PlayByPlayEventScore[];
@@ -305,6 +318,15 @@ const processLiveGameEvents = ({
 			textOnly =
 				e.type === "gameOver" || e.type === "quarter" || e.type === "overtime";
 			boxScore.time = formatClock(e.clock);
+
+			if (Object.hasOwn(newPossessionTypes, eAny.type)) {
+				boxScore.possession = newPossessionTypes[eAny.type]
+					? actualT
+					: actualT === 0
+					  ? 1
+					  : 0;
+			}
+
 			stop = true;
 		}
 	}

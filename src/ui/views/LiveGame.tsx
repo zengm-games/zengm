@@ -305,11 +305,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 			const scoreDiff = currentPts - prevPts;
 
-			if (output.t !== undefined) {
-				// possession is the latest value of t we've seen (ignore undefined values, which could happen on things like a flag in football that don't have an associated team)
-				boxScore.current.possession = output.t;
-			}
-
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;
 			possessionChange.current = output.possessionChange;

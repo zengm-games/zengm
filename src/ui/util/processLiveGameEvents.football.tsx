@@ -658,6 +658,8 @@ const processLiveGameEvents = ({
 					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
 				}
 			}
+
+			boxScore.possession = actualT;
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
@@ -905,6 +907,17 @@ const processLiveGameEvents = ({
 				e.type === "fieldGoal" ||
 				e.type === "extraPoint" ||
 				(e as any).twoPointConversionTeam !== undefined;
+
+			if (
+				e.type === "puntReturn" ||
+				e.type === "kickoffReturn" ||
+				e.type === "interception" ||
+				(e.type === "fumbleRecovery" && e.lost)
+			) {
+				boxScore.possession = actualT;
+			} else if (e.type === "turnoverOnDowns") {
+				boxScore.possession = otherT;
+			}
 		}
 
 		if (scoringSummary) {

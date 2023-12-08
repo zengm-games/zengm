@@ -186,6 +186,34 @@ export const getText = (
 	}
 };
 
+// false means assign possession to other team
+const newPossessionTypes: Record<string, boolean> = {
+	fgAtRim: true,
+	fgAtRimAndOne: true,
+	fgLowPost: true,
+	fgLowPostAndOne: true,
+	fgMidRange: true,
+	fgMidRangeAndOne: true,
+	ft: true,
+	tp: true,
+	tpAndOne: true,
+	drb: true,
+	fgaAtRim: true,
+	fgaLowPost: true,
+	fgaMidRange: true,
+	fgaTp: true,
+	fgaTpFake: true,
+	jumpBall: true,
+	missAtRim: true,
+	missFt: true,
+	missLowPost: true,
+	missMidRange: true,
+	missTp: true,
+	orb: true,
+	stl: true,
+	tov: false,
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
@@ -333,6 +361,14 @@ const processLiveGameEvents = ({
 
 			if (time) {
 				boxScore.time = time;
+			}
+
+			if (Object.hasOwn(newPossessionTypes, eAny.type)) {
+				boxScore.possession = newPossessionTypes[eAny.type]
+					? actualT
+					: actualT === 0
+					  ? 1
+					  : 0;
 			}
 
 			stop = true;

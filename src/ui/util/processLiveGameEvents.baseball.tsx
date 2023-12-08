@@ -444,6 +444,7 @@ const processLiveGameEvents = ({
 		quarterShort: string;
 		numPeriods: number;
 		overtime?: string;
+		possession: 0 | 1 | undefined;
 		teams: [BoxScoreTeam, BoxScoreTeam];
 		time: string;
 		scoringSummary: PlayByPlayEventScore[];
@@ -496,6 +497,7 @@ const processLiveGameEvents = ({
 			sportState.pitcherPid = e.pitcherPid;
 			sportState.batterPid = -1;
 			sportState.o = actualT!;
+			boxScore.possession = actualT;
 			t = actualT;
 		} else if (e.type === "reliefPitcher") {
 			sportState.pitcherPid = e.pidOn;

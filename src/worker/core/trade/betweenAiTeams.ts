@@ -60,35 +60,25 @@ const attempt = async (valueChangeKey: number) => {
 	const dpids: number[] = [];
 
 	if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
-		try {
-			// Weight by player value - good player more likely to be in trade
-			pids.push(random.choice(players, p => p.value).pid);
-		} catch (error) {
-			Bugsnag.notify(new Error("Custom - trade player"), event => {
-				event.addMetadata("custom", {
-					draftPicks: draftPicks.map(p => ({ dpid: p?.dpid })),
-					players: players.map(p => ({ pid: p?.pid, value: p?.value })),
-				});
-			});
-
-			throw error;
+		// Weight by player value - good player more likely to be in trade
+		const p = random.choice(players, p => p.value);
+		if (!p) {
+			Bugsnag.notify(new Error("Custom - trade player"));
+			return false;
 		}
+		pids.push(p.pid);
 	} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
 		dpids.push(random.choice(draftPicks).dpid);
 	} else {
-		try {
-			pids.push(random.choice(players, p => p.value).pid);
-			dpids.push(random.choice(draftPicks).dpid);
-		} catch (error) {
-			Bugsnag.notify(new Error("Custom - trade player 2"), event => {
-				event.addMetadata("custom", {
-					draftPicks: draftPicks.map(p => ({ dpid: p?.dpid })),
-					players: players.map(p => ({ pid: p?.pid, value: p?.value })),
-				});
-			});
-
-			throw error;
+		// Weight by player value - good player more likely to be in trade
+		const p = random.choice(players, p => p.value);
+		const dp = random.choice(draftPicks);
+		if (!p || !dp) {
+			Bugsnag.notify(new Error("Custom - trade player 2"));
+			return false;
 		}
+		pids.push(p.pid);
+		dpids.push(dp.dpid);
 	}
 
 	const teams0: TradeTeams = [

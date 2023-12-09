@@ -484,7 +484,7 @@ const BaseballDiamond = ({
 	return (
 		<div>
 			<div className="text-center mb-2">
-				{outs} out{outs === 1 ? "" : "s"}
+				{outs} {helpers.plural("out", outs)}
 			</div>
 			<div className="d-flex justify-content-center">
 				<div className="d-flex mx-1">

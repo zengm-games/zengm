@@ -167,9 +167,9 @@ const NegotiationList = ({
 					className="btn btn-secondary mb-3"
 					onClick={async () => {
 						const proceed = await confirm(
-							`Are you sure you want to re-sign all ${players.length} ${
-								players.length === 1 ? "player" : "players"
-							}?`,
+							`Are you sure you want to re-sign all ${
+								players.length
+							} ${helpers.plural("player", players.length)}?`,
 							{
 								okText: "Re-sign all",
 							},

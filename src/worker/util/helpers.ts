@@ -223,8 +223,8 @@ const pickDesc = async (dp: DraftPick, short?: "short") => {
 		dp.season === "fantasy"
 			? "Fantasy draft"
 			: dp.season === "expansion"
-			? "Expansion draft"
-			: dp.season;
+			  ? "Expansion draft"
+			  : dp.season;
 
 	const extras: string[] = [];
 
@@ -331,7 +331,7 @@ const daysLeft = (freeAgents: boolean, days?: number) => {
 
 	let dayWeek;
 	if (freeAgents) {
-		dayWeek = `day${actualDays === 1 ? "" : "s"}`;
+		dayWeek = helpers.plural("day", actualDays);
 	} else {
 		dayWeek = timeBetweenGames(actualDays);
 	}

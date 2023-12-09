@@ -2,7 +2,7 @@ import { bySport, PHASE, PLAYER } from "../../common";
 import type { UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
-import { g, local } from "../util";
+import { g, helpers, local } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
 
 const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -148,7 +148,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 							", ",
 						)}) are no longer available to be selected because they have already reached the limit of ${
 							expansionDraft.numPerTeam
-						} drafted player${expansionDraft.numPerTeam === 1 ? "" : "s"}.`;
+						} drafted ${helpers.plural("player", expansionDraft.numPerTeam)}.`;
 					}
 				}
 			}

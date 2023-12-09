@@ -2021,9 +2021,10 @@ class GameSim extends GameSimBase {
 
 				if (!this.elamActive) {
 					if (play.time > 0) {
-						eventText += ` with ${play.time} second${
-							play.time !== 1 ? "s" : ""
-						} remaining`;
+						eventText += ` with ${play.time} ${helpers.plural(
+							"second",
+							play.time,
+						)} remaining`;
 					} else {
 						eventText +=
 							play.type === "ft"

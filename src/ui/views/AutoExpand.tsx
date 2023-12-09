@@ -71,7 +71,10 @@ const AutoExpand = ({ godMode, newTeams }: View<"autoExpand">) => {
 				setOverride={setOverride}
 				status={status}
 				vote={vote}
-				voteTextYes={`Approve expansion team${newTeams.length > 1 ? "s" : ""}`}
+				voteTextYes={`Approve expansion ${helpers.plural(
+					"team",
+					newTeams.length,
+				)}`}
 				voteTextNo="No expansion"
 				resultTextYes="Expansion approved!"
 				resultTextNo="Expansion denied!"

@@ -809,9 +809,8 @@ const FieldAndDrive = ({
 							: sportState.text}
 						{!sportState.awaitingKickoff ? (
 							<div className="ms-auto">
-								Drive: {numPlays} play
-								{numPlays === 1 ? "" : "s"}, {yards} yard
-								{yards === 1 ? "" : "s"}
+								Drive: {numPlays} {helpers.plural("play", numPlays)}, {yards}{" "}
+								{helpers.plural("yard", yards)}
 							</div>
 						) : null}
 					</>

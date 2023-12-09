@@ -133,9 +133,11 @@ const PlayByPlayEntry = memo(
 							}`}
 						>
 							{bySport({
-								baseball: `${entry.scoreDiff} run${
-									entry.scoreDiff === 1 ? "" : "s"
-								} score${entry.scoreDiff === 1 ? "s" : ""}!`,
+								baseball: `${entry.scoreDiff} ${helpers.plural(
+									"run scores",
+									entry.scoreDiff,
+									"runs score",
+								)}!`,
 								basketball: "",
 								football: `${entry.scoreType ?? "???"}!`,
 								hockey: "Goal!",
@@ -185,7 +187,7 @@ const PlayByPlayEntry = memo(
 					) : null}
 					{entry.outs !== undefined ? (
 						<div className="fw-bold text-danger">
-							{entry.outs} out{entry.outs === 1 ? "" : "s"}
+							{entry.outs} {helpers.plural("out", entry.outs)}
 						</div>
 					) : null}
 				</div>
@@ -639,7 +641,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 		const menuItems = [
 			...skipMinutes.map(({ minutes, key }) => ({
-				label: `${minutes} minute${minutes === 1 ? "" : "s"}`,
+				label: `${minutes} ${helpers.plural("minute", minutes)}`,
 				key,
 				onClick: () => {
 					playSeconds(60 * minutes);

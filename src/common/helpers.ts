@@ -1491,6 +1491,14 @@ const getRecordNumericValue = (record: string | null) => {
 	return 0;
 };
 
+const plural = (text: string, amount: number, textPluralOverride?: string) => {
+	if (amount === 1) {
+		return text;
+	}
+
+	return textPluralOverride ?? `${text}s`;
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -1506,6 +1514,7 @@ export default {
 	leagueUrlFactory,
 	numberWithCommas,
 	ordinal,
+	plural,
 	roundWinp,
 	upperCaseFirstLetter,
 	keys,

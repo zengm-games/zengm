@@ -135,8 +135,7 @@ const Summary = ({
 			summaryRows.push(
 				<>
 					<b>
-						{count} {title}
-						{count > 1 ? "s" : null}:
+						{count} {helpers.plural(title, count)}
 					</b>{" "}
 					{display.map((p, i) => (
 						<Fragment key={p.pid}>

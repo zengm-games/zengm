@@ -4156,14 +4156,11 @@ const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 		let assetsText;
 		const numAssets = teams[0].pids.length + teams[0].dpids.length;
 		if (teams[0].pids.length === 0) {
-			assetsText = "Pick";
+			assetsText = helpers.plural("Pick", numAssets);
 		} else if (teams[0].dpids.length === 0) {
-			assetsText = "Player";
+			assetsText = helpers.plural("Player", numAssets);
 		} else {
-			assetsText = "Asset";
-		}
-		if (numAssets !== 1) {
-			assetsText += "s";
+			assetsText = helpers.plural("Asset", numAssets);
 		}
 
 		const proceed = await toUI(

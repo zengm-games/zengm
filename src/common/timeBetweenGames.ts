@@ -1,9 +1,8 @@
 import { TIME_BETWEEN_GAMES } from "./constants";
+import helpers from "./helpers";
 
 const timeBetweenGames = (numGames: number) => {
-	const plural = numGames !== 1;
-
-	return `${TIME_BETWEEN_GAMES}${plural ? "s" : ""}`;
+	return helpers.plural(TIME_BETWEEN_GAMES, numGames);
 };
 
 export default timeBetweenGames;

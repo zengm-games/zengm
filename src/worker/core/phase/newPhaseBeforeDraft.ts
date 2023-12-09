@@ -241,9 +241,10 @@ const doThanosMode = async (conditions: Conditions) => {
 		if (numPlayers === 0) {
 			text += "Somehow your team did not lose any players.";
 		} else {
-			text += `Your team lost ${numPlayers} player${
-				numPlayers === 1 ? "" : "s"
-			}: `;
+			text += `Your team lost ${numPlayers} ${helpers.plural(
+				"player",
+				numPlayers,
+			)}: `;
 			for (let i = 0; i < numPlayers; i++) {
 				const p = userSnappedPlayers[i];
 				if (i > 0 && numPlayers === 2) {

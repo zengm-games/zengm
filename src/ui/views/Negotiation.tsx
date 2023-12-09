@@ -147,8 +147,7 @@ const Negotiation = ({
 										<span className="d-none d-sm-inline">
 											, through {contract.exp}
 										</span>{" "}
-										({contract.years}{" "}
-										{contract.years === 1 ? "season" : "seasons"})
+										({contract.years} {helpers.plural("season", contract.years)}
 									</div>
 
 									<button

@@ -1,3 +1,8 @@
+better clock handling in BBGM - calculate time as you go in the play
+- assist should imply some minimum time
+- offensive rebound putback should be fast
+- end of game sometimes things happen unrealistically fast
+
 betweenAiTeams error
 - in bugsnag breadcrumbs, seems to happen after cliking play > until preseason
 
@@ -60,8 +65,6 @@ FBGM show field during game
     - rather than removing a row from sportState.plays, might be better to mark it as overturned
     - but when rolling back for penalties, we kind of need to delete, because that lets us show the penalty in the main bar, not in a sub-play bar
 
-plural helper function
-
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores
 
@@ -110,11 +113,6 @@ FBGM
   - in hurryUp, should try to end play out of bounds
   - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
 - move some TFL from LB to DL https://discord.com/channels/290013534023057409/569726303926878219/1180748752215085138
-
-better clock handling in BBGM - calculate time as you go in the play
-- assist should imply some minimum time
-- offensive rebound putback should be fast
-- end of game sometimes things happen unrealistically fast
 
 wrong team abbrev various places
 - functions for helping
@@ -175,17 +173,8 @@ ad ideas
 - no ads for first N minutes if 0 leagues
 - minimum refresh time
   - or just get rid of refresh, since freestar refresh time is fast
-- refactor
-  - class fields browser support https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields#browser_compatibility
 
 settings for magnitude of budget effects https://old.reddit.com/r/Football_GM/comments/15scd9z/revert_to_version_v202308021178/
-
-vertical ad showing on mobile https://old.reddit.com/r/BasketballGM/comments/15h4k9g/vertical_ads/
-- i think it's blockthrough
-  - how is blockthrough supposed to know about responsive ads showing/hiding?
-  - is there a better way than _disabled to handle gold?
-- if no problem now, is it because blockthrough is still not showing anything?
-- other sports need same solution as BBGM
 
 trade value in legends league - trading block offering nothing gets you players https://www.instagram.com/direct/t/102694951131118/
 
@@ -253,16 +242,12 @@ names of playoff rounds
 accessibility
 - team finances graphs don't show up on screen reader https://discord.com/channels/@me/1121892283986477237/1121898840245682316
 
-add undrafted players to draft history page
-
 team finances
 - later
   - something like "Are you sure you want to discard your unsaved settings changes?" on navigation away with unsaved changes
   - some kind of estimates for revenue, expenses, and profit for the year
 
 tweak attendance formula so selling out isn't always the best option for auto ticket price
-
-Player.draft.pot and Player.draft.ovr needed? either use ratings row from that season, or if not found, make them null?
 
 default new league settings in non-basketball sports shows basketball-only options for randomizaion
 

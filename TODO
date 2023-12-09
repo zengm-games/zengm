@@ -1,9 +1,10 @@
-some baseball scoring plays not being logged right https://discord.com/channels/290013534023057409/290015591216054273/1182937180985896981
-
 better clock handling in BBGM - calculate time as you go in the play
 - assist should imply some minimum time
 - offensive rebound putback should be fast
 - end of game sometimes things happen unrealistically fast
+- clock stop on out of bounds in last 2 minutes of half/OT
+- fractional seconds in UI
+- timeouts
 
 betweenAiTeams error
 - in bugsnag breadcrumbs, seems to happen after cliking play > until preseason

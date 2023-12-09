@@ -930,7 +930,7 @@ class GameSim extends GameSimBase {
 			type,
 			pid: p.id,
 			runners: this.finalizeRunners(runners),
-			t: this.o,
+			t: this.d,
 			...this.getSportState(),
 		});
 	}

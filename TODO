@@ -1,10 +1,25 @@
-better clock handling in BBGM - calculate time as you go in the play
-- assist should imply some minimum time
-- offensive rebound putback should be fast
-- end of game sometimes things happen unrealistically fast
+better clock handling in BBGM - calculate tim as you go in the play
+- sent explicit possession event, to set possession indicator
 - clock stop on out of bounds in last 2 minutes of half/OT
-- fractional seconds in UI
+- fractional seconds in UI when under 1 minute
 - timeouts
+  - advance to half court if under 2 minutes in game/OT
+- log event for running out of time at the end of the quarter before a shot
+- implement fromPreviousPossession logic
+  - set after made shot or timeout
+- possession timeline
+  - from backcourt to frontcourt
+    - intentional foul
+      - increase turnover/stl rate before foul, if there is enough time
+    - it not enough time, risk of turnover increases
+    - skip for offensive rebound
+    - skip for side out of bounds
+  - frontcourt to shot
+    - if not enough time, shot quality decreases
+      - <0.3 seconds mean shot must be a tip in
+    - assist should imply some minimum time was used
+    - offensive rebound putback should be fast and with no assist
+    - foul stops clock (fewer fouls as time expires)
 
 betweenAiTeams error
 - in bugsnag breadcrumbs, seems to happen after cliking play > until preseason

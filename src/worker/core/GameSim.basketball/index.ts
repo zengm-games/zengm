@@ -75,6 +75,16 @@ type TeamGameSim = {
 	};
 };
 
+type PossessionOutcome =
+	| "tov"
+	| "stl"
+	| "endOfQuarter"
+	| "nonShootingFoul"
+	| "drb"
+	| "orb"
+	| "fg"
+	| null;
+
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 /**
@@ -193,6 +203,8 @@ class GameSim extends GameSimBase {
 	numPlayersOnCourt: number;
 
 	gender: GameAttributesLeague["gender"];
+
+	prevPossessionOutcome: PossessionOutcome | undefined;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -637,16 +649,34 @@ class GameSim extends GameSimBase {
 		return intentionalFoul;
 	}
 
+	// When a shot is made and the clock is still running, some time runs off the clock before the next possession starts
+	dtInbound() {
+		let dt = 0;
+
+		if (this.prevPossessionOutcome === "fg") {
+			const quarter = this.team[0].stat.ptsQtrs.length;
+			// In the last 2 minutes of the last period or overtime, clock stops after a made shot
+			if (quarter < this.numPeriods || this.t > 2) {
+				// Time to gather ball after shot was made, and then to inbound it too
+				dt += random.uniform(1, 5) / 60;
+			}
+		}
+
+		return dt;
+	}
+
 	simPossession() {
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
 		this.updateTeamCompositeRatings();
 
-		// Clock
+		this.t -= this.dtInbound();
+
 		const intentionalFoul = this.shouldIntentionalFoul();
 		const possessionLength = this.getPossessionLength(intentionalFoul);
 		this.t -= possessionLength;
+
 		const outcome = this.getPossessionOutcome(
 			possessionLength,
 			intentionalFoul,
@@ -660,6 +690,8 @@ class GameSim extends GameSimBase {
 
 		this.updatePlayingTime(possessionLength);
 		this.injuries();
+
+		this.prevPossessionOutcome = outcome;
 
 		let gameOver = false;
 		if (this.elam) {
@@ -1298,7 +1330,10 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
-	getPossessionOutcome(possessionLength: number, intentionalFoul: boolean) {
+	getPossessionOutcome(
+		possessionLength: number,
+		intentionalFoul: boolean,
+	): PossessionOutcome {
 		// If winning at end of game, just run out the clock
 		if (
 			this.t <= 0 &&
@@ -1367,7 +1402,7 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
 	 */
-	doTov() {
+	doTov(): PossessionOutcome {
 		const ratios = this.ratingArray("turnovers", this.o, 2);
 		const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
 		this.recordStat(this.o, p, "tov");
@@ -1405,7 +1440,7 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Currently always returns "stl".
 	 */
-	doStl(pStoleFrom: number) {
+	doStl(pStoleFrom: number): PossessionOutcome {
 		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
@@ -1425,7 +1460,10 @@ class GameSim extends GameSimBase {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
 	 */
-	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
+	doShot(
+		shooter: PlayerNumOnCourt,
+		possessionLength: number,
+	): PossessionOutcome {
 		const p = this.playersOnCourt[this.o][shooter];
 		const currentFatigue = this.fatigue(
 			this.team[this.o].player[p].stat.energy,
@@ -1688,7 +1726,7 @@ class GameSim extends GameSimBase {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Output of this.doReb.
 	 */
-	doBlk(shooter: PlayerNumOnCourt, type: ShotType) {
+	doBlk(shooter: PlayerNumOnCourt, type: ShotType): PossessionOutcome {
 		const p = this.playersOnCourt[this.o][shooter];
 		this.recordStat(this.o, p, "ba");
 		this.recordStat(this.o, p, "fga");
@@ -1755,7 +1793,7 @@ class GameSim extends GameSimBase {
 		passer: PlayerNumOnCourt | undefined,
 		type: ShotType,
 		andOne: boolean = false,
-	) {
+	): PossessionOutcome {
 		const p = this.playersOnCourt[this.o][shooter];
 		const pid = this.team[this.o].player[p].id;
 		this.recordStat(this.o, p, "fga");
@@ -2094,7 +2132,7 @@ class GameSim extends GameSimBase {
 	 * @param {number} amount Integer representing the number of free throws to shoot
 	 * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
 	 */
-	doFt(shooter: PlayerNumOnCourt, amount: number) {
+	doFt(shooter: PlayerNumOnCourt, amount: number): PossessionOutcome {
 		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 
 		const ftp = helpers.bound(
@@ -2105,7 +2143,7 @@ class GameSim extends GameSimBase {
 			0,
 			0.95,
 		);
-		let outcome: string | null = null;
+		let outcome: PossessionOutcome | null = null;
 
 		for (let i = 0; i < amount; i++) {
 			this.recordStat(this.o, p, "fta");
@@ -2223,7 +2261,7 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
 	 */
-	doReb() {
+	doReb(): PossessionOutcome {
 		let p;
 		let ratios;
 

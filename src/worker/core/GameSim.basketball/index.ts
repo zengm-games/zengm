@@ -536,7 +536,11 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	getPossessionLength(intentionalFoul: boolean) {
+	getClockFactor() {
+		if (this.shouldIntentionalFoul()) {
+			return "intentionalFoul";
+		}
+
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const pointDifferential =
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
@@ -546,31 +550,43 @@ class GameSim extends GameSimBase {
 			quarter >= this.numPeriods &&
 			!this.elamActive &&
 			this.t <= 24 / 60 &&
-			pointDifferential > 0 &&
-			!intentionalFoul
+			pointDifferential > 0
 		) {
-			return this.t;
+			return "runOutClock" as const;
 		}
 
-		// Booleans that can influence possession length strategy
-		const holdForLastShot =
-			!this.elamActive &&
-			this.t <= 26 / 60 &&
-			(quarter < this.numPeriods || pointDifferential >= 0);
-		const catchUp =
-			!this.elamActive &&
-			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential <= -10) ||
-				(this.t <= 2 && pointDifferential <= -5) ||
-				(this.t <= 1 && pointDifferential < 0));
-		const maintainLead =
-			!this.elamActive &&
-			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential > 10) ||
-				(this.t <= 2 && pointDifferential > 5) ||
-				(this.t <= 1 && pointDifferential > 0));
-		const twoForOne =
-			!this.elamActive && this.t >= 32 / 60 && this.t <= 52 / 60;
+		if (!this.elamActive) {
+			if (
+				this.t <= 26 / 60 &&
+				(quarter < this.numPeriods || pointDifferential >= 0)
+			) {
+				return "holdForLastShot" as const;
+			}
+
+			if (
+				quarter >= this.numPeriods &&
+				((this.t <= 3 && pointDifferential <= -10) ||
+					(this.t <= 2 && pointDifferential <= -5) ||
+					(this.t <= 1 && pointDifferential < 0))
+			) {
+				return "catchUp";
+			}
+			if (
+				quarter >= this.numPeriods &&
+				((this.t <= 3 && pointDifferential > 10) ||
+					(this.t <= 2 && pointDifferential > 5) ||
+					(this.t <= 1 && pointDifferential > 0))
+			) {
+				return "maintainLead";
+			}
+
+			if (this.t >= 32 / 60 && this.t <= 52 / 60) {
+				return "twoForOne";
+			}
+		}
+	}
+
+	getPossessionLength(clockFactor: ReturnType<GameSim["getClockFactor"]>) {
 		let lowerBound = 4 / 60;
 		let upperBound = 24 / 60;
 
@@ -584,13 +600,13 @@ class GameSim extends GameSimBase {
 
 		let possessionLength; // [min]
 
-		if (intentionalFoul) {
+		if (clockFactor === "intentionalFoul") {
 			possessionLength = (Math.random() * 3) / 60;
 			lowerBound = 0;
 			upperBound = this.t;
-		} else if (holdForLastShot) {
+		} else if (clockFactor === "holdForLastShot") {
 			possessionLength = random.gauss(this.t, 5 / 60);
-		} else if (catchUp) {
+		} else if (clockFactor === "catchUp") {
 			possessionLength = random.gauss(
 				this.averagePossessionLength - 3 / 60,
 				5 / 60,
@@ -598,7 +614,7 @@ class GameSim extends GameSimBase {
 			if (this.t < 48 / 60 && this.t > 4 / 60) {
 				upperBound = this.t / 2;
 			}
-		} else if (maintainLead) {
+		} else if (clockFactor === "maintainLead") {
 			possessionLength = random.gauss(
 				this.averagePossessionLength + 3 / 60,
 				5 / 60,
@@ -607,7 +623,7 @@ class GameSim extends GameSimBase {
 			possessionLength = random.gauss(this.averagePossessionLength, 5 / 60);
 		}
 
-		if (twoForOne && !catchUp && !maintainLead) {
+		if (clockFactor === "twoForOne") {
 			if (Math.random() < 0.6) {
 				// There are between 32 and 52 seconds remaining, and we'd like to get the shot up somewhere between 29 and 35 seconds
 				lowerBound = this.t - 35 / 60;
@@ -673,13 +689,13 @@ class GameSim extends GameSimBase {
 
 		this.t -= this.dtInbound();
 
-		const intentionalFoul = this.shouldIntentionalFoul();
-		const possessionLength = this.getPossessionLength(intentionalFoul);
+		const clockFactor = this.getClockFactor();
+		const possessionLength = this.getPossessionLength(clockFactor);
 		this.t -= possessionLength;
 
 		const outcome = this.getPossessionOutcome(
 			possessionLength,
-			intentionalFoul,
+			clockFactor === "intentionalFoul",
 		);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.

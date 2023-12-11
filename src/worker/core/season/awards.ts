@@ -22,6 +22,7 @@ import type {
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
 import season from ".";
 import addAward from "../player/addAward";
+import { maxBy } from "../../../common/utils";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -350,8 +351,8 @@ const leagueLeaders = (
 		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
-		const p = players
-			.filter(p2 => {
+		const p = maxBy(
+			players.filter(p2 => {
 				// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
 				let playerValue;
 				if (!isSport("basketball")) {
@@ -363,13 +364,9 @@ const leagueLeaders = (
 					playerValue >= cat.minValue * factor ||
 					p2.currentStats.gp >= 0.85 * numGames
 				);
-			})
-			.reduce((maxPlayer, currentPlayer) => {
-				return currentPlayer.currentStats[cat.stat] >
-					maxPlayer.currentStats[cat.stat]
-					? currentPlayer
-					: maxPlayer;
-			});
+			}),
+			p => p.currentStats[cat.stat],
+		);
 
 		if (p) {
 			awardsByPlayer.push({

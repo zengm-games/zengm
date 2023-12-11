@@ -337,7 +337,7 @@ const processLiveGameEvents = ({
 
 			let time;
 			if (eAny.clock !== undefined) {
-				const sec = Math.floor((eAny.clock % 1) * 60);
+				const sec = Math.floor(eAny.clock);
 				const secString = sec < 10 ? `0${sec}` : `${sec}`;
 				time = `${Math.floor(eAny.clock)}:${secString}`;
 			}

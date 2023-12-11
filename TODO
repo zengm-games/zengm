@@ -1,25 +1,37 @@
 better clock handling in BBGM - calculate tim as you go in the play
 - sent explicit possession event, to set possession indicator
-- clock stop on out of bounds in last 2 minutes of half/OT
+- clock stop for inbounding after
+  - made fg in last 2 minutes of half/OT
+  - end of quarter - is endOfQuarter always sent? no, right?
+  - timeout
 - fractional seconds in UI when under 1 minute
 - timeouts
   - advance to half court if under 2 minutes in game/OT
-- log event for running out of time at the end of the quarter before a shot
-- implement fromPreviousPossession logic
-  - set after made shot or timeout
-- possession timeline
-  - from backcourt to frontcourt
+    - no backcourt events in getPossessionOutcome, but still have some chance of turnover on inbound
+- endOfQuarter event - currently for the clock running out at the end of the quarter, but should differentiate between intentionally and unintentionally not getting a shot up. also time running out when trying to foul
+- turnovers can happen in backcourt or frontcourt
+  - for frontcourt only, increase turnovers if intentionalFoul situation
+- be careful that advanceClockSeconds does not lead to end of quarter unintentionally
+- averagePossessionLength should be used, or something upstream of that like pace
+  - for time before possession too
+- heaves
+- possession timeline - advance this.t within these functions, while keeping track of total (for shot clock)
+  - backcourt
     - intentional foul
       - increase turnover/stl rate before foul, if there is enough time
-    - it not enough time, risk of turnover increases
-    - skip for offensive rebound
-    - skip for side out of bounds
-  - frontcourt to shot
+    - some time runs off clock
+      - use all clockFactor variables
+  - frontcourt
     - if not enough time, shot quality decreases
       - <0.3 seconds mean shot must be a tip in
     - assist should imply some minimum time was used
     - offensive rebound putback should be fast and with no assist
+      - somehow know who got the rebound so we can reuse them for the putback
     - foul stops clock (fewer fouls as time expires)
+      - doShot needs to advance time - takes possessionLength, do something with it
+    - some time runs off clock
+      - use all clockFactor variables
+- https://github.com/zengm-games/zengm/issues/392
 
 betweenAiTeams error
 - in bugsnag breadcrumbs, seems to happen after cliking play > until preseason
@@ -832,8 +844,6 @@ More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
 
 show tenths of seconds in live sim play by play
-
-free throws with no time left https://github.com/zengm-games/zengm/issues/392
 
 player ratings stats popover, allow switching season
 - include peak and career as options

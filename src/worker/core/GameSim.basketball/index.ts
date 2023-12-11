@@ -1381,12 +1381,12 @@ class GameSim extends GameSimBase {
 		}
 
 		// Time to advance ball to frontcourt
-		const defaultMin =
+		const upperLimitMin =
 			clockFactor === "catchUp" ? 1 : clockFactor === "maintainLead" ? 4 : 2;
-		const min = Math.max(Math.min(this.t - 0.3, defaultMin), 0);
-		const defaultMax =
+		const min = Math.max(Math.min(this.t - 0.3, upperLimitMin), 0);
+		const upperLimitMax =
 			clockFactor === "catchUp" ? 4 : clockFactor === "maintainLead" ? 8 : 6;
-		const max = Math.max(Math.min(this.t - 0.3, defaultMax), 0);
+		const max = Math.max(Math.min(this.t - 0.3, upperLimitMax), 0);
 		const dt = random.uniform(min, max);
 		advanceClockSeconds(dt);
 

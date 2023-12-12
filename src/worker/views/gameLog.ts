@@ -83,7 +83,7 @@ export const setTeamInfo = async (
 				teamSeason.imgURLSmall ??
 				(Object.hasOwn(g, "teamInfoCache")
 					? g.get("teamInfoCache")[t.tid]?.imgURLSmall
-					: "");
+					: undefined);
 			t.colors = teamSeason.colors;
 		} else if (Object.hasOwn(g, "teamInfoCache")) {
 			t.region = g.get("teamInfoCache")[t.tid]?.region;

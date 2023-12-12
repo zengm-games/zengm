@@ -87,6 +87,8 @@ type PossessionOutcome =
 	| "fg"
 	| null;
 
+type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
+
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 /**
@@ -206,7 +208,9 @@ class GameSim extends GameSimBase {
 
 	gender: GameAttributesLeague["gender"];
 
+	// Individual possession state
 	prevPossessionOutcome: PossessionOutcome | undefined;
+	possessionLength = 0;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -626,10 +630,10 @@ class GameSim extends GameSimBase {
 
 		const dtInbound = this.dtInbound();
 		this.t -= dtInbound;
+		this.possessionLength = 0;
 
 		const clockFactor = this.getClockFactor();
-		const { outcome, possessionLength } =
-			this.getPossessionOutcome(clockFactor);
+		const outcome = this.getPossessionOutcome(clockFactor);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
@@ -637,7 +641,7 @@ class GameSim extends GameSimBase {
 			this.d = this.o === 1 ? 0 : 1;
 		}
 
-		this.updatePlayingTime(dtInbound + possessionLength);
+		this.updatePlayingTime(dtInbound + this.possessionLength);
 		this.injuries();
 
 		this.prevPossessionOutcome = outcome;
@@ -1275,44 +1279,33 @@ class GameSim extends GameSimBase {
 		return normal;
 	}
 
+	advanceClockSeconds(seconds: number) {
+		if (seconds > this.t) {
+			this.possessionLength += this.t;
+			this.t = 0;
+		} else {
+			this.possessionLength += seconds;
+			this.t -= seconds;
+		}
+	}
+
 	/**
 	 * Simulate a single possession.
 	 *
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
-	getPossessionOutcome(clockFactor: ReturnType<GameSim["getClockFactor"]>): {
-		outcome: PossessionOutcome;
-		possessionLength: number;
-	} {
-		let possessionLength = 0;
-		const advanceClockSeconds = (seconds: number) => {
-			if (seconds > this.t) {
-				possessionLength += this.t;
-				this.t = 0;
-			} else {
-				possessionLength += seconds;
-				this.t -= seconds;
-			}
-		};
-
-		const formatReturn = (outcome: PossessionOutcome) => {
-			return {
-				outcome,
-				possessionLength,
-			};
-		};
-
+	getPossessionOutcome(clockFactor: ClockFactor): PossessionOutcome {
 		// If winning at end of game, just run out the clock
 		if (clockFactor === "runOutClock") {
-			advanceClockSeconds(Infinity);
-			return formatReturn("endOfQuarter");
+			this.advanceClockSeconds(Infinity);
+			return "endOfQuarter";
 		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
 		if (this.t <= 6 && !this.elamActive) {
 			if (Math.random() > (this.t / 8) ** (1 / 4)) {
-				advanceClockSeconds(Infinity);
-				return formatReturn("endOfQuarter");
+				this.advanceClockSeconds(Infinity);
+				return "endOfQuarter";
 			}
 		}
 
@@ -1326,8 +1319,8 @@ class GameSim extends GameSimBase {
 				} else {
 					dt = random.uniform(1, 8);
 				}
-				advanceClockSeconds(dt);
-				return formatReturn(this.doTov());
+				this.advanceClockSeconds(dt);
+				return this.doTov();
 			}
 		}
 
@@ -1344,8 +1337,8 @@ class GameSim extends GameSimBase {
 				if (this.t < 8) {
 					if (this.t < 0.2 || (this.t < 1 && Math.random() > this.t)) {
 						// Time ran out while trying to foul
-						advanceClockSeconds(Infinity);
-						return formatReturn("endOfQuarter");
+						this.advanceClockSeconds(Infinity);
+						return "endOfQuarter";
 					}
 					dt = random.uniform(0.1, Math.min(this.t - 0.2, 4));
 				} else {
@@ -1357,11 +1350,11 @@ class GameSim extends GameSimBase {
 				} else {
 					dt = random.uniform(
 						1,
-						Math.min(this.t, SHOT_CLOCK - possessionLength),
+						Math.min(this.t, SHOT_CLOCK - this.possessionLength),
 					);
 				}
 			}
-			advanceClockSeconds(dt);
+			this.advanceClockSeconds(dt);
 
 			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
 			const numFoulsUntilBonus = this.getNumFoulsUntilBonus();
@@ -1374,10 +1367,10 @@ class GameSim extends GameSimBase {
 			}
 
 			if (inBonus) {
-				return formatReturn(this.doFt(shooter, 2));
+				return this.doFt(shooter, 2);
 			}
 
-			return formatReturn("nonShootingFoul");
+			return "nonShootingFoul";
 		}
 
 		// Time to advance ball to frontcourt
@@ -1388,10 +1381,10 @@ class GameSim extends GameSimBase {
 			clockFactor === "catchUp" ? 4 : clockFactor === "maintainLead" ? 8 : 6;
 		const max = Math.max(Math.min(this.t - 0.3, upperLimitMax), 0);
 		const dt = random.uniform(min, max);
-		advanceClockSeconds(dt);
+		this.advanceClockSeconds(dt);
 
 		// Shot!
-		return this.doShot(shooter, possessionLength);
+		return this.doShot(shooter, clockFactor);
 	}
 
 	/**
@@ -1472,7 +1465,36 @@ class GameSim extends GameSimBase {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
 	 */
-	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
+	doShot(shooter: PlayerNumOnCourt, clockFactor: ClockFactor) {
+		// Ball is already in frontcourt. How long until the shot goes up?
+		const lowerLimit = Math.min(this.t / 2, 2);
+		const upperLimit = Math.min(
+			SHOT_CLOCK - this.possessionLength,
+			this.t - 0.1,
+		);
+		const tipInOnly = this.t < 0.15;
+		const cahtchAndShootOnly = this.t < 0.35;
+		let dt;
+		if (this.t < 0.15) {
+			// Less than 0.1 seconds left - must be a tip in
+			dt = 0;
+		} else if (this.t < 1) {
+			// Less than 1 second left
+			dt = random.uniform(0.15, upperLimit);
+		} else if (lowerLimit > upperLimit) {
+			// Less than 2 seconds left
+			dt = random.uniform(0.5, upperLimit);
+		} else if (upperLimit - lowerLimit < 4) {
+			// Due to being near the end of the quarter, upperLimit and lowerLimit are close
+			dt = random.uniform(lowerLimit, upperLimit);
+		} else {
+			const mean =
+				clockFactor === "catchUp" ? 5 : clockFactor === "maintainLead" ? 12 : 8;
+
+			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
+		}
+		this.advanceClockSeconds(dt);
+
 		const p = this.playersOnCourt[this.o][shooter];
 		const currentFatigue = this.fatigue(
 			this.team[this.o].player[p].stat.energy,
@@ -1514,7 +1536,9 @@ class GameSim extends GameSimBase {
 				this.t <= 10 &&
 				quarter >= this.numPeriods &&
 				Math.random() > this.t / 60) ||
-			(quarter < this.numPeriods && this.t === 0 && possessionLength <= 2.5);
+			(quarter < this.numPeriods &&
+				this.t === 0 &&
+				this.possessionLength <= 2.5);
 
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
@@ -1614,6 +1638,19 @@ class GameSim extends GameSimBase {
 			probMake *= g.get("twoPointAccuracyFactor");
 		}
 
+		// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
+		this.advanceClockSeconds(
+			random.uniform(
+				...((type === "atRim"
+					? [0, 0]
+					: type === "lowPost"
+					  ? [0, 0]
+					  : type === "midRange"
+					    ? [0, 0]
+					    : [0, 0]) as [number, number]),
+			),
+		);
+
 		let foulFactor =
 			0.65 *
 			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
@@ -1634,8 +1671,8 @@ class GameSim extends GameSimBase {
 
 		// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
 
-		if (this.t === 0 && possessionLength < 6) {
-			probMake *= Math.sqrt(possessionLength / 8);
+		if (this.t === 0 && this.possessionLength < 6) {
+			probMake *= Math.sqrt(this.possessionLength / 8);
 		}
 
 		// Assisted shots are easier
@@ -1707,8 +1744,8 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		if (this.t > 0.4 || this.elamActive) {
-			return this.doReb(); // orb or drb
+		if (this.t > 0 || this.elamActive) {
+			return this.doReb();
 		}
 
 		return "endOfQuarter";
@@ -2272,6 +2309,8 @@ class GameSim extends GameSimBase {
 	doReb() {
 		let p;
 		let ratios;
+
+		this.advanceClockSeconds(random.uniform(0.1, 0.7));
 
 		if (Math.random() < 0.15) {
 			return null;

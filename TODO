@@ -22,8 +22,10 @@ better clock handling in BBGM - calculate tim as you go in the play
     - some time runs off clock
       - use all clockFactor variables
   - frontcourt
+    - add numbers for "Time between the shot being released"
     - if not enough time, shot quality decreases
       - <0.3 seconds mean shot must be a tip in
+        - only for side out of bounds or orb put back - maybe do this check before calling doShot?
     - assist should imply some minimum time was used
     - offensive rebound putback should be fast and with no assist
       - somehow know who got the rebound so we can reuse them for the putback
@@ -31,11 +33,17 @@ better clock handling in BBGM - calculate tim as you go in the play
       - doShot needs to advance time - takes possessionLength, do something with it
     - some time runs off clock
       - use all clockFactor variables
+    - use clockFactor in doShot
 - https://github.com/zengm-games/zengm/issues/392
 - blog
-  - foul w 0 seconds
+  - timeouts to stop clock and advance ball under 2 minutes
+  - clock stoppages under 2 minutes, otherwise it keeps running while team inbounds
+  - time between shot being taken and shot going in
+    - can see in play-by-play
+    - foul w 0 seconds
   - plays with 0 seconds on clock
   - offensive rebound putbacks
+  - tip ins
 
 betweenAiTeams error
 - in bugsnag breadcrumbs, seems to happen after cliking play > until preseason

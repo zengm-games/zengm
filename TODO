@@ -22,7 +22,6 @@ better clock handling in BBGM - calculate tim as you go in the play
     - some time runs off clock
       - use all clockFactor variables
   - frontcourt
-    - add numbers for "Time between the shot being released"
     - if not enough time, shot quality decreases
       - <0.3 seconds mean shot must be a tip in
         - only for side out of bounds or orb put back - maybe do this check before calling doShot?

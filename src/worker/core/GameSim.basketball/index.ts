@@ -1642,12 +1642,12 @@ class GameSim extends GameSimBase {
 		this.advanceClockSeconds(
 			random.uniform(
 				...((type === "atRim"
-					? [0, 0]
+					? [0.1, 0.3]
 					: type === "lowPost"
-					  ? [0, 0]
+					  ? [0.7, 1.1]
 					  : type === "midRange"
-					    ? [0, 0]
-					    : [0, 0]) as [number, number]),
+					    ? [0.9, 1.3]
+					    : [1.2, 1.9]) as [number, number]),
 			),
 		);
 

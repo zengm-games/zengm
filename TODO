@@ -44,6 +44,8 @@ better clock handling in BBGM - calculate tim as you go in the play
   - offensive rebound putbacks
   - tip ins
 
+release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
+
 betweenAiTeams error
 - in bugsnag breadcrumbs, seems to happen after cliking play > until preseason
 

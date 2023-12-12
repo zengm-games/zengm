@@ -81,7 +81,8 @@ const addGame = async ({
 
 		if (!headToHead.playoffs[t0][t1]) {
 			if (playoffRound === undefined) {
-				throw new Error("Missing playoffRound");
+				// In some weird cases (like game in schedule still after playoffs end) this can happen. Maybe would be better to make this a hard error and prevent this from ever happening, but headToHead is just not that important of a feature.
+				return;
 			}
 
 			headToHead.playoffs[t0][t1] = {

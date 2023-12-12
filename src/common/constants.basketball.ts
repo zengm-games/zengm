@@ -3,11 +3,11 @@ import type { RatingKey } from "./types.basketball";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {
-		ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
+		ratings: ["jmp", "dnk", "diq", "drb", "oiq"],
 	},
 	usage: {
-		ratings: ["ins", "dnk", "fg", "tp", "spd", "hgt", "drb", "oiq"],
-		weights: [1.5, 1, 1, 1, 0.5, 0.5, 0.5, 0.5],
+		ratings: ["ins", "fg", "dnk", "oiq", "drb", "jmp"],
+		weights: [1.0, 0.88, 0.5, 0.13, 0.1, 0.1],
 		skill: {
 			label: "V",
 			cutoff: 0.61,
@@ -23,7 +23,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	passing: {
 		ratings: ["drb", "pss", "oiq"],
-		weights: [0.4, 1, 0.5],
+		weights: [0.25, 1, 0.2],
 		skill: {
 			label: "Ps",
 			cutoff: 0.63,
@@ -31,7 +31,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	turnovers: {
 		ratings: [50, "ins", "pss", "oiq"],
-		weights: [0.5, 1, 1, -1],
+		weights: [2, 1, 0.75, -1],
 	},
 	shootingAtRim: {
 		ratings: ["hgt", "stre", "dnk", "oiq"],
@@ -61,28 +61,28 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["ft"],
 	},
 	rebounding: {
-		ratings: ["hgt", "stre", "jmp", "reb", "oiq", "diq"],
-		weights: [2, 0.1, 0.1, 2, 0.5, 0.5],
+		ratings: ["hgt", "reb", "diq"],
+		weights: [1, 1, 0.1],
 		skill: {
 			label: "R",
 			cutoff: 0.61,
 		},
 	},
 	stealing: {
-		ratings: [50, "spd", "diq"],
-		weights: [1, 1, 2],
+		ratings: ["spd", "diq"],
+		weights: [0.5, 1.0],
 	},
 	blocking: {
 		ratings: ["hgt", "jmp", "diq"],
-		weights: [2.5, 1.5, 0.5],
+		weights: [2.5, 1.3, 0.5],
 	},
 	fouling: {
 		ratings: [50, "hgt", "diq", "spd"],
 		weights: [3, 1, -1, -1],
 	},
 	drawingFouls: {
-		ratings: ["hgt", "spd", "drb", "dnk", "oiq"],
-		weights: [1, 1, 1, 1, 1],
+		ratings: ["hgt", "spd", "dnk", "pss", "reb"],
+		weights: [1, 0.6, 0.8, 0.4, 0.6],
 	},
 	defense: {
 		ratings: ["hgt", "stre", "spd", "jmp", "diq"],

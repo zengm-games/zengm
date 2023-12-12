@@ -1368,7 +1368,7 @@ class GameSim extends GameSimBase {
 	 * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
 	 */
 	doTov() {
-		const ratios = this.ratingArray("turnovers", this.o, 2);
+		const ratios = this.ratingArray("turnovers", this.o, 3);
 		const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
 		this.recordStat(this.o, p, "tov");
 
@@ -1406,7 +1406,7 @@ class GameSim extends GameSimBase {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
-		const ratios = this.ratingArray("stealing", this.d, 4);
+		const ratios = this.ratingArray("stealing", this.d, 3);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
 		this.playByPlay.logEvent({
@@ -1434,7 +1434,7 @@ class GameSim extends GameSimBase {
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer: PlayerNumOnCourt | undefined;
 		if (this.probAst() > Math.random() && this.numPlayersOnCourt > 1) {
-			const ratios = this.ratingArray("passing", this.o, 10);
+			const ratios = this.ratingArray("passing", this.o, 5);
 			passer = pickPlayer(ratios, shooter);
 		}
 
@@ -1703,7 +1703,7 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.o, p, "tpa");
 		}
 
-		const ratios = this.ratingArray("blocking", this.d, 10);
+		const ratios = this.ratingArray("blocking", this.d, 8);
 		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p2, "blk");
 
@@ -2237,7 +2237,7 @@ class GameSim extends GameSimBase {
 					(2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
-			ratios = this.ratingArray("rebounding", this.d, 3);
+			ratios = this.ratingArray("rebounding", this.d, 2);
 			p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 			this.recordStat(this.d, p, "drb");
 			this.playByPlay.logEvent({
@@ -2249,7 +2249,7 @@ class GameSim extends GameSimBase {
 			return "drb";
 		}
 
-		ratios = this.ratingArray("rebounding", this.o, 5);
+		ratios = this.ratingArray("rebounding", this.o, 3);
 		p = this.playersOnCourt[this.o][pickPlayer(ratios)];
 		this.recordStat(this.o, p, "orb");
 		this.playByPlay.logEvent({

@@ -4,7 +4,9 @@ better clock handling in BBGM - calculate tim as you go in the play
   - made fg in last 2 minutes of half/OT
   - end of quarter - is endOfQuarter always sent? no, right?
   - timeout
-- timeouts
+- this.timeouts
+  - call depending on clock running status and if we need to save time and advance the ball
+  - check at beginning of simPossession
   - advance to half court if under 2 minutes in game/OT
     - no backcourt events in getPossessionOutcome, but still have some chance of turnover on inbound
 - endOfQuarter event - currently for the clock running out at the end of the quarter, but should differentiate between intentionally and unintentionally not getting a shot up. also time running out when trying to foul

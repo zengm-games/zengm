@@ -8,6 +8,10 @@ import { range } from "../../../common/utils";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 
 const SHOT_CLOCK = 24;
+const NUM_TIMEOUTS = 7;
+const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
+const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
+const NUM_TIMEOUTS_OVERTIME = 2;
 
 type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
 type Stat =
@@ -85,6 +89,7 @@ type PossessionOutcome =
 	| "drb"
 	| "orb"
 	| "fg"
+	| "timeout"
 	| null;
 
 type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
@@ -207,6 +212,8 @@ class GameSim extends GameSimBase {
 	numPlayersOnCourt: number;
 
 	gender: GameAttributesLeague["gender"];
+
+	timeouts: [number, number] = [NUM_TIMEOUTS, NUM_TIMEOUTS];
 
 	// Individual possession state
 	prevPossessionOutcome: PossessionOutcome | undefined;
@@ -471,14 +478,27 @@ class GameSim extends GameSimBase {
 		}
 	}
 
+	// Set the number of timeouts for each team to maxTimeouts, unless it's already lower than that in which case do nothing
+	setMaxTimeouts(maxTimeouts: number) {
+		this.timeouts = this.timeouts.map(timeouts => {
+			return Math.min(timeouts, maxTimeouts);
+		}) as [number, number];
+	}
+
 	simRegulation() {
-		let quarter = 1;
+		let period = 1;
 		const wonJump = this.jumpBall();
+		let doneSettingTimeoutsLastThreeMinutes = false;
 
 		while (!this.elamDone) {
+			const finalPeriod = period === this.numPeriods;
+			if (finalPeriod) {
+				this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD);
+			}
+
 			// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
 			if (
-				jumpBallWinnerStartsThisPeriodWithPossession(quarter, this.numPeriods)
+				jumpBallWinnerStartsThisPeriodWithPossession(period, this.numPeriods)
 			) {
 				this.o = wonJump === 0 ? 1 : 0;
 			} else {
@@ -488,15 +508,24 @@ class GameSim extends GameSimBase {
 
 			this.checkElamEnding(); // Before loop, in case it's at 0
 			while ((this.t > 0 || this.elamActive) && !this.elamDone) {
+				if (
+					finalPeriod &&
+					!doneSettingTimeoutsLastThreeMinutes &&
+					this.t <= 3 * 60
+				) {
+					this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN);
+					doneSettingTimeoutsLastThreeMinutes = true;
+				}
+
 				this.simPossession();
 				this.checkElamEnding();
 			}
 
-			quarter += 1;
-
-			if (quarter > this.numPeriods) {
+			if (finalPeriod) {
 				break;
 			}
+
+			period += 1;
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
@@ -518,6 +547,8 @@ class GameSim extends GameSimBase {
 		if (this.t === 0) {
 			this.t = 5 * 60;
 		}
+
+		this.timeouts = [NUM_TIMEOUTS_OVERTIME, NUM_TIMEOUTS_OVERTIME];
 
 		this.lastScoringPlay = [];
 		this.overtimes += 1;
@@ -636,7 +667,11 @@ class GameSim extends GameSimBase {
 		const outcome = this.getPossessionOutcome(clockFactor);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
-		if (outcome === "orb" || outcome === "nonShootingFoul") {
+		if (
+			outcome === "orb" ||
+			outcome === "nonShootingFoul" ||
+			outcome === "timeout"
+		) {
 			this.o = this.o === 1 ? 0 : 1;
 			this.d = this.o === 1 ? 0 : 1;
 		}
@@ -1472,8 +1507,8 @@ class GameSim extends GameSimBase {
 			SHOT_CLOCK - this.possessionLength,
 			this.t - 0.1,
 		);
-		const tipInOnly = this.t < 0.15;
-		const cahtchAndShootOnly = this.t < 0.35;
+		const tipInOnly = this.t < 0.25;
+		const catchAndShootOnly = this.t < 0.45;
 		let dt;
 		if (this.t < 0.15) {
 			// Less than 0.1 seconds left - must be a tip in

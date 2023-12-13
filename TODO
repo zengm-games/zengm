@@ -1,14 +1,13 @@
 better clock handling in BBGM - calculate tim as you go in the play
+- later
+  - sim ball going out of bounds
+    - where is inbound from?
+    - clock stops
+  - higher turnovers late when defense is trailing
+    - side out of bounds less likely to have a turnover
 - sent explicit possession event, to set possession indicator
-- clock stop for inbounding after
-  - made fg in last 2 minutes of half/OT
-  - end of quarter - is endOfQuarter always sent? no, right?
-  - timeout
-- this.timeouts
-  - call depending on clock running status and if we need to save time and advance the ball
-  - check at beginning of simPossession
-  - advance to half court if under 2 minutes in game/OT
-    - no backcourt events in getPossessionOutcome, but still have some chance of turnover on inbound
+- isClockRunning
+  - set false on made fg in last 2 minutes of half/OT
 - endOfQuarter event - currently for the clock running out at the end of the quarter, but should differentiate between intentionally and unintentionally not getting a shot up. also time running out when trying to foul
 - turnovers can happen in backcourt or frontcourt
   - for frontcourt only, increase turnovers if intentionalFoul situation
@@ -16,6 +15,7 @@ better clock handling in BBGM - calculate tim as you go in the play
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
 - heaves
+- tip ins
 - possession timeline - advance this.t within these functions, while keeping track of total (for shot clock)
   - backcourt
     - intentional foul

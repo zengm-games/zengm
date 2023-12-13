@@ -249,6 +249,13 @@ type PlayByPlayEventInputNoScore =
 	| {
 			type: "elamActive";
 			target: number;
+	  }
+	| {
+			type: "timeout";
+			t: TeamNum;
+			numLeft: number;
+			advancesBall: boolean;
+			clock: number;
 	  };
 
 type PlayByPlayEventInput =

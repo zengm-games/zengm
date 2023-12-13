@@ -170,6 +170,12 @@ export const getText = (
 		texts = [`${getName(event.pid)} won the jump ball`];
 	} else if (event.type === "elamActive") {
 		texts = [`Elam Ending activated! First team to ${event.target} wins.`];
+	} else if (event.type === "timeout") {
+		texts = [
+			`Timeout (${event.numLeft} remaining)${
+				event.advancesBall ? "; the ball is advanced to half court" : ""
+			}`,
+		];
 	}
 
 	if (texts) {

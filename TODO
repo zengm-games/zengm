@@ -4,7 +4,6 @@ better clock handling in BBGM - calculate tim as you go in the play
   - made fg in last 2 minutes of half/OT
   - end of quarter - is endOfQuarter always sent? no, right?
   - timeout
-- fractional seconds in UI when under 1 minute
 - timeouts
   - advance to half court if under 2 minutes in game/OT
     - no backcourt events in getPossessionOutcome, but still have some chance of turnover on inbound
@@ -43,6 +42,7 @@ better clock handling in BBGM - calculate tim as you go in the play
   - plays with 0 seconds on clock
   - offensive rebound putbacks
   - tip ins
+  - tenths of seconds shown when under 1 minute left in period
 
 release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
 

@@ -337,9 +337,20 @@ const processLiveGameEvents = ({
 
 			let time;
 			if (eAny.clock !== undefined) {
-				const sec = Math.floor(eAny.clock);
-				const secString = sec < 10 ? `0${sec}` : `${sec}`;
-				time = `${Math.floor(eAny.clock)}:${secString}`;
+				const seconds = eAny.clock;
+				if (seconds <= 59.9) {
+					const centiSecondsRounded = Math.ceil(seconds * 10);
+					const remainingSeconds = Math.floor(centiSecondsRounded / 10);
+					const remainingCentiSeconds = centiSecondsRounded % 10;
+					time = `${remainingSeconds}.${remainingCentiSeconds}`;
+				} else {
+					const secondsRounded = Math.ceil(seconds);
+					const minutes = Math.floor(secondsRounded / 60);
+					const remainingSeconds = secondsRounded % 60;
+					const formattedSeconds =
+						remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+					time = `${minutes}:${formattedSeconds}`;
+				}
 			}
 
 			if (e.type === "injury") {

@@ -1638,18 +1638,9 @@ class GameSim extends GameSimBase {
 			probMake *= g.get("twoPointAccuracyFactor");
 		}
 
-		// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
-		this.advanceClockSeconds(
-			random.uniform(
-				...((type === "atRim"
-					? [0.1, 0.3]
-					: type === "lowPost"
-					  ? [0.7, 1.1]
-					  : type === "midRange"
-					    ? [0.9, 1.3]
-					    : [1.2, 1.9]) as [number, number]),
-			),
-		);
+		if (this.probBlk() > Math.random()) {
+			return this.doBlk(shooter, type); // orb or drb
+		}
 
 		let foulFactor =
 			0.65 *
@@ -1680,9 +1671,20 @@ class GameSim extends GameSimBase {
 			probMake += 0.025;
 		}
 
-		if (this.probBlk() > Math.random()) {
-			return this.doBlk(shooter, type); // orb or drb
-		}
+		const advanceClockIfNoFoul = () => {
+			// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
+			this.advanceClockSeconds(
+				random.uniform(
+					...((type === "atRim"
+						? [0.1, 0.3]
+						: type === "lowPost"
+						  ? [0.7, 1.1]
+						  : type === "midRange"
+						    ? [0.9, 1.3]
+						    : [1.2, 1.9]) as [number, number]),
+				),
+			);
+		};
 
 		// Make
 		if (probMake > Math.random()) {
@@ -1691,6 +1693,7 @@ class GameSim extends GameSimBase {
 				return this.doFg(shooter, passer, type, true); // fg, orb, or drb
 			}
 
+			advanceClockIfNoFoul();
 			return this.doFg(shooter, passer, type); // fg
 		}
 
@@ -1708,6 +1711,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Miss
+		advanceClockIfNoFoul();
 		this.recordStat(this.o, p, "fga");
 
 		if (type === "atRim") {

@@ -6,8 +6,6 @@ better clock handling in BBGM - calculate tim as you go in the play
   - higher turnovers late when defense is trailing
     - side out of bounds less likely to have a turnover
 - sent explicit possession event, to set possession indicator
-- isClockRunning
-  - set false on made fg in last 2 minutes of half/OT
 - endOfQuarter event - currently for the clock running out at the end of the quarter, but should differentiate between intentionally and unintentionally not getting a shot up. also time running out when trying to foul
 - turnovers can happen in backcourt or frontcourt
   - for frontcourt only, increase turnovers if intentionalFoul situation

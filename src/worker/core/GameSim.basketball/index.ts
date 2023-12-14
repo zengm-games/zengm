@@ -645,13 +645,9 @@ class GameSim extends GameSimBase {
 	dtInbound() {
 		let dt = 0;
 
-		if (this.prevPossessionOutcome === "fg") {
-			const quarter = this.team[0].stat.ptsQtrs.length;
-			// In the last 2 minutes of the last period or overtime, clock stops after a made shot
-			if (quarter < this.numPeriods || this.t > 2 * 60) {
-				// Time to gather ball after shot was made, and then to inbound it too
-				dt += random.uniform(1, 5);
-			}
+		if (this.prevPossessionOutcome === "fg" && this.isClockRunning) {
+			// Time to gather ball after shot was made, and then to inbound it too
+			dt += random.uniform(1, 5);
 		}
 
 		return dt;
@@ -2045,6 +2041,11 @@ class GameSim extends GameSimBase {
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
 
+		// In the last 2 minutes of a period, stop clock after made FG
+		if (this.t < 2 * 60) {
+			this.isClockRunning = false;
+		}
+
 		return "fg";
 	}
 
@@ -2339,7 +2340,9 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		if (outcome !== "fg") {
+		if (outcome === "fg") {
+			this.isClockRunning = false;
+		} else {
 			outcome = this.doReb();
 		}
 

@@ -218,6 +218,7 @@ const newPossessionTypes: Record<string, boolean> = {
 	orb: true,
 	stl: true,
 	tov: false,
+	timeout: true,
 };
 
 // Mutates boxScore!!!

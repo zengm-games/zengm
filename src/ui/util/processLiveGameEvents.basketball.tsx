@@ -67,10 +67,22 @@ export const getText = (
 	} else if (event.type === "fgaMidRange") {
 		texts = [`${getName(event.pid)} attempts a mid-range shot`];
 	} else if (event.type === "fgaTp") {
-		texts = [`${getName(event.pid)} attempts a three pointer`];
+		if (event.desperation) {
+			texts = [
+				`${getName(event.pid)} throws up a deep three as time winds down`,
+			];
+		} else {
+			texts = [`${getName(event.pid)} attempts a three pointer`];
+		}
 	} else if (event.type === "fgaTpFake") {
 		// This is for when threePointers is false
-		texts = [`${getName(event.pid)} attempts a deep shot`];
+		if (event.desperation) {
+			texts = [
+				`${getName(event.pid)} throws up a deep shot as time winds down`,
+			];
+		} else {
+			texts = [`${getName(event.pid)} attempts a deep shot`];
+		}
 	} else if (event.type === "fgTipIn") {
 		const he = getPronoun("He");
 

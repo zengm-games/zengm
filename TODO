@@ -9,9 +9,6 @@ better clock handling in BBGM - calculate tim as you go in the play
 - be careful that advanceClockSeconds does not lead to end of quarter unintentionally
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
-- heaves
-  - replace "this.possessionLength <= 2.5"
-  - flag on tp events - decreased % already being simmed, just add text
 - test made tip ins
 - tpAndOne missing pidAst
 - non-shooting fouls should not happen with 0 on the clock, but they can now
@@ -46,6 +43,7 @@ better clock handling in BBGM - calculate tim as you go in the play
   - plays with 0 seconds on clock
   - offensive rebound putbacks
   - tip ins for side out of bounds with <0.3 seconds left
+  - heaves (was already in game sim, but now exposed in UI)
   - tenths of seconds shown when under 1 minute left in period
   - when period ends on something besides a shot, it tells you what happened (team chooses to run out the clock, team fails to get up a shot, defense was trying to foul but failed)
 

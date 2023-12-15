@@ -139,12 +139,14 @@ type PlayByPlayEventInputNoScore =
 			t: TeamNum;
 			pid: number;
 			clock: number;
+			desperation: boolean;
 	  }
 	| {
 			type: "fgaTpFake";
 			t: TeamNum;
 			pid: number;
 			clock: number;
+			desperation: boolean;
 	  }
 	| {
 			type: "fgaTipIn";

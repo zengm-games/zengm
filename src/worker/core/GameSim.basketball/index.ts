@@ -1702,6 +1702,8 @@ class GameSim extends GameSimBase {
 				this.possessionLength <= 3 &&
 				!this.sideOutOfBounds());
 
+		const rushed = this.t < 2 && this.possessionLength < 6;
+
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
 		let probMake;
@@ -1744,6 +1746,7 @@ class GameSim extends GameSimBase {
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
 				clock: this.t,
+				desperation: rushed && forceThreePointer,
 			});
 		} else {
 			const r1 =
@@ -1838,7 +1841,7 @@ class GameSim extends GameSimBase {
 
 		if (!tipInFromOutOfBounds) {
 			// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
-			if (this.t < 2 && this.possessionLength < 6) {
+			if (rushed) {
 				probMake *= Math.sqrt(this.possessionLength / 8);
 			}
 

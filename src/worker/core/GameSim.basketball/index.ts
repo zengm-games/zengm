@@ -15,7 +15,7 @@ const NUM_TIMEOUTS_OVERTIME = 2;
 
 const TIMEOUTS_STOP_CLOCK = 2; // [minutes]
 
-const TIP_IN_ONLY_LIMIT = 0.3; // [seconds] - only tip-ins from an inbound with less than this much time
+const TIP_IN_ONLY_LIMIT = 0.2; // [seconds] - only tip-ins from an inbound with less than this much time
 
 type ShotType =
 	| "atRim"
@@ -1362,7 +1362,7 @@ class GameSim extends GameSimBase {
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
 		if (this.t <= 6 && !this.elamActive && !this.tipInOnly()) {
-			if (Math.random() > (this.t / 8) ** (1 / 4)) {
+			if (this.t <= 0.1 || Math.random() > (this.t / 8) ** (1 / 4)) {
 				const pointDifferential =
 					this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 				this.advanceClockSeconds(Infinity);
@@ -1443,7 +1443,10 @@ class GameSim extends GameSimBase {
 		// Simulate backcourt events, only if necessary
 		if (!possessionStartsInFrontcourt) {
 			// Turnover in backcourt?
-			if (this.t > 0.2 && Math.random() < this.probTov()) {
+			if (
+				(this.t > 0.2 || !this.elamActive) &&
+				Math.random() < this.probTov()
+			) {
 				let dt;
 				if (this.t < 8 || clockFactor === "intentionalFoul") {
 					dt = random.uniform(0.1, Math.min(this.t, 5));
@@ -1466,7 +1469,7 @@ class GameSim extends GameSimBase {
 			let dt;
 			if (clockFactor === "intentionalFoul") {
 				if (this.t < 8) {
-					if (this.t < 0.2 || (this.t < 1 && Math.random() > this.t)) {
+					if (this.t <= 0.2 || (this.t < 1 && Math.random() > this.t)) {
 						// Time ran out while trying to foul
 						this.advanceClockSeconds(Infinity);
 						this.playByPlay.logEvent({
@@ -1482,7 +1485,7 @@ class GameSim extends GameSimBase {
 					dt = random.uniform(1, 5);
 				}
 			} else {
-				if (this.t < 2) {
+				if (this.t < 2 && !this.elamActive) {
 					dt = random.uniform(0.1, this.t);
 				} else {
 					dt = random.uniform(
@@ -1599,13 +1602,15 @@ class GameSim extends GameSimBase {
 		return "stl" as const;
 	}
 
-	tipInOnly() {
+	sideOutOfBounds() {
 		return (
-			this.t < TIP_IN_ONLY_LIMIT &&
-			(this.prevPossessionOutcome === "nonShootingFoul" ||
-				(this.prevPossessionOutcome === "timeout" &&
-					this.timeoutAdvancesBall()))
+			this.prevPossessionOutcome === "nonShootingFoul" ||
+			(this.prevPossessionOutcome === "timeout" && this.timeoutAdvancesBall())
 		);
+	}
+
+	tipInOnly() {
+		return this.t <= TIP_IN_ONLY_LIMIT && this.sideOutOfBounds();
 	}
 
 	/**
@@ -1628,7 +1633,7 @@ class GameSim extends GameSimBase {
 		let dt;
 		if (tipInFromOutOfBounds) {
 			dt = 0;
-		} else if (this.t < 0.3) {
+		} else if (this.t <= 0.3) {
 			dt = random.uniform(0, upperLimit);
 		} else if (this.t < 1) {
 			// Less than 1 second left
@@ -1693,8 +1698,9 @@ class GameSim extends GameSimBase {
 				quarter >= this.numPeriods &&
 				Math.random() > this.t / 60) ||
 			(quarter < this.numPeriods &&
-				this.t === 0 &&
-				this.possessionLength <= 2.5);
+				this.t < 2 &&
+				this.possessionLength <= 3 &&
+				!this.sideOutOfBounds());
 
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
@@ -1832,7 +1838,7 @@ class GameSim extends GameSimBase {
 
 		if (!tipInFromOutOfBounds) {
 			// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
-			if (this.t === 0 && this.possessionLength < 6) {
+			if (this.t < 2 && this.possessionLength < 6) {
 				probMake *= Math.sqrt(this.possessionLength / 8);
 			}
 

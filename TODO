@@ -6,7 +6,6 @@ better clock handling in BBGM - calculate tim as you go in the play
   - higher turnovers late when defense is trailing
     - side out of bounds less likely to have a turnover
       - this implies simulating turnovers on inbound different than other turnovers
-- endOfQuarter event - currently for the clock running out at the end of the quarter, but should differentiate between intentionally and unintentionally not getting a shot up. also time running out when trying to foul
 - be careful that advanceClockSeconds does not lead to end of quarter unintentionally
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
@@ -41,6 +40,7 @@ better clock handling in BBGM - calculate tim as you go in the play
   - offensive rebound putbacks
   - tip ins
   - tenths of seconds shown when under 1 minute left in period
+  - when period ends on something besides a shot, it tells you what happened (team chooses to run out the clock, team fails to get up a shot, defense was trying to foul but failed)
 
 release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
 

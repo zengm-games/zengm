@@ -256,6 +256,12 @@ type PlayByPlayEventInputNoScore =
 			numLeft: number;
 			advancesBall: boolean;
 			clock: number;
+	  }
+	| {
+			type: "endOfPeriod";
+			t: TeamNum;
+			reason: "runOutClock" | "noShot" | "intentionalFoul";
+			clock: number;
 	  };
 
 type PlayByPlayEventInput =

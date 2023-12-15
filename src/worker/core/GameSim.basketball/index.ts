@@ -86,7 +86,7 @@ type TeamGameSim = {
 type PossessionOutcome =
 	| "tov"
 	| "stl"
-	| "endOfQuarter"
+	| "endOfPeriod"
 	| "nonShootingFoul"
 	| "drb"
 	| "orb"
@@ -667,6 +667,7 @@ class GameSim extends GameSimBase {
 
 		const clockFactor = this.getClockFactor();
 		const outcome = this.getPossessionOutcome(clockFactor);
+		console.log(this.t, outcome);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (
@@ -1342,14 +1343,28 @@ class GameSim extends GameSimBase {
 		// If winning at end of game, just run out the clock
 		if (clockFactor === "runOutClock") {
 			this.advanceClockSeconds(Infinity);
-			return "endOfQuarter";
+			this.playByPlay.logEvent({
+				type: "endOfPeriod",
+				t: this.o,
+				clock: this.t,
+				reason: "runOutClock",
+			});
+			console.log("endOfPeriod runOutClock");
+			return "endOfPeriod";
 		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
 		if (this.t <= 6 && !this.elamActive) {
 			if (Math.random() > (this.t / 8) ** (1 / 4)) {
 				this.advanceClockSeconds(Infinity);
-				return "endOfQuarter";
+				this.playByPlay.logEvent({
+					type: "endOfPeriod",
+					t: this.o,
+					clock: this.t,
+					reason: "noShot",
+				});
+				console.log("endOfPeriod noShot");
+				return "endOfPeriod";
 			}
 		}
 
@@ -1441,7 +1456,14 @@ class GameSim extends GameSimBase {
 					if (this.t < 0.2 || (this.t < 1 && Math.random() > this.t)) {
 						// Time ran out while trying to foul
 						this.advanceClockSeconds(Infinity);
-						return "endOfQuarter";
+						this.playByPlay.logEvent({
+							type: "endOfPeriod",
+							t: this.o,
+							clock: this.t,
+							reason: "intentionalFoul",
+						});
+						console.log("endOfPeriod intentionalFoul");
+						return "endOfPeriod";
 					}
 					dt = random.uniform(0.1, Math.min(this.t - 0.2, 4));
 				} else {
@@ -1862,7 +1884,7 @@ class GameSim extends GameSimBase {
 			return this.doReb();
 		}
 
-		return "endOfQuarter";
+		return "endOfPeriod";
 	}
 
 	/**

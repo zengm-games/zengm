@@ -176,6 +176,14 @@ export const getText = (
 				event.advancesBall ? "; the ball is advanced to half court" : ""
 			}`,
 		];
+	} else if (event.type === "endOfPeriod") {
+		if (event.reason === "runOutClock") {
+			texts = ["They ran out the clock to end the game"];
+		} else if (event.reason === "noShot") {
+			texts = ["They didn't get a shot up before the buzzer"];
+		} else {
+			texts = ["The clock runs out as the defense tries to foul"];
+		}
 	}
 
 	if (texts) {
@@ -219,6 +227,7 @@ const newPossessionTypes: Record<string, boolean> = {
 	stl: true,
 	tov: false,
 	timeout: true,
+	endOfPeriod: true,
 };
 
 // Mutates boxScore!!!

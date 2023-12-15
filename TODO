@@ -10,7 +10,16 @@ better clock handling in BBGM - calculate tim as you go in the play
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
 - heaves
-- tip ins
+  - replace "this.possessionLength <= 2.5"
+  - flag on tp events - decreased % already being simmed, just add text
+- test made tip ins
+- tpAndOne missing pidAst
+- sim many games and test for negative time - saw it in overtime
+  - seems to happen after late made FG or FT
+- non-shooting fouls should not happen with 0 on the clock, but they can now
+- play by play shows shot happening at 0.0 on the clock, should be impossible
+- time elapses between late timeout (1.6 seconds left) and a tip in attempt (0.2 seconds)
+- rebound should not be logged at 0.0 seconds - nothing should
 - possession timeline - advance this.t within these functions, while keeping track of total (for shot clock)
   - backcourt
     - intentional foul
@@ -38,7 +47,7 @@ better clock handling in BBGM - calculate tim as you go in the play
     - foul w 0 seconds
   - plays with 0 seconds on clock
   - offensive rebound putbacks
-  - tip ins
+  - tip ins for side out of bounds with <0.3 seconds left
   - tenths of seconds shown when under 1 minute left in period
   - when period ends on something besides a shot, it tells you what happened (team chooses to run out the clock, team fails to get up a shot, defense was trying to foul but failed)
 

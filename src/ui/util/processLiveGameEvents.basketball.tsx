@@ -54,6 +54,12 @@ export const getText = (
 		texts = [
 			`${getName(event.pid)} stole the ball from ${getName(event.pidTov)}`,
 		];
+	} else if (event.type === "fgaTipIn") {
+		texts = [
+			`${getName(event.pid)} cuts to the rim as ${getName(
+				event.pidPass,
+			)} lobs up the inbound pass`,
+		];
 	} else if (event.type === "fgaAtRim") {
 		texts = [`${getName(event.pid)} elevates for a shot at the rim`];
 	} else if (event.type === "fgaLowPost") {
@@ -65,6 +71,19 @@ export const getText = (
 	} else if (event.type === "fgaTpFake") {
 		// This is for when threePointers is false
 		texts = [`${getName(event.pid)} attempts a deep shot`];
+	} else if (event.type === "fgTipIn") {
+		const he = getPronoun("He");
+
+		texts = [`${he} slams it home!`, `${he} tips it in!`];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
+	} else if (event.type === "fgTipInAndOne") {
+		const he = getPronoun("He");
+
+		texts = [
+			`${he} slams it home, and a foul!`,
+			`${he} tips it in, and a foul!`,
+		];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgAtRim") {
 		const he = getPronoun("He");
 
@@ -95,7 +114,7 @@ export const getText = (
 		event.type === "tpAndOne"
 	) {
 		texts = ["It's good, and a foul!"];
-	} else if (event.type === "blkAtRim") {
+	} else if (event.type === "blkAtRim" || event.type === "blkTipIn") {
 		texts = [
 			`${getName(event.pid)} blocked the layup attempt`,
 			`${getName(event.pid)} blocked the dunk attempt`,
@@ -109,6 +128,12 @@ export const getText = (
 		event.type === "blkTp"
 	) {
 		texts = [`Blocked by ${getName(event.pid)}!`];
+	} else if (event.type === "missTipIn") {
+		const he = getPronoun("He");
+		texts = [`${he} blows the layup`, `${he} blows the dunk`, "No good"];
+		if (local.getState().gender === "female") {
+			weights = [1, 0, 1];
+		}
 	} else if (event.type === "missAtRim") {
 		texts = [
 			`${getPronoun("He")} missed the layup`,
@@ -173,12 +198,12 @@ export const getText = (
 	} else if (event.type === "timeout") {
 		texts = [
 			`Timeout (${event.numLeft} remaining)${
-				event.advancesBall ? "; the ball is advanced to half court" : ""
+				event.advancesBall ? ", the ball is advanced to half court" : ""
 			}`,
 		];
 	} else if (event.type === "endOfPeriod") {
 		if (event.reason === "runOutClock") {
-			texts = ["They ran out the clock to end the game"];
+			texts = ["They run out the clock to end the game"];
 		} else if (event.reason === "noShot") {
 			texts = ["They didn't get a shot up before the buzzer"];
 		} else {

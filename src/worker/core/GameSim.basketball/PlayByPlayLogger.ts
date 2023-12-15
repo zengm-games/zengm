@@ -63,9 +63,29 @@ type PlayByPlayEventInputScore =
 			t: TeamNum;
 			pid: number;
 			clock: number;
+	  }
+	| {
+			type: "fgTipIn";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgTipInAndOne";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
 	  };
 
 type PlayByPlayEventInputNoScore =
+	| {
+			type: "blkTipIn";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
 	| {
 			type: "blkAtRim";
 			t: TeamNum;
@@ -127,6 +147,13 @@ type PlayByPlayEventInputNoScore =
 			clock: number;
 	  }
 	| {
+			type: "fgaTipIn";
+			t: TeamNum;
+			pid: number;
+			pidPass: number;
+			clock: number;
+	  }
+	| {
 			type: "foulOut";
 			t: TeamNum;
 			pid: number;
@@ -143,6 +170,12 @@ type PlayByPlayEventInputNoScore =
 	  }
 	| {
 			type: "jumpBall";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missTipIn";
 			t: TeamNum;
 			pid: number;
 			clock: number;

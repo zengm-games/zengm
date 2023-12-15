@@ -15,7 +15,15 @@ const NUM_TIMEOUTS_OVERTIME = 2;
 
 const TIMEOUTS_STOP_CLOCK = 2; // [minutes]
 
-type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
+const TIP_IN_ONLY_LIMIT = 0.3; // [seconds] - only tip-ins from an inbound with less than this much time
+
+type ShotType =
+	| "atRim"
+	| "ft"
+	| "lowPost"
+	| "midRange"
+	| "threePointer"
+	| "tipIn";
 type Stat =
 	| "ast"
 	| "ba"
@@ -635,6 +643,7 @@ class GameSim extends GameSimBase {
 			offenseWinningByABit &&
 			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
 			this.t < 27 &&
+			this.t > 0.3 &&
 			!this.elamActive &&
 			this.getNumFoulsUntilBonus() <= 10;
 
@@ -1349,21 +1358,26 @@ class GameSim extends GameSimBase {
 				clock: this.t,
 				reason: "runOutClock",
 			});
-			console.log("endOfPeriod runOutClock");
 			return "endOfPeriod";
 		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
-		if (this.t <= 6 && !this.elamActive) {
+		if (this.t <= 6 && !this.elamActive && !this.tipInOnly()) {
 			if (Math.random() > (this.t / 8) ** (1 / 4)) {
+				const pointDifferential =
+					this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 				this.advanceClockSeconds(Infinity);
 				this.playByPlay.logEvent({
 					type: "endOfPeriod",
 					t: this.o,
 					clock: this.t,
-					reason: "noShot",
+					reason:
+						clockFactor === "intentionalFoul"
+							? "intentionalFoul"
+							: pointDifferential > 0
+							  ? "runOutClock"
+							  : "noShot",
 				});
-				console.log("endOfPeriod noShot");
 				return "endOfPeriod";
 			}
 		}
@@ -1462,7 +1476,6 @@ class GameSim extends GameSimBase {
 							clock: this.t,
 							reason: "intentionalFoul",
 						});
-						console.log("endOfPeriod intentionalFoul");
 						return "endOfPeriod";
 					}
 					dt = random.uniform(0.1, Math.min(this.t - 0.2, 4));
@@ -1500,14 +1513,16 @@ class GameSim extends GameSimBase {
 		}
 
 		// Time to advance ball to frontcourt
-		const upperLimitMin =
-			clockFactor === "catchUp" ? 1 : clockFactor === "maintainLead" ? 4 : 2;
-		const min = Math.max(Math.min(this.t - 0.3, upperLimitMin), 0);
-		const upperLimitMax =
-			clockFactor === "catchUp" ? 4 : clockFactor === "maintainLead" ? 8 : 6;
-		const max = Math.max(Math.min(this.t - 0.3, upperLimitMax), 0);
-		const dt = random.uniform(min, max);
-		this.advanceClockSeconds(dt);
+		if (!possessionStartsInFrontcourt) {
+			const upperLimitMin =
+				clockFactor === "catchUp" ? 1 : clockFactor === "maintainLead" ? 4 : 2;
+			const min = Math.max(Math.min(this.t - 0.3, upperLimitMin), 0);
+			const upperLimitMax =
+				clockFactor === "catchUp" ? 4 : clockFactor === "maintainLead" ? 8 : 6;
+			const max = Math.max(Math.min(this.t - 0.3, upperLimitMax), 0);
+			const dt = random.uniform(min, max);
+			this.advanceClockSeconds(dt);
+		}
 
 		// Shot!
 		return this.doShot(shooter, clockFactor);
@@ -1585,6 +1600,15 @@ class GameSim extends GameSimBase {
 		return "stl" as const;
 	}
 
+	tipInOnly() {
+		return (
+			this.t < TIP_IN_ONLY_LIMIT &&
+			(this.prevPossessionOutcome === "nonShootingFoul" ||
+				(this.prevPossessionOutcome === "timeout" &&
+					this.timeoutAdvancesBall()))
+		);
+	}
+
 	/**
 	 * Shot.
 	 *
@@ -1593,20 +1617,23 @@ class GameSim extends GameSimBase {
 	 */
 	doShot(shooter: PlayerNumOnCourt, clockFactor: ClockFactor) {
 		// Ball is already in frontcourt. How long until the shot goes up?
-		const lowerLimit = Math.min(this.t / 2, 2);
-		const upperLimit = Math.min(
-			SHOT_CLOCK - this.possessionLength,
-			this.t - 0.1,
-		);
-		const tipInOnly = this.t < 0.25;
-		const catchAndShootOnly = this.t < 0.45;
+		let lowerLimit = Math.min(this.t / 2, 2);
+		let upperLimit = Math.min(SHOT_CLOCK - this.possessionLength, this.t - 0.1);
+		if (upperLimit < 0) {
+			lowerLimit = 0;
+			upperLimit = 0;
+		}
+
+		const tipInFromOutOfBounds = this.tipInOnly();
+
 		let dt;
-		if (this.t < 0.15) {
-			// Less than 0.1 seconds left - must be a tip in
+		if (tipInFromOutOfBounds) {
 			dt = 0;
+		} else if (this.t < 0.3) {
+			dt = random.uniform(0, upperLimit);
 		} else if (this.t < 1) {
 			// Less than 1 second left
-			dt = random.uniform(0.15, upperLimit);
+			dt = random.uniform(0.2, upperLimit);
 		} else if (lowerLimit > upperLimit) {
 			// Less than 2 seconds left
 			dt = random.uniform(0.5, upperLimit);
@@ -1628,7 +1655,11 @@ class GameSim extends GameSimBase {
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer: PlayerNumOnCourt | undefined;
-		if (this.probAst() > Math.random() && this.numPlayersOnCourt > 1) {
+		if (
+			(tipInFromOutOfBounds ||
+				(this.t > 1 && this.probAst() > Math.random())) &&
+			this.numPlayersOnCourt > 1
+		) {
 			const ratios = this.ratingArray("passing", this.o, 10);
 			passer = pickPlayer(ratios, shooter);
 		}
@@ -1672,7 +1703,21 @@ class GameSim extends GameSimBase {
 		let probMissAndFoul;
 		let type: ShotType;
 
-		if (
+		if (tipInFromOutOfBounds) {
+			type = "tipIn";
+			probMissAndFoul = 0.02;
+			probMake =
+				0.05 + this.team[this.o].player[p].compositeRating.shootingAtRim * 0.1;
+			probAndOne = 0.01;
+
+			this.playByPlay.logEvent({
+				type: "fgaTipIn",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				pidPass: this.team[this.o].player[passer!].id,
+				clock: this.t,
+			});
+		} else if (
 			forceThreePointer ||
 			Math.random() <
 				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
@@ -1786,28 +1831,30 @@ class GameSim extends GameSimBase {
 					(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
 			currentFatigue;
 
-		// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+		if (!tipInFromOutOfBounds) {
+			// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+			if (this.t === 0 && this.possessionLength < 6) {
+				probMake *= Math.sqrt(this.possessionLength / 8);
+			}
 
-		if (this.t === 0 && this.possessionLength < 6) {
-			probMake *= Math.sqrt(this.possessionLength / 8);
-		}
-
-		// Assisted shots are easier
-		if (passer !== undefined) {
-			probMake += 0.025;
+			// Assisted shots are easier
+			if (passer !== undefined) {
+				probMake += 0.025;
+			}
 		}
 
 		const advanceClock = () => {
 			if (!this.isClockRunning) {
-				// Time between shot and foul being called
-				this.advanceClockSeconds(random.uniform(0, 0.2));
+				// Time between shot and foul being called - maybe better off not having this, since it can lead to too many fouls with 0 on the clock
+				// this.advanceClockSeconds(random.uniform(0, 0.2));
+				return;
 			}
 
 			// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
 			this.advanceClockSeconds(
 				random.uniform(
 					...((type === "atRim"
-						? [0.1, 0.3]
+						? [0.2, 0.5]
 						: type === "lowPost"
 						  ? [0.7, 1.1]
 						  : type === "midRange"
@@ -1846,7 +1893,15 @@ class GameSim extends GameSimBase {
 		advanceClock();
 		this.recordStat(this.o, p, "fga");
 
-		if (type === "atRim") {
+		if (type === "tipIn") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.playByPlay.logEvent({
+				type: "missTipIn",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
+		} else if (type === "atRim") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.playByPlay.logEvent({
 				type: "missAtRim",
@@ -1925,7 +1980,14 @@ class GameSim extends GameSimBase {
 		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p2, "blk");
 
-		if (type === "atRim") {
+		if (type === "tipIn") {
+			this.playByPlay.logEvent({
+				type: "blkTipIn",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
+		} else if (type === "atRim") {
 			this.playByPlay.logEvent({
 				type: "blkAtRim",
 				t: this.d,
@@ -1995,6 +2057,17 @@ class GameSim extends GameSimBase {
 			pidAst = this.team[this.o].player[pAst].id;
 		}
 
+		if (type === "tipIn") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.recordStat(this.o, p, "fgAtRim");
+			this.playByPlay.logEvent({
+				type: andOne ? "fgTipInAndOne" : "fgTipIn",
+				t: this.o,
+				pid,
+				pidAst,
+				clock: this.t,
+			});
+		}
 		if (type === "atRim") {
 			// Randomly pick a name to be dunked on
 			let pidDefense;

@@ -663,8 +663,6 @@ class GameSim extends GameSimBase {
 	}
 
 	simPossession() {
-		this.isClockRunning = true;
-
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
@@ -673,6 +671,7 @@ class GameSim extends GameSimBase {
 		const dtInbound = this.dtInbound();
 		this.t -= dtInbound;
 		this.possessionLength = 0;
+		this.isClockRunning = true; // Set after computing dtIinbound!
 
 		const clockFactor = this.getClockFactor();
 		const outcome = this.getPossessionOutcome(clockFactor);

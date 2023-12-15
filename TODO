@@ -14,8 +14,6 @@ better clock handling in BBGM - calculate tim as you go in the play
   - flag on tp events - decreased % already being simmed, just add text
 - test made tip ins
 - tpAndOne missing pidAst
-- sim many games and test for negative time - saw it in overtime
-  - seems to happen after late made FG or FT
 - non-shooting fouls should not happen with 0 on the clock, but they can now
 - play by play shows shot happening at 0.0 on the clock, should be impossible
 - time elapses between late timeout (1.6 seconds left) and a tip in attempt (0.2 seconds)

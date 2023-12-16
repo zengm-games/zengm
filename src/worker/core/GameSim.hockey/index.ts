@@ -1682,17 +1682,12 @@ class GameSim extends GameSimBase {
 							p.injury.playingThrough,
 						);
 
-						// 10% as many injuries for G
+						// Fewer injuries for G
 						if (pos === "G") {
-							injuryRate *= 0.1;
+							injuryRate *= 0.25;
 						}
 
 						if (Math.random() < injuryRate) {
-							// 10% as many injuries for G
-							if (pos === "G" && Math.random() < 0.1) {
-								continue;
-							}
-
 							p.injured = true;
 							p.newInjury = true;
 							this.playByPlay.logEvent({

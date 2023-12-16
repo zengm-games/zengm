@@ -483,6 +483,7 @@ class GameSim extends GameSimBase {
 			);
 			this.elamTarget = maxPts + g.get("elamPoints");
 			this.elamActive = true;
+			this.t = Infinity; // This disables any late clock effects
 			this.playByPlay.logEvent({
 				type: "elamActive",
 				target: this.elamTarget,
@@ -519,7 +520,7 @@ class GameSim extends GameSimBase {
 			this.d = this.o === 0 ? 1 : 0;
 
 			this.checkElamEnding(); // Before loop, in case it's at 0
-			while ((this.t > 0 || this.elamActive) && !this.elamDone) {
+			while (this.t > 0 && !this.elamDone) {
 				if (
 					finalPeriod &&
 					!doneSettingTimeoutsLastThreeMinutes &&
@@ -580,12 +581,16 @@ class GameSim extends GameSimBase {
 
 		this.jumpBall();
 
-		while ((this.t > 0 || this.elamActive) && !this.elamDone) {
+		while (this.t > 0 && !this.elamDone) {
 			this.simPossession();
 		}
 	}
 
 	getClockFactor() {
+		if (this.elamActive) {
+			return;
+		}
+
 		if (this.shouldIntentionalFoul()) {
 			return "intentionalFoul";
 		}
@@ -595,43 +600,33 @@ class GameSim extends GameSimBase {
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
 		// Run out the clock if winning
-		if (
-			period >= this.numPeriods &&
-			!this.elamActive &&
-			this.t <= 24 &&
-			pointDifferential > 0
-		) {
+		if (period >= this.numPeriods && this.t <= 24 && pointDifferential > 0) {
 			return "runOutClock" as const;
 		}
 
-		if (!this.elamActive) {
-			if (
-				this.t <= 26 &&
-				(period < this.numPeriods || pointDifferential >= 0)
-			) {
-				return "holdForLastShot" as const;
-			}
+		if (this.t <= 26 && (period < this.numPeriods || pointDifferential >= 0)) {
+			return "holdForLastShot" as const;
+		}
 
-			if (
-				period >= this.numPeriods &&
-				((this.t <= 3 * 60 && pointDifferential <= -10) ||
-					(this.t <= 2 * 60 && pointDifferential <= -5) ||
-					(this.t <= 1 * 60 && pointDifferential < 0))
-			) {
-				return "catchUp";
-			}
-			if (
-				period >= this.numPeriods &&
-				((this.t <= 3 * 60 && pointDifferential > 10) ||
-					(this.t <= 2 * 60 && pointDifferential > 5) ||
-					(this.t <= 1 * 60 && pointDifferential > 0))
-			) {
-				return "maintainLead";
-			}
+		if (
+			period >= this.numPeriods &&
+			((this.t <= 3 * 60 && pointDifferential <= -10) ||
+				(this.t <= 2 * 60 && pointDifferential <= -5) ||
+				(this.t <= 1 * 60 && pointDifferential < 0))
+		) {
+			return "catchUp";
+		}
+		if (
+			period >= this.numPeriods &&
+			((this.t <= 3 * 60 && pointDifferential > 10) ||
+				(this.t <= 2 * 60 && pointDifferential > 5) ||
+				(this.t <= 1 * 60 && pointDifferential > 0))
+		) {
+			return "maintainLead";
+		}
 
-			if (this.t >= 32 && this.t <= 52) {
-				return "twoForOne";
-			}
+		if (this.t >= 32 && this.t <= 52) {
+			return "twoForOne";
 		}
 	}
 
@@ -644,7 +639,6 @@ class GameSim extends GameSimBase {
 			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
 			this.t < 27 &&
 			this.t > 0.3 &&
-			!this.elamActive &&
 			this.getNumFoulsUntilBonus() <= 10;
 
 		return intentionalFoul;
@@ -744,7 +738,7 @@ class GameSim extends GameSimBase {
 
 		// Late in games, or in OT, fatigue matters less
 		if (this.isLateGame()) {
-			const factor = 6 - this.t / 60;
+			const factor = this.elamActive ? 2 : 6 - this.t / 60;
 			return (energy + factor) / (1 + factor);
 		}
 
@@ -1326,6 +1320,10 @@ class GameSim extends GameSimBase {
 	}
 
 	advanceClockSeconds(seconds: number) {
+		if (this.elamActive) {
+			return;
+		}
+
 		if (this.t === 0) {
 			throw new Error("advanceClockSeconds called with 0 already on the clock");
 		}
@@ -1365,7 +1363,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
-		if (this.t <= 6 && !this.elamActive && !this.tipInOnly()) {
+		if (this.t <= 6 && !this.tipInOnly()) {
 			if (this.t <= 0.1 || Math.random() > (this.t / 8) ** (1 / 4)) {
 				const pointDifferential =
 					this.team[this.o].stat.pts - this.team[this.d].stat.pts;
@@ -1447,10 +1445,7 @@ class GameSim extends GameSimBase {
 		// Simulate backcourt events, only if necessary
 		if (!possessionStartsInFrontcourt) {
 			// Turnover in backcourt?
-			if (
-				(this.t > 0.2 || !this.elamActive) &&
-				Math.random() < this.probTov()
-			) {
+			if (this.t > 0.2 && Math.random() < this.probTov()) {
 				let dt;
 				if (this.t < 8 || clockFactor === "intentionalFoul") {
 					dt = random.uniform(0.1, Math.min(this.t, 5));
@@ -1489,8 +1484,8 @@ class GameSim extends GameSimBase {
 					dt = random.uniform(1, 5);
 				}
 			} else {
-				if (this.t < 2 && !this.elamActive) {
-					dt = random.uniform(0.1, this.t);
+				if (this.t < 2) {
+					dt = random.uniform(0, this.t);
 				} else {
 					dt = random.uniform(
 						1,
@@ -1504,6 +1499,10 @@ class GameSim extends GameSimBase {
 			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
 			const numFoulsUntilBonus = this.getNumFoulsUntilBonus();
 			const inBonus = numFoulsUntilBonus <= 1;
+
+			if (this.t <= 0) {
+				throw new Error("Clock at 0 for non-shooting foul");
+			}
 
 			if (inBonus) {
 				this.doPf({ t: this.d, type: "pfBonus", shooter });
@@ -1696,8 +1695,7 @@ class GameSim extends GameSimBase {
 		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const forceThreePointer =
-			(!this.elamActive &&
-				diff >= 3 &&
+			(diff >= 3 &&
 				diff <= 10 &&
 				this.t <= 10 &&
 				quarter >= this.numPeriods &&
@@ -2537,7 +2535,7 @@ class GameSim extends GameSimBase {
 	 * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
 	 */
 	doReb() {
-		if (this.t === 0 && !this.elamActive) {
+		if (this.t === 0) {
 			return "endOfPeriod";
 		}
 

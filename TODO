@@ -3,9 +3,11 @@ better clock handling in BBGM - calculate tim as you go in the play
   - sim ball going out of bounds
     - where is inbound from?
     - clock stops
-  - higher turnovers late when defense is trailing
-    - side out of bounds less likely to have a turnover
-      - this implies simulating turnovers on inbound different than other turnovers
+  - turnovers
+    - higher turnovers late when defense is trailing
+      - side out of bounds less likely to have a turnover
+        - this implies simulating turnovers on inbound different than other turnovers
+    - currently there are no turnovers if !possessionStartsInFrontcourt
   - offensive rebound putback should be fast and with no assist
     - somehow know who got the rebound so we can reuse them for the putback
     - higher percentage shot, happens with some probability based on dunk/inside ratings and defense rating

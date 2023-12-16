@@ -1634,6 +1634,7 @@ class GameSim extends GameSimBase {
 
 		const tipInFromOutOfBounds = this.tipInOnly();
 
+		// Time from the ball being in the frontcourt to a shot
 		let dt;
 		if (tipInFromOutOfBounds) {
 			dt = 0;
@@ -1707,6 +1708,10 @@ class GameSim extends GameSimBase {
 				!this.sideOutOfBounds());
 
 		const rushed = this.t < 2 && this.possessionLength < 6;
+
+		if (this.t <= 0) {
+			throw new Error("Clock at 0 when a shot is taken");
+		}
 
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
@@ -1947,11 +1952,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		if (this.t > 0 || this.elamActive) {
-			return this.doReb();
-		}
-
-		return "endOfPeriod";
+		return this.doReb();
 	}
 
 	/**
@@ -2536,6 +2537,10 @@ class GameSim extends GameSimBase {
 	 * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
 	 */
 	doReb() {
+		if (this.t === 0 && !this.elamActive) {
+			return "endOfPeriod";
+		}
+
 		let p;
 		let ratios;
 

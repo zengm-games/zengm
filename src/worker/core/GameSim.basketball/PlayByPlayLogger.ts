@@ -62,6 +62,7 @@ type PlayByPlayEventInputScore =
 			type: "tpAndOne";
 			t: TeamNum;
 			pid: number;
+			pidAst: number | undefined;
 			clock: number;
 	  }
 	| {

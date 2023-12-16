@@ -6,7 +6,9 @@ better clock handling in BBGM - calculate tim as you go in the play
   - higher turnovers late when defense is trailing
     - side out of bounds less likely to have a turnover
       - this implies simulating turnovers on inbound different than other turnovers
-- be careful that advanceClockSeconds does not lead to end of quarter unintentionally
+  - offensive rebound putback should be fast and with no assist
+    - somehow know who got the rebound so we can reuse them for the putback
+    - higher percentage shot, happens with some probability based on dunk/inside ratings and defense rating
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
 - test made tip ins
@@ -26,10 +28,6 @@ better clock handling in BBGM - calculate tim as you go in the play
       - <0.3 seconds mean shot must be a tip in
         - only for side out of bounds or orb put back - maybe do this check before calling doShot?
     - assist should imply some minimum time was used
-    - offensive rebound putback should be fast and with no assist
-      - somehow know who got the rebound so we can reuse them for the putback
-    - foul stops clock (fewer fouls as time expires)
-      - doShot needs to advance time - takes possessionLength, do something with it
     - some time runs off clock
       - use all clockFactor variables
     - use clockFactor in doShot

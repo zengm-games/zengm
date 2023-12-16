@@ -1326,6 +1326,10 @@ class GameSim extends GameSimBase {
 	}
 
 	advanceClockSeconds(seconds: number) {
+		if (this.t === 0) {
+			throw new Error("advanceClockSeconds called with 0 already on the clock");
+		}
+
 		if (seconds > this.t) {
 			this.possessionLength += this.t;
 			this.t = 0;

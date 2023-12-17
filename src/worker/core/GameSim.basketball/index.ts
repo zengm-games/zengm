@@ -2587,14 +2587,18 @@ class GameSim extends GameSimBase {
 	}
 
 	doReb() {
+		let p;
+		let ratios;
+
 		if (this.t === 0) {
 			return "endOfPeriod";
 		}
 
-		let p;
-		let ratios;
-
 		this.advanceClockSeconds(random.uniform(0.1, 0.7));
+
+		if (this.t === 0) {
+			return "endOfPeriod";
+		}
 
 		if (Math.random() < 0.15) {
 			return null;

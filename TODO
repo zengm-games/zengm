@@ -3,34 +3,26 @@ better clock handling in BBGM - calculate tim as you go in the play
   - sim ball going out of bounds
     - where is inbound from?
     - clock stops
-  - turnovers
+  - turnovers/steals
     - higher turnovers late when defense is trailing
       - side out of bounds less likely to have a turnover
         - this implies simulating turnovers on inbound different than other turnovers
+    - increase turnover/stl rate even further before intentional foul, if there is enough time
     - currently there are no turnovers if !possessionStartsInFrontcourt
-  - offensive rebound putback should be fast and with no assist
-    - somehow know who got the rebound so we can reuse them for the putback
-    - higher percentage shot, happens with some probability based on dunk/inside ratings and defense rating
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
-- test made tip ins
-- non-shooting fouls should not happen with 0 on the clock, but they can now
-- time elapses between late timeout (1.6 seconds left) and a tip in attempt (0.2 seconds)
-  - still happening?
-- possession timeline - advance this.t within these functions, while keeping track of total (for shot clock)
-  - backcourt
-    - intentional foul
-      - increase turnover/stl rate before foul, if there is enough time
-    - some time runs off clock
-      - use all clockFactor variables
-  - frontcourt
-    - if not enough time, shot quality decreases
-      - <0.3 seconds mean shot must be a tip in
-        - only for side out of bounds or orb put back - maybe do this check before calling doShot?
-    - assist should imply some minimum time was used
-    - some time runs off clock
-      - use all clockFactor variables
-    - use clockFactor in doShot
+- offensive rebound putback should be fast and with no assist
+  - somehow know who got the rebound so we can reuse them for the putback
+  - higher percentage shot, happens with some probability based on dunk/inside ratings and defense rating
+- assist should imply some minimum time was used
+  - tip-in - already handled
+  - orb - if not enough time, always do a put back attempt, but maybe with lower percentage
+  - normal change of possession - if not enough time, just don't add assister
+- test
+  - made tip-ins text
+  - player stats
+  - team stats
+    - pace variation
 - https://github.com/zengm-games/zengm/issues/392
 - blog
   - timeouts to stop clock and advance ball under 2 minutes

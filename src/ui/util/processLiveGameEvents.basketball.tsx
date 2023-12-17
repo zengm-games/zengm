@@ -60,6 +60,8 @@ export const getText = (
 				event.pidPass,
 			)} lobs up the inbound pass`,
 		];
+	} else if (event.type === "fgaPutBack") {
+		texts = [`${getName(event.pid)} puts the offensive rebound back up`];
 	} else if (event.type === "fgaAtRim") {
 		texts = [`${getName(event.pid)} elevates for a shot at the rim`];
 	} else if (event.type === "fgaLowPost") {
@@ -96,6 +98,19 @@ export const getText = (
 			`${he} tips it in, and a foul!`,
 		];
 		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
+	} else if (event.type === "fgPutBack") {
+		const he = getPronoun("He");
+
+		texts = [`${he} slams it home!`, `${he} lays it in!`];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
+	} else if (event.type === "fgPutBackAndOne") {
+		const he = getPronoun("He");
+
+		texts = [
+			`${he} slams it home, and a foul!`,
+			`${he} lays it in, and a foul!`,
+		];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgAtRim") {
 		const he = getPronoun("He");
 
@@ -126,7 +141,11 @@ export const getText = (
 		event.type === "tpAndOne"
 	) {
 		texts = ["It's good, and a foul!"];
-	} else if (event.type === "blkAtRim" || event.type === "blkTipIn") {
+	} else if (
+		event.type === "blkAtRim" ||
+		event.type === "blkTipIn" ||
+		event.type === "blkPutBack"
+	) {
 		texts = [
 			`${getName(event.pid)} blocked the layup attempt`,
 			`${getName(event.pid)} blocked the dunk attempt`,
@@ -146,7 +165,7 @@ export const getText = (
 		if (local.getState().gender === "female") {
 			weights = [1, 0, 1];
 		}
-	} else if (event.type === "missAtRim") {
+	} else if (event.type === "missAtRim" || event.type === "missPutBack") {
 		texts = [
 			`${getPronoun("He")} missed the layup`,
 			"The layup attempt rolls out",
@@ -249,6 +268,8 @@ const newPossessionTypes: Record<string, boolean> = {
 	tp: true,
 	tpAndOne: true,
 	drb: true,
+	fgaTipIn: true,
+	fgaPutBack: true,
 	fgaAtRim: true,
 	fgaLowPost: true,
 	fgaMidRange: true,

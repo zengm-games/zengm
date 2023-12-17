@@ -78,11 +78,29 @@ type PlayByPlayEventInputScore =
 			pid: number;
 			pidAst: number | undefined;
 			clock: number;
+	  }
+	| {
+			type: "fgPutBack";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "fgPutBackAndOne";
+			t: TeamNum;
+			pid: number;
+			clock: number;
 	  };
 
 type PlayByPlayEventInputNoScore =
 	| {
 			type: "blkTipIn";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "blkPutBack";
 			t: TeamNum;
 			pid: number;
 			clock: number;
@@ -157,6 +175,12 @@ type PlayByPlayEventInputNoScore =
 			clock: number;
 	  }
 	| {
+			type: "fgaPutBack";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
 			type: "foulOut";
 			t: TeamNum;
 			pid: number;
@@ -179,6 +203,12 @@ type PlayByPlayEventInputNoScore =
 	  }
 	| {
 			type: "missTipIn";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missPutBack";
 			t: TeamNum;
 			pid: number;
 			clock: number;

@@ -1,6 +1,6 @@
 better clock handling in BBGM - calculate tim as you go in the play
 - later
-  - sim ball going out of bounds
+  - sim ball going out of bounds, such as how there are currently missed shots that nobody rebounds
     - where is inbound from?
     - clock stops
   - turnovers/steals
@@ -9,15 +9,14 @@ better clock handling in BBGM - calculate tim as you go in the play
         - this implies simulating turnovers on inbound different than other turnovers
     - increase turnover/stl rate even further before intentional foul, if there is enough time
     - currently there are no turnovers if !possessionStartsInFrontcourt
+  - offensive rebound putback should be fast and with no assist
+    - mostly implemented already, but only used now for lateGameOrbPutback. other put backs should be higher percentage. but make sure it doesn't affect stats too much
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
-- offensive rebound putback should be fast and with no assist
-  - somehow know who got the rebound so we can reuse them for the putback
-  - higher percentage shot, happens with some probability based on dunk/inside ratings and defense rating
 - assist should imply some minimum time was used
-  - tip-in - already handled
-  - orb - if not enough time, always do a put back attempt, but maybe with lower percentage
   - normal change of possession - if not enough time, just don't add assister
+  - heaves
+- offensive rebound happened at 0 seconds still
 - test
   - made tip-ins text
   - player stats
@@ -36,6 +35,7 @@ better clock handling in BBGM - calculate tim as you go in the play
   - heaves (was already in game sim, but now exposed in UI)
   - tenths of seconds shown when under 1 minute left in period
   - when period ends on something besides a shot, it tells you what happened (team chooses to run out the clock, team fails to get up a shot, defense was trying to foul but failed)
+  - offensive rebound put backs (for now, only when clock is low, because i didn't want to add too much stuff that could affect sim results)
 
 release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
 

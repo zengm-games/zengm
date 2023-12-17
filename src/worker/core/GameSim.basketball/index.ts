@@ -23,7 +23,8 @@ type ShotType =
 	| "lowPost"
 	| "midRange"
 	| "threePointer"
-	| "tipIn";
+	| "tipIn"
+	| "putBack";
 type Stat =
 	| "ast"
 	| "ba"
@@ -230,6 +231,7 @@ class GameSim extends GameSimBase {
 	// Individual possession state
 	prevPossessionOutcome: PossessionOutcome | undefined;
 	possessionLength = 0;
+	lastOrbPlayer: any;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -1633,10 +1635,16 @@ class GameSim extends GameSimBase {
 
 		const tipInFromOutOfBounds = this.tipInOnly();
 
+		const lateGameOrbPutback =
+			this.prevPossessionOutcome === "orb" && this.t < 1;
+		const putBack = lateGameOrbPutback; // Eventually use this in more situations
+
 		// Time from the ball being in the frontcourt to a shot
 		let dt;
 		if (tipInFromOutOfBounds) {
 			dt = 0;
+		} else if (putBack) {
+			dt = random.uniform(Math.min(this.t, 0.1), Math.min(this.t, 1));
 		} else if (this.t <= 0.3) {
 			dt = random.uniform(0, upperLimit);
 		} else if (this.t < 1) {
@@ -1666,6 +1674,7 @@ class GameSim extends GameSimBase {
 		if (
 			(tipInFromOutOfBounds ||
 				(this.t > 1 && this.probAst() > Math.random())) &&
+			!putBack &&
 			this.numPlayersOnCourt > 1
 		) {
 			const ratios = this.ratingArray("passing", this.o, 10);
@@ -1729,6 +1738,25 @@ class GameSim extends GameSimBase {
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
 				pidPass: this.team[this.o].player[passer!].id,
+				clock: this.t,
+			});
+		} else if (putBack) {
+			type = "putBack";
+			probMissAndFoul = 0.37;
+			probMake =
+				this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 + 0.54;
+			probAndOne = 0.25;
+
+			if (lateGameOrbPutback) {
+				probMissAndFoul /= 2;
+				probMake /= 2;
+				probAndOne /= 2;
+			}
+
+			this.playByPlay.logEvent({
+				type: "fgaPutBack",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
 				clock: this.t,
 			});
 		} else if (
@@ -1868,7 +1896,7 @@ class GameSim extends GameSimBase {
 			// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
 			this.advanceClockSeconds(
 				random.uniform(
-					...((type === "atRim"
+					...((type === "atRim" || type === "tipIn" || type === "putBack"
 						? [0.2, 0.5]
 						: type === "lowPost"
 						  ? [0.7, 1.1]
@@ -1912,6 +1940,14 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.playByPlay.logEvent({
 				type: "missTipIn",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
+		} else if (type === "putBack") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.playByPlay.logEvent({
+				type: "missPutBack",
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
 				clock: this.t,
@@ -1977,7 +2013,7 @@ class GameSim extends GameSimBase {
 		this.recordStat(this.o, p, "ba");
 		this.recordStat(this.o, p, "fga");
 
-		if (type === "atRim") {
+		if (type === "atRim" || type === "tipIn" || type === "putBack") {
 			this.recordStat(this.o, p, "fgaAtRim");
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
@@ -1994,6 +2030,13 @@ class GameSim extends GameSimBase {
 		if (type === "tipIn") {
 			this.playByPlay.logEvent({
 				type: "blkTipIn",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
+		} else if (type === "putBack") {
+			this.playByPlay.logEvent({
+				type: "blkPutBack",
 				t: this.d,
 				pid: this.team[this.d].player[p2].id,
 				clock: this.t,
@@ -2078,8 +2121,16 @@ class GameSim extends GameSimBase {
 				pidAst,
 				clock: this.t,
 			});
-		}
-		if (type === "atRim") {
+		} else if (type === "putBack") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.recordStat(this.o, p, "fgAtRim");
+			this.playByPlay.logEvent({
+				type: andOne ? "fgPutBackAndOne" : "fgPutBack",
+				t: this.o,
+				pid,
+				clock: this.t,
+			});
+		} else if (type === "atRim") {
 			// Randomly pick a name to be dunked on
 			let pidDefense;
 			if (pidFoul !== undefined) {
@@ -2180,6 +2231,8 @@ class GameSim extends GameSimBase {
 
 		switch (play.type) {
 			case "atRim":
+			case "tipIn":
+			case "putBack":
 			case "lowPost":
 			case "midRange":
 				break;
@@ -2197,6 +2250,8 @@ class GameSim extends GameSimBase {
 					if (prevPlay.team === play.team) {
 						switch (prevPlay.type) {
 							case "atRim":
+							case "tipIn":
+							case "putBack":
 							case "lowPost":
 							case "midRange":
 								shotType = "a three-point play";
@@ -2271,6 +2326,8 @@ class GameSim extends GameSimBase {
 
 			switch (play.type) {
 				case "atRim":
+				case "tipIn":
+				case "putBack":
 				case "lowPost":
 				case "midRange":
 					pts = 2;
@@ -2292,6 +2349,8 @@ class GameSim extends GameSimBase {
 							switch (prevPlay.type) {
 								// cases where the basket ties the game, and the and-one wins it
 								case "atRim":
+								case "tipIn":
+								case "putBack":
 								case "lowPost":
 								case "midRange":
 									shotType = "three-point play";
@@ -2527,13 +2586,6 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	/**
-	 * Rebound.
-	 *
-	 * Simulates a rebound opportunity (e.g. after a missed shot).
-	 *
-	 * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
-	 */
 	doReb() {
 		if (this.t === 0) {
 			return "endOfPeriod";
@@ -2568,11 +2620,13 @@ class GameSim extends GameSimBase {
 
 		ratios = this.ratingArray("rebounding", this.o, 5);
 		p = this.playersOnCourt[this.o][pickPlayer(ratios)];
+		const orbPlayer = this.team[this.o].player[p];
+		this.lastOrbPlayer = orbPlayer;
 		this.recordStat(this.o, p, "orb");
 		this.playByPlay.logEvent({
 			type: "orb",
 			t: this.o,
-			pid: this.team[this.o].player[p].id,
+			pid: orbPlayer.id,
 			clock: this.t,
 		});
 		return "orb" as const;

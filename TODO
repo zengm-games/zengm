@@ -4,24 +4,21 @@ better clock handling in BBGM - calculate tim as you go in the play
     - where is inbound from?
     - clock stops
   - turnovers/steals
-    - higher turnovers late when defense is trailing
-      - side out of bounds less likely to have a turnover
-        - this implies simulating turnovers on inbound different than other turnovers
-    - increase turnover/stl rate even further before intentional foul, if there is enough time
-    - currently there are no turnovers if !possessionStartsInFrontcourt
+    - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt
+    - simulate turnovers on inbound pass
+      - only meaningful in late game situations, especially intentional foul ones if there is enough time
+      - lower rate if side out of bounds, so winning team should sometimes use timeouts
+    - higher turnovers late when defense is trailing, but also higher foul rate and give up better shots
   - offensive rebound putback should be fast and with no assist
     - mostly implemented already, but only used now for lateGameOrbPutback. other put backs should be higher percentage. but make sure it doesn't affect stats too much
 - averagePossessionLength should be used, or something upstream of that like pace
   - for time before possession too
 - test
   - made tip-ins text
+  - made put back matches orb
   - player stats
   - team stats
     - pace variation
-  - league stats
-    - tov/stl too low
-      - needs frontcourt tov/stl
-      - needs to handle orb and tipIn as sources of turnover
 - https://github.com/zengm-games/zengm/issues/392
 - blog
   - timeouts to stop clock and advance ball under 2 minutes

@@ -231,7 +231,7 @@ class GameSim extends GameSimBase {
 	// Individual possession state
 	prevPossessionOutcome: PossessionOutcome | undefined;
 	possessionLength = 0;
-	lastOrbPlayer: any;
+	lastOrbPlayer: PlayerNumOnCourt = 0;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -1446,7 +1446,7 @@ class GameSim extends GameSimBase {
 
 		// Simulate backcourt events, only if necessary
 		if (!possessionStartsInFrontcourt) {
-			// Turnover in backcourt?
+			// Turnover in backcourt? Actually for possessions starting in backcourt, currently this simulates
 			if (this.t > 0.2 && Math.random() < this.probTov()) {
 				let dt;
 				if (this.t < 8 || clockFactor === "intentionalFoul") {
@@ -1532,7 +1532,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Shot!
-		return this.doShot(shooter, clockFactor);
+		return this.doShot(shooter, clockFactor, possessionStartsInFrontcourt);
 	}
 
 	/**
@@ -1555,9 +1555,14 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
 	 */
-	doTov() {
-		const ratios = this.ratingArray("turnovers", this.o, 2);
-		const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
+	doTov(pOverride?: number) {
+		let p;
+		if (pOverride) {
+			p = pOverride;
+		} else {
+			const ratios = this.ratingArray("turnovers", this.o, 2);
+			p = this.playersOnCourt[this.o][pickPlayer(ratios)];
+		}
 		this.recordStat(this.o, p, "tov");
 
 		if (this.probStl() > Math.random()) {
@@ -1624,7 +1629,37 @@ class GameSim extends GameSimBase {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
 	 */
-	doShot(shooter: PlayerNumOnCourt, clockFactor: ClockFactor) {
+	doShot(
+		shooter: PlayerNumOnCourt,
+		clockFactor: ClockFactor,
+		possessionStartsInFrontcourt: boolean,
+	) {
+		const tipInFromOutOfBounds = this.tipInOnly();
+		const lateGamePutBack = this.prevPossessionOutcome === "orb" && this.t < 1;
+		const putBack = lateGamePutBack; // Eventually use this in more situations
+
+		// If it's a putback, override shooter selection with whoever got the last offensive rebound
+		if (putBack) {
+			shooter = this.lastOrbPlayer;
+		}
+
+		const p = this.playersOnCourt[this.o][shooter];
+		const currentFatigue = this.fatigue(
+			this.team[this.o].player[p].stat.energy,
+		);
+
+		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
+		let passer: PlayerNumOnCourt | undefined;
+		if (
+			(tipInFromOutOfBounds ||
+				(this.t > 1 && this.probAst() > Math.random())) &&
+			!putBack &&
+			this.numPlayersOnCourt > 1
+		) {
+			const ratios = this.ratingArray("passing", this.o, 10);
+			passer = pickPlayer(ratios, shooter);
+		}
+
 		// Ball is already in frontcourt. How long until the shot goes up?
 		let lowerLimit = Math.min(this.t / 2, 2);
 		let upperLimit = Math.min(SHOT_CLOCK - this.possessionLength, this.t - 0.1);
@@ -1632,12 +1667,6 @@ class GameSim extends GameSimBase {
 			lowerLimit = 0;
 			upperLimit = 0;
 		}
-
-		const tipInFromOutOfBounds = this.tipInOnly();
-
-		const lateGameOrbPutback =
-			this.prevPossessionOutcome === "orb" && this.t < 1;
-		const putBack = lateGameOrbPutback; // Eventually use this in more situations
 
 		// Time from the ball being in the frontcourt to a shot
 		let dt;
@@ -1662,27 +1691,23 @@ class GameSim extends GameSimBase {
 					? 5
 					: clockFactor === "maintainLead"
 					  ? 12
-					  : 6.85;
+					  : 6.25;
 
 			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
 		}
 		this.advanceClockSeconds(dt);
 
-		const p = this.playersOnCourt[this.o][shooter];
-		const currentFatigue = this.fatigue(
-			this.team[this.o].player[p].stat.energy,
-		);
-
-		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-		let passer: PlayerNumOnCourt | undefined;
-		if (
-			(tipInFromOutOfBounds ||
-				(this.t > 1 && this.probAst() > Math.random())) &&
-			!putBack &&
-			this.numPlayersOnCourt > 1
-		) {
-			const ratios = this.ratingArray("passing", this.o, 10);
-			passer = pickPlayer(ratios, shooter);
+		// Turnovers for possessions that start in the frontcourt only (other turnovers are already handled above for the entire possession, although I guess it'd be better to do it here)
+		if (possessionStartsInFrontcourt) {
+			if (Math.random() < this.probTov()) {
+				let pTurnover;
+				if (tipInFromOutOfBounds) {
+					pTurnover = passer;
+				} else if (putBack) {
+					pTurnover = shooter;
+				}
+				return this.doTov(pTurnover);
+			}
 		}
 
 		let shootingThreePointerScaled =
@@ -1751,7 +1776,7 @@ class GameSim extends GameSimBase {
 				this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 + 0.54;
 			probAndOne = 0.25;
 
-			if (lateGameOrbPutback) {
+			if (lateGamePutBack) {
 				probMissAndFoul /= 2;
 				probMake /= 2;
 				probAndOne /= 2;
@@ -2627,14 +2652,13 @@ class GameSim extends GameSimBase {
 		}
 
 		ratios = this.ratingArray("rebounding", this.o, 5);
-		p = this.playersOnCourt[this.o][pickPlayer(ratios)];
-		const orbPlayer = this.team[this.o].player[p];
-		this.lastOrbPlayer = orbPlayer;
+		this.lastOrbPlayer = pickPlayer(ratios);
+		p = this.playersOnCourt[this.o][this.lastOrbPlayer];
 		this.recordStat(this.o, p, "orb");
 		this.playByPlay.logEvent({
 			type: "orb",
 			t: this.o,
-			pid: orbPlayer.id,
+			pid: this.team[this.o].player[p].id,
 			clock: this.t,
 		});
 		return "orb" as const;

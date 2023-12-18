@@ -186,7 +186,7 @@ class GameSim extends GameSimBase {
 
 	foulsLastTwoMinutes: [number, number];
 
-	averagePossessionLength: number;
+	paceFactor: number;
 
 	synergyFactor: number;
 
@@ -285,15 +285,19 @@ class GameSim extends GameSimBase {
 		this.numPeriods = g.get("numPeriods");
 		this.gender = g.get("gender");
 
-		// Needed because relationship between averagePossessionLength and number of actual possessions is not perfect
-		let paceFactor = g.get("pace") / 100;
-		paceFactor += 0.025 * helpers.bound((paceFactor - 1) / 0.2, -1, 1);
+		this.paceFactor = g.get("pace") / 100;
+		this.paceFactor +=
+			0.025 * helpers.bound((this.paceFactor - 1) / 0.2, -1, 1);
+
+		// Fudge factor to make things line up with the old averagePossessionLength stuff
+		if (this.paceFactor > 1) {
+			//this.paceFactor *= 0.915;
+		} else {
+			this.paceFactor *= 1.03;
+		}
 
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
-		const numPossessions =
-			((this.team[0].pace + this.team[1].pace) / 2) * 1.1 * paceFactor;
-		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
 		this.synergyFactor = 0.1; // How important is synergy?
@@ -1330,12 +1334,15 @@ class GameSim extends GameSimBase {
 			throw new Error("advanceClockSeconds called with 0 already on the clock");
 		}
 
-		if (seconds > this.t) {
+		// Adjust for pace up until the last minute, so we don't make end of game stuff too weird
+		const secondsAdjusted = this.t > 60 ? seconds / this.paceFactor : seconds;
+
+		if (secondsAdjusted > this.t) {
 			this.possessionLength += this.t;
 			this.t = 0;
 		} else {
-			this.possessionLength += seconds;
-			this.t -= seconds;
+			this.possessionLength += secondsAdjusted;
+			this.t -= secondsAdjusted;
 		}
 	}
 

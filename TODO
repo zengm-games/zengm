@@ -18,6 +18,10 @@ better clock handling in BBGM - calculate tim as you go in the play
   - player stats
   - team stats
     - pace variation
+  - league stats
+    - tov/stl too low
+      - needs frontcourt tov/stl
+      - needs to handle orb and tipIn as sources of turnover
 - https://github.com/zengm-games/zengm/issues/392
 - blog
   - timeouts to stop clock and advance ball under 2 minutes

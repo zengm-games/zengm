@@ -1658,7 +1658,11 @@ class GameSim extends GameSimBase {
 			dt = random.uniform(lowerLimit, upperLimit);
 		} else {
 			const mean =
-				clockFactor === "catchUp" ? 5 : clockFactor === "maintainLead" ? 12 : 8;
+				clockFactor === "catchUp"
+					? 5
+					: clockFactor === "maintainLead"
+					  ? 12
+					  : 6.85;
 
 			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
 		}

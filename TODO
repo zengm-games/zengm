@@ -14,21 +14,13 @@ better clock handling in BBGM - calculate tim as you go in the play
   - tip ins should normally happen sometimes on out of bounds plays
   - substitutions should only happen at allowed times (period ends, timeout, foul, out of bounds)
   - teams should be less likely to foul in dumb situations late
-- no substitution after offensive rebound
 - https://github.com/zengm-games/zengm/issues/392
+- subs only at dead ball
+  - no substitution after offensive rebound
 - blog
-  - timeouts to stop clock and advance ball under 2 minutes
-  - clock stoppages under 2 minutes, otherwise it keeps running while team inbounds
-  - time between shot being taken and shot going in
-    - can see in play-by-play
-    - foul w 0 seconds
-  - no plays with 0 seconds on clock
-  - offensive rebound putbacks
-  - tip ins for side out of bounds with <0.3 seconds left
-  - heaves (was already in game sim, but now exposed in UI)
-  - tenths of seconds shown when under 1 minute left in period
-  - when period ends on something besides a shot, it tells you what happened (team chooses to run out the clock, team fails to get up a shot, defense was trying to foul but failed)
-  - offensive rebound put backs (for now, only when clock is low, because i didn't want to add too much stuff that could affect sim results)
+  - stuff from discord
+  - it tells you when the ball goes out of bounds
+  - subs only at dead ball
 
 in player popover in box score from past season, show season ratings/stats rather than career https://discord.com/channels/290013534023057409/290013534023057409/1186038552191062066
 

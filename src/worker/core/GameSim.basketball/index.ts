@@ -101,7 +101,8 @@ type PossessionOutcome =
 	| "orb"
 	| "fg"
 	| "timeout"
-	| null;
+	| "outOfBoundsDefense"
+	| "outOfBoundsOffense";
 
 type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
 
@@ -680,7 +681,8 @@ class GameSim extends GameSimBase {
 		if (
 			outcome === "orb" ||
 			outcome === "nonShootingFoul" ||
-			outcome === "timeout"
+			outcome === "timeout" ||
+			outcome === "outOfBoundsDefense"
 		) {
 			this.o = this.o === 1 ? 0 : 1;
 			this.d = this.o === 1 ? 0 : 1;
@@ -1352,6 +1354,18 @@ class GameSim extends GameSimBase {
 		);
 	}
 
+	doOutOfBounds(probOffenseRetainsBall: number) {
+		this.isClockRunning = false;
+		const offenseRetainsBall = Math.random() < probOffenseRetainsBall;
+		this.playByPlay.logEvent({
+			type: "outOfBounds",
+			on: offenseRetainsBall ? "defense" : "offense",
+			t: offenseRetainsBall ? this.o : this.d,
+			clock: this.t,
+		});
+		return offenseRetainsBall ? "outOfBoundsDefense" : "outOfBoundsOffense";
+	}
+
 	/**
 	 * Simulate a single possession.
 	 *
@@ -1475,6 +1489,11 @@ class GameSim extends GameSimBase {
 				this.advanceClockSeconds(dt);
 				return this.doTov();
 			}
+
+			// Offense loses ball out of bounds, but retains possession
+			if (Math.random() < 0.01) {
+				return this.doOutOfBounds(1);
+			}
 		}
 
 		const ratios = this.ratingArray("usage", this.o, 1.25);
@@ -1593,13 +1612,20 @@ class GameSim extends GameSimBase {
 			return this.doStl(p);
 		}
 
+		// Ball could go out of bounds on the turnover
+		const outOfBounds = Math.random() < 0.3;
+		if (outOfBounds) {
+			this.isClockRunning = false;
+		}
+
 		this.playByPlay.logEvent({
 			type: "tov",
 			t: this.o,
 			pid: this.team[this.o].player[p].id,
+			outOfBounds,
 			clock: this.t,
 		});
-		return "tov" as const;
+		return outOfBounds ? "outOfBoundsOffense" : ("tov" as const);
 	}
 
 	/**
@@ -1623,6 +1649,12 @@ class GameSim extends GameSimBase {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
+		// Ball could go out of bounds on the steal
+		const outOfBounds = Math.random() < 0.1;
+		if (outOfBounds) {
+			this.isClockRunning = false;
+		}
+
 		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
@@ -1631,15 +1663,19 @@ class GameSim extends GameSimBase {
 			t: this.d,
 			pid: this.team[this.d].player[p].id,
 			pidTov: this.team[this.o].player[pStoleFrom].id,
+			outOfBounds,
 			clock: this.t,
 		});
-		return "stl" as const;
+		return outOfBounds ? "outOfBoundsOffense" : ("stl" as const);
 	}
 
 	sideOutOfBounds() {
 		return (
 			this.prevPossessionOutcome === "nonShootingFoul" ||
-			(this.prevPossessionOutcome === "timeout" && this.timeoutAdvancesBall())
+			(this.prevPossessionOutcome === "timeout" &&
+				this.timeoutAdvancesBall()) ||
+			this.prevPossessionOutcome === "outOfBoundsDefense" ||
+			this.prevPossessionOutcome === "outOfBoundsOffense"
 		);
 	}
 
@@ -1727,6 +1763,11 @@ class GameSim extends GameSimBase {
 					pTurnover = shooter;
 				}
 				return this.doTov(pTurnover);
+			}
+
+			// Offense loses ball out of bounds, but retains possession
+			if (Math.random() < 0.01) {
+				return this.doOutOfBounds(1);
 			}
 		}
 
@@ -2522,7 +2563,7 @@ class GameSim extends GameSimBase {
 			0.95,
 		);
 
-		let outcome: PossessionOutcome = null;
+		let outcome: PossessionOutcome | undefined;
 
 		for (let i = 0; i < amount; i++) {
 			this.recordStat(this.o, p, "fta");
@@ -2551,7 +2592,7 @@ class GameSim extends GameSimBase {
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
 				});
-				outcome = null;
+				outcome;
 			}
 		}
 
@@ -2651,7 +2692,7 @@ class GameSim extends GameSimBase {
 		}
 
 		if (Math.random() < 0.15) {
-			return null;
+			return this.doOutOfBounds(0.1);
 		}
 
 		if (

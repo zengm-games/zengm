@@ -49,11 +49,23 @@ export const getText = (
 	} else if (event.type === "injury") {
 		texts = [`${getName(event.pid)} was injured!`];
 	} else if (event.type === "tov") {
-		texts = [`${getName(event.pid)} turned the ball over`];
+		if (event.outOfBounds) {
+			texts = [`${getName(event.pid)} loses the ball out of bounds`];
+		} else {
+			texts = [`${getName(event.pid)} turns the ball over`];
+		}
 	} else if (event.type === "stl") {
-		texts = [
-			`${getName(event.pid)} stole the ball from ${getName(event.pidTov)}`,
-		];
+		if (event.outOfBounds) {
+			texts = [
+				`${getName(event.pid)} knocks the ball out of bounds off ${getName(
+					event.pidTov,
+				)}`,
+			];
+		} else {
+			texts = [
+				`${getName(event.pid)} stole the ball from ${getName(event.pidTov)}`,
+			];
+		}
 	} else if (event.type === "fgaTipIn") {
 		texts = [
 			`${getName(event.pid)} cuts to the rim as ${getName(
@@ -240,6 +252,8 @@ export const getText = (
 		} else {
 			texts = ["The clock runs out as the defense tries to foul"];
 		}
+	} else if (event.type === "outOfBounds") {
+		texts = [`Out of bounds, last touched by the ${event.on}`];
 	}
 
 	if (texts) {

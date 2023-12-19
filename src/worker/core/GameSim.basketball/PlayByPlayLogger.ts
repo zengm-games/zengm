@@ -297,6 +297,7 @@ type PlayByPlayEventInputNoScore =
 			t: TeamNum;
 			pid: number;
 			pidTov: number;
+			outOfBounds: boolean;
 			clock: number;
 	  }
 	| {
@@ -310,6 +311,7 @@ type PlayByPlayEventInputNoScore =
 			type: "tov";
 			t: TeamNum;
 			pid: number;
+			outOfBounds: boolean;
 			clock: number;
 	  }
 	| {
@@ -327,6 +329,12 @@ type PlayByPlayEventInputNoScore =
 			type: "endOfPeriod";
 			t: TeamNum;
 			reason: "runOutClock" | "noShot" | "intentionalFoul";
+			clock: number;
+	  }
+	| {
+			type: "outOfBounds";
+			t: TeamNum;
+			on: "offense" | "defense";
 			clock: number;
 	  };
 

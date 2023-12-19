@@ -9,10 +9,12 @@ better clock handling in BBGM - calculate tim as you go in the play
       - only meaningful in late game situations, especially intentional foul ones if there is enough time
       - lower rate if side out of bounds, so winning team should sometimes use timeouts
     - higher turnovers late when defense is trailing, but also higher foul rate and give up better shots
-  - offensive rebound putback should be fast and with no assist
+  - offensive rebound putbacks on normal plays
     - mostly implemented already, but only used now for lateGameOrbPutback. other put backs should be higher percentage. but make sure it doesn't affect stats too much
-- test
-  - made tip-ins text
+  - tip ins should normally happen sometimes on out of bounds plays
+  - substitutions should only happen at allowed times (period ends, timeout, foul, out of bounds)
+  - teams should be less likely to foul in dumb situations late
+- no substitution after offensive rebound
 - https://github.com/zengm-games/zengm/issues/392
 - blog
   - timeouts to stop clock and advance ball under 2 minutes

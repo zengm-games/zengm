@@ -100,6 +100,7 @@ type PossessionOutcome =
 	| "drb"
 	| "orb"
 	| "fg"
+	| "ft"
 	| "timeout"
 	| "outOfBoundsDefense"
 	| "outOfBoundsOffense";
@@ -655,7 +656,11 @@ class GameSim extends GameSimBase {
 	dtInbound() {
 		let dt = 0;
 
-		if (this.prevPossessionOutcome === "fg" && this.isClockRunning) {
+		if (
+			(this.prevPossessionOutcome === "fg" ||
+				this.prevPossessionOutcome === "ft") &&
+			this.isClockRunning
+		) {
 			// Time to gather ball after shot was made, and then to inbound it too
 			dt += random.uniform(1, 5);
 		}
@@ -689,7 +694,7 @@ class GameSim extends GameSimBase {
 		}
 
 		this.updatePlayingTime(dtInbound + this.possessionLength);
-		this.injuries();
+		const injuries = this.injuries();
 
 		this.prevPossessionOutcome = outcome;
 
@@ -703,11 +708,21 @@ class GameSim extends GameSimBase {
 				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
 		}
 
-		if (!gameOver && random.randInt(1, this.subsEveryN) === 1) {
-			const substitutions = this.updatePlayersOnCourt();
+		if (!gameOver) {
+			const deadBall =
+				injuries ||
+				outcome === "timeout" ||
+				outcome === "outOfBoundsDefense" ||
+				outcome === "outOfBoundsOffense" ||
+				outcome === "nonShootingFoul" ||
+				outcome === "endOfPeriod" ||
+				outcome === "ft";
+			if (deadBall) {
+				const substitutions = this.updatePlayersOnCourt();
 
-			if (substitutions) {
-				this.updateSynergy();
+				if (substitutions) {
+					this.updateSynergy();
+				}
 			}
 		}
 	}
@@ -1300,10 +1315,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// Sub out injured player
-		if (newInjury) {
-			this.updatePlayersOnCourt();
-		}
+		return newInjury;
 	}
 
 	getNumFoulsUntilBonus() {
@@ -1366,11 +1378,6 @@ class GameSim extends GameSimBase {
 		return offenseRetainsBall ? "outOfBoundsDefense" : "outOfBoundsOffense";
 	}
 
-	/**
-	 * Simulate a single possession.
-	 *
-	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
-	 */
 	getPossessionOutcome(clockFactor: ClockFactor): PossessionOutcome {
 		// If winning at end of game, just run out the clock
 		if (clockFactor === "runOutClock") {
@@ -1679,12 +1686,6 @@ class GameSim extends GameSimBase {
 		);
 	}
 
-	/**
-	 * Shot.
-	 *
-	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
-	 */
 	doShot(
 		shooter: PlayerNumOnCourt,
 		clockFactor: ClockFactor,
@@ -1979,8 +1980,10 @@ class GameSim extends GameSimBase {
 
 		const advanceClock = () => {
 			if (!this.isClockRunning) {
-				// Time between shot and foul being called - maybe better off not having this, since it can lead to too many fouls with 0 on the clock
-				// this.advanceClockSeconds(random.uniform(0, 0.2));
+				// Time between shot and foul being called, rarely
+				if (Math.random() < 0.1) {
+					this.advanceClockSeconds(random.uniform(0, 0.2));
+				}
 				return;
 			}
 
@@ -2542,15 +2545,6 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	/**
-	 * Free throw.
-	 *
-	 * Fatigue has no affect: https://doi.org/10.2478/v10078-010-0019-0
-	 *
-	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-	 * @param {number} amount Integer representing the number of free throws to shoot
-	 * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
-	 */
 	doFt(shooter: PlayerNumOnCourt, amount: number) {
 		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 
@@ -2578,9 +2572,8 @@ class GameSim extends GameSimBase {
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
 				});
-				outcome = "fg";
+				outcome = "ft";
 				this.recordLastScore(this.o, p, "ft", this.t);
-				this.isClockRunning = false;
 
 				if (this.elamDone) {
 					break;
@@ -2592,13 +2585,14 @@ class GameSim extends GameSimBase {
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
 				});
-				outcome;
+				outcome = undefined;
 			}
 		}
 
-		if (outcome === "fg") {
+		if (outcome === "ft") {
 			this.isClockRunning = false;
 		} else {
+			this.isClockRunning = true;
 			outcome = this.doReb();
 		}
 

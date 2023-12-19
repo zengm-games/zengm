@@ -14,9 +14,12 @@ better clock handling in BBGM - calculate tim as you go in the play
   - tip ins should normally happen sometimes on out of bounds plays
   - substitutions should only happen at allowed times (period ends, timeout, foul, out of bounds)
   - teams should be less likely to foul in dumb situations late
+  - substitution stuff
+    - injury should require a timeout or dead ball to actually make a sub, until then team plays with an injured player
+    - should not have separate updatePlayersOnCourt call for fouling out, should somehow integrate that with the normal updatePlayersOnCourt call in simPossession
+  - timeouts
+    - currently just are used to stop clock and advance ball. should also be used for rest, (maybe) stopping a run, substitutions (especially after injury)
 - https://github.com/zengm-games/zengm/issues/392
-- subs only at dead ball
-  - no substitution after offensive rebound
 - blog
   - stuff from discord
   - it tells you when the ball goes out of bounds

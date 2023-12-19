@@ -1,4 +1,4 @@
-import { g, helpers, orderTeams } from "../../util";
+import { g, helpers, logEvent, orderTeams } from "../../util";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
@@ -149,18 +149,26 @@ export const genPlayoffSeriesFromTeams = async (
 	}
 
 	const byConf = await getPlayoffsByConf(g.get("season"));
-	validatePlayoffSettings({
-		numRounds,
-		numPlayoffByes,
-		numActiveTeams: g.get("numActiveTeams"),
-		playIn: g.get("playIn"),
-		byConf,
-	});
-	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+	try {
+		validatePlayoffSettings({
+			numRounds,
+			numPlayoffByes,
+			numActiveTeams: g.get("numActiveTeams"),
+			playIn: g.get("playIn"),
+			byConf,
+		});
+	} catch (error) {
+		logEvent({
+			type: "error",
+			text: error.message,
+			saveToDb: false,
+		});
 
-	if (teams.length < numPlayoffTeams) {
-		throw new Error("Not enough teams for playoffs");
+		// We need to stop executing because otherwise it will somehow have some other error due to invalid settings
+		throw error;
 	}
+
+	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 

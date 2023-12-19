@@ -13,7 +13,6 @@ better clock handling in BBGM - calculate tim as you go in the play
     - mostly implemented already, but only used now for lateGameOrbPutback. other put backs should be higher percentage. but make sure it doesn't affect stats too much
 - test
   - made tip-ins text
-  - made put back matches orb
 - https://github.com/zengm-games/zengm/issues/392
 - blog
   - timeouts to stop clock and advance ball under 2 minutes

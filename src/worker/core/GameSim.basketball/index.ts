@@ -1371,9 +1371,21 @@ class GameSim extends GameSimBase {
 			return "endOfPeriod";
 		}
 
+		const tipInFromOutOfBounds =
+			this.t <= TIP_IN_ONLY_LIMIT && this.sideOutOfBounds();
+		const lateGamePutBack =
+			this.prevPossessionOutcome === "orb" && this.t < 1.5;
+		if (lateGamePutBack) {
+			console.log("LATE GAME PUT BACK");
+		}
+
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
-		if (this.t <= 6 && !this.tipInOnly()) {
-			if (this.t <= 0.1 || Math.random() > (this.t / 8) ** (1 / 4)) {
+		if (this.t <= 6 && !tipInFromOutOfBounds) {
+			// When lateGamePutBack is true, more likely to get a shot up
+			if (
+				this.t <= 0.1 ||
+				Math.random() > (this.t / 8) ** (1 / (lateGamePutBack ? 12 : 6))
+			) {
 				const pointDifferential =
 					this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 				this.advanceClockSeconds(Infinity);
@@ -1539,7 +1551,13 @@ class GameSim extends GameSimBase {
 		}
 
 		// Shot!
-		return this.doShot(shooter, clockFactor, possessionStartsInFrontcourt);
+		return this.doShot(
+			shooter,
+			clockFactor,
+			possessionStartsInFrontcourt,
+			tipInFromOutOfBounds,
+			lateGamePutBack,
+		);
 	}
 
 	/**
@@ -1626,10 +1644,6 @@ class GameSim extends GameSimBase {
 		);
 	}
 
-	tipInOnly() {
-		return this.t <= TIP_IN_ONLY_LIMIT && this.sideOutOfBounds();
-	}
-
 	/**
 	 * Shot.
 	 *
@@ -1640,9 +1654,9 @@ class GameSim extends GameSimBase {
 		shooter: PlayerNumOnCourt,
 		clockFactor: ClockFactor,
 		possessionStartsInFrontcourt: boolean,
+		tipInFromOutOfBounds: boolean,
+		lateGamePutBack: boolean,
 	) {
-		const tipInFromOutOfBounds = this.tipInOnly();
-		const lateGamePutBack = this.prevPossessionOutcome === "orb" && this.t < 1;
 		const putBack = lateGamePutBack; // Eventually use this in more situations
 
 		// If it's a putback, override shooter selection with whoever got the last offensive rebound
@@ -1784,9 +1798,10 @@ class GameSim extends GameSimBase {
 			probAndOne = 0.25;
 
 			if (lateGamePutBack) {
-				probMissAndFoul /= 2;
-				probMake /= 2;
-				probAndOne /= 2;
+				probMissAndFoul *= 0.75;
+				probMake *= 0.75;
+				probAndOne *= 0.75;
+				console.log(probMake);
 			}
 
 			this.playByPlay.logEvent({

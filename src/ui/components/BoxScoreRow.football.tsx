@@ -14,6 +14,7 @@ const BoxScoreRow = ({
 	onClick,
 	p,
 	stats,
+	season,
 	seasonStats,
 }: {
 	className?: string;
@@ -22,6 +23,7 @@ const BoxScoreRow = ({
 	onClick?: (event: MouseEvent) => void;
 	p: any;
 	stats: string[];
+	season: number;
 	seasonStats?: string[];
 }) => {
 	return (
@@ -35,6 +37,7 @@ const BoxScoreRow = ({
 					skills={p.skills}
 					legacyName={p.name}
 					disableNameLink={exhibition}
+					season={season}
 				/>
 				{isSport("baseball") ? (
 					p.w > 0 ? (
@@ -72,7 +75,7 @@ const BoxScoreRow = ({
 						>
 							{helpers.roundStat(p.seasonStats[stat], stat, true)}
 						</td>
-				  ))
+					))
 				: null}
 		</tr>
 	);

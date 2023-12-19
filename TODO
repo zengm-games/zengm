@@ -22,8 +22,6 @@ better clock handling in BBGM - calculate tim as you go in the play
   - it tells you when the ball goes out of bounds
   - subs only at dead ball
 
-in player popover in box score from past season, show season ratings/stats rather than career https://discord.com/channels/290013534023057409/290013534023057409/1186038552191062066
-
 release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
 
 betweenAiTeams error

@@ -12,6 +12,7 @@ const StatsTable = ({
 	forceRowUpdate,
 	liveGameInProgress,
 	numPlayersOnCourt,
+	season,
 	t,
 }: {
 	Row: any;
@@ -19,6 +20,7 @@ const StatsTable = ({
 	forceRowUpdate: boolean;
 	liveGameInProgress: boolean;
 	numPlayersOnCourt: number;
+	season: number;
 	t: any;
 }) => {
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
@@ -151,6 +153,7 @@ const StatsTable = ({
 							liveGameInProgress={liveGameInProgress}
 							p={p}
 							forceUpdate={forceRowUpdate}
+							season={season}
 						/>
 					))}
 				</tbody>
@@ -259,6 +262,7 @@ const BoxScore = ({
 							forceRowUpdate={forceRowUpdate}
 							liveGameInProgress={liveGameInProgress}
 							numPlayersOnCourt={boxScore.numPlayersOnCourt ?? 5}
+							season={boxScore.season}
 							t={t}
 						/>
 					</div>
@@ -271,7 +275,7 @@ const BoxScore = ({
 						<p key={i}>
 							<SafeHtml dirty={text} />
 						</p>
-				  ))
+					))
 				: null}
 		</>
 	);

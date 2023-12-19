@@ -10,6 +10,7 @@ const BoxScoreRow = ({
 	liveGameInProgress,
 	onClick,
 	p,
+	season,
 }: {
 	className?: string;
 	exhibition?: boolean;
@@ -17,6 +18,7 @@ const BoxScoreRow = ({
 	liveGameInProgress?: boolean;
 	onClick?: (event: MouseEvent) => void;
 	p: any;
+	season: number;
 }) => {
 	const showDNP =
 		p.min === 0 &&
@@ -71,6 +73,7 @@ const BoxScoreRow = ({
 					skills={p.skills}
 					legacyName={p.name}
 					disableNameLink={exhibition}
+					season={season}
 				/>
 			</td>
 			{typeof p.abbrev === "string" ? (

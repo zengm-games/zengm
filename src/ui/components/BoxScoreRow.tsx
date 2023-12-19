@@ -10,6 +10,7 @@ const BoxScoreRow = (props: {
 	liveGameInProgress?: boolean;
 	onClick?: (event: MouseEvent) => void;
 	p: any;
+	season: number;
 	stats?: string[];
 }) => {
 	return bySport({

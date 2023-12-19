@@ -981,8 +981,8 @@ class GameSim extends GameSimBase {
 							this.numPlayersOnCourt >= 5
 								? 2
 								: this.numPlayersOnCourt >= 3
-								  ? 1
-								  : 0;
+									? 1
+									: 0;
 						if (
 							(numG < cutoff && numPG === 0) ||
 							(numF < cutoff && numC === 0)
@@ -1395,9 +1395,6 @@ class GameSim extends GameSimBase {
 			this.t <= TIP_IN_ONLY_LIMIT && this.sideOutOfBounds();
 		const lateGamePutBack =
 			this.prevPossessionOutcome === "orb" && this.t < 1.5;
-		if (lateGamePutBack) {
-			console.log("LATE GAME PUT BACK");
-		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
 		if (this.t <= 6 && !tipInFromOutOfBounds) {
@@ -1417,8 +1414,8 @@ class GameSim extends GameSimBase {
 						clockFactor === "intentionalFoul"
 							? "intentionalFoul"
 							: pointDifferential > 0
-							  ? "runOutClock"
-							  : "noShot",
+								? "runOutClock"
+								: "noShot",
 				});
 				return "endOfPeriod";
 			}
@@ -1747,8 +1744,8 @@ class GameSim extends GameSimBase {
 				clockFactor === "catchUp"
 					? 5
 					: clockFactor === "maintainLead"
-					  ? 12
-					  : 6.25;
+						? 12
+						: 6.25;
 
 			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
 		}
@@ -1842,7 +1839,6 @@ class GameSim extends GameSimBase {
 				probMissAndFoul *= 0.75;
 				probMake *= 0.75;
 				probAndOne *= 0.75;
-				console.log(probMake);
 			}
 
 			this.playByPlay.logEvent({
@@ -1993,10 +1989,10 @@ class GameSim extends GameSimBase {
 					...((type === "atRim" || type === "tipIn" || type === "putBack"
 						? [0.2, 0.5]
 						: type === "lowPost"
-						  ? [0.7, 1.1]
-						  : type === "midRange"
-						    ? [0.9, 1.3]
-						    : [1.2, 1.9]) as [number, number]),
+							? [0.7, 1.1]
+							: type === "midRange"
+								? [0.9, 1.3]
+								: [1.2, 1.9]) as [number, number]),
 				),
 			);
 		};

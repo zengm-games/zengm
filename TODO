@@ -1,8 +1,5 @@
 better clock handling in BBGM - calculate tim as you go in the play
 - later
-  - sim ball going out of bounds, such as how there are currently missed shots that nobody rebounds
-    - where is inbound from?
-    - clock stops
   - turnovers/steals
     - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt
     - simulate turnovers on inbound pass

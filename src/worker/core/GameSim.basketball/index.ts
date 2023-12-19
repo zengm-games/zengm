@@ -675,7 +675,6 @@ class GameSim extends GameSimBase {
 
 		const clockFactor = this.getClockFactor();
 		const outcome = this.getPossessionOutcome(clockFactor);
-		console.log(this.t, outcome);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (

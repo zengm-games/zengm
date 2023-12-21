@@ -1392,6 +1392,7 @@ class GameSim extends GameSimBase {
 				this.t <= 0.1 ||
 				Math.random() > (this.t / 8) ** (1 / (lateGamePutBack ? 12 : 6))
 			) {
+				const period = this.team[this.o].stat.ptsQtrs.length;
 				const pointDifferential =
 					this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 				this.advanceClockSeconds(Infinity);
@@ -1402,7 +1403,7 @@ class GameSim extends GameSimBase {
 					reason:
 						clockFactor === "intentionalFoul"
 							? "intentionalFoul"
-							: pointDifferential > 0
+							: period >= this.numPeriods && pointDifferential > 0
 								? "runOutClock"
 								: "noShot",
 				});

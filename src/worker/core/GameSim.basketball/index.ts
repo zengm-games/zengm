@@ -1454,12 +1454,12 @@ class GameSim extends GameSimBase {
 					if (this.t < 5) {
 						// If time is really low, definitely take a timeout to advance ball
 						takeTimeout = true;
-					} else if (this.t < 30 && this.isClockRunning) {
+					} else if (this.t < 25 && this.isClockRunning) {
 						// If time is somewhat low, definitely take a timeout to advance ball
 						takeTimeout = true;
-					} else if (this.t < 120 && this.isClockRunning) {
+					} else if (this.t < 60 && this.isClockRunning) {
 						// If time is a little low, sometimes take a timeout to advance ball
-						if ((this.t - 30) / (120 - 30) < Math.random()) {
+						if ((this.t - 25) / (60 - 25) < Math.random()) {
 							takeTimeout = true;
 						}
 					}
@@ -2289,7 +2289,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// In the last 2 minutes of a period, stop clock after made FG
-		if (this.t < 2 * 60) {
+		if (this.t <= 2 * 60) {
 			this.isClockRunning = false;
 		}
 

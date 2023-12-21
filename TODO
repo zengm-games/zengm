@@ -1,26 +1,20 @@
 better clock handling in BBGM - calculate tim as you go in the play
-- later
-  - turnovers/steals
-    - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt
-    - simulate turnovers on inbound pass
-      - only meaningful in late game situations, especially intentional foul ones if there is enough time
-      - lower rate if side out of bounds, so winning team should sometimes use timeouts
-    - higher turnovers late when defense is trailing, but also higher foul rate and give up better shots
-  - offensive rebound putbacks on normal plays
-    - mostly implemented already, but only used now for lateGameOrbPutback. other put backs should be higher percentage. but make sure it doesn't affect stats too much
-  - tip ins should normally happen sometimes on out of bounds plays
-  - substitutions should only happen at allowed times (period ends, timeout, foul, out of bounds)
-  - teams should be less likely to foul in dumb situations late
-  - substitution stuff
-    - injury should require a timeout or dead ball to actually make a sub, until then team plays with an injured player
-    - should not have separate updatePlayersOnCourt call for fouling out, should somehow integrate that with the normal updatePlayersOnCourt call in simPossession
-  - timeouts
-    - currently just are used to stop clock and advance ball. should also be used for rest, (maybe) stopping a run, substitutions (especially after injury)
-- https://github.com/zengm-games/zengm/issues/392
-- blog
-  - stuff from discord
-  - it tells you when the ball goes out of bounds
-  - subs only at dead ball
+- turnovers/steals
+  - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt
+  - simulate turnovers on inbound pass
+    - only meaningful in late game situations, especially intentional foul ones if there is enough time
+    - lower rate if side out of bounds, so winning team should sometimes use timeouts
+  - higher turnovers late when defense is trailing, but also higher foul rate and give up better shots
+- offensive rebound putbacks on normal plays
+  - mostly implemented already, but only used now for lateGameOrbPutback. other put backs should be higher percentage. but make sure it doesn't affect stats too much
+- tip ins should normally happen sometimes on out of bounds plays
+- substitutions should only happen at allowed times (period ends, timeout, foul, out of bounds)
+- teams should be less likely to foul in dumb situations late
+- substitution stuff
+  - injury should require a timeout or dead ball to actually make a sub, until then team plays with an injured player
+  - should not have separate updatePlayersOnCourt call for fouling out, should somehow integrate that with the normal updatePlayersOnCourt call in simPossession
+- timeouts
+  - currently just are used to stop clock and advance ball. should also be used for rest, (maybe) stopping a run, substitutions (especially after injury), and making inbounds easier when leading late
 
 release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
 
@@ -1478,8 +1472,6 @@ contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_
 - always show 2 decimal places?
 - right align, and use tabular-nums so numbers are aligned?
 
-The spending page needs to fixed. Either change the "finances" so you select "spending rank" (1st thru 30th) or make the finance system actually use cardinal values. right now it's confusing for new players and kinda annoying to set yourself as first the in the league (guess + check)
-
 import/export players
 - maybe
   - export
@@ -2213,7 +2205,6 @@ career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/ar
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
 account
   more pages
-    account/edit
     account/:username (public profile showing achievements)
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere

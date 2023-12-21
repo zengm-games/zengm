@@ -652,7 +652,7 @@ class GameSim extends GameSimBase {
 		return intentionalFoul;
 	}
 
-	// When a shot is made and the clock is still running, some time runs off the clock before the next possession starts
+	// When a shot is made and the clock is still running, some time runs off the clock before the next possession starts. No need to worry about going into negative clock values, since the clock stops after made baskets with under 2 minutes left
 	dtInbound() {
 		let dt = 0;
 
@@ -1339,10 +1339,6 @@ class GameSim extends GameSimBase {
 	}
 
 	advanceClockSeconds(seconds: number) {
-		if (this.elamActive) {
-			return;
-		}
-
 		if (this.t === 0) {
 			throw new Error("advanceClockSeconds called with 0 already on the clock");
 		}

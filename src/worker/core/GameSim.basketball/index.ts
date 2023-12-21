@@ -173,6 +173,15 @@ const getSortedIndexes = (ovrs: number[]) => {
 // Use if denominator of prob might be 0
 const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
 
+// Keep time formatting in sync with processLiveGameEvents.basketball.tsx
+// Currently just used for end of game, so assume under 1 minute left.
+const formatClock = (t: number) => {
+	const centiSecondsRounded = Math.ceil(t * 10);
+	const remainingSeconds = Math.floor(centiSecondsRounded / 10);
+	const remainingCentiSeconds = centiSecondsRounded % 10;
+	return `${remainingSeconds}.${remainingCentiSeconds}`;
+};
+
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
@@ -2389,7 +2398,7 @@ class GameSim extends GameSimBase {
 		}</a> made ${shotType}`;
 
 		if (play.time > 0) {
-			eventText += ` with ${play.time} seconds remaining`;
+			eventText += ` with ${formatClock(play.time)} seconds remaining`;
 		} else {
 			eventText +=
 				play.type === "ft" ? " with no time on the clock" : " at the buzzer";
@@ -2485,10 +2494,7 @@ class GameSim extends GameSimBase {
 
 				if (!this.elamActive) {
 					if (play.time > 0) {
-						eventText += ` with ${play.time} ${helpers.plural(
-							"second",
-							play.time,
-						)} remaining`;
+						eventText += ` with ${formatClock(play.time)} seconds remaining`;
 					} else {
 						eventText +=
 							play.type === "ft"

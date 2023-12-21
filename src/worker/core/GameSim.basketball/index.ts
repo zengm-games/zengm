@@ -505,6 +505,12 @@ class GameSim extends GameSimBase {
 		let doneSettingTimeoutsLastThreeMinutes = false;
 
 		while (!this.elamDone) {
+			if (period !== 1) {
+				this.doSubstitutionsIfDeadBall({
+					type: "newPeriod",
+				});
+			}
+
 			const finalPeriod = period === this.numPeriods;
 			if (finalPeriod) {
 				this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD);
@@ -579,6 +585,10 @@ class GameSim extends GameSimBase {
 
 		// Check for elamOvertime
 		this.checkElamEnding();
+
+		this.doSubstitutionsIfDeadBall({
+			type: "newPeriod",
+		});
 
 		this.jumpBall();
 
@@ -661,6 +671,34 @@ class GameSim extends GameSimBase {
 		return dt;
 	}
 
+	doSubstitutionsIfDeadBall(
+		info:
+			| {
+					type: "afterPossession";
+					injuries: boolean;
+			  }
+			| {
+					type: "newPeriod";
+			  },
+	) {
+		const outcome = this.prevPossessionOutcome;
+		const deadBall =
+			info.type === "newPeriod" ||
+			(info.type === "afterPossession" && info.injuries) ||
+			outcome === "timeout" ||
+			outcome === "outOfBoundsDefense" ||
+			outcome === "outOfBoundsOffense" ||
+			outcome === "nonShootingFoul" ||
+			outcome === "ft";
+		if (deadBall) {
+			const substitutions = this.updatePlayersOnCourt();
+
+			if (substitutions) {
+				this.updateSynergy();
+			}
+		}
+	}
+
 	simPossession() {
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
@@ -691,32 +729,12 @@ class GameSim extends GameSimBase {
 
 		this.prevPossessionOutcome = outcome;
 
-		let gameOver = false;
-		if (this.elam) {
-			gameOver = this.elamDone;
-		} else {
-			gameOver =
-				this.t <= 0 &&
-				this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
-				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
-		}
-
-		if (!gameOver) {
-			const deadBall =
-				injuries ||
-				outcome === "timeout" ||
-				outcome === "outOfBoundsDefense" ||
-				outcome === "outOfBoundsOffense" ||
-				outcome === "nonShootingFoul" ||
-				outcome === "endOfPeriod" ||
-				outcome === "ft";
-			if (deadBall) {
-				const substitutions = this.updatePlayersOnCourt();
-
-				if (substitutions) {
-					this.updateSynergy();
-				}
-			}
+		// With 0 on the clock, either the game is over (no subs) or the subs should happen at start of next period
+		if (this.t > 0 && !this.elamDone) {
+			this.doSubstitutionsIfDeadBall({
+				type: "afterPossession",
+				injuries,
+			});
 		}
 	}
 
@@ -1274,7 +1292,7 @@ class GameSim extends GameSimBase {
 	 */
 	injuries() {
 		if ((g as any).disableInjuries) {
-			return;
+			return false;
 		}
 
 		let newInjury = false;

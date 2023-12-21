@@ -291,13 +291,6 @@ class GameSim extends GameSimBase {
 		this.paceFactor +=
 			0.025 * helpers.bound((this.paceFactor - 1) / 0.2, -1, 1);
 
-		// Fudge factor to make things line up with the old averagePossessionLength stuff
-		if (this.paceFactor > 1) {
-			this.paceFactor = (this.paceFactor - 1) * 0.9 + 1;
-		} else {
-			this.paceFactor = 1 - (1 - this.paceFactor) * 0.9;
-		}
-
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 

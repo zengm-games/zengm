@@ -2285,7 +2285,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		this.recordLastScore(this.o, p, type, this.t);
+		this.recordLastScore(this.o, p, type);
 
 		if (pAst !== undefined) {
 			this.recordStat(this.o, pAst, "ast");
@@ -2508,19 +2508,14 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	recordLastScore(
-		teamnum: TeamNum,
-		playernum: number,
-		type: ShotType,
-		time: number,
-	) {
+	recordLastScore(teamnum: TeamNum, playernum: number, type: ShotType) {
 		// only record plays in the fourth quarter or overtime...
 		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
 			return;
 		}
 
 		// ...in the last 24 seconds...
-		if (time > 0.4) {
+		if (this.t > 24) {
 			return;
 		}
 
@@ -2533,7 +2528,7 @@ class GameSim extends GameSimBase {
 			team: teamnum,
 			player: playernum,
 			type,
-			time: Math.floor(time * 600) / 10, // up to 0.1 of a second
+			time: this.t,
 		};
 
 		if (this.lastScoringPlay.length === 0) {
@@ -2577,7 +2572,7 @@ class GameSim extends GameSimBase {
 					clock: this.t,
 				});
 				outcome = "ft";
-				this.recordLastScore(this.o, p, "ft", this.t);
+				this.recordLastScore(this.o, p, "ft");
 
 				if (this.elamDone) {
 					break;

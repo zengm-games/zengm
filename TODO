@@ -1,5 +1,3 @@
-timestamp of game winners is off https://discord.com/channels/290013534023057409/290015591216054273/1187248235316785205
-
 better clock handling in BBGM - calculate tim as you go in the play
 - turnovers/steals
   - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt

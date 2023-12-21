@@ -1,3 +1,7 @@
+"run out the clock to end the game" and similar - make them make sense for periods that don't end the game!
+
+timestamp of game winners is off https://discord.com/channels/290013534023057409/290015591216054273/1187248235316785205
+
 better clock handling in BBGM - calculate tim as you go in the play
 - turnovers/steals
   - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt
@@ -15,6 +19,7 @@ better clock handling in BBGM - calculate tim as you go in the play
   - should not have separate updatePlayersOnCourt call for fouling out, should somehow integrate that with the normal updatePlayersOnCourt call in simPossession
 - timeouts
   - currently just are used to stop clock and advance ball. should also be used for rest, (maybe) stopping a run, substitutions (especially after injury), and making inbounds easier when leading late
+- if down by 2/3 very late, maybe intentionally miss FT to get offensive rebound attempt https://github.com/zengm-games/zengm/issues/392
 
 release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
 

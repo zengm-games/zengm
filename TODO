@@ -1,3 +1,11 @@
+new logos
+- delhi typo
+- run svgo on all logos
+- blog
+  - rebranding
+  - providence in historical leagues
+  - hockey default teams (CIN -> CLB, CHA -> RAL)
+
 better clock handling in BBGM - calculate tim as you go in the play
 - turnovers/steals
   - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt

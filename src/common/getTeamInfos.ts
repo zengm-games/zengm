@@ -1,6 +1,6 @@
 import teamInfos from "./teamInfos";
 
-export const noSmallLogo = ["BOS", "DET", "LAE", "VAN"];
+export const noSmallLogo = ["LAE", "VAN"];
 
 export const abbrevRewrites: Record<string, string | undefined> = {
 	LAC: "LAE",

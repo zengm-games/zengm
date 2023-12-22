@@ -363,6 +363,41 @@ const geographicCoordinates: Record<
 		longitude: 151.2093,
 		outsideNorthAmerica: true,
 	},
+
+	// 2023-12-23 - new teams
+	Athens: {
+		latitude: 37.9838,
+		longitude: 23.7275,
+		outsideNorthAmerica: true,
+	},
+	Columbus: {
+		latitude: 39.9612,
+		longitude: -82.9988,
+	},
+	Delhi: {
+		latitude: 28.7041,
+		longitude: 77.1025,
+		outsideNorthAmerica: true,
+	},
+	Istanbul: {
+		latitude: 41.0082,
+		longitude: 28.9784,
+		outsideNorthAmerica: true,
+	},
+	Lisbon: {
+		latitude: 38.7223,
+		longitude: -9.1393,
+		outsideNorthAmerica: true,
+	},
+	Raleigh: {
+		latitude: 35.7796,
+		longitude: -78.6382,
+	},
+	Seoul: {
+		latitude: 37.5519,
+		longitude: 126.9918,
+		outsideNorthAmerica: true,
+	},
 };
 
 export default geographicCoordinates;

@@ -6,7 +6,7 @@ import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 import { bySport, isSport } from "../../common";
 
-const StatsRow = ({ p, ...props }: { i: number; p: any }) => {
+const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const classes = classNames({
@@ -114,8 +114,8 @@ const GamesList = ({
 							overtimeText === ""
 								? ""
 								: isSport("baseball")
-								  ? ` (${overtimeText})`
-								  : ` ${overtimeText}`;
+									? ` (${overtimeText})`
+									: ` ${overtimeText}`;
 
 						const oppAbbrev = gamesList.abbrevs[gm.teams[other].tid];
 

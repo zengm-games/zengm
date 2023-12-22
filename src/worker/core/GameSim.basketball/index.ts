@@ -7,7 +7,24 @@ import GameSimBase from "../GameSimBase";
 import { range } from "../../../common/utils";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 
-type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
+const SHOT_CLOCK = 24;
+const NUM_TIMEOUTS = 7;
+const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
+const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
+const NUM_TIMEOUTS_OVERTIME = 2;
+
+const TIMEOUTS_STOP_CLOCK = 2; // [minutes]
+
+const TIP_IN_ONLY_LIMIT = 0.2; // [seconds] - only tip-ins from an inbound with less than this much time
+
+type ShotType =
+	| "atRim"
+	| "ft"
+	| "lowPost"
+	| "midRange"
+	| "threePointer"
+	| "tipIn"
+	| "putBack";
 type Stat =
 	| "ast"
 	| "ba"
@@ -75,6 +92,21 @@ type TeamGameSim = {
 	};
 };
 
+type PossessionOutcome =
+	| "tov"
+	| "stl"
+	| "endOfPeriod"
+	| "nonShootingFoul"
+	| "drb"
+	| "orb"
+	| "fg"
+	| "ft"
+	| "timeout"
+	| "outOfBoundsDefense"
+	| "outOfBoundsOffense";
+
+type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
+
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 /**
@@ -141,6 +173,15 @@ const getSortedIndexes = (ovrs: number[]) => {
 // Use if denominator of prob might be 0
 const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
 
+// Keep time formatting in sync with processLiveGameEvents.basketball.tsx
+// Currently just used for end of game, so assume under 1 minute left.
+const formatClock = (t: number) => {
+	const centiSecondsRounded = Math.ceil(t * 10);
+	const remainingSeconds = Math.floor(centiSecondsRounded / 10);
+	const remainingCentiSeconds = centiSecondsRounded % 10;
+	return `${remainingSeconds}.${remainingCentiSeconds}`;
+};
+
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
@@ -156,7 +197,7 @@ class GameSim extends GameSimBase {
 
 	foulsLastTwoMinutes: [number, number];
 
-	averagePossessionLength: number;
+	paceFactor: number;
 
 	synergyFactor: number;
 
@@ -193,6 +234,15 @@ class GameSim extends GameSimBase {
 	numPlayersOnCourt: number;
 
 	gender: GameAttributesLeague["gender"];
+
+	timeouts: [number, number] = [NUM_TIMEOUTS, NUM_TIMEOUTS];
+
+	isClockRunning = true;
+
+	// Individual possession state
+	prevPossessionOutcome: PossessionOutcome | undefined;
+	possessionLength = 0;
+	lastOrbPlayer: PlayerNumOnCourt = 0;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -242,19 +292,16 @@ class GameSim extends GameSimBase {
 		this.updateSynergy();
 		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
-		this.t = g.get("quarterLength"); // Game clock, in minutes
+		this.t = g.get("quarterLength") * 60; // Game clock, in seconds
 		this.numPeriods = g.get("numPeriods");
 		this.gender = g.get("gender");
 
-		// Needed because relationship between averagePossessionLength and number of actual possessions is not perfect
-		let paceFactor = g.get("pace") / 100;
-		paceFactor += 0.025 * helpers.bound((paceFactor - 1) / 0.2, -1, 1);
+		this.paceFactor = g.get("pace") / 100;
+		this.paceFactor +=
+			0.025 * helpers.bound((this.paceFactor - 1) / 0.2, -1, 1);
 
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
-		const numPossessions =
-			((this.team[0].pace + this.team[1].pace) / 2) * 1.1 * paceFactor;
-		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
 		this.synergyFactor = 0.1; // How important is synergy?
@@ -438,7 +485,7 @@ class GameSim extends GameSimBase {
 				this.team[0].stat.ptsQtrs.length > this.numPeriods) ||
 				(!g.get("elamOvertime") &&
 					this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-					this.t <= g.get("elamMinutes")))
+					this.t <= g.get("elamMinutes") * 60))
 		) {
 			const maxPts = Math.max(
 				this.team[this.d].stat.pts,
@@ -446,6 +493,7 @@ class GameSim extends GameSimBase {
 			);
 			this.elamTarget = maxPts + g.get("elamPoints");
 			this.elamActive = true;
+			this.t = Infinity; // This disables any late clock effects
 			this.playByPlay.logEvent({
 				type: "elamActive",
 				target: this.elamTarget,
@@ -453,14 +501,33 @@ class GameSim extends GameSimBase {
 		}
 	}
 
+	// Set the number of timeouts for each team to maxTimeouts, unless it's already lower than that in which case do nothing
+	setMaxTimeouts(maxTimeouts: number) {
+		this.timeouts = this.timeouts.map(timeouts => {
+			return Math.min(timeouts, maxTimeouts);
+		}) as [number, number];
+	}
+
 	simRegulation() {
-		let quarter = 1;
+		let period = 1;
 		const wonJump = this.jumpBall();
+		let doneSettingTimeoutsLastThreeMinutes = false;
 
 		while (!this.elamDone) {
+			if (period !== 1) {
+				this.doSubstitutionsIfDeadBall({
+					type: "newPeriod",
+				});
+			}
+
+			const finalPeriod = period === this.numPeriods;
+			if (finalPeriod) {
+				this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD);
+			}
+
 			// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
 			if (
-				jumpBallWinnerStartsThisPeriodWithPossession(quarter, this.numPeriods)
+				jumpBallWinnerStartsThisPeriodWithPossession(period, this.numPeriods)
 			) {
 				this.o = wonJump === 0 ? 1 : 0;
 			} else {
@@ -469,23 +536,32 @@ class GameSim extends GameSimBase {
 			this.d = this.o === 0 ? 1 : 0;
 
 			this.checkElamEnding(); // Before loop, in case it's at 0
-			while ((this.t > 0.5 / 60 || this.elamActive) && !this.elamDone) {
+			while (this.t > 0 && !this.elamDone) {
+				if (
+					finalPeriod &&
+					!doneSettingTimeoutsLastThreeMinutes &&
+					this.t <= 3 * 60
+				) {
+					this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN);
+					doneSettingTimeoutsLastThreeMinutes = true;
+				}
+
 				this.simPossession();
 				this.checkElamEnding();
 			}
 
-			quarter += 1;
-
-			if (quarter > this.numPeriods) {
+			if (finalPeriod) {
 				break;
 			}
+
+			period += 1;
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
 			this.foulsThisQuarter = [0, 0];
 			this.foulsLastTwoMinutes = [0, 0];
 			this.lastScoringPlay = [];
-			this.t = g.get("quarterLength");
+			this.t = g.get("quarterLength") * 60;
 			this.playByPlay.logEvent({
 				type: "period",
 				period: this.team[0].stat.ptsQtrs.length,
@@ -495,11 +571,13 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		this.t = Math.ceil(0.4 * g.get("quarterLength")); // 5 minutes by default, but scales
-
+		// 5 minutes by default, but scales
+		this.t = Math.ceil(0.4 * g.get("quarterLength") * 60);
 		if (this.t === 0) {
-			this.t = 5;
+			this.t = 5 * 60;
 		}
+
+		this.timeouts = [NUM_TIMEOUTS_OVERTIME, NUM_TIMEOUTS_OVERTIME];
 
 		this.lastScoringPlay = [];
 		this.overtimes += 1;
@@ -517,110 +595,59 @@ class GameSim extends GameSimBase {
 		// Check for elamOvertime
 		this.checkElamEnding();
 
+		this.doSubstitutionsIfDeadBall({
+			type: "newPeriod",
+		});
+
 		this.jumpBall();
 
-		while ((this.t > 0.5 / 60 || this.elamActive) && !this.elamDone) {
+		while (this.t > 0 && !this.elamDone) {
 			this.simPossession();
 		}
 	}
 
-	getPossessionLength(intentionalFoul: boolean) {
-		const quarter = this.team[this.o].stat.ptsQtrs.length;
+	getClockFactor() {
+		if (this.elamActive) {
+			return;
+		}
+
+		if (this.shouldIntentionalFoul()) {
+			return "intentionalFoul";
+		}
+
+		const period = this.team[this.o].stat.ptsQtrs.length;
 		const pointDifferential =
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
 		// Run out the clock if winning
+		if (period >= this.numPeriods && this.t <= 24 && pointDifferential > 0) {
+			return "runOutClock" as const;
+		}
+
+		if (this.t <= 26 && (period < this.numPeriods || pointDifferential >= 0)) {
+			return "holdForLastShot" as const;
+		}
+
 		if (
-			quarter >= this.numPeriods &&
-			!this.elamActive &&
-			this.t <= 24 / 60 &&
-			pointDifferential > 0 &&
-			!intentionalFoul
+			period >= this.numPeriods &&
+			((this.t <= 3 * 60 && pointDifferential <= -10) ||
+				(this.t <= 2 * 60 && pointDifferential <= -5) ||
+				(this.t <= 1 * 60 && pointDifferential < 0))
 		) {
-			return this.t;
+			return "catchUp";
+		}
+		if (
+			period >= this.numPeriods &&
+			((this.t <= 3 * 60 && pointDifferential > 10) ||
+				(this.t <= 2 * 60 && pointDifferential > 5) ||
+				(this.t <= 1 * 60 && pointDifferential > 0))
+		) {
+			return "maintainLead";
 		}
 
-		// Booleans that can influence possession length strategy
-		const holdForLastShot =
-			!this.elamActive &&
-			this.t <= 26 / 60 &&
-			(quarter < this.numPeriods || pointDifferential >= 0);
-		const catchUp =
-			!this.elamActive &&
-			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential <= -10) ||
-				(this.t <= 2 && pointDifferential <= -5) ||
-				(this.t <= 1 && pointDifferential < 0));
-		const maintainLead =
-			!this.elamActive &&
-			quarter >= this.numPeriods &&
-			((this.t <= 3 && pointDifferential > 10) ||
-				(this.t <= 2 && pointDifferential > 5) ||
-				(this.t <= 1 && pointDifferential > 0));
-		const twoForOne =
-			!this.elamActive && this.t >= 32 / 60 && this.t <= 52 / 60;
-		let lowerBound = 4 / 60;
-		let upperBound = 24 / 60;
-
-		if (lowerBound > this.t) {
-			lowerBound = this.t;
+		if (this.t >= 32 && this.t <= 52) {
+			return "twoForOne";
 		}
-
-		if (upperBound > this.t) {
-			upperBound = this.t;
-		}
-
-		let possessionLength; // [min]
-
-		if (intentionalFoul) {
-			possessionLength = (Math.random() * 3) / 60;
-			lowerBound = 0;
-			upperBound = this.t;
-		} else if (holdForLastShot) {
-			possessionLength = random.gauss(this.t, 5 / 60);
-		} else if (catchUp) {
-			possessionLength = random.gauss(
-				this.averagePossessionLength - 3 / 60,
-				5 / 60,
-			);
-			if (this.t < 48 / 60 && this.t > 4 / 60) {
-				upperBound = this.t / 2;
-			}
-		} else if (maintainLead) {
-			possessionLength = random.gauss(
-				this.averagePossessionLength + 3 / 60,
-				5 / 60,
-			);
-		} else {
-			possessionLength = random.gauss(this.averagePossessionLength, 5 / 60);
-		}
-
-		if (twoForOne && !catchUp && !maintainLead) {
-			if (Math.random() < 0.6) {
-				// There are between 32 and 52 seconds remaining, and we'd like to get the shot up somewhere between 29 and 35 seconds
-				lowerBound = this.t - 35 / 60;
-				upperBound = this.t - 29 / 60;
-			}
-		}
-
-		if (upperBound < lowerBound) {
-			lowerBound = upperBound;
-		}
-
-		if (lowerBound < 0) {
-			lowerBound = 0;
-		}
-		if (upperBound < 1 / 60) {
-			upperBound = 1 / 60;
-		}
-
-		upperBound = this.elamActive ? Infinity : upperBound;
-
-		const bounded1 = helpers.bound(possessionLength, lowerBound, upperBound);
-
-		const finalUpperBound = this.elamActive ? Infinity : this.t;
-
-		return helpers.bound(bounded1, 0, finalUpperBound);
 	}
 
 	// Call this before running clock for possession
@@ -630,11 +657,55 @@ class GameSim extends GameSimBase {
 		const intentionalFoul =
 			offenseWinningByABit &&
 			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-			this.t < 27 / 60 &&
-			!this.elamActive &&
+			this.t < 27 &&
+			this.t > 0.3 &&
 			this.getNumFoulsUntilBonus() <= 10;
 
 		return intentionalFoul;
+	}
+
+	// When a shot is made and the clock is still running, some time runs off the clock before the next possession starts. No need to worry about going into negative clock values, since the clock stops after made baskets with under 2 minutes left
+	dtInbound() {
+		let dt = 0;
+
+		if (
+			(this.prevPossessionOutcome === "fg" ||
+				this.prevPossessionOutcome === "ft") &&
+			this.isClockRunning
+		) {
+			// Time to gather ball after shot was made, and then to inbound it too
+			dt += random.uniform(1, 5);
+		}
+
+		return dt;
+	}
+
+	doSubstitutionsIfDeadBall(
+		info:
+			| {
+					type: "afterPossession";
+					injuries: boolean;
+			  }
+			| {
+					type: "newPeriod";
+			  },
+	) {
+		const outcome = this.prevPossessionOutcome;
+		const deadBall =
+			info.type === "newPeriod" ||
+			(info.type === "afterPossession" && info.injuries) ||
+			outcome === "timeout" ||
+			outcome === "outOfBoundsDefense" ||
+			outcome === "outOfBoundsOffense" ||
+			outcome === "nonShootingFoul" ||
+			outcome === "ft";
+		if (deadBall) {
+			const substitutions = this.updatePlayersOnCourt();
+
+			if (substitutions) {
+				this.updateSynergy();
+			}
+		}
 	}
 
 	simPossession() {
@@ -643,40 +714,36 @@ class GameSim extends GameSimBase {
 		this.d = this.o === 1 ? 0 : 1;
 		this.updateTeamCompositeRatings();
 
-		// Clock
-		const intentionalFoul = this.shouldIntentionalFoul();
-		const possessionLength = this.getPossessionLength(intentionalFoul);
-		this.t -= possessionLength;
-		const outcome = this.getPossessionOutcome(
-			possessionLength,
-			intentionalFoul,
-		);
+		const dtInbound = this.dtInbound();
+		this.t -= dtInbound;
+		this.possessionLength = 0;
+		this.isClockRunning = true; // Set after computing dtIinbound!
+
+		const clockFactor = this.getClockFactor();
+		const outcome = this.getPossessionOutcome(clockFactor);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
-		if (outcome === "orb" || outcome === "nonShootingFoul") {
+		if (
+			outcome === "orb" ||
+			outcome === "nonShootingFoul" ||
+			outcome === "timeout" ||
+			outcome === "outOfBoundsDefense"
+		) {
 			this.o = this.o === 1 ? 0 : 1;
 			this.d = this.o === 1 ? 0 : 1;
 		}
 
-		this.updatePlayingTime(possessionLength);
-		this.injuries();
+		this.updatePlayingTime(dtInbound + this.possessionLength);
+		const injuries = this.injuries();
 
-		let gameOver = false;
-		if (this.elam) {
-			gameOver = this.elamDone;
-		} else {
-			gameOver =
-				this.t <= 0 &&
-				this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
-				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
-		}
+		this.prevPossessionOutcome = outcome;
 
-		if (!gameOver && random.randInt(1, this.subsEveryN) === 1) {
-			const substitutions = this.updatePlayersOnCourt();
-
-			if (substitutions) {
-				this.updateSynergy();
-			}
+		// With 0 on the clock, either the game is over (no subs) or the subs should happen at start of next period
+		if (this.t > 0 && !this.elamDone) {
+			this.doSubstitutionsIfDeadBall({
+				type: "afterPossession",
+				injuries,
+			});
 		}
 	}
 
@@ -689,7 +756,7 @@ class GameSim extends GameSimBase {
 				Math.max(this.team[this.d].stat.pts, this.team[this.o].stat.pts);
 			lateGame = ptsToTarget <= 15;
 		} else {
-			lateGame = quarter >= this.numPeriods && this.t < 6;
+			lateGame = quarter >= this.numPeriods && this.t < 6 * 60;
 		}
 
 		return lateGame;
@@ -713,7 +780,7 @@ class GameSim extends GameSimBase {
 
 		// Late in games, or in OT, fatigue matters less
 		if (this.isLateGame()) {
-			const factor = 6 - this.t;
+			const factor = this.elamActive ? 2 : 6 - this.t / 60;
 			return (energy + factor) / (1 + factor);
 		}
 
@@ -728,7 +795,7 @@ class GameSim extends GameSimBase {
 		if (
 			this.overtimes > 0 ||
 			this.elamActive ||
-			(quarter === this.numPeriods && this.t < 8)
+			(quarter === this.numPeriods && this.t < 8 * 60)
 		) {
 			return foulsNeededToFoulOut;
 		}
@@ -736,7 +803,7 @@ class GameSim extends GameSimBase {
 		const quarterLength = g.get("quarterLength");
 
 		const gameCompletionFraction =
-			(quarter - this.t / quarterLength) / this.numPeriods;
+			(quarter - this.t / (quarterLength * 60)) / this.numPeriods;
 
 		// For default settings, the limit by quarter is 2/3/5/5. (Last quarter is 5 because of that Math.min)
 		let foulLimit = Math.ceil(gameCompletionFraction * foulsNeededToFoulOut);
@@ -798,11 +865,11 @@ class GameSim extends GameSimBase {
 			} else {
 				blowout =
 					quarter === this.numPeriods &&
-					((diff >= 30 && this.t < 12) ||
-						(diff >= 25 && this.t < 9) ||
-						(diff >= 20 && this.t < 7) ||
-						(diff >= 15 && this.t < 3) ||
-						(diff >= 10 && this.t < 1));
+					((diff >= 30 && this.t < 12 * 60) ||
+						(diff >= 25 && this.t < 9 * 60) ||
+						(diff >= 20 && this.t < 7 * 60) ||
+						(diff >= 15 && this.t < 3 * 60) ||
+						(diff >= 10 && this.t < 1 * 60));
 			}
 		}
 
@@ -934,8 +1001,8 @@ class GameSim extends GameSimBase {
 							this.numPlayersOnCourt >= 5
 								? 2
 								: this.numPlayersOnCourt >= 3
-								  ? 1
-								  : 0;
+									? 1
+									: 0;
 						if (
 							(numG < cutoff && numPG === 0) ||
 							(numF < cutoff && numC === 0)
@@ -1194,19 +1261,20 @@ class GameSim extends GameSimBase {
 	 * This should be called once every possession, at the end, to record playing time and bench time for players.
 	 */
 	updatePlayingTime(possessionLength: number) {
+		const min = possessionLength / 60;
 		for (const t of teamNums) {
 			// Update minutes (overall, court, and bench)
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				if (this.playersOnCourt[t].includes(p)) {
-					this.recordStat(t, p, "min", possessionLength);
-					this.recordStat(t, p, "courtTime", possessionLength);
+					this.recordStat(t, p, "min", min);
+					this.recordStat(t, p, "courtTime", min);
 
 					// This used to be 0.04. Increase more to lower PT
 					this.recordStat(
 						t,
 						p,
 						"energy",
-						-possessionLength *
+						-min *
 							this.fatigueFactor *
 							(1 - this.team[t].player[p].compositeRating.endurance),
 					);
@@ -1215,8 +1283,8 @@ class GameSim extends GameSimBase {
 						this.team[t].player[p].stat.energy = 0;
 					}
 				} else {
-					this.recordStat(t, p, "benchTime", possessionLength);
-					this.recordStat(t, p, "energy", possessionLength * 0.094);
+					this.recordStat(t, p, "benchTime", min);
+					this.recordStat(t, p, "energy", min * 0.094);
 
 					if (this.team[t].player[p].stat.energy > 1) {
 						this.team[t].player[p].stat.energy = 1;
@@ -1233,7 +1301,7 @@ class GameSim extends GameSimBase {
 	 */
 	injuries() {
 		if ((g as any).disableInjuries) {
-			return;
+			return false;
 		}
 
 		let newInjury = false;
@@ -1267,10 +1335,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// Sub out injured player
-		if (newInjury) {
-			this.updatePlayersOnCourt();
-		}
+		return newInjury;
 	}
 
 	getNumFoulsUntilBonus() {
@@ -1282,7 +1347,7 @@ class GameSim extends GameSimBase {
 			this.foulsThisQuarter[this.d];
 
 		// Also check last 2 minutes limit, when appropriate;
-		if (this.t <= 2) {
+		if (this.t <= 2 * 60) {
 			return Math.min(
 				normal,
 				foulsUntilBonus[2] - this.foulsLastTwoMinutes[this.d],
@@ -1293,42 +1358,211 @@ class GameSim extends GameSimBase {
 		return normal;
 	}
 
-	/**
-	 * Simulate a single possession.
-	 *
-	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
-	 */
-	getPossessionOutcome(possessionLength: number, intentionalFoul: boolean) {
-		// If winning at end of game, just run out the clock
-		if (
-			this.t <= 0 &&
-			this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
-			this.team[this.o].stat.pts > this.team[this.d].stat.pts &&
-			!this.elamActive
-		) {
-			return "endOfQuarter";
+	advanceClockSeconds(seconds: number) {
+		if (this.t === 0) {
+			throw new Error("advanceClockSeconds called with 0 already on the clock");
 		}
 
+		// Adjust for pace up until the last minute, so we don't make end of game stuff too weird
+		const secondsAdjusted = this.t > 60 ? seconds / this.paceFactor : seconds;
+
+		if (secondsAdjusted > this.t) {
+			this.possessionLength += this.t;
+			this.t = 0;
+		} else {
+			this.possessionLength += secondsAdjusted;
+			this.t -= secondsAdjusted;
+		}
+	}
+
+	timeoutAdvancesBall() {
+		return (
+			this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
+			this.t <= TIMEOUTS_STOP_CLOCK * 60
+		);
+	}
+
+	doOutOfBounds(probOffenseRetainsBall: number) {
+		this.isClockRunning = false;
+		const offenseRetainsBall = Math.random() < probOffenseRetainsBall;
+		this.playByPlay.logEvent({
+			type: "outOfBounds",
+			on: offenseRetainsBall ? "defense" : "offense",
+			t: offenseRetainsBall ? this.o : this.d,
+			clock: this.t,
+		});
+		return offenseRetainsBall ? "outOfBoundsDefense" : "outOfBoundsOffense";
+	}
+
+	getPossessionOutcome(clockFactor: ClockFactor): PossessionOutcome {
+		// If winning at end of game, just run out the clock
+		if (clockFactor === "runOutClock") {
+			this.advanceClockSeconds(Infinity);
+			this.playByPlay.logEvent({
+				type: "endOfPeriod",
+				t: this.o,
+				clock: this.t,
+				reason: "runOutClock",
+			});
+			return "endOfPeriod";
+		}
+
+		const tipInFromOutOfBounds =
+			this.t <= TIP_IN_ONLY_LIMIT && this.sideOutOfBounds();
+		const lateGamePutBack =
+			this.prevPossessionOutcome === "orb" && this.t < 1.5;
+
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
-		if (this.t <= 0 && possessionLength < 6 / 60 && !this.elamActive) {
-			if (Math.random() > (possessionLength / (8 / 60)) ** (1 / 4)) {
-				return "endOfQuarter";
+		if (this.t <= 6 && !tipInFromOutOfBounds) {
+			// When lateGamePutBack is true, more likely to get a shot up
+			if (
+				this.t <= 0.1 ||
+				Math.random() > (this.t / 8) ** (1 / (lateGamePutBack ? 12 : 6))
+			) {
+				const period = this.team[this.o].stat.ptsQtrs.length;
+				const pointDifferential =
+					this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+				this.advanceClockSeconds(Infinity);
+				this.playByPlay.logEvent({
+					type: "endOfPeriod",
+					t: this.o,
+					clock: this.t,
+					reason:
+						clockFactor === "intentionalFoul"
+							? "intentionalFoul"
+							: period >= this.numPeriods && pointDifferential > 0
+								? "runOutClock"
+								: "noShot",
+				});
+				return "endOfPeriod";
 			}
 		}
 
-		// Turnover?
-		if (Math.random() < this.probTov()) {
-			return this.doTov(); // tov
+		const timeoutAdvancesBall = this.timeoutAdvancesBall();
+		const possessionStartsInFrontcourt =
+			this.prevPossessionOutcome === "orb" ||
+			this.prevPossessionOutcome === "nonShootingFoul" ||
+			(this.prevPossessionOutcome === "timeout" && timeoutAdvancesBall);
+
+		if (!possessionStartsInFrontcourt && timeoutAdvancesBall && this.t < 120) {
+			const pointDifferential =
+				this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+			if (pointDifferential < 0 && this.timeouts[this.o] > 0) {
+				// If comeback is very unlikely, no point in taking a timeout
+				let comebackAttempt = false;
+				if (this.t > 60 && pointDifferential >= -21) {
+					comebackAttempt = true;
+				} else if (this.t > 30 && pointDifferential >= -18) {
+					comebackAttempt = true;
+				} else if (this.t > 20 && pointDifferential >= -15) {
+					comebackAttempt = true;
+				} else if (this.t > 10 && pointDifferential >= -12) {
+					comebackAttempt = true;
+				} else if (this.t > 5 && pointDifferential >= -9) {
+					comebackAttempt = true;
+				} else if (this.t > 2 && pointDifferential >= -6) {
+					comebackAttempt = true;
+				} else if (pointDifferential >= -3) {
+					comebackAttempt = true;
+				}
+
+				if (comebackAttempt) {
+					let takeTimeout = false;
+					if (this.t < 5) {
+						// If time is really low, definitely take a timeout to advance ball
+						takeTimeout = true;
+					} else if (this.t < 25 && this.isClockRunning) {
+						// If time is somewhat low, definitely take a timeout to advance ball
+						takeTimeout = true;
+					} else if (this.t < 60 && this.isClockRunning) {
+						// If time is a little low, sometimes take a timeout to advance ball
+						if ((this.t - 25) / (60 - 25) < Math.random()) {
+							takeTimeout = true;
+						}
+					}
+
+					if (takeTimeout) {
+						this.isClockRunning = false;
+						this.timeouts[this.o] -= 1;
+						this.playByPlay.logEvent({
+							type: "timeout",
+							clock: this.t,
+							t: this.o,
+							numLeft: this.timeouts[this.o],
+							advancesBall: this.timeoutAdvancesBall(),
+						});
+						return "timeout";
+					}
+				}
+			}
+		}
+
+		// Simulate backcourt events, only if necessary
+		if (!possessionStartsInFrontcourt) {
+			// Turnover in backcourt? Actually for possessions starting in backcourt, currently this simulates
+			if (this.t > 0.2 && Math.random() < this.probTov()) {
+				let dt;
+				if (this.t < 8 || clockFactor === "intentionalFoul") {
+					dt = random.uniform(0.1, Math.min(this.t, 5));
+				} else {
+					dt = random.uniform(1, 8);
+				}
+				this.advanceClockSeconds(dt);
+				return this.doTov();
+			}
+
+			// Offense loses ball out of bounds, but retains possession
+			if (Math.random() < 0.01) {
+				return this.doOutOfBounds(1);
+			}
 		}
 
 		const ratios = this.ratingArray("usage", this.o, 1.25);
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
-		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
+		if (
+			Math.random() < 0.08 * g.get("foulRateFactor") ||
+			clockFactor === "intentionalFoul"
+		) {
+			let dt;
+			if (clockFactor === "intentionalFoul") {
+				if (this.t < 8) {
+					if (this.t <= 0.2 || (this.t < 1 && Math.random() > this.t)) {
+						// Time ran out while trying to foul
+						this.advanceClockSeconds(Infinity);
+						this.playByPlay.logEvent({
+							type: "endOfPeriod",
+							t: this.o,
+							clock: this.t,
+							reason: "intentionalFoul",
+						});
+						return "endOfPeriod";
+					}
+					dt = random.uniform(0.1, Math.min(this.t - 0.2, 4));
+				} else {
+					dt = random.uniform(1, 5);
+				}
+			} else {
+				if (this.t < 2) {
+					dt = random.uniform(0, this.t);
+				} else {
+					dt = random.uniform(
+						1,
+						Math.min(this.t, SHOT_CLOCK - this.possessionLength),
+					);
+				}
+			}
+			this.advanceClockSeconds(dt);
+			this.isClockRunning = false;
+
 			// In the bonus? Checks offset by 1, because the foul counter won't increment until doPf is called below
 			const numFoulsUntilBonus = this.getNumFoulsUntilBonus();
 			const inBonus = numFoulsUntilBonus <= 1;
+
+			if (this.t <= 0) {
+				throw new Error("Clock at 0 for non-shooting foul");
+			}
 
 			if (inBonus) {
 				this.doPf({ t: this.d, type: "pfBonus", shooter });
@@ -1337,14 +1571,32 @@ class GameSim extends GameSimBase {
 			}
 
 			if (inBonus) {
-				return this.doFt(shooter, 2); // fg, orb, or drb
+				return this.doFt(shooter, 2);
 			}
 
 			return "nonShootingFoul";
 		}
 
+		// Time to advance ball to frontcourt
+		if (!possessionStartsInFrontcourt) {
+			const upperLimitMin =
+				clockFactor === "catchUp" ? 1 : clockFactor === "maintainLead" ? 4 : 2;
+			const min = Math.max(Math.min(this.t - 0.3, upperLimitMin), 0);
+			const upperLimitMax =
+				clockFactor === "catchUp" ? 4 : clockFactor === "maintainLead" ? 8 : 6;
+			const max = Math.max(Math.min(this.t - 0.3, upperLimitMax), 0);
+			const dt = random.uniform(min, max);
+			this.advanceClockSeconds(dt);
+		}
+
 		// Shot!
-		return this.doShot(shooter, possessionLength); // fg, orb, or drb
+		return this.doShot(
+			shooter,
+			clockFactor,
+			possessionStartsInFrontcourt,
+			tipInFromOutOfBounds,
+			lateGamePutBack,
+		);
 	}
 
 	/**
@@ -1367,22 +1619,34 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
 	 */
-	doTov() {
-		const ratios = this.ratingArray("turnovers", this.o, 2);
-		const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
+	doTov(pOverride?: number) {
+		let p;
+		if (pOverride) {
+			p = pOverride;
+		} else {
+			const ratios = this.ratingArray("turnovers", this.o, 2);
+			p = this.playersOnCourt[this.o][pickPlayer(ratios)];
+		}
 		this.recordStat(this.o, p, "tov");
 
 		if (this.probStl() > Math.random()) {
-			return this.doStl(p); // "stl"
+			return this.doStl(p);
+		}
+
+		// Ball could go out of bounds on the turnover
+		const outOfBounds = Math.random() < 0.3;
+		if (outOfBounds) {
+			this.isClockRunning = false;
 		}
 
 		this.playByPlay.logEvent({
 			type: "tov",
 			t: this.o,
 			pid: this.team[this.o].player[p].id,
+			outOfBounds,
 			clock: this.t,
 		});
-		return "tov";
+		return outOfBounds ? "outOfBoundsOffense" : ("tov" as const);
 	}
 
 	/**
@@ -1406,6 +1670,12 @@ class GameSim extends GameSimBase {
 	 * @return {string} Currently always returns "stl".
 	 */
 	doStl(pStoleFrom: number) {
+		// Ball could go out of bounds on the steal
+		const outOfBounds = Math.random() < 0.1;
+		if (outOfBounds) {
+			this.isClockRunning = false;
+		}
+
 		const ratios = this.ratingArray("stealing", this.d, 4);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "stl");
@@ -1414,18 +1684,36 @@ class GameSim extends GameSimBase {
 			t: this.d,
 			pid: this.team[this.d].player[p].id,
 			pidTov: this.team[this.o].player[pStoleFrom].id,
+			outOfBounds,
 			clock: this.t,
 		});
-		return "stl";
+		return outOfBounds ? "outOfBoundsOffense" : ("stl" as const);
 	}
 
-	/**
-	 * Shot.
-	 *
-	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
-	 */
-	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
+	sideOutOfBounds() {
+		return (
+			this.prevPossessionOutcome === "nonShootingFoul" ||
+			(this.prevPossessionOutcome === "timeout" &&
+				this.timeoutAdvancesBall()) ||
+			this.prevPossessionOutcome === "outOfBoundsDefense" ||
+			this.prevPossessionOutcome === "outOfBoundsOffense"
+		);
+	}
+
+	doShot(
+		shooter: PlayerNumOnCourt,
+		clockFactor: ClockFactor,
+		possessionStartsInFrontcourt: boolean,
+		tipInFromOutOfBounds: boolean,
+		lateGamePutBack: boolean,
+	) {
+		const putBack = lateGamePutBack; // Eventually use this in more situations
+
+		// If it's a putback, override shooter selection with whoever got the last offensive rebound
+		if (putBack) {
+			shooter = this.lastOrbPlayer;
+		}
+
 		const p = this.playersOnCourt[this.o][shooter];
 		const currentFatigue = this.fatigue(
 			this.team[this.o].player[p].stat.energy,
@@ -1433,9 +1721,69 @@ class GameSim extends GameSimBase {
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer: PlayerNumOnCourt | undefined;
-		if (this.probAst() > Math.random() && this.numPlayersOnCourt > 1) {
+		if (
+			(tipInFromOutOfBounds ||
+				(this.t > 1 && this.probAst() > Math.random())) &&
+			!putBack &&
+			this.numPlayersOnCourt > 1
+		) {
 			const ratios = this.ratingArray("passing", this.o, 10);
 			passer = pickPlayer(ratios, shooter);
+		}
+
+		// Ball is already in frontcourt. How long until the shot goes up?
+		let lowerLimit = Math.min(this.t / 2, 2);
+		let upperLimit = Math.min(SHOT_CLOCK - this.possessionLength, this.t - 0.1);
+		if (upperLimit < 0) {
+			lowerLimit = 0;
+			upperLimit = 0;
+		}
+
+		// Time from the ball being in the frontcourt to a shot
+		let dt;
+		if (tipInFromOutOfBounds) {
+			dt = 0;
+		} else if (putBack) {
+			dt = random.uniform(Math.min(this.t, 0.1), Math.min(this.t, 1));
+		} else if (this.t <= 0.3) {
+			dt = random.uniform(0, upperLimit);
+		} else if (this.t < 1) {
+			// Less than 1 second left
+			dt = random.uniform(0.2, upperLimit);
+		} else if (lowerLimit > upperLimit) {
+			// Less than 2 seconds left
+			dt = random.uniform(0.5, upperLimit);
+		} else if (upperLimit - lowerLimit < 4) {
+			// Due to being near the end of the quarter, upperLimit and lowerLimit are close
+			dt = random.uniform(lowerLimit, upperLimit);
+		} else {
+			const mean =
+				clockFactor === "catchUp"
+					? 5
+					: clockFactor === "maintainLead"
+						? 12
+						: 6.25;
+
+			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
+		}
+		this.advanceClockSeconds(dt);
+
+		// Turnovers for possessions that start in the frontcourt only (other turnovers are already handled above for the entire possession, although I guess it'd be better to do it here)
+		if (possessionStartsInFrontcourt) {
+			if (Math.random() < this.probTov()) {
+				let pTurnover;
+				if (tipInFromOutOfBounds) {
+					pTurnover = passer;
+				} else if (putBack) {
+					pTurnover = shooter;
+				}
+				return this.doTov(pTurnover);
+			}
+
+			// Offense loses ball out of bounds, but retains possession
+			if (Math.random() < 0.01) {
+				return this.doOutOfBounds(1);
+			}
 		}
 
 		let shootingThreePointerScaled =
@@ -1461,15 +1809,21 @@ class GameSim extends GameSimBase {
 		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const forceThreePointer =
-			(!this.elamActive &&
-				diff >= 3 &&
+			(diff >= 3 &&
 				diff <= 10 &&
-				this.t <= 10 / 60 &&
+				this.t <= 10 &&
 				quarter >= this.numPeriods &&
-				Math.random() > this.t) ||
+				Math.random() > this.t / 60) ||
 			(quarter < this.numPeriods &&
-				this.t === 0 &&
-				possessionLength <= 2.5 / 60);
+				this.t < 2 &&
+				this.possessionLength <= 3 &&
+				!this.sideOutOfBounds());
+
+		const rushed = this.t < 2 && this.possessionLength < 6;
+
+		if (this.t <= 0) {
+			throw new Error("Clock at 0 when a shot is taken");
+		}
 
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
@@ -1477,7 +1831,40 @@ class GameSim extends GameSimBase {
 		let probMissAndFoul;
 		let type: ShotType;
 
-		if (
+		if (tipInFromOutOfBounds) {
+			type = "tipIn";
+			probMissAndFoul = 0.02;
+			probMake =
+				0.05 + this.team[this.o].player[p].compositeRating.shootingAtRim * 0.1;
+			probAndOne = 0.01;
+
+			this.playByPlay.logEvent({
+				type: "fgaTipIn",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				pidPass: this.team[this.o].player[passer!].id,
+				clock: this.t,
+			});
+		} else if (putBack) {
+			type = "putBack";
+			probMissAndFoul = 0.37;
+			probMake =
+				this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 + 0.54;
+			probAndOne = 0.25;
+
+			if (lateGamePutBack) {
+				probMissAndFoul *= 0.75;
+				probMake *= 0.75;
+				probAndOne *= 0.75;
+			}
+
+			this.playByPlay.logEvent({
+				type: "fgaPutBack",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
+		} else if (
 			forceThreePointer ||
 			Math.random() <
 				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
@@ -1499,6 +1886,7 @@ class GameSim extends GameSimBase {
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
 				clock: this.t,
+				desperation: rushed && forceThreePointer,
 			});
 		} else {
 			const r1 =
@@ -1569,6 +1957,10 @@ class GameSim extends GameSimBase {
 			probMake *= g.get("twoPointAccuracyFactor");
 		}
 
+		if (this.probBlk() > Math.random()) {
+			return this.doBlk(shooter, type); // orb or drb
+		}
+
 		let foulFactor =
 			0.65 *
 			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
@@ -1587,48 +1979,87 @@ class GameSim extends GameSimBase {
 					(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
 			currentFatigue;
 
-		// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+		if (!tipInFromOutOfBounds) {
+			// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+			if (rushed) {
+				probMake *= Math.sqrt(this.possessionLength / 8);
+			}
 
-		if (this.t === 0 && possessionLength < 6 / 60) {
-			probMake *= Math.sqrt(possessionLength / (8 / 60));
+			// Assisted shots are easier
+			if (passer !== undefined) {
+				probMake += 0.025;
+			}
 		}
 
-		// Assisted shots are easier
-		if (passer !== undefined) {
-			probMake += 0.025;
-		}
+		const advanceClock = () => {
+			if (!this.isClockRunning) {
+				// Time between shot and foul being called, rarely
+				if (Math.random() < 0.1) {
+					this.advanceClockSeconds(random.uniform(0, 0.2));
+				}
+				return;
+			}
 
-		if (this.probBlk() > Math.random()) {
-			return this.doBlk(shooter, type); // orb or drb
-		}
+			// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
+			this.advanceClockSeconds(
+				random.uniform(
+					...((type === "atRim" || type === "tipIn" || type === "putBack"
+						? [0.2, 0.5]
+						: type === "lowPost"
+							? [0.7, 1.1]
+							: type === "midRange"
+								? [0.9, 1.3]
+								: [1.2, 1.9]) as [number, number]),
+				),
+			);
+		};
 
 		// Make
 		if (probMake > Math.random()) {
-			// And 1
-			if (probAndOne > Math.random()) {
-				return this.doFg(shooter, passer, type, true); // fg, orb, or drb
+			const andOne = probAndOne > Math.random();
+			if (andOne) {
+				this.isClockRunning = false;
 			}
-
-			return this.doFg(shooter, passer, type); // fg
+			advanceClock();
+			return this.doFg(shooter, passer, type, andOne);
 		}
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
+			this.isClockRunning = false;
+			advanceClock();
 			const threePointer = type === "threePointer" && g.get("threePointers");
 
 			this.doPf({ t: this.d, type: threePointer ? "pfTP" : "pfFG", shooter });
 
 			if (threePointer) {
-				return this.doFt(shooter, 3); // fg, orb, or drb
+				return this.doFt(shooter, 3);
 			}
 
-			return this.doFt(shooter, 2); // fg, orb, or drb
+			return this.doFt(shooter, 2);
 		}
 
 		// Miss
+		advanceClock();
 		this.recordStat(this.o, p, "fga");
 
-		if (type === "atRim") {
+		if (type === "tipIn") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.playByPlay.logEvent({
+				type: "missTipIn",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
+		} else if (type === "putBack") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.playByPlay.logEvent({
+				type: "missPutBack",
+				t: this.o,
+				pid: this.team[this.o].player[p].id,
+				clock: this.t,
+			});
+		} else if (type === "atRim") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.playByPlay.logEvent({
 				type: "missAtRim",
@@ -1662,11 +2093,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		if (this.t > 0.5 / 60 || this.elamActive) {
-			return this.doReb(); // orb or drb
-		}
-
-		return "endOfQuarter";
+		return this.doReb();
 	}
 
 	/**
@@ -1693,7 +2120,7 @@ class GameSim extends GameSimBase {
 		this.recordStat(this.o, p, "ba");
 		this.recordStat(this.o, p, "fga");
 
-		if (type === "atRim") {
+		if (type === "atRim" || type === "tipIn" || type === "putBack") {
 			this.recordStat(this.o, p, "fgaAtRim");
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
@@ -1707,7 +2134,21 @@ class GameSim extends GameSimBase {
 		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p2, "blk");
 
-		if (type === "atRim") {
+		if (type === "tipIn") {
+			this.playByPlay.logEvent({
+				type: "blkTipIn",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
+		} else if (type === "putBack") {
+			this.playByPlay.logEvent({
+				type: "blkPutBack",
+				t: this.d,
+				pid: this.team[this.d].player[p2].id,
+				clock: this.t,
+			});
+		} else if (type === "atRim") {
 			this.playByPlay.logEvent({
 				type: "blkAtRim",
 				t: this.d,
@@ -1737,7 +2178,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		return this.doReb(); // orb or drb
+		return this.doReb();
 	}
 
 	/**
@@ -1777,7 +2218,26 @@ class GameSim extends GameSimBase {
 			pidAst = this.team[this.o].player[pAst].id;
 		}
 
-		if (type === "atRim") {
+		if (type === "tipIn") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.recordStat(this.o, p, "fgAtRim");
+			this.playByPlay.logEvent({
+				type: andOne ? "fgTipInAndOne" : "fgTipIn",
+				t: this.o,
+				pid,
+				pidAst,
+				clock: this.t,
+			});
+		} else if (type === "putBack") {
+			this.recordStat(this.o, p, "fgaAtRim");
+			this.recordStat(this.o, p, "fgAtRim");
+			this.playByPlay.logEvent({
+				type: andOne ? "fgPutBackAndOne" : "fgPutBack",
+				t: this.o,
+				pid,
+				clock: this.t,
+			});
+		} else if (type === "atRim") {
 			// Randomly pick a name to be dunked on
 			let pidDefense;
 			if (pidFoul !== undefined) {
@@ -1834,7 +2294,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		this.recordLastScore(this.o, p, type, this.t);
+		this.recordLastScore(this.o, p, type);
 
 		if (pAst !== undefined) {
 			this.recordStat(this.o, pAst, "ast");
@@ -1843,6 +2303,11 @@ class GameSim extends GameSimBase {
 		if (andOne && !this.elamDone) {
 			this.doPf({ t: this.d, type: "pfAndOne", shooter, fouler });
 			return this.doFt(shooter, 1); // fg, orb, or drb
+		}
+
+		// In the last 2 minutes of a period, stop clock after made FG
+		if (this.t <= 2 * 60) {
+			this.isClockRunning = false;
 		}
 
 		return "fg";
@@ -1873,6 +2338,8 @@ class GameSim extends GameSimBase {
 
 		switch (play.type) {
 			case "atRim":
+			case "tipIn":
+			case "putBack":
 			case "lowPost":
 			case "midRange":
 				break;
@@ -1890,6 +2357,8 @@ class GameSim extends GameSimBase {
 					if (prevPlay.team === play.team) {
 						switch (prevPlay.type) {
 							case "atRim":
+							case "tipIn":
+							case "putBack":
 							case "lowPost":
 							case "midRange":
 								shotType = "a three-point play";
@@ -1929,7 +2398,7 @@ class GameSim extends GameSimBase {
 		}</a> made ${shotType}`;
 
 		if (play.time > 0) {
-			eventText += ` with ${play.time} seconds remaining`;
+			eventText += ` with ${formatClock(play.time)} seconds remaining`;
 		} else {
 			eventText +=
 				play.type === "ft" ? " with no time on the clock" : " at the buzzer";
@@ -1964,6 +2433,8 @@ class GameSim extends GameSimBase {
 
 			switch (play.type) {
 				case "atRim":
+				case "tipIn":
+				case "putBack":
 				case "lowPost":
 				case "midRange":
 					pts = 2;
@@ -1985,6 +2456,8 @@ class GameSim extends GameSimBase {
 							switch (prevPlay.type) {
 								// cases where the basket ties the game, and the and-one wins it
 								case "atRim":
+								case "tipIn":
+								case "putBack":
 								case "lowPost":
 								case "midRange":
 									shotType = "three-point play";
@@ -2021,10 +2494,7 @@ class GameSim extends GameSimBase {
 
 				if (!this.elamActive) {
 					if (play.time > 0) {
-						eventText += ` with ${play.time} ${helpers.plural(
-							"second",
-							play.time,
-						)} remaining`;
+						eventText += ` with ${formatClock(play.time)} seconds remaining`;
 					} else {
 						eventText +=
 							play.type === "ft"
@@ -2044,19 +2514,14 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	recordLastScore(
-		teamnum: TeamNum,
-		playernum: number,
-		type: ShotType,
-		time: number,
-	) {
+	recordLastScore(teamnum: TeamNum, playernum: number, type: ShotType) {
 		// only record plays in the fourth quarter or overtime...
 		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
 			return;
 		}
 
 		// ...in the last 24 seconds...
-		if (time > 0.4) {
+		if (this.t > 24) {
 			return;
 		}
 
@@ -2069,7 +2534,7 @@ class GameSim extends GameSimBase {
 			team: teamnum,
 			player: playernum,
 			type,
-			time: Math.floor(time * 600) / 10, // up to 0.1 of a second
+			time: this.t,
 		};
 
 		if (this.lastScoringPlay.length === 0) {
@@ -2085,15 +2550,6 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	/**
-	 * Free throw.
-	 *
-	 * Fatigue has no affect: https://doi.org/10.2478/v10078-010-0019-0
-	 *
-	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-	 * @param {number} amount Integer representing the number of free throws to shoot
-	 * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
-	 */
 	doFt(shooter: PlayerNumOnCourt, amount: number) {
 		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 
@@ -2105,7 +2561,8 @@ class GameSim extends GameSimBase {
 			0,
 			0.95,
 		);
-		let outcome: string | null = null;
+
+		let outcome: PossessionOutcome | undefined;
 
 		for (let i = 0; i < amount; i++) {
 			this.recordStat(this.o, p, "fta");
@@ -2120,8 +2577,8 @@ class GameSim extends GameSimBase {
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
 				});
-				outcome = "fg";
-				this.recordLastScore(this.o, p, "ft", this.t);
+				outcome = "ft";
+				this.recordLastScore(this.o, p, "ft");
 
 				if (this.elamDone) {
 					break;
@@ -2133,12 +2590,15 @@ class GameSim extends GameSimBase {
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
 				});
-				outcome = null;
+				outcome = undefined;
 			}
 		}
 
-		if (outcome !== "fg") {
-			outcome = this.doReb(); // orb or drb
+		if (outcome === "ft") {
+			this.isClockRunning = false;
+		} else {
+			this.isClockRunning = true;
+			outcome = this.doReb();
 		}
 
 		return outcome;
@@ -2211,24 +2671,27 @@ class GameSim extends GameSimBase {
 
 		this.foulsThisQuarter[t] += 1;
 
-		if (this.t <= 2) {
+		if (this.t <= 2 * 60) {
 			this.foulsLastTwoMinutes[t] += 1;
 		}
 	}
 
-	/**
-	 * Rebound.
-	 *
-	 * Simulates a rebound opportunity (e.g. after a missed shot).
-	 *
-	 * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
-	 */
 	doReb() {
 		let p;
 		let ratios;
 
+		if (this.t === 0) {
+			return "endOfPeriod";
+		}
+
+		this.advanceClockSeconds(random.uniform(0.1, 0.7));
+
+		if (this.t === 0) {
+			return "endOfPeriod";
+		}
+
 		if (Math.random() < 0.15) {
-			return null;
+			return this.doOutOfBounds(0.1);
 		}
 
 		if (
@@ -2246,11 +2709,12 @@ class GameSim extends GameSimBase {
 				pid: this.team[this.d].player[p].id,
 				clock: this.t,
 			});
-			return "drb";
+			return "drb" as const;
 		}
 
 		ratios = this.ratingArray("rebounding", this.o, 5);
-		p = this.playersOnCourt[this.o][pickPlayer(ratios)];
+		this.lastOrbPlayer = pickPlayer(ratios);
+		p = this.playersOnCourt[this.o][this.lastOrbPlayer];
 		this.recordStat(this.o, p, "orb");
 		this.playByPlay.logEvent({
 			type: "orb",
@@ -2258,7 +2722,7 @@ class GameSim extends GameSimBase {
 			pid: this.team[this.o].player[p].id,
 			clock: this.t,
 		});
-		return "orb";
+		return "orb" as const;
 	}
 
 	/**

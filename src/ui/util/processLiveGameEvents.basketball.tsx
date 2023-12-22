@@ -49,11 +49,31 @@ export const getText = (
 	} else if (event.type === "injury") {
 		texts = [`${getName(event.pid)} was injured!`];
 	} else if (event.type === "tov") {
-		texts = [`${getName(event.pid)} turned the ball over`];
+		if (event.outOfBounds) {
+			texts = [`${getName(event.pid)} loses the ball out of bounds`];
+		} else {
+			texts = [`${getName(event.pid)} turns the ball over`];
+		}
 	} else if (event.type === "stl") {
+		if (event.outOfBounds) {
+			texts = [
+				`${getName(event.pid)} knocks the ball out of bounds off ${getName(
+					event.pidTov,
+				)}`,
+			];
+		} else {
+			texts = [
+				`${getName(event.pid)} stole the ball from ${getName(event.pidTov)}`,
+			];
+		}
+	} else if (event.type === "fgaTipIn") {
 		texts = [
-			`${getName(event.pid)} stole the ball from ${getName(event.pidTov)}`,
+			`${getName(event.pid)} cuts to the rim as ${getName(
+				event.pidPass,
+			)} lobs up the inbound pass`,
 		];
+	} else if (event.type === "fgaPutBack") {
+		texts = [`${getName(event.pid)} puts the offensive rebound back up`];
 	} else if (event.type === "fgaAtRim") {
 		texts = [`${getName(event.pid)} elevates for a shot at the rim`];
 	} else if (event.type === "fgaLowPost") {
@@ -61,10 +81,48 @@ export const getText = (
 	} else if (event.type === "fgaMidRange") {
 		texts = [`${getName(event.pid)} attempts a mid-range shot`];
 	} else if (event.type === "fgaTp") {
-		texts = [`${getName(event.pid)} attempts a three pointer`];
+		if (event.desperation) {
+			texts = [
+				`${getName(event.pid)} throws up a deep three as time winds down`,
+			];
+		} else {
+			texts = [`${getName(event.pid)} attempts a three pointer`];
+		}
 	} else if (event.type === "fgaTpFake") {
 		// This is for when threePointers is false
-		texts = [`${getName(event.pid)} attempts a deep shot`];
+		if (event.desperation) {
+			texts = [
+				`${getName(event.pid)} throws up a deep shot as time winds down`,
+			];
+		} else {
+			texts = [`${getName(event.pid)} attempts a deep shot`];
+		}
+	} else if (event.type === "fgTipIn") {
+		const he = getPronoun("He");
+
+		texts = [`${he} slams it home!`, `${he} tips it in!`];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
+	} else if (event.type === "fgTipInAndOne") {
+		const he = getPronoun("He");
+
+		texts = [
+			`${he} slams it home, and a foul!`,
+			`${he} tips it in, and a foul!`,
+		];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
+	} else if (event.type === "fgPutBack") {
+		const he = getPronoun("He");
+
+		texts = [`${he} slams it home!`, `${he} lays it in!`];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
+	} else if (event.type === "fgPutBackAndOne") {
+		const he = getPronoun("He");
+
+		texts = [
+			`${he} slams it home, and a foul!`,
+			`${he} lays it in, and a foul!`,
+		];
+		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgAtRim") {
 		const he = getPronoun("He");
 
@@ -95,7 +153,11 @@ export const getText = (
 		event.type === "tpAndOne"
 	) {
 		texts = ["It's good, and a foul!"];
-	} else if (event.type === "blkAtRim") {
+	} else if (
+		event.type === "blkAtRim" ||
+		event.type === "blkTipIn" ||
+		event.type === "blkPutBack"
+	) {
 		texts = [
 			`${getName(event.pid)} blocked the layup attempt`,
 			`${getName(event.pid)} blocked the dunk attempt`,
@@ -109,7 +171,13 @@ export const getText = (
 		event.type === "blkTp"
 	) {
 		texts = [`Blocked by ${getName(event.pid)}!`];
-	} else if (event.type === "missAtRim") {
+	} else if (event.type === "missTipIn") {
+		const he = getPronoun("He");
+		texts = [`${he} blows the layup`, `${he} blows the dunk`, "No good"];
+		if (local.getState().gender === "female") {
+			weights = [1, 0, 1];
+		}
+	} else if (event.type === "missAtRim" || event.type === "missPutBack") {
 		texts = [
 			`${getPronoun("He")} missed the layup`,
 			"The layup attempt rolls out",
@@ -170,6 +238,22 @@ export const getText = (
 		texts = [`${getName(event.pid)} won the jump ball`];
 	} else if (event.type === "elamActive") {
 		texts = [`Elam Ending activated! First team to ${event.target} wins.`];
+	} else if (event.type === "timeout") {
+		texts = [
+			`Timeout (${event.numLeft} remaining)${
+				event.advancesBall ? ", the ball is advanced to half court" : ""
+			}`,
+		];
+	} else if (event.type === "endOfPeriod") {
+		if (event.reason === "runOutClock") {
+			texts = ["They run out the clock to end the game"];
+		} else if (event.reason === "noShot") {
+			texts = ["They didn't get a shot up before the buzzer"];
+		} else {
+			texts = ["The clock runs out as the defense tries to foul"];
+		}
+	} else if (event.type === "outOfBounds") {
+		texts = [`Out of bounds, last touched by the ${event.on}`];
 	}
 
 	if (texts) {
@@ -198,6 +282,8 @@ const newPossessionTypes: Record<string, boolean> = {
 	tp: true,
 	tpAndOne: true,
 	drb: true,
+	fgaTipIn: true,
+	fgaPutBack: true,
 	fgaAtRim: true,
 	fgaLowPost: true,
 	fgaMidRange: true,
@@ -212,6 +298,8 @@ const newPossessionTypes: Record<string, boolean> = {
 	orb: true,
 	stl: true,
 	tov: false,
+	timeout: true,
+	endOfPeriod: true,
 };
 
 // Mutates boxScore!!!
@@ -337,9 +425,20 @@ const processLiveGameEvents = ({
 
 			let time;
 			if (eAny.clock !== undefined) {
-				const sec = Math.floor((eAny.clock % 1) * 60);
-				const secString = sec < 10 ? `0${sec}` : `${sec}`;
-				time = `${Math.floor(eAny.clock)}:${secString}`;
+				const seconds = eAny.clock;
+				if (seconds <= 59.9) {
+					const centiSecondsRounded = Math.ceil(seconds * 10);
+					const remainingSeconds = Math.floor(centiSecondsRounded / 10);
+					const remainingCentiSeconds = centiSecondsRounded % 10;
+					time = `${remainingSeconds}.${remainingCentiSeconds}`;
+				} else {
+					const secondsRounded = Math.ceil(seconds);
+					const minutes = Math.floor(secondsRounded / 60);
+					const remainingSeconds = secondsRounded % 60;
+					const formattedSeconds =
+						remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+					time = `${minutes}:${formattedSeconds}`;
+				}
 			}
 
 			if (e.type === "injury") {

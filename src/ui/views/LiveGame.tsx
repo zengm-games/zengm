@@ -32,6 +32,7 @@ type PlayerRowProps = {
 	i: number;
 	liveGameInProgress?: boolean;
 	p: any;
+	season: number;
 };
 
 class PlayerRow extends Component<PlayerRowProps> {
@@ -622,7 +623,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 						),
 						key: "S",
 					},
-			  ];
+				];
 
 		// Dedupe
 		const skipMinutesValues = new Set();
@@ -772,22 +773,22 @@ export const LiveGame = (props: View<"liveGame">) => {
 								setPlayIndex(prev => prev + numPlays);
 							},
 						},
-				  ]
+					]
 				: [
 						{
 							label: `End of ${
 								boxScore.current.elamTarget !== undefined
 									? "game"
 									: boxScore.current.overtime
-									  ? "period"
-									  : getPeriodName(boxScore.current.numPeriods)
+										? "period"
+										: getPeriodName(boxScore.current.numPeriods)
 							}`,
 							key: "Q",
 							onClick: () => {
 								playSeconds(Infinity);
 							},
 						},
-				  ]),
+					]),
 		];
 
 		if (!boxScore.current.elam && !isSport("baseball")) {

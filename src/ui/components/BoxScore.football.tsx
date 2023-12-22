@@ -39,6 +39,7 @@ type Team = {
 
 type BoxScore = {
 	gid: number;
+	season: number;
 	scoringSummary: PlayByPlayEventScore[];
 	teams: [Team, Team];
 	numPeriods?: number;
@@ -117,11 +118,13 @@ export const sortByStats = (
 const StatsTableIndividual = ({
 	Row,
 	exhibition,
+	season,
 	t,
 	type,
 }: {
 	Row: any;
 	exhibition?: boolean;
+	season: number;
 	t: BoxScore["teams"][number];
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
@@ -186,6 +189,7 @@ const StatsTableIndividual = ({
 								p={p}
 								stats={stats}
 								highlightCols={highlightCols}
+								season={season}
 							/>
 						))}
 					</tbody>
@@ -211,6 +215,7 @@ const StatsTable = ({
 					key={i}
 					Row={Row}
 					exhibition={boxScore.exhibition}
+					season={boxScore.season}
 					t={t}
 					type={type}
 				/>
@@ -286,8 +291,8 @@ const processEvents = (
 					quarter: isOldFormat
 						? oldEvent.quarter
 						: event.quarter <= numPeriods
-						  ? `Q${event.quarter}`
-						  : `OT${event.quarter - numPeriods}`,
+							? `Q${event.quarter}`
+							: `OT${event.quarter - numPeriods}`,
 					time: isOldFormat ? oldEvent.time : formatClock(event.clock),
 					text,
 					score: helpers.deepCopy(score),
@@ -414,8 +419,8 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 				const endzoneTeam = ENDZONE_OFFENSE
 					? t
 					: ENDZONE_DEFENSE
-					  ? t2
-					  : undefined;
+						? t2
+						: undefined;
 				if (endzoneTeam) {
 					style.backgroundColor = endzoneTeam.colors[0];
 					style.color = endzoneTeam.colors[1];
@@ -615,7 +620,7 @@ const PlayBar = forwardRef<
 								}}
 							/>
 						</OverlayTrigger>
-				  ))
+					))
 				: null;
 		if (flags && !driveDirection) {
 			flags.reverse();
@@ -643,10 +648,10 @@ const PlayBar = forwardRef<
 						backgroundColor: turnover
 							? red
 							: score
-							  ? lightGreen
-							  : play.intendedPossessionChange
-							    ? darkGray
-							    : blue,
+								? lightGreen
+								: play.intendedPossessionChange
+									? darkGray
+									: blue,
 						[driveDirection ? "marginLeft" : "marginRight"]: margin,
 						width: `calc(${
 							(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
@@ -669,10 +674,10 @@ const PlayBar = forwardRef<
 								backgroundColor: turnover
 									? red
 									: score
-									  ? lightGreen
-									  : play.intendedPossessionChange
-									    ? darkGray
-									    : lightGray,
+										? lightGreen
+										: play.intendedPossessionChange
+											? darkGray
+											: lightGray,
 								color:
 									turnover || play.intendedPossessionChange ? "#fff" : "#000",
 							}}
@@ -684,7 +689,7 @@ const PlayBar = forwardRef<
 											play.down,
 											play.toGo,
 											play.scrimmage,
-									  ))}
+										))}
 						</div>
 					) : (
 						<>&nbsp;</>

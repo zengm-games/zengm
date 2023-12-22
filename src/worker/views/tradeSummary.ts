@@ -125,7 +125,7 @@ const findStatSum = (
 					};
 				}
 				statSumsBySeason[row.season].stat += stat;
-				if (row.tid === tid) {
+				if (row.tid === tid && !seenOtherTeam) {
 					statSumsBySeason[row.season].statTeam += stat;
 				}
 			}

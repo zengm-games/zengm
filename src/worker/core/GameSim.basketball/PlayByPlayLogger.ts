@@ -62,10 +62,49 @@ type PlayByPlayEventInputScore =
 			type: "tpAndOne";
 			t: TeamNum;
 			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgTipIn";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgTipInAndOne";
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "fgPutBack";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "fgPutBackAndOne";
+			t: TeamNum;
+			pid: number;
 			clock: number;
 	  };
 
 type PlayByPlayEventInputNoScore =
+	| {
+			type: "blkTipIn";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "blkPutBack";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
 	| {
 			type: "blkAtRim";
 			t: TeamNum;
@@ -119,9 +158,24 @@ type PlayByPlayEventInputNoScore =
 			t: TeamNum;
 			pid: number;
 			clock: number;
+			desperation: boolean;
 	  }
 	| {
 			type: "fgaTpFake";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+			desperation: boolean;
+	  }
+	| {
+			type: "fgaTipIn";
+			t: TeamNum;
+			pid: number;
+			pidPass: number;
+			clock: number;
+	  }
+	| {
+			type: "fgaPutBack";
 			t: TeamNum;
 			pid: number;
 			clock: number;
@@ -143,6 +197,18 @@ type PlayByPlayEventInputNoScore =
 	  }
 	| {
 			type: "jumpBall";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missTipIn";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "missPutBack";
 			t: TeamNum;
 			pid: number;
 			clock: number;
@@ -231,6 +297,7 @@ type PlayByPlayEventInputNoScore =
 			t: TeamNum;
 			pid: number;
 			pidTov: number;
+			outOfBounds: boolean;
 			clock: number;
 	  }
 	| {
@@ -244,11 +311,31 @@ type PlayByPlayEventInputNoScore =
 			type: "tov";
 			t: TeamNum;
 			pid: number;
+			outOfBounds: boolean;
 			clock: number;
 	  }
 	| {
 			type: "elamActive";
 			target: number;
+	  }
+	| {
+			type: "timeout";
+			t: TeamNum;
+			numLeft: number;
+			advancesBall: boolean;
+			clock: number;
+	  }
+	| {
+			type: "endOfPeriod";
+			t: TeamNum;
+			reason: "runOutClock" | "noShot" | "intentionalFoul";
+			clock: number;
+	  }
+	| {
+			type: "outOfBounds";
+			t: TeamNum;
+			on: "offense" | "defense";
+			clock: number;
 	  };
 
 type PlayByPlayEventInput =

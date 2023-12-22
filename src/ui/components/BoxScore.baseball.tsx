@@ -42,6 +42,7 @@ type Team = {
 type BoxScore = {
 	gid: number;
 	scoringSummary: PlayByPlayEventScore[];
+	season: number;
 	teams: [Team, Team];
 	numPeriods?: number;
 	exhibition?: boolean;
@@ -51,6 +52,7 @@ const StatsTable = ({
 	Row,
 	exhibition,
 	forceRowUpdate,
+	season,
 	title,
 	type,
 	t,
@@ -58,6 +60,7 @@ const StatsTable = ({
 	Row: any;
 	exhibition?: boolean;
 	forceRowUpdate: boolean;
+	season: number;
 	title: string;
 	type: keyof typeof PLAYER_GAME_STATS;
 	t: Team;
@@ -169,6 +172,7 @@ const StatsTable = ({
 								exhibition={exhibition}
 								i={i}
 								p={p}
+								season={season}
 								stats={stats}
 								seasonStats={seasonStats}
 								forceUpdate={forceRowUpdate}
@@ -448,6 +452,7 @@ const BoxScore = ({
 								Row={Row}
 								exhibition={boxScore.exhibition}
 								forceRowUpdate={forceRowUpdate}
+								season={boxScore.season}
 								title={title}
 								type={title.toLowerCase() as any}
 								t={t}

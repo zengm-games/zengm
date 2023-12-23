@@ -1,9 +1,20 @@
 new logos
 - delhi typo
+- logos page
 - blog
   - rebranding
   - providence in historical leagues
   - hockey default teams (CIN -> CLB, CHA -> RAL)
+
+setting for overtime period length
+- not available for baseball
+- default values for
+  - basketball
+  - football
+  - hockey
+- upgrade by applying what would be the default in the old system
+  - import
+  - existing leagues
 
 better clock handling in BBGM - calculate tim as you go in the play
 - turnovers/steals

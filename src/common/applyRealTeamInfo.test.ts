@@ -17,7 +17,7 @@ describe("common/applyRealTeamInfo", () => {
 		assert.strictEqual(t.region, "Atlanta");
 		assert.strictEqual(t.name, "Gold Club");
 		assert.strictEqual(t.pop, 5.3);
-		assert.deepStrictEqual(t.colors, ["#5c4a99", "#f0e81c", "#211e1e"]);
+		assert.deepStrictEqual(t.colors, ["#291091", "#ae7c00", "#00d1df"]);
 		assert.strictEqual(t.imgURL, "/img/logos-primary/ATL.svg");
 		t.srID = "foo";
 

@@ -245,6 +245,7 @@ const getSeasonInfoLeague = async ({
 			return {
 				abbrev: teamSeason.abbrev ?? t.abbrev,
 				imgURL: teamSeason.imgURL ?? t.imgURL,
+				imgURLSmall: teamSeason.imgURLSmall ?? t.imgURLSmall,
 				region: teamSeason.region ?? t.region,
 				name: teamSeason.name ?? t.name,
 				pop: teamSeason.pop ?? t.pop,

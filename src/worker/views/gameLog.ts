@@ -79,9 +79,11 @@ export const setTeamInfo = async (
 				(Object.hasOwn(g, "teamInfoCache")
 					? g.get("teamInfoCache")[t.tid]?.imgURL
 					: "");
+
+			// Extra teamSeasonOverride check here because this could intentionally be undefined in the provided teamSeason
 			t.imgURLSmall =
 				teamSeason.imgURLSmall ??
-				(Object.hasOwn(g, "teamInfoCache")
+				(Object.hasOwn(g, "teamInfoCache") && !teamSeasonOverride
 					? g.get("teamInfoCache")[t.tid]?.imgURLSmall
 					: undefined);
 			t.colors = teamSeason.colors;

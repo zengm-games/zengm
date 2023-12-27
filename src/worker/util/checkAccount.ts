@@ -74,6 +74,7 @@ const checkAccount = async (
 	} catch (err) {
 		// Don't freak out if an AJAX request fails or whatever
 		console.log(err);
+		adding = false;
 		return {
 			email: "",
 			goldCancelled: false,

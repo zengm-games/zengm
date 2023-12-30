@@ -841,7 +841,7 @@ class Play {
 		}
 
 		// No first down or turnover on downs if extra point or two-point conversion - see issue #396
-		if (state.awaitingAfterTouchdown) {
+		if (state.awaitingAfterTouchdown || state.awaitingAfterSafety) {
 			return;
 		}
 

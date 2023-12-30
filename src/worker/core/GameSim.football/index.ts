@@ -452,7 +452,7 @@ class GameSim extends GameSimBase {
 	// Probability that a kickoff should be an onside kick
 	probOnside() {
 		if (this.awaitingAfterSafety) {
-			return 0 * g.get("onsideFactor");
+			return 0;
 		}
 
 		// Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
@@ -462,7 +462,7 @@ class GameSim extends GameSimBase {
 
 		// Does game situation dictate an onside kick in the 4th quarter?
 		if (this.team[0].stat.ptsQtrs.length !== this.numPeriods) {
-			return 0 * g.get("onsideFactor");
+			return 0;
 		}
 
 		const numScoresDown = Math.ceil(
@@ -471,7 +471,7 @@ class GameSim extends GameSimBase {
 
 		if (numScoresDown <= 0 || numScoresDown >= 4) {
 			// Either winning, or being blown out so there's no point
-			return 0 * g.get("onsideFactor");
+			return 0;
 		}
 
 		if (this.clock < 2) {
@@ -490,7 +490,7 @@ class GameSim extends GameSimBase {
 			return (numScoresDown / 20) * g.get("onsideFactor");
 		}
 
-		return 0 * g.get("onsideFactor");
+		return 0;
 	}
 
 	hurryUp() {
@@ -925,7 +925,7 @@ class GameSim extends GameSimBase {
 					? new Set([
 							this.pickPlayer(d, "tackling", positions, 1.5),
 							this.pickPlayer(d, "tackling", positions, 1.5),
-					  ])
+						])
 					: new Set([this.pickPlayer(d, "tackling", positions, 1.5)]);
 
 			this.currentPlay.addEvent({

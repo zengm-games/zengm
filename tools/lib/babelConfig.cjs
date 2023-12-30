@@ -8,13 +8,13 @@ module.exports = legacy => {
 	if (legacy) {
 		plugins.push(
 			[
-				"@babel/plugin-proposal-optional-chaining",
+				"@babel/plugin-transform-optional-chaining",
 				{
 					loose: true,
 				},
 			], // Chrome 80, Safari 13.1
 			[
-				"@babel/plugin-proposal-nullish-coalescing-operator",
+				"@babel/plugin-transform-nullish-coalescing-operator",
 				{
 					loose: true,
 				},

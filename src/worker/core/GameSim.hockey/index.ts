@@ -511,15 +511,18 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		this.clock = g.get("quarterLength");
+		// 5 minutes by default, but scales
+		this.clock = Math.ceil(
+			(g.get("quarterLength") * 5) / defaultGameAttributes.quarterLength,
+		);
+		if (this.clock === 0) {
+			this.clock = 5;
+		}
+
 		this.minutesSinceLineChange[0].F = 0;
 		this.minutesSinceLineChange[0].D = 0;
 		this.minutesSinceLineChange[1].F = 0;
 		this.minutesSinceLineChange[1].D = 0;
-
-		if (this.clock <= 0) {
-			this.clock = defaultGameAttributes.quarterLength;
-		}
 
 		this.overtime = true;
 		this.overtimes += 1;
@@ -1733,7 +1736,7 @@ class GameSim extends GameSimBase {
 								injuryFactor) **
 							power
 						);
-				  }
+					}
 				: undefined;
 		return random.choice(players, weightFunc);
 	}

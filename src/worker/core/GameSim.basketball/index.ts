@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../util";
+import { defaultGameAttributes, g, helpers, random } from "../../util";
 import { PHASE } from "../../../common";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 import getInjuryRate from "./getInjuryRate";
@@ -572,7 +572,9 @@ class GameSim extends GameSimBase {
 
 	simOvertime() {
 		// 5 minutes by default, but scales
-		this.t = Math.ceil(0.4 * g.get("quarterLength") * 60);
+		this.t = Math.ceil(
+			(g.get("quarterLength") * 60 * 5) / defaultGameAttributes.quarterLength,
+		);
 		if (this.t === 0) {
 			this.t = 5 * 60;
 		}

@@ -7,7 +7,6 @@ import processTrade from "./processTrade";
 import summary from "./summary";
 import type { TradeTeams } from "../../../common/types";
 import { isSport } from "../../../common";
-import Bugsnag from "@bugsnag/browser";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();
@@ -63,7 +62,6 @@ const attempt = async (valueChangeKey: number) => {
 		// Weight by player value - good player more likely to be in trade
 		const p = random.choice(players, p => p.value);
 		if (!p) {
-			Bugsnag.notify(new Error("Custom - trade player"));
 			return false;
 		}
 		pids.push(p.pid);
@@ -74,7 +72,6 @@ const attempt = async (valueChangeKey: number) => {
 		const p = random.choice(players, p => p.value);
 		const dp = random.choice(draftPicks);
 		if (!p || !dp) {
-			Bugsnag.notify(new Error("Custom - trade player 2"));
 			return false;
 		}
 		pids.push(p.pid);

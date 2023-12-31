@@ -31,11 +31,6 @@ better clock handling in BBGM - calculate tim as you go in the play
 - if down by 2/3 very late, maybe intentionally miss FT to get offensive rebound attempt https://github.com/zengm-games/zengm/issues/392
 - fast breaks
 
-release and re-sign player - don't create extra stats row https://discord.com/channels/@me/662077709836484618/1184181016961753159
-
-betweenAiTeams error
-- in bugsnag breadcrumbs, seems to happen after cliking play > until preseason
-
 tailwind
 - https://usewindy.com/
 

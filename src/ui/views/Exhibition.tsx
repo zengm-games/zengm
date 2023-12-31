@@ -197,13 +197,13 @@ const SelectTeam = ({
 						type: "real",
 						season,
 						pidOffset,
-				  }
+					}
 				: {
 						type: "league",
 						lid: league.lid,
 						season,
 						pidOffset,
-				  },
+					},
 		);
 		const newTeams = orderBy(
 			applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
@@ -332,7 +332,7 @@ const SelectTeam = ({
 									<option key={i} value={i}>
 										{i}
 									</option>
-							  ))
+								))
 							: null}
 					</select>
 					<select
@@ -348,7 +348,7 @@ const SelectTeam = ({
 					>
 						{teams.map(t => (
 							<option key={t.tid} value={t.tid}>
-								{t.region} {t.name}
+								{t.region} {t.name} ({t.ovr} ovr)
 							</option>
 						))}
 						{teams.length === 0 ? (

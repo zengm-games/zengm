@@ -1,3 +1,6 @@
+more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
+- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
+
 BBGM injury rate too low? https://discord.com/channels/290013534023057409/290015591216054273/1190784110763970600
 
 setting for overtime period length
@@ -146,9 +149,6 @@ wrong team abbrev various places
   - fixRatingsStatsAbbrevs - updates abbrevs in player object (ratings/stats/draft)
 - any abbrev returned in stats or ratings from playersPlus is wrong
 - using teamInfoCache from UI is probably wrong too
-
-more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
-- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

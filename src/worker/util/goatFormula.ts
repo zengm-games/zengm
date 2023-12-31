@@ -85,6 +85,29 @@ const evaluate = (
 
 	const object: Record<string, number> = {};
 
+	const statsRows = p.stats.filter(row => {
+		if (info.type === "season" && row.season !== info.season) {
+			return false;
+		}
+
+		// Don't check row.min being 0, since that is true for some historical stats before 1952
+		if (row.gp === 0) {
+			return false;
+		}
+
+		// Not sure why I made this only for career and not for season too
+		if (info.type === "career" && row.gp < MIN_GP_SEASON) {
+			return false;
+		}
+
+		return true;
+	});
+
+	// Ignore players with no valid stats, so there isn't weirdness like -ewaPeak being shown as Infinity
+	if (statsRows.length === 0) {
+		return -Infinity;
+	}
+
 	for (const stat of STAT_VARIABLES) {
 		const peak = `${stat}Peak`;
 		const peakPerGame = `${stat}PeakPerGame`;
@@ -100,16 +123,7 @@ const evaluate = (
 		let minSum = 0;
 		let minSumPlayoffs = 0;
 
-		for (const row of p.stats) {
-			if (info.type === "season" && row.season !== info.season) {
-				continue;
-			}
-
-			// Don't check row.min being 0, since that is true for some historical stats before 1952
-			if (row.gp === 0) {
-				continue;
-			}
-
+		for (const row of statsRows) {
 			if (row.playoffs) {
 				if (weightStatByMinutes) {
 					object[playoffs] += row[stat] * row.min;
@@ -119,15 +133,13 @@ const evaluate = (
 				}
 			} else {
 				if (info.type === "career") {
-					if (row.gp >= MIN_GP_SEASON) {
-						if (row[stat] > object[peak]) {
-							object[peak] = row[stat];
-						}
+					if (row[stat] > object[peak]) {
+						object[peak] = row[stat];
+					}
 
-						const perGame = row[stat] / row.gp;
-						if (perGame > object[peakPerGame]) {
-							object[peakPerGame] = perGame;
-						}
+					const perGame = row[stat] / row.gp;
+					if (perGame > object[peakPerGame]) {
+						object[peakPerGame] = perGame;
 					}
 				}
 
@@ -216,8 +228,10 @@ const evaluate = (
 	const value = formulaCache[goatFormula].evaluate(object);
 
 	if (Number.isNaN(value)) {
+		console.log("NaN", value);
 		return -Infinity;
 	}
+	console.log("value", value, object);
 
 	return value;
 };

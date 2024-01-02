@@ -511,12 +511,9 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		// 5 minutes by default, but scales
-		this.clock = Math.ceil(
-			(g.get("quarterLength") * 5) / defaultGameAttributes.quarterLength,
-		);
+		this.clock = g.get("quarterLength");
 		if (this.clock === 0) {
-			this.clock = 5;
+			this.clock = defaultGameAttributes.quarterLength;
 		}
 
 		this.minutesSinceLineChange[0].F = 0;

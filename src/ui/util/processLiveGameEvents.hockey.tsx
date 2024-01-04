@@ -157,8 +157,8 @@ const getText = (
 			event.penaltyType === "major"
 				? "Major"
 				: event.penaltyType === "minor"
-				  ? "Minor"
-				  : "Double minor";
+					? "Minor"
+					: "Double minor";
 		text = (
 			<span className="text-danger">
 				{type} penalty on {event.names[0]} for {event.penaltyName}
@@ -216,7 +216,11 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: number[];
 }) => {
-	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+	if (
+		!playersByPid ||
+		boxScore.gid !== playersByPidGid ||
+		events[0].type === "init"
+	) {
 		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {
@@ -323,8 +327,8 @@ const processLiveGameEvents = ({
 				boxScore.possession = newPossessionTypes[eAny.type]
 					? actualT
 					: actualT === 0
-					  ? 1
-					  : 0;
+						? 1
+						: 0;
 			}
 
 			stop = true;

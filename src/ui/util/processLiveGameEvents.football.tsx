@@ -233,8 +233,8 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			event.touchback
 				? " for a touchback"
 				: event.yds < 0
-				  ? " into the end zone"
-				  : ` to the ${event.yds} yard line`
+					? " into the end zone"
+					: ` to the ${event.yds} yard line`
 		}`;
 	} else if (event.type === "kickoffReturn") {
 		text = `${event.names[0]} returned the kickoff ${event.yds} yards${
@@ -248,15 +248,15 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				? "the kicking team!"
 				: `the receiving team${
 						event.td ? " and returned for a touchdown!" : ""
-				  }`
+					}`
 		}`;
 	} else if (event.type === "punt") {
 		text = `${event.names[0]} punted ${event.yds} yards${
 			event.touchback
 				? " for a touchback"
 				: event.yds < 0
-				  ? " into the end zone"
-				  : ""
+					? " into the end zone"
+					: ""
 		}`;
 	} else if (event.type === "puntReturn") {
 		text = `${event.names[0]} returned the punt ${event.yds} yards${
@@ -296,7 +296,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 						? ` in the endzone for ${touchdownText}!`
 						: ` and returned it ${event.yds} yards${
 								event.td ? ` for ${touchdownText}!` : ""
-						  }`}
+							}`}
 				</>
 			);
 		} else {
@@ -373,8 +373,8 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			const spotFoulText = event.tackOn
 				? " from the end of the play"
 				: event.spotFoul
-				  ? " from the spot of the foul"
-				  : "";
+					? " from the spot of the foul"
+					: "";
 			const automaticFirstDownText = event.automaticFirstDown
 				? " and an automatic first down"
 				: "";
@@ -457,7 +457,11 @@ const processLiveGameEvents = ({
 	quarters: string[];
 	sportState: SportState;
 }) => {
-	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+	if (
+		!playersByPid ||
+		boxScore.gid !== playersByPidGid ||
+		events[0].type === "init"
+	) {
 		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {

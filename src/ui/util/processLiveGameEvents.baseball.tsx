@@ -453,7 +453,11 @@ const processLiveGameEvents = ({
 	quarters: number[];
 	sportState: SportState;
 }) => {
-	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+	if (
+		!playersByPid ||
+		boxScore.gid !== playersByPidGid ||
+		events[0].type === "init"
+	) {
 		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {

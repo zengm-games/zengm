@@ -314,7 +314,11 @@ const processLiveGameEvents = ({
 	overtimes: number;
 	quarters: string[];
 }) => {
-	if (!playersByPid || boxScore.gid !== playersByPidGid) {
+	if (
+		!playersByPid ||
+		boxScore.gid !== playersByPidGid ||
+		events[0].type === "init"
+	) {
 		playersByPidGid = boxScore.gid;
 		playersByPid = {};
 		for (const t of boxScore.teams) {
@@ -466,8 +470,8 @@ const processLiveGameEvents = ({
 				boxScore.possession = newPossessionTypes[eAny.type]
 					? actualT
 					: actualT === 0
-					  ? 1
-					  : 0;
+						? 1
+						: 0;
 			}
 
 			stop = true;

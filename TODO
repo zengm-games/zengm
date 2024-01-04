@@ -1,3 +1,22 @@
+Support logos being saved to IndexedDB
+- what formats to support?
+- what about player images?
+- how to handle global image data?
+- hash and store globally
+  - if it's all based on hash, can never edit a logo
+  - global metadata
+    - created date
+    - edited date
+    - description text
+    - source (league id, or "uploaded")
+    - (maybe) league IDs using it currently
+- optionally include in league file
+  - option on export page - note all the hashes used, and then load them from database
+  - in league file - some root level "logos"
+  - importing league file - read from "logos"
+- ui to allow CRUD of logos
+  - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
+
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 

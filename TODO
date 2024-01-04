@@ -1,3 +1,17 @@
+some way to pin trades?
+- UI? trading block and trade page? updating a pinned trade?
+- needs to include what user is trading for, in case that changes
+- indicator of if the offer is still valid or not
+  - can evaluate trade to see
+- https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/
+- store in trade database, with some rid besides 0 (0 is always the current UI trade)
+
+store results of trading block in database
+- indicator of if the offer is still valid or not
+  - can evaluate trade to see
+- indicator if trade is invalid because an asset no longer exists on that team
+- https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
+
 Support logos being saved to IndexedDB
 - what formats to support?
 - what about player images?
@@ -52,6 +66,8 @@ better clock handling in BBGM - calculate tim as you go in the play
   - currently just are used to stop clock and advance ball. should also be used for rest, (maybe) stopping a run, substitutions (especially after injury), and making inbounds easier when leading late
 - if down by 2/3 very late, maybe intentionally miss FT to get offensive rebound attempt https://github.com/zengm-games/zengm/issues/392
 - fast breaks
+- fewer out of bounds after missed free throws, maybe other shot types too
+- ORB% should vary by shot type
 
 tailwind
 - https://usewindy.com/
@@ -431,12 +447,6 @@ expansion team in BBGM league not signing draft pick
 - https://discord.com/channels/@me/673750689649917958/1045026873723334768
 
 option to disable all-star redirect, along with phase redirects
-
-store results of trading block in database
-- indicator of if the offer is still valid or not
-  - can evaluate trade to see
-- indicator if trade is invalid because an asset no longer exists on that team
-- https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
 
 setting for salary match ratio https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iuhyjnb/
 
@@ -922,12 +932,6 @@ beter handling of customizable columns in tables where the defaults change based
 
 ZGMH all contending https://discord.com/channels/290013534023057409/290015591216054273/851150025966747678
 - happens in any league if oyu play for a while
-
-some way to pin trades?
-- UI? trading block and trade page? updating a pinned trade?
-- needs to include what user is trading for, in case that changes
-- indicator of if the offer is still valid or not
-  - can evaluate trade to see
 
 cancel expansion draft can leave you in control of inactive team https://mail.google.com/mail/u/0/#inbox/FMfcgzGkXdCQjTRbGcgzmdrZTMFLHQbZ
 

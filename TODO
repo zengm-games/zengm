@@ -1,19 +1,30 @@
 some way to pin trades?
-- UI? trading block and trade page? updating a pinned trade?
-- needs to include what user is trading for, in case that changes
+- flag/unflag icon
+  - flagging should return the primary key in trade store, so unflag can remove it
+  - on trade page
+    - clear saved trade ID if any asset in the trade changes
+  - on trading block page
 - indicator of if the offer is still valid or not
-  - can evaluate trade to see
+  - show warning if a pick/player is no longer on a team
 - https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/
 - store in trade database, with some rid besides 0 (0 is always the current UI trade)
 - multi team mode?
   - only show the ones with the current tid
   - in multi team mode, extra button to clear all for all teams
+- view trade
+  - ignore any picks/players no longer on team
+  - load into 0 slot
+  - maybe put id in URL parameter and then the above can happen automatically, and also we can know the ID so we can show it as flagged and allow unflagging
 
 store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
 - indicator if trade is invalid because an asset no longer exists on that team
 - https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
+
+auto export to folder every N seasons
+- chrome only?
+- include box scores?
 
 Support logos being saved to IndexedDB
 - what formats to support?

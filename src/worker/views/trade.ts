@@ -1,11 +1,12 @@
-import { bySport, PHASE } from "../../common";
+import { bySport } from "../../common";
 import { team, trade } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
+import { g, helpers } from "../util";
 import type { TradeTeams } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { orderBy } from "../../common/utils";
 
+// This relies on vars being populated, so it can't be called in parallel with updateTrade
 export const getSummary = async (teams: TradeTeams) => {
 	const summary = await trade.summary(teams);
 	const summary2 = {
@@ -219,10 +220,6 @@ const updateTrade = async () => {
 	const userTeamName = `${g.get("teamInfoCache")[g.get("userTid")]
 		?.region} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
 
-	// If the season is over, can't trade players whose contracts are expired
-	const showResigningMsg =
-		g.get("phase") > PHASE.PLAYOFFS && g.get("phase") < PHASE.FREE_AGENCY;
-
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		challengeNoTrades: g.get("challengeNoTrades"),
@@ -247,7 +244,6 @@ const updateTrade = async () => {
 		summary,
 		won: t.seasonAttrs.won,
 		lost: t.seasonAttrs.lost,
-		showResigningMsg,
 		teams: teams2,
 		tied: t.seasonAttrs.tied,
 		otl: t.seasonAttrs.otl,

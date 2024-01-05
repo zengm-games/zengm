@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, toWorker, useLocal, useLocalPartial } from "../../util";
+import { helpers, toWorker, useLocal } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import type { TradeClearType } from "./Buttons";
@@ -251,7 +251,6 @@ const Trade = (props: View<"trade">) => {
 		salaryCap,
 		salaryCapType,
 		summary,
-		showResigningMsg,
 		stats,
 		strategy,
 		teams,
@@ -302,8 +301,6 @@ const Trade = (props: View<"trade">) => {
 		};
 	}, [updateSummaryHeight]);
 
-	const { gender } = useLocalPartial(["gender"]);
-
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
@@ -331,19 +328,6 @@ const Trade = (props: View<"trade">) => {
 		<>
 			<div className="row">
 				<div className="col-md-9">
-					{showResigningMsg ? (
-						<p>
-							You can't trade players whose contracts expired this season, but
-							their old contracts still count against team salary caps until
-							they are either re-signed or become free agents.
-						</p>
-					) : null}
-
-					<p>
-						If a player has been signed within the past 14 days,{" "}
-						{helpers.pronoun(gender, "he")} is not allowed to be traded.
-					</p>
-
 					<div className="d-flex mb-2">
 						<div className="btn-group">
 							<button

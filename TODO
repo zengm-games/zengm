@@ -5,6 +5,9 @@ some way to pin trades?
   - can evaluate trade to see
 - https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/
 - store in trade database, with some rid besides 0 (0 is always the current UI trade)
+- multi team mode?
+  - only show the ones with the current tid
+  - in multi team mode, extra button to clear all for all teams
 
 store results of trading block in database
 - indicator of if the offer is still valid or not
@@ -30,6 +33,8 @@ Support logos being saved to IndexedDB
   - importing league file - read from "logos"
 - ui to allow CRUD of logos
   - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
+
+"field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://chromestatus.com/feature/5176596826161152
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is

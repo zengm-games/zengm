@@ -3,27 +3,9 @@ import { arrayMoveImmutable } from "array-move";
 import { PHASE } from "../../common";
 import { SortableTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util"; // Copied from worker/util/random lol
+import { helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
-
-const randInt = (a: number, b: number): number => {
-	return Math.floor(Math.random() * (1 + b - a)) + a;
-};
-
-const shuffle = (list: any[]) => {
-	const l = list.length;
-
-	for (let i = 1; i < l; i++) {
-		const j = randInt(0, i);
-
-		if (j !== i) {
-			// swap list[i] and list[j]
-			const temp = list[i];
-			list[i] = list[j];
-			list[j] = temp;
-		}
-	}
-};
+import { shuffle } from "../../common/random";
 
 const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(teams.map(t => t.tid));

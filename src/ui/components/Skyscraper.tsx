@@ -1,6 +1,8 @@
-import { memo, useEffect } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
+import { memo, useEffect } from "react";
 import { AD_DIVS } from "../../common";
 import { ads } from "../util";
+
+// Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 
 // https://developer.mozilla.org/en-US/docs/Web/Events/resize
 let running = false;

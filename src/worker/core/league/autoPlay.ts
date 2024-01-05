@@ -9,9 +9,10 @@ import {
 	team,
 } from "..";
 import { g, random } from "../../util";
-import type { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
+import type { Conditions } from "../../../common/types";
 import { idb } from "../../db";
 
+// Depending on phase, initiate action that will lead to the next phase
 const autoPlay = async (conditions: Conditions = {}) => {
 	let currentPhase = g.get("phase");
 

@@ -10,7 +10,9 @@ some way to pin trades?
 - store in trade database, with some rid besides 0 (0 is always the current UI trade)
 - multi team mode?
   - only show the ones with the current tid
-  - in multi team mode, extra button to clear all for all teams
+- ui to view saved trades
+  - clear all
+  - clear obsolete
 - view trade
   - ignore any picks/players no longer on team
   - load into 0 slot

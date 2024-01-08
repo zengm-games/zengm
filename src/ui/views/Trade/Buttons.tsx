@@ -1,5 +1,6 @@
 import { ButtonGroup, Dropdown } from "react-bootstrap";
 import useLocalStorageState from "use-local-storage-state";
+import { ActionButton } from "../../components";
 
 export type TradeClearType = "all" | "other" | "user" | "keepUntradeable";
 
@@ -55,17 +56,18 @@ const Buttons = ({
 					</label>
 				</div>
 			) : null}
-			<div>
-				<button
+			<div className="mb-2">
+				<ActionButton
 					type="submit"
-					className="btn btn-secondary mb-2"
-					disabled={asking || numAssets === 0}
+					variant="secondary"
+					disabled={numAssets === 0}
+					processing={asking}
 					onClick={handleClickAsk}
 				>
-					{asking ? "Waiting for answer..." : "What would make this deal work?"}
-				</button>
+					What would make this deal work?
+				</ActionButton>
 			</div>
-			<div className="btn-group">
+			<div className="d-flex justify-content-center gap-2">
 				<button
 					type="submit"
 					className="btn btn-primary"

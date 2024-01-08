@@ -2,6 +2,7 @@ some way to pin trades?
 - flag/unflag icon
   - flagging should return the primary key in trade store, so unflag can remove it
   - on trade page
+    - where should it be? don't want to imply a trade must be saved, since the current trade auto saves
     - clear saved trade ID if any asset in the trade changes
   - on trading block page
 - indicator of if the offer is still valid or not
@@ -13,10 +14,19 @@ some way to pin trades?
 - ui to view saved trades
   - clear all
   - clear obsolete
+- dedupe
+  - hash trade assets and use that as index? then any time displaying a trade, we can know if it's already pinned
+    - could even be primary key... 0 is active, string hash is any other
 - view trade
   - ignore any picks/players no longer on team
   - load into 0 slot
   - maybe put id in URL parameter and then the above can happen automatically, and also we can know the ID so we can show it as flagged and allow unflagging
+
+fix subscriptions
+- should not be possible to have multiple subscriptions active for same account
+- should be harder to have multiple subscriptions active for different accounts with same email
+- password recovery should handle multiple usernames for email
+- https://stripe.com/use-cases/saas
 
 store results of trading block in database
 - indicator of if the offer is still valid or not

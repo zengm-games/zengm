@@ -45,6 +45,7 @@ export { default as RetiredPlayers } from "./RetiredPlayers";
 export { default as RosterComposition } from "./RosterComposition";
 export { default as RosterSalarySummary } from "./RosterSalarySummary";
 export { default as SafeHtml } from "./SafeHtml";
+export { default as SaveTrade } from "./SaveTrade";
 export { default as SideBar } from "./SideBar";
 export { default as SkillsBlock } from "./SkillsBlock";
 export { default as Skyscraper } from "./Skyscraper";

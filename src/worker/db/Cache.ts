@@ -22,6 +22,7 @@ import type {
 	PlayoffSeries,
 	ReleasedPlayer,
 	ReleasedPlayerWithoutKey,
+	SavedTrade,
 	ScheduleGame,
 	ScheduleGameWithoutKey,
 	ScheduledEvent,
@@ -60,6 +61,7 @@ export type Store =
 	| "players"
 	| "playoffSeries"
 	| "releasedPlayers"
+	| "savedTrades"
 	| "schedule"
 	| "scheduledEvents"
 	| "seasonLeaders"
@@ -94,6 +96,7 @@ export const STORES: Store[] = [
 	"players",
 	"playoffSeries",
 	"releasedPlayers",
+	"savedTrades",
 	"schedule",
 	"scheduledEvents",
 	"seasonLeaders",
@@ -129,7 +132,7 @@ const getIndexKey = (
 	);
 };
 
-class StoreAPI<Input, Output, ID> {
+class StoreAPI<Input, Output, ID extends string | number> {
 	cache: Cache;
 
 	store: Store;
@@ -174,7 +177,7 @@ class StoreAPI<Input, Output, ID> {
 		return this.cache._put(this.store, obj) as any;
 	}
 
-	delete(id: number): Promise<void> {
+	delete(id: ID): Promise<void> {
 		return this.cache._delete(this.store, id);
 	}
 
@@ -269,6 +272,8 @@ class Cache {
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 
 	releasedPlayers: StoreAPI<ReleasedPlayerWithoutKey, ReleasedPlayer, number>;
+
+	savedTrades: StoreAPI<SavedTrade, SavedTrade, string>;
 
 	schedule: StoreAPI<ScheduleGameWithoutKey, ScheduleGame, number>;
 
@@ -433,6 +438,13 @@ class Cache {
 					},
 				],
 			},
+			savedTrades: {
+				pk: "hash",
+				pkType: "string",
+				autoIncrement: false,
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("savedTrades").getAll(),
+			},
 			schedule: {
 				pk: "gid",
 				pkType: "number",
@@ -562,6 +574,7 @@ class Cache {
 		this.players = new StoreAPI(this, "players");
 		this.playoffSeries = new StoreAPI(this, "playoffSeries");
 		this.releasedPlayers = new StoreAPI(this, "releasedPlayers");
+		this.savedTrades = new StoreAPI(this, "savedTrades");
 		this.schedule = new StoreAPI(this, "schedule");
 		this.scheduledEvents = new StoreAPI(this, "scheduledEvents");
 		this.seasonLeaders = new StoreAPI(this, "seasonLeaders");

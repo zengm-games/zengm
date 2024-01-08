@@ -1590,14 +1590,14 @@ export type TeamFiltered<
 				seasonAttrs: Season extends number
 					? Pick<TeamSeasonPlus, SeasonAttrs[number]>
 					: Pick<TeamSeasonPlus, SeasonAttrs[number]>[];
-		  }
+			}
 		: Record<string, unknown>) &
 	(StatAttrs extends Readonly<TeamStatAttr[]>
 		? {
 				stats: Season extends number
 					? Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean }
 					: (Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean })[];
-		  }
+			}
 		: Record<string, unknown>);
 
 export type TeamBasic = {
@@ -1880,4 +1880,9 @@ export type SeasonLeaders = {
 
 	// Optional because we can't compute this for real players leagues without scanning the whole history (slow, tedious) and probably nobody cares
 	ratingsFuzz?: Record<string, unknown>;
+};
+
+export type SavedTrade = {
+	hash: string;
+	tid: number;
 };

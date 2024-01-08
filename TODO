@@ -5,6 +5,7 @@ some way to pin trades?
     - where should it be? don't want to imply a trade must be saved, since the current trade auto saves
     - clear saved trade ID if any asset in the trade changes
   - on trading block page
+  - on trade proposals page
 - indicator of if the offer is still valid or not
   - show warning if a pick/player is no longer on a team
 - https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/
@@ -21,6 +22,11 @@ some way to pin trades?
   - ignore any picks/players no longer on team
   - load into 0 slot
   - maybe put id in URL parameter and then the above can happen automatically, and also we can know the ID so we can show it as flagged and allow unflagging
+- savedTrades
+  - export/import
+  - schema
+- after accepting trade, remove from flag list
+- test export/import
 
 fix subscriptions
 - should not be possible to have multiple subscriptions active for same account

@@ -12,7 +12,7 @@ const ACCOUNT_API_URL =
 				basketball: "https://account.basketball-gm.com",
 				football: "https://account.football-gm.com",
 				default: "https://account.zengm.com",
-		  });
+			});
 
 const DIFFICULTY = {
 	Easy: -0.25,
@@ -28,7 +28,7 @@ const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-const LEAGUE_DATABASE_VERSION = 58;
+const LEAGUE_DATABASE_VERSION = 59;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",

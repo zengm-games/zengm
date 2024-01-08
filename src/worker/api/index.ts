@@ -1446,10 +1446,10 @@ const exportDraftClass = async ({
 		retiredPlayers
 			? {
 					retiredYear: season,
-			  }
+				}
 			: {
 					draftYear: season,
-			  },
+				},
 		"noCopyCache",
 	);
 
@@ -2974,10 +2974,10 @@ const setGOATFormula = async ({
 			? {
 					type,
 					season: g.get("season"),
-			  }
+				}
 			: {
 					type,
-			  },
+				},
 	);
 
 	if (type === "career") {
@@ -4261,6 +4261,29 @@ const validatePlayoffSettings = async ({
 	});
 };
 
+const getSavedTrade = async (hash: string) => {
+	const value = await idb.cache.savedTrades.get(hash);
+
+	// Use 1 and 0 rather than boolean for consistency with watch list, and in case we want to add more trade lists in the future
+	return value ? 1 : 0;
+};
+
+const setSavedTrade = async ({
+	saved,
+	hash,
+	tid,
+}: {
+	saved: number;
+	hash: string;
+	tid: number;
+}) => {
+	if (saved !== 0) {
+		await idb.cache.savedTrades.put({ hash, tid });
+	} else {
+		await idb.cache.savedTrades.delete(hash);
+	}
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -4324,6 +4347,7 @@ export default {
 		getRandomName,
 		getRandomRatings,
 		getRandomTeams,
+		getSavedTrade,
 		getTradingBlockOffers,
 		ping,
 		handleUploadedDraftClass,
@@ -4357,6 +4381,7 @@ export default {
 		setGOATFormula,
 		setLocal,
 		setPlayerNote,
+		setSavedTrade,
 		sign,
 		updateExpansionDraftSetup,
 		advanceToPlayerProtection,

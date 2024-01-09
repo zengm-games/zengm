@@ -1,6 +1,17 @@
-import type { TradeTeams } from "./types";
-
-export const hashSavedTrade = (tradeTeams: TradeTeams) => {
+export const hashSavedTrade = (
+	tradeTeams: [
+		{
+			tid: number;
+			pids: number[];
+			dpids: number[];
+		},
+		{
+			tid: number;
+			pids: number[];
+			dpids: number[];
+		},
+	],
+) => {
 	return JSON.stringify([
 		tradeTeams[0].tid,
 		tradeTeams[0].pids,

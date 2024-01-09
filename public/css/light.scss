@@ -442,7 +442,7 @@ table {
 }
 
 .select-team {
-	width: 203px;
+	max-width: 203px;
 }
 
 .player-picture {
@@ -1017,8 +1017,12 @@ tr.table-warning:hover > td {
 	text-decoration-style: dashed;
 	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22100%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M%200%2C0%20L%20100%2C100%20L%20200%2C0%20z%22%2F%3E%3C%2Fsvg%3E");
 	background-repeat: no-repeat, repeat;
-	background-position: right 0 top 45%, 0 0;
-	background-size: 0.62em auto, 100%;
+	background-position:
+		right 0 top 45%,
+		0 0;
+	background-size:
+		0.62em auto,
+		100%;
 	font-size: 13px;
 
 	option {

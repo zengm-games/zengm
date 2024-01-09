@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { memo, useState, type SyntheticEvent, useLayoutEffect } from "react";
 import { toWorker } from "../util";
-import type { TradeTeams } from "../../common/types";
 import { hashSavedTrade } from "../../common/hashSavedTrade";
 
 const SaveTrade = memo(
@@ -11,9 +10,19 @@ const SaveTrade = memo(
 		tradeTeams,
 	}: {
 		className?: string;
-		pid: number;
 		onChange?: (saved: number) => void;
-		tradeTeams: TradeTeams;
+		tradeTeams: [
+			{
+				tid: number;
+				pids: number[];
+				dpids: number[];
+			},
+			{
+				tid: number;
+				pids: number[];
+				dpids: number[];
+			},
+		];
 	}) => {
 		const [saved, setSaved] = useState<number | undefined>();
 
@@ -24,7 +33,6 @@ const SaveTrade = memo(
 
 		useLayoutEffect(() => {
 			let mounted = true;
-			setSaved(undefined);
 
 			(async () => {
 				const value = await toWorker("main", "getSavedTrade", hash);
@@ -41,6 +49,7 @@ const SaveTrade = memo(
 		const handleClick = async (event: SyntheticEvent) => {
 			event.preventDefault();
 			const newSaved = saved === 0 ? 1 : 0;
+			setSaved(newSaved);
 			if (onChange) {
 				onChange(newSaved);
 			}
@@ -54,15 +63,12 @@ const SaveTrade = memo(
 		if (!empty && saved !== undefined && saved > 0) {
 			return (
 				<button
-					className="btn btn-link p-0"
+					className={classNames("btn btn-link p-0", className)}
 					onClick={handleClick}
 					title={"Unsave Trade"}
 				>
 					<span
-						className={classNames(
-							`glyphicon glyphicon-flag watch ms-0 watch-active-${saved}`,
-							className,
-						)}
+						className={`glyphicon glyphicon-flag watch ms-0 watch-active-${saved}`}
 					/>
 				</button>
 			);
@@ -70,17 +76,12 @@ const SaveTrade = memo(
 
 		return (
 			<button
-				className="btn btn-link p-0"
+				className={classNames("btn btn-link p-0", className)}
 				onClick={handleClick}
 				title="Save Trade"
 				disabled={saved === undefined || empty}
 			>
-				<span
-					className={classNames(
-						"glyphicon glyphicon-flag watch ms-0",
-						className,
-					)}
-				/>
+				<span className="glyphicon glyphicon-flag watch ms-0" />
 			</button>
 		);
 	},

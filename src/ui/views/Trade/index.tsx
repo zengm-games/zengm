@@ -8,6 +8,7 @@ import type { TradeClearType } from "./Buttons";
 import Summary from "./Summary";
 import type { TradeTeams, View } from "../../../common/types";
 import classNames from "classnames";
+import { SaveTrade } from "../../components";
 
 export type HandleToggle = (
 	userOrOther: "other" | "user",
@@ -259,6 +260,11 @@ const Trade = (props: View<"trade">) => {
 		userRoster,
 		userTeamName,
 		won,
+		userDpids,
+		userPids,
+		otherDpids,
+		otherPids,
+		userTid,
 	} = props;
 
 	useTitleBar({
@@ -328,7 +334,7 @@ const Trade = (props: View<"trade">) => {
 		<>
 			<div className="row">
 				<div className="col-md-9">
-					<div className="d-flex mb-2">
+					<div className="d-flex mb-2 align-items-center">
 						<div className="btn-group">
 							<button
 								className="btn btn-light-bordered btn-xs"
@@ -352,7 +358,7 @@ const Trade = (props: View<"trade">) => {
 							</button>
 						</div>
 						<select
-							className="float-start form-select select-team mx-2"
+							className="float-start form-select select-team mx-2 flex-shrink-1"
 							value={otherTid}
 							onChange={event => {
 								handleChangeTeam(parseInt(event.currentTarget.value));
@@ -364,15 +370,26 @@ const Trade = (props: View<"trade">) => {
 								</option>
 							))}
 						</select>
-						<div
-							style={{
-								paddingTop: 7,
-							}}
-						>
+						<div className="text-nowrap me-2">
 							{won}-{lost}
 							{otl > 0 ? <>-{otl}</> : null}
 							{tied > 0 ? <>-{tied}</> : null}, {strategy}
 						</div>
+						<SaveTrade
+							className="ms-auto"
+							tradeTeams={[
+								{
+									pids: userPids,
+									dpids: userDpids,
+									tid: userTid,
+								},
+								{
+									pids: otherPids,
+									dpids: otherDpids,
+									tid: otherTid,
+								},
+							]}
+						/>
 					</div>
 					<AssetList
 						challengeNoRatings={challengeNoRatings}

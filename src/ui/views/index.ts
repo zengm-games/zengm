@@ -88,6 +88,7 @@ import Relatives from "./Relatives";
 import ResetPassword from "./ResetPassword";
 import Roster from "./Roster";
 import RosterContinuity from "./RosterContinuity";
+import SavedTrades from "./SavedTrades";
 import Schedule from "./Schedule";
 import ScheduledEvents from "./ScheduledEvents";
 import SeasonPreview from "./SeasonPreview";
@@ -197,6 +198,7 @@ export default {
 	ResetPassword,
 	Roster,
 	RosterContinuity,
+	SavedTrades,
 	Schedule,
 	ScheduledEvents,
 	SeasonPreview,

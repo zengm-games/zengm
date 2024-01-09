@@ -82,6 +82,7 @@ import relatives from "./relatives";
 import resetPassword from "./resetPassword";
 import roster from "./roster";
 import rosterContinuity from "./rosterContinuity";
+import savedTrades from "./savedTrades";
 import schedule from "./schedule";
 import scheduledEvents from "./scheduledEvents";
 import seasonPreview from "./seasonPreview";
@@ -186,6 +187,7 @@ export default {
 	resetPassword,
 	roster,
 	rosterContinuity,
+	savedTrades,
 	schedule,
 	scheduledEvents,
 	seasonPreview,

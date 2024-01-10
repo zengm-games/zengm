@@ -4,10 +4,15 @@ import type { Player, PlayerWithoutKey } from "../../../common/types";
 
 const isUntradable = (
 	p: Player | PlayerWithoutKey,
-): {
-	untradable: boolean;
-	untradableMsg?: string;
-} => {
+):
+	| {
+			untradable: false;
+			untradableMsg?: string;
+	  }
+	| {
+			untradable: true;
+			untradableMsg: string;
+	  } => {
 	if (!g.get("godMode")) {
 		if (
 			p.contract.exp <= g.get("season") &&

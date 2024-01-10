@@ -177,10 +177,10 @@ const SavedTrades = (props: View<"tradeProposals">) => {
 			</div>
 
 			<div className="d-block d-lg-none">
-				{filteredOffers.map(offer => {
+				{filteredOffers.map((offer, i) => {
 					return (
 						<Offer
-							key={offer.tid}
+							key={i}
 							challengeNoRatings={challengeNoRatings}
 							onNegotiate={() => {
 								handleNegotiate(offer);

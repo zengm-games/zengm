@@ -129,6 +129,7 @@ import * as exhibitionGame from "./exhibitionGame";
 import { getSummary } from "../views/trade";
 import { getStats, statTypes } from "../views/playerGraphs";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels";
+import isUntradable from "../core/trade/isUntradable";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1858,7 +1859,9 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 					"playersByTid",
 					tid,
 				);
-				playersAll = playersAll.filter(p => pids.includes(p.pid));
+				playersAll = playersAll.filter(
+					p => pids.includes(p.pid) && !isUntradable(p).untradable,
+				);
 				return addFirstNameShort(
 					await idb.getCopies.playersPlus(playersAll, {
 						attrs: [

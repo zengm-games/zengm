@@ -3,6 +3,7 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
 import { orderBy } from "../../../common/utils";
+import isUntradable from "./isUntradable";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {
@@ -60,7 +61,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			tids[i],
 		);
 		let players = orderBy(
-			playersBefore.filter(p => pids[i].includes(p.pid)),
+			playersBefore.filter(
+				p => pids[i].includes(p.pid) && !isUntradable(p).untradable,
+			),
 			"valueFuzz",
 			"desc",
 		);
@@ -94,9 +97,15 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		s.teams[j].ovrBefore = await getTeamOvr(playersBefore);
 
 		playersAfter[j].push(
-			...playersBefore.filter(p => !pids[i].includes(p.pid)),
+			...playersBefore.filter(
+				p => !(pids[i].includes(p.pid) && !isUntradable(p).untradable),
+			),
 		);
-		playersAfter[i].push(...playersBefore.filter(p => pids[i].includes(p.pid)));
+		playersAfter[i].push(
+			...playersBefore.filter(
+				p => pids[i].includes(p.pid) && !isUntradable(p).untradable,
+			),
+		);
 	}
 	for (const i of [0, 1] as const) {
 		s.teams[i].ovrAfter = await getTeamOvr(playersAfter[i]);

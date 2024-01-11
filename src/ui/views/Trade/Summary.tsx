@@ -187,6 +187,18 @@ export const SummaryTeam = ({
 											/>
 											<div className="ms-2 text-danger">{asset.message}</div>
 										</>
+									) : asset.type === "tradedPick" ? (
+										<>
+											<SafeHtml dirty={asset.desc} />
+											<div className="ms-2 text-danger">Traded away</div>
+										</>
+									) : asset.type === "pastDraft" ? (
+										<>
+											Draft pick
+											<div className="ms-2 text-danger">
+												Draft already happened
+											</div>
+										</>
 									) : (
 										"???"
 									)}

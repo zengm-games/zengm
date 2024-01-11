@@ -6,7 +6,7 @@ some way to pin trades?
   - show warning if a pick/player is no longer on a team
     - pick
       - other team
-      - no longer exists
+        - why is picksUser empty?
   - clear one - flag icon like watch list
   - fix useState/useEffect
 - https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/

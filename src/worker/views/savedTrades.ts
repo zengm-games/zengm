@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { TradeTeams, UpdateEvents } from "../../common/types";
 import isUntradable from "../core/trade/isUntradable";
 import { augmentOffers } from "../api";
@@ -70,6 +70,13 @@ export type MissingAsset =
 	| {
 			type: "deletedPlayer";
 			pid: number;
+	  }
+	| {
+			type: "tradedPick";
+			desc: string;
+	  }
+	| {
+			type: "pastDraft";
 	  };
 
 const updateSavedTrades = async (
@@ -101,66 +108,85 @@ const updateSavedTrades = async (
 			};
 			offers2.push(offer2);
 
-			const pidInfos: {
+			const missingInfos: ({
 				type: "missingUser" | "missing";
-				pids: number[];
-				players: any[];
-				tid: number;
-			}[] = [
+			} & Pick<typeof offer, "pids" | "players" | "dpids" | "picks">)[] = [
 				{
 					type: "missingUser",
 					pids: offer.pidsUser,
 					players: offer.playersUser,
-					tid: g.get("userTid"),
+					dpids: offer.dpidsUser,
+					picks: offer.picksUser,
 				},
 				{
 					type: "missing",
 					pids: offer.pids,
 					players: offer.players,
-					tid: offer.tid,
+					dpids: offer.dpids,
+					picks: offer.picks,
 				},
 			];
-			for (const { type, pids, players, tid } of pidInfos) {
-				if (pids.length === players.length) {
-					continue;
-				}
+			for (const { type, pids, players, dpids, picks } of missingInfos) {
+				console.log(type, pids, players, dpids, picks);
+				if (pids.length !== players.length) {
+					const missingPids = pids.filter(
+						pid => !players.find(p => p.pid === pid),
+					);
 
-				const missingPids = pids.filter(
-					pid => !players.find(p => p.pid === pid),
-				);
+					for (const pid of missingPids) {
+						const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
+						if (pRaw) {
+							const p = {
+								pid: pRaw.pid,
+								name: `${pRaw.firstName} ${pRaw.lastName}`,
+								pos: pRaw.ratings.at(-1).pos,
+							};
 
-				for (const pid of missingPids) {
-					const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
-					if (pRaw) {
-						const p = {
-							pid: pRaw.pid,
-							name: `${pRaw.firstName} ${pRaw.lastName}`,
-							pos: pRaw.ratings.at(-1).pos,
-						};
-
-						const untradableInfo = isUntradable(pRaw);
-						if (pRaw.tid === PLAYER.RETIRED) {
+							const untradableInfo = isUntradable(pRaw);
+							if (pRaw.tid === PLAYER.RETIRED) {
+								offer2[type].push({
+									type: "retired",
+									...p,
+								});
+							} else if (untradableInfo.untradable) {
+								offer2[type].push({
+									type: "untradable",
+									message: untradableInfo.untradableMsg,
+									...p,
+								});
+							} else {
+								offer2[type].push({
+									type: "noLongerOnTeam",
+									...p,
+								});
+							}
+						} else {
 							offer2[type].push({
-								type: "retired",
-								...p,
-							});
-						} else if (pRaw.tid !== tid) {
-							offer2[type].push({
-								type: "noLongerOnTeam",
-								...p,
-							});
-						} else if (untradableInfo.untradable) {
-							offer2[type].push({
-								type: "untradable",
-								message: untradableInfo.untradableMsg,
-								...p,
+								type: "deletedPlayer",
+								pid,
 							});
 						}
-					} else {
-						offer2[type].push({
-							type: "deletedPlayer",
-							pid,
-						});
+					}
+				}
+
+				if (dpids.length !== picks.length) {
+					const missingDpids = dpids.filter(
+						dpid => !picks.find(dp => dp.dpid === dpid),
+					);
+					console.log("missingDpids", missingDpids);
+
+					for (const dpid of missingDpids) {
+						const dp = await idb.cache.draftPicks.get(dpid);
+						if (dp) {
+							offer2[type].push({
+								type: "tradedPick",
+								desc: await helpers.pickDesc(dp, "short"),
+							});
+						} else {
+							offer2[type].push({
+								type: "pastDraft",
+							});
+						}
 					}
 				}
 			}

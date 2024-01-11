@@ -144,7 +144,7 @@ export const Offer = (props: OfferProps) => {
 				<button
 					type="button"
 					className="btn-close ms-1"
-					title="Remove offer from list"
+					title="Remove trade from list"
 					onClick={onRemove}
 				/>
 			</div>
@@ -359,7 +359,7 @@ export const OfferTable = ({
 					<button
 						type="button"
 						className="btn-close ms-2 p-0"
-						title="Remove offer from list"
+						title="Remove trade from list"
 						onClick={() => {
 							handleRemove(i);
 						}}

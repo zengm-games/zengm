@@ -6,6 +6,7 @@ import { PlayerNameLabels, SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
 import { isSport } from "../../../common";
+import type { MissingAsset } from "../../../worker/views/savedTrades";
 
 // Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1
 export const OvrChange = ({
@@ -49,6 +50,7 @@ export const SummaryTeam = ({
 	hideFinanceInfo,
 	hideTeamOvr,
 	luxuryPayroll,
+	missingAssets,
 	salaryCap,
 	salaryCapType,
 	showInlinePlayerInfo,
@@ -62,11 +64,13 @@ export const SummaryTeam = ({
 	handleRemove?: (type: "player" | "pick", id: number) => void;
 	hideFinanceInfo?: boolean;
 	hideTeamOvr?: boolean;
+	missingAssets?: MissingAsset[];
 	showInlinePlayerInfo?: boolean;
 	t: View<"trade">["summary"]["teams"][number];
 }) => {
 	const payrollColorCutoff =
 		salaryCapType === "none" ? luxuryPayroll : salaryCap;
+	console.log("missingAssets", missingAssets);
 
 	return (
 		<>
@@ -144,6 +148,55 @@ export const SummaryTeam = ({
 					<li>Nothing</li>
 				) : null}
 			</ul>
+			{missingAssets && missingAssets.length > 0 ? (
+				<div className="mt-1">
+					<h4 className="fw-bold mb-1 text-danger">
+						Assets no longer available:
+					</h4>
+					<ul className="list-unstyled mb-0">
+						{missingAssets.map((asset, i) => {
+							return (
+								<li key={i}>
+									{asset.type === "deletedPlayer" ? (
+										<span className="text-danger">
+											Player {asset.pid} was deleted
+										</span>
+									) : asset.type === "noLongerOnTeam" ? (
+										<>
+											<PlayerNameLabels
+												pid={asset.pid}
+												legacyName={asset.name}
+												pos={asset.pos}
+											/>
+											<div className="ms-2 text-danger">Not on roster</div>
+										</>
+									) : asset.type === "retired" ? (
+										<>
+											<PlayerNameLabels
+												pid={asset.pid}
+												legacyName={asset.name}
+												pos={asset.pos}
+											/>
+											<div className="ms-2 text-danger">Retired</div>
+										</>
+									) : asset.type === "untradable" ? (
+										<>
+											<PlayerNameLabels
+												pid={asset.pid}
+												legacyName={asset.name}
+												pos={asset.pos}
+											/>
+											<div className="ms-2 text-danger">{asset.message}</div>
+										</>
+									) : (
+										"???"
+									)}
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+			) : null}
 			{!hideFinanceInfo || !hideTeamOvr ? (
 				<ul className="list-unstyled mt-1">
 					{!hideFinanceInfo ? (

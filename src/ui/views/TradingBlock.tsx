@@ -13,10 +13,14 @@ import {
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { OvrChange } from "./Trade/Summary";
+import type { MissingAsset } from "../../worker/views/savedTrades";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
->[0];
+>[0] & {
+	missing?: MissingAsset[];
+	missingUser?: MissingAsset[];
+};
 
 type OfferProps = {
 	children: ReactNode;
@@ -287,13 +291,13 @@ export const OfferTable = ({
 		const t = teamInfoCache[offer.tid];
 		if (!t) {
 			return {
-				key: offer.tid,
+				key: i,
 				data: [],
 			};
 		}
 
 		return {
-			key: offer.tid,
+			key: i,
 			data: [
 				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${offer.tid}`])}>
 					{t.abbrev}
@@ -310,7 +314,7 @@ export const OfferTable = ({
 							),
 							sortValue: offer.summary.teams[1].ovrAfter,
 							searchValue: `${offer.summary.teams[1].ovrBefore} ${offer.summary.teams[1].ovrAfter}`,
-					  }
+						}
 					: null,
 				!challengeNoRatings
 					? {
@@ -322,7 +326,7 @@ export const OfferTable = ({
 							),
 							sortValue: offer.summary.teams[0].ovrAfter,
 							searchValue: `${offer.summary.teams[0].ovrBefore} ${offer.summary.teams[0].ovrAfter}`,
-					  }
+						}
 					: null,
 				...getAssetColContents(offer),
 				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),

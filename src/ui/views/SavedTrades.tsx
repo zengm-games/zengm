@@ -12,7 +12,7 @@ import {
 } from "./TradingBlock";
 import { useEffect, useState } from "react";
 
-const SavedTrades = (props: View<"tradeProposals">) => {
+const SavedTrades = (props: View<"savedTrades">) => {
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
@@ -137,6 +137,7 @@ const SavedTrades = (props: View<"tradeProposals">) => {
 										hideFinanceInfo
 										hideTeamOvr
 										luxuryPayroll={luxuryPayroll}
+										missingAssets={offer.missing}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
@@ -153,6 +154,7 @@ const SavedTrades = (props: View<"tradeProposals">) => {
 										hideFinanceInfo
 										hideTeamOvr
 										luxuryPayroll={luxuryPayroll}
+										missingAssets={offer.missingUser}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
@@ -197,12 +199,14 @@ const SavedTrades = (props: View<"tradeProposals">) => {
 						>
 							<div className="d-flex gap-5">
 								{offer.summary.teams.map((t, j) => {
+									const missingKey = j === 0 ? "missing" : "missingUser";
 									return (
 										<div key={j}>
 											<SummaryTeam
 												challengeNoRatings={challengeNoRatings}
 												hideFinanceInfo
 												luxuryPayroll={luxuryPayroll}
+												missingAssets={offer[missingKey]}
 												salaryCap={salaryCap}
 												salaryCapType={salaryCapType}
 												showInlinePlayerInfo

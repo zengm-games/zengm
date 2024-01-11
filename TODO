@@ -3,13 +3,10 @@ some way to pin trades?
   - on trading block page
   - on trade proposals page
 - saved trades UI
-  - indicator of if the offer is still valid or not
   - show warning if a pick/player is no longer on a team
     - player
-      - retired
       - isUntradable
         - make sure to filter out in summary()
-      - other team
     - pick
       - other team
       - no longer exists
@@ -18,6 +15,8 @@ some way to pin trades?
 - multi team mode?
   - only show the ones with the current tid
 - ui to view saved trades
+  - clear one
+    - X icon like trade proposals or flag icon like watch list
   - clear all
   - clear obsolete
 - view trade

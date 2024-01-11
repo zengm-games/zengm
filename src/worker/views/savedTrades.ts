@@ -1,13 +1,7 @@
 import { idb } from "../db";
-import { g, random } from "../util";
-import type {
-	PlayerContract,
-	TradeTeams,
-	UpdateEvents,
-} from "../../common/types";
+import { g } from "../util";
+import type { TradeTeams, UpdateEvents } from "../../common/types";
 import isUntradable from "../core/trade/isUntradable";
-import makeItWork from "../core/trade/makeItWork";
-import summary from "../core/trade/summary";
 import { augmentOffers } from "../api";
 import { fixPlayers } from "./tradeProposals";
 import { PLAYER } from "../../common";
@@ -44,36 +38,30 @@ const getOffers = async () => {
 	return augmentOffers(offers);
 };
 
-// What players/picks are actually eligible to be traded from a team
-const getEligibleAssets = async () => {
-	const eligibleAssets: {
-		pids: Record<number, number[]>;
-		dpids: Record<number, number[]>;
-	} = {
-		pids: {},
-		dpids: {},
-	};
-
-	const players = await idb.cache.players.getAll();
-	for (const p of players) {
-		if (p.tid >= 0) {
-			if (!eligibleAssets.pids[p.tid]) {
-				eligibleAssets.pids[p.tid] = [];
-			}
-			eligibleAssets.pids[p.tid].push(p.pid);
-		}
-	}
-
-	const draftPicks = await idb.cache.draftPicks.getAll();
-	for (const dp of draftPicks) {
-		if (!eligibleAssets.dpids[dp.tid]) {
-			eligibleAssets.dpids[dp.tid] = [];
-		}
-		eligibleAssets.dpids[dp.tid].push(dp.dpid);
-	}
-
-	return eligibleAssets;
-};
+export type MissingAsset =
+	| {
+			type: "retired";
+			pid: number;
+			name: string;
+			pos: string;
+	  }
+	| {
+			type: "noLongerOnTeam";
+			pid: number;
+			name: string;
+			pos: string;
+	  }
+	| {
+			type: "untradable";
+			pid: number;
+			name: string;
+			pos: string;
+			message: string;
+	  }
+	| {
+			type: "deletedPlayer";
+			pid: number;
+	  };
 
 const updateSavedTrades = async (
 	inputs: unknown,
@@ -94,27 +82,6 @@ const updateSavedTrades = async (
 
 		// Add some info about players/picks no longer available
 		const offers2 = [];
-
-		type MissingAsset =
-			| {
-					type: "retired";
-					pid: number;
-					name: string;
-			  }
-			| {
-					type: "noLongerOnTeam";
-					pid: number;
-					name: string;
-			  }
-			| {
-					type: "untradable";
-					pid: number;
-					name: string;
-			  }
-			| {
-					type: "deletedPlayer";
-					pid: number;
-			  };
 
 		for (const offer of offers) {
 			const offer2 = {
@@ -155,19 +122,19 @@ const updateSavedTrades = async (
 				for (const pid of missingPids) {
 					const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
 					if (pRaw) {
-						const p = await idb.getCopy.playersPlus(pRaw, {
-							attrs: ["pid", "name"],
-							showRookies: true,
-							showNoStats: true,
-						});
+						const p = {
+							pid: pRaw.pid,
+							name: `${pRaw.firstName} ${pRaw.lastName}`,
+							pos: pRaw.ratings.at(-1).pos,
+						};
 
 						const untradableInfo = isUntradable(pRaw);
-						if (p.tid === PLAYER.RETIRED) {
+						if (pRaw.tid === PLAYER.RETIRED) {
 							offer2[type].push({
 								type: "retired",
 								...p,
 							});
-						} else if (p.tid !== tid) {
+						} else if (pRaw.tid !== tid) {
 							offer2[type].push({
 								type: "noLongerOnTeam",
 								...p,

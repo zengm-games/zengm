@@ -10,7 +10,6 @@ import {
 	pickScore,
 	playerScore,
 } from "./TradingBlock";
-import { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 
 const SavedTrades = (props: View<"savedTrades">) => {
@@ -25,20 +24,6 @@ const SavedTrades = (props: View<"savedTrades">) => {
 		salaryCapType,
 		spectator,
 	} = props;
-
-	const [removedTids, setRemovedTids] = useState<number[]>([]);
-	const [prevOffers, setPrevOffers] = useState(offers);
-
-	// Without this, we'd still see the old offers even after 10 games are played and there are new offers
-	useEffect(() => {
-		const tids = JSON.stringify(offers.map(offer => offer.tid).sort());
-		const prevTids = JSON.stringify(prevOffers.map(offer => offer.tid).sort());
-
-		if (tids !== prevTids) {
-			setRemovedTids([]);
-			setPrevOffers(offers);
-		}
-	}, [offers, prevOffers]);
 
 	useTitleBar({ title: "Saved Trades" });
 
@@ -105,10 +90,6 @@ const SavedTrades = (props: View<"savedTrades">) => {
 		};
 	};
 
-	const filteredOffers = offers.filter(
-		offer => !removedTids.includes(offer.tid),
-	);
-
 	return (
 		<>
 			<p>
@@ -147,7 +128,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 					</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>
-			{filteredOffers.length === 0 ? <div>No saved trades</div> : null}
+			{offers.length === 0 ? <div>No saved trades</div> : null}
 			<div className="d-none d-lg-block">
 				<OfferTable
 					assetCols={[
@@ -205,14 +186,14 @@ const SavedTrades = (props: View<"savedTrades">) => {
 					handleRemove={async i => {
 						await toWorker("main", "clearSavedTrades", [offers[i].hash]);
 					}}
-					offers={filteredOffers}
+					offers={offers}
 					salaryCap={salaryCap}
 					salaryCapType={salaryCapType}
 				/>
 			</div>
 
 			<div className="d-block d-lg-none">
-				{filteredOffers.map(offer => {
+				{offers.map(offer => {
 					return (
 						<Offer
 							key={offer.hash}

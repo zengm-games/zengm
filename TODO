@@ -2,8 +2,6 @@ some way to pin trades?
 - flag/unflag icon
   - on trading block page
   - on trade proposals page
-- saved trades UI
-  - fix useState/useEffect
 - https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/
 - savedTrades
   - export/import

@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { SummaryTeam } from "./Trade/Summary";
-import { toWorker, useLocalPartial } from "../util";
+import { helpers, toWorker, useLocalPartial } from "../util";
 import {
 	Offer,
 	OfferTable,
@@ -112,8 +112,12 @@ const SavedTrades = (props: View<"savedTrades">) => {
 	return (
 		<>
 			<p>
-				These are trade proposals from up to 5 AI teams. New teams will appear
-				here every 10 games.
+				Add trades to this list by clicking the "save trade" icon{" "}
+				<span className="glyphicon glyphicon-flag" /> on any of the{" "}
+				<a href={helpers.leagueUrl(["trade"])}>Trade</a>,{" "}
+				<a href={helpers.leagueUrl(["trading_block"])}>Trading Block</a>, or{" "}
+				<a href={helpers.leagueUrl(["trade_proposals"])}>Trade Proposals</a>{" "}
+				pages.
 			</p>
 			<Dropdown>
 				<Dropdown.Toggle variant="danger" className="mb-3">

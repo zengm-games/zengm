@@ -1835,7 +1835,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 				throw new Error("No team found");
 			}
 
-			const formatPicks = async (dpids: number[]) => {
+			const formatPicks = async (tid: number, dpids: number[]) => {
 				let picks = await idb.getCopies.draftPicks(
 					{
 						tid,
@@ -1898,9 +1898,9 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 				pidsUser: offerRaw[0].pids,
 				dpidsUser: offerRaw[0].dpids,
 				payroll,
-				picks: await formatPicks(offerRaw[1].dpids),
+				picks: await formatPicks(tid, offerRaw[1].dpids),
 				players: await formatPlayers(tid, offerRaw[1].pids),
-				picksUser: await formatPicks(offerRaw[0].dpids),
+				picksUser: await formatPicks(g.get("userTid"), offerRaw[0].dpids),
 				playersUser: await formatPlayers(g.get("userTid"), offerRaw[0].pids),
 				summary: await getSummary(offerRaw),
 			};

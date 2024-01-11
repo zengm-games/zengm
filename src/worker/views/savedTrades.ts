@@ -127,7 +127,6 @@ const updateSavedTrades = async (
 				},
 			];
 			for (const { type, pids, players, dpids, picks } of missingInfos) {
-				console.log(type, pids, players, dpids, picks);
 				if (pids.length !== players.length) {
 					const missingPids = pids.filter(
 						pid => !players.find(p => p.pid === pid),

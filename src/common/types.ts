@@ -1773,6 +1773,7 @@ export type UpdateEvents = (
 	| "options"
 	| "playerMovement"
 	| "playoffs"
+	| "savedTrades"
 	| "scheduledEvents"
 	| "retiredJerseys"
 	| "team"

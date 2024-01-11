@@ -4287,6 +4287,14 @@ const setSavedTrade = async ({
 	}
 };
 
+const clearSavedTrades = async (hashes: string[]) => {
+	for (const hash of hashes) {
+		await idb.cache.savedTrades.delete(hash);
+	}
+
+	await toUI("realtimeUpdate", [["savedTrades"]]);
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -4308,8 +4316,9 @@ export default {
 		cancelContractNegotiation,
 		checkAccount: checkAccount2,
 		checkParticipationAchievement,
-		clearTrade,
 		clearInjuries,
+		clearSavedTrades,
+		clearTrade,
 		clearWatchList,
 		countNegotiations,
 		createLeague,

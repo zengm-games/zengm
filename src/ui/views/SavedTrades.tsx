@@ -11,6 +11,7 @@ import {
 	playerScore,
 } from "./TradingBlock";
 import { useEffect, useState } from "react";
+import { Dropdown } from "react-bootstrap";
 
 const SavedTrades = (props: View<"savedTrades">) => {
 	const {
@@ -114,6 +115,35 @@ const SavedTrades = (props: View<"savedTrades">) => {
 				These are trade proposals from up to 5 AI teams. New teams will appear
 				here every 10 games.
 			</p>
+			<Dropdown>
+				<Dropdown.Toggle variant="danger" className="mb-3">
+					Clear
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item
+						onClick={async () => {
+							const hashes = offers.map(offer => offer.hash);
+							await toWorker("main", "clearSavedTrades", hashes);
+						}}
+					>
+						All saved trades
+					</Dropdown.Item>
+					<Dropdown.Item
+						onClick={async () => {
+							const hashes = offers
+								.filter(
+									offer =>
+										offer.missing.length > 0 || offer.missingUser.length > 0,
+								)
+								.map(offer => offer.hash);
+							await toWorker("main", "clearSavedTrades", hashes);
+						}}
+					>
+						Trades with invalid assets
+					</Dropdown.Item>
+				</Dropdown.Menu>
+			</Dropdown>
+			{filteredOffers.length === 0 ? <div>No saved trades</div> : null}
 			<div className="d-none d-lg-block">
 				<OfferTable
 					assetCols={[

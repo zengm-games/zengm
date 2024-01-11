@@ -70,7 +70,6 @@ export const SummaryTeam = ({
 }) => {
 	const payrollColorCutoff =
 		salaryCapType === "none" ? luxuryPayroll : salaryCap;
-	console.log("missingAssets", missingAssets);
 
 	return (
 		<>

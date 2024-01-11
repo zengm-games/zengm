@@ -30,12 +30,21 @@ const savedTradeHashToTradeTeams = (hash: string): TradeTeams => {
 const getOffers = async () => {
 	const userTid = g.get("userTid");
 
-	const offers = (await idb.cache.savedTrades.getAll())
-		.filter(savedTrade => savedTrade.tid === userTid)
-		.map(savedTrade => savedTradeHashToTradeTeams(savedTrade.hash));
+	const savedTrades = (await idb.cache.savedTrades.getAll()).filter(
+		savedTrade => savedTrade.tid === userTid,
+	);
+
+	const offers = savedTrades.map(savedTrade =>
+		savedTradeHashToTradeTeams(savedTrade.hash),
+	);
 	console.log("offers", offers);
 
-	return augmentOffers(offers);
+	return (await augmentOffers(offers)).map((offer, i) => {
+		return {
+			...offer,
+			hash: savedTrades[i].hash,
+		};
+	});
 };
 
 export type MissingAsset =
@@ -70,6 +79,7 @@ const updateSavedTrades = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("savedTrades") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {

@@ -60,7 +60,7 @@ const categories: Category[] = [
 						desc: "Game highs are fun, but they increase export size by 25%.",
 						default: true,
 					},
-			  ]
+				]
 			: undefined,
 	},
 	{
@@ -285,6 +285,7 @@ const getExportInfo = (
 			"allStars",
 			"scheduledEvents",
 			"seasonLeaders",
+			"savedTrades",
 		],
 		newsFeedTransactions: ["events"],
 		newsFeedOther: ["events"],
@@ -437,7 +438,7 @@ const RenderOption = ({
 							onToggle={onToggle}
 							parent={name}
 						/>
-				  ))
+					))
 				: null}
 		</>
 	);

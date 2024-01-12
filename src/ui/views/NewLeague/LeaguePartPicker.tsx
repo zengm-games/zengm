@@ -20,6 +20,7 @@ const leaguePartDescriptions: Record<string, string> = {
 		"Scheduled events, like expansion and league rule changes. For more control, go to Tools > Scheduled Events after creating your league.",
 	headToHeads: "Team head-to-head results",
 	seasonLeaders: "Season leaders cache",
+	savedTrades: "Saved trades",
 };
 
 const LeaguePartPicker = ({

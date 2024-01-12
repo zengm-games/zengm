@@ -2618,6 +2618,21 @@ const generateJSONSchema = (sport /*: string*/) => {
 					required: ["cid", "did", "region", "name", "abbrev"],
 				},
 			},
+			savedTrades: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						hash: {
+							type: "string",
+						},
+						tid: {
+							type: "integer",
+						},
+					},
+					required: ["hash", "tid"],
+				},
+			},
 			trade: {
 				type: "array",
 				items: {

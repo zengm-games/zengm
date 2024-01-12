@@ -37,7 +37,6 @@ const getOffers = async () => {
 	const offers = savedTrades.map(savedTrade =>
 		savedTradeHashToTradeTeams(savedTrade.hash),
 	);
-	console.log("offers", offers);
 
 	return (await augmentOffers(offers)).map((offer, i) => {
 		return {
@@ -172,7 +171,6 @@ const updateSavedTrades = async (
 					const missingDpids = dpids.filter(
 						dpid => !picks.find(dp => dp.dpid === dpid),
 					);
-					console.log("missingDpids", missingDpids);
 
 					for (const dpid of missingDpids) {
 						const dp = await idb.cache.draftPicks.get(dpid);
@@ -190,7 +188,6 @@ const updateSavedTrades = async (
 				}
 			}
 		}
-		console.log("offers2", offers2);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

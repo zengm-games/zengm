@@ -6,6 +6,7 @@ import processTrade from "./processTrade";
 import summary from "./summary";
 import get from "./get";
 import { idb } from "../../db";
+import { hashSavedTrade } from "../../../common/hashSavedTrade";
 
 /**
  * Proposes the current trade in the database.
@@ -60,14 +61,21 @@ const propose = async (
 	);
 
 	if (dv > 0 || forceTrade) {
+		// Compute hash now, since teams is mutated in processTrade somehow
+		const hash = hashSavedTrade(teams);
+
 		// Trade players
 		outcome = "accepted";
 		await processTrade(tids, pids, dpids);
+
+		// Delete from saved trades, if applicable
+		await idb.cache.savedTrades.delete(hash);
 	}
 
 	if (outcome === "accepted") {
-		await clear(); // Auto-sort team rosters
+		await clear();
 
+		// Auto-sort team rosters
 		for (const tid of tids) {
 			const t = await idb.cache.teams.get(tid);
 			const onlyNewPlayers =

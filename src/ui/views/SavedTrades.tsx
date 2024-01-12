@@ -183,9 +183,6 @@ const SavedTrades = (props: View<"savedTrades">) => {
 					}}
 					challengeNoRatings={challengeNoRatings}
 					handleNegotiate={handleNegotiate}
-					handleRemove={async i => {
-						await toWorker("main", "clearSavedTrades", [offers[i].hash]);
-					}}
 					offers={offers}
 					salaryCap={salaryCap}
 					salaryCapType={salaryCapType}
@@ -200,9 +197,6 @@ const SavedTrades = (props: View<"savedTrades">) => {
 							challengeNoRatings={challengeNoRatings}
 							onNegotiate={() => {
 								handleNegotiate(offer);
-							}}
-							onRemove={async () => {
-								await toWorker("main", "clearSavedTrades", [offer.hash]);
 							}}
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}

@@ -4285,6 +4285,8 @@ const setSavedTrade = async ({
 	} else {
 		await idb.cache.savedTrades.delete(hash);
 	}
+
+	await toUI("realtimeUpdate", [["savedTrades"]]);
 };
 
 const clearSavedTrades = async (hashes: string[]) => {

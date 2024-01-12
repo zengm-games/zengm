@@ -6,11 +6,9 @@ import { hashSavedTrade } from "../../common/hashSavedTrade";
 const SaveTrade = memo(
 	({
 		className,
-		onChange,
 		tradeTeams,
 	}: {
 		className?: string;
-		onChange?: (saved: number) => void;
 		tradeTeams: [
 			{
 				tid: number;
@@ -50,9 +48,6 @@ const SaveTrade = memo(
 			event.preventDefault();
 			const newSaved = saved === 0 ? 1 : 0;
 			setSaved(newSaved);
-			if (onChange) {
-				onChange(newSaved);
-			}
 			await toWorker("main", "setSavedTrade", {
 				saved: newSaved,
 				hash,

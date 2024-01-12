@@ -1,8 +1,5 @@
 some way to pin trades?
-- when resizing window to switch between table/non-table, save trade icon falls out of sync
 - https://old.reddit.com/r/BasketballGM/comments/187ynjl/monthly_suggestions_thread/kbjrf6g/
-- SaveTrade
-  - onChange needed?
 - savedTrades
   - export/import
   - schema

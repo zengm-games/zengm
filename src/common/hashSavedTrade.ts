@@ -14,10 +14,10 @@ export const hashSavedTrade = (
 ) => {
 	return JSON.stringify([
 		tradeTeams[0].tid,
-		tradeTeams[0].pids,
-		tradeTeams[0].dpids,
+		tradeTeams[0].pids.sort((a, b) => a - b),
+		tradeTeams[0].dpids.sort((a, b) => a - b),
 		tradeTeams[1].tid,
-		tradeTeams[1].pids,
-		tradeTeams[1].dpids,
+		tradeTeams[1].pids.sort((a, b) => a - b),
+		tradeTeams[1].dpids.sort((a, b) => a - b),
 	]);
 };

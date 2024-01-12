@@ -28,6 +28,7 @@ const SaveTrade = memo(
 			t => t.pids.length === 0 && t.dpids.length === 0,
 		);
 		const hash = hashSavedTrade(tradeTeams);
+		console.log(hash, tradeTeams);
 
 		useLayoutEffect(() => {
 			let mounted = true;

@@ -2,7 +2,18 @@ fix subscriptions
 - should not be possible to have multiple subscriptions active for same account
 - should be harder to have multiple subscriptions active for different accounts with same email
 - password recovery should handle multiple usernames for email
-- https://stripe.com/use-cases/saas
+
+setting for overtime period length
+- not available for baseball
+- football is different for playoffs
+- leave blank and overtime is same as period length
+- default values for
+  - basketball
+  - football
+  - hockey
+- upgrade by applying what would be the default in the old system
+  - import
+  - existing leagues
 
 box score overflow with long team name https://discord.com/channels/290013534023057409/290015591216054273/1194104187722661928
 
@@ -41,17 +52,6 @@ more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/co
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 
 BBGM injury rate too low? https://discord.com/channels/290013534023057409/290015591216054273/1190784110763970600
-
-setting for overtime period length
-- not available for baseball
-- football is different for playoffs
-- default values for
-  - basketball
-  - football
-  - hockey
-- upgrade by applying what would be the default in the old system
-  - import
-  - existing leagues
 
 better clock handling in BBGM - calculate tim as you go in the play
 - turnovers/steals
@@ -182,6 +182,7 @@ FBGM
   - in hurryUp, should try to end play out of bounds
   - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
 - move some TFL from LB to DL https://discord.com/channels/290013534023057409/569726303926878219/1180748752215085138
+- interception in the enzone showing outside the endzone in drive chart, why? https://discord.com/channels/290013534023057409/290015591216054273/1195441266029232220
 
 wrong team abbrev various places
 - functions for helping
@@ -1077,10 +1078,6 @@ settings re-design
   - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 
 If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
-
-better gold websites
-- dedicated website, separate from game
-- new stripe checkout https://mail.google.com/mail/u/0/#inbox/FMfcgxwLswLjSWCHtJMHJkFtKTwQXVKj
 
 bbgm ai teams keep dynasties together too easily?
 

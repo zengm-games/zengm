@@ -460,7 +460,7 @@ const processLiveGameEvents = ({
 	if (
 		!playersByPid ||
 		boxScore.gid !== playersByPidGid ||
-		events[0].type === "init"
+		events[0]?.type === "init"
 	) {
 		playersByPidGid = boxScore.gid;
 		playersByPid = {};

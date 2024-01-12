@@ -190,6 +190,8 @@ const Trade = (props: View<"trade">) => {
 			undefined,
 		);
 
+		console.log("changed", changed);
+
 		if (!changed) {
 			newPrevTeams = undefined;
 		}
@@ -329,6 +331,8 @@ const Trade = (props: View<"trade">) => {
 		? `${otherTeam.region} ${otherTeam.name}`
 		: "Other team";
 	const teamNames = [otherTeamName, userTeamName] as [string, string];
+
+	console.log(state.message, state.prevTeams);
 
 	return (
 		<>

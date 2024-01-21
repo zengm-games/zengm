@@ -261,7 +261,7 @@ const updateBoxScore = async (
 	}
 };
 
-const loadAbbrevs = async (season: number) => {
+export const loadAbbrevs = async (season: number) => {
 	const abbrevs: Record<number, string> = {};
 	abbrevs[-2] = "ASG";
 	abbrevs[-1] = "ASG";

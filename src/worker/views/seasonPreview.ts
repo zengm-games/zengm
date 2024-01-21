@@ -4,6 +4,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
 import { groupBy, orderBy } from "../../common/utils";
 import { PHASE } from "../../common";
+import { loadAbbrevs } from "./gameLog";
 
 const updateSeasonPreview = async (
 	{ season }: ViewInput<"seasonPreview">,
@@ -25,34 +26,33 @@ const updateSeasonPreview = async (
 			"noCopyCache",
 		);
 
-		const pidsNewTeam = new Set(
-			playersRaw
-				.filter(p => {
-					const prevTid = p.stats.findLast(row => row.season === season - 1)
-						?.tid;
-					if (prevTid === undefined) {
-						return false;
-					}
+		const prevTeamTidsByPid = new Map<number, number>();
 
-					let currentTid;
-					if (
-						g.get("season") === season &&
-						(g.get("phase") === PHASE.PRESEASON ||
-							p.stats.find(row => row.season === season) === undefined)
-					) {
-						currentTid = p.tid;
-					} else {
-						currentTid = p.stats.find(row => row.season === season)?.tid;
-					}
+		for (const p of playersRaw) {
+			const prevTid = p.stats.findLast(row => row.season === season - 1)?.tid;
+			if (prevTid === undefined) {
+				continue;
+			}
 
-					if (currentTid === undefined || currentTid < 0) {
-						return false;
-					}
+			let currentTid;
+			if (
+				g.get("season") === season &&
+				(g.get("phase") === PHASE.PRESEASON ||
+					p.stats.find(row => row.season === season) === undefined)
+			) {
+				currentTid = p.tid;
+			} else {
+				currentTid = p.stats.find(row => row.season === season)?.tid;
+			}
 
-					return currentTid !== prevTid;
-				})
-				.map(p => p.pid),
-		);
+			if (currentTid === undefined || currentTid < 0) {
+				continue;
+			}
+
+			if (currentTid !== prevTid) {
+				prevTeamTidsByPid.set(p.pid, prevTid);
+			}
+		}
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [
@@ -92,11 +92,20 @@ const updateSeasonPreview = async (
 		).slice(0, NUM_PLAYERS_TO_SHOW);
 
 		const playersNewTeam = [];
-		for (const p of playersTopAll) {
-			if (pidsNewTeam.has(p.pid)) {
-				playersNewTeam.push(p);
-				if (playersNewTeam.length === NUM_PLAYERS_TO_SHOW) {
-					break;
+		if (prevTeamTidsByPid.size > 0) {
+			const prevAbbrevs = await loadAbbrevs(season - 1);
+			for (const p of playersTopAll) {
+				const prevTid = prevTeamTidsByPid.get(p.pid);
+				if (prevTid !== undefined) {
+					playersNewTeam.push({
+						...p,
+						prevTid,
+						prevAbbrev:
+							prevAbbrevs[prevTid] ?? g.get("teamInfoCache")[prevTid].abbrev,
+					});
+					if (playersNewTeam.length === NUM_PLAYERS_TO_SHOW) {
+						break;
+					}
 				}
 			}
 		}

@@ -8,6 +8,7 @@ import {
 	RatingWithChange,
 	RecordAndPlayoffs,
 } from "../components";
+import { arrow } from "./Trade/Summary";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -53,16 +54,31 @@ const PlayerList = ({
 							firstName={p.firstName}
 							lastName={p.lastName}
 						/>
-						<a
-							href={helpers.leagueUrl([
-								"roster",
-								`${p.abbrev}_${p.tid}`,
-								season,
-							])}
-							className="ms-2"
-						>
-							{p.abbrev}
-						</a>
+						<span className="ms-2">
+							{p.prevTid !== undefined ? (
+								<>
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											`${p.prevAbbrev}_${p.prevTid}`,
+											season - 1,
+										])}
+									>
+										{p.prevAbbrev}
+									</a>{" "}
+									{arrow}{" "}
+								</>
+							) : null}
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${p.abbrev}_${p.tid}`,
+									season,
+								])}
+							>
+								{p.abbrev}
+							</a>
+						</span>
 					</span>
 					<br />
 					{!challengeNoRatings ? (
@@ -214,7 +230,7 @@ const SeasonPreview = ({
 	return (
 		<>
 			<MoreLinks type="league" page="season_preview" />
-			<div style={{ maxWidth: 1200 }}>
+			<div style={{ maxWidth: 1400 }}>
 				<div className="row">
 					<div className="col-sm-6 col-md-4 col-lg-3">
 						<h2>Top Players</h2>
@@ -293,7 +309,6 @@ const SeasonPreview = ({
 							players={playersNewTeam}
 							season={season}
 							userTid={userTid}
-							showDraftPick
 						/>
 					</div>
 				</div>

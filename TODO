@@ -1,3 +1,7 @@
+season preview players on new team
+- show ABC -> XYZ as abbrev
+- https://github.com/zengm-games/zengm/issues/462
+
 fix subscriptions
 - should not be possible to have multiple subscriptions active for same account
 - should be harder to have multiple subscriptions active for different accounts with same email

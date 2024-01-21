@@ -195,6 +195,7 @@ const SeasonPreview = ({
 	numPlayoffRounds,
 	playersDeclining,
 	playersImproving,
+	playersNewTeam,
 	playersTop,
 	playersTopRookies,
 	season,
@@ -283,6 +284,16 @@ const SeasonPreview = ({
 							teams={teamsDeclining}
 							season={season}
 							userTid={userTid}
+						/>
+					</div>
+					<div className="col-sm-6 col-md-4 col-lg-3">
+						<h2>Top Players on New Teams</h2>
+						<PlayerList
+							challengeNoRatings={challengeNoRatings}
+							players={playersNewTeam}
+							season={season}
+							userTid={userTid}
+							showDraftPick
 						/>
 					</div>
 				</div>

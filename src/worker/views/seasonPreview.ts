@@ -3,6 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
 import { groupBy, orderBy } from "../../common/utils";
+import { PHASE } from "../../common";
 
 const updateSeasonPreview = async (
 	{ season }: ViewInput<"seasonPreview">,
@@ -24,6 +25,35 @@ const updateSeasonPreview = async (
 			"noCopyCache",
 		);
 
+		const pidsNewTeam = new Set(
+			playersRaw
+				.filter(p => {
+					const prevTid = p.stats.findLast(row => row.season === season - 1)
+						?.tid;
+					if (prevTid === undefined) {
+						return false;
+					}
+
+					let currentTid;
+					if (
+						g.get("season") === season &&
+						(g.get("phase") === PHASE.PRESEASON ||
+							p.stats.find(row => row.season === season) === undefined)
+					) {
+						currentTid = p.tid;
+					} else {
+						currentTid = p.stats.find(row => row.season === season)?.tid;
+					}
+
+					if (currentTid === undefined || currentTid < 0) {
+						return false;
+					}
+
+					return currentTid !== prevTid;
+				})
+				.map(p => p.pid),
+		);
+
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [
 				"pid",
@@ -42,10 +72,9 @@ const updateSeasonPreview = async (
 			showNoStats: true,
 		});
 
-		const playersTop = orderBy(players, p => p.ratings.ovr, "desc").slice(
-			0,
-			NUM_PLAYERS_TO_SHOW,
-		);
+		const playersTopAll = orderBy(players, p => p.ratings.ovr, "desc");
+
+		const playersTop = playersTopAll.slice(0, NUM_PLAYERS_TO_SHOW);
 		const playersImproving = orderBy(
 			players.filter(p => p.ratings.dovr > 0),
 			p => p.ratings.ovr + 2 * p.ratings.dovr,
@@ -61,6 +90,16 @@ const updateSeasonPreview = async (
 			p => p.ratings.ovr,
 			"desc",
 		).slice(0, NUM_PLAYERS_TO_SHOW);
+
+		const playersNewTeam = [];
+		for (const p of playersTopAll) {
+			if (pidsNewTeam.has(p.pid)) {
+				playersNewTeam.push(p);
+				if (playersNewTeam.length === NUM_PLAYERS_TO_SHOW) {
+					break;
+				}
+			}
+		}
 
 		const teamSeasonsCurrent = await idb.getCopies.teamSeasons(
 			{
@@ -101,7 +140,7 @@ const updateSeasonPreview = async (
 						tied: teamSeasonPrev.tied,
 						otl: teamSeasonPrev.otl,
 						playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
-				  }
+					}
 				: undefined;
 
 			return {
@@ -141,6 +180,7 @@ const updateSeasonPreview = async (
 			numPlayoffRounds,
 			playersDeclining,
 			playersImproving,
+			playersNewTeam,
 			playersTop,
 			playersTopRookies,
 			season,

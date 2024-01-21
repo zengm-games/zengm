@@ -283,7 +283,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 					) : (
 						""
 					)}
-					${event.names[0]} recovered the fumble in the endzone, resulting in a{" "}
+					{event.names[0]} recovered the fumble in the endzone, resulting in a{" "}
 					{event.safety ? "safety!" : "touchback"}
 				</>
 			);

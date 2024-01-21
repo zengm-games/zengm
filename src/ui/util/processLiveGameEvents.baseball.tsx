@@ -331,6 +331,7 @@ export const getText = (
 			} else {
 				runnersText = formatRunners(getName, event.runners);
 			}
+			console.log(event.outs, runnersText.includes("score"));
 
 			if (runnersText) {
 				if (!text.endsWith("!") && !text.endsWith(".") && !text.endsWith(",")) {

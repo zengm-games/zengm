@@ -183,6 +183,10 @@ FBGM
   - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
 - move some TFL from LB to DL https://discord.com/channels/290013534023057409/569726303926878219/1180748752215085138
 - interception in the enzone showing outside the endzone in drive chart, why? https://discord.com/channels/290013534023057409/290015591216054273/1195441266029232220
+- missed FG should put the ball at least on the 20 https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmDMcvCdTBhDpQRBpZbRlDnB?compose=GTvVlcRzBlKZpWSJKcGwhBWJsgxgxdqPxQPmDLdmNdGrSGjdShXVtnVbPplhHMkvhhNnRBFngBljz
+- drive chart weirdness for successful onside kicks https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmLJLlZPKfvvFDnjqDfFXwpq
+- better timeout management
+  - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
 
 wrong team abbrev various places
 - functions for helping

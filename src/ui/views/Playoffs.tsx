@@ -100,7 +100,7 @@ const Playoffs = ({
 					);
 				},
 				teams: teamsEdited,
-		  }
+			}
 		: undefined;
 
 	return (
@@ -203,12 +203,12 @@ const Playoffs = ({
 					<p className="mb-2">
 						The {helpers.plural("winner", playIns.length)} of the{" "}
 						{playIns[0][0].home.seed}/{playIns[0][0].away.seed}{" "}
-						{helpers.plural("game makes", playIns.length, "games make")} the
+						{helpers.plural("game makes", playIns.length, "games make")} the{" "}
 						playoffs. Then the{" "}
-						{helpers.plural("loser plays", playIns.length, "losers play")} the
+						{helpers.plural("loser plays", playIns.length, "losers play")} the{" "}
 						{helpers.plural("winner", playIns.length)} of the{" "}
 						{playIns[0][1].home.seed}/{playIns[0][1].away.seed}{" "}
-						{helpers.plural("game", playIns.length)} for the final playoffs
+						{helpers.plural("game", playIns.length)} for the final playoffs{" "}
 						{helpers.plural("spot", playIns.length)}.
 					</p>
 					{[...playIns].reverse().map((playIn, i) => {

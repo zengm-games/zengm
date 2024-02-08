@@ -920,7 +920,7 @@ const achievements: Achievement[] = [
 		name: "Hardware Store",
 		desc: bySport({
 			baseball:
-				"Players on your team win MVP, POY, ROY, ROY, and Finals MVP in the same season.",
+				"Players on your team win MVP, POY, ROY, RPOY, and Finals MVP in the same season.",
 			basketball:
 				"Players on your team win MVP, DPOY, SMOY, MIP, ROY, and Finals MVP in the same season.",
 			football:
@@ -941,8 +941,7 @@ const achievements: Achievement[] = [
 					awards.mvp?.tid === userTid &&
 					awards.poy?.tid === userTid &&
 					awards.roy?.tid === userTid &&
-					awards.goy?.tid === userTid &&
-					awards.roy?.tid === userTid &&
+					awards.rpoy?.tid === userTid &&
 					awards.finalsMvp?.tid === userTid,
 				basketball:
 					awards &&

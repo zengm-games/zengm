@@ -91,11 +91,6 @@ BANNER_ADS_CODE
           <div id="startup-worker"></div>
 
           <div class="alert alert-danger mt-3" id="startup-error" style="display: none"></div>
-
-          <div class="alert alert-danger mt-3" id="startup-error-unknown" style="display: none">
-            <p>This should only take a few seconds on a fast connection.</p>
-            <p>If it gets stuck for a while, read <a href="https://WEBSITE_ROOT/manual/debugging/">the debugging instructions</a> and <a href="https://WEBSITE_ROOT/contact/">ask for help</a> if it still isn't working.</p>
-          </div>
         </div>
       </div>
     </div>
@@ -103,9 +98,21 @@ BANNER_ADS_CODE
     <script>
 var startupUI = document.getElementById("startup-ui");
 var startupWorker = document.getElementById("startup-worker");
+var doneUI = false;
+var doneWorker = false;
 
 var timeoutID = setTimeout(function () {
-  document.getElementById("startup-error-unknown").style.display = "block";
+  var errorMsg;
+  if (doneUI && !doneWorker) {
+    // From user reports in Chrome, possibly related to Chrome version updates in the background
+    errorMsg = '<p>This should only take a few seconds on a fast connection.</p><p>If it\'s stuck loading the backend, <b>try restarting your browser</b>, sometimes that helps.</p>';
+  } else if (!doneUI && !doneWorker) {
+    errorMsg = '<p>This should only take a few seconds on a fast connection.</p><p>If it gets stuck for a while, read <a href="https://WEBSITE_ROOT/manual/debugging/">the debugging instructions</a> and <a href="https://WEBSITE_ROOT/contact/">ask for help</a> if it still isn\'t working.</p>';
+  }
+
+  var startupError = document.getElementById("startup-error");
+  startupError.innerHTML = errorMsg;
+  startupError.style.display = "block";
 }, 6000);
 
 function checkModern() {
@@ -141,6 +148,7 @@ function withGoodBrowser() {
 var count = 0;
 function withGoodUI() {
   startupUI.innerHTML += " done!";
+  doneUI = true;
   count += 1;
   if (count === 2) {
     clearTimeout(timeoutID);
@@ -148,6 +156,7 @@ function withGoodUI() {
 }
 function withGoodWorker() {
   startupWorker.innerHTML += " done!";
+  doneWorker = true;
   count += 1;
   if (count === 2) {
     clearTimeout(timeoutID);

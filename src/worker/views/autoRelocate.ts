@@ -47,6 +47,19 @@ const getRealignInfo = (
 		});
 	}
 
+	// Add any empty divs
+	for (let divIndex = 0; divIndex < divs.length; divIndex++) {
+		const div = divs[divIndex];
+		const confIndex = confs.findIndex(conf => conf.cid === div.cid);
+
+		if (!current[confIndex]) {
+			current[confIndex] = [];
+		}
+		if (!current[confIndex][divIndex]) {
+			current[confIndex][divIndex] = [];
+		}
+	}
+
 	// Indexed on divIndex, so there are gaps unless we filter out undefined. Then it's no longer indexed by divIndex but that's fine.
 	for (let confIndex = 0; confIndex < current.length; confIndex++) {
 		current[confIndex] = current[confIndex]

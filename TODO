@@ -1,8 +1,3 @@
-team stat penalty bugs https://github.com/zengm-games/zengm/issues/463
-- two penalties, one accepted
-  - adds the accepted one, and then deletes the declined one even though it was never accepted in the first place
-  - maybe not always?
-
 weird sorting of Pick column in Best Player at Every Pick https://discord.com/channels/290013534023057409/290015591216054273/1201314404713635900
 
 viewing player during fantasy draft makes them not get drafted https://discord.com/channels/290013534023057409/290015591216054273/1203381599413215312

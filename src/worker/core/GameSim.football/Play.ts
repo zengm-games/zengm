@@ -1258,6 +1258,11 @@ class Play {
 						.filter((event, i) => {
 							// Don't remove the accepted penalty, since we only just added it here! It is not like other events which are added previously
 							if (event.event.type === "penalty") {
+								// Offsetting penalties were never added to stats in the first place
+								if (offsetStatus === "offset") {
+									return false;
+								}
+
 								if (result.indexAccept === numPenaltiesSeen) {
 									numPenaltiesSeen += 1;
 									return false;

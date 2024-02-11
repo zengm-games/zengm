@@ -2424,6 +2424,9 @@ class GameSim extends GameSimBase {
 			if (p !== undefined && s !== "min") {
 				const logAmount = isLng ? p.stat[s] : signedAmount;
 				this.playByPlay.logStat(t, p.id, s, logAmount);
+			} else if (p === undefined) {
+				// Team penalties like delay of game, for the team penalty display at the top
+				this.playByPlay.logStat(t, undefined, s, signedAmount);
 			}
 		}
 	}

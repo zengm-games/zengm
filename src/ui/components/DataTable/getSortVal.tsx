@@ -71,7 +71,13 @@ const getSortVal = (
 
 			const [round, pick] = sortVal.split("-"); // This assumes no league has more than a million teams lol
 
-			return parseInt(round) * 1000000 + parseInt(pick);
+			const number = parseInt(round) * 1000000 + parseInt(pick);
+
+			// Handle any weird values, like "none" or "undrafted" or whatever. Such as on "Best Player at Every Pick"
+			if (Number.isNaN(number)) {
+				return Infinity;
+			}
+			return number;
 		}
 
 		if (sortType === "currency") {

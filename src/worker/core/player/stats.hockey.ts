@@ -23,6 +23,7 @@ const stats = {
 		"minAvailable",
 		"pm",
 		"pim",
+		"shft",
 
 		// Goals and assists: even strength, power play, short-handed, and game-winning
 		"evG",
@@ -69,6 +70,7 @@ const stats = {
 		"shMinMax",
 		"pmMax",
 		"pimMax",
+		"shftMax",
 		"evGMax",
 		"ppGMax",
 		"shGMax",

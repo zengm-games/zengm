@@ -1376,6 +1376,17 @@ class GameSim extends GameSimBase {
 		} else {
 			this.playersOnIce[t].D = newLine;
 		}
+
+		let actualNewLine;
+		if (pos === "F") {
+			actualNewLine = [...this.playersOnIce[t].C, ...this.playersOnIce[t].W];
+		} else {
+			actualNewLine = this.playersOnIce[t].D;
+		}
+		for (const p of actualNewLine) {
+			console.log("shft line", t, p.id, this.clock);
+			this.recordStat(t, p, "shft");
+		}
 	}
 
 	updatePlayersOnIce(
@@ -1394,6 +1405,7 @@ class GameSim extends GameSimBase {
 					t: TeamNum;
 			  },
 	) {
+		console.log("updatePlayersOnIce", options.type, this.clock);
 		let substitutions = false;
 
 		for (const t of teamNums) {
@@ -1402,6 +1414,8 @@ class GameSim extends GameSimBase {
 				this.playersOnIce[t].W = this.lines[t].F[0].slice(1, 3);
 				this.playersOnIce[t].D = [...this.lines[t].D[0]];
 				this.playersOnIce[t].G = [...this.lines[t].G[0]];
+
+				// No need to track shft here because updatePlayersOnIce will be called with newPeriod anyway. So actually, this "starters" mode of updatePlayersOnIce could be eliminated as long as gs was tracked properly in the first newPeriod call.
 			} else if (options.type === "penaltyOver") {
 				if (options.t !== t) {
 					continue;
@@ -1428,6 +1442,7 @@ class GameSim extends GameSimBase {
 
 				this.playersOnIce[t].G = [];
 				this.playersOnIce[t].C.push(sub);
+				this.recordStat(t, sub, "shft");
 
 				this.playByPlay.logEvent({
 					type: "pullGoalie",

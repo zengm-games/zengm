@@ -2447,6 +2447,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "+/-",
 		},
+		"stat:shft": {
+			desc: "Shifts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SHFT",
+		},
 		"stat:pim": {
 			desc: "Penalty Minutes",
 			sortSequence: ["desc", "asc"],

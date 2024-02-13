@@ -477,6 +477,7 @@ const getLeaderRequirements = () => {
 			pm: {
 				filter: p => p.ratings.pos !== "G",
 			},
+			shft: {},
 			min: {
 				filter: p => p.ratings.pos !== "G",
 			},
@@ -534,6 +535,7 @@ const getLeaderRequirements = () => {
 			shAMax: {},
 			sMax: {},
 			tsaMax: {},
+			shftMax: {},
 			minMax: {},
 			ppMinMax: {},
 			shMinMax: {},

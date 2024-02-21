@@ -9,7 +9,7 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 
 	const remainingMatchups = new Set(matchups);
 
-	const allTids = Array.from(new Set(tids.flat()));
+	const allTids = new Set(tids.flat());
 
 	while (remainingMatchups.size > 0) {
 		const tidsUsed = new Set();
@@ -43,7 +43,7 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 				tidsUsed.add(matchup[0]);
 				tidsUsed.add(matchup[1]);
 
-				if (tidsUsed.size === allTids.length) {
+				if (tidsUsed.size === allTids.size) {
 					break;
 				}
 			}

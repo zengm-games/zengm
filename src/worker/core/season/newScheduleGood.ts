@@ -3,6 +3,8 @@ import { groupByUnique, orderBy, range } from "../../../common/utils";
 import type { Div, GameAttributesLeague } from "../../../common/types";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";
 import groupScheduleSeries from "./groupScheduleSeries";
+import { isSport } from "../../../common";
+import groupScheduleCompact from "./groupScheduleCompact";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -753,6 +755,9 @@ const newSchedule = (
 	if (Object.hasOwn(g, "groupScheduleSeries") && g.get("groupScheduleSeries")) {
 		// Group schedule into series
 		tids = groupScheduleSeries(tids);
+	} else if (isSport("football")) {
+		// For football, ideally we'd have explicit bye weeks, but failing that we should at least make the schedule as compact as possible. Whereas the code below makes it only somewhat compact.
+		tids = groupScheduleCompact(tids);
 	} else {
 		// Order the schedule so that it takes fewer days to play
 		random.shuffle(tids);

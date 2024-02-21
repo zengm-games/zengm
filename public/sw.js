@@ -1,6 +1,5 @@
 import { registerQuotaErrorCallback } from "workbox-core/registerQuotaErrorCallback.js";
 import { clientsClaim } from "workbox-core";
-import * as googleAnalytics from "workbox-google-analytics";
 import { createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
@@ -80,5 +79,3 @@ self.addEventListener("message", event => {
 
 // Without this, can get into weird situations with the update checking logic in initServiceWorker, where a service worker has activated but is not yet contorlling the page, so we can't use the service worker to trigger refreshes
 clientsClaim();
-
-googleAnalytics.initialize();

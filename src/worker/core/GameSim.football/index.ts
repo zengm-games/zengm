@@ -614,9 +614,11 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// Don't kick a FG when we really need a touchdown!
+		// Don't kick a FG when we really need a touchdown! secondPossession check is for playoff overtime rules
 		const needTouchdown =
-			quarter >= this.numPeriods && ptsDown > 3 && this.clock <= 2;
+			quarter >= this.numPeriods &&
+			ptsDown > 3 &&
+			(this.clock <= 2 || this.overtimeState === "secondPossession");
 
 		const neverPunt =
 			(quarter === this.numPeriods && ptsDown > 0 && this.clock <= 2) ||

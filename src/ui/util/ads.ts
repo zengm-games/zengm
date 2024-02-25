@@ -1,4 +1,4 @@
-import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN, isSport } from "../../common";
+import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 import { local, localActions } from "./local";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
@@ -253,11 +253,6 @@ class Ads {
 	}
 
 	refreshAll() {
-		if (isSport("football")) {
-			// Try no refresh on pageview in FBGM
-			return;
-		}
-
 		if (this.state === "initialized") {
 			window.freestar.queue.push(() => {
 				window.freestar.refreshAllSlots?.();

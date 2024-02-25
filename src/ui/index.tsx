@@ -131,19 +131,19 @@ const handleVersion = async () => {
 									? {
 											scriptURL: r.active.scriptURL,
 											state: r.active.state,
-									  }
+										}
 									: null,
 								installing: r.installing
 									? {
 											scriptURL: r.installing.scriptURL,
 											state: r.installing.state,
-									  }
+										}
 									: null,
 								waiting: r.waiting
 									? {
 											scriptURL: r.waiting.scriptURL,
 											state: r.waiting.state,
-									  }
+										}
 									: null,
 							};
 						}),
@@ -250,7 +250,7 @@ const setupRoutes = () => {
 			if (!context.state.noTrack) {
 				if (window.enableLogging) {
 					if (!initialLoad) {
-						const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
+						/*const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
 
 						// https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 						analyticsEvent("page_view", {
@@ -264,12 +264,11 @@ const setupRoutes = () => {
 						// gtag('set', 'page_path', pagePath);
 						// gtag('event', 'page_view');
 
-						/*// Prev, also similar to https://developers.google.com/analytics/devguides/collection/ga4/views?technology=websites - but did not work
+						// Prev, also similar to https://developers.google.com/analytics/devguides/collection/ga4/views?technology=websites - but did not work
 						window.gtag("config", window.googleAnalyticsID, {
 							// Normalize league URLs to all look the same
 							page_path: pagePath,
 						});*/
-
 						/*if (window._qevents) {
 							window._qevents.push({
 								qacct: "p-Ye5RY6xC03ZWz",
@@ -344,6 +343,16 @@ const setupRoutes = () => {
 			} else if (!context.state.noTrack) {
 				// If this is not an error page, initialize ads. init() will do nothing if it's already initialized
 				util.ads.init();
+			}
+
+			if (!context.state.noTrack) {
+				// Track page_view here so logged title is correct
+				const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
+
+				// https://developers.google.com/analytics/devguides/collection/ga4/views?client_type=gtag
+				analyticsEvent("page_view", {
+					page_location: `${location.origin}${pagePath}`,
+				});
 			}
 		},
 		routes,

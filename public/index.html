@@ -55,7 +55,8 @@ if (window.enableLogging) {
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'GOOGLE_ANALYTICS_ID', {
-    cookie_domain: 'GOOGLE_ANALYTICS_COOKIE_DOMAIN'
+    cookie_domain: 'GOOGLE_ANALYTICS_COOKIE_DOMAIN',
+    send_page_view: false
   });
 }
 

@@ -248,43 +248,12 @@ const setupRoutes = () => {
 			}
 
 			if (!context.state.noTrack) {
-				if (window.enableLogging) {
-					if (!initialLoad) {
-						/*const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
-
-						// https://developers.google.com/analytics/devguides/collection/gtagjs/pages
-						analyticsEvent("page_view", {
-							page_path: pagePath,
-
-							// https://online-metrics.com/page-view-in-google-analytics-4/
-							page_location: `${location.origin}${pagePath}`,
-						});
-
-						// https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
-						// gtag('set', 'page_path', pagePath);
-						// gtag('event', 'page_view');
-
-						// Prev, also similar to https://developers.google.com/analytics/devguides/collection/ga4/views?technology=websites - but did not work
-						window.gtag("config", window.googleAnalyticsID, {
-							// Normalize league URLs to all look the same
-							page_path: pagePath,
-						});*/
-						/*if (window._qevents) {
-							window._qevents.push({
-								qacct: "p-Ye5RY6xC03ZWz",
-								event: "click",
-							});
-						}*/
-					}
-
-					util.ads.trackPageview();
-				}
-
 				if (initialLoad) {
 					initialLoad = false;
 				} else {
 					// This will only do something if ads are already initialized, so it's (mostly) safe to call here even though this could be an error page, since at least it won't show on an error page for the initial pageview
 					util.ads.refreshAll();
+					util.ads.trackPageview();
 				}
 			}
 		},
@@ -345,7 +314,7 @@ const setupRoutes = () => {
 				util.ads.init();
 			}
 
-			if (!context.state.noTrack) {
+			if (!context.state.noTrack && window.enableLogging) {
 				// Track page_view here so logged title is correct
 				const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
 

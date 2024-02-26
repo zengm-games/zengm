@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { ACCOUNT_API_URL, PLAYER, fetchWrapper } from "../../../common";
 import { draft, player, season, team, league } from "..";
 import { idb } from "../../db";
 import {
@@ -171,8 +171,9 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 				"roster",
 				`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
 				g.get("season"),
-			])}">${g.get("teamInfoCache")[tid]
-				?.name}</a> finished in 1st place and are league champions!`,
+			])}">${
+				g.get("teamInfoCache")[tid]?.name
+			}</a> finished in 1st place and are league champions!`,
 			showNotification: true,
 			hideInLiveGame: true,
 			tids: [tid],
@@ -565,6 +566,16 @@ const newPhaseBeforeDraft = async (
 		],
 		conditions,
 	);
+	fetchWrapper({
+		url: `${ACCOUNT_API_URL}/log_event.php`,
+		method: "POST",
+		data: {
+			sport: process.env.SPORT,
+			type: "completed_season",
+		},
+		credentials: "include",
+	});
+
 	return {
 		redirect,
 		updateEvents: ["playerMovement"],

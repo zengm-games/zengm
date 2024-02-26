@@ -13,6 +13,8 @@ import {
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
+	ACCOUNT_API_URL,
+	fetchWrapper,
 } from "../../../common";
 import {
 	ActionButton,
@@ -884,6 +886,15 @@ const NewLeague = (props: View<"newLeague">) => {
 				team: teamRegionName,
 				league_id: lid,
 			});
+			fetchWrapper({
+				url: `${ACCOUNT_API_URL}/log_event.php`,
+				method: "POST",
+				data: {
+					sport: process.env.SPORT,
+					type: "new_league",
+				},
+				credentials: "include",
+			});
 
 			realtimeUpdate([], `/l/${lid}`);
 		} catch (err) {
@@ -1002,7 +1013,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						: {
 								...props.defaultSettings,
 								randomization: leagueInfo.randomization,
-						  },
+							},
 				startingSeason: leagueInfo.startingSeason,
 			});
 		},
@@ -1393,7 +1404,7 @@ const NewLeague = (props: View<"newLeague">) => {
 														? "Loading..."
 														: `${t.region} ${t.name}${
 																t.season !== undefined ? ` (${t.season})` : ""
-														  }`}
+															}`}
 												</option>
 											);
 										})}

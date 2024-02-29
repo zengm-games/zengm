@@ -248,9 +248,9 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 	let teamName = "";
 	if (p.tid >= 0) {
-		teamName = `${g.get("teamInfoCache")[p.tid]?.region} ${g.get(
-			"teamInfoCache",
-		)[p.tid]?.name}`;
+		teamName = `${g.get("teamInfoCache")[p.tid]?.region} ${
+			g.get("teamInfoCache")[p.tid]?.name
+		}`;
 	} else if (p.tid === PLAYER.FREE_AGENT) {
 		teamName = "Free Agent";
 	} else if (
@@ -300,7 +300,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		const key = JSON.stringify([
 			jerseyNumber,
 			t?.tid,
-			t?.colors,
+			t?.colors?.map(x => x.toUpperCase()),
 			t?.name,
 			t?.region,
 		]);
@@ -535,7 +535,7 @@ const updatePlayer = async (
 								dpid: p.draft.dpid,
 							},
 							"noCopyCache",
-					  )
+						)
 					: []),
 			],
 			"eid",

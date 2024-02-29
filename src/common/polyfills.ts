@@ -33,7 +33,7 @@ import {
 	ReadableStream as PolyfillReadableStream,
 	TransformStream as PolyfillTransformStream,
 	WritableStream as PolyfillWritableStream,
-} from "web-streams-polyfill/ponyfill/es6";
+} from "web-streams-polyfill";
 import {
 	createReadableStreamWrapper,
 	createTransformStreamWrapper,

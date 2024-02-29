@@ -600,30 +600,32 @@ export const LiveGame = (props: View<"liveGame">) => {
 			setPlayIndex(prev => prev + numPlays);
 		};
 
-		let skipMinutes = isSport("baseball")
-			? []
-			: [
-					{
-						minutes: 1,
-						key: "O",
-					},
-					{
-						minutes: helpers.bound(
-							Math.round(props.quarterLength / 4),
-							1,
-							Infinity,
-						),
-						key: "T",
-					},
-					{
-						minutes: helpers.bound(
-							Math.round(props.quarterLength / 2),
-							1,
-							Infinity,
-						),
-						key: "S",
-					},
-				];
+		// elamTarget check is because clock is set to Infinity in Elam ending, so we can't skip ahead minutes
+		let skipMinutes =
+			isSport("baseball") || boxScore.current.elamTarget !== undefined
+				? []
+				: [
+						{
+							minutes: 1,
+							key: "O",
+						},
+						{
+							minutes: helpers.bound(
+								Math.round(props.quarterLength / 4),
+								1,
+								Infinity,
+							),
+							key: "T",
+						},
+						{
+							minutes: helpers.bound(
+								Math.round(props.quarterLength / 2),
+								1,
+								Infinity,
+							),
+							key: "S",
+						},
+					];
 
 		// Dedupe
 		const skipMinutesValues = new Set();

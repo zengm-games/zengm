@@ -1084,9 +1084,6 @@ trade finder, with salary cap rules enforced
   - could work same as now, but never add a player that takes it above the limit, and then have an extra step at the end where it tries to add filler salary
   - even better - filler salary could be added up front, to allow taking a bigger contract back... but how exactly?
 
-fbgm game sim breaks with 0 ovr players https://discord.com/channels/@me/837050122482352212/837810119567736832
-- force 1 to be minimum? or add special case to the bounded gaussian function to just return the max/min at some point?
-
 AI teams too likely to re-sign stars?
 
 in god mode, add button to switch to controlling a team directly on the roster page https://discord.com/channels/290013534023057409/331882115119448065/837416287948111942

@@ -1857,10 +1857,15 @@ class GameSim extends GameSimBase {
 
 		let ydsRaw = Math.round(
 			random.truncGauss(
-				rbFactor *
-					8.3 *
-					(this.team[o].compositeRating.passBlocking /
-						this.team[d].compositeRating.passRushing),
+				// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
+				helpers.bound(
+					rbFactor *
+						8.3 *
+						(this.team[o].compositeRating.passBlocking /
+							this.team[d].compositeRating.passRushing),
+					-5,
+					100,
+				),
 				rbFactor * 7,
 				-5,
 				100,
@@ -2007,13 +2012,18 @@ class GameSim extends GameSimBase {
 			t: o,
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
-		const meanYds =
+
+		// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
+		const meanYds = helpers.bound(
 			(scrambleModifier *
 				(3.5 *
 					0.5 *
 					(p.compositeRating.rushing +
 						this.team[o].compositeRating.runBlocking))) /
-			this.team[d].compositeRating.runStopping;
+				this.team[d].compositeRating.runStopping,
+			-5,
+			15,
+		);
 		let ydsRaw = Math.round(random.truncGauss(meanYds, 6, -5, 15));
 
 		if (Math.random() < 0.01) {

@@ -1,4 +1,34 @@
+compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
+- https://stathead.com/basketball/vs/steph-curry-vs-magic
+  - top: table of key stats, highlighting who is better
+    - another table for ratings too - use peak season in career mode if retired, or current season if not retired, similar to popover
+      - shade color for ratings difference
+  - bottom: all the tables from player stats, showing one row for each player
+    - regular season, playoffs, and combined tabs
+  - top menu options
+    - regular season, playoffs, or combined (affects top key stats)
+  - option to switch individual season or career totals
+    - each player might have a different individual season
+  - list of player names, similar to relatives dropdown
+    - need to put pid in URL, but form control is in main page, how to do that?
+      - could manually call realtimeUpdate like in Dropdown component
+      - could somehow use customUrl feature of Dropdown component, maybe?
+      - maybe do both - so dropdown URL can see local state for customUrl, and so page can trigger update on some other select change
+- link from
+  - main menu
+  - player profile
+  - player popover?
+
+PWA install prompt
+- android
+  - beforeinstallprompt
+- ios https://medium.com/ngconf/installing-your-pwa-on-ios-d1c497968e62
+  - data loss when switching from browser to PWA?
+
 data URI for image files?
+
+hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/778760871911751700/1213624877345411162
+- improve stats: more faceoffs, more shifts
 
 safety being logged as "penalty overturned score" https://discord.com/channels/290013534023057409/290015591216054273/1211395504223686679
 
@@ -1557,8 +1587,6 @@ customizable columns in datatable
 from survey
 - people really like looking back at history
 - people really want better playing time control
-- player comparison should be better
-  - https://bbgm6man.eiphi.eu/
 - team comparison should be better
 - better international name options
 - player mood revamp (bigger contract, ring-chasing, etc)
@@ -2386,7 +2414,6 @@ track longest W/L streaks
 team chemistry http://www.reddit.com/r/BasketballGM/comments/2oco2a/simple_suggestion_team_chemistry/cmrpap6?context=3
 box plots / distributions
   "it'd be great to overlay your roster to see where you stand. Maybe click on a name in a list to add or remove it from the display. Do I have a fast team? Do I have a three point shooting team? Are we big and bruising and slow?"
-compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd

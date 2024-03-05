@@ -11,6 +11,7 @@ import autoRelocate from "./autoRelocate";
 import awardRaces from "./awardRaces";
 import awardsRecords from "./awardsRecords";
 import colleges from "./colleges";
+import comparePlayers from "./comparePlayers";
 import countries from "./countries";
 import customizePlayer from "./customizePlayer";
 import dailySchedule from "./dailySchedule";
@@ -116,6 +117,7 @@ export default {
 	awardRaces,
 	awardsRecords,
 	colleges,
+	comparePlayers,
 	countries,
 	customizePlayer,
 	dailySchedule,

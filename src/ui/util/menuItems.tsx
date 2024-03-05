@@ -436,6 +436,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "comparePlayers",
+				league: true,
+				commandPalette: true,
+				path: ["compare_players"],
+				text: "Compare Players",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "watchList",
 				league: true,
 				commandPalette: true,

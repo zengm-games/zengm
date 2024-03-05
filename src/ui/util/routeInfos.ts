@@ -203,6 +203,8 @@ const routeInfos = {
 	"/l/:lid/season_preview/:season": "seasonPreview",
 	"/l/:lid/auto_expand": "autoExpand",
 	"/l/:lid/auto_relocate": "autoRelocate",
+	"/l/:lid/compare_players": "comparePlayers",
+	"/l/:lid/compare_players/:playoffs/:info": "comparePlayers",
 };
 
 export default routeInfos;

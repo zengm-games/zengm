@@ -815,7 +815,7 @@ const standings = (params: Params) => {
 					basketball: "conf",
 					football: "div",
 					hockey: "div",
-			  });
+				});
 	if (
 		params.type === "conf" ||
 		params.type === "div" ||
@@ -936,6 +936,31 @@ const validateSeasonOnly = (params: Params) => {
 	};
 };
 
+const comparePlayers = (params: Params) => {
+	const players: {
+		pid: number;
+		season: number | "career";
+	}[] = [];
+
+	const info = params.info;
+	if (info !== undefined) {
+		players.push(
+			...info.split("-").map(pidSeason => {
+				const parts = pidSeason.split(".");
+				return {
+					pid: parseInt(parts[0]),
+					season: parts[1] === "career" ? "career" : parseInt(parts[1]),
+				} as const;
+			}),
+		);
+	}
+
+	return {
+		players,
+		playoffs: validateSeasonType(params.playoffs),
+	};
+};
+
 export default {
 	account,
 	allStarDunk: validateSeasonOnly,
@@ -944,6 +969,7 @@ export default {
 	awardRaces: validateSeasonOnly,
 	awardsRecords,
 	customizePlayer,
+	comparePlayers,
 	dailySchedule,
 	depth,
 	draft,

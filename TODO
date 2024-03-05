@@ -1,6 +1,7 @@
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - https://stathead.com/basketball/vs/steph-curry-vs-magic
   - top: table of key stats, highlighting who is better
+    - player picture/name like dunk/3 contest
     - another table for ratings too - use peak season in career mode if retired, or current season if not retired, similar to popover
       - shade color for ratings difference
   - bottom: all the tables from player stats, showing one row for each player
@@ -9,11 +10,18 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - regular season, playoffs, or combined (affects top key stats)
   - option to switch individual season or career totals
     - each player might have a different individual season
+    - but also have a checkbox to enable changing both simultaneously
   - list of player names, similar to relatives dropdown
     - need to put pid in URL, but form control is in main page, how to do that?
       - could manually call realtimeUpdate like in Dropdown component
       - could somehow use customUrl feature of Dropdown component, maybe?
       - maybe do both - so dropdown URL can see local state for customUrl, and so page can trigger update on some other select change
+  - allow arbitrary number of players in the comparison
+    - in top table, shift labels to the left when >2 players
+  - URL: /playoffs/5.2024-7.2014-199.1952
+  - make sure TOT stats display correctly
+  - only show prospects up to NUM_DRAFT_CLASSES until load all
+  - test in all sports
 - link from
   - main menu
   - player profile
@@ -29,6 +37,9 @@ data URI for image files?
 
 hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/778760871911751700/1213624877345411162
 - improve stats: more faceoffs, more shifts
+- Offsides -> Just leads to another faceoff. Maybe frequency could be calculated by something about Possession Teams' OIQ vs The Defenses DIQ
+- Icing -> Team that iced puck cannot line change, leads to another faceoff. Would replace missed shots on Empty Nets. But Icing also happens during games.
+- Puck out of play -> Leads to faceoff
 
 safety being logged as "penalty overturned score" https://discord.com/channels/290013534023057409/290015591216054273/1211395504223686679
 
@@ -1225,7 +1236,7 @@ name/colleges
 allow import/export of league settings from New League page
 
 add some more built-in teams
-- foreign: Shanghai, Karachi, Istanbul, Lagos, Kinshasa, Moscow, Bogotá, Lima, Bangkok, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Milan, Zagreb, Warsaw, Dubai, Kiev, Barcelona, Hong King, Taipei, Jerusalem or Tel Aviv, Johannesburg or Cape Town, Zagreb, Sarajevo
+- foreign: Shanghai, Karachi, Lagos, Kinshasa, Moscow, Bogotá, Lima, Bangkok, Tehran, Kuala Lumpur, Riyadh, Baghdad, Santiago, Milan, Zagreb, Warsaw, Dubai, Kiev, Barcelona, Hong King, Taipei, Jerusalem or Tel Aviv, Johannesburg or Cape Town, Zagreb, Sarajevo
 - Redo some of the BBGM default teams
   - Vancouver Orcas https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJvqmmdKvZZGHLgkjJZGtNPDw?compose=DmwnWrRpfDXcbbLkrJmmJLsXflzZglwNmThVlTLxqRKXRDLbmPdTfJdWtHqlNSPbKlwhGKvnKJsB
 - Candidates

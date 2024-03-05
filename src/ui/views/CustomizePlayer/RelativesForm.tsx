@@ -167,16 +167,16 @@ const RelativesForm = ({
 					type="button"
 					variant="secondary"
 				>
-					{allPlayersState === "done" ? "Done!" : "Load Retired Players"}
+					{allPlayersState === "done" ? "Done!" : "Load retired players"}
 				</ActionButton>
-				<HelpPopover title="Load Retired Players">
+				<HelpPopover title="Load retired players">
 					<p>
 						By default, only active players are shown as selectable options in
 						the relatives form. This is for performance reasons, to handle
 						leagues where people have played many seasons.
 					</p>
 					<p>
-						If you press the "Load Retired Players" button and wait for it to
+						If you press the "Load retired players" button and wait for it to
 						load, then retired players will be available to select as well.
 					</p>
 				</HelpPopover>

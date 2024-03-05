@@ -474,7 +474,6 @@ const processScheduledEvents = async (
 	}
 
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
-	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];
 
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
@@ -520,8 +519,11 @@ const processScheduledEvents = async (
 		}
 
 		await idb.cache.scheduledEvents.delete(scheduledEvent.id);
+	}
 
-		processed.push(scheduledEvent);
+	if (scheduledEvents.length > 0) {
+		// Non-default scheduled events (or default plus bulk delete) could leave a team orphanied in a division or conference that no longer exists
+		await team.ensureValidDivsConfs();
 	}
 
 	if (eventLogTexts.length > 0) {

@@ -3,6 +3,7 @@ import avgAge from "./avgAge";
 import checkRosterSizes from "./checkRosterSizes";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 import disable from "./disable";
+import ensureValidDivsConfs from "./ensureValidDivsConfs";
 import evaluatePointsFormula from "./evaluatePointsFormula";
 import expandVote from "./expandVote";
 import genSeasonRow from "./genSeasonRow";
@@ -32,6 +33,7 @@ export default {
 	checkRosterSizes,
 	deleteUnreadMessages,
 	disable,
+	ensureValidDivsConfs,
 	evaluatePointsFormula,
 	expandVote,
 	genSeasonRow,

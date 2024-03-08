@@ -122,7 +122,7 @@ function checkModern() {
     return false;
   }
 
-  // Chrome 71, Firefox 105, Safari 14.1
+  // Firefox 105, Safari 14.1
   if (typeof TextDecoderStream === "undefined") {
     return false;
   }
@@ -168,7 +168,7 @@ function checkBrowser() {
   try {
     // Safari 10 https://bugs.webkit.org/show_bug.cgi?id=171041
     // {...x} is for Chrome 59 and lower
-    eval("{ const x = {a: 1}; const y = {...x}; const s = Symbol(); let e = (e) => { for (let e of []) {}; } }");
+    eval("{ const x = {a: 1}; const y = {...x}; const s = Symbol(); let e = (e) => { for (let e of []) {}; } window.queueMicrotask(); }");
     return true;
   } catch (err) {
     return false;
@@ -210,7 +210,7 @@ goodIDB(function (idbResult) {
     if (idbResult === "open-failed") {
       errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p><p>If you\'re using Firefox\'s Private Browsing mode, there is currently a bug in Firefox that prevents GAME_NAME from running. Either load GAME_NAME outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
     } else {
-      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 67+</li><li>Firefox 78+</li><li>Safari 12+</li></ul>';
+      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 75+</li><li>Firefox 78+</li><li>Safari 12.1+</li></ul>';
     }
 
     // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)

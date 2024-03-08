@@ -1,34 +1,5 @@
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Chrome 69
-// https://github.com/behnammodi/polyfill/blob/1a5965edc0e2eaf8e6d87902cc719462e2a889fb/array.polyfill.js#L598-L622
-if (!Array.prototype.flat) {
-	Object.defineProperty(Array.prototype, "flat", {
-		configurable: true,
-		writable: true,
-		value: function () {
-			const depth =
-				// eslint-disable-next-line prefer-rest-params
-				typeof arguments[0] === "undefined" ? 1 : Number(arguments[0]) || 0;
-			const result: any[] = [];
-			const forEach = result.forEach;
-
-			const flatDeep = function (arr: any[], depth: number) {
-				forEach.call(arr, function (val) {
-					if (depth > 0 && Array.isArray(val)) {
-						flatDeep(val, depth - 1);
-					} else {
-						result.push(val);
-					}
-				});
-			};
-
-			flatDeep(this, depth);
-			return result;
-		},
-	});
-}
-
 import {
 	ReadableStream as PolyfillReadableStream,
 	TransformStream as PolyfillTransformStream,
@@ -146,21 +117,8 @@ if (!Object.hasOwn) {
 	});
 }
 
-// Chrome 71, Firefox 105, Safari 14.1
+//  Firefox 105, Safari 14.1
 import "./polyfill-TextEncoderDecoderStream";
-
-// Chrome 71
-// https://github.com/feross/queue-microtask/blob/2a5e7b9874c5f075e62975862e5e4a673f149786/index.js
-/*! queue-microtask. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
-if (typeof queueMicrotask !== "function") {
-	let promise: Promise<unknown>;
-	self.queueMicrotask = cb =>
-		(promise || (promise = Promise.resolve())).then(cb).catch(err =>
-			setTimeout(() => {
-				throw err;
-			}, 0),
-		);
-}
 
 // Chrome 85, Safari 13.1
 if (!String.prototype.replaceAll) {

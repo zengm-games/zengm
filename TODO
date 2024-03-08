@@ -4,6 +4,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - player picture/name like dunk/3 contest
     - another table for ratings too - use peak season in career mode if retired, or current season if not retired, similar to popover
       - shade color for ratings difference
+    - if >2 players, red for last
   - bottom: all the tables from player stats, showing one row for each player
     - regular season, playoffs, and combined tabs
   - top menu options
@@ -25,6 +26,15 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
 - link from
   - player profile
   - player popover?
+
+jersey numbers by position and frequency
+- football - classic numbers more popular
+- hockey https://discord.com/channels/@me/778760871911751700/1214961240405704757
+  - goalies are only position that wears #1. also wears 30-39 a lot
+  - defensemen usually wear 2-9
+  - forwards wear everything
+  - except for #1, anyone can wear any number
+  - make 66 and 99 more common
 
 PWA install prompt
 - android
@@ -1657,6 +1667,7 @@ q- When an interception happens on the passer's side of field, the team that pic
   - OL intercepted pass from own QB https://discord.com/channels/290013534023057409/290015591216054273/853410221137199124
   - another change of possession weirdness https://discord.com/channels/290013534023057409/290015591216054273/854387307754160148
   - ...but a unit test on 4th and 1 and 4th and 50 run 100 times doesn't reproduce
+- some penalties should filter out players, such as no holding on the ball carrier
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

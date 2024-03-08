@@ -1,0 +1,12 @@
+diff --git a/node_modules/framer-motion/dist/index.d.ts b/node_modules/framer-motion/dist/index.d.ts
+index 4300e75..2b91af9 100644
+--- a/node_modules/framer-motion/dist/index.d.ts
++++ b/node_modules/framer-motion/dist/index.d.ts
+@@ -1209,6 +1209,7 @@ interface AnimationPlaybackControls {
+     attachTimeline?: (timeline: ProgressTimeline) => VoidFunction;
+ }
+ declare type DynamicOption<T> = (i: number, total: number) => T;
++// @ts-expect-error
+ interface CSSStyleDeclarationWithTransform extends Omit<CSSStyleDeclaration, "direction" | "transition"> {
+     x: number | string;
+     y: number | string;

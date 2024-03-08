@@ -50,11 +50,12 @@ const throttleRender = (wait: number) => {
 
 const transition = { duration: 0.4, type: "tween" };
 
-const Headlines = ({
-	events,
-	season,
-	userTid,
-}: Pick<View<"leagueDashboard">, "events" | "season" | "userTid">) => {
+type HeadlinesProps = Pick<
+	View<"leagueDashboard">,
+	"events" | "season" | "userTid"
+>;
+
+const Headlines = ({ events, season, userTid }: HeadlinesProps) => {
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
 	return (
@@ -93,7 +94,9 @@ const Headlines = ({
 
 const ThrottledComponent = memo(
 	throttleRender(2000)(Headlines),
-	(prevProps, nextProps) => {
+
+	// Unclear why these manual types are needed, they didn't used to be
+	(prevProps: HeadlinesProps, nextProps: HeadlinesProps) => {
 		// Complicated memo function is because we don't want the throttle timer to start when doing a render where nothing changed, and we can't maintain referential equality of props.events because it is passed between the UI and worker.
 		if (
 			prevProps.season !== nextProps.season ||

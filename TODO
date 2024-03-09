@@ -23,13 +23,12 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - test in all sports
     - position specific stats?
   - test long names
+  - test 3+ players
+    - if >2 players, red for last
   - table striping
     - should be specific to a category/th, not for the whole table
   - sticky header while scolling top table
     - makes sense on mobile too, or just desktop?
-  - highlighting
-    - know which stats are better if lower
-    - if >2 players, red for last
 - link from
   - player profile
   - player popover?

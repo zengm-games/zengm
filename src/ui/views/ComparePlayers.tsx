@@ -1,16 +1,19 @@
 import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
+import type { SortType, View } from "../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../components";
 import { PLAYER, RATINGS, bySport } from "../../common";
 import { getCols, helpers } from "../util";
 import type { ReactNode } from "react";
+import getSortVal from "../components/DataTable/getSortVal";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 
 const InfoRow = ({
 	col,
 	players,
-	formatValue,
+	formatDisplay,
+	sortAsc,
+	sortType,
 }: {
 	col: {
 		desc?: string | undefined;
@@ -23,8 +26,45 @@ const InfoRow = ({
 				season: undefined;
 		  }
 	)[];
-	formatValue: (p: PlayerInfo["p"]) => ReactNode;
+	formatDisplay: (p: PlayerInfo["p"]) => ReactNode;
+	sortAsc?: boolean;
+	sortType?: SortType;
 }) => {
+	const values = players.map(({ p }) =>
+		p === "legend" ? "legend" : formatDisplay(p),
+	);
+
+	let bestSortValue = -Infinity;
+	let worstSortValue = Infinity;
+	let sortValues: any[] | undefined;
+
+	if (sortType !== undefined) {
+		sortValues = values.map(value => getSortVal(value, sortType));
+		for (let i = 0; i < sortValues.length; i++) {
+			if (players[i].p === "legend") {
+				continue;
+			}
+
+			if (sortValues[i] > bestSortValue) {
+				bestSortValue = sortValues[i];
+			}
+			if (sortValues[i] < worstSortValue) {
+				worstSortValue = sortValues[i];
+			}
+		}
+	}
+
+	if (sortAsc) {
+		const temp = bestSortValue;
+		bestSortValue = worstSortValue;
+		worstSortValue = temp;
+	}
+
+	// If only 2 players, then don't highlight worst value because it's redundant. Length is 3 because of the legend column!
+	if (players.length === 3) {
+		worstSortValue = NaN;
+	}
+
 	return (
 		<tr>
 			{players.map(({ p }, i) => {
@@ -36,7 +76,20 @@ const InfoRow = ({
 					);
 				}
 
-				return <td key={i}>{formatValue(p)}</td>;
+				let highlight;
+				if (sortValues) {
+					if (sortValues[i] === bestSortValue) {
+						highlight = "table-success";
+					} else if (sortValues[i] === worstSortValue) {
+						highlight = "table-danger";
+					}
+				}
+
+				return (
+					<td key={i} className={highlight}>
+						{values[i]}
+					</td>
+				);
 			})}
 		</tr>
 	);
@@ -104,7 +157,7 @@ const ComparePlayers = ({
 		<>
 			<div className="table-responsive">
 				<table className="table table-nonfluid table-sm border-top-0 table-striped text-center">
-					<tbody>
+					<thead>
 						<tr>
 							{playersAndLegend.map(({ p, season }, i) => {
 								if (p === "legend") {
@@ -148,6 +201,8 @@ const ComparePlayers = ({
 								);
 							})}
 						</tr>
+					</thead>
+					<tbody>
 						<HeaderRow colSpan={numCols}>Bio</HeaderRow>
 						{career ? (
 							<InfoRow
@@ -156,36 +211,41 @@ const ComparePlayers = ({
 									desc: "Experience (Number of Years in the League)",
 								}}
 								players={playersAndLegend}
-								formatValue={p => {
+								formatDisplay={p => {
 									return `${p.experience} years`;
 								}}
+								sortType="number"
 							/>
 						) : (
 							<InfoRow
 								col={getCols(["Age"])[0]}
 								players={playersAndLegend}
-								formatValue={p => {
+								formatDisplay={p => {
 									return p.age;
 								}}
+								sortType="number"
+								sortAsc
 							/>
 						)}
 						<InfoRow
 							col={getCols(["Pos"])[0]}
 							players={playersAndLegend}
-							formatValue={p => {
+							formatDisplay={p => {
 								return p.ratings.pos;
 							}}
 						/>
 						<InfoRow
 							col={getCols(["Draft"])[0]}
 							players={playersAndLegend}
-							formatValue={p => {
+							formatDisplay={p => {
 								return p.tid === PLAYER.UNDRAFTED
 									? "Draft prospect"
 									: p.draft.round === 0
 										? "Undrafted"
 										: `${p.draft.round}-${p.draft.pick}`;
 							}}
+							sortType="draftPick"
+							sortAsc
 						/>
 						<HeaderRow colSpan={numCols}>
 							{career ? "Peak Ratings" : "Ratings"}
@@ -205,9 +265,10 @@ const ComparePlayers = ({
 									key={rating}
 									col={col}
 									players={playersAndLegend}
-									formatValue={p => {
+									formatDisplay={p => {
 										return p.ratings[rating];
 									}}
+									sortType="number"
 								/>
 							);
 						})}
@@ -219,7 +280,7 @@ const ComparePlayers = ({
 									key={stat}
 									col={col}
 									players={playersAndLegend}
-									formatValue={p => {
+									formatDisplay={p => {
 										return (
 											<>
 												{helpers.roundStat(p.stats[stat], stat)}
@@ -227,6 +288,7 @@ const ComparePlayers = ({
 											</>
 										);
 									}}
+									sortType="number"
 								/>
 							);
 						})}

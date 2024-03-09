@@ -945,8 +945,8 @@ const comparePlayers = (params: Params) => {
 	const info = params.info;
 	if (info !== undefined) {
 		players.push(
-			...info.split("-").map(pidSeason => {
-				const parts = pidSeason.split(".");
+			...info.split(",").map(pidSeason => {
+				const parts = pidSeason.split("-");
 				return {
 					pid: parseInt(parts[0]),
 					season: parts[1] === "career" ? "career" : parseInt(parts[1]),

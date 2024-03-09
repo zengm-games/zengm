@@ -1,8 +1,25 @@
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../components";
-import { RATINGS, bySport } from "../../common";
+import { PLAYER, RATINGS, bySport } from "../../common";
 import { getCols, helpers } from "../util";
+import type { ReactNode } from "react";
+
+const HeaderRow = ({
+	children,
+	colSpan,
+}: {
+	children: ReactNode;
+	colSpan: number;
+}) => {
+	return (
+		<tr>
+			<th colSpan={colSpan} className="table-info">
+				{children}
+			</th>
+		</tr>
+	);
+};
 
 const ComparePlayers = ({
 	availablePlayers,
@@ -42,6 +59,9 @@ const ComparePlayers = ({
 					{ p: "legend", season: undefined } as const,
 					...players.slice(1),
 				];
+
+	// If one is career, all are career
+	const career = players[0].season === "career";
 
 	return (
 		<>
@@ -91,20 +111,57 @@ const ComparePlayers = ({
 								);
 							})}
 						</tr>
+						<HeaderRow colSpan={numCols}>Bio</HeaderRow>
+						{career ? (
+							<tr>
+								{playersAndLegend.map(({ p }, i) => {
+									if (p === "legend") {
+										return (
+											<td key="legend" title="Experience">
+												Exp
+											</td>
+										);
+									}
+									return <td key={i}>{p.experience} years</td>;
+								})}
+							</tr>
+						) : (
+							<tr>
+								{playersAndLegend.map(({ p }, i) => {
+									if (p === "legend") {
+										return <td key="legend">Age</td>;
+									}
+									return <td key={i}>{p.age}</td>;
+								})}
+							</tr>
+						)}
 						<tr>
-							<th colSpan={numCols}>Bio</th>
+							{playersAndLegend.map(({ p }, i) => {
+								if (p === "legend") {
+									return <td key="legend">Pos</td>;
+								}
+								return <td key={i}>{p.ratings.pos}</td>;
+							})}
 						</tr>
 						<tr>
 							{playersAndLegend.map(({ p }, i) => {
 								if (p === "legend") {
-									return <td key="legend">Age</td>;
+									return <td key="legend">Draft</td>;
 								}
-								return <td key={i}>{p.age}</td>;
+								return (
+									<td key={i}>
+										{p.tid === PLAYER.UNDRAFTED
+											? "Draft prospect"
+											: p.draft.round === 0
+												? "Undrafted"
+												: `${p.draft.round}-${p.draft.pick}`}
+									</td>
+								);
 							})}
 						</tr>
-						<tr>
-							<th colSpan={numCols}>Ratings</th>
-						</tr>
+						<HeaderRow colSpan={numCols}>
+							{career ? "Peak Ratings" : "Ratings"}
+						</HeaderRow>
 						{ratings.map(rating => {
 							return (
 								<tr key={rating}>
@@ -131,9 +188,7 @@ const ComparePlayers = ({
 								</tr>
 							);
 						})}
-						<tr>
-							<th colSpan={numCols}>Stats</th>
-						</tr>
+						<HeaderRow colSpan={numCols}>Stats</HeaderRow>
 						{stats.map(stat => {
 							return (
 								<tr key={stat}>
@@ -157,9 +212,7 @@ const ComparePlayers = ({
 								</tr>
 							);
 						})}
-						<tr>
-							<th colSpan={numCols}>Awards</th>
-						</tr>
+						<HeaderRow colSpan={numCols}>Awards</HeaderRow>
 					</tbody>
 				</table>
 			</div>

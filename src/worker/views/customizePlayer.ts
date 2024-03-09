@@ -43,6 +43,8 @@ export const finalizePlayersRelativesList = (
 		if (p.firstSeason !== undefined && p.lastSeason !== undefined) {
 			if (p.firstSeason !== p.lastSeason) {
 				name += ` (${p.firstSeason}-${p.lastSeason})`;
+			} else {
+				name += ` (${p.firstSeason})`;
 			}
 		}
 

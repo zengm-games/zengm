@@ -23,6 +23,8 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - make sure TOT stats display correctly
   - only show prospects up to NUM_DRAFT_CLASSES until load all
   - test in all sports
+    - position specific stats?
+  - test long names
 - link from
   - player profile
   - player popover?

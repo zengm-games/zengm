@@ -1,4 +1,4 @@
-import { PLAYER, RATINGS } from "../../common";
+import { PLAYER, RATINGS, bySport } from "../../common";
 import { idb } from "../db";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import {
@@ -46,6 +46,30 @@ const updateComparePlayers = async (
 			}
 		}
 
+		const stats = bySport({
+			baseball: [],
+			basketball: [
+				"gp",
+				"pts",
+				"trb",
+				"ast",
+				"stl",
+				"blk",
+				"tov",
+				"fgp",
+				"ftp",
+				"tpp",
+				"tsp",
+				"tpar",
+				"ftr",
+				"per",
+				"bpm",
+				"vorp",
+			],
+			football: [],
+			hockey: [],
+		});
+
 		const players = [];
 		for (const { pid, season } of playersToShow) {
 			const pRaw = await idb.getCopy.players({ pid });
@@ -59,12 +83,10 @@ const updateComparePlayers = async (
 						"watch",
 						"face",
 						"imgURL",
-						"hgt",
-						"weight",
 						"awards",
 					],
-					ratings: ["ovr", "pot", ...RATINGS, "pos", "skills"],
-					stats: ["gp", "pts", "trb", "ast", "jerseyNumber"],
+					ratings: ["ovr", "pot", ...RATINGS, "pos"],
+					stats,
 					playoffs: inputs.playoffs === "playoffs",
 					regularSeason: inputs.playoffs === "regularSeason",
 					combined: inputs.playoffs === "combined",
@@ -89,6 +111,7 @@ const updateComparePlayers = async (
 			availablePlayers,
 			playoffs: inputs.playoffs,
 			players,
+			stats,
 		};
 	}
 };

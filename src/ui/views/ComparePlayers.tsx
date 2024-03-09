@@ -172,13 +172,13 @@ const ComparePlayers = ({
 								}
 
 								return (
-									<td
-										key={i}
-										style={{
-											width: 200,
-										}}
-									>
-										<div className="d-flex align-items-center flex-column">
+									<td key={i}>
+										<div
+											className="d-flex align-items-center flex-column"
+											style={{
+												width: 140,
+											}}
+										>
 											<div
 												style={{
 													maxHeight: 180,
@@ -196,7 +196,6 @@ const ComparePlayers = ({
 											<PlayerNameLabels
 												pid={p.pid}
 												season={season === "career" ? undefined : season}
-												jerseyNumber={p.stats.jerseyNumber}
 												watch={p.watch}
 												firstName={p.firstName}
 												lastName={p.lastName}

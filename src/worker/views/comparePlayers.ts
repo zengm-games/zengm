@@ -10,8 +10,9 @@ import { choice, shuffle } from "../../common/random";
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
 	updateEvents: UpdateEvents,
+	state: any,
 ) => {
-	if (updateEvents.includes("firstRun")) {
+	if (updateEvents.includes("firstRun") || inputs.playoffs !== state.playoffs) {
 		const currentPlayers = await idb.cache.players.getAll();
 
 		const playersToShow = [...inputs.players];

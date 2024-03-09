@@ -172,13 +172,23 @@ const ComparePlayers = ({
 }: View<"comparePlayers">) => {
 	useTitleBar({
 		title: "Compare Players",
+		dropdownView: "compare_players",
+		dropdownFields: {
+			playoffsCombined: playoffs,
+		},
+		dropdownCustomURL: fields => {
+			return helpers.leagueUrl([
+				"compare_players",
+				fields.playoffsCombined,
+				"156-2024,382-2024",
+			]);
+		},
 	});
 
 	console.log({
 		availablePlayers,
 		playoffs,
 		players,
-		awards: players.map(({ p }) => groupAwards(p.awards, true)),
 	});
 
 	const ratings = ["ovr", "pot", ...RATINGS];

@@ -29,8 +29,7 @@ const getAllAwardsGrouped = (players: PlayerInfoAndLegend[]) => {
 
 const InfoRow = ({
 	col,
-	players,
-	formatDisplay,
+	values,
 	sortAsc,
 	sortType,
 }: {
@@ -38,15 +37,10 @@ const InfoRow = ({
 		desc?: string | undefined;
 		title: string;
 	};
-	players: PlayerInfoAndLegend[];
-	formatDisplay: (p: PlayerInfo["p"]) => ReactNode;
+	values: any[];
 	sortAsc?: boolean;
 	sortType?: SortType;
 }) => {
-	const values = players.map(({ p }) =>
-		p === "legend" ? "legend" : formatDisplay(p),
-	);
-
 	let bestSortValue = -Infinity;
 	let worstSortValue = Infinity;
 	let sortValues: any[] | undefined;
@@ -54,7 +48,7 @@ const InfoRow = ({
 	if (sortType !== undefined) {
 		sortValues = values.map(value => getSortVal(value, sortType));
 		for (let i = 0; i < sortValues.length; i++) {
-			if (players[i].p === "legend") {
+			if (values[i] === "legend") {
 				continue;
 			}
 
@@ -80,14 +74,14 @@ const InfoRow = ({
 	}
 
 	// If only 2 players, then don't highlight worst value because it's redundant. Length is 3 because of the legend column!
-	if (players.length === 3) {
+	if (values.length === 3) {
 		worstSortValue = NaN;
 	}
 
 	return (
 		<tr>
-			{players.map(({ p }, i) => {
-				if (p === "legend") {
+			{values.map((value, i) => {
+				if (value === "legend") {
 					return (
 						<td key="legend" title={col.desc}>
 							{col.title}
@@ -106,7 +100,7 @@ const InfoRow = ({
 
 				return (
 					<td key={i} className={highlight}>
-						{values[i]}
+						{value}
 					</td>
 				);
 			})}
@@ -132,7 +126,6 @@ const HeaderRow = ({
 
 const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 	const allAwardsGrouped = getAllAwardsGrouped(players);
-	console.log("allAwardsGrouped", allAwardsGrouped);
 
 	const awardsGrouped = players.map(({ p }) => {
 		if (p === "legend") {
@@ -141,7 +134,6 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 
 		return groupByUnique(groupAwards(p.awards, true), "type");
 	});
-	console.log("awardsGrouped", awardsGrouped);
 
 	return (
 		<>
@@ -153,10 +145,9 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 							title: award.type,
 							desc: award.long,
 						}}
-						players={players}
-						formatDisplay={p => {
-							return p.ratings.ovr;
-						}}
+						values={players.map(({ p }, i) =>
+							p === "legend" ? "legend" : awardsGrouped[i][award.type]?.count,
+						)}
 						sortType="number"
 					/>
 				);
@@ -263,40 +254,38 @@ const ComparePlayers = ({
 									title: "Exp",
 									desc: "Experience (Number of Years in the League)",
 								}}
-								players={playersAndLegend}
-								formatDisplay={p => {
-									return `${p.experience} years`;
-								}}
+								values={playersAndLegend.map(({ p }) =>
+									p === "legend" ? "legend" : `${p.experience} years`,
+								)}
 								sortType="number"
 							/>
 						) : (
 							<InfoRow
 								col={getCols(["Age"])[0]}
-								players={playersAndLegend}
-								formatDisplay={p => {
-									return p.age;
-								}}
+								values={playersAndLegend.map(({ p }) =>
+									p === "legend" ? "legend" : p.age,
+								)}
 								sortType="number"
 								sortAsc
 							/>
 						)}
 						<InfoRow
 							col={getCols(["Pos"])[0]}
-							players={playersAndLegend}
-							formatDisplay={p => {
-								return p.ratings.pos;
-							}}
+							values={playersAndLegend.map(({ p }) =>
+								p === "legend" ? "legend" : p.ratings.pos,
+							)}
 						/>
 						<InfoRow
 							col={getCols(["Draft"])[0]}
-							players={playersAndLegend}
-							formatDisplay={p => {
-								return p.tid === PLAYER.UNDRAFTED
-									? "Draft prospect"
-									: p.draft.round === 0
-										? "Undrafted"
-										: `${p.draft.round}-${p.draft.pick}`;
-							}}
+							values={playersAndLegend.map(({ p }) =>
+								p === "legend"
+									? "legend"
+									: p.tid === PLAYER.UNDRAFTED
+										? "Draft prospect"
+										: p.draft.round === 0
+											? "Undrafted"
+											: `${p.draft.round}-${p.draft.pick}`,
+							)}
 							sortType="draftPick"
 							sortAsc
 						/>
@@ -317,10 +306,9 @@ const ComparePlayers = ({
 								<InfoRow
 									key={rating}
 									col={col}
-									players={playersAndLegend}
-									formatDisplay={p => {
-										return p.ratings[rating];
-									}}
+									values={playersAndLegend.map(({ p }) =>
+										p === "legend" ? "legend" : p.ratings[rating],
+									)}
 									sortType="number"
 								/>
 							);
@@ -332,15 +320,16 @@ const ComparePlayers = ({
 								<InfoRow
 									key={stat}
 									col={col}
-									players={playersAndLegend}
-									formatDisplay={p => {
-										return (
+									values={playersAndLegend.map(({ p }) =>
+										p === "legend" ? (
+											"legend"
+										) : (
 											<>
 												{helpers.roundStat(p.stats[stat], stat)}
 												{showPercentSign.includes(stat) ? "%" : null}
 											</>
-										);
-									}}
+										),
+									)}
 									sortType="number"
 								/>
 							);

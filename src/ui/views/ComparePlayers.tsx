@@ -5,8 +5,27 @@ import { PLAYER, RATINGS, bySport } from "../../common";
 import { getCols, groupAwards, helpers } from "../util";
 import type { ReactNode } from "react";
 import getSortVal from "../components/DataTable/getSortVal";
+import { groupByUnique } from "../../common/utils";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
+type PlayerInfoAndLegend =
+	| PlayerInfo
+	| {
+			p: "legend";
+			season: undefined;
+	  };
+
+// Get award counts for both players combined, just so we have all the awards in the correct order
+const getAllAwardsGrouped = (players: PlayerInfoAndLegend[]) => {
+	const allAwards = [];
+	for (const { p } of players) {
+		if (p === "legend") {
+			continue;
+		}
+		allAwards.push(...p.awards);
+	}
+	return groupAwards(allAwards, true);
+};
 
 const InfoRow = ({
 	col,
@@ -19,13 +38,7 @@ const InfoRow = ({
 		desc?: string | undefined;
 		title: string;
 	};
-	players: (
-		| PlayerInfo
-		| {
-				p: "legend";
-				season: undefined;
-		  }
-	)[];
+	players: PlayerInfoAndLegend[];
 	formatDisplay: (p: PlayerInfo["p"]) => ReactNode;
 	sortAsc?: boolean;
 	sortType?: SortType;
@@ -114,6 +127,41 @@ const HeaderRow = ({
 				{children}
 			</th>
 		</tr>
+	);
+};
+
+const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
+	const allAwardsGrouped = getAllAwardsGrouped(players);
+	console.log("allAwardsGrouped", allAwardsGrouped);
+
+	const awardsGrouped = players.map(({ p }) => {
+		if (p === "legend") {
+			return {};
+		}
+
+		return groupByUnique(groupAwards(p.awards, true), "type");
+	});
+	console.log("awardsGrouped", awardsGrouped);
+
+	return (
+		<>
+			{allAwardsGrouped.map(award => {
+				return (
+					<InfoRow
+						key={award.type}
+						col={{
+							title: award.type,
+							desc: award.long,
+						}}
+						players={players}
+						formatDisplay={p => {
+							return p.ratings.ovr;
+						}}
+						sortType="number"
+					/>
+				);
+			})}
+		</>
 	);
 };
 
@@ -298,6 +346,7 @@ const ComparePlayers = ({
 							);
 						})}
 						<HeaderRow colSpan={numCols}>Awards</HeaderRow>
+						<AwardRows players={playersAndLegend} />
 					</tbody>
 				</table>
 			</div>

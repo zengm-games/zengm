@@ -25,6 +25,11 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - test in all sports
     - position specific stats?
   - test long names
+  - table striping
+    - should be specific to a category/th, not for the whole table
+  - sticky header while scolling top table
+    - makes sense on mobile too, or just desktop?
+  - more distinct background color for th
 - link from
   - player profile
   - player popover?

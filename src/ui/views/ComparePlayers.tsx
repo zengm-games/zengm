@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { SortType, View } from "../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../components";
 import { PLAYER, RATINGS, bySport } from "../../common";
-import { getCols, helpers } from "../util";
+import { getCols, groupAwards, helpers } from "../util";
 import type { ReactNode } from "react";
 import getSortVal from "../components/DataTable/getSortVal";
 
@@ -58,6 +58,12 @@ const InfoRow = ({
 		const temp = bestSortValue;
 		bestSortValue = worstSortValue;
 		worstSortValue = temp;
+	}
+
+	// If all players are tied, highlight nobody
+	if (bestSortValue === worstSortValue) {
+		bestSortValue = NaN;
+		worstSortValue = NaN;
 	}
 
 	// If only 2 players, then don't highlight worst value because it's redundant. Length is 3 because of the legend column!
@@ -125,6 +131,7 @@ const ComparePlayers = ({
 		availablePlayers,
 		playoffs,
 		players,
+		awards: players.map(({ p }) => groupAwards(p.awards, true)),
 	});
 
 	const ratings = ["ovr", "pot", ...RATINGS];
@@ -190,7 +197,6 @@ const ComparePlayers = ({
 												pid={p.pid}
 												season={season === "career" ? undefined : season}
 												jerseyNumber={p.stats.jerseyNumber}
-												pos={p.ratings.pos}
 												watch={p.watch}
 												firstName={p.firstName}
 												lastName={p.lastName}

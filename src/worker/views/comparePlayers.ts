@@ -87,6 +87,7 @@ const updateComparePlayers = async (
 						"draft",
 						"tid",
 						"experience",
+						"awards",
 					],
 					ratings: ["ovr", "pot", ...RATINGS, "pos"],
 					stats,

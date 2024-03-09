@@ -5,6 +5,43 @@ import { PLAYER, RATINGS, bySport } from "../../common";
 import { getCols, helpers } from "../util";
 import type { ReactNode } from "react";
 
+type PlayerInfo = View<"comparePlayers">["players"][number];
+
+const InfoRow = ({
+	col,
+	players,
+	formatValue,
+}: {
+	col: {
+		desc?: string | undefined;
+		title: string;
+	};
+	players: (
+		| PlayerInfo
+		| {
+				p: "legend";
+				season: undefined;
+		  }
+	)[];
+	formatValue: (p: PlayerInfo["p"]) => ReactNode;
+}) => {
+	return (
+		<tr>
+			{players.map(({ p }, i) => {
+				if (p === "legend") {
+					return (
+						<td key="legend" title={col.desc}>
+							{col.title}
+						</td>
+					);
+				}
+
+				return <td key={i}>{formatValue(p)}</td>;
+			})}
+		</tr>
+	);
+};
+
 const HeaderRow = ({
 	children,
 	colSpan,
@@ -113,103 +150,84 @@ const ComparePlayers = ({
 						</tr>
 						<HeaderRow colSpan={numCols}>Bio</HeaderRow>
 						{career ? (
-							<tr>
-								{playersAndLegend.map(({ p }, i) => {
-									if (p === "legend") {
-										return (
-											<td key="legend" title="Experience">
-												Exp
-											</td>
-										);
-									}
-									return <td key={i}>{p.experience} years</td>;
-								})}
-							</tr>
+							<InfoRow
+								col={{
+									title: "Exp",
+									desc: "Experience (Number of Years in the League)",
+								}}
+								players={playersAndLegend}
+								formatValue={p => {
+									return `${p.experience} years`;
+								}}
+							/>
 						) : (
-							<tr>
-								{playersAndLegend.map(({ p }, i) => {
-									if (p === "legend") {
-										return <td key="legend">Age</td>;
-									}
-									return <td key={i}>{p.age}</td>;
-								})}
-							</tr>
+							<InfoRow
+								col={getCols(["Age"])[0]}
+								players={playersAndLegend}
+								formatValue={p => {
+									return p.age;
+								}}
+							/>
 						)}
-						<tr>
-							{playersAndLegend.map(({ p }, i) => {
-								if (p === "legend") {
-									return <td key="legend">Pos</td>;
-								}
-								return <td key={i}>{p.ratings.pos}</td>;
-							})}
-						</tr>
-						<tr>
-							{playersAndLegend.map(({ p }, i) => {
-								if (p === "legend") {
-									return <td key="legend">Draft</td>;
-								}
-								return (
-									<td key={i}>
-										{p.tid === PLAYER.UNDRAFTED
-											? "Draft prospect"
-											: p.draft.round === 0
-												? "Undrafted"
-												: `${p.draft.round}-${p.draft.pick}`}
-									</td>
-								);
-							})}
-						</tr>
+						<InfoRow
+							col={getCols(["Pos"])[0]}
+							players={playersAndLegend}
+							formatValue={p => {
+								return p.ratings.pos;
+							}}
+						/>
+						<InfoRow
+							col={getCols(["Draft"])[0]}
+							players={playersAndLegend}
+							formatValue={p => {
+								return p.tid === PLAYER.UNDRAFTED
+									? "Draft prospect"
+									: p.draft.round === 0
+										? "Undrafted"
+										: `${p.draft.round}-${p.draft.pick}`;
+							}}
+						/>
 						<HeaderRow colSpan={numCols}>
 							{career ? "Peak Ratings" : "Ratings"}
 						</HeaderRow>
 						{ratings.map(rating => {
+							let key;
+							if (rating === "ovr") {
+								key = "Ovr";
+							} else if (rating === "pot") {
+								key = "Pot";
+							} else {
+								key = `rating:${rating}`;
+							}
+							const col = getCols([key])[0];
 							return (
-								<tr key={rating}>
-									{playersAndLegend.map(({ p }, i) => {
-										if (p === "legend") {
-											let key;
-											if (rating === "ovr") {
-												key = "Ovr";
-											} else if (rating === "pot") {
-												key = "Pot";
-											} else {
-												key = `rating:${rating}`;
-											}
-											const col = getCols([key])[0];
-											return (
-												<td key="legend" title={col.desc}>
-													{col.title}
-												</td>
-											);
-										}
-
-										return <td key={i}>{p.ratings[rating]}</td>;
-									})}
-								</tr>
+								<InfoRow
+									key={rating}
+									col={col}
+									players={playersAndLegend}
+									formatValue={p => {
+										return p.ratings[rating];
+									}}
+								/>
 							);
 						})}
 						<HeaderRow colSpan={numCols}>Stats</HeaderRow>
 						{stats.map(stat => {
+							const col = getCols([`stat:${stat}`])[0];
 							return (
-								<tr key={stat}>
-									{playersAndLegend.map(({ p }, i) => {
-										if (p === "legend") {
-											const col = getCols([`stat:${stat}`])[0];
-											return (
-												<td key="legend" title={col.desc}>
-													{col.title}
-												</td>
-											);
-										}
-
+								<InfoRow
+									key={stat}
+									col={col}
+									players={playersAndLegend}
+									formatValue={p => {
 										return (
-											<td key={i}>
+											<>
 												{helpers.roundStat(p.stats[stat], stat)}
 												{showPercentSign.includes(stat) ? "%" : null}
-											</td>
+											</>
 										);
-									})}
-								</tr>
+									}}
+								/>
 							);
 						})}
 						<HeaderRow colSpan={numCols}>Awards</HeaderRow>

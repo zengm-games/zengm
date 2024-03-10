@@ -51,6 +51,8 @@ export const finalizePlayersRelativesList = (
 		return {
 			pid: p.pid,
 			name,
+			firstSeason: p.firstSeason,
+			lastSeason: p.lastSeason,
 		};
 	});
 };

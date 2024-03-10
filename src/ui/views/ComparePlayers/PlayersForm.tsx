@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { View } from "../../../common/types";
-import { groupByUnique } from "../../../common/utils";
+import { groupByUnique, range } from "../../../common/utils";
 import SelectMultiple from "../../components/SelectMultiple";
 
 const PlayersForm = ({
@@ -11,7 +11,8 @@ const PlayersForm = ({
 		"init" | "loading" | "done"
 	>("init");
 	const [allPlayers, setAllPlayers] = useState<
-		{ pid: number; name: string }[] | undefined
+		| { pid: number; name: string; firstSeason: number; lastSeason: number }[]
+		| undefined
 	>();
 	const availablePlayers = allPlayers ?? initialAvailablePlayers;
 
@@ -50,31 +51,84 @@ const PlayersForm = ({
 			{currentPlayers.map(({ pid, season }, i) => {
 				const p = playersByPid[pid];
 				return (
-					<div className="d-flex mb-2">
-						<SelectMultiple
-							value={playersByPid[pid]}
-							options={availablePlayers}
-							onChange={p => {
-								setCurrentPlayers(players => {
-									const newPlayers = [...players];
-									newPlayers[i] = {
-										...newPlayers[i],
-										pid: p!.pid,
-									};
+					<div
+						className="d-flex align-items-end mb-3"
+						style={{ maxWidth: 400 }}
+					>
+						<div className="me-3 flex-grow-1">
+							<SelectMultiple
+								value={playersByPid[pid]}
+								options={availablePlayers}
+								onChange={p => {
+									if (!p) {
+										return;
+									}
 
-									return newPlayers;
-								});
-							}}
-							getOptionLabel={p => p.name}
-							getOptionValue={p => String(p.pid)}
-							loading={allPlayersState === "loading"}
-							isClearable={false}
-						/>
+									const newPid = p.pid;
+									let newSeason;
+									if (season === "career") {
+										newSeason = "career";
+									} else if (season < p.firstSeason || season > p.lastSeason) {
+										newSeason = p.firstSeason;
+									} else {
+										newSeason = season;
+									}
+
+									setCurrentPlayers(players => {
+										const newPlayers = [...players];
+
+										newPlayers[i] = {
+											...newPlayers[i],
+											pid: newPid,
+											season: newSeason,
+										};
+
+										return newPlayers;
+									});
+								}}
+								getOptionLabel={p => p.name}
+								getOptionValue={p => String(p.pid)}
+								loading={allPlayersState === "loading"}
+								isClearable={false}
+							/>
+						</div>
+						<div className="me-2 flex-shrink-0">
+							{i === 0 ? <label className="form-label">Type</label> : null}
+							<select
+								className="form-select"
+								onChange={event => {
+									const newSeason =
+										event.target.value === "career"
+											? ("career" as const)
+											: parseInt(event.target.value);
+
+									setCurrentPlayers(players => {
+										const newPlayers = [...players];
+										newPlayers[i] = {
+											...newPlayers[i],
+											season: newSeason,
+										};
+
+										return newPlayers;
+									});
+								}}
+								value={season}
+							>
+								<option value="career">Career</option>
+								{range(p.firstSeason, p.lastSeason + 1).map(season => {
+									return (
+										<option key={season} value={season}>
+											{season}
+										</option>
+									);
+								})}
+							</select>
+						</div>
 					</div>
 				);
 			})}
 
-			<button className="btn btn-primary" type="submit">
+			<button className="btn btn-primary mb-3" type="submit">
 				Update players
 			</button>
 		</form>

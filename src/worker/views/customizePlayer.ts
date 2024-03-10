@@ -11,12 +11,8 @@ import type {
 import { orderBy } from "../../common/utils";
 
 export const formatPlayerRelativesList = (p: Player) => {
-	let firstSeason;
-	let lastSeason;
-	if (p.stats.length > 0) {
-		firstSeason = p.stats[0].season;
-		lastSeason = p.stats.at(-1)!.season;
-	}
+	const firstSeason = p.ratings[0].season as number;
+	const lastSeason = p.ratings.at(-1)!.season as number;
 
 	return {
 		pid: p.pid,
@@ -40,12 +36,11 @@ export const finalizePlayersRelativesList = (
 		if (p.lastName) {
 			name += ` ${p.lastName}`;
 		}
-		if (p.firstSeason !== undefined && p.lastSeason !== undefined) {
-			if (p.firstSeason !== p.lastSeason) {
-				name += ` (${p.firstSeason}-${p.lastSeason})`;
-			} else {
-				name += ` (${p.firstSeason})`;
-			}
+
+		if (p.firstSeason !== p.lastSeason) {
+			name += ` (${p.firstSeason}-${p.lastSeason})`;
+		} else {
+			name += ` (${p.firstSeason})`;
 		}
 
 		return {

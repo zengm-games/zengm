@@ -244,7 +244,6 @@ const ComparePlayers = ({
 				initialAvailablePlayers={initialAvailablePlayers}
 				players={players}
 				onSubmit={playerInfos => {
-					console.log("SUBMIT", playerInfos);
 					const url = makeUrl({ playoffs, players: playerInfos });
 					realtimeUpdate([], url);
 				}}

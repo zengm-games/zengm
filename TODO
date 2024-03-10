@@ -24,6 +24,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - PlayersForm
     - fast enough to go to worker on each change?
   - make sections collapsible, with icon similar to mobile menu
+  - react-select border
 - link from
   - player profile
   - player popover?

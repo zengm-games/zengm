@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { View } from "../../../common/types";
-import { groupByUnique, range } from "../../../common/utils";
+import { range } from "../../../common/utils";
 import SelectMultiple from "../../components/SelectMultiple";
 import { ActionButton, HelpPopover } from "../../components";
 import { toWorker } from "../../util";
+import {
+	formatName,
+	type PlayerInfoForName,
+} from "../CustomizePlayer/RelativesForm";
 
 const PlayersForm = ({
 	initialAvailablePlayers,
@@ -12,8 +16,8 @@ const PlayersForm = ({
 }: Pick<View<"comparePlayers">, "initialAvailablePlayers" | "players"> & {
 	onSubmit: (
 		playerInfos: {
-			pid: number;
 			season: number | "career";
+			p: PlayerInfoForName;
 		}[],
 	) => void;
 }) => {
@@ -21,16 +25,26 @@ const PlayersForm = ({
 		"init" | "loading" | "done"
 	>("init");
 	const [allPlayers, setAllPlayers] = useState<
-		| { pid: number; name: string; firstSeason: number; lastSeason: number }[]
-		| undefined
+		PlayerInfoForName[] | undefined
 	>();
 	const availablePlayers = allPlayers ?? initialAvailablePlayers;
 
-	const [currentPlayers, setCurrentPlayers] = useState(
+	const [currentPlayers, setCurrentPlayers] = useState<
+		{
+			season: number | "career";
+			p: PlayerInfoForName;
+		}[]
+	>(
 		players.map(info => {
 			return {
-				pid: info.p.pid,
 				season: info.season,
+				p: {
+					pid: info.p.pid,
+					firstName: info.p.firstName,
+					lastName: info.p.lastName,
+					firstSeason: info.firstSeason,
+					lastSeason: info.lastSeason,
+				},
 			};
 		}),
 	);
@@ -40,17 +54,18 @@ const PlayersForm = ({
 		setCurrentPlayers(
 			players.map(info => {
 				return {
-					pid: info.p.pid,
 					season: info.season,
+					p: {
+						pid: info.p.pid,
+						firstName: info.p.firstName,
+						lastName: info.p.lastName,
+						firstSeason: info.firstSeason,
+						lastSeason: info.lastSeason,
+					},
 				};
 			}),
 		);
 	}, [players]);
-
-	const playersByPid = useMemo(
-		() => groupByUnique(availablePlayers, "pid"),
-		[availablePlayers],
-	);
 
 	return (
 		<form
@@ -59,27 +74,28 @@ const PlayersForm = ({
 				onSubmit(currentPlayers);
 			}}
 		>
-			{currentPlayers.map(({ pid, season }, i) => {
-				const p = playersByPid[pid];
+			{currentPlayers.map((playerInfo, i) => {
 				return (
 					<div className="d-flex mb-3" style={{ maxWidth: 500 }} key={i}>
 						<div className="me-3 flex-grow-1">
 							<SelectMultiple
-								value={playersByPid[pid]}
+								value={playerInfo.p}
 								options={availablePlayers}
 								onChange={p => {
 									if (!p) {
 										return;
 									}
 
-									const newPid = p.pid;
 									let newSeason;
-									if (season === "career") {
+									if (playerInfo.season === "career") {
 										newSeason = "career" as const;
-									} else if (season < p.firstSeason || season > p.lastSeason) {
+									} else if (
+										playerInfo.season < p.firstSeason ||
+										playerInfo.season > p.lastSeason
+									) {
 										newSeason = p.firstSeason;
 									} else {
-										newSeason = season;
+										newSeason = playerInfo.season;
 									}
 
 									setCurrentPlayers(players => {
@@ -87,14 +103,16 @@ const PlayersForm = ({
 
 										newPlayers[i] = {
 											...newPlayers[i],
-											pid: newPid,
 											season: newSeason,
+											p: {
+												...p,
+											},
 										};
 
 										return newPlayers;
 									});
 								}}
-								getOptionLabel={p => p.name}
+								getOptionLabel={p => formatName(p)}
 								getOptionValue={p => String(p.pid)}
 								loading={allPlayersState === "loading"}
 								isClearable={false}
@@ -119,10 +137,13 @@ const PlayersForm = ({
 										return newPlayers;
 									});
 								}}
-								value={season}
+								value={playerInfo.season}
 							>
 								<option value="career">Career</option>
-								{range(p.firstSeason, p.lastSeason + 1).map(season => {
+								{range(
+									playerInfo.p.firstSeason,
+									playerInfo.p.lastSeason + 1,
+								).map(season => {
 									return (
 										<option key={season} value={season}>
 											{season}
@@ -143,13 +164,12 @@ const PlayersForm = ({
 						setCurrentPlayers(players => {
 							// First player not previously selected
 							const p = availablePlayers.find(
-								p => !players.some(p2 => p2.pid === p.pid),
+								p => !players.some(p2 => p2.p.pid === p.pid),
 							);
 							if (!p) {
 								return players;
 							}
 
-							const newPid = p.pid;
 							const prevSeason = players.at(-1)?.season;
 							let newSeason: number | "career";
 							if (prevSeason === "career") {
@@ -167,8 +187,10 @@ const PlayersForm = ({
 							return [
 								...players,
 								{
-									pid: newPid,
 									season: newSeason,
+									p: {
+										...p,
+									},
 								},
 							];
 						});

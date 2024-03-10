@@ -2258,8 +2258,8 @@ const loadRetiredPlayers = async () => {
 		pid: number;
 		firstName: string;
 		lastName: string;
-		firstSeason: number | undefined;
-		lastSeason: number | undefined;
+		firstSeason: number;
+		lastSeason: number;
 	}[] = [];
 
 	await iterate(

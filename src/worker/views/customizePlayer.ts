@@ -31,25 +31,7 @@ export const finalizePlayersRelativesList = (
 		"firstName",
 		"firstSeason",
 		"lastSeason",
-	]).map(p => {
-		let name = p.firstName;
-		if (p.lastName) {
-			name += ` ${p.lastName}`;
-		}
-
-		if (p.firstSeason !== p.lastSeason) {
-			name += ` (${p.firstSeason}-${p.lastSeason})`;
-		} else {
-			name += ` (${p.firstSeason})`;
-		}
-
-		return {
-			pid: p.pid,
-			name,
-			firstSeason: p.firstSeason,
-			lastSeason: p.lastSeason,
-		};
-	});
+	]);
 };
 
 const updateCustomizePlayer = async (

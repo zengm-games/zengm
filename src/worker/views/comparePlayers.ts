@@ -109,6 +109,8 @@ const updateComparePlayers = async (
 				players.push({
 					p,
 					season,
+					firstSeason: pRaw.ratings[0].season as number,
+					lastSeason: pRaw.ratings.at(-1)!.season as number,
 				});
 			}
 		}

@@ -244,7 +244,15 @@ const ComparePlayers = ({
 				initialAvailablePlayers={initialAvailablePlayers}
 				players={players}
 				onSubmit={playerInfos => {
-					const url = makeUrl({ playoffs, players: playerInfos });
+					const url = makeUrl({
+						playoffs,
+						players: playerInfos.map(info => {
+							return {
+								season: info.season,
+								pid: info.p.pid,
+							};
+						}),
+					});
 					realtimeUpdate([], url);
 				}}
 			/>

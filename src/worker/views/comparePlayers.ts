@@ -6,13 +6,18 @@ import {
 	formatPlayerRelativesList,
 } from "./customizePlayer";
 import { choice, shuffle } from "../../common/random";
+import { dequal } from "dequal/lite";
 
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (updateEvents.includes("firstRun") || inputs.playoffs !== state.playoffs) {
+	if (
+		updateEvents.includes("firstRun") ||
+		inputs.playoffs !== state.playoffs ||
+		!dequal(inputs.players, state.players)
+	) {
 		const currentPlayers = await idb.cache.players.getAll();
 
 		const playersToShow = [...inputs.players];

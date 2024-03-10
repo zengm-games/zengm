@@ -6,7 +6,15 @@ import SelectMultiple from "../../components/SelectMultiple";
 const PlayersForm = ({
 	initialAvailablePlayers,
 	players,
-}: Pick<View<"comparePlayers">, "initialAvailablePlayers" | "players">) => {
+	onSubmit,
+}: Pick<View<"comparePlayers">, "initialAvailablePlayers" | "players"> & {
+	onSubmit: (
+		playerInfos: {
+			pid: number;
+			season: number | "career";
+		}[],
+	) => void;
+}) => {
 	const [allPlayersState, setAllPlayersState] = useState<
 		"init" | "loading" | "done"
 	>("init");
@@ -46,15 +54,13 @@ const PlayersForm = ({
 		<form
 			onSubmit={event => {
 				event.preventDefault();
+				onSubmit(currentPlayers);
 			}}
 		>
 			{currentPlayers.map(({ pid, season }, i) => {
 				const p = playersByPid[pid];
 				return (
-					<div
-						className="d-flex align-items-end mb-3"
-						style={{ maxWidth: 400 }}
-					>
+					<div className="d-flex mb-3" style={{ maxWidth: 500 }} key={i}>
 						<div className="me-3 flex-grow-1">
 							<SelectMultiple
 								value={playersByPid[pid]}
@@ -93,7 +99,6 @@ const PlayersForm = ({
 							/>
 						</div>
 						<div className="me-2 flex-shrink-0">
-							{i === 0 ? <label className="form-label">Type</label> : null}
 							<select
 								className="form-select"
 								onChange={event => {

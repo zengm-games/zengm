@@ -2,7 +2,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import type { SortType, View } from "../../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../../components";
 import { PLAYER, RATINGS, bySport } from "../../../common";
-import { getCols, groupAwards, helpers } from "../../util";
+import { getCols, groupAwards, helpers, realtimeUpdate } from "../../util";
 import type { ReactNode } from "react";
 import getSortVal from "../../components/DataTable/getSortVal";
 import { groupByUnique } from "../../../common/utils";
@@ -165,6 +165,22 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 	);
 };
 
+const makeUrl = ({
+	playoffs,
+	players,
+}: Pick<View<"comparePlayers">, "playoffs"> & {
+	players: {
+		pid: number;
+		season: number | "career";
+	}[];
+}) => {
+	return helpers.leagueUrl([
+		"compare_players",
+		playoffs,
+		players.map(({ pid, season }) => `${pid}-${season}`).join(","),
+	]);
+};
+
 const ComparePlayers = ({
 	initialAvailablePlayers,
 	playoffs,
@@ -178,11 +194,15 @@ const ComparePlayers = ({
 			playoffsCombined: playoffs,
 		},
 		dropdownCustomURL: fields => {
-			return helpers.leagueUrl([
-				"compare_players",
-				fields.playoffsCombined,
-				"156-2024,382-2024",
-			]);
+			return makeUrl({
+				playoffs: fields.playoffsCombined,
+				players: players.map(({ p, season }) => {
+					return {
+						pid: p.pid,
+						season,
+					};
+				}),
+			});
 		},
 	});
 
@@ -223,6 +243,11 @@ const ComparePlayers = ({
 			<PlayersForm
 				initialAvailablePlayers={initialAvailablePlayers}
 				players={players}
+				onSubmit={playerInfos => {
+					console.log("SUBMIT", playerInfos);
+					const url = makeUrl({ playoffs, players: playerInfos });
+					realtimeUpdate([], url);
+				}}
 			/>
 			<div className="table-responsive">
 				<table className="table table-nonfluid table-sm border-top-0 table-striped text-center">

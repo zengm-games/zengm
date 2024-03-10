@@ -52,6 +52,7 @@
 		"classnames": "^2.5.1",
 		"confetti-js": "^0.0.18",
 		"d3-dsv": "^3.0.1",
+		"dequal": "^2.0.3",
 		"dompurify": "^3.0.9",
 		"dropbox": "^10.34.0",
 		"facesjs": "^4.0.0",

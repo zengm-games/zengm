@@ -1,11 +1,12 @@
-import useTitleBar from "../hooks/useTitleBar";
-import type { SortType, View } from "../../common/types";
-import { PlayerNameLabels, PlayerPicture } from "../components";
-import { PLAYER, RATINGS, bySport } from "../../common";
-import { getCols, groupAwards, helpers } from "../util";
+import useTitleBar from "../../hooks/useTitleBar";
+import type { SortType, View } from "../../../common/types";
+import { PlayerNameLabels, PlayerPicture } from "../../components";
+import { PLAYER, RATINGS, bySport } from "../../../common";
+import { getCols, groupAwards, helpers } from "../../util";
 import type { ReactNode } from "react";
-import getSortVal from "../components/DataTable/getSortVal";
-import { groupByUnique } from "../../common/utils";
+import getSortVal from "../../components/DataTable/getSortVal";
+import { groupByUnique } from "../../../common/utils";
+import PlayersForm from "./PlayersForm";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =
@@ -165,7 +166,7 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 };
 
 const ComparePlayers = ({
-	availablePlayers,
+	initialAvailablePlayers,
 	playoffs,
 	players,
 	stats,
@@ -186,7 +187,7 @@ const ComparePlayers = ({
 	});
 
 	console.log({
-		availablePlayers,
+		initialAvailablePlayers,
 		playoffs,
 		players,
 	});
@@ -219,6 +220,10 @@ const ComparePlayers = ({
 
 	return (
 		<>
+			<PlayersForm
+				initialAvailablePlayers={initialAvailablePlayers}
+				players={players}
+			/>
 			<div className="table-responsive">
 				<table className="table table-nonfluid table-sm border-top-0 table-striped text-center">
 					<thead>

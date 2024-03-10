@@ -18,14 +18,16 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - make sure TOT stats display correctly
   - only show prospects up to NUM_DRAFT_CLASSES until load all
   - test in all sports
-    - position specific stats?
-  - test long names
+    - separate list of stats for different positions, then take the union for all current displayed positions
+      - what position to use for careerStats?
   - test 3+ players
-    - if >2 players, red for last
   - table striping
     - should be specific to a category/th, not for the whole table
   - sticky header while scolling top table
     - makes sense on mobile too, or just desktop?
+  - filter awards for single season
+  - PlayersForm
+    - fast enough to go to worker on each change?
 - link from
   - player profile
   - player popover?

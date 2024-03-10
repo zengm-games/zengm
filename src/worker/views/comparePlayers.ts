@@ -108,12 +108,12 @@ const updateComparePlayers = async (
 			}
 		}
 
-		const availablePlayers = finalizePlayersRelativesList(
+		const initialAvailablePlayers = finalizePlayersRelativesList(
 			currentPlayers.map(formatPlayerRelativesList),
 		);
 
 		return {
-			availablePlayers,
+			initialAvailablePlayers,
 			playoffs: inputs.playoffs,
 			players,
 			stats,

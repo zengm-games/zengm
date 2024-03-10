@@ -118,7 +118,7 @@ const PlayersForm = ({
 								isClearable={false}
 							/>
 						</div>
-						<div className="me-2 flex-shrink-0">
+						<div className="me-3 flex-shrink-0">
 							<select
 								className="form-select"
 								onChange={event => {
@@ -151,6 +151,22 @@ const PlayersForm = ({
 									);
 								})}
 							</select>
+						</div>
+						<div className="flex-shrink-0" style={{ fontSize: 20 }}>
+							<button
+								className="text-danger btn btn-link p-0 border-0"
+								onClick={() => {
+									setCurrentPlayers(players => {
+										return players.filter((p, j) => j !== i);
+									});
+								}}
+								title="Delete"
+								style={{ fontSize: 20 }}
+								type="button"
+								disabled={currentPlayers.length <= 2}
+							>
+								<span className="glyphicon glyphicon-remove" />
+							</button>
 						</div>
 					</div>
 				);
@@ -224,9 +240,9 @@ const PlayersForm = ({
 				</ActionButton>
 				<HelpPopover title="Load retired players">
 					<p>
-						By default, only active players are shown as selectable options in
-						the relatives form. This is for performance reasons, to handle
-						leagues where people have played many seasons.
+						By default, only active players are shown here. This is for
+						performance reasons, to handle leagues where people have played many
+						seasons.
 					</p>
 					<p>
 						If you press the "Load retired players" button and wait for it to

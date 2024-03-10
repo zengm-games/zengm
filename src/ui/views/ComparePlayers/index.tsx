@@ -206,12 +206,6 @@ const ComparePlayers = ({
 		},
 	});
 
-	console.log({
-		initialAvailablePlayers,
-		playoffs,
-		players,
-	});
-
 	const ratings = ["ovr", "pot", ...RATINGS];
 
 	const numCols = players.length + 1;

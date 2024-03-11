@@ -1659,3 +1659,18 @@ tr.text-body-secondary td {
 	// Without these, then applying this to a table row (like for TOT stat rows) does not override the color from the striped table class
 	color: var(--bs-secondary-color) !important;
 }
+
+.compare-players-heading {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	padding: 4px;
+	cursor: pointer;
+
+	display: block;
+	font-weight: 500;
+	color: $black;
+
+	&:hover {
+		text-decoration: none;
+	}
+}

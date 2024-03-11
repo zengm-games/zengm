@@ -3,10 +3,11 @@ import type { SortType, View } from "../../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../../components";
 import { PLAYER, RATINGS, bySport } from "../../../common";
 import { getCols, groupAwards, helpers, realtimeUpdate } from "../../util";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import getSortVal from "../../components/DataTable/getSortVal";
 import { groupByUnique } from "../../../common/utils";
 import PlayersForm from "./PlayersForm";
+import CollapseArrow from "../../components/CollapseArrow";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =
@@ -112,14 +113,26 @@ const InfoRow = ({
 const HeaderRow = ({
 	children,
 	colSpan,
+	open,
+	setOpen,
 }: {
 	children: ReactNode;
 	colSpan: number;
+	open: boolean;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
 	return (
 		<tr>
-			<th colSpan={colSpan} className="table-info">
-				{children}
+			<th colSpan={colSpan} className="table-info p-0">
+				<a
+					className="compare-players-heading"
+					onClick={event => {
+						event.preventDefault();
+						setOpen(prev => !prev);
+					}}
+				>
+					<CollapseArrow open={open} /> {children}
+				</a>
 			</th>
 		</tr>
 	);
@@ -205,6 +218,11 @@ const ComparePlayers = ({
 			});
 		},
 	});
+
+	const [openBio, setOpenBio] = useState(true);
+	const [openRatings, setOpenRatings] = useState(true);
+	const [openStats, setOpenStats] = useState(true);
+	const [openAwards, setOpenAwards] = useState(true);
 
 	const ratings = ["ovr", "pot", ...RATINGS];
 
@@ -296,86 +314,112 @@ const ComparePlayers = ({
 						</tr>
 					</thead>
 					<tbody>
-						<HeaderRow colSpan={numCols}>Bio</HeaderRow>
-						{career ? (
-							<InfoRow
-								col={{
-									title: "Exp",
-									desc: "Experience (Number of Years in the League)",
-								}}
-								values={playersToValues(
-									playersAndLegend,
-									p => `${p.experience} years`,
+						<HeaderRow colSpan={numCols} open={openBio} setOpen={setOpenBio}>
+							Bio
+						</HeaderRow>
+						{openBio ? (
+							<>
+								{career ? (
+									<InfoRow
+										col={{
+											title: "Exp",
+											desc: "Experience (Number of Years in the League)",
+										}}
+										values={playersToValues(
+											playersAndLegend,
+											p => `${p.experience} years`,
+										)}
+										sortType="number"
+									/>
+								) : (
+									<InfoRow
+										col={getCols(["Age"])[0]}
+										values={playersToValues(playersAndLegend, p => p.age)}
+										sortType="number"
+										sortAsc
+									/>
 								)}
-								sortType="number"
-							/>
-						) : (
-							<InfoRow
-								col={getCols(["Age"])[0]}
-								values={playersToValues(playersAndLegend, p => p.age)}
-								sortType="number"
-								sortAsc
-							/>
-						)}
-						<InfoRow
-							col={getCols(["Pos"])[0]}
-							values={playersToValues(playersAndLegend, p => p.ratings.pos)}
-						/>
-						<InfoRow
-							col={getCols(["Draft"])[0]}
-							values={playersToValues(playersAndLegend, p =>
-								p.tid === PLAYER.UNDRAFTED
-									? "Draft prospect"
-									: p.draft.round === 0
-										? "Undrafted"
-										: `${p.draft.round}-${p.draft.pick}`,
-							)}
-							sortType="draftPick"
-							sortAsc
-						/>
-						<HeaderRow colSpan={numCols}>
+								<InfoRow
+									col={getCols(["Pos"])[0]}
+									values={playersToValues(playersAndLegend, p => p.ratings.pos)}
+								/>
+								<InfoRow
+									col={getCols(["Draft"])[0]}
+									values={playersToValues(playersAndLegend, p =>
+										p.tid === PLAYER.UNDRAFTED
+											? "Draft prospect"
+											: p.draft.round === 0
+												? "Undrafted"
+												: `${p.draft.round}-${p.draft.pick}`,
+									)}
+									sortType="draftPick"
+									sortAsc
+								/>
+							</>
+						) : null}
+						<HeaderRow
+							colSpan={numCols}
+							open={openRatings}
+							setOpen={setOpenRatings}
+						>
 							{career ? "Peak Ratings" : "Ratings"}
 						</HeaderRow>
-						{ratings.map(rating => {
-							let key;
-							if (rating === "ovr") {
-								key = "Ovr";
-							} else if (rating === "pot") {
-								key = "Pot";
-							} else {
-								key = `rating:${rating}`;
-							}
-							const col = getCols([key])[0];
-							return (
-								<InfoRow
-									key={rating}
-									col={col}
-									values={playersToValues(
-										playersAndLegend,
-										p => p.ratings[rating],
-									)}
-									sortType="number"
-								/>
-							);
-						})}
-						<HeaderRow colSpan={numCols}>Stats</HeaderRow>
-						{stats.map(stat => {
-							const col = getCols([`stat:${stat}`])[0];
-							return (
-								<InfoRow
-									key={stat}
-									col={col}
-									values={playersToValues(
-										playersAndLegend,
-										p =>
-											`${helpers.roundStat(p.stats[stat], stat)}${showPercentSign.includes(stat) ? "%" : ""}`,
-									)}
-									sortType="number"
-								/>
-							);
-						})}
-						<HeaderRow colSpan={numCols}>Awards</HeaderRow>
-						<AwardRows players={playersAndLegend} />
+						{openRatings
+							? ratings.map(rating => {
+									let key;
+									if (rating === "ovr") {
+										key = "Ovr";
+									} else if (rating === "pot") {
+										key = "Pot";
+									} else {
+										key = `rating:${rating}`;
+									}
+									const col = getCols([key])[0];
+									return (
+										<InfoRow
+											key={rating}
+											col={col}
+											values={playersToValues(
+												playersAndLegend,
+												p => p.ratings[rating],
+											)}
+											sortType="number"
+										/>
+									);
+								})
+							: null}
+						<HeaderRow
+							colSpan={numCols}
+							open={openStats}
+							setOpen={setOpenStats}
+						>
+							Stats
+						</HeaderRow>
+						{openStats
+							? stats.map(stat => {
+									const col = getCols([`stat:${stat}`])[0];
+									return (
+										<InfoRow
+											key={stat}
+											col={col}
+											values={playersToValues(
+												playersAndLegend,
+												p =>
+													`${helpers.roundStat(p.stats[stat], stat)}${showPercentSign.includes(stat) ? "%" : ""}`,
+											)}
+											sortType="number"
+										/>
+									);
+								})
+							: null}
+						<HeaderRow
+							colSpan={numCols}
+							open={openAwards}
+							setOpen={setOpenAwards}
+						>
+							Awards
+						</HeaderRow>
+						{openAwards ? <AwardRows players={playersAndLegend} /> : null}
 					</tbody>
 				</table>
 			</div>

@@ -16,11 +16,12 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - sticky header while scolling top table
     - makes sense on mobile too, or just desktop?
   - filter awards for single season
-  - make sections collapsible, with icon similar to mobile menu
   - quick links 
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page
     - top 3 free agents, from free agents page
+  - test alignment of image and svg
+    - dunk contest and elsewhere too
 - link from
   - player profile
   - player popover?

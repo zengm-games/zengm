@@ -76,7 +76,7 @@ const PlayersForm = ({
 		>
 			{currentPlayers.map((playerInfo, i) => {
 				return (
-					<div className="d-flex mb-2" style={{ maxWidth: 500 }} key={i}>
+					<div className="d-flex mb-2" style={{ maxWidth: 400 }} key={i}>
 						<div className="me-2 flex-grow-1">
 							<SelectMultiple
 								value={playerInfo.p}

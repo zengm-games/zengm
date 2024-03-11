@@ -6,9 +6,45 @@ import {
 	formatPlayerRelativesList,
 } from "./customizePlayer";
 import { choice, shuffle } from "../../common/random";
-import { dequal } from "dequal/lite";
 import { g } from "../util";
 import { maxBy } from "../../common/utils";
+
+const newPlayers = (
+	inputPlayers: ViewInput<"comparePlayers">["players"],
+	statePlayers:
+		| {
+				season: number;
+				p: {
+					pid: number;
+				};
+		  }[]
+		| undefined,
+) => {
+	// This just happens on initial render, which should never trigger because it checks firstRun before this, but let's just be careful
+	if (statePlayers === undefined) {
+		return true;
+	}
+
+	// This happens when the URL is just /l/0/compare_players and it picks two random players, we don't want to refresh and pick new random players
+	if (inputPlayers.length === 0) {
+		return false;
+	}
+
+	if (inputPlayers.length !== statePlayers.length) {
+		return true;
+	}
+
+	for (let i = 0; i < inputPlayers.length; i++) {
+		const inputP = inputPlayers[i];
+		const stateP = statePlayers[i];
+
+		if (inputP.pid !== stateP.p.pid || inputP.season !== stateP.season) {
+			return true;
+		}
+	}
+
+	return false;
+};
 
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
@@ -18,7 +54,7 @@ const updateComparePlayers = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.playoffs !== state.playoffs ||
-		!dequal(inputs.players, state.players)
+		newPlayers(inputs.players, state.players)
 	) {
 		const currentPlayers = (await idb.cache.players.getAll()).filter(p => {
 			// Don't include far future players
@@ -133,7 +169,6 @@ const updateComparePlayers = async (
 						award => award.season === season,
 					);
 				}
-				console.log(p);
 
 				players.push({
 					p,

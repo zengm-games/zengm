@@ -9,9 +9,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page
     - top 3 free agents, from free agents page
-  - test alignment of image and svg
-    - dunk contest and elsewhere too
-    - make sure sticky header is still aligned
+  - updateComparePlayers is running every day in game sim, why?
 - link from
   - player profile
   - player popover?

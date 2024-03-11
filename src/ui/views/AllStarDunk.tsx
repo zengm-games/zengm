@@ -262,8 +262,8 @@ const Log = ({
 								{event.num === 1
 									? " first"
 									: event.num === 2
-									  ? " second"
-									  : null}{" "}
+										? " second"
+										: null}{" "}
 								dunk
 							</b>{" "}
 							({event.try === 3 ? "final" : helpers.ordinal(event.try)} try)
@@ -448,7 +448,7 @@ const UserDunkForm = ({
 														pid: dunk.players[index].pid,
 														move: name,
 														units,
-												  })
+													})
 												: info.name}
 										</option>
 									))}
@@ -539,7 +539,8 @@ export const ContestantProfiles = ({
 							style={{
 								maxHeight: 180,
 								width: 120,
-								marginTop: p.imgURL ? 0 : -20,
+								marginTop: p.imgURL ? 0 : -10,
+								marginBottom: p.imgURL ? 0 : 10,
 							}}
 							className="flex-shrink-0"
 						>
@@ -866,7 +867,7 @@ const AllStarDunk = ({
 											await toWorker("main", "dunkSimNext", "your");
 										},
 									},
-							  ]
+								]
 							: []),
 						{
 							label: "End of round",

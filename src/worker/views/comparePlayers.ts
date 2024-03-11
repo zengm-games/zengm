@@ -117,8 +117,14 @@ const updateComparePlayers = async (
 				});
 
 				if (season === "career") {
-					p.stats = p.careerStats;
-					delete p.careerStats;
+					const statsKey =
+						inputs.playoffs === "playoffs"
+							? "careerStatsPlayoffs"
+							: inputs.playoffs === "combined"
+								? "careerStatsCombined"
+								: "careerStats";
+					p.stats = p[statsKey];
+					delete p[statsKey];
 
 					// Peak ratings
 					p.ratings = maxBy(p.ratings, "ovr");

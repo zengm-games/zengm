@@ -269,7 +269,7 @@ const ComparePlayers = ({
 				}}
 			/>
 			<div className="table-responsive">
-				<table className="table table-nonfluid table-sm border-top-0 table-striped text-center">
+				<table className="table table-nonfluid table-sm border-top-0 text-center">
 					<thead>
 						<tr>
 							{playersAndLegend.map(({ p, season }, i) => {

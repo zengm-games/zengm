@@ -5,16 +5,18 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - test in all sports
     - separate list of stats for different positions, then take the union for all current displayed positions
       - what position to use for careerStats?
-  - table striping
-    - should be specific to a category/th, not for the whole table
   - sticky header while scolling top table
     - makes sense on mobile too, or just desktop?
+    - doesn't work inside responsive table. could just do responsive table on mobile? https://stackoverflow.com/questions/55483466/responsive-bootstrap-table-with-sticky-header
   - quick links 
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page
     - top 3 free agents, from free agents page
   - test alignment of image and svg
     - dunk contest and elsewhere too
+  - divs instead of tables?
+    - allows animating open/close
+    - allows sticky header, maybe
 - link from
   - player profile
   - player popover?

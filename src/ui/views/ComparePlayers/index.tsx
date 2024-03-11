@@ -306,7 +306,7 @@ const ComparePlayers = ({
 												firstName={p.firstName}
 												lastName={p.lastName}
 											/>
-											{season}
+											{season === "career" ? "Career totals" : season}
 										</div>
 									</td>
 								);

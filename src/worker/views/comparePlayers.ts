@@ -8,6 +8,7 @@ import {
 import { choice, shuffle } from "../../common/random";
 import { dequal } from "dequal/lite";
 import { g } from "../util";
+import { maxBy } from "../../common/utils";
 
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
@@ -115,11 +116,18 @@ const updateComparePlayers = async (
 					mergeStats: "totOnly",
 				});
 
-				if (season !== "career") {
+				if (season === "career") {
+					p.stats = p.careerStats;
+					delete p.careerStats;
+
+					// Peak ratings
+					p.ratings = maxBy(p.ratings, "ovr");
+				} else {
 					p.awards = (p.awards as any[]).filter(
 						award => award.season === season,
 					);
 				}
+				console.log(p);
 
 				players.push({
 					p,

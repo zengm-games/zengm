@@ -119,7 +119,7 @@ import toolsMenu from "./toolsMenu";
 import addFirstNameShort from "../util/addFirstNameShort";
 import statsBaseball from "../core/team/stats.baseball";
 import { extraRatings } from "../views/playerRatings";
-import { groupByUnique, omit, orderBy } from "../../common/utils";
+import { groupByUnique, maxBy, omit, orderBy } from "../../common/utils";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
@@ -2398,13 +2398,8 @@ const ratingsStatsPopoverInfo = async ({
 		if (draftProspect) {
 			p2.ratings = p2.ratings[0];
 		} else {
-			let peakRatings;
-			for (const row of p2.ratings) {
-				if (!peakRatings || row.ovr > peakRatings.ovr) {
-					peakRatings = row;
-				}
-			}
-			p2.ratings = peakRatings;
+			// Peak ratings
+			p.ratings = maxBy(p.ratings, "ovr");
 		}
 		p2.age = p2.ratings.season - p.born.year;
 

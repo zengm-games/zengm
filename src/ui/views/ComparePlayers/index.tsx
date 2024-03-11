@@ -3,7 +3,7 @@ import type { SortType, View } from "../../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../../components";
 import { PLAYER, RATINGS, bySport } from "../../../common";
 import { getCols, groupAwards, helpers, realtimeUpdate } from "../../util";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import getSortVal from "../../components/DataTable/getSortVal";
 import { groupByUnique } from "../../../common/utils";
 import PlayersForm from "./PlayersForm";
@@ -194,6 +194,32 @@ const makeUrl = ({
 	]);
 };
 
+// This is needed rather than CSS "position: sticky" because of the table-responsive wrapper https://stackoverflow.com/q/55483466/786644
+const useManualSticky = (element: HTMLElement | null, top: number) => {
+	useEffect(() => {
+		if (!element) {
+			return;
+		}
+
+		const parentElement = element.parentElement!;
+
+		const onScroll = () => {
+			const coordinates = parentElement.getBoundingClientRect();
+			if (coordinates.y < top) {
+				element.style.transform = `translate3d(0,${top - coordinates.y}px, 0)`;
+			} else {
+				element.style.removeProperty("transform");
+			}
+		};
+
+		window.addEventListener("scroll", onScroll);
+
+		return () => {
+			window.removeEventListener("scroll", onScroll);
+		};
+	}, [element, top]);
+};
+
 const ComparePlayers = ({
 	initialAvailablePlayers,
 	playoffs,
@@ -223,6 +249,9 @@ const ComparePlayers = ({
 	const [openRatings, setOpenRatings] = useState(true);
 	const [openStats, setOpenStats] = useState(true);
 	const [openAwards, setOpenAwards] = useState(true);
+
+	const [stickyElement, setStickyElement] = useState<HTMLElement | null>(null);
+	useManualSticky(stickyElement, -128);
 
 	const ratings = ["ovr", "pot", ...RATINGS];
 
@@ -270,7 +299,13 @@ const ComparePlayers = ({
 			/>
 			<div className="table-responsive">
 				<table className="table table-nonfluid table-sm border-top-0 text-center">
-					<thead>
+					<thead
+						ref={setStickyElement}
+						className="bg-white position-relative"
+						style={{
+							zIndex: 1020,
+						}}
+					>
 						<tr>
 							{playersAndLegend.map(({ p, season }, i) => {
 								if (p === "legend") {

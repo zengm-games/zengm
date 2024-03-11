@@ -328,6 +328,7 @@ table.table thead .sorting::after {
 
 .dark-select__control {
 	background-color: $white !important;
+	border-color: var(--bs-border-color) !important;
 }
 .dark-select__control--is-focused {
 	border-color: $primary !important;
@@ -349,6 +350,9 @@ table.table thead .sorting::after {
 	&:not(:disabled):hover {
 		color: $gray-400 !important;
 	}
+}
+.dark-select__indicator-separator {
+	background-color: $gray-300 !important;
 }
 .dark-select__option {
 	background-color: $white;

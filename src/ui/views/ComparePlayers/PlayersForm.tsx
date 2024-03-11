@@ -76,8 +76,8 @@ const PlayersForm = ({
 		>
 			{currentPlayers.map((playerInfo, i) => {
 				return (
-					<div className="d-flex mb-3" style={{ maxWidth: 500 }} key={i}>
-						<div className="me-3 flex-grow-1">
+					<div className="d-flex mb-2" style={{ maxWidth: 500 }} key={i}>
+						<div className="me-2 flex-grow-1">
 							<SelectMultiple
 								value={playerInfo.p}
 								options={availablePlayers}
@@ -118,7 +118,7 @@ const PlayersForm = ({
 								isClearable={false}
 							/>
 						</div>
-						<div className="me-3 flex-shrink-0">
+						<div className="me-2 flex-shrink-0">
 							<select
 								className="form-select"
 								onChange={event => {
@@ -172,7 +172,7 @@ const PlayersForm = ({
 				);
 			})}
 
-			<div className="d-flex align-items-center mb-3">
+			<div className="d-flex align-items-center mb-2">
 				<button
 					type="button"
 					className="btn btn-secondary"
@@ -215,7 +215,7 @@ const PlayersForm = ({
 					Add
 				</button>
 				<ActionButton
-					className="ms-3 me-2"
+					className="ms-2 me-2"
 					processing={allPlayersState === "loading"}
 					disabled={allPlayersState === "done"}
 					onClick={async () => {

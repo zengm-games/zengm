@@ -86,7 +86,7 @@ const updateComparePlayers = async (
 
 		const players = [];
 		for (const { pid, season } of playersToShow) {
-			const pRaw = await idb.getCopy.players({ pid });
+			const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
 			if (pRaw) {
 				const p = await idb.getCopy.playersPlus(pRaw, {
 					attrs: [
@@ -114,6 +114,13 @@ const updateComparePlayers = async (
 					fuzz: true,
 					mergeStats: "totOnly",
 				});
+
+				if (season !== "career") {
+					p.awards = (p.awards as any[]).filter(
+						award => award.season === season,
+					);
+				}
+
 				players.push({
 					p,
 					season,

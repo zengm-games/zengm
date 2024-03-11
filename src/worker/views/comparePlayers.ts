@@ -97,6 +97,13 @@ const updateComparePlayers = async (
 			}
 		}
 
+		const ratings = bySport({
+			baseball: [],
+			basketball: ["ovr", "pot", ...RATINGS],
+			football: [],
+			hockey: [],
+		});
+
 		const stats = bySport({
 			baseball: [],
 			basketball: [
@@ -140,7 +147,7 @@ const updateComparePlayers = async (
 						"experience",
 						"awards",
 					],
-					ratings: ["ovr", "pot", ...RATINGS, "pos"],
+					ratings: ["pos", ...ratings],
 					stats,
 					playoffs: inputs.playoffs === "playoffs",
 					regularSeason: inputs.playoffs === "regularSeason",
@@ -187,6 +194,7 @@ const updateComparePlayers = async (
 			initialAvailablePlayers,
 			playoffs: inputs.playoffs,
 			players,
+			ratings,
 			stats,
 		};
 	}

@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar";
 import type { SortType, View } from "../../../common/types";
 import { PlayerNameLabels, PlayerPicture } from "../../components";
-import { PLAYER, RATINGS, bySport } from "../../../common";
+import { PLAYER, bySport } from "../../../common";
 import { getCols, groupAwards, helpers, realtimeUpdate } from "../../util";
 import { useEffect, useState, type ReactNode } from "react";
 import getSortVal from "../../components/DataTable/getSortVal";
@@ -224,6 +224,7 @@ const ComparePlayers = ({
 	initialAvailablePlayers,
 	playoffs,
 	players,
+	ratings,
 	stats,
 }: View<"comparePlayers">) => {
 	useTitleBar({
@@ -252,8 +253,6 @@ const ComparePlayers = ({
 
 	const [stickyElement, setStickyElement] = useState<HTMLElement | null>(null);
 	useManualSticky(stickyElement, -128);
-
-	const ratings = ["ovr", "pot", ...RATINGS];
 
 	const numCols = players.length + 1;
 

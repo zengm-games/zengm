@@ -1,11 +1,8 @@
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - https://stathead.com/basketball/vs/steph-curry-vs-magic
   - top: table of key stats, highlighting who is better
-    - player picture/name like dunk/3 contest
     - another table for ratings too - use peak season in career mode if retired, or current season if not retired, similar to popover
   - bottom: all the tables from player stats, showing one row for each player
-  - form
-    - career total is all or nothing
   - make sure TOT stats display correctly
   - test in all sports
     - separate list of stats for different positions, then take the union for all current displayed positions

@@ -134,6 +134,27 @@ const PlayersForm = ({
 											season: newSeason,
 										};
 
+										// If one player is career, they all must be
+										if (newSeason === "career") {
+											for (const info of newPlayers) {
+												info.season = "career";
+											}
+										} else {
+											const newSeasonNumber = newSeason; // idk why this is needed
+											for (const info of newPlayers) {
+												if (info.season === "career") {
+													if (
+														newSeasonNumber < info.p.firstSeason ||
+														newSeasonNumber > info.p.lastSeason
+													) {
+														info.season = info.p.firstSeason;
+													} else {
+														info.season = newSeasonNumber;
+													}
+												}
+											}
+										}
+
 										return newPlayers;
 									});
 								}}

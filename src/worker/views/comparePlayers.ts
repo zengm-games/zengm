@@ -7,6 +7,7 @@ import {
 } from "./customizePlayer";
 import { choice, shuffle } from "../../common/random";
 import { dequal } from "dequal/lite";
+import { g } from "../util";
 
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
@@ -18,7 +19,14 @@ const updateComparePlayers = async (
 		inputs.playoffs !== state.playoffs ||
 		!dequal(inputs.players, state.players)
 	) {
-		const currentPlayers = await idb.cache.players.getAll();
+		const currentPlayers = (await idb.cache.players.getAll()).filter(p => {
+			// Don't include far future players
+			if (p.tid === PLAYER.UNDRAFTED && p.draft.year > g.get("season") + 2) {
+				return false;
+			}
+
+			return true;
+		});
 
 		const playersToShow = [...inputs.players];
 

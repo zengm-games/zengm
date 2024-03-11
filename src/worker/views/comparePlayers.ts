@@ -46,6 +46,79 @@ const newPlayers = (
 	return false;
 };
 
+const getRatingsByPositions = (positions: string[]) => {
+	const sportSpecific = bySport({
+		baseball: () => {
+			const ratings = ["hgt", "spd"];
+			for (const pos of positions) {
+				if (pos === "SP" || pos === "RP") {
+					ratings.push("ppw", "ctl", "mov", "endu");
+				} else {
+					ratings.push("hpw", "con", "eye", "gnd", "fly", "thr", "cat");
+				}
+			}
+			return new Set(ratings);
+		},
+		basketball: () => {
+			return new Set(RATINGS);
+		},
+		football: () => {
+			const ratings = ["hgt", "stre", "spd", "endu"];
+			for (const pos of positions) {
+				if (pos === "QB") {
+					ratings.push("thv", "thp", "tha", "bsc");
+				} else if (pos === "RB" || pos === "WR") {
+					ratings.push("bsc", "elu", "rtr", "hnd");
+				} else if (pos === "TE") {
+					ratings.push("bsc", "elu", "rtr", "hnd", "rbk", "pbk");
+				} else if (pos === "OL") {
+					ratings.push("rbk", "pbk");
+				} else if (pos === "DL") {
+					ratings.push("tck", "prs", "rns");
+				} else if (pos === "LB") {
+					ratings.push("pcv", "tck", "prs", "rns");
+				} else if (pos === "CB") {
+					ratings.push("pcv", "tck", "prs", "rns");
+				} else if (pos === "S") {
+					ratings.push("pcv", "tck", "prs", "rns");
+				} else if (pos === "K") {
+					ratings.push("kpw", "kac");
+				} else if (pos === "P") {
+					ratings.push("ppw", "pac");
+				}
+			}
+			return new Set(ratings);
+		},
+		hockey: () => {
+			const ratings = [];
+			for (const pos of positions) {
+				if (pos === "G") {
+					ratings.push("glk");
+				} else {
+					ratings.push(
+						"hgt",
+						"stre",
+						"spd",
+						"endu",
+						"pss",
+						"wst",
+						"sst",
+						"stk",
+						"oiq",
+						"chk",
+						"blk",
+						"fcf",
+						"diq",
+					);
+				}
+			}
+			return new Set(ratings);
+		},
+	})();
+
+	return ["ovr", "pot", ...RATINGS.filter(rating => sportSpecific.has(rating))];
+};
+
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
 	updateEvents: UpdateEvents,
@@ -97,13 +170,6 @@ const updateComparePlayers = async (
 			}
 		}
 
-		const ratings = bySport({
-			baseball: [],
-			basketball: ["ovr", "pot", ...RATINGS],
-			football: [],
-			hockey: [],
-		});
-
 		const stats = bySport({
 			baseball: [],
 			basketball: [
@@ -147,7 +213,7 @@ const updateComparePlayers = async (
 						"experience",
 						"awards",
 					],
-					ratings: ["pos", ...ratings],
+					ratings: ["pos", "ovr", "pot", ...RATINGS],
 					stats,
 					playoffs: inputs.playoffs === "playoffs",
 					regularSeason: inputs.playoffs === "regularSeason",
@@ -185,6 +251,9 @@ const updateComparePlayers = async (
 				});
 			}
 		}
+
+		// Only show ratings relevant to these players' positions
+		const ratings = getRatingsByPositions(players.map(p => p.p.ratings.pos));
 
 		const initialAvailablePlayers = finalizePlayersRelativesList(
 			currentPlayers.map(formatPlayerRelativesList),

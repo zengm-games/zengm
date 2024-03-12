@@ -6,8 +6,8 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page
     - top 3 free agents, from free agents page
-  - Allow setting per player playoff stats. Use for finals MVP link
-    - test hasPlayerInfoChanged
+  - PlayersForm z-index blocking dropdown
+    - only set z-index when sticky is active
   - For mip link to self compare to last season
   - If no player selected, make sure it defaults to current season
   - link from player profile

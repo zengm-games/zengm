@@ -9,11 +9,23 @@ import {
 	type PlayerInfoForName,
 } from "../CustomizePlayer/RelativesForm";
 import type { SeasonType } from "../../../worker/api/processInputs";
+import useDropdownOptions, {
+	type DropdownOption,
+} from "../../hooks/useDropdownOptions";
 
 type PlayerInfo = {
 	season: number | "career";
 	p: PlayerInfoForName;
 	playoffs: SeasonType;
+};
+
+// For responsive ones, render the first one, which should be the shortest
+const OptionDropdown = ({ value }: { value: DropdownOption }) => {
+	return (
+		<option value={value.key}>
+			{Array.isArray(value.value) ? value.value[0].text : value.value}
+		</option>
+	);
 };
 
 const PlayersForm = ({
@@ -65,6 +77,8 @@ const PlayersForm = ({
 			}),
 		);
 	}, [players]);
+
+	const playoffsOptions = useDropdownOptions("playoffsCombined");
 
 	return (
 		<form
@@ -169,6 +183,28 @@ const PlayersForm = ({
 											{season}
 										</option>
 									);
+								})}
+							</select>
+						</div>
+						<div className="me-2 flex-shrink-0">
+							<select
+								className="form-select"
+								onChange={event => {
+									const newPlayoffs = event.target.value as SeasonType;
+
+									setCurrentPlayers(players => {
+										const newPlayers = [...players];
+										newPlayers[i] = {
+											...newPlayers[i],
+											playoffs: newPlayoffs,
+										};
+										return newPlayers;
+									});
+								}}
+								value={playerInfo.playoffs}
+							>
+								{playoffsOptions.map(x => {
+									return <OptionDropdown key={x.key} value={x} />;
 								})}
 							</select>
 						</div>

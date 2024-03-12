@@ -246,6 +246,19 @@ const ComparePlayers = ({
 	// If one is career, all are career
 	const career = players[0].season === "career";
 
+	const ageRow = (
+		<InfoRow
+			col={getCols(["Age"])[0]}
+			values={playersToValues(
+				playersAndLegend,
+				p => p.ratings.season - p.born.year,
+			)}
+			sortType="number"
+			sortAsc
+		/>
+	);
+
+	console.log(playersAndLegend);
 	return (
 		<>
 			<PlayersForm
@@ -340,12 +353,7 @@ const ComparePlayers = ({
 										sortType="number"
 									/>
 								) : (
-									<InfoRow
-										col={getCols(["Age"])[0]}
-										values={playersToValues(playersAndLegend, p => p.age)}
-										sortType="number"
-										sortAsc
-									/>
+									ageRow
 								)}
 								<InfoRow
 									col={getCols(["Pos"])[0]}
@@ -372,8 +380,10 @@ const ComparePlayers = ({
 						>
 							{career ? "Peak Ratings" : "Ratings"}
 						</HeaderRow>
-						{openRatings
-							? ratings.map(rating => {
+						{openRatings ? (
+							<>
+								{career ? ageRow : null}
+								{ratings.map(rating => {
 									let key;
 									if (rating === "ovr") {
 										key = "Ovr";
@@ -394,8 +404,9 @@ const ComparePlayers = ({
 											sortType="number"
 										/>
 									);
-								})
-							: null}
+								})}
+							</>
+						) : null}
 						<HeaderRow
 							colSpan={numCols}
 							open={openStats}

@@ -3,7 +3,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
   - bottom: all the tables from player stats, showing one row for each player
     - make sticky header not go over these
   - test in all sports
-    - separate list of stats for different positions, then take the union for all current displayed positions
+    - todo: football stats
   - quick links
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page

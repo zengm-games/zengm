@@ -442,7 +442,7 @@ const ComparePlayers = ({
 												p =>
 													`${helpers.roundStat(p.stats[stat], stat)}${showPercentSign.includes(stat) ? "%" : ""}`,
 											)}
-											sortType="number"
+											sortType={col.sortType}
 										/>
 									);
 								})

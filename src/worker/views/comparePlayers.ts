@@ -8,6 +8,7 @@ import {
 import { choice, shuffle } from "../../common/random";
 import { g } from "../util";
 import { maxBy } from "../../common/utils";
+import { getPlayerProfileStats } from "./player";
 
 const newPlayers = (
 	inputPlayers: ViewInput<"comparePlayers">["players"],
@@ -119,6 +120,126 @@ const getRatingsByPositions = (positions: string[]) => {
 	return ["ovr", "pot", ...RATINGS.filter(rating => sportSpecific.has(rating))];
 };
 
+const getStatsByPositions = (positions: string[]) => {
+	const sportSpecific = bySport<() => Set<string> | string[]>({
+		baseball: () => {
+			const stats = [];
+			for (const pos of positions) {
+				if (pos === "SP" || pos === "RP") {
+					stats.push(
+						"gpPit",
+						"gsPit",
+						"ip",
+						"w",
+						"l",
+						"sv",
+						"era",
+						"soPit",
+						"bbPit",
+						"whip",
+					);
+				} else {
+					stats.push(
+						"gp",
+						"pa",
+						"h",
+						"hr",
+						"rbi",
+						"sb",
+						"ba",
+						"obp",
+						"slg",
+						"ops",
+					);
+				}
+			}
+			return new Set([...stats, "war"]);
+		},
+		basketball: () => {
+			return [
+				"gp",
+				"pts",
+				"trb",
+				"ast",
+				"stl",
+				"blk",
+				"tov",
+				"fgp",
+				"ftp",
+				"tpp",
+				"tsp",
+				"tpar",
+				"ftr",
+				"per",
+				"bpm",
+				"vorp",
+			];
+		},
+		football: () => {
+			const ratings = ["hgt", "stre", "spd", "endu"];
+			for (const pos of positions) {
+				if (pos === "QB") {
+					ratings.push("thv", "thp", "tha", "bsc");
+				} else if (pos === "RB" || pos === "WR") {
+					ratings.push("bsc", "elu", "rtr", "hnd");
+				} else if (pos === "TE") {
+					ratings.push("bsc", "elu", "rtr", "hnd", "rbk", "pbk");
+				} else if (pos === "OL") {
+					ratings.push("rbk", "pbk");
+				} else if (pos === "DL") {
+					ratings.push("tck", "prs", "rns");
+				} else if (pos === "LB") {
+					ratings.push("pcv", "tck", "prs", "rns");
+				} else if (pos === "CB") {
+					ratings.push("pcv", "tck", "prs", "rns");
+				} else if (pos === "S") {
+					ratings.push("pcv", "tck", "prs", "rns");
+				} else if (pos === "K") {
+					ratings.push("kpw", "kac");
+				} else if (pos === "P") {
+					ratings.push("ppw", "pac");
+				}
+			}
+			return new Set(ratings);
+		},
+		hockey: () => {
+			const stats = [];
+			for (const pos of positions) {
+				if (pos === "G") {
+					stats.push(
+						"gpGoalie",
+						"gRec",
+						"ga",
+						"sa",
+						"sv",
+						"svPct",
+						"gaa",
+						"so",
+					);
+				} else {
+					stats.push(
+						"gpSkater",
+						"g",
+						"a",
+						"pts",
+						"pm",
+						"pim",
+						"ppG",
+						"shG",
+						"gwG",
+						"s",
+						"ops",
+						"dps",
+					);
+				}
+			}
+			return new Set([...stats, "ps"]);
+		},
+	})();
+
+	return Array.from(sportSpecific);
+};
+
 const updateComparePlayers = async (
 	inputs: ViewInput<"comparePlayers">,
 	updateEvents: UpdateEvents,
@@ -170,29 +291,7 @@ const updateComparePlayers = async (
 			}
 		}
 
-		const stats = bySport({
-			baseball: [],
-			basketball: [
-				"gp",
-				"pts",
-				"trb",
-				"ast",
-				"stl",
-				"blk",
-				"tov",
-				"fgp",
-				"ftp",
-				"tpp",
-				"tsp",
-				"tpar",
-				"ftr",
-				"per",
-				"bpm",
-				"vorp",
-			],
-			football: [],
-			hockey: [],
-		});
+		const allStats = getPlayerProfileStats();
 
 		const players = [];
 		for (const { pid, season } of playersToShow) {
@@ -214,7 +313,7 @@ const updateComparePlayers = async (
 						"awards",
 					],
 					ratings: ["pos", "ovr", "pot", ...RATINGS],
-					stats,
+					stats: allStats,
 					playoffs: inputs.playoffs === "playoffs",
 					regularSeason: inputs.playoffs === "regularSeason",
 					combined: inputs.playoffs === "combined",
@@ -252,8 +351,10 @@ const updateComparePlayers = async (
 			}
 		}
 
-		// Only show ratings relevant to these players' positions
-		const ratings = getRatingsByPositions(players.map(p => p.p.ratings.pos));
+		// In summary table show ratings/stats relevant to these players' positions
+		const positions = players.map(p => p.p.ratings.pos);
+		const ratings = getRatingsByPositions(positions);
+		const stats = getStatsByPositions(positions);
 
 		const initialAvailablePlayers = finalizePlayersRelativesList(
 			currentPlayers.map(formatPlayerRelativesList),

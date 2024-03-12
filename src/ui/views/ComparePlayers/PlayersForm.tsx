@@ -8,18 +8,20 @@ import {
 	formatName,
 	type PlayerInfoForName,
 } from "../CustomizePlayer/RelativesForm";
+import type { SeasonType } from "../../../worker/api/processInputs";
+
+type PlayerInfo = {
+	season: number | "career";
+	p: PlayerInfoForName;
+	playoffs: SeasonType;
+};
 
 const PlayersForm = ({
 	initialAvailablePlayers,
 	players,
 	onSubmit,
 }: Pick<View<"comparePlayers">, "initialAvailablePlayers" | "players"> & {
-	onSubmit: (
-		playerInfos: {
-			season: number | "career";
-			p: PlayerInfoForName;
-		}[],
-	) => void;
+	onSubmit: (playerInfos: PlayerInfo[]) => void;
 }) => {
 	const [allPlayersState, setAllPlayersState] = useState<
 		"init" | "loading" | "done"
@@ -29,12 +31,7 @@ const PlayersForm = ({
 	>();
 	const availablePlayers = allPlayers ?? initialAvailablePlayers;
 
-	const [currentPlayers, setCurrentPlayers] = useState<
-		{
-			season: number | "career";
-			p: PlayerInfoForName;
-		}[]
-	>(
+	const [currentPlayers, setCurrentPlayers] = useState<PlayerInfo[]>(
 		players.map(info => {
 			return {
 				season: info.season,
@@ -45,6 +42,7 @@ const PlayersForm = ({
 					firstSeason: info.firstSeason,
 					lastSeason: info.lastSeason,
 				},
+				playoffs: info.playoffs,
 			};
 		}),
 	);
@@ -62,6 +60,7 @@ const PlayersForm = ({
 						firstSeason: info.firstSeason,
 						lastSeason: info.lastSeason,
 					},
+					playoffs: info.playoffs,
 				};
 			}),
 		);
@@ -228,6 +227,7 @@ const PlayersForm = ({
 									p: {
 										...p,
 									},
+									playoffs: players.at(-1)?.playoffs ?? "regularSeason",
 								},
 							];
 						});

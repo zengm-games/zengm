@@ -5,12 +5,13 @@ import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
 } from "./customizePlayer";
-import { choice, shuffle } from "../../common/random";
+import { shuffle } from "../../common/random";
 import { g } from "../util";
 import { maxBy } from "../../common/utils";
 import { getPlayerProfileStats } from "./player";
+import type { SeasonType } from "../api/processInputs";
 
-const newPlayers = (
+const hasPlayerInfoChanged = (
 	inputPlayers: ViewInput<"comparePlayers">["players"],
 	statePlayers:
 		| {
@@ -18,6 +19,7 @@ const newPlayers = (
 				p: {
 					pid: number;
 				};
+				playoffs: SeasonType;
 		  }[]
 		| undefined,
 ) => {
@@ -39,7 +41,11 @@ const newPlayers = (
 		const inputP = inputPlayers[i];
 		const stateP = statePlayers[i];
 
-		if (inputP.pid !== stateP.p.pid || inputP.season !== stateP.season) {
+		if (
+			inputP.pid !== stateP.p.pid ||
+			inputP.season !== stateP.season ||
+			inputP.playoffs !== stateP.playoffs
+		) {
 			return true;
 		}
 	}
@@ -292,8 +298,7 @@ const updateComparePlayers = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		inputs.playoffs !== state.playoffs ||
-		newPlayers(inputs.players, state.players)
+		hasPlayerInfoChanged(inputs.players, state.players)
 	) {
 		const currentPlayers = (await idb.cache.players.getAll()).filter(p => {
 			// Don't include far future players
@@ -321,11 +326,15 @@ const updateComparePlayers = async (
 					continue;
 				}
 
-				const season = choice(p.ratings).season;
+				// Current season, if possible
+				const season =
+					p.ratings.findLast(row => row.season === g.get("season"))?.season ??
+					p.ratings.at(-1)!.season;
 
 				playersToShow.push({
 					pid: p.pid,
 					season,
+					playoffs: "regularSeason",
 				});
 				found = true;
 				break;
@@ -339,7 +348,7 @@ const updateComparePlayers = async (
 		const allStats = getPlayerProfileStats();
 
 		const players = [];
-		for (const { pid, season } of playersToShow) {
+		for (const { pid, season, playoffs } of playersToShow) {
 			const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
 			if (pRaw) {
 				const p = await idb.getCopy.playersPlus(pRaw, {
@@ -359,9 +368,9 @@ const updateComparePlayers = async (
 					],
 					ratings: ["pos", "ovr", "pot", ...RATINGS],
 					stats: allStats,
-					playoffs: inputs.playoffs === "playoffs",
-					regularSeason: inputs.playoffs === "regularSeason",
-					combined: inputs.playoffs === "combined",
+					playoffs: playoffs === "playoffs",
+					regularSeason: playoffs === "regularSeason",
+					combined: playoffs === "combined",
 					season: season === "career" ? undefined : season,
 					showNoStats: true,
 					showRookies: true,
@@ -371,9 +380,9 @@ const updateComparePlayers = async (
 
 				if (season === "career") {
 					const statsKey =
-						inputs.playoffs === "playoffs"
+						playoffs === "playoffs"
 							? "careerStatsPlayoffs"
-							: inputs.playoffs === "combined"
+							: playoffs === "combined"
 								? "careerStatsCombined"
 								: "careerStats";
 					p.stats = p[statsKey];
@@ -392,6 +401,7 @@ const updateComparePlayers = async (
 					season,
 					firstSeason: pRaw.ratings[0].season as number,
 					lastSeason: pRaw.ratings.at(-1)!.season as number,
+					playoffs,
 				});
 			}
 		}
@@ -407,7 +417,6 @@ const updateComparePlayers = async (
 
 		return {
 			initialAvailablePlayers,
-			playoffs: inputs.playoffs,
 			players,
 			ratings,
 			stats,

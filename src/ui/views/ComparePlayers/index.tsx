@@ -178,22 +178,6 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 	);
 };
 
-const makeUrl = ({
-	playoffs,
-	players,
-}: Pick<View<"comparePlayers">, "playoffs"> & {
-	players: {
-		pid: number;
-		season: number | "career";
-	}[];
-}) => {
-	return helpers.leagueUrl([
-		"compare_players",
-		playoffs,
-		players.map(({ pid, season }) => `${pid}-${season}`).join(","),
-	]);
-};
-
 // This is needed rather than CSS "position: sticky" because of the table-responsive wrapper https://stackoverflow.com/q/55483466/786644
 const useManualSticky = (element: HTMLElement | null, top: number) => {
 	useEffect(() => {
@@ -222,28 +206,12 @@ const useManualSticky = (element: HTMLElement | null, top: number) => {
 
 const ComparePlayers = ({
 	initialAvailablePlayers,
-	playoffs,
 	players,
 	ratings,
 	stats,
 }: View<"comparePlayers">) => {
 	useTitleBar({
 		title: "Compare Players",
-		dropdownView: "compare_players",
-		dropdownFields: {
-			playoffsCombined: playoffs,
-		},
-		dropdownCustomURL: fields => {
-			return makeUrl({
-				playoffs: fields.playoffsCombined,
-				players: players.map(({ p, season }) => {
-					return {
-						pid: p.pid,
-						season,
-					};
-				}),
-			});
-		},
 	});
 
 	const [openBio, setOpenBio] = useState(true);
@@ -284,15 +252,20 @@ const ComparePlayers = ({
 				initialAvailablePlayers={initialAvailablePlayers}
 				players={players}
 				onSubmit={playerInfos => {
-					const url = makeUrl({
-						playoffs,
-						players: playerInfos.map(info => {
-							return {
-								season: info.season,
-								pid: info.p.pid,
-							};
-						}),
-					});
+					const url = helpers.leagueUrl([
+						"compare_players",
+						playerInfos
+							.map(info => {
+								const shortPlayoffs =
+									info.playoffs === "combined"
+										? "c"
+										: info.playoffs === "playoffs"
+											? "p"
+											: "r";
+								return `${info.p.pid}-${info.season}-${shortPlayoffs}`;
+							})
+							.join(","),
+					]);
 					realtimeUpdate([], url);
 				}}
 			/>

@@ -79,7 +79,7 @@ export const validateSeason = (season?: number | string): number => {
 	return season;
 };
 
-type SeasonType = "playoffs" | "regularSeason" | "combined";
+export type SeasonType = "playoffs" | "regularSeason" | "combined";
 const validateSeasonType = (
 	seasonType: string | undefined,
 	defaultType: SeasonType = "regularSeason",
@@ -940,16 +940,23 @@ const comparePlayers = (params: Params) => {
 	const players: {
 		pid: number;
 		season: number | "career";
+		playoffs: SeasonType;
 	}[] = [];
 
 	const info = params.info;
 	if (info !== undefined) {
 		players.push(
-			...info.split(",").map(pidSeason => {
-				const parts = pidSeason.split("-");
+			...info.split(",").map(pidSeasonPlayoffs => {
+				const parts = pidSeasonPlayoffs.split("-");
 				return {
 					pid: parseInt(parts[0]),
 					season: parts[1] === "career" ? "career" : parseInt(parts[1]),
+					playoffs:
+						parts[2] === "c"
+							? "combined"
+							: parts[2] === "p"
+								? "playoffs"
+								: "regularSeason",
 				} as const;
 			}),
 		);
@@ -957,7 +964,6 @@ const comparePlayers = (params: Params) => {
 
 	return {
 		players,
-		playoffs: validateSeasonType(params.playoffs),
 	};
 };
 

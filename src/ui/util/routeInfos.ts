@@ -204,7 +204,7 @@ const routeInfos = {
 	"/l/:lid/auto_expand": "autoExpand",
 	"/l/:lid/auto_relocate": "autoRelocate",
 	"/l/:lid/compare_players": "comparePlayers",
-	"/l/:lid/compare_players/:playoffs/:info": "comparePlayers",
+	"/l/:lid/compare_players/:info": "comparePlayers",
 };
 
 export default routeInfos;

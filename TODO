@@ -6,9 +6,11 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page
     - top 3 free agents, from free agents page
-- link from
-  - player profile
-  - player popover?
+  - Allow setting per player playoff stats. Use for finals MVP link
+    - test hasPlayerInfoChanged
+  - For mip link to self compare to last season
+  - If no player selected, make sure it defaults to current season
+  - link from player profile
 
 jersey numbers by position and frequency
 - football - classic numbers more popular

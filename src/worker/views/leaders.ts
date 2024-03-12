@@ -263,7 +263,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				stat: "recYds",
 			},
 			{
-				stat: "recYdsPerAtt",
+				stat: "recYdsPerRec",
 			},
 			{
 				stat: "recTD",

@@ -157,7 +157,7 @@ const PLAYER_GAME_STATS = {
 	},
 	receiving: {
 		name: "Receiving",
-		stats: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD", "fp"],
+		stats: ["tgt", "rec", "recYds", "recYdsPerRec", "recLng", "recTD", "fp"],
 		sortBy: ["recYds"],
 	},
 	kicking: {

@@ -350,7 +350,6 @@ const getLeaderRequirements = () => {
 			cmpPct: footballPssStats,
 			qbRat: footballPssStats,
 			rusYdsPerAtt: footballRusStats,
-			recYdsPerAtt: footballRecStats,
 			pssTDPct: footballPssStats,
 			pssIntPct: {
 				...footballPssStats,

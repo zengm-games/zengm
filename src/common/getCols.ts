@@ -1981,12 +1981,6 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Y/A",
 		},
-		"stat:recYdsPerAtt": {
-			desc: "Yards Per Catch",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-			title: "Y/A",
-		},
 		"stat:fg": {
 			desc: "Field Goals Made",
 			sortSequence: ["desc", "asc"],

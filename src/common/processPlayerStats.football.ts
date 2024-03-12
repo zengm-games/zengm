@@ -24,8 +24,6 @@ const processStats = (
 			row[stat] = qbRat(ps);
 		} else if (stat === "rusYdsPerAtt") {
 			row[stat] = ps.rusYds / ps.rus;
-		} else if (stat === "recYdsPerAtt") {
-			row[stat] = ps.recYds / ps.rec;
 		} else if (stat === "fg") {
 			row[stat] = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
 		} else if (stat === "fga") {

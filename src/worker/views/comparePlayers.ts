@@ -76,11 +76,7 @@ const getRatingsByPositions = (positions: string[]) => {
 					ratings.push("rbk", "pbk");
 				} else if (pos === "DL") {
 					ratings.push("tck", "prs", "rns");
-				} else if (pos === "LB") {
-					ratings.push("pcv", "tck", "prs", "rns");
-				} else if (pos === "CB") {
-					ratings.push("pcv", "tck", "prs", "rns");
-				} else if (pos === "S") {
+				} else if (pos === "LB" || pos === "CB" || pos === "S") {
 					ratings.push("pcv", "tck", "prs", "rns");
 				} else if (pos === "K") {
 					ratings.push("kpw", "kac");
@@ -176,31 +172,80 @@ const getStatsByPositions = (positions: string[]) => {
 			];
 		},
 		football: () => {
-			const ratings = ["hgt", "stre", "spd", "endu"];
+			const stats = ["gp"];
 			for (const pos of positions) {
 				if (pos === "QB") {
-					ratings.push("thv", "thp", "tha", "bsc");
-				} else if (pos === "RB" || pos === "WR") {
-					ratings.push("bsc", "elu", "rtr", "hnd");
-				} else if (pos === "TE") {
-					ratings.push("bsc", "elu", "rtr", "hnd", "rbk", "pbk");
+					stats.push(
+						"qbRec",
+						"pssCmp",
+						"pss",
+						"cmpPct",
+						"pssYds",
+						"pssTD",
+						"pssInt",
+						"qbRat",
+						"rus",
+						"rusYds",
+						"rusYdsPerAtt",
+						"rusTD",
+						"fmbLost",
+					);
+				} else if (pos === "RB" || pos === "WR" || pos === "TE") {
+					stats.push(
+						"rus",
+						"rusYds",
+						"rusYdsPerAtt",
+						"rusTD",
+						"fmbLost",
+						"tgt",
+						"rec",
+						"recYds",
+						"recYdsPerRec",
+						"recTD",
+					);
 				} else if (pos === "OL") {
-					ratings.push("rbk", "pbk");
-				} else if (pos === "DL") {
-					ratings.push("tck", "prs", "rns");
-				} else if (pos === "LB") {
-					ratings.push("pcv", "tck", "prs", "rns");
-				} else if (pos === "CB") {
-					ratings.push("pcv", "tck", "prs", "rns");
-				} else if (pos === "S") {
-					ratings.push("pcv", "tck", "prs", "rns");
+					continue;
+				} else if (
+					pos === "DL" ||
+					pos === "LB" ||
+					pos === "CB" ||
+					pos === "S"
+				) {
+					stats.push(
+						"defTck",
+						"defTckLoss",
+						"defSk",
+						"defSft",
+						"defPssDef",
+						"defInt",
+						"defIntTD",
+						"defFmbFrc",
+						"defFmbRec",
+						"defFmbTD",
+					);
 				} else if (pos === "K") {
-					ratings.push("kpw", "kac");
+					stats.push(
+						"fg",
+						"fga",
+						"fgPct",
+						"fgLng",
+						"xp",
+						"xpa",
+						"xpPct",
+						"kickingPts",
+					);
 				} else if (pos === "P") {
-					ratings.push("ppw", "pac");
+					stats.push(
+						"pnt",
+						"pntYdsPerAtt",
+						"pntIn20",
+						"pntTB",
+						"pntLng",
+						"pntBlk",
+					);
 				}
 			}
-			return new Set(ratings);
+			return new Set([...stats, "fp", "av"]);
 		},
 		hockey: () => {
 			const stats = [];

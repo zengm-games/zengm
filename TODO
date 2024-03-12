@@ -6,10 +6,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - top 3 award candidates, from award races page
     - top 3 draft prospects, from draft scouting page and draft page
     - top 3 free agents, from free agents page
-  - PlayersForm z-index blocking dropdown
-    - only set z-index when sticky is active
   - For mip link to self compare to last season
-  - If no player selected, make sure it defaults to current season
   - link from player profile
 
 jersey numbers by position and frequency
@@ -26,6 +23,8 @@ PWA install prompt
   - beforeinstallprompt
 - ios https://medium.com/ngconf/installing-your-pwa-on-ios-d1c497968e62
   - data loss when switching from browser to PWA?
+
+offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
 
 data URI for image files?
 
@@ -823,7 +822,6 @@ getCopy/getCopies dry
 
 fbgm edge cases
 - half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
-- defensive penalty on last possession of half/OT - should have one untimed down https://mail.google.com/mail/u/0/#inbox/FMfcgzGllVnWKrWXjxwNNXWTqsncqjNq
 
 sack rate? https://discord.com/channels/@me/915839517829767218/915840315859034122
 

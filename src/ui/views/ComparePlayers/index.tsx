@@ -191,8 +191,12 @@ const useManualSticky = (element: HTMLElement | null, top: number) => {
 			const coordinates = parentElement.getBoundingClientRect();
 			if (coordinates.y < top) {
 				element.style.transform = `translate3d(0,${top - coordinates.y}px, 0)`;
+
+				// Set z-index so this floats over everything, but only when sticky otherwise it blocks the dropdown forms from above
+				element.style.zIndex = "1020";
 			} else {
 				element.style.removeProperty("transform");
+				element.style.removeProperty("z-index");
 			}
 		};
 
@@ -258,7 +262,6 @@ const ComparePlayers = ({
 		/>
 	);
 
-	console.log(playersAndLegend);
 	return (
 		<>
 			<PlayersForm
@@ -284,13 +287,7 @@ const ComparePlayers = ({
 			/>
 			<div className="table-responsive">
 				<table className="table table-nonfluid table-sm border-top-0 text-center">
-					<thead
-						ref={setStickyElement}
-						className="bg-white position-relative"
-						style={{
-							zIndex: 1020,
-						}}
-					>
+					<thead ref={setStickyElement} className="bg-white position-relative">
 						<tr>
 							{playersAndLegend.map(({ p, season }, i) => {
 								if (p === "legend") {

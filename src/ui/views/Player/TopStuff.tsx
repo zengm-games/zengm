@@ -408,7 +408,7 @@ const TopStuff = ({
 					}}
 					title={player.untradableMsg}
 				>
-					{showTradeFor ? "Trade For" : <>Add To Trading Block</>}
+					{showTradeFor ? "Trade for" : "Add to trading block"}
 				</button>
 			) : null}
 			{!spectator && freeAgent ? (
@@ -422,9 +422,18 @@ const TopStuff = ({
 							: `${player.name} refuses to negotiate with you`
 					}
 				>
-					Negotiate Contract
+					Negotiate contract
 				</button>
 			) : null}
+			<a
+				className="btn btn-light-bordered"
+				href={helpers.leagueUrl([
+					"compare_players",
+					`${player.pid}-${retired ? "career" : player.ratings.at(-1)!.season}-r`,
+				])}
+			>
+				Compare player
+			</a>
 		</>
 	);
 
@@ -535,7 +544,7 @@ const TopStuff = ({
 								? "none"
 								: `${player.experience} year${
 										player.experience > 1 ? "s" : ""
-								  }`}
+									}`}
 							<br />
 							{contractInfo}
 							{statusInfo}
@@ -597,7 +606,9 @@ const TopStuff = ({
 						{!godMode ? buttonsAvailableOutsideGodMode : null}
 					</div>
 					{godMode ? (
-						<div className="mt-2">{buttonsAvailableOutsideGodMode}</div>
+						<div className="mt-2">
+							<div className="btn-group">{buttonsAvailableOutsideGodMode}</div>
+						</div>
 					) : null}
 					{player.careerStats.gp > 0 ? (
 						<>

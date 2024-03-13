@@ -8,6 +8,7 @@ import getSortVal from "../../components/DataTable/getSortVal";
 import { groupByUnique } from "../../../common/utils";
 import PlayersForm from "./PlayersForm";
 import CollapseArrow from "../../components/CollapseArrow";
+import { lowerIsBetter } from "../../../worker/views/teamStats";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =
@@ -430,6 +431,7 @@ const ComparePlayers = ({
 													`${helpers.roundStat(p.stats[stat], stat)}${showPercentSign.includes(stat) ? "%" : ""}`,
 											)}
 											sortType={col.sortType}
+											sortAsc={lowerIsBetter.has(stat)}
 										/>
 									);
 								})

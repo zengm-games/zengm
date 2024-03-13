@@ -4,6 +4,7 @@ import { defaultGameAttributes, g, helpers } from "../../util";
 
 // This is for league leaders pages and player profile page stat tables
 // https://www.basketball-reference.com/about/rate_stat_req.html has some info for basketball, can use as rough guide
+// sortAscending can't use lowerIsBetter because some of these (like "tov") are considered "bad" if you lead it
 const getLeaderRequirements = () => {
 	const numGames = defaultGameAttributes.numGames[0].value;
 

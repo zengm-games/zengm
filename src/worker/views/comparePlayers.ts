@@ -379,31 +379,33 @@ const updateComparePlayers = async (
 					mergeStats: "totOnly",
 				});
 
-				if (season === "career") {
-					const statsKey =
-						playoffs === "playoffs"
-							? "careerStatsPlayoffs"
-							: playoffs === "combined"
-								? "careerStatsCombined"
-								: "careerStats";
-					p.stats = p[statsKey];
-					delete p[statsKey];
+				if (p) {
+					if (season === "career") {
+						const statsKey =
+							playoffs === "playoffs"
+								? "careerStatsPlayoffs"
+								: playoffs === "combined"
+									? "careerStatsCombined"
+									: "careerStats";
+						p.stats = p[statsKey];
+						delete p[statsKey];
 
-					// Peak ratings
-					p.ratings = maxBy(p.ratings, "ovr");
-				} else {
-					p.awards = (p.awards as any[]).filter(
-						award => award.season === season,
-					);
+						// Peak ratings
+						p.ratings = maxBy(p.ratings, "ovr");
+					} else {
+						p.awards = (p.awards as any[]).filter(
+							award => award.season === season,
+						);
+					}
+
+					players.push({
+						p,
+						season,
+						firstSeason: pRaw.ratings[0].season as number,
+						lastSeason: pRaw.ratings.at(-1)!.season as number,
+						playoffs,
+					});
 				}
-
-				players.push({
-					p,
-					season,
-					firstSeason: pRaw.ratings[0].season as number,
-					lastSeason: pRaw.ratings.at(-1)!.season as number,
-					playoffs,
-				});
 			}
 		}
 

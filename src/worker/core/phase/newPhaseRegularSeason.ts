@@ -1,6 +1,7 @@
 import { season } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, toUI } from "../../util";
+import { getDivisionRanks } from "../../util/orderTeams";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 import {
 	EMAIL_ADDRESS,
@@ -23,8 +24,89 @@ const newPhaseRegularSeason = async (
 		},
 		"noCopyCache",
 	);
-
-	await season.setSchedule(season.newSchedule(teams));
+	//As I understand it, this is the relevant area to generate a regular season schedule
+	if (isSport("football") && teams.length === 32) {
+		// This needs to be more strict, should verify league is in default configuration
+		const year = g.get("season");
+		const startingYear = g.get("startingSeason");
+		const rawTeams =
+			//Borrowed some of this logic from the standing view, which may not be the optimum way to get ranked teams.
+			await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid"],
+					seasonAttrs: [
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"winp",
+						"pts",
+						"ptsPct",
+						"wonHome",
+						"lostHome",
+						"tiedHome",
+						"otlHome",
+						"wonAway",
+						"lostAway",
+						"tiedAway",
+						"otlAway",
+						"wonDiv",
+						"lostDiv",
+						"tiedDiv",
+						"otlDiv",
+						"wonConf",
+						"lostConf",
+						"tiedConf",
+						"otlConf",
+						"cid",
+						"did",
+						"abbrev",
+						"region",
+						"name",
+						"clinchedPlayoffs",
+					],
+					stats: ["pts", "oppPts", "gp"],
+					season: year > startingYear ? year - 1 : year, //TODO: We want the previous year's schedule, otherwise just place in TID order
+					showNoStats: true,
+				},
+				"noCopyCache",
+			);
+		const rankedTeams: number[] = Array(rawTeams.length);
+		//If it's not the first season, base order on previous season's ranking, otherwise, just do order received
+		if (year > startingYear) {
+			// rankings will give the row
+			// TODO: THIS DOES NOT WORK RIGHT
+			const rankings = await getDivisionRanks(rawTeams, rawTeams, {
+				skipDivisionLeaders: false,
+				skipTiebreakers: false,
+				season: g.get("season"),
+			});
+			// division ID and conference ID thankfully maps to our general concept.  So we create an array, and then assign all teams to their
+			//expected location
+			rawTeams.forEach(team => {
+				const row = rankings.get(team.tid);
+				const col = team.seasonAttrs.did;
+				//Assign teams based on rank
+				rankedTeams[row! * 8 + col] = team.tid;
+			});
+		} else {
+			//this does work right
+			rawTeams.forEach(team => {
+				const col = team.seasonAttrs.did;
+				//Assign teams based on order received.
+				for (let i = 0; i < 4; i++) {
+					if (rankedTeams[i * 8 + col] === undefined) {
+						rankedTeams[i * 8 + col] = team.tid;
+						break;
+					}
+				}
+			});
+		}
+		const matches = await season.generateMatches(rankedTeams, g.get("season"));
+		season.setSchedule([], season.scheduleSort(matches));
+	} else {
+		await season.setSchedule(season.newSchedule(teams));
+	}
 
 	if (g.get("autoDeleteOldBoxScores")) {
 		const tx = idb.league.transaction("games", "readwrite");

@@ -16,10 +16,15 @@ const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
  * Save the schedule to the database, overwriting what's currently there.
  *
  * @param {Array} tids A list of lists, each containing the team IDs of the home and
-        away teams, respectively, for every game in the season, respectively.
+		away teams, respectively, for every game in the season, respectively.
+ * @param {ScheduleGameWithoutKey[]} schedule A list of games, containing the home and away team IDs, presorted into
+		days/weeks (skips addDaysToSchedule function)
  * @return {Promise}
  */
-const setSchedule = async (tids: [number, number][]) => {
+const setSchedule = async (
+	tids: [number, number][],
+	schedule?: ScheduleGameWithoutKey[],
+) => {
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	const oldPlayoffGames: Record<string, ScheduleGame> = {};
@@ -34,15 +39,16 @@ const setSchedule = async (tids: [number, number][]) => {
 	}
 
 	await idb.cache.schedule.clear();
-
-	const schedule = addDaysToSchedule(
-		tids.map(([homeTid, awayTid]) => ({
-			homeTid,
-			awayTid,
-		})),
-		await idb.cache.games.getAll(),
-	);
-	for (const game of schedule) {
+	if (schedule === undefined && tids !== []) {
+		schedule = addDaysToSchedule(
+			tids.map(([homeTid, awayTid]) => ({
+				homeTid,
+				awayTid,
+			})),
+		);
+	}
+	await idb.cache.games.getAll();
+	for (const game of schedule!) {
 		if (playoffs) {
 			const key = makePlayoffsKey(game);
 			if (oldPlayoffGames[key]) {

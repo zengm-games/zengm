@@ -160,6 +160,7 @@ const getStatsByPositions = (positions: string[]) => {
 		basketball: () => {
 			return [
 				"gp",
+				"min",
 				"pts",
 				"trb",
 				"ast",

@@ -8,7 +8,7 @@ import getSortVal from "../../components/DataTable/getSortVal";
 import { groupByUnique } from "../../../common/utils";
 import PlayersForm from "./PlayersForm";
 import CollapseArrow from "../../components/CollapseArrow";
-import { lowerIsBetter } from "../../../worker/views/teamStats";
+import { lowerIsBetter } from "../../../common/lowerIsBetter";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =

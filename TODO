@@ -1,17 +1,16 @@
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
-- https://stathead.com/basketball/vs/steph-curry-vs-magic
-  - bottom: all the tables from player stats, showing one row for each player
-    - make sticky header not go over these
-  - quick links
-    - top 3 draft prospects,  and draft page
-    - top 3 free agents, from free agents page
-    - link from player profile
-  - blog
-    - for non-basketball sports, ratings/stats depend on position
-    - links from  
-      - top 5 award candidates
-      - MIP compare with self last year
-      - top 5 draft prospects from draft scouting page
+- bottom: all the tables from player stats, showing one row for each player
+  - make sticky header not go over these
+- quick links
+  - top 3 free agents, from free agents page
+  - link from player profile
+- blog
+  - for non-basketball sports, ratings/stats depend on position
+  - links from  
+    - top 5 award candidates
+    - MIP compare with self last year
+    - top 5 draft prospects from draft scouting page
+    - top 5 draft prospects from draft page
 
 jersey numbers by position and frequency
 - football - classic numbers more popular

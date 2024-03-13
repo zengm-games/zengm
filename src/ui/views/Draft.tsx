@@ -79,6 +79,7 @@ const Draft = ({
 	expansionDraft,
 	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
+	season,
 	spectator,
 	stats,
 	undrafted,
@@ -102,8 +103,8 @@ const Draft = ({
 		title: fantasyDraft
 			? "Fantasy Draft"
 			: expansionDraft
-			  ? "Expansion Draft"
-			  : "Draft",
+				? "Expansion Draft"
+				: "Draft",
 	});
 	const remainingPicks = drafted.filter(p => p.pid < 0);
 	const nextPick = remainingPicks[0];
@@ -220,9 +221,9 @@ const Draft = ({
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
 			{
-				searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${teamInfoCache[
-					p.draft.originalTid
-				]?.abbrev}`,
+				searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
+					teamInfoCache[p.draft.originalTid]?.abbrev
+				}`,
 				sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
 				value: (
 					<DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />
@@ -429,6 +430,22 @@ const Draft = ({
 
 				<RosterComposition className="mb-3 ms-sm-3" players={userPlayers} />
 			</div>
+
+			{undrafted.length > 1 ? (
+				<div className="mb-3">
+					<a
+						href={helpers.leagueUrl([
+							"compare_players",
+							undrafted
+								.slice(0, 5)
+								.map(p => `${p.pid}-${season}-r`)
+								.join(","),
+						])}
+					>
+						Compare top {Math.min(5, undrafted.length)} remaining prospects
+					</a>
+				</div>
+			) : null}
 
 			<div className={wrapperClasses}>
 				<div className={undraftedColClasses}>

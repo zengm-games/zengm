@@ -209,6 +209,7 @@ const useManualSticky = (element: HTMLElement | null, top: number) => {
 };
 
 const ComparePlayers = ({
+	challengeNoRatings,
 	initialAvailablePlayers,
 	players,
 	ratings,
@@ -370,40 +371,45 @@ const ComparePlayers = ({
 								/>
 							</>
 						) : null}
-						<HeaderRow
-							colSpan={numCols}
-							open={openRatings}
-							setOpen={setOpenRatings}
-						>
-							{career ? "Peak Ratings" : "Ratings"}
-						</HeaderRow>
-						{openRatings ? (
+						{challengeNoRatings &&
+						!players.every(p => p.p.tid === PLAYER.RETIRED) ? null : (
 							<>
-								{career ? ageRow : null}
-								{ratings.map(rating => {
-									let key;
-									if (rating === "ovr") {
-										key = "Ovr";
-									} else if (rating === "pot") {
-										key = "Pot";
-									} else {
-										key = `rating:${rating}`;
-									}
-									const col = getCols([key])[0];
-									return (
-										<InfoRow
-											key={rating}
-											col={col}
-											values={playersToValues(
-												playersAndLegend,
-												p => p.ratings[rating],
-											)}
-											sortType="number"
-										/>
-									);
-								})}
+								<HeaderRow
+									colSpan={numCols}
+									open={openRatings}
+									setOpen={setOpenRatings}
+								>
+									{career ? "Peak Ratings" : "Ratings"}
+								</HeaderRow>
+								{openRatings ? (
+									<>
+										{career ? ageRow : null}
+										{ratings.map(rating => {
+											let key;
+											if (rating === "ovr") {
+												key = "Ovr";
+											} else if (rating === "pot") {
+												key = "Pot";
+											} else {
+												key = `rating:${rating}`;
+											}
+											const col = getCols([key])[0];
+											return (
+												<InfoRow
+													key={rating}
+													col={col}
+													values={playersToValues(
+														playersAndLegend,
+														p => p.ratings[rating],
+													)}
+													sortType="number"
+												/>
+											);
+										})}
+									</>
+								) : null}
 							</>
-						) : null}
+						)}
 						<HeaderRow
 							colSpan={numCols}
 							open={openStats}

@@ -44,6 +44,10 @@ const AwardRaces = ({
 						...getCols(stats.map(stat => `stat:${stat}`)),
 					];
 
+					if (mip) {
+						cols.push(...getCols(["Compare"]));
+					}
+
 					const rows = players.map((p, j) => {
 						let ps: any;
 						for (let i = p.stats.length - 1; i >= 0; i--) {
@@ -139,6 +143,16 @@ const AwardRaces = ({
 									);
 								}),
 							);
+							data.push(
+								<a
+									href={helpers.leagueUrl([
+										"compare_players",
+										`${p.pid}-${season - 1}-r,${p.pid}-${season}-r`,
+									])}
+								>
+									Compare
+								</a>,
+							);
 						} else {
 							data.push(pr && showRatings ? pr.ovr : undefined);
 							const statsRow = stats.map(stat =>
@@ -165,14 +179,30 @@ const AwardRaces = ({
 						>
 							<h2>{name}</h2>
 							{rows.length > 0 ? (
-								<DataTable
-									cols={cols}
-									defaultSort={[0, "asc"]}
-									defaultStickyCols={window.mobile ? 0 : 2}
-									hideAllControls
-									name={`AwardRaces${name}`}
-									rows={rows}
-								/>
+								<>
+									<DataTable
+										classNameWrapper="mb-1"
+										cols={cols}
+										defaultSort={[0, "asc"]}
+										defaultStickyCols={window.mobile ? 0 : 2}
+										hideAllControls
+										name={`AwardRaces${name}`}
+										rows={rows}
+									/>
+									<div className="mb-3">
+										<a
+											href={helpers.leagueUrl([
+												"compare_players",
+												players
+													.slice(0, 5)
+													.map(p => `${p.pid}-${season}-r`)
+													.join(","),
+											])}
+										>
+											Compare top 5 players
+										</a>
+									</div>
+								</>
 							) : (
 								<p>No candidates yet...</p>
 							)}

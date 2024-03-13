@@ -32,6 +32,7 @@ const FreeAgents = ({
 	phase,
 	players,
 	salaryCapType,
+	season,
 	stats,
 	userPlayers,
 }: View<"freeAgents">) => {
@@ -190,6 +191,22 @@ const FreeAgents = ({
 							</button>
 						) : null}
 					</div>
+				</div>
+			) : null}
+
+			{players.length > 1 ? (
+				<div className="mb-3">
+					<a
+						href={helpers.leagueUrl([
+							"compare_players",
+							players
+								.slice(0, 5)
+								.map(p => `${p.pid}-${season}-r`)
+								.join(","),
+						])}
+					>
+						Compare top {Math.min(5, players.length)} free agents
+					</a>
 				</div>
 			) : null}
 

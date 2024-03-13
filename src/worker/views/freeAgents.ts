@@ -1,5 +1,6 @@
 import { bySport, PLAYER } from "../../common";
 import type { Player } from "../../common/types";
+import { orderBy } from "../../common/utils";
 import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -36,7 +37,7 @@ const updateFreeAgents = async () => {
 	);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
-	const players = addFirstNameShort(
+	let players = addFirstNameShort(
 		await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
@@ -59,6 +60,9 @@ const updateFreeAgents = async () => {
 			oldStats: true,
 		}),
 	);
+
+	// Default sort, used for the compare players link
+	players = orderBy(players, p => p.mood.user.contractAmount, "desc");
 
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],
@@ -83,6 +87,7 @@ const updateFreeAgents = async () => {
 		payroll: payroll / 1000,
 		phase: g.get("phase"),
 		players,
+		season: g.get("season"),
 		stats: freeAgentStats,
 		userPlayers,
 	};

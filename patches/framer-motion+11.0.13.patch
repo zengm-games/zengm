@@ -1,8 +1,8 @@
 diff --git a/node_modules/framer-motion/dist/index.d.ts b/node_modules/framer-motion/dist/index.d.ts
-index 5e3c0fd..78af237 100644
+index 759246d..66106bc 100644
 --- a/node_modules/framer-motion/dist/index.d.ts
 +++ b/node_modules/framer-motion/dist/index.d.ts
-@@ -1209,6 +1209,7 @@ interface AnimationPlaybackControls {
+@@ -1898,6 +1898,7 @@ interface AnimationPlaybackControls {
      attachTimeline?: (timeline: ProgressTimeline) => VoidFunction;
  }
  declare type DynamicOption<T> = (i: number, total: number) => T;

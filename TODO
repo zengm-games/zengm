@@ -1,11 +1,17 @@
 fantasy draft weirdness in one league https://discord.com/channels/290013534023057409/290015591216054273/1217322378019737661
-
-compare players from watch list https://discord.com/channels/290013534023057409/1217323576257151016/1217344410925269082
-- need popup to select which ones
+- when min roster size is 0
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player
   - make sticky header not go over these
+- links
+  - trade pages https://old.reddit.com/r/BasketballGM/comments/1bdi7eg/version_202403130000_new_compare_players_feature/kun5sce/?context=3
+  - watch list https://discord.com/channels/290013534023057409/1217323576257151016/1217344410925269082
+    - need popup to select which ones
+    - better: generic built into tables through ... menu
+      - needs to know pid/playoffs/season for each row, could put in metadata
+- for current players, show contract and team, if current year or career is selected? https://old.reddit.com/r/BasketballGM/comments/1bdi7eg/version_202403130000_new_compare_players_feature/kun5sce/?context=3
+  - handle free agent contracts
 
 jersey numbers by position and frequency
 - football - classic numbers more popular
@@ -23,6 +29,8 @@ PWA install prompt
   - data loss when switching from browser to PWA?
 
 offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
+
+draft pick trade logic bug https://old.reddit.com/message/messages/274jbgt AI may value the picks by team record only, even when the better record team is in the lottery and the worse record team is not
 
 data URI for image files?
 

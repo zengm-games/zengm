@@ -220,7 +220,7 @@ export const settings: Setting[] = (
 							</>
 						),
 					},
-			  ] as Setting[])
+				] as Setting[])
 			: ([
 					{
 						category: "New League",
@@ -250,7 +250,7 @@ export const settings: Setting[] = (
 							</>
 						),
 					},
-			  ] as Setting[])),
+				] as Setting[])),
 		{
 			category: "New League",
 			key: "realDraftRatings",
@@ -363,12 +363,20 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "int",
 			validator: (value, output) => {
-				if (!isSport("football") && value < output.numPlayersOnCourt) {
-					throw new Error(`Value cannot be less than # Players On ${COURT}`);
-				}
-				if (isSport("hockey") && value < 12) {
-					// Game sim crashes with fewer than 12 players currently. Otherwise, should be no limit.
-					throw new Error("Value must be at least 12");
+				const cutoff = bySport({
+					baseball: 10,
+					basketball: output.numPlayersOnCourt,
+					football: 11,
+
+					// Game crashes with less than 12 currently
+					hockey: 12,
+				});
+				if (value < cutoff) {
+					if (isSport("basketball")) {
+						throw new Error(`Value cannot be less than # Players On ${COURT}`);
+					} else {
+						throw new Error(`Value must be at least ${cutoff}`);
+					}
 				}
 			},
 		},

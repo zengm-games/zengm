@@ -91,9 +91,7 @@ const moodComponents = async (
 	);
 	const currentTeamSeason = teamSeasons.find(ts => ts.season === season);
 
-	const teams = helpers.addPopRank(
-		(await idb.cache.teams.getAll()).filter(t => !t.disabled),
-	);
+	const teams = helpers.addPopRank(await idb.cache.teams.getAll());
 	const t = teams.find(t => t.tid === tid);
 	if (!t) {
 		throw new Error(`tid ${tid} not found`);

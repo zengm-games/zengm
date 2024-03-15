@@ -953,13 +953,10 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	const draftPicks = await draft.getOrder();
 	const dp = draftPicks[0];
 
-	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (dp && g.get("userTids").includes(dp.tid)) {
 		draftPicks.shift();
 		await draft.selectPlayer(dp, pid);
 		await draft.afterPicks(draftPicks.length === 0, conditions);
-	} else {
-		throw new Error("User trying to draft out of turn.");
 	}
 };
 

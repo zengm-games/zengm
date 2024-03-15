@@ -20,7 +20,7 @@ const PlayerPicture = ({
 }) => {
 	const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
 	useEffect(() => {
-		if (face && !imgURL && wrapper) {
+		if (face && (!imgURL || imgURL == "/img/blank-face.png") && wrapper) {
 			displayFace({
 				colors,
 				face,
@@ -30,12 +30,17 @@ const PlayerPicture = ({
 		}
 	}, [face, imgURL, colors, jersey, wrapper]);
 
-	if (imgURL) {
+	// Order of player picture preference: (1) non-blank image > (2) Face JS > (3) blank face
+	if (imgURL && imgURL !== "/img/blank-face.png") {
 		return <img alt="Player" src={imgURL} style={imgStyle} />;
 	}
 
 	if (face) {
 		return <div ref={setWrapper} />;
+	}
+
+	if (imgURL) {
+		return <img alt="Player" src={imgURL} style={imgStyle} />;
 	}
 
 	return null;

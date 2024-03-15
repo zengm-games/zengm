@@ -127,10 +127,28 @@ export const processEvents = async (
 				{ pid: event.pids[0] },
 				"noCopyCache",
 			);
+			let team;
+			if (event.tid) {
+				team = await idb.getCopy.teamsPlus(
+					{
+						attrs: ["colors"],
+						tid: event.tid,
+						// season: event.season,
+					},
+					"noCopyCache",
+				);
+			}
+
 			if (player) {
+				if (player.face && team && "colors" in team) {
+					player.face.teamColors = team.colors as string[];
+				}
 				event.p = {
 					imgURL: player.imgURL,
-					face: player.imgURL ? undefined : player.face,
+					face:
+						player.imgURL && player.imgURL != "/img/blank-face.png"
+							? undefined
+							: player.face,
 				};
 				numImagesRemaining -= 1;
 			}

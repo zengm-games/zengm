@@ -10,6 +10,8 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
     - need popup to select which ones
     - better: generic built into tables through ... menu
       - needs to know pid/playoffs/season for each row, could put in metadata
+      - replace existing links, such as award races
+      - could implement as "compare highlighted players", would also need a "clear highlight", idk
 - for current players, show contract and team, if current year or career is selected? https://old.reddit.com/r/BasketballGM/comments/1bdi7eg/version_202403130000_new_compare_players_feature/kun5sce/?context=3
   - handle free agent contracts
 

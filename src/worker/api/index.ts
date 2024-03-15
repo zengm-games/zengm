@@ -2399,7 +2399,7 @@ const ratingsStatsPopoverInfo = async ({
 			p2.ratings = p2.ratings[0];
 		} else {
 			// Peak ratings
-			p.ratings = maxBy(p.ratings, "ovr");
+			p2.ratings = maxBy(p.ratings, "ovr");
 		}
 		p2.age = p2.ratings.season - p.born.year;
 

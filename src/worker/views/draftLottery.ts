@@ -20,6 +20,7 @@ const updateDraftLottery = async (
 	challengeWarning?: boolean;
 	notEnoughTeams?: boolean;
 	draftType?: DraftType | "dummy";
+	dpidsAvailableToTrade: Set<number>;
 	godMode?: boolean;
 	numToPick: number;
 	result: DraftLotteryResultArray | undefined;
@@ -52,6 +53,12 @@ const updateDraftLottery = async (
 			}
 		}
 
+		const dpidsAvailableToTrade = new Set(
+			(await idb.cache.draftPicks.getAll())
+				.filter(dp => dp.season === season)
+				.map(dp => dp.dpid),
+		);
+
 		// View completed draft lottery
 		if (
 			season < g.get("season") ||
@@ -79,6 +86,7 @@ const updateDraftLottery = async (
 				}
 
 				return {
+					dpidsAvailableToTrade,
 					draftType,
 					numToPick: getNumToPick(draftType, result ? result.length : 14),
 					result,
@@ -94,6 +102,7 @@ const updateDraftLottery = async (
 			if (season < g.get("season")) {
 				// Maybe there was no draft lottery done, or it was deleted from the database
 				return {
+					dpidsAvailableToTrade,
 					draftType: "noLottery",
 					numToPick: 0,
 					result: undefined,
@@ -109,6 +118,7 @@ const updateDraftLottery = async (
 
 		if (NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))) {
 			return {
+				dpidsAvailableToTrade,
 				draftType: g.get("draftType"),
 				numToPick: 0,
 				result: undefined,
@@ -153,13 +163,14 @@ const updateDraftLottery = async (
 				g.get("challengeNoDraftPicks") &&
 				g.get("userTids").length > 0,
 			notEnoughTeams: !draftLotteryResult,
+			dpidsAvailableToTrade,
 			draftType,
 			godMode: g.get("godMode"),
 			numToPick: getNumToPick(
 				draftType,
 				draftLotteryResult ? draftLotteryResult.result.length : 14,
 			),
-			result: draftLotteryResult ? draftLotteryResult.result : undefined,
+			result: draftLotteryResult?.result,
 			rigged: g.get("riggedLottery"),
 			season: draftLotteryResult ? draftLotteryResult.season : season,
 			spectator: g.get("spectator"),

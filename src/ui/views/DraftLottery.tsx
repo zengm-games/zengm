@@ -108,6 +108,7 @@ const reducer = (state: State, action: Action): State => {
 const Row = ({
 	NUM_PICKS,
 	i,
+	pickAlreadyMade,
 	season,
 	t,
 	userTid,
@@ -118,6 +119,7 @@ const Row = ({
 }: {
 	NUM_PICKS: number;
 	i: number;
+	pickAlreadyMade: boolean;
 	season: number;
 	t: DraftLotteryResultArray[number];
 	userTid: number;
@@ -192,7 +194,7 @@ const Row = ({
 				{revealedPickNumber}
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
-				{userTeam || spectator ? null : (
+				{userTeam || spectator || pickAlreadyMade ? null : (
 					<button
 						className="btn btn-xs btn-light-bordered"
 						onClick={async () => {
@@ -386,7 +388,15 @@ const DraftLotteryTable = (props: Props) => {
 		dispatch({ type: "revealOne" });
 	};
 
-	const { godMode, numToPick, rigged, season, type, userTid } = props;
+	const {
+		dpidsAvailableToTrade,
+		godMode,
+		numToPick,
+		rigged,
+		season,
+		type,
+		userTid,
+	} = props;
 	const { draftType, result } = state;
 	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType, numToPick);
 	const NUM_PICKS = result !== undefined ? result.length : 14;
@@ -470,6 +480,7 @@ const DraftLotteryTable = (props: Props) => {
 									key={i}
 									NUM_PICKS={NUM_PICKS}
 									i={i}
+									pickAlreadyMade={!dpidsAvailableToTrade.has(t.dpid)}
 									season={season}
 									t={t}
 									userTid={userTid}

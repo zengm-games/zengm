@@ -1,3 +1,11 @@
+arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
+- make it a select? or listen for keyboard shortcut?
+
+show all teams on draft lottery page, even ones outside the lottery https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kodk30a/
+
+add more info to switch teams page https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kq1v6f0/
+- all time finals record and last finals win
+
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player
   - make sticky header not go over these
@@ -376,6 +384,8 @@ custom awards
   - team records
   - GOAT formula
 - add triple crown for baseball, like league leader awards
+- store top 10 for each individual award, so it can be displayed easily on player profile pages
+- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 
 names of playoff rounds
 - centralize to one place

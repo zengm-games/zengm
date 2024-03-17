@@ -252,11 +252,8 @@ export type TradeEventTeams = {
 	assets: TradeEventAsset[];
 }[];
 
-export type DiscriminateUnion<
-	T,
-	K extends keyof T,
-	V extends T[K],
-> = T extends Record<K, V> ? T : never;
+export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
+	T extends Record<K, V> ? T : never;
 
 export type EventBBGMWithoutKey =
 	| {
@@ -1808,6 +1805,7 @@ export type GetLeagueOptionsReal = {
 	randomDebutsKeepCurrent: boolean;
 	realDraftRatings: "draft" | "rookie";
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
+	includePlayers: boolean;
 
 	// For exhibition game only
 	includeSeasonInfo?: boolean;

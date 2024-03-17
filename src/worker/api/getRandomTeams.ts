@@ -31,6 +31,7 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 			randomDebutsKeepCurrent: false,
 			realDraftRatings: "draft",
 			realStats: "none",
+			includePlayers: false,
 		});
 
 		for (const t of teams) {
@@ -94,6 +95,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 				realDraftRatings: "rookie",
 				realStats: "none",
 				includeSeasonInfo: true,
+				includePlayers: false,
 			},
 		);
 
@@ -147,6 +149,7 @@ const getRandomTeams = async ({
 			randomDebutsKeepCurrent: false,
 			realDraftRatings: "draft",
 			realStats: "none",
+			includePlayers: false,
 		});
 		confs = gameAttributes.confs;
 		divs = gameAttributes.divs;

@@ -14,6 +14,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
+					includePlayers: true,
 				})
 			).teams.length,
 			8,
@@ -29,6 +30,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
+					includePlayers: true,
 				})
 			).teams.length,
 			30,
@@ -46,6 +48,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
+					includePlayers: true,
 				})
 			).teams.length,
 			29,
@@ -60,6 +63,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
+					includePlayers: true,
 				})
 			).teams.length,
 			30,
@@ -77,6 +81,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
+					includePlayers: true,
 				})
 			).teams.length,
 			17,
@@ -91,6 +96,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 					randomDebutsKeepCurrent: false,
 					realDraftRatings: "rookie",
 					realStats: "none",
+					includePlayers: true,
 				})
 			).teams.length,
 			11,

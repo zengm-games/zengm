@@ -302,6 +302,7 @@ export const getSeasonInfo = async (
 			realDraftRatings: "rookie",
 			realStats: "lastSeason",
 			includeSeasonInfo: true,
+			includePlayers: false,
 			...options,
 		});
 		gameAttributes = info.gameAttributes;

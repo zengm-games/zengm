@@ -37,6 +37,7 @@ const updateRandomDebutsForever = async (
 			randomDebutsKeepCurrent: false,
 			realDraftRatings: g.get("realDraftRatings") ?? "draft",
 			realStats: "none",
+			includePlayers: true,
 		},
 	);
 

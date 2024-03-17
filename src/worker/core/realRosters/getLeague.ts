@@ -82,6 +82,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 		...basketball.scheduledEventsTeams,
 	];
 
+	const hofSlugs = new Set();
+	let players;
 	if (options.type === "real") {
 		const { scheduledEvents, initialGameAttributes, initialTeams } =
 			formatScheduledEvents(scheduledEventsAll, {
@@ -91,243 +93,244 @@ const getLeague = async (options: GetLeagueOptions) => {
 				phase: options.phase,
 			});
 
-		const formatPlayer = await formatPlayerFactory(
-			basketball,
-			options,
-			options.season,
-			initialTeams,
-			-1,
-		);
+		if (options.includePlayers) {
+			const formatPlayer = await formatPlayerFactory(
+				basketball,
+				options,
+				options.season,
+				initialTeams,
+				-1,
+			);
 
-		const ratingsRows = basketball.ratings.filter(row => {
-			if (
-				options.realStats === "all" ||
-				options.realStats === "allActive" ||
-				options.realStats === "allActiveHOF"
-			) {
-				return row.season <= options.season;
-			}
-
-			if (options.realStats === "lastSeason") {
-				const lastSeason =
-					options.phase > PHASE.REGULAR_SEASON
-						? options.season
-						: options.season - 1;
-				return row.season >= lastSeason && row.season <= options.season;
-			}
-
-			return row.season === options.season;
-		});
-
-		let groupedRatings = Object.values(groupBy(ratingsRows, "slug")).filter(
-			allRatings => {
-				// Ignore players in upcoming draft
-				const bio = basketball.bios[allRatings[0].slug];
+			const ratingsRows = basketball.ratings.filter(row => {
 				if (
-					bio &&
-					(bio.draftYear > options.season ||
-						(bio.draftYear === options.season &&
-							options.phase < PHASE.AFTER_DRAFT))
+					options.realStats === "all" ||
+					options.realStats === "allActive" ||
+					options.realStats === "allActiveHOF"
 				) {
-					return false;
+					return row.season <= options.season;
 				}
 
-				return true;
-			},
-		);
+				if (options.realStats === "lastSeason") {
+					const lastSeason =
+						options.phase > PHASE.REGULAR_SEASON
+							? options.season
+							: options.season - 1;
+					return row.season >= lastSeason && row.season <= options.season;
+				}
 
-		const hofSlugs = new Set();
-		if (options.realStats === "allActive") {
-			// Only keep players who are active this season
-			groupedRatings = groupedRatings.filter(allRatings => {
-				const lastSeason = allRatings.at(-1)?.season;
-				return lastSeason === options.season;
+				return row.season === options.season;
 			});
-		} else if (
-			options.realStats === "allActiveHOF" ||
-			options.realStats === "all"
-		) {
-			// Populate hofSlugs for use later
-			for (const [slug, awards] of Object.entries(basketball.awards)) {
-				if (awards) {
-					for (const award of awards) {
-						if (award.type === "Inducted into the Hall of Fame") {
-							hofSlugs.add(slug);
-							continue;
+
+			let groupedRatings = Object.values(groupBy(ratingsRows, "slug")).filter(
+				allRatings => {
+					// Ignore players in upcoming draft
+					const bio = basketball.bios[allRatings[0].slug];
+					if (
+						bio &&
+						(bio.draftYear > options.season ||
+							(bio.draftYear === options.season &&
+								options.phase < PHASE.AFTER_DRAFT))
+					) {
+						return false;
+					}
+
+					return true;
+				},
+			);
+
+			if (options.realStats === "allActive") {
+				// Only keep players who are active this season
+				groupedRatings = groupedRatings.filter(allRatings => {
+					const lastSeason = allRatings.at(-1)?.season;
+					return lastSeason === options.season;
+				});
+			} else if (
+				options.realStats === "allActiveHOF" ||
+				options.realStats === "all"
+			) {
+				// Populate hofSlugs for use later
+				for (const [slug, awards] of Object.entries(basketball.awards)) {
+					if (awards) {
+						for (const award of awards) {
+							if (award.type === "Inducted into the Hall of Fame") {
+								hofSlugs.add(slug);
+								continue;
+							}
 						}
 					}
 				}
-			}
 
-			if (options.realStats === "allActiveHOF") {
-				// Only keep players who are active this season or in the HoF
-				groupedRatings = groupedRatings.filter(allRatings => {
-					const lastRatings = allRatings.at(-1)!;
-					return (
-						lastRatings.season === options.season ||
-						hofSlugs.has(lastRatings.slug)
-					);
-				});
-			}
-		}
-
-		const players = groupedRatings.map(ratings => {
-			const p = formatPlayer(ratings);
-
-			const retiredUntil = ratings.at(-1)?.retiredUntil;
-			if (retiredUntil !== undefined) {
-				scheduledEvents.push({
-					type: "unretirePlayer",
-					season: retiredUntil - 1,
-					phase: PHASE.FREE_AGENCY,
-					info: {
-						pid: p.pid,
-					},
-				});
-			}
-
-			return p;
-		});
-
-		// Find draft prospects, which can't include any active players
-		const lastPID = Math.max(...players.map(p => p.pid));
-		const draftProspects = await getDraftProspects(
-			basketball,
-			players,
-			initialTeams,
-			scheduledEvents,
-			lastPID,
-			0,
-			options,
-		);
-
-		players.push(...draftProspects);
-
-		// Injuries - do this here rather than in formatPlayerFactory so we have access to initialGameAttributes
-		const getUnwrappedGameAttributeOrDefault = <
-			Key extends keyof GameAttributesLeague,
-		>(
-			key: Key,
-		): GameAttributesLeague[Key] => {
-			if (initialGameAttributes[key]) {
-				return unwrapGameAttribute(initialGameAttributes, key);
-			}
-
-			return unwrapGameAttribute(defaultGameAttributes, key);
-		};
-		for (const p of players) {
-			if (p.srID) {
-				const injury = getInjury({
-					injuries: basketball.injuries,
-					slug: p.srID,
-					season: options.season,
-					phase: options.phase,
-					numGames: getUnwrappedGameAttributeOrDefault("numGames"),
-					numGamesPlayoffSeries: getUnwrappedGameAttributeOrDefault(
-						"numGamesPlayoffSeries",
-					),
-					draftProspect: p.tid === PLAYER.UNDRAFTED,
-					draftYear: p.draft.year,
-				});
-				if (injury) {
-					p.injury = injury;
+				if (options.realStats === "allActiveHOF") {
+					// Only keep players who are active this season or in the HoF
+					groupedRatings = groupedRatings.filter(allRatings => {
+						const lastRatings = allRatings.at(-1)!;
+						return (
+							lastRatings.season === options.season ||
+							hofSlugs.has(lastRatings.slug)
+						);
+					});
 				}
 			}
-		}
 
-		if (options.randomDebuts) {
-			const toRandomize = players.filter(p => {
-				if (p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.RETIRED) {
-					return false;
+			players = groupedRatings.map(ratings => {
+				const p = formatPlayer(ratings);
+
+				const retiredUntil = ratings.at(-1)?.retiredUntil;
+				if (retiredUntil !== undefined) {
+					scheduledEvents.push({
+						type: "unretirePlayer",
+						season: retiredUntil - 1,
+						phase: PHASE.FREE_AGENCY,
+						info: {
+							pid: p.pid,
+						},
+					});
 				}
 
-				if (options.randomDebutsKeepCurrent) {
-					return p.tid < 0;
-				}
-
-				return true;
+				return p;
 			});
 
-			const draftYears = toRandomize.map(p => p.draft.year);
-			random.shuffle(draftYears);
+			// Find draft prospects, which can't include any active players
+			const lastPID = Math.max(...players.map(p => p.pid));
+			const draftProspects = await getDraftProspects(
+				basketball,
+				players,
+				initialTeams,
+				scheduledEvents,
+				lastPID,
+				0,
+				options,
+			);
 
-			const tids = toRandomize.filter(p => p.tid >= 0).map(p => p.tid);
-			random.shuffle(tids);
+			players.push(...draftProspects);
 
-			for (let i = 0; i < toRandomize.length; i++) {
-				const p = toRandomize[i];
-				const diff = draftYears[i] - p.draft.year;
-				p.draft.year = draftYears[i];
-				p.born.year += diff;
+			// Injuries - do this here rather than in formatPlayerFactory so we have access to initialGameAttributes
+			const getUnwrappedGameAttributeOrDefault = <
+				Key extends keyof GameAttributesLeague,
+			>(
+				key: Key,
+			): GameAttributesLeague[Key] => {
+				if (initialGameAttributes[key]) {
+					return unwrapGameAttribute(initialGameAttributes, key);
+				}
 
-				p.draft.tid = -1;
-				p.draft.originalTid = -1;
-				p.draft.round = 0;
-				p.draft.pick = 0;
+				return unwrapGameAttribute(defaultGameAttributes, key);
+			};
+			for (const p of players) {
+				if (p.srID) {
+					const injury = getInjury({
+						injuries: basketball.injuries,
+						slug: p.srID,
+						season: options.season,
+						phase: options.phase,
+						numGames: getUnwrappedGameAttributeOrDefault("numGames"),
+						numGamesPlayoffSeries: getUnwrappedGameAttributeOrDefault(
+							"numGamesPlayoffSeries",
+						),
+						draftProspect: p.tid === PLAYER.UNDRAFTED,
+						draftYear: p.draft.year,
+					});
+					if (injury) {
+						p.injury = injury;
+					}
+				}
+			}
 
-				if (
-					p.draft.year < options.season ||
-					(p.draft.year === options.season && options.phase > PHASE.DRAFT)
-				) {
-					// Active player on a team
-					const tid = tids.pop();
-					if (tid === undefined) {
-						throw new Error("Not enough tids");
+			if (options.randomDebuts) {
+				const toRandomize = players.filter(p => {
+					if (p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.RETIRED) {
+						return false;
 					}
 
-					p.tid = tid;
-
-					const targetRatingsSeason = options.season - diff;
-
-					const rows = basketball.ratings.filter(row => row.slug === p.srID);
-					if (rows.length === 0) {
-						throw new Error(`No ratings found for "${p.srID}"`);
+					if (options.randomDebutsKeepCurrent) {
+						return p.tid < 0;
 					}
 
-					// If possible, use ratings from exact age
-					let ratings = rows.find(row => row.season === targetRatingsSeason);
+					return true;
+				});
 
-					// Otherwise, find closest
-					if (!ratings) {
-						const sorted = orderBy(
-							rows,
-							row => Math.abs(row.season - targetRatingsSeason),
-							"asc",
-						);
-						ratings = sorted[0];
-					}
+				const draftYears = toRandomize.map(p => p.draft.year);
+				random.shuffle(draftYears);
 
-					p.ratings = [getOnlyRatings(ratings)];
-				} else {
-					// Draft prospect
-					p.tid = PLAYER.UNDRAFTED;
-					const rookieRatings = basketball.ratings.find(
-						row => row.slug === p.srID,
-					);
-					if (!rookieRatings) {
-						throw new Error(`No ratings found for "${p.srID}"`);
-					}
-					const currentRatings = getOnlyRatings(rookieRatings);
-					nerfDraftProspect(currentRatings);
-					p.ratings = [currentRatings];
-					const bio = basketball.bios[p.srID];
+				const tids = toRandomize.filter(p => p.tid >= 0).map(p => p.tid);
+				random.shuffle(tids);
+
+				for (let i = 0; i < toRandomize.length; i++) {
+					const p = toRandomize[i];
+					const diff = draftYears[i] - p.draft.year;
+					p.draft.year = draftYears[i];
+					p.born.year += diff;
+
+					p.draft.tid = -1;
+					p.draft.originalTid = -1;
+					p.draft.round = 0;
+					p.draft.pick = 0;
+
 					if (
-						options.type === "real" &&
-						options.realDraftRatings === "draft" &&
-						bio
+						p.draft.year < options.season ||
+						(p.draft.year === options.season && options.phase > PHASE.DRAFT)
 					) {
-						const age = p.draft.year + 1 - p.born.year;
-						setDraftProspectRatingsBasedOnDraftPosition(
-							currentRatings,
-							age,
-							bio,
-						);
-					}
+						// Active player on a team
+						const tid = tids.pop();
+						if (tid === undefined) {
+							throw new Error("Not enough tids");
+						}
 
-					// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
-					p.stats = [];
-					p.awards = [];
-					p.salaries = [];
+						p.tid = tid;
+
+						const targetRatingsSeason = options.season - diff;
+
+						const rows = basketball.ratings.filter(row => row.slug === p.srID);
+						if (rows.length === 0) {
+							throw new Error(`No ratings found for "${p.srID}"`);
+						}
+
+						// If possible, use ratings from exact age
+						let ratings = rows.find(row => row.season === targetRatingsSeason);
+
+						// Otherwise, find closest
+						if (!ratings) {
+							const sorted = orderBy(
+								rows,
+								row => Math.abs(row.season - targetRatingsSeason),
+								"asc",
+							);
+							ratings = sorted[0];
+						}
+
+						p.ratings = [getOnlyRatings(ratings)];
+					} else {
+						// Draft prospect
+						p.tid = PLAYER.UNDRAFTED;
+						const rookieRatings = basketball.ratings.find(
+							row => row.slug === p.srID,
+						);
+						if (!rookieRatings) {
+							throw new Error(`No ratings found for "${p.srID}"`);
+						}
+						const currentRatings = getOnlyRatings(rookieRatings);
+						nerfDraftProspect(currentRatings);
+						p.ratings = [currentRatings];
+						const bio = basketball.bios[p.srID];
+						if (
+							options.type === "real" &&
+							options.realDraftRatings === "draft" &&
+							bio
+						) {
+							const age = p.draft.year + 1 - p.born.year;
+							setDraftProspectRatingsBasedOnDraftPosition(
+								currentRatings,
+								age,
+								bio,
+							);
+						}
+
+						// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
+						p.stats = [];
+						p.awards = [];
+						p.salaries = [];
+					}
 				}
 			}
 		}
@@ -679,212 +682,217 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
-		const awards = getAwards(basketball.awards, players, initialTeams, options);
+		let awards;
+		let seasonLeaders;
+		if (options.includePlayers && players) {
+			awards = getAwards(basketball.awards, players, initialTeams, options);
 
-		// Mark players as retired - don't delete, so we have full season stats and awards.
-		// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
-		// Skip 2021 because we don't have 2021 data yet!
-		if (
-			options.phase > PHASE.PLAYOFFS &&
-			options.season < 2021 &&
-			!options.randomDebuts
-		) {
-			const nextSeasonSlugs = new Set();
-			for (const row of basketball.ratings) {
-				if (row.season === options.season + 1) {
-					nextSeasonSlugs.add(row.slug);
-				}
-			}
-
-			for (const p of players) {
-				if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
-					p.tid = PLAYER.RETIRED;
-					(p as any).retiredYear = options.season;
-				}
-			}
-		}
-
-		// Manually add HoF to retired players who do eventually make the HoF, but have not yet been inducted by the tim ethis season started.
-		// This needs to be after the code above which sets retired players, otherwise starting after the playoffs will result in players who retired that year never making the HoF.
-		if (hofSlugs.size > 0) {
-			for (const p of players) {
-				if (hofSlugs.has(p.srID) && !p.hof && p.tid === PLAYER.RETIRED) {
-					p.hof = 1;
-					if (!p.awards) {
-						p.awards = [];
+			// Mark players as retired - don't delete, so we have full season stats and awards.
+			// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
+			// Skip 2021 because we don't have 2021 data yet!
+			if (
+				options.phase > PHASE.PLAYOFFS &&
+				options.season < 2021 &&
+				!options.randomDebuts
+			) {
+				const nextSeasonSlugs = new Set();
+				for (const row of basketball.ratings) {
+					if (row.season === options.season + 1) {
+						nextSeasonSlugs.add(row.slug);
 					}
-
-					const season =
-						options.phase <= PHASE.PLAYOFFS
-							? options.season - 1
-							: options.season;
-
-					player.addAward(p as any, {
-						type: "Inducted into the Hall of Fame",
-						season,
-					});
 				}
-			}
-		}
-
-		// Assign expansion draft players to their teams
-		if (
-			options.phase >= PHASE.DRAFT_LOTTERY &&
-			basketball.expansionDrafts[options.season] &&
-			!options.randomDebuts
-		) {
-			for (const [abbrev, slugs] of Object.entries(
-				basketball.expansionDrafts[options.season],
-			)) {
-				const t = initialTeams.find(
-					t => abbrev === oldAbbrevTo2020BBGMAbbrev(t.abbrev),
-				);
-				if (!t) {
-					throw new Error("Team not found");
-				}
-
-				t.firstSeasonAfterExpansion = options.season + 1;
 
 				for (const p of players) {
-					if (slugs.includes(p.srID)) {
-						p.tid = t.tid;
+					if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
+						p.tid = PLAYER.RETIRED;
+						(p as any).retiredYear = options.season;
 					}
 				}
 			}
-		}
 
-		// Assign drafted players to their teams
-		if (
-			options.phase > PHASE.DRAFT &&
-			!options.randomDebuts &&
-			options.season < LATEST_SEASON
-		) {
-			for (const dp of basketball.draftPicks[options.season]) {
-				if (!dp.slug) {
-					continue;
+			// Manually add HoF to retired players who do eventually make the HoF, but have not yet been inducted by the tim ethis season started.
+			// This needs to be after the code above which sets retired players, otherwise starting after the playoffs will result in players who retired that year never making the HoF.
+			if (hofSlugs.size > 0) {
+				for (const p of players) {
+					if (hofSlugs.has(p.srID) && !p.hof && p.tid === PLAYER.RETIRED) {
+						p.hof = 1;
+						if (!p.awards) {
+							p.awards = [];
+						}
+
+						const season =
+							options.phase <= PHASE.PLAYOFFS
+								? options.season - 1
+								: options.season;
+
+						player.addAward(p as any, {
+							type: "Inducted into the Hall of Fame",
+							season,
+						});
+					}
 				}
+			}
 
-				const p = players.find(p => p.srID === dp.slug);
-				if (!p) {
-					throw new Error("Player not found");
-				}
-				if (dp.pick === undefined) {
-					throw new Error("No pick number");
-				}
-
-				const [t, t2] = getDraftPickTeams(dp);
-
-				p.tid = t.tid;
-				p.draft = {
-					round: dp.round,
-					pick: dp.pick,
-					tid: t.tid,
-					year: options.season,
-					originalTid: t2.tid,
-				};
-
-				// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
-				const salaryRow = basketball.salaries.find(
-					row => row.start <= options.season + 1 && row.slug === p.srID,
-				);
-				if (salaryRow) {
-					let minYears =
-						defaultGameAttributes.rookieContractLengths[dp.round - 1] ??
-						defaultGameAttributes.rookieContractLengths[
-							defaultGameAttributes.rookieContractLengths.length - 1
-						];
-
-					// Offset because it starts next season
-					minYears += 1;
-
-					let exp = salaryRow.exp;
-
-					// Bound at 5 year contract
-					if (exp > options.season + 5) {
-						exp = options.season + 5;
+			// Assign expansion draft players to their teams
+			if (
+				options.phase >= PHASE.DRAFT_LOTTERY &&
+				basketball.expansionDrafts[options.season] &&
+				!options.randomDebuts
+			) {
+				for (const [abbrev, slugs] of Object.entries(
+					basketball.expansionDrafts[options.season],
+				)) {
+					const t = initialTeams.find(
+						t => abbrev === oldAbbrevTo2020BBGMAbbrev(t.abbrev),
+					);
+					if (!t) {
+						throw new Error("Team not found");
 					}
 
-					p.contract = {
-						amount: averageSalary(salaryRow, options.season + 1, exp),
-						exp,
-						rookie: true,
+					t.firstSeasonAfterExpansion = options.season + 1;
+
+					for (const p of players) {
+						if (slugs.includes(p.srID)) {
+							p.tid = t.tid;
+						}
+					}
+				}
+			}
+
+			// Assign drafted players to their teams
+			if (
+				options.phase > PHASE.DRAFT &&
+				!options.randomDebuts &&
+				options.season < LATEST_SEASON
+			) {
+				for (const dp of basketball.draftPicks[options.season]) {
+					if (!dp.slug) {
+						continue;
+					}
+
+					const p = players.find(p => p.srID === dp.slug);
+					if (!p) {
+						throw new Error("Player not found");
+					}
+					if (dp.pick === undefined) {
+						throw new Error("No pick number");
+					}
+
+					const [t, t2] = getDraftPickTeams(dp);
+
+					p.tid = t.tid;
+					p.draft = {
+						round: dp.round,
+						pick: dp.pick,
+						tid: t.tid,
+						year: options.season,
+						originalTid: t2.tid,
 					};
 
-					// Bound at minYears, but do this after calling averageSalary in case a player was released before minYears
-					if (p.contract.exp < options.season + minYears) {
-						p.contract.exp = options.season + minYears;
+					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
+					const salaryRow = basketball.salaries.find(
+						row => row.start <= options.season + 1 && row.slug === p.srID,
+					);
+					if (salaryRow) {
+						let minYears =
+							defaultGameAttributes.rookieContractLengths[dp.round - 1] ??
+							defaultGameAttributes.rookieContractLengths[
+								defaultGameAttributes.rookieContractLengths.length - 1
+							];
+
+						// Offset because it starts next season
+						minYears += 1;
+
+						let exp = salaryRow.exp;
+
+						// Bound at 5 year contract
+						if (exp > options.season + 5) {
+							exp = options.season + 5;
+						}
+
+						p.contract = {
+							amount: averageSalary(salaryRow, options.season + 1, exp),
+							exp,
+							rookie: true,
+						};
+
+						// Bound at minYears, but do this after calling averageSalary in case a player was released before minYears
+						if (p.contract.exp < options.season + minYears) {
+							p.contract.exp = options.season + minYears;
+						}
+					}
+
+					const currentRatings = p.ratings[0];
+					currentRatings.season = options.season;
+					nerfDraftProspect(currentRatings);
+					if (options.type === "real" && options.realDraftRatings === "draft") {
+						const age = currentRatings.season! - p.born.year;
+						setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
+							draftRound: p.draft.round,
+							draftPick: p.draft.pick,
+						});
 					}
 				}
-
-				const currentRatings = p.ratings[0];
-				currentRatings.season = options.season;
-				nerfDraftProspect(currentRatings);
-				if (options.type === "real" && options.realDraftRatings === "draft") {
-					const age = currentRatings.season! - p.born.year;
-					setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
-						draftRound: p.draft.round,
-						draftPick: p.draft.pick,
-					});
-				}
 			}
-		}
 
-		addRelatives(players, basketball.relatives);
-		addFreeAgents(players, options.season);
+			addRelatives(players, basketball.relatives);
+			addFreeAgents(players, options.season);
 
-		// Add retired jersey numbers for expansion teams too - but not for teams that are going to disband and then return again later (seenAbbrevs check)
-		const initialAndFutureTeams = [...initialTeams];
-		const seenAbbrevs = new Set(
-			initialTeams.map(t => oldAbbrevTo2020BBGMAbbrev(t.srID)),
-		);
-		for (const event of scheduledEvents) {
-			if (event.type === "expansionDraft") {
-				for (const t of event.info.teams) {
-					const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
-					if (!seenAbbrevs.has(abbrev)) {
-						initialAndFutureTeams.push(t);
-						seenAbbrevs.add(abbrev);
+			// Add retired jersey numbers for expansion teams too - but not for teams that are going to disband and then return again later (seenAbbrevs check)
+			const initialAndFutureTeams = [...initialTeams];
+			const seenAbbrevs = new Set(
+				initialTeams.map(t => oldAbbrevTo2020BBGMAbbrev(t.srID)),
+			);
+			for (const event of scheduledEvents) {
+				if (event.type === "expansionDraft") {
+					for (const t of event.info.teams) {
+						const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
+						if (!seenAbbrevs.has(abbrev)) {
+							initialAndFutureTeams.push(t);
+							seenAbbrevs.add(abbrev);
+						}
 					}
 				}
 			}
-		}
 
-		addRetiredJerseyNumbers({
-			teams: initialAndFutureTeams,
-			players,
-			season: options.season,
-			phase: options.phase,
-			allBios: basketball.bios,
-			allRetiredJerseyNumbers: basketball.retiredJerseyNumbers,
-		});
+			addRetiredJerseyNumbers({
+				teams: initialAndFutureTeams,
+				players,
+				season: options.season,
+				phase: options.phase,
+				allBios: basketball.bios,
+				allRetiredJerseyNumbers: basketball.retiredJerseyNumbers,
+			});
 
-		let seasonLeaders;
-		if (options.realStats !== "none") {
-			let seasonLeadersSeasons;
+			if (options.realStats !== "none") {
+				let seasonLeadersSeasons;
 
-			if (options.realStats === "lastSeason") {
-				// Different from mostRecentLeadersSeason to keep in sync with the season that player stats get pulled from in formatPlayer
-				const statsSeason =
-					options.phase > PHASE.REGULAR_SEASON
-						? options.season
-						: options.season - 1;
+				if (options.realStats === "lastSeason") {
+					// Different from mostRecentLeadersSeason to keep in sync with the season that player stats get pulled from in formatPlayer
+					const statsSeason =
+						options.phase > PHASE.REGULAR_SEASON
+							? options.season
+							: options.season - 1;
 
-				seasonLeadersSeasons = [statsSeason];
-			} else {
-				const mostRecentLeadersSeason =
-					options.phase > PHASE.PLAYOFFS ? options.season : options.season - 1;
+					seasonLeadersSeasons = [statsSeason];
+				} else {
+					const mostRecentLeadersSeason =
+						options.phase > PHASE.PLAYOFFS
+							? options.season
+							: options.season - 1;
 
-				seasonLeadersSeasons = range(MIN_SEASON, mostRecentLeadersSeason + 1);
-			}
+					seasonLeadersSeasons = range(MIN_SEASON, mostRecentLeadersSeason + 1);
+				}
 
-			const basketballStats = await loadStatsBasketball();
-			seasonLeaders = [];
-			for (const season of seasonLeadersSeasons) {
-				if (basketballStats.seasonLeaders[season]) {
-					seasonLeaders.push({
-						season,
-						...basketballStats.seasonLeaders[season],
-					});
+				const basketballStats = await loadStatsBasketball();
+				seasonLeaders = [];
+				for (const season of seasonLeadersSeasons) {
+					if (basketballStats.seasonLeaders[season]) {
+						seasonLeaders.push({
+							season,
+							...basketballStats.seasonLeaders[season],
+						});
+					}
 				}
 			}
 		}

@@ -831,6 +831,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						settings.randomization === "debutsForeverKeepCurrent",
 					realDraftRatings: settings.realDraftRatings,
 					realStats: settings.realStats,
+					includePlayers: state.keptKeys.includes("players"),
 				};
 			} else if (state.customize === "legends") {
 				getLeagueOptions = {
@@ -1293,6 +1294,7 @@ const NewLeague = (props: View<"newLeague">) => {
 															state.settings.randomization ===
 																"debutsForeverKeepCurrent",
 														realDraftRatings: state.settings.realDraftRatings,
+														includePlayers: false,
 
 														// Adding historical seasons just screws up tid
 														realStats: "none",

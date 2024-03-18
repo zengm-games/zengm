@@ -35,7 +35,7 @@ type State = {
 type Action =
 	| {
 			type: "init";
-			props: Props;
+			props: Pick<Props, "result" | "season" | "draftType">;
 	  }
 	| {
 			type: "startClicked";
@@ -295,6 +295,7 @@ const Rigged = ({
 };
 
 const DraftLotteryTable = (props: Props) => {
+	console.log("render table", props.result);
 	const isMounted = useRef(true);
 	useEffect(() => {
 		return () => {
@@ -317,10 +318,15 @@ const DraftLotteryTable = (props: Props) => {
 		season: props.season,
 	});
 
-	if (props.season !== state.season) {
+	// Handle changing season, and updating state.result due to game sim
+	if (
+		props.season !== state.season ||
+		props.draftType !== state.draftType ||
+		(revealState.current === "init" && props.result !== state.result)
+	) {
 		numLeftToReveal.current = 0;
 		revealState.current = "init";
-		dispatch({ type: "init", props: props });
+		dispatch({ type: "init", props });
 	}
 
 	const revealPickAuto = () => {

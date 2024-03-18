@@ -1,7 +1,5 @@
 dialog still in DOM after closing, why?
-
-draft lottery UI
-- test updating as games are played
+- happened after last dep upgrade
 
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
 - make it a select? or listen for keyboard shortcut?

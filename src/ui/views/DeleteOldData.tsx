@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
+import { ActionButton } from "../components";
 
 const DeleteOldData = () => {
 	const [state, setState] = useState({
@@ -151,9 +152,14 @@ const DeleteOldData = () => {
 					Fame and the completion of in-progress achievements!
 				</p>
 
-				<button className="btn btn-danger" disabled={deleting} type="submit">
+				<ActionButton
+					processing={deleting}
+					processingText="Deleting"
+					type="submit"
+					variant="danger"
+				>
 					Delete Old Data
-				</button>
+				</ActionButton>
 			</form>
 		</>
 	);

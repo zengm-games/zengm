@@ -708,11 +708,16 @@ const deleteOldData = async (options: {
 		let updated = false;
 		if (p.ratings.length > 0) {
 			updated = true;
-			p.ratings = [p.ratings.at(-1)!];
+			const latestSeason = p.ratings.at(-1)?.season;
+			p.ratings = p.ratings.filter(row => row.season >= latestSeason);
 		}
 		if (p.stats.length > 0) {
 			updated = true;
-			p.stats = [p.stats.at(-1)];
+			let latestSeason = g.get("season");
+			if (g.get("phase") === PHASE.PRESEASON) {
+				latestSeason -= 1;
+			}
+			p.stats = p.stats.filter(row => row.season >= latestSeason);
 		}
 		if (p.injuries.length > 0) {
 			if (

@@ -1,5 +1,5 @@
 diff --git a/node_modules/framer-motion/dist/index.d.ts b/node_modules/framer-motion/dist/index.d.ts
-index 759246d..66106bc 100644
+index d1f6f57..6c0faca 100644
 --- a/node_modules/framer-motion/dist/index.d.ts
 +++ b/node_modules/framer-motion/dist/index.d.ts
 @@ -1898,6 +1898,7 @@ interface AnimationPlaybackControls {

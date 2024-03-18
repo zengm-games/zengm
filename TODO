@@ -1,5 +1,5 @@
 dialog still in DOM after closing, why?
-- happened after last dep upgrade
+- don't upgrade yarn.lock until new @restart/ui version after 1.6.7 is released https://github.com/react-restart/ui/pull/99
 
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
 - make it a select? or listen for keyboard shortcut?

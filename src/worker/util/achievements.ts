@@ -183,7 +183,6 @@ const checkFoFoFo = async () => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 
 	if (!playoffSeries || playoffSeries.series.length === 0) {
-		// Should only happen if playoffs are skipped
 		return false;
 	}
 
@@ -306,11 +305,7 @@ const checkSevenGameFinals = async () => {
 
 	const matchup = playoffSeries?.series.at(-1)?.[0];
 
-	if (
-		matchup === undefined ||
-		matchup.home === undefined ||
-		matchup.away === undefined
-	) {
+	if (matchup === undefined || matchup.away === undefined) {
 		return false;
 	}
 
@@ -1251,6 +1246,49 @@ const achievements: Achievement[] = [
 
 		when: "afterPlayoffs",
 	},
+	{
+		slug: "revenge",
+		name: "Revenge",
+		desc: "Win in the finals against a team you used to control.",
+		category: "Playoffs",
+
+		async check() {
+			const wonTitle = await userWonTitle();
+
+			if (!wonTitle) {
+				return false;
+			}
+
+			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+
+			const matchup = playoffSeries?.series.at(-1)?.[0];
+
+			if (matchup === undefined || matchup.away === undefined) {
+				return false;
+			}
+
+			const loserTid =
+				matchup.home.won > matchup.away.won
+					? matchup.away.tid
+					: matchup.home.tid;
+
+			const currentSeason = g.get("season");
+			for (
+				let season = g.get("startingSeason");
+				season < currentSeason;
+				season++
+			) {
+				const userTid = g.get("userTid", season);
+				if (userTid === loserTid) {
+					return true;
+				}
+			}
+
+			return false;
+		},
+
+		when: "afterPlayoffs",
+	},
 ];
 
 if (isSport("hockey") || isSport("basketball")) {
@@ -1300,7 +1338,6 @@ if (isSport("hockey") || isSport("basketball")) {
 				);
 
 				if (!playoffSeries || playoffSeries.series.length === 0) {
-					// Should only happen if playoffs are skipped
 					return false;
 				}
 

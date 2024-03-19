@@ -544,7 +544,7 @@ const achievements: Achievement[] = [
 	},
 	{
 		slug: "expansion",
-		name: "Expansion To Champion",
+		name: "Expansion to Champion",
 		desc: "Win a title as an expansion team within its first 5 seasons.",
 		category: "Season",
 
@@ -556,12 +556,24 @@ const achievements: Achievement[] = [
 	},
 	{
 		slug: "expansion_2",
-		name: "Expansion To Champion 2",
+		name: "Expansion to Champion 2",
 		desc: "Win a title as an expansion team within its first 3 seasons.",
 		category: "Season",
 
 		check() {
 			return checkExpansion(3);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "expansion_3",
+		name: "Expansion to Champion 3",
+		desc: "Win a title as an expansion team in its first season.",
+		category: "Season",
+
+		check() {
+			return checkExpansion(1);
 		},
 
 		when: "afterPlayoffs",

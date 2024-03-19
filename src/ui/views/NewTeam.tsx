@@ -3,7 +3,43 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { PopText, RecordAndPlayoffs } from "../components";
+import { PopText, RecordAndPlayoffs, SafeHtml } from "../components";
+
+const HistoryBlock = ({
+	won,
+	lost,
+	tied,
+	otl,
+	winp,
+	finalsAppearances,
+	championships,
+	lastChampionship,
+	userOrTotal,
+}: View<"newTeam">["teams"][number]["total"] & {
+	userOrTotal: "user" | "total";
+}) => {
+	return (
+		<div>
+			<h4>{userOrTotal === "user" ? "Under your control" : "Total"}</h4>
+			Record:{" "}
+			{helpers.formatRecord({
+				won,
+				lost,
+				otl,
+				tied,
+			})}{" "}
+			({helpers.roundWinp(winp)})<br />
+			Finals record: {championships}-{championships + finalsAppearances}
+			<br />
+			Last championship:{" "}
+			{lastChampionship === undefined ? (
+				<span className="text-danger">never</span>
+			) : (
+				lastChampionship
+			)}
+		</div>
+	);
+};
 
 const NewTeam = ({
 	challengeNoRatings,
@@ -180,18 +216,35 @@ const NewTeam = ({
 			</form>
 
 			{t ? (
-				<div className="d-flex mt-3">
+				<div className="d-flex mt-3 gap-3">
 					{t.imgURL ? (
-						<div
-							style={{ width: 128 }}
-							className="me-3 d-flex align-items-center justify-content-center"
-						>
-							<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>
-								<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
-							</a>
+						<div className="d-flex flex-column align-items-center gap-4">
+							<div style={{ width: 128 }}>
+								<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>
+									<img
+										className="mw-100 mh-100"
+										src={t.imgURL}
+										alt="Team logo"
+									/>
+								</a>
+							</div>
+							{t.imgURLSmall ? (
+								<div style={{ width: 32 }}>
+									<a
+										href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}
+									>
+										<img
+											className="mw-100 mh-100"
+											src={t.imgURLSmall}
+											alt="Team logo"
+										/>
+									</a>
+								</div>
+							) : null}
 						</div>
 					) : null}
 					<div>
+						<h3>Team info</h3>
 						{expansion && t.tid !== userTid ? (
 							<>
 								New expansion team!
@@ -223,6 +276,24 @@ const NewTeam = ({
 						{confs[t.cid] ? confs[t.cid].name : null}
 						<br />
 						<PopText tid={tid} teams={teams} numActiveTeams={numActiveTeams} />
+
+						<h3 className="mt-4">Franchise history</h3>
+						<HistoryBlock {...t.total} userOrTotal="total" />
+						<div className="mt-2">
+							<HistoryBlock {...t.user} userOrTotal="user" />
+						</div>
+					</div>
+					<div>
+						<h3>Upcoming draft picks</h3>
+						<ul className="list-unstyled">
+							{t.draftPicks.map((dp, i) => {
+								return (
+									<li key={i}>
+										<SafeHtml dirty={dp.desc} />
+									</li>
+								);
+							})}
+						</ul>
 					</div>
 				</div>
 			) : null}

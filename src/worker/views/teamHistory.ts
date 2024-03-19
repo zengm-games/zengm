@@ -38,6 +38,7 @@ export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 	let playoffAppearances = 0;
 	let finalsAppearances = 0;
 	let championships = 0;
+	let lastChampionship = undefined;
 
 	for (const teamSeason of teamSeasons) {
 		const numPlayoffRounds = g.get(
@@ -80,6 +81,7 @@ export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 
 		if (teamSeason.playoffRoundsWon === numPlayoffRounds) {
 			championships += 1;
+			lastChampionship = teamSeason.season;
 		}
 
 		const gp = helpers.getTeamSeasonGp(teamSeason);
@@ -129,6 +131,7 @@ export const getHistoryTeam = (teamSeasons: TeamSeason[]) => {
 		championships,
 		bestRecord,
 		worstRecord,
+		lastChampionship,
 	};
 };
 

@@ -3,6 +3,7 @@ import { g, helpers } from "../util";
 import { PHASE } from "../../common";
 import { team } from "../core";
 import { orderBy } from "../../common/utils";
+import { getHistoryTeam } from "./teamHistory";
 
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -18,10 +19,82 @@ export const getTeamOvr = async (tid: number) => {
 	return team.ovr(players);
 };
 
+const addHistoryAndPicks = async <T extends { tid: number }>(teams: T[]) => {
+	const teamsAugmented = [];
+
+	for (const t of teams) {
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{
+				tid: t.tid,
+			},
+			"noCopyCache",
+		);
+
+		const historyTotal = await getHistoryTeam(teamSeasons);
+		const historyUser = await getHistoryTeam(
+			teamSeasons.filter(
+				teamSeason => g.get("userTid", teamSeason.season) === teamSeason.tid,
+			),
+		);
+
+		const draftPicksRaw = await idb.getCopies.draftPicks(
+			{
+				tid: t.tid,
+			},
+			"noCopyCache",
+		);
+
+		const draftPicks = await Promise.all(
+			draftPicksRaw.map(async dp => {
+				return {
+					...dp,
+					desc: await helpers.pickDesc(dp),
+				};
+			}),
+		);
+
+		teamsAugmented.push({
+			...t,
+			total: {
+				won: historyTotal.totalWon,
+				lost: historyTotal.totalLost,
+				tied: historyTotal.totalTied,
+				otl: historyTotal.totalOtl,
+				winp: historyTotal.totalWinp,
+				finalsAppearances: historyTotal.finalsAppearances,
+				championships: historyTotal.championships,
+				lastChampionship: historyTotal.lastChampionship,
+			},
+			user: {
+				won: historyUser.totalWon,
+				lost: historyUser.totalLost,
+				tied: historyUser.totalTied,
+				otl: historyUser.totalOtl,
+				winp: historyUser.totalWinp,
+				finalsAppearances: historyUser.finalsAppearances,
+				championships: historyUser.championships,
+				lastChampionship: historyUser.lastChampionship,
+			},
+			draftPicks,
+		});
+	}
+
+	return teamsAugmented;
+};
+
 const updateTeamSelect = async () => {
 	const rawTeams = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["tid", "region", "name", "pop", "imgURL", "cid", "abbrev"],
+			attrs: [
+				"tid",
+				"region",
+				"name",
+				"pop",
+				"imgURL",
+				"imgURLSmall",
+				"cid",
+				"abbrev",
+			],
 			seasonAttrs: [
 				"winp",
 				"won",
@@ -80,13 +153,15 @@ const updateTeamSelect = async () => {
 		}
 	}
 
-	const finalTeams = orderedTeams.map(t => ({
+	const teamsWithOvr = orderedTeams.map(t => ({
 		...t,
 		ovr: 0,
 	}));
-	for (const t of finalTeams) {
+	for (const t of teamsWithOvr) {
 		t.ovr = await getTeamOvr(t.tid);
 	}
+
+	const finalTeams = await addHistoryAndPicks(teamsWithOvr);
 
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),

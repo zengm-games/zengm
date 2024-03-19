@@ -220,6 +220,21 @@ const checkFoFoFo = async () => {
 	return true;
 };
 
+const checkBrickWall = async (cutoff: number) => {
+	let count = 0;
+	const awards = await idb.cache.awards.get(g.get("season"));
+
+	if (awards && awards.allDefensive && awards.allDefensive[0]) {
+		for (const p of awards.allDefensive[0].players) {
+			if (p.tid === g.get("userTid")) {
+				count += 1;
+			}
+		}
+	}
+
+	return count >= cutoff;
+};
+
 const getUserSeed = async () => {
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{
@@ -1455,19 +1470,20 @@ if (isSport("basketball")) {
 			desc: "Have 3+ players on the All-Defensive First Team.",
 			category: "Awards",
 
-			async check() {
-				let count = 0;
-				const awards = await idb.cache.awards.get(g.get("season"));
+			check() {
+				return checkBrickWall(3);
+			},
 
-				if (awards && awards.allDefensive && awards.allDefensive[0]) {
-					for (const p of awards.allDefensive[0].players) {
-						if (p.tid === g.get("userTid")) {
-							count += 1;
-						}
-					}
-				}
+			when: "afterAwards",
+		},
+		{
+			slug: "brick_wall_2",
+			name: "Brick Wall 2",
+			desc: "Have 5 players on the All-Defensive First Team.",
+			category: "Awards",
 
-				return count >= 3;
+			check() {
+				return checkBrickWall(3);
 			},
 
 			when: "afterAwards",

@@ -235,6 +235,43 @@ const checkBrickWall = async (cutoff: number) => {
 	return count >= cutoff;
 };
 
+const checkAroundTheWorld = async (target: number) => {
+	const tidsWon = new Set();
+
+	const currentSeason = g.get("season");
+	for (
+		let season = g.get("startingSeason");
+		season <= currentSeason;
+		season++
+	) {
+		const tid = g.get("userTid", season);
+		if (tid >= 0) {
+			const teamSeason = await idb.getCopy.teamSeasons(
+				{
+					tid,
+					season,
+				},
+				"noCopyCache",
+			);
+			if (teamSeason) {
+				if (
+					teamSeason.playoffRoundsWon ===
+					g.get("numGamesPlayoffSeries", season).length
+				) {
+					tidsWon.add(tid);
+				}
+			}
+		}
+
+		// See if we're one short of the cutoff right before the current season. That's the only time we want to actually give this achievement, otherwise it will trigger every year after that too
+		if (season === currentSeason - 1 && tidsWon.size !== target - 1) {
+			return false;
+		}
+	}
+
+	return tidsWon.size === target;
+};
+
 const getUserSeed = async () => {
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{
@@ -602,6 +639,42 @@ const achievements: Achievement[] = [
 
 		async check() {
 			return g.get("season") === g.get("startingSeason") + 9999;
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "around_the_world",
+		name: "Around the World",
+		desc: "Win a championship with 2 franchises in a single league.",
+		category: "Multiple Seasons",
+
+		check() {
+			return checkAroundTheWorld(2);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "around_the_world_2",
+		name: "Around the World 2",
+		desc: "Win a championship with 10 franchises in a single league.",
+		category: "Multiple Seasons",
+
+		check() {
+			return checkAroundTheWorld(10);
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
+		slug: "around_the_world_3",
+		name: "Around the World 3",
+		desc: "Win a championship with 30 franchises in a single league.",
+		category: "Multiple Seasons",
+
+		check() {
+			return checkAroundTheWorld(30);
 		},
 
 		when: "afterPlayoffs",

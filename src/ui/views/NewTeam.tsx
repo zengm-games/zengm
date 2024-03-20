@@ -216,7 +216,7 @@ const NewTeam = ({
 			</form>
 
 			{t ? (
-				<div className="d-flex mt-3 gap-3">
+				<div className="d-flex flex-wrap mt-3 gap-3">
 					{t.imgURL ? (
 						<div className="d-flex flex-column align-items-center gap-4">
 							<div style={{ width: 128 }}>
@@ -285,7 +285,7 @@ const NewTeam = ({
 					</div>
 					<div>
 						<h3>Upcoming draft picks</h3>
-						<ul className="list-unstyled">
+						<ul className="list-unstyled mb-0">
 							{t.draftPicks.map((dp, i) => {
 								return (
 									<li key={i}>

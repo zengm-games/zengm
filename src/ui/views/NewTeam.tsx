@@ -3,7 +3,13 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { PopText, RecordAndPlayoffs, SafeHtml } from "../components";
+import {
+	PlayerNameLabels,
+	PopText,
+	RecordAndPlayoffs,
+	SafeHtml,
+} from "../components";
+import classNames from "classnames";
 
 const HistoryBlock = ({
 	won,
@@ -41,6 +47,52 @@ const HistoryBlock = ({
 	);
 };
 
+const PlayerList = ({
+	challengeNoRatings,
+	players,
+	season,
+}: {
+	challengeNoRatings: boolean;
+	players: any[];
+	season: number;
+}) => {
+	if (players.length === 0) {
+		return <p>None</p>;
+	}
+
+	return (
+		<ol className="list-unstyled mb-0">
+			{players.map((p, i) => (
+				<li
+					key={p.pid}
+					className={classNames({
+						"mt-2": i > 0,
+					})}
+				>
+					<span className="p-1">
+						<PlayerNameLabels
+							pid={p.pid}
+							season={season}
+							pos={p.ratings.pos}
+							skills={p.ratings.skills}
+							watch={p.watch}
+							firstName={p.firstName}
+							lastName={p.lastName}
+						/>
+					</span>
+					<br />
+					{!challengeNoRatings ? (
+						<>
+							{p.ratings.ovr} ovr, {p.ratings.pot} pot,{" "}
+						</>
+					) : null}
+					{p.age} yo
+				</li>
+			))}
+		</ol>
+	);
+};
+
 const NewTeam = ({
 	challengeNoRatings,
 	confs,
@@ -52,6 +104,7 @@ const NewTeam = ({
 	numPlayoffRounds,
 	otherTeamsWantToHire,
 	phase,
+	season,
 	teams,
 	userTid,
 }: View<"newTeam">) => {
@@ -283,17 +336,27 @@ const NewTeam = ({
 							<HistoryBlock {...t.user} userOrTotal="user" />
 						</div>
 					</div>
-					<div>
-						<h3>Upcoming draft picks</h3>
-						<ul className="list-unstyled mb-0">
-							{t.draftPicks.map((dp, i) => {
-								return (
-									<li key={i}>
-										<SafeHtml dirty={dp.desc} />
-									</li>
-								);
-							})}
-						</ul>
+					<div className="d-flex flex-wrap gap-3">
+						<div>
+							<h3>Top players</h3>
+							<PlayerList
+								challengeNoRatings={challengeNoRatings}
+								players={t.players}
+								season={season}
+							/>
+						</div>
+						<div>
+							<h3>Upcoming draft picks</h3>
+							<ul className="list-unstyled mb-0">
+								{t.draftPicks.map((dp, i) => {
+									return (
+										<li key={i}>
+											<SafeHtml dirty={dp.desc} />
+										</li>
+									);
+								})}
+							</ul>
+						</div>
 					</div>
 				</div>
 			) : null}

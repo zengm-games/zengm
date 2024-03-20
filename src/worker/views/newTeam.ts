@@ -19,7 +19,9 @@ export const getTeamOvr = async (tid: number) => {
 	return team.ovr(players);
 };
 
-const addHistoryAndPicks = async <T extends { tid: number }>(teams: T[]) => {
+const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
+	teams: T[],
+) => {
 	const teamsAugmented = [];
 
 	for (const t of teams) {
@@ -53,6 +55,31 @@ const addHistoryAndPicks = async <T extends { tid: number }>(teams: T[]) => {
 			}),
 		);
 
+		const playersRaw = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			t.tid,
+		);
+		const players = orderBy(
+			await idb.getCopies.playersPlus(playersRaw, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"age",
+					"watch",
+					"value",
+					"draft",
+				],
+				ratings: ["ovr", "pot", "dovr", "dpot", "pos", "skills", "ovrs"],
+				season: g.get("season"),
+				fuzz: true,
+				showNoStats: true,
+				showRookies: true,
+			}),
+			"value",
+			"desc",
+		).slice(0, 5);
+
 		teamsAugmented.push({
 			...t,
 			total: {
@@ -76,6 +103,7 @@ const addHistoryAndPicks = async <T extends { tid: number }>(teams: T[]) => {
 				lastChampionship: historyUser.lastChampionship,
 			},
 			draftPicks,
+			players,
 		});
 	}
 
@@ -161,7 +189,7 @@ const updateTeamSelect = async () => {
 		t.ovr = await getTeamOvr(t.tid);
 	}
 
-	const finalTeams = await addHistoryAndPicks(teamsWithOvr);
+	const finalTeams = await addHistoryAndPicksAndPlayers(teamsWithOvr);
 
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
@@ -174,6 +202,7 @@ const updateTeamSelect = async () => {
 		numPlayoffRounds: g.get("numGamesPlayoffSeries", "current").length,
 		otherTeamsWantToHire,
 		phase: g.get("phase"),
+		season: g.get("season"),
 		teams: finalTeams,
 		userTid: g.get("userTid"),
 	};

@@ -1605,7 +1605,7 @@ if (isSport("basketball")) {
 			category: "Awards",
 
 			check() {
-				return checkBrickWall(3);
+				return checkBrickWall(5);
 			},
 
 			when: "afterAwards",

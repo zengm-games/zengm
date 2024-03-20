@@ -29,7 +29,7 @@ const HistoryBlock = ({
 				tied,
 			})}{" "}
 			({helpers.roundWinp(winp)})<br />
-			Finals record: {championships}-{championships + finalsAppearances}
+			Finals record: {championships}-{finalsAppearances - championships}
 			<br />
 			Last championship:{" "}
 			{lastChampionship === undefined ? (

@@ -56,7 +56,7 @@ const DraftClass = ({
 					You cannot import/export future draft classes during a fantasy draft
 				</div>
 			) : (
-				<div className="d-flex mb-3">
+				<div className="d-flex flex-wrap gap-1 mb-3">
 					<div className="btn-group me-auto">
 						<button
 							className="btn btn-light-bordered btn-xs"
@@ -127,6 +127,7 @@ const DraftClass = ({
 						) : null}
 					</div>
 					<a
+						className="text-nowrap"
 						href={helpers.leagueUrl([
 							"compare_players",
 							players

@@ -1,5 +1,4 @@
 import { AWARD_NAMES, bySport, isSport } from "../../common";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
 import stats from "../core/player/stats";
 import { weightByMinutes } from "../db/getCopies/playersPlus";
@@ -70,12 +69,12 @@ const evaluate = (
 		  },
 ) => {
 	const MIN_GP_SEASON = bySport({
-		baseball: 40,
-		basketball: 20,
-		football: 7,
-		hockey: 20,
+		baseball: 5,
+		basketball: 10,
+		football: 5,
+		hockey: 10,
 	});
-	const MIN_GP_TOTAL = defaultGameAttributes.numGames[0].value;
+	const MIN_GP_TOTAL = MIN_GP_SEASON * 3;
 
 	const goatFormula =
 		formula ??
@@ -92,11 +91,6 @@ const evaluate = (
 
 		// Don't check row.min being 0, since that is true for some historical stats before 1952
 		if (row.gp === 0) {
-			return false;
-		}
-
-		// Not sure why I made this only for career and not for season too
-		if (info.type === "career" && row.gp < MIN_GP_SEASON) {
 			return false;
 		}
 
@@ -228,10 +222,8 @@ const evaluate = (
 	const value = formulaCache[goatFormula].evaluate(object);
 
 	if (Number.isNaN(value)) {
-		console.log("NaN", value);
 		return -Infinity;
 	}
-	console.log("value", value, object);
 
 	return value;
 };

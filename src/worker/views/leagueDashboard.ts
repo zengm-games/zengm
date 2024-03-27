@@ -518,7 +518,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		const confTeams: (typeof teams[number] & {
+		const confTeams: ((typeof teams)[number] & {
 			rank: number;
 			gb: number;
 		})[] = (
@@ -596,8 +596,27 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			events.push(...events2);
 		}
 
+		const teams = (
+			await idb.getCopies.teamsPlus(
+				{
+					seasonAttrs: [
+						"abbrev",
+						"colors",
+						"jersey",
+						"imgURL",
+						"imgURLSmall",
+						"region",
+					],
+					season: g.get("season"),
+					addDummySeason: true,
+				},
+				"noCopyCache",
+			)
+		).map(t => t.seasonAttrs);
+
 		return {
 			events,
+			teams,
 		};
 	}
 };

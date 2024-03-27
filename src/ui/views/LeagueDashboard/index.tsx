@@ -44,6 +44,7 @@ const LeagueDashboard = ({
 	startersStats,
 	teamLeaders,
 	teamStats,
+	teams,
 	tied,
 	usePts,
 	userTid,
@@ -193,7 +194,12 @@ const LeagueDashboard = ({
 					/>
 				</div>
 				<div className="col-xl-5 col-lg-4 mb-3">
-					<Headlines events={events} season={season} userTid={userTid} />
+					<Headlines
+						events={events}
+						season={season}
+						teams={teams}
+						userTid={userTid}
+					/>
 				</div>
 			</div>
 		</>

@@ -184,14 +184,7 @@ const updateNews = async (
 				},
 				"noCopyCache",
 			)
-		).map(t => ({
-			abbrev: t.seasonAttrs.abbrev,
-			colors: t.seasonAttrs.colors,
-			jersey: t.seasonAttrs.jersey,
-			imgURL: t.seasonAttrs.imgURL,
-			imgURLSmall: t.seasonAttrs.imgURLSmall,
-			region: t.seasonAttrs.region,
-		}));
+		).map(t => t.seasonAttrs);
 
 		return {
 			abbrev,

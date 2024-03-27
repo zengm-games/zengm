@@ -1,6 +1,6 @@
 import { m, AnimatePresence } from "framer-motion";
 import { NewsBlock } from "../../components";
-import { helpers, useLocal } from "../../util";
+import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { Component, createElement, memo } from "react";
 import type { ComponentType } from "react";
@@ -52,12 +52,10 @@ const transition = { duration: 0.4, type: "tween" };
 
 type HeadlinesProps = Pick<
 	View<"leagueDashboard">,
-	"events" | "season" | "userTid"
+	"events" | "season" | "userTid" | "teams"
 >;
 
-const Headlines = ({ events, season, userTid }: HeadlinesProps) => {
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
-
+const Headlines = ({ events, season, teams, userTid }: HeadlinesProps) => {
 	return (
 		<>
 			<h2 className="mt-3" style={{ marginBottom: "-0.5rem" }}>
@@ -79,7 +77,7 @@ const Headlines = ({ events, season, userTid }: HeadlinesProps) => {
 								<NewsBlock
 									event={event}
 									season={season}
-									teams={teamInfoCache}
+									teams={teams}
 									userTid={userTid}
 								/>
 							</m.div>

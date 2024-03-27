@@ -6,7 +6,7 @@ import {
 	formatPlayerRelativesList,
 } from "./customizePlayer";
 import { shuffle } from "../../common/random";
-import { g } from "../util";
+import { g, getTeamInfoBySeason } from "../util";
 import { maxBy } from "../../common/utils";
 import { getPlayerProfileStats } from "./player";
 import type { SeasonType } from "../api/processInputs";
@@ -380,6 +380,7 @@ const updateComparePlayers = async (
 				});
 
 				if (p) {
+					let teamInfo;
 					if (season === "career") {
 						const statsKey =
 							playoffs === "playoffs"
@@ -392,10 +393,18 @@ const updateComparePlayers = async (
 
 						// Peak ratings
 						p.ratings = maxBy(p.ratings, "ovr");
+
+						teamInfo = await getTeamInfoBySeason(p.tid, p.ratings.season);
 					} else {
 						p.awards = (p.awards as any[]).filter(
 							award => award.season === season,
 						);
+						teamInfo = await getTeamInfoBySeason(p.tid, season);
+					}
+
+					if (teamInfo) {
+						p.colors = teamInfo.colors;
+						p.jersey = teamInfo.jersey;
 					}
 
 					players.push({

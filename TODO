@@ -1,3 +1,13 @@
+jersey colors https://discord.com/channels/290013534023057409/331882115119448065/1221998452318277743
+- news feed
+
+more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
+- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
+
+option for neutral site playoffs https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
+- none, all, finals
+- use in FBGM
+
 new achievements
 - force challenge mode to remain on
 - win title X years after sisyphus mode
@@ -28,12 +38,6 @@ jersey numbers by position and frequency
   - except for #1, anyone can wear any number
   - make 66 and 99 more common
 
-PWA install prompt
-- android
-  - beforeinstallprompt
-- ios https://medium.com/ngconf/installing-your-pwa-on-ios-d1c497968e62
-  - data loss when switching from browser to PWA?
-
 offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
 
 draft pick trade logic bug https://old.reddit.com/message/messages/274jbgt AI may value the picks by team record only, even when the better record team is in the lottery and the worse record team is not
@@ -45,8 +49,6 @@ hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/7
 - Offsides -> Just leads to another faceoff. Maybe frequency could be calculated by something about Possession Teams' OIQ vs The Defenses DIQ
 - Icing -> Team that iced puck cannot line change, leads to another faceoff. Would replace missed shots on Empty Nets. But Icing also happens during games.
 - Puck out of play -> Leads to faceoff
-
-safety being logged as "penalty overturned score" https://discord.com/channels/290013534023057409/290015591216054273/1211395504223686679
 
 event log
 - make sure numbers look reasonable
@@ -130,12 +132,9 @@ Support logos being saved to IndexedDB
 
 "field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://chromestatus.com/feature/5176596826161152
 
-more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
-- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
-
 BBGM injury rate too low? https://discord.com/channels/290013534023057409/290015591216054273/1190784110763970600
 
-better clock handling in BBGM - calculate tim as you go in the play
+better clock handling in BBGM - calculate time as you go in the play
 - turnovers/steals
   - better separation of frontcourt/backcourt turnovers, rather than doing it only for possession starting in frontcourt
   - simulate turnovers on inbound pass

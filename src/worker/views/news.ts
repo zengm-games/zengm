@@ -171,7 +171,14 @@ const updateNews = async (
 		const teams = (
 			await idb.getCopies.teamsPlus(
 				{
-					seasonAttrs: ["abbrev", "imgURL", "imgURLSmall", "region"],
+					seasonAttrs: [
+						"abbrev",
+						"colors",
+						"jersey",
+						"imgURL",
+						"imgURLSmall",
+						"region",
+					],
 					season: season,
 					addDummySeason: true,
 				},
@@ -179,6 +186,8 @@ const updateNews = async (
 			)
 		).map(t => ({
 			abbrev: t.seasonAttrs.abbrev,
+			colors: t.seasonAttrs.colors,
+			jersey: t.seasonAttrs.jersey,
 			imgURL: t.seasonAttrs.imgURL,
 			imgURLSmall: t.seasonAttrs.imgURLSmall,
 			region: t.seasonAttrs.region,

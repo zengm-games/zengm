@@ -33,16 +33,12 @@ const NewsBlock = ({
 	event: View<"news">["events"][number];
 	season: number;
 	userTid: number;
-	teams: {
-		abbrev: string;
-		imgURL?: string;
-		imgURLSmall?: string;
-		region: string;
-	}[];
+	teams: View<"news">["teams"];
 }) => {
 	let teamName = null;
+	let teamInfo;
 	if (event.tid !== undefined) {
-		const teamInfo = teams[event.tid];
+		teamInfo = teams[event.tid];
 
 		if (teamInfo) {
 			const rosterURL = helpers.leagueUrl([
@@ -71,7 +67,7 @@ const NewsBlock = ({
 	} else if (event.tids && event.tids.length <= 3) {
 		// Show multiple logos, like for a trade;
 		teamName = event.tids.map(tid => {
-			const teamInfo = teams[tid];
+			teamInfo = teams[tid];
 
 			if (!teamInfo) {
 				return null;
@@ -122,7 +118,12 @@ const NewsBlock = ({
 						}}
 						className="flex-shrink-0"
 					>
-						<PlayerPicture face={event.p.face} imgURL={event.p.imgURL} />
+						<PlayerPicture
+							face={event.p.face}
+							imgURL={event.p.imgURL}
+							colors={teamInfo?.colors}
+							jersey={teamInfo?.jersey}
+						/>
 					</div>
 				) : null}
 				<div className="p-2">

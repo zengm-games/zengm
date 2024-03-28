@@ -315,7 +315,7 @@ const setupRoutes = () => {
 			}
 
 			if (!context.state.noTrack && window.enableLogging) {
-				// Track page_view here so logged title is correct
+				// Track page_view here rather than in routeMatched so logged title is correct
 				const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
 
 				// https://developers.google.com/analytics/devguides/collection/ga4/views?client_type=gtag

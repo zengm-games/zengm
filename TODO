@@ -608,15 +608,6 @@ use TeamAbbrevLink more places
 
 baseballGM: roster composition on Trade page. WAR on resigning page? https://discord.com/channels/290013534023057409/331882115119448065/991842013798473749
 
-don't show captains on All-Star History page unless it's a draft
-
-ga4
-- https://developers.google.com/analytics/devguides/collection/ga4/reference/config#user_id
-- Configure > Events
-  - mark as conversion
-- send_to can send to only one property
-- bbgm-ads account link
-
 regular season -> playoffs processing transition is slow in football, maybe only in prod build not watch
 
 sim to all-star game should be present even when it's in the playoffs https://discord.com/channels/290013534023057409/569726303926878219/996409511428505610

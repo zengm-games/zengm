@@ -5,7 +5,7 @@ import Players from "./Players";
 import RetiredJerseyNumbers from "./RetiredJerseyNumbers";
 import Seasons from "./Seasons";
 import { MoreLinks } from "../../components";
-import hideableSectionFactory from "../../components/hideableSectionFactory";
+import HideableSection from "../../components/HideableSection";
 
 const TeamHistory = ({
 	abbrev,
@@ -34,15 +34,13 @@ const TeamHistory = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const HideableSection = hideableSectionFactory("TeamHistory");
-
 	return (
 		<>
 			<MoreLinks type="team" page="team_history" abbrev={abbrev} tid={tid} />
 
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
-					<HideableSection title="Overall">
+					<HideableSection pageName="TeamHistory" title="Overall">
 						<Overall
 							bestRecord={bestRecord}
 							championships={championships}

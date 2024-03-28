@@ -4,7 +4,7 @@ import type { View } from "../../common/types";
 import Overall from "./TeamHistory/Overall";
 import Players from "./TeamHistory/Players";
 import Seasons from "./TeamHistory/Seasons";
-import hideableSectionFactory from "../components/hideableSectionFactory";
+import HideableSection from "../components/HideableSection";
 
 const GmHistory = ({
 	bestRecord,
@@ -28,8 +28,6 @@ const GmHistory = ({
 
 	const showOverall = teamHistories.length !== 1;
 
-	const HideableSection = hideableSectionFactory("GmHistory");
-
 	return (
 		<>
 			<p>
@@ -46,7 +44,7 @@ const GmHistory = ({
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
 					{showOverall ? (
-						<HideableSection title="Overall">
+						<HideableSection pageName="GmHistory" title="Overall">
 							<Overall
 								bestRecord={bestRecord}
 								championships={championships}

@@ -11,7 +11,7 @@ import TopStuff from "./TopStuff";
 import { isSport, PLAYER } from "../../../common";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
 import TeamAbbrevLink from "../../components/TeamAbbrevLink";
-import hideableSectionFactory from "../../components/hideableSectionFactory";
+import HideableSection from "../../components/HideableSection";
 
 const SeasonLink = ({
 	className,
@@ -44,7 +44,6 @@ const StatsTable = ({
 	p,
 	stats,
 	superCols,
-	HideableSection,
 	leaders,
 }: {
 	name: string;
@@ -52,7 +51,6 @@ const StatsTable = ({
 	p: View<"player">["player"];
 	stats: string[];
 	superCols?: any[];
-	HideableSection: ReturnType<typeof hideableSectionFactory>;
 	leaders: View<"player">["leaders"];
 }) => {
 	const hasRegularSeasonStats = p.careerStats.gp > 0;
@@ -80,8 +78,8 @@ const StatsTable = ({
 		playoffs === "combined"
 			? p.careerStatsCombined
 			: playoffs
-			? p.careerStatsPlayoffs
-			: p.careerStats;
+				? p.careerStatsPlayoffs
+				: p.careerStats;
 
 	if (onlyShowIf !== undefined) {
 		let display = false;
@@ -155,8 +153,8 @@ const StatsTable = ({
 		playoffs === "combined"
 			? "combined"
 			: playoffs === true
-			? "playoffs"
-			: "regularSeason";
+				? "playoffs"
+				: "regularSeason";
 
 	let hasLeader = false;
 	if (leadersType) {
@@ -338,7 +336,7 @@ const Player2 = ({
 			player.tid !== PLAYER.UNDRAFTED
 				? {
 						playerProfile: "overview",
-				  }
+					}
 				: undefined,
 		dropdownCustomURL: fields => {
 			let gameLogSeason;
@@ -360,8 +358,6 @@ const Player2 = ({
 	});
 
 	const awardsGrouped = groupAwards(player.awards);
-
-	const HideableSection = hideableSectionFactory(undefined);
 
 	let hasLeader = false;
 	for (const row of Object.values(leaders)) {
@@ -405,7 +401,6 @@ const Player2 = ({
 					stats={stats}
 					superCols={superCols}
 					p={player}
-					HideableSection={HideableSection}
 					leaders={leaders}
 				/>
 			))}

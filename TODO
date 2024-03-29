@@ -1,3 +1,5 @@
+OTW
+
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 
@@ -608,8 +610,6 @@ use TeamAbbrevLink more places
 
 baseballGM: roster composition on Trade page. WAR on resigning page? https://discord.com/channels/290013534023057409/331882115119448065/991842013798473749
 
-regular season -> playoffs processing transition is slow in football, maybe only in prod build not watch
-
 sim to all-star game should be present even when it's in the playoffs https://discord.com/channels/290013534023057409/569726303926878219/996409511428505610
 - need a consistent way to determine if playoffs ASG has happened or not. currently it's hackily determined in getNumDaysPlayoffs and newSchedulePlayoffsDay
 
@@ -666,8 +666,6 @@ finances graphs direction https://old.reddit.com/r/BasketballGM/comments/t3v3bj/
 
 pot skills - show % likelihood of achieving a skill tag, based on pot bootstrap
 
-column title typos in trading block table https://discord.com/channels/290013534023057409/290015591216054273/960753790728957953
-
 add player note to popover https://discord.com/channels/290013534023057409/331882115119448065/955039124501450793
 
 When you reach playoffs if you press sim game or watch game live it puts the game on a seperate day. Say it is day 20 in playoffs, you live sim a game and the game you simmed remains on day 20 while the rest of the  games for that day are moved to day 21. https://discord.com/channels/290013534023057409/290015591216054273/953828260565905438
@@ -675,8 +673,6 @@ When you reach playoffs if you press sim game or watch game live it puts the gam
 if better teams get better draft picks, tiebreakers should be reversed https://discord.com/channels/290013534023057409/290015591216054273/951988322807476284
 
 sticky columns (maybe just mobile >2 columns) don't get applied correctly when table contents changes, such as on the trade screen when making a trade https://discord.com/channels/@me/673750689649917958/952412436609245255
-
-complete a successful trade. then click "what would make this deal work?" - the box containing text from other GM is green rather than blue https://discord.com/channels/@me/673750689649917958/952413582421786645
 
 add more stuff to league leaders - TS%, DD, TD https://discord.com/channels/@me/673750689649917958/953637095887499324
 
@@ -920,8 +916,6 @@ no attendance in baseball https://discord.com/channels/290013534023057409/290015
 More preset league structures
 - https://discord.com/channels/290013534023057409/331882115119448065/876662349287804938
 
-show tenths of seconds in live sim play by play
-
 player ratings stats popover, allow switching season
 - include peak and career as options
 - one switch for ratings and stats (For career, show peak ratings)
@@ -1088,9 +1082,6 @@ playoff series W/L in live sim double incrementing https://discord.com/channels/
 disable injuries without god mode before league? https://discord.com/channels/@me/831754887058423819/833206526780768277
 
 auto buttons to height in player editor https://discord.com/channels/290013534023057409/331882115119448065/833532089281282058
-
-create new 2021 league with realStats="all", go to season summary, best record teams still show up with their default names even if you have real team info override
-- really should get rid of abbrev/region/name from that object and just store tid
 
 Block numbers increase by >33% in playoffs, this is a bit too much!!! https://discord.com/channels/290013534023057409/290015591216054273/832653523644710953
 

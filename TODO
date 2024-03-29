@@ -1,4 +1,7 @@
 OTW
+- formatRecord as W-OTW-OTL-L-T if both OTW and OTL are available, otherwise if only OTL keep it after L
+- add tracking of ROW for tiebreakers even if we don't break out OTW in standings - maybe always track this
+  - RW might be needed to - doesn't include shootouts. shootouts make this more complicated, maybe not worth doing now...
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is

@@ -5,6 +5,7 @@ import isUntradable from "../core/trade/isUntradable";
 import { augmentOffers } from "../api";
 import { fixPlayers } from "./tradeProposals";
 import { PLAYER } from "../../common";
+import { orderBy } from "../../common/utils";
 
 const savedTradeHashToTradeTeams = (hash: string): TradeTeams => {
 	const values = JSON.parse(hash);
@@ -38,12 +39,15 @@ const getOffers = async () => {
 		savedTradeHashToTradeTeams(savedTrade.hash),
 	);
 
-	return (await augmentOffers(offers)).map((offer, i) => {
-		return {
-			...offer,
-			hash: savedTrades[i].hash,
-		};
-	});
+	return orderBy(
+		(await augmentOffers(offers)).map((offer, i) => {
+			return {
+				...offer,
+				hash: savedTrades[i].hash,
+			};
+		}),
+		info => info.summary.teams[1].name,
+	);
 };
 
 export type MissingAsset =

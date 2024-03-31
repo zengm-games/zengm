@@ -54,6 +54,7 @@ hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/7
 - Offsides -> Just leads to another faceoff. Maybe frequency could be calculated by something about Possession Teams' OIQ vs The Defenses DIQ
 - Icing -> Team that iced puck cannot line change, leads to another faceoff. Would replace missed shots on Empty Nets. But Icing also happens during games.
 - Puck out of play -> Leads to faceoff
+- other stuff: https://discord.com/channels/@me/778760871911751700/1223414545234530425
 
 event log
 - make sure numbers look reasonable

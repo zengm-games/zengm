@@ -154,7 +154,7 @@ export const Offer = (props: OfferProps) => {
 					</a>
 				</h2>
 				<SaveTrade
-					className="mx-2"
+					className="ms-4"
 					tradeTeams={[
 						{
 							pids: pidsUser,
@@ -171,7 +171,7 @@ export const Offer = (props: OfferProps) => {
 				{onRemove ? (
 					<button
 						type="button"
-						className="btn-close"
+						className="btn-close ms-4"
 						title="Remove trade from list"
 						onClick={onRemove}
 					/>

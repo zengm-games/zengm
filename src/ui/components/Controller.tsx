@@ -106,18 +106,16 @@ const Controller = () => {
 						<div className="d-flex" style={minHeight100}>
 							<div className="w-100 d-flex flex-column" style={minWidth0}>
 								<Header />
-								<main className="p402_premium">
-									<div id="actual-actual-content" className="clearfix">
-										<ErrorBoundary key={idLoaded}>
-											{Component ? (
-												<KeepPreviousRenderWhileUpdating updating={updating}>
-													<Component {...data} />
-												</KeepPreviousRenderWhileUpdating>
-											) : null}
-											{inLeague ? <MultiTeamMenu /> : null}
-										</ErrorBoundary>
-									</div>
-								</main>
+								<div id="actual-actual-content" className="clearfix">
+									<ErrorBoundary key={idLoaded}>
+										{Component ? (
+											<KeepPreviousRenderWhileUpdating updating={updating}>
+												<Component {...data} />
+											</KeepPreviousRenderWhileUpdating>
+										) : null}
+										{inLeague ? <MultiTeamMenu /> : null}
+									</ErrorBoundary>
+								</div>
 								<Footer />
 							</div>
 							<Skyscraper />

@@ -1384,7 +1384,6 @@ class GameSim extends GameSimBase {
 			actualNewLine = this.playersOnIce[t].D;
 		}
 		for (const p of actualNewLine) {
-			console.log("shft line", t, p.id, this.clock);
 			this.recordStat(t, p, "shft");
 		}
 	}
@@ -1405,7 +1404,6 @@ class GameSim extends GameSimBase {
 					t: TeamNum;
 			  },
 	) {
-		console.log("updatePlayersOnIce", options.type, this.clock);
 		let substitutions = false;
 
 		for (const t of teamNums) {

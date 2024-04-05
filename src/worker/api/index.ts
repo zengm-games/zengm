@@ -130,6 +130,7 @@ import { getSummary } from "../views/trade";
 import { getStats, statTypes } from "../views/playerGraphs";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 import isUntradable from "../core/trade/isUntradable";
+import getWinner from "../../common/getWinner";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1327,11 +1328,15 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 	while (cursor) {
 		const { gid, playoffs, season, teams } = cursor.value;
 
-		for (let i = 0; i < 2; i++) {
+		for (const i of [0, 1] as const) {
+			const j = i === 0 ? 1 : 0;
 			const t = teams[i];
-			const t2 = teams[i === 0 ? 1 : 0];
+			const t2 = teams[j];
 
 			for (const p of t.players) {
+				const winner = getWinner([t, t2]);
+				const result = winner === i ? "W" : winner === j ? "L" : "T";
+
 				rows.push([
 					gid,
 					p.pid,
@@ -1340,7 +1345,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					g.get("teamInfoCache")[t.tid]?.abbrev,
 					g.get("teamInfoCache")[t2.tid]?.abbrev,
 					`${t.pts}-${t2.pts}`,
-					t.pts > t2.pts ? "W" : "L",
+					result,
 					season,
 					playoffs,
 					p.min,

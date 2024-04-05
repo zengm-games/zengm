@@ -1,4 +1,5 @@
 import { filterPlayerStats, PLAYER_GAME_STATS } from "../../common";
+import getWinner from "../../common/getWinner";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers, processPlayerStats } from "../util";
@@ -78,14 +79,8 @@ const updatePlayerGameLog = async (
 
 			const t1 = t0 === 0 ? 1 : 0;
 
-			let result;
-			if (game.teams[t0].pts > game.teams[t1].pts) {
-				result = "W";
-			} else if (game.teams[t0].pts < game.teams[t1].pts) {
-				result = "L";
-			} else {
-				result = "T";
-			}
+			const winner = getWinner(game.teams);
+			const result = winner === t0 ? "W" : winner === t1 ? "L" : "T";
 
 			const overtimeText = helpers.overtimeText(
 				game.overtimes,

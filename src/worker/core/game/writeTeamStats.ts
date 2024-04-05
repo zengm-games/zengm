@@ -10,6 +10,7 @@ import {
 	getBaseAttendance,
 } from "./attendance";
 import { levelToAmount } from "../../../common/budgetLevels";
+import getWinner from "../../../common/getWinner";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -24,7 +25,9 @@ const writeTeamStats = async (results: GameResults) => {
 
 	const ties = season.hasTies("current");
 
-	for (const t1 of [0, 1]) {
+	const winner = getWinner([results.team[0].stat, results.team[1].stat]);
+
+	for (const t1 of [0, 1] as const) {
 		const t2 = t1 === 1 ? 0 : 1;
 		const payroll = await team.getPayroll(results.team[t1].id);
 		const t = await idb.cache.teams.get(results.team[t1].id);
@@ -36,8 +39,8 @@ const writeTeamStats = async (results: GameResults) => {
 			],
 		);
 		const teamSeason = teamSeasons.at(-1)!;
-		const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
-		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;
+		const won = winner === t1;
+		const lost = winner === t2;
 
 		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 		let teamStats = await idb.cache.teamStats.indexGet(

@@ -315,6 +315,9 @@ type GameTeam = {
 		lost: number;
 	};
 
+	// This stat is guaranteed to be here in all sports. Others maybe not
+	pts: number;
+
 	// For stats
 	[key: string]: any;
 };

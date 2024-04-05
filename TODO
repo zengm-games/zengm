@@ -2,10 +2,6 @@ indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
 shootouts
-- any code that determines win/tie from game object needs to account for this
-  - const tied =
-  - .pts >
-  - winner = 
 - UI displaying game results needs to handle it somehow
   - https://www.nhl.com/gamecenter/det-vs-fla/2024/03/30/2023021165 shows it as an extra period, resulting in 1 extra point for the winner
   - https://en.wikipedia.org/wiki/2022_FIFA_World_Cup#Knockout_stage shows # of PKs in parens after the actual # of goals
@@ -16,6 +12,11 @@ shootouts
 - don't track any stats
 - no clock
 - need to support different num overtimes in playoffs - if not infinity, then shootout happens
+- in writeGameStats, add sPts to gameStats.won and lost
+- make sure game-tying and game-winning appear correctly in text of clutch shots when there is a shootout
+  - do shootout after calling checkGameWinner()
+- make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
+- for getWinner typescript, would be nice if it knew it would only return undefined if pts was undefined
 - by sport
   - baseball: pick best HR hitter, each one gets N pitches from a new pitcher
   - basketball: pick best 3 point shooter, each one gets N shots

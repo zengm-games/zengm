@@ -10,6 +10,7 @@ import type {
 	GamePlayer,
 	GameResults,
 } from "../../../common/types";
+import getWinner from "../../../common/getWinner";
 
 const checkPlayer = bySport({
 	baseball: checkStatisticalFeatBaseball,
@@ -60,10 +61,12 @@ const checkStatisticalFeat = (
 	const { score, feats } = checkPlayer(p);
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 
+	const winner = getWinner([results.team[0].stat, results.team[1].stat]);
 	if (feats) {
-		const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
-		const won = results.team[i].stat.pts > results.team[j].stat.pts;
-		const tied = results.team[i].stat.pts === results.team[j].stat.pts;
+		const [i, j] =
+			results.team[0].id === tid ? ([0, 1] as const) : ([1, 0] as const);
+		const won = winner === i;
+		const tied = winner === -1;
 		const featTextArr = Object.keys(feats).map(stat => {
 			const text = `${feats[stat]} ${stat}`;
 
@@ -105,7 +108,7 @@ const checkStatisticalFeat = (
 			? `${tied ? "tie" : won ? "win" : "loss"} in the All-Star Game`
 			: `${tied ? "tie with the" : won ? "win over the" : "loss to the"} ${
 					g.get("teamInfoCache")[results.team[j].id]?.name
-			  }`;
+				}`;
 		featText += `</a> in ${
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
 		} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${endPart}.`;

@@ -14,6 +14,7 @@ import type { Conditions, GameResults, Player } from "../../../common/types";
 import stats from "../player/stats";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
 import { maxBy } from "../../../common/utils";
+import getWinner from "../../../common/getWinner";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -247,12 +248,7 @@ const writePlayerStats = async (
 	for (const result of results) {
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2;
 
-		const winningTeam =
-			result.team[0].stat.pts > result.team[1].stat.pts
-				? 0
-				: result.team[0].stat.pts < result.team[1].stat.pts
-				  ? 1
-				  : undefined;
+		const winner = getWinner([result.team[0].stat, result.team[1].stat]);
 
 		const qbgResults = new Map<number, "W" | "L" | "OTL" | "T">();
 		if (isSport("football") || isSport("hockey")) {
@@ -273,9 +269,9 @@ const writePlayerStats = async (
 
 				if (id !== undefined) {
 					let qbgResult: "W" | "L" | "OTL" | "T";
-					if (winningTeam === undefined) {
+					if (winner === -1) {
 						qbgResult = "T";
-					} else if (winningTeam === i) {
+					} else if (winner === i) {
 						qbgResult = "W";
 					} else if (otl) {
 						qbgResult = "OTL";
@@ -309,7 +305,7 @@ const writePlayerStats = async (
 				}
 
 				// Check for gwG/gwA - can only be done by looking at complete scoring log for the game, since we're looking for the goal that is one more than what the losing team had in the game
-				if (winningTeam === i) {
+				if (winner === i) {
 					const j = i === 0 ? 1 : 0;
 					const winningGoalScore = result.team[j].stat.pts + 1;
 					let currentScore = 0;

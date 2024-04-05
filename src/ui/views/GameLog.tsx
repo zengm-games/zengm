@@ -5,6 +5,7 @@ import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 import { bySport, isSport } from "../../common";
+import getWinner from "../../common/getWinner";
 
 const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -97,14 +98,8 @@ const GamesList = ({
 						const user = home ? 0 : 1;
 						const other = home ? 1 : 0;
 
-						let result;
-						if (gm.teams[user].pts > gm.teams[other].pts) {
-							result = "W";
-						} else if (gm.teams[user].pts < gm.teams[other].pts) {
-							result = "L";
-						} else {
-							result = "T";
-						}
+						const winner = getWinner(gm.teams);
+						const result = winner === user ? "W" : winner === other ? "L" : "T";
 
 						const overtimeText = helpers.overtimeText(
 							gm.overtimes,

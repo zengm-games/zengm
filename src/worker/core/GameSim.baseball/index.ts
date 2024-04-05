@@ -11,6 +11,7 @@ import Team from "./Team";
 import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
 import GameSimBase from "../GameSimBase";
+import getWinner from "../../../common/getWinner";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -348,11 +349,11 @@ class GameSim extends GameSimBase {
 			? random.choice(
 					["farLeftFoul", "farRightFoul", "outOfPlay"] as const,
 					[1.5, 0.5, 1],
-			  )
+				)
 			: random.choice(
 					["farLeft", "left", "middle", "right", "farRight"] as const,
 					[1.5, 2, 1.5, 1, 0.5],
-			  );
+				);
 
 		let speed;
 		let distance;
@@ -2158,10 +2159,10 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			const teamWon = this.team[t].t.stat.pts > this.team[t2].t.stat.pts;
+			const winner = getWinner([this.team[0].t.stat, this.team[1].t.stat]);
 			const saveOutsNeeded = this.team[t].saveOutsNeeded;
 			if (
-				teamWon &&
+				winner === t &&
 				pitcher.id !== this.winEligiblePid &&
 				saveOutsNeeded !== undefined &&
 				pitcher.stat.outs >= saveOutsNeeded
@@ -2346,7 +2347,7 @@ class GameSim extends GameSimBase {
 				(saveOutsNeeded < 9 ||
 					this.team[this.o].t.stat.pts === this.team[this.d].t.stat.pts)) ||
 			(this.inning > this.numInnings &&
-				this.team[this.o].t.stat.pts >= this.team[this.d].t.stat.pts);
+				getWinner([this.team[0].t.stat, this.team[1].t.stat]) !== this.d);
 		const candidate = t.getBestReliefPitcher(closerSituation);
 		if (!candidate) {
 			return;
@@ -2499,7 +2500,7 @@ class GameSim extends GameSimBase {
 		if (
 			this.o === 0 &&
 			this.inning >= this.numInnings &&
-			this.team[0].t.stat.pts > this.team[1].t.stat.pts
+			getWinner([this.team[0].t.stat, this.team[1].t.stat]) === 0
 		) {
 			// Game over, home team is at bat and up after 9+ innings
 			return true;
@@ -2532,7 +2533,7 @@ class GameSim extends GameSimBase {
 				if (this.o === 1) {
 					if (
 						this.inning >= this.numInnings &&
-						this.team[0].t.stat.pts > this.team[1].t.stat.pts
+						getWinner([this.team[0].t.stat, this.team[1].t.stat]) === 0
 					) {
 						// No need to play bottom of inning, home team is already up
 						return true;

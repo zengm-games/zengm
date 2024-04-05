@@ -35,6 +35,7 @@ import type {
 	UpdateEvents,
 } from "../../../common/types";
 import allowForceTie from "../../../common/allowForceTie";
+import getWinner from "../../../common/getWinner";
 
 /**
  * Play one or more days of games.
@@ -445,11 +446,12 @@ const play = async (
 						homeCourtFactor,
 					});
 
+					const winner = getWinner([result.team[0].stat, result.team[1].stat]);
 					let wonTid: number | undefined;
-					if (result.team[0].stat.pts > result.team[1].stat.pts) {
+					if (winner === 0) {
 						wonTid = result.team[0].id;
 						homeWonLastGame = true;
-					} else if (result.team[0].stat.pts < result.team[1].stat.pts) {
+					} else if (winner === 1) {
 						wonTid = result.team[1].id;
 						homeWonLastGame = false;
 					}

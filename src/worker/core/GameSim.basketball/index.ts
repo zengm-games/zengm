@@ -6,6 +6,7 @@ import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
 import GameSimBase from "../GameSimBase";
 import { range } from "../../../common/utils";
 import PlayByPlayLogger from "./PlayByPlayLogger";
+import getWinner from "../../../common/getWinner";
 
 const SHOT_CLOCK = 24;
 const NUM_TIMEOUTS = 7;
@@ -406,11 +407,11 @@ class GameSim extends GameSimBase {
 			numOvertimes += 1;
 		}
 
+		this.checkGameWinner();
+
 		this.playByPlay.logEvent({
 			type: "gameOver",
 		});
-
-		this.checkGameWinner();
 
 		// Delete stuff that isn't needed before returning
 		for (const t of teamNums) {
@@ -2422,9 +2423,15 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		const winner = this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1;
+		const winner = getWinner([this.team[0].stat, this.team[1].stat]);
+		if (winner === undefined) {
+			return;
+		}
 		const loser = winner === 0 ? 1 : 0;
-		const finalMargin = this.team[winner].stat.pts - this.team[loser].stat.pts;
+		const finalMargin =
+			winner === -1
+				? 0
+				: this.team[winner].stat.pts - this.team[loser].stat.pts;
 		let margin = finalMargin;
 
 		// work backwards from last scoring plays, check if any resulted in a tie-break or lead change
@@ -2486,8 +2493,7 @@ class GameSim extends GameSimBase {
 				const team = this.team[play.team];
 				const player = this.team[play.team].player[play.player];
 
-				const winningOrTying =
-					finalMargin === 0 ? "game-tying" : "game-winning";
+				const winningOrTying = winner === -1 ? "game-tying" : "game-winning";
 
 				let eventText = `<a href="${helpers.leagueUrl([
 					"player",

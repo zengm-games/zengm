@@ -19,6 +19,7 @@ export const ALWAYS_WRAP = [
 	"otl",
 	"playoffsNumTeamsDiv",
 	"pointsFormula",
+	"shootoutRounds",
 	"tiebreakers",
 	"userTid",
 ];

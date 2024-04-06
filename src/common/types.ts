@@ -318,6 +318,9 @@ type GameTeam = {
 	// This stat is guaranteed to be here in all sports. Others maybe not
 	pts: number;
 
+	// Defined only if it's a shootout
+	sPts?: number;
+
 	// For stats
 	[key: string]: any;
 };
@@ -550,7 +553,8 @@ export type GameAttributesLeague = {
 	luxuryTax: number;
 	maxContract: number;
 	maxContractLength: number;
-	maxOvertimes: number | null; // null means infinite overtimes (no ties)
+	maxOvertimes: number | null; // null means infinite overtimes (no ties/shootouts)
+	maxOvertimesPlayoffs: number | null; // null means infinite overtimes (no shootouts)
 	maxRosterSize: number;
 	minContract: number;
 	minContractLength: number;
@@ -577,6 +581,8 @@ export type GameAttributesLeague = {
 	playIn: boolean;
 	playerMoodTraits: boolean;
 	pointsFormula: string;
+	shootoutRounds: number;
+	shootoutRoundsPlayoffs: number;
 	spectator: boolean;
 	otl: boolean;
 	otherTeamsWantToHire: boolean;
@@ -712,6 +718,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "otl"
 	| "playoffsNumTeamsDiv"
 	| "pointsFormula"
+	| "shootoutRounds"
 	| "tiebreakers"
 	| "userTid"
 > & {
@@ -731,6 +738,9 @@ export type GameAttributesLeagueWithHistory = Omit<
 	>;
 	pointsFormula: GameAttributeWithHistory<
 		GameAttributesLeague["pointsFormula"]
+	>;
+	shootoutRounds: GameAttributeWithHistory<
+		GameAttributesLeague["shootoutRounds"]
 	>;
 	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;

@@ -10,11 +10,16 @@ class GameSimBase {
 	overtime = false;
 	overtimes = 0;
 
-	// In the playoffs, no ties so maxOvertimes is infinity. Otherwise, just go with the setting
-	maxOvertimes =
+	shootout = false;
+	shootoutRounds =
 		g.get("phase") === PHASE.PLAYOFFS
-			? Infinity
-			: g.get("maxOvertimes", "current") ?? Infinity;
+			? g.get("shootoutRoundsPlayoffs", "current")
+			: g.get("shootoutRounds", "current");
+
+	maxOvertimes =
+		(g.get("phase") === PHASE.PLAYOFFS
+			? g.get("maxOvertimesPlayoffs", "current")
+			: g.get("maxOvertimes", "current")) ?? Infinity;
 
 	constructor({
 		gid,

@@ -2187,26 +2187,97 @@ export const settings: Setting[] = (
 			description:
 				"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 		},
-		{
-			category: "Game Simulation",
-			key: "maxOvertimes",
-			name: `Max # ${
-				isSport("baseball") ? "Extra Innings" : "Overtime Periods"
-			}`,
-			type: "intOrNull",
-			description: `If a game is still tied after this many ${
-				isSport("baseball") ? "extra innings" : "overtimes"
-			}, the result is a tie. Set to 0 to disable ${
-				isSport("baseball") ? "extra innings" : "overtime"
-			}. Leave blank for infinite ${
-				isSport("baseball") ? "extra innings" : "overtimes"
-			} and no ties. In the playoffs there are never ties, regardless of this setting.`,
-			validator: value => {
-				if (typeof value === "number" && value < 0) {
-					throw new Error("Cannot be negative");
-				}
-			},
-		},
+		...(["maxOvertimes", "maxOvertimesPlayoffs"] as const).map(key => {
+			const playoffs = key === "maxOvertimesPlayoffs";
+
+			const setting: Setting = {
+				category: "Game Simulation",
+				key,
+				name: `Max # ${
+					isSport("baseball") ? "Extra Innings" : "Overtime Periods"
+				}${playoffs ? " (Playoffs)" : ""}`,
+				type: "intOrNull",
+				descriptionLong: (
+					<>
+						<p>
+							If a{playoffs ? " playoff" : ""} game is still tied after this
+							many {isSport("baseball") ? "extra innings" : "overtimes"}, the
+							game ends in a{" "}
+							{playoffs
+								? "shootout (Shootout Rounds must be >0, there can be no ties in the playoffs)"
+								: "tie (or a shootout, if Shootout Rounds is > 0)"}
+							.
+						</p>
+						<p>
+							Set to 0 to disable{" "}
+							{isSport("baseball") ? "extra innings" : "overtime"}. Leave blank
+							for infinite {isSport("baseball") ? "extra innings" : "overtimes"}
+							{playoffs ? "" : " and no ties"}.
+						</p>
+					</>
+				),
+				validator: value => {
+					if (typeof value === "number" && value < 0) {
+						throw new Error("Cannot be negative");
+					}
+				},
+			};
+
+			return setting;
+		}),
+		...(["shootoutRounds", "shootoutRoundsPlayoffs"] as const).map(key => {
+			const playoffs = key === "shootoutRoundsPlayoffs";
+			const overtimePeriods = isSport("baseball")
+				? "extra innings"
+				: "overtime periods";
+
+			const setting: Setting = {
+				category: "Game Simulation",
+				key,
+				name: `# Shootout Rounds ${playoffs ? " (Playoffs)" : ""}`,
+				type: "int",
+				descriptionLong: (
+					<>
+						<p>
+							If this value is greater than 0 and the max # of {overtimePeriods}{" "}
+							have elapsed, then the game will end in a shootout.
+						</p>
+						<p>
+							{bySport({
+								baseball:
+									"For baseball, that means a home run derby! This setting specifies the # of swings/strikes your best hitter will get againts a pitcher from your own team throwing meatballs. If the game is still tied after both teams go, then it's repeated until someone wins.",
+								basketball:
+									"For basketball, that means a three-point contest! This setting specifies the # of shots your best shooter will get. If the game is still tied after both teams go, then it's repeated until someone wins.",
+								football:
+									"For football, that means a field goal contest! This setting specifies the number of 50 yard field goals each team will attempt. If it's still tied after both teams go, then additional rounds will be played until there is a winner, with each round moving a little closer in case both kickers are injured or something crazy like that.",
+								hockey:
+									"For hockey, that means a penalty shootout. This setting specifies the number of players from each team who will take turns attempting penalty shots. If it's still tied after that, then additional rounds will be played until there is a winner.",
+							})}
+						</p>
+						<p>Set to 0 to disable shootouts.</p>
+						{playoffs ? (
+							<p>
+								In the playoffs, this must be greater than 0 if you have a max #
+								of overtimes, because playoff games cannot end in a tie.
+							</p>
+						) : null}
+					</>
+				),
+				validator: (value, output) => {
+					if (typeof value === "number" && value < 0) {
+						throw new Error("Cannot be negative");
+					}
+
+					if (playoffs && output.maxOvertimesPlayoffs !== null) {
+						throw new Error(
+							`Must be >0 if there is a limit to the number of playoff ${overtimePeriods}`,
+						);
+					}
+				},
+			};
+
+			return setting;
+		}),
 		{
 			category: "Game Simulation",
 			key: "otl",

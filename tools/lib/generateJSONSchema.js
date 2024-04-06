@@ -1168,6 +1168,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 									},
 								],
 							}),
+							maxOvertimesPlayoffs: wrap({
+								anyOf: [
+									{
+										type: "integer",
+										minimum: 0,
+									},
+									{
+										type: "null",
+									},
+								],
+							}),
 							numPeriods: {
 								type: "number",
 								minimum: 0,
@@ -1235,6 +1246,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							season: {
 								type: "integer",
+							},
+							shootoutRounds: {
+								type: "integer",
+								minimum: 0,
+							},
+							shootoutRoundsPlayoffs: {
+								type: "integer",
+								minimum: 0,
 							},
 							softCapTradeSalaryMatch: {
 								type: "number",

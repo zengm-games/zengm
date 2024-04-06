@@ -423,6 +423,7 @@ const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
 
 const EXHIBITION_GAME_SETTINGS = [
 	"maxOvertimes",
+	"shootoutRounds",
 	"dh",
 	"numPlayersOnCourt",
 	"foulsNeededToFoulOut",

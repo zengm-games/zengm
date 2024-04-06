@@ -2,13 +2,15 @@ indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
 shootouts
+- Game Simulation -> Tendencies, it's getting too messy
+  - makes sense for real player presets?
 - UI displaying game results needs to handle it somehow
   - https://www.nhl.com/gamecenter/det-vs-fla/2024/03/30/2023021165 shows it as an extra period, resulting in 1 extra point for the winner
   - https://en.wikipedia.org/wiki/2022_FIFA_World_Cup#Knockout_stage shows # of PKs in parens after the actual # of goals
 - specify number of rounds
 - no injuries during shootout
 - if still tied, keep going one at a time
-  - make sure it's not all 0, like in FBGM might need to make probability higher or closer FG
+  - make sure it's not all 0, all sports should have some min prob of success
 - don't track any stats
 - no clock
 - need to support different num overtimes in playoffs - if not infinity, then shootout happens
@@ -16,12 +18,21 @@ shootouts
 - make sure game-tying and game-winning appear correctly in text of clutch shots when there is a shootout
   - do shootout after calling checkGameWinner()
 - make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
-- for getWinner typescript, would be nice if it knew it would only return undefined if pts was undefined
+- for getWinner typescript, would be nice if it knew it would only return undefined if pts was undefined. also pts are either both or neither undefined
+- force tie should not be an option if shootout will happen this game
+- upgrades
+  - league file import
+  - idb upgrade
+  - maxOvertimesPlayoffs and shootoutRoundsPlayoffs - default is fine for upgrades
+  - shootoutRounds - apply new default. if default is >0 (hockey), set history to 0 so hasTies works correctly
+    - also set maxOvertimes with history - previously it was null, now it's 1
+- test schema
 - by sport
-  - baseball: pick best HR hitter, each one gets N pitches from a new pitcher
-  - basketball: pick best 3 point shooter, each one gets N shots
-  - football: each kicker gets N kicks from 50 yard line
-  - hockey: take turns with different players, no reuse unless all are used
+  - see descriptions in settings.tsx - make sure we do that!
+- blog
+  - settings screenshot
+  - screenshot of each sport's sim, and description
+  - Game Simulation -> Tendencies
 
 various baseball gamesim text improvements https://mail.google.com/mail/u/0/#search/gould/FMfcgzGxSRQrSRzJfBGgRVKHNxBWCJnJ
 

@@ -186,6 +186,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	salaryCapType: "soft",
 
 	maxOvertimes: wrap(null),
+	shootoutRounds: wrap(0),
+	maxOvertimesPlayoffs: null,
+	shootoutRoundsPlayoffs: 0,
+
 	otl: wrap(false),
 
 	draftType: "nba2019",
@@ -398,7 +402,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContract: false,
 				pace: 1,
 				hofFactor: 1.2,
-		  }
+			}
 		: {};
 
 export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
@@ -432,7 +436,9 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContractRounds: 2,
 				rookieContractLengths: [3],
 				pace: 1,
-		  }
+				maxOvertimes: wrap(1),
+				shootoutRounds: wrap(3),
+			}
 		: {};
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -469,7 +475,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContractRounds: 4,
 				draftPickAutoContract: false,
 				groupScheduleSeries: true,
-		  }
+			}
 		: {};
 
 if (isSport("football")) {

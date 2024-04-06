@@ -366,7 +366,7 @@ const SettingsFormOptions = ({
 								</HelpPopover>
 							) : null}
 						</h2>
-						{category.name === "Game Simulation" &&
+						{category.name === "Tendencies" &&
 						isSport("basketball") &&
 						gameSimPresets &&
 						(godMode || showGodModeSettings) ? (
@@ -513,7 +513,7 @@ const SettingsFormOptions = ({
 														onCancelDefaultSetting
 															? () => {
 																	onCancelDefaultSetting(key);
-															  }
+																}
 															: undefined
 													}
 												/>

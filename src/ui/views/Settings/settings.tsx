@@ -1662,7 +1662,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "pace",
 			name: "Pace",
 			godModeRequired: "always",
@@ -1682,7 +1682,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "foulFactor",
 			name: "Foul Ball Factor",
 			godModeRequired: "always",
@@ -1691,7 +1691,7 @@ export const settings: Setting[] = (
 				"The probability that a batted ball is foul is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "groundFactor",
 			name: "Ground Ball Factor",
 			godModeRequired: "always",
@@ -1700,7 +1700,7 @@ export const settings: Setting[] = (
 				"The likelihood of ground balls is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "lineFactor",
 			name: "Line Drive Factor",
 			godModeRequired: "always",
@@ -1709,7 +1709,7 @@ export const settings: Setting[] = (
 				"The likelihood of line drives is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "flyFactor",
 			name: "Fly Ball Factor",
 			godModeRequired: "always",
@@ -1718,7 +1718,7 @@ export const settings: Setting[] = (
 				"The likelihood of fly balls drives is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "powerFactor",
 			name: "Power Factor",
 			godModeRequired: "always",
@@ -1736,7 +1736,7 @@ export const settings: Setting[] = (
 				"If you disable three pointers, shots from that range will still be displayed as three pointers in stats tables, but they will only count for two points.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "threePointTendencyFactor",
 			name: "Three Point Tendency Factor",
 			godModeRequired: "always",
@@ -1745,7 +1745,7 @@ export const settings: Setting[] = (
 				"The baseline rate for number of three pointers is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "threePointAccuracyFactor",
 			name: "Three Point Accuracy Factor",
 			godModeRequired: "always",
@@ -1754,7 +1754,7 @@ export const settings: Setting[] = (
 				"The baseline rate for three point percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "twoPointAccuracyFactor",
 			name: "Two Point Accuracy Factor",
 			godModeRequired: "always",
@@ -1763,7 +1763,7 @@ export const settings: Setting[] = (
 				"The baseline rate for two point percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "ftAccuracyFactor",
 			name: "FT Accuracy Factor",
 			godModeRequired: "always",
@@ -1772,7 +1772,7 @@ export const settings: Setting[] = (
 				"The baseline rate for free throw percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "blockFactor",
 			name: "Block Tendency Factor",
 			godModeRequired: "always",
@@ -1781,7 +1781,7 @@ export const settings: Setting[] = (
 				"The baseline block percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "stealFactor",
 			name: "Steal Tendency Factor",
 			godModeRequired: "always",
@@ -1791,7 +1791,7 @@ export const settings: Setting[] = (
 				: "The probability of a player attempting a steal is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "turnoverFactor",
 			name: "Turnover Tendency Factor",
 			godModeRequired: "always",
@@ -1800,7 +1800,7 @@ export const settings: Setting[] = (
 				"The baseline turnover percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "orbFactor",
 			name: "Off Reb Tendency Factor",
 			godModeRequired: "always",
@@ -1809,7 +1809,7 @@ export const settings: Setting[] = (
 				"The baseline offensive rebound percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "foulRateFactor",
 			name: `${isSport("football") ? "Penalty" : "Foul"} Rate Factor`,
 			godModeRequired: "always",
@@ -1829,7 +1829,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "passFactor",
 			name: "Passing Tendency Factor",
 			godModeRequired: "always",
@@ -1838,7 +1838,7 @@ export const settings: Setting[] = (
 				"The probability of calling a passing play is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "rushYdsFactor",
 			name: "Rushing Yards Factor",
 			godModeRequired: "always",
@@ -1846,7 +1846,7 @@ export const settings: Setting[] = (
 			description: "The baseline yards per rush is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "passYdsFactor",
 			name: "Passing Yards Factor",
 			godModeRequired: "always",
@@ -1854,7 +1854,7 @@ export const settings: Setting[] = (
 			description: "The baseline yards per pass is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "completionFactor",
 			name: "Completion Factor",
 			godModeRequired: "always",
@@ -1863,7 +1863,7 @@ export const settings: Setting[] = (
 				"The baseline pass completion percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "scrambleFactor",
 			name: "QB Scramble Factor",
 			godModeRequired: "always",
@@ -1872,7 +1872,7 @@ export const settings: Setting[] = (
 				"The probability of a quarterback scrambling on a passing play is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "sackFactor",
 			name: "Sack Factor",
 			godModeRequired: "always",
@@ -1881,7 +1881,7 @@ export const settings: Setting[] = (
 				"The baseline sack probability is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "fumbleFactor",
 			name: "Fumble Factor",
 			godModeRequired: "always",
@@ -1890,7 +1890,7 @@ export const settings: Setting[] = (
 				"The baseline fumble probability is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "intFactor",
 			name: "Interception Factor",
 			godModeRequired: "always",
@@ -1899,7 +1899,7 @@ export const settings: Setting[] = (
 				"The baseline interception probability is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "fgAccuracyFactor",
 			name: "FG Accuracy Factor",
 			godModeRequired: "always",
@@ -1908,7 +1908,7 @@ export const settings: Setting[] = (
 				"The baseline field goal accuracy percentage is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "fourthDownFactor",
 			name: "4th Down Aggressiveness Factor",
 			godModeRequired: "always",
@@ -1917,7 +1917,7 @@ export const settings: Setting[] = (
 				"The probability to go for it on 4th down is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "onsideFactor",
 			name: "Onside Kick Factor",
 			godModeRequired: "always",
@@ -1926,7 +1926,7 @@ export const settings: Setting[] = (
 				"The probability of doing an onside kick is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "onsideRecoveryFactor",
 			name: "Onside Recovery Factor",
 			godModeRequired: "always",
@@ -1935,7 +1935,7 @@ export const settings: Setting[] = (
 				"The probability of the kicking team recovering an onside kick is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "throwOutFactor",
 			name: "Throw Out Factor",
 			godModeRequired: "always",
@@ -1944,7 +1944,7 @@ export const settings: Setting[] = (
 				"The probability of the catcher successfully throwing out a stealing baserunner is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "strikeFactor",
 			name: "Strike Factor",
 			godModeRequired: "always",
@@ -1953,7 +1953,7 @@ export const settings: Setting[] = (
 				"The probability of the pitcher throwing a strike is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "balkFactor",
 			name: "Balk Factor",
 			godModeRequired: "always",
@@ -1961,7 +1961,7 @@ export const settings: Setting[] = (
 			description: "The probability of a balk is multipled by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "wildPitchFactor",
 			name: "Wild Pitch Factor",
 			godModeRequired: "always",
@@ -1970,7 +1970,7 @@ export const settings: Setting[] = (
 				"The probability of a wild pitch is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "passedBallFactor",
 			name: "Passed Ball Factor",
 			godModeRequired: "always",
@@ -1979,7 +1979,7 @@ export const settings: Setting[] = (
 				"The probability of a passed ball is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "hitByPitchFactor",
 			name: "Hit By Pitch Factor",
 			godModeRequired: "always",
@@ -1988,7 +1988,7 @@ export const settings: Setting[] = (
 				"The probability of the batter being hit by a pitch is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "swingFactor",
 			name: "Swing Factor",
 			godModeRequired: "always",
@@ -1997,7 +1997,7 @@ export const settings: Setting[] = (
 				"The probability of the batter swinging at a pitch is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "contactFactor",
 			name: "Contact Factor",
 			godModeRequired: "always",
@@ -2006,7 +2006,7 @@ export const settings: Setting[] = (
 				"The probability of a swing making contact is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "deflectionFactor",
 			name: "Deflection Factor",
 			godModeRequired: "always",
@@ -2015,7 +2015,7 @@ export const settings: Setting[] = (
 				"The probability of the offense deflecting a shot is multiplied by this number",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "saveFactor",
 			name: "Save Factor",
 			godModeRequired: "always",
@@ -2024,7 +2024,7 @@ export const settings: Setting[] = (
 				"The save probability of each shot is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "assistFactor",
 			name: "Assist Factor",
 			godModeRequired: "always",
@@ -2033,7 +2033,7 @@ export const settings: Setting[] = (
 				"The probability that a shot is assisted is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "hitFactor",
 			name: "Hit Factor",
 			godModeRequired: "always",
@@ -2043,7 +2043,7 @@ export const settings: Setting[] = (
 				: "The probability that a ball in play is a hit is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "giveawayFactor",
 			name: "Giveaway Factor",
 			godModeRequired: "always",
@@ -2052,7 +2052,7 @@ export const settings: Setting[] = (
 				"The probability of a giveaway happening is multiplied by this number.",
 		},
 		{
-			category: "Game Simulation",
+			category: "Tendencies",
 			key: "takeawayFactor",
 			name: "Takeaway Factor",
 			godModeRequired: "always",

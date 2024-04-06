@@ -176,6 +176,7 @@ export type Category =
 	| "Events"
 	| "Injuries"
 	| "Game Simulation"
+	| "Tendencies"
 	| "Elam Ending"
 	| "Challenge Modes"
 	| "Game Modes"

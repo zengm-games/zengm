@@ -129,6 +129,9 @@ const categories: {
 		name: "Game Simulation",
 	},
 	{
+		name: "Tendencies",
+	},
+	{
 		name: "Elam Ending",
 		helpText: (
 			<>

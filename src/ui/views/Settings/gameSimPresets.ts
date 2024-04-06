@@ -1,11 +1,11 @@
 import { isSport } from "../../../common";
 
-// See play-style-adjustments in bbgm-rosters
+// See play-style-adjustments in bbgm-rosters.
+// This used to include the threePointers setting, but since now that is in Game Simulation rather than Tendencies, it's not here anymore. Same with other various settings that change over time in real players leagues.
 const gameSimPresets = isSport("basketball")
 	? {
 			2020: {
 				pace: 100.2,
-				threePointers: true,
 				threePointTendencyFactor: 1,
 				threePointAccuracyFactor: 1,
 				twoPointAccuracyFactor: 1,
@@ -17,7 +17,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2019: {
 				pace: 100,
-				threePointers: true,
 				threePointTendencyFactor: 0.946,
 				threePointAccuracyFactor: 0.994,
 				twoPointAccuracyFactor: 1,
@@ -29,7 +28,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2018: {
 				pace: 97.3,
-				threePointers: true,
 				threePointTendencyFactor: 0.881,
 				threePointAccuracyFactor: 1.014,
 				twoPointAccuracyFactor: 1,
@@ -41,7 +39,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2017: {
 				pace: 96.4,
-				threePointers: true,
 				threePointTendencyFactor: 0.827,
 				threePointAccuracyFactor: 1.003,
 				twoPointAccuracyFactor: 1,
@@ -53,7 +50,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2016: {
 				pace: 95.8,
-				threePointers: true,
 				threePointTendencyFactor: 0.744,
 				threePointAccuracyFactor: 0.992,
 				twoPointAccuracyFactor: 1,
@@ -65,7 +61,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2015: {
 				pace: 93.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.705,
 				threePointAccuracyFactor: 0.98,
 				twoPointAccuracyFactor: 1,
@@ -77,7 +72,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2014: {
 				pace: 93.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.676,
 				threePointAccuracyFactor: 1.008,
 				twoPointAccuracyFactor: 1,
@@ -89,7 +83,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2013: {
 				pace: 92,
-				threePointers: true,
 				threePointTendencyFactor: 0.64,
 				threePointAccuracyFactor: 1.006,
 				twoPointAccuracyFactor: 0.991,
@@ -101,7 +94,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2012: {
 				pace: 91.3,
-				threePointers: true,
 				threePointTendencyFactor: 0.595,
 				threePointAccuracyFactor: 0.978,
 				twoPointAccuracyFactor: 0.978,
@@ -113,7 +105,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2011: {
 				pace: 92.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.577,
 				threePointAccuracyFactor: 1.003,
 				twoPointAccuracyFactor: 0.999,
@@ -125,7 +116,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2010: {
 				pace: 92.7,
-				threePointers: true,
 				threePointTendencyFactor: 0.577,
 				threePointAccuracyFactor: 0.994,
 				twoPointAccuracyFactor: 1.009,
@@ -137,7 +127,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2009: {
 				pace: 91.7,
-				threePointers: true,
 				threePointTendencyFactor: 0.583,
 				threePointAccuracyFactor: 1.028,
 				twoPointAccuracyFactor: 0.995,
@@ -149,7 +138,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2008: {
 				pace: 92.4,
-				threePointers: true,
 				threePointTendencyFactor: 0.58,
 				threePointAccuracyFactor: 1.014,
 				twoPointAccuracyFactor: 0.993,
@@ -161,7 +149,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2007: {
 				pace: 91.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.545,
 				threePointAccuracyFactor: 1.003,
 				twoPointAccuracyFactor: 0.995,
@@ -173,7 +160,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2006: {
 				pace: 90.5,
-				threePointers: true,
 				threePointTendencyFactor: 0.521,
 				threePointAccuracyFactor: 1.003,
 				twoPointAccuracyFactor: 0.98,
@@ -185,7 +171,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2005: {
 				pace: 90.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.512,
 				threePointAccuracyFactor: 0.997,
 				twoPointAccuracyFactor: 0.964,
@@ -197,7 +182,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2004: {
 				pace: 90.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.488,
 				threePointAccuracyFactor: 0.972,
 				twoPointAccuracyFactor: 0.943,
@@ -209,7 +193,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2003: {
 				pace: 91,
-				threePointers: true,
 				threePointTendencyFactor: 0.476,
 				threePointAccuracyFactor: 0.978,
 				twoPointAccuracyFactor: 0.949,
@@ -221,7 +204,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2002: {
 				pace: 90.7,
-				threePointers: true,
 				threePointTendencyFactor: 0.479,
 				threePointAccuracyFactor: 0.992,
 				twoPointAccuracyFactor: 0.954,
@@ -233,7 +215,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2001: {
 				pace: 91.3,
-				threePointers: true,
 				threePointTendencyFactor: 0.443,
 				threePointAccuracyFactor: 0.992,
 				twoPointAccuracyFactor: 0.946,
@@ -245,7 +226,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			2000: {
 				pace: 93.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.435,
 				threePointAccuracyFactor: 0.989,
 				twoPointAccuracyFactor: 0.96,
@@ -257,7 +237,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1999: {
 				pace: 88.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.438,
 				threePointAccuracyFactor: 0.95,
 				twoPointAccuracyFactor: 0.937,
@@ -269,7 +248,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1998: {
 				pace: 90.3,
-				threePointers: true,
 				threePointTendencyFactor: 0.417,
 				threePointAccuracyFactor: 0.969,
 				twoPointAccuracyFactor: 0.965,
@@ -281,7 +259,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1997: {
 				pace: 90.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.551,
 				threePointAccuracyFactor: 1.008,
 				twoPointAccuracyFactor: 0.985,
@@ -293,7 +270,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1996: {
 				pace: 91.8,
-				threePointers: true,
 				threePointTendencyFactor: 0.518,
 				threePointAccuracyFactor: 1.028,
 				twoPointAccuracyFactor: 0.996,
@@ -305,7 +281,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1995: {
 				pace: 92.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.485,
 				threePointAccuracyFactor: 1.006,
 				twoPointAccuracyFactor: 1.007,
@@ -317,7 +292,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1994: {
 				pace: 95.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.31,
 				threePointAccuracyFactor: 0.933,
 				twoPointAccuracyFactor: 0.991,
@@ -329,7 +303,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1993: {
 				pace: 96.8,
-				threePointers: true,
 				threePointTendencyFactor: 0.274,
 				threePointAccuracyFactor: 0.941,
 				twoPointAccuracyFactor: 1.003,
@@ -341,7 +314,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1992: {
 				pace: 96.6,
-				threePointers: true,
 				threePointTendencyFactor: 0.232,
 				threePointAccuracyFactor: 0.927,
 				twoPointAccuracyFactor: 0.997,
@@ -353,7 +325,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1991: {
 				pace: 97.8,
-				threePointers: true,
 				threePointTendencyFactor: 0.214,
 				threePointAccuracyFactor: 0.896,
 				twoPointAccuracyFactor: 1.001,
@@ -365,7 +336,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1990: {
 				pace: 98.3,
-				threePointers: true,
 				threePointTendencyFactor: 0.199,
 				threePointAccuracyFactor: 0.927,
 				twoPointAccuracyFactor: 1.001,
@@ -377,7 +347,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1989: {
 				pace: 100.6,
-				threePointers: true,
 				threePointTendencyFactor: 0.193,
 				threePointAccuracyFactor: 0.905,
 				twoPointAccuracyFactor: 1.004,
@@ -389,7 +358,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1988: {
 				pace: 99.6,
-				threePointers: true,
 				threePointTendencyFactor: 0.149,
 				threePointAccuracyFactor: 0.885,
 				twoPointAccuracyFactor: 1.005,
@@ -401,7 +369,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1987: {
 				pace: 100.8,
-				threePointers: true,
 				threePointTendencyFactor: 0.14,
 				threePointAccuracyFactor: 0.843,
 				twoPointAccuracyFactor: 1.006,
@@ -413,7 +380,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1986: {
 				pace: 102.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.095,
 				threePointAccuracyFactor: 0.79,
 				twoPointAccuracyFactor: 1.016,
@@ -425,7 +391,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1985: {
 				pace: 102.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.092,
 				threePointAccuracyFactor: 0.79,
 				twoPointAccuracyFactor: 1.023,
@@ -437,7 +402,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1984: {
 				pace: 101.4,
-				threePointers: true,
 				threePointTendencyFactor: 0.068,
 				threePointAccuracyFactor: 0.7,
 				twoPointAccuracyFactor: 1.023,
@@ -449,7 +413,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1983: {
 				pace: 103.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.065,
 				threePointAccuracyFactor: 0.667,
 				twoPointAccuracyFactor: 1.009,
@@ -461,7 +424,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1982: {
 				pace: 100.9,
-				threePointers: true,
 				threePointTendencyFactor: 0.065,
 				threePointAccuracyFactor: 0.734,
 				twoPointAccuracyFactor: 1.02,
@@ -473,7 +435,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1981: {
 				pace: 101.8,
-				threePointers: true,
 				threePointTendencyFactor: 0.06,
 				threePointAccuracyFactor: 0.686,
 				twoPointAccuracyFactor: 1.008,
@@ -485,7 +446,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1980: {
 				pace: 103.1,
-				threePointers: true,
 				threePointTendencyFactor: 0.08,
 				threePointAccuracyFactor: 0.784,
 				twoPointAccuracyFactor: 1,
@@ -497,7 +457,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1979: {
 				pace: 105.8,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.99575,
@@ -509,7 +468,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1978: {
 				pace: 106.7,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9762,
@@ -521,7 +479,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1977: {
 				pace: 106.5,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9694,
@@ -533,7 +490,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1976: {
 				pace: 105.5,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9575,
@@ -545,7 +501,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1975: {
 				pace: 104.5,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9558,
@@ -557,7 +512,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1974: {
 				pace: 107.8,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.95835,
@@ -569,7 +523,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1973: {
 				pace: 110.385,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9541,
@@ -581,7 +534,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1972: {
 				pace: 109.785,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9507,
@@ -593,7 +545,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1971: {
 				pace: 112.988,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9507,
@@ -605,7 +556,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1970: {
 				pace: 114.811,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.96005,
@@ -617,7 +567,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1969: {
 				pace: 114.571,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9439,
@@ -629,7 +578,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1968: {
 				pace: 117.058,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.95325,
@@ -641,7 +589,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1967: {
 				pace: 119.602,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9439,
@@ -653,7 +600,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1966: {
 				pace: 118.921,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.92945,
@@ -665,7 +611,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1965: {
 				pace: 115.617,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.91755,
@@ -677,7 +622,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1964: {
 				pace: 114.689,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.92945,
@@ -689,7 +633,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1963: {
 				pace: 117.316,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9439,
@@ -701,7 +644,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1962: {
 				pace: 125.168,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9269,
@@ -713,7 +655,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1961: {
 				pace: 127.219,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.9065,
@@ -725,7 +666,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1960: {
 				pace: 126.113,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.898,
@@ -737,7 +677,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1959: {
 				pace: 118.68,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.8725,
@@ -749,7 +688,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1958: {
 				pace: 118.564,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.8521,
@@ -761,7 +699,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1957: {
 				pace: 109.736,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.84615,
@@ -773,7 +710,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1956: {
 				pace: 106.17,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.85805,
@@ -785,7 +721,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1955: {
 				pace: 101,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.8455,
@@ -797,7 +732,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1954: {
 				pace: 93,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.8333,
@@ -809,7 +743,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1953: {
 				pace: 95,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.83,
@@ -821,7 +754,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1952: {
 				pace: 97,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.8,
 				twoPointAccuracyFactor: 0.8232,
@@ -833,7 +765,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1951: {
 				pace: 99,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.7,
 				twoPointAccuracyFactor: 0.81,
@@ -845,7 +776,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1950: {
 				pace: 99,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.7,
 				twoPointAccuracyFactor: 0.79,
@@ -857,7 +787,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1949: {
 				pace: 104,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.7,
 				twoPointAccuracyFactor: 0.77,
@@ -869,7 +798,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1948: {
 				pace: 108,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.6,
 				twoPointAccuracyFactor: 0.71,
@@ -881,7 +809,6 @@ const gameSimPresets = isSport("basketball")
 			},
 			1947: {
 				pace: 104,
-				threePointers: false,
 				threePointTendencyFactor: 0.025,
 				threePointAccuracyFactor: 0.6,
 				twoPointAccuracyFactor: 0.7,
@@ -891,7 +818,7 @@ const gameSimPresets = isSport("basketball")
 				turnoverFactor: 1.15,
 				orbFactor: 1.09375,
 			},
-	  }
+		}
 	: undefined;
 
 export default gameSimPresets;

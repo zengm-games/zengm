@@ -206,7 +206,6 @@ class GameSim extends GameSimBase {
 			type: "gameOver",
 			clock: this.clock,
 		});
-		// this.checkGameWinner();
 
 		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {

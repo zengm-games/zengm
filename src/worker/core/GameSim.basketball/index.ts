@@ -4,7 +4,7 @@ import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStarts
 import getInjuryRate from "./getInjuryRate";
 import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
 import GameSimBase from "../GameSimBase";
-import { range } from "../../../common/utils";
+import { maxBy, range } from "../../../common/utils";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import getWinner from "../../../common/getWinner";
 
@@ -52,7 +52,9 @@ type Stat =
 	| "stl"
 	| "tov"
 	| "tp"
-	| "tpa";
+	| "tpa"
+	| "sAtt"
+	| "sPts";
 type PlayerNumOnCourt = number;
 type TeamNum = 0 | 1;
 type CompositeRating =
@@ -409,6 +411,8 @@ class GameSim extends GameSimBase {
 
 		this.checkGameWinner();
 
+		this.doShootout();
+
 		this.playByPlay.logEvent({
 			type: "gameOver",
 		});
@@ -450,8 +454,88 @@ class GameSim extends GameSimBase {
 		return out;
 	}
 
+	doShootoutShot(t: TeamNum, p: PlayerGameSim) {
+		// 20% to 80%
+		const probMake = p.compositeRating.shootingThreePointer * 0.6 + 0.2;
+
+		const made = Math.random() < probMake;
+
+		this.recordStat(t, undefined, "sAtt");
+		if (made) {
+			this.recordStat(t, undefined, "sPts");
+		}
+
+		this.playByPlay.logEvent({
+			type: "shootoutShot",
+			t: t,
+			pid: p.id,
+			made,
+		});
+	}
+
+	doShootout() {
+		if (
+			this.shootoutRounds <= 0 ||
+			this.team[0].stat.pts !== this.team[1].stat.pts
+		) {
+			return;
+		}
+
+		this.shootout = true;
+		this.team[0].stat.sPts = 0;
+		this.team[0].stat.sAtt = 0;
+		this.team[1].stat.sPts = 0;
+		this.team[1].stat.sAtt = 0;
+
+		this.playByPlay.logEvent({
+			type: "shootoutStart",
+			rounds: this.shootoutRounds,
+		});
+
+		const shooters = teamNums.map(t => {
+			// Find best shooter - slight bias towards high usage players
+			return maxBy(
+				this.team[t].player,
+				p =>
+					p.compositeRating.shootingThreePointer +
+					0.2 * p.compositeRating.usage -
+					(p.injured ? 1000 : 0),
+			)!;
+		}) as [PlayerGameSim, PlayerGameSim];
+
+		const reversedTeamNums = [1, 0] as const;
+
+		for (const t of reversedTeamNums) {
+			const shooter = shooters[t];
+
+			this.playByPlay.logEvent({
+				type: "shootoutTeam",
+				t: t,
+				pid: shooter.id,
+			});
+
+			for (let i = 0; i < this.shootoutRounds; i++) {
+				this.doShootoutShot(t, shooter);
+			}
+		}
+		console.log(this.team[0].stat.sPts, this.team[1].stat.sPts);
+
+		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
+			this.playByPlay.logEvent({
+				type: "shootoutTie",
+			});
+
+			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
+				for (const t of reversedTeamNums) {
+					const shooter = shooters[t];
+					this.doShootoutShot(t, shooter);
+				}
+			}
+		}
+	}
+
 	jumpBall() {
-		const jumpers = ([0, 1] as const).map(t => {
+		const jumpers = teamNums.map(t => {
 			const ratios = this.ratingArray("jumpBall", t);
 			const maxRatio = Math.max(...ratios);
 			let ind = ratios.findIndex(ratio => ratio === maxRatio);
@@ -2791,8 +2875,10 @@ class GameSim extends GameSimBase {
 	 * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
 	 * @param {number} amt Amount to increment (default is 1).
 	 */
-	recordStat(t: TeamNum, p: number, s: Stat, amt: number = 1) {
-		this.team[t].player[p].stat[s] += amt;
+	recordStat(t: TeamNum, p: number | undefined, s: Stat, amt: number = 1) {
+		if (p !== undefined) {
+			this.team[t].player[p].stat[s] += amt;
+		}
 
 		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
 			if (s !== "gs") {
@@ -2820,7 +2906,12 @@ class GameSim extends GameSimBase {
 			}
 
 			if (this.playByPlay !== undefined) {
-				this.playByPlay.logStat(t, this.team[t].player[p].id, s, amt);
+				this.playByPlay.logStat(
+					t,
+					p === undefined ? undefined : this.team[t].player[p].id,
+					s,
+					amt,
+				);
 			}
 		}
 	}

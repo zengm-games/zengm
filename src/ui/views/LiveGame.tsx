@@ -104,7 +104,7 @@ const DEFAULT_SPORT_STATE = bySport<any>({
 	hockey: undefined,
 });
 
-type PlayByPlayEntry = {
+type PlayByPlayEntryInfo = {
 	key: number;
 	score: ReactNode | undefined;
 	scoreDiff: number;
@@ -117,7 +117,7 @@ type PlayByPlayEntry = {
 };
 
 const PlayByPlayEntry = memo(
-	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntry }) => {
+	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntryInfo }) => {
 		let scoreBlock = null;
 		if (entry.score) {
 			if (isSport("basketball")) {
@@ -204,7 +204,7 @@ const PlayByPlay = ({
 	playByPlayDivRef,
 }: {
 	boxScore: any;
-	entries: PlayByPlayEntry[];
+	entries: PlayByPlayEntryInfo[];
 	playByPlayDivRef: React.MutableRefObject<HTMLDivElement | null>;
 }) => {
 	useEffect(() => {
@@ -276,7 +276,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);
 
-	const playByPlayEntries = useRef<PlayByPlayEntry[]>([]);
+	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
@@ -291,10 +291,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			const startSeconds = getSeconds(boxScore.current.time);
 
+			const shootout = !!boxScore.current.shootout;
+			const ptsKey = shootout ? "sPts" : "pts";
+
 			// Save here since it is mutated in processLiveGameEvents
 			const prevOuts = sportState.current?.outs;
 			const prevPts =
-				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
+				boxScore.current.teams[0][ptsKey] + boxScore.current.teams[1][ptsKey];
 
 			const output = processLiveGameEvents({
 				boxScore: boxScore.current,
@@ -305,7 +308,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			});
 			const text = output.text;
 			const currentPts =
-				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
+				boxScore.current.teams[0][ptsKey] + boxScore.current.teams[1][ptsKey];
 			const scoreDiff = currentPts - prevPts;
 
 			overtimes.current = output.overtimes;
@@ -337,17 +340,17 @@ export const LiveGame = (props: View<"liveGame">) => {
 					score =
 						scoreT === 0 ? (
 							<>
-								<b>{boxScore.current.teams[0].pts}</b>-
+								<b>{boxScore.current.teams[0][ptsKey]}</b>-
 								<span className="text-body-secondary">
-									{boxScore.current.teams[1].pts}
+									{boxScore.current.teams[1][ptsKey]}
 								</span>
 							</>
 						) : scoreT === 1 ? (
 							<>
 								<span className="text-body-secondary">
-									{boxScore.current.teams[0].pts}
+									{boxScore.current.teams[0][ptsKey]}
 								</span>
-								-<b>{boxScore.current.teams[1].pts}</b>
+								-<b>{boxScore.current.teams[1][ptsKey]}</b>
 							</>
 						) : undefined;
 

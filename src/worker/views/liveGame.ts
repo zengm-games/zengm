@@ -84,6 +84,10 @@ export const boxScoreToLiveSim = async ({
 			}
 		}
 
+		// Special reset of shootout stats to undefined, since that is used in the UI to identify if we're in a shootout yet
+		delete t.sPts;
+		delete t.sAtt;
+
 		for (let j = 0; j < t.players.length; j++) {
 			const p = t.players[j];
 
@@ -93,11 +97,11 @@ export const boxScoreToLiveSim = async ({
 					? {
 							...p.injuryAtStart,
 							playingThrough: true,
-					  }
+						}
 					: {
 							type: "Healthy",
 							gamesRemaining: 0,
-					  };
+						};
 			}
 
 			for (const stat of resetStatsPlayer) {

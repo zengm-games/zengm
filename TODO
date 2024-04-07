@@ -5,13 +5,17 @@ shootouts
 - UI displaying game results needs to handle it somehow
   - https://www.nhl.com/gamecenter/det-vs-fla/2024/03/30/2023021165 shows it as an extra period, resulting in 1 extra point for the winner
   - https://en.wikipedia.org/wiki/2022_FIFA_World_Cup#Knockout_stage shows # of PKs in parens after the actual # of goals
-- specify number of rounds
+  - top bar
+  - game log
+  - schedule
+  - box score
+  - playoffs (1 game in round)
+- stop after impossible to win
 - no injuries during shootout
 - if still tied, keep going one at a time
   - make sure it's not all 0, all sports should have some min prob of success
 - don't track any stats
 - no clock
-- need to support different num overtimes in playoffs - if not infinity, then shootout happens
 - in writeGameStats, add sPts to gameStats.won and lost
 - make sure game-tying and game-winning appear correctly in text of clutch shots when there is a shootout
   - do shootout after calling checkGameWinner()

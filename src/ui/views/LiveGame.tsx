@@ -90,8 +90,12 @@ const getSeconds = (time: string | undefined) => {
 	}
 
 	const parts = time.split(":").map(x => parseInt(x));
-	if (parts.length < 2) {
+	if (parts.length === 0) {
 		return 0;
+	}
+	if (parts.length === 1) {
+		// Seconds only being displayed
+		return parseFloat(time);
 	}
 	const [min, sec] = parts;
 	return min * 60 + sec;

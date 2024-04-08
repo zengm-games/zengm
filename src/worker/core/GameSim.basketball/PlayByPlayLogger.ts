@@ -340,6 +340,7 @@ type PlayByPlayEventInputNoScore =
 	| {
 			type: "shootoutStart";
 			rounds: number;
+			clock: number;
 	  }
 	| {
 			type: "shootoutTeam";

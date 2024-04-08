@@ -482,6 +482,7 @@ class GameSim extends GameSimBase {
 		}
 
 		this.shootout = true;
+		this.t = 1; // So fast-forward to end of period stops before the shootout
 		this.team[0].stat.sPts = 0;
 		this.team[0].stat.sAtt = 0;
 		this.team[1].stat.sPts = 0;
@@ -490,6 +491,9 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "shootoutStart",
 			rounds: this.shootoutRounds,
+
+			// So fast-forward to end of period stops before the shootout
+			clock: this.t,
 		});
 
 		const shooters = teamNums.map(t => {

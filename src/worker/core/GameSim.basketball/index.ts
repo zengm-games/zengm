@@ -519,11 +519,19 @@ class GameSim extends GameSimBase {
 			});
 
 			for (let i = 0; i < this.shootoutRounds; i++) {
-				const remainingShots = this.shootoutRounds - i;
-				const pointsNeeded =
-					this.team[t === 0 ? 1 : 0].stat.sPts - this.team[t].stat.sPts;
-				if (remainingShots < pointsNeeded) {
-					break;
+				// Short circuit if result is already decided and the 2nd player is shooting
+				if (t === 0) {
+					const ptsNeeded =
+						this.team[t === 0 ? 1 : 0].stat.sPts - this.team[t].stat.sPts;
+					if (ptsNeeded < 0) {
+						// Already clinched a win even without the remaining shots
+						break;
+					}
+					const remainingShots = this.shootoutRounds - i;
+					if (remainingShots < ptsNeeded) {
+						// Can't possibly win, so just give up
+						break;
+					}
 				}
 
 				this.doShootoutShot(t, shooter);

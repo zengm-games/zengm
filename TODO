@@ -23,7 +23,6 @@ shootouts
   - make sure game-tying shots are logged as clutch right before a shootout
     - might need to call checkGameTyingShot again
 - make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
-- for getWinner typescript, would be nice if it knew it would only return undefined if pts was undefined. also pts are either both or neither undefined
 - force tie should not be an option if shootout will happen this game
 - upgrades
   - league file import

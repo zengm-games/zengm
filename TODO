@@ -10,7 +10,7 @@ shootouts
   - schedule
   - box score
   - playoffs (1 game in round)
-- stop after impossible to win
+- don't show clock in BBGM play-by-play
 - no injuries during shootout
 - if still tied, keep going one at a time
   - make sure it's not all 0, all sports should have some min prob of success

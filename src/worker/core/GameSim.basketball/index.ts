@@ -515,10 +515,16 @@ class GameSim extends GameSimBase {
 			});
 
 			for (let i = 0; i < this.shootoutRounds; i++) {
+				const remainingShots = this.shootoutRounds - i;
+				const pointsNeeded =
+					this.team[t === 0 ? 1 : 0].stat.sPts - this.team[t].stat.sPts;
+				if (remainingShots < pointsNeeded) {
+					break;
+				}
+
 				this.doShootoutShot(t, shooter);
 			}
 		}
-		console.log(this.team[0].stat.sPts, this.team[1].stat.sPts);
 
 		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
 			this.playByPlay.logEvent({

@@ -372,7 +372,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 						hockey: true,
 					})
 				) {
-					if (
+					if (shootout && t !== undefined) {
+						time = `Attempt ${boxScore.current.teams[t].sAtt}`;
+					} else if (
 						isSport("basketball") &&
 						boxScore.current.elamTarget !== undefined
 					) {

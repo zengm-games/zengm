@@ -456,7 +456,8 @@ const processLiveGameEvents = ({
 				e.type === "overtime" ||
 				e.type === "elamActive" ||
 				e.type === "shootoutStart" ||
-				e.type === "shootoutTie";
+				e.type === "shootoutTie" ||
+				e.type === "shootoutTeam";
 
 			let time;
 			if (eAny.clock !== undefined) {

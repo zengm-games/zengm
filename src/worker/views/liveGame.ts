@@ -44,6 +44,7 @@ export const boxScoreToLiveSim = async ({
 	boxScore.quarterShort = "";
 	boxScore.time = `${g.get("quarterLength")}:00`;
 	boxScore.gameOver = false;
+	delete boxScore.shootout;
 
 	for (let i = 0; i < boxScore.teams.length; i++) {
 		const t = boxScore.teams[i];

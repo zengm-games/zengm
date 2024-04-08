@@ -27,11 +27,11 @@ const allowForceTie = ({
 	}
 
 	if (isSport("basketball")) {
-		if (elam) {
+		const isAllStarGame = homeTid === -1 && awayTid === -2;
+
+		if (!isAllStarGame && elam) {
 			return false;
 		}
-
-		const isAllStarGame = homeTid === -1 && awayTid === -2;
 
 		if (isAllStarGame && elamASG) {
 			return false;

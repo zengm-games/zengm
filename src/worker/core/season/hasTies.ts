@@ -4,7 +4,7 @@ import { g } from "../../util";
 const hasTies = (season: number | "current") => {
 	return (
 		g.get("maxOvertimes", season) !== null &&
-		g.get("shootoutRounds", season) === null
+		g.get("shootoutRounds", season) <= 0
 	);
 };
 

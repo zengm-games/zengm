@@ -2431,6 +2431,7 @@ class GameSim extends GameSimBase {
 		);
 	}
 
+	// This runs before an overtime period is played, so all these shots lead to another overtime period, not the end of the game
 	checkGameTyingShot() {
 		if (this.lastScoringPlay.length === 0 || this.elamActive) {
 			return;
@@ -2520,15 +2521,13 @@ class GameSim extends GameSimBase {
 		});
 	}
 
+	// This runs after the game ends (except shootout) so it could be a game-tying shot if the game will end in a tie or shootout
 	checkGameWinner() {
 		if (this.lastScoringPlay.length === 0) {
 			return;
 		}
 
-		const winner = getWinner([this.team[0].stat, this.team[1].stat]);
-		if (winner === undefined) {
-			return;
-		}
+		const winner = getWinner([this.team[0].stat, this.team[1].stat])!;
 		const loser = winner === 0 ? 1 : 0;
 		const finalMargin =
 			winner === -1
@@ -2589,7 +2588,7 @@ class GameSim extends GameSimBase {
 				default:
 			}
 
-			margin -= play.team === winner ? pts : -pts;
+			margin -= winner === -1 || play.team === winner ? pts : -pts;
 
 			if (margin <= 0) {
 				const team = this.team[play.team];
@@ -2611,6 +2610,10 @@ class GameSim extends GameSimBase {
 								? " with no time on the clock"
 								: " at the buzzer";
 					}
+				}
+
+				if (winner === -1 && this.shootoutRounds > 0) {
+					eventText += " to force a shootout";
 				}
 
 				this.clutchPlays.push({

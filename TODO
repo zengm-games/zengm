@@ -17,12 +17,10 @@ shootouts
   - don't track any stats
   - no clock
 - in writeGameStats, add sPts to gameStats.won and lost
-- basketball
-  - make sure game-tying and game-winning appear correctly in text of clutch shots when there is a shootout
-    - do shootout after calling checkGameWinner()
-  - make sure game-tying shots are logged as clutch right before a shootout
-    - might need to call checkGameTyingShot again
 - make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
+- show shootout result somewhere
+  - basketball - clutch play could say who beat who
+  - other sports - scoring log
 - upgrades
   - league file import
   - idb upgrade
@@ -35,6 +33,7 @@ shootouts
 - blog
   - settings screenshot
   - screenshot of each sport's sim, and description
+  - see result live in play-by-play, or in clutch play description or scoring log depending on sport
 
 various baseball gamesim text improvements https://mail.google.com/mail/u/0/#search/gould/FMfcgzGxSRQrSRzJfBGgRVKHNxBWCJnJ
 

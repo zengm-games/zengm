@@ -544,12 +544,14 @@ const writeGameStats = async (
 						{
 							ovr: results.team[0].ovr,
 							pts: results.team[0].stat.pts,
+							sPts: results.team[0].stat.sPts,
 							tid: results.team[0].id,
 							playoffs: gameStats.teams[0].playoffs,
 						},
 						{
 							ovr: results.team[1].ovr,
 							pts: results.team[1].stat.pts,
+							sPts: results.team[1].stat.sPts,
 							tid: results.team[1].id,
 							playoffs: gameStats.teams[1].playoffs,
 						},

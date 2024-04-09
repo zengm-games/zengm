@@ -975,6 +975,7 @@ export type LocalStateUI = {
 			{
 				ovr?: number;
 				pts?: number;
+				sPts?: number;
 				tid: number;
 				playoffs?: {
 					seed: number;
@@ -985,6 +986,7 @@ export type LocalStateUI = {
 			{
 				ovr?: number;
 				pts?: number;
+				sPts?: number;
 				tid: number;
 				playoffs?: {
 					seed: number;

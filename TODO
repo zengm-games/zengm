@@ -5,9 +5,7 @@ shootouts
 - UI displaying game results needs to handle it somehow
   - https://www.nhl.com/gamecenter/det-vs-fla/2024/03/30/2023021165 shows it as an extra period, resulting in 1 extra point for the winner
   - https://en.wikipedia.org/wiki/2022_FIFA_World_Cup#Knockout_stage shows # of PKs in parens after the actual # of goals
-  - top bar
   - game log
-  - schedule
   - box score
   - playoffs (1 game in round)
 - confirm for all sports
@@ -16,7 +14,8 @@ shootouts
     - make sure it's not all 0, all sports should have some min prob of success
   - don't track any stats
   - no clock
-- make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
+- make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info\
+- fix all .won.pts
 - show shootout result somewhere
   - other sports - scoring log
 - upgrades

@@ -15,6 +15,7 @@ const roundHalf = (x: number) => {
 type Team = {
 	ovr?: number;
 	pts?: number;
+	sPts?: number;
 	tid: number;
 	won?: number;
 	lost?: number;
@@ -451,9 +452,21 @@ const ScoreBox = memo(
 														}}
 													>
 														{t.pts}
+														{t.sPts !== undefined ? (
+															<span className="fw-normal">
+																&nbsp;({t.sPts})
+															</span>
+														) : null}
 													</a>
 												) : (
-													t.pts
+													<>
+														{t.pts}
+														{t.sPts !== undefined ? (
+															<span className="text-muted">
+																&nbsp;({t.sPts})
+															</span>
+														) : null}
+													</>
 												)}
 											</div>
 										) : null}

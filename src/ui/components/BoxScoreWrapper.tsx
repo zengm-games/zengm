@@ -10,6 +10,7 @@ import { isSport, PHASE } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../util";
 import BoxScore from "./BoxScore";
 import { range } from "../../common/utils";
+import getWinner from "../../common/getWinner";
 
 const TeamNameLink = ({
 	children,
@@ -100,14 +101,16 @@ export const HeadlineScore = ({
 		? "d-none"
 		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
 
+	const shootout = t0.sPts !== undefined;
+
 	return (
 		<div
 			className={
 				small
 					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-2"
 					: liveGameSim
-					  ? "d-none d-md-block"
-					  : undefined
+						? "d-none d-md-block"
+						: undefined
 			}
 		>
 			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
@@ -128,7 +131,11 @@ export const HeadlineScore = ({
 					<span className={className}>{t0.region} </span>
 					{t0.name}
 				</TeamNameLink>{" "}
-				{t0.pts},{" "}
+				{t0.pts}
+				{shootout ? (
+					<span className="text-body-secondary"> ({t0.sPts})</span>
+				) : null}
+				,{" "}
 				{boxScore.possession !== undefined ? (
 					<span
 						className={
@@ -147,6 +154,9 @@ export const HeadlineScore = ({
 					{t1.name}
 				</TeamNameLink>{" "}
 				{t1.pts}
+				{shootout ? (
+					<span className="text-body-secondary"> ({t1.sPts})</span>
+				) : null}
 				{boxScore.overtime}
 			</h2>
 			{liveGameSim ? (
@@ -155,29 +165,29 @@ export const HeadlineScore = ({
 						{boxScore.gameOver
 							? "Final score"
 							: boxScore.elamTarget !== undefined
-							  ? `Elam Ending target: ${boxScore.elamTarget} points`
-							  : isSport("baseball")
-							    ? `${
+								? `Elam Ending target: ${boxScore.elamTarget} points`
+								: isSport("baseball")
+									? `${
 											boxScore.teams[0].ptsQtrs.length ===
 											boxScore.teams[1].ptsQtrs.length
 												? "Bottom"
 												: "Top"
-							      } of the ${boxScore.quarter}`
-							    : `${boxScore.quarter}, ${boxScore.time} remaining`}
+										} of the ${boxScore.quarter}`
+									: `${boxScore.quarter}, ${boxScore.time} remaining`}
 					</span>
 					<span className="d-sm-none">
 						{boxScore.gameOver
 							? "F"
 							: boxScore.elamTarget !== undefined
-							  ? `Elam Ending target: ${boxScore.elamTarget} points`
-							  : isSport("baseball")
-							    ? `${
+								? `Elam Ending target: ${boxScore.elamTarget} points`
+								: isSport("baseball")
+									? `${
 											boxScore.teams[0].ptsQtrs.length ===
 											boxScore.teams[1].ptsQtrs.length
 												? "B"
 												: "T"
-							      }${boxScore.quarterShort}`
-							    : `${boxScore.quarterShort}, ${boxScore.time}`}
+										}${boxScore.quarterShort}`
+									: `${boxScore.quarterShort}, ${boxScore.time}`}
 					</span>
 				</div>
 			) : null}
@@ -524,16 +534,51 @@ const DetailedScore = ({
 		boxScore.teams[0].ptsQtrs.length,
 		boxScore.numPeriods ?? 0,
 	);
-	const qtrs: string[] = range(numPeriods).map(i => {
-		return i < boxScore.numPeriods || isSport("baseball")
-			? `${i + 1}`
-			: `OT${i - boxScore.numPeriods + 1}`;
+	const qtrs: {
+		title?: string;
+		label: string;
+		bold?: boolean;
+	}[] = range(numPeriods).map(i => {
+		return {
+			label:
+				i < boxScore.numPeriods || isSport("baseball")
+					? `${i + 1}`
+					: `OT${i - boxScore.numPeriods + 1}`,
+		};
 	});
 
 	if (isSport("baseball")) {
-		qtrs.push("R", "H", "E");
+		qtrs.push({
+			label: "R",
+			title: "Runs",
+			bold: true,
+		});
+		qtrs.push({
+			label: "H",
+			title: "Hits",
+			bold: true,
+		});
+		qtrs.push({
+			label: "E",
+			title: "Errors",
+			bold: true,
+		});
 	} else {
-		qtrs.push("F");
+		qtrs.push({
+			label: "F",
+			title: "Final score",
+			bold: true,
+		});
+	}
+
+	const shootout = boxScore.teams[0].sPts !== undefined;
+
+	if (shootout) {
+		qtrs.push({
+			label: "S",
+			title: "Shootout",
+			bold: true,
+		});
 	}
 
 	const liveGameSim = boxScore.won?.name === undefined;
@@ -563,16 +608,13 @@ const DetailedScore = ({
 						<thead>
 							<tr>
 								<th />
-								{qtrs.map((qtr, i) => (
+								{qtrs.map(info => (
 									<th
-										key={qtr}
-										className={
-											i < qtrs.length - (isSport("baseball") ? 3 : 1)
-												? "text-body-secondary"
-												: undefined
-										}
+										key={info.label}
+										className={info.bold ? undefined : "text-body-secondary"}
+										title={info.title}
 									>
-										{qtr}
+										{info.label}
 									</th>
 								))}
 							</tr>
@@ -610,11 +652,12 @@ const DetailedScore = ({
 													? (t.e as (number | undefined)[]).reduce<number>(
 															(prev, current) => prev + (current ?? 0),
 															0,
-													  )
+														)
 													: t.e}
 											</th>
 										</>
 									) : null}
+									{shootout ? <th>{t.sPts}</th> : null}
 								</tr>
 							))}
 						</tbody>
@@ -815,7 +858,7 @@ const BoxScoreWrapper = ({
 		const pure = boxScore.forceWin <= 500;
 
 		// Live game sim still has final score in won/lost.pts
-		const tie = boxScore.won.pts === boxScore.lost.pts;
+		const tie = getWinner([boxScore.won, boxScore.lost]) === -1;
 
 		forcedWinText = (
 			<>
@@ -827,10 +870,10 @@ const BoxScoreWrapper = ({
 						pure
 							? `${tie ? "Tie" : "Win"} was forced without giving a bonus to ${
 									tie ? "either" : "the winning"
-							  } team`
+								} team`
 							: `Forcing the ${tie ? "tie" : "win"} required giving ${
 									tie ? "a" : "the winning"
-							  } team a bonus`
+								} team a bonus`
 					}
 				>
 					{helpers.numberWithCommas(boxScore.forceWin)}

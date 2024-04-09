@@ -462,7 +462,7 @@ const ScoreBox = memo(
 													<>
 														{t.pts}
 														{t.sPts !== undefined ? (
-															<span className="text-muted">
+															<span className="text-body-secondary">
 																&nbsp;({t.sPts})
 															</span>
 														) : null}

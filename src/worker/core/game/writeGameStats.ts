@@ -300,6 +300,8 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	gameStats.lost.tid = results.team[tl].id;
 	gameStats.won.pts = results.team[tw].stat.pts;
 	gameStats.lost.pts = results.team[tl].stat.pts;
+	gameStats.won.sPts = results.team[tw].stat.sPts;
+	gameStats.lost.sPts = results.team[tl].stat.sPts;
 	const tied = winner === -1;
 
 	if (g.get("phase") < PHASE.PLAYOFFS) {

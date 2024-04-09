@@ -334,6 +334,7 @@ export type Game = {
 	lost: {
 		tid: number;
 		pts: number;
+		sPts?: number;
 	};
 	numGamesToWinSeries?: number;
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
@@ -346,6 +347,7 @@ export type Game = {
 	won: {
 		tid: number;
 		pts: number;
+		sPts?: number;
 	};
 };
 

@@ -16,7 +16,6 @@ shootouts
     - make sure it's not all 0, all sports should have some min prob of success
   - don't track any stats
   - no clock
-- in writeGameStats, add sPts to gameStats.won and lost
 - make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
 - show shootout result somewhere
   - other sports - scoring log

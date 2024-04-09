@@ -321,6 +321,9 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
 	const bannerAdsCode = `<script type="text/javascript" async=true>
 (function() {
+  if (!window.enableLogging) {
+	return;
+  }
   var host = '${bySport({
 		basketball: "basketball-gm.com",
 		football: "football-gm.com",

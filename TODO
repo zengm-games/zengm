@@ -19,7 +19,6 @@ shootouts
 - in writeGameStats, add sPts to gameStats.won and lost
 - make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
 - show shootout result somewhere
-  - basketball - clutch play could say who beat who
   - other sports - scoring log
 - upgrades
   - league file import

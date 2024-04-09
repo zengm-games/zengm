@@ -2268,7 +2268,7 @@ export const settings: Setting[] = (
 						throw new Error("Cannot be negative");
 					}
 
-					if (playoffs && output.maxOvertimesPlayoffs !== null) {
+					if (playoffs && output.maxOvertimesPlayoffs !== null && value < 1) {
 						throw new Error(
 							`Must be >0 if there is a limit to the number of playoff ${overtimePeriods}`,
 						);

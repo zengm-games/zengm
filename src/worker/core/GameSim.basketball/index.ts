@@ -550,6 +550,20 @@ class GameSim extends GameSimBase {
 				}
 			}
 		}
+
+		// Log winner
+		const winner = this.team[0].stat.sPts > this.team[1].stat.sPts ? 0 : 1;
+		const loser = winner === 0 ? 1 : 0;
+		this.clutchPlays.push({
+			text: `<a href="${helpers.leagueUrl(["player", shooters[winner].id])}">${
+				shooters[winner].name
+			}</a> defeated <a href="${helpers.leagueUrl(["player", shooters[loser].id])}">${
+				shooters[loser].name
+			}</a> ${this.team[winner].stat.sPts}-${this.team[loser].stat.sPts} in a shootout`,
+			showNotification: this.team[winner].id === g.get("userTid"),
+			pids: [shooters[winner].id],
+			tids: [this.team[winner].id],
+		});
 	}
 
 	jumpBall() {

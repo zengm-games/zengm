@@ -146,6 +146,12 @@ const GamesList = ({
 									<a href={url}>
 										{gm.teams[user].pts}-{gm.teams[other].pts}
 										{overtimes}
+										{gm.teams[user].sPts !== undefined ? (
+											<>
+												{" "}
+												({gm.teams[user].sPts}-{gm.teams[other].sPts})
+											</>
+										) : null}
 									</a>
 								</td>
 							</tr>

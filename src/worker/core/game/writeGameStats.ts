@@ -680,6 +680,10 @@ const writeGameStats = async (
 	await headToHead.addGame({
 		tids: [gameStats.won.tid, gameStats.lost.tid],
 		pts: [gameStats.won.pts, gameStats.lost.pts],
+		sPts:
+			gameStats.won.sPts === undefined
+				? undefined
+				: [gameStats.won.sPts, gameStats.lost.sPts!],
 		overtime: gameStats.overtimes > 0,
 		playoffRound: currentRound,
 		seriesWinner,

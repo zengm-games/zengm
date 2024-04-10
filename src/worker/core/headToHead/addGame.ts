@@ -1,4 +1,5 @@
 import { PHASE } from "../../../common";
+import getWinner from "../../../common/getWinner";
 import type { HeadToHead } from "../../../common/types";
 import { idb } from "../../db";
 import { g } from "../../util";
@@ -6,6 +7,7 @@ import { g } from "../../util";
 const addGame = async ({
 	tids,
 	pts,
+	sPts,
 	overtime,
 	playoffRound,
 	seriesWinner,
@@ -14,6 +16,7 @@ const addGame = async ({
 }: {
 	tids: [number, number];
 	pts: [number, number];
+	sPts: [number, number] | undefined;
 	overtime: boolean;
 	playoffRound?: number;
 	seriesWinner?: number;
@@ -39,6 +42,17 @@ const addGame = async ({
 		return;
 	}
 
+	const winner = getWinner([
+		{
+			pts: pts[i],
+			sPts: sPts?.[i],
+		},
+		{
+			pts: pts[j],
+			sPts: sPts?.[j],
+		},
+	]);
+
 	if (!playoffs) {
 		if (!headToHead.regularSeason[t0]) {
 			headToHead.regularSeason[t0] = {};
@@ -56,13 +70,13 @@ const addGame = async ({
 			};
 		}
 
-		if (pts[i] > pts[j]) {
+		if (winner === 0) {
 			if (overtime && otl) {
 				headToHead.regularSeason[t0][t1].otw += 1;
 			} else {
 				headToHead.regularSeason[t0][t1].won += 1;
 			}
-		} else if (pts[i] === pts[j]) {
+		} else if (winner === -1) {
 			headToHead.regularSeason[t0][t1].tied += 1;
 		} else {
 			if (overtime && otl) {
@@ -95,7 +109,7 @@ const addGame = async ({
 			};
 		}
 
-		if (pts[i] > pts[j]) {
+		if (winner === 0) {
 			headToHead.playoffs[t0][t1].won += 1;
 		} else {
 			headToHead.playoffs[t0][t1].lost += 1;

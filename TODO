@@ -2,9 +2,6 @@ indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
 shootouts
-- fix all .won.pts
-  - writeGameStats headToHead
-    - is headToHead broken?
 - confirm for all sports
   - no injuries during shootout
   - if still tied, keep going one at a time

@@ -3,6 +3,8 @@ indicator of if trade will be accepted
 
 shootouts
 - fix all .won.pts
+  - writeGameStats headToHead
+    - is headToHead broken?
 - confirm for all sports
   - no injuries during shootout
   - if still tied, keep going one at a time

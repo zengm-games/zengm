@@ -60,7 +60,10 @@ export const boxScoreToLiveSim = async ({
 				}
 			}
 		} else {
-			if (boxScore.won.pts === boxScore.lost.pts) {
+			if (
+				boxScore.won.pts === boxScore.lost.pts &&
+				boxScore.won.sPts === boxScore.lost.sPts
+			) {
 				// Tied!
 				if (t.tied !== undefined) {
 					t.tied -= 1;

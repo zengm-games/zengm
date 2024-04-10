@@ -441,7 +441,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 								}
 							}
 						} else {
-							if (boxScore.current.won.pts === boxScore.current.lost.pts) {
+							if (
+								boxScore.current.won.pts === boxScore.current.lost.pts &&
+								boxScore.current.won.sPts === boxScore.current.lost.sPts
+							) {
 								// Tied!
 								if (t.tied !== undefined) {
 									t.tied += 1;

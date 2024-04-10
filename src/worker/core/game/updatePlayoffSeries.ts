@@ -35,14 +35,27 @@ const updatePlayoffSeries = async (
 			if (home.pts === undefined) {
 				home.pts = 0;
 			}
-
 			if (away.pts === undefined) {
 				away.pts = 0;
+			}
+
+			const shootout = result.team[0].stat.sPts !== undefined;
+			if (shootout) {
+				if (home.sPts === undefined) {
+					home.sPts = 0;
+				}
+				if (away.sPts === undefined) {
+					away.sPts = 0;
+				}
 			}
 
 			if (home.tid === result.team[0].id) {
 				home.pts += result.team[0].stat.pts;
 				away.pts += result.team[1].stat.pts;
+				if (shootout) {
+					home.sPts += result.team[0].stat.sPts;
+					away.sPts += result.team[1].stat.sPts;
+				}
 
 				if (winner === 0) {
 					home.won += 1;
@@ -52,6 +65,10 @@ const updatePlayoffSeries = async (
 			} else if (away.tid === result.team[0].id) {
 				away.pts += result.team[0].stat.pts;
 				home.pts += result.team[1].stat.pts;
+				if (shootout) {
+					away.sPts += result.team[0].stat.sPts;
+					home.sPts += result.team[1].stat.sPts;
+				}
 
 				if (winner === 0) {
 					away.won += 1;
@@ -74,21 +91,27 @@ const updatePlayoffSeries = async (
 			series.home.won >= numGamesToWinSeries
 		) {
 			let winnerPts;
+			let winnerSPts;
 			let winnerTid;
 			let loserPts;
+			let loserSPts;
 			let loserTid;
 			let loserWon;
 
 			if (series.away.won >= numGamesToWinSeries) {
 				winnerPts = series.away.pts;
+				winnerSPts = series.away.sPts;
 				winnerTid = series.away.tid;
 				loserPts = series.home.pts;
+				loserSPts = series.home.sPts;
 				loserTid = series.home.tid;
 				loserWon = series.home.won;
 			} else {
 				winnerPts = series.home.pts;
+				winnerSPts = series.away.sPts;
 				winnerTid = series.home.tid;
 				loserPts = series.away.pts;
+				loserSPts = series.home.sPts;
 				loserTid = series.away.tid;
 				loserWon = series.away.won;
 			}
@@ -136,7 +159,7 @@ const updatePlayoffSeries = async (
 				loserPts !== undefined &&
 				numGamesToWinSeries === 1;
 			const score = showPts
-				? `${winnerPts}-${loserPts}`
+				? `${winnerPts}-${loserPts}${winnerSPts !== undefined ? ` (${winnerSPts}-${loserSPts})` : ""}`
 				: `${numGamesToWinSeries}-${loserWon}`;
 			const showNotification =
 				series.away.tid === g.get("userTid") ||

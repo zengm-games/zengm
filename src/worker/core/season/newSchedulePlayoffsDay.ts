@@ -321,13 +321,15 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			? {
 					home: team1,
 					away: team2,
-			  }
+				}
 			: {
 					home: team2,
 					away: team1,
-			  };
+				};
 		matchup.home.pts = undefined;
 		matchup.away.pts = undefined;
+		matchup.home.sPts = undefined;
+		matchup.away.sPts = undefined;
 		matchup.home.won = 0;
 		matchup.away.won = 0;
 		series[rnd + 1][i / 2] = matchup;

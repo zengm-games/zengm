@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
+import type { ReactNode } from "react";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -9,6 +10,7 @@ type SeriesTeam = {
 	imgURLSmall?: string;
 	pendingPlayIn?: true;
 	pts?: number;
+	sPts?: number;
 	regularSeason: {
 		won: number;
 		lost: number;
@@ -91,6 +93,7 @@ const Team = ({
 	if (!team) {
 		return null;
 	}
+	console.log(team);
 
 	if (!team.pendingPlayIn && editing) {
 		const { teams, byConf } = editing;
@@ -140,7 +143,7 @@ const Team = ({
 		}
 	}
 
-	const wonPtsLink = (value: number) => {
+	const wonPtsLink = (value: ReactNode) => {
 		if (gid === undefined) {
 			return <div className="ms-auto pe-2">{value}</div>;
 		}
@@ -218,7 +221,14 @@ const Team = ({
 			)}
 			{showWon && typeof team.won === "number" ? wonPtsLink(team.won) : null}
 			{!showWon && showPts && typeof team.pts === "number"
-				? wonPtsLink(team.pts)
+				? wonPtsLink(
+						<>
+							{team.pts}
+							{team.sPts !== undefined ? (
+								<span className="fw-normal">&nbsp;({team.sPts})</span>
+							) : null}
+						</>,
+					)
 				: null}
 		</li>
 	);

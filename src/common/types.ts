@@ -1385,7 +1385,6 @@ export type PlayoffSeriesTeam = {
 	imgURL?: string;
 	imgURLSmall?: string;
 	pendingPlayIn?: true;
-	pts?: number; // undefined means game hasn't happened yet
 	region?: string;
 	regularSeason?: {
 		won: number;
@@ -1396,6 +1395,10 @@ export type PlayoffSeriesTeam = {
 	seed: number;
 	tid: number;
 	won: number;
+
+	// pts and sPts are basically only used when there is one game in the series, but they're tracked as the sum of all games for some reason. Beside the one game use case, pts is used in a couple places to identify if a series has started or not. Might be good to improve that some day.
+	pts?: number; // undefined means game hasn't happened yet
+	sPts?: number; // undefined means game hasn't happened yet or there was no shootout
 };
 
 type PlayInMatchup = {

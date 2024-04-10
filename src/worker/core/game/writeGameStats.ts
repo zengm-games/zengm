@@ -662,6 +662,9 @@ const writeGameStats = async (
 		if (allStars) {
 			allStars.gid = results.gid;
 			allStars.score = [results.team[0].stat.pts, results.team[1].stat.pts];
+			if (results.team[0].stat.sPts !== undefined) {
+				allStars.sPts = [results.team[0].stat.sPts, results.team[0].stat.sPts];
+			}
 			allStars.overtimes = results.overtimes;
 			await idb.cache.allStars.put(allStars);
 		}

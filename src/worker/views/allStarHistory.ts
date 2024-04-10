@@ -19,6 +19,7 @@ const augment = (allAllStars: AllStars[]) => {
 			mvp: row.mvp ? addAbbrevAndCount(row.mvp) : undefined,
 			overtimes: row.overtimes,
 			score: row.score,
+			sPts: row.sPts,
 			season: row.season,
 			teamNames: row.teamNames,
 			captain1: addAbbrevAndCount(row.teams[0][0]),
@@ -48,7 +49,7 @@ const augment = (allAllStars: AllStars[]) => {
 
 	const updateCount = (
 		key: "captain1" | "captain2" | "mvp" | "dunk" | "three",
-		row: typeof augmented[number],
+		row: (typeof augmented)[number],
 	) => {
 		const object = row[key];
 		if (!object) {

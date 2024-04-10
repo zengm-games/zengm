@@ -114,6 +114,7 @@ export type AllStars = {
 	// After game is complete
 	gid?: number;
 	score?: [number, number];
+	sPts?: [number, number]; // Only if there was a shootout
 	overtimes?: number;
 	mvp?: {
 		pid: number;

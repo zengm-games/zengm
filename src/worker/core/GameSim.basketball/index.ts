@@ -559,7 +559,7 @@ class GameSim extends GameSimBase {
 				shooters[winner].name
 			}</a> defeated <a href="${helpers.leagueUrl(["player", shooters[loser].id])}">${
 				shooters[loser].name
-			}</a> ${this.team[winner].stat.sPts}-${this.team[loser].stat.sPts} in a shootout`,
+			}</a> in a shootout`,
 			showNotification: this.team[winner].id === g.get("userTid"),
 			pids: [shooters[winner].id],
 			tids: [this.team[winner].id],

@@ -2,16 +2,14 @@ indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
 shootouts
-- UI displaying game results needs to handle it somehow
-  - pts}-
+- make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info
+- fix all .won.pts
 - confirm for all sports
   - no injuries during shootout
   - if still tied, keep going one at a time
     - make sure it's not all 0, all sports should have some min prob of success
   - don't track any stats
   - no clock
-- make sure it works for player feats - see PlayerFeats.tsx "const result" - needs shootout info\
-- fix all .won.pts
 - show shootout result somewhere
   - other sports - scoring log
 - upgrades

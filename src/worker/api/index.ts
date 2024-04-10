@@ -131,6 +131,7 @@ import { getStats, statTypes } from "../views/playerGraphs";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 import isUntradable from "../core/trade/isUntradable";
 import getWinner from "../../common/getWinner";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1344,7 +1345,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					p.pos,
 					g.get("teamInfoCache")[t.tid]?.abbrev,
 					g.get("teamInfoCache")[t2.tid]?.abbrev,
-					`${t.pts}-${t2.pts}`,
+					formatScoreWithShootout(t, t2),
 					result,
 					season,
 					playoffs,

@@ -11,6 +11,7 @@ import type {
 } from "../../../common/types";
 import { headToHead, season } from "..";
 import getWinner from "../../../common/getWinner";
+import formatScoreWithShootout from "../../../common/formatScoreWithShootout";
 
 const allStarMVP = async (
 	game: Game,
@@ -413,7 +414,7 @@ const writeGameStats = async (
 			`${g.get("teamInfoCache")[g.get("userTid")]?.abbrev}_${g.get("userTid")}`,
 			g.get("season"),
 			results.gid,
-		])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
+		])}">${formatScoreWithShootout(results.team[tw].stat, results.team[tl].stat)}</a>.`;
 
 		let type: LogEventType =
 			results.team[tw].id === g.get("userTid") ? "gameWon" : "gameLost";
@@ -439,9 +440,7 @@ const writeGameStats = async (
 				"special",
 				g.get("season"),
 				results.gid,
-			])}">${results.team[tw].stat.pts}-${
-				results.team[tl].stat.pts
-			} in the All-Star Game</a>.`;
+			])}">${formatScoreWithShootout(results.team[tw].stat, results.team[tl].stat)} in the All-Star Game</a>.`;
 			const type = tied ? "gameTied" : "gameWon";
 			logEvent(
 				{
@@ -511,9 +510,7 @@ const writeGameStats = async (
 			`${g.get("teamInfoCache")[g.get("userTid")]?.abbrev}_${g.get("userTid")}`,
 			g.get("season"),
 			results.gid,
-		])}">${results.team[tw].stat.pts}-${
-			results.team[tl].stat.pts
-		}</a> in${gameNumText} the ${round}${leadText}.`;
+		])}">${formatScoreWithShootout(results.team[tw].stat, results.team[tl].stat)}</a> in${gameNumText} the ${round}${leadText}.`;
 
 		// Await needed so this happens before the updatePlayoffSeries event
 		await logEvent(
@@ -566,8 +563,14 @@ const writeGameStats = async (
 		const indOther = indTeam === 0 ? 1 : 0;
 		const won = indTeam === tw;
 		const score = won
-			? `${results.team[indTeam].stat.pts}-${results.team[indOther].stat.pts}`
-			: `${results.team[indOther].stat.pts}-${results.team[indTeam].stat.pts}`;
+			? formatScoreWithShootout(
+					results.team[indTeam].stat,
+					results.team[indOther].stat,
+				)
+			: formatScoreWithShootout(
+					results.team[indOther].stat,
+					results.team[indTeam].stat,
+				);
 
 		let endPart = "";
 		if (allStarGame) {

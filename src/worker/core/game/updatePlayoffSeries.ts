@@ -4,6 +4,7 @@ import type { Conditions, GameResults } from "../../../common/types";
 import season from "../season";
 import { findSeries } from "./writeGameStats";
 import getWinner from "../../../common/getWinner";
+import formatScoreWithShootout from "../../../common/formatScoreWithShootout";
 
 const updatePlayoffSeries = async (
 	results: GameResults,
@@ -159,7 +160,16 @@ const updatePlayoffSeries = async (
 				loserPts !== undefined &&
 				numGamesToWinSeries === 1;
 			const score = showPts
-				? `${winnerPts}-${loserPts}${winnerSPts !== undefined ? ` (${winnerSPts}-${loserSPts})` : ""}`
+				? formatScoreWithShootout(
+						{
+							pts: winnerPts!,
+							sPts: winnerSPts,
+						},
+						{
+							pts: loserPts!,
+							sPts: loserSPts,
+						},
+					)
 				: `${numGamesToWinSeries}-${loserWon}`;
 			const showNotification =
 				series.away.tid === g.get("userTid") ||

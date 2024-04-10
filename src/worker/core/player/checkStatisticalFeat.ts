@@ -11,6 +11,7 @@ import type {
 	GameResults,
 } from "../../../common/types";
 import getWinner from "../../../common/getWinner";
+import formatScoreWithShootout from "../../../common/formatScoreWithShootout";
 
 const checkPlayer = bySport({
 	baseball: checkStatisticalFeatBaseball,
@@ -104,6 +105,11 @@ const checkStatisticalFeat = (
 			}
 		}
 
+		const scoreText = formatScoreWithShootout(
+			results.team[i].stat,
+			results.team[j].stat,
+		);
+
 		const endPart = allStarGame
 			? `${tied ? "tie" : won ? "win" : "loss"} in the All-Star Game`
 			: `${tied ? "tie with the" : won ? "win over the" : "loss to the"} ${
@@ -111,7 +117,7 @@ const checkStatisticalFeat = (
 				}`;
 		featText += `</a> in ${
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
-		} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${endPart}.`;
+		} ${scoreText} ${endPart}.`;
 
 		logFeat(featText, score);
 
@@ -126,7 +132,7 @@ const checkStatisticalFeat = (
 			gid: results.gid,
 			stats: p.stat,
 			won,
-			score: `${results.team[i].stat.pts}-${results.team[j].stat.pts}`,
+			score: scoreText,
 			overtimes: results.overtimes,
 			numPeriods: g.get("numPeriods"),
 		});

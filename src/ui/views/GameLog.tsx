@@ -6,6 +6,7 @@ import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import getWinner from "../../common/getWinner";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 
 const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -144,14 +145,8 @@ const GamesList = ({
 								</td>
 								<td className="game-log-cell">
 									<a href={url}>
-										{gm.teams[user].pts}-{gm.teams[other].pts}
+										{formatScoreWithShootout(gm.teams[user], gm.teams[other])}
 										{overtimes}
-										{gm.teams[user].sPts !== undefined ? (
-											<>
-												{" "}
-												({gm.teams[user].sPts}-{gm.teams[other].sPts})
-											</>
-										) : null}
 									</a>
 								</td>
 							</tr>

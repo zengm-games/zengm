@@ -1,4 +1,5 @@
 import { filterPlayerStats, PLAYER_GAME_STATS } from "../../common";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 import getWinner from "../../common/getWinner";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
@@ -159,7 +160,7 @@ const updatePlayerGameLog = async (
 				abbrev,
 				oppTid,
 				oppAbbrev,
-				result: `${result} ${game.teams[t0].pts}-${game.teams[t1].pts}${overtimes}`,
+				result: `${result} ${formatScoreWithShootout(game.teams[t0], game.teams[t1])}${overtimes}`,
 				diff: game.teams[t0].pts - game.teams[t1].pts,
 				playoffs: game.playoffs,
 				stats: gameStats,

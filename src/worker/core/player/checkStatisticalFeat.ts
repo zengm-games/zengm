@@ -27,6 +27,12 @@ const checkStatisticalFeat = (
 	results: GameResults,
 	conditions: Conditions,
 ) => {
+	const minFactor = helpers.quarterLengthFactor();
+	if (minFactor <= 0.01) {
+		// Skip for very short games
+		return;
+	}
+
 	const logFeat = async (text: string, score: number) => {
 		let allStars;
 

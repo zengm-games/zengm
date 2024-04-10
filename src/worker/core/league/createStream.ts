@@ -252,6 +252,23 @@ const preProcess = async (
 				applyRealTeamInfo(x.info, realTeamInfo, x.season);
 			}
 		}
+	} else if (key === "playerFeats") {
+		// Version 60 upgrade
+		if (
+			x.won !== undefined &&
+			x.result === undefined &&
+			typeof x.score === "string"
+		) {
+			const pts = (x.score as string).split("-").map(y => parseInt(y));
+			let diff = -Infinity;
+			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
+				diff = pts[0] - pts[1];
+			}
+
+			x.result = diff === 0 ? "T" : x.won ? "W" : "L";
+
+			delete x.won;
+		}
 	}
 
 	return x;
@@ -1288,7 +1305,7 @@ const afterDBStream = async ({
 				activeTids,
 				scoutingLevel,
 				teams,
-		  });
+			});
 
 	// If players are specified for some team on import (from CustomizeTeams), replace the randomly generated players
 	const replaceTids = new Set();

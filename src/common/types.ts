@@ -1093,7 +1093,7 @@ export type PlayerFeatWithoutKey = {
 	playoffs: boolean;
 	gid: number;
 	stats: any;
-	won: boolean;
+	result: "W" | "L" | "T";
 	score: string;
 	overtimes: number;
 	numPeriods: number;

@@ -1610,8 +1610,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 						},
 						stats: {},
-						won: {
-							type: "boolean",
+						result: {
+							type: "string",
+							enum: ["W", "L", "T"],
 						},
 						score: {
 							type: "string",
@@ -1631,7 +1632,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 						"playoffs",
 						"gid",
 						"stats",
-						"won",
 						"score",
 						"overtimes",
 					],

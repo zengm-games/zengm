@@ -121,6 +121,8 @@ const checkStatisticalFeat = (
 
 		logFeat(featText, score);
 
+		const result = tied ? "T" : won ? "W" : "L";
+
 		idb.cache.playerFeats.add({
 			pid,
 			name: p.name,
@@ -131,10 +133,10 @@ const checkStatisticalFeat = (
 			playoffs: g.get("phase") === PHASE.PLAYOFFS,
 			gid: results.gid,
 			stats: p.stat,
-			won,
 			score: scoreText,
 			overtimes: results.overtimes,
 			numPeriods: g.get("numPeriods"),
+			result,
 		});
 	}
 };

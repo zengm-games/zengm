@@ -1420,6 +1420,27 @@ const migrate = async ({
 			keyPath: "hash",
 		});
 	}
+
+	if (oldVersion <= 59) {
+		iterate(
+			transaction.objectStore("playerFeats"),
+			undefined,
+			undefined,
+			feat => {
+				const pts = feat.score.split("-").map(x => parseInt(x));
+				let diff = -Infinity;
+				if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
+					diff = pts[0] - pts[1];
+				}
+
+				feat.result = diff === 0 ? "T" : (feat as any).won ? "W" : "L";
+
+				delete (feat as any).won;
+
+				return feat;
+			},
+		);
+	}
 };
 
 const connectLeague = (lid: number) =>

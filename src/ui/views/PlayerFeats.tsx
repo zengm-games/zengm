@@ -31,7 +31,7 @@ const PlayerFeats = ({
 	]);
 
 	const rows = feats.map(p => {
-		const result = `${p.diff === 0 ? "T" : p.won ? "W" : "L"} ${p.score}`;
+		const result = `${p.result} ${p.score}`;
 
 		return {
 			key: p.fid,
@@ -70,7 +70,7 @@ const PlayerFeats = ({
 							{result}
 						</a>
 					),
-					sortValue: p.diff,
+					sortValue: parseInt(p.score.split("-")[0]),
 					searchValue: result,
 				},
 				p.season,
@@ -112,7 +112,7 @@ const PlayerFeats = ({
 					title: "",
 					colspan: 4,
 				},
-		  ]
+			]
 		: undefined;
 
 	const scaleMinimum = (amount: number) => {

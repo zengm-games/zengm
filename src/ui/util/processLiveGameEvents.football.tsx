@@ -562,18 +562,21 @@ const processLiveGameEvents = ({
 			scrimmage,
 			intendedPossessionChange,
 			subPlay,
+			tOverride,
 		}: {
 			down: number;
 			toGo: number;
 			scrimmage: number;
 			intendedPossessionChange: boolean;
 			subPlay: boolean;
+			tOverride?: 0 | 1;
 		}) => {
-			if (actualT === undefined) {
+			const t = tOverride ?? actualT;
+			if (t === undefined) {
 				throw new Error("Should never happen");
 			}
 			sportState.plays.push({
-				t: actualT,
+				t,
 				down,
 				toGo,
 				scrimmage,
@@ -610,6 +613,7 @@ const processLiveGameEvents = ({
 				scrimmage: 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
+				tOverride: 0,
 			});
 		}
 

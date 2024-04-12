@@ -314,7 +314,6 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay.logEvent({
 			type: "shootoutStart",
-			t: reversedTeamNums[0],
 			rounds: this.shootoutRounds,
 			clock: this.clock,
 		});

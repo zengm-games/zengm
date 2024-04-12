@@ -3,7 +3,6 @@ indicator of if trade will be accepted
 
 shootouts
 - football
-  - end early logic is not right
   - show attempt # in play-by-play
   - test missed FGs scoring summary in normal game
   - drive chart

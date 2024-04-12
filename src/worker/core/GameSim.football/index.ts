@@ -318,7 +318,7 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 		});
 
-		for (let i = 0; i < this.shootoutRounds; i++) {
+		SHOOTOUT_ROUNDS: for (let i = 0; i < this.shootoutRounds; i++) {
 			for (const t of reversedTeamNums) {
 				this.doShootoutShot(t);
 
@@ -329,14 +329,13 @@ class GameSim extends GameSimBase {
 				const minPtsOther = this.team[t2].stat.sPts;
 				const maxPtsOther =
 					minPtsOther + this.shootoutRounds - i - (t === 0 ? 1 : 0);
-				console.log(i, t, minPts, maxPts, minPtsOther, maxPtsOther);
 				if (minPts > maxPtsOther) {
 					// Already clinched a win even without the remaining shots
-					break;
+					break SHOOTOUT_ROUNDS;
 				}
 				if (maxPts < minPtsOther) {
 					// Can't possibly win, so just give up
-					break;
+					break SHOOTOUT_ROUNDS;
 				}
 			}
 		}

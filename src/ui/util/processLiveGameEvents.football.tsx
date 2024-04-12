@@ -970,7 +970,7 @@ const processLiveGameEvents = ({
 			} else if (e.type === "twoPointConversion") {
 				play.tagOverride = "2PA";
 			} else if (e.type === "shootoutShot") {
-				play.tagOverride = "SHA";
+				play.tagOverride = "FGA";
 			}
 		}
 

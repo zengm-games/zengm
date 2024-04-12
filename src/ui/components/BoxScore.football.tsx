@@ -385,7 +385,7 @@ const ScoringSummary = memo(
 								<tr>
 									<td>{teams[event.t].abbrev}</td>
 									<td className={event.noPoints ? "text-danger" : undefined}>
-										{event.scoreType}
+										{event.scoreType === "SH" ? "FG" : event.scoreType}
 									</td>
 									<td>
 										{event.score.map((pts, i) => {
@@ -567,10 +567,10 @@ const PlayBar = forwardRef<
 				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
 				(play.scoreInfo.type === "SH" && play.scoreInfo.sPts === undefined)
 			) {
-				score = `Missed ${play.scoreInfo.type}`;
+				score = "Missed FG";
 				SCORE_TAG_WIDTH = 75;
 			} else {
-				score = play.scoreInfo.type;
+				score = play.scoreInfo.type === "SH" ? "FG" : play.scoreInfo.type;
 			}
 		}
 

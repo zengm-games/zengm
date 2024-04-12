@@ -4,13 +4,13 @@ indicator of if trade will be accepted
 shootouts
 - football
   - show attempt # in play-by-play
+    - maybe also in drive chart instad of SHA
   - test missed FGs scoring summary in normal game
   - scoring summary
     - new section for shootout
     - no time for shootout
   - drive chart
     - get rid of first play, if possible
-    - switch field every kick
 - baseball
 - hockey
 - confirm for all sports

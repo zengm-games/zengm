@@ -547,9 +547,10 @@ const PlayBar = forwardRef<
 	) => {
 		const goalToGo = play.toGo + play.scrimmage >= 100;
 		const TAG_WIDTH = goalToGo ? 75 : 60;
-		const SCORE_TAG_WIDTH = 30;
+		let SCORE_TAG_WIDTH = 30;
 
-		const negative = play.yards < 0;
+		const negative =
+			play.yards < 0 || (play.scoreInfo?.type === "SH" && play.scrimmage < 50);
 
 		const barGoingLeft = driveDirection === negative;
 
@@ -558,11 +559,15 @@ const PlayBar = forwardRef<
 		let score: string | undefined;
 		console.log(play);
 		if (play.scoreInfo?.type) {
-			score =
+			if (
 				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
 				(play.scoreInfo.type === "SH" && play.scoreInfo.sPts === undefined)
-					? `Missed ${play.scoreInfo.type}`
-					: play.scoreInfo.type;
+			) {
+				score = `Missed ${play.scoreInfo.type}`;
+				SCORE_TAG_WIDTH = 75;
+			} else {
+				score = play.scoreInfo.type;
+			}
 		}
 
 		const yardLinePercent = yardLineToPercent(play.scrimmage);

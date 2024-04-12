@@ -18,6 +18,7 @@ let playersByPid:
 export type SportState = {
 	awaitingAfterTouchdown: boolean;
 	awaitingKickoff: boolean;
+	awaitingShootout: boolean;
 	t: 0 | 1;
 	scrimmage: number;
 	toGo: number;
@@ -46,6 +47,7 @@ export type SportState = {
 export const DEFAULT_SPORT_STATE: SportState = {
 	awaitingAfterTouchdown: false,
 	awaitingKickoff: true,
+	awaitingShootout: false,
 	t: 0,
 	scrimmage: 0,
 	toGo: 0,
@@ -598,12 +600,14 @@ const processLiveGameEvents = ({
 			sportState.plays = [];
 			sportState.awaitingAfterTouchdown = false;
 			sportState.awaitingKickoff = false;
+			sportState.awaitingShootout = true;
 			sportState.scrimmage = 1;
 			sportState.toGo = 10;
+			sportState.t = 0;
 			addNewPlay({
 				down: 1,
 				toGo: 10,
-				scrimmage: 33,
+				scrimmage: 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
 			});
@@ -640,7 +644,7 @@ const processLiveGameEvents = ({
 			addNewPlay({
 				down: 1,
 				toGo: 10,
-				scrimmage: 33,
+				scrimmage: actualT === 1 ? 33 : 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
 			});
@@ -960,6 +964,8 @@ const processLiveGameEvents = ({
 				play.tagOverride = "XPA";
 			} else if (e.type === "twoPointConversion") {
 				play.tagOverride = "2PA";
+			} else if (e.type === "shootoutShot") {
+				play.tagOverride = "SHA";
 			}
 		}
 

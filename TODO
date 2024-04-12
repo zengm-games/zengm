@@ -3,13 +3,13 @@ indicator of if trade will be accepted
 
 shootouts
 - football
-  - score not updating
-  - show score in play-by-play somehow
+  - show attempt # in play-by-play
   - scoring summary
     - show missed ones too
+      - normal FGs too
     - should scoreInfo have sPts or just use pts?
     - should play type be SH or FG?
-  - do something in drive chart
+  - drive chart
     - show all as same drive
     - switch field every kick
 - baseball

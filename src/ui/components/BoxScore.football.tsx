@@ -239,7 +239,8 @@ const processEvents = (
 		text: ReactNode;
 		time: string;
 	}[] = [];
-	const score = [0, 0] as [number, number];
+	let score: [number, number] = [0, 0];
+	let shootout = false;
 
 	for (const event of events) {
 		let text: ReactNode | undefined;
@@ -258,6 +259,11 @@ const processEvents = (
 			continue;
 		}
 
+		if (!shootout && event.type === "shootoutShot") {
+			shootout = true;
+			score = [0, 0];
+		}
+
 		// gameLog.ts swaps these, but liveGame.ts doesn't (because they come from the raw events in FBGM, but not in the other games - ugh)
 		const actualT = liveGameSim ? (event.t === 0 ? 1 : 0) : event.t;
 		const otherT = actualT === 0 ? 1 : 0;
@@ -266,11 +272,12 @@ const processEvents = (
 			? getScoreInfoOld(oldEvent.text)
 			: getScoreInfo(event);
 		if (scoreInfo) {
+			const ptsKey = shootout ? "sPts" : "points";
 			if (scoreInfo.type === "SF") {
 				// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
-				score[otherT] += scoreInfo.points;
+				score[otherT] += scoreInfo[ptsKey]!;
 			} else {
-				score[actualT] += scoreInfo.points;
+				score[actualT] += scoreInfo[ptsKey]!;
 			}
 
 			const prevEvent: any = processedEvents.at(-1);

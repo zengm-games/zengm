@@ -122,7 +122,6 @@ type PlayByPlayEntryInfo = {
 
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntryInfo }) => {
-		console.log(entry);
 		let scoreBlock = null;
 		if (entry.score) {
 			if (isSport("basketball")) {
@@ -315,7 +314,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 			const currentPts =
 				boxScore.current.teams[0][ptsKey] + boxScore.current.teams[1][ptsKey];
 			const scoreDiff = currentPts - prevPts;
-			console.log("ptsKey", ptsKey, scoreDiff);
 
 			overtimes.current = output.overtimes;
 			quarters.current = output.quarters;

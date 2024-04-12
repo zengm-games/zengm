@@ -98,6 +98,14 @@ export type PlayByPlayEventInputScore =
 			type: "twoPointConversionFailed";
 			clock: number;
 			t: TeamNum;
+	  }
+	| {
+			type: "shootoutShot";
+			t: TeamNum;
+			pid: number;
+			made: boolean;
+			yds: number;
+			clock: number;
 	  };
 
 type PlayByPlayEventInput =
@@ -236,14 +244,6 @@ type PlayByPlayEventInput =
 			type: "shootoutStart";
 			rounds: number;
 			t: TeamNum;
-			clock: number;
-	  }
-	| {
-			type: "shootoutShot";
-			t: TeamNum;
-			pid: number;
-			made: boolean;
-			yds: number;
 			clock: number;
 	  }
 	| {

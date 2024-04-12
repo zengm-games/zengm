@@ -116,12 +116,20 @@ export const getScoreInfo = (event: PlayByPlayEvent) => {
 	}
 
 	if (type !== undefined && long !== undefined) {
-		return {
+		const scoreInfo = {
 			type,
 			long,
 			points,
-			sPts,
+			sPts: undefined as undefined | number,
 		};
+		if (sPts > 0) {
+			return {
+				...scoreInfo,
+				sPts,
+			};
+		}
+
+		return scoreInfo;
 	}
 };
 
@@ -160,6 +168,7 @@ export const getScoreInfoOld = (text: string) => {
 			type,
 			long: "",
 			points,
+			sPts: undefined as undefined | number,
 		};
 	}
 };
@@ -712,7 +721,6 @@ const processLiveGameEvents = ({
 
 			boxScore.possession = actualT;
 		} else if (e.type === "stat") {
-			console.log(e);
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
 				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
@@ -943,7 +951,6 @@ const processLiveGameEvents = ({
 				(e as any).type === "shootoutShot"
 			) {
 				const scoreInfo = getScoreInfo(e);
-				console.log("scoreInfo", scoreInfo);
 				if (
 					scoreInfo &&
 					(scoreInfo.points > 0 ||

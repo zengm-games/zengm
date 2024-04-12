@@ -345,26 +345,31 @@ const ScoringSummary = memo(
 			<table className="table table-sm border-bottom">
 				<tbody>
 					{processedEvents.map((event, i) => {
-						let quarterText = "???";
-						if (event.quarter.startsWith("OT")) {
-							const overtimes = parseInt(event.quarter.replace("OT", ""));
-							if (overtimes > 1) {
-								quarterText = `${helpers.ordinal(overtimes)} overtime`;
-							} else {
-								quarterText = "Overtime";
-							}
-						} else {
-							const quarter = parseInt(event.quarter.replace("Q", ""));
-							if (!Number.isNaN(quarter)) {
-								quarterText = `${helpers.ordinal(quarter)} ${getPeriodName(
-									numPeriods,
-								)}`;
-							}
-						}
-
 						let quarterHeader: ReactNode = null;
-						if (event.quarter !== prevQuarter) {
-							prevQuarter = event.quarter;
+						const currentQuarter =
+							event.scoreType === "SH" ? "SH" : event.quarter;
+						if (currentQuarter !== prevQuarter) {
+							prevQuarter = currentQuarter;
+
+							let quarterText = "???";
+							if (currentQuarter.startsWith("OT")) {
+								const overtimes = parseInt(currentQuarter.replace("OT", ""));
+								if (overtimes > 1) {
+									quarterText = `${helpers.ordinal(overtimes)} overtime`;
+								} else {
+									quarterText = "Overtime";
+								}
+							} else if (currentQuarter === "SH") {
+								quarterText = "Shootout";
+							} else {
+								const quarter = parseInt(currentQuarter.replace("Q", ""));
+								if (!Number.isNaN(quarter)) {
+									quarterText = `${helpers.ordinal(quarter)} ${getPeriodName(
+										numPeriods,
+									)}`;
+								}
+							}
+
 							quarterHeader = (
 								<tr>
 									<td className="text-body-secondary" colSpan={5}>
@@ -400,7 +405,7 @@ const ScoringSummary = memo(
 											);
 										})}
 									</td>
-									<td>{event.time}</td>
+									<td>{currentQuarter !== "SH" ? event.time : null}</td>
 									<td style={{ whiteSpace: "normal" }}>{event.text}</td>
 								</tr>
 							</Fragment>
@@ -557,7 +562,6 @@ const PlayBar = forwardRef<
 		const turnover = play.turnover;
 
 		let score: string | undefined;
-		console.log(play);
 		if (play.scoreInfo?.type) {
 			if (
 				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||

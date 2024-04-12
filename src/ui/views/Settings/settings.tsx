@@ -2249,7 +2249,7 @@ export const settings: Setting[] = (
 								basketball:
 									"For basketball, that means a three-point contest! This setting specifies the # of shots your best shooter will get. If the game is still tied after both teams go, then it's repeated until someone wins.",
 								football:
-									"For football, that means a field goal contest! This setting specifies the number of 50 yard field goals each team will attempt. If it's still tied after both teams go, then additional rounds will be played until there is a winner, with each round moving a little closer in case both kickers are injured or something crazy like that.",
+									"For football, that means a field goal contest! This setting specifies the number of 50 yard field goals each team will attempt. If it's still tied after that, then additional rounds will be played until there is a winner.",
 								hockey:
 									"For hockey, that means a penalty shootout. This setting specifies the number of players from each team who will take turns attempting penalty shots. If it's still tied after that, then additional rounds will be played until there is a winner.",
 							})}

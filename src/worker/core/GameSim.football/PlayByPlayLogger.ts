@@ -231,6 +231,23 @@ type PlayByPlayEventInput =
 			type: "turnoverOnDowns";
 			clock: number;
 			t: TeamNum;
+	  }
+	| {
+			type: "shootoutStart";
+			rounds: number;
+			clock: number;
+	  }
+	| {
+			type: "shootoutShot";
+			t: TeamNum;
+			pid: number;
+			made: boolean;
+			yds: number;
+			clock: number;
+	  }
+	| {
+			type: "shootoutTie";
+			clock: number;
 	  };
 
 export type PlayByPlayEvent =

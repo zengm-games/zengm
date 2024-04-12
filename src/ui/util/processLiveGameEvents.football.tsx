@@ -436,6 +436,14 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		text = "Two-point conversion failed";
 	} else if (event.type === "turnoverOnDowns") {
 		text = <span className="text-danger">Turnover on downs</span>;
+	} else if (event.type === "shootoutStart") {
+		text = `The game will now be decided by a three-point shootout with ${event.rounds} rounds!`;
+	} else if (event.type === "shootoutShot") {
+		text = `${playersByPid![event.pid].name} ${event.made ? "made" : "missed"} a ${
+			event.yds
+		} yard field goal`;
+	} else if (event.type === "shootoutTie") {
+		text = `The shootout is tied! Teams will alternate kicks until there is a winner`;
 	} else {
 		throw new Error(`No text for "${event.type}"`);
 	}
@@ -527,6 +535,12 @@ const processLiveGameEvents = ({
 			if ((e as any).clock !== undefined) {
 				boxScore.time = formatClock((e as any).clock);
 			}
+		} else if (e.type === "shootoutStart") {
+			boxScore.shootout = true;
+			boxScore.teams[0].sPts = 0;
+			boxScore.teams[0].sAtt = 0;
+			boxScore.teams[1].sPts = 0;
+			boxScore.teams[1].sAtt = 0;
 		}
 
 		const addNewPlay = ({
@@ -721,7 +735,11 @@ const processLiveGameEvents = ({
 				boxScore.time = formatClock(e.clock);
 				stop = true;
 				t = actualT;
-				textOnly = e.type === "twoMinuteWarning" || e.type === "gameOver";
+				textOnly =
+					e.type === "twoMinuteWarning" ||
+					e.type === "gameOver" ||
+					e.type === "shootoutStart" ||
+					e.type === "shootoutTie";
 
 				play.texts.push(text);
 			}

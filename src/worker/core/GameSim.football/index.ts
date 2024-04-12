@@ -29,6 +29,8 @@ import { PHASE } from "../../../common";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
+const FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE = 17;
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -202,6 +204,8 @@ class GameSim extends GameSimBase {
 			numOvertimes += 1;
 		}
 
+		this.doShootout();
+
 		this.playByPlay.logEvent({
 			type: "gameOver",
 			clock: this.clock,
@@ -257,6 +261,97 @@ class GameSim extends GameSimBase {
 			scoringSummary,
 		};
 		return out;
+	}
+
+	doShootoutShot(t: TeamNum) {
+		this.o = t;
+		this.d = t === 0 ? 1 : 0;
+
+		this.updatePlayersOnField("fieldGoal");
+
+		const distance = 50;
+
+		const p = this.getTopPlayerOnField(this.o, "K");
+		this.scrimmage = distance + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
+
+		// Don't let it ever be 0% or 100%
+		const probMake = helpers.bound(this.probMadeFieldGoal(p), 0.01, 0.99);
+
+		const made = Math.random() < probMake;
+
+		this.recordStat(t, undefined, "sAtt");
+		if (made) {
+			this.recordStat(t, undefined, "sPts");
+		}
+
+		this.playByPlay.logEvent({
+			type: "shootoutShot",
+			t: t,
+			pid: p.id,
+			made,
+			yds: distance,
+			clock: this.clock,
+		});
+	}
+
+	doShootout() {
+		if (
+			this.shootoutRounds <= 0 ||
+			this.team[0].stat.pts !== this.team[1].stat.pts
+		) {
+			return;
+		}
+
+		this.shootout = true;
+		this.clock = 1; // So fast-forward to end of period stops before the shootout
+		this.team[0].stat.sPts = 0;
+		this.team[0].stat.sAtt = 0;
+		this.team[1].stat.sPts = 0;
+		this.team[1].stat.sAtt = 0;
+
+		this.playByPlay.logEvent({
+			type: "shootoutStart",
+			rounds: this.shootoutRounds,
+			clock: this.clock,
+		});
+
+		const reversedTeamNums = [1, 0] as const;
+
+		for (let i = 0; i < this.shootoutRounds; i++) {
+			for (const t of reversedTeamNums) {
+				this.doShootoutShot(t);
+
+				// Short circuit if result is already decided
+				const t2 = t === 0 ? 1 : 0;
+				const minPts = this.team[t].stat.sPts;
+				const maxPts = minPts + this.shootoutRounds - i - 1;
+				const minPtsOther = this.team[t2].stat.sPts;
+				const maxPtsOther =
+					minPtsOther + this.shootoutRounds - i - (t === 0 ? 1 : 0);
+				console.log(i, t, minPts, maxPts, minPtsOther, maxPtsOther);
+				if (minPts > maxPtsOther) {
+					// Already clinched a win even without the remaining shots
+					break;
+				}
+				if (maxPts < minPtsOther) {
+					// Can't possibly win, so just give up
+					break;
+				}
+			}
+		}
+
+		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
+			this.playByPlay.logEvent({
+				type: "shootoutTie",
+				clock: this.clock,
+			});
+
+			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
+				for (const t of reversedTeamNums) {
+					this.doShootoutShot(t);
+				}
+			}
+		}
 	}
 
 	isFirstPeriodAfterHalftime(quarter: number) {
@@ -1333,7 +1428,8 @@ class GameSim extends GameSimBase {
 				? kickerInput
 				: this.team[this.o].depth.K.find(p => !p.injured);
 		let baseProb = 0;
-		let distance = 100 - this.scrimmage + 17;
+		let distance =
+			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
 
 		if (!kicker) {
 			// Would take an absurd amount of injuries to get here, but technically possible
@@ -1450,7 +1546,8 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const distance = 100 - this.scrimmage + 17;
+		const distance =
+			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
 		const kicker = this.getTopPlayerOnField(this.o, "K");
 		const made = Math.random() < this.probMadeFieldGoal(kicker);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);

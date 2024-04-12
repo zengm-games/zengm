@@ -2,6 +2,14 @@ indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
 shootouts
+- football
+  - score not updating
+  - show score in play-by-play somehow
+  - do something in drive chart
+    - fix play bar
+    - switch field every kick
+- baseball
+- hockey
 - confirm for all sports
   - no injuries during shootout
   - if still tied, keep going one at a time
@@ -16,6 +24,7 @@ shootouts
   - maxOvertimesPlayoffs and shootoutRoundsPlayoffs - default is fine for upgrades
   - shootoutRounds - apply new default. if default is >0 (hockey), set history to 0 so hasTies works correctly
     - also set maxOvertimes with history - previously it was null, now it's 1
+- move short circuit code to Base
 - test schema
 - by sport
   - see descriptions in settings.tsx - make sure we do that!

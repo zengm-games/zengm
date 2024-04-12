@@ -69,9 +69,10 @@ export const scrimmageToFieldPos = (
 };
 
 export const getScoreInfo = (event: PlayByPlayEvent) => {
-	let type: "XP" | "FG" | "TD" | "2P" | "SF" | undefined;
+	let type: "XP" | "FG" | "TD" | "2P" | "SF" | "SH" | undefined;
 	let long: string | undefined;
 	let points = 0;
+	let sPts = 0;
 
 	const eAny = event as any;
 
@@ -86,6 +87,12 @@ export const getScoreInfo = (event: PlayByPlayEvent) => {
 		long = "Field goal";
 		if (event.made) {
 			points = 3;
+		}
+	} else if (event.type === "shootoutShot") {
+		type = "SH";
+		long = "Shootout";
+		if (event.made) {
+			sPts = 1;
 		}
 	} else if (eAny.td) {
 		if (eAny.twoPointConversionTeam !== undefined) {
@@ -113,6 +120,7 @@ export const getScoreInfo = (event: PlayByPlayEvent) => {
 			type,
 			long,
 			points,
+			sPts,
 		};
 	}
 };
@@ -875,7 +883,8 @@ const processLiveGameEvents = ({
 				e.type === "sack" ||
 				e.type === "passComplete" ||
 				e.type === "run" ||
-				e.type === "kneel"
+				e.type === "kneel" ||
+				e.type === "shootoutShot"
 			) {
 				const reversedField = play.t !== sportState.t;
 
@@ -902,9 +911,18 @@ const processLiveGameEvents = ({
 			}
 
 			// Extra fieldGoal check is to include missed field goals
-			if (scoringSummary || (e as any).type === "fieldGoal") {
+			if (
+				scoringSummary ||
+				(e as any).type === "fieldGoal" ||
+				(e as any).type === "shootoutShot"
+			) {
 				const scoreInfo = getScoreInfo(e);
-				if (scoreInfo && (scoreInfo.points > 0 || scoreInfo.type === "FG")) {
+				if (
+					scoreInfo &&
+					(scoreInfo.points > 0 ||
+						scoreInfo.type === "FG" ||
+						scoreInfo.type === "SH")
+				) {
 					play.scoreInfo = scoreInfo;
 				}
 			}

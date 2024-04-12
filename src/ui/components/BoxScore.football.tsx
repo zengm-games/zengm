@@ -44,6 +44,7 @@ type BoxScore = {
 	teams: [Team, Team];
 	numPeriods?: number;
 	exhibition?: boolean;
+	shootout?: boolean;
 };
 
 export const StatsHeader = ({
@@ -807,6 +808,8 @@ const FieldAndDrive = ({
 			<div className="d-flex mt-1">
 				{sportState.newPeriodText ? (
 					sportState.newPeriodText
+				) : boxScore.shootout ? (
+					"Shootout"
 				) : (
 					<>
 						{sportState.awaitingAfterTouchdown

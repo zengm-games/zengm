@@ -11,6 +11,7 @@ export const isScoringPlay = (
 		(event as any).td ||
 		event.type === "extraPoint" ||
 		event.type === "twoPointConversionFailed" ||
-		(event.type === "fieldGoal" && event.made)
+		(event.type === "fieldGoal" && event.made) ||
+		(event.type === "shootoutShot" && event.made)
 	);
 };

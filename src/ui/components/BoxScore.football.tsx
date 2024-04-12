@@ -233,6 +233,7 @@ const processEvents = (
 ) => {
 	const processedEvents: {
 		quarter: string;
+		noPoints: boolean;
 		score: [number, number];
 		scoreType: string | null;
 		t: 0 | 1;
@@ -273,11 +274,12 @@ const processEvents = (
 			: getScoreInfo(event);
 		if (scoreInfo) {
 			const ptsKey = shootout ? "sPts" : "points";
+			const pts = scoreInfo[ptsKey] ?? 0;
 			if (scoreInfo.type === "SF") {
 				// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
-				score[otherT] += scoreInfo[ptsKey]!;
+				score[otherT] += pts;
 			} else {
-				score[actualT] += scoreInfo[ptsKey]!;
+				score[actualT] += pts;
 			}
 
 			const prevEvent: any = processedEvents.at(-1);
@@ -301,6 +303,7 @@ const processEvents = (
 						: event.quarter <= numPeriods
 							? `Q${event.quarter}`
 							: `OT${event.quarter - numPeriods}`,
+					noPoints: pts === 0,
 					time: isOldFormat ? oldEvent.time : formatClock(event.clock),
 					text,
 					score: helpers.deepCopy(score),
@@ -376,23 +379,26 @@ const ScoringSummary = memo(
 								{quarterHeader}
 								<tr>
 									<td>{teams[event.t].abbrev}</td>
-									<td>{event.scoreType}</td>
+									<td className={event.noPoints ? "text-danger" : undefined}>
+										{event.scoreType}
+									</td>
 									<td>
-										{event.t === 0 ? (
-											<>
-												<b>{event.score[0]}</b>-
-												<span className="text-body-secondary">
-													{event.score[1]}
-												</span>
-											</>
-										) : (
-											<>
-												<span className="text-body-secondary">
-													{event.score[0]}
-												</span>
-												-<b>{event.score[1]}</b>
-											</>
-										)}
+										{event.score.map((pts, i) => {
+											return (
+												<Fragment key={i}>
+													<span
+														className={
+															!event.noPoints && event.t === i
+																? "fw-bold"
+																: "text-body-secondary"
+														}
+													>
+														{pts}
+													</span>
+													{i === 0 ? "-" : null}
+												</Fragment>
+											);
+										})}
 									</td>
 									<td>{event.time}</td>
 									<td style={{ whiteSpace: "normal" }}>{event.text}</td>

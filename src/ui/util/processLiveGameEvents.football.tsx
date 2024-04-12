@@ -945,11 +945,7 @@ const processLiveGameEvents = ({
 			}
 
 			// Extra fieldGoal check is to include missed field goals
-			if (
-				scoringSummary ||
-				(e as any).type === "fieldGoal" ||
-				(e as any).type === "shootoutShot"
-			) {
+			if (scoringSummary) {
 				const scoreInfo = getScoreInfo(e);
 				if (
 					scoreInfo &&

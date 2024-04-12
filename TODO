@@ -3,12 +3,9 @@ indicator of if trade will be accepted
 
 shootouts
 - football
+  - end early logic is not right
   - show attempt # in play-by-play
-  - scoring summary
-    - show missed ones too
-      - normal FGs too
-    - should scoreInfo have sPts or just use pts?
-    - should play type be SH or FG?
+  - test missed FGs scoring summary in normal game
   - drive chart
     - show all as same drive
     - switch field every kick
@@ -36,6 +33,7 @@ shootouts
   - settings screenshot
   - screenshot of each sport's sim, and description
   - see result live in play-by-play, or in clutch play description or scoring log depending on sport
+  - missed FG in scoring summary (for shootout and not)
 
 baseball pitcher not replaced after injury in sportState https://discord.com/channels/290013534023057409/290015591216054273/1227319251422154832
 

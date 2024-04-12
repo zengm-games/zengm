@@ -323,19 +323,12 @@ class GameSim extends GameSimBase {
 			for (const t of reversedTeamNums) {
 				this.doShootoutShot(t);
 
-				// Short circuit if result is already decided
-				const t2 = t === 0 ? 1 : 0;
-				const minPts = this.team[t].stat.sPts;
-				const maxPts = minPts + this.shootoutRounds - i - 1;
-				const minPtsOther = this.team[t2].stat.sPts;
-				const maxPtsOther =
-					minPtsOther + this.shootoutRounds - i - (t === 0 ? 1 : 0);
-				if (minPts > maxPtsOther) {
-					// Already clinched a win even without the remaining shots
-					break SHOOTOUT_ROUNDS;
-				}
-				if (maxPts < minPtsOther) {
-					// Can't possibly win, so just give up
+				if (
+					this.shouldEndShootoutEarly(t, i, [
+						this.team[0].stat.sPts,
+						this.team[1].stat.sPts,
+					])
+				) {
 					break SHOOTOUT_ROUNDS;
 				}
 			}

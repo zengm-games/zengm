@@ -102,7 +102,7 @@ export type PlayByPlayEventInputScore =
 	| {
 			type: "shootoutShot";
 			t: TeamNum;
-			pid: number;
+			names: string[];
 			made: boolean;
 			yds: number;
 			clock: number;

@@ -287,7 +287,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "shootoutShot",
 			t: t,
-			pid: p.id,
+			names: [p.name],
 			made,
 			yds: distance,
 			clock: this.clock,

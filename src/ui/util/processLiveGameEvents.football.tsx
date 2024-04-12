@@ -917,8 +917,7 @@ const processLiveGameEvents = ({
 				e.type === "sack" ||
 				e.type === "passComplete" ||
 				e.type === "run" ||
-				e.type === "kneel" ||
-				e.type === "shootoutShot"
+				e.type === "kneel"
 			) {
 				const reversedField = play.t !== sportState.t;
 

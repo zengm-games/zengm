@@ -556,10 +556,12 @@ const PlayBar = forwardRef<
 		const turnover = play.turnover;
 
 		let score: string | undefined;
+		console.log(play);
 		if (play.scoreInfo?.type) {
 			score =
-				play.scoreInfo.type === "FG" && play.scoreInfo.points === 0
-					? "Missed FG"
+				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
+				(play.scoreInfo.type === "SH" && play.scoreInfo.sPts === undefined)
+					? `Missed ${play.scoreInfo.type}`
 					: play.scoreInfo.type;
 		}
 

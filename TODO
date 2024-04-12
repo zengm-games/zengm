@@ -5,8 +5,11 @@ shootouts
 - football
   - show attempt # in play-by-play
   - test missed FGs scoring summary in normal game
+  - scoring summary
+    - new section for shootout
+    - no time for shootout
   - drive chart
-    - show all as same drive
+    - get rid of first play, if possible
     - switch field every kick
 - baseball
 - hockey

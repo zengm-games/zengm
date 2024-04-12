@@ -309,13 +309,14 @@ class GameSim extends GameSimBase {
 		this.team[1].stat.sPts = 0;
 		this.team[1].stat.sAtt = 0;
 
+		const reversedTeamNums = [1, 0] as const;
+
 		this.playByPlay.logEvent({
 			type: "shootoutStart",
+			t: reversedTeamNums[0],
 			rounds: this.shootoutRounds,
 			clock: this.clock,
 		});
-
-		const reversedTeamNums = [1, 0] as const;
 
 		for (let i = 0; i < this.shootoutRounds; i++) {
 			for (const t of reversedTeamNums) {

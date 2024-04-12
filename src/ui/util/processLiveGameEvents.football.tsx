@@ -14,7 +14,6 @@ let playersByPid:
 			}
 	  >
 	| undefined;
-let awaitingShootoutStart = false;
 
 export type SportState = {
 	awaitingAfterTouchdown: boolean;
@@ -486,7 +485,6 @@ const processLiveGameEvents = ({
 				playersByPid[p.pid] = p;
 			}
 		}
-		awaitingShootoutStart = false;
 	}
 	let stop = false;
 	let text;
@@ -587,7 +585,19 @@ const processLiveGameEvents = ({
 			boxScore.teams[0].sAtt = 0;
 			boxScore.teams[1].sPts = 0;
 			boxScore.teams[1].sAtt = 0;
-			awaitingShootoutStart = true;
+
+			sportState.plays = [];
+			sportState.awaitingAfterTouchdown = false;
+			sportState.awaitingKickoff = false;
+			sportState.scrimmage = 1;
+			sportState.toGo = 10;
+			addNewPlay({
+				down: 1,
+				toGo: 10,
+				scrimmage: 33,
+				intendedPossessionChange: false,
+				subPlay: false,
+			});
 		}
 
 		// Update team with possession
@@ -618,14 +628,6 @@ const processLiveGameEvents = ({
 		}
 
 		if (e.type === "shootoutShot") {
-			if (awaitingShootoutStart) {
-				sportState.plays = [];
-				sportState.awaitingAfterTouchdown = false;
-				sportState.awaitingKickoff = false;
-				sportState.scrimmage = 1;
-				sportState.toGo = 10;
-				awaitingShootoutStart = false;
-			}
 			addNewPlay({
 				down: 1,
 				toGo: 10,

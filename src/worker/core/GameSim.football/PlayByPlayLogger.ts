@@ -235,6 +235,7 @@ type PlayByPlayEventInput =
 	| {
 			type: "shootoutStart";
 			rounds: number;
+			t: TeamNum;
 			clock: number;
 	  }
 	| {

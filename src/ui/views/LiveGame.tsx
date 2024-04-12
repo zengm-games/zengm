@@ -122,6 +122,7 @@ type PlayByPlayEntryInfo = {
 
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntryInfo }) => {
+		console.log(entry);
 		let scoreBlock = null;
 		if (entry.score) {
 			if (isSport("basketball")) {

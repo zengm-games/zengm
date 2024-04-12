@@ -445,7 +445,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "turnoverOnDowns") {
 		text = <span className="text-danger">Turnover on downs</span>;
 	} else if (event.type === "shootoutStart") {
-		text = `The game will now be decided by a three-point shootout with ${event.rounds} rounds!`;
+		text = `The game will now be decided by a field goal shootout with ${event.rounds} rounds!`;
 	} else if (event.type === "shootoutShot") {
 		text = `${playersByPid![event.pid].name} ${event.made ? "made" : "missed"} a ${
 			event.yds
@@ -712,6 +712,7 @@ const processLiveGameEvents = ({
 
 			boxScore.possession = actualT;
 		} else if (e.type === "stat") {
+			console.log(e);
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
 				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;

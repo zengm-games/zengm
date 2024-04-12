@@ -2526,7 +2526,11 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logStat(t, p.id, s, logAmount);
 			} else if (
 				p === undefined &&
-				(s === "pts" || s === "pen" || s === "penYds")
+				(s === "pts" ||
+					s === "pen" ||
+					s === "penYds" ||
+					s === "sPts" ||
+					s === "sAtt")
 			) {
 				// Team points, and also team penalties like delay of game, for the team penalty display at the top
 				this.playByPlay.logStat(t, undefined, s, signedAmount);

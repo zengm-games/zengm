@@ -5,6 +5,10 @@ shootouts
 - football
   - score not updating
   - show score in play-by-play somehow
+  - scoring summary
+    - show missed ones too
+    - should scoreInfo have sPts or just use pts?
+    - should play type be SH or FG?
   - do something in drive chart
     - show all as same drive
     - switch field every kick

@@ -5,8 +5,7 @@ shootouts
 - football
   - test missed FGs scoring summary in normal game
   - test shootout after normal game - make sure it looks good everywhere
-  - drive chart
-    - get rid of first play, if possible
+  - SH -> FG in UI?
 - baseball
 - hockey
 - confirm for all sports

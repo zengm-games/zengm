@@ -641,6 +641,11 @@ const processLiveGameEvents = ({
 		}
 
 		if (e.type === "shootoutShot") {
+			if (sportState.awaitingShootout) {
+				sportState.plays.pop();
+				sportState.awaitingShootout = false;
+			}
+
 			addNewPlay({
 				down: 1,
 				toGo: 10,

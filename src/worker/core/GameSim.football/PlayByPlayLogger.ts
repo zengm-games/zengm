@@ -104,6 +104,7 @@ export type PlayByPlayEventInputScore =
 			t: TeamNum;
 			names: string[];
 			made: boolean;
+			att: number;
 			yds: number;
 			clock: number;
 	  };

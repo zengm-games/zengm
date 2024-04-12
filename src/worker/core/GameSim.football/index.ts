@@ -289,6 +289,7 @@ class GameSim extends GameSimBase {
 			t: t,
 			names: [p.name],
 			made,
+			att: this.team[t].stat.sAtt,
 			yds: distance,
 			clock: this.clock,
 		});

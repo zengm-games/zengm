@@ -458,7 +458,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "shootoutStart") {
 		text = `The game will now be decided by a field goal shootout with ${event.rounds} rounds!`;
 	} else if (event.type === "shootoutShot") {
-		text = `${event.names[0]} ${event.made ? "made" : "missed"} a ${
+		text = `Kick ${event.att}: ${event.names[0]} ${event.made ? "made" : "missed"} a ${
 			event.yds
 		} yard field goal`;
 	} else if (event.type === "shootoutTie") {

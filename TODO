@@ -3,8 +3,6 @@ indicator of if trade will be accepted
 
 shootouts
 - football
-  - show attempt # in play-by-play
-    - maybe also in drive chart instad of SHA
   - test missed FGs scoring summary in normal game
   - test shootout after normal game - make sure it looks good everywhere
   - drive chart

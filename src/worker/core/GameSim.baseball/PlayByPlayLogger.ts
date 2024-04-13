@@ -151,6 +151,26 @@ type PlayByPlayEventInput =
 			type: "sub";
 			pidOff: number;
 			pidOn: number;
+	  }
+	| {
+			type: "shootoutStart";
+			rounds: number;
+	  }
+	| {
+			type: "shootoutTeam";
+			t: TeamNum;
+			pid: number;
+			pitcherPid: number;
+	  }
+	| {
+			type: "shootoutShot";
+			t: TeamNum;
+			pid: number;
+			made: boolean;
+			pitcherPid: number;
+	  }
+	| {
+			type: "shootoutTie";
 	  };
 
 type PlayByPlayEventStat = {

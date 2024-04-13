@@ -9,6 +9,7 @@ import {
 	POS_NUMBERS_INVERSE,
 } from "../../common/constants.baseball";
 import type { PlayerInjury } from "../../common/types";
+import { choice } from "../../common/random";
 
 export type BoxScorePlayer = {
 	name: string;
@@ -19,6 +20,8 @@ type BoxScoreTeam = {
 	abbrev: string;
 	players: BoxScorePlayer[];
 	ptsQtrs: number[];
+	sAtt?: number;
+	sPts?: number;
 };
 
 let playersByPidGid: number | undefined;
@@ -393,6 +396,41 @@ export const getText = (
 			bold = true;
 			break;
 		}
+		case "shootoutStart": {
+			text = `The game will now be decided by a home run derby with ${event.rounds} rounds!`;
+			bold = true;
+			break;
+		}
+		case "shootoutTeam": {
+			text = `${getName(event.pid)} steps up to the plate.`;
+			bold = true;
+			break;
+		}
+		case "shootoutShot": {
+			const he = helpers.pronoun(local.getState().gender, "He");
+			text = choice(
+				event.made
+					? [
+							`${he} hits a deep fly ball.. and it's gone!`,
+							`${he} rockets one down the line... and it's fair!`,
+							"He blasts one way over the fence!",
+							"Home run!",
+						]
+					: [
+							`${he} hits a deep fly ball.. and it falls short.`,
+							`${he} rockets one down the line... and it's foul.`,
+							"A swing and a miss",
+							"He makes contact, but it falls way short",
+						],
+				[1, 1, 2, 6],
+			);
+			break;
+		}
+		case "shootoutTie": {
+			text =
+				"The home run derby is tied! Players will alternate swings until there is a winner";
+			break;
+		}
 		default: {
 			text = JSON.stringify(event);
 			console.log(event);
@@ -445,6 +483,7 @@ const processLiveGameEvents = ({
 		numPeriods: number;
 		overtime?: string;
 		possession: 0 | 1 | undefined;
+		shootout?: boolean;
 		teams: [BoxScoreTeam, BoxScoreTeam];
 		time: string;
 		scoringSummary: PlayByPlayEventScore[];
@@ -540,6 +579,20 @@ const processLiveGameEvents = ({
 			e.type === "hitByPitch"
 		) {
 			sportState.bases = e.bases;
+		} else if (e.type === "shootoutStart") {
+			boxScore.shootout = true;
+			boxScore.teams[0].sPts = 0;
+			boxScore.teams[0].sAtt = 0;
+			boxScore.teams[1].sPts = 0;
+			boxScore.teams[1].sAtt = 0;
+
+			sportState = {
+				...DEFAULT_SPORT_STATE,
+			};
+		} else if (e.type === "shootoutTeam" || e.type === "shootoutShot") {
+			sportState.batterPid = e.pid;
+			sportState.pitcherPid = e.pitcherPid;
+			sportState.o = e.t;
 		}
 
 		if (e.type === "stat") {

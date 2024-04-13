@@ -539,8 +539,7 @@ class GameSim extends GameSimBase {
 
 			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
 				for (const t of reversedTeamNums) {
-					const shooter = shooters[t];
-					this.doShootoutShot(t, shooter);
+					this.doShootoutShot(t, shooters[t]);
 				}
 			}
 		}

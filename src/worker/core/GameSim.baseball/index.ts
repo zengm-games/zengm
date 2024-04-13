@@ -12,6 +12,7 @@ import { fatigueFactor } from "./fatigueFactor";
 import { infoDefense } from "../player/ovr.baseball";
 import GameSimBase from "../GameSimBase";
 import getWinner from "../../../common/getWinner";
+import { maxBy } from "../../../common/utils";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -2127,6 +2128,8 @@ class GameSim extends GameSimBase {
 			gameOver = this.simSide();
 		}
 
+		this.doShootout();
+
 		this.playByPlay.logEvent({
 			type: "gameOver",
 		});
@@ -2224,6 +2227,106 @@ class GameSim extends GameSimBase {
 			scoringSummary: this.playByPlay.scoringSummary,
 		};
 		return out;
+	}
+
+	doShootoutShot(t: TeamNum, p: PlayerGameSim, pitcher: PlayerGameSim) {
+		// 20% to 80%
+		const probMake = p.compositeRating.powerHitter * 0.6 + 0.2;
+
+		const made = Math.random() < probMake;
+
+		this.recordStat(t, undefined, "sAtt");
+		if (made) {
+			this.recordStat(t, undefined, "sPts");
+		}
+
+		this.playByPlay.logEvent({
+			type: "shootoutShot",
+			t: t,
+			pid: p.id,
+			pitcherPid: pitcher.id,
+			made,
+		});
+	}
+
+	doShootout() {
+		if (
+			this.shootoutRounds <= 0 ||
+			this.team[0].t.stat.pts !== this.team[1].t.stat.pts
+		) {
+			return;
+		}
+
+		this.shootout = true;
+		this.team[0].t.stat.sPts = 0;
+		this.team[0].t.stat.sAtt = 0;
+		this.team[1].t.stat.sPts = 0;
+		this.team[1].t.stat.sAtt = 0;
+
+		this.playByPlay.logEvent({
+			type: "shootoutStart",
+			rounds: this.shootoutRounds,
+		});
+
+		const hitters = teamNums.map(t => {
+			// Find best hitter - slight bias towards high usage players
+			return maxBy(
+				this.team[t].t.player,
+				p =>
+					p.compositeRating.powerHitter +
+					0.2 * p.compositeRating.contactHitter -
+					(p.injured ? 1000 : 0),
+			)!;
+		}) as [PlayerGameSim, PlayerGameSim];
+
+		const pitchers = teamNums.map(t => {
+			const candidate = this.team[t].getBestReliefPitcher(false);
+			if (candidate) {
+				return candidate.p;
+			}
+
+			// Probably will never happen, but just in case
+			return random.choice(this.team[t].depth.pitchers)!;
+		}) as [PlayerGameSim, PlayerGameSim];
+
+		const reversedTeamNums = [1, 0] as const;
+
+		for (const t of reversedTeamNums) {
+			const hitter = hitters[t];
+			const pitcher = pitchers[t];
+
+			this.playByPlay.logEvent({
+				type: "shootoutTeam",
+				t: t,
+				pid: hitter.id,
+				pitcherPid: pitcher.id,
+			});
+
+			for (let i = 0; i < this.shootoutRounds; i++) {
+				if (
+					this.shouldEndShootoutEarly(t, i, [
+						this.team[0].t.stat.sPts,
+						this.team[1].t.stat.sPts,
+					])
+				) {
+					break;
+				}
+
+				this.doShootoutShot(t, hitter, pitcher);
+			}
+		}
+
+		if (this.team[0].t.stat.sPts === this.team[1].t.stat.sPts) {
+			this.playByPlay.logEvent({
+				type: "shootoutTie",
+			});
+
+			while (this.team[0].t.stat.sPts === this.team[1].t.stat.sPts) {
+				for (const t of reversedTeamNums) {
+					this.doShootoutShot(t, hitters[t], pitchers[t]);
+				}
+			}
+		}
 	}
 
 	shouldIntentionalWalk() {
@@ -2630,8 +2733,8 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			if (p !== undefined) {
-				this.playByPlay.logStat(t, p.id, s, amt);
+			if (p !== undefined || s === "sAtt" || s === "sPts") {
+				this.playByPlay.logStat(t, p?.id, s, amt);
 			}
 		}
 	}

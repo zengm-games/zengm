@@ -3,6 +3,10 @@ indicator of if trade will be accepted
 
 shootouts
 - baseball
+  - show attempt number in play-by-play
+  - scoring summary
+  - "1 run scores" -> "Shootout"
+  - test if fast forward to end of inning/side doesn't stop before shootout
 - hockey
 - confirm for all sports
   - no injuries during shootout

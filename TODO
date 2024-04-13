@@ -27,8 +27,6 @@ shootouts
   - see result live in play-by-play, or in clutch play description or scoring log depending on sport
   - missed FG in scoring summary (for shootout and not)
 
-baseball pitcher not replaced after injury in sportState https://discord.com/channels/290013534023057409/290015591216054273/1227319251422154832
-
 various baseball gamesim text improvements https://mail.google.com/mail/u/0/#search/gould/FMfcgzGxSRQrSRzJfBGgRVKHNxBWCJnJ
 
 euro-style team names
@@ -363,8 +361,6 @@ when adding team, check if there is already a team in that city, and if so copy 
   - relocation vote
   - relocation from UI
   - manual edit from UI
-
-in baseball, injured player still takes base https://discord.com/channels/290013534023057409/290015591216054273/1146156888262721598
 
 ad ideas
 - remove bottom ads

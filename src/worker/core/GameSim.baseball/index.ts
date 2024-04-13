@@ -2330,6 +2330,13 @@ class GameSim extends GameSimBase {
 
 		this.recordStat(teamNum, on, "gp");
 		this.recordStat(teamNum, on, "gpF", 1, "fielding");
+
+		// Update players on base
+		for (const base of this.bases) {
+			if (base?.p === off.p) {
+				base.p = on;
+			}
+		}
 	}
 
 	checkReliefPitcher(betweenInnings: boolean) {

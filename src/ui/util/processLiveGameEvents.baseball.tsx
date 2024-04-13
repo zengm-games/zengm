@@ -331,7 +331,6 @@ export const getText = (
 			} else {
 				runnersText = formatRunners(getName, event.runners);
 			}
-			console.log(event.outs, runnersText.includes("score"));
 
 			if (runnersText) {
 				if (!text.endsWith("!") && !text.endsWith(".") && !text.endsWith(",")) {
@@ -571,6 +570,23 @@ const processLiveGameEvents = ({
 					type: "Injured",
 					gamesRemaining: -1,
 				};
+
+				// Replace in sportState
+				if (e.replacementPid !== undefined) {
+					if (sportState.pitcherPid === e.pid) {
+						sportState.pitcherPid = e.replacementPid;
+					}
+
+					// Purposely don't update batterPid, because injury only happens after an at bat, so they'll be replaced in bases
+
+					sportState.bases = sportState.bases.map(base => {
+						if (base === e.pid) {
+							return e.replacementPid;
+						}
+
+						return base;
+					}) as SportState["bases"];
+				}
 			}
 
 			const output = getText(e, getName);

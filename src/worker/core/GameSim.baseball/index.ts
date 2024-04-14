@@ -2245,6 +2245,7 @@ class GameSim extends GameSimBase {
 			t: t,
 			pid: p.id,
 			pitcherPid: pitcher.id,
+			att: this.team[t].t.stat.sAtt,
 			made,
 		});
 	}

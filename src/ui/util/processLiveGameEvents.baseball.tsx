@@ -408,7 +408,7 @@ export const getText = (
 		}
 		case "shootoutShot": {
 			const he = helpers.pronoun(local.getState().gender, "He");
-			text = choice(
+			text = `Try ${event.att}: ${choice(
 				event.made
 					? [
 							`${he} hits a deep fly ball.. and it's gone!`,
@@ -423,7 +423,7 @@ export const getText = (
 							"He makes contact, but it falls way short",
 						],
 				[1, 1, 2, 6],
-			);
+			)}`;
 			break;
 		}
 		case "shootoutTie": {
@@ -592,7 +592,7 @@ const processLiveGameEvents = ({
 		} else if (e.type === "shootoutTeam" || e.type === "shootoutShot") {
 			sportState.batterPid = e.pid;
 			sportState.pitcherPid = e.pitcherPid;
-			sportState.o = e.t;
+			sportState.o = actualT!;
 		}
 
 		if (e.type === "stat") {

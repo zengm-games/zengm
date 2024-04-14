@@ -167,6 +167,7 @@ type PlayByPlayEventInput =
 			t: TeamNum;
 			pid: number;
 			made: boolean;
+			att: number;
 			pitcherPid: number;
 	  }
 	| {

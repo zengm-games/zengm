@@ -169,6 +169,7 @@ type PlayByPlayEventInput =
 			made: boolean;
 			att: number;
 			pitcherPid: number;
+			flavor: number;
 	  }
 	| {
 			type: "shootoutTie";
@@ -218,6 +219,8 @@ class PlayByPlayLogger {
 		let scored = false;
 		if (event.type === "hitResult" && event.numBases === 4) {
 			// Home run
+			scored = true;
+		} else if (event.type === "shootoutShot") {
 			scored = true;
 		} else {
 			const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)

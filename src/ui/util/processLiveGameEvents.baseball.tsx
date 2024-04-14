@@ -9,7 +9,6 @@ import {
 	POS_NUMBERS_INVERSE,
 } from "../../common/constants.baseball";
 import type { PlayerInjury } from "../../common/types";
-import { choice } from "../../common/random";
 
 export type BoxScorePlayer = {
 	name: string;
@@ -408,8 +407,8 @@ export const getText = (
 		}
 		case "shootoutShot": {
 			const he = helpers.pronoun(local.getState().gender, "He");
-			text = `Try ${event.att}: ${choice(
-				event.made
+			text = `Try ${event.att}: ${
+				(event.made
 					? [
 							`${he} hits a deep fly ball.. and it's gone!`,
 							`${he} rockets one down the line... and it's fair!`,
@@ -420,10 +419,9 @@ export const getText = (
 							`${he} hits a deep fly ball.. and it falls short.`,
 							`${he} rockets one down the line... and it's foul.`,
 							"A swing and a miss",
-							"He makes contact, but it falls way short",
-						],
-				[1, 1, 2, 6],
-			)}`;
+							"He makes contact, but it falls short",
+						])[event.flavor]
+			}`;
 			break;
 		}
 		case "shootoutTie": {

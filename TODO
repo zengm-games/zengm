@@ -1,10 +1,14 @@
 indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
+allow undoing a trade
+
 shootouts
 - baseball
-  - scoring summary
+  - scoring summary filtering in eventsToShow can't handle misses, they get shown early
+    - need football scoringSummary style - build up from events?
 - hockey
+  - need football scoringSummary style - build up from events?
 - confirm for all sports
   - check what fast-forward options are shown during shootout
   - no injuries during shootout

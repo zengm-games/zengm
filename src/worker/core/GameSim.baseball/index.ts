@@ -13,6 +13,7 @@ import { infoDefense } from "../player/ovr.baseball";
 import GameSimBase from "../GameSimBase";
 import getWinner from "../../../common/getWinner";
 import { maxBy } from "../../../common/utils";
+import { choice } from "../../../common/random";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -2247,6 +2248,7 @@ class GameSim extends GameSimBase {
 			pitcherPid: pitcher.id,
 			att: this.team[t].t.stat.sAtt,
 			made,
+			flavor: choice([0, 1, 2, 3], [1, 1, 2, 6]),
 		});
 	}
 

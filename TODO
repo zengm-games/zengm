@@ -6,9 +6,9 @@ shootouts
   - show attempt number in play-by-play
   - scoring summary
   - "1 run scores" -> "Shootout"
-  - test if fast forward to end of inning/side doesn't stop before shootout
 - hockey
 - confirm for all sports
+  - check what fast-forward options are shown during shootout
   - no injuries during shootout
   - if still tied, keep going one at a time
     - make sure it's not all 0, all sports should have some min prob of success

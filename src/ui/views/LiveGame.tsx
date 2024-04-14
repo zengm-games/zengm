@@ -533,7 +533,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 		const playSeconds = (cutoff: number) => {
 			let seconds = 0;
 			let numPlays = 0;
-			while (seconds < cutoff && !boxScore.current.gameOver) {
+			while (
+				seconds < cutoff &&
+				!boxScore.current.gameOver &&
+				!boxScore.current.shootout
+			) {
 				const elapsedSeconds = processToNextPause(true);
 				numPlays += 1;
 				if (elapsedSeconds > 0) {
@@ -583,7 +587,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 				boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 			let currentPts = initialPts;
 			let numPlays = 0;
-			while (initialPts === currentPts && !boxScore.current.gameOver) {
+			while (
+				initialPts === currentPts &&
+				!boxScore.current.gameOver &&
+				!boxScore.current.shootout
+			) {
 				processToNextPause(true);
 				currentPts =
 					boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
@@ -738,7 +746,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 								let numPlays = 0;
 
 								const numSidesSoFar = getNumSidesSoFar();
-								while (!boxScore.current.gameOver) {
+								while (
+									!boxScore.current.gameOver &&
+									!boxScore.current.shootout
+								) {
 									processToNextPause(true);
 									numPlays += 1;
 
@@ -757,7 +768,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 								let numPlays = 0;
 
 								const numSidesSoFar = getNumSidesSoFar();
-								while (!boxScore.current.gameOver) {
+								while (
+									!boxScore.current.gameOver &&
+									!boxScore.current.shootout
+								) {
 									processToNextPause(true);
 									numPlays += 1;
 

@@ -263,14 +263,7 @@ const ScoringSummary = ({
 		Record<number, BoxScorePlayer>
 	>({});
 
-	const eventsToShow = processedEvents.filter(event => {
-		const ptsKey = event.type === "shootoutShot" ? "sPts" : "pts";
-		return (
-			event.score[0] <= teams[0][ptsKey]! && event.score[1] <= teams[1][ptsKey]!
-		);
-	});
-
-	const someEvents = eventsToShow.length > 0;
+	const someEvents = processedEvents.length > 0;
 
 	useEffect(() => {
 		if (!someEvents) {
@@ -295,7 +288,7 @@ const ScoringSummary = ({
 	return (
 		<table className="table table-sm border-bottom">
 			<tbody>
-				{eventsToShow.map((event, i) => {
+				{processedEvents.map((event, i) => {
 					let quarterHeader: ReactNode = null;
 					const currentInning =
 						event.type === "shootoutShot" ? "Shootout" : event.inning;
@@ -334,7 +327,9 @@ const ScoringSummary = ({
 													className={
 														!event.noPoints && event.t === i
 															? "fw-bold"
-															: "text-body-secondary"
+															: event.noPoints && event.t === i
+																? "text-danger"
+																: "text-body-secondary"
 													}
 												>
 													{pts}

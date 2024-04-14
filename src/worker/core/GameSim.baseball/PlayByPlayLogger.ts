@@ -1,7 +1,8 @@
 import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
+import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.baseball";
 import type { Runner, TeamNum } from "./types";
 
-type PlayByPlayEventInput =
+export type PlayByPlayEventInput =
 	| {
 			type: "sideStart";
 			inning: number;
@@ -216,35 +217,9 @@ class PlayByPlayLogger {
 			this.period = event.inning;
 		}
 
-		let scored = false;
-		if (event.type === "hitResult" && event.numBases === 4) {
-			// Home run
-			scored = true;
-		} else if (event.type === "shootoutShot") {
-			scored = true;
-		} else {
-			const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
-				.runners;
-			if (runners?.some(runner => runner.scored)) {
-				scored = true;
-			}
-		}
-
-		if (scored) {
-			const scoringSummaryEvent = {
-				...event,
-				inning: this.period,
-			};
-			if (
-				scoringSummaryEvent.type === "balk" ||
-				scoringSummaryEvent.type === "wildPitch" ||
-				scoringSummaryEvent.type === "passedBall"
-			) {
-				// Swap team, so it shows up correctly in scoring summary. Basically, t must be team that scored
-				scoringSummaryEvent.t = scoringSummaryEvent.t === 0 ? 1 : 0;
-			}
-
-			this.scoringSummary.push(scoringSummaryEvent as any);
+		const scoringSummaryEvent = formatScoringSummaryEvent(event, this.period);
+		if (scoringSummaryEvent) {
+			this.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
 

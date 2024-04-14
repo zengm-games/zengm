@@ -9,6 +9,7 @@ import {
 	POS_NUMBERS_INVERSE,
 } from "../../common/constants.baseball";
 import type { PlayerInjury } from "../../common/types";
+import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.baseball";
 
 export type BoxScorePlayer = {
 	name: string;
@@ -648,6 +649,14 @@ const processLiveGameEvents = ({
 				e.type === "gameOver";
 
 			stop = true;
+
+			const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
+			if (scoringSummaryEvent) {
+				boxScore.scoringSummary = [
+					...boxScore.scoringSummary,
+					scoringSummaryEvent,
+				];
+			}
 		}
 	}
 

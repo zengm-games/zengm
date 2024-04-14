@@ -126,7 +126,7 @@ export const boxScoreToLiveSim = async ({
 	}
 
 	// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
-	if (isSport("football")) {
+	if (isSport("football") || isSport("baseball")) {
 		boxScore.scoringSummary = [];
 	}
 

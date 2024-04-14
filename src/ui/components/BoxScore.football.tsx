@@ -384,9 +384,7 @@ const ScoringSummary = memo(
 								{quarterHeader}
 								<tr>
 									<td>{teams[event.t].abbrev}</td>
-									<td className={event.noPoints ? "text-danger" : undefined}>
-										{event.scoreType === "SH" ? "FG" : event.scoreType}
-									</td>
+									<td>{event.scoreType === "SH" ? "FG" : event.scoreType}</td>
 									<td>
 										{event.score.map((pts, i) => {
 											return (
@@ -395,7 +393,9 @@ const ScoringSummary = memo(
 														className={
 															!event.noPoints && event.t === i
 																? "fw-bold"
-																: "text-body-secondary"
+																: event.noPoints && event.t === i
+																	? "text-danger"
+																	: "text-body-secondary"
 														}
 													>
 														{pts}

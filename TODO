@@ -4,11 +4,9 @@ indicator of if trade will be accepted
 allow undoing a trade
 
 shootouts
-- baseball
-  - scoring summary filtering in eventsToShow can't handle misses, they get shown early
-    - need football scoringSummary style - build up from events?
 - hockey
-  - need football scoringSummary style - build up from events?
+  - need football/baseball scoringSummary style - build up from events?
+- isScoringPlay -> formatScoringSummaryEvent
 - confirm for all sports
   - check what fast-forward options are shown during shootout
   - no injuries during shootout

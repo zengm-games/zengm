@@ -138,13 +138,17 @@ const PlayByPlayEntry = memo(
 							}`}
 						>
 							{bySport({
-								baseball: `${entry.scoreDiff} ${helpers.plural(
-									"run scores",
-									entry.scoreDiff,
-									"runs score",
-								)}!`,
+								baseball: boxScore.shootout
+									? "Home run!"
+									: `${entry.scoreDiff} ${helpers.plural(
+											"run scores",
+											entry.scoreDiff,
+											"runs score",
+										)}!`,
 								basketball: "",
-								football: `${entry.scoreType ?? "???"}!`,
+								football: boxScore.shootout
+									? "It's good!"
+									: `${entry.scoreType ?? "???"}!`,
 								hockey: "Goal!",
 							})}
 						</span>{" "}

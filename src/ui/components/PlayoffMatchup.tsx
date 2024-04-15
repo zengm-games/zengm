@@ -93,7 +93,6 @@ const Team = ({
 	if (!team) {
 		return null;
 	}
-	console.log(team);
 
 	if (!team.pendingPlayIn && editing) {
 		const { teams, byConf } = editing;

@@ -186,7 +186,7 @@ const getCount = (events: PlayByPlayEventScore[]) => {
 	return count;
 };
 
-const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en") => {
+const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en" | "pn") => {
 	switch (goalType) {
 		case "ev":
 			return "Even strength";
@@ -196,6 +196,8 @@ const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en") => {
 			return "Power play";
 		case "en":
 			return "Empty net";
+		case "pn":
+			return "Penalty shot";
 	}
 };
 

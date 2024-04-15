@@ -434,6 +434,8 @@ class GameSim extends GameSimBase {
 			numOvertimes += 1;
 		}
 
+		this.doShootout();
+
 		this.playByPlay.logEvent({
 			type: "gameOver",
 			clock: this.clock,
@@ -470,6 +472,112 @@ class GameSim extends GameSimBase {
 			scoringSummary: this.playByPlay.scoringSummary,
 		};
 		return out;
+	}
+
+	doShootoutShot(t: TeamNum, p: PlayerGameSim, goalie: PlayerGameSim) {
+		// 20% to 80%
+		const skaterProb = 0.2 + 0.6 * p.compositeRating.scoring;
+		const goalieProb = 0.8 - 0.6 * goalie.compositeRating.goalkeeping;
+
+		const probMake = skaterProb * goalieProb;
+
+		const made = Math.random() < probMake;
+
+		this.recordStat(t, undefined, "sAtt");
+		if (made) {
+			this.recordStat(t, undefined, "sPts");
+		}
+
+		this.playByPlay.logEvent({
+			type: "shootoutShot",
+			clock: this.clock,
+			t,
+			names: [p.name, goalie.name],
+			att: this.team[t].stat.sAtt,
+			made,
+			goalType: "pn",
+			shotType: "penalty",
+		});
+	}
+
+	doShootout() {
+		if (
+			this.shootoutRounds <= 0 ||
+			this.team[0].stat.pts !== this.team[1].stat.pts
+		) {
+			return;
+		}
+
+		this.shootout = true;
+		this.clock = 1; // So fast-forward to end of period stops before the shootout
+		this.team[0].stat.sPts = 0;
+		this.team[0].stat.sAtt = 0;
+		this.team[1].stat.sPts = 0;
+		this.team[1].stat.sAtt = 0;
+
+		const reversedTeamNums = [1, 0] as const;
+
+		this.playByPlay.logEvent({
+			type: "shootoutStart",
+			rounds: this.shootoutRounds,
+			clock: this.clock,
+		});
+
+		const skaters = teamNums.map(t => {
+			let eligible = this.team[t].depth.F.filter(p => !p.injured);
+			if (eligible.length === 0) {
+				// Use injured players if there are no others
+				eligible = this.team[t].depth.F;
+			}
+
+			return orderBy(
+				this.team[t].depth.F,
+				p => p.compositeRating.scoring,
+				"desc",
+			);
+		}) as [PlayerGameSim[], PlayerGameSim[]];
+
+		const goalies = teamNums.map(t => {
+			return this.lines[t].G[0][0];
+		}) as [PlayerGameSim, PlayerGameSim];
+
+		const skatersIndex = [0, 0];
+
+		const getNextSkater = (t: 0 | 1) => {
+			const skater = skaters[t][skatersIndex[t] % skaters[t].length];
+			skatersIndex[t] += 1;
+			return skater;
+		};
+
+		SHOOTOUT_ROUNDS: for (let i = 0; i < this.shootoutRounds; i++) {
+			for (const t of reversedTeamNums) {
+				const p = getNextSkater(t);
+				this.doShootoutShot(t, p, goalies[t]);
+
+				if (
+					this.shouldEndShootoutEarly(t, i, [
+						this.team[0].stat.sPts,
+						this.team[1].stat.sPts,
+					])
+				) {
+					break SHOOTOUT_ROUNDS;
+				}
+			}
+		}
+
+		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
+			this.playByPlay.logEvent({
+				type: "shootoutTie",
+				clock: this.clock,
+			});
+
+			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
+				for (const t of reversedTeamNums) {
+					const p = getNextSkater(t);
+					this.doShootoutShot(t, p, goalies[t]);
+				}
+			}
+		}
 	}
 
 	simRegulation() {
@@ -1828,7 +1936,7 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logStat(t, p.id, s, amt);
 			}
 
-			if (s === "ppo") {
+			if (s === "ppo" || s === "sAtt" || s === "sPts") {
 				this.playByPlay.logStat(t, undefined, s, amt);
 			}
 		}

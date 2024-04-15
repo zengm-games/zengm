@@ -1,15 +1,26 @@
 import type { penaltyTypes } from "./penalties";
 import type { TeamNum } from "./types";
 
-type PlayByPlayEventInputScore = {
-	type: "goal";
-	clock: number;
-	t: TeamNum;
-	names: [string] | [string, string] | [string, string, string];
-	pids: [number] | [number, number] | [number, number, number];
-	goalType: "ev" | "sh" | "pp" | "en";
-	shotType: string;
-};
+type PlayByPlayEventInputScore =
+	| {
+			type: "goal";
+			clock: number;
+			t: TeamNum;
+			names: [string] | [string, string] | [string, string, string];
+			pids: [number] | [number, number] | [number, number, number];
+			goalType: "ev" | "sh" | "pp" | "en";
+			shotType: string;
+	  }
+	| {
+			type: "shootoutShot";
+			clock: number;
+			t: TeamNum;
+			names: [string, string];
+			made: boolean;
+			att: number;
+			goalType: "pn";
+			shotType: string;
+	  };
 
 type PlayByPlayEventInput =
 	| {
@@ -89,6 +100,15 @@ type PlayByPlayEventInput =
 			clock: number;
 			t: TeamNum;
 			name: string;
+	  }
+	| {
+			type: "shootoutStart";
+			rounds: number;
+			clock: number;
+	  }
+	| {
+			type: "shootoutTie";
+			clock: number;
 	  };
 
 export type PlayByPlayEvent =

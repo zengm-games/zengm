@@ -79,80 +79,59 @@ const getText = (
 
 	if (event.type === "injury") {
 		text = `${event.names[0]} was injured!`;
-	}
-	if (event.type === "quarter") {
+	} else if (event.type === "quarter") {
 		text = `Start of ${helpers.ordinal(event.quarter)} ${getPeriodName(
 			boxScore.numPeriods,
 		)}`;
-	}
-	if (event.type === "overtime") {
+	} else if (event.type === "overtime") {
 		const overtimes = event.quarter - boxScore.numPeriods;
 		text = `Start of ${
 			overtimes === 1 ? "" : `${helpers.ordinal(overtimes)} `
 		} overtime`;
-	}
-	if (event.type === "gameOver") {
+	} else if (event.type === "gameOver") {
 		text = "End of game";
-	}
-	if (event.type === "hit") {
+	} else if (event.type === "hit") {
 		text = `${event.names[0]} hit ${event.names[1]}`;
-	}
-	if (event.type === "gv") {
+	} else if (event.type === "gv") {
 		text = `Giveaway by ${event.names[0]}`;
-	}
-	if (event.type === "tk") {
+	} else if (event.type === "tk") {
 		text = `Takeaway by ${event.names[0]}`;
-	}
-	if (event.type === "slapshot") {
+	} else if (event.type === "slapshot") {
 		text = `Slapshot from ${event.names[0]}`;
-	}
-	if (event.type === "wristshot") {
+	} else if (event.type === "wristshot") {
 		text = `Wristshot by ${event.names[0]}`;
-	}
-	if (event.type === "shot") {
+	} else if (event.type === "shot") {
 		text = `Shot by ${event.names[0]}`;
-	}
-	if (event.type === "reboundShot") {
+	} else if (event.type === "reboundShot") {
 		text = `Shot by ${event.names[0]} off the rebound`;
-	}
-	if (event.type === "deflection") {
+	} else if (event.type === "deflection") {
 		text = `Deflected by ${event.names[0]}`;
-	}
-	if (event.type === "block") {
+	} else if (event.type === "block") {
 		text = `Blocked by ${event.names[0]}`;
-	}
-	if (event.type === "miss") {
+	} else if (event.type === "miss") {
 		text = "Shot missed the goal";
-	}
-	if (event.type === "save") {
+	} else if (event.type === "save") {
 		text = `Saved by ${event.names[0]}`;
-	}
-	if (event.type === "save-freeze") {
+	} else if (event.type === "save-freeze") {
 		text = `Saved by ${event.names[0]}, and ${helpers.pronoun(
 			local.getState().gender,
 			"he",
 		)} freezes the puck`;
-	}
-	if (event.type === "faceoff") {
+	} else if (event.type === "faceoff") {
 		text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;
-	}
-	if (event.type === "goal") {
+	} else if (event.type === "goal") {
 		// text empty because PlayByPlayEntry handles it
 		text = "";
 		if (event.names.length > 1) {
 			text += ` (assist: ${event.names.slice(1).join(", ")})`;
 		}
-	}
-	if (event.type === "offensiveLineChange") {
+	} else if (event.type === "offensiveLineChange") {
 		text = "Offensive line change";
-	}
-	if (event.type === "fullLineChange") {
+	} else if (event.type === "fullLineChange") {
 		text = "Full line change";
-	}
-	if (event.type === "defensiveLineChange") {
+	} else if (event.type === "defensiveLineChange") {
 		text = "Defensive line change";
-	}
-	if (event.type === "penalty") {
+	} else if (event.type === "penalty") {
 		const type =
 			event.penaltyType === "major"
 				? "Major"
@@ -164,27 +143,30 @@ const getText = (
 				{type} penalty on {event.names[0]} for {event.penaltyName}
 			</span>
 		);
-	}
-	if (event.type === "penaltyOver") {
+	} else if (event.type === "penaltyOver") {
 		text = (
 			<span className="text-danger">
 				{event.names[0]} is released from the penalty box
 			</span>
 		);
-	}
-	if (event.type === "pullGoalie") {
+	} else if (event.type === "pullGoalie") {
 		text = (
 			<span className="text-danger">
 				Pulled goalie! {event.name} takes the ice
 			</span>
 		);
-	}
-	if (event.type === "noPullGoalie") {
+	} else if (event.type === "noPullGoalie") {
 		text = (
 			<span className="text-danger">
 				Goalie {event.name} comes back into the game
 			</span>
 		);
+	} else if (event.type === "shootoutStart") {
+		text = `The game will now be decided by a shootout with ${event.rounds} rounds!`;
+	} else if (event.type === "shootoutShot") {
+		text = `Kick ${event.att}: ${event.made ? `Shot by ${event.names[0]} - saved by ${event.names[1]}` : `Shot by ${event.names[0]}`}`;
+	} else if (event.type === "shootoutTie") {
+		text = `The shootout is tied! Teams will alternate penalty shots until there is a winner`;
 	}
 
 	if (text === undefined) {
@@ -212,6 +194,7 @@ const processLiveGameEvents = ({
 		teams: any;
 		time: string;
 		scoringSummary: PlayByPlayEventScore[];
+		shootout?: boolean;
 	};
 	overtimes: number;
 	quarters: number[];
@@ -276,6 +259,14 @@ const processLiveGameEvents = ({
 			}
 		}
 
+		if (e.type === "shootoutStart") {
+			boxScore.shootout = true;
+			boxScore.teams[0].sPts = 0;
+			boxScore.teams[0].sAtt = 0;
+			boxScore.teams[1].sPts = 0;
+			boxScore.teams[1].sAtt = 0;
+		}
+
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
@@ -320,7 +311,11 @@ const processLiveGameEvents = ({
 			text = getText(e, boxScore);
 			t = actualT;
 			textOnly =
-				e.type === "gameOver" || e.type === "quarter" || e.type === "overtime";
+				e.type === "gameOver" ||
+				e.type === "quarter" ||
+				e.type === "overtime" ||
+				e.type === "shootoutStart" ||
+				e.type === "shootoutTie";
 			boxScore.time = formatClock(e.clock);
 
 			if (Object.hasOwn(newPossessionTypes, eAny.type)) {

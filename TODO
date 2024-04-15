@@ -4,17 +4,9 @@ indicator of if trade will be accepted
 allow undoing a trade
 
 shootouts
-- hockey
-  - need football/baseball scoringSummary style - build up from events?
-  - scoring summary
 - isScoringPlay -> formatScoringSummaryEvent
 - confirm for all sports
   - check what fast-forward options are shown during shootout
-  - no injuries during shootout
-  - if still tied, keep going one at a time
-    - make sure it's not all 0, all sports should have some min prob of success
-  - don't track any stats
-  - no clock
 - show shootout result somewhere
   - other sports - scoring log
 - upgrades

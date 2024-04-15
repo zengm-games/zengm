@@ -1,3 +1,4 @@
+import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.hockey";
 import type { penaltyTypes } from "./penalties";
 import type { TeamNum } from "./types";
 
@@ -16,6 +17,7 @@ type PlayByPlayEventInputScore =
 			clock: number;
 			t: TeamNum;
 			names: [string];
+			goalieName: string;
 			made: boolean;
 			goalType: "pn";
 			shotType: string;
@@ -136,7 +138,6 @@ export type PlayByPlayEvent =
 
 export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
-	hide?: boolean;
 };
 
 class PlayByPlayLogger {
@@ -166,8 +167,9 @@ class PlayByPlayLogger {
 
 		this.playByPlay.push(event2);
 
-		if (event2.type === "goal") {
-			this.scoringSummary.push({ ...event2 });
+		const scoringSummaryEvent = formatScoringSummaryEvent(event2);
+		if (scoringSummaryEvent) {
+			this.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
 

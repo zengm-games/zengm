@@ -290,18 +290,18 @@ const ScoringSummary = ({
 			<tbody>
 				{processedEvents.map((event, i) => {
 					let quarterHeader: ReactNode = null;
-					const currentInning =
+					const currentPeriod =
 						event.type === "shootoutShot" ? "Shootout" : event.inning;
 					if (
 						event.inning !== prevInning ||
-						(event.t !== prevT && currentInning !== "Shootout")
+						(event.t !== prevT && currentPeriod !== "Shootout")
 					) {
 						prevInning = event.inning;
 						prevT = event.t;
 						quarterHeader = (
 							<tr>
 								<td className="text-body-secondary" colSpan={4}>
-									{currentInning === "Shootout" ? (
+									{currentPeriod === "Shootout" ? (
 										"Home run derby"
 									) : (
 										<>

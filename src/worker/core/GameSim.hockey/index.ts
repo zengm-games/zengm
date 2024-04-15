@@ -500,10 +500,11 @@ class GameSim extends GameSimBase {
 			type: "shootoutShot",
 			clock: this.clock,
 			t,
-			names: [goalie.name],
+			names: [p.name],
+			goalieName: goalie.name,
 			made,
 			goalType: "pn",
-			shotType: "penalty",
+			shotType: "penalty shot",
 		});
 	}
 

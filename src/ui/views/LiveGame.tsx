@@ -419,11 +419,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 				boxScore.current.time = "0:00";
 				boxScore.current.gameOver = true;
 				boxScore.current.possession = undefined;
-				if (boxScore.current.scoringSummary) {
-					for (const event of boxScore.current.scoringSummary) {
-						event.hide = false;
-					}
-				}
 
 				// Update team records with result of game
 				// Keep in sync with liveGame.ts

@@ -5,6 +5,7 @@ import type {
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
 import type { PlayerInjury } from "../../common/types";
+import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.hockey";
 
 let playersByPidGid: number | undefined;
 let playersByPid:
@@ -18,26 +19,6 @@ let playersByPid:
 			}
 	  >
 	| undefined;
-
-// For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
-const cmpTime = (t1: string, t2: string) => {
-	const [min1, sec1] = t1.split(":").map(x => parseInt(x));
-	const [min2, sec2] = t2.split(":").map(x => parseInt(x));
-
-	if (min1 > min2) {
-		return 1;
-	}
-	if (min1 < min2) {
-		return -1;
-	}
-	if (sec1 > sec2) {
-		return 1;
-	}
-	if (sec1 < sec2) {
-		return -1;
-	}
-	return 0;
-};
 
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 export const formatClock = (clock: number) => {
@@ -166,7 +147,7 @@ const getText = (
 	} else if (event.type === "shootoutTeam") {
 		text = `${event.names[0]} takes the puck`;
 	} else if (event.type === "shootoutShot") {
-		text = event.made ? "" : `Saved by ${event.names[0]}`;
+		text = event.made ? "" : `Saved by ${event.goalieName}`;
 	} else if (event.type === "shootoutTie") {
 		text = `The shootout is tied! Teams will alternate penalty shots until there is a winner`;
 	}
@@ -218,7 +199,6 @@ const processLiveGameEvents = ({
 	let text;
 	let t: 0 | 1 | undefined;
 	let textOnly = false;
-	let prevGoal: PlayByPlayEvent | undefined;
 
 	while (!stop && events.length > 0) {
 		const e = events.shift();
@@ -306,10 +286,6 @@ const processLiveGameEvents = ({
 				p.inPenaltyBox = false;
 			}
 
-			if (e.type === "goal") {
-				prevGoal = e;
-			}
-
 			text = getText(e, boxScore);
 			t = actualT;
 			textOnly =
@@ -330,29 +306,14 @@ const processLiveGameEvents = ({
 
 			stop = true;
 		}
-	}
 
-	//  Handle filtering of scoringSummary
-	if (boxScore.scoringSummary && boxScore.time !== undefined) {
-		for (const event of boxScore.scoringSummary) {
-			if (event.hide === false) {
-				// Already past, no need to check again
-				continue;
-			}
-
-			if (!quarters.includes(event.quarter)) {
-				// Future quarters
-				event.hide = true;
-			} else if (event.quarter !== quarters.at(-1)) {
-				// Past quarters
-				event.hide = false;
-			} else {
-				const cmp = cmpTime(formatClock(event.clock), boxScore.time);
-				const show =
-					cmp === 1 ||
-					(cmp === 0 && prevGoal && (prevGoal as any).clock === event.clock);
-				event.hide = !show;
-			}
+		//  Handle filtering of scoringSummary
+		const scoringSummaryEvent = formatScoringSummaryEvent(e);
+		if (scoringSummaryEvent) {
+			boxScore.scoringSummary = [
+				...boxScore.scoringSummary,
+				scoringSummaryEvent,
+			];
 		}
 	}
 

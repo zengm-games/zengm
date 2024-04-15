@@ -1,9 +1,9 @@
 import {
-	memo,
 	Fragment,
 	type MouseEvent,
 	type ReactNode,
 	useState,
+	useMemo,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, helpers, processPlayerStats } from "../util";
@@ -157,33 +157,32 @@ const StatsTable = ({
 const processEvents = (events: PlayByPlayEventScore[]) => {
 	const processedEvents: (PlayByPlayEventScore & {
 		score: [number, number];
+		noPoints: boolean;
 	})[] = [];
-	const score = [0, 0] as [number, number];
+	let score = [0, 0] as [number, number];
+	let shootout = false;
 
 	for (const event of events) {
-		if (event.hide) {
-			continue;
+		if (!shootout && event.type === "shootoutShot") {
+			shootout = true;
+			score = [0, 0];
 		}
 
-		score[event.t] += 1;
+		let numPts = 0;
+		if (event.type === "goal" || event.made) {
+			numPts += 1;
+		}
+
+		score[event.t] += numPts;
 
 		processedEvents.push({
 			...event,
 			score: helpers.deepCopy(score),
+			noPoints: numPts === 0,
 		});
 	}
 
 	return processedEvents;
-};
-
-const getCount = (events: PlayByPlayEventScore[]) => {
-	let count = 0;
-	for (const event of events) {
-		if (!event.hide) {
-			count += 1;
-		}
-	}
-	return count;
 };
 
 const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en" | "pn") => {
@@ -201,30 +200,35 @@ const goalTypeTitle = (goalType: "ev" | "sh" | "pp" | "en" | "pn") => {
 	}
 };
 
-const ScoringSummary = memo(
-	({
-		events,
-		numPeriods,
-		teams,
-	}: {
-		count: number;
-		events: PlayByPlayEventScore[];
-		numPeriods: number;
-		teams: [Team, Team];
-	}) => {
-		let prevQuarter: number;
-		const processedEvents = processEvents(events);
+const ScoringSummary = ({
+	processedEvents,
+	numPeriods,
+	teams,
+}: {
+	processedEvents: ReturnType<typeof processEvents>;
+	numPeriods: number;
+	teams: [Team, Team];
+}) => {
+	let prevQuarter: number | "Shootout";
 
-		if (processedEvents.length === 0) {
-			return <p>None</p>;
-		}
+	if (processedEvents.length === 0) {
+		return <p>None</p>;
+	}
 
-		return (
-			<table className="table table-sm border-bottom">
-				<tbody>
-					{processedEvents.map((event, i) => {
-						let quarterText = "???";
-						if (event.quarter > numPeriods) {
+	return (
+		<table className="table table-sm border-bottom">
+			<tbody>
+				{processedEvents.map((event, i) => {
+					let quarterHeader: ReactNode = null;
+					const currentPeriod =
+						event.type === "shootoutShot" ? "Shootout" : event.quarter;
+					if (currentPeriod !== prevQuarter) {
+						prevQuarter = currentPeriod;
+
+						let quarterText;
+						if (event.type === "shootoutShot") {
+							quarterText = "Shootout";
+						} else if (event.quarter > numPeriods) {
 							const overtimes = event.quarter - numPeriods;
 							if (overtimes > 1) {
 								quarterText = `${helpers.ordinal(overtimes)} overtime`;
@@ -237,70 +241,70 @@ const ScoringSummary = memo(
 							)}`;
 						}
 
-						let quarterHeader: ReactNode = null;
-						if (event.quarter !== prevQuarter) {
-							prevQuarter = event.quarter;
-							quarterHeader = (
-								<tr>
-									<td className="text-body-secondary" colSpan={5}>
-										{quarterText}
-									</td>
-								</tr>
-							);
-						}
-
-						return (
-							<Fragment key={i}>
-								{quarterHeader}
-								<tr>
-									<td>{teams[event.t].abbrev}</td>
-									<td>
-										{event.t === 0 ? (
-											<>
-												<b>{event.score[0]}</b>-
-												<span className="text-body-secondary">
-													{event.score[1]}
-												</span>
-											</>
-										) : (
-											<>
-												<span className="text-body-secondary">
-													{event.score[0]}
-												</span>
-												-<b>{event.score[1]}</b>
-											</>
-										)}
-									</td>
-									<td>{formatClock(event.clock)}</td>
-									<td title={goalTypeTitle(event.goalType)}>
-										{event.goalType.toUpperCase()}
-									</td>
-									<td style={{ whiteSpace: "normal" }}>
-										{event.shotType === "reboundShot"
-											? "Rebound shot"
-											: helpers.upperCaseFirstLetter(event.shotType)}{" "}
-										by {event.names[0]}
-										{event.names.length > 1 ? (
-											<>
-												{" "}
-												<span className="text-body-secondary">
-													(assist: {event.names.slice(1).join(", ")})
-												</span>
-											</>
-										) : null}
-									</td>
-								</tr>
-							</Fragment>
+						quarterHeader = (
+							<tr>
+								<td className="text-body-secondary" colSpan={5}>
+									{quarterText}
+								</td>
+							</tr>
 						);
-					})}
-				</tbody>
-			</table>
-		);
-	},
-	(prevProps, nextProps) => {
-		return prevProps.count === nextProps.count;
-	},
-);
+					}
+
+					return (
+						<Fragment key={i}>
+							{quarterHeader}
+							<tr>
+								<td>{teams[event.t].abbrev}</td>
+								<td>
+									{event.score.map((pts, i) => {
+										return (
+											<Fragment key={i}>
+												<span
+													className={
+														!event.noPoints && event.t === i
+															? "fw-bold"
+															: event.noPoints && event.t === i
+																? "text-danger"
+																: "text-body-secondary"
+													}
+												>
+													{pts}
+												</span>
+												{i === 0 ? "-" : null}
+											</Fragment>
+										);
+									})}
+								</td>
+								<td>
+									{currentPeriod !== "Shootout"
+										? formatClock(event.clock)
+										: null}
+								</td>
+								<td title={goalTypeTitle(event.goalType)}>
+									{event.goalType.toUpperCase()}
+								</td>
+								<td style={{ whiteSpace: "normal" }}>
+									{event.shotType === "reboundShot"
+										? "Rebound shot"
+										: helpers.upperCaseFirstLetter(event.shotType)}{" "}
+									by {event.names[0]}
+									{event.names.length > 1 ? (
+										<>
+											{" "}
+											<span className="text-body-secondary">
+												(assist: {event.names.slice(1).join(", ")})
+											</span>
+										</>
+									) : null}
+								</td>
+							</tr>
+						</Fragment>
+					);
+				})}
+			</tbody>
+		</table>
+	);
+};
 
 const BoxScore = ({
 	boxScore,
@@ -311,13 +315,17 @@ const BoxScore = ({
 	forceRowUpdate: boolean;
 	Row: any;
 }) => {
+	const processedEvents = useMemo(
+		() => processEvents(boxScore.scoringSummary),
+		[boxScore.scoringSummary],
+	);
+
 	return (
 		<div className="mb-3">
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
-				count={getCount(boxScore.scoringSummary)}
-				events={boxScore.scoringSummary}
+				processedEvents={processedEvents}
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>

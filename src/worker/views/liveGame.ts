@@ -7,7 +7,7 @@ import {
 	type TeamSeasonOverride,
 } from "./gameLog";
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
-import { isSport, PHASE } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -126,15 +126,15 @@ export const boxScoreToLiveSim = async ({
 	}
 
 	// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
-	if (isSport("football") || isSport("baseball")) {
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: true,
+			hockey: true,
+		})
+	) {
 		boxScore.scoringSummary = [];
-	}
-
-	// For ZGMH, if we don't start with events hidden, scoring summary flickers
-	if (isSport("hockey")) {
-		for (const event of boxScore.scoringSummary) {
-			event.hide = true;
-		}
 	}
 
 	return {

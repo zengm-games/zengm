@@ -4,7 +4,6 @@ indicator of if trade will be accepted
 allow undoing a trade
 
 shootouts
-- isScoringPlay -> formatScoringSummaryEvent
 - confirm for all sports
   - check what fast-forward options are shown during shootout
 - show shootout result somewhere

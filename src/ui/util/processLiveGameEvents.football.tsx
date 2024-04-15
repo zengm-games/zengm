@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common";
-import { isScoringPlay } from "../../common/isScoringPlay.football";
+import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.football";
 import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
 import type { ReactNode } from "react";
@@ -515,7 +515,7 @@ const processLiveGameEvents = ({
 		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 		const otherT = actualT === 0 ? 1 : 0;
 
-		const scoringSummary = isScoringPlay(e);
+		const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
 
 		let quarterText;
 		if (quarters.length === 0) {
@@ -957,14 +957,9 @@ const processLiveGameEvents = ({
 			}
 
 			// Extra fieldGoal check is to include missed field goals
-			if (scoringSummary) {
+			if (scoringSummaryEvent) {
 				const scoreInfo = getScoreInfo(e);
-				if (
-					scoreInfo &&
-					(scoreInfo.points > 0 ||
-						scoreInfo.type === "FG" ||
-						scoreInfo.type === "SH")
-				) {
+				if (scoreInfo) {
 					play.scoreInfo = scoreInfo;
 				}
 			}
@@ -1004,11 +999,8 @@ const processLiveGameEvents = ({
 			}
 		}
 
-		if (scoringSummary) {
-			boxScore.scoringSummary.push({
-				...e,
-				quarter: quarters.length,
-			});
+		if (scoringSummaryEvent) {
+			boxScore.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
 

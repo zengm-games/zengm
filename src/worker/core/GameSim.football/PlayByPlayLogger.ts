@@ -1,4 +1,4 @@
-import { isScoringPlay } from "../../../common/isScoringPlay.football";
+import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.football";
 import type { TeamNum } from "./types";
 
 export type PlayByPlayEventInputScore =
@@ -109,7 +109,7 @@ export type PlayByPlayEventInputScore =
 			clock: number;
 	  };
 
-type PlayByPlayEventInput =
+export type PlayByPlayEventInput =
 	| PlayByPlayEventInputScore
 	| {
 			type: "quarter";
@@ -313,11 +313,9 @@ class PlayByPlayLogger {
 			});
 		}
 
-		if (isScoringPlay(event)) {
-			this.scoringSummary.push({
-				...event,
-				quarter: this.quarter,
-			});
+		const scoringSummaryEvent = formatScoringSummaryEvent(event, this.quarter);
+		if (scoringSummaryEvent) {
+			this.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
 

@@ -99,10 +99,8 @@ const updatePlayoffs = async (
 			series = result.series;
 			playIns = result.playIns;
 		}
-		console.log(1, structuredClone(series));
 
 		await helpers.augmentSeries(series, inputs.season);
-		console.log(2, structuredClone(series));
 
 		if (playIns) {
 			await helpers.augmentSeries(playIns, inputs.season);
@@ -114,7 +112,6 @@ const updatePlayoffs = async (
 			away?: SeriesTeam;
 		}[][];
 		const playIns2 = playIns as PlayIns;
-		console.log(2, structuredClone(series2));
 
 		// Formatting for the table in playoffs.html
 		const matchups: {

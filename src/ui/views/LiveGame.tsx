@@ -532,10 +532,14 @@ export const LiveGame = (props: View<"liveGame">) => {
 		const playSeconds = (cutoff: number) => {
 			let seconds = 0;
 			let numPlays = 0;
+
+			// Stop at shootout, unless we're already in a shootout
+			const initialShootout = boxScore.current.shootout;
+
 			while (
 				seconds < cutoff &&
 				!boxScore.current.gameOver &&
-				!boxScore.current.shootout
+				(initialShootout || !boxScore.current.shootout)
 			) {
 				const elapsedSeconds = processToNextPause(true);
 				numPlays += 1;
@@ -621,7 +625,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 		// elamTarget check is because clock is set to Infinity in Elam ending, so we can't skip ahead minutes
 		let skipMinutes =
-			isSport("baseball") || boxScore.current.elamTarget !== undefined
+			isSport("baseball") ||
+			boxScore.current.elamTarget !== undefined ||
+			boxScore.current.shootout
 				? []
 				: [
 						{
@@ -670,145 +676,159 @@ export const LiveGame = (props: View<"liveGame">) => {
 				},
 			})),
 			...(isSport("baseball")
-				? [
-						{
-							label: "Next batter",
-							key: "O",
-							onClick: () => {
-								let numPlays = 0;
+				? !boxScore.current.shootout
+					? [
+							{
+								label: "Next batter",
+								key: "O",
+								onClick: () => {
+									let numPlays = 0;
 
-								const initialBatter = sportState.current?.batterPid;
-								while (!boxScore.current.gameOver) {
-									processToNextPause(true);
-									numPlays += 1;
+									const initialBatter = sportState.current?.batterPid;
+									while (!boxScore.current.gameOver) {
+										processToNextPause(true);
+										numPlays += 1;
 
-									const currentBatter = sportState.current?.batterPid;
-									if (
-										currentBatter !== undefined &&
-										currentBatter >= 0 &&
-										initialBatter !== currentBatter
-									) {
-										break;
+										const currentBatter = sportState.current?.batterPid;
+										if (
+											currentBatter !== undefined &&
+											currentBatter >= 0 &&
+											initialBatter !== currentBatter
+										) {
+											break;
+										}
 									}
-								}
 
-								setPlayIndex(prev => prev + numPlays);
+									setPlayIndex(prev => prev + numPlays);
+								},
 							},
-						},
-						{
-							label: "Next baserunner",
-							key: "T",
-							onClick: () => {
-								const sportStateBaseball =
-									sportState.current as typeof DEFAULT_SPORT_STATE_BASEBALL;
-								const initialBases = sportStateBaseball.bases ?? [];
-								const initialBaserunners = new Set(
-									initialBases.filter(pid => pid !== undefined),
-								);
-
-								const initialHR =
-									boxScore.current.teams[0].hr + boxScore.current.teams[1].hr;
-
-								let numPlays = 0;
-
-								while (!boxScore.current.gameOver) {
-									processToNextPause(true);
-									numPlays += 1;
-
-									// Any new baserunner -> stop
-									const baserunners = (sportStateBaseball.bases ?? []).filter(
-										pid => pid !== undefined,
+							{
+								label: "Next baserunner",
+								key: "T",
+								onClick: () => {
+									const sportStateBaseball =
+										sportState.current as typeof DEFAULT_SPORT_STATE_BASEBALL;
+									const initialBases = sportStateBaseball.bases ?? [];
+									const initialBaserunners = new Set(
+										initialBases.filter(pid => pid !== undefined),
 									);
-									if (baserunners.length === 0) {
-										// Handle case where it's a new inning and the same guy gets on base
-										initialBaserunners.clear();
-									}
-									if (baserunners.some(pid => !initialBaserunners.has(pid))) {
-										break;
-									}
 
-									// Home run counts as new baserunner
-									const currentHR =
+									const initialHR =
 										boxScore.current.teams[0].hr + boxScore.current.teams[1].hr;
-									if (initialHR !== currentHR) {
-										break;
+
+									let numPlays = 0;
+
+									while (!boxScore.current.gameOver) {
+										processToNextPause(true);
+										numPlays += 1;
+
+										// Any new baserunner -> stop
+										const baserunners = (sportStateBaseball.bases ?? []).filter(
+											pid => pid !== undefined,
+										);
+										if (baserunners.length === 0) {
+											// Handle case where it's a new inning and the same guy gets on base
+											initialBaserunners.clear();
+										}
+										if (baserunners.some(pid => !initialBaserunners.has(pid))) {
+											break;
+										}
+
+										// Home run counts as new baserunner
+										const currentHR =
+											boxScore.current.teams[0].hr +
+											boxScore.current.teams[1].hr;
+										if (initialHR !== currentHR) {
+											break;
+										}
 									}
-								}
 
-								setPlayIndex(prev => prev + numPlays);
+									setPlayIndex(prev => prev + numPlays);
+								},
 							},
-						},
-						{
-							label: "Side is retired",
-							key: "C",
-							onClick: () => {
-								let numPlays = 0;
+							{
+								label: "Side is retired",
+								key: "C",
+								onClick: () => {
+									let numPlays = 0;
 
-								const numSidesSoFar = getNumSidesSoFar();
-								while (
-									!boxScore.current.gameOver &&
-									!boxScore.current.shootout
-								) {
-									processToNextPause(true);
-									numPlays += 1;
+									const numSidesSoFar = getNumSidesSoFar();
+									while (
+										!boxScore.current.gameOver &&
+										!boxScore.current.shootout
+									) {
+										processToNextPause(true);
+										numPlays += 1;
 
-									if (numSidesSoFar !== getNumSidesSoFar()) {
-										break;
+										if (numSidesSoFar !== getNumSidesSoFar()) {
+											break;
+										}
 									}
-								}
 
-								setPlayIndex(prev => prev + numPlays);
+									setPlayIndex(prev => prev + numPlays);
+								},
 							},
-						},
-						{
-							label: "End of inning",
-							key: "Q",
-							onClick: () => {
-								let numPlays = 0;
+							{
+								label: "End of inning",
+								key: "Q",
+								onClick: () => {
+									let numPlays = 0;
 
-								const numSidesSoFar = getNumSidesSoFar();
-								while (
-									!boxScore.current.gameOver &&
-									!boxScore.current.shootout
-								) {
-									processToNextPause(true);
-									numPlays += 1;
+									const numSidesSoFar = getNumSidesSoFar();
+									while (
+										!boxScore.current.gameOver &&
+										!boxScore.current.shootout
+									) {
+										processToNextPause(true);
+										numPlays += 1;
 
-									const newNum = getNumSidesSoFar();
-									if (numSidesSoFar !== newNum && newNum % 2 === 1) {
-										break;
+										const newNum = getNumSidesSoFar();
+										if (numSidesSoFar !== newNum && newNum % 2 === 1) {
+											break;
+										}
 									}
-								}
 
-								setPlayIndex(prev => prev + numPlays);
+									setPlayIndex(prev => prev + numPlays);
+								},
 							},
-						},
-						{
-							label: `${helpers.ordinal(boxScore.current.numPeriods)} inning`,
-							key: "U",
-							onClick: () => {
-								let numPlays = 0;
+							{
+								label: `${helpers.ordinal(boxScore.current.numPeriods)} inning`,
+								key: "U",
+								onClick: () => {
+									let numPlays = 0;
 
-								while (
-									getNumSidesSoFar() <= (boxScore.current.numPeriods - 1) * 2 &&
-									!boxScore.current.gameOver
-								) {
-									processToNextPause(true);
-									numPlays += 1;
-								}
+									while (
+										getNumSidesSoFar() <=
+											(boxScore.current.numPeriods - 1) * 2 &&
+										!boxScore.current.gameOver
+									) {
+										processToNextPause(true);
+										numPlays += 1;
+									}
 
-								setPlayIndex(prev => prev + numPlays);
+									setPlayIndex(prev => prev + numPlays);
+								},
 							},
-						},
-					]
+						]
+					: [
+							{
+								label: "End of shootout",
+								key: "Q",
+								onClick: () => {
+									playSeconds(Infinity);
+								},
+							},
+						]
 				: [
 						{
 							label: `End of ${
 								boxScore.current.elamTarget !== undefined
 									? "game"
-									: boxScore.current.overtime
-										? "period"
-										: getPeriodName(boxScore.current.numPeriods)
+									: boxScore.current.shootout
+										? "shootout"
+										: boxScore.current.overtime
+											? "period"
+											: getPeriodName(boxScore.current.numPeriods)
 							}`,
 							key: "Q",
 							onClick: () => {
@@ -818,7 +838,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 					]),
 		];
 
-		if (!boxScore.current.elam && !isSport("baseball")) {
+		if (
+			!boxScore.current.elam &&
+			!boxScore.current.shootout &&
+			!isSport("baseball")
+		) {
 			menuItems.push({
 				label: "Last 2 minutes",
 				key: "U",
@@ -834,7 +858,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 				basketball: false,
 				football: true,
 				hockey: false,
-			})
+			}) &&
+			!boxScore.current.shootout
 		) {
 			menuItems.push({
 				label: "Change of possession",
@@ -851,7 +876,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 				basketball: false,
 				football: true,
 				hockey: true,
-			})
+			}) &&
+			!boxScore.current.shootout
 		) {
 			menuItems.push({
 				label: `Next ${bySport({
@@ -885,6 +911,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		boxScore.current.elam,
 		boxScore.current.elamTarget,
 		boxScore.current.overtime,
+		boxScore.current.shootout,
 		processToNextPause,
 	]);
 
@@ -924,7 +951,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 							<input
 								type="range"
 								className="form-range flex-grow-1"
-								disabled={boxScore.current.gameOver}
 								min="1"
 								max="33"
 								step="1"
@@ -1019,7 +1045,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 							<input
 								type="range"
 								className="form-range flex-grow-1"
-								disabled={boxScore.current.gameOver}
 								min="1"
 								max="33"
 								step="1"

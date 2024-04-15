@@ -114,7 +114,7 @@ const PlayPauseNext = ({
 					<Dropdown.Toggle
 						id="fast-forward"
 						className="btn-light-bordered fast-forward"
-						disabled={disabled || !paused}
+						disabled={disabled || !paused || fastForwards.length === 0}
 						variant={"no-class" as any}
 						title="Fast Forward"
 					>

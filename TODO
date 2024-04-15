@@ -6,9 +6,6 @@ allow undoing a trade
 shootouts
 - hockey
   - need football/baseball scoringSummary style - build up from events?
-  - flavor?
-  - separate attempt from result
-  - fix play-by-play text
   - scoring summary
 - isScoringPlay -> formatScoringSummaryEvent
 - confirm for all sports

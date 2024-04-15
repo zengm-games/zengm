@@ -15,9 +15,8 @@ type PlayByPlayEventInputScore =
 			type: "shootoutShot";
 			clock: number;
 			t: TeamNum;
-			names: [string, string];
+			names: [string];
 			made: boolean;
-			att: number;
 			goalType: "pn";
 			shotType: string;
 	  };
@@ -104,6 +103,12 @@ type PlayByPlayEventInput =
 	| {
 			type: "shootoutStart";
 			rounds: number;
+			clock: number;
+	  }
+	| {
+			type: "shootoutTeam";
+			t: TeamNum;
+			names: [string];
 			clock: number;
 	  }
 	| {

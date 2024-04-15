@@ -475,15 +475,23 @@ class GameSim extends GameSimBase {
 	}
 
 	doShootoutShot(t: TeamNum, p: PlayerGameSim, goalie: PlayerGameSim) {
-		// 20% to 80%
-		const skaterProb = 0.2 + 0.6 * p.compositeRating.scoring;
-		const goalieProb = 0.8 - 0.6 * goalie.compositeRating.goalkeeping;
+		// 50% to 100%
+		const skaterProb = 0.5 + 0.5 * p.compositeRating.scoring;
+		const goalieProb = 1 - 0.5 * goalie.compositeRating.goalkeeping;
 
 		const probMake = skaterProb * goalieProb;
 
 		const made = Math.random() < probMake;
 
 		this.recordStat(t, undefined, "sAtt");
+
+		this.playByPlay.logEvent({
+			type: "shootoutTeam",
+			clock: this.clock,
+			t,
+			names: [p.name],
+		});
+
 		if (made) {
 			this.recordStat(t, undefined, "sPts");
 		}
@@ -492,8 +500,7 @@ class GameSim extends GameSimBase {
 			type: "shootoutShot",
 			clock: this.clock,
 			t,
-			names: [p.name, goalie.name],
-			att: this.team[t].stat.sAtt,
+			names: [goalie.name],
 			made,
 			goalType: "pn",
 			shotType: "penalty",

@@ -163,8 +163,10 @@ const getText = (
 		);
 	} else if (event.type === "shootoutStart") {
 		text = `The game will now be decided by a shootout with ${event.rounds} rounds!`;
+	} else if (event.type === "shootoutTeam") {
+		text = `${event.names[0]} takes the puck`;
 	} else if (event.type === "shootoutShot") {
-		text = `Kick ${event.att}: ${event.made ? `Shot by ${event.names[0]} - saved by ${event.names[1]}` : `Shot by ${event.names[0]}`}`;
+		text = event.made ? "" : `Saved by ${event.names[0]}`;
 	} else if (event.type === "shootoutTie") {
 		text = `The shootout is tied! Teams will alternate penalty shots until there is a winner`;
 	}

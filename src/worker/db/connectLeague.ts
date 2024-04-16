@@ -1422,7 +1422,7 @@ const migrate = async ({
 	}
 
 	if (oldVersion <= 59) {
-		iterate(
+		await iterate(
 			transaction.objectStore("playerFeats"),
 			undefined,
 			undefined,

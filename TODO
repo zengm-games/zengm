@@ -5,24 +5,6 @@ allow undoing a trade
 
 in baseball, show "9th inning" fast forward option only before 9th inning
 
-shootouts
-- show shootout result somewhere
-  - other sports - scoring log
-- upgrades
-  - league file import
-  - idb upgrade
-  - maxOvertimesPlayoffs and shootoutRoundsPlayoffs - default is fine for upgrades
-  - shootoutRounds - apply new default. if default is >0 (hockey), set history to 0 so hasTies works correctly
-    - also set maxOvertimes with history - previously it was null, now it's 1
-- test schema
-- by sport
-  - see descriptions in settings.tsx - make sure we do that!
-- blog
-  - settings screenshot
-  - screenshot of each sport's sim, and description
-  - see result live in play-by-play, or in clutch play description or scoring log depending on sport
-  - missed FG in scoring summary (for shootout and not)
-
 various baseball gamesim text improvements https://mail.google.com/mail/u/0/#search/gould/FMfcgzGxSRQrSRzJfBGgRVKHNxBWCJnJ
 
 euro-style team names

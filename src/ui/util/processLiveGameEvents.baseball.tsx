@@ -650,8 +650,10 @@ const processLiveGameEvents = ({
 
 			stop = true;
 
-			const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
+			const inning = Math.ceil(quarters.length / 2);
+			const scoringSummaryEvent = formatScoringSummaryEvent(e, inning);
 			if (scoringSummaryEvent) {
+				(scoringSummaryEvent as any).t = actualT;
 				boxScore.scoringSummary = [
 					...boxScore.scoringSummary,
 					scoringSummaryEvent,

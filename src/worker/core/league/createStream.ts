@@ -748,7 +748,6 @@ const processTeamInfos = async ({
 					"name",
 					"abbrev",
 					"imgURL",
-					"imgURLSmall",
 					"colors",
 					"jersey",
 

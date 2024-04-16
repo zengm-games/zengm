@@ -310,6 +310,7 @@ const processLiveGameEvents = ({
 		//  Handle filtering of scoringSummary
 		const scoringSummaryEvent = formatScoringSummaryEvent(e);
 		if (scoringSummaryEvent) {
+			(scoringSummaryEvent as any).t = actualT;
 			boxScore.scoringSummary = [
 				...boxScore.scoringSummary,
 				scoringSummaryEvent,

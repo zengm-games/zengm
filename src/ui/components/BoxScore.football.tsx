@@ -226,11 +226,7 @@ const StatsTable = ({
 };
 
 // Condenses TD + XP/2P into one event rather than two, and normalizes scoring summary events into consistent format (old style format had the text in it already, new one is just raw metadata from game sim)
-const processEvents = (
-	events: PlayByPlayEventScore[],
-	numPeriods: number,
-	liveGameSim: boolean,
-) => {
+const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 	const processedEvents: {
 		quarter: string;
 		noPoints: boolean;
@@ -265,9 +261,7 @@ const processEvents = (
 			score = [0, 0];
 		}
 
-		// gameLog.ts swaps these, but liveGame.ts doesn't (because they come from the raw events in FBGM, but not in the other games - ugh)
-		const actualT = liveGameSim ? (event.t === 0 ? 1 : 0) : event.t;
-		const otherT = actualT === 0 ? 1 : 0;
+		const otherT = event.t === 0 ? 1 : 0;
 
 		const scoreInfo = isOldFormat
 			? getScoreInfoOld(oldEvent.text)
@@ -279,7 +273,7 @@ const processEvents = (
 				// Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
 				score[otherT] += pts;
 			} else {
-				score[actualT] += pts;
+				score[event.t] += pts;
 			}
 
 			const prevEvent: any = processedEvents.at(-1);
@@ -287,7 +281,7 @@ const processEvents = (
 			if (
 				prevEvent &&
 				(scoreInfo.type === "XP" ||
-					(scoreInfo.type === "2P" && actualT === prevEvent.t))
+					(scoreInfo.type === "2P" && event.t === prevEvent.t))
 			) {
 				prevEvent.score = score.slice();
 				prevEvent.text = (
@@ -297,7 +291,7 @@ const processEvents = (
 				);
 			} else {
 				processedEvents.push({
-					t: scoreInfo.type === "SF" ? otherT : actualT, // See comment above about safety teams
+					t: scoreInfo.type === "SF" ? otherT : event.t, // See comment above about safety teams
 					quarter: isOldFormat
 						? oldEvent.quarter
 						: event.quarter <= numPeriods
@@ -323,19 +317,17 @@ const getCount = (events: PlayByPlayEventScore[]) => {
 const ScoringSummary = memo(
 	({
 		events,
-		liveGameSim,
 		numPeriods,
 		teams,
 	}: {
 		count: number;
 		events: PlayByPlayEventScore[];
-		liveGameSim: boolean;
 		numPeriods: number;
 		teams: [Team, Team];
 	}) => {
 		let prevQuarter: string;
 
-		const processedEvents = processEvents(events, numPeriods, liveGameSim);
+		const processedEvents = processEvents(events, numPeriods);
 
 		if (processedEvents.length === 0) {
 			return <p>None</p>;
@@ -875,7 +867,6 @@ const BoxScore = ({
 				key={boxScore.gid}
 				count={getCount(boxScore.scoringSummary)}
 				events={boxScore.scoringSummary}
-				liveGameSim={liveGameSim}
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>

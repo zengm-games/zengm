@@ -119,11 +119,6 @@ export const boxScoreToLiveSim = async ({
 
 	// Swap teams order, so home team is at bottom in box score
 	boxScore.teams.reverse();
-	if (boxScore.scoringSummary) {
-		for (const event of boxScore.scoringSummary) {
-			event.t = event.t === 0 ? 1 : 0;
-		}
-	}
 
 	// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
 	if (

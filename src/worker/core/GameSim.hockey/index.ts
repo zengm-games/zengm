@@ -546,7 +546,7 @@ class GameSim extends GameSimBase {
 		}) as [PlayerGameSim[], PlayerGameSim[]];
 
 		const goalies = teamNums.map(t => {
-			return this.lines[t].G[0][0];
+			return this.lines[t === 0 ? 1 : 0].G[0][0];
 		}) as [PlayerGameSim, PlayerGameSim];
 
 		const skatersIndex = [0, 0];

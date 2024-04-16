@@ -664,8 +664,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 		});
 
 		const getNumSidesSoFar = () =>
-			boxScore.current.teams[0].ptsQtrs.length +
-			boxScore.current.teams[1].ptsQtrs.length;
+			boxScore.current.teams === undefined
+				? 0
+				: boxScore.current.teams[0].ptsQtrs.length +
+					boxScore.current.teams[1].ptsQtrs.length;
 
 		const menuItems = [
 			...skipMinutes.map(({ minutes, key }) => ({
@@ -791,24 +793,28 @@ export const LiveGame = (props: View<"liveGame">) => {
 									setPlayIndex(prev => prev + numPlays);
 								},
 							},
-							{
-								label: `${helpers.ordinal(boxScore.current.numPeriods)} inning`,
-								key: "U",
-								onClick: () => {
-									let numPlays = 0;
+							...(getNumSidesSoFar() <= (boxScore.current.numPeriods - 1) * 2
+								? [
+										{
+											label: `${helpers.ordinal(boxScore.current.numPeriods)} inning`,
+											key: "U",
+											onClick: () => {
+												let numPlays = 0;
 
-									while (
-										getNumSidesSoFar() <=
-											(boxScore.current.numPeriods - 1) * 2 &&
-										!boxScore.current.gameOver
-									) {
-										processToNextPause(true);
-										numPlays += 1;
-									}
+												while (
+													getNumSidesSoFar() <=
+														(boxScore.current.numPeriods - 1) * 2 &&
+													!boxScore.current.gameOver
+												) {
+													processToNextPause(true);
+													numPlays += 1;
+												}
 
-									setPlayIndex(prev => prev + numPlays);
-								},
-							},
+												setPlayIndex(prev => prev + numPlays);
+											},
+										},
+									]
+								: []),
 						]
 					: [
 							{
@@ -912,6 +918,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		boxScore.current.elamTarget,
 		boxScore.current.overtime,
 		boxScore.current.shootout,
+		quarters.current.length,
 		processToNextPause,
 	]);
 

@@ -310,7 +310,9 @@ const processLiveGameEvents = ({
 		//  Handle filtering of scoringSummary
 		const scoringSummaryEvent = formatScoringSummaryEvent(e);
 		if (scoringSummaryEvent) {
-			(scoringSummaryEvent as any).t = actualT;
+			// Swap rather than using actualT in case it's a score for the other team
+			(scoringSummaryEvent as any).t =
+				(scoringSummaryEvent as any).t === 0 ? 1 : 0;
 			boxScore.scoringSummary = [
 				...boxScore.scoringSummary,
 				scoringSummaryEvent,

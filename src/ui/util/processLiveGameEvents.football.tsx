@@ -517,7 +517,9 @@ const processLiveGameEvents = ({
 
 		const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
 		if (scoringSummaryEvent) {
-			(scoringSummaryEvent as any).t = actualT;
+			// Swap rather than using actualT in case it's a score for the other team
+			(scoringSummaryEvent as any).t =
+				(scoringSummaryEvent as any).t === 0 ? 1 : 0;
 		}
 
 		let quarterText;

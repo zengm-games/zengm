@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import cloudflare from "cloudflare";
+import Cloudflare from "cloudflare";
 import { readFile } from "fs/promises";
 import build from "./build.js";
 import { bySport, getSport } from "./buildFuncs.js";
@@ -106,15 +106,20 @@ const deploy = async () => {
 			throw new Error("Missing zone in Cloudflare config file");
 		}
 
-		const cf = cloudflare({
-			email: "jdscheff@gmail.com",
-			key: cloudflareConfig.apiKey,
+		const cloudflare = new Cloudflare({
+			apiEmail: "jdscheff@gmail.com",
+			apiKey: cloudflareConfig.apiKey,
 		});
 
-		const response = await cf.zones.purgeCache(zone, {
+		const response = await cloudflare.cache.purge({
+			zone_id: zone,
 			purge_everything: true,
 		});
-		if (!response.success) {
+		if (
+			!response ||
+			JSON.stringify(response) !== JSON.stringify({ id: zone })
+		) {
+			console.log("WEIRD RESPONSE FROM CLOUDFLARE:");
 			console.log(response);
 		}
 	} else {

@@ -1,7 +1,13 @@
 indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
-allow undoing a trade
+allow undoing actions
+- types
+  - trade
+  - signing player from table
+  - drafting player (tricky bc AI goes right after)
+  - X to hide a trade offer
+  - releasing player
 
 euro-style team names
 - implementation

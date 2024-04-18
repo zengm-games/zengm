@@ -1281,6 +1281,16 @@ class Play {
 				for (const statChange of statChanges) {
 					this.g.recordStat(...statChange);
 				}
+
+				// Do we need to revert a score (or missed field goal) for a penalty?
+				if (
+					statChanges.some(
+						([, p, stat]) =>
+							(stat === "pts" && p === undefined) || stat.startsWith("fga"),
+					)
+				) {
+					this.g.playByPlay.removeLastScore();
+				}
 			}
 		}
 	}

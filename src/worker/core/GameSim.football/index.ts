@@ -2529,10 +2529,6 @@ class GameSim extends GameSimBase {
 
 				if (s === "pts") {
 					this.team[t].stat.ptsQtrs[qtr] += signedAmount;
-
-					if (remove) {
-						this.playByPlay.removeLastScore();
-					}
 				}
 			}
 		}

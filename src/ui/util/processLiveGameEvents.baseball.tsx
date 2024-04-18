@@ -86,8 +86,12 @@ const formatRunners = (
 	runners: Extract<PlayByPlayEvent, { type: "walk" }>["runners"],
 	{
 		ignoreStationary,
+		sideRetired,
 	}: {
 		ignoreStationary?: boolean;
+
+		// When true, only report runners who are out, since the side is retired the other ones don't matter
+		sideRetired?: boolean;
 	} = {},
 ) => {
 	const filtered = runners.filter(
@@ -104,15 +108,17 @@ const formatRunners = (
 		const name = getName(runner.pid);
 		if (runner.out) {
 			texts.push(`${name} out at ${getBaseName(runner.to)}.`);
-		} else if (runner.from === runner.to) {
-			if (!ignoreStationary) {
-				numStationary += 1;
-				texts.push(`${name} stays at ${getBaseName(runner.to)}.`);
+		} else if (!sideRetired) {
+			if (runner.from === runner.to) {
+				if (!ignoreStationary) {
+					numStationary += 1;
+					texts.push(`${name} stays at ${getBaseName(runner.to)}.`);
+				}
+			} else if (runner.to === 4) {
+				scored.push(name);
+			} else {
+				texts.push(`${name} advances to ${getBaseName(runner.to)}.`);
 			}
-		} else if (runner.to === 4) {
-			scored.push(name);
-		} else {
-			texts.push(`${name} advances to ${getBaseName(runner.to)}.`);
 		}
 	}
 
@@ -276,6 +282,8 @@ export const getText = (
 			break;
 		}
 		case "hitResult": {
+			const sideRetired = event.outs === NUM_OUTS_PER_INNING;
+
 			text = "";
 			if (event.result === "error") {
 				text = `${helpers.pronoun(
@@ -311,7 +319,7 @@ export const getText = (
 					} and thrown out at 1st`;
 				}
 			} else if (event.result === "fieldersChoice") {
-				if (event.outs === NUM_OUTS_PER_INNING) {
+				if (sideRetired) {
 					text = "Fielder's choice,";
 				} else {
 					text = `${helpers.pronoun(
@@ -341,7 +349,9 @@ export const getText = (
 				// If there are 3 outs and no runner is out, then the hitter was out, in which case we don't need any runnersText
 				runnersText = "";
 			} else {
-				runnersText = formatRunners(getName, event.runners);
+				runnersText = formatRunners(getName, event.runners, {
+					sideRetired,
+				});
 			}
 
 			if (runnersText) {

@@ -3,8 +3,6 @@ indicator of if trade will be accepted
 
 allow undoing a trade
 
-various baseball gamesim text improvements https://mail.google.com/mail/u/0/#search/gould/FMfcgzGxSRQrSRzJfBGgRVKHNxBWCJnJ
-
 euro-style team names
 - implementation
   - add two field allongside abbrev/region/name - customMedium and customLong

@@ -94,6 +94,9 @@ const formatRunners = (
 		runner => runner.to !== runner.from || !ignoreStationary,
 	);
 
+	// Show most important runner (furthest along the bases) first
+	filtered.reverse();
+
 	const texts = [];
 	const scored = [];
 	for (const runner of filtered) {
@@ -112,7 +115,7 @@ const formatRunners = (
 	}
 
 	if (scored.length === 1) {
-		texts.push(`${scored[0]} scores.`);
+		texts.unshift(`${scored[0]} scores.`);
 	} else if (scored.length > 1) {
 		let namesCombined;
 		if (Intl.ListFormat) {
@@ -120,7 +123,7 @@ const formatRunners = (
 		} else {
 			namesCombined = `${scored.length} runners`;
 		}
-		texts.push(`${namesCombined} score.`);
+		texts.unshift(`${namesCombined} score.`);
 	}
 
 	return texts.join(" ");

@@ -313,11 +313,12 @@ export const getText = (
 			} else if (event.result === "fieldersChoice") {
 				if (event.outs === NUM_OUTS_PER_INNING) {
 					text = "Fielder's choice,";
+				} else {
+					text = `${helpers.pronoun(
+						local.getState().gender,
+						"He",
+					)} reaches ${getBaseName(event.numBases)} on a fielder's choice`;
 				}
-				text = `${helpers.pronoun(
-					local.getState().gender,
-					"He",
-				)} reaches ${getBaseName(event.numBases)} on a fielder's choice`;
 			} else if (event.result === "doublePlay") {
 				text = "Double play!";
 			}

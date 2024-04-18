@@ -97,14 +97,16 @@ const formatRunners = (
 	// Show most important runner (furthest along the bases) first
 	filtered.reverse();
 
-	const texts = [];
+	let texts = [];
 	const scored = [];
+	let numStationary = 0;
 	for (const runner of filtered) {
 		const name = getName(runner.pid);
 		if (runner.out) {
 			texts.push(`${name} out at ${getBaseName(runner.to)}.`);
 		} else if (runner.from === runner.to) {
 			if (!ignoreStationary) {
+				numStationary += 1;
 				texts.push(`${name} stays at ${getBaseName(runner.to)}.`);
 			}
 		} else if (runner.to === 4) {
@@ -114,7 +116,10 @@ const formatRunners = (
 		}
 	}
 
-	if (scored.length === 1) {
+	if (numStationary > 1 && numStationary === filtered.length) {
+		// This means all the runners stayed
+		texts = ["The runners hold."];
+	} else if (scored.length === 1) {
 		texts.unshift(`${scored[0]} scores.`);
 	} else if (scored.length > 1) {
 		let namesCombined;

@@ -1590,22 +1590,25 @@ class GameSim extends GameSimBase {
 	simPitch() {
 		let doneBatter;
 
-		if (this.bases.some(p => p) && Math.random() < this.probBalk()) {
-			this.doBalkWildPitchPassedBall("balk");
+		const atLeastOneRunnerOnBase = this.bases.some(p => p);
+		let wildPitchPassedBall: "wildPitch" | "passedBall" | undefined;
+		if (atLeastOneRunnerOnBase) {
+			if (Math.random() < this.probBalk()) {
+				this.doBalkWildPitchPassedBall("balk");
 
-			if (this.gameIsOverDuringInning()) {
-				// End the game mid at bat
-				doneBatter = true;
+				if (this.gameIsOverDuringInning()) {
+					// End the game mid at bat
+					doneBatter = true;
+				}
+
+				return doneBatter;
 			}
 
-			return doneBatter;
-		}
-
-		let wildPitchPassedBall: "wildPitch" | "passedBall" | undefined;
-		if (Math.random() < this.probWildPitch()) {
-			wildPitchPassedBall = "wildPitch";
-		} else if (Math.random() < this.probPassedBall()) {
-			wildPitchPassedBall = "passedBall";
+			if (Math.random() < this.probWildPitch()) {
+				wildPitchPassedBall = "wildPitch";
+			} else if (Math.random() < this.probPassedBall()) {
+				wildPitchPassedBall = "passedBall";
+			}
 		}
 
 		if (wildPitchPassedBall) {

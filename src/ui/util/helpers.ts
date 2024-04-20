@@ -284,6 +284,7 @@ const roundOverrides: Record<
 		cmpPct: "oneDecimalPlace",
 		qbRat: "oneDecimalPlace",
 		rusYdsPerAtt: "oneDecimalPlace",
+		recYdsPerRec: "oneDecimalPlace",
 		fgPct: "oneDecimalPlace",
 		xpPct: "oneDecimalPlace",
 		pntYdsPerAtt: "oneDecimalPlace",

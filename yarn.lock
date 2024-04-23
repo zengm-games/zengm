@@ -4570,11 +4570,11 @@ extend@^3.0.0:
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
 
 facesjs@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-4.0.0.tgz#de928673eb6aadd369480aeeb8a43e0047df404d"
-  integrity sha512-Wid7U+2tJl660QpBh/FdQvZaQ1R3WQ/GA40WQxy/83T5yg9XC8ABZBK/qoRzzc/ar3Bb9gEgdD8oP6ERCZ2dgg==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-4.1.0.tgz#1d059e4ef5e3dd21f4e5fca2c2cda5227ace5001"
+  integrity sha512-/aDBU9n78yiXsS1/S/0XZOkp9cNnQeVlYtclonipcg1/63PmY3ggcrRLtcWTT6BdhV1MuXjIhAmgw9ACmV4eNw==
   dependencies:
-    svg-path-bbox "^1.2.4"
+    svg-path-bbox "1.2.5"
 
 fake-indexeddb@5.0.2:
   version "5.0.2"
@@ -8299,10 +8299,10 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-svg-path-bbox@^1.2.4:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/svg-path-bbox/-/svg-path-bbox-1.2.6.tgz#a4dc2fa8294745dddeb7679e3a41b8ec466224d4"
-  integrity sha512-jKkQcvBrjUdzDFOIas2E1g5ICVdZ/YdjDjhvwbfXRYmodN3qIR6pBAzQhLEpn11cb1Q2Hn+ufFqER5wDHr6osg==
+svg-path-bbox@1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/svg-path-bbox/-/svg-path-bbox-1.2.5.tgz#c4b32583614f7c32faa09ad8067f11db610eb1e8"
+  integrity sha512-HqH8HleRM2OomivNcfXLZImCg3rslsARnthGJtgn3aRAHPaIVWX/lqH0iolmuk/7XBm0WedxHhXhygPos+9aJg==
   dependencies:
     svgpath "^2.6.0"
 

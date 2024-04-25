@@ -566,15 +566,17 @@ const newPhaseBeforeDraft = async (
 		],
 		conditions,
 	);
-	fetchWrapper({
-		url: `${ACCOUNT_API_URL}/log_event.php`,
-		method: "POST",
-		data: {
-			sport: process.env.SPORT,
-			type: "completed_season",
-		},
-		credentials: "include",
-	});
+	if (window.enableLogging) {
+		fetchWrapper({
+			url: `${ACCOUNT_API_URL}/log_event.php`,
+			method: "POST",
+			data: {
+				sport: process.env.SPORT,
+				type: "completed_season",
+			},
+			credentials: "include",
+		});
+	}
 
 	return {
 		redirect,

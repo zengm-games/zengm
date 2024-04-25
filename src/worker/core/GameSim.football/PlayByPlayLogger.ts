@@ -249,6 +249,10 @@ export type PlayByPlayEventInput =
 	| {
 			type: "shootoutTie";
 			clock: number;
+	  }
+	| {
+			type: "timeouts";
+			timeouts: [number, number];
 	  };
 
 export type PlayByPlayEvent =

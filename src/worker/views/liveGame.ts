@@ -8,6 +8,7 @@ import {
 } from "./gameLog";
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
 import { bySport, isSport, PHASE } from "../../common";
+import GameSimBase from "../core/GameSimBase";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -130,6 +131,12 @@ export const boxScoreToLiveSim = async ({
 		})
 	) {
 		boxScore.scoringSummary = [];
+	}
+
+	const getStartingNumTimeouts = GameSimBase.getStartingNumTimeouts();
+	if (getStartingNumTimeouts !== undefined) {
+		boxScore.teams[0].timeouts = getStartingNumTimeouts;
+		boxScore.teams[1].timeouts = getStartingNumTimeouts;
 	}
 
 	return {

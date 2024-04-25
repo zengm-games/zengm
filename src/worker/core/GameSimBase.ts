@@ -84,6 +84,15 @@ class GameSimBase {
 			return false;
 		}
 	}
+
+	static getStartingNumTimeouts() {
+		return bySport({
+			baseball: undefined,
+			basketball: 7,
+			football: 3,
+			hockey: undefined,
+		});
+	}
 }
 
 export default GameSimBase;

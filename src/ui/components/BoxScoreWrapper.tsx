@@ -62,6 +62,7 @@ const TeamLogo = ({
 		lost: number;
 		tied?: number;
 		otl?: number;
+		timeouts?: number;
 	};
 }) => {
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
@@ -75,7 +76,10 @@ const TeamLogo = ({
 				>
 					<img className="mw-100 mh-100" src={t.imgURL} alt="" />
 				</TeamNameLink>
-				<div className="mt-1 mb-3 fw-bold">{helpers.formatRecord(t)}</div>
+				<div className="mt-1 mb-3">
+					<div className="fw-bold">{helpers.formatRecord(t)}</div>
+					{t.timeouts !== undefined ? <div>Timeouts: {t.timeouts}</div> : null}
+				</div>
 			</div>
 		</div>
 	) : null;

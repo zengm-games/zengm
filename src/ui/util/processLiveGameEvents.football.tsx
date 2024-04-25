@@ -770,6 +770,10 @@ const processLiveGameEvents = ({
 				sportState.newPeriodText = text;
 				sportState.plays = [];
 			}
+		} else if (e.type === "timeouts") {
+			// Reversed for actualT
+			boxScore.teams[0].timeouts = e.timeouts[1];
+			boxScore.teams[1].timeouts = e.timeouts[0];
 		} else if (e.type !== "init") {
 			let play = sportState.plays.at(-1);
 			if (!play) {

@@ -887,15 +887,17 @@ const NewLeague = (props: View<"newLeague">) => {
 				team: teamRegionName,
 				league_id: lid,
 			});
-			fetchWrapper({
-				url: `${ACCOUNT_API_URL}/log_event.php`,
-				method: "POST",
-				data: {
-					sport: process.env.SPORT,
-					type: "new_league",
-				},
-				credentials: "include",
-			});
+			if (window.enableLogging) {
+				fetchWrapper({
+					url: `${ACCOUNT_API_URL}/log_event.php`,
+					method: "POST",
+					data: {
+						sport: process.env.SPORT,
+						type: "new_league",
+					},
+					credentials: "include",
+				});
+			}
 
 			realtimeUpdate([], `/l/${lid}`);
 		} catch (err) {

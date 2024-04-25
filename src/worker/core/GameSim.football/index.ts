@@ -72,7 +72,7 @@ class GameSim extends GameSimBase {
 
 	numPeriods: number;
 
-	isClockRunning: boolean;
+	isClockRunning = false;
 
 	o: TeamNum;
 
@@ -80,22 +80,25 @@ class GameSim extends GameSimBase {
 
 	playByPlay: PlayByPlayLogger;
 
-	awaitingAfterTouchdown: boolean;
+	awaitingAfterTouchdown = false;
 
-	awaitingAfterSafety: boolean;
+	awaitingAfterSafety = false;
 
 	awaitingKickoff: TeamNum | undefined;
 	lastHalfAwaitingKickoff: TeamNum;
 
-	scrimmage: number;
+	scrimmage = SCRIMMAGE_KICKOFF;
 
-	down: number;
+	down = 1;
 
-	toGo: number;
+	toGo = 10;
 
-	timeouts: [number, number];
+	timeouts: [number, number] = [
+		GameSimBase.getStartingNumTimeouts()!,
+		GameSimBase.getStartingNumTimeouts()!,
+	];
 
-	twoMinuteWarningHappened: boolean;
+	twoMinuteWarningHappened = false;
 
 	currentPlay: Play;
 
@@ -147,18 +150,10 @@ class GameSim extends GameSimBase {
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
 
-		this.isClockRunning = false;
-		this.awaitingAfterTouchdown = false;
-		this.awaitingAfterSafety = false;
 		this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
 		this.d = this.awaitingKickoff;
 		this.o = this.awaitingKickoff === 0 ? 1 : 0;
 		this.lastHalfAwaitingKickoff = this.awaitingKickoff;
-		this.down = 1;
-		this.toGo = 10;
-		this.scrimmage = SCRIMMAGE_KICKOFF;
-		this.timeouts = [3, 3];
-		this.twoMinuteWarningHappened = false;
 		this.currentPlay = new Play(this);
 		this.lngTracker = new LngTracker();
 
@@ -357,6 +352,13 @@ class GameSim extends GameSimBase {
 		);
 	}
 
+	logTimeouts() {
+		this.playByPlay.logEvent({
+			type: "timeouts",
+			timeouts: [...this.timeouts],
+		});
+	}
+
 	simRegulation() {
 		let quarter = 1;
 
@@ -372,6 +374,7 @@ class GameSim extends GameSimBase {
 			// Who gets the ball after halftime?
 			if (this.isFirstPeriodAfterHalftime(quarter + 1)) {
 				this.timeouts = [3, 3];
+				this.logTimeouts();
 				this.twoMinuteWarningHappened = false;
 
 				this.d = this.lastHalfAwaitingKickoff === 0 ? 1 : 0;
@@ -420,6 +423,7 @@ class GameSim extends GameSimBase {
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
 		this.timeouts = [2, 2];
+		this.logTimeouts();
 		this.twoMinuteWarningHappened = false;
 		this.playByPlay.logEvent({
 			type: "overtime",
@@ -1163,6 +1167,7 @@ class GameSim extends GameSimBase {
 		}
 
 		this.timeouts[t] -= 1;
+		this.logTimeouts();
 		this.isClockRunning = false;
 		this.playByPlay.logEvent({
 			type: "timeout",

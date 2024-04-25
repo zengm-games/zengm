@@ -9,7 +9,6 @@ import PlayByPlayLogger from "./PlayByPlayLogger";
 import getWinner from "../../../common/getWinner";
 
 const SHOT_CLOCK = 24;
-const NUM_TIMEOUTS = 7;
 const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
 const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
 const NUM_TIMEOUTS_OVERTIME = 2;
@@ -238,7 +237,10 @@ class GameSim extends GameSimBase {
 
 	gender: GameAttributesLeague["gender"];
 
-	timeouts: [number, number] = [NUM_TIMEOUTS, NUM_TIMEOUTS];
+	timeouts: [number, number] = [
+		GameSimBase.getStartingNumTimeouts()!,
+		GameSimBase.getStartingNumTimeouts()!,
+	];
 
 	isClockRunning = true;
 
@@ -611,11 +613,19 @@ class GameSim extends GameSimBase {
 		}
 	}
 
+	logTimeouts() {
+		this.playByPlay.logEvent({
+			type: "timeouts",
+			timeouts: [...this.timeouts],
+		});
+	}
+
 	// Set the number of timeouts for each team to maxTimeouts, unless it's already lower than that in which case do nothing
 	setMaxTimeouts(maxTimeouts: number) {
 		this.timeouts = this.timeouts.map(timeouts => {
 			return Math.min(timeouts, maxTimeouts);
 		}) as [number, number];
+		this.logTimeouts();
 	}
 
 	simRegulation() {
@@ -690,6 +700,7 @@ class GameSim extends GameSimBase {
 		}
 
 		this.timeouts = [NUM_TIMEOUTS_OVERTIME, NUM_TIMEOUTS_OVERTIME];
+		this.logTimeouts();
 
 		this.lastScoringPlay = [];
 		this.overtimes += 1;
@@ -1596,6 +1607,7 @@ class GameSim extends GameSimBase {
 					if (takeTimeout) {
 						this.isClockRunning = false;
 						this.timeouts[this.o] -= 1;
+						this.logTimeouts();
 						this.playByPlay.logEvent({
 							type: "timeout",
 							clock: this.t,

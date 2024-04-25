@@ -355,6 +355,10 @@ type PlayByPlayEventInputNoScore =
 	  }
 	| {
 			type: "shootoutTie";
+	  }
+	| {
+			type: "timeouts";
+			timeouts: [number, number];
 	  };
 
 type PlayByPlayEventInput =

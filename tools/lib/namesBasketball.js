@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { load } from "cheerio";
 import fs from "node:fs";
 import path from "node:path";
@@ -65,7 +64,7 @@ const namesBasketball = () => {
 			for (let i = 1; i < parts.length - 1; i++) {
 				const middle = parts.slice(i, parts.length - 1);
 				for (const middleWithLast of middlesWithLast) {
-					if (_.isEqual(middleWithLast, middle)) {
+					if (JSON.stringify(middleWithLast) === JSON.stringify(middle)) {
 						parts = parts.slice(0, i).concat(parts.slice(i).join(" "));
 						stop = true;
 						break;

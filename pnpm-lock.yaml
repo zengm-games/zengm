@@ -154,6 +154,9 @@ importers:
       workbox-routing:
         specifier: ^7.0.0
         version: 7.1.0
+      workbox-strategies:
+        specifier: ^7.1.0
+        version: 7.1.0
       workbox-window:
         specifier: ^7.0.0
         version: 7.1.0

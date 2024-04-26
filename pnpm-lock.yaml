@@ -27,10 +27,10 @@ importers:
         version: 0.1.0
       '@tanstack/react-virtual':
         specifier: ^3.3.0
-        version: 3.4.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 3.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@visx/axis':
         specifier: ^3.10.1
-        version: 3.10.1(react@18.3.0)
+        version: 3.10.1(react@18.3.1)
       '@visx/curve':
         specifier: ^3.3.0
         version: 3.3.0
@@ -39,22 +39,22 @@ importers:
         version: 3.3.0
       '@visx/group':
         specifier: ^3.3.0
-        version: 3.3.0(react@18.3.0)
+        version: 3.3.0(react@18.3.1)
       '@visx/responsive':
         specifier: ^3.10.2
-        version: 3.10.2(react@18.3.0)
+        version: 3.10.2(react@18.3.1)
       '@visx/scale':
         specifier: ^3.5.0
         version: 3.5.0
       '@visx/shape':
         specifier: ^3.5.0
-        version: 3.5.0(react@18.3.0)
+        version: 3.5.0(react@18.3.1)
       '@visx/text':
         specifier: ^3.3.0
-        version: 3.3.0(react@18.3.0)
+        version: 3.3.0(react@18.3.1)
       '@visx/tooltip':
         specifier: ^3.3.0
-        version: 3.3.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 3.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       ajv:
         specifier: ^8.12.0
         version: 8.12.0
@@ -90,7 +90,7 @@ importers:
         version: 7.2.1
       framer-motion:
         specifier: ^11.1.1
-        version: 11.1.7(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 11.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       html2canvas:
         specifier: ^1.4.1
         version: 1.4.1
@@ -107,26 +107,26 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1
       react:
-        specifier: ^18.2.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-addons-text-content:
         specifier: ^0.0.4
         version: 0.0.4
       react-bootstrap:
         specifier: ^2.10.2
-        version: 2.10.2(@types/react@18.3.0)(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 2.10.2(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-confirm:
         specifier: ^0.3.0-7
-        version: 0.3.0-7(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 0.3.0-7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom:
-        specifier: ^18.2.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-select:
         specifier: ^5.8.0
-        version: 5.8.0(@types/react@18.3.0)(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 5.8.0(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-sortable-hoc:
         specifier: ^2.0.0
-        version: 2.0.0(patch_hash=aye5ykr34zoi3acqx3frqfcwj4)(prop-types@15.8.1)(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 2.0.0(patch_hash=aye5ykr34zoi3acqx3frqfcwj4)(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       roman-numerals:
         specifier: ^0.3.2
         version: 0.3.2
@@ -141,7 +141,7 @@ importers:
         version: 5.0.0
       use-local-storage-state:
         specifier: ^19.2.0
-        version: 19.2.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 19.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       web-streams-polyfill:
         specifier: ^4.0.0
         version: 4.0.0
@@ -162,7 +162,7 @@ importers:
         version: 7.1.0
       zustand:
         specifier: ^4.5.2
-        version: 4.5.2(@types/react@18.3.0)(react@18.3.0)
+        version: 4.5.2(@types/react@18.3.0)(react@18.3.1)
     devDependencies:
       '@babel/core':
         specifier: ^7.24.4
@@ -193,7 +193,7 @@ importers:
         version: 7.24.1(@babel/core@7.24.4)
       '@restart/ui':
         specifier: ^1.6.8
-        version: 1.6.8(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+        version: 1.6.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@rollup/plugin-alias':
         specifier: ^5.1.0
         version: 5.1.0(rollup@4.16.4)
@@ -309,8 +309,8 @@ importers:
         specifier: ^7.34.1
         version: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks:
-        specifier: ^4.6.0
-        version: 4.6.1(eslint@8.57.0)
+        specifier: ^4.6.2
+        version: 4.6.2(eslint@8.57.0)
       fake-indexeddb:
         specifier: 5.0.2
         version: 5.0.2
@@ -328,10 +328,10 @@ importers:
         version: 5.0.0
       ink:
         specifier: ^4.4.1
-        version: 4.4.1(@types/react@18.3.0)(react@18.3.0)
+        version: 4.4.1(@types/react@18.3.0)(react@18.3.1)
       ink-spinner:
         specifier: ^5.0.0
-        version: 5.0.0(ink@4.4.1(@types/react@18.3.0)(react@18.3.0))(react@18.3.0)
+        version: 5.0.0(ink@4.4.1(@types/react@18.3.0)(react@18.3.1))(react@18.3.1)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.12.7)(babel-plugin-macros@3.1.0)
@@ -2891,8 +2891,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-hooks@4.6.1:
-    resolution: {integrity: sha512-Ck77j8hF7l9N4S/rzSLOWEKpn994YH6iwUK8fr9mXIaQvGpQYmOnQLbiue1u5kI5T1y+gdgqosnEAO9NCz0DBg==}
+  eslint-plugin-react-hooks@4.6.2:
+    resolution: {integrity: sha512-QzliNJq4GinDBcD8gPB5v0wh6g8q3SUi6EFF0x8N/BL9PoVs0atuGc47ozMRyOWAKdwaZ5OnbOEa3WR+dSGKuQ==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
@@ -4460,10 +4460,10 @@ packages:
       react: 18.x
       react-dom: 18.x
 
-  react-dom@18.3.0:
-    resolution: {integrity: sha512-zaKdLBftQJnvb7FtDIpZtsAIb2MZU087RM8bRDZU8LVCCFYjPTsDZJNFUWPcVz3HFSN1n/caxi0ca4B/aaVQGQ==}
+  react-dom@18.3.1:
+    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
-      react: ^18.3.0
+      react: ^18.3.1
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -4505,8 +4505,8 @@ packages:
       react: '>=16.13'
       react-dom: '>=16.13'
 
-  react@18.3.0:
-    resolution: {integrity: sha512-RPutkJftSAldDibyrjuku7q11d3oy6wKOyPe5K1HA/HwwrXcEqBdHsLypkC2FFYjP7bPUa6gbzSBhw4sY2JcDg==}
+  react@18.3.1:
+    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
 
   readdirp@3.6.0:
@@ -4683,6 +4683,9 @@ packages:
 
   scheduler@0.23.1:
     resolution: {integrity: sha512-5GKS5JGfiah1O38Vfa9srZE4s3wdHbwjlCrvIookrg2FO9aIwKLOJXuJQFlEfNcVSOXuaL2hzDeY20uVXcUtrw==}
+
+  scheduler@0.23.2:
+    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -6304,17 +6307,17 @@ snapshots:
 
   '@emotion/memoize@0.8.1': {}
 
-  '@emotion/react@11.11.4(@types/react@18.3.0)(react@18.3.0)':
+  '@emotion/react@11.11.4(@types/react@18.3.0)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.24.4
       '@emotion/babel-plugin': 11.11.0
       '@emotion/cache': 11.11.0
       '@emotion/serialize': 1.1.4
-      '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.3.0)
+      '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.3.1)
       '@emotion/utils': 1.2.1
       '@emotion/weak-memoize': 0.3.1
       hoist-non-react-statics: 3.3.2
-      react: 18.3.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.3.0
 
@@ -6330,9 +6333,9 @@ snapshots:
 
   '@emotion/unitless@0.8.1': {}
 
-  '@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.3.0)':
+  '@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.3.1)':
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
 
   '@emotion/utils@1.2.1': {}
 
@@ -6677,28 +6680,28 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@react-aria/ssr@3.9.2(react@18.3.0)':
+  '@react-aria/ssr@3.9.2(react@18.3.1)':
     dependencies:
       '@swc/helpers': 0.5.11
-      react: 18.3.0
+      react: 18.3.1
 
-  '@restart/hooks@0.4.16(react@18.3.0)':
+  '@restart/hooks@0.4.16(react@18.3.1)':
     dependencies:
       dequal: 2.0.3
-      react: 18.3.0
+      react: 18.3.1
 
-  '@restart/ui@1.6.8(react-dom@18.3.0(react@18.3.0))(react@18.3.0)':
+  '@restart/ui@1.6.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.24.4
       '@popperjs/core': 2.11.8
-      '@react-aria/ssr': 3.9.2(react@18.3.0)
-      '@restart/hooks': 0.4.16(react@18.3.0)
+      '@react-aria/ssr': 3.9.2(react@18.3.1)
+      '@restart/hooks': 0.4.16(react@18.3.1)
       '@types/warning': 3.0.3
       dequal: 2.0.3
       dom-helpers: 5.2.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
-      uncontrollable: 8.0.4(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      uncontrollable: 8.0.4(react@18.3.1)
       warning: 4.0.3
 
   '@rollup/plugin-alias@5.1.0(rollup@4.16.4)':
@@ -6887,11 +6890,11 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@tanstack/react-virtual@3.4.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)':
+  '@tanstack/react-virtual@3.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/virtual-core': 3.4.0
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@tanstack/virtual-core@3.4.0': {}
 
@@ -7165,25 +7168,25 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@visx/axis@3.10.1(react@18.3.0)':
+  '@visx/axis@3.10.1(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.0
-      '@visx/group': 3.3.0(react@18.3.0)
+      '@visx/group': 3.3.0(react@18.3.1)
       '@visx/point': 3.3.0
       '@visx/scale': 3.5.0
-      '@visx/shape': 3.5.0(react@18.3.0)
-      '@visx/text': 3.3.0(react@18.3.0)
+      '@visx/shape': 3.5.0(react@18.3.1)
+      '@visx/text': 3.3.0(react@18.3.1)
       classnames: 2.5.1
       prop-types: 15.8.1
-      react: 18.3.0
+      react: 18.3.1
 
-  '@visx/bounds@3.3.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)':
+  '@visx/bounds@3.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.0
       '@types/react-dom': 18.3.0
       prop-types: 15.8.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@visx/curve@3.3.0':
     dependencies:
@@ -7195,62 +7198,62 @@ snapshots:
       '@types/react': 18.3.0
       '@visx/point': 3.3.0
 
-  '@visx/group@3.3.0(react@18.3.0)':
+  '@visx/group@3.3.0(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.0
       classnames: 2.5.1
       prop-types: 15.8.1
-      react: 18.3.0
+      react: 18.3.1
 
   '@visx/point@3.3.0': {}
 
-  '@visx/responsive@3.10.2(react@18.3.0)':
+  '@visx/responsive@3.10.2(react@18.3.1)':
     dependencies:
       '@types/lodash': 4.17.0
       '@types/react': 18.3.0
       lodash: 4.17.21
       prop-types: 15.8.1
-      react: 18.3.0
+      react: 18.3.1
 
   '@visx/scale@3.5.0':
     dependencies:
       '@visx/vendor': 3.5.0
 
-  '@visx/shape@3.5.0(react@18.3.0)':
+  '@visx/shape@3.5.0(react@18.3.1)':
     dependencies:
       '@types/d3-path': 1.0.11
       '@types/d3-shape': 1.3.12
       '@types/lodash': 4.17.0
       '@types/react': 18.3.0
       '@visx/curve': 3.3.0
-      '@visx/group': 3.3.0(react@18.3.0)
+      '@visx/group': 3.3.0(react@18.3.1)
       '@visx/scale': 3.5.0
       classnames: 2.5.1
       d3-path: 1.0.9
       d3-shape: 1.3.7
       lodash: 4.17.21
       prop-types: 15.8.1
-      react: 18.3.0
+      react: 18.3.1
 
-  '@visx/text@3.3.0(react@18.3.0)':
+  '@visx/text@3.3.0(react@18.3.1)':
     dependencies:
       '@types/lodash': 4.17.0
       '@types/react': 18.3.0
       classnames: 2.5.1
       lodash: 4.17.21
       prop-types: 15.8.1
-      react: 18.3.0
+      react: 18.3.1
       reduce-css-calc: 1.3.0
 
-  '@visx/tooltip@3.3.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)':
+  '@visx/tooltip@3.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.0
-      '@visx/bounds': 3.3.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+      '@visx/bounds': 3.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       classnames: 2.5.1
       prop-types: 15.8.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
-      react-use-measure: 2.1.1(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-use-measure: 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@visx/vendor@3.5.0':
     dependencies:
@@ -8409,7 +8412,7 @@ snapshots:
       object.entries: 1.1.8
       object.fromentries: 2.0.8
 
-  eslint-plugin-react-hooks@4.6.1(eslint@8.57.0):
+  eslint-plugin-react-hooks@4.6.2(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
 
@@ -8671,12 +8674,12 @@ snapshots:
       node-domexception: 1.0.0
       web-streams-polyfill: 4.0.0-beta.3
 
-  framer-motion@11.1.7(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  framer-motion@11.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       tslib: 2.6.2
     optionalDependencies:
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   from@0.1.7: {}
 
@@ -8953,13 +8956,13 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  ink-spinner@5.0.0(ink@4.4.1(@types/react@18.3.0)(react@18.3.0))(react@18.3.0):
+  ink-spinner@5.0.0(ink@4.4.1(@types/react@18.3.0)(react@18.3.1))(react@18.3.1):
     dependencies:
       cli-spinners: 2.9.2
-      ink: 4.4.1(@types/react@18.3.0)(react@18.3.0)
-      react: 18.3.0
+      ink: 4.4.1(@types/react@18.3.0)(react@18.3.1)
+      react: 18.3.1
 
-  ink@4.4.1(@types/react@18.3.0)(react@18.3.0):
+  ink@4.4.1(@types/react@18.3.0)(react@18.3.1):
     dependencies:
       '@alcalzone/ansi-tokenize': 0.1.3
       ansi-escapes: 6.2.1
@@ -8975,8 +8978,8 @@ snapshots:
       is-upper-case: 2.0.2
       lodash: 4.17.21
       patch-console: 2.0.0
-      react: 18.3.0
-      react-reconciler: 0.29.1(react@18.3.0)
+      react: 18.3.1
+      react-reconciler: 0.29.1(react@18.3.1)
       scheduler: 0.23.1
       signal-exit: 3.0.7
       slice-ansi: 6.0.0
@@ -10215,9 +10218,9 @@ snapshots:
       kleur: 3.0.3
       sisteransi: 1.0.5
 
-  prop-types-extra@1.1.1(react@18.3.0):
+  prop-types-extra@1.1.1(react@18.3.1):
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
       react-is: 16.13.1
       warning: 4.0.3
 
@@ -10275,35 +10278,35 @@ snapshots:
 
   react-addons-text-content@0.0.4: {}
 
-  react-bootstrap@2.10.2(@types/react@18.3.0)(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  react-bootstrap@2.10.2(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.4
-      '@restart/hooks': 0.4.16(react@18.3.0)
-      '@restart/ui': 1.6.8(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
+      '@restart/hooks': 0.4.16(react@18.3.1)
+      '@restart/ui': 1.6.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react-transition-group': 4.4.10
       classnames: 2.5.1
       dom-helpers: 5.2.1
       invariant: 2.2.4
       prop-types: 15.8.1
-      prop-types-extra: 1.1.1(react@18.3.0)
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
-      react-transition-group: 4.4.5(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
-      uncontrollable: 7.2.1(react@18.3.0)
+      prop-types-extra: 1.1.1(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      uncontrollable: 7.2.1(react@18.3.1)
       warning: 4.0.3
     optionalDependencies:
       '@types/react': 18.3.0
 
-  react-confirm@0.3.0-7(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  react-confirm@0.3.0-7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  react-dom@18.3.0(react@18.3.0):
+  react-dom@18.3.1(react@18.3.1):
     dependencies:
       loose-envify: 1.4.0
-      react: 18.3.0
-      scheduler: 0.23.1
+      react: 18.3.1
+      scheduler: 0.23.2
 
   react-is@16.13.1: {}
 
@@ -10311,52 +10314,52 @@ snapshots:
 
   react-lifecycles-compat@3.0.4: {}
 
-  react-reconciler@0.29.1(react@18.3.0):
+  react-reconciler@0.29.1(react@18.3.1):
     dependencies:
       loose-envify: 1.4.0
-      react: 18.3.0
+      react: 18.3.1
       scheduler: 0.23.1
 
-  react-select@5.8.0(@types/react@18.3.0)(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  react-select@5.8.0(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.4
       '@emotion/cache': 11.11.0
-      '@emotion/react': 11.11.4(@types/react@18.3.0)(react@18.3.0)
+      '@emotion/react': 11.11.4(@types/react@18.3.0)(react@18.3.1)
       '@floating-ui/dom': 1.6.3
       '@types/react-transition-group': 4.4.10
       memoize-one: 6.0.0
       prop-types: 15.8.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
-      react-transition-group: 4.4.5(react-dom@18.3.0(react@18.3.0))(react@18.3.0)
-      use-isomorphic-layout-effect: 1.1.2(@types/react@18.3.0)(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      use-isomorphic-layout-effect: 1.1.2(@types/react@18.3.0)(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
 
-  react-sortable-hoc@2.0.0(patch_hash=aye5ykr34zoi3acqx3frqfcwj4)(prop-types@15.8.1)(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  react-sortable-hoc@2.0.0(patch_hash=aye5ykr34zoi3acqx3frqfcwj4)(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.4
       invariant: 2.2.4
       prop-types: 15.8.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  react-transition-group@4.4.5(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  react-transition-group@4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.4
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  react-use-measure@2.1.1(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  react-use-measure@2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       debounce: 1.2.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  react@18.3.0:
+  react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
 
@@ -10554,6 +10557,10 @@ snapshots:
       xmlchars: 2.2.0
 
   scheduler@0.23.1:
+    dependencies:
+      loose-envify: 1.4.0
+
+  scheduler@0.23.2:
     dependencies:
       loose-envify: 1.4.0
 
@@ -10974,17 +10981,17 @@ snapshots:
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
 
-  uncontrollable@7.2.1(react@18.3.0):
+  uncontrollable@7.2.1(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.4
       '@types/react': 18.3.0
       invariant: 2.2.4
-      react: 18.3.0
+      react: 18.3.1
       react-lifecycles-compat: 3.0.4
 
-  uncontrollable@8.0.4(react@18.3.0):
+  uncontrollable@8.0.4(react@18.3.1):
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
 
   undici-types@5.26.5: {}
 
@@ -11028,20 +11035,20 @@ snapshots:
       querystringify: 2.2.0
       requires-port: 1.0.0
 
-  use-isomorphic-layout-effect@1.1.2(@types/react@18.3.0)(react@18.3.0):
+  use-isomorphic-layout-effect@1.1.2(@types/react@18.3.0)(react@18.3.1):
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.3.0
 
-  use-local-storage-state@19.2.0(react-dom@18.3.0(react@18.3.0))(react@18.3.0):
+  use-local-storage-state@19.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  use-sync-external-store@1.2.0(react@18.3.0):
+  use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
 
   util-deprecate@1.0.2: {}
 
@@ -11387,9 +11394,9 @@ snapshots:
 
   yoga-wasm-web@0.3.3: {}
 
-  zustand@4.5.2(@types/react@18.3.0)(react@18.3.0):
+  zustand@4.5.2(@types/react@18.3.0)(react@18.3.1):
     dependencies:
-      use-sync-external-store: 1.2.0(react@18.3.0)
+      use-sync-external-store: 1.2.0(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.3.0
-      react: 18.3.0
+      react: 18.3.1

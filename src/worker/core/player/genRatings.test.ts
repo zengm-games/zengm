@@ -3,7 +3,7 @@
  *
  * Run this like (after unskipping the test):
  *
- * $ SPORT=basketball yarn jest src/worker/core/player/genRatings.test.ts | grep QUARTILES
+ * $ SPORT=basketball pnpm jest src/worker/core/player/genRatings.test.ts | grep QUARTILES
  *
  * It's in jest rather than node.js because jest has all the imports and crap set up.
  */

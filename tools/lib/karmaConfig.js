@@ -1,5 +1,11 @@
 import alias from "@rollup/plugin-alias";
 import rollupConfig from "./rollupConfig.js";
+import browserstackLauncher from "karma-browserstack-launcher";
+import chromeLauncher from "karma-chrome-launcher";
+import firefoxLauncher from "karma-firefox-launcher";
+import mocha from "karma-mocha";
+import rollupPreprocessor from "karma-rollup-preprocessor";
+import sourceMapSupport from "karma-source-map-support";
 
 const files = ["src/test/mocha.ts", "src/test/smoke.ts"];
 
@@ -13,6 +19,15 @@ rollupConfigTemp.plugins.unshift(
 );
 
 export default {
+	plugins: [
+		browserstackLauncher,
+		chromeLauncher,
+		firefoxLauncher,
+		mocha,
+		rollupPreprocessor,
+		sourceMapSupport,
+	],
+
 	frameworks: ["mocha", "source-map-support"],
 
 	files: files.map(pattern => {

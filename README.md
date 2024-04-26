@@ -52,10 +52,10 @@ from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 Make sure you're using a recent version of [Node.js](https://nodejs.org/), older
 versions probably won't work. Then, all of the tooling used in development can
-be set up by simply installing [Yarn 1](https://classic.yarnpkg.com/) and
+be set up by simply installing [pnpm](https://pnpm.io/) and
 running:
 
-    yarn install
+    pnpm install
 
 from within this folder.
 
@@ -63,20 +63,20 @@ from within this folder.
 
 To build the app along with all its assets, run
 
-    yarn run build
+    pnpm run build
 
 However during development, you probably would rather do
 
-    yarn run start-watch
+    pnpm run start-watch
 
 which will start the server and watch JS and CSS files for changes and
-recompile. This simply runs both `yarn run start` and `yarn run watch` together,
+recompile. This simply runs both `pnpm run start` and `pnpm run watch` together,
 which alternatively can be run separately if you wish.
 
 By default this will build the basketball version of the game. For other sports,
 set the SPORT environment variable to "football", "baseball", or "hockey", like:
 
-    SPORT=football yarn run start-watch
+    SPORT=football yapnpmrn run start-watch
 
 Open `package.json` to see all available development scripts.
 
@@ -90,10 +90,10 @@ use as long as you can get it to run on your computer.
 
 Run
 
-    yarn run start
+    pnpm run start
 
-and point your browser to <http://localhost:3000/>. If you use the command `yarn
-run start-watch` from above, then running the command `yarn run start` is not
+and point your browser to <http://localhost:3000/>. If you use the command `pnpm
+run start-watch` from above, then running the command `pnpm run start` is not
 necessary.
 
 #### 2. Apache
@@ -106,17 +106,17 @@ should work if you point it at the `build` folder with mod_rewrite enabled.
 TypeScript and ESLint are used to enforce some coding standards. To run them on
 the entire codebase, run
 
-    yarn run lint
+    pnpm run lint
 
 Integration and unit tests spread out through the codebase in *.test.ts files.
 Coverage is not great. They can be run from the command line with
 
-    yarn test
+    pnpm test
 
 There is also a single end-to-end test which creates a league and simulates a
 season. To execute the end-to-end test, run
 
-    yarn run test-e2e
+    pnpm run test-e2e
 
 For the end-to-end test, by default it is basketball. If you want it to do
 football, stick `SPORT=football ` in front.
@@ -162,7 +162,7 @@ reloading if you want to see changes in the worker.
 
 ### Service Worker
 
-This only applies if you use Apache, not if you use `yarn run start`!
+This only applies if you use Apache, not if you use `pnpm run start`!
 
 A service worker is used for offline caching. This can make development tricky,
 because if you load the game in your browser, make a change, wait for

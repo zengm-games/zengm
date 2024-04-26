@@ -1,3 +1,11 @@
+drag and drop
+- some modern library
+- customize page
+  - allow drag and drop to reorder confs/divs
+  - allow drag and drop to move teams to other divs
+- manage confs page
+- remove patch
+
 indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
 
@@ -1261,9 +1269,6 @@ UI for selecting a custom set of teams in a new league
     - i guess that's fine... real players would be generated from the team configuration, and if there are none, there are none. all other settings from that real season would still apply
 - clicking "Customize" takes you to a new page
   - list of teams by confs/divs
-    - allow drag and drop to reorder confs/divs
-      - https://github.com/atlassian/react-beautiful-dnd
-    - allow drag and drop to move teams to other divs
   - add/edit team
     - region name, pop, stadium capacity, logo URL, srID (dropdown, not free text, and help popover explaining that real team overrides will apply), colors, include real players?
   - while viewing confs/divs/teams, buttons on the side

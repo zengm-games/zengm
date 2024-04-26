@@ -8,15 +8,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v3
     - uses: actions/setup-node@v3
       with:
         node-version: '20.x'
-        registry-url: <registry url>
+        cache: 'pnpm'
     - name: Install dependencies
-      run: yarn install
+      run: pnpm install
     - name: ESLint
-      run: yarn lint-js
+      run: pnpm lint-js
     - name: TypeScript
-      run: yarn lint-ts
+      run: pnpm lint-ts
     - name: Unit tests
-      run: yarn test
+      run: pnpm test

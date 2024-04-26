@@ -18,9 +18,9 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "safari",
-		browser_version: "13.1", // Works back to 12.1 currently
+		browser_version: "14.1", // Works back to 12.1 currently
 		os: "OS X",
-		os_version: "Catalina",
+		os_version: "Big Sur",
 	},
 ].reduce((acc, browser, i) => {
 	acc[i] = browser;

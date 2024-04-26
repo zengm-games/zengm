@@ -332,8 +332,6 @@ const Trade = (props: View<"trade">) => {
 		: "Other team";
 	const teamNames = [otherTeamName, userTeamName] as [string, string];
 
-	console.log(state.message, state.prevTeams);
-
 	return (
 		<>
 			<div className="row">

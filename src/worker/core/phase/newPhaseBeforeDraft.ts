@@ -12,6 +12,7 @@ import {
 	logEvent,
 	random,
 	orderTeams,
+	env,
 } from "../../util";
 import type {
 	Conditions,
@@ -566,7 +567,7 @@ const newPhaseBeforeDraft = async (
 		],
 		conditions,
 	);
-	if (window.enableLogging) {
+	if (env.enableLogging) {
 		fetchWrapper({
 			url: `${ACCOUNT_API_URL}/log_event.php`,
 			method: "POST",

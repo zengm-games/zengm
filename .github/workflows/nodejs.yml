@@ -18,8 +18,8 @@ jobs:
     - name: Install dependencies
       run: pnpm install
     - name: ESLint
-      run: pnpm lint-js
+      run: pnpm run lint-js
     - name: TypeScript
-      run: pnpm lint-ts
+      run: pnpm run lint-ts
     - name: Unit tests
       run: pnpm test

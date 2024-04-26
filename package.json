@@ -19,7 +19,7 @@
 		"watch": "node --loader=import-jsx --no-warnings tools/watch.js",
 		"lint": "concurrently --raw \"pnpm run lint-js\" \"pnpm run lint-ts\"",
 		"lint-js": "eslint \"*.{mjs,js,ts,tsx}\" \"public/*.js\" \"src/**/*.{mjs,js,ts,tsx}\" \"tools/**/*.{mjs,js,ts,tsx}\"",
-		"lint-ts": "node tools/pre-test.js && pnpm run tsc",
+		"lint-ts": "node tools/pre-test.js && pnpm tsc",
 		"prettier": "prettier --write \"*.{mjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,js,json,scss,ts,tsx}\"",
 		"test": "node tools/pre-test.js && cross-env SPORT=basketball jest --testPathIgnorePatterns football && cross-env SPORT=football jest --testRegex \"football.*\\.test\\.c?[jt]sx?\"",
 		"test-e2e": "node tools/pre-test.js && karma start karma.conf.js",

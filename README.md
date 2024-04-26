@@ -76,7 +76,7 @@ which alternatively can be run separately if you wish.
 By default this will build the basketball version of the game. For other sports,
 set the SPORT environment variable to "football", "baseball", or "hockey", like:
 
-    SPORT=football yapnpmrn run start-watch
+    SPORT=football pnpm run start-watch
 
 Open `package.json` to see all available development scripts.
 

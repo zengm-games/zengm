@@ -22,7 +22,6 @@ declare global {
 		heartbeatID: string;
 		mobile: boolean;
 		releaseStage: string;
-		_qevents: any;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
 		withGoodUI: () => void;

@@ -5,6 +5,7 @@ import { team } from "../core";
 import { groupBy, orderBy } from "../../common/utils";
 import { PHASE } from "../../common";
 import { loadAbbrevs } from "./gameLog";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 
 const updateSeasonPreview = async (
 	{ season }: ViewInput<"seasonPreview">,
@@ -180,18 +181,18 @@ const updateSeasonPreview = async (
 		).slice(0, NUM_TEAMS_TO_SHOW);
 
 		// These are used when displaying last year's playoff results, so they are for last season
-		const numConfs = g.get("confs", season - 1).length;
 		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
+		const playoffsByConf = await getPlayoffsByConf(season - 1);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
-			numConfs,
 			numPlayoffRounds,
 			playersDeclining,
 			playersImproving,
 			playersNewTeam,
 			playersTop,
 			playersTopRookies,
+			playoffsByConf,
 			season,
 			teamsDeclining,
 			teamsImproving,

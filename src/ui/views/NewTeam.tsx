@@ -104,6 +104,7 @@ const NewTeam = ({
 	numPlayoffRounds,
 	otherTeamsWantToHire,
 	phase,
+	playoffsByConf,
 	season,
 	teams,
 	userTid,
@@ -313,7 +314,7 @@ const NewTeam = ({
 									tied={t.seasonAttrs.tied}
 									otl={t.seasonAttrs.otl}
 									won={t.seasonAttrs.won}
-									numConfs={confs.length}
+									playoffsByConf={playoffsByConf}
 									numPlayoffRounds={numPlayoffRounds}
 									playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
 								/>

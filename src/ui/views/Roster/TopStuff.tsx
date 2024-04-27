@@ -151,11 +151,11 @@ const TopStuff = ({
 	luxuryTaxAmount,
 	minPayroll,
 	minPayrollAmount,
-	numConfs,
 	numPlayoffRounds,
 	openRosterSpots,
 	payroll,
 	players,
+	playoffsByConf,
 	profit,
 	salaryCap,
 	salaryCapType,
@@ -176,10 +176,10 @@ const TopStuff = ({
 	| "luxuryTaxAmount"
 	| "minPayroll"
 	| "minPayrollAmount"
-	| "numConfs"
 	| "numPlayoffRounds"
 	| "payroll"
 	| "players"
+	| "playoffsByConf"
 	| "salaryCap"
 	| "salaryCapType"
 	| "season"
@@ -211,8 +211,8 @@ const TopStuff = ({
 					otl={t.seasonAttrs.otl}
 					tied={t.seasonAttrs.tied}
 					playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
+					playoffsByConf={playoffsByConf}
 					option="noSeason"
-					numConfs={numConfs}
 					numPlayoffRounds={numPlayoffRounds}
 					tid={tid}
 				/>

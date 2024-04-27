@@ -1280,36 +1280,38 @@ const getJerseyNumber = (
 const roundsWonText = (
 	playoffRoundsWon: number,
 	numPlayoffRounds: number,
-	numConfs: number,
+	playoffsByConf: boolean,
 	showMissedPlayoffs?: boolean,
-): string => {
-	const playoffsByConf = numConfs === 2;
-
+) => {
 	if (playoffRoundsWon === numPlayoffRounds) {
-		return "League champs";
+		return "League champs" as const;
 	}
 
 	if (playoffRoundsWon === numPlayoffRounds - 1) {
-		return playoffsByConf ? "Conference champs" : "Made finals";
+		return playoffsByConf ? "Conference champs" : ("Made finals" as const);
 	}
 
 	if (playoffRoundsWon === 0) {
-		return "Made playoffs";
+		return "Made playoffs" as const;
 	}
 
 	if (playoffRoundsWon === numPlayoffRounds - 2) {
-		return playoffsByConf ? "Made conference finals" : "Made semifinals";
+		return playoffsByConf
+			? "Made conference finals"
+			: ("Made semifinals" as const);
 	}
 
 	if (playoffRoundsWon === numPlayoffRounds - 3) {
-		return playoffsByConf ? "Made conference semifinals" : "Made quarterfinals";
+		return playoffsByConf
+			? "Made conference semifinals"
+			: ("Made quarterfinals" as const);
 	}
 
 	if (playoffRoundsWon >= 1) {
-		return `Made ${ordinal(playoffRoundsWon + 1)} round`;
+		return `Made ${ordinal(playoffRoundsWon + 1)} round` as const;
 	}
 
-	return showMissedPlayoffs ? "Missed playoffs" : "";
+	return showMissedPlayoffs ? "Missed playoffs" : ("" as const);
 };
 
 // Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?

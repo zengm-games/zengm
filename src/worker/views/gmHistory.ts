@@ -2,6 +2,7 @@ import { idb, iterate } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, TeamSeason, Player } from "../../common/types";
 import { getHistory, getHistoryTeam } from "./teamHistory";
+import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons";
 
 const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -45,9 +46,10 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
+		const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 		const teamHistories = [];
 		for (const teamSeasons of teamSeasonsByTeam) {
-			const group = getHistoryTeam(teamSeasons);
+			const group = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
 
 			// This is to filter out when tid is DOES_NOT_EXIST when realStats=="all"
 			if (group.history.length > 0) {
@@ -109,7 +111,12 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			...(await getHistory(allTeamSeasons, players, true)),
+			...(await getHistory(
+				allTeamSeasons,
+				players,
+				playoffsByConfBySeason,
+				true,
+			)),
 			teamHistories,
 		};
 	}

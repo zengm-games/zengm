@@ -261,6 +261,8 @@ const updateRoster = async (
 			);
 		}
 
+		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+
 		return {
 			abbrev: inputs.abbrev,
 			budget: g.get("budget"),
@@ -270,7 +272,6 @@ const updateRoster = async (
 			godMode: g.get("godMode"),
 			salaryCapType: g.get("salaryCapType"),
 			maxRosterSize: g.get("maxRosterSize"),
-			numConfs: g.get("confs", "current").length,
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
 			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
@@ -281,6 +282,7 @@ const updateRoster = async (
 			phase: g.get("phase"),
 			playoffs: inputs.playoffs,
 			players: addFirstNameShort(players),
+			playoffsByConf,
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
 			showSpectatorWarning:

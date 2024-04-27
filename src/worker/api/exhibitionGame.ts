@@ -31,6 +31,7 @@ import {
 	toUI,
 } from "../util";
 import { boxScoreToLiveSim } from "../views/liveGame";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -99,9 +100,10 @@ const getSeasonInfoLeague = async ({
 	}
 
 	const numGamesPlayoffSeries = await getGameAttribute("numGamesPlayoffSeries");
-	const confs = await getGameAttribute("confs");
 	const currentSeason = await getGameAttribute("season");
 	const currentPhase = await getGameAttribute("phase");
+	const confs = await getGameAttribute("confs");
+	const playoffsByConf = await getGameAttribute("playoffsByConf");
 
 	const isCurrentOngoingSeason =
 		season === currentSeason && currentPhase < PHASE.DRAFT;
@@ -135,6 +137,10 @@ const getSeasonInfoLeague = async ({
 	});
 	const playersByTid = groupBy(players, p => p.stats[0].tid);
 
+	const playoffSeries = await league
+		.transaction("playoffSeries")
+		.store.get(season);
+
 	const exhibitionTeams: ExhibitionTeamWithPop[] = await Promise.all(
 		teamSeasons.map(async teamSeason => {
 			const tid = teamSeason.tid;
@@ -147,7 +153,12 @@ const getSeasonInfoLeague = async ({
 				roundsWonText = helpers.roundsWonText(
 					teamSeason.playoffRoundsWon,
 					numGamesPlayoffSeries.length,
-					confs.length,
+					await getPlayoffsByConf(teamSeason.season, {
+						confs,
+						playoffSeries,
+						playoffsByConf,
+						skipPlayoffSeries: false,
+					}),
 					true,
 				);
 			}

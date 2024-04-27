@@ -105,7 +105,7 @@ const LeagueDashboard = ({
 											{helpers.roundsWonText(
 												playoffRoundsWon,
 												numPlayoffRounds,
-												numConfs,
+												playoffsByConf,
 											)}
 										</span>
 									)}

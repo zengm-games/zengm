@@ -4,7 +4,7 @@ const RecordAndPlayoffs = ({
 	abbrev,
 	boldChamps,
 	lost,
-	numConfs,
+	playoffsByConf,
 	numPlayoffRounds,
 	option,
 	playoffRoundsWon,
@@ -15,18 +15,27 @@ const RecordAndPlayoffs = ({
 	won,
 }: {
 	abbrev: string;
-	boldChamps?: boolean;
 	lost: number;
-	numConfs?: number;
-	numPlayoffRounds?: number;
 	option?: "noSeason";
-	playoffRoundsWon?: number;
 	season: number;
 	tied?: number;
 	otl?: number;
 	tid: number;
 	won: number;
-}) => {
+} & (
+	| {
+			boldChamps?: boolean;
+			numPlayoffRounds: number;
+			playoffRoundsWon: number;
+			playoffsByConf: boolean;
+	  }
+	| {
+			boldChamps?: void;
+			numPlayoffRounds?: void;
+			playoffRoundsWon?: void;
+			playoffsByConf?: void;
+	  }
+)) => {
 	const seasonText =
 		option !== "noSeason" ? (
 			<span>
@@ -48,7 +57,7 @@ const RecordAndPlayoffs = ({
 		<a href={helpers.leagueUrl(["standings", season])}>{record}</a>
 	);
 	const extraText =
-		numConfs !== undefined &&
+		playoffsByConf !== undefined &&
 		numPlayoffRounds !== undefined &&
 		playoffRoundsWon !== undefined &&
 		playoffRoundsWon >= 0 ? (
@@ -56,7 +65,7 @@ const RecordAndPlayoffs = ({
 				,{" "}
 				<a href={helpers.leagueUrl(["playoffs", season])}>
 					{helpers
-						.roundsWonText(playoffRoundsWon, numPlayoffRounds, numConfs)
+						.roundsWonText(playoffRoundsWon, numPlayoffRounds, playoffsByConf)
 						.toLowerCase()}
 				</a>
 			</span>

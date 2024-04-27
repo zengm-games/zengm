@@ -13,10 +13,10 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 				abbrev={h.abbrev}
 				boldChamps
 				lost={h.lost}
-				numConfs={h.numConfs}
 				numPlayoffRounds={h.numPlayoffRounds}
 				otl={h.otl}
 				playoffRoundsWon={h.playoffRoundsWon}
+				playoffsByConf={h.playoffsByConf}
 				season={h.season}
 				tid={h.tid}
 				tied={h.tied}

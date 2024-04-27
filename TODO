@@ -1,3 +1,9 @@
+use timeouts in BBGM
+
+use ptsPct instead of winp in various places if pointsFormula
+- team history
+- power rankings
+
 drag and drop
 - some modern library
 - customize page

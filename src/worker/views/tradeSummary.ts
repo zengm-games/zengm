@@ -12,6 +12,7 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import { player, team } from "../core";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
@@ -257,7 +258,10 @@ const getSeasonsToPlot = async (
 					region: teamSeason.region ?? g.get("teamInfoCache")[tid].region,
 					name: teamSeason.name ?? g.get("teamInfoCache")[tid].name,
 					abbrev: teamSeason.abbrev ?? g.get("teamInfoCache")[tid].abbrev,
-					roundsWonText: getRoundsWonText(teamSeason).toLocaleLowerCase(),
+					roundsWonText: getRoundsWonText(
+						teamSeason,
+						await getPlayoffsByConf(teamSeason.season),
+					).toLocaleLowerCase(),
 				};
 			}
 

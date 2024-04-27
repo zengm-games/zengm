@@ -78,7 +78,11 @@ const TeamLogo = ({
 				</TeamNameLink>
 				<div className="mt-1 mb-3">
 					<div className="fw-bold">{helpers.formatRecord(t)}</div>
-					{t.timeouts !== undefined ? <div>Timeouts: {t.timeouts}</div> : null}
+					{t.timeouts !== undefined ? (
+						<div className={t.timeouts === 0 ? "text-danger" : undefined}>
+							Timeouts: {t.timeouts}
+						</div>
+					) : null}
 				</div>
 			</div>
 		</div>

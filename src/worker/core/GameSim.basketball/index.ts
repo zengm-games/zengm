@@ -9,8 +9,8 @@ import PlayByPlayLogger from "./PlayByPlayLogger";
 import getWinner from "../../../common/getWinner";
 
 const SHOT_CLOCK = 24;
-const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
-const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
+// const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
+// const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
 const NUM_TIMEOUTS_OVERTIME = 2;
 
 const TIMEOUTS_STOP_CLOCK = 2; // [minutes]
@@ -621,17 +621,17 @@ class GameSim extends GameSimBase {
 	}
 
 	// Set the number of timeouts for each team to maxTimeouts, unless it's already lower than that in which case do nothing
-	setMaxTimeouts(maxTimeouts: number) {
+	/*setMaxTimeouts(maxTimeouts: number) {
 		this.timeouts = this.timeouts.map(timeouts => {
 			return Math.min(timeouts, maxTimeouts);
 		}) as [number, number];
 		this.logTimeouts();
-	}
+	}*/
 
 	simRegulation() {
 		let period = 1;
 		const wonJump = this.jumpBall();
-		let doneSettingTimeoutsLastThreeMinutes = false;
+		// let doneSettingTimeoutsLastThreeMinutes = false;
 
 		while (!this.elamDone) {
 			if (period !== 1) {
@@ -641,9 +641,9 @@ class GameSim extends GameSimBase {
 			}
 
 			const finalPeriod = period === this.numPeriods;
-			if (finalPeriod) {
+			/*if (finalPeriod) {
 				this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD);
-			}
+			}*/
 
 			// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
 			if (
@@ -657,14 +657,14 @@ class GameSim extends GameSimBase {
 
 			this.checkElamEnding(); // Before loop, in case it's at 0
 			while (this.t > 0 && !this.elamDone) {
-				if (
+				/*if (
 					finalPeriod &&
 					!doneSettingTimeoutsLastThreeMinutes &&
 					this.t <= 3 * 60
 				) {
 					this.setMaxTimeouts(NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN);
 					doneSettingTimeoutsLastThreeMinutes = true;
-				}
+				}*/
 
 				this.simPossession();
 				this.checkElamEnding();

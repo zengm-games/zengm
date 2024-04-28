@@ -195,10 +195,6 @@ const getSeasonsToPlot = async (
 
 	const seasons = [];
 
-	const teamSeasonsIndex = idb.league
-		.transaction("teamSeasons")
-		.store.index("tid, season");
-
 	for (let i = start; i <= end; i++) {
 		type Team = {
 			winp?: number;
@@ -226,16 +222,13 @@ const getSeasonsToPlot = async (
 		];
 		for (let j = 0; j < tids.length; j++) {
 			const tid = tids[j];
-			let teamSeason;
-			if (i === g.get("season")) {
-				teamSeason = await idb.cache.teamSeasons.indexGet(
-					"teamSeasonsByTidSeason",
-					[tid, i],
-				);
-			}
-			if (!teamSeason) {
-				teamSeason = await teamSeasonsIndex.get([tid, i]);
-			}
+			const teamSeason = await idb.getCopy.teamSeasons(
+				{
+					season: i,
+					tid,
+				},
+				"noCopyCache",
+			);
 
 			if (
 				teamSeason &&

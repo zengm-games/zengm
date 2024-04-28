@@ -89,6 +89,47 @@ const TeamLogo = ({
 	) : null;
 };
 
+const TeamNameAndScore = ({
+	boxScore,
+	possessionNum,
+	small,
+	t,
+}: {
+	boxScore: any;
+	possessionNum: 0 | 1;
+	small: boolean | undefined;
+	t: any;
+}) => {
+	const className = small
+		? "d-none"
+		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
+
+	return (
+		<>
+			{boxScore.possession !== undefined ? (
+				<span
+					className={
+						boxScore.possession === possessionNum
+							? "text-warning"
+							: "text-white"
+					}
+				>
+					●{" "}
+				</span>
+			) : null}
+			{t.playoffs ? (
+				<span className="text-body-secondary">{t.playoffs.seed}. </span>
+			) : null}
+			<TeamNameLink season={boxScore.season} t={t}>
+				{t.season !== undefined ? `${t.season} ` : null}
+				<span className={className}>{t.region} </span>
+				{t.name}
+			</TeamNameLink>{" "}
+			{t.pts}
+		</>
+	);
+};
+
 export const HeadlineScore = ({
 	boxScore,
 	small,
@@ -105,10 +146,6 @@ export const HeadlineScore = ({
 	const t1 =
 		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
-	const className = small
-		? "d-none"
-		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
-
 	const shootout = t0.sPts !== undefined;
 
 	return (
@@ -122,46 +159,19 @@ export const HeadlineScore = ({
 			}
 		>
 			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
-				{boxScore.possession !== undefined ? (
-					<span
-						className={
-							boxScore.possession === 0 ? "text-warning" : "text-white"
-						}
-					>
-						●{" "}
-					</span>
-				) : null}
-				{t0.playoffs ? (
-					<span className="text-body-secondary">{t0.playoffs.seed}. </span>
-				) : null}
-				<TeamNameLink season={boxScore.season} t={t0}>
-					{t0.season !== undefined ? `${t0.season} ` : null}
-					<span className={className}>{t0.region} </span>
-					{t0.name}
-				</TeamNameLink>{" "}
-				{t0.pts}
-				{shootout ? (
-					<span className="text-body-secondary"> ({t0.sPts})</span>
-				) : null}
+				<TeamNameAndScore
+					boxScore={boxScore}
+					possessionNum={0}
+					small={small}
+					t={t0}
+				/>
 				,{" "}
-				{boxScore.possession !== undefined ? (
-					<span
-						className={
-							boxScore.possession === 1 ? "text-warning" : "text-white"
-						}
-					>
-						●{" "}
-					</span>
-				) : null}
-				{t1.playoffs ? (
-					<span className="text-body-secondary">{t1.playoffs.seed}. </span>
-				) : null}
-				<TeamNameLink season={boxScore.season} t={t1}>
-					{t1.season !== undefined ? `${t1.season} ` : null}
-					<span className={className}>{t1.region} </span>
-					{t1.name}
-				</TeamNameLink>{" "}
-				{t1.pts}
+				<TeamNameAndScore
+					boxScore={boxScore}
+					possessionNum={1}
+					small={small}
+					t={t1}
+				/>
 				{shootout ? (
 					<span className="text-body-secondary"> ({t1.sPts})</span>
 				) : null}

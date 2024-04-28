@@ -60,8 +60,8 @@ const DefaultNewLeagueSettings = ({
 				}
 
 				if (setting.hidden) {
-					const partner = settings.find(
-						setting => setting?.partners?.includes(key as Key),
+					const partner = settings.find(setting =>
+						setting?.partners?.includes(key as Key),
 					);
 					if (partner) {
 						return [key, partner.key];
@@ -83,10 +83,9 @@ const DefaultNewLeagueSettings = ({
 			!settingsShown.includes(setting.key) &&
 			(!setting.showOnlyIf ||
 				setting.showOnlyIf({
-					defaultNewLeagueSettings: true,
 					hasPlayers: true,
 					newLeague: true,
-					realPlayers: true,
+					realPlayers: SPORT_HAS_REAL_PLAYERS,
 				})),
 	);
 

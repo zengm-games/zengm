@@ -320,7 +320,6 @@ const SettingsForm = ({
 			(!settingsShown || settingsShown.includes(setting.key)) &&
 			(!setting.showOnlyIf ||
 				setting.showOnlyIf({
-					defaultNewLeagueSettings,
 					hasPlayers,
 					newLeague,
 					realPlayers,

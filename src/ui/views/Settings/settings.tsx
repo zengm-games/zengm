@@ -44,7 +44,6 @@ type Setting = {
 
 	// showOnlyIf is for hiding form elements that only make sense in some situations (like when creating a new league). hidden is for a setting where we're merging it with some other setting in the UI (probably with customForm) but still want to track it here so it gets updated properly.
 	showOnlyIf?: (params: {
-		defaultNewLeagueSettings?: boolean;
 		hasPlayers?: boolean;
 		newLeague?: boolean;
 		realPlayers?: boolean;
@@ -80,87 +79,79 @@ export const settings: Setting[] = (
 				{ key: "all", value: "All seasons, teams, and players" },
 			],
 		},
-		{
-			category: "New League",
-			key: "randomization",
-			name: "Randomization",
-			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
-				newLeague && hasPlayers && realPlayers,
-			type: "string",
-			values: [
-				{ key: "none", value: "None" },
-				{ key: "debuts", value: "Random debuts" },
-				{
-					key: "debutsKeepCurrent",
-					value: "Random debuts (keep current rosters)",
-				},
-				{ key: "debutsForever", value: "Random debuts forever" },
-				{
-					key: "debutsForeverKeepCurrent",
-					value: "Random debuts forever (keep current rosters)",
-				},
-				{ key: "shuffle", value: "Shuffle rosters" },
-			],
-			descriptionLong: (
-				<>
-					<p>
-						<b>Random debuts:</b> Every player's draft year is randomized.
-						Starting teams and future draft classes are all random combinations
-						of past, current, and future real players.
-					</p>
-					<p>
-						<b>Random debuts forever:</b> Like random debuts, except when it
-						runs out of draft prospects, it will randomize all real players
-						again and add them to future draft classes.
-					</p>
-					<p>
-						<b>(keep current rosters)</b> means that the current rosters will
-						not be randomized, only future draft classes.
-					</p>
-					<p>
-						<b>Shuffle rosters:</b> All active players are placed on random
-						teams.
-					</p>
-				</>
-			),
-			validator: (value, output) => {
-				if (
-					(value === "debuts" || value === "debutsForever") &&
-					output.realStats !== "none"
-				) {
-					throw new Error(
-						'Random debuts only works with "Historical Stats" set to "None"',
-					);
-				}
-				if (
-					(value === "debutsKeepCurrent" ||
-						value === "debutsForeverKeepCurrent") &&
-					output.realStats !== "none" &&
-					output.realStats !== "lastSeason" &&
-					output.realStats !== "allActive"
-				) {
-					throw new Error(
-						'Random debuts (keep current rosters) only works with "Historical Stats" set to "None", "Last season, active players only", or "All seasons, active players only"',
-					);
-				}
-			},
-		},
 		...(SPORT_HAS_REAL_PLAYERS
 			? ([
 					{
 						category: "New League",
 						key: "randomization",
 						name: "Randomization",
-						showOnlyIf: ({
-							defaultNewLeagueSettings,
-							newLeague,
-							hasPlayers,
-							realPlayers,
-						}) =>
-							newLeague &&
-							hasPlayers &&
-							!realPlayers &&
-							!defaultNewLeagueSettings,
+						showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+							newLeague && hasPlayers && realPlayers,
+						type: "string",
+						values: [
+							{ key: "none", value: "None" },
+							{ key: "debuts", value: "Random debuts" },
+							{
+								key: "debutsKeepCurrent",
+								value: "Random debuts (keep current rosters)",
+							},
+							{ key: "debutsForever", value: "Random debuts forever" },
+							{
+								key: "debutsForeverKeepCurrent",
+								value: "Random debuts forever (keep current rosters)",
+							},
+							{ key: "shuffle", value: "Shuffle rosters" },
+						],
+						descriptionLong: (
+							<>
+								<p>
+									<b>Random debuts:</b> Every player's draft year is randomized.
+									Starting teams and future draft classes are all random
+									combinations of past, current, and future real players.
+								</p>
+								<p>
+									<b>Random debuts forever:</b> Like random debuts, except when
+									it runs out of draft prospects, it will randomize all real
+									players again and add them to future draft classes.
+								</p>
+								<p>
+									<b>(keep current rosters)</b> means that the current rosters
+									will not be randomized, only future draft classes.
+								</p>
+								<p>
+									<b>Shuffle rosters:</b> All active players are placed on
+									random teams.
+								</p>
+							</>
+						),
+						validator: (value, output) => {
+							if (
+								(value === "debuts" || value === "debutsForever") &&
+								output.realStats !== "none"
+							) {
+								throw new Error(
+									'Random debuts only works with "Historical Stats" set to "None"',
+								);
+							}
+							if (
+								(value === "debutsKeepCurrent" ||
+									value === "debutsForeverKeepCurrent") &&
+								output.realStats !== "none" &&
+								output.realStats !== "lastSeason" &&
+								output.realStats !== "allActive"
+							) {
+								throw new Error(
+									'Random debuts (keep current rosters) only works with "Historical Stats" set to "None", "Last season, active players only", or "All seasons, active players only"',
+								);
+							}
+						},
+					},
+					{
+						category: "New League",
+						key: "randomization",
+						name: "Randomization",
+						showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+							newLeague && hasPlayers && !realPlayers,
 						type: "string",
 						values: [
 							{ key: "none", value: "None" },
@@ -190,16 +181,8 @@ export const settings: Setting[] = (
 						category: "New League",
 						key: "randomization",
 						name: "Randomization",
-						showOnlyIf: ({
-							defaultNewLeagueSettings,
-							newLeague,
-							hasPlayers,
-							realPlayers,
-						}) =>
-							newLeague &&
-							!hasPlayers &&
-							!realPlayers &&
-							!defaultNewLeagueSettings,
+						showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
+							newLeague && !hasPlayers && !realPlayers,
 						type: "string",
 						values: [
 							{ key: "none", value: "None" },
@@ -226,16 +209,7 @@ export const settings: Setting[] = (
 						category: "New League",
 						key: "randomization",
 						name: "Randomization",
-						showOnlyIf: ({
-							defaultNewLeagueSettings,
-							newLeague,
-							hasPlayers,
-							realPlayers,
-						}) =>
-							newLeague &&
-							hasPlayers &&
-							!realPlayers &&
-							!defaultNewLeagueSettings,
+						showOnlyIf: ({ newLeague, hasPlayers }) => newLeague && hasPlayers,
 						type: "string",
 						values: [
 							{ key: "none", value: "None" },

@@ -24,7 +24,7 @@ class DefaultKeyMap<Key, Value> extends Map<Key, Value> {
 
 	override get(key: Key) {
 		if (!this.has(key)) {
-			if (this.has(this.defaultKey)) {
+			if (!this.has(this.defaultKey)) {
 				throw new Error("No entry for defaultKey");
 			}
 			return super.get(this.defaultKey)!;

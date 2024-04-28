@@ -8,6 +8,11 @@ drag and drop
   - @dnd-kit/core - not that well maintained, large bundle size
   - @hello-pangea/dnd - no grid support
 - SortableTable
+  - not draggable outside table
+    - https://docs.dndkit.com/api-documentation/modifiers
+    - need overlay?
+    0 https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
+  - 0th row not draggable
   - ghost row while dragging
     - all components need to know which row is being dragged, and what it's currently hovering over. or at least know which direction they are offset
   - click to swap
@@ -16,6 +21,9 @@ drag and drop
   - check bundle size
   - test mobile
   - test all uses in game, not just roster
+  - getId function, use for
+    - key
+    - SortableContext items
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs

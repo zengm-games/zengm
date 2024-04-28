@@ -33,6 +33,8 @@
 	"dependencies": {
 		"@bugsnag/browser": "^7.22.4",
 		"@bugsnag/plugin-react": "^7.19.0",
+		"@dnd-kit/core": "^6.1.0",
+		"@dnd-kit/sortable": "^8.0.0",
 		"@juggle/resize-observer": "^3.4.0",
 		"@mattiasbuelens/web-streams-adapter": "^0.1.0",
 		"@tanstack/react-virtual": "^3.3.0",

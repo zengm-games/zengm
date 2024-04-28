@@ -1,15 +1,12 @@
 import classNames from "classnames";
 import { useCallback, useRef, useState } from "react";
-import type { ReactNode } from "react";
-import {
-	SortableContainer,
-	SortableElement,
-	SortableHandle,
-} from "react-sortable-hoc";
+import type { CSSProperties, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 import type { StickyCols } from "./DataTable";
 import useStickyXX from "./DataTable/useStickyXX";
+import { DndContext, useDroppable, useDraggable } from "@dnd-kit/core";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 
 type HighlightHandle<Value> = (a: { index: number; value: Value }) => boolean;
 type RowClassName<Value> = (a: {
@@ -22,138 +19,88 @@ type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 // Should be Value passed through as generic parameter, but that is annoying with HOC
 type ShouldBeValue = any;
 
-const ReorderHandle = SortableHandle(
-	({ isDragged }: { isDragged: boolean }) => {
-		return (
-			<a
-				className={classNames("d-block w-100")}
-				data-movable-handle
-				style={{
-					cursor: isDragged ? "grabbing" : "grab",
-					height: 27,
-				}}
-			/>
-		);
-	},
-);
+const Row = ({
+	className,
+	disabled2,
+	highlight,
+	i,
+	isDragged,
+	row,
+	rowLabel,
+	selected,
+	value,
+}: {
+	className?: string;
+	disabled2?: boolean;
+	highlight: boolean;
+	i: number;
+	isDragged: boolean;
+	selected: boolean;
+	row: Row<ShouldBeValue>;
+	rowLabel?: string;
+	value: ShouldBeValue;
+}) => {
+	const { clicked, toggleClicked } = useClickable();
 
-const Row = SortableElement(
-	(props: {
-		className?: string;
-		disabled2?: boolean;
-		highlight: boolean;
-		i: number;
-		isDragged: boolean;
-		selected: boolean;
-		row: Row<ShouldBeValue>;
-		rowLabel?: string;
-		value: ShouldBeValue;
-	}) => {
-		const { clicked, toggleClicked } = useClickable();
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		setActivatorNodeRef,
+		transform,
+		transition,
+	} = useSortable({ id: i });
 
-		const {
-			className,
-			disabled2,
-			highlight,
-			i,
-			isDragged,
-			row,
-			rowLabel,
-			selected,
-			value,
-		} = props;
+	const style = transform
+		? {
+				transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+				transition,
+			}
+		: undefined;
 
-		return (
-			<tr
-				className={classNames(className, {
-					"table-warning": clicked,
-				})}
-				onClick={toggleClicked}
-			>
-				{rowLabel !== undefined ? (
-					<td className="text-center">{rowLabel}</td>
-				) : null}
-				{disabled2 ? (
-					<td className="p-0" />
-				) : (
-					<td
-						className={classNames("roster-handle p-0", {
-							"table-info": !selected && highlight,
-							"table-secondary": !selected && !highlight,
-							"user-select-none": isDragged,
-							"bg-primary": selected,
-						})}
-					>
-						<ReorderHandle isDragged={isDragged} />
-					</td>
-				)}
-				{row({
-					index: i,
-					value,
-				})}
-			</tr>
-		);
-	},
-);
-
-const TBody = SortableContainer(
-	({
-		disabled,
-		highlightHandle,
-		indexSelected,
-		isDragged,
-		row,
-		rowClassName,
-		rowLabels,
-		values,
-	}: {
-		disabled?: boolean;
-		highlightHandle: HighlightHandle<ShouldBeValue>;
-		indexSelected: number | undefined;
-		isDragged: boolean;
-		row: ShouldBeValue;
-		rowClassName?: RowClassName<ShouldBeValue>;
-		rowLabels?: string[];
-		values: ShouldBeValue[];
-	}) => {
-		return (
-			<tbody>
-				{values.map((value, index) => {
-					const className: string | undefined = rowClassName
-						? rowClassName({ index, isDragged, value })
-						: undefined;
-					const highlight = highlightHandle({ index, value });
-
-					// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
-					let key;
-					if (Object.hasOwn(value, "pid")) {
-						key = value.pid;
-					} else if (Object.hasOwn(value, "tid")) {
-						key = value.tid;
-					} else {
-						key = index;
-					}
-
-					return (
-						<Row
-							className={className}
-							disabled2={disabled}
-							key={key}
-							highlight={highlight}
-							i={index}
-							index={index}
-							isDragged={isDragged}
-							selected={indexSelected === index}
-							rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
-							row={row}
-							value={value}
-						/>
-					);
-				})}
-			</tbody>
-		);
-	},
-);
+	return (
+		<tr
+			className={classNames(className, {
+				"table-warning": clicked,
+			})}
+			onClick={toggleClicked}
+			ref={setNodeRef}
+			style={style}
+		>
+			{rowLabel !== undefined ? (
+				<td className="text-center">{rowLabel}</td>
+			) : null}
+			{disabled2 ? (
+				<td className="p-0" />
+			) : (
+				<td
+					className={classNames("roster-handle p-0", {
+						"table-info": !selected && highlight,
+						"table-secondary": !selected && !highlight,
+						"user-select-none": isDragged,
+						"bg-primary": selected,
+					})}
+				>
+					<a
+						className={classNames("d-block w-100")}
+						data-movable-handle
+						style={{
+							cursor: isDragged ? "grabbing" : "grab",
+							height: 27,
+						}}
+						ref={setActivatorNodeRef}
+						{...listeners}
+						{...attributes}
+					/>
+				</td>
+			)}
+			{row({
+				index: i,
+				value,
+			})}
+		</tr>
+	);
+};
 
 const SortableTable = <Value extends Record<string, unknown>>({
 	cols,
@@ -194,7 +141,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		time: 0,
 	});
 
-	const onSortStart = useCallback(
+	/*const onSortStart = useCallback(
 		({ node, index }: { node: Element; index: number }) => {
 			setIsDragged(true);
 
@@ -252,7 +199,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			clicked.current.index = undefined;
 		},
 		[onChange, onSwap, indexSelected],
-	);
+	);*/
 
 	let tableClasses =
 		"table table-striped table-borderless table-sm table-hover";
@@ -261,33 +208,76 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	}
 
 	return (
-		<ResponsiveTableWrapper nonfluid>
-			<table ref={tableRef} className={tableClasses}>
-				<thead>
-					<tr>
-						<th className="p-0" />
-						{rowLabels ? <th className="p-0" /> : null}
-						{cols()}
-					</tr>
-				</thead>
-				<TBody
-					disabled={disabled}
-					helperClass="SortableHelper"
-					highlightHandle={highlightHandle}
-					indexSelected={indexSelected}
-					isDragged={isDragged}
-					onSortEnd={onSortEnd}
-					onSortStart={onSortStart}
-					onSortOver={onSortOver}
-					row={row}
-					rowClassName={rowClassName}
-					rowLabels={rowLabels}
-					transitionDuration={0}
-					values={values}
-					useDragHandle
-				/>
-			</table>
-		</ResponsiveTableWrapper>
+		<DndContext
+			onDragStart={event => {
+				console.log("onDragStart", event);
+				setIsDragged(true);
+			}}
+			onDragMove={event => {
+				// console.log("onDragMove", event);
+			}}
+			onDragOver={event => {
+				// console.log("onDragOver", event);
+			}}
+			onDragEnd={event => {
+				console.log("onDragEnd", event);
+				console.log(event.active.id, event.over?.id);
+				const oldIndex = event.active.id;
+				const newIndex = event.over?.id;
+				if (newIndex !== undefined) {
+					onChange({ oldIndex, newIndex });
+				}
+			}}
+			onDragCancel={() => console.log("onDragCancel")}
+		>
+			<SortableContext items={values.map((value, i) => i)}>
+				<ResponsiveTableWrapper nonfluid>
+					<table ref={tableRef} className={tableClasses}>
+						<thead>
+							<tr>
+								<th className="p-0" />
+								{rowLabels ? <th className="p-0" /> : null}
+								{cols()}
+							</tr>
+						</thead>
+						<tbody>
+							{values.map((value, index) => {
+								const className: string | undefined = rowClassName
+									? rowClassName({ index, isDragged, value })
+									: undefined;
+								const highlight = highlightHandle({ index, value });
+
+								// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
+								let key: any;
+								if (Object.hasOwn(value, "pid")) {
+									key = value.pid;
+								} else if (Object.hasOwn(value, "tid")) {
+									key = value.tid;
+								} else {
+									key = index;
+								}
+
+								return (
+									<Row
+										className={className}
+										disabled2={disabled}
+										key={key}
+										highlight={highlight}
+										i={index}
+										index={index}
+										isDragged={isDragged}
+										selected={indexSelected === index}
+										rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
+										row={row}
+										value={value}
+									/>
+								);
+							})}
+						</tbody>
+					</table>
+				</ResponsiveTableWrapper>
+			</SortableContext>
+		</DndContext>
 	);
 };
 

@@ -220,9 +220,9 @@ const processLiveGameEvents = ({
 			if (quarter > boxScore.numPeriods) {
 				overtimes += 1;
 				if (overtimes === 1) {
-					boxScore.overtime = " (OT)";
+					boxScore.overtime = "(OT)";
 				} else if (overtimes > 1) {
-					boxScore.overtime = ` (${overtimes}OT)`;
+					boxScore.overtime = `(${overtimes}OT)`;
 				}
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
 				boxScore.quarterShort = overtimes === 1 ? "OT" : `${overtimes}OT`;

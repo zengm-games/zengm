@@ -547,7 +547,7 @@ const processLiveGameEvents = ({
 				const inning = boxScore.teams[0].ptsQtrs.length;
 				if (inning > boxScore.numPeriods) {
 					overtimes += 1;
-					boxScore.overtime = ` (${boxScore.numPeriods + overtimes})`;
+					boxScore.overtime = `(${boxScore.numPeriods + overtimes})`;
 				}
 				const ordinal = helpers.ordinal(inning);
 				boxScore.quarter = `${ordinal} ${getPeriodName(boxScore.numPeriods)}`;

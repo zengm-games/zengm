@@ -105,7 +105,7 @@ const TeamNameAndScore = ({
 		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
 
 	return (
-		<>
+		<div>
 			{boxScore.possession !== undefined ? (
 				<span
 					className={
@@ -126,7 +126,7 @@ const TeamNameAndScore = ({
 				{t.name}
 			</TeamNameLink>{" "}
 			{t.pts}
-		</>
+		</div>
 	);
 };
 
@@ -158,14 +158,16 @@ export const HeadlineScore = ({
 						: undefined
 			}
 		>
-			<h2 className={small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}>
+			<h2
+				className={`d-flex ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
+			>
 				<TeamNameAndScore
 					boxScore={boxScore}
 					possessionNum={0}
 					small={small}
 					t={t0}
 				/>
-				,{" "}
+				<div>,&nbsp;</div>
 				<TeamNameAndScore
 					boxScore={boxScore}
 					possessionNum={1}
@@ -173,9 +175,9 @@ export const HeadlineScore = ({
 					t={t1}
 				/>
 				{shootout ? (
-					<span className="text-body-secondary"> ({t1.sPts})</span>
+					<div className="text-body-secondary">&nbsp;({t1.sPts})</div>
 				) : null}
-				{boxScore.overtime}
+				{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 			</h2>
 			{liveGameSim ? (
 				<div className={small ? undefined : "mb-2"}>

@@ -5,8 +5,23 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 import type { StickyCols } from "./DataTable";
 import useStickyXX from "./DataTable/useStickyXX";
-import { DndContext, useDroppable, useDraggable } from "@dnd-kit/core";
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import {
+	DndContext,
+	useDroppable,
+	useDraggable,
+	DragOverlay,
+	useSensors,
+	useSensor,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+} from "@dnd-kit/core";
+import {
+	SortableContext,
+	useSortable,
+	verticalListSortingStrategy,
+	sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 
 type HighlightHandle<Value> = (a: { index: number; value: Value }) => boolean;
 type RowClassName<Value> = (a: {
@@ -125,7 +140,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	stickyCols?: StickyCols;
 	values: Value[];
 }) => {
-	const [isDragged, setIsDragged] = useState(false);
+	const [activeId, setActiveId] = useState<any>(undefined);
 	const [indexSelected, setIndexSelected] = useState<number | undefined>(
 		undefined,
 	);
@@ -207,11 +222,20 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		tableClasses += ` ${stickyClass}`;
 	}
 
+	const isDragged = activeId !== undefined;
+
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	);
+
 	return (
 		<DndContext
 			onDragStart={event => {
 				console.log("onDragStart", event);
-				setIsDragged(true);
+				setActiveId(event.active.id);
 			}}
 			onDragMove={event => {
 				// console.log("onDragMove", event);
@@ -220,6 +244,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 				// console.log("onDragOver", event);
 			}}
 			onDragEnd={event => {
+				setActiveId(undefined);
 				console.log("onDragEnd", event);
 				console.log(event.active.id, event.over?.id);
 				const oldIndex = event.active.id;
@@ -229,6 +254,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 				}
 			}}
 			onDragCancel={() => console.log("onDragCancel")}
+			collisionDetection={closestCenter}
 		>
 			<SortableContext items={values.map((value, i) => i)}>
 				<ResponsiveTableWrapper nonfluid>
@@ -264,7 +290,6 @@ const SortableTable = <Value extends Record<string, unknown>>({
 										key={key}
 										highlight={highlight}
 										i={index}
-										index={index}
 										isDragged={isDragged}
 										selected={indexSelected === index}
 										rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
@@ -274,6 +299,18 @@ const SortableTable = <Value extends Record<string, unknown>>({
 								);
 							})}
 						</tbody>
+						<DragOverlay wrapperElement="tbody">
+							{activeId ? (
+								<Row
+									highlight={false}
+									i={activeId}
+									index={activeId}
+									isDragged={isDragged}
+									row={row}
+									value={values[activeId]}
+								/>
+							) : null}
+						</DragOverlay>
 					</table>
 				</ResponsiveTableWrapper>
 			</SortableContext>

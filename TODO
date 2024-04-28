@@ -10,7 +10,12 @@ drag and drop
 - SortableTable
   - not draggable outside table
     - https://docs.dndkit.com/api-documentation/modifiers
-    - need overlay?
+    - overlay
+      - doesn't hide row in table
+      - doesn't automatically set column widths
+      - https://docs.dndkit.com/api-documentation/draggable/drag-overlay#patterns
+    - with no overlay, closestCenter combined with no table-responsive fixes it
+      - with table-responsive, need to set position fixed on tr, but that causes other issues
     0 https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
   - 0th row not draggable
   - ghost row while dragging

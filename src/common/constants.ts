@@ -503,6 +503,15 @@ export const DEFAULT_TEAM_COLORS: [string, string, string] = [
 	"#ffffff",
 ];
 
+export const STARTING_NUM_TIMEOUTS = bySport({
+	baseball: undefined,
+	football: 3,
+	hockey: undefined,
+
+	// Should actually be 7, but since timeouts are only used at the end of the game currently, it's silly to have those extra 5 timeouts lying around all game
+	basketball: 2,
+});
+
 export {
 	AD_DIVS,
 	ALL_STAR_GAME_ONLY,

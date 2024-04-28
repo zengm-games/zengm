@@ -1185,6 +1185,10 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	color: $black !important;
 }
 
+.bg-tertiary {
+	background-color: $gray-300 !important;
+}
+
 .sort-inside-modal {
 	z-index: 999999999;
 }

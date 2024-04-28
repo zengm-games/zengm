@@ -7,8 +7,7 @@ import {
 	type TeamSeasonOverride,
 } from "./gameLog";
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
-import { bySport, isSport, PHASE } from "../../common";
-import GameSimBase from "../core/GameSimBase";
+import { bySport, isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -133,10 +132,9 @@ export const boxScoreToLiveSim = async ({
 		boxScore.scoringSummary = [];
 	}
 
-	const getStartingNumTimeouts = GameSimBase.getStartingNumTimeouts();
-	if (getStartingNumTimeouts !== undefined) {
-		boxScore.teams[0].timeouts = getStartingNumTimeouts;
-		boxScore.teams[1].timeouts = getStartingNumTimeouts;
+	if (STARTING_NUM_TIMEOUTS !== undefined) {
+		boxScore.teams[0].timeouts = STARTING_NUM_TIMEOUTS;
+		boxScore.teams[1].timeouts = STARTING_NUM_TIMEOUTS;
 	}
 
 	return {

@@ -1,5 +1,5 @@
 import { defaultGameAttributes, g, helpers, random } from "../../util";
-import { PHASE } from "../../../common";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
 import getInjuryRate from "./getInjuryRate";
 import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
@@ -237,10 +237,7 @@ class GameSim extends GameSimBase {
 
 	gender: GameAttributesLeague["gender"];
 
-	timeouts: [number, number] = [
-		GameSimBase.getStartingNumTimeouts()!,
-		GameSimBase.getStartingNumTimeouts()!,
-	];
+	timeouts: [number, number] = [STARTING_NUM_TIMEOUTS!, STARTING_NUM_TIMEOUTS!];
 
 	isClockRunning = true;
 

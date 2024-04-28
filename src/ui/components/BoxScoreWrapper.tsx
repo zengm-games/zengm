@@ -6,7 +6,7 @@ import {
 	useRef,
 	type CSSProperties,
 } from "react";
-import { isSport, PHASE } from "../../common";
+import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common";
 import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../util";
 import BoxScore from "./BoxScore";
 import { range } from "../../common/utils";
@@ -76,14 +76,7 @@ const TeamLogo = ({
 				>
 					<img className="mw-100 mh-100" src={t.imgURL} alt="" />
 				</TeamNameLink>
-				<div className="mt-1 mb-3">
-					<div className="fw-bold">{helpers.formatRecord(t)}</div>
-					{t.timeouts !== undefined ? (
-						<div className={t.timeouts === 0 ? "text-danger" : undefined}>
-							Timeouts: {t.timeouts}
-						</div>
-					) : null}
-				</div>
+				<div className="mt-1 mb-3 fw-bold">{helpers.formatRecord(t)}</div>
 			</div>
 		</div>
 	) : null;
@@ -105,7 +98,7 @@ const TeamNameAndScore = ({
 		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
 
 	return (
-		<div>
+		<div className="d-flex">
 			{boxScore.possession !== undefined ? (
 				<span
 					className={
@@ -114,18 +107,34 @@ const TeamNameAndScore = ({
 							: "text-white"
 					}
 				>
-					●{" "}
+					●&nbsp;
 				</span>
 			) : null}
 			{t.playoffs ? (
-				<span className="text-body-secondary">{t.playoffs.seed}. </span>
+				<span className="text-body-secondary">{t.playoffs.seed}.&nbsp;</span>
 			) : null}
-			<TeamNameLink season={boxScore.season} t={t}>
-				{t.season !== undefined ? `${t.season} ` : null}
-				<span className={className}>{t.region} </span>
-				{t.name}
-			</TeamNameLink>{" "}
-			{t.pts}
+			<div>
+				<TeamNameLink season={boxScore.season} t={t}>
+					{t.season !== undefined ? `${t.season} ` : null}
+					<span className={className}>{t.region} </span>
+					{t.name}
+				</TeamNameLink>
+				{t.timeouts !== undefined && STARTING_NUM_TIMEOUTS !== undefined ? (
+					<div
+						className="d-flex gap-1 pt-1"
+						title={`${t.timeouts} ${helpers.plural("timeout", t.timeouts)} remaining`}
+					>
+						{range(STARTING_NUM_TIMEOUTS).map(i => (
+							<div
+								key={i}
+								style={{ width: 12, height: 3 }}
+								className={i < t.timeouts ? "bg-warning" : "bg-tertiary"}
+							/>
+						))}
+					</div>
+				) : null}
+			</div>
+			<div>&nbsp;{t.pts}</div>
 		</div>
 	);
 };

@@ -25,7 +25,7 @@ import Play, {
 } from "./Play";
 import LngTracker from "./LngTracker";
 import GameSimBase from "../GameSimBase";
-import { PHASE } from "../../../common";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -93,10 +93,7 @@ class GameSim extends GameSimBase {
 
 	toGo = 10;
 
-	timeouts: [number, number] = [
-		GameSimBase.getStartingNumTimeouts()!,
-		GameSimBase.getStartingNumTimeouts()!,
-	];
+	timeouts: [number, number] = [STARTING_NUM_TIMEOUTS!, STARTING_NUM_TIMEOUTS!];
 
 	twoMinuteWarningHappened = false;
 

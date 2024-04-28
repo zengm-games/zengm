@@ -84,17 +84,6 @@ class GameSimBase {
 			return false;
 		}
 	}
-
-	static getStartingNumTimeouts() {
-		return bySport({
-			baseball: undefined,
-			football: 3,
-			hockey: undefined,
-
-			// Should actually be 7, but since timeouts are only used at the end of the game currently, it's silly to have those extra 5 timeouts lying around all game
-			basketball: 2,
-		});
-	}
 }
 
 export default GameSimBase;

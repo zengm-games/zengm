@@ -4,6 +4,18 @@ use ptsPct instead of winp in various places if pointsFormula
 
 drag and drop
 - some modern library
+  - @atlaskit/pragmatic-drag-and-drop - no examples where the rows shift as you drag, it's all just showing a border in between. when i tried to implement the rows shifting, i couldn't get it to work
+  - @dnd-kit/core - not that well maintained, large bundle size
+  - @hello-pangea/dnd - no grid support
+- SortableTable
+  - ghost row while dragging
+    - all components need to know which row is being dragged, and what it's currently hovering over. or at least know which direction they are offset
+  - click to swap
+  - how to handle dragging beyond the top/bottom of table and dropping - should treat as first/last entry
+    - hitbox thing? see list example
+  - check bundle size
+  - test mobile
+  - test all uses in game, not just roster
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs

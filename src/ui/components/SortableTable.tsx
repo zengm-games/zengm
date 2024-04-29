@@ -1,12 +1,5 @@
 import classNames from "classnames";
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { createContext, useContext, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
@@ -14,8 +7,6 @@ import type { StickyCols } from "./DataTable";
 import useStickyXX from "./DataTable/useStickyXX";
 import {
 	DndContext,
-	useDroppable,
-	useDraggable,
 	DragOverlay,
 	useSensors,
 	useSensor,
@@ -55,9 +46,13 @@ const SortableTableContext = createContext<SortableTableContextInfo>(
 	{} as SortableTableContextInfo,
 );
 
-const Row = ({ index, value }: { index: number; value: ShouldBeValue }) => {
-	const { clicked, toggleClicked } = useClickable();
-
+const DraggableRow = ({
+	index,
+	value,
+}: {
+	index: number;
+	value: ShouldBeValue;
+}) => {
 	const {
 		attributes,
 		listeners,
@@ -66,6 +61,42 @@ const Row = ({ index, value }: { index: number; value: ShouldBeValue }) => {
 		transform,
 		transition,
 	} = useSortable({ id: index });
+
+	const style = transform
+		? {
+				transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+				transition,
+			}
+		: undefined;
+
+	return (
+		<Row
+			index={index}
+			value={value}
+			style={style}
+			attributes={attributes}
+			listeners={listeners}
+			setNodeRef={setNodeRef}
+			setActivatorNodeRef={setActivatorNodeRef}
+		/>
+	);
+};
+
+const Row = ({
+	index,
+	value,
+	style,
+	attributes,
+	listeners,
+	setNodeRef,
+	setActivatorNodeRef,
+}: { index: number; value: ShouldBeValue; style?: CSSProperties } & Partial<
+	Pick<
+		ReturnType<typeof useSortable>,
+		"attributes" | "listeners" | "setNodeRef" | "setActivatorNodeRef"
+	>
+>) => {
+	const { clicked, toggleClicked } = useClickable();
 
 	const {
 		disabled,
@@ -79,13 +110,6 @@ const Row = ({ index, value }: { index: number; value: ShouldBeValue }) => {
 
 	const selected = indexSelected === index;
 	const rowLabel = rowLabels ? rowLabels[index] ?? "" : undefined;
-
-	const style = transform
-		? {
-				transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-				transition,
-			}
-		: undefined;
 
 	const className: string | undefined = rowClassName
 		? rowClassName({ index, isDragged, value })
@@ -287,8 +311,8 @@ const SortableTable = <Value extends Record<string, unknown>>({
 				setActiveId(undefined);
 				console.log("onDragEnd", event);
 				console.log(event.active.id, event.over?.id);
-				const oldIndex = event.active.id;
-				const newIndex = event.over?.id;
+				const oldIndex = event.active.id as number;
+				const newIndex = event.over?.id as number | undefined;
 				if (newIndex !== undefined) {
 					onChange({ oldIndex, newIndex });
 				}
@@ -296,7 +320,10 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			onDragCancel={() => console.log("onDragCancel")}
 			collisionDetection={closestCenter}
 		>
-			<SortableContext items={values.map((value, i) => i)}>
+			<SortableContext
+				items={values.map((value, i) => i)}
+				strategy={verticalListSortingStrategy}
+			>
 				<SortableTableContext.Provider value={context}>
 					<ResponsiveTableWrapper nonfluid>
 						<table ref={tableRef} className={tableClasses}>
@@ -318,12 +345,13 @@ const SortableTable = <Value extends Record<string, unknown>>({
 									} else {
 										key = index;
 									}
+									console.log(key);
 
-									return <Row key={key} index={index} value={value} />;
+									return <DraggableRow key={key} index={index} value={value} />;
 								})}
 							</tbody>
 							<DragOverlay wrapperElement="tbody">
-								{activeId ? (
+								{activeId !== undefined ? (
 									<Row index={activeId} value={values[activeId]} />
 								) : null}
 							</DragOverlay>

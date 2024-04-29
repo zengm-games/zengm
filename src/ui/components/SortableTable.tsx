@@ -33,11 +33,11 @@ type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 type ShouldBeValue = any;
 
 type SortableTableContextInfo = {
+	clickedIndex: number | undefined;
 	disabled: boolean | undefined;
+	draggedIndex: number | undefined;
 	highlightHandle: HighlightHandle<ShouldBeValue>;
 	id: any;
-	indexSelected: number | undefined;
-	isDragged: boolean;
 	row: Row<ShouldBeValue>;
 	rowClassName: RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
@@ -83,12 +83,18 @@ const DraggableRow = ({ value }: { value: ShouldBeValue }) => {
 const Row = ({
 	index,
 	value,
+	overlay,
 	style,
 	attributes,
 	listeners,
 	setNodeRef,
 	setActivatorNodeRef,
-}: { index: number; value: ShouldBeValue; style?: CSSProperties } & Partial<
+}: {
+	index: number;
+	value: ShouldBeValue;
+	overlay?: boolean;
+	style?: CSSProperties;
+} & Partial<
 	Pick<
 		ReturnType<typeof useSortable>,
 		"attributes" | "listeners" | "setNodeRef" | "setActivatorNodeRef"
@@ -97,16 +103,17 @@ const Row = ({
 	const { clicked, toggleClicked } = useClickable();
 
 	const {
+		clickedIndex,
 		disabled,
+		draggedIndex,
 		highlightHandle,
-		indexSelected,
-		isDragged,
 		row,
 		rowClassName,
 		rowLabels,
 	} = useContext(SortableTableContext);
 
-	const selected = indexSelected === index;
+	const isDragged = draggedIndex !== undefined;
+	const selected = clickedIndex === index;
 	const rowLabel = rowLabels ? rowLabels[index] ?? "" : undefined;
 
 	const className: string | undefined = rowClassName
@@ -118,6 +125,7 @@ const Row = ({
 		<tr
 			className={classNames(className, {
 				"table-warning": clicked,
+				"opacity-0": !overlay && draggedIndex === index,
 			})}
 			onClick={toggleClicked}
 			ref={setNodeRef}
@@ -185,8 +193,10 @@ const SortableTable = <
 	stickyCols?: StickyCols;
 	values: Value[];
 }) => {
-	const [activeIndex, setActiveIndex] = useState<any>(undefined);
-	const [indexSelected, setIndexSelected] = useState<number | undefined>(
+	const [draggedIndex, setDraggedIndex] = useState<number | undefined>(
+		undefined,
+	);
+	const [clickedIndex, setClickedIndex] = useState<number | undefined>(
 		undefined,
 	);
 
@@ -241,24 +251,24 @@ const SortableTable = <
 			clicked.current.time = Date.now();
 
 			if (oldIndex === newIndex && clicked.current.index === newIndex) {
-				if (indexSelected === undefined) {
-					setIndexSelected(newIndex);
-				} else if (indexSelected === newIndex) {
+				if (clickedIndex === undefined) {
+					setClickedIndex(newIndex);
+				} else if (clickedIndex === newIndex) {
 					// Hack to avoid responding to duiplicated event on mobile
 					if (!ignoreToDebounce) {
-						setIndexSelected(undefined);
+						setClickedIndex(undefined);
 					}
 				} else {
-					onSwap(indexSelected, newIndex);
-					setIndexSelected(undefined);
+					onSwap(clickedIndex, newIndex);
+					setClickedIndex(undefined);
 				}
 			} else {
 				onChange({ oldIndex, newIndex });
-				setIndexSelected(undefined);
+				setClickedIndex(undefined);
 			}
 			clicked.current.index = undefined;
 		},
-		[onChange, onSwap, indexSelected],
+		[onChange, onSwap, clickedIndex],
 	);*/
 
 	let tableClasses =
@@ -266,8 +276,6 @@ const SortableTable = <
 	if (stickyClass) {
 		tableClasses += ` ${stickyClass}`;
 	}
-
-	const isDragged = activeIndex !== undefined;
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -278,21 +286,21 @@ const SortableTable = <
 
 	const context = useMemo(
 		() => ({
+			clickedIndex,
 			disabled,
+			draggedIndex,
 			highlightHandle,
 			id,
-			indexSelected,
-			isDragged,
 			row,
 			rowClassName,
 			rowLabels,
 		}),
 		[
+			clickedIndex,
 			disabled,
+			draggedIndex,
 			highlightHandle,
 			id,
-			indexSelected,
-			isDragged,
 			row,
 			rowClassName,
 			rowLabels,
@@ -303,7 +311,7 @@ const SortableTable = <
 		<DndContext
 			onDragStart={event => {
 				console.log("onDragStart", event);
-				setActiveIndex(
+				setDraggedIndex(
 					values.findIndex(value => value[id] === event.active.id),
 				);
 			}}
@@ -314,7 +322,7 @@ const SortableTable = <
 				// console.log("onDragOver", event);
 			}}
 			onDragEnd={event => {
-				setActiveIndex(undefined);
+				setDraggedIndex(undefined);
 				console.log("onDragEnd", event);
 				const oldId = event.active.id as number;
 				const newId = event.over?.id as number | undefined;
@@ -347,8 +355,12 @@ const SortableTable = <
 								})}
 							</tbody>
 							<DragOverlay wrapperElement="tbody">
-								{activeIndex !== undefined ? (
-									<Row index={activeIndex} value={values[activeIndex]} />
+								{draggedIndex !== undefined ? (
+									<Row
+										index={draggedIndex}
+										value={values[draggedIndex]}
+										overlay
+									/>
 								) : null}
 							</DragOverlay>
 						</table>

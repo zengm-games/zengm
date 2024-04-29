@@ -198,6 +198,7 @@ const Roster = ({
 				disabled={!editable}
 				values={playersSorted}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}
+				id="pid"
 				rowClassName={({ index, value: p }) =>
 					classNames({
 						separator:

@@ -35,6 +35,7 @@ type ShouldBeValue = any;
 type SortableTableContextInfo = {
 	disabled: boolean | undefined;
 	highlightHandle: HighlightHandle<ShouldBeValue>;
+	id: any;
 	indexSelected: number | undefined;
 	isDragged: boolean;
 	row: Row<ShouldBeValue>;
@@ -53,6 +54,8 @@ const DraggableRow = ({
 	index: number;
 	value: ShouldBeValue;
 }) => {
+	const { disabled, id } = useContext(SortableTableContext);
+
 	const {
 		attributes,
 		listeners,
@@ -60,7 +63,7 @@ const DraggableRow = ({
 		setActivatorNodeRef,
 		transform,
 		transition,
-	} = useSortable({ id: index });
+	} = useSortable({ disabled, id: value[id] });
 
 	const style = transform
 		? {
@@ -141,7 +144,6 @@ const Row = ({
 				>
 					<a
 						className={classNames("d-block w-100")}
-						data-movable-handle
 						style={{
 							cursor: isDragged ? "grabbing" : "grab",
 							height: 27,
@@ -160,9 +162,13 @@ const Row = ({
 	);
 };
 
-const SortableTable = <Value extends Record<string, unknown>>({
+const SortableTable = <
+	Id extends string,
+	Value extends Record<string, unknown> & Record<Id, string | number>,
+>({
 	cols,
 	disabled,
+	id,
 	highlightHandle,
 	onChange,
 	onSwap,
@@ -174,6 +180,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 }: {
 	cols: () => ReactNode;
 	disabled?: boolean;
+	id: keyof Value;
 	highlightHandle: HighlightHandle<Value>;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
 	onSwap: (index1: number, index2: number) => void;
@@ -278,6 +285,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		() => ({
 			disabled,
 			highlightHandle,
+			id,
 			indexSelected,
 			isDragged,
 			row,
@@ -287,6 +295,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		[
 			disabled,
 			highlightHandle,
+			id,
 			indexSelected,
 			isDragged,
 			row,
@@ -299,7 +308,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		<DndContext
 			onDragStart={event => {
 				console.log("onDragStart", event);
-				setActiveId(event.active.id);
+				setActiveId(values.findIndex(value => value[id] === event.active.id));
 			}}
 			onDragMove={event => {
 				// console.log("onDragMove", event);
@@ -311,9 +320,11 @@ const SortableTable = <Value extends Record<string, unknown>>({
 				setActiveId(undefined);
 				console.log("onDragEnd", event);
 				console.log(event.active.id, event.over?.id);
-				const oldIndex = event.active.id as number;
-				const newIndex = event.over?.id as number | undefined;
-				if (newIndex !== undefined) {
+				const oldId = event.active.id as number;
+				const newId = event.over?.id as number | undefined;
+				if (newId !== undefined) {
+					const oldIndex = values.findIndex(value => value[id] === oldId);
+					const newIndex = values.findIndex(value => value[id] === newId);
 					onChange({ oldIndex, newIndex });
 				}
 			}}
@@ -321,7 +332,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			collisionDetection={closestCenter}
 		>
 			<SortableContext
-				items={values.map((value, i) => i)}
+				items={values.map(value => value[id])}
 				strategy={verticalListSortingStrategy}
 			>
 				<SortableTableContext.Provider value={context}>
@@ -336,18 +347,14 @@ const SortableTable = <Value extends Record<string, unknown>>({
 							</thead>
 							<tbody>
 								{values.map((value, index) => {
-									// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
-									let key: any;
-									if (Object.hasOwn(value, "pid")) {
-										key = value.pid;
-									} else if (Object.hasOwn(value, "tid")) {
-										key = value.tid;
-									} else {
-										key = index;
-									}
-									console.log(key);
-
-									return <DraggableRow key={key} index={index} value={value} />;
+									return (
+										<DraggableRow
+											key={value[id]}
+											id={value[id]}
+											index={index}
+											value={value}
+										/>
+									);
 								})}
 							</tbody>
 							<DragOverlay wrapperElement="tbody">

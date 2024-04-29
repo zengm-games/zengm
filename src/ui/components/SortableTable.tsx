@@ -1,5 +1,12 @@
 import classNames from "classnames";
-import { useCallback, useRef, useState } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import type { CSSProperties, ReactNode } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
@@ -34,27 +41,21 @@ type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 // Should be Value passed through as generic parameter, but that is annoying with HOC
 type ShouldBeValue = any;
 
-const Row = ({
-	disabled,
-	highlightHandle,
-	index,
-	isDragged,
-	row,
-	rowClassName,
-	rowLabel,
-	selected,
-	value,
-}: {
-	disabled?: boolean;
+type SortableTableContextInfo = {
+	disabled: boolean | undefined;
 	highlightHandle: HighlightHandle<ShouldBeValue>;
-	index: number;
+	indexSelected: number | undefined;
 	isDragged: boolean;
-	selected: boolean;
 	row: Row<ShouldBeValue>;
 	rowClassName: RowClassName<ShouldBeValue> | undefined;
-	rowLabel?: string;
-	value: ShouldBeValue;
-}) => {
+	rowLabels: string[] | undefined;
+};
+
+const SortableTableContext = createContext<SortableTableContextInfo>(
+	{} as SortableTableContextInfo,
+);
+
+const Row = ({ index, value }: { index: number; value: ShouldBeValue }) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const {
@@ -65,6 +66,19 @@ const Row = ({
 		transform,
 		transition,
 	} = useSortable({ id: index });
+
+	const {
+		disabled,
+		highlightHandle,
+		indexSelected,
+		isDragged,
+		row,
+		rowClassName,
+		rowLabels,
+	} = useContext(SortableTableContext);
+
+	const selected = indexSelected === index;
+	const rowLabel = rowLabels ? rowLabels[index] ?? "" : undefined;
 
 	const style = transform
 		? {
@@ -236,6 +250,27 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		}),
 	);
 
+	const context = useMemo(
+		() => ({
+			disabled,
+			highlightHandle,
+			indexSelected,
+			isDragged,
+			row,
+			rowClassName,
+			rowLabels,
+		}),
+		[
+			disabled,
+			highlightHandle,
+			indexSelected,
+			isDragged,
+			row,
+			rowClassName,
+			rowLabels,
+		],
+	);
+
 	return (
 		<DndContext
 			onDragStart={event => {
@@ -262,58 +297,39 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			collisionDetection={closestCenter}
 		>
 			<SortableContext items={values.map((value, i) => i)}>
-				<ResponsiveTableWrapper nonfluid>
-					<table ref={tableRef} className={tableClasses}>
-						<thead>
-							<tr>
-								<th className="p-0" />
-								{rowLabels ? <th className="p-0" /> : null}
-								{cols()}
-							</tr>
-						</thead>
-						<tbody>
-							{values.map((value, index) => {
-								// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
-								let key: any;
-								if (Object.hasOwn(value, "pid")) {
-									key = value.pid;
-								} else if (Object.hasOwn(value, "tid")) {
-									key = value.tid;
-								} else {
-									key = index;
-								}
+				<SortableTableContext.Provider value={context}>
+					<ResponsiveTableWrapper nonfluid>
+						<table ref={tableRef} className={tableClasses}>
+							<thead>
+								<tr>
+									<th className="p-0" />
+									{rowLabels ? <th className="p-0" /> : null}
+									{cols()}
+								</tr>
+							</thead>
+							<tbody>
+								{values.map((value, index) => {
+									// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
+									let key: any;
+									if (Object.hasOwn(value, "pid")) {
+										key = value.pid;
+									} else if (Object.hasOwn(value, "tid")) {
+										key = value.tid;
+									} else {
+										key = index;
+									}
 
-								return (
-									<Row
-										disabled={disabled}
-										key={key}
-										highlightHandle={highlightHandle}
-										index={index}
-										isDragged={isDragged}
-										selected={indexSelected === index}
-										row={row}
-										rowClassName={rowClassName}
-										rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
-										value={value}
-									/>
-								);
-							})}
-						</tbody>
-						<DragOverlay wrapperElement="tbody">
-							{activeId ? (
-								<Row
-									highlightHandle={highlightHandle}
-									index={activeId}
-									isDragged={isDragged}
-									row={row}
-									rowClassName={rowClassName}
-									selected={indexSelected === activeId}
-									value={values[activeId]}
-								/>
-							) : null}
-						</DragOverlay>
-					</table>
-				</ResponsiveTableWrapper>
+									return <Row key={key} index={index} value={value} />;
+								})}
+							</tbody>
+							<DragOverlay wrapperElement="tbody">
+								{activeId ? (
+									<Row index={activeId} value={values[activeId]} />
+								) : null}
+							</DragOverlay>
+						</table>
+					</ResponsiveTableWrapper>
+				</SortableTableContext.Provider>
 			</SortableContext>
 		</DndContext>
 	);

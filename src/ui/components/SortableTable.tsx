@@ -200,13 +200,13 @@ const SortableTable = <
 
 	const { stickyClass, tableRef } = useStickyXX(stickyCols);
 
-	// Hacky shit to try to determine click from drag. Could just be a boolean, except on mobile seems sorting fires twice in a row, so we need to track the time to debounce.
+	// Hacky shit to try to determine click from drag. start is to track how long a click lasted.
 	const clicked = useRef<{
 		index: number | undefined;
-		time: number; // Milliseconds
+		start: number; // Milliseconds
 	}>({
 		index: undefined,
-		time: 0,
+		start: 0,
 	});
 
 	/*const onSortStart = useCallback(
@@ -305,45 +305,50 @@ const SortableTable = <
 				console.log("onDragStart", index);
 				setDraggedIndex(index);
 
-				// Hack to avoid responding to duplicated event on mobile
-				const ignoreToDebounce = Date.now() - clicked.current.time < 500;
-				//if (!ignoreToDebounce) {
 				clicked.current.index = index;
-				//}
+				clicked.current.start = Date.now();
 			}}
 			onDragEnd={event => {
 				setDraggedIndex(undefined);
 				console.log("onDragEnd", event);
 				const oldId = event.active.id as string;
 				const newId = event.over?.id as string | undefined;
-				// Hack to avoid responding to duplicated event on mobile
-				const ignoreToDebounce = Date.now() - clicked.current.time < 500;
-				//if (ignoreToDebounce) {
-				//	return;
-				//}
-				clicked.current.time = Date.now();
 
 				const oldIndex = ids.indexOf(oldId);
 
-				// For fast clicks, newId will be undefined. For slower clicks, it might not be, unsure how much that matters
-				if (newId === undefined) {
+				// For fast clicks, newId will be undefined. For slower clicks, it might be
+				if (
+					newId === undefined ||
+					(newId === oldId && Date.now() - clicked.current.start < 500)
+				) {
+					// Make sure the click started on this item, otherwise it's not a click it's a drag
 					if (clicked.current.index === oldIndex) {
 						if (clickedIndex === undefined) {
+							// Click on unhighlighted item and no other item is highlighted - highlight
 							setClickedIndex(oldIndex);
 						} else if (clickedIndex === oldIndex) {
-							// Hack to avoid responding to duplicated event on mobile
-							//if (!ignoreToDebounce) {
+							// Click on highlighted item - unhighlight
 							setClickedIndex(undefined);
-							//}
 						} else {
+							// Click on unhighlighted item and another item is highlighted - swap
 							onSwap(clickedIndex, oldIndex);
 							setClickedIndex(undefined);
 						}
 					}
+
+					clicked.current.index = undefined;
 				} else if (newId !== undefined) {
 					const newIndex = ids.indexOf(newId);
 
 					onChange({ oldIndex, newIndex });
+				}
+			}}
+			onDragOver={event => {
+				const oldId = event.active.id as string;
+				const newId = event.over?.id as string | undefined;
+				if (newId !== undefined && oldId !== newId) {
+					// Dragged over something besides self, so this can't be a click
+					clicked.current.index = undefined;
 				}
 			}}
 			onDragCancel={() => {

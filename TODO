@@ -3,28 +3,18 @@ use ptsPct instead of winp in various places if pointsFormula
 - power rankings
 
 drag and drop
-- some modern library
-  - @atlaskit/pragmatic-drag-and-drop - no examples where the rows shift as you drag, it's all just showing a border in between. when i tried to implement the rows shifting, i couldn't get it to work
-  - @dnd-kit/core - not that well maintained, large bundle size
-  - @hello-pangea/dnd - no grid support
 - SortableTable
-  - not draggable outside table
-    - https://docs.dndkit.com/api-documentation/modifiers
-    - dragging row with separator keeps separator in overlay
-      - also, why separator not render in main table during drag?
-    - overlay
-      - doesn't automatically set column widths
-    0 https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
+  - performance https://github.com/clauderic/dnd-kit/issues/1071
+  - dragging row with separator keeps separator in overlay
+    - also, why separator not render in main table during drag?
+  - overlay
+    - doesn't automatically set column widths
+  - https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
+  - confirm sticky works
   - https://docs.dndkit.com/api-documentation/sensors/pointer#recommendations
-  - click to swap
-  - how to handle dragging beyond the top/bottom of table and dropping - should treat as first/last entry
-    - hitbox thing? see list example
   - check bundle size
   - test mobile
   - test all uses in game, not just roster
-  - getId function, use for
-    - key
-    - SortableContext items
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs

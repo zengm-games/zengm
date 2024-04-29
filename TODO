@@ -14,6 +14,8 @@ drag and drop
       - doesn't hide row in table
       - doesn't automatically set column widths
       - https://docs.dndkit.com/api-documentation/draggable/drag-overlay#patterns
+      - after you release, it animates back to original location
+      - style from hook needed in row?
     - with no overlay, closestCenter combined with no table-responsive fixes it
       - with table-responsive, need to set position fixed on tr, but that causes other issues
     0 https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme

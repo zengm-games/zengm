@@ -35,23 +35,23 @@ type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 type ShouldBeValue = any;
 
 const Row = ({
-	className,
-	disabled2,
-	highlight,
-	i,
+	disabled,
+	highlightHandle,
+	index,
 	isDragged,
 	row,
+	rowClassName,
 	rowLabel,
 	selected,
 	value,
 }: {
-	className?: string;
-	disabled2?: boolean;
-	highlight: boolean;
-	i: number;
+	disabled?: boolean;
+	highlightHandle: HighlightHandle<ShouldBeValue>;
+	index: number;
 	isDragged: boolean;
 	selected: boolean;
 	row: Row<ShouldBeValue>;
+	rowClassName: RowClassName<ShouldBeValue> | undefined;
 	rowLabel?: string;
 	value: ShouldBeValue;
 }) => {
@@ -64,7 +64,7 @@ const Row = ({
 		setActivatorNodeRef,
 		transform,
 		transition,
-	} = useSortable({ id: i });
+	} = useSortable({ id: index });
 
 	const style = transform
 		? {
@@ -72,6 +72,11 @@ const Row = ({
 				transition,
 			}
 		: undefined;
+
+	const className: string | undefined = rowClassName
+		? rowClassName({ index, isDragged, value })
+		: undefined;
+	const highlight = highlightHandle({ index, value });
 
 	return (
 		<tr
@@ -85,7 +90,7 @@ const Row = ({
 			{rowLabel !== undefined ? (
 				<td className="text-center">{rowLabel}</td>
 			) : null}
-			{disabled2 ? (
+			{disabled ? (
 				<td className="p-0" />
 			) : (
 				<td
@@ -110,7 +115,7 @@ const Row = ({
 				</td>
 			)}
 			{row({
-				index: i,
+				index,
 				value,
 			})}
 		</tr>
@@ -268,11 +273,6 @@ const SortableTable = <Value extends Record<string, unknown>>({
 						</thead>
 						<tbody>
 							{values.map((value, index) => {
-								const className: string | undefined = rowClassName
-									? rowClassName({ index, isDragged, value })
-									: undefined;
-								const highlight = highlightHandle({ index, value });
-
 								// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
 								let key: any;
 								if (Object.hasOwn(value, "pid")) {
@@ -285,15 +285,15 @@ const SortableTable = <Value extends Record<string, unknown>>({
 
 								return (
 									<Row
-										className={className}
-										disabled2={disabled}
+										disabled={disabled}
 										key={key}
-										highlight={highlight}
-										i={index}
+										highlightHandle={highlightHandle}
+										index={index}
 										isDragged={isDragged}
 										selected={indexSelected === index}
-										rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
 										row={row}
+										rowClassName={rowClassName}
+										rowLabel={rowLabels ? rowLabels[index] ?? "" : undefined}
 										value={value}
 									/>
 								);
@@ -302,11 +302,12 @@ const SortableTable = <Value extends Record<string, unknown>>({
 						<DragOverlay wrapperElement="tbody">
 							{activeId ? (
 								<Row
-									highlight={false}
-									i={activeId}
+									highlightHandle={highlightHandle}
 									index={activeId}
 									isDragged={isDragged}
 									row={row}
+									rowClassName={rowClassName}
+									selected={indexSelected === activeId}
 									value={values[activeId]}
 								/>
 							) : null}

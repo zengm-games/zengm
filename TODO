@@ -14,16 +14,15 @@ drag and drop
       - also, why separator not render in main table during drag?
     - overlay
       - doesn't automatically set column widths
-    - with no overlay, closestCenter combined with no table-responsive fixes it
-      - with table-responsive, need to set position fixed on tr, but that causes other issues
     0 https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
-  - ghost row while dragging
-    - all components need to know which row is being dragged, and what it's currently hovering over. or at least know which direction they are offset
+  - https://docs.dndkit.com/api-documentation/sensors/pointer#recommendations
   - click to swap
   - how to handle dragging beyond the top/bottom of table and dropping - should treat as first/last entry
     - hitbox thing? see list example
   - check bundle size
   - test mobile
+    - currently requires clicking twice to actually start drag, then works fine. why?
+    - https://docs.dndkit.com/api-documentation/sensors
   - test all uses in game, not just roster
   - getId function, use for
     - key

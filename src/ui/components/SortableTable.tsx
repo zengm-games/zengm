@@ -8,17 +8,13 @@ import useStickyXX from "./DataTable/useStickyXX";
 import {
 	DndContext,
 	DragOverlay,
-	useSensors,
-	useSensor,
-	closestCenter,
-	KeyboardSensor,
 	PointerSensor,
+	closestCenter,
 } from "@dnd-kit/core";
 import {
 	SortableContext,
 	useSortable,
 	verticalListSortingStrategy,
-	sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 
 type HighlightHandle<Value> = (a: { index: number; value: Value }) => boolean;
@@ -276,13 +272,6 @@ const SortableTable = <
 		tableClasses += ` ${stickyClass}`;
 	}
 
-	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
-	);
-
 	const context = useMemo(
 		() => ({
 			clickedIndex,
@@ -309,21 +298,55 @@ const SortableTable = <
 	return (
 		<DndContext
 			onDragStart={event => {
-				console.log("onDragStart", event);
-				setDraggedIndex(ids.indexOf(event.active.id as string));
+				const index = ids.indexOf(event.active.id as string);
+				console.log("onDragStart", index);
+				setDraggedIndex(index);
+
+				// Hack to avoid responding to duplicated event on mobile
+				const ignoreToDebounce = Date.now() - clicked.current.time < 500;
+				//if (!ignoreToDebounce) {
+				clicked.current.index = index;
+				//}
 			}}
 			onDragEnd={event => {
 				setDraggedIndex(undefined);
 				console.log("onDragEnd", event);
 				const oldId = event.active.id as string;
 				const newId = event.over?.id as string | undefined;
-				if (newId !== undefined) {
-					const oldIndex = ids.indexOf(oldId);
+				// Hack to avoid responding to duplicated event on mobile
+				const ignoreToDebounce = Date.now() - clicked.current.time < 500;
+				//if (ignoreToDebounce) {
+				//	return;
+				//}
+				clicked.current.time = Date.now();
+
+				const oldIndex = ids.indexOf(oldId);
+
+				// For fast clicks, newId will be undefined. For slower clicks, it might not be, unsure how much that matters
+				if (newId === undefined) {
+					if (clicked.current.index === oldIndex) {
+						if (clickedIndex === undefined) {
+							setClickedIndex(oldIndex);
+						} else if (clickedIndex === oldIndex) {
+							// Hack to avoid responding to duplicated event on mobile
+							//if (!ignoreToDebounce) {
+							setClickedIndex(undefined);
+							//}
+						} else {
+							onSwap(clickedIndex, oldIndex);
+							setClickedIndex(undefined);
+						}
+					}
+				} else if (newId !== undefined) {
 					const newIndex = ids.indexOf(newId);
+
 					onChange({ oldIndex, newIndex });
 				}
 			}}
-			onDragCancel={() => console.log("onDragCancel")}
+			onDragCancel={() => {
+				setDraggedIndex(undefined);
+				clicked.current.index = undefined;
+			}}
 			collisionDetection={closestCenter}
 		>
 			<SortableContext items={ids} strategy={verticalListSortingStrategy}>

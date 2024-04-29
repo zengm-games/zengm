@@ -1,16 +1,18 @@
 import classNames from "classnames";
-import { createContext, useContext, useMemo, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import {
+	createContext,
+	useContext,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
+import type { CSSProperties, ReactNode, RefObject } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 import type { StickyCols } from "./DataTable";
 import useStickyXX from "./DataTable/useStickyXX";
-import {
-	DndContext,
-	DragOverlay,
-	PointerSensor,
-	closestCenter,
-} from "@dnd-kit/core";
+import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
 import {
 	SortableContext,
 	useSortable,
@@ -36,6 +38,7 @@ type SortableTableContextInfo = {
 	row: Row<ShouldBeValue>;
 	rowClassName: RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
+	tableRef: RefObject<HTMLTableElement>;
 };
 
 const SortableTableContext = createContext<SortableTableContextInfo>(
@@ -105,6 +108,7 @@ const Row = ({
 		row,
 		rowClassName,
 		rowLabels,
+		tableRef,
 	} = useContext(SortableTableContext);
 
 	const isDragged = draggedIndex !== undefined;
@@ -116,6 +120,26 @@ const Row = ({
 		: undefined;
 	const highlight = highlightHandle({ index, value });
 
+	const overlayRowRef = useRef<HTMLTableRowElement | null>(null);
+
+	useLayoutEffect(() => {
+		if (overlay && tableRef.current && overlayRowRef.current) {
+			// All tds in the first row of the actual table
+			const tableTds =
+				tableRef.current.querySelector("tbody")!.children[0].children;
+
+			// All tds in the overlay row
+			const overlayTds = overlayRowRef.current.children;
+
+			for (let i = 0; i < overlayTds.length; i++) {
+				// @ts-expect-error
+				overlayTds[i].style.width = `${tableTds[i].offsetWidth}px`;
+				// @ts-expect-error
+				overlayTds[i].style.padding = "4px";
+			}
+		}
+	}, [overlay, tableRef]);
+
 	return (
 		<tr
 			className={classNames(className, {
@@ -123,7 +147,14 @@ const Row = ({
 				"opacity-0": !overlay && draggedIndex === index,
 			})}
 			onClick={toggleClicked}
-			ref={setNodeRef}
+			ref={node => {
+				if (setNodeRef) {
+					setNodeRef(node);
+				}
+				if (overlay) {
+					overlayRowRef.current = node;
+				}
+			}}
 			style={style}
 		>
 			{rowLabel !== undefined ? (
@@ -284,6 +315,7 @@ const SortableTable = <
 			row,
 			rowClassName,
 			rowLabels,
+			tableRef,
 		}),
 		[
 			clickedIndex,
@@ -293,12 +325,11 @@ const SortableTable = <
 			row,
 			rowClassName,
 			rowLabels,
+			tableRef,
 		],
 	);
 
 	const ids = values.map(value => getId(value));
-
-	const overlayRowRef = useRef<HTMLTableRowElement>(null);
 
 	return (
 		<DndContext
@@ -308,25 +339,6 @@ const SortableTable = <
 
 				clicked.current.index = index;
 				clicked.current.start = Date.now();
-
-				// Needed for overlayRowRef to be set
-				setTimeout(() => {
-					if (tableRef.current && overlayRowRef.current) {
-						// All tds in the first row of the actual table
-						const tableTds =
-							tableRef.current.querySelector("tbody")!.children[0].children;
-
-						// All tds in the overlay row
-						const overlayTds = overlayRowRef.current.children;
-
-						for (let i = 0; i < overlayTds.length; i++) {
-							// @ts-expect-error
-							overlayTds[i].style.width = `${tableTds[i].offsetWidth}px`;
-							// @ts-expect-error
-							overlayTds[i].style.padding = "4px";
-						}
-					}
-				}, 0);
 			}}
 			onDragEnd={event => {
 				setDraggedIndex(undefined);
@@ -401,8 +413,6 @@ const SortableTable = <
 										index={draggedIndex}
 										value={values[draggedIndex]}
 										overlay
-										// setNodeRef was originally designed for internal use of dnd-kit, but here it's not otherwise used, so we can use it too
-										setNodeRef={overlayRowRef}
 									/>
 								) : null}
 							</DragOverlay>

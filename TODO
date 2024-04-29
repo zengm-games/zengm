@@ -7,8 +7,6 @@ drag and drop
   - performance https://github.com/clauderic/dnd-kit/issues/1071
   - dragging row with separator keeps separator in overlay
     - also, why separator not render in main table during drag?
-  - overlay
-    - doesn't automatically set column widths
   - https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
   - confirm sticky works
   - https://docs.dndkit.com/api-documentation/sensors/pointer#recommendations

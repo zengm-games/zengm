@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
+import os from "node:os";
 
 const port = 3006;
 
@@ -75,6 +76,35 @@ const server = http.createServer((req, res) => {
 	}
 });
 
-server.listen(port, "localhost", () => {
-	console.log(`View at http://localhost:${port}`);
+const param = process.argv[2];
+let exposeToNetwork = false;
+if (param === "--host") {
+	exposeToNetwork = true;
+} else if (param !== undefined) {
+	throw new Error("Invalid CLI argument");
+}
+
+// https://stackoverflow.com/a/15075395/786644
+const getIpAddress = () => {
+	const interfaces = os.networkInterfaces();
+	for (const devName in interfaces) {
+		for (const alias of interfaces[devName]) {
+			if (
+				alias.family === "IPv4" &&
+				alias.address !== "127.0.0.1" &&
+				!alias.internal
+			)
+				return alias.address;
+		}
+	}
+	return "0.0.0.0";
+};
+
+server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
+	console.log(`Local: http://localhost:${port}`);
+	if (exposeToNetwork) {
+		console.log(`Network: http://${getIpAddress()}:${port}`);
+	} else {
+		console.log(`Network: use --host to expose`);
+	}
 });

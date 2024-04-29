@@ -47,17 +47,12 @@ const SortableTableContext = createContext<SortableTableContextInfo>(
 	{} as SortableTableContextInfo,
 );
 
-const DraggableRow = ({
-	index,
-	value,
-}: {
-	index: number;
-	value: ShouldBeValue;
-}) => {
+const DraggableRow = ({ value }: { value: ShouldBeValue }) => {
 	const { disabled, id } = useContext(SortableTableContext);
 
 	const {
 		attributes,
+		index,
 		listeners,
 		setNodeRef,
 		setActivatorNodeRef,
@@ -190,7 +185,7 @@ const SortableTable = <
 	stickyCols?: StickyCols;
 	values: Value[];
 }) => {
-	const [activeId, setActiveId] = useState<any>(undefined);
+	const [activeIndex, setActiveIndex] = useState<any>(undefined);
 	const [indexSelected, setIndexSelected] = useState<number | undefined>(
 		undefined,
 	);
@@ -272,7 +267,7 @@ const SortableTable = <
 		tableClasses += ` ${stickyClass}`;
 	}
 
-	const isDragged = activeId !== undefined;
+	const isDragged = activeIndex !== undefined;
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -308,7 +303,9 @@ const SortableTable = <
 		<DndContext
 			onDragStart={event => {
 				console.log("onDragStart", event);
-				setActiveId(values.findIndex(value => value[id] === event.active.id));
+				setActiveIndex(
+					values.findIndex(value => value[id] === event.active.id),
+				);
 			}}
 			onDragMove={event => {
 				// console.log("onDragMove", event);
@@ -317,9 +314,8 @@ const SortableTable = <
 				// console.log("onDragOver", event);
 			}}
 			onDragEnd={event => {
-				setActiveId(undefined);
+				setActiveIndex(undefined);
 				console.log("onDragEnd", event);
-				console.log(event.active.id, event.over?.id);
 				const oldId = event.active.id as number;
 				const newId = event.over?.id as number | undefined;
 				if (newId !== undefined) {
@@ -346,20 +342,13 @@ const SortableTable = <
 								</tr>
 							</thead>
 							<tbody>
-								{values.map((value, index) => {
-									return (
-										<DraggableRow
-											key={value[id]}
-											id={value[id]}
-											index={index}
-											value={value}
-										/>
-									);
+								{values.map(value => {
+									return <DraggableRow key={value[id]} value={value} />;
 								})}
 							</tbody>
 							<DragOverlay wrapperElement="tbody">
-								{activeId !== undefined ? (
-									<Row index={activeId} value={values[activeId]} />
+								{activeIndex !== undefined ? (
+									<Row index={activeIndex} value={values[activeIndex]} />
 								) : null}
 							</DragOverlay>
 						</table>

@@ -298,15 +298,35 @@ const SortableTable = <
 
 	const ids = values.map(value => getId(value));
 
+	const overlayRowRef = useRef<HTMLTableRowElement>(null);
+
 	return (
 		<DndContext
 			onDragStart={event => {
 				const index = ids.indexOf(event.active.id as string);
-				console.log("onDragStart", index);
 				setDraggedIndex(index);
 
 				clicked.current.index = index;
 				clicked.current.start = Date.now();
+
+				// Needed for overlayRowRef to be set
+				setTimeout(() => {
+					if (tableRef.current && overlayRowRef.current) {
+						// All tds in the first row of the actual table
+						const tableTds =
+							tableRef.current.querySelector("tbody")!.children[0].children;
+
+						// All tds in the overlay row
+						const overlayTds = overlayRowRef.current.children;
+
+						for (let i = 0; i < overlayTds.length; i++) {
+							// @ts-expect-error
+							overlayTds[i].style.width = `${tableTds[i].offsetWidth}px`;
+							// @ts-expect-error
+							overlayTds[i].style.padding = "4px";
+						}
+					}
+				}, 0);
 			}}
 			onDragEnd={event => {
 				setDraggedIndex(undefined);
@@ -381,6 +401,8 @@ const SortableTable = <
 										index={draggedIndex}
 										value={values[draggedIndex]}
 										overlay
+										// setNodeRef was originally designed for internal use of dnd-kit, but here it's not otherwise used, so we can use it too
+										setNodeRef={overlayRowRef}
 									/>
 								) : null}
 							</DragOverlay>

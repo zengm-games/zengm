@@ -168,7 +168,7 @@ export const HeadlineScore = ({
 			}
 		>
 			<h2
-				className={`d-flex ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
+				className={`d-flex justify-content-center ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
 			>
 				<TeamNameAndScore
 					boxScore={boxScore}

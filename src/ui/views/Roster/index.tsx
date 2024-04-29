@@ -197,8 +197,8 @@ const Roster = ({
 			<SortableTable
 				disabled={!editable}
 				values={playersSorted}
+				getId={p => String(p.pid)}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}
-				id="pid"
 				rowClassName={({ index, value: p }) =>
 					classNames({
 						separator:

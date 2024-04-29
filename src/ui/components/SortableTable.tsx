@@ -29,7 +29,7 @@ type RowClassName<Value> = (a: {
 }) => string | undefined;
 type Row<Value> = (a: { index: number; value: Value }) => ReactNode;
 
-// Should be Value passed through as generic parameter, but that is annoying with HOC
+// Should be Value passed through as generic parameter, but IDK how
 type ShouldBeValue = any;
 
 type SortableTableContextInfo = {
@@ -37,7 +37,6 @@ type SortableTableContextInfo = {
 	disabled: boolean | undefined;
 	draggedIndex: number | undefined;
 	highlightHandle: HighlightHandle<ShouldBeValue>;
-	id: any;
 	row: Row<ShouldBeValue>;
 	rowClassName: RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
@@ -47,8 +46,8 @@ const SortableTableContext = createContext<SortableTableContextInfo>(
 	{} as SortableTableContextInfo,
 );
 
-const DraggableRow = ({ value }: { value: ShouldBeValue }) => {
-	const { disabled, id } = useContext(SortableTableContext);
+const DraggableRow = ({ id, value }: { id: string; value: ShouldBeValue }) => {
+	const { disabled } = useContext(SortableTableContext);
 
 	const {
 		attributes,
@@ -58,7 +57,7 @@ const DraggableRow = ({ value }: { value: ShouldBeValue }) => {
 		setActivatorNodeRef,
 		transform,
 		transition,
-	} = useSortable({ disabled, id: value[id] });
+	} = useSortable({ disabled, id });
 
 	const style = transform
 		? {
@@ -171,7 +170,7 @@ const SortableTable = <
 >({
 	cols,
 	disabled,
-	id,
+	getId,
 	highlightHandle,
 	onChange,
 	onSwap,
@@ -183,7 +182,7 @@ const SortableTable = <
 }: {
 	cols: () => ReactNode;
 	disabled?: boolean;
-	id: keyof Value;
+	getId: (value: Value) => string; // string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!
 	highlightHandle: HighlightHandle<Value>;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
 	onSwap: (index1: number, index2: number) => void;
@@ -290,7 +289,6 @@ const SortableTable = <
 			disabled,
 			draggedIndex,
 			highlightHandle,
-			id,
 			row,
 			rowClassName,
 			rowLabels,
@@ -300,45 +298,35 @@ const SortableTable = <
 			disabled,
 			draggedIndex,
 			highlightHandle,
-			id,
 			row,
 			rowClassName,
 			rowLabels,
 		],
 	);
 
+	const ids = values.map(value => getId(value));
+
 	return (
 		<DndContext
 			onDragStart={event => {
 				console.log("onDragStart", event);
-				setDraggedIndex(
-					values.findIndex(value => value[id] === event.active.id),
-				);
-			}}
-			onDragMove={event => {
-				// console.log("onDragMove", event);
-			}}
-			onDragOver={event => {
-				// console.log("onDragOver", event);
+				setDraggedIndex(ids.indexOf(event.active.id as string));
 			}}
 			onDragEnd={event => {
 				setDraggedIndex(undefined);
 				console.log("onDragEnd", event);
-				const oldId = event.active.id as number;
-				const newId = event.over?.id as number | undefined;
+				const oldId = event.active.id as string;
+				const newId = event.over?.id as string | undefined;
 				if (newId !== undefined) {
-					const oldIndex = values.findIndex(value => value[id] === oldId);
-					const newIndex = values.findIndex(value => value[id] === newId);
+					const oldIndex = ids.indexOf(oldId);
+					const newIndex = ids.indexOf(newId);
 					onChange({ oldIndex, newIndex });
 				}
 			}}
 			onDragCancel={() => console.log("onDragCancel")}
 			collisionDetection={closestCenter}
 		>
-			<SortableContext
-				items={values.map(value => value[id])}
-				strategy={verticalListSortingStrategy}
-			>
+			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
 				<SortableTableContext.Provider value={context}>
 					<ResponsiveTableWrapper nonfluid>
 						<table ref={tableRef} className={tableClasses}>
@@ -350,8 +338,10 @@ const SortableTable = <
 								</tr>
 							</thead>
 							<tbody>
-								{values.map(value => {
-									return <DraggableRow key={value[id]} value={value} />;
+								{values.map((value, i) => {
+									return (
+										<DraggableRow key={ids[i]} id={ids[i]} value={value} />
+									);
 								})}
 							</tbody>
 							<DragOverlay wrapperElement="tbody">

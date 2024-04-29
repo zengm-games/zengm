@@ -11,14 +11,12 @@ drag and drop
   - not draggable outside table
     - https://docs.dndkit.com/api-documentation/modifiers
     - dragging row with separator keeps separator in overlay
+      - also, why separator not render in main table during drag?
     - overlay
       - doesn't automatically set column widths
     - with no overlay, closestCenter combined with no table-responsive fixes it
       - with table-responsive, need to set position fixed on tr, but that causes other issues
     0 https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
-  - 0th row not draggable
-    - or pid 0
-    - make always string id
   - ghost row while dragging
     - all components need to know which row is being dragged, and what it's currently hovering over. or at least know which direction they are offset
   - click to swap

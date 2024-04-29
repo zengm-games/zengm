@@ -145,6 +145,9 @@ const Row = ({
 						style={{
 							cursor: isDragged ? "grabbing" : "grab",
 							height: 27,
+
+							// This is needed for mobile https://docs.dndkit.com/api-documentation/sensors/pointer#touch-action
+							touchAction: "none",
 						}}
 						ref={setActivatorNodeRef}
 						{...listeners}

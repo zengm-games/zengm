@@ -21,8 +21,6 @@ drag and drop
     - hitbox thing? see list example
   - check bundle size
   - test mobile
-    - currently requires clicking twice to actually start drag, then works fine. why?
-    - https://docs.dndkit.com/api-documentation/sensors
   - test all uses in game, not just roster
   - getId function, use for
     - key

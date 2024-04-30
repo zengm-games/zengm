@@ -102,8 +102,11 @@ const Item = ({
 				onChange={onToggleHidden}
 			/>
 			<label
-				className={`form-check-label touch-action-none w-100${disabled ? "" : isDragged ? " cursor-grabbing" : " cursor-grab"}`}
+				className={`form-check-label touch-action-none ${disabled ? "" : isDragged ? " cursor-grabbing" : " cursor-grab"}`}
 				ref={setActivatorNodeRef}
+				style={{
+					minWidth: 100,
+				}}
 				{...listeners}
 				{...attributes}
 			>

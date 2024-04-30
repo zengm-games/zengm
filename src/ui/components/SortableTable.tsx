@@ -12,7 +12,15 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 import type { StickyCols } from "./DataTable";
 import useStickyXX from "./DataTable/useStickyXX";
-import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
+import {
+	DndContext,
+	DragOverlay,
+	closestCenter,
+	MouseSensor,
+	TouchSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
 import {
 	SortableContext,
 	useSortable,
@@ -171,8 +179,8 @@ const Row = ({
 						"bg-primary": selected,
 					})}
 				>
-					<a
-						className={`d-block touch-action-none w-100$ ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
+					<button
+						className={`btn border-0 d-block w-100 $ ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
 						style={{
 							height: 27,
 						}}
@@ -266,8 +274,12 @@ const SortableTable = <Value extends Record<string, unknown>>({
 
 	const ids = values.map(value => getId(value));
 
+	// If I use the default sensor (pointer rather than mouse+touch) everything works (as long as you put touch-action-none on the handle)... except on iOS for some reason it sometimes only fires click events rather than pointer events. This seems to happen for roughly the bottom 2/3 of rows in the table. No idea why.
+	const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
 	return (
 		<DndContext
+			sensors={sensors}
 			onDragStart={event => {
 				const index = ids.indexOf(event.active.id as string);
 				setDraggedIndex(index);
@@ -307,6 +319,9 @@ const SortableTable = <Value extends Record<string, unknown>>({
 					const newIndex = ids.indexOf(newId);
 
 					onChange({ oldIndex, newIndex });
+
+					// Reset any clicked on after a drag
+					setClickedIndex(undefined);
 				}
 			}}
 			onDragOver={event => {

@@ -194,10 +194,7 @@ const Row = ({
 	);
 };
 
-const SortableTable = <
-	Id extends string,
-	Value extends Record<string, unknown> & Record<Id, string | number>,
->({
+const SortableTable = <Value extends Record<string, unknown>>({
 	cols,
 	disabled,
 	getId,

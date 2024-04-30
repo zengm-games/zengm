@@ -71,6 +71,7 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 
 			<SortableTable
 				values={teamsSorted}
+				getId={t => String(t.tid)}
 				highlightHandle={({ value }) => userTids.includes(value.tid)}
 				onChange={({ oldIndex, newIndex }) => {
 					const newSortedTids = arrayMoveImmutable(

@@ -10,7 +10,7 @@ drag and drop
   - https://docs.dndkit.com/api-documentation/sensors/pointer#recommendations
   - check bundle size
   - test mobile
-  - test all uses in game, not just roster
+- other uses
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs

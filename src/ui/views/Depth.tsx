@@ -355,17 +355,18 @@ const Depth = ({
 			<SortableTable
 				disabled={!editable}
 				values={playersSorted}
+				getId={p => String(p.pid)}
 				highlightHandle={({ index }) => index < numStarters * numLines}
 				rowClassName={({ index, isDragged }) =>
 					classNames({
 						separator:
-							(isSport("baseball") && pos === "P" && index === 4) ||
-							(isSport("baseball") && pos === "D" && index === 8) ||
-							(isSport("baseball") && pos === "DP" && index === 7) ||
-							((index % numStarters) + 1 === numStarters &&
-								index < numLines * numStarters &&
-								!isDragged &&
-								index !== playersSorted.length - 1),
+							!isDragged &&
+							((isSport("baseball") && pos === "P" && index === 4) ||
+								(isSport("baseball") && pos === "D" && index === 8) ||
+								(isSport("baseball") && pos === "DP" && index === 7) ||
+								((index % numStarters) + 1 === numStarters &&
+									index < numLines * numStarters &&
+									index !== playersSorted.length - 1)),
 					})
 				}
 				rowLabels={rowLabels}
@@ -459,26 +460,26 @@ const Depth = ({
 									"text-danger":
 										isSport("baseball") && p.lineupPos !== undefined
 											? p.pid >= 0 &&
-											  p.lineupPos !== "DH" &&
-											  p.lineupPos !== p.ratings.pos
+												p.lineupPos !== "DH" &&
+												p.lineupPos !== p.ratings.pos
 											: isSport("baseball") && (pos === "D" || pos === "DP")
-											  ? rowLabels?.[index] !== undefined &&
-											    rowLabels[index] !== "DH" &&
-											    rowLabels[index] !== p.ratings.pos
-											  : !isSport("baseball") &&
-											    p.pid >= 0 &&
-											    pos !== "KR" &&
-											    pos !== "PR" &&
-											    !positions.includes(p.ratings.pos),
+												? rowLabels?.[index] !== undefined &&
+													rowLabels[index] !== "DH" &&
+													rowLabels[index] !== p.ratings.pos
+												: !isSport("baseball") &&
+													p.pid >= 0 &&
+													pos !== "KR" &&
+													pos !== "PR" &&
+													!positions.includes(p.ratings.pos),
 								})}
 							>
 								{isSport("baseball") && (pos === "D" || pos === "DP")
 									? p.ratings.pos
 									: p.pid >= 0
-									  ? lineupPos
-									  : p.pid === -1
-									    ? "P"
-									    : null}
+										? lineupPos
+										: p.pid === -1
+											? "P"
+											: null}
 							</td>
 							<td>{p.age}</td>
 							{isSport("baseball") && pos !== "P" ? (

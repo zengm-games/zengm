@@ -172,9 +172,8 @@ const Row = ({
 					})}
 				>
 					<a
-						className="d-block touch-action-none w-100"
+						className={`d-block touch-action-none w-100$ ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
 						style={{
-							cursor: isDragged ? "grabbing" : "grab",
 							height: 27,
 						}}
 						ref={setActivatorNodeRef}

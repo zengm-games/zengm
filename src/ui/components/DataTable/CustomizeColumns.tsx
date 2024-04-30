@@ -1,12 +1,11 @@
 import type { Col, StickyCols } from ".";
-import { useState, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
 	SortableContext,
 	useSortable,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import classNames from "classnames";
 import Modal from "../Modal";
 
 const DraggableItem = ({
@@ -21,6 +20,7 @@ const DraggableItem = ({
 	onToggleHidden: () => void;
 }) => {
 	const {
+		active,
 		attributes,
 		listeners,
 		setNodeRef,
@@ -42,6 +42,7 @@ const DraggableItem = ({
 			hidden={hidden}
 			onToggleHidden={onToggleHidden}
 			style={style}
+			isDragged={!!active}
 			attributes={attributes}
 			listeners={listeners}
 			setNodeRef={setNodeRef}
@@ -55,6 +56,7 @@ const Item = ({
 	hidden,
 	onToggleHidden,
 	style,
+	isDragged,
 	attributes,
 	listeners,
 	setNodeRef,
@@ -64,6 +66,7 @@ const Item = ({
 	hidden?: boolean;
 	onToggleHidden: () => void;
 	style?: CSSProperties;
+	isDragged: boolean;
 } & Partial<
 	Pick<
 		ReturnType<typeof useSortable>,
@@ -94,7 +97,7 @@ const Item = ({
 				onChange={onToggleHidden}
 			/>
 			<label
-				className="form-check-label cursor-grab touch-action-none w-100"
+				className={`form-check-label touch-action-none w-100 ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
 				ref={setActivatorNodeRef}
 				{...listeners}
 				{...attributes}
@@ -102,24 +105,6 @@ const Item = ({
 				{title}
 			</label>
 		</div>
-	);
-};
-
-const Container = ({
-	children,
-	isDragged,
-}: {
-	children: any[];
-	isDragged: boolean;
-}) => {
-	return (
-		<ul
-			className={classNames("list-unstyled mb-0 cursor-grab user-select-none", {
-				"cursor-grabbing": isDragged,
-			})}
-		>
-			{children}
-		</ul>
 	);
 };
 
@@ -149,8 +134,6 @@ const CustomizeColumns = ({
 	show: boolean;
 	stickyCols: StickyCols;
 }) => {
-	const [isDragged, setIsDragged] = useState(false);
-
 	const stickyColsOptions = [0, 1, 2, 3] as StickyCols[];
 
 	const ids = colOrder.map(col => String(col.colIndex));
@@ -188,14 +171,10 @@ const CustomizeColumns = ({
 					</p>
 				) : null}
 				<DndContext
-					onDragStart={() => {
-						setIsDragged(true);
-					}}
 					onDragEnd={event => {
 						if (hasSuperCols) {
 							return;
 						}
-						setIsDragged(false);
 
 						const oldId = event.active.id as string;
 						const newId = event.over?.id as string | undefined;
@@ -210,7 +189,7 @@ const CustomizeColumns = ({
 					collisionDetection={closestCenter}
 				>
 					<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-						<Container isDragged={isDragged}>
+						<ul className="list-unstyled mb-0 user-select-none">
 							{colOrder.map(({ colIndex, hidden }, i) => {
 								const col = cols[colIndex];
 								return (
@@ -223,7 +202,7 @@ const CustomizeColumns = ({
 									/>
 								);
 							})}
-						</Container>
+						</ul>
 					</SortableContext>
 				</DndContext>
 			</Modal.Body>

@@ -6,8 +6,6 @@ drag and drop
 - SortableTable
   - performance https://github.com/clauderic/dnd-kit/issues/1071
   - https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
-  - confirm sticky works
-  - https://docs.dndkit.com/api-documentation/sensors/pointer#recommendations
   - check bundle size
   - test mobile
 - other uses

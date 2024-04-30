@@ -151,7 +151,7 @@ const DataTable = ({
 						cols[i] ? cols[i].sortType : undefined,
 						cols[i] ? cols[i].searchType : undefined,
 					),
-			  )
+				)
 			: [];
 		const skipFiltering = state.searchText === "" && !state.enableFilters;
 		const searchText = state.searchText.toLowerCase();
@@ -197,7 +197,7 @@ const DataTable = ({
 					}
 
 					return true;
-			  });
+				});
 
 		const sortKeys = state.sortBys.map(sortBy => (row: DataTableRow) => {
 			let i = sortBy[0];
@@ -451,7 +451,7 @@ const DataTable = ({
 					state.settingsCache.set("DataTableColOrder", newOrder);
 					state.settingsCache.clear("DataTableStickyCols");
 				}}
-				onSortEnd={({ oldIndex, newIndex }) => {
+				onChange={({ oldIndex, newIndex }) => {
 					const newOrder = arrayMoveImmutable(
 						state.colOrder,
 						oldIndex,

@@ -8,7 +8,11 @@ drag and drop
   - https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
   - check bundle size
   - test mobile
-- other uses
+- customizecolumns
+  - test hasSuperCols
+  - should disable all if hasSuperCols?
+  - performance- seems slow!
+  - isDragged refactor
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs

@@ -172,13 +172,10 @@ const Row = ({
 					})}
 				>
 					<a
-						className={classNames("d-block w-100")}
+						className="d-block touch-action-none w-100"
 						style={{
 							cursor: isDragged ? "grabbing" : "grab",
 							height: 27,
-
-							// This is needed for mobile https://docs.dndkit.com/api-documentation/sensors/pointer#touch-action
-							touchAction: "none",
 						}}
 						ref={setActivatorNodeRef}
 						{...listeners}

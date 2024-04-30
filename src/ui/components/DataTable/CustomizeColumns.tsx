@@ -1,6 +1,6 @@
 import type { Col, StickyCols } from ".";
 import { useState, type CSSProperties } from "react";
-import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
 	SortableContext,
 	useSortable,
@@ -94,7 +94,7 @@ const Item = ({
 				onChange={onToggleHidden}
 			/>
 			<label
-				className="form-check-label cursor-grab"
+				className="form-check-label cursor-grab touch-action-none w-100"
 				ref={setActivatorNodeRef}
 				{...listeners}
 				{...attributes}

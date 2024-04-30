@@ -1189,6 +1189,11 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	background-color: $gray-300 !important;
 }
 
+.touch-action-none {
+	// This is needed for draggable handles on mobile https://docs.dndkit.com/api-documentation/sensors/pointer#touch-action
+	touch-action: none;
+}
+
 button.fast-forward {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;

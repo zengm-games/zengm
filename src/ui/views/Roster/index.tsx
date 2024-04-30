@@ -199,15 +199,16 @@ const Roster = ({
 				values={playersSorted}
 				getId={p => String(p.pid)}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}
-				rowClassName={({ index, value: p }) =>
+				rowClassName={({ index, isDragged, value: p }) =>
 					classNames({
 						separator:
-							(isSport("basketball") &&
+							!isDragged &&
+							((isSport("basketball") &&
 								index === numPlayersOnCourt - 1 &&
 								season === currentSeason) ||
-							(!isSport("basketball") &&
-								playersSorted[index + 1] &&
-								p.ratings.pos !== playersSorted[index + 1].ratings.pos),
+								(!isSport("basketball") &&
+									playersSorted[index + 1] &&
+									p.ratings.pos !== playersSorted[index + 1].ratings.pos)),
 						"table-danger": p.hof,
 						"table-info": p.tid === tid && season !== currentSeason,
 					})

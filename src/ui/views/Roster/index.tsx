@@ -198,7 +198,6 @@ const Roster = ({
 				disabled={!editable}
 				values={playersSorted}
 				getId={p => String(p.pid)}
-				stickyCols={2}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}
 				rowClassName={({ index, isDragged, value: p }) =>
 					classNames({

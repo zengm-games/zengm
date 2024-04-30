@@ -356,7 +356,6 @@ const Depth = ({
 				disabled={!editable}
 				values={playersSorted}
 				getId={p => String(p.pid)}
-				stickyCols={2}
 				highlightHandle={({ index }) => index < numStarters * numLines}
 				rowClassName={({ index, isDragged }) =>
 					classNames({

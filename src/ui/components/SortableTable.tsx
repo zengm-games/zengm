@@ -200,8 +200,10 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	row,
 	rowClassName,
 	rowLabels,
-	stickyCols = 0,
 	values,
+
+	// This is never used currently because some people don't like it and there is no UI to disable it now
+	stickyCols = 0,
 }: {
 	cols: () => ReactNode;
 	disabled?: boolean;

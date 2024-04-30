@@ -70,7 +70,6 @@
 		"react-confirm": "^0.3.0-7",
 		"react-dom": "^18.3.1",
 		"react-select": "^5.8.0",
-		"react-sortable-hoc": "^2.0.0",
 		"roman-numerals": "^0.3.2",
 		"s-ago": "^2.2.0",
 		"streamsaver": "^2.0.6",
@@ -164,10 +163,5 @@
 		"typescript": "^5.4.5",
 		"workbox-build": "^7.0.0"
 	},
-	"private": true,
-	"pnpm": {
-		"patchedDependencies": {
-			"react-sortable-hoc@2.0.0": "patches/react-sortable-hoc@2.0.0.patch"
-		}
-	}
+	"private": true
 }

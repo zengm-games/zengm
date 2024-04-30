@@ -5,14 +5,13 @@ use ptsPct instead of winp in various places if pointsFormula
 - power rankings
 
 drag and drop
-- SortableTable
-  - performance https://github.com/clauderic/dnd-kit/issues/1071
-  - https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
-  - check bundle size
-- customizecolumns
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs
+  - https://codesandbox.io/p/sandbox/react-multiple-container-drag-and-drop-forked-sdd2km?file=%2Fsrc%2Findex.tsx
+  - https://master--5fc05e08a4a65d0021ae0bf2.chromatic.com/?path=/story/presets-sortable-multiple-containers--basic-setup
+    - https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
+  - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
 - remove patch
 

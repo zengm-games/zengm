@@ -237,66 +237,6 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		start: 0,
 	});
 
-	/*const onSortStart = useCallback(
-		({ node, index }: { node: Element; index: number }) => {
-			setIsDragged(true);
-
-			// Hack to avoid responding to duiplicated event on mobile
-			const ignoreToDebounce = Date.now() - clicked.current.time < 500;
-			if (!ignoreToDebounce) {
-				clicked.current.index = index;
-			}
-
-			// https://github.com/clauderic/react-sortable-hoc/issues/361#issuecomment-471907612
-			const tds =
-				document.getElementsByClassName("SortableHelper")[0].childNodes;
-			for (let i = 0; i < tds.length; i++) {
-				const childNode = node.childNodes[i];
-				// @ts-expect-error
-				tds[i].style.width = `${childNode.offsetWidth}px`;
-				// @ts-expect-error
-				tds[i].style.padding = "4px";
-			}
-		},
-		[],
-	);
-
-	const onSortOver = useCallback(() => {
-		clicked.current.index = undefined;
-	}, []);
-
-	const onSortEnd = useCallback(
-		({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
-			setIsDragged(false);
-
-			// Hack to avoid responding to duiplicated event on mobile
-			const ignoreToDebounce = Date.now() - clicked.current.time < 500;
-			if (ignoreToDebounce) {
-				return;
-			}
-			clicked.current.time = Date.now();
-
-			if (oldIndex === newIndex && clicked.current.index === newIndex) {
-				if (clickedIndex === undefined) {
-					setClickedIndex(newIndex);
-				} else if (clickedIndex === newIndex) {
-					// Hack to avoid responding to duiplicated event on mobile
-					if (!ignoreToDebounce) {
-						setClickedIndex(undefined);
-					}
-				} else {
-					onSwap(clickedIndex, newIndex);
-					setClickedIndex(undefined);
-				}
-			} else {
-				onChange({ oldIndex, newIndex });
-				setClickedIndex(undefined);
-			}
-			clicked.current.index = undefined;
-		},
-		[onChange, onSwap, clickedIndex],
-	);*/
-
 	let tableClasses =
 		"table table-striped table-borderless table-sm table-hover";
 	if (stickyClass) {
@@ -339,7 +279,6 @@ const SortableTable = <Value extends Record<string, unknown>>({
 			}}
 			onDragEnd={event => {
 				setDraggedIndex(undefined);
-				console.log("onDragEnd", event);
 				const oldId = event.active.id as string;
 				const newId = event.over?.id as string | undefined;
 

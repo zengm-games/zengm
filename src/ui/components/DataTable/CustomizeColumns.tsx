@@ -10,11 +10,13 @@ import Modal from "../Modal";
 
 const DraggableItem = ({
 	col,
+	disabled,
 	id,
 	hidden,
 	onToggleHidden,
 }: {
 	col?: Col;
+	disabled: boolean;
 	id: string;
 	hidden?: boolean;
 	onToggleHidden: () => void;
@@ -27,7 +29,7 @@ const DraggableItem = ({
 		setActivatorNodeRef,
 		transform,
 		transition,
-	} = useSortable({ id, disabled: !col });
+	} = useSortable({ id, disabled });
 
 	const style = transform
 		? {
@@ -39,6 +41,7 @@ const DraggableItem = ({
 	return (
 		<Item
 			col={col}
+			disabled={disabled}
 			hidden={hidden}
 			onToggleHidden={onToggleHidden}
 			style={style}
@@ -53,6 +56,7 @@ const DraggableItem = ({
 
 const Item = ({
 	col,
+	disabled,
 	hidden,
 	onToggleHidden,
 	style,
@@ -63,6 +67,7 @@ const Item = ({
 	setActivatorNodeRef,
 }: {
 	col?: Col;
+	disabled: boolean;
 	hidden?: boolean;
 	onToggleHidden: () => void;
 	style?: CSSProperties;
@@ -97,7 +102,7 @@ const Item = ({
 				onChange={onToggleHidden}
 			/>
 			<label
-				className={`form-check-label touch-action-none w-100 ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
+				className={`form-check-label touch-action-none w-100${disabled ? "" : isDragged ? " cursor-grabbing" : " cursor-grab"}`}
 				ref={setActivatorNodeRef}
 				{...listeners}
 				{...attributes}
@@ -199,6 +204,7 @@ const CustomizeColumns = ({
 										onToggleHidden={onToggleHidden(i)}
 										hidden={hidden}
 										col={col}
+										disabled={!col || hasSuperCols}
 									/>
 								);
 							})}

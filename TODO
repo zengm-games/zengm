@@ -1,3 +1,5 @@
+test multiple tabs on android - does one open block another?
+
 use ptsPct instead of winp in various places if pointsFormula
 - team history
 - power rankings
@@ -7,10 +9,7 @@ drag and drop
   - performance https://github.com/clauderic/dnd-kit/issues/1071
   - https://codesandbox.io/p/sandbox/dnd-kit-demo-q9hbk0 tips in readme
   - check bundle size
-  - test mobile
 - customizecolumns
-  - test hasSuperCols
-  - should disable all if hasSuperCols?
 - customize page
   - allow drag and drop to reorder confs/divs
   - allow drag and drop to move teams to other divs

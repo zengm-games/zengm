@@ -76,7 +76,7 @@ const checkHeartbeat = async (lid: number) => {
 	}
 
 	throw new Error(
-		"A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload. Or switch to Chrome/Firefox on a desktop/laptop, which doesn't have this limitation.",
+		"Your browser only supports opening a league in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.",
 	);
 };
 

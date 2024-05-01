@@ -11,6 +11,7 @@ drag and drop
     - https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
+  - maybe same as customize page, but with some option to prevent deleting/adding teams
 
 indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
@@ -1230,6 +1231,8 @@ add some more built-in teams
 - Candidates
   - Boise
   - Omaha
+  - Nashville
+  - Chicago
   - Lagos
   - Johannesburg or Cape Town
   - Santiago
@@ -1238,7 +1241,10 @@ add some more built-in teams
   - Moscow
   - Kiev
   - Antarctica Penguins
-  - Chicago
+  - Barcelona
+  - Tehran
+  - Dubai
+  - Tel Aviv
 
 "find players" form
 - customizable search boxes for stats/ratings

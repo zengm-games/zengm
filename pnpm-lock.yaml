@@ -134,9 +134,6 @@ importers:
       streamsaver:
         specifier: ^2.0.6
         version: 2.0.6
-      throttle-debounce:
-        specifier: ^5.0.0
-        version: 5.0.0
       use-local-storage-state:
         specifier: ^19.2.0
         version: 19.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -252,9 +249,6 @@ importers:
       '@types/stripe-v2':
         specifier: ^2.0.6
         version: 2.0.6
-      '@types/throttle-debounce':
-        specifier: ^5.0.2
-        version: 5.0.2
       '@types/wicg-file-system-access':
         specifier: ^2023.10.5
         version: 2023.10.5
@@ -1853,9 +1847,6 @@ packages:
 
   '@types/stripe-v3@3.1.33':
     resolution: {integrity: sha512-fIE7F7alypCrnIMsk4naprHf8kXEvPM2Q9FGdL/3TDeGM0xlHohdVWkwuaEZ2tKzXB9QQKoS8k+ocLkPjZajwQ==}
-
-  '@types/throttle-debounce@5.0.2':
-    resolution: {integrity: sha512-pDzSNulqooSKvSNcksnV72nk8p7gRqN8As71Sp28nov1IgmPKWbOEIwAWvBME5pPTtaXJAvG3O4oc76HlQ4kqQ==}
 
   '@types/tough-cookie@4.0.5':
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
@@ -5009,10 +5000,6 @@ packages:
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
 
-  throttle-debounce@5.0.0:
-    resolution: {integrity: sha512-2iQTSgkkc1Zyk0MeVrt/3BvuOXYPl/R8Z0U2xxo9rjwNciaHDG3R+Lm6dh4EeUci49DanvBnuqI6jshoQQRGEg==}
-    engines: {node: '>=12.22'}
-
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
 
@@ -7154,8 +7141,6 @@ snapshots:
   '@types/stripe-v2@2.0.6': {}
 
   '@types/stripe-v3@3.1.33': {}
-
-  '@types/throttle-debounce@5.0.2': {}
 
   '@types/tough-cookie@4.0.5': {}
 
@@ -10953,8 +10938,6 @@ snapshots:
       utrie: 1.0.2
 
   text-table@0.2.0: {}
-
-  throttle-debounce@5.0.0: {}
 
   through@2.3.8: {}
 

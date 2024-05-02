@@ -1,7 +1,3 @@
-use ptsPct instead of winp in various places if pointsFormula
-- team history
-- power rankings
-
 drag and drop
 - customize page
   - allow drag and drop to reorder confs/divs
@@ -12,6 +8,14 @@ drag and drop
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
   - maybe same as customize page, but with some option to prevent deleting/adding teams
+
+team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
+
+add career totals to export stats https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/
+
+use ptsPct instead of winp in various places if pointsFormula
+- team history
+- power rankings
 
 indicator of if trade will be accepted
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
@@ -442,8 +446,6 @@ bootstrap real dark mode
 BBGM box score minutes played should be MM:SS like in ZGMH https://old.reddit.com/r/BasketballGM/comments/14aff4g/box_score_idea/
 - same for any individual game, like in game log, stat feats, etc. but not averages
 
-team graphs
-
 game of the year
 - something based on margin of victory, overtimes, how good the teams are, how the best players performed
 - add ability to save important box scores
@@ -486,6 +488,7 @@ frivolities
   - GOAT Lab for teams https://discord.com/channels/290013534023057409/331882115119448065/864892186888765502
   - lowest payroll for championship https://old.reddit.com/r/BasketballGM/comments/ttdazd/monthly_suggestions_thread/i6cctm4/
   - largest/smallest change in team winning percentage
+  - most hall of famers on team
 - oldest/youngest award winners for each award https://discord.com/channels/290013534023057409/331882115119448065/898189161536839691
 - Youngest and Oldest ever to achieve certain statistical feats like triple doubles and 50 pointers https://discord.com/channels/290013534023057409/331882115119448065/904435732842700810
 - playoffs

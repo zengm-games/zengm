@@ -5,6 +5,7 @@ import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 import { JerseyNumber } from "../../components";
 import { displayFace, toWorker } from "../../util";
 import MoveModal, { type MoveModalTeamFinal } from "./MoveModal";
+import { ColorPicker } from "../../components/ColorPicker";
 
 const TeamForm = ({
 	classNamesCol,
@@ -241,23 +242,25 @@ const TeamForm = ({
 			<div className={classNamesCol[8]}>
 				<div className="mb-3">
 					<label className={classNameLabel}>Jersey</label>
-					<div className="d-flex">
+					<div className="input-group">
 						{[0, 1, 2].map(j => (
-							<input
+							<ColorPicker
 								key={j}
-								type="color"
-								className="form-control form-control-color"
 								onClick={() => {
 									setShowFace(true);
 								}}
-								onChange={e => {
-									handleInputChange(`colors${j}`, e);
+								onChange={value => {
+									handleInputChange(`colors${j}`, {
+										target: {
+											value,
+										},
+									});
 								}}
 								value={t.colors[j]}
 								style={{
 									// Set positive z-index here rather than negative on face, because otherwise face doesn't appear when TeamForm is in modal
 									zIndex: 1,
-									flexBasis: "100%",
+									minWidth: "20%",
 								}}
 							/>
 						))}
@@ -277,7 +280,6 @@ const TeamForm = ({
 							style={{
 								// Set positive z-index here rather than negative on face, because otherwise face doesn't appear when TeamForm is in modal
 								zIndex: 1,
-								flexBasis: "100%",
 							}}
 						>
 							{helpers.keys(JERSEYS).map(jersey => (

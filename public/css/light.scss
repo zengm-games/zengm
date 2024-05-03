@@ -1679,3 +1679,9 @@ tr.text-body-secondary td {
 		text-decoration: none;
 	}
 }
+
+// https://github.com/uiwjs/react-color?tab=readme-ov-file#support-darknight-theme
+.w-color-editable-input {
+	--editable-input-color: #000 !important;
+	--editable-input-label-color: #555 !important;
+}

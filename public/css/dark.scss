@@ -424,3 +424,17 @@ $highlight-leader-color: lighten($yellow, 18%);
 		color: $highlight-leader-color !important;
 	}
 }
+
+// https://github.com/uiwjs/react-color?tab=readme-ov-file#support-darknight-theme
+.w-color-sketch {
+	--sketch-background: #323232 !important;
+}
+.w-color-swatch {
+	--sketch-swatch-border-top: 1px solid #525252 !important;
+}
+.w-color-editable-input {
+	--editable-input-label-color: #757575 !important;
+	--editable-input-box-shadow: #616161 0px 0px 0px 1px inset !important;
+	--editable-input-color: #fff !important;
+	--editable-input-label-color: #aaa !important;
+}

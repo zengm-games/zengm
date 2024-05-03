@@ -58,6 +58,7 @@ option for neutral site playoffs https://discord.com/channels/290013534023057409
   - or by round?
 - use in FBGM
 - make it clearer in the UI that it's a neutral site game, like in the schedule, game log, etc
+- point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ
 
 new achievements
 - force challenge mode to remain on

@@ -106,7 +106,7 @@
 		"@types/gtag.js": "^0.0.19",
 		"@types/jest": "^29.5.12",
 		"@types/lodash-es": "^4.17.12",
-		"@types/node": "^20.12.7",
+		"@types/node": "^20.12.8",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.2.25",
 		"@types/roman-numerals": "^0.3.2",
@@ -157,7 +157,7 @@
 		"rollup": "^4.17.2",
 		"rollup-plugin-blacklist": "^1.0.1",
 		"rollup-plugin-visualizer": "^5.12.0",
-		"sass": "^1.75.0",
+		"sass": "^1.76.0",
 		"typescript": "^5.4.5",
 		"workbox-build": "^7.0.0"
 	},

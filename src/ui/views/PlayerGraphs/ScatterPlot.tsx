@@ -18,7 +18,8 @@ type ScatterPlotProps = {
 	data: TooltipData[];
 	descShort: [string, string];
 	descLong: [string | undefined, string | undefined];
-	getTooltipTitle: (row: any) => ReactNode;
+	getImageUrl?: (row: any) => string | undefined;
+	getTooltipTitle: (row: any) => string;
 	renderTooltip: (value: number, row: any, i: number) => ReactNode;
 	stat: [string, string];
 	statType: [string, string];
@@ -84,6 +85,7 @@ const ScatterPlot = ({
 	data,
 	descLong,
 	descShort,
+	getImageUrl,
 	getTooltipTitle,
 	renderTooltip,
 	width: initialWidth,
@@ -193,25 +195,53 @@ const ScatterPlot = ({
 						strokeWidth={4}
 					/>
 					{data.map((d, i) => {
-						const circle = (
-							<Circle
-								key={i}
-								cx={xScale(d.x)}
-								cy={yScale(d.y)}
-								fillOpacity={0.8}
-								onMouseOver={event => handleMouseOver(event, d)}
-								onMouseOut={hideTooltip}
-								r={6}
-								fill={"var(--bs-blue)"}
-							/>
-						);
+						const imageUrl = getImageUrl?.(d.row);
+
+						const cx = xScale(d.x);
+						const cy = yScale(d.y);
+
+						let point;
+						if (imageUrl) {
+							const size = 24;
+
+							// foreignObject is needed because an SVG <image> tag dosen't seem to support maintaining the aspect ratio of a .svg image, it only works with raster images
+							point = (
+								<foreignObject
+									x={cx - size / 2}
+									y={cy - size / 2}
+									width={size}
+									height={size}
+								>
+									<div className="d-flex align-items-center justify-content-center w-100 h-100">
+										<img
+											src={imageUrl}
+											className="mw-100 mh-100"
+											alt={tooltipData ? getTooltipTitle(tooltipData.row) : ""}
+										/>
+									</div>
+								</foreignObject>
+							);
+						} else {
+							point = (
+								<Circle
+									key={i}
+									cx={cx}
+									cy={cy}
+									fillOpacity={0.8}
+									onMouseOver={event => handleMouseOver(event, d)}
+									onMouseOut={hideTooltip}
+									r={6}
+									fill={"var(--bs-blue)"}
+								/>
+							);
+						}
 
 						// https://stackoverflow.com/a/4819886 so we detect tablets too, rather than using window.mobile just based on screen size
 						return "ontouchstart" in window ? (
-							circle
+							point
 						) : (
 							<a key={i} href={helpers.leagueUrl(["player", d.row.pid])}>
-								{circle}
+								{point}
 							</a>
 						);
 					})}

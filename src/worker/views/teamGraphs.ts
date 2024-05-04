@@ -101,7 +101,7 @@ const getTeamStats = async (
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["tid", "abbrev", "region", "name"],
+			attrs: ["tid", "abbrev", "region", "name", "imgURL", "imgURLSmall"],
 			seasonAttrs,
 			stats: statKeys as TeamStatAttr[],
 			season,

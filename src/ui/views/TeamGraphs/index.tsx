@@ -97,6 +97,7 @@ const GraphCreation = ({
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
+			getImageUrl={t => t.imgURLSmall ?? t.imgURL}
 			getTooltipTitle={t => `${t.region} ${t.name}`}
 			renderTooltip={(value, p, i) => {
 				return (

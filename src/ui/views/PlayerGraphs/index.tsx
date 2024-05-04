@@ -50,44 +50,81 @@ const getStatFromPlayer = (p: any, stat: string, statType: string) => {
 	return p.stats[stat];
 };
 
-type GraphCreationProps = {
+const getFormattedStat = (value: number, stat: string, statType: string) => {
+	if (statType === "bio") {
+		if (stat === "salary") {
+			return helpers.formatCurrency(value, "M");
+		}
+		if (stat === "draftPosition") {
+			return helpers.ordinal(value);
+		}
+	}
+	if (statType === "bio" || statType === "ratings") {
+		return value;
+	}
+	return helpers.roundStat(value, stat, statType === "totals");
+};
+
+const GraphCreation = ({
+	minGames,
+	players,
+	stat,
+	statType,
+}: {
 	players: [any, any];
 	stat: [string, string];
 	statType: [string, string];
 	minGames: number;
-};
-
-const GraphCreation = (props: GraphCreationProps) => {
-	const playersYByPid = groupByUnique<any>(props.players[1], "pid");
+}) => {
+	const playersYByPid = groupByUnique<any>(players[1], "pid");
 
 	const data: TooltipData[] = [];
-	for (const p of props.players[0]) {
-		if (!p.stats || p.stats.gp <= props.minGames) {
+	for (const p of players[0]) {
+		if (!p.stats || p.stats.gp <= minGames) {
 			continue;
 		}
 
 		const p2 = playersYByPid[p.pid];
-		if (!p2 || !p2.stats || p2.stats.gp < props.minGames) {
+		if (!p2 || !p2.stats || p2.stats.gp < minGames) {
 			continue;
 		}
 
 		data.push({
-			x: getStatFromPlayer(p, props.stat[0], props.statType[0]),
-			y: getStatFromPlayer(p2, props.stat[1], props.statType[1]),
-			p,
+			x: getStatFromPlayer(p, stat[0], statType[0]),
+			y: getStatFromPlayer(p2, stat[1], statType[1]),
+			row: p,
 		});
 	}
 
-	const titleX = getStatsWithLabels([props.stat[0]], props.statType[0])[0];
-	const titleY = getStatsWithLabels([props.stat[1]], props.statType[1])[0];
+	const titleX = getStatsWithLabels([stat[0]], statType[0])[0];
+	const titleY = getStatsWithLabels([stat[1]], statType[1])[0];
+	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
 		<StatGraph
 			data={data}
-			descShort={[titleX.title, titleY.title]}
+			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
-			stat={props.stat}
-			statType={props.statType}
+			getTooltipTitle={p => p.name}
+			renderTooltip={(value, p, i) => {
+				const undraftedOverride =
+					statType[i] === "bio" &&
+					stat[i] === "draftPosition" &&
+					p.draft.round === 0;
+				return (
+					<div key={i}>
+						{undraftedOverride ? (
+							"Undrafted"
+						) : (
+							<>
+								{getFormattedStat(value, stat[i], statType[i])} {descShort[i]}
+							</>
+						)}
+					</div>
+				);
+			}}
+			stat={stat}
+			statType={statType}
 		/>
 	);
 };

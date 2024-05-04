@@ -5,19 +5,21 @@ import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import { useRef, type MouseEvent } from "react";
+import { useRef, type MouseEvent, type ReactNode } from "react";
 import { helpers } from "../../util";
 
 export type TooltipData = {
 	x: number;
 	y: number;
-	p: any;
+	row: any;
 };
 
 type ScatterPlotProps = {
 	data: TooltipData[];
 	descShort: [string, string];
 	descLong: [string | undefined, string | undefined];
+	getTooltipTitle: (row: any) => ReactNode;
+	renderTooltip: (value: number, row: any, i: number) => ReactNode;
 	stat: [string, string];
 	statType: [string, string];
 };
@@ -78,30 +80,20 @@ const linearRegression = (
 	return { m, b, rSquared };
 };
 
-const getFormattedStat = (value: number, stat: string, statType: string) => {
-	if (statType === "bio") {
-		if (stat === "salary") {
-			return helpers.formatCurrency(value, "M");
-		}
-		if (stat === "draftPosition") {
-			return helpers.ordinal(value);
-		}
-	}
-	if (statType === "bio" || statType === "ratings") {
-		return value;
-	}
-	return helpers.roundStat(value, stat, statType === "totals");
-};
-
-const ScatterPlot = (
-	props: ScatterPlotProps & {
-		width: number;
-	},
-) => {
+const ScatterPlot = ({
+	data,
+	descLong,
+	descShort,
+	getTooltipTitle,
+	renderTooltip,
+	width: initialWidth,
+}: ScatterPlotProps & {
+	width: number;
+}) => {
 	const HEIGHT = 400;
 
-	const xVals = props.data.map(point => point.x);
-	const yVals = props.data.map(point => point.y);
+	const xVals = data.map(point => point.x);
+	const yVals = data.map(point => point.y);
 
 	const xDomain = [Math.min(...xVals), Math.max(...xVals)];
 
@@ -120,7 +112,7 @@ const ScatterPlot = (
 	const svgRef = useRef(null);
 
 	const margin = { top: 10, left: 60, right: 10, bottom: 60 };
-	const width = props.width - margin.left - margin.right;
+	const width = initialWidth - margin.left - margin.right;
 	const xScale = scaleLinear({
 		domain: xDomain,
 		range: [0, width],
@@ -130,7 +122,7 @@ const ScatterPlot = (
 		range: [HEIGHT, 0],
 	});
 
-	const { m, b, rSquared } = linearRegression(props.data);
+	const { m, b, rSquared } = linearRegression(data);
 
 	const avg = (x: number) => {
 		return m * x + b;
@@ -153,9 +145,7 @@ const ScatterPlot = (
 
 	const labels = ([0, 1] as const).map(
 		i =>
-			`${props.descShort[i]}${
-				props.descLong[i] !== undefined ? ` (${props.descLong[i]})` : ""
-			}`,
+			`${descShort[i]}${descLong[i] !== undefined ? ` (${descLong[i]})` : ""}`,
 	);
 
 	const rSquaredRounded = Math.round(100 * rSquared) / 100;
@@ -163,7 +153,7 @@ const ScatterPlot = (
 	return (
 		<div>
 			<svg
-				width={props.width}
+				width={width}
 				height={HEIGHT + margin.top + margin.bottom}
 				ref={svgRef}
 			>
@@ -202,7 +192,7 @@ const ScatterPlot = (
 						opacity={0.7}
 						strokeWidth={4}
 					/>
-					{props.data.map((d, i) => {
+					{data.map((d, i) => {
 						const circle = (
 							<Circle
 								key={i}
@@ -220,7 +210,7 @@ const ScatterPlot = (
 						return "ontouchstart" in window ? (
 							circle
 						) : (
-							<a key={i} href={helpers.leagueUrl(["player", d.p.pid])}>
+							<a key={i} href={helpers.leagueUrl(["player", d.row.pid])}>
 								{circle}
 							</a>
 						);
@@ -247,27 +237,12 @@ const ScatterPlot = (
 			</svg>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
-					<h3>{tooltipData.p.name}</h3>
+					<h3>{getTooltipTitle(tooltipData.row)}</h3>
 					{([0, 1] as const).map(i => {
-						const undraftedOverride =
-							props.statType[i] === "bio" &&
-							props.stat[i] === "draftPosition" &&
-							tooltipData.p.draft.round === 0;
-						return (
-							<div key={i}>
-								{undraftedOverride ? (
-									"Undrafted"
-								) : (
-									<>
-										{getFormattedStat(
-											tooltipData[i === 0 ? "x" : "y"],
-											props.stat[i],
-											props.statType[i],
-										)}{" "}
-										{props.descShort[i]}
-									</>
-								)}
-							</div>
+						return renderTooltip(
+							tooltipData[i === 0 ? "x" : "y"],
+							tooltipData.row,
+							i,
 						);
 					})}
 				</TooltipWithBounds>

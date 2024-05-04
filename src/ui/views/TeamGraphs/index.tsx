@@ -50,37 +50,63 @@ const getStatFromTeam = (p: any, stat: string, statType: string) => {
 	return p.stats[stat];
 };
 
-type GraphCreationProps = {
+const getFormattedStat = (value: number, stat: string, statType: string) => {
+	if (statType === "bio") {
+		if (stat === "salary") {
+			return helpers.formatCurrency(value, "M");
+		}
+		if (stat === "draftPosition") {
+			return helpers.ordinal(value);
+		}
+	}
+	if (statType === "bio" || statType === "ratings") {
+		return value;
+	}
+	return helpers.roundStat(value, stat, statType === "totals");
+};
+
+const GraphCreation = ({
+	stat,
+	statType,
+	teams,
+}: {
 	teams: [any, any];
 	stat: [string, string];
 	statType: [string, string];
 	minGames: number;
-};
-
-const GraphCreation = (props: GraphCreationProps) => {
-	const teamsYByTid = groupByUnique<any>(props.teams[1], "tid");
+}) => {
+	const teamsYByTid = groupByUnique<any>(teams[1], "tid");
 
 	const data: TooltipData[] = [];
-	for (const t of props.teams[0]) {
+	for (const t of teams[0]) {
 		const t2 = teamsYByTid[t.tid];
 
 		data.push({
-			x: getStatFromTeam(t, props.stat[0], props.statType[0]),
-			y: getStatFromTeam(t2, props.stat[1], props.statType[1]),
-			p: t,
+			x: getStatFromTeam(t, stat[0], statType[0]),
+			y: getStatFromTeam(t2, stat[1], statType[1]),
+			row: t,
 		});
 	}
 
-	const titleX = getStatsWithLabels([props.stat[0]], props.statType[0])[0];
-	const titleY = getStatsWithLabels([props.stat[1]], props.statType[1])[0];
+	const titleX = getStatsWithLabels([stat[0]], statType[0])[0];
+	const titleY = getStatsWithLabels([stat[1]], statType[1])[0];
+	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
 		<StatGraph
 			data={data}
-			descShort={[titleX.title, titleY.title]}
+			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
-			stat={props.stat}
-			statType={props.statType}
+			getTooltipTitle={t => `${t.region} ${t.name}`}
+			renderTooltip={(value, p, i) => {
+				return (
+					<div key={i}>
+						{getFormattedStat(value, stat[i], statType[i])} {descShort[i]}
+					</div>
+				);
+			}}
+			stat={stat}
+			statType={statType}
 		/>
 	);
 };

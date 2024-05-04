@@ -1,3 +1,9 @@
+team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
+- stuff from power rankings: team rating (current/healthy), playoff rating (current/healthy), rating/position ranks
+- use small logos for points on plot
+- DRY as much UI code with player graphs as possible
+- test all sports
+
 drag and drop
 - customize page
   - allow drag and drop to reorder confs/divs
@@ -8,8 +14,6 @@ drag and drop
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
   - maybe same as customize page, but with some option to prevent deleting/adding teams
-
-team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
 
 triple play logged as double play https://discord.com/channels/290013534023057409/290015591216054273/1235723112310378496
 - how does a triple play even happen?

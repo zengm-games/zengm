@@ -689,6 +689,27 @@ const playerGraphs = (params: Params) => {
 	};
 };
 
+const teamGraphs = (params: Params) => {
+	const playoffsX = validateSeasonType(params.playoffsX);
+	const playoffsY = validateSeasonType(params.playoffsY);
+
+	const seasonX = validateSeason(params.seasonX);
+	const seasonY = validateSeason(params.seasonY);
+
+	return {
+		seasonX,
+		seasonY,
+		playoffsX,
+		playoffsY,
+
+		// Defaults to random stat if undefined
+		statTypeX: params.statTypeX,
+		statTypeY: params.statTypeY,
+		statX: params.statX,
+		statY: params.statY,
+	};
+};
+
 const playerStatDists = (params: Params) => {
 	const defaultStatType = bySport({
 		baseball: "batting",
@@ -1024,6 +1045,7 @@ export default {
 	seasonPreview: validateSeasonOnly,
 	standings,
 	teamFinances,
+	teamGraphs,
 	teamHistory,
 	teamRecords,
 	teamStatDists: validateSeasonOnly,

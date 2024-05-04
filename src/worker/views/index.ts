@@ -90,6 +90,7 @@ import seasonPreview from "./seasonPreview";
 import settings from "./settings";
 import standings from "./standings";
 import teamFinances from "./teamFinances";
+import teamGraphs from "./teamGraphs";
 import teamHistory from "./teamHistory";
 import teamRecords from "./teamRecords";
 import teamStatDists from "./teamStatDists";
@@ -196,6 +197,7 @@ export default {
 	settings,
 	standings,
 	teamFinances,
+	teamGraphs,
 	teamHistory,
 	teamRecords,
 	teamStatDists,

@@ -690,8 +690,10 @@ const playerGraphs = (params: Params) => {
 };
 
 const teamGraphs = (params: Params) => {
-	const playoffsX = validateSeasonType(params.playoffsX);
-	const playoffsY = validateSeasonType(params.playoffsY);
+	const playoffsX =
+		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
+	const playoffsY =
+		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
 
 	const seasonX = validateSeason(params.seasonX);
 	const seasonY = validateSeason(params.seasonY);
@@ -699,8 +701,8 @@ const teamGraphs = (params: Params) => {
 	return {
 		seasonX,
 		seasonY,
-		playoffsX,
-		playoffsY,
+		playoffsX: playoffsX as "playoffs" | "regularSeason",
+		playoffsY: playoffsY as "playoffs" | "regularSeason",
 
 		// Defaults to random stat if undefined
 		statTypeX: params.statTypeX,

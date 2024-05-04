@@ -70,22 +70,23 @@ const getStatsTableByType = (statTypePlus: string) => {
 };
 
 export const getStats = (statTypePlus: string) => {
-	const statsTable = getStatsTableByType(statTypePlus);
-
-	let stats: string[];
 	if (statTypePlus === "ratings") {
-		stats = ["ovr", "pot", ...RATINGS];
+		return ["ovr", "pot", ...RATINGS];
 	} else if (statTypePlus == "bio") {
-		stats = ["age", "salary", "draftPosition"];
+		return ["age", "salary", "draftPosition"];
 	} else {
+		const statsTable = getStatsTableByType(statTypePlus);
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
 		}
-		// Remove pos for fielding stats
-		stats = statsTable.stats.filter(stat => stat !== "pos");
-	}
 
-	return stats;
+		// Remove pos for fielding stats
+		if (isSport("baseball")) {
+			return statsTable.stats.filter(stat => stat !== "pos");
+		}
+
+		return [...statsTable.stats];
+	}
 };
 
 const getPlayerStats = async (
@@ -221,7 +222,6 @@ const getPlayerStats = async (
 
 	if (g.get("challengeNoRatings") && ratings.length > 0) {
 		for (const p of players) {
-			console.log(p);
 			if (p.tid !== PLAYER.RETIRED) {
 				for (const key of ratings) {
 					p.ratings[key] = 50;

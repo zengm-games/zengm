@@ -1,6 +1,6 @@
 import type { View } from "../../../common/types";
 import useTitleBar from "../../hooks/useTitleBar";
-import { StatGraph, type TooltipData } from "./ScatterPlot";
+import { StatGraph, type TooltipData } from "../PlayerGraphs/ScatterPlot";
 import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions";
@@ -37,7 +37,7 @@ const getStatsWithLabels = (stats: string[], statTypeX: string) => {
 	return getCols(stats.map(stat => addPrefixForStat(statTypeX, stat)));
 };
 
-const getStatFromPlayer = (p: any, stat: string, statType: string) => {
+const getStatFromTeam = (p: any, stat: string, statType: string) => {
 	if (statType == "ratings") {
 		return p.ratings[stat];
 	} else if (statType == "bio") {
@@ -51,30 +51,23 @@ const getStatFromPlayer = (p: any, stat: string, statType: string) => {
 };
 
 type GraphCreationProps = {
-	players: [any, any];
+	teams: [any, any];
 	stat: [string, string];
 	statType: [string, string];
 	minGames: number;
 };
 
 const GraphCreation = (props: GraphCreationProps) => {
-	const playersYByPid = groupByUnique<any>(props.players[1], "pid");
+	const teamsYByTid = groupByUnique<any>(props.teams[1], "tid");
 
 	const data: TooltipData[] = [];
-	for (const p of props.players[0]) {
-		if (!p.stats || p.stats.gp <= props.minGames) {
-			continue;
-		}
-
-		const p2 = playersYByPid[p.pid];
-		if (!p2 || !p2.stats || p2.stats.gp < props.minGames) {
-			continue;
-		}
+	for (const t of props.teams[0]) {
+		const t2 = teamsYByTid[t.tid];
 
 		data.push({
-			x: getStatFromPlayer(p, props.stat[0], props.statType[0]),
-			y: getStatFromPlayer(p2, props.stat[1], props.statType[1]),
-			p,
+			x: getStatFromTeam(t, props.stat[0], props.statType[0]),
+			y: getStatFromTeam(t2, props.stat[1], props.statType[1]),
+			p: t,
 		});
 	}
 
@@ -96,7 +89,7 @@ type AxisState = {
 	stat: string;
 	statType: string;
 	playoffs: string;
-	season: number | "career";
+	season: number;
 };
 
 // For responsive ones, render the last one, which should be the longest
@@ -109,8 +102,8 @@ const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 };
 
 type UpdateUrlParam = {
-	seasonX?: number | "career";
-	seasonY?: number | "career";
+	seasonX?: number;
+	seasonY?: number;
 	statTypeX?: string;
 	statTypeY?: string;
 	playoffsX?: string;
@@ -187,7 +180,7 @@ const PickStat = ({
 				value={state.statType}
 				onChange={async event => {
 					const newStatType = event.target.value;
-					const { stat } = await toWorker("main", "getPlayerGraphStat", {
+					const { stat } = await toWorker("main", "getTeamGraphStat", {
 						statType: newStatType,
 						stat: state.stat,
 					});
@@ -241,7 +234,7 @@ const PickStat = ({
 				onClick={async () => {
 					const { stat, statType } = await toWorker(
 						"main",
-						"getPlayerGraphStat",
+						"getTeamGraphStat",
 						{},
 					);
 
@@ -265,12 +258,12 @@ const TeamGraphs = ({
 	seasonY,
 	statTypeX,
 	statTypeY,
-	playersX,
-	playersY,
 	statsX,
 	statsY,
 	statX,
 	statY,
+	teamsX,
+	teamsY,
 }: View<"teamGraphs">) => {
 	useTitleBar({
 		title: "Team Graphs",
@@ -348,7 +341,7 @@ const TeamGraphs = ({
 			</div>
 			<div>
 				<GraphCreation
-					players={[playersX, playersY]}
+					teams={[teamsX, teamsY]}
 					stat={[statX, statY]}
 					statType={[statTypeX, statTypeY]}
 					minGames={0}

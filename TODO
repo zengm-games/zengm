@@ -1,8 +1,18 @@
 team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
 - stuff from power rankings: team rating (current/healthy), playoff rating (current/healthy), rating/position ranks
+  - challengeNoRatings
 - use small logos for points on plot
 - DRY as much UI code with player graphs as possible
 - test all sports
+  - baseball fielding stats
+- where do other seasonAttrs like avgAge go?
+- how are superCols ones handled?
+- whewn to hide for missing data? maybe only if both are playoffs, for teams with no playoff games
+- payroll vs salaryPaid
+- power rankings for this season
+- expense levels
+- opponent stats working?
+  - axis label
 
 drag and drop
 - customize page
@@ -184,6 +194,8 @@ Support logos being saved to IndexedDB
   - importing league file - read from "logos"
 - ui to allow CRUD of logos
   - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
+- or allow uploading to server
+  - https://news.ycombinator.com/item?id=40221210
 
 "field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://chromestatus.com/feature/5176596826161152
 

@@ -1,97 +1,75 @@
-import {
-	bySport,
-	isSport,
-	PHASE,
-	PLAYER,
-	PLAYER_STATS_TABLES,
-	RATINGS,
-} from "../../common";
+import { isSport, TEAM_STATS_TABLES } from "../../common";
 import { idb } from "../db";
-import { g, helpers, random } from "../util";
+import { g, random } from "../util";
 import type {
+	TeamSeasonAttr,
 	UpdateEvents,
 	ViewInput,
-	PlayerStatType,
 } from "../../common/types";
-import { POS_NUMBERS } from "../../common/constants.baseball";
-import { maxBy } from "../../common/utils";
+import type { TeamStatAttr } from "../../common/types.baseball";
 
-export const statTypes = bySport({
-	baseball: [
-		"bio",
-		"ratings",
-		"batting",
-		"pitching",
-		"fielding",
-		"advanced",
-		"gameHighs",
-	],
-	basketball: [
-		"bio",
-		"ratings",
-		"perGame",
-		"per36",
-		"totals",
-		"shotLocations",
-		"advanced",
-		"gameHighs",
-	],
-	football: [
-		"bio",
-		"ratings",
-		"passing",
-		"rushing",
-		"defense",
-		"kicking",
-		"returns",
-	],
-	hockey: ["bio", "ratings", "skater", "goalie", "advanced", "gameHighs"],
-});
+export const statTypes = [
+	"standings",
+	"powerRankings",
+	"finances",
+	...Object.keys(TEAM_STATS_TABLES),
+];
 
 const getStatsTableByType = (statTypePlus: string) => {
-	if (statTypePlus == "bio" || statTypePlus == "ratings") {
-		return;
-	}
-
-	// Keep in sync with statTypesAdv
-	if (isSport("basketball")) {
-		if (statTypePlus === "advanced") {
-			return PLAYER_STATS_TABLES.advanced;
-		} else if (statTypePlus === "shotLocations") {
-			return PLAYER_STATS_TABLES.shotLocations;
-		} else if (statTypePlus === "gameHighs") {
-			return PLAYER_STATS_TABLES.gameHighs;
-		} else {
-			return PLAYER_STATS_TABLES.regular;
-		}
-	}
-
-	return PLAYER_STATS_TABLES[statTypePlus];
+	// Will be undefined for standings/powerRankings/finances
+	return TEAM_STATS_TABLES[statTypePlus];
 };
 
 export const getStats = (statTypePlus: string) => {
-	const statsTable = getStatsTableByType(statTypePlus);
-
-	let stats: string[];
-	if (statTypePlus === "ratings") {
-		stats = ["ovr", "pot", ...RATINGS];
-	} else if (statTypePlus == "bio") {
-		stats = ["age", "salary", "draftPosition"];
+	if (statTypePlus === "standings") {
+		return [
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"ptsPct",
+			"wonHome",
+			"lostHome",
+			"tiedHome",
+			"otlHome",
+			"wonAway",
+			"lostAway",
+			"tiedAway",
+			"otlAway",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		];
+	} else if (statTypePlus === "powerRankings") {
+		return ["avgAge"];
+	} else if (statTypePlus === "finances") {
+		return ["att", "revenue", "profit", "cash", "payroll", "salaryPaid", "pop"];
 	} else {
+		const statsTable = getStatsTableByType(statTypePlus);
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
 		}
-		// Remove pos for fielding stats
-		stats = statsTable.stats.filter(stat => stat !== "pos");
-	}
 
-	return stats;
+		// Remove pos for fielding stats
+		if (isSport("baseball")) {
+			return statsTable.stats.filter(stat => stat !== "pos");
+		}
+
+		return [...statsTable.stats];
+	}
 };
 
-const getPlayerStats = async (
+const getTeamStats = async (
 	statTypeInput: string | undefined,
-	season: number | "career",
-	playoffs: "playoffs" | "regularSeason" | "combined",
+	season: number,
+	playoffs: "playoffs" | "regularSeason",
 ) => {
 	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
 	const statTypePlus =
@@ -101,140 +79,42 @@ const getPlayerStats = async (
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
-	const ratings = statTypePlus === "ratings" ? ["ovr", "pot", ...RATINGS] : [];
-	let statType: PlayerStatType;
-	if (isSport("basketball")) {
-		if (statTypePlus === "totals") {
-			statType = "totals";
-		} else if (statTypePlus === "per36") {
-			statType = "per36";
-		} else {
-			statType = "perGame";
-		}
-	} else {
-		statType = "totals";
-	}
-
-	let playersAll;
-
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: typeof season === "number" ? season : undefined,
-			},
-			"noCopyCache",
-		);
-	}
-
 	const statKeys = statsTable?.stats ?? ["gp"];
 
-	let players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"pid",
-			"name",
-			"tid",
-
-			// draft is needed to know who is undrafted, for the tooltip
-			"draft",
-			...(statTypePlus == "bio" ? ["age", "salary", "draftPosition"] : []),
-		],
-		ratings: ratings,
-		stats: statKeys,
-		season: typeof season === "number" ? season : undefined,
-		tid: undefined,
-		statType,
-		playoffs: playoffs === "playoffs",
-		regularSeason: playoffs === "regularSeason",
-		combined: playoffs === "combined",
-		mergeStats: "totOnly",
-		fuzz: true,
-	});
-
-	if (season === "career") {
-		for (const p of players) {
-			p.stats = p.careerStats;
-			delete p.careerStats;
-
-			// Show row from max ovr season
-			if (p.ratings) {
-				p.ratings = maxBy(p.ratings, row => row.ovr);
-			}
-		}
-	}
-
-	// HACKY! Sum up fielding stats, rather than by position
-	if (isSport("baseball") && statTypePlus === "fielding") {
-		for (const p of players) {
-			// Ignore DH games played, so that filtering on GP in the Player Graphs UI does something reasonable. Otherwise DHs with 0 fielding stats appear in all the fielding graphs.
-			const dhIndex = POS_NUMBERS.DH - 1;
-			p.stats.gp = 0;
-			for (let i = 0; i < p.stats.gpF.length; i++) {
-				if (i !== dhIndex && p.stats.gpF[i] !== undefined) {
-					p.stats.gp += p.stats.gpF[i];
-				}
-			}
-
-			// Sum up stats
-			for (const stat of statKeys) {
-				if (Array.isArray(p.stats[stat])) {
-					let sum = 0;
-					for (const value of p.stats[stat]) {
-						if (value !== undefined) {
-							sum += value;
-						}
-					}
-					p.stats[stat] = sum;
-				}
-			}
-
-			// Fix Fld%
-			p.stats.fldp = helpers.ratio(
-				(p.stats.po ?? 0) + (p.stats.a ?? 0),
-				(p.stats.po ?? 0) + (p.stats.a ?? 0) + (p.stats.e ?? 0),
-			);
-		}
-	}
-
-	if (statsTable?.onlyShowIf && !isSport("basketball")) {
-		// Ensure some non-zero stat for this position
-		const onlyShowIf = statsTable.onlyShowIf;
-
-		players = players.filter(p => {
-			for (const stat of onlyShowIf) {
-				// Array check is for byPos stats
-				if (
-					(typeof p.stats[stat] === "number" && p.stats[stat] > 0) ||
-					(Array.isArray(p.stats[stat]) && p.stats[stat].length > 0)
-				) {
-					return true;
-				}
-			}
-
-			return false;
-		});
-	}
-
-	if (g.get("challengeNoRatings") && ratings.length > 0) {
-		for (const p of players) {
-			console.log(p);
-			if (p.tid !== PLAYER.RETIRED) {
-				for (const key of ratings) {
-					p.ratings[key] = 50;
-				}
-			}
-		}
-	}
+	const seasonAttrs: TeamSeasonAttr[] = [
+		"abbrev",
+		"region",
+		"name",
+		"imgURL",
+		"imgURLSmall",
+	];
 
 	const stats = getStats(statTypePlus);
-	return { players, stats, statType: statTypePlus };
+
+	if (
+		statTypePlus === "standings" ||
+		statTypePlus === "powerRankings" ||
+		statTypePlus === "finances"
+	) {
+		seasonAttrs.push(...(stats as any));
+	}
+
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs,
+			stats: statKeys as TeamStatAttr[],
+			season,
+			playoffs: playoffs === "playoffs",
+			regularSeason: playoffs === "regularSeason",
+		},
+		"noCopyCache",
+	);
+
+	return { teams, stats, statType: statTypePlus };
 };
 
-const updatePlayers = async (
+const updateTeams = async (
 	axis: "X" | "Y",
 	inputs: ViewInput<"teamGraphs">,
 	updateEvents: UpdateEvents,
@@ -253,7 +133,7 @@ const updatePlayers = async (
 		inputs[statType] !== state[statType] ||
 		inputs[playoffs] !== state[playoffs]
 	) {
-		const statForAxis = await getPlayerStats(
+		const statForAxis = await getTeamStats(
 			inputs[statType],
 			inputs[season],
 			inputs[playoffs],
@@ -271,7 +151,7 @@ const updatePlayers = async (
 			[season]: inputs[season],
 			[statType]: statForAxis.statType,
 			[playoffs]: inputs[playoffs],
-			[`players${axis}`]: statForAxis.players,
+			[`teams${axis}`]: statForAxis.teams,
 			[`stats${axis}`]: statForAxis.stats,
 			[statKey]: stat,
 		};
@@ -281,8 +161,8 @@ const updatePlayers = async (
 const updateClientSide = (
 	inputs: ViewInput<"teamGraphs">,
 	state: any,
-	x: Awaited<ReturnType<typeof updatePlayers>>,
-	y: Awaited<ReturnType<typeof updatePlayers>>,
+	x: Awaited<ReturnType<typeof updateTeams>>,
+	y: Awaited<ReturnType<typeof updateTeams>>,
 ) => {
 	if (inputs.statX !== state.statX || inputs.statY !== state.statY) {
 		// Check x and y for statX and statY in case they were already specified there, such as randomly selecting from statForAxis
@@ -291,14 +171,14 @@ const updateClientSide = (
 			statY: y?.statY ?? inputs.statY,
 		} as {
 			// We can assert this because we know the above block runs on first render, so this is just updating an existing state, so we don't want TypeScript to get confused
-			seasonX: number | "career";
-			seasonY: number | "career";
+			seasonX: number;
+			seasonY: number;
 			statTypeX: string;
 			statTypeY: string;
-			playoffsX: "playoffs" | "regularSeason" | "combined";
-			playoffsY: "playoffs" | "regularSeason" | "combined";
-			playersX: any[];
-			playersY: any[];
+			playoffsX: "playoffs" | "regularSeason";
+			playoffsY: "playoffs" | "regularSeason";
+			teamsX: any[];
+			teamsY: any[];
 			statsX: string[];
 			statsY: string[];
 			statX: string;
@@ -312,8 +192,8 @@ export default async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	const x = await updatePlayers("X", inputs, updateEvents, state);
-	const y = await updatePlayers("Y", inputs, updateEvents, state);
+	const x = await updateTeams("X", inputs, updateEvents, state);
+	const y = await updateTeams("Y", inputs, updateEvents, state);
 
 	return Object.assign({}, x, y, updateClientSide(inputs, state, x, y));
 };

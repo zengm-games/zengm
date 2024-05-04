@@ -128,6 +128,10 @@ import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDi
 import * as exhibitionGame from "./exhibitionGame";
 import { getSummary } from "../views/trade";
 import { getStats, statTypes } from "../views/playerGraphs";
+import {
+	getStats as teamGetStats,
+	statTypes as teamStatTypes,
+} from "../views/teamGraphs";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 import isUntradable from "../core/trade/isUntradable";
 import getWinner from "../../common/getWinner";
@@ -1588,6 +1592,19 @@ const getLeagues = () => {
 const getPlayerGraphStat = (prev: { statType?: string; stat?: string }) => {
 	const statType = prev.statType ?? random.choice(statTypes);
 	const stats = getStats(statType);
+	const stat =
+		prev.stat !== undefined && stats.includes(prev.stat)
+			? prev.stat
+			: random.choice(stats);
+	return {
+		statType,
+		stat,
+	};
+};
+
+const getTeamGraphStat = (prev: { statType?: string; stat?: string }) => {
+	const statType = prev.statType ?? random.choice(teamStatTypes);
+	const stats = teamGetStats(statType);
 	const stat =
 		prev.stat !== undefined && stats.includes(prev.stat)
 			? prev.stat
@@ -4308,6 +4325,7 @@ export default {
 		getRandomRatings,
 		getRandomTeams,
 		getSavedTrade,
+		getTeamGraphStat,
 		getTradingBlockOffers,
 		ping,
 		handleUploadedDraftClass,

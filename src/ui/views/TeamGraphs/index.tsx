@@ -170,11 +170,12 @@ const PickStat = ({
 	const seasons = useDropdownOptions("seasons");
 	const statTypes = [
 		// Keep in sync with statTypes in TeamGraphs.ts
-		...useDropdownOptions("statTypesAdv"),
-		{ key: "bio", value: "Bio" },
-		{ key: "ratings", value: "Ratings" },
+		...useDropdownOptions("teamOpponentAdvanced"),
+		{ key: "standings", value: "Standings" },
+		{ key: "powerRankings", value: "Power Rankings" },
+		{ key: "finances", value: "Finances" },
 	];
-	const playoffs = useDropdownOptions("playoffsCombined");
+	const playoffs = useDropdownOptions("playoffs");
 
 	const xyCapital = label === "x" ? "X" : "Y";
 

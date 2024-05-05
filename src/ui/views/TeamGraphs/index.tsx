@@ -98,6 +98,13 @@ const GraphCreation = ({
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
 			getImageUrl={t => t.imgURLSmall ?? t.imgURL}
+			getLink={t =>
+				helpers.leagueUrl([
+					"roster",
+					`${t.abbrev}_${t.tid}`,
+					t.seasonAttrs.season,
+				])
+			}
 			getTooltipTitle={t => `${t.region} ${t.name}`}
 			renderTooltip={(value, p, i) => {
 				return (

@@ -5,7 +5,6 @@ import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { useRef, type ReactNode } from "react";
-import { helpers } from "../../util";
 
 export type TooltipData = {
 	x: number;
@@ -18,6 +17,7 @@ type ScatterPlotProps = {
 	descShort: [string, string];
 	descLong: [string | undefined, string | undefined];
 	getImageUrl?: (row: any) => string | undefined;
+	getLink: (row: any) => string;
 	getTooltipTitle: (row: any) => string;
 	renderTooltip: (value: number, row: any, i: number) => ReactNode;
 	stat: [string, string];
@@ -85,6 +85,7 @@ const ScatterPlot = ({
 	descLong,
 	descShort,
 	getImageUrl,
+	getLink,
 	getTooltipTitle,
 	renderTooltip,
 	width: initialWidth,
@@ -208,6 +209,7 @@ const ScatterPlot = ({
 							// foreignObject is needed because an SVG <image> tag dosen't seem to support maintaining the aspect ratio of a .svg image, it only works with raster images
 							point = (
 								<foreignObject
+									key={i}
 									x={cx - size / 2}
 									y={cy - size / 2}
 									width={size}
@@ -241,7 +243,7 @@ const ScatterPlot = ({
 						return "ontouchstart" in window ? (
 							point
 						) : (
-							<a key={i} href={helpers.leagueUrl(["player", d.row.pid])}>
+							<a key={i} href={getLink(d.row)}>
 								{point}
 							</a>
 						);

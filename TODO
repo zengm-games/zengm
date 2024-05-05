@@ -13,7 +13,11 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - opponent stats working?
   - axis label
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
-- fix link on click of dot
+- generic row type on ScatterPlotProps
+  - better type for teams, at least
+- add more padding to the right side so top point doesn't get cut in half
+- for both player and team graphs, x-axis gets truncated a bit on mobile
+  - seems to be a regression compared to master branch
 
 drag and drop
 - customize page

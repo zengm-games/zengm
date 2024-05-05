@@ -82,6 +82,7 @@ const getTeamStats = async (
 	const statKeys = statsTable?.stats ?? ["gp"];
 
 	const seasonAttrs: TeamSeasonAttr[] = [
+		"season",
 		"abbrev",
 		"region",
 		"name",

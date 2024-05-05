@@ -152,7 +152,7 @@ const ScatterPlot = ({
 	return (
 		<div>
 			<svg
-				width={width}
+				width={innerWidth}
 				height={HEIGHT + margin.top + margin.bottom}
 				ref={svgRef}
 			>

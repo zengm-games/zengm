@@ -3,9 +3,8 @@ import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Circle, LinePath } from "@visx/shape";
 import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
-import { localPoint } from "@visx/event";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import { useRef, type MouseEvent, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { helpers } from "../../util";
 
 export type TooltipData = {
@@ -130,15 +129,12 @@ const ScatterPlot = ({
 		return m * x + b;
 	};
 
-	const handleMouseOver = (event: MouseEvent, data: TooltipData) => {
-		const coords = localPoint((event.target as any).ownerSVGElement, event);
-		if (coords) {
-			showTooltip({
-				tooltipLeft: coords.x,
-				tooltipTop: coords.y,
-				tooltipData: data,
-			});
-		}
+	const handleMouseOver = (x: number, y: number, data: TooltipData) => {
+		showTooltip({
+			tooltipLeft: x + margin.left,
+			tooltipTop: y + margin.top,
+			tooltipData: data,
+		});
 	};
 
 	const fontSizeProps = {
@@ -200,6 +196,11 @@ const ScatterPlot = ({
 						const cx = xScale(d.x);
 						const cy = yScale(d.y);
 
+						const hoverParams = {
+							onMouseOver: () => handleMouseOver(cx, cy, d),
+							onMouseOut: hideTooltip,
+						};
+
 						let point;
 						if (imageUrl) {
 							const size = 24;
@@ -216,7 +217,8 @@ const ScatterPlot = ({
 										<img
 											src={imageUrl}
 											className="mw-100 mh-100"
-											alt={tooltipData ? getTooltipTitle(tooltipData.row) : ""}
+											alt={getTooltipTitle(d.row)}
+											{...hoverParams}
 										/>
 									</div>
 								</foreignObject>
@@ -228,10 +230,9 @@ const ScatterPlot = ({
 									cx={cx}
 									cy={cy}
 									fillOpacity={0.8}
-									onMouseOver={event => handleMouseOver(event, d)}
-									onMouseOut={hideTooltip}
 									r={6}
 									fill={"var(--bs-blue)"}
+									{...hoverParams}
 								/>
 							);
 						}

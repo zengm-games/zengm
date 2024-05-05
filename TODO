@@ -1,9 +1,6 @@
 team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
 - stuff from power rankings: team rating (current/healthy), playoff rating (current/healthy), rating/position ranks
   - challengeNoRatings
-- use small logos for points on plot
-  - make sure it works for images and SVGs
-  - tooltips
 - DRY as much UI code with player graphs as possible
 - test all sports
   - baseball fielding stats

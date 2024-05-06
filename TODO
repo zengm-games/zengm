@@ -1,22 +1,24 @@
 team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
 - stuff from power rankings: team rating (current/healthy), playoff rating (current/healthy), rating/position ranks
   - challengeNoRatings
-- DRY as much UI code with player graphs as possible
 - Team/Opponent/Advanced - rename to "Team Stats" and "Opponent Stats" and "Advanced Stats"
+  - all sports
 - standings
   - only show pts/tied/otl/etc when appropriate
 - test all sports
   - baseball fielding stats
 - when to hide for missing data? maybe only if both are playoffs, for teams with no playoff games. or if both disabled
-- payroll vs salaryPaid
 - getId for key?
+- test playoff stats
 - power rankings for this season
   - DRY with powerRankings code, avgAge too
+  - getFormattedStat for all of them
 - finances
   - expense levels
-  - payroll - how exactly? current or paid?
   - DRY with leagueFinances, make sure it's using current values for this season
   - rounding of large units in axis ticks and tooltip
+  - getFormattedStat for all of them
+- does playoffs dropdown make sense for any of these except stats? not really
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
 - when swithing between team and opp, keep same stat
 - width on mobile extending beyond screen width?

@@ -54,12 +54,13 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			profit: "Profit",
 			cash: "Cash",
 			pop: "Pop",
+			payrollOrSalaryPaid: "Payroll",
 		};
 
 		return overrides[stat] ?? stat;
 	}
 
-	if (statType === "Opponent" && stat.startsWith("opp")) {
+	if (statType === "opponent" && stat.startsWith("opp")) {
 		return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 	}
 

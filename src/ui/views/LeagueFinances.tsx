@@ -69,10 +69,7 @@ const LeagueFinances = ({
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
-		const payroll =
-			season === currentSeason
-				? t.seasonAttrs.payroll
-				: t.seasonAttrs.salaryPaid;
+		const payroll = t.seasonAttrs.payrollOrSalaryPaid;
 
 		const data: DataTableRow["data"] = [
 			wrappedTeamLogoAndName(

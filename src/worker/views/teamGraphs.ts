@@ -52,7 +52,7 @@ export const getStats = (statTypePlus: string) => {
 	} else if (statTypePlus === "powerRankings") {
 		return ["avgAge"];
 	} else if (statTypePlus === "finances") {
-		return ["att", "revenue", "profit", "cash", "pop"];
+		return ["pop", "att", "revenue", "profit", "cash", "payrollOrSalaryPaid"];
 	} else {
 		const statsTable = getStatsTableByType(statTypePlus);
 		if (!statsTable) {

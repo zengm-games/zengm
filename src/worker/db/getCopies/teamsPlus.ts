@@ -131,6 +131,12 @@ const processSeasonAttrs = async <
 					} else {
 						row.payroll = undefined;
 					}
+				} else if (attr === "payrollOrSalaryPaid") {
+					if (season === g.get("season")) {
+						row.payrollOrSalaryPaid = (await team.getPayroll(t.tid)) / 1000;
+					} else {
+						row.payrollOrSalaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
+					}
 				} else if (attr === "lastTen") {
 					const lastTenWon = ts.lastTen.filter(x => x === 1).length;
 					const lastTenLost = ts.lastTen.filter(x => x === 0).length;

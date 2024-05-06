@@ -1565,6 +1565,7 @@ type TeamSeasonPlus = TeamSeason & {
 	profit: number;
 	salaryPaid: number;
 	payroll: number;
+	payrollOrSalaryPaid: number;
 	lastTen: string;
 	streak: string;
 	pts: number;

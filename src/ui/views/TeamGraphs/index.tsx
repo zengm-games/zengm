@@ -11,28 +11,32 @@ import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
 
 const addPrefixForStat = (statType: string, stat: string) => {
-	if (statType === "ratings") {
-		if (stat === "ovr") {
-			return "Ovr";
+	if (statType === "standings") {
+		const overrides: Record<string, string | undefined> = {
+			otl: "OTL",
+			won: "W",
+			lost: "L",
+			tied: "T",
+			winp: "%",
+			pts: "PTS",
+			ptsPct: "PTS%",
+		};
+
+		const suffixes = ["Home", "Away", "Conf", "Div"];
+		for (const suffix of suffixes) {
+			if (stat.endsWith(suffix)) {
+				const statNoSuffix = stat.replace(suffix, "");
+				return overrides[statNoSuffix] ?? statNoSuffix;
+			}
 		}
-		if (stat === "pot") {
-			return "Pot";
-		}
-		return `rating:${stat}`;
-	} else if (statType === "bio") {
-		if (stat === "age") {
-			return "Age";
-		}
-		if (stat === "draftPosition") {
-			return "Draft Pick";
-		}
-		if (stat === "salary") {
-			return "Salary";
-		}
+
+		return overrides[stat] ?? stat;
 	}
-	if (stat.startsWith("opp")) {
+
+	if (statType === "Opponent" && stat.startsWith("opp")) {
 		return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 	}
+
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
 
@@ -56,30 +60,13 @@ const getStatsWithLabels = (
 };
 
 const getStatFromTeam = (t: any, stat: string, statType: string) => {
-	if (statType == "ratings") {
-		return t.ratings[stat];
-	} else if (statType == "bio") {
-		return t[stat] ?? 0;
-	}
-	if (statType == "gameHighs") {
-		stat = t.stats[stat];
-		return Array.isArray(stat) ? stat[0] : stat;
+	if (statType == "standings") {
+		return t.seasonAttrs[stat] ?? 0;
 	}
 	return t.stats[stat];
 };
 
 const getFormattedStat = (value: number, stat: string, statType: string) => {
-	if (statType === "bio") {
-		if (stat === "salary") {
-			return helpers.formatCurrency(value, "M");
-		}
-		if (stat === "draftPosition") {
-			return helpers.ordinal(value);
-		}
-	}
-	if (statType === "bio" || statType === "ratings") {
-		return value;
-	}
 	return helpers.roundStat(value, stat, statType === "totals");
 };
 

@@ -2,6 +2,10 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - stuff from power rankings: team rating (current/healthy), playoff rating (current/healthy), rating/position ranks
   - challengeNoRatings
 - DRY as much UI code with player graphs as possible
+- standings
+  - only show pts/tied/otl/etc when appropriate
+  - handle suffixes in description
+  - rounding of stats like w, otl
 - test all sports
   - baseball fielding stats
 - where do other seasonAttrs like avgAge go?

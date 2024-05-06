@@ -10,6 +10,13 @@ import { groupByUnique } from "../../../common/utils";
 import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
 
+const suffixes = {
+	Home: "Home",
+	Away: "Away",
+	Conf: "Conference",
+	Div: "Division",
+};
+
 const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType === "standings") {
 		const overrides: Record<string, string | undefined> = {
@@ -17,13 +24,12 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			won: "W",
 			lost: "L",
 			tied: "T",
-			winp: "%",
+			winp: "Win%",
 			pts: "PTS",
 			ptsPct: "PTS%",
 		};
 
-		const suffixes = ["Home", "Away", "Conf", "Div"];
-		for (const suffix of suffixes) {
+		for (const suffix of Object.keys(suffixes)) {
 			if (stat.endsWith(suffix)) {
 				const statNoSuffix = stat.replace(suffix, "");
 				return overrides[statNoSuffix] ?? statNoSuffix;
@@ -47,10 +53,21 @@ const getStatsWithLabels = (
 ) => {
 	return getCols(stats.map(stat => addPrefixForStat(statType, stat))).map(
 		(col, i) => {
-			if (prefixOpp && stats[i].startsWith("opp")) {
+			const stat = stats[i];
+
+			if (prefixOpp && stat.startsWith("opp")) {
 				col.title = `opp${col.title}`;
 				if (col.desc) {
 					col.desc = `Opponent ${col.desc}`;
+				}
+			}
+
+			for (const [suffix, long] of Object.entries(suffixes)) {
+				if (stat.endsWith(suffix)) {
+					col.title += suffix;
+					if (col.desc) {
+						col.desc = `${long} ${col.desc}`;
+					}
 				}
 			}
 

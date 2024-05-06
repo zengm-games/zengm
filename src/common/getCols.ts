@@ -3254,6 +3254,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"Win%": {
+		desc: "Winning Percentage",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	X: {
 		desc: "Exclude from counter offers",
 		noSearch: true,

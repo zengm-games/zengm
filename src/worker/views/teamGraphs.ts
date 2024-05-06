@@ -8,6 +8,7 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import type { TeamStatAttr } from "../../common/types.baseball";
+import { team } from "../core";
 
 export const statTypes = [
 	"standings",
@@ -112,6 +113,27 @@ const getTeamStats = async (
 		},
 		"noCopyCache",
 	);
+	if (
+		seasonAttrs.includes("avgAge") &&
+		teams.some(t => t.seasonAttrs.avgAge === undefined)
+	) {
+		for (const t of teams) {
+			const playersRaw = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				t.tid,
+			);
+			const players = await idb.getCopies.playersPlus(playersRaw, {
+				attrs: ["tid", "injury", "value", "age", "pid"],
+				stats: ["season", "tid", "gp", "min"],
+				season,
+				showNoStats: g.get("season") === season,
+				showRookies: g.get("season") === season,
+				fuzz: true,
+				tid: t.tid,
+			});
+			t.seasonAttrs.avgAge = team.avgAge(players);
+		}
+	}
 
 	return { teams, stats, statType: statTypePlus };
 };

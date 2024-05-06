@@ -84,6 +84,14 @@ const getStatFromTeam = (t: any, stat: string, statType: string) => {
 };
 
 const getFormattedStat = (value: number, stat: string, statType: string) => {
+	if (statType === "standings") {
+		if (stat === "winp" || stat === "ptsPct") {
+			return helpers.roundWinp(value);
+		} else {
+			return Math.round(value);
+		}
+	}
+
 	return helpers.roundStat(value, stat, statType === "totals");
 };
 

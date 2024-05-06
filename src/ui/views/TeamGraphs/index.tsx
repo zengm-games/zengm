@@ -47,6 +47,18 @@ const addPrefixForStat = (statType: string, stat: string) => {
 		return overrides[stat] ?? stat;
 	}
 
+	if (statType === "finances") {
+		const overrides: Record<string, string | undefined> = {
+			att: "Avg Attendance",
+			revenue: "Revenue",
+			profit: "Profit",
+			cash: "Cash",
+			pop: "Pop",
+		};
+
+		return overrides[stat] ?? stat;
+	}
+
 	if (statType === "Opponent" && stat.startsWith("opp")) {
 		return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 	}
@@ -85,7 +97,11 @@ const getStatsWithLabels = (
 };
 
 const getStatFromTeam = (t: any, stat: string, statType: string) => {
-	if (statType == "standings" || statType === "powerRankings") {
+	if (
+		statType == "standings" ||
+		statType === "powerRankings" ||
+		statType === "finances"
+	) {
 		return t.seasonAttrs[stat] ?? 0;
 	}
 	return t.stats[stat];

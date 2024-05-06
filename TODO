@@ -7,15 +7,19 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
   - only show pts/tied/otl/etc when appropriate
 - test all sports
   - baseball fielding stats
-- where do other seasonAttrs like avgAge go?
-- how are superCols ones handled?
-- whewn to hide for missing data? maybe only if both are playoffs, for teams with no playoff games
+- when to hide for missing data? maybe only if both are playoffs, for teams with no playoff games. or if both disabled
 - payroll vs salaryPaid
 - getId for key?
-- power rankings for this season - DRY with powerRankings code, avgAge too
-- expense levels
+- power rankings for this season
+  - DRY with powerRankings code, avgAge too
+- finances
+  - expense levels
+  - payroll - how exactly? current or paid?
+  - DRY with leagueFinances, make sure it's using current values for this season
+  - rounding of large units in axis ticks and tooltip
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
 - when swithing between team and opp, keep same stat
+- width on mobile extending beyond screen width?
 
 is team being set right on out of bounds? https://discord.com/channels/290013534023057409/290015591216054273/1236560475949633639
 

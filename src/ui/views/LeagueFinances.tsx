@@ -43,8 +43,8 @@ const LeagueFinances = ({
 				"Pop",
 				"Avg Attendance",
 				"Ticket Price",
-				"Revenue (YTD)",
-				"Profit (YTD)",
+				"Revenue",
+				"Profit",
 				"Cash",
 				"Payroll",
 				...capSpaceColNames,
@@ -55,7 +55,7 @@ const LeagueFinances = ({
 				"Coaching",
 				"Health",
 				"Facilities",
-		  ])
+			])
 		: getCols([
 				"Team",
 				"Pop",
@@ -65,7 +65,7 @@ const LeagueFinances = ({
 				"Roster Spots",
 				"Strategy",
 				"Trade",
-		  ]);
+			]);
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
@@ -92,7 +92,7 @@ const LeagueFinances = ({
 						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
 						helpers.formatCurrency(t.seasonAttrs.profit, "M"),
 						helpers.formatCurrency(t.seasonAttrs.cash, "M"),
-				  ]
+					]
 				: []),
 			helpers.formatCurrency(payroll, "M"),
 		];

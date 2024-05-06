@@ -3143,7 +3143,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"Profit (YTD)": {
+	Profit: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
@@ -3170,7 +3170,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"Revenue (YTD)": {
+	Revenue: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},

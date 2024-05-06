@@ -55,6 +55,10 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			cash: "Cash",
 			pop: "Pop",
 			payrollOrSalaryPaid: "Payroll",
+			scoutingLevel: "Scouting",
+			coachingLevel: "Coaching",
+			healthLevel: "Health",
+			facilitiesLevel: "Facilities",
 		};
 
 		return overrides[stat] ?? stat;
@@ -98,6 +102,10 @@ const getStatsWithLabels = (
 };
 
 const getStatFromTeam = (t: any, stat: string, statType: string) => {
+	if (statType === "finances" && stat.endsWith("Level")) {
+		const key = stat.replace("Level", "");
+		return t.seasonAttrs.expenseLevels[key];
+	}
 	if (
 		statType == "standings" ||
 		statType === "powerRankings" ||

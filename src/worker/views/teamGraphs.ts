@@ -52,7 +52,18 @@ export const getStats = (statTypePlus: string) => {
 	} else if (statTypePlus === "powerRankings") {
 		return ["avgAge"];
 	} else if (statTypePlus === "finances") {
-		return ["pop", "att", "revenue", "profit", "cash", "payrollOrSalaryPaid"];
+		return [
+			"pop",
+			"att",
+			"revenue",
+			"profit",
+			"cash",
+			"payrollOrSalaryPaid",
+			"scoutingLevel",
+			"coachingLevel",
+			"healthLevel",
+			"facilitiesLevel",
+		];
 	} else {
 		const statsTable = getStatsTableByType(statTypePlus);
 		if (!statsTable) {
@@ -94,12 +105,13 @@ const getTeamStats = async (
 
 	const stats = getStats(statTypePlus);
 
-	if (
-		statTypePlus === "standings" ||
-		statTypePlus === "powerRankings" ||
-		statTypePlus === "finances"
-	) {
-		seasonAttrs.push(...(stats as any));
+	if (statTypePlus === "standings" || statTypePlus === "powerRankings") {
+		seasonAttrs.push(...(stats as any[]));
+	} else if (statTypePlus === "finances") {
+		seasonAttrs.push(
+			...(stats as any[]).filter(stat => !stat.endsWith("Level")),
+			"expenseLevels",
+		);
 	}
 
 	const teams = await idb.getCopies.teamsPlus(

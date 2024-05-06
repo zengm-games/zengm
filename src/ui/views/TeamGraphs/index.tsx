@@ -55,17 +55,17 @@ const getStatsWithLabels = (
 	);
 };
 
-const getStatFromTeam = (p: any, stat: string, statType: string) => {
+const getStatFromTeam = (t: any, stat: string, statType: string) => {
 	if (statType == "ratings") {
-		return p.ratings[stat];
+		return t.ratings[stat];
 	} else if (statType == "bio") {
-		return p[stat] ?? 0;
+		return t[stat] ?? 0;
 	}
 	if (statType == "gameHighs") {
-		stat = p.stats[stat];
+		stat = t.stats[stat];
 		return Array.isArray(stat) ? stat[0] : stat;
 	}
-	return p.stats[stat];
+	return t.stats[stat];
 };
 
 const getFormattedStat = (value: number, stat: string, statType: string) => {
@@ -83,12 +83,14 @@ const getFormattedStat = (value: number, stat: string, statType: string) => {
 	return helpers.roundStat(value, stat, statType === "totals");
 };
 
-const GraphCreation = ({
+type ViewProps = View<"teamGraphs">;
+
+const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 	stat,
 	statType,
 	teams,
 }: {
-	teams: [any, any];
+	teams: [Team[], Team[]];
 	stat: [string, string];
 	statType: [string, string];
 	minGames: number;
@@ -111,11 +113,11 @@ const GraphCreation = ({
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
-		<StatGraph
+		<StatGraph<Team>
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
-			getImageUrl={t => t.imgURLSmall ?? t.imgURL}
+			getImageUrl={t => t.seasonAttrs.imgURLSmall ?? t.seasonAttrs.imgURL}
 			getLink={t =>
 				helpers.leagueUrl([
 					"roster",
@@ -123,7 +125,7 @@ const GraphCreation = ({
 					t.seasonAttrs.season,
 				])
 			}
-			getTooltipTitle={t => `${t.region} ${t.name}`}
+			getTooltipTitle={t => `${t.seasonAttrs.region} ${t.seasonAttrs.name}`}
 			renderTooltip={(value, p, i) => {
 				return (
 					<div key={i}>
@@ -321,7 +323,7 @@ const TeamGraphs = ({
 	statY,
 	teamsX,
 	teamsY,
-}: View<"teamGraphs">) => {
+}: ViewProps) => {
 	useTitleBar({
 		title: "Team Graphs",
 		dropdownView: "team_graphs",

@@ -2,6 +2,7 @@ import { isSport, TEAM_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g, random } from "../util";
 import type {
+	TeamFiltered,
 	TeamSeasonAttr,
 	UpdateEvents,
 	ViewInput,
@@ -102,7 +103,7 @@ const getTeamStats = async (
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["tid", "abbrev", "region", "name", "imgURL", "imgURLSmall"],
+			attrs: ["tid", "abbrev"],
 			seasonAttrs,
 			stats: statKeys as TeamStatAttr[],
 			season,
@@ -159,6 +160,13 @@ const updateTeams = async (
 	}
 };
 
+type Team = TeamFiltered<
+	["tid", "abbrev"],
+	["season", "abbrev", "region", "name", "imgURL", "imgURLSmall"],
+	["gp"],
+	number
+>;
+
 const updateClientSide = (
 	inputs: ViewInput<"teamGraphs">,
 	state: any,
@@ -178,8 +186,8 @@ const updateClientSide = (
 			statTypeY: string;
 			playoffsX: "playoffs" | "regularSeason";
 			playoffsY: "playoffs" | "regularSeason";
-			teamsX: any[];
-			teamsY: any[];
+			teamsX: Team[];
+			teamsY: Team[];
 			statsX: string[];
 			statsY: string[];
 			statX: string;

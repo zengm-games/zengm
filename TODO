@@ -8,11 +8,10 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - how are superCols ones handled?
 - whewn to hide for missing data? maybe only if both are playoffs, for teams with no playoff games
 - payroll vs salaryPaid
+- getId for key?
 - power rankings for this season
 - expense levels
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
-- generic row type on ScatterPlotProps
-  - better type for teams, at least
 - when swithing between team and opp, keep same stat
 
 is team being set right on out of bounds? https://discord.com/channels/290013534023057409/290015591216054273/1236560475949633639

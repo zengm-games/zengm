@@ -12,14 +12,14 @@ export type TooltipData = {
 	row: any;
 };
 
-type ScatterPlotProps = {
+type ScatterPlotProps<Row> = {
 	data: TooltipData[];
 	descShort: [string, string];
 	descLong: [string | undefined, string | undefined];
-	getImageUrl?: (row: any) => string | undefined;
-	getLink: (row: any) => string;
-	getTooltipTitle: (row: any) => string;
-	renderTooltip: (value: number, row: any, i: number) => ReactNode;
+	getImageUrl?: (row: Row) => string | undefined;
+	getLink: (row: Row) => string;
+	getTooltipTitle: (row: Row) => string;
+	renderTooltip: (value: number, row: Row, i: number) => ReactNode;
 	stat: [string, string];
 	statType: [string, string];
 };
@@ -80,7 +80,7 @@ const linearRegression = (
 	return { m, b, rSquared };
 };
 
-const ScatterPlot = ({
+const ScatterPlot = <Row extends unknown>({
 	data,
 	descLong,
 	descShort,
@@ -89,7 +89,7 @@ const ScatterPlot = ({
 	getTooltipTitle,
 	renderTooltip,
 	width: initialWidth,
-}: ScatterPlotProps & {
+}: ScatterPlotProps<Row> & {
 	width: number;
 }) => {
 	const HEIGHT = 400;
@@ -284,11 +284,13 @@ const ScatterPlot = ({
 	);
 };
 
-export const StatGraph = (props: ScatterPlotProps) => {
+export const StatGraph = <Row extends unknown>(
+	props: ScatterPlotProps<Row>,
+) => {
 	return (
 		<div className="position-relative">
 			<ParentSize>
-				{parent => <ScatterPlot width={parent.width} {...props} />}
+				{parent => <ScatterPlot<Row> width={parent.width} {...props} />}
 			</ParentSize>
 		</div>
 	);

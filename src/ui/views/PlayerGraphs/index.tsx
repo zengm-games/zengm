@@ -101,7 +101,7 @@ const GraphCreation = ({
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
-		<StatGraph
+		<StatGraph<any>
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}

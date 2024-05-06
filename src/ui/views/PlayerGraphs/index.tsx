@@ -33,8 +33,8 @@ const addPrefixForStat = (statType: string, stat: string) => {
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
 
-const getStatsWithLabels = (stats: string[], statTypeX: string) => {
-	return getCols(stats.map(stat => addPrefixForStat(statTypeX, stat)));
+const getStatsWithLabels = (stats: string[], statType: string) => {
+	return getCols(stats.map(stat => addPrefixForStat(statType, stat)));
 };
 
 const getStatFromPlayer = (p: any, stat: string, statType: string) => {

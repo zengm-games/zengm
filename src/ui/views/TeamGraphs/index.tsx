@@ -30,11 +30,29 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			return "Salary";
 		}
 	}
+	if (stat.startsWith("opp")) {
+		return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
+	}
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
 
-const getStatsWithLabels = (stats: string[], statTypeX: string) => {
-	return getCols(stats.map(stat => addPrefixForStat(statTypeX, stat)));
+const getStatsWithLabels = (
+	stats: string[],
+	statType: string,
+	prefixOpp: boolean,
+) => {
+	return getCols(stats.map(stat => addPrefixForStat(statType, stat))).map(
+		(col, i) => {
+			if (prefixOpp && stats[i].startsWith("opp")) {
+				col.title = `opp${col.title}`;
+				if (col.desc) {
+					col.desc = `Opponent ${col.desc}`;
+				}
+			}
+
+			return col;
+		},
+	);
 };
 
 const getStatFromTeam = (p: any, stat: string, statType: string) => {
@@ -88,8 +106,8 @@ const GraphCreation = ({
 		});
 	}
 
-	const titleX = getStatsWithLabels([stat[0]], statType[0])[0];
-	const titleY = getStatsWithLabels([stat[1]], statType[1])[0];
+	const titleX = getStatsWithLabels([stat[0]], statType[0], true)[0];
+	const titleY = getStatsWithLabels([stat[1]], statType[1], true)[0];
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
@@ -160,7 +178,11 @@ const PickStat = ({
 	updateUrl: (state: UpdateUrlParam) => void;
 	stats: string[];
 }) => {
-	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {
+	const statsXEnriched = getStatsWithLabels(
+		stats,
+		state.statType,
+		false,
+	) as (Col & {
 		stat: string;
 	})[];
 	for (let i = 0; i < statsXEnriched.length; i++) {

@@ -10,11 +10,10 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - payroll vs salaryPaid
 - power rankings for this season
 - expense levels
-- opponent stats working?
-  - axis label
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
 - generic row type on ScatterPlotProps
   - better type for teams, at least
+- when swithing between team and opp, keep same stat
 
 is team being set right on out of bounds? https://discord.com/channels/290013534023057409/290015591216054273/1236560475949633639
 

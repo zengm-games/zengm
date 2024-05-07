@@ -197,6 +197,7 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
 			getImageUrl={t => t.seasonAttrs.imgURLSmall ?? t.seasonAttrs.imgURL}
+			getKey={t => t.tid}
 			getLink={t =>
 				helpers.leagueUrl([
 					"roster",

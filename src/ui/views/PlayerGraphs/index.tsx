@@ -105,6 +105,7 @@ const GraphCreation = ({
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
+			getKey={p => p.pid}
 			getLink={p => helpers.leagueUrl(["player", p.pid])}
 			getTooltipTitle={p => p.name}
 			renderTooltip={(value, p, i) => {

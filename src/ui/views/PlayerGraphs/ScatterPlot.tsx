@@ -17,6 +17,7 @@ type ScatterPlotProps<Row> = {
 	descShort: [string, string];
 	descLong: [string | undefined, string | undefined];
 	getImageUrl?: (row: Row) => string | undefined;
+	getKey: (row: Row) => string | number;
 	getLink: (row: Row) => string;
 	getTooltipTitle: (row: Row) => string;
 	renderTooltip: (value: number, row: Row, i: number) => ReactNode;
@@ -85,6 +86,7 @@ const ScatterPlot = <Row extends unknown>({
 	descLong,
 	descShort,
 	getImageUrl,
+	getKey,
 	getLink,
 	getTooltipTitle,
 	renderTooltip,
@@ -209,7 +211,7 @@ const ScatterPlot = <Row extends unknown>({
 							// foreignObject is needed because an SVG <image> tag dosen't seem to support maintaining the aspect ratio of a .svg image, it only works with raster images
 							point = (
 								<foreignObject
-									key={i}
+									key={getKey(d.row)}
 									x={cx - size / 2}
 									y={cy - size / 2}
 									width={size}
@@ -228,7 +230,7 @@ const ScatterPlot = <Row extends unknown>({
 						} else {
 							point = (
 								<Circle
-									key={i}
+									key={getKey(d.row)}
 									cx={cx}
 									cy={cy}
 									fillOpacity={0.8}

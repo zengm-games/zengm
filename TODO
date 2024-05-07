@@ -4,7 +4,6 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - test all sports
   - baseball fielding stats
 - when to hide for missing data? maybe only if both are playoffs, for teams with no playoff games. or if both disabled
-- getId for key?
 - test playoff stats
 - power rankings for this season
   - DRY with powerRankings code, avgAge too

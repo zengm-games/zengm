@@ -9,6 +9,7 @@ import { getCols, helpers, toWorker } from "../../util";
 import { groupByUnique } from "../../../common/utils";
 import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
+import { isSport } from "../../../common";
 
 const suffixes = {
 	Home: "Home",
@@ -242,6 +243,35 @@ type UpdateUrlParam = {
 	minGames?: string;
 };
 
+const actuallyAddSuffix = (text: string) => {
+	if (isSport("basketball") && text.includes("Feats")) {
+		return text;
+	}
+
+	return `${text} Stats`;
+};
+
+const addStatsSuffix = (option: DropdownOption) => {
+	const value = option.value;
+
+	let newValue: typeof value;
+	if (typeof value === "string") {
+		newValue = actuallyAddSuffix(value);
+	} else {
+		newValue = value.map(row => {
+			return {
+				...row,
+				text: actuallyAddSuffix(row.text),
+			};
+		});
+	}
+
+	return {
+		...option,
+		value: newValue,
+	};
+};
+
 const PickStat = ({
 	className,
 	label,
@@ -269,7 +299,7 @@ const PickStat = ({
 	const seasons = useDropdownOptions("seasons");
 	const statTypes = [
 		// Keep in sync with statTypes in TeamGraphs.ts
-		...useDropdownOptions("teamOpponentAdvanced"),
+		...useDropdownOptions("teamOpponentAdvanced").map(addStatsSuffix),
 		{ key: "standings", value: "Standings" },
 		{ key: "powerRankings", value: "Power Rankings" },
 		{ key: "finances", value: "Finances" },

@@ -13,9 +13,6 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - power rankings for this season
   - DRY with powerRankings code, avgAge too
   - getFormattedStat for all of them
-- finances
-  - rounding of large units in axis ticks and tooltip
-  - getFormattedStat for all of them
 - does playoffs dropdown make sense for any of these except stats? not really
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
 - when swithing between team and opp, keep same stat

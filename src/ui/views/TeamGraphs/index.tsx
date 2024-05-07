@@ -50,6 +50,7 @@ const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType === "finances") {
 		const overrides: Record<string, string | undefined> = {
 			att: "Avg Attendance",
+			ticketPrice: "Ticket Price",
 			revenue: "Revenue",
 			profit: "Profit",
 			cash: "Cash",
@@ -102,9 +103,11 @@ const getStatsWithLabels = (
 };
 
 const getStatFromTeam = (t: any, stat: string, statType: string) => {
-	if (statType === "finances" && stat.endsWith("Level")) {
-		const key = stat.replace("Level", "");
-		return t.seasonAttrs.expenseLevels[key];
+	if (statType === "finances") {
+		if (stat.endsWith("Level")) {
+			const key = stat.replace("Level", "");
+			return t.seasonAttrs.expenseLevels[key];
+		}
 	}
 	if (
 		statType == "standings" ||
@@ -122,6 +125,33 @@ const getFormattedStat = (value: number, stat: string, statType: string) => {
 			return helpers.roundWinp(value);
 		} else {
 			return Math.round(value);
+		}
+	}
+
+	if (statType === "finances") {
+		switch (stat) {
+			case "pop":
+				return `${value.toFixed(1)}M`;
+			case "att":
+				return helpers.numberWithCommas(Math.round(value));
+			case "revenue":
+				return helpers.formatCurrency(value, "M");
+			case "profit":
+				return helpers.formatCurrency(value, "M");
+			case "cash":
+				return helpers.formatCurrency(value, "M");
+			case "payrollOrSalaryPaid":
+				return helpers.formatCurrency(value, "M");
+			case "scoutingLevel":
+				return value;
+			case "coachingLevel":
+				return value;
+			case "healthLevel":
+				return value;
+			case "facilitiesLevel":
+				return value;
+			default:
+				throw new Error("Unknown stat");
 		}
 	}
 

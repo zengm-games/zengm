@@ -1589,11 +1589,15 @@ const getLeagues = () => {
 	return idb.meta.getAll("leagues");
 };
 
-const getPlayerGraphStat = (prev: { statType?: string; stat?: string }) => {
-	const statType = prev.statType ?? random.choice(statTypes);
+const getPlayerGraphStat = ({
+	prev,
+}: {
+	prev?: { statType?: string; stat?: string };
+}) => {
+	const statType = prev?.statType ?? random.choice(statTypes);
 	const stats = getStats(statType);
 	const stat =
-		prev.stat !== undefined && stats.includes(prev.stat)
+		prev?.stat !== undefined && stats.includes(prev.stat)
 			? prev.stat
 			: random.choice(stats);
 	return {
@@ -1602,11 +1606,19 @@ const getPlayerGraphStat = (prev: { statType?: string; stat?: string }) => {
 	};
 };
 
-const getTeamGraphStat = (prev: { statType?: string; stat?: string }) => {
-	const statType = prev.statType ?? random.choice(teamStatTypes);
-	const stats = teamGetStats(statType);
+console.log("awa");
+const getTeamGraphStat = ({
+	prev,
+	seasons,
+}: {
+	prev?: { statType?: string; stat?: string };
+	seasons: [number, number];
+}) => {
+	const statType = prev?.statType ?? random.choice(teamStatTypes);
+	const stats = teamGetStats(statType, seasons);
+
 	const stat =
-		prev.stat !== undefined && stats.includes(prev.stat)
+		prev?.stat !== undefined && stats.includes(prev.stat)
 			? prev.stat
 			: random.choice(stats);
 	return {

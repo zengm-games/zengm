@@ -8,7 +8,7 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import type { TeamStatAttr } from "../../common/types.baseball";
-import { team } from "../core";
+import { season, team } from "../core";
 
 export const statTypes = [
 	"standings",
@@ -22,9 +22,9 @@ const getStatsTableByType = (statTypePlus: string) => {
 	return TEAM_STATS_TABLES[statTypePlus];
 };
 
-export const getStats = (statTypePlus: string) => {
+export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 	if (statTypePlus === "standings") {
-		return [
+		const stats = [
 			"won",
 			"lost",
 			"tied",
@@ -49,6 +49,46 @@ export const getStats = (statTypePlus: string) => {
 			"tiedConf",
 			"otlConf",
 		];
+
+		// Show ties/otl if they are enabled in one of the seasons in question
+		const useTies = seasons.some(x => season.hasTies(x));
+		const useOtl = seasons.some(x => g.get("otl", x));
+
+		// Check pts/winp together since they are based on the same thing
+		let usePts = false;
+		let useWinp = false;
+		for (const season of seasons) {
+			const pointsFormula = g.get("pointsFormula", season);
+			if (pointsFormula !== "") {
+				usePts = true;
+			} else {
+				useWinp = true;
+			}
+		}
+
+		const toRemove: string[] = [];
+		if (!useTies) {
+			toRemove.push("tied");
+		}
+		if (!useOtl) {
+			toRemove.push("otl");
+		}
+		if (!useWinp) {
+			toRemove.push("winp");
+		}
+		if (!usePts) {
+			toRemove.push("ptsPct", "pts");
+		}
+
+		return stats.filter(stat => {
+			for (const part of toRemove) {
+				if (stat.startsWith(part)) {
+					return false;
+				}
+			}
+
+			return true;
+		});
 	} else if (statTypePlus === "powerRankings") {
 		return ["avgAge"];
 	} else if (statTypePlus === "finances") {
@@ -83,6 +123,7 @@ const getTeamStats = async (
 	statTypeInput: string | undefined,
 	season: number,
 	playoffs: "playoffs" | "regularSeason",
+	seasons: [number, number],
 ) => {
 	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
 	const statTypePlus =
@@ -103,7 +144,7 @@ const getTeamStats = async (
 		"imgURLSmall",
 	];
 
-	const stats = getStats(statTypePlus);
+	const stats = getStats(statTypePlus, seasons);
 
 	if (statTypePlus === "standings" || statTypePlus === "powerRankings") {
 		seasonAttrs.push(...(stats as any[]));
@@ -173,6 +214,7 @@ const updateTeams = async (
 			inputs[statType],
 			inputs[season],
 			inputs[playoffs],
+			[inputs.seasonX, inputs.seasonY],
 		);
 
 		const statKey = `stat${axis}` as const;

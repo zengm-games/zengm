@@ -277,12 +277,14 @@ const PickStat = ({
 	label,
 	state,
 	updateUrl,
+	seasons,
 	stats,
 }: {
 	className?: string;
 	label: "x" | "y";
 	state: AxisState;
 	updateUrl: (state: UpdateUrlParam) => void;
+	seasons: [number, number];
 	stats: string[];
 }) => {
 	const statsXEnriched = getStatsWithLabels(
@@ -296,7 +298,7 @@ const PickStat = ({
 		statsXEnriched[i].stat = stats[i];
 	}
 
-	const seasons = useDropdownOptions("seasons");
+	const dropdownSeasons = useDropdownOptions("seasons");
 	const statTypes = [
 		// Keep in sync with statTypes in TeamGraphs.ts
 		...useDropdownOptions("teamOpponentAdvanced").map(addStatsSuffix),
@@ -335,7 +337,7 @@ const PickStat = ({
 				}}
 			>
 				<option value="career">Career</option>
-				{seasons.map(x => {
+				{dropdownSeasons.map(x => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
@@ -345,8 +347,11 @@ const PickStat = ({
 				onChange={async event => {
 					const newStatType = event.target.value;
 					const { stat } = await toWorker("main", "getTeamGraphStat", {
-						statType: newStatType,
-						stat: state.stat,
+						prev: {
+							statType: newStatType,
+							stat: state.stat,
+						},
+						seasons,
 					});
 					await updateUrl({
 						[`stat${xyCapital}`]: stat,
@@ -399,7 +404,9 @@ const PickStat = ({
 					const { stat, statType } = await toWorker(
 						"main",
 						"getTeamGraphStat",
-						{},
+						{
+							seasons,
+						},
 					);
 
 					await updateUrl({
@@ -455,6 +462,8 @@ const TeamGraphs = ({
 		updateUrl({});
 	}
 
+	const seasons: [number, number] = [seasonX, seasonY];
+
 	return (
 		<>
 			<div className="d-flex gap-3 align-items-start mb-3 flex-wrap">
@@ -462,6 +471,7 @@ const TeamGraphs = ({
 					<PickStat
 						className="mb-3"
 						label="x"
+						seasons={seasons}
 						stats={statsX}
 						state={{
 							season: seasonX,
@@ -473,6 +483,7 @@ const TeamGraphs = ({
 					/>
 					<PickStat
 						label="y"
+						seasons={seasons}
 						stats={statsY}
 						state={{
 							season: seasonY,

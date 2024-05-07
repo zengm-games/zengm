@@ -88,7 +88,7 @@ const ScatterPlot = <Row extends unknown>({
 	getLink,
 	getTooltipTitle,
 	renderTooltip,
-	width: initialWidth,
+	width: totalWidth,
 }: ScatterPlotProps<Row> & {
 	width: number;
 }) => {
@@ -114,7 +114,7 @@ const ScatterPlot = <Row extends unknown>({
 	const svgRef = useRef(null);
 
 	const margin = { top: 10, left: 60, right: 10, bottom: 60 };
-	const width = initialWidth - margin.left - margin.right;
+	const width = totalWidth - margin.left - margin.right;
 	const xScale = scaleLinear({
 		domain: xDomain,
 		range: [0, width],
@@ -152,7 +152,7 @@ const ScatterPlot = <Row extends unknown>({
 	return (
 		<div>
 			<svg
-				width={innerWidth}
+				width={totalWidth}
 				height={HEIGHT + margin.top + margin.bottom}
 				ref={svgRef}
 			>

@@ -7,17 +7,19 @@ import hasTies from "../core/season/hasTies";
 
 const otherToRanks = (
 	teams: {
-		other: Record<string, number>;
-		otherCurrent: Record<string, number>;
+		powerRankings: {
+			other: Record<string, number>;
+			otherCurrent: Record<string, number>;
+		};
 	}[],
 ) => {
 	for (const field of ["other", "otherCurrent"] as const) {
-		for (const key of Object.keys(teams[0][field])) {
-			const values = teams.map(t => t[field][key]);
+		for (const key of Object.keys(teams[0].powerRankings[field])) {
+			const values = teams.map(t => t.powerRankings[field][key]);
 			const sorted = values.slice().sort((a, b) => b - a);
 			const ranks = values.map(value => sorted.indexOf(value) + 1);
 			for (let i = 0; i < teams.length; i++) {
-				teams[i][field][key] = ranks[i];
+				teams[i].powerRankings[field][key] = ranks[i];
 			}
 		}
 	}
@@ -123,25 +125,29 @@ export const addPowerRankingsStuffToTeams = async <
 
 			return {
 				...t,
-				score,
-				ovr,
-				ovrCurrent,
-				other,
-				otherCurrent,
-				avgAge: team.avgAge(teamPlayers),
+				powerRankings: {
+					score,
+					ovr,
+					ovrCurrent,
+					other,
+					otherCurrent,
+					avgAge: team.avgAge(teamPlayers),
 
-				// Placeholder
-				rank: -1,
+					// Placeholder
+					rank: -1,
+				},
 			};
 		}),
 	);
 
 	otherToRanks(teamsWithRankings);
 
-	teamsWithRankings.sort((a, b) => b.score - a.score);
+	teamsWithRankings.sort(
+		(a, b) => b.powerRankings.score - a.powerRankings.score,
+	);
 
 	for (let i = 0; i < teamsWithRankings.length; i++) {
-		teamsWithRankings[i].rank = i + 1;
+		teamsWithRankings[i].powerRankings.rank = i + 1;
 	}
 
 	return teamsWithRankings;

@@ -8,7 +8,8 @@ import type {
 	ViewInput,
 } from "../../common/types";
 import type { TeamStatAttr } from "../../common/types.baseball";
-import { season, team } from "../core";
+import { season } from "../core";
+import { addPowerRankingsStuffToTeams } from "./powerRankings";
 
 export const statTypes = [
 	"standings",
@@ -90,7 +91,7 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 			return true;
 		});
 	} else if (statTypePlus === "powerRankings") {
-		return ["avgAge"];
+		return ["avgAge", "rank", "ovr", "ovrCurrent"];
 	} else if (statTypePlus === "finances") {
 		return [
 			"pop",
@@ -146,16 +147,19 @@ const getTeamStats = async (
 
 	const stats = getStats(statTypePlus, seasons);
 
-	if (statTypePlus === "standings" || statTypePlus === "powerRankings") {
+	if (statTypePlus === "standings") {
 		seasonAttrs.push(...(stats as any[]));
 	} else if (statTypePlus === "finances") {
 		seasonAttrs.push(
 			...(stats as any[]).filter(stat => !stat.endsWith("Level")),
 			"expenseLevels",
 		);
+	} else if (statTypePlus === "powerRankings") {
+		statKeys.push("mov");
+		seasonAttrs.push("lastTen");
 	}
 
-	const teams = await idb.getCopies.teamsPlus(
+	let teams = await idb.getCopies.teamsPlus(
 		{
 			attrs: ["tid", "abbrev"],
 			seasonAttrs,
@@ -166,26 +170,13 @@ const getTeamStats = async (
 		},
 		"noCopyCache",
 	);
-	if (
-		seasonAttrs.includes("avgAge") &&
-		teams.some(t => t.seasonAttrs.avgAge === undefined)
-	) {
-		for (const t of teams) {
-			const playersRaw = await idb.cache.players.indexGetAll(
-				"playersByTid",
-				t.tid,
-			);
-			const players = await idb.getCopies.playersPlus(playersRaw, {
-				attrs: ["tid", "injury", "value", "age", "pid"],
-				stats: ["season", "tid", "gp", "min"],
-				season,
-				showNoStats: g.get("season") === season,
-				showRookies: g.get("season") === season,
-				fuzz: true,
-				tid: t.tid,
-			});
-			t.seasonAttrs.avgAge = team.avgAge(players);
-		}
+
+	if (statTypePlus === "powerRankings") {
+		teams = await addPowerRankingsStuffToTeams(
+			teams as any[],
+			season,
+			playoffs,
+		);
 	}
 
 	return { teams, stats, statType: statTypePlus };

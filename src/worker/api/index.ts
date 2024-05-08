@@ -1606,7 +1606,6 @@ const getPlayerGraphStat = ({
 	};
 };
 
-console.log("awa");
 const getTeamGraphStat = ({
 	prev,
 	seasons,

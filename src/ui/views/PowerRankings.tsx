@@ -135,7 +135,7 @@ const PowerRankings = ({
 		return {
 			key: t.tid,
 			data: [
-				t.rank,
+				t.powerRankings.rank,
 				wrappedTeamLogoAndName(
 					t,
 					helpers.leagueUrl([
@@ -147,13 +147,13 @@ const PowerRankings = ({
 				conf ? conf.name.replace(" Conference", "") : null,
 				div ? div.name : null,
 				!challengeNoRatings ? (
-					t.ovr !== t.ovrCurrent ? (
-						<span className="text-danger">{t.ovrCurrent}</span>
+					t.powerRankings.ovr !== t.powerRankings.ovrCurrent ? (
+						<span className="text-danger">{t.powerRankings.ovrCurrent}</span>
 					) : (
-						t.ovrCurrent
+						t.powerRankings.ovrCurrent
 					)
 				) : null,
-				!challengeNoRatings ? t.ovr : null,
+				!challengeNoRatings ? t.powerRankings.ovr : null,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
 				...(otl ? [t.seasonAttrs.otl] : []),
@@ -165,21 +165,25 @@ const PowerRankings = ({
 								pts: t.stats.pts * t.stats.gp,
 								oppPts: t.stats.oppPts * t.stats.gp,
 								gp: t.stats.gp,
-						  }
+							}
 						: t.stats,
 					isSport("basketball") ? "mov" : "diff",
 				),
-				t.avgAge.toFixed(1),
+				t.powerRankings.avgAge.toFixed(1),
 				...otherKeys.map(key => ({
 					value: (
 						<Other
 							actualShowHealthy={actualShowHealthy}
-							current={t.otherCurrent[key]}
-							healthy={t.other[key]}
+							current={t.powerRankings.otherCurrent[key]}
+							healthy={t.powerRankings.other[key]}
 						/>
 					),
-					searchValue: actualShowHealthy ? t.other[key] : t.otherCurrent[key],
-					sortValue: actualShowHealthy ? t.other[key] : t.otherCurrent[key],
+					searchValue: actualShowHealthy
+						? t.powerRankings.other[key]
+						: t.powerRankings.otherCurrent[key],
+					sortValue: actualShowHealthy
+						? t.powerRankings.other[key]
+						: t.powerRankings.otherCurrent[key],
 				})),
 			],
 			classNames: {

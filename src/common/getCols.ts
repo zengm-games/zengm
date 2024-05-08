@@ -3230,6 +3230,14 @@ const cols: {
 		sortType: "number",
 	},
 	Team: {},
+	"Team Rating": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Team Rating (With Injuries)": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"Three-Point Winner": {
 		desc: "Three-Point Contest Winner",
 	},

@@ -43,6 +43,9 @@ const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType === "powerRankings") {
 		const overrides: Record<string, string | undefined> = {
 			avgAge: "AvgAge",
+			rank: "#",
+			ovr: "Team Rating",
+			ovrCurrent: "Team Rating (With Injuries)",
 		};
 
 		return overrides[stat] ?? stat;
@@ -92,6 +95,10 @@ const getStatsWithLabels = (
 				}
 			}
 
+			if (stat === "rank") {
+				col.title = "Rank";
+			}
+
 			for (const [suffix, long] of Object.entries(suffixes)) {
 				if (stat.endsWith(suffix)) {
 					col.title += suffix;
@@ -113,13 +120,15 @@ const getStatFromTeam = (t: any, stat: string, statType: string) => {
 			return t.seasonAttrs.expenseLevels[key];
 		}
 	}
-	if (
-		statType == "standings" ||
-		statType === "powerRankings" ||
-		statType === "finances"
-	) {
+
+	if (statType == "standings" || statType === "finances") {
 		return t.seasonAttrs[stat] ?? 0;
 	}
+
+	if (statType === "powerRankings") {
+		return t.powerRankings[stat];
+	}
+
 	return t.stats[stat];
 };
 

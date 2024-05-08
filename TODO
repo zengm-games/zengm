@@ -4,15 +4,26 @@ team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_sugge
 - test all sports
   - baseball fielding stats
 - when to hide for missing data? maybe only if both are playoffs, for teams with no playoff games. or if both disabled
-- test playoff stats
+- test playoffs
+  - stats
+  - team ratings (basketball only)
 - power rankings for this season
   - DRY with powerRankings code, avgAge too
+  - rank
+  - ovr
+  - ovrHealthy
+  - ratings ranks (basketball only)
+  - pos ranks (non-basketball only)
+  - addPowerRankingsStuffToTeams input should be non-playoff teams stats object
   - getFormattedStat for all of them
 - does playoffs dropdown make sense for any of these except stats? not really
+  - for power rankings in basketball it does
 - http://localhost/l/191/team_graphs/2035/team/regularSeason/pts/2035/team/regularSeason/ast
 - when swithing between team and opp, keep same stat
 
-is team being set right on out of bounds? https://discord.com/channels/290013534023057409/290015591216054273/1236560475949633639
+is team being set right on out of bounds?
+- https://discord.com/channels/290013534023057409/290015591216054273/1236560475949633639
+- https://discord.com/channels/290013534023057409/290015591216054273/1237562224562667571
 
 drag and drop
 - customize page

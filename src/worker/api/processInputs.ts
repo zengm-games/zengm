@@ -939,7 +939,7 @@ const watchList = (params: Params) => {
 };
 
 const powerRankings = (params: Params) => {
-	let playoffs =
+	let playoffs: "playoffs" | "regularSeason" =
 		g.get("phase") === PHASE.PLAYOFFS ? "playoffs" : "regularSeason";
 	if (params.playoffs === "playoffs") {
 		playoffs = "playoffs";

@@ -35,6 +35,10 @@ drag and drop
 - manage confs page
   - maybe same as customize page, but with some option to prevent deleting/adding teams
 
+support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
+- need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too
+- should run augmentPartialPlayer after reading file in LeagueFileUpload but before showing in UI for ImportPlayers
+
 On the frivolities page for jersey numbers add a column for number of teams that have retired the number https://discord.com/channels/290013534023057409/331882115119448065/1236793003587272845
 
 triple play logged as double play https://discord.com/channels/290013534023057409/290015591216054273/1235723112310378496

@@ -2,7 +2,7 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { TeamFiltered, UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
-import { POSITIONS, RATINGS, isSport } from "../../common";
+import { POSITIONS, RATINGS, bySport, isSport } from "../../common";
 import hasTies from "../core/season/hasTies";
 
 const otherToRanks = (
@@ -24,6 +24,13 @@ const otherToRanks = (
 		}
 	}
 };
+
+export const skipPositions = bySport({
+	baseball: ["DH"],
+	basketball: [],
+	football: ["KR", "PR"],
+	hockey: [],
+});
 
 export const addPowerRankingsStuffToTeams = async <
 	T extends TeamFiltered<["tid"], ["lastTen"], ["gp", "mov"], number>,
@@ -109,7 +116,7 @@ export const addPowerRankingsStuffToTeams = async <
 				}
 			} else {
 				for (const pos of POSITIONS) {
-					if (pos === "KR" || pos === "PR" || pos === "DH") {
+					if (skipPositions.includes(pos)) {
 						continue;
 					}
 					other[pos] = team.ovr(teamPlayers, {

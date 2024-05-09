@@ -1,4 +1,4 @@
-import { isSport, TEAM_STATS_TABLES } from "../../common";
+import { isSport, POSITIONS, RATINGS, TEAM_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g, random } from "../util";
 import type {
@@ -9,7 +9,7 @@ import type {
 } from "../../common/types";
 import type { TeamStatAttr } from "../../common/types.baseball";
 import { season } from "../core";
-import { addPowerRankingsStuffToTeams } from "./powerRankings";
+import { addPowerRankingsStuffToTeams, skipPositions } from "./powerRankings";
 
 export const statTypes = [
 	"standings",
@@ -91,7 +91,22 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 			return true;
 		});
 	} else if (statTypePlus === "powerRankings") {
-		return ["avgAge", "rank", "ovr", "ovrCurrent"];
+		const stats = ["avgAge", "rank", "ovr", "ovrCurrent"];
+
+		if (isSport("basketball")) {
+			for (const rating of RATINGS) {
+				stats.push(`rank_${rating}`, `rankCurrent_${rating}`);
+			}
+		} else {
+			for (const pos of POSITIONS) {
+				if (skipPositions.includes(pos)) {
+					continue;
+				}
+				stats.push(`rank_${pos}`, `rankCurrent_${pos}`);
+			}
+		}
+
+		return stats;
 	} else if (statTypePlus === "finances") {
 		return [
 			"pop",

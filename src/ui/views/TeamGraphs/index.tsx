@@ -9,7 +9,7 @@ import { getCols, helpers, toWorker } from "../../util";
 import { groupByUnique } from "../../../common/utils";
 import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
-import { isSport } from "../../../common";
+import { bySport, isSport } from "../../../common";
 
 const suffixes = {
 	Home: "Home",
@@ -48,7 +48,23 @@ const addPrefixForStat = (statType: string, stat: string) => {
 			ovrCurrent: "Team Rating (With Injuries)",
 		};
 
-		return overrides[stat] ?? stat;
+		const override = overrides[stat];
+		if (override !== undefined) {
+			return override;
+		}
+
+		if (stat.startsWith("rank_") || stat.startsWith("rankCurrent_")) {
+			const type = stat.split("_")[1];
+			const prefix = bySport({
+				baseball: "pos",
+				basketball: "rating",
+				football: "pos",
+				hockey: "pos",
+			});
+			return `${prefix}:${type}`;
+		}
+
+		return stat;
 	}
 
 	if (statType === "finances") {
@@ -97,6 +113,12 @@ const getStatsWithLabels = (
 
 			if (stat === "rank") {
 				col.title = "Rank";
+			} else if (stat.startsWith("rank_")) {
+				col.title += " Rank";
+				delete col.desc;
+			} else if (stat.startsWith("rankCurrent_")) {
+				col.title += " Rank (With Injuries)";
+				delete col.desc;
 			}
 
 			for (const [suffix, long] of Object.entries(suffixes)) {
@@ -126,6 +148,13 @@ const getStatFromTeam = (t: any, stat: string, statType: string) => {
 	}
 
 	if (statType === "powerRankings") {
+		const other = stat.startsWith("rank_");
+		const otherCurrent = stat.startsWith("rankCurrent_");
+		if (other || otherCurrent) {
+			const type = stat.split("_")[1];
+			return t.powerRankings[other ? "other" : "otherCurrent"][type];
+		}
+
 		return t.powerRankings[stat];
 	}
 

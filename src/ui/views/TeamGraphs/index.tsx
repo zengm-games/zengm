@@ -235,6 +235,10 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 	const titleY = getStatsWithLabels([stat[1]], statType[1], true)[0];
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
+	const reverseAxis = stat.map(
+		(stat, i) => statType[i] === "powerRankings" && stat.startsWith("rank"),
+	) as [boolean, boolean];
+
 	return (
 		<StatGraph<Team>
 			data={data}
@@ -257,6 +261,7 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 					</div>
 				);
 			}}
+			reverseAxis={reverseAxis}
 			stat={stat}
 			statType={statType}
 		/>

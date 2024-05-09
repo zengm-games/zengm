@@ -21,6 +21,7 @@ type ScatterPlotProps<Row> = {
 	getLink: (row: Row) => string;
 	getTooltipTitle: (row: Row) => string;
 	renderTooltip: (value: number, row: Row, i: number) => ReactNode;
+	reverseAxis: [boolean, boolean];
 	stat: [string, string];
 	statType: [string, string];
 };
@@ -90,6 +91,7 @@ const ScatterPlot = <Row extends unknown>({
 	getLink,
 	getTooltipTitle,
 	renderTooltip,
+	reverseAxis,
 	width: totalWidth,
 }: ScatterPlotProps<Row> & {
 	width: number;
@@ -100,8 +102,14 @@ const ScatterPlot = <Row extends unknown>({
 	const yVals = data.map(point => point.y);
 
 	const xDomain = [Math.min(...xVals), Math.max(...xVals)];
+	if (reverseAxis[0]) {
+		xDomain.reverse();
+	}
 
 	const yDomain = [Math.min(...yVals), Math.max(...yVals)];
+	if (reverseAxis[1]) {
+		yDomain.reverse();
+	}
 
 	// tooltip handler
 	const {

@@ -125,6 +125,7 @@ const GraphCreation = ({
 					</div>
 				);
 			}}
+			reverseAxis={[false, false]}
 			stat={stat}
 			statType={statType}
 		/>

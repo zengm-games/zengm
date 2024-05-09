@@ -197,6 +197,12 @@ const getFormattedStat = (value: number, stat: string, statType: string) => {
 		}
 	}
 
+	if (statType === "powerRankings") {
+		if (stat !== "avgAge") {
+			return Math.round(value);
+		}
+	}
+
 	return helpers.roundStat(value, stat, statType === "totals");
 };
 

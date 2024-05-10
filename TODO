@@ -1,5 +1,4 @@
 team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
-- challengeNoRatings for power rankings stuff
 - test all sports
   - baseball fielding stats
 - playoffs power rankings
@@ -23,6 +22,7 @@ drag and drop
   - maybe same as customize page, but with some option to prevent deleting/adding teams
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
+- maybe better - show your payroll after trade https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
 
 support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
 - need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too

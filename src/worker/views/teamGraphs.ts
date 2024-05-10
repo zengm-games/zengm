@@ -91,7 +91,11 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 			return true;
 		});
 	} else if (statTypePlus === "powerRankings") {
-		const stats = ["avgAge", "rank", "ovr", "ovrCurrent"];
+		const stats = ["avgAge", "rank"];
+
+		if (!g.get("challengeNoRatings")) {
+			stats.push("ovr", "ovrCurrent");
+		}
 
 		if (isSport("basketball")) {
 			for (const rating of RATINGS) {

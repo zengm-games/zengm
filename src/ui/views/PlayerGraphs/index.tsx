@@ -96,6 +96,10 @@ const GraphCreation = ({
 		});
 	}
 
+	if (data.length === 0) {
+		return <div>No data for the selected options.</div>;
+	}
+
 	const titleX = getStatsWithLabels([stat[0]], statType[0])[0];
 	const titleY = getStatsWithLabels([stat[1]], statType[1])[0];
 	const descShort: [string, string] = [titleX.title, titleY.title];

@@ -1,12 +1,9 @@
 team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
-- stuff from power rankings: team rating (current/healthy), playoff rating (current/healthy), rating/position ranks
-  - challengeNoRatings
+- challengeNoRatings for power rankings stuff
 - test all sports
   - baseball fielding stats
 - when to hide for missing data? maybe only if both are playoffs, for teams with no playoff games. or if both disabled
 - test playoffs
-  - stats
-  - how to handle upcoming playoffs during regular season
   - team ratings (basketball only)
     - addPowerRankingsStuffToTeams input should be non-playoff teams stats object
 - does playoffs dropdown make sense for any of these except stats? not really
@@ -28,6 +25,8 @@ drag and drop
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
   - maybe same as customize page, but with some option to prevent deleting/adding teams
+
+on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 
 support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
 - need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too

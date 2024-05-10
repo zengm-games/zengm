@@ -231,6 +231,7 @@ const updateTeams = async (
 				? inputStat
 				: random.choice(statForAxis.stats);
 
+		console.log(axis, statForAxis.teams);
 		return {
 			[season]: inputs[season],
 			[statType]: statForAxis.statType,

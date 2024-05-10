@@ -223,12 +223,19 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 	const data: TooltipData[] = [];
 	for (const t of teams[0]) {
 		const t2 = teamsYByTid[t.tid];
+		if (!t2) {
+			continue;
+		}
 
 		data.push({
 			x: getStatFromTeam(t, stat[0], statType[0]),
 			y: getStatFromTeam(t2, stat[1], statType[1]),
 			row: t,
 		});
+	}
+
+	if (data.length === 0) {
+		return <div>No data for the selected options.</div>;
 	}
 
 	const titleX = getStatsWithLabels([stat[0]], statType[0], true)[0];

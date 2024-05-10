@@ -1,6 +1,6 @@
 import { isSport, POSITIONS, RATINGS, TEAM_STATS_TABLES } from "../../common";
 import { idb } from "../db";
-import { g, random } from "../util";
+import { g, helpers, random } from "../util";
 import type {
 	TeamFiltered,
 	TeamSeasonAttr,
@@ -200,6 +200,35 @@ const getTeamStats = async (
 			season,
 			playoffs,
 		);
+	}
+
+	// HACKY! Sum up fielding stats, rather than by position
+	if (
+		isSport("baseball") &&
+		(statTypePlus === "fielding" || statTypePlus === "oppFielding")
+	) {
+		for (const t of teams) {
+			const statsAny = t.stats as any;
+
+			// Sum up stats
+			for (const stat of statKeys) {
+				if (Array.isArray(statsAny[stat])) {
+					let sum = 0;
+					for (const value of statsAny[stat]) {
+						if (value !== undefined) {
+							sum += value;
+						}
+					}
+					statsAny[stat] = sum;
+				}
+			}
+
+			// Fix Fld%
+			statsAny.fldp = helpers.ratio(
+				(statsAny.po ?? 0) + (statsAny.a ?? 0),
+				(statsAny.po ?? 0) + (statsAny.a ?? 0) + (statsAny.e ?? 0),
+			);
+		}
 	}
 
 	return { teams, stats, statType: statTypePlus };

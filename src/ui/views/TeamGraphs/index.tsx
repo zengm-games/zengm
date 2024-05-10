@@ -85,10 +85,7 @@ const addPrefixForStat = (statType: string, stat: string) => {
 		return overrides[stat] ?? stat;
 	}
 
-	if (
-		(statType === "opponent" || statType === "opponentShotLocations") &&
-		stat.startsWith("opp")
-	) {
+	if (stat.startsWith("opp")) {
 		return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 	}
 

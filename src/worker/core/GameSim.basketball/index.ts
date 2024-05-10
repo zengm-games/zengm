@@ -1508,7 +1508,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "outOfBounds",
 			on: offenseRetainsBall ? "defense" : "offense",
-			t: offenseRetainsBall ? this.o : this.d,
+			t: offenseRetainsBall ? this.d : this.o,
 			clock: this.t,
 		});
 		return offenseRetainsBall ? "outOfBoundsDefense" : "outOfBoundsOffense";

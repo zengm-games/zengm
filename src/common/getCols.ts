@@ -2054,7 +2054,6 @@ const sportSpecificCols = bySport<{
 			title: "Stats",
 		},
 		"stat:pts": {
-			desc: "",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "Pts",

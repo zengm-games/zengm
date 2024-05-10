@@ -1616,10 +1616,32 @@ const getTeamGraphStat = ({
 	const statType = prev?.statType ?? random.choice(teamStatTypes);
 	const stats = teamGetStats(statType, seasons);
 
-	const stat =
-		prev?.stat !== undefined && stats.includes(prev.stat)
-			? prev.stat
-			: random.choice(stats);
+	const prevStat = prev?.stat;
+
+	// opp logic is so switching between normal and opponent stats keeps the same stat selected (like pts and oppPts)
+	let stat;
+	if (prevStat !== undefined) {
+		if (stats.includes(prevStat)) {
+			stat = prevStat;
+		} else if (prevStat.startsWith("opp")) {
+			// Try removing opp
+			const withoutOpp = prevStat.replace("opp", "");
+			const withoutOppLower = `${withoutOpp.charAt(0).toLowerCase()}${withoutOpp.slice(1)}`;
+			if (stats.includes(withoutOppLower)) {
+				stat = withoutOppLower;
+			}
+		} else {
+			// Try adding opp
+			const withOpp = `opp${helpers.upperCaseFirstLetter(prevStat)}`;
+			if (stats.includes(withOpp)) {
+				stat = withOpp;
+			}
+		}
+	}
+	if (stat === undefined) {
+		stat = random.choice(stats);
+	}
+
 	return {
 		statType,
 		stat,

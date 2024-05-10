@@ -178,14 +178,18 @@ const getTeamStats = async (
 		seasonAttrs.push("lastTen");
 	}
 
+	// To match power rankings behavior, playoff stats are not used, but playoffs status is passed to addPowerRankingsStuffToTeams below
+	const teamsPlayoffs =
+		playoffs === "playoffs" && statTypePlus !== "powerRankings";
+
 	let teams = await idb.getCopies.teamsPlus(
 		{
 			attrs: ["tid", "abbrev"],
 			seasonAttrs,
 			stats: statKeys as TeamStatAttr[],
 			season,
-			playoffs: playoffs === "playoffs",
-			regularSeason: playoffs === "regularSeason",
+			playoffs: teamsPlayoffs,
+			regularSeason: !teamsPlayoffs,
 		},
 		"noCopyCache",
 	);
@@ -235,7 +239,6 @@ const updateTeams = async (
 				? inputStat
 				: random.choice(statForAxis.stats);
 
-		console.log(axis, statForAxis.teams);
 		return {
 			[season]: inputs[season],
 			[statType]: statForAxis.statType,

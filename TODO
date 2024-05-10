@@ -1,9 +1,6 @@
 team graphs https://old.reddit.com/r/BasketballGM/comments/1bsp3ji/monthly_suggestions_thread/kxm3at5/
 - test all sports
   - baseball fielding stats
-- playoffs power rankings
-  - broken?
-  - addPowerRankingsStuffToTeams input should be non-playoff teams stats object
 - when swithing between team and opp, keep same stat
 
 is team being set right on out of bounds?

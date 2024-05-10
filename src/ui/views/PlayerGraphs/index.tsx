@@ -278,9 +278,21 @@ const PickStat = ({
 					maxWidth: 130,
 				}}
 			>
-				{playoffs.map(x => {
-					return <OptionDropdown key={x.key} value={x} />;
-				})}
+				{playoffs
+					.filter(x => {
+						if (x.key === "regularSeason") {
+							// Regular season always exists
+							return true;
+						}
+						if (state.statType === "bio" || state.statType === "ratings") {
+							// No playoff version of these stats
+							return false;
+						}
+						return x;
+					})
+					.map(x => {
+						return <OptionDropdown key={x.key} value={x} />;
+					})}
 			</select>
 			<button
 				className="btn btn-secondary"

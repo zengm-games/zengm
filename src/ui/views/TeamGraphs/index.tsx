@@ -454,9 +454,25 @@ const PickStat = ({
 					maxWidth: 130,
 				}}
 			>
-				{playoffs.map(x => {
-					return <OptionDropdown key={x.key} value={x} />;
-				})}
+				{playoffs
+					.filter(x => {
+						if (x.key === "regularSeason") {
+							// Regular season always exists
+							return true;
+						}
+						if (
+							state.statType === "standings" ||
+							state.statType === "finances" ||
+							(!isSport("basketball") && state.statType === "powerRankings")
+						) {
+							// No playoff version of these stats
+							return false;
+						}
+						return x;
+					})
+					.map(x => {
+						return <OptionDropdown key={x.key} value={x} />;
+					})}
 			</select>
 			<button
 				className="btn btn-secondary"

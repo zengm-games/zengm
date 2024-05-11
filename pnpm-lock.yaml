@@ -29,7 +29,22 @@ importers:
       '@tanstack/react-virtual':
         specifier: ^3.5.0
         version: 3.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@uiw/react-color-sketch':
+      '@uiw/color-convert':
+        specifier: ^2.1.1
+        version: 2.1.1(@babel/runtime@7.24.5)
+      '@uiw/react-color-editable-input':
+        specifier: ^2.1.1
+        version: 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@uiw/react-color-editable-input-rgba':
+        specifier: ^2.1.1
+        version: 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@uiw/react-color-hue':
+        specifier: ^2.1.1
+        version: 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@uiw/react-color-saturation':
+        specifier: ^2.1.1
+        version: 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@uiw/react-color-swatch':
         specifier: ^2.1.1
         version: 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@visx/axis':
@@ -1929,13 +1944,6 @@ packages:
 
   '@uiw/react-color-saturation@2.1.1':
     resolution: {integrity: sha512-lg3ElCNuiHt7wsfR9FQpgFcg9zht+GAuVhemvgLq6twR62ZUgFd58in42T1F8l2ZpimXu8SgLGEtvc7XB2i8CQ==}
-    peerDependencies:
-      '@babel/runtime': '>=7.19.0'
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-
-  '@uiw/react-color-sketch@2.1.1':
-    resolution: {integrity: sha512-hiHhwSJnMzRs9mUfOiqekPosQQ60mhzRN1LDfD/z4sW7GHxWgV9sl9jdoBeN3RRS0O4i/qHjNrJqTad6D4rV7g==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
@@ -7271,19 +7279,6 @@ snapshots:
       '@babel/runtime': 7.24.5
       '@uiw/color-convert': 2.1.1(@babel/runtime@7.24.5)
       '@uiw/react-drag-event-interactive': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  '@uiw/react-color-sketch@2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.24.5
-      '@uiw/color-convert': 2.1.1(@babel/runtime@7.24.5)
-      '@uiw/react-color-alpha': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@uiw/react-color-editable-input': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@uiw/react-color-editable-input-rgba': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@uiw/react-color-hue': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@uiw/react-color-saturation': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@uiw/react-color-swatch': 2.1.1(@babel/runtime@7.24.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 

@@ -383,17 +383,13 @@ const PickStat = ({
 				value={state.season}
 				onChange={event =>
 					updateUrl({
-						[`season${xyCapital}`]:
-							event.target.value === "career"
-								? "career"
-								: parseInt(event.target.value),
+						[`season${xyCapital}`]: parseInt(event.target.value),
 					})
 				}
 				style={{
 					maxWidth: 70,
 				}}
 			>
-				<option value="career">Career</option>
 				{dropdownSeasons.map(x => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}

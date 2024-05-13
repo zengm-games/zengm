@@ -37,6 +37,7 @@
 		"@dnd-kit/sortable": "^8.0.0",
 		"@juggle/resize-observer": "^3.4.0",
 		"@mattiasbuelens/web-streams-adapter": "^0.1.0",
+		"@sentry/react": "^7.114.0",
 		"@tanstack/react-virtual": "^3.5.0",
 		"@uiw/color-convert": "^2.3.0",
 		"@uiw/react-color-editable-input": "^2.3.0",

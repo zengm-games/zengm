@@ -6,7 +6,7 @@ import type {
 	LogEventType,
 } from "../../common/types";
 import { idb } from "../db";
-import type { Face } from "facesjs";
+import type { FaceConfig } from "facesjs";
 
 const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];
 
@@ -108,7 +108,7 @@ export const processEvents = async (
 			| undefined
 			| {
 					imgURL?: string;
-					face?: Face;
+					face?: FaceConfig;
 			  };
 		return {
 			...event,

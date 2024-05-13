@@ -1,11 +1,12 @@
-import type { Face } from "facesjs";
-import { useEffect, useRef, useState } from "react";
+import type { FaceConfig } from "facesjs";
+import { useState } from "react";
 import { helpers, JERSEYS } from "../../../common";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 import { JerseyNumber } from "../../components";
-import { displayFace, toWorker } from "../../util";
+import { toWorker } from "../../util";
 import MoveModal, { type MoveModalTeamFinal } from "./MoveModal";
 import { ColorPicker } from "../../components/ColorPicker";
+import { MyFace } from "../../components/MyFace";
 
 const TeamForm = ({
 	classNamesCol,
@@ -58,9 +59,7 @@ const TeamForm = ({
 		usePlayers?: boolean;
 	};
 }) => {
-	const [faceWrapper, setFaceWrapper] = useState<HTMLDivElement | null>(null);
-	const face = useRef<Face | undefined>();
-	const [showFace, setShowFace] = useState(false);
+	const [face, setFace] = useState<FaceConfig | undefined>();
 
 	const divisions = divs.map(div => {
 		const conf = confs.find(c => c.cid === div.cid);
@@ -76,31 +75,11 @@ const TeamForm = ({
 		"#ffffff",
 	];
 
-	useEffect(() => {
-		const renderFace = async () => {
-			if (!showFace) {
-				if (faceWrapper) {
-					faceWrapper.innerHTML = "";
-				}
-				return;
-			}
-
-			if (!face.current) {
-				face.current = await toWorker("main", "generateFace", undefined);
-			}
-
-			if (faceWrapper && face.current) {
-				displayFace({
-					colors: [color1, color2, color3],
-					face: face.current,
-					jersey: t.jersey,
-					wrapper: faceWrapper,
-				});
-			}
-		};
-
-		renderFace();
-	}, [faceWrapper, showFace, color1, color2, color3, t.jersey]);
+	const ensureFace = async () => {
+		if (!face) {
+			setFace(await toWorker("main", "generateFace", undefined));
+		}
+	};
 
 	const [showMoveModal, setShowMoveModal] = useState(false);
 
@@ -246,8 +225,8 @@ const TeamForm = ({
 						{[0, 1, 2].map(j => (
 							<ColorPicker
 								key={j}
-								onClick={() => {
-									setShowFace(true);
+								onClick={async () => {
+									await ensureFace();
 								}}
 								onChange={value => {
 									handleInputChange(`colors${j}`, {
@@ -266,15 +245,15 @@ const TeamForm = ({
 						))}
 						<select
 							className="form-select"
-							onMouseDown={() => {
+							onMouseDown={async () => {
 								// Runs when select is opened
-								setShowFace(true);
+								await ensureFace();
 							}}
-							onChange={e => {
+							onChange={async e => {
 								handleInputChange("jersey", e);
 
 								// Just to be sure, since onMouseDown seems strange
-								setShowFace(true);
+								await ensureFace();
 							}}
 							value={t.jersey}
 							style={{
@@ -290,18 +269,23 @@ const TeamForm = ({
 						</select>
 					</div>
 				</div>
-				<div
-					onClick={() => {
-						setShowFace(show => !show);
-					}}
-					className="d-flex"
-				>
+				{face ? (
 					<div
-						ref={setFaceWrapper}
-						style={{ maxWidth: 120, marginTop: -35 }}
-						className="position-relative mb-3"
-					/>
-					{showFace ? (
+						onClick={async () => {
+							setFace(undefined);
+						}}
+						className="d-flex"
+					>
+						<div
+							style={{ width: 120, marginTop: -35 }}
+							className="position-relative mb-3"
+						>
+							<MyFace
+								colors={[color1, color2, color3]}
+								face={face}
+								jersey={t.jersey}
+							/>
+						</div>
 						<JerseyNumber
 							number={"35"}
 							start={2002}
@@ -312,8 +296,8 @@ const TeamForm = ({
 								region: t.region,
 							}}
 						/>
-					) : null}
-				</div>
+					</div>
+				) : null}
 			</div>
 			{!hideStatus ? (
 				<div className={classNamesCol[9]}>

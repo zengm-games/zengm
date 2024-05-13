@@ -1,7 +1,8 @@
-import { useState, type CSSProperties, useRef, useEffect } from "react";
+import { type CSSProperties, useState, useLayoutEffect } from "react";
 import JerseyNumber from "./JerseyNumber";
-import { displayFace, toWorker } from "../util";
-import type { Face } from "facesjs";
+import { toWorker } from "../util";
+import type { FaceConfig } from "facesjs";
+import { MyFace } from "./MyFace";
 
 export const TeamLogoJerseyInfo = ({
 	brandedTeam,
@@ -18,27 +19,13 @@ export const TeamLogoJerseyInfo = ({
 		region: string;
 	};
 }) => {
-	const [faceWrapper, setFaceWrapper] = useState<HTMLDivElement | null>(null);
-	const face = useRef<Face | undefined>();
+	const [face, setFace] = useState<FaceConfig | undefined>();
 
-	useEffect(() => {
-		const renderFace = async () => {
-			if (!face.current) {
-				face.current = await toWorker("main", "generateFace", undefined);
-			}
-
-			if (faceWrapper && face.current) {
-				displayFace({
-					colors: brandedTeam.colors,
-					face: face.current,
-					jersey: brandedTeam.jersey,
-					wrapper: faceWrapper,
-				});
-			}
-		};
-
-		renderFace();
-	}, [faceWrapper, brandedTeam]);
+	useLayoutEffect(() => {
+		(async () => {
+			setFace(await toWorker("main", "generateFace", undefined));
+		})();
+	}, []);
 
 	const logoStyle: CSSProperties = {};
 	if (brandedTeam.imgURL) {
@@ -53,11 +40,15 @@ export const TeamLogoJerseyInfo = ({
 			</h3>
 			<div className="d-flex">
 				<div className="team-picture" style={logoStyle} />
-				<div
-					className="mx-2"
-					ref={setFaceWrapper}
-					style={{ width: 100, marginTop: -25 }}
-				/>
+				<div className="mx-2" style={{ width: 100, marginTop: -25 }}>
+					{face ? (
+						<MyFace
+							colors={brandedTeam.colors}
+							face={face}
+							jersey={brandedTeam.jersey}
+						/>
+					) : null}
+				</div>
 				<JerseyNumber
 					number={"35"}
 					start={2002}

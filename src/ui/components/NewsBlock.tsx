@@ -123,6 +123,7 @@ const NewsBlock = ({
 							imgURL={event.p.imgURL}
 							colors={teamInfo?.colors}
 							jersey={teamInfo?.jersey}
+							lazy
 						/>
 					</div>
 				) : null}

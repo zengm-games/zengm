@@ -1,4 +1,4 @@
-import type { Face } from "facesjs";
+import type { FaceConfig } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
@@ -1170,7 +1170,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		skills: string[];
 		dpid?: number;
 	};
-	face: Face;
+	face: FaceConfig;
 	firstName: string;
 	gamesUntilTradable: number;
 	hgt: number;

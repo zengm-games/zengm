@@ -1,6 +1,5 @@
-import type { Face } from "facesjs";
-import { useEffect, useState } from "react";
-import { displayFace } from "../util";
+import type { FaceConfig } from "facesjs";
+import { MyFace } from "./MyFace";
 
 const imgStyle = {
 	maxHeight: "100%",
@@ -8,34 +7,24 @@ const imgStyle = {
 };
 
 const PlayerPicture = ({
+	colors,
 	face,
 	imgURL,
-	colors,
 	jersey,
+	lazy,
 }: {
-	face?: Face;
-	imgURL?: string;
 	colors?: [string, string, string];
+	face?: FaceConfig;
+	imgURL?: string;
 	jersey?: string;
+	lazy?: boolean;
 }) => {
-	const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
-	useEffect(() => {
-		if (face && !imgURL && wrapper) {
-			displayFace({
-				colors,
-				face,
-				jersey,
-				wrapper,
-			});
-		}
-	}, [face, imgURL, colors, jersey, wrapper]);
-
 	if (imgURL) {
 		return <img alt="Player" src={imgURL} style={imgStyle} />;
 	}
 
 	if (face) {
-		return <div ref={setWrapper} />;
+		return <MyFace colors={colors} face={face} jersey={jersey} lazy={lazy} />;
 	}
 
 	return null;

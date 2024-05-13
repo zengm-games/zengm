@@ -1,17 +1,16 @@
-import { display } from "facesjs";
-import type { Face } from "facesjs";
+import { Face, type FaceConfig } from "facesjs";
 import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS, isSport } from "../../common";
 
-const displayFace = ({
+export const MyFace = ({
 	colors = DEFAULT_TEAM_COLORS,
 	face,
 	jersey = DEFAULT_JERSEY,
-	wrapper,
+	lazy,
 }: {
 	colors?: [string, string, string];
+	face: FaceConfig;
 	jersey?: string;
-	face: Face;
-	wrapper: HTMLDivElement;
+	lazy?: boolean;
 }) => {
 	let overrides;
 	if (isSport("baseball")) {
@@ -34,12 +33,15 @@ const displayFace = ({
 		};
 	}
 
-	// Don't crash if displaying face fails
-	try {
-		display(wrapper, face, overrides);
-	} catch (error) {
-		console.error(error);
-	}
+	return (
+		<Face
+			face={face}
+			ignoreDisplayErrors
+			lazy={lazy}
+			overrides={overrides}
+			style={{
+				aspectRatio: "2/3",
+			}}
+		/>
+	);
 };
-
-export default displayFace;

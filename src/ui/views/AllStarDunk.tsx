@@ -549,6 +549,7 @@ export const ContestantProfiles = ({
 								imgURL={p.imgURL}
 								colors={p.colors}
 								jersey={p.jersey}
+								lazy
 							/>
 						</div>
 						<div

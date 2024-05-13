@@ -2,9 +2,6 @@ sentry
 - https://docs.sentry.io/platforms/javascript/configuration/tree-shaking/#tree-shaking-default-integrations
 - source maps working?
 
-don't render face until it's displayed https://old.reddit.com/r/BasketballGM/comments/1cpruh9/terrifying_glitch/
-- https://github.com/zengm-games/facesjs/issues/45
-
 drag and drop
 - customize page
   - allow drag and drop to reorder confs/divs

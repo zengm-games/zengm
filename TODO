@@ -1,4 +1,9 @@
+sentry
+- https://docs.sentry.io/platforms/javascript/configuration/tree-shaking/#tree-shaking-default-integrations
+- source maps working?
+
 don't render face until it's displayed https://old.reddit.com/r/BasketballGM/comments/1cpruh9/terrifying_glitch/
+- https://github.com/zengm-games/facesjs/issues/45
 
 drag and drop
 - customize page
@@ -10,6 +15,8 @@ drag and drop
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
   - maybe same as customize page, but with some option to prevent deleting/adding teams
+
+show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 - maybe better - show your payroll after trade https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw

@@ -21,7 +21,7 @@ declare global {
 		googletag: any;
 		heartbeatID: string;
 		mobile: boolean;
-		releaseStage: string;
+		releaseStage: "unknown" | "development" | "beta" | "production";
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
 		withGoodUI: () => void;

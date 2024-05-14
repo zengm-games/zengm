@@ -14,7 +14,6 @@ declare global {
 	interface Window {
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
-		bugsnagKey: string;
 		enableLogging: boolean;
 		freestar: any;
 		getTheme: () => string;

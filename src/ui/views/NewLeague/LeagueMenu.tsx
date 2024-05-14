@@ -1,4 +1,4 @@
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import { useEffect, useRef } from "react";
 import { NextPrevButtons } from "../../components";
 import { logEvent } from "../../util";
@@ -40,7 +40,7 @@ const LeagueMenu = <Value extends string>({
 			}
 		} catch (error) {
 			console.error(error);
-			Bugsnag.notify(error);
+			Sentry.captureException(error);
 			logEvent({
 				type: "error",
 				text: `Error loading real team data: ${error.message}`,
@@ -86,7 +86,7 @@ const LeagueMenu = <Value extends string>({
 							>
 								{values.find(v => v.key === key)!.value}
 							</button>
-					  ))
+						))
 					: null}
 			</div>
 			<div className="input-group mb-1">

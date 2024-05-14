@@ -1,5 +1,4 @@
-import * as React from "react";
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import useTitleBar from "../hooks/useTitleBar";
 
 const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
@@ -25,9 +24,6 @@ const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
 	);
 };
 
-const ErrorBoundaryBugsnag =
-	Bugsnag.getPlugin("react")!.createErrorBoundary(React);
-
 const ErrorBoundary = ({
 	children,
 	local,
@@ -36,11 +32,9 @@ const ErrorBoundary = ({
 	local?: boolean;
 }) => {
 	return (
-		<ErrorBoundaryBugsnag
-			FallbackComponent={local ? FallbackLocal : FallbackGlobal}
-		>
+		<Sentry.ErrorBoundary fallback={local ? FallbackLocal : FallbackGlobal}>
 			{children}
-		</ErrorBoundaryBugsnag>
+		</Sentry.ErrorBoundary>
 	);
 };
 

@@ -33,7 +33,7 @@ const buildJS = async () => {
 	}
 	await Promise.all(promises);
 
-	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
+	// Hack because otherwise I'm somehow left with no newline before the source map URL, which confuses Bugsnag
 	const replacePaths = fs
 		.readdirSync("build/gen")
 		.filter(filename => filename.endsWith(".js"))

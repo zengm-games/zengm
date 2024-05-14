@@ -1,4 +1,4 @@
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import { PWBHost } from "promise-worker-bi";
 
 const workerPath =
@@ -19,7 +19,7 @@ try {
 
 export const promiseWorker = new PWBHost(worker);
 promiseWorker.registerError(error => {
-	Bugsnag.notify(error);
+	Sentry.captureException(error);
 
 	console.error("Error from worker:");
 	console.error(error);

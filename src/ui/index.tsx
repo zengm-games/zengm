@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import "./util/initBugsnag";
+import "./util/initSentry";
 import "bbgm-polyfills"; // eslint-disable-line
 import "bbgm-polyfills-ui"; // eslint-disable-line
 import type { ReactNode } from "react";
@@ -10,7 +10,7 @@ import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 window.bbgm = { api, ...util };
 const {
 	analyticsEvent,
@@ -117,8 +117,8 @@ const handleVersion = async () => {
 				const swVersion = await getSWVersion();
 				console.log("swVersion", swVersion);
 
-				Bugsnag.notify(new Error("Game version mismatch"), event => {
-					event.addMetadata("custom", {
+				Sentry.captureException(new Error("Game version mismatch"), {
+					extra: {
 						bbgmVersion: window.bbgmVersion,
 						bbgmVersionStored,
 						hasNavigatorServiceWorker:
@@ -132,23 +132,23 @@ const handleVersion = async () => {
 											scriptURL: r.active.scriptURL,
 											state: r.active.state,
 										}
-									: null,
+									: undefined,
 								installing: r.installing
 									? {
 											scriptURL: r.installing.scriptURL,
 											state: r.installing.state,
 										}
-									: null,
+									: undefined,
 								waiting: r.waiting
 									? {
 											scriptURL: r.waiting.scriptURL,
 											state: r.waiting.state,
 										}
-									: null,
+									: undefined,
 							};
 						}),
 						swVersion,
-					});
+					},
 				});
 
 				unregisterServiceWorkers();
@@ -269,7 +269,7 @@ const setupRoutes = () => {
 					typeof errMsg !== "string" ||
 					!errMsg.includes("A league can only be open in one tab at a time")
 				) {
-					Bugsnag.notify(error);
+					Sentry.captureException(error);
 
 					console.error("Error from view:");
 					console.error(error);

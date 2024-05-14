@@ -52,6 +52,9 @@
     // Really just want to disable in TSX files, where this pattern is actually needed https://github.com/typescript-eslint/typescript-eslint/issues/4062
     "@typescript-eslint/no-unnecessary-type-constraint": "off",
 
+    // Doesn't work with sentry, and seems not very useful with TypeScript
+    "import/namespace": "off",
+
     // Nice for catching if(0){} but too many false positives for object checks that can't be disabled
     /*"@typescript-eslint/strict-boolean-expressions": ["error", {
       "allowString": true,

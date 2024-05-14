@@ -1,6 +1,6 @@
 sentry
 - https://docs.sentry.io/platforms/javascript/configuration/tree-shaking/#tree-shaking-default-integrations
-- source maps working?
+- check context being sent https://docs.sentry.io/platforms/javascript/enriching-events/context/
 
 drag and drop
 - customize page

@@ -87,9 +87,6 @@ const deploy = async () => {
 		"--exclude",
 		"/old",
 	];
-	if (subdomain === "beta") {
-		excludes.push("--exclude", "/sw.js*");
-	}
 	await mySpawn("rsync", [
 		"-vhrl",
 		"--delete",

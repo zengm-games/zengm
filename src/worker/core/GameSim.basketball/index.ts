@@ -2819,7 +2819,7 @@ class GameSim extends GameSimBase {
 			return "endOfPeriod";
 		}
 
-		if (Math.random() < 0.15) {
+		if (Math.random() < 0.1) {
 			return this.doOutOfBounds(0.1);
 		}
 

@@ -12,7 +12,9 @@ const LODASH_BLACKLIST = [
 
 const BLACKLIST = {
 	ui: [...LODASH_BLACKLIST, /\/worker/],
-	worker: [...LODASH_BLACKLIST, /\/ui/, /^react/],
+
+	// -.+ is because "react" is technically imported by facesjs, although it will be tree shaken
+	worker: [...LODASH_BLACKLIST, /\/ui/, /^react[^/].+/],
 };
 
 const buildFile = async (name, legacy, rev) => {

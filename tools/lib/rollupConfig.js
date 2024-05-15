@@ -110,8 +110,7 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 			// I don't care about "use client" because I don't use RSC
 			if (
 				warning.code === "MODULE_LEVEL_DIRECTIVE" &&
-				warning.message.includes('"use client"') &&
-				warning.id.includes("react-bootstrap")
+				warning.message.includes('"use client"')
 			) {
 				return;
 			}

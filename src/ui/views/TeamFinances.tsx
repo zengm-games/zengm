@@ -415,7 +415,7 @@ const FinancesForm = ({
 											: helpers.formatCurrency(
 													levelToAmount(levelInt, salaryCap * 1000) / 1000,
 													"M",
-											  )}
+												)}
 									</div>
 								</div>
 								<div className="row ms-3" style={{ width: 350 }}>
@@ -615,7 +615,7 @@ const PayrollInfo = ({
 		);
 	}
 
-	if (salaryCapType !== "hard") {
+	if (salaryCapType !== "hard" && luxuryTax !== 0) {
 		parts.push(
 			<>
 				{payroll > luxuryPayroll ? "above" : "below"} the luxury tax limit (
@@ -805,13 +805,13 @@ const TeamFinances = ({
 					contractTotals.map(amount =>
 						highlightZeroNegative(luxuryPayroll - amount),
 					),
-			  )
+				)
 			: ["", "Free Cap Space"].concat(
 					// @ts-expect-error
 					contractTotals.map(amount =>
 						highlightZeroNegative(salaryCap - amount),
 					),
-			  ),
+				),
 	];
 
 	// This happens for expansion teams before they have a TeamSeason

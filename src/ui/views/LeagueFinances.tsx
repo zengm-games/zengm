@@ -155,10 +155,16 @@ const LeagueFinances = ({
 				{salaryCapType !== "hard" ? (
 					<>
 						<br />
-						Luxury tax limit:{" "}
-						<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b> (teams with
-						payrolls above this limit will be assessed a fine equal to{" "}
-						{luxuryTax} times the difference at the end of the season)
+						{luxuryTax === 0 ? (
+							"Luxury tax: none"
+						) : (
+							<>
+								Luxury tax limit:{" "}
+								<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b> (teams with
+								payrolls above this limit will be assessed a fine equal to{" "}
+								{luxuryTax} times the difference at the end of the season)
+							</>
+						)}
 					</>
 				) : null}
 			</p>

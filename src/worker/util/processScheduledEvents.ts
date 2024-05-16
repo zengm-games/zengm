@@ -321,6 +321,17 @@ const processGameAttributes = async (
 		texts.push(text);
 	}
 
+	const prevLuxuryTax = g.get("luxuryTax");
+	if (info.luxuryTax !== undefined && info.luxuryTax !== prevLuxuryTax) {
+		let text;
+		if (prevLuxuryTax === 0) {
+			text = `Luxury tax instituted for teams with payrolls over ${helpers.formatCurrency((info.luxuryPayroll ?? g.get("luxuryPayroll")) / 1000, "M")}`;
+		} else {
+			text = `Luxury tax changed from ${prevLuxuryTax} to ${info.luxuryTax}`;
+		}
+		texts.push(text);
+	}
+
 	for (const text of texts) {
 		logEvent({
 			text,

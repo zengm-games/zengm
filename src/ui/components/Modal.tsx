@@ -52,7 +52,7 @@ const manager = new MyModalManager();
 const WrappedModal = ({ children, ...props }: Parameters<typeof Modal>[0]) => {
 	return (
 		<Modal animation={animation} manager={manager} {...props}>
-			{children}
+			<div className="modal-child-overlay-container">{children}</div>
 		</Modal>
 	);
 };

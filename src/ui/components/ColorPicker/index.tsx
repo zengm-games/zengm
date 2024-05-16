@@ -15,12 +15,15 @@ export const ColorPicker = ({
 }) => {
 	const [hex, setHex] = useState(value);
 
+	// modalRef stuff is needed until https://github.com/react-bootstrap/react-overlays/issues/1003 is fixed
 	const ref = useRef<HTMLButtonElement>(null);
 	const modalRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
 		if (ref.current) {
-			modalRef.current = ref.current.closest(".modal");
+			// Search for a div inside the modal, rather than the .modal itself, like suggested https://github.com/react-bootstrap/react-bootstrap/issues/5846#issuecomment-2017368604 - otherwise there is weird behavior with the color picker (drag starting inside color picker but ending outside the color picker and inside the modal would result in closing the modal)
+			modalRef.current = ref.current.closest(".modal-child-overlay-container");
+			// modalRef.current = document.getElementsByClassName("modal-child-overlay-container")[0] ?? null;
 		}
 	}, []);
 
@@ -28,7 +31,6 @@ export const ColorPicker = ({
 		<OverlayTrigger
 			trigger="click"
 			placement="auto"
-			// modalRef is needed until https://github.com/react-bootstrap/react-overlays/issues/1003 is fixed
 			container={modalRef.current}
 			overlay={
 				<Popover>

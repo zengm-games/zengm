@@ -1,8 +1,5 @@
 luxury tax should not exist before 2001 https://discord.com/channels/290013534023057409/290013534023057409/1239407770298482790
 
-color picker closing parent dialog bug https://discord.com/channels/290013534023057409/290015591216054273/1239364873012510871
-- drag within the color square, and have the drag end outside the color popup, and it closes the parent modal. it should not, even if the drag ends outside the modal. but currently it closes it even if the drag ends inside the modal too!
-
 players switching numbers when they don't switch teams https://discord.com/channels/290013534023057409/290013534023057409/1239346257151918130
 
 sentry
@@ -24,6 +21,8 @@ show how many fouls each team has, and bonus status https://old.reddit.com/r/Bas
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 - maybe better - show your payroll after trade https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
+
+injured players in hockey shootouts https://discord.com/channels/@me/778760871911751700/1238301880489345184
 
 support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
 - need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too

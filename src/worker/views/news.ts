@@ -117,11 +117,7 @@ export const processEvents = async (
 		};
 	});
 
-	let numImagesRemaining = 12;
 	for (const event of eventsWithPlayers) {
-		if (numImagesRemaining <= 0) {
-			break;
-		}
 		if (event.pids && event.pids.length > 0) {
 			const player = await idb.getCopy.players(
 				{ pid: event.pids[0] },
@@ -132,7 +128,6 @@ export const processEvents = async (
 					imgURL: player.imgURL,
 					face: player.imgURL ? undefined : player.face,
 				};
-				numImagesRemaining -= 1;
 			}
 		}
 	}

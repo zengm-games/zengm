@@ -10,10 +10,9 @@ import type {
 import { type IDBPDatabase, unwrap } from "idb";
 import type { LeagueDB } from "../connectLeague";
 
-export const getPlayersActiveSeasons = (
+export const getPlayersActiveSeason = (
 	league: IDBPDatabase<LeagueDB>,
-	seasonStart: number,
-	seasonEnd: number,
+	season: number,
 ) => {
 	return new Promise<Player<MinimalPlayerRatings>[]>((resolve, reject) => {
 		const transaction = league.transaction("players");
@@ -24,9 +23,10 @@ export const getPlayersActiveSeasons = (
 			transaction.objectStore("players").index("draft.year, retiredYear"),
 		);
 
+		// -1 is because players drafted last year won't play until this year
 		const range = IDBKeyRange.bound(
-			[-Infinity, seasonStart],
-			[seasonEnd, Infinity],
+			[-Infinity, season - 1],
+			[season, Infinity],
 		);
 		const request = index.openCursor(range);
 
@@ -45,8 +45,8 @@ export const getPlayersActiveSeasons = (
 			const [draftYear2, retiredYear] = cursor.key;
 
 			// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-			if (retiredYear < seasonStart) {
-				cursor.continue([draftYear2, seasonStart]);
+			if (retiredYear < season) {
+				cursor.continue([draftYear2, season]);
 			} else {
 				players.push(cursor.value);
 				cursor.continue();
@@ -62,7 +62,6 @@ const getCopies = async (
 		retiredYear,
 		activeAndRetired,
 		activeSeason,
-		activeSeasons,
 		draftYear,
 		hof,
 		note,
@@ -76,7 +75,6 @@ const getCopies = async (
 		retiredYear?: number;
 		activeAndRetired?: boolean;
 		activeSeason?: number;
-		activeSeasons?: [number, number]; // Inclusive
 		draftYear?: number;
 		hof?: boolean;
 		note?: boolean;
@@ -270,22 +268,8 @@ const getCopies = async (
 		).filter(filter);
 	}
 
-	if (activeSeason !== undefined || activeSeasons !== undefined) {
-		let seasonStart;
-		let seasonEnd;
-		if (activeSeason !== undefined) {
-			seasonStart = activeSeason;
-			seasonEnd = activeSeason;
-		} else {
-			seasonStart = activeSeasons![0];
-			seasonEnd = activeSeasons![1];
-		}
-
-		const fromDB = await getPlayersActiveSeasons(
-			idb.league,
-			seasonStart,
-			seasonEnd,
-		);
+	if (activeSeason !== undefined) {
+		const fromDB = await getPlayersActiveSeason(idb.league, activeSeason);
 
 		return mergeByPk(
 			fromDB,
@@ -297,7 +281,9 @@ const getCopies = async (
 						Infinity,
 					]),
 				)
-				.filter(p => p.draft.year < seasonStart && p.retiredYear >= seasonEnd),
+				.filter(
+					p => p.draft.year < activeSeason && p.retiredYear >= activeSeason,
+				),
 			"players",
 			type,
 		);

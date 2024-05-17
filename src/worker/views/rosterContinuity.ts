@@ -23,24 +23,28 @@ async function updateSeasons(
 		const seasons: (number | undefined)[][] = [];
 		let prevMinutesAll: Map<number, number>[] | undefined;
 
-		const BATCH_SIZE = 30;
+		// Start with players who were drafted before startingSeason - would be faster to use draftYear index only
+		const startingSeason = g.get("startingSeason");
+		let players = (
+			await idb.getCopies.players(
+				{
+					activeSeason: g.get("startingSeason"),
+				},
+				"noCopyCache",
+			)
+		).filter(p => p.draft.year < startingSeason);
 
-		let players;
-		let prevPlayersSeasonStart = -Infinity;
+		for (let season = startingSeason; season <= g.get("season"); season++) {
+			if (season > startingSeason) {
+				// Remove players who retired after the previous season
+				players = players.filter(p => p.retiredYear >= season);
 
-		for (
-			let season = g.get("startingSeason");
-			season <= g.get("season");
-			season++
-		) {
-			if (!players || prevPlayersSeasonStart + BATCH_SIZE <= season) {
-				players = await idb.getCopies.players(
-					{
-						activeSeasons: [season, season + BATCH_SIZE - 1],
-					},
-					"noCopyCache",
-				);
-				prevPlayersSeasonStart = season;
+				// Add rookies
+				const rookies = await idb.getCopies.players({
+					draftYear: season - 1,
+				});
+
+				players.push(...rookies);
 			}
 
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
@@ -56,7 +60,6 @@ async function updateSeasons(
 					}
 				}
 			}
-			// console.log(season, minutesAll)
 
 			if (prevMinutesAll) {
 				// compare against previous season

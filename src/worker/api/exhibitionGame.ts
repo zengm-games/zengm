@@ -21,7 +21,7 @@ import { processTeam } from "../core/game/loadTeams";
 import { gameSimToBoxScore } from "../core/game/writeGameStats";
 import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball";
 import { connectLeague, idb } from "../db";
-import { getPlayersActiveSeasons } from "../db/getCopies/players";
+import { getPlayersActiveSeason } from "../db/getCopies/players";
 import {
 	defaultGameAttributes,
 	g,
@@ -116,9 +116,7 @@ const getSeasonInfoLeague = async ({
 
 	let pid = pidOffset;
 
-	const players = (
-		await getPlayersActiveSeasons(league, season, season)
-	).filter(p => {
+	const players = (await getPlayersActiveSeason(league, season)).filter(p => {
 		// Keep players who ended the season on this team. Not perfect, will miss released players
 		const seasonStats = p.stats
 			.filter(row => row.season === season && !row.playoffs)

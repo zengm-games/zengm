@@ -23,17 +23,25 @@ async function updateSeasons(
 		const seasons: (number | undefined)[][] = [];
 		let prevMinutesAll: Map<number, number>[] | undefined;
 
+		const BATCH_SIZE = 30;
+
+		let players;
+		let prevPlayersSeasonStart = -Infinity;
+
 		for (
 			let season = g.get("startingSeason");
 			season <= g.get("season");
 			season++
 		) {
-			const players = await idb.getCopies.players(
-				{
-					activeSeason: season,
-				},
-				"noCopyCache",
-			);
+			if (!players || prevPlayersSeasonStart + BATCH_SIZE <= season) {
+				players = await idb.getCopies.players(
+					{
+						activeSeasons: [season, season + BATCH_SIZE - 1],
+					},
+					"noCopyCache",
+				);
+				prevPlayersSeasonStart = season;
+			}
 
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
 			const minutesAll = range(g.get("numTeams")).map(
@@ -41,17 +49,14 @@ async function updateSeasons(
 			);
 
 			for (const p of players) {
-				const stats = p.stats.filter(
-					ps => !ps.playoffs && ps.season === season,
-				);
-
-				for (const ps of stats) {
-					if (minutesAll[ps.tid]) {
+				for (const ps of p.stats) {
+					if (ps.season === season && !ps.playoffs && minutesAll[ps.tid]) {
 						const min = minutesAll[ps.tid].get(p.pid) ?? 0;
 						minutesAll[ps.tid].set(p.pid, min + ps.min);
 					}
 				}
 			}
+			// console.log(season, minutesAll)
 
 			if (prevMinutesAll) {
 				// compare against previous season

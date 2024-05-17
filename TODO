@@ -1,5 +1,3 @@
-players switching numbers when they don't switch teams https://discord.com/channels/290013534023057409/290013534023057409/1239346257151918130
-
 sentry
 - https://docs.sentry.io/platforms/javascript/configuration/tree-shaking/#tree-shaking-default-integrations
 - source maps working?
@@ -21,6 +19,8 @@ on trading block, if salary cap is disabled, hide the Payroll and Cap columns si
 - maybe better - show your payroll after trade https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
 
 injured players in hockey shootouts https://discord.com/channels/@me/778760871911751700/1238301880489345184
+
+players switching numbers when they don't switch teams https://discord.com/channels/290013534023057409/290013534023057409/1239346257151918130
 
 support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
 - need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too

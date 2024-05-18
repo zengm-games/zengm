@@ -208,14 +208,9 @@ goodIDB(function (idbResult) {
   if (idbResult !== "good") {
     var errorMsg;
     if (idbResult === "open-failed") {
-      errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p><p>If you\'re using Firefox\'s Private Browsing mode, there is currently a bug in Firefox that prevents GAME_NAME from running. Either load GAME_NAME outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
+      errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p>';
     } else {
       errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 75+</li><li>Firefox 78+</li><li>Safari 12.1+</li></ul>';
-    }
-
-    // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
-    if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
-      errorMsg += '<p>If you\'re on an iPhone/iPad, upgrade to iOS 12 or higher to play GAME_NAME. If you can\'t do that, then please come back on a desktop/laptop or a non-Apple mobile device!</p>';
     }
 
     var startupError = document.getElementById("startup-error");

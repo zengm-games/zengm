@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { Sketch } from "./Sketch";
 
@@ -15,7 +15,8 @@ export const ColorPicker = ({
 }) => {
 	const [hex, setHex] = useState(value);
 
-	// modalRef stuff is needed until https://github.com/react-bootstrap/react-overlays/issues/1003 is fixed
+	// Using this (plus a wrapper div in Modal.tsx) fixed the bug mentioned below about the inputs, but it broke scrolling behavior of the modal body in Firefox, so switching to enforceFocus={false} manually applied to modals that conatin the color picker (only one currently)
+	/*// modalRef stuff is needed until https://github.com/react-bootstrap/react-overlays/issues/1003 is fixed, otherwise can't type in inputs in color picker
 	const ref = useRef<HTMLButtonElement>(null);
 	const modalRef = useRef<HTMLElement | null>(null);
 
@@ -25,13 +26,12 @@ export const ColorPicker = ({
 			modalRef.current = ref.current.closest(".modal-child-overlay-container");
 			// modalRef.current = document.getElementsByClassName("modal-child-overlay-container")[0] ?? null;
 		}
-	}, []);
+	}, []);*/
 
 	return (
 		<OverlayTrigger
 			trigger="click"
 			placement="auto"
-			container={modalRef.current}
 			overlay={
 				<Popover>
 					<Sketch
@@ -53,7 +53,6 @@ export const ColorPicker = ({
 					backgroundColor: hex,
 				}}
 				type="button"
-				ref={ref}
 			/>
 		</OverlayTrigger>
 	);

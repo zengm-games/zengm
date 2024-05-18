@@ -169,13 +169,13 @@ const SelectTeam = ({
 						type: "real",
 						season,
 						pidOffset: 0,
-				  }
+					}
 				: {
 						type: "league",
 						lid: league.lid,
 						season,
 						pidOffset: 0,
-				  },
+					},
 		);
 
 		const newTeams = orderBy(
@@ -380,7 +380,7 @@ const SelectTeam = ({
 											<option key={i} value={i}>
 												{i}
 											</option>
-									  ))
+										))
 									: null}
 							</select>
 						) : null}
@@ -425,7 +425,7 @@ const SelectTeam = ({
 													t.seasonInfo.roundsWonText
 														? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
 														: ""
-											  }`
+												}`
 											: null}
 									</option>
 								))
@@ -619,8 +619,16 @@ const UpsertTeamModal = ({
 		onSave(edited);
 	};
 
+	// See comments in ColorPicker explaining why this is needed
+	const enforceFocus = false;
+
 	return (
-		<Modal size="lg" show={addEditTeamInfo.type !== "none"} onHide={onCancel}>
+		<Modal
+			size="lg"
+			show={addEditTeamInfo.type !== "none"}
+			onHide={onCancel}
+			enforceFocus={enforceFocus}
+		>
 			<Modal.Header closeButton>
 				<Modal.Title>
 					{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team

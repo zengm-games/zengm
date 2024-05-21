@@ -1460,8 +1460,10 @@ if (isSport("hockey") || isSport("basketball")) {
 			slug: "international",
 			name: "International",
 			desc: `Win a title with no ${bySport({
-				hockey: "Canadian",
-				default: "American",
+				baseball: "American",
+				basketball: "American",
+				football: "American",
+				hockey: "American or Canadian",
 			})} players on your team.`,
 			category: "Team Composition",
 
@@ -1475,7 +1477,10 @@ if (isSport("hockey") || isSport("basketball")) {
 				const playersAll = await idb.cache.players.getAll();
 				const countUSA = playersAll.filter(p => {
 					if (isSport("hockey")) {
-						return helpers.getCountry(p.born.loc) === "Canada";
+						return (
+							helpers.getCountry(p.born.loc) === "Canada" ||
+							helpers.isAmerican(p.born.loc)
+						);
 					}
 
 					return helpers.isAmerican(p.born.loc);
@@ -1493,7 +1498,10 @@ if (isSport("hockey") || isSport("basketball")) {
 
 				for (const p of players) {
 					if (isSport("hockey")) {
-						if (helpers.getCountry(p.born.loc) === "Canada") {
+						if (
+							helpers.getCountry(p.born.loc) === "Canada" ||
+							helpers.isAmerican(p.born.loc)
+						) {
 							return false;
 						}
 					} else {

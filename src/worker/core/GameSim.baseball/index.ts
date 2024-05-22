@@ -1624,6 +1624,11 @@ class GameSim extends GameSimBase {
 					balls: this.balls,
 					strikes: this.strikes,
 				});
+
+				if (this.gameIsOverDuringInning()) {
+					// End the game mid at bat - only needed in this branch because a walk sets doneBatter to true anyway
+					doneBatter = true;
+				}
 			}
 
 			return doneBatter;

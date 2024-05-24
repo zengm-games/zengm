@@ -116,27 +116,31 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				dataTableWrappedMood({
-					defaultType: "user",
-					maxWidth: true,
-					p,
-				}),
-				wrappedContractAmount(p, p.mood.user.contractAmount / 1000),
+				p.freeAgentType === "available"
+					? dataTableWrappedMood({
+							defaultType: "user",
+							maxWidth: true,
+							p,
+						})
+					: undefined,
+				wrappedContractAmount(p, p.contract.amount),
 				wrappedContractExp(p),
-				{
-					value: (
-						<NegotiateButtons
-							canGoOverCap={salaryCapType === "none"}
-							capSpace={capSpace}
-							disabled={gameSimInProgress}
-							minContract={minContract}
-							spectator={spectator}
-							p={p}
-							willingToNegotiate={p.mood.user.willing}
-						/>
-					),
-					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
-				},
+				p.freeAgentType === "available"
+					? {
+							value: (
+								<NegotiateButtons
+									canGoOverCap={salaryCapType === "none"}
+									capSpace={capSpace}
+									disabled={gameSimInProgress}
+									minContract={minContract}
+									spectator={spectator}
+									p={p}
+									willingToNegotiate={p.mood.user.willing}
+								/>
+							),
+							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
+						}
+					: "AAA",
 			],
 		};
 	});

@@ -14,11 +14,14 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
 - where to get contract info from?
   - convert freeAgent event to be metadata-based?
     - upgrade events, or keep old ones around?
-      - upgrade would be nice, to have the new feature work
+      - upgrade would be nice, to have the new feature work... but actually it won't because eid won't be in transaction, right?
         - update typescript stuff in formatEventText
     - need to look up abbrev/name of team when rendering text
   - add to p.transactions?
 - add eid to p.transactions, use to look up event in freeAgents.ts
+- // Apply contract
+- no addMood for signed players
+  - fix orderBy
 
 drag and drop
 - customize page

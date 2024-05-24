@@ -52,29 +52,37 @@ const isSeason = (
 	);
 };
 
-const getPlayers = async (season: number | "current") => {
-	let available: Player[];
-	let signed: Player[];
-	let user: Player[];
+const getPlayers = async (
+	season: number | "current",
+	type: "both" | "available" | "signed",
+) => {
+	let available: Player[] = [];
+	let signed: Player[] = [];
+	let user: Player[] = [];
 
 	if (season === "current") {
-		available = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			PLAYER.FREE_AGENT,
-		);
 		user = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			g.get("userTid"),
 		);
-		signed = (await idb.cache.players.getAll()).filter(p =>
-			p.transactions?.some(
-				row => row.type === "freeAgent" && isSeason(season, row),
-			),
-		);
+
+		if (type !== "signed") {
+			available = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				PLAYER.FREE_AGENT,
+			);
+		}
+
+		if (type !== "available") {
+			signed = await idb.cache.players.getAll();
+		}
 	} else {
-		available = [];
-		user = [];
-		signed = [];
+		if (type !== "available") {
+			signed = await idb.getCopies.players(
+				{ activeSeason: season },
+				"noCopyCache",
+			);
+		}
 	}
 
 	return {
@@ -82,17 +90,23 @@ const getPlayers = async (season: number | "current") => {
 			...available.map(p => {
 				return {
 					...p,
-					type: "available",
+					freeAgentType: "available",
 				};
 			}),
-			...signed.map(p => {
-				return {
-					...p,
-					type: "signed",
-				};
-			}),
+			...signed
+				.filter(p =>
+					p.transactions?.some(
+						row => row.type === "freeAgent" && isSeason(season, row),
+					),
+				)
+				.map(p => {
+					return {
+						...p,
+						freeAgentType: "signed",
+					};
+				}),
 		]),
-		user: await addMood(user),
+		user,
 	};
 };
 
@@ -100,7 +114,7 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	const userTid = g.get("userTid");
 
 	const payroll = await team.getPayroll(userTid);
-	const playersByType = await getPlayers(season);
+	const playersByType = await getPlayers(season, type);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
 	let players = addFirstNameShort(
@@ -116,6 +130,9 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 				"jerseyNumber",
 				"mood",
 				"draft",
+
+				// Added in getPlayers
+				"freeAgentType",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats: freeAgentStats,
@@ -127,8 +144,15 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 		}),
 	);
 
+	// Apply contract
+	for (const p of players) {
+		if (p.freeAgentType === "available") {
+			p.contract.amount = p.mood.user.contractAmount / 1000;
+		}
+	}
+
 	// Default sort, used for the compare players link
-	players = orderBy(players, p => p.mood.user.contractAmount, "desc");
+	players = orderBy(players, p => p.contract.amount, "desc");
 
 	const userPlayers = await idb.getCopies.playersPlus(playersByType.user, {
 		attrs: [],

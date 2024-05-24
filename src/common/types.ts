@@ -257,7 +257,10 @@ export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
 
 export type EventBBGMWithoutKey =
 	| {
-			type: Exclude<LogEventType, "sisyphus" | "trade">;
+			type: Exclude<
+				LogEventType,
+				"sisyphus" | "trade" | "freeAgent" | "reSigned"
+			>;
 			text: string;
 			pids?: number[];
 			dpids?: number[];
@@ -293,6 +296,21 @@ export type EventBBGMWithoutKey =
 			phase?: Phase;
 			score?: number;
 			teams?: TradeEventTeams;
+	  }
+	| {
+			type: "freeAgent" | "reSigned";
+			text?: string; // Only legacy will have text
+			pids: [number];
+			tids: [number];
+			season: number;
+
+			// These three will only be undefind in legacy events
+			phase?: Phase;
+			score?: number;
+			contract?: PlayerContract;
+
+			// Never defined, just for TypeScript
+			dpids?: number[];
 	  };
 
 export type EventBBGM = EventBBGMWithoutKey & {
@@ -1216,6 +1234,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 				phase: number;
 				tid: number;
 				type: "freeAgent";
+				eid?: number;
 		  }
 		| {
 				season: number;

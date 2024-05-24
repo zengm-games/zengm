@@ -1,6 +1,7 @@
 signed free agents page - show signed players per year https://old.reddit.com/r/BasketballGM/comments/1cwv0z2/show_fa_signings/ otherwise the same as normal free agents page
 - show phase of game signed too
 - group season starting at free agency phase so like 2025-26
+  - make sure dropdown of season appears correctly, when we advance to free agency
 - maybe not a distinct page... just add them to the normal free agents page, have an option for "available/signed/both", and default to "both" for past seasons
 - make sure compare link still works
   - current season
@@ -12,7 +13,12 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
 - test other sports
 - where to get contract info from?
   - convert freeAgent event to be metadata-based?
+    - upgrade events, or keep old ones around?
+      - upgrade would be nice, to have the new feature work
+        - update typescript stuff in formatEventText
+    - need to look up abbrev/name of team when rendering text
   - add to p.transactions?
+- add eid to p.transactions, use to look up event in freeAgents.ts
 
 drag and drop
 - customize page

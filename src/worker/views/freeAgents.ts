@@ -1,5 +1,5 @@
-import { bySport, PLAYER } from "../../common";
-import type { Player, ViewInput } from "../../common/types";
+import { bySport, PHASE, PLAYER } from "../../common";
+import type { Phase, Player, ViewInput } from "../../common/types";
 import { orderBy } from "../../common/utils";
 import { player, team } from "../core";
 import { idb } from "../db";
@@ -25,6 +25,33 @@ export const freeAgentStats = bySport({
 	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 });
 
+const isSeason = (
+	season: number | "current",
+	toCheck: {
+		season: number;
+		phase: Phase;
+	},
+) => {
+	let freeAgencySeason;
+	if (season === "current") {
+		if (g.get("phase") >= PHASE.FREE_AGENCY) {
+			freeAgencySeason = g.get("season");
+		} else {
+			freeAgencySeason = g.get("season") - 1;
+		}
+	} else {
+		// Starting free agency in season, up until right before free agency in season + 1
+		freeAgencySeason = season;
+	}
+
+	return (
+		(toCheck.season === freeAgencySeason &&
+			toCheck.phase >= PHASE.FREE_AGENCY) ||
+		(toCheck.season === freeAgencySeason + 1 &&
+			toCheck.phase < PHASE.FREE_AGENCY)
+	);
+};
+
 const getPlayers = async (season: number | "current") => {
 	let available: Player[];
 	let signed: Player[];
@@ -39,7 +66,11 @@ const getPlayers = async (season: number | "current") => {
 			"playersByTid",
 			g.get("userTid"),
 		);
-		signed = [];
+		signed = (await idb.cache.players.getAll()).filter(p =>
+			p.transactions?.some(
+				row => row.type === "freeAgent" && isSeason(season, row),
+			),
+		);
 	} else {
 		available = [];
 		user = [];

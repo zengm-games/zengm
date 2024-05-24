@@ -137,7 +137,7 @@ const formatEventText = async (event: EventBBGM) => {
 						"roster",
 						`${teamInfo.abbrev}_${tid}`,
 						event.season,
-				  ])}">${teamInfo.name}</a>`
+					])}">${teamInfo.name}</a>`
 				: "???";
 
 			if (text === "") {
@@ -173,6 +173,36 @@ const formatEventText = async (event: EventBBGM) => {
 
 		return text;
 	}
+	if (
+		(event.type === "freeAgent" || event.type === "reSigned") &&
+		event.text === undefined
+	) {
+		const signedOrReSigned = event.type === "reSigned" ? "re-signed" : "signed";
+
+		const tid = event.tids[0];
+
+		const teamInfo = await getTeamInfoBySeason(tid, event.season);
+		const teamName = teamInfo
+			? `<a href="${helpers.leagueUrl([
+					"roster",
+					`${teamInfo.abbrev}_${tid}`,
+					event.season,
+				])}">${teamInfo.name}</a>`
+			: "???";
+
+		const p = await idb.getCopy.players({ pid: event.pids[0] }, "noCopyCache");
+		const playerName = p
+			? `<a href="${helpers.leagueUrl([
+					"player",
+					p.pid,
+				])}">${p.firstName} ${p.lastName}</a>`
+			: "???";
+
+		return `The ${teamName} ${signedOrReSigned} ${playerName} for ${helpers.formatCurrency(
+			event.contract!.amount / 1000,
+			"M",
+		)}/year through ${event.contract!.exp}.`;
+	}
 
 	if (event.type === "sisyphus") {
 		const teamNames = await Promise.all(
@@ -183,7 +213,7 @@ const formatEventText = async (event: EventBBGM) => {
 							"roster",
 							`${teamInfo.abbrev}_${tid}`,
 							event.season,
-					  ])}">${teamInfo.name}</a>`
+						])}">${teamInfo.name}</a>`
 					: "???";
 			}),
 		);
@@ -192,7 +222,7 @@ const formatEventText = async (event: EventBBGM) => {
 		const playerName = p
 			? `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 					p.lastName
-			  }</a>`
+				}</a>`
 			: "???";
 
 		return `Sisyphus Mode sent ${playerName} from the ${teamNames[1]} to the ${

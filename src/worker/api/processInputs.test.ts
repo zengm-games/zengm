@@ -45,7 +45,7 @@ describe("worker/api/processInputs", () => {
 
 		test("return current season on invalid input", () => {
 			assert.strictEqual(validateSeason("fuck"), 2009);
-			assert.strictEqual(validateSeason(), 2009);
+			assert.strictEqual(validateSeason(undefined), 2009);
 		});
 	});
 });

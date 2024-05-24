@@ -35,26 +35,13 @@ const sign = async (
 	const resigning =
 		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
 	const eventType = resigning ? "reSigned" : "freeAgent";
-	const signedOrReSigned = resigning ? "re-signed" : "signed";
 	logEvent({
 		type: eventType,
-		text: `The <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[p.tid]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[p.tid]?.name
-		}</a> ${signedOrReSigned} <a href="${helpers.leagueUrl([
-			"player",
-			p.pid,
-		])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
-			p.contract.amount / 1000,
-			"M",
-		)}/year through ${p.contract.exp}.`,
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],
 		score,
+		contract: p.contract,
 	});
 
 	const freeAgent = !resigning && !isRookie;

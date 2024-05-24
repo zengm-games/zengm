@@ -1,5 +1,5 @@
 import { bySport, PLAYER } from "../../common";
-import type { Player } from "../../common/types";
+import type { Player, ViewInput } from "../../common/types";
 import { orderBy } from "../../common/utils";
 import { player, team } from "../core";
 import { idb } from "../db";
@@ -25,7 +25,7 @@ export const freeAgentStats = bySport({
 	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 });
 
-const updateFreeAgents = async () => {
+const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	const userTid = g.get("userTid");
 
 	const payroll = await team.getPayroll(userTid);
@@ -87,8 +87,9 @@ const updateFreeAgents = async () => {
 		payroll: payroll / 1000,
 		phase: g.get("phase"),
 		players,
-		season: g.get("season"),
+		season,
 		stats: freeAgentStats,
+		type,
 		userPlayers,
 	};
 };

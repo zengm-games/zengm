@@ -34,6 +34,7 @@ const FreeAgents = ({
 	salaryCapType,
 	season,
 	stats,
+	type,
 	userPlayers,
 }: View<"freeAgents">) => {
 	const [addFilters, setAddFilters] = useState<
@@ -58,7 +59,11 @@ const FreeAgents = ({
 		}, 0);
 	}, [capSpace, challengeNoFreeAgents, minContract, stats]);
 
-	useTitleBar({ title: "Free Agents" });
+	useTitleBar({
+		title: "Free Agents",
+		dropdownView: "free_agents",
+		dropdownFields: { typeFreeAgents: type, seasonsFreeAgents: season },
+	});
 
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
@@ -140,58 +145,62 @@ const FreeAgents = ({
 
 	return (
 		<>
-			<RosterComposition className="float-end mb-3" players={userPlayers} />
-
+			{season === "current" ? (
+				<RosterComposition className="float-end mb-3" players={userPlayers} />
+			) : null}
 			<MoreLinks type="freeAgents" page="free_agents" />
+			{season === "current" ? (
+				<>
+					<RosterSalarySummary
+						capSpace={capSpace}
+						salaryCapType={salaryCapType}
+						luxuryPayroll={luxuryPayroll}
+						maxContract={maxContract}
+						minContract={minContract}
+						numRosterSpots={numRosterSpots}
+						payroll={payroll}
+					/>
 
-			<RosterSalarySummary
-				capSpace={capSpace}
-				salaryCapType={salaryCapType}
-				luxuryPayroll={luxuryPayroll}
-				maxContract={maxContract}
-				minContract={minContract}
-				numRosterSpots={numRosterSpots}
-				payroll={payroll}
-			/>
+					{showShowPlayersAffordButton || godMode ? (
+						<div className="d-sm-flex mb-3">
+							{showShowPlayersAffordButton ? (
+								<button
+									className="btn btn-secondary"
+									onClick={showAfforablePlayers}
+								>
+									Show players you can afford now
+								</button>
+							) : null}
 
-			{showShowPlayersAffordButton || godMode ? (
-				<div className="d-sm-flex mb-3">
-					{showShowPlayersAffordButton ? (
-						<button
-							className="btn btn-secondary"
-							onClick={showAfforablePlayers}
-						>
-							Show players you can afford now
-						</button>
+							<div className="d-block">
+								{godMode ? (
+									<button
+										className={classNames("btn btn-god-mode", {
+											"ms-sm-2 mt-2 mt-sm-0": showShowPlayersAffordButton,
+										})}
+										onClick={async () => {
+											const proceed = await confirm(
+												`Are you sure you want to delete all ${players.length} free agents?`,
+												{
+													okText: "Delete Players",
+												},
+											);
+											if (proceed) {
+												await toWorker(
+													"main",
+													"removePlayers",
+													players.map(p => p.pid),
+												);
+											}
+										}}
+									>
+										Delete all players
+									</button>
+								) : null}
+							</div>
+						</div>
 					) : null}
-
-					<div className="d-block">
-						{godMode ? (
-							<button
-								className={classNames("btn btn-god-mode", {
-									"ms-sm-2 mt-2 mt-sm-0": showShowPlayersAffordButton,
-								})}
-								onClick={async () => {
-									const proceed = await confirm(
-										`Are you sure you want to delete all ${players.length} free agents?`,
-										{
-											okText: "Delete Players",
-										},
-									);
-									if (proceed) {
-										await toWorker(
-											"main",
-											"removePlayers",
-											players.map(p => p.pid),
-										);
-									}
-								}}
-							>
-								Delete all players
-							</button>
-						) : null}
-					</div>
-				</div>
+				</>
 			) : null}
 
 			{players.length > 1 ? (

@@ -165,6 +165,9 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	current: "Current",
 	overview: "Overview",
 	gameLog: "Game Log",
+	available: "Available",
+	signed: "Signed",
+	both: "Both",
 };
 
 if (isSport("baseball")) {
@@ -249,7 +252,8 @@ const useDropdownOptions = (
 		field === "seasonsAndAll" ||
 		field === "seasonsAndCurrent" ||
 		field === "seasonsAndOldDrafts" ||
-		field === "seasonsHistory"
+		field === "seasonsHistory" ||
+		field === "seasonsFreeAgents"
 	) {
 		keys = [];
 
@@ -265,7 +269,7 @@ const useDropdownOptions = (
 			keys.unshift("all|||seasons");
 		}
 
-		if (field === "seasonsAndCurrent") {
+		if (field === "seasonsAndCurrent" || field === "seasonsFreeAgents") {
 			keys.unshift("current");
 		}
 
@@ -458,6 +462,8 @@ const useDropdownOptions = (
 		keys = ["flag", "note", "either"];
 	} else if (field === "playerProfile") {
 		keys = ["overview", "gameLog"];
+	} else if (field === "typeFreeAgents") {
+		keys = ["available", "signed", "both"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

@@ -63,7 +63,7 @@ export const validateAbbrev = (
  * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.get("season") is used.
  * @return {number} Validated season (same as input unless input is undefined, currently).
  */
-export const validateSeason = (season?: number | string): number => {
+export const validateSeason = (season: number | string | undefined): number => {
 	if (season === undefined) {
 		return g.get("season");
 	}
@@ -245,12 +245,36 @@ const fantasyDraft = () => {
 	}
 };
 
-const freeAgents = () => {
+const freeAgents = (params: Params) => {
 	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		return {
 			redirectUrl: helpers.leagueUrl(["negotiation"]),
 		};
 	}
+
+	let season: number | "current";
+	if (params.season && params.season !== "current") {
+		season = validateSeason(params.season);
+	} else {
+		season = "current";
+	}
+
+	let type: "available" | "signed" | "both";
+	if (season !== "current") {
+		// If this is a previous season, force type to be "both" because "available" will be none and "both" looks better when switching to current season than "signed"
+		type = "both";
+	} else if (params.type === "signed") {
+		type = "signed";
+	} else if (params.type === "both") {
+		type = "both";
+	} else {
+		type = "available";
+	}
+
+	return {
+		season,
+		type,
+	};
 };
 
 const frivolitiesTrades = (params: Params) => {

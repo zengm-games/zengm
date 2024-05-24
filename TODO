@@ -1,3 +1,15 @@
+signed free agents page - show signed players per year https://old.reddit.com/r/BasketballGM/comments/1cwv0z2/show_fa_signings/ otherwise the same as normal free agents page
+- show phase of game signed too
+- group season starting at free agency phase so like 2025-26
+- maybe not a distinct page... just add them to the normal free agents page, have an option for "available/signed/both", and default to "both" for past seasons
+- make sure compare link still works
+  - current season
+  - past seasons
+- players signed multiple times in season? last one
+- don't slow down current season by reading from disk
+- skip update refresh for past seasons
+- DRY isCurrentSeason
+
 drag and drop
 - customize page
   - allow drag and drop to reorder confs/divs

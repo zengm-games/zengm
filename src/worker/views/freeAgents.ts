@@ -25,20 +25,55 @@ export const freeAgentStats = bySport({
 	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 });
 
+const getPlayers = async (season: number | "current") => {
+	let available: Player[];
+	let signed: Player[];
+	let user: Player[];
+
+	if (season === "current") {
+		available = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			PLAYER.FREE_AGENT,
+		);
+		user = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
+		signed = [];
+	} else {
+		available = [];
+		user = [];
+		signed = [];
+	}
+
+	return {
+		freeAgents: await addMood([
+			...available.map(p => {
+				return {
+					...p,
+					type: "available",
+				};
+			}),
+			...signed.map(p => {
+				return {
+					...p,
+					type: "signed",
+				};
+			}),
+		]),
+		user: await addMood(user),
+	};
+};
+
 const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	const userTid = g.get("userTid");
 
 	const payroll = await team.getPayroll(userTid);
-	const userPlayersAll = await addMood(
-		await idb.cache.players.indexGetAll("playersByTid", userTid),
-	);
-	const playersAll = await addMood(
-		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
-	);
+	const playersByType = await getPlayers(season);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
 	let players = addFirstNameShort(
-		await idb.getCopies.playersPlus(playersAll, {
+		await idb.getCopies.playersPlus(playersByType.freeAgents, {
 			attrs: [
 				"pid",
 				"firstName",
@@ -64,7 +99,7 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	// Default sort, used for the compare players link
 	players = orderBy(players, p => p.mood.user.contractAmount, "desc");
 
-	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
+	const userPlayers = await idb.getCopies.playersPlus(playersByType.user, {
 		attrs: [],
 		ratings: ["pos"],
 		stats: [],

@@ -1224,21 +1224,21 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	transactions?: (
 		| {
 				season: number;
-				phase: number;
+				phase: Phase;
 				tid: number;
 				type: "draft";
 				pickNum: number;
 		  }
 		| {
 				season: number;
-				phase: number;
+				phase: Phase;
 				tid: number;
 				type: "freeAgent";
 				eid?: number;
 		  }
 		| {
 				season: number;
-				phase: number;
+				phase: Phase;
 				tid: number;
 				type: "trade";
 				fromTid: number;
@@ -1246,19 +1246,19 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		  }
 		| {
 				season: number;
-				phase: number;
+				phase: Phase;
 				tid: number;
 				type: "godMode";
 		  }
 		| {
 				season: number;
-				phase: number;
+				phase: Phase;
 				tid: number;
 				type: "import";
 		  }
 		| {
 				season: number;
-				phase: number;
+				phase: Phase;
 				tid: number;
 				type: "sisyphus";
 				fromTid: number;

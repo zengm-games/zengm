@@ -39,10 +39,8 @@ const isSeason = (
 	},
 ) => {
 	return (
-		(toCheck.season === freeAgencySeason &&
-			toCheck.phase >= PHASE.FREE_AGENCY) ||
-		(toCheck.season === freeAgencySeason + 1 &&
-			toCheck.phase < PHASE.FREE_AGENCY)
+		(toCheck.season === freeAgencySeason && toCheck.phase >= PHASE.PLAYOFFS) ||
+		(toCheck.season === freeAgencySeason + 1 && toCheck.phase < PHASE.PLAYOFFS)
 	);
 };
 
@@ -141,7 +139,7 @@ const updateFreeAgents = async (
 
 		let freeAgencySeason;
 		if (season === "current") {
-			if (g.get("phase") >= PHASE.FREE_AGENCY) {
+			if (g.get("phase") >= PHASE.PLAYOFFS) {
 				freeAgencySeason = g.get("season");
 			} else {
 				freeAgencySeason = g.get("season") - 1;

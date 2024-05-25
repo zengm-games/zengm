@@ -31,8 +31,7 @@ const useSeasonsFreeAgents = () => {
 	const minFreeAgencySeason = startingSeason - 1;
 
 	// These are 1 lower than you'd expect, because there's also a "current" entry added below
-	const maxFreeAgencySeason =
-		phase >= PHASE.FREE_AGENCY ? season - 1 : season - 2;
+	const maxFreeAgencySeason = phase >= PHASE.PLAYOFFS ? season - 1 : season - 2;
 
 	const options: DropdownOption[] = range(
 		minFreeAgencySeason,
@@ -117,9 +116,10 @@ const FreeAgents = ({
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
 	if (
-		(phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
-		phase === PHASE.FANTASY_DRAFT ||
-		phase === PHASE.EXPANSION_DRAFT
+		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
+			phase === PHASE.FANTASY_DRAFT ||
+			phase === PHASE.EXPANSION_DRAFT) &&
+		season === "current"
 	) {
 		return (
 			<div>

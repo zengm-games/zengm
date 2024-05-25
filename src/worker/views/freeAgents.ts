@@ -109,15 +109,17 @@ const getPlayers = async (
 	}
 
 	return {
-		freeAgents: await addMood([
-			...available.map(p => {
-				return {
-					...p,
-					freeAgentType: "available",
-				};
-			}),
+		freeAgents: [
+			...(await addMood(
+				available.map(p => {
+					return {
+						...p,
+						freeAgentType: "available",
+					};
+				}),
+			)),
 			...processedSigned,
-		]),
+		],
 		user,
 	};
 };

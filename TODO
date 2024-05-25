@@ -7,7 +7,6 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
         - update typescript stuff in formatEventText
     - need to look up abbrev/name of team when rendering text
   - add to p.transactions?
-- no addMood for signed players
 - test in old leagues
 - should free agents page ever be unviewable?
 - test dropdown with negative years and years<10

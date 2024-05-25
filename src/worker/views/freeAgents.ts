@@ -5,6 +5,7 @@ import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { loadAbbrevs } from "./gameLog";
 
 export const addMood = async (players: Player[]) => {
 	const moods: Awaited<ReturnType<(typeof player)["moodInfos"]>>[] = [];
@@ -26,24 +27,12 @@ export const freeAgentStats = bySport({
 });
 
 const isSeason = (
-	season: number | "current",
+	freeAgencySeason: number,
 	toCheck: {
 		season: number;
 		phase: Phase;
 	},
 ) => {
-	let freeAgencySeason;
-	if (season === "current") {
-		if (g.get("phase") >= PHASE.FREE_AGENCY) {
-			freeAgencySeason = g.get("season");
-		} else {
-			freeAgencySeason = g.get("season") - 1;
-		}
-	} else {
-		// Starting free agency in season, up until right before free agency in season + 1
-		freeAgencySeason = season;
-	}
-
 	return (
 		(toCheck.season === freeAgencySeason &&
 			toCheck.phase >= PHASE.FREE_AGENCY) ||
@@ -54,6 +43,7 @@ const isSeason = (
 
 const getPlayers = async (
 	season: number | "current",
+	freeAgencySeason: number,
 	type: "both" | "available" | "signed",
 ) => {
 	let available: Player[] = [];
@@ -76,6 +66,12 @@ const getPlayers = async (
 		if (type !== "available") {
 			signed = await idb.cache.players.getAll();
 		}
+
+		if (type === "both") {
+			// Ensure players don't appear both available and signed, like they were signed and then released again
+			const availablePids = new Set(available.map(p => p.pid));
+			signed = signed.filter(p => !availablePids.has(p.pid));
+		}
 	} else {
 		if (type !== "available") {
 			signed = await idb.getCopies.players(
@@ -94,7 +90,7 @@ const getPlayers = async (
 	})[] = [];
 	for (const p of signed) {
 		const freeAgentTransaction = p.transactions?.findLast(
-			row => row.type === "freeAgent" && isSeason(season, row),
+			row => row.type === "freeAgent" && isSeason(freeAgencySeason, row),
 		);
 		if (freeAgentTransaction) {
 			processedSigned.push({
@@ -124,8 +120,20 @@ const getPlayers = async (
 const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	const userTid = g.get("userTid");
 
+	let freeAgencySeason;
+	if (season === "current") {
+		if (g.get("phase") >= PHASE.FREE_AGENCY) {
+			freeAgencySeason = g.get("season");
+		} else {
+			freeAgencySeason = g.get("season") - 1;
+		}
+	} else {
+		// Starting free agency in season, up until right before free agency in season + 1
+		freeAgencySeason = season;
+	}
+
 	const payroll = await team.getPayroll(userTid);
-	const playersByType = await getPlayers(season, type);
+	const playersByType = await getPlayers(season, freeAgencySeason, type);
 	const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
 	let players = addFirstNameShort(
@@ -157,6 +165,7 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	);
 
 	// Apply contract
+	let abbrevs;
 	for (const p of players) {
 		if (p.freeAgentType === "available") {
 			p.contract.amount = p.mood.user.contractAmount / 1000;
@@ -176,6 +185,12 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 					exp: p.freeAgentTransaction.season,
 				};
 			}
+
+			if (!abbrevs) {
+				// + 1 because it should consider abbrevs from the next game actually played, which will be the following calendar year after free agency starts
+				abbrevs = await loadAbbrevs(freeAgencySeason + 1);
+			}
+			p.freeAgentTransaction.abbrev = abbrevs[p.freeAgentTransaction.tid];
 		}
 	}
 
@@ -195,6 +210,7 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 		capSpace,
 		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 		challengeNoRatings: g.get("challengeNoRatings"),
+		freeAgencySeason,
 		godMode: g.get("godMode"),
 		luxuryPayroll: g.get("luxuryPayroll") / 1000,
 		salaryCapType: g.get("salaryCapType"),

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { PHASE } from "../../common";
+import { PHASE, PHASE_TEXT } from "../../common";
 import {
 	DataTable,
 	MoreLinks,
@@ -22,6 +22,7 @@ const FreeAgents = ({
 	capSpace,
 	challengeNoFreeAgents,
 	challengeNoRatings,
+	freeAgencySeason,
 	godMode,
 	luxuryPayroll,
 	maxContract,
@@ -140,7 +141,23 @@ const FreeAgents = ({
 							),
 							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 						}
-					: "ATL, preseason",
+					: {
+							value: (
+								<>
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											`${p.freeAgentTransaction.abbrev}_${p.freeAgentTransaction.tid}`,
+											freeAgencySeason + 1,
+										])}
+									>
+										{p.freeAgentTransaction.abbrev}
+									</a>
+									, {(PHASE_TEXT as any)[p.freeAgentTransaction.phase]}
+								</>
+							),
+							searchValue: `${p.freeAgentTransaction.abbrev}, ${(PHASE_TEXT as any)[p.freeAgentTransaction.phase]}`,
+						},
 			],
 		};
 	});

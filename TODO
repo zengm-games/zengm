@@ -19,9 +19,9 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
     - need to look up abbrev/name of team when rendering text
   - add to p.transactions?
 - no addMood for signed players
-- for signed players, need tid, abbrev, season, and phase
-  - get from p.transactions
-  - also need to use eid there to look up contract value in event
+- test in old leagues
+- should free agents page ever be unviewable?
+- dropdown decrease all seasons by 1
 
 drag and drop
 - customize page

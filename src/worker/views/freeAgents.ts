@@ -173,7 +173,7 @@ const updateFreeAgents = async (
 				],
 				ratings: ["ovr", "pot", "skills", "pos"],
 				stats: freeAgentStats,
-				season: g.get("season"),
+				season: season === "current" ? g.get("season") : freeAgencySeason,
 				showNoStats: true,
 				showRookies: true,
 				fuzz: true,

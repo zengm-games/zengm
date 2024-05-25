@@ -146,6 +146,10 @@ const FreeAgents = ({
 		"Negotiate",
 	]);
 
+	const playerInfoSeason =
+		freeAgencySeason +
+		(season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0);
+
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
@@ -159,6 +163,7 @@ const FreeAgents = ({
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
+					season: playerInfoSeason,
 				}),
 				p.ratings.pos,
 				p.age,
@@ -279,10 +284,7 @@ const FreeAgents = ({
 							"compare_players",
 							players
 								.slice(0, 5)
-								.map(
-									p =>
-										`${p.pid}-${freeAgencySeason + (season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0)}-r`,
-								)
+								.map(p => `${p.pid}-${playerInfoSeason}-r`)
 								.join(","),
 						])}
 					>

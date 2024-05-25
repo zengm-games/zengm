@@ -279,7 +279,10 @@ const FreeAgents = ({
 							"compare_players",
 							players
 								.slice(0, 5)
-								.map(p => `${p.pid}-${season}-r`)
+								.map(
+									p =>
+										`${p.pid}-${freeAgencySeason + (season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0)}-r`,
+								)
 								.join(","),
 						])}
 					>

@@ -1,15 +1,11 @@
 signed free agents page - show signed players per year https://old.reddit.com/r/BasketballGM/comments/1cwv0z2/show_fa_signings/ otherwise the same as normal free agents page
 - test other sports
-- where to get contract info from?
-  - convert freeAgent event to be metadata-based?
-    - upgrade events, or keep old ones around?
-      - upgrade would be nice, to have the new feature work... but actually it won't because eid won't be in transaction, right?
-        - update typescript stuff in formatEventText
-    - need to look up abbrev/name of team when rendering text
-  - add to p.transactions?
-- test in old leagues
+- ovr/pot missing http://localhost/l/188/free_agents
 - should free agents page ever be unviewable?
-- test dropdown with negative years and years<10
+- blog
+  - available/signed/both
+  - seasons
+  - upgraded leagues - missing contract info
 
 drag and drop
 - customize page

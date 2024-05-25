@@ -2279,7 +2279,7 @@ export const settings: Setting[] = (
 						the playoffs, with the same exact players and rosters as the
 						previous season. No player development, no persistent transactions.
 						Groundhog Day can be enabled at any point in the season prior to the
-						draft. teams.
+						draft.
 					</p>
 					<p>
 						<b>Players only:</b> The same players exist at the same ages/ratings

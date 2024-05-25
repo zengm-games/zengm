@@ -1,5 +1,10 @@
 import { bySport, PHASE, PLAYER } from "../../common";
-import type { Phase, Player, ViewInput } from "../../common/types";
+import type {
+	Phase,
+	Player,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
 import { orderBy } from "../../common/utils";
 import { player, team } from "../core";
 import { idb } from "../db";
@@ -117,116 +122,129 @@ const getPlayers = async (
 	};
 };
 
-const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
-	const userTid = g.get("userTid");
+const updateFreeAgents = async (
+	{ season, type }: ViewInput<"freeAgents">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
+	if (
+		updateEvents.includes("firstRun") ||
+		season === "current" ||
+		(updateEvents.includes("newPhase") &&
+			g.get("phase") === PHASE.FREE_AGENCY) ||
+		season !== state.season ||
+		type !== state.type
+	) {
+		const userTid = g.get("userTid");
 
-	let freeAgencySeason;
-	if (season === "current") {
-		if (g.get("phase") >= PHASE.FREE_AGENCY) {
-			freeAgencySeason = g.get("season");
+		let freeAgencySeason;
+		if (season === "current") {
+			if (g.get("phase") >= PHASE.FREE_AGENCY) {
+				freeAgencySeason = g.get("season");
+			} else {
+				freeAgencySeason = g.get("season") - 1;
+			}
 		} else {
-			freeAgencySeason = g.get("season") - 1;
+			// Starting free agency in season, up until right before free agency in season + 1
+			freeAgencySeason = season;
 		}
-	} else {
-		// Starting free agency in season, up until right before free agency in season + 1
-		freeAgencySeason = season;
-	}
 
-	const payroll = await team.getPayroll(userTid);
-	const playersByType = await getPlayers(season, freeAgencySeason, type);
-	const capSpace = (g.get("salaryCap") - payroll) / 1000;
+		const payroll = await team.getPayroll(userTid);
+		const playersByType = await getPlayers(season, freeAgencySeason, type);
+		const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
-	let players = addFirstNameShort(
-		await idb.getCopies.playersPlus(playersByType.freeAgents, {
-			attrs: [
-				"pid",
-				"firstName",
-				"lastName",
-				"age",
-				"contract",
-				"injury",
-				"watch",
-				"jerseyNumber",
-				"mood",
-				"draft",
+		let players = addFirstNameShort(
+			await idb.getCopies.playersPlus(playersByType.freeAgents, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"age",
+					"contract",
+					"injury",
+					"watch",
+					"jerseyNumber",
+					"mood",
+					"draft",
 
-				// Added in getPlayers
-				"freeAgentType",
-				"freeAgentTransaction",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats: freeAgentStats,
+					// Added in getPlayers
+					"freeAgentType",
+					"freeAgentTransaction",
+				],
+				ratings: ["ovr", "pot", "skills", "pos"],
+				stats: freeAgentStats,
+				season: g.get("season"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+				oldStats: true,
+			}),
+		);
+
+		// Apply contract
+		let abbrevs;
+		for (const p of players) {
+			if (p.freeAgentType === "available") {
+				p.contract.amount = p.mood.user.contractAmount / 1000;
+			} else {
+				let event;
+				if (p.freeAgentTransaction.eid !== undefined) {
+					event = await idb.getCopy.events({ eid: p.freeAgentTransaction.eid });
+				}
+				if (event && event.type === "freeAgent" && event.contract) {
+					p.contract = {
+						amount: event.contract.amount / 1000,
+						exp: event.contract.exp,
+					};
+				} else {
+					p.contract = {
+						amount: 0,
+						exp: p.freeAgentTransaction.season,
+					};
+				}
+
+				if (!abbrevs) {
+					// + 1 because it should consider abbrevs from the next game actually played, which will be the following calendar year after free agency starts
+					abbrevs = await loadAbbrevs(freeAgencySeason + 1);
+				}
+				p.freeAgentTransaction.abbrev = abbrevs[p.freeAgentTransaction.tid];
+			}
+		}
+
+		// Default sort, used for the compare players link
+		players = orderBy(players, p => p.contract.amount, "desc");
+
+		const userPlayers = await idb.getCopies.playersPlus(playersByType.user, {
+			attrs: [],
+			ratings: ["pos"],
+			stats: [],
 			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
-			fuzz: true,
-			oldStats: true,
-		}),
-	);
+		});
 
-	// Apply contract
-	let abbrevs;
-	for (const p of players) {
-		if (p.freeAgentType === "available") {
-			p.contract.amount = p.mood.user.contractAmount / 1000;
-		} else {
-			let event;
-			if (p.freeAgentTransaction.eid !== undefined) {
-				event = await idb.getCopy.events({ eid: p.freeAgentTransaction.eid });
-			}
-			if (event && event.type === "freeAgent" && event.contract) {
-				p.contract = {
-					amount: event.contract.amount / 1000,
-					exp: event.contract.exp,
-				};
-			} else {
-				p.contract = {
-					amount: 0,
-					exp: p.freeAgentTransaction.season,
-				};
-			}
-
-			if (!abbrevs) {
-				// + 1 because it should consider abbrevs from the next game actually played, which will be the following calendar year after free agency starts
-				abbrevs = await loadAbbrevs(freeAgencySeason + 1);
-			}
-			p.freeAgentTransaction.abbrev = abbrevs[p.freeAgentTransaction.tid];
-		}
+		return {
+			capSpace,
+			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
+			challengeNoRatings: g.get("challengeNoRatings"),
+			freeAgencySeason,
+			godMode: g.get("godMode"),
+			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			salaryCapType: g.get("salaryCapType"),
+			maxContract: g.get("maxContract"),
+			minContract: g.get("minContract"),
+			numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
+			spectator: g.get("spectator"),
+			payroll: payroll / 1000,
+			phase: g.get("phase"),
+			players,
+			season,
+			startingSeason: g.get("startingSeason"),
+			stats: freeAgentStats,
+			type,
+			userPlayers,
+		};
 	}
-
-	// Default sort, used for the compare players link
-	players = orderBy(players, p => p.contract.amount, "desc");
-
-	const userPlayers = await idb.getCopies.playersPlus(playersByType.user, {
-		attrs: [],
-		ratings: ["pos"],
-		stats: [],
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-	});
-
-	return {
-		capSpace,
-		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
-		challengeNoRatings: g.get("challengeNoRatings"),
-		freeAgencySeason,
-		godMode: g.get("godMode"),
-		luxuryPayroll: g.get("luxuryPayroll") / 1000,
-		salaryCapType: g.get("salaryCapType"),
-		maxContract: g.get("maxContract"),
-		minContract: g.get("minContract"),
-		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
-		spectator: g.get("spectator"),
-		payroll: payroll / 1000,
-		phase: g.get("phase"),
-		players,
-		season,
-		startingSeason: g.get("startingSeason"),
-		stats: freeAgentStats,
-		type,
-		userPlayers,
-	};
 };
 
 export default updateFreeAgents;

@@ -189,7 +189,10 @@ const updateFreeAgents = async (
 			} else {
 				let event;
 				if (p.freeAgentTransaction.eid !== undefined) {
-					event = await idb.getCopy.events({ eid: p.freeAgentTransaction.eid });
+					event = await idb.getCopy.events(
+						{ eid: p.freeAgentTransaction.eid },
+						"noCopyCache",
+					);
 				}
 				if (event && event.type === "freeAgent" && event.contract) {
 					p.contract = {

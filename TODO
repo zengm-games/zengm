@@ -6,7 +6,6 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
 - make sure compare link still works
   - current season
   - past seasons
-- don't slow down current season by reading from disk
 - test other sports
 - where to get contract info from?
   - convert freeAgent event to be metadata-based?

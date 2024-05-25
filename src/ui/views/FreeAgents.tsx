@@ -17,6 +17,49 @@ import {
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import classNames from "classnames";
+import { range } from "../../common/utils";
+import type { DropdownOption } from "../hooks/useDropdownOptions";
+
+const useSeasonsFreeAgents = () => {
+	const { phase, season, startingSeason } = useLocalPartial([
+		"phase",
+		"season",
+		"startingSeason",
+	]);
+
+	// Decrease season by 1, since "free agent season" starts in the previous calendar year
+	const minFreeAgencySeason = startingSeason - 1;
+
+	// These are 1 lower than you'd expect, because there's also a "current" entry added below
+	const maxFreeAgencySeason =
+		phase >= PHASE.FREE_AGENCY ? season - 1 : season - 2;
+
+	const options: DropdownOption[] = range(
+		minFreeAgencySeason,
+		maxFreeAgencySeason + 1,
+	).map(freeAgencySeason => {
+		let value;
+		if (freeAgencySeason >= -10 && freeAgencySeason < 10) {
+			value = `${freeAgencySeason}-${freeAgencySeason + 1}`;
+		} else {
+			value = `${freeAgencySeason}-${String((freeAgencySeason + 1) % 100).padStart(2)}`;
+		}
+
+		return {
+			key: freeAgencySeason,
+			value,
+		};
+	});
+
+	options.push({
+		key: "current",
+		value: "Current",
+	});
+
+	options.reverse();
+
+	return options;
+};
 
 const FreeAgents = ({
 	capSpace,
@@ -60,10 +103,15 @@ const FreeAgents = ({
 		}, 0);
 	}, [capSpace, challengeNoFreeAgents, minContract, stats]);
 
+	const seasonsFreeAgents = useSeasonsFreeAgents();
+
 	useTitleBar({
 		title: "Free Agents",
 		dropdownView: "free_agents",
 		dropdownFields: { typeFreeAgents: type, seasonsFreeAgents: season },
+		dropdownCustomOptions: {
+			seasonsFreeAgents,
+		},
 	});
 
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);

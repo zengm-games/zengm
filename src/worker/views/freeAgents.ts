@@ -222,6 +222,7 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 		phase: g.get("phase"),
 		players,
 		season,
+		startingSeason: g.get("startingSeason"),
 		stats: freeAgentStats,
 		type,
 		userPlayers,

@@ -6,10 +6,8 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
 - make sure compare link still works
   - current season
   - past seasons
-- players signed multiple times in season? last one
 - don't slow down current season by reading from disk
 - skip update refresh for past seasons
-- DRY isCurrentSeason
 - test other sports
 - where to get contract info from?
   - convert freeAgent event to be metadata-based?
@@ -21,7 +19,7 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
 - no addMood for signed players
 - test in old leagues
 - should free agents page ever be unviewable?
-- dropdown decrease all seasons by 1
+- test dropdown with negative years and years<10
 
 drag and drop
 - customize page

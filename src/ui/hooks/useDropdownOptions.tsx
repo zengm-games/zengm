@@ -231,11 +231,7 @@ const useDropdownOptions = (
 	let keys: (number | string)[];
 
 	if (customOptions) {
-		if (customOptions.length === 0) {
-			return [];
-		} else {
-			return customOptions;
-		}
+		return customOptions;
 	} else if (field === "teams") {
 		keys = Object.keys(sortedTeams);
 	} else if (field === "teamsAndSpecial") {
@@ -269,7 +265,7 @@ const useDropdownOptions = (
 			keys.unshift("all|||seasons");
 		}
 
-		if (field === "seasonsAndCurrent" || field === "seasonsFreeAgents") {
+		if (field === "seasonsAndCurrent") {
 			keys.unshift("current");
 		}
 

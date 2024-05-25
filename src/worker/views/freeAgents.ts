@@ -85,6 +85,28 @@ const getPlayers = async (
 		}
 	}
 
+	const processedSigned: (Player & {
+		freeAgentType: "signed";
+		freeAgentTransaction: Extract<
+			NonNullable<Player["transactions"]>[number],
+			{ type: "freeAgent" }
+		>;
+	})[] = [];
+	for (const p of signed) {
+		const freeAgentTransaction = p.transactions?.findLast(
+			row => row.type === "freeAgent" && isSeason(season, row),
+		);
+		if (freeAgentTransaction) {
+			processedSigned.push({
+				...p,
+				freeAgentType: "signed",
+
+				// @ts-expect-error
+				freeAgentTransaction,
+			});
+		}
+	}
+
 	return {
 		freeAgents: await addMood([
 			...available.map(p => {
@@ -93,18 +115,7 @@ const getPlayers = async (
 					freeAgentType: "available",
 				};
 			}),
-			...signed
-				.filter(p =>
-					p.transactions?.some(
-						row => row.type === "freeAgent" && isSeason(season, row),
-					),
-				)
-				.map(p => {
-					return {
-						...p,
-						freeAgentType: "signed",
-					};
-				}),
+			...processedSigned,
 		]),
 		user,
 	};
@@ -133,6 +144,7 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 
 				// Added in getPlayers
 				"freeAgentType",
+				"freeAgentTransaction",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats: freeAgentStats,
@@ -148,6 +160,22 @@ const updateFreeAgents = async ({ season, type }: ViewInput<"freeAgents">) => {
 	for (const p of players) {
 		if (p.freeAgentType === "available") {
 			p.contract.amount = p.mood.user.contractAmount / 1000;
+		} else {
+			let event;
+			if (p.freeAgentTransaction.eid !== undefined) {
+				event = await idb.getCopy.events({ eid: p.freeAgentTransaction.eid });
+			}
+			if (event && event.type === "freeAgent" && event.contract) {
+				p.contract = {
+					amount: event.contract.amount / 1000,
+					exp: event.contract.exp,
+				};
+			} else {
+				p.contract = {
+					amount: 0,
+					exp: p.freeAgentTransaction.season,
+				};
+			}
 		}
 	}
 

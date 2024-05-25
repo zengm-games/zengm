@@ -35,7 +35,7 @@ const sign = async (
 	const resigning =
 		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
 	const eventType = resigning ? "reSigned" : "freeAgent";
-	logEvent({
+	const eid = await logEvent({
 		type: eventType,
 		showNotification: false,
 		pids: [p.pid],
@@ -54,6 +54,7 @@ const sign = async (
 			phase: g.get("phase"),
 			tid: p.tid,
 			type: "freeAgent",
+			eid,
 		});
 	}
 };

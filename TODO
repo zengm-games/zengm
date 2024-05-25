@@ -18,10 +18,10 @@ signed free agents page - show signed players per year https://old.reddit.com/r/
         - update typescript stuff in formatEventText
     - need to look up abbrev/name of team when rendering text
   - add to p.transactions?
-- add eid to p.transactions, use to look up event in freeAgents.ts
-- // Apply contract
 - no addMood for signed players
-  - fix orderBy
+- for signed players, need tid, abbrev, season, and phase
+  - get from p.transactions
+  - also need to use eid there to look up contract value in event
 
 drag and drop
 - customize page

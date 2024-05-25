@@ -140,7 +140,7 @@ const FreeAgents = ({
 							),
 							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 						}
-					: "AAA",
+					: "ATL, preseason",
 			],
 		};
 	});

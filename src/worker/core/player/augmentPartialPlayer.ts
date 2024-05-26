@@ -433,6 +433,16 @@ const augmentPartialPlayer = async (
 		}
 	}
 
+	if (isSport("hockey") && version !== undefined && version <= 60) {
+		for (const row of p.stats) {
+			if (row.gp > 0) {
+				row.gMin = (row.min * row.gpGoalie) / row.gp;
+			} else {
+				row.gMin = 0;
+			}
+		}
+	}
+
 	if (!Array.isArray(p.relatives)) {
 		p.relatives = [];
 	}

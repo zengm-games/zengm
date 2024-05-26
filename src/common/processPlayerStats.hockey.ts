@@ -30,7 +30,7 @@ const processStats = (
 		} else if (stat === "foPct") {
 			row[stat] = helpers.percentage(ps.fow, ps.fow + ps.fol);
 		} else if (stat === "gaa") {
-			row[stat] = helpers.ratio(ps.ga, ps.gpGoalie);
+			row[stat] = helpers.ratio(ps.ga, ps.gMin / 60);
 		} else if (stat === "amin") {
 			row[stat] = helpers.ratio(ps.min, ps.gp);
 		} else if (stat === "gRec") {
@@ -67,7 +67,7 @@ const processStats = (
 				row[stat] = `${g} G, ${a} A, ${pts} P`;
 			} else if (role === "goalie") {
 				const svPct = helpers.percentage(ps.sv, ps.sv + ps.ga);
-				const gaa = helpers.ratio(ps.ga, ps.gp);
+				const gaa = helpers.ratio(ps.ga, ps.gMin / 60);
 				row[stat] = `${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
 			} else {
 				row[stat] = "";

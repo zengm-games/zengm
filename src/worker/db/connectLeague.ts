@@ -1441,6 +1441,26 @@ const migrate = async ({
 			},
 		);
 	}
+
+	if (oldVersion <= 60) {
+		if (isSport("hockey")) {
+			await iterate(
+				transaction.objectStore("players"),
+				undefined,
+				undefined,
+				p => {
+					for (const row of p.stats) {
+						if (row.gp > 0) {
+							row.gMin = (row.min * row.gpGoalie) / row.gp;
+						} else {
+							row.gMin = 0;
+						}
+					}
+					return p;
+				},
+			);
+		}
+	}
 };
 
 const connectLeague = (lid: number) =>

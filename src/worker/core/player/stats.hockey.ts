@@ -20,6 +20,7 @@ const stats = {
 		"min",
 		"ppMin",
 		"shMin",
+		"gMin", // Goalie minutes, for GAA
 		"minAvailable",
 		"pm",
 		"pim",

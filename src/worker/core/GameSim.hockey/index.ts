@@ -1725,6 +1725,10 @@ class GameSim extends GameSimBase {
 					}
 					this.recordStat(t, p, "courtTime", possessionTime);
 
+					if (pos === "G") {
+						this.recordStat(t, p, "gMin", possessionTime);
+					}
+
 					// This used to be 0.04. Increase more to lower PT
 					this.recordStat(t, p, "energy", -0.25 * possessionTime);
 

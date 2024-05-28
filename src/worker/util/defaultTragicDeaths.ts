@@ -38,7 +38,7 @@ const reasons = [
 	"PLAYER_NAME was murdered by a time traveler so PRONOUN_he would not become the world's evil overlord following PRONOUN_his playing days.",
 	'PLAYER_NAME removed the "Do Not Remove" tag from a newly purchased mattress and was promptly devoured by mattress gnomes',
 	"PLAYER_NAME died of dysentery.",
-	"PLAYER_NAME was strangled to death by a teammate for not knowing the score.",
+	"PLAYER_NAME was strangled to death by a teammate for not knowing the score late in a close game.",
 	"PLAYER_NAME died in a freak gasoline fight accident.",
 	`PLAYER_NAME was intensely focused on playing ${GAME_NAME} on PRONOUN_his cell phone. As PRONOUN_he walked across the street, PRONOUN_he was so distracted by PRONOUN_his ultimately fatal obsession that PRONOUN_he didn't notice the bus barreling towards PRONOUN_him.`,
 	"PLAYER_NAME drowned while crossing the Saleph River.",

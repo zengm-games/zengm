@@ -67,7 +67,7 @@ const deploy = async () => {
 		await mySpawn("rsync", [
 			"-vhrl",
 			`./build/${folder}/`,
-			`jersch50@garibaldi.dreamhost.com:/home/jersch50/${domain}/${folder}/`,
+			`jersch50@pdx1-shared-a3-10.dreamhost.com:/home/jersch50/${domain}/${folder}/`,
 		]);
 	}
 
@@ -95,7 +95,7 @@ const deploy = async () => {
 		"--delete",
 		...excludes,
 		"./build/",
-		`jersch50@garibaldi.dreamhost.com:/home/jersch50/${domain}/`,
+		`jersch50@pdx1-shared-a3-10.dreamhost.com:/home/jersch50/${domain}/`,
 	]);
 
 	if (subdomain !== "beta") {

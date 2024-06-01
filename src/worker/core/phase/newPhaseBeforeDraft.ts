@@ -314,6 +314,9 @@ const newPhaseBeforeDraft = async (
 	conditions: Conditions,
 	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
+	// In case some weird situation results in games still in the schedule, clear them
+	await idb.cache.schedule.clear();
+
 	if (g.get("numGamesPlayoffSeries").length === 0) {
 		// Set champ of the league!
 		await setChampNoPlayoffs(conditions);

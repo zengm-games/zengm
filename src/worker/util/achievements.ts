@@ -521,7 +521,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "moneyball",
 		name: "Moneyball",
-		desc: "Win a title with a payroll under 2/3 of the salary cap.",
+		desc: "Win a title with a payroll (meaning actual money paid, not your final roster's payroll) under 2/3 of the salary cap.",
 		category: "Season",
 
 		check() {
@@ -533,7 +533,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "moneyball_2",
 		name: "Moneyball 2",
-		desc: "Win a title with a payroll under half of the salary cap.",
+		desc: "Win a title with a payroll (meaning actual money paid, not your final roster's payroll) under half of the salary cap.",
 		category: "Season",
 
 		check() {

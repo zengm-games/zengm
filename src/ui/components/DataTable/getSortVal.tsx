@@ -122,6 +122,14 @@ const getSortVal = (
 			return helpers.getRecordNumericValue(sortVal);
 		}
 
+		if (sortType === "country") {
+			// Switch something like "Alabama, USA" to "USA, Alabama" so it sorts on country first
+			const parts = sortVal.split(", ");
+			parts.reverse();
+			return parts.join(", ");
+			console.log(sortVal);
+		}
+
 		return sortVal;
 	} catch (err) {
 		console.error(

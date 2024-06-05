@@ -8,8 +8,6 @@ When exporting Bio Info, export even default values, then dedupe on import https
 Improve search for special characters (match to equivalent normal character). Will help with nationalities like Poland, Turkey and Vietnam.
 - maybe https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator#using_collator
 
-When sorting players by Country, keep USA (and Canada) together, with States/Provinces sorted within a country. Not separated by State/Province, scattered among the other countries https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l2fzzyk/
-
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 - maybe better - show your payroll after trade https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
 

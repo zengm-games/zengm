@@ -102,7 +102,13 @@ const processStats = (
 					)} / ${helpers.roundWinp(obp + slg)}`;
 				}
 			} else if (role === "pitcher") {
-				const recordOrSaves = ps.w >= ps.sv ? `${ps.w}-${ps.l}` : `${ps.sv} SV`;
+				const recordOrSaves =
+					ps.w >= ps.sv
+						? helpers.formatRecord({
+								won: ps.w,
+								lost: ps.l,
+							})
+						: `${ps.sv} SV`;
 				row[stat] = `${recordOrSaves}, ${era.toFixed(2)} ERA`;
 				if (stat === "keyStats") {
 					row[stat] += `, ${ip.toFixed(1)} IP`;

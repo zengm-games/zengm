@@ -43,13 +43,12 @@ const processStats = (
 			row[stat] = ps.defTckSolo + ps.defTckAst;
 		} else if (stat === "qbRec") {
 			if (ps.qbW !== undefined && ps.qbL !== undefined) {
-				row[stat] = `${ps.qbW}-${ps.qbL}`;
-				if (ps.qbOTL > 0) {
-					row[stat] += `-${ps.qbOTL}`;
-				}
-				if (ps.qbT > 0) {
-					row[stat] += `-${ps.qbT}`;
-				}
+				row[stat] = helpers.formatRecord({
+					won: ps.qbW,
+					lost: ps.qbL,
+					tied: ps.qbT,
+					otl: ps.qbOTL,
+				});
 			} else {
 				row[stat] = "0-0";
 			}

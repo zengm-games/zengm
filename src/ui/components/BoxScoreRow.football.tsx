@@ -42,11 +42,23 @@ const BoxScoreRow = ({
 				{isSport("baseball") ? (
 					p.w > 0 ? (
 						<span className="text-success ms-2">
-							W{exhibition ? null : ` (${p.seasonStats.w}-${p.seasonStats.l})`}
+							W
+							{exhibition
+								? null
+								: ` (${helpers.formatRecord({
+										won: p.seasonStats.w,
+										lost: p.seasonStats.l,
+									})})`}
 						</span>
 					) : p.l > 0 ? (
 						<span className="text-danger ms-2">
-							L{exhibition ? null : ` (${p.seasonStats.w}-${p.seasonStats.l})`}
+							L
+							{exhibition
+								? null
+								: ` (${helpers.formatRecord({
+										won: p.seasonStats.w,
+										lost: p.seasonStats.l,
+									})})`}
 						</span>
 					) : p.sv > 0 ? (
 						<span className="ms-2">

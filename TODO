@@ -1,4 +1,9 @@
-In global settings add fields for goat season and goat lab formulas https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l5sjatq/
+football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
+
+Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corban)
+
+When exporting Bio Info, export even default values, then dedupe on import https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l3kvqv1/
+- or better, include option
 
 Improve search for special characters (match to equivalent normal character). Will help with nationalities like Poland, Turkey and Vietnam.
 - maybe https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator#using_collator

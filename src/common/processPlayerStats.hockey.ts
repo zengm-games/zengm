@@ -35,13 +35,12 @@ const processStats = (
 			row[stat] = helpers.ratio(ps.min, ps.gp);
 		} else if (stat === "gRec") {
 			if (ps.gW !== undefined && ps.gL !== undefined) {
-				row[stat] = `${ps.gW}-${ps.gL}`;
-				if (ps.gOTL > 0) {
-					row[stat] += `-${ps.gOTL}`;
-				}
-				if (ps.gT > 0) {
-					row[stat] += `-${ps.gT}`;
-				}
+				row[stat] = helpers.formatRecord({
+					won: ps.gW,
+					lost: ps.gL,
+					tied: ps.gT,
+					otl: ps.gOTL,
+				});
 			} else {
 				row[stat] = "0-0";
 			}

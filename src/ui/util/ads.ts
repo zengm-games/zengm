@@ -1,4 +1,10 @@
-import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN } from "../../common";
+import {
+	AD_DIVS,
+	MOBILE_AD_BOTTOM_MARGIN,
+	VIDEO_ADS,
+	bySport,
+} from "../../common";
+import getScript from "./getScript";
 import { local, localActions } from "./local";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
@@ -94,14 +100,27 @@ class Ads {
 		if (gold) {
 			this.state = "gold";
 		} else {
+			// Would be better to have this in BANNER_ADS_CODE so it can load earlier, but would need a way to conditionally load video ads then
+			if (window.enableLogging) {
+				getScript(
+					`https://a.pub.network/${bySport({
+						basketball: "basketball-gm-com",
+						football: "football-gm-com",
+						default: "zengm-com",
+					})}${window.freestar.debug ? "/qa/pubfig.min.js" : "/pubfig.min.js"}`,
+				);
+			}
+
 			// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
-			const divsAll = [
-				AD_DIVS.mobile,
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-				AD_DIVS.rail,
-			];
+			const divsAll = VIDEO_ADS
+				? [AD_DIVS.mobile, AD_DIVS.rail]
+				: [
+						AD_DIVS.mobile,
+						AD_DIVS.leaderboard,
+						AD_DIVS.rectangle1,
+						AD_DIVS.rectangle2,
+						AD_DIVS.rail,
+					];
 			for (const id of divsAll) {
 				const div = document.getElementById(`${id}_disabled`);
 				if (div) {
@@ -112,11 +131,7 @@ class Ads {
 			window.freestar.queue.push(() => {
 				// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 				const divsMobile = [AD_DIVS.mobile];
-				const divsDesktop = [
-					AD_DIVS.leaderboard,
-					AD_DIVS.rectangle1,
-					AD_DIVS.rectangle2,
-				];
+				const divsDesktop: string[] = [];
 				const divs = window.mobile ? divsMobile : divsDesktop;
 
 				for (const id of divs) {
@@ -166,7 +181,7 @@ class Ads {
 					});
 				}
 
-				if (!window.mobile) {
+				if (!window.mobile && !VIDEO_ADS) {
 					// Show the logo too
 					const logo = document.getElementById("bbgm-ads-logo");
 

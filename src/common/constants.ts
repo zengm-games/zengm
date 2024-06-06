@@ -3,6 +3,7 @@ import * as constantsBaseball from "./constants.baseball";
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 import * as constantsHockey from "./constants.hockey";
+import isSport from "./isSport";
 import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types";
 
 const ACCOUNT_API_URL =
@@ -511,6 +512,9 @@ export const STARTING_NUM_TIMEOUTS = bySport({
 	// Should actually be 7, but since timeouts are only used at the end of the game currently, it's silly to have those extra 5 timeouts lying around all game
 	basketball: 2,
 });
+
+export const VIDEO_ADS = isSport("football");
+export const VIDEO_AD_PADDING = 225 + 10 + 10;
 
 export {
 	AD_DIVS,

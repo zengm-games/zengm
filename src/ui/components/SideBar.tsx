@@ -21,6 +21,7 @@ import type {
 } from "../../common/types";
 import CollapseArrow from "./CollapseArrow";
 import { AnimatePresence, m } from "framer-motion";
+import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../common";
 
 export const getText = (
 	text: MenuItemLink["text"],
@@ -352,7 +353,16 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 				ref={getNode}
 				aria-label="side navigation"
 			>
-				<div className="bg-light sidebar-inner small-scrollbar">
+				<div
+					className="bg-light sidebar-inner small-scrollbar"
+					style={
+						VIDEO_ADS
+							? {
+									paddingBottom: VIDEO_AD_PADDING,
+								}
+							: undefined
+					}
+				>
 					{menuItems.map((menuItem, i) => (
 						<MenuItem
 							godMode={godMode}

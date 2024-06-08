@@ -1,10 +1,4 @@
-import {
-	AD_DIVS,
-	MOBILE_AD_BOTTOM_MARGIN,
-	VIDEO_ADS,
-	bySport,
-} from "../../common";
-import getScript from "./getScript";
+import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN, VIDEO_ADS } from "../../common";
 import { local, localActions } from "./local";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
@@ -81,6 +75,7 @@ class Ads {
 	}
 
 	init() {
+		console.log("init");
 		// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
 		if (this.state !== "none") {
 			// Must have already ran somehow?
@@ -100,17 +95,6 @@ class Ads {
 		if (gold) {
 			this.state = "gold";
 		} else {
-			// Would be better to have this in BANNER_ADS_CODE so it can load earlier, but would need a way to conditionally load video ads then
-			if (window.enableLogging) {
-				getScript(
-					`https://a.pub.network/${bySport({
-						basketball: "basketball-gm-com",
-						football: "football-gm-com",
-						default: "zengm-com",
-					})}${window.freestar.debug ? "/qa/pubfig.min.js" : "/pubfig.min.js"}`,
-				);
-			}
-
 			// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
 			const divsAll = VIDEO_ADS
 				? [AD_DIVS.mobile, AD_DIVS.rail]
@@ -129,6 +113,10 @@ class Ads {
 			}
 
 			window.freestar.queue.push(() => {
+				console.log("init running callback");
+
+				window.freestar.newStickyFooter("football-gm_adhesion");
+
 				// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 				const divsMobile = [AD_DIVS.mobile];
 				const divsDesktop: string[] = [];
@@ -192,6 +180,7 @@ class Ads {
 
 				window.freestar.newAdSlots(window.freestar.config.enabled_slots);
 
+				console.log("init initialized");
 				this.state = "initialized";
 			});
 		}
@@ -268,7 +257,9 @@ class Ads {
 	}
 
 	refreshAll() {
+		console.log("refreshAll?");
 		if (this.state === "initialized") {
+			console.log("refreshAll actually process");
 			window.freestar.queue.push(() => {
 				window.freestar.refreshAllSlots?.();
 			});

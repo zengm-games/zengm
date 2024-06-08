@@ -487,6 +487,15 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 })();
 </script>
 
+<link rel="preconnect" href="https://a.pub.network/" crossorigin />
+<link rel="preconnect" href="https://b.pub.network/" crossorigin />
+<link rel="preconnect" href="https://c.pub.network/" crossorigin />
+<link rel="preconnect" href="https://d.pub.network/" crossorigin />
+<link rel="preconnect" href="https://c.amazon-adsystem.com" crossorigin />
+<link rel="preconnect" href="https://s.amazon-adsystem.com" crossorigin />
+<link rel="preconnect" href="https://btloader.com/" crossorigin />
+<link rel="preconnect" href="https://api.btloader.com/" crossorigin />
+<link rel="preconnect" href="https://cdn.confiant-integrations.net" crossorigin />
 <script type="text/javascript">
 var freestar = freestar || {};
 freestar.hitTime = Date.now();
@@ -494,9 +503,7 @@ freestar.queue = freestar.queue || [];
 freestar.config = freestar.config || {};
 freestar.debug = window.location.search.indexOf('fsdebug') === -1 ? false : true;
 freestar.config.enabled_slots = [];
-</script>`;
-
-	/*if (window.enableLogging) {
+if (window.enableLogging) {
   !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/${bySport(
 		{
 			basketball: "basketball-gm-com",
@@ -504,7 +511,8 @@ freestar.config.enabled_slots = [];
 			default: "zengm-com",
 		},
 	)}";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
-}*/
+}
+</script>`;
 
 	replace({
 		regex: "BANNER_ADS_CODE",

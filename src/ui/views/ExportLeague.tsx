@@ -80,7 +80,7 @@ const categories: Category[] = [
 	{
 		name: "schedule",
 		title: "Schedule",
-		desc: "Current regular season schedule and playoff series.",
+		desc: "Current regular season schedule, and current and past playoff series data.",
 		default: true,
 	},
 	{

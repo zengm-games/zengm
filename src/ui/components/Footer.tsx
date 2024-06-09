@@ -1,5 +1,11 @@
 import { memo } from "react";
-import { AD_DIVS, GAME_ACRONYM, SUBREDDIT_NAME } from "../../common";
+import {
+	AD_DIVS,
+	GAME_ACRONYM,
+	SUBREDDIT_NAME,
+	VIDEO_ADS,
+	VIDEO_AD_PADDING,
+} from "../../common";
 
 const footerLinks = [
 	{
@@ -35,7 +41,17 @@ const footerLinks = [
 const Footer = memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
-		<footer className="footer-wrapper mt-auto mb-3" id="main-footer">
+		<footer
+			className={`footer-wrapper mt-auto${VIDEO_ADS ? "" : " mb-3"}`}
+			id="main-footer"
+			style={
+				VIDEO_ADS
+					? {
+							paddingBottom: VIDEO_AD_PADDING,
+						}
+					: undefined
+			}
+		>
 			<p className="clearfix" />
 
 			<div

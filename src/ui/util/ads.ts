@@ -112,11 +112,15 @@ class Ads {
 			}
 
 			window.freestar.queue.push(() => {
-				window.freestar.newStickyFooter("football-gm_adhesion");
+				if (VIDEO_ADS) {
+					window.freestar.newStickyFooter("football-gm_adhesion");
+				}
 
 				// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 				const divsMobile = [AD_DIVS.mobile];
-				const divsDesktop: string[] = [];
+				const divsDesktop = VIDEO_ADS
+					? []
+					: [AD_DIVS.leaderboard, AD_DIVS.rectangle1, AD_DIVS.rectangle2];
 				const divs = window.mobile ? divsMobile : divsDesktop;
 
 				for (const id of divs) {

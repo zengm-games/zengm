@@ -1226,7 +1226,7 @@ export const settings: Setting[] = (
 			type: "bool",
 		},
 		{
-			category: "Contracts",
+			category: "Rookie Contracts",
 			key: "rookiesCanRefuse",
 			name: "Can Refuse After Rookie Contract",
 			godModeRequired: "existingLeagueOnly",

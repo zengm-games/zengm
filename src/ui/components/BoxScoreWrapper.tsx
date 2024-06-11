@@ -156,6 +156,7 @@ export const HeadlineScore = ({
 		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
 	const shootout = t0.sPts !== undefined;
+	console.log("shootout", shootout);
 
 	return (
 		<div
@@ -176,6 +177,9 @@ export const HeadlineScore = ({
 					small={small}
 					t={t0}
 				/>
+				{shootout ? (
+					<div className="text-body-secondary">&nbsp;({t0.sPts})</div>
+				) : null}
 				<div>,&nbsp;</div>
 				<TeamNameAndScore
 					boxScore={boxScore}

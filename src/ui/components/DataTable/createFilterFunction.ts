@@ -3,6 +3,110 @@ import getSortVal from "./getSortVal";
 import type { SortType } from "../../../common/types";
 import { helpers } from "../../util";
 
+type Direction = ">" | "<" | "=" | undefined;
+
+const evalFilter = (
+	{
+		direction,
+		exact,
+		not,
+		number,
+		text,
+	}: {
+		direction: Direction;
+		exact: boolean;
+		not: boolean;
+		number: number | undefined;
+		text: string;
+	},
+	sortType: SortType | undefined,
+	value: any,
+) => {
+	if (not) {
+		const checkTextSearch = () => {
+			const searchVal = getSearchVal(value);
+
+			if (!exact && !searchVal.includes(text)) {
+				return true;
+			}
+
+			if (exact && searchVal !== text) {
+				return true;
+			}
+
+			return false;
+		};
+
+		if (typeof number === "number") {
+			const numericVal = helpers.localeParseFloat(getSortVal(value, sortType));
+
+			if (direction === ">" && numericVal <= number + Number.EPSILON) {
+				return true;
+			}
+
+			if (direction === "<" && numericVal + Number.EPSILON >= number) {
+				return true;
+			}
+
+			if (direction === "=" && numericVal !== number) {
+				return true;
+			}
+
+			if (direction === undefined) {
+				if (checkTextSearch()) {
+					return true;
+				}
+			}
+		} else {
+			if (checkTextSearch()) {
+				return true;
+			}
+		}
+	} else {
+		const checkTextSearch = () => {
+			const searchVal = getSearchVal(value);
+
+			if (!exact && searchVal.includes(text)) {
+				return true;
+			}
+
+			if (exact && searchVal === text) {
+				return true;
+			}
+
+			return false;
+		};
+
+		if (typeof number === "number") {
+			const numericVal = helpers.localeParseFloat(getSortVal(value, sortType));
+
+			if (direction === ">" && numericVal + Number.EPSILON >= number) {
+				return true;
+			}
+
+			if (direction === "<" && numericVal <= number + Number.EPSILON) {
+				return true;
+			}
+
+			if (direction === "=" && numericVal === number) {
+				return true;
+			}
+
+			if (direction === undefined) {
+				if (checkTextSearch()) {
+					return true;
+				}
+			}
+		} else {
+			if (checkTextSearch()) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+};
+
 // searchType is assumed to be equal to sortType, unless it's specified
 const createFilterFunction = (
 	originalFilterText: string,
@@ -11,12 +115,14 @@ const createFilterFunction = (
 ) => {
 	searchType = searchType ?? sortType;
 
+	const orOrAnd = originalFilterText.includes("&") ? "&" : ("|" as const);
+
 	const filters = originalFilterText
-		.split("|")
+		.split(orOrAnd)
 		.map(text => text.trim().toLowerCase())
-		.filter(text => text !== "" && text !== "|")
+		.filter(text => text !== "")
 		.map(text => {
-			let direction;
+			let direction: Direction;
 			let number;
 
 			const not = text[0] === "!";
@@ -62,8 +168,8 @@ const createFilterFunction = (
 			};
 		})
 		.filter(({ number }) => {
-			if (number !== undefined) {
-				return !Number.isNaN(number);
+			if (number !== undefined && Number.isNaN(number)) {
+				return false;
 			}
 
 			return true;
@@ -75,103 +181,20 @@ const createFilterFunction = (
 			return true;
 		}
 
-		for (const { direction, exact, not, number, text } of filters) {
-			if (not) {
-				const checkTextSearch = () => {
-					const searchVal = getSearchVal(value);
+		for (const filter of filters) {
+			const match = evalFilter(filter, sortType, value);
 
-					if (!exact && !searchVal.includes(text)) {
-						return true;
-					}
+			if (orOrAnd === "|" && match) {
+				return true;
+			}
 
-					if (exact && searchVal !== text) {
-						return true;
-					}
-
-					return false;
-				};
-
-				if (typeof number === "number") {
-					const numericVal = helpers.localeParseFloat(
-						getSortVal(value, sortType),
-					);
-
-					if (Number.isNaN(numericVal)) {
-						continue;
-					}
-
-					if (direction === ">" && numericVal <= number + Number.EPSILON) {
-						return true;
-					}
-
-					if (direction === "<" && numericVal + Number.EPSILON >= number) {
-						return true;
-					}
-
-					if (direction === "=" && numericVal !== number) {
-						return true;
-					}
-
-					if (direction === undefined) {
-						if (checkTextSearch()) {
-							return true;
-						}
-					}
-				} else {
-					if (checkTextSearch()) {
-						return true;
-					}
-				}
-			} else {
-				const checkTextSearch = () => {
-					const searchVal = getSearchVal(value);
-
-					if (!exact && searchVal.includes(text)) {
-						return true;
-					}
-
-					if (exact && searchVal === text) {
-						return true;
-					}
-
-					return false;
-				};
-
-				if (typeof number === "number") {
-					const numericVal = helpers.localeParseFloat(
-						getSortVal(value, sortType),
-					);
-
-					if (Number.isNaN(numericVal)) {
-						continue;
-					}
-
-					if (direction === ">" && numericVal + Number.EPSILON >= number) {
-						return true;
-					}
-
-					if (direction === "<" && numericVal <= number + Number.EPSILON) {
-						return true;
-					}
-
-					if (direction === "=" && numericVal === number) {
-						return true;
-					}
-
-					if (direction === undefined) {
-						if (checkTextSearch()) {
-							return true;
-						}
-					}
-				} else {
-					if (checkTextSearch()) {
-						return true;
-					}
-				}
+			if (orOrAnd === "&" && !match) {
+				return false;
 			}
 		}
 
-		return false;
+		// If none of the ORs matched, false. If all of the ANDs matched, true.
+		return orOrAnd === "|" ? false : true;
 	};
 };
 

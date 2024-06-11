@@ -81,10 +81,6 @@ const Controls = ({
 								the opposite.
 							</p>
 							<p>
-								You can filter on multiple values at once using a logical OR
-								operator. For example, enter {positionFilterText}.
-							</p>
-							<p>
 								You can find all rows not matching a string, like{" "}
 								<code>!CHI</code> will show all players except those on Chicago.
 							</p>
@@ -93,6 +89,12 @@ const Controls = ({
 								putting it in quotes. For example, <code>2</code> will search
 								for any value containing a 2, while <code>"2"</code> will search
 								only for the number 2 exactly.
+							</p>
+							<p>
+								You can filter on multiple values at once using logical "or" or
+								"and" operators. For example, enter {positionFilterText}, or{" "}
+								<code>!"DP"&!"FA"</code> to remove draft prospects and free
+								agents from the Player Ratings table.
 							</p>
 						</HelpPopover>
 					</div>

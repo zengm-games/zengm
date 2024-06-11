@@ -967,10 +967,9 @@ more dramatic play-by-play
 
 rarely, elam ending doesn't get triggered https://discord.com/channels/290013534023057409/290015591216054273/891454150783692821
 
-improve table column filtering
-- AND operation
-  - how to handle mixing with OR?
-- parentheses to group operations
+allow the main search bar to be used to filter on multiple columns, like Hgt>70&Pss>50
+- maybe use https://github.com/NimitzDEV/logical-expression-parser to parse with parentheses
+  - is that needed for single column filtering?
 
 better adjustment for real draft prospects
 

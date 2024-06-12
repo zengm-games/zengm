@@ -1,9 +1,17 @@
 zipped files
-- not really feasible for streaming, since you need to write info about the size of the compressed files to the header - no way to do that except maybe going over it twice
-- could use gz like the demo at https://web.dev/blog/compressionstreams
-  - dropbox upload/download
-  - github download
-- import
+- zip not really feasible for streaming, since you need to write info about the size of the compressed files to the header - no way to do that except maybe going over it twice
+- gzip
+  - test dropbox import
+  - test dropbox export
+  - test github import
+  - import
+    - how do i detect if gzip or text?
+      - https://stackoverflow.com/q/78612843/786644
+      - could look at start of gzip stream, but how best to propagate that info?
+    - other places to upload
+      - import players
+      - draft class
+      - global settings
 
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
 

@@ -5,19 +5,30 @@ const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 // Why is this in UI? streamsaver does not work in worker. Otherwise it would be better there.
 // If this is ever moved to the worker, be careful about file system access API crashing Chrome 93/94 https://dumbmatter.com/file-system-access-worker-bug/
-const downloadFileStream = async (stream: boolean, filename: string) => {
+const downloadFileStream = async (
+	stream: boolean,
+	filename: string,
+	gzip: boolean,
+) => {
 	if (stream) {
 		let fileStream: WritableStream;
 		if (HAS_FILE_SYSTEM_ACCESS_API) {
 			const fileHandle = await window.showSaveFilePicker({
 				suggestedName: filename,
 				types: [
-					{
-						description: "JSON Files",
-						accept: {
-							"application/json": [".json"],
-						},
-					},
+					gzip
+						? {
+								description: "Gzip Files",
+								accept: {
+									"application/gzip": [".gz"],
+								},
+							}
+						: {
+								description: "JSON Files",
+								accept: {
+									"application/json": [".json"],
+								},
+							},
 				],
 			} as any);
 
@@ -39,7 +50,11 @@ const downloadFileStream = async (stream: boolean, filename: string) => {
 			contents.push(chunk);
 		},
 		close() {
-			downloadFile(filename, contents, "application/json");
+			downloadFile(
+				filename,
+				contents,
+				gzip ? "application/gzip" : "application/json",
+			);
 		},
 	});
 

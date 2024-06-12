@@ -1,3 +1,10 @@
+zipped files
+- not really feasible for streaming, since you need to write info about the size of the compressed files to the header - no way to do that except maybe going over it twice
+- could use gz like the demo at https://web.dev/blog/compressionstreams
+  - dropbox upload/download
+  - github download
+- import
+
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
 
 Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corban)
@@ -1926,9 +1933,6 @@ keep box scores with feats, and ASG
 hype revamp
 - make more transparent
 - YWT
-
-zipped files @Jofish#5051
-- deflate-raw is in CompressionStream now so it can work. https://gildas-lormeau.github.io/zip.js/ is an implementation, kind of big
 
 https://react-hook-form.com/ for forms
 

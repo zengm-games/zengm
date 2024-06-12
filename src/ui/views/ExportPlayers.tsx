@@ -194,7 +194,6 @@ const ExportPlayers = ({
 											await import("../util/exportLeague");
 
 										const readableStream = await makeExportStream(["players"], {
-											compressed: false,
 											filter: {
 												players: p => pids.includes(p.pid),
 											},
@@ -226,6 +225,7 @@ const ExportPlayers = ({
 										const fileStream = await downloadFileStream(
 											false,
 											filename,
+											false,
 										);
 
 										await readableStream

@@ -51,7 +51,7 @@ const makeExportStream = async (
 		onPercentDone,
 		onProcessingStore,
 	}: {
-		compressed: boolean;
+		compressed?: boolean;
 		filter?: {
 			[key: string]: Filter;
 		};
@@ -362,9 +362,7 @@ const makeExportStream = async (
 							await writeRootObject(
 								controller,
 								"startingSeason",
-								(
-									await leagueDB.get("gameAttributes", "startingSeason")
-								)?.value,
+								(await leagueDB.get("gameAttributes", "startingSeason"))?.value,
 							);
 						}
 

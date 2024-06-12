@@ -219,11 +219,11 @@ const getDefaultChecked = () => {
 	return init;
 };
 
-const saveDefaults = (checked: Checked, compressed: boolean) => {
+const saveDefaults = (checked: Checked, compressed: boolean, gzip: boolean) => {
 	safeLocalStorage.setItem("exportLeagueData", JSON.stringify(checked));
 	safeLocalStorage.setItem(
 		"exportLeagueFormat",
-		JSON.stringify({ compressed }),
+		JSON.stringify({ compressed, gzip }),
 	);
 };
 
@@ -259,6 +259,20 @@ const loadCompressed = (): boolean => {
 	}
 
 	return true;
+};
+
+const loadGzip = (): boolean => {
+	const json = safeLocalStorage.getItem("exportLeagueFormat");
+	if (json) {
+		try {
+			const settings = JSON.parse(json);
+			if (typeof settings.gzip === "boolean") {
+				return settings.gzip;
+			}
+		} catch (error) {}
+	}
+
+	return false;
 };
 
 const getExportInfo = (
@@ -451,6 +465,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [aborting, setAborting] = useState(false);
 	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(loadCompressed);
+	const [gzip, setGzip] = useState(loadGzip);
 	const [checked, setChecked] = useState<Checked>(loadChecked);
 	const [processingStore, setProcessingStore] = useState<string | undefined>();
 	const [percentDone, setPercentDone] = useState(-1);
@@ -477,10 +492,13 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		setState(type);
 		setAborting(false);
 		setPercentDone(0);
-		saveDefaults(checked, compressed);
+		saveDefaults(checked, compressed, gzip);
 
 		try {
-			const filename = await toWorker("main", "getExportFilename", "league");
+			let filename = await toWorker("main", "getExportFilename", "league");
+			if (gzip) {
+				filename += ".gz";
+			}
 
 			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
 				stats,
@@ -509,7 +527,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			let fileStream;
 			let status: ReactNode;
 			if (type === "download") {
-				fileStream = await downloadFileStream(streamDownload, filename);
+				fileStream = await downloadFileStream(streamDownload, filename, gzip);
 			} else {
 				if (!dropboxAccessToken) {
 					throw new Error("Missing dropboxAccessToken");
@@ -562,11 +580,15 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				abortController.current = new AbortController();
 			}
 
-			await readableStream
-				.pipeThrough(new TextEncoderStream())
-				.pipeTo(fileStream, {
-					signal: abortController.current?.signal,
-				});
+			let tempStream = readableStream.pipeThrough(new TextEncoderStream());
+
+			if (gzip && window.CompressionStream !== undefined) {
+				tempStream = tempStream.pipeThrough(new CompressionStream("gzip"));
+			}
+
+			await tempStream.pipeTo(fileStream, {
+				signal: abortController.current?.signal,
+			});
 
 			cleanupAfterStream(status);
 		} catch (error) {
@@ -698,9 +720,24 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 									setCompressed(compressed => !compressed);
 								}}
 							/>
-							Compressed (no extra whitespace)
+							Compress (no extra whitespace)
 						</label>
 					</div>
+					{window.CompressionStream !== undefined ? (
+						<div className="form-check mb-3">
+							<label className="form-check-label">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									checked={gzip}
+									onChange={() => {
+										setGzip(gzip => !gzip);
+									}}
+								/>
+								Compress (gzip)
+							</label>
+						</div>
+					) : null}
 					<div className="form-check">
 						<label className="form-check-label">
 							<input
@@ -777,7 +814,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 									const url = await getAuthenticationUrl(lid);
 
 									// Remember what was checked, since local state will be lost during redirect
-									saveDefaults(checked, compressed);
+									saveDefaults(checked, compressed, gzip);
 
 									window.location.href = url;
 								}}

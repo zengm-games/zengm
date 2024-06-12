@@ -4,14 +4,18 @@ zipped files
   - test dropbox import
   - test dropbox export
   - test github import
-  - import
-    - how do i detect if gzip or text?
-      - https://stackoverflow.com/q/78612843/786644
-      - could look at start of gzip stream, but how best to propagate that info?
-    - other places to upload
-      - import players
-      - draft class
-      - global settings
+  - test in old firefox/safari (stream polyfill)
+  - progress bar finishes too early
+  - benchmark
+    - size
+    - perf
+  - import into default new league settings
+    - src/ui/views/DefaultNewLeagueSettings/ImportButton.tsx
+      - can use initialCheck and get from gameAttributes?
+  - import into player bio info
+    - src/ui/views/Settings/PlayerBioInfoCountries.tsx
+      - can use initialCheck and get from gameAttributes?
+  - refactor code to just a TransformStream?
 
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
 

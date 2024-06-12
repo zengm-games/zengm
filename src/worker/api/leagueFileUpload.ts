@@ -305,7 +305,7 @@ export const emitProgressStream = (
 							? {
 									id: leagueCreationID,
 									percent: 0,
-							  }
+								}
 							: undefined,
 					},
 				],
@@ -336,6 +336,32 @@ export const emitProgressStream = (
 			}
 		},
 	});
+};
+
+// Check first 2 bytes of stream for gzip header
+const isStreamGzipped = async (stream: ReadableStream) => {
+	const reader = stream.getReader();
+	const { value } = await reader.read();
+	reader.cancel();
+
+	if (value !== undefined && value.length >= 2) {
+		return value[0] === 0x1f && value[1] === 0x8b;
+	}
+
+	return false;
+};
+
+// Stream could either be text, or gzipped text. This will unzip only if necessary, otherwise it just passes the stream through.
+export const decompressStreamIfNecessary = async <T>(
+	inputStream: ReadableStream<T>,
+): Promise<ReadableStream<T>> => {
+	const [checkGzipStream, outputStream] = inputStream.tee();
+
+	if (await isStreamGzipped(checkGzipStream)) {
+		return outputStream.pipeThrough(new DecompressionStream("gzip"));
+	}
+
+	return outputStream;
 };
 
 const initialCheck = async (
@@ -401,7 +427,7 @@ const initialCheck = async (
 			sizeInBytes = Number(size);
 		}
 	} else {
-		stream = file.stream() as unknown as ReadableStream;
+		stream = file.stream();
 		sizeInBytes = file.size;
 	}
 
@@ -410,9 +436,13 @@ const initialCheck = async (
 	// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
 	(self as any).stream0 = stream0;
 
-	const stream2 = stream0
-		.pipeThrough(emitProgressStream(leagueCreationID, sizeInBytes, conditions))
-		.pipeThrough(toPolyfillTransform(new TextDecoderStream()));
+	const stream2 = (
+		await decompressStreamIfNecessary(
+			stream0.pipeThrough(
+				emitProgressStream(leagueCreationID, sizeInBytes, conditions),
+			),
+		)
+	).pipeThrough(toPolyfillTransform(new TextDecoderStream()));
 	const { basicInfo, schemaErrors } = await getBasicInfo({
 		stream: stream2,
 		includePlayersInBasicInfo,

@@ -16,6 +16,7 @@ import {
 } from "../../common";
 import actions from "./actions";
 import leagueFileUpload, {
+	decompressStreamIfNecessary,
 	emitProgressStream,
 	parseJSON,
 } from "./leagueFileUpload";
@@ -566,10 +567,13 @@ const createLeague = async (
 		// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
 		(self as any).stream0 = stream0;
 
-		stream = stream0
-			.pipeThrough(
-				emitProgressStream(leagueCreationID, sizeInBytes, conditions),
+		stream = (
+			await decompressStreamIfNecessary(
+				stream0.pipeThrough(
+					emitProgressStream(leagueCreationID, sizeInBytes, conditions),
+				),
 			)
+		)
 			.pipeThrough(toPolyfillTransform(new TextDecoderStream()))
 			.pipeThrough(parseJSON());
 	} else {

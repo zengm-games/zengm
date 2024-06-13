@@ -496,7 +496,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 		try {
 			let filename = await toWorker("main", "getExportFilename", "league");
-			if (gzip) {
+			if (gzip && typeof CompressionStream !== "undefined") {
 				filename += ".gz";
 			}
 
@@ -582,7 +582,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 			let tempStream = readableStream.pipeThrough(new TextEncoderStream());
 
-			if (gzip && window.CompressionStream !== undefined) {
+			if (gzip && typeof CompressionStream !== "undefined") {
 				tempStream = tempStream.pipeThrough(new CompressionStream("gzip"));
 			}
 
@@ -723,7 +723,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							Compress (no extra whitespace)
 						</label>
 					</div>
-					{window.CompressionStream !== undefined ? (
+					{typeof CompressionStream !== "undefined" ? (
 						<div className="form-check mb-3">
 							<label className="form-check-label">
 								<input

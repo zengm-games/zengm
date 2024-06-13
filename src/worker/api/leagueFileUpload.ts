@@ -341,7 +341,7 @@ export const emitProgressStream = (
 	});
 };
 
-// Check first 2 bytes of stream for gzip header
+// Check first 3 bytes of stream for gzip header
 const isStreamGzipped = async (stream: ReadableStream) => {
 	const reader = stream.getReader();
 	const { value } = await reader.read();
@@ -362,6 +362,12 @@ export const decompressStreamIfNecessary = async <T>(
 	const [checkGzipStream, outputStream] = inputStream.tee();
 
 	if (await isStreamGzipped(checkGzipStream)) {
+		if (typeof DecompressionStream === "undefined") {
+			throw new Error(
+				"Your browser does not support .gz league files. Either upgrade your browser or manually decompress the file to a plain .json file before importing.",
+			);
+		}
+
 		return outputStream.pipeThrough(new DecompressionStream("gzip"));
 	}
 

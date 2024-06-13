@@ -1,17 +1,3 @@
-zipped files
-- zip not really feasible for streaming, since you need to write info about the size of the compressed files to the header - no way to do that except maybe going over it twice
-- gzip
-  - test in old firefox/safari (stream polyfill)
-  - progress bar finishes too early
-  - blog
-    - 100 season league
-      - size: 366 MB (or 177MB with no whitespace) -> 53.7 MB
-      - import time: 39.76s -> 42.60s
-      - export time: 70.67s -> 35.89s
-    - explain feature
-    - why not zip
-    - why not newer algo
-
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
 
 Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corban)

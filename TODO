@@ -1,16 +1,13 @@
 zipped files
 - zip not really feasible for streaming, since you need to write info about the size of the compressed files to the header - no way to do that except maybe going over it twice
 - gzip
-  - test dropbox import
-  - test dropbox export
-  - test github import
   - test in old firefox/safari (stream polyfill)
   - progress bar finishes too early
-  - benchmark
-    - size
-    - perf
-  - refactor code to just a TransformStream?
   - blog
+    - 100 season league
+      - size: 366 MB (or 177MB with no whitespace) -> 53.7 MB
+      - import time: 39.76s -> 42.60s
+      - export time: 70.67s -> 35.89s
     - explain feature
     - why not zip
     - why not newer algo

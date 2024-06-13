@@ -355,6 +355,7 @@ const isStreamGzipped = async (stream: ReadableStream) => {
 };
 
 // Stream could either be text, or gzipped text. This will unzip only if necessary, otherwise it just passes the stream through.
+// Would be nice if this was just a normal TransformStream rather than an async wrapper function, but I'm not sure how to do that!
 export const decompressStreamIfNecessary = async <T>(
 	inputStream: ReadableStream<T>,
 ): Promise<ReadableStream<T>> => {

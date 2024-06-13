@@ -9,13 +9,11 @@ zipped files
   - benchmark
     - size
     - perf
-  - import into default new league settings
-    - src/ui/views/DefaultNewLeagueSettings/ImportButton.tsx
-      - can use initialCheck and get from gameAttributes?
-  - import into player bio info
-    - src/ui/views/Settings/PlayerBioInfoCountries.tsx
-      - can use initialCheck and get from gameAttributes?
   - refactor code to just a TransformStream?
+  - blog
+    - explain feature
+    - why not zip
+    - why not newer algo
 
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
 

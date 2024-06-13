@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { downloadFile, helpers, resetFileInput } from "../../util";
+import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
 import classNames from "classnames";
 import {
 	type Defaults,
@@ -67,7 +67,7 @@ const ImportButton = ({
 			type="file"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
-			onChange={event => {
+			onChange={async event => {
 				if (!event.target.files) {
 					return;
 				}
@@ -78,24 +78,28 @@ const ImportButton = ({
 
 				setErrorMessage();
 
-				const reader = new window.FileReader();
-				reader.readAsText(file);
+				try {
+					const { basicInfo } = await toWorker(
+						"leagueFileUpload",
+						"initialCheck",
+						{
+							file,
+						},
+					);
 
-				reader.onload = async event2 => {
-					try {
-						// @ts-expect-error
-						const info = JSON.parse(event2.currentTarget.result);
+					if (basicInfo.gameAttributes) {
 						setInfoState(
 							formatPlayerBioInfoState(
-								info.gameAttributes.playerBioInfo,
+								basicInfo.gameAttributes.playerBioInfo,
 								defaults,
 							),
 						);
-					} catch (error) {
-						setErrorMessage(error.message);
-						return;
+					} else {
+						setErrorMessage("League file does not contain any settings.");
 					}
-				};
+				} catch (error) {
+					setErrorMessage(error.message);
+				}
 			}}
 		/>
 	</button>

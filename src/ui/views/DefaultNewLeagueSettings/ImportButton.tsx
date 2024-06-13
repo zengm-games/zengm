@@ -1,4 +1,4 @@
-import { resetFileInput } from "../../util";
+import { resetFileInput, toWorker } from "../../util";
 import { IMPORT_FILE_STYLE } from "../Settings/RowsEditor";
 
 // https://stackoverflow.com/a/35200633/786644
@@ -22,7 +22,7 @@ const ImportButton = ({
 			type="file"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
-			onChange={event => {
+			onChange={async event => {
 				if (!event.target.files) {
 					return;
 				}
@@ -33,23 +33,23 @@ const ImportButton = ({
 
 				onBeforeImport();
 
-				const reader = new window.FileReader();
-				reader.readAsText(file);
+				try {
+					const { basicInfo } = await toWorker(
+						"leagueFileUpload",
+						"initialCheck",
+						{
+							file,
+						},
+					);
 
-				reader.onload = async event2 => {
-					try {
-						// @ts-expect-error
-						const leagueFile = JSON.parse(event2.currentTarget.result);
-						if (leagueFile.gameAttributes) {
-							onImport(leagueFile.gameAttributes);
-						} else {
-							onError("League file does not contain any settings.");
-						}
-					} catch (error) {
-						onError(error.message);
-						return;
+					if (basicInfo.gameAttributes) {
+						onImport(basicInfo.gameAttributes);
+					} else {
+						onError("League file does not contain any settings.");
 					}
-				};
+				} catch (error) {
+					onError(error.message);
+				}
 			}}
 		/>
 	</button>

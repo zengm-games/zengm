@@ -153,7 +153,7 @@ const getBasicInfo = async ({
 }: {
 	stream: ReadableStream;
 	includePlayersInBasicInfo: boolean | undefined;
-	leagueCreationID: number;
+	leagueCreationID: number | undefined;
 	conditions: Conditions;
 }) => {
 	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
@@ -190,7 +190,7 @@ const getBasicInfo = async ({
 
 		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
 
-		if (!basicInfo.keys.has(value.key)) {
+		if (leagueCreationID !== undefined && !basicInfo.keys.has(value.key)) {
 			basicInfo.keys.add(value.key);
 			toUI(
 				"updateLocal",
@@ -287,11 +287,14 @@ const getBasicInfo = async ({
 };
 
 export const emitProgressStream = (
-	leagueCreationID: number,
+	leagueCreationID: number | undefined,
 	sizeInBytes: number | undefined,
 	conditions: Conditions,
 ) => {
-	const doIt = sizeInBytes !== undefined && !Number.isNaN(sizeInBytes);
+	const doIt =
+		leagueCreationID !== undefined &&
+		sizeInBytes !== undefined &&
+		!Number.isNaN(sizeInBytes);
 
 	let lastPercentEmitted = 0;
 	let sizeSoFar = 0;
@@ -371,8 +374,8 @@ const initialCheck = async (
 		leagueCreationID,
 	}: {
 		file: File | string;
-		includePlayersInBasicInfo: boolean | undefined;
-		leagueCreationID: number;
+		includePlayersInBasicInfo?: boolean;
+		leagueCreationID?: number;
 	},
 	conditions: Conditions,
 ) => {

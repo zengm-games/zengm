@@ -347,8 +347,8 @@ const isStreamGzipped = async (stream: ReadableStream) => {
 	const { value } = await reader.read();
 	reader.cancel();
 
-	if (value !== undefined && value.length >= 2) {
-		return value[0] === 0x1f && value[1] === 0x8b;
+	if (value !== undefined && value.length >= 3) {
+		return value[0] === 0x1f && value[1] === 0x8b && value[2] === 0x08;
 	}
 
 	return false;

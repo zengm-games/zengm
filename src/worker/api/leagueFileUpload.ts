@@ -347,11 +347,13 @@ const isStreamGzipped = async (stream: ReadableStream) => {
 	const { value } = await reader.read();
 	reader.cancel();
 
-	if (value !== undefined && value.length >= 3) {
-		return value[0] === 0x1f && value[1] === 0x8b && value[2] === 0x08;
-	}
-
-	return false;
+	return (
+		value !== undefined &&
+		value.length >= 3 &&
+		value[0] === 0x1f &&
+		value[1] === 0x8b &&
+		value[2] === 0x08
+	);
 };
 
 // Stream could either be text, or gzipped text. This will unzip only if necessary, otherwise it just passes the stream through.

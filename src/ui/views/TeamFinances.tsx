@@ -636,7 +636,9 @@ const PayrollInfo = ({
 	return (
 		<p>
 			The current payroll (<b>{helpers.formatCurrency(payroll, "M")}</b>) is{" "}
-			{parts.length <= 2 ? (
+			{parts.length === 1 ? (
+				parts[0]
+			) : parts.length <= 2 ? (
 				<>
 					{parts[0]} and {parts[1]}
 				</>

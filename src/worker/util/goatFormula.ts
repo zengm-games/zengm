@@ -26,7 +26,7 @@ const BANNED_STAT_VARIABLES = new Set(
 		baseball: ["minAvailable", "poSo", "rfld"],
 		basketball: ["minAvailable"],
 		football: ["minAvailable"],
-		hockey: ["minAvailable", "gpSkater", "gpGoalie"],
+		hockey: ["minAvailable", "gpSkater", "gpGoalie", "gMin"],
 	}),
 );
 

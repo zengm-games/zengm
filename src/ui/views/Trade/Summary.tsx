@@ -53,6 +53,7 @@ export const SummaryTeam = ({
 	hideFinanceInfo,
 	hideTeamOvr,
 	luxuryPayroll,
+	luxuryTax,
 	missingAssets,
 	salaryCap,
 	salaryCapType,
@@ -61,7 +62,7 @@ export const SummaryTeam = ({
 	t,
 }: Pick<
 	View<"trade">,
-	"luxuryPayroll" | "salaryCap" | "salaryCapType" | "summary"
+	"luxuryPayroll" | "luxuryTax" | "salaryCap" | "salaryCapType" | "summary"
 > & {
 	challengeNoRatings: boolean;
 	handleRemove?: (type: "player" | "pick", id: number) => void;
@@ -229,9 +230,9 @@ export const SummaryTeam = ({
 					) : null}
 					{hideFinanceInfo ? null : salaryCapType !== "none" ? (
 						<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
-					) : (
+					) : luxuryTax !== 0 ? (
 						<li>Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}</li>
-					)}
+					) : null}
 					{!challengeNoRatings && !hideTeamOvr ? (
 						<li>
 							Team ovr:{" "}
@@ -253,12 +254,13 @@ const Summary = forwardRef(
 			challengeNoRatings,
 			handleToggle,
 			luxuryPayroll,
+			luxuryTax,
 			salaryCap,
 			salaryCapType,
 			summary,
 		}: Pick<
 			View<"trade">,
-			"luxuryPayroll" | "salaryCap" | "salaryCapType" | "summary"
+			"luxuryPayroll" | "luxuryTax" | "salaryCap" | "salaryCapType" | "summary"
 		> & {
 			challengeNoRatings: boolean;
 			handleToggle: HandleToggle;
@@ -280,6 +282,7 @@ const Summary = forwardRef(
 							<SummaryTeam
 								challengeNoRatings={challengeNoRatings}
 								luxuryPayroll={luxuryPayroll}
+								luxuryTax={luxuryTax}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}
 								handleRemove={(type, id) => {

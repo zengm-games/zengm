@@ -18,6 +18,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 		challengeNoTrades,
 		gameOver,
 		luxuryPayroll,
+		luxuryTax,
 		offers,
 		phase,
 		salaryCap,
@@ -152,6 +153,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 										hideFinanceInfo
 										hideTeamOvr
 										luxuryPayroll={luxuryPayroll}
+										luxuryTax={luxuryTax}
 										missingAssets={offer.missing}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
@@ -169,6 +171,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 										hideFinanceInfo
 										hideTeamOvr
 										luxuryPayroll={luxuryPayroll}
+										luxuryTax={luxuryTax}
 										missingAssets={offer.missingUser}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
@@ -213,6 +216,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 												challengeNoRatings={challengeNoRatings}
 												hideFinanceInfo
 												luxuryPayroll={luxuryPayroll}
+												luxuryTax={luxuryTax}
 												missingAssets={offer[missingKey]}
 												salaryCap={salaryCap}
 												salaryCapType={salaryCapType}

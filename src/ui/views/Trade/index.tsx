@@ -243,6 +243,7 @@ const Trade = (props: View<"trade">) => {
 		godMode,
 		lost,
 		luxuryPayroll,
+		luxuryTax,
 		multiTeamMode,
 		numDraftRounds,
 		spectator,
@@ -422,6 +423,7 @@ const Trade = (props: View<"trade">) => {
 							challengeNoRatings={challengeNoRatings}
 							handleToggle={handleChangeAsset}
 							luxuryPayroll={luxuryPayroll}
+							luxuryTax={luxuryTax}
 							ref={summaryText}
 							salaryCap={salaryCap}
 							salaryCapType={salaryCapType}

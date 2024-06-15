@@ -18,6 +18,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 		challengeNoTrades,
 		gameOver,
 		luxuryPayroll,
+		luxuryTax,
 		offers,
 		phase,
 		salaryCap,
@@ -137,6 +138,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 										hideFinanceInfo
 										hideTeamOvr
 										luxuryPayroll={luxuryPayroll}
+										luxuryTax={luxuryTax}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
@@ -153,6 +155,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 										hideFinanceInfo
 										hideTeamOvr
 										luxuryPayroll={luxuryPayroll}
+										luxuryTax={luxuryTax}
 										salaryCap={salaryCap}
 										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
@@ -203,6 +206,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 												challengeNoRatings={challengeNoRatings}
 												hideFinanceInfo
 												luxuryPayroll={luxuryPayroll}
+												luxuryTax={luxuryTax}
 												salaryCap={salaryCap}
 												salaryCapType={salaryCapType}
 												showInlinePlayerInfo

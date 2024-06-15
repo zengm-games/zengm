@@ -217,13 +217,15 @@ const updateTrade = async () => {
 
 	teams2 = orderBy(teams2, ["region", "name", "tid"]);
 
-	const userTeamName = `${g.get("teamInfoCache")[g.get("userTid")]
-		?.region} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
+	const userTeamName = `${
+		g.get("teamInfoCache")[g.get("userTid")]?.region
+	} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
 
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		challengeNoTrades: g.get("challengeNoTrades"),
 		luxuryPayroll: g.get("luxuryPayroll") / 1000,
+		luxuryTax: g.get("luxuryTax"),
 		salaryCap: g.get("salaryCap") / 1000,
 		salaryCapType: g.get("salaryCapType"),
 		userDpids: teams[0].dpids,

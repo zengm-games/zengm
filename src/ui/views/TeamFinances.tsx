@@ -615,7 +615,7 @@ const PayrollInfo = ({
 		);
 	}
 
-	if (salaryCapType !== "hard" && luxuryTax !== 0) {
+	if (luxuryTax !== 0) {
 		parts.push(
 			<>
 				{payroll > luxuryPayroll ? "above" : "below"} the luxury tax limit (

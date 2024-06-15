@@ -11,9 +11,7 @@ Improve search for special characters (match to equivalent normal character). Wi
 - maybe https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator#using_collator
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
-- maybe better - show your payroll after trade https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
-
-when luxury tax is disabled, it still shows on trade screen https://old.reddit.com/r/BasketballGM/comments/1cu4nv9/a_couple_small_updates_in_version_202405170541_in/l4x77gy/?context=3
+- maybe better - show your payroll after trade, rather than the other team's payroll https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
 
 cap on mood fickleness due to ovr https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
 - for re-signing only, cap bad mood due to ovr, otherwise players wind up rooting against their own progs sometimes. cap should be fairly high, maybe 70 or 75?

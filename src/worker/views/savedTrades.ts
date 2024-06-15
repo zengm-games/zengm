@@ -198,6 +198,7 @@ const updateSavedTrades = async (
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
 			luxuryPayroll: g.get("luxuryPayroll"),
+			luxuryTax: g.get("luxuryTax"),
 			offers: offers2,
 			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),

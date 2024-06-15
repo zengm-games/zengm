@@ -2,6 +2,7 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import type { SortType } from "../../../common/types";
 import { helpers } from "../../util";
+import { normalizeIntl } from "./normalizeIntl";
 
 type Direction = ">" | "<" | "=" | undefined;
 
@@ -24,7 +25,7 @@ const evalFilter = (
 ) => {
 	if (not) {
 		const checkTextSearch = () => {
-			const searchVal = getSearchVal(value);
+			const searchVal = normalizeIntl(getSearchVal(value, false));
 
 			if (!exact && !searchVal.includes(text)) {
 				return true;
@@ -64,7 +65,7 @@ const evalFilter = (
 		}
 	} else {
 		const checkTextSearch = () => {
-			const searchVal = getSearchVal(value);
+			const searchVal = normalizeIntl(getSearchVal(value, false));
 
 			if (!exact && searchVal.includes(text)) {
 				return true;
@@ -119,7 +120,7 @@ const createFilterFunction = (
 
 	const filters = originalFilterText
 		.split(orOrAnd)
-		.map(text => text.trim().toLowerCase())
+		.map(text => text.trim())
 		.filter(text => text !== "")
 		.map(text => {
 			let direction: Direction;
@@ -135,6 +136,8 @@ const createFilterFunction = (
 				exact = true;
 				text = text.slice(1, -1);
 			}
+
+			text = normalizeIntl(text);
 
 			if (
 				searchType === "number" ||

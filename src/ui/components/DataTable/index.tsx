@@ -29,6 +29,7 @@ import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
 import { orderBy } from "../../../common/utils";
+import { normalizeIntl } from "./normalizeIntl";
 
 export type SortBy = [number, SortOrder];
 
@@ -154,7 +155,7 @@ const DataTable = ({
 				)
 			: [];
 		const skipFiltering = state.searchText === "" && !state.enableFilters;
-		const searchText = state.searchText.toLowerCase();
+		const searchText = normalizeIntl(state.searchText);
 		const rowsFiltered = skipFiltering
 			? rows
 			: rows.filter(row => {
@@ -168,7 +169,11 @@ const DataTable = ({
 								continue;
 							}
 
-							if (getSearchVal(row.data[i]).includes(searchText)) {
+							if (
+								normalizeIntl(getSearchVal(row.data[i], false)).includes(
+									searchText,
+								)
+							) {
 								found = true;
 								break;
 							}

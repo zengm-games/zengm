@@ -1,3 +1,6 @@
+get fired, pick a new team, export the save and start it with the team you got fired from -> mood still bad https://discord.com/channels/290013534023057409/290015591216054273/1251569674961944716
+- reset mood when switching to a new team
+
 green highlight (players from your team) most places should be aware of userTid history
 
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
@@ -6,9 +9,6 @@ Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corb
 
 When exporting Bio Info, export even default values, then dedupe on import https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l3kvqv1/
 - or better, include option
-
-Improve search for special characters (match to equivalent normal character). Will help with nationalities like Poland, Turkey and Vietnam.
-- maybe https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator#using_collator
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 - maybe better - show your payroll after trade, rather than the other team's payroll https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw

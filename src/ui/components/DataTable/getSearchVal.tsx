@@ -2,7 +2,7 @@ import { isValidElement } from "react";
 // @ts-expect-error
 import textContent from "react-addons-text-content";
 
-const getSearchVal = (value: any, toLowerCase: boolean = true) => {
+const getSearchVal = (value: any, toLowerCase: boolean = true): string => {
 	try {
 		let val;
 		let searchVal;

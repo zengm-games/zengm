@@ -91,6 +91,7 @@ const LeadersProgressive = ({
 										firstName: p.firstName,
 										firstNameShort: p.firstNameShort,
 										lastName: p.lastName,
+										count: type === "yearByYear" ? row[type]?.count : undefined,
 									}),
 									classNames: {
 										"table-danger": p.hof,

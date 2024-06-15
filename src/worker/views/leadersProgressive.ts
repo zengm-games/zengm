@@ -73,7 +73,7 @@ const updateLeadersProgressive = async (
 		let allLeaders = seasons.map(season => ({
 			season,
 			linkSeason: false,
-			yearByYear: undefined as MyLeader | undefined,
+			yearByYear: undefined as (MyLeader & { count: number }) | undefined,
 			active: undefined as MyLeader | undefined,
 			career: undefined as MyLeader | undefined,
 			singleSeason: undefined as MyLeader | undefined,
@@ -168,6 +168,7 @@ const updateLeadersProgressive = async (
 								stat: p.stats[cat.stat],
 								userTeam: g.get("userTid", season) === p.stats.tid,
 								watch: p.watch,
+								count: 0,
 							};
 						}
 					}
@@ -290,6 +291,20 @@ const updateLeadersProgressive = async (
 
 		allLeaders = allLeaders.filter(row => row.yearByYear);
 		leadersProgressiveAddFirstNameShort(allLeaders);
+
+		const yearByYearCounts: Record<number, number | undefined> = {};
+		for (const row of allLeaders) {
+			if (!row.yearByYear) {
+				continue;
+			}
+
+			if (yearByYearCounts[row.yearByYear.pid] === undefined) {
+				yearByYearCounts[row.yearByYear.pid] = 0;
+			}
+			yearByYearCounts[row.yearByYear.pid]! += 1;
+
+			row.yearByYear.count = yearByYearCounts[row.yearByYear.pid]!;
+		}
 
 		return {
 			allLeaders,

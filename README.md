@@ -35,7 +35,7 @@ to help.
 ### License and Contributor License Agreement
 
 **This project is NOT open source, but it is also not completely closed. Please
-see LICENSE.md for details.**
+see [LICENSE.md](LICENSE.md) for details.**
 
 If you want to contribute code to this project, you must sign a contributor
 license agreement. There are separate forms for individuals and entities (such

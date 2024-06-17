@@ -29,6 +29,7 @@ import classNames from "classnames";
 import AwardsSummary from "./AwardsSummary";
 import RatingsOverview from "./RatingsOverview";
 import Note from "./Note";
+import PlayerTradingCard from "./PlayerTradingCard";
 
 const Relatives = ({
 	gender,
@@ -47,7 +48,6 @@ const Relatives = ({
 
 	const numToShow = showAll || relatives.length <= 3 ? relatives.length : 2;
 	const numToHide = relatives.length - numToShow;
-
 	return (
 		<>
 			{relatives.slice(0, numToShow).map(rel => {
@@ -438,6 +438,53 @@ const TopStuff = ({
 	);
 
 	const showRatingsOverview = (!retired || season !== undefined) && showRatings;
+	let teamsPlayedFor: any = {};
+	let teams = [];
+	teamsPlayedFor[player.stats[0].abbrev] = { start: null, end: null };
+	teamsPlayedFor[player.stats[0].abbrev].start = player.stats[0].season;
+	let playerSeasons = player.stats.filter(season => season.abbrev !== "TOT");
+	for (let index = 1; index < playerSeasons.length; index++) {
+		let teamPreviousYear = playerSeasons[index - 1].abbrev;
+		let teamCurrentYear = playerSeasons[index].abbrev;
+
+		if (
+			teamsPlayedFor[teamCurrentYear] === undefined &&
+			teamCurrentYear !== teamPreviousYear
+		) {
+			teamsPlayedFor[teamCurrentYear] = { start: null, end: null };
+			teamsPlayedFor[teamCurrentYear].start = playerSeasons[index - 1].season;
+		}
+
+		if (
+			teamsPlayedFor[teamCurrentYear] &&
+			teamCurrentYear !== teamPreviousYear
+		) {
+			let start = teamsPlayedFor[teamPreviousYear].start;
+			let end = teamsPlayedFor[teamPreviousYear].end;
+			let current = playerSeasons[index].season;
+
+			if (playerSeasons[index].abbrev !== "TOT") {
+				if (end !== null) {
+					teams.push(`${start} - ${end} ${teamPreviousYear}`);
+				} else {
+					teams.push(`${start} - ${current} ${teamPreviousYear}`);
+				}
+			}
+		}
+
+		if (
+			teamsPlayedFor[teamCurrentYear] &&
+			teamCurrentYear === teamPreviousYear
+		) {
+			teamsPlayedFor[teamCurrentYear].end = playerSeasons[index].season;
+		}
+
+		if (index === playerSeasons.length - 1) {
+			let start = teamsPlayedFor[teamCurrentYear].start;
+			let end = player.stats[index].season;
+			teams.push(`${start} - ${end} ${teamCurrentYear}`);
+		}
+	}
 
 	return (
 		<div className="mb-3">
@@ -694,6 +741,23 @@ const TopStuff = ({
 			<AwardsSummary awards={player.awards} />
 
 			<Note note={player.note} pid={player.pid} />
+
+			<PlayerTradingCard
+				name={player.name}
+				teams={teams}
+				stats={{
+					games: player.careerStats.gp.toString(),
+					points: player.careerStats.pts.toFixed(2),
+					rebounds: player.careerStats.trb.toFixed(2),
+					assists: player.careerStats.ast.toFixed(2),
+					playerEfficiencyRating: player.careerStats.per.toFixed(2),
+				}}
+				awards={player.awards}
+				face={player.face}
+				imgURL={player.imgURL}
+				colors={teamColors}
+				jersey={teamJersey}
+			/>
 		</div>
 	);
 };

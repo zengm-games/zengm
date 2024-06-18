@@ -1247,10 +1247,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 							season: {
 								type: "integer",
 							},
-							shootoutRounds: {
+							shootoutRounds: wrap({
 								type: "integer",
 								minimum: 0,
-							},
+							}),
 							shootoutRoundsPlayoffs: {
 								type: "integer",
 								minimum: 0,

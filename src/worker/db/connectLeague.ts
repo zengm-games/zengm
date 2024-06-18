@@ -1451,6 +1451,7 @@ const migrate = async ({
 				p => {
 					for (const row of p.stats) {
 						if (row.gp > 0) {
+							// Glitchy because a goalie generally plays the whole game but a skater doesn't. Maybe `60 * row.gpGoalie` would have been better. https://discord.com/channels/290013534023057409/290015591216054273/1252453706679582741
 							row.gMin = (row.min * row.gpGoalie) / row.gp;
 						} else {
 							row.gMin = 0;

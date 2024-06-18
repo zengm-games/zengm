@@ -4,6 +4,14 @@ import { idb } from "../../db";
 import moodComponents from "./moodComponents";
 import type { Player } from "../../../common/types";
 
+const hasActiveNegotiation = async (tid: number, pid: number) => {
+	const teamNegotiations = (await idb.cache.negotiations.getAll()).filter(
+		negotiation => negotiation.tid === tid,
+	);
+
+	return teamNegotiations.some(negotiation => negotiation.pid === pid);
+};
+
 const moodInfo = async (
 	p: Player,
 	tid: number,
@@ -50,10 +58,26 @@ const moodInfo = async (
 	if (p.tid === PLAYER.FREE_AGENT) {
 		sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
 	}
-	const valueDiff =
+
+	let valueDiff =
 		(p.value -
 			bySport({ baseball: 75, basketball: 65, football: 85, hockey: 75 })) /
 		2;
+
+	// It's annoying to root against your player improving, but you do that for very good players sometimes. This prevents that from happening by capping valueDiff, but only when you're re-signing your own player
+	const MAX_RESIGNING_VALUE_DIFF = 4;
+	if (valueDiff > MAX_RESIGNING_VALUE_DIFF) {
+		// Is player really re-signing? Otherwise do nothing.
+		if (
+			p.tid === tid ||
+			(resigning &&
+				p.tid === PLAYER.FREE_AGENT &&
+				(await hasActiveNegotiation(tid, p.pid)))
+		) {
+			valueDiff = MAX_RESIGNING_VALUE_DIFF;
+		}
+	}
+
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
 	const thisIsAUserTeam = g.get("userTids").includes(tid);

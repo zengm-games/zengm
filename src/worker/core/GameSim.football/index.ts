@@ -1141,13 +1141,11 @@ class GameSim extends GameSimBase {
 					});
 				this.playersOnField[t][pos] = players.slice(0, numPlayers);
 
-				// @ts-expect-error
 				for (const p of this.playersOnField[t][pos]) {
 					pidsUsed.add(p.id);
 				}
 
 				if (playType === "starters") {
-					// @ts-expect-error
 					for (const p of this.playersOnField[t][pos]) {
 						this.recordStat(t, p, "gs");
 					}

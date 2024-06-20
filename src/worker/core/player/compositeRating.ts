@@ -23,7 +23,6 @@ const compositeRating = (
 		if (typeof component === "number") {
 			factor = component;
 		} else {
-			// https://github.com/microsoft/TypeScript/issues/21732
 			// @ts-expect-error
 			const rating: number | undefined = ratings[component];
 

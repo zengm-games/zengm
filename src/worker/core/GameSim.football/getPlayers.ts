@@ -11,8 +11,6 @@ const getPlayers = (
 
 	for (const pos of helpers.keys(playersOnField)) {
 		if (positions.includes(pos) && playersOnField[pos]) {
-			// https://github.com/microsoft/TypeScript/issues/21732
-			// @ts-expect-error
 			players.push(...playersOnField[pos]);
 		}
 	}

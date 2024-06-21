@@ -738,8 +738,6 @@ class Cache {
 
 	// Load database from disk and save in cache, wiping out any prior values in cache
 	async fill(season?: number) {
-		//console.log('fill start');
-		//performance.mark('fillStart');
 		this._validateStatus("empty", "full");
 
 		this._setStatus("filling");
@@ -789,9 +787,6 @@ class Cache {
 		}
 
 		this._setStatus("full");
-		//performance.measure('fillTime', 'fillStart');
-		//const entries = performance.getEntriesByName('fillTime');
-		//console.log(`${g.get("phase")} fill duration: ${entries.at(-1).duration / 1000} seconds`);
 	}
 
 	// Take current contents in database and write to disk
@@ -800,8 +795,6 @@ class Cache {
 			return;
 		}
 
-		//console.log('flush start');
-		//performance.mark('flushStart');
 		this._validateStatus("full");
 
 		const transaction = idb.league.transaction(STORES, "readwrite");
@@ -836,9 +829,6 @@ class Cache {
 				lastPlayed: new Date(),
 			});
 		}
-		//performance.measure('flushTime', 'flushStart');
-		//const entries = performance.getEntriesByName('flushTime');
-		//console.log(`${g.get("phase")} flush duration: ${entries.at(-1).duration / 1000} seconds`);
 	}
 
 	async _autoFlush() {

@@ -1,3 +1,17 @@
+5000 seasons 
+- export https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxHcqgpRvHvRsKMKMSwhfwHQV
+  - streaming slow
+  - gzip + no streaming fast
+- init (on ctrl+r) is slow
+- new phase perf
+  - cache players getData is slow
+    - cursor is a little faster actually (maybe my getAll is too)
+    - benchmark in firefox/safari too
+    - getAllKeys slow?
+    - get slow?
+    - separate objectstore for retired players could help, but ugh
+  - benchmark removing promise.alls in cache
+
 https://discord.com/channels/290013534023057409/569726303926878219/1253099037872226314
 - Dpoy is still a little weird. I understand if dm wants it to be evenly spread out among positions, however with my sliders that are damn near identical to irl stats (which I feel should be the default for the game) corners win it 8/10 times
 - TFL is all screwed up, LBs get like 20-30+ a season when DL get none. This is probably a huge change for the engine though, but would probably fix issue 1

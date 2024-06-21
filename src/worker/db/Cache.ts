@@ -394,16 +394,14 @@ class Cache {
 				autoIncrement: true,
 				getData: async (tx: IDBPTransaction<LeagueDB>) => {
 					// Non-retired players
-					const [players1, players2] = await Promise.all([
-						tx
-							.objectStore("players")
-							.index("tid")
-							.getAll(IDBKeyRange.lowerBound(PLAYER.UNDRAFTED)),
-						tx
-							.objectStore("players")
-							.index("tid")
-							.getAll(PLAYER.UNDRAFTED_FANTASY_TEMP),
-					]);
+					const players1 = await tx
+						.objectStore("players")
+						.index("tid")
+						.getAll(IDBKeyRange.lowerBound(PLAYER.UNDRAFTED));
+					const players2 = await tx
+						.objectStore("players")
+						.index("tid")
+						.getAll(PLAYER.UNDRAFTED_FANTASY_TEMP);
 					return players1.concat(players2);
 				},
 				indexes: [
@@ -702,42 +700,41 @@ class Cache {
 			this._dirtyRecords[store] = new Set();
 		}
 
-		// Load data and do maxIds calculation in parallel
-		await Promise.all([
-			(async () => {
-				// No getData implies no need to store any records in cache except new ones
-				const data = storeInfo.getData
-					? await storeInfo.getData(transaction)
-					: [];
-				if (!append) {
-					this._data[store] = {};
-				}
+		{
+			// No getData implies no need to store any records in cache except new ones
+			const data = storeInfo.getData
+				? await storeInfo.getData(transaction)
+				: [];
+			if (!append) {
+				this._data[store] = {};
+			}
 
-				for (const row of data) {
-					const key = row[storeInfo.pk];
-					this._data[store][key] = row;
-				}
+			for (const row of data) {
+				const key = row[storeInfo.pk];
+				this._data[store][key] = row;
+			}
 
-				this._refreshIndexes(store);
-			})(),
-			(async () => {
-				// Special case for games is due to interaction with schedule (see hack below)
-				if (storeInfo.autoIncrement || store === "games") {
-					this._maxIds[store] = -1;
+			this._refreshIndexes(store);
+		}
 
-					const cursor = await transaction
-						.objectStore(store)
-						.openCursor(undefined, "prev");
-					if (cursor) {
-						this._maxIds[store] = cursor.value[storeInfo.pk];
-					}
+		{
+			// Special case for games is due to interaction with schedule (see hack below)
+			if (storeInfo.autoIncrement || store === "games") {
+				this._maxIds[store] = -1;
+
+				const cursor = await transaction
+					.objectStore(store)
+					.openCursor(undefined, "prev");
+				if (cursor) {
+					this._maxIds[store] = cursor.value[storeInfo.pk];
 				}
-			})(),
-		]);
+			}
+		}
 	}
 
 	// Load database from disk and save in cache, wiping out any prior values in cache
 	async fill(season?: number) {
+		console.time("FOO");
 		this._validateStatus("empty", "full");
 
 		this._setStatus("filling");
@@ -787,6 +784,7 @@ class Cache {
 		}
 
 		this._setStatus("full");
+		console.timeEnd("FOO");
 	}
 
 	// Take current contents in database and write to disk

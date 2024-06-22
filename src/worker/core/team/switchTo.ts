@@ -4,6 +4,8 @@ import { g, toUI } from "../../util";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 
 const switchTo = async (tid: number, tids?: number[]) => {
+	const prevTid = g.get("userTid");
+
 	await league.setGameAttributes({
 		gameOver: false,
 		userTid: tid,
@@ -14,17 +16,20 @@ const switchTo = async (tid: number, tids?: number[]) => {
 
 	league.updateMeta();
 
-	const teamSeason = await idb.cache.teamSeasons.indexGet(
-		"teamSeasonsByTidSeason",
-		[tid, g.get("season")],
-	);
-	if (teamSeason) {
-		teamSeason.ownerMood = {
-			money: 0,
-			playoffs: 0,
-			wins: 0,
-		};
-		await idb.cache.teamSeasons.put(teamSeason);
+	// Reset prev and next team mood. Prev handles exporting and then importing with a new team. And next makes sure the new team is always 0 mood.
+	for (const tid2 of [prevTid, tid]) {
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[tid2, g.get("season")],
+		);
+		if (teamSeason) {
+			teamSeason.ownerMood = {
+				money: 0,
+				playoffs: 0,
+				wins: 0,
+			};
+			await idb.cache.teamSeasons.put(teamSeason);
+		}
 	}
 
 	await deleteUnreadMessages();

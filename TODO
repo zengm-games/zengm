@@ -1,3 +1,56 @@
+enable gzip by default, if browser supports
+
+Support logos being saved to IndexedDB
+- what formats to support?
+- what about player images?
+- how to handle global image data?
+- upload or local storage?
+  - upload - am i responsible for content?
+  - local storage - mobile disk space constraints
+- hash and store globally
+  - if it's all based on hash, can never edit a logo
+    - could instead require a key
+    - special key for srID auto ones
+  - global metadata
+    - created date
+    - edited date
+    - description text
+    - source (league id, or "uploaded")
+    - (maybe) league IDs using it currently
+- optionally include in league file
+  - option on export page - note all the hashes used, and then load them from database
+  - in league file - some root level "logos"
+  - importing league file - read from "logos"
+- ui to allow CRUD of logos
+  - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
+- or allow uploading to server
+  - https://news.ycombinator.com/item?id=40221210
+
+advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
+- similar to https://stathead.com/basketball/player-season-finder.cgi
+- scan players in season range similar to roster continuity
+- some way to specify only active players or not, even for current season (if after playoffs, or someone died)
+- columns
+  - always show pos/team/age/contract/exp
+  - user picks one of the stat table types, or ratings table
+  - if it's a stats table, include ovr/pot
+  - also include the filter columns
+- form UI
+  - seasons range
+    - below link presets for "any", "current", "career"
+    - default to current
+    - if you set one to "career", the other one gets set too. same for moving away from career
+  - regular season / playoffs / combined
+  - (basketball only) per game / per 36 / total
+  - select custom filters
+    - categories
+      - bio
+        - include name, position, college, country, team
+      - stats
+      - ratings
+    - maybe share code with player graphs?
+  - position
+
 https://discord.com/channels/290013534023057409/569726303926878219/1253099037872226314
 - Dpoy is still a little weird. I understand if dm wants it to be evenly spread out among positions, however with my sliders that are damn near identical to irl stats (which I feel should be the default for the game) corners win it 8/10 times
 - TFL is all screwed up, LBs get like 20-30+ a season when DL get none. This is probably a huge change for the engine though, but would probably fix issue 1
@@ -8,11 +61,6 @@ https://discord.com/channels/290013534023057409/569726303926878219/1253099037872
 - Finally I want to see contracts adjusted, irl cap is up to 255m with top guys at 55m, but in game is still 200m/30m. I am able to get 45m max in game with a 255m cap, however I can’t get up to 55m because some positions make way too much. Most look good, but I have rbs making 25-30m which is way off, those dudes make like 16 tops now. If the amount people got paid was tweaked a tiny bit I’m sure a 255/55 setting would be possible to match irl contracts very closely
 
 baseball colleges
-
-don't allow deleting account with active gold subscription
-
-get fired, pick a new team, export the save and start it with the team you got fired from -> mood still bad https://discord.com/channels/290013534023057409/290015591216054273/1251569674961944716
-- reset mood when switching to a new team
 
 green highlight (players from your team) most places should be aware of userTid history
 
@@ -25,19 +73,6 @@ When exporting Bio Info, export even default values, then dedupe on import https
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 - maybe better - show your payroll after trade, rather than the other team's payroll https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
-
-cap on mood fickleness due to ovr https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
-- for re-signing only, cap bad mood due to ovr, otherwise players wind up rooting against their own progs sometimes. cap should be fairly high, maybe 70 or 75?
-
-advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
-- filter by bio/stats/ratings
-  - maybe share code with player graphs?
-  - should it allow stats/ratings from different seasons (or career)? or all the same?
-- ideally don't just support a stat/rating by season, but also by experience
-- age filter needs to be relative to a season
-- similar to https://stathead.com/basketball/player-season-finder.cgi
-- for any season, scan players similar to roster continuity
-- some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 
 team season seach - similar to advanced player search
 - https://stathead.com/basketball/team-season-finder.cgi
@@ -215,27 +250,6 @@ store results of trading block in database
 auto export to folder every N seasons
 - chrome only?
 - include box scores?
-
-Support logos being saved to IndexedDB
-- what formats to support?
-- what about player images?
-- how to handle global image data?
-- hash and store globally
-  - if it's all based on hash, can never edit a logo
-  - global metadata
-    - created date
-    - edited date
-    - description text
-    - source (league id, or "uploaded")
-    - (maybe) league IDs using it currently
-- optionally include in league file
-  - option on export page - note all the hashes used, and then load them from database
-  - in league file - some root level "logos"
-  - importing league file - read from "logos"
-- ui to allow CRUD of logos
-  - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
-- or allow uploading to server
-  - https://news.ycombinator.com/item?id=40221210
 
 "field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://chromestatus.com/feature/5176596826161152
 

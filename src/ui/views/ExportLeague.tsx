@@ -262,6 +262,11 @@ const loadCompressed = (): boolean => {
 };
 
 const loadGzip = (): boolean => {
+	// Chrome 80, Firefox 13, Safari 16.4 (can remove this and other checks for the existence of DecompressionStream)
+	if (typeof DecompressionStream === "undefined") {
+		return false;
+	}
+
 	const json = safeLocalStorage.getItem("exportLeagueFormat");
 	if (json) {
 		try {
@@ -272,7 +277,7 @@ const loadGzip = (): boolean => {
 		} catch (error) {}
 	}
 
-	return false;
+	return true;
 };
 
 const getExportInfo = (

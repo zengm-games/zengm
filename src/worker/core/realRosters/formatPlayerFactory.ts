@@ -21,6 +21,24 @@ const MINUTES_PER_GAME = 48;
 
 const hasPhoto = ["seemebo01"];
 
+export const getDraftTid = (
+	teams: {
+		srID?: string;
+		tid: number;
+	}[],
+	draftAbbrev: string,
+) => {
+	const draftTeam = teams.find(
+		t =>
+			t.srID !== undefined && oldAbbrevTo2020BBGMAbbrev(t.srID) === draftAbbrev,
+	);
+	if (draftTeam) {
+		return draftTeam.tid;
+	} else {
+		return -1;
+	}
+};
+
 const formatPlayerFactory = async (
 	basketball: Basketball,
 	options: GetLeagueOptions,
@@ -96,21 +114,11 @@ const formatPlayerFactory = async (
 				year: legends
 					? season - 1
 					: draftRatingsAlreadySet
-					? ratings.season
-					: ratings.season - 1,
+						? ratings.season
+						: ratings.season - 1,
 			};
 		} else {
-			let draftTid;
-			const draftTeam = teams.find(
-				t =>
-					t.srID !== undefined &&
-					oldAbbrevTo2020BBGMAbbrev(t.srID) === bio.draftAbbrev,
-			);
-			if (draftTeam) {
-				draftTid = draftTeam.tid;
-			} else {
-				draftTid = -1;
-			}
+			const draftTid = getDraftTid(teams, bio.draftAbbrev!);
 			draft = {
 				tid: draftTid,
 				originalTid: draftTid,
@@ -301,7 +309,7 @@ const formatPlayerFactory = async (
 											award.type === "Slam Dunk Contest Winner" ||
 											award.type === "Three-Point Contest Winner")),
 							),
-					  )
+						)
 					: undefined;
 		}
 

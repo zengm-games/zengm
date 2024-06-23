@@ -7,6 +7,7 @@ import type {
 	DraftPickWithoutKey,
 	DraftLotteryResult,
 	GameAttributesLeague,
+	PlayerContract,
 } from "../../../common/types";
 import { defaultGameAttributes, helpers, random } from "../../util";
 import {
@@ -19,9 +20,9 @@ import {
 import { player, team } from "..";
 import { legendsInfo } from "./getLeagueInfo";
 import getDraftProspects from "./getDraftProspects";
-import formatPlayerFactory from "./formatPlayerFactory";
+import formatPlayerFactory, { getDraftTid } from "./formatPlayerFactory";
 import nerfDraftProspect from "./nerfDraftProspect";
-import getOnlyRatings from "./getOnlyRatings";
+import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import addRelatives from "./addRelatives";
 import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers";
@@ -765,37 +766,24 @@ const getLeague = async (options: GetLeagueOptions) => {
 				!options.randomDebuts &&
 				options.season < LATEST_SEASON
 			) {
-				for (const dp of basketball.draftPicks[options.season]) {
-					if (!dp.slug) {
-						continue;
-					}
-
-					const p = players.find(p => p.srID === dp.slug);
-					if (!p) {
-						throw new Error("Player not found");
-					}
-					if (dp.pick === undefined) {
-						throw new Error("No pick number");
-					}
-
-					const [t, t2] = getDraftPickTeams(dp);
-
-					p.tid = t.tid;
-					p.draft = {
-						round: dp.round,
-						pick: dp.pick,
-						tid: t.tid,
-						year: options.season,
-						originalTid: t2.tid,
+				const applyRookieContractAndFixRatings = (p: {
+					draft: {
+						round: number | undefined;
 					};
-
+					contract: PlayerContract | undefined;
+					ratings: OnlyRatings[];
+					srID: string;
+				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
 					const salaryRow = basketball.salaries.find(
 						row => row.start <= options.season + 1 && row.slug === p.srID,
 					);
 					if (salaryRow) {
+						if (p.draft.round === undefined) {
+							throw new Error("Should never happen");
+						}
 						let minYears =
-							defaultGameAttributes.rookieContractLengths[dp.round - 1] ??
+							defaultGameAttributes.rookieContractLengths[p.draft.round - 1] ??
 							defaultGameAttributes.rookieContractLengths[
 								defaultGameAttributes.rookieContractLengths.length - 1
 							];
@@ -825,12 +813,86 @@ const getLeague = async (options: GetLeagueOptions) => {
 					const currentRatings = p.ratings[0];
 					currentRatings.season = options.season;
 					nerfDraftProspect(currentRatings);
-					if (options.type === "real" && options.realDraftRatings === "draft") {
-						const age = currentRatings.season! - p.born.year;
-						setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
-							draftRound: p.draft.round,
-							draftPick: p.draft.pick,
-						});
+				};
+
+				const playersBySlug = groupBy(players, "srID");
+				for (const dp of basketball.draftPicks[options.season]) {
+					if (!dp.slug) {
+						continue;
+					}
+
+					const playersSlug = playersBySlug[dp.slug];
+					if (!playersSlug || playersSlug.length === 0) {
+						throw new Error("Player not found");
+					}
+					if (dp.pick === undefined) {
+						throw new Error("No pick number");
+					}
+
+					const [t, t2] = getDraftPickTeams(dp);
+
+					for (const p of playersSlug) {
+						p.tid = t.tid;
+						p.draft = {
+							round: dp.round,
+							pick: dp.pick,
+							tid: t.tid,
+							year: options.season,
+							originalTid: t2.tid,
+						};
+
+						applyRookieContractAndFixRatings(p);
+
+						if (
+							options.type === "real" &&
+							options.realDraftRatings === "draft"
+						) {
+							const currentRatings = p.ratings[0];
+							const age = currentRatings.season! - p.born.year;
+							setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
+								draftRound: p.draft.round,
+								draftPick: p.draft.pick,
+							});
+						}
+					}
+				}
+
+				// Handle rookies who were drafted in a previous season, since there is no concept of rights being owned by a team, we need this extra effort to assign them to their team
+				for (const p of players) {
+					const bio = basketball.bios[p.srID]!;
+					// Looking for - draft class was in the past, but still labeled as undrafted (so not picked up as being in this draft class above, or as a "normal" player on a roster in formatPlayerFactory)
+					if (
+						p.draft.year <= options.season &&
+						p.tid === PLAYER.UNDRAFTED &&
+						bio.draftRound !== undefined &&
+						bio.draftRound > 0
+					) {
+						// Search forwards - first team a player was on that season
+						const statsRow = basketball.teams.find(
+							row => row.slug === p.srID && row.season === options.season + 1,
+						);
+
+						if (statsRow) {
+							const t = initialTeams.find(
+								t =>
+									t.srID !== undefined &&
+									oldAbbrevTo2020BBGMAbbrev(t.srID) === statsRow.abbrev,
+							);
+
+							if (t) {
+								p.tid = t.tid;
+								const draftTid = getDraftTid(initialTeams, bio.draftAbbrev!);
+								p.draft = {
+									round: bio.draftRound,
+									pick: bio.draftPick,
+									tid: draftTid,
+									year: bio.draftYear,
+									originalTid: draftTid,
+								};
+
+								applyRookieContractAndFixRatings(p);
+							}
+						}
 					}
 				}
 			}

@@ -1,6 +1,6 @@
 import type { Ratings } from "./loadData.basketball";
 
-type OnlyRatings = {
+export type OnlyRatings = {
 	hgt: number;
 	stre: number;
 	spd: number;

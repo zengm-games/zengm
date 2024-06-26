@@ -1,3 +1,16 @@
+league UI option to always show flag by player name
+- dynamically load from UI in PlayerNameLabels
+
+shot selection revamp
+- pick shooter - similar to current
+  - or maybe factor in shot quality, some players basically only take open shots (mediocre jump shooters, bigs who only dunk)
+- determine shot quality - base on team oiq, team skills, player oiq, and player skills
+- determine shot type - calculate expected value for all shot types, factoring in shot quality (contested 3 is often the bail out shot for low quality situations). also consider that layup/dunk is harder to get, but the other ones you can pretty much always get.
+  - 2 layer decision - jump shot vs inside vs layup. if jump shot, use tendency factor to influence likelihood of 2 vs 3
+- goals
+  - the only guys shooting a lot of midrange shots should be either efficient at it, or low oiq
+  - should be some bigs that basically only take inside shots
+
 for real player draft prospects, link to tankathon
 - future years?
 - is everyone on https://www.tankathon.com/big_board ?

@@ -295,7 +295,6 @@ const Rigged = ({
 };
 
 const DraftLotteryTable = (props: Props) => {
-	console.log("render table", props.result);
 	const isMounted = useRef(true);
 	useEffect(() => {
 		return () => {

@@ -73,7 +73,7 @@ const gameScore = (arg: { [key: string]: number }): number => {
 	);
 };
 
-function getTeamsDefault(): TeamBasic[] {
+const getTeamsDefault = (): TeamBasic[] => {
 	let teams: TeamBasic[];
 	if (isSport("baseball")) {
 		teams = getTeamInfos([
@@ -601,51 +601,51 @@ function getTeamsDefault(): TeamBasic[] {
 			},
 			{
 				tid: 21,
-				cid: 1,
-				did: 2,
-				abbrev: "PHO",
-			},
-			{
-				tid: 22,
 				cid: 0,
 				did: 1,
 				abbrev: "PIT",
 			},
 			{
-				tid: 23,
+				tid: 22,
 				cid: 0,
 				did: 1,
 				abbrev: "RAL",
 			},
 			{
-				tid: 24,
+				tid: 23,
 				cid: 1,
 				did: 3,
 				abbrev: "SJ",
 			},
 			{
-				tid: 25,
+				tid: 24,
 				cid: 1,
 				did: 3,
 				abbrev: "SEA",
 			},
 			{
-				tid: 26,
+				tid: 25,
 				cid: 1,
 				did: 2,
 				abbrev: "STL",
 			},
 			{
-				tid: 27,
+				tid: 26,
 				cid: 0,
 				did: 0,
 				abbrev: "TPA",
 			},
 			{
-				tid: 28,
+				tid: 27,
 				cid: 0,
 				did: 0,
 				abbrev: "TOR",
+			},
+			{
+				tid: 28,
+				cid: 1,
+				did: 2,
+				abbrev: "UTA",
 			},
 			{
 				tid: 29,
@@ -871,7 +871,7 @@ function getTeamsDefault(): TeamBasic[] {
 	}
 
 	return teams;
-}
+};
 
 /**
  * Clones an object.

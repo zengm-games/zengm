@@ -650,6 +650,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "string",
 								enum: ["draft", "byConf", "top"],
 							},
+							alwaysShowCountry: {
+								type: "boolean",
+							},
 							autoDeleteOldBoxScores: {
 								type: "boolean",
 							},

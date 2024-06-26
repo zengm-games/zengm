@@ -45,6 +45,7 @@ if (window.innerWidth >= 1200) {
 
 const useLocal = createWithEqualityFn<LocalStateWithActions>(
 	set => ({
+		alwaysShowCountry: false,
 		challengeNoRatings: false,
 		customMenu: undefined,
 		dirtySettings: false,
@@ -128,6 +129,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 			// Reset any values specific to a league. statusText and phaseText will be set later, no need to override here and cause UI flicker
 			resetLeague() {
 				set({
+					alwaysShowCountry: false,
 					challengeNoRatings: false,
 					games: [],
 					godMode: false,
@@ -186,6 +188,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 			) {
 				// Keep in sync with gameAttributesToUI - this is just for TypeScript
 				const keys = [
+					"alwaysShowCountry",
 					"challengeNoRatings",
 					"fantasyPoints",
 					"gender",

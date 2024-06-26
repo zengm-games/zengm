@@ -2366,6 +2366,14 @@ export const settings: Setting[] = (
 			},
 		},
 		{
+			category: "UI",
+			key: "alwaysShowCountry",
+			name: "Always Show Country",
+			type: "bool",
+			description:
+				"This will show a player's birth country flag in most places his name is displayed.",
+		},
+		{
 			category: "Players",
 			key: "goatFormula",
 			name: "GOAT Formula",

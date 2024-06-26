@@ -403,6 +403,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"autoRelocateRebrand",
 		),
+		alwaysShowCountry: unwrapGameAttribute(
+			defaultGameAttributes,
+			"alwaysShowCountry",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

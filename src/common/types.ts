@@ -489,6 +489,7 @@ export type GameAttributesLeague = {
 	allStarType: "draft" | "byConf" | "top";
 	allStarDunk: boolean;
 	allStarThree: boolean;
+	alwaysShowCountry: boolean;
 	autoDeleteOldBoxScores: boolean;
 	autoExpand:
 		| {
@@ -979,6 +980,7 @@ export type Options = {
 };
 
 export type LocalStateUI = {
+	alwaysShowCountry: boolean;
 	challengeNoRatings: boolean;
 	customMenu?: MenuItemHeader;
 	dirtySettings: boolean;

@@ -288,7 +288,8 @@ const CountryFlag = ({
 		override ?? flagOverrides[country] ?? flagOverrides[country2];
 
 	if (actualOverride === "none") {
-		return null;
+		// Placeholder with same width
+		return <div className={classNames(className, "fi")} title={country2} />;
 	} else if (actualOverride) {
 		return (
 			<img
@@ -312,7 +313,8 @@ const CountryFlag = ({
 		);
 	}
 
-	return null;
+	// Placeholder with same width
+	return <div className={classNames(className, "fi")} title={country2} />;
 };
 
 export default CountryFlag;

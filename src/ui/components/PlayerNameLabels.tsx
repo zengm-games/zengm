@@ -1,9 +1,11 @@
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
-import { helpers, useLocal } from "../util";
+import { helpers, toWorker, useLocalPartial } from "../util";
 import type { Player, PlayerInjury } from "../../common/types";
 import InjuryIcon from "./InjuryIcon";
 import SeasonIcons from "../views/Player/SeasonIcons";
+import CountryFlag from "./CountryFlag";
+import { useEffect, useState } from "react";
 
 type Props = {
 	awards?: Player["awards"];
@@ -99,8 +101,37 @@ export const CountBadge = ({ count }: { count: number }) => {
 	return null;
 };
 
+const CountryFlagPid = ({
+	className,
+	pid,
+}: {
+	className?: string;
+	pid: number;
+}) => {
+	const [country, setCountry] = useState<undefined | string>();
+
+	useEffect(() => {
+		let mounted = true;
+		(async () => {
+			const country = await toWorker("main", "getBornLoc", pid);
+
+			if (mounted) {
+				setCountry(country);
+			}
+		})();
+
+		return () => {
+			mounted = false;
+		};
+	});
+
+	return <CountryFlag className={className} country={country ?? "Unknown"} />;
+};
+
 const PlayerNameLabels = (props: Props) => {
-	const fullNames = useLocal(state => state.fullNames) || props.fullNames;
+	const localState = useLocalPartial(["alwaysShowCountry", "fullNames"]);
+	const alwaysShowCountry = localState.alwaysShowCountry;
+	const fullNames = localState.fullNames || props.fullNames;
 
 	const {
 		abbrev,
@@ -209,6 +240,9 @@ const PlayerNameLabels = (props: Props) => {
 				>
 					{abbrev}
 				</a>
+			) : null}
+			{alwaysShowCountry && pid !== undefined ? (
+				<CountryFlagPid pid={pid} className="ms-2" />
 			) : null}
 		</span>
 	);

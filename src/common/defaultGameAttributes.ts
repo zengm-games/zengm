@@ -294,6 +294,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	autoRelocateGeo: "naFirst",
 	autoRelocateRebrand: true,
 	autoRelocateRealign: true,
+	alwaysShowCountry: false,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

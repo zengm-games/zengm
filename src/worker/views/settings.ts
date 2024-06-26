@@ -169,6 +169,7 @@ const keys = [
 	"autoRelocateGeo",
 	"autoRelocateRealign",
 	"autoRelocateRebrand",
+	"alwaysShowCountry",
 ] as const;
 
 export type Settings = Pick<
@@ -378,6 +379,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			autoRelocateGeo: g.get("autoRelocateGeo"),
 			autoRelocateRealign: g.get("autoRelocateRealign"),
 			autoRelocateRebrand: g.get("autoRelocateRebrand"),
+			alwaysShowCountry: g.get("alwaysShowCountry"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

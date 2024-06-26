@@ -158,7 +158,8 @@ export type Key =
 	| "autoRelocateProb"
 	| "autoRelocateGeo"
 	| "autoRelocateRebrand"
-	| "autoRelocateRealign";
+	| "autoRelocateRealign"
+	| "alwaysShowCountry";
 
 export type Category =
 	| "New League"

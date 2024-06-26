@@ -1,5 +1,8 @@
 league UI option to always show flag by player name
-- dynamically load from UI in PlayerNameLabels
+- don't show on places CountryFlag is aleady shown
+  - PlayerBios
+  - Roster
+  - Player
 
 shot selection revamp
 - pick shooter - similar to current

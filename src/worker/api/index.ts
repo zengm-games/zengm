@@ -1546,6 +1546,13 @@ const getAutoPos = (ratings: any) => {
 	return player.pos(boundedRatings);
 };
 
+const getBornLoc = async (pid: number) => {
+	const p = await idb.getCopy.players({ pid });
+	if (p) {
+		return p.born.loc;
+	}
+};
+
 const getDefaultInjuries = () => {
 	return defaultInjuries;
 };
@@ -4342,6 +4349,7 @@ export default {
 		exportPlayerGamesCsv,
 		generateFace,
 		getAutoPos,
+		getBornLoc,
 		getDefaultInjuries,
 		getDefaultNewLeagueSettings,
 		getDefaultTragicDeaths,

@@ -11,6 +11,7 @@ const gameAttributesToUI = async (
 ) => {
 	// Keep in sync with ui/util/local.ts
 	const keys = [
+		"alwaysShowCountry",
 		"challengeNoRatings",
 		"fantasyPoints",
 		"gender",

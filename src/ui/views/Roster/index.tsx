@@ -336,6 +336,7 @@ const Roster = ({
 									firstNameShort={p.firstNameShort}
 									lastName={p.lastName}
 									awards={p.awards}
+									neverShowCountry
 								/>
 							</td>
 							<td>{p.ratings.pos}</td>

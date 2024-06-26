@@ -1,9 +1,3 @@
-league UI option to always show flag by player name
-- don't show on places CountryFlag is aleady shown
-  - PlayerBios
-  - Roster
-  - Player
-
 shot selection revamp
 - pick shooter - similar to current
   - or maybe factor in shot quality, some players basically only take open shots (mediocre jump shooters, bigs who only dunk)

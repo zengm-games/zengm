@@ -42,6 +42,9 @@ type Props = {
 
 	// Pass to override firstName and lastName
 	legacyName?: string;
+
+	// Override the alwaysShowCountry feature to always be disabled, in the case where we know the country is displayed elsewhere nearby already
+	neverShowCountry?: boolean;
 };
 
 const parseLegacyName = (name: string) => {
@@ -142,6 +145,7 @@ const PlayerNameLabels = (props: Props) => {
 		firstNameShort,
 		injury,
 		jerseyNumber,
+		neverShowCountry,
 		pid,
 		pos,
 		season,
@@ -241,7 +245,7 @@ const PlayerNameLabels = (props: Props) => {
 					{abbrev}
 				</a>
 			) : null}
-			{alwaysShowCountry && pid !== undefined ? (
+			{alwaysShowCountry && !neverShowCountry && pid !== undefined ? (
 				<CountryFlagPid pid={pid} className="ms-2" />
 			) : null}
 		</span>

@@ -228,6 +228,34 @@ const ComparePlayers = ({
 	const [stickyElement, setStickyElement] = useState<HTMLElement | null>(null);
 	useManualSticky(stickyElement, -128);
 
+	const playersForm = (
+		<PlayersForm
+			initialAvailablePlayers={initialAvailablePlayers}
+			players={players}
+			onSubmit={playerInfos => {
+				const url = helpers.leagueUrl([
+					"compare_players",
+					playerInfos
+						.map(info => {
+							const shortPlayoffs =
+								info.playoffs === "combined"
+									? "c"
+									: info.playoffs === "playoffs"
+										? "p"
+										: "r";
+							return `${info.p.pid}-${info.season}-${shortPlayoffs}`;
+						})
+						.join(","),
+				]);
+				realtimeUpdate([], url);
+			}}
+		/>
+	);
+
+	if (players.length === 0) {
+		return playersForm;
+	}
+
 	const numCols = players.length + 1;
 
 	const showPercentSign = bySport({
@@ -250,7 +278,7 @@ const ComparePlayers = ({
 				];
 
 	// If one is career, all are career
-	const career = players[0].season === "career";
+	const career = players.length > 0 && players[0].season === "career";
 
 	const ageRow = (
 		<InfoRow
@@ -266,27 +294,7 @@ const ComparePlayers = ({
 
 	return (
 		<>
-			<PlayersForm
-				initialAvailablePlayers={initialAvailablePlayers}
-				players={players}
-				onSubmit={playerInfos => {
-					const url = helpers.leagueUrl([
-						"compare_players",
-						playerInfos
-							.map(info => {
-								const shortPlayoffs =
-									info.playoffs === "combined"
-										? "c"
-										: info.playoffs === "playoffs"
-											? "p"
-											: "r";
-								return `${info.p.pid}-${info.season}-${shortPlayoffs}`;
-							})
-							.join(","),
-					]);
-					realtimeUpdate([], url);
-				}}
-			/>
+			{playersForm}
 			<div className="table-responsive">
 				<table className="table table-nonfluid table-sm border-top-0 text-center">
 					<thead ref={setStickyElement} className="bg-white position-relative">

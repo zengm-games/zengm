@@ -6,6 +6,7 @@ import {
 	VIDEO_ADS,
 	VIDEO_AD_PADDING,
 } from "../../common";
+import { useLocalPartial } from "../util";
 
 const footerLinks = [
 	{
@@ -39,13 +40,17 @@ const footerLinks = [
 ];
 
 const Footer = memo(() => {
+	const { gold } = useLocalPartial(["gold"]);
+
+	const video_ad_padding = VIDEO_ADS && gold;
+
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
 		<footer
-			className={`footer-wrapper mt-auto${VIDEO_ADS ? "" : " mb-3"}`}
+			className={`footer-wrapper mt-auto${video_ad_padding ? "" : " mb-3"}`}
 			id="main-footer"
 			style={
-				VIDEO_ADS
+				video_ad_padding
 					? {
 							paddingBottom: VIDEO_AD_PADDING,
 						}

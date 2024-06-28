@@ -1,3 +1,7 @@
+tests -> vitest
+- normal tests - vitest had trouble with circular dependencies, like importing stuff from util returns undefined
+- when browser testing is stable, could replace the karma/mocha stuff with vitest
+
 VIDEO_ADS should add margin in footer only outside of gold
 
 advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3

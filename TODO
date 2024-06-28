@@ -1,3 +1,29 @@
+advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
+- similar to https://stathead.com/basketball/player-season-finder.cgi
+- scan players in season range similar to roster continuity
+- some way to specify only active players or not, even for current season (if after playoffs, or someone died)
+- columns
+  - always show pos/team/age/contract/exp
+  - user picks one of the stat table types, or ratings table
+  - if it's a stats table, include ovr/pot
+  - also include the filter columns
+- form UI
+  - seasons range
+    - below link presets for "any", "current"
+    - default to current
+  - single season / total
+    - could implement total in playersPlus by filtering stats array before summing up
+  - regular season / playoffs / combined
+  - (basketball only) per game / per 36 / total
+  - select custom filters
+    - categories
+      - bio
+        - include name, position, college, country, team
+      - stats
+      - ratings
+    - maybe share code with player graphs?
+  - position
+
 shot selection revamp
 - pick shooter - similar to current
   - or maybe factor in shot quality, some players basically only take open shots (mediocre jump shooters, bigs who only dunk)
@@ -37,31 +63,6 @@ Support logos being saved to IndexedDB
   - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
 - or allow uploading to server
   - https://news.ycombinator.com/item?id=40221210
-
-advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
-- similar to https://stathead.com/basketball/player-season-finder.cgi
-- scan players in season range similar to roster continuity
-- some way to specify only active players or not, even for current season (if after playoffs, or someone died)
-- columns
-  - always show pos/team/age/contract/exp
-  - user picks one of the stat table types, or ratings table
-  - if it's a stats table, include ovr/pot
-  - also include the filter columns
-- form UI
-  - seasons range
-    - below link presets for "any", "current", "career"
-    - default to current
-    - if you set one to "career", the other one gets set too. same for moving away from career
-  - regular season / playoffs / combined
-  - (basketball only) per game / per 36 / total
-  - select custom filters
-    - categories
-      - bio
-        - include name, position, college, country, team
-      - stats
-      - ratings
-    - maybe share code with player graphs?
-  - position
 
 https://discord.com/channels/290013534023057409/569726303926878219/1253099037872226314
 - Dpoy is still a little weird. I understand if dm wants it to be evenly spread out among positions, however with my sliders that are damn near identical to irl stats (which I feel should be the default for the game) corners win it 8/10 times

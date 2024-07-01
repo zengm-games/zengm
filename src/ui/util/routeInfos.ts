@@ -209,6 +209,7 @@ const routeInfos = {
 	"/l/:lid/auto_relocate": "autoRelocate",
 	"/l/:lid/compare_players": "comparePlayers",
 	"/l/:lid/compare_players/:info": "comparePlayers",
+	"/l/:lid/advanced_player_search": "advancedPlayerSearch",
 };
 
 export default routeInfos;

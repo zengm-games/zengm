@@ -363,6 +363,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "advancedPlayerSearch",
+				league: true,
+				commandPalette: true,
+				path: ["advanced_player_search"],
+				text: "Advanced Player Search",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "trade",
 				league: true,
 				commandPalette: true,

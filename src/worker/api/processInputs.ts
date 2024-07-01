@@ -1014,8 +1014,13 @@ const comparePlayers = (params: Params) => {
 	};
 };
 
+const advancedPlayerSearch = () => {
+	return {};
+};
+
 export default {
 	account,
+	advancedPlayerSearch,
 	allStarDunk: validateSeasonOnly,
 	allStarTeams: validateSeasonOnly,
 	allStarThree: validateSeasonOnly,

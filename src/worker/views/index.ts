@@ -1,6 +1,7 @@
 import account from "./account";
 import accountUpdateCard from "./accountUpdateCard";
 import achievements from "./achievements";
+import advancedPlayerSearch from "./advancedPlayerSearch";
 import allStar from "./allStar";
 import allStarDunk from "./allStarDunk";
 import allStarHistory from "./allStarHistory";
@@ -108,6 +109,7 @@ export default {
 	account,
 	accountUpdateCard,
 	achievements,
+	advancedPlayerSearch,
 	allStar,
 	allStarDunk,
 	allStarHistory,

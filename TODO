@@ -1,9 +1,3 @@
-tests -> vitest
-- normal tests - vitest had trouble with circular dependencies, like importing stuff from util returns undefined
-- when browser testing is stable, could replace the karma/mocha stuff with vitest
-
-VIDEO_ADS should add margin in footer only outside of gold
-
 advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
 - similar to https://stathead.com/basketball/player-season-finder.cgi
 - scan players in season range similar to roster continuity
@@ -29,6 +23,20 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - ratings
     - maybe share code with player graphs?
   - position
+  - some way to specify that you want previous season's stats for current players, like for free agents or in the preseason
+    - oldStats option kind of does this
+
+when a pitcher gives up ER in 0 IP, it should show an ERA of "inf" or something https://chat.reddit.com/room/!CTzWdQJV_o3iD9mGr52VSsuMkPL7xM2O-ZWkauqKxYw%3Areddit.com
+- just let the Infinity pass through and format it as "inf"
+  - handle sorting
+  - works for career averages?
+  - any other stats this should be applied for?
+
+tests -> vitest
+- normal tests - vitest had trouble with circular dependencies, like importing stuff from util returns undefined
+- when browser testing is stable, could replace the karma/mocha stuff with vitest
+
+VIDEO_ADS should add margin in footer only outside of gold
 
 shot selection revamp
 - pick shooter - similar to current

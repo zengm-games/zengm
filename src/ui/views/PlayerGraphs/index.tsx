@@ -144,7 +144,7 @@ type AxisState = {
 };
 
 // For responsive ones, render the last one, which should be the longest
-const OptionDropdown = ({ value }: { value: DropdownOption }) => {
+export const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 	return (
 		<option value={value.key}>
 			{Array.isArray(value.value) ? value.value.at(-1)!.text : value.value}

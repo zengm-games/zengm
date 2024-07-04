@@ -210,6 +210,8 @@ const routeInfos = {
 	"/l/:lid/compare_players": "comparePlayers",
 	"/l/:lid/compare_players/:info": "comparePlayers",
 	"/l/:lid/advanced_player_search": "advancedPlayerSearch",
+	"/l/:lid/advanced_player_search/:seasonStart/:seasonEnd/:singleSeason/:playoffs/:statType/:filters":
+		"advancedPlayerSearch",
 };
 
 export default routeInfos;

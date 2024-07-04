@@ -381,6 +381,23 @@ const injuries = (params: Params) => {
 	};
 };
 
+const validateStatType = (statType: string | undefined): PlayerStatType => {
+	if (statType === "perGame") {
+		return "perGame";
+	} else if (statType === "per36") {
+		return "per36";
+	} else if (statType === "totals") {
+		return "totals";
+	} else {
+		return bySport({
+			baseball: "totals",
+			basketball: "perGame",
+			football: "totals",
+			hockey: "totals",
+		});
+	}
+};
+
 const leaders = (params: Params) => {
 	let season: "career" | "all" | number;
 	if (params.season === "career" || params.season === "all") {
@@ -389,46 +406,14 @@ const leaders = (params: Params) => {
 		season = validateSeason(params.season);
 	}
 
-	let statType: PlayerStatType;
-	if (params.statType === "perGame") {
-		statType = "perGame";
-	} else if (params.statType === "per36") {
-		statType = "per36";
-	} else if (params.statType === "totals") {
-		statType = "totals";
-	} else {
-		statType = bySport({
-			baseball: "totals",
-			basketball: "perGame",
-			football: "totals",
-			hockey: "totals",
-		});
-	}
-
 	return {
 		season,
 		playoffs: validateSeasonType(params.playoffs),
-		statType,
+		statType: validateStatType(params.statType),
 	};
 };
 
 const leadersYears = (params: Params) => {
-	let statType: PlayerStatType;
-	if (params.statType === "perGame") {
-		statType = "perGame";
-	} else if (params.statType === "per36") {
-		statType = "per36";
-	} else if (params.statType === "totals") {
-		statType = "totals";
-	} else {
-		statType = bySport({
-			baseball: "totals",
-			basketball: "perGame",
-			football: "totals",
-			hockey: "totals",
-		});
-	}
-
 	const defaultStat = bySport({
 		baseball: "ba",
 		basketball: "pts",
@@ -439,7 +424,7 @@ const leadersYears = (params: Params) => {
 	return {
 		stat: params.stat ?? defaultStat,
 		playoffs: validateSeasonType(params.playoffs),
-		statType,
+		statType: validateStatType(params.statType),
 	};
 };
 
@@ -1014,8 +999,18 @@ const comparePlayers = (params: Params) => {
 	};
 };
 
-const advancedPlayerSearch = () => {
-	return {};
+const advancedPlayerSearch = (params: Params) => {
+	const singleSeason: "totals" | "singleSeason" =
+		params.singleSeason === "totals" ? "totals" : "singleSeason";
+
+	return {
+		seasonStart: validateSeason(params.seasonStart),
+		seasonEnd: validateSeason(params.seasonEnd),
+		singleSeason,
+		playoffs: validateSeasonType("regularSeason"),
+		statType: validateStatType(params.statType),
+		filters: params.filters,
+	};
 };
 
 export default {

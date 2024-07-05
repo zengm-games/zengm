@@ -3,7 +3,47 @@ import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
 import { orderBy, range } from "../../common/utils";
 
-async function updateSeasons(
+// Range includes both seasonStart and seasonEnd
+async function* iterateActivePlayersSeasonRange(
+	seasonStart: number,
+	seasonEnd: number,
+) {
+	// Start with players who were drafted before seasonStart - would be faster to use draftYear index only
+	let players = (
+		await idb.getCopies.players(
+			{
+				activeSeason: seasonStart,
+			},
+			"noCopyCache",
+		)
+	).filter(p => p.draft.year < seasonStart);
+
+	for (let season = seasonStart; season <= seasonEnd; season++) {
+		if (season > seasonStart) {
+			const rookies = await idb.getCopies.players(
+				{
+					draftYear: season - 1,
+				},
+				"noCopyCache",
+			);
+
+			// Remove players who retired after the previous season
+			players = players.filter(p => p.retiredYear >= season);
+
+			players = [
+				// Remove players who retired after the previous season
+				...players.filter(p => p.retiredYear >= season),
+
+				// Add rookies
+				...rookies,
+			];
+		}
+
+		yield { players, season };
+	}
+}
+
+const updateSeasons = async (
 	inputs: unknown,
 	updateEvents: UpdateEvents,
 ): Promise<
@@ -14,7 +54,7 @@ async function updateSeasons(
 			userAbbrev: string;
 	  }
 	| undefined
-> {
+> => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -24,29 +64,10 @@ async function updateSeasons(
 		let prevMinutesAll: Map<number, number>[] | undefined;
 
 		// Start with players who were drafted before startingSeason - would be faster to use draftYear index only
-		const startingSeason = g.get("startingSeason");
-		let players = (
-			await idb.getCopies.players(
-				{
-					activeSeason: g.get("startingSeason"),
-				},
-				"noCopyCache",
-			)
-		).filter(p => p.draft.year < startingSeason);
-
-		for (let season = startingSeason; season <= g.get("season"); season++) {
-			if (season > startingSeason) {
-				// Remove players who retired after the previous season
-				players = players.filter(p => p.retiredYear >= season);
-
-				// Add rookies
-				const rookies = await idb.getCopies.players({
-					draftYear: season - 1,
-				});
-
-				players.push(...rookies);
-			}
-
+		for await (const { players, season } of iterateActivePlayersSeasonRange(
+			g.get("startingSeason"),
+			g.get("season"),
+		)) {
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
 			const minutesAll = range(g.get("numTeams")).map(
 				() => new Map<number, number>(),
@@ -155,6 +176,6 @@ async function updateSeasons(
 			userAbbrev: g.get("teamInfoCache")[g.get("userTid")].abbrev,
 		};
 	}
-}
+};
 
 export default updateSeasons;

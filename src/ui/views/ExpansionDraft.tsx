@@ -7,7 +7,12 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
-import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS, PHASE } from "../../common";
+import {
+	DEFAULT_JERSEY,
+	DEFAULT_STADIUM_CAPACITY,
+	DEFAULT_TEAM_COLORS,
+	PHASE,
+} from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld";
@@ -35,7 +40,7 @@ const ExpansionDraft = ({
 		colors: DEFAULT_TEAM_COLORS,
 		jersey: DEFAULT_JERSEY,
 		pop: "1",
-		stadiumCapacity: "25000",
+		stadiumCapacity: String(DEFAULT_STADIUM_CAPACITY),
 		did: String(divs.at(-1)!.did),
 		takeControl: false,
 	};
@@ -251,7 +256,6 @@ const ExpansionDraft = ({
 													"d-none",
 												]}
 												confs={confs}
-												disableStadiumCapacity={!godMode}
 												divs={divs}
 												handleInputChange={handleInputChange(i)}
 												hideStatus

@@ -26,6 +26,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - oldStats option kind of does this
   - if range is 1 year only, then career/total should not be option, only single season
 - when to refresh data? only if some input changed
+- hide ratings if challenge mode
+- show no results on initial load
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams

@@ -4,11 +4,11 @@ import type { UpdateEvents } from "../../common/types";
 import { orderBy, range } from "../../common/utils";
 
 // Range includes both seasonStart and seasonEnd
-async function* iterateActivePlayersSeasonRange(
+export async function* iterateActivePlayersSeasonRange(
 	seasonStart: number,
 	seasonEnd: number,
 ) {
-	// Start with players who were drafted before seasonStart - would be faster to use draftYear index only
+	// Start with players who were drafted before seasonStart - if seasonStart is startingSeason, this would be faster to use draftYear index only, but using activeSeason is faster if we're doing some arbitrary start that is not startingSeason
 	let players = (
 		await idb.getCopies.players(
 			{

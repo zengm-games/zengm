@@ -1,7 +1,7 @@
 import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { Player, UpdateEvents, ViewInput } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { buffOvrDH } from "./depth";
 
@@ -19,19 +19,22 @@ export const getPlayers = async (
 	ratings: string[],
 	stats: string[],
 	tid: number | undefined,
+	playersAllOverride?: Player[],
 ) => {
-	let playersAll;
+	let playersAll = playersAllOverride;
 
-	if (g.get("season") === season) {
-		playersAll = await idb.cache.players.getAll();
-		playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+	if (playersAll === undefined) {
+		if (g.get("season") === season) {
+			playersAll = await idb.cache.players.getAll();
+			playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+		} else {
+			playersAll = await idb.getCopies.players(
+				{
+					activeSeason: season,
+				},
+				"noCopyCache",
+			);
+		}
 	}
 
 	// Show all teams

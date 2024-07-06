@@ -3,7 +3,7 @@ import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
-import { isSport } from "../../common";
+import { isSport, RATINGS } from "../../common";
 import { helpers, realtimeUpdate } from "../util";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
@@ -11,11 +11,72 @@ type NumericOperator = (typeof numericOperators)[number];
 const stringOperators = ["contains", "does not contain"] as const;
 type StringOperator = (typeof stringOperators)[number];
 
+type FilterCategory = "rating";
+
+type AdvancedPlayerSearchField = {
+	key: string;
+	valueType: "numeric" | "string";
+};
+
 export type AdvancedPlayerSearchFilter = {
-	type: "rating";
+	category: FilterCategory;
 	key: string;
 	operator: NumericOperator;
 	value: number;
+};
+
+const possibleFilters: Record<
+	FilterCategory,
+	{
+		label: string;
+		options: AdvancedPlayerSearchField[];
+	}
+> = {
+	rating: {
+		label: "Ratings",
+		options: ["ovr", "pot", ...RATINGS].map(key => {
+			return {
+				key,
+				valueType: "numeric",
+			};
+		}),
+	},
+};
+
+const getFilterInfo = (category: FilterCategory, key: string) => {
+	return possibleFilters[category].options.find(row => row.key === key);
+};
+
+const SelectOperator = <
+	Type extends "numeric" | "string",
+	Value = Type extends "numeric" ? NumericOperator : StringOperator,
+>({
+	type,
+	value,
+	onChange,
+}: {
+	type: Type;
+	value: Value;
+	onChange: (value: Value) => void;
+}) => {
+	const operators = type === "numeric" ? numericOperators : stringOperators;
+	return (
+		<select
+			className="form-select"
+			value={value as any}
+			onChange={event => {
+				onChange(event.target.value as any);
+			}}
+		>
+			{operators.map(operator => {
+				return (
+					<option key={operator} value={operator}>
+						{operator}
+					</option>
+				);
+			})}
+		</select>
+	);
 };
 
 const Filters = ({
@@ -27,12 +88,34 @@ const Filters = ({
 		React.SetStateAction<AdvancedPlayerSearchFilter[]>
 	>;
 }) => {
+	const setFilter = (i: number, filter: AdvancedPlayerSearchFilter) => {
+		setFilters(oldFilters => {
+			return oldFilters.map((oldFilter, j) => (i === j ? filter : oldFilter));
+		});
+	};
+
 	return (
 		<div>
 			{filters.map((filter, i) => {
+				const filterInfo = getFilterInfo(filter.category, filter.key);
+				if (!filterInfo) {
+					return null;
+				}
+
 				return (
 					<div key={i} className="d-flex gap-2">
-						{filter.key} {filter.operator} {filter.value}
+						{filter.key}{" "}
+						<SelectOperator
+							type={filterInfo.valueType}
+							value={filter.operator}
+							onChange={operator => {
+								setFilter(i, {
+									...filter,
+									operator,
+								});
+							}}
+						/>{" "}
+						{filter.value}
 					</div>
 				);
 			})}
@@ -44,7 +127,7 @@ const Filters = ({
 						return [
 							...prev,
 							{
-								type: "rating",
+								category: "rating",
 								key: "ovr",
 								operator: ">=",
 								value: 50,

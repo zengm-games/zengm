@@ -12,7 +12,13 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	loading,
 }: {
 	value: T | null | undefined;
-	options: T[];
+	options: (
+		| T
+		| {
+				label: string;
+				options: T[];
+		  }
+	)[];
 	onChange: (value: T | null) => void;
 	isClearable?: boolean;
 	getOptionLabel: (value: T) => string;

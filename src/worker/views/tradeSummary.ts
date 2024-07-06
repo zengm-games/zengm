@@ -26,7 +26,7 @@ const findRatingsRow = (
 ) => {
 	// If no data was deleted/edited, should work with just ratingsIndex
 	const firstTry = allRatings[ratingsIndex];
-	if (firstTry !== undefined && firstTry.season === season) {
+	if (firstTry?.season === season) {
 		return firstTry;
 	}
 

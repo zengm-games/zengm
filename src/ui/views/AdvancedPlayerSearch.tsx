@@ -6,6 +6,59 @@ import { OptionDropdown } from "./PlayerGraphs";
 import { isSport } from "../../common";
 import { helpers, realtimeUpdate } from "../util";
 
+const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
+type NumericOperator = (typeof numericOperators)[number];
+const stringOperators = ["contains", "does not contain"] as const;
+type StringOperator = (typeof stringOperators)[number];
+
+export type AdvancedPlayerSearchFilter = {
+	type: "rating";
+	key: string;
+	operator: NumericOperator;
+	value: number;
+};
+
+const Filters = ({
+	filters,
+	setFilters,
+}: {
+	filters: AdvancedPlayerSearchFilter[];
+	setFilters: React.Dispatch<
+		React.SetStateAction<AdvancedPlayerSearchFilter[]>
+	>;
+}) => {
+	return (
+		<div>
+			{filters.map((filter, i) => {
+				return (
+					<div key={i} className="d-flex gap-2">
+						{filter.key} {filter.operator} {filter.value}
+					</div>
+				);
+			})}
+			<button
+				type="button"
+				className="btn btn-secondary"
+				onClick={() => {
+					setFilters(prev => {
+						return [
+							...prev,
+							{
+								type: "rating",
+								key: "ovr",
+								operator: ">=",
+								value: 50,
+							},
+						];
+					});
+				}}
+			>
+				Add filter
+			</button>
+		</div>
+	);
+};
+
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [[seasonStart, seasonEnd], setSeasonRange] = useState<[number, number]>(
 		[props.seasonStart, props.seasonEnd],
@@ -13,6 +66,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [singleSeason, setSingleSeason] = useState(props.singleSeason);
 	const [playoffs, setPlayoffs] = useState(props.playoffs);
 	const [statType, setStatType] = useState(props.statType);
+	const [filters, setFilters] = useState(props.filters);
 
 	useTitleBar({
 		title: "Advanced Player Search",
@@ -36,7 +90,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							singleSeason,
 							playoffs,
 							statType,
-							"FILTERS",
+							JSON.stringify(filters),
 						]),
 					);
 				}}
@@ -130,6 +184,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						</select>
 					</div>
 				) : null}
+				<Filters filters={filters} setFilters={setFilters} />
 				<button type="submit" className="btn btn-primary">
 					Search
 				</button>

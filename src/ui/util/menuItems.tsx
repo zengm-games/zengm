@@ -436,14 +436,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "advancedPlayerSearch",
-				league: true,
-				commandPalette: true,
-				path: ["advanced_player_search"],
-				text: "Advanced Player Search",
-			},
-			{
-				type: "link",
 				active: pageID => pageID === "comparePlayers",
 				league: true,
 				commandPalette: true,
@@ -575,6 +567,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 				path: ["player_graphs"],
 				text: "Player Graphs",
+			},
+			{
+				type: "link",
+				active: pageID => pageID === "advancedPlayerSearch",
+				league: true,
+				commandPalette: true,
+				path: ["advanced_player_search"],
+				text: "Advanced Player Search",
 			},
 			{
 				type: "link",

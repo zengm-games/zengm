@@ -25,14 +25,25 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - some way to specify that you want previous season's stats for current players, like for free agents or in the preseason
     - oldStats option kind of does this
   - if range is 1 year only, then career/total should not be option, only single season
+- filter UI
+  - searchable dropdown for all possible fields, separated by category
+  - filtering on ratings only makes sense for singleSeason, so put it in error state when necessary
+  - how to handle AND/OR logic?
+    - ootp lets you pick and/or, but how to specify grouping? https://manuals.ootpdevelopments.com/index.php?man=ootp16&page=filters
+    - could make it hierarchical, but that's complicated https://cloud.google.com/looker/docs/and-or-filters-in-explores#filter_groups https://support.airtable.com/docs/filtering-records-using-conditions#condition-groups-and-advanced-filtering
 - when to refresh data? only if some input changed
 - hide ratings if challenge mode
 - show no results on initial load
-- filtering on ratings only makes sense for singleSeason
 - tid - distinction between "current team" and "team", like if a player was traded in the offseason and you filter by team, what do you show? look in getPlayers too
+- test
+  - weird ones
+    - baseball defensive stats
+    - qbrec
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams
+
+show amount in $ over trade limit rather than % https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxRJVkhtPLhkSrSXlJxJVWgrN?compose=DmwnWrRrmRLLHDwLtgDWrwnTFPXrFqTcCQpnNNqHJKtNMsbmsqNqfhtmtPQrTQKMrQjSNfCLSJcg
 
 keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
 - mid season trades?

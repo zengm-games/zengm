@@ -3,6 +3,7 @@ import { g, helpers } from "../util";
 import type { PlayerStatType } from "../../common/types";
 import type { Params } from "../../ui/router";
 import type { boxScoreToLiveSim } from "../views/liveGame";
+import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -1003,13 +1004,20 @@ const advancedPlayerSearch = (params: Params) => {
 	const singleSeason: "totals" | "singleSeason" =
 		params.singleSeason === "totals" ? "totals" : "singleSeason";
 
+	let filters: AdvancedPlayerSearchFilter[];
+	try {
+		filters = JSON.parse(params.filters!);
+	} catch (error) {
+		filters = [];
+	}
+
 	return {
 		seasonStart: validateSeason(params.seasonStart),
 		seasonEnd: validateSeason(params.seasonEnd),
 		singleSeason,
 		playoffs: validateSeasonType("regularSeason"),
 		statType: validateStatType(params.statType),
-		filters: params.filters,
+		filters,
 	};
 };
 

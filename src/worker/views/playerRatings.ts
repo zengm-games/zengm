@@ -61,6 +61,7 @@ export const getPlayers = async (
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
 		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
 		season: season,
+		mergeStats: "totOnly",
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,

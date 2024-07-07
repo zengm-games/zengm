@@ -8,6 +8,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - if it's a stats table, include ovr/pot
   - also include the filter columns
     - see colKey
+  - defaultSort to the first filter column
+  - Team should be current team (for the current season or for totals) or whatever would get displayed in stats
 - form UI
   - seasons range
     - below link presets for "any", "current"

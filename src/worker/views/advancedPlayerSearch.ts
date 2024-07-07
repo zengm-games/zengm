@@ -1,4 +1,5 @@
 import type { ViewInput } from "../../common/types";
+import addFirstNameShort from "../util/addFirstNameShort";
 import { getPlayers } from "./playerRatings";
 import { iterateActivePlayersSeasonRange } from "./rosterContinuity";
 
@@ -91,7 +92,7 @@ const updateAdvancedPlayerSearch = async ({
 		playoffs,
 		statType,
 		filters,
-		players: matchedPlayers,
+		players: addFirstNameShort(matchedPlayers),
 	};
 };
 

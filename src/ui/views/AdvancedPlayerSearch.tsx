@@ -4,7 +4,9 @@ import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
 import { isSport, RATINGS } from "../../common";
-import { helpers, realtimeUpdate } from "../util";
+import { getCols, helpers, realtimeUpdate } from "../util";
+import { DataTable } from "../components";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -224,6 +226,39 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
 
+	const cols = getCols(["Name", "Pos", "Age", "Team", "Season"]);
+
+	const rows = props.players.map((p, i) => {
+		return {
+			key: i,
+			data: [
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					season: p.ratings.season,
+					skills: p.ratings.skills,
+					jerseyNumber: p.stats.jerseyNumber,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+				}),
+				p.ratings.pos,
+				p.age,
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${p.stats.abbrev}_${p.stats.tid}`,
+						p.ratings.season,
+					])}
+				>
+					{p.stats.abbrev}
+				</a>,
+				p.ratings.season,
+			],
+		};
+	});
+
 	return (
 		<>
 			<form
@@ -337,6 +372,15 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					Search
 				</button>
 			</form>
+
+			<DataTable
+				cols={cols}
+				defaultSort={[0, "asc"]}
+				defaultStickyCols={window.mobile ? 0 : 1}
+				name="AdvancedPlayerSearch"
+				pagination
+				rows={rows}
+			/>
 		</>
 	);
 };

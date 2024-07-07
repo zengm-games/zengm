@@ -21,6 +21,7 @@ type AdvancedPlayerSearchField = {
 export type AdvancedPlayerSearchFilter = {
 	category: "rating";
 	key: string;
+	colKey: string;
 	operator: NumericOperator;
 	value: number;
 };
@@ -44,6 +45,7 @@ const possibleFilters: Record<
 		options: ["ovr", "pot", ...RATINGS].map(key => {
 			return {
 				key,
+				colKey: `rating:${key}`,
 				valueType: "numeric",
 			};
 		}),
@@ -167,6 +169,7 @@ const Filters = ({
 							{
 								category: "rating",
 								key: "ovr",
+								colKey: "rating:ovr",
 								operator: ">=",
 								value: "50",
 							} satisfies AdvancedPlayerSearchFilterEditing,

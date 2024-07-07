@@ -13,6 +13,14 @@ const updateAdvancedPlayerSearch = async ({
 	if (singleSeason === "totals") {
 		throw new Error("Not implemented");
 	}
+	console.log(filters);
+
+	const extraRatings: string[] = ["season"];
+	for (const filter of filters) {
+		if (filter.category === "rating" && !extraRatings.includes(filter.key)) {
+			extraRatings.push(filter.key);
+		}
+	}
 
 	const matchedPlayers = [];
 	for await (const { players, season } of iterateActivePlayersSeasonRange(
@@ -23,18 +31,58 @@ const updateAdvancedPlayerSearch = async ({
 			season,
 			"all",
 			[],
-			["season"],
+			extraRatings,
 			[],
 			undefined,
 			players,
 		);
 
-		console.log(playersPlus);
-
 		for (const p of playersPlus) {
-			matchedPlayers.push(p);
+			let match = true;
+			for (const filter of filters) {
+				if (filter.category === "rating") {
+					const pValue = p.ratings[filter.key];
+					if (filter.operator === ">") {
+						if (pValue <= filter.value) {
+							match = false;
+						}
+					} else if (filter.operator === "<") {
+						if (pValue >= filter.value) {
+							match = false;
+						}
+					} else if (filter.operator === ">=") {
+						if (pValue < filter.value) {
+							match = false;
+						}
+					} else if (filter.operator === "<=") {
+						if (pValue > filter.value) {
+							match = false;
+						}
+					} else if (filter.operator === "=") {
+						if (pValue != filter.value) {
+							match = false;
+						}
+					} else if (filter.operator === "!=") {
+						if (pValue === filter.value) {
+							match = false;
+						}
+					} else {
+						throw new Error("Should never happen");
+					}
+				}
+
+				if (!match) {
+					break;
+				}
+			}
+
+			if (match) {
+				matchedPlayers.push(p);
+			}
 		}
 	}
+
+	console.log(matchedPlayers);
 
 	return {
 		seasonStart,

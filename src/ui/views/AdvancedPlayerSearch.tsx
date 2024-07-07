@@ -19,10 +19,17 @@ type AdvancedPlayerSearchField = {
 };
 
 export type AdvancedPlayerSearchFilter = {
-	category: FilterCategory;
+	category: "rating";
 	key: string;
 	operator: NumericOperator;
 	value: number;
+};
+
+type AdvancedPlayerSearchFilterEditing = Omit<
+	AdvancedPlayerSearchFilter,
+	"value"
+> & {
+	value: string;
 };
 
 const possibleFilters: Record<
@@ -79,16 +86,38 @@ const SelectOperator = <
 	);
 };
 
+const ValueInput = ({
+	type,
+	value,
+	onChange,
+}: {
+	type: "numeric" | "string";
+	value: string;
+	onChange: (value: string) => void;
+}) => {
+	return (
+		<input
+			type="text"
+			className="form-control"
+			inputMode={type === "numeric" ? "numeric" : undefined}
+			value={value}
+			onChange={event => {
+				onChange(event.target.value as any);
+			}}
+		/>
+	);
+};
+
 const Filters = ({
 	filters,
 	setFilters,
 }: {
-	filters: AdvancedPlayerSearchFilter[];
+	filters: AdvancedPlayerSearchFilterEditing[];
 	setFilters: React.Dispatch<
-		React.SetStateAction<AdvancedPlayerSearchFilter[]>
+		React.SetStateAction<AdvancedPlayerSearchFilterEditing[]>
 	>;
 }) => {
-	const setFilter = (i: number, filter: AdvancedPlayerSearchFilter) => {
+	const setFilter = (i: number, filter: AdvancedPlayerSearchFilterEditing) => {
 		setFilters(oldFilters => {
 			return oldFilters.map((oldFilter, j) => (i === j ? filter : oldFilter));
 		});
@@ -114,8 +143,17 @@ const Filters = ({
 									operator,
 								});
 							}}
-						/>{" "}
-						{filter.value}
+						/>
+						<ValueInput
+							type={filterInfo.valueType}
+							value={filter.value}
+							onChange={value => {
+								setFilter(i, {
+									...filter,
+									value,
+								});
+							}}
+						/>
 					</div>
 				);
 			})}
@@ -130,8 +168,8 @@ const Filters = ({
 								category: "rating",
 								key: "ovr",
 								operator: ">=",
-								value: 50,
-							},
+								value: "50",
+							} satisfies AdvancedPlayerSearchFilterEditing,
 						];
 					});
 				}}
@@ -149,7 +187,14 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [singleSeason, setSingleSeason] = useState(props.singleSeason);
 	const [playoffs, setPlayoffs] = useState(props.playoffs);
 	const [statType, setStatType] = useState(props.statType);
-	const [filters, setFilters] = useState(props.filters);
+	const [filters, setFilters] = useState(
+		props.filters.map(filter => {
+			return {
+				...filter,
+				value: String(filter.value),
+			};
+		}),
+	);
 
 	useTitleBar({
 		title: "Advanced Player Search",

@@ -25,6 +25,9 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - some way to specify that you want previous season's stats for current players, like for free agents or in the preseason
     - oldStats option kind of does this
   - if range is 1 year only, then career/total should not be option, only single season
+  - form validation
+    - numeric input should be numeric
+    - no ratings for totals
 - filter UI
   - searchable dropdown for all possible fields, separated by category
   - filtering on ratings only makes sense for singleSeason, so put it in error state when necessary

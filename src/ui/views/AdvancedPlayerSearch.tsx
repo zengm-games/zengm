@@ -180,6 +180,28 @@ const Filters = ({
 	);
 };
 
+const filtersToEditable = (
+	filters: AdvancedPlayerSearchFilter[],
+): AdvancedPlayerSearchFilterEditing[] => {
+	return filters.map(filter => {
+		return {
+			...filter,
+			value: String(filter.value),
+		};
+	});
+};
+
+const filtersFromEditable = (
+	filters: AdvancedPlayerSearchFilterEditing[],
+): AdvancedPlayerSearchFilter[] => {
+	return filters.map(filter => {
+		return {
+			...filter,
+			value: helpers.localeParseFloat(filter.value),
+		};
+	});
+};
+
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [[seasonStart, seasonEnd], setSeasonRange] = useState<[number, number]>(
 		[props.seasonStart, props.seasonEnd],
@@ -187,14 +209,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [singleSeason, setSingleSeason] = useState(props.singleSeason);
 	const [playoffs, setPlayoffs] = useState(props.playoffs);
 	const [statType, setStatType] = useState(props.statType);
-	const [filters, setFilters] = useState(
-		props.filters.map(filter => {
-			return {
-				...filter,
-				value: String(filter.value),
-			};
-		}),
-	);
+	const [filters, setFilters] = useState(() => {
+		return filtersToEditable(props.filters);
+	});
 
 	useTitleBar({
 		title: "Advanced Player Search",
@@ -218,7 +235,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							singleSeason,
 							playoffs,
 							statType,
-							JSON.stringify(filters),
+							JSON.stringify(filtersFromEditable(filters)),
 						]),
 					);
 				}}

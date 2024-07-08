@@ -7,6 +7,7 @@ import { isSport, PLAYER, RATINGS } from "../../common";
 import { getCols, helpers, realtimeUpdate } from "../util";
 import { DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import SelectMultiple from "../components/SelectMultiple";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -16,14 +17,15 @@ type StringOperator = (typeof stringOperators)[number];
 type FilterCategory = "rating";
 
 type AdvancedPlayerSearchField = {
+	category: FilterCategory;
 	key: string;
+	colKey: string;
 	valueType: "numeric" | "string";
 };
 
 export type AdvancedPlayerSearchFilter = {
 	category: "rating";
 	key: string;
-	colKey: string;
 	operator: NumericOperator;
 	value: number;
 };
@@ -46,6 +48,7 @@ const possibleFilters: Record<
 		label: "Ratings",
 		options: ["ovr", "pot", ...RATINGS].map(key => {
 			return {
+				category: "rating",
 				key,
 				colKey: key === "ovr" ? "Ovr" : key === "pot" ? "Pot" : `rating:${key}`,
 				valueType: "numeric",
@@ -138,7 +141,20 @@ const Filters = ({
 
 				return (
 					<div key={i} className="d-flex gap-2">
-						{filter.key}{" "}
+						<SelectMultiple
+							value={filterInfo}
+							options={Object.values(possibleFilters)}
+							getOptionLabel={row => {
+								const col = getCols([row.colKey])[0];
+								return col.title;
+							}}
+							getOptionValue={row => {
+								return JSON.stringify([row.category, row.key]);
+							}}
+							onChange={row => {
+								console.log(row);
+							}}
+						/>
 						<SelectOperator
 							type={filterInfo.valueType}
 							value={filter.operator}
@@ -172,7 +188,6 @@ const Filters = ({
 							{
 								category: "rating",
 								key: "ovr",
-								colKey: "Ovr",
 								operator: ">=",
 								value: "50",
 							} satisfies AdvancedPlayerSearchFilterEditing,
@@ -227,13 +242,23 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
 
+	const filtersWithInfos = props.filters
+		.map(filter => {
+			const info = getFilterInfo(filter.category, filter.key);
+			return {
+				filter,
+				info: info!,
+			};
+		})
+		.filter(row => !!row.info);
+
 	const seenCols = new Set();
-	const filtersWithUniqueCols = props.filters.filter(filter => {
-		if (seenCols.has(filter.colKey)) {
+	const uniqueColFiltersWithInfo = filtersWithInfos.filter(filter => {
+		if (seenCols.has(filter.info.colKey)) {
 			return false;
 		}
 
-		seenCols.add(filter.colKey);
+		seenCols.add(filter.info.colKey);
 		return true;
 	});
 
@@ -243,7 +268,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		"Age",
 		"Team",
 		"Season",
-		...filtersWithUniqueCols.map(filter => filter.colKey),
+		...uniqueColFiltersWithInfo.map(filter => filter.info.colKey),
 	]);
 
 	const rows = props.players.map((p, i) => {
@@ -275,8 +300,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					{p.stats.abbrev}
 				</a>,
 				p.ratings.season,
-				...filtersWithUniqueCols.map(filter => {
-					if (filter.category === "rating") {
+				...uniqueColFiltersWithInfo.map(row => {
+					if (row.filter.category === "rating") {
 						return showRatings ? p.ratings.ovr : null;
 					} else {
 						throw new Error("Should never happen");

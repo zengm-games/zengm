@@ -1,4 +1,5 @@
 import type { ViewInput } from "../../common/types";
+import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { getPlayers } from "./playerRatings";
 import { iterateActivePlayersSeasonRange } from "./rosterContinuity";
@@ -86,6 +87,7 @@ const updateAdvancedPlayerSearch = async ({
 	console.log(matchedPlayers);
 
 	return {
+		challengeNoRatings: g.get("challengeNoRatings"),
 		seasonStart,
 		seasonEnd,
 		singleSeason,

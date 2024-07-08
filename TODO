@@ -2,6 +2,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - similar to https://stathead.com/basketball/player-season-finder.cgi
 - scan players in season range similar to roster continuity
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
+- minimize state passed to URL/worker - colKey should not be there
 - columns
   - always show pos/team/age/contract/exp
   - user picks one of the stat table types, or ratings table

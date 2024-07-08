@@ -3,7 +3,7 @@ import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
-import { isSport, RATINGS } from "../../common";
+import { isSport, PLAYER, RATINGS } from "../../common";
 import { getCols, helpers, realtimeUpdate } from "../util";
 import { DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -47,12 +47,13 @@ const possibleFilters: Record<
 		options: ["ovr", "pot", ...RATINGS].map(key => {
 			return {
 				key,
-				colKey: `rating:${key}`,
+				colKey: key === "ovr" ? "Ovr" : key === "pot" ? "Pot" : `rating:${key}`,
 				valueType: "numeric",
 			};
 		}),
 	},
 };
+console.log(possibleFilters);
 
 const getFilterInfo = (category: FilterCategory, key: string) => {
 	return possibleFilters[category].options.find(row => row.key === key);
@@ -171,7 +172,7 @@ const Filters = ({
 							{
 								category: "rating",
 								key: "ovr",
-								colKey: "rating:ovr",
+								colKey: "Ovr",
 								operator: ">=",
 								value: "50",
 							} satisfies AdvancedPlayerSearchFilterEditing,
@@ -226,9 +227,28 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
 
-	const cols = getCols(["Name", "Pos", "Age", "Team", "Season"]);
+	const seenCols = new Set();
+	const filtersWithUniqueCols = props.filters.filter(filter => {
+		if (seenCols.has(filter.colKey)) {
+			return false;
+		}
+
+		seenCols.add(filter.colKey);
+		return true;
+	});
+
+	const cols = getCols([
+		"Name",
+		"Pos",
+		"Age",
+		"Team",
+		"Season",
+		...filtersWithUniqueCols.map(filter => filter.colKey),
+	]);
 
 	const rows = props.players.map((p, i) => {
+		const showRatings = !props.challengeNoRatings || p.tid === PLAYER.RETIRED;
+
 		return {
 			key: i,
 			data: [
@@ -255,6 +275,13 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					{p.stats.abbrev}
 				</a>,
 				p.ratings.season,
+				...filtersWithUniqueCols.map(filter => {
+					if (filter.category === "rating") {
+						return showRatings ? p.ratings.ovr : null;
+					} else {
+						throw new Error("Should never happen");
+					}
+				}),
 			],
 		};
 	});

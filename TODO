@@ -7,6 +7,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - user picks one of the stat table types, or ratings table
   - if it's a stats table, include ovr/pot
   - also include the filter columns
+    - get filters from props, not state
     - see colKey
   - defaultSort to the first filter column
   - Team should be current team (for the current season or for totals) or whatever would get displayed in stats

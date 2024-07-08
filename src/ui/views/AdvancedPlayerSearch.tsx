@@ -278,95 +278,88 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					);
 				}}
 			>
-				<div className="mb-3">
-					<label htmlFor="seasonStart" className="form-label">
-						Season range
-					</label>
-					<div className="input-group">
+				<div className="row row-cols-md-auto g-3 mb-3">
+					<div className="col-12 col-sm-6">
+						<div className="input-group">
+							<select
+								className="form-select"
+								value={seasonStart}
+								onChange={event => {
+									const season = parseInt(event.target.value);
+									if (season > seasonEnd) {
+										setSeasonRange([season, season]);
+									} else {
+										setSeasonRange([season, seasonEnd]);
+									}
+								}}
+							>
+								{seasons.map(x => {
+									return <OptionDropdown key={x.key} value={x} />;
+								})}
+							</select>
+							<span className="input-group-text">to</span>
+							<select
+								className="form-select"
+								value={seasonEnd}
+								onChange={event => {
+									const season = parseInt(event.target.value);
+									if (season < seasonStart) {
+										setSeasonRange([season, season]);
+									} else {
+										setSeasonRange([seasonStart, season]);
+									}
+								}}
+							>
+								{seasons.map(x => {
+									return <OptionDropdown key={x.key} value={x} />;
+								})}
+							</select>
+						</div>
+					</div>
+					<div className="col-12 col-sm-6">
 						<select
-							id="seasonStart"
 							className="form-select"
-							value={seasonStart}
+							value={singleSeason}
 							onChange={event => {
-								const season = parseInt(event.target.value);
-								if (season > seasonEnd) {
-									setSeasonRange([season, season]);
-								} else {
-									setSeasonRange([season, seasonEnd]);
-								}
-							}}
-							style={{
-								maxWidth: 70,
+								setSingleSeason(event.target.value as any);
 							}}
 						>
-							{seasons.map(x => {
-								return <OptionDropdown key={x.key} value={x} />;
-							})}
-						</select>
-						<span className="input-group-text">to</span>
-						<select
-							className="form-select"
-							value={seasonEnd}
-							onChange={event => {
-								const season = parseInt(event.target.value);
-								if (season < seasonStart) {
-									setSeasonRange([season, season]);
-								} else {
-									setSeasonRange([seasonStart, season]);
-								}
-							}}
-							style={{
-								maxWidth: 70,
-							}}
-						>
-							{seasons.map(x => {
-								return <OptionDropdown key={x.key} value={x} />;
-							})}
+							<option value="singleSeason">Single season</option>
+							<option value="totals">Totals</option>
 						</select>
 					</div>
-				</div>
-				<div className="mb-3">
-					<select
-						className="form-select"
-						value={singleSeason}
-						onChange={event => {
-							setSingleSeason(event.target.value as any);
-						}}
-					>
-						<option value="singleSeason">Single season</option>
-						<option value="totals">Totals</option>
-					</select>
-				</div>
-				<div className="mb-3">
-					<select
-						className="form-select"
-						onChange={event => {
-							const newPlayoffs = event.target.value as any;
+					<div className="col-12 col-sm-6">
+						<select
+							className="form-select"
+							onChange={event => {
+								const newPlayoffs = event.target.value as any;
 
-							setPlayoffs(newPlayoffs);
-						}}
-						value={playoffs}
-					>
-						{playoffsOptions.map(x => {
-							return <OptionDropdown key={x.key} value={x} />;
-						})}
-					</select>
-				</div>
-				{isSport("basketball") ? (
-					<div className="mb-3">
-						<select
-							className="form-select"
-							value={statType}
-							onChange={event => {
-								setStatType(event.target.value as any);
+								setPlayoffs(newPlayoffs);
 							}}
+							value={playoffs}
 						>
-							{statTypes.map(x => {
+							{playoffsOptions.map(x => {
 								return <OptionDropdown key={x.key} value={x} />;
 							})}
 						</select>
 					</div>
-				) : null}
+
+					{isSport("basketball") ? (
+						<div className="col-12 col-sm-6">
+							<select
+								className="form-select"
+								value={statType}
+								onChange={event => {
+									setStatType(event.target.value as any);
+								}}
+							>
+								{statTypes.map(x => {
+									return <OptionDropdown key={x.key} value={x} />;
+								})}
+							</select>
+						</div>
+					) : null}
+				</div>
 				<Filters filters={filters} setFilters={setFilters} />
 				<button type="submit" className="btn btn-primary">
 					Search

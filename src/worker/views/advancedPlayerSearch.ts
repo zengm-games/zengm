@@ -92,6 +92,7 @@ const updateAdvancedPlayerSearch = async ({
 
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
+		currentSeason: g.get("season"),
 		seasonStart,
 		seasonEnd,
 		singleSeason,

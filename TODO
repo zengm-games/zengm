@@ -4,7 +4,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
 - columns
-  - if current season, always show contract/exp
+  - sum contract if totals
   - user picks one of the stat table types, or ratings table
   - if it's a stats table, include ovr/pot
   - also include the filter columns
@@ -14,6 +14,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - show season unless only one season is selected
     - if it's a range in totals, show similar to award season range
   - Team should be current team (for the current season or for totals) or whatever would get displayed in stats
+  - don't repeat the default columns if they are filters
 - form UI
   - seasons range
     - below link presets for "any", "current"

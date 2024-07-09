@@ -12,6 +12,10 @@ import {
 	allFilters,
 	type FilterCategory,
 } from "../../common/advancedPlayerSearch";
+import {
+	wrappedContractAmount,
+	wrappedContractExp,
+} from "../components/contract";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -292,6 +296,8 @@ const filtersFromEditable = (
 };
 
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
+	const { challengeNoRatings, currentSeason, players } = props;
+
 	const [[seasonStart, seasonEnd], setSeasonRange] = useState<[number, number]>(
 		[props.seasonStart, props.seasonEnd],
 	);
@@ -333,14 +339,19 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const cols = getCols([
 		"Name",
 		"Pos",
-		"Age",
 		"Team",
+		"Age",
+		"Contract",
+		"Exp",
 		"Season",
 		...uniqueColFiltersWithInfo.map(filter => filter.info.colKey),
 	]);
 
-	const rows = props.players.map((p, i) => {
-		const showRatings = !props.challengeNoRatings || p.tid === PLAYER.RETIRED;
+	const currentSeasonOnly =
+		seasonStart === seasonEnd && seasonStart === currentSeason;
+
+	const rows = players.map((p, i) => {
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {
 			key: i,
@@ -357,7 +368,6 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					lastName: p.lastName,
 				}),
 				p.ratings.pos,
-				p.age,
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -367,6 +377,11 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				>
 					{p.stats.abbrev}
 				</a>,
+				p.age,
+				p.contract.amount > 0 ? wrappedContractAmount(p) : null,
+				p.contract.amount > 0 && currentSeasonOnly
+					? wrappedContractExp(p)
+					: null,
 				p.ratings.season,
 				...uniqueColFiltersWithInfo.map(row => {
 					if (row.filter.category === "rating") {

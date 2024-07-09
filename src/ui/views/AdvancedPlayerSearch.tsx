@@ -197,6 +197,19 @@ const Filters = ({
 									});
 								}}
 							/>
+							<button
+								className="text-danger btn btn-link p-0 border-0"
+								onClick={() => {
+									setFilters(oldFilters => {
+										return oldFilters.filter((oldFilter, j) => i !== j);
+									});
+								}}
+								title="Delete filter"
+								style={{ fontSize: 20, marginTop: 3 }}
+								type="button"
+							>
+								<span className="glyphicon glyphicon-remove" />
+							</button>
 						</div>
 					</div>
 				);

@@ -160,7 +160,7 @@ const Filters = ({
 				return (
 					<div key={i}>
 						<div className="p-2 rounded d-inline-flex gap-2 mb-3 bg-body-secondary">
-							<div>
+							<div className="advanced-search-select">
 								<SelectMultiple
 									value={filterInfo}
 									options={Object.values(possibleFilters)}

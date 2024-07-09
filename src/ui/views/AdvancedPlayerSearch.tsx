@@ -189,7 +189,7 @@ const Filters = ({
 									options={options}
 									getOptionLabel={row => {
 										const col = getCols([row.colKey])[0];
-										return col.title;
+										return `${col.title}${col.desc !== undefined ? ` (${col.desc})` : ""}`;
 									}}
 									getOptionValue={row => {
 										return JSON.stringify([row.category, row.key]);

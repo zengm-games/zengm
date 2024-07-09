@@ -134,6 +134,26 @@ const ValueInput = ({
 	);
 };
 
+const getInitialFilterEditing = (
+	category: FilterCategory,
+	key: string,
+	prevFilter?: AdvancedPlayerSearchFilterEditing,
+): AdvancedPlayerSearchFilterEditing => {
+	const prevInfo = prevFilter
+		? getFilterInfo(prevFilter.category, prevFilter.key)
+		: undefined;
+	if (category === "rating") {
+		return {
+			category,
+			key,
+			operator: prevInfo?.valueType === "numeric" ? prevFilter!.operator : ">=",
+			value: prevInfo?.valueType === "numeric" ? prevFilter!.value : "50",
+		};
+	}
+
+	throw new Error("Should never happen");
+};
+
 const Filters = ({
 	filters,
 	setFilters,
@@ -172,7 +192,14 @@ const Filters = ({
 										return JSON.stringify([row.category, row.key]);
 									}}
 									onChange={row => {
-										console.log(row);
+										if (row) {
+											console.log(row);
+											const newFilter = getInitialFilterEditing(
+												row.category,
+												row.key,
+											);
+											setFilter(i, newFilter);
+										}
 									}}
 									isClearable={false}
 									// Virtualization isn't needed here because there aren't too many options, and also it breaks the logic in CustomMenuList for finding the height of the dropdown menu because most of the children are sub-options rather than direct children
@@ -222,15 +249,7 @@ const Filters = ({
 					className="btn btn-secondary"
 					onClick={() => {
 						setFilters(prev => {
-							return [
-								...prev,
-								{
-									category: "rating",
-									key: "ovr",
-									operator: ">=",
-									value: "50",
-								} satisfies AdvancedPlayerSearchFilterEditing,
-							];
+							return [...prev, getInitialFilterEditing("rating", "ovr")];
 						});
 					}}
 				>
@@ -345,7 +364,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				p.ratings.season,
 				...uniqueColFiltersWithInfo.map(row => {
 					if (row.filter.category === "rating") {
-						return showRatings ? p.ratings.ovr : null;
+						return showRatings ? p.ratings[row.filter.key] : null;
 					} else {
 						throw new Error("Should never happen");
 					}

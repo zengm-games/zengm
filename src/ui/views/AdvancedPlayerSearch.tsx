@@ -84,7 +84,7 @@ const SelectOperator = <
 				onChange(event.target.value as any);
 			}}
 			style={{
-				width: "auto",
+				width: 175,
 			}}
 		>
 			{operators.map(operator => {
@@ -117,7 +117,7 @@ const ValueInput = ({
 				onChange(event.target.value as any);
 			}}
 			style={{
-				width: "auto",
+				width: 175,
 			}}
 		/>
 	);
@@ -183,7 +183,7 @@ const Filters = ({
 				return (
 					<div key={i}>
 						<div className="p-2 rounded d-inline-flex gap-2 mb-3 bg-body-secondary">
-							<div className="advanced-search-select">
+							<div className="advanced-search-select" style={{ width: 175 }}>
 								<SelectMultiple
 									value={filterInfo}
 									options={options}

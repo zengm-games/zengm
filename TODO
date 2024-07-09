@@ -35,7 +35,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - position
     - maybe share code with player graphs?
     - intelligent default values when switching to a new filter - see getInitialFilterEditing
-    - make fixed width so the width doesn't jump around when you change the selected value
   - some way to specify that you want previous season's stats for current players, like for free agents or in the preseason
     - oldStats option kind of does this
   - if range is 1 year only, then career/total should not be option, only single season

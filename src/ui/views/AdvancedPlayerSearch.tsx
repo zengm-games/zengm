@@ -14,7 +14,7 @@ type NumericOperator = (typeof numericOperators)[number];
 const stringOperators = ["contains", "does not contain"] as const;
 type StringOperator = (typeof stringOperators)[number];
 
-type FilterCategory = "rating";
+type FilterCategory = "bio" | "rating";
 
 type AdvancedPlayerSearchField = {
 	category: FilterCategory;
@@ -23,12 +23,19 @@ type AdvancedPlayerSearchField = {
 	valueType: "numeric" | "string";
 };
 
-export type AdvancedPlayerSearchFilter = {
-	category: "rating";
-	key: string;
-	operator: NumericOperator;
-	value: number;
-};
+export type AdvancedPlayerSearchFilter =
+	| {
+			category: "bio";
+			key: "name" | "country" | "college";
+			operator: StringOperator;
+			value: string;
+	  }
+	| {
+			category: "rating";
+			key: string;
+			operator: NumericOperator;
+			value: number;
+	  };
 
 type AdvancedPlayerSearchFilterEditing = Omit<
 	AdvancedPlayerSearchFilter,
@@ -44,6 +51,29 @@ const possibleFilters: Record<
 		options: AdvancedPlayerSearchField[];
 	}
 > = {
+	bio: {
+		label: "Bio",
+		options: [
+			{
+				category: "bio",
+				key: "name",
+				colKey: "Name",
+				valueType: "string",
+			},
+			{
+				category: "bio",
+				key: "country",
+				colKey: "Country",
+				valueType: "string",
+			},
+			{
+				category: "bio",
+				key: "college",
+				colKey: "College",
+				valueType: "string",
+			},
+		],
+	},
 	rating: {
 		label: "Ratings",
 		options: ["ovr", "pot", ...RATINGS].map(key => {
@@ -59,7 +89,11 @@ const possibleFilters: Record<
 console.log(possibleFilters);
 
 const getFilterInfo = (category: FilterCategory, key: string) => {
-	return possibleFilters[category].options.find(row => row.key === key);
+	const info = possibleFilters[category].options.find(row => row.key === key);
+	if (!info) {
+		throw new Error("Should never happen");
+	}
+	return info;
 };
 
 const SelectOperator = <
@@ -139,19 +173,26 @@ const getInitialFilterEditing = (
 	key: string,
 	prevFilter?: AdvancedPlayerSearchFilterEditing,
 ): AdvancedPlayerSearchFilterEditing => {
+	const info = getFilterInfo(category, key);
 	const prevInfo = prevFilter
 		? getFilterInfo(prevFilter.category, prevFilter.key)
 		: undefined;
-	if (category === "rating") {
-		return {
-			category,
-			key,
-			operator: prevInfo?.valueType === "numeric" ? prevFilter!.operator : ">=",
-			value: prevInfo?.valueType === "numeric" ? prevFilter!.value : "50",
-		};
-	}
 
-	throw new Error("Should never happen");
+	return {
+		category,
+		key,
+
+		// If switching between two string or two numeric fields, keep the operator the same
+		operator:
+			prevInfo?.valueType === info.valueType
+				? prevFilter!.operator
+				: info.valueType === "string"
+					? stringOperators[0]
+					: numericOperators[0],
+
+		// Keep the value the same, even if it may now be invalid - validation logic will handle any errors
+		value: prevFilter?.value ?? "",
+	};
 };
 
 const Filters = ({
@@ -278,11 +319,18 @@ const filtersFromEditable = (
 	filters: AdvancedPlayerSearchFilterEditing[],
 ): AdvancedPlayerSearchFilter[] => {
 	return filters.map(filter => {
+		const info = getFilterInfo(filter.category, filter.key);
+		if (info?.valueType === "numeric") {
+			return {
+				...filter,
+				value: helpers.localeParseFloat(filter.value),
+			};
+		}
+
 		return {
 			...filter,
-			value: helpers.localeParseFloat(filter.value),
 		};
-	});
+	}) as any;
 };
 
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {

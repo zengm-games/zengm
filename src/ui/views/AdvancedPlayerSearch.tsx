@@ -175,6 +175,8 @@ const Filters = ({
 										console.log(row);
 									}}
 									isClearable={false}
+									// Virtualization isn't needed here because there aren't too many options, and also it breaks the logic in CustomMenuList for finding the height of the dropdown menu because most of the children are sub-options rather than direct children
+									virtualize={false}
 								/>
 							</div>
 							<SelectOperator

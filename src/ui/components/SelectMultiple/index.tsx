@@ -10,6 +10,7 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	getOptionValue,
 	disabled,
 	loading,
+	virtualize = true,
 }: {
 	value: T | null | undefined;
 	options: (
@@ -25,6 +26,7 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	getOptionValue: (value: T) => string;
 	disabled?: boolean;
 	loading?: boolean;
+	virtualize?: boolean;
 }) => {
 	return (
 		<Select<T>
@@ -37,7 +39,11 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 			getOptionLabel={getOptionLabel}
 			isDisabled={disabled}
 			isLoading={loading}
-			components={{ Option: CustomOption, MenuList: CustomMenuList }}
+			components={
+				virtualize
+					? { Option: CustomOption, MenuList: CustomMenuList }
+					: undefined
+			}
 		/>
 	);
 };

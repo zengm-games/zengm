@@ -29,6 +29,9 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - stats
       - ratings
     - maybe share code with player graphs?
+    - why dropdown so small?
+    - no X in selectmultiple
+    - delete button
   - some way to specify that you want previous season's stats for current players, like for free agents or in the preseason
     - oldStats option kind of does this
   - if range is 1 year only, then career/total should not be option, only single season
@@ -52,6 +55,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - qbrec
 - https://github.com/JedWatson/react-select/issues/404#issuecomment-221312631
   - https://react-select.com/advanced#portaling
+- responsive
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams

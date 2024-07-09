@@ -94,6 +94,9 @@ const SelectOperator = <
 			onChange={event => {
 				onChange(event.target.value as any);
 			}}
+			style={{
+				width: "auto",
+			}}
 		>
 			{operators.map(operator => {
 				return (
@@ -124,6 +127,9 @@ const ValueInput = ({
 			onChange={event => {
 				onChange(event.target.value as any);
 			}}
+			style={{
+				width: "auto",
+			}}
 		/>
 	);
 };
@@ -152,24 +158,25 @@ const Filters = ({
 				}
 
 				return (
-					<div key={i} className="row row-cols-md-auto g-3 mb-3">
-						<div className="col-12">
-							<SelectMultiple
-								value={filterInfo}
-								options={Object.values(possibleFilters)}
-								getOptionLabel={row => {
-									const col = getCols([row.colKey])[0];
-									return col.title;
-								}}
-								getOptionValue={row => {
-									return JSON.stringify([row.category, row.key]);
-								}}
-								onChange={row => {
-									console.log(row);
-								}}
-							/>
-						</div>
-						<div className="col-12">
+					<div key={i}>
+						<div className="p-2 rounded d-inline-flex gap-2 mb-3 bg-body-secondary">
+							<div>
+								<SelectMultiple
+									value={filterInfo}
+									options={Object.values(possibleFilters)}
+									getOptionLabel={row => {
+										const col = getCols([row.colKey])[0];
+										return col.title;
+									}}
+									getOptionValue={row => {
+										return JSON.stringify([row.category, row.key]);
+									}}
+									onChange={row => {
+										console.log(row);
+									}}
+									isClearable={false}
+								/>
+							</div>
 							<SelectOperator
 								type={filterInfo.valueType}
 								value={filter.operator}
@@ -180,8 +187,6 @@ const Filters = ({
 									});
 								}}
 							/>
-						</div>
-						<div className="col-12">
 							<ValueInput
 								type={filterInfo.valueType}
 								value={filter.value}
@@ -196,25 +201,30 @@ const Filters = ({
 					</div>
 				);
 			})}
-			<button
-				type="button"
-				className="btn btn-secondary"
-				onClick={() => {
-					setFilters(prev => {
-						return [
-							...prev,
-							{
-								category: "rating",
-								key: "ovr",
-								operator: ">=",
-								value: "50",
-							} satisfies AdvancedPlayerSearchFilterEditing,
-						];
-					});
-				}}
-			>
-				Add filter
-			</button>
+			<div className="d-flex gap-2">
+				<button
+					type="button"
+					className="btn btn-secondary"
+					onClick={() => {
+						setFilters(prev => {
+							return [
+								...prev,
+								{
+									category: "rating",
+									key: "ovr",
+									operator: ">=",
+									value: "50",
+								} satisfies AdvancedPlayerSearchFilterEditing,
+							];
+						});
+					}}
+				>
+					Add filter
+				</button>
+				<button type="submit" className="btn btn-primary">
+					Search
+				</button>
+			</div>
 		</div>
 	);
 };
@@ -332,6 +342,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	return (
 		<>
 			<form
+				className="mb-5"
 				onSubmit={event => {
 					event.preventDefault();
 					realtimeUpdate(
@@ -431,9 +442,6 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					) : null}
 				</div>
 				<Filters filters={filters} setFilters={setFilters} />
-				<button type="submit" className="btn btn-primary">
-					Search
-				</button>
 			</form>
 
 			<DataTable

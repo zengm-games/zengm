@@ -1,4 +1,6 @@
+import { allFilters } from "../../common/advancedPlayerSearch";
 import type { ViewInput } from "../../common/types";
+import { normalizeIntl } from "../../ui/components/DataTable/normalizeIntl";
 import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { getPlayers } from "./playerRatings";
@@ -17,10 +19,19 @@ const updateAdvancedPlayerSearch = async ({
 	}
 	console.log(filters);
 
+	const extraAttrs: string[] = [];
 	const extraRatings: string[] = ["season"];
 	for (const filter of filters) {
 		if (filter.category === "rating" && !extraRatings.includes(filter.key)) {
 			extraRatings.push(filter.key);
+		} else if (filter.category === "bio") {
+			const filterInfo = allFilters[filter.category].options[filter.key];
+			if (filterInfo) {
+				const key = filterInfo.workerFieldOverride ?? filter.key;
+				if (!extraAttrs.includes(key)) {
+					extraAttrs.push(key);
+				}
+			}
 		}
 	}
 
@@ -32,7 +43,7 @@ const updateAdvancedPlayerSearch = async ({
 		const playersPlus = await getPlayers(
 			season,
 			"all",
-			[],
+			extraAttrs,
 			extraRatings,
 			[],
 			undefined,
@@ -41,23 +52,33 @@ const updateAdvancedPlayerSearch = async ({
 
 		for (const p of playersPlus) {
 			const matchesAll = filters.every(filter => {
-				if (filter.category === "rating") {
-					const pValue = p.ratings[filter.key];
+				const filterInfo = allFilters[filter.category].options[filter.key];
+				if (!filterInfo) {
+					return true;
+				}
+
+				const pValue = filterInfo.getValue(p);
+				if (filterInfo.valueType === "numeric") {
+					const pValueNumber = pValue as number;
 					if (filter.operator === ">") {
-						return pValue > filter.value;
+						return pValueNumber > filter.value;
 					} else if (filter.operator === "<") {
-						return pValue < filter.value;
+						return pValueNumber < filter.value;
 					} else if (filter.operator === ">=") {
-						return pValue >= filter.value;
+						return pValueNumber >= filter.value;
 					} else if (filter.operator === "<=") {
-						return pValue <= filter.value;
+						return pValueNumber <= filter.value;
 					} else if (filter.operator === "=") {
-						return pValue === filter.value;
+						return pValueNumber === filter.value;
 					} else if (filter.operator === "!=") {
-						return pValue != filter.value;
+						return pValueNumber != filter.value;
 					} else {
 						throw new Error("Should never happen");
 					}
+				} else if (filterInfo.valueType === "string") {
+					const searchText = normalizeIntl(filter.value as string);
+					const includes = normalizeIntl(pValue as string).includes(searchText);
+					return filter.operator === "contains" ? includes : !includes;
 				}
 			});
 

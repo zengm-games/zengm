@@ -25,8 +25,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - select custom filters
     - categories
       - bio
-        - include name, college, country
-          - some nice way to specify what data a field needs
         - position
         - team
         - contract

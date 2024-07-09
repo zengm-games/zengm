@@ -3,25 +3,20 @@ import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
-import { isSport, PLAYER, RATINGS } from "../../common";
+import { isSport, PLAYER } from "../../common";
 import { getCols, helpers, realtimeUpdate } from "../util";
 import { DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import SelectMultiple from "../components/SelectMultiple";
+import {
+	allFilters,
+	type FilterCategory,
+} from "../../common/advancedPlayerSearch";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
 const stringOperators = ["contains", "does not contain"] as const;
 type StringOperator = (typeof stringOperators)[number];
-
-type FilterCategory = "bio" | "rating";
-
-type AdvancedPlayerSearchField = {
-	category: FilterCategory;
-	key: string;
-	colKey: string;
-	valueType: "numeric" | "string";
-};
 
 export type AdvancedPlayerSearchFilter =
 	| {
@@ -44,52 +39,8 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 	value: string;
 };
 
-const possibleFilters: Record<
-	FilterCategory,
-	{
-		label: string;
-		options: AdvancedPlayerSearchField[];
-	}
-> = {
-	bio: {
-		label: "Bio",
-		options: [
-			{
-				category: "bio",
-				key: "name",
-				colKey: "Name",
-				valueType: "string",
-			},
-			{
-				category: "bio",
-				key: "country",
-				colKey: "Country",
-				valueType: "string",
-			},
-			{
-				category: "bio",
-				key: "college",
-				colKey: "College",
-				valueType: "string",
-			},
-		],
-	},
-	rating: {
-		label: "Ratings",
-		options: ["ovr", "pot", ...RATINGS].map(key => {
-			return {
-				category: "rating",
-				key,
-				colKey: key === "ovr" ? "Ovr" : key === "pot" ? "Pot" : `rating:${key}`,
-				valueType: "numeric",
-			};
-		}),
-	},
-};
-console.log(possibleFilters);
-
 const getFilterInfo = (category: FilterCategory, key: string) => {
-	const info = possibleFilters[category].options.find(row => row.key === key);
+	const info = allFilters[category].options[key];
 	if (!info) {
 		throw new Error("Should never happen");
 	}
@@ -210,6 +161,13 @@ const Filters = ({
 		});
 	};
 
+	const options = Object.values(allFilters).map(info => {
+		return {
+			label: info.label,
+			options: Object.values(info.options),
+		};
+	});
+
 	return (
 		<div>
 			{filters.map((filter, i) => {
@@ -224,7 +182,7 @@ const Filters = ({
 							<div className="advanced-search-select">
 								<SelectMultiple
 									value={filterInfo}
-									options={Object.values(possibleFilters)}
+									options={options}
 									getOptionLabel={row => {
 										const col = getCols([row.colKey])[0];
 										return col.title;
@@ -412,9 +370,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				p.ratings.season,
 				...uniqueColFiltersWithInfo.map(row => {
 					if (row.filter.category === "rating") {
-						return showRatings ? p.ratings[row.filter.key] : null;
+						return showRatings ? row.info.getValue(p) : null;
 					} else {
-						throw new Error("Should never happen");
+						return row.info.getValue(p);
 					}
 				}),
 			],

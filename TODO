@@ -50,6 +50,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - weird ones
     - baseball defensive stats
     - qbrec
+- https://github.com/JedWatson/react-select/issues/404#issuecomment-221312631
+  - https://react-select.com/advanced#portaling
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams

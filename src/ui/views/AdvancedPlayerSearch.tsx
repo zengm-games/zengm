@@ -75,6 +75,18 @@ const SelectOperator = <
 	onChange: (value: Value) => void;
 }) => {
 	const operators = type === "numeric" ? numericOperators : stringOperators;
+	const textOverrides =
+		type === "numeric"
+			? {
+					">": "greater than",
+					"<": "less than",
+					">=": "greater than or equal to",
+					"<=": "less than or equal to",
+					"=": "equals",
+					"!=": "does not equal",
+				}
+			: undefined;
+
 	return (
 		<select
 			className="form-select"
@@ -86,7 +98,7 @@ const SelectOperator = <
 			{operators.map(operator => {
 				return (
 					<option key={operator} value={operator}>
-						{operator}
+						{(textOverrides as any)?.[operator] ?? operator}
 					</option>
 				);
 			})}
@@ -140,41 +152,47 @@ const Filters = ({
 				}
 
 				return (
-					<div key={i} className="d-flex gap-2">
-						<SelectMultiple
-							value={filterInfo}
-							options={Object.values(possibleFilters)}
-							getOptionLabel={row => {
-								const col = getCols([row.colKey])[0];
-								return col.title;
-							}}
-							getOptionValue={row => {
-								return JSON.stringify([row.category, row.key]);
-							}}
-							onChange={row => {
-								console.log(row);
-							}}
-						/>
-						<SelectOperator
-							type={filterInfo.valueType}
-							value={filter.operator}
-							onChange={operator => {
-								setFilter(i, {
-									...filter,
-									operator,
-								});
-							}}
-						/>
-						<ValueInput
-							type={filterInfo.valueType}
-							value={filter.value}
-							onChange={value => {
-								setFilter(i, {
-									...filter,
-									value,
-								});
-							}}
-						/>
+					<div key={i} className="row row-cols-md-auto g-3 mb-3">
+						<div className="col-12">
+							<SelectMultiple
+								value={filterInfo}
+								options={Object.values(possibleFilters)}
+								getOptionLabel={row => {
+									const col = getCols([row.colKey])[0];
+									return col.title;
+								}}
+								getOptionValue={row => {
+									return JSON.stringify([row.category, row.key]);
+								}}
+								onChange={row => {
+									console.log(row);
+								}}
+							/>
+						</div>
+						<div className="col-12">
+							<SelectOperator
+								type={filterInfo.valueType}
+								value={filter.operator}
+								onChange={operator => {
+									setFilter(i, {
+										...filter,
+										operator,
+									});
+								}}
+							/>
+						</div>
+						<div className="col-12">
+							<ValueInput
+								type={filterInfo.valueType}
+								value={filter.value}
+								onChange={value => {
+									setFilter(i, {
+										...filter,
+										value,
+									});
+								}}
+							/>
+						</div>
 					</div>
 				);
 			})}

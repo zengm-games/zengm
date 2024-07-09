@@ -40,45 +40,28 @@ const updateAdvancedPlayerSearch = async ({
 		);
 
 		for (const p of playersPlus) {
-			let match = true;
-			for (const filter of filters) {
+			const matchesAll = filters.every(filter => {
 				if (filter.category === "rating") {
 					const pValue = p.ratings[filter.key];
 					if (filter.operator === ">") {
-						if (pValue <= filter.value) {
-							match = false;
-						}
+						return pValue > filter.value;
 					} else if (filter.operator === "<") {
-						if (pValue >= filter.value) {
-							match = false;
-						}
+						return pValue < filter.value;
 					} else if (filter.operator === ">=") {
-						if (pValue < filter.value) {
-							match = false;
-						}
+						return pValue >= filter.value;
 					} else if (filter.operator === "<=") {
-						if (pValue > filter.value) {
-							match = false;
-						}
+						return pValue <= filter.value;
 					} else if (filter.operator === "=") {
-						if (pValue != filter.value) {
-							match = false;
-						}
+						return pValue === filter.value;
 					} else if (filter.operator === "!=") {
-						if (pValue === filter.value) {
-							match = false;
-						}
+						return pValue != filter.value;
 					} else {
 						throw new Error("Should never happen");
 					}
 				}
+			});
 
-				if (!match) {
-					break;
-				}
-			}
-
-			if (match) {
+			if (matchesAll) {
 				matchedPlayers.push(p);
 			}
 		}

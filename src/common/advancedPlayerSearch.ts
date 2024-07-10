@@ -1,4 +1,4 @@
-import { isSport, PLAYER_STATS_TABLES, RATINGS } from ".";
+import { PLAYER_STATS_TABLES, RATINGS } from ".";
 
 export type FilterCategory = "bio" | "rating" | string;
 
@@ -30,12 +30,10 @@ for (const key of ["ovr", "pot", ...RATINGS]) {
 const allFiltersTemp: Record<
 	FilterCategory,
 	{
-		label: string;
 		options: Record<string, MinimalAdvancedPlayerSearchField>;
 	}
 > = {
 	bio: {
-		label: "Bio",
 		options: {
 			name: {
 				colKey: "Name",
@@ -56,7 +54,6 @@ const allFiltersTemp: Record<
 		},
 	},
 	rating: {
-		label: "Ratings",
 		options: ratingOptions,
 	},
 };
@@ -85,9 +82,6 @@ export const addPrefixForStat = (statType: string, stat: string) => {
 };
 
 for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
-	const label =
-		category === "regular" && isSport("basketball") ? "Stats" : info.name;
-
 	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
 	for (const key of info.stats) {
 		options[key] = {
@@ -98,7 +92,6 @@ for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
 	}
 
 	allFiltersTemp[category] = {
-		label,
 		options,
 	};
 }

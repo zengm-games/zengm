@@ -7,7 +7,6 @@ import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { getCols, helpers, realtimeUpdate } from "../util";
 import { DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import SelectMultiple from "../components/SelectMultiple";
 import {
 	allFilters,
 	type FilterCategory,
@@ -16,7 +15,6 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
-import { choice } from "../../common/random";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -25,19 +23,13 @@ type StringOperator = (typeof stringOperators)[number];
 
 export type AdvancedPlayerSearchFilter =
 	| {
-			category: "bio";
-			key: "name" | "country" | "college";
+			category: string;
+			key: string;
 			operator: StringOperator;
 			value: string;
 	  }
 	| {
-			category: "rating";
-			key: string;
-			operator: NumericOperator;
-			value: number;
-	  }
-	| {
-			category: `stat:${string}`;
+			category: string;
 			key: string;
 			operator: NumericOperator;
 			value: number;
@@ -171,13 +163,6 @@ const Filters = ({
 			return oldFilters.map((oldFilter, j) => (i === j ? filter : oldFilter));
 		});
 	};
-
-	const options = Object.values(allFilters).map(info => {
-		return {
-			label: info.label,
-			options: Object.values(info.options),
-		};
-	});
 
 	const statTypes = [
 		{ key: "bio", value: "Bio" },

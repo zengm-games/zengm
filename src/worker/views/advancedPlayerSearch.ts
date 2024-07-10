@@ -53,6 +53,8 @@ const updateAdvancedPlayerSearch = async ({
 			extraStats,
 			undefined,
 			players,
+			playoffs,
+			statType,
 		);
 
 		for (const p of playersPlus) {

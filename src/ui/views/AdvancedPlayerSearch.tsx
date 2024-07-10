@@ -414,7 +414,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						return helpers.roundStat(
 							value,
 							row.filter.key,
-							singleSeason === "totals",
+							statType === "totals",
 						);
 					}
 				}),

@@ -1,9 +1,15 @@
 import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { Player, UpdateEvents, ViewInput } from "../../common/types";
+import type {
+	Player,
+	PlayerStatType,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { buffOvrDH } from "./depth";
+import type { SeasonType } from "../api/processInputs";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],
@@ -20,6 +26,8 @@ export const getPlayers = async (
 	stats: string[],
 	tid: number | undefined,
 	playersAllOverride?: Player[],
+	playoffs: SeasonType = "regularSeason",
+	statType: PlayerStatType = "perGame",
 ) => {
 	let playersAll = playersAllOverride;
 
@@ -65,6 +73,10 @@ export const getPlayers = async (
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
+		statType,
+		playoffs: playoffs === "playoffs",
+		regularSeason: playoffs === "regularSeason",
+		combined: playoffs === "combined",
 	});
 
 	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually

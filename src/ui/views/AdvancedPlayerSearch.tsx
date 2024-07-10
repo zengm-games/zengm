@@ -3,7 +3,7 @@ import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
-import { isSport, PLAYER } from "../../common";
+import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { getCols, helpers, realtimeUpdate } from "../util";
 import { DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -16,6 +16,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import { choice } from "../../common/random";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -90,7 +91,7 @@ const SelectOperator = <
 				onChange(event.target.value as any);
 			}}
 			style={{
-				width: 175,
+				width: 150,
 			}}
 		>
 			{operators.map(operator => {
@@ -123,7 +124,7 @@ const ValueInput = ({
 				onChange(event.target.value as any);
 			}}
 			style={{
-				width: 175,
+				width: 150,
 			}}
 		/>
 	);
@@ -178,6 +179,16 @@ const Filters = ({
 		};
 	});
 
+	const statTypes = [
+		{ key: "bio", value: "Bio" },
+		{ key: "rating", value: "Ratings" },
+		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
+			const value =
+				key === "regular" && isSport("basketball") ? "Stats" : info.name;
+			return { key, value };
+		}),
+	];
+
 	return (
 		<div>
 			{filters.map((filter, i) => {
@@ -189,32 +200,54 @@ const Filters = ({
 				return (
 					<div key={i}>
 						<div className="p-2 rounded d-inline-flex gap-2 mb-3 bg-body-secondary">
-							<div className="advanced-search-select" style={{ width: 175 }}>
-								<SelectMultiple
-									value={filterInfo}
-									options={options}
-									getOptionLabel={row => {
+							<select
+								className="form-select"
+								value={filter.category}
+								onChange={event => {
+									const newCategory = event.target.value as any;
+									const newKey = Object.keys(
+										allFilters[newCategory].options,
+									)[0];
+									const newFilter = getInitialFilterEditing(
+										newCategory,
+										newKey,
+									);
+									setFilter(i, newFilter);
+								}}
+								style={{
+									width: 150,
+								}}
+							>
+								{statTypes.map(x => {
+									return <OptionDropdown key={x.key} value={x} />;
+								})}
+							</select>
+							<select
+								className="form-select"
+								value={filterInfo.key}
+								onChange={event => {
+									const newFilter = getInitialFilterEditing(
+										filter.category,
+										event.target.value,
+									);
+									setFilter(i, newFilter);
+								}}
+								style={{
+									width: 150,
+								}}
+							>
+								{Object.values(allFilters[filter.category].options).map(
+									(row, i) => {
 										const col = getCols([row.colKey])[0];
-										return `${col.title}${col.desc !== undefined ? ` (${col.desc})` : ""}`;
-									}}
-									getOptionValue={row => {
-										return JSON.stringify([row.category, row.key]);
-									}}
-									onChange={row => {
-										if (row) {
-											console.log(row);
-											const newFilter = getInitialFilterEditing(
-												row.category,
-												row.key,
-											);
-											setFilter(i, newFilter);
-										}
-									}}
-									isClearable={false}
-									// Virtualization isn't needed here because there aren't too many options, and also it breaks the logic in CustomMenuList for finding the height of the dropdown menu because most of the children are sub-options rather than direct children
-									virtualize={false}
-								/>
-							</div>
+										return (
+											<option key={i} value={row.key} title={col.desc}>
+												{col.title}
+												{col.desc !== undefined ? ` (${col.desc})` : null}
+											</option>
+										);
+									},
+								)}
+							</select>
 							<SelectOperator
 								type={filterInfo.valueType}
 								value={filter.operator}

@@ -1,6 +1,6 @@
 import { isSport, PLAYER_STATS_TABLES, RATINGS } from ".";
 
-export type FilterCategory = "bio" | "rating" | `stat:${string}`;
+export type FilterCategory = "bio" | "rating" | string;
 
 type AdvancedPlayerSearchField = {
 	category: FilterCategory;
@@ -84,15 +84,14 @@ export const addPrefixForStat = (statType: string, stat: string) => {
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
 
-for (const [categoryRaw, info] of Object.entries(PLAYER_STATS_TABLES)) {
-	const category = `stat:${categoryRaw}` as const;
+for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
 	const label =
-		categoryRaw === "regular" && isSport("basketball") ? "Stats" : info.name;
+		category === "regular" && isSport("basketball") ? "Stats" : info.name;
 
 	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
 	for (const key of info.stats) {
 		options[key] = {
-			colKey: addPrefixForStat(categoryRaw, key),
+			colKey: addPrefixForStat(category, key),
 			valueType: "numeric",
 			getValue: p => p.stats[key],
 		};

@@ -1482,12 +1482,6 @@ hr {
 	}
 }
 
-.advanced-search-select {
-	.dark-select__menu {
-		z-index: 13; // Above DataTable headers
-	}
-}
-
 // Make same height as other form controls
 .dark-select__control {
 	min-height: 33px !important;

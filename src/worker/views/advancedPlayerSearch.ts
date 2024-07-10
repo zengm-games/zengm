@@ -22,7 +22,7 @@ const updateAdvancedPlayerSearch = async ({
 	const extraAttrs: string[] = [];
 	const extraRatings: string[] = ["season"];
 	for (const filter of filters) {
-		if (filter.category === "rating" && !extraRatings.includes(filter.key)) {
+		if (filter.category === "ratings" && !extraRatings.includes(filter.key)) {
 			extraRatings.push(filter.key);
 		} else if (filter.category === "bio") {
 			const filterInfo = allFilters[filter.category].options[filter.key];

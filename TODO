@@ -1,6 +1,5 @@
 advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
 - similar to https://stathead.com/basketball/player-season-finder.cgi
-- scan players in season range similar to roster continuity
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
 - columns
@@ -432,6 +431,8 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 FBGM
 - kick and punt return should be based on ratings of returner and other special teams players
 - make tackling more important, currently it just assigns blame
+  - also LB in general, since LB ovr is not used in composite ratings currently
+- fast WR OP? https://discord.com/channels/@me/1216830279272890378/1260586368153681930
 - fix the glitch where passes get picked off in the end zone from like 80 yards out
 - kickers/punters should get injured less https://old.reddit.com/r/Football_GM/comments/1b03rbb/kicker_got_injured_in_the_playoffs/
 - more running plays on 3rd/4th and short?

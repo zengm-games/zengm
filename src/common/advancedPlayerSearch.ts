@@ -1,9 +1,7 @@
 import { PLAYER_STATS_TABLES, RATINGS } from ".";
 
-export type FilterCategory = "bio" | "rating" | string;
-
 type AdvancedPlayerSearchField = {
-	category: FilterCategory;
+	category: string;
 	key: string;
 	colKey: string;
 	valueType: "numeric" | "string";
@@ -17,46 +15,6 @@ type MinimalAdvancedPlayerSearchField = Omit<
 	AdvancedPlayerSearchField,
 	"category" | "key"
 >;
-
-const ratingOptions: Record<string, MinimalAdvancedPlayerSearchField> = {};
-for (const key of ["ovr", "pot", ...RATINGS]) {
-	ratingOptions[key] = {
-		colKey: key === "ovr" ? "Ovr" : key === "pot" ? "Pot" : `rating:${key}`,
-		valueType: "numeric",
-		getValue: p => p.ratings[key],
-	};
-}
-
-const allFiltersTemp: Record<
-	FilterCategory,
-	{
-		options: Record<string, MinimalAdvancedPlayerSearchField>;
-	}
-> = {
-	bio: {
-		options: {
-			name: {
-				colKey: "Name",
-				valueType: "string",
-				getValue: p => p.name,
-			},
-			country: {
-				colKey: "Country",
-				valueType: "string",
-				getValue: p => p.born.loc,
-				workerFieldOverride: "born",
-			},
-			college: {
-				colKey: "College",
-				valueType: "string",
-				getValue: p => p.college,
-			},
-		},
-	},
-	rating: {
-		options: ratingOptions,
-	},
-};
 
 export const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType === "ratings") {
@@ -81,6 +39,46 @@ export const addPrefixForStat = (statType: string, stat: string) => {
 	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
 };
 
+const ratingOptions: Record<string, MinimalAdvancedPlayerSearchField> = {};
+for (const key of ["ovr", "pot", ...RATINGS]) {
+	ratingOptions[key] = {
+		colKey: addPrefixForStat("ratings", key),
+		valueType: "numeric",
+		getValue: p => p.ratings[key],
+	};
+}
+
+const allFiltersTemp: Record<
+	string,
+	{
+		options: Record<string, MinimalAdvancedPlayerSearchField>;
+	}
+> = {
+	bio: {
+		options: {
+			name: {
+				colKey: "Name",
+				valueType: "string",
+				getValue: p => p.name,
+			},
+			country: {
+				colKey: "Country",
+				valueType: "string",
+				getValue: p => p.born.loc,
+				workerFieldOverride: "born",
+			},
+			college: {
+				colKey: "College",
+				valueType: "string",
+				getValue: p => p.college,
+			},
+		},
+	},
+	ratings: {
+		options: ratingOptions,
+	},
+};
+
 for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
 	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
 	for (const key of info.stats) {
@@ -98,7 +96,7 @@ for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
 
 // Add key and category to each option
 export const allFilters = allFiltersTemp as Record<
-	FilterCategory,
+	string,
 	{
 		label: string;
 		options: Record<string, AdvancedPlayerSearchField>;

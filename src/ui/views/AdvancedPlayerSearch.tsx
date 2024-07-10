@@ -7,10 +7,7 @@ import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { getCols, helpers, realtimeUpdate } from "../util";
 import { DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import {
-	allFilters,
-	type FilterCategory,
-} from "../../common/advancedPlayerSearch";
+import { allFilters } from "../../common/advancedPlayerSearch";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
@@ -42,7 +39,7 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 	value: string;
 };
 
-const getFilterInfo = (category: FilterCategory, key: string) => {
+const getFilterInfo = (category: string, key: string) => {
 	const info = allFilters[category].options[key];
 	if (!info) {
 		throw new Error("Should never happen");
@@ -123,7 +120,7 @@ const ValueInput = ({
 };
 
 const getInitialFilterEditing = (
-	category: FilterCategory,
+	category: string,
 	key: string,
 	prevFilter?: AdvancedPlayerSearchFilterEditing,
 ): AdvancedPlayerSearchFilterEditing => {
@@ -166,7 +163,7 @@ const Filters = ({
 
 	const statTypes = [
 		{ key: "bio", value: "Bio" },
-		{ key: "rating", value: "Ratings" },
+		{ key: "ratings", value: "Ratings" },
 		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
 			const value =
 				key === "regular" && isSport("basketball") ? "Stats" : info.name;
@@ -276,7 +273,7 @@ const Filters = ({
 					className="btn btn-secondary"
 					onClick={() => {
 						setFilters(prev => {
-							return [...prev, getInitialFilterEditing("rating", "ovr")];
+							return [...prev, getInitialFilterEditing("ratings", "ovr")];
 						});
 					}}
 				>
@@ -408,7 +405,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					: null,
 				p.ratings.season,
 				...uniqueColFiltersWithInfo.map(row => {
-					if (row.filter.category === "rating") {
+					if (row.filter.category === "ratings") {
 						return showRatings ? row.info.getValue(p) : null;
 					} else {
 						return row.info.getValue(p);

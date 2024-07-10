@@ -34,6 +34,12 @@ export type AdvancedPlayerSearchFilter =
 			key: string;
 			operator: NumericOperator;
 			value: number;
+	  }
+	| {
+			category: `stat:${string}`;
+			key: string;
+			operator: NumericOperator;
+			value: number;
 	  };
 
 type AdvancedPlayerSearchFilterEditing = Omit<

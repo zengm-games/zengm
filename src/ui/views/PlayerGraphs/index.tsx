@@ -9,29 +9,7 @@ import { getCols, helpers, toWorker } from "../../util";
 import { groupByUnique } from "../../../common/utils";
 import type { Col } from "../../components/DataTable";
 import classNames from "classnames";
-
-const addPrefixForStat = (statType: string, stat: string) => {
-	if (statType === "ratings") {
-		if (stat === "ovr") {
-			return "Ovr";
-		}
-		if (stat === "pot") {
-			return "Pot";
-		}
-		return `rating:${stat}`;
-	} else if (statType === "bio") {
-		if (stat === "age") {
-			return "Age";
-		}
-		if (stat === "draftPosition") {
-			return "Draft Pick";
-		}
-		if (stat === "salary") {
-			return "Salary";
-		}
-	}
-	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
-};
+import { addPrefixForStat } from "../../../common/advancedPlayerSearch";
 
 const getStatsWithLabels = (stats: string[], statType: string) => {
 	return getCols(stats.map(stat => addPrefixForStat(statType, stat)));

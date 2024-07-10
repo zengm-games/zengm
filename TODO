@@ -31,9 +31,9 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
         - contract
         - draft
         - experience
-      - stats
-      - position
+    - switch to category/options 2 dropdowns, rather than 1 with searching, because some things get confusing with only one (like game highs vs other stats look too similar)
     - maybe share code with player graphs?
+      - use addPrefixForStat to replace colKey
     - intelligent default values when switching to a new filter - see getInitialFilterEditing
   - some way to specify that you want previous season's stats for current players, like for free agents or in the preseason
     - oldStats option kind of does this
@@ -53,6 +53,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - tid - distinction between "current team" and "team", like if a player was traded in the offseason and you filter by team, what do you show? look in getPlayers too
 - test
   - weird ones
+    - game highs
     - baseball defensive stats
     - qbrec
 - https://github.com/JedWatson/react-select/issues/404#issuecomment-221312631

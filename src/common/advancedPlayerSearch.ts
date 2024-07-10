@@ -1,6 +1,6 @@
-import { RATINGS } from ".";
+import { isSport, PLAYER_STATS_TABLES, RATINGS } from ".";
 
-export type FilterCategory = "bio" | "rating";
+export type FilterCategory = "bio" | "rating" | `stat:${string}`;
 
 type AdvancedPlayerSearchField = {
 	category: FilterCategory;
@@ -60,6 +60,49 @@ const allFiltersTemp: Record<
 		options: ratingOptions,
 	},
 };
+
+export const addPrefixForStat = (statType: string, stat: string) => {
+	if (statType === "ratings") {
+		if (stat === "ovr") {
+			return "Ovr";
+		}
+		if (stat === "pot") {
+			return "Pot";
+		}
+		return `rating:${stat}`;
+	} else if (statType === "bio") {
+		if (stat === "age") {
+			return "Age";
+		}
+		if (stat === "draftPosition") {
+			return "Draft Pick";
+		}
+		if (stat === "salary") {
+			return "Salary";
+		}
+	}
+	return `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`;
+};
+
+for (const [categoryRaw, info] of Object.entries(PLAYER_STATS_TABLES)) {
+	const category = `stat:${categoryRaw}` as const;
+	const label =
+		categoryRaw === "regular" && isSport("basketball") ? "Stats" : info.name;
+
+	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
+	for (const key of info.stats) {
+		options[key] = {
+			colKey: addPrefixForStat(categoryRaw, key),
+			valueType: "numeric",
+			getValue: p => p.stats[key],
+		};
+	}
+
+	allFiltersTemp[category] = {
+		label,
+		options,
+	};
+}
 
 // Add key and category to each option
 export const allFilters = allFiltersTemp as Record<

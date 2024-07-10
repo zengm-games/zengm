@@ -1015,7 +1015,7 @@ const advancedPlayerSearch = (params: Params) => {
 		seasonStart: validateSeason(params.seasonStart),
 		seasonEnd: validateSeason(params.seasonEnd),
 		singleSeason,
-		playoffs: validateSeasonType("regularSeason"),
+		playoffs: validateSeasonType(params.playoffs, "regularSeason"),
 		statType: validateStatType(params.statType),
 		filters,
 	};

@@ -20,7 +20,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - default to current
   - single season / total
     - could implement total in playersPlus by filtering stats array before summing up
-  - regular season / playoffs / combined
   - (basketball only) per game / per 36 / total
   - select custom filters
     - categories

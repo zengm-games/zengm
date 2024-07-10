@@ -14,16 +14,16 @@ const updateAdvancedPlayerSearch = async ({
 	statType,
 	filters,
 }: ViewInput<"advancedPlayerSearch">) => {
-	if (singleSeason === "totals") {
-		throw new Error("Not implemented");
-	}
 	console.log(filters);
 
 	const extraAttrs: string[] = [];
 	const extraRatings: string[] = ["season"];
+	const extraStats: string[] = [];
 	for (const filter of filters) {
-		if (filter.category === "ratings" && !extraRatings.includes(filter.key)) {
-			extraRatings.push(filter.key);
+		if (filter.category === "ratings") {
+			if (!extraRatings.includes(filter.key)) {
+				extraRatings.push(filter.key);
+			}
 		} else if (filter.category === "bio") {
 			const filterInfo = allFilters[filter.category].options[filter.key];
 			if (filterInfo) {
@@ -31,6 +31,11 @@ const updateAdvancedPlayerSearch = async ({
 				if (!extraAttrs.includes(key)) {
 					extraAttrs.push(key);
 				}
+			}
+		} else {
+			// Must be stats
+			if (!extraStats.includes(filter.key)) {
+				extraStats.push(filter.key);
 			}
 		}
 	}
@@ -45,7 +50,7 @@ const updateAdvancedPlayerSearch = async ({
 			"all",
 			extraAttrs,
 			extraRatings,
-			[],
+			extraStats,
 			undefined,
 			players,
 		);

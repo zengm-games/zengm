@@ -405,10 +405,17 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					: null,
 				p.ratings.season,
 				...uniqueColFiltersWithInfo.map(row => {
-					if (row.filter.category === "ratings") {
-						return showRatings ? row.info.getValue(p) : null;
+					const value = row.info.getValue(p);
+					if (row.filter.category === "bio") {
+						return value;
+					} else if (row.filter.category === "ratings") {
+						return showRatings ? value : null;
 					} else {
-						return row.info.getValue(p);
+						return helpers.roundStat(
+							value,
+							row.filter.key,
+							singleSeason === "totals",
+						);
 					}
 				}),
 			],

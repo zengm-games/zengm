@@ -61,16 +61,39 @@ const allFiltersTemp: Record<
 				valueType: "string",
 				getValue: p => p.name,
 			},
+			college: {
+				colKey: "College",
+				valueType: "string",
+				getValue: p => p.college,
+			},
 			country: {
 				colKey: "Country",
 				valueType: "string",
 				getValue: p => p.born.loc,
 				workerFieldOverride: "born",
 			},
-			college: {
-				colKey: "College",
-				valueType: "string",
-				getValue: p => p.college,
+			draftYear: {
+				colKey: "Draft Year",
+				valueType: "numeric",
+				getValue: p => p.draft.year,
+				workerFieldOverride: "draft",
+			},
+			draftRound: {
+				colKey: "Draft Round",
+				valueType: "numeric",
+				getValue: p => p.draft.round,
+				workerFieldOverride: "draft",
+			},
+			draftPick: {
+				colKey: "Draft Pick",
+				valueType: "numeric",
+				getValue: p => p.draft.pick,
+				workerFieldOverride: "draft",
+			},
+			experience: {
+				colKey: "Experience",
+				valueType: "numeric",
+				getValue: p => p.experience,
 			},
 		},
 	},

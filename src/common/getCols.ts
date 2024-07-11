@@ -2911,6 +2911,9 @@ const cols: {
 	"Draft Picks": {
 		sortSequence: [],
 	},
+	"Draft Round": {
+		sortType: "number",
+	},
 	"Draft Year": {
 		sortType: "number",
 	},

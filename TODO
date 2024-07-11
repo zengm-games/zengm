@@ -23,8 +23,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
         - position
         - team
         - contract
-        - draft
-        - experience
     - switch to category/options 2 dropdowns, rather than 1 with searching, because some things get confusing with only one (like game highs vs other stats look too similar)
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey

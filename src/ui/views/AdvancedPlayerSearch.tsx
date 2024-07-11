@@ -15,7 +15,12 @@ import {
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
-const stringOperators = ["contains", "does not contain"] as const;
+const stringOperators = [
+	"contains",
+	"does not contain",
+	"is exactly",
+	"is not exactly",
+] as const;
 type StringOperator = (typeof stringOperators)[number];
 
 export type AdvancedPlayerSearchFilter =

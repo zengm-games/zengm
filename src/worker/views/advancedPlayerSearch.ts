@@ -92,8 +92,15 @@ const updateAdvancedPlayerSearch = async ({
 					}
 				} else if (filterInfo.valueType === "string") {
 					const searchText = normalizeIntl(filter.value as string);
-					const includes = normalizeIntl(pValue as string).includes(searchText);
-					return filter.operator === "contains" ? includes : !includes;
+					const pValueString = normalizeIntl(pValue as string);
+					if (filter.operator === "is exactly") {
+						return searchText === pValueString;
+					} else if (filter.operator === "is not exactly") {
+						return searchText !== pValueString;
+					} else {
+						const includes = pValueString.includes(searchText);
+						return filter.operator === "contains" ? includes : !includes;
+					}
 				}
 			});
 

@@ -21,8 +21,10 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - categories
       - bio
         - position
-        - team
         - contract
+      - jersey number
+      - ratings team (for that season)
+      - ratings pos (for that season)
     - switch to category/options 2 dropdowns, rather than 1 with searching, because some things get confusing with only one (like game highs vs other stats look too similar)
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey
@@ -55,6 +57,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - responsive
 - blog
   - basketball stat type limitation
+  - bio team/pos vs ratings team/pos
   - new functionality enabled
     - view columns from stats/ratings/bios tables together
     - filter for more efficiently loading data from many seasons

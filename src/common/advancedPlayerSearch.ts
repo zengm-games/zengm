@@ -61,6 +61,11 @@ const allFiltersTemp: Record<
 				valueType: "string",
 				getValue: p => p.name,
 			},
+			abbrev: {
+				colKey: "Team",
+				valueType: "string",
+				getValue: p => p.abbrev,
+			},
 			college: {
 				colKey: "College",
 				valueType: "string",

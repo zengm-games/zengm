@@ -352,16 +352,6 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		})
 		.filter(row => !!row.info);
 
-	const seenCols = new Set();
-	const uniqueColFiltersWithInfo = filtersWithInfos.filter(filter => {
-		if (seenCols.has(filter.info.colKey)) {
-			return false;
-		}
-
-		seenCols.add(filter.info.colKey);
-		return true;
-	});
-
 	const defaultCols = [
 		"Name",
 		"Pos",
@@ -371,6 +361,16 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		"Exp",
 		"Season",
 	];
+
+	const seenCols = new Set(defaultCols);
+	const uniqueColFiltersWithInfo = filtersWithInfos.filter(filter => {
+		if (seenCols.has(filter.info.colKey)) {
+			return false;
+		}
+
+		seenCols.add(filter.info.colKey);
+		return true;
+	});
 
 	const cols = getCols([
 		...defaultCols,

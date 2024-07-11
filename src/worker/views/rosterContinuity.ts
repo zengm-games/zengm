@@ -7,6 +7,10 @@ import { orderBy, range } from "../../common/utils";
 export async function* iterateActivePlayersSeasonRange(
 	seasonStart: number,
 	seasonEnd: number,
+
+	// "all" will return all active players each season. So a player who played 5 years in the range will be returned in 5 different players lists.
+	// "unique" will only return the player once, the first time they appear. This is useful if you're computing career stats or something for these players, and filtering them so the end result doesn't include everyone. Then it's basically scanning all players who played in this range, without reading them all into memory at once.
+	type: "all" | "unique",
 ) {
 	// Start with players who were drafted before seasonStart - if seasonStart is startingSeason, this would be faster to use draftYear index only, but using activeSeason is faster if we're doing some arbitrary start that is not startingSeason
 	let players = (
@@ -27,8 +31,13 @@ export async function* iterateActivePlayersSeasonRange(
 				"noCopyCache",
 			);
 
-			// Remove players who retired after the previous season
-			players = players.filter(p => p.retiredYear >= season);
+			if (type === "all") {
+				// Remove players who retired after the previous season
+				players = players.filter(p => p.retiredYear >= season);
+			} else {
+				// Remove all players, since last iteration would have already sent them through
+				players = [];
+			}
 
 			players = [
 				// Remove players who retired after the previous season
@@ -67,6 +76,7 @@ const updateSeasons = async (
 		for await (const { players, season } of iterateActivePlayersSeasonRange(
 			g.get("startingSeason"),
 			g.get("season"),
+			"all",
 		)) {
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
 			const minutesAll = range(g.get("numTeams")).map(

@@ -19,7 +19,7 @@ export const extraRatings = bySport({
 });
 
 export const getPlayers = async (
-	season: number,
+	season: number | undefined,
 	abbrev: string,
 	attrs: string[],
 	ratings: string[],
@@ -28,6 +28,7 @@ export const getPlayers = async (
 	playersAllOverride?: Player[],
 	playoffs: SeasonType = "regularSeason",
 	statType: PlayerStatType = "perGame",
+	seasonRange?: [number, number],
 ) => {
 	let playersAll = playersAllOverride;
 
@@ -77,6 +78,7 @@ export const getPlayers = async (
 		playoffs: playoffs === "playoffs",
 		regularSeason: playoffs === "regularSeason",
 		combined: playoffs === "combined",
+		seasonRange,
 	});
 
 	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually

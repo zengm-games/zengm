@@ -1289,6 +1289,7 @@ export type PlayerStatType = "per36" | "perGame" | "totals";
 
 export type PlayersPlusOptions = {
 	season?: number;
+	seasonRange?: [number, number];
 	tid?: number;
 	attrs?: string[];
 	ratings?: string[];

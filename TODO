@@ -6,11 +6,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - sum contract if totals
   - user picks one of the stat table types, or ratings table
   - if it's a stats table, include ovr/pot
-  - also include the filter columns
-    - get filters from props, not state
-    - see colKey
-  - show season unless only one season is selected
-    - if it's a range in totals, show similar to award season range
   - Team should be current team (for the current season or for totals) or whatever would get displayed in stats
   - don't repeat the default columns if they are filters
 - form UI
@@ -19,6 +14,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - default to current
   - single season / total
     - could implement total in playersPlus by filtering stats array before summing up
+    - use seasonRange passed to playersPlus
+    - season column - if it's a range, show similar to award season range. not the total seasonRange of the whole thing, but for this specific player what the range of his stats entries are
   - (basketball only) per game / per 36 / total
   - select custom filters
     - categories

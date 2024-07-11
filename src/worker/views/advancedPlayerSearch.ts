@@ -14,8 +14,6 @@ const updateAdvancedPlayerSearch = async ({
 	statType,
 	filters,
 }: ViewInput<"advancedPlayerSearch">) => {
-	console.log(filters);
-
 	const extraAttrs: string[] = [];
 	const extraRatings: string[] = ["season"];
 	const extraStats: string[] = [];
@@ -40,10 +38,18 @@ const updateAdvancedPlayerSearch = async ({
 		}
 	}
 
+	let seasonRange: [number, number] | undefined;
+	if (singleSeason === "totals" && seasonStart !== seasonEnd) {
+		// Sum up totals within seasonRange
+		seasonRange = [seasonStart, seasonEnd];
+	}
+
 	const matchedPlayers = [];
+
 	for await (const { players, season } of iterateActivePlayersSeasonRange(
 		seasonStart,
 		seasonEnd,
+		seasonRange ? "unique" : "all",
 	)) {
 		const playersPlus = await getPlayers(
 			season,
@@ -55,7 +61,9 @@ const updateAdvancedPlayerSearch = async ({
 			players,
 			playoffs,
 			statType,
+			seasonRange,
 		);
+		console.log(season, playersPlus);
 
 		for (const p of playersPlus) {
 			const matchesAll = filters.every(filter => {

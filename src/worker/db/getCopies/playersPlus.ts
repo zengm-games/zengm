@@ -13,9 +13,10 @@ import type {
 } from "../../../common/types";
 
 type PlayersPlusOptionsRequired = Required<
-	Omit<PlayersPlusOptions, "season" | "tid">
+	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">
 > & {
 	season?: number;
+	seasonRange?: [number, number];
 	tid?: number;
 };
 
@@ -162,11 +163,11 @@ const processAttrs = (
 						transaction.phase === PHASE.FANTASY_DRAFT
 							? `${transaction.season} fantasy draft`
 							: transaction.phase === PHASE.EXPANSION_DRAFT
-							? `${transaction.season} expansion draft`
-							: `<a href="${helpers.leagueUrl([
-									"draft_history",
-									transaction.season,
-							  ])}">${transaction.season} draft</a>`;
+								? `${transaction.season} expansion draft`
+								: `<a href="${helpers.leagueUrl([
+										"draft_history",
+										transaction.season,
+									])}">${transaction.season} draft</a>`;
 
 					output.latestTransaction = `${helpers.ordinal(
 						transaction.pickNum,
@@ -927,6 +928,7 @@ const getCopies = async (
 	players: Player[],
 	{
 		season,
+		seasonRange,
 		tid,
 		attrs = [],
 		ratings = [],
@@ -953,6 +955,7 @@ const getCopies = async (
 
 	const options: PlayersPlusOptionsRequired = {
 		season,
+		seasonRange,
 		tid,
 		attrs,
 		ratings,

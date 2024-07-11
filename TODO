@@ -9,7 +9,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - also include the filter columns
     - get filters from props, not state
     - see colKey
-  - defaultSort to the first filter column
   - show season unless only one season is selected
     - if it's a range in totals, show similar to award season range
   - Team should be current team (for the current season or for totals) or whatever would get displayed in stats
@@ -58,6 +57,12 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - https://github.com/JedWatson/react-select/issues/404#issuecomment-221312631
   - https://react-select.com/advanced#portaling
 - responsive
+- blog
+  - basketball stat type limitation
+  - new functionality enabled
+    - view columns from stats/ratings/bios tables together
+    - filter for more efficiently loading data from many seasons
+    - group data within a range of seasons (like "top scorers in the 90s")
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams

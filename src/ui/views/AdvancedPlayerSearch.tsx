@@ -357,7 +357,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		return true;
 	});
 
-	const cols = getCols([
+	const defaultCols = [
 		"Name",
 		"Pos",
 		"Team",
@@ -365,6 +365,10 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		"Contract",
 		"Exp",
 		"Season",
+	];
+
+	const cols = getCols([
+		...defaultCols,
 		...uniqueColFiltersWithInfo.map(filter => filter.info.colKey),
 	]);
 
@@ -529,7 +533,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 
 			<DataTable
 				cols={cols}
-				defaultSort={[0, "asc"]}
+				defaultSort={[defaultCols.length, "desc"]}
 				defaultStickyCols={window.mobile ? 0 : 1}
 				name="AdvancedPlayerSearch"
 				pagination

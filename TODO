@@ -3,11 +3,11 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
 - getPlayers needed?
+- average ratings in range? or highest season? or last season? or nothing?
 - show ovr and pot by default
   - how does it work for totals?
 - columns
   - user picks one of the stat table types, or ratings table
-  - sum contract if totals
 - form UI
   - seasons range
     - below link presets for "any", "current"
@@ -30,6 +30,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - form validation
     - numeric input should be numeric
 - filter UI
+  - blank field should show up in table but not do any filtering
+    - why does a blank field show up as null in the URL?
   - filtering on ratings only makes sense for singleSeason, so put it in error state when necessary
     - isOptionDisabled
   - how to handle AND/OR logic?
@@ -56,6 +58,10 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - view columns from stats/ratings/bios tables together
     - filter for more efficiently loading data from many seasons
     - group data within a range of seasons (like "top scorers in the 90s")
+      - contracts too!
+      - ratings?
+
+VIDEO_ADS should add margin in footer only outside of gold
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams
@@ -86,7 +92,7 @@ tests -> vitest
 - normal tests - vitest had trouble with circular dependencies, like importing stuff from util returns undefined
 - when browser testing is stable, could replace the karma/mocha stuff with vitest
 
-VIDEO_ADS should add margin in footer only outside of gold
+option to sort playoff teams by power ranking
 
 shot selection revamp
 - pick shooter - similar to current

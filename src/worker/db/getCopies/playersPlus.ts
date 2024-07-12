@@ -23,14 +23,30 @@ type PlayersPlusOptionsRequired = Required<
 const processAttrs = (
 	output: PlayerFiltered,
 	p: Player,
-	{ attrs, fuzz, numGamesRemaining, season, tid }: PlayersPlusOptionsRequired,
+	{
+		attrs,
+		fuzz,
+		numGamesRemaining,
+		season,
+		seasonRange,
+		tid,
+	}: PlayersPlusOptionsRequired,
 ) => {
 	const getSalary = () => {
 		let total = 0;
 
 		for (const salary of p.salaries) {
-			if (salary.season === season || season === undefined) {
-				total += salary.amount / 1000;
+			if (seasonRange !== undefined) {
+				if (
+					salary.season >= seasonRange[0] &&
+					salary.season <= seasonRange[1]
+				) {
+					total += salary.amount / 1000;
+				}
+			} else {
+				if (salary.season === season || season === undefined) {
+					total += salary.amount / 1000;
+				}
 			}
 		}
 
@@ -77,7 +93,10 @@ const processAttrs = (
 				);
 			}
 		} else if (attr === "contract") {
-			if (g.get("season") === season || season === undefined) {
+			if (
+				seasonRange === undefined &&
+				(g.get("season") === season || season === undefined)
+			) {
 				output.contract = helpers.deepCopy(p.contract);
 				output.contract.amount /= 1000; // [millions of dollars]
 			} else {

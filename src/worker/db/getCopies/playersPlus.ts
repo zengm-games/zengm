@@ -719,9 +719,6 @@ const processStats = (
 		stats,
 	}: PlayersPlusOptionsRequired,
 ) => {
-	if (p.pid === 2167) {
-		console.log("playerStatsInput", playerStatsInput);
-	}
 	// Only season(s) and team in question
 	let playerStats = getPlayerStats(
 		playerStatsInput,
@@ -732,9 +729,6 @@ const processStats = (
 		combined,
 		mergeStats,
 	);
-	if (p.pid === 2167) {
-		console.log("playerStats", playerStats);
-	}
 
 	// oldStats crap
 	if (oldStats && season !== undefined && playerStats.length === 0) {

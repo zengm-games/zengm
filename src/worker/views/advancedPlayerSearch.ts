@@ -16,7 +16,7 @@ const updateAdvancedPlayerSearch = async ({
 }: ViewInput<"advancedPlayerSearch">) => {
 	const extraAttrs: string[] = [];
 	const extraRatings: string[] = ["season"];
-	const extraStats: string[] = [];
+	const extraStats: string[] = ["season"];
 	for (const filter of filters) {
 		if (filter.category === "ratings") {
 			if (!extraRatings.includes(filter.key)) {
@@ -43,7 +43,6 @@ const updateAdvancedPlayerSearch = async ({
 		// Sum up totals within seasonRange
 		seasonRange = [seasonStart, seasonEnd];
 	}
-	console.log("seasonRange", seasonRange, singleSeason);
 
 	const matchedPlayers = [];
 
@@ -64,7 +63,7 @@ const updateAdvancedPlayerSearch = async ({
 			statType,
 			seasonRange,
 		);
-		console.log(seasonRange, structuredClone(playersPlus));
+		console.log(season, structuredClone(playersPlus));
 
 		for (const p of playersPlus) {
 			// Fix stats vs careerStats
@@ -81,6 +80,14 @@ const updateAdvancedPlayerSearch = async ({
 				} else {
 					obj = "careerStats";
 				}
+
+				// Copy some over from first/last stats entry
+				p[obj].seasonStart = p.stats[0]?.season;
+				p[obj].seasonEnd = p.stats.at(-1)?.season;
+				p[obj].abbrev = p.stats.at(-1)?.abbrev;
+				p[obj].tid = p.stats.at(-1)?.tid;
+				p[obj].jerseyNumber = p.stats.at(-1)?.jerseyNumber;
+				p.ratings = p.ratings.at(-1);
 			} else {
 				obj = "stats";
 			}

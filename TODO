@@ -2,17 +2,12 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - similar to https://stathead.com/basketball/player-season-finder.cgi
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
+- getPlayers needed?
+- show ovr and pot by default
+  - how does it work for totals?
 - columns
   - user picks one of the stat table types, or ratings table
-  - if it's a stats table, include ovr/pot
-  - Team should be current team (for the current season or for totals) or whatever would get displayed in stats
-  - don't repeat the default columns if they are filters
-- seasonRange totals
-  - team column - why all FA?
-  - pos column - why broken?
-  - season column - if it's a range, show similar to award season range. not the total seasonRange of the whole thing, but for this specific player
-    - request seasonRange from stats in playersPlus, get it as a string? or seasonStart and seasonEnd separately, and then can use end in sorting?
-  - sum contract if totalsthe range of his stats entries are
+  - sum contract if totals
 - form UI
   - seasons range
     - below link presets for "any", "current"

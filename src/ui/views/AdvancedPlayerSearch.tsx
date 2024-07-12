@@ -321,6 +321,14 @@ const filtersFromEditable = (
 	}) as any;
 };
 
+const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
+	if (seasonStart === seasonEnd) {
+		return String(seasonEnd);
+	}
+
+	return `${seasonStart}-${seasonEnd}`;
+};
+
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const { challengeNoRatings, currentSeason, players } = props;
 
@@ -402,7 +410,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					href={helpers.leagueUrl([
 						"roster",
 						`${p.stats.abbrev}_${p.stats.tid}`,
-						p.ratings.season,
+						p.stats.seasonEnd ?? p.stats.season,
 					])}
 				>
 					{p.stats.abbrev}
@@ -412,7 +420,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				p.contract.amount > 0 && currentSeasonOnly
 					? wrappedContractExp(p)
 					: null,
-				p.ratings.season,
+				p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
+					? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)
+					: p.ratings.season,
 				...uniqueColFiltersWithInfo.map(row => {
 					const value = row.info.getValue(p);
 					if (row.filter.category === "bio") {

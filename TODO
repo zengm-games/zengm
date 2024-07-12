@@ -3,9 +3,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
 - getPlayers needed?
-- average ratings in range? or highest season? or last season? or nothing?
 - show ovr and pot by default
-  - how does it work for totals?
 - columns
   - user picks one of the stat table types, or ratings table
 - form UI
@@ -59,7 +57,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - filter for more efficiently loading data from many seasons
     - group data within a range of seasons (like "top scorers in the 90s")
       - contracts too!
-      - ratings?
+      - ratings - max ovr
 
 VIDEO_ADS should add margin in footer only outside of gold
 
@@ -93,6 +91,8 @@ tests -> vitest
 - when browser testing is stable, could replace the karma/mocha stuff with vitest
 
 option to sort playoff teams by power ranking
+
+don't let goalies play as skaters unless there are less than 5 healthy skaters https://discord.com/channels/@me/778760871911751700/1261362360396943430
 
 shot selection revamp
 - pick shooter - similar to current

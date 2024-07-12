@@ -1,5 +1,6 @@
 import { allFilters } from "../../common/advancedPlayerSearch";
 import type { ViewInput } from "../../common/types";
+import { maxBy } from "../../common/utils";
 import { normalizeIntl } from "../../ui/components/DataTable/normalizeIntl";
 import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
@@ -87,7 +88,7 @@ const updateAdvancedPlayerSearch = async ({
 				p[obj].abbrev = p.stats.at(-1)?.abbrev;
 				p[obj].tid = p.stats.at(-1)?.tid;
 				p[obj].jerseyNumber = p.stats.at(-1)?.jerseyNumber;
-				p.ratings = p.ratings.at(-1);
+				p.ratings = maxBy(p.ratings, row => row.ovr);
 			} else {
 				obj = "stats";
 			}

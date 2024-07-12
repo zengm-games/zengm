@@ -43,6 +43,7 @@ const updateAdvancedPlayerSearch = async ({
 		// Sum up totals within seasonRange
 		seasonRange = [seasonStart, seasonEnd];
 	}
+	console.log("seasonRange", seasonRange, singleSeason);
 
 	const matchedPlayers = [];
 
@@ -52,7 +53,7 @@ const updateAdvancedPlayerSearch = async ({
 		seasonRange ? "unique" : "all",
 	)) {
 		const playersPlus = await getPlayers(
-			season,
+			seasonRange ? undefined : season,
 			"all",
 			extraAttrs,
 			extraRatings,
@@ -63,9 +64,28 @@ const updateAdvancedPlayerSearch = async ({
 			statType,
 			seasonRange,
 		);
-		console.log(season, playersPlus);
+		console.log(seasonRange, structuredClone(playersPlus));
 
 		for (const p of playersPlus) {
+			// Fix stats vs careerStats
+			let obj:
+				| "careerStatsPlayoffs"
+				| "careerStatsCombined"
+				| "careerStats"
+				| "stats";
+			if (seasonRange) {
+				if (playoffs === "playoffs") {
+					obj = "careerStatsPlayoffs";
+				} else if (playoffs === "combined") {
+					obj = "careerStatsCombined";
+				} else {
+					obj = "careerStats";
+				}
+			} else {
+				obj = "stats";
+			}
+			p.stats = p[obj];
+
 			const matchesAll = filters.every(filter => {
 				const filterInfo = allFilters[filter.category].options[filter.key];
 				if (!filterInfo) {

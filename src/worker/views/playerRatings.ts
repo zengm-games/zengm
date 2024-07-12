@@ -50,6 +50,7 @@ export const getPlayers = async (
 	if (tid === undefined && abbrev === "watch") {
 		playersAll = playersAll.filter(p => p.watch);
 	}
+	console.log("season", season);
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -69,7 +70,7 @@ export const getPlayers = async (
 		],
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
 		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
-		season: season,
+		season,
 		mergeStats: "totOnly",
 		showNoStats: true,
 		showRookies: true,

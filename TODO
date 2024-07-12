@@ -3,20 +3,20 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
 - columns
-  - sum contract if totals
   - user picks one of the stat table types, or ratings table
   - if it's a stats table, include ovr/pot
   - Team should be current team (for the current season or for totals) or whatever would get displayed in stats
   - don't repeat the default columns if they are filters
+- seasonRange totals
+  - team column - why all FA?
+  - pos column - why broken?
+  - season column - if it's a range, show similar to award season range. not the total seasonRange of the whole thing, but for this specific player
+    - request seasonRange from stats in playersPlus, get it as a string? or seasonStart and seasonEnd separately, and then can use end in sorting?
+  - sum contract if totalsthe range of his stats entries are
 - form UI
   - seasons range
     - below link presets for "any", "current"
     - default to current
-  - single season / total
-    - could implement total in playersPlus by filtering stats array before summing up
-    - use seasonRange passed to playersPlus
-    - season column - if it's a range, show similar to award season range. not the total seasonRange of the whole thing, but for this specific player what the range of his stats entries are
-  - (basketball only) per game / per 36 / total
   - select custom filters
     - categories
       - bio
@@ -25,7 +25,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - jersey number
       - ratings team (for that season)
       - ratings pos (for that season)
-    - switch to category/options 2 dropdowns, rather than 1 with searching, because some things get confusing with only one (like game highs vs other stats look too similar)
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey
       - label still needed?

@@ -227,6 +227,7 @@ const processAttrs = (
 const processRatings = (
 	output: PlayerFiltered,
 	p: Player,
+	playerRatingsInput: any[],
 	{
 		fuzz,
 		ratings,
@@ -237,7 +238,7 @@ const processRatings = (
 		tid,
 	}: PlayersPlusOptionsRequired,
 ) => {
-	let playerRatings = p.ratings;
+	let playerRatings = playerRatingsInput;
 
 	if (
 		showDraftProspectRookieRatings &&
@@ -704,6 +705,7 @@ const processPlayerStats = (
 const processStats = (
 	output: PlayerFiltered,
 	p: Player,
+	playerStatsInput: any[],
 	{
 		mergeStats,
 		playoffs,
@@ -717,9 +719,12 @@ const processStats = (
 		stats,
 	}: PlayersPlusOptionsRequired,
 ) => {
+	if (p.pid === 2167) {
+		console.log("playerStatsInput", playerStatsInput);
+	}
 	// Only season(s) and team in question
 	let playerStats = getPlayerStats(
-		p.stats,
+		playerStatsInput,
 		season,
 		tid,
 		playoffs,
@@ -727,12 +732,15 @@ const processStats = (
 		combined,
 		mergeStats,
 	);
+	if (p.pid === 2167) {
+		console.log("playerStats", playerStats);
+	}
 
 	// oldStats crap
 	if (oldStats && season !== undefined && playerStats.length === 0) {
 		const oldSeason = season - 1;
 		playerStats = getPlayerStats(
-			p.stats,
+			playerStatsInput,
 			oldSeason,
 			tid,
 			playoffs,
@@ -845,13 +853,36 @@ const processStats = (
 };
 
 const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
-	const { attrs, ratings, season, showNoStats, showRetired, showRookies } =
-		options;
+	const {
+		attrs,
+		ratings,
+		season,
+		seasonRange,
+		showNoStats,
+		showRetired,
+		showRookies,
+	} = options;
+
+	const playerRatings =
+		seasonRange === undefined
+			? p.ratings
+			: p.ratings.filter(
+					r => r.season >= seasonRange[0] && r.season <= seasonRange[1],
+				);
+	if (playerRatings.length === 0) {
+		return;
+	}
+	const playerStats =
+		seasonRange === undefined
+			? p.stats
+			: p.stats.filter(
+					r => r.season >= seasonRange[0] && r.season <= seasonRange[1],
+				);
 
 	const output: any = {};
 
 	if (ratings.length > 0 && season !== undefined) {
-		const hasRatingsSeason = p.ratings.some(
+		const hasRatingsSeason = playerRatings.some(
 			r =>
 				r.season === season ||
 				(r.season === season + 1 && g.get("phase") > PHASE.DRAFT),
@@ -869,7 +900,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, options);
+		processStats(output, p, playerStats, options);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {
@@ -879,7 +910,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 
 	// processRatings must be after processStats for abbrev hack
 	if (ratings.length > 0) {
-		processRatings(output, p, options);
+		processRatings(output, p, playerRatings, options);
 
 		// This should be mostly redundant with hasRatingsSeason above
 		if (output.ratings === undefined) {

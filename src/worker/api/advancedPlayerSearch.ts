@@ -1,7 +1,9 @@
+import { PLAYER } from "../../common";
 import { allFilters } from "../../common/advancedPlayerSearch";
 import type { ViewInput } from "../../common/types";
 import { maxBy } from "../../common/utils";
 import { normalizeIntl } from "../../ui/components/DataTable/normalizeIntl";
+import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { getPlayers } from "../views/playerRatings";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity";
@@ -46,6 +48,32 @@ export const advancedPlayerSearch = async ({
 
 	const matchedPlayers = [];
 
+	// Special case for tid
+	const abbrevFilter = filters.find(
+		filter => filter.category === "bio" && filter.key === "abbrev",
+	);
+	let tid: number | undefined;
+	if (abbrevFilter) {
+		// Remove from list of filters, since we are handling it here
+		filters = filters.filter(filter => filter !== abbrevFilter);
+
+		const abbrev = abbrevFilter.value;
+
+		if (abbrev === "$ALL$") {
+			tid = undefined;
+		} else if (abbrev === "$DP$") {
+			tid = PLAYER.UNDRAFTED;
+		} else if (abbrev === "$FA$") {
+			tid = PLAYER.UNDRAFTED;
+		} else {
+			const teamInfos = g.get("teamInfoCache");
+			const index = teamInfos.findIndex(t => t.abbrev === abbrev);
+			if (index >= 0) {
+				tid = index;
+			}
+		}
+	}
+
 	for await (const { players, season } of iterateActivePlayersSeasonRange(
 		seasonStart,
 		seasonEnd,
@@ -57,13 +85,12 @@ export const advancedPlayerSearch = async ({
 			extraAttrs,
 			extraRatings,
 			extraStats,
-			undefined,
+			tid,
 			players,
 			playoffs,
 			statType,
 			seasonRange,
 		);
-		console.log(season, structuredClone(playersPlus));
 
 		for (const p of playersPlus) {
 			// Fix stats vs careerStats

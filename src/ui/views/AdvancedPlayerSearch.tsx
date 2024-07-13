@@ -137,7 +137,6 @@ const SelectTeam = ({
 		{ key: "$FA$", value: "Free Agents" },
 		...useDropdownOptions("teams"),
 	];
-	console.log("teams", teams);
 
 	return (
 		<select
@@ -239,6 +238,7 @@ const Filters = ({
 									const newFilter = getInitialFilterEditing(
 										newCategory,
 										newKey,
+										filter,
 									);
 									setFilter(i, newFilter);
 								}}
@@ -257,6 +257,7 @@ const Filters = ({
 									const newFilter = getInitialFilterEditing(
 										filter.category,
 										event.target.value,
+										filter,
 									);
 									setFilter(i, newFilter);
 								}}

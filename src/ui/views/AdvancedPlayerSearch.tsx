@@ -124,6 +124,39 @@ const ValueInput = ({
 	);
 };
 
+const SelectTeam = ({
+	value,
+	onChange,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+}) => {
+	const teams = [
+		{ key: "$ALL$", value: "All Teams" },
+		{ key: "$DP$", value: "Draft Prospects" },
+		{ key: "$FA$", value: "Free Agents" },
+		...useDropdownOptions("teams"),
+	];
+	console.log("teams", teams);
+
+	return (
+		<select
+			className="form-select"
+			value={value as any}
+			onChange={event => {
+				onChange(event.target.value as any);
+			}}
+			style={{
+				width: 308,
+			}}
+		>
+			{teams.map(x => {
+				return <OptionDropdown key={x.key} value={x} />;
+			})}
+		</select>
+	);
+};
+
 const getInitialFilterEditing = (
 	category: string,
 	key: string,
@@ -134,7 +167,7 @@ const getInitialFilterEditing = (
 		? getFilterInfo(prevFilter.category, prevFilter.key)
 		: undefined;
 
-	return {
+	const newFilter = {
 		category,
 		key,
 
@@ -149,6 +182,14 @@ const getInitialFilterEditing = (
 		// Keep the value the same, even if it may now be invalid - validation logic will handle any errors
 		value: prevFilter?.value ?? "",
 	};
+
+	if (category === "bio" && key === "abbrev") {
+		// abbrev gets a special select dropdown, requires some special treatment here too
+		newFilter.operator = "is exactly";
+		newFilter.value = "$ALL$";
+	}
+
+	return newFilter;
 };
 
 const Filters = ({
@@ -242,26 +283,41 @@ const Filters = ({
 									},
 								)}
 							</select>
-							<SelectOperator
-								type={filterInfo.valueType}
-								value={filter.operator}
-								onChange={operator => {
-									setFilter(i, {
-										...filter,
-										operator,
-									});
-								}}
-							/>
-							<ValueInput
-								type={filterInfo.valueType}
-								value={filter.value}
-								onChange={value => {
-									setFilter(i, {
-										...filter,
-										value,
-									});
-								}}
-							/>
+							{filter.key === "abbrev" ? (
+								<SelectTeam
+									value={filter.value}
+									onChange={value => {
+										setFilter(i, {
+											...filter,
+											operator: "is exactly",
+											value,
+										});
+									}}
+								/>
+							) : (
+								<>
+									<SelectOperator
+										type={filterInfo.valueType}
+										value={filter.operator}
+										onChange={operator => {
+											setFilter(i, {
+												...filter,
+												operator,
+											});
+										}}
+									/>
+									<ValueInput
+										type={filterInfo.valueType}
+										value={filter.value}
+										onChange={value => {
+											setFilter(i, {
+												...filter,
+												value,
+											});
+										}}
+									/>
+								</>
+							)}
 							<button
 								className="text-danger btn btn-link p-0 border-0"
 								onClick={() => {

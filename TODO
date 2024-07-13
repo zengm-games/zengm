@@ -14,6 +14,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
         - should it keep just stats from that team?
           - need dropdown for tid then
             - handle FA and DP
+            - make sure switching to tid resets to valid option
         - probably want same logic as stats page if there are stats, and same logic as ratings page otherwise
         - only new thing is range of seasons with no stats
         - code in getPlayers for this season

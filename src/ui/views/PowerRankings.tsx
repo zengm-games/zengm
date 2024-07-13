@@ -199,7 +199,7 @@ const PowerRankings = ({
 				victory, and team rating. Team rating is based only on the ratings of
 				players on each team.
 			</p>
-			{playoffs === "playoffs" ? (
+			{playoffs === "playoffs" && isSport("basketball") ? (
 				<p>
 					In the playoffs, rotations get shorter and players play harder, so
 					some teams get higher or lower ratings.

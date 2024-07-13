@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
 import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
-import { getCols, helpers, realtimeUpdate } from "../util";
-import { DataTable } from "../components";
+import { getCols, helpers, realtimeUpdate, toWorker } from "../util";
+import { ActionButton, DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { allFilters } from "../../common/advancedPlayerSearch";
 import {
@@ -279,22 +279,17 @@ const Filters = ({
 					</div>
 				);
 			})}
-			<div className="d-flex gap-2">
-				<button
-					type="button"
-					className="btn btn-secondary"
-					onClick={() => {
-						setFilters(prev => {
-							return [...prev, getInitialFilterEditing("ratings", "ovr")];
-						});
-					}}
-				>
-					Add filter
-				</button>
-				<button type="submit" className="btn btn-primary">
-					Search
-				</button>
-			</div>
+			<button
+				type="button"
+				className="btn btn-secondary"
+				onClick={() => {
+					setFilters(prev => {
+						return [...prev, getInitialFilterEditing("ratings", "ovr")];
+					});
+				}}
+			>
+				Add filter
+			</button>
 		</div>
 	);
 };
@@ -337,7 +332,10 @@ const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
 };
 
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
-	const { challengeNoRatings, currentSeason, players } = props;
+	const { challengeNoRatings, currentSeason } = props;
+
+	const [players, setPlayers] = useState<any[] | undefined>();
+	const [fetchingPlayers, setFetchingPlayers] = useState(false);
 
 	const [[seasonStart, seasonEnd], setSeasonRange] = useState<[number, number]>(
 		[props.seasonStart, props.seasonEnd],
@@ -349,9 +347,34 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		return filtersToEditable(props.filters);
 	});
 
+	const updatePlayers = async () => {
+		setFetchingPlayers(true);
+
+		const newPlayers = await toWorker("main", "advancedPlayerSearch", {
+			seasonStart,
+			seasonEnd,
+			singleSeason,
+			playoffs,
+			statType,
+			filters: filtersFromEditable(filters),
+		});
+
+		setPlayers(newPlayers);
+
+		setFetchingPlayers(false);
+	};
+
 	useTitleBar({
 		title: "Advanced Player Search",
 	});
+
+	useLayoutEffect(() => {
+		// If URL has some paramters in it, load initial players
+		if (!location.pathname.endsWith("/advanced_player_search")) {
+			updatePlayers();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const seasons = useDropdownOptions("seasons");
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
@@ -397,7 +420,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const currentSeasonOnly =
 		seasonStart === seasonEnd && seasonStart === currentSeason;
 
-	const rows = players.map((p, i) => {
+	const rows = players?.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {
@@ -456,8 +479,10 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		<>
 			<form
 				className="mb-5"
-				onSubmit={event => {
+				onSubmit={async event => {
 					event.preventDefault();
+
+					// This is just to set the URL so ctrl+R works
 					realtimeUpdate(
 						[],
 						helpers.leagueUrl([
@@ -470,6 +495,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							JSON.stringify(filtersFromEditable(filters)),
 						]),
 					);
+
+					await updatePlayers();
 				}}
 			>
 				<div className="row row-cols-md-auto g-3 mb-3">
@@ -555,16 +582,28 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					) : null}
 				</div>
 				<Filters filters={filters} setFilters={setFilters} />
+				<ActionButton
+					className="mt-3"
+					processing={fetchingPlayers}
+					processingText="Loading"
+					type="submit"
+				>
+					Search
+				</ActionButton>
 			</form>
 
-			<DataTable
-				cols={cols}
-				defaultSort={[defaultCols.length, "desc"]}
-				defaultStickyCols={window.mobile ? 0 : 1}
-				name="AdvancedPlayerSearch"
-				pagination
-				rows={rows}
-			/>
+			{!rows ? null : rows.length === 0 ? (
+				"No players found"
+			) : (
+				<DataTable
+					cols={cols}
+					defaultSort={[defaultCols.length, "desc"]}
+					defaultStickyCols={window.mobile ? 0 : 1}
+					name="AdvancedPlayerSearch"
+					pagination
+					rows={rows}
+				/>
+			)}
 		</>
 	);
 };

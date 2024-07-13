@@ -126,6 +126,7 @@ import {
 	formatPlayerRelativesList,
 } from "../views/customizePlayer";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings";
+import { advancedPlayerSearch } from "./advancedPlayerSearch";
 import * as exhibitionGame from "./exhibitionGame";
 import { getSummary } from "../views/trade";
 import { getStats, statTypes } from "../views/playerGraphs";
@@ -4313,6 +4314,7 @@ export default {
 	main: {
 		acceptContractNegotiation,
 		addTeam,
+		advancedPlayerSearch,
 		allStarDraftAll,
 		allStarDraftOne,
 		allStarDraftUser,

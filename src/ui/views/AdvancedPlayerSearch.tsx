@@ -225,7 +225,14 @@ const Filters = ({
 							>
 								{Object.values(allFilters[filter.category].options).map(
 									(row, i) => {
-										const col = getCols([row.colKey])[0];
+										const col = getCols(
+											[row.colKey],
+											row.colOverrides
+												? {
+														[row.colKey]: row.colOverrides,
+													}
+												: undefined,
+										)[0];
 										return (
 											<option key={i} value={row.key} title={col.desc}>
 												{col.title}

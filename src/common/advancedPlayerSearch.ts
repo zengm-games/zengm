@@ -1,9 +1,11 @@
 import { PLAYER_STATS_TABLES, RATINGS } from ".";
+import type { Col } from "../ui/components/DataTable";
 
 type AdvancedPlayerSearchField = {
 	category: string;
 	key: string;
 	colKey: string;
+	colOverrides?: Partial<Col>;
 	valueType: "numeric" | "string";
 	getValue: (p: any) => string | number;
 
@@ -65,6 +67,20 @@ const allFiltersTemp: Record<
 				colKey: "Team",
 				valueType: "string",
 				getValue: p => p.abbrev,
+			},
+			contract: {
+				colKey: "Contract",
+				valueType: "numeric",
+				getValue: p => p.contract.amount,
+				colOverrides: {
+					desc: "Amount, Millions of Dollars",
+				},
+			},
+			exp: {
+				colKey: "Exp",
+				valueType: "numeric",
+				getValue: p => p.contract.exp,
+				workerFieldOverride: "contract",
 			},
 			college: {
 				colKey: "College",

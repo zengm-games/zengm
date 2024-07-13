@@ -15,7 +15,7 @@ export const advancedPlayerSearch = async ({
 	filters,
 }: ViewInput<"advancedPlayerSearch">) => {
 	const extraAttrs: string[] = [];
-	const extraRatings: string[] = ["season", "ovr", "pot"];
+	const extraRatings: string[] = ["season", "pos", "ovr", "pot"];
 	const extraStats: string[] = ["season"];
 	for (const filter of filters) {
 		if (filter.category === "ratings") {
@@ -24,7 +24,7 @@ export const advancedPlayerSearch = async ({
 			}
 		} else if (filter.category === "bio") {
 			const filterInfo = allFilters[filter.category].options[filter.key];
-			if (filterInfo) {
+			if (filterInfo && filterInfo.workerFieldOverride !== null) {
 				const key = filterInfo.workerFieldOverride ?? filter.key;
 				if (!extraAttrs.includes(key)) {
 					extraAttrs.push(key);

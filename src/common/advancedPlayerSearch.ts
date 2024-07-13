@@ -10,7 +10,7 @@ type AdvancedPlayerSearchField = {
 	getValue: (p: any) => string | number;
 
 	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key"
-	workerFieldOverride?: string;
+	workerFieldOverride?: string | null;
 };
 
 type MinimalAdvancedPlayerSearchField = Omit<
@@ -62,6 +62,12 @@ const allFiltersTemp: Record<
 				colKey: "Name",
 				valueType: "string",
 				getValue: p => p.name,
+			},
+			pos: {
+				colKey: "Pos",
+				valueType: "string",
+				getValue: p => p.ratings.pos,
+				workerFieldOverride: null,
 			},
 			abbrev: {
 				colKey: "Team",

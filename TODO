@@ -4,14 +4,13 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - getPlayers needed?
 - columns
   - user picks one of the stat table types, or ratings table
+   - make sure it works in URL on ctrl+r
 - form UI
   - select custom filters
     - categories
-      - bio
-        - position
       - jersey number
       - ratings team (for that season)
-      - ratings pos (for that season)
+        - what about stats? should it be TOT ever? should it keep just stats from that team?
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey
       - label still needed?

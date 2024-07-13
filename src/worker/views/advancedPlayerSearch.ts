@@ -16,7 +16,7 @@ const updateAdvancedPlayerSearch = async ({
 	filters,
 }: ViewInput<"advancedPlayerSearch">) => {
 	const extraAttrs: string[] = [];
-	const extraRatings: string[] = ["season"];
+	const extraRatings: string[] = ["season", "ovr", "pot"];
 	const extraStats: string[] = ["season"];
 	for (const filter of filters) {
 		if (filter.category === "ratings") {

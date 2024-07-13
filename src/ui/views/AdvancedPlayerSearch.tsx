@@ -368,6 +368,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		"Contract",
 		"Exp",
 		"Season",
+		"Ovr",
+		"Pot",
 	];
 
 	const seenCols = new Set(defaultCols);

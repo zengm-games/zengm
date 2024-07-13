@@ -1,6 +1,5 @@
 advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
 - similar to https://stathead.com/basketball/player-season-finder.cgi
-- some way to specify only active players or not, even for current season (if after playoffs, or someone died)
 - minimize state passed to URL/worker - colKey should not be there
 - getPlayers needed?
 - show ovr and pot by default
@@ -15,6 +14,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - bio
         - position
         - contract
+          - exp logic should be the same as in UI
       - jersey number
       - ratings team (for that season)
       - ratings pos (for that season)

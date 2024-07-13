@@ -10,7 +10,13 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - categories
       - jersey number
       - ratings team (for that season)
-        - what about stats? should it be TOT ever? should it keep just stats from that team?
+        - what about stats? should it be TOT ever?
+        - should it keep just stats from that team?
+          - need dropdown for tid then
+            - handle FA and DP
+        - probably want same logic as stats page if there are stats, and same logic as ratings page otherwise
+        - only new thing is range of seasons with no stats
+        - code in getPlayers for this season
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey
       - label still needed?

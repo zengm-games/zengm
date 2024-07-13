@@ -432,6 +432,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
 					? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)
 					: p.ratings.season,
+				showRatings ? p.ratings.ovr : null,
+				showRatings ? p.ratings.pot : null,
 				...uniqueColFiltersWithInfo.map(row => {
 					const value = row.info.getValue(p);
 					if (row.filter.category === "bio") {

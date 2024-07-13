@@ -2,7 +2,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - similar to https://stathead.com/basketball/player-season-finder.cgi
 - minimize state passed to URL/worker - colKey should not be there
 - getPlayers needed?
-- show ovr and pot by default
 - columns
   - user picks one of the stat table types, or ratings table
 - form UI
@@ -32,6 +31,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - show no results on initial load
   - maybe whole thing should be through API, URL just sets initial state, that way ActionButton can be used
 - tid - distinction between "current team" and "team", like if a player was traded in the offseason and you filter by team, what do you show? look in getPlayers too
+- add some filters, apply, then click from menu -> filters still show up, but data loaded is initial data
 - test
   - weird ones
     - game highs
@@ -52,6 +52,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - ratings - max ovr
 
 VIDEO_ADS should add margin in footer only outside of gold
+
+some generic UI component for hiding ratings in challengeNoRatings
 
 for statsTid getCopies, include activeSeason somehow for performance
 - maybe switch between them based on number of seasons in database and number of teams

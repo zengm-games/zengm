@@ -11,7 +11,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
       - jersey number
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey
-      - label still needed?
     - intelligent default values when switching to a new filter - see getInitialFilterEditing
   - form validation
     - numeric input should be numeric

@@ -148,7 +148,6 @@ for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
 export const allFilters = allFiltersTemp as Record<
 	string,
 	{
-		label: string;
 		options: Record<string, AdvancedPlayerSearchField>;
 	}
 >;

@@ -210,6 +210,7 @@ export const advancedPlayerSearch = async ({
 			p.stats = p[obj];
 
 			const matchesAll = filters.every(filter => {
+				console.log(filter);
 				const filterInfo = allFilters[filter.category].options[filter.key];
 				if (!filterInfo) {
 					return true;
@@ -217,6 +218,10 @@ export const advancedPlayerSearch = async ({
 
 				const pValue = filterInfo.getValue(p);
 				if (filterInfo.valueType === "numeric") {
+					if (filter.value === null) {
+						return true;
+					}
+
 					const pValueNumber = pValue as number;
 					if (filter.operator === ">") {
 						return pValueNumber > filter.value;

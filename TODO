@@ -13,8 +13,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - intelligent default values when switching to a new filter - see getInitialFilterEditing
 - when selecting a team, contract seasons to sum up should be filtered by stats seasons (just like ratings)
 - filter UI
-  - blank field should show up in table but not do any filtering
-    - why does a blank field show up as null in the URL?
   - filtering on ratings only makes sense for singleSeason, so put it in error state when necessary
     - isOptionDisabled
   - how to handle AND/OR logic?
@@ -31,6 +29,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - blog
   - basketball stat type limitation
   - bio team/pos vs ratings team/pos
+  - want to show just one column without filtering, leave value blank
   - new functionality enabled
     - view columns from stats/ratings/bios tables together
     - filter for more efficiently loading data from many seasons

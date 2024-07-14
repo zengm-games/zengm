@@ -35,7 +35,7 @@ export type AdvancedPlayerSearchFilter =
 			category: string;
 			key: string;
 			operator: NumericOperator;
-			value: number;
+			value: number | null;
 	  };
 
 type AdvancedPlayerSearchFilterEditing = Omit<
@@ -389,7 +389,7 @@ const filtersToEditable = (
 	return filters.map(filter => {
 		return {
 			...filter,
-			value: String(filter.value),
+			value: filter.value === null ? "" : String(filter.value),
 			errorMessage: undefined,
 		};
 	});
@@ -406,7 +406,9 @@ const filtersFromEditable = (
 			operator: filter.operator,
 			value:
 				info?.valueType === "numeric"
-					? helpers.localeParseFloat(filter.value)
+					? filter.value === ""
+						? null
+						: helpers.localeParseFloat(filter.value)
 					: filter.value,
 		};
 	}) as any;

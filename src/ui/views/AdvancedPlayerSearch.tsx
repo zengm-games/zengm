@@ -12,6 +12,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
+import classNames from "classnames";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -42,6 +43,7 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 	"value"
 > & {
 	value: string;
+	errorMessage: string | undefined;
 };
 
 const getFilterInfo = (category: string, key: string) => {
@@ -103,24 +105,33 @@ const ValueInput = ({
 	type,
 	value,
 	onChange,
+	errorMessage,
 }: {
 	type: "numeric" | "string";
 	value: string;
 	onChange: (value: string) => void;
+	errorMessage: string | undefined;
 }) => {
 	return (
-		<input
-			type="text"
-			className="form-control"
-			inputMode={type === "numeric" ? "numeric" : undefined}
-			value={value}
-			onChange={event => {
-				onChange(event.target.value as any);
-			}}
-			style={{
-				width: 150,
-			}}
-		/>
+		<div>
+			<input
+				type="text"
+				className={classNames("form-control", {
+					"is-invalid": errorMessage,
+				})}
+				inputMode={type === "numeric" ? "numeric" : undefined}
+				value={value}
+				onChange={event => {
+					onChange(event.target.value as any);
+				}}
+				style={{
+					width: 150,
+				}}
+			/>
+			{errorMessage ? (
+				<div className="text-danger form-text">{errorMessage}</div>
+			) : null}
+		</div>
 	);
 };
 
@@ -156,11 +167,23 @@ const SelectTeam = ({
 	);
 };
 
+const validateFilter = (filter: AdvancedPlayerSearchFilterEditing) => {
+	const info = getFilterInfo(filter.category, filter.key);
+	if (info.valueType === "numeric") {
+		if (filter.value !== "") {
+			const number = helpers.localeParseFloat(filter.value);
+			if (!Number.isFinite(number)) {
+				return "Must be a number";
+			}
+		}
+	}
+};
+
 const getInitialFilterEditing = (
 	category: string,
 	key: string,
 	prevFilter?: AdvancedPlayerSearchFilterEditing,
-): AdvancedPlayerSearchFilterEditing => {
+) => {
 	const info = getFilterInfo(category, key);
 	const prevInfo = prevFilter
 		? getFilterInfo(prevFilter.category, prevFilter.key)
@@ -170,9 +193,10 @@ const getInitialFilterEditing = (
 	const prevIsAbbrev =
 		prevInfo?.category === "bio" && prevInfo.key === "abbrev";
 
-	const newFilter = {
+	const newFilter: AdvancedPlayerSearchFilterEditing = {
 		category,
 		key,
+		errorMessage: undefined,
 
 		// If switching between two string or two numeric fields, keep the operator the same
 		operator:
@@ -192,6 +216,8 @@ const getInitialFilterEditing = (
 		newFilter.value = "$ALL$";
 	}
 
+	newFilter.errorMessage = validateFilter(newFilter);
+
 	return newFilter;
 };
 
@@ -205,6 +231,7 @@ const Filters = ({
 	>;
 }) => {
 	const setFilter = (i: number, filter: AdvancedPlayerSearchFilterEditing) => {
+		filter.errorMessage = validateFilter(filter);
 		setFilters(oldFilters => {
 			return oldFilters.map((oldFilter, j) => (i === j ? filter : oldFilter));
 		});
@@ -230,7 +257,7 @@ const Filters = ({
 
 				return (
 					<div key={i}>
-						<div className="p-2 rounded d-inline-flex gap-2 mb-3 bg-body-secondary">
+						<div className="p-2 rounded d-inline-flex align-items-start gap-2 mb-3 bg-body-secondary">
 							<select
 								className="form-select"
 								value={filter.category}
@@ -320,6 +347,7 @@ const Filters = ({
 												value,
 											});
 										}}
+										errorMessage={filter.errorMessage}
 									/>
 								</>
 							)}
@@ -362,6 +390,7 @@ const filtersToEditable = (
 		return {
 			...filter,
 			value: String(filter.value),
+			errorMessage: undefined,
 		};
 	});
 };
@@ -371,15 +400,14 @@ const filtersFromEditable = (
 ): AdvancedPlayerSearchFilter[] => {
 	return filters.map(filter => {
 		const info = getFilterInfo(filter.category, filter.key);
-		if (info?.valueType === "numeric") {
-			return {
-				...filter,
-				value: helpers.localeParseFloat(filter.value),
-			};
-		}
-
 		return {
-			...filter,
+			category: filter.category,
+			key: filter.key,
+			operator: filter.operator,
+			value:
+				info?.valueType === "numeric"
+					? helpers.localeParseFloat(filter.value)
+					: filter.value,
 		};
 	}) as any;
 };
@@ -645,6 +673,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				<Filters filters={filters} setFilters={setFilters} />
 				<ActionButton
 					className="mt-3"
+					disabled={filters.some(filter => filter.errorMessage)}
 					processing={fetchingPlayers}
 					processingText="Loading"
 					type="submit"

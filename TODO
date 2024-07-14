@@ -12,8 +12,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - maybe share code with player graphs?
       - use addPrefixForStat to replace colKey
     - intelligent default values when switching to a new filter - see getInitialFilterEditing
-  - form validation
-    - numeric input should be numeric
+- when selecting a team, contract seasons to sum up should be filtered by stats seasons (just like ratings)
 - filter UI
   - blank field should show up in table but not do any filtering
     - why does a blank field show up as null in the URL?
@@ -205,6 +204,7 @@ OTW
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
+- also random (generate a random players draft class and just put the real names on it)
 
 support sorting mobile trade tables (like saved trades, trading block)
 

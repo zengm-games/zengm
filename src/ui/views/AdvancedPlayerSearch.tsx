@@ -166,20 +166,24 @@ const getInitialFilterEditing = (
 		? getFilterInfo(prevFilter.category, prevFilter.key)
 		: undefined;
 
+	// Don't retain info from abbrev, since it's kind of weird to do that because it's hidden in the abbrev state
+	const prevIsAbbrev =
+		prevInfo?.category === "bio" && prevInfo.key === "abbrev";
+
 	const newFilter = {
 		category,
 		key,
 
 		// If switching between two string or two numeric fields, keep the operator the same
 		operator:
-			prevInfo?.valueType === info.valueType
+			prevInfo?.valueType === info.valueType && !prevIsAbbrev
 				? prevFilter!.operator
 				: info.valueType === "string"
 					? stringOperators[0]
 					: numericOperators[0],
 
 		// Keep the value the same, even if it may now be invalid - validation logic will handle any errors
-		value: prevFilter?.value ?? "",
+		value: prevFilter && !prevIsAbbrev ? prevFilter.value : "",
 	};
 
 	if (category === "bio" && key === "abbrev") {

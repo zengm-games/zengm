@@ -926,7 +926,8 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		processRatings(output, p, playerRatings, options);
 
 		// This should be mostly redundant with hasRatingsSeason above
-		if (output.ratings === undefined) {
+		// output.ratings.length check is for seasonRange where all seasons are filtered out
+		if (output.ratings === undefined || output.ratings.length === 0) {
 			return;
 		}
 	}

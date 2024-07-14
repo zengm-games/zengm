@@ -1,12 +1,91 @@
-import { PLAYER } from "../../common";
+import { isSport, PLAYER } from "../../common";
 import { allFilters } from "../../common/advancedPlayerSearch";
-import type { ViewInput } from "../../common/types";
+import type { Player, PlayerStatType, ViewInput } from "../../common/types";
 import { maxBy } from "../../common/utils";
 import { normalizeIntl } from "../../ui/components/DataTable/normalizeIntl";
+import { idb } from "../db";
 import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
-import { getPlayers } from "../views/playerRatings";
+import { buffOvrDH } from "../views/depth";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity";
+import type { SeasonType } from "./processInputs";
+
+export const getPlayers = async (
+	season: number | undefined,
+	attrs: string[],
+	ratings: string[],
+	stats: string[],
+	tidInput: number | undefined,
+	playersAll: Player[],
+	playoffs: SeasonType = "regularSeason",
+	statType: PlayerStatType = "perGame",
+	seasonRange?: [number, number],
+) => {
+	let tid: number | undefined;
+	if (tidInput !== undefined && tidInput <= 0) {
+		// For draft prospets and free agents, use current status
+		playersAll = playersAll.filter(p => p.tid === tidInput);
+	} else {
+		// For other teams, use playersPlus
+		tid = tidInput;
+	}
+
+	let players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: [
+			"pid",
+			"firstName",
+			"lastName",
+			"age",
+			"contract",
+			"injury",
+			"hof",
+			"watch",
+			"tid",
+			"abbrev",
+			"draft",
+			"awards",
+			...attrs,
+		],
+		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
+		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
+		season,
+		tid,
+		mergeStats: "totOnly",
+		showNoStats: tid === undefined, // If this is true and tid is set, then a bunch of false positives come back
+		showRookies: true,
+		fuzz: true,
+		statType,
+		playoffs: playoffs === "playoffs",
+		regularSeason: playoffs === "regularSeason",
+		combined: playoffs === "combined",
+		seasonRange,
+	});
+
+	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
+	// For the current season, use the current abbrev (including FA), not the last stats abbrev
+	// For other seasons, use the stats abbrev for filtering
+	if (g.get("season") === season) {
+		if (tid !== undefined) {
+			players = players.filter(p => p.tid === tid);
+		}
+
+		for (const p of players) {
+			p.stats.abbrev = p.abbrev;
+			p.stats.tid = p.tid;
+		}
+	} else if (tid !== undefined) {
+		players = players.filter(p => p.stats.tid === tid);
+	}
+	console.log(season, tid, players);
+
+	if (isSport("baseball")) {
+		for (const p of players) {
+			buffOvrDH(p);
+		}
+	}
+
+	return players;
+};
 
 export const advancedPlayerSearch = async ({
 	seasonStart,
@@ -64,7 +143,7 @@ export const advancedPlayerSearch = async ({
 		} else if (abbrev === "$DP$") {
 			tid = PLAYER.UNDRAFTED;
 		} else if (abbrev === "$FA$") {
-			tid = PLAYER.UNDRAFTED;
+			tid = PLAYER.FREE_AGENT;
 		} else {
 			const teamInfos = g.get("teamInfoCache");
 			const index = teamInfos.findIndex(t => t.abbrev === abbrev);
@@ -81,7 +160,6 @@ export const advancedPlayerSearch = async ({
 	)) {
 		const playersPlus = await getPlayers(
 			seasonRange ? undefined : season,
-			"all",
 			extraAttrs,
 			extraRatings,
 			extraStats,

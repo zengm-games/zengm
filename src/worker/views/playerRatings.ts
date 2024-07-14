@@ -1,15 +1,9 @@
 import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type {
-	Player,
-	PlayerStatType,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { buffOvrDH } from "./depth";
-import type { SeasonType } from "../api/processInputs";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],
@@ -19,38 +13,31 @@ export const extraRatings = bySport({
 });
 
 export const getPlayers = async (
-	season: number | undefined,
+	season: number,
 	abbrev: string,
 	attrs: string[],
 	ratings: string[],
 	stats: string[],
 	tid: number | undefined,
-	playersAllOverride?: Player[],
-	playoffs: SeasonType = "regularSeason",
-	statType: PlayerStatType = "perGame",
-	seasonRange?: [number, number],
 ) => {
-	let playersAll = playersAllOverride;
+	let playersAll;
 
-	if (playersAll === undefined) {
-		if (g.get("season") === season) {
-			playersAll = await idb.cache.players.getAll();
-			playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-		} else {
-			playersAll = await idb.getCopies.players(
-				{
-					activeSeason: season,
-				},
-				"noCopyCache",
-			);
-		}
+	if (g.get("season") === season) {
+		playersAll = await idb.cache.players.getAll();
+		playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+	} else {
+		playersAll = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
 	}
 
 	// Show all teams
 	if (tid === undefined && abbrev === "watch") {
 		playersAll = playersAll.filter(p => p.watch);
 	}
-	console.log("season", season);
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -70,16 +57,10 @@ export const getPlayers = async (
 		],
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
 		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
-		season,
-		mergeStats: "totOnly",
+		season: season,
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
-		statType,
-		playoffs: playoffs === "playoffs",
-		regularSeason: playoffs === "regularSeason",
-		combined: playoffs === "combined",
-		seasonRange,
 	});
 
 	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually

@@ -1,7 +1,6 @@
 advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
 - similar to https://stathead.com/basketball/player-season-finder.cgi
 - minimize state passed to URL/worker - colKey should not be there
-- getPlayers needed?
 - columns
   - user picks one of the stat table types, or ratings table
    - make sure it works in URL on ctrl+r
@@ -14,8 +13,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
         - what about stats? should it be TOT ever?
         - should it keep just stats from that team?
           - need dropdown for tid then
-            - handle FA and DP
-            - make sure switching to tid resets to valid option
+            - handle DP
+            - stats should only show for the selected team, right?
         - probably want same logic as stats page if there are stats, and same logic as ratings page otherwise
         - only new thing is range of seasons with no stats
         - code in getPlayers for this season

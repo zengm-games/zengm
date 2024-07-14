@@ -4,7 +4,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - columns
   - user picks one of the stat table types, or ratings table
    - make sure it works in URL on ctrl+r
-- selected columns from filters don't show up until ctrl+R
 - form UI
   - select custom filters
     - categories

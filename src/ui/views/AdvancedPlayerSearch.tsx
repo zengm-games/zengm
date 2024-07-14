@@ -435,9 +435,12 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [filters, setFilters] = useState(() => {
 		return filtersToEditable(props.filters);
 	});
+	const [renderedFilters, setRenderedFilters] = useState(props.filters);
 
 	const updatePlayers = async () => {
 		setFetchingPlayers(true);
+
+		const newFilters = filtersFromEditable(filters);
 
 		const newPlayers = await toWorker("main", "advancedPlayerSearch", {
 			seasonStart,
@@ -445,10 +448,11 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			singleSeason,
 			playoffs,
 			statType,
-			filters: filtersFromEditable(filters),
+			filters: newFilters,
 		});
 
 		setPlayers(newPlayers);
+		setRenderedFilters(newFilters);
 
 		setFetchingPlayers(false);
 	};
@@ -469,7 +473,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
 
-	const filtersWithInfos = props.filters
+	const renderedFiltersWithInfos = renderedFilters
 		.map(filter => {
 			const info = getFilterInfo(filter.category, filter.key);
 			return {
@@ -492,7 +496,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	];
 
 	const seenCols = new Set(defaultCols);
-	const uniqueColFiltersWithInfo = filtersWithInfos.filter(filter => {
+	const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(filter => {
 		if (seenCols.has(filter.info.colKey)) {
 			return false;
 		}

@@ -1,4 +1,4 @@
-import { isSport, PLAYER } from "../../common";
+import { isSport, PHASE, PLAYER } from "../../common";
 import { allFilters } from "../../common/advancedPlayerSearch";
 import type { Player, PlayerStatType, ViewInput } from "../../common/types";
 import { maxBy } from "../../common/utils";
@@ -76,7 +76,6 @@ export const getPlayers = async (
 	} else if (tid !== undefined) {
 		players = players.filter(p => p.stats.tid === tid);
 	}
-	console.log(season, tid, players);
 
 	if (isSport("baseball")) {
 		for (const p of players) {
@@ -153,13 +152,24 @@ export const advancedPlayerSearch = async ({
 		}
 	}
 
+	let actualSeasonEnd = seasonEnd;
+	if (
+		seasonStart === seasonEnd &&
+		seasonEnd === g.get("season") &&
+		(tid === undefined || tid === PLAYER.UNDRAFTED)
+	) {
+		// Show the upcoming draft class too
+		actualSeasonEnd += g.get("phase") > PHASE.DRAFT ? 2 : 1;
+	}
+
 	for await (const { players, season } of iterateActivePlayersSeasonRange(
 		seasonStart,
-		seasonEnd,
+		actualSeasonEnd,
 		seasonRange ? "unique" : "all",
 	)) {
 		const playersPlus = await getPlayers(
-			seasonRange ? undefined : season,
+			// Math.min is for draft prospects in future seasons
+			seasonRange ? undefined : Math.min(season, seasonEnd),
 			extraAttrs,
 			extraRatings,
 			extraStats,
@@ -241,8 +251,6 @@ export const advancedPlayerSearch = async ({
 			}
 		}
 	}
-
-	console.log(matchedPlayers);
 
 	return addFirstNameShort(matchedPlayers);
 };

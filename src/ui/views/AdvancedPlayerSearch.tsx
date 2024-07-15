@@ -245,7 +245,9 @@ const Filters = ({
 		{ key: "ratings", value: "Ratings" },
 		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
 			const value =
-				key === "regular" && isSport("basketball") ? "Stats" : info.name;
+				key === "regular" && isSport("basketball")
+					? "Traditional Stats"
+					: info.name;
 			return { key, value };
 		}),
 	];
@@ -400,7 +402,7 @@ const ShowStatTypes = ({
 		{ key: "ratings", value: "Ratings" },
 		...(isSport("basketball")
 			? [
-					{ key: "perGame", value: "Traditional Stats" },
+					{ key: "regular", value: "Traditional Stats" },
 					...dropdownOptions.filter(
 						row =>
 							row.key !== "perGame" &&
@@ -564,31 +566,39 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	});
 
 	// Process these after filters, so filter cols get shown first
-	const statTypeKeys = getExtraStatTypeKeys(renderedShowStatTypes);
-	const uniqueStatTypeInfos = [
-		...statTypeKeys.attrs.map(key => {
-			const info = allFilters.bio.options[key];
-
-			return info;
-		}),
-		...statTypeKeys.ratings.map(key => {
-			const info = allFilters.ratings.options[key];
-
-			return info;
-		}),
-		...statTypeKeys.stats.map(key => {
-			const info = allFilters.stats.options[key];
-
-			return info;
-		}),
-	].filter(row => {
+	let uniqueStatTypeInfos = [];
+	for (const statType of renderedShowStatTypes) {
+		const keys = getExtraStatTypeKeys([statType]);
+		if (statType === "bio") {
+			uniqueStatTypeInfos.push(
+				...keys.attrs.map(key => {
+					const info = allFilters.bio.options[key];
+					return info;
+				}),
+			);
+		} else if (statType === "ratings") {
+			uniqueStatTypeInfos.push(
+				...keys.ratings.map(key => {
+					const info = allFilters.ratings.options[key];
+					return info;
+				}),
+			);
+		} else {
+			uniqueStatTypeInfos.push(
+				...keys.stats.map(key => {
+					const info = allFilters[statType].options[key];
+					return info;
+				}),
+			);
+		}
+	}
+	uniqueStatTypeInfos = uniqueStatTypeInfos.filter(row => {
 		if (seenCols.has(row.colKey)) {
 			return false;
 		}
 		seenCols.add(row.colKey);
 		return true;
 	});
-	console.log(uniqueStatTypeInfos);
 
 	const cols = getCols([
 		...defaultCols,

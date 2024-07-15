@@ -5,6 +5,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - more concise URLs - convert object to array for filters
 - columns
   - user picks one of the stat table types, or ratings table
+    - switch from select to checkboxes, so you can select none?
     - implement similar to player graphs
     - make sure it works in URL on ctrl+r
 - form UI

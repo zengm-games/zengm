@@ -1,11 +1,4 @@
-import {
-	bySport,
-	isSport,
-	PHASE,
-	PLAYER,
-	PLAYER_STATS_TABLES,
-	RATINGS,
-} from "../../common";
+import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
 import { idb } from "../db";
 import { g, helpers, random } from "../util";
 import type {
@@ -15,6 +8,10 @@ import type {
 } from "../../common/types";
 import { POS_NUMBERS } from "../../common/constants.baseball";
 import { maxBy } from "../../common/utils";
+import {
+	getStats,
+	getStatsTableByType,
+} from "../../common/advancedPlayerSearch";
 
 export const statTypes = bySport({
 	baseball: [
@@ -47,47 +44,6 @@ export const statTypes = bySport({
 	],
 	hockey: ["bio", "ratings", "skater", "goalie", "advanced", "gameHighs"],
 });
-
-const getStatsTableByType = (statTypePlus: string) => {
-	if (statTypePlus == "bio" || statTypePlus == "ratings") {
-		return;
-	}
-
-	// Keep in sync with statTypesAdv
-	if (isSport("basketball")) {
-		if (statTypePlus === "advanced") {
-			return PLAYER_STATS_TABLES.advanced;
-		} else if (statTypePlus === "shotLocations") {
-			return PLAYER_STATS_TABLES.shotLocations;
-		} else if (statTypePlus === "gameHighs") {
-			return PLAYER_STATS_TABLES.gameHighs;
-		} else {
-			return PLAYER_STATS_TABLES.regular;
-		}
-	}
-
-	return PLAYER_STATS_TABLES[statTypePlus];
-};
-
-export const getStats = (statTypePlus: string) => {
-	if (statTypePlus === "ratings") {
-		return ["ovr", "pot", ...RATINGS];
-	} else if (statTypePlus == "bio") {
-		return ["age", "salary", "draftPosition"];
-	} else {
-		const statsTable = getStatsTableByType(statTypePlus);
-		if (!statsTable) {
-			throw new Error(`Invalid statType: "${statTypePlus}"`);
-		}
-
-		// Remove pos for fielding stats
-		if (isSport("baseball")) {
-			return statsTable.stats.filter(stat => stat !== "pos");
-		}
-
-		return [...statsTable.stats];
-	}
-};
 
 const getPlayerStats = async (
 	statTypeInput: string | undefined,

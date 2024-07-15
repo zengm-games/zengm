@@ -1,4 +1,4 @@
-import { PLAYER_STATS_TABLES, RATINGS } from ".";
+import { isSport, PLAYER_STATS_TABLES, RATINGS } from ".";
 import type { Col } from "../ui/components/DataTable";
 
 type AdvancedPlayerSearchField = {
@@ -157,3 +157,65 @@ for (const [category, { options }] of Object.entries(allFiltersTemp)) {
 		(value as any).category = category;
 	}
 }
+
+export const getStatsTableByType = (statTypePlus: string) => {
+	if (statTypePlus == "bio" || statTypePlus == "ratings") {
+		return;
+	}
+
+	// Keep in sync with statTypesAdv
+	if (isSport("basketball")) {
+		if (statTypePlus === "advanced") {
+			return PLAYER_STATS_TABLES.advanced;
+		} else if (statTypePlus === "shotLocations") {
+			return PLAYER_STATS_TABLES.shotLocations;
+		} else if (statTypePlus === "gameHighs") {
+			return PLAYER_STATS_TABLES.gameHighs;
+		} else {
+			return PLAYER_STATS_TABLES.regular;
+		}
+	}
+
+	return PLAYER_STATS_TABLES[statTypePlus];
+};
+
+export const getStats = (statTypePlus: string) => {
+	if (statTypePlus === "ratings") {
+		return ["ovr", "pot", ...RATINGS];
+	} else if (statTypePlus == "bio") {
+		return ["age", "salary", "draftPosition"];
+	} else {
+		const statsTable = getStatsTableByType(statTypePlus);
+		if (!statsTable) {
+			throw new Error(`Invalid statType: "${statTypePlus}"`);
+		}
+
+		// Remove pos for fielding stats
+		if (isSport("baseball")) {
+			return statsTable.stats.filter(stat => stat !== "pos");
+		}
+
+		return [...statsTable.stats];
+	}
+};
+
+export const getExtraStatTypeKeys = (showStatTypes: string[]) => {
+	const attrs = [];
+	const ratings = [];
+	const stats = [];
+
+	for (const statType of showStatTypes) {
+		if (statType === "bio") {
+		} else if (statType === "ratings") {
+			ratings.push(...RATINGS);
+		} else {
+			stats.push(...getStats(statType));
+		}
+	}
+
+	return {
+		attrs,
+		ratings,
+		stats,
+	};
+};

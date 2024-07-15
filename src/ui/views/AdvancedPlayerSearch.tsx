@@ -7,7 +7,10 @@ import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { getCols, helpers, realtimeUpdate, toWorker } from "../util";
 import { ActionButton, DataTable } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { allFilters } from "../../common/advancedPlayerSearch";
+import {
+	allFilters,
+	getExtraStatTypeKeys,
+} from "../../common/advancedPlayerSearch";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
@@ -487,6 +490,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [showStatTypes, setShowStatTypes] = useState(props.showStatTypes);
 
 	const [renderedFilters, setRenderedFilters] = useState(props.filters);
+	const [renderedShowStatTypes, setRenderedShowStatTypes] = useState(
+		props.showStatTypes,
+	);
 
 	const updatePlayers = async () => {
 		setFetchingPlayers(true);
@@ -505,6 +511,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 
 		setPlayers(newPlayers);
 		setRenderedFilters(newFilters);
+		setRenderedShowStatTypes(showStatTypes);
 
 		setFetchingPlayers(false);
 	};
@@ -552,14 +559,41 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		if (seenCols.has(filter.info.colKey)) {
 			return false;
 		}
-
 		seenCols.add(filter.info.colKey);
 		return true;
 	});
 
+	// Process these after filters, so filter cols get shown first
+	const statTypeKeys = getExtraStatTypeKeys(renderedShowStatTypes);
+	const uniqueStatTypeInfos = [
+		...statTypeKeys.attrs.map(key => {
+			const info = allFilters.bio.options[key];
+
+			return info;
+		}),
+		...statTypeKeys.ratings.map(key => {
+			const info = allFilters.ratings.options[key];
+
+			return info;
+		}),
+		...statTypeKeys.stats.map(key => {
+			const info = allFilters.stats.options[key];
+
+			return info;
+		}),
+	].filter(row => {
+		if (seenCols.has(row.colKey)) {
+			return false;
+		}
+		seenCols.add(row.colKey);
+		return true;
+	});
+	console.log(uniqueStatTypeInfos);
+
 	const cols = getCols([
 		...defaultCols,
 		...uniqueColFiltersWithInfo.map(filter => filter.info.colKey),
+		...uniqueStatTypeInfos.map(row => row.colKey),
 	]);
 
 	const currentSeasonOnly =
@@ -602,18 +636,17 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					: p.ratings.season,
 				showRatings ? p.ratings.ovr : null,
 				showRatings ? p.ratings.pot : null,
-				...uniqueColFiltersWithInfo.map(row => {
-					const value = row.info.getValue(p);
-					if (row.filter.category === "bio") {
+				...[
+					...uniqueColFiltersWithInfo.map(row => row.info),
+					...uniqueStatTypeInfos,
+				].map(info => {
+					const value = info.getValue(p);
+					if (info.category === "bio") {
 						return value;
-					} else if (row.filter.category === "ratings") {
+					} else if (info.category === "ratings") {
 						return showRatings ? value : null;
 					} else {
-						return helpers.roundStat(
-							value,
-							row.filter.key,
-							statType === "totals",
-						);
+						return helpers.roundStat(value, info.key, statType === "totals");
 					}
 				}),
 			],

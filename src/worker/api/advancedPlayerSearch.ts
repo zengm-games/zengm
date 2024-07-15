@@ -1,5 +1,8 @@
 import { isSport, PHASE, PLAYER } from "../../common";
-import { allFilters } from "../../common/advancedPlayerSearch";
+import {
+	allFilters,
+	getExtraStatTypeKeys,
+} from "../../common/advancedPlayerSearch";
 import type { Player, PlayerStatType, ViewInput } from "../../common/types";
 import { maxBy } from "../../common/utils";
 import { normalizeIntl } from "../../ui/components/DataTable/normalizeIntl";
@@ -87,6 +90,8 @@ export const getPlayers = async (
 	return players;
 };
 
+const unique = (array: string[]) => Array.from(new Set(array));
+
 export const advancedPlayerSearch = async ({
 	seasonStart,
 	seasonEnd,
@@ -96,29 +101,32 @@ export const advancedPlayerSearch = async ({
 	filters,
 	showStatTypes,
 }: ViewInput<"advancedPlayerSearch">) => {
-	const extraAttrs: string[] = [];
-	const extraRatings: string[] = ["season", "pos", "ovr", "pot"];
-	const extraStats: string[] = ["season"];
+	let extraAttrs: string[] = [];
+	let extraRatings: string[] = ["season", "pos", "ovr", "pot"];
+	let extraStats: string[] = ["season"];
 	for (const filter of filters) {
 		if (filter.category === "ratings") {
-			if (!extraRatings.includes(filter.key)) {
-				extraRatings.push(filter.key);
-			}
+			extraRatings.push(filter.key);
 		} else if (filter.category === "bio") {
 			const filterInfo = allFilters[filter.category].options[filter.key];
 			if (filterInfo && filterInfo.workerFieldOverride !== null) {
 				const key = filterInfo.workerFieldOverride ?? filter.key;
-				if (!extraAttrs.includes(key)) {
-					extraAttrs.push(key);
-				}
+				extraAttrs.push(key);
 			}
 		} else {
 			// Must be stats
-			if (!extraStats.includes(filter.key)) {
-				extraStats.push(filter.key);
-			}
+			extraStats.push(filter.key);
 		}
 	}
+
+	const more = getExtraStatTypeKeys(showStatTypes);
+	extraAttrs.push(...more.attrs);
+	extraRatings.push(...more.ratings);
+	extraStats.push(...more.stats);
+
+	extraAttrs = unique(extraAttrs);
+	extraRatings = unique(extraRatings);
+	extraStats = unique(extraStats);
 
 	let seasonRange: [number, number] | undefined;
 	if (singleSeason === "totals" && seasonStart !== seasonEnd) {

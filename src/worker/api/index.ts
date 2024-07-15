@@ -129,7 +129,7 @@ import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDi
 import { advancedPlayerSearch } from "./advancedPlayerSearch";
 import * as exhibitionGame from "./exhibitionGame";
 import { getSummary } from "../views/trade";
-import { getStats, statTypes } from "../views/playerGraphs";
+import { statTypes } from "../views/playerGraphs";
 import {
 	getStats as teamGetStats,
 	statTypes as teamStatTypes,
@@ -138,6 +138,7 @@ import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 import isUntradable from "../core/trade/isUntradable";
 import getWinner from "../../common/getWinner";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout";
+import { getStats } from "../../common/advancedPlayerSearch";
 
 const acceptContractNegotiation = async ({
 	pid,

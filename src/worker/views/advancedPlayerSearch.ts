@@ -9,6 +9,7 @@ const updateAdvancedPlayerSearch = async (
 		playoffs,
 		statType,
 		filters,
+		showStatTypes,
 	}: ViewInput<"advancedPlayerSearch">,
 	updateEvents: UpdateEvents,
 ) => {
@@ -22,6 +23,7 @@ const updateAdvancedPlayerSearch = async (
 			playoffs,
 			statType,
 			filters,
+			showStatTypes,
 		};
 	}
 };

@@ -383,6 +383,53 @@ const Filters = ({
 	);
 };
 
+const ShowStatTypes = ({
+	showStatTypes,
+	setShowStatTypes,
+}: {
+	showStatTypes: string[];
+	setShowStatTypes: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
+	const dropdownOptions = useDropdownOptions("statTypesAdv");
+
+	const allStatTypes = [
+		{ key: "bio", value: "Bio" },
+		{ key: "ratings", value: "Ratings" },
+		...(isSport("basketball")
+			? [
+					{ key: "perGame", value: "Traditional Stats" },
+					...dropdownOptions.filter(
+						row =>
+							row.key !== "perGame" &&
+							row.key !== "per36" &&
+							row.key !== "totals",
+					),
+				]
+			: dropdownOptions),
+	];
+
+	return (
+		<>
+			<select
+				className="form-select"
+				multiple
+				onChange={event => {
+					const newShowStatTypes = Array.from(event.target.selectedOptions).map(
+						o => o.value,
+					);
+					setShowStatTypes(newShowStatTypes);
+				}}
+				size={allStatTypes.length}
+				value={showStatTypes}
+			>
+				{allStatTypes.map(x => {
+					return <OptionDropdown key={x.key} value={x} />;
+				})}
+			</select>
+		</>
+	);
+};
+
 const filtersToEditable = (
 	filters: AdvancedPlayerSearchFilter[],
 ): AdvancedPlayerSearchFilterEditing[] => {
@@ -437,6 +484,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [filters, setFilters] = useState(() => {
 		return filtersToEditable(props.filters);
 	});
+	const [showStatTypes, setShowStatTypes] = useState(props.showStatTypes);
+
 	const [renderedFilters, setRenderedFilters] = useState(props.filters);
 
 	const updatePlayers = async () => {
@@ -451,6 +500,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			playoffs,
 			statType,
 			filters: newFilters,
+			showStatTypes,
 		});
 
 		setPlayers(newPlayers);
@@ -588,6 +638,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							playoffs,
 							statType,
 							JSON.stringify(filtersFromEditable(filters)),
+							JSON.stringify(showStatTypes),
 						]),
 					);
 
@@ -677,6 +728,10 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					) : null}
 				</div>
 				<Filters filters={filters} setFilters={setFilters} />
+				<ShowStatTypes
+					showStatTypes={showStatTypes}
+					setShowStatTypes={setShowStatTypes}
+				/>
 				<ActionButton
 					className="mt-3"
 					disabled={filters.some(filter => filter.errorMessage)}

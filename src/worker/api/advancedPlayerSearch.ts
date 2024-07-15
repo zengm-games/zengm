@@ -94,6 +94,7 @@ export const advancedPlayerSearch = async ({
 	playoffs,
 	statType,
 	filters,
+	showStatTypes,
 }: ViewInput<"advancedPlayerSearch">) => {
 	const extraAttrs: string[] = [];
 	const extraRatings: string[] = ["season", "pos", "ovr", "pot"];

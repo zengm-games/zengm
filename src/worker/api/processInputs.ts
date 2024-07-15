@@ -1011,6 +1011,13 @@ const advancedPlayerSearch = (params: Params) => {
 		filters = [];
 	}
 
+	let showStatTypes: string[];
+	try {
+		showStatTypes = JSON.parse(params.showStatTypes!);
+	} catch (error) {
+		showStatTypes = [];
+	}
+
 	return {
 		seasonStart: validateSeason(params.seasonStart),
 		seasonEnd: validateSeason(params.seasonEnd),
@@ -1018,6 +1025,7 @@ const advancedPlayerSearch = (params: Params) => {
 		playoffs: validateSeasonType(params.playoffs, "regularSeason"),
 		statType: validateStatType(params.statType),
 		filters,
+		showStatTypes,
 	};
 };
 

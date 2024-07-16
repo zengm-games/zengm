@@ -415,22 +415,29 @@ const ShowStatTypes = ({
 
 	return (
 		<>
-			<select
-				className="form-select"
-				multiple
-				onChange={event => {
-					const newShowStatTypes = Array.from(event.target.selectedOptions).map(
-						o => o.value,
-					);
-					setShowStatTypes(newShowStatTypes);
-				}}
-				size={allStatTypes.length}
-				value={showStatTypes}
-			>
-				{allStatTypes.map(x => {
-					return <OptionDropdown key={x.key} value={x} />;
-				})}
-			</select>
+			{allStatTypes.map(x => {
+				const id = `AdvancedPlayerSearchStatType-${x.key}`;
+				return (
+					<div className="form-check" key={x.key}>
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={showStatTypes.includes(x.key as string)}
+							id={id}
+							onChange={event => {
+								if (event.target.checked) {
+									setShowStatTypes([...showStatTypes, x.key as string]);
+								} else {
+									setShowStatTypes(showStatTypes.filter(y => y !== x.key));
+								}
+							}}
+						/>
+						<label className="form-check-label" htmlFor={id}>
+							{Array.isArray(x.value) ? x.value.at(-1)!.text : x.value}
+						</label>
+					</div>
+				);
+			})}
 		</>
 	);
 };

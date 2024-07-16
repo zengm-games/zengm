@@ -5,9 +5,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - more concise URLs - convert object to array for filters
 - columns
   - user picks one of the stat table types, or ratings table
-    - switch from select to checkboxes, so you can select none?
-    - implement similar to player graphs
-    - make sure it works in URL on ctrl+r
+    - implement bios
+    - make sure game highs work
 - form UI
   - select custom filters
     - categories
@@ -27,6 +26,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - +/- special formatting
   - other sports
 - responsive
+- stats menu or players menu?
 - blog
   - basketball stat type limitation
   - bio team/pos vs ratings team/pos
@@ -37,6 +37,8 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - group data within a range of seasons (like "top scorers in the 90s")
       - contracts too!
       - ratings - max ovr
+
+reorganize menus - what goes in teams/players vs stats?
 
 VIDEO_ADS should add margin in footer only outside of gold
 
@@ -982,6 +984,12 @@ customizable columns https://discord.com/channels/@me/914986660020748321
 - define "standard" columns available in some context (like "career total" or "individual season")
 - deal with instability in the current column selection system - like if # of columns changes (sometimes due to season change), selection gets lost
 - start gradually porting over some views
+- new ideas
+  - global category/key column definition, link to header and how to retrieve from player object
+  - this would simplify logic for when i return a list of ratings/stats to show as columns, or more complex stuff like getExtraStatTypeKeys
+  - handle special formatting (like +/-)
+  - handle supercols
+  - who defines the columns fetched? UI or worker? don't want to over fetch...
 
 dropbox integration - save league to cloud
 - add way to view leagues saved in dropbox account and select one from that list

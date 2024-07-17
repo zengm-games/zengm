@@ -80,6 +80,12 @@ const allFiltersTemp: Record<
 				valueType: "numeric",
 				getValue: p => p.age,
 			},
+			jerseyNumber: {
+				colKey: "stat:jerseyNumber",
+				valueType: "string",
+				getValue: p => p.stats?.jerseyNumber ?? "",
+				workerFieldOverride: null,
+			},
 			contract: {
 				colKey: "Contract",
 				valueType: "numeric",
@@ -222,6 +228,11 @@ export const getExtraStatTypeKeys = (
 	for (const statType of showStatTypes) {
 		if (statType === "bio") {
 			for (const [key, info] of Object.entries(allFilters.bio.options)) {
+				if (key === "jerseyNumber") {
+					// Already shown by player name
+					continue;
+				}
+
 				if (
 					applyWorkerFieldOverrides &&
 					info.workerFieldOverride !== undefined

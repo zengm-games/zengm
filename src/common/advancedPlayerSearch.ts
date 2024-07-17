@@ -135,7 +135,13 @@ for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
 		options[key] = {
 			colKey: addPrefixForStat(category, key),
 			valueType: "numeric",
-			getValue: p => p.stats[key],
+			getValue:
+				category === "gameHighs"
+					? p => {
+							const stat = p.stats[key];
+							return Array.isArray(stat) ? stat[0] : stat;
+						}
+					: p => p.stats[key],
 		};
 	}
 

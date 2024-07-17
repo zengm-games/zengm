@@ -6,7 +6,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - columns
   - user picks one of the stat table types, or ratings table
     - implement bios
-    - make sure game highs work
 - form UI
   - select custom filters
     - categories
@@ -20,7 +19,6 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - could make it hierarchical, but that's complicated https://cloud.google.com/looker/docs/and-or-filters-in-explores#filter_groups https://support.airtable.com/docs/filtering-records-using-conditions#condition-groups-and-advanced-filtering
 - test
   - weird ones
-    - game highs
     - baseball defensive stats
     - qbrec
   - +/- special formatting

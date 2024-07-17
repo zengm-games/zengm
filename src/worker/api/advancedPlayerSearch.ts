@@ -63,7 +63,6 @@ export const getPlayers = async (
 		combined: playoffs === "combined",
 		seasonRange,
 	});
-	// console.log(season, tid, playersAll, structuredClone(players.find(p => p.pid === 2760)));
 
 	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
 	// For the current season, use the current abbrev (including FA), not the last stats abbrev
@@ -219,7 +218,6 @@ export const advancedPlayerSearch = async ({
 			p.stats = p[obj];
 
 			const matchesAll = filters.every(filter => {
-				console.log(filter);
 				const filterInfo = allFilters[filter.category].options[filter.key];
 				if (!filterInfo) {
 					return true;

@@ -213,8 +213,13 @@ export const advancedPlayerSearch = async ({
 				}
 
 				// Copy some over from first/last stats entry
-				p[obj].seasonStart = p.stats[0]?.season;
-				p[obj].seasonEnd = p.stats.at(-1)?.season;
+				if (p.stats.length > 1 || p.stats[0]?.abbrev !== "FA") {
+					p[obj].seasonStart = p.stats[0]?.season;
+					p[obj].seasonEnd = p.stats.at(-1)?.season;
+				} else {
+					p[obj].seasonStart = p.ratings[0]?.season;
+					p[obj].seasonEnd = p.ratings.at(-1)?.season;
+				}
 				p[obj].abbrev = p.stats.at(-1)?.abbrev;
 				p[obj].tid = p.stats.at(-1)?.tid;
 				p[obj].jerseyNumber = p.stats.at(-1)?.jerseyNumber;

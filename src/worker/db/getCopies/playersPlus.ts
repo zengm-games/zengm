@@ -55,7 +55,7 @@ const processAttrs = (
 
 	for (const attr of attrs) {
 		if (attr === "age") {
-			const s = season ?? g.get("season");
+			const s = season ?? seasonRange?.[1] ?? g.get("season");
 			output.age = s - p.born.year;
 		} else if (attr === "ageAtDeath") {
 			output.ageAtDeath =

@@ -1,6 +1,4 @@
 advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
-- age - how to handle for range?
-- for range, what season should be used for ratings popover?
 - similar to https://stathead.com/basketball/player-season-finder.cgi
 - more concise URLs - convert object to array for filters
 - columns
@@ -35,6 +33,7 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
     - group data within a range of seasons (like "top scorers in the 90s")
       - contracts too!
       - ratings - max ovr
+      - age - at end of range
 
 reorganize menus - what goes in teams/players vs stats?
 

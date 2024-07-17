@@ -74,6 +74,11 @@ const allFiltersTemp: Record<
 				valueType: "string",
 				getValue: p => p.abbrev,
 			},
+			age: {
+				colKey: "Age",
+				valueType: "numeric",
+				getValue: p => p.age,
+			},
 			contract: {
 				colKey: "Contract",
 				valueType: "numeric",

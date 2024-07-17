@@ -9,7 +9,8 @@ type AdvancedPlayerSearchField = {
 	valueType: "numeric" | "string";
 	getValue: (p: any) => string | number;
 
-	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key"
+	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key".
+	// null means don't fetch anything.
 	workerFieldOverride?: string | null;
 };
 
@@ -210,13 +211,28 @@ export const getStats = (statTypePlus: string) => {
 	}
 };
 
-export const getExtraStatTypeKeys = (showStatTypes: string[]) => {
+export const getExtraStatTypeKeys = (
+	showStatTypes: string[],
+	applyWorkerFieldOverrides?: boolean,
+) => {
 	const attrs = [];
 	const ratings = [];
 	const stats = [];
 
 	for (const statType of showStatTypes) {
 		if (statType === "bio") {
+			for (const [key, info] of Object.entries(allFilters.bio.options)) {
+				if (
+					applyWorkerFieldOverrides &&
+					info.workerFieldOverride !== undefined
+				) {
+					if (info.workerFieldOverride !== null) {
+						attrs.push(info.workerFieldOverride);
+					}
+				} else {
+					attrs.push(key);
+				}
+			}
 		} else if (statType === "ratings") {
 			ratings.push(...RATINGS);
 		} else {

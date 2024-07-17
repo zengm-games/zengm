@@ -118,7 +118,7 @@ export const advancedPlayerSearch = async ({
 		}
 	}
 
-	const more = getExtraStatTypeKeys(showStatTypes);
+	const more = getExtraStatTypeKeys(showStatTypes, true);
 	extraAttrs.push(...more.attrs);
 	extraRatings.push(...more.ratings);
 	extraStats.push(...more.stats);

@@ -162,6 +162,7 @@ export const advancedPlayerSearch = async ({
 	}
 
 	let actualSeasonEnd = seasonEnd;
+	let seasonRangeType: "unique" | "all";
 	if (
 		seasonStart === seasonEnd &&
 		seasonEnd === g.get("season") &&
@@ -169,12 +170,18 @@ export const advancedPlayerSearch = async ({
 	) {
 		// Show the upcoming draft class too
 		actualSeasonEnd += g.get("phase") > PHASE.DRAFT ? 2 : 1;
+
+		// Set to "unique" so the draft prospects are the only ones appearing in the excess seasons. This works only because we confirm seasonStart === seasonEnd, in which case normally the unique/all setting doesn't matter
+		seasonRangeType = "unique";
+	} else {
+		// If we're looking for a range of seasons only, then each player can only appear in our results once, so unique is waht we want.
+		seasonRangeType = seasonRange ? "unique" : "all";
 	}
 
 	for await (const { players, season } of iterateActivePlayersSeasonRange(
 		seasonStart,
 		actualSeasonEnd,
-		seasonRange ? "unique" : "all",
+		seasonRangeType,
 	)) {
 		const playersPlus = await getPlayers(
 			// Math.min is for draft prospects in future seasons

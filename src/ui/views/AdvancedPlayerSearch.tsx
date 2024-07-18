@@ -783,7 +783,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						</div>
 					) : null}
 				</div>
+				<h3>Filters</h3>
 				<Filters filters={filters} setFilters={setFilters} />
+				<h3 className="mt-3">Additional columns to show</h3>
 				<ShowStatTypes
 					showStatTypes={showStatTypes}
 					setShowStatTypes={setShowStatTypes}

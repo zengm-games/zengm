@@ -12,6 +12,10 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
   - hockey +/- special formatting
   - other sports
 - responsive
+- perf of editing form while table is displayed
+  - does it matter in prod build?
+  - make uncontrolled?
+  - memo players?
 - blog
   - basketball stat type limitation
   - bio team/pos vs ratings team/pos

@@ -4,12 +4,12 @@ advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/vi
 - form UI
   - select custom filters
     - maybe share code with player graphs?
-      - use addPrefixForStat to replace colKey
 - test
   - weird ones
     - baseball defensive stats
     - qbrec
-  - +/- special formatting
+    - grec
+  - hockey +/- special formatting
   - other sports
 - responsive
 - blog

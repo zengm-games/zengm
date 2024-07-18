@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
 import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { getCols, helpers, realtimeUpdate, toWorker } from "../util";
-import { ActionButton, DataTable } from "../components";
+import { ActionButton, DataTable, PlusMinus } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import {
 	allFilters,
@@ -663,6 +663,12 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					} else if (info.category === "ratings") {
 						return showRatings ? value : null;
 					} else {
+						if (
+							isSport("basketball") &&
+							(info.key === "pm100" || info.key === "onOff100")
+						) {
+							return <PlusMinus>{value as number}</PlusMinus>;
+						}
 						return helpers.roundStat(value, info.key, statType === "totals");
 					}
 				}),

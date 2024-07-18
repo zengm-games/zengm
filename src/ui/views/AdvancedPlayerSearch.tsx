@@ -263,99 +263,105 @@ const Filters = ({
 				return (
 					<div key={i}>
 						<div className="p-2 rounded d-inline-flex align-items-start gap-2 mb-3 bg-body-secondary">
-							<select
-								className="form-select"
-								value={filter.category}
-								onChange={event => {
-									const newCategory = event.target.value as any;
-									const newKey = Object.keys(
-										allFilters[newCategory].options,
-									)[0];
-									const newFilter = getInitialFilterEditing(
-										newCategory,
-										newKey,
-										filter,
-									);
-									setFilter(i, newFilter);
-								}}
-								style={{
-									width: 150,
-								}}
-							>
-								{statTypes.map(x => {
-									return <OptionDropdown key={x.key} value={x} />;
-								})}
-							</select>
-							<select
-								className="form-select"
-								value={filterInfo.key}
-								onChange={event => {
-									const newFilter = getInitialFilterEditing(
-										filter.category,
-										event.target.value,
-										filter,
-									);
-									setFilter(i, newFilter);
-								}}
-								style={{
-									width: 150,
-								}}
-							>
-								{Object.values(allFilters[filter.category].options).map(
-									(row, i) => {
-										const col = getCols(
-											[row.colKey],
-											row.colOverrides
-												? {
-														[row.colKey]: row.colOverrides,
-													}
-												: undefined,
-										)[0];
-										return (
-											<option key={i} value={row.key} title={col.desc}>
-												{col.title}
-												{col.desc !== undefined ? ` (${col.desc})` : null}
-											</option>
-										);
-									},
-								)}
-							</select>
-							{filter.key === "abbrev" ? (
-								<SelectTeam
-									value={filter.value}
-									onChange={value => {
-										setFilter(i, {
-											...filter,
-											operator: "is exactly",
-											value,
-										});
-									}}
-								/>
-							) : (
-								<>
-									<SelectOperator
-										type={filterInfo.valueType}
-										value={filter.operator}
-										onChange={operator => {
-											setFilter(i, {
-												...filter,
-												operator,
-											});
+							<div className="d-flex flex-wrap gap-2">
+								<div className="d-flex gap-2">
+									<select
+										className="form-select"
+										value={filter.category}
+										onChange={event => {
+											const newCategory = event.target.value as any;
+											const newKey = Object.keys(
+												allFilters[newCategory].options,
+											)[0];
+											const newFilter = getInitialFilterEditing(
+												newCategory,
+												newKey,
+												filter,
+											);
+											setFilter(i, newFilter);
 										}}
-									/>
-									<ValueInput
-										type={filterInfo.valueType}
-										value={filter.value}
-										onChange={value => {
-											setFilter(i, {
-												...filter,
-												value,
-											});
+										style={{
+											width: 150,
 										}}
-										errorMessage={filter.errorMessage}
-									/>
-								</>
-							)}
+									>
+										{statTypes.map(x => {
+											return <OptionDropdown key={x.key} value={x} />;
+										})}
+									</select>
+									<select
+										className="form-select"
+										value={filterInfo.key}
+										onChange={event => {
+											const newFilter = getInitialFilterEditing(
+												filter.category,
+												event.target.value,
+												filter,
+											);
+											setFilter(i, newFilter);
+										}}
+										style={{
+											width: 150,
+										}}
+									>
+										{Object.values(allFilters[filter.category].options).map(
+											(row, i) => {
+												const col = getCols(
+													[row.colKey],
+													row.colOverrides
+														? {
+																[row.colKey]: row.colOverrides,
+															}
+														: undefined,
+												)[0];
+												return (
+													<option key={i} value={row.key} title={col.desc}>
+														{col.title}
+														{col.desc !== undefined ? ` (${col.desc})` : null}
+													</option>
+												);
+											},
+										)}
+									</select>
+								</div>
+								<div className="d-flex gap-2">
+									{filter.key === "abbrev" ? (
+										<SelectTeam
+											value={filter.value}
+											onChange={value => {
+												setFilter(i, {
+													...filter,
+													operator: "is exactly",
+													value,
+												});
+											}}
+										/>
+									) : (
+										<>
+											<SelectOperator
+												type={filterInfo.valueType}
+												value={filter.operator}
+												onChange={operator => {
+													setFilter(i, {
+														...filter,
+														operator,
+													});
+												}}
+											/>
+											<ValueInput
+												type={filterInfo.valueType}
+												value={filter.value}
+												onChange={value => {
+													setFilter(i, {
+														...filter,
+														value,
+													});
+												}}
+												errorMessage={filter.errorMessage}
+											/>
+										</>
+									)}
+								</div>
+							</div>
 							<button
 								className="text-danger btn btn-link p-0 border-0"
 								onClick={() => {

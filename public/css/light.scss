@@ -1685,3 +1685,9 @@ tr.text-body-secondary td {
 	--editable-input-color: #000 !important;
 	--editable-input-label-color: #555 !important;
 }
+
+@include media-breakpoint-down(md) {
+	.filter-wrapper {
+		flex-direction: column !important;
+	}
+}

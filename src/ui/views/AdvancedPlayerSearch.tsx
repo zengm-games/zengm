@@ -261,9 +261,9 @@ const Filters = ({
 				}
 
 				return (
-					<div key={i}>
-						<div className="p-2 rounded d-inline-flex align-items-start gap-2 mb-3 bg-body-secondary">
-							<div className="d-flex flex-wrap gap-2">
+					<div className="d-flex" key={i}>
+						<div className="p-2 rounded d-flex align-items-start gap-2 mb-3 bg-body-secondary me-auto">
+							<div className="d-flex filter-wrapper flex-wrap gap-2">
 								<div className="d-flex gap-2">
 									<select
 										className="form-select"

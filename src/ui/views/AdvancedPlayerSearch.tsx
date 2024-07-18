@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
@@ -541,17 +541,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
 
-	const renderedFiltersWithInfos = renderedFilters
-		.map(filter => {
-			const info = getFilterInfo(filter.category, filter.key);
-			return {
-				filter,
-				info: info!,
-			};
-		})
-		.filter(row => !!row.info);
-
-	const defaultCols = [
+	const defaultCols = useRef([
 		"Name",
 		"Pos",
 		"Team",
@@ -561,54 +551,68 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		"Season",
 		"Ovr",
 		"Pot",
-	];
+	]);
 
-	const seenCols = new Set(defaultCols);
-	const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(filter => {
-		if (seenCols.has(filter.info.colKey)) {
-			return false;
-		}
-		seenCols.add(filter.info.colKey);
-		return true;
-	});
+	const { uniqueColFiltersWithInfo, uniqueStatTypeInfos } = useMemo(() => {
+		const renderedFiltersWithInfos = renderedFilters
+			.map(filter => {
+				const info = getFilterInfo(filter.category, filter.key);
+				return {
+					filter,
+					info: info!,
+				};
+			})
+			.filter(row => !!row.info);
 
-	// Process these after filters, so filter cols get shown first
-	let uniqueStatTypeInfos = [];
-	for (const statType of renderedShowStatTypes) {
-		const keys = getExtraStatTypeKeys([statType]);
-		if (statType === "bio") {
-			uniqueStatTypeInfos.push(
-				...keys.attrs.map(key => {
-					const info = allFilters.bio.options[key];
-					return info;
-				}),
-			);
-		} else if (statType === "ratings") {
-			uniqueStatTypeInfos.push(
-				...keys.ratings.map(key => {
-					const info = allFilters.ratings.options[key];
-					return info;
-				}),
-			);
-		} else {
-			uniqueStatTypeInfos.push(
-				...keys.stats.map(key => {
-					const info = allFilters[statType].options[key];
-					return info;
-				}),
-			);
+		const seenCols = new Set(defaultCols.current);
+		const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(filter => {
+			if (seenCols.has(filter.info.colKey)) {
+				return false;
+			}
+			seenCols.add(filter.info.colKey);
+			return true;
+		});
+
+		// Process these after filters, so filter cols get shown first
+		let uniqueStatTypeInfos = [];
+		for (const statType of renderedShowStatTypes) {
+			const keys = getExtraStatTypeKeys([statType]);
+			if (statType === "bio") {
+				uniqueStatTypeInfos.push(
+					...keys.attrs.map(key => {
+						const info = allFilters.bio.options[key];
+						return info;
+					}),
+				);
+			} else if (statType === "ratings") {
+				uniqueStatTypeInfos.push(
+					...keys.ratings.map(key => {
+						const info = allFilters.ratings.options[key];
+						return info;
+					}),
+				);
+			} else {
+				uniqueStatTypeInfos.push(
+					...keys.stats.map(key => {
+						const info = allFilters[statType].options[key];
+						return info;
+					}),
+				);
+			}
 		}
-	}
-	uniqueStatTypeInfos = uniqueStatTypeInfos.filter(row => {
-		if (seenCols.has(row.colKey)) {
-			return false;
-		}
-		seenCols.add(row.colKey);
-		return true;
-	});
+		uniqueStatTypeInfos = uniqueStatTypeInfos.filter(row => {
+			if (seenCols.has(row.colKey)) {
+				return false;
+			}
+			seenCols.add(row.colKey);
+			return true;
+		});
+
+		return { uniqueColFiltersWithInfo, uniqueStatTypeInfos };
+	}, [renderedFilters, renderedShowStatTypes]);
 
 	const cols = getCols([
-		...defaultCols,
+		...defaultCols.current,
 		...uniqueColFiltersWithInfo.map(filter => filter.info.colKey),
 		...uniqueStatTypeInfos.map(row => row.colKey),
 	]);
@@ -616,65 +620,75 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const currentSeasonOnly =
 		seasonStart === seasonEnd && seasonStart === currentSeason;
 
-	const rows = players?.map((p, i) => {
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+	// useMemo because this is slow, don't want to run it on every unrelated state change
+	const rows = useMemo(() => {
+		return players?.map((p, i) => {
+			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
-		return {
-			key: i,
-			data: [
-				wrappedPlayerNameLabels({
-					pid: p.pid,
-					injury: p.injury,
-					season: p.ratings.season,
-					skills: p.ratings.skills,
-					jerseyNumber: p.stats.jerseyNumber,
-					watch: p.watch,
-					firstName: p.firstName,
-					firstNameShort: p.firstNameShort,
-					lastName: p.lastName,
-				}),
-				p.ratings.pos,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${p.stats.abbrev}_${p.stats.tid}`,
-						p.stats.seasonEnd ?? p.stats.season,
-					])}
-				>
-					{p.stats.abbrev}
-				</a>,
-				p.age,
-				p.contract.amount > 0 ? wrappedContractAmount(p) : null,
-				p.contract.amount > 0 && currentSeasonOnly
-					? wrappedContractExp(p)
-					: null,
-				p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
-					? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)
-					: p.ratings.season,
-				showRatings ? p.ratings.ovr : null,
-				showRatings ? p.ratings.pot : null,
-				...[
-					...uniqueColFiltersWithInfo.map(row => row.info),
-					...uniqueStatTypeInfos,
-				].map(info => {
-					const value = info.getValue(p);
-					if (info.category === "bio") {
-						return value;
-					} else if (info.category === "ratings") {
-						return showRatings ? value : null;
-					} else {
-						if (
-							isSport("basketball") &&
-							(info.key === "pm100" || info.key === "onOff100")
-						) {
-							return <PlusMinus>{value as number}</PlusMinus>;
+			return {
+				key: i,
+				data: [
+					wrappedPlayerNameLabels({
+						pid: p.pid,
+						injury: p.injury,
+						season: p.ratings.season,
+						skills: p.ratings.skills,
+						jerseyNumber: p.stats.jerseyNumber,
+						watch: p.watch,
+						firstName: p.firstName,
+						firstNameShort: p.firstNameShort,
+						lastName: p.lastName,
+					}),
+					p.ratings.pos,
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${p.stats.abbrev}_${p.stats.tid}`,
+							p.stats.seasonEnd ?? p.stats.season,
+						])}
+					>
+						{p.stats.abbrev}
+					</a>,
+					p.age,
+					p.contract.amount > 0 ? wrappedContractAmount(p) : null,
+					p.contract.amount > 0 && currentSeasonOnly
+						? wrappedContractExp(p)
+						: null,
+					p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
+						? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)
+						: p.ratings.season,
+					showRatings ? p.ratings.ovr : null,
+					showRatings ? p.ratings.pot : null,
+					...[
+						...uniqueColFiltersWithInfo.map(row => row.info),
+						...uniqueStatTypeInfos,
+					].map(info => {
+						const value = info.getValue(p);
+						if (info.category === "bio") {
+							return value;
+						} else if (info.category === "ratings") {
+							return showRatings ? value : null;
+						} else {
+							if (
+								isSport("basketball") &&
+								(info.key === "pm100" || info.key === "onOff100")
+							) {
+								return <PlusMinus>{value as number}</PlusMinus>;
+							}
+							return helpers.roundStat(value, info.key, statType === "totals");
 						}
-						return helpers.roundStat(value, info.key, statType === "totals");
-					}
-				}),
-			],
-		};
-	});
+					}),
+				],
+			};
+		});
+	}, [
+		challengeNoRatings,
+		currentSeasonOnly,
+		players,
+		statType,
+		uniqueColFiltersWithInfo,
+		uniqueStatTypeInfos,
+	]);
 
 	return (
 		<>
@@ -806,7 +820,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			) : (
 				<DataTable
 					cols={cols}
-					defaultSort={[defaultCols.length, "desc"]}
+					defaultSort={[defaultCols.current.length, "desc"]}
 					defaultStickyCols={window.mobile ? 0 : 1}
 					name="AdvancedPlayerSearch"
 					pagination

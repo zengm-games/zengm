@@ -416,7 +416,9 @@ const ShowStatTypes = ({
 							row.key !== "totals",
 					),
 				]
-			: dropdownOptions),
+			: isSport("baseball")
+				? dropdownOptions.filter(row => row.key !== "fielding")
+				: dropdownOptions),
 	];
 
 	return (

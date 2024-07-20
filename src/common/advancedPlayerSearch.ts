@@ -141,9 +141,29 @@ const allFiltersTemp: Record<
 	},
 };
 
-for (const [category, info] of Object.entries(PLAYER_STATS_TABLES)) {
+const processStatsTable = (
+	statsTable: (typeof PLAYER_STATS_TABLES)[string],
+) => {
+	if (isSport("football")) {
+		const index = statsTable.stats.indexOf("qbRec");
+		if (index >= 0) {
+			const stats = [...statsTable.stats];
+			stats.splice(index, 1, "qbW", "qbL", "qbT", "qbOTL");
+			console.log(statsTable.stats, stats);
+			return {
+				...statsTable,
+				stats,
+			};
+		}
+	}
+
+	return statsTable;
+};
+
+for (const [category, table] of Object.entries(PLAYER_STATS_TABLES)) {
 	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
-	for (const key of info.stats) {
+	const processedTable = processStatsTable(table);
+	for (const key of processedTable.stats) {
 		options[key] = {
 			colKey: addPrefixForStat(category, key),
 			valueType: "numeric",
@@ -182,19 +202,22 @@ export const getStatsTableByType = (statTypePlus: string) => {
 	}
 
 	// Keep in sync with statTypesAdv
+	let table;
 	if (isSport("basketball")) {
 		if (statTypePlus === "advanced") {
-			return PLAYER_STATS_TABLES.advanced;
+			table = PLAYER_STATS_TABLES.advanced;
 		} else if (statTypePlus === "shotLocations") {
-			return PLAYER_STATS_TABLES.shotLocations;
+			table = PLAYER_STATS_TABLES.shotLocations;
 		} else if (statTypePlus === "gameHighs") {
-			return PLAYER_STATS_TABLES.gameHighs;
+			table = PLAYER_STATS_TABLES.gameHighs;
 		} else {
-			return PLAYER_STATS_TABLES.regular;
+			table = PLAYER_STATS_TABLES.regular;
 		}
+	} else {
+		table = PLAYER_STATS_TABLES[statTypePlus];
 	}
 
-	return PLAYER_STATS_TABLES[statTypePlus];
+	return processStatsTable(table);
 };
 
 export const getStats = (statTypePlus: string) => {

@@ -149,7 +149,17 @@ const processStatsTable = (
 		if (index >= 0) {
 			const stats = [...statsTable.stats];
 			stats.splice(index, 1, "qbW", "qbL", "qbT", "qbOTL");
-			console.log(statsTable.stats, stats);
+			return {
+				...statsTable,
+				stats,
+			};
+		}
+	}
+	if (isSport("hockey")) {
+		const index = statsTable.stats.indexOf("gRec");
+		if (index >= 0) {
+			const stats = [...statsTable.stats];
+			stats.splice(index, 1, "gW", "gL", "gT", "gOTL");
 			return {
 				...statsTable,
 				stats,

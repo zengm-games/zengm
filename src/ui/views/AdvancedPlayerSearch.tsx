@@ -705,6 +705,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				onSubmit={async event => {
 					event.preventDefault();
 
+					const actualFilters = filtersFromEditable(filters);
+
 					// This is just to set the URL so ctrl+R works
 					realtimeUpdate(
 						[],
@@ -715,7 +717,16 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							singleSeason,
 							playoffs,
 							statType,
-							JSON.stringify(filtersFromEditable(filters)),
+							JSON.stringify(
+								actualFilters.map(filter => {
+									return [
+										filter.category,
+										filter.key,
+										filter.operator,
+										filter.value,
+									];
+								}),
+							),
 							JSON.stringify(showStatTypes),
 						]),
 					);

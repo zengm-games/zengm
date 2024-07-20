@@ -1006,7 +1006,15 @@ const advancedPlayerSearch = (params: Params) => {
 
 	let filters: AdvancedPlayerSearchFilter[];
 	try {
-		filters = JSON.parse(params.filters!);
+		const parsed = JSON.parse(params.filters!) as any[][];
+		filters = parsed.map(row => {
+			return {
+				category: row[0],
+				key: row[1],
+				operator: row[2],
+				value: row[3],
+			};
+		});
 	} catch (error) {
 		filters = [];
 	}

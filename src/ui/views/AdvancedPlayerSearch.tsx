@@ -492,7 +492,6 @@ const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const { challengeNoRatings, currentSeason } = props;
 
-	const [players, setPlayers] = useState<any[] | undefined>();
 	const [fetchingPlayers, setFetchingPlayers] = useState(false);
 
 	const [[seasonStart, seasonEnd], setSeasonRange] = useState<[number, number]>(
@@ -506,10 +505,16 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	});
 	const [showStatTypes, setShowStatTypes] = useState(props.showStatTypes);
 
-	const [renderedFilters, setRenderedFilters] = useState(props.filters);
-	const [renderedShowStatTypes, setRenderedShowStatTypes] = useState(
-		props.showStatTypes,
-	);
+	const [rendered, setRendered] = useState({
+		players: undefined as any[] | undefined,
+		seasonStart,
+		seasonEnd,
+		singleSeason,
+		playoffs,
+		statType,
+		filters: props.filters,
+		showStatTypes,
+	});
 
 	const updatePlayers = async () => {
 		setFetchingPlayers(true);
@@ -526,9 +531,16 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			showStatTypes,
 		});
 
-		setPlayers(newPlayers);
-		setRenderedFilters(newFilters);
-		setRenderedShowStatTypes(showStatTypes);
+		setRendered({
+			players: newPlayers,
+			seasonStart,
+			seasonEnd,
+			singleSeason,
+			playoffs,
+			statType,
+			filters: newFilters,
+			showStatTypes,
+		});
 
 		setFetchingPlayers(false);
 	};
@@ -562,7 +574,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	]);
 
 	const { uniqueColFiltersWithInfo, uniqueStatTypeInfos } = useMemo(() => {
-		const renderedFiltersWithInfos = renderedFilters
+		const renderedFiltersWithInfos = rendered.filters
 			.map(filter => {
 				const info = getFilterInfo(filter.category, filter.key);
 				return {
@@ -583,7 +595,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 
 		// Process these after filters, so filter cols get shown first
 		let uniqueStatTypeInfos = [];
-		for (const statType of renderedShowStatTypes) {
+		for (const statType of rendered.showStatTypes) {
 			const keys = getExtraStatTypeKeys([statType]);
 			if (statType === "bio") {
 				uniqueStatTypeInfos.push(
@@ -617,7 +629,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		});
 
 		return { uniqueColFiltersWithInfo, uniqueStatTypeInfos };
-	}, [renderedFilters, renderedShowStatTypes]);
+	}, [rendered.filters, rendered.showStatTypes]);
 
 	const cols = getCols([
 		...defaultCols.current,
@@ -626,11 +638,12 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	]);
 
 	const currentSeasonOnly =
-		seasonStart === seasonEnd && seasonStart === currentSeason;
+		rendered.seasonStart === rendered.seasonEnd &&
+		rendered.seasonStart === currentSeason;
 
 	// useMemo because this is slow, don't want to run it on every unrelated state change
 	const rows = useMemo(() => {
-		return players?.map((p, i) => {
+		return rendered.players?.map((p, i) => {
 			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 			return {
@@ -683,7 +696,11 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							) {
 								return <PlusMinus>{value as number}</PlusMinus>;
 							}
-							return helpers.roundStat(value, info.key, statType === "totals");
+							return helpers.roundStat(
+								value,
+								info.key,
+								rendered.statType === "totals",
+							);
 						}
 					}),
 				],
@@ -692,8 +709,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	}, [
 		challengeNoRatings,
 		currentSeasonOnly,
-		players,
-		statType,
+		rendered.players,
+		rendered.statType,
 		uniqueColFiltersWithInfo,
 		uniqueStatTypeInfos,
 	]);

@@ -1,15 +1,4 @@
-advanced player search https://old.reddit.com/r/BasketballGM/comments/1d0xctc/video_playing_bbgm_at_a_high_level_interlude/l5s5a1l/?context=3
-- blog
-  - basketball stat type limitation
-  - bio team/pos vs ratings team/pos
-  - want to show just one column without filtering, leave value blank
-  - new functionality enabled
-    - view columns from stats/ratings/bios tables together
-    - filter for more efficiently loading data from many seasons
-    - group data within a range of seasons (like "top scorers in the 90s")
-      - contracts too!
-      - ratings - max ovr
-      - age - at end of range
+advanced player search
 - later
   - when selecting a team, contract seasons to sum up should be filtered by stats seasons (just like ratings). except it's kind of fake, since it doesn't handle released contract amounts going to original team
   - filter UI AND/OR logic, rather than just AND?

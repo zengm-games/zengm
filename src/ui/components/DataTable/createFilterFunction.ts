@@ -2,7 +2,7 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import type { SortType } from "../../../common/types";
 import { helpers } from "../../util";
-import { normalizeIntl } from "./normalizeIntl";
+import { normalizeIntl } from "../../../common/normalizeIntl";
 
 type Direction = ">" | "<" | "=" | undefined;
 

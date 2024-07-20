@@ -5,7 +5,7 @@ import {
 } from "../../common/advancedPlayerSearch";
 import type { Player, PlayerStatType, ViewInput } from "../../common/types";
 import { maxBy } from "../../common/utils";
-import { normalizeIntl } from "../../ui/components/DataTable/normalizeIntl";
+import { normalizeIntl } from "../../common/normalizeIntl";
 import { idb } from "../db";
 import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";

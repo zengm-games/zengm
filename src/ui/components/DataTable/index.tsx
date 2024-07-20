@@ -29,7 +29,7 @@ import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
 import { orderBy } from "../../../common/utils";
-import { normalizeIntl } from "./normalizeIntl";
+import { normalizeIntl } from "../../../common/normalizeIntl";
 
 export type SortBy = [number, SortOrder];
 

@@ -42,7 +42,7 @@ const footerLinks = [
 const Footer = memo(() => {
 	const { gold } = useLocalPartial(["gold"]);
 
-	const video_ad_padding = VIDEO_ADS && gold;
+	const video_ad_padding = VIDEO_ADS && !gold;
 
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (

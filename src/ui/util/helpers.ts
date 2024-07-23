@@ -284,6 +284,7 @@ const roundOverrides: Record<
 		pfMax: "noDecimalPlace",
 		ptsMax: "noDecimalPlace",
 		pmMax: "plusMinusNoDecimalPlace",
+		gmscMax: "oneDecimalPlace",
 		dd: "noDecimalPlace",
 		td: "noDecimalPlace",
 		qd: "noDecimalPlace",

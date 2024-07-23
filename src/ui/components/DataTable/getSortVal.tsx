@@ -34,7 +34,8 @@ const getSortVal = (
 			}
 
 			if (typeof sortVal === "string") {
-				if (sortVal === "--:--") {
+				// "" happens for game highs with no value, like a player with 0 GP
+				if (sortVal === "--:--" || sortVal === "") {
 					// Sort below 0
 					return -Infinity;
 				}

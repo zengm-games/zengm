@@ -52,6 +52,7 @@ export const addPowerRankingsStuffToTeams = async <
 			} else {
 				teamPlayers = await idb.getCopies.players(
 					{
+						activeSeason: season,
 						statsTid: t.tid,
 					},
 					"noCopyCache",

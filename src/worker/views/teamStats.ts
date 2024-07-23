@@ -119,6 +119,7 @@ export const getStats = async ({
 				}
 				playersRaw = await idb.getCopies.players(
 					{
+						activeSeason: season,
 						statsTid: t.tid,
 					},
 					"noCopyCache",

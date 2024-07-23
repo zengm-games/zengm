@@ -15,9 +15,6 @@ reorganize menus - what goes in teams/players vs stats?
 
 some generic UI component for hiding ratings in challengeNoRatings
 
-for statsTid getCopies, include activeSeason somehow for performance
-- maybe switch between them based on number of seasons in database and number of teams
-
 show amount in $ over trade limit rather than % https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxRJVkhtPLhkSrSXlJxJVWgrN?compose=DmwnWrRrmRLLHDwLtgDWrwnTFPXrFqTcCQpnNNqHJKtNMsbmsqNqfhtmtPQrTQKMrQjSNfCLSJcg
 
 keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/

@@ -1,7 +1,7 @@
 import { PLAYER } from "../../../common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type {
 	GetCopyType,
 	MinimalPlayerRatings,
@@ -269,24 +269,41 @@ const getCopies = async (
 	}
 
 	if (activeSeason !== undefined) {
-		const fromDB = await getPlayersActiveSeason(idb.league, activeSeason);
+		let proceed = true;
+		if (statsTid !== undefined) {
+			// If statsTid and activeSeason are both defined, use activeSeason rather thatn statsTid based on number of seasons/teams
+			const numTeams = g.get("numTeams");
+			const numSeasons = g.get("season") - g.get("startingSeason");
 
-		return mergeByPk(
-			fromDB,
-			([] as Player<MinimalPlayerRatings>[])
-				.concat(
-					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
-					await idb.cache.players.indexGetAll("playersByTid", [
-						PLAYER.FREE_AGENT,
-						Infinity,
-					]),
-				)
-				.filter(
-					p => p.draft.year < activeSeason && p.retiredYear >= activeSeason,
-				),
-			"players",
-			type,
-		);
+			// Factor is based on testing when this actually gets faster
+			if (5 * numTeams > numSeasons) {
+				proceed = false;
+			}
+		}
+
+		if (proceed) {
+			const fromDB = await getPlayersActiveSeason(idb.league, activeSeason);
+
+			return mergeByPk(
+				fromDB,
+				([] as Player<MinimalPlayerRatings>[])
+					.concat(
+						await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
+						await idb.cache.players.indexGetAll("playersByTid", [
+							PLAYER.FREE_AGENT,
+							Infinity,
+						]),
+					)
+					.filter(
+						p =>
+							p.draft.year < activeSeason &&
+							p.retiredYear >= activeSeason &&
+							(statsTid === undefined || p.statsTids.includes(statsTid)),
+					),
+				"players",
+				type,
+			);
+		}
 	}
 
 	if (hof) {

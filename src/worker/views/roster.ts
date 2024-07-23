@@ -195,6 +195,7 @@ const updateRoster = async (
 			// Show all players with stats for the given team and year
 			const playersAll = await idb.getCopies.players(
 				{
+					activeSeason: inputs.season,
 					statsTid: inputs.tid,
 				},
 				"noCopyCache",

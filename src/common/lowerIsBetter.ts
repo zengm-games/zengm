@@ -9,6 +9,7 @@ export const lowerIsBetter = new Set(
 			"cs",
 			"so",
 			"gdp",
+			"l",
 			"era",
 			"rPit",
 			"er",

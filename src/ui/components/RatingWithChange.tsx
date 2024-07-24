@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 
 const RatingWithChange = ({
 	change,
@@ -12,7 +12,7 @@ const RatingWithChange = ({
 			{children}
 			{change !== 0 ? (
 				<span
-					className={classNames({
+					className={clsx({
 						"text-success": change > 0,
 						"text-danger": change < 0,
 					})}

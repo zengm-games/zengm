@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { CSSProperties } from "react";
 import { helpers, useLocal } from "../util";
 
@@ -289,12 +289,12 @@ const CountryFlag = ({
 
 	if (actualOverride === "none") {
 		// Placeholder with same width
-		return <div className={classNames(className, "fi")} title={country2} />;
+		return <div className={clsx(className, "fi")} title={country2} />;
 	} else if (actualOverride) {
 		return (
 			<img
 				src={actualOverride}
-				className={classNames("flag-image", className)}
+				className={clsx("flag-image", className)}
 				alt={flagOverrides[country] ? country : country2}
 				style={style}
 			/>
@@ -305,7 +305,7 @@ const CountryFlag = ({
 	if (code) {
 		return (
 			<span
-				className={classNames(`fi fi-${code}`, className)}
+				className={clsx(`fi fi-${code}`, className)}
 				data-no-row-highlight="true"
 				title={countryCodes[country] ? country : country2}
 				style={style}
@@ -314,7 +314,7 @@ const CountryFlag = ({
 	}
 
 	// Placeholder with same width
-	return <div className={classNames(className, "fi")} title={country2} />;
+	return <div className={clsx(className, "fi")} title={country2} />;
 };
 
 export default CountryFlag;

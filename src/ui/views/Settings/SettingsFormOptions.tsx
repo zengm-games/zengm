@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import classNames from "classnames";
+import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
 import { isSport } from "../../../common";
@@ -279,7 +279,7 @@ const Option = ({
 						/>
 					) : null}
 				</div>
-				<div className={classNames("ms-auto", maxWidth ? "w-100" : undefined)}>
+				<div className={clsx("ms-auto", maxWidth ? "w-100" : undefined)}>
 					{formElement}
 				</div>
 				{onCancelDefaultSetting ? (
@@ -489,7 +489,7 @@ const SettingsFormOptions = ({
 											className="settings-col col-md-6 col-xxl-4 d-flex"
 										>
 											<div
-												className={classNames("fake-list-group-item rounded", {
+												className={clsx("fake-list-group-item rounded", {
 													"settings-striped-bg-alt": i % 2 === 1,
 													"pe-1": onCancelDefaultSetting,
 												})}

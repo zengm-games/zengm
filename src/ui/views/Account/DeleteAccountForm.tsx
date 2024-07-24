@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { ACCOUNT_API_URL, fetchWrapper, GAME_NAME } from "../../../common";
@@ -88,7 +88,7 @@ const Dialog = ({
 					<input
 						ref={inputRef}
 						type="password"
-						className={classNames("form-control", {
+						className={clsx("form-control", {
 							"is-invalid": invalidPassword,
 						})}
 						onChange={event => {

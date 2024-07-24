@@ -1,8 +1,7 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
-import type { Argument } from "classnames";
 
 const Row = ({
 	clickable,
@@ -12,14 +11,14 @@ const Row = ({
 	clickable?: boolean;
 	highlightCols: number[];
 	row: {
-		classNames?: Argument;
+		classNames?: clsx.ClassValue;
 		data: any[];
 	};
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
 		<tr
-			className={classNames(row.classNames, {
+			className={clsx(row.classNames, {
 				"table-warning": clickable && clicked,
 			})}
 			onClick={clickable ? toggleClicked : undefined}
@@ -33,7 +32,7 @@ const Row = ({
 
 				const highlightCol = highlightCols.includes(i);
 				if (value && value.classNames) {
-					props.className = classNames(
+					props.className = clsx(
 						value.classNames,
 						highlightCol ? "sorting_highlight" : undefined,
 					);

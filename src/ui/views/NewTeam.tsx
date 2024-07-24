@@ -9,7 +9,7 @@ import {
 	RecordAndPlayoffs,
 	SafeHtml,
 } from "../components";
-import classNames from "classnames";
+import clsx from "clsx";
 
 const HistoryBlock = ({
 	won,
@@ -65,7 +65,7 @@ const PlayerList = ({
 			{players.map((p, i) => (
 				<li
 					key={p.pid}
-					className={classNames({
+					className={clsx({
 						"mt-2": i > 0,
 					})}
 				>

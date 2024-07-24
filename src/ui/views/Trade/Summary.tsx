@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
-import classNames from "classnames";
+import clsx from "clsx";
 import { PlayerNameLabels, SafeHtml } from "../../components";
 import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
@@ -36,7 +36,7 @@ export const OvrChange = ({
 		<>
 			{before} {arrow}{" "}
 			<span
-				className={classNames({
+				className={clsx({
 					"text-success": after > before,
 					"text-danger": before > after,
 				})}
@@ -275,7 +275,7 @@ const Summary = forwardRef(
 					return (
 						<div
 							key={i}
-							className={classNames("col-md-12 col-6 d-flex flex-column", {
+							className={clsx("col-md-12 col-6 d-flex flex-column", {
 								"mb-md-3": i === 0,
 							})}
 						>

@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers, toWorker } from "../util";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
-import classNames from "classnames";
+import clsx from "clsx";
 import { wait } from "../../common";
 
 export const AutoRelocateExpandSubmit = ({
@@ -202,7 +202,7 @@ const AutoRelocate = ({
 								return (
 									<div
 										key={i}
-										className={classNames("d-flex gap-3", {
+										className={clsx("d-flex gap-3", {
 											"mt-2": i > 0,
 										})}
 									>
@@ -224,18 +224,15 @@ const AutoRelocate = ({
 														return (
 															<li
 																key={t.tid}
-																className={classNames(
-																	"text-nowrap overflow-hidden",
-																	{
-																		"text-success": t.tid === newTeam.tid,
-																		"text-info":
-																			realign &&
-																			t.tid !== newTeam.tid &&
-																			!realignInfo.current[i][j].some(
-																				t2 => t2.tid === t.tid,
-																			),
-																	},
-																)}
+																className={clsx("text-nowrap overflow-hidden", {
+																	"text-success": t.tid === newTeam.tid,
+																	"text-info":
+																		realign &&
+																		t.tid !== newTeam.tid &&
+																		!realignInfo.current[i][j].some(
+																			t2 => t2.tid === t.tid,
+																		),
+																})}
 																style={{ textOverflow: "ellipsis" }}
 															>
 																{teamName}

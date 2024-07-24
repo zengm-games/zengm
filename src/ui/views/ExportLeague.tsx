@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState, type ReactNode, useRef } from "react";
 import { GAME_NAME, isSport, WEBSITE_ROOT } from "../../common";
 import {
@@ -430,7 +430,7 @@ const RenderOption = ({
 	return (
 		<>
 			<div
-				className={classNames("form-check", {
+				className={clsx("form-check", {
 					"ms-4": parent,
 				})}
 			>

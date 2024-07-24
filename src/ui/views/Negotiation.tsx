@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	helpers,
@@ -135,12 +135,9 @@ const Negotiation = ({
 							return (
 								<div
 									key={i}
-									className={classNames(
-										"d-flex align-items-center list-group-item",
-										{
-											"list-group-item-success": contract.smallestAmount,
-										},
-									)}
+									className={clsx("d-flex align-items-center list-group-item", {
+										"list-group-item-success": contract.smallestAmount,
+									})}
 								>
 									<div className="flex-grow-1">
 										{helpers.formatCurrency(contract.amount, "M")} per year

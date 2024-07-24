@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
@@ -27,7 +27,7 @@ const Inbox = ({ anyUnread, messages }: View<"inbox">) => {
 							return (
 								<tr
 									key={mid}
-									className={classNames({
+									className={clsx({
 										"fw-bold": !read,
 									})}
 								>

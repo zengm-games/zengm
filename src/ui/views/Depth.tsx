@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { Fragment, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
@@ -262,7 +262,7 @@ const Depth = ({
 					return (
 						<li className="nav-item" key={pos2}>
 							<a
-								className={classNames("nav-link", {
+								className={clsx("nav-link", {
 									active: pos === pos2,
 								})}
 								href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
@@ -358,7 +358,7 @@ const Depth = ({
 				getId={p => String(p.pid)}
 				highlightHandle={({ index }) => index < numStarters * numLines}
 				rowClassName={({ index, isDragged }) =>
-					classNames({
+					clsx({
 						separator:
 							!isDragged &&
 							((isSport("baseball") && pos === "P" && index === 4) ||
@@ -456,7 +456,7 @@ const Depth = ({
 								) : null}
 							</td>
 							<td
-								className={classNames({
+								className={clsx({
 									"text-danger":
 										isSport("baseball") && p.lineupPos !== undefined
 											? p.pid >= 0 &&
@@ -487,12 +487,12 @@ const Depth = ({
 									<>
 										<td>
 											{!challengeNoRatings
-												? p.ratings.ovrs[lineupPos] ?? p.ratings.ovr
+												? (p.ratings.ovrs[lineupPos] ?? p.ratings.ovr)
 												: null}
 										</td>
 										<td>
 											{!challengeNoRatings
-												? p.ratings.pots[lineupPos] ?? p.ratings.pot
+												? (p.ratings.pots[lineupPos] ?? p.ratings.pot)
 												: null}
 										</td>
 									</>

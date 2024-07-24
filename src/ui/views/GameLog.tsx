@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { BoxScoreRow, BoxScoreWrapper, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
@@ -11,7 +11,7 @@ import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
 	const { clicked, toggleClicked } = useClickable();
 
-	const classes = classNames({
+	const classes = clsx({
 		"table-warning": clicked,
 	});
 	return (
@@ -133,7 +133,7 @@ const GamesList = ({
 										{oppAbbrev}
 									</a>
 								</td>
-								<td className={classNames("game-log-cell")}>
+								<td className={clsx("game-log-cell")}>
 									<a
 										href={url}
 										className={

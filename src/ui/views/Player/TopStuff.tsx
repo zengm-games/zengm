@@ -25,7 +25,7 @@ import type {
 	View,
 } from "../../../common/types";
 import { bySport, isSport, PHASE, PLAYER } from "../../../common";
-import classNames from "classnames";
+import clsx from "clsx";
 import AwardsSummary from "./AwardsSummary";
 import RatingsOverview from "./RatingsOverview";
 import Note from "./Note";
@@ -173,7 +173,7 @@ const StatsSummary = ({
 								<th
 									key={i}
 									title={col.desc}
-									className={classNames({
+									className={clsx({
 										"table-separator-right": separatorAfter.includes(i),
 										"table-separator-left": separatorAfter.includes(i - 1),
 										"text-start": i === 0,
@@ -198,7 +198,7 @@ const StatsSummary = ({
 								return (
 									<td
 										key={stat}
-										className={classNames({
+										className={clsx({
 											"table-separator-right": separatorAfter.includes(i + 1),
 											"table-separator-left": separatorAfter.includes(i),
 										})}
@@ -218,7 +218,7 @@ const StatsSummary = ({
 							return (
 								<td
 									key={stat}
-									className={classNames({
+									className={clsx({
 										"table-separator-right": separatorAfter.includes(i + 1),
 										"table-separator-left": separatorAfter.includes(i),
 									})}
@@ -554,7 +554,7 @@ const TopStuff = ({
 					<div className="btn-group mt-2">
 						<a
 							href={helpers.leagueUrl(["customize_player", player.pid])}
-							className={classNames(
+							className={clsx(
 								"btn",
 								godMode ? "btn-outline-god-mode" : "btn-light-bordered",
 							)}
@@ -635,7 +635,7 @@ const TopStuff = ({
 					) : null}
 					{jerseyNumberInfos.length > 0 ? (
 						<div
-							className={classNames("d-flex flex-wrap", {
+							className={clsx("d-flex flex-wrap", {
 								"mt-2": showRatingsOverview || player.awards.length > 0,
 							})}
 							style={{

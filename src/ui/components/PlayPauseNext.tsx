@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
 
@@ -81,7 +81,7 @@ const PlayPauseNext = ({
 	]);
 
 	return (
-		<div className={classNames("btn-group", className)}>
+		<div className={clsx("btn-group", className)}>
 			{paused ? (
 				<button
 					className="btn btn-light-bordered"

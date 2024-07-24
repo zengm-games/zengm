@@ -15,7 +15,7 @@ import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
-import classNames from "classnames";
+import clsx from "clsx";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -119,7 +119,7 @@ const ValueInput = ({
 		<div>
 			<input
 				type="text"
-				className={classNames("form-control", {
+				className={clsx("form-control", {
 					"is-invalid": errorMessage,
 				})}
 				inputMode={type === "numeric" ? "numeric" : undefined}

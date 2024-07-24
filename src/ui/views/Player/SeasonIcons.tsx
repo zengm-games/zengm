@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { Player } from "../../../common/types";
 
 const prefixCount = (text: string, count: number) => {
@@ -99,7 +99,7 @@ const SeasonIcons = ({
 	if (title) {
 		return (
 			<span
-				className={classNames(classNameIcon, className)}
+				className={clsx(classNameIcon, className)}
 				role="img"
 				aria-label={title}
 				title={title}

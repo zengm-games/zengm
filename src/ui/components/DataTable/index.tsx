@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { csvFormatRows } from "d3-dsv";
 import {
 	type SyntheticEvent,
@@ -23,7 +23,6 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-import type { Argument } from "classnames";
 import { arrayMoveImmutable } from "array-move";
 import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
@@ -56,13 +55,13 @@ export type DataTableRow = {
 	data: (
 		| ReactNode
 		| {
-				classNames?: Argument;
+				classNames?: clsx.ClassValue;
 				value: ReactNode;
 				searchValue?: string | number;
 				sortValue?: string | number;
 		  }
 	)[];
-	classNames?: Argument;
+	classNames?: clsx.ClassValue;
 };
 
 export type StickyCols = 0 | 1 | 2 | 3;
@@ -494,7 +493,7 @@ const DataTable = ({
 			/>
 			<div className={className}>
 				<div
-					className={classNames({
+					className={clsx({
 						"d-inline-block mw-100": nonfluid,
 					})}
 				>
@@ -518,14 +517,14 @@ const DataTable = ({
 						{nonfluid ? <div className="clearFix" /> : null}
 					</>
 					<ResponsiveTableWrapper
-						className={classNames(
+						className={clsx(
 							classNameWrapper,
 							pagination ? "fix-margin-pagination" : null,
 						)}
 						nonfluid={nonfluid}
 					>
 						<table
-							className={classNames(
+							className={clsx(
 								"table table-hover",
 								{
 									"table-sm": small !== false,

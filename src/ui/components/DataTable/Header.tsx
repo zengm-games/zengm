@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { type SyntheticEvent, type MouseEvent, Fragment } from "react";
 import type { Col, SortBy, SuperCol } from ".";
 import { range } from "../../../common/utils";
@@ -103,10 +103,10 @@ const SuperCols = ({
 											key={j}
 											className={
 												addBorders
-													? classNames({
+													? clsx({
 															"border-start": j === 0,
 															"border-end": j === adjustedColspan - 1,
-													  })
+														})
 													: undefined
 											}
 										/>
@@ -197,7 +197,7 @@ const Header = ({
 
 					return (
 						<th
-							className={classNames(colClassNames, className)}
+							className={clsx(colClassNames, className)}
 							key={colIndex}
 							onClick={event => {
 								handleColClick(event, colIndex);

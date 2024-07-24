@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { MouseEvent } from "react";
 import PlayerNameLabels from "./PlayerNameLabels";
 import { helpers } from "../util";
@@ -60,7 +60,7 @@ const BoxScoreRow = ({
 
 	return (
 		<tr
-			className={classNames(className, {
+			className={clsx(className, {
 				separator: lastStarter,
 			})}
 			onClick={onClick}

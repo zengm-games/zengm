@@ -16,7 +16,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import classNames from "classnames";
+import clsx from "clsx";
 import { range } from "../../common/utils";
 import type { DropdownOption } from "../hooks/useDropdownOptions";
 
@@ -249,7 +249,7 @@ const FreeAgents = ({
 							<div className="d-block">
 								{godMode ? (
 									<button
-										className={classNames("btn btn-god-mode", {
+										className={clsx("btn btn-god-mode", {
 											"ms-sm-2 mt-2 mt-sm-0": showShowPlayersAffordButton,
 										})}
 										onClick={async () => {

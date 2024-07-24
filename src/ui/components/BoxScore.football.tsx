@@ -14,7 +14,7 @@ import { PLAYER_GAME_STATS } from "../../common/constants.football";
 import type { Col, SortBy } from "./DataTable";
 import updateSortBys from "./DataTable/updateSortBys";
 import { getSortClassName } from "./DataTable/Header";
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	formatClock,
 	formatDownAndDistance,
@@ -453,7 +453,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 				return (
 					<div
 						key={i}
-						className={classNames("d-flex", {
+						className={clsx("d-flex", {
 							"align-items-center justify-content-center": endzoneTeam,
 							"flex-column justify-content-between": yardLine !== undefined,
 						})}

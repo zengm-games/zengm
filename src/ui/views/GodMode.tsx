@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
@@ -37,10 +37,7 @@ const GodMode = (props: View<"godMode">) => {
 			</p>
 
 			<button
-				className={classNames(
-					"btn btn-lg",
-					godMode ? "btn-success" : "btn-god-mode",
-				)}
+				className={clsx("btn btn-lg", godMode ? "btn-success" : "btn-god-mode")}
 				onClick={handleGodModeToggle}
 			>
 				{godMode ? "Disable God Mode" : "Enable God Mode"}

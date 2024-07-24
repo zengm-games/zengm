@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { toWorker, useLocalPartial } from "../util";
@@ -74,7 +74,7 @@ const ForceWin = ({
 					{[game.teams[1], game.teams[0]].map(({ tid }, index) => (
 						<button
 							key={index}
-							className={classNames(
+							className={clsx(
 								"btn btn-xs",
 								tid === forceWin
 									? "btn-outline-god-mode"
@@ -104,7 +104,7 @@ const ForceWin = ({
 					))}
 					{allowTie ? (
 						<button
-							className={classNames(
+							className={clsx(
 								"btn btn-xs",
 								"tie" === forceWin
 									? "btn-outline-god-mode"

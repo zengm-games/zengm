@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { bySport, getBestPlayerBoxScore, isSport } from "../../../common";
 import { getCols, helpers, useLocalPartial } from "../../util";
 import React, { memo, type ReactNode } from "react";
@@ -185,14 +185,11 @@ const ScoreBox = memo(
 
 		const scoreBox = (
 			<div
-				className={classNames(
-					"flex-grow-1 w-100",
-					small ? "d-flex" : undefined,
-				)}
+				className={clsx("flex-grow-1 w-100", small ? "d-flex" : undefined)}
 				style={small ? smallStyle : undefined}
 			>
 				<div
-					className={classNames(
+					className={clsx(
 						"border-light",
 						actions.length > 0 ? "border-end-0" : undefined,
 					)}
@@ -212,12 +209,12 @@ const ScoreBox = memo(
 					) : allStarGame && !final ? (
 						[1, 2].map(i => (
 							<div
-								className={classNames("d-flex align-items-center", {
+								className={clsx("d-flex align-items-center", {
 									"score-box-all-star": !small,
 								})}
 								key={i}
 							>
-								<div className={classNames("p-1", { "pe-5": small })}>
+								<div className={clsx("p-1", { "pe-5": small })}>
 									<a
 										href={helpers.leagueUrl(["all_star", "teams"])}
 										className={!small ? "fw-bold" : undefined}
@@ -346,7 +343,7 @@ const ScoreBox = memo(
 							return (
 								<div
 									key={i}
-									className={classNames(
+									className={clsx(
 										"d-flex align-items-center alert-bg-color",
 										scoreClassForceWin,
 										userTeamClass,
@@ -363,7 +360,7 @@ const ScoreBox = memo(
 										</a>
 									) : null}
 									<div
-										className={classNames(
+										className={clsx(
 											"d-flex align-items-center score-box-left-wrapper",
 											{
 												"flex-grow-1": small,
@@ -423,7 +420,7 @@ const ScoreBox = memo(
 										) : null}
 										{final ? (
 											<div
-												className={classNames(
+												className={clsx(
 													"text-body text-end align-self-stretch d-flex align-items-center alert-bg-color",
 													scoreClass,
 													userTeamClass,
@@ -516,7 +513,7 @@ const ScoreBox = memo(
 						{scoreBox}
 						<div className="btn-group-vertical score-box-action">
 							{actions.map((action, i) => {
-								const classNameAction = classNames(
+								const classNameAction = clsx(
 									"btn",
 									action.highlight ? "btn-success" : "btn-light-bordered-2",
 								);

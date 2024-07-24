@@ -1,7 +1,7 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers, logEvent } from "../../util";
-import classNames from "classnames";
+import clsx from "clsx";
 import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo";
 import {
 	PlayerBioInfoRowButton,
@@ -125,7 +125,7 @@ export const RacesEditor = ({
 							<div className="col-6">
 								<input
 									type="text"
-									className={classNames("form-control", {
+									className={clsx("form-control", {
 										"is-invalid": isInvalidNumber(
 											helpers.localeParseFloat(rows.frequency),
 										),
@@ -367,7 +367,7 @@ export const CollegesEditor = ({
 						</label>
 						<input
 							type="text"
-							className={classNames("form-control", {
+							className={clsx("form-control", {
 								"is-invalid": isInvalidFraction,
 							})}
 							style={{ maxWidth: 100 }}
@@ -426,7 +426,7 @@ export const CollegesEditor = ({
 								<div style={smallColStyle}>
 									<input
 										type="text"
-										className={classNames("form-control", {
+										className={clsx("form-control", {
 											"is-invalid": isInvalidNumber(
 												helpers.localeParseFloat(row.frequency),
 											),
@@ -652,7 +652,7 @@ export const NamesEditor = ({
 					{(["first", "last"] as const).map(type => (
 						<li key={type} className="nav-item">
 							<a
-								className={classNames("nav-link", {
+								className={clsx("nav-link", {
 									active: type === firstOrLast,
 								})}
 								onClick={() => {
@@ -692,7 +692,7 @@ export const NamesEditor = ({
 									<div style={smallColStyle}>
 										<input
 											type="text"
-											className={classNames("form-control", {
+											className={clsx("form-control", {
 												"is-invalid": isInvalidNumber(
 													helpers.localeParseFloat(row.frequency),
 												),

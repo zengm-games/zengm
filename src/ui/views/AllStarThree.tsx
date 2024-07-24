@@ -5,7 +5,7 @@ import { PlayPauseNext } from "../components";
 import { useEffect, useState } from "react";
 import { isSport } from "../../common";
 import { ContestantProfiles, EditContestants, ScoreTable } from "./AllStarDunk";
-import classNames from "classnames";
+import clsx from "clsx";
 import { range } from "../../common/utils";
 
 const NUM_BALLS_PER_RACK = 5;
@@ -19,7 +19,7 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 	return (
 		<div className="row" style={{ maxWidth: 800 }}>
 			{rackNames.map((name, i) => (
-				<div key={i} className={classNames("col-12 col-sm", highlight(i))}>
+				<div key={i} className={clsx("col-12 col-sm", highlight(i))}>
 					<div className="fw-bold text-center my-1">{name}</div>
 					<div className="d-flex mb-2">
 						{range(NUM_BALLS_PER_RACK).map(j => {
@@ -60,7 +60,7 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 													? {
 															filter: "grayscale(100%)",
 															opacity: 0.7,
-													  }
+														}
 													: undefined),
 											}}
 										/>

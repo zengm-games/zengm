@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 
 const Footer = ({
 	colOrder,
@@ -39,10 +39,7 @@ const Footer = ({
 						if (value != null && Object.hasOwn(value, "value")) {
 							return (
 								<th
-									className={classNames(
-										value.classNames,
-										highlightColClassNames,
-									)}
+									className={clsx(value.classNames, highlightColClassNames)}
 									key={colIndex}
 								>
 									{value.value}
@@ -51,7 +48,7 @@ const Footer = ({
 						}
 
 						return (
-							<th key={colIndex} className={classNames(highlightColClassNames)}>
+							<th key={colIndex} className={clsx(highlightColClassNames)}>
 								{value}
 							</th>
 						);

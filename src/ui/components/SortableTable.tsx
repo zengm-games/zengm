@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	createContext,
 	useContext,
@@ -121,7 +121,7 @@ const Row = ({
 
 	const isDragged = draggedIndex !== undefined;
 	const selected = clickedIndex === index;
-	const rowLabel = rowLabels ? rowLabels[index] ?? "" : undefined;
+	const rowLabel = rowLabels ? (rowLabels[index] ?? "") : undefined;
 
 	const className: string | undefined = rowClassName
 		? rowClassName({ index, isDragged, value })
@@ -150,7 +150,7 @@ const Row = ({
 
 	return (
 		<tr
-			className={classNames(className, {
+			className={clsx(className, {
 				"table-warning": clicked,
 				"opacity-0": !overlay && draggedIndex === index,
 			})}
@@ -172,7 +172,7 @@ const Row = ({
 				<td className="p-0" />
 			) : (
 				<td
-					className={classNames("roster-handle p-0", {
+					className={clsx("roster-handle p-0", {
 						"table-info": !selected && highlight,
 						"table-secondary": !selected && !highlight,
 						"user-select-none": isDragged,

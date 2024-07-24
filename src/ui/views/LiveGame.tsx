@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	Component,
 	type ChangeEvent,
@@ -65,11 +65,11 @@ class PlayerRow extends Component<PlayerRowProps> {
 
 		const classes = bySport({
 			baseball: undefined,
-			basketball: classNames({
+			basketball: clsx({
 				"table-warning": p.inGame,
 			}),
 			football: undefined,
-			hockey: classNames({
+			hockey: clsx({
 				"table-warning": p.inGame,
 				"table-danger": p.inPenaltyBox,
 			}),
@@ -163,7 +163,7 @@ const PlayByPlayEntry = memo(
 				{entry.t !== undefined ? (
 					<TeamLogoInline
 						alt={boxScore.teams[entry.t].abbrev}
-						className={classNames("flex-shrink-0", {
+						className={clsx("flex-shrink-0", {
 							// If there is a time line, then add some margin to the top, looks better.
 							// If it's just score and no time, then that's football, and no margin looks more consistent. So don't check score here.
 							"mt-1": !entry.textOnly && entry.time,
@@ -175,7 +175,7 @@ const PlayByPlayEntry = memo(
 					/>
 				) : null}
 				<div
-					className={classNames(
+					className={clsx(
 						"flex-grow-1 align-self-center me-2",
 						entry.textOnly ? "fw-bold" : undefined,
 						entry.t !== undefined ? "ms-2" : undefined,

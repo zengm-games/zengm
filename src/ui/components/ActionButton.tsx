@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	type ButtonHTMLAttributes,
 	type MouseEvent,
@@ -53,7 +53,7 @@ const ActionButton = ({
 		<button
 			ref={button}
 			type={type}
-			className={classNames(
+			className={clsx(
 				`btn btn-${variant}`,
 				size ? `btn-${size}` : undefined,
 				className,
@@ -73,7 +73,7 @@ const ActionButton = ({
 				maintainWidth
 					? {
 							minWidth: minWidth.current,
-					  }
+						}
 					: undefined
 			}
 		>

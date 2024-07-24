@@ -3,7 +3,7 @@ import { JerseyNumber } from "../../components";
 import { helpers, confirm, toWorker, logEvent } from "../../util";
 import type { View } from "../../../common/types";
 import { PLAYER } from "../../../common";
-import classNames from "classnames";
+import clsx from "clsx";
 import useLocalStorageState from "use-local-storage-state";
 import { orderBy } from "../../../common/utils";
 
@@ -504,7 +504,7 @@ const RetiredJerseyNumbers = ({
 				</div>
 			)}
 			<div
-				className={classNames("d-flex", {
+				className={clsx("d-flex", {
 					"mb-3": godMode || tid === userTid || pagination,
 				})}
 			>

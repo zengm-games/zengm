@@ -12,7 +12,7 @@ import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 import { PHASE } from "../../../common";
 import { ReferenceLine } from "../Message/OwnerMoodsChart";
-import classNames from "classnames";
+import clsx from "clsx";
 
 const HEIGHT = 200;
 
@@ -77,7 +77,7 @@ const Chart = ({
 
 	return (
 		<div
-			className={classNames("position-relative", className)}
+			className={clsx("position-relative", className)}
 			style={{
 				maxWidth: MAX_WIDTH,
 			}}

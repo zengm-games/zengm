@@ -3,7 +3,7 @@ import { getCols, gradientStyleFactory, helpers } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import type { Col } from "../components/DataTable";
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState } from "react";
 
 const gradientStyle = gradientStyleFactory(0.38, 0.49, 0.51, 0.62);
@@ -35,7 +35,7 @@ const HeadToHeadAll = ({
 		...getCols(["Team"]),
 		...teamsFiltered.map((t): Col => {
 			return {
-				classNames: classNames(
+				classNames: clsx(
 					"text-center",
 					userTid === t.tid ? "table-info" : undefined,
 				),
@@ -55,7 +55,7 @@ const HeadToHeadAll = ({
 			key: t.tid,
 			data: [
 				{
-					classNames: classNames(userTid === t.tid ? "table-info" : undefined),
+					classNames: clsx(userTid === t.tid ? "table-info" : undefined),
 					value: (
 						<a
 							href={helpers.leagueUrl([

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useEffect, useState, type ReactNode, type FormEvent } from "react";
 import { ACCOUNT_API_URL, EMAIL_ADDRESS, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
@@ -140,7 +140,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 					<input type="hidden" name="action" value="reset_password" />
 					<input type="hidden" name="token" value={token} />
 					<div
-						className={classNames("mb-3", {
+						className={clsx("mb-3", {
 							"text-danger": state.errorMessagePassword !== undefined,
 						})}
 					>
@@ -149,7 +149,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 						</label>
 						<input
 							type="password"
-							className={classNames("form-control", {
+							className={clsx("form-control", {
 								"is-invalid": state.errorMessagePassword !== undefined,
 							})}
 							id="resetpw-password"
@@ -159,7 +159,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 						<span className="form-text">{state.errorMessagePassword}</span>
 					</div>
 					<div
-						className={classNames("mb-3", {
+						className={clsx("mb-3", {
 							"text-danger": state.errorMessagePassword2 !== undefined,
 						})}
 					>
@@ -168,7 +168,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 						</label>
 						<input
 							type="password"
-							className={classNames("form-control", {
+							className={clsx("form-control", {
 								"is-invalid": state.errorMessagePassword2 !== undefined,
 							})}
 							id="resetpw-password2"

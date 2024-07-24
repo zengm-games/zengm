@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useRef } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { DEFAULT_TEAM_COLORS } from "../../common";
@@ -82,14 +82,14 @@ const JerseyNumber = ({
 				window.mobile
 					? () => {
 							preventNextClick.current = true;
-					  }
+						}
 					: undefined
 			}
 			overlay={<Tooltip id={id}>{text}</Tooltip>}
 			placement="bottom"
 		>
 			<div
-				className={classNames(
+				className={clsx(
 					"d-flex align-items-center justify-content-center",
 					className,
 					onClick ? "cursor-pointer" : undefined,
@@ -111,7 +111,7 @@ const JerseyNumber = ({
 								} else {
 									onClick();
 								}
-						  }
+							}
 						: undefined
 				}
 			>

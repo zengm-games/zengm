@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { memo, type SyntheticEvent } from "react";
 import { toWorker, useLocalPartial } from "../util";
 
@@ -26,7 +26,7 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 	if (watch > 0) {
 		return (
 			<span
-				className={classNames(
+				className={clsx(
 					`glyphicon glyphicon-flag watch watch-active-${watch}`,
 					className,
 				)}
@@ -40,7 +40,7 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 
 	return (
 		<span
-			className={classNames("glyphicon glyphicon-flag watch", className)}
+			className={clsx("glyphicon glyphicon-flag watch", className)}
 			onClick={handleClick}
 			title="Add to Watch List"
 		/>

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 type Props = {
 	className?: string | null;
 	children: any;
@@ -9,7 +9,7 @@ type Props = {
 const ResponsiveTableWrapper = ({ className, children, nonfluid }: Props) => {
 	return (
 		<div
-			className={classNames(
+			className={clsx(
 				"table-responsive small-scrollbar",
 				{
 					"table-nonfluid": nonfluid,

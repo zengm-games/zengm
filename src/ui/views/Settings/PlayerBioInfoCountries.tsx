@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	type Defaults,
 	formatPlayerBioInfoState,
@@ -414,7 +414,7 @@ export const CountriesEditor = ({
 									<div style={smallColStyle}>
 										<input
 											type="text"
-											className={classNames("form-control", {
+											className={clsx("form-control", {
 												"is-invalid": isInvalidNumber(
 													helpers.localeParseFloat(country.frequency),
 												),

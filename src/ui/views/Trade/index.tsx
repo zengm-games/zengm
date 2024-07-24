@@ -7,7 +7,7 @@ import Buttons from "./Buttons";
 import type { TradeClearType } from "./Buttons";
 import Summary from "./Summary";
 import type { TradeTeams, View } from "../../../common/types";
-import classNames from "classnames";
+import clsx from "clsx";
 import { SaveTrade } from "../../components";
 
 export type HandleToggle = (
@@ -438,7 +438,7 @@ const Trade = (props: View<"trade">) => {
 							) : null}
 							{state.message ? (
 								<div
-									className={classNames(
+									className={clsx(
 										"alert mb-0",
 										state.accepted ? "alert-success" : "alert-info",
 										{
@@ -474,7 +474,7 @@ const Trade = (props: View<"trade">) => {
 							) : null}
 
 							<div
-								className={classNames({
+								className={clsx({
 									"trade-extra-margin-bottom": multiTeamMode,
 									"mt-3": summary.warning || state.message,
 								})}

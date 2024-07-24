@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import type { View } from "../../common/types";
@@ -36,12 +36,12 @@ const PlayerList = ({
 			{players.map((p, i) => (
 				<li
 					key={p.pid}
-					className={classNames({
+					className={clsx({
 						"mt-2": i > 0,
 					})}
 				>
 					<span
-						className={classNames({
+						className={clsx({
 							"p-1 table-info": userTid === p.tid,
 						})}
 					>
@@ -136,12 +136,12 @@ const TeamList = ({
 			{teams.map((t, i) => (
 				<li
 					key={t.tid}
-					className={classNames({
+					className={clsx({
 						"mt-3": i > 0,
 					})}
 				>
 					<span
-						className={classNames({
+						className={clsx({
 							"p-1 table-info": userTid === t.tid,
 						})}
 					>

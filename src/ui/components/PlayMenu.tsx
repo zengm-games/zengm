@@ -2,7 +2,7 @@ import { useEffect, type MouseEvent, forwardRef } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
-import classNames from "classnames";
+import clsx from "clsx";
 
 type Props = {
 	lid: number | undefined;
@@ -77,7 +77,7 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 			ref={ref}
 		>
 			<Dropdown.Toggle
-				className={classNames(
+				className={clsx(
 					"play-button",
 					spectator ? "play-button-danger" : "play-button-success",
 				)}

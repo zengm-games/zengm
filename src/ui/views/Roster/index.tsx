@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
@@ -200,7 +200,7 @@ const Roster = ({
 				getId={p => String(p.pid)}
 				highlightHandle={({ index }) => index < numPlayersOnCourt}
 				rowClassName={({ index, isDragged, value: p }) =>
-					classNames({
+					clsx({
 						separator:
 							!isDragged &&
 							((isSport("basketball") &&

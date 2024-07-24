@@ -1,6 +1,6 @@
 import { PlayerPicture } from ".";
 import SafeHtml from "./SafeHtml";
-import classNames from "classnames";
+import clsx from "clsx";
 import { helpers } from "../util";
 import type { View, LogEventType } from "../../common/types";
 import { categories, types } from "../../common/transactionInfo";
@@ -97,7 +97,7 @@ const NewsBlock = ({
 	return (
 		<div className="card">
 			<div
-				className={classNames(
+				className={clsx(
 					"d-flex align-items-center",
 					event.tids && event.tids.includes(userTid)
 						? "table-info"

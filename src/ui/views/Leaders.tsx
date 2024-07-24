@@ -7,7 +7,7 @@ import {
 } from "../components";
 import type { View } from "../../common/types";
 import useClickable from "../hooks/useClickable";
-import classNames from "classnames";
+import clsx from "clsx";
 import { bySport, isSport } from "../../common";
 
 const Row = ({
@@ -37,7 +37,7 @@ const Row = ({
 
 	return (
 		<tr
-			className={classNames({
+			className={clsx({
 				"table-danger": highlightActiveAndHOF && p.hof,
 				"table-success": highlightActiveAndHOF && p.retiredYear === Infinity,
 				"table-info": p.userTeam,

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { groupBy } from "../../common/utils";
 import { Fragment, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar";
@@ -269,7 +269,7 @@ const Category = ({
 						className="col-sm-6 col-md-4 col-xl-3"
 					>
 						<div
-							className={classNames("card", achievementClassNames(achievement))}
+							className={clsx("card", achievementClassNames(achievement))}
 							key={achievement.slug}
 							style={{
 								minHeight: 109,
@@ -277,7 +277,7 @@ const Category = ({
 						>
 							<div className="card-body">
 								<h4
-									className={classNames("card-title", {
+									className={clsx("card-title", {
 										"fw-bold": highlight,
 									})}
 								>
@@ -298,11 +298,11 @@ const Category = ({
 														{count}
 													</span>
 												);
-										  })
+											})
 										: null}
 								</h4>
 								<p
-									className={classNames("card-text", {
+									className={clsx("card-text", {
 										"fw-bold": highlight,
 									})}
 								>

@@ -4,7 +4,7 @@ import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, groupAwards } from "../../util";
 import type { View } from "../../../common/types";
-import classNames from "classnames";
+import clsx from "clsx";
 import { formatStatGameHigh } from "../PlayerStats";
 import SeasonIcons from "./SeasonIcons";
 import TopStuff from "./TopStuff";
@@ -182,7 +182,7 @@ const StatsTable = ({
 				{hasRegularSeasonStats ? (
 					<li className="nav-item">
 						<button
-							className={classNames("nav-link", {
+							className={clsx("nav-link", {
 								active: playoffs === false,
 								"border-bottom": playoffs === false,
 							})}
@@ -197,7 +197,7 @@ const StatsTable = ({
 				{hasPlayoffStats ? (
 					<li className="nav-item">
 						<button
-							className={classNames("nav-link", {
+							className={clsx("nav-link", {
 								active: playoffs === true,
 								"border-bottom": playoffs === true,
 							})}
@@ -212,7 +212,7 @@ const StatsTable = ({
 				{hasRegularSeasonStats && hasPlayoffStats ? (
 					<li className="nav-item">
 						<button
-							className={classNames("nav-link", {
+							className={clsx("nav-link", {
 								active: playoffs === "combined",
 								"border-bottom": playoffs === "combined",
 							})}

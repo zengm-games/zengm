@@ -18,7 +18,7 @@ import {
 	getValidMoves,
 	isDunkContest,
 } from "../../common/dunkContest";
-import classNames from "classnames";
+import clsx from "clsx";
 import { getHeightString } from "../components/Height";
 import { range } from "../../common/utils";
 
@@ -390,7 +390,7 @@ const UserDunkForm = ({
 	];
 
 	return (
-		<div className={classNames("mb-3", classNameTop)}>
+		<div className={clsx("mb-3", classNameTop)}>
 			<h3>{name}</h3>
 			<div
 				className="d-flex flex-wrap"
@@ -415,7 +415,7 @@ const UserDunkForm = ({
 					{fields.map(({ key, label, options }, i) => (
 						<div
 							key={key}
-							className={classNames(
+							className={clsx(
 								"d-flex align-items-center",
 								i > 0 ? "mt-1" : undefined,
 							)}
@@ -553,7 +553,7 @@ export const ContestantProfiles = ({
 							/>
 						</div>
 						<div
-							className={classNames(
+							className={clsx(
 								"mt-2",
 								tid === userTid ? "table-info" : undefined,
 							)}

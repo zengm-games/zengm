@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { type MouseEvent, useCallback, useEffect, useState } from "react";
 import { GAME_NAME, WEBSITE_ROOT } from "../../../common";
 
@@ -73,7 +73,7 @@ const Storage = () => {
 			<p>
 				Status:{" "}
 				<span
-					className={classNames({
+					className={clsx({
 						"text-success": status === "enabled",
 						"text-danger": status === "disabled" || status === "failed",
 					})}

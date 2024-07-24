@@ -2,7 +2,7 @@ import { useReducer, useState } from "react";
 import type { Dispatch } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types";
 import type { Conf, Div, Player, View } from "../../../common/types";
-import classNames from "classnames";
+import clsx from "clsx";
 import { arrayMoveImmutable } from "array-move";
 import UpsertTeamModal from "./UpsertTeamModal";
 import { StickyBottomButtons } from "../../components";
@@ -438,7 +438,7 @@ const CardHeader = ({
 	const [controlledName, setControlledName] = useState(name);
 
 	return (
-		<div className={classNames("card-header", renaming ? "p-1" : "px-2")}>
+		<div className={clsx("card-header", renaming ? "p-1" : "px-2")}>
 			{renaming ? (
 				<form
 					className="d-flex"

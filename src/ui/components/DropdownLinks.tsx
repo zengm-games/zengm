@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { memo, useCallback, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
@@ -185,7 +185,7 @@ const MenuItem = ({
 		return (
 			<Dropdown.Item
 				{...anchorProps}
-				className={classNames({
+				className={clsx({
 					"god-mode": menuItem.godMode,
 				})}
 			>
@@ -260,10 +260,7 @@ const DropdownLinks = memo(
 			[openID],
 		);
 		return (
-			<Nav
-				navbar
-				className={classNames(className, "dropdown-links navbar-nav")}
-			>
+			<Nav navbar className={clsx(className, "dropdown-links navbar-nav")}>
 				{menuItems.map((menuItem, i) => (
 					<MenuItem
 						godMode={godMode}

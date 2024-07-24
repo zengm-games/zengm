@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { type FormEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import {
@@ -137,7 +137,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Username
 					</label>
 					<input
-						className={classNames("form-control", {
+						className={clsx("form-control", {
 							"is-invalid": state.errorMessageUsername !== undefined,
 						})}
 						id="register-username"
@@ -148,7 +148,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						{fields.username.description}
 					</span>
 					<span
-						className={classNames("form-text", {
+						className={clsx("form-text", {
 							"text-danger": state.errorMessageUsername !== undefined,
 						})}
 					>
@@ -160,7 +160,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Email Address
 					</label>
 					<input
-						className={classNames("form-control", {
+						className={clsx("form-control", {
 							"is-invalid": state.errorMessageEmail !== undefined,
 						})}
 						id="register-email"
@@ -168,7 +168,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						{...fields.email.inputProps}
 					/>
 					<span
-						className={classNames("form-text", {
+						className={clsx("form-text", {
 							"text-danger": state.errorMessageEmail !== undefined,
 						})}
 					>
@@ -180,7 +180,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Password
 					</label>
 					<input
-						className={classNames("form-control", {
+						className={clsx("form-control", {
 							"is-invalid": state.errorMessagePassword !== undefined,
 						})}
 						id="register-password"
@@ -189,7 +189,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						autoComplete="new-password"
 					/>
 					<span
-						className={classNames("form-text", {
+						className={clsx("form-text", {
 							"text-danger": state.errorMessagePassword !== undefined,
 						})}
 					>
@@ -201,7 +201,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Repeat Password
 					</label>
 					<input
-						className={classNames("form-control", {
+						className={clsx("form-control", {
 							"is-invalid": state.errorMessagePassword2 !== undefined,
 						})}
 						id="register-password2"
@@ -210,7 +210,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						autoComplete="new-password"
 					/>
 					<span
-						className={classNames("form-text", {
+						className={clsx("form-text", {
 							"text-danger": state.errorMessagePassword2 !== undefined,
 						})}
 					>

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useEffect, useReducer, useRef } from "react";
 import {
 	DraftAbbrev,
@@ -158,7 +158,7 @@ const Row = ({
 
 		return (
 			<td
-				className={classNames({
+				className={clsx({
 					"table-success": highlighted && !userTeam,
 					"table-info": highlighted && userTeam,
 				})}
@@ -171,20 +171,20 @@ const Row = ({
 
 	const row = (
 		<tr
-			className={classNames({
+			className={clsx({
 				"table-warning": clicked,
 			})}
 			onClick={toggleClicked}
 		>
 			<td
-				className={classNames({
+				className={clsx({
 					"table-info": userTeam,
 				})}
 			>
 				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
 			</td>
 			<td
-				className={classNames(
+				className={clsx(
 					{
 						"table-info": userTeam,
 					},
@@ -443,7 +443,7 @@ const DraftLotteryTable = (props: Props) => {
 				<p />
 				<ResponsiveTableWrapper nonfluid>
 					<table
-						className={classNames(
+						className={clsx(
 							"table table-striped table-borderless table-sm table-hover",
 							stickyClass,
 						)}

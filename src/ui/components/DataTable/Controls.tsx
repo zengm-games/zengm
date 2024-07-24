@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../../common";
@@ -99,12 +99,9 @@ const Controls = ({
 						</HelpPopover>
 					</div>
 					<a
-						className={classNames(
-							"btn btn-sm btn-light-bordered cursor-pointer",
-							{
-								active: enableFilters,
-							},
-						)}
+						className={clsx("btn btn-sm btn-light-bordered cursor-pointer", {
+							active: enableFilters,
+						})}
 						onClick={onToggleFilters}
 						style={style}
 						title="Filter"

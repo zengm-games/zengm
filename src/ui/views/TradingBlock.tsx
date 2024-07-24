@@ -12,7 +12,7 @@ import {
 import type { Col } from "../components/DataTable";
 import type { View } from "../../common/types";
 import type api from "../../worker/api";
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
@@ -385,7 +385,7 @@ export const OfferTable = ({
 						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>
 					) : null,
 					sortValue: offer.summary.warningAmount ?? 0,
-					classNames: classNames(
+					classNames: clsx(
 						"text-center",
 						offer.summary.warning ? "table-danger" : undefined,
 					),

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { PlayerContract } from "../../common/types";
 import { helpers, useLocal, useLocalPartial } from "../util";
 
@@ -61,7 +61,7 @@ export const ContractExp = ({
 
 	return (
 		<span
-			className={classNames({
+			className={clsx({
 				"fst-italic": justDrafted,
 				"fw-bold": expiring,
 			})}
@@ -69,8 +69,8 @@ export const ContractExp = ({
 				justDrafted
 					? NON_GUARANTEED_CONTRACT_TEXT
 					: expiring
-					? "Expiring contract"
-					: undefined
+						? "Expiring contract"
+						: undefined
 			}
 		>
 			{override ?? p.contract.exp}

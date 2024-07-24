@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState } from "react";
 import { MOOD_TRAITS } from "../../common";
 import type {
@@ -60,7 +60,7 @@ const componentText = (
 };
 
 const highlightColor = (sum: number) =>
-	classNames({
+	clsx({
 		"text-danger": sum < 0,
 		"text-success": sum > 0,
 		"text-body-secondary": sum === 0,
@@ -183,7 +183,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				<ul className="nav nav-tabs mb-2">
 					<li className="nav-item">
 						<a
-							className={classNames("nav-link", {
+							className={clsx("nav-link", {
 								active: type === "user",
 							})}
 							onClick={event => {
@@ -197,7 +197,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 					{canShowCurrent ? (
 						<li className="nav-item">
 							<a
-								className={classNames("nav-link", {
+								className={clsx("nav-link", {
 									active: type === "current",
 								})}
 								onClick={event => {
@@ -257,7 +257,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => {
 		return (
 			<button
-				className={classNames(
+				className={clsx(
 					"btn btn-xs d-flex",
 					className,
 					initialType === "user"

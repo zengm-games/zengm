@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState, type FormEvent, useEffect } from "react";
 import { groupBy } from "../../../common/utils";
 import { ActionButton, StickyBottomButtons } from "../../components";
@@ -134,7 +134,7 @@ const GodModeSettingsButton = ({
 	return (
 		<button
 			type="button"
-			className={classNames("btn btn-secondary", className)}
+			className={clsx("btn btn-secondary", className)}
 			disabled={disabled}
 			onClick={onClick}
 		>
@@ -501,7 +501,7 @@ const SettingsForm = ({
 						{!hideGodModeToggle ? (
 							<div className="btn-group">
 								<button
-									className={classNames(
+									className={clsx(
 										"btn text-nowrap",
 										godMode ? "btn-secondary" : "btn-god-mode",
 									)}

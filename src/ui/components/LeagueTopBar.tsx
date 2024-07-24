@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalPartial, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
@@ -13,7 +13,7 @@ const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 			onClick={toggle}
 		>
 			<span
-				className={classNames(
+				className={clsx(
 					"glyphicon",
 					show ? "glyphicon-menu-right" : "glyphicon-menu-left",
 				)}
@@ -193,7 +193,7 @@ const LeagueTopBar = memo(() => {
 							game={game}
 							small
 						/>
-				  ))
+					))
 				: null}
 		</div>
 	);

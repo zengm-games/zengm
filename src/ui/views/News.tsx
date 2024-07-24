@@ -2,7 +2,7 @@ import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
-import classNames from "classnames";
+import clsx from "clsx";
 import { NewsBlock } from "../components";
 import { categories, types } from "../../common/transactionInfo";
 
@@ -48,10 +48,7 @@ const News = ({
 					return (
 						<div
 							key={category}
-							className={classNames(
-								"form-check form-check-inline mb-2 ms-2",
-								{},
-							)}
+							className={clsx("form-check form-check-inline mb-2 ms-2", {})}
 						>
 							<input
 								className="form-check-input"

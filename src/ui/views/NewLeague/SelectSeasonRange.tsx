@@ -1,5 +1,5 @@
 import { MAX_SEASON, MIN_SEASON } from ".";
-import classNames from "classnames";
+import clsx from "clsx";
 import { range } from "../../../common/utils";
 
 export const SelectSeasonRange = ({
@@ -18,10 +18,7 @@ export const SelectSeasonRange = ({
 	const allSeasons = range(MIN_SEASON, MAX_SEASON + 1);
 
 	return (
-		<div
-			className={classNames("input-group", className)}
-			style={{ width: 180 }}
-		>
+		<div className={clsx("input-group", className)} style={{ width: 180 }}>
 			{([0, 1] as const).map(i => {
 				return (
 					<select

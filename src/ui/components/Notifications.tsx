@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { emitter, type Message } from "../util/notify";
@@ -53,10 +53,7 @@ const Notification = ({
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<div
-			className={classNames("notification", extraClass)}
-			ref={notificationElement}
-		>
+		<div className={clsx("notification", extraClass)} ref={notificationElement}>
 			<button
 				className="notification-close"
 				onClick={remove}

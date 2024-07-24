@@ -8,7 +8,7 @@ import realtimeUpdate from "../../util/realtimeUpdate";
 import { getCols, helpers, toWorker } from "../../util";
 import { groupByUnique } from "../../../common/utils";
 import type { Col } from "../../components/DataTable";
-import classNames from "classnames";
+import clsx from "clsx";
 import { bySport, isSport } from "../../../common";
 
 const suffixes = {
@@ -369,7 +369,7 @@ const PickStat = ({
 
 	return (
 		<div
-			className={classNames("input-group", className)}
+			className={clsx("input-group", className)}
 			style={{
 				maxWidth: 600,
 			}}

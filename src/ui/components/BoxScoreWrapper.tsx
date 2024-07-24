@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	useCallback,
 	useEffect,
@@ -156,7 +156,6 @@ export const HeadlineScore = ({
 		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
 
 	const shootout = t0.sPts !== undefined;
-	console.log("shootout", shootout);
 
 	return (
 		<div
@@ -453,7 +452,7 @@ const NextButton = ({
 				</button>
 			) : (
 				<a
-					className={classNames("btn", "btn-light-bordered", {
+					className={clsx("btn", "btn-light-bordered", {
 						disabled: nextGid === undefined,
 					})}
 					href={helpers.leagueUrl([
@@ -623,7 +622,7 @@ const DetailedScore = ({
 			{showNextPrev ? (
 				<div className="me-4">
 					<a
-						className={classNames("btn", "btn-light-bordered", {
+						className={clsx("btn", "btn-light-bordered", {
 							disabled: prevGid === undefined,
 						})}
 						href={helpers.leagueUrl([

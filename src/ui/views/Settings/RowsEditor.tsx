@@ -11,7 +11,7 @@ import {
 	toWorker,
 } from "../../util";
 import { godModeRequiredMessage } from "./SettingsFormOptions";
-import classNames from "classnames";
+import clsx from "clsx";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
 import Modal from "../../components/Modal";
 
@@ -22,12 +22,12 @@ type RowsState<Type> = Type extends "injuries"
 			name: string;
 			frequency: string;
 			games: string;
-	  }[]
+		}[]
 	: {
 			id: number;
 			reason: string;
 			frequency: string;
-	  }[];
+		}[];
 
 const formatRows = <Type extends "injuries" | "tragicDeaths">(
 	rows: Rows<Type>,
@@ -180,12 +180,12 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 											name: "Injury",
 											frequency: "1",
 											games: "1",
-									  }
+										}
 									: {
 											id: Math.random(),
 											reason: "PLAYER_NAME died.",
 											frequency: "1",
-									  };
+										};
 
 							if (position === "top") {
 								setRows(rows => [newRow as any, ...rows]);
@@ -498,7 +498,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 													<div className="col-3">
 														<input
 															type="text"
-															className={classNames("form-control", {
+															className={clsx("form-control", {
 																"is-invalid": isInvalidNumber(
 																	helpers.localeParseFloat(row.frequency),
 																),
@@ -510,7 +510,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 													<div className="col-3">
 														<input
 															type="text"
-															className={classNames("form-control", {
+															className={clsx("form-control", {
 																"is-invalid": isInvalidNumber(
 																	helpers.localeParseFloat((row as any).games),
 																),
@@ -533,7 +533,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 													<div className="col-3 col-md-2 col-xl-1">
 														<input
 															type="text"
-															className={classNames("form-control", {
+															className={clsx("form-control", {
 																"is-invalid": isInvalidNumber(
 																	helpers.localeParseFloat(row.frequency),
 																),

@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
 import { helpers, toWorker } from "../util";
 import { useState } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { range } from "../../common/utils";
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
@@ -113,10 +113,7 @@ const Playoffs = ({
 			) : canEdit ? (
 				<div className="mb-3">
 					<button
-						className={classNames(
-							"btn",
-							editing ? "btn-primary" : "btn-god-mode",
-						)}
+						className={clsx("btn", editing ? "btn-primary" : "btn-god-mode")}
 						onClick={async () => {
 							if (!editing) {
 								setEditing(true);

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { helpers } from "../../util";
 import { ColPtsOrGB, TeamColumn } from "../Standings";
 import type { View } from "../../../common/types";
@@ -47,7 +47,7 @@ const Standings = ({
 						return (
 							<tr
 								key={t.tid}
-								className={classNames({
+								className={clsx({
 									separator:
 										(i === maxPlayoffSeed - 1 ||
 											i === maxPlayoffSeedNoPlayIn - 1) &&

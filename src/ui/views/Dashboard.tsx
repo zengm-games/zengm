@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useCallback, useState, type CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
 
@@ -70,7 +70,7 @@ const DifficultyText = ({
 
 	return (
 		<span
-			className={classNames({
+			className={clsx({
 				"fw-bold": difficulty > DIFFICULTY.Insane,
 				"text-danger": difficulty >= DIFFICULTY.Insane,
 			})}

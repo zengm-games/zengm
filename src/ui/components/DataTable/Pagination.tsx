@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { ReactNode } from "react";
 
 const Pagination = ({
@@ -33,7 +33,7 @@ const Pagination = ({
 		numberedPages.push(
 			<li
 				key={i}
-				className={classNames("page-item", i === currentPage ? "active" : null)}
+				className={clsx("page-item", i === currentPage ? "active" : null)}
 			>
 				{i === currentPage ? (
 					<span className="page-link" onClick={() => onClick(i)}>
@@ -52,7 +52,7 @@ const Pagination = ({
 		<div className="datatable-pagination">
 			<ul className="pagination">
 				<li
-					className={classNames("page-item", {
+					className={clsx("page-item", {
 						disabled: !showPrev,
 					})}
 				>
@@ -65,7 +65,7 @@ const Pagination = ({
 				</li>
 				{numberedPages}
 				<li
-					className={classNames("page-item", {
+					className={clsx("page-item", {
 						disabled: !showNext,
 					})}
 				>

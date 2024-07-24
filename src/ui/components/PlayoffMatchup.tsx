@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import type { View } from "../../common/types";
 import { helpers } from "../util";
 import type { ReactNode } from "react";
@@ -112,7 +112,7 @@ const Team = ({
 
 			return (
 				<li
-					className={classNames("border border-bottom-0", {
+					className={clsx("border border-bottom-0", {
 						"table-info": highlightUser,
 					})}
 				>
@@ -166,7 +166,7 @@ const Team = ({
 
 	return (
 		<li
-			className={classNames("border border-bottom-0", {
+			className={clsx("border border-bottom-0", {
 				"fw-bold": won,
 				"table-info": highlightUser,
 				"table-warning": won && extraHighlight && !highlightUser,
@@ -194,7 +194,7 @@ const Team = ({
 			) : (
 				<div className="me-1 overflow-hidden">
 					<a
-						className={classNames({
+						className={clsx({
 							"text-body-secondary": lost,
 						})}
 						href={helpers.leagueUrl([

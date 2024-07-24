@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { type ChangeEvent, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { ActionButton } from "../../components";
@@ -194,7 +194,7 @@ const AccountInfoForm = ({
 						</label>
 						<div className="input-group">
 							<input
-								className={classNames("form-control", {
+								className={clsx("form-control", {
 									"is-invalid": state.errorMessageUsername !== undefined,
 								})}
 								id="account-username"
@@ -216,7 +216,7 @@ const AccountInfoForm = ({
 							{fields.username.description}
 						</span>
 						<span
-							className={classNames("form-text", {
+							className={clsx("form-text", {
 								"text-danger": state.errorMessageUsername,
 							})}
 						>
@@ -230,7 +230,7 @@ const AccountInfoForm = ({
 						</label>
 						<div className="input-group">
 							<input
-								className={classNames("form-control", {
+								className={clsx("form-control", {
 									"is-invalid": state.errorMessageEmail !== undefined,
 								})}
 								id="account-email"
@@ -249,7 +249,7 @@ const AccountInfoForm = ({
 							</button>
 						</div>
 						<span
-							className={classNames("form-text", {
+							className={clsx("form-text", {
 								"text-danger": state.errorMessageEmail,
 							})}
 						>
@@ -265,7 +265,7 @@ const AccountInfoForm = ({
 						</label>
 						<div className="input-group">
 							<input
-								className={classNames("form-control", {
+								className={clsx("form-control", {
 									"is-invalid": state.errorMessageNewPassword !== undefined,
 								})}
 								id="account-new-password"
@@ -285,7 +285,7 @@ const AccountInfoForm = ({
 							</button>
 						</div>
 						<span
-							className={classNames("form-text", {
+							className={clsx("form-text", {
 								"text-danger": state.errorMessageNewPassword,
 							})}
 						>
@@ -298,7 +298,7 @@ const AccountInfoForm = ({
 							Repeat New Password
 						</label>
 						<input
-							className={classNames("form-control", {
+							className={clsx("form-control", {
 								"is-invalid": state.errorMessageNewPassword2 !== undefined,
 							})}
 							id="account-new-password-2"
@@ -310,7 +310,7 @@ const AccountInfoForm = ({
 							autoComplete="new-password"
 						/>
 						<span
-							className={classNames("form-text", {
+							className={clsx("form-text", {
 								"text-danger": state.errorMessageNewPassword2,
 							})}
 						>
@@ -325,7 +325,7 @@ const AccountInfoForm = ({
 					Confirm Current Password
 				</label>
 				<input
-					className={classNames("form-control", {
+					className={clsx("form-control", {
 						"is-invalid": state.errorMessageOldPassword !== undefined,
 					})}
 					id="account-old-password"
@@ -335,7 +335,7 @@ const AccountInfoForm = ({
 					autoComplete="current-password"
 				/>
 				<span
-					className={classNames("form-text", {
+					className={clsx("form-text", {
 						"text-danger": state.errorMessageOldPassword,
 					})}
 				>

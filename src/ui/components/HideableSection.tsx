@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { type ReactNode } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
@@ -67,7 +67,7 @@ const HideableSection = ({
 	return (
 		<>
 			<div
-				className={classNames(
+				className={clsx(
 					"d-flex align-items-center flex-wrap gap-2 row-gap-0",
 					className,
 					show ? "mb-2" : "mb-3",

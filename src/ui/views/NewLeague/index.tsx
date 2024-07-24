@@ -43,7 +43,7 @@ import type {
 	Conf,
 	GameAttributesLeague,
 } from "../../../common/types";
-import classNames from "classnames";
+import clsx from "clsx";
 import { descriptions } from "../Settings/settings";
 import LeagueMenu from "./LeagueMenu";
 import LeaguePartPicker from "./LeaguePartPicker";
@@ -1564,7 +1564,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						props.type === "legends" ||
 						props.type === "crossEra" ? (
 							<div
-								className={classNames(
+								className={clsx(
 									"col-sm-6 order-first order-sm-last mb-3 mb-sm-0",
 									{
 										"d-none d-sm-block": props.type === "real",

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { memo, useState, type SyntheticEvent, useLayoutEffect } from "react";
 import { toWorker } from "../util";
 import { hashSavedTrade } from "../../common/hashSavedTrade";
@@ -58,7 +58,7 @@ const SaveTrade = memo(
 		if (!empty && saved !== undefined && saved > 0) {
 			return (
 				<button
-					className={classNames("btn btn-link p-0", className)}
+					className={clsx("btn btn-link p-0", className)}
 					onClick={handleClick}
 					title={"Unsave Trade"}
 				>
@@ -71,7 +71,7 @@ const SaveTrade = memo(
 
 		return (
 			<button
-				className={classNames("btn btn-link p-0", className)}
+				className={clsx("btn btn-link p-0", className)}
 				onClick={handleClick}
 				title="Save Trade"
 				disabled={saved === undefined || empty}

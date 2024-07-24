@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
@@ -361,15 +361,15 @@ const Draft = ({
 			},
 		};
 	});
-	const buttonClasses = classNames("btn", "btn-primary", "btn-xs", {
+	const buttonClasses = clsx("btn", "btn-primary", "btn-xs", {
 		"d-sm-none": !(fantasyDraft || expansionDraft),
 		"d-xl-none": fantasyDraft || expansionDraft,
 	});
-	const wrapperClasses = classNames("row");
+	const wrapperClasses = clsx("row");
 	const colClass =
 		fantasyDraft || expansionDraft ? "col-12 col-xl-6" : "col-sm-6";
-	const undraftedColClasses = classNames(colClass);
-	const draftedColClasses = classNames(colClass);
+	const undraftedColClasses = clsx(colClass);
+	const draftedColClasses = clsx(colClass);
 	return (
 		<>
 			<div className="d-sm-flex">

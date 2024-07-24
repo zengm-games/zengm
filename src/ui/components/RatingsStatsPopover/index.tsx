@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	forwardRef,
 	type RefObject,
@@ -22,7 +22,7 @@ const Icon = forwardRef<
 	return (
 		<span
 			ref={ref}
-			className={classNames(
+			className={clsx(
 				"glyphicon glyphicon-stats watch",
 				watch === 0 ? undefined : `watch-active-${watch}`,
 			)}
@@ -168,7 +168,7 @@ const RatingsStatsPopover = ({
 						LOCAL_WATCH
 							? newWatch => {
 									setLocalWatch(newWatch);
-							  }
+								}
 							: undefined
 					}
 				/>

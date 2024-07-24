@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import {
 	memo,
 	type ReactNode,
@@ -174,7 +174,7 @@ const MenuItem = ({
 		const item = (
 			<li className="nav-item">
 				<a
-					className={classNames("nav-link", {
+					className={clsx("nav-link", {
 						active: menuItem.active ? menuItem.active(pageID, pathname) : false,
 						"god-mode": menuItem.godMode,
 					})}

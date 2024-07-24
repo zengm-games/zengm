@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { type CSSProperties, Fragment } from "react";
 import {
 	ResponsiveTableWrapper,
@@ -131,7 +131,7 @@ const GroupStandingsRow = ({
 	return (
 		<tr
 			key={t.tid}
-			className={classNames({
+			className={clsx({
 				"table-info": t.tid === userTid,
 				"table-warning": clicked,
 				separator,
@@ -166,7 +166,7 @@ const GroupStandingsRow = ({
 									pts: t.stats.pts * t.stats.gp,
 									oppPts: t.stats.oppPts * t.stats.gp,
 									gp: t.stats.gp,
-							  }
+								}
 							: t.stats
 					}
 					type={isSport("basketball") ? "mov" : "diff"}
@@ -325,7 +325,7 @@ const SmallStandingsRow = ({
 	return (
 		<tr
 			key={t.tid}
-			className={classNames({
+			className={clsx({
 				"table-info": t.tid === userTid,
 				"table-warning": clicked,
 				separator: i === maxPlayoffSeed - 1 || i === maxPlayoffSeedNoPlayIn - 1,
@@ -342,8 +342,8 @@ const SmallStandingsRow = ({
 				{usePts
 					? Math.round(t.seasonAttrs.pts)
 					: playoffsByConf
-					? t.gb.conf
-					: t.gb.league}
+						? t.gb.conf
+						: t.gb.league}
 			</td>
 		</tr>
 	);

@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import clsx from "clsx";
 import { helpers } from "../util";
 
 const StatWithChange = ({
@@ -15,7 +15,7 @@ const StatWithChange = ({
 			{helpers.roundStat(children, stat)}
 			{change !== 0 ? (
 				<span
-					className={classNames({
+					className={clsx({
 						"text-success": change > 0,
 						"text-danger": change < 0,
 					})}

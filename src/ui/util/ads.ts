@@ -1,4 +1,9 @@
-import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN, VIDEO_ADS } from "../../common";
+import {
+	AD_DIVS,
+	MOBILE_AD_BOTTOM_MARGIN,
+	VIDEO_ADS,
+	VIDEO_ADS_2,
+} from "../../common";
 import { local, localActions } from "./local";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
@@ -114,6 +119,13 @@ class Ads {
 			window.freestar.queue.push(() => {
 				if (VIDEO_ADS) {
 					window.freestar.newStickyFooter("football-gm_adhesion");
+				}
+
+				if (!window.mobile && VIDEO_ADS_2) {
+					window.freestar.newVideo("FreeStarVideoAdContainer");
+					document
+						.getElementById("FreeStarVideoAdContainer")
+						?.style.removeProperty("display");
 				}
 
 				// Show hidden divs. skyscraper has its own code elsewhere to manage display.

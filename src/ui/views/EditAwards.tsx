@@ -46,12 +46,12 @@ const makeAwardPlayer = (
 							trb: p.stats.trb,
 							blk: p.stats.blk,
 							stl: p.stats.stl,
-					  }
+						}
 					: {
 							pts: p.stats.pts,
 							trb: p.stats.trb,
 							ast: p.stats.ast,
-					  },
+						},
 			football: {
 				pos: pos ?? p.ratings.pos,
 				keyStats: p.stats.keyStats,
@@ -246,13 +246,9 @@ const EditAwards = ({
 		let stats;
 		if (isSport("basketball")) {
 			if (award === "dpoy" || award === "allDefensive") {
-				stats = `${p.stats.trb.toFixed(1)} reb, ${p.stats.blk.toFixed(
-					1,
-				)} blk, ${p.stats.stl.toFixed(1)} stl`;
+				stats = `${helpers.roundStat(p.stats.trb, "trb")} reb, ${helpers.roundStat(p.stats.blk, "blk")} blk, ${helpers.roundStat(p.stats.stl, "stl")} stl`;
 			} else {
-				stats = `${p.stats.pts.toFixed(1)} pts, ${p.stats.trb.toFixed(
-					1,
-				)} reb, ${p.stats.ast.toFixed(1)} ast`;
+				stats = `${helpers.roundStat(p.stats.pts, "pts")} pts, ${helpers.roundStat(p.stats.trb, "reb")} reb, ${helpers.roundStat(p.stats.ast, "ast")} ast`;
 			}
 		} else {
 			stats = p.stats.keyStats;
@@ -330,7 +326,7 @@ const EditAwards = ({
 										{teamSelect}
 									</div>,
 								];
-						  })
+							})
 						: null}
 
 					{isSport("basketball") ? (

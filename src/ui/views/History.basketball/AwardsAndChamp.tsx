@@ -40,7 +40,9 @@ const Winner = ({
 				)
 			</span>
 			<br />
-			{stats.map(stat => `${award[stat].toFixed(1)} ${stat}`).join(", ")}
+			{stats
+				.map(stat => `${helpers.roundStat(award[stat], stat)} ${stat}`)
+				.join(", ")}
 		</>
 	);
 

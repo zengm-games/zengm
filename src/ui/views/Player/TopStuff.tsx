@@ -693,7 +693,15 @@ const TopStuff = ({
 
 			<AwardsSummary awards={player.awards} />
 
-			<Note note={player.note} pid={player.pid} />
+			<div className="mt-3">
+				<Note
+					note={player.note}
+					info={{
+						type: "player",
+						pid: player.pid,
+					}}
+				/>
+			</div>
 		</div>
 	);
 };

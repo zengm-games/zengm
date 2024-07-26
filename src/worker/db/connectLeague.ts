@@ -153,6 +153,7 @@ export interface LeagueDB extends DBSchema {
 		indexes: {
 			"season, tid": [number, number];
 			"tid, season": [number, number];
+			noteBool: 1;
 		};
 	};
 	teamStats: {
@@ -523,6 +524,9 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		unique: true,
 	});
 	teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
+		unique: false,
+	});
+	teamSeasonsStore.createIndex("noteBool", "noteBool", {
 		unique: false,
 	});
 	teamStatsStore.createIndex("season, tid", ["season", "tid"], {
@@ -1461,6 +1465,13 @@ const migrate = async ({
 				},
 			);
 		}
+	}
+
+	if (oldVersion <= 61) {
+		const teamSeasonsStore = transaction.objectStore("teamSeasons");
+		teamSeasonsStore.createIndex("noteBool", "noteBool", {
+			unique: false,
+		});
 	}
 };
 

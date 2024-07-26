@@ -1718,6 +1718,8 @@ export type TeamSeasonWithoutKey = {
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;
 	numPlayersTradedAway: number;
+	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 
 	// w - clinched play-in tournament
 	// x - clinched playoffs

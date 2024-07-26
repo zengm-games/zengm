@@ -1,20 +1,44 @@
 import { useState } from "react";
-import type { Player } from "../../../common/types";
 import { toWorker } from "../../util";
 
 const MAX_WIDTH = 600;
 
-const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
+const Note = ({
+	note,
+	info,
+}: {
+	note: string | undefined;
+	info:
+		| {
+				type: "player";
+				pid: number;
+		  }
+		| {
+				type: "teamSeason";
+				tid: number;
+				season: number;
+		  };
+}) => {
 	const [editing, setEditing] = useState(false);
 	const [editedNote, setEditedNote] = useState(note ?? "");
 
 	if (editing) {
 		return (
 			<form
-				className="mt-3"
 				onSubmit={async event => {
 					event.preventDefault();
-					await toWorker("main", "setPlayerNote", { pid, note: editedNote });
+					if (info.type === "player") {
+						await toWorker("main", "setPlayerNote", {
+							pid: info.pid,
+							note: editedNote,
+						});
+					} else {
+						await toWorker("main", "setTeamNote", {
+							tid: info.tid,
+							season: info.season,
+							note: editedNote,
+						});
+					}
 					setEditing(false);
 				}}
 			>
@@ -46,16 +70,18 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 		);
 	}
 
+	const name = info.type === "player" ? "player" : "team season";
+
 	if (note === undefined || note === "") {
 		return (
 			<button
 				type="button"
-				className="btn btn-light-bordered btn-sm mt-3"
+				className="btn btn-light-bordered btn-sm"
 				onClick={() => {
 					setEditing(true);
 				}}
 			>
-				Add player note
+				Add {name} note
 			</button>
 		);
 	}
@@ -63,7 +89,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 	return (
 		<>
 			<div
-				className="mt-3 overflow-auto small-scrollbar"
+				className={"overflow-auto small-scrollbar"}
 				style={{ whiteSpace: "pre-line", maxHeight: 300, maxWidth: MAX_WIDTH }}
 			>
 				{note}
@@ -75,7 +101,7 @@ const Note = ({ note, pid }: { note: Player["note"]; pid: number }) => {
 					setEditing(true);
 				}}
 			>
-				Edit player note
+				Edit {name} note
 			</button>
 		</>
 	);

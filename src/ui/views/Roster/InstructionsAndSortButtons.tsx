@@ -20,18 +20,6 @@ const InstructionsAndSortButtons = ({
 }) => {
 	return (
 		<>
-			{editable ? (
-				<p
-					style={{
-						clear: "both",
-					}}
-				>
-					Click or drag row handles to move players between the starting lineup{" "}
-					<span className="table-info legend-square" /> and the bench{" "}
-					<span className="table-secondary legend-square" />.
-				</p>
-			) : null}
-
 			{editable || godMode ? (
 				<div className="mb-3">
 					<div className="d-flex flex-wrap gap-2">

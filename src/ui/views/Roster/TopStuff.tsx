@@ -10,6 +10,7 @@ import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders";
 import type { View } from "../../../common/types";
 import { bySport } from "../../../common";
+import Note from "../Player/Note";
 
 const fontSizeLarger = { fontSize: "larger" };
 
@@ -316,7 +317,29 @@ const TopStuff = ({
 				players={players}
 				tid={tid}
 			/>
-			{season !== currentSeason ? (
+
+			<div className="mb-3">
+				<Note
+					note={t.seasonAttrs.note}
+					info={{
+						type: "teamSeason",
+						tid,
+						season,
+					}}
+				/>
+			</div>
+
+			{editable ? (
+				<p
+					style={{
+						clear: "both",
+					}}
+				>
+					Click or drag row handles to move players between the starting lineup{" "}
+					<span className="table-info legend-square" /> and the bench{" "}
+					<span className="table-secondary legend-square" />.
+				</p>
+			) : season !== currentSeason ? (
 				<p>
 					Players still on this team are{" "}
 					<span className="text-info">highlighted in blue</span>. Players in the

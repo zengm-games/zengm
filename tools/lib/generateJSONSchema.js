@@ -2612,6 +2612,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 									ovrEnd: {
 										type: "number",
 									},
+									note: {
+										type: "string",
+									},
+									noteBool: {
+										const: 1,
+									},
 								},
 								required: ["season"],
 							},

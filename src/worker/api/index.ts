@@ -3105,6 +3105,39 @@ const setPlayerNote = async ({ pid, note }: { pid: number; note: string }) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const setTeamNote = async ({
+	tid,
+	season,
+	note,
+}: {
+	tid: number;
+	season: number;
+	note: string;
+}) => {
+	const ts = await idb.getCopy.teamSeasons(
+		{
+			tid,
+			season,
+		},
+		"noCopyCache",
+	);
+
+	if (ts) {
+		if (note === "") {
+			delete ts.note;
+			delete ts.noteBool;
+		} else {
+			ts.note = note;
+			ts.noteBool = 1;
+		}
+		await idb.cache.teamSeasons.put(ts);
+	} else {
+		throw new Error("Invalid tid/season");
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const sign = async ({
 	pid,
 	amount,
@@ -4407,6 +4440,7 @@ export default {
 		setGOATFormula,
 		setLocal,
 		setPlayerNote,
+		setTeamNote,
 		setSavedTrade,
 		sign,
 		updateExpansionDraftSetup,

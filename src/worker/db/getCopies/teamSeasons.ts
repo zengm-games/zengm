@@ -8,10 +8,12 @@ const getCopies = async (
 		tid,
 		season,
 		seasons,
+		note,
 	}: {
 		tid?: number;
 		season?: number;
 		seasons?: [number, number];
+		note?: boolean;
 	} = {},
 	type?: GetCopyType,
 ): Promise<TeamSeason[]> => {
@@ -79,6 +81,19 @@ const getCopies = async (
 			"teamSeasons",
 			type,
 		);
+	}
+
+	if (note) {
+		return mergeByPk(
+			await idb.league
+				.transaction("teamSeasons")
+				.store.index("noteBool")
+				// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
+				.getAll(),
+			await idb.cache.teamSeasons.getAll(),
+			"teamSeasons",
+			type,
+		).filter(row => row.noteBool === 1);
 	}
 
 	return mergeByPk(

@@ -32,11 +32,15 @@ const TeamNotes = ({
 	} else {
 		colNames.push("%");
 	}
-	colNames.push("Note");
+	colNames.push("Note", "");
 
 	const cols = getCols(colNames, {
 		Note: {
 			width: "100%",
+		},
+		"": {
+			noSearch: true,
+			sortSequence: [],
 		},
 	});
 
@@ -72,6 +76,18 @@ const TeamNotes = ({
 					searchValue: t.note,
 					sortValue: t.note,
 				},
+				<button
+					className="btn btn-danger"
+					onClick={async () => {
+						await toWorker("main", "setTeamNote", {
+							tid: t.tid,
+							season: t.season,
+							note: "",
+						});
+					}}
+				>
+					Delete
+				</button>,
 			],
 			classNames: {
 				"align-top": true,

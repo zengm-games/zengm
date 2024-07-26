@@ -19,7 +19,7 @@ const TeamNotes = ({
 		title: "Team Notes",
 	});
 
-	const colNames = ["Team", "W", "L"];
+	const colNames = ["Team", "Season", "W", "L"];
 	if (otl) {
 		colNames.push("OTL");
 	}
@@ -32,7 +32,7 @@ const TeamNotes = ({
 	} else {
 		colNames.push("%");
 	}
-	colNames.push("Note", "");
+	colNames.push("Playoffs", "Note", "");
 
 	const cols = getCols(colNames, {
 		Note: {
@@ -45,6 +45,13 @@ const TeamNotes = ({
 	});
 
 	const rows = teams.map(t => {
+		const roundsWonText = helpers.roundsWonText(
+			t.playoffRoundsWon,
+			t.numPlayoffRounds,
+			t.playoffsByConf,
+			true,
+		);
+
 		return {
 			key: JSON.stringify([t.tid, t.season]),
 			data: [
@@ -55,6 +62,7 @@ const TeamNotes = ({
 					},
 					helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, t.season]),
 				),
+				t.season,
 				t.won,
 				t.lost,
 				...(otl ? [t.otl] : []),
@@ -62,6 +70,20 @@ const TeamNotes = ({
 				...(usePts
 					? [Math.round(t.pts), helpers.roundWinp(t.ptsPct)]
 					: [helpers.roundWinp(t.winp)]),
+				{
+					value: (
+						<a
+							href={helpers.leagueUrl([
+								t.playoffRoundsWon >= 0 ? "playoffs" : "standings",
+								t.season,
+							])}
+						>
+							{roundsWonText}
+						</a>
+					),
+					sortValue: t.playoffRoundsWon,
+					searchValue: roundsWonText,
+				},
 				{
 					value: (
 						<Note

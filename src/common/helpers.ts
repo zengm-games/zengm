@@ -1283,32 +1283,34 @@ const roundsWonText = (
 	playoffsByConf: boolean,
 	showMissedPlayoffs?: boolean,
 ) => {
-	if (playoffRoundsWon === numPlayoffRounds) {
-		return "League champs" as const;
-	}
+	if (playoffRoundsWon >= 0) {
+		if (playoffRoundsWon === numPlayoffRounds) {
+			return "League champs" as const;
+		}
 
-	if (playoffRoundsWon === numPlayoffRounds - 1) {
-		return playoffsByConf ? "Conference champs" : ("Made finals" as const);
-	}
+		if (playoffRoundsWon === numPlayoffRounds - 1) {
+			return playoffsByConf ? "Conference champs" : ("Made finals" as const);
+		}
 
-	if (playoffRoundsWon === 0) {
-		return "Made playoffs" as const;
-	}
+		if (playoffRoundsWon === 0) {
+			return "Made playoffs" as const;
+		}
 
-	if (playoffRoundsWon === numPlayoffRounds - 2) {
-		return playoffsByConf
-			? "Made conference finals"
-			: ("Made semifinals" as const);
-	}
+		if (playoffRoundsWon === numPlayoffRounds - 2) {
+			return playoffsByConf
+				? "Made conference finals"
+				: ("Made semifinals" as const);
+		}
 
-	if (playoffRoundsWon === numPlayoffRounds - 3) {
-		return playoffsByConf
-			? "Made conference semifinals"
-			: ("Made quarterfinals" as const);
-	}
+		if (playoffRoundsWon === numPlayoffRounds - 3) {
+			return playoffsByConf
+				? "Made conference semifinals"
+				: ("Made quarterfinals" as const);
+		}
 
-	if (playoffRoundsWon >= 1) {
-		return `Made ${ordinal(playoffRoundsWon + 1)} round` as const;
+		if (playoffRoundsWon >= 1) {
+			return `Made ${ordinal(playoffRoundsWon + 1)} round` as const;
+		}
 	}
 
 	return showMissedPlayoffs ? "Missed playoffs" : ("" as const);

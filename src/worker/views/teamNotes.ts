@@ -2,6 +2,7 @@ import { season, team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 
 const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("team")) {
@@ -13,8 +14,17 @@ const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const pointsFormula = g.get("pointsFormula");
 		const usePts = pointsFormula !== "";
 
-		const teams = teamSeasons.map(ts => {
-			return {
+		const playoffsByConfBySeason = new Map<number, boolean>();
+
+		const teams = [];
+		for (const ts of teamSeasons) {
+			let playoffsByConf = playoffsByConfBySeason.get(ts.season);
+			if (playoffsByConf === undefined) {
+				playoffsByConf = await getPlayoffsByConf(ts.season);
+				playoffsByConfBySeason.set(ts.season, playoffsByConf);
+			}
+
+			teams.push({
 				tid: ts.tid,
 				abbrev: ts.abbrev,
 				region: ts.region,
@@ -32,8 +42,11 @@ const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				ptsPct: team.ptsPct(ts),
 				winp: helpers.calcWinp(ts),
 				note: ts.note,
-			};
-		});
+				playoffRoundsWon: ts.playoffRoundsWon,
+				numPlayoffRounds: g.get("numGamesPlayoffSeries", ts.season).length,
+				playoffsByConf,
+			});
+		}
 
 		return {
 			teams,

@@ -122,6 +122,11 @@ const TeamNotes = ({
 		<>
 			<MoreLinks type="league" page="team_notes" />
 
+			<p>
+				Add notes to new team seasons from the{" "}
+				<a href={helpers.leagueUrl(["roster"])}>Roster page</a>.
+			</p>
+
 			<ActionButton
 				className="mb-3"
 				onClick={async () => {

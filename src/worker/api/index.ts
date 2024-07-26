@@ -3135,7 +3135,7 @@ const setTeamNote = async ({
 		throw new Error("Invalid tid/season");
 	}
 
-	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await toUI("realtimeUpdate", [["team"]]);
 };
 
 const sign = async ({

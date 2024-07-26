@@ -17,6 +17,19 @@ const getCopies = async (
 	} = {},
 	type?: GetCopyType,
 ): Promise<TeamSeason[]> => {
+	if (note) {
+		return mergeByPk(
+			await idb.league
+				.transaction("teamSeasons")
+				.store.index("noteBool")
+				// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
+				.getAll(),
+			await idb.cache.teamSeasons.getAll(),
+			"teamSeasons",
+			type,
+		).filter(row => row.noteBool === 1);
+	}
+
 	if (tid !== undefined && season !== undefined) {
 		// Return array of length 1
 		let teamSeason;
@@ -81,19 +94,6 @@ const getCopies = async (
 			"teamSeasons",
 			type,
 		);
-	}
-
-	if (note) {
-		return mergeByPk(
-			await idb.league
-				.transaction("teamSeasons")
-				.store.index("noteBool")
-				// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
-				.getAll(),
-			await idb.cache.teamSeasons.getAll(),
-			"teamSeasons",
-			type,
-		).filter(row => row.noteBool === 1);
 	}
 
 	return mergeByPk(

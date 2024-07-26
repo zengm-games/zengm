@@ -70,7 +70,7 @@ const Note = ({
 		);
 	}
 
-	const name = info.type === "player" ? "player" : "team season";
+	const name = info.type === "player" ? "player" : "team";
 
 	if (note === undefined || note === "") {
 		return (

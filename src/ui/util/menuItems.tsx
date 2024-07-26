@@ -271,6 +271,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["season_preview"],
 				text: "Season Previews",
 			},
+			{
+				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: ["team_notes"],
+				text: "Team Notes",
+			},
 		],
 	},
 	{

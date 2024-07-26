@@ -93,6 +93,7 @@ import standings from "./standings";
 import teamFinances from "./teamFinances";
 import teamGraphs from "./teamGraphs";
 import teamHistory from "./teamHistory";
+import teamNotes from "./teamNotes";
 import teamRecords from "./teamRecords";
 import teamStatDists from "./teamStatDists";
 import teamStats from "./teamStats";
@@ -201,6 +202,7 @@ export default {
 	teamFinances,
 	teamGraphs,
 	teamHistory,
+	teamNotes,
 	teamRecords,
 	teamStatDists,
 	teamStats,

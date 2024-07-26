@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { toWorker } from "../../util";
 
 const MAX_WIDTH = 600;
@@ -6,6 +6,7 @@ const MAX_WIDTH = 600;
 const Note = ({
 	note,
 	info,
+	infoLink,
 }: {
 	note: string | undefined;
 	info:
@@ -18,6 +19,7 @@ const Note = ({
 				tid: number;
 				season: number;
 		  };
+	infoLink?: ReactNode;
 }) => {
 	const [editing, setEditing] = useState(false);
 	const [editedNote, setEditedNote] = useState(note ?? "");
@@ -52,8 +54,8 @@ const Note = ({
 					value={editedNote}
 				/>
 
-				<div className="mt-2">
-					<button type="submit" className="btn btn-primary btn-sm me-2">
+				<div className="mt-2 d-flex gap-2" style={{ maxWidth: MAX_WIDTH }}>
+					<button type="submit" className="btn btn-primary btn-sm">
 						Save
 					</button>
 					<button
@@ -65,6 +67,7 @@ const Note = ({
 					>
 						Cancel
 					</button>
+					{infoLink}
 				</div>
 			</form>
 		);

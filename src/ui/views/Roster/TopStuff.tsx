@@ -327,6 +327,11 @@ const TopStuff = ({
 						tid,
 						season,
 					}}
+					infoLink={
+						<div className="ms-auto">
+							<a href={helpers.leagueUrl(["team_notes"])}>View all</a>
+						</div>
+					}
 				/>
 			</div>
 

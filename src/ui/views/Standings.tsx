@@ -37,11 +37,6 @@ const record = (
 const tdStyle = {
 	maxWidth: 0,
 };
-const divStyle: CSSProperties = {
-	textOverflow: "ellipsis",
-	overflow: "hidden",
-	whiteSpace: "nowrap",
-};
 
 export const TeamColumn = ({
 	maxRank,
@@ -84,7 +79,7 @@ export const TeamColumn = ({
 					imgURLSmall={t.seasonAttrs.imgURLSmall}
 					className="mx-1 flex-shrink-0"
 				/>
-				<div style={divStyle}>
+				<div className="text-truncate">
 					<a
 						href={helpers.leagueUrl([
 							"roster",

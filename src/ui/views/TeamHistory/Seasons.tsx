@@ -1,5 +1,28 @@
+import clsx from "clsx";
 import { RecordAndPlayoffs } from "../../components";
 import type { View } from "../../../common/types";
+import { useState } from "react";
+
+const ExpandableNote = ({ note }: { note: string | undefined }) => {
+	const [expand, setExpand] = useState(false);
+
+	if (!note) {
+		return null;
+	}
+
+	// Would be nice to use a button rather than a div, but I couldn't get text-truncate to work there
+	return (
+		<div
+			className={clsx("cursor-pointer", expand ? undefined : "text-truncate")}
+			style={expand ? { whiteSpace: "pre-line" } : undefined}
+			onClick={() => {
+				setExpand(!expand);
+			}}
+		>
+			{note}
+		</div>
+	);
+};
 
 const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 	const numTeamNames = new Set(
@@ -39,7 +62,7 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 					<h4 className={i > 0 ? "mt-2" : undefined}>{newName}</h4>
 				) : null}
 				{recordAndPlayoffs}
-				<br />
+				<ExpandableNote note={h.note} />
 			</div>
 		);
 	});

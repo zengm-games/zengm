@@ -74,12 +74,7 @@ const HideableSection = ({
 				)}
 			>
 				<div className="d-flex" style={{ minWidth: 0 }}>
-					<h2
-						className="mb-0 text-nowrap"
-						style={{ overflow: "hidden", textOverflow: "ellipsis" }}
-					>
-						{title}
-					</h2>
+					<h2 className="mb-0 text-truncate">{title}</h2>
 					{hideableSectionButton}
 				</div>
 				{show ? <div className="text-nowrap">{description}</div> : null}

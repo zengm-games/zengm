@@ -37,6 +37,7 @@ export const getHistoryTeam = (
 		name?: string;
 		tid: number;
 		abbrev: string;
+		note?: string;
 	}[] = [];
 
 	let totalWon = 0;
@@ -70,6 +71,7 @@ export const getHistoryTeam = (
 			tid: teamSeason.tid,
 			abbrev:
 				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]?.abbrev,
+			note: teamSeason.note,
 		});
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;

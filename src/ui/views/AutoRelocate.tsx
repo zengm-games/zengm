@@ -224,7 +224,7 @@ const AutoRelocate = ({
 														return (
 															<li
 																key={t.tid}
-																className={clsx("text-nowrap overflow-hidden", {
+																className={clsx("text-truncate", {
 																	"text-success": t.tid === newTeam.tid,
 																	"text-info":
 																		realign &&
@@ -233,7 +233,6 @@ const AutoRelocate = ({
 																			t2 => t2.tid === t.tid,
 																		),
 																})}
-																style={{ textOverflow: "ellipsis" }}
 															>
 																{teamName}
 															</li>

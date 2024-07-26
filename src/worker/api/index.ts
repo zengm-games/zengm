@@ -431,6 +431,22 @@ const clearInjuries = async (pid: number[] | "all") => {
 	await recomputeLocalUITeamOvrs();
 };
 
+const clearTeamNotes = async () => {
+	const teamSeasons = await idb.getCopies.teamSeasons(
+		{
+			note: true,
+		},
+		"noCopyCache",
+	);
+	for (const ts of teamSeasons) {
+		delete ts.note;
+		delete ts.noteBool;
+		await idb.cache.teamSeasons.put(ts);
+	}
+
+	await toUI("realtimeUpdate", [["team"]]);
+};
+
 const clearWatchList = async () => {
 	const players = await idb.getCopies.players(
 		{
@@ -4363,6 +4379,7 @@ export default {
 		checkParticipationAchievement,
 		clearInjuries,
 		clearSavedTrades,
+		clearTeamNotes,
 		clearTrade,
 		clearWatchList,
 		countNegotiations,

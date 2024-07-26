@@ -695,6 +695,7 @@ const TopStuff = ({
 
 			<div className="mt-3">
 				<Note
+					key={player.pid}
 					note={player.note}
 					info={{
 						type: "player",

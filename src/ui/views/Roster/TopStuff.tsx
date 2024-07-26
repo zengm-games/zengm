@@ -320,6 +320,7 @@ const TopStuff = ({
 
 			<div className="mb-3">
 				<Note
+					key={JSON.stringify([tid, season])}
 					note={t.seasonAttrs.note}
 					info={{
 						type: "teamSeason",

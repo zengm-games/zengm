@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
@@ -21,12 +21,6 @@ const WatchList = ({
 	stats,
 }: View<"watchList">) => {
 	const [clearing, setClearing] = useState(false);
-
-	const clearWatchList = useCallback(async () => {
-		setClearing(true);
-		await toWorker("main", "clearWatchList", undefined);
-		setClearing(false);
-	}, []);
 
 	useTitleBar({
 		title: "Watch List",
@@ -158,7 +152,11 @@ const WatchList = ({
 
 			<ActionButton
 				className="mb-3"
-				onClick={clearWatchList}
+				onClick={async () => {
+					setClearing(true);
+					await toWorker("main", "clearWatchList", undefined);
+					setClearing(false);
+				}}
 				processing={clearing}
 				variant="danger"
 			>

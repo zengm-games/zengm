@@ -1,8 +1,9 @@
-import { getCols, helpers } from "../util";
+import { getCols, helpers, toWorker } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
-import { DataTable, MoreLinks } from "../components";
+import { ActionButton, DataTable, MoreLinks } from "../components";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 import type { View } from "../../common/types";
+import { useState } from "react";
 
 const TeamNotes = ({
 	teams,
@@ -11,6 +12,8 @@ const TeamNotes = ({
 	usePts,
 	userTid,
 }: View<"teamNotes">) => {
+	const [clearing, setClearing] = useState(false);
+
 	useTitleBar({
 		title: "Team Notes",
 	});
@@ -68,6 +71,19 @@ const TeamNotes = ({
 	return (
 		<>
 			<MoreLinks type="league" page="team_notes" />
+
+			<ActionButton
+				className="mb-3"
+				onClick={async () => {
+					setClearing(true);
+					await toWorker("main", "clearTeamNotes", undefined);
+					setClearing(false);
+				}}
+				processing={clearing}
+				variant="danger"
+			>
+				Clear Team Notes
+			</ActionButton>
 
 			<DataTable
 				cols={cols}

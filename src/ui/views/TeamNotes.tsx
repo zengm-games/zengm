@@ -4,6 +4,7 @@ import { ActionButton, DataTable, MoreLinks } from "../components";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 import type { View } from "../../common/types";
 import { useState } from "react";
+import Note from "./Player/Note";
 
 const TeamNotes = ({
 	teams,
@@ -58,7 +59,18 @@ const TeamNotes = ({
 					? [Math.round(t.pts), helpers.roundWinp(t.ptsPct)]
 					: [helpers.roundWinp(t.winp)]),
 				{
-					value: <div style={{ whiteSpace: "pre-line" }}>{t.note}</div>,
+					value: (
+						<Note
+							note={t.note}
+							info={{
+								type: "teamSeason",
+								tid: t.tid,
+								season: t.season,
+							}}
+						/>
+					),
+					searchValue: t.note,
+					sortValue: t.note,
 				},
 			],
 			classNames: {

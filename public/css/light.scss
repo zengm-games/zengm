@@ -352,10 +352,6 @@ a.god-mode.active {
 	animation: oscillate-bg 1.5s infinite;
 }
 
-.dashboard-table table td {
-	vertical-align: middle;
-}
-
 @keyframes oscillate-bg {
 	0% {
 		background-color: lighten($success, 8);
@@ -1626,15 +1622,6 @@ table.sticky-xxx {
 		// Wide enough that Philadelphia Cheesesteaks still fits after clinching playoffs
 		min-width: 228px;
 	}
-}
-
-// Better default than top, we often have like a team logo inline or something
-.table td {
-	vertical-align: middle;
-}
-
-.align-top-all .table td {
-	vertical-align: top;
 }
 
 .baseball-base {

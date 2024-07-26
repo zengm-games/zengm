@@ -1,9 +1,12 @@
 team notes on roster page, similar to player notes
 - some way to view all team seasons with notes - noteBool index
-  - Team Season Notes page
-  - link from league history pages
-  - explain at top to add notes on roster pages
-  - Clear All Notes button
+  - Team Notes page
+    - Clear All Notes button
+    - similar columns to team stats (W/L/T/OTL/%/pts if relevant)
+    - playoff result column, including link to playoffs
+    - highlight user team
+    - link to/from league history pages
+    - explain at top to add notes on roster pages
   - mention this page when editing team season note. similar for watch list
 - blog
   - roster page

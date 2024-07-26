@@ -32,16 +32,13 @@ const getCopies = async (
 
 	if (tid !== undefined && season !== undefined) {
 		// Return array of length 1
-		let teamSeason;
-		if (season >= g.get("season") - 2) {
-			teamSeason = maybeDeepCopy(
-				await idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
-					season,
-					tid,
-				]),
-				type,
-			);
-		}
+		let teamSeason = maybeDeepCopy(
+			await idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
+				season,
+				tid,
+			]),
+			type,
+		);
 
 		if (!teamSeason) {
 			teamSeason = await idb.league

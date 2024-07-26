@@ -5,7 +5,10 @@ import type { UpdateEvents } from "../../common/types";
 
 const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("team")) {
-		const teamSeasons = await idb.getCopies.teamSeasons({ note: true });
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{ note: true },
+			"noCopyCache",
+		);
 
 		const pointsFormula = g.get("pointsFormula");
 		const usePts = pointsFormula !== "";

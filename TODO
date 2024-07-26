@@ -1,7 +1,6 @@
 team notes on roster page, similar to player notes
 - some way to view all team seasons with notes - noteBool index
   - Team Notes page
-    - does not immediately update after you press "save", but does if you do it again?
     - similar columns to team stats (W/L/T/OTL/%/pts if relevant)
     - playoff result column, including link to playoffs
     - highlight user team

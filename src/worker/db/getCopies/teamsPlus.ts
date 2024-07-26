@@ -52,33 +52,21 @@ const processSeasonAttrs = async <
 
 	if (season === undefined) {
 		// All seasons
-		seasons = mergeByPk(
-			await idb.league
-				.transaction("teamSeasons")
-				.store.index("tid, season")
-				.getAll(IDBKeyRange.bound([t.tid], [t.tid, ""])),
-			await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-				[t.tid],
-				[t.tid, "Z"],
-			]),
-			"teamSeasons",
+		seasons = await idb.getCopies.teamSeasons(
+			{
+				tid: t.tid,
+			},
 			type,
-		);
-	} else if (season >= g.get("season") - 2) {
-		// Single season, from cache
-		seasons = await idb.cache.teamSeasons.indexGetAll(
-			"teamSeasonsBySeasonTid",
-			[
-				[season, t.tid],
-				[season, t.tid],
-			],
 		);
 	} else {
 		// Single season, from database
-		seasons = await idb.league
-			.transaction("teamSeasons")
-			.store.index("season, tid")
-			.getAll([season as number, t.tid]);
+		seasons = await idb.getCopies.teamSeasons(
+			{
+				season,
+				tid: t.tid,
+			},
+			type,
+		);
 	}
 
 	// If a season is requested but not in the database, make a fake season so at least some dummy values are returned

@@ -152,7 +152,6 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			row.three && row.three.tid === userTid ? "table-info" : "";
 
 		const rowResultText = resultText(row);
-		console.log(row);
 
 		return {
 			key: row.season,

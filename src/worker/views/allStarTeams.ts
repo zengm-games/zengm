@@ -43,7 +43,7 @@ const getPlayerInfo = async (
 	p2.name = name;
 	p2.abbrev =
 		(await getTeamInfoBySeason(tid, season))?.abbrev ??
-		g.get("teamInfoCache")[tid].abbrev;
+		helpers.getAbbrev(p.tid);
 
 	return p2;
 };
@@ -130,7 +130,7 @@ const updateAllStarTeams = async (
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,
-				abbrev: g.get("teamInfoCache")[p.tid].abbrev,
+				abbrev: helpers.getAbbrev(p.tid),
 				injury: p.injury,
 			}));
 		}

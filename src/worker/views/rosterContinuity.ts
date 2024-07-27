@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 import { orderBy, range } from "../../common/utils";
 
@@ -183,7 +183,7 @@ const updateSeasons = async (
 			abbrevs: abbrevsSorted,
 			season: g.get("season"),
 			seasons: seasonsSorted,
-			userAbbrev: g.get("teamInfoCache")[g.get("userTid")].abbrev,
+			userAbbrev: helpers.getAbbrev(g.get("userTid")),
 		};
 	}
 };

@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
 import { groupBy, orderBy } from "../../common/utils";
@@ -101,8 +101,7 @@ const updateSeasonPreview = async (
 					playersNewTeam.push({
 						...p,
 						prevTid,
-						prevAbbrev:
-							prevAbbrevs[prevTid] ?? g.get("teamInfoCache")[prevTid].abbrev,
+						prevAbbrev: prevAbbrevs[prevTid] ?? helpers.getAbbrev(prevTid),
 					});
 					if (playersNewTeam.length === NUM_PLAYERS_TO_SHOW) {
 						break;

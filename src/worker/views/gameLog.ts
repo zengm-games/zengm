@@ -48,7 +48,7 @@ export const setTeamInfo = async (
 
 		for (const p of t.players) {
 			const entry = allStars.teams[ind].find(p2 => p2.pid === p.pid);
-			p.abbrev = entry ? g.get("teamInfoCache")[entry.tid]?.abbrev : "";
+			p.abbrev = entry ? helpers.getAbbrev(entry.tid) : "";
 			p.tid = entry ? entry.tid : g.get("userTid");
 		}
 	} else {

@@ -140,9 +140,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					const numPlayersBefore = undrafted.length;
 					undrafted = undrafted.filter(p => !tidsOverLimit.includes(p.tid));
 					if (undrafted.length !== numPlayersBefore) {
-						const teamInfoCache = g.get("teamInfoCache");
 						const abbrevs = tidsOverLimit
-							.map(tid => teamInfoCache[tid].abbrev)
+							.map(tid => helpers.getAbbrev(tid))
 							.sort();
 						expansionDraftFilteredTeamsMessage = `Players from some teams (${abbrevs.join(
 							", ",

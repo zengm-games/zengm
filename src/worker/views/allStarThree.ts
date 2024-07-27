@@ -108,7 +108,7 @@ const updateAllStarThree = async (
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,
-				abbrev: g.get("teamInfoCache")[p.tid].abbrev,
+				abbrev: helpers.getAbbrev(p.tid),
 			}));
 		}
 

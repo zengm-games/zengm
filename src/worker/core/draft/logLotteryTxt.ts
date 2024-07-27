@@ -7,7 +7,7 @@ const logLotteryTxt = (
 ) => {
 	let txt = `The <a href="${helpers.leagueUrl([
 		"roster",
-		g.get("teamInfoCache")[tid]?.abbrev,
+		helpers.getAbbrev(tid),
 		g.get("season"),
 	])}">${g.get("teamInfoCache")[tid]?.name}</a>`;
 

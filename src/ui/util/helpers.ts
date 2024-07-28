@@ -520,6 +520,13 @@ const roundStat = (
 			value = 0;
 		}
 
+		if (value === Infinity) {
+			return "inf";
+		}
+		if (value === -Infinity) {
+			return "-inf";
+		}
+
 		if (roundOverrides[stat] === "minutes") {
 			if (value > 100) {
 				return value.toLocaleString("en-US", { maximumFractionDigits: 0 });

@@ -1327,8 +1327,16 @@ const getExpansionDraftMinimumPlayersPerActiveTeam = (
 	);
 };
 
-const ratio = (numerator: number, denominator: number) => {
+const ratio = (
+	numerator: number,
+	denominator: number,
+	allowInfinity?: boolean,
+) => {
 	if (denominator > 0) {
+		return numerator / denominator;
+	}
+
+	if (allowInfinity && numerator !== 0) {
 		return numerator / denominator;
 	}
 

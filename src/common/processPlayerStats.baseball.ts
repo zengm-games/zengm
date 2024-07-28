@@ -44,7 +44,7 @@ const processStats = (
 	const slg = helpers.ratio(tb, ab);
 
 	const ip = outsToInnings(ps.outs);
-	const era = helpers.ratio(ps.er, ps.outs / NUM_OUTS_PER_GAME);
+	const era = helpers.ratio(ps.er, ps.outs / NUM_OUTS_PER_GAME, true);
 
 	let posIndexesChecked = false;
 	const posIndexes: number[] = [];
@@ -139,21 +139,22 @@ const processStats = (
 				helpers.ratio(
 					13 * ps.hrPit + 3 * (ps.hbpPit + ps.bbPit) - 2 * ps.soPit,
 					ps.outs / 3,
+					true,
 				) + 3.2;
 		} else if (stat === "whip") {
-			row[stat] = helpers.ratio(ps.bbPit + ps.hPit, ps.outs / 3);
+			row[stat] = helpers.ratio(ps.bbPit + ps.hPit, ps.outs / 3, true);
 		} else if (stat === "h9") {
-			row[stat] = helpers.ratio(ps.hPit, ps.outs / NUM_OUTS_PER_GAME);
+			row[stat] = helpers.ratio(ps.hPit, ps.outs / NUM_OUTS_PER_GAME, true);
 		} else if (stat === "hr9") {
-			row[stat] = helpers.ratio(ps.hrPit, ps.outs / NUM_OUTS_PER_GAME);
+			row[stat] = helpers.ratio(ps.hrPit, ps.outs / NUM_OUTS_PER_GAME, true);
 		} else if (stat === "bb9") {
-			row[stat] = helpers.ratio(ps.bbPit, ps.outs / NUM_OUTS_PER_GAME);
+			row[stat] = helpers.ratio(ps.bbPit, ps.outs / NUM_OUTS_PER_GAME, true);
 		} else if (stat === "so9") {
-			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME);
+			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME, true);
 		} else if (stat === "pc9") {
-			row[stat] = helpers.ratio(ps.pc, ps.outs / NUM_OUTS_PER_GAME);
+			row[stat] = helpers.ratio(ps.pc, ps.outs / NUM_OUTS_PER_GAME, true);
 		} else if (stat === "sow") {
-			row[stat] = helpers.ratio(ps.soPit, ps.bbPit);
+			row[stat] = helpers.ratio(ps.soPit, ps.bbPit, true);
 		} else if (stat === "rfldTot") {
 			row[stat] = sumByPos(ps.rfld);
 		} else if (stat === "ch") {
@@ -172,6 +173,7 @@ const processStats = (
 				helpers.ratio(
 					(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
 					(ps.outsF[i] ?? 0) / NUM_OUTS_PER_GAME,
+					true,
 				),
 			);
 		} else if (stat === "rfg") {

@@ -190,8 +190,6 @@ const Trade = (props: View<"trade">) => {
 			undefined,
 		);
 
-		console.log("changed", changed);
-
 		if (!changed) {
 			newPrevTeams = undefined;
 		}

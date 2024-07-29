@@ -3,6 +3,7 @@ import { isValidElement } from "react";
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
 import { helpers } from "../../util";
+import { normalizeIntl } from "../../../common/normalizeIntl";
 
 const getSortVal = (
 	value: any = null,
@@ -132,7 +133,10 @@ const getSortVal = (
 			const parts = sortVal.split(", ");
 			parts.reverse();
 			return parts.join(", ");
-			console.log(sortVal);
+		}
+
+		if (typeof sortVal === "string") {
+			return normalizeIntl(sortVal);
 		}
 
 		return sortVal;

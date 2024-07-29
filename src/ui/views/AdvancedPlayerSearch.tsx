@@ -240,7 +240,7 @@ const Filters = ({
 		});
 	};
 
-	const statTypes = [
+	let statTypes = [
 		{ key: "bio", value: "Bio" },
 		{ key: "ratings", value: "Ratings" },
 		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
@@ -251,6 +251,10 @@ const Filters = ({
 			return { key, value };
 		}),
 	];
+
+	if (isSport("baseball")) {
+		statTypes = statTypes.filter(row => row.key !== "fielding");
+	}
 
 	return (
 		<div>

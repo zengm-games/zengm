@@ -32,12 +32,9 @@ const Confirm = confirmable<
 	const selectRef = useRef<HTMLSelectElement>(null);
 
 	useEffect(() => {
-		// Ugly hack that became necessary when upgrading reactstrap from v6 to v8
-		setTimeout(() => {
-			if (selectRef.current) {
-				selectRef.current.focus();
-			}
-		}, 0);
+		if (selectRef.current) {
+			selectRef.current.focus();
+		}
 	}, []);
 
 	return (

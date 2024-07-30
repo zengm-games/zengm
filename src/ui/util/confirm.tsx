@@ -26,14 +26,11 @@ const Confirm = confirmable<
 	const okRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
-		// Ugly hack that became necessary when upgrading reactstrap from v6 to v8
-		setTimeout(() => {
-			if (inputRef.current) {
-				inputRef.current.select();
-			} else if (okRef.current) {
-				okRef.current.focus();
-			}
-		}, 0);
+		if (inputRef.current) {
+			inputRef.current.select();
+		} else if (okRef.current) {
+			okRef.current.focus();
+		}
 	}, []);
 
 	return (

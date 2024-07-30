@@ -19,12 +19,9 @@ const Confirm = confirmable<
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		// Ugly hack that became necessary when upgrading reactstrap from v6 to v8
-		setTimeout(() => {
-			if (inputRef.current) {
-				inputRef.current.select();
-			}
-		}, 0);
+		if (inputRef.current) {
+			inputRef.current.select();
+		}
 	}, []);
 
 	const cancel = () => proceed(null);

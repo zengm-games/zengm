@@ -1483,8 +1483,11 @@ class GameSim extends GameSimBase {
 			throw new Error("advanceClockSeconds called with 0 already on the clock");
 		}
 
-		// Adjust for pace up until the last minute, so we don't make end of game stuff too weird
-		const secondsAdjusted = this.t > 60 ? seconds / this.paceFactor : seconds;
+		// Adjust for pace up until near the end of the period, so we don't make end of game stuff too weird
+		const secondsAdjusted =
+			this.t - seconds / this.paceFactor > 40
+				? seconds / this.paceFactor
+				: seconds;
 
 		if (secondsAdjusted > this.t) {
 			this.possessionLength += this.t;

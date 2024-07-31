@@ -162,7 +162,7 @@ export const doRelocate = async () => {
 		);
 
 		const coordinates = activeTeams.map(temp => {
-			const t = temp.tid === newTeam.tid ? newTeam : temp;
+			const t = temp.tid === currentTeam.tid ? newTeam : temp;
 			return [
 				geographicCoordinates[t.region].latitude,
 				geographicCoordinates[t.region].longitude,

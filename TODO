@@ -1,3 +1,10 @@
+show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
+- design ideas
+  - could use symbol for bonus
+  - could show just text like "TO: 5, F: 5" and highlight F in red when in bonus
+  - could write BONUS as vertical text after the team name/score
+- show count of personal/team fouls when a foul happens in text https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l8bya7o/
+
 hard to click player ratings popover icon on mobile without hitting player name? https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxlKSNzFsbplCJFNQHjrZjHXz?compose=DmwnWstqxPhppsXNxCfVhCxwWDdnRGXNrVbGqgdPQhDFFgXzxhKzJjlLMSJgtNznJpKSPlRNsZxV
 
 in box score, only save players who actually show up in box score (not players who didn't play)
@@ -29,9 +36,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - could store in some json file
 - does it make sense without spectator mode?
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
-
-show count of personal/team fouls when a foul happens in text
-- https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l8bya7o/
 
 Player Bio Info: Button to equalize all country frequencies (to 1) https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l7e83r5/
 
@@ -121,8 +125,6 @@ drag and drop
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 - manage confs page
   - maybe same as customize page, but with some option to prevent deleting/adding teams
-
-show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 
 injured players in hockey shootouts https://discord.com/channels/@me/778760871911751700/1238301880489345184
 

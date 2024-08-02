@@ -87,7 +87,7 @@ const Buttons = ({
 
 					<Dropdown.Toggle split variant="secondary" id="clear-trade-more" />
 
-					<Dropdown.Menu>
+					<Dropdown.Menu align="end">
 						<Dropdown.Item onClick={onClick("all")}>
 							All{defaultType === "all" ? " (default)" : null}
 						</Dropdown.Item>

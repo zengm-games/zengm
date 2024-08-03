@@ -1,3 +1,10 @@
+option for neutral site playoffs (no home court advantage) https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
+- none, all, finals
+  - or by round?
+- use in FBGM
+- make it clearer in the UI that it's a neutral site game, like in the schedule, game log, etc
+- point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ
+
 show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 - design ideas
   - could use symbol for bonus
@@ -178,13 +185,6 @@ more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/co
 - also random (generate a random players draft class and just put the real names on it)
 
 support sorting mobile trade tables (like saved trades, trading block)
-
-option for neutral site playoffs https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
-- none, all, finals
-  - or by round?
-- use in FBGM
-- make it clearer in the UI that it's a neutral site game, like in the schedule, game log, etc
-- point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ
 
 new achievements
 - force challenge mode to remain on

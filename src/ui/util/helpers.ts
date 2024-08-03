@@ -227,7 +227,7 @@ const roundOverrides: Record<
 	basketball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
-		min: "oneDecimalPlace",
+		min: "minutes",
 		yearsWithTeam: "noDecimalPlace",
 		gmsc: "oneDecimalPlace",
 		fgp: "oneDecimalPlace",

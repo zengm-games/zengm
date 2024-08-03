@@ -563,9 +563,6 @@ when negotiating with re-sign players, don't remove from list when you press can
 bootstrap real dark mode
 - table color variants won't be in until v6 https://getbootstrap.com/docs/5.3/content/tables/#variants
 
-BBGM box score minutes played should be MM:SS like in ZGMH https://old.reddit.com/r/BasketballGM/comments/14aff4g/box_score_idea/
-- same for any individual game, like in game log, stat feats, etc. but not averages
-
 game of the year
 - something based on margin of victory, overtimes, how good the teams are, how the best players performed
 - add ability to save important box scores

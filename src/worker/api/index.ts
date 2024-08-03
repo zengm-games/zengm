@@ -1312,7 +1312,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 		"WL",
 		"Season",
 		"Playoffs",
-		"MP",
+		"Min",
 		"FGM",
 		"FGA",
 		"FG%",

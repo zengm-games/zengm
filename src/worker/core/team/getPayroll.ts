@@ -25,7 +25,7 @@ const getPayroll = async (
 		);
 
 		for (const p of [...players, ...releasedPlayers]) {
-			if (season === undefined || p.contract.exp > season) {
+			if (season === undefined || p.contract.exp >= season) {
 				payroll += p.contract.amount;
 			}
 		}

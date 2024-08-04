@@ -95,7 +95,7 @@ class GameSim extends GameSimBase {
 		homeCourtFactor,
 		allStarGame,
 		baseInjuryRate,
-		disableHomeCourtAdvantage,
+		neutralSite,
 	}: {
 		gid: number;
 		day?: number;
@@ -104,14 +104,14 @@ class GameSim extends GameSimBase {
 		homeCourtFactor: number;
 		allStarGame: boolean;
 		baseInjuryRate: number;
-		disableHomeCourtAdvantage: boolean;
+		neutralSite: boolean;
 	}) {
 		super({
 			gid,
 			day,
 			allStarGame,
 			baseInjuryRate,
-			disableHomeCourtAdvantage,
+			neutralSite,
 		});
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
@@ -157,7 +157,7 @@ class GameSim extends GameSimBase {
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");
 
-		if (!disableHomeCourtAdvantage) {
+		if (!neutralSite) {
 			this.homeCourtAdvantage(homeCourtFactor);
 		}
 
@@ -470,7 +470,7 @@ class GameSim extends GameSimBase {
 			team: this.team,
 			clutchPlays: [],
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
-			disableHomeCourtAdvantage: this.disableHomeCourtAdvantage,
+			neutralSite: this.neutralSite,
 			scoringSummary: this.playByPlay.scoringSummary,
 		};
 		return out;

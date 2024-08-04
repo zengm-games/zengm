@@ -363,12 +363,12 @@ type ExhibitionGamePhase =
 
 export const simExhibitionGame = async (
 	{
-		disableHomeCourtAdvantage,
+		neutralSite,
 		gameAttributes,
 		phase,
 		teams,
 	}: {
-		disableHomeCourtAdvantage: boolean;
+		neutralSite: boolean;
 		gameAttributes: ExhibitionGameAttributes;
 		phase: ExhibitionGamePhase;
 		teams: [ExhibitionTeam, ExhibitionTeam];
@@ -439,7 +439,7 @@ export const simExhibitionGame = async (
 		teams: teamsProcessed,
 		doPlayByPlay: true,
 		homeCourtFactor: 1,
-		disableHomeCourtAdvantage,
+		neutralSite,
 		allStarGame: false,
 		baseInjuryRate: g.get("injuryRate"),
 		dh,

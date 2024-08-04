@@ -259,7 +259,7 @@ class GameSim extends GameSimBase {
 		homeCourtFactor,
 		allStarGame,
 		baseInjuryRate,
-		disableHomeCourtAdvantage,
+		neutralSite,
 	}: {
 		gid: number;
 		day?: number;
@@ -268,14 +268,14 @@ class GameSim extends GameSimBase {
 		homeCourtFactor: number;
 		allStarGame: boolean;
 		baseInjuryRate: number;
-		disableHomeCourtAdvantage: boolean;
+		neutralSite: boolean;
 	}) {
 		super({
 			gid,
 			day,
 			allStarGame,
 			baseInjuryRate,
-			disableHomeCourtAdvantage,
+			neutralSite,
 		});
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
@@ -323,7 +323,7 @@ class GameSim extends GameSimBase {
 			this.synergyFactor *= 2.5;
 		}
 
-		if (!disableHomeCourtAdvantage) {
+		if (!neutralSite) {
 			this.homeCourtAdvantage(homeCourtFactor);
 		}
 
@@ -448,7 +448,7 @@ class GameSim extends GameSimBase {
 			clutchPlays: this.clutchPlays,
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
 			numPlayersOnCourt: this.numPlayersOnCourt,
-			disableHomeCourtAdvantage: this.disableHomeCourtAdvantage,
+			neutralSite: this.neutralSite,
 			// scoringSummary: this.playByPlay.scoringSummary,
 		};
 

@@ -709,7 +709,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					}
 
 					await toWorker("exhibitionGame", "simExhibitionGame", {
-						disableHomeCourtAdvantage: neutralSite,
+						neutralSite,
 						gameAttributes,
 						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
 						teams: simTeams,

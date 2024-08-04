@@ -112,7 +112,7 @@ class GameSim extends GameSimBase {
 		teams,
 		doPlayByPlay,
 		homeCourtFactor,
-		disableHomeCourtAdvantage,
+		neutralSite,
 		baseInjuryRate,
 	}: {
 		gid: number;
@@ -120,7 +120,7 @@ class GameSim extends GameSimBase {
 		teams: [TeamGameSim, TeamGameSim];
 		doPlayByPlay: boolean;
 		homeCourtFactor: number;
-		disableHomeCourtAdvantage: boolean;
+		neutralSite: boolean;
 		baseInjuryRate: number;
 	}) {
 		super({
@@ -128,7 +128,7 @@ class GameSim extends GameSimBase {
 			day,
 			allStarGame: false,
 			baseInjuryRate,
-			disableHomeCourtAdvantage,
+			neutralSite,
 		});
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
@@ -155,7 +155,7 @@ class GameSim extends GameSimBase {
 		this.currentPlay = new Play(this);
 		this.lngTracker = new LngTracker();
 
-		if (!disableHomeCourtAdvantage) {
+		if (!neutralSite) {
 			this.homeCourtAdvantage(homeCourtFactor);
 		}
 	}
@@ -251,7 +251,7 @@ class GameSim extends GameSimBase {
 			team: this.team,
 			clutchPlays: [],
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
-			disableHomeCourtAdvantage: this.disableHomeCourtAdvantage,
+			neutralSite: this.neutralSite,
 			scoringSummary,
 		};
 		return out;

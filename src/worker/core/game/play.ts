@@ -320,14 +320,14 @@ const play = async (
 		teams,
 		doPlayByPlay = false,
 		homeCourtFactor = 1,
-		disableHomeCourtAdvantage = false,
+		neutralSite = false,
 	}: {
 		gid: number;
 		day: number | undefined;
 		teams: [any, any];
 		doPlayByPlay?: boolean;
 		homeCourtFactor?: number;
-		disableHomeCourtAdvantage?: boolean;
+		neutralSite?: boolean;
 	}) => {
 		let dh;
 		if (isSport("baseball")) {
@@ -364,7 +364,7 @@ const play = async (
 			teams,
 			doPlayByPlay,
 			homeCourtFactor,
-			disableHomeCourtAdvantage: disableHomeCourtAdvantage || allStarGame,
+			neutralSite: neutralSite || allStarGame,
 			allStarGame,
 			baseInjuryRate,
 
@@ -502,9 +502,9 @@ const play = async (
 					await lock.set("stopGameSim", true);
 				}
 			} else {
-				// Only do disableHomeCourtAdvantage when not forcing a win, since forcing a win uses homeCourtFactor and I don't want to worry about how that interacts with disableHomeCourtAdvantage
+				// Only do neutralSite when not forcing a win, since forcing a win uses homeCourtFactor and I don't want to worry about how that interacts with neutralSite
 				const noHomeCourtAdvantage = g.get("noHomeCourtAdvantage");
-				const disableHomeCourtAdvantage =
+				const neutralSite =
 					g.get("phase") === PHASE.PLAYOFFS &&
 					(noHomeCourtAdvantage === "playoffs" ||
 						(noHomeCourtAdvantage === "finals" && game.finals));
@@ -514,7 +514,7 @@ const play = async (
 					day: game.day,
 					teams: teamsInput,
 					doPlayByPlay,
-					disableHomeCourtAdvantage,
+					neutralSite,
 				});
 				results.push(result);
 			}

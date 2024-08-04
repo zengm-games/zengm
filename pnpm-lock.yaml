@@ -99,8 +99,8 @@ importers:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.11)
       facesjs:
-        specifier: 4.2.2-0
-        version: 4.2.2-0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^4.2.2
+        version: 4.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       fast-deep-equal:
         specifier: ^3.1.3
         version: 3.1.3
@@ -3055,8 +3055,8 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
-  facesjs@4.2.2-0:
-    resolution: {integrity: sha512-2hXcavkkQAQTZqKk+WJrHhroNHL2HuXZWYn0C4muZdZlXPey3bt2XCVf3KUnnZr9qgv+10wf3+SfBAQ/RhP8ig==}
+  facesjs@4.2.2:
+    resolution: {integrity: sha512-NN+sjKthqI6le6ZAucqRS+06GF26tDBsWoUQxb4faxW8o2LWmzOnKwfX4RoyLOppSI6RSOU6pk6kVH0qaTAi6w==}
     hasBin: true
     peerDependencies:
       react: '>=18.0.0'
@@ -8815,7 +8815,7 @@ snapshots:
 
   extend@3.0.2: {}
 
-  facesjs@4.2.2-0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  facesjs@4.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       svg-path-bbox: 2.0.0
     optionalDependencies:

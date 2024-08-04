@@ -80,6 +80,7 @@ const ScoreBox = memo(
 		const {
 			challengeNoRatings,
 			homeCourtAdvantage,
+			noHomeCourtAdvantage,
 			numPeriods,
 			quarterLength,
 			season,
@@ -88,6 +89,7 @@ const ScoreBox = memo(
 		} = useLocalPartial([
 			"challengeNoRatings",
 			"homeCourtAdvantage",
+			"noHomeCourtAdvantage",
 			"numPeriods",
 			"quarterLength",
 			"season",

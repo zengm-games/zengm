@@ -8,6 +8,7 @@ import type {
 } from "../../../common/types";
 import addDaysToSchedule from "./addDaysToSchedule";
 import { PHASE } from "../../../common";
+import { isFinals } from "./isFinals";
 
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
 	JSON.stringify([game.homeTid, game.awayTid]);
@@ -35,6 +36,8 @@ const setSchedule = async (tids: [number, number][]) => {
 
 	await idb.cache.schedule.clear();
 
+	const finals = playoffs && (await isFinals());
+
 	const schedule = addDaysToSchedule(
 		tids.map(([homeTid, awayTid]) => ({
 			homeTid,
@@ -49,6 +52,11 @@ const setSchedule = async (tids: [number, number][]) => {
 				game.day = oldPlayoffGames[key].day;
 				game.gid = oldPlayoffGames[key].gid;
 				game.forceWin = oldPlayoffGames[key].forceWin;
+			}
+
+			// Track if game is a finals game or not, used along with noHomeCourtAdvantage
+			if (finals) {
+				game.finals = true;
 			}
 		}
 

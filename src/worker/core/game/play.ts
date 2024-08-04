@@ -503,27 +503,11 @@ const play = async (
 				}
 			} else {
 				// Only do disableHomeCourtAdvantage when not forcing a win, since forcing a win uses homeCourtFactor and I don't want to worry about how that interacts with disableHomeCourtAdvantage
-				let disableHomeCourtAdvantage = false;
 				const noHomeCourtAdvantage = g.get("noHomeCourtAdvantage");
-				if (g.get("phase") === PHASE.PLAYOFFS) {
-					if (noHomeCourtAdvantage === "playoffs") {
-						disableHomeCourtAdvantage = true;
-					} else {
-						const numGamesPlayoffSeries = g.get(
-							"numGamesPlayoffSeries",
-							"current",
-						);
-						const playoffSeries = await idb.cache.playoffSeries.get(
-							g.get("season"),
-						);
-						if (
-							playoffSeries?.currentRound ===
-							numGamesPlayoffSeries.length - 1
-						) {
-							disableHomeCourtAdvantage = true;
-						}
-					}
-				}
+				const disableHomeCourtAdvantage =
+					g.get("phase") === PHASE.PLAYOFFS &&
+					(noHomeCourtAdvantage === "playoffs" ||
+						(noHomeCourtAdvantage === "finals" && game.finals));
 
 				const result = getResult({
 					gid: game.gid,

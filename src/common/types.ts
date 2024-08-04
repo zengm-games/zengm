@@ -1482,6 +1482,7 @@ export type ScheduleGameWithoutKey = {
 	awayTid: number;
 	homeTid: number;
 	forceWin?: number | "tie"; // either awayTid or homeTid, if defined
+	finals?: boolean; // Used for easily checking noHomeCourtAdvantage "finals" setting
 
 	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
 	day: number;

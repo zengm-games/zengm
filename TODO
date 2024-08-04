@@ -1,5 +1,6 @@
 option for neutral site playoffs (no home court advantage) https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
 - make it clearer in the UI that it's a neutral site game, like in the schedule, game log, etc
+- disableHomeCourtAdvantage in play.ts - implement more cleanly with homeCourtFactor
 - point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxtnnBjBpBnjQPFrxjMbGHDNr
   - tricky because point spread is calculated in UI, but info needed to compute disableHomeCourtAdvantage is not
     - could defer to worker - like still show current result synchronously, but in background check if it should be adjusted
@@ -7,6 +8,7 @@ option for neutral site playoffs (no home court advantage) https://discord.com/c
       - but then it won't respond instantly to changes to the setting, unless we recompute the schedule when the setting changes
     - could move all the info we need to UI
       - really, disableHomeCourtAdvantage could be computed every day and sent to the UI, since you never have some games with different settings than others. it's all or nothing.
+    - could store finals boolean in schedule, i think that's all that would be needed since playoffs status is already in UI. then just send new setting to UI too
 - blog
   - FBGM has been the default for a while, but was not shown in the UI anywhere
   - point spread

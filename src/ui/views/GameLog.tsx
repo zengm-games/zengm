@@ -98,6 +98,7 @@ const GamesList = ({
 						const home = gm.teams[0].tid === tid;
 						const user = home ? 0 : 1;
 						const other = home ? 1 : 0;
+						console.log(gm);
 
 						const winner = getWinner(gm.teams);
 						const result = winner === user ? "W" : winner === other ? "L" : "T";
@@ -129,7 +130,7 @@ const GamesList = ({
 							>
 								<td className="game-log-cell">
 									<a href={url}>
-										{home ? "" : "@"}
+										{gm.neutralSite || home ? "" : "@"}
 										{oppAbbrev}
 									</a>
 								</td>

@@ -952,6 +952,12 @@ const BoxScoreWrapper = ({
 				sportState={sportState}
 			/>
 			Attendance: {helpers.numberWithCommas(boxScore.att)}
+			{boxScore.neutralSite ? (
+				<>
+					<br />
+					Played at a neutral site
+				</>
+			) : null}
 			{forcedWinText}
 		</>
 	);

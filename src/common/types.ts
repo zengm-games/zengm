@@ -354,6 +354,7 @@ export type Game = {
 		pts: number;
 		sPts?: number;
 	};
+	neutralSite?: boolean;
 	numGamesToWinSeries?: number;
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;

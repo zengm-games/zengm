@@ -233,6 +233,9 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	if (results.forceWin !== undefined) {
 		gameStats.forceWin = results.forceWin;
 	}
+	if (results.noHomeCourtAdvantage) {
+		gameStats.neutralSite = true;
+	}
 
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 	let allStars;

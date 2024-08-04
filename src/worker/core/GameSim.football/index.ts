@@ -128,6 +128,7 @@ class GameSim extends GameSimBase {
 			day,
 			allStarGame: false,
 			baseInjuryRate,
+			disableHomeCourtAdvantage,
 		});
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
@@ -250,6 +251,7 @@ class GameSim extends GameSimBase {
 			team: this.team,
 			clutchPlays: [],
 			playByPlay: this.playByPlay.getPlayByPlay(this.team),
+			disableHomeCourtAdvantage: this.disableHomeCourtAdvantage,
 			scoringSummary,
 		};
 		return out;

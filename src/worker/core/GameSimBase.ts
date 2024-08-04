@@ -6,6 +6,7 @@ class GameSimBase {
 	day: number | undefined;
 	allStarGame: boolean;
 	baseInjuryRate: number;
+	disableHomeCourtAdvantage: boolean;
 
 	overtime = false;
 	overtimes = 0;
@@ -26,16 +27,19 @@ class GameSimBase {
 		day,
 		allStarGame,
 		baseInjuryRate,
+		disableHomeCourtAdvantage,
 	}: {
 		gid: number;
 		day: number | undefined;
 		allStarGame: boolean;
 		baseInjuryRate: number;
+		disableHomeCourtAdvantage: boolean;
 	}) {
 		this.id = gid;
 		this.day = day;
 		this.allStarGame = allStarGame;
 		this.baseInjuryRate = baseInjuryRate;
+		this.disableHomeCourtAdvantage = disableHomeCourtAdvantage;
 	}
 
 	shouldEndShootoutEarly(t: 0 | 1, i: number, sPts: [number, number]) {

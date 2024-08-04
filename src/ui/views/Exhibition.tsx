@@ -464,7 +464,7 @@ type CachedTeam =
 	  };
 type CachedSettings = {
 	gameAttributesInfo: GameAttributesInfo;
-	neutralCourt: boolean;
+	neutralSite: boolean;
 	playoffIntensity: boolean;
 	swapHomeAway?: boolean;
 	teams: [CachedTeam, CachedTeam];
@@ -515,7 +515,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			gameAttributesInfo: {
 				type: "t1",
 			} as GameAttributesInfo,
-			neutralCourt: true,
+			neutralSite: true,
 			playoffIntensity: true,
 			swapHomeAway: false,
 			teams: undefined,
@@ -530,7 +530,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			ExhibitionTeamAndSettings | undefined,
 		]
 	>([undefined, undefined]);
-	const [neutralCourt, setNeutralCourt] = useState(defaultState.neutralCourt);
+	const [neutralSite, setNeutralSite] = useState(defaultState.neutralSite);
 	const [swapHomeAway, setSwapHomeAway] = useState(
 		defaultState.swapHomeAway ?? false,
 	);
@@ -636,7 +636,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				style={{ maxWidth: 700, width: "100%" }}
 			>
 				<div className="col-12 col-sm-6">
-					<h2>{neutralCourt ? "Team 1" : swapHomeAway ? "Home" : "Away"}</h2>
+					<h2>{neutralSite ? "Team 1" : swapHomeAway ? "Home" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
 						index={1}
@@ -649,7 +649,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
-					<h2>{neutralCourt ? "Team 2" : swapHomeAway ? "Away" : "Home"}</h2>
+					<h2>{neutralSite ? "Team 2" : swapHomeAway ? "Away" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
 						index={0}
@@ -673,9 +673,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 					const toSave: CachedSettings = {
 						gameAttributesInfo,
-						neutralCourt,
+						neutralSite,
 						playoffIntensity,
-						swapHomeAway: neutralCourt ? undefined : swapHomeAway,
+						swapHomeAway: neutralSite ? undefined : swapHomeAway,
 						teams: teams.map(entry => {
 							if (!entry) {
 								throw new Error("Missing entry");
@@ -704,12 +704,12 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						ExhibitionTeam,
 					];
 
-					if (swapHomeAway && !neutralCourt) {
+					if (swapHomeAway && !neutralSite) {
 						simTeams.reverse();
 					}
 
 					await toWorker("exhibitionGame", "simExhibitionGame", {
-						disableHomeCourtAdvantage: neutralCourt,
+						disableHomeCourtAdvantage: neutralSite,
 						gameAttributes,
 						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
 						teams: simTeams,
@@ -772,14 +772,14 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							<input
 								className="form-check-input"
 								type="checkbox"
-								id="neutralCourtCheck"
-								checked={neutralCourt}
+								id="neutralSiteCheck"
+								checked={neutralSite}
 								disabled={simmingGame}
 								onChange={() => {
-									setNeutralCourt(!neutralCourt);
+									setNeutralSite(!neutralSite);
 								}}
 							/>
-							<label className="form-check-label" htmlFor="neutralCourtCheck">
+							<label className="form-check-label" htmlFor="neutralSiteCheck">
 								Neutral {COURT}
 							</label>
 						</div>
@@ -806,7 +806,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						) : null}
 					</div>
 
-					{!neutralCourt ? (
+					{!neutralSite ? (
 						<button
 							className="btn py-1 btn-light-bordered ms-2"
 							type="button"

@@ -110,17 +110,17 @@ class GameSim extends GameSimBase {
 		gid,
 		day,
 		teams,
-		doPlayByPlay = false,
-		homeCourtFactor = 1,
-		disableHomeCourtAdvantage = false,
+		doPlayByPlay,
+		homeCourtFactor,
+		disableHomeCourtAdvantage,
 		baseInjuryRate,
 	}: {
 		gid: number;
 		day?: number;
 		teams: [TeamGameSim, TeamGameSim];
-		doPlayByPlay?: boolean;
-		homeCourtFactor?: number;
-		disableHomeCourtAdvantage?: boolean;
+		doPlayByPlay: boolean;
+		homeCourtFactor: number;
+		disableHomeCourtAdvantage: boolean;
 		baseInjuryRate: number;
 	}) {
 		super({

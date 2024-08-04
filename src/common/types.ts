@@ -726,6 +726,7 @@ export type GameAttributesLeague = {
 	hitByPitchFactor: number;
 	swingFactor: number;
 	contactFactor: number;
+	noHomeCourtAdvantage: "never" | "finals" | "playoffs";
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

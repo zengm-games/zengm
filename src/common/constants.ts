@@ -487,6 +487,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"deflectionFactor",
 	"saveFactor",
 	"gender",
+	"noHomeCourtAdvantage",
 ] as const;
 
 const MOBILE_AD_BOTTOM_MARGIN = 52;

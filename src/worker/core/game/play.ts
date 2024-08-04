@@ -502,22 +502,23 @@ const play = async (
 					await lock.set("stopGameSim", true);
 				}
 			} else {
+				// Only do disableHomeCourtAdvantage when not forcing a win, since forcing a win uses homeCourtFactor and I don't want to worry about how that interacts with disableHomeCourtAdvantage
 				let disableHomeCourtAdvantage = false;
-				if (isSport("football") && g.get("phase") === PHASE.PLAYOFFS) {
-					const numGamesPlayoffSeries = g.get(
-						"numGamesPlayoffSeries",
-						"current",
-					);
-					const numFinalsGames = numGamesPlayoffSeries.at(-1);
-
-					// If finals is 1 game, then no home court advantage
-					if (numFinalsGames === 1) {
+				const noHomeCourtAdvantage = g.get("noHomeCourtAdvantage");
+				if (g.get("phase") === PHASE.PLAYOFFS) {
+					if (noHomeCourtAdvantage === "playoffs") {
+						disableHomeCourtAdvantage = true;
+					} else {
+						const numGamesPlayoffSeries = g.get(
+							"numGamesPlayoffSeries",
+							"current",
+						);
 						const playoffSeries = await idb.cache.playoffSeries.get(
 							g.get("season"),
 						);
 						if (
-							playoffSeries &&
-							playoffSeries.currentRound === numGamesPlayoffSeries.length - 1
+							playoffSeries?.currentRound ===
+							numGamesPlayoffSeries.length - 1
 						) {
 							disableHomeCourtAdvantage = true;
 						}

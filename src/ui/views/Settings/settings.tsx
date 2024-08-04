@@ -2161,6 +2161,18 @@ export const settings: Setting[] = (
 			description:
 				"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 		},
+		{
+			category: "Game Simulation",
+			key: "noHomeCourtAdvantage",
+			name: `Disable Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
+			godModeRequired: "always",
+			type: "string",
+			values: [
+				{ key: "never", value: "Never" },
+				{ key: "playoffs", value: "For the whole playoffs" },
+				{ key: "finals", value: "For only the finals" },
+			],
+		},
 		...(["maxOvertimes", "maxOvertimesPlayoffs"] as const).map(key => {
 			const playoffs = key === "maxOvertimesPlayoffs";
 

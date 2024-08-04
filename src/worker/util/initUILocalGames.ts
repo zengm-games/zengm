@@ -42,6 +42,7 @@ const initUILocalGames = async () => {
 	const upcoming = await getUpcoming({ tid: userTid });
 	for (const game of upcoming) {
 		games.push({
+			finals: game.finals,
 			gid: game.gid,
 			teams: [
 				{

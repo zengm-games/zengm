@@ -1,5 +1,10 @@
 import clsx from "clsx";
-import { bySport, getBestPlayerBoxScore, isSport } from "../../../common";
+import {
+	bySport,
+	getBestPlayerBoxScore,
+	isSport,
+	PHASE,
+} from "../../../common";
 import { getCols, helpers, useLocalPartial } from "../../util";
 import React, { memo, type ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline";
@@ -66,6 +71,7 @@ const ScoreBox = memo(
 		boxScoreTeamOverride?: string;
 		className?: string;
 		game: {
+			finals?: boolean;
 			forceWin?: number;
 			gid: number;
 			season?: number;
@@ -77,11 +83,15 @@ const ScoreBox = memo(
 		playersUpcomingAbbrev?: boolean;
 		small?: boolean;
 	}) => {
+		if (game.gid === 1316) {
+			console.log(game);
+		}
 		const {
 			challengeNoRatings,
 			homeCourtAdvantage,
 			noHomeCourtAdvantage,
 			numPeriods,
+			phase,
 			quarterLength,
 			season,
 			teamInfoCache,
@@ -91,6 +101,7 @@ const ScoreBox = memo(
 			"homeCourtAdvantage",
 			"noHomeCourtAdvantage",
 			"numPeriods",
+			"phase",
 			"quarterLength",
 			"season",
 			"teamInfoCache",
@@ -116,19 +127,36 @@ const ScoreBox = memo(
 			game.teams[1].ovr !== undefined &&
 			(!small || !final)
 		) {
+			let actualHomeCourtAdvantage;
+			if (noHomeCourtAdvantage === "finals" && game.finals) {
+				actualHomeCourtAdvantage = 0;
+			} else if (
+				noHomeCourtAdvantage === "playoffs" &&
+				phase === PHASE.PLAYOFFS
+			) {
+				actualHomeCourtAdvantage = 0;
+			} else {
+				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
+				// Default homeCourtAdvantage is 1
+				actualHomeCourtAdvantage =
+					bySport({
+						baseball: 1,
+						basketball: 3.3504,
+						football: 3,
+						hockey: 0.25,
+					}) * homeCourtAdvantage;
+			}
+
 			const ovr0 = game.teams[0].ovr;
 			const ovr1 = game.teams[1].ovr;
 			let spread = bySport({
-				baseball: () => (1 / 10) * (ovr0 - ovr1) + 1 * homeCourtAdvantage,
+				baseball: () => (1 / 10) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
 
-				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
-				// Default homeCourtAdvantage is 1
-				basketball: () =>
-					(15 / 50) * (ovr0 - ovr1) + 3.3504 * homeCourtAdvantage,
+				basketball: () => (15 / 50) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
 
-				football: () => (3 / 10) * (ovr0 - ovr1) + 3 * homeCourtAdvantage,
+				football: () => (3 / 10) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
 
-				hockey: () => (1.8 / 100) * (ovr0 - ovr1) + 0.25 * homeCourtAdvantage,
+				hockey: () => (1.8 / 100) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
 			})();
 
 			// Adjust for game length

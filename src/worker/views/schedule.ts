@@ -124,12 +124,14 @@ export const getUpcoming = async ({
 		.slice(0, limit);
 
 	const upcoming: {
+		finals?: boolean;
 		forceWin?: number | "tie";
 		gid: number;
 		season: number;
 		teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
-	}[] = filteredSchedule.map(({ awayTid, forceWin, gid, homeTid }) => {
+	}[] = filteredSchedule.map(({ awayTid, finals, forceWin, gid, homeTid }) => {
 		return {
+			finals,
 			forceWin,
 			gid,
 			season: g.get("season"),

@@ -988,6 +988,7 @@ export type LocalStateUI = {
 	flagOverrides: Record<string, string | undefined>;
 	gameSimInProgress: boolean;
 	games: {
+		finals?: boolean;
 		forceWin?: number; // Number of iterations - defined means result was forced
 		gid: number;
 		numPeriods?: number;
@@ -1024,7 +1025,7 @@ export type LocalStateUI = {
 	godMode: boolean;
 	hasViewedALeague: boolean;
 	hideDisabledTeams: boolean;
-	homeCourtAdvantage: number;
+	homeCourtAdvantage: GameAttributesLeague["homeCourtAdvantage"];
 	leagueCreation?: {
 		id: number;
 		status: string;
@@ -1035,6 +1036,7 @@ export type LocalStateUI = {
 	};
 	lid?: number;
 	liveGameInProgress: boolean;
+	noHomeCourtAdvantage: GameAttributesLeague["noHomeCourtAdvantage"];
 	numPeriods: number;
 	numWatchColors: number;
 	phase: number;

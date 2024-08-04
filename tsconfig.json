@@ -7,7 +7,7 @@
 		"noEmit": true,
 		"noUnusedLocals": true,
 		"noFallthroughCasesInSwitch": true,
-		"moduleResolution": "node",
+		"moduleResolution": "Bundler",
 		"baseUrl": ".",
 		"paths": {
 			"league-schema": ["build/files/league-schema.json"],
@@ -19,7 +19,7 @@
 		"strict": true,
 		"useUnknownInCatchVariables": false,
 		"verbatimModuleSyntax": true,
-		"module": "esnext",
+		"module": "Preserve",
 		"noImplicitOverride": true,
 		"isolatedModules": true
 	}

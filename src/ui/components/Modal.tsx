@@ -1,4 +1,4 @@
-import type { ContainerState } from "@restart/ui/esm/ModalManager";
+import type { ContainerState } from "@restart/ui/ModalManager";
 import { Modal } from "react-bootstrap";
 import BootstrapModalManager from "react-bootstrap/BootstrapModalManager";
 import { createNanoEvents } from "nanoevents";

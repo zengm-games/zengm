@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx, { type ClassValue } from "clsx";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
@@ -11,7 +11,7 @@ const Row = ({
 	clickable?: boolean;
 	highlightCols: number[];
 	row: {
-		classNames?: clsx.ClassValue;
+		classNames?: ClassValue;
 		data: any[];
 	};
 }) => {

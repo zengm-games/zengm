@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx, { type ClassValue } from "clsx";
 import { csvFormatRows } from "d3-dsv";
 import {
 	type SyntheticEvent,
@@ -55,13 +55,13 @@ export type DataTableRow = {
 	data: (
 		| ReactNode
 		| {
-				classNames?: clsx.ClassValue;
+				classNames?: ClassValue;
 				value: ReactNode;
 				searchValue?: string | number;
 				sortValue?: string | number;
 		  }
 	)[];
-	classNames?: clsx.ClassValue;
+	classNames?: ClassValue;
 };
 
 export type StickyCols = 0 | 1 | 2 | 3;

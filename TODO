@@ -1,6 +1,6 @@
 option for neutral site playoffs (no home court advantage) https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
 - make it clearer in the UI that it's a neutral site game, like in the schedule, game log, etc
-- point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ
+- point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxtnnBjBpBnjQPFrxjMbGHDNr
   - tricky because point spread is calculated in UI, but info needed to compute disableHomeCourtAdvantage is not
     - could defer to worker - like still show current result synchronously, but in background check if it should be adjusted
     - could store disableHomeCourtAdvantage in schedule, rather than computing it dynamically

@@ -727,7 +727,7 @@ export type GameAttributesLeague = {
 	hitByPitchFactor: number;
 	swingFactor: number;
 	contactFactor: number;
-	noHomeCourtAdvantage: "never" | "finals" | "playoffs";
+	neutralSite: "never" | "finals" | "playoffs";
 };
 
 export type GameAttributesLeagueWithHistory = Omit<
@@ -1037,7 +1037,7 @@ export type LocalStateUI = {
 	};
 	lid?: number;
 	liveGameInProgress: boolean;
-	noHomeCourtAdvantage: GameAttributesLeague["noHomeCourtAdvantage"];
+	neutralSite: GameAttributesLeague["neutralSite"];
 	numPeriods: number;
 	numWatchColors: number;
 	phase: number;
@@ -1485,7 +1485,7 @@ export type ScheduleGameWithoutKey = {
 	awayTid: number;
 	homeTid: number;
 	forceWin?: number | "tie"; // either awayTid or homeTid, if defined
-	finals?: boolean; // Used for easily checking noHomeCourtAdvantage "finals" setting
+	finals?: boolean; // Used for easily checking neutralSite "finals" setting
 
 	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
 	day: number;

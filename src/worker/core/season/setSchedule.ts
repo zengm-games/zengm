@@ -54,7 +54,7 @@ const setSchedule = async (tids: [number, number][]) => {
 				game.forceWin = oldPlayoffGames[key].forceWin;
 			}
 
-			// Track if game is a finals game or not, used along with noHomeCourtAdvantage
+			// Track if game is a finals game or not, used along with neutralSite
 			if (finals) {
 				game.finals = true;
 			}

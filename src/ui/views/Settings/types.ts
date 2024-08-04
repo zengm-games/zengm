@@ -160,7 +160,7 @@ export type Key =
 	| "autoRelocateRebrand"
 	| "autoRelocateRealign"
 	| "alwaysShowCountry"
-	| "noHomeCourtAdvantage";
+	| "neutralSite";
 
 export type Category =
 	| "New League"

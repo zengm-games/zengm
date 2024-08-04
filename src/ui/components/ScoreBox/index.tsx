@@ -86,7 +86,7 @@ const ScoreBox = memo(
 		const {
 			challengeNoRatings,
 			homeCourtAdvantage,
-			noHomeCourtAdvantage,
+			neutralSite,
 			numPeriods,
 			phase,
 			quarterLength,
@@ -96,7 +96,7 @@ const ScoreBox = memo(
 		} = useLocalPartial([
 			"challengeNoRatings",
 			"homeCourtAdvantage",
-			"noHomeCourtAdvantage",
+			"neutralSite",
 			"numPeriods",
 			"phase",
 			"quarterLength",
@@ -125,12 +125,9 @@ const ScoreBox = memo(
 			(!small || !final)
 		) {
 			let actualHomeCourtAdvantage;
-			if (noHomeCourtAdvantage === "finals" && game.finals) {
+			if (neutralSite === "finals" && game.finals) {
 				actualHomeCourtAdvantage = 0;
-			} else if (
-				noHomeCourtAdvantage === "playoffs" &&
-				phase === PHASE.PLAYOFFS
-			) {
+			} else if (neutralSite === "playoffs" && phase === PHASE.PLAYOFFS) {
 				actualHomeCourtAdvantage = 0;
 			} else {
 				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb

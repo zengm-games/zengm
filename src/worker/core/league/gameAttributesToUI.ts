@@ -19,7 +19,7 @@ const gameAttributesToUI = async (
 		"hideDisabledTeams",
 		"homeCourtAdvantage",
 		"lid",
-		"noHomeCourtAdvantage",
+		"neutralSite",
 		"numPeriods",
 		"numWatchColors",
 		"phase",

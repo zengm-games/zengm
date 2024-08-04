@@ -2163,8 +2163,8 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
-			key: "noHomeCourtAdvantage",
-			name: `Disable Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
+			key: "neutralSite",
+			name: "Play Games at Neutral Sites",
 			godModeRequired: "always",
 			type: "string",
 			values: [
@@ -2172,6 +2172,7 @@ export const settings: Setting[] = (
 				{ key: "playoffs", value: "For the whole playoffs" },
 				{ key: "finals", value: "For only the finals" },
 			],
+			description: `This disables the home ${helpers.upperCaseFirstLetter(COURT)} advantage for some games.`,
 		},
 		...(["maxOvertimes", "maxOvertimesPlayoffs"] as const).map(key => {
 			const playoffs = key === "maxOvertimesPlayoffs";

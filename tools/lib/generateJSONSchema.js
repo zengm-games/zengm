@@ -1450,7 +1450,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							contactFactor: {
 								type: "number",
 							},
-							noHomeCourtAdvantage: {
+							neutralSite: {
 								type: "string",
 								enum: ["never", "finals", "playoffs"],
 							},

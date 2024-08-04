@@ -352,7 +352,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	swingFactor: 1,
 	contactFactor: 1,
 
-	noHomeCourtAdvantage: "never",
+	neutralSite: "never",
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -405,7 +405,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContract: false,
 				pace: 1,
 				hofFactor: 1.2,
-				noHomeCourtAdvantage: "finals",
+				neutralSite: "finals",
 			}
 		: {};
 

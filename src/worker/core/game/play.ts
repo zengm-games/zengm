@@ -503,11 +503,10 @@ const play = async (
 				}
 			} else {
 				// Only do neutralSite when not forcing a win, since forcing a win uses homeCourtFactor and I don't want to worry about how that interacts with neutralSite
-				const noHomeCourtAdvantage = g.get("noHomeCourtAdvantage");
 				const neutralSite =
 					g.get("phase") === PHASE.PLAYOFFS &&
-					(noHomeCourtAdvantage === "playoffs" ||
-						(noHomeCourtAdvantage === "finals" && game.finals));
+					(g.get("neutralSite") === "playoffs" ||
+						(g.get("neutralSite") === "finals" && game.finals));
 
 				const result = getResult({
 					gid: game.gid,

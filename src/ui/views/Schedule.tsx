@@ -99,7 +99,7 @@ const Schedule = ({
 														),
 														onClick: () =>
 															toWorker("actions", "liveGame", game.gid),
-												  }
+													}
 												: {
 														disabled: gameSimInProgress,
 														text: (
@@ -114,8 +114,8 @@ const Schedule = ({
 														onClick: () => {
 															toWorker("actions", "simToGame", game.gid);
 														},
-												  },
-									  ];
+													},
+										];
 
 							const allowTie = allowForceTie({
 								homeTid: game.teams[0].tid,
@@ -136,6 +136,7 @@ const Schedule = ({
 									<ScoreBox
 										game={{
 											// Leave out forceTie, since ScoreBox wants the value for finished games
+											finals: game.finals,
 											gid: game.gid,
 											season: game.season,
 											teams: game.teams,

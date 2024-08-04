@@ -119,7 +119,7 @@ const DailySchedule = ({
 														onClick: () =>
 															toWorker("actions", "simGame", game.gid),
 													},
-											  ]
+												]
 											: undefined;
 
 									const allowTie = allowForceTie({
@@ -140,6 +140,7 @@ const DailySchedule = ({
 											<ScoreBox
 												game={{
 													// Leave out forceTie, since ScoreBox wants the value for finished games
+													finals: game.finals,
 													gid: game.gid,
 													season: game.season,
 													teams: game.teams,

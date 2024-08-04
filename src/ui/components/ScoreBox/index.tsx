@@ -83,9 +83,6 @@ const ScoreBox = memo(
 		playersUpcomingAbbrev?: boolean;
 		small?: boolean;
 	}) => {
-		if (game.gid === 1316) {
-			console.log(game);
-		}
 		const {
 			challengeNoRatings,
 			homeCourtAdvantage,

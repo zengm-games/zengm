@@ -1,12 +1,11 @@
 option for neutral site playoffs (no home court advantage) https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
 - make it clearer in the UI that it's a neutral site game
-  - upcoming game
-    - DailySchedule
-    - Schedule
   - finished game
-    - ScoreBox too?
-    - GameLog
+    - ScoreBox should read Game.neutralSite or whatever
+      - including ASG!
+    - GameLog list
     - BoxScore
+    - live game
 - disableHomeCourtAdvantage in play.ts - implement more cleanly with homeCourtFactor
 - point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxtnnBjBpBnjQPFrxjMbGHDNr
   - tricky because point spread is calculated in UI, but info needed to compute disableHomeCourtAdvantage is not

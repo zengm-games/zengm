@@ -1,13 +1,3 @@
-option for neutral site playoffs (no home court advantage) https://discord.com/channels/290013534023057409/331882115119448065/1222011146660483173
-- point spread should account for this, currently doesn't for FBGM https://mail.google.com/mail/u/0/#inbox/FMfcgzGxSvBmhwMkWzZpTVNcNzdbxsWQ https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxtnnBjBpBnjQPFrxjMbGHDNr
-- blog
-  - FBGM has been the default for a while, but was not shown in the UI anywhere
-  - point spread
-  - where it shows in UI now
-    - box score
-    - live game
-    - game log list (no @ for either team)
-
 show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 - design ideas
   - could use symbol for bonus

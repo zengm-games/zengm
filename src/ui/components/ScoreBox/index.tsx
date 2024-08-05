@@ -74,6 +74,7 @@ const ScoreBox = memo(
 			finals?: boolean;
 			forceWin?: number;
 			gid: number;
+			neutralSite?: boolean;
 			season?: number;
 			teams: [Team, Team];
 			numPeriods?: number;
@@ -125,9 +126,14 @@ const ScoreBox = memo(
 			(!small || !final)
 		) {
 			let actualHomeCourtAdvantage;
-			if (neutralSite === "finals" && game.finals) {
+			if (game.neutralSite) {
+				// Completed game at neutral site
+				actualHomeCourtAdvantage = 0;
+			} else if (neutralSite === "finals" && game.finals) {
+				// Upcoming game at neutral site
 				actualHomeCourtAdvantage = 0;
 			} else if (neutralSite === "playoffs" && phase === PHASE.PLAYOFFS) {
+				// Upcoming game at neutral site
 				actualHomeCourtAdvantage = 0;
 			} else {
 				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb

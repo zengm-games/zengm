@@ -2172,7 +2172,7 @@ export const settings: Setting[] = (
 				{ key: "playoffs", value: "For the whole playoffs" },
 				{ key: "finals", value: "For only the finals" },
 			],
-			description: `This disables the home ${helpers.upperCaseFirstLetter(COURT)} advantage for some games.`,
+			description: `This disables the home ${COURT} advantage for some games.`,
 		},
 		...(["maxOvertimes", "maxOvertimesPlayoffs"] as const).map(key => {
 			const playoffs = key === "maxOvertimesPlayoffs";

@@ -4,7 +4,6 @@ import {
 	GAME_ACRONYM,
 	SUBREDDIT_NAME,
 	VIDEO_ADS,
-	VIDEO_ADS_2,
 	VIDEO_AD_PADDING,
 } from "../../common";
 import { useLocalPartial } from "../util";
@@ -66,35 +65,17 @@ const Footer = memo(() => {
 					position: "relative",
 				}}
 			>
-				{VIDEO_ADS_2 ? (
-					<div
-						id="FreeStarVideoAdContainer"
-						style={{
-							display: "none",
-							textAlign: "center",
-							height: "250px",
-							position: "absolute",
-							top: "5px",
-							left: 0,
-						}}
-					>
-						<div id="freestar-video-parent">
-							<div id="freestar-video-child"></div>
-						</div>
-					</div>
-				) : (
-					<div
-						id={`${AD_DIVS.rectangle1}_disabled`}
-						style={{
-							display: "none",
-							textAlign: "center",
-							height: "250px",
-							position: "absolute",
-							top: "5px",
-							left: 0,
-						}}
-					/>
-				)}
+				<div
+					id={`${AD_DIVS.rectangle1}_disabled`}
+					style={{
+						display: "none",
+						textAlign: "center",
+						height: "250px",
+						position: "absolute",
+						top: "5px",
+						left: 0,
+					}}
+				/>
 				<div
 					id="bbgm-ads-logo"
 					style={{

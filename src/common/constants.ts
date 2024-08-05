@@ -516,7 +516,6 @@ export const STARTING_NUM_TIMEOUTS = bySport({
 
 export const VIDEO_ADS = isSport("football");
 export const VIDEO_AD_PADDING = 225 + 10 + 10;
-export const VIDEO_ADS_2 = isSport("basketball");
 
 export {
 	AD_DIVS,

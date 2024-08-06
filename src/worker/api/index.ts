@@ -3428,7 +3428,6 @@ const updateGameAttributesGodMode = async (
 
 	const currentRepeatSeasonType = g.get("repeatSeason")?.type ?? "disabled";
 	const repeatSeason = settings.repeatSeason;
-	console.log("repeatSeason", repeatSeason);
 
 	if (repeatSeason !== "disabled" && repeatSeason !== currentRepeatSeasonType) {
 		if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {

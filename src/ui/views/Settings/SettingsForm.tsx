@@ -315,7 +315,7 @@ const SettingsForm = ({
 	const [filterText, setFilterText] = useState("");
 
 	// Filter out the new league only ones when appropriate
-	let filteredSettings = settings.filter(setting => {
+	const filteredSettings = settings.filter(setting => {
 		return (
 			(!settingsShown || settingsShown.includes(setting.key)) &&
 			(!setting.showOnlyIf ||
@@ -327,6 +327,10 @@ const SettingsForm = ({
 		);
 	});
 
+	// filteredSettings - removes ones not appropriate for this context, like new league only settings
+	// filteredSettings2 - handles the filter/search bar in the UI
+	let filteredSettings2;
+
 	// Ignore all-whitespace filterText
 	if (filterText !== "" && /\S/.test(filterText)) {
 		const words = filterText
@@ -334,7 +338,7 @@ const SettingsForm = ({
 			.map(word => word.trim().toLowerCase())
 			.filter(word => word !== "");
 
-		filteredSettings = filteredSettings.filter(setting => {
+		filteredSettings2 = filteredSettings.filter(setting => {
 			const category = setting.category.toLowerCase();
 			const name = setting.name.toLowerCase();
 
@@ -355,6 +359,8 @@ const SettingsForm = ({
 				);
 			});
 		});
+	} else {
+		filteredSettings2 = filteredSettings;
 	}
 
 	const [submitting, setSubmitting] = useState(false);
@@ -453,7 +459,7 @@ const SettingsForm = ({
 
 	const visibleCategories = getVisibleCategories({
 		godMode,
-		filteredSettings,
+		filteredSettings: filteredSettings2,
 		newLeague,
 		showGodModeSettings,
 	});

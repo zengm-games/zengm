@@ -1,3 +1,7 @@
+rounding
+- in BBGM, use decimal format for min in stat tables, MM:SS only in box scores https://old.reddit.com/r/BasketballGM/comments/1ekagjc/small_new_feature_in_version_202408041229_play/
+- ORTG and DRTG no decimal places https://old.reddit.com/r/BasketballGM/comments/1ekagjc/small_new_feature_in_version_202408041229_play/
+
 show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 - design ideas
   - could use symbol for bonus

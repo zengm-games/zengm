@@ -3332,7 +3332,7 @@ const cols: {
 		desc: isSport("hockey") ? "Time On Ice" : "Minutes",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "TOI" : "Min",
+		title: isSport("hockey") ? "TOI" : "MP",
 	},
 	"stat:mov": {
 		desc: "Average Margin of Victory",

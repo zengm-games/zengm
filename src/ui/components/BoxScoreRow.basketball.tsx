@@ -34,7 +34,7 @@ const BoxScoreRow = ({
 		</td>
 	) : (
 		<>
-			<td>{helpers.roundStat(p.min, "min")}</td>
+			<td>{helpers.formatNumber(p.min, "minutes")}</td>
 			<td>
 				{p.fg}-{p.fga}
 			</td>

@@ -19,9 +19,7 @@ const plusMinus = (arg: number, d: number): string => {
 	return (arg > 0 ? "+" : "") + arg.toFixed(d);
 };
 
-const roundOverrides: Record<
-	string,
-	| "none"
+type RoundType =
 	| "oneDecimalPlace"
 	| "twoDecimalPlaces"
 	| "threeDecimalPlaces"
@@ -29,12 +27,14 @@ const roundOverrides: Record<
 	| "plusMinus"
 	| "plusMinusNoDecimalPlace"
 	| "noDecimalPlace"
-	| "minutes"
-	| undefined
-> = bySport({
+	| "minutes";
+
+// This only works for stats that are displayed the same in all contexts (per game, totals, individual game - yes, min in BBGM has a special override for individual games) - ideally would have a more comprehensive system. Currently it just assumes things that aren't the same in all contexts are 0 decimal places when totals and 1 otherwise.
+const roundOverrides: Record<string, RoundType | undefined> = bySport({
 	baseball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
+		min: "oneDecimalPlace",
 		yearsWithTeam: "noDecimalPlace",
 		pa: "noDecimalPlace",
 		ab: "noDecimalPlace",
@@ -227,7 +227,7 @@ const roundOverrides: Record<
 	basketball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
-		min: "minutes",
+		min: "oneDecimalPlace",
 		yearsWithTeam: "noDecimalPlace",
 		gmsc: "oneDecimalPlace",
 		fgp: "oneDecimalPlace",
@@ -503,6 +503,56 @@ const roundOverrides: Record<
 	},
 });
 
+const formatNumber = (value: number, type: RoundType): string => {
+	if (type === "oneDecimalPlace") {
+		if (value === 100) {
+			return "100";
+		}
+
+		return value.toLocaleString("en-US", {
+			maximumFractionDigits: 1,
+			minimumFractionDigits: 1,
+		});
+	} else if (type === "twoDecimalPlaces") {
+		return value.toLocaleString("en-US", {
+			maximumFractionDigits: 2,
+			minimumFractionDigits: 2,
+		});
+	} else if (type === "threeDecimalPlaces") {
+		return value.toLocaleString("en-US", {
+			maximumFractionDigits: 3,
+			minimumFractionDigits: 3,
+		});
+	} else if (type === "roundWinp") {
+		return commonHelpers.roundWinp(value);
+	} else if (type === "plusMinus") {
+		return plusMinus(value, 1);
+	} else if (type === "plusMinusNoDecimalPlace") {
+		return plusMinus(value, 0);
+	} else if (type === "noDecimalPlace") {
+		return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+	} else if (type === "minutes") {
+		if (value > 100) {
+			return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+		}
+
+		if (value === 0) {
+			return "--:--";
+		}
+
+		const remainder = value % 1;
+		let seconds = Math.round(remainder * 60);
+		let minutes = Math.floor(value);
+		while (seconds >= 60) {
+			minutes += 1;
+			seconds -= 60;
+		}
+		return `${minutes}:${seconds >= 10 ? seconds : `0${seconds}`}`;
+	} else {
+		throw new Error("Should never happen");
+	}
+};
+
 const roundStat = (
 	value: number | string,
 	stat: string,
@@ -514,7 +564,7 @@ const roundStat = (
 		}
 
 		// Number of decimals for many stats
-		const d = totals ? 0 : 1;
+		const decimalPlaces = totals ? 0 : 1;
 
 		if (Number.isNaN(value)) {
 			value = 0;
@@ -527,69 +577,17 @@ const roundStat = (
 			return "-inf";
 		}
 
-		if (roundOverrides[stat] === "minutes") {
-			if (value > 100) {
-				return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+		const type = roundOverrides[stat];
+		if (type) {
+			if (type === "plusMinus" && totals) {
+				return formatNumber(value, "plusMinusNoDecimalPlace");
 			}
-
-			if (value === 0) {
-				return "--:--";
-			}
-
-			const remainder = value % 1;
-			let seconds = Math.round(remainder * 60);
-			let minutes = Math.floor(value);
-			while (seconds >= 60) {
-				minutes += 1;
-				seconds -= 60;
-			}
-			return `${minutes}:${seconds >= 10 ? seconds : `0${seconds}`}`;
-		}
-
-		if (roundOverrides[stat] === "oneDecimalPlace") {
-			if (value === 100) {
-				return "100";
-			}
-
-			return value.toLocaleString("en-US", {
-				maximumFractionDigits: 1,
-				minimumFractionDigits: 1,
-			});
-		}
-
-		if (roundOverrides[stat] === "twoDecimalPlaces") {
-			return value.toLocaleString("en-US", {
-				maximumFractionDigits: 2,
-				minimumFractionDigits: 2,
-			});
-		}
-
-		if (roundOverrides[stat] === "threeDecimalPlaces") {
-			return value.toLocaleString("en-US", {
-				maximumFractionDigits: 3,
-				minimumFractionDigits: 3,
-			});
-		}
-
-		if (roundOverrides[stat] === "roundWinp") {
-			return commonHelpers.roundWinp(value);
-		}
-
-		if (roundOverrides[stat] === "plusMinus") {
-			return plusMinus(value, d);
-		}
-
-		if (roundOverrides[stat] === "plusMinusNoDecimalPlace") {
-			return plusMinus(value, 0);
-		}
-
-		if (roundOverrides[stat] === "noDecimalPlace") {
-			return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+			return formatNumber(value, type);
 		}
 
 		return value.toLocaleString("en-US", {
-			maximumFractionDigits: d,
-			minimumFractionDigits: d,
+			maximumFractionDigits: decimalPlaces,
+			minimumFractionDigits: decimalPlaces,
 		});
 	} catch (err) {
 		return "";
@@ -634,6 +632,7 @@ const yearRanges = (arrInput: number[]): string[] => {
 
 const helpers = {
 	...commonHelpers,
+	formatNumber,
 	leagueUrl,
 	plusMinus,
 	roundStat,

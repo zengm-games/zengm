@@ -1,3 +1,8 @@
+some indication of jersey number collisions when editing a player
+- https://old.reddit.com/r/BasketballGM/comments/1dsfbps/monthly_suggestions_thread/ldelue2/
+
+On the frivolities page for jersey numbers add a column for number of teams that have retired the number https://discord.com/channels/290013534023057409/331882115119448065/1236793003587272845
+
 rounding
 - in BBGM, use decimal format for min in stat tables, MM:SS only in box scores https://old.reddit.com/r/BasketballGM/comments/1ekagjc/small_new_feature_in_version_202408041229_play/
 - ORTG and DRTG no decimal places https://old.reddit.com/r/BasketballGM/comments/1ekagjc/small_new_feature_in_version_202408041229_play/
@@ -137,8 +142,6 @@ players switching numbers when they don't switch teams https://discord.com/chann
 support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
 - need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too
 - should run augmentPartialPlayer after reading file in LeagueFileUpload but before showing in UI for ImportPlayers
-
-On the frivolities page for jersey numbers add a column for number of teams that have retired the number https://discord.com/channels/290013534023057409/331882115119448065/1236793003587272845
 
 triple play logged as double play https://discord.com/channels/290013534023057409/290015591216054273/1235723112310378496
 - how does a triple play even happen?

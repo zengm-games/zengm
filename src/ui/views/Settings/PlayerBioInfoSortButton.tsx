@@ -26,7 +26,7 @@ const SortButton = <Type extends "names" | "colleges" | "countries">({
 			if (temp) {
 				prev = JSON.parse(temp);
 			}
-		} catch (error) {}
+		} catch {}
 
 		if (!prev) {
 			prev = {};

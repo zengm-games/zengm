@@ -685,11 +685,11 @@ const UpsertTeamModal = ({
 												string,
 												string,
 											];
-											(colors[ind] = event.target.value),
-												setControlledTeam({
-													...controlledTeam,
-													colors,
-												});
+											colors[ind] = event.target.value;
+											setControlledTeam({
+												...controlledTeam,
+												colors,
+											});
 										}
 									} else if (field === "usePlayers") {
 										setControlledTeam({

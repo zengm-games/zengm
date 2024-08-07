@@ -1015,14 +1015,14 @@ const advancedPlayerSearch = (params: Params) => {
 				value: row[3],
 			};
 		});
-	} catch (error) {
+	} catch {
 		filters = [];
 	}
 
 	let showStatTypes: string[];
 	try {
 		showStatTypes = JSON.parse(params.showStatTypes!);
-	} catch (error) {
+	} catch {
 		showStatTypes = [];
 	}
 

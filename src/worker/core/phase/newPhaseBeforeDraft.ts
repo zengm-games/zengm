@@ -74,7 +74,7 @@ const doInflation = async (conditions: Conditions) => {
 				inflationMin,
 				inflationMax,
 			);
-		} catch (error) {
+		} catch {
 			inflation = random.randInt(inflationMin, inflationMax);
 		}
 	}

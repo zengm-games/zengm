@@ -10,7 +10,7 @@ try {
 	worker = window.useSharedWorker
 		? new SharedWorker(workerPath, { type: "module" })
 		: new Worker(workerPath, { type: "module" });
-} catch (error) {
+} catch {
 	// Chrome <83 has an error when using module type
 	worker = window.useSharedWorker
 		? new SharedWorker(workerPath)

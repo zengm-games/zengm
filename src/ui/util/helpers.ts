@@ -589,7 +589,7 @@ const roundStat = (
 			maximumFractionDigits: decimalPlaces,
 			minimumFractionDigits: decimalPlaces,
 		});
-	} catch (err) {
+	} catch {
 		return "";
 	}
 };

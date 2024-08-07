@@ -241,7 +241,7 @@ const loadChecked = () => {
 			}
 
 			return checked;
-		} catch (error) {}
+		} catch {}
 	}
 
 	return checked;
@@ -255,7 +255,7 @@ const loadCompressed = (): boolean => {
 			if (typeof settings.compressed === "boolean") {
 				return settings.compressed;
 			}
-		} catch (error) {}
+		} catch {}
 	}
 
 	return true;
@@ -274,7 +274,7 @@ const loadGzip = (): boolean => {
 			if (typeof settings.gzip === "boolean") {
 				return settings.gzip;
 			}
-		} catch (error) {}
+		} catch {}
 	}
 
 	return true;

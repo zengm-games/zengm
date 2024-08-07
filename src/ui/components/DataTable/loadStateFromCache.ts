@@ -58,7 +58,7 @@ const loadStateFromCache = ({
 					}
 				}
 			}
-		} catch (err) {
+		} catch {
 			filters = defaultFilters;
 		}
 	}

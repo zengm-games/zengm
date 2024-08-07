@@ -49,6 +49,9 @@
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
 
+    // Enable this again when I have totally gotten rid of CJS scripts/configs
+    "@typescript-eslint/no-require-imports": "off",
+
     // Really just want to disable in TSX files, where this pattern is actually needed https://github.com/typescript-eslint/typescript-eslint/issues/4062
     "@typescript-eslint/no-unnecessary-type-constraint": "off",
 

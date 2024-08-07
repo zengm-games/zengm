@@ -27,7 +27,7 @@ const updateAccountUpdateCard = async (
 				expYear: data.expYear,
 				username: partialTopMenu.username,
 			};
-		} catch (err) {
+		} catch {
 			return {
 				goldCancelled: partialTopMenu.goldCancelled,
 				last4: "????",

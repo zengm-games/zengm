@@ -481,7 +481,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	try {
 		// @ts-expect-error
 		parsedFace = JSON.parse(p.face);
-	} catch (error) {}
+	} catch {}
 
 	const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
 

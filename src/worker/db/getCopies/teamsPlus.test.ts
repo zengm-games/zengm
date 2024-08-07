@@ -242,6 +242,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 
 	describe("TypeScript", () => {
 		test("Returns attrs, seasonAttrs, and stats for a single season", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
@@ -249,6 +250,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const t = await idb.getCopy.teamsPlus({
 				tid: 0,
 				attrs: ["tid", "abbrev"],
@@ -284,11 +286,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 
 		test("Returns just attrs", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				season: g.get("season"),
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const t = await idb.getCopy.teamsPlus({
 				tid: 0,
 				attrs: ["tid", "abbrev"],
@@ -311,12 +315,14 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 
 		test("Returns just attrs and seasonAttrs", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
 				season: g.get("season"),
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const t = await idb.getCopy.teamsPlus({
 				tid: 0,
 				attrs: ["tid", "abbrev"],
@@ -345,12 +351,14 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 
 		test("Returns just attrs and stats", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				stats: ["gp", "fg", "fgp"],
 				season: g.get("season"),
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const t = await idb.getCopy.teamsPlus({
 				tid: 0,
 				attrs: ["tid", "abbrev"],
@@ -380,12 +388,14 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 
 		test("Returns just seasonAttrs and stats", async () => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const teams = await idb.getCopies.teamsPlus({
 				seasonAttrs: ["season", "won", "payroll"],
 				stats: ["gp", "fg", "fgp"],
 				season: g.get("season"),
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const t = await idb.getCopy.teamsPlus({
 				tid: 0,
 				seasonAttrs: ["season", "won", "payroll"],
@@ -420,12 +430,14 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		test("Returns array for seasonAttrs and stats when no season is supplied", async () => {
 			idb.league = testHelpers.mockIDBLeague();
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
 				stats: ["gp", "fg", "fgp"],
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const t = await idb.getCopy.teamsPlus({
 				tid: 0,
 				attrs: ["tid", "abbrev"],

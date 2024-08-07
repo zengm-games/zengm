@@ -7,15 +7,13 @@ import * as util from "./util";
 
 self.bbgm = { api, ...common, ...core, ...db, ...util };
 
-const categories = [
-	"actions",
-	"exhibitionGame",
-	"leagueFileUpload",
-	"main",
-	"playMenu",
-	"toolsMenu",
-] as const;
-export type WorkerAPICategory = typeof categories[number];
+export type WorkerAPICategory =
+	| "actions"
+	| "exhibitionGame"
+	| "leagueFileUpload"
+	| "main"
+	| "playMenu"
+	| "toolsMenu";
 
 // API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
 

@@ -394,7 +394,7 @@ const initialCheck = async (
 		let response;
 		try {
 			response = await fetch(file);
-		} catch (error) {
+		} catch {
 			throw new Error(
 				"Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
 			);

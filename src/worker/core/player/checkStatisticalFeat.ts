@@ -75,20 +75,14 @@ const checkStatisticalFeat = (
 		const won = winner === i;
 		const tied = winner === -1;
 		const featTextArr = Object.keys(feats).map(stat => {
-			const text = `${feats[stat]} ${stat}`;
-
-			if (text === "1 shutout") {
-				return "a shutout";
-			}
-
-			// Hacky way to convert "1 assists" into "1 assist"
+			// Hacky way to convert "1 assists" into "an assist"
 			if (feats[stat] === 1 && stat.endsWith("s")) {
 				const singular = stat.slice(0, -1);
 				const vowels = ["a", "e", "i", "o", "u"];
 				return `${vowels.includes(singular[0]) ? "an" : "a"} ${singular}`;
 			}
 
-			return text;
+			return `${feats[stat]} ${stat}`;
 		});
 		let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${
 			p.name

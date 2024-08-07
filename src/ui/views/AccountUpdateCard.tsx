@@ -85,7 +85,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 						realtimeUpdate(["account"], "/account", {
 							goldResult: data,
 						});
-					} catch (err) {
+					} catch {
 						setState(prevState => ({
 							...prevState,
 							disabled: false,

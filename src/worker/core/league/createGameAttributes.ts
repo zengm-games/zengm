@@ -161,7 +161,7 @@ const createGameAttributes = async (
 			playIn: gameAttributes.playIn,
 			byConf: gameAttributes.playoffsByConf,
 		});
-	} catch (error) {
+	} catch {
 		legacyPlayoffs = true;
 	}
 	if (legacyPlayoffs) {
@@ -245,7 +245,7 @@ const createGameAttributes = async (
 				playIn: gameAttributes.playIn,
 				byConf,
 			});
-		} catch (error) {
+		} catch {
 			gameAttributes.playIn = false;
 		}
 	}

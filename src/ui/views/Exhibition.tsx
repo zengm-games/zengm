@@ -498,7 +498,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			if (json) {
 				settings = JSON.parse(json) as CachedSettings;
 			}
-		} catch (error) {}
+		} catch {}
 
 		if (settings) {
 			// Add default, in case there is a new setting

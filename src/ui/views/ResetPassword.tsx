@@ -55,7 +55,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 						showForm: false,
 					}));
 				}
-			} catch (err) {
+			} catch {
 				setState(state2 => ({
 					...state2,
 					globalMessage: <span className="text-danger">{ajaxErrorMsg}</span>,
@@ -121,7 +121,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 
 				setState(updatedState);
 			}
-		} catch (err) {
+		} catch {
 			setState({
 				...state,
 				errorMessageOverall: ajaxErrorMsg,

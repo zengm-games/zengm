@@ -96,7 +96,7 @@ export const formatPlayerBioInfoState = (
 					defaults.namesCountries,
 					defaults.namesGroups,
 					defaults.groups,
-			  );
+				);
 
 	// Happens when playerBioInfo is undefined
 	const allDefaults = mergedCountries === defaultMergedCountries;
@@ -132,7 +132,7 @@ export const formatPlayerBioInfoState = (
 				playerBioInfoSort[key] = PLAYER_BIO_INFO_SORT_DEFAULT[key];
 			}
 		}
-	} catch (err) {
+	} catch {
 		playerBioInfoSort = { ...PLAYER_BIO_INFO_SORT_DEFAULT };
 	}
 

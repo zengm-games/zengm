@@ -24,7 +24,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 	}
 
 	if (p.stat.so > 0) {
-		statArr.shutout = p.stat.so;
+		statArr.shutouts = p.stat.so;
 	}
 
 	if (Object.keys(statArr).length > 0) {

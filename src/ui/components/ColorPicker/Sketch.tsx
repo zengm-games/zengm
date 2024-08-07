@@ -66,7 +66,7 @@ const EyeDropperButton = ({
 				try {
 					const result = await eyeDropper.open();
 					onChange(result.sRGBHex.slice(1));
-				} catch (err) {
+				} catch {
 					// The user escaped the eyedropper mode, do nothing
 				}
 			}}
@@ -143,7 +143,9 @@ export const Sketch = React.forwardRef<HTMLDivElement, SketchProps>(
 
 		const handleChange = (hsv: HsvaColor) => {
 			setHsva(hsv);
-			onChange && onChange(handleColor(hsv));
+			if (onChange) {
+				onChange(handleColor(hsv));
+			}
 		};
 
 		const handleHex = (value: string | number) => {

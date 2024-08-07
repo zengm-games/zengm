@@ -386,7 +386,7 @@ const namesBasketball = () => {
 		let contents;
 		try {
 			contents = fs.readFileSync(file, "utf8");
-		} catch (err) {
+		} catch {
 			console.log(`Cannot open ${file}`);
 			continue;
 		}

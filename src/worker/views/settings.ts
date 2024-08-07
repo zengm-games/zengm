@@ -9,174 +9,173 @@ import type {
 } from "../../common/types";
 import goatFormula from "../util/goatFormula";
 
-const keys = [
-	"godMode",
-	"godModeInPast",
-	"numGames",
-	"numGamesDiv",
-	"numGamesConf",
-	"numActiveTeams",
-	"quarterLength",
-	"maxRosterSize",
-	"minRosterSize",
-	"salaryCap",
-	"minPayroll",
-	"luxuryPayroll",
-	"luxuryTax",
-	"minContract",
-	"maxContract",
-	"minContractLength",
-	"maxContractLength",
-	"aiTradesFactor",
-	"injuryRate",
-	"homeCourtAdvantage",
-	"rookieContractLengths",
-	"rookiesCanRefuse",
-	"tragicDeathRate",
-	"brotherRate",
-	"sonRate",
-	"forceRetireAge",
-	"forceRetireSeasons",
-	"salaryCapType",
-	"numGamesPlayoffSeries",
-	"numPlayoffByes",
-	"draftType",
-	"draftAges",
-	"playersRefuseToNegotiate",
-	"allStarGame",
-	"allStarNum",
-	"allStarType",
-	"budget",
-	"numSeasonsFutureDraftPicks",
-	"foulRateFactor",
-	"foulsNeededToFoulOut",
-	"foulsUntilBonus",
-	"threePointers",
-	"pace",
-	"threePointTendencyFactor",
-	"threePointAccuracyFactor",
-	"twoPointAccuracyFactor",
-	"ftAccuracyFactor",
-	"blockFactor",
-	"stealFactor",
-	"turnoverFactor",
-	"orbFactor",
-	"challengeNoDraftPicks",
-	"challengeNoFreeAgents",
-	"challengeNoTrades",
-	"challengeLoseBestPlayer",
-	"challengeNoRatings",
-	"challengeFiredLuxuryTax",
-	"challengeFiredMissPlayoffs",
-	"challengeSisyphusMode",
-	"challengeThanosMode",
-	"realPlayerDeterminism",
-	"repeatSeason",
-	"maxOvertimes",
-	"maxOvertimesPlayoffs",
-	"shootoutRounds",
-	"shootoutRoundsPlayoffs",
-	"otl",
-	"spectator",
-	"elam",
-	"elamASG",
-	"elamMinutes",
-	"elamOvertime",
-	"elamPoints",
-	"playerMoodTraits",
-	"numPlayersOnCourt",
-	"numDraftRounds",
-	"tradeDeadline",
-	"autoDeleteOldBoxScores",
-	"difficulty",
-	"stopOnInjury",
-	"stopOnInjuryGames",
-	"aiJerseyRetirement",
-	"numPeriods",
-	"tiebreakers",
-	"pointsFormula",
-	"equalizeRegions",
-	"realDraftRatings",
-	"hideDisabledTeams",
-	"hofFactor",
-	"injuries",
-	"inflationAvg",
-	"inflationMax",
-	"inflationMin",
-	"inflationStd",
-	"playoffsByConf",
-	"playoffsNumTeamsDiv",
-	"playoffsReseed",
-	"playerBioInfo",
-	"playIn",
-	"numPlayersDunk",
-	"numPlayersThree",
-	"fantasyPoints",
-	"goatFormula",
-	"goatSeasonFormula",
-	"draftPickAutoContract",
-	"draftPickAutoContractPercent",
-	"draftPickAutoContractRounds",
-	"dh",
-	"draftLotteryCustomNumPicks",
-	"draftLotteryCustomChances",
-	"passFactor",
-	"rushYdsFactor",
-	"passYdsFactor",
-	"completionFactor",
-	"scrambleFactor",
-	"sackFactor",
-	"fumbleFactor",
-	"intFactor",
-	"fgAccuracyFactor",
-	"fourthDownFactor",
-	"onsideFactor",
-	"onsideRecoveryFactor",
-	"hitFactor",
-	"giveawayFactor",
-	"takeawayFactor",
-	"deflectionFactor",
-	"saveFactor",
-	"assistFactor",
-	"foulFactor",
-	"groundFactor",
-	"lineFactor",
-	"flyFactor",
-	"powerFactor",
-	"throwOutFactor",
-	"strikeFactor",
-	"balkFactor",
-	"wildPitchFactor",
-	"passedBallFactor",
-	"hitByPitchFactor",
-	"swingFactor",
-	"contactFactor",
-	"softCapTradeSalaryMatch",
-	"gender",
-	"heightFactor",
-	"weightFactor",
-	"allStarDunk",
-	"allStarThree",
-	"minRetireAge",
-	"numWatchColors",
-	"giveMeWorstRoster",
-	"groupScheduleSeries",
-	"autoExpandProb",
-	"autoExpandNumTeams",
-	"autoExpandMaxNumTeams",
-	"autoExpandGeo",
-	"autoRelocateProb",
-	"autoRelocateGeo",
-	"autoRelocateRealign",
-	"autoRelocateRebrand",
-	"alwaysShowCountry",
-	"neutralSite",
-] as const;
+type Key =
+	| "godMode"
+	| "godModeInPast"
+	| "numGames"
+	| "numGamesDiv"
+	| "numGamesConf"
+	| "numActiveTeams"
+	| "quarterLength"
+	| "maxRosterSize"
+	| "minRosterSize"
+	| "salaryCap"
+	| "minPayroll"
+	| "luxuryPayroll"
+	| "luxuryTax"
+	| "minContract"
+	| "maxContract"
+	| "minContractLength"
+	| "maxContractLength"
+	| "aiTradesFactor"
+	| "injuryRate"
+	| "homeCourtAdvantage"
+	| "rookieContractLengths"
+	| "rookiesCanRefuse"
+	| "tragicDeathRate"
+	| "brotherRate"
+	| "sonRate"
+	| "forceRetireAge"
+	| "forceRetireSeasons"
+	| "salaryCapType"
+	| "numGamesPlayoffSeries"
+	| "numPlayoffByes"
+	| "draftType"
+	| "draftAges"
+	| "playersRefuseToNegotiate"
+	| "allStarGame"
+	| "allStarNum"
+	| "allStarType"
+	| "budget"
+	| "numSeasonsFutureDraftPicks"
+	| "foulRateFactor"
+	| "foulsNeededToFoulOut"
+	| "foulsUntilBonus"
+	| "threePointers"
+	| "pace"
+	| "threePointTendencyFactor"
+	| "threePointAccuracyFactor"
+	| "twoPointAccuracyFactor"
+	| "ftAccuracyFactor"
+	| "blockFactor"
+	| "stealFactor"
+	| "turnoverFactor"
+	| "orbFactor"
+	| "challengeNoDraftPicks"
+	| "challengeNoFreeAgents"
+	| "challengeNoTrades"
+	| "challengeLoseBestPlayer"
+	| "challengeNoRatings"
+	| "challengeFiredLuxuryTax"
+	| "challengeFiredMissPlayoffs"
+	| "challengeSisyphusMode"
+	| "challengeThanosMode"
+	| "realPlayerDeterminism"
+	| "repeatSeason"
+	| "maxOvertimes"
+	| "maxOvertimesPlayoffs"
+	| "shootoutRounds"
+	| "shootoutRoundsPlayoffs"
+	| "otl"
+	| "spectator"
+	| "elam"
+	| "elamASG"
+	| "elamMinutes"
+	| "elamOvertime"
+	| "elamPoints"
+	| "playerMoodTraits"
+	| "numPlayersOnCourt"
+	| "numDraftRounds"
+	| "tradeDeadline"
+	| "autoDeleteOldBoxScores"
+	| "difficulty"
+	| "stopOnInjury"
+	| "stopOnInjuryGames"
+	| "aiJerseyRetirement"
+	| "numPeriods"
+	| "tiebreakers"
+	| "pointsFormula"
+	| "equalizeRegions"
+	| "realDraftRatings"
+	| "hideDisabledTeams"
+	| "hofFactor"
+	| "injuries"
+	| "inflationAvg"
+	| "inflationMax"
+	| "inflationMin"
+	| "inflationStd"
+	| "playoffsByConf"
+	| "playoffsNumTeamsDiv"
+	| "playoffsReseed"
+	| "playerBioInfo"
+	| "playIn"
+	| "numPlayersDunk"
+	| "numPlayersThree"
+	| "fantasyPoints"
+	| "goatFormula"
+	| "goatSeasonFormula"
+	| "draftPickAutoContract"
+	| "draftPickAutoContractPercent"
+	| "draftPickAutoContractRounds"
+	| "dh"
+	| "draftLotteryCustomNumPicks"
+	| "draftLotteryCustomChances"
+	| "passFactor"
+	| "rushYdsFactor"
+	| "passYdsFactor"
+	| "completionFactor"
+	| "scrambleFactor"
+	| "sackFactor"
+	| "fumbleFactor"
+	| "intFactor"
+	| "fgAccuracyFactor"
+	| "fourthDownFactor"
+	| "onsideFactor"
+	| "onsideRecoveryFactor"
+	| "hitFactor"
+	| "giveawayFactor"
+	| "takeawayFactor"
+	| "deflectionFactor"
+	| "saveFactor"
+	| "assistFactor"
+	| "foulFactor"
+	| "groundFactor"
+	| "lineFactor"
+	| "flyFactor"
+	| "powerFactor"
+	| "throwOutFactor"
+	| "strikeFactor"
+	| "balkFactor"
+	| "wildPitchFactor"
+	| "passedBallFactor"
+	| "hitByPitchFactor"
+	| "swingFactor"
+	| "contactFactor"
+	| "softCapTradeSalaryMatch"
+	| "gender"
+	| "heightFactor"
+	| "weightFactor"
+	| "allStarDunk"
+	| "allStarThree"
+	| "minRetireAge"
+	| "numWatchColors"
+	| "giveMeWorstRoster"
+	| "groupScheduleSeries"
+	| "autoExpandProb"
+	| "autoExpandNumTeams"
+	| "autoExpandMaxNumTeams"
+	| "autoExpandGeo"
+	| "autoRelocateProb"
+	| "autoRelocateGeo"
+	| "autoRelocateRealign"
+	| "autoRelocateRebrand"
+	| "alwaysShowCountry"
+	| "neutralSite";
 
 export type Settings = Pick<
 	GameAttributesLeague,
 	Exclude<
-		(typeof keys)[number],
+		Key,
 		| "repeatSeason"
 		| "realDraftRatings"
 		| "injuries"

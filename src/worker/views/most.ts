@@ -283,7 +283,7 @@ const updatePlayers = async (
 					value = goatFormula.evaluate(p, undefined, {
 						type: "career",
 					});
-				} catch (error) {}
+				} catch {}
 
 				return {
 					value,
@@ -333,7 +333,7 @@ const updatePlayers = async (
 									bestSeasonOverride: season,
 								},
 							};
-						} catch (error) {}
+						} catch {}
 
 						return [];
 					})

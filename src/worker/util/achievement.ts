@@ -104,7 +104,7 @@ async function add(
 		if (!data.success) {
 			await addToIndexedDB(slugs);
 		}
-	} catch (error) {
+	} catch {
 		await addToIndexedDB(slugs);
 	}
 }
@@ -166,7 +166,7 @@ async function getAll(): Promise<
 		}
 
 		return achievements2;
-	} catch (err) {
+	} catch {
 		// If remote fails, still return local achievements
 		return achievements2;
 	}

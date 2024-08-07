@@ -48,7 +48,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		p.stat["2b"] >= 1 &&
 		p.stat.hr >= 1
 	) {
-		statArr.cycle === 1;
+		statArr.cycles = 1;
 		score += 20;
 	}
 

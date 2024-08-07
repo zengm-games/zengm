@@ -744,7 +744,7 @@ class Cache {
 		if (this._season === undefined) {
 			try {
 				this._season = g.get("season");
-			} catch (err) {}
+			} catch {}
 		}
 
 		if (this._season === undefined) {

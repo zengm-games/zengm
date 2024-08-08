@@ -1604,6 +1604,45 @@ const getDiamondInfo = async (pid: number) => {
 	}
 };
 
+const getJerseyNumberConflict = async ({
+	pid,
+	tid,
+	jerseyNumber,
+}: {
+	pid: number | undefined;
+	tid: number;
+	jerseyNumber: string;
+}) => {
+	const conflicts = (
+		await idb.cache.players.indexGetAll("playersByTid", tid)
+	).filter(p => {
+		// Can't conflict with self
+		if (p.pid === pid) {
+			return false;
+		}
+
+		return helpers.getJerseyNumber(p) === jerseyNumber;
+	});
+
+	if (conflicts.length === 0) {
+		return;
+	}
+
+	if (conflicts.length === 1) {
+		const p = conflicts[0];
+
+		return {
+			type: "player" as const,
+			name: `${p.firstName} ${p.lastName}`,
+			pid: p.pid,
+		};
+	}
+
+	return {
+		type: "multiple" as const,
+	};
+};
+
 const getLeagueInfo = async (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
@@ -4407,6 +4446,7 @@ export default {
 		getDefaultNewLeagueSettings,
 		getDefaultTragicDeaths,
 		getDiamondInfo,
+		getJerseyNumberConflict,
 		getLeagueInfo,
 		getLeagueName,
 		getLeagues,

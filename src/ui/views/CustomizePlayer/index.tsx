@@ -5,6 +5,7 @@ import {
 	type MouseEvent,
 	type ReactNode,
 	useEffect,
+	useLayoutEffect,
 } from "react";
 import {
 	PHASE,
@@ -272,6 +273,49 @@ const copyValidValues = (
 		.filter(rel => !Number.isNaN(rel.pid));
 
 	return recomputePosOvrPot;
+};
+
+const useJerseyNumberConflictInfo = (
+	pid: number | undefined,
+	tid: number,
+	jerseyNumber: string,
+) => {
+	const [jerseyNumberConflictInfo, setJerseyNumberConflictInfo] = useState<
+		| {
+				type: "player";
+				name: string;
+				pid: number;
+		  }
+		| {
+				type: "multiple";
+		  }
+		| undefined
+	>();
+	useLayoutEffect(() => {
+		let mounted = true;
+
+		(async () => {
+			if (tid >= 0) {
+				const conflictInfo = await toWorker("main", "getJerseyNumberConflict", {
+					pid,
+					tid,
+					jerseyNumber,
+				});
+
+				if (!mounted) {
+					return;
+				}
+
+				setJerseyNumberConflictInfo(conflictInfo);
+			}
+		})();
+
+		return () => {
+			mounted = false;
+		};
+	}, [jerseyNumber, pid, tid]);
+
+	return jerseyNumberConflictInfo;
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
@@ -594,6 +638,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		jerseyNumber = "";
 	}
 
+	const jerseyNumberConflictInfo = useJerseyNumberConflictInfo(
+		p.pid,
+		p.tid,
+		jerseyNumber,
+	);
+	console.log("jerseyNumberConflictInfo", jerseyNumberConflictInfo);
+
 	const draftTeamUndrafted =
 		p.draft.tid === PLAYER.UNDRAFTED ||
 		(p.draft.tid as any) === String(PLAYER.UNDRAFTED);
@@ -806,6 +857,25 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										<span className="d-inline d-md-none d-lg-inline">om</span>
 									</button>
 								</div>
+								{jerseyNumberConflictInfo ? (
+									<span className="form-text text-danger">
+										{jerseyNumberConflictInfo.type === "player" ? (
+											<>
+												Conflicts with{" "}
+												<a
+													href={helpers.leagueUrl([
+														"player",
+														jerseyNumberConflictInfo.pid,
+													])}
+												>
+													{jerseyNumberConflictInfo.name}
+												</a>
+											</>
+										) : (
+											"Conflicts with multiple teammates"
+										)}
+									</span>
+								) : null}
 							</div>
 							<div className="col-sm-6 mb-3">
 								<label className="form-label">Country</label>

@@ -58,7 +58,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"statsTids",
 				"hof",
 			],
-			ratings: ["ovr", "pos"],
+			ratings: ["season", "ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});

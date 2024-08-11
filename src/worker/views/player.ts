@@ -329,8 +329,11 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 	let teamColors;
 	let teamJersey;
+	let bestPos;
 	if (p.tid === PLAYER.RETIRED) {
-		const { legacyTid } = processPlayersHallOfFame([p])[0];
+		const info = processPlayersHallOfFame([p])[0];
+		const legacyTid = info.legacyTid;
+		bestPos = info.bestPos;
 
 		// Randomly pick a season that he played on this team, and use that for colors
 		const teamJerseyNumberInfos = jerseyNumberInfos.filter(
@@ -343,6 +346,8 @@ export const getCommon = async (pid?: number, season?: number) => {
 				teamJersey = info.t.jersey;
 			}
 		}
+	} else {
+		bestPos = p.ratings.at(-1)!.pos;
 	}
 	if (teamColors === undefined) {
 		teamColors = await getTeamColors(p.tid);
@@ -467,6 +472,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 	return {
 		type: "normal" as const,
+		bestPos,
 		currentSeason: g.get("season"),
 		customMenu,
 		freeAgent: p.tid === PLAYER.FREE_AGENT,

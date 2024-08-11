@@ -129,7 +129,7 @@ const updateFrivolitiesDraftClasses = async (
 						"diedYear",
 						"jerseyNumber",
 					],
-					ratings: ["ovr", "pos"],
+					ratings: ["season", "ovr", "pos"],
 					stats: ["season", "abbrev", "tid", ...stats],
 					fuzz: true,
 				}),

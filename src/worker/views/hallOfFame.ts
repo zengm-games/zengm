@@ -41,7 +41,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"retiredYear",
 				"statsTids",
 			],
-			ratings: ["ovr", "pos"],
+			ratings: ["season", "ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});

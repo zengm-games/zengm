@@ -19,8 +19,8 @@ const getRelationText = (
 		return directLine
 			? "Self"
 			: brother
-			? helpers.getRelativeType(gender, "brother")
-			: "Cousin";
+				? helpers.getRelativeType(gender, "brother")
+				: "Cousin";
 	}
 
 	if (generation === 1) {
@@ -229,7 +229,7 @@ const updatePlayers = async (
 				"college",
 				"jerseyNumber",
 			],
-			ratings: ["ovr", "pos"],
+			ratings: ["season", "ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});

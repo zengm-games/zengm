@@ -45,7 +45,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
 				}),
-				p.ratings.at(-1).pos,
+				p.bestPos,
 				p.draft.year,
 				p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",

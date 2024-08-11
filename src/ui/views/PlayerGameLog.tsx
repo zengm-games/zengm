@@ -7,6 +7,7 @@ import { NoGamesMessage } from "./GameLog";
 import type { DataTableRow } from "../components/DataTable";
 
 const PlayerGameLog = ({
+	bestPos,
 	currentSeason,
 	customMenu,
 	freeAgent,
@@ -185,6 +186,7 @@ const PlayerGameLog = ({
 	return (
 		<>
 			<TopStuff
+				bestPos={bestPos}
 				currentSeason={currentSeason}
 				freeAgent={freeAgent}
 				gender={gender}

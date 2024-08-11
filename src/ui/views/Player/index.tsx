@@ -300,6 +300,7 @@ const MaybeBold = ({
 };
 
 const Player2 = ({
+	bestPos,
 	currentSeason,
 	customMenu,
 	events,
@@ -370,6 +371,7 @@ const Player2 = ({
 	return (
 		<>
 			<TopStuff
+				bestPos={bestPos}
 				currentSeason={currentSeason}
 				freeAgent={freeAgent}
 				gender={gender}

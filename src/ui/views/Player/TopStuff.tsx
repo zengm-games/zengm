@@ -235,6 +235,7 @@ const StatsSummary = ({
 };
 
 const TopStuff = ({
+	bestPos,
 	currentSeason,
 	freeAgent,
 	gender,
@@ -259,6 +260,7 @@ const TopStuff = ({
 	willingToSign,
 }: Pick<
 	View<"player">,
+	| "bestPos"
 	| "currentSeason"
 	| "freeAgent"
 	| "gender"
@@ -459,7 +461,7 @@ const TopStuff = ({
 						</div>
 						<div>
 							<strong>
-								{player.ratings.at(-1)!.pos},{" "}
+								{bestPos},{" "}
 								{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
 								{player.jerseyNumber ? (
 									<>

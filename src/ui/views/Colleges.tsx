@@ -20,10 +20,10 @@ export const genView = (
 				type === "college"
 					? "Colleges"
 					: type === "country"
-					? "Countries"
-					: type === "draftPosition"
-					? "Best Player at Every Pick"
-					: "Jersey Numbers",
+						? "Countries"
+						: type === "draftPosition"
+							? "Best Player at Every Pick"
+							: "Jersey Numbers",
 			customMenu: frivolitiesMenu,
 		});
 
@@ -44,10 +44,10 @@ export const genView = (
 			type === "college"
 				? "College"
 				: type === "country"
-				? "Country"
-				: type === "draftPosition"
-				? "Pick"
-				: "stat:jerseyNumber",
+					? "Country"
+					: type === "draftPosition"
+						? "Pick"
+						: "stat:jerseyNumber",
 			"# Players",
 			"Active",
 			"HoF",
@@ -82,10 +82,10 @@ export const genView = (
 							type === "college"
 								? "college"
 								: type === "country"
-								? "country"
-								: type === "draftPosition"
-								? "at_pick"
-								: "jersey_number",
+									? "country"
+									: type === "draftPosition"
+										? "at_pick"
+										: "jersey_number",
 							window.encodeURIComponent(c.name),
 						])}
 					>
@@ -114,7 +114,7 @@ export const genView = (
 							"table-info": p.statsTids.includes(userTid),
 						},
 					},
-					p.ratings.at(-1).pos,
+					p.bestPos,
 					p.draft.year,
 					p.retiredYear === Infinity ? null : p.retiredYear,
 					p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",

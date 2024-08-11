@@ -87,7 +87,7 @@ const getMostXPlayers = async ({
 			"jerseyNumber",
 			"awards",
 		],
-		ratings: ["ovr", "pos"],
+		ratings: ["season", "ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],
 		fuzz: true,
 		mergeStats: "totOnly",

@@ -289,6 +289,9 @@ const useJerseyNumberConflictInfo = (
 		| {
 				type: "multiple";
 		  }
+		| {
+				type: "retiredJerseyNumber";
+		  }
 		| undefined
 	>();
 	useLayoutEffect(() => {
@@ -871,6 +874,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 													{jerseyNumberConflictInfo.name}
 												</a>
 											</>
+										) : jerseyNumberConflictInfo.type ===
+										  "retiredJerseyNumber" ? (
+											"Retired jersey number"
 										) : (
 											"Conflicts with multiple teammates"
 										)}

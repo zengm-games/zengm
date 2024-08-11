@@ -1625,6 +1625,18 @@ const getJerseyNumberConflict = async ({
 	});
 
 	if (conflicts.length === 0) {
+		const t = await idb.cache.teams.get(tid);
+		if (t?.retiredJerseyNumbers) {
+			for (const row of t.retiredJerseyNumbers) {
+				if (row.number === jerseyNumber) {
+					return {
+						type: "retiredJerseyNumber" as const,
+					};
+				}
+			}
+		}
+
+		// No player or retired jersey conflicts
 		return;
 	}
 

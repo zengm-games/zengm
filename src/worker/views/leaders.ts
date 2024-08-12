@@ -777,7 +777,13 @@ const updateLeaders = async (
 					"hof",
 					"retiredYear",
 				],
-				ratings: ["skills", "pos"],
+
+				// season and ovr only needed for bestPos
+				ratings:
+					inputs.season === "career"
+						? ["season", "ovr", "skills", "pos"]
+						: ["skills", "pos"],
+
 				stats: ["abbrev", "tid", ...stats],
 				season: season === "career" ? undefined : season,
 				playoffs: inputs.playoffs === "playoffs",
@@ -788,14 +794,6 @@ const updateLeaders = async (
 			});
 			if (!p) {
 				return;
-			}
-
-			// Shitty handling of career totals
-			if (Array.isArray(p.ratings)) {
-				p.ratings = {
-					pos: p.ratings.at(-1).pos,
-					skills: [],
-				};
 			}
 
 			let playerStats;
@@ -844,12 +842,18 @@ const updateLeaders = async (
 
 					let tid = playerStats.tid;
 					let abbrev = playerStats.abbrev;
+					let pos;
 					if (season === "career") {
-						const { legacyTid } = processPlayersHallOfFame([p])[0];
+						const { bestPos, legacyTid } = processPlayersHallOfFame([p])[0];
 						if (legacyTid >= 0) {
 							tid = legacyTid;
 							abbrev = g.get("teamInfoCache")[tid]?.abbrev;
 						}
+
+						// Shitty handling of career totals
+						pos = bestPos;
+					} else {
+						pos = p.ratings.pos;
 					}
 
 					const userTid =
@@ -864,7 +868,7 @@ const updateLeaders = async (
 						firstName: p.firstName,
 						lastName: p.lastName,
 						pid: p.pid,
-						pos: p.ratings.pos,
+						pos,
 						retiredYear: p.retiredYear,
 						season:
 							inputs.season === "all" && season !== "career"

@@ -421,6 +421,21 @@ const augmentPartialPlayer = async (
 					ps[key] = 0;
 				}
 			}
+
+			if (isSport("baseball") && stats.byPos) {
+				for (const key of stats.byPos) {
+					if (ps[key]) {
+						for (let i = 0; i < ps[key].length; i++) {
+							// JSON.stringify turns undefined into null
+							if (ps[key][i] === null) {
+								ps[key][i] = undefined;
+							}
+						}
+					} else {
+						ps[key] = [];
+					}
+				}
+			}
 		}
 
 		// Add stats row if this is the preseason and all stats are historical, both for people making rosters by hand and for historical rosters

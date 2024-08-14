@@ -646,7 +646,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		p.tid,
 		jerseyNumber,
 	);
-	console.log("jerseyNumberConflictInfo", jerseyNumberConflictInfo);
 
 	const draftTeamUndrafted =
 		p.draft.tid === PLAYER.UNDRAFTED ||

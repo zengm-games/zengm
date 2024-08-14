@@ -112,7 +112,7 @@ class Ads {
 			}
 
 			window.freestar.queue.push(() => {
-				if (VIDEO_ADS) {
+				if (VIDEO_ADS && !window.mobile) {
 					window.freestar.newStickyFooter("football-gm_adhesion");
 				}
 

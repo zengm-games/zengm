@@ -40,30 +40,38 @@ export const genView = (
 			},
 		];
 
-		const cols = getCols([
-			type === "college"
-				? "College"
-				: type === "country"
-					? "Country"
-					: type === "draftPosition"
-						? "Pick"
-						: "stat:jerseyNumber",
-			"# Players",
-			"Active",
-			"HoF",
-			"stat:gp",
-			"stat:gpPerPlayer",
-			`stat:${displayStat}`,
-			`stat:${displayStat}PerPlayer`,
-			"Name",
-			"Pos",
-			"Drafted",
-			"Retired",
-			"Pick",
-			"Peak Ovr",
-			"Team",
-			...stats.map(stat => `stat:${stat}`),
-		]);
+		const cols = getCols(
+			[
+				type === "college"
+					? "College"
+					: type === "country"
+						? "Country"
+						: type === "draftPosition"
+							? "Pick"
+							: "stat:jerseyNumber",
+				"# Players",
+				"Active",
+				...(type === "jerseyNumbers" ? ["Retired"] : []),
+				"HoF",
+				"stat:gp",
+				"stat:gpPerPlayer",
+				`stat:${displayStat}`,
+				`stat:${displayStat}PerPlayer`,
+				"Name",
+				"Pos",
+				"Drafted",
+				"Retired",
+				"Pick",
+				"Peak Ovr",
+				"Team",
+				...stats.map(stat => `stat:${stat}`),
+			],
+			{
+				Retired: {
+					desc: "Number of teams that retired this jersey number",
+				},
+			},
+		);
 
 		const rows = infos.map(c => {
 			const p = c.p;
@@ -95,6 +103,7 @@ export const genView = (
 					</a>,
 					c.numPlayers,
 					c.numActivePlayers,
+					...(type === "jerseyNumbers" ? [c.numRetired] : []),
 					c.numHof,
 					helpers.roundStat(c.gp, "gp"),
 					(c.gp / c.numPlayers).toFixed(1),
@@ -149,7 +158,7 @@ export const genView = (
 				</p>
 				<DataTable
 					cols={cols}
-					defaultSort={[5, "desc"]}
+					defaultSort={[type === "jerseyNumbers" ? 7 : 6, "desc"]}
 					defaultStickyCols={window.mobile ? 0 : 1}
 					name={type === "college" ? "Colleges" : "Countries"}
 					rows={rows}

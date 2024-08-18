@@ -9,6 +9,7 @@ type InfoTemp = {
 	numPlayers: number;
 	numActivePlayers: number;
 	numHof: number;
+	numRetired: number;
 	gp: number;
 	displayStat: number;
 	valueStat: number;
@@ -50,6 +51,7 @@ const reducer = (
 			numPlayers: 0,
 			numActivePlayers: 0,
 			numHof: 0,
+			numRetired: 0,
 			gp: 0,
 			displayStat: 0,
 			valueStat: 0,
@@ -157,6 +159,7 @@ export const genView = (
 						numPlayers: info.numPlayers,
 						numActivePlayers: info.numActivePlayers,
 						numHof: info.numHof,
+						numRetired: info.numRetired,
 						gp: info.gp,
 						displayStat: info.displayStat,
 						valueStat: info.valueStat,
@@ -164,6 +167,26 @@ export const genView = (
 					};
 				}),
 			);
+
+			if (type === "jerseyNumbers") {
+				const retiredCounts: Record<string, number> = {};
+				const teams = await idb.cache.teams.getAll();
+				for (const t of teams) {
+					if (t.retiredJerseyNumbers) {
+						for (const row of t.retiredJerseyNumbers) {
+							if (retiredCounts[row.number] === undefined) {
+								retiredCounts[row.number] = 1;
+							} else {
+								retiredCounts[row.number] += 1;
+							}
+						}
+					}
+				}
+
+				for (const info of infos) {
+					info.numRetired = retiredCounts[info.name] ?? 0;
+				}
+			}
 
 			// Hacky crap because p is nested
 			const players = infos.map(info => info.p);

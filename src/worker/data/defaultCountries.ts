@@ -265,15 +265,17 @@ if (process.env.NODE_ENV === "test") {
 			Slovakia: 10,
 			Switzerland: 12,
 			Denmark: 8,
-			Slovenia: 1,
 			Germany: 9,
-			Norway: 1,
 			France: 3,
-			Austria: 1,
 			Latvia: 4,
 			Netherlands: 1,
 			Belarus: 2,
 			Australia: 1,
+
+			// @atomicdelirium from Discord asked for these to be increased from 1, so why not
+			Austria: 3,
+			Norway: 2,
+			Slovenia: 2,
 
 			// Extra countries from https://www.hockey-reference.com/friv/birthplaces.cgi
 			Bahamas: 1,

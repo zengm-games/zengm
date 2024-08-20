@@ -42,9 +42,6 @@ type Trade = {
 const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
 	const tid = event.tids[i];
 	const teamInfo = await getTeamInfoBySeason(tid, event.season);
-	if (!teamInfo) {
-		throw new Error("teamInfo not found");
-	}
 
 	const assets = await processAssets(event, i);
 

@@ -52,9 +52,7 @@ const fixRatingsStatsAbbrevs = async (p: {
 			for (const row of rows) {
 				if (row.tid !== undefined) {
 					const info = await getTeamInfoBySeason(row.tid, row.season);
-					if (info) {
-						row.abbrev = info.abbrev;
-					}
+					row.abbrev = info.abbrev;
 				}
 			}
 		}
@@ -62,9 +60,7 @@ const fixRatingsStatsAbbrevs = async (p: {
 
 	if (p.draft) {
 		const info = await getTeamInfoBySeason(p.draft.tid, p.draft.year);
-		if (info) {
-			p.draft.abbrev = info.abbrev;
-		}
+		p.draft.abbrev = info.abbrev;
 	}
 };
 
@@ -286,7 +282,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 		const ts = await getTeamInfoBySeason(ps.tid, ps.season);
 		let t;
-		if (ts && ts.colors && ts.name !== undefined && ts.region !== undefined) {
+		if (ts.colors && ts.name !== undefined && ts.region !== undefined) {
 			t = {
 				tid: ps.tid,
 				colors: ts.colors,
@@ -455,11 +451,9 @@ export const getCommon = async (pid?: number, season?: number) => {
 				}
 
 				const info = await getTeamInfoBySeason(stats.tid, stats.season);
-				if (info) {
-					teamName = `${info.region} ${info.name}`;
-					teamColors = info.colors;
-					teamJersey = info.jersey;
-				}
+				teamName = `${info.region} ${info.name}`;
+				teamColors = info.colors;
+				teamJersey = info.jersey;
 
 				teamURL = helpers.leagueUrl([
 					"roster",

@@ -452,11 +452,7 @@ export const processAssets = async (
 				const season =
 					typeof asset.season === "number" ? asset.season : event.season;
 				const teamInfo = await getTeamInfoBySeason(asset.originalTid, season);
-				if (teamInfo) {
-					abbrev = teamInfo.abbrev;
-				} else {
-					abbrev = "???";
-				}
+				abbrev = teamInfo.abbrev;
 			}
 
 			const common = {
@@ -533,9 +529,6 @@ const updateTradeSummary = async (
 		for (let i = 0; i < event.tids.length; i++) {
 			const tid = event.tids[i];
 			const teamInfo = await getTeamInfoBySeason(tid, event.season);
-			if (!teamInfo) {
-				throw new Error("teamInfo not found");
-			}
 
 			const assets = await processAssets(event, i, statSumsBySeason);
 			console.log(assets);

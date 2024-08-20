@@ -74,12 +74,9 @@ const updateAllStarThree = async (
 			// p2 could be undefined if player was deleted before contest
 			if (p2) {
 				const ts = await getTeamInfoBySeason(p.tid, season);
-
-				if (ts) {
-					p2.colors = ts.colors;
-					p2.jersey = ts.jersey;
-					p2.abbrev = ts.abbrev;
-				}
+				p2.colors = ts.colors;
+				p2.jersey = ts.jersey;
+				p2.abbrev = ts.abbrev;
 			}
 		}
 

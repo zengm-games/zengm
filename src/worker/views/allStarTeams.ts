@@ -41,9 +41,7 @@ const getPlayerInfo = async (
 	// Use values at time of draft
 	p2.tid = tid;
 	p2.name = name;
-	p2.abbrev =
-		(await getTeamInfoBySeason(tid, season))?.abbrev ??
-		helpers.getAbbrev(p.tid);
+	p2.abbrev = (await getTeamInfoBySeason(tid, season)).abbrev;
 
 	return p2;
 };

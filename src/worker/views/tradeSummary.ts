@@ -1,4 +1,4 @@
-import { bySport, PHASE } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import type {
 	DiscriminateUnion,
 	DraftPickSeason,
@@ -142,11 +142,12 @@ const getActualPlayerInfo = (
 	p: Player,
 	ratingsIndex: number,
 	statsIndex: number | undefined,
+	eid: number,
 	season: number,
 	phase: Phase,
 	tid: number,
-	statSumsBySeason?: StatSumsBySeason,
-	draftPick: boolean = false,
+	statSumsBySeason: StatSumsBySeason | undefined,
+	draftPick: boolean,
 ) => {
 	const ratings = findRatingsRow(p.ratings, ratingsIndex, season, phase);
 
@@ -158,6 +159,83 @@ const getActualPlayerInfo = (
 		tid,
 		statSumsBySeason,
 	);
+	console.log("p", p);
+
+	let foundCurrentTransaction = false;
+	const nextTransaction = p.transactions?.find(row => {
+		if (row.type === "trade" && row.eid === eid) {
+			// We found this trade in the log, so next transaction is leaving this team
+			foundCurrentTransaction = true;
+		} else if (draftPick && row.type === "draft") {
+			// We found the draft pick being made, so next transaction is leaving this team
+			foundCurrentTransaction = true;
+		} else if (foundCurrentTransaction) {
+			return row;
+		}
+	});
+	console.log("nextTransaction", nextTransaction);
+
+	let outcome:
+		| {
+				type: "stillOnTeam";
+		  }
+		| {
+				type: "retired";
+				season: number;
+		  }
+		| {
+				type: "trade";
+				tid: number;
+				eid: number | undefined;
+		  }
+		| {
+				type: "sisyphus";
+				season: number;
+		  }
+		| {
+				type: "godMode";
+				season: number;
+		  }
+		| {
+				type: "freeAgent";
+				season: number;
+				tid: number;
+		  }
+		| undefined;
+
+	if (!nextTransaction) {
+		if (p.tid === PLAYER.RETIRED) {
+			outcome = {
+				type: "retired",
+				season: p.retiredYear,
+			};
+		} else if (p.tid === tid) {
+			outcome = {
+				type: "stillOnTeam",
+			};
+		}
+	} else if (nextTransaction.type === "trade") {
+		outcome = {
+			type: "trade",
+			tid: nextTransaction.tid,
+			eid: nextTransaction.eid,
+		};
+	} else if (
+		nextTransaction.type === "sisyphus" ||
+		nextTransaction.type === "godMode"
+	) {
+		outcome = {
+			type: nextTransaction.type,
+			season: nextTransaction.season,
+		};
+	} else if (nextTransaction.type === "freeAgent") {
+		outcome = {
+			type: "freeAgent",
+			season: nextTransaction.season,
+			tid: nextTransaction.tid,
+		};
+	}
+	console.log("outcome", outcome);
 
 	return {
 		name: `${p.firstName} ${p.lastName}`,
@@ -170,6 +248,7 @@ const getActualPlayerInfo = (
 		stat,
 		statTeam,
 		watch: p.watch ?? 0,
+		outcome,
 	};
 };
 
@@ -312,6 +391,7 @@ export const processAssets = async (
 	if (!event.teams || event.phase === undefined) {
 		throw new Error("Invalid event");
 	}
+	console.log("event", event);
 
 	const otherTid = event.tids[i === 0 ? 1 : 0];
 
@@ -345,10 +425,12 @@ export const processAssets = async (
 					p,
 					asset.ratingsIndex,
 					asset.statsIndex,
+					event.eid,
 					event.season,
 					event.phase,
 					event.tids[i],
 					statSumsBySeason ? statSumsBySeason[i] : undefined,
+					false,
 				);
 
 				assets.push({
@@ -391,6 +473,7 @@ export const processAssets = async (
 					p,
 					0,
 					undefined,
+					event.eid,
 					event.season,
 					event.phase,
 					event.tids[i],
@@ -455,6 +538,7 @@ const updateTradeSummary = async (
 			}
 
 			const assets = await processAssets(event, i, statSumsBySeason);
+			console.log(assets);
 
 			let statSum = 0;
 			let statSumTeam = 0;

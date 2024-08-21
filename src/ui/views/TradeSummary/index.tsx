@@ -2,7 +2,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 import { PlayerNameLabels } from "../../components";
-import { PHASE_TEXT } from "../../../common";
+import { PHASE, PHASE_TEXT } from "../../../common";
 import Charts from "./Charts";
 import PickText from "./PickText";
 import type { PlayerOutcome } from "../../../worker/views/tradeSummary";
@@ -13,6 +13,8 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 	}
 
 	if (outcome.type === "freeAgent") {
+		const actualSeason =
+			outcome.phase > PHASE.PLAYOFFS ? outcome.season + 1 : outcome.season;
 		return (
 			<div>
 				Signed as a free agent with{" "}
@@ -20,7 +22,7 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 					href={helpers.leagueUrl([
 						"roster",
 						`${outcome.abbrev}_${outcome.tid}`,
-						outcome.season,
+						actualSeason,
 					])}
 				>
 					{outcome.abbrev} in {outcome.season}
@@ -28,6 +30,8 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 			</div>
 		);
 	} else if (outcome.type === "godMode") {
+		const actualSeason =
+			outcome.phase > PHASE.PLAYOFFS ? outcome.season + 1 : outcome.season;
 		return (
 			<div>
 				God Mode to{" "}
@@ -35,7 +39,7 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 					href={helpers.leagueUrl([
 						"roster",
 						`${outcome.abbrev}_${outcome.tid}`,
-						outcome.season,
+						actualSeason,
 					])}
 				>
 					{outcome.abbrev} in {outcome.season}
@@ -45,6 +49,8 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 	} else if (outcome.type === "retired") {
 		return <div>Retired in {outcome.season}</div>;
 	} else if (outcome.type === "sisyphus") {
+		const actualSeason =
+			outcome.phase > PHASE.PLAYOFFS ? outcome.season + 1 : outcome.season;
 		return (
 			<div>
 				Sisyphus Mode to{" "}
@@ -52,7 +58,7 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 					href={helpers.leagueUrl([
 						"roster",
 						`${outcome.abbrev}_${outcome.tid}`,
-						outcome.season,
+						actualSeason,
 					])}
 				>
 					{outcome.abbrev} in {outcome.season}

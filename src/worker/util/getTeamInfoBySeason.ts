@@ -41,6 +41,8 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 			region: ts.region,
 		};
 	}
+
+	// Could be an invalid tid, like PLAYER.TOT or PLAYER.DOES_NOT_EXIST
 };
 
 export default getTeamInfoBySeason;

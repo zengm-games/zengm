@@ -142,7 +142,7 @@ const getNextTeamInfo = async (tid: number, season: number) => {
 	const teamInfo = await getTeamInfoBySeason(tid, season);
 	return {
 		tid,
-		abbrev: teamInfo.abbrev,
+		abbrev: teamInfo?.abbrev ?? "???",
 	};
 };
 
@@ -164,18 +164,21 @@ export type PlayerOutcome =
 	| {
 			type: "sisyphus";
 			season: number;
+			phase: Phase;
 			tid: number;
 			abbrev: string;
 	  }
 	| {
 			type: "godMode";
 			season: number;
+			phase: Phase;
 			tid: number;
 			abbrev: string;
 	  }
 	| {
 			type: "freeAgent";
 			season: number;
+			phase: Phase;
 			tid: number;
 			abbrev: string;
 	  }
@@ -202,7 +205,6 @@ const getActualPlayerInfo = async (
 		tid,
 		statSumsBySeason,
 	);
-	console.log("p", p);
 
 	let foundCurrentTransaction = false;
 	const nextTransaction = p.transactions?.find(row => {
@@ -216,10 +218,8 @@ const getActualPlayerInfo = async (
 			return row;
 		}
 	});
-	console.log("nextTransaction", nextTransaction);
 
 	let outcome: PlayerOutcome;
-
 	if (!nextTransaction) {
 		if (p.tid === PLAYER.RETIRED) {
 			outcome = {
@@ -245,16 +245,17 @@ const getActualPlayerInfo = async (
 		outcome = {
 			type: nextTransaction.type,
 			season: nextTransaction.season,
+			phase: nextTransaction.phase,
 			...(await getNextTeamInfo(nextTransaction.tid, nextTransaction.season)),
 		};
 	} else if (nextTransaction.type === "freeAgent") {
 		outcome = {
 			type: "freeAgent",
 			season: nextTransaction.season,
+			phase: nextTransaction.phase,
 			...(await getNextTeamInfo(nextTransaction.tid, nextTransaction.season)),
 		};
 	}
-	console.log("outcome", outcome);
 
 	return {
 		name: `${p.firstName} ${p.lastName}`,
@@ -411,7 +412,6 @@ export const processAssets = async (
 	if (!event.teams || event.phase === undefined) {
 		throw new Error("Invalid event");
 	}
-	console.log("event", event);
 
 	const otherTid = event.tids[i === 0 ? 1 : 0];
 
@@ -558,7 +558,6 @@ const updateTradeSummary = async (
 			}
 
 			const assets = await processAssets(event, i, statSumsBySeason);
-			console.log(assets);
 
 			let statSum = 0;
 			let statSumTeam = 0;

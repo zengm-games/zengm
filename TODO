@@ -1,13 +1,3 @@
-trade summary
-- show how player left team
-  - player.transactions - does it contain enough info to know if it came before/after the current trade? eid?
-  - if not, then scan event log for player, and look for next eid
-  - if trade, link to trade
-  - how will it work for draft picks? cause then there is no transactions entry for the trade, should look at next transaction after draft
-  - look up team name/region/abbrev
-  - https://old.reddit.com/r/BasketballGM/comments/137wce5/version_202305040893_trade_summaries_now_include/jiwqha3/?context=3
-  - https://old.reddit.com/r/BasketballGM/comments/1dsfbps/monthly_suggestions_thread/lfhwvz4/
-
 use team ovr in updateStrategies https://old.reddit.com/r/nba/comments/1estlxk/basketball_gm_rnba_post_2024_edition/lielvo3/?context=3
 - maybe top X% guaranteed to be contending, bottom X% guaranteed to not be?
 

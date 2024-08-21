@@ -162,6 +162,9 @@ export type PlayerOutcome =
 			abbrev: string;
 	  }
 	| {
+			type: "tradeBeforeDraft";
+	  }
+	| {
 			type: "sisyphus";
 			season: number;
 			phase: Phase;
@@ -207,6 +210,7 @@ const getActualPlayerInfo = async (
 	);
 
 	let foundCurrentTransaction = false;
+	let tradeBeforeDraft = false;
 	const nextTransaction = p.transactions?.find(row => {
 		if (row.type === "trade" && row.eid === eid) {
 			// We found this trade in the log, so next transaction is leaving this team
@@ -214,13 +218,22 @@ const getActualPlayerInfo = async (
 		} else if (draftPick && row.type === "draft") {
 			// We found the draft pick being made, so next transaction is leaving this team
 			foundCurrentTransaction = true;
+
+			if (row.tid !== tid) {
+				// Must have been traded before the draft... sadly we don't have an easy record of that, would have to search events database
+				tradeBeforeDraft = true;
+			}
 		} else if (foundCurrentTransaction) {
 			return row;
 		}
 	});
 
 	let outcome: PlayerOutcome;
-	if (!nextTransaction) {
+	if (tradeBeforeDraft) {
+		outcome = {
+			type: "tradeBeforeDraft",
+		};
+	} else if (!nextTransaction) {
 		if (p.tid === PLAYER.RETIRED) {
 			outcome = {
 				type: "retired",

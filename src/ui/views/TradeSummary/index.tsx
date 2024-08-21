@@ -84,6 +84,8 @@ const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 				</div>
 			);
 		}
+	} else if (outcome.type === "tradeBeforeDraft") {
+		return "Traded before draft";
 	}
 };
 

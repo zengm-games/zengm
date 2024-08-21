@@ -60,7 +60,7 @@ const updatePlayerGameLog = async (
 			let abbrev = abbrevsByTid[tid];
 			if (abbrev === undefined) {
 				const info = await getTeamInfoBySeason(tid, season);
-				abbrev = info.abbrev;
+				abbrev = info?.abbrev ?? "???";
 				abbrevsByTid[tid] = abbrev;
 			}
 			return abbrev;

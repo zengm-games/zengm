@@ -402,8 +402,10 @@ const updateComparePlayers = async (
 						teamInfo = await getTeamInfoBySeason(p.tid, season);
 					}
 
-					p.colors = teamInfo.colors;
-					p.jersey = teamInfo.jersey;
+					if (teamInfo) {
+						p.colors = teamInfo.colors;
+						p.jersey = teamInfo.jersey;
+					}
 
 					players.push({
 						p,

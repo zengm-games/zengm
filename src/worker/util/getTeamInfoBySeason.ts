@@ -41,8 +41,6 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 			region: ts.region,
 		};
 	}
-
-	throw new Error("Team not found");
 };
 
 export default getTeamInfoBySeason;

@@ -138,7 +138,50 @@ const findStatSum = (
 	};
 };
 
-const getActualPlayerInfo = (
+const getNextTeamInfo = async (tid: number, season: number) => {
+	const teamInfo = await getTeamInfoBySeason(tid, season);
+	return {
+		tid,
+		abbrev: teamInfo.abbrev,
+	};
+};
+
+export type PlayerOutcome =
+	| {
+			type: "stillOnTeam";
+	  }
+	| {
+			type: "retired";
+			season: number;
+	  }
+	| {
+			type: "trade";
+			eid: number | undefined;
+			season: number;
+			tid: number;
+			abbrev: string;
+	  }
+	| {
+			type: "sisyphus";
+			season: number;
+			tid: number;
+			abbrev: string;
+	  }
+	| {
+			type: "godMode";
+			season: number;
+			tid: number;
+			abbrev: string;
+	  }
+	| {
+			type: "freeAgent";
+			season: number;
+			tid: number;
+			abbrev: string;
+	  }
+	| undefined;
+
+const getActualPlayerInfo = async (
 	p: Player,
 	ratingsIndex: number,
 	statsIndex: number | undefined,
@@ -175,33 +218,7 @@ const getActualPlayerInfo = (
 	});
 	console.log("nextTransaction", nextTransaction);
 
-	let outcome:
-		| {
-				type: "stillOnTeam";
-		  }
-		| {
-				type: "retired";
-				season: number;
-		  }
-		| {
-				type: "trade";
-				tid: number;
-				eid: number | undefined;
-		  }
-		| {
-				type: "sisyphus";
-				season: number;
-		  }
-		| {
-				type: "godMode";
-				season: number;
-		  }
-		| {
-				type: "freeAgent";
-				season: number;
-				tid: number;
-		  }
-		| undefined;
+	let outcome: PlayerOutcome;
 
 	if (!nextTransaction) {
 		if (p.tid === PLAYER.RETIRED) {
@@ -217,8 +234,9 @@ const getActualPlayerInfo = (
 	} else if (nextTransaction.type === "trade") {
 		outcome = {
 			type: "trade",
-			tid: nextTransaction.tid,
 			eid: nextTransaction.eid,
+			season: nextTransaction.season,
+			...(await getNextTeamInfo(nextTransaction.tid, nextTransaction.season)),
 		};
 	} else if (
 		nextTransaction.type === "sisyphus" ||
@@ -227,12 +245,13 @@ const getActualPlayerInfo = (
 		outcome = {
 			type: nextTransaction.type,
 			season: nextTransaction.season,
+			...(await getNextTeamInfo(nextTransaction.tid, nextTransaction.season)),
 		};
 	} else if (nextTransaction.type === "freeAgent") {
 		outcome = {
 			type: "freeAgent",
 			season: nextTransaction.season,
-			tid: nextTransaction.tid,
+			...(await getNextTeamInfo(nextTransaction.tid, nextTransaction.season)),
 		};
 	}
 	console.log("outcome", outcome);
@@ -372,6 +391,7 @@ type CommonActualPlayer = {
 	watch: number;
 	stat: number;
 	statTeam: number;
+	outcome: PlayerOutcome;
 };
 
 type CommonPick = {
@@ -421,7 +441,7 @@ export const processAssets = async (
 				contract: asset.contract,
 			};
 			if (p) {
-				const playerInfo = getActualPlayerInfo(
+				const playerInfo = await getActualPlayerInfo(
 					p,
 					asset.ratingsIndex,
 					asset.statsIndex,
@@ -465,7 +485,7 @@ export const processAssets = async (
 			// Has the draft already happened? If so, fill in the player
 			const p = await getPlayerFromPick(asset);
 			if (p) {
-				const playerInfo = getActualPlayerInfo(
+				const playerInfo = await getActualPlayerInfo(
 					p,
 					0,
 					undefined,

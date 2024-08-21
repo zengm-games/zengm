@@ -5,6 +5,81 @@ import { PlayerNameLabels } from "../../components";
 import { PHASE_TEXT } from "../../../common";
 import Charts from "./Charts";
 import PickText from "./PickText";
+import type { PlayerOutcome } from "../../../worker/views/tradeSummary";
+
+const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
+	if (!outcome) {
+		return null;
+	}
+
+	if (outcome.type === "freeAgent") {
+		return (
+			<div>
+				Signed as a free agent with{" "}
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${outcome.abbrev}_${outcome.tid}`,
+						outcome.season,
+					])}
+				>
+					{outcome.abbrev} in {outcome.season}
+				</a>
+			</div>
+		);
+	} else if (outcome.type === "godMode") {
+		return (
+			<div>
+				God Mode to{" "}
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${outcome.abbrev}_${outcome.tid}`,
+						outcome.season,
+					])}
+				>
+					{outcome.abbrev} in {outcome.season}
+				</a>
+			</div>
+		);
+	} else if (outcome.type === "retired") {
+		return <div>Retired in {outcome.season}</div>;
+	} else if (outcome.type === "sisyphus") {
+		return (
+			<div>
+				Sisyphus Mode to{" "}
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${outcome.abbrev}_${outcome.tid}`,
+						outcome.season,
+					])}
+				>
+					{outcome.abbrev} in {outcome.season}
+				</a>
+			</div>
+		);
+	} else if (outcome.type === "stillOnTeam") {
+		return null;
+	} else if (outcome.type === "trade") {
+		if (outcome.eid === undefined) {
+			return (
+				<div>
+					Traded to {outcome.abbrev} in {outcome.season}
+				</div>
+			);
+		} else {
+			return (
+				<div>
+					Traded to{" "}
+					<a href={helpers.leagueUrl(["trade_summary", outcome.eid])}>
+						{outcome.abbrev} in {outcome.season}
+					</a>
+				</div>
+			);
+		}
+	}
+};
 
 const TradeSummary = ({
 	challengeNoRatings,
@@ -76,6 +151,7 @@ const TradeSummary = ({
 												({helpers.roundStat(asset.statTeam, "ws")} with{" "}
 												{t.abbrev})
 											</div>
+											<Outcome outcome={asset.outcome} />
 										</div>
 									);
 								}
@@ -128,6 +204,7 @@ const TradeSummary = ({
 												({helpers.roundStat(asset.statTeam, "ws")} with{" "}
 												{t.abbrev})
 											</div>
+											<Outcome outcome={asset.outcome} />
 										</div>
 									);
 								}

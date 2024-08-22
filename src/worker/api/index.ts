@@ -926,6 +926,8 @@ const deleteScheduledEvents = async (type: string) => {
 						"minContract",
 						"minPayroll",
 						"salaryCap",
+						"salaryCapType",
+						"luxuryTax",
 					],
 					event,
 				);
@@ -940,6 +942,13 @@ const deleteScheduledEvents = async (type: string) => {
 						"draftType",
 						"threePointers",
 						"foulsUntilBonus",
+						"playIn",
+						"numGamesConf",
+						"numGamesDiv",
+						"allStarType",
+						"elamASG",
+						"allStarDunk",
+						"allStarThree",
 					],
 					event,
 				);

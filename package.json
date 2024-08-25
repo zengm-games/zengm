@@ -67,6 +67,7 @@
 		"framer-motion": "^11.3.29",
 		"html2canvas": "^1.4.1",
 		"idb": "dumbmatter/idb#autoIncrementKeyPath2-build",
+		"just-clone": "^6.2.0",
 		"match-sorter": "^6.3.4",
 		"nanoevents": "^9.0.0",
 		"promise-worker-bi": "^4.1.1",

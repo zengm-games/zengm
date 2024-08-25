@@ -116,6 +116,9 @@ importers:
       idb:
         specifier: dumbmatter/idb#autoIncrementKeyPath2-build
         version: https://codeload.github.com/dumbmatter/idb/tar.gz/c1fc45dfeee1af3a12b83b2bebaec2f6670b28ce
+      just-clone:
+        specifier: ^6.2.0
+        version: 6.2.0
       match-sorter:
         specifier: ^6.3.4
         version: 6.3.4
@@ -3912,6 +3915,9 @@ packages:
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
+
+  just-clone@6.2.0:
+    resolution: {integrity: sha512-1IynUYEc/HAwxhi3WDpIpxJbZpMCvvrrmZVqvj9EhpvbH8lls7HhdhiByjL7DkAaWlLIzpC0Xc/VPvy/UxLNjA==}
 
   karma-browserstack-launcher@1.6.0:
     resolution: {integrity: sha512-Y/UWPdHZkHIVH2To4GWHCTzmrsB6H7PBWy6pw+TWz5sr4HW2mcE+Uj6qWgoVNxvQU1Pfn5LQQzI6EQ65p8QbiQ==}
@@ -9930,6 +9936,8 @@ snapshots:
       array.prototype.flat: 1.3.2
       object.assign: 4.1.5
       object.values: 1.2.0
+
+  just-clone@6.2.0: {}
 
   karma-browserstack-launcher@1.6.0(karma@6.4.4):
     dependencies:

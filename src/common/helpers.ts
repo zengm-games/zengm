@@ -1,4 +1,5 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
+import clone from "just-clone";
 import type {
 	TeamBasic,
 	Phase,
@@ -879,23 +880,10 @@ const getTeamsDefault = (): TeamBasic[] => {
  * Taken from http://stackoverflow.com/a/3284324/786644
  */
 function deepCopy<T>(obj: T): T {
-	if (typeof obj !== "object" || obj === null) {
-		return obj;
-	}
-
-	if (obj.constructor === RegExp) {
-		return obj;
-	}
-
-	// @ts-expect-error
-	const retVal = new obj.constructor();
-
-	for (const key of Object.keys(obj)) {
-		// @ts-expect-error
-		retVal[key] = deepCopy(obj[key]);
-	}
-
-	return retVal;
+	// Can't use old deepCopy function because Chrome 128 had a weird bug where sometimes [{}] would get cloned to {0: {}} - this appeared when creating a league in ZGMB
+	// Can't use structuredClone because Jest handles it annoyingly enough (deepStrictEqual doesn't work) that it's not worth it
+	// @ts-expect-error https://github.com/angus-c/just/pull/582
+	return clone(obj);
 }
 
 /**

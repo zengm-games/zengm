@@ -124,8 +124,8 @@ const PlayerStats = ({
 			playoffs === "playoffs"
 				? "careerStatsPlayoffs"
 				: playoffs === "combined"
-				? "careerStatsCombined"
-				: "careerStats";
+					? "careerStatsCombined"
+					: "careerStats";
 	} else {
 		statsProperty = "stats";
 	}
@@ -139,15 +139,6 @@ const PlayerStats = ({
 	}
 
 	const rows = players.map(p => {
-		let pos;
-		if (Array.isArray(p.ratings) && p.ratings.length > 0) {
-			pos = p.ratings.at(-1).pos;
-		} else if (p.ratings.pos) {
-			pos = p.ratings.pos;
-		} else {
-			pos = "?";
-		}
-
 		// HACKS to show right stats, info
 		let actualAbbrev;
 		let actualTid;
@@ -193,7 +184,7 @@ const PlayerStats = ({
 					awards: p.awards,
 					awardsSeason: numericSeason,
 				}),
-				pos,
+				p.pos,
 
 				// Only show age at death for career totals, otherwise just use current age
 				season === "career"

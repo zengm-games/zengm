@@ -1,4 +1,5 @@
 import {
+	bySport,
 	helpers,
 	isSport,
 	PHASE,
@@ -6,7 +7,7 @@ import {
 	PLAYER_STATS_TABLES,
 } from "../../common";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, processPlayersHallOfFame } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -50,9 +51,24 @@ const updatePlayers = async (
 			throw new Error(`Invalid statType: "${inputs.statType}"`);
 		}
 
-		const stats = statsTable.stats;
-		let playersAll;
+		let stats;
+		if (inputs.season === "career") {
+			stats = [
+				...statsTable.stats,
 
+				// Used in processPlayersHallOfFame
+				bySport({
+					baseball: "war",
+					basketball: "ewa",
+					football: "av",
+					hockey: "ps",
+				}),
+			];
+		} else {
+			stats = statsTable.stats;
+		}
+
+		let playersAll;
 		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
 			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
@@ -191,6 +207,19 @@ const updatePlayers = async (
 		}
 
 		players = addFirstNameShort(players);
+
+		for (const p of players) {
+			if (inputs.season === "career") {
+				const { bestPos } = processPlayersHallOfFame([p])[0];
+				p.pos = bestPos;
+			} else if (Array.isArray(p.ratings) && p.ratings.length > 0) {
+				p.pos = p.ratings.at(-1).pos;
+			} else if (p.ratings.pos !== undefined) {
+				p.pos = p.ratings.pos;
+			} else {
+				p.pos = "?";
+			}
+		}
 
 		let superCols;
 		if (inputs.season === "all") {

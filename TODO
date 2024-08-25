@@ -1,5 +1,3 @@
-some way to prevent live sims from running so fast immediately if you have the speed bumped up from last game https://discord.com/channels/290013534023057409/331882115119448065/1277081165957955699
-
 fuite
 - works with web worker, not shared worker
 - only looks in main process, not worker process

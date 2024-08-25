@@ -254,11 +254,17 @@ const PlayByPlay = ({
 	);
 };
 
+const DEFAULT_SPEED = 7;
+
+const speedToMs = (speed: number) => {
+	return 4000 / 1.2 ** speed;
+};
+
 export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
 	const [speed, setSpeed] = useLocalStorageState("live-game-speed", {
-		defaultValue: "7",
+		defaultValue: String(DEFAULT_SPEED),
 	});
 	const speedRef = useRef(parseInt(speed));
 	const [playIndex, setPlayIndex] = useState(-1);
@@ -407,13 +413,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			if (events.current && events.current.length > 0) {
 				if (!pausedRef.current) {
-					setTimeout(
-						() => {
-							processToNextPause();
-							setPlayIndex(prev => prev + 1);
-						},
-						4000 / 1.2 ** speedRef.current,
-					);
+					setTimeout(() => {
+						processToNextPause();
+						setPlayIndex(prev => prev + 1);
+					}, speedToMs(speedRef.current));
 				}
 			} else {
 				boxScore.current.time = "0:00";
@@ -485,8 +488,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const startLiveGame = useCallback(
 		(events2: any[]) => {
 			events.current = events2;
-			processToNextPause();
-			setPlayIndex(prev => prev + 1);
+			setTimeout(() => {
+				processToNextPause();
+				setPlayIndex(prev => prev + 1);
+			}, speedToMs(DEFAULT_SPEED));
 		},
 		[processToNextPause],
 	);

@@ -7,13 +7,14 @@ import {
 	PLAYER_STATS_TABLES,
 } from "../../common";
 import { idb } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import { g } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerStatType,
 } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { getBestPos } from "../core/player/checkJerseyNumberRetirement";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -210,8 +211,7 @@ const updatePlayers = async (
 
 		for (const p of players) {
 			if (inputs.season === "career") {
-				const { bestPos } = processPlayersHallOfFame([p])[0];
-				p.pos = bestPos;
+				p.pos = getBestPos(p, tid);
 			} else if (Array.isArray(p.ratings) && p.ratings.length > 0) {
 				p.pos = p.ratings.at(-1).pos;
 			} else if (p.ratings.pos !== undefined) {

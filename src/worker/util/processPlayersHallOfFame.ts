@@ -105,7 +105,7 @@ const processPlayersHallOfFame = <
 
 		return {
 			...p,
-			bestPos: bestPos ?? "",
+			bestPos: bestPos ?? "?",
 			bestStats,
 			peakOvr,
 			legacyTid,

@@ -1,6 +1,6 @@
 import { bySport, isSport } from "../../../common";
-import type { Player, Team } from "../../../common/types";
-import { orderBy } from "../../../common/utils";
+import type { Player, PlayerStats, Team } from "../../../common/types";
+import { maxBy, orderBy } from "../../../common/utils";
 import { idb } from "../../db";
 import { g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
@@ -37,26 +37,51 @@ export const getValueStatsRow = (ps: any) => {
 	});
 };
 
-export const getMostCommonPosition = (p: Player, tid: number) => {
-	const positionCounts = new Map<string, number>();
-	for (const pr of p.ratings) {
-		const ps = p.stats.find(ps => ps.season === pr.season && ps.tid === tid);
-		if (ps) {
-			const prevValue = positionCounts.get(pr.pos) ?? 0;
-			positionCounts.set(pr.pos, prevValue + 1);
+// Ideally p should be a Player object, but a processed player object works too if it's in the right format
+export const getBestPos = (
+	p: {
+		ratings: {
+			pos: string;
+			season: number;
+		}[];
+		stats: PlayerStats[];
+	},
+	tid: number | undefined,
+): string => {
+	const posBySeason: Record<number, string | undefined> = {};
+
+	for (const row of p.ratings) {
+		if (row.pos !== undefined && row.season !== undefined) {
+			posBySeason[row.season] = row.pos;
 		}
 	}
 
-	let maxValue = -Infinity;
-	let mostCommonPosition: string | undefined;
-	for (const [pos, value] of positionCounts) {
-		if (value > maxValue) {
-			maxValue = value;
-			mostCommonPosition = pos;
+	const posByEWA: Record<string, number> = {};
+	for (const ps of p.stats) {
+		if (ps.tid === tid || tid === undefined) {
+			const ewa = bySport({
+				baseball: ps.war,
+				basketball: ps.ewa,
+				football: ps.av,
+				hockey: ps.ps,
+			});
+			const pos = posBySeason[ps.season];
+			if (pos !== undefined) {
+				//console.log(ps.pos, ps)
+				if (posByEWA[pos] === undefined) {
+					posByEWA[pos] = ewa;
+				} else {
+					posByEWA[pos] += ewa;
+				}
+			}
 		}
 	}
 
-	return mostCommonPosition;
+	return (
+		maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??
+		p.ratings.at(-1)?.pos ??
+		"?"
+	);
 };
 
 // const posCounts = {};
@@ -74,7 +99,7 @@ export const getScore = (p: Player, tid: number) => {
 		baseball: 40,
 		basketball: 80,
 		football: (() => {
-			const mostCommonPosition = getMostCommonPosition(p, tid);
+			const mostCommonPosition = getBestPos(p, tid);
 
 			let threshold = getThreshold(mostCommonPosition);
 			if (threshold > 80) {

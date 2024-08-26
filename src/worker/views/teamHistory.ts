@@ -6,7 +6,7 @@ import type {
 	TeamSeason,
 	Player,
 } from "../../common/types";
-import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
+import { getBestPos } from "../core/player/checkJerseyNumberRetirement";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { groupByUnique } from "../../common/utils";
@@ -173,7 +173,7 @@ export const getHistory = async (
 			"awards",
 			"retirableJerseyNumbers",
 		],
-		ratings: ["pos"],
+		ratings: ["pos", "season"],
 		stats: ["season", "abbrev", ...stats],
 	});
 
@@ -203,8 +203,9 @@ export const getHistory = async (
 		).length;
 		delete p.awards;
 
-		// Handle case where ratings don't exist
-		p.pos = p.ratings.length > 0 ? p.ratings.at(-1).pos : "";
+		// undefined as 2nd argument because we have already filtered stats before getting here
+		p.pos = getBestPos(p, undefined);
+
 		delete p.ratings;
 		delete p.stats;
 	}
@@ -259,7 +260,7 @@ const updateTeamHistory = async (
 					if (p) {
 						firstName = p.firstName;
 						lastName = p.lastName;
-						pos = getMostCommonPosition(p, inputs.tid);
+						pos = getBestPos(p, inputs.tid);
 						for (const row of p.stats) {
 							if (row.tid === inputs.tid && row.season > lastSeasonWithTeam) {
 								lastSeasonWithTeam = row.season;

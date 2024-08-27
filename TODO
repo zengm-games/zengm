@@ -1,3 +1,11 @@
+some generic UI component for hiding ratings in challengeNoRatings
+- search for
+  - showRatings
+  - challengeNoRatings
+- test sort with dOvr, should sort secondarily by change
+- similar for TeamRating component and related uses of challengeNoRating
+  - uses Rating in SeasonPreview
+
 fuite
 - works with web worker, not shared worker
 - only looks in main process, not worker process
@@ -39,8 +47,6 @@ mobile UI ideas https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_desi
 - #3: move roster higher on page - make injury stuff at the bottom, and condense other stuff
 
 reorganize menus - what goes in teams/players vs stats?
-
-some generic UI component for hiding ratings in challengeNoRatings
 
 show amount in $ over trade limit rather than % https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxRJVkhtPLhkSrSXlJxJVWgrN?compose=DmwnWrRrmRLLHDwLtgDWrwnTFPXrFqTcCQpnNNqHJKtNMsbmsqNqfhtmtPQrTQKMrQjSNfCLSJcg
 

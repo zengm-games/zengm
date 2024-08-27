@@ -5,10 +5,11 @@ import type { View } from "../../common/types";
 import {
 	MoreLinks,
 	PlayerNameLabels,
-	RatingWithChange,
+	Rating,
 	RecordAndPlayoffs,
 } from "../components";
 import { arrow } from "./Trade/Summary";
+import { PLAYER } from "../../common";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -33,77 +34,86 @@ const PlayerList = ({
 				paddingLeft: 20,
 			}}
 		>
-			{players.map((p, i) => (
-				<li
-					key={p.pid}
-					className={clsx({
-						"mt-2": i > 0,
-					})}
-				>
-					<span
+			{players.map((p, i) => {
+				// We still need this, rather than just the Rating component, becuase we want to hide some extra text layout when appropriate too
+				const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
+				return (
+					<li
+						key={p.pid}
 						className={clsx({
-							"p-1 table-info": userTid === p.tid,
+							"mt-2": i > 0,
 						})}
 					>
-						<PlayerNameLabels
-							pid={p.pid}
-							season={season}
-							pos={p.ratings.pos}
-							skills={p.ratings.skills}
-							watch={p.watch}
-							firstName={p.firstName}
-							lastName={p.lastName}
-						/>
-						<span className="ms-2">
-							{p.prevTid !== undefined ? (
-								<>
-									<a
-										href={helpers.leagueUrl([
-											"roster",
-											`${p.prevAbbrev}_${p.prevTid}`,
-											season - 1,
-										])}
-									>
-										{p.prevAbbrev}
-									</a>{" "}
-									{arrow}{" "}
-								</>
-							) : null}
-							<a
-								href={helpers.leagueUrl([
-									"roster",
-									`${p.abbrev}_${p.tid}`,
-									season,
-								])}
-							>
-								{p.abbrev}
-							</a>
+						<span
+							className={clsx({
+								"p-1 table-info": userTid === p.tid,
+							})}
+						>
+							<PlayerNameLabels
+								pid={p.pid}
+								season={season}
+								pos={p.ratings.pos}
+								skills={p.ratings.skills}
+								watch={p.watch}
+								firstName={p.firstName}
+								lastName={p.lastName}
+							/>
+							<span className="ms-2">
+								{p.prevTid !== undefined ? (
+									<>
+										<a
+											href={helpers.leagueUrl([
+												"roster",
+												`${p.prevAbbrev}_${p.prevTid}`,
+												season - 1,
+											])}
+										>
+											{p.prevAbbrev}
+										</a>{" "}
+										{arrow}{" "}
+									</>
+								) : null}
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${p.abbrev}_${p.tid}`,
+										season,
+									])}
+								>
+									{p.abbrev}
+								</a>
+							</span>
 						</span>
-					</span>
-					<br />
-					{!challengeNoRatings ? (
-						<>
-							<RatingWithChange change={p.ratings.dovr}>
-								{p.ratings.ovr}
-							</RatingWithChange>{" "}
-							ovr,{" "}
-							<RatingWithChange change={p.ratings.dpot}>
-								{p.ratings.pot}
-							</RatingWithChange>{" "}
-							pot,{" "}
-						</>
-					) : null}
-					{p.age} yo
-					{showDraftPick ? (
-						<>
-							,{" "}
-							{p.draft.round > 0
-								? `${p.draft.round}-${p.draft.pick}`
-								: "undrafted"}
-						</>
-					) : null}
-				</li>
-			))}
+						<br />
+						{showRatings ? (
+							<>
+								<Rating
+									change={p.ratings.dovr}
+									rating={p.ratings.ovr}
+									tid={p.tid}
+								/>{" "}
+								ovr,{" "}
+								<Rating
+									change={p.ratings.dpot}
+									rating={p.ratings.pot}
+									tid={p.tid}
+								/>{" "}
+								pot,{" "}
+							</>
+						) : null}
+						{p.age} yo
+						{showDraftPick ? (
+							<>
+								,{" "}
+								{p.draft.round > 0
+									? `${p.draft.round}-${p.draft.pick}`
+									: "undrafted"}
+							</>
+						) : null}
+					</li>
+				);
+			})}
 		</ol>
 	);
 };
@@ -156,8 +166,7 @@ const TeamList = ({
 						</a>
 						{!challengeNoRatings ? (
 							<>
-								, <RatingWithChange change={t.dovr}>{t.ovr}</RatingWithChange>{" "}
-								ovr
+								, <Rating change={t.dovr} rating={t.ovr} /> ovr
 							</>
 						) : null}
 					</span>

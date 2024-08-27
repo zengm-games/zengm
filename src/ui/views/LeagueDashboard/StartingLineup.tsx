@@ -1,6 +1,6 @@
 import {
 	PlayerNameLabels,
-	RatingWithChange,
+	Rating,
 	ResponsiveTableWrapper,
 } from "../../components";
 import { getCols, helpers } from "../../util";
@@ -9,13 +9,12 @@ import { DEPTH_CHART_NAME, isSport } from "../../../common";
 import { Contract } from "../../components/contract";
 
 const StartingLineup = ({
-	challengeNoRatings,
 	numPlayersOnCourt,
 	starters,
 	startersStats,
 }: Pick<
 	View<"leagueDashboard">,
-	"challengeNoRatings" | "numPlayersOnCourt" | "starters" | "startersStats"
+	"numPlayersOnCourt" | "starters" | "startersStats"
 >) => {
 	const statCols = getCols(startersStats.map(stat => `stat:${stat}`));
 
@@ -64,18 +63,10 @@ const StartingLineup = ({
 								<td>{p.age}</td>
 								<td>{p.stats.yearsWithTeam}</td>
 								<td>
-									{!challengeNoRatings ? (
-										<RatingWithChange change={p.ratings.dovr}>
-											{p.ratings.ovr}
-										</RatingWithChange>
-									) : null}
+									<Rating change={p.ratings.dovr} rating={p.ratings.ovr} />
 								</td>
 								<td>
-									{!challengeNoRatings ? (
-										<RatingWithChange change={p.ratings.dpot}>
-											{p.ratings.pot}
-										</RatingWithChange>
-									) : null}
+									<Rating change={p.ratings.dpot} rating={p.ratings.pot} />
 								</td>
 								<td>
 									<Contract p={p} />

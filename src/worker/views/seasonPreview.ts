@@ -182,6 +182,7 @@ const updateSeasonPreview = async (
 		// These are used when displaying last year's playoff results, so they are for last season
 		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
 		const playoffsByConf = await getPlayoffsByConf(season - 1);
+		console.log(playersTop);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),

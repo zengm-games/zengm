@@ -850,7 +850,8 @@ class GameSim extends GameSimBase {
 			}
 
 			if (runner.to === 4 && !runner.out && !inningOverAndNobodyAdvances) {
-				const pRBI = error ? undefined : p;
+				// Count an RBI for the batter, unless this was an error or a double play
+				const pRBI = error || result === "doublePlay" ? undefined : p;
 				runner.scored = true;
 
 				this.doScore(this.bases[i]!, pRBI);

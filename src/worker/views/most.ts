@@ -80,6 +80,7 @@ const getMostXPlayers = async ({
 			"draft",
 			"retiredYear",
 			"statsTids",
+			"tid",
 			"hof",
 			"born",
 			"diedYear",
@@ -943,7 +944,6 @@ const updatePlayers = async (
 		});
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			description,
 			extraCols,
 			extraProps,

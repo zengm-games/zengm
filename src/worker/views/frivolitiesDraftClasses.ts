@@ -5,7 +5,7 @@ import type {
 	Player,
 	MinimalPlayerRatings,
 } from "../../common/types";
-import { bySport, PHASE } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { orderBy } from "../../common/utils";
 
@@ -89,7 +89,7 @@ const updateFrivolitiesDraftClasses = async (
 				if (p.awards.some(award => award.type === "All-Star")) {
 					draftClass.numAS += 1;
 				}
-				if (p.retiredYear === Infinity) {
+				if (p.tid !== PLAYER.RETIRED) {
 					draftClass.numActive += 1;
 				}
 			},
@@ -123,7 +123,7 @@ const updateFrivolitiesDraftClasses = async (
 						"firstName",
 						"lastName",
 						"draft",
-						"retiredYear",
+						"tid",
 						"statsTids",
 						"born",
 						"diedYear",
@@ -146,7 +146,6 @@ const updateFrivolitiesDraftClasses = async (
 		);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			draftClasses: draftClasses2,
 			stats,
 			userTid: g.get("userTid"),

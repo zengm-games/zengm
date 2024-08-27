@@ -11,7 +11,6 @@ const updateImportPlayers = async (
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON)
 	) {
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
 			godMode: g.get("godMode"),
 			phase: g.get("phase"),

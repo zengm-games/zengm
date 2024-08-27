@@ -146,6 +146,7 @@ export const genView = (
 							"draft",
 							"retiredYear",
 							"statsTids",
+							"tid",
 							"hof",
 							"jerseyNumber",
 						],
@@ -196,7 +197,6 @@ export const genView = (
 			}
 
 			return {
-				challengeNoRatings: g.get("challengeNoRatings"),
 				infos,
 				stats,
 				userTid: g.get("userTid"),

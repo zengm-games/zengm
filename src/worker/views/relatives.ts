@@ -221,6 +221,7 @@ const updatePlayers = async (
 				"draft",
 				"retiredYear",
 				"statsTids",
+				"tid",
 				"hof",
 				"relatives",
 				"numBrothers",
@@ -249,7 +250,6 @@ const updatePlayers = async (
 		}
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			gender: g.get("gender"),
 			pid,
 			players: addFirstNameShort(processPlayersHallOfFame(players)),

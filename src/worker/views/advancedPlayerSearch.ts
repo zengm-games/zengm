@@ -15,7 +15,6 @@ const updateAdvancedPlayerSearch = async (
 ) => {
 	if (updateEvents.includes("firstRun")) {
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
 			seasonStart,
 			seasonEnd,

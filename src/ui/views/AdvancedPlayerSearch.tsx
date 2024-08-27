@@ -3,7 +3,7 @@ import type { View } from "../../common/types";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import useTitleBar from "../hooks/useTitleBar";
 import { OptionDropdown } from "./PlayerGraphs";
-import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
+import { isSport, PLAYER_STATS_TABLES } from "../../common";
 import { getCols, helpers, realtimeUpdate, toWorker } from "../util";
 import { ActionButton, DataTable, PlusMinus } from "../components";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -16,6 +16,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import clsx from "clsx";
+import { wrappedRating } from "../components/Rating";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -494,7 +495,7 @@ const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
 };
 
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
-	const { challengeNoRatings, currentSeason } = props;
+	const { currentSeason } = props;
 
 	const [fetchingPlayers, setFetchingPlayers] = useState(false);
 
@@ -648,8 +649,6 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	// useMemo because this is slow, don't want to run it on every unrelated state change
 	const rows = useMemo(() => {
 		return rendered.players?.map((p, i) => {
-			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
 			return {
 				key: i,
 				data: [
@@ -682,8 +681,14 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
 						? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)
 						: p.ratings.season,
-					showRatings ? p.ratings.ovr : null,
-					showRatings ? p.ratings.pot : null,
+					wrappedRating({
+						rating: p.ratings.ovr,
+						tid: p.tid,
+					}),
+					wrappedRating({
+						rating: p.ratings.pot,
+						tid: p.tid,
+					}),
 					...[
 						...uniqueColFiltersWithInfo.map(row => row.info),
 						...uniqueStatTypeInfos,
@@ -692,7 +697,10 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						if (info.category === "bio") {
 							return value;
 						} else if (info.category === "ratings") {
-							return showRatings ? value : null;
+							return wrappedRating({
+								rating: value as any,
+								tid: p.tid,
+							});
 						} else {
 							if (
 								isSport("basketball") &&
@@ -711,7 +719,6 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			};
 		});
 	}, [
-		challengeNoRatings,
 		currentSeasonOnly,
 		rendered.players,
 		rendered.statType,

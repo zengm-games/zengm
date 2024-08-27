@@ -6,9 +6,9 @@ import { DataTable, LeagueFileUpload, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { orderBy } from "../../common/utils";
+import { wrappedRating } from "../components/Rating";
 
 const ImportPlayers = ({
-	challengeNoRatings,
 	currentSeason,
 	godMode,
 	phase,
@@ -148,8 +148,6 @@ const ImportPlayers = ({
 			tid,
 		} = player;
 
-		const showRatings = !challengeNoRatings;
-
 		// const abbrev = helpers.getAbbrev(tid, teamInfoCache);
 
 		let ratings = p.ratings.at(-1);
@@ -213,8 +211,12 @@ const ImportPlayers = ({
 					Clone
 				</button>,
 				ratings.pos,
-				showRatings ? ratings.ovr : null,
-				showRatings ? ratings.pot : null,
+				wrappedRating({
+					rating: ratings.ovr,
+				}),
+				wrappedRating({
+					rating: ratings.pot,
+				}),
 				{
 					value: (
 						<select

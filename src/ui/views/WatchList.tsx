@@ -11,9 +11,9 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { wrappedRating } from "../components/Rating";
 
 const WatchList = ({
-	challengeNoRatings,
 	flagNote,
 	players,
 	playoffs,
@@ -67,8 +67,6 @@ const WatchList = ({
 			exp = wrappedContractExp(p);
 		}
 
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
 		return {
 			key: p.pid,
 			data: [
@@ -92,8 +90,14 @@ const WatchList = ({
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
 					{p.abbrev}
 				</a>,
-				showRatings ? p.ratings.ovr : null,
-				showRatings ? p.ratings.pot : null,
+				wrappedRating({
+					rating: p.ratings.ovr,
+					tid: p.tid,
+				}),
+				wrappedRating({
+					rating: p.ratings.pot,
+					tid: p.tid,
+				}),
 				contract,
 				exp,
 				...stats.map(stat =>

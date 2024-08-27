@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { wrappedRating } from "../components/Rating";
 
 const ExportPlayers = ({
-	challengeNoRatings,
 	multipleSeasons,
 	players,
 	season,
@@ -42,8 +41,6 @@ const ExportPlayers = ({
 	});
 
 	const commonRows = (p: (typeof players)[number]) => {
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
 		return [
 			wrappedPlayerNameLabels({
 				injury: p.injury,
@@ -61,8 +58,14 @@ const ExportPlayers = ({
 			<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 				{p.abbrev}
 			</a>,
-			showRatings ? p.ratings.ovr : null,
-			showRatings ? p.ratings.pot : null,
+			wrappedRating({
+				rating: p.ratings.ovr,
+				tid: p.tid,
+			}),
+			wrappedRating({
+				rating: p.ratings.pot,
+				tid: p.tid,
+			}),
 		];
 	};
 

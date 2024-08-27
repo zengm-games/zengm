@@ -51,7 +51,6 @@ const updatePlayers = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
 			season: inputs.season,
 			players,

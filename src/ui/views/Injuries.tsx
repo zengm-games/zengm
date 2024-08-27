@@ -2,12 +2,11 @@ import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { wrappedRating } from "../components/Rating";
 
 const Injuries = ({
 	abbrev,
-	challengeNoRatings,
 	currentSeason,
 	godMode,
 	injuries,
@@ -36,8 +35,6 @@ const Injuries = ({
 	]);
 
 	const rows = injuries.map((p, i) => {
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
 		return {
 			key: season === "current" ? p.pid : i,
 			data: [
@@ -63,13 +60,25 @@ const Injuries = ({
 					{p.stats.abbrev}
 				</a>,
 				p.age,
-				showRatings ? p.ratings.ovr : null,
-				showRatings ? p.ratings.pot : null,
+				wrappedRating({
+					rating: p.ratings.ovr,
+					tid: p.tid,
+				}),
+				wrappedRating({
+					rating: p.ratings.pot,
+					tid: p.tid,
+				}),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				p.type,
 				p.games,
-				showRatings ? p.ovrDrop : null,
-				showRatings ? p.potDrop : null,
+				wrappedRating({
+					rating: p.ovrDrop,
+					tid: p.tid,
+				}),
+				wrappedRating({
+					rating: p.potDrop,
+					tid: p.tid,
+				}),
 			],
 			classNames: {
 				"table-danger": p.hof,

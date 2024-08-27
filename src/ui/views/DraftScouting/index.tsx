@@ -7,7 +7,6 @@ import { MoreLinks } from "../../components";
 const PAGE_SIZE = 3;
 
 const DraftScouting = ({
-	challengeNoRatings,
 	draftType,
 	fantasyDraft,
 	godMode,
@@ -77,7 +76,6 @@ const DraftScouting = ({
 					return (
 						<div key={info.season} className="col-md-4 col-sm-6">
 							<DraftClass
-								challengeNoRatings={challengeNoRatings}
 								fantasyDraft={fantasyDraft}
 								godMode={godMode}
 								offset={offset}

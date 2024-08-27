@@ -10,10 +10,10 @@ import { confirm, getCols, helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { wrappedRating } from "../components/Rating";
 
 const NegotiationList = ({
 	capSpace,
-	challengeNoRatings,
 	draftPickAutoContract,
 	luxuryPayroll,
 	maxContract,
@@ -79,8 +79,12 @@ const NegotiationList = ({
 				}),
 				p.ratings.pos,
 				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
+				wrappedRating({
+					rating: p.ratings.ovr,
+				}),
+				wrappedRating({
+					rating: p.ratings.pot,
+				}),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,

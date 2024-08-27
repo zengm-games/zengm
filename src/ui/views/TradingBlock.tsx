@@ -20,6 +20,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { OvrChange } from "./Trade/Summary";
 import type { MissingAsset } from "../../worker/views/savedTrades";
+import { wrappedRating } from "../components/Rating";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -46,12 +47,10 @@ type OfferProps = {
 
 const OfferPlayers = ({
 	className,
-	challengeNoRatings,
 	players,
 	stats,
 }: Pick<OfferType, "players"> & {
 	className?: string;
-	challengeNoRatings: View<"tradingBlock">["challengeNoRatings"];
 	stats: View<"tradingBlock">["stats"];
 }) => {
 	if (players.length > 0) {
@@ -88,8 +87,12 @@ const OfferPlayers = ({
 					}),
 					p.ratings.pos,
 					p.age,
-					!challengeNoRatings ? p.ratings.ovr : null,
-					!challengeNoRatings ? p.ratings.pot : null,
+					wrappedRating({
+						rating: p.ratings.ovr,
+					}),
+					wrappedRating({
+						rating: p.ratings.pot,
+					}),
 					wrappedContractAmount(p),
 					wrappedContractExp(p),
 					...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
@@ -606,8 +609,12 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				}),
 				p.ratings.pos,
 				p.age,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
+				wrappedRating({
+					rating: p.ratings.ovr,
+				}),
+				wrappedRating({
+					rating: p.ratings.pot,
+				}),
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
@@ -691,7 +698,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 								value: (
 									<OfferPlayers
 										className="mb-0"
-										challengeNoRatings={challengeNoRatings}
 										players={offer.players}
 										stats={stats}
 									/>
@@ -752,11 +758,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 								<div className="row">
 									{offer.players.length > 0 ? (
 										<div className="col-md-8">
-											<OfferPlayers
-												challengeNoRatings={challengeNoRatings}
-												players={offer.players}
-												stats={stats}
-											/>
+											<OfferPlayers players={offer.players} stats={stats} />
 										</div>
 									) : null}
 									{offer.picks.length > 0 ? (

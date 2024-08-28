@@ -475,17 +475,15 @@ const RatingsOverview = ({
 			<div className="d-flex justify-content-between">
 				<h2 className="me-3">
 					Overall:{" "}
-					<Rating
-						change={currentSeason.ovr - lastSeason.ovr}
-						rating={currentSeason.ovr}
-					/>
+					<Rating change={currentSeason.ovr - lastSeason.ovr}>
+						{currentSeason.ovr}
+					</Rating>
 				</h2>
 				<h2>
 					Potential:{" "}
-					<Rating
-						change={currentSeason.pot - lastSeason.pot}
-						rating={currentSeason.pot}
-					/>
+					<Rating change={currentSeason.pot - lastSeason.pot}>
+						{currentSeason.pot}
+					</Rating>
 				</h2>
 			</div>
 			<div className="d-flex justify-content-between">
@@ -511,8 +509,9 @@ const RatingsOverview = ({
 															(currentSeason as any)[rating] -
 															(lastSeason as any)[rating]
 														}
-														rating={(currentSeason as any)[rating]}
-													/>
+													>
+														{(currentSeason as any)[rating]}
+													</Rating>
 												</td>
 											</tr>
 										))}

@@ -3,11 +3,11 @@ import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
-import { bySport, PLAYER } from "../../common";
+import { bySport } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { wrappedRating } from "../components/Rating";
 
 const FrivolitiesDraftClasses = ({
+	challengeNoRatings,
 	draftClasses,
 	stats,
 	userTid,
@@ -47,6 +47,7 @@ const FrivolitiesDraftClasses = ({
 
 	const rows = draftClasses.map((draftClass, i) => {
 		const p = draftClass.bestPlayer;
+		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
 		return {
 			key: p.pid,
@@ -79,16 +80,13 @@ const FrivolitiesDraftClasses = ({
 						lastName: p.lastName,
 					}),
 					classNames: {
-						"table-success": p.tid !== PLAYER.RETIRED,
+						"table-success": p.retiredYear === Infinity,
 						"table-info": p.statsTids.includes(userTid),
 					},
 				},
 				p.ratings.at(-1).pos,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
-				wrappedRating({
-					rating: p.peakOvr,
-					tid: p.tid,
-				}),
+				showRatings ? p.peakOvr : null,
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 		};

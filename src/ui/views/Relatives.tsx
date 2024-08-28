@@ -4,10 +4,9 @@ import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { PLAYER } from "../../common";
-import { wrappedRating } from "../components/Rating";
 
 const Relatives = ({
+	challengeNoRatings,
 	gender,
 	pid,
 	players,
@@ -74,6 +73,8 @@ const Relatives = ({
 			relationArray.push(p.relationText);
 		}
 
+		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
 		const college = p.college && p.college !== "" ? p.college : "None";
 
 		return {
@@ -100,10 +101,7 @@ const Relatives = ({
 					{college}
 				</a>,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
-				wrappedRating({
-					rating: p.peakOvr,
-					tid: p.tid,
-				}),
+				showRatings ? p.peakOvr : null,
 				...relationArray,
 				p.pid !== pid ? (
 					<a href={helpers.leagueUrl(["frivolities", "relatives", p.pid])}>
@@ -128,7 +126,7 @@ const Relatives = ({
 			],
 			classNames: {
 				"table-danger": p.hof,
-				"table-success": p.tid !== PLAYER.RETIRED,
+				"table-success": p.retiredYear === Infinity,
 				"table-info": p.statsTids.includes(userTid),
 			},
 		};

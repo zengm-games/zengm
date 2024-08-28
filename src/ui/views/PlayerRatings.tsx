@@ -1,14 +1,13 @@
 import { DataTable, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { POSITIONS, bySport } from "../../common";
+import { POSITIONS, PLAYER, bySport } from "../../common";
 import type { View } from "../../common/types";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { wrappedRating } from "../components/Rating";
 
 const PlayerRatings = ({
 	abbrev,
@@ -57,7 +56,9 @@ const PlayerRatings = ({
 	]);
 
 	const rows = players.map(p => {
-		const ovrsPotsRatings: any[] = [];
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
+		const ovrsPotsRatings: string[] = [];
 		if (
 			bySport({
 				baseball: true,
@@ -68,12 +69,7 @@ const PlayerRatings = ({
 		) {
 			for (const pos of POSITIONS) {
 				for (const type of ["ovrs", "pots"]) {
-					ovrsPotsRatings.push(
-						wrappedRating({
-							rating: p.ratings[type][pos],
-							tid: p.tid,
-						}),
-					);
+					ovrsPotsRatings.push(showRatings ? p.ratings[type][pos] : null);
 				}
 			}
 		}
@@ -109,20 +105,9 @@ const PlayerRatings = ({
 				p.contract.amount > 0 && season === currentSeason
 					? wrappedContractExp(p)
 					: null,
-				wrappedRating({
-					rating: p.ratings.ovr,
-					tid: p.tid,
-				}),
-				wrappedRating({
-					rating: p.ratings.pot,
-					tid: p.tid,
-				}),
-				...ratings.map(rating =>
-					wrappedRating({
-						rating: p.ratings[rating],
-						tid: p.tid,
-					}),
-				),
+				showRatings ? p.ratings.ovr : null,
+				showRatings ? p.ratings.pot : null,
+				...ratings.map(rating => (showRatings ? p.ratings[rating] : null)),
 				...ovrsPotsRatings,
 			],
 			classNames: {

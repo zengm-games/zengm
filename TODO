@@ -1,11 +1,10 @@
 some generic UI component for hiding ratings in challengeNoRatings
 - search for
+  - showRatings
   - challengeNoRatings
 - test sort with dOvr, should sort secondarily by change
 - similar for TeamRating component and related uses of challengeNoRating
   - uses Rating in SeasonPreview
-
-depth chart link to compare players https://mail.google.com/mail/u/0/#sent/FMfcgzQVzFbDgsScWqqVNXgVKhBlRpDv
 
 fuite
 - works with web worker, not shared worker

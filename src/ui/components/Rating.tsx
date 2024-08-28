@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { local, useLocal } from "../util";
+import { useLocal } from "../util";
 import { PLAYER } from "../../common";
 
 type Props = {
@@ -40,13 +40,6 @@ const Rating = ({ change, rating, tid }: Props) => {
 };
 
 export const wrappedRating = (props: Props) => {
-	const challengeNoRatings = local.getState().challengeNoRatings;
-
-	if (challengeNoRatings && props.tid !== PLAYER.RETIRED) {
-		// Hide rating if challengeNoRatings is enabled, except for retired players
-		return null;
-	}
-
 	return {
 		value: <Rating {...props} />,
 		searchValue: `${props.rating}${props.change !== 0 && props.change !== undefined ? getChangeText(props.change) : ""}}`,

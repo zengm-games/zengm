@@ -93,6 +93,7 @@ const updatePlayers = async (
 		}
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			flagNote: inputs.flagNote,
 			players,
 			playoffs: inputs.playoffs,

@@ -3,11 +3,10 @@ import { DataTable, DraftAbbrev, SkillsBlock, MoreLinks } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
-import { bySport } from "../../common";
+import { bySport, PLAYER } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { orderBy } from "../../common/utils";
-import { wrappedRating } from "../components/Rating";
 
 const Summary = ({
 	players,
@@ -207,6 +206,7 @@ const ExportButton = ({ season }: { season: number }) => {
 };
 
 const DraftHistory = ({
+	challengeNoRatings,
 	draftType,
 	players,
 	season,
@@ -271,6 +271,8 @@ const DraftHistory = ({
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
+
 		return {
 			key: p.pid,
 			data: [
@@ -286,9 +288,9 @@ const DraftHistory = ({
 				}),
 				p.pos,
 				{
-					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
-						teamInfoCache[p.draft.originalTid]?.abbrev
-					}`,
+					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${teamInfoCache[
+						p.draft.originalTid
+					]?.abbrev}`,
 					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
 					value: (
 						<DraftAbbrev
@@ -299,14 +301,8 @@ const DraftHistory = ({
 					),
 				},
 				p.draft.age,
-				wrappedRating({
-					rating: p.draft.ovr,
-					tid: p.currentTid,
-				}),
-				wrappedRating({
-					rating: p.draft.pot,
-					tid: p.currentTid,
-				}),
+				showRatings ? p.draft.ovr : null,
+				showRatings ? p.draft.pot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.draft.skills} />
 				</span>,
@@ -319,26 +315,14 @@ const DraftHistory = ({
 					{p.currentAbbrev}
 				</a>,
 				wrappedAgeAtDeath(p.currentAge, p.ageAtDeath),
-				wrappedRating({
-					rating: p.currentOvr,
-					tid: p.currentTid,
-				}),
-				wrappedRating({
-					rating: p.currentPot,
-					tid: p.currentTid,
-				}),
+				showRatings ? p.currentOvr : null,
+				showRatings ? p.currentPot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.currentSkills} />
 				</span>,
 				p.peakAge,
-				wrappedRating({
-					rating: p.peakOvr,
-					tid: p.currentTid,
-				}),
-				wrappedRating({
-					rating: p.peakPot,
-					tid: p.currentTid,
-				}),
+				showRatings ? p.peakOvr : null,
+				showRatings ? p.peakPot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.peakSkills} />
 				</span>,

@@ -8,11 +8,12 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
+import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { wrappedRating } from "../components/Rating";
 
 const DraftTeamHistory = ({
 	abbrev,
+	challengeNoRatings,
 	draftType,
 	players,
 	stats,
@@ -77,6 +78,8 @@ const DraftTeamHistory = ({
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
+
 		return {
 			key: p.pid,
 			data: [
@@ -119,14 +122,8 @@ const DraftTeamHistory = ({
 					),
 				},
 				p.draft.age,
-				wrappedRating({
-					rating: p.draft.ovr,
-					tid: p.currentTid,
-				}),
-				wrappedRating({
-					rating: p.draft.pot,
-					tid: p.currentTid,
-				}),
+				showRatings ? p.draft.ovr : null,
+				showRatings ? p.draft.pot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.draft.skills} />
 				</span>,
@@ -139,26 +136,14 @@ const DraftTeamHistory = ({
 					{p.currentAbbrev}
 				</a>,
 				p.currentAge,
-				wrappedRating({
-					rating: p.currentOvr,
-					tid: p.currentTid,
-				}),
-				wrappedRating({
-					rating: p.currentPot,
-					tid: p.currentTid,
-				}),
+				showRatings ? p.currentOvr : null,
+				showRatings ? p.currentPot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.currentSkills} />
 				</span>,
 				p.peakAge,
-				wrappedRating({
-					rating: p.peakOvr,
-					tid: p.currentTid,
-				}),
-				wrappedRating({
-					rating: p.peakPot,
-					tid: p.currentTid,
-				}),
+				showRatings ? p.peakOvr : null,
+				showRatings ? p.peakPot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.peakSkills} />
 				</span>,

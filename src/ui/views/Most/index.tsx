@@ -5,7 +5,6 @@ import type { View } from "../../../common/types";
 import { frivolitiesMenu } from "../Frivolities";
 import GOATFormula from "./GOATFormula";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import { wrappedRating } from "../../components/Rating";
 
 export const getValue = (
 	obj: any,
@@ -14,11 +13,12 @@ export const getValue = (
 	return typeof key === "string"
 		? obj[key]
 		: key.length === 2
-			? obj[key[0]][key[1]]
-			: obj[key[0]][key[1]][key[2]];
+		? obj[key[0]][key[1]]
+		: obj[key[0]][key[1]][key[2]];
 };
 
 const Most = ({
+	challengeNoRatings,
 	description,
 	extraCols,
 	extraProps,
@@ -65,6 +65,8 @@ const Most = ({
 	]);
 
 	const rows = players.map((p, i) => {
+		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
 		const draftPick =
 			p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "";
 
@@ -116,10 +118,7 @@ const Most = ({
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				draftPick,
-				wrappedRating({
-					rating: p.peakOvr,
-					tid: p.tid,
-				}),
+				showRatings ? p.peakOvr : null,
 				p.bestStats.season,
 				<a
 					href={helpers.leagueUrl([

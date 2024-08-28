@@ -11,11 +11,11 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { wrappedRating } from "../components/Rating";
 
 const PlayerBios = ({
 	abbrev,
 	currentSeason,
+	challengeNoRatings,
 	players,
 	season,
 	stats,
@@ -51,6 +51,7 @@ const PlayerBios = ({
 	]);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 		const college = p.college && p.college !== "" ? p.college : "None";
 
 		return {
@@ -136,14 +137,8 @@ const PlayerBios = ({
 				p.draft.year,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : null,
 				p.experience,
-				wrappedRating({
-					rating: p.ratings.ovr,
-					tid: p.tid,
-				}),
-				wrappedRating({
-					rating: p.ratings.pot,
-					tid: p.tid,
-				}),
+				showRatings ? p.ratings.ovr : null,
+				showRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {

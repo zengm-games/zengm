@@ -4,13 +4,17 @@ import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { PLAYER } from "../../common";
-import { wrappedRating } from "../components/Rating";
 
 export const genView = (
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
 ) => {
-	return ({ infos, stats, userTid, displayStat }: View<"colleges">) => {
+	return ({
+		challengeNoRatings,
+		infos,
+		stats,
+		userTid,
+		displayStat,
+	}: View<"colleges">) => {
 		useTitleBar({
 			title:
 				type === "college"
@@ -74,6 +78,8 @@ export const genView = (
 
 			const abbrev = teamInfoCache[p.legacyTid]?.abbrev;
 
+			const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
 			return {
 				key: c.name,
 				data: [
@@ -113,7 +119,7 @@ export const genView = (
 						}),
 						classNames: {
 							"table-danger": p.hof,
-							"table-success": p.tid !== PLAYER.RETIRED,
+							"table-success": p.retiredYear === Infinity,
 							"table-info": p.statsTids.includes(userTid),
 						},
 					},
@@ -121,10 +127,7 @@ export const genView = (
 					p.draft.year,
 					p.retiredYear === Infinity ? null : p.retiredYear,
 					p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
-					wrappedRating({
-						rating: p.peakOvr,
-						tid: p.tid,
-					}),
+					showRatings ? p.peakOvr : null,
 					{
 						value: (
 							<a

@@ -37,7 +37,7 @@ export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
 export { default as PopText } from "./PopText";
 export { default as ProgressBarText } from "./ProgressBarText";
-export { default as Rating } from "./Rating";
+export { default as RatingWithChange } from "./RatingWithChange";
 export { default as RatingsStatsPopover } from "./RatingsStatsPopover";
 export { default as RecordAndPlayoffs } from "./RecordAndPlayoffs";
 export { default as ResponsiveTableWrapper } from "./ResponsiveTableWrapper";

@@ -360,6 +360,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders: addFirstNameShort(leagueLeaders),
 			numPlayersOnCourt,
 			teamLeaders,

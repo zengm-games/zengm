@@ -34,6 +34,7 @@ const updateAwardRaces = async (
 
 		return {
 			awardCandidates,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			season: inputs.season,
 			userTid: g.get("userTid"),
 			teams,

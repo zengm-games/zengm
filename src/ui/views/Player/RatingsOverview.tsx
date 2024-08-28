@@ -1,5 +1,5 @@
 import { bySport } from "../../../common";
-import Rating from "../../components/Rating";
+import RatingWithChange from "../../components/RatingWithChange";
 import type { ReactNode } from "react";
 
 const RatingsOverview = ({
@@ -475,15 +475,15 @@ const RatingsOverview = ({
 			<div className="d-flex justify-content-between">
 				<h2 className="me-3">
 					Overall:{" "}
-					<Rating change={currentSeason.ovr - lastSeason.ovr}>
+					<RatingWithChange change={currentSeason.ovr - lastSeason.ovr}>
 						{currentSeason.ovr}
-					</Rating>
+					</RatingWithChange>
 				</h2>
 				<h2>
 					Potential:{" "}
-					<Rating change={currentSeason.pot - lastSeason.pot}>
+					<RatingWithChange change={currentSeason.pot - lastSeason.pot}>
 						{currentSeason.pot}
-					</Rating>
+					</RatingWithChange>
 				</h2>
 			</div>
 			<div className="d-flex justify-content-between">
@@ -504,14 +504,14 @@ const RatingsOverview = ({
 											<tr key={j}>
 												<td className="p-0">{label}:</td>
 												<td className="p-0 ps-1">
-													<Rating
+													<RatingWithChange
 														change={
 															(currentSeason as any)[rating] -
 															(lastSeason as any)[rating]
 														}
 													>
 														{(currentSeason as any)[rating]}
-													</Rating>
+													</RatingWithChange>
 												</td>
 											</tr>
 										))}

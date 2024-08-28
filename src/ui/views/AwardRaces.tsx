@@ -1,11 +1,18 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
-import { DataTable, Rating, StatWithChange, MoreLinks } from "../components";
+import {
+	DataTable,
+	RatingWithChange,
+	StatWithChange,
+	MoreLinks,
+} from "../components";
 import type { View } from "../../common/types";
+import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const AwardRaces = ({
 	awardCandidates,
+	challengeNoRatings,
 	season,
 	teams,
 	userTid,
@@ -103,10 +110,12 @@ const AwardRaces = ({
 							recordOrPick,
 						];
 
+						const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
 						if (mip) {
 							data.push(
-								pr ? (
-									<Rating change={pr.dovr} rating={pr.ovr} tid={p.tid} />
+								pr && showRatings ? (
+									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
 								) : undefined,
 							);
 
@@ -145,9 +154,7 @@ const AwardRaces = ({
 								</a>,
 							);
 						} else {
-							data.push(
-								pr ? <Rating rating={pr.ovr} tid={p.tid} /> : undefined,
-							);
+							data.push(pr && showRatings ? pr.ovr : undefined);
 							const statsRow = stats.map(stat =>
 								ps ? helpers.roundStat(ps[stat], stat) : undefined,
 							);

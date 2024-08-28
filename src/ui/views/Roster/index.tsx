@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
-import { isSport, WEBSITE_ROOT } from "../../../common";
+import { isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
 	CountryFlag,
 	HelpPopover,
 	Mood,
 	PlayerNameLabels,
-	Rating,
+	RatingWithChange,
 	SortableTable,
 	SafeHtml,
 	MoreLinks,
@@ -321,6 +321,7 @@ const Roster = ({
 					</>
 				)}
 				row={({ value: p }) => {
+					const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 					return (
 						<>
 							<td>
@@ -341,18 +342,18 @@ const Roster = ({
 							<td>{p.ratings.pos}</td>
 							<td>{p.age}</td>
 							<td>
-								<Rating
-									change={p.ratings.dovr}
-									rating={p.ratings.ovr}
-									tid={p.tid}
-								/>
+								{showRatings ? (
+									<RatingWithChange change={p.ratings.dovr}>
+										{p.ratings.ovr}
+									</RatingWithChange>
+								) : null}
 							</td>
 							<td>
-								<Rating
-									change={p.ratings.dpot}
-									rating={p.ratings.pot}
-									tid={p.tid}
-								/>
+								{showRatings ? (
+									<RatingWithChange change={p.ratings.dpot}>
+										{p.ratings.pot}
+									</RatingWithChange>
+								) : null}
 							</td>
 							{season === currentSeason ? (
 								<td>

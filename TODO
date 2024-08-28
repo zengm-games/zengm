@@ -1,3 +1,5 @@
+depth chart link to compare players https://mail.google.com/mail/u/0/#sent/FMfcgzQVzFbDgsScWqqVNXgVKhBlRpDv
+
 fuite
 - works with web worker, not shared worker
 - only looks in main process, not worker process
@@ -40,7 +42,8 @@ mobile UI ideas https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_desi
 
 reorganize menus - what goes in teams/players vs stats?
 
-some generic UI component for hiding ratings in challengeNoRatings
+some generic way to hide ratings in challengeNoRatings
+- should be done on worker, so UI never gets an opportunity to display ratings. this is better than a Rating component because it handles all cases, including when ratings are shown inline in some text
 
 show amount in $ over trade limit rather than % https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxRJVkhtPLhkSrSXlJxJVWgrN?compose=DmwnWrRrmRLLHDwLtgDWrwnTFPXrFqTcCQpnNNqHJKtNMsbmsqNqfhtmtPQrTQKMrQjSNfCLSJcg
 

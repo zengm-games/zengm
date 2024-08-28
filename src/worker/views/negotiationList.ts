@@ -72,6 +72,7 @@ const updateNegotiationList = async () => {
 
 	return {
 		capSpace,
+		challengeNoRatings: g.get("challengeNoRatings"),
 		draftPickAutoContract: g.get("draftPickAutoContract"),
 		luxuryPayroll: g.get("luxuryPayroll") / 1000,
 		salaryCapType: g.get("salaryCapType"),

@@ -4,15 +4,16 @@ import { confirm, downloadFile, getCols, helpers, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { WEBSITE_ROOT } from "../../../common";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import { wrappedRating } from "../../components/Rating";
 
 const DraftClass = ({
+	challengeNoRatings,
 	fantasyDraft,
 	godMode,
 	offset,
 	players,
 	season,
 }: {
+	challengeNoRatings: boolean;
 	fantasyDraft: boolean;
 	godMode: boolean;
 	offset: number;
@@ -40,12 +41,8 @@ const DraftClass = ({
 				}),
 				p.pos,
 				p.age,
-				wrappedRating({
-					rating: p.ovr,
-				}),
-				wrappedRating({
-					rating: p.pot,
-				}),
+				!challengeNoRatings ? p.ovr : null,
+				!challengeNoRatings ? p.pot : null,
 			],
 		};
 	});

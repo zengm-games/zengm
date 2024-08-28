@@ -22,11 +22,11 @@ const updateUpcomingFreeAgents = async (
 	let players: any[] = showActualFreeAgents
 		? await idb.getCopies.players({
 				tid: PLAYER.FREE_AGENT,
-			})
+		  })
 		: await idb.getCopies.players({
 				tid: [0, Infinity],
 				filter: p => p.contract.exp === inputs.season,
-			});
+		  });
 
 	// Done before filter so full player object can be passed to player.genContract.
 	for (const p of players) {
@@ -75,6 +75,7 @@ const updateUpcomingFreeAgents = async (
 	const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
 
 	return {
+		challengeNoRatings: g.get("challengeNoRatings"),
 		phase: g.get("phase"),
 		players,
 		projectedCapSpace,

@@ -16,9 +16,9 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { wrappedRating } from "../components/Rating";
 
 const PlayerList = ({
+	challengeNoRatings,
 	updateProtectedPids,
 	numPerTeam,
 	numRemaining,
@@ -27,7 +27,7 @@ const PlayerList = ({
 	stats,
 	tid,
 	upcomingFreeAgentsText,
-}: Pick<View<"protectPlayers">, "players" | "stats"> & {
+}: Pick<View<"protectPlayers">, "challengeNoRatings" | "players" | "stats"> & {
 	updateProtectedPids: (newProtectedPids: number[]) => void;
 	numPerTeam: number;
 	numRemaining: number;
@@ -80,12 +80,8 @@ const PlayerList = ({
 				}),
 				p.ratings.pos,
 				p.age,
-				wrappedRating({
-					rating: p.ratings.ovr,
-				}),
-				wrappedRating({
-					rating: p.ratings.pot,
-				}),
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
@@ -150,6 +146,7 @@ const PlayerList = ({
 };
 
 const ProtectPlayers = ({
+	challengeNoRatings,
 	expansionDraft,
 	expansionTeam,
 	nextPhase,
@@ -277,6 +274,7 @@ const ProtectPlayers = ({
 					<p>The AI will handle protecting players in spectator mode.</p>
 				) : (
 					<PlayerList
+						challengeNoRatings={challengeNoRatings}
 						updateProtectedPids={updateProtectedPids}
 						numPerTeam={expansionDraft.numPerTeam}
 						numRemaining={numRemaining}

@@ -5,9 +5,9 @@ import { getCols, helpers, useLocalPartial } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { wrappedRating } from "../components/Rating";
 
 const UpcomingFreeAgents = ({
+	challengeNoRatings,
 	phase,
 	players,
 	projectedCapSpace,
@@ -73,12 +73,8 @@ const UpcomingFreeAgents = ({
 					{p.abbrev}
 				</a>,
 				p.age,
-				wrappedRating({
-					rating: p.ratings.ovr,
-				}),
-				wrappedRating({
-					rating: p.ratings.pot,
-				}),
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				dataTableWrappedMood({
 					defaultType: "user",

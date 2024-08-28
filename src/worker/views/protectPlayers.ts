@@ -70,6 +70,7 @@ const updateProtectPlayers = async () => {
 	}
 
 	return {
+		challengeNoRatings: g.get("challengeNoRatings"),
 		expansionDraft,
 		expansionTeam,
 		nextPhase: g.get("nextPhase"),

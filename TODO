@@ -1,3 +1,5 @@
+in baseball, after a trade, player could be in the depth chart for LP (no DH lineup) even if there is no DH lineup at all, and then his position there will show up in lineupPos elsewhere on the depth chart. but weirdly, this happened with a pitcher getting listed at CF. seems the CF was sent out in the trade, maybe related? https://discord.com/channels/290013534023057409/290015591216054273/1278535975022231553
+
 depth chart link to compare players https://mail.google.com/mail/u/0/#sent/FMfcgzQVzFbDgsScWqqVNXgVKhBlRpDv
 
 fuite
@@ -1500,8 +1502,6 @@ redesign draft screen
 - compute skills somehow.. lower cutoff? project future like pot?
 - https://cdn.discordapp.com/attachments/331882115119448065/775567088584491018/unknown.png
 - should not require scrolling on mobile
-
-option to disable the cap entirely. Turn the Hard Cap option into "Cap Type" with "None, Soft Cap, Hard Cap". leave the setting for actual salary cap, so it can be used for all the contract computation. @nicidob
 
 possible to enter into negotiations with a player, trade away other players so that now he refuses to negotiate, but still sign him because negotiations have already started
 - check mood on negotiation page, even if negotiation already started

@@ -33,7 +33,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 	}
 
 	if (p.stat.r >= FOUR && p.stat.r >= 2) {
-		statArr.RBIs = p.stat.r;
+		statArr.runs = p.stat.r;
 		score += p.stat.r >= FIVE ? 20 : 10;
 	}
 
@@ -43,10 +43,10 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 	}
 
 	if (
-		p.stat.h >= 4 &&
-		p.stat["3b"] >= 1 &&
 		p.stat["2b"] >= 1 &&
-		p.stat.hr >= 1
+		p.stat["3b"] >= 1 &&
+		p.stat.hr >= 1 &&
+		p.stat.h - p.stat["2b"] - p.stat["3b"] - p.stat.hr >= 4
 	) {
 		statArr.cycles = 1;
 		score += 20;

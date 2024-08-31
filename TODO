@@ -1,3 +1,5 @@
+In the "Trading block" page, add a feature like in the "Trade" page: when you select players the total salary of all players is shown (I suck at maths so it's hard for me to do it by myself) https://discord.com/channels/290013534023057409/331882115119448065/979653599879643166
+
 in baseball, after a trade, player could be in the depth chart for LP (no DH lineup) even if there is no DH lineup at all, and then his position there will show up in lineupPos elsewhere on the depth chart. but weirdly, this happened with a pitcher getting listed at CF. seems the CF was sent out in the trade, maybe related? https://discord.com/channels/290013534023057409/290015591216054273/1278535975022231553
 
 depth chart link to compare players https://mail.google.com/mail/u/0/#sent/FMfcgzQVzFbDgsScWqqVNXgVKhBlRpDv
@@ -788,8 +790,6 @@ derived variables in GOAT lab
 unify league leaders and award stat leader code, to allow things like BA leader in baseball
 
 highlight your team when viewing other team's schedule https://discord.com/channels/290013534023057409/331882115119448065/976114143700586537
-
-In the "Trading block" page, add a feature like in the "Trade" page: when you select players the total salary of all players is shown (I suck at maths so it's hard for me to do it by myself) https://discord.com/channels/290013534023057409/331882115119448065/979653599879643166
 
 On Free Agents page, for players asking for more than my available cap space, add somewhere (maybe in the "asking for" column?) the amount of cap space I have to get rid to sign this player so I don't have to do the maths by myself https://discord.com/channels/290013534023057409/331882115119448065/979755636529168404
 - should be in another column, hidden by default

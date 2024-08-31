@@ -52,10 +52,11 @@ const updatePlayers = async (
 			throw new Error(`Invalid statType: "${inputs.statType}"`);
 		}
 
-		let stats;
+		const stats = statsTable.stats;
+		let actualStats;
 		if (inputs.season === "career") {
-			stats = [
-				...statsTable.stats,
+			actualStats = [
+				...stats,
 
 				// Used in processPlayersHallOfFame
 				bySport({
@@ -66,7 +67,7 @@ const updatePlayers = async (
 				}),
 			];
 		} else {
-			stats = statsTable.stats;
+			actualStats = stats;
 		}
 
 		let playersAll;
@@ -126,7 +127,7 @@ const updatePlayers = async (
 				"awards",
 			],
 			ratings: ["skills", "pos", "season"],
-			stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
+			stats: ["abbrev", "tid", "jerseyNumber", "season", ...actualStats],
 			season: typeof inputs.season === "number" ? inputs.season : undefined,
 			tid,
 			statType,

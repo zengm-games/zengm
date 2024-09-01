@@ -1,4 +1,29 @@
+show ASG count next to player on ASG pages https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/ling0r3/
+
+include note in player export https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lgf17r8/
+
+contract rounding should depend on salaryCap, shouldn't always be $10k
+- https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfy1lhr/
+
+Hall of fame probability https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lg5hq2c/
+- make a model to predict if a player will make the hall of fame - include age and current ovr so it's a prediction of the future, not just checking his current status
+  - estimate when player will retire
+  - account for quarterLengthFactor, hofFactor
+  - could train a model to predict future career WS from (age, ovr, pos)
+  - could do monte carlo like pot, although that'd be slow and change every time you reload
+    - bail out early when...
+      - we cross the threshold for HoF
+      - EWA per year has decreased to 0 (this could eliminate the need for estimating retirement age)
+      - stronger version of above - bail out when there's no realistic chance of HoF, based on some heuristic
+    - could maybe discard a lot of players - ones already 100%, and ones with no chance for more than 0%
+
+Family rankings in the relatives page? https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfwhir1/
+
 In the "Trading block" page, add a feature like in the "Trade" page: when you select players the total salary of all players is shown (I suck at maths so it's hard for me to do it by myself) https://discord.com/channels/290013534023057409/331882115119448065/979653599879643166
+
+Not sure why but if force retire age is set at 100 I've noticed players in my league at the age of 100 will randomly spawn in and start playing, so fixing that would be neat. https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfy1lhr/
+
+when game is tied late, teams should usually wait until the last second to shoot https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lj6ccns/
 
 in baseball, after a trade, player could be in the depth chart for LP (no DH lineup) even if there is no DH lineup at all, and then his position there will show up in lineupPos elsewhere on the depth chart. but weirdly, this happened with a pitcher getting listed at CF. seems the CF was sent out in the trade, maybe related? https://discord.com/channels/290013534023057409/290015591216054273/1278535975022231553
 
@@ -615,6 +640,8 @@ frivolities
     - worst contract
   - highest ovr at each age https://discord.com/channels/290013534023057409/331882115119448065/868031573205876778
     - or highest advanced stat?
+  - best teammates or trios (could just be total combined PER or EWA for seasons played together) https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfwhir1/
+
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons

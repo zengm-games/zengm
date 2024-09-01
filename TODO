@@ -1617,8 +1617,6 @@ When changing the jersey number on a player acquired in FA it also changes what 
 - need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
 - https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 
-Add game log to player page
-
 option to disable unimportant notifications
 - https://old.reddit.com/r/BasketballGM/comments/ier26k/pop_ups_disable/
 - sirlamegame

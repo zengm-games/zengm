@@ -2728,11 +2728,6 @@ const cols: {
 	"@": {
 		desc: "Home or Away",
 	},
-	"#AS": {
-		desc: "Number of All-Star Selections",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
 	"%": {
 		desc: "Percentage",
 		sortSequence: ["desc", "asc"],

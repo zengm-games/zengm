@@ -42,7 +42,6 @@ const PlayersTable = ({
 		"Age",
 		"Ovr",
 		...stats.map(stat => `stat:${stat}`),
-		"#AS",
 	];
 	if (name !== "Remaining") {
 		colNames.unshift("#");
@@ -61,7 +60,7 @@ const PlayersTable = ({
 						const p = remaining.find(p2 => p2.pid === pid);
 						return p;
 					}),
-			  ]
+				]
 	)
 		// Filter everything, because `players` might have empty slots too due to deleted players
 		.filter(p => p !== undefined);
@@ -83,6 +82,7 @@ const PlayersTable = ({
 					skills: p.skills,
 					watch: p.watch,
 					legacyName: p.name,
+					count: p.numAllStar,
 				}),
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
 					{p.abbrev}
@@ -90,7 +90,6 @@ const PlayersTable = ({
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				p.numAllStar,
 			];
 			if (name !== "Remaining") {
 				data.unshift(i + 1);
@@ -274,7 +273,7 @@ const AllStars = ({
 									allowHealthy: true,
 									allowInjured: true,
 								},
-						  ]
+							]
 						: [
 								{
 									name: teamNames[0],
@@ -294,7 +293,7 @@ const AllStars = ({
 									allowHealthy: false,
 									allowInjured: true,
 								},
-						  ]
+							]
 				}
 				type={type}
 				onDone={() => {

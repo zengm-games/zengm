@@ -1,3 +1,7 @@
+add future known cap increases
+- https://mail.google.com/mail/u/0/#inbox/FMfcgzQVzXTGhRRpshPWGDHklRlZgfTm
+- https://discord.com/channels/290013534023057409/290015591216054273/1280325043108315286
+
 show ASG count next to player on ASG pages https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/ling0r3/
 
 include note in player export https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lgf17r8/
@@ -10,6 +14,7 @@ Hall of fame probability https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/
   - estimate when player will retire
   - account for quarterLengthFactor, hofFactor
   - could train a model to predict future career WS from (age, ovr, pos)
+    - need to know the stddev too
   - could do monte carlo like pot, although that'd be slow and change every time you reload
     - bail out early when...
       - we cross the threshold for HoF
@@ -24,6 +29,8 @@ In the "Trading block" page, add a feature like in the "Trade" page: when you se
 Not sure why but if force retire age is set at 100 I've noticed players in my league at the age of 100 will randomly spawn in and start playing, so fixing that would be neat. https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfy1lhr/
 
 when game is tied late, teams should usually wait until the last second to shoot https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lj6ccns/
+
+cancelling expansion draft can somehow delete existing teams, not just expansion teams https://discord.com/channels/@me/1279993011387764818/1280026813812310017
 
 in baseball, after a trade, player could be in the depth chart for LP (no DH lineup) even if there is no DH lineup at all, and then his position there will show up in lineupPos elsewhere on the depth chart. but weirdly, this happened with a pitcher getting listed at CF. seems the CF was sent out in the trade, maybe related? https://discord.com/channels/290013534023057409/290015591216054273/1278535975022231553
 

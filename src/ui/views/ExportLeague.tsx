@@ -490,7 +490,9 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		setProcessingStore(undefined);
 	};
 
-	const dropboxAccessToken = localStorage.getItem("dropboxAccessToken");
+	const [dropboxAccessToken, setDropboxAccessToken] = useState(() =>
+		safeLocalStorage.getItem("dropboxAccessToken"),
+	);
 
 	const handleSubmit = (type: "download" | "dropbox") => async () => {
 		setStatus(undefined);
@@ -796,15 +798,28 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 					{state === "idle" || state === "dropbox" ? (
 						dropboxAccessToken ? (
-							<ActionButton
-								className={state === "idle" ? "ms-2" : undefined}
-								maintainWidth={false}
-								processing={state === "dropbox"}
-								onClick={handleSubmit("dropbox")}
-							>
-								<span className="glyphicon glyphicon-cloud-upload" /> Save to
-								Dropbox
-							</ActionButton>
+							<>
+								<ActionButton
+									className={state === "idle" ? "ms-2" : undefined}
+									maintainWidth={false}
+									processing={state === "dropbox"}
+									onClick={handleSubmit("dropbox")}
+								>
+									<span className="glyphicon glyphicon-cloud-upload" /> Save to
+									Dropbox
+								</ActionButton>
+								{state === "idle" ? (
+									<button
+										className="btn btn-danger ms-2"
+										onClick={() => {
+											safeLocalStorage.removeItem("dropboxAccessToken");
+											setDropboxAccessToken(null);
+										}}
+									>
+										Disconnect
+									</button>
+								) : null}
+							</>
 						) : (
 							<button
 								className="btn btn-primary ms-2"

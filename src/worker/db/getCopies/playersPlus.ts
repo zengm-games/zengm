@@ -152,7 +152,13 @@ const processAttrs = (
 		} else if (attr === "numSons") {
 			output.numSons = p.relatives.filter(rel => rel.type === "son").length;
 		} else if (attr === "numAllStar") {
-			output.numAllStar = p.awards.filter(a => a.type === "All-Star").length;
+			output.numAllStar = p.awards.filter(
+				a =>
+					a.type === "All-Star" &&
+					(season === undefined || a.season <= season) &&
+					(seasonRange === undefined ||
+						(a.season >= seasonRange[0] && a.season <= seasonRange[1])),
+			).length;
 		} else if (attr === "latestTransaction") {
 			let transaction;
 			if (p.transactions && p.transactions.length > 0) {

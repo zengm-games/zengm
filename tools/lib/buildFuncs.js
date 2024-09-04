@@ -318,7 +318,9 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 		silent: true,
 	});
 
-	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
+	// Not needed for Raptive, but needed for Freestar
+	const bannerAdsCode = "";
+	/*// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
 	const bannerAdsCode = `<script type="text/javascript" async=true>
 (function() {
   if (!window.enableLogging) {
@@ -512,7 +514,7 @@ if (window.enableLogging) {
 		},
 	)}";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
 }
-</script>`;
+</script>`;*/
 
 	replace({
 		regex: "BANNER_ADS_CODE",

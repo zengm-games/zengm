@@ -1,6 +1,7 @@
 import { memo, useEffect } from "react";
 import { AD_DIVS } from "../../common";
 import { ads } from "../util";
+import type { AdsFreestar } from "../util/ads";
 
 // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 
@@ -22,7 +23,7 @@ const Skyscraper = memo(() => {
 	useEffect(() => {
 		if (!window.mobile) {
 			const callback = () => {
-				ads.skyscraper.updateDislay(false);
+				(ads as AdsFreestar).skyscraper.updateDislay(false);
 			};
 
 			callback();

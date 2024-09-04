@@ -29,18 +29,34 @@ function loadCSS(filename){
   document.getElementsByTagName("head")[0].appendChild(el);
   return el;
 }
+
+// Currently this is just for Raptive
+function applyClass(dark) {
+  if (dark) {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+
 function getTheme() {
-  var dark = "dark-CSS_HASH_DARK";
-  var light = "light-CSS_HASH_LIGHT";
+  let dark = false;
   try {
     var local = localStorage.getItem("theme");
     if (local !== null) {
-      return local === "dark" ? dark : light;
+      dark = local === "dark";
+    } else {
+      dark = matchMedia("(prefers-color-scheme: dark)").matches;
     }
-    return matchMedia("(prefers-color-scheme: dark)").matches ? dark : light;
-  } catch (err) {
-    return light;
+  } catch (err) {}
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => applyClass(dark));
+  } else {
+    applyClass(dark);
   }
+
+  return dark ? "dark-CSS_HASH_DARK" : "light-CSS_HASH_LIGHT";
 }
 window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
 

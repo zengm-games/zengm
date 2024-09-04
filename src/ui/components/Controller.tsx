@@ -14,7 +14,7 @@ import SideBar from "./SideBar";
 import Skyscraper from "./Skyscraper";
 import TitleBar from "./TitleBar";
 import { useViewData } from "../util/viewManager";
-import { isSport } from "../../common";
+import { AD_PROVIDER, isSport } from "../../common";
 import api from "../api";
 
 const loadFramerMotionFeatures = () =>
@@ -118,7 +118,7 @@ const Controller = () => {
 								</div>
 								<Footer />
 							</div>
-							<Skyscraper />
+							{AD_PROVIDER === "freestar" ? <Skyscraper /> : null}
 						</div>
 						<CommandPalette />
 						<NagModal close={closeNagModal} show={showNagModal} />

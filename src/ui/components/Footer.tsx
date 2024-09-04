@@ -1,6 +1,7 @@
 import { memo } from "react";
 import {
 	AD_DIVS,
+	AD_PROVIDER,
 	GAME_ACRONYM,
 	SUBREDDIT_NAME,
 	VIDEO_ADS,
@@ -59,54 +60,58 @@ const Footer = memo(() => {
 		>
 			<p className="clearfix" />
 
-			<div
-				className="banner-ad"
-				style={{
-					position: "relative",
-				}}
-			>
-				<div
-					id={`${AD_DIVS.rectangle1}_disabled`}
-					style={{
-						display: "none",
-						textAlign: "center",
-						height: "250px",
-						position: "absolute",
-						top: "5px",
-						left: 0,
-					}}
-				/>
-				<div
-					id="bbgm-ads-logo"
-					style={{
-						display: "none",
-						height: "250px",
-						margin: "5px 320px 0 320px",
-						alignItems: "center",
-						justifyContent: "center",
-					}}
-				>
-					<img
-						alt=""
-						src={`https://zengm.com/files/logo-${process.env.SPORT}.svg`}
+			{AD_PROVIDER === "freestar" ? (
+				<>
+					<div
+						className="banner-ad"
 						style={{
-							maxHeight: "100%",
-							maxWidth: "100%",
+							position: "relative",
 						}}
-					/>
-				</div>
-				<div
-					id={`${AD_DIVS.rectangle2}_disabled`}
-					style={{
-						display: "none",
-						textAlign: "center",
-						height: "250px",
-						position: "absolute",
-						top: "5px",
-						right: 0,
-					}}
-				/>
-			</div>
+					>
+						<div
+							id={`${AD_DIVS.rectangle1}_disabled`}
+							style={{
+								display: "none",
+								textAlign: "center",
+								height: "250px",
+								position: "absolute",
+								top: "5px",
+								left: 0,
+							}}
+						/>
+						<div
+							id="bbgm-ads-logo"
+							style={{
+								display: "none",
+								height: "250px",
+								margin: "5px 320px 0 320px",
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+						>
+							<img
+								alt=""
+								src={`https://zengm.com/files/logo-${process.env.SPORT}.svg`}
+								style={{
+									maxHeight: "100%",
+									maxWidth: "100%",
+								}}
+							/>
+						</div>
+						<div
+							id={`${AD_DIVS.rectangle2}_disabled`}
+							style={{
+								display: "none",
+								textAlign: "center",
+								height: "250px",
+								position: "absolute",
+								top: "5px",
+								right: 0,
+							}}
+						/>
+					</div>
+				</>
+			) : null}
 
 			<div className="clearfix" />
 			<hr />

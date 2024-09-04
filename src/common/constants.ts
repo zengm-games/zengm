@@ -331,7 +331,7 @@ const TIEBREAKERS = {
 // This is only applied by default in hockey, but it's still used in all sports if "pts" are explicitly requested and there is no formula set
 const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
 
-const AD_DIVS = bySport({
+const FREESTAR_AD_DIVS = bySport({
 	basketball: {
 		mobile: "basketball-gm_mobile_leaderboard",
 		leaderboard: "basketball-gm_leaderboard_atf",
@@ -354,6 +354,10 @@ const AD_DIVS = bySport({
 		rail: "zen-gm_right_rail",
 	},
 });
+
+export const VIDEO_ADS = false;
+export const VIDEO_AD_PADDING = 225 + 10 + 10;
+export const AD_PROVIDER: "raptive" | "freestar" = "raptive";
 
 const DEFAULT_JERSEY = bySport({
 	baseball: "baseball2:hat2",
@@ -513,11 +517,8 @@ export const STARTING_NUM_TIMEOUTS = bySport({
 	basketball: 2,
 });
 
-export const VIDEO_ADS = false;
-export const VIDEO_AD_PADDING = 225 + 10 + 10;
-
 export {
-	AD_DIVS,
+	FREESTAR_AD_DIVS as AD_DIVS,
 	ALL_STAR_GAME_ONLY,
 	AWARD_NAMES,
 	COURT,

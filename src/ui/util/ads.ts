@@ -1,4 +1,10 @@
-import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN, VIDEO_ADS } from "../../common";
+import {
+	AD_DIVS,
+	AD_PROVIDER,
+	bySport,
+	MOBILE_AD_BOTTOM_MARGIN,
+	VIDEO_ADS,
+} from "../../common";
 import { local, localActions } from "./local";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
@@ -60,11 +66,10 @@ class Skyscraper {
 
 type AdState = "none" | "gold" | "initializing" | "initialized";
 
-class Ads {
+abstract class AdsBase {
 	private accountChecked = false;
 	private uiRendered = false;
 	private initAfterLoadingDone = false;
-	skyscraper = new Skyscraper();
 	private state: AdState = "none";
 
 	setLoadingDone(type: "accountChecked" | "uiRendered") {
@@ -74,7 +79,11 @@ class Ads {
 		}
 	}
 
-	init() {
+	async init() {
+		if (!window.enableLogging) {
+			return;
+		}
+
 		// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
 		if (this.state !== "none") {
 			// Must have already ran somehow?
@@ -94,6 +103,36 @@ class Ads {
 		if (gold) {
 			this.state = "gold";
 		} else {
+			await this.initCore();
+			this.state = "initialized";
+		}
+	}
+	abstract initCore(): Promise<void>;
+
+	// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
+	async stop() {
+		await this.stopCore();
+		this.state = "gold";
+	}
+	abstract stopCore(): Promise<void>;
+
+	abstract adBlock(): boolean;
+
+	abstract trackPageview(): void;
+
+	refreshAll() {
+		if (this.state === "initialized") {
+			this.refreshAllCore();
+		}
+	}
+	abstract refreshAllCore(): void;
+}
+
+export class AdsFreestar extends AdsBase {
+	skyscraper = new Skyscraper();
+
+	initCore() {
+		return new Promise<void>(resolve => {
 			// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
 			const divsAll = VIDEO_ADS
 				? [AD_DIVS.mobile, AD_DIVS.rail]
@@ -181,63 +220,64 @@ class Ads {
 
 				window.freestar.newAdSlots(window.freestar.config.enabled_slots);
 
-				this.state = "initialized";
+				resolve();
 			});
-		}
+		});
 	}
 
-	// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
-	stop() {
-		window.freestar.queue.push(() => {
-			const divsAll = [
-				AD_DIVS.mobile,
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-			];
+	stopCore() {
+		return new Promise<void>(resolve => {
+			window.freestar.queue.push(() => {
+				const divsAll = [
+					AD_DIVS.mobile,
+					AD_DIVS.leaderboard,
+					AD_DIVS.rectangle1,
+					AD_DIVS.rectangle2,
+				];
 
-			for (const id of divsAll) {
-				const div = document.getElementById(id);
+				for (const id of divsAll) {
+					const div = document.getElementById(id);
 
-				if (div) {
-					div.style.display = "none";
+					if (div) {
+						div.style.display = "none";
+					}
+
+					window.freestar.deleteAdSlots(id);
 				}
 
-				window.freestar.deleteAdSlots(id);
-			}
+				// Special case for rail, to tell it there is no BBGM gold
+				const rail = document.getElementById(AD_DIVS.rail);
+				if (rail) {
+					rail.dataset.gold = "true";
+					this.skyscraper.updateDislay(false);
+				}
 
-			// Special case for rail, to tell it there is no BBGM gold
-			const rail = document.getElementById(AD_DIVS.rail);
-			if (rail) {
-				rail.dataset.gold = "true";
-				this.skyscraper.updateDislay(false);
-			}
+				localActions.update({
+					stickyFooterAd: false,
+				});
 
-			localActions.update({
-				stickyFooterAd: false,
+				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+				const footer = document.getElementById("main-footer");
+				if (footer) {
+					footer.style.marginBottom = "";
+				}
+
+				const logo = document.getElementById("bbgm-ads-logo");
+				if (logo) {
+					logo.style.display = "none";
+				}
+
+				// Rename to hide from Blockthrough
+				for (const id of [...divsAll, AD_DIVS.rail]) {
+					const div = document.getElementById(id);
+
+					if (div) {
+						div.id = `${id}_disabled`;
+					}
+				}
+
+				resolve();
 			});
-
-			// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
-			const footer = document.getElementById("main-footer");
-			if (footer) {
-				footer.style.marginBottom = "";
-			}
-
-			const logo = document.getElementById("bbgm-ads-logo");
-			if (logo) {
-				logo.style.display = "none";
-			}
-
-			// Rename to hide from Blockthrough
-			for (const id of [...divsAll, AD_DIVS.rail]) {
-				const div = document.getElementById(id);
-
-				if (div) {
-					div.id = `${id}_disabled`;
-				}
-			}
-
-			this.state = "gold";
 		});
 	}
 
@@ -257,15 +297,63 @@ class Ads {
 		});
 	}
 
-	refreshAll() {
-		if (this.state === "initialized") {
-			window.freestar.queue.push(() => {
-				window.freestar.refreshAllSlots?.();
-			});
-		}
+	refreshAllCore() {
+		window.freestar.queue.push(() => {
+			window.freestar.refreshAllSlots?.();
+		});
 	}
 }
 
-const ads = new Ads();
+class AdsRaptive extends AdsBase {
+	private raptiveId = bySport({
+		baseball: "665e0cf7767eb96e18401832",
+		basketball: "64b02c6a66495b53bc728959",
+		football: "665e0d0b56ae7a6e182c7b04",
+		hockey: "665e0cf7767eb96e18401832",
+	});
+
+	async initCore() {
+		console.log("run initCore");
+		return new Promise<void>((resolve, reject) => {
+			window.adthrive = window.adthrive || {};
+			window.adthrive.cmd = window.adthrive.cmd || [];
+			window.adthrive.plugin = "adthrive-ads-manual";
+			window.adthrive.host = "ads.adthrive.com";
+			const s = document.createElement("script");
+			s.async = true;
+			(s as any).referrerPolicy = "no-referrer-when-downgrade";
+			s.src =
+				"https://" +
+				window.adthrive.host +
+				"/sites/" +
+				this.raptiveId +
+				"/ads.min.js?referrer=" +
+				window.encodeURIComponent(window.location.href) +
+				"&cb=" +
+				(Math.floor(Math.random() * 100) + 1);
+			const n = document.getElementsByTagName("script")[0];
+			n.parentNode!.insertBefore(s, n);
+			s.onerror = err => {
+				reject(err);
+			};
+
+			s.onload = () => {
+				resolve();
+			};
+		});
+	}
+
+	async stopCore() {}
+
+	adBlock() {
+		return false;
+	}
+
+	trackPageview() {}
+
+	refreshAllCore() {}
+}
+
+const ads = AD_PROVIDER === "freestar" ? new AdsFreestar() : new AdsRaptive();
 
 export default ads;

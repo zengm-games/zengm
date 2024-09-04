@@ -12,6 +12,7 @@ export type Env = {
 
 declare global {
 	interface Window {
+		adthrive: any;
 		bbgm: any; // Just for debugging
 		bbgmVersion: string;
 		bugsnagKey: string;

@@ -62,24 +62,19 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 			},
 		);
 
-		const stores =
-			options.season >= 2020
-				? [
-						"teams",
-						"players",
-						"gameAttributes",
-						"startingSeason",
-						"seasonLeaders",
-						"draftPicks",
-				  ]
-				: [
-						"teams",
-						"players",
-						"gameAttributes",
-						"startingSeason",
-						"seasonLeaders",
-						"scheduledEvents",
-				  ];
+		const stores = [
+			"teams",
+			"players",
+			"gameAttributes",
+			"startingSeason",
+			"seasonLeaders",
+			"scheduledEvents",
+		];
+
+		if (options.season >= 2020) {
+			// Future draft pick data only in alexnoob files
+			stores.push("draftPicks");
+		}
 
 		const gameAttributes = getGameAttributes(initialGameAttributes, options);
 		const teams = initialTeams.filter(t => !t.disabled);

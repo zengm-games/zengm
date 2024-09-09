@@ -1458,7 +1458,6 @@ export const settings: Setting[] = (
 			category: "Players",
 			key: "playerBioInfo",
 			name: "Biographical Info",
-			godModeRequired: "always",
 			type: "custom",
 			description:
 				"Customize the home countries and names of generated players.",

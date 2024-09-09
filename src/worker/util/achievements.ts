@@ -384,6 +384,13 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	return currentAwards.mvp?.tid === userTid && checkMvpCache.count === limit;
 };
 
+const internationalCountries = bySport({
+	baseball: "American",
+	basketball: "American",
+	football: "American",
+	hockey: "American/Canadian",
+});
+
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const achievements: Achievement[] = [
 	{
@@ -1459,12 +1466,7 @@ if (isSport("hockey") || isSport("basketball")) {
 		{
 			slug: "international",
 			name: "International",
-			desc: `Win a title with no ${bySport({
-				baseball: "American",
-				basketball: "American",
-				football: "American",
-				hockey: "American or Canadian",
-			})} players on your team.`,
+			desc: `Win a title with no ${internationalCountries} players on your team (league must be at least 50% ${internationalCountries}).`,
 			category: "Team Composition",
 
 			async check() {

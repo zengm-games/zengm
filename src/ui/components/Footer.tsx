@@ -138,6 +138,8 @@ const Footer = memo(() => {
 					{GAME_ACRONYM} v{window.bbgmVersion}
 				</div>
 			</div>
+
+			<div id="raptive-footer-text" />
 		</footer>
 	);
 });

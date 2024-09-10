@@ -5,7 +5,7 @@ const Header = memo(() => {
 	return (
 		// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 		AD_PROVIDER === "freestar" ? (
-			<>
+			<div className="mt-2">
 				<div
 					className="banner-ad"
 					id={`${AD_DIVS.leaderboard}_disabled`}
@@ -26,16 +26,28 @@ const Header = memo(() => {
 						marginBottom: 5,
 					}}
 				/>
-			</>
+			</div>
 		) : (
 			<div
-				className="banner-ad raptive-placeholder-header"
 				style={{
-					textAlign: "center",
-					minHeight: 90,
-					marginBottom: 5,
+					// Same as mt-2, basically
+					minHeight: 8,
 				}}
-			/>
+			>
+				<div
+					className="banner-ad raptive-placeholder-header"
+					style={{
+						display: "none",
+						textAlign: "center",
+
+						// 90px ad, 10px padding on each side from Raptive
+						minHeight: 110,
+
+						// https://stackoverflow.com/a/32349703/786644
+						overflow: "hidden",
+					}}
+				/>
+			</div>
 		)
 	);
 });

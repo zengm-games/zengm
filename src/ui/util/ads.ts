@@ -313,8 +313,14 @@ class AdsRaptive extends AdsBase {
 	});
 
 	async initCore() {
-		console.log("run initCore");
 		return new Promise<void>((resolve, reject) => {
+			const divs = document.getElementsByClassName(
+				"raptive-placeholder-header",
+			) as HTMLCollectionOf<HTMLElement>;
+			for (const div of divs) {
+				div.style.removeProperty("display");
+			}
+
 			window.adthrive = window.adthrive || {};
 			window.adthrive.cmd = window.adthrive.cmd || [];
 			window.adthrive.plugin = "adthrive-ads-manual";

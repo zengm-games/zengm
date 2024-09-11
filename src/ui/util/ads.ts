@@ -1,3 +1,4 @@
+import throttle from "just-throttle";
 import { AD_DIVS, AD_PROVIDER, bySport, VIDEO_ADS } from "../../common";
 import { local, localActions } from "./local";
 
@@ -300,6 +301,103 @@ export class AdsFreestar extends AdsBase {
 	}
 }
 
+class RaptiveStickyFooterManager {
+	observerOpen: MutationObserver | undefined;
+	observerClose: MutationObserver | undefined;
+
+	AD_BOTTOM_MARGIN_DESKTOP = 92;
+	AD_BOTTOM_MARGIN_MOBILE = 50;
+
+	start() {
+		this.cleanup();
+		this.listenForOpen();
+	}
+
+	private hasDesktopFooter() {
+		// https://stackoverflow.com/a/39332340/786644 says this is faster than scanning the mutations
+		return !!document.getElementById("AdThrive_Footer_1_desktop");
+	}
+
+	private hasMobileFooter() {
+		return !!document.getElementById("AdThrive_Footer_1_phone");
+		/*const divs = document.getElementsByClassName("ut_container");
+		return divs.length > 0;*/
+	}
+
+	private listenForOpen() {
+		this.observerOpen = new MutationObserver(
+			throttle(() => {
+				console.log("check open");
+				if (this.hasDesktopFooter()) {
+					console.log("opened desktop");
+					localActions.update({
+						stickyFooterAd: this.AD_BOTTOM_MARGIN_DESKTOP,
+					});
+
+					this.stopListeningForOpen();
+					this.listenForClose("desktop");
+				} else if (this.hasMobileFooter()) {
+					console.log("opened mobile");
+					localActions.update({
+						stickyFooterAd: this.AD_BOTTOM_MARGIN_MOBILE,
+					});
+
+					this.stopListeningForOpen();
+					this.listenForClose("mobile");
+				}
+			}, 500),
+		);
+
+		this.observerOpen.observe(document.body, {
+			childList: true,
+			attributeFilter: [],
+		});
+	}
+
+	private listenForClose(type: "desktop" | "mobile") {
+		this.observerClose = new MutationObserver(
+			throttle(() => {
+				console.log("check close");
+				if (
+					(type === "desktop" && !this.hasDesktopFooter()) ||
+					(type === "mobile" && !this.hasMobileFooter())
+				) {
+					console.log("closed");
+					localActions.update({
+						stickyFooterAd: 0,
+					});
+
+					this.stopListeningForClose();
+				}
+			}, 500),
+		);
+
+		this.observerClose.observe(document.body, {
+			childList: true,
+			attributeFilter: [],
+		});
+	}
+
+	private stopListeningForOpen() {
+		if (this.observerOpen) {
+			this.observerOpen.disconnect();
+			this.observerOpen = undefined;
+		}
+	}
+
+	private stopListeningForClose() {
+		if (this.observerClose) {
+			this.observerClose.disconnect();
+			this.observerClose = undefined;
+		}
+	}
+
+	cleanup() {
+		this.stopListeningForOpen();
+		this.stopListeningForClose();
+	}
+}
+
 class AdsRaptive extends AdsBase {
 	private raptiveId = bySport({
 		baseball: "665e0cf7767eb96e18401832",
@@ -308,8 +406,12 @@ class AdsRaptive extends AdsBase {
 		hockey: "665e0cf7767eb96e18401832",
 	});
 
+	private stickyFooterManager = new RaptiveStickyFooterManager();
+
 	async initCore() {
 		return new Promise<void>((resolve, reject) => {
+			this.stickyFooterManager.start();
+
 			const divs = document.getElementsByClassName(
 				"raptive-placeholder-header",
 			) as HTMLCollectionOf<HTMLElement>;
@@ -336,6 +438,7 @@ class AdsRaptive extends AdsBase {
 			const n = document.getElementsByTagName("script")[0];
 			n.parentNode!.insertBefore(s, n);
 			s.onerror = err => {
+				this.stickyFooterManager?.cleanup();
 				reject(err);
 			};
 

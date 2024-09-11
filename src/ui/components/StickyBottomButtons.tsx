@@ -1,4 +1,3 @@
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 import { useLocalPartial } from "../util";
 
 const StickyBottomButtons = ({
@@ -14,10 +13,7 @@ const StickyBottomButtons = ({
 	if (isInsideModal) {
 		bottom = -15;
 	} else {
-		bottom = 0;
-		if (stickyFooterAd) {
-			bottom += MOBILE_AD_BOTTOM_MARGIN;
-		}
+		bottom = stickyFooterAd;
 	}
 
 	return (

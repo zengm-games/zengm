@@ -1,6 +1,5 @@
 import type { ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalPartial } from "../util";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 import { orderBy } from "../../common/utils";
 
 const setUserTid = async (userTid: number) => {
@@ -60,7 +59,7 @@ const MultiTeamMenu = () => {
 
 	let bottom = 0;
 	if (state.stickyFooterAd) {
-		bottom += MOBILE_AD_BOTTOM_MARGIN;
+		bottom += state.stickyFooterAd;
 	}
 
 	return (

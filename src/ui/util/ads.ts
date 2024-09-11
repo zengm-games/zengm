@@ -1,10 +1,4 @@
-import {
-	AD_DIVS,
-	AD_PROVIDER,
-	bySport,
-	MOBILE_AD_BOTTOM_MARGIN,
-	VIDEO_ADS,
-} from "../../common";
+import { AD_DIVS, AD_PROVIDER, bySport, VIDEO_ADS } from "../../common";
 import { local, localActions } from "./local";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
@@ -185,8 +179,10 @@ export class AdsFreestar extends AdsBase {
 				}
 
 				if (divs.includes(AD_DIVS.mobile)) {
+					const MOBILE_AD_BOTTOM_MARGIN = 52;
+
 					localActions.update({
-						stickyFooterAd: true,
+						stickyFooterAd: MOBILE_AD_BOTTOM_MARGIN,
 					});
 
 					// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
@@ -253,13 +249,13 @@ export class AdsFreestar extends AdsBase {
 				}
 
 				localActions.update({
-					stickyFooterAd: false,
+					stickyFooterAd: 0,
 				});
 
 				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
 				const footer = document.getElementById("main-footer");
 				if (footer) {
-					footer.style.marginBottom = "";
+					footer.style.paddingBottom = "";
 				}
 
 				const logo = document.getElementById("bbgm-ads-logo");

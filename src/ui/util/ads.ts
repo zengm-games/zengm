@@ -390,6 +390,9 @@ class RaptiveStickyFooterManager {
 					});
 
 					this.stopListeningForClose();
+
+					// Need to listen for open, because we can't distinguish if this is temporarily closed between ads, or permanently closed due to clicking close button
+					this.listenForOpen();
 				}
 			}, 500),
 		);

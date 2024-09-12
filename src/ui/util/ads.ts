@@ -313,15 +313,23 @@ class RaptiveStickyFooterManager {
 		this.listenForOpen();
 	}
 
-	private hasDesktopFooter() {
+	private hasFooter(id: string) {
 		// https://stackoverflow.com/a/39332340/786644 says this is faster than scanning the mutations
-		return !!document.getElementById("AdThrive_Footer_1_desktop");
+		const div = document.getElementById(id);
+
+		// Length check is because sometimes this appears with no content, in which case it's the same as if no ad existed yet
+		return div && div?.childNodes?.length > 0;
+
+		/*const divs = document.getElementsByClassName("ut_container");
+		return divs.length > 0;*/
+	}
+
+	private hasDesktopFooter() {
+		return this.hasFooter("AdThrive_Footer_1_desktop");
 	}
 
 	private hasMobileFooter() {
-		return !!document.getElementById("AdThrive_Footer_1_phone");
-		/*const divs = document.getElementsByClassName("ut_container");
-		return divs.length > 0;*/
+		return this.hasFooter("AdThrive_Footer_1_phone");
 	}
 
 	private listenForOpen() {

@@ -35,7 +35,8 @@ const Header = memo(() => {
 				}}
 			>
 				<div
-					className="banner-ad raptive-placeholder-header"
+					className="banner-ad"
+					id="raptive-placeholder-header-id"
 					style={{
 						display: "none",
 						textAlign: "center",

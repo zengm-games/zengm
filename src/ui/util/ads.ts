@@ -328,6 +328,10 @@ class RaptiveStickyFooterManager {
 		return this.hasFooter("AdThrive_Footer_1_desktop");
 	}
 
+	private hasTabletFooter() {
+		return this.hasFooter("AdThrive_Footer_1_tablet");
+	}
+
 	private hasMobileFooter() {
 		return this.hasFooter("AdThrive_Footer_1_phone");
 	}
@@ -344,6 +348,15 @@ class RaptiveStickyFooterManager {
 
 					this.stopListeningForOpen();
 					this.listenForClose("desktop");
+				} else if (this.hasTabletFooter()) {
+					console.log("opened tablet");
+					localActions.update({
+						// Tablet ad is same size as desktop
+						stickyFooterAd: this.AD_BOTTOM_MARGIN_DESKTOP,
+					});
+
+					this.stopListeningForOpen();
+					this.listenForClose("tablet");
 				} else if (this.hasMobileFooter()) {
 					console.log("opened mobile");
 					localActions.update({
@@ -362,12 +375,13 @@ class RaptiveStickyFooterManager {
 		});
 	}
 
-	private listenForClose(type: "desktop" | "mobile") {
+	private listenForClose(type: "desktop" | "tablet" | "mobile") {
 		this.observerClose = new MutationObserver(
 			throttle(() => {
 				console.log("check close");
 				if (
 					(type === "desktop" && !this.hasDesktopFooter()) ||
+					(type === "tablet" && !this.hasTabletFooter()) ||
 					(type === "mobile" && !this.hasMobileFooter())
 				) {
 					console.log("closed");
@@ -420,11 +434,13 @@ class AdsRaptive extends AdsBase {
 		return new Promise<void>((resolve, reject) => {
 			this.stickyFooterManager.start();
 
-			const divs = document.getElementsByClassName(
-				"raptive-placeholder-header",
-			) as HTMLCollectionOf<HTMLElement>;
-			for (const div of divs) {
-				div.style.removeProperty("display");
+			// These ads only display on desktop https://mail.google.com/mail/u/0/#inbox/FMfcgzQVzXVPZjkNvXbKZWNCSjkzThQV?compose=jrjtXJSkJpmqdjGzPlpjhrFZxvgxmWkLWNjhXMJrqghRTrCWXFcggBmxbNKpvRXfLrPmCwxL
+			if (window.innerWidth >= 1024) {
+				const div = document.getElementById("raptive-placeholder-header-id");
+				if (div) {
+					div.classList.add("raptive-placeholder-header");
+					div.style.removeProperty("display");
+				}
 			}
 
 			window.adthrive = window.adthrive || {};

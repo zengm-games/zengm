@@ -1682,6 +1682,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 						contract: {
 							$ref: "#/definitions/playerContract",
 						},
+						customMoodItems: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									amount: {
+										type: "number",
+									},
+									text: {
+										type: "string",
+									},
+									tid: {
+										type: "integer",
+									},
+								},
+								required: ["amount", "text"],
+							},
+						},
 						diedYear: {
 							type: "integer",
 						},

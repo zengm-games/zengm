@@ -49,8 +49,14 @@ const moodInfo = async (
 	}
 
 	let sumComponents = 0;
-	for (const value of Object.values(components)) {
-		sumComponents += value;
+	for (const key of helpers.keys(components)) {
+		if (key === "custom") {
+			for (const row of components.custom!) {
+				sumComponents += row.amount;
+			}
+		} else {
+			sumComponents += components[key];
+		}
 	}
 
 	// Add some based on how long free agency has lasted and how good/bad the player is

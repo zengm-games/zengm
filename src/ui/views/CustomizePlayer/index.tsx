@@ -25,6 +25,7 @@ import RelativesForm from "./RelativesForm";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
 import posRatings from "../../../common/posRatings";
 import { orderBy } from "../../../common/utils";
+import CustomMoodItemsForm from "./CustomMoodItemsForm";
 
 // A player can never have KR or PR as his main position
 const bannedPositions = ["KR", "PR"];
@@ -271,6 +272,27 @@ const copyValidValues = (
 			return rel;
 		})
 		.filter(rel => !Number.isNaN(rel.pid));
+
+	target.customMoodItems = source.customMoodItems?.map(row => {
+		let amount;
+		if (typeof row.amount === "number") {
+			amount = row.amount;
+		} else {
+			amount = helpers.localeParseFloat(row.amount);
+		}
+
+		if (Number.isNaN(amount)) {
+			amount = 0;
+		}
+
+		return {
+			...row,
+			amount,
+		};
+	});
+	if (target.customMoodItems && target.customMoodItems.length === 0) {
+		delete target.customMoodItems;
+	}
 
 	return recomputePosOvrPot;
 };
@@ -1069,7 +1091,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-sm-6 mb-3">
 								<label className="form-label">Games Out</label>
 								<input
 									type="text"
@@ -1102,6 +1124,23 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									))}
 								</div>
 							) : null}
+							<div className="col-sm-9 mb-3">
+								<label className="form-label">
+									Custom Mood Items{" "}
+									<HelpPopover title="Custom Mood Items">
+										Add custom entries to a player's mood calculation. By
+										default you see things like "+2 Enjoys playing in a large
+										market", and with this setting you can add custom text with
+										any numeric value to alter a player's mood towards a
+										specific team or towards all teams.
+									</HelpPopover>
+								</label>
+								<CustomMoodItemsForm
+									godMode={godMode}
+									handleChange={handleChange}
+									customMoodItems={p.customMoodItems}
+								/>
+							</div>
 						</div>
 
 						<h2>Appearance</h2>

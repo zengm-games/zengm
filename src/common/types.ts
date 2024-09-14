@@ -957,6 +957,11 @@ export type MoodComponents = {
 	trades: number;
 	playingTime: number;
 	rookieContract: number;
+	difficulty: number;
+	custom?: {
+		text: string;
+		amount: number;
+	}[];
 };
 
 export type MoodTrait = "F" | "L" | "$" | "W";
@@ -1182,6 +1187,11 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	contract: PlayerContract & {
 		temp?: true; // Used only on import
 	};
+	customMoodItems?: {
+		amount: number;
+		text: string;
+		tid?: number;
+	}[];
 	diedYear?: number;
 	draft: {
 		round: number;

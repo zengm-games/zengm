@@ -97,7 +97,7 @@ const moodComponents = async (
 		throw new Error(`tid ${tid} not found`);
 	}
 
-	const components = {
+	const components: MoodComponents = {
 		marketSize: 0,
 		facilities: 0,
 		teamPerformance: 0,
@@ -108,6 +108,21 @@ const moodComponents = async (
 		rookieContract: 0,
 		difficulty: 0,
 	};
+
+	if (p.customMoodItems) {
+		for (const row of p.customMoodItems) {
+			if (row.tid === undefined || row.tid === tid) {
+				if (!components.custom) {
+					components.custom = [];
+				}
+
+				components.custom.push({
+					amount: row.amount,
+					text: row.text,
+				});
+			}
+		}
+	}
 
 	{
 		// MARKET SIZE: -2 to 2, based on population rank
@@ -297,6 +312,10 @@ const moodComponents = async (
 	if (g.get("userTids").includes(tid)) {
 		if (difficulty !== 0) {
 			for (const key of helpers.keys(components)) {
+				if (key === "custom") {
+					continue;
+				}
+
 				// Higher difficulty should result in lower mood, but we don't want to swap signs because that'd make for weird output (like complaining about team success when you won the title... but it's okay to just have it at 0 and say nothing)
 				if (difficulty > 0) {
 					if (components[key] > 0) {
@@ -317,6 +336,10 @@ const moodComponents = async (
 		// At default difficulty, make players more likely to refuse. Decrease this, and players will be more likely to enter free agency
 		const amount = 0.5 - helpers.bound(difficulty / 2, -0.25, 0.25);
 		for (const key of helpers.keys(components)) {
+			if (key === "custom") {
+				continue;
+			}
+
 			if (amount > 0) {
 				if (components[key] > 0) {
 					components[key] /= 1 + amount;

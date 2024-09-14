@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { MOOD_TRAITS } from "../../common";
 import type {
 	GameAttributesLeague,
@@ -89,8 +89,14 @@ export const processComponents = (components: MoodComponents) => {
 	};
 	let sum = 0;
 	for (const key of helpers.keys(componentsRounded)) {
-		componentsRounded[key] = Math.round(componentsRounded[key]);
-		sum += componentsRounded[key];
+		if (key === "custom") {
+			for (const row of componentsRounded.custom!) {
+				sum += row.amount;
+			}
+		} else {
+			componentsRounded[key] = Math.round(componentsRounded[key]);
+			sum += componentsRounded[key];
+		}
 	}
 
 	return {
@@ -118,6 +124,15 @@ type Props = {
 		tid: number;
 	};
 	defaultType: "user" | "current";
+};
+
+const MoodTextRow = ({ amount, text }: { amount: number; text: string }) => {
+	return (
+		<tr className={highlightColor(amount)}>
+			<td className="text-end p-0">{plusMinus(amount)}</td>
+			<td className="p-0 ps-1">{text}</td>
+		</tr>
+	);
 };
 
 const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
@@ -213,21 +228,37 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				<table>
 					<tbody>
 						{helpers.keys(componentsRounded).map(key => {
+							if (key === "custom") {
+								return (
+									<Fragment key={key}>
+										{componentsRounded.custom!.map((row, i) => {
+											if (row.amount === 0) {
+												return null;
+											}
+
+											return (
+												<MoodTextRow
+													key={i}
+													amount={row.amount}
+													text={row.text}
+												/>
+											);
+										})}
+									</Fragment>
+								);
+							}
+
 							const text = componentText(key, componentsRounded[key], gender);
 							if (!text) {
 								return null;
 							}
 
 							return (
-								<tr
+								<MoodTextRow
 									key={key}
-									className={highlightColor(componentsRounded[key])}
-								>
-									<td className="text-end p-0">
-										{plusMinus(componentsRounded[key])}
-									</td>
-									<td className="p-0 ps-1">{text}</td>
-								</tr>
+									amount={componentsRounded[key]}
+									text={text}
+								/>
 							);
 						})}
 					</tbody>

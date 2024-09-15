@@ -1,3 +1,5 @@
+Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corban)
+
 contract rounding should depend on salaryCap, shouldn't always be $10k
 - https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfy1lhr/
 
@@ -149,8 +151,6 @@ baseball colleges
 green highlight (players from your team) most places should be aware of userTid history
 
 football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
-
-Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corban)
 
 When exporting Bio Info, export even default values, then dedupe on import https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l3kvqv1/
 - or better, include option

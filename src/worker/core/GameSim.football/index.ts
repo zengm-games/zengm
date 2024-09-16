@@ -545,9 +545,9 @@ class GameSim extends GameSimBase {
 			return 0;
 		}
 
-		// Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
+		// Random onside kick, but never in the 4th quarter because some of those could be really stupid
 		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
-			return 0.01 * g.get("onsideFactor");
+			return 0.001 * g.get("onsideFactor");
 		}
 
 		// Does game situation dictate an onside kick in the 4th quarter?
@@ -565,19 +565,19 @@ class GameSim extends GameSimBase {
 		}
 
 		if (this.clock < 2) {
-			return 1 * g.get("onsideFactor");
+			return 1;
 		}
 
 		if (numScoresDown >= 2 && this.clock < 2.5) {
-			return 0.9 * g.get("onsideFactor");
+			return 0.9;
 		}
 
 		if (numScoresDown >= 3 && this.clock < 3.5) {
-			return 0.8 * g.get("onsideFactor");
+			return 0.8;
 		}
 
 		if (numScoresDown >= 2 && this.clock < 5) {
-			return (numScoresDown / 20) * g.get("onsideFactor");
+			return numScoresDown / 20;
 		}
 
 		return 0;

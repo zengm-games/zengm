@@ -7,7 +7,7 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../../common/types";
-import { type IDBPDatabase, unwrap } from "idb";
+import { type IDBPDatabase, unwrap } from "@dumbmatter/idb";
 import type { LeagueDB } from "../connectLeague";
 
 export const getPlayersActiveSeason = (

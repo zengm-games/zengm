@@ -1,5 +1,9 @@
-import { openDB } from "idb";
-import type { IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
+import { openDB } from "@dumbmatter/idb";
+import type {
+	IDBPDatabase,
+	IDBPTransaction,
+	StoreNames,
+} from "@dumbmatter/idb";
 import { WEBSITE_ROOT } from "../../common";
 import { logEvent } from "../util";
 

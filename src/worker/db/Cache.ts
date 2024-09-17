@@ -36,7 +36,7 @@ import type {
 	EventBBGMWithoutKey,
 	SeasonLeaders,
 } from "../../common/types";
-import type { IDBPTransaction } from "idb";
+import type { IDBPTransaction } from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague";
 import getAll from "./getAll";
 import { league } from "../core";

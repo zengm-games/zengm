@@ -113,7 +113,7 @@ import { withState } from "../core/player/name";
 import { initDefaults } from "../util/loadNames";
 import type { PlayerRatings } from "../../common/types.basketball";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
-import type { IDBPIndex, IDBPObjectStore } from "idb";
+import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
 import type { LeagueDB } from "../db/connectLeague";
 import playMenu from "./playMenu";
 import toolsMenu from "./toolsMenu";

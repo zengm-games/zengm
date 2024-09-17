@@ -1,4 +1,4 @@
-import type { IDBPDatabase } from "idb";
+import type { IDBPDatabase } from "@dumbmatter/idb";
 import { connectLeague, idb } from "../../db";
 import { getNewLeagueLid } from "../../util";
 import remove from "./remove";

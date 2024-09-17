@@ -1,5 +1,5 @@
-import { openDB } from "idb";
-import type { IDBPCursorWithValue } from "idb";
+import { openDB } from "@dumbmatter/idb";
+import type { IDBPCursorWithValue } from "@dumbmatter/idb";
 import {
 	gameAttributesArrayToObject,
 	LEAGUE_DATABASE_VERSION,

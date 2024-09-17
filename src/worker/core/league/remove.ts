@@ -1,4 +1,4 @@
-import { deleteDB } from "idb";
+import { deleteDB } from "@dumbmatter/idb";
 import close from "./close";
 import { idb } from "../../db";
 import { g, logEvent } from "../../util";

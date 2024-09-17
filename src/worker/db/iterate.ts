@@ -1,4 +1,4 @@
-import { unwrap } from "idb";
+import { unwrap } from "@dumbmatter/idb";
 import type {
 	IDBPObjectStore,
 	IDBPIndex,
@@ -6,7 +6,7 @@ import type {
 	StoreValue,
 	IndexNames,
 	StoreKey,
-} from "idb";
+} from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague";
 
 // Helper function to use cursors to iterate over an index or object store, without awaiting a promise (for Firefox <60 support).

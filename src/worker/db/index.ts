@@ -1,4 +1,4 @@
-import type { IDBPDatabase } from "idb";
+import type { IDBPDatabase } from "@dumbmatter/idb";
 import Cache from "./Cache";
 import connectLeague, { type LeagueDB } from "./connectLeague";
 import connectMeta, { type MetaDB } from "./connectMeta";

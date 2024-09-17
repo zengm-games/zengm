@@ -5,7 +5,7 @@ import type {
 	StoreNames,
 	StoreValue,
 	IndexNames,
-} from "idb";
+} from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague";
 
 /**

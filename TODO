@@ -1,4 +1,7 @@
+when viewing the popup of a player's stats during the preseason, it should show the stats from the previous year https://discord.com/channels/290013534023057409/331882115119448065/1284009343880138805
+
 Maybe show latest play at the top somehow in mobile, like in FBGM and ZGMB (corban)
+- basketball - could show last possession outcome, all condensed into one line (e.g. shot attempt and result)
 
 contract rounding should depend on salaryCap, shouldn't always be $10k
 - https://old.reddit.com/r/BasketballGM/comments/1eh2h9b/monthly_suggestions_thread/lfy1lhr/
@@ -424,6 +427,7 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 - 18 in 2024
 
 FBGM
+- too many block in the back penalties? https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJGkWRpLHMglFTjVxwkhwRlrP?compose=DmwnWrRnZVhxHCNkTVdJSMmbHbGPgCRltRlKvmhtGwHmGsdBjvVRTGPpCVpwjFrcmmLvVZMKmdrl
 - for recovered onside kick, kick shows as 1st and goal in drive chart https://discord.com/channels/290013534023057409/290015591216054273/1270384918748200972
 - When you're drafting, you can see how many players you have at each position-but that includes expiring contracts. show both https://discord.com/channels/290013534023057409/331882115119448065/1266520868193046730
 - some way to automate contract signing. Generally I want to always sign all of my rookies to 5 years, so a way to set that up could be cool-obviously it would not fully complete if the cap is met but it would greatly reduce the amount of clicks needed to sign a big draft class https://discord.com/channels/290013534023057409/331882115119448065/1266521363183833199

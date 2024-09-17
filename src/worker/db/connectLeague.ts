@@ -1,4 +1,4 @@
-import { unwrap } from "idb";
+import { unwrap } from "@dumbmatter/idb";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_TEAM_COLORS,
@@ -15,7 +15,12 @@ import { idb } from ".";
 import iterate from "./iterate";
 import { defaultGameAttributes, helpers, logEvent } from "../util";
 import connectIndexedDB from "./connectIndexedDB";
-import type { DBSchema, IDBPDatabase, IDBPTransaction, StoreNames } from "idb";
+import type {
+	DBSchema,
+	IDBPDatabase,
+	IDBPTransaction,
+	StoreNames,
+} from "@dumbmatter/idb";
 import type {
 	DraftLotteryResult,
 	ReleasedPlayer,

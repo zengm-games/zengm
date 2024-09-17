@@ -1,4 +1,4 @@
-import type { IDBPTransaction } from "idb";
+import type { IDBPTransaction } from "@dumbmatter/idb";
 import { draft, finances, freeAgents, league, player, season, team } from "..";
 import {
 	applyRealTeamInfo,

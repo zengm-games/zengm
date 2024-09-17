@@ -1,4 +1,4 @@
-import type { DBSchema, IDBPDatabase } from "idb";
+import type { DBSchema, IDBPDatabase } from "@dumbmatter/idb";
 import { isSport } from "../../common";
 import type {
 	League,

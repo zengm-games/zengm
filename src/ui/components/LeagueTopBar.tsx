@@ -138,7 +138,7 @@ const LeagueTopBar = memo(() => {
 		games[0].teams[1].tid === -2;
 
 	if (lid === undefined || games.length === 0 || onlyAllStarGame) {
-		return null;
+		return <div className="mt-2" />;
 	}
 
 	// Don't show any new games if liveGameInProgress

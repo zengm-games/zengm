@@ -438,11 +438,11 @@ class AdsRaptive extends AdsBase {
 			this.stickyFooterManager.start();
 
 			// These ads only display on desktop https://mail.google.com/mail/u/0/#inbox/FMfcgzQVzXVPZjkNvXbKZWNCSjkzThQV?compose=jrjtXJSkJpmqdjGzPlpjhrFZxvgxmWkLWNjhXMJrqghRTrCWXFcggBmxbNKpvRXfLrPmCwxL
+			let div: HTMLElement | null = null;
 			if (window.innerWidth >= 1024) {
-				const div = document.getElementById("raptive-placeholder-header-id");
+				div = document.getElementById("raptive-placeholder-header-id");
 				if (div) {
 					div.classList.add("raptive-placeholder-header");
-					div.style.removeProperty("display");
 				}
 			}
 
@@ -452,7 +452,7 @@ class AdsRaptive extends AdsBase {
 			window.adthrive.host = "ads.adthrive.com";
 			const s = document.createElement("script");
 			s.async = true;
-			(s as any).referrerPolicy = "no-referrer-when-downgrade";
+			s.referrerPolicy = "no-referrer-when-downgrade";
 			s.src =
 				"https://" +
 				window.adthrive.host +
@@ -470,6 +470,9 @@ class AdsRaptive extends AdsBase {
 			};
 
 			s.onload = () => {
+				// Only show this div if ad code was not blocked
+				div?.style.removeProperty("display");
+
 				resolve();
 			};
 		});
@@ -478,12 +481,14 @@ class AdsRaptive extends AdsBase {
 	async stopCore() {}
 
 	adBlock() {
-		return false;
+		return !window.adthrive || !window.googletag || !window.googletag.pubads;
 	}
 
 	trackPageview() {}
 
-	refreshAllCore() {}
+	refreshAllCore() {
+		// Automatically happens based on URL
+	}
 }
 
 const ads = AD_PROVIDER === "freestar" ? new AdsFreestar() : new AdsRaptive();

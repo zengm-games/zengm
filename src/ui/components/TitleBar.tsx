@@ -44,7 +44,14 @@ const TitleBar = () => {
 	]);
 
 	if (title === undefined) {
-		return null;
+		// Hack for raptive, since padding is inside their top ad unit
+		return (
+			<div
+				style={{
+					marginTop: -8,
+				}}
+			/>
+		);
 	}
 
 	const menuItems: MenuItemHeader[] = [];

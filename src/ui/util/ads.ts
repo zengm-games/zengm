@@ -302,68 +302,70 @@ export class AdsFreestar extends AdsBase {
 }
 
 class RaptiveStickyFooterManager {
-	observerOpen: MutationObserver | undefined;
-	observerClose: MutationObserver | undefined;
+	private observerOpen: MutationObserver | undefined;
+	private observerOpen2: MutationObserver | undefined;
+	private observerClose: MutationObserver | undefined;
 
-	AD_BOTTOM_MARGIN_DESKTOP = 92;
-	AD_BOTTOM_MARGIN_MOBILE = 50;
+	private AD_BOTTOM_MARGIN_DESKTOP = 92;
+	private AD_BOTTOM_MARGIN_MOBILE = 50;
 
 	start() {
 		this.cleanup();
 		this.listenForOpen();
 	}
 
-	private hasFooter(id: string) {
+	private getFooter(id: string) {
 		// https://stackoverflow.com/a/39332340/786644 says this is faster than scanning the mutations
 		const div = document.getElementById(id);
 
-		// Length check is because sometimes this appears with no content, in which case it's the same as if no ad existed yet
-		return div && div?.childNodes?.length > 0;
-
-		/*const divs = document.getElementsByClassName("ut_container");
-		return divs.length > 0;*/
+		if (div) {
+			return div;
+		}
 	}
 
-	private hasDesktopFooter() {
-		return this.hasFooter("AdThrive_Footer_1_desktop");
+	private getDesktopFooter() {
+		return this.getFooter("AdThrive_Footer_1_desktop");
 	}
 
-	private hasTabletFooter() {
-		return this.hasFooter("AdThrive_Footer_1_tablet");
+	private getTabletFooter() {
+		return this.getFooter("AdThrive_Footer_1_tablet");
 	}
 
-	private hasMobileFooter() {
-		return this.hasFooter("AdThrive_Footer_1_phone");
+	private getMobileFooter() {
+		return this.getFooter("AdThrive_Footer_1_phone");
 	}
 
 	private listenForOpen() {
 		this.observerOpen = new MutationObserver(
 			throttle(() => {
 				console.log("check open");
-				if (this.hasDesktopFooter()) {
+				let div = this.getDesktopFooter();
+
+				if (div) {
 					console.log("opened desktop");
-					localActions.update({
-						stickyFooterAd: this.AD_BOTTOM_MARGIN_DESKTOP,
-					});
 
 					this.stopListeningForOpen();
+					this.listenForOpen2(div, "desktop");
 					this.listenForClose("desktop");
-				} else if (this.hasTabletFooter()) {
+				}
+
+				div = this.getTabletFooter();
+
+				if (div) {
 					console.log("opened tablet");
-					localActions.update({
-						// Tablet ad is same size as desktop
-						stickyFooterAd: this.AD_BOTTOM_MARGIN_DESKTOP,
-					});
 
 					this.stopListeningForOpen();
+					this.listenForOpen2(div, "tablet");
 					this.listenForClose("tablet");
-				} else if (this.hasMobileFooter()) {
+				}
+
+				div = this.getMobileFooter();
+
+				if (div) {
 					console.log("opened mobile");
-					localActions.update({
-						stickyFooterAd: this.AD_BOTTOM_MARGIN_MOBILE,
-					});
 
 					this.stopListeningForOpen();
+					this.listenForOpen2(div, "mobile");
 					this.listenForClose("mobile");
 				}
 			}, 500),
@@ -375,14 +377,54 @@ class RaptiveStickyFooterManager {
 		});
 	}
 
+	// Sometimes there is a delay for content actually appearing in the footer. But if there's no content, then nothing shows at all, so listenForOpen is not enough
+	private listenForOpen2(
+		div: HTMLElement,
+		type: "desktop" | "tablet" | "mobile",
+	) {
+		if (div?.childNodes?.length > 0) {
+			console.log(`opened2 initial ${type}`);
+			localActions.update({
+				// Tablet ad is same size as desktop
+				stickyFooterAd:
+					type === "mobile"
+						? this.AD_BOTTOM_MARGIN_MOBILE
+						: this.AD_BOTTOM_MARGIN_DESKTOP,
+			});
+			return;
+		}
+
+		this.observerOpen2 = new MutationObserver(
+			throttle(() => {
+				if (div?.childNodes?.length > 0) {
+					console.log(`opened2 later ${type}`);
+					localActions.update({
+						// Tablet ad is same size as desktop
+						stickyFooterAd:
+							type === "mobile"
+								? this.AD_BOTTOM_MARGIN_MOBILE
+								: this.AD_BOTTOM_MARGIN_DESKTOP,
+					});
+
+					this.stopListeningForOpen2();
+				}
+			}, 500),
+		);
+
+		this.observerOpen2.observe(div, {
+			childList: true,
+			attributeFilter: [],
+		});
+	}
+
 	private listenForClose(type: "desktop" | "tablet" | "mobile") {
 		this.observerClose = new MutationObserver(
 			throttle(() => {
 				console.log("check close");
 				if (
-					(type === "desktop" && !this.hasDesktopFooter()) ||
-					(type === "tablet" && !this.hasTabletFooter()) ||
-					(type === "mobile" && !this.hasMobileFooter())
+					(type === "desktop" && !this.getDesktopFooter()) ||
+					(type === "tablet" && !this.getTabletFooter()) ||
+					(type === "mobile" && !this.getMobileFooter())
 				) {
 					console.log("closed");
 					localActions.update({
@@ -410,6 +452,13 @@ class RaptiveStickyFooterManager {
 		}
 	}
 
+	private stopListeningForOpen2() {
+		if (this.observerOpen2) {
+			this.observerOpen2.disconnect();
+			this.observerOpen2 = undefined;
+		}
+	}
+
 	private stopListeningForClose() {
 		if (this.observerClose) {
 			this.observerClose.disconnect();
@@ -419,6 +468,7 @@ class RaptiveStickyFooterManager {
 
 	cleanup() {
 		this.stopListeningForOpen();
+		this.stopListeningForOpen2();
 		this.stopListeningForClose();
 	}
 }

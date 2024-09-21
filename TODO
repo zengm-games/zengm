@@ -1415,10 +1415,6 @@ add some more built-in teams
   - ZenGM
   - suggestions: https://mail.google.com/mail/u/0/#inbox/FMfcgzQVwnbtxLFxRJvngPQlqJdrWdWN
 
-"find players" form
-- customizable search boxes for stats/ratings
-- table then displays only the columns you searched for, like stathead
-
 trade filters
 - https://old.reddit.com/r/BasketballGM/comments/kksxpp/proposal_trade_filters/
 
@@ -1535,9 +1531,6 @@ redesign draft screen
 
 possible to enter into negotiations with a player, trade away other players so that now he refuses to negotiate, but still sign him because negotiations have already started
 - check mood on negotiation page, even if negotiation already started
-
-when I just deleted old data, processing after draft and pre season sped up atleast 200%
-- if not fixable, then maybe add option to auto delete more stuff, not just box scores
 
 trade balancing
 - https://old.reddit.com/r/BasketballGM/comments/jhtm1k/im_playing_charlotte_queens_on_hard_mode_and_i/

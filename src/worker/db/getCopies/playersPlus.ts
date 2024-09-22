@@ -756,9 +756,14 @@ const processStats = (
 	);
 
 	// oldStats crap
-	if (oldStats && season !== undefined && playerStats.length === 0) {
+	if (
+		oldStats &&
+		season !== undefined &&
+		(playerStats.length === 0 ||
+			(season === g.get("season") && g.get("phase") === PHASE.PRESEASON))
+	) {
 		const oldSeason = season - 1;
-		playerStats = getPlayerStats(
+		const playerStats2 = getPlayerStats(
 			playerStatsInput,
 			oldSeason,
 			tid,
@@ -767,6 +772,9 @@ const processStats = (
 			combined,
 			mergeStats,
 		);
+		if (playerStats2.length > 0) {
+			playerStats = playerStats2;
+		}
 	}
 
 	if (playerStats.length === 0 && showNoStats) {

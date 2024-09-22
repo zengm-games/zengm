@@ -30,4 +30,20 @@ describe("worker/util/helpers", () => {
 			assert.strictEqual(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
 		});
 	});
+
+	describe("roundContract", () => {
+		test("roundContract", () => {
+			g.setWithoutSavingToDB("minContract", 10);
+			assert.strictEqual(helpers.roundContract(123456789), 123456789);
+			g.setWithoutSavingToDB("minContract", 100);
+			assert.strictEqual(helpers.roundContract(123456789), 123456789);
+			g.setWithoutSavingToDB("minContract", 1000);
+			assert.strictEqual(helpers.roundContract(123456789), 123456790);
+			g.setWithoutSavingToDB("minContract", 10000);
+			assert.strictEqual(helpers.roundContract(123456789), 123456800);
+			g.setWithoutSavingToDB("minContract", 100000);
+			assert.strictEqual(helpers.roundContract(123456789), 123457000);
+			assert.strictEqual(helpers.getAbbrev("6"), "DAL");
+		});
+	});
 });

@@ -223,8 +223,8 @@ const pickDesc = async (dp: DraftPick, short?: "short") => {
 		dp.season === "fantasy"
 			? "Fantasy draft"
 			: dp.season === "expansion"
-			  ? "Expansion draft"
-			  : dp.season;
+				? "Expansion draft"
+				: dp.season;
 
 	const extras: string[] = [];
 
@@ -299,7 +299,29 @@ const resetG = () => {
 };
 
 // Make it a multiple of 10k
-const roundContract = (amount: number) => 10 * Math.round(amount / 10);
+const roundContract = (amount: number) => {
+	const minContract = g.get("minContract");
+
+	if (minContract >= 50) {
+		// Round to some integer
+		// 50-499 -> 1 digit (thousands)
+		// 500-4999 -> 2 digits (tens of thousands)
+		// 5000-49999 -> 3 digits (hundreds of thousands)
+		// ...etc
+		const numDigits = Math.floor(Math.log10(minContract / 5));
+
+		// 1 digit -> 1
+		// 2 digits -> 10
+		// 3 digits -> 100
+		// ...etc
+		const roundAmount = 10 ** (numDigits - 1);
+
+		return roundAmount * Math.round(amount / roundAmount);
+	}
+
+	// Maybe could be fractional, but let's not worry about that unless someone asks
+	return Math.round(amount);
+};
 
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x: number, a: number, b: number): number => {

@@ -302,13 +302,13 @@ const resetG = () => {
 const roundContract = (amount: number) => {
 	const minContract = g.get("minContract");
 
-	if (minContract >= 50) {
+	if (minContract >= 3) {
 		// Round to some integer
-		// 50-499 -> 1 digit (thousands)
-		// 500-4999 -> 2 digits (tens of thousands)
-		// 5000-49999 -> 3 digits (hundreds of thousands)
+		// 30-299 -> 1 digit (thousands)
+		// 300-2999 -> 2 digits (tens of thousands)
+		// 3000-29999 -> 3 digits (hundreds of thousands)
 		// ...etc
-		const numDigits = Math.floor(Math.log10(minContract / 5));
+		const numDigits = Math.floor(Math.log10(minContract / 3));
 
 		// 1 digit -> 1
 		// 2 digits -> 10

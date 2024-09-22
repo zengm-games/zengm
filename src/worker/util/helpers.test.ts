@@ -37,6 +37,10 @@ describe("worker/util/helpers", () => {
 			assert.strictEqual(helpers.roundContract(123456789), 123456789);
 			g.setWithoutSavingToDB("minContract", 100);
 			assert.strictEqual(helpers.roundContract(123456789), 123456789);
+			g.setWithoutSavingToDB("minContract", 299);
+			assert.strictEqual(helpers.roundContract(123456789), 123456789);
+			g.setWithoutSavingToDB("minContract", 300);
+			assert.strictEqual(helpers.roundContract(123456789), 123456790);
 			g.setWithoutSavingToDB("minContract", 1000);
 			assert.strictEqual(helpers.roundContract(123456789), 123456790);
 			g.setWithoutSavingToDB("minContract", 10000);

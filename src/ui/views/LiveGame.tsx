@@ -929,20 +929,40 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	const scrollTop = useRef<HTMLDivElement>(null);
 
+	const [showWarning, setShowWarning] = useLocalStorageState(
+		"showLiveSimWarning",
+		{
+			defaultValue: true,
+		},
+	);
+
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
 			{confetti.display ? <Confetti colors={confetti.colors} /> : null}
 
-			<p className="text-danger">
-				{boxScore.current.exhibition
-					? "If you navigate away from this page, you won't be able to see this box score again because it is not stored anywhere."
-					: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
-			</p>
+			{showWarning ? (
+				<p className="text-danger">
+					{boxScore.current.exhibition
+						? "If you navigate away from this page, you won't be able to see this box score again because it is not stored anywhere."
+						: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
+					<>
+						{" "}
+						<button
+							className="btn btn-link p-0 border-0"
+							onClick={() => {
+								setShowWarning(false);
+							}}
+						>
+							(Dismiss)
+						</button>
+					</>
+				</p>
+			) : null}
 
 			{boxScore.current.gid >= 0 ? (
 				<div className="live-game-affix-mobile mb-3 d-md-none">
-					<div className="bg-white pt-2">
+					<div className="bg-white">
 						<HeadlineScore boxScore={boxScore.current} small />
 						<div className="d-flex align-items-center">
 							<PlayPauseNext

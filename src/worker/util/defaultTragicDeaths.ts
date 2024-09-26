@@ -43,7 +43,7 @@ const reasons = [
 	`PLAYER_NAME was intensely focused on playing ${GAME_NAME} on PRONOUN_his cell phone. As PRONOUN_he walked across the street, PRONOUN_he was so distracted by PRONOUN_his ultimately fatal obsession that PRONOUN_he didn't notice the bus barreling towards PRONOUN_him.`,
 	"PLAYER_NAME drowned while crossing the Saleph River.",
 	"PLAYER_NAME uploaded PRONOUN_himself to the cloud and can no longer participate in corporeal pursuits.",
-	"PLAYER_NAME committed suicide by two shots to the back of PRONOUN_his head after handcuffing and throwing PRONOUN_himself into ocean inside a duffle bag, CIA reports.",
+	"PLAYER_NAME committed suicide by two shots to the back of PRONOUN_his head after handcuffing and throwing PRONOUN_himself into the ocean inside a duffle bag, CIA reports.",
 
 	// https://old.reddit.com/r/BasketballGM/comments/13231s4/more_random_death_events_suggestions/
 	"PLAYER_NAME fell to PRONOUN_his death while testing PRONOUN_his homemade parachute.",

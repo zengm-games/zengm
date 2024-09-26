@@ -450,6 +450,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: props.initialDpid !== undefined ? [props.initialDpid] : [],
 	});
+	console.log(state);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
@@ -561,6 +562,25 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		);
 	}
 
+	let sumContracts = 0;
+	for (const p of userRoster) {
+		if (state.pids.includes(p.pid)) {
+			sumContracts += p.contract.amount;
+		}
+	}
+	console.log(sumContracts);
+	let footer;
+	if (sumContracts !== 0) {
+		footer = [];
+		footer[1] = (
+			<div className="text-end">
+				Total ({state.pids.length} {helpers.plural("player", state.pids.length)}
+				)
+			</div>
+		);
+		footer[6] = helpers.formatCurrency(sumContracts, "M");
+	}
+
 	const cols = getCols(
 		[
 			"",
@@ -649,6 +669,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						defaultStickyCols={window.mobile ? 1 : 2}
 						name="TradingBlock"
 						rows={rows}
+						footer={footer}
 					/>
 				</div>
 				<div className="col-md-3 pt-3">

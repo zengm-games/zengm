@@ -243,6 +243,7 @@ class Ads {
 
 	adBlock() {
 		return (
+			!window.freestar ||
 			!window.freestar.refreshAllSlots ||
 			!window.googletag ||
 			!window.googletag.pubads

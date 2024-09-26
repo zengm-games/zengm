@@ -300,7 +300,9 @@ const resetG = () => {
 
 // Make it a multiple of 10k
 const roundContract = (amount: number) => {
-	const minContract = g.get("minContract");
+	const minContract = Object.hasOwn(g, "minContract")
+		? g.get("minContract")
+		: defaultGameAttributes.minContract;
 
 	if (minContract >= 3) {
 		// Round to some integer

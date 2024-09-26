@@ -1,3 +1,7 @@
+Allegedly in a normal league, "X cuts to the rim as X lobs up the inbound pass" can have the same player as both X https://discord.com/channels/290013534023057409/290015591216054273/1272784016067792910
+- https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxtrHnKndhJFRszlGPFFNcfDq?compose=CllgCJvkXPwzrnwrPTZWRVdSNsrHqKSDCRhxbqCLgzhrGpkJJzrnmCnDgJbJPqTfvHDJbgSwNWL
+- or player not in game and DNP https://old.reddit.com/r/BasketballGM/comments/1fp9otv/am_i_tripping_why_did_my_dnp_injured_player/
+
 best teams option in legends mode
 - iterate over teams, compute ovr, drop ones who don't make the top 30 - is this too slow?
 
@@ -40,9 +44,6 @@ use team ovr in updateStrategies https://old.reddit.com/r/nba/comments/1estlxk/b
 in FBGM, teams sometimes take timeout right after the kickoff, before 1st and 10 even shows up https://discord.com/channels/290013534023057409/290015591216054273/1274484873167507488
 
 Some way to have determinism not affect pot, so people can replay historical situations and stuff https://old.reddit.com/r/nba/comments/1estlxk/basketball_gm_rnba_post_2024_edition/lica1bn/
-
-Allegedly in a normal league, "X cuts to the rim as X lobs up the inbound pass" can have the same player as both X https://discord.com/channels/290013534023057409/290015591216054273/1272784016067792910
-- or player not in game and DNP https://old.reddit.com/r/BasketballGM/comments/1fp9otv/am_i_tripping_why_did_my_dnp_injured_player/
 
 Can processPlayersHallOfFame use gpF for baseball? spread season's WAR around by that, if it's available? https://discord.com/channels/290013534023057409/944392892905037885/1272548695459631210
 

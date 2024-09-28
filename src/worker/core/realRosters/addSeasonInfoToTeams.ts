@@ -118,7 +118,7 @@ const addSeasonInfoToTeams = async <
 	local.playerOvrStd = 10;
 	local.playerOvrMeanStdStale = false;
 	for (const p of players) {
-		await player.develop(p, 0, false, 1);
+		await player.develop(p, 0);
 		await player.updateValues(p);
 	}
 

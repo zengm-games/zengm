@@ -1,4 +1,4 @@
-import chokidar from "chokidar";
+import { watch } from "chokidar";
 import fs from "node:fs";
 import { getSport } from "./buildFuncs.js";
 
@@ -13,7 +13,7 @@ const watchJSONSchema = async (updateStart, updateEnd, updateError) => {
 
 	const sport = getSport();
 
-	const watcher = chokidar.watch("tools/lib/generateJSONSchema.js", {});
+	const watcher = watch("tools/lib/generateJSONSchema.js", {});
 
 	const outFilename = "build/files/league-schema.json";
 

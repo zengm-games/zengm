@@ -1,13 +1,10 @@
-import chokidar from "chokidar";
+import { watch } from "chokidar";
 import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.js";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
 const watchFiles = (updateStart, updateEnd, updateError) => {
-	const watcher = chokidar.watch(
-		["public", "data", "node_modules/flag-icons"],
-		{},
-	);
+	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
 
 	const outFilename = "static files";
 

@@ -1,8 +1,8 @@
-import chokidar from "chokidar";
+import { watch } from "chokidar";
 import { buildCSS } from "./buildFuncs.js";
 
 const watchCSS = async (updateStart, updateEnd, updateError) => {
-	const watcher = chokidar.watch("public/css", {});
+	const watcher = watch("public/css", {});
 
 	const filenames = ["build/gen/light.css", "build/gen/dark.css"];
 

@@ -2,7 +2,7 @@ import type teamStats from "../worker/core/team/stats.hockey";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
-	| typeof teamStats["raw"][number]
+	| (typeof teamStats)["raw"][number]
 	| "g"
 	| "a"
 	| "sa"
@@ -51,7 +51,9 @@ export type AwardPlayer = {
 export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
-	bestRecordConfs: (AwardTeam | undefined)[];
+
+	// undefined gets turned into null by JSON.stringify
+	bestRecordConfs: (AwardTeam | undefined | null)[];
 
 	// Only in old leagues
 	bre?: AwardTeam;

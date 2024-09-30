@@ -2,7 +2,7 @@ import type teamStats from "../worker/core/team/stats.baseball";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
-	| typeof teamStats["raw"][number]
+	| (typeof teamStats)["raw"][number]
 	| "ab"
 	| "ops"
 	| "era"
@@ -43,7 +43,7 @@ export type TeamStatAttr =
 	| "oppCsp";
 
 export type TeamStatAttrByPos =
-	| typeof teamStats["byPos"][number]
+	| (typeof teamStats)["byPos"][number]
 	| "ch"
 	| "fldp"
 	| "rf9"
@@ -77,7 +77,9 @@ export type AwardPlayer = {
 export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
-	bestRecordConfs: (AwardTeam | undefined)[];
+
+	// undefined gets turned into null by JSON.stringify
+	bestRecordConfs: (AwardTeam | undefined | null)[];
 
 	// Only in old leagues
 	bre?: AwardTeam;

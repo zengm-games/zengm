@@ -115,7 +115,7 @@ const AwardsAndChamp = ({
 				)}
 				<h2>Best Record</h2>
 				{awards.bestRecordConfs
-					.filter((a: any) => a !== undefined)
+					.filter((a: any) => a !== undefined && a !== null)
 					.map((t: any, i: number) =>
 						t !== undefined ? (
 							<p key={t.tid}>

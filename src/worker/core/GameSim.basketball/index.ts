@@ -1957,18 +1957,20 @@ class GameSim extends GameSimBase {
 		let probMissAndFoul;
 		let type: ShotType;
 
-		if (tipInFromOutOfBounds) {
+		if (tipInFromOutOfBounds && passer !== undefined) {
 			type = "tipIn";
 			probMissAndFoul = 0.02;
 			probMake =
-				0.05 + this.team[this.o].player[p].compositeRating.shootingAtRim * 0.1;
+				0.1 + this.team[this.o].player[p].compositeRating.shootingAtRim * 0.1;
 			probAndOne = 0.01;
+
+			const pAst = this.playersOnCourt[this.o][passer];
 
 			this.playByPlay.logEvent({
 				type: "fgaTipIn",
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
-				pidPass: this.team[this.o].player[passer!].id,
+				pidPass: this.team[this.o].player[pAst].id,
 				clock: this.t,
 			});
 		} else if (putBack) {

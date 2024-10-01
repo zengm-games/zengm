@@ -1,6 +1,6 @@
 import { idb, iterate } from "../db";
 import g from "./g";
-import type { Achievement } from "../../common/types";
+import type { Achievement, Player } from "../../common/types";
 import { bySport, isSport, PLAYER } from "../../common";
 import helpers from "./helpers";
 
@@ -382,6 +382,38 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	);
 
 	return currentAwards.mvp?.tid === userTid && checkMvpCache.count === limit;
+};
+
+const checkSleeperPick = async (checkPlayer: (p: Player) => boolean) => {
+	const awards = await idb.cache.awards.get(g.get("season"));
+	if (!awards) {
+		return false;
+	}
+
+	const awardKeysToCheck = bySport({
+		baseball: ["roy"],
+		basketball: ["roy"],
+		football: ["droy", "oroy"],
+		hockey: ["roy"],
+	});
+
+	for (const key of awardKeysToCheck) {
+		if (awards[key] && awards[key].tid === g.get("userTid")) {
+			const p = await idb.cache.players.get(awards[key].pid);
+
+			if (
+				p &&
+				p.tid === g.get("userTid") &&
+				p.draft.tid === g.get("userTid") &&
+				p.draft.year === g.get("season") - 1 &&
+				checkPlayer(p)
+			) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 };
 
 const internationalCountries = bySport({
@@ -1113,28 +1145,15 @@ const achievements: Achievement[] = [
 		}),
 		category: "Draft",
 
-		async check() {
-			const awards = await idb.cache.awards.get(g.get("season"));
-
-			if (awards && awards.roy && awards.roy.tid === g.get("userTid")) {
-				const p = await idb.cache.players.get(awards.roy.pid);
-
-				if (
-					p &&
-					p.tid === g.get("userTid") &&
-					p.draft.tid === g.get("userTid") &&
-					p.draft.year === g.get("season") - 1
-				) {
-					return bySport({
-						baseball: p.draft.round >= 2,
-						basketball: p.draft.round > 1 || p.draft.pick >= 15,
-						football: p.draft.round >= 3,
-						hockey: p.draft.round > 1 || p.draft.pick >= 15,
-					});
-				}
-			}
-
-			return false;
+		check() {
+			return checkSleeperPick(p => {
+				return bySport({
+					baseball: p.draft.round >= 2,
+					basketball: p.draft.round > 1 || p.draft.pick >= 15,
+					football: p.draft.round >= 3,
+					hockey: p.draft.round > 1 || p.draft.pick >= 15,
+				});
+			});
 		},
 
 		when: "afterAwards",
@@ -1150,30 +1169,15 @@ const achievements: Achievement[] = [
 		}),
 		category: "Draft",
 
-		async check() {
-			const awards = await idb.cache.awards.get(g.get("season"));
-
-			if (awards && awards.roy && awards.roy.tid === g.get("userTid")) {
-				const p = await idb.cache.players.get(awards.roy.pid);
-
-				if (
-					p &&
-					p.tid === g.get("userTid") &&
-					p.draft.tid === g.get("userTid") &&
-					p.draft.year === g.get("season") - 1 &&
-					p.draft.round > 1
-				) {
-					return bySport({
-						baseball: p.draft.round >= 3,
-						basketball: p.draft.round > 1,
-						football: p.draft.round >= 5,
-						hockey: p.draft.round > 1,
-					});
-					return true;
-				}
-			}
-
-			return false;
+		check() {
+			return checkSleeperPick(p => {
+				return bySport({
+					baseball: p.draft.round >= 3,
+					basketball: p.draft.round > 1,
+					football: p.draft.round >= 5,
+					hockey: p.draft.round > 1,
+				});
+			});
 		},
 
 		when: "afterAwards",

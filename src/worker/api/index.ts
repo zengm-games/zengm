@@ -2635,10 +2635,7 @@ const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
 		active: true,
 	});
 
-	const newSchedule = season.newSchedule(teams, {
-		notify: true,
-		conditions,
-	});
+	const newSchedule = season.newSchedule(teams, conditions);
 
 	await toUI("updateLocal", [
 		{
@@ -3517,10 +3514,7 @@ const updateGameAttributesGodMode = async (
 					did: t.did,
 				},
 			})),
-			{
-				notify: true,
-				conditions,
-			},
+			conditions,
 		);
 	}
 

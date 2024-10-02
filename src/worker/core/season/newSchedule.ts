@@ -11,10 +11,7 @@ const newSchedule = (
 		};
 		tid: number;
 	}[],
-	settings?: {
-		notify: boolean;
-		conditions: Conditions;
-	},
+	conditions?: Conditions,
 ) => {
 	const { tids, warning } = newScheduleGood(teams);
 
@@ -32,7 +29,7 @@ const newSchedule = (
 		tids.splice(ind, 0, [-1, -2]);
 	}
 
-	if (settings?.notify && warning) {
+	if (warning !== undefined) {
 		// console.log(g.get("season"), warning);
 		logEvent(
 			{
@@ -42,7 +39,7 @@ const newSchedule = (
 				])}">schedule settings (# Games, # Division Games, and # Conference Games)</a> combined with your teams/divs/confs cannot be handled by the schedule generator, so instead it will generate round robin matchups between all your teams. Message from the schedule generator: "${warning}" <a href="https://${WEBSITE_ROOT}/manual/customization/schedule-settings/" rel="noopener noreferrer" target="_blank">More details.</a>`,
 				saveToDb: false,
 			},
-			settings.conditions,
+			conditions,
 		);
 	}
 

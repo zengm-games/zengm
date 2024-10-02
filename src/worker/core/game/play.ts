@@ -178,7 +178,7 @@ const play = async (
 					p.pFatigue = helpers.bound(
 						p.pFatigue - P_FATIGUE_DAILY_REDUCTION,
 						0,
-						100,
+						80,
 					);
 					changed = true;
 				}

@@ -1,4 +1,4 @@
-import { ACCOUNT_API_URL, PLAYER, fetchWrapper } from "../../../common";
+import { PLAYER } from "../../../common";
 import { draft, player, season, team, league } from "..";
 import { idb } from "../../db";
 import {
@@ -25,6 +25,7 @@ import type {
 import setGameAttributes from "../league/setGameAttributes";
 import { doExpand, doRelocate } from "./relocateExpand";
 import addAward from "../player/addAward";
+import { analyticsEventLocal } from "../../../common/analyticsEventLocal";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -559,27 +560,19 @@ const newPhaseBeforeDraft = async (
 		riggedLottery: undefined,
 	});
 
-	toUI(
-		"analyticsEvent",
-		[
-			"completed_season",
-			{
-				season: g.get("season"),
-				league_id: g.get("lid"),
-			},
-		],
-		conditions,
-	);
 	if (env.enableLogging) {
-		fetchWrapper({
-			url: `${ACCOUNT_API_URL}/log_event.php`,
-			method: "POST",
-			data: {
-				sport: process.env.SPORT,
-				type: "completed_season",
-			},
-			credentials: "include",
-		});
+		toUI(
+			"analyticsEvent",
+			[
+				"completed_season",
+				{
+					season: g.get("season"),
+					league_id: g.get("lid"),
+				},
+			],
+			conditions,
+		);
+		analyticsEventLocal("completed_season");
 	}
 
 	return {

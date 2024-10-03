@@ -1,3 +1,9 @@
+customize number of pitchers in rotation https://discord.com/channels/290013534023057409/944392892905037885/1291306004495204363
+- use this to set the max pFatigue value in play.ts
+- use in UI for how many starting pitchers are shown in depth chart
+- use in getStartingPitcher
+- use in auto sorting pitcher depth chart
+
 best teams option in legends mode
 - iterate over teams, compute ovr, drop ones who don't make the top 30 - is this too slow?
 

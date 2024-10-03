@@ -13,8 +13,6 @@ import {
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
-	ACCOUNT_API_URL,
-	fetchWrapper,
 } from "../../../common";
 import {
 	ActionButton,
@@ -54,6 +52,7 @@ import type { Settings } from "../../../worker/views/settings";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload";
 import { SelectSeasonRange } from "./SelectSeasonRange";
 import { orderBy } from "../../../common/utils";
+import { analyticsEventLocal } from "../../../common/analyticsEventLocal";
 
 const animationVariants = {
 	visible: {
@@ -888,15 +887,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				league_id: lid,
 			});
 			if (window.enableLogging) {
-				fetchWrapper({
-					url: `${ACCOUNT_API_URL}/log_event.php`,
-					method: "POST",
-					data: {
-						sport: process.env.SPORT,
-						type: "new_league",
-					},
-					credentials: "include",
-				});
+				analyticsEventLocal("new_league");
 			}
 
 			realtimeUpdate([], `/l/${lid}`);

@@ -196,6 +196,7 @@ defaultRaces["South Sudan"] = defaultRaces["Nigeria"];
 defaultRaces["Sudan"] = defaultRaces["Nigeria"];
 defaultRaces["Sweden"] = defaultRaces["Spain"];
 defaultRaces["Switzerland"] = defaultRaces["Germany"];
+defaultRaces["Taiwan"] = defaultRaces["China"];
 defaultRaces["Thailand"] = defaultRaces["China"];
 defaultRaces["Trinidad and Tobago"] = defaultRaces["Cape Verde"];
 defaultRaces["Ukraine"] = defaultRaces["Lithuania"];

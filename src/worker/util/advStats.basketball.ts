@@ -489,7 +489,9 @@ const calculateBPM = (
 			throw new Error("No team found");
 		}
 
-		VORP[i] = ((BPM[i] + 2) * playerMin[i] * t.stats.gp) / g.get("numGames");
+		VORP[i] =
+			((BPM[i] + 2) * playerMin[i] * t.stats.gp) /
+			defaultGameAttributes.numGames.at(-1)!.value;
 	}
 
 	return {

@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 import type { PlayerRatings } from "../../../common/types.football";
 
@@ -96,7 +96,10 @@ const madeHof = (
 	const threshold = getThreshold(pos);
 
 	// Final formula
-	return total + df > threshold * g.get("hofFactor");
+	return (
+		total + df >
+		threshold * helpers.gameLengthScaleFactor() * g.get("hofFactor")
+	);
 };
 
 export default madeHof;

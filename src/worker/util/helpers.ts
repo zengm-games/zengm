@@ -350,6 +350,13 @@ const quarterLengthFactor = () => {
 	);
 };
 
+const gameLengthScaleFactor = () => {
+	return (
+		(quarterLengthFactor() * g.get("numGames")) /
+		defaultGameAttributes.numGames[0].value
+	);
+};
+
 const daysLeft = (freeAgents: boolean, days?: number) => {
 	const actualDays = days ?? g.get("daysLeft");
 
@@ -390,6 +397,7 @@ const helpers = {
 	roundContract,
 	sigmoid,
 	daysLeft,
+	gameLengthScaleFactor,
 };
 
 export default helpers;

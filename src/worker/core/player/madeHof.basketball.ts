@@ -1,4 +1,4 @@
-import { defaultGameAttributes, g, helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type {
 	Player,
 	PlayerWithoutKey,
@@ -64,12 +64,10 @@ const madeHof = (
 		total += winShares[0] * fudgeSeasons;
 	}
 
-	const scaleFactor =
-		(helpers.quarterLengthFactor() * g.get("numGames")) /
-		defaultGameAttributes.numGames[0].value;
-
 	// Final formula
-	return total + df > 120 * scaleFactor * g.get("hofFactor");
+	return (
+		total + df > 120 * helpers.gameLengthScaleFactor() * g.get("hofFactor")
+	);
 };
 
 export default madeHof;

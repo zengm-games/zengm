@@ -10,6 +10,7 @@ import {
 } from "../core/season/doAwards.football";
 import advStatsSave from "./advStatsSave";
 import { groupByUnique } from "../../common/utils";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -65,7 +66,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				: (ptsSkill *
 						0.22 *
 						(t.stats.rusYds / (t.stats.rusYds + t.stats.recYds))) /
-				  0.37;
+					0.37;
 		const ptsPss = (ptsSkill - ptsRus) * 0.26;
 		const ptsRec = (ptsSkill - ptsRus) * 0.74;
 
@@ -261,7 +262,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		}
 
 		// Adjust for GP... docs don't say to do this, but it feels right
-		score *= t.stats.gp / g.get("numGames");
+		score *= t.stats.gp / defaultGameAttributes.numGames.at(-1)!.value;
 
 		return score === Infinity ? 0 : score;
 	});

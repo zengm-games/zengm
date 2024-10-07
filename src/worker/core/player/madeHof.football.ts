@@ -98,7 +98,7 @@ const madeHof = (
 	// Final formula
 	return (
 		total + df >
-		threshold * helpers.gameLengthScaleFactor() * g.get("hofFactor")
+		threshold * helpers.gameAndSeasonLengthScaleFactor() * g.get("hofFactor")
 	);
 };
 

@@ -66,7 +66,8 @@ const madeHof = (
 
 	// Final formula
 	return (
-		total + df > 120 * helpers.gameLengthScaleFactor() * g.get("hofFactor")
+		total + df >
+		120 * helpers.gameAndSeasonLengthScaleFactor() * g.get("hofFactor")
 	);
 };
 

@@ -118,7 +118,7 @@ export const getScore = (p: Player, tid: number) => {
 		hockey: 80,
 	});
 
-	const score = value / (helpers.gameLengthScaleFactor() * threshold);
+	const score = value / (helpers.gameAndSeasonLengthScaleFactor() * threshold);
 
 	return score;
 };

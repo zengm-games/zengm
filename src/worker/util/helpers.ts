@@ -350,7 +350,7 @@ const quarterLengthFactor = () => {
 	);
 };
 
-const gameLengthScaleFactor = () => {
+const gameAndSeasonLengthScaleFactor = () => {
 	return (
 		(quarterLengthFactor() * g.get("numGames")) /
 		defaultGameAttributes.numGames[0].value
@@ -397,7 +397,7 @@ const helpers = {
 	roundContract,
 	sigmoid,
 	daysLeft,
-	gameLengthScaleFactor,
+	gameAndSeasonLengthScaleFactor,
 };
 
 export default helpers;

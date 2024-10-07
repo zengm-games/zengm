@@ -39,7 +39,9 @@ const madeHof = (
 	}
 
 	// Final formula
-	return score > 100 * helpers.gameLengthScaleFactor() * g.get("hofFactor");
+	return (
+		score > 100 * helpers.gameAndSeasonLengthScaleFactor() * g.get("hofFactor")
+	);
 };
 
 export default madeHof;

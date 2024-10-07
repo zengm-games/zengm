@@ -405,7 +405,7 @@ const formatPlayerFactory = async (
 						playoffs: !!row.playoffs,
 						tid,
 						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
-						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos),
+						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos, 1),
 					};
 					delete (newRow as any).slug;
 					delete (newRow as any).abbrev;

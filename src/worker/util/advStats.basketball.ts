@@ -5,6 +5,7 @@ import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
 import { groupByUnique } from "../../common/utils";
 import helpers from "./helpers";
+import defaultGameAttributes from "../../common/defaultGameAttributes";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -87,19 +88,18 @@ const prls = {
 	C: 10.6,
 };
 
-export const getEWA = (per: number, min: number, pos: string) => {
-	let prl;
+export const getEWA = (
+	per: number,
+	min: number,
+	pos: string,
+	gameLengthFactor: number,
+) => {
+	// Fallback should never happen unless someone manually enters the wrong position, which can happen in custom roster files
+	// https://github.com/microsoft/TypeScript/issues/21732
+	// @ts-expect-error
+	const prl = prls[pos] ?? 10.75;
 
-	if (Object.hasOwn(prls, pos)) {
-		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-expect-error
-		prl = prls[pos];
-	} else {
-		// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
-		prl = 10.75;
-	}
-
-	const va = (min * (per - prl)) / 67;
+	const va = (min * (per - prl)) / 67 / gameLengthFactor;
 	return (va / 30) * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
 };
 
@@ -170,8 +170,16 @@ const calculatePER = (
 	// Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
 	const EWA: number[] = []; // Position Replacement Levels
 
+	const gameLengthFactor =
+		helpers.effectiveGameLength() /
+		(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength);
 	for (let i = 0; i < players.length; i++) {
-		EWA[i] = getEWA(PER[i], players[i].stats.min, players[i].ratings.pos);
+		EWA[i] = getEWA(
+			PER[i],
+			players[i].stats.min,
+			players[i].ratings.pos,
+			gameLengthFactor,
+		);
 	}
 
 	return {

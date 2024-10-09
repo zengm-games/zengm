@@ -3173,6 +3173,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	"Rookie Ovr": {
+		desc: "Rookie Overall Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"Roster Spots": {
 		desc: "Number of Open Roster Spots",
 		sortSequence: ["desc", "asc"],

@@ -913,6 +913,10 @@ const updatePlayers = async (
 					key: ["most", "extra", "age"],
 					colName: "Age",
 				},
+				{
+					key: ["most", "extra", "rookieOvr"],
+					colName: "Rookie Ovr",
+				},
 			);
 
 			filter = p =>
@@ -921,12 +925,20 @@ const updatePlayers = async (
 				const row = p.stats[0];
 				const value = getValueStatsRow(row);
 
+				const rookieRatings = p.ratings.find(
+					row2 => row2.season === row?.season,
+				);
+				const rookieOvr = rookieRatings
+					? player.fuzzRating(rookieRatings.ovr, rookieRatings.fuzz)
+					: undefined;
+
 				return {
 					value: value,
 					extra: {
 						tid: row.tid,
 						bestSeasonOverride: row.season,
 						age: row.season - p.born.year,
+						rookieOvr,
 					},
 				};
 			};

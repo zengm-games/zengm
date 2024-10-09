@@ -1,9 +1,39 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ActionButton } from "../../components";
 import { helpers, toWorker } from "../../util";
+import useLocalStorageState from "use-local-storage-state";
+
+const LogOutput = ({ value }: { value: string }) => {
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+	return (
+		<div>
+			<textarea
+				className="form-control"
+				style={{
+					height: 200,
+				}}
+				ref={textareaRef}
+				defaultValue={value}
+			/>
+			<button
+				className="btn btn-secondary mt-2"
+				onClick={() => {
+					if (textareaRef.current) {
+						textareaRef.current.select();
+						document.execCommand("copy");
+					}
+				}}
+				type="button"
+			>
+				Copy to clipboard
+			</button>
+		</div>
+	);
+};
 
 const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
-	const [code, setCode] = useState("");
+	const [logOutput, setLogOutput] = useState<undefined | string>();
 	const [status, setStatus] = useState<
 		| {
 				type: "init" | "running" | "done";
@@ -14,6 +44,9 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 		  }
 	>({
 		type: "init",
+	});
+	const [code, setCode] = useLocalStorageState("worker-console-code", {
+		defaultValue: "",
 	});
 
 	const disabled = status.type === "running" || !godMode;
@@ -32,8 +65,10 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 					event.preventDefault();
 
 					setStatus({ type: "running" });
+					setLogOutput(undefined);
 					try {
-						await toWorker("main", "evalOnWorker", code);
+						const output = await toWorker("main", "evalOnWorker", code);
+						setLogOutput(output);
 					} catch (error) {
 						console.error(error);
 						setStatus({ type: "error", error });
@@ -72,6 +107,11 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 				</div>
 				{status.type === "error" ? (
 					<p className="text-danger mt-2">{status.error.message}</p>
+				) : null}
+				{logOutput !== undefined ? (
+					<div className="mt-2">
+						<LogOutput value={logOutput} />
+					</div>
 				) : null}
 			</form>
 		</>

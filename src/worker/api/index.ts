@@ -1141,8 +1141,44 @@ const dunkUser = async (
 };
 
 const evalOnWorker = async (code: string) => {
-	// https://stackoverflow.com/a/63972569/786644
-	await Object.getPrototypeOf(async function () {}).constructor(code)();
+	const originalLog = console.log;
+
+	const logOutput: (string | boolean | number)[] = [];
+	const log = (x: any) => {
+		if (x === undefined) {
+			return;
+		}
+
+		if (
+			typeof x === "string" ||
+			typeof x === "boolean" ||
+			typeof x === "number"
+		) {
+			logOutput.push(x);
+		} else {
+			try {
+				const json = JSON.stringify(x);
+				logOutput.push(json);
+			} catch (error) {
+				logOutput.push(
+					`Can only log JSON-serializable variables: ${error.message}`,
+				);
+			}
+		}
+	};
+
+	console.log = log;
+
+	try {
+		// https://stackoverflow.com/a/63972569/786644
+		await Object.getPrototypeOf(async function () {}).constructor(code)();
+
+		if (logOutput.length > 0) {
+			return logOutput.join("\n");
+		}
+	} finally {
+		console.log = originalLog;
+	}
 };
 
 // exportPlayerAveragesCsv(2015) - just 2015 stats

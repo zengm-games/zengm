@@ -1,4 +1,4 @@
-import { csvFormatRows } from "d3-dsv";
+import { csvFormat, csvFormatRows } from "d3-dsv";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -1141,10 +1141,12 @@ const dunkUser = async (
 };
 
 const evalOnWorker = async (code: string) => {
-	const originalLog = console.log;
-
 	const logOutput: (string | boolean | number)[] = [];
-	const log = (x: any) => {
+
+	const originalLog = console.log;
+	const originalTable = console.table;
+
+	const log = (x: unknown) => {
 		if (x === undefined) {
 			return;
 		}
@@ -1167,7 +1169,13 @@ const evalOnWorker = async (code: string) => {
 		}
 	};
 
+	const table = (rows: any[], inputColumns?: string[]) => {
+		const csv = csvFormat(rows, inputColumns);
+		logOutput.push(csv);
+	};
+
 	console.log = log;
+	console.table = table;
 
 	try {
 		// https://stackoverflow.com/a/63972569/786644
@@ -1178,6 +1186,7 @@ const evalOnWorker = async (code: string) => {
 		}
 	} finally {
 		console.log = originalLog;
+		console.table = originalTable;
 	}
 };
 

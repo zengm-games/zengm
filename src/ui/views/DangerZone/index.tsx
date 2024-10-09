@@ -226,7 +226,7 @@ const DangerZone = ({
 
 				<p className="alert alert-danger">
 					<b>Warning!</b> Please make sure the code you enter here comes from a
-					trusted source. Malicious code could edit or delete any of your saved
+					trusted source. Malicious code could edit or delete any of your
 					leagues.
 				</p>
 

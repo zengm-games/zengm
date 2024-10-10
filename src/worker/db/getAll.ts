@@ -1,4 +1,3 @@
-import iterate from "./iterate";
 import type {
 	IDBPObjectStore,
 	IDBPIndex,
@@ -29,11 +28,11 @@ const getAll = async <StoreName extends StoreNames<LeagueDB>>(
 ) => {
 	const objs: StoreValue<LeagueDB, StoreName>[] = [];
 
-	await iterate(store, key, undefined, value => {
+	for await (const { value } of store.iterate(key)) {
 		if (cb === undefined || cb(value)) {
 			objs.push(value);
 		}
-	});
+	}
 
 	return objs;
 };

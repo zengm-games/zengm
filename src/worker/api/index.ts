@@ -36,7 +36,7 @@ import {
 	freeAgents,
 	season,
 } from "../core";
-import { connectMeta, idb, iterate } from "../db";
+import { connectMeta, idb } from "../db";
 import {
 	achievement,
 	beforeView,
@@ -670,66 +670,48 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.teamHistory) {
-		await iterate(
-			transaction.objectStore("teamSeasons"),
-			undefined,
-			undefined,
-			teamSeason => {
-				if (teamSeason.season < g.get("season")) {
-					transaction.objectStore("teamSeasons").delete(teamSeason.rid);
-				}
-			},
-		);
+		for await (const cursor of transaction.objectStore("teamSeasons")) {
+			if (cursor.value.season < g.get("season")) {
+				cursor.delete();
+			}
+		}
 
 		transaction.objectStore("draftLotteryResults").clear();
 
 		transaction.objectStore("headToHeads").clear();
 
-		await iterate(
-			transaction.objectStore("allStars"),
-			undefined,
-			undefined,
-			allStars => {
-				if (allStars.season < g.get("season")) {
-					transaction.objectStore("allStars").delete(allStars.season);
-				}
-			},
-		);
+		for await (const cursor of transaction.objectStore("allStars")) {
+			if (cursor.value.season < g.get("season")) {
+				cursor.delete();
+			}
+		}
 	}
 
 	if (options.teamStats) {
-		await iterate(
-			transaction.objectStore("teamStats"),
-			undefined,
-			undefined,
-			teamStats => {
-				if (teamStats.season < g.get("season")) {
-					transaction.objectStore("teamStats").delete(teamStats.rid);
-				}
-			},
-		);
+		for await (const cursor of transaction.objectStore("teamStats")) {
+			if (cursor.value.season < g.get("season")) {
+				cursor.delete();
+			}
+		}
 	}
 
 	if (options.retiredPlayers) {
-		await iterate(
-			transaction.objectStore("players").index("tid"),
-			PLAYER.RETIRED,
-			undefined,
-			p => {
-				transaction.objectStore("players").delete(p.pid);
-			},
-		);
+		for await (const cursor of transaction
+			.objectStore("players")
+			.index("tid")
+			.iterate(PLAYER.RETIRED)) {
+			cursor.delete();
+		}
 	} else if (options.retiredPlayersUnnotable) {
-		await iterate(
-			transaction.objectStore("players").index("tid"),
-			PLAYER.RETIRED,
-			undefined,
-			p => {
-				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
-					transaction.objectStore("players").delete(p.pid);
-				}
-			},
-		);
+		for await (const cursor of transaction
+			.objectStore("players")
+			.index("tid")
+			.iterate(PLAYER.RETIRED)) {
+			const p = cursor.value;
+			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+				cursor.delete();
+			}
+		}
 	}
 
 	const deletePlayerStats = (p: Player) => {
@@ -790,23 +772,23 @@ const deleteOldData = async (options: {
 	};
 
 	if (options.playerStats) {
-		await iterate(
-			transaction.objectStore("players"),
-			undefined,
-			undefined,
-			deletePlayerStats,
-		);
+		for await (const cursor of transaction.objectStore("players")) {
+			const p = cursor.value;
+			const p2 = deletePlayerStats(p);
+			if (p2) {
+				cursor.update(p2);
+			}
+		}
 	} else if (options.playerStatsUnnotable) {
-		await iterate(
-			transaction.objectStore("players"),
-			undefined,
-			undefined,
-			p => {
-				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
-					return deletePlayerStats(p);
+		for await (const cursor of transaction.objectStore("players")) {
+			const p = cursor.value;
+			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+				const p2 = deletePlayerStats(p);
+				if (p2) {
+					cursor.update(p2);
 				}
-			},
-		);
+			}
+		}
 	}
 
 	if (options.events) {
@@ -2462,17 +2444,13 @@ const loadRetiredPlayers = async () => {
 		lastSeason: number;
 	}[] = [];
 
-	await iterate(
-		idb.league.transaction("players").store,
-		undefined,
-		undefined,
-		pTemp => {
-			// Make sure we have latest version of this player
-			const p = playersByPid[pTemp.pid] ?? pTemp;
+	for await (const { value: pTemp } of idb.league.transaction("players")
+		.store) {
+		// Make sure we have latest version of this player
+		const p = playersByPid[pTemp.pid] ?? pTemp;
 
-			playerNames.push(formatPlayerRelativesList(p));
-		},
-	);
+		playerNames.push(formatPlayerRelativesList(p));
+	}
 
 	return finalizePlayersRelativesList(playerNames);
 };

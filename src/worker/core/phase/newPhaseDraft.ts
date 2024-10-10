@@ -1,6 +1,6 @@
 import { PLAYER } from "../../../common";
 import { draft, league } from "..";
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 
@@ -12,31 +12,29 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 	const promises: Promise<unknown>[] = [];
 
 	const currentSeason = g.get("season");
-	await iterate(
-		idb.league.transaction("players").store.index("draft.year, retiredYear"),
-		IDBKeyRange.bound([currentSeason - 110], [""]),
-		undefined,
-		p => {
-			// Skip non-retired players and dead players
-			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
-				return;
-			}
+	for await (const { value: p } of idb.league
+		.transaction("players")
+		.store.index("draft.year, retiredYear")
+		.iterate(IDBKeyRange.bound([currentSeason - 110], [""]))) {
+		// Skip non-retired players and dead players
+		if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
+			continue;
+		}
 
-			// Skip real players dying young
-			if (p.real && currentSeason - p.born.year < 70) {
-				return;
-			}
+		// Skip real players dying young
+		if (p.real && currentSeason - p.born.year < 70) {
+			continue;
+		}
 
-			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-			const probDeath =
-				0.0001165111 * Math.exp(0.0761889274 * (currentSeason - p.born.year));
+		// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+		const probDeath =
+			0.0001165111 * Math.exp(0.0761889274 * (currentSeason - p.born.year));
 
-			if (Math.random() < probDeath) {
-				p.diedYear = currentSeason;
-				promises.push(idb.cache.players.put(p));
-			}
-		},
-	);
+		if (Math.random() < probDeath) {
+			p.diedYear = currentSeason;
+			promises.push(idb.cache.players.put(p));
+		}
+	}
 
 	await Promise.all(promises);
 

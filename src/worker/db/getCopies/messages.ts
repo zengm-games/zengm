@@ -1,4 +1,4 @@
-import { getAll, idb, iterate } from "..";
+import { getAll, idb } from "..";
 import { maybeDeepCopy, mergeByPk } from "./helpers";
 import type { GetCopyType, Message } from "../../../common/types";
 
@@ -32,17 +32,14 @@ const getCopies = async (
 
 	if (limit !== undefined) {
 		const fromDb: Message[] = [];
-		await iterate(
-			idb.league.transaction("messages").store,
-			undefined,
-			"prev",
-			(message, shortCircuit) => {
-				fromDb.unshift(message);
-				if (fromDb.length >= limit) {
-					shortCircuit();
-				}
-			},
-		);
+		for await (const { value: message } of idb.league
+			.transaction("messages")
+			.store.iterate(undefined, "prev")) {
+			fromDb.unshift(message);
+			if (fromDb.length >= limit) {
+				break;
+			}
+		}
 
 		const fromCache = await idb.cache.messages.getAll();
 

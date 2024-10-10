@@ -1,12 +1,15 @@
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { toUI } from "../../util";
 import { player } from "..";
+import { PLAYER } from "../../../common";
 
 const recomputeHallOfFame = async () => {
-	const transaction = idb.league.transaction("players", "readwrite");
+	const tx = idb.league.transaction("players", "readwrite");
 
-	await iterate(transaction.store, undefined, "prev", p => {
-		const made = player.madeHof(p);
+	for await (const cursor of tx.store) {
+		const p = cursor.value;
+
+		const made = p.tid === PLAYER.RETIRED && player.madeHof(p);
 
 		const prev = p.hof;
 		if (made) {
@@ -16,11 +19,11 @@ const recomputeHallOfFame = async () => {
 		}
 
 		if (p.hof !== prev) {
-			return p;
+			await cursor.update(p);
 		}
-	});
+	}
 
-	await transaction.done;
+	await tx.done;
 
 	await idb.cache.fill();
 	await toUI("realtimeUpdate", [["firstRun"]]);

@@ -1,4 +1,4 @@
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { toUI } from "../../util";
 import { player } from "..";
 
@@ -10,9 +10,11 @@ const recomputeOvr = async () => {
 		diff: number;
 	}[] = [];
 
-	const transaction = idb.league.transaction("players", "readwrite");
+	const tx = idb.league.transaction("players", "readwrite");
 
-	await iterate(transaction.store, undefined, "prev", p => {
+	for await (const cursor of tx.store) {
+		const p = cursor.value;
+
 		const ratings = p.ratings.at(-1)!;
 		const ovr = player.ovr(ratings);
 		ovrs.push({
@@ -24,11 +26,11 @@ const recomputeOvr = async () => {
 
 		if (ratings.ovr !== ovr) {
 			ratings.ovr = ovr;
-			return p;
+			await cursor.update(p);
 		}
-	});
+	}
 
-	await transaction.done;
+	await tx.done;
 
 	console.table(ovrs);
 	await idb.cache.fill();

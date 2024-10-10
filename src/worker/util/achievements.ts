@@ -1,4 +1,4 @@
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import g from "./g";
 import type { Achievement, Player } from "../../common/types";
 import { bySport, isSport, PLAYER } from "../../common";
@@ -359,27 +359,23 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	if (currentAwards.mvp?.tid === userTid) {
 		checkMvpCache.count += 1;
 	}
-	await iterate(
-		idb.league.transaction("awards").store,
-		undefined,
-		undefined,
-		(awards, shortCircuit) => {
-			// Already checked current season in currentAwards
-			if (awards.season >= season) {
-				return;
-			}
+	for await (const { value: awards } of idb.league.transaction("awards")
+		.store) {
+		// Already checked current season in currentAwards
+		if (awards.season >= season) {
+			continue;
+		}
 
-			const userTid = g.get("userTid", awards.season);
-			if (awards.mvp?.tid === userTid) {
-				checkMvpCache!.count += 1;
-			}
+		const userTid = g.get("userTid", awards.season);
+		if (awards.mvp?.tid === userTid) {
+			checkMvpCache!.count += 1;
+		}
 
-			// > rather than >=, because we need to know if we just hit the limit (==) or if it was already beyond it (>)
-			if (checkMvpCache!.count > overallLimit) {
-				shortCircuit();
-			}
-		},
-	);
+		// > rather than >=, because we need to know if we just hit the limit (==) or if it was already beyond it (>)
+		if (checkMvpCache!.count > overallLimit) {
+			break;
+		}
+	}
 
 	return currentAwards.mvp?.tid === userTid && checkMvpCache.count === limit;
 };

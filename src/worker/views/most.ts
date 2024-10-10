@@ -1,4 +1,4 @@
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import { g, helpers, processPlayersHallOfFame } from "../util";
 import type {
 	UpdateEvents,
@@ -36,34 +36,32 @@ const getMostXPlayers = async ({
 	const LIMIT = 100;
 	let playersAll: PlayersAll = [];
 
-	await iterate(
-		idb.league.transaction("players").store.index("draft.year, retiredYear"),
-		IDBKeyRange.bound([-Infinity], [g.get("season") - 1, Infinity]),
-		undefined,
-		p => {
-			if (filter !== undefined && !filter(p)) {
-				return;
-			}
+	for await (const { value: p } of idb.league
+		.transaction("players")
+		.store.index("draft.year, retiredYear")
+		.iterate(IDBKeyRange.bound([-Infinity], [g.get("season") - 1, Infinity]))) {
+		if (filter !== undefined && !filter(p)) {
+			continue;
+		}
 
-			const most = getValue(p);
-			if (most === undefined) {
-				return;
-			}
+		const most = getValue(p);
+		if (most === undefined) {
+			continue;
+		}
 
-			const mosts = Array.isArray(most) ? most : [most];
+		const mosts = Array.isArray(most) ? most : [most];
 
-			for (const row of mosts) {
-				playersAll.push({
-					...p,
-					most: row,
-				});
-			}
+		for (const row of mosts) {
+			playersAll.push({
+				...p,
+				most: row,
+			});
+		}
 
-			playersAll.sort((a, b) => b.most.value - a.most.value);
+		playersAll.sort((a, b) => b.most.value - a.most.value);
 
-			playersAll = playersAll.slice(0, LIMIT);
-		},
-	);
+		playersAll = playersAll.slice(0, LIMIT);
+	}
 
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],

@@ -1,4 +1,4 @@
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
 import { isSport, PHASE } from "../../common";
@@ -69,34 +69,30 @@ const getMostXTeamSeasons = async ({
 
 	const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 
-	await iterate(
-		idb.league.transaction("teamSeasons").store,
-		undefined,
-		undefined,
-		ts => {
-			if (filter !== undefined && !filter(ts)) {
-				return;
-			}
+	for await (const { value: ts } of idb.league.transaction("teamSeasons")
+		.store) {
+		if (filter !== undefined && !filter(ts)) {
+			continue;
+		}
 
-			const playoffsByConf = playoffsByConfBySeason.get(ts.season);
+		const playoffsByConf = playoffsByConfBySeason.get(ts.season);
 
-			const most = getValue(ts, playoffsByConf);
-			if (most === undefined) {
-				return;
-			}
+		const most = getValue(ts, playoffsByConf);
+		if (most === undefined) {
+			continue;
+		}
 
-			teamSeasonsAll.push({
-				...ts,
-				winp: helpers.calcWinp(ts),
-				most,
-			});
-			teamSeasonsAll.sort((a, b) => b.most.value - a.most.value);
+		teamSeasonsAll.push({
+			...ts,
+			winp: helpers.calcWinp(ts),
+			most,
+		});
+		teamSeasonsAll.sort((a, b) => b.most.value - a.most.value);
 
-			if (teamSeasonsAll.length > LIMIT) {
-				teamSeasonsAll.pop();
-			}
-		},
-	);
+		if (teamSeasonsAll.length > LIMIT) {
+			teamSeasonsAll.pop();
+		}
+	}
 
 	const challengeNoRatings = g.get("challengeNoRatings");
 

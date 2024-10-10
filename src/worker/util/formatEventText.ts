@@ -5,7 +5,7 @@ import type {
 	Player,
 	TradeEventTeams,
 } from "../../common/types";
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import g from "./g";
 import getTeamInfoBySeason from "./getTeamInfoBySeason";
 import helpers from "./helpers";
@@ -36,17 +36,15 @@ export const getPlayerFromPick = async (dp: PickAsset) => {
 		(dp.season < g.get("season") ||
 			(dp.season === g.get("season") && g.get("phase") >= PHASE.DRAFT))
 	) {
-		await iterate(
-			idb.league.transaction("players").store.index("draft.year, retiredYear"),
-			IDBKeyRange.bound([dp.season], [dp.season, Infinity]),
-			"prev",
-			(p2, shortCircuit) => {
-				if (p2.draft.dpid === dp.dpid) {
-					p = p2;
-					shortCircuit();
-				}
-			},
-		);
+		for await (const { value: p2 } of idb.league
+			.transaction("players")
+			.store.index("draft.year, retiredYear")
+			.iterate(IDBKeyRange.bound([dp.season], [dp.season, Infinity]), "prev")) {
+			if (p2.draft.dpid === dp.dpid) {
+				p = p2;
+				break;
+			}
+		}
 	}
 
 	return p;

@@ -1,5 +1,5 @@
 import type { HeadToHead } from "../../../common/types";
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { g } from "../../util";
 
 const blankInfo = (tid: number, tid2: number, season: number) => ({
@@ -138,19 +138,16 @@ const iterate2 = async (
 
 	const currentSeason = g.get("season");
 
-	await iterate(
-		idb.league.transaction("headToHeads").store,
-		key,
-		undefined,
-		headToHead => {
-			if (headToHead.season === currentSeason) {
-				// We'll do this later, from cache
-				return;
-			}
+	for await (const { value: headToHead } of idb.league
+		.transaction("headToHeads")
+		.store.iterate(key)) {
+		if (headToHead.season === currentSeason) {
+			// We'll do this later, from cache
+			continue;
+		}
 
-			processHeadToHead(headToHead);
-		},
-	);
+		processHeadToHead(headToHead);
+	}
 
 	if (options.season === "all" || options.season === currentSeason) {
 		const headToHead = await idb.cache.headToHeads.get(currentSeason);

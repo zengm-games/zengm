@@ -1,4 +1,4 @@
-import { idb, iterate } from "../../db";
+import { idb } from "../../db";
 import { PLAYER } from "../../../common";
 import type { Player } from "../../../common/types";
 
@@ -34,20 +34,19 @@ const remove = async (pids: number[]) => {
 			await idb.cache.players.put(p);
 		}
 	}
-	await iterate(
-		idb.league.transaction("players", "readwrite").store.index("tid"),
-		PLAYER.RETIRED,
-		undefined,
-		p => {
-			if (pids.includes(p.pid)) {
-				return;
-			}
+	for await (const cursor of idb.league
+		.transaction("players", "readwrite")
+		.store.index("tid")
+		.iterate(PLAYER.RETIRED)) {
+		const p = cursor.value;
+		if (pids.includes(p.pid)) {
+			continue;
+		}
 
-			if (hasRelativeAndMutate(p, pids)) {
-				return p;
-			}
-		},
-	);
+		if (hasRelativeAndMutate(p, pids)) {
+			await cursor.update(p);
+		}
+	}
 };
 
 export default remove;

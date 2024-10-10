@@ -1,4 +1,4 @@
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
 import { bySport } from "../../common";
@@ -127,14 +127,10 @@ export const genView = (
 			});
 
 			const infosTemp: { [key: string]: InfoTemp } = {};
-			await iterate(
-				idb.league.transaction("players").store,
-				undefined,
-				undefined,
-				p => {
-					reducer(type, infosTemp, p);
-				},
-			);
+			for await (const { value: p } of idb.league.transaction("players")
+				.store) {
+				reducer(type, infosTemp, p);
+			}
 
 			const infos = await Promise.all(
 				Object.entries(infosTemp).map(async ([name, info]) => {

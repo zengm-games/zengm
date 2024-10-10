@@ -1,4 +1,4 @@
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, TeamSeason, Player } from "../../common/types";
 import { getHistory, getHistoryTeam } from "./teamHistory";
@@ -74,40 +74,32 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		if (tids.size <= g.get("numTeams") / 2) {
 			const pids = new Set<number>();
 			for (const tid of tids) {
-				await iterate(
-					idb.league.transaction("players").store.index("statsTids"),
-					tid,
-					undefined,
-					p => {
-						if (pids.has(p.pid)) {
-							return;
-						}
-
-						addPlayer(p);
-						pids.add(p.pid);
-					},
-				);
-			}
-		} else {
-			await iterate(
-				idb.league.transaction("players").store,
-				undefined,
-				undefined,
-				p => {
-					let hasTid = false;
-					for (const tid of p.statsTids) {
-						if (tids.has(tid)) {
-							hasTid = true;
-							break;
-						}
-					}
-					if (!hasTid) {
-						return;
+				for await (const { value: p } of idb.league
+					.transaction("players")
+					.store.index("statsTids")
+					.iterate(tid)) {
+					if (pids.has(p.pid)) {
+						continue;
 					}
 
 					addPlayer(p);
-				},
-			);
+					pids.add(p.pid);
+				}
+			}
+		} else {
+			for await (const { value: p } of idb.league.transaction("players")
+				.store) {
+				let hasTid = false;
+				for (const tid of p.statsTids) {
+					if (tids.has(tid)) {
+						hasTid = true;
+						break;
+					}
+				}
+				if (hasTid) {
+					addPlayer(p);
+				}
+			}
 		}
 
 		return {

@@ -1,4 +1,4 @@
-import { idb, iterate } from "../db";
+import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import type {
 	UpdateEvents,
@@ -31,7 +31,7 @@ const updateFrivolitiesDraftClasses = async (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON)
 	) {
-		let draftClass: {
+		type DraftClass = {
 			season: number;
 			value: number;
 			numHOF: number;
@@ -43,57 +43,56 @@ const updateFrivolitiesDraftClasses = async (
 				value: number;
 			};
 		};
-		const draftClasses: (typeof draftClass)[] = [];
+		let draftClass: DraftClass | undefined;
+		const draftClasses: DraftClass[] = [];
 
-		await iterate(
-			idb.league.transaction("players").store.index("draft.year, retiredYear"),
-			IDBKeyRange.lowerBound([g.get("startingSeason")]),
-			undefined,
-			p => {
-				if (p.draft.round < 1) {
-					return;
-				}
+		for await (const { value: p } of idb.league
+			.transaction("players")
+			.store.index("draft.year, retiredYear")
+			.iterate(IDBKeyRange.lowerBound([g.get("startingSeason")]))) {
+			if (p.draft.round < 1) {
+				continue;
+			}
 
-				const value = playerValue(p);
+			const value = playerValue(p);
 
-				if (draftClass === undefined || p.draft.year !== draftClass.season) {
-					draftClass = {
-						season: p.draft.year,
-						value: 0,
-						numHOF: 0,
-						numMVP: 0,
-						numAS: 0,
-						numActive: 0,
-						bestPlayer: {
-							p,
-							value,
-						},
+			if (draftClass === undefined || p.draft.year !== draftClass.season) {
+				draftClass = {
+					season: p.draft.year,
+					value: 0,
+					numHOF: 0,
+					numMVP: 0,
+					numAS: 0,
+					numActive: 0,
+					bestPlayer: {
+						p,
+						value,
+					},
+				};
+				draftClasses.push(draftClass);
+			} else {
+				if (value > draftClass.bestPlayer.value) {
+					draftClass.bestPlayer = {
+						p,
+						value,
 					};
-					draftClasses.push(draftClass);
-				} else {
-					if (value > draftClass.bestPlayer.value) {
-						draftClass.bestPlayer = {
-							p,
-							value,
-						};
-					}
 				}
+			}
 
-				draftClass.value += value;
-				if (p.hof) {
-					draftClass.numHOF += 1;
-				}
-				if (p.awards.some(award => award.type === "Most Valuable Player")) {
-					draftClass.numMVP += 1;
-				}
-				if (p.awards.some(award => award.type === "All-Star")) {
-					draftClass.numAS += 1;
-				}
-				if (p.retiredYear === Infinity) {
-					draftClass.numActive += 1;
-				}
-			},
-		);
+			draftClass.value += value;
+			if (p.hof) {
+				draftClass.numHOF += 1;
+			}
+			if (p.awards.some(award => award.type === "Most Valuable Player")) {
+				draftClass.numMVP += 1;
+			}
+			if (p.awards.some(award => award.type === "All-Star")) {
+				draftClass.numAS += 1;
+			}
+			if (p.retiredYear === Infinity) {
+				draftClass.numActive += 1;
+			}
+		}
 
 		const stats = bySport({
 			baseball: ["gp", "keyStats", "war"],

@@ -120,6 +120,9 @@ const StatsTable = ({
 			if (p.bs > 0) {
 				seasonStats2.bs = seasonStatsCurrent.bs;
 			}
+			if (p.hld > 0) {
+				seasonStats2.hld = seasonStatsCurrent.hld;
+			}
 
 			return {
 				...p,

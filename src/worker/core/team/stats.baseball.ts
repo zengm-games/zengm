@@ -30,6 +30,7 @@ const rawAndOpp = [
 	"sho",
 	"sv",
 	"bs",
+	"hld",
 	"outs", // Easier than tracking IP
 	"rPit",
 	"er",

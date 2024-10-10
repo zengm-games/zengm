@@ -2,9 +2,6 @@ move from my iterate function to async iterators
 - regex search: [\t ]iterate\(
 
 Add blown saves (BS) and holds (HLD)
-- show HLD in box score
-  - could be L, but not W or SV. show as HL
-- show HLD in team stats
 - SV%
 - confirm i didn't break save stats - getSaveOutsNeeded returning undefined might make the closer come in less
 - confirm exhibition game works

@@ -2573,8 +2573,16 @@ class GameSim extends GameSimBase {
 		}
 
 		if (sub) {
-			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
+			// Check if the pitcher coming out is eligible for a hold. If we are still winning when the pitcher came in in a save situation, then it's a hold.
+			if (
+				t.saveOutsNeeded !== undefined &&
+				this.team[this.d].t.stat.pts > this.team[this.o].t.stat.pts
+			) {
+				this.recordStat(this.d, pitcher, "hld");
+			}
 
+			// Actually apply the substitution
+			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
 			this.playByPlay.logEvent({
 				type: "reliefPitcher",
 				pidOn: candidate.p.id,

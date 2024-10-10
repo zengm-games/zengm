@@ -52,7 +52,8 @@ const BoxScoreRow = ({
 						</span>
 					) : p.l > 0 ? (
 						<span className="text-danger ms-2">
-							{p.bs > 0 ? "B" : ""}L
+							{p.bs > 0 ? "B" : ""}
+							{p.bs > 0 ? "H" : ""}L
 							{exhibition
 								? null
 								: ` (${helpers.formatRecord({
@@ -67,6 +68,10 @@ const BoxScoreRow = ({
 					) : p.bs > 0 ? (
 						<span className="ms-2">
 							BS{exhibition ? null : ` (${p.seasonStats.bs})`}
+						</span>
+					) : p.hld > 0 ? (
+						<span className="ms-2">
+							H{exhibition ? null : ` (${p.seasonStats.hld})`}
 						</span>
 					) : null
 				) : null}

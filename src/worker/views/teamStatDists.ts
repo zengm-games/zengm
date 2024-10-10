@@ -45,6 +45,7 @@ const updateTeams = async (
 				"sho",
 				"sv",
 				"bs",
+				"hld",
 				"ip",
 				"rPit",
 				"er",

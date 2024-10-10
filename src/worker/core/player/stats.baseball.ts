@@ -48,6 +48,7 @@ const stats = {
 		"sho",
 		"sv",
 		"bs",
+		"hld",
 		"outs", // Easier than tracking IP
 		"rPit",
 		"er",

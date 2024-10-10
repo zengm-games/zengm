@@ -229,6 +229,7 @@ export const processTeam = (
 				"l",
 				"sv",
 				"bs",
+				"hld",
 			];
 
 			let hasStats;

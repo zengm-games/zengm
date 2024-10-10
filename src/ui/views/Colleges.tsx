@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocalPartial } from "../util";
-import { DataTable } from "../components";
+import { CountryFlag, DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -97,6 +97,9 @@ export const genView = (
 							window.encodeURIComponent(c.name),
 						])}
 					>
+						{type === "country" ? (
+							<CountryFlag className="me-1" country={c.name} />
+						) : null}
 						{type === "draftPosition" && c.name === "undrafted"
 							? "none"
 							: c.name}

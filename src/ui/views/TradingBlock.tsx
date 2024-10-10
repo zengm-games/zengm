@@ -438,17 +438,26 @@ export const OfferTable = ({
 	);
 };
 
+type Contract = {
+	pid: number;
+	contract: number;
+};
+
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
 		asking: boolean;
 		offers: OfferType[];
 		pids: number[];
 		dpids: number[];
+		selectedContracts: Contract[];
+		contractsSum: number;
 	}>({
 		asking: false,
 		offers: [],
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: props.initialDpid !== undefined ? [props.initialDpid] : [],
+		selectedContracts: [],
+		contractsSum: 0,
 	});
 	console.log(state);
 
@@ -469,6 +478,32 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				...prevState,
 				[type]: ids[type],
 			};
+		});
+	};
+
+	/**
+	 * Tally the sum of selected contracts.
+	 *
+	 * @param {number} pid - The ID of the contract.
+	 * @param {number} contract - The value of the contract.
+	 */
+	const handleContractSum = (pid: number, contract: number) => {
+		setState(prevState => {
+			// Copy the selected contracts array.
+			const contracts = [...prevState.selectedContracts];
+			// Find the index of the contract.
+			const index = contracts.findIndex(c => c.pid === pid);
+			// If the contract is not found, add it to the array and tally it to the sum.
+			if (index === -1) {
+				contracts.push({ pid, contract });
+				prevState.contractsSum += contract;
+			} else {
+				// Otherwise, remove the contract from the array.
+				contracts.splice(index, 1);
+				prevState.contractsSum -= contract;
+			}
+			// Return the updated state
+			return { ...prevState, selectedContracts: contracts };
 		});
 	};
 
@@ -611,7 +646,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					type="checkbox"
 					checked={state.pids.includes(p.pid)}
 					disabled={p.untradable}
-					onChange={() => handleChangeAsset("pids", p.pid)}
+					onChange={() => {
+						handleChangeAsset("pids", p.pid);
+						handleContractSum(p.pid, p.contract.amount);
+					}}
 					title={p.untradableMsg}
 				/>,
 				wrappedPlayerNameLabels({
@@ -659,6 +697,12 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			<p>
 				Select some assets you want to trade away and other teams will make you
 				trade proposals.
+			</p>
+
+			{/* Display total sum of selected contracts */}
+			<p>
+				<b>Total Salary: </b>
+				{helpers.formatCurrency(state.contractsSum, "M")}
 			</p>
 
 			<div className="row mb-3">

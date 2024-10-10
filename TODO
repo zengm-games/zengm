@@ -2,6 +2,14 @@ move from my iterate function to async iterators
 - regex search: [\t ]iterate\(
 
 Add blown saves (BS) and holds (HLD)
+- show HLD in box score
+  - could be L, but not W or SV. show as HL
+- show HLD in team stats
+- SV%
+- confirm i didn't break save stats - getSaveOutsNeeded returning undefined might make the closer come in less
+- confirm exhibition game works
+- confirm HLD and BS in live game
+- show decision in player game log (similar to box score, maybe reuse code form BoxScoreRow.football)
 
 customize number of pitchers in rotation https://discord.com/channels/290013534023057409/944392892905037885/1291306004495204363
 - use this to set the max pFatigue value in play.ts

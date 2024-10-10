@@ -69,6 +69,7 @@ const roundOverrides: Record<string, RoundType | undefined> = bySport({
 		cg: "noDecimalPlace",
 		sho: "noDecimalPlace",
 		sv: "noDecimalPlace",
+		bs: "noDecimalPlace",
 		ip: "oneDecimalPlace",
 		rPit: "noDecimalPlace",
 		er: "noDecimalPlace",

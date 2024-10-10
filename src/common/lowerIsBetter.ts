@@ -11,6 +11,7 @@ export const lowerIsBetter = new Set(
 			"gdp",
 			"l",
 			"era",
+			"bs",
 			"rPit",
 			"er",
 			"hPit",

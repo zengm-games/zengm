@@ -1953,6 +1953,14 @@ class GameSim extends GameSimBase {
 		if (this.team[0].t.stat.pts === this.team[1].t.stat.pts) {
 			this.winEligiblePid = undefined;
 			this.lossEligiblePid = undefined;
+
+			// Game was just tied up, so this could be a blown save
+			if (this.team[this.d].saveOutsNeeded !== undefined) {
+				this.recordStat(this.d, pitcher, "bs");
+
+				// No longer save eligible
+				this.team[this.d].saveOutsNeeded = undefined;
+			}
 		} else if (
 			this.team[this.o].t.stat.pts - 1 ===
 			this.team[this.d].t.stat.pts
@@ -2412,17 +2420,31 @@ class GameSim extends GameSimBase {
 		this.checkInjuries();
 	}
 
-	getSaveOutsNeeded(teamNum: TeamNum) {
+	// undefined return value means this is not a save situation
+	getSaveOutsNeeded(teamNum: TeamNum, undefinedIfNotEnoughOutsLeft: boolean) {
 		const otherTeamNum = teamNum === 1 ? 0 : 1;
 		const scoreDiff =
 			this.team[teamNum].t.stat.pts - this.team[otherTeamNum].t.stat.pts;
 		const runsUpToOnDeck = this.bases.filter(base => base).length + 2;
-		let saveOutsNeeded = 9;
-		if (scoreDiff > 0 && scoreDiff <= 3) {
-			saveOutsNeeded = 3;
-		}
+
+		let saveOutsNeeded: number | undefined;
 		if (scoreDiff > 0 && scoreDiff <= runsUpToOnDeck) {
 			saveOutsNeeded = 1;
+		} else if (scoreDiff > 0 && scoreDiff <= 3) {
+			saveOutsNeeded = 3;
+		} else if (scoreDiff > 0) {
+			saveOutsNeeded = 9;
+		}
+
+		if (undefinedIfNotEnoughOutsLeft && saveOutsNeeded !== undefined) {
+			const outsLeft =
+				(this.numInnings - this.inning) * NUM_OUTS_PER_INNING +
+				(NUM_OUTS_PER_INNING - this.outs);
+			if (saveOutsNeeded <= outsLeft) {
+				return saveOutsNeeded;
+			} else {
+				return;
+			}
 		}
 
 		return saveOutsNeeded;
@@ -2440,8 +2462,7 @@ class GameSim extends GameSimBase {
 		if (off.pos === "P") {
 			this.recordStat(teamNum, on, "gpPit");
 
-			const saveOutsNeeded = this.getSaveOutsNeeded(teamNum);
-			t.saveOutsNeeded = saveOutsNeeded;
+			t.saveOutsNeeded = this.getSaveOutsNeeded(teamNum, false);
 			this.outsIfNoErrorsByPitcherPid[on.id] += this.outsIfNoErrors;
 		}
 
@@ -2461,14 +2482,14 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		const saveOutsNeeded = this.getSaveOutsNeeded(this.d);
+		const saveOutsNeeded = this.getSaveOutsNeeded(this.d, true);
 
 		const t = this.team[this.d];
 
 		// Try to put in the closer if this is a save situation, or a tie game in the 9th+ inning, or we are winning in extra innings
 		const closerSituation =
 			(this.inning === this.numInnings &&
-				(saveOutsNeeded < 9 ||
+				((saveOutsNeeded !== undefined && saveOutsNeeded < 9) ||
 					this.team[this.o].t.stat.pts === this.team[this.d].t.stat.pts)) ||
 			(this.inning > this.numInnings &&
 				getWinner([this.team[0].t.stat, this.team[1].t.stat]) !== this.d);

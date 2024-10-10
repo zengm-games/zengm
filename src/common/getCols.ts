@@ -410,6 +410,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "SV",
 		},
+		"stat:bs": {
+			desc: "Blown Saves",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "BS",
+		},
 		"stat:ip": {
 			desc: "Innings Pitched",
 			sortSequence: ["desc", "asc"],

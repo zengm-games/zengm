@@ -155,6 +155,7 @@ const getLeaderRequirements = () => {
 			cg: {},
 			sho: {},
 			sv: {},
+			bs: {},
 			ip: {},
 			rPit: {},
 			er: {},

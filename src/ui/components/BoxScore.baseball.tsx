@@ -117,6 +117,10 @@ const StatsTable = ({
 				seasonStats2.sv = seasonStatsCurrent.sv;
 			}
 
+			if (p.bs > 0) {
+				seasonStats2.bs = seasonStatsCurrent.bs;
+			}
+
 			return {
 				...p,
 				processed: processPlayerStats(p, stats),

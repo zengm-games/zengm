@@ -6,6 +6,10 @@ Add blown saves (BS) and holds (HLD)
 - why so few HLDs?
 - confirm exhibition game works
 - show decision in player game log (similar to box score, maybe reuse code form BoxScoreRow.football)
+  - sort
+  - off by one, why is box score working correctly then?
+  - no decision column for position players
+  - blog
 
 customize number of pitchers in rotation https://discord.com/channels/290013534023057409/944392892905037885/1291306004495204363
 - use this to set the max pFatigue value in play.ts

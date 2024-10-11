@@ -5,6 +5,68 @@ import { getCols, helpers } from "../util";
 import { DataTable, InjuryIcon } from "../components";
 import { NoGamesMessage } from "./GameLog";
 import type { DataTableRow } from "../components/DataTable";
+import { isSport } from "../../common";
+import clsx from "clsx";
+
+export const BaseballDecision = ({
+	className,
+	exhibition,
+	p,
+	wlColors,
+}: {
+	className?: string;
+	exhibition?: boolean;
+	p: {
+		w: number;
+		l: number;
+		sv: number;
+		bs: number;
+		hld: number;
+		seasonStats: {
+			w: number;
+			l: number;
+			sv: number;
+			bs: number;
+			hld: number;
+		};
+	};
+	wlColors?: boolean;
+}) => {
+	return p.w > 0 ? (
+		<span className={clsx(wlColors ? "text-success" : undefined, className)}>
+			{p.bs > 0 ? "B" : ""}W
+			{exhibition
+				? null
+				: ` (${helpers.formatRecord({
+						won: p.seasonStats.w,
+						lost: p.seasonStats.l,
+					})})`}
+		</span>
+	) : p.l > 0 ? (
+		<span className={clsx(wlColors ? "text-danger" : undefined, className)}>
+			{p.bs > 0 ? "B" : ""}
+			{p.hld > 0 ? "H" : ""}L
+			{exhibition
+				? null
+				: ` (${helpers.formatRecord({
+						won: p.seasonStats.w,
+						lost: p.seasonStats.l,
+					})})`}
+		</span>
+	) : p.sv > 0 ? (
+		<span className={className}>
+			SV{exhibition ? null : ` (${p.seasonStats.sv})`}
+		</span>
+	) : p.bs > 0 ? (
+		<span className={className}>
+			BS{exhibition ? null : ` (${p.seasonStats.bs})`}
+		</span>
+	) : p.hld > 0 ? (
+		<span className={className}>
+			H{exhibition ? null : ` (${p.seasonStats.hld})`}
+		</span>
+	) : null;
+};
 
 const PlayerGameLog = ({
 	bestPos,
@@ -34,6 +96,7 @@ const PlayerGameLog = ({
 	gameLog,
 	season,
 	seasonsWithStats,
+	showDecisionColumn,
 	stats,
 	superCols,
 }: View<"playerGameLog">) => {
@@ -69,6 +132,7 @@ const PlayerGameLog = ({
 		"Result",
 		"Record",
 		"",
+		...(isSport("baseball") && showDecisionColumn ? ["Decision"] : []),
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
@@ -131,6 +195,9 @@ const PlayerGameLog = ({
 					searchValue: game.injury.gamesRemaining,
 					classNames: "text-center",
 				},
+				...(isSport("baseball") && showDecisionColumn
+					? [<BaseballDecision p={game.stats as any} />]
+					: []),
 				...stats.map(stat =>
 					game.stats[stat] === undefined
 						? undefined

@@ -2895,6 +2895,7 @@ const cols: {
 		sortType: "currency",
 		title: "Projected",
 	},
+	Decision: {},
 	Details: {},
 	Died: {
 		sortSequence: ["desc", "asc"],

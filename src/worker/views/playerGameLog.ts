@@ -1,4 +1,4 @@
-import { filterPlayerStats, PLAYER_GAME_STATS } from "../../common";
+import { filterPlayerStats, isSport, PLAYER_GAME_STATS } from "../../common";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 import getWinner from "../../common/getWinner";
 import type { UpdateEvents, ViewInput } from "../../common/types";
@@ -66,6 +66,8 @@ const updatePlayerGameLog = async (
 			return abbrev;
 		};
 
+		let showDecisionColumn = false;
+
 		const gameLog = [];
 		for (const game of games) {
 			let row = game.teams[0].players.find(p => p.pid === pid);
@@ -108,7 +110,9 @@ const updatePlayerGameLog = async (
 			const abbrev = await getAbbrev(tid);
 			const oppAbbrev = await getAbbrev(oppTid);
 
-			const gameStats: Record<string, number> = {};
+			const gameStats: Record<string, number> & {
+				seasonStats?: Record<string, number>;
+			} = {};
 			for (const type of types) {
 				const info = PLAYER_GAME_STATS[type];
 
@@ -125,6 +129,18 @@ const updatePlayerGameLog = async (
 
 				for (const stat of info.stats) {
 					gameStats[stat] = p.processed[stat];
+				}
+
+				if (isSport("baseball")) {
+					const extraBaseballStats = ["w", "l", "sv", "bs", "hld"];
+					gameStats.seasonStats = {};
+					for (const key of extraBaseballStats) {
+						gameStats.seasonStats[key] = p.seasonStats[key];
+						gameStats[key] = p[key];
+						if (gameStats[key] !== undefined) {
+							showDecisionColumn = true;
+						}
+					}
 				}
 			}
 
@@ -171,6 +187,7 @@ const updatePlayerGameLog = async (
 
 		return {
 			...topStuff,
+			showDecisionColumn,
 			gameLog,
 			numGamesPlayoffSeires: g.get("numGamesPlayoffSeries", season),
 			season,

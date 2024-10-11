@@ -2,6 +2,7 @@ import type { MouseEvent } from "react";
 import PlayerNameLabels from "./PlayerNameLabels";
 import { helpers } from "../util";
 import { isSport } from "../../common";
+import { BaseballDecision } from "../views/PlayerGameLog";
 
 const width100 = {
 	width: "100%",
@@ -40,40 +41,12 @@ const BoxScoreRow = ({
 					season={season}
 				/>
 				{isSport("baseball") ? (
-					p.w > 0 ? (
-						<span className="text-success ms-2">
-							{p.bs > 0 ? "B" : ""}W
-							{exhibition
-								? null
-								: ` (${helpers.formatRecord({
-										won: p.seasonStats.w,
-										lost: p.seasonStats.l,
-									})})`}
-						</span>
-					) : p.l > 0 ? (
-						<span className="text-danger ms-2">
-							{p.bs > 0 ? "B" : ""}
-							{p.hld > 0 ? "H" : ""}L
-							{exhibition
-								? null
-								: ` (${helpers.formatRecord({
-										won: p.seasonStats.w,
-										lost: p.seasonStats.l,
-									})})`}
-						</span>
-					) : p.sv > 0 ? (
-						<span className="ms-2">
-							SV{exhibition ? null : ` (${p.seasonStats.sv})`}
-						</span>
-					) : p.bs > 0 ? (
-						<span className="ms-2">
-							BS{exhibition ? null : ` (${p.seasonStats.bs})`}
-						</span>
-					) : p.hld > 0 ? (
-						<span className="ms-2">
-							H{exhibition ? null : ` (${p.seasonStats.hld})`}
-						</span>
-					) : null
+					<BaseballDecision
+						className="ms-2"
+						p={p}
+						exhibition={exhibition}
+						wlColors
+					/>
 				) : null}
 			</td>
 			{stats.map((stat, i) => (

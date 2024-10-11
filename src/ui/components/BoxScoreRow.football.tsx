@@ -53,7 +53,7 @@ const BoxScoreRow = ({
 					) : p.l > 0 ? (
 						<span className="text-danger ms-2">
 							{p.bs > 0 ? "B" : ""}
-							{p.bs > 0 ? "H" : ""}L
+							{p.hld > 0 ? "H" : ""}L
 							{exhibition
 								? null
 								: ` (${helpers.formatRecord({

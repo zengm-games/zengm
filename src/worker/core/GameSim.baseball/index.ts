@@ -2425,29 +2425,31 @@ class GameSim extends GameSimBase {
 		const otherTeamNum = teamNum === 1 ? 0 : 1;
 		const scoreDiff =
 			this.team[teamNum].t.stat.pts - this.team[otherTeamNum].t.stat.pts;
-		const runsUpToOnDeck = this.bases.filter(base => base).length + 2;
+		if (scoreDiff > 0) {
+			const runsUpToOnDeck = this.bases.filter(base => base).length + 2;
 
-		let saveOutsNeeded: number | undefined;
-		if (scoreDiff > 0 && scoreDiff <= runsUpToOnDeck) {
-			saveOutsNeeded = 1;
-		} else if (scoreDiff > 0 && scoreDiff <= 3) {
-			saveOutsNeeded = 3;
-		} else if (scoreDiff > 0) {
-			saveOutsNeeded = 9;
-		}
-
-		if (undefinedIfNotEnoughOutsLeft && saveOutsNeeded !== undefined) {
-			const outsLeft =
-				(this.numInnings - this.inning) * NUM_OUTS_PER_INNING +
-				(NUM_OUTS_PER_INNING - this.outs);
-			if (saveOutsNeeded <= outsLeft) {
-				return saveOutsNeeded;
+			let saveOutsNeeded: number;
+			if (scoreDiff <= runsUpToOnDeck) {
+				saveOutsNeeded = 1;
+			} else if (scoreDiff <= 3) {
+				saveOutsNeeded = 3;
 			} else {
-				return;
+				saveOutsNeeded = 9;
 			}
-		}
 
-		return saveOutsNeeded;
+			if (undefinedIfNotEnoughOutsLeft && saveOutsNeeded !== undefined) {
+				const outsLeft =
+					(this.numInnings - this.inning) * NUM_OUTS_PER_INNING +
+					(NUM_OUTS_PER_INNING - this.outs);
+				if (saveOutsNeeded <= outsLeft) {
+					return saveOutsNeeded;
+				} else {
+					return;
+				}
+			}
+
+			return saveOutsNeeded;
+		}
 	}
 
 	substitution(
@@ -2462,7 +2464,7 @@ class GameSim extends GameSimBase {
 		if (off.pos === "P") {
 			this.recordStat(teamNum, on, "gpPit");
 
-			t.saveOutsNeeded = this.getSaveOutsNeeded(teamNum, false);
+			t.saveOutsNeeded = this.getSaveOutsNeeded(teamNum, true);
 			this.outsIfNoErrorsByPitcherPid[on.id] += this.outsIfNoErrors;
 		}
 
@@ -2482,7 +2484,7 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		const saveOutsNeeded = this.getSaveOutsNeeded(this.d, true);
+		const saveOutsNeeded = this.getSaveOutsNeeded(this.d, false);
 
 		const t = this.team[this.d];
 
@@ -2573,10 +2575,12 @@ class GameSim extends GameSimBase {
 		}
 
 		if (sub) {
-			// Check if the pitcher coming out is eligible for a hold. If we are still winning when the pitcher came in in a save situation, then it's a hold.
+			// Check if the pitcher coming out is eligible for a hold. If we are still winning when the pitcher came in in a save situation, then it's a hold (if they recorded at least 1 out). The check for 9 outs is that most people seem to not consider it a hold if it's only a save situation based on the 3+ innings criteria.
 			if (
 				t.saveOutsNeeded !== undefined &&
-				this.team[this.d].t.stat.pts > this.team[this.o].t.stat.pts
+				t.saveOutsNeeded < 9 &&
+				this.team[this.d].t.stat.pts > this.team[this.o].t.stat.pts &&
+				pitcher.stat.outs >= 1
 			) {
 				this.recordStat(this.d, pitcher, "hld");
 			}

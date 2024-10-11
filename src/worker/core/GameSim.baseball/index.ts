@@ -1955,11 +1955,11 @@ class GameSim extends GameSimBase {
 			this.lossEligiblePid = undefined;
 
 			// Game was just tied up, so this could be a blown save
-			if (this.team[this.d].saveOutsNeeded !== undefined) {
+			if (this.team[this.d].saveSituation !== undefined) {
 				this.recordStat(this.d, pitcher, "bs");
 
 				// No longer save eligible
-				this.team[this.d].saveOutsNeeded = undefined;
+				this.team[this.d].saveSituation = undefined;
 			}
 		} else if (
 			this.team[this.o].t.stat.pts - 1 ===
@@ -2182,12 +2182,10 @@ class GameSim extends GameSimBase {
 			}
 
 			const winner = getWinner([this.team[0].t.stat, this.team[1].t.stat]);
-			const saveOutsNeeded = this.team[t].saveOutsNeeded;
 			if (
 				winner === t &&
 				pitcher.id !== this.winEligiblePid &&
-				saveOutsNeeded !== undefined &&
-				pitcher.stat.outs >= saveOutsNeeded
+				this.team[t].saveSituation !== undefined
 			) {
 				this.recordStat(t, pitcher, "sv");
 			}
@@ -2421,7 +2419,7 @@ class GameSim extends GameSimBase {
 	}
 
 	// undefined return value means this is not a save situation
-	getSaveOutsNeeded(teamNum: TeamNum, undefinedIfNotEnoughOutsLeft: boolean) {
+	isSaveSituation(teamNum: TeamNum) {
 		const otherTeamNum = teamNum === 1 ? 0 : 1;
 		const scoreDiff =
 			this.team[teamNum].t.stat.pts - this.team[otherTeamNum].t.stat.pts;
@@ -2437,18 +2435,15 @@ class GameSim extends GameSimBase {
 				saveOutsNeeded = 9;
 			}
 
-			if (undefinedIfNotEnoughOutsLeft && saveOutsNeeded !== undefined) {
+			if (saveOutsNeeded !== undefined) {
 				const outsLeft =
 					(this.numInnings - this.inning) * NUM_OUTS_PER_INNING +
 					(NUM_OUTS_PER_INNING - this.outs);
 				if (saveOutsNeeded <= outsLeft) {
-					return saveOutsNeeded;
-				} else {
-					return;
+					// In the situation where this is only a valid save if it goes 3 innings (9 outs), then it could be a save or a blown save, but it can't be a hold https://tht.fangraphs.com/the-unofficial-rules-of-holds-and-blown-saves/
+					return saveOutsNeeded === 9 ? "saveOnly" : "saveOrHold";
 				}
 			}
-
-			return saveOutsNeeded;
 		}
 	}
 
@@ -2464,7 +2459,7 @@ class GameSim extends GameSimBase {
 		if (off.pos === "P") {
 			this.recordStat(teamNum, on, "gpPit");
 
-			t.saveOutsNeeded = this.getSaveOutsNeeded(teamNum, true);
+			t.saveSituation = this.isSaveSituation(teamNum);
 			this.outsIfNoErrorsByPitcherPid[on.id] += this.outsIfNoErrors;
 		}
 
@@ -2484,14 +2479,14 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		const saveOutsNeeded = this.getSaveOutsNeeded(this.d, false);
+		const saveSituation = this.isSaveSituation(this.d);
 
 		const t = this.team[this.d];
 
 		// Try to put in the closer if this is a save situation, or a tie game in the 9th+ inning, or we are winning in extra innings
 		const closerSituation =
 			(this.inning === this.numInnings &&
-				((saveOutsNeeded !== undefined && saveOutsNeeded < 9) ||
+				(saveSituation === "saveOrHold" ||
 					this.team[this.o].t.stat.pts === this.team[this.d].t.stat.pts)) ||
 			(this.inning > this.numInnings &&
 				getWinner([this.team[0].t.stat, this.team[1].t.stat]) !== this.d);
@@ -2575,10 +2570,9 @@ class GameSim extends GameSimBase {
 		}
 
 		if (sub) {
-			// Check if the pitcher coming out is eligible for a hold. If we are still winning when the pitcher came in in a save situation, then it's a hold (if they recorded at least 1 out). The check for 9 outs is that most people seem to not consider it a hold if it's only a save situation based on the 3+ innings criteria.
+			// Check if the pitcher coming out is eligible for a hold. If we are still winning when the pitcher came in in a save situation (except the 3+ inning one), then it's a hold (if they recorded at least 1 out).
 			if (
-				t.saveOutsNeeded !== undefined &&
-				t.saveOutsNeeded < 9 &&
+				t.saveSituation === "saveOrHold" &&
 				this.team[this.d].t.stat.pts > this.team[this.o].t.stat.pts &&
 				pitcher.stat.outs >= 1
 			) {

@@ -47,7 +47,7 @@ class Team<DH extends boolean> {
 
 	atBat: number;
 	subIndex: number;
-	saveOutsNeeded: number | undefined;
+	saveSituation: "saveOnly" | "saveOrHold" | undefined;
 
 	// Depth chart, but adjusted to remove injured players and capped at the number of active players
 	depth: Depth;

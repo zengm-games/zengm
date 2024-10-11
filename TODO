@@ -3,6 +3,7 @@ move from my iterate function to async iterators
 
 Add blown saves (BS) and holds (HLD)
 - confirm i didn't break save stats - getSaveOutsNeeded returning undefined might make the closer come in less
+- why so few HLDs?
 - confirm exhibition game works
 - show decision in player game log (similar to box score, maybe reuse code form BoxScoreRow.football)
 

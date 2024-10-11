@@ -2437,7 +2437,7 @@ class GameSim extends GameSimBase {
 
 			if (saveOutsNeeded !== undefined) {
 				const outsLeft =
-					(this.numInnings - this.inning) * NUM_OUTS_PER_INNING +
+					Math.max(0, this.numInnings - this.inning) * NUM_OUTS_PER_INNING +
 					(NUM_OUTS_PER_INNING - this.outs);
 				if (saveOutsNeeded <= outsLeft) {
 					// In the situation where this is only a valid save if it goes 3 innings (9 outs), then it could be a save or a blown save, but it can't be a hold https://tht.fangraphs.com/the-unofficial-rules-of-holds-and-blown-saves/

@@ -7,7 +7,6 @@ Add blown saves (BS) and holds (HLD)
 - confirm exhibition game works
 - show decision in player game log (similar to box score, maybe reuse code form BoxScoreRow.football)
   - sort
-  - off by one, why is box score working correctly then?
   - no decision column for position players
   - blog
 

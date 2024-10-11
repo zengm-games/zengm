@@ -137,8 +137,11 @@ const updatePlayerGameLog = async (
 					for (const key of extraBaseballStats) {
 						gameStats.seasonStats[key] = p.seasonStats[key];
 						gameStats[key] = p[key];
-						if (gameStats[key] !== undefined) {
+						if (gameStats[key] > 0) {
 							showDecisionColumn = true;
+
+							// seasonStats is from before game, so add to reflect after game
+							gameStats.seasonStats[key] += gameStats[key];
 						}
 					}
 				}

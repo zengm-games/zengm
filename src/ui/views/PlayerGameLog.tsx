@@ -8,6 +8,91 @@ import type { DataTableRow } from "../components/DataTable";
 import { isSport } from "../../common";
 import clsx from "clsx";
 
+type DecisionPlayer = {
+	w: number;
+	l: number;
+	sv: number;
+	bs: number;
+	hld: number;
+	seasonStats: {
+		w: number;
+		l: number;
+		sv: number;
+		bs: number;
+		hld: number;
+	};
+};
+
+const baseballDecision = (p: DecisionPlayer) => {
+	if (p.w > 0) {
+		if (p.bs > 0) {
+			return "BW";
+		}
+
+		return "W";
+	}
+
+	if (p.l > 0) {
+		if (p.bs > 0) {
+			return "BL";
+		}
+		if (p.hld > 0) {
+			return "HL";
+		}
+		return "L";
+	}
+
+	if (p.sv > 0) {
+		return "SV";
+	}
+
+	if (p.bs > 0) {
+		return "BS";
+	}
+
+	if (p.hld > 0) {
+		return "H";
+	}
+};
+
+const baseballDecisionGames = (
+	p: DecisionPlayer,
+	decision: NonNullable<ReturnType<typeof baseballDecision>>,
+) => {
+	if (
+		decision === "W" ||
+		decision === "BW" ||
+		decision === "L" ||
+		decision === "BL" ||
+		decision === "HL"
+	) {
+		return {
+			count: p.seasonStats.w + p.seasonStats.l,
+			formatted: helpers.formatRecord({
+				won: p.seasonStats.w,
+				lost: p.seasonStats.l,
+			}),
+		};
+	} else if (decision === "SV") {
+		return {
+			count: p.seasonStats.sv,
+			formatted: `${p.seasonStats.sv}`,
+		};
+	} else if (decision === "BS") {
+		return {
+			count: p.seasonStats.bs,
+			formatted: `${p.seasonStats.bs}`,
+		};
+	} else if (decision === "H") {
+		return {
+			count: p.seasonStats.hld,
+			formatted: `${p.seasonStats.hld}`,
+		};
+	} else {
+		throw new Error("Should never happen");
+	}
+};
+
 export const BaseballDecision = ({
 	className,
 	exhibition,
@@ -16,56 +101,46 @@ export const BaseballDecision = ({
 }: {
 	className?: string;
 	exhibition?: boolean;
-	p: {
-		w: number;
-		l: number;
-		sv: number;
-		bs: number;
-		hld: number;
-		seasonStats: {
-			w: number;
-			l: number;
-			sv: number;
-			bs: number;
-			hld: number;
-		};
-	};
+	p: DecisionPlayer;
 	wlColors?: boolean;
 }) => {
-	return p.w > 0 ? (
-		<span className={clsx(wlColors ? "text-success" : undefined, className)}>
-			{p.bs > 0 ? "B" : ""}W
-			{exhibition
-				? null
-				: ` (${helpers.formatRecord({
-						won: p.seasonStats.w,
-						lost: p.seasonStats.l,
-					})})`}
-		</span>
-	) : p.l > 0 ? (
-		<span className={clsx(wlColors ? "text-danger" : undefined, className)}>
-			{p.bs > 0 ? "B" : ""}
-			{p.hld > 0 ? "H" : ""}L
-			{exhibition
-				? null
-				: ` (${helpers.formatRecord({
-						won: p.seasonStats.w,
-						lost: p.seasonStats.l,
-					})})`}
-		</span>
-	) : p.sv > 0 ? (
-		<span className={className}>
-			SV{exhibition ? null : ` (${p.seasonStats.sv})`}
-		</span>
-	) : p.bs > 0 ? (
-		<span className={className}>
-			BS{exhibition ? null : ` (${p.seasonStats.bs})`}
-		</span>
-	) : p.hld > 0 ? (
-		<span className={className}>
-			H{exhibition ? null : ` (${p.seasonStats.hld})`}
-		</span>
-	) : null;
+	const decision = baseballDecision(p);
+	if (decision !== undefined) {
+		const colorClassName = wlColors
+			? decision === "W" || decision === "BW"
+				? "text-success"
+				: decision === "L" || decision === "BL" || decision === "HL"
+					? "text-danger"
+					: undefined
+			: undefined;
+		const { formatted } = baseballDecisionGames(p, decision);
+
+		return (
+			<span className={clsx(colorClassName, className)}>
+				{decision}
+				{exhibition || formatted === undefined ? null : <> ({formatted})</>}
+			</span>
+		);
+	}
+
+	return null;
+};
+
+const wrappedBaseballDecision = (p: DecisionPlayer) => {
+	let searchValue;
+	let sortValue = ""; // Otherwise it doesn't work if undefined
+	const decision = baseballDecision(p);
+	if (decision !== undefined) {
+		const { count, formatted } = baseballDecisionGames(p, decision);
+		searchValue = `${decision} (${formatted})`;
+		sortValue = `${decision}${count + 10000}`;
+	}
+
+	return {
+		value: <BaseballDecision p={p} />,
+		searchValue,
+		sortValue,
+	};
 };
 
 const PlayerGameLog = ({
@@ -196,7 +271,7 @@ const PlayerGameLog = ({
 					classNames: "text-center",
 				},
 				...(isSport("baseball") && showDecisionColumn
-					? [<BaseballDecision p={game.stats as any} />]
+					? [wrappedBaseballDecision(game.stats as any)]
 					: []),
 				...stats.map(stat =>
 					game.stats[stat] === undefined

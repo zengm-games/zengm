@@ -59,8 +59,4 @@ const reset = async () => {
 	await trade.clear();
 };
 
-export {
-	// eslint-disable-next-line import/prefer-default-export
-	beforeTests,
-	reset,
-};
+export { beforeTests, reset };

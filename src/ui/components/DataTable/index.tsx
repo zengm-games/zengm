@@ -238,7 +238,7 @@ const DataTable = ({
 			cols,
 			event,
 			i,
-			prevSortBys: state.sortBys, // eslint-disable-line react/no-access-state-in-setstate
+			prevSortBys: state.sortBys,
 		});
 
 		state.settingsCache.set("DataTableSort", sortBys);
@@ -308,7 +308,7 @@ const DataTable = ({
 		event: SyntheticEvent<HTMLInputElement>,
 		i: number,
 	) => {
-		const filters = helpers.deepCopy(state.filters); // eslint-disable-line react/no-access-state-in-setstate
+		const filters = helpers.deepCopy(state.filters);
 
 		filters[i] = event.currentTarget.value;
 		setStatePartial({

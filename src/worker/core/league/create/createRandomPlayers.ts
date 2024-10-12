@@ -281,7 +281,7 @@ const createRandomPlayers = async ({
 	const addToFreeAgents = (
 		p: PlayerWithoutKey<MinimalPlayerRatings> | undefined,
 	) => {
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (p) {
 			// So half will be eligible to retire after the first season
 			p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;

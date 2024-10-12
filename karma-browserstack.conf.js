@@ -1,4 +1,4 @@
-const browserStack = require("../../.browserstack.json"); // eslint-disable-line import/no-unresolved
+const browserStack = require("../../.browserstack.json");
 
 const customLaunchers = [
 	{

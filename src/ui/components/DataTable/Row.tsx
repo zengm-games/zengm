@@ -1,7 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
-// eslint-disable-next-line import/no-unresolved
 
 const Row = ({
 	clickable,
@@ -76,7 +75,6 @@ const Row = ({
 					props["data-no-row-highlight"] = "true";
 				}
 
-				// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 				return (
 					<td key={i} {...props}>
 						{actualValue}

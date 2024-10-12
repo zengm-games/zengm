@@ -307,7 +307,7 @@ const updateTeams = async (
 					continue;
 				}
 
-				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+				// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				if (!allStats[statType]) {
 					allStats[statType] = [value];
 				} else {

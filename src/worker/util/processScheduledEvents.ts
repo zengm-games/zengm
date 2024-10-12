@@ -372,7 +372,7 @@ const processExpansionDraft = async (
 			return true;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!teams[t.tid]) {
 			return true;
 		}

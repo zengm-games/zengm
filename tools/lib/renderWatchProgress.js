@@ -93,7 +93,7 @@ const File = ({ filename, info }) => {
 	} else if (numMillisecondsSinceTime < TIME_CUTOFF_YELLOW) {
 		colorParams.color = "yellow";
 	} else {
-		// eslint-disable-next-line no-lonely-if
+		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
 		if (info.building) {
 			colorParams.color = "red";
 		}

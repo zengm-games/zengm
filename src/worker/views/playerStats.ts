@@ -47,7 +47,7 @@ const updatePlayers = async (
 			statsTable = PLAYER_STATS_TABLES[inputs.statType];
 		}
 
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${inputs.statType}"`);
 		}

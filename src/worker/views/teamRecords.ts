@@ -142,7 +142,7 @@ const tallyAwards = (
 					teamAwards.bestRecord++;
 				}
 			} else {
-				// eslint-disable-next-line no-lonely-if
+				// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
 				if (a.brw.tid === tid) {
 					teamAwards.bestRecord++;
 				}

@@ -78,7 +78,7 @@ const genRatings = (
 			type = "point";
 		}
 	} else {
-		// eslint-disable-next-line no-lonely-if
+		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
 		if (randType < 0.03) {
 			type = "point";
 		} else if (randType < 0.3) {

@@ -253,7 +253,7 @@ class ViewManager {
 				});
 			}
 		} else {
-			// eslint-disable-next-line no-lonely-if
+			// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
 			if (lid !== undefined) {
 				await toWorker("main", "beforeViewNonLeague", undefined);
 				localActions.updateGameAttributes({

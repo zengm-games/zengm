@@ -2571,12 +2571,6 @@ fantasy draft
 some kind of playoff series overview page, including box scores for easy access
 A year-to-date comparison of team finances with the previous year.
 dashboard info should be on a widget accessible from any screen
-player search page
-  show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
-  search by stats, ratings, or attributes
-  trade for button, or sign button if free agent, or draft button if draft prospect
-    same contextual buttons for watch list
-    can this become main UI for drafting (at least fantasy draft)
 finances
   too easy to make big $$$
     owner should take profits each year

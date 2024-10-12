@@ -1515,7 +1515,8 @@ export type SortType =
 	| "name"
 	| "number"
 	| "record"
-	| "string";
+	| "string"
+	| "pos";
 
 export type Team = {
 	tid: number;

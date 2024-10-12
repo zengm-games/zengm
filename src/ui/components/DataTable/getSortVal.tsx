@@ -4,6 +4,7 @@ import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
 import { helpers } from "../../util";
 import { normalizeIntl } from "../../../common/normalizeIntl";
+import { POSITIONS } from "../../../common";
 
 const getSortVal = (
 	value: any = null,
@@ -133,6 +134,10 @@ const getSortVal = (
 			const parts = sortVal.split(", ");
 			parts.reverse();
 			return parts.join(", ");
+		}
+
+		if (sortType === "pos") {
+			return POSITIONS.indexOf(sortVal);
 		}
 
 		if (typeof sortVal === "string") {

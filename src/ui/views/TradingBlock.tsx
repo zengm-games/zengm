@@ -450,7 +450,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: props.initialDpid !== undefined ? [props.initialDpid] : [],
 	});
-	console.log(state);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
@@ -568,7 +567,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			sumContracts += p.contract.amount;
 		}
 	}
-	console.log(sumContracts);
+
 	let footer;
 	if (sumContracts !== 0) {
 		footer = [];

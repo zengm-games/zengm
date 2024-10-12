@@ -3134,6 +3134,7 @@ const cols: {
 	},
 	Pos: {
 		desc: "Position",
+		sortType: "pos",
 	},
 	Pot: {
 		desc: "Potential Rating",

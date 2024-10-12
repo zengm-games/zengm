@@ -1,3 +1,6 @@
+support sorting mobile trade tables (like saved trades, trading block)
+- or have toggle to switch between them?
+
 move from my iterate function to async iterators
 - regex search: [\t ]iterate\(
 
@@ -225,8 +228,6 @@ OTW
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 - also random (generate a random players draft class and just put the real names on it)
-
-support sorting mobile trade tables (like saved trades, trading block)
 
 new achievements
 - moneyball 4 - win 3 championships with hardest constraint https://old.reddit.com/r/BasketballGM/comments/1bgxksp/auto_played_almost_9000_seasons_to_get_longevity/lhgnwm1/?context=3
@@ -2163,8 +2164,6 @@ live game
 - field with drive summary, football, direction, and last play
 
 ---
-
-in table, sort position by constants.POSITIONS order (like roster page in football)
 
 everywhere contract is displayed, make it in italics if not guaranteed
 - currently only on roster i think. make a component!

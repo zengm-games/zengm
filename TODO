@@ -2165,12 +2165,7 @@ live game
 
 ---
 
-everywhere contract is displayed, make it in italics if not guaranteed
-- currently only on roster i think. make a component!
-
 "Accept Trade" button on trading block
-
-AI teams should adjust finances
 
 https://developers.google.com/web/fundamentals/app-install-banners/
 
@@ -2250,8 +2245,6 @@ advanced stat table too confusing? needs vertical dividers/spacing?
 use something besides PER in player value formula
 
 per 100 possessions and totals toggle on team stats page
-
-remove polyfills
 
 add franchise leaders (stats) to team history page
 
@@ -2706,7 +2699,6 @@ hire/fire different coaches with different strategies
 boxplots for shot location stats, plus comparison to NBA data
 import/export stuff
   online "locker" that you can sync saved games to
-moving to other cities
 team finances view
   compare bar graphs against league averages?
 different size stadiums, building new stadiums

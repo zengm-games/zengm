@@ -139,7 +139,8 @@ class Team<DH extends boolean> {
 			pos: "P",
 		};
 
-		let substitutionOccurred = false;
+		// Track the first position in the batting order with a substitution, so we can leave anyone above that unsorted
+		let minBattingOrderWithSubstitution: number | undefined;
 
 		const numPositionPlayers = this.dh
 			? NUM_BATTERS_PER_SIDE
@@ -178,7 +179,9 @@ class Team<DH extends boolean> {
 					p = p2;
 				}
 
-				substitutionOccurred = true;
+				if (minBattingOrderWithSubstitution === undefined) {
+					minBattingOrderWithSubstitution = i;
+				}
 			}
 
 			if (p.id === -1) {
@@ -197,7 +200,7 @@ class Team<DH extends boolean> {
 		}
 
 		// If there were subs in the starting batting order, auto sort
-		if (substitutionOccurred) {
+		if (minBattingOrderWithSubstitution !== undefined) {
 			const originalBattingOrder = [];
 			for (const p of Object.values(playersInGame)) {
 				if (p.battingOrder >= 0) {
@@ -205,11 +208,15 @@ class Team<DH extends boolean> {
 				}
 			}
 
-			const newBattingOrder = orderBy(
-				[...originalBattingOrder],
-				p => lineupSort(p.p.ovrs.DH, p.p.compositeRating.speed),
-				"desc",
-			);
+			// Sort only for the substituted player and after
+			const newBattingOrder = [
+				...originalBattingOrder.slice(0, minBattingOrderWithSubstitution),
+				...orderBy(
+					originalBattingOrder.slice(minBattingOrderWithSubstitution),
+					p => lineupSort(p.p.ovrs.DH, p.p.compositeRating.speed),
+					"desc",
+				),
+			];
 
 			for (let i = 0; i < newBattingOrder.length; i++) {
 				const p = newBattingOrder[i];

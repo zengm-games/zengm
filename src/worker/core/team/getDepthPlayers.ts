@@ -1,4 +1,4 @@
-import { isSport, POSITIONS } from "../../../common";
+import { bySport, isSport, POSITIONS } from "../../../common";
 import type { Team } from "../../../common/types";
 import { range } from "../../../common/utils";
 
@@ -12,7 +12,14 @@ const getDepthPlayers = <
 	players: T[],
 	dh?: boolean,
 ): Record<string, T[]> => {
-	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
+	if (
+		bySport({
+			baseball: false,
+			basketball: true,
+			football: false,
+			hockey: false,
+		})
+	) {
 		throw new Error("Not implemented");
 	}
 

@@ -7,10 +7,17 @@ import {
 	type CSSProperties,
 } from "react";
 import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common";
-import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../util";
+import {
+	gradientStyleFactory,
+	helpers,
+	realtimeUpdate,
+	toWorker,
+	useLocalPartial,
+} from "../util";
 import BoxScore from "./BoxScore";
 import { range } from "../../common/utils";
 import getWinner from "../../common/getWinner";
+import PlusMinus from "./PlusMinus";
 
 const TeamNameLink = ({
 	children,
@@ -229,7 +236,82 @@ export const HeadlineScore = ({
 	);
 };
 
+/**
+ * https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJkPnPxpcVRXBlWLkzstDqRhL?compose=DmwnWsCZDhLblTHmqrNNxtXpHpcPFDdgTvQWnRHjZxklJKgDrKvMXQjlFhvrMzWLxNgRsnbTGzqv
+ * Shooting factor: FG Pts - FGM*LgEffic - (1-LgOR%)*FGX*LgEffic
+ * Turnover factor: -LgEffic*TOV
+ * Rebound factor: [(1-LgOR%)*OREB - LgOR%*OppDREB]*LgEffic
+ * Free throw factor: FTM - 0.4*FTA*LgEffic + 0.06*(FTA-FTM)*LgEffic
+ * LgEffic is the league average points per possession (like 1.06, for example). In the NBA, it's about 1.15. In the Olympics, it was about 1.11. In the WNBA it's around 1.02. Lower at lower levels, usually.
+ * LgOR% is the league average offensive rebounding percentage. It tends to be about 0.28, though can be higher at lower levels.
+ * Do those calculations for each team, then do the difference so things approximately add up to the final score difference.
+ */
+const getFourFactorsNetPoints = (teams: any[]) => {
+	const lgEffic = 1.15;
+	const lgOrbPct = 0.28;
+
+	// For testing with data from https://x.com/DeanO_Lytics/status/1846229178808406137
+	/*const teams = [
+		{
+			fg: 43,
+			fga: 92,
+			tp: 16,
+			tov: 16,
+			ft: 18,
+			fta: 28,
+			drb: 30,
+			orb: 17,
+		},
+		{
+			fg: 43,
+			fga: 79,
+			tp: 13,
+			tov: 18,
+			ft: 17,
+			fta: 29,
+			drb: 33,
+			orb: 7,
+		},
+	];*/
+
+	const fourFactorsNetPoints = {
+		efg: 0,
+		tov: 0,
+		orb: 0,
+		ft: 0,
+	};
+	for (let i = 0; i < teams.length; i++) {
+		const t = teams[i];
+		const t2 = teams[1 - i];
+
+		const sign = i === 0 ? 1 : -1;
+
+		const fgPts = 2 * t.fg + t.tp;
+
+		fourFactorsNetPoints.efg +=
+			sign *
+			(fgPts - t.fg * lgEffic - (1 - lgOrbPct) * (t.fga - t.fg) * lgEffic);
+		fourFactorsNetPoints.tov += sign * (-lgEffic * t.tov);
+		fourFactorsNetPoints.orb +=
+			sign * ((1 - lgOrbPct) * t.orb - lgOrbPct * t2.drb) * lgEffic;
+		fourFactorsNetPoints.ft +=
+			sign * (t.ft - 0.4 * t.fta * lgEffic + 0.06 * (t.fta - t.ft) * lgEffic);
+	}
+
+	return fourFactorsNetPoints;
+};
+
 const FourFactors = ({ teams }: { teams: any[] }) => {
+	const fourFactorsNetPoints = getFourFactorsNetPoints(teams);
+
+	// +10 shows up in the gradient as maximum color, unless there is one component beyond that, in which case we use that value to highlight how extreme it is. But keeping +10 as the minumum possible max is good to show when they are all pretty close.
+	const maxMagnitude = Math.max(
+		Math.max(...Object.values(fourFactorsNetPoints).map(x => Math.abs(x))),
+		10,
+	);
+
+	const gradientStyle = gradientStyleFactory(-maxMagnitude, 0, 0, maxMagnitude);
+
 	return (
 		<table className="table table-sm mb-2 mb-sm-0">
 			<thead>
@@ -257,23 +339,64 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 					const orbp2 = (100 * t2.orb) / (t2.orb + t.drb);
 					const ftpFga2 = t2.ft / t2.fga;
 
+					// Can't always take Math.abs because sometimes the 4 factors leader is not the net pts leader, since the 4 factors values are not used directly in the net pts formulas
+					const gradientSign = i === 0 ? 1 : -1;
+
 					return (
 						<tr key={t.abbrev}>
-							<td className={efg > efg2 ? "table-success" : undefined}>
+							<td
+								style={
+									efg > efg2
+										? gradientStyle(gradientSign * fourFactorsNetPoints.efg)
+										: undefined
+								}
+							>
 								{helpers.roundStat(efg, "efg")}
 							</td>
-							<td className={tovp < tovp2 ? "table-success" : undefined}>
+							<td
+								style={
+									tovp < tovp2
+										? gradientStyle(gradientSign * fourFactorsNetPoints.tov)
+										: undefined
+								}
+							>
 								{helpers.roundStat(tovp, "tovp")}
 							</td>
-							<td className={orbp > orbp2 ? "table-success" : undefined}>
+							<td
+								style={
+									orbp > orbp2
+										? gradientStyle(gradientSign * fourFactorsNetPoints.orb)
+										: undefined
+								}
+							>
 								{helpers.roundStat(orbp, "orbp")}
 							</td>
-							<td className={ftpFga > ftpFga2 ? "table-success" : undefined}>
+							<td
+								style={
+									ftpFga > ftpFga2
+										? gradientStyle(gradientSign * fourFactorsNetPoints.ft)
+										: undefined
+								}
+							>
 								{helpers.roundStat(ftpFga, "ftpFga")}
 							</td>
 						</tr>
 					);
 				})}
+				<tr>
+					<td>
+						<PlusMinus color={false}>{fourFactorsNetPoints.efg}</PlusMinus>
+					</td>
+					<td>
+						<PlusMinus color={false}>{fourFactorsNetPoints.tov}</PlusMinus>
+					</td>
+					<td>
+						<PlusMinus color={false}>{fourFactorsNetPoints.orb}</PlusMinus>
+					</td>
+					<td>
+						<PlusMinus color={false}>{fourFactorsNetPoints.ft}</PlusMinus>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	);

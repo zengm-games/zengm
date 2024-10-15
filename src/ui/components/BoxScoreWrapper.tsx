@@ -17,7 +17,7 @@ import {
 import BoxScore from "./BoxScore";
 import { range } from "../../common/utils";
 import getWinner from "../../common/getWinner";
-import PlusMinus from "./PlusMinus";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 
 const TeamNameLink = ({
 	children,
@@ -301,6 +301,46 @@ const getFourFactorsNetPoints = (teams: any[]) => {
 	return fourFactorsNetPoints;
 };
 
+const FourFactorsAmountLine = ({
+	amount,
+	teams,
+}: {
+	amount: number;
+	teams: any[];
+}) => {
+	const abbrev = amount > 0 ? teams[0].abbrev : teams[1].abbrev;
+	return (
+		<>
+			+{Math.abs(amount).toFixed(1)} for {abbrev}
+		</>
+	);
+};
+
+const FourFactorsTotalLine = ({
+	fourFactorsNetPoints,
+	teams,
+}: {
+	fourFactorsNetPoints: ReturnType<typeof getFourFactorsNetPoints>;
+	teams: any[];
+}) => {
+	const total =
+		fourFactorsNetPoints.efg +
+		fourFactorsNetPoints.tov +
+		fourFactorsNetPoints.orb +
+		fourFactorsNetPoints.ft;
+	const totalFixed = Math.abs(total).toFixed(1);
+	if (totalFixed === "0.0") {
+		return "even";
+	}
+
+	const abbrev = total > 0 ? teams[0].abbrev : teams[1].abbrev;
+	return (
+		<>
+			+{totalFixed} for {abbrev}
+		</>
+	);
+};
+
 const FourFactors = ({ teams }: { teams: any[] }) => {
 	const fourFactorsNetPoints = getFourFactorsNetPoints(teams);
 
@@ -313,92 +353,128 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 	const gradientStyle = gradientStyleFactory(-maxMagnitude, 0, 0, maxMagnitude);
 
 	return (
-		<table className="table table-sm mb-2 mb-sm-0">
-			<thead>
-				<tr />
-				<tr>
-					<th title="Four Factors: Effective Field Goal Percentage">eFG%</th>
-					<th title="Four Factors: Turnover Percentage">TOV%</th>
-					<th title="Four Factors: Offensive Rebound Percentage">ORB%</th>
-					<th title="Four Factors: Free Throws Made Over Field Goal Attempts">
-						FT/FGA
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				{teams.map((t, i) => {
-					const t2 = teams[1 - i];
+		<OverlayTrigger
+			overlay={
+				<Popover>
+					<Popover.Body style={{ width: 170 }}>
+						<p>Estimated value of four factors in net points:</p>
+						<ul className="list-unstyled mb-0">
+							<li>
+								eFG%:{" "}
+								<FourFactorsAmountLine
+									amount={fourFactorsNetPoints.efg}
+									teams={teams}
+								/>
+							</li>
+							<li>
+								TOV%:{" "}
+								<FourFactorsAmountLine
+									amount={fourFactorsNetPoints.tov}
+									teams={teams}
+								/>
+							</li>
+							<li>
+								ORB%:{" "}
+								<FourFactorsAmountLine
+									amount={fourFactorsNetPoints.orb}
+									teams={teams}
+								/>
+							</li>
+							<li>
+								FT/FGA:{" "}
+								<FourFactorsAmountLine
+									amount={fourFactorsNetPoints.ft}
+									teams={teams}
+								/>
+							</li>
+							<li className="fw-bold">
+								Total:{" "}
+								<FourFactorsTotalLine
+									fourFactorsNetPoints={fourFactorsNetPoints}
+									teams={teams}
+								/>
+							</li>
+						</ul>
+					</Popover.Body>
+				</Popover>
+			}
+			placement="bottom"
+			rootClose
+			trigger="click"
+		>
+			<table className="table table-sm mb-2 mb-sm-0">
+				<thead>
+					<tr />
+					<tr>
+						<th title="Four Factors: Effective Field Goal Percentage">eFG%</th>
+						<th title="Four Factors: Turnover Percentage">TOV%</th>
+						<th title="Four Factors: Offensive Rebound Percentage">ORB%</th>
+						<th title="Four Factors: Free Throws Made Over Field Goal Attempts">
+							FT/FGA
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{teams.map((t, i) => {
+						const t2 = teams[1 - i];
 
-					const efg = (100 * (t.fg + t.tp / 2)) / t.fga;
-					const tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
-					const orbp = (100 * t.orb) / (t.orb + t2.drb);
-					const ftpFga = t.ft / t.fga;
+						const efg = (100 * (t.fg + t.tp / 2)) / t.fga;
+						const tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
+						const orbp = (100 * t.orb) / (t.orb + t2.drb);
+						const ftpFga = t.ft / t.fga;
 
-					const efg2 = (100 * (t2.fg + t2.tp / 2)) / t2.fga;
-					const tovp2 = (100 * t2.tov) / (t2.fga + 0.44 * t2.fta + t2.tov);
-					const orbp2 = (100 * t2.orb) / (t2.orb + t.drb);
-					const ftpFga2 = t2.ft / t2.fga;
+						const efg2 = (100 * (t2.fg + t2.tp / 2)) / t2.fga;
+						const tovp2 = (100 * t2.tov) / (t2.fga + 0.44 * t2.fta + t2.tov);
+						const orbp2 = (100 * t2.orb) / (t2.orb + t.drb);
+						const ftpFga2 = t2.ft / t2.fga;
 
-					// Can't always take Math.abs because sometimes the 4 factors leader is not the net pts leader, since the 4 factors values are not used directly in the net pts formulas
-					const gradientSign = i === 0 ? 1 : -1;
+						// Can't always take Math.abs because sometimes the 4 factors leader is not the net pts leader, since the 4 factors values are not used directly in the net pts formulas
+						const gradientSign = i === 0 ? 1 : -1;
 
-					return (
-						<tr key={t.abbrev}>
-							<td
-								style={
-									efg > efg2
-										? gradientStyle(gradientSign * fourFactorsNetPoints.efg)
-										: undefined
-								}
-							>
-								{helpers.roundStat(efg, "efg")}
-							</td>
-							<td
-								style={
-									tovp < tovp2
-										? gradientStyle(gradientSign * fourFactorsNetPoints.tov)
-										: undefined
-								}
-							>
-								{helpers.roundStat(tovp, "tovp")}
-							</td>
-							<td
-								style={
-									orbp > orbp2
-										? gradientStyle(gradientSign * fourFactorsNetPoints.orb)
-										: undefined
-								}
-							>
-								{helpers.roundStat(orbp, "orbp")}
-							</td>
-							<td
-								style={
-									ftpFga > ftpFga2
-										? gradientStyle(gradientSign * fourFactorsNetPoints.ft)
-										: undefined
-								}
-							>
-								{helpers.roundStat(ftpFga, "ftpFga")}
-							</td>
-						</tr>
-					);
-				})}
-				<tr>
-					<td>
-						<PlusMinus color={false}>{fourFactorsNetPoints.efg}</PlusMinus>
-					</td>
-					<td>
-						<PlusMinus color={false}>{fourFactorsNetPoints.tov}</PlusMinus>
-					</td>
-					<td>
-						<PlusMinus color={false}>{fourFactorsNetPoints.orb}</PlusMinus>
-					</td>
-					<td>
-						<PlusMinus color={false}>{fourFactorsNetPoints.ft}</PlusMinus>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+						return (
+							<tr key={t.abbrev}>
+								<td
+									style={
+										efg > efg2
+											? gradientStyle(gradientSign * fourFactorsNetPoints.efg)
+											: undefined
+									}
+								>
+									{helpers.roundStat(efg, "efg")}
+								</td>
+								<td
+									style={
+										tovp < tovp2
+											? gradientStyle(gradientSign * fourFactorsNetPoints.tov)
+											: undefined
+									}
+								>
+									{helpers.roundStat(tovp, "tovp")}
+								</td>
+								<td
+									style={
+										orbp > orbp2
+											? gradientStyle(gradientSign * fourFactorsNetPoints.orb)
+											: undefined
+									}
+								>
+									{helpers.roundStat(orbp, "orbp")}
+								</td>
+								<td
+									style={
+										ftpFga > ftpFga2
+											? gradientStyle(gradientSign * fourFactorsNetPoints.ft)
+											: undefined
+									}
+								>
+									{helpers.roundStat(ftpFga, "ftpFga")}
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</OverlayTrigger>
 	);
 };
 

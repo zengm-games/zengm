@@ -1,7 +1,9 @@
 4 factors Net Pts metric from Basketball Beyond Paper https://x.com/basketball_gm/status/1846231902417478073
-- show total on hover
-  - test mobile
+- pointer on hover of table
 - if possible, use estimates from current league for lgEffic and lgOrbPct
+  - after N games?
+  - prior to N games, estimate from league settings
+  - always estimate? test
 - blog
   - sometimes they can point in opposite directions http://localhost/l/132/game_log/CLE_5/2024/242
     - orb-drb: 15-31 and 16-29

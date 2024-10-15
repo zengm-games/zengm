@@ -247,6 +247,7 @@ export const HeadlineScore = ({
  * Do those calculations for each team, then do the difference so things approximately add up to the final score difference.
  */
 const getFourFactorsNetPoints = (teams: any[]) => {
+	// These should be adjusted for league averages, but doens't seem to matter much, so whatever
 	const lgEffic = 1.15;
 	const lgOrbPct = 0.28;
 
@@ -309,9 +310,14 @@ const FourFactorsAmountLine = ({
 	teams: any[];
 }) => {
 	const abbrev = amount > 0 ? teams[0].abbrev : teams[1].abbrev;
+	const amountFixed = Math.abs(amount).toFixed(1);
+	if (amountFixed === "0.0") {
+		return "even";
+	}
+
 	return (
 		<>
-			+{Math.abs(amount).toFixed(1)} for {abbrev}
+			+{amountFixed} for {abbrev}
 		</>
 	);
 };
@@ -402,7 +408,7 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 			rootClose
 			trigger="click"
 		>
-			<table className="table table-sm mb-2 mb-sm-0">
+			<table className="table table-sm mb-2 mb-sm-0 cursor-pointer">
 				<thead>
 					<tr />
 					<tr>

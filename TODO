@@ -1,21 +1,3 @@
-4 factors Net Pts metric from Basketball Beyond Paper https://x.com/basketball_gm/status/1846231902417478073
-- pointer on hover of table
-- if possible, use estimates from current league for lgEffic and lgOrbPct
-  - after N games?
-  - prior to N games, estimate from league settings
-  - always estimate? test
-- blog
-  - sometimes they can point in opposite directions http://localhost/l/132/game_log/CLE_5/2024/242
-    - orb-drb: 15-31 and 16-29
-    - orb%: 15/(15+29)=0.3409 and 16/(16+31)=0.3404 - so 1st team is better
-    - net pts orb metric: ((1-0.28)*15 - 0.28*29)*1.15=3.082 and ((1-0.28)*16 - 0.28*31)*1.15=3.266 - so 2nd team is better
-  - point estimate on hover
-  - color of point estimate
-    - http://localhost/l/132/game_log/CLE_5/2024/57 - both won 2, but MXC's are larger wins
-    - http://localhost/l/132/game_log/CLE_5/2024/91 - POR only won 1 category, but it's by a huge margin, so it outweighs the other 3
-    - http://localhost/l/132/game_log/CLE_5/2024/183 - all factors pretty close, so all highlighting is pretty light
-    - http://localhost/l/132/game_log/CLE_5/2024/167 - close game in total, but very wide margins in the 4 factors
-
 Strike out throw out DP does not advance batting order https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
 
 button to heal injury on edit player page, or give random injury if healthy

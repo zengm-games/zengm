@@ -15,7 +15,6 @@ import {
 } from "../../../common";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
 import statsRowIsCurrent from "../player/statsRowIsCurrent";
-import { P_FATIGUE_DAILY_REDUCTION } from "./writePlayerStats";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 

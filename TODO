@@ -1,4 +1,12 @@
+wOBA, wrc, wrc+
+
 5th starter should be treated like a reliever in playoffs, assuming none of the top 4 starters are injured https://discord.com/channels/290013534023057409/290015591216054273/1295809141805416541
+
+option to hide jersey numbers on team history page https://discord.com/channels/290013534023057409/331882115119448065/1295583496084914277
+
+separator for inactive years on player profile https://discord.com/channels/290013534023057409/331882115119448065/1294509668000862228
+
+in updateClinchedPlayoffs, calculate with tiebreakers during last few days of the regular season, because that's the only time it really matters, and maybe it's fast enough for that https://discord.com/channels/290013534023057409/290015591216054273/1295887837467512905
 
 Strike out throw out DP does not advance batting order https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
 

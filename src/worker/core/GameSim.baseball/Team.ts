@@ -8,7 +8,7 @@ import { orderBy } from "../../../common/utils";
 import { random } from "../../util";
 import { lineupSort } from "../team/genDepth.baseball";
 import { fatigueFactor } from "./fatigueFactor";
-import { getStartingPitcher } from "./getStartingPitcher";
+import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher";
 import type { PlayerGameSim, TeamGameSim } from "./types";
 
 type GamePositions<DH extends boolean> =
@@ -30,6 +30,7 @@ class Team<DH extends boolean> {
 	t: TeamGameSim;
 	dh: DH;
 	allStarGame: boolean;
+	playoffs: boolean;
 	playersByPid: Record<number, PlayerGameSim>;
 	playersInGame: Record<number, PlayerInGame<DH>>;
 	playersInGameByPos: Record<GamePositions<DH>, PlayerInGame<DH>>;
@@ -52,10 +53,11 @@ class Team<DH extends boolean> {
 	// Depth chart, but adjusted to remove injured players and capped at the number of active players
 	depth: Depth;
 
-	constructor(t: TeamGameSim, dh: DH, allStarGame: boolean) {
+	constructor(t: TeamGameSim, dh: DH, allStarGame: boolean, playoffs: boolean) {
 		this.t = t;
 		this.dh = dh;
 		this.allStarGame = allStarGame;
+		this.playoffs = playoffs;
 
 		this.playersInGame = {};
 
@@ -274,9 +276,18 @@ class Team<DH extends boolean> {
 				value: number;
 		  }
 		| undefined {
+		// 5 starters normally, but only 4 in the playoffs so use the last starter as a reliever, unless one of the top 4 starters is injured
+		let numStartingPitchers = NUM_STARTING_PITCHERS;
+		if (this.playoffs) {
+			const starters = this.depth.pitchers.slice(0, NUM_STARTING_PITCHERS - 1);
+			if (starters.every(p => !p.injured)) {
+				numStartingPitchers = NUM_STARTING_PITCHERS - 1;
+			}
+		}
+
 		const availablePitchers = this.depth.pitchers
 			.map((p, i) => ({
-				starter: i < NUM_STARTING_PITCHERS,
+				starter: i < numStartingPitchers,
 				p,
 				index: i,
 				value:
@@ -297,6 +308,7 @@ class Team<DH extends boolean> {
 		}
 
 		const closer =
+			healthyPitchers.find(p => p.index === CLOSER_INDEX) ??
 			healthyPitchers.find(p => !p.starter) ??
 			random.choice(healthyPitchers, choiceWeight) ??
 			random.choice(availablePitchers);

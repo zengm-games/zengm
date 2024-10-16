@@ -14,6 +14,7 @@ import GameSimBase from "../GameSimBase";
 import getWinner from "../../../common/getWinner";
 import { maxBy } from "../../../common/utils";
 import { choice } from "../../../common/random";
+import { PHASE } from "../../../common";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -94,9 +95,10 @@ class GameSim extends GameSimBase {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 
 		// If a team plays twice in a day, this needs to be a deep copy
+		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 		this.team = [
-			new Team(teams[0], dh, this.allStarGame),
-			new Team(teams[1], dh, this.allStarGame),
+			new Team(teams[0], dh, this.allStarGame, playoffs),
+			new Team(teams[1], dh, this.allStarGame, playoffs),
 		];
 
 		if (!neutralSite) {

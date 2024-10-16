@@ -3,7 +3,7 @@ import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball";
 import { g, random } from "../../util";
 import type { PlayerGameSim } from "./types";
 
-const CLOSER_INDEX = NUM_STARTING_PITCHERS;
+export const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 
 export const getStartingPitcher = (
 	pitchers: PlayerGameSim[],

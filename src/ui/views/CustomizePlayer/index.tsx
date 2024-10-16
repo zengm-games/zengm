@@ -746,7 +746,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</button>
 								</div>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Age</label>
 								<input
 									type="text"
@@ -756,7 +756,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Team</label>
 								<select
 									className="form-select"
@@ -776,9 +776,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									})}
 								</select>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">
-									Height (inches){" "}
+									Height (in){" "}
 									<HelpPopover title="Height (inches)">
 										Height (inches) is just for show. The height rating is what
 										actually gets used in game simulations.
@@ -791,7 +791,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.hgt}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">
 									Weight (lbs){" "}
 									<HelpPopover title="Weight (lbs)">
@@ -806,7 +806,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.weight}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">
 									Position{" "}
 									<HelpPopover title="Position">
@@ -845,7 +845,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									})}
 								</select>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-6 col-sm-3 mb-3">
 								<label className="form-label">Jersey Number</label>
 								<div className="input-group">
 									<input
@@ -904,7 +904,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</span>
 								) : null}
 							</div>
-							<div className="col-sm-6 mb-3">
+							<div className="col-6 mb-3">
 								<label className="form-label">Country</label>
 								<div className="input-group">
 									<input
@@ -947,7 +947,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</button>
 								</div>
 							</div>
-							<div className="col-sm-6 mb-3">
+							<div className="col-6 mb-3">
 								<label className="form-label">College</label>
 								<div className="input-group">
 									<input
@@ -985,7 +985,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									</button>
 								</div>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Draft Class</label>
 								<input
 									type="text"
@@ -995,7 +995,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Draft Round</label>
 								<input
 									type="text"
@@ -1005,7 +1005,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode || draftTeamUndrafted}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Draft Pick</label>
 								<input
 									type="text"
@@ -1015,7 +1015,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode || draftTeamUndrafted}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Draft Team</label>
 								<select
 									className="form-select"
@@ -1033,7 +1033,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									})}
 								</select>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Year of Death</label>
 								<input
 									type="text"
@@ -1043,7 +1043,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 mb-3">
+							<div className="col-3 mb-3">
 								<label className="form-label">Hall of Fame</label>
 								<select
 									className="form-select"
@@ -1057,7 +1057,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</div>
 						</div>
 						<div className="row">
-							<div className="col-sm-6 mb-3">
+							<div className="col-6 mb-3">
 								<label className="form-label">Contract Amount</label>
 								<div className="input-group">
 									<div className="input-group-text">$</div>
@@ -1071,7 +1071,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<div className="input-group-text">M per year</div>
 								</div>
 							</div>
-							<div className="col-sm-6 mb-3">
+							<div className="col-6 mb-3">
 								<label className="form-label">Contract Expiration</label>
 								<input
 									type="text"
@@ -1081,7 +1081,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-6 mb-3">
+							<div className="col-6 mb-3">
 								<label className="form-label">Injury</label>
 								<input
 									type="text"
@@ -1091,7 +1091,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-6 mb-3">
+							<div className="col-6 mb-3">
 								<label className="form-label">Games Out</label>
 								<input
 									type="text"
@@ -1102,7 +1102,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							{playerMoodTraits ? (
-								<div className="col-sm-3 mb-3">
+								<div className="col-3 mb-3">
 									<label className="form-label">Mood Traits</label>
 									{helpers.keys(MOOD_TRAITS).map(trait => (
 										<div className="form-check" key={trait}>

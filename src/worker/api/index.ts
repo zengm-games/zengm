@@ -1866,6 +1866,10 @@ const getRandomCountry = async () => {
 	return withState(random.choice(playerBioInfo.frequencies)[0]);
 };
 
+const getRandomInjury = () => {
+	return player.injury(DEFAULT_LEVEL);
+};
+
 const getRandomJerseyNumber = async ({
 	pid,
 	pos,
@@ -4505,6 +4509,7 @@ export default {
 		getProjectedAttendance,
 		getRandomCollege,
 		getRandomCountry,
+		getRandomInjury,
 		getRandomJerseyNumber,
 		getRandomName,
 		getRandomRatings,

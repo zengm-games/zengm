@@ -1055,6 +1055,89 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<option value="no">No</option>
 								</select>
 							</div>
+							<div className="col-sm-6 mb-3">
+								<label className="form-label">Injury and Games Out</label>
+								<div className="input-group">
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "injury", "type")}
+										value={p.injury.type}
+										disabled={!godMode}
+									/>
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(
+											null,
+											"injury",
+											"gamesRemaining",
+										)}
+										value={p.injury.gamesRemaining}
+										disabled={!godMode}
+										style={{
+											maxWidth: 70,
+										}}
+									/>
+									{p.injury.type !== "Healthy" ||
+									p.injury.gamesRemaining !== 0 ? (
+										<button
+											className="btn btn-secondary"
+											type="button"
+											onClick={async event => {
+												event.preventDefault();
+
+												setState(prevState => {
+													const p: any = {
+														...prevState.p,
+														injury: {
+															type: "Healthy",
+															gamesRemaining: 0,
+														},
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+											disabled={!godMode}
+										>
+											Heal
+										</button>
+									) : (
+										<button
+											className="btn btn-secondary"
+											type="button"
+											onClick={async event => {
+												event.preventDefault();
+
+												const injury = await toWorker(
+													"main",
+													"getRandomInjury",
+													undefined,
+												);
+
+												setState(prevState => {
+													const p: any = {
+														...prevState.p,
+														injury,
+													};
+
+													return {
+														...prevState,
+														p,
+													};
+												});
+											}}
+											disabled={!godMode}
+										>
+											Injure
+										</button>
+									)}
+								</div>
+							</div>
 						</div>
 						<div className="row">
 							<div className="col-6 mb-3">
@@ -1078,26 +1161,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "contract", "exp")}
 									value={p.contract.exp}
-									disabled={!godMode}
-								/>
-							</div>
-							<div className="col-6 mb-3">
-								<label className="form-label">Injury</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "injury", "type")}
-									value={p.injury.type}
-									disabled={!godMode}
-								/>
-							</div>
-							<div className="col-6 mb-3">
-								<label className="form-label">Games Out</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "injury", "gamesRemaining")}
-									value={p.injury.gamesRemaining}
 									disabled={!godMode}
 								/>
 							</div>

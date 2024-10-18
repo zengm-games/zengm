@@ -334,8 +334,8 @@ importers:
         specifier: ^9.1.6
         version: 9.1.6
       import-jsx:
-        specifier: ^5.0.0
-        version: 5.0.0
+        specifier: github:dumbmatter/import-jsx#import-attributes
+        version: https://codeload.github.com/dumbmatter/import-jsx/tar.gz/b4f37a508f7b73d86a59dd77118eb31993ea7d08
       ink:
         specifier: ^5.0.1
         version: 5.0.1(@types/react@18.3.11)(react@18.3.1)
@@ -3406,8 +3406,9 @@ packages:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
 
-  import-jsx@5.0.0:
-    resolution: {integrity: sha512-IovW6KNUJDAJCuzvG8Y3+srknbwgdLMCScqKe51Z0lrHogDu+Zw4g2wJQeV1KMLDwB4S6EGEXCFphconrrY4qg==}
+  import-jsx@https://codeload.github.com/dumbmatter/import-jsx/tar.gz/b4f37a508f7b73d86a59dd77118eb31993ea7d08:
+    resolution: {tarball: https://codeload.github.com/dumbmatter/import-jsx/tar.gz/b4f37a508f7b73d86a59dd77118eb31993ea7d08}
+    version: 5.0.0
     engines: {node: '>=14.16'}
 
   import-local@3.2.0:
@@ -9142,7 +9143,7 @@ snapshots:
       parent-module: 1.0.1
       resolve-from: 4.0.0
 
-  import-jsx@5.0.0:
+  import-jsx@https://codeload.github.com/dumbmatter/import-jsx/tar.gz/b4f37a508f7b73d86a59dd77118eb31993ea7d08:
     dependencies:
       '@babel/core': 7.25.8
       '@babel/preset-react': 7.25.7(@babel/core@7.25.8)

@@ -262,9 +262,21 @@ const getRealFinalsMvp = async (
 				const ydsFromScrimmage = p.recYds + p.rusYds;
 				const otherTD =
 					p.recTD + p.rusTD + p.prTD + p.krTD + p.defIntTD + p.defFmbTD;
+				const defense =
+					1.75 * p.defSk +
+					(p.defTckSolo + p.defTckAst) / 10 +
+					p.defInt * 2 +
+					p.defPssDef +
+					p.defFmbFrc * 2 +
+					p.defFmbRec * 2 +
+					5 * p.defSft;
 				info.score +=
 					factor *
-					(p.pssYds / 25 + 4 * p.pssTD + ydsFromScrimmage / 10 + 6 * otherTD);
+					(p.pssYds / 25 +
+						4 * p.pssTD +
+						ydsFromScrimmage / 10 +
+						6 * otherTD +
+						1.75 * defense);
 				playerInfos.set(p.pid, info);
 			}
 		}
@@ -308,6 +320,8 @@ export const dpoyScore = (p: PlayerFiltered) => {
 		p.currentStats.defTck / 10 +
 		p.currentStats.defInt * 4 +
 		p.currentStats.defPssDef +
+		p.currentStats.defFmbFrc * 2 +
+		p.currentStats.defFmbRec * 2 +
 		5 *
 			(p.currentStats.defFmbTD +
 				p.currentStats.defIntTD +

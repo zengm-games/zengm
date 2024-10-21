@@ -1,3 +1,13 @@
+add option to make rookie contracts not signed, even if there is no hard cap https://discord.com/channels/@me/1256311871980441670/1297925653685080136
+
+get rid of checks for raw state/province names https://old.reddit.com/r/ZenGMHockey/comments/1g57hg5/if_you_make_a_real_state_a_new_country_you_cant/
+- still need to check for 2 letter abbrevs, cause that's what alexnoob uses. make sure about that though
+- maybe only do this if it's in playerBioInfo, like if there is a country called Maryland
+
+Don't allow play if versions in tabs don't match
+- close worker?
+- newPhasePreseason being called twice in two different tabs and somehow updating the database twice?
+
 on trade graphs, don't use 0% and 100% as limits for wins graph https://discord.com/channels/290013534023057409/331882115119448065/1295991083637149829
 
 wOBA, wrc, wrc+
@@ -1419,6 +1429,7 @@ add some more built-in teams
   - Jerusalem or Tel Aviv, Israel
   - Taipei, Taiwan
   - Antarctica Penguins
+  - Maybe redo the LA Earthquakes and Philly Cheesesteaks. Maybe with new team names too?
   - ZenGM
   - suggestions: https://mail.google.com/mail/u/0/#inbox/FMfcgzQVwnbtxLFxRJvngPQlqJdrWdWN
 
@@ -2174,9 +2185,6 @@ https://developers.google.com/web/fundamentals/app-install-banners/
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value
-
-Don't allow play if versions in tabs don't match
-- close worker?
 
 ---
 

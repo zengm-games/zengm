@@ -216,8 +216,6 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		// Kicking
 		{
-			// Ignore schedule length normalization
-
 			const kPlayingTime =
 				p.stats.xpa +
 				3 *
@@ -235,15 +233,14 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				paaTotal += 3 * (p.stats.fg50 - p.stats.fga50 * league.fgp50);
 
 				const pctTeamPlayingTime = kPlayingTime / t.stats.kPlayingTime;
-				const avgAV = 3.125 * pctTeamPlayingTime;
+				const avgAV = (3.125 / 16) * t.stats.gp * pctTeamPlayingTime;
 				const rawAV = avgAV + paaTotal / 5;
-				score += rawAV;
+				score += (16 * rawAV) / t.stats.gp;
 			}
 		}
 
 		// Punting
 		{
-			// Ignore schedule length normalization
 			if (
 				p.stats.pnt + p.stats.pntBlk > 0 &&
 				t.stats.pnt + t.stats.pntBlk > 0
@@ -255,9 +252,9 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 					(p.stats.pnt + p.stats.pntBlk) * (adjPntYPA - league.adjPntYPA);
 				const pctTeamPlayingTime =
 					(p.stats.pnt + p.stats.pntBlk) / (t.stats.pnt + t.stats.pntBlk);
-				const avgAV = 2.1875 * pctTeamPlayingTime;
+				const avgAV = (2.1875 / 16) * t.stats.gp * pctTeamPlayingTime;
 				const rawAV = avgAV + adjPuntYdsAboveAvg / 200;
-				score += rawAV;
+				score += (16 * rawAV) / t.stats.gp;
 			}
 		}
 

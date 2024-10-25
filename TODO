@@ -8,8 +8,6 @@ Don't allow play if versions in tabs don't match
 - close worker?
 - newPhasePreseason being called twice in two different tabs and somehow updating the database twice?
 
-on trade graphs, don't use 0% and 100% as limits for wins graph https://discord.com/channels/290013534023057409/331882115119448065/1295991083637149829
-
 wOBA, wrc, wrc+
 
 option to hide jersey numbers on team history page https://discord.com/channels/290013534023057409/331882115119448065/1295583496084914277

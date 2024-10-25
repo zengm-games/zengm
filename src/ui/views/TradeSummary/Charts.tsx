@@ -247,13 +247,21 @@ const Charts = ({
 	View<"tradeSummary">,
 	"phase" | "season" | "seasonsToPlot" | "stat" | "teams" | "usePts"
 >) => {
+	const pctKey = usePts ? "ptsPct" : "winp";
+
 	const allStats: number[] = [];
+	const allPcts: number[] = [];
 	const seasons: number[] = [];
 
 	for (const row of seasonsToPlot) {
 		for (const team of row.teams) {
 			if (team.stat !== undefined) {
 				allStats.push(team.stat);
+
+				const pct = team[pctKey];
+				if (pct !== undefined) {
+					allPcts.push(pct);
+				}
 			}
 		}
 		seasons.push(row.season);
@@ -261,8 +269,9 @@ const Charts = ({
 
 	const xDomain = [seasons[0], seasons.at(-1)] as [number, number];
 
+	const yDomainPct = [Math.min(0.25, ...allPcts), Math.max(0.75, ...allPcts)];
 	const yScale = scaleLinear({
-		domain: [0, 1],
+		domain: yDomainPct,
 		range: [HEIGHT, 0],
 	});
 
@@ -284,7 +293,7 @@ const Charts = ({
 					usePts ? "point" : "winning"
 				} percentages before and after the
 				trade`}
-				valueKey={usePts ? "ptsPct" : "winp"}
+				valueKey={pctKey}
 				xDomain={xDomain}
 				yScale={yScale}
 				yTickFormat={helpers.roundWinp}

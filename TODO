@@ -1,6 +1,3 @@
-in exhibition games, add special case for current season (if <= playoffs phase) to use the current roster rather than all players with stats for a team. otherwise, players who you just released will still show up. same with traded players.
-- https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJZsPVhMCMNVTJqjvPPWBMxGf
-
 add option to make rookie contracts not signed, even if there is no hard cap https://discord.com/channels/@me/1256311871980441670/1297925653685080136
 
 get rid of checks for raw state/province names https://old.reddit.com/r/ZenGMHockey/comments/1g57hg5/if_you_make_a_real_state_a_new_country_you_cant/

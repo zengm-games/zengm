@@ -20,7 +20,10 @@ const getClinchedPlayoffs = async (
 
 	const usePts = g.get("pointsFormula", "current") !== "";
 
-	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow.
+	const numGames = g.get("numGames", "current");
+
+	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow. You could imagine using tiebreakers only on the last few games of the season... but really it doesn't even work. The bestCases check below isn't actually using the schedule, and it doesn't consider all permutations of game outcomes (which technically would be necessary for all possible tiebreakers) - that would be needed.
+	// const skipTiebreakers = teamSeasons.every(row => numGames - helpers.getTeamSeasonGp(row) > 3);
 	const skipTiebreakers = true;
 
 	const output: ClinchedPlayoffs[] = [];
@@ -29,7 +32,7 @@ const getClinchedPlayoffs = async (
 			const gp = helpers.getTeamSeasonGp(t2);
 
 			// Will be wrong if a team is missing a game due to scheduling constraints
-			const gamesLeft = g.get("numGames", "current") - gp;
+			const gamesLeft = numGames - gp;
 
 			const stats = teamStats.get(t2.tid);
 

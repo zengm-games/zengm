@@ -11,6 +11,7 @@ Don't allow play if versions in tabs don't match
 wOBA, wrc, wrc+
 
 option to hide jersey numbers on team history page https://discord.com/channels/290013534023057409/331882115119448065/1295583496084914277
+- need to support JSX in title and button inline, for sort menu
 
 separator for inactive years on player profile https://discord.com/channels/290013534023057409/331882115119448065/1294509668000862228
 

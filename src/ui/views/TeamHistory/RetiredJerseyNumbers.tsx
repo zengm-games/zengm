@@ -425,8 +425,10 @@ const RetiredJerseyNumbers = ({
 							}`}
 						>
 							<span
-								className={`glyphicon glyphicon-arrow-${
-									jerseySortDirection === "asc" ? "down" : "up"
+								className={`glyphicon ${
+									jerseySortDirection === "asc"
+										? "glyphicon-arrow-down"
+										: "glyphicon-arrow-up"
 								}`}
 							/>
 						</button>

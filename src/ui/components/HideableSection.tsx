@@ -38,7 +38,7 @@ const useShowSection = (
 		<HideableSectionButton show={show} setShow={setShow} />
 	);
 
-	return [show, hideableSectionButton];
+	return [show, hideableSectionButton] as const;
 };
 
 const HideableSection = ({
@@ -46,6 +46,7 @@ const HideableSection = ({
 	className,
 	description,
 	pageName,
+	renderTitle,
 	title,
 	titleExtraKey,
 }: {
@@ -57,6 +58,9 @@ const HideableSection = ({
 	pageName?: string | undefined;
 	title: string;
 	titleExtraKey?: string | number;
+
+	// Use this to override title for display, including the button. title is still needed for the localStorage key
+	renderTitle?: (show: boolean, hideableSectionButton: ReactNode) => ReactNode;
 }) => {
 	const [show, hideableSectionButton] = useShowSection(
 		pageName,
@@ -73,10 +77,14 @@ const HideableSection = ({
 					show ? "mb-2" : "mb-3",
 				)}
 			>
-				<div className="d-flex" style={{ minWidth: 0 }}>
-					<h2 className="mb-0 text-truncate">{title}</h2>
-					{hideableSectionButton}
-				</div>
+				{renderTitle ? (
+					renderTitle(show, hideableSectionButton)
+				) : (
+					<div className="d-flex" style={{ minWidth: 0 }}>
+						<h2 className="mb-0 text-truncate">{title}</h2>
+						{hideableSectionButton}
+					</div>
+				)}
 				{show ? <div className="text-nowrap">{description}</div> : null}
 			</div>
 			{show ? children : null}

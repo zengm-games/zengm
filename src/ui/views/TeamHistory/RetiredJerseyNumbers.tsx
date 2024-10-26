@@ -6,6 +6,7 @@ import { PLAYER } from "../../../common";
 import clsx from "clsx";
 import useLocalStorageState from "use-local-storage-state";
 import { orderBy } from "../../../common/utils";
+import HideableSection from "../../components/HideableSection";
 
 const PAGE_SIZE = 12;
 
@@ -385,160 +386,172 @@ const RetiredJerseyNumbers = ({
 
 	return (
 		<>
-			<div className="d-flex justify-content-between mb-2">
-				<h2 className="mb-0 text-nowrap">
-					Retired <span className="d-sm-none">Jerseys</span>
-					<span className="d-none d-sm-inline">Jersey Numbers</span>
-				</h2>
-				{showSortOptions ? (
-					<div
-						className="input-group input-group-sm ms-3"
-						style={{ maxWidth: 250 }}
-					>
-						<span className="input-group-text" id="basic-addon1">
-							Sort by
-						</span>
-						<select
-							className="form-select"
-							value={jerseySortKey}
-							onChange={event => {
-								setJerseySortKey(event.target.value as JeresySortKey);
-								setPage(0);
-							}}
-						>
-							{jerseySortOptions.map(({ key, title }) => (
-								<option key={key} value={key}>
-									{title}
-								</option>
-							))}
-						</select>
-						<button
-							className="btn btn-sm btn-light-bordered"
-							onClick={() => {
-								setJerseySortDirection(
-									jerseySortDirection === "asc" ? "desc" : "asc",
-								);
-								setPage(0);
-							}}
-							title={`Sort ${
-								jerseySortDirection === "asc" ? "descending" : "ascending"
-							}`}
-						>
-							<span
-								className={`glyphicon ${
-									jerseySortDirection === "asc"
-										? "glyphicon-arrow-down"
-										: "glyphicon-arrow-up"
-								}`}
-							/>
-						</button>
-					</div>
-				) : null}
-			</div>
-			{sortedJerseyNumbers.length === 0 ? (
-				<p>None yet!</p>
-			) : (
-				<div className="row">
-					{retiredJerseyNumbersToDisplay.map((row, i) => (
-						<div
-							key={i}
-							className="col-md-6 col-lg-4 d-flex align-items-center mb-3"
-						>
-							<JerseyNumber
-								className="flex-shrink-0"
-								number={row.number}
-								start={row.seasonRetired}
-								end={row.seasonRetired}
-								t={row.teamInfo}
-							/>
-							<div className="ms-3">
-								<div>
-									{row.pid !== undefined ? (
+			<HideableSection
+				pageName="TeamHistory"
+				title="Retired Jersey Numbers"
+				renderTitle={(show, hideableSectionButton) => {
+					return (
+						<div className="d-flex justify-content-between w-100">
+							<div className="d-flex">
+								<h2 className="mb-0 text-nowrap">
+									Retired <span className="d-md-none">Jerseys</span>
+									<span className="d-none d-md-inline">Jersey Numbers</span>
+								</h2>
+								{hideableSectionButton}
+							</div>
+							{show && showSortOptions ? (
+								<div
+									className="input-group input-group-sm ms-2"
+									style={{ maxWidth: 250 }}
+								>
+									<span className="input-group-text">
+										Sort<span className="d-none d-md-inline">&nbsp;by</span>
+									</span>
+									<select
+										className="form-select"
+										value={jerseySortKey}
+										onChange={event => {
+											setJerseySortKey(event.target.value as JeresySortKey);
+											setPage(0);
+										}}
+									>
+										{jerseySortOptions.map(({ key, title }) => (
+											<option key={key} value={key}>
+												{title}
+											</option>
+										))}
+									</select>
+									<button
+										className="btn btn-sm btn-light-bordered"
+										onClick={() => {
+											setJerseySortDirection(
+												jerseySortDirection === "asc" ? "desc" : "asc",
+											);
+											setPage(0);
+										}}
+										title={`Sort ${
+											jerseySortDirection === "asc" ? "descending" : "ascending"
+										}`}
+									>
+										<span
+											className={`glyphicon ${
+												jerseySortDirection === "asc"
+													? "glyphicon-arrow-down"
+													: "glyphicon-arrow-up"
+											}`}
+										/>
+									</button>
+								</div>
+							) : null}
+						</div>
+					);
+				}}
+			>
+				{sortedJerseyNumbers.length === 0 ? (
+					<p>None yet!</p>
+				) : (
+					<div className="row">
+						{retiredJerseyNumbersToDisplay.map((row, i) => (
+							<div
+								key={i}
+								className="col-md-6 col-lg-4 d-flex align-items-center mb-3"
+							>
+								<JerseyNumber
+									className="flex-shrink-0"
+									number={row.number}
+									start={row.seasonRetired}
+									end={row.seasonRetired}
+									t={row.teamInfo}
+								/>
+								<div className="ms-3">
+									<div>
+										{row.pid !== undefined ? (
+											<>
+												{row.pos ? `${row.pos} ` : null}
+												<a href={helpers.leagueUrl(["player", row.pid])}>
+													{row.firstName} {row.lastName}
+												</a>
+												{row.numRings > 0 ? (
+													<span
+														title={`${row.numRings} ${helpers.plural(
+															"championship",
+															row.numRings,
+														)}`}
+													>
+														<span className="ring ms-1" />
+														{row.numRings > 1 ? (
+															<span className="text-yellow ms-1">
+																x{row.numRings}
+															</span>
+														) : null}
+													</span>
+												) : null}
+												{row.text ? " - " : null}
+											</>
+										) : null}
+										{row.text}
+									</div>
+									{godMode || tid === userTid ? (
 										<>
-											{row.pos ? `${row.pos} ` : null}
-											<a href={helpers.leagueUrl(["player", row.pid])}>
-												{row.firstName} {row.lastName}
-											</a>
-											{row.numRings > 0 ? (
-												<span
-													title={`${row.numRings} ${helpers.plural(
-														"championship",
-														row.numRings,
-													)}`}
-												>
-													<span className="ring ms-1" />
-													{row.numRings > 1 ? (
-														<span className="text-yellow ms-1">
-															x{row.numRings}
-														</span>
-													) : null}
-												</span>
-											) : null}
-											{row.text ? " - " : null}
+											<button
+												className="btn btn-sm btn-link p-0 border-0"
+												onClick={() => {
+													editRetiredJersey(findUnsortedIndex(i));
+												}}
+											>
+												Edit
+											</button>{" "}
+											|{" "}
+											<button
+												className="btn btn-sm btn-link p-0 border-0"
+												onClick={() => {
+													deleteRetiredJersey(findUnsortedIndex(i));
+												}}
+											>
+												Delete
+											</button>
 										</>
 									) : null}
-									{row.text}
 								</div>
-								{godMode || tid === userTid ? (
-									<>
-										<button
-											className="btn btn-sm btn-link p-0 border-0"
-											onClick={() => {
-												editRetiredJersey(findUnsortedIndex(i));
-											}}
-										>
-											Edit
-										</button>{" "}
-										|{" "}
-										<button
-											className="btn btn-sm btn-link p-0 border-0"
-											onClick={() => {
-												deleteRetiredJersey(findUnsortedIndex(i));
-											}}
-										>
-											Delete
-										</button>
-									</>
-								) : null}
 							</div>
-						</div>
-					))}
-				</div>
-			)}
-			<div
-				className={clsx("d-flex", {
-					"mb-3": godMode || tid === userTid || pagination,
-				})}
-			>
-				{godMode || tid === userTid ? (
-					<button className="btn btn-secondary" onClick={addRetiredJersey}>
-						Add Retired Jersey Number
-					</button>
-				) : null}
-
-				{pagination ? (
-					<div className="btn-group ms-auto">
-						<button
-							className="btn btn-light-bordered"
-							disabled={!enablePrevious}
-							onClick={() => {
-								setPage(page - 1);
-							}}
-						>
-							Previous
-						</button>
-						<button
-							className="btn btn-light-bordered"
-							disabled={!enableNext}
-							onClick={() => {
-								setPage(page + 1);
-							}}
-						>
-							Next
-						</button>
+						))}
 					</div>
-				) : null}
-			</div>
+				)}
+				<div
+					className={clsx("d-flex", {
+						"mb-3": godMode || tid === userTid || pagination,
+					})}
+				>
+					{godMode || tid === userTid ? (
+						<button className="btn btn-secondary" onClick={addRetiredJersey}>
+							Add Retired Jersey Number
+						</button>
+					) : null}
+
+					{pagination ? (
+						<div className="btn-group ms-auto">
+							<button
+								className="btn btn-light-bordered"
+								disabled={!enablePrevious}
+								onClick={() => {
+									setPage(page - 1);
+								}}
+							>
+								Previous
+							</button>
+							<button
+								className="btn btn-light-bordered"
+								disabled={!enableNext}
+								onClick={() => {
+									setPage(page + 1);
+								}}
+							>
+								Next
+							</button>
+						</div>
+					) : null}
+				</div>
+			</HideableSection>
 		</>
 	);
 };

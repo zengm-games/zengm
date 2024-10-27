@@ -73,7 +73,9 @@ const OfferPlayers = ({
 			},
 		);
 
+		let sumContracts = 0;
 		const rows = players.map(p => {
+			sumContracts += p.contract.amount;
 			return {
 				key: p.pid,
 				data: [
@@ -97,12 +99,26 @@ const OfferPlayers = ({
 			};
 		});
 
+		let footer;
+		if (sumContracts !== 0) {
+			footer = [];
+			// Total text is too distracting, and it's usually a small number of players
+			/*footer[0] = (
+				<div className="text-end">
+					Total ({players.length} {helpers.plural("player", players.length)}
+					)
+				</div>
+			);*/
+			footer[5] = helpers.formatCurrency(sumContracts, "M");
+		}
+
 		return (
 			<DataTable
 				classNameWrapper={className}
 				cols={cols}
 				defaultSort={[5, "desc"]}
 				defaultStickyCols={window.mobile ? 0 : 1}
+				footer={footer}
 				hideAllControls
 				hideMenuToo
 				name="TradingBlockOffer"

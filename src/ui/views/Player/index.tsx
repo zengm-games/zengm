@@ -192,7 +192,7 @@ const StatsTable = ({
 						searchValue: gapSeason,
 
 						// i is used to index other sorts, so we need to fit in between
-						sortValue: i + 0.5,
+						sortValue: i - 0.5,
 
 						value: null,
 					},

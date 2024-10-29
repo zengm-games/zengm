@@ -1,3 +1,6 @@
+hardcode known good schedule for default FBGM settings, to minimize bye weeks
+- make sure to rotate out of conference opponents randomly
+
 support sorting mobile trade tables (like saved trades, trading block)
 - or have toggle to switch between them?
 

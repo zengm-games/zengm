@@ -11,6 +11,7 @@ import {
 	playerScore,
 } from "./TradingBlock";
 import { useEffect, useState } from "react";
+import { ActionButton } from "../components";
 
 const TradeProposals = (props: View<"tradeProposals">) => {
 	const {
@@ -43,6 +44,8 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 	useTitleBar({ title: "Trade Proposals" });
 
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+
+	const [refreshing, setRefreshing] = useState(false);
 
 	if (spectator) {
 		return <p>You're not allowed to make trades in spectator mode.</p>;
@@ -115,6 +118,19 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 				These are trade proposals from up to 5 AI teams. New teams will appear
 				here every 10 games.
 			</p>
+			<ActionButton
+				className="mb-3"
+				onClick={async () => {
+					setRefreshing(true);
+					await toWorker("main", "incrementTradeProposalsSeed", undefined);
+					setRefreshing(false);
+				}}
+				processing={refreshing}
+				processingText="Loading"
+				variant="secondary"
+			>
+				Refresh trade proposals
+			</ActionButton>
 			<div className="d-none d-lg-block">
 				<OfferTable
 					assetCols={[

@@ -1454,6 +1454,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 								type: "string",
 								enum: ["never", "finals", "playoffs"],
 							},
+							tradeProposalsSeed: {
+								type: "integer",
+							},
 						},
 					},
 				],

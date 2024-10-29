@@ -2390,6 +2390,14 @@ const importPlayers = async ({
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const incrementTradeProposalsSeed = async () => {
+	await league.setGameAttributes({
+		tradeProposalsSeed: g.get("tradeProposalsSeed") + 1,
+	});
+
+	await toUI("realtimeUpdate", [["g.tradeProposalsSeed"]]);
+};
+
 const init = async (inputEnv: Env, conditions: Conditions) => {
 	Object.assign(env, inputEnv);
 
@@ -4521,6 +4529,7 @@ export default {
 		handleUploadedDraftClass,
 		idbCacheFlush,
 		importPlayers,
+		incrementTradeProposalsSeed,
 		init,
 		initGold,
 		loadRetiredPlayers,

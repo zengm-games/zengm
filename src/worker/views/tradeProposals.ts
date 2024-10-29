@@ -125,7 +125,8 @@ const updateTradeProposals = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
+		updateEvents.includes("newPhase") ||
+		updateEvents.includes("g.tradeProposalsSeed")
 	) {
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
@@ -138,7 +139,8 @@ const updateTradeProposals = async (
 		const seed =
 			Math.floor(gp / NUM_GAMES_BEFORE_NEW_OFFERS) +
 			g.get("season") +
-			g.get("phase");
+			g.get("phase") +
+			g.get("tradeProposalsSeed");
 
 		const offers = await getOffers(seed);
 

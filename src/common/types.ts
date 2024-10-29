@@ -657,6 +657,7 @@ export type GameAttributesLeague = {
 		disabled: boolean | undefined;
 	}[];
 	tradeDeadline: number;
+	tradeProposalsSeed: number;
 	tragicDeathRate: number;
 	tragicDeaths?: TragicDeaths;
 	userTid: number;
@@ -1825,6 +1826,7 @@ export type UpdateEvents = (
 	| "firstRun"
 	| "g.goatFormula"
 	| "g.goatSeasonFormula"
+	| "g.tradeProposalsSeed"
 	| "gameAttributes"
 	| "gameSim"
 	| "leagues"

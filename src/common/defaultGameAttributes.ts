@@ -37,6 +37,7 @@ export const gameAttributesKeysGameState: GameAttributeKey[] = [
 	"expansionDraft",
 	"autoRelocate",
 	"autoExpand",
+	"tradeProposalsSeed",
 ];
 export const gameAttributesKeysTeams: GameAttributeKey[] = ["confs", "divs"];
 export const gameAttributesCache: GameAttributeKey[] = [
@@ -353,6 +354,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	contactFactor: 1,
 
 	neutralSite: "never",
+	tradeProposalsSeed: 0,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

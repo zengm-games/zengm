@@ -173,6 +173,83 @@ const StatsTable = ({
 		}
 	}
 
+	console.log(playerStats);
+
+	const rows = [];
+
+	let prevSeason;
+	for (let i = 0; i < playerStats.length; i++) {
+		const ps = playerStats[i];
+
+		// Add blank rows for gap years if necessary
+		if (prevSeason !== undefined && prevSeason < ps.season - 1) {
+			const gapSeason = prevSeason + 1;
+
+			rows.push({
+				key: `gap-${gapSeason}`,
+				data: [
+					{
+						searchValue: gapSeason,
+
+						// i is used to index other sorts, so we need to fit in between
+						sortValue: i + 0.5,
+
+						value: null,
+					},
+					null,
+					null,
+					...stats.map(() => null),
+				],
+				classNames: "table-secondary",
+			});
+		}
+
+		prevSeason = ps.season;
+
+		const className = ps.hasTot ? "text-body-secondary" : undefined;
+
+		rows.push({
+			key: i,
+			data: [
+				{
+					searchValue: ps.season,
+					sortValue: i,
+					value: (
+						<>
+							<SeasonLink
+								className={className}
+								pid={p.pid}
+								season={ps.season}
+							/>{" "}
+							<SeasonIcons
+								season={ps.season}
+								awards={p.awards}
+								playoffs={playoffs === true}
+							/>
+						</>
+					),
+				},
+				<TeamAbbrevLink
+					abbrev={ps.abbrev}
+					className={className}
+					season={ps.season}
+					tid={ps.tid}
+				/>,
+				<MaybeBold bold={leaders[ps.season]?.attrs.has("age")}>
+					{ps.age}
+				</MaybeBold>,
+				...stats.map(stat => (
+					<MaybeBold
+						bold={!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)}
+					>
+						{formatStatGameHigh(ps, stat)}
+					</MaybeBold>
+				)),
+			],
+			classNames: className,
+		});
+	}
+
 	return (
 		<HideableSection
 			title={name}
@@ -233,52 +310,7 @@ const StatsTable = ({
 				footer={footer}
 				hideAllControls
 				name={`Player:${name}`}
-				rows={playerStats.map((ps, i) => {
-					const className = ps.hasTot ? "text-body-secondary" : undefined;
-
-					return {
-						key: i,
-						data: [
-							{
-								searchValue: ps.season,
-								sortValue: i,
-								value: (
-									<>
-										<SeasonLink
-											className={className}
-											pid={p.pid}
-											season={ps.season}
-										/>{" "}
-										<SeasonIcons
-											season={ps.season}
-											awards={p.awards}
-											playoffs={playoffs === true}
-										/>
-									</>
-								),
-							},
-							<TeamAbbrevLink
-								abbrev={ps.abbrev}
-								className={className}
-								season={ps.season}
-								tid={ps.tid}
-							/>,
-							<MaybeBold bold={leaders[ps.season]?.attrs.has("age")}>
-								{ps.age}
-							</MaybeBold>,
-							...stats.map(stat => (
-								<MaybeBold
-									bold={
-										!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)
-									}
-								>
-									{formatStatGameHigh(ps, stat)}
-								</MaybeBold>
-							)),
-						],
-						classNames: className,
-					};
-				})}
+				rows={rows}
 				superCols={superCols}
 			/>
 		</HideableSection>

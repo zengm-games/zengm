@@ -1,5 +1,11 @@
+store results of trading block in database
+- indicator of if the offer is still valid or not
+  - can evaluate trade to see
+- indicator if trade is invalid because an asset no longer exists on that team
+- https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
+
 hardcode known good schedule for default FBGM settings, to minimize bye weeks
-- make sure to rotate out of conference opponents randomly
+- take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams
 
 support sorting mobile trade tables (like saved trades, trading block)
 - or have toggle to switch between them?
@@ -338,12 +344,6 @@ setting for overtime period length
   - existing leagues
 
 box score overflow with long team name https://discord.com/channels/290013534023057409/290015591216054273/1194104187722661928
-
-store results of trading block in database
-- indicator of if the offer is still valid or not
-  - can evaluate trade to see
-- indicator if trade is invalid because an asset no longer exists on that team
-- https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
 
 auto export to folder every N seasons
 - chrome only?

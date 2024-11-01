@@ -88,7 +88,7 @@
 		"workbox-routing": "^7.3.0",
 		"workbox-strategies": "^7.3.0",
 		"workbox-window": "^7.3.0",
-		"zustand": "^5.0.0"
+		"zustand": "^5.0.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.26.0",
@@ -115,7 +115,7 @@
 		"@types/gtag.js": "^0.0.20",
 		"@types/jest": "^29.5.14",
 		"@types/lodash-es": "^4.17.12",
-		"@types/node": "^22.8.4",
+		"@types/node": "^22.8.6",
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",
 		"@types/roman-numerals": "^0.3.2",
@@ -156,7 +156,7 @@
 		"lightningcss": "^1.27.0",
 		"lint-staged": "^15.2.10",
 		"log-symbols": "^7.0.0",
-		"mocha": "^10.8.1",
+		"mocha": "^10.8.2",
 		"prettier": "^3.3.3",
 		"purgecss": "^6.0.0",
 		"replace": "^1.2.2",

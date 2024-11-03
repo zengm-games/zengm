@@ -4,6 +4,10 @@ store results of trading block in database
 - indicator if trade is invalid because an asset no longer exists on that team
 - https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
 
+embed facesjs ui
+- what to do about all the dependencies?
+  - could load async
+
 hardcode known good schedule for default FBGM settings, to minimize bye weeks
 - take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams
 
@@ -19,8 +23,6 @@ get rid of checks for raw state/province names https://old.reddit.com/r/ZenGMHoc
 Don't allow play if versions in tabs don't match
 - close worker?
 - newPhasePreseason being called twice in two different tabs and somehow updating the database twice?
-
-wOBA, wrc, wrc+
 
 Strike out throw out DP does not advance batting order https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
 

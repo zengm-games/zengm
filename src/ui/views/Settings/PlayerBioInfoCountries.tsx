@@ -471,11 +471,20 @@ export const CountriesEditor = ({
 												<div style={smallColStyle} key={key}>
 													<Dropdown>
 														<Dropdown.Toggle
-															variant="light-bordered"
+															variant={
+																currentText === "Default"
+																	? "light-bordered"
+																	: "secondary"
+															}
 															id={`dropdown-${key}-${country.id}`}
 															className="w-100"
 														>
-															{currentText}
+															<span className="d-sm-none">
+																{currentText.charAt(0)}
+															</span>
+															<span className="d-none d-sm-inline">
+																{currentText}
+															</span>
 														</Dropdown.Toggle>
 
 														<Dropdown.Menu>

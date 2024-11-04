@@ -2094,6 +2094,22 @@ const getTradingBlockOffers = async ({
 	dpids: number[];
 }) => {
 	const offers = await getOffers(pids, dpids);
+
+	const savedTradingBlock = {
+		rid: 0 as const,
+		dpids,
+		pids,
+		tid: g.get("userTid"),
+		offers: offers.map(offer => {
+			return {
+				dpids: offer[1].dpids,
+				pids: offer[1].pids,
+				tid: offer[1].tid,
+			};
+		}),
+	};
+	await idb.cache.savedTradingBlock.put(savedTradingBlock);
+
 	return augmentOffers(offers);
 };
 

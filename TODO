@@ -1,10 +1,14 @@
-hype should impact the magnitude of the home court advantage
-
 store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
 - indicator if trade is invalid because an asset no longer exists on that team
 - https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
+- test in old browsers (set isSubsetOf)
+
+hype should impact the magnitude of the home court advantage
+
+support sorting mobile trade tables (like saved trades, trading block)
+- or have toggle to switch between them?
 
 embed facesjs ui
 - what to do about all the dependencies?
@@ -12,9 +16,6 @@ embed facesjs ui
 
 hardcode known good schedule for default FBGM settings, to minimize bye weeks
 - take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams
-
-support sorting mobile trade tables (like saved trades, trading block)
-- or have toggle to switch between them?
 
 add option to make rookie contracts not signed, even if there is no hard cap https://discord.com/channels/@me/1256311871980441670/1297925653685080136
 
@@ -451,6 +452,7 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 - 18 in 2024
 
 FBGM
+- hail mary as clock runs down
 - too many block in the back penalties? https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJGkWRpLHMglFTjVxwkhwRlrP?compose=DmwnWrRnZVhxHCNkTVdJSMmbHbGPgCRltRlKvmhtGwHmGsdBjvVRTGPpCVpwjFrcmmLvVZMKmdrl
 - for recovered onside kick, kick shows as 1st and goal in drive chart https://discord.com/channels/290013534023057409/290015591216054273/1270384918748200972
 - When you're drafting, you can see how many players you have at each position-but that includes expiring contracts. show both https://discord.com/channels/290013534023057409/331882115119448065/1266520868193046730

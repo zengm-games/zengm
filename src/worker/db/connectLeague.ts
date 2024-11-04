@@ -46,6 +46,7 @@ import type {
 	GameAttributeWithHistory,
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
+	SavedTradingBlock,
 } from "../../common/types";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
 import { amountToLevel } from "../../common/budgetLevels";
@@ -134,6 +135,10 @@ export interface LeagueDB extends DBSchema {
 		key: string;
 		value: SavedTrade;
 	};
+	savedTradingBlock: {
+		key: 0;
+		value: SavedTradingBlock;
+	};
 	schedule: {
 		key: number;
 		value: ScheduleGame;
@@ -175,7 +180,7 @@ export interface LeagueDB extends DBSchema {
 		value: Team;
 	};
 	trade: {
-		key: number;
+		key: 0;
 		value: Trade;
 	};
 }
@@ -551,6 +556,10 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 
 	db.createObjectStore("savedTrades", {
 		keyPath: "hash",
+	});
+
+	db.createObjectStore("savedTradingBlock", {
+		keyPath: "rid",
 	});
 };
 
@@ -1476,6 +1485,12 @@ const migrate = async ({
 		const teamSeasonsStore = transaction.objectStore("teamSeasons");
 		teamSeasonsStore.createIndex("noteBool", "noteBool", {
 			unique: false,
+		});
+	}
+
+	if (oldVersion <= 62) {
+		db.createObjectStore("savedTradingBlock", {
+			keyPath: "rid",
 		});
 	}
 };

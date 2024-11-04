@@ -1949,3 +1949,15 @@ export type SavedTrade = {
 	hash: string;
 	tid: number;
 };
+
+export type SavedTradingBlock = {
+	rid: 0;
+	dpids: number[];
+	pids: number[];
+	tid: number;
+	offers: {
+		dpids: number[];
+		pids: number[];
+		tid: number;
+	}[];
+};

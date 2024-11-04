@@ -454,17 +454,51 @@ export const OfferTable = ({
 	);
 };
 
-const TradingBlock = (props: View<"tradingBlock">) => {
+const TradingBlock = ({
+	challengeNoRatings,
+	challengeNoTrades,
+	gameOver,
+	initialDpid,
+	initialPid,
+	phase,
+	salaryCap,
+	salaryCapType,
+	savedTradingBlock,
+	spectator,
+	stats,
+	userPicks,
+	userRoster,
+}: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
 		asking: boolean;
 		offers: OfferType[];
 		pids: number[];
 		dpids: number[];
-	}>({
-		asking: false,
-		offers: [],
-		pids: props.initialPid !== undefined ? [props.initialPid] : [],
-		dpids: props.initialDpid !== undefined ? [props.initialDpid] : [],
+	}>(() => {
+		let pids: number[];
+		if (initialPid !== undefined) {
+			pids = [initialPid];
+		} else if (savedTradingBlock) {
+			pids = savedTradingBlock.pids;
+		} else {
+			pids = [];
+		}
+
+		let dpids: number[];
+		if (initialDpid !== undefined) {
+			dpids = [initialDpid];
+		} else if (savedTradingBlock) {
+			dpids = savedTradingBlock.dpids;
+		} else {
+			dpids = [];
+		}
+
+		return {
+			asking: false,
+			offers: savedTradingBlock?.offers ?? [],
+			pids,
+			dpids,
+		};
 	});
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
@@ -526,19 +560,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			offers: prevState.offers.filter((offer, j) => j !== i),
 		}));
 	};
-
-	const {
-		challengeNoRatings,
-		challengeNoTrades,
-		gameOver,
-		phase,
-		salaryCap,
-		salaryCapType,
-		spectator,
-		stats,
-		userPicks,
-		userRoster,
-	} = props;
 
 	useTitleBar({ title: "Trading Block" });
 

@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es2023",
+		"target": "esnext",
 		"resolveJsonModule": true,
 		"jsx": "react-jsx",
 		"rootDir": "./src",

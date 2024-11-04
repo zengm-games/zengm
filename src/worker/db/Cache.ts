@@ -35,6 +35,7 @@ import type {
 	Trade,
 	EventBBGMWithoutKey,
 	SeasonLeaders,
+	SavedTradingBlock,
 } from "../../common/types";
 import type { IDBPTransaction } from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague";
@@ -62,6 +63,7 @@ export type Store =
 	| "playoffSeries"
 	| "releasedPlayers"
 	| "savedTrades"
+	| "savedTradingBlock"
 	| "schedule"
 	| "scheduledEvents"
 	| "seasonLeaders"
@@ -97,6 +99,7 @@ export const STORES: Store[] = [
 	"playoffSeries",
 	"releasedPlayers",
 	"savedTrades",
+	"savedTradingBlock",
 	"schedule",
 	"scheduledEvents",
 	"seasonLeaders",
@@ -275,6 +278,8 @@ class Cache {
 
 	savedTrades: StoreAPI<SavedTrade, SavedTrade, string>;
 
+	savedTradingBlock: StoreAPI<SavedTradingBlock, SavedTradingBlock, number>;
+
 	schedule: StoreAPI<ScheduleGameWithoutKey, ScheduleGame, number>;
 
 	scheduledEvents: StoreAPI<ScheduledEventWithoutKey, ScheduledEvent, number>;
@@ -443,6 +448,13 @@ class Cache {
 				getData: (tx: IDBPTransaction<LeagueDB>) =>
 					tx.objectStore("savedTrades").getAll(),
 			},
+			savedTradingBlock: {
+				pk: "rid",
+				pkType: "number",
+				autoIncrement: false,
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("savedTradingBlock").getAll(),
+			},
 			schedule: {
 				pk: "gid",
 				pkType: "number",
@@ -573,6 +585,7 @@ class Cache {
 		this.playoffSeries = new StoreAPI(this, "playoffSeries");
 		this.releasedPlayers = new StoreAPI(this, "releasedPlayers");
 		this.savedTrades = new StoreAPI(this, "savedTrades");
+		this.savedTradingBlock = new StoreAPI(this, "savedTradingBlock");
 		this.schedule = new StoreAPI(this, "schedule");
 		this.scheduledEvents = new StoreAPI(this, "scheduledEvents");
 		this.seasonLeaders = new StoreAPI(this, "seasonLeaders");

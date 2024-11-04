@@ -305,6 +305,7 @@ const getExportInfo = (
 			"scheduledEvents",
 			"seasonLeaders",
 			"savedTrades",
+			"savedTradingBlock",
 		],
 		newsFeedTransactions: ["events"],
 		newsFeedOther: ["events"],

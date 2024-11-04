@@ -3,6 +3,7 @@ import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
+import { augmentOffers } from "../api";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,
@@ -64,6 +65,48 @@ const updateUserRoster = async (
 			}),
 		);
 
+		let savedTradingBlock;
+		if (inputs.pid === undefined && inputs.dpid === undefined) {
+			const savedTradingBlockRaw = await idb.cache.savedTradingBlock.get(0);
+			if (savedTradingBlockRaw?.tid === g.get("userTid")) {
+				// If a pid/dpid is no longer valid on the user's team, ignore
+				const userValidPids = new Set(savedTradingBlockRaw.pids).isSubsetOf(
+					new Set(userRoster.map(p => p.pid)),
+				);
+				const userValidDpids = new Set(savedTradingBlockRaw.dpids).isSubsetOf(
+					new Set(userPicks2.map(dp => dp.dpid)),
+				);
+				if (userValidPids && userValidDpids) {
+					savedTradingBlock = {
+						dpids: savedTradingBlockRaw.dpids,
+						pids: savedTradingBlockRaw.pids,
+						offers: await augmentOffers(
+							savedTradingBlockRaw.offers.map(offer => {
+								return [
+									{
+										dpids: savedTradingBlockRaw.dpids,
+										dpidsExcluded: [],
+										pids: savedTradingBlockRaw.pids,
+										pidsExcluded: [],
+										tid: g.get("userTid"),
+									},
+									{
+										dpids: offer.dpids,
+										dpidsExcluded: [],
+										pids: offer.pids,
+										pidsExcluded: [],
+										tid: offer.tid,
+									},
+								];
+							}),
+						),
+					};
+				} else {
+					await idb.cache.savedTradingBlock.clear();
+				}
+			}
+		}
+
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
@@ -73,6 +116,7 @@ const updateUserRoster = async (
 			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),
 			salaryCapType: g.get("salaryCapType"),
+			savedTradingBlock,
 			spectator: g.get("spectator"),
 			stats,
 			userPicks: userPicks2,

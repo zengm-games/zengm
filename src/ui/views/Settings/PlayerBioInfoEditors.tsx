@@ -118,7 +118,7 @@ export const RacesEditor = ({
 						<div className="col-6">Frequency</div>
 					</div>
 					{rowsEdited.map((rows, i) => (
-						<div key={rows.race} className="row g-2 align-items-center">
+						<div key={rows.race} className="row g-2 align-items-center mt-0">
 							<div className="col-6">
 								{helpers.upperCaseFirstLetter(rows.race)}
 							</div>

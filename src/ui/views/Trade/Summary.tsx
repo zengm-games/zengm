@@ -47,6 +47,70 @@ export const OvrChange = ({
 	);
 };
 
+export const MissingAssets = ({
+	missingAssets,
+}: {
+	missingAssets: MissingAsset[];
+}) => {
+	return (
+		<>
+			<h4 className="fw-bold mb-1 text-danger">Assets no longer available:</h4>
+			<ul className="list-unstyled mb-0">
+				{missingAssets.map((asset, i) => {
+					return (
+						<li key={i}>
+							{asset.type === "deletedPlayer" ? (
+								<span className="text-danger">
+									Player {asset.pid} was deleted
+								</span>
+							) : asset.type === "noLongerOnTeam" ? (
+								<>
+									<PlayerNameLabels
+										pid={asset.pid}
+										legacyName={asset.name}
+										pos={asset.pos}
+									/>
+									<div className="ms-2 text-danger">Not on roster</div>
+								</>
+							) : asset.type === "retired" ? (
+								<>
+									<PlayerNameLabels
+										pid={asset.pid}
+										legacyName={asset.name}
+										pos={asset.pos}
+									/>
+									<div className="ms-2 text-danger">Retired</div>
+								</>
+							) : asset.type === "untradable" ? (
+								<>
+									<PlayerNameLabels
+										pid={asset.pid}
+										legacyName={asset.name}
+										pos={asset.pos}
+									/>
+									<div className="ms-2 text-danger">{asset.message}</div>
+								</>
+							) : asset.type === "tradedPick" ? (
+								<>
+									<SafeHtml dirty={asset.desc} />
+									<div className="ms-2 text-danger">Traded away</div>
+								</>
+							) : asset.type === "pastDraft" ? (
+								<>
+									Draft pick
+									<div className="ms-2 text-danger">Draft already happened</div>
+								</>
+							) : (
+								"???"
+							)}
+						</li>
+					);
+				})}
+			</ul>
+		</>
+	);
+};
+
 export const SummaryTeam = ({
 	challengeNoRatings,
 	handleRemove,
@@ -153,63 +217,7 @@ export const SummaryTeam = ({
 			</ul>
 			{missingAssets && missingAssets.length > 0 ? (
 				<div className="mt-1">
-					<h4 className="fw-bold mb-1 text-danger">
-						Assets no longer available:
-					</h4>
-					<ul className="list-unstyled mb-0">
-						{missingAssets.map((asset, i) => {
-							return (
-								<li key={i}>
-									{asset.type === "deletedPlayer" ? (
-										<span className="text-danger">
-											Player {asset.pid} was deleted
-										</span>
-									) : asset.type === "noLongerOnTeam" ? (
-										<>
-											<PlayerNameLabels
-												pid={asset.pid}
-												legacyName={asset.name}
-												pos={asset.pos}
-											/>
-											<div className="ms-2 text-danger">Not on roster</div>
-										</>
-									) : asset.type === "retired" ? (
-										<>
-											<PlayerNameLabels
-												pid={asset.pid}
-												legacyName={asset.name}
-												pos={asset.pos}
-											/>
-											<div className="ms-2 text-danger">Retired</div>
-										</>
-									) : asset.type === "untradable" ? (
-										<>
-											<PlayerNameLabels
-												pid={asset.pid}
-												legacyName={asset.name}
-												pos={asset.pos}
-											/>
-											<div className="ms-2 text-danger">{asset.message}</div>
-										</>
-									) : asset.type === "tradedPick" ? (
-										<>
-											<SafeHtml dirty={asset.desc} />
-											<div className="ms-2 text-danger">Traded away</div>
-										</>
-									) : asset.type === "pastDraft" ? (
-										<>
-											Draft pick
-											<div className="ms-2 text-danger">
-												Draft already happened
-											</div>
-										</>
-									) : (
-										"???"
-									)}
-								</li>
-							);
-						})}
-					</ul>
+					<MissingAssets missingAssets={missingAssets} />
 				</div>
 			) : null}
 			{!hideFinanceInfo || !hideTeamOvr ? (

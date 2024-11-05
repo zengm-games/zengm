@@ -189,6 +189,9 @@ const augmentPartialPlayer = async (
 			}
 		}
 	} else if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
+		if (!Array.isArray(p.ratings)) {
+			console.log(p);
+		}
 		if (p.ratings[0].season === undefined) {
 			p.ratings[0].season = currentSeason;
 		}

@@ -18,7 +18,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { OvrChange } from "./Trade/Summary";
+import { MissingAssets, OvrChange } from "./Trade/Summary";
 import type { MissingAsset } from "../../worker/views/savedTrades";
 
 export type OfferType = Awaited<
@@ -746,12 +746,19 @@ const TradingBlock = ({
 						return [
 							{
 								value: (
-									<OfferPlayers
-										className="mb-0"
-										challengeNoRatings={challengeNoRatings}
-										players={offer.players}
-										stats={stats}
-									/>
+									<>
+										<OfferPlayers
+											className="mb-0"
+											challengeNoRatings={challengeNoRatings}
+											players={offer.players}
+											stats={stats}
+										/>
+										{offer.missing && offer.missing.length > 0 ? (
+											<div className="mt-3">
+												<MissingAssets missingAssets={offer.missing} />
+											</div>
+										) : null}
+									</>
 								),
 								searchValue: offer.players
 									.map(p => `${p.name} ${p.ratings.pos}`)
@@ -790,6 +797,7 @@ const TradingBlock = ({
 
 			<div className="d-block d-xxl-none">
 				{state.offers.map((offer, i) => {
+					console.log(i, offer);
 					return (
 						<Offer
 							key={offer.tid}
@@ -814,6 +822,11 @@ const TradingBlock = ({
 												players={offer.players}
 												stats={stats}
 											/>
+											{offer.missing && offer.missing.length > 0 ? (
+												<div className="mb-3">
+													<MissingAssets missingAssets={offer.missing} />
+												</div>
+											) : null}
 										</div>
 									) : null}
 									{offer.picks.length > 0 ? (

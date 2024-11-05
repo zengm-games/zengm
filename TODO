@@ -1,11 +1,3 @@
-store results of trading block in database
-- blog
-  - clear if you don't have all your assets
-  - warning if asset traded
-  - warning if AI team no longer wants to make trade
-- https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
-- test in old browsers (set isSubsetOf)
-
 hype should impact the magnitude of the home court advantage
 
 support sorting mobile trade tables (like saved trades, trading block)

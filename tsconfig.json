@@ -21,6 +21,7 @@
 		"verbatimModuleSyntax": true,
 		"module": "Preserve",
 		"noImplicitOverride": true,
-		"isolatedModules": true
+		"isolatedModules": true,
+		"skipLibCheck": true
 	}
 }

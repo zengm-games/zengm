@@ -471,14 +471,16 @@ const MissingAndWilling = ({
 	missingAssets,
 	willing,
 }: {
-	missingAssets: MissingAsset[];
+	missingAssets: MissingAsset[] | undefined;
 	willing: boolean | undefined;
 }) => {
 	return (
 		<div className="d-flex flex-column gap-3">
-			<div>
-				<MissingAssets missingAssets={missingAssets} />
-			</div>
+			{missingAssets && missingAssets.length > 0 ? (
+				<div>
+					<MissingAssets missingAssets={missingAssets} />
+				</div>
+			) : null}
 			<WillingText willing={willing} />
 		</div>
 	);
@@ -783,7 +785,8 @@ const TradingBlock = ({
 											players={offer.players}
 											stats={stats}
 										/>
-										{offer.missing && offer.missing.length > 0 ? (
+										{(offer.missing && offer.missing.length > 0) ||
+										offer.willing === false ? (
 											<div className="mt-3">
 												<MissingAndWilling
 													missingAssets={offer.missing}
@@ -830,7 +833,6 @@ const TradingBlock = ({
 
 			<div className="d-block d-xxl-none">
 				{state.offers.map((offer, i) => {
-					console.log(i, offer);
 					return (
 						<Offer
 							key={offer.tid}
@@ -855,7 +857,8 @@ const TradingBlock = ({
 												players={offer.players}
 												stats={stats}
 											/>
-											{offer.missing && offer.missing.length > 0 ? (
+											{(offer.missing && offer.missing.length > 0) ||
+											offer.willing === false ? (
 												<div className="mb-3">
 													<MissingAndWilling
 														missingAssets={offer.missing}

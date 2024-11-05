@@ -2,6 +2,8 @@ store results of trading block in database
 - indicator of if the offer is still valid or not
   - can evaluate trade to see
 - indicator if trade is invalid because an asset no longer exists on that team
+  - just don't show the trade at all, like "Offer from ATL contained assets that they no longer control"
+    - because currently players/picks that don't exist just don't get shown. would need to reevaluate how all that works to do something better, like showing what exact player/pick is no longer on the team and why
 - https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
 - test in old browsers (set isSubsetOf)
 

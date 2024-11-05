@@ -173,8 +173,6 @@ const StatsTable = ({
 		}
 	}
 
-	console.log(playerStats);
-
 	const rows = [];
 
 	let prevSeason;

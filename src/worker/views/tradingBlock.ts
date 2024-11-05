@@ -4,6 +4,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import { bySport } from "../../common";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { augmentOffers } from "../api";
+import { team } from "../core";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,
@@ -77,27 +78,81 @@ const updateUserRoster = async (
 					new Set(userPicks2.map(dp => dp.dpid)),
 				);
 				if (userValidPids && userValidDpids) {
+					const offers = await augmentOffers(
+						savedTradingBlockRaw.offers.map(offer => {
+							return [
+								{
+									dpids: savedTradingBlockRaw.dpids,
+									dpidsExcluded: [],
+									pids: savedTradingBlockRaw.pids,
+									pidsExcluded: [],
+									tid: g.get("userTid"),
+								},
+								{
+									dpids: offer.dpids,
+									dpidsExcluded: [],
+									pids: offer.pids,
+									pidsExcluded: [],
+									tid: offer.tid,
+								},
+							];
+						}),
+					);
+
 					savedTradingBlock = {
 						dpids: savedTradingBlockRaw.dpids,
 						pids: savedTradingBlockRaw.pids,
-						offers: await augmentOffers(
-							savedTradingBlockRaw.offers.map(offer => {
-								return [
-									{
-										dpids: savedTradingBlockRaw.dpids,
-										dpidsExcluded: [],
-										pids: savedTradingBlockRaw.pids,
-										pidsExcluded: [],
-										tid: g.get("userTid"),
-									},
-									{
-										dpids: offer.dpids,
-										dpidsExcluded: [],
-										pids: offer.pids,
-										pidsExcluded: [],
-										tid: offer.tid,
-									},
-								];
+						offers: await Promise.all(
+							offers.map(async offer => {
+								let invalidReason: "asset" | "willing" | undefined;
+
+								// Is offer invalid becuase asset no longer exists on AI team?
+								const teamPlayers = await idb.cache.players.indexGetAll(
+									"playersByTid",
+									offer.tid,
+								);
+								const validPids = new Set(offer.pids).isSubsetOf(
+									new Set(teamPlayers.map(p => p.pid)),
+								);
+								if (!validPids) {
+									invalidReason = "asset";
+								} else {
+									const teamDraftPicks = await idb.getCopies.draftPicks(
+										{
+											tid: offer.tid,
+										},
+										"noCopyCache",
+									);
+									const validDpids = new Set(offer.dpids).isSubsetOf(
+										new Set(teamDraftPicks.map(dp => dp.dpid)),
+									);
+									if (!validDpids) {
+										invalidReason = "asset";
+									} else {
+										// Is offer invalid because AI team no longer wants to make the trade?
+										if (invalidReason === undefined) {
+											const dv = await team.valueChange(
+												offer.tid,
+												offer.pidsUser,
+												offer.pids,
+												offer.dpidsUser,
+												offer.dpids,
+												undefined,
+												g.get("userTid"),
+											);
+
+											if (dv < 0) {
+												invalidReason = "willing";
+											}
+										}
+									}
+								}
+								console.log(offer.tid, invalidReason);
+
+								return {
+									invalidReason,
+									...offer,
+								};
 							}),
 						),
 					};

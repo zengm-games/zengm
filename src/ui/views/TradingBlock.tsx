@@ -26,6 +26,7 @@ export type OfferType = Awaited<
 >[0] & {
 	missing?: MissingAsset[];
 	missingUser?: MissingAsset[];
+	willing?: boolean;
 };
 
 type OfferProps = {
@@ -454,6 +455,35 @@ export const OfferTable = ({
 	);
 };
 
+const WillingText = ({ willing }: { willing: boolean | undefined }) => {
+	if (willing === false) {
+		return (
+			<div className="text-danger fw-bold">
+				AI team is no longer willing to make this trade!
+			</div>
+		);
+	}
+
+	return null;
+};
+
+const MissingAndWilling = ({
+	missingAssets,
+	willing,
+}: {
+	missingAssets: MissingAsset[];
+	willing: boolean | undefined;
+}) => {
+	return (
+		<div className="d-flex flex-column gap-3">
+			<div>
+				<MissingAssets missingAssets={missingAssets} />
+			</div>
+			<WillingText willing={willing} />
+		</div>
+	);
+};
+
 const TradingBlock = ({
 	challengeNoRatings,
 	challengeNoTrades,
@@ -755,7 +785,10 @@ const TradingBlock = ({
 										/>
 										{offer.missing && offer.missing.length > 0 ? (
 											<div className="mt-3">
-												<MissingAssets missingAssets={offer.missing} />
+												<MissingAndWilling
+													missingAssets={offer.missing}
+													willing={offer.willing}
+												/>
 											</div>
 										) : null}
 									</>
@@ -824,7 +857,10 @@ const TradingBlock = ({
 											/>
 											{offer.missing && offer.missing.length > 0 ? (
 												<div className="mb-3">
-													<MissingAssets missingAssets={offer.missing} />
+													<MissingAndWilling
+														missingAssets={offer.missing}
+														willing={offer.willing}
+													/>
 												</div>
 											) : null}
 										</div>

@@ -79,27 +79,47 @@ const updateUserRoster = async (
 					new Set(userPicks2.map(dp => dp.dpid)),
 				);
 				if (userValidPids && userValidDpids) {
-					const offers = await addMissingAssets(
-						await augmentOffers(
-							savedTradingBlockRaw.offers.map(offer => {
-								return [
-									{
-										dpids: savedTradingBlockRaw.dpids,
-										dpidsExcluded: [],
-										pids: savedTradingBlockRaw.pids,
-										pidsExcluded: [],
-										tid: g.get("userTid"),
-									},
-									{
-										dpids: offer.dpids,
-										dpidsExcluded: [],
-										pids: offer.pids,
-										pidsExcluded: [],
-										tid: offer.tid,
-									},
-								];
-							}),
-						),
+					const offers = await Promise.all(
+						(
+							await addMissingAssets(
+								await augmentOffers(
+									savedTradingBlockRaw.offers.map(offer => {
+										return [
+											{
+												dpids: savedTradingBlockRaw.dpids,
+												dpidsExcluded: [],
+												pids: savedTradingBlockRaw.pids,
+												pidsExcluded: [],
+												tid: g.get("userTid"),
+											},
+											{
+												dpids: offer.dpids,
+												dpidsExcluded: [],
+												pids: offer.pids,
+												pidsExcluded: [],
+												tid: offer.tid,
+											},
+										];
+									}),
+								),
+							)
+						).map(async offer => {
+							const dv = await team.valueChange(
+								offer.tid,
+								offer.pidsUser,
+								offer.pids,
+								offer.dpidsUser,
+								offer.dpids,
+								undefined,
+								g.get("userTid"),
+							);
+							const willing = dv > 0;
+
+							return {
+								...offer,
+								willing,
+							};
+						}),
 					);
 
 					savedTradingBlock = {

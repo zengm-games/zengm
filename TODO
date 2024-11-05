@@ -1,6 +1,4 @@
 store results of trading block in database
-- indicator of if the offer is still valid or not
-  - can evaluate trade to see
 - https://old.reddit.com/r/BasketballGM/comments/xsglap/monthly_suggestions_thread/iqkeufr/
 - test in old browsers (set isSubsetOf)
 

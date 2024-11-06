@@ -760,6 +760,21 @@ const TradingBlock = ({
 				>
 					Ask For Trade Proposals
 				</ActionButton>
+				<button
+					type="button"
+					className="btn btn-secondary btn-lg ms-2"
+					disabled={state.asking}
+					onClick={() => {
+						setState({
+							asking: false,
+							offers: [],
+							pids: [],
+							dpids: [],
+						});
+					}}
+				>
+					Clear
+				</button>
 			</div>
 
 			<div className="d-none d-xxl-block">

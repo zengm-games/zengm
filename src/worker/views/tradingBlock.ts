@@ -73,7 +73,7 @@ const updateUserRoster = async (
 			if (savedTradingBlockRaw?.tid === g.get("userTid")) {
 				// If a pid/dpid is no longer valid on the user's team, ignore
 				const userValidPids = new Set(savedTradingBlockRaw.pids).isSubsetOf(
-					new Set(userRoster.map(p => p.pid)),
+					new Set(userRoster.filter(p => !p.untradable).map(p => p.pid)),
 				);
 				const userValidDpids = new Set(savedTradingBlockRaw.dpids).isSubsetOf(
 					new Set(userPicks2.map(dp => dp.dpid)),

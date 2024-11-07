@@ -12,6 +12,7 @@ import {
 } from "./TradingBlock";
 import { useEffect, useState } from "react";
 import { ActionButton } from "../components";
+import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch";
 
 const TradeProposals = (props: View<"tradeProposals">) => {
 	const {
@@ -46,6 +47,8 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 	const [refreshing, setRefreshing] = useState(false);
+
+	const tradeOffersSwitch = useTradeOffersSwitch();
 
 	if (spectator) {
 		return <p>You're not allowed to make trades in spectator mode.</p>;
@@ -119,7 +122,6 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 				here every 10 games.
 			</p>
 			<ActionButton
-				className="mb-3"
 				onClick={async () => {
 					setRefreshing(true);
 					await toWorker("main", "incrementTradeProposalsSeed", undefined);
@@ -131,7 +133,8 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 			>
 				Refresh trade proposals
 			</ActionButton>
-			<div className="d-none d-lg-block">
+			{tradeOffersSwitch.toggle}
+			{tradeOffersSwitch.value === "table" ? (
 				<OfferTable
 					assetCols={[
 						{
@@ -193,50 +196,51 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 					salaryCap={salaryCap}
 					salaryCapType={salaryCapType}
 				/>
-			</div>
-
-			<div className="d-block d-lg-none">
-				{filteredOffers.map(offer => {
-					return (
-						<Offer
-							key={offer.tid}
-							challengeNoRatings={challengeNoRatings}
-							onNegotiate={() => {
-								handleNegotiate(offer);
-							}}
-							onRemove={() => {
-								const tid = offer.tid;
-								setRemovedTids(prevTids => [...prevTids, tid]);
-							}}
-							salaryCap={salaryCap}
-							salaryCapType={salaryCapType}
-							teamInfo={teamInfoCache[offer.tid]}
-							hideTopTeamOvrs
-							{...offer}
-						>
-							<div className="d-flex gap-5">
-								{offer.summary.teams.map((t, j) => {
-									return (
-										<div key={j}>
-											<SummaryTeam
-												challengeNoRatings={challengeNoRatings}
-												hideFinanceInfo
-												luxuryPayroll={luxuryPayroll}
-												luxuryTax={luxuryTax}
-												salaryCap={salaryCap}
-												salaryCapType={salaryCapType}
-												showInlinePlayerInfo
-												summary={offer.summary}
-												t={t}
-											/>
-										</div>
-									);
-								})}
-							</div>
-						</Offer>
-					);
-				})}
-			</div>
+			) : (
+				<>
+					{filteredOffers.map((offer, i) => {
+						return (
+							<Offer
+								key={offer.tid}
+								challengeNoRatings={challengeNoRatings}
+								onNegotiate={() => {
+									handleNegotiate(offer);
+								}}
+								onRemove={() => {
+									const tid = offer.tid;
+									setRemovedTids(prevTids => [...prevTids, tid]);
+								}}
+								salaryCap={salaryCap}
+								salaryCapType={salaryCapType}
+								teamInfo={teamInfoCache[offer.tid]}
+								hideTopTeamOvrs
+								first={i === 0}
+								{...offer}
+							>
+								<div className="d-flex gap-5">
+									{offer.summary.teams.map((t, j) => {
+										return (
+											<div key={j}>
+												<SummaryTeam
+													challengeNoRatings={challengeNoRatings}
+													hideFinanceInfo
+													luxuryPayroll={luxuryPayroll}
+													luxuryTax={luxuryTax}
+													salaryCap={salaryCap}
+													salaryCapType={salaryCapType}
+													showInlinePlayerInfo
+													summary={offer.summary}
+													t={t}
+												/>
+											</div>
+										);
+									})}
+								</div>
+							</Offer>
+						);
+					})}
+				</>
+			)}
 		</>
 	);
 };

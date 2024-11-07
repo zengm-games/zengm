@@ -20,6 +20,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { MissingAssets, OvrChange } from "./Trade/Summary";
 import type { MissingAsset } from "../../worker/views/savedTrades";
+import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -31,6 +32,7 @@ export type OfferType = Awaited<
 
 type OfferProps = {
 	children: ReactNode;
+	first: boolean;
 	hideTopTeamOvrs?: boolean;
 	onNegotiate: () => void;
 	onRemove?: () => void;
@@ -101,7 +103,7 @@ const OfferPlayers = ({
 		});
 
 		let footer;
-		if (sumContracts !== 0) {
+		if (sumContracts !== 0 && players.length > 1) {
 			footer = [];
 			// Total text is too distracting, and it's usually a small number of players
 			/*footer[0] = (
@@ -137,6 +139,7 @@ export const Offer = (props: OfferProps) => {
 		children,
 		dpids,
 		dpidsUser,
+		first,
 		hideTopTeamOvrs,
 		onNegotiate,
 		onRemove,
@@ -163,7 +166,7 @@ export const Offer = (props: OfferProps) => {
 	}
 
 	return (
-		<div className="mt-4" style={{ maxWidth: 1125 }}>
+		<div className={first ? undefined : "mt-4"} style={{ maxWidth: 1125 }}>
 			<div className="d-flex align-items-center mb-2">
 				<h2 className="mb-0">
 					<a href={helpers.leagueUrl(["roster", `${teamInfo.abbrev}_${tid}`])}>
@@ -597,6 +600,8 @@ const TradingBlock = ({
 
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
+	const tradeOffersSwitch = useTradeOffersSwitch();
+
 	if (spectator) {
 		return <p>You're not allowed to make trades in spectator mode.</p>;
 	}
@@ -764,20 +769,26 @@ const TradingBlock = ({
 					type="button"
 					className="btn btn-secondary btn-lg ms-2"
 					disabled={state.asking}
-					onClick={() => {
+					onClick={async () => {
 						setState({
 							asking: false,
 							offers: [],
 							pids: [],
 							dpids: [],
 						});
+
+						await toWorker("main", "clearTradingBlock", undefined);
 					}}
 				>
 					Clear
 				</button>
 			</div>
 
-			<div className="d-none d-xxl-block">
+			{state.offers.length > 0 ? (
+				<div className="mt-3 mt-md-0">{tradeOffersSwitch.toggle}</div>
+			) : null}
+
+			{tradeOffersSwitch.value === "table" ? (
 				<OfferTable
 					assetCols={getCols(["Players", "Draft Picks"], {
 						"Draft Picks": {
@@ -844,73 +855,74 @@ const TradingBlock = ({
 					salaryCap={salaryCap}
 					salaryCapType={salaryCapType}
 				/>
-			</div>
-
-			<div className="d-block d-xxl-none">
-				{state.offers.map((offer, i) => {
-					return (
-						<Offer
-							key={offer.tid}
-							challengeNoRatings={challengeNoRatings}
-							onNegotiate={() => {
-								handleNegotiate(offer.tid, offer.pids, offer.dpids);
-							}}
-							onRemove={() => {
-								handleRemove(i);
-							}}
-							salaryCap={salaryCap}
-							salaryCapType={salaryCapType}
-							teamInfo={teamInfoCache[offer.tid]}
-							{...offer}
-						>
-							{offer.picks.length > 0 || offer.players.length > 0 ? (
-								<div className="row">
-									{offer.players.length > 0 ? (
-										<div className="col-md-8">
-											<OfferPlayers
-												challengeNoRatings={challengeNoRatings}
-												players={offer.players}
-												stats={stats}
-											/>
-											{(offer.missing && offer.missing.length > 0) ||
-											offer.willing === false ? (
-												<div className="mb-3">
-													<MissingAndWilling
-														missingAssets={offer.missing}
-														willing={offer.willing}
-													/>
-												</div>
-											) : null}
-										</div>
-									) : null}
-									{offer.picks.length > 0 ? (
-										<div className="col-md-4">
-											<table className="table table-striped table-borderless table-sm">
-												<thead>
-													<tr>
-														<th>Draft Picks</th>
-													</tr>
-												</thead>
-												<tbody>
-													{offer.picks.map(pick => (
-														<tr key={pick.dpid}>
-															<td>
-																<SafeHtml dirty={pick.desc} />
-															</td>
+			) : (
+				<>
+					{state.offers.map((offer, i) => {
+						return (
+							<Offer
+								key={offer.tid}
+								challengeNoRatings={challengeNoRatings}
+								onNegotiate={() => {
+									handleNegotiate(offer.tid, offer.pids, offer.dpids);
+								}}
+								onRemove={() => {
+									handleRemove(i);
+								}}
+								salaryCap={salaryCap}
+								salaryCapType={salaryCapType}
+								teamInfo={teamInfoCache[offer.tid]}
+								first={i === 0}
+								{...offer}
+							>
+								{offer.picks.length > 0 || offer.players.length > 0 ? (
+									<div className="row">
+										{offer.players.length > 0 ? (
+											<div className="col-md-8">
+												<OfferPlayers
+													challengeNoRatings={challengeNoRatings}
+													players={offer.players}
+													stats={stats}
+												/>
+												{(offer.missing && offer.missing.length > 0) ||
+												offer.willing === false ? (
+													<div className="mb-3">
+														<MissingAndWilling
+															missingAssets={offer.missing}
+															willing={offer.willing}
+														/>
+													</div>
+												) : null}
+											</div>
+										) : null}
+										{offer.picks.length > 0 ? (
+											<div className="col-md-4">
+												<table className="table table-striped table-borderless table-sm">
+													<thead>
+														<tr>
+															<th>Draft Picks</th>
 														</tr>
-													))}
-												</tbody>
-											</table>
-										</div>
-									) : null}
-								</div>
-							) : (
-								<p>Nothing.</p>
-							)}
-						</Offer>
-					);
-				})}
-			</div>
+													</thead>
+													<tbody>
+														{offer.picks.map(pick => (
+															<tr key={pick.dpid}>
+																<td>
+																	<SafeHtml dirty={pick.desc} />
+																</td>
+															</tr>
+														))}
+													</tbody>
+												</table>
+											</div>
+										) : null}
+									</div>
+								) : (
+									<p>Nothing.</p>
+								)}
+							</Offer>
+						);
+					})}
+				</>
+			)}
 		</>
 	);
 };

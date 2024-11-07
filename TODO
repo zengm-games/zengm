@@ -1,8 +1,5 @@
 hype should impact the magnitude of the home court advantage
 
-support sorting mobile trade tables (like saved trades, trading block)
-- or have toggle to switch between them?
-
 embed facesjs ui
 - what to do about all the dependencies?
   - could load async

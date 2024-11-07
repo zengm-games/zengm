@@ -11,6 +11,7 @@ import {
 	playerScore,
 } from "./TradingBlock";
 import { Dropdown } from "react-bootstrap";
+import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch";
 
 const SavedTrades = (props: View<"savedTrades">) => {
 	const {
@@ -29,6 +30,8 @@ const SavedTrades = (props: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
 
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+
+	const tradeOffersSwitch = useTradeOffersSwitch();
 
 	if (spectator) {
 		return <p>You're not allowed to make trades in spectator mode.</p>;
@@ -102,9 +105,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 				pages.
 			</p>
 			<Dropdown>
-				<Dropdown.Toggle variant="danger" className="mb-3">
-					Clear
-				</Dropdown.Toggle>
+				<Dropdown.Toggle variant="danger">Clear</Dropdown.Toggle>
 				<Dropdown.Menu>
 					<Dropdown.Item
 						onClick={async () => {
@@ -129,8 +130,12 @@ const SavedTrades = (props: View<"savedTrades">) => {
 					</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>
-			{offers.length === 0 ? <div>No saved trades</div> : null}
-			<div className="d-none d-lg-block">
+			{offers.length === 0 ? (
+				<div className="mt-3">No saved trades</div>
+			) : (
+				tradeOffersSwitch.toggle
+			)}
+			{tradeOffersSwitch.value === "table" ? (
 				<OfferTable
 					assetCols={[
 						{
@@ -190,48 +195,49 @@ const SavedTrades = (props: View<"savedTrades">) => {
 					salaryCap={salaryCap}
 					salaryCapType={salaryCapType}
 				/>
-			</div>
-
-			<div className="d-block d-lg-none">
-				{offers.map(offer => {
-					return (
-						<Offer
-							key={offer.hash}
-							challengeNoRatings={challengeNoRatings}
-							onNegotiate={() => {
-								handleNegotiate(offer);
-							}}
-							salaryCap={salaryCap}
-							salaryCapType={salaryCapType}
-							teamInfo={teamInfoCache[offer.tid]}
-							hideTopTeamOvrs
-							{...offer}
-						>
-							<div className="d-flex gap-5">
-								{offer.summary.teams.map((t, j) => {
-									const missingKey = j === 0 ? "missing" : "missingUser";
-									return (
-										<div key={j}>
-											<SummaryTeam
-												challengeNoRatings={challengeNoRatings}
-												hideFinanceInfo
-												luxuryPayroll={luxuryPayroll}
-												luxuryTax={luxuryTax}
-												missingAssets={offer[missingKey]}
-												salaryCap={salaryCap}
-												salaryCapType={salaryCapType}
-												showInlinePlayerInfo
-												summary={offer.summary}
-												t={t}
-											/>
-										</div>
-									);
-								})}
-							</div>
-						</Offer>
-					);
-				})}
-			</div>
+			) : (
+				<>
+					{offers.map((offer, i) => {
+						return (
+							<Offer
+								key={offer.hash}
+								challengeNoRatings={challengeNoRatings}
+								onNegotiate={() => {
+									handleNegotiate(offer);
+								}}
+								salaryCap={salaryCap}
+								salaryCapType={salaryCapType}
+								teamInfo={teamInfoCache[offer.tid]}
+								hideTopTeamOvrs
+								first={i === 0}
+								{...offer}
+							>
+								<div className="d-flex gap-5">
+									{offer.summary.teams.map((t, j) => {
+										const missingKey = j === 0 ? "missing" : "missingUser";
+										return (
+											<div key={j}>
+												<SummaryTeam
+													challengeNoRatings={challengeNoRatings}
+													hideFinanceInfo
+													luxuryPayroll={luxuryPayroll}
+													luxuryTax={luxuryTax}
+													missingAssets={offer[missingKey]}
+													salaryCap={salaryCap}
+													salaryCapType={salaryCapType}
+													showInlinePlayerInfo
+													summary={offer.summary}
+													t={t}
+												/>
+											</div>
+										);
+									})}
+								</div>
+							</Offer>
+						);
+					})}
+				</>
+			)}
 		</>
 	);
 };

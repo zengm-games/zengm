@@ -44,7 +44,7 @@ const handleVersion = async () => {
 			}
 		} else if (e.key === "theme") {
 			if (window.themeCSSLink) {
-				window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;
+				window.themeCSSLink.href = window.getThemeFilename(window.getTheme());
 			}
 		}
 	});

@@ -9,7 +9,7 @@ import {
 import logEvent from "./logEvent";
 
 const takeScreenshotChunk = async () => {
-	const theme = window.getTheme().startsWith("dark") ? "dark" : "light";
+	const theme = window.getTheme();
 
 	const contentEl = document.getElementById("actual-actual-content");
 	if (!contentEl) {

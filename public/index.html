@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <title>GAME_NAME</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#FF7F2A"/>
+    <meta name="theme-color" content="#FF7F2A">
     <meta name="format-detection" content="telephone=no">
+    <meta name="color-scheme" content="light dark">
 
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="icon" href="/ico/icon.svg">
@@ -25,7 +26,7 @@ window.mobile = window.screen.width < 768 || window.screen.height < 768;
 function loadCSS(filename){
   var el = document.createElement("link");
   el.setAttribute("rel", "stylesheet");
-  el.setAttribute("href", "/" + filename);
+  el.setAttribute("href", filename);
   document.getElementsByTagName("head")[0].appendChild(el);
   return el;
 }
@@ -35,14 +36,23 @@ function getTheme() {
   try {
     var local = localStorage.getItem("theme");
     if (local !== null) {
-      return local === "dark" ? dark : light;
+      return local === "dark" ? "dark" : "light";
     }
-    return matchMedia("(prefers-color-scheme: dark)").matches ? dark : light;
+    return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   } catch (err) {
-    return light;
+    return "light";
   }
 }
-window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
+function getThemeFilename(theme) {
+  // Updates the scrollbar in Chrome - from the demo https://color-scheme-demo.glitch.me/ from https://web.dev/articles/color-scheme#demo
+  document.documentElement.style.colorScheme = theme;
+
+  if (theme === "dark") {
+    return "/gen/dark-CSS_HASH_DARK.css";
+  }
+  return "/gen/light-CSS_HASH_LIGHT.css";
+}
+window.themeCSSLink = loadCSS(getThemeFilename(getTheme()));
 
 window.enableLogging = location.host.indexOf("GOOGLE_ANALYTICS_COOKIE_DOMAIN") >= 0;
 

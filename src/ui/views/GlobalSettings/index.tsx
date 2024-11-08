@@ -64,7 +64,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			safeLocalStorage.setItem("theme", state.theme);
 		}
 		if (window.themeCSSLink) {
-			window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;
+			window.themeCSSLink.href = window.getThemeFilename(window.getTheme());
 		}
 
 		const units = state.units === "default" ? undefined : state.units;

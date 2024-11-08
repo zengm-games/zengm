@@ -17,7 +17,8 @@ declare global {
 		bugsnagKey: string;
 		enableLogging: boolean;
 		freestar: any;
-		getTheme: () => string;
+		getTheme: () => "dark" | "light";
+		getThemeFilename: (theme: "dark" | "light") => string;
 		googletag: any;
 		heartbeatID: string;
 		mobile: boolean;

@@ -92,7 +92,7 @@ const getMostXPlayers = async ({
 	});
 
 	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < LIMIT; i++) {
 		if (ordered[i]) {
 			ordered[i].rank = i + 1;
 

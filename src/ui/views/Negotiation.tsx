@@ -164,12 +164,20 @@ const Negotiation = ({
 				</div>
 			</div>
 
-			<button
-				className="btn btn-danger mt-3"
-				onClick={() => cancel(player.pid)}
-			>
-				Can't reach a deal? End negotiation
-			</button>
+			<div className="mt-3">
+				{resigning ? (
+					<a
+						className="btn btn-secondary"
+						href={helpers.leagueUrl(["negotiation"])}
+					>
+						Return to Re-Sign Players page
+					</a>
+				) : (
+					<button className="btn btn-danger" onClick={() => cancel(player.pid)}>
+						Can't reach a deal? End negotiation
+					</button>
+				)}
+			</div>
 		</>
 	);
 };

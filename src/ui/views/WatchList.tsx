@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { PLAYER } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { ActionButton, DataTable, WatchBlock } from "../components";
@@ -15,6 +15,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 const WatchList = ({
 	challengeNoRatings,
 	flagNote,
+	phase,
 	players,
 	playoffs,
 	statType,
@@ -60,7 +61,12 @@ const WatchList = ({
 		let exp = null;
 		if (p.tid === PLAYER.RETIRED) {
 			contract = "Retired";
-		} else if (p.tid === PLAYER.UNDRAFTED) {
+		} else if (p.tid === PLAYER.UNDRAFTED && phase === PHASE.FANTASY_DRAFT) {
+			contract = "Fantasy Draft Prospect";
+		} else if (
+			p.tid === PLAYER.UNDRAFTED ||
+			p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+		) {
 			contract = `${p.draft.year} Draft Prospect`;
 		} else {
 			contract = wrappedContractAmount(p);

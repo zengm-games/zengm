@@ -15,6 +15,7 @@ const updatePlayers = async (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("newPhase") ||
 		inputs.statType !== state.statType ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.flagNote !== state.flagNote
@@ -95,6 +96,7 @@ const updatePlayers = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			flagNote: inputs.flagNote,
+			phase: g.get("phase"),
 			players,
 			playoffs: inputs.playoffs,
 			statType: inputs.statType,

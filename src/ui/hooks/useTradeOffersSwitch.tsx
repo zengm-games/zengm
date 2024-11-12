@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
+const DEFAULT_LIST = window.screen.width < 992 || window.screen.height < 992;
+
 const useTradeOffersSwitch = () => {
 	const [value, setValue] = useLocalStorageState<"table" | "list">(
 		"tradeOffersOverride",
 		{
-			defaultValue: "list",
+			defaultValue: DEFAULT_LIST ? "list" : "table",
 		},
 	);
 
@@ -29,8 +31,8 @@ const useTradeOffersSwitch = () => {
 	);
 
 	return {
-		toggle: window.mobile ? toggle : null,
-		value: window.mobile ? value : "table",
+		toggle,
+		value,
 	};
 };
 

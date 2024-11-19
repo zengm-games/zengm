@@ -129,6 +129,9 @@ const TradeSummary = ({
 								</a>{" "}
 								received:
 							</h2>
+							{t.assets.length === 0 ? (
+								<div className="mb-2">Nothing!</div>
+							) : null}
 							{t.assets.map((asset, i) => {
 								if (asset.type === "player") {
 									return (
@@ -156,8 +159,11 @@ const TradeSummary = ({
 												{asset.age} years old
 												<br />
 												{helpers.roundStat(asset.stat, "ws")} {stat} after trade
-												({helpers.roundStat(asset.statTeam, "ws")} with{" "}
-												{t.abbrev})
+												(
+												{asset.stat === asset.statTeam
+													? "all"
+													: helpers.roundStat(asset.statTeam, "ws")}{" "}
+												with {t.abbrev})
 											</div>
 											<Outcome outcome={asset.outcome} />
 										</div>
@@ -209,8 +215,11 @@ const TradeSummary = ({
 												{asset.age} years old
 												<br />
 												{helpers.roundStat(asset.stat, "ws")} {stat} after trade
-												({helpers.roundStat(asset.statTeam, "ws")} with{" "}
-												{t.abbrev})
+												(
+												{asset.stat === asset.statTeam
+													? "all"
+													: helpers.roundStat(asset.statTeam, "ws")}{" "}
+												with {t.abbrev})
 											</div>
 											<Outcome outcome={asset.outcome} />
 										</div>
@@ -219,12 +228,24 @@ const TradeSummary = ({
 
 								return "???";
 							})}
-							<b>
-								{helpers.roundStat(t.statSum, "ws")} {stat} after trade (total)
-								<br />
-								{helpers.roundStat(t.statSumTeam, "ws")} {stat} after trade
-								(with {t.abbrev})
-							</b>
+							{t.assets.length === 0 ? null : (
+								<b>
+									{t.statSum === t.statSumTeam ? (
+										<>
+											{helpers.roundStat(t.statSum, "ws")} {stat} after trade
+											(all with {t.abbrev})
+										</>
+									) : (
+										<>
+											{helpers.roundStat(t.statSum, "ws")} {stat} after trade
+											(total)
+											<br />
+											{helpers.roundStat(t.statSumTeam, "ws")} {stat} after
+											trade (with {t.abbrev})
+										</>
+									)}
+								</b>
+							)}
 						</div>
 					))}
 				</div>

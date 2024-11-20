@@ -43,6 +43,10 @@ const typeFactors: Record<
 	},
 };
 
+const athleticismRatings = new Set(["stre", "spd", "jmp", "endu", "dnk"]);
+const shootingRatings = new Set(["ft", "fg", "tp"]);
+const skillRatings = new Set(["oiq", "diq", "drb", "pss", "reb"]); // ins purposely left out
+
 const genRatings = (
 	season: number,
 	scoutingLevel: number,
@@ -112,19 +116,16 @@ const genRatings = (
 	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
-	const shootingRatings = ["ft", "fg", "tp"];
-	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
 
 	for (const key of helpers.keys(rawRatings)) {
-		const typeFactor = typeFactors[type]?.[key] ?? 1;
+		const typeFactor = typeFactors[type][key] ?? 1;
 		let factor = factorIns;
 
-		if (athleticismRatings.includes(key)) {
+		if (athleticismRatings.has(key)) {
 			factor = factorAthleticism;
-		} else if (shootingRatings.includes(key)) {
+		} else if (shootingRatings.has(key)) {
 			factor = factorShooting;
-		} else if (skillRatings.includes(key)) {
+		} else if (skillRatings.has(key)) {
 			factor = factorSkill;
 		}
 

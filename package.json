@@ -60,7 +60,7 @@
 		"clsx": "^2.1.1",
 		"confetti-js": "^0.0.18",
 		"d3-dsv": "^3.0.1",
-		"dompurify": "^3.2.0",
+		"dompurify": "^3.2.1",
 		"dropbox": "^10.34.0",
 		"facesjs": "^4.2.2",
 		"fast-deep-equal": "^3.1.3",

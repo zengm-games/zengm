@@ -191,12 +191,13 @@ const calcBaseChange = (age: number, coachingLevel: number): number => {
 	}
 
 	// Noise
+	const mult = 2; // sqrt(4), since we run this function 4 times below
 	if (age <= 23) {
-		val += helpers.bound(random.realGauss(0, 5), -4, 20);
+		val += helpers.bound(random.realGauss(0, 5 * mult), -4 * mult, 20 * mult);
 	} else if (age <= 25) {
-		val += helpers.bound(random.realGauss(0, 5), -4, 10);
+		val += helpers.bound(random.realGauss(0, 5 * mult), -4 * mult, 10 * mult);
 	} else {
-		val += helpers.bound(random.realGauss(0, 3), -2, 4);
+		val += helpers.bound(random.realGauss(0, 3 * mult), -2 * mult, 4 * mult);
 	}
 
 	val *= 1 + (val > 0 ? 1 : -1) * coachingEffect(coachingLevel);
@@ -222,7 +223,27 @@ const developSeason = (
 		}
 	}
 
-	const baseChange = calcBaseChange(age, coachingLevel);
+	const baseChangeA = calcBaseChange(age, coachingLevel);
+	const baseChangeS = calcBaseChange(age, coachingLevel);
+	const baseChangeO = calcBaseChange(age, coachingLevel);
+	const baseChangeD = calcBaseChange(age, coachingLevel);
+
+	const ratingsNumbers = {
+		stre: (baseChangeA + baseChangeD) / 2,
+		spd: baseChangeA,
+		jmp: baseChangeA,
+		endu: baseChangeA,
+		dnk: (baseChangeA + baseChangeS) / 2,
+		ins: (baseChangeO + baseChangeS) / 2,
+		ft: baseChangeS,
+		fg: baseChangeS,
+		tp: baseChangeS,
+		oiq: baseChangeO,
+		diq: baseChangeD,
+		drb: baseChangeO,
+		pss: baseChangeO,
+		reb: baseChangeD,
+	};
 
 	for (const key of helpers.keys(ratingsFormulas)) {
 		const ageModifier = ratingsFormulas[key].ageModifier(age);
@@ -231,7 +252,7 @@ const developSeason = (
 		ratings[key] = limitRating(
 			ratings[key] +
 				helpers.bound(
-					(baseChange + ageModifier) * random.uniform(0.4, 1.4),
+					(ratingsNumbers[key] + ageModifier) * random.uniform(0.4, 1.4),
 					changeLimits[0],
 					changeLimits[1],
 				),

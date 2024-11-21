@@ -10,6 +10,7 @@ import potEstimator from "./potEstimator";
 import { BANNED_POSITIONS } from "./pos.baseball";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { RATINGS } from "../../../common/constants.basketball";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -71,7 +72,13 @@ export const monteCarloPot = async ({
 		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
-			await developSeason(copiedRatings, ageTemp, srID); // Purposely no coachingLevel
+			await developSeason(
+				copiedRatings,
+				ageTemp,
+				srID,
+				DEFAULT_LEVEL,
+				undefined,
+			); // Purposely no coachingLevel
 
 			const currentOvr = ovr(copiedRatings, pos);
 
@@ -84,6 +91,17 @@ export const monteCarloPot = async ({
 	}
 
 	return maxOvrs.sort((a, b) => a - b)[Math.floor(0.75 * NUM_SIMULATIONS)];
+};
+
+const ratingsDiff = (
+	oldRatings: Record<string, number>,
+	newRatings: Record<string, number>,
+) => {
+	const prevProgs: Record<string, number> = {};
+	for (const key of RATINGS) {
+		prevProgs[key] = newRatings[key] - oldRatings[key];
+	}
+	return prevProgs;
 };
 
 /**
@@ -123,14 +141,35 @@ const develop = async (
 	const ratings = p.ratings.at(-1)!;
 	let age = ratings.season - p.born.year;
 
+	let prevProgs: Record<string, number> | undefined;
+	if (isSport("basketball")) {
+		const prevRatings = p.ratings.at(-2);
+		if (prevRatings) {
+			prevProgs = ratingsDiff(prevRatings as any, ratings as any);
+		}
+	}
+
 	for (let i = 0; i < years; i++) {
 		// (CONFUSING!) Don't increment age for existing players developing one season (i.e. newPhasePreseason) because the season is already incremented before this function is called. But in other scenarios (new league and draft picks), the season is not changing, so age should be incremented every iteration of this loop.
 		if (newPlayer || years > 1) {
 			age += 1;
 		}
 
+		const updatePrevProgs = isSport("basketball") && i < years - 1;
+
+		let prevRatings;
+		if (updatePrevProgs) {
+			prevRatings = {
+				...ratings,
+			};
+		}
+
 		if (!ratings.locked) {
-			await developSeason(ratings, age, p.srID, coachingLevel);
+			await developSeason(ratings, age, p.srID, coachingLevel, prevProgs);
+		}
+
+		if (updatePrevProgs) {
+			prevProgs = ratingsDiff(prevRatings as any, ratings as any);
 		}
 	}
 

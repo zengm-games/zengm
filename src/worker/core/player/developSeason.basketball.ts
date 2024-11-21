@@ -36,10 +36,13 @@ const calcBaseChange = (age: number, coachingLevel: number) => {
 	return val;
 };
 
+const SMOOTH_WITH_PREV_PROGS = 0.5;
+
 const developSeason = (
 	ratings: PlayerRatings,
 	age: number,
 	coachingLevel: number,
+	prevProgs: Record<string, number> | undefined,
 ) => {
 	// In young players, height can sometimes increase
 	if (age <= 21) {
@@ -85,9 +88,13 @@ const developSeason = (
 
 		const ageChange =
 			ageModifier + helpers.bound(random.realGauss() * ageStd, -3, 5);
-		ratings[key] = limitRating(
-			ratings[key] + 0.5 * (baseChanges[key] + ageChange),
-		);
+		let prog = 0.5 * (baseChanges[key] + ageChange);
+		if (prevProgs) {
+			prog =
+				(1 - SMOOTH_WITH_PREV_PROGS) * prog +
+				SMOOTH_WITH_PREV_PROGS * prevProgs[key];
+		}
+		ratings[key] = limitRating(ratings[key] + prog);
 	}
 };
 

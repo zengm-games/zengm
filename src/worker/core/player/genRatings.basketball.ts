@@ -53,8 +53,9 @@ const genRatings = (
 	// realHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
 	let heightInInches = random.heightDist() + Math.random() - 0.5; // Fraction of an inch
 
-	const wingspanAdjust = heightInInches + random.randInt(-1, 1); // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
+	const wingspanAdjust = heightInInches + random.randInt(-1, 1);
 
+	// hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
 	const hgt = heightToRating(wingspanAdjust);
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
@@ -90,20 +91,20 @@ const genRatings = (
 
 	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		stre: 37,
-		spd: 40,
-		jmp: 40,
-		endu: 17,
-		ins: 27,
-		dnk: 27,
-		ft: 32,
-		fg: 32,
-		tp: 32,
-		oiq: 22,
-		diq: 22,
-		drb: 37,
-		pss: 37,
-		reb: 37,
+		diq: 39,
+		dnk: 39,
+		drb: 40,
+		endu: 23,
+		fg: 34,
+		ft: 36,
+		ins: 38,
+		jmp: 35,
+		oiq: 38,
+		pss: 39,
+		reb: 45,
+		spd: 37,
+		stre: 46,
+		tp: 40,
 	};
 
 	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
@@ -135,7 +136,7 @@ const genRatings = (
 		}
 
 		rawRatings[key] = limitRating(
-			factor * typeFactor * random.realGauss(rawRatings[key], 3),
+			factor * typeFactor * random.realGauss(rawRatings[key], 5),
 		);
 	}
 

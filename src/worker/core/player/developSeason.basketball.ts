@@ -3,37 +3,119 @@ import { helpers, random } from "../../util";
 import type { PlayerRatings } from "../../../common/types.basketball";
 import { coachingEffect } from "../../../common/budgetLevels";
 
-// (age coefficient, age offset) for mean, and stddev
+// peakAge: the age this rating normally peaks
+// normalGrowth: amount this rating usually increases per year, until peakAge (modulated a bit by age still, so further from peakAge growth will be higher, and closer to peakAge it will be lower)
+// normalDecline: amount this rating usually declines (from peakAge to 40, with similar modulation as normalGrowth)
 const ratingsFormulas = {
-	diq: [-0.1, 2.841, -0.95],
-	dnk: [-0.052, 1.781, 1.205],
-	drb: [0.097, -3.06, -0.014],
-	endu: [-0.52, 13.842, 2.301],
-	fg: [0.015, 0.07, 0.544],
-	ft: [0.155, -3.891, -0.071],
-	ins: [-0.032, 0.924, 0.756],
-	jmp: [-0.247, 5.446, 1.486],
-	oiq: [0.076, -2.039, 0.406],
-	pss: [0.157, -4.602, 0.288],
-	reb: [0.042, -0.964, -0.098],
-	spd: [-0.057, 0.44, 0.323],
-	stre: [-0.099, 2.675, 0.231],
-	tp: [0.138, -3.909, 0.68],
-} satisfies Record<string, [number, number, number]>;
+	// Big growth
+	stre: {
+		peakAge: 28,
+		normalGrowth: 5,
+		normalDecline: 2,
+	},
+	oiq: {
+		peakAge: 28,
+		normalGrowth: 8,
+		normalDecline: 2,
+	},
+	diq: {
+		peakAge: 28,
+		normalGrowth: 8,
+		normalDecline: 2,
+	},
+	endu: {
+		peakAge: 26,
+		normalGrowth: 5,
+		normalDecline: 2,
+	},
 
-const calcBaseChange = (age: number, coachingLevel: number) => {
-	let val;
+	// Moderate growth
+	dnk: {
+		peakAge: 25,
+		normalGrowth: 2,
+		normalDecline: 2,
+	},
+	drb: {
+		peakAge: 30,
+		normalGrowth: 2,
+		normalDecline: 2,
+	},
+	fg: {
+		peakAge: 30,
+		normalGrowth: 3,
+		normalDecline: 2,
+	},
+	ft: {
+		peakAge: 30,
+		normalGrowth: 3,
+		normalDecline: 2,
+	},
+	ins: {
+		peakAge: 30,
+		normalGrowth: 2,
+		normalDecline: 2,
+	},
+	pss: {
+		peakAge: 30,
+		normalGrowth: 2,
+		normalDecline: 2,
+	},
+	reb: {
+		peakAge: 30,
+		normalGrowth: 2,
+		normalDecline: 2,
+	},
+	tp: {
+		peakAge: 30,
+		normalGrowth: 3,
+		normalDecline: 2,
+	},
 
-	const base_coef = [-0.327, 10, 4.202];
+	// Small growth
+	jmp: {
+		peakAge: 24,
+		normalGrowth: 1,
+		normalDecline: 8,
+	},
+	spd: {
+		peakAge: 25,
+		normalGrowth: 1,
+		normalDecline: 8,
+	},
+};
 
-	val = base_coef[0] * age + base_coef[1];
-	const std_base = base_coef[2];
-	const std_noise = helpers.bound(random.realGauss() * std_base, -1, 4);
-	val += std_noise;
-
-	val *= 1 + (val > 0 ? 1 : -1) * coachingEffect(coachingLevel);
-
-	return val;
+const getNormalChange = (
+	{
+		peakAge,
+		normalGrowth,
+		normalDecline,
+	}: {
+		peakAge: number;
+		normalGrowth: number;
+		normalDecline: number;
+	},
+	age: number,
+) => {
+	const ageDiff = age - peakAge;
+	if (ageDiff < -3) {
+		return normalGrowth;
+	} else if (ageDiff === -3) {
+		return 0.75 * normalGrowth;
+	} else if (ageDiff === -2) {
+		return 0.5 * normalGrowth;
+	} else if (ageDiff === -1) {
+		return 0.25 * normalGrowth;
+	} else if (ageDiff === 0) {
+		return 0;
+	} else if (ageDiff === 1) {
+		return -0.25 * normalGrowth;
+	} else if (ageDiff === 2) {
+		return -0.5 * normalGrowth;
+	} else if (ageDiff === 3) {
+		return -0.75 * normalGrowth;
+	} else {
+		return -normalDecline;
+	}
 };
 
 const SMOOTH_WITH_PREV_PROGS = 0.5;
@@ -57,43 +139,43 @@ const developSeason = (
 		}
 	}
 
-	const ageBound = helpers.bound(age, 19, 50);
-
-	const baseChangeA = calcBaseChange(ageBound, coachingLevel);
-	const baseChangeS = calcBaseChange(ageBound, coachingLevel);
-	const baseChangeO = calcBaseChange(ageBound, coachingLevel);
-	const baseChangeD = calcBaseChange(ageBound, coachingLevel);
+	const baseChangeAthleticism = random.uniform(-3, 3);
+	const baseChangeShooting = random.uniform(-3, 3);
+	const baseChangeOffense = random.uniform(-3, 3);
+	const baseChangeDefense = random.uniform(-3, 3);
 
 	const baseChanges = {
-		stre: (baseChangeA + baseChangeD) / 2,
-		spd: baseChangeA,
-		jmp: baseChangeA,
-		endu: baseChangeA,
-		dnk: (baseChangeA + baseChangeS) / 2,
-		ins: (baseChangeO + baseChangeS) / 2,
-		ft: baseChangeS,
-		fg: baseChangeS,
-		tp: baseChangeS,
-		oiq: baseChangeO,
-		diq: baseChangeD,
-		drb: baseChangeO,
-		pss: baseChangeO,
-		reb: baseChangeD,
+		stre: (baseChangeAthleticism + baseChangeDefense) / 2,
+		spd: baseChangeAthleticism,
+		jmp: baseChangeAthleticism,
+		endu: baseChangeAthleticism,
+		dnk: (baseChangeAthleticism + baseChangeShooting) / 2,
+		ins: (baseChangeOffense + baseChangeShooting) / 2,
+		ft: baseChangeShooting,
+		fg: baseChangeShooting,
+		tp: baseChangeShooting,
+		oiq: baseChangeOffense,
+		diq: baseChangeDefense,
+		drb: baseChangeOffense,
+		pss: baseChangeOffense,
+		reb: baseChangeDefense,
 	};
 
 	for (const key of helpers.keys(ratingsFormulas)) {
-		const ageModifier =
-			ratingsFormulas[key][0] * ageBound + ratingsFormulas[key][1];
-		const ageStd = ratingsFormulas[key][2];
+		let prog =
+			0.7 *
+			(getNormalChange(ratingsFormulas[key], age) +
+				baseChanges[key] +
+				helpers.bound(0 * random.realGauss(), -10, 10));
 
-		const ageChange =
-			ageModifier + helpers.bound(random.realGauss() * ageStd, -3, 5);
-		let prog = 0.5 * (baseChanges[key] + ageChange);
+		prog *= 1 + (prog > 0 ? 1 : -1) * coachingEffect(coachingLevel);
+
 		if (prevProgs) {
 			prog =
 				(1 - SMOOTH_WITH_PREV_PROGS) * prog +
 				SMOOTH_WITH_PREV_PROGS * prevProgs[key];
 		}
+
 		ratings[key] = limitRating(ratings[key] + prog);
 	}
 };

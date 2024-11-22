@@ -33,15 +33,19 @@ const typeFactors: Record<
 	},
 	big: {
 		stre: 1.2,
-		ins: 1.6,
-		dnk: 1.5,
+		ins: 2,
+		dnk: 2,
 		reb: 1.4,
 		ft: 0.8,
 		fg: 0.8,
 		tp: 0.8,
-		diq: 1.2,
+		diq: 1.3,
 	},
 };
+
+const athleticismRatings = new Set(["stre", "spd", "jmp", "endu", "dnk"]);
+const shootingRatings = new Set(["ft", "fg", "tp"]);
+const skillRatings = new Set(["oiq", "diq", "drb", "pss", "reb"]); // ins purposely left out
 
 const genRatings = (
 	season: number,
@@ -91,20 +95,20 @@ const genRatings = (
 
 	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		diq: 39,
-		dnk: 39,
-		drb: 40,
-		endu: 23,
-		fg: 34,
-		ft: 36,
-		ins: 38,
-		jmp: 35,
-		oiq: 38,
-		pss: 39,
-		reb: 45,
-		spd: 37,
-		stre: 46,
-		tp: 40,
+		stre: 37,
+		spd: 40,
+		jmp: 40,
+		endu: 37,
+		ins: 27,
+		dnk: 27,
+		ft: 32,
+		fg: 32,
+		tp: 32,
+		oiq: 22,
+		diq: 22,
+		drb: 37,
+		pss: 37,
+		reb: 37,
 	};
 
 	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
@@ -113,26 +117,17 @@ const genRatings = (
 	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
-	const shootingRatings = ["ft", "fg", "tp"];
-	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
 
 	for (const key of helpers.keys(rawRatings)) {
 		const typeFactor = typeFactors[type]?.[key] ?? 1;
 		let factor = factorIns;
 
-		if (athleticismRatings.includes(key)) {
+		if (athleticismRatings.has(key)) {
 			factor = factorAthleticism;
-		} else if (shootingRatings.includes(key)) {
+		} else if (shootingRatings.has(key)) {
 			factor = factorShooting;
-		} else if (skillRatings.includes(key)) {
+		} else if (skillRatings.has(key)) {
 			factor = factorSkill;
-		}
-
-		// For TypeScript
-		// https://github.com/microsoft/TypeScript/issues/21732
-		if (typeFactor === undefined) {
-			throw new Error("Should never happen");
 		}
 
 		rawRatings[key] = limitRating(

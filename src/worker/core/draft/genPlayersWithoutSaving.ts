@@ -164,7 +164,7 @@ const genPlayersWithoutSaving = async (
 	}
 
 	// Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
-	if (existingPlayers.length === 0) {
+	if (existingPlayers.length === 0 && !isSport("basketball")) {
 		const numSpecialPlayerChances = Math.round((4 / 70) * numPlayers);
 
 		for (let i = 0; i < numSpecialPlayerChances; i++) {

@@ -43,9 +43,51 @@ const typeFactors: Record<
 	},
 };
 
-const athleticismRatings = new Set(["stre", "spd", "jmp", "endu", "dnk"]);
-const shootingRatings = new Set(["ft", "fg", "tp"]);
-const skillRatings = new Set(["oiq", "diq", "drb", "pss", "reb"]); // ins purposely left out
+const ratingCategoryKeys = {
+	physical: ["spd", "jmp", "endu"] as const,
+	point: ["drb", "pss", "oiq"] as const,
+	shooting: ["ft", "fg", "tp"] as const,
+	inside: ["dnk", "ins"] as const,
+	defense: ["diq", "reb"] as const,
+	strength: ["stre"] as const,
+};
+const ratingCategories = helpers.keys(ratingCategoryKeys);
+
+const getBuffDirection = (
+	category: (typeof ratingCategories)[number],
+	hgt: number,
+): -1 | 1 => {
+	if (category === "inside" || category === "defense") {
+		return Math.random() < 0.5 ? 1 : -1;
+	}
+
+	// Number (0.1, 0.9) representing height. 0.1 is 6'3" (33) and 0.9 is 6'10" (59). Anything beyond that is truncated
+	const hgtFraction = helpers.bound(
+		0.1 + (0.8 * (hgt - 33)) / (59 - 33),
+		0.1,
+		0.9,
+	);
+
+	if (category === "strength") {
+		const r = Math.random();
+		if (r < hgtFraction) {
+			// Likely for tall players
+			return 1;
+		}
+
+		// Likely for short players
+		return -1;
+	}
+
+	const r = Math.random();
+	if (r > hgtFraction) {
+		// Likely for short players
+		return 1;
+	}
+
+	// Likely for tall players
+	return -1;
+};
 
 const genRatings = (
 	season: number,
@@ -63,93 +105,35 @@ const genRatings = (
 	const hgt = heightToRating(wingspanAdjust);
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
-	const randType = Math.random();
-	let type: keyof typeof typeFactors;
-
-	if (hgt >= 59) {
-		// 6'10" or taller
-		if (randType < 0.01) {
-			type = "point";
-		} else if (randType < 0.05) {
-			type = "wing";
-		} else {
-			type = "big";
-		}
-	} else if (hgt <= 33) {
-		// 6'3" or shorter
-		if (randType < 0.1) {
-			type = "wing";
-		} else {
-			type = "point";
-		}
-	} else {
-		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
-		if (randType < 0.03) {
-			type = "point";
-		} else if (randType < 0.3) {
-			type = "big";
-		} else {
-			type = "wing";
-		}
-	}
-
-	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
-		stre: 37,
-		spd: 40,
-		jmp: 40,
-		endu: 37,
-		ins: 27,
-		dnk: 27,
-		ft: 32,
-		fg: 32,
-		tp: 32,
-		oiq: 22,
-		diq: 22,
-		drb: 37,
-		pss: 37,
-		reb: 37,
+		stre: 40,
+		spd: 50,
+		jmp: 50,
+		endu: 40,
+		ins: 50,
+		dnk: 50,
+		ft: 50,
+		fg: 50,
+		tp: 50,
+		oiq: 30,
+		diq: 30,
+		drb: 50,
+		pss: 50,
+		reb: 50,
 	};
 
-	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
-	// ensure there are some who are elite in one but not the other
-	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-
-	for (const key of helpers.keys(rawRatings)) {
-		const typeFactor = typeFactors[type]?.[key] ?? 1;
-		let factor = factorIns;
-
-		if (athleticismRatings.has(key)) {
-			factor = factorAthleticism;
-		} else if (shootingRatings.has(key)) {
-			factor = factorShooting;
-		} else if (skillRatings.has(key)) {
-			factor = factorSkill;
+	for (const category of ratingCategories) {
+		const sign = getBuffDirection(category, hgt);
+		const amount = random.randInt(0, 15);
+		for (const key of ratingCategoryKeys[category]) {
+			rawRatings[key] = limitRating(
+				rawRatings[key] + sign * (amount + random.randInt(0, 25)),
+			);
 		}
-
-		rawRatings[key] = limitRating(
-			factor * typeFactor * random.realGauss(rawRatings[key], 5),
-		);
 	}
 
 	const ratings = {
-		stre: rawRatings.stre,
-		spd: rawRatings.spd,
-		jmp: rawRatings.jmp,
-		endu: rawRatings.endu,
-		ins: rawRatings.ins,
-		dnk: rawRatings.dnk,
-		ft: rawRatings.ft,
-		fg: rawRatings.fg,
-		tp: rawRatings.tp,
-		oiq: rawRatings.oiq,
-		diq: rawRatings.diq,
-		drb: rawRatings.drb,
-		pss: rawRatings.pss,
-		reb: rawRatings.reb,
+		...rawRatings,
 		hgt,
 		fuzz: genFuzz(scoutingLevel),
 		ovr: 0,

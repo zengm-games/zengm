@@ -2,46 +2,7 @@ import genFuzz from "./genFuzz";
 import heightToRating from "./heightToRating";
 import limitRating from "./limitRating";
 import { helpers, random } from "../../util";
-import type {
-	PlayerRatings,
-	RatingKey,
-} from "../../../common/types.basketball";
-
-const typeFactors: Record<
-	"point" | "wing" | "big",
-	Partial<Record<RatingKey, number>>
-> = {
-	point: {
-		jmp: 1.65,
-		spd: 1.65,
-		drb: 1.5,
-		pss: 1.5,
-		ft: 1.4,
-		fg: 1.4,
-		tp: 1.4,
-		oiq: 1.2,
-		endu: 1.4,
-	},
-	wing: {
-		drb: 1.2,
-		dnk: 1.5,
-		jmp: 1.4,
-		spd: 1.4,
-		ft: 1.2,
-		fg: 1.2,
-		tp: 1.2,
-	},
-	big: {
-		stre: 1.2,
-		ins: 2,
-		dnk: 2,
-		reb: 1.4,
-		ft: 0.8,
-		fg: 0.8,
-		tp: 0.8,
-		diq: 1.3,
-	},
-};
+import type { PlayerRatings } from "../../../common/types.basketball";
 
 const ratingCategoryKeys = {
 	physical: ["spd", "jmp", "endu"] as const,
@@ -53,7 +14,7 @@ const ratingCategoryKeys = {
 };
 const ratingCategories = helpers.keys(ratingCategoryKeys);
 
-const getBuffDirection = (
+const getBuffAmount = (
 	category: (typeof ratingCategories)[number],
 	hgt: number,
 ): -1 | 1 => {
@@ -61,11 +22,11 @@ const getBuffDirection = (
 		return Math.random() < 0.5 ? 1 : -1;
 	}
 
-	// Number (0.1, 0.9) representing height. 0.1 is 6'3" (33) and 0.9 is 6'10" (59). Anything beyond that is truncated
+	// Number (0.25, 0.75) representing height. 0.1 is 6'3" (33) and 0.9 is 6'10" (59). Anything beyond that is truncated
 	const hgtFraction = helpers.bound(
-		0.1 + (0.8 * (hgt - 33)) / (59 - 33),
-		0.1,
-		0.9,
+		0.25 + (0.5 * (hgt - 33)) / (59 - 33),
+		0.25,
+		0.75,
 	);
 
 	if (category === "strength") {
@@ -106,28 +67,31 @@ const genRatings = (
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
 	const rawRatings = {
-		stre: 40,
-		spd: 50,
-		jmp: 50,
-		endu: 40,
-		ins: 50,
-		dnk: 50,
-		ft: 50,
-		fg: 50,
-		tp: 50,
-		oiq: 30,
-		diq: 30,
-		drb: 50,
-		pss: 50,
-		reb: 50,
+		stre: 0,
+		spd: 0,
+		jmp: 0,
+		endu: 0,
+		ins: 0,
+		dnk: 0,
+		ft: 0,
+		fg: 0,
+		tp: 0,
+		oiq: 0,
+		diq: 0,
+		drb: 0,
+		pss: 0,
+		reb: 0,
 	};
 
+	for (const key of helpers.keys(rawRatings)) {
+		rawRatings[key] = random.randInt(0, 20);
+	}
+
 	for (const category of ratingCategories) {
-		const sign = getBuffDirection(category, hgt);
-		const amount = random.randInt(0, 15);
+		const amount = getBuffAmount(category, hgt);
 		for (const key of ratingCategoryKeys[category]) {
 			rawRatings[key] = limitRating(
-				rawRatings[key] + sign * (amount + random.randInt(0, 25)),
+				rawRatings[key] + amount + random.randInt(0, 25),
 			);
 		}
 	}

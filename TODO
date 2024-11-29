@@ -1,3 +1,11 @@
+if a player gets traded away and then traded back to the same team during the same season, he will show up as having played 2 seasons for that team under the Most Years on One Team frivolity https://discord.com/channels/290013534023057409/290015591216054273/1309954680809324566
+
+If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
+
+Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
+
+looking at the Daily Schedule for past seasons shows teams that have relocated under their current identity. should show them under their identity at the time https://discord.com/channels/290013534023057409/290015591216054273/1310425782736257125
+
 "penalty overturned score" after safety when there was no penalty https://discord.com/channels/290013534023057409/290015591216054273/1307833053854433421
 
 players just drafted should not count towards mood when traded away https://old.reddit.com/r/BasketballGM/comments/1gtj4dj/suggestion_for_core_updates_in_newsletter/

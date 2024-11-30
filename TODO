@@ -1,3 +1,8 @@
+when regenerating schedule in danger zone, it uses latest value rather than current season value for numGames and associated settings. so this applies to situations where you edit the schedule settings and then click "regenerate schedule". the discrepancy messes with updateClinchedPlayoffs and possibly other things. https://discord.com/channels/290013534023057409/290015591216054273/1312261745674289203
+- fix would be to have the regenerate schedule function identify when this happens and change the settings to apply to the current season, rahter than text season.
+
+even if on insane mode with low moods, min contract players should not refuse to sign https://old.reddit.com/r/BasketballGM/comments/1ggtvkv/monthly_suggestions_thread/lutbi6p/
+
 if a player gets traded away and then traded back to the same team during the same season, he will show up as having played 2 seasons for that team under the Most Years on One Team frivolity https://discord.com/channels/290013534023057409/290015591216054273/1309954680809324566
 
 If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
@@ -5,6 +10,9 @@ If you go onto a team and start spam releasing players quickly (best way to do t
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
 
 looking at the Daily Schedule for past seasons shows teams that have relocated under their current identity. should show them under their identity at the time https://discord.com/channels/290013534023057409/290015591216054273/1310425782736257125
+
+scheduled events editor
+- see "scheduled-events-editor" branch, shit's complicated
 
 "penalty overturned score" after safety when there was no penalty https://discord.com/channels/290013534023057409/290015591216054273/1307833053854433421
 
@@ -1299,9 +1307,6 @@ team rating should do something sensible if roster size or num players on court 
 draft lottery animation for random draft https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtokjf0/
 
 no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gu9tsqi/
-
-scheduled events editor
-- see "scheduled-events-editor" branch, shit's complicated
 
 view console.log output from worker console UI https://discord.com/channels/290013534023057409/331882115119448065/836521637103796224
 

@@ -11,6 +11,9 @@ const g: GameAttributes & {
 		key: T,
 		season?: number | "current",
 	) => GameAttributesLeague[T];
+	getRaw: <T extends keyof GameAttributesLeague>(
+		key: T,
+	) => GameAttributesLeagueWithHistory[T];
 	setWithoutSavingToDB: <T extends keyof GameAttributesLeague>(
 		key: T,
 		value: GameAttributesLeague[T] | GameAttributesLeagueWithHistory[T],
@@ -35,6 +38,26 @@ const g: GameAttributes & {
 				// Should never reach here
 				return gameAttribute[0].value;
 			}
+
+			if (key === "allStarGame" && typeof gameAttribute === "boolean") {
+				if (gameAttribute) {
+					// Old default, back when it was a boolean and not customizable
+					return 0.7;
+				}
+
+				return null;
+			}
+
+			return gameAttribute;
+		}
+
+		throw new Error(`Attempt to get g.${key} while it is not already set`);
+	},
+
+	getRaw: key => {
+		if (Object.hasOwn(g, key)) {
+			// @ts-expect-error
+			const gameAttribute = g[key];
 
 			if (key === "allStarGame" && typeof gameAttribute === "boolean") {
 				if (gameAttribute) {

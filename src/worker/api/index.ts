@@ -2686,6 +2686,37 @@ const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
 		active: true,
 	});
 
+	// If it's the regular season, that means there were 0 games played and we're allowed to regenerate the schedule (see canRegenerateSchedule). In that case, season.newSchedule uses the latest settings for numGames/numGamesConf/numGamesDiv/divs, both because that's what the user would want (tweaking schedule settings) and because numGamesConf/numGamesDiv are currently not wrapped. So if we know numGames or divs has changed for next season, we need to update the setting for those (and also confs for consistency) to apply to this season.
+	if (g.get("phase") === PHASE.REGULAR_SEASON) {
+		const season = g.get("season");
+		const toAdjust = ["numGames", "divs", "confs"] as const;
+		for (const key of toAdjust) {
+			const value = g.getRaw(key);
+			if (value.length > 1) {
+				const updated = helpers.deepCopy(value);
+
+				const lastValue = updated.at(-1)!;
+				if (lastValue.start === season + 1) {
+					// We need to update! Either change last entry to current season, or delete 2nd-last entry and overwrite 2nd-last one with current value (if 2nd-last entry was only for this season).
+
+					const secondLastValue = updated.at(-2)!;
+					if (secondLastValue.start === season) {
+						updated.pop();
+						secondLastValue.value = lastValue.value;
+					} else {
+						lastValue.start = season;
+					}
+
+					await idb.cache.gameAttributes.put({
+						key,
+						value: updated,
+					});
+					g.setWithoutSavingToDB(key, updated);
+				}
+			}
+		}
+	}
+
 	const newSchedule = season.newSchedule(teams, conditions);
 
 	await toUI("updateLocal", [

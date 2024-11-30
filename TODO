@@ -1,6 +1,3 @@
-when regenerating schedule in danger zone, it uses latest value rather than current season value for numGames and associated settings. so this applies to situations where you edit the schedule settings and then click "regenerate schedule". the discrepancy messes with updateClinchedPlayoffs and possibly other things. https://discord.com/channels/290013534023057409/290015591216054273/1312261745674289203
-- fix would be to have the regenerate schedule function identify when this happens and change the settings to apply to the current season, rahter than text season.
-
 even if on insane mode with low moods, min contract players should not refuse to sign https://old.reddit.com/r/BasketballGM/comments/1ggtvkv/monthly_suggestions_thread/lutbi6p/
 
 if a player gets traded away and then traded back to the same team during the same season, he will show up as having played 2 seasons for that team under the Most Years on One Team frivolity https://discord.com/channels/290013534023057409/290015591216054273/1309954680809324566

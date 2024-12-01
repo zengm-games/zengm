@@ -637,7 +637,8 @@ const updatePlayers = async (
 					ps => ps.tid,
 				);
 				for (const tid of Object.keys(statsByTid)) {
-					const numSeasons = statsByTid[tid].length;
+					const numSeasons = new Set(statsByTid[tid].map(row => row.season))
+						.size;
 					if (numSeasons > maxNumSeasons) {
 						maxNumSeasons = numSeasons;
 

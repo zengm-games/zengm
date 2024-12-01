@@ -1076,6 +1076,7 @@ export const settings: Setting[] = (
 						before comparing. So if you increase this number, the Hall of Fame
 						becomes harder to get into. Decrease it and it is easier to get in.
 					</p>
+					<p>This also applies to AI teams retiring jersey numbers.</p>
 				</>
 			),
 		},

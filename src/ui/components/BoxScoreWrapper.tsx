@@ -603,7 +603,7 @@ const NextButton = ({
 		const whatever = async () => {
 			if (autoGoToNext && nextGid !== undefined) {
 				setAutoGoToNext(false);
-				// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets cancelled even though it's a new URL (because it's the same page)
+				// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets canceled even though it's a new URL (because it's the same page)
 				setTimeout(() => {
 					realtimeUpdate(
 						[],

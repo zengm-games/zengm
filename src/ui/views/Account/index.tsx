@@ -201,7 +201,7 @@ const UserInfo = ({
 				</p>
 			) : null}
 			{showGoldCancelled ? (
-				<p>ZenGM Gold: Cancelled, expires {goldUntilDateString}</p>
+				<p>ZenGM Gold: Canceled, expires {goldUntilDateString}</p>
 			) : null}
 		</>
 	);

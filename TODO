@@ -1,3 +1,7 @@
+FBGM -  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008
+
+condense develop0 and updateValues into a single function, mainly for worker console
+
 If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
 
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564

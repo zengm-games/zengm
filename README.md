@@ -92,7 +92,8 @@ Run
 
     pnpm run start
 
-and point your browser to <http://localhost:3000/>. If you use the command `pnpm
+and point your browser to <http://localhost:3000/> (or it will use a different
+port if 3000 is already used by somethign else). If you use the command `pnpm
 run start-watch` from above, then running the command `pnpm run start` is not
 necessary.
 

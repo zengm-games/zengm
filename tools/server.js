@@ -2,8 +2,9 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import os from "node:os";
+import getPort from "get-port";
 
-const port = 3006;
+const port = await getPort({ port: 3000 });
 
 const mimeTypes = {
 	".bmp": "image/bmp",

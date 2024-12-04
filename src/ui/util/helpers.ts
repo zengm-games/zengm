@@ -259,8 +259,11 @@ const roundOverrides: Record<string, RoundType | undefined> = bySport({
 		blkp: "oneDecimalPlace",
 		tovp: "oneDecimalPlace",
 		usgp: "oneDecimalPlace",
-		ortg: "noDecimalPlace",
-		drtg: "noDecimalPlace",
+
+		// basketball-reference has these with no decimal place for player stats, but one decimal place for team stats
+		ortg: "oneDecimalPlace",
+		drtg: "oneDecimalPlace",
+
 		ows: "oneDecimalPlace",
 		dws: "oneDecimalPlace",
 		ws: "oneDecimalPlace",

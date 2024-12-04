@@ -11,6 +11,72 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import { Flag } from "../components/WatchBlock";
+
+const ClearButton = ({
+	onClick,
+	players,
+	processing,
+}: {
+	onClick: (type: "all" | number) => void;
+	players: any[];
+	processing: boolean;
+}) => {
+	const watchNumbers = new Set<number>();
+	for (const p of players) {
+		if (p.watch !== undefined) {
+			watchNumbers.add(p.watch);
+		}
+	}
+
+	if (watchNumbers.size > 0) {
+		const numbers = Array.from(watchNumbers).sort((a, b) => a - b);
+
+		return (
+			<Dropdown>
+				<Dropdown.Toggle variant="danger" disabled={processing}>
+					Clear Watch List
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item
+						onClick={() => {
+							onClick("all");
+						}}
+					>
+						All{" "}
+						{numbers.map(number => {
+							return <Flag key={number} watch={number} />;
+						})}
+					</Dropdown.Item>
+					{numbers.map(number => {
+						return (
+							<Dropdown.Item
+								key={number}
+								onClick={() => {
+									onClick(number);
+								}}
+							>
+								Only list {number} <Flag watch={number} />
+							</Dropdown.Item>
+						);
+					})}
+				</Dropdown.Menu>
+			</Dropdown>
+		);
+	}
+
+	return (
+		<ActionButton
+			onClick={() => {
+				onClick("all");
+			}}
+			processing={processing}
+			variant="danger"
+		>
+			Clear Watch List
+		</ActionButton>
+	);
+};
 
 const WatchList = ({
 	challengeNoRatings,
@@ -156,20 +222,18 @@ const WatchList = ({
 				{helpers.pronoun(gender, "his")} profile page.
 			</p>
 
-			<ActionButton
-				className="mb-3"
-				onClick={async () => {
+			<ClearButton
+				players={players}
+				onClick={async type => {
 					setClearing(true);
-					await toWorker("main", "clearWatchList", undefined);
+					await toWorker("main", "clearWatchList", type);
 					setClearing(false);
 				}}
 				processing={clearing}
-				variant="danger"
-			>
-				Clear Watch List
-			</ActionButton>
+			/>
 
 			<DataTable
+				className="mt-3"
 				cols={cols}
 				defaultSort={[5, "desc"]}
 				defaultStickyCols={window.mobile ? 1 : 2}

@@ -11,6 +11,30 @@ type Props = {
 	onChange?: (watch: number) => void;
 };
 
+export const Flag = ({
+	className,
+	watch,
+	onClick,
+	title,
+}: {
+	className?: string;
+	watch: number;
+	onClick?: (event: SyntheticEvent) => void;
+	title?: string;
+}) => {
+	return (
+		<span
+			className={clsx(
+				"glyphicon glyphicon-flag watch",
+				watch !== undefined && watch > 0 ? `watch-active-${watch}` : undefined,
+				className,
+			)}
+			onClick={onClick}
+			title={title}
+		/>
+	);
+};
+
 const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
 
@@ -23,26 +47,18 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 		await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
 	};
 
-	if (watch > 0) {
-		return (
-			<span
-				className={clsx(
-					`glyphicon glyphicon-flag watch watch-active-${watch}`,
-					className,
-				)}
-				onClick={handleClick}
-				title={
-					numWatchColors > 1 ? "Cycle Watch List" : "Remove from Watch List"
-				}
-			/>
-		);
-	}
-
 	return (
-		<span
-			className={clsx("glyphicon glyphicon-flag watch", className)}
+		<Flag
+			className={className}
 			onClick={handleClick}
-			title="Add to Watch List"
+			title={
+				watch !== undefined && watch > 0
+					? numWatchColors > 1
+						? "Cycle Watch List"
+						: "Remove from Watch List"
+					: "Add to Watch List"
+			}
+			watch={watch}
 		/>
 	);
 });

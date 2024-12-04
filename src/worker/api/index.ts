@@ -447,7 +447,7 @@ const clearTeamNotes = async () => {
 	await toUI("realtimeUpdate", [["team"]]);
 };
 
-const clearWatchList = async () => {
+const clearWatchList = async (type: "all" | number) => {
 	const players = await idb.getCopies.players(
 		{
 			watch: true,
@@ -455,8 +455,10 @@ const clearWatchList = async () => {
 		"noCopyCache",
 	);
 	for (const p of players) {
-		delete p.watch;
-		await idb.cache.players.put(p);
+		if (type === "all" || p.watch === type) {
+			delete p.watch;
+			await idb.cache.players.put(p);
+		}
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);

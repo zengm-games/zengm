@@ -258,6 +258,21 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/karma-browserstack-launcher':
+        specifier: ^1.6.5
+        version: 1.6.5
+      '@types/karma-chrome-launcher':
+        specifier: ^3.1.4
+        version: 3.1.4
+      '@types/karma-firefox-launcher':
+        specifier: ^2.1.4
+        version: 2.1.4
+      '@types/karma-mocha':
+        specifier: ^1.3.4
+        version: 1.3.4
+      '@types/karma-rollup-preprocessor':
+        specifier: ^7.0.3
+        version: 7.0.3
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -1822,6 +1837,24 @@ packages:
 
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
+
+  '@types/karma-browserstack-launcher@1.6.5':
+    resolution: {integrity: sha512-lY3wKT6umw1pQ7vkv/hjQDWxaWzYxxwJ2kYYgdCubAKQuzMBVBaOqJccIOYSrOLmMS8TZuCLHrXMgd1oHdMOlg==}
+
+  '@types/karma-chrome-launcher@3.1.4':
+    resolution: {integrity: sha512-DmZXMnOG1zcl/GqtWbfAePFqWLuDFOYdfa+TpvlNvGHiT8GxJjr5RKTptX8K8ZUokjX1pZGAf4KeC46iok3VcA==}
+
+  '@types/karma-firefox-launcher@2.1.4':
+    resolution: {integrity: sha512-LvTzhKUPR1Qid8rHOPjdEi4eqggFXCf77KVGhpu2D8y8eTSCYpfi+enz1k+avUUo6QxoE2rC/YVijt0COp0gUg==}
+
+  '@types/karma-mocha@1.3.4':
+    resolution: {integrity: sha512-Imps6TZLcBJNWaHV30/NHTg8GBiZAPZAeNdCNbX3vgEmUK5EMrxmu6OfT753w8Nwq5zWg2ielioCl3LjD0QlIA==}
+
+  '@types/karma-rollup-preprocessor@7.0.3':
+    resolution: {integrity: sha512-tLhyP158m7USYC1Hcf1IJGmc2tCq+Qo/akXsWozXrrDfmrIQLXmyI7arS1PFbcYu+L6lYoFnXS6wNX8ElQWFWw==}
+
+  '@types/karma@6.3.9':
+    resolution: {integrity: sha512-sjE/MHnoAZAQYAKRXAbjTOiBKyGGErEM725bruRcmDdMa2vp1bjWPhApI7/i564PTyHlzc3vIGXLL6TFIpAxFg==}
 
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
@@ -7239,6 +7272,44 @@ snapshots:
   '@types/jsonfile@6.1.4':
     dependencies:
       '@types/node': 22.10.1
+
+  '@types/karma-browserstack-launcher@1.6.5':
+    dependencies:
+      '@types/karma': 6.3.9
+    transitivePeerDependencies:
+      - supports-color
+
+  '@types/karma-chrome-launcher@3.1.4':
+    dependencies:
+      '@types/karma': 6.3.9
+    transitivePeerDependencies:
+      - supports-color
+
+  '@types/karma-firefox-launcher@2.1.4':
+    dependencies:
+      '@types/karma': 6.3.9
+    transitivePeerDependencies:
+      - supports-color
+
+  '@types/karma-mocha@1.3.4':
+    dependencies:
+      '@types/karma': 6.3.9
+    transitivePeerDependencies:
+      - supports-color
+
+  '@types/karma-rollup-preprocessor@7.0.3':
+    dependencies:
+      '@types/karma': 6.3.9
+      rollup: 4.28.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@types/karma@6.3.9':
+    dependencies:
+      '@types/node': 22.10.1
+      log4js: 6.9.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@types/lodash-es@4.17.12':
     dependencies:

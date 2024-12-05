@@ -28,7 +28,7 @@ const customLaunchers = [
 }, {});
 
 module.exports = async config => {
-	const karmaConfig = (await import("./tools/lib/karmaConfig.js")).default;
+	const karmaConfig = (await import("./tools/lib/karmaConfig.ts")).default;
 
 	config.set({
 		...karmaConfig,

@@ -1,6 +1,7 @@
 import path from "node:path";
 import alias from "@rollup/plugin-alias";
 import { babel } from "@rollup/plugin-babel";
+// @ts-expect-error
 import blacklist from "rollup-plugin-blacklist";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
@@ -12,7 +13,18 @@ import { getSport } from "./buildFuncs.ts";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
-export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
+export default (
+	nodeEnv: "development" | "production" | "test",
+	{
+		blacklistOptions,
+		statsFilename,
+		legacy,
+	}: {
+		blacklistOptions?: RegExp[];
+		statsFilename?: string;
+		legacy?: boolean;
+	} = {},
+) => {
 	const sport = getSport();
 
 	// This gets used in babel.config.js, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
@@ -24,7 +36,6 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 
 	const plugins = [
 		alias({
-			resolve: [".json"],
 			entries: {
 				// This is assumed to be generated prior to rollup being started
 				"league-schema": path.resolve(root, "build/files/league-schema.json"),
@@ -99,7 +110,7 @@ export default (nodeEnv, { blacklistOptions, statsFilename, legacy } = {}) => {
 
 	return {
 		plugins,
-		onwarn(warning, rollupWarn) {
+		onwarn(warning: any, rollupWarn: any) {
 			// I don't like this, but there's too much damn baggage
 			if (warning.code === "CIRCULAR_DEPENDENCY") {
 				return;

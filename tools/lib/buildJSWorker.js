@@ -1,5 +1,5 @@
 import * as rollup from "rollup";
-import rollupConfig from "./rollupConfig.js";
+import rollupConfig from "./rollupConfig.ts";
 import { parentPort, workerData } from "node:worker_threads";
 
 const LODASH_BLACKLIST = [

@@ -11,7 +11,7 @@
 		"url": "https://github.com/zengm-games/zengm.git"
 	},
 	"scripts": {
-		"start": "node tools/server.js",
+		"start": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/server.ts",
 		"build": "node tools/build.js",
 		"deploy": "node --run lint && node --run test && node tools/deploy.js",
 		"deploy-all": "node --run lint && node --run test && node tools/deploy-all.js",

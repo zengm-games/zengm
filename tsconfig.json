@@ -3,7 +3,6 @@
 		"target": "esnext",
 		"resolveJsonModule": true,
 		"jsx": "react-jsx",
-		"rootDir": "./src",
 		"noEmit": true,
 		"noUnusedLocals": true,
 		"noFallthroughCasesInSwitch": true,
@@ -23,5 +22,6 @@
 		"noImplicitOverride": true,
 		"isolatedModules": true,
 		"skipLibCheck": true
-	}
+	},
+	"include": ["src", "tools"]
 }

@@ -23,12 +23,12 @@ const mimeTypes = {
 	".woff": "font/woff",
 	".woff2": "font/woff2",
 };
-const sendFile = (res, filename) => {
+const sendFile = (res: http.ServerResponse, filename: string) => {
 	const filePath = path.join("build", filename);
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
 		if (Object.hasOwn(mimeTypes, ext)) {
-			res.writeHead(200, { "Content-Type": mimeTypes[ext] });
+			res.writeHead(200, { "Content-Type": (mimeTypes as any)[ext] });
 		} else {
 			console.log(`Unknown mime type for extension ${ext}`);
 		}
@@ -43,14 +43,14 @@ const sendFile = (res, filename) => {
 	}
 };
 
-const showStatic = (req, res) => {
-	sendFile(res, req.url.substr(1));
+const showStatic = (url: string, res: http.ServerResponse) => {
+	sendFile(res, url.substring(1));
 };
-const showIndex = (req, res) => {
+const showIndex = (res: http.ServerResponse) => {
 	sendFile(res, "index.html");
 };
 
-const startsWith = (url, prefixes) => {
+const startsWith = (url: string, prefixes: string[]) => {
 	for (const prefix of prefixes) {
 		if (url.indexOf(prefix) === 0) {
 			return true;
@@ -70,10 +70,12 @@ const server = http.createServer((req, res) => {
 		"/manifest",
 	];
 
-	if (startsWith(req.url, prefixesStatic)) {
-		showStatic(req, res);
+	const url = req.url!;
+
+	if (startsWith(url, prefixesStatic)) {
+		showStatic(url, res);
 	} else {
-		showIndex(req, res);
+		showIndex(res);
 	}
 });
 
@@ -89,13 +91,16 @@ if (param === "--host") {
 const getIpAddress = () => {
 	const interfaces = os.networkInterfaces();
 	for (const devName in interfaces) {
-		for (const alias of interfaces[devName]) {
-			if (
-				alias.family === "IPv4" &&
-				alias.address !== "127.0.0.1" &&
-				!alias.internal
-			)
-				return alias.address;
+		const aliases = interfaces[devName];
+		if (aliases) {
+			for (const alias of aliases) {
+				if (
+					alias.family === "IPv4" &&
+					alias.address !== "127.0.0.1" &&
+					!alias.internal
+				)
+					return alias.address;
+			}
 		}
 	}
 	return "0.0.0.0";

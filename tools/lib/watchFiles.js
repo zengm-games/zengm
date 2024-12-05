@@ -1,5 +1,5 @@
 import { watch } from "chokidar";
-import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.js";
+import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 

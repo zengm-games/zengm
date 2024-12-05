@@ -8,9 +8,10 @@ import * as htmlmin from "html-minifier-terser";
 import * as sass from "sass";
 import path from "node:path";
 import { PurgeCSS } from "purgecss";
+// @ts-expect-error
 import replace from "replace";
 
-const SPORTS = ["baseball", "basketball", "football", "hockey"];
+const SPORTS = ["baseball", "basketball", "football", "hockey"] as const;
 
 const getSport = () => {
 	if (SPORTS.includes(process.env.SPORT)) {
@@ -22,12 +23,12 @@ const getSport = () => {
 	throw new Error(`Invalid SPORT: ${process.env.SPORT}`);
 };
 
-const fileHash = contents => {
+const fileHash = (contents: string) => {
 	// https://github.com/sindresorhus/rev-hash
 	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
 };
 
-const buildCSS = async (watch /*: boolean*/ = false) => {
+const buildCSS = async (watch: boolean = false) => {
 	const filenames = ["light", "dark"];
 	const rawCSS = filenames.map(filename => {
 		const sassFilePath = `public/css/${filename}.scss`;
@@ -92,7 +93,7 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 				),
 			});
 
-			output = code;
+			output = code.toString();
 
 			if (output.includes(DANGER_CSS)) {
 				throw new Error(`CSS output contains ${DANGER_CSS}`);
@@ -120,14 +121,30 @@ const buildCSS = async (watch /*: boolean*/ = false) => {
 	}
 };
 
-const bySport = object => {
+const bySport = <T extends unknown>(
+	object:
+		| {
+				baseball: T;
+				basketball: T;
+				football: T;
+				hockey: T;
+				default?: T;
+		  }
+		| {
+				baseball?: T;
+				basketball?: T;
+				football?: T;
+				hockey?: T;
+				default: T;
+		  },
+): T => {
 	const sport = getSport();
 	if (Object.hasOwn(object, sport)) {
-		return object[sport];
+		return (object as any)[sport];
 	}
 
 	if (Object.hasOwn(object, "default")) {
-		return object.default;
+		return (object as any).default;
 	}
 
 	throw new Error("No value for sport and no default");
@@ -201,7 +218,7 @@ const setSport = () => {
 	});
 };
 
-const copyFiles = watch => {
+const copyFiles = (watch: boolean) => {
 	const foldersToIgnore = [
 		"baseball",
 		"basketball",
@@ -280,7 +297,7 @@ const reset = () => {
 	fs.mkdirSync("build/gen", { recursive: true });
 };
 
-const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
+const setTimestamps = (rev: string, watch: boolean = false) => {
 	if (watch) {
 		replace({
 			regex: "-REV_GOES_HERE\\.js",

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import fse from "fs-extra";
-import { fileHash, genRev, setTimestamps } from "./buildFuncs.js";
+import { fileHash, genRev, setTimestamps } from "./buildFuncs.ts";
 import replace from "replace";
 import { Worker } from "node:worker_threads";
 

@@ -1,6 +1,6 @@
 import { watch } from "chokidar";
 import fs from "node:fs";
-import { getSport } from "./buildFuncs.js";
+import { getSport } from "./buildFuncs.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async modulePath => {

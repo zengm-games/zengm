@@ -5,7 +5,7 @@ import {
 	getSport,
 	minifyIndexHTML,
 	reset,
-} from "./buildFuncs.js";
+} from "./buildFuncs.ts";
 import generateJSONSchema from "./generateJSONSchema.js";
 import buildJS from "./build-js.js";
 import buildSW from "./build-sw.js";

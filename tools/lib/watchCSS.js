@@ -1,5 +1,5 @@
 import { watch } from "chokidar";
-import { buildCSS } from "./buildFuncs.js";
+import { buildCSS } from "./buildFuncs.ts";
 
 const watchCSS = async (updateStart, updateEnd, updateError) => {
 	const watcher = watch("public/css", {});

@@ -8,7 +8,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
-import { getSport } from "./buildFuncs.js";
+import { getSport } from "./buildFuncs.ts";
 import { getDirname } from "./getDirname.js";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];

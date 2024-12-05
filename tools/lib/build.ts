@@ -7,8 +7,8 @@ import {
 	reset,
 } from "./buildFuncs.ts";
 import generateJSONSchema from "./generateJSONSchema.ts";
-import buildJS from "./build-js.js";
-import buildSW from "./build-sw.js";
+import buildJS from "./build-js.ts";
+import buildSW from "./build-sw.ts";
 
 export default async () => {
 	const sport = getSport();

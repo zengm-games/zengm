@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import fse from "fs-extra";
 import { fileHash, genRev, setTimestamps } from "./buildFuncs.ts";
+// @ts-expect-error
 import replace from "replace";
 import { Worker } from "node:worker_threads";
 
@@ -12,7 +13,7 @@ const buildJS = async () => {
 	for (const name of ["ui", "worker"]) {
 		for (const legacy of [false, true]) {
 			promises.push(
-				new Promise(resolve => {
+				new Promise<void>(resolve => {
 					const worker = new Worker(
 						new URL("./buildJSWorker.js", import.meta.url),
 						{
@@ -56,7 +57,7 @@ const buildJS = async () => {
 	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
 		if (fs.existsSync(filePath)) {
-			const string = fs.readFileSync(filePath);
+			const string = fs.readFileSync(filePath, "utf8");
 			const compressed = JSON.stringify(JSON.parse(string));
 			fs.writeFileSync(filePath, compressed);
 

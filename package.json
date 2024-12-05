@@ -12,7 +12,7 @@
 	},
 	"scripts": {
 		"start": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/server.ts",
-		"build": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/build.js",
+		"build": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/build.ts",
 		"deploy": "node --run lint && node --run test && node --experimental-strip-types --disable-warning=ExperimentalWarning tools/deploy.js",
 		"deploy-all": "node --run lint && node --run test && node --experimental-strip-types --disable-warning=ExperimentalWarning tools/deploy-all.js",
 		"start-watch": "concurrently --kill-others \"node --run start\" \"node --run watch\"",

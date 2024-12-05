@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import Cloudflare from "cloudflare";
 import { readFile } from "fs/promises";
-import build from "./build.js";
+import build from "./build.ts";
 import { bySport, getSport } from "./buildFuncs.ts";
 
 const getSubdomain = () => {

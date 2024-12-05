@@ -1,4 +1,5 @@
 import fs from "node:fs";
+// @ts-expect-error
 import replace2 from "replace";
 import { babel } from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";

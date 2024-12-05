@@ -218,7 +218,7 @@ const setSport = () => {
 	});
 };
 
-const copyFiles = (watch: boolean) => {
+const copyFiles = (watch: boolean = false) => {
 	const foldersToIgnore = [
 		"baseball",
 		"basketball",

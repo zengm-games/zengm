@@ -8,8 +8,6 @@ import * as htmlmin from "html-minifier-terser";
 import * as sass from "sass";
 import path from "node:path";
 import { PurgeCSS } from "purgecss";
-// @ts-expect-error
-import replace from "replace";
 
 const SPORTS = ["baseball", "basketball", "football", "hockey"] as const;
 
@@ -26,6 +24,25 @@ const getSport = () => {
 const fileHash = (contents: string) => {
 	// https://github.com/sindresorhus/rev-hash
 	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
+};
+
+const replace = ({
+	paths,
+	replaces,
+}: {
+	paths: fs.PathOrFileDescriptor[];
+	replaces: {
+		searchValue: string | RegExp;
+		replaceValue: string;
+	}[];
+}) => {
+	for (const path of paths) {
+		let contents = fs.readFileSync(path, "utf8");
+		for (const { searchValue, replaceValue } of replaces) {
+			contents = contents.replaceAll(searchValue, replaceValue);
+		}
+		fs.writeFileSync(path, contents);
+	}
 };
 
 const buildCSS = async (watch: boolean = false) => {
@@ -110,10 +127,13 @@ const buildCSS = async (watch: boolean = false) => {
 			outFilename = `build/gen/${filename}-${hash}.css`;
 
 			replace({
-				regex: `CSS_HASH_${filename.toUpperCase()}`,
-				replacement: hash,
 				paths: ["build/index.html"],
-				silent: true,
+				replaces: [
+					{
+						searchValue: `CSS_HASH_${filename.toUpperCase()}`,
+						replaceValue: hash,
+					},
+				],
 			});
 		}
 
@@ -152,69 +172,62 @@ const bySport = <T extends unknown>(
 
 const setSport = () => {
 	replace({
-		regex: "GAME_NAME",
-		replacement: bySport({
-			baseball: "ZenGM Baseball",
-			basketball: "Basketball GM",
-			football: "Football GM",
-			hockey: "ZenGM Hockey",
-		}),
 		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "SPORT",
-		replacement: bySport({
-			baseball: "baseball",
-			basketball: "basketball",
-			football: "football",
-			hockey: "hockey",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
-		replacement: bySport({
-			basketball: "basketball-gm.com",
-			football: "football-gm.com",
-			default: "zengm.com",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "WEBSITE_ROOT",
-		replacement: bySport({
-			baseball: "zengm.com/baseball",
-			basketball: "basketball-gm.com",
-			football: "football-gm.com",
-			hockey: "zengm.com/hockey",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "PLAY_SUBDOMAIN",
-		replacement: bySport({
-			baseball: "baseball.zengm.com",
-			basketball: "play.basketball-gm.com",
-			football: "play.football-gm.com",
-			hockey: "hockey.zengm.com",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-	replace({
-		regex: "BETA_SUBDOMAIN",
-		replacement: bySport({
-			baseball: "beta.baseball.zengm.com",
-			basketball: "beta.basketball-gm.com",
-			football: "beta.football-gm.com",
-			hockey: "beta.hockey.zengm.com",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
+		replaces: [
+			{
+				searchValue: "GAME_NAME",
+				replaceValue: bySport({
+					baseball: "ZenGM Baseball",
+					basketball: "Basketball GM",
+					football: "Football GM",
+					hockey: "ZenGM Hockey",
+				}),
+			},
+			{
+				searchValue: "SPORT",
+				replaceValue: bySport({
+					baseball: "baseball",
+					basketball: "basketball",
+					football: "football",
+					hockey: "hockey",
+				}),
+			},
+			{
+				searchValue: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
+				replaceValue: bySport({
+					basketball: "basketball-gm.com",
+					football: "football-gm.com",
+					default: "zengm.com",
+				}),
+			},
+			{
+				searchValue: "WEBSITE_ROOT",
+				replaceValue: bySport({
+					baseball: "zengm.com/baseball",
+					basketball: "basketball-gm.com",
+					football: "football-gm.com",
+					hockey: "zengm.com/hockey",
+				}),
+			},
+			{
+				searchValue: "PLAY_SUBDOMAIN",
+				replaceValue: bySport({
+					baseball: "baseball.zengm.com",
+					basketball: "play.basketball-gm.com",
+					football: "play.football-gm.com",
+					hockey: "hockey.zengm.com",
+				}),
+			},
+			{
+				searchValue: "BETA_SUBDOMAIN",
+				replaceValue: bySport({
+					baseball: "beta.baseball.zengm.com",
+					basketball: "beta.basketball-gm.com",
+					football: "beta.football-gm.com",
+					hockey: "beta.hockey.zengm.com",
+				}),
+			},
+		],
 	});
 };
 
@@ -300,40 +313,43 @@ const reset = () => {
 const setTimestamps = (rev: string, watch: boolean = false) => {
 	if (watch) {
 		replace({
-			regex: "-REV_GOES_HERE\\.js",
-			replacement: ".js",
 			paths: ["build/index.html"],
-			silent: true,
+			replaces: [
+				{
+					searchValue: "-REV_GOES_HERE.js",
+					replaceValue: ".js",
+				},
+				{
+					searchValue: '-" + bbgmVersion + "',
+					replaceValue: "",
+				},
+				{
+					searchValue: /-CSS_HASH_(LIGHT|DARK)/g,
+					replaceValue: "",
+				},
+				{
+					searchValue: "REV_GOES_HERE",
+					replaceValue: rev,
+				},
+			],
 		});
-
+	} else {
 		replace({
-			regex: '-" \\+ bbgmVersion \\+ "',
-			replacement: "",
-			paths: ["build/index.html"],
-			silent: true,
-		});
+			paths: [
+				"build/index.html",
 
-		replace({
-			regex: `-CSS_HASH_(LIGHT|DARK)`,
-			replacement: "",
-			paths: ["build/index.html"],
-			silent: true,
+				// This is currently just for lastChangesVersion, so don't worry about it not working in watch mode
+				`build/gen/worker-${rev}.js`,
+				`build/gen/worker-legacy-${rev}.js`,
+			],
+			replaces: [
+				{
+					searchValue: "REV_GOES_HERE",
+					replaceValue: rev,
+				},
+			],
 		});
 	}
-
-	replace({
-		regex: "REV_GOES_HERE",
-		replacement: rev,
-		paths: [
-			"build/index.html",
-
-			// This is currently just for lastChangesVersion, so don't worry about it not working in watch mode
-			...(watch
-				? []
-				: [`build/gen/worker-${rev}.js`, `build/gen/worker-legacy-${rev}.js`]),
-		],
-		silent: true,
-	});
 
 	// Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0)
 	const bannerAdsCode = `<script type="text/javascript" async=true>
@@ -531,54 +547,43 @@ if (window.enableLogging) {
 }
 </script>`;
 
-	replace({
-		regex: "BANNER_ADS_CODE",
-		replacement: bannerAdsCode,
-		paths: ["build/index.html"],
-		silent: true,
-	});
-
 	if (!watch) {
 		replace({
-			regex: "/gen/worker-",
-			replacement: "/gen/worker-legacy-",
 			paths: [`build/gen/ui-legacy-${rev}.js`],
-			silent: true,
+			replaces: [
+				{
+					searchValue: "/gen/worker-",
+					replaceValue: "/gen/worker-legacy-",
+				},
+			],
 		});
 	}
 
 	replace({
-		regex: "GOOGLE_ANALYTICS_ID",
-		replacement: bySport({
-			basketball: "UA-38759330-1",
-			football: "UA-38759330-2",
-			default: "UA-38759330-3",
-		}),
 		paths: ["build/index.html"],
-		silent: true,
-	});
-
-	replace({
-		regex: "GOOGLE_SURVEYS_ID",
-		replacement: bySport({
-			basketball: "_5lgefwumzxr6qxsbcz46dpx624",
-			football: "_ez6qiutxtbl66x5e22u5mzuyqq",
-			default: "_zrz3msjci2slargulizluenoni",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
-	});
-
-	replace({
-		regex: "BUGSNAG_API_KEY",
-		replacement: bySport({
-			baseball: "37b1fd32d021f7716dc0e1d4a3e619bc",
-			basketball: "c10b95290070cb8888a7a79cc5408555",
-			football: "fed8957cbfca2d1c80997897b840e6cf",
-			hockey: "449e8ed576f7cbccf5c7649e936ab9ff",
-		}),
-		paths: ["build/index.html"],
-		silent: true,
+		replaces: [
+			{
+				searchValue: "BANNER_ADS_CODE",
+				replaceValue: bannerAdsCode,
+			},
+			{
+				searchValue: "GOOGLE_ANALYTICS_ID",
+				replaceValue: bySport({
+					basketball: "UA-38759330-1",
+					football: "UA-38759330-2",
+					default: "UA-38759330-3",
+				}),
+			},
+			{
+				searchValue: "BUGSNAG_API_KEY",
+				replaceValue: bySport({
+					baseball: "37b1fd32d021f7716dc0e1d4a3e619bc",
+					basketball: "c10b95290070cb8888a7a79cc5408555",
+					football: "fed8957cbfca2d1c80997897b840e6cf",
+					hockey: "449e8ed576f7cbccf5c7649e936ab9ff",
+				}),
+			},
+		],
 	});
 
 	return rev;
@@ -604,6 +609,7 @@ export {
 	fileHash,
 	genRev,
 	getSport,
+	replace,
 	reset,
 	setTimestamps,
 	minifyIndexHTML,

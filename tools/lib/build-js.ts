@@ -1,8 +1,6 @@
 import fs from "node:fs";
 import fse from "fs-extra";
-import { fileHash, genRev, setTimestamps } from "./buildFuncs.ts";
-// @ts-expect-error
-import replace from "replace";
+import { fileHash, genRev, replace, setTimestamps } from "./buildFuncs.ts";
 import { Worker } from "node:worker_threads";
 
 const rev = genRev();
@@ -40,10 +38,13 @@ const buildJS = async () => {
 		.filter(filename => filename.endsWith(".js"))
 		.map(filename => `build/gen/${filename}`);
 	replace({
-		regex: ";//# sourceMappingURL",
-		replacement: ";\n//# sourceMappingURL",
 		paths: replacePaths,
-		silent: true,
+		replaces: [
+			{
+				searchValue: ";//# sourceMappingURL",
+				replaceValue: ";\n//# sourceMappingURL",
+			},
+		],
 	});
 
 	setTimestamps(rev);
@@ -66,13 +67,16 @@ const buildJS = async () => {
 			fse.moveSync(filePath, newFilename);
 
 			replace({
-				regex: `/gen/${filename}.json`,
-				replacement: `/gen/${filename}-${hash}.json`,
 				paths: [
 					`build/gen/worker-legacy-${rev}.js`,
 					`build/gen/worker-${rev}.js`,
 				],
-				silent: true,
+				replaces: [
+					{
+						searchValue: `/gen/${filename}.json`,
+						replaceValue: `/gen/${filename}-${hash}.json`,
+					},
+				],
 			});
 		}
 	}

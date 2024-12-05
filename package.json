@@ -29,7 +29,7 @@
 		"prepare": "husky"
 	},
 	"lint-staged": {
-		"*.{js,cjs,mjs,jsx,json,scss,ts,tsx}": "prettier --write"
+		"*.{js,cjs,mjs,jsx,json,scss,ts,cts,mts,tsx}": "prettier --write"
 	},
 	"dependencies": {
 		"@bugsnag/browser": "^8.1.2",

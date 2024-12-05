@@ -6,6 +6,7 @@
 
 "use strict";
 
+// To define types some day: https://github.com/babel/babel/issues/10637
 module.exports = function (babel) {
 	var t = babel.types;
 
@@ -96,7 +97,7 @@ module.exports = function (babel) {
 									),
 									sportProperties[0].value,
 									defaultProperty.value,
-							  )
+								)
 							: sportProperties[0].value;
 
 						// Wrap other sports around the first

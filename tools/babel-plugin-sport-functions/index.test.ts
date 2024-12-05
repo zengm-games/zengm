@@ -1,17 +1,17 @@
-/* eslint-env mocha:true */
+import assert from "node:assert/strict";
+import * as babel from "@babel/core";
+// @ts-expect-error
+import babelPluginSportFunctions from "./index.cjs";
 
-const assert = require("node:assert/strict");
-const babel = require("@babel/core");
-const babelPluginSportFunctions = require("./index.cjs");
-
-const transform = input => {
+const transform = (input: string) => {
+	console.log(babel);
 	return babel.transform(input, {
 		filename: "test.js",
 		plugins: [babelPluginSportFunctions],
-	}).code;
+	})!.code;
 };
 
-const compare = (input, output) => {
+const compare = (input: string, output: string) => {
 	const compiled = transform(input);
 	assert.strictEqual(compiled, output);
 };

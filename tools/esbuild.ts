@@ -15,7 +15,7 @@ import esbuildConfig from "./lib/esbuildConfig.ts";
  *   - Could still use babel on output
  */
 
-const names = ["ui", "worker"];
+const names = ["ui", "worker"] as const;
 await Promise.all(
 	names.map(async name => {
 		await esbuild.build({

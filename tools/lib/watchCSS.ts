@@ -1,7 +1,11 @@
 import { watch } from "chokidar";
 import { buildCSS } from "./buildFuncs.ts";
 
-const watchCSS = async (updateStart, updateEnd, updateError) => {
+const watchCSS = async (
+	updateStart: (filename: string) => void,
+	updateEnd: (filename: string) => void,
+	updateError: (filename: string, error: Error) => void,
+) => {
 	const watcher = watch("public/css", {});
 
 	const filenames = ["build/gen/light.css", "build/gen/dark.css"];

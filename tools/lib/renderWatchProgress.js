@@ -5,10 +5,10 @@ import { render, Box, Text } from "ink";
 // eslint-disable-next-line import/no-unresolved
 import Spinner from "ink-spinner";
 import React, { useEffect, useReducer } from "react";
-import watchCSS from "./watchCSS.js";
-import watchFiles from "./watchFiles.js";
-import watchJS from "./watchJS.js";
-import watchJSONSchema from "./watchJSONSchema.js";
+import watchCSS from "./watchCSS.ts";
+import watchFiles from "./watchFiles.ts";
+import watchJS from "./watchJS.ts";
+import watchJSONSchema from "./watchJSONSchema.ts";
 
 const TIME_CUTOFF_GREEN = 10000; // 10 seconds
 const TIME_CUTOFF_YELLOW = 30000; // 30 seconds

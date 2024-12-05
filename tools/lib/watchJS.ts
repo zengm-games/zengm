@@ -1,7 +1,11 @@
 import path from "node:path";
 import { Worker } from "node:worker_threads";
 
-const watchJS = (updateStart, updateEnd, updateError) => {
+const watchJS = (
+	updateStart: (filename: string) => void,
+	updateEnd: (filename: string) => void,
+	updateError: (filename: string, error: Error) => void,
+) => {
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
 

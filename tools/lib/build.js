@@ -6,7 +6,7 @@ import {
 	minifyIndexHTML,
 	reset,
 } from "./buildFuncs.ts";
-import generateJSONSchema from "./generateJSONSchema.js";
+import generateJSONSchema from "./generateJSONSchema.ts";
 import buildJS from "./build-js.js";
 import buildSW from "./build-sw.js";
 

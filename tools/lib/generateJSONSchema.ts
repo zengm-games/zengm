@@ -1,7 +1,7 @@
 import { bySport } from "./buildFuncs.ts";
 
-const genRatings = (sport /*: string*/) => {
-	const properties = {
+const genRatings = (sport: string) => {
+	const properties: any = {
 		fuzz: {
 			type: "number",
 		},
@@ -125,7 +125,7 @@ const genRatings = (sport /*: string*/) => {
 	};
 };
 
-const wrap = child => ({
+const wrap = (child: any) => ({
 	anyOf: [
 		{
 			type: "array",
@@ -152,7 +152,7 @@ const wrap = child => ({
 	],
 });
 
-const generateJSONSchema = (sport /*: string*/) => {
+const generateJSONSchema = (sport: string) => {
 	if (sport === "test") {
 		return {
 			$schema: "http://json-schema.org/draft-07/schema#",

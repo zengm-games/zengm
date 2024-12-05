@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import generateJSONSchema from "./lib/generateJSONSchema.js";
+import generateJSONSchema from "./lib/generateJSONSchema.ts";
 
 if (!fs.existsSync("build/files/league-schema.json")) {
 	const jsonSchema = generateJSONSchema("test");

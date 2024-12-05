@@ -3,7 +3,11 @@ import { copyFiles, genRev, reset, setTimestamps } from "./buildFuncs.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
-const watchFiles = (updateStart, updateEnd, updateError) => {
+const watchFiles = (
+	updateStart: (filename: string) => void,
+	updateEnd: (filename: string) => void,
+	updateError: (filename: string, error: Error) => void,
+) => {
 	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
 
 	const outFilename = "static files";

@@ -1,35 +1,54 @@
 import fs from "fs/promises";
 import babel from "@babel/core";
+// @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
+// @ts-expect-error
 import babelPluginSportFunctions from "../babel-plugin-sport-functions/index.cjs";
+// @ts-expect-error
 import { getSport } from "./buildFuncs.js";
 
-const babelCache = {};
+// Result is undefined if no match, meaning just do normal stuff
+type BabelCacheResult =
+	| {
+			contents: string;
+			loader: "ts" | "tsx";
+	  }
+	| undefined;
+
+const babelCache: Record<
+	string,
+	| {
+			mtimeMs: number;
+			result: BabelCacheResult;
+	  }
+	| undefined
+> = {};
 
 // Use babel to run babel-plugin-sport-functions. This is needed because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport.
-const pluginSportFunctions = nodeEnv => ({
+const pluginSportFunctions = (nodeEnv: "development" | "production") => ({
 	name: "sport-functions",
-	setup(build) {
-		build.onLoad({ filter: /\.tsx?$/, namespace: "file" }, async args => {
-			const { mtimeMs } = await fs.stat(args.path);
-			if (babelCache[args.path] && babelCache[args.path].mtimeMs === mtimeMs) {
-				return babelCache[args.path].result;
-			}
+	setup(build: any) {
+		build.onLoad(
+			{ filter: /\.tsx?$/, namespace: "file" },
+			async (args: any) => {
+				const { mtimeMs } = await fs.stat(args.path);
+				const cached = babelCache[args.path];
+				if (cached && cached.mtimeMs === mtimeMs) {
+					return cached.result;
+				}
 
-			const isTSX = args.path.endsWith("tsx");
+				const isTSX = args.path.endsWith("tsx");
 
-			const loader = isTSX ? "tsx" : "ts";
+				const loader = isTSX ? "tsx" : "ts";
 
-			const text = await fs.readFile(args.path, "utf8");
+				const text = await fs.readFile(args.path, "utf8");
 
-			// result is undefined if no match, meaning just do normal stuff
-			let result;
-			if (
-				text.includes("bySport") ||
-				(nodeEnv === "production" && text.includes("isSport"))
-			) {
-				const contents = (
-					await babel.transformAsync(text, {
+				let result: BabelCacheResult;
+				if (
+					text.includes("bySport") ||
+					(nodeEnv === "production" && text.includes("isSport"))
+				) {
+					const contents = (await babel.transformAsync(text, {
 						babelrc: false,
 						configFile: false,
 						sourceMaps: "inline",
@@ -37,28 +56,34 @@ const pluginSportFunctions = nodeEnv => ({
 							[babelPluginSyntaxTypescript, { isTSX }],
 							babelPluginSportFunctions,
 						],
-					})
-				).code;
+					}))!.code!;
 
-				result = { contents, loader };
-			}
+					result = { contents, loader };
+				}
 
-			babelCache[args.path] = {
-				mtimeMs,
-				result,
-			};
+				babelCache[args.path] = {
+					mtimeMs,
+					result,
+				};
 
-			if (result === undefined) {
+				if (result) {
+					return result;
+				}
+
 				// Might as well return the text, since we have it in memory already
-				result = { contents: text, loader };
-			}
-
-			return result;
-		});
+				return { contents: text, loader };
+			},
+		);
 	},
 });
 
-const esbuildConfig = ({ nodeEnv, name }) => {
+const esbuildConfig = ({
+	name,
+	nodeEnv,
+}: {
+	name: "ui" | "worker";
+	nodeEnv: "development" | "production";
+}) => {
 	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
 	const outfile = `build/gen/${name}.js`;
 

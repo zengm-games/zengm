@@ -237,6 +237,9 @@ importers:
       '@rollup/plugin-terser':
         specifier: 0.4.4
         version: 0.4.4(rollup@4.28.0)
+      '@types/babel__core':
+        specifier: ^7.20.5
+        version: 7.20.5
       '@types/d3-dsv':
         specifier: ^3.0.7
         version: 3.0.7

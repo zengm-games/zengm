@@ -1,11 +1,11 @@
 import { csvParse } from "d3-dsv";
 import fs from "node:fs";
 import path from "node:path";
-import { getDirname } from "./lib/getDirname.js";
 
-const __dirname = getDirname(import.meta.url);
-
-const csv = fs.readFileSync(path.join(__dirname, "races.csv"), "utf8");
+const csv = fs.readFileSync(
+	path.join(import.meta.dirname, "races.csv"),
+	"utf8",
+);
 const rows = csvParse(csv);
 const templates = {};
 
@@ -54,6 +54,9 @@ for (const row of rows) {
 
 code += `\nexport default defaultRaces;\n`;
 
-const filename = path.join(__dirname, "../src/worker/data/defaultRaces.ts");
+const filename = path.join(
+	import.meta.dirname,
+	"../src/worker/data/defaultRaces.ts",
+);
 fs.writeFileSync(filename, code);
 console.log(`Wrote data to ${filename}`);

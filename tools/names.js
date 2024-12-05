@@ -1,10 +1,7 @@
 import { csvParse } from "d3-dsv";
 import fs from "node:fs";
 import path from "node:path";
-import { getDirname } from "./lib/getDirname.js";
 import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.js";
-
-const __dirname = getDirname(import.meta.url);
 
 const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(
@@ -22,10 +19,12 @@ const countryFreqs = ({ fnsByCountry }) => {
 };
 
 const basketball = JSON.parse(
-	fs.readFileSync(path.join(__dirname, "names-manual/basketball.json")),
+	fs.readFileSync(
+		path.join(import.meta.dirname, "names-manual/basketball.json"),
+	),
 );
 const football = JSON.parse(
-	fs.readFileSync(path.join(__dirname, "names-manual/football.json")),
+	fs.readFileSync(path.join(import.meta.dirname, "names-manual/football.json")),
 );
 
 const countriesBasketball = countryFreqs(basketball);
@@ -61,11 +60,13 @@ const getOverrides = () => {
 
 	const groups = {};
 
-	const filenames = fs.readdirSync(path.join(__dirname, "names-manual"));
+	const filenames = fs.readdirSync(
+		path.join(import.meta.dirname, "names-manual"),
+	);
 
 	const getNames = filename => {
 		const csv = fs.readFileSync(
-			path.join(__dirname, "names-manual", filename),
+			path.join(import.meta.dirname, "names-manual", filename),
 			"utf8",
 		);
 		const rows = csvParse(csv);
@@ -136,14 +137,17 @@ groups.chinese = namesByCountry.China;
 delete namesByCountry.China;
 countriesBasketball.Taiwan = 3;
 
-const filename = path.join(__dirname, "../data/names.json");
+const filename = path.join(import.meta.dirname, "../data/names.json");
 fs.writeFileSync(
 	filename,
 	JSONstringifyOrder({ countries: namesByCountry, groups }, "\t"),
 );
 console.log(`Wrote data to ${filename}`);
 
-const filenameFemale = path.join(__dirname, "../data/names-female.json");
+const filenameFemale = path.join(
+	import.meta.dirname,
+	"../data/names-female.json",
+);
 fs.writeFileSync(
 	filenameFemale,
 	JSONstringifyOrder({ countries: femaleNames }, "\t"),

@@ -6,7 +6,7 @@ const watchJS = (updateStart, updateEnd, updateError) => {
 		const filename = `build/gen/${name}.js`;
 
 		const worker = new Worker(
-			path.join(import.meta.dirname, "watchJSWorker.js"),
+			path.join(import.meta.dirname, "watchJSWorker.ts"),
 			{
 				workerData: {
 					name,

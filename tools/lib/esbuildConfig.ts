@@ -93,7 +93,7 @@ const esbuildConfig = ({
 		outfile,
 		bundle: true,
 		sourcemap: true,
-		jsx: "automatic",
+		jsx: "automatic" as const,
 		jsxDev: nodeEnv === "development",
 		define: {
 			"process.env.NODE_ENV": JSON.stringify(nodeEnv),

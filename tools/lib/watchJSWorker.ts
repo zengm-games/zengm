@@ -5,15 +5,15 @@ import esbuildConfig from "./esbuildConfig.ts";
 
 const pluginStartEnd = {
 	name: "start-end",
-	setup(build) {
+	setup(build: any) {
 		build.onStart(() => {
-			parentPort.postMessage({
+			parentPort!.postMessage({
 				type: "start",
 			});
 		});
-		build.onEnd(result => {
+		build.onEnd((result: any) => {
 			if (result.errors.length) {
-				parentPort.postMessage({
+				parentPort!.postMessage({
 					type: "error",
 					error: result.errors[0],
 				});
@@ -22,7 +22,7 @@ const pluginStartEnd = {
 				const js = `throw new Error(\`${result.errors[0].message}\`)`;
 				fs.writeFileSync(config.outfile, js);
 			} else {
-				parentPort.postMessage({
+				parentPort!.postMessage({
 					type: "end",
 				});
 			}

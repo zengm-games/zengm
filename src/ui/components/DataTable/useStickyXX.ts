@@ -6,7 +6,7 @@ import { range } from "../../../common/utils";
 // >1 sticky column requires some JS to compute the left offset of all besides the first sticky column (whose offset is always 0)
 const useStickyXX = (stickyCols: StickyCols) => {
 	const tableRef = useRef<HTMLTableElement>(null);
-	const prevLefts = useRef<number[] | undefined>();
+	const prevLefts = useRef<number[] | undefined>(undefined);
 
 	const updateStickyCols = useCallback(() => {
 		const table = tableRef.current;

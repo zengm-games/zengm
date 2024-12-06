@@ -199,7 +199,7 @@ const RatingsStatsPopover = ({
 		forwardedRef,
 		onClick,
 	}: {
-		forwardedRef?: RefObject<HTMLElement>;
+		forwardedRef?: RefObject<HTMLElement | null>;
 		onClick?: () => void;
 	}) => <Icon ref={forwardedRef} onClick={onClick} watch={actualWatch} />;
 

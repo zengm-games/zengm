@@ -195,6 +195,7 @@ const Chart = ({
 				}}
 			</ParentSize>
 			{tooltipOpen && tooltipData ? (
+				// @ts-expect-error
 				<TooltipWithBounds
 					key={Math.random()}
 					top={tooltipTop}

@@ -16,7 +16,7 @@ const ResponsivePopover = ({
 	popoverContent: ReactNode;
 	renderTarget: (props: {
 		onClick?: () => void;
-		forwardedRef?: RefObject<HTMLElement>;
+		forwardedRef?: RefObject<HTMLElement | null>;
 	}) => ReactNode;
 	toggle?: () => void;
 }) => {

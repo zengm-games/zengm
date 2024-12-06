@@ -27,6 +27,7 @@ module.exports = legacy => {
 	}
 
 	return {
+		compact: false,
 		presets: [
 			[
 				"@babel/preset-react",

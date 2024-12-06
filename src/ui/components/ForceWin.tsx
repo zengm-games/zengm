@@ -10,7 +10,7 @@ type Team = {
 type State = undefined | "saving" | "saved" | "error";
 const useSavingState = () => {
 	const [state, setState] = useState<State>();
-	const timeoutID = useRef<number | undefined>();
+	const timeoutID = useRef<number | undefined>(undefined);
 
 	const wrappedSetState = (state2: State) => {
 		window.clearTimeout(timeoutID.current);

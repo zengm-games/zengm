@@ -458,7 +458,7 @@ const PlayerBioInfo2 = ({
 		PlayerBioInfoState | undefined
 	>();
 	const [dirty, setDirty] = useState(false);
-	const lastSavedState = useRef<PlayerBioInfoState | undefined>();
+	const lastSavedState = useRef<PlayerBioInfoState | undefined>(undefined);
 	const [defaults, setDefaults] = useState<Defaults | undefined>();
 	const [pageInfo, setPageInfo] = useState<PageInfo>({
 		name: "countries",

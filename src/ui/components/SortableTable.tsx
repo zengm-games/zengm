@@ -46,7 +46,7 @@ type SortableTableContextInfo = {
 	row: Row<ShouldBeValue>;
 	rowClassName: RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
-	tableRef: RefObject<HTMLTableElement>;
+	tableRef: RefObject<HTMLTableElement | null>;
 };
 
 const SortableTableContext = createContext<SortableTableContextInfo>(

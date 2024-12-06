@@ -42,7 +42,7 @@ export const RacesEditor = ({
 	onSave: (races: RaceRow[]) => void;
 }) => {
 	const [rowsEdited, setRowsEdited] = useState([...rows]);
-	const lastSavedState = useRef<RaceRow[] | undefined>();
+	const lastSavedState = useRef<RaceRow[] | undefined>(undefined);
 
 	const handleCancel = async () => {
 		// Reset for next time
@@ -289,7 +289,7 @@ export const CollegesEditor = ({
 				rowsEdited: CollegeRow[];
 				fractionSkipCollegeEdited: string;
 		  }
-	>();
+	>(undefined);
 
 	const [fractionSkipCollegeEdited, setFractionSkipCollegeEdited] =
 		useState(fractionSkipCollege);
@@ -575,7 +575,7 @@ export const NamesEditor = ({
 	onSave: (rows: NameRows) => void;
 }) => {
 	const [rowsEdited, setRowsEdited] = useState({ ...rows });
-	const lastSavedState = useRef<undefined | NameRows>();
+	const lastSavedState = useRef<undefined | NameRows>(undefined);
 	const [firstOrLast, setFirstOrLast] = useState<"first" | "last">("first");
 
 	const handleCancel = async () => {
@@ -757,7 +757,7 @@ export const FlagEditor = ({
 }) => {
 	const initialFlag = flag ?? "";
 	const [flagEdited, setFlagEdited] = useState(initialFlag);
-	const lastSavedState = useRef<undefined | string>();
+	const lastSavedState = useRef<undefined | string>(undefined);
 
 	const handleCancel = async () => {
 		// Reset for next time

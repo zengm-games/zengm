@@ -15,7 +15,11 @@ const BLACKLIST = {
 	worker: [...LODASH_BLACKLIST, /\/ui/, /^react/],
 };
 
-const buildFile = async (name, legacy, rev) => {
+const buildFile = async (
+	name: "ui" | "worker",
+	legacy: boolean,
+	rev: string,
+) => {
 	const bundle = await rollup.rollup({
 		...rollupConfig("production", {
 			blacklistOptions: BLACKLIST[name],
@@ -28,7 +32,7 @@ const buildFile = async (name, legacy, rev) => {
 		preserveEntrySignatures: false,
 	});
 
-	let format;
+	let format: rollup.ModuleFormat;
 	if (legacy) {
 		// ES modules don't work in workers in all the browsers currently supported
 		// Chrome 80, Firefox 114, Safari 15.5/16.4
@@ -47,7 +51,7 @@ const buildFile = async (name, legacy, rev) => {
 		dir: "build/gen",
 	});
 
-	parentPort.postMessage("done");
+	parentPort!.postMessage("done");
 };
 
 (async () => {

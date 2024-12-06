@@ -23,8 +23,8 @@ const getSubdomain = () => {
 	);
 };
 
-const mySpawn = (command, args) => {
-	return new Promise(resolve => {
+const mySpawn = (command: string, args: string[]) => {
+	return new Promise<void>(resolve => {
 		console.log(`${command} ${args.join(" ")}`);
 
 		const cmd = spawn(command, args, { shell: true, stdio: "inherit" });
@@ -42,6 +42,7 @@ const deploy = async () => {
 	const cloudflareConfig = JSON.parse(
 		await readFile(
 			new URL("../../../../.config/cloudflare.json", import.meta.url),
+			"utf8",
 		),
 	);
 

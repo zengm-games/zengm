@@ -13,7 +13,7 @@ const buildJS = async () => {
 			promises.push(
 				new Promise<void>(resolve => {
 					const worker = new Worker(
-						new URL("./buildJSWorker.js", import.meta.url),
+						new URL("./buildJSWorker.ts", import.meta.url),
 						{
 							workerData: {
 								legacy,

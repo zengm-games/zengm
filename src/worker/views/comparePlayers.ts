@@ -366,6 +366,9 @@ const updateComparePlayers = async (
 						"tid",
 						"experience",
 						"awards",
+						"contract",
+						"salaries",
+						"salariesTotal",
 					],
 					ratings: ["season", "pos", "ovr", "pot", ...RATINGS],
 					stats: allStats,
@@ -429,6 +432,7 @@ const updateComparePlayers = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
+			currentSeason: g.get("season"),
 			initialAvailablePlayers,
 			players,
 			ratings,

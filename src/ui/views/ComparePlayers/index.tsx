@@ -9,6 +9,7 @@ import { groupByUnique } from "../../../common/utils";
 import PlayersForm from "./PlayersForm";
 import CollapseArrow from "../../components/CollapseArrow";
 import { lowerIsBetter } from "../../../common/lowerIsBetter";
+import { Contract, ContractAmount } from "../../components/contract";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =
@@ -211,6 +212,7 @@ const useManualSticky = (element: HTMLElement | null, top: number) => {
 
 const ComparePlayers = ({
 	challengeNoRatings,
+	currentSeason,
 	initialAvailablePlayers,
 	players,
 	ratings,
@@ -290,6 +292,41 @@ const ComparePlayers = ({
 			sortType="number"
 			sortAsc
 		/>
+	);
+
+	const contractValues = playersToValues(playersAndLegend, (p, i) => {
+		const season = playersAndLegend[i].season;
+
+		if (
+			p.tid === PLAYER.UNDRAFTED ||
+			(typeof season === "number" && season <= p.draft.year) ||
+			(season === "career" && p.salariesTotal === 0)
+		) {
+			return null;
+		}
+
+		if (season === "career") {
+			return <ContractAmount p={p} override={p.salariesTotal} />;
+		}
+
+		if (season !== currentSeason) {
+			return <ContractAmount p={p} />;
+		}
+
+		if (p.tid === PLAYER.FREE_AGENT) {
+			return (
+				<>
+					<Contract p={p} /> (FA)
+				</>
+			);
+		}
+
+		return <Contract p={p} />;
+	});
+
+	// Only show contract if there is a non-null value for some player
+	const showContracts = contractValues.some(
+		value => value !== null && value !== "legend",
 	);
 
 	return (
@@ -378,6 +415,12 @@ const ComparePlayers = ({
 									sortType="draftPick"
 									sortAsc
 								/>
+								{showContracts ? (
+									<InfoRow
+										col={getCols(["Contract"])[0]}
+										values={contractValues}
+									/>
+								) : null}
 							</>
 						) : null}
 						{challengeNoRatings &&

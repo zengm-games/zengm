@@ -3,7 +3,6 @@ import {
 	type ButtonHTMLAttributes,
 	type MouseEvent,
 	type ReactNode,
-	useRef,
 } from "react";
 
 export const ProcessingSpinner = ({
@@ -21,6 +20,11 @@ export const ProcessingSpinner = ({
 			{text}
 		</>
 	);
+};
+
+const styleGrid11 = {
+	gridColumn: 1,
+	gridRow: 1,
 };
 
 const ActionButton = ({
@@ -46,38 +50,39 @@ const ActionButton = ({
 	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
 	variant?: "primary" | "secondary" | "god-mode" | "danger" | "light-bordered";
 }) => {
-	const minWidth = useRef(0);
-	const button = useRef<HTMLButtonElement>(null);
-
+	// maintainWidth d-inline-grid stuff is from https://x.com/wesbos/status/1834242925401694490
 	return (
 		<button
-			ref={button}
 			type={type}
 			className={clsx(
 				`btn btn-${variant}`,
 				size ? `btn-${size}` : undefined,
+				maintainWidth ? "d-inline-grid" : undefined,
 				className,
 			)}
 			disabled={disabled || processing}
-			onClick={event => {
-				// When we switch to "Processing", don't let the button shrink in width. (Ideally we'd also prevent it from growing, but oh well)
-				if (button.current) {
-					minWidth.current = button.current.offsetWidth;
-				}
-
-				if (onClick) {
-					onClick(event);
-				}
-			}}
-			style={
-				maintainWidth
-					? {
-							minWidth: minWidth.current,
-						}
-					: undefined
-			}
+			onClick={onClick}
 		>
-			{processing ? <ProcessingSpinner text={processingText} /> : children}
+			{maintainWidth ? (
+				<>
+					<span
+						style={styleGrid11}
+						className={processing ? "opacity-0" : "opacity-100"}
+					>
+						{children}
+					</span>
+					<span
+						style={styleGrid11}
+						className={processing ? "opacity-100" : "opacity-0"}
+					>
+						<ProcessingSpinner text={processingText} />
+					</span>
+				</>
+			) : processing ? (
+				<ProcessingSpinner text={processingText} />
+			) : (
+				children
+			)}
 		</button>
 	);
 };

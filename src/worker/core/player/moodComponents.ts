@@ -4,6 +4,7 @@ import { facilitiesEffectMood } from "../../../common/budgetLevels";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
+import { getNegotiationPids } from "../../views/negotiationList";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
 	if (!isSport("basketball")) {
@@ -259,11 +260,18 @@ const moodComponents = async (
 		const numSeasonsWithTeam = p.stats.filter(row => row.tid === tid).length;
 		components.loyalty = numSeasonsWithTeam / 8;
 
+		let wantsToReSign = p.tid === tid;
 		if (
-			p.tid === tid ||
-			(p.tid === PLAYER.FREE_AGENT && phase === PHASE.RESIGN_PLAYERS)
+			!wantsToReSign &&
+			p.tid === PLAYER.FREE_AGENT &&
+			phase === PHASE.RESIGN_PLAYERS
 		) {
-			// Wants to re-sign
+			// Is this a free agent that a user team can re-sign? If so, apply bonus only for that team.
+			const negotiationPids = await getNegotiationPids(tid);
+			wantsToReSign = negotiationPids.has(p.pid);
+		}
+
+		if (wantsToReSign) {
 			components.loyalty += isSport("football") ? 5 : 2;
 		}
 	}

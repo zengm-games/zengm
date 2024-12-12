@@ -5,18 +5,24 @@ import { g } from "../util";
 import addFirstNameShort from "../util/addFirstNameShort";
 import { addMood, freeAgentStats } from "./freeAgents";
 
+export const getNegotiationPids = async (tid: number) => {
+	const negotiations = await idb.cache.negotiations.getAll();
+
+	// Need to check tid for Multi Team Mode, might have other team's negotiations going on
+	return new Set(
+		negotiations
+			.filter(negotiation => negotiation.tid === tid)
+			.map(negotiation => negotiation.pid),
+	);
+};
+
 const updateNegotiationList = async () => {
 	const stats = ["yearsWithTeam", ...freeAgentStats];
 
 	const userTid = g.get("userTid");
 
-	let negotiations = await idb.cache.negotiations.getAll();
+	const negotiationPids = await getNegotiationPids(userTid);
 
-	// For Multi Team Mode, might have other team's negotiations going on
-	negotiations = negotiations.filter(
-		negotiation => negotiation.tid === userTid,
-	);
-	const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 	const userPlayersAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		userTid,
@@ -24,7 +30,7 @@ const updateNegotiationList = async () => {
 	const playersAll = await addMood(
 		(
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
-		).filter(p => negotiationPids.includes(p.pid)),
+		).filter(p => negotiationPids.has(p.pid)),
 	);
 
 	const players = addFirstNameShort(

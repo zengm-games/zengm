@@ -508,23 +508,35 @@ const roundOverrides: Record<string, RoundType | undefined> = bySport({
 	},
 });
 
+const toLocaleStringWithoutNegativeZero = (
+	value: number,
+	locales: Intl.LocalesArgument,
+	options?: Intl.NumberFormatOptions,
+) => {
+	const output = value.toLocaleString(locales, options);
+	if (output === "-0") {
+		return "0";
+	}
+	return output;
+};
+
 const formatNumber = (value: number, type: RoundType): string => {
 	if (type === "oneDecimalPlace") {
 		if (value === 100) {
 			return "100";
 		}
 
-		return value.toLocaleString("en-US", {
+		return toLocaleStringWithoutNegativeZero(value, "en-US", {
 			maximumFractionDigits: 1,
 			minimumFractionDigits: 1,
 		});
 	} else if (type === "twoDecimalPlaces") {
-		return value.toLocaleString("en-US", {
+		return toLocaleStringWithoutNegativeZero(value, "en-US", {
 			maximumFractionDigits: 2,
 			minimumFractionDigits: 2,
 		});
 	} else if (type === "threeDecimalPlaces") {
-		return value.toLocaleString("en-US", {
+		return toLocaleStringWithoutNegativeZero(value, "en-US", {
 			maximumFractionDigits: 3,
 			minimumFractionDigits: 3,
 		});
@@ -535,10 +547,14 @@ const formatNumber = (value: number, type: RoundType): string => {
 	} else if (type === "plusMinusNoDecimalPlace") {
 		return plusMinus(value, 0);
 	} else if (type === "noDecimalPlace") {
-		return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+		return toLocaleStringWithoutNegativeZero(value, "en-US", {
+			maximumFractionDigits: 0,
+		});
 	} else if (type === "minutes") {
 		if (value > 100) {
-			return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+			return toLocaleStringWithoutNegativeZero(value, "en-US", {
+				maximumFractionDigits: 0,
+			});
 		}
 
 		if (value === 0) {
@@ -590,7 +606,7 @@ const roundStat = (
 			return formatNumber(value, type);
 		}
 
-		return value.toLocaleString("en-US", {
+		return toLocaleStringWithoutNegativeZero(value, "en-US", {
 			maximumFractionDigits: decimalPlaces,
 			minimumFractionDigits: decimalPlaces,
 		});

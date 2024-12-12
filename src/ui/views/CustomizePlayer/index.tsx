@@ -26,6 +26,7 @@ import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
 import posRatings from "../../../common/posRatings";
 import { orderBy } from "../../../common/utils";
 import CustomMoodItemsForm from "./CustomMoodItemsForm";
+import { roundContract } from "../../../common/roundContract";
 
 // A player can never have KR or PR as his main position
 const bannedPositions = ["KR", "PR"];
@@ -146,10 +147,11 @@ const copyValidValues = (
 	let contractChanged = false;
 
 	{
-		// Allow any value, even above or below normal limits, but round to $10k and convert from M to k
-		let amount =
-			// @ts-expect-error
-			Math.round(100 * helpers.localeParseFloat(source.contract.amount)) * 10;
+		// Allow any value, even above or below normal limits, but round and convert from M to k
+		let amount = roundContract(
+			1000 * helpers.localeParseFloat(String(source.contract.amount)),
+			minContract,
+		);
 		if (Number.isNaN(amount)) {
 			amount = minContract;
 		}

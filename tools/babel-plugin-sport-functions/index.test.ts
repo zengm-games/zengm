@@ -4,7 +4,6 @@ import * as babel from "@babel/core";
 import babelPluginSportFunctions from "./index.cjs";
 
 const transform = (input: string) => {
-	console.log(babel);
 	return babel.transform(input, {
 		filename: "test.js",
 		plugins: [babelPluginSportFunctions],

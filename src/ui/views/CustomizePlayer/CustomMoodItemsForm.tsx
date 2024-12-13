@@ -49,8 +49,11 @@ const CustomMoodItemsForm = ({
 			},
 		});
 	};
-
+	// https://github.com/facebook/react/issues/31687
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const teamsRaw = useDropdownOptions("teamsAndAll");
+	// https://github.com/facebook/react/issues/31687
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 	const tidsByAbbrev: Record<string, number> = {};
 	for (let tid = 0; tid < teamInfoCache.length; tid++) {

@@ -23,6 +23,8 @@ const StatsTable = ({
 	season: number;
 	t: any;
 }) => {
+	// https://github.com/facebook/react/issues/31687
+	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
 	const onClick = (event: MouseEvent, i: number) => {

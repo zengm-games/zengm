@@ -2034,11 +2034,13 @@ class GameSim extends GameSimBase {
 					});
 				}
 
-				this.playByPlay.logEvent(completeEvent);
-
 				if (safety) {
+					// Do safety before logging event, otherwise pts for safety show up on the next play (kickoff)
 					this.doSafety();
+					this.playByPlay.logEvent(completeEvent);
 				} else if (!td) {
+					this.playByPlay.logEvent(completeEvent);
+
 					this.doTackle({
 						loss: yds < 0,
 					});

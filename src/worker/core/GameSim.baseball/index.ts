@@ -1,6 +1,8 @@
 import { g, helpers, random } from "../../util";
 import {
+	NUM_BALLS_PER_WALK,
 	NUM_OUTS_PER_INNING,
+	NUM_STRIKES_PER_OUT,
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball";
@@ -330,7 +332,7 @@ class GameSim extends GameSimBase {
 	}
 
 	doFoul() {
-		if (this.strikes < 2) {
+		if (this.strikes < NUM_STRIKES_PER_OUT - 1) {
 			this.strikes += 1;
 		}
 
@@ -967,7 +969,7 @@ class GameSim extends GameSimBase {
 		for (let i = stealing.length - 1; i >= 0; i--) {
 			if (stealing[i]) {
 				// If this is a walk and the runner gets the base automatically, then no steal attempt
-				if (this.balls === 4 && this.isForceOut(i as any)) {
+				if (this.balls === NUM_BALLS_PER_WALK && this.isForceOut(i as any)) {
 					continue;
 				}
 
@@ -1006,8 +1008,11 @@ class GameSim extends GameSimBase {
 
 				this.logOut();
 
-				if (this.outs >= NUM_OUTS_PER_INNING) {
-					// Same batter will be up next inning
+				// If inning is over, same batter will be up next inning, unless he also struck out
+				if (
+					this.outs >= NUM_OUTS_PER_INNING &&
+					this.strikes < NUM_STRIKES_PER_OUT
+				) {
 					this.team[this.o].moveToPreviousBatter();
 				}
 			} else {
@@ -1131,12 +1136,12 @@ class GameSim extends GameSimBase {
 		};
 		let ballProb = BALL_PROB_BY_COUNT[this.strikes][this.balls];
 
-		if (this.strikes === 2 && this.balls === 0) {
-			ballProb += 0.2 * pitcher.compositeRating.controlPitcher;
-		} else if (this.strikes === 2 && this.balls === 1) {
-			ballProb += 0.1 * pitcher.compositeRating.controlPitcher;
-		} else if (this.balls === 3) {
+		if (this.balls === NUM_BALLS_PER_WALK - 1) {
 			ballProb -= 0.2 * pitcher.compositeRating.controlPitcher;
+		} else if (this.strikes === NUM_STRIKES_PER_OUT - 1 && this.balls === 0) {
+			ballProb += 0.2 * pitcher.compositeRating.controlPitcher;
+		} else if (this.strikes === NUM_STRIKES_PER_OUT - 1 && this.balls === 1) {
+			ballProb += 0.1 * pitcher.compositeRating.controlPitcher;
 		} else {
 			ballProb -= 0.1 * pitcher.compositeRating.controlPitcher;
 		}
@@ -1168,7 +1173,7 @@ class GameSim extends GameSimBase {
 		let contactAdjusted = 0.25 + 0.5 * batter.compositeRating.contactHitter;
 
 		let swingProbAdjustment = 0;
-		if (this.strikes === 2) {
+		if (this.strikes === NUM_STRIKES_PER_OUT - 1) {
 			swingProbAdjustment += 0.2;
 			contactAdjusted += 0.08;
 		}
@@ -1619,7 +1624,7 @@ class GameSim extends GameSimBase {
 			this.doBalkWildPitchPassedBall(wildPitchPassedBall);
 
 			this.balls += 1;
-			if (this.balls >= 4) {
+			if (this.balls >= NUM_BALLS_PER_WALK) {
 				this.doWalk("normal");
 				doneBatter = true;
 			} else {
@@ -1647,8 +1652,8 @@ class GameSim extends GameSimBase {
 		const stealing = [false, false, false] as [boolean, boolean, boolean];
 		const fullCountTwoOuts =
 			this.outs === NUM_OUTS_PER_INNING - 1 &&
-			this.balls === 3 &&
-			this.strikes === 2;
+			this.balls === NUM_BALLS_PER_WALK - 1 &&
+			this.strikes === NUM_STRIKES_PER_OUT - 1;
 
 		let numStealing = 0;
 		let numStaying = 0;
@@ -1709,7 +1714,7 @@ class GameSim extends GameSimBase {
 
 		if (outcome === "ball") {
 			this.balls += 1;
-			if (this.balls >= 4) {
+			if (this.balls >= NUM_BALLS_PER_WALK) {
 				this.doWalk("normal");
 				doneBatter = true;
 			} else {
@@ -1729,7 +1734,7 @@ class GameSim extends GameSimBase {
 			}
 		} else if (outcome === "strike") {
 			this.strikes += 1;
-			if (this.strikes >= 3) {
+			if (this.strikes >= NUM_STRIKES_PER_OUT) {
 				this.doStrikeout(swinging);
 				doneBatter = true;
 				if (this.outs >= NUM_OUTS_PER_INNING) {

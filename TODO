@@ -1,3 +1,5 @@
+runner stealing base should only very rarely be caught in double play
+
 make player graphs remember selections https://old.reddit.com/r/BasketballGM/comments/1gplx7g/could_you_make_the_player_graphs_remember_what/
 - other pages?
 
@@ -47,8 +49,6 @@ get rid of checks for raw state/province names https://old.reddit.com/r/ZenGMHoc
 Don't allow play if versions in tabs don't match
 - close worker?
 - newPhasePreseason being called twice in two different tabs and somehow updating the database twice?
-
-Strike out throw out DP does not advance batting order https://discord.com/channels/290013534023057409/290015591216054273/1010153106740351057
 
 move from my iterate function to async iterators
 - regex search: [\t ]iterate\(

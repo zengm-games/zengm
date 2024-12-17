@@ -18,6 +18,13 @@ import getWinner from "../../../common/getWinner";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
+export const STAT_PLAYED_IN_GAME_IF_NONZERO = bySport({
+	baseball: "gp",
+	basketball: "min",
+	football: "min",
+	hockey: "min",
+});
+
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
@@ -414,12 +421,7 @@ const writePlayerStats = async (
 					}
 
 					// Update stats
-					const playedInGame = bySport({
-						baseball: p.stat.gp > 0,
-						basketball: p.stat.min > 0,
-						football: p.stat.min > 0,
-						hockey: p.stat.min > 0,
-					});
+					const playedInGame = p.stat[STAT_PLAYED_IN_GAME_IF_NONZERO] > 0;
 					if (playedInGame) {
 						// Too many other parts of the codebase use "min", so put a dummy value there
 						if (isSport("baseball")) {

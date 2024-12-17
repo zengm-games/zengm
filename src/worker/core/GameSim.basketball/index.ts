@@ -189,8 +189,6 @@ class GameSim extends GameSimBase {
 
 	playersOnCourt: [number[], number[]];
 
-	subsEveryN: number;
-
 	t: number;
 
 	numPeriods: number;
@@ -293,7 +291,6 @@ class GameSim extends GameSimBase {
 			recordStarters: true,
 		});
 		this.updateSynergy();
-		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
 		this.t = g.get("quarterLength") * 60; // Game clock, in seconds
 		this.numPeriods = g.get("numPeriods");

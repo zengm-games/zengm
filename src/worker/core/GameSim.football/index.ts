@@ -52,8 +52,6 @@ class GameSim extends GameSimBase {
 
 	playersOnField: [PlayersOnField, PlayersOnField];
 
-	subsEveryN: number;
-
 	/**
 	 * "initialKickoff" -> (right after kickoff) "firstPossession" -> (after next call to possessionChange) -> "secondPossession" -> (after next call to possessionChange) -> "bothTeamPossessed" -> (based on conditions below) "over"
 	 * - "initialKickoff", "firstPossession": when touchdown or safety is scored, set state to "over"
@@ -143,7 +141,6 @@ class GameSim extends GameSimBase {
 		this.o = 1;
 		this.d = 0;
 		this.updatePlayersOnField("starters");
-		this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
 		this.clock = g.get("quarterLength"); // Game clock, in minutes
 		this.numPeriods = g.get("numPeriods");

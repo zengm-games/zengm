@@ -249,50 +249,46 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
 		}
 
-		for (let p = 0; p < results.team[t].player.length; p++) {
-			gameStats.teams[t].players[p] = {};
+		for (const p0 of results.team[t].player) {
+			const p: Record<string, any> = {};
 
-			for (const key of Object.keys(results.team[t].player[p].stat)) {
-				gameStats.teams[t].players[p][key] =
-					results.team[t].player[p].stat[key];
+			for (const key of Object.keys(p0.stat)) {
+				p[key] = p0.stat[key];
 			}
 
-			gameStats.teams[t].players[p].name = results.team[t].player[p].name;
-			gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;
-			gameStats.teams[t].players[p].pid = results.team[t].player[p].id;
-			gameStats.teams[t].players[p].skills = helpers.deepCopy(
-				results.team[t].player[p].skills,
-			);
-			gameStats.teams[t].players[p].injury = {
-				type: results.team[t].player[p].injury.type,
-				gamesRemaining: results.team[t].player[p].injury.gamesRemaining,
+			p.name = p0.name;
+			p.pos = p0.pos;
+			p.pid = p0.id;
+			p.skills = helpers.deepCopy(p0.skills);
+			p.injury = {
+				type: p0.injury.type,
+				gamesRemaining: p0.injury.gamesRemaining,
 			};
-			if (results.team[t].player[p].injury.newThisGame) {
-				gameStats.teams[t].players[p].injury.newThisGame = true;
+			if (p0.injury.newThisGame) {
+				p.injury.newThisGame = true;
 			}
-			if (results.team[t].player[p].injury.playingThrough) {
-				gameStats.teams[t].players[p].injury.playingThrough = true;
+			if (p0.injury.playingThrough) {
+				p.injury.playingThrough = true;
 			}
-			if (results.team[t].player[p].injuryAtStart) {
-				gameStats.teams[t].players[p].injuryAtStart =
-					results.team[t].player[p].injuryAtStart;
+			if (p0.injuryAtStart) {
+				p.injuryAtStart = p0.injuryAtStart;
 			}
-			gameStats.teams[t].players[p].jerseyNumber =
-				results.team[t].player[p].jerseyNumber;
+			p.jerseyNumber = p0.jerseyNumber;
 
 			if (isSport("baseball")) {
-				gameStats.teams[t].players[p].seasonStats =
-					results.team[t].player[p].seasonStats;
+				p.seasonStats = p0.seasonStats;
 
 				// These are either integers or undefined
 				const baseballMaybeKeys = ["battingOrder", "subIndex"];
 				for (const key of baseballMaybeKeys) {
-					const value = results.team[t].player[p][key];
+					const value = p0[key];
 					if (value !== undefined) {
-						gameStats.teams[t].players[p][key] = value;
+						p[key] = value;
 					}
 				}
 			}
+
+			gameStats.teams[t].players.push(p);
 		}
 	}
 

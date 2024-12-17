@@ -1,3 +1,6 @@
+in box score, only save players who actually show up in box score (not players who didn't play)
+- not in basketball
+
 runner stealing base should only very rarely be caught in double play
 
 make player graphs remember selections https://old.reddit.com/r/BasketballGM/comments/1gplx7g/could_you_make_the_player_graphs_remember_what/
@@ -112,9 +115,6 @@ show how many fouls each team has, and bonus status https://old.reddit.com/r/Bas
 - show count of personal/team fouls when a foul happens in text https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l8bya7o/
 
 hard to click player ratings popover icon on mobile without hitting player name? https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxlKSNzFsbplCJFNQHjrZjHXz?compose=DmwnWstqxPhppsXNxCfVhCxwWDdnRGXNrVbGqgdPQhDFFgXzxhKzJjlLMSJgtNznJpKSPlRNsZxV
-
-in box score, only save players who actually show up in box score (not players who didn't play)
-- not in basketball
 
 "Show players you can afford" button should be a toggle https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_design_suggestions_to_improve_mobile_uiux/le6kljv/?context=3
 

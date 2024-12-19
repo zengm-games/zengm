@@ -1063,10 +1063,6 @@ fix applying penalties on xp/2pt
   - wouldn't work for defensive penalties
 - go for 2 after offensive penalty only if absolutley necessary (late in game)
 
-hockey player does stuff on ice while in penalty box https://discord.com/channels/@me/778760871911751700/908163406111072326
-
-combined regular season and playoffs on player stats page https://discord.com/channels/@me/819437830773538816/907468037312114718
-
 fix ai value of reversed draft picks https://discord.com/channels/290013534023057409/290013534023057409/905048206457581598
 - and random https://old.reddit.com/r/BasketballGM/comments/pyw33f/monthly_suggestions_thread/hg2t67n/
 
@@ -1075,10 +1071,6 @@ add archetypes to players?
 - https://discord.com/channels/290013534023057409/290015468939640832/897791010225147954 https://www.bball-index.com/lebron-database/
   - https://www.bball-index.com/impact-metric-comparison/ for defense
 - https://docs.google.com/spreadsheets/d/1JcA535OolPztKI9NT438MyZ6UJMh9sgbgUkeBnG0vjU/edit#gid=1556746814
-
-https://github.com/lukeed/tsm
-- see tsm branch, was getting errors in build
-- move types to jsdoc?
 
 all-star snubs https://old.reddit.com/r/BasketballGM/comments/q53xkk/a_lil_feature_this_game_could_add/
 
@@ -1140,8 +1132,7 @@ playoffsByConf should support numConfs!=2
 - otherwise, would need byes after the conferences are done.
   - how to pick which team gets bye? normal team sort with just the top teams
   - 1950 nba playoffs
-- how to determine which teams play when all the conference winners are left?
-- UI is tricky
+- how to determine which teams play when all the conference winners are left? UI is tricky
 
 no attendance in baseball https://discord.com/channels/290013534023057409/290015591216054273/1012536651110686742
 
@@ -1240,8 +1231,6 @@ mood effect of trading away a player should only be applied after the current ph
 
 Don't allow sim to preseason while user is over roster limit? If the "sign a ton of players to see if they prog" thing becomes an issue
 - or offseason roster limit https://discord.com/channels/290013534023057409/331882115119448065/847984927136022558
-
-faceoff from penalty box after period ends https://discord.com/channels/@me/778760871911751700/845898372672913409
 
 playoff series record in live box score messed up https://discord.com/channels/290013534023057409/290015591216054273/846468388565942333
 
@@ -1388,9 +1377,6 @@ In live sim, when there is a foul, indicate how many fouls the team has so we ca
 
 sim substitutions faster in live sim
 - https://discord.com/channels/290013534023057409/331882115119448065/799434082802860073
-
-bold scoring plays in live sim
-- https://discord.com/channels/290013534023057409/331882115119448065/799434734101856312
 
 real players prospect rating options
 - base on career stats (maybe compute peak overall year and apply standard progs backwards to draft age)

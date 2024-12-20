@@ -108,7 +108,19 @@ export const dpoyScore = (p: PlayerFiltered) =>
 
 export const dfoyFilter = (p: PlayerFiltered) => p.pos === "C" || p.pos === "W";
 
-export const goyScore = (p: PlayerFiltered) => p.currentStats.gps;
+export const goyScore = (p: PlayerFiltered) => {
+	// This will be inconsistent when viewing past seasons if this setting changed
+	const numGames = g.get("numGames");
+
+	// Only credit GPS up to 75% of games played, so as to not penalize goalies with good backups who play a bit less
+	const numGamesMax = Math.round(0.75 * numGames);
+	const gpsPerGame =
+		p.currentStats.gpGoalie === 0
+			? 0
+			: p.currentStats.gps / p.currentStats.gpGoalie;
+	console.log(p.currentStats);
+	return gpsPerGame * Math.min(numGamesMax, p.currentStats.gpGoalie);
+};
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {

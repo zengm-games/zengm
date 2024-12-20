@@ -59,7 +59,7 @@ const getAwardCandidates = async (season: number) => {
 				},
 				players,
 			),
-			stats: ["gaa", "svPct", "gps"],
+			stats: ["gpGoalie", "gaa", "svPct", "gps"],
 		},
 		{
 			name: "Rookie of the Year",

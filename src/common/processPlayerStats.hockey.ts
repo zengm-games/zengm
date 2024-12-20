@@ -67,7 +67,8 @@ const processStats = (
 			} else if (role === "goalie") {
 				const svPct = helpers.percentage(ps.sv, ps.sv + ps.ga);
 				const gaa = helpers.ratio(ps.ga, ps.gMin / 60);
-				row[stat] = `${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
+				row[stat] =
+					`${ps.gpGoalie} GP, ${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
 			} else {
 				row[stat] = "";
 			}

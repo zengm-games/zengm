@@ -46,6 +46,7 @@ const sign = async (pid: number, amount: number, exp: number) => {
 };
 
 const Negotiation = ({
+	capSpace,
 	challengeNoRatings,
 	contractOptions,
 	payroll,
@@ -107,6 +108,8 @@ const Negotiation = ({
 					<>
 						<br />
 						Salary Cap: {helpers.formatCurrency(salaryCap, "M")}
+						<br />
+						Cap Space: {helpers.formatCurrency(capSpace, "M")}
 					</>
 				) : null}
 			</p>

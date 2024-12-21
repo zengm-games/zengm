@@ -106,6 +106,32 @@ const updateDailySchedule = async (
 					value: playoffs ? `${day} (playoffs)` : `${day}`,
 				}));
 
+			if (inputs.season !== currentSeason) {
+				// Add team branding info, in case that was different in past season. Otherwise, ScoreBox uses teamInfoCache for latest values
+				for (let i = 0; i < completed.length; i++) {
+					const game = { ...completed[i] };
+					completed[i] = game;
+
+					for (const t of game.teams) {
+						const teamSeason = await idb.getCopy.teamSeasons({
+							season: game.season,
+							tid: t.tid,
+						});
+
+						if (teamSeason) {
+							t.branding = {
+								region: teamSeason.region,
+								name: teamSeason.name,
+								abbrev: teamSeason.abbrev,
+								imgURL: teamSeason.imgURL,
+								imgURLSmall: teamSeason.imgURLSmall,
+							};
+							console.log(t.branding);
+						}
+					}
+				}
+			}
+
 			return {
 				completed,
 				day,

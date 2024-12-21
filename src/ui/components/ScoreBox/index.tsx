@@ -16,8 +16,8 @@ const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
 };
 
-// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
 type Team = {
+	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
 	ovr?: number;
 	pts?: number;
 	sPts?: number;
@@ -31,6 +31,15 @@ type Team = {
 		seed: number;
 		won: number;
 		lost: number;
+	};
+
+	// Not needed for current season, just use the ones in teamInfoCache. But for past seasons (like on Daily Schedule), this is nice
+	branding?: {
+		region: string;
+		name: string;
+		abbrev: string;
+		imgURL?: string;
+		imgURLSmall?: string;
 	};
 };
 
@@ -203,7 +212,7 @@ const ScoreBox = memo(
 							? "special"
 							: boxScoreTeamOverride !== undefined
 								? boxScoreTeamOverride
-								: `${teamInfoCache[game.teams[0].tid]?.abbrev}_${
+								: `${game.teams[0].branding?.abbrev ?? teamInfoCache[game.teams[0].tid]?.abbrev}_${
 										game.teams[0].tid
 									}`,
 						gameSeason,
@@ -297,17 +306,15 @@ const ScoreBox = memo(
 									: `All-Stars ${i === 0 ? 2 : 1}`;
 								rosterURL = helpers.leagueUrl(["all_star", "history"]);
 							} else {
-								imgURL =
-									teamInfoCache[t.tid]?.imgURLSmall ??
-									teamInfoCache[t.tid]?.imgURL;
+								const branding = t.branding ?? teamInfoCache[t.tid];
+								imgURL = branding?.imgURLSmall ?? branding?.imgURL;
 								teamName = small
-									? teamInfoCache[t.tid]?.abbrev
-									: `${teamInfoCache[t.tid]?.region} ${
-											teamInfoCache[t.tid]?.name
-										}`;
+									? branding?.abbrev
+									: `${branding?.region} ${branding?.name}`;
 								rosterURL = helpers.leagueUrl([
 									"roster",
-									`${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
+									`${branding?.abbrev}_${t.tid}`,
+									gameSeason,
 								]);
 							}
 

@@ -13,8 +13,6 @@ If you go onto a team and start spam releasing players quickly (best way to do t
 
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
 
-looking at the Daily Schedule for past seasons shows teams that have relocated under their current identity. should show them under their identity at the time https://discord.com/channels/290013534023057409/290015591216054273/1310425782736257125
-
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 

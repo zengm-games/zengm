@@ -9,7 +9,7 @@ import {
 	useLocalPartial,
 } from "../util";
 import type { View } from "../../common/types";
-import { Mood, RatingsStatsPopover } from "../components";
+import { HelpPopover, Mood, RatingsStatsPopover } from "../components";
 import { isSport } from "../../common";
 
 // Show the negotiations list if there are more ongoing negotiations
@@ -96,52 +96,47 @@ const Negotiation = ({
 	const { gender } = useLocalPartial(["gender"]);
 
 	let message;
-	if (resigning && salaryCapType === "soft") {
-		message = (
-			<>
-				You are allowed to go over the salary cap to make this deal because you
-				are re-signing{" "}
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> to a
-				contract extension.{" "}
-				<b>
-					If you do not come to an agreement here,{" "}
-					<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> will
-					become a free agent.
-				</b>{" "}
-				{helpers.pronoun(gender, "He")} will then be able to sign with any team,
-				and you won't be able to go over the salary cap to sign{" "}
-				{helpers.pronoun(gender, "him")}.
-			</>
-		);
-	} else if (salaryCapType !== "none") {
-		const extra =
-			salaryCapType === "soft" ? (
+	if (salaryCapType === "soft") {
+		if (resigning) {
+			message = (
 				<>
-					{" "}
-					because <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> is
-					a free agent
+					You are allowed to go over the salary cap when re-signing players.{" "}
+					<b>
+						If you do not come to an agreement here,{" "}
+						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> will
+						become a free agent.
+					</b>{" "}
+					{helpers.pronoun(gender, "He")} will then be able to sign with any
+					team, and you won't be able to go over the salary cap to sign{" "}
+					{helpers.pronoun(gender, "him")}.
 				</>
-			) : null;
-
-		message = (
-			<>
-				You are not allowed to go over the salary cap to make this deal (unless
-				it is for a minimum contract){extra}.
-			</>
-		);
+			);
+		} else {
+			message =
+				"You are not allowed to go over the salary cap to sign free agents (unless it is for a minimum contract).";
+		}
+	} else if (salaryCapType === "hard") {
+		message =
+			"You are not allowed to go over the salary cap to sign players (unless it is for a minimum contract).";
 	}
 
 	return (
 		<>
 			<div className="row">
 				<div className="col-sm-10 col-md-8 col-lg-6">
-					<h1 className="d-flex mb-3">
+					<div className="d-flex fs-2">
 						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
 						<div className="ms-2 fs-6 d-flex align-items-center">
 							<Mood defaultType="user" p={p} />
 							<RatingsStatsPopover pid={p.pid} />
 						</div>
-					</h1>
+					</div>
+					<div className="fs-3 mb-3">
+						{resigning ? "Re-signing" : "Free Agent"}
+						{message ? (
+							<HelpPopover className="ms-2">{message}</HelpPopover>
+						) : null}
+					</div>
 					<div className="list-group">
 						{contractOptions.map((contract, i) => {
 							return (
@@ -197,8 +192,6 @@ const Negotiation = ({
 					</div>
 				</div>
 			</div>
-
-			{message ? <div className="mt-5">{message}</div> : null}
 		</>
 	);
 };

@@ -84,92 +84,64 @@ const SignButton = ({
 
 const Negotiation = ({
 	capSpace,
-	challengeNoRatings,
 	contractOptions,
 	payroll,
-	player = {},
+	p,
 	resigning,
 	salaryCap,
 	salaryCapType,
 }: View<"negotiation">) => {
-	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
+	useTitleBar({ title: "Contract Negotiation" });
 
 	const { gender } = useLocalPartial(["gender"]);
 
 	let message;
 	if (resigning && salaryCapType === "soft") {
 		message = (
-			<p>
+			<>
 				You are allowed to go over the salary cap to make this deal because you
 				are re-signing{" "}
-				<a href={helpers.leagueUrl(["player", player.pid])}>{player.name}</a> to
-				a contract extension.{" "}
+				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> to a
+				contract extension.{" "}
 				<b>
 					If you do not come to an agreement here,{" "}
-					<a href={helpers.leagueUrl(["player", player.pid])}>{player.name}</a>{" "}
-					will become a free agent.
+					<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> will
+					become a free agent.
 				</b>{" "}
 				{helpers.pronoun(gender, "He")} will then be able to sign with any team,
 				and you won't be able to go over the salary cap to sign{" "}
 				{helpers.pronoun(gender, "him")}.
-			</p>
+			</>
 		);
 	} else if (salaryCapType !== "none") {
 		const extra =
 			salaryCapType === "soft" ? (
 				<>
 					{" "}
-					because{" "}
-					<a href={helpers.leagueUrl(["player", player.pid])}>
-						{player.name}
-					</a>{" "}
-					is a free agent
+					because <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> is
+					a free agent
 				</>
 			) : null;
 
 		message = (
-			<p>
+			<>
 				You are not allowed to go over the salary cap to make this deal (unless
 				it is for a minimum contract){extra}.
-			</p>
+			</>
 		);
 	}
 
 	return (
 		<>
-			{message}
-
-			<p>
-				Current Payroll: {helpers.formatCurrency(payroll, "M")}
-				{salaryCapType !== "none" ? (
-					<>
-						<br />
-						Salary Cap: {helpers.formatCurrency(salaryCap, "M")}
-						<br />
-						Cap Space: {helpers.formatCurrency(capSpace, "M")}
-					</>
-				) : null}
-			</p>
-
-			<h2>
-				{" "}
-				<a href={helpers.leagueUrl(["player", player.pid])}>
-					{player.name}
-				</a>{" "}
-			</h2>
-			<div className="d-flex align-items-center">
-				<Mood defaultType="user" p={player} />
-				<RatingsStatsPopover pid={player.pid} />
-			</div>
-			<p className="mt-2">
-				{player.age} years old
-				{!challengeNoRatings
-					? `; Overall: ${player.ratings.ovr}; Potential: ${player.ratings.pot}`
-					: null}
-			</p>
-
 			<div className="row">
 				<div className="col-sm-10 col-md-8 col-lg-6">
+					<h1 className="d-flex mb-3">
+						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
+						<div className="ms-2 fs-6 d-flex align-items-center">
+							<Mood defaultType="user" p={p} />
+							<RatingsStatsPopover pid={p.pid} />
+						</div>
+					</h1>
 					<div className="list-group">
 						{contractOptions.map((contract, i) => {
 							return (
@@ -189,7 +161,7 @@ const Negotiation = ({
 									</div>
 
 									<SignButton
-										pid={player.pid}
+										pid={p.pid}
 										amount={contract.amount}
 										exp={contract.exp}
 										disabledReason={contract.disabledReason}
@@ -198,23 +170,35 @@ const Negotiation = ({
 							);
 						})}
 					</div>
+
+					<div className="mt-3">
+						{resigning ? (
+							<a
+								className="btn btn-secondary"
+								href={helpers.leagueUrl(["negotiation"])}
+							>
+								Return to Re-Sign Players page
+							</a>
+						) : (
+							<button className="btn btn-danger" onClick={() => cancel(p.pid)}>
+								Can't reach a deal? End negotiation
+							</button>
+						)}
+					</div>
+
+					<div className="d-flex justify-content-between mt-5">
+						<div>Current Payroll: {helpers.formatCurrency(payroll, "M")}</div>
+						{salaryCapType !== "none" ? (
+							<>
+								<div>Salary Cap: {helpers.formatCurrency(salaryCap, "M")}</div>
+								<div>Cap Space: {helpers.formatCurrency(capSpace, "M")}</div>
+							</>
+						) : null}
+					</div>
 				</div>
 			</div>
 
-			<div className="mt-3">
-				{resigning ? (
-					<a
-						className="btn btn-secondary"
-						href={helpers.leagueUrl(["negotiation"])}
-					>
-						Return to Re-Sign Players page
-					</a>
-				) : (
-					<button className="btn btn-danger" onClick={() => cancel(player.pid)}>
-						Can't reach a deal? End negotiation
-					</button>
-				)}
-			</div>
+			{message ? <div className="mt-5">{message}</div> : null}
 		</>
 	);
 };

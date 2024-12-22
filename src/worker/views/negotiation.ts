@@ -185,11 +185,10 @@ const updateNegotiation = async (
 
 		return {
 			capSpace: (g.get("salaryCap") - payroll) / 1000,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			contractOptions,
 			salaryCapType: g.get("salaryCapType"),
 			payroll: payroll / 1000,
-			player: p,
+			p,
 			resigning: negotiation.resigning,
 			salaryCap: g.get("salaryCap") / 1000,
 		};

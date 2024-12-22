@@ -148,8 +148,8 @@ const acceptContractNegotiation = async ({
 	pid: number;
 	amount: number;
 	exp: number;
-}): Promise<string | undefined | null> => {
-	return contractNegotiation.accept(pid, amount, exp);
+}) => {
+	return contractNegotiation.accept({ pid, amount, exp });
 };
 
 const addTeam = async () => {
@@ -3322,7 +3322,7 @@ const sign = async ({
 		}
 	}
 
-	const errorMsg = await contractNegotiation.accept(pid, amount, exp);
+	const errorMsg = await contractNegotiation.accept({ pid, amount, exp });
 
 	if (errorMsg !== undefined && errorMsg) {
 		return errorMsg;
@@ -3339,11 +3339,11 @@ const reSignAll = async (players: any[]) => {
 		const p = players.find(p => p.pid === pid);
 
 		if (p && p.mood.user.willing) {
-			const errorMsg = await contractNegotiation.accept(
+			const errorMsg = await contractNegotiation.accept({
 				pid,
-				p.mood.user.contractAmount,
-				p.contract.exp,
-			);
+				amount: p.mood.user.contractAmount,
+				exp: p.contract.exp,
+			});
 
 			if (errorMsg !== undefined && errorMsg) {
 				return errorMsg;

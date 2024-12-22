@@ -17,11 +17,11 @@ describe("worker/core/contractNegotiation/accept", () => {
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
-		const error2 = await contractNegotiation.accept(
+		const error2 = await contractNegotiation.accept({
 			pid,
-			g.get("salaryCap"),
-			g.get("season") + 1,
-		);
+			amount: g.get("salaryCap"),
+			exp: g.get("season") + 1,
+		});
 		assert.strictEqual(
 			error2,
 			"This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary.",

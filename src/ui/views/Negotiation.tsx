@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import useTitleBar from "../hooks/useTitleBar";
 import {
 	helpers,
@@ -29,20 +30,56 @@ const cancel = async (pid: number) => {
 	redirectNegotiationOrRoster(true);
 };
 
-const sign = async (pid: number, amount: number, exp: number) => {
-	const errorMsg = await toWorker("main", "acceptContractNegotiation", {
-		pid: pid,
-		amount: Math.round(amount * 1000),
-		exp,
-	});
-	if (errorMsg !== undefined && errorMsg) {
-		logEvent({
-			type: "error",
-			text: errorMsg,
-			saveToDb: false,
-		});
+const SignButton = ({
+	pid,
+	amount,
+	exp,
+	disabledReason,
+}: {
+	pid: number;
+	amount: number;
+	exp: number;
+	disabledReason: string | undefined;
+}) => {
+	const button = (
+		<button
+			className={`btn ${disabledReason !== undefined ? "btn-secondary" : "btn-success"}`}
+			disabled={disabledReason !== undefined}
+			onClick={async () => {
+				const errorMsg = await toWorker("main", "acceptContractNegotiation", {
+					pid: pid,
+					amount: Math.round(amount * 1000),
+					exp,
+				});
+				if (errorMsg !== undefined && errorMsg) {
+					logEvent({
+						type: "error",
+						text: errorMsg,
+						saveToDb: false,
+					});
+				}
+				redirectNegotiationOrRoster(false);
+			}}
+		>
+			Sign
+			<span className="d-none d-sm-inline"> Contract</span>
+		</button>
+	);
+
+	if (disabledReason === undefined) {
+		return button;
 	}
-	redirectNegotiationOrRoster(false);
+
+	// CSS/HTML hacks!
+	// position-fixed is for https://stackoverflow.com/a/75264190/786644 otherwise the scrollback flicker appears/disappears on desktop when the react-bootstrap Tooltip is shown.
+	// Wrapper div around button is because otherwise there is no hover over the disabled button and no tooltip is shown.
+	return (
+		<OverlayTrigger
+			overlay={<Tooltip className="position-fixed">{disabledReason}</Tooltip>}
+		>
+			<div>{button}</div>
+		</OverlayTrigger>
+	);
 };
 
 const Negotiation = ({
@@ -151,15 +188,12 @@ const Negotiation = ({
 										)
 									</div>
 
-									<button
-										className="btn btn-success"
-										onClick={() =>
-											sign(player.pid, contract.amount, contract.exp)
-										}
-									>
-										Sign
-										<span className="d-none d-sm-inline"> Contract</span>
-									</button>
+									<SignButton
+										pid={player.pid}
+										amount={contract.amount}
+										exp={contract.exp}
+										disabledReason={contract.disabledReason}
+									/>
 								</div>
 							);
 						})}

@@ -9,7 +9,11 @@ import type {
 } from "../../common/types";
 import { range } from "../../common/utils";
 
-const generateContractOptions = (contract: PlayerContract, ovr: number) => {
+const generateContractOptions = async (
+	pid: number,
+	contract: PlayerContract,
+	ovr: number,
+) => {
 	let growthFactor = 0.15;
 
 	// Modulate contract amounts based on last digit of ovr (add some deterministic noise)
@@ -31,6 +35,7 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 		years: number;
 		amount: number;
 		smallestAmount: boolean;
+		disabledReason?: string;
 	}[] = allowedLengths.map((contractLength, i) => {
 		const contractOption = {
 			exp: exp + contractLength,
@@ -62,7 +67,7 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 			helpers.roundContract(contractOptions[i].amount * 1000) / 1000;
 	}
 
-	return contractOptions.filter(contractOption => {
+	const possible = contractOptions.filter(contractOption => {
 		if (contractOption.smallestAmount) {
 			return true;
 		}
@@ -77,6 +82,20 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 
 		return contractOption.amount * 1000 <= g.get("maxContract");
 	});
+
+	for (const row of possible) {
+		const disabledReason = await contractNegotiation.accept({
+			pid,
+			amount: Math.round(row.amount * 1000),
+			exp: row.exp,
+			dryRun: true,
+		});
+		if (disabledReason !== undefined) {
+			row.disabledReason = disabledReason;
+		}
+	}
+
+	return possible;
 };
 
 const updateNegotiation = async (
@@ -135,7 +154,8 @@ const updateNegotiation = async (
 
 		p.mood = await player.moodInfos(p2);
 
-		const contractOptions = generateContractOptions(
+		const contractOptions = await generateContractOptions(
+			negotiation.pid,
 			{
 				amount: p.mood.user.contractAmount / 1000,
 				exp: p.contract.exp,

@@ -14,11 +14,17 @@ import { PHASE } from "../../../common";
  * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
-const accept = async (
-	pid: number,
-	amount: number,
-	exp: number,
-): Promise<string | undefined | null> => {
+const accept = async ({
+	pid,
+	amount,
+	exp,
+	dryRun,
+}: {
+	pid: number;
+	amount: number;
+	exp: number;
+	dryRun?: boolean;
+}) => {
 	const negotiation = await idb.cache.negotiations.get(pid);
 
 	if (!negotiation) {
@@ -76,18 +82,20 @@ const accept = async (
 		contract.rookie = true;
 	}
 
-	await player.sign(p, g.get("userTid"), contract, g.get("phase"));
-	await idb.cache.players.put(p);
-	await cancel(pid);
+	if (!dryRun) {
+		await player.sign(p, g.get("userTid"), contract, g.get("phase"));
+		await idb.cache.players.put(p);
+		await cancel(pid);
 
-	// If a depth chart exists, place this player in the depth chart so they are ahead of every player they are
-	// better than, without otherwise disturbing the depth chart order
-	const t = await idb.cache.teams.get(p.tid);
-	const onlyNewPlayers = t ? !t.keepRosterSorted : false;
-	await team.rosterAutoSort(g.get("userTid"), onlyNewPlayers);
+		// If a depth chart exists, place this player in the depth chart so they are ahead of every player they are
+		// better than, without otherwise disturbing the depth chart order
+		const t = await idb.cache.teams.get(p.tid);
+		const onlyNewPlayers = t ? !t.keepRosterSorted : false;
+		await team.rosterAutoSort(g.get("userTid"), onlyNewPlayers);
 
-	await toUI("realtimeUpdate", [["playerMovement"]]);
-	await recomputeLocalUITeamOvrs();
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+		await recomputeLocalUITeamOvrs();
+	}
 };
 
 export default accept;

@@ -133,7 +133,7 @@ const updateNegotiation = async (
 		let p;
 		if (p2) {
 			p = await idb.getCopy.playersPlus(p2, {
-				attrs: ["pid", "name", "age", "contract"],
+				attrs: ["pid", "name", "age", "contract", "face", "imgURL"],
 				ratings: ["ovr", "pot"],
 				season: g.get("season"),
 				showNoStats: true,
@@ -183,14 +183,24 @@ const updateNegotiation = async (
 
 		const payroll = await team.getPayroll(userTid);
 
+		const t = await idb.getCopy.teamsPlus({
+			tid: g.get("userTid"),
+			attrs: ["colors", "jersey"],
+		});
+		if (!t) {
+			throw new Error("Should never happen");
+		}
+
 		return {
 			capSpace: (g.get("salaryCap") - payroll) / 1000,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			contractOptions,
 			salaryCapType: g.get("salaryCapType"),
 			payroll: payroll / 1000,
 			p,
 			resigning: negotiation.resigning,
 			salaryCap: g.get("salaryCap") / 1000,
+			t,
 		};
 	}
 };

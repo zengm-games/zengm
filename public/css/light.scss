@@ -40,13 +40,6 @@ $font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 $font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
 	"Liberation Mono", "Courier New", monospace;
 
-$h1-font-size: 24px;
-$h2-font-size: 20px;
-$h3-font-size: 16px;
-$h4-font-size: 14px;
-$h5-font-size: 12px;
-$h6-font-size: 12px;
-
 // Country list is from CountryFlag.tsx, inlined here to skip a few of the special ones like the UN and EU flags
 $include: af, ax, al, dz, as, ad, ao, ai, aq, ag, ar, am, aw, au, at, az, bs,
 	bh, bd, bb, by, be, bz, bj, bm, bt, bo, bq, ba, bw, bv, br, io, bn, bg, bf,
@@ -143,6 +136,21 @@ $flag-icon-css-path: "/img/flags";
 	}
 }
 
+h1 {
+	font-size: 24px;
+}
+h2 {
+	font-size: 20px;
+}
+h3 {
+	font-size: 16px;
+}
+h4 {
+	font-size: 14px;
+}
+h5 {
+	font-size: 12px;
+}
 .modal-title {
 	font-size: 20px;
 }

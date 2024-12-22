@@ -30,11 +30,6 @@ const redirectNegotiationOrRoster = async (cancelled: boolean) => {
 	}
 };
 
-const cancel = async (pid: number) => {
-	await toWorker("main", "cancelContractNegotiation", pid);
-	redirectNegotiationOrRoster(true);
-};
-
 const SignButton = ({
 	pid,
 	amount,
@@ -87,6 +82,8 @@ const SignButton = ({
 	);
 };
 
+const widthStyle = { maxWidth: 575 };
+
 const Negotiation = ({
 	capSpace,
 	challengeNoRatings,
@@ -130,99 +127,101 @@ const Negotiation = ({
 
 	return (
 		<>
-			<div style={{ maxWidth: 575 }}>
-				<div className="d-flex gap-2 mb-2">
-					<div
-						style={{
-							maxHeight: 90,
-							width: 60,
-							marginTop: p.imgURL ? 0 : -10,
-						}}
-						className="flex-shrink-0 d-flex justify-content-center align-items-center"
-					>
-						<PlayerPicture
-							face={p.face}
-							imgURL={p.imgURL}
-							colors={t.colors}
-							jersey={t.jersey}
-							lazy
-						/>
-					</div>
-					<div className="d-flex flex-column justify-content-end">
-						<div className="d-flex gap-2">
-							<h1 className="mb-0">
-								<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
-							</h1>
-							<div className="d-flex align-items-center">
-								<Mood defaultType="user" p={p} />
-								<RatingsStatsPopover pid={p.pid} />
-							</div>
-						</div>
-						<div>
-							{p.age} years old
-							{!challengeNoRatings
-								? `; Overall: ${p.ratings.ovr}; Potential: ${p.ratings.pot}`
-								: null}
-						</div>
-						<div>
-							{resigning ? "Re-signing" : "Free Agent"}
-							{message ? (
-								<HelpPopover className="ms-1">{message}</HelpPopover>
-							) : null}
+			<div className="d-flex gap-2 mb-2" style={widthStyle}>
+				<div
+					style={{
+						maxHeight: 90,
+						width: 60,
+						marginTop: p.imgURL ? 0 : -10,
+					}}
+					className="flex-shrink-0 d-flex justify-content-center align-items-center"
+				>
+					<PlayerPicture
+						face={p.face}
+						imgURL={p.imgURL}
+						colors={t.colors}
+						jersey={t.jersey}
+						lazy
+					/>
+				</div>
+				<div className="d-flex flex-column justify-content-end">
+					<div className="d-flex flex-wrap gap-2">
+						<h1 className="mb-0 text-nowrap">
+							<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
+						</h1>
+						<div className="d-flex align-items-center">
+							<Mood defaultType="user" p={p} />
+							<RatingsStatsPopover pid={p.pid} />
 						</div>
 					</div>
-					<div className="ms-auto d-none d-sm-flex flex-column justify-content-end align-items-end">
-						<div>Payroll: {helpers.formatCurrency(payroll, "M")}</div>
-						{salaryCapType !== "none" ? (
-							<>
-								<div>Salary Cap: {helpers.formatCurrency(salaryCap, "M")}</div>
-								<div>Cap Space: {helpers.formatCurrency(capSpace, "M")}</div>
-							</>
+					<div>
+						{p.age} years old
+						{!challengeNoRatings
+							? `; Overall: ${p.ratings.ovr}; Potential: ${p.ratings.pot}`
+							: null}
+					</div>
+					<div>
+						{resigning ? "Re-signing" : "Free Agent"}
+						{message ? (
+							<HelpPopover className="ms-1">{message}</HelpPopover>
 						) : null}
 					</div>
 				</div>
-
-				<div className="list-group">
-					{contractOptions.map((contract, i) => {
-						return (
-							<div
-								key={i}
-								className={clsx("d-flex align-items-center list-group-item", {
-									"list-group-item-success": contract.smallestAmount,
-								})}
-							>
-								<div className="flex-grow-1">
-									<b>{helpers.formatCurrency(contract.amount, "M")}</b>/year for{" "}
-									<b>{contract.years}</b>{" "}
-									{helpers.plural("year", contract.years)} (through{" "}
-									{contract.exp})
-								</div>
-
-								<SignButton
-									pid={p.pid}
-									amount={contract.amount}
-									exp={contract.exp}
-									disabledReason={contract.disabledReason}
-								/>
-							</div>
-						);
-					})}
+				<div className="ms-auto d-none d-sm-flex flex-column justify-content-end align-items-end text-nowrap">
+					<div>Payroll: {helpers.formatCurrency(payroll, "M")}</div>
+					{salaryCapType !== "none" ? (
+						<>
+							<div>Salary Cap: {helpers.formatCurrency(salaryCap, "M")}</div>
+							<div>Cap Space: {helpers.formatCurrency(capSpace, "M")}</div>
+						</>
+					) : null}
 				</div>
-
-				<div className="mt-3">
-					{resigning ? (
-						<a
-							className="btn btn-secondary"
-							href={helpers.leagueUrl(["negotiation"])}
+			</div>
+			<div className="list-group" style={widthStyle}>
+				{contractOptions.map((contract, i) => {
+					return (
+						<div
+							key={i}
+							className={clsx("d-flex align-items-center list-group-item", {
+								"list-group-item-success": contract.smallestAmount,
+							})}
 						>
-							Return to Re-Sign Players page
-						</a>
-					) : (
-						<button className="btn btn-danger" onClick={() => cancel(p.pid)}>
-							Can't reach a deal? End negotiation
-						</button>
-					)}
-				</div>
+							<div className="flex-grow-1">
+								<b>{helpers.formatCurrency(contract.amount, "M")}</b>/year for{" "}
+								{contract.years} {helpers.plural("year", contract.years)}{" "}
+								(through {contract.exp})
+							</div>
+
+							<SignButton
+								pid={p.pid}
+								amount={contract.amount}
+								exp={contract.exp}
+								disabledReason={contract.disabledReason}
+							/>
+						</div>
+					);
+				})}
+			</div>
+
+			<div className="mt-3">
+				{resigning ? (
+					<a
+						className="btn btn-secondary"
+						href={helpers.leagueUrl(["negotiation"])}
+					>
+						Return to Re-Sign Players page
+					</a>
+				) : (
+					<button
+						className="btn btn-danger"
+						onClick={async () => {
+							await toWorker("main", "cancelContractNegotiation", p.pid);
+							redirectNegotiationOrRoster(true);
+						}}
+					>
+						Can't reach a deal? End negotiation
+					</button>
+				)}
 			</div>
 		</>
 	);

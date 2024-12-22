@@ -44,7 +44,7 @@ const accept = async ({
 			payroll + amount - 1 > g.get("salaryCap") &&
 			amount - 1 > g.get("minContract")
 		) {
-			return `This contract would put you over the salary cap. You cannot go over the salary cap to sign ${
+			return `You cannot go over the salary cap to sign ${
 				salaryCapType === "hard" ? "players" : "free agents"
 			} to contracts higher than the minimum salary.`;
 		}

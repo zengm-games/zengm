@@ -2038,7 +2038,7 @@ class GameSim extends GameSimBase {
 
 				this.playByPlay.logEvent(completeEvent);
 
-				if (!td) {
+				if (!td && !safety) {
 					this.doTackle({
 						loss: yds < 0,
 					});

@@ -2371,7 +2371,7 @@ export const settings: Setting[] = (
 			name: "# Watch List Colors",
 			type: "int",
 			description:
-				"If you have more than one color, you can cycle through them by clicking a player's watch flag.",
+				"If this is more than 1, you can cycle through the colors by clicking a player's watch flag. Maximum possible value is 8.",
 			validator: value => {
 				if (value < 1 || value > 8) {
 					throw new Error("Value must be between 1 and 8");

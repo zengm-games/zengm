@@ -1,3 +1,12 @@
+in hockey for goalies, having GP in keyStats is redundant for anywhere it's displayed in a table with GP already as another column https://discord.com/channels/@me/778760871911751700/1320962687680909322
+- can we do separate code paths for if it includes GP or not?
+
+https://discord.com/channels/290013534023057409/331882115119448065/1320819951400910929
+- After completed trade, redirect to trading block OR roster. Highlight new additions.
+- In trading block, highlight the players you can't trade yet (due to resigning) just like it does in roster view
+- Players traded in preseason (my default, so I know who's ratings have improved or dropped) should be included in the regular season preview - example, "top players on New teams" should pretty much always have one of my old players I traded away and it never does
+- Show roster spots at top of trading block - do a ton of offloading lowest players and I can only see those slots in roster
+
 add expiration year on trade proposals page https://discord.com/channels/290013534023057409/331882115119448065/1319999415418748938
 
 runner stealing base should only very rarely be caught in double play

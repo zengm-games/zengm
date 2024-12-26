@@ -52,10 +52,10 @@ const processStats = (
 			}
 
 			row.age = ps.season - bornYear;
-		} else if (stat === "keyStats") {
+		} else if (stat === "keyStats" || stat === "keyStatsWithGoalieGP") {
 			const pts = g + a;
 
-			let role: string | undefined;
+			let role: "skater" | "goalie" | undefined;
 			if (pts > 0 && pts >= ps.sv) {
 				role = "skater";
 			} else if (ps.sv > 0 && ps.sv >= pts) {
@@ -67,8 +67,10 @@ const processStats = (
 			} else if (role === "goalie") {
 				const svPct = helpers.percentage(ps.sv, ps.sv + ps.ga);
 				const gaa = helpers.ratio(ps.ga, ps.gMin / 60);
+
+				// Show GP for goalie in some UIs, cause everything else is a rate stat
 				row[stat] =
-					`${ps.gpGoalie} GP, ${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
+					`${stat === "keyStatsWithGoalieGP" ? `${ps.gpGoalie} GP, ` : ""}${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
 			} else {
 				row[stat] = "";
 			}

@@ -2581,7 +2581,7 @@ const ratingsStatsPopoverInfo = async ({
 			"ftp",
 		],
 		football: ["keyStats"],
-		hockey: ["keyStats"],
+		hockey: ["keyStatsWithGoalieGP"],
 	});
 
 	const attrs = ["name", "jerseyNumber", "tid", "age"];

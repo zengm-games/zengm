@@ -250,6 +250,8 @@ const EditAwards = ({
 			} else {
 				stats = `${helpers.roundStat(p.stats.pts, "pts")} pts, ${helpers.roundStat(p.stats.trb, "reb")} reb, ${helpers.roundStat(p.stats.ast, "ast")} ast`;
 			}
+		} else if (isSport("hockey")) {
+			stats = p.stats.keyStatsWithGoalieGP;
 		} else {
 			stats = p.stats.keyStats;
 		}

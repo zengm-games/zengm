@@ -86,7 +86,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 	}
 
 	let statsBlock;
-	if (stats && stats.keyStats !== "") {
+	if (stats && stats.keyStatsWithGoalieGP !== "") {
 		statsBlock = (
 			<div
 				style={{
@@ -94,7 +94,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 				}}
 			>
 				<div className="fw-bold mb-1">{seasonPrefix2}Stats</div>
-				{stats.keyStats}
+				{stats.keyStatsWithGoalieGP}
 			</div>
 		);
 	} else {

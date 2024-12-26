@@ -62,7 +62,7 @@ const updateAwards = async (
 				hockey: [
 					"abbrev",
 					"tid",
-					"keyStats",
+					"keyStatsWithGoalieGP",
 					"a",
 					"dps",
 					"g",

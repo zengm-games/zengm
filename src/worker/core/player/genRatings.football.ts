@@ -192,6 +192,8 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			kpw: 1.75,
 			kac: 1.25,
+			ppw: 0.75,
+			pac: 0.25,
 			elu: -1,
 			bsc: -1,
 			hnd: -1,
@@ -208,6 +210,8 @@ const getRatingsToBoost = (pos: string) => {
 		return {
 			ppw: 1.75,
 			pac: 1.25,
+			kpw: 0.75,
+			kac: 0.25,
 			elu: -1,
 			bsc: -1,
 			hnd: -1,

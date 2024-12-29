@@ -408,6 +408,7 @@ export const getDefaultSettings = () => {
 			"alwaysShowCountry",
 		),
 		neutralSite: unwrapGameAttribute(defaultGameAttributes, "neutralSite"),
+		rpdPot: unwrapGameAttribute(defaultGameAttributes, "rpdPot"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

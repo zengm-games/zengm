@@ -2066,6 +2066,38 @@ export const settings: Setting[] = (
 			},
 		},
 		{
+			category: "Players",
+			key: "rpdPot",
+			name: "RPD Affects Potential",
+			godModeRequired: "always",
+			type: "bool",
+			descriptionLong: (
+				<>
+					<p>
+						This only does something if Real Player Determinism (RPD) is set to
+						some value above 0%.
+					</p>
+					<p>
+						When this is enabled, then the Pot (potential) rating calculation is
+						aware that RPD is enabled and influencing progs. So for instance if
+						you set RPD to 100%, Pot will just be equal to the player's peak
+						future Ovr. This is the default behavior because it gives the AI
+						some of the same information that the user has (knowledge of future
+						progs before they happen), which makes the game more fair.
+					</p>
+					<p>
+						When this is disabled, then Pot calculation will run as if RPD was
+						set to 0%. This may be desirable if you are setting the "Real Draft
+						Prospect Ratings" setting to "Based on draft position". Because if
+						you let a high value of RPD influence Pot, it kind of breaks that
+						setting because the Pot rating is so important in player value that
+						the AI can't be tricked into drafting players near their real life
+						draft positions.
+					</p>
+				</>
+			),
+		},
+		{
 			category: "Elam Ending",
 			key: "elam",
 			name: "Regular Season and Playoffs",

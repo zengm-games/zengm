@@ -8,7 +8,6 @@ import { bySport, isSport, RATINGS } from "../../../common";
 import loadDataBasketball from "../realRosters/loadData.basketball";
 import type { Ratings } from "../realRosters/loadData.basketball";
 import limitRating from "./limitRating";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
 // Cache for performance
 let groupedRatings: Record<string, Ratings | undefined> | undefined;
@@ -17,7 +16,8 @@ const developSeason = async (
 	ratings: MinimalPlayerRatings,
 	age: number,
 	srID: string | undefined,
-	coachingLevel: number = DEFAULT_LEVEL,
+	coachingLevel: number,
+	forPot: boolean,
 ) => {
 	bySport({
 		baseball: developSeasonBaseball(ratings as any, age, coachingLevel),
@@ -27,6 +27,10 @@ const developSeason = async (
 	});
 
 	if (!isSport("basketball") || !Object.hasOwn(g, "realPlayerDeterminism")) {
+		return;
+	}
+
+	if (forPot && !g.get("rpdPot")) {
 		return;
 	}
 

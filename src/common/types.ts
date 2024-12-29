@@ -730,6 +730,7 @@ export type GameAttributesLeague = {
 	swingFactor: number;
 	contactFactor: number;
 	neutralSite: "never" | "finals" | "playoffs";
+	rpdPot: boolean;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

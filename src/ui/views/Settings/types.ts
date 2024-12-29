@@ -160,7 +160,8 @@ export type Key =
 	| "autoRelocateRebrand"
 	| "autoRelocateRealign"
 	| "alwaysShowCountry"
-	| "neutralSite";
+	| "neutralSite"
+	| "rpdPot";
 
 export type Category =
 	| "New League"

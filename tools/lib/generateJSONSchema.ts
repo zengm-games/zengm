@@ -1457,6 +1457,9 @@ const generateJSONSchema = (sport: string) => {
 							tradeProposalsSeed: {
 								type: "integer",
 							},
+							rpdPot: {
+								type: "boolean",
+							},
 						},
 					},
 				],

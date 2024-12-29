@@ -170,7 +170,8 @@ type Key =
 	| "autoRelocateRealign"
 	| "autoRelocateRebrand"
 	| "alwaysShowCountry"
-	| "neutralSite";
+	| "neutralSite"
+	| "rpdPot";
 
 export type Settings = Pick<
 	GameAttributesLeague,
@@ -381,6 +382,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			autoRelocateRebrand: g.get("autoRelocateRebrand"),
 			alwaysShowCountry: g.get("alwaysShowCountry"),
 			neutralSite: g.get("neutralSite"),
+			rpdPot: g.get("rpdPot"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

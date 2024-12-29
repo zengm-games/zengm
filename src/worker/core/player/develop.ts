@@ -71,7 +71,7 @@ export const monteCarloPot = async ({
 		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
-			await developSeason(copiedRatings, ageTemp, srID); // Purposely no coachingLevel
+			await developSeason(copiedRatings, ageTemp, srID, DEFAULT_LEVEL, true);
 
 			const currentOvr = ovr(copiedRatings, pos);
 
@@ -130,7 +130,7 @@ const develop = async (
 		}
 
 		if (!ratings.locked) {
-			await developSeason(ratings, age, p.srID, coachingLevel);
+			await developSeason(ratings, age, p.srID, coachingLevel, false);
 		}
 	}
 

@@ -1,3 +1,9 @@
+Change (or add an option for) the coin flip to be like the old NBA coin flip, which was between the worst teams in each conference, not the worst two teams overall. Alternatively add the ability to edit the teams in the lottery. Probably no one else cares, but I like to be accurate. https://discord.com/channels/290013534023057409/331882115119448065/1322397494335897692
+
+On the countries frivolity page could the Active column include free agents, currently it only counts rostered players https://discord.com/channels/290013534023057409/331882115119448065/1321693299261575283
+
+FBGM playoff overtime minor bug - 1st team scores TD+XP, 2nd scores TD and misses XP. that should end the game, but it doesn't actually end until the next kickoff https://discord.com/channels/290013534023057409/290015591216054273/1322426704832106527
+
 https://discord.com/channels/290013534023057409/331882115119448065/1320819951400910929
 - After completed trade, redirect to trading block OR roster. Highlight new additions.
 - In trading block, highlight the players you can't trade yet (due to resigning) just like it does in roster view
@@ -105,8 +111,6 @@ use team ovr in updateStrategies https://old.reddit.com/r/nba/comments/1estlxk/b
 - maybe top X% guaranteed to be contending, bottom X% guaranteed to not be?
 
 in FBGM, teams sometimes take timeout right after the kickoff, before 1st and 10 even shows up https://discord.com/channels/290013534023057409/290015591216054273/1274484873167507488
-
-Some way to have determinism not affect pot, so people can replay historical situations and stuff https://old.reddit.com/r/nba/comments/1estlxk/basketball_gm_rnba_post_2024_edition/lica1bn/
 
 Can processPlayersHallOfFame use gpF for baseball? spread season's WAR around by that, if it's available? https://discord.com/channels/290013534023057409/944392892905037885/1272548695459631210
 

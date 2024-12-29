@@ -77,6 +77,7 @@ const gameAttributesKeysSportSpecific = {
 		"orbFactor",
 		"assistFactor",
 		"realPlayerDeterminism",
+		"rpdPot",
 		"foulRateFactor",
 		"foulsNeededToFoulOut",
 		"foulsUntilBonus",
@@ -355,6 +356,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	neutralSite: "never",
 	tradeProposalsSeed: 0,
+	rpdPot: true,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

@@ -689,6 +689,7 @@ const SearchResults = memo(
 							<div className="list-group list-group-flush rounded-0">
 								{results.map((result, j) => {
 									const active = activeIndex === index;
+									const highlightedResult = highlightedResults[index];
 									index += 1;
 
 									return (
@@ -700,7 +701,7 @@ const SearchResults = memo(
 											}`}
 											style={{ whiteSpace: "pre" }}
 										>
-											{highlightedResults[index]}
+											{highlightedResult}
 
 											{active ? (
 												<div className="ms-auto">Press enter to select</div>

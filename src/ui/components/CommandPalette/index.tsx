@@ -2,6 +2,7 @@ import ago from "s-ago";
 import { matchSorter } from "match-sorter";
 import {
 	Fragment,
+	memo,
 	useCallback,
 	useEffect,
 	useRef,
@@ -489,6 +490,9 @@ const getResultsGrouped = async ({
 	return {
 		resultsGrouped,
 		count,
+
+		// Return this so we know "this set of results is from this searchText", to optimize rendering
+		searchText,
 	};
 };
 
@@ -601,96 +605,100 @@ const ResultText = ({
 
 const ACTIVE_CLASS = "table-bg-striped";
 
-const SearchResults = ({
-	activeIndex,
-	collapseGroups,
-	resultsGrouped,
-	searchText,
-}: {
-	activeIndex: number | undefined;
-	collapseGroups: boolean;
-	resultsGrouped: Awaited<
-		ReturnType<typeof getResultsGrouped>
-	>["resultsGrouped"];
-	searchText: string;
-}) => {
-	const wrapperRef = useRef<HTMLDivElement | null>(null);
+// memo is so it doesn't render twice when searching (once as searchTextInput state updates before resultsGrouped/searchText updates)
+const SearchResults = memo(
+	({
+		activeIndex,
+		resultsGrouped,
+		searchText,
+	}: {
+		activeIndex: number | undefined;
+		resultsGrouped: Awaited<
+			ReturnType<typeof getResultsGrouped>
+		>["resultsGrouped"];
+		searchText: string;
+	}) => {
+		const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-	// Keep active element in viewport
-	useEffect(() => {
-		if (activeIndex !== undefined && wrapperRef.current) {
-			const activeElement = wrapperRef.current.querySelector(
-				`.${ACTIVE_CLASS}`,
-			);
-			if (activeElement) {
-				activeElement.scrollIntoView({
-					block: "nearest",
-				});
-			}
-		}
-	}, [activeIndex, resultsGrouped]);
+		const collapseGroups = searchText !== "";
 
-	const normalizedSearchText = normalizeIntl(searchText.replaceAll(" ", ""));
-
-	let index = 0;
-	return (
-		<div ref={wrapperRef}>
-			{resultsGrouped.map(({ category, results }, i) => {
-				const block = (
-					<div
-						key={category ?? i}
-						className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
-					>
-						{!collapseGroups && category ? (
-							<div className="card-header bg-transparent border-0">
-								<span className="fw-bold text-secondary text-uppercase">
-									{category}
-								</span>
-							</div>
-						) : null}
-						<div className="list-group list-group-flush rounded-0">
-							{results.map((result, j) => {
-								const active = activeIndex === index;
-								index += 1;
-
-								const categoryPrefix =
-									collapseGroups &&
-									result.category &&
-									!(result as any).hideCollapsedCategory
-										? result.category
-										: undefined;
-
-								return (
-									<a
-										key={j}
-										{...result.anchorProps}
-										className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
-											active ? ACTIVE_CLASS : ""
-										}`}
-										style={{ whiteSpace: "pre" }}
-									>
-										<ResultText
-											categoryPrefix={categoryPrefix}
-											prefix={result.prefix}
-											searchText={normalizedSearchText}
-											text={result.text}
-										/>
-
-										{active ? (
-											<div className="ms-auto">Press enter to select</div>
-										) : null}
-									</a>
-								);
-							})}
-						</div>
-					</div>
+		// Keep active element in viewport
+		useEffect(() => {
+			if (activeIndex !== undefined && wrapperRef.current) {
+				const activeElement = wrapperRef.current.querySelector(
+					`.${ACTIVE_CLASS}`,
 				);
+				if (activeElement) {
+					activeElement.scrollIntoView({
+						block: "nearest",
+					});
+				}
+			}
+		}, [activeIndex, resultsGrouped]);
 
-				return block;
-			})}
-		</div>
-	);
-};
+		const normalizedSearchText = normalizeIntl(searchText.replaceAll(" ", ""));
+		console.log("RENDER RESULTS", activeIndex, resultsGrouped, searchText);
+
+		let index = 0;
+		return (
+			<div ref={wrapperRef}>
+				{resultsGrouped.map(({ category, results }, i) => {
+					const block = (
+						<div
+							key={category ?? i}
+							className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
+						>
+							{!collapseGroups && category ? (
+								<div className="card-header bg-transparent border-0">
+									<span className="fw-bold text-secondary text-uppercase">
+										{category}
+									</span>
+								</div>
+							) : null}
+							<div className="list-group list-group-flush rounded-0">
+								{results.map((result, j) => {
+									const active = activeIndex === index;
+									index += 1;
+
+									const categoryPrefix =
+										collapseGroups &&
+										result.category &&
+										!(result as any).hideCollapsedCategory
+											? result.category
+											: undefined;
+
+									return (
+										<a
+											key={j}
+											{...result.anchorProps}
+											className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
+												active ? ACTIVE_CLASS : ""
+											}`}
+											style={{ whiteSpace: "pre" }}
+										>
+											<ResultText
+												categoryPrefix={categoryPrefix}
+												prefix={result.prefix}
+												searchText={normalizedSearchText}
+												text={result.text}
+											/>
+
+											{active ? (
+												<div className="ms-auto">Press enter to select</div>
+											) : null}
+										</a>
+									);
+								})}
+							</div>
+						</div>
+					);
+
+					return block;
+				})}
+			</div>
+		);
+	},
+);
 
 const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	// Hide players/teams in league
@@ -737,14 +745,15 @@ const ComandPalette = ({
 	]);
 	const inLeague = lid !== undefined;
 
-	const [searchText, setSearchText] = useState("");
+	const [searchTextInput, setSearchTextInput] = useState("");
 	const [mode, setMode] = useState<undefined | Mode>();
 	const [activeIndex, setActiveIndex] = useState<number | undefined>();
-	const [{ resultsGrouped, count }, setResults] = useState<
+	const [{ resultsGrouped, count, searchText }, setResults] = useState<
 		Awaited<ReturnType<typeof getResultsGrouped>>
 	>({
-		resultsGrouped: [],
 		count: 0,
+		resultsGrouped: [],
+		searchText: "",
 	});
 
 	useEffect(() => {
@@ -759,11 +768,12 @@ const ComandPalette = ({
 				mode,
 				onHide,
 				playMenuOptions,
-				searchText,
+				searchText: searchTextInput,
 				teamInfoCache,
 			});
 
 			if (active) {
+				console.log("setResults", newResults);
 				setResults(newResults);
 			}
 		};
@@ -781,7 +791,7 @@ const ComandPalette = ({
 		mode,
 		onHide,
 		playMenuOptions,
-		searchText,
+		searchTextInput,
 		teamInfoCache,
 	]);
 
@@ -793,7 +803,7 @@ const ComandPalette = ({
 
 			saveLastUsed();
 		} else {
-			setSearchText("");
+			setSearchTextInput("");
 			setMode(undefined);
 			setActiveIndex(undefined);
 		}
@@ -908,7 +918,7 @@ const ComandPalette = ({
 							style={{
 								fontSize: 15,
 							}}
-							value={searchText}
+							value={searchTextInput}
 							onChange={event => {
 								const newText = event.target.value;
 
@@ -916,18 +926,22 @@ const ComandPalette = ({
 									const newMode = MODES.find(mode => mode.key === newText[0]);
 									if (newMode) {
 										setMode(newMode);
-										setSearchText(newText.slice(1));
+										setSearchTextInput(newText.slice(1));
 										setActiveIndex(newText.length > 1 ? 0 : undefined);
 										return;
 									}
 								}
 
-								setSearchText(newText);
+								setSearchTextInput(newText);
 								setActiveIndex(newText.length > 0 ? 0 : undefined);
 							}}
 							onKeyDown={event => {
 								// Handle backspace when mode is set and there is no text - unset mode
-								if (searchText === "" && mode && event.code === "Backspace") {
+								if (
+									searchTextInput === "" &&
+									mode &&
+									event.code === "Backspace"
+								) {
 									setMode(undefined);
 									setActiveIndex(undefined);
 								}
@@ -947,7 +961,6 @@ const ComandPalette = ({
 				{resultsGrouped.length > 0 ? (
 					<SearchResults
 						activeIndex={activeIndex}
-						collapseGroups={searchText !== ""}
 						resultsGrouped={resultsGrouped}
 						searchText={searchText}
 					/>

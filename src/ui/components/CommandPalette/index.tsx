@@ -506,15 +506,13 @@ const ResultText = ({
 }) => {
 	const textArray = Array.isArray(text) ? text : [text];
 
-	const normalizedSearchText = normalizeIntl(searchText.replaceAll(" ", ""));
-
 	let highlightedTextArray: ReactNode[];
-	if (normalizedSearchText === "") {
+	if (searchText === "") {
 		highlightedTextArray = textArray;
 	} else {
 		let searchTextIndex = 0;
 		highlightedTextArray = textArray.map(line => {
-			if (searchTextIndex === normalizedSearchText.length) {
+			if (searchTextIndex === searchText.length) {
 				return line;
 			}
 
@@ -524,15 +522,13 @@ const ResultText = ({
 			}[] = [];
 
 			// Skip spaces
-			let target = normalizedSearchText[searchTextIndex];
+			let target = searchText[searchTextIndex];
 			let currentBold = false;
 			let currentText = "";
 			for (const char of line) {
 				const charNormalized = normalizeIntl(char);
 				if (charNormalized === target) {
-					if (currentBold) {
-						// Another bold character
-					} else {
+					if (!currentBold) {
 						// First bold character after non-bold
 						if (currentText !== "") {
 							parts.push({
@@ -545,25 +541,20 @@ const ResultText = ({
 					}
 
 					searchTextIndex += 1;
-					target = normalizedSearchText[searchTextIndex];
-					currentText += char;
-				} else {
-					if (!currentBold) {
-						// Another non-bold character
-					} else {
-						// First non-bold character after bold
-						if (currentText !== "") {
-							parts.push({
-								bold: currentBold,
-								text: currentText,
-							});
-							currentText = "";
-						}
-						currentBold = false;
+					target = searchText[searchTextIndex];
+				} else if (currentBold) {
+					// First non-bold character after bold
+					if (currentText !== "") {
+						parts.push({
+							bold: currentBold,
+							text: currentText,
+						});
+						currentText = "";
 					}
-
-					currentText += char;
+					currentBold = false;
 				}
+
+				currentText += char;
 			}
 
 			// Handle last segment
@@ -636,6 +627,8 @@ const SearchResults = ({
 		}
 	}, [activeIndex, resultsGrouped]);
 
+	const normalizedSearchText = normalizeIntl(searchText.replaceAll(" ", ""));
+
 	let index = 0;
 	return (
 		<div ref={wrapperRef}>
@@ -673,7 +666,7 @@ const SearchResults = ({
 										) : null}
 										<ResultText
 											prefix={result.prefix}
-											searchText={searchText}
+											searchText={normalizedSearchText}
 											text={result.text}
 										/>
 

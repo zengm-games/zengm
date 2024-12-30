@@ -1,6 +1,13 @@
 import ago from "s-ago";
 import { matchSorter } from "match-sorter";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import {
+	Fragment,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type ReactNode,
+} from "react";
 import { groupBy, orderBy } from "../../../common/utils";
 import type {
 	LocalStateUI,
@@ -20,6 +27,7 @@ import {
 import { getText, makeAnchorProps } from "../SideBar";
 import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
 import Modal from "../Modal";
+import { normalizeIntl } from "../../../common/normalizeIntl";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -150,29 +158,27 @@ const getResultsGroupedDefault = ({
 		.flat()
 		.map(({ category, menuItem }) => {
 			const anchorProps = makeAnchorProps(menuItem, onHide, true);
-			let text = getText(menuItem.text);
-			if (menuItem.godMode) {
-				text = (
-					<>
-						<span className="legend-square god-mode me-1" />
-						{text}
-					</>
-				);
-			}
+			const text = getText(menuItem.text);
+			const prefix = menuItem.godMode ? (
+				<span className="legend-square god-mode me-1" />
+			) : undefined;
 
 			const search = category ? `${category} ${text}` : text;
 
 			return {
 				category,
+				prefix,
 				text,
 				search,
 				anchorProps,
 			};
-		});
+		})
+		.filter(row => typeof row.text === "string");
 
 	results.unshift(
 		...playMenuOptions.map(option => ({
 			category: "Play",
+			prefix: undefined,
 			text: option.label,
 			search: `Play ${option.label}`,
 			anchorProps: {
@@ -322,13 +328,10 @@ const getResultsGroupedLeagues = async ({
 			}`;
 			return {
 				category: "Leagues",
-				text: (
-					<>
-						{l.name} - {lastPlayed}
-						<br />
-						{l.phaseText} - {l.teamRegion} {l.teamName}
-					</>
-				),
+				text: [
+					`${l.name} - ${lastPlayed}`,
+					`${l.phaseText} - ${l.teamRegion} ${l.teamName}`,
+				],
 				search: `${l.name} - ${lastPlayed} ${l.phaseText} - ${l.teamRegion} ${l.teamName}`,
 				anchorProps: {
 					href: `/l/${l.lid}`,
@@ -439,7 +442,15 @@ const getResultsGrouped = async ({
 	searchText: string;
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
-	let resultsGrouped;
+	let resultsGrouped: {
+		category: string;
+		results: {
+			anchorProps: AnchorProps;
+			category: string;
+			text: string | string[];
+			prefix?: ReactNode;
+		}[];
+	}[];
 	if (mode?.key === "/") {
 		resultsGrouped = getResultsGroupedTeams({
 			hideDisabledTeams,
@@ -479,18 +490,132 @@ const getResultsGrouped = async ({
 	};
 };
 
+const ResultText = ({
+	prefix,
+	searchText,
+	text,
+}: {
+	prefix?: ReactNode;
+	searchText: string;
+	text: string | string[];
+}) => {
+	const textArray = Array.isArray(text) ? text : [text];
+
+	const normalizedSearchText = normalizeIntl(searchText.replaceAll(" ", ""));
+
+	let highlightedTextArray: ReactNode[];
+	if (normalizedSearchText === "") {
+		highlightedTextArray = textArray;
+	} else {
+		let searchTextIndex = 0;
+		highlightedTextArray = textArray.map(line => {
+			if (searchTextIndex === normalizedSearchText.length) {
+				return line;
+			}
+
+			const parts: {
+				bold: boolean;
+				text: string;
+			}[] = [];
+
+			// Skip spaces
+			let target = normalizedSearchText[searchTextIndex];
+			let currentBold = false;
+			let currentText = "";
+			for (const char of line) {
+				const charNormalized = normalizeIntl(char);
+				if (charNormalized === target) {
+					if (currentBold) {
+						// Another bold character
+					} else {
+						// First bold character after non-bold
+						if (currentText !== "") {
+							parts.push({
+								bold: currentBold,
+								text: currentText,
+							});
+							currentText = "";
+						}
+						currentBold = true;
+					}
+
+					searchTextIndex += 1;
+					target = normalizedSearchText[searchTextIndex];
+					currentText += char;
+				} else {
+					if (!currentBold) {
+						// Another non-bold character
+					} else {
+						// First non-bold character after bold
+						if (currentText !== "") {
+							parts.push({
+								bold: currentBold,
+								text: currentText,
+							});
+							currentText = "";
+						}
+						currentBold = false;
+					}
+
+					currentText += char;
+				}
+			}
+
+			// Handle last segment
+			parts.push({
+				bold: currentBold,
+				text: currentText,
+			});
+
+			console.log(text, parts);
+
+			return (
+				<>
+					{parts.map((part, i) => {
+						if (part.bold) {
+							return (
+								<span className="highlight-leader" key={i}>
+									{part.text}
+								</span>
+							);
+						}
+
+						return <Fragment key={i}>{part.text}</Fragment>;
+					})}
+				</>
+			);
+		});
+	}
+
+	return (
+		<div>
+			{prefix}
+			{highlightedTextArray.map((line, i) => {
+				return (
+					<Fragment key={i}>
+						{i > 0 ? <br /> : null}
+						{line}
+					</Fragment>
+				);
+			})}
+		</div>
+	);
+};
+
 const ACTIVE_CLASS = "table-bg-striped";
 
 const SearchResults = ({
 	activeIndex,
 	collapseGroups,
 	resultsGrouped,
+	searchText,
 }: {
 	activeIndex: number | undefined;
 	collapseGroups: boolean;
 	resultsGrouped: Awaited<
 		ReturnType<typeof getResultsGrouped>
 	>["resultsGrouped"];
+	searchText: string;
 }) => {
 	const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -536,13 +661,18 @@ const SearchResults = ({
 										className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
 											active ? ACTIVE_CLASS : ""
 										}`}
+										style={{ whiteSpace: "pre" }}
 									>
 										{collapseGroups &&
 										result.category &&
 										!(result as any).hideCollapsedCategory ? (
 											<>{result.category} &gt; </>
 										) : null}
-										{result.text}
+										<ResultText
+											prefix={result.prefix}
+											searchText={searchText}
+											text={result.text}
+										/>
 
 										{active ? (
 											<div className="ms-auto">Press enter to select</div>
@@ -817,6 +947,7 @@ const ComandPalette = ({
 						activeIndex={activeIndex}
 						collapseGroups={searchText !== ""}
 						resultsGrouped={resultsGrouped}
+						searchText={searchText}
 					/>
 				) : (
 					<div className="px-3">No results found.</div>

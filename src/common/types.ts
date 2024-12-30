@@ -927,6 +927,7 @@ export type MenuItemLink = {
 		a: MouseEvent<any>,
 	) => undefined | void | false | Promise<undefined | void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
+	prefix?: ReactNode;
 	text:
 		| Exclude<ReactNode, null | undefined | number | boolean>
 		| {

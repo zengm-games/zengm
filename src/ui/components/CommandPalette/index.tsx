@@ -159,11 +159,17 @@ const getResultsGroupedDefault = ({
 		.map(({ category, menuItem }) => {
 			const anchorProps = makeAnchorProps(menuItem, onHide, true);
 			const text = getText(menuItem.text);
-			const prefix = menuItem.godMode ? (
-				<span className="legend-square god-mode me-1" />
-			) : undefined;
+			const prefix =
+				menuItem.prefix ??
+				(menuItem.godMode ? (
+					<span className="legend-square god-mode me-1" />
+				) : undefined);
 
 			const search = category ? `${category} ${text}` : text;
+
+			if (typeof text !== "string") {
+				throw new Error("Should never happen");
+			}
 
 			return {
 				category,
@@ -172,8 +178,7 @@ const getResultsGroupedDefault = ({
 				search,
 				anchorProps,
 			};
-		})
-		.filter(row => typeof row.text === "string");
+		});
 
 	results.unshift(
 		...playMenuOptions.map(option => ({
@@ -566,8 +571,6 @@ const ResultText = ({
 				bold: currentBold,
 				text: currentText,
 			});
-
-			console.log(text, parts);
 
 			return (
 				<>

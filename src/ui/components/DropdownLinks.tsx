@@ -177,7 +177,10 @@ const MenuItem = ({
 		if (root) {
 			return (
 				<Nav.Item>
-					<Nav.Link {...anchorProps}>{getText(menuItem.text)}</Nav.Link>
+					<Nav.Link {...anchorProps}>
+						{menuItem.prefix}
+						{getText(menuItem.text)}
+					</Nav.Link>
 				</Nav.Item>
 			);
 		}
@@ -189,6 +192,7 @@ const MenuItem = ({
 					"god-mode": menuItem.godMode,
 				})}
 			>
+				{menuItem.prefix}
 				{getText(menuItem.text)}
 			</Dropdown.Item>
 		);

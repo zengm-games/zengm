@@ -802,11 +802,8 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 					takeScreenshot();
 				},
 
-				text: (
-					<span>
-						<span className="glyphicon glyphicon-camera" /> Screenshot
-					</span>
-				),
+				prefix: <span className="glyphicon glyphicon-camera me-1" />,
+				text: "Screenshot",
 			},
 			{
 				type: "link",

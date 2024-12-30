@@ -1,7 +1,5 @@
 highlight in command palete
 - benchmark
-  - double rendering
-    - activeIndex switching from undefined to 0 results in double render after first character
   - could use virtualization for long list
 
 in football GM player graphs, selecting both "career" and "combined" for an axis causes a crash https://discord.com/channels/290013534023057409/290015591216054273/1322967498689347694

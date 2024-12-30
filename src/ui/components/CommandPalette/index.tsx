@@ -5,6 +5,7 @@ import {
 	memo,
 	useCallback,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 	type ReactNode,
@@ -636,9 +637,39 @@ const SearchResults = memo(
 			}
 		}, [activeIndex, resultsGrouped]);
 
-		const normalizedSearchText = normalizeIntl(searchText.replaceAll(" ", ""));
-		console.log("RENDER RESULTS", activeIndex, resultsGrouped, searchText);
+		// This is needed in addition to the memo above because the activeIndex prop changes sometimes (such as when typing the first character, or when using up/down arrows), but we don't need to re-highlight the results just because activeIndex changed
+		const highlightedResults = useMemo(() => {
+			const normalizedSearchText = normalizeIntl(
+				searchText.replaceAll(" ", ""),
+			);
 
+			const output = [];
+
+			// KEEP INDEX LOGIC IN SYNC WITH CODE BELOW!
+			for (const { results } of resultsGrouped) {
+				for (const result of results) {
+					const categoryPrefix =
+						collapseGroups &&
+						result.category &&
+						!(result as any).hideCollapsedCategory
+							? result.category
+							: undefined;
+
+					output.push(
+						<ResultText
+							categoryPrefix={categoryPrefix}
+							prefix={result.prefix}
+							searchText={normalizedSearchText}
+							text={result.text}
+						/>,
+					);
+				}
+			}
+
+			return output;
+		}, [collapseGroups, resultsGrouped, searchText]);
+
+		// KEEP INDEX LOGIC IN SYNC WITH CODE ABOVE!
 		let index = 0;
 		return (
 			<div ref={wrapperRef}>
@@ -660,13 +691,6 @@ const SearchResults = memo(
 									const active = activeIndex === index;
 									index += 1;
 
-									const categoryPrefix =
-										collapseGroups &&
-										result.category &&
-										!(result as any).hideCollapsedCategory
-											? result.category
-											: undefined;
-
 									return (
 										<a
 											key={j}
@@ -676,12 +700,7 @@ const SearchResults = memo(
 											}`}
 											style={{ whiteSpace: "pre" }}
 										>
-											<ResultText
-												categoryPrefix={categoryPrefix}
-												prefix={result.prefix}
-												searchText={normalizedSearchText}
-												text={result.text}
-											/>
+											{highlightedResults[index]}
 
 											{active ? (
 												<div className="ms-auto">Press enter to select</div>
@@ -773,7 +792,6 @@ const ComandPalette = ({
 			});
 
 			if (active) {
-				console.log("setResults", newResults);
 				setResults(newResults);
 			}
 		};

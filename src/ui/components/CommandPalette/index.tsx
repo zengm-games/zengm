@@ -312,7 +312,7 @@ const getResultsGroupedLeagues = async ({
 
 	const results = [
 		{
-			category: "",
+			category: undefined,
 			text: "Switch League",
 			anchorProps: {
 				href: "/",
@@ -320,7 +320,7 @@ const getResultsGroupedLeagues = async ({
 			} as AnchorProps,
 		},
 		...newLeagueResults.map(row => ({
-			category: "",
+			category: undefined,
 			text: row.text,
 			anchorProps: {
 				href: row.href,
@@ -366,7 +366,6 @@ const getResultsGroupedLeagues = async ({
 		});
 		if (filteredResults.length > 0) {
 			output.push({
-				category: "",
 				results: filteredResults.map(row => ({
 					category: row.category,
 					text: row.text,
@@ -416,9 +415,7 @@ const getResultsGroupedPlayers = async ({
 
 	return [
 		{
-			category: "",
 			results: filteredResults.map(row => ({
-				category: "",
 				text: row.text,
 				anchorProps: row.anchorProps,
 			})),
@@ -448,10 +445,10 @@ const getResultsGrouped = async ({
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
 	let resultsGrouped: {
-		category: string;
+		category?: string;
 		results: {
 			anchorProps: AnchorProps;
-			category: string;
+			category?: string;
 			text: string | string[];
 			prefix?: ReactNode;
 		}[];
@@ -496,15 +493,21 @@ const getResultsGrouped = async ({
 };
 
 const ResultText = ({
+	categoryPrefix,
 	prefix,
 	searchText,
 	text,
 }: {
-	prefix?: ReactNode;
+	categoryPrefix: string | undefined;
+	prefix: ReactNode | undefined;
 	searchText: string;
 	text: string | string[];
 }) => {
 	const textArray = Array.isArray(text) ? text : [text];
+
+	if (categoryPrefix) {
+		textArray[0] = `${categoryPrefix} > ${textArray[0]}`;
+	}
 
 	let highlightedTextArray: ReactNode[];
 	if (searchText === "") {
@@ -635,7 +638,7 @@ const SearchResults = ({
 			{resultsGrouped.map(({ category, results }, i) => {
 				const block = (
 					<div
-						key={category}
+						key={category ?? i}
 						className={`card border-0${i > 0 ? " pt-2 mt-2 border-top" : ""}`}
 					>
 						{!collapseGroups && category ? (
@@ -650,6 +653,13 @@ const SearchResults = ({
 								const active = activeIndex === index;
 								index += 1;
 
+								const categoryPrefix =
+									collapseGroups &&
+									result.category &&
+									!(result as any).hideCollapsedCategory
+										? result.category
+										: undefined;
+
 								return (
 									<a
 										key={j}
@@ -659,12 +669,8 @@ const SearchResults = ({
 										}`}
 										style={{ whiteSpace: "pre" }}
 									>
-										{collapseGroups &&
-										result.category &&
-										!(result as any).hideCollapsedCategory ? (
-											<>{result.category} &gt; </>
-										) : null}
 										<ResultText
+											categoryPrefix={categoryPrefix}
 											prefix={result.prefix}
 											searchText={normalizedSearchText}
 											text={result.text}

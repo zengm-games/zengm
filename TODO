@@ -1,7 +1,6 @@
 highlight in command palete
 - benchmark
   - could use virtualization for long list
-- highlight category prefix for menu
 
 in football GM player graphs, selecting both "career" and "combined" for an axis causes a crash https://discord.com/channels/290013534023057409/290015591216054273/1322967498689347694
 - BBGM says "No data for the selected options." but FBGM has an error message

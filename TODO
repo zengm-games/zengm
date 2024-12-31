@@ -61,7 +61,7 @@ Don't allow play if versions in tabs don't match
 - newPhasePreseason being called twice in two different tabs and somehow updating the database twice?
 
 move from my iterate function to async iterators
-- regex search: [\t ]iterate\(
+- all gone now, but some people might still be using it in worker console, so maybe in a couple years (2027?) get rid of the function
 
 customize number of pitchers in rotation https://discord.com/channels/290013534023057409/944392892905037885/1291306004495204363
 - use this to set the max pFatigue value in play.ts

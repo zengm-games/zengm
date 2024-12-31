@@ -12,7 +12,6 @@ import {
 } from "../../common";
 import { player, season } from "../core";
 import { idb } from ".";
-import iterate from "./iterate";
 import { defaultGameAttributes, helpers, logEvent } from "../util";
 import connectIndexedDB from "./connectIndexedDB";
 import type {
@@ -321,7 +320,9 @@ const upgrade33 = (transaction: VersionChangeTransaction) => {
 			throw new Error("Invalid season in gameAttributes during upgrade");
 		}
 
-		tx.objectStore("gameAttributes").get("phase").onsuccess = (event2: any) => {
+		tx.objectStore("gameAttributes").get("phase").onsuccess = async (
+			event2: any,
+		) => {
 			if (event2.target.result === undefined) {
 				throw new Error("Missing phase in gameAttributes during upgrade");
 			}
@@ -333,27 +334,28 @@ const upgrade33 = (transaction: VersionChangeTransaction) => {
 			}
 
 			const offset = phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				if (p.tid === PLAYER.UNDRAFTED) {
 					const draftYear = season + offset;
 
 					if (p.ratings[0].season !== draftYear || p.draft.year !== draftYear) {
 						p.ratings[0].season = draftYear;
 						p.draft.year = draftYear;
-						return p;
+						await cursor.update(p);
 					}
 				} else if (p.tid === PLAYER.UNDRAFTED_2) {
 					p.tid = PLAYER.UNDRAFTED;
 					p.ratings[0].season = season + 1 + offset;
 					p.draft.year = p.ratings[0].season;
-					return p;
+					await cursor.update(p);
 				} else if (p.tid === PLAYER.UNDRAFTED_3) {
 					p.tid = PLAYER.UNDRAFTED;
 					p.ratings[0].season = season + 2 + offset;
 					p.draft.year = p.ratings[0].season;
-					return p;
+					await cursor.update(p);
 				}
-			});
+			}
 		};
 	};
 };
@@ -620,7 +622,8 @@ const migrate = async ({
 				unique: false,
 			});
 
-			iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+			for await (const cursor of transaction.objectStore("teams")) {
+				const t = cursor.value;
 				for (const teamStats of (t as any).stats) {
 					teamStats.tid = t.tid;
 
@@ -638,8 +641,8 @@ const migrate = async ({
 
 				delete (t as any).stats;
 				delete (t as any).seasons;
-				return t;
-			});
+				await cursor.update(t);
+			}
 		}
 
 		if (oldVersion <= 17) {
@@ -648,29 +651,31 @@ const migrate = async ({
 
 		if (oldVersion <= 18) {
 			// Split old single string p.name into two names
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				if ((p as any).name) {
 					const bothNames = (p as any).name.split(" ");
 					p.firstName = bothNames[0];
 					p.lastName = bothNames[1];
 					delete (p as any).name;
-				}
 
-				return p;
-			});
+					await cursor.update(p);
+				}
+			}
 		}
 
 		if (oldVersion <= 19) {
 			// New best records format in awards
-			iterate(transaction.objectStore("awards"), undefined, undefined, a => {
+			for await (const cursor of transaction.objectStore("awards")) {
+				const a = cursor.value;
 				if (a.bre && a.brw) {
 					a.bestRecordConfs = [a.bre, a.brw];
 					a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
 					delete a.bre;
 					delete a.brw;
-					return a;
+					await cursor.update(a);
 				}
-			});
+			}
 		}
 
 		if (oldVersion <= 20) {
@@ -691,12 +696,13 @@ const migrate = async ({
 				.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"], {
 					unique: false,
 				});
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				if (p.retiredYear === null || p.retiredYear === undefined) {
 					p.retiredYear = Infinity;
-					return p;
+					await cursor.update(p);
 				}
-			});
+			}
 		}
 
 		if (oldVersion <= 22) {
@@ -706,30 +712,28 @@ const migrate = async ({
 		}
 
 		if (oldVersion <= 23) {
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				for (const r of p.ratings) {
 					r.hgt = player.heightToRating(p.hgt);
 				}
 
-				return p;
-			});
+				await cursor.update(p);
+			}
 		}
 
 		if (oldVersion <= 24) {
-			iterate(
-				transaction.objectStore("teamStats"),
-				undefined,
-				undefined,
-				ts => {
-					ts.oppBlk = ts.ba;
-					delete ts.ba;
-					return ts;
-				},
-			);
+			for await (const cursor of transaction.objectStore("teamStats")) {
+				const ts = cursor.value;
+				ts.oppBlk = ts.ba;
+				delete ts.ba;
+				await cursor.update(ts);
+			}
 		}
 
 		if (oldVersion <= 25) {
-			iterate(transaction.objectStore("games"), undefined, undefined, gm => {
+			for await (const cursor of transaction.objectStore("games")) {
+				const gm = cursor.value;
 				for (const t of gm.teams) {
 					delete t.trb;
 
@@ -738,123 +742,107 @@ const migrate = async ({
 					}
 				}
 
-				return gm;
-			});
-			iterate(
-				transaction.objectStore("playerStats" as any),
-				undefined,
-				undefined,
-				ps => {
-					delete ps.trb;
-					return ps;
-				},
-			);
-			iterate(
-				transaction.objectStore("teamStats"),
-				undefined,
-				undefined,
-				ts => {
-					delete ts.trb;
-					delete ts.oppTrb;
-					return ts;
-				},
-			);
+				await cursor.update(gm);
+			}
+			for await (const cursor of transaction.objectStore("playerStats")) {
+				const ps = cursor.value;
+				delete ps.trb;
+				await cursor.update(ps);
+			}
+			for await (const cursor of transaction.objectStore("teamStats")) {
+				const ts = cursor.value;
+				delete ts.trb;
+				delete ts.oppTrb;
+				await cursor.update(ts);
+			}
 		}
 
 		if (oldVersion <= 26) {
 			slowUpgrade();
 
 			// Only non-retired players, for efficiency
-			iterate(
-				transaction.objectStore("players"),
-				undefined,
-				undefined,
-				(p: any) => {
-					for (const r of p.ratings) {
-						// Replace blk/stl with diq
-						if (typeof r.diq !== "number") {
-							if (typeof r.blk === "number" && typeof r.stl === "number") {
-								r.diq = Math.round((r.blk + r.stl) / 2);
-								delete r.blk;
-								delete r.stl;
-							} else {
-								r.diq = 50;
-							}
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
+				for (const r of p.ratings) {
+					// Replace blk/stl with diq
+					if (typeof r.diq !== "number") {
+						if (typeof r.blk === "number" && typeof r.stl === "number") {
+							r.diq = Math.round((r.blk + r.stl) / 2);
+							delete r.blk;
+							delete r.stl;
+						} else {
+							r.diq = 50;
 						}
+					}
 
-						// Add oiq
+					// Add oiq
+					if (typeof r.oiq !== "number") {
+						r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
+
 						if (typeof r.oiq !== "number") {
-							r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
-
-							if (typeof r.oiq !== "number") {
-								r.oiq = 50;
-							}
-						}
-
-						// Scale ratings
-						const ratingKeys = [
-							"stre",
-							"spd",
-							"jmp",
-							"endu",
-							"ins",
-							"dnk",
-							"ft",
-							"fg",
-							"tp",
-							"oiq",
-							"diq",
-							"drb",
-							"pss",
-							"reb",
-						];
-
-						for (const key of ratingKeys) {
-							if (typeof r[key] === "number") {
-								// 100 -> 80
-								// 0 -> 20
-								// Linear in between
-								r[key] -= (20 * (r[key] - 50)) / 50;
-							} else {
-								console.log(p);
-								throw new Error(`Missing rating: ${key}`);
-							}
-						}
-
-						r.ovr = player.ovr(r);
-						r.skills = player.skills(r);
-
-						// Don't want to deal with monteCarloPot now being async
-						r.pot = r.ovr;
-
-						if (p.draft.year === r.season) {
-							p.draft.ovr = r.ovr;
-							p.draft.skills = r.skills;
-							p.draft.pot = r.pot;
+							r.oiq = 50;
 						}
 					}
 
-					if (!Array.isArray(p.relatives)) {
-						p.relatives = [];
+					// Scale ratings
+					const ratingKeys = [
+						"stre",
+						"spd",
+						"jmp",
+						"endu",
+						"ins",
+						"dnk",
+						"ft",
+						"fg",
+						"tp",
+						"oiq",
+						"diq",
+						"drb",
+						"pss",
+						"reb",
+					];
+
+					for (const key of ratingKeys) {
+						if (typeof r[key] === "number") {
+							// 100 -> 80
+							// 0 -> 20
+							// Linear in between
+							r[key] -= (20 * (r[key] - 50)) / 50;
+						} else {
+							console.log(p);
+							throw new Error(`Missing rating: ${key}`);
+						}
 					}
 
-					return p;
-				},
-			);
+					r.ovr = player.ovr(r);
+					r.skills = player.skills(r);
+
+					// Don't want to deal with monteCarloPot now being async
+					r.pot = r.ovr;
+
+					if (p.draft.year === r.season) {
+						p.draft.ovr = r.ovr;
+						p.draft.skills = r.skills;
+						p.draft.pot = r.pot;
+					}
+				}
+
+				if (!Array.isArray(p.relatives)) {
+					p.relatives = [];
+				}
+
+				await cursor.update(p);
+			}
 		}
 
 		if (oldVersion <= 27) {
-			iterate(
-				transaction.objectStore("teamSeasons"),
-				undefined,
-				undefined,
-				teamSeason => {
-					if (typeof teamSeason.stadiumCapacity !== "number") {
-						teamSeason.stadiumCapacity = 25000;
-						return teamSeason;
-					}
-				},
-			);
+			for await (const cursor of transaction.objectStore("teamSeasons")) {
+				const ts = cursor.value;
+				if (typeof ts.stadiumCapacity !== "number") {
+					ts.stadiumCapacity = 25000;
+					await cursor.update(ts);
+				}
+			}
 		}
 
 		if (oldVersion <= 28) {
@@ -864,12 +852,13 @@ const migrate = async ({
 
 		if (oldVersion === 29) {
 			// === rather than <= is to prevent the 30 and 27/29 upgrades from having a race condition on updating players
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				if (!Array.isArray(p.relatives)) {
 					p.relatives = [];
-					return p;
+					await cursor.update(p);
 				}
-			});
+			}
 		}
 
 		if (oldVersion <= 30) {
@@ -922,7 +911,8 @@ const migrate = async ({
 
 		if (oldVersion <= 34) {
 			const teamsDefault = helpers.getTeamsDefault();
-			iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+			for await (const cursor of transaction.objectStore("teams")) {
+				const t = cursor.value;
 				if (!(t as any).colors) {
 					if (
 						(teamsDefault as any)[t.tid] &&
@@ -934,19 +924,20 @@ const migrate = async ({
 						t.colors = DEFAULT_TEAM_COLORS;
 					}
 
-					return t;
+					await cursor.update(t);
 				}
-			});
+			}
 		}
 
 		if (oldVersion <= 35) {
 			slowUpgrade();
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				if (!(p as any).injuries) {
 					p.injuries = [];
-					return p;
+					await cursor.update(p);
 				}
-			});
+			}
 		}
 
 		if (oldVersion <= 36) {
@@ -968,7 +959,8 @@ const migrate = async ({
 
 			let lastCentury = 0; // Iterate over players
 
-			iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
 				// This can be really slow, so need some UI for progress
 				const century = Math.floor(p.draft.year / 100);
 				if (century > lastCentury) {
@@ -985,17 +977,13 @@ const migrate = async ({
 				delete (p as any).freeAgentMood;
 				p.moodTraits = player.genMoodTraits();
 				p.numDaysFreeAgent = 0;
-				return p;
-			});
-			iterate(
-				transaction.objectStore("teamSeasons"),
-				undefined,
-				undefined,
-				teamSeason => {
-					teamSeason.numPlayersTradedAway = 0;
-					return teamSeason;
-				},
-			);
+				await cursor.update(p);
+			}
+			for await (const cursor of transaction.objectStore("teamStats")) {
+				const ts = cursor.value;
+				ts.numPlayersTradedAway = 0;
+				await cursor.update(ts);
+			}
 		}
 
 		if (oldVersion <= 39) {
@@ -1016,29 +1004,29 @@ const migrate = async ({
 					userTids = event.target.result.value;
 				}
 
-				tx.objectStore("gameAttributes").get("keepRosterSorted").onsuccess = (
-					event: any,
-				) => {
-					let keepRosterSorted = true;
-					if (event.target.result) {
-						keepRosterSorted = !!event.target.result.value;
-					}
-
-					iterate(transaction.objectStore("teams"), undefined, undefined, t => {
-						t.keepRosterSorted = userTids.includes(t.tid)
-							? keepRosterSorted
-							: true;
-
-						if (t.adjustForInflation === undefined) {
-							t.adjustForInflation = true;
-						}
-						if (t.disabled === undefined) {
-							t.disabled = false;
+				tx.objectStore("gameAttributes").get("keepRosterSorted").onsuccess =
+					async (event: any) => {
+						let keepRosterSorted = true;
+						if (event.target.result) {
+							keepRosterSorted = !!event.target.result.value;
 						}
 
-						return t;
-					});
-				};
+						for await (const cursor of transaction.objectStore("teams")) {
+							const t = cursor.value;
+							t.keepRosterSorted = userTids.includes(t.tid)
+								? keepRosterSorted
+								: true;
+
+							if (t.adjustForInflation === undefined) {
+								t.adjustForInflation = true;
+							}
+							if (t.disabled === undefined) {
+								t.disabled = false;
+							}
+
+							await cursor.update(t);
+						}
+					};
 			};
 		}
 
@@ -1116,12 +1104,13 @@ const migrate = async ({
 	}
 
 	if (oldVersion <= 43) {
-		iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+		for await (const cursor of transaction.objectStore("teams")) {
+			const t = cursor.value;
 			if (!t.playThroughInjuries) {
 				t.playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES;
-				return t;
+				await cursor.update(t);
 			}
-		});
+		}
 	}
 
 	if (oldVersion <= 44) {
@@ -1138,13 +1127,14 @@ const migrate = async ({
 	if (oldVersion <= 46) {
 		slowUpgrade();
 
-		iterate(transaction.objectStore("players"), undefined, undefined, p => {
+		for await (const cursor of transaction.objectStore("players")) {
+			const p = cursor.value;
 			if ((p as any).mood) {
 				// Delete mood property that was accidentally saved previously
 				delete (p as any).mood;
-				return p;
+				await cursor.update(p);
 			}
-		});
+		}
 	}
 
 	if (oldVersion <= 47) {
@@ -1192,29 +1182,26 @@ const migrate = async ({
 	if (oldVersion <= 49) {
 		slowUpgrade();
 
-		const playerStore = transaction.objectStore("players");
-		await iterate(
-			transaction.objectStore("players"),
-			undefined,
-			undefined,
-			p => {
-				for (const key of ["hof", "watch"] as const) {
-					if (p[key]) {
-						p[key] = 1;
-					} else {
-						delete p[key];
-					}
-				}
-
-				if (p.note) {
-					p.noteBool = 1;
+		for await (const cursor of transaction.objectStore("players")) {
+			const p = cursor.value;
+			for (const key of ["hof", "watch"] as const) {
+				if (p[key]) {
+					p[key] = 1;
 				} else {
-					delete p.note;
+					delete p[key];
 				}
+			}
 
-				return p;
-			},
-		);
+			if (p.note) {
+				p.noteBool = 1;
+			} else {
+				delete p.note;
+			}
+
+			await cursor.update(p);
+		}
+
+		const playerStore = transaction.objectStore("players");
 
 		// Had hof index in version 49, others in 50. Merged together here so the upgrade could happen together for people who have not yet upgraded to 49
 		if (oldVersion <= 48) {
@@ -1287,7 +1274,9 @@ const migrate = async ({
 
 		const budgetsByTid: Record<number, Team["budget"]> = {};
 
-		await iterate(transaction.objectStore("teams"), undefined, undefined, t => {
+		for await (const cursor of transaction.objectStore("teams")) {
+			const t = cursor.value;
+
 			// Compute equivalent levels for the budget values
 			for (const key of helpers.keys(t.budget)) {
 				const value = t.budget[key] as unknown as OldBudgetItem;
@@ -1309,54 +1298,50 @@ const migrate = async ({
 
 			budgetsByTid[t.tid] = t.budget;
 
-			return t;
-		});
+			await cursor.update(t);
+		}
 
-		await iterate(
-			transaction.objectStore("teamSeasons"),
-			undefined,
-			undefined,
-			ts => {
-				if (ts.tied === undefined) {
-					ts.tied = 0;
-				}
-				if (ts.otl === undefined) {
-					ts.otl = 0;
-				}
-				const gp = helpers.getTeamSeasonGp(ts);
-				if (ts.gpHome === undefined) {
-					ts.gpHome = Math.round(gp / 2);
-				}
+		for await (const cursor of transaction.objectStore("teamSeasons")) {
+			const ts = cursor.value;
+			if (ts.tied === undefined) {
+				ts.tied = 0;
+			}
+			if (ts.otl === undefined) {
+				ts.otl = 0;
+			}
+			const gp = helpers.getTeamSeasonGp(ts);
+			if (ts.gpHome === undefined) {
+				ts.gpHome = Math.round(gp / 2);
+			}
 
-				// Move the amount to root, no more storing rank
-				for (const key of helpers.keys(ts.revenues)) {
-					const value = ts.revenues[key] as unknown as OldBudgetItem;
-					if (typeof value !== "number") {
-						ts.revenues[key] = value.amount;
-					}
+			// Move the amount to root, no more storing rank
+			for (const key of helpers.keys(ts.revenues)) {
+				const value = ts.revenues[key] as unknown as OldBudgetItem;
+				if (typeof value !== "number") {
+					ts.revenues[key] = value.amount;
 				}
-				for (const key of helpers.keys(ts.expenses)) {
-					const value = ts.expenses[key] as unknown as OldBudgetItem;
-					if (typeof value !== "number") {
-						ts.expenses[key] = value.amount;
-					}
+			}
+			for (const key of helpers.keys(ts.expenses)) {
+				const value = ts.expenses[key] as unknown as OldBudgetItem;
+				if (typeof value !== "number") {
+					ts.expenses[key] = value.amount;
 				}
+			}
 
-				// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
-				const expenseLevelsKeys = [
-					"coaching",
-					"facilities",
-					"health",
-					"scouting",
-				] as const;
-				ts.expenseLevels = {} as any;
-				for (const key of expenseLevelsKeys) {
-					ts.expenseLevels[key] = gp * budgetsByTid[ts.tid][key];
-				}
+			// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+			const expenseLevelsKeys = [
+				"coaching",
+				"facilities",
+				"health",
+				"scouting",
+			] as const;
+			ts.expenseLevels = {} as any;
+			for (const key of expenseLevelsKeys) {
+				ts.expenseLevels[key] = gp * budgetsByTid[ts.tid][key];
+			}
 
-				return ts;
-			},
-		);
+			await cursor.update(ts);
+		}
 	}
 
 	// Bug here! But leave so upgrade below works
@@ -1440,44 +1425,37 @@ const migrate = async ({
 	}
 
 	if (oldVersion <= 59) {
-		await iterate(
-			transaction.objectStore("playerFeats"),
-			undefined,
-			undefined,
-			feat => {
-				const pts = feat.score.split("-").map(x => parseInt(x));
-				let diff = -Infinity;
-				if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
-					diff = pts[0] - pts[1];
-				}
+		for await (const cursor of transaction.objectStore("playerFeats")) {
+			const feat = cursor.value;
 
-				feat.result = diff === 0 ? "T" : (feat as any).won ? "W" : "L";
+			const pts = feat.score.split("-").map(x => parseInt(x));
+			let diff = -Infinity;
+			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
+				diff = pts[0] - pts[1];
+			}
 
-				delete (feat as any).won;
+			feat.result = diff === 0 ? "T" : (feat as any).won ? "W" : "L";
 
-				return feat;
-			},
-		);
+			delete (feat as any).won;
+
+			await cursor.update(feat);
+		}
 	}
 
 	if (oldVersion <= 60) {
 		if (isSport("hockey")) {
-			await iterate(
-				transaction.objectStore("players"),
-				undefined,
-				undefined,
-				p => {
-					for (const row of p.stats) {
-						if (row.gp > 0) {
-							// Glitchy because a goalie generally plays the whole game but a skater doesn't. Maybe `60 * row.gpGoalie` would have been better. https://discord.com/channels/290013534023057409/290015591216054273/1252453706679582741
-							row.gMin = (row.min * row.gpGoalie) / row.gp;
-						} else {
-							row.gMin = 0;
-						}
+			for await (const cursor of transaction.objectStore("players")) {
+				const p = cursor.value;
+				for (const row of p.stats) {
+					if (row.gp > 0) {
+						// Glitchy because a goalie generally plays the whole game but a skater doesn't. Maybe `60 * row.gpGoalie` would have been better. https://discord.com/channels/290013534023057409/290015591216054273/1252453706679582741
+						row.gMin = (row.min * row.gpGoalie) / row.gp;
+					} else {
+						row.gMin = 0;
 					}
-					return p;
-				},
-			);
+				}
+				await cursor.update(p);
+			}
 		}
 	}
 

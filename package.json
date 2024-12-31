@@ -163,7 +163,7 @@
 		"karma-rollup-preprocessor": "^7.0.8",
 		"karma-source-map-support": "^1.4.0",
 		"lightningcss": "^1.28.2",
-		"lint-staged": "^15.2.11",
+		"lint-staged": "^15.3.0",
 		"log-symbols": "^7.0.0",
 		"mocha": "^11.0.1",
 		"prettier": "^3.4.2",
@@ -173,7 +173,7 @@
 		"rollup-plugin-visualizer": "^5.13.1",
 		"sass": "1.77.6",
 		"typescript": "^5.7.2",
-		"typescript-eslint": "^8.18.2",
+		"typescript-eslint": "^8.19.0",
 		"workbox-build": "^7.3.0"
 	},
 	"private": true

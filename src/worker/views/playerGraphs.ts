@@ -113,9 +113,17 @@ const getPlayerStats = async (
 	});
 
 	if (season === "career") {
+		let obj;
+		if (playoffs === "playoffs") {
+			obj = "careerStatsPlayoffs";
+		} else if (playoffs === "combined") {
+			obj = "careerStatsCombined";
+		} else {
+			obj = "careerStats";
+		}
 		for (const p of players) {
-			p.stats = p.careerStats;
-			delete p.careerStats;
+			p.stats = p[obj];
+			delete p[obj];
 
 			// Show row from max ovr season
 			if (p.ratings) {

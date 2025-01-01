@@ -361,16 +361,43 @@ const finalize = ({
 			return allowOneTeamWithOneGameRemaining.other;
 		};
 
-		const applyOneGameRemaining = (
-			t: MyTeam,
-			level: (typeof LEVELS)[number],
-		) => {
+		type Level = (typeof LEVELS)[number];
+
+		const applyOneGameRemaining = (t: MyTeam, level: Level) => {
 			if (level === "div") {
 				allowOneTeamWithOneGameRemaining.div[t.seasonAttrs.did] = false;
 			} else if (level === "conf") {
 				allowOneTeamWithOneGameRemaining.conf[t.seasonAttrs.cid] = false;
 			} else {
 				allowOneTeamWithOneGameRemaining.other = false;
+			}
+		};
+
+		const logAsEitherIfApplicable = (
+			tid0: number,
+			tid1: number,
+			level: Level,
+		) => {
+			// console.log('found matchup', tid0, tid1, level);
+			if (tidsEither.has(tid0, tid1)) {
+				// Already have an "either" game between these two teams, so instead make them a home and away each
+				tidsEither.remove(tid0, tid1);
+				scheduleCounts[tid0][level].either -= 1;
+				scheduleCounts[tid1][level].either -= 1;
+
+				// Swapping order for the 2nd one is irrelevant I think, but whatever
+				tidsDoneTwoExcess.push([tid0, tid1], [tid1, tid0]);
+
+				scheduleCounts[tid0][level].home += 1;
+				scheduleCounts[tid0][level].away += 1;
+				scheduleCounts[tid1][level].home += 1;
+				scheduleCounts[tid1][level].away += 1;
+			} else {
+				// Record as an "either" game
+				tidsEither.add(tid0, tid1);
+
+				scheduleCounts[tid0][level].either += 1;
+				scheduleCounts[tid1][level].either += 1;
 			}
 		};
 
@@ -433,25 +460,7 @@ const finalize = ({
 							continue;
 						}
 
-						if (tidsEither.has(t.tid, t2.tid)) {
-							// Already have an "either" game between these two teams, so instead make them a home and away each
-							tidsEither.remove(t.tid, t2.tid);
-							scheduleCounts[t.tid][level].either -= 1;
-							scheduleCounts[t2.tid][level].either -= 1;
-
-							tidsDoneTwoExcess.push([t.tid, t2.tid], [t2.tid, t.tid]);
-							scheduleCounts[t.tid][level].home += 1;
-							scheduleCounts[t.tid][level].away += 1;
-							scheduleCounts[t2.tid][level].home += 1;
-							scheduleCounts[t2.tid][level].away += 1;
-						} else {
-							// Record as an "either" game
-							// console.log('found matchup', t.tid, t2.tid);
-							tidsEither.add(t.tid, t2.tid);
-
-							scheduleCounts[t.tid][level].either += 1;
-							scheduleCounts[t2.tid][level].either += 1;
-						}
+						logAsEitherIfApplicable(t.tid, t2.tid, level);
 
 						excessGamesRemaining[level] -= 1;
 						excessGamesRemainingByTid[t2.tid][level] -= 1;
@@ -526,14 +535,11 @@ const finalize = ({
 					break;
 				}
 
-				tidsEither.add(tid0, tid1);
-
 				const t0 = teamsByTid[tid0];
 				const t1 = teamsByTid[tid1];
 				const level = getLevel(t0, t1);
 
-				scheduleCounts[tid0][level].either += 1;
-				scheduleCounts[tid1][level].either += 1;
+				logAsEitherIfApplicable(tid0, tid1, level);
 			}
 		}
 

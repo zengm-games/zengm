@@ -289,15 +289,19 @@ const finalize = ({
 		}
 	};
 
+	// Track games between teams where there are somehow 2 "either"" matchups (like if there are 3 mandatory games, then one excees), the mandatory games were split 1/1/1 for home/away/either, and then the one excess game also is an either, so make that 2 home and 2 away total - those last 2 games will show up in tidsDoneTemp
+	let tidsDoneTwoExcess: [number, number][];
+
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
 		iteration1 += 1;
 
 		// Copy some variables
-		const tidsEither = helpers.deepCopy(toCopy.tidsEither);
+		let tidsEither = helpers.deepCopy(toCopy.tidsEither);
 		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
 		const allowOneTeamWithOneGameRemaining = helpers.deepCopy(
 			allowOneTeamWithOneGameRemainingBase,
 		);
+		tidsDoneTwoExcess = [];
 
 		const skippedGameTids: number[] = [];
 
@@ -386,12 +390,27 @@ const finalize = ({
 							continue;
 						}
 
-						// Record as an "either" game
-						// console.log('found matchup', t.tid, t2.tid);
-						tidsEither.push([t.tid, t2.tid]);
+						const prevMatchup = tidsEither.find(
+							row =>
+								(row[0] === t.tid && row[1] === t2.tid) ||
+								(row[0] === t2.tid && row[1] === t.tid),
+						);
+						if (prevMatchup) {
+							// Already have an "either" game between these two teams, so instead make them a home and away each
+							tidsEither = tidsEither.filter(row => row !== prevMatchup);
+							tidsDoneTwoExcess.push([t.tid, t2.tid], [t2.tid, t.tid]);
+							scheduleCounts[t.tid][level].home += 1;
+							scheduleCounts[t.tid][level].away += 1;
+							scheduleCounts[t2.tid][level].home += 1;
+							scheduleCounts[t2.tid][level].away += 1;
+						} else {
+							// Record as an "either" game
+							// console.log('found matchup', t.tid, t2.tid);
+							tidsEither.push([t.tid, t2.tid]);
 
-						scheduleCounts[t.tid][level].either += 1;
-						scheduleCounts[t2.tid][level].either += 1;
+							scheduleCounts[t.tid][level].either += 1;
+							scheduleCounts[t2.tid][level].either += 1;
+						}
 
 						excessGamesRemaining[level] -= 1;
 						excessGamesRemainingByTid[t2.tid][level] -= 1;
@@ -619,7 +638,7 @@ const finalize = ({
 			}
 
 			// console.log('iteration counts', iteration1, iteration2, iteration2all);
-			return tidsDone;
+			return [...tidsDoneTwoExcess, ...tidsDone];
 		}
 	}
 

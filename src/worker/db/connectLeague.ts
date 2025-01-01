@@ -744,7 +744,9 @@ const migrate = async ({
 
 				await cursor.update(gm);
 			}
-			for await (const cursor of transaction.objectStore("playerStats")) {
+			for await (const cursor of transaction.objectStore(
+				"playerStats" as any,
+			)) {
 				const ps = cursor.value;
 				delete ps.trb;
 				await cursor.update(ps);
@@ -763,7 +765,7 @@ const migrate = async ({
 			// Only non-retired players, for efficiency
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
-				for (const r of p.ratings) {
+				for (const r of p.ratings as any[]) {
 					// Replace blk/stl with diq
 					if (typeof r.diq !== "number") {
 						if (typeof r.blk === "number" && typeof r.stl === "number") {

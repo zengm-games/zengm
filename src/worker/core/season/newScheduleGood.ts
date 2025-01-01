@@ -1,5 +1,5 @@
 import { g, helpers, random } from "../../../worker/util";
-import { groupByUnique, orderBy, range } from "../../../common/utils";
+import { groupBy, groupByUnique, orderBy, range } from "../../../common/utils";
 import type { Div, GameAttributesLeague } from "../../../common/types";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";
 import groupScheduleSeries from "./groupScheduleSeries";
@@ -37,7 +37,6 @@ const getNumGames = (
 const isDiv = (t: MyTeam, div: Div) => t.seasonAttrs.did === div.did;
 const isConf = (t: MyTeam, div: Div) =>
 	t.seasonAttrs.did !== div.did && t.seasonAttrs.cid === div.cid;
-const isOther = (t: MyTeam, div: Div) => t.seasonAttrs.cid !== div.cid;
 
 const groupTeamsByDid = (
 	teams: MyTeam[],
@@ -61,19 +60,26 @@ const groupTeamsByDid = (
 
 	for (const div of divs) {
 		teamsGroupedByDid[div.did] = {
-			div: teams.filter(t => numGamesDiv !== null && isDiv(t, div)),
-			conf: teams.filter(
-				t =>
-					numGamesConf !== null &&
-					(isConf(t, div) || (numGamesDiv === null && isDiv(t, div))),
-			),
-			other: teams.filter(
-				t =>
-					isOther(t, div) ||
-					(numGamesDiv === null && numGamesConf === null && isDiv(t, div)) ||
-					(numGamesConf === null && isConf(t, div)),
-			),
+			div: [],
+			conf: [],
+			other: [],
 		};
+
+		const grouped = teamsGroupedByDid[div.did];
+
+		for (const t of teams) {
+			// Only label same-division teams as div if numGamesDiv is set. Otherwise, put them in conf (if same-conference and if numGamesConf is set) or other.
+			if (numGamesDiv !== null && isDiv(t, div)) {
+				grouped.div.push(t);
+			} else if (
+				numGamesConf !== null &&
+				(isConf(t, div) || (numGamesDiv === null && isDiv(t, div)))
+			) {
+				grouped.conf.push(t);
+			} else {
+				grouped.other.push(t);
+			}
+		}
 	}
 
 	return teamsGroupedByDid;
@@ -312,8 +318,9 @@ const finalize = ({
 	}
 
 	const cids = new Set(settings.divs.map(div => div.cid));
+	const teamsByCid = groupBy(teams, t => t.seasonAttrs.cid);
 	for (const cid of cids) {
-		const numTeams = teams.filter(t => t.seasonAttrs.cid === cid).length;
+		const numTeams = teamsByCid[cid]?.length ?? 0;
 		allowOneTeamWithOneGameRemainingBase.conf[cid] =
 			(numTeams * numGamesConf2) % 2 === 1;
 	}
@@ -513,9 +520,7 @@ const finalize = ({
 				const tid0 = skippedGameTidsOrdered.pop();
 
 				// Are any teams skipped multiple times? If so, need to be careful they don't play themselves
-				const tid1: number | undefined = skippedGameTidsOrdered.filter(
-					tid => tid !== tid0,
-				)[0];
+				let tid1;
 
 				let found = false;
 				skippedGameTidsOrdered = skippedGameTidsOrdered.filter(tid => {
@@ -523,12 +528,13 @@ const finalize = ({
 						return true;
 					}
 
-					if (tid !== tid1) {
-						return true;
+					if (tid !== tid0) {
+						tid1 = tid;
+						found = true;
+						return false;
 					}
 
-					found = true;
-					return false;
+					return true;
 				});
 
 				if (tid0 === undefined || tid1 === undefined || tid0 === tid1) {

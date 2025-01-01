@@ -3,7 +3,8 @@ conf games (same conf different division) can have unbalanced home/away counts
   - possible solutions
     - when adding a tidEither game, first check if one already exists. if so, delete it and add two games (home and away)
     - in MAIN_LOOP_2, instead of just trying to balance home/away totals for a team's entire schedule, look at the matchups with each team (like take count of how many tidEither entries there are with this team, and split them up evenly unless that breaks a constraint)
-- get rid of find, use a better data structure
+- get rid of "filter" in other places
+- tests
 
 Change (or add an option for) the coin flip to be like the old NBA coin flip, which was between the worst teams in each conference, not the worst two teams overall. Alternatively add the ability to edit the teams in the lottery. Probably no one else cares, but I like to be accurate. https://discord.com/channels/290013534023057409/331882115119448065/1322397494335897692
 

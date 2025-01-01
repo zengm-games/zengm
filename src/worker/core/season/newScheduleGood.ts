@@ -212,6 +212,49 @@ const initScheduleCounts = (teams: MyTeam[]) => {
 	return scheduleCounts;
 };
 
+class TidsEither {
+	matchups: Map<string, [number, number]> = new Map();
+
+	// tid0 is the smaller one, for ease of comparison
+	private getSortedTids(tid0: number, tid1: number): [number, number] {
+		if (tid0 > tid1) {
+			return [tid1, tid0];
+		}
+		return [tid0, tid1];
+	}
+
+	private makeKey(tids: [number, number]) {
+		return `${tids[0]}-${tids[1]}`;
+	}
+
+	add(tid0: number, tid1: number) {
+		const tids = this.getSortedTids(tid0, tid1);
+		const key = this.makeKey(tids);
+		if (this.matchups.has(key)) {
+			throw new Error("Cannot add a duplicate matchup to TidsEither");
+		}
+		this.matchups.set(key, tids);
+	}
+
+	remove(tid0: number, tid1: number) {
+		return this.matchups.delete(this.makeKey(this.getSortedTids(tid0, tid1)));
+	}
+
+	has(tid0: number, tid1: number) {
+		return this.matchups.has(this.makeKey(this.getSortedTids(tid0, tid1)));
+	}
+
+	values() {
+		return this.matchups.values();
+	}
+
+	clone() {
+		const clone = new TidsEither();
+		clone.matchups = helpers.deepCopy(this.matchups);
+		return clone;
+	}
+}
+
 const finalize = ({
 	ignoreNumGamesDivConf,
 	numGamesTargetsByDid,
@@ -229,7 +272,7 @@ const finalize = ({
 	teams: MyTeam[];
 	teamsGroupedByDid: ReturnType<typeof groupTeamsByDid>;
 	scheduleCounts: ReturnType<typeof initScheduleCounts>;
-	tidsEither: [number, number][];
+	tidsEither: TidsEither;
 }) => {
 	const MAX_ITERATIONS_1 = 1000;
 	const MAX_ITERATIONS_2 = 1000;
@@ -296,7 +339,7 @@ const finalize = ({
 		iteration1 += 1;
 
 		// Copy some variables
-		let tidsEither = helpers.deepCopy(toCopy.tidsEither);
+		const tidsEither = toCopy.tidsEither.clone();
 		const scheduleCounts = helpers.deepCopy(toCopy.scheduleCounts);
 		const allowOneTeamWithOneGameRemaining = helpers.deepCopy(
 			allowOneTeamWithOneGameRemainingBase,
@@ -390,14 +433,9 @@ const finalize = ({
 							continue;
 						}
 
-						const prevMatchup = tidsEither.find(
-							row =>
-								(row[0] === t.tid && row[1] === t2.tid) ||
-								(row[0] === t2.tid && row[1] === t.tid),
-						);
-						if (prevMatchup) {
+						if (tidsEither.has(t.tid, t2.tid)) {
 							// Already have an "either" game between these two teams, so instead make them a home and away each
-							tidsEither = tidsEither.filter(row => row !== prevMatchup);
+							tidsEither.remove(t.tid, t2.tid);
 							tidsDoneTwoExcess.push([t.tid, t2.tid], [t2.tid, t.tid]);
 							scheduleCounts[t.tid][level].home += 1;
 							scheduleCounts[t.tid][level].away += 1;
@@ -406,7 +444,7 @@ const finalize = ({
 						} else {
 							// Record as an "either" game
 							// console.log('found matchup', t.tid, t2.tid);
-							tidsEither.push([t.tid, t2.tid]);
+							tidsEither.add(t.tid, t2.tid);
 
 							scheduleCounts[t.tid][level].either += 1;
 							scheduleCounts[t2.tid][level].either += 1;
@@ -485,7 +523,7 @@ const finalize = ({
 					break;
 				}
 
-				tidsEither.push([tid0, tid1]);
+				tidsEither.add(tid0, tid1);
 
 				const t0 = teamsByTid[tid0];
 				const t1 = teamsByTid[tid1];
@@ -507,7 +545,8 @@ const finalize = ({
 			// Assign tidsEither to home/away games
 			const tidsDone: [number, number][] = []; // tid_home, tid_away
 
-			random.shuffle(tidsEither);
+			const shuffledTidsEither = [...tidsEither.values()];
+			random.shuffle(shuffledTidsEither);
 
 			const tidsDoneIndexesByLevel: Record<
 				(typeof LEVELS)[number],
@@ -530,7 +569,7 @@ const finalize = ({
 				return Math.ceil(numGamesAtLevel / 2);
 			};
 
-			for (const [tid0, tid1] of tidsEither) {
+			for (const [tid0, tid1] of shuffledTidsEither) {
 				const t0 = teamsByTid[tid0];
 				const t1 = teamsByTid[tid1];
 
@@ -564,7 +603,7 @@ const finalize = ({
 				let homeMinCutoffDiffs = getHomeMinCutoffDiffs();
 
 				if (homeMinCutoffDiffs[0] === 0 && homeMinCutoffDiffs[1] === 0) {
-					// console.log(iteration2all, `${tidsDone.length} / ${tidsEither.length}`, level, homeMinCutoffDiffs);
+					// console.log(iteration2all, `${tidsDone.length} / ${shuffledTidsEither.length}`, level, homeMinCutoffDiffs);
 
 					// Try swapping a past matchup, if that is valid
 					let swapped = false;
@@ -675,7 +714,7 @@ const newScheduleGood = (
 	const scheduleCounts = initScheduleCounts(teams);
 
 	const tidsDone: [number, number][] = []; // tid_home, tid_away
-	const tidsEither: [number, number][] = []; // home/away not yet set, add to tids later
+	const tidsEither = new TidsEither(); // home/away not yet set, add to tids later
 
 	// Make all the required matchups (perTeam)
 	for (const t of teams) {
@@ -702,7 +741,7 @@ const newScheduleGood = (
 				if (t.tid < t2.tid) {
 					const numEither = numGamesTargets.perTeam[level] % 2;
 					for (let i = 0; i < numEither; i++) {
-						tidsEither.push([t.tid, t2.tid]);
+						tidsEither.add(t.tid, t2.tid);
 						scheduleCounts[t.tid][level].either += 1;
 						scheduleCounts[t2.tid][level].either += 1;
 					}
@@ -715,7 +754,7 @@ const newScheduleGood = (
 	console.log("numGamesTargetsByDid", numGamesTargetsByDid);
 	console.log("scheduleCounts", scheduleCounts);
 	console.log("tidsDone", tidsDone);
-	console.log("tidsEither", tidsEither);*/
+	console.log("tidsEither", tidsEither.values());*/
 
 	// Everything above is deterministic, but below is where randomness is introduced
 	const tidsDone2 = finalize({

@@ -436,6 +436,9 @@ const finalize = ({
 						if (tidsEither.has(t.tid, t2.tid)) {
 							// Already have an "either" game between these two teams, so instead make them a home and away each
 							tidsEither.remove(t.tid, t2.tid);
+							scheduleCounts[t.tid][level].either -= 1;
+							scheduleCounts[t2.tid][level].either -= 1;
+
 							tidsDoneTwoExcess.push([t.tid, t2.tid], [t2.tid, t.tid]);
 							scheduleCounts[t.tid][level].home += 1;
 							scheduleCounts[t.tid][level].away += 1;

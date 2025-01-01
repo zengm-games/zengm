@@ -131,7 +131,7 @@ describe("worker/core/season/newScheduleGood", () => {
 			}
 		});
 
-		test.skip("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
+		test("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
 			const { tids, warning } = newScheduleGood(defaultTeams);
 			assert.strictEqual(warning, undefined);
 
@@ -162,7 +162,6 @@ describe("worker/core/season/newScheduleGood", () => {
 			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const { tid } of defaultTeams) {
-				console.log(tid, Object.values(home[tid]));
 				assert.strictEqual(Object.values(home[tid]).length, 10);
 				assert.strictEqual(
 					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),

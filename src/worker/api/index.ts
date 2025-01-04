@@ -3603,10 +3603,31 @@ const updateGameAttributesGodMode = async (
 		);
 	}
 
+	const currentRpdPot = g.get("rpdPot");
+	const currentRealPlayerDeterminism = g.get("realPlayerDeterminism");
+
 	await league.setGameAttributes(gameAttributes);
 
 	if (repeatSeason !== currentRepeatSeasonType) {
 		await league.setRepeatSeason(repeatSeason);
+	}
+
+	// Need to recompute pot for real players?
+	if (
+		(gameAttributes.rpdPot !== undefined &&
+			currentRpdPot !== gameAttributes.rpdPot) ||
+		(gameAttributes.realPlayerDeterminism !== undefined &&
+			currentRealPlayerDeterminism !== gameAttributes.realPlayerDeterminism)
+	) {
+		console.log("RECOMPUTE");
+		const players = await idb.cache.players.getAll();
+		for (const p of players) {
+			if (p.real) {
+				await player.develop(p, 0);
+				await player.updateValues(p);
+				await idb.cache.players.put(p);
+			}
+		}
 	}
 
 	await idb.cache.flush();

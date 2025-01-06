@@ -176,5 +176,9 @@
 		"typescript-eslint": "^8.19.0",
 		"workbox-build": "^7.3.0"
 	},
+	"engines": {
+		"node": "^22.0.0",
+		"pnpm": "^9.0.0"
+	},
 	"private": true
 }

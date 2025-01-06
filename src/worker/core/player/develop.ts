@@ -1,4 +1,10 @@
-import { bySport, isSport, PLAYER, POSITIONS } from "../../../common";
+import {
+	bySport,
+	isSport,
+	NOT_REAL_POSITIONS,
+	PLAYER,
+	POSITIONS,
+} from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";
 import pos from "./pos";
@@ -7,7 +13,6 @@ import { g, helpers, random } from "../../util";
 import type { MinimalPlayerRatings } from "../../../common/types";
 import genWeight from "./genWeight";
 import potEstimator from "./potEstimator";
-import { BANNED_POSITIONS } from "./pos.baseball";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
 
@@ -157,7 +162,7 @@ const develop = async (
 			ratings.ovrs = POSITIONS.reduce((ovrs, pos2) => {
 				ovrs[pos2] = ovr(ratings, pos2);
 
-				if (!BANNED_POSITIONS.includes(pos2) && ovrs[pos2] > maxOvr) {
+				if (!NOT_REAL_POSITIONS.includes(pos2) && ovrs[pos2] > maxOvr) {
 					pos = pos2;
 					maxOvr = ovrs[pos2];
 				}

@@ -13,9 +13,9 @@ import {
 	RATINGS,
 	POSITIONS,
 	MOOD_TRAITS,
-	isSport,
 	WEBSITE_ROOT,
 	bySport,
+	NOT_REAL_POSITIONS,
 } from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -27,9 +27,6 @@ import posRatings from "../../../common/posRatings";
 import { orderBy } from "../../../common/utils";
 import CustomMoodItemsForm from "./CustomMoodItemsForm";
 import { roundContract } from "../../../common/roundContract";
-
-// A player can never have KR or PR as his main position
-const bannedPositions = ["KR", "PR"];
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -833,12 +830,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<option value="auto">
 										Auto{autoPos !== undefined ? ` (${autoPos})` : null}
 									</option>
-									{POSITIONS.filter(pos => {
-										if (isSport("football") && bannedPositions.includes(pos)) {
-											return false;
-										}
-										return true;
-									}).map(pos => {
+									{POSITIONS.filter(
+										pos => !NOT_REAL_POSITIONS.includes(pos),
+									).map(pos => {
 										return (
 											<option key={pos} value={pos}>
 												{pos}

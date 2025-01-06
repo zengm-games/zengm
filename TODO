@@ -3,16 +3,22 @@ trading block - specify what you want
   - run the normal algorithm N times and keep the trade with the most matching assets
   - give a bonus to the desired assets in the algorithm
   - when including assets, first select the desired assets to try to add (or at least give them a bonus)
-    - just for first asset, except picks
+    - just for first asset, except for the "other" ones
     - if picks and something else, apply picks sort for 2nd+ asset
+    - if "prospects" or "best current players", apply that as a sort the entire time (valueNoPot or some combination of age and value)
+    - how to handle multiple "other" selections? maybe don't allow both best and prospects
 - ui
   - check boxes of
     - positions (how to handle basketball intermediate ones? maybe just G/F/C?)
     - skills
-    - draft picks
+    - other: draft picks, prospects, best current players
   - what was that old PR?
   - clear button - maybe make it a dropdown for Assets/Filters/Both
   - what to call the new section? Filters? Desired assets? What are you looking for?
+  - make sure to save this new state along with the other persisted trading block state
+  - tooltips
+  - responsive
+  - light+dark
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through

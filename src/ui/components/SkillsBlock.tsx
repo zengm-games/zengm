@@ -1,57 +1,7 @@
 import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { bySport } from "../../common";
 import { useLocal } from "../util";
-
-const tooltips = bySport({
-	baseball: {
-		Pp: "Power Pitcher",
-		Pf: "Finesse Pitcher",
-		Pw: "Workhorse Pitcher",
-		Ri: "Infield Range",
-		Ro: "Outfield Range",
-		Dc: "Catcher Defense",
-		D1: "First Base Defense",
-		Dg: "Ground Ball Fielding",
-		Df: "Fly Ball Fielding",
-		A: "Strong Arm",
-		Hp: "Power Hitter",
-		Hc: "Contact Hitter",
-		E: "Good Eye",
-		S: "Speed",
-	},
-	basketball: {
-		"3": "Three Point Shooter",
-		A: "Athlete",
-		B: "Ball Handler",
-		Di: "Interior Defender",
-		Dp: "Perimeter Defender",
-		Po: "Post Scorer",
-		Ps: "Passer",
-		R: "Rebounder",
-		V: "Volume Scorer",
-	},
-	football: {
-		Pa: "Accurate Passer",
-		Pd: "Deep Passer",
-		Ps: "Smart Passer",
-		A: "Athletic",
-		X: "Explosive Runner",
-		H: "Hands",
-		Bp: "Pass Blocker",
-		Br: "Run Blocker",
-		PR: "Pass Rusher",
-		RS: "Run Stopper",
-		L: "Lockdown Coverage",
-	},
-	hockey: {
-		Pm: "Playmaker",
-		Pw: "Power",
-		G: "Grinder",
-		E: "Enforcer",
-		S: "Sniper",
-	},
-});
+import { SKILLS } from "../../common";
 
 const TruncatedSkills = ({
 	numSkillsBeforeTruncate,
@@ -104,7 +54,7 @@ const SkillsBlock = ({
 	return (
 		<span className={className}>
 			{truncatedSkills.map(skill => (
-				<span key={skill} className="skill" title={(tooltips as any)[skill]}>
+				<span key={skill} className="skill" title={SKILLS[skill]}>
 					{skill}
 				</span>
 			))}

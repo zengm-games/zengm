@@ -139,6 +139,7 @@ import isUntradable from "../core/trade/isUntradable";
 import getWinner from "../../common/getWinner";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 import { getStats } from "../../common/advancedPlayerSearch";
+import type { LookingFor } from "../core/trade/makeItWork";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1944,7 +1945,11 @@ const getRandomRatings = async ({
 	};
 };
 
-const getOffers = async (userPids: number[], userDpids: number[]) => {
+const getOffers = async (
+	userPids: number[],
+	userDpids: number[],
+	lookingFor: LookingFor,
+) => {
 	// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
 	const teams = await idb.cache.teams.getAll();
 	const tids = orderBy(
@@ -1972,11 +1977,11 @@ const getOffers = async (userPids: number[], userDpids: number[]) => {
 		];
 
 		if (tid !== g.get("userTid")) {
-			const teams2 = await trade.makeItWork(
-				teams,
-				true,
-				4 + userPids.length + userDpids.length,
-			);
+			const teams2 = await trade.makeItWork(teams, {
+				holdUserConstant: true,
+				maxAssetsToAdd: 4 + userPids.length + userDpids.length,
+				lookingFor,
+			});
 
 			if (teams2) {
 				offers.push(teams2);
@@ -2091,11 +2096,13 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 const getTradingBlockOffers = async ({
 	pids,
 	dpids,
+	lookingFor,
 }: {
 	pids: number[];
 	dpids: number[];
+	lookingFor: LookingFor;
 }) => {
-	const offers = await getOffers(pids, dpids);
+	const offers = await getOffers(pids, dpids, lookingFor);
 
 	const savedTradingBlock = {
 		rid: 0 as const,

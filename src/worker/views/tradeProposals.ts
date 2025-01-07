@@ -67,7 +67,11 @@ const getOffers = async (seed: number) => {
 				},
 			];
 
-			const teams = await makeItWork(teams0, false, 5, valueChangeKey);
+			const teams = await makeItWork(teams0, {
+				holdUserConstant: false,
+				maxAssetsToAdd: 5,
+				valueChangeKey,
+			});
 
 			if (!teams) {
 				continue;

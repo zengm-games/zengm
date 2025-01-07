@@ -4,6 +4,12 @@ import type { TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 import { helpers } from "../../util";
 
+export type LookingFor = {
+	positions: Set<string>;
+	skills: Set<string>;
+	assets: Set<string>;
+};
+
 type AssetPlayer = {
 	type: "player";
 	dv: number;
@@ -191,9 +197,17 @@ const tryAddAsset = async (
  */
 const makeItWork = async (
 	teams: TradeTeams,
-	holdUserConstant: boolean,
-	maxAssetsToAdd = Infinity,
-	valueChangeKey: number = Math.random(),
+	{
+		holdUserConstant,
+		lookingFor,
+		maxAssetsToAdd = Infinity,
+		valueChangeKey = Math.random(),
+	}: {
+		holdUserConstant: boolean;
+		lookingFor?: LookingFor;
+		maxAssetsToAdd?: number;
+		valueChangeKey?: number;
+	},
 ): Promise<TradeTeams | undefined> => {
 	let initialSign: -1 | 1;
 	let added = 0;
@@ -272,15 +286,13 @@ const makeItWork = async (
 			// Looking for a trade that the AI will accept
 			if (dv > 0) {
 				// Run another round of makeItWork in the opposite direction, which will make the end result of this stable (clicking the "What would make this deal work?" button won't do anything)
-
 				const newMaxAssetsToAdd = maxAssetsToAdd - added;
 				if (newMaxAssetsToAdd > 0) {
-					return makeItWork(
-						newTeams,
+					return makeItWork(newTeams, {
 						holdUserConstant,
-						newMaxAssetsToAdd,
+						maxAssetsToAdd: newMaxAssetsToAdd,
 						valueChangeKey,
-					);
+					});
 				}
 				return newTeams;
 			}

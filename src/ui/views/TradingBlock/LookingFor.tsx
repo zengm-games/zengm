@@ -5,7 +5,7 @@ import useLookingForState, { categories } from "./useLookingForState";
 import { ResponsiveTableWrapper } from "../../components";
 
 type UseLookingForState = ReturnType<typeof useLookingForState>;
-type LookingForState = UseLookingForState[0];
+export type LookingForState = UseLookingForState[0];
 type SetLookingForState = UseLookingForState[1];
 
 const LookingFor = ({

@@ -13,6 +13,8 @@ trading block - specify what you want
     - and for clear button, pass type to clearTradingBlock
   - light+dark
   - make sure it looks okay in other sports
+  - is "Best current players" actually a good name?
+- recursive makeItWork call in makeItWork - does this ever happen if holdUserConstant?
 
 make a MyTooltip component with position-fixed hack built in
 - https://github.com/react-bootstrap/react-bootstrap/issues/6563

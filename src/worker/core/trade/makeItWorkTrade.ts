@@ -15,7 +15,9 @@ import get from "./get";
 const makeItWorkTrade = async () => {
 	const tr = await get();
 	const teams0 = tr.teams;
-	const teams = await makeItWork(helpers.deepCopy(teams0), false);
+	const teams = await makeItWork(helpers.deepCopy(teams0), {
+		holdUserConstant: false,
+	});
 
 	if (!teams) {
 		return {

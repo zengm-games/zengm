@@ -21,7 +21,7 @@ import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { MissingAssets, OvrChange } from "../Trade/Summary";
 import type { MissingAsset } from "../../../worker/views/savedTrades";
 import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
-import LookingFor from "./LookingFor";
+import LookingFor, { type LookingForState } from "./LookingFor";
 import useLookingForState from "./useLookingForState";
 import { Dropdown, SplitButton } from "react-bootstrap";
 
@@ -492,6 +492,24 @@ const MissingAndWilling = ({
 	);
 };
 
+const lookingForToWorker = (lookingForState: LookingForState) => {
+	const output = {
+		positions: new Set<string>(),
+		skills: new Set<string>(),
+		assets: new Set<string>(),
+	};
+
+	for (const category of helpers.keys(lookingForState)) {
+		for (const [key, value] of Object.entries(lookingForState[category])) {
+			if (value) {
+				output[category].add(key);
+			}
+		}
+	}
+
+	return output;
+};
+
 const TradingBlock = ({
 	challengeNoRatings,
 	challengeNoTrades,
@@ -572,6 +590,7 @@ const TradingBlock = ({
 		const offers = await toWorker("main", "getTradingBlockOffers", {
 			pids: state.pids,
 			dpids: state.dpids,
+			lookingFor: lookingForToWorker(lookingForState),
 		});
 
 		setState(prevState => ({

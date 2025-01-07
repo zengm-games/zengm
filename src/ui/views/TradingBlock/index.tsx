@@ -757,7 +757,11 @@ const TradingBlock = ({
 			</div>
 
 			<div className="my-5">
-				<LookingFor state={lookingForState} setState={setLookingForState} />
+				<LookingFor
+					disabled={state.asking}
+					state={lookingForState}
+					setState={setLookingForState}
+				/>
 			</div>
 
 			<div>

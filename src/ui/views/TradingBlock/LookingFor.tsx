@@ -8,9 +8,11 @@ type LookingForState = UseLookingForState[0];
 type SetLookingForState = UseLookingForState[1];
 
 const LookingFor = ({
+	disabled,
 	state,
 	setState,
 }: {
+	disabled: boolean;
 	state: LookingForState;
 	setState: SetLookingForState;
 }) => {
@@ -41,6 +43,7 @@ const LookingFor = ({
 												<input
 													type="checkbox"
 													className="form-check-input me-1"
+													disabled={disabled}
 													onChange={() => {
 														setState(state => {
 															return {

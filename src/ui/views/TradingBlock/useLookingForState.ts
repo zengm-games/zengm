@@ -21,10 +21,18 @@ const positions = bySport({
 	default: POSITIONS.filter(pos => !NOT_REAL_POSITIONS.includes(pos)),
 });
 const positionNames = bySport<Record<string, string> | undefined>({
+	baseball: undefined,
 	basketball: {
-		G: "Guards",
-		F: "Forwards",
-		C: "Centers",
+		G: "Guard",
+		F: "Forward",
+		C: "Center",
+	},
+	football: undefined,
+	hockey: {
+		C: "Center",
+		W: "Wing",
+		D: "Defenseman",
+		G: "Goalie",
 	},
 	default: undefined,
 });

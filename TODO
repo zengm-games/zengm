@@ -13,6 +13,7 @@ trading block - specify what you want
     - and for clear button, pass type to clearTradingBlock
   - responsive
   - light+dark
+  - make sure it looks okay in other sports
 
 make a MyTooltip component with position-fixed hack built in
 - https://github.com/react-bootstrap/react-bootstrap/issues/6563

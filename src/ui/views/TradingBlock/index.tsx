@@ -783,7 +783,7 @@ const TradingBlock = ({
 				/>
 			</div>
 
-			<div>
+			<div className="trading-block-buttons">
 				<ActionButton
 					processing={state.asking}
 					onClick={handleClickAsk}

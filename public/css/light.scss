@@ -1684,8 +1684,15 @@ tr.text-body-secondary td {
 	color: $white !important;
 }
 
+.trading-block-buttons {
+	text-align: center;
+}
 @include media-breakpoint-up(md) {
 	.trading-block-draft-picks-wrapper {
 		padding-top: 35px;
+	}
+
+	.trading-block-buttons {
+		text-align: unset;
 	}
 }

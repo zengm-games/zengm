@@ -496,10 +496,12 @@ const lookingForToWorker = (lookingForState: LookingForState) => {
 	const output = {
 		positions: new Set<string>(),
 		skills: new Set<string>(),
-		assets: new Set<string>(),
+		draftPicks: lookingForState.assets.draftPicks,
+		prospects: lookingForState.assets.prospects,
+		bestCurrentPlayers: lookingForState.assets.bestCurrentPlayers,
 	};
 
-	for (const category of helpers.keys(lookingForState)) {
+	for (const category of ["positions", "skills"] as const) {
 		for (const [key, value] of Object.entries(lookingForState[category])) {
 			if (value) {
 				output[category].add(key);

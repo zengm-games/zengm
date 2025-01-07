@@ -3,11 +3,14 @@ import { idb } from "../../db";
 import type { TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 import { helpers } from "../../util";
+import { isSport, POSITIONS } from "../../../common";
 
 export type LookingFor = {
 	positions: Set<string>;
 	skills: Set<string>;
-	assets: Set<string>;
+	draftPicks: boolean;
+	prospects: boolean;
+	bestCurrentPlayers: boolean;
 };
 
 type AssetPlayer = {
@@ -29,6 +32,8 @@ const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
 	valueChangeKey: number,
+	firstTry: boolean,
+	lookingFor?: LookingFor,
 ): Promise<TradeTeams | void> => {
 	const assets: Asset[] = [];
 
@@ -41,17 +46,19 @@ const tryAddAsset = async (
 
 		for (const p of players) {
 			if (
-				!teams[0].pids.includes(p.pid) &&
-				!teams[0].pidsExcluded.includes(p.pid) &&
-				!isUntradable(p).untradable
+				teams[0].pids.includes(p.pid) ||
+				teams[0].pidsExcluded.includes(p.pid) ||
+				isUntradable(p).untradable
 			) {
-				assets.push({
-					type: "player",
-					dv: 0,
-					pid: p.pid,
-					tid: teams[0].tid,
-				});
+				continue;
 			}
+
+			assets.push({
+				type: "player",
+				dv: 0,
+				pid: p.pid,
+				tid: teams[0].tid,
+			});
 		}
 	}
 
@@ -61,19 +68,48 @@ const tryAddAsset = async (
 		teams[1].tid,
 	);
 
+	// If lookingFor is set, make sure first asset added is from one of the requested positions only
+	let lookingForSpecificPositions;
+	if (firstTry && lookingFor && lookingFor.positions.size > 0) {
+		if (isSport("basketball")) {
+			// For basketball, convert G/F/C into real positions
+			lookingForSpecificPositions = new Set(
+				POSITIONS.filter(pos => {
+					for (const pos2 of lookingFor.positions) {
+						if (pos.includes(pos2)) {
+							return true;
+						}
+					}
+				}),
+			);
+		} else {
+			// Other sports, pass right through
+			lookingForSpecificPositions = lookingFor.positions;
+		}
+	}
+
 	for (const p of players) {
 		if (
-			!teams[1].pids.includes(p.pid) &&
-			!teams[1].pidsExcluded.includes(p.pid) &&
-			!isUntradable(p).untradable
+			teams[1].pids.includes(p.pid) ||
+			teams[1].pidsExcluded.includes(p.pid) ||
+			isUntradable(p).untradable
 		) {
-			assets.push({
-				type: "player",
-				dv: 0,
-				pid: p.pid,
-				tid: teams[1].tid,
-			});
+			continue;
 		}
+
+		if (
+			lookingForSpecificPositions &&
+			!lookingForSpecificPositions.has(p.ratings.at(-1)!.pos)
+		) {
+			continue;
+		}
+
+		assets.push({
+			type: "player",
+			dv: 0,
+			pid: p.pid,
+			tid: teams[1].tid,
+		});
 	}
 
 	if (!holdUserConstant) {
@@ -237,6 +273,8 @@ const makeItWork = async (
 			prevTeams,
 			holdUserConstant,
 			valueChangeKey,
+			added === 0,
+			lookingFor,
 		);
 
 		if (!newTeams) {

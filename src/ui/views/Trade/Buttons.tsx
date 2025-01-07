@@ -1,4 +1,4 @@
-import { ButtonGroup, Dropdown } from "react-bootstrap";
+import { Dropdown, SplitButton } from "react-bootstrap";
 import useLocalStorageState from "use-local-storage-state";
 import { ActionButton } from "../../components";
 
@@ -76,33 +76,26 @@ const Buttons = ({
 				>
 					Propose trade
 				</button>
-				<Dropdown as={ButtonGroup}>
-					<button
-						type="submit"
-						className="btn btn-secondary"
-						onClick={onClick(defaultType)}
-					>
-						Clear
-					</button>
-
-					<Dropdown.Toggle split variant="secondary" />
-
-					<Dropdown.Menu align="end">
-						<Dropdown.Item onClick={onClick("all")}>
-							All{defaultType === "all" ? " (default)" : null}
-						</Dropdown.Item>
-						<Dropdown.Item onClick={onClick("other")}>
-							{teamNames[0]} only{defaultType === "other" ? " (default)" : null}
-						</Dropdown.Item>
-						<Dropdown.Item onClick={onClick("user")}>
-							{teamNames[1]} only{defaultType === "user" ? " (default)" : null}
-						</Dropdown.Item>
-						<Dropdown.Item onClick={onClick("keepUntradeable")}>
-							Keep untradeable
-							{defaultType === "keepUntradeable" ? " (default)" : null}
-						</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
+				<SplitButton
+					variant="secondary"
+					onClick={onClick(defaultType)}
+					title="Clear"
+					align="end"
+				>
+					<Dropdown.Item onClick={onClick("all")}>
+						All{defaultType === "all" ? " (default)" : null}
+					</Dropdown.Item>
+					<Dropdown.Item onClick={onClick("other")}>
+						{teamNames[0]} only{defaultType === "other" ? " (default)" : null}
+					</Dropdown.Item>
+					<Dropdown.Item onClick={onClick("user")}>
+						{teamNames[1]} only{defaultType === "user" ? " (default)" : null}
+					</Dropdown.Item>
+					<Dropdown.Item onClick={onClick("keepUntradeable")}>
+						Keep untradeable
+						{defaultType === "keepUntradeable" ? " (default)" : null}
+					</Dropdown.Item>
+				</SplitButton>
 			</div>
 		</>
 	);

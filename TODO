@@ -7,6 +7,7 @@ trading block - specify what you want
     - if picks and something else, apply picks sort for 2nd+ asset
     - if "prospects" or "best current players", apply that as a sort the entire time (valueNoPot or some combination of age and value)
     - how to handle multiple "other" selections? maybe don't allow both best and prospects
+  - filter out proposals that don't have any player at the selected position
 - ui
   - make sure to save this new state along with the other persisted trading block state
     - and for clear button, pass type to clearTradingBlock

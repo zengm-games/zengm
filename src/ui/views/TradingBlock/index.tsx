@@ -23,7 +23,7 @@ import type { MissingAsset } from "../../../worker/views/savedTrades";
 import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
 import LookingFor from "./LookingFor";
 import useLookingForState from "./useLookingForState";
-import { ButtonGroup, Dropdown } from "react-bootstrap";
+import { Dropdown, SplitButton } from "react-bootstrap";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -789,33 +789,27 @@ const TradingBlock = ({
 					onClick={handleClickAsk}
 					size="lg"
 					variant="primary"
+					className="me-2"
 				>
 					Ask for trade proposals
 				</ActionButton>
-				<Dropdown as={ButtonGroup}>
-					<button
-						type="button"
-						className="btn btn-secondary btn-lg ms-2"
-						disabled={state.asking}
-						onClick={() => clear("all")}
-					>
-						Clear
-					</button>
-
-					<Dropdown.Toggle split variant="secondary" />
-
-					<Dropdown.Menu align="end">
-						<Dropdown.Item onClick={() => clear("all")}>
-							All (default)
-						</Dropdown.Item>
-						<Dropdown.Item onClick={() => clear("assets")}>
-							Assets only
-						</Dropdown.Item>
-						<Dropdown.Item onClick={() => clear("lookingFor")}>
-							Looking for only
-						</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
+				<SplitButton
+					variant="secondary"
+					size="lg"
+					disabled={state.asking}
+					onClick={() => clear("all")}
+					title="Clear"
+				>
+					<Dropdown.Item onClick={() => clear("all")}>
+						All (default)
+					</Dropdown.Item>
+					<Dropdown.Item onClick={() => clear("assets")}>
+						Assets only
+					</Dropdown.Item>
+					<Dropdown.Item onClick={() => clear("lookingFor")}>
+						Looking for only
+					</Dropdown.Item>
+				</SplitButton>
 			</div>
 
 			{state.offers.length > 0 ? (

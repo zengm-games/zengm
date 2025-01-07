@@ -1,95 +1,21 @@
-import { useState } from "react";
-import {
-	bySport,
-	NOT_REAL_POSITIONS,
-	POSITIONS,
-	SKILLS,
-} from "../../../common";
 import clsx from "clsx";
 import { helpers } from "../../util";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import useLookingForState, { categories } from "./useLookingForState";
 
-type Category = {
-	name: string;
-	options: {
-		key: string;
-		name: string;
-		tooltip?: string;
-	}[];
-};
-type Categories = Record<"positions" | "skills" | "assets", Category>;
+type UseLookingForState = ReturnType<typeof useLookingForState>;
+type LookingForState = UseLookingForState[0];
+type SetLookingForState = UseLookingForState[1];
 
-const positions = bySport({
-	basketball: ["G", "F", "C"],
-	default: POSITIONS.filter(pos => !NOT_REAL_POSITIONS.includes(pos)),
-});
-const positionNames = bySport<Record<string, string> | undefined>({
-	basketball: {
-		G: "Guards",
-		F: "Forwards",
-		C: "Centers",
-	},
-	default: undefined,
-});
-
-const categories: Categories = {
-	positions: {
-		name: "Positions",
-		options: positions.map(pos => {
-			return {
-				key: pos,
-				name: positionNames?.[pos] ?? pos,
-			};
-		}),
-	},
-	skills: {
-		name: "Skills",
-		options: Object.entries(SKILLS).map(([key, tooltip]) => {
-			return {
-				key,
-				name: key,
-				tooltip,
-			};
-		}),
-	},
-	assets: {
-		name: "Assets",
-		options: [
-			{
-				key: "draftPicks",
-				name: "Draft picks",
-			},
-			{
-				key: "prospects",
-				name: "Prospects",
-			},
-			{
-				key: "bestCurrentPlayers",
-				name: "Best current players",
-			},
-		],
-	},
-};
-
-const LookingFor = () => {
-	const [state, setState] = useState(() => {
-		const makeObj = (category: Category) => {
-			const obj: Record<string, boolean> = {};
-			for (const { key } of category.options) {
-				obj[key] = false;
-			}
-			return obj;
-		};
-
-		return {
-			positions: makeObj(categories.positions),
-			skills: makeObj(categories.skills),
-			assets: makeObj(categories.assets),
-		};
-	});
-
+const LookingFor = ({
+	state,
+	setState,
+}: {
+	state: LookingForState;
+	setState: SetLookingForState;
+}) => {
 	return (
-		<>
+		<div>
 			<h3 className="mb-0">What are you looking for?</h3>
 			<table>
 				<tbody>
@@ -154,7 +80,7 @@ const LookingFor = () => {
 					})}
 				</tbody>
 			</table>
-		</>
+		</div>
 	);
 };
 

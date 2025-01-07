@@ -1683,3 +1683,9 @@ tr.text-body-secondary td {
 .bg-secondary {
 	color: $white !important;
 }
+
+@include media-breakpoint-up(md) {
+	.trading-block-draft-picks-wrapper {
+		padding-top: 35px;
+	}
+}

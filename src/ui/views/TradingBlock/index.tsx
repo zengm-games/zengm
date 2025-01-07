@@ -22,6 +22,7 @@ import { MissingAssets, OvrChange } from "../Trade/Summary";
 import type { MissingAsset } from "../../../worker/views/savedTrades";
 import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
 import LookingFor from "./LookingFor";
+import useLookingForState from "./useLookingForState";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -537,6 +538,8 @@ const TradingBlock = ({
 		};
 	});
 
+	const [lookingForState, setLookingForState] = useLookingForState();
+
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
 			const ids = {
@@ -730,11 +733,6 @@ const TradingBlock = ({
 
 	return (
 		<>
-			<p>
-				Select some assets you want to trade away and other teams will make you
-				trade proposals.
-			</p>
-
 			<div className="row">
 				<div className="col-md-9">
 					<DataTable
@@ -746,27 +744,30 @@ const TradingBlock = ({
 						footer={footer}
 					/>
 				</div>
-				<div className="col-md-3 pt-3">
+				<div className="col-md-3 trading-block-draft-picks-wrapper">
 					<DataTable
 						cols={pickCols}
 						defaultSort={[1, "asc"]}
 						hideAllControls
+						hideMenuToo
 						name={`TradingBlock:Picks`}
 						rows={pickRows}
 					/>
 				</div>
 			</div>
 
-			<LookingFor />
+			<div className="my-5">
+				<LookingFor state={lookingForState} setState={setLookingForState} />
+			</div>
 
-			<div className="text-center mt-3">
+			<div>
 				<ActionButton
 					processing={state.asking}
 					onClick={handleClickAsk}
 					size="lg"
 					variant="primary"
 				>
-					Ask For Trade Proposals
+					Ask for trade proposals
 				</ActionButton>
 				<button
 					type="button"

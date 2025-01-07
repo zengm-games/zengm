@@ -1,26 +1,27 @@
 import { useState, type ReactNode } from "react";
-import { PHASE } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocalPartial } from "../util";
+import { PHASE } from "../../../common";
+import useTitleBar from "../../hooks/useTitleBar";
+import { getCols, helpers, toWorker, useLocalPartial } from "../../util";
 import {
 	ActionButton,
 	DataTable,
 	HelpPopover,
 	SafeHtml,
 	SaveTrade,
-} from "../components";
-import type { Col } from "../components/DataTable";
-import type { View } from "../../common/types";
-import type api from "../../worker/api";
+} from "../../components";
+import type { Col } from "../../components/DataTable";
+import type { View } from "../../../common/types";
+import type api from "../../../worker/api";
 import clsx from "clsx";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { MissingAssets, OvrChange } from "./Trade/Summary";
-import type { MissingAsset } from "../../worker/views/savedTrades";
-import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch";
+} from "../../components/contract";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
+import { MissingAssets, OvrChange } from "../Trade/Summary";
+import type { MissingAsset } from "../../../worker/views/savedTrades";
+import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
+import LookingFor from "./LookingFor";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -734,7 +735,7 @@ const TradingBlock = ({
 				trade proposals.
 			</p>
 
-			<div className="row mb-3">
+			<div className="row">
 				<div className="col-md-9">
 					<DataTable
 						cols={cols}
@@ -756,7 +757,9 @@ const TradingBlock = ({
 				</div>
 			</div>
 
-			<div className="text-center">
+			<LookingFor />
+
+			<div className="text-center mt-3">
 				<ActionButton
 					processing={state.asking}
 					onClick={handleClickAsk}

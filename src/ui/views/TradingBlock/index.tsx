@@ -23,6 +23,7 @@ import type { MissingAsset } from "../../../worker/views/savedTrades";
 import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
 import LookingFor from "./LookingFor";
 import useLookingForState from "./useLookingForState";
+import { ButtonGroup, Dropdown } from "react-bootstrap";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -538,7 +539,8 @@ const TradingBlock = ({
 		};
 	});
 
-	const [lookingForState, setLookingForState] = useLookingForState();
+	const [lookingForState, setLookingForState, resetLookingForState] =
+		useLookingForState();
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
@@ -598,6 +600,23 @@ const TradingBlock = ({
 			...prevState,
 			offers: prevState.offers.filter((offer, j) => j !== i),
 		}));
+	};
+
+	const clear = async (type: "all" | "lookingFor" | "assets") => {
+		if (type === "all" || type === "lookingFor") {
+			resetLookingForState();
+		}
+
+		if (type === "all" || type === "assets") {
+			setState({
+				asking: false,
+				offers: [],
+				pids: [],
+				dpids: [],
+			});
+
+			await toWorker("main", "clearTradingBlock", undefined);
+		}
 	};
 
 	useTitleBar({ title: "Trading Block" });
@@ -773,23 +792,30 @@ const TradingBlock = ({
 				>
 					Ask for trade proposals
 				</ActionButton>
-				<button
-					type="button"
-					className="btn btn-secondary btn-lg ms-2"
-					disabled={state.asking}
-					onClick={async () => {
-						setState({
-							asking: false,
-							offers: [],
-							pids: [],
-							dpids: [],
-						});
+				<Dropdown as={ButtonGroup}>
+					<button
+						type="button"
+						className="btn btn-secondary btn-lg ms-2"
+						disabled={state.asking}
+						onClick={() => clear("all")}
+					>
+						Clear
+					</button>
 
-						await toWorker("main", "clearTradingBlock", undefined);
-					}}
-				>
-					Clear
-				</button>
+					<Dropdown.Toggle split variant="secondary" />
+
+					<Dropdown.Menu align="end">
+						<Dropdown.Item onClick={() => clear("all")}>
+							All (default)
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => clear("assets")}>
+							Assets only
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => clear("lookingFor")}>
+							Looking for only
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 			</div>
 
 			{state.offers.length > 0 ? (

@@ -74,7 +74,7 @@ const Buttons = ({
 					disabled={!enablePropose && !forceTrade}
 					onClick={handleClickPropose}
 				>
-					Propose Trade
+					Propose trade
 				</button>
 				<Dropdown as={ButtonGroup}>
 					<button
@@ -85,7 +85,7 @@ const Buttons = ({
 						Clear
 					</button>
 
-					<Dropdown.Toggle split variant="secondary" id="clear-trade-more" />
+					<Dropdown.Toggle split variant="secondary" />
 
 					<Dropdown.Menu align="end">
 						<Dropdown.Item onClick={onClick("all")}>

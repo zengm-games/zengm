@@ -68,24 +68,30 @@ export const categories: Categories = {
 	},
 };
 
+const getInitialState = () => {
+	const makeObj = (category: Category) => {
+		const obj: Record<string, boolean> = {};
+		for (const { key } of category.options) {
+			obj[key] = false;
+		}
+		return obj;
+	};
+
+	return {
+		positions: makeObj(categories.positions),
+		skills: makeObj(categories.skills),
+		assets: makeObj(categories.assets),
+	};
+};
+
 const useLookingForState = () => {
-	const [state, setState] = useState(() => {
-		const makeObj = (category: Category) => {
-			const obj: Record<string, boolean> = {};
-			for (const { key } of category.options) {
-				obj[key] = false;
-			}
-			return obj;
-		};
+	const [state, setState] = useState(getInitialState);
 
-		return {
-			positions: makeObj(categories.positions),
-			skills: makeObj(categories.skills),
-			assets: makeObj(categories.assets),
-		};
-	});
+	const resetState = () => {
+		setState(getInitialState());
+	};
 
-	return [state, setState] as const;
+	return [state, setState, resetState] as const;
 };
 
 export default useLookingForState;

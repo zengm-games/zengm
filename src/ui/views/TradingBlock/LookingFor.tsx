@@ -44,6 +44,7 @@ const LookingFor = ({
 													type="checkbox"
 													className="form-check-input me-1"
 													disabled={disabled}
+													checked={state[categoryKey][option.key]}
 													onChange={() => {
 														setState(state => {
 															return {
@@ -67,6 +68,7 @@ const LookingFor = ({
 										// position-fixed is for https://stackoverflow.com/a/75264190/786644
 										return (
 											<OverlayTrigger
+												key={option.key}
 												overlay={
 													<Tooltip className="position-fixed">
 														{option.tooltip}

@@ -8,8 +8,8 @@ trading block - specify what you want
     - if "prospects" or "best current players", apply that as a sort the entire time (valueNoPot or some combination of age and value)
     - how to handle multiple "other" selections? maybe don't allow both best and prospects
 - ui
-  - clear button - maybe make it a dropdown for Assets/Filters/Both
   - make sure to save this new state along with the other persisted trading block state
+    - and for clear button, pass type to clearTradingBlock
   - responsive
   - light+dark
 

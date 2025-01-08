@@ -200,9 +200,10 @@ const tryAddAsset = async (
 
 	let asset;
 
-	if (!lookingForSpecificPositions && lookingFor?.draftPicks) {
-		// If we're looking for draft picks (and we're done looking for 1 player for a specific position, if necessary), add draft picks first before players
+	// Here we are trying to find a single asset to make the trade favorable to the AI (dv > 0), but if that fails, we don't know if we are at least moving in the right direction or not (making it closer to favorable than before, so maybe next iteration we can add another asset to make it actually favorable). So it just returns assets[0] below (best asset) in the hopes that it is moving in the right direction. Ideally we would pass dv from before this trade in to this function, and then we'd know that here rather than having to check it again later. But I don't want to mess with that now.
 
+	if (!lookingForSpecificPositions && lookingFor?.draftPicks) {
+		// If we're looking for draft picks (and we're done looking for 1 player for a specific position, if necessary), add draft picks first before players. If there are no draft picks that the AI team is willing to give up, then asset will be undefined and it will try to find a player below.
 		const draftAssets = assets.filter(asset => asset.type === "draftPick");
 		asset = draftAssets.findLast(asset => asset.dv > 0);
 	}

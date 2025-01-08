@@ -49,14 +49,27 @@ const LookingFor = ({
 														checked={state[categoryKey][option.key]}
 														onChange={() => {
 															setState(state => {
-																return {
+																const checked = !state[categoryKey][option.key];
+
+																const newState = {
 																	...state,
 																	[categoryKey]: {
 																		...state[categoryKey],
-																		[option.key]:
-																			!state[categoryKey][option.key],
+																		[option.key]: checked,
 																	},
 																};
+
+																if (checked && categoryKey === "assets") {
+																	if (option.key === "prospects") {
+																		newState.assets.bestCurrentPlayers = false;
+																	} else if (
+																		option.key === "bestCurrentPlayers"
+																	) {
+																		newState.assets.prospects = false;
+																	}
+																}
+
+																return newState;
 															});
 														}}
 													/>

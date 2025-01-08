@@ -112,18 +112,22 @@ const tryAddAsset = async (
 		});
 	}
 
-	if (!holdUserConstant) {
-		// Get all draft picks not in userDpids
-		const draftPicks = await idb.cache.draftPicks.indexGetAll(
-			"draftPicksByTid",
-			teams[0].tid,
-		);
+	if (!lookingForSpecificPositions) {
+		if (!holdUserConstant) {
+			// Get all draft picks not in userDpids
+			const draftPicks = await idb.cache.draftPicks.indexGetAll(
+				"draftPicksByTid",
+				teams[0].tid,
+			);
 
-		for (const dp of draftPicks) {
-			if (
-				!teams[0].dpids.includes(dp.dpid) &&
-				!teams[0].dpidsExcluded.includes(dp.dpid)
-			) {
+			for (const dp of draftPicks) {
+				if (
+					teams[0].dpids.includes(dp.dpid) ||
+					teams[0].dpidsExcluded.includes(dp.dpid)
+				) {
+					continue;
+				}
+
 				assets.push({
 					type: "draftPick",
 					dv: 0,
@@ -132,19 +136,21 @@ const tryAddAsset = async (
 				});
 			}
 		}
-	}
 
-	// Get all draft picks not in otherDpids
-	const draftPicks = await idb.cache.draftPicks.indexGetAll(
-		"draftPicksByTid",
-		teams[1].tid,
-	);
+		// Get all draft picks not in otherDpids
+		const draftPicks = await idb.cache.draftPicks.indexGetAll(
+			"draftPicksByTid",
+			teams[1].tid,
+		);
 
-	for (const dp of draftPicks) {
-		if (
-			!teams[1].dpids.includes(dp.dpid) &&
-			!teams[1].dpidsExcluded.includes(dp.dpid)
-		) {
+		for (const dp of draftPicks) {
+			if (
+				teams[1].dpids.includes(dp.dpid) ||
+				teams[1].dpidsExcluded.includes(dp.dpid)
+			) {
+				continue;
+			}
+
 			assets.push({
 				type: "draftPick",
 				dv: 0,
@@ -188,21 +194,12 @@ const tryAddAsset = async (
 			teams[0].tid,
 		);
 	}
-	assets.sort((a, b) => b.dv - a.dv); // Find the asset that will push the trade value the smallest amount above 0
 
-	let j;
+	// Sort from best asset to worst asset
+	assets.sort((a, b) => b.dv - a.dv);
 
-	for (j = 0; j < assets.length; j++) {
-		if (assets[j].dv < 0) {
-			break;
-		}
-	}
-
-	if (j > 0) {
-		j -= 1;
-	}
-
-	const asset = assets[j];
+	// Find the asset that will push the trade value the smallest amount above 0, or fall back to just adding the best asset if no single asset is good enough
+	const asset = assets.findLast(asset => asset.dv > 0) ?? assets[0];
 
 	const newTeams = helpers.deepCopy(teams);
 	if (asset.type === "player") {
@@ -245,6 +242,7 @@ const makeItWork = async (
 		valueChangeKey?: number;
 	},
 ): Promise<TradeTeams | undefined> => {
+	console.log("lookingFor", lookingFor);
 	let initialSign: -1 | 1;
 	let added = 0;
 

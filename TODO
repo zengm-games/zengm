@@ -19,10 +19,6 @@ trading block - specify what you want
   - why
   - algorithm
 
-make a MyTooltip component with position-fixed hack built in
-- https://github.com/react-bootstrap/react-bootstrap/issues/6563
-- https://stackoverflow.com/a/75264190/786644
-
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through
 - UI-related ones still go through, like warnings or "success" ones

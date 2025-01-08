@@ -68,15 +68,10 @@ const LookingFor = ({
 												return toggleButton;
 											}
 
-											// position-fixed is for https://stackoverflow.com/a/75264190/786644
 											return (
 												<OverlayTrigger
 													key={option.key}
-													overlay={
-														<Tooltip className="position-fixed">
-															{option.tooltip}
-														</Tooltip>
-													}
+													overlay={<Tooltip>{option.tooltip}</Tooltip>}
 												>
 													{toggleButton}
 												</OverlayTrigger>

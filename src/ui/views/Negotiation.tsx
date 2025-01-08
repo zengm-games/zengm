@@ -71,7 +71,7 @@ const SignButton = ({
 	}
 
 	// CSS/HTML hacks!
-	// position-fixed is for https://stackoverflow.com/a/75264190/786644 otherwise the scrollback flicker appears/disappears on desktop when the react-bootstrap Tooltip is shown.
+	// position-fixed is for https://stackoverflow.com/a/75264190/786644 https://github.com/react-bootstrap/react-bootstrap/issues/6563 otherwise the scrollback flicker appears/disappears on desktop when the react-bootstrap Tooltip is shown. However this breaks if you scroll, but this page doesn't need to scroll.
 	// Wrapper div around button is because otherwise there is no hover over the disabled button and no tooltip is shown.
 	return (
 		<OverlayTrigger

@@ -3,8 +3,10 @@ trading block - specify what you want
   - run the normal algorithm N times and keep the trade with the most matching assets
   - give a bonus to the desired assets in the algorithm
   - when including assets, first select the desired assets to try to add (or at least give them a bonus)
-    - if picks and something else, apply picks sort for 2nd+ asset
     - if "prospects" or "best current players", apply that as a sort the entire time (valueNoPot or some combination of age and value)
+      - how to combine with draftPicks?
+    - how to do skills adjustment? just one player like position?
+      - how to combine with draftPicks?
     - how to handle multiple "other" selections? maybe don't allow both best and prospects
 - ui
   - make sure to save this new state along with the other persisted trading block state

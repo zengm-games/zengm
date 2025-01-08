@@ -198,8 +198,19 @@ const tryAddAsset = async (
 	// Sort from best asset to worst asset
 	assets.sort((a, b) => b.dv - a.dv);
 
+	let asset;
+
+	if (!lookingForSpecificPositions && lookingFor?.draftPicks) {
+		// If we're looking for draft picks (and we're done looking for 1 player for a specific position, if necessary), add draft picks first before players
+
+		const draftAssets = assets.filter(asset => asset.type === "draftPick");
+		asset = draftAssets.findLast(asset => asset.dv > 0);
+	}
+
 	// Find the asset that will push the trade value the smallest amount above 0, or fall back to just adding the best asset if no single asset is good enough
-	const asset = assets.findLast(asset => asset.dv > 0) ?? assets[0];
+	if (!asset) {
+		asset = assets.findLast(asset => asset.dv > 0) ?? assets[0];
+	}
 
 	const newTeams = helpers.deepCopy(teams);
 	if (asset.type === "player") {

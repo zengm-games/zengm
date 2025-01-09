@@ -201,6 +201,8 @@ const tryAddAsset = async (
 		return;
 	}
 
+	// Sort the assets such that the best assets are listed first. Why best and not worst? Because we already got rid of assets that are so good they would make the trade negative value for the AI. So the AI wants to offer the best asset of its remaining assets, otherwise the trade will remain too unbalanced.
+
 	// High dv means the trade is highly favorable to the AI, so this is sorting from the best asset (lowest dv) to the worst asset (high dv). AI wants to give up the most possible (best asset) while still minimizing dv (so the trade is favorable to them, but at least semi-close to favorable for the other team too).
 	assets.sort((a, b) => a.dv - b.dv);
 

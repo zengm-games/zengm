@@ -35,7 +35,7 @@ const tryAddAsset = async (
 	firstTry: boolean,
 	lookingFor?: LookingFor,
 ): Promise<TradeTeams | void> => {
-	const assets: Asset[] = [];
+	let assets: Asset[] = [];
 
 	if (!holdUserConstant) {
 		// Get all players not in userPids
@@ -195,22 +195,26 @@ const tryAddAsset = async (
 		);
 	}
 
-	// Here we are trying to find a single asset to make the trade favorable to the AI (dv > 0), but if that fails, we don't know if we are at least moving in the right direction or not (making it closer to favorable than before, so maybe next iteration we can add another asset to make it actually favorable). So it just returns assets[0] below (best asset) in the hopes that it is moving in the right direction. Ideally we would pass dv from before this trade in to this function, and then we'd know that here rather than having to check it again later. But I don't want to mess with that now.
+	// Here we are trying to find a single asset for the AI to give up while still having the trade be favorable to them. So we are discarding assets that are too good to give up. If there is no asset remaining (dv is negative for all assets) then just give up.
+	assets = assets.filter(asset => asset.dv >= 0);
+	if (assets.length === 0) {
+		return;
+	}
 
-	// Sort from worst asset to best asset - high dv means the trade is highly favorable to the AI
-	assets.sort((a, b) => b.dv - a.dv);
+	// High dv means the trade is highly favorable to the AI, so this is sorting from the best asset (lowest dv) to the worst asset (high dv). AI wants to give up the most possible (best asset) while still minimizing dv (so the trade is favorable to them, but at least semi-close to favorable for the other team too).
+	assets.sort((a, b) => a.dv - b.dv);
 
 	let asset;
 
 	if (!lookingForSpecificPositions && lookingFor?.draftPicks) {
 		// If we're looking for draft picks (and we're done looking for 1 player for a specific position, if necessary), add draft picks first before players. If there are no draft picks that the AI team is willing to give up, then asset will be undefined and it will try to find a player below.
-		const draftAssets = assets.filter(asset => asset.type === "draftPick");
-		asset = draftAssets.findLast(asset => asset.dv > 0);
+		asset = assets.find(asset => asset.type === "draftPick");
 	}
 
 	// Find the asset that will push the trade value the smallest amount above 0 (i.e. the best asset the AI is willing to give up without making the trade unfavorable to them), or fall back to just adding the worst asset if no single asset is good enough
 	if (!asset) {
-		asset = assets.findLast(asset => asset.dv > 0) ?? assets[0];
+		// asset is now guaranteed to be defined, since there was a length check above
+		asset = assets[0];
 	}
 
 	const newTeams = helpers.deepCopy(teams);
@@ -220,10 +224,12 @@ const tryAddAsset = async (
 		} else {
 			newTeams[1].pids.push(asset.p.pid);
 		}
-	} else if (asset.tid === newTeams[0].tid) {
-		newTeams[0].dpids.push(asset.dp.dpid);
 	} else {
-		newTeams[1].dpids.push(asset.dp.dpid);
+		if (asset.tid === newTeams[0].tid) {
+			newTeams[0].dpids.push(asset.dp.dpid);
+		} else {
+			newTeams[1].dpids.push(asset.dp.dpid);
+		}
 	}
 
 	return newTeams;

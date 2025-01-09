@@ -140,6 +140,7 @@ import getWinner from "../../common/getWinner";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 import { getStats } from "../../common/advancedPlayerSearch";
 import type { LookingFor } from "../core/trade/makeItWork";
+import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2093,6 +2094,26 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 	);
 };
 
+const toConciseLookingFor = (lookingForState: LookingForState) => {
+	const output = {
+		positions: new Set<string>(),
+		skills: new Set<string>(),
+		draftPicks: lookingForState.assets.draftPicks,
+		prospects: lookingForState.assets.prospects,
+		bestCurrentPlayers: lookingForState.assets.bestCurrentPlayers,
+	};
+
+	for (const category of ["positions", "skills"] as const) {
+		for (const [key, value] of Object.entries(lookingForState[category])) {
+			if (value) {
+				output[category].add(key);
+			}
+		}
+	}
+
+	return output;
+};
+
 const getTradingBlockOffers = async ({
 	pids,
 	dpids,
@@ -2100,9 +2121,9 @@ const getTradingBlockOffers = async ({
 }: {
 	pids: number[];
 	dpids: number[];
-	lookingFor: LookingFor;
+	lookingFor: LookingForState;
 }) => {
-	const offers = await getOffers(pids, dpids, lookingFor);
+	const offers = await getOffers(pids, dpids, toConciseLookingFor(lookingFor));
 
 	const savedTradingBlock = {
 		rid: 0 as const,
@@ -2116,6 +2137,7 @@ const getTradingBlockOffers = async ({
 				tid: offer[1].tid,
 			};
 		}),
+		lookingFor,
 	};
 	await idb.cache.savedTradingBlock.put(savedTradingBlock);
 

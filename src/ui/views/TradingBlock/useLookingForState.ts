@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
 	bySport,
 	COMPOSITE_WEIGHTS,
@@ -98,8 +98,13 @@ const getInitialState = () => {
 	};
 };
 
-const useLookingForState = () => {
-	const [state, setState] = useState(getInitialState);
+export type LookingForState = ReturnType<typeof getInitialState>;
+export type SetLookingForState = React.Dispatch<
+	React.SetStateAction<LookingForState>
+>;
+
+const useLookingForState = (savedLookingFor: LookingForState | undefined) => {
+	const [state, setState] = useState(savedLookingFor ?? getInitialState);
 
 	const resetState = () => {
 		setState(getInitialState());

@@ -1628,6 +1628,7 @@ import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
 import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
 import type { TIEBREAKERS } from "./constants";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions";
+import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &
@@ -1963,4 +1964,5 @@ export type SavedTradingBlock = {
 		pids: number[];
 		tid: number;
 	}[];
+	lookingFor?: LookingForState;
 };

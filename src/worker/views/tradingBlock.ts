@@ -126,6 +126,7 @@ const updateUserRoster = async (
 						dpids: savedTradingBlockRaw.dpids,
 						pids: savedTradingBlockRaw.pids,
 						offers,
+						lookingFor: savedTradingBlockRaw.lookingFor,
 					};
 				} else {
 					await idb.cache.savedTradingBlock.clear();

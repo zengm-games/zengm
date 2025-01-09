@@ -21,7 +21,7 @@ import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { MissingAssets, OvrChange } from "../Trade/Summary";
 import type { MissingAsset } from "../../../worker/views/savedTrades";
 import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
-import LookingFor, { type LookingForState } from "./LookingFor";
+import LookingFor from "./LookingFor";
 import useLookingForState from "./useLookingForState";
 import { Dropdown, SplitButton } from "react-bootstrap";
 
@@ -492,26 +492,6 @@ const MissingAndWilling = ({
 	);
 };
 
-const lookingForToWorker = (lookingForState: LookingForState) => {
-	const output = {
-		positions: new Set<string>(),
-		skills: new Set<string>(),
-		draftPicks: lookingForState.assets.draftPicks,
-		prospects: lookingForState.assets.prospects,
-		bestCurrentPlayers: lookingForState.assets.bestCurrentPlayers,
-	};
-
-	for (const category of ["positions", "skills"] as const) {
-		for (const [key, value] of Object.entries(lookingForState[category])) {
-			if (value) {
-				output[category].add(key);
-			}
-		}
-	}
-
-	return output;
-};
-
 const TradingBlock = ({
 	challengeNoRatings,
 	challengeNoTrades,
@@ -560,7 +540,7 @@ const TradingBlock = ({
 	});
 
 	const [lookingForState, setLookingForState, resetLookingForState] =
-		useLookingForState();
+		useLookingForState(savedTradingBlock?.lookingFor);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
@@ -592,7 +572,7 @@ const TradingBlock = ({
 		const offers = await toWorker("main", "getTradingBlockOffers", {
 			pids: state.pids,
 			dpids: state.dpids,
-			lookingFor: lookingForToWorker(lookingForState),
+			lookingFor: lookingForState,
 		});
 
 		setState(prevState => ({

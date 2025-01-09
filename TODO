@@ -16,6 +16,7 @@ trading block - specify what you want
   - is "Best current players" actually a good name? Maybe "Win-now players"?
   - too much space between lookingfor and table above it?
 - recursive makeItWork call in makeItWork - does this ever happen if holdUserConstant?
+- some trade (like hauser for 3) result in offers with no assets being returned
 - does fallback to first entry in assets list make sense? should we instead have no fall back?
   -  ?? assets[0]
   - maybe only makes sense with negative assets?

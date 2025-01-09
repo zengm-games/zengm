@@ -1,9 +1,9 @@
-import { team } from "..";
+import { player, team } from "..";
 import { idb } from "../../db";
 import type { DraftPick, Player, TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 import { helpers } from "../../util";
-import { isSport, POSITIONS } from "../../../common";
+import { COMPOSITE_WEIGHTS, isSport, POSITIONS } from "../../../common";
 
 export type LookingFor = {
 	positions: Set<string>;
@@ -13,16 +13,19 @@ export type LookingFor = {
 	bestCurrentPlayers: boolean;
 };
 
-type AssetPlayer = {
-	type: "player";
-	dv: number;
+type AssetBase = {
 	tid: number;
+	dv: number;
+
+	// score is only used when applying some sort override that is not dv, with some lookingFor settings
+	score: number;
+};
+type AssetPlayer = AssetBase & {
+	type: "player";
 	p: Player;
 };
-type AssetPick = {
+type AssetPick = AssetBase & {
 	type: "draftPick";
-	dv: number;
-	tid: number;
 	dp: DraftPick;
 };
 type Asset = AssetPlayer | AssetPick;
@@ -56,6 +59,7 @@ const tryAddAsset = async (
 			assets.push({
 				type: "player",
 				dv: 0,
+				score: 0,
 				tid: teams[0].tid,
 				p,
 			});
@@ -107,6 +111,7 @@ const tryAddAsset = async (
 		assets.push({
 			type: "player",
 			dv: 0,
+			score: 0,
 			tid: teams[1].tid,
 			p,
 		});
@@ -131,6 +136,7 @@ const tryAddAsset = async (
 				assets.push({
 					type: "draftPick",
 					dv: 0,
+					score: 0,
 					tid: teams[0].tid,
 					dp,
 				});
@@ -154,6 +160,7 @@ const tryAddAsset = async (
 			assets.push({
 				type: "draftPick",
 				dv: 0,
+				score: 0,
 				tid: teams[1].tid,
 				dp,
 			});
@@ -178,10 +185,12 @@ const tryAddAsset = async (
 			} else {
 				otherPids.push(asset.p.pid);
 			}
-		} else if (asset.tid === teams[0].tid) {
-			userDpids.push(asset.dp.dpid);
 		} else {
-			otherDpids.push(asset.dp.dpid);
+			if (asset.tid === teams[0].tid) {
+				userDpids.push(asset.dp.dpid);
+			} else {
+				otherDpids.push(asset.dp.dpid);
+			}
 		}
 
 		asset.dv = await team.valueChange(
@@ -202,9 +211,27 @@ const tryAddAsset = async (
 	}
 
 	// Sort the assets such that the best assets are listed first. Why best and not worst? Because we already got rid of assets that are so good they would make the trade negative value for the AI. So the AI wants to offer the best asset of its remaining assets, otherwise the trade will remain too unbalanced.
+	if (lookingFor && lookingFor.skills.size > 0) {
+		for (const asset of assets) {
+			if (asset.type === "player") {
+				const ratings = asset.p.ratings.at(-1);
+				for (const skill of lookingFor.skills) {
+					asset.score += player.compositeRating(
+						ratings,
+						COMPOSITE_WEIGHTS[skill].ratings,
+						COMPOSITE_WEIGHTS[skill].weights,
+						false,
+					);
+				}
+			}
+		}
 
-	// High dv means the trade is highly favorable to the AI, so this is sorting from the best asset (lowest dv) to the worst asset (high dv). AI wants to give up the most possible (best asset) while still minimizing dv (so the trade is favorable to them, but at least semi-close to favorable for the other team too).
-	assets.sort((a, b) => a.dv - b.dv);
+		assets.sort((a, b) => b.score - a.score);
+	} else {
+		// This is the default code path, unless lookingFor something!
+		// High dv means the trade is highly favorable to the AI, so this is sorting from the best asset (lowest dv) to the worst asset (high dv). AI wants to give up the most possible (best asset) while still minimizing dv (so the trade is favorable to them, but at least semi-close to favorable for the other team too).
+		assets.sort((a, b) => a.dv - b.dv);
+	}
 
 	let asset;
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
 	bySport,
+	COMPOSITE_WEIGHTS,
 	NOT_REAL_POSITIONS,
 	POSITIONS,
 	SKILLS,
@@ -37,6 +38,17 @@ const positionNames = bySport<Record<string, string> | undefined>({
 	default: undefined,
 });
 
+const skillOptions = [];
+for (const [key, compositeWeight] of Object.entries(COMPOSITE_WEIGHTS)) {
+	if (compositeWeight.skill) {
+		skillOptions.push({
+			key,
+			name: compositeWeight.skill.label,
+			tooltip: SKILLS[compositeWeight.skill.label],
+		});
+	}
+}
+
 export const categories: Categories = {
 	positions: {
 		name: "Positions",
@@ -49,13 +61,7 @@ export const categories: Categories = {
 	},
 	skills: {
 		name: "Skills",
-		options: Object.entries(SKILLS).map(([key, tooltip]) => {
-			return {
-				key,
-				name: key,
-				tooltip,
-			};
-		}),
+		options: skillOptions,
 	},
 	assets: {
 		name: "Assets",

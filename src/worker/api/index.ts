@@ -2125,6 +2125,16 @@ const getTradingBlockOffers = async ({
 }) => {
 	const offers = await getOffers(pids, dpids, toConciseLookingFor(lookingFor));
 
+	let saveLookingFor;
+	OUTER_LOOP: for (const obj of Object.values(lookingFor)) {
+		for (const value of Object.values(obj)) {
+			if (value) {
+				saveLookingFor = true;
+				break OUTER_LOOP;
+			}
+		}
+	}
+
 	const savedTradingBlock = {
 		rid: 0 as const,
 		dpids,
@@ -2137,7 +2147,7 @@ const getTradingBlockOffers = async ({
 				tid: offer[1].tid,
 			};
 		}),
-		lookingFor,
+		lookingFor: saveLookingFor ? lookingFor : undefined,
 	};
 	await idb.cache.savedTradingBlock.put(savedTradingBlock);
 

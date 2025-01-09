@@ -13,6 +13,7 @@ trading block - specify what you want
   - light+dark
   - make sure it looks okay in other sports
   - is "Best current players" actually a good name? Maybe "Win-now players"?
+  - too much space between lookingfor and table above it?
 - recursive makeItWork call in makeItWork - does this ever happen if holdUserConstant?
 - blog
   - why
@@ -23,6 +24,11 @@ option to disable notification popups https://old.reddit.com/r/BasketballGM/comm
 - UI-related ones still go through, like warnings or "success" ones
 
 Setting pass tendency to zero doesn't prevent pass attempts on two point conversions https://discord.com/channels/290013534023057409/290015591216054273/1323838219598561363
+
+somehow show count of goals and HR inline for baseball and hockey
+- others too... like for basketball stats it should be this game's stats
+- https://x.com/nevameant2b/status/1877107051492499699
+- https://discord.com/channels/@me/778760871911751700/1179618240507420783
 
 Change (or add an option for) the coin flip to be like the old NBA coin flip, which was between the worst teams in each conference, not the worst two teams overall. Alternatively add the ability to edit the teams in the lottery. Probably no one else cares, but I like to be accurate. https://discord.com/channels/290013534023057409/331882115119448065/1322397494335897692
 
@@ -437,9 +443,6 @@ better copy/paste or export of play-by-play
 - https://old.reddit.com/r/BasketballGM/comments/188okm0/is_there_a_way_to_copy_the_playbyplay/kbq4bei/?context=3
 
 subs shouldn't happen after offensive rebound https://old.reddit.com/r/BasketballGM/comments/18829x9/substitution_on_offensive_rebounds_shouldnt_be/
-
-somehow show count of goals and HR inline for baseball and hockey https://discord.com/channels/@me/778760871911751700/1179618240507420783
-- others too... like for basketball stats it should be this game's stats
 
 some sportState live sim for basketball/hockey
 - chart showing margin vs time or win probability vs time (toggle button to switch)

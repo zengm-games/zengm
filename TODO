@@ -5,6 +5,7 @@ trading block - specify what you want
     - prospects - idk come up with something involving age, ovr, and pot
     - skill - calculate skill formula, normalize relative to cutoff somehow. if multiple skills, add them.
     - bestCurrentPlayers/prospects + skills - ???
+    - overall - positive dv means AI is willing to do the trade, so tweaking that a bit could mean the AI gives up players who aren't that good (high dv, rather than a lower dv option that matches) or that the AI gives up a player that is too good and makes the trade low DV
   - if draftPicks is selected along with some other stuff, then use the other stuff to pick a player first, then take draft picks until done, then resume taking players by the original sort
   - if draftPicks is not selected but something else is, then don't look at picks at all? or can i put it on the same scale somehow?
 - ui
@@ -15,9 +16,13 @@ trading block - specify what you want
   - is "Best current players" actually a good name? Maybe "Win-now players"?
   - too much space between lookingfor and table above it?
 - recursive makeItWork call in makeItWork - does this ever happen if holdUserConstant?
+- does fallback to first entry in assets list make sense? should we instead have no fall back?
+  -  ?? assets[0]
+  - maybe only makes sense with negative assets?
 - blog
   - why
   - algorithm
+  - positions are discrete (kind of), others are continuous
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through

@@ -197,7 +197,7 @@ const tryAddAsset = async (
 
 	// Here we are trying to find a single asset to make the trade favorable to the AI (dv > 0), but if that fails, we don't know if we are at least moving in the right direction or not (making it closer to favorable than before, so maybe next iteration we can add another asset to make it actually favorable). So it just returns assets[0] below (best asset) in the hopes that it is moving in the right direction. Ideally we would pass dv from before this trade in to this function, and then we'd know that here rather than having to check it again later. But I don't want to mess with that now.
 
-	// Sort from best asset to worst asset
+	// Sort from worst asset to best asset - high dv means the trade is highly favorable to the AI
 	assets.sort((a, b) => b.dv - a.dv);
 
 	let asset;
@@ -208,7 +208,7 @@ const tryAddAsset = async (
 		asset = draftAssets.findLast(asset => asset.dv > 0);
 	}
 
-	// Find the asset that will push the trade value the smallest amount above 0, or fall back to just adding the best asset if no single asset is good enough
+	// Find the asset that will push the trade value the smallest amount above 0 (i.e. the best asset the AI is willing to give up without making the trade unfavorable to them), or fall back to just adding the worst asset if no single asset is good enough
 	if (!asset) {
 		asset = assets.findLast(asset => asset.dv > 0) ?? assets[0];
 	}

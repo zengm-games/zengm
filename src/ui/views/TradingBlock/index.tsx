@@ -566,7 +566,6 @@ const TradingBlock = ({
 		setState(prevState => ({
 			...prevState,
 			asking: true,
-			offers: [],
 		}));
 
 		const offers = await toWorker("main", "getTradingBlockOffers", {
@@ -609,14 +608,14 @@ const TradingBlock = ({
 		}
 
 		if (type === "all" || type === "assets") {
-			setState({
-				asking: false,
-				offers: [],
-				pids: [],
-				dpids: [],
+			setState(state => {
+				return {
+					...state,
+					asking: false,
+					pids: [],
+					dpids: [],
+				};
 			});
-
-			await toWorker("main", "clearTradingBlock", undefined);
 		}
 	};
 
@@ -805,7 +804,7 @@ const TradingBlock = ({
 						All (default)
 					</Dropdown.Item>
 					<Dropdown.Item onClick={() => clear("assets")}>
-						Assets only
+						Players/picks only
 					</Dropdown.Item>
 					<Dropdown.Item onClick={() => clear("lookingFor")}>
 						Looking for only

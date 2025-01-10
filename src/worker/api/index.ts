@@ -4426,10 +4426,6 @@ const clearTrade = async (
 	await toUI("realtimeUpdate", []);
 };
 
-const clearTradingBlock = async () => {
-	await idb.cache.savedTradingBlock.clear();
-};
-
 const createTrade = async (teams: TradeTeams) => {
 	await trade.create(teams);
 	await toUI("realtimeUpdate", []);
@@ -4619,7 +4615,6 @@ export default {
 		clearSavedTrades,
 		clearTeamNotes,
 		clearTrade,
-		clearTradingBlock,
 		clearWatchList,
 		countNegotiations,
 		createLeague,

@@ -267,9 +267,21 @@ const tryAddAsset = async (
 
 	let asset;
 
-	if (!lookingForSpecificPositions && lookingFor?.draftPicks) {
-		// If we're looking for draft picks (and we're done looking for 1 player for a specific position, if necessary), add draft picks first before players. If there are no draft picks that the AI team is willing to give up, then asset will be undefined and it will try to find a player below.
-		asset = assets.find(asset => asset.type === "draftPick");
+	if (lookingFor) {
+		const lookingForSomePlayerBeforeDraftPicks =
+			firstTry &&
+			lookingFor.draftPicks &&
+			(lookingFor.bestCurrentPlayers ||
+				lookingFor.prospects ||
+				lookingFor.skills.size > 0);
+		if (
+			!lookingForSpecificPositions &&
+			!lookingForSomePlayerBeforeDraftPicks &&
+			lookingFor.draftPicks
+		) {
+			// If we're looking for draft picks (and we're done looking for 1 player for a specific position or 1 player with some other sort, if necessary), add draft picks first before players. If there are no draft picks that the AI team is willing to give up, then asset will be undefined and it will try to find a player below.
+			asset = assets.find(asset => asset.type === "draftPick");
+		}
 	}
 
 	// Find the asset that will push the trade value the smallest amount above 0 (i.e. the best asset the AI is willing to give up without making the trade unfavorable to them), or fall back to just adding the worst asset if no single asset is good enough

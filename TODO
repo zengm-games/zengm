@@ -1,6 +1,4 @@
 trading block - specify what you want
-- if draftPicks is selected along with some other stuff, then use the other stuff to pick a player first, then take draft picks until done, then resume taking players by the original sort
-- if draftPicks is not selected but something else is, then don't look at picks at all? or can i put it on the same scale somehow?
 - ui
   - light+dark
   - make sure it looks okay in other sports

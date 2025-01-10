@@ -510,6 +510,7 @@ const TradingBlock = ({
 	const [state, setState] = useState<{
 		asking: boolean;
 		offers: OfferType[];
+		noOffers: boolean;
 		pids: number[];
 		dpids: number[];
 	}>(() => {
@@ -534,6 +535,7 @@ const TradingBlock = ({
 		return {
 			asking: false,
 			offers: savedTradingBlock?.offers ?? [],
+			noOffers: false, // Only set true in response to a click
 			pids,
 			dpids,
 		};
@@ -577,6 +579,7 @@ const TradingBlock = ({
 		setState(prevState => ({
 			...prevState,
 			asking: false,
+			noOffers: offers.length === 0,
 			offers,
 		}));
 	};
@@ -811,6 +814,12 @@ const TradingBlock = ({
 					</Dropdown.Item>
 				</SplitButton>
 			</div>
+
+			{state.noOffers ? (
+				<div className="alert alert-danger mb-0 mt-3 d-inline-block">
+					No team made an offer.
+				</div>
+			) : null}
 
 			{state.offers.length > 0 ? (
 				<div className="mt-3 mt-md-0">{tradeOffersSwitch.toggle}</div>

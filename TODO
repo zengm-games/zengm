@@ -3,7 +3,6 @@ trading block - specify what you want
   - could take all the ones that are acceptable to the AI by positive dv and then sort them by some other metric
     - bestCurrentPlayers - sort by valueNoPot
     - prospects - idk come up with something involving age, ovr, and pot
-    - skill - calculate skill formula, normalize relative to cutoff somehow. if multiple skills, add them.
     - bestCurrentPlayers/prospects + skills - ???
     - overall - positive dv means AI is willing to do the trade, so tweaking that a bit could mean the AI gives up players who aren't that good (high dv, rather than a lower dv option that matches) or that the AI gives up a player that is too good and makes the trade low DV
   - if draftPicks is selected along with some other stuff, then use the other stuff to pick a player first, then take draft picks until done, then resume taking players by the original sort
@@ -15,7 +14,6 @@ trading block - specify what you want
   - is "Best current players" actually a good name? Maybe "Win-now players"?
   - too much space between lookingfor and table above it?
 - recursive makeItWork call in makeItWork - does this ever happen if holdUserConstant?
-- some trade (like hauser for 3) result in offers with no assets being returned
 - does fallback to first entry in assets list make sense? should we instead have no fall back?
   -  ?? assets[0]
   - maybe only makes sense with negative assets?
@@ -23,6 +21,14 @@ trading block - specify what you want
   - why
   - algorithm
   - positions are discrete (kind of), others are continuous
+
+counter proposals too jumpy, get rid of that extra iteration at the end maybe?
+- https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
+- https://discord.com/channels/290013534023057409/290015591216054273/854580914024480798
+- add penalty for too many players in trade?
+- try with and without overshooting (without meaning, don't add anyone worth more than the initial trade proposal) and if both work, pick the one with fewest assets
+- something about magnitude - no point in adding 20 shitty players when trading a star
+- only overshoot if # of players is not too much
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through
@@ -1297,12 +1303,6 @@ bundle size
 teams run starting lineups with terrible guards because most GFs became SFs or Fs, even though their passing and dribbling are far better than whichever short guy now gets to start. the logic for who's on the floor when should probably be changed. https://discord.com/channels/290013534023057409/331882115119448065/840121129389391882
 
 Re-enabling auto-save while auto-playing sometimes breaks the game. Uncaught (in promise) Error: Primary key "2480" already exists in "games" https://discord.com/channels/290013534023057409/290015591216054273/840126335501991957
-
-counter proposals too jumpy, get rid of that extra iteration at the end maybe?
-- https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
-- https://discord.com/channels/290013534023057409/290015591216054273/854580914024480798
-- add penalty for too many players in trade?
-- try with and without overshooting (without meaning, don't add anyone worth more than the initial trade proposal) and if both work, pick the one with fewest assets
 
 Live-simming a game being played by CPU teams in playoffs before simming your game on the same day causes the top game bar to stop updating. https://discord.com/channels/290013534023057409/290015591216054273/840604799539871744
 

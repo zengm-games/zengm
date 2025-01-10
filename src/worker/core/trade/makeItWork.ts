@@ -35,6 +35,7 @@ const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
 	valueChangeKey: number,
+	prevDv: number,
 	firstTry: boolean,
 	lookingFor?: LookingFor,
 ): Promise<TradeTeams | void> => {
@@ -205,7 +206,10 @@ const tryAddAsset = async (
 	}
 
 	// Here we are trying to find a single asset for the AI to give up while still having the trade be favorable to them. So we are discarding assets that are too good to give up. If there is no asset remaining (dv is negative for all assets) then just give up.
-	assets = assets.filter(asset => asset.dv >= 0);
+	// prevDv condition is basically just for the trading block with lookingFor - we want to make sure the assets we're picking actually move things in the correct direction, which is generally starting with a positive dv and moving down towards 0. Maybe would make sense to put a similar condition for negative dv, but idk if it's needed.
+	assets = assets.filter(
+		asset => asset.dv >= 0 && (prevDv < 0 || asset.dv < prevDv),
+	);
 	if (assets.length === 0) {
 		return;
 	}
@@ -289,7 +293,6 @@ const makeItWork = async (
 		valueChangeKey?: number;
 	},
 ): Promise<TradeTeams | undefined> => {
-	console.log("lookingFor", lookingFor);
 	let initialSign: -1 | 1;
 	let added = 0;
 
@@ -318,6 +321,7 @@ const makeItWork = async (
 			prevTeams,
 			holdUserConstant,
 			valueChangeKey,
+			prevDv,
 			added === 0,
 			lookingFor,
 		);

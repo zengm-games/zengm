@@ -60,7 +60,7 @@ const tryAddAsset = async (
 			assets.push({
 				type: "player",
 				dv: 0,
-				score: 0,
+				score: 1,
 				tid: teams[0].tid,
 				p,
 			});
@@ -112,7 +112,7 @@ const tryAddAsset = async (
 		assets.push({
 			type: "player",
 			dv: 0,
-			score: 0,
+			score: 1,
 			tid: teams[1].tid,
 			p,
 		});
@@ -215,21 +215,43 @@ const tryAddAsset = async (
 	}
 
 	// Sort the assets such that the best assets are listed first. Why best and not worst? Because we already got rid of assets that are so good they would make the trade negative value for the AI. So the AI wants to offer the best asset of its remaining assets, otherwise the trade will remain too unbalanced.
-	if (lookingFor && lookingFor.skills.size > 0) {
-		for (const asset of assets) {
-			if (asset.type === "player") {
-				const ratings = asset.p.ratings.at(-1);
-				for (const skill of lookingFor.skills) {
-					asset.score += player.compositeRating(
-						ratings,
-						COMPOSITE_WEIGHTS[skill].ratings,
-						COMPOSITE_WEIGHTS[skill].weights,
-						false,
-					);
+	let lookingForSort = false;
+	if (lookingFor) {
+		if (lookingFor.skills.size > 0) {
+			for (const asset of assets) {
+				if (asset.type === "player") {
+					const ratings = asset.p.ratings.at(-1);
+					for (const skill of lookingFor.skills) {
+						asset.score += player.compositeRating(
+							ratings,
+							COMPOSITE_WEIGHTS[skill].ratings,
+							COMPOSITE_WEIGHTS[skill].weights,
+							false,
+						);
+					}
 				}
 			}
+
+			lookingForSort = true;
 		}
 
+		if (lookingFor.bestCurrentPlayers) {
+			for (const asset of assets) {
+				if (asset.type === "player") {
+					// Asset score for players starts at 0 and draft picks starts at 0, so this will keep all players above draft picks, and also handle adjusting based on skills-adjusted score
+					asset.score *= asset.p.valueNoPot;
+				}
+			}
+
+			lookingForSort = true;
+		} else if (lookingFor.prospects) {
+			console.log("TODO");
+
+			lookingForSort = true;
+		}
+	}
+
+	if (lookingForSort) {
 		assets.sort((a, b) => b.score - a.score);
 	} else {
 		// This is the default code path, unless lookingFor something!

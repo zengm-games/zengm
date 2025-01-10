@@ -1,12 +1,9 @@
 trading block - specify what you want
-- implementation ideas
-  - could take all the ones that are acceptable to the AI by positive dv and then sort them by some other metric
-    - bestCurrentPlayers - sort by valueNoPot
-    - prospects - idk come up with something involving age, ovr, and pot
-    - bestCurrentPlayers/prospects + skills - ???
-    - overall - positive dv means AI is willing to do the trade, so tweaking that a bit could mean the AI gives up players who aren't that good (high dv, rather than a lower dv option that matches) or that the AI gives up a player that is too good and makes the trade low DV
-  - if draftPicks is selected along with some other stuff, then use the other stuff to pick a player first, then take draft picks until done, then resume taking players by the original sort
-  - if draftPicks is not selected but something else is, then don't look at picks at all? or can i put it on the same scale somehow?
+- trade holiday for C + draftPicks - some blank ones return
+- if looking for draft picks, should not return trades with no draft picks
+- prospects - idk come up with something involving age, ovr, and pot
+- if draftPicks is selected along with some other stuff, then use the other stuff to pick a player first, then take draft picks until done, then resume taking players by the original sort
+- if draftPicks is not selected but something else is, then don't look at picks at all? or can i put it on the same scale somehow?
 - ui
   - and for clear button, pass type to clearTradingBlock
   - light+dark
@@ -17,6 +14,8 @@ trading block - specify what you want
 - does fallback to first entry in assets list make sense? should we instead have no fall back?
   -  ?? assets[0]
   - maybe only makes sense with negative assets?
+- info button explaining how it works
+  - prospects vs bestCurrentPlayers vs default
 - blog
   - why
   - algorithm

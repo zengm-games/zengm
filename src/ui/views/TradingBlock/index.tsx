@@ -758,6 +758,7 @@ const TradingBlock = ({
 			<div className="row">
 				<div className="col-md-9">
 					<DataTable
+						classNameWrapper="mb-3 mb-md-0"
 						cols={cols}
 						defaultSort={[6, "desc"]}
 						defaultStickyCols={window.mobile ? 1 : 2}
@@ -768,6 +769,7 @@ const TradingBlock = ({
 				</div>
 				<div className="col-md-3 trading-block-draft-picks-wrapper">
 					<DataTable
+						classNameWrapper="mb-0"
 						cols={pickCols}
 						defaultSort={[1, "asc"]}
 						hideAllControls

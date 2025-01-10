@@ -1,11 +1,3 @@
-trading block - specify what you want
-- ui
-  - too much space between lookingfor and table above it?
-- blog
-  - why
-  - algorithm
-  - positions are discrete (kind of), others are continuous
-
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
 - https://discord.com/channels/290013534023057409/290015591216054273/854580914024480798

@@ -245,7 +245,13 @@ const tryAddAsset = async (
 
 			lookingForSort = true;
 		} else if (lookingFor.prospects) {
-			console.log("TODO");
+			for (const asset of assets) {
+				if (asset.type === "player") {
+					const ratings = asset.p.ratings.at(-1);
+					const potDiff = ratings.pot - ratings.ovr;
+					asset.score += potDiff / 20;
+				}
+			}
 
 			lookingForSort = true;
 		}

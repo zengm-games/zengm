@@ -2123,16 +2123,43 @@ const getTradingBlockOffers = async ({
 	dpids: number[];
 	lookingFor: LookingForState;
 }) => {
-	const offers = await getOffers(pids, dpids, toConciseLookingFor(lookingFor));
+	let offers = await getOffers(pids, dpids, toConciseLookingFor(lookingFor));
 
 	let saveLookingFor;
-	OUTER_LOOP: for (const obj of Object.values(lookingFor)) {
-		for (const value of Object.values(obj)) {
+	let positionAndNotDraftPicks = false;
+	let draftPicksAndNothingElse = lookingFor.assets.draftPicks;
+	for (const type of helpers.keys(lookingFor)) {
+		const obj = lookingFor[type];
+		for (const [key, value] of Object.entries(obj)) {
 			if (value) {
 				saveLookingFor = true;
-				break OUTER_LOOP;
+
+				if (!lookingFor.assets.draftPicks && type === "positions") {
+					positionAndNotDraftPicks = true;
+				}
+
+				if (
+					draftPicksAndNothingElse &&
+					(type !== "assets" || key !== "draftPicks")
+				) {
+					draftPicksAndNothingElse = false;
+				}
 			}
 		}
+	}
+
+	// If we're looking for a position and not draft picks, only keep offers that include that position
+	if (positionAndNotDraftPicks) {
+		offers = offers.filter(offer => {
+			return offer[1].pids.length > 0;
+		});
+	}
+
+	// If we're looking for draft picks and nothing else, only keep offers that include picks
+	if (draftPicksAndNothingElse) {
+		offers = offers.filter(offer => {
+			return offer[1].dpids.length > 0;
+		});
 	}
 
 	const savedTradingBlock = {

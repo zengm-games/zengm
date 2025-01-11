@@ -1951,7 +1951,6 @@ const getOffers = async (
 	userDpids: number[],
 	lookingFor: LookingFor,
 ) => {
-	// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
 	const teams = await idb.cache.teams.getAll();
 	const tids = orderBy(
 		teams.filter(t => !t.disabled),

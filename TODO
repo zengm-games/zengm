@@ -1,7 +1,22 @@
+
+Fo-Fo-Fo fails if team has a bye https://mail.google.com/mail/u/0/#inbox/FMfcgzQXKhJZvwmSjwbthGLcdXGfCrJH
+
+98 Degrees should be awarded regardless of the number of playoff rounds and also if there are more than 82 regular season games, just need 82+ and 16+ games with no losses https://mail.google.com/mail/u/0/#inbox/FMfcgzQXKhJZvwmSjwbthGLcdXGfCrJH
+
+Add https://mail.google.com/mail/u/0/#inbox/FMfcgzQXKhJZvwmSjwbthGLcdXGfCrJH to rebuilding/contending strategy rewrite
+
+Create league in 1949 playoffs. Sim through playoffs. Expansion draft starts. Export/import league. Observe that the playoff changes for 1950 got applied to 1949 https://mail.google.com/mail/u/0/#inbox/FMfcgzQZSZFWNRNfpsKFvnRmhWRHcttB
+
+vector logo generation
+- https://www.recraft.ai/ai-image-vectorizer
+- https://sagipolaczek.github.io/NeuralSVG/
+- https://neosvg.com/
+
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194
 - https://discord.com/channels/290013534023057409/290015591216054273/854580914024480798
 - add penalty for too many players in trade?
+  - if this works, could remove the maxAssetsToAdd constraint in trading block
 - try with and without overshooting (without meaning, don't add anyone worth more than the initial trade proposal) and if both work, pick the one with fewest assets
 - something about magnitude - no point in adding 20 shitty players when trading a star
 - only overshoot if # of players is not too much

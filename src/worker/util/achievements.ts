@@ -176,20 +176,24 @@ const checkYoungGuns = async (age: number) => {
 };
 
 const checkFoFoFo = async () => {
-	if (g.get("numGamesPlayoffSeries", "current").length < 3) {
-		return false;
-	}
-
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 
 	if (!playoffSeries || playoffSeries.series.length === 0) {
 		return false;
 	}
 
+	let numRoundsFound = 0;
+
 	for (const round of playoffSeries.series) {
 		let found = false;
 
 		for (const series of round) {
+			if (!series.away && series.home.tid === g.get("userTid")) {
+				// Bye
+				found = true;
+				break;
+			}
+
 			if (
 				series.away &&
 				series.away.won >= 4 &&
@@ -197,6 +201,7 @@ const checkFoFoFo = async () => {
 				series.away.tid === g.get("userTid")
 			) {
 				found = true;
+				numRoundsFound += 1;
 				break;
 			}
 
@@ -207,6 +212,7 @@ const checkFoFoFo = async () => {
 				series.home.tid === g.get("userTid")
 			) {
 				found = true;
+				numRoundsFound += 1;
 				break;
 			}
 		}
@@ -216,7 +222,7 @@ const checkFoFoFo = async () => {
 		}
 	}
 
-	return true;
+	return numRoundsFound >= 3;
 };
 
 const checkBrickWall = async (cutoff: number) => {
@@ -1315,7 +1321,7 @@ if (isSport("hockey") || isSport("basketball")) {
 		{
 			slug: "fo_fo_fo",
 			name: "Fo Fo Fo",
-			desc: "Go 16-0 in the playoffs.",
+			desc: "Go undefeated in the playoffs.",
 			category: "Playoffs",
 			check: checkFoFoFo,
 			when: "afterPlayoffs",
@@ -1323,7 +1329,7 @@ if (isSport("hockey") || isSport("basketball")) {
 		{
 			slug: "fo_fo_fo_2",
 			name: "Fo Fo Fo 2",
-			desc: "Go 16-0 in the playoffs, without the #1 seed.",
+			desc: "Go undefeated in the playoffs, without the #1 seed.",
 			category: "Playoffs",
 
 			async check() {
@@ -1348,10 +1354,6 @@ if (isSport("hockey") || isSport("basketball")) {
 			async check() {
 				// Similar to checkFoFoFo
 
-				if (g.get("numGamesPlayoffSeries", "current").length < 3) {
-					return false;
-				}
-
 				const playoffSeries = await idb.cache.playoffSeries.get(
 					g.get("season"),
 				);
@@ -1360,10 +1362,18 @@ if (isSport("hockey") || isSport("basketball")) {
 					return false;
 				}
 
+				let numRoundsFound = 0;
+
 				for (const round of playoffSeries.series) {
 					let found = false;
 
 					for (const series of round) {
+						if (!series.away && series.home.tid === g.get("userTid")) {
+							// Bye
+							found = true;
+							break;
+						}
+
 						if (
 							series.away &&
 							series.away.won >= 4 &&
@@ -1371,6 +1381,7 @@ if (isSport("hockey") || isSport("basketball")) {
 							series.away.tid === g.get("userTid")
 						) {
 							found = true;
+							numRoundsFound += 1;
 							break;
 						}
 
@@ -1381,6 +1392,7 @@ if (isSport("hockey") || isSport("basketball")) {
 							series.home.tid === g.get("userTid")
 						) {
 							found = true;
+							numRoundsFound += 1;
 							break;
 						}
 					}
@@ -1390,7 +1402,7 @@ if (isSport("hockey") || isSport("basketball")) {
 					}
 				}
 
-				return true;
+				return numRoundsFound >= 3;
 			},
 
 			when: "afterPlayoffs",

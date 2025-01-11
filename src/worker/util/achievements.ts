@@ -178,7 +178,7 @@ const checkYoungGuns = async (age: number) => {
 const checkFoFoFo = async () => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 
-	if (!playoffSeries || playoffSeries.series.length === 0) {
+	if (!playoffSeries) {
 		return false;
 	}
 
@@ -1358,7 +1358,7 @@ if (isSport("hockey") || isSport("basketball")) {
 					g.get("season"),
 				);
 
-				if (!playoffSeries || playoffSeries.series.length === 0) {
+				if (!playoffSeries) {
 					return false;
 				}
 
@@ -1434,24 +1434,54 @@ if (isSport("hockey") || isSport("basketball")) {
 			category: "Season",
 
 			async check() {
-				const awarded = await checkFoFoFo();
+				const playoffSeries = await idb.cache.playoffSeries.get(
+					g.get("season"),
+				);
 
-				if (awarded) {
-					const t = await idb.getCopy.teamsPlus(
-						{
-							seasonAttrs: ["won", "lost"],
-							season: g.get("season"),
-							tid: g.get("userTid"),
-						},
-						"noCopyCache",
-					);
+				if (!playoffSeries) {
+					return false;
+				}
 
-					if (t && t.seasonAttrs.won === 82 && t.seasonAttrs.lost === 0) {
-						return true;
+				let playoffWins = 0;
+
+				for (const round of playoffSeries.series) {
+					for (const series of round) {
+						if (series.away && series.away.tid === g.get("userTid")) {
+							if (series.home.won > 0) {
+								return false;
+							}
+							playoffWins += series.away.won;
+						}
+
+						if (series.away && series.home.tid === g.get("userTid")) {
+							if (series.away.won > 0) {
+								return false;
+							}
+							playoffWins += series.home.won;
+						}
 					}
 				}
 
-				return false;
+				if (playoffWins < 16) {
+					return false;
+				}
+
+				const t = await idb.getCopy.teamsPlus(
+					{
+						seasonAttrs: ["won", "lost", "tied", "otl"],
+						season: g.get("season"),
+						tid: g.get("userTid"),
+					},
+					"noCopyCache",
+				);
+
+				return !!(
+					t &&
+					t.seasonAttrs.won >= 82 &&
+					t.seasonAttrs.lost === 0 &&
+					t.seasonAttrs.tied === 0 &&
+					t.seasonAttrs.otl === 0
+				);
 			},
 
 			when: "afterPlayoffs",

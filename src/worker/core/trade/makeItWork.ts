@@ -205,10 +205,10 @@ const tryAddAsset = async (
 		);
 	}
 
-	if (prevDv >= 0) {
+	if (prevDv > 0) {
 		// Here we are trying to find a single asset for the AI to give up (or a negative asset from the user) while still having the trade be favorable to them. So we are discarding assets that are too good to give up. If there is no asset remaining (dv is negative for all assets) then just give up.
 		// prevDv condition is basically just for the trading block with lookingFor - we want to make sure the assets we're picking actually move things in the correct direction, which is generally starting with a positive dv and moving down towards 0. Maybe would make sense to put a similar condition for negative dv, but idk if it's needed.
-		assets = assets.filter(asset => asset.dv >= 0 && asset.dv < prevDv);
+		assets = assets.filter(asset => asset.dv > 0 && asset.dv < prevDv);
 	} else {
 		// Going in the opposite direction, make sure this asset actually moves us that way
 		assets = assets.filter(asset => asset.dv > prevDv);
@@ -265,8 +265,8 @@ const tryAddAsset = async (
 		assets.sort((a, b) => b.score - a.score);
 	} else {
 		// This is the default code path, unless lookingFor something!
-		if (prevDv >= 0) {
-			// If prevDv>=0, then we're looking for the best asset that keeps dv above 0, which is just the lowest value of dv in this array because above we already filtered out the ones that move this trade negative.
+		if (prevDv > 0) {
+			// If prevDv>0, then we're looking for the best asset that keeps dv above 0, which is just the lowest value of dv in this array because above we already filtered out the ones that move this trade negative.
 			// High dv means the trade is highly favorable to the AI, so this is sorting from the best asset (lowest dv) to the worst asset (high dv). AI wants to give up the most possible (best asset) while still minimizing dv (so the trade is favorable to them, but at least semi-close to favorable for the other team too).
 			assets.sort((a, b) => a.dv - b.dv);
 		} else {
@@ -274,7 +274,7 @@ const tryAddAsset = async (
 			const positiveDv = [];
 			const negativeDv = [];
 			for (const asset of assets) {
-				if (asset.dv >= 0) {
+				if (asset.dv > 0) {
 					positiveDv.push(asset);
 				} else {
 					negativeDv.push(asset);

@@ -668,17 +668,13 @@ const TradingBlock = ({
 		}
 	}
 
-	let footer;
-	if (sumContracts !== 0) {
-		footer = [];
-		footer[1] = (
-			<div className="text-end">
-				Total ({state.pids.length} {helpers.plural("player", state.pids.length)}
-				)
-			</div>
-		);
-		footer[6] = helpers.formatCurrency(sumContracts, "M");
-	}
+	const footer = [];
+	footer[1] = (
+		<div className="text-end">
+			Total ({state.pids.length} {helpers.plural("player", state.pids.length)})
+		</div>
+	);
+	footer[6] = helpers.formatCurrency(sumContracts, "M");
 
 	const cols = getCols(
 		[

@@ -442,10 +442,17 @@ const finalizeGameAttributes = async ({
 	};
 
 	for (const key of helpers.keys(gameAttributeOverrides)) {
+		let phase = finalized.phase ?? PHASE.PRESEASON;
+		if (phase < 0) {
+			if (finalized.nextPhase !== undefined) {
+				phase = finalized.nextPhase;
+			}
+		}
+
 		// If we're overriding a value with history, keep the history
 		finalized[key] = wrap(finalized, key, gameAttributeOverrides[key], {
 			season: finalized.season ?? startingSeason,
-			phase: finalized.phase ?? PHASE.PRESEASON,
+			phase,
 		});
 	}
 

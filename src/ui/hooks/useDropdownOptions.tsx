@@ -82,7 +82,8 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	advanced: "Advanced",
 	gameHighs: "Game Highs",
 	passing: "Passing",
-	rushing: "Rushing/Receiving",
+	rushing: "Rushing",
+	rushingReceiving: "Rushing/Receiving",
 	defense: "Defense",
 	kicking: "Kicking",
 	returns: "Returns",
@@ -322,7 +323,13 @@ const useDropdownOptions = (
 					? ["shotLocations", "advanced", "gameHighs"]
 					: []),
 			],
-			football: ["passing", "rushing", "defense", "kicking", "returns"],
+			football: [
+				"passing",
+				"rushingReceiving",
+				"defense",
+				"kicking",
+				"returns",
+			],
 			hockey: [
 				"skater",
 				"goalie",

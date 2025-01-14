@@ -297,7 +297,7 @@ const PLAYER_STATS_TABLES = {
 			"av",
 		],
 	},
-	rushing: {
+	rushingReceiving: {
 		name: "Rushing and Receiving",
 		onlyShowIf: ["rus", "rec"],
 		stats: [

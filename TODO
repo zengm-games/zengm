@@ -1,4 +1,24 @@
+FBGM tackling
+- DL should get more TFL, LB should get fewer
+- S/CB should get more tackles on long plays
+- team stats
+- player stats
+
+missed XP being more obvious in drive chart https://discord.com/channels/290013534023057409/331882115119448065/1326592472813539480
+
+In FBGM live sim,  "advanced to change of possession" skips drives ending in safeties https://discord.com/channels/290013534023057409/331882115119448065/1326592472813539480
+
+GOAT lab and GOAT season date range filters https://discord.com/channels/290013534023057409/331882115119448065/1327680226477604895
+- for players, implement similar to Advanced Player Search
+
+RatingsStatsPopover revealing info during live sim
+- easy fix - no stats from live sim
+- hard fix - pass game stats to function and subtract (like inline stats for baseball box score)
+  - handle exhibition game, where that is not needed
+- https://discord.com/channels/290013534023057409/331882115119448065/1324429366364471328
+
 for stat tables with gap placeholders (like on a player profile page, there's a gap for empty space between seasons), that gap should only be rendered when sorting by season https://discord.com/channels/290013534023057409/290015591216054273/1327933313079312446
+- somehow need to hide these based on table sort - how to propagate that info?
 
 Add https://mail.google.com/mail/u/0/#inbox/FMfcgzQXKhJZvwmSjwbthGLcdXGfCrJH to rebuilding/contending strategy rewrite
 
@@ -227,7 +247,6 @@ Support logos being saved to IndexedDB
 
 https://discord.com/channels/290013534023057409/569726303926878219/1253099037872226314
 - Dpoy is still a little weird. I understand if dm wants it to be evenly spread out among positions, however with my sliders that are damn near identical to irl stats (which I feel should be the default for the game) corners win it 8/10 times
-- TFL is all screwed up, LBs get like 20-30+ a season when DL get none. This is probably a huge change for the engine though, but would probably fix issue 1
 - If you start as an expansion team in the offseason before the draft similar to irl, your team picks in the middle of the pack (16-17 in a 32 team league). In reality expansion teams should get the 1st overall pick.
 - I feel like the difference in workload for rb1 and rb2 should be bigger when there’s a huge gap in ovr. I just had a 2k rusher today which is crazy, however even with my rushing-enhanced sliders I pretty much never see over 1700 in a season unless I purposely set my team up to force the ball down a rbs throat. I don’t wanna see 10 guys with 1-1.2k yards, I wanna see 8 guys there and a couple up at 1500+.
 - Starting to get more detailed here, but rookie qbs are too high ovr. There’s only a couple rookie qbs to ever pass for over 4k yards but that happens all the time in fbgm, and when that’s happened irl most qbs have like a 1.5:1 td:int ratio. In fbgm I see so many 4k+ passers with like 30+ tds and <10 picks. I like seeing the 50 ovr guys, not the 70-80+ 100 pot dudes all the time
@@ -546,7 +565,6 @@ FBGM
 - late game clock management
   - in hurryUp, should try to end play out of bounds
   - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
-- move some TFL from LB to DL https://discord.com/channels/290013534023057409/569726303926878219/1180748752215085138
 - interception in the enzone showing outside the endzone in drive chart, why? https://discord.com/channels/290013534023057409/290015591216054273/1195441266029232220
 - missed FG should put the ball at least on the 20 https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmDMcvCdTBhDpQRBpZbRlDnB?compose=GTvVlcRzBlKZpWSJKcGwhBWJsgxgxdqPxQPmDLdmNdGrSGjdShXVtnVbPplhHMkvhhNnRBFngBljz
 - drive chart weirdness for successful onside kicks https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmLJLlZPKfvvFDnjqDfFXwpq
@@ -2114,8 +2132,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
 some gamesim issues
 - https://old.reddit.com/message/messages/ne69ad
 - too many safeties
-
-Can DL get more sacks and TFLs in FBGM? Tackle numbers on the DL are realistic now, so adding more sacks and TFLs would make it more realistic. Actually lower TFLs. There's several guys with more than 20 TFLs in my league. @☭☭#9825
 
 infinite AV is possible
 - https://media.discordapp.net/attachments/331882115119448065/600596243055509516/unknown.png?width=1440&height=423

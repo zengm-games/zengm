@@ -452,6 +452,7 @@ class Play {
 				statChanges.push([state.o, event.qb, "pssSkYds", Math.abs(event.yds)]);
 				statChanges.push([state.d, event.p, "defSk"]);
 				statChanges.push([state.d, event.p, "defTckSolo"]);
+				statChanges.push([state.d, event.p, "defTckLoss"]);
 			} else if (event.type === "pss") {
 				statChanges.push([state.o, event.qb, "pss"]);
 				statChanges.push([state.o, event.target, "tgt"]);

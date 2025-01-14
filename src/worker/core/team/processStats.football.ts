@@ -1,3 +1,4 @@
+import { qbRat } from "../../../common/processPlayerStats.football";
 import type { TeamStatAttr, TeamStats } from "../../../common/types";
 import { helpers } from "../../util";
 
@@ -57,6 +58,58 @@ const processStats = (
 				row[stat] = (ts.pssYds + ts.rusYds) / ts.drives;
 			} else if (stat === "ptsPerDrive") {
 				row[stat] = ts.pts / ts.drives;
+			} else if (stat === "cmpPct") {
+				row[stat] = helpers.percentage(ts.pssCmp, ts.pss);
+			} else if (stat === "qbRat") {
+				row[stat] = qbRat(ts);
+			} else if (stat === "pssTDPct") {
+				row[stat] = helpers.percentage(ts.pssTD, ts.pss);
+			} else if (stat === "pssIntPct") {
+				row[stat] = helpers.percentage(ts.pssInt, ts.pss);
+			} else if (stat === "pssYdsPerAtt") {
+				row[stat] = ts.pssYds / ts.pss;
+			} else if (stat === "pssAdjYdsPerAtt") {
+				row[stat] = (ts.pssYds + 20 * ts.pssTD - 45 * ts.pssInt) / ts.pss;
+			} else if (stat === "pssYdsPerCmp") {
+				row[stat] = ts.pssYds / ts.pssCmp;
+			} else if (stat === "pssAdjNetYdsPerAtt") {
+				row[stat] =
+					(ts.pssYds + 20 * ts.pssTD - 45 * ts.pssInt - ts.pssSkYds) /
+					(ts.pss + ts.pssSk);
+			} else if (stat === "pssSkPct") {
+				row[stat] = helpers.percentage(ts.pssSk, ts.pssSk + ts.pss);
+			} else if (stat === "rusPerGame") {
+				row[stat] = ts.rus / ts.gp;
+			} else if (stat === "defTck") {
+				row[stat] = ts.defTckSolo + ts.defTckAst;
+			} else if (stat === "fg") {
+				row[stat] = ts.fg0 + ts.fg20 + ts.fg30 + ts.fg40 + ts.fg50;
+			} else if (stat === "fga") {
+				row[stat] = ts.fga0 + ts.fga20 + ts.fga30 + ts.fga40 + ts.fga50;
+			} else if (stat === "fgPct") {
+				row[stat] = helpers.percentage(
+					ts.fg0 + ts.fg20 + ts.fg30 + ts.fg40 + ts.fg50,
+					ts.fga0 + ts.fga20 + ts.fga30 + ts.fga40 + ts.fga50,
+				);
+			} else if (stat === "xpPct") {
+				row[stat] = helpers.percentage(ts.xp, ts.xpa);
+			} else if (stat === "kickingPts") {
+				row[stat] =
+					3 * (ts.fg0 + ts.fg20 + ts.fg30 + ts.fg40 + ts.fg50) + ts.xp;
+			} else if (stat === "pntYdsPerAtt") {
+				row[stat] = ts.pntYds / ts.pnt;
+			} else if (stat === "prYdsPerAtt") {
+				row[stat] = ts.prYds / ts.pr;
+			} else if (stat === "krYdsPerAtt") {
+				row[stat] = ts.krYds / ts.kr;
+			} else if (stat === "allPurposeYds") {
+				row[stat] =
+					ts.rusYds +
+					ts.recYds +
+					ts.prYds +
+					ts.krYds +
+					ts.defIntYds +
+					ts.defFmbYds;
 			} else if (stat === "oppYds") {
 				row[stat] = ts.oppPssYds + ts.oppRusYds;
 			} else if (stat === "oppYdsPerPlay") {

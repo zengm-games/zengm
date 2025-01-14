@@ -1,7 +1,7 @@
 import helpers from "./helpers";
 import type { GameAttributesLeague, PlayerStats } from "./types";
 
-const qbRat = (ps: PlayerStats) => {
+export const qbRat = (ps: PlayerStats) => {
 	const a = helpers.bound((ps.pssCmp / ps.pss - 0.3) * 5, 0, 2.375);
 	const b = helpers.bound((ps.pssYds / ps.pss - 3) * 0.25, 0, 2.375);
 	const c = helpers.bound((ps.pssTD / ps.pss) * 20, 0, 2.375);

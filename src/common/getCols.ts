@@ -1939,6 +1939,24 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "XPA",
 		},
+		"stat:tp": {
+			desc: "Two-Point Conversions",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "2PM",
+		},
+		"stat:tpa": {
+			desc: "Two-Point Conversions Attempted",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "2PA",
+		},
+		"stat:allTD": {
+			desc: "All Touchdowns",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "AllTD",
+		},
 		"stat:pnt": {
 			desc: "Times Punted",
 			sortSequence: ["desc", "asc"],
@@ -2141,6 +2159,12 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "Pts/D",
+		},
+		"stat:ptsPerGame": {
+			desc: "Points Per Game",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Pts/G",
 		},
 		"stat:qbRec": {
 			desc: "Record as primary QB",

@@ -110,6 +110,9 @@ const processStats = (
 					ts.krYds +
 					ts.defIntYds +
 					ts.defFmbYds;
+			} else if (stat === "allTD") {
+				row[stat] =
+					ts.rusTD + ts.recTD + ts.prTD + ts.krTD + ts.defFmbTD + ts.defIntTD;
 			} else if (stat === "oppYds") {
 				row[stat] = ts.oppPssYds + ts.oppRusYds;
 			} else if (stat === "oppYdsPerPlay") {

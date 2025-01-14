@@ -40,6 +40,7 @@ export type TeamStatAttr =
 	| "prYdsPerAtt"
 	| "krYdsPerAtt"
 	| "allPurposeYds"
+	| "allTD"
 	| "oppYds"
 	| "oppYdsPerPlay"
 	| "oppTov"

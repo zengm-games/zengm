@@ -159,6 +159,7 @@ type PlayEvent =
 	| {
 			type: "twoPointConversionDone";
 			t: TeamNum;
+			made: boolean;
 	  }
 	| {
 			type: "defSft";
@@ -398,8 +399,13 @@ class Play {
 	getStatChanges(event: PlayEvent, state: State) {
 		const statChanges: StatChange[] = [];
 
-		// No tracking stats during 2 point conversion attempt
-		if (!state.awaitingAfterTouchdown || event.type === "xp") {
+		// No tracking stats during 2 point conversion attempt, except team stat for completed and attempt conversions
+		if (event.type === "twoPointConversionDone") {
+			statChanges.push([event.t, undefined, "tpa"]);
+			if (event.made) {
+				statChanges.push([event.t, undefined, "tp"]);
+			}
+		} else if (!state.awaitingAfterTouchdown || event.type === "xp") {
 			if (event.type === "penalty") {
 				const actualPenYds =
 					event.name === "Pass interference" && event.penYds === 0

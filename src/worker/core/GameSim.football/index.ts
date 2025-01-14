@@ -1613,12 +1613,15 @@ class GameSim extends GameSimBase {
 
 		const ptsAfter = getPts();
 
+		const made = ptsAfter > ptsBefore;
+
 		this.currentPlay.addEvent({
 			type: "twoPointConversionDone",
 			t: twoPointConversionTeam,
+			made,
 		});
 
-		if (ptsBefore === ptsAfter) {
+		if (!made) {
 			// Must have failed!
 			this.playByPlay.logEvent({
 				type: "twoPointConversionFailed",

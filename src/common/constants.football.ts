@@ -581,6 +581,27 @@ const TEAM_STATS_TABLES = {
 			"allPurposeYds",
 		],
 	},
+	scoring: {
+		name: "Scoring",
+		stats: [
+			"rusTD",
+			"recTD",
+			"prTD",
+			"krTD",
+			"defFmbTD",
+			"defIntTD",
+			"allTD",
+			"tp",
+			"tpa",
+			"xp",
+			"xpa",
+			"fg",
+			"fga",
+			"defSft",
+			"pts",
+			"ptsPerGame",
+		],
+	},
 };
 
 const POSITIONS: Position[] = [

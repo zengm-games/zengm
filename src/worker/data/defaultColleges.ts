@@ -356,7 +356,6 @@ const defaultColleges = bySport<Record<string, number>>({
 		Xavier: 20,
 		Yale: 4,
 		"Youngstown State": 0.1,
-		"South Central Louisiana State University": 0.01,
 	},
 	football: {
 		Clemson: 249,

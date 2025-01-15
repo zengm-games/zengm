@@ -521,7 +521,4 @@ for (const [college, count] of Object.entries(colleges)) {
 	}
 }
 
-// Easter egg
-colleges["South Central Louisiana State University"] = 0.01;
-
 console.log(colleges);

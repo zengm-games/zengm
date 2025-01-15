@@ -1,4 +1,4 @@
-import { bySport, PHASE } from "../../common";
+import { bySport, isSport, PHASE } from "../../common";
 import { g, helpers } from "../util";
 import type { PlayerStatType } from "../../common/types";
 import type { Params } from "../../ui/router";
@@ -662,10 +662,17 @@ const playerStats = (params: Params) => {
 		season = validateSeason(params.season);
 	}
 
+	let statType = params.statType ?? defaultStatType;
+
+	// Handle upgrade without breaking URLs
+	if (isSport("football") && statType === "rushing") {
+		statType = "rushingReceiving";
+	}
+
 	return {
 		abbrev,
 		season,
-		statType: params.statType ?? defaultStatType,
+		statType,
 		playoffs: validateSeasonType(params.playoffs),
 	};
 };

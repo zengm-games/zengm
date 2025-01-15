@@ -60,11 +60,10 @@ class Skyscraper {
 
 type AdState = "none" | "gold" | "initializing" | "initialized";
 
-class Ads {
+abstract class AdsBase {
 	private accountChecked = false;
 	private uiRendered = false;
 	private initAfterLoadingDone = false;
-	skyscraper = new Skyscraper();
 	private state: AdState = "none";
 
 	setLoadingDone(type: "accountChecked" | "uiRendered") {
@@ -74,26 +73,56 @@ class Ads {
 		}
 	}
 
-	init() {
+	async init() {
+		if (!window.enableLogging) {
+			return;
+		}
+
 		// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
 		if (this.state !== "none") {
 			// Must have already ran somehow?
 			return;
 		}
-
 		if (!this.accountChecked || !this.uiRendered) {
 			// We got the first pageview, but we're not done loading stuff, so render first ad after we finish loading
 			this.initAfterLoadingDone = true;
 			return;
 		}
-
 		this.state = "initializing";
-
 		const gold = local.getState().gold;
-
 		if (gold) {
 			this.state = "gold";
 		} else {
+			await this.initCore();
+			this.state = "initialized";
+		}
+	}
+	abstract initCore(): Promise<void>;
+
+	// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
+	async stop() {
+		await this.stopCore();
+		this.state = "gold";
+	}
+	abstract stopCore(): Promise<void>;
+
+	abstract adBlock(): boolean;
+
+	abstract trackPageview(): void;
+
+	refreshAll() {
+		if (this.state === "initialized") {
+			this.refreshAllCore();
+		}
+	}
+	abstract refreshAllCore(): void;
+}
+
+class Ads extends AdsBase {
+	skyscraper = new Skyscraper();
+
+	initCore() {
+		return new Promise<void>(resolve => {
 			// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
 			const divsAll = VIDEO_ADS
 				? [AD_DIVS.mobile, AD_DIVS.rail]
@@ -147,7 +176,7 @@ class Ads {
 
 				if (divs.includes(AD_DIVS.mobile)) {
 					localActions.update({
-						stickyFooterAd: true,
+						stickyFooterAd: MOBILE_AD_BOTTOM_MARGIN,
 					});
 
 					// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
@@ -159,7 +188,7 @@ class Ads {
 					// Disabled due to https://mail.google.com/mail/u/0/#inbox/FMfcgzQZSZHnVhMpncBXqpCxZMdgtcJL
 					// Hack to hopefully stop the Microsoft ad from breaking everything
 					// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
-					/*window.googletag = window.googletag || {};
+					window.googletag = window.googletag || {};
 					window.googletag.cmd = window.googletag.cmd || [];
 					window.googletag.cmd.push(() => {
 						window.googletag.pubads().setForceSafeFrame(true);
@@ -168,7 +197,7 @@ class Ads {
 							allowPushExpansion: false,
 							sandbox: true,
 						});
-					});*/
+					});
 				}
 
 				if (!window.mobile && !VIDEO_ADS) {
@@ -182,63 +211,64 @@ class Ads {
 
 				window.freestar.newAdSlots(window.freestar.config.enabled_slots);
 
-				this.state = "initialized";
+				resolve();
 			});
-		}
+		});
 	}
 
-	// This does the opposite of initAds. To be called when a user subscribes to gold or logs in to an account with an active subscription
-	stop() {
-		window.freestar.queue.push(() => {
-			const divsAll = [
-				AD_DIVS.mobile,
-				AD_DIVS.leaderboard,
-				AD_DIVS.rectangle1,
-				AD_DIVS.rectangle2,
-			];
+	stopCore() {
+		return new Promise<void>(resolve => {
+			window.freestar.queue.push(() => {
+				const divsAll = [
+					AD_DIVS.mobile,
+					AD_DIVS.leaderboard,
+					AD_DIVS.rectangle1,
+					AD_DIVS.rectangle2,
+				];
 
-			for (const id of divsAll) {
-				const div = document.getElementById(id);
+				for (const id of divsAll) {
+					const div = document.getElementById(id);
 
-				if (div) {
-					div.style.display = "none";
+					if (div) {
+						div.style.display = "none";
+					}
+
+					window.freestar.deleteAdSlots(id);
 				}
 
-				window.freestar.deleteAdSlots(id);
-			}
+				// Special case for rail, to tell it there is no BBGM gold
+				const rail = document.getElementById(AD_DIVS.rail);
+				if (rail) {
+					rail.dataset.gold = "true";
+					this.skyscraper.updateDislay(false);
+				}
 
-			// Special case for rail, to tell it there is no BBGM gold
-			const rail = document.getElementById(AD_DIVS.rail);
-			if (rail) {
-				rail.dataset.gold = "true";
-				this.skyscraper.updateDislay(false);
-			}
+				localActions.update({
+					stickyFooterAd: 0,
+				});
 
-			localActions.update({
-				stickyFooterAd: false,
+				// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+				const footer = document.getElementById("main-footer");
+				if (footer) {
+					footer.style.paddingBottom = "";
+				}
+
+				const logo = document.getElementById("bbgm-ads-logo");
+				if (logo) {
+					logo.style.display = "none";
+				}
+
+				// Rename to hide from Blockthrough
+				for (const id of [...divsAll, AD_DIVS.rail]) {
+					const div = document.getElementById(id);
+
+					if (div) {
+						div.id = `${id}_disabled`;
+					}
+				}
+
+				resolve();
 			});
-
-			// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
-			const footer = document.getElementById("main-footer");
-			if (footer) {
-				footer.style.marginBottom = "";
-			}
-
-			const logo = document.getElementById("bbgm-ads-logo");
-			if (logo) {
-				logo.style.display = "none";
-			}
-
-			// Rename to hide from Blockthrough
-			for (const id of [...divsAll, AD_DIVS.rail]) {
-				const div = document.getElementById(id);
-
-				if (div) {
-					div.id = `${id}_disabled`;
-				}
-			}
-
-			this.state = "gold";
 		});
 	}
 
@@ -258,12 +288,10 @@ class Ads {
 		});
 	}
 
-	refreshAll() {
-		if (this.state === "initialized") {
-			window.freestar.queue.push(() => {
-				window.freestar.refreshAllSlots?.();
-			});
-		}
+	refreshAllCore() {
+		window.freestar.queue.push(() => {
+			window.freestar.refreshAllSlots?.();
+		});
 	}
 }
 

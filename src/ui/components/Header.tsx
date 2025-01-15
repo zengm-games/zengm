@@ -7,7 +7,7 @@ const Header = memo(() => {
 		<>
 			<div
 				className="banner-ad"
-				id={`${AD_DIVS.leaderboard}_disabled`}
+				id={AD_DIVS.leaderboard}
 				style={{
 					display: "none",
 					textAlign: "center",
@@ -17,7 +17,7 @@ const Header = memo(() => {
 			/>
 			<div
 				className="banner-ad"
-				id={`${AD_DIVS.mobile}_disabled`}
+				id={AD_DIVS.mobile}
 				style={{
 					display: "none",
 					textAlign: "center",

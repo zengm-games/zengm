@@ -92,7 +92,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		moreInfoAbbrev: undefined,
 		moreInfoSeason: undefined,
 		moreInfoTid: undefined,
-		stickyFooterAd: false,
+		stickyFooterAd: 0,
 		stickyFormButtons: false,
 
 		actions: {

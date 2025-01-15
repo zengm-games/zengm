@@ -66,13 +66,13 @@ const Footer = memo(() => {
 				}}
 			>
 				<div
-					id={`${AD_DIVS.rectangle1}_disabled`}
+					id={AD_DIVS.rectangle1}
 					style={{
 						display: "none",
 						textAlign: "center",
-						height: "250px",
+						height: 250,
 						position: "absolute",
-						top: "5px",
+						top: 5,
 						left: 0,
 					}}
 				/>
@@ -80,7 +80,7 @@ const Footer = memo(() => {
 					id="bbgm-ads-logo"
 					style={{
 						display: "none",
-						height: "250px",
+						height: 250,
 						margin: "5px 320px 0 320px",
 						alignItems: "center",
 						justifyContent: "center",
@@ -96,13 +96,13 @@ const Footer = memo(() => {
 					/>
 				</div>
 				<div
-					id={`${AD_DIVS.rectangle2}_disabled`}
+					id={AD_DIVS.rectangle2}
 					style={{
 						display: "none",
 						textAlign: "center",
-						height: "250px",
+						height: 250,
 						position: "absolute",
-						top: "5px",
+						top: 5,
 						right: 0,
 					}}
 				/>

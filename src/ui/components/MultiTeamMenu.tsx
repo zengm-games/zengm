@@ -1,6 +1,5 @@
 import type { ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalPartial } from "../util";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
 import { orderBy } from "../../common/utils";
 
 const setUserTid = async (userTid: number) => {
@@ -58,13 +57,11 @@ const MultiTeamMenu = () => {
 	const prevDisabled = ind < 0 || ind === 0;
 	const nextDisabled = ind < 0 || ind === state.userTids.length - 1;
 
-	let bottom = 0;
-	if (state.stickyFooterAd) {
-		bottom += MOBILE_AD_BOTTOM_MARGIN;
-	}
-
 	return (
-		<div className="multi-team-menu d-flex align-items-end" style={{ bottom }}>
+		<div
+			className="multi-team-menu d-flex align-items-end"
+			style={{ bottom: state.stickyFooterAd }}
+		>
 			<button
 				className="btn btn-link p-0 mb-1"
 				disabled={prevDisabled}

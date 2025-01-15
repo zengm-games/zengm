@@ -1085,7 +1085,7 @@ export type LocalStateUI = {
 	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
-	stickyFooterAd: boolean;
+	stickyFooterAd: number; // Margin to add to some stuff based on a sticky footer ad this many pixels high, or 0 if none
 	stickyFormButtons: boolean;
 };
 

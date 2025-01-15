@@ -470,6 +470,7 @@ const getLeaderRequirements = () => {
 			krYds: {},
 			krTD: {},
 			krLng: {},
+			kickingPts: {},
 			allPurposeYds: {},
 			qbRec: {
 				sortValue: helpers.getRecordNumericValue,

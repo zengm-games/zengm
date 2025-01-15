@@ -554,6 +554,7 @@ const PlayBar = forwardRef<
 		const turnover = play.turnover;
 
 		let score: string | undefined;
+		let missedKick = false;
 		if (play.scoreInfo?.type) {
 			if (
 				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
@@ -561,6 +562,11 @@ const PlayBar = forwardRef<
 			) {
 				score = "Missed FG";
 				SCORE_TAG_WIDTH = 75;
+				missedKick = true;
+			} else if (play.scoreInfo.type === "XP" && play.scoreInfo.points === 0) {
+				score = "Missed XP";
+				SCORE_TAG_WIDTH = 75;
+				missedKick = true;
 			} else {
 				score = play.scoreInfo.type === "SH" ? "FG" : play.scoreInfo.type;
 			}
@@ -601,8 +607,8 @@ const PlayBar = forwardRef<
 					barGoingLeft ? "text-end rounded-start" : "text-start rounded-end"
 				}`}
 				style={{
-					backgroundColor: turnover ? red : lightGreen,
-					color: turnover ? "#fff" : "#000",
+					backgroundColor: turnover || missedKick ? red : lightGreen,
+					color: turnover || missedKick ? "#fff" : "#000",
 					width: barGoingLeft ? SCORE_TAG_WIDTH : undefined,
 				}}
 			>
@@ -662,13 +668,14 @@ const PlayBar = forwardRef<
 							: ""
 					}`}
 					style={{
-						backgroundColor: turnover
-							? red
-							: score
-								? lightGreen
-								: play.intendedPossessionChange
-									? darkGray
-									: blue,
+						backgroundColor:
+							turnover || missedKick
+								? red
+								: score
+									? lightGreen
+									: play.intendedPossessionChange
+										? darkGray
+										: blue,
 						[driveDirection ? "marginLeft" : "marginRight"]: margin,
 						width: `calc(${
 							(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
@@ -688,15 +695,18 @@ const PlayBar = forwardRef<
 							style={{
 								width: TAG_WIDTH,
 								[borderStyleName]: `2px solid ${blue}`,
-								backgroundColor: turnover
-									? red
-									: score
-										? lightGreen
-										: play.intendedPossessionChange
-											? darkGray
-											: lightGray,
+								backgroundColor:
+									turnover || missedKick
+										? red
+										: score
+											? lightGreen
+											: play.intendedPossessionChange
+												? darkGray
+												: lightGray,
 								color:
-									turnover || play.intendedPossessionChange ? "#fff" : "#000",
+									turnover || missedKick || play.intendedPossessionChange
+										? "#fff"
+										: "#000",
 							}}
 						>
 							{play.tagOverride ??

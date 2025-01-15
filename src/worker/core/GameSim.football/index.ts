@@ -988,7 +988,7 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	doTackle({ loss }: { loss: boolean }) {
+	doTackle({ ydsFromScrimmage }: { ydsFromScrimmage: number | undefined }) {
 		const d = this.currentPlay.state.current.d;
 
 		// For non-sacks, record tackler(s)
@@ -1020,7 +1020,7 @@ class GameSim extends GameSimBase {
 			this.currentPlay.addEvent({
 				type: "tck",
 				tacklers,
-				loss,
+				loss: ydsFromScrimmage !== undefined && ydsFromScrimmage < 0,
 			});
 		}
 	}
@@ -1221,7 +1221,7 @@ class GameSim extends GameSimBase {
 				});
 			} else {
 				this.doTackle({
-					loss: false,
+					ydsFromScrimmage: undefined,
 				});
 			}
 
@@ -1289,7 +1289,7 @@ class GameSim extends GameSimBase {
 					});
 				} else {
 					this.doTackle({
-						loss: false,
+						ydsFromScrimmage: undefined,
 					});
 				}
 
@@ -1389,7 +1389,7 @@ class GameSim extends GameSimBase {
 				});
 			} else {
 				this.doTackle({
-					loss: false,
+					ydsFromScrimmage: undefined,
 				});
 			}
 
@@ -1701,7 +1701,7 @@ class GameSim extends GameSimBase {
 				fumble = true;
 			} else {
 				this.doTackle({
-					loss: false,
+					ydsFromScrimmage: undefined,
 				});
 			}
 		}
@@ -1773,7 +1773,7 @@ class GameSim extends GameSimBase {
 			fumble = true;
 		} else {
 			this.doTackle({
-				loss: false,
+				ydsFromScrimmage: undefined,
 			});
 		}
 
@@ -2048,7 +2048,7 @@ class GameSim extends GameSimBase {
 
 				if (!td && !safety) {
 					this.doTackle({
-						loss: yds < 0,
+						ydsFromScrimmage: yds,
 					});
 				}
 			} else {
@@ -2159,7 +2159,7 @@ class GameSim extends GameSimBase {
 			this.doSafety();
 		} else {
 			this.doTackle({
-				loss: yds < 0,
+				ydsFromScrimmage: yds,
 			});
 		}
 

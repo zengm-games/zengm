@@ -143,6 +143,73 @@ const processStats = (
 				row[stat] = (ts.oppPssYds + ts.oppRusYds) / ts.oppDrives;
 			} else if (stat === "oppPtsPerDrive") {
 				row[stat] = ts.oppPts / ts.oppDrives;
+			} else if (stat === "oppPssTDPct") {
+				row[stat] = helpers.percentage(ts.oppPssTD, ts.oppPss);
+			} else if (stat === "oppPssIntPct") {
+				row[stat] = helpers.percentage(ts.oppPssInt, ts.oppPss);
+			} else if (stat === "oppPssYdsPerAtt") {
+				row[stat] = ts.oppPssYds / ts.oppPss;
+			} else if (stat === "oppPssAdjYdsPerAtt") {
+				row[stat] =
+					(ts.oppPssYds + 20 * ts.oppPssTD - 45 * ts.oppPssInt) / ts.oppPss;
+			} else if (stat === "oppPssYdsPerCmp") {
+				row[stat] = ts.oppPssYds / ts.oppPssCmp;
+			} else if (stat === "oppPssAdjNetYdsPerAtt") {
+				row[stat] =
+					(ts.oppPssYds +
+						20 * ts.oppPssTD -
+						45 * ts.oppPssInt -
+						ts.oppPssSkYds) /
+					(ts.oppPss + ts.oppPssSk);
+			} else if (stat === "oppPssSkPct") {
+				row[stat] = helpers.percentage(ts.oppPssSk, ts.oppPssSk + ts.oppPss);
+			} else if (stat === "oppPssYdsPerGame") {
+				row[stat] = ts.oppPssYds / ts.gp;
+			} else if (stat === "oppRusPerGame") {
+				row[stat] = ts.oppRus / ts.gp;
+			} else if (stat === "oppRusYdsPerGame") {
+				row[stat] = ts.oppRusYds / ts.gp;
+			} else if (stat === "oppDefTck") {
+				row[stat] = ts.oppDefTckSolo + ts.oppDefTckAst;
+			} else if (stat === "oppFg") {
+				row[stat] =
+					ts.oppFg0 + ts.oppFg20 + ts.oppFg30 + ts.oppFg40 + ts.oppFg50;
+			} else if (stat === "oppFga") {
+				row[stat] =
+					ts.oppFga0 + ts.oppFga20 + ts.oppFga30 + ts.oppFga40 + ts.oppFga50;
+			} else if (stat === "oppFgPct") {
+				row[stat] = helpers.percentage(
+					ts.oppFg0 + ts.oppFg20 + ts.oppFg30 + ts.oppFg40 + ts.oppFg50,
+					ts.oppFga0 + ts.oppFga20 + ts.oppFga30 + ts.oppFga40 + ts.oppFga50,
+				);
+			} else if (stat === "oppXpPct") {
+				row[stat] = helpers.percentage(ts.oppXp, ts.oppXpa);
+			} else if (stat === "oppKickingPts") {
+				row[stat] =
+					3 * (ts.oppFg0 + ts.oppFg20 + ts.oppFg30 + ts.oppFg40 + ts.oppFg50) +
+					ts.oppXp;
+			} else if (stat === "oppPntYdsPerAtt") {
+				row[stat] = ts.oppPntYds / ts.oppPnt;
+			} else if (stat === "oppPrYdsPerAtt") {
+				row[stat] = ts.oppPrYds / ts.oppPr;
+			} else if (stat === "oppKrYdsPerAtt") {
+				row[stat] = ts.oppKrYds / ts.oppKr;
+			} else if (stat === "oppAllPurposeYds") {
+				row[stat] =
+					ts.oppRusYds +
+					ts.oppRecYds +
+					ts.oppPrYds +
+					ts.oppKrYds +
+					ts.oppDefIntYds +
+					ts.oppDefFmbYds;
+			} else if (stat === "oppAllTD") {
+				row[stat] =
+					ts.oppRusTD +
+					ts.oppRecTD +
+					ts.oppPrTD +
+					ts.oppKrTD +
+					ts.oppDefFmbTD +
+					ts.oppDefIntTD;
 			} else {
 				row[stat] = ts[stat];
 			}

@@ -53,7 +53,29 @@ export type TeamStatAttr =
 	| "oppTimePerDrive"
 	| "oppPlaysPerDrive"
 	| "oppYdsPerDrive"
-	| "oppPtsPerDrive";
+	| "oppPtsPerDrive"
+	| "oppPssTDPct"
+	| "oppPssIntPct"
+	| "oppPssYdsPerAtt"
+	| "oppPssAdjYdsPerAtt"
+	| "oppPssYdsPerCmp"
+	| "oppPssAdjNetYdsPerAtt"
+	| "oppPssSkPct"
+	| "oppPssYdsPerGame"
+	| "oppRusPerGame"
+	| "oppRusYdsPerGame"
+	| "oppDefTck"
+	| "oppFg"
+	| "oppFga"
+	| "oppFgPct"
+	| "oppXpPct"
+	| "oppKickingPts"
+	| "oppPntYdsPerAtt"
+	| "oppPntYdsPerAtt"
+	| "oppPrYdsPerAtt"
+	| "oppKrYdsPerAtt"
+	| "oppAllPurposeYds"
+	| "oppAllTD";
 
 type AwardTeam = {
 	tid: number;

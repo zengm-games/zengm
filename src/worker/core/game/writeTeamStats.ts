@@ -340,7 +340,11 @@ const writeTeamStats = async (results: GameResults) => {
 
 				// Deal with upgraded leagues, and some stats that don't have opp versions
 				if (teamStats[oppKey] !== undefined) {
-					if (team.stats.byPos && team.stats.byPos.includes(oppKey)) {
+					if (isSport("football") && key.endsWith("Lng")) {
+						if (results.team[t2].stat[key] > teamStats[oppKey]) {
+							teamStats[oppKey] = results.team[t2].stat[key];
+						}
+					} else if (team.stats.byPos && team.stats.byPos.includes(oppKey)) {
 						for (let i = 0; i < results.team[t2].stat[key].length; i++) {
 							const value = results.team[t2].stat[key][i];
 							if (value !== undefined) {

@@ -551,10 +551,9 @@ const PlayBar = forwardRef<
 
 		const barGoingLeft = driveDirection === negative;
 
-		const turnover = play.turnover;
+		let turnoverOrMissedKickOrMissedTwoPointConversion = play.turnover;
 
 		let score: string | undefined;
-		let missedKick = false;
 		if (play.scoreInfo?.type) {
 			if (
 				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
@@ -562,11 +561,15 @@ const PlayBar = forwardRef<
 			) {
 				score = "Missed FG";
 				SCORE_TAG_WIDTH = 75;
-				missedKick = true;
+				turnoverOrMissedKickOrMissedTwoPointConversion = true;
 			} else if (play.scoreInfo.type === "XP" && play.scoreInfo.points === 0) {
 				score = "Missed XP";
 				SCORE_TAG_WIDTH = 75;
-				missedKick = true;
+				turnoverOrMissedKickOrMissedTwoPointConversion = true;
+			} else if (play.scoreInfo.type === "2P" && play.scoreInfo.points === 0) {
+				score = "Failed 2P";
+				SCORE_TAG_WIDTH = 70;
+				turnoverOrMissedKickOrMissedTwoPointConversion = true;
 			} else {
 				score = play.scoreInfo.type === "SH" ? "FG" : play.scoreInfo.type;
 			}
@@ -607,8 +610,12 @@ const PlayBar = forwardRef<
 					barGoingLeft ? "text-end rounded-start" : "text-start rounded-end"
 				}`}
 				style={{
-					backgroundColor: turnover || missedKick ? red : lightGreen,
-					color: turnover || missedKick ? "#fff" : "#000",
+					backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
+						? red
+						: lightGreen,
+					color: turnoverOrMissedKickOrMissedTwoPointConversion
+						? "#fff"
+						: "#000",
 					width: barGoingLeft ? SCORE_TAG_WIDTH : undefined,
 				}}
 			>
@@ -668,14 +675,13 @@ const PlayBar = forwardRef<
 							: ""
 					}`}
 					style={{
-						backgroundColor:
-							turnover || missedKick
-								? red
-								: score
-									? lightGreen
-									: play.intendedPossessionChange
-										? darkGray
-										: blue,
+						backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
+							? red
+							: score
+								? lightGreen
+								: play.intendedPossessionChange
+									? darkGray
+									: blue,
 						[driveDirection ? "marginLeft" : "marginRight"]: margin,
 						width: `calc(${
 							(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
@@ -695,16 +701,16 @@ const PlayBar = forwardRef<
 							style={{
 								width: TAG_WIDTH,
 								[borderStyleName]: `2px solid ${blue}`,
-								backgroundColor:
-									turnover || missedKick
-										? red
-										: score
-											? lightGreen
-											: play.intendedPossessionChange
-												? darkGray
-												: lightGray,
+								backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
+									? red
+									: score
+										? lightGreen
+										: play.intendedPossessionChange
+											? darkGray
+											: lightGray,
 								color:
-									turnover || missedKick || play.intendedPossessionChange
+									turnoverOrMissedKickOrMissedTwoPointConversion ||
+									play.intendedPossessionChange
 										? "#fff"
 										: "#000",
 							}}

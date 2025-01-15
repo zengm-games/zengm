@@ -1973,6 +1973,11 @@ class GameSim extends GameSimBase {
 			ydsRaw += random.randInt(0, 109);
 		}
 
+		// Fewer TFL
+		if (ydsRaw < 0) {
+			ydsRaw += random.randInt(0, 5);
+		}
+
 		ydsRaw = Math.round(ydsRaw * g.get("passYdsFactor"));
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
@@ -2122,6 +2127,11 @@ class GameSim extends GameSimBase {
 
 		if (Math.random() < 0.01) {
 			ydsRaw += random.randInt(0, 109);
+		}
+
+		// Fewer TFL
+		if (ydsRaw < 0) {
+			ydsRaw += random.randInt(0, 5);
 		}
 
 		ydsRaw = Math.round(ydsRaw * g.get("rushYdsFactor"));

@@ -827,7 +827,7 @@ const leagueStats = (params: Params) => {
 	const defaultStatType = bySport({
 		baseball: "batting",
 		basketball: "team",
-		football: "team",
+		football: "summary",
 		hockey: "team",
 	});
 

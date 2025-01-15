@@ -994,6 +994,7 @@ const processLiveGameEvents = ({
 				e.type === "turnoverOnDowns" ||
 				e.type === "fieldGoal" ||
 				e.type === "extraPoint" ||
+				(e as any).safety ||
 				(e as any).twoPointConversionTeam !== undefined;
 
 			if (

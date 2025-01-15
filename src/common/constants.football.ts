@@ -412,8 +412,8 @@ const PLAYER_STATS_TABLES = {
 	},
 };
 const TEAM_STATS_TABLES = {
-	team: {
-		name: "Team",
+	summary: {
+		name: "Summary",
 		stats: [
 			"pts",
 			"yds",
@@ -571,8 +571,8 @@ const TEAM_STATS_TABLES = {
 			"ptsPerGame",
 		],
 	},
-	opponent: {
-		name: "Opponent",
+	opponentSummary: {
+		name: "Opponent Summary",
 		stats: [
 			"oppPts",
 			"oppYds",
@@ -694,7 +694,7 @@ const TEAM_STATS_TABLES = {
 		],
 	},
 	opponnetReturns: {
-		name: "Opponent Kick and Punt Returns",
+		name: "Opponent Returns",
 		stats: [
 			"oppPr",
 			"oppPrYds",

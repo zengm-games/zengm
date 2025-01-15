@@ -188,7 +188,7 @@ class Ads extends AdsBase {
 					// Disabled due to https://mail.google.com/mail/u/0/#inbox/FMfcgzQZSZHnVhMpncBXqpCxZMdgtcJL
 					// Hack to hopefully stop the Microsoft ad from breaking everything
 					// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
-					window.googletag = window.googletag || {};
+					/*window.googletag = window.googletag || {};
 					window.googletag.cmd = window.googletag.cmd || [];
 					window.googletag.cmd.push(() => {
 						window.googletag.pubads().setForceSafeFrame(true);
@@ -197,7 +197,7 @@ class Ads extends AdsBase {
 							allowPushExpansion: false,
 							sandbox: true,
 						});
-					});
+					});*/
 				}
 
 				if (!window.mobile && !VIDEO_ADS) {

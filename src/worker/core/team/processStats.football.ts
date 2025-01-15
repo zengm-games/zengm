@@ -210,6 +210,14 @@ const processStats = (
 					ts.oppKrTD +
 					ts.oppDefFmbTD +
 					ts.oppDefIntTD;
+			} else if (stat === "oppQbRat") {
+				row[stat] = qbRat({
+					pss: ts.oppPss,
+					pssCmp: ts.oppPssCmp,
+					pssInt: ts.oppPssInt,
+					pssYds: ts.oppPssYds,
+					pssTD: ts.oppPssTD,
+				});
 			} else {
 				row[stat] = ts[stat];
 			}

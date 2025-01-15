@@ -75,7 +75,8 @@ export type TeamStatAttr =
 	| "oppPrYdsPerAtt"
 	| "oppKrYdsPerAtt"
 	| "oppAllPurposeYds"
-	| "oppAllTD";
+	| "oppAllTD"
+	| "oppQbRat";
 
 type AwardTeam = {
 	tid: number;

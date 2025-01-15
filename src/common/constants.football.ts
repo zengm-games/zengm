@@ -618,7 +618,7 @@ const TEAM_STATS_TABLES = {
 			"oppPssAdjYdsPerAtt",
 			"oppPssYdsPerCmp",
 			"oppPssYdsPerGame",
-			"qbRat",
+			"oppQbRat",
 			"oppPssSk",
 			"oppPssSkYds",
 			"oppPssSkPct",

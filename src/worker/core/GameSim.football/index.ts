@@ -1001,13 +1001,38 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			// Bias away from DL and CB
-			const positions: Position[] | undefined =
-				this.playersOnField[d].LB &&
-				this.playersOnField[d].LB!.length > 0 &&
-				Math.random() < 0.25
-					? ["LB", "S"]
-					: undefined;
+			// Bias position of tackler based on how far from scrimmage the play is
+			let positions: Position[] | undefined;
+			if (ydsFromScrimmage !== undefined) {
+				const r = Math.random();
+				if (ydsFromScrimmage < 2) {
+					if (r < 0) {
+						positions = ["DL"];
+					} else if (r < 0.4) {
+						positions = ["DL", "LB"];
+					}
+				} else if (ydsFromScrimmage < 7) {
+					if (r < 0.2) {
+						positions = ["LB"];
+					} else if (r < 0.4) {
+						positions = ["LB", "S"];
+					}
+				} else if (ydsFromScrimmage < 15) {
+					if (r < 0.3) {
+						positions = ["LB", "S"];
+					} else if (r < 0.95) {
+						positions = ["LB", "S", "CB"];
+					}
+				} else {
+					if (r < 0.3) {
+						positions = ["S"];
+					} else if (r < 0.9) {
+						positions = ["S", "CB"];
+					} else {
+						positions = ["S", "CB", "LB"];
+					}
+				}
+			}
 
 			const tacklers =
 				Math.random() < 0.25

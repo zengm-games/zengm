@@ -139,10 +139,10 @@ const processStats = (
 				row.poss = poss(ts);
 				scale = false;
 			} else if (stat === "tpar") {
-				row[stat] = helpers.percentage(ts.tpa, ts.fga) / 100;
+				row[stat] = helpers.ratio(ts.tpa, ts.fga);
 				scale = false;
 			} else if (stat === "ftr") {
-				row[stat] = helpers.percentage(ts.fta, ts.fga) / 100;
+				row[stat] = helpers.ratio(ts.fta, ts.fga);
 				scale = false;
 			} else if (stat === "tsp") {
 				row[stat] = helpers.percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
@@ -157,7 +157,7 @@ const processStats = (
 				row[stat] = helpers.percentage(ts.orb, ts.orb + ts.oppDrb);
 				scale = false;
 			} else if (stat === "ftpFga") {
-				row[stat] = helpers.percentage(ts.ft, ts.fga) / 100;
+				row[stat] = helpers.ratio(ts.ft, ts.fga);
 				scale = false;
 			} else if (
 				stat === "season" ||

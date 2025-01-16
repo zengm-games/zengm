@@ -70,10 +70,10 @@ const processStats = (
 			row[stat] = helpers.percentage(ps.pts, 2 * (ps.fga + 0.44 * ps.fta));
 			scale = false;
 		} else if (stat === "tpar") {
-			row[stat] = helpers.percentage(ps.tpa, ps.fga) / 100;
+			row[stat] = helpers.ratio(ps.tpa, ps.fga);
 			scale = false;
 		} else if (stat === "ftr") {
-			row[stat] = helpers.percentage(ps.fta, ps.fga) / 100;
+			row[stat] = helpers.ratio(ps.fta, ps.fga);
 			scale = false;
 		} else if (stat === "tovp") {
 			row[stat] = helpers.percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);

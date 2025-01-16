@@ -607,7 +607,7 @@ const TEAM_STATS_TABLES = {
 		stats: [
 			"oppPssCmp",
 			"oppPss",
-			"cmpPct",
+			"oppCmpPct",
 			"oppPssYds",
 			"oppPssTD",
 			"oppPssTDPct",

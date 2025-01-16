@@ -218,6 +218,8 @@ const processStats = (
 					pssYds: ts.oppPssYds,
 					pssTD: ts.oppPssTD,
 				});
+			} else if (stat === "oppCmpPct") {
+				row[stat] = helpers.percentage(ts.oppPssCmp, ts.oppPss);
 			} else {
 				row[stat] = ts[stat];
 			}

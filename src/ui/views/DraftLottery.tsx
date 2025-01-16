@@ -306,7 +306,7 @@ const DraftLotteryTable = (props: Props) => {
 	const numLeftToReveal = useRef(0); // Like indRevealed
 	const revealState = useRef<State["revealState"]>("init");
 
-	const timeoutID = useRef<number | undefined>();
+	const timeoutID = useRef<number | undefined>(undefined);
 
 	const [state, dispatch] = useReducer(reducer, {
 		draftType: props.draftType,

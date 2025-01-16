@@ -283,9 +283,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const overtimes = useRef(0);
 	const playByPlayDiv = useRef<HTMLDivElement | null>(null);
 	const quarters = useRef([]);
-	const possessionChange = useRef<boolean | undefined>();
+	const possessionChange = useRef<boolean | undefined>(undefined);
 	const componentIsMounted = useRef(false);
-	const events = useRef<any[] | undefined>();
+	const events = useRef<any[] | undefined>(undefined);
 	const sportState = useRef(
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);

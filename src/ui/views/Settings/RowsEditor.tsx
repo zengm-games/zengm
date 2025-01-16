@@ -311,7 +311,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 	const [show, setShow] = useState(false);
 	const [rows, setRowsRaw] = useState(() => formatRows<Type>(defaultValue));
 	const [dirty, setDirty] = useState(false);
-	const lastSavedRows = useRef<RowsState<Type> | undefined>();
+	const lastSavedRows = useRef<RowsState<Type> | undefined>(undefined);
 
 	const setRows = (rows: Parameters<typeof setRowsRaw>[0]) => {
 		setRowsRaw(rows);

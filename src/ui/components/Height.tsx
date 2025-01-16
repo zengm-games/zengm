@@ -1,5 +1,7 @@
 import { local, useLocal } from "../util";
 
+import type { JSX } from "react";
+
 export const getHeightString = (inches: number, units: "metric" | "us") => {
 	if (units === "metric") {
 		return `${Math.round(inches * 2.54)} cm`;

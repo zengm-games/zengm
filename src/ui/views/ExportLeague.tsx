@@ -478,7 +478,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [streamDownload, setStreamDownload] = useState(
 		HAS_FILE_SYSTEM_ACCESS_API,
 	);
-	const abortController = useRef<AbortController | undefined>();
+	const abortController = useRef<AbortController | undefined>(undefined);
 
 	const lid = useLocal(state => state.lid);
 

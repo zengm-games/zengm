@@ -65,15 +65,34 @@ export const getRosterOrderByPid = (
 		ratings: {
 			pos: string;
 		};
+		injury: {
+			type: string;
+			gamesRemaining: number;
+		};
 	}[],
 	tid: number,
 	fuzzUser: boolean,
 ) => {
 	// Fuzz only for user's team
+	// Move injured players to the bottom
 	if (fuzzUser && tid === g.get("userTid")) {
-		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
+		players.sort((a, b) => {
+			if (a.injury.gamesRemaining > 0) {
+				return 1;
+			} else if (b.injury.gamesRemaining > 0) {
+				return -1;
+			}
+			return b.valueNoPotFuzz - a.valueNoPotFuzz;
+		});
 	} else {
-		players.sort((a, b) => b.valueNoPot - a.valueNoPot);
+		players.sort((a, b) => {
+			if (a.injury.gamesRemaining > 0) {
+				return 1;
+			} else if (b.injury.gamesRemaining > 0) {
+				return -1;
+			}
+			return b.valueNoPot - a.valueNoPot;
+		});
 	}
 
 	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
@@ -115,7 +134,7 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		tid,
 	);
 	const players = await idb.getCopies.playersPlus(playersFromCache, {
-		attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
+		attrs: ["pid", "valueNoPot", "valueNoPotFuzz", "injury"],
 		ratings: ["pos"],
 		season: g.get("season"),
 		showNoStats: true,

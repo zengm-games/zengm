@@ -1,3 +1,5 @@
+import { g } from "../../util";
+
 const ovr = (
 	players: {
 		ratings: {
@@ -45,18 +47,40 @@ const ovr = (
 		b = -0.1609;
 		k = 102.98;
 	}
-	const predictedMOV =
-		-k +
-		a * Math.exp(b * 0) * ratings[0] +
-		a * Math.exp(b * 1) * ratings[1] +
-		a * Math.exp(b * 2) * ratings[2] +
-		a * Math.exp(b * 3) * ratings[3] +
-		a * Math.exp(b * 4) * ratings[4] +
-		a * Math.exp(b * 5) * ratings[5] +
-		a * Math.exp(b * 6) * ratings[6] +
-		a * Math.exp(b * 7) * ratings[7] +
-		a * Math.exp(b * 8) * ratings[8] +
-		a * Math.exp(b * 9) * ratings[9];
+
+	const numPlayersOnCourt = g.get("numPlayersOnCourt");
+	let predictedMOV;
+	if (numPlayersOnCourt >= 5) {
+		predictedMOV =
+			-k +
+			a * Math.exp(b * 0) * ratings[0] +
+			a * Math.exp(b * 1) * ratings[1] +
+			a * Math.exp(b * 2) * ratings[2] +
+			a * Math.exp(b * 3) * ratings[3] +
+			a * Math.exp(b * 4) * ratings[4] +
+			a * Math.exp(b * 5) * ratings[5] +
+			a * Math.exp(b * 6) * ratings[6] +
+			a * Math.exp(b * 7) * ratings[7] +
+			a * Math.exp(b * 8) * ratings[8] +
+			a * Math.exp(b * 9) * ratings[9];
+	} else {
+		predictedMOV = -k;
+
+		let ratingsIndex = 0;
+		for (let i = 0; i < numPlayersOnCourt; i++) {
+			predictedMOV += a * Math.exp(b * i) * ratings[ratingsIndex];
+			ratingsIndex += 1;
+		}
+
+		// Skip the coefficients of the normal starters who are now bench players
+		for (let i = 5; i < 10; i++) {
+			predictedMOV += a * Math.exp(b * i) * ratings[ratingsIndex];
+			ratingsIndex += 1;
+		}
+
+		// Rough estimates to keep ovr on 0-100 scale
+		predictedMOV += (60 * (5 - numPlayersOnCourt)) / 5;
+	}
 
 	if (rating) {
 		// In this case, we're ultimately using the value to compute a rank or some other relative score, so we don't care about the scale

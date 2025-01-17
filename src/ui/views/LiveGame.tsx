@@ -79,9 +79,9 @@ class PlayerRow extends Component<PlayerRowProps> {
 	}
 }
 
-const updatePhaseAndLeagueTopBar = () => {
+const onLiveSimOver = () => {
 	// Send to worker, rather than doing `localActions.update({ liveGameInProgress: false });`, so it works in all tabs
-	toWorker("main", "uiUpdateLocal", { liveGameInProgress: false });
+	toWorker("main", "onLiveSimOver", undefined);
 };
 
 const getSeconds = (time: string | undefined) => {
@@ -464,7 +464,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					}
 				}
 
-				updatePhaseAndLeagueTopBar();
+				onLiveSimOver();
 			}
 
 			const endSeconds = getSeconds(boxScore.current.time);
@@ -481,7 +481,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 		return () => {
 			componentIsMounted.current = false;
-			updatePhaseAndLeagueTopBar();
+			onLiveSimOver();
 		};
 	}, []);
 

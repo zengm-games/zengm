@@ -1,17 +1,13 @@
+GOAT lab and GOAT season date range filters https://discord.com/channels/290013534023057409/331882115119448065/1327680226477604895
+- for players, implement similar to Advanced Player Search
+
+basketball team ovr should adjust for numPlayersOnCourt https://mail.google.com/mail/u/0/#inbox/FMfcgzQXKhJZvwmSjwbthGLcdXGfCrJH
+
 on drive chart, a 2 point conversion attempt that goes backwards puts the end of the score tag on the wrong side of the field
 
 trading block picks filter should also include negative value players if that allows another pick or a better pick to be included
 
 persistent no trade button
-
-GOAT lab and GOAT season date range filters https://discord.com/channels/290013534023057409/331882115119448065/1327680226477604895
-- for players, implement similar to Advanced Player Search
-
-RatingsStatsPopover revealing info during live sim
-- easy fix - no stats from live sim
-- hard fix - pass game stats to function and subtract (like inline stats for baseball box score)
-  - handle exhibition game, where that is not needed
-- https://discord.com/channels/290013534023057409/331882115119448065/1324429366364471328
 
 for stat tables with gap placeholders (like on a player profile page, there's a gap for empty space between seasons), that gap should only be rendered when sorting by season https://discord.com/channels/290013534023057409/290015591216054273/1327933313079312446
 - somehow need to hide these based on table sort - how to propagate that info?

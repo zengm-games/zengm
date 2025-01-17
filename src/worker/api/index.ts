@@ -86,7 +86,6 @@ import type {
 	ScheduleGameWithoutKey,
 	Conf,
 	Div,
-	LocalStateUI,
 	DunkAttempt,
 	AllStarPlayer,
 	League,
@@ -2584,7 +2583,11 @@ const ratingsStatsPopoverInfo = async ({
 	let p;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
-	} else {
+	} else if (local.liveSimRatingsStatsPopoverPlayers) {
+		p = local.liveSimRatingsStatsPopoverPlayers[pid];
+	}
+
+	if (!p) {
 		p = await idb.getCopy.players(
 			{
 				pid,
@@ -3541,8 +3544,10 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 	}
 };
 
-const uiUpdateLocal = async (obj: Partial<LocalStateUI>) => {
-	await toUI("updateLocal", [obj]);
+const onLiveSimOver = async () => {
+	local.liveSimRatingsStatsPopoverPlayers = undefined;
+
+	await toUI("updateLocal", [{ liveGameInProgress: false }]);
 };
 
 const updateBudget = async ({
@@ -4707,7 +4712,7 @@ export default {
 		threeSimNext,
 		toggleTradeDeadline,
 		tradeCounterOffer,
-		uiUpdateLocal,
+		onLiveSimOver,
 		updateAwards,
 		updateBudget,
 		updateConfsDivs,

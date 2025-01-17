@@ -1396,6 +1396,7 @@ export type Local = {
 	})[];
 	goldUntil: number;
 	leagueLoaded: boolean;
+	liveSimRatingsStatsPopoverPlayers: Record<number, Player> | undefined;
 	mailingList: boolean;
 	minFractionDiffs:
 		| Record<

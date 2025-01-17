@@ -31,11 +31,13 @@ import {
 } from "../../util";
 import type {
 	Conditions,
+	GameResults,
 	ScheduleGame,
 	UpdateEvents,
 } from "../../../common/types";
 import allowForceTie from "../../../common/allowForceTie";
 import getWinner from "../../../common/getWinner";
+import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers";
 
 /**
  * Play one or more days of games.
@@ -101,10 +103,13 @@ const play = async (
 	};
 
 	// Saves a vector of results objects for a day, as is output from cbSimGames
-	const cbSaveResults = async (results: any[], dayOver: boolean) => {
+	const cbSaveResults = async (results: GameResults[], dayOver: boolean) => {
 		// Before writeGameStats, so LeagueTopBar can not update with game result
 		if (gidOneGame !== undefined && playByPlay) {
 			await toUI("updateLocal", [{ liveGameInProgress: true }]);
+
+			// Run this before writing player stats
+			await setLiveSimRatingsStatsPopoverPlayers(results);
 		}
 
 		// Before writeGameStats, so injury is set correctly

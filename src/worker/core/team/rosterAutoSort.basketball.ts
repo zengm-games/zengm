@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
+import { PHASE, DEFAULT_PLAY_THROUGH_INJURIES } from "../../../common";
 
 /**
  * Given a list of players sorted by ability, find the starters.
@@ -72,23 +73,24 @@ export const getRosterOrderByPid = (
 	}[],
 	tid: number,
 	fuzzUser: boolean,
+	playThroughInjuries: number,
 ) => {
 	// Fuzz only for user's team
 	// Move injured players to the bottom
 	if (fuzzUser && tid === g.get("userTid")) {
 		players.sort((a, b) => {
-			if (a.injury.gamesRemaining > 0) {
+			if (a.injury.gamesRemaining > playThroughInjuries) {
 				return 1;
-			} else if (b.injury.gamesRemaining > 0) {
+			} else if (b.injury.gamesRemaining > playThroughInjuries) {
 				return -1;
 			}
 			return b.valueNoPotFuzz - a.valueNoPotFuzz;
 		});
 	} else {
 		players.sort((a, b) => {
-			if (a.injury.gamesRemaining > 0) {
+			if (a.injury.gamesRemaining > playThroughInjuries) {
 				return 1;
-			} else if (b.injury.gamesRemaining > 0) {
+			} else if (b.injury.gamesRemaining > playThroughInjuries) {
 				return -1;
 			}
 			return b.valueNoPot - a.valueNoPot;
@@ -128,6 +130,22 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		return;
 	}
 
+	// Grabbing Play Thru Inj setting
+	const team = await idb.cache.teams.get(tid);
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
+	let playThroughInjuries;
+	if (
+		// Avoiding lint error (team is possibly undefined)
+		team?.playThroughInjuries &&
+		g.get("userTids").includes(team.tid) &&
+		!g.get("spectator")
+	) {
+		playThroughInjuries = team.playThroughInjuries[playoffs ? 1 : 0];
+	} else {
+		playThroughInjuries = DEFAULT_PLAY_THROUGH_INJURIES[playoffs ? 1 : 0];
+	}
+
 	// Get roster and sort by value (no potential included)
 	const playersFromCache = await idb.cache.players.indexGetAll(
 		"playersByTid",
@@ -141,7 +159,12 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		showRookies: true,
 	});
 
-	const rosterOrders = getRosterOrderByPid(players, tid, true);
+	const rosterOrders = getRosterOrderByPid(
+		players,
+		tid,
+		true,
+		playThroughInjuries,
+	);
 
 	// Update rosterOrder
 	for (const p of playersFromCache) {

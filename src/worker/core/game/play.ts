@@ -110,6 +110,9 @@ const play = async (
 
 			// Run this before writing player stats
 			await setLiveSimRatingsStatsPopoverPlayers(results);
+		} else {
+			// In case a live sim is still open in another tab
+			local.liveSimRatingsStatsPopoverPlayers = undefined;
 		}
 
 		// Before writeGameStats, so injury is set correctly

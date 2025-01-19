@@ -4,8 +4,6 @@ import path from "node:path";
 import os from "node:os";
 import getPort from "get-port";
 
-const port = await getPort({ port: 3000 });
-
 const mimeTypes = {
 	".bmp": "image/bmp",
 	".css": "text/css",
@@ -59,34 +57,6 @@ const startsWith = (url: string, prefixes: string[]) => {
 	return false;
 };
 
-const server = http.createServer((req, res) => {
-	const prefixesStatic = [
-		"/css/",
-		"/files/",
-		"/fonts/",
-		"/gen/",
-		"/ico/",
-		"/img/",
-		"/manifest",
-	];
-
-	const url = req.url!;
-
-	if (startsWith(url, prefixesStatic)) {
-		showStatic(url, res);
-	} else {
-		showIndex(res);
-	}
-});
-
-const param = process.argv[2];
-let exposeToNetwork = false;
-if (param === "--host") {
-	exposeToNetwork = true;
-} else if (param !== undefined) {
-	throw new Error("Invalid CLI argument");
-}
-
 // https://stackoverflow.com/a/15075395/786644
 const getIpAddress = () => {
 	const interfaces = os.networkInterfaces();
@@ -106,11 +76,46 @@ const getIpAddress = () => {
 	return "0.0.0.0";
 };
 
-server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
-	console.log(`Local: http://localhost:${port}`);
-	if (exposeToNetwork) {
-		console.log(`Network: http://${getIpAddress()}:${port}`);
-	} else {
-		console.log(`Network: use --host to expose`);
+export const startServer = async () => {
+	const param = process.argv[2];
+	let exposeToNetwork = false;
+	if (param === "--host") {
+		exposeToNetwork = true;
+	} else if (param !== undefined) {
+		throw new Error("Invalid CLI argument");
 	}
-});
+
+	const port = await getPort({ port: 3000 });
+
+	const server = http.createServer((req, res) => {
+		const prefixesStatic = [
+			"/css/",
+			"/files/",
+			"/fonts/",
+			"/gen/",
+			"/ico/",
+			"/img/",
+			"/manifest",
+		];
+
+		const url = req.url!;
+
+		if (startsWith(url, prefixesStatic)) {
+			showStatic(url, res);
+		} else {
+			showIndex(res);
+		}
+	});
+
+	return new Promise<void>(resolve => {
+		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
+			console.log(`Local: http://localhost:${port}`);
+			if (exposeToNetwork) {
+				console.log(`Network: http://${getIpAddress()}:${port}`);
+			} else {
+				console.log(`Network: use --host to expose`);
+			}
+			resolve();
+		});
+	});
+};

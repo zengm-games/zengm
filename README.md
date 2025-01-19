@@ -6,7 +6,7 @@ are implemented entirely in client-side JavaScript, backed by IndexedDB.
 
 Copyright (C) ZenGM, LLC. All rights reserved.
 
-Email: jeremy@zengm.com
+Email: <jeremy@zengm.com>
 
 Website: <https://zengm.com/>
 
@@ -14,25 +14,22 @@ Development: <https://github.com/zengm-games/zengm>
 
 Discussion:
 
-* <https://www.reddit.com/r/BasketballGM/>
-* <https://www.reddit.com/r/Football_GM/>
-* <https://www.reddit.com/r/ZenGMBaseball/>
-* <https://www.reddit.com/r/ZenGMHockey/>
-* <https://zengm.com/discord/>
+* [Discord](https://zengm.com/discord/)
+* Reddit: [Basketball GM](https://www.reddit.com/r/BasketballGM/),
+[Football GM](https://www.reddit.com/r/Football_GM/),
+[ZenGM Baseball](https://www.reddit.com/r/ZenGMBaseball/),
+[ZenGM Hockey](https://www.reddit.com/r/ZenGMHockey/)
 
 **This project is NOT open source, but it is also not completely closed. Please
 see [LICENSE.md](LICENSE.md) for details.**
 
-## Development Info
+## Who is this for?
 
-If you just want to play the game, go to <https://zengm.com/>. Instructions
-below are for developers who want to run a copy locally so they can make changes
-to the code.
+If you just want to play a game, go to <https://zengm.com/>. Instructions below
+are for developers who want to run a copy locally so they can make changes to
+the code.
 
-If you want to contribute but get stuck somewhere, please contact me! I'm happy
-to help.
-
-### License and Contributor License Agreement
+## License and contributor license agreement
 
 **This project is NOT open source, but it is also not completely closed. Please
 see [LICENSE.md](LICENSE.md) for details.**
@@ -48,81 +45,64 @@ Make a copy of the form, fill in your information at the bottom, and send an
 email to jeremy@zengm.com with the subject line, "Contributor License Agreement
 from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
-### Step 1 - Installing
+## Setup 
 
-Make sure you're using a recent version of [Node.js](https://nodejs.org/), older
-versions probably won't work. Then, all of the tooling used in development can
-be set up by simply installing [pnpm](https://pnpm.io/) and
-running:
+First install [Node.js](https://nodejs.org/) 22 and [pnpm](https://pnpm.io/) 9.
+
+Then within this folder run:
 
     pnpm install
 
-from within this folder.
+to install dependencies and:
 
-### Step 2 - Building
+    pnpm run dev
 
-To build the app along with all its assets, run
-
-    pnpm run build
-
-However during development, you probably would rather do
-
-    pnpm run start-watch
-
-which will start the server and watch JS and CSS files for changes and
-recompile. This simply runs both `pnpm run start` and `pnpm run watch` together,
-which alternatively can be run separately if you wish.
+to start the dev server and watch the source code for changes.
 
 By default this will build the basketball version of the game. For other sports,
-set the SPORT environment variable to "football", "baseball", or "hockey", like:
+set the `SPORT` environment variable to `football`, `baseball`, or `hockey`,
+like:
 
-    SPORT=football pnpm run start-watch
+    SPORT=football pnpm run dev
 
-Open `package.json` to see all available development scripts.
+The `dev` script will also tell you a URL to open in your browser to view the
+game, <http://localhost:3000> unless that port is already in use.
 
-### Step 3 - Running
+## Other dev info
 
-To run the game locally, you need some way of running a web server to display
-the content. There are currently two ways to do it. It doesn't matter which you
-use as long as you can get it to run on your computer.
-
-#### 1. Node.js (easiest)
-
-Run
-
-    pnpm run start
-
-and point your browser to <http://localhost:3000/> (or it will use a different
-port if 3000 is already used by somethign else). If you use the command `pnpm
-run start-watch` from above, then running the command `pnpm run start` is not
-necessary.
-
-#### 2. Apache
-
-The mod_rewrite rules in `.htaccess` let the game run in Apache. Everything
-should work if you point it at the `build` folder with mod_rewrite enabled.
-
-### Step 4 - Testing
+### Tests
 
 TypeScript and ESLint are used to enforce some coding standards. To run them on
-the entire codebase, run
+the entire codebase, run:
 
     pnpm run lint
 
 Integration and unit tests spread out through the codebase in *.test.ts files.
-Coverage is not great. They can be run from the command line with
+Coverage is not great. They can be run from the command line with:
 
-    pnpm test
+    pnpm run test
 
 There is also a single end-to-end test which creates a league and simulates a
-season. To execute the end-to-end test, run
+season. To execute the end-to-end test, run:
 
     pnpm run test-e2e
 
-For the end-to-end test, by default it is basketball. If you want it to do
-football, stick `SPORT=football ` in front.
+Like the dev command, you can stick `SPORT=football ` or whatever in front of
+this command to run it for a non-basketball sport.
 
-### Code Overview
+### Git workflow
+
+If you want to contribute changes back to the project, first create a fork on
+GitHub. Then make your changes in a new branch. Confirm that the tests
+(hopefully including new ones you wrote!) and lint scripts all pass. Finally,
+send me a pull request.
+
+It's also probably a good idea to create an [issue on
+GitHub](https://github.com/zengm-games/zengm/issues) before you start working
+on something to keep me in the loop. I don't want you to spend lots of time on
+something that I don't want to put in the game!
+
+### Code overview
 
 This is a single-page app that runs almost entirely client-side by storing data
 in IndexedDB. The core of the game runs inside a Shared Worker (or a Web Worker
@@ -149,7 +129,7 @@ In both the worker and UI processes, there is a global variable `self.bbgm`
 which gives you access to many of the internal functions of the game from
 within your browser.
 
-### Shared Worker Debugging
+### Shared Worker debugging
 
 As mentioned above, the core of a game runs in a Shared Worker. This makes
 debugging a little tricky. For instance, in Chrome, if you `console.log`
@@ -160,45 +140,6 @@ Instead, you need to go to chrome://inspect/#workers and click "Inspect" under
 In any browser, if you have two tabs open and you reload one of them, the worker
 process will not reload. So make sure you close all tabs except one before
 reloading if you want to see changes in the worker.
-
-### Service Worker
-
-This only applies if you use Apache, not if you use `pnpm run start`!
-
-A service worker is used for offline caching. This can make development tricky,
-because if you load the game in your browser, make a change, wait for
-build/watch to finish, and then reload... you will not see your change because
-it will cache the original version and then not update it on a reload. This is
-the normal behavior for service workers (they only switch to a new version when
-you actually close the website and reopen it, not on a reload), but it makes
-development annoying.
-
-To work around that, in Chrome you can [use the "Update on reload" option][1]
-and keep your devtools open. Then reloading will always get you the latest
-version.
-
-Even with that, ctrl+shift+r may be a good idea to make sure you're seeing your
-latest changes.
-
-[1]: https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#update_on_reload
-
-### Git Workflow
-
-If you want to contribute changes back to the project, first create a fork on
-GitHub. Then make your changes in a new branch. Confirm that the tests
-(hopefully including new ones you wrote!) and ESLint all pass. Finally, send me
-a pull request.
-
-It's also probably a good idea to create an [issue on
-GitHub](https://github.com/zengm-games/zengm/issues) before you start working
-on something to keep me in the loop.
-
-## Less Important Development Info
-
-### Sport-specific stuff
-
-Abbreviations of stats should be done like basketball-reference.com and
-football-reference.com stat pages. For instance, "defensive rebounds" is "drb".
 
 ### Thank you BrowserStack
 

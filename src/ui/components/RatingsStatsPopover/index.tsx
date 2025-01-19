@@ -1,24 +1,20 @@
 import clsx from "clsx";
-import {
-	forwardRef,
-	type RefObject,
-	useCallback,
-	useEffect,
-	useState,
-} from "react";
+import { type Ref, useCallback, useEffect, useState } from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";
 import ResponsivePopover from "../ResponsivePopover";
 import { PLAYER } from "../../../common";
 
-const Icon = forwardRef<
-	HTMLElement,
-	{
-		onClick?: () => void;
-		watch: number;
-	}
->(({ onClick, watch }, ref) => {
+const Icon = ({
+	onClick,
+	ref,
+	watch,
+}: {
+	onClick?: () => void;
+	ref?: Ref<HTMLSpanElement>;
+	watch: number;
+}) => {
 	return (
 		<span
 			ref={ref}
@@ -31,7 +27,7 @@ const Icon = forwardRef<
 			onClick={onClick}
 		/>
 	);
-});
+};
 
 type Props = {
 	disableNameLink?: boolean;
@@ -199,7 +195,7 @@ const RatingsStatsPopover = ({
 		forwardedRef,
 		onClick,
 	}: {
-		forwardedRef?: RefObject<HTMLElement | null>;
+		forwardedRef?: Ref<HTMLSpanElement>;
 		onClick?: () => void;
 	}) => <Icon ref={forwardedRef} onClick={onClick} watch={actualWatch} />;
 

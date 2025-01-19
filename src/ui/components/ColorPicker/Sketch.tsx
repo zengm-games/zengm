@@ -1,4 +1,4 @@
-import React, { useState, type CSSProperties } from "react";
+import React, { useState, type CSSProperties, type Ref } from "react";
 import Saturation from "@uiw/react-color-saturation";
 import EditableInput from "@uiw/react-color-editable-input";
 import RGBA from "@uiw/react-color-editable-input-rgba";
@@ -103,6 +103,7 @@ export interface SketchProps
 	color?: string | HsvaColor;
 	presetColors?: false | SwatchPresetColor[];
 	onChange?: (newShade: ColorResult) => void;
+	ref?: Ref<HTMLDivElement>;
 }
 
 const Bar = (props: { left?: string }) => (
@@ -120,121 +121,120 @@ const Bar = (props: { left?: string }) => (
 	/>
 );
 
-export const Sketch = React.forwardRef<HTMLDivElement, SketchProps>(
-	(props, ref) => {
-		const {
-			prefixCls = "w-color-sketch",
-			className,
-			onChange,
-			width = 218,
-			color,
-			style,
-			...other
-		} = props;
-		const [hsva, setHsva] = useState({ h: 209, s: 36, v: 90, a: 1 });
-		useEffect(() => {
-			if (typeof color === "string" && validHex(color)) {
-				setHsva(hexToHsva(color));
-			}
-			if (typeof color === "object") {
-				setHsva(color);
-			}
-		}, [color]);
+export const Sketch = (props: SketchProps) => {
+	const {
+		prefixCls = "w-color-sketch",
+		className,
+		onChange,
+		width = 218,
+		color,
+		style,
+		ref,
+		...other
+	} = props;
+	const [hsva, setHsva] = useState({ h: 209, s: 36, v: 90, a: 1 });
+	useEffect(() => {
+		if (typeof color === "string" && validHex(color)) {
+			setHsva(hexToHsva(color));
+		}
+		if (typeof color === "object") {
+			setHsva(color);
+		}
+	}, [color]);
 
-		const handleChange = (hsv: HsvaColor) => {
-			setHsva(hsv);
-			if (onChange) {
-				onChange(handleColor(hsv));
-			}
-		};
+	const handleChange = (hsv: HsvaColor) => {
+		setHsva(hsv);
+		if (onChange) {
+			onChange(handleColor(hsv));
+		}
+	};
 
-		const handleHex = (value: string | number) => {
-			if (
-				typeof value === "string" &&
-				validHex(value) &&
-				/(3|6)/.test(String(value.length))
-			) {
-				handleChange(hexToHsva(value));
-			}
-		};
-		const handleSaturationChange = (newColor: HsvaColor) =>
-			handleChange({ ...hsva, ...newColor, a: hsva.a });
-		const styleMain = {
-			"--sketch-background": "rgb(255, 255, 255)",
-			"--sketch-box-shadow":
-				"rgb(0 0 0 / 15%) 0px 0px 0px 1px, rgb(0 0 0 / 15%) 0px 8px 16px",
-			"--sketch-swatch-box-shadow": "rgb(0 0 0 / 15%) 0px 0px 0px 1px inset",
-			"--sketch-swatch-border-top": "1px solid rgb(238, 238, 238)",
-			background: "var(--sketch-background)",
-			borderRadius: 4,
-			boxShadow: "var(--sketch-box-shadow)",
-			width,
-			...style,
-		} as CSSProperties;
-		const styleSwatch = {
-			borderTop: "var(--sketch-swatch-border-top)",
-			paddingTop: 10,
-			paddingLeft: 10,
-		} as CSSProperties;
-		const styleSwatchRect = {
-			marginRight: 10,
-			marginBottom: 10,
-			borderRadius: 3,
-			boxShadow: "var(--sketch-swatch-box-shadow)",
-		} as CSSProperties;
-		return (
-			<div
-				{...other}
-				className={`${prefixCls} ${className || ""}`}
-				ref={ref}
-				style={styleMain}
-			>
-				<div style={{ padding: "10px 10px 8px" }}>
-					<Saturation
-						hsva={hsva}
-						style={{ width: "auto", height: 150 }}
-						onChange={handleSaturationChange}
-					/>
-					<div style={{ display: "flex", marginTop: 4 }}>
-						<div style={{ flex: 1 }}>
-							<Hue
-								width="auto"
-								height={10}
-								hue={hsva.h}
-								pointer={Bar}
-								innerProps={{
-									style: { marginLeft: 1, marginRight: 5 },
-								}}
-								onChange={newHue => handleChange({ ...hsva, ...newHue })}
-							/>
-						</div>
+	const handleHex = (value: string | number) => {
+		if (
+			typeof value === "string" &&
+			validHex(value) &&
+			/(3|6)/.test(String(value.length))
+		) {
+			handleChange(hexToHsva(value));
+		}
+	};
+	const handleSaturationChange = (newColor: HsvaColor) =>
+		handleChange({ ...hsva, ...newColor, a: hsva.a });
+	const styleMain = {
+		"--sketch-background": "rgb(255, 255, 255)",
+		"--sketch-box-shadow":
+			"rgb(0 0 0 / 15%) 0px 0px 0px 1px, rgb(0 0 0 / 15%) 0px 8px 16px",
+		"--sketch-swatch-box-shadow": "rgb(0 0 0 / 15%) 0px 0px 0px 1px inset",
+		"--sketch-swatch-border-top": "1px solid rgb(238, 238, 238)",
+		background: "var(--sketch-background)",
+		borderRadius: 4,
+		boxShadow: "var(--sketch-box-shadow)",
+		width,
+		...style,
+	} as CSSProperties;
+	const styleSwatch = {
+		borderTop: "var(--sketch-swatch-border-top)",
+		paddingTop: 10,
+		paddingLeft: 10,
+	} as CSSProperties;
+	const styleSwatchRect = {
+		marginRight: 10,
+		marginBottom: 10,
+		borderRadius: 3,
+		boxShadow: "var(--sketch-swatch-box-shadow)",
+	} as CSSProperties;
+	return (
+		<div
+			{...other}
+			className={`${prefixCls} ${className || ""}`}
+			ref={ref}
+			style={styleMain}
+		>
+			<div style={{ padding: "10px 10px 8px" }}>
+				<Saturation
+					hsva={hsva}
+					style={{ width: "auto", height: 150 }}
+					onChange={handleSaturationChange}
+				/>
+				<div style={{ display: "flex", marginTop: 4 }}>
+					<div style={{ flex: 1 }}>
+						<Hue
+							width="auto"
+							height={10}
+							hue={hsva.h}
+							pointer={Bar}
+							innerProps={{
+								style: { marginLeft: 1, marginRight: 5 },
+							}}
+							onChange={newHue => handleChange({ ...hsva, ...newHue })}
+						/>
 					</div>
 				</div>
-				<div style={{ display: "flex", margin: "0 10px 3px 10px" }}>
-					<EditableInput
-						label="Hex"
-						value={hsvaToHex(hsva).replace(/^#/, "").toLocaleUpperCase()}
-						onChange={(evn, val) => handleHex(val)}
-						style={{ minWidth: 58 }}
-					/>
-					<RGBA
-						hsva={hsva}
-						style={{ marginLeft: 6 }}
-						aProps={false}
-						onChange={result => handleChange(result.hsva)}
-					/>
-					<EyeDropperButton onChange={handleHex} />
-				</div>
-				<Swatch
-					style={styleSwatch}
-					colors={PRESET_COLORS}
-					color={hsvaToHex(hsva)}
-					onChange={hsvColor => handleChange(hsvColor)}
-					rectProps={{
-						style: styleSwatchRect,
-					}}
-				/>
 			</div>
-		);
-	},
-);
+			<div style={{ display: "flex", margin: "0 10px 3px 10px" }}>
+				<EditableInput
+					label="Hex"
+					value={hsvaToHex(hsva).replace(/^#/, "").toLocaleUpperCase()}
+					onChange={(evn, val) => handleHex(val)}
+					style={{ minWidth: 58 }}
+				/>
+				<RGBA
+					hsva={hsva}
+					style={{ marginLeft: 6 }}
+					aProps={false}
+					onChange={result => handleChange(result.hsva)}
+				/>
+				<EyeDropperButton onChange={handleHex} />
+			</div>
+			<Swatch
+				style={styleSwatch}
+				colors={PRESET_COLORS}
+				color={hsvaToHex(hsva)}
+				onChange={hsvColor => handleChange(hsvColor)}
+				rectProps={{
+					style: styleSwatchRect,
+				}}
+			/>
+		</div>
+	);
+};

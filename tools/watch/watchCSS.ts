@@ -1,5 +1,5 @@
 import { watch } from "chokidar";
-import { buildCSS } from "./buildFuncs.ts";
+import { buildCSS } from "../lib/buildFuncs.ts";
 
 const watchCSS = async (
 	updateStart: (filename: string) => void,

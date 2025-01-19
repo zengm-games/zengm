@@ -2762,7 +2762,6 @@ class GameSim extends GameSimBase {
 				} else if (s === "er") {
 					if (this.outsIfNoErrors >= NUM_OUTS_PER_INNING) {
 						// It's an ER for this reliever, but not for the team
-						this.team[t].t.stat.rPit += amt;
 					} else {
 						this.team[t].t.stat.er += amt;
 					}

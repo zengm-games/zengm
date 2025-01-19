@@ -2,8 +2,7 @@
 
 import process from "node:process";
 import type { WriteStream } from "node:tty";
-import { stripVTControlCharacters } from "util";
-import yoctocolors from "yoctocolors";
+import { stripVTControlCharacters, styleText } from "node:util";
 
 const isUnicodeSupported =
 	process.platform !== "win32" || Boolean(process.env.WT_SESSION);
@@ -13,14 +12,14 @@ const isInteractive = (stream: WriteStream) =>
 		stream.isTTY && process.env.TERM !== "dumb" && !("CI" in process.env),
 	);
 
-const successSymbol = yoctocolors.green(isUnicodeSupported ? "✔" : "√");
-const errorSymbol = yoctocolors.red(isUnicodeSupported ? "✖" : "×");
+const successSymbol = styleText("green", isUnicodeSupported ? "✔" : "√");
+const errorSymbol = styleText("red", isUnicodeSupported ? "✖" : "×");
 
 const frames = (
 	isUnicodeSupported
 		? ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 		: ["-", "\\", "|", "/"]
-).map(frame => yoctocolors.cyan(frame));
+).map(frame => styleText("cyan", frame));
 
 const interval = 80;
 
@@ -309,9 +308,9 @@ export const spinners = new Spinners(
 			const time = dateStart.toLocaleTimeString();
 			let coloredTime;
 			if (millisecondsElapsed > TIME_CUTOFF_SPIN_2) {
-				coloredTime = yoctocolors.red(time);
+				coloredTime = styleText("red", time);
 			} else if (millisecondsElapsed > TIME_CUTOFF_SPIN_1) {
-				coloredTime = yoctocolors.yellow(time);
+				coloredTime = styleText("yellow", time);
 			} else {
 				coloredTime = time;
 			}
@@ -333,9 +332,9 @@ export const spinners = new Spinners(
 			const time = dateEnd.toLocaleTimeString();
 			let coloredTime;
 			if (millisecondsElapsed < TIME_CUTOFF_SUCCESS_1) {
-				coloredTime = yoctocolors.green(time);
+				coloredTime = styleText("green", time);
 			} else if (millisecondsElapsed < TIME_CUTOFF_SUCCESS_2) {
-				coloredTime = yoctocolors.yellow(time);
+				coloredTime = styleText("yellow", time);
 			} else {
 				coloredTime = time;
 			}

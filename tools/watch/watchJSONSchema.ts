@@ -17,12 +17,12 @@ const watchJSONSchema = async (
 
 	const sport = getSport();
 
-	const watcher = watch("tools/lib/generateJSONSchema.ts", {});
-
 	const outFilename = "build/files/league-schema.json";
 
 	const buildJSONSchema = async () => {
 		try {
+			updateStart(outFilename);
+
 			// Dynamically reload generateJSONSchema, cause that's what we're watching!
 			const generateJSONSchema = await importFresh(
 				"../lib/generateJSONSchema.ts",
@@ -38,14 +38,10 @@ const watchJSONSchema = async (
 		}
 	};
 
-	updateStart(outFilename);
-
-	watcher.on("change", async () => {
-		updateStart(outFilename);
-		await buildJSONSchema();
-	});
-
 	await buildJSONSchema();
+
+	const watcher = watch("tools/lib/generateJSONSchema.ts", {});
+	watcher.on("change", buildJSONSchema);
 };
 
 // watchJSONSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

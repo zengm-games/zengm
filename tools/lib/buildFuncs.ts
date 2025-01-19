@@ -3,6 +3,7 @@ import browserslist from "browserslist";
 import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import fsp from "node:fs/promises";
 import fse from "fs-extra";
 import * as htmlmin from "html-minifier-terser";
 import * as sass from "sass";
@@ -231,7 +232,7 @@ const setSport = () => {
 	});
 };
 
-const copyFiles = (watch: boolean = false) => {
+const copyFiles = async (watch: boolean = false) => {
 	const foldersToIgnore = [
 		"baseball",
 		"basketball",
@@ -240,7 +241,7 @@ const copyFiles = (watch: boolean = false) => {
 		"hockey",
 	];
 
-	fse.copySync("public", "build", {
+	await fse.copy("public", "build", {
 		filter: filename => {
 			// Loop through folders to ignore.
 			for (const folder of foldersToIgnore) {
@@ -263,31 +264,31 @@ const copyFiles = (watch: boolean = false) => {
 		sport = "basketball";
 	}
 
-	fse.copySync(path.join("public", sport), "build", {
+	await fse.copy(path.join("public", sport), "build", {
 		filter: filename => !filename.includes(".gitignore"),
 	});
 
 	// Remove the empty folders created by the "filter" function.
 	for (const folder of foldersToIgnore) {
-		fs.rmSync(`build/${folder}`, { recursive: true, force: true });
+		await fsp.rm(`build/${folder}`, { recursive: true, force: true });
 	}
 
 	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = path.join("data", `${filename}.${sport}.json`);
 		if (fs.existsSync(sourcePath)) {
-			fse.copySync(sourcePath, `build/gen/${filename}.json`);
+			await fse.copy(sourcePath, `build/gen/${filename}.json`);
 		}
 	}
 
-	fse.copySync("data/names.json", "build/gen/names.json");
-	fse.copySync("data/names-female.json", "build/gen/names-female.json");
+	await fse.copy("data/names.json", "build/gen/names.json");
+	await fse.copy("data/names-female.json", "build/gen/names-female.json");
 
-	fse.copySync("node_modules/flag-icons/flags/4x3", "build/img/flags");
+	await fse.copy("node_modules/flag-icons/flags/4x3", "build/img/flags");
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;
-	fs.writeFileSync("build/img/flags/.htaccess", flagHtaccess);
+	await fsp.writeFile("build/img/flags/.htaccess", flagHtaccess);
 
 	setSport();
 };
@@ -305,9 +306,9 @@ const genRev = () => {
 	return `${year}.${month}.${day}.${minutes}`;
 };
 
-const reset = () => {
-	fs.rmSync("build", { recursive: true, force: true });
-	fs.mkdirSync("build/gen", { recursive: true });
+const reset = async () => {
+	await fsp.rm("build", { recursive: true, force: true });
+	await fsp.mkdir("build/gen", { recursive: true });
 };
 
 const setTimestamps = (rev: string, watch: boolean = false) => {

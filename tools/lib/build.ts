@@ -15,8 +15,8 @@ export default async () => {
 
 	console.log(`Building ${sport}...`);
 
-	reset();
-	copyFiles();
+	await reset();
+	await copyFiles();
 
 	const jsonSchema = generateJSONSchema(sport);
 	await fs.mkdir("build/files", { recursive: true });

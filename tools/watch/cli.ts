@@ -89,7 +89,7 @@ const updateError = (filename: string, error: Error) => {
 };
 
 // Needs to run first, to create output folder
-watchFiles(updateStart, updateEnd, updateError);
+await watchFiles(updateStart, updateEnd, updateError);
 
 // Schema is needed for JS bunlde, and watchJSONSchema is async
 watchJSONSchema(updateStart, updateEnd, updateError).then(() => {

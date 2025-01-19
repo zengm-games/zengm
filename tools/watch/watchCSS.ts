@@ -1,30 +1,26 @@
-import { watch } from "chokidar";
-import { buildCSS } from "../lib/buildFuncs.ts";
+import path from "node:path";
+import { Worker } from "node:worker_threads";
 
 const watchCSS = async (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
 ) => {
-	const watcher = watch("public/css", {});
+	const worker = new Worker(
+		path.join(import.meta.dirname, "watchCSSWorker.ts"),
+	);
 
-	const filenames = ["build/gen/light.css", "build/gen/dark.css"];
-
-	const myBuildCSS = async () => {
-		filenames.map(updateStart);
-		try {
-			await buildCSS(true);
-			filenames.map(updateEnd);
-		} catch (error) {
-			for (const filename of filenames) {
-				updateError(filename, error);
-			}
+	worker.on("message", message => {
+		if (message.type === "start") {
+			updateStart(message.filename);
 		}
-	};
-
-	await myBuildCSS();
-
-	watcher.on("change", myBuildCSS);
+		if (message.type === "end") {
+			updateEnd(message.filename);
+		}
+		if (message.type === "error") {
+			updateError(message.filename, message.error);
+		}
+	});
 };
 
 export default watchCSS;

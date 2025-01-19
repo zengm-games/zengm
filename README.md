@@ -20,9 +20,6 @@ Discussion:
 [ZenGM Baseball](https://www.reddit.com/r/ZenGMBaseball/),
 [ZenGM Hockey](https://www.reddit.com/r/ZenGMHockey/)
 
-**This project is NOT open source, but it is also not completely closed. Please
-see [LICENSE.md](LICENSE.md) for details.**
-
 ## Who is this for?
 
 If you just want to play a game, go to <https://zengm.com/>. Instructions below
@@ -49,24 +46,21 @@ from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 First install [Node.js](https://nodejs.org/) 22 and [pnpm](https://pnpm.io/) 9.
 
-Then within this folder run:
+Then install the dependencies:
 
     pnpm install
 
-to install dependencies and:
+and start the dev server, which watches the source code for changes:
 
-    pnpm run dev
+    node --run dev
 
-to start the dev server and watch the source code for changes.
+The `dev` script will tell you a URL to open in your browser to view the game,
+<http://localhost:3000> unless that port is already in use.
 
-By default this will build the basketball version of the game. For other sports,
-set the `SPORT` environment variable to `football`, `baseball`, or `hockey`,
-like:
+By default this builds the basketball version of the game. For other sports, set
+the `SPORT` environment variable to `football`, `baseball`, or `hockey`, like:
 
-    SPORT=football pnpm run dev
-
-The `dev` script will also tell you a URL to open in your browser to view the
-game, <http://localhost:3000> unless that port is already in use.
+    SPORT=football node --run dev
 
 ## Other dev info
 
@@ -75,17 +69,17 @@ game, <http://localhost:3000> unless that port is already in use.
 TypeScript and ESLint are used to enforce some coding standards. To run them on
 the entire codebase, run:
 
-    pnpm run lint
+    node --run lint
 
 Integration and unit tests spread out through the codebase in *.test.ts files.
 Coverage is not great. They can be run from the command line with:
 
-    pnpm run test
+    node --run test
 
 There is also a single end-to-end test which creates a league and simulates a
 season. To execute the end-to-end test, run:
 
-    pnpm run test-e2e
+    node --run test-e2e
 
 Like the dev command, you can stick `SPORT=football ` or whatever in front of
 this command to run it for a non-basketball sport.
@@ -97,10 +91,11 @@ GitHub. Then make your changes in a new branch. Confirm that the tests
 (hopefully including new ones you wrote!) and lint scripts all pass. Finally,
 send me a pull request.
 
-It's also probably a good idea to create an [issue on
-GitHub](https://github.com/zengm-games/zengm/issues) before you start working
-on something to keep me in the loop. I don't want you to spend lots of time on
-something that I don't want to put in the game!
+It's also probably a good idea to [create an issue on
+GitHub](https://github.com/zengm-games/zengm/issues) or [send me a
+message](https://zengm.com/contact/) before you start working on something. I
+don't want you to spend lots of time on something that I don't want to put in
+the game!
 
 ### Code overview
 

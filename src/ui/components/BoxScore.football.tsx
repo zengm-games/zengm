@@ -5,7 +5,6 @@ import {
 	type ReactNode,
 	useState,
 	type CSSProperties,
-	forwardRef,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { getCols, processPlayerStats } from "../util";
@@ -521,219 +520,204 @@ const lightGray = "#adb5bd";
 const darkGray = "#495057";
 const red = "#dc3545";
 
-const PlayBar = forwardRef<
-	HTMLDivElement,
-	{
-		first: boolean;
-		kickoff: boolean;
-		last: boolean;
-		driveDirection: boolean;
-		play: SportState["plays"][number];
-	}
->(
-	(
-		{
-			first,
-			kickoff,
-			last,
-			play,
-			driveDirection,
-			...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
-		},
-		ref,
-	) => {
-		const goalToGo = play.toGo + play.scrimmage >= 100;
-		const TAG_WIDTH = goalToGo ? 75 : 60;
-		let SCORE_TAG_WIDTH = 30;
+const PlayBar = ({
+	first,
+	kickoff,
+	last,
+	play,
+	driveDirection,
+	...props // https://github.com/react-bootstrap/react-bootstrap/issues/2208
+}: {
+	first: boolean;
+	kickoff: boolean;
+	last: boolean;
+	driveDirection: boolean;
+	play: SportState["plays"][number];
+}) => {
+	const goalToGo = play.toGo + play.scrimmage >= 100;
+	const TAG_WIDTH = goalToGo ? 75 : 60;
+	let SCORE_TAG_WIDTH = 30;
 
-		const negative =
-			play.yards < 0 || (play.scoreInfo?.type === "SH" && play.scrimmage < 50);
+	const negative =
+		play.yards < 0 || (play.scoreInfo?.type === "SH" && play.scrimmage < 50);
 
-		const barGoingLeft = driveDirection === negative;
+	const barGoingLeft = driveDirection === negative;
 
-		let turnoverOrMissedKickOrMissedTwoPointConversion = play.turnover;
+	let turnoverOrMissedKickOrMissedTwoPointConversion = play.turnover;
 
-		let score: string | undefined;
-		if (play.scoreInfo?.type) {
-			if (
-				(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
-				(play.scoreInfo.type === "SH" && play.scoreInfo.sPts === undefined)
-			) {
-				score = "Missed FG";
-				SCORE_TAG_WIDTH = 75;
-				turnoverOrMissedKickOrMissedTwoPointConversion = true;
-			} else if (play.scoreInfo.type === "XP" && play.scoreInfo.points === 0) {
-				score = "Missed XP";
-				SCORE_TAG_WIDTH = 75;
-				turnoverOrMissedKickOrMissedTwoPointConversion = true;
-			} else if (play.scoreInfo.type === "2P" && play.scoreInfo.points === 0) {
-				score = "Failed 2P";
-				SCORE_TAG_WIDTH = 70;
-				turnoverOrMissedKickOrMissedTwoPointConversion = true;
-			} else {
-				score = play.scoreInfo.type === "SH" ? "FG" : play.scoreInfo.type;
-			}
-		}
-
-		const yardLinePercent = yardLineToPercent(play.scrimmage);
-		const yardsPercent = yardsToPercent(play.yards);
-
-		const showTag = !play.subPlay;
-
-		// Extra 2px is to account for border
-		let margin;
-		if (driveDirection) {
-			if (negative) {
-				margin = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
-					score ? SCORE_TAG_WIDTH : 0
-				}px)`;
-			} else {
-				margin = `calc(${yardLinePercent}% - ${showTag ? TAG_WIDTH - 2 : 0}px)`;
-			}
+	let score: string | undefined;
+	if (play.scoreInfo?.type) {
+		if (
+			(play.scoreInfo.type === "FG" && play.scoreInfo.points === 0) ||
+			(play.scoreInfo.type === "SH" && play.scoreInfo.sPts === undefined)
+		) {
+			score = "Missed FG";
+			SCORE_TAG_WIDTH = 75;
+			turnoverOrMissedKickOrMissedTwoPointConversion = true;
+		} else if (play.scoreInfo.type === "XP" && play.scoreInfo.points === 0) {
+			score = "Missed XP";
+			SCORE_TAG_WIDTH = 75;
+			turnoverOrMissedKickOrMissedTwoPointConversion = true;
+		} else if (play.scoreInfo.type === "2P" && play.scoreInfo.points === 0) {
+			score = "Failed 2P";
+			SCORE_TAG_WIDTH = 70;
+			turnoverOrMissedKickOrMissedTwoPointConversion = true;
 		} else {
-			if (negative) {
-				margin = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
-					(score ? SCORE_TAG_WIDTH : 0) + 2
-				}px)`;
-			} else {
-				margin = `calc(${yardLinePercent}% - ${showTag ? TAG_WIDTH : 0}px)`;
-			}
+			score = play.scoreInfo.type === "SH" ? "FG" : play.scoreInfo.type;
 		}
+	}
 
-		const borderStyleName = barGoingLeft
-			? "borderLeft"
-			: ("borderRight" as const);
+	const yardLinePercent = yardLineToPercent(play.scrimmage);
+	const yardsPercent = yardsToPercent(play.yards);
 
-		const scoreTag = score ? (
+	const showTag = !play.subPlay;
+
+	// Extra 2px is to account for border
+	let margin;
+	if (driveDirection) {
+		if (negative) {
+			margin = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
+				score ? SCORE_TAG_WIDTH : 0
+			}px)`;
+		} else {
+			margin = `calc(${yardLinePercent}% - ${showTag ? TAG_WIDTH - 2 : 0}px)`;
+		}
+	} else {
+		if (negative) {
+			margin = `calc(${yardLinePercent}% - ${yardsPercent}% - ${
+				(score ? SCORE_TAG_WIDTH : 0) + 2
+			}px)`;
+		} else {
+			margin = `calc(${yardLinePercent}% - ${showTag ? TAG_WIDTH : 0}px)`;
+		}
+	}
+
+	const borderStyleName = barGoingLeft
+		? "borderLeft"
+		: ("borderRight" as const);
+
+	const scoreTag = score ? (
+		<div
+			className={`px-1 ${
+				barGoingLeft ? "text-end rounded-start" : "text-start rounded-end"
+			}`}
+			style={{
+				backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
+					? red
+					: lightGreen,
+				color: turnoverOrMissedKickOrMissedTwoPointConversion ? "#fff" : "#000",
+				width: barGoingLeft ? SCORE_TAG_WIDTH : undefined,
+			}}
+		>
+			{score}
+		</div>
+	) : null;
+
+	const flags =
+		play.flags.length > 0
+			? play.flags.map((flagInfo, i) => (
+					<OverlayTrigger
+						key={i}
+						trigger={["click", "hover"]}
+						placement="auto"
+						overlay={
+							<Popover>
+								<Popover.Body>
+									{flagInfo?.text ?? "Flag on the play"}
+								</Popover.Body>
+							</Popover>
+						}
+						rootClose
+					>
+						<span
+							className="glyphicon glyphicon-stop"
+							style={{
+								color: !flagInfo ? yellow : flagInfo.accept ? red : lightGray,
+
+								// Center icon vertically
+								lineHeight: "unset",
+								top: "unset",
+							}}
+						/>
+					</OverlayTrigger>
+				))
+			: null;
+	if (flags && !driveDirection) {
+		flags.reverse();
+	}
+
+	return (
+		<div
+			className={`d-flex ${!driveDirection ? "justify-content-end " : ""}${
+				first ? "mt-4" : "mt-1"
+			}${last ? " mb-4" : ""}`}
+			style={{
+				// For some reason this puts it above the field background and below dropdown menus
+				zIndex: 0,
+			}}
+		>
+			{!driveDirection ? flags : null}
 			<div
-				className={`px-1 ${
-					barGoingLeft ? "text-end rounded-start" : "text-start rounded-end"
+				className={`d-flex${barGoingLeft && showTag ? " rounded-end" : ""}${
+					(!barGoingLeft && showTag) || (barGoingLeft && score)
+						? " rounded-start"
+						: ""
 				}`}
 				style={{
 					backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
 						? red
-						: lightGreen,
-					color: turnoverOrMissedKickOrMissedTwoPointConversion
-						? "#fff"
-						: "#000",
-					width: barGoingLeft ? SCORE_TAG_WIDTH : undefined,
+						: score
+							? lightGreen
+							: play.intendedPossessionChange
+								? darkGray
+								: blue,
+					[driveDirection ? "marginLeft" : "marginRight"]: margin,
+					width: `calc(${
+						(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
+						(showTag ? TAG_WIDTH : 0)
+					}px + ${yardsPercent}%)`,
 				}}
+				{...props}
 			>
-				{score}
+				{score && barGoingLeft ? scoreTag : null}
+				{showTag ? (
+					<div
+						className={`${
+							barGoingLeft
+								? "text-start ps-1 rounded-end ms-auto"
+								: "text-end pe-1 rounded-start"
+						}`}
+						style={{
+							width: TAG_WIDTH,
+							[borderStyleName]: `2px solid ${blue}`,
+							backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
+								? red
+								: score
+									? lightGreen
+									: play.intendedPossessionChange
+										? darkGray
+										: lightGray,
+							color:
+								turnoverOrMissedKickOrMissedTwoPointConversion ||
+								play.intendedPossessionChange
+									? "#fff"
+									: "#000",
+						}}
+					>
+						{play.tagOverride ??
+							(kickoff
+								? "Kickoff"
+								: formatDownAndDistance(play.down, play.toGo, play.scrimmage))}
+					</div>
+				) : (
+					<>&nbsp;</>
+				)}
 			</div>
-		) : null;
-
-		const flags =
-			play.flags.length > 0
-				? play.flags.map((flagInfo, i) => (
-						<OverlayTrigger
-							key={i}
-							trigger={["click", "hover"]}
-							placement="auto"
-							overlay={
-								<Popover>
-									<Popover.Body>
-										{flagInfo?.text ?? "Flag on the play"}
-									</Popover.Body>
-								</Popover>
-							}
-							rootClose
-						>
-							<span
-								className="glyphicon glyphicon-stop"
-								style={{
-									color: !flagInfo ? yellow : flagInfo.accept ? red : lightGray,
-
-									// Center icon vertically
-									lineHeight: "unset",
-									top: "unset",
-								}}
-							/>
-						</OverlayTrigger>
-					))
-				: null;
-		if (flags && !driveDirection) {
-			flags.reverse();
-		}
-
-		return (
-			<div
-				className={`d-flex ${!driveDirection ? "justify-content-end " : ""}${
-					first ? "mt-4" : "mt-1"
-				}${last ? " mb-4" : ""}`}
-				style={{
-					// For some reason this puts it above the field background and below dropdown menus
-					zIndex: 0,
-				}}
-			>
-				{!driveDirection ? flags : null}
-				<div
-					ref={ref}
-					className={`d-flex${barGoingLeft && showTag ? " rounded-end" : ""}${
-						(!barGoingLeft && showTag) || (barGoingLeft && score)
-							? " rounded-start"
-							: ""
-					}`}
-					style={{
-						backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
-							? red
-							: score
-								? lightGreen
-								: play.intendedPossessionChange
-									? darkGray
-									: blue,
-						[driveDirection ? "marginLeft" : "marginRight"]: margin,
-						width: `calc(${
-							(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
-							(showTag ? TAG_WIDTH : 0)
-						}px + ${yardsPercent}%)`,
-					}}
-					{...props}
-				>
-					{score && barGoingLeft ? scoreTag : null}
-					{showTag ? (
-						<div
-							className={`${
-								barGoingLeft
-									? "text-start ps-1 rounded-end ms-auto"
-									: "text-end pe-1 rounded-start"
-							}`}
-							style={{
-								width: TAG_WIDTH,
-								[borderStyleName]: `2px solid ${blue}`,
-								backgroundColor: turnoverOrMissedKickOrMissedTwoPointConversion
-									? red
-									: score
-										? lightGreen
-										: play.intendedPossessionChange
-											? darkGray
-											: lightGray,
-								color:
-									turnoverOrMissedKickOrMissedTwoPointConversion ||
-									play.intendedPossessionChange
-										? "#fff"
-										: "#000",
-							}}
-						>
-							{play.tagOverride ??
-								(kickoff
-									? "Kickoff"
-									: formatDownAndDistance(
-											play.down,
-											play.toGo,
-											play.scrimmage,
-										))}
-						</div>
-					) : (
-						<>&nbsp;</>
-					)}
-				</div>
-				{score && !barGoingLeft ? scoreTag : null}
-				{driveDirection ? flags : null}
-			</div>
-		);
-	},
-);
+			{score && !barGoingLeft ? scoreTag : null}
+			{driveDirection ? flags : null}
+		</div>
+	);
+};
 
 const FieldAndDrive = ({
 	boxScore,

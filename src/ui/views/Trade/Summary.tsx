@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import clsx from "clsx";
@@ -7,6 +6,7 @@ import { ContractAmount } from "../../components/contract";
 import type { HandleToggle } from ".";
 import { isSport } from "../../../common";
 import type { MissingAsset } from "../../../worker/views/savedTrades";
+import type { Ref } from "react";
 
 // Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1
 export const arrow = (
@@ -256,55 +256,52 @@ export const SummaryTeam = ({
 	);
 };
 
-const Summary = forwardRef(
-	(
-		{
-			challengeNoRatings,
-			handleToggle,
-			luxuryPayroll,
-			luxuryTax,
-			salaryCap,
-			salaryCapType,
-			summary,
-		}: Pick<
-			View<"trade">,
-			"luxuryPayroll" | "luxuryTax" | "salaryCap" | "salaryCapType" | "summary"
-		> & {
-			challengeNoRatings: boolean;
-			handleToggle: HandleToggle;
-		},
-		ref: any,
-	) => {
-		return (
-			<div className="row trade-items mb-3" ref={ref}>
-				{summary.teams.map((t, i) => {
-					const userOrOther = i === 0 ? "other" : ("user" as const);
+const Summary = ({
+	challengeNoRatings,
+	handleToggle,
+	luxuryPayroll,
+	luxuryTax,
+	ref,
+	salaryCap,
+	salaryCapType,
+	summary,
+}: Pick<
+	View<"trade">,
+	"luxuryPayroll" | "luxuryTax" | "salaryCap" | "salaryCapType" | "summary"
+> & {
+	challengeNoRatings: boolean;
+	handleToggle: HandleToggle;
+	ref?: Ref<HTMLDivElement>;
+}) => {
+	return (
+		<div className="row trade-items mb-3" ref={ref}>
+			{summary.teams.map((t, i) => {
+				const userOrOther = i === 0 ? "other" : ("user" as const);
 
-					return (
-						<div
-							key={i}
-							className={clsx("col-md-12 col-6 d-flex flex-column", {
-								"mb-md-3": i === 0,
-							})}
-						>
-							<SummaryTeam
-								challengeNoRatings={challengeNoRatings}
-								luxuryPayroll={luxuryPayroll}
-								luxuryTax={luxuryTax}
-								salaryCap={salaryCap}
-								salaryCapType={salaryCapType}
-								handleRemove={(type, id) => {
-									handleToggle(userOrOther, type, "include", id);
-								}}
-								summary={summary}
-								t={t}
-							/>
-						</div>
-					);
-				})}
-			</div>
-		);
-	},
-);
+				return (
+					<div
+						key={i}
+						className={clsx("col-md-12 col-6 d-flex flex-column", {
+							"mb-md-3": i === 0,
+						})}
+					>
+						<SummaryTeam
+							challengeNoRatings={challengeNoRatings}
+							luxuryPayroll={luxuryPayroll}
+							luxuryTax={luxuryTax}
+							salaryCap={salaryCap}
+							salaryCapType={salaryCapType}
+							handleRemove={(type, id) => {
+								handleToggle(userOrOther, type, "include", id);
+							}}
+							summary={summary}
+							t={t}
+						/>
+					</div>
+				);
+			})}
+		</div>
+	);
+};
 
 export default Summary;

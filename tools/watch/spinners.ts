@@ -2,6 +2,7 @@
 
 import process from "node:process";
 import type { WriteStream } from "node:tty";
+import { stripVTControlCharacters } from "util";
 import yoctocolors from "yoctocolors";
 
 const isUnicodeSupported =
@@ -254,7 +255,7 @@ class Spinners<Key extends string = string> {
 
 	private lineCount(text: string) {
 		const width = this.stream.columns ?? 80;
-		const lines = text.split("\n");
+		const lines = stripVTControlCharacters(text).split("\n");
 
 		let lineCount = 0;
 		for (const line of lines) {

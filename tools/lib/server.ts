@@ -76,15 +76,7 @@ const getIpAddress = () => {
 	return "0.0.0.0";
 };
 
-export const startServer = async () => {
-	const param = process.argv[2];
-	let exposeToNetwork = false;
-	if (param === "--host") {
-		exposeToNetwork = true;
-	} else if (param !== undefined) {
-		throw new Error("Invalid CLI argument");
-	}
-
+export const startServer = async (exposeToNetwork: boolean) => {
 	const port = await getPort({ port: 3000 });
 
 	const server = http.createServer((req, res) => {

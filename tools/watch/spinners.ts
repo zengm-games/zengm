@@ -58,6 +58,7 @@ class Spinners<Key extends string = string> {
 	private lines = 0;
 	private isInteractive;
 	private lastSpinnerFrameTime = 0;
+	private exitHandlerBound: (signal: NodeJS.Signals) => void;
 
 	// When true, setInterval is rendering frequently because there is a spinner going. Otherwise, there is no rendering happening until a status changes.
 	private rendering = false;
@@ -76,6 +77,7 @@ class Spinners<Key extends string = string> {
 		this.renderKey = renderKey;
 		this.extraRenderDelays = extraRenderDelays;
 		this.isInteractive = isInteractive(this.stream);
+		this.exitHandlerBound = this.exitHandler.bind(this);
 	}
 
 	private startRendering() {
@@ -86,6 +88,7 @@ class Spinners<Key extends string = string> {
 		this.rendering = true;
 
 		this.hideCursor();
+		this.subscribeToProcessEvents();
 		this.render();
 
 		this.timer = setInterval(() => {
@@ -265,6 +268,28 @@ class Spinners<Key extends string = string> {
 		if (this.isInteractive) {
 			this.write("\u001B[?25l");
 		}
+	}
+
+	private showCursor() {
+		if (this.isInteractive) {
+			this.write("\u001B[?25h");
+		}
+	}
+
+	subscribeToProcessEvents() {
+		process.once("SIGINT", this.exitHandlerBound);
+		process.once("SIGTERM", this.exitHandlerBound);
+	}
+
+	exitHandler(signal: NodeJS.Signals) {
+		// Restore hidden cursor before exit, or it stays hidden after!
+		this.showCursor();
+
+		// This guarantees no more rendering after exit
+		// SIGINT: 128 + 2
+		// SIGTERM: 128 + 15
+		const exitCode = signal === "SIGINT" ? 130 : signal === "SIGTERM" ? 143 : 1;
+		process.exit(exitCode);
 	}
 }
 

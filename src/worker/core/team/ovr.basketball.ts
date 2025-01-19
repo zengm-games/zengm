@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { defaultGameAttributes, g } from "../../util";
 
 const ovr = (
 	players: {
@@ -48,7 +48,9 @@ const ovr = (
 		k = 102.98;
 	}
 
-	const numPlayersOnCourt = g.get("numPlayersOnCourt");
+	const numPlayersOnCourt = Object.hasOwn(g, "numPlayersOnCourt")
+		? g.get("numPlayersOnCourt")
+		: defaultGameAttributes.numPlayersOnCourt;
 	let predictedMOV;
 	if (numPlayersOnCourt >= 5) {
 		predictedMOV =

@@ -1,14 +1,8 @@
-import { useEffect, type MouseEvent, forwardRef } from "react";
+import { useEffect, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
 import clsx from "clsx";
-
-type Props = {
-	lid: number | undefined;
-	spectator: boolean;
-	options: Option[];
-};
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
@@ -17,7 +11,15 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 	}
 };
 
-const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
+const PlayMenu = ({
+	lid,
+	spectator,
+	options,
+}: {
+	lid: number | undefined;
+	spectator: boolean;
+	options: Option[];
+}) => {
 	useEffect(() => {
 		const handleKeydown = async (event: KeyboardEvent) => {
 			// alt + letter -  CANNOT USE KeyboardEvent.key BECAUSE ALT+P ON MAC IS PI!
@@ -74,7 +76,6 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 				window.mobile ? " dropdown-mobile" : ""
 			}`}
 			as={Nav.Item}
-			ref={ref}
 		>
 			<Dropdown.Toggle
 				className={clsx(
@@ -109,6 +110,6 @@ const PlayMenu = forwardRef(({ lid, spectator, options }: Props, ref) => {
 			</Dropdown.Menu>
 		</Dropdown>
 	);
-});
+};
 
 export default PlayMenu;

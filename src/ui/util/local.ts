@@ -57,7 +57,6 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		gender: defaultGameAttributes.gender,
 		gold: undefined,
 		godMode: false,
-		hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
 		hideDisabledTeams: false,
 		homeCourtAdvantage: 1,
 		lid: undefined,

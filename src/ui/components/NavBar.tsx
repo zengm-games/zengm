@@ -1,12 +1,6 @@
-import { Nav, Navbar, OverlayTrigger, Popover } from "react-bootstrap";
-import { GAME_NAME, PHASE } from "../../common";
-import {
-	helpers,
-	localActions,
-	menuItems,
-	safeLocalStorage,
-	useLocalPartial,
-} from "../util";
+import { Nav, Navbar } from "react-bootstrap";
+import { PHASE } from "../../common";
+import { helpers, localActions, menuItems, useLocalPartial } from "../util";
 import { useViewData } from "../util/viewManager";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
@@ -76,7 +70,6 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		lid,
 		godMode,
 		gold,
-		hasViewedALeague,
 		sidebarOpen,
 		spectator,
 		playMenuOptions,
@@ -86,7 +79,6 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		"lid",
 		"godMode",
 		"gold",
-		"hasViewedALeague",
 		"sidebarOpen",
 		"spectator",
 		"playMenuOptions",
@@ -135,36 +127,11 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 				<LogoAndText gold={gold} inLeague={inLeague} updating={updating} />
 				{inLeague ? (
 					<Nav navbar>
-						<OverlayTrigger
-							placement="bottom"
-							defaultShow={!hasViewedALeague && lid === 1}
-							trigger="click"
-							rootClose
-							onExited={() => {
-								localActions.update({
-									hasViewedALeague: true,
-								});
-								safeLocalStorage.setItem("hasViewedALeague", "true");
-							}}
-							overlay={
-								<Popover id="popover-welcome">
-									<Popover.Header className="text-primary fw-bold">
-										Welcome to {GAME_NAME}!
-									</Popover.Header>
-									<Popover.Body>
-										To advance through the game, use the Play button at the top.
-										The options shown will change depending on the current state
-										of the game.
-									</Popover.Body>
-								</Popover>
-							}
-						>
-							<PlayMenu
-								lid={lid}
-								spectator={spectator}
-								options={playMenuOptions}
-							/>
-						</OverlayTrigger>
+						<PlayMenu
+							lid={lid}
+							spectator={spectator}
+							options={playMenuOptions}
+						/>
 					</Nav>
 				) : null}
 				{inLeague ? <PhaseStatusBlock /> : null}

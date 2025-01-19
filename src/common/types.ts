@@ -1033,7 +1033,6 @@ export type LocalStateUI = {
 	fullNames: boolean;
 	gold?: boolean;
 	godMode: boolean;
-	hasViewedALeague: boolean;
 	hideDisabledTeams: boolean;
 	homeCourtAdvantage: GameAttributesLeague["homeCourtAdvantage"];
 	leagueCreation?: {

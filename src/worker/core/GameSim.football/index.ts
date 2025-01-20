@@ -1630,7 +1630,9 @@ class GameSim extends GameSimBase {
 
 		const ptsBefore = getPts();
 
-		if (Math.random() > 0.5) {
+		const probPass = 0.5 * g.get("passFactor");
+
+		if (Math.random() < probPass) {
 			this.doPass();
 		} else {
 			this.doRun();

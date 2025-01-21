@@ -89,11 +89,11 @@ const ForceWin = ({
 										gid: game.gid,
 										tidOrTie: newForceWin,
 									});
+									setState("saved");
 								} catch (error) {
 									setState("error");
-									throw error;
+									console.error(error);
 								}
-								setState("saved");
 							}}
 							style={style}
 						>

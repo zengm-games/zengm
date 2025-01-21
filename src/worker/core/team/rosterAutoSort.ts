@@ -4,12 +4,12 @@ import rosterAutoSortBasketball from "./rosterAutoSort.basketball";
 import rosterAutoSortFootball from "./rosterAutoSort.football";
 import rosterAutoSortHockey from "./rosterAutoSort.hockey";
 
-const rosterAutoSort = (
+const rosterAutoSort = async (
 	tid: number,
 	onlyNewPlayers?: boolean,
 	pos?: string,
 ) => {
-	return bySport({
+	await bySport<any>({
 		baseball: rosterAutoSortBaseball,
 		basketball: rosterAutoSortBasketball,
 		football: rosterAutoSortFootball,

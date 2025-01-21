@@ -2,7 +2,8 @@ import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
 import { defaultGameAttributes, g, local } from "../worker/util";
 
-import "smoke-test-overrides"; // eslint-disable-line
+// eslint-disable-next-line import/no-unresolved
+import "smoke-test-overrides";
 import { deleteDB } from "@dumbmatter/idb";
 import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject";
 import { helpers, LEAGUE_DATABASE_VERSION } from "../common";
@@ -11,8 +12,6 @@ describe("Smoke Tests", () => {
 	let intervalID: number;
 
 	it("Create a new league and simuluate a season without error", async function () {
-		// Don't want to include Mocha and Jest types cause they conflict
-		// @ts-expect-error
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
 		idb.meta = await connectMeta();
@@ -58,8 +57,6 @@ describe("Smoke Tests", () => {
 		});
 	});
 
-	// Don't want to include Mocha and Jest types cause they conflict
-	// @ts-expect-error
 	after(async () => {
 		clearInterval(intervalID);
 		await league.remove(g.get("lid"));

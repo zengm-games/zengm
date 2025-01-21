@@ -33,7 +33,7 @@ const fetchCache: Record<string, any> = {};
 	};
 };
 
-// Removes the need for jsdom in most tests
-global.self = global;
-global.window = global;
+// Removes the need for jsdom in most test files
+(global as any).self = global;
+(global as any).window = global;
 global.addEventListener = () => {};

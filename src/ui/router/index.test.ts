@@ -25,7 +25,7 @@ const routes = {
 	},
 	"/state": async (context: Context) => {
 		countCallback(context);
-		assert.strictEqual(context.state, 123);
+		assert.deepStrictEqual(context.state, { custom: 123 });
 	},
 };
 for (const key of Object.keys(routes)) {
@@ -166,7 +166,7 @@ test("fires navigationend event with runtime error", () => {
 test("passes state to callback", async () => {
 	const countBefore = counts["/state"];
 
-	const arg: any = { state: 123 };
+	const arg = { state: { custom: 123 } };
 	await router.navigate("/state", arg);
 
 	assert.strictEqual(window.location.pathname, "/state");

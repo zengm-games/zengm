@@ -6,7 +6,7 @@ import type { MinimalPlayerRatings } from "../../../common/types";
 import { bySport } from "../../../common";
 
 const ovr = (ratings: MinimalPlayerRatings, pos?: string) => {
-	return bySport({
+	return bySport<(...args: any[]) => number>({
 		baseball: ovrBaseball,
 		basketball: ovrBasketball,
 		football: ovrFootball,

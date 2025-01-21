@@ -204,6 +204,6 @@ describe("tiebreakers", () => {
 			},
 		});
 
-		assert.deepStrictEqual(gameAttributes.tiebreakers, "foo");
+		assert.deepStrictEqual(gameAttributes.tiebreakers as any, "foo");
 	});
 });

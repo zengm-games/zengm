@@ -44,12 +44,19 @@ const genDepth = async (
 		});
 	}
 
-	return bySport<Promise<Team["depth"]>>({
+	const depth = (await bySport({
 		baseball: genDepthBaseball,
 		basketball: undefined as any,
 		football: genDepthFootball,
 		hockey: genDepthHockey,
-	})?.(players, initialDepth as any, onlyNewPlayers, pos as any);
+	})?.(
+		players,
+		initialDepth as any,
+		onlyNewPlayers,
+		pos as any,
+	)) as Team["depth"];
+
+	return depth;
 };
 
 export default genDepth;

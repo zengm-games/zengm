@@ -23,7 +23,7 @@ const ovr = (
 		wholeRoster?: boolean;
 	} = {},
 ) => {
-	return bySport({
+	return bySport<(players: any, options: any) => number>({
 		baseball: ovrBaseball,
 		basketball: ovrBasketball,
 		football: ovrFootball,

@@ -69,7 +69,7 @@ export default (
 			extensions: extensions.filter(extension => extension !== ".json"),
 			configFile: path.join(
 				import.meta.dirname,
-				`../../babel.config${legacy ? ".legacy" : ""}.js`,
+				`../../babel.config${legacy ? ".legacy" : ""}.mjs`,
 			),
 		}),
 		json({

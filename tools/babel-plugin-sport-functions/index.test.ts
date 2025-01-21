@@ -1,10 +1,11 @@
 import { assert, describe, test } from "vitest";
 import * as babel from "@babel/core";
-// @ts-expect-error
-import babelPluginSportFunctions from "./index.cjs";
+import { babelPluginSportFunctions } from "./index.js";
 
 const transform = (input: string) => {
 	return babel.transform(input, {
+		babelrc: false,
+		configFile: false,
 		filename: "test.js",
 		plugins: [babelPluginSportFunctions],
 	})!.code;
@@ -21,9 +22,7 @@ describe("isSport", () => {
 			`if (isSport("basketball")) {
   console.log("foo");
 }`,
-			`"use strict";
-
-if (process.env.SPORT === "basketball") {
+			`if (process.env.SPORT === "basketball") {
   console.log("foo");
 }`,
 		);
@@ -34,9 +33,7 @@ if (process.env.SPORT === "basketball") {
 			`if (!isSport("basketball")) {
   console.log("foo");
 }`,
-			`"use strict";
-
-if (!(process.env.SPORT === "basketball")) {
+			`if (!(process.env.SPORT === "basketball")) {
   console.log("foo");
 }`,
 		);
@@ -45,9 +42,7 @@ if (!(process.env.SPORT === "basketball")) {
 	test("should replace isSport in ternary", () => {
 		compare(
 			`isSport("basketball") ? 1 : 0;`,
-			`"use strict";
-
-process.env.SPORT === "basketball" ? 1 : 0;`,
+			`process.env.SPORT === "basketball" ? 1 : 0;`,
 		);
 	});
 });
@@ -60,9 +55,7 @@ describe("bySport", () => {
   football: "football thing",
   hockey: "hockey thing",
 });`,
-			`"use strict";
-
-const whatever = process.env.SPORT === "basketball" ? "basketball thing" : process.env.SPORT === "football" ? "football thing" : "hockey thing";`,
+			`const whatever = process.env.SPORT === "basketball" ? "basketball thing" : process.env.SPORT === "football" ? "football thing" : "hockey thing";`,
 		);
 	});
 
@@ -72,9 +65,7 @@ const whatever = process.env.SPORT === "basketball" ? "basketball thing" : proce
   "basketball": "basketball thing",
   football: "football thing",
 });`,
-			`"use strict";
-
-const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "football thing";`,
+			`const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "football thing";`,
 		);
 	});
 
@@ -84,9 +75,7 @@ const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "foot
   default: "default thing",
   basketball: "basketball thing",
 });`,
-			`"use strict";
-
-const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "default thing";`,
+			`const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "default thing";`,
 		);
 	});
 });

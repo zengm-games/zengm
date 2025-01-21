@@ -1,8 +1,8 @@
 // Need babel.config.js this rather than .babelrc to run on d3 inside node_modules (see also @rollup/plugin-babel config)
 
-const babelPluginSportFunctions = require("../babel-plugin-sport-functions/index.cjs");
+import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.js";
 
-module.exports = legacy => {
+export const babelConfig = legacy => {
 	const plugins = [babelPluginSportFunctions];
 
 	if (legacy) {
@@ -38,10 +38,5 @@ module.exports = legacy => {
 			"@babel/preset-typescript",
 		],
 		plugins,
-		env: {
-			test: {
-				plugins: ["@babel/plugin-transform-modules-commonjs"],
-			},
-		},
 	};
 };

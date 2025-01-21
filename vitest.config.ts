@@ -1,4 +1,5 @@
 import * as path from "node:path";
+//import babel from "vite-plugin-babel";
 // eslint-disable-next-line import/no-unresolved
 import { configDefaults, defineConfig } from "vitest/config";
 
@@ -22,6 +23,7 @@ const test =
 			};
 
 export default defineConfig({
+	// This can be used with vite-plugin-babel for babel-plugin-sport-functions, but it's not necessary and it slows the tests down
 	/*plugins: [
 		babel({
 			filter: /\.[cjt]sx?$/,

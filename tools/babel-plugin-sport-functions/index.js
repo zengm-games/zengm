@@ -7,7 +7,7 @@
 "use strict";
 
 // To define types some day: https://github.com/babel/babel/issues/10637
-module.exports = function (babel) {
+export const babelPluginSportFunctions = function (babel) {
 	var t = babel.types;
 
 	var PROCESS_ENV_SPORT = t.memberExpression(

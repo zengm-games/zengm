@@ -195,9 +195,6 @@ importers:
       '@babel/plugin-transform-logical-assignment-operators':
         specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.0)
-      '@babel/plugin-transform-modules-commonjs':
-        specifier: ^7.26.3
-        version: 7.26.3(@babel/core@7.26.0)
       '@babel/plugin-transform-nullish-coalescing-operator':
         specifier: ^7.26.6
         version: 7.26.6(@babel/core@7.26.0)

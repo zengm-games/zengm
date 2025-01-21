@@ -1,4 +1,4 @@
-import { GAME_NAME, WEBSITE_ROOT } from "../../common";
+import { GAME_NAME } from "../../common";
 import { ads } from "../util";
 import GameLinks from "./GameLinks";
 import Modal from "./Modal";
@@ -24,20 +24,19 @@ const NagModal = ({ close, show }: Props) => {
 						this window and keep playing.
 					</p>
 					<p>
-						But please remember that {GAME_NAME} is a free game. It's made by
-						one person (<a href={`https://${WEBSITE_ROOT}/about/`}>me</a>) in my
-						spare time. The more money I make, the more time I can afford to
-						spend improving the game.
+						But please remember that {GAME_NAME} is a free game made by one
+						person (<a href="https://zengm.com/about/">me</a>). This is my full
+						time job, and I do need to make some money to pay the bills!
 					</p>
 					<p>
 						Also remember how corrupt and horrible most video game companies
-						are. Imagine if {GAME_NAME} was owned by EA or 2k. For example, I
-						could make a lot more money if I let you pay to "hire trainers" to
-						improve player development.
+						are. Imagine if {GAME_NAME} was owned by EA or 2k. I could probably
+						make a lot more money if I let you pay to "hire trainers" to improve
+						player development, and gave you bad progs if you didn't pay.
 					</p>
 					<p>
-						But I refuse to do that. If you want to encourage me, please support{" "}
-						{GAME_NAME}. There are a few ways you can do it:
+						I refuse to do stuff like that. If you want to encourage me, please
+						support {GAME_NAME}. There are a few ways you can do it:
 					</p>
 					<ol>
 						<li>

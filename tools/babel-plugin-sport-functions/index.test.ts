@@ -15,80 +15,78 @@ const compare = (input: string, output: string) => {
 	assert.strictEqual(compiled, output);
 };
 
-describe("babel-plugin-sport-functions", function () {
-	describe("isSport", () => {
-		test("should replace isSport in if", () => {
-			compare(
-				`if (isSport("basketball")) {
+describe("isSport", () => {
+	test("should replace isSport in if", () => {
+		compare(
+			`if (isSport("basketball")) {
   console.log("foo");
 }`,
-				`"use strict";
+			`"use strict";
 
 if (process.env.SPORT === "basketball") {
   console.log("foo");
 }`,
-			);
-		});
+		);
+	});
 
-		test("should replace !isSport in if", () => {
-			compare(
-				`if (!isSport("basketball")) {
+	test("should replace !isSport in if", () => {
+		compare(
+			`if (!isSport("basketball")) {
   console.log("foo");
 }`,
-				`"use strict";
+			`"use strict";
 
 if (!(process.env.SPORT === "basketball")) {
   console.log("foo");
 }`,
-			);
-		});
-
-		test("should replace isSport in ternary", () => {
-			compare(
-				`isSport("basketball") ? 1 : 0;`,
-				`"use strict";
-
-process.env.SPORT === "basketball" ? 1 : 0;`,
-			);
-		});
+		);
 	});
 
-	describe("bySport", () => {
-		test("should replace bySport", () => {
-			compare(
-				`const whatever = bySport({
+	test("should replace isSport in ternary", () => {
+		compare(
+			`isSport("basketball") ? 1 : 0;`,
+			`"use strict";
+
+process.env.SPORT === "basketball" ? 1 : 0;`,
+		);
+	});
+});
+
+describe("bySport", () => {
+	test("should replace bySport", () => {
+		compare(
+			`const whatever = bySport({
   basketball: "basketball thing",
   football: "football thing",
   hockey: "hockey thing",
 });`,
-				`"use strict";
+			`"use strict";
 
 const whatever = process.env.SPORT === "basketball" ? "basketball thing" : process.env.SPORT === "football" ? "football thing" : "hockey thing";`,
-			);
-		});
+		);
+	});
 
-		test("should replace bySport, with quoted properties", () => {
-			compare(
-				`const whatever = bySport({
+	test("should replace bySport, with quoted properties", () => {
+		compare(
+			`const whatever = bySport({
   "basketball": "basketball thing",
   football: "football thing",
 });`,
-				`"use strict";
+			`"use strict";
 
 const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "football thing";`,
-			);
-		});
+		);
+	});
 
-		test("should replace bySport, with default if no matching sport", () => {
-			compare(
-				`const whatever = bySport({
+	test("should replace bySport, with default if no matching sport", () => {
+		compare(
+			`const whatever = bySport({
   default: "default thing",
   basketball: "basketball thing",
 });`,
-				`"use strict";
+			`"use strict";
 
 const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "default thing";`,
-			);
-		});
+		);
 	});
 });

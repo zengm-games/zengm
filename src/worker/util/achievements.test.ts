@@ -24,7 +24,7 @@ const get = (slug: string) => {
 	};
 };
 
-describe("worker/util/account/checkAchievement", () => {
+describe("checkAchievement", () => {
 	beforeAll(async () => {
 		testHelpers.resetG();
 		g.setWithoutSavingToDB("season", 2013);

@@ -1,7 +1,7 @@
 import { assert, describe, test } from "vitest";
 import { PointsFormulaEvaluator } from "./evaluatePointsFormula";
 
-describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
+describe("PointsFormulaEvaluator", () => {
 	test("works for a normal formula", () => {
 		const evaluator = new PointsFormulaEvaluator("2*W + OTL + T");
 		assert.strictEqual(

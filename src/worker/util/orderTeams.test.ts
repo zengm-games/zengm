@@ -32,7 +32,7 @@ const baseTeams = range(4).map(tid => ({
 	tiebreaker: undefined as any,
 }));
 
-describe("worker/util/orderTeams/breakTies", () => {
+describe("tiebreakers", () => {
 	for (const type of ["conf", "div"] as const) {
 		const tiebreaker = `${type}RecordIfSame` as const;
 

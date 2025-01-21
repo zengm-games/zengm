@@ -1,4 +1,4 @@
-import { afterAll, assert, beforeAll, describe, test } from "vitest";
+import { afterAll, assert, beforeAll, test } from "vitest";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
@@ -49,38 +49,36 @@ const testDraftUser = async (round: number) => {
 	assert.strictEqual(p.tid, g.get("userTid"));
 };
 
-describe("worker/core/draft/runPicks", () => {
-	beforeAll(async () => {
-		await loadTeamSeasons();
-		idb.league = testHelpers.mockIDBLeague();
-		await draft.genPlayers(g.get("season"), DEFAULT_LEVEL);
-		const draftTids = await getDraftTids();
-		userPick1 = draftTids.indexOf(g.get("userTid")) + 1;
-		userPick2 = draftTids.lastIndexOf(g.get("userTid")) + 1;
-	});
-	afterAll(() => {
-		// @ts-expect-error
-		idb.league = undefined;
-	});
+beforeAll(async () => {
+	await loadTeamSeasons();
+	idb.league = testHelpers.mockIDBLeague();
+	await draft.genPlayers(g.get("season"), DEFAULT_LEVEL);
+	const draftTids = await getDraftTids();
+	userPick1 = draftTids.indexOf(g.get("userTid")) + 1;
+	userPick2 = draftTids.lastIndexOf(g.get("userTid")) + 1;
+});
+afterAll(() => {
+	// @ts-expect-error
+	idb.league = undefined;
+});
 
-	test("draft players before the user's team first round pick", () => {
-		return testRunPicks(userPick1 - 1, userPick1 - 1);
-	});
+test("draft players before the user's team first round pick", () => {
+	return testRunPicks(userPick1 - 1, userPick1 - 1);
+});
 
-	test("then allow the user to draft in the first round", () => {
-		return testDraftUser(1);
-	});
+test("then allow the user to draft in the first round", () => {
+	return testDraftUser(1);
+});
 
-	test("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
-		return testRunPicks(userPick2 - userPick1 - 1, userPick2 - 1);
-	});
+test("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
+	return testRunPicks(userPick2 - userPick1 - 1, userPick2 - 1);
+});
 
-	test("then allow the user to draft in the second round", () => {
-		return testDraftUser(2);
-	});
+test("then allow the user to draft in the second round", () => {
+	return testDraftUser(2);
+});
 
-	test("when called again after the user drafts, should draft more players to finish the draft", () => {
-		const numAfter = 60 - userPick2;
-		return testRunPicks(numAfter, userPick2 + numAfter);
-	});
+test("when called again after the user drafts, should draft more players to finish the draft", () => {
+	const numAfter = 60 - userPick2;
+	return testRunPicks(numAfter, userPick2 + numAfter);
 });

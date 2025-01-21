@@ -1114,6 +1114,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 													"getRandomInjury",
 													undefined,
 												);
+												if (injury.gamesRemaining === 0) {
+													injury.gamesRemaining = 1;
+												}
 
 												setState(prevState => {
 													const p: any = {

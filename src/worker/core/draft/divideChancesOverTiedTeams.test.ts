@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { afterAll, assert, beforeAll, describe, test } from "vitest";
 import { loadTeamSeasons } from "./testHelpers";
 import lotterySort from "./lotterySort";
 import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";

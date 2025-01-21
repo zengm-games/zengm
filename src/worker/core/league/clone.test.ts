@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import { getCloneName } from "./clone";
 
 describe("core/league/clone", () => {

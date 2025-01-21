@@ -4,10 +4,10 @@ import type { Conditions } from "../../common/types";
 
 const toUI = <Name extends keyof typeof api>(
 	name: Name,
-	args: Parameters<typeof api[Name]>,
+	args: Parameters<(typeof api)[Name]>,
 	conditions: Conditions = {},
-): Promise<ReturnType<typeof api[Name]>> => {
-	if (typeof it === "function") {
+): Promise<ReturnType<(typeof api)[Name]>> => {
+	if (process.env.NODE_ENV === "test") {
 		// @ts-expect-error
 		return Promise.resolve();
 	}

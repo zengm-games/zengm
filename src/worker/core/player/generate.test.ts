@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import player from "./index";
 import testHelpers from "../../../test/helpers";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels";

@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import teamInfos from "./teamInfos";
 import geographicCoordinates from "./geographicCoordinates";
 

@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { afterEach, assert, beforeAll, describe, test } from "vitest";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";

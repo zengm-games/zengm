@@ -7,11 +7,11 @@ import { bySport } from "../../../common";
 
 const ovr = (ratings: MinimalPlayerRatings, pos?: string) => {
 	return bySport({
-		baseball: ovrBaseball(ratings as any, pos as any),
-		basketball: ovrBasketball(ratings as any),
-		football: ovrFootball(ratings as any, pos as any),
-		hockey: ovrHockey(ratings as any, pos as any),
-	});
+		baseball: ovrBaseball,
+		basketball: ovrBasketball,
+		football: ovrFootball,
+		hockey: ovrHockey,
+	})(ratings, pos);
 };
 
 export default ovr;

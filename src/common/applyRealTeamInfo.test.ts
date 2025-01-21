@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, beforeAll, describe, test } from "vitest";
 import applyRealTeamInfo from "./applyRealTeamInfo";
 import generate from "../worker/core/team/generate";
 import testHelpers from "../test/helpers";

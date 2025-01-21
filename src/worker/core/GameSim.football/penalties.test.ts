@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import penalties from "./penalties";
 
 describe("worker/core/GameSim.football", () => {

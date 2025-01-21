@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert } from "vitest";
 import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";

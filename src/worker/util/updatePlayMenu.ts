@@ -14,7 +14,7 @@ import type { Option } from "../../common/types";
 import { idb } from "../db";
 
 const updatePlayMenu = async () => {
-	if (typeof it === "function") {
+	if (process.env.NODE_ENV === "test") {
 		return;
 	}
 

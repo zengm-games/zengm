@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import testHelpers from "../../../test/helpers";
 import { finances, player, team } from "..";
 import { idb } from "../../db";

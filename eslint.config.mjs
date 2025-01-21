@@ -99,15 +99,6 @@ export default tseslint.config(
 		},
 	},
 	{
-		files: ["**/*.test.{cjs,js,ts}"],
-
-		languageOptions: {
-			globals: {
-				...globals.jest,
-			},
-		},
-	},
-	{
 		files: ["**/*.js", "tools/**/*.{cjs,js,ts}"],
 
 		languageOptions: {

@@ -2334,7 +2334,7 @@ when dirty on close, show warning window, and initiate flush (if not already in 
 - hard to coordinate across UI and worker...
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
-  if (typeof it === "function") { return; }
+  process.env.NODE_ENV === "test"
 
 get tests working
 - db.getCopy.teams

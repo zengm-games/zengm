@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, beforeAll, describe, test } from "vitest";
 import Play from "./Play";
 import { genTwoTeams, initGameSim } from "./index.test";
 import { PHASE } from "../../../common";

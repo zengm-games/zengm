@@ -1,4 +1,6 @@
-import assert from "node:assert/strict";
+// @vitest-environment jsdom
+
+import { assert, describe, test } from "vitest";
 import helpers from "./helpers";
 
 describe("ui/util/helpers", () => {

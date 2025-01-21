@@ -8,6 +8,7 @@
  * It's in jest rather than node.js because jest has all the imports and crap set up.
  */
 
+import { describe, test } from "vitest";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { g } from "../../util";

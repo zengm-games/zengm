@@ -10,11 +10,11 @@ const rosterAutoSort = (
 	pos?: string,
 ) => {
 	return bySport({
-		baseball: rosterAutoSortBaseball(tid, onlyNewPlayers, pos as any),
-		basketball: rosterAutoSortBasketball(tid, onlyNewPlayers),
-		football: rosterAutoSortFootball(tid, onlyNewPlayers, pos as any),
-		hockey: rosterAutoSortHockey(tid, onlyNewPlayers, pos as any),
-	});
+		baseball: rosterAutoSortBaseball,
+		basketball: rosterAutoSortBasketball,
+		football: rosterAutoSortFootball,
+		hockey: rosterAutoSortHockey,
+	})(tid, onlyNewPlayers, pos as any);
 };
 
 export default rosterAutoSort;

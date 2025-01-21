@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import LngTracker from "./LngTracker";
 
 describe("worker/core/GameSim.football/LngTracker", () => {

@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, beforeAll, describe, test } from "vitest";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import genJerseyNumber from "./genJerseyNumber";

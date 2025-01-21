@@ -24,23 +24,11 @@ const ovr = (
 	} = {},
 ) => {
 	return bySport({
-		baseball: ovrBaseball(players as any, {
-			onlyPos: options.pos,
-			wholeRoster: options.wholeRoster,
-		}),
-		basketball: ovrBasketball(players, {
-			playoffs: options.playoffs,
-			rating: options.rating,
-		}),
-		football: ovrFootball(players as any, {
-			onlyPos: options.pos,
-			wholeRoster: options.wholeRoster,
-		}),
-		hockey: ovrHockey(players as any, {
-			onlyPos: options.pos,
-			wholeRoster: options.wholeRoster,
-		}),
-	});
+		baseball: ovrBaseball,
+		basketball: ovrBasketball,
+		football: ovrFootball,
+		hockey: ovrHockey,
+	})(players, options);
 };
 
 export default ovr;

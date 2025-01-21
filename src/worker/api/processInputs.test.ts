@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, beforeAll, describe, test } from "vitest";
 import { g, helpers } from "../util";
 import { validateAbbrev, validateSeason } from "./processInputs";
 

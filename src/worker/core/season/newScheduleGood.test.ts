@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, beforeAll, beforeEach, describe, test } from "vitest";
 import testHelpers from "../../../test/helpers";
 import newScheduleGood from "./newScheduleGood";
 import { g, helpers } from "../../util";

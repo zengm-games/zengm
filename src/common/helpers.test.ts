@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import { helpers } from ".";
 
 describe("common/helpers", () => {
@@ -129,7 +129,7 @@ describe("common/helpers", () => {
 	});
 
 	describe("getRelativeType", () => {
-		it("should return the correct relative type for a male gender", () => {
+		test("should return the correct relative type for a male gender", () => {
 			assert.strictEqual(helpers.getRelativeType("male", "brother"), "Brother");
 			assert.strictEqual(helpers.getRelativeType("male", "son"), "Son");
 			assert.strictEqual(helpers.getRelativeType("male", "father"), "Father");
@@ -145,7 +145,7 @@ describe("common/helpers", () => {
 			assert.strictEqual(helpers.getRelativeType("male", "uncle"), "Uncle");
 		});
 
-		it("should return the correct relative type for a female gender", () => {
+		test("should return the correct relative type for a female gender", () => {
 			assert.strictEqual(
 				helpers.getRelativeType("female", "brother"),
 				"Sister",
@@ -166,7 +166,7 @@ describe("common/helpers", () => {
 	});
 
 	describe("leagueUrlFactory", () => {
-		it("should construct a valid URL with components", () => {
+		test("should construct a valid URL with components", () => {
 			const lid = 123;
 			const components = ["team", 45, "roster", undefined, "stats"];
 			const assertedUrl = "/l/123/team/45/roster/stats";
@@ -176,7 +176,7 @@ describe("common/helpers", () => {
 			);
 		});
 
-		it("should construct a valid URL without undefined components", () => {
+		test("should construct a valid URL without undefined components", () => {
 			const lid = 456;
 			const components = ["players", undefined, "schedule", "results"];
 			const assertedUrl = "/l/456/players/schedule/results";
@@ -186,7 +186,7 @@ describe("common/helpers", () => {
 			);
 		});
 
-		it("should construct a valid URL with only the league ID", () => {
+		test("should construct a valid URL with only the league ID", () => {
 			const lid = 789;
 			const components: (number | string | undefined)[] = [];
 			const assertedUrl = "/l/789";

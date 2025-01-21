@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import { PointsFormulaEvaluator } from "./evaluatePointsFormula";
 
 describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
@@ -65,23 +65,13 @@ describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
 	});
 
 	test("error for invalid variable", () => {
-		assert.throws(
-			() => {
-				new PointsFormulaEvaluator("1+2*W+OTL+Q");
-			},
-			{
-				message: 'Invalid variable "Q"',
-			},
-		);
+		assert.throws(() => {
+			new PointsFormulaEvaluator("1+2*W+OTL+Q");
+		}, 'Invalid variable "Q"');
 
-		assert.throws(
-			() => {
-				new PointsFormulaEvaluator("aBc+5");
-			},
-			{
-				message: 'Invalid variable "ABC"',
-			},
-		);
+		assert.throws(() => {
+			new PointsFormulaEvaluator("aBc+5");
+		}, 'Invalid variable "ABC"');
 	});
 
 	test("error for invalid syntax", () => {
@@ -91,13 +81,8 @@ describe("worker/core/team/evaluatePointsFormua/PointsFormulaEvaluator", () => {
 	});
 
 	test("error for mismatched parentheses", () => {
-		assert.throws(
-			() => {
-				new PointsFormulaEvaluator("2*W+(OTL+T");
-			},
-			{
-				message: "Mismatched parentheses",
-			},
-		);
+		assert.throws(() => {
+			new PointsFormulaEvaluator("2*W+(OTL+T");
+		}, "Mismatched parentheses");
 	});
 });

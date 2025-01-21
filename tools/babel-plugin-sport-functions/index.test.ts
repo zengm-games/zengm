@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import * as babel from "@babel/core";
 // @ts-expect-error
 import babelPluginSportFunctions from "./index.cjs";
@@ -17,7 +17,7 @@ const compare = (input: string, output: string) => {
 
 describe("babel-plugin-sport-functions", function () {
 	describe("isSport", () => {
-		it("should replace isSport in if", () => {
+		test("should replace isSport in if", () => {
 			compare(
 				`if (isSport("basketball")) {
   console.log("foo");
@@ -30,7 +30,7 @@ if (process.env.SPORT === "basketball") {
 			);
 		});
 
-		it("should replace !isSport in if", () => {
+		test("should replace !isSport in if", () => {
 			compare(
 				`if (!isSport("basketball")) {
   console.log("foo");
@@ -43,7 +43,7 @@ if (!(process.env.SPORT === "basketball")) {
 			);
 		});
 
-		it("should replace isSport in ternary", () => {
+		test("should replace isSport in ternary", () => {
 			compare(
 				`isSport("basketball") ? 1 : 0;`,
 				`"use strict";
@@ -54,7 +54,7 @@ process.env.SPORT === "basketball" ? 1 : 0;`,
 	});
 
 	describe("bySport", () => {
-		it("should replace bySport", () => {
+		test("should replace bySport", () => {
 			compare(
 				`const whatever = bySport({
   basketball: "basketball thing",
@@ -67,7 +67,7 @@ const whatever = process.env.SPORT === "basketball" ? "basketball thing" : proce
 			);
 		});
 
-		it("should replace bySport, with quoted properties", () => {
+		test("should replace bySport, with quoted properties", () => {
 			compare(
 				`const whatever = bySport({
   "basketball": "basketball thing",
@@ -79,7 +79,7 @@ const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "foot
 			);
 		});
 
-		it("should replace bySport, with default if no matching sport", () => {
+		test("should replace bySport, with default if no matching sport", () => {
 			compare(
 				`const whatever = bySport({
   default: "default thing",

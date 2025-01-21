@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { afterAll, assert, beforeAll, describe, test } from "vitest";
 import testHelpers from "../../test/helpers";
 import { player, team } from "../core";
 import { idb } from "../db";

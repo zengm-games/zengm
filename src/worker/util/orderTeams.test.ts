@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+import { assert, describe, test } from "vitest";
 import helpers from "./helpers";
 import { breakTies } from "./orderTeams";
 import type { HeadToHead } from "../../common/types";

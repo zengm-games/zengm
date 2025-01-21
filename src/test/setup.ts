@@ -16,10 +16,6 @@ global.postMessage = (...args) => {
 	}
 };
 
-if (!process.env.SPORT) {
-	process.env.SPORT = "basketball";
-}
-
 const fetchCache: Record<string, any> = {};
 (global as any).fetch = async (url: string) => {
 	if (!Object.hasOwn(fetchCache, url)) {
@@ -36,3 +32,8 @@ const fetchCache: Record<string, any> = {};
 		json: async () => fetchCache[url],
 	};
 };
+
+// Removes the need for jsdom in most tests
+global.self = global;
+global.window = global;
+global.addEventListener = () => {};

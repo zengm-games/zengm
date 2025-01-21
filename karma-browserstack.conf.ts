@@ -1,4 +1,5 @@
-const browserStack = require("../../.browserstack.json");
+import karmaConfig from "./tools/lib/karmaConfig.ts";
+import browserStack from "../../.browserstack.json" with { type: "json" };
 
 const customLaunchers = [
 	{
@@ -27,9 +28,7 @@ const customLaunchers = [
 	return acc;
 }, {});
 
-module.exports = async config => {
-	const karmaConfig = (await import("./tools/lib/karmaConfig.ts")).default;
-
+export default config => {
 	config.set({
 		...karmaConfig,
 		browserStack,

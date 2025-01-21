@@ -22,9 +22,9 @@
 		"pre-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/pre-test.ts",
 		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",
 		"test": "node --run pre-test && vitest --run && cross-env SPORT=football vitest --run",
-		"test-e2e": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.js",
-		"test-e2e-watch": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.js --auto-watch --no-single-run",
-		"test-e2e-browserstack": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma-browserstack.conf.js",
+		"test-e2e": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.ts",
+		"test-e2e-watch": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.ts --auto-watch --no-single-run",
+		"test-e2e-browserstack": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma-browserstack.conf.ts",
 		"prepare": "husky"
 	},
 	"lint-staged": {

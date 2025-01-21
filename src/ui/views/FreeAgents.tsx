@@ -9,7 +9,7 @@ import {
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, helpers, toWorker, useLocalPartial } from "../util";
-import type { View } from "../../common/types";
+import type { Phase, View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import {
 	wrappedContractAmount,
@@ -19,6 +19,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import clsx from "clsx";
 import { range } from "../../common/utils";
 import type { DropdownOption } from "../hooks/useDropdownOptions";
+import type { FreeAgentTransaction } from "../../worker/views/freeAgents";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([
@@ -58,6 +59,43 @@ const useSeasonsFreeAgents = () => {
 	options.reverse();
 
 	return options;
+};
+
+const signedFreeAgentWrapped = (
+	freeAgentTransaction: FreeAgentTransaction & {
+		abbrev: string;
+	},
+	freeAgencySeason: number,
+	season: number | "current",
+	phase: Phase,
+) => {
+	let rosterSeason;
+
+	if (season === "current" && phase >= PHASE.PLAYOFFS) {
+		// Link to current season roster, because there is no next season roster
+		rosterSeason = freeAgencySeason;
+	} else {
+		// Link to next season roster, because freeAgencySeason starts after the regular season ends
+		rosterSeason = freeAgencySeason + 1;
+	}
+
+	return {
+		value: (
+			<>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${freeAgentTransaction.abbrev}_${freeAgentTransaction.tid}`,
+						rosterSeason,
+					])}
+				>
+					{freeAgentTransaction.abbrev}
+				</a>
+				, {(PHASE_TEXT as any)[freeAgentTransaction.phase]}
+			</>
+		),
+		searchValue: `${freeAgentTransaction.abbrev}, ${(PHASE_TEXT as any)[freeAgentTransaction.phase]}`,
+	};
 };
 
 const FreeAgents = ({
@@ -194,23 +232,12 @@ const FreeAgents = ({
 							),
 							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 						}
-					: {
-							value: (
-								<>
-									<a
-										href={helpers.leagueUrl([
-											"roster",
-											`${p.freeAgentTransaction.abbrev}_${p.freeAgentTransaction.tid}`,
-											freeAgencySeason + 1,
-										])}
-									>
-										{p.freeAgentTransaction.abbrev}
-									</a>
-									, {(PHASE_TEXT as any)[p.freeAgentTransaction.phase]}
-								</>
-							),
-							searchValue: `${p.freeAgentTransaction.abbrev}, ${(PHASE_TEXT as any)[p.freeAgentTransaction.phase]}`,
-						},
+					: signedFreeAgentWrapped(
+							p.freeAgentTransaction,
+							freeAgencySeason,
+							season,
+							phase,
+						),
 			],
 		};
 	});

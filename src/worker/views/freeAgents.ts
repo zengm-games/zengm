@@ -44,6 +44,11 @@ const isSeason = (
 	);
 };
 
+export type FreeAgentTransaction = Extract<
+	NonNullable<Player["transactions"]>[number],
+	{ type: "freeAgent" }
+>;
+
 const getPlayers = async (
 	season: number | "current",
 	freeAgencySeason: number,
@@ -86,10 +91,7 @@ const getPlayers = async (
 
 	const processedSigned: (Player & {
 		freeAgentType: "signed";
-		freeAgentTransaction: Extract<
-			NonNullable<Player["transactions"]>[number],
-			{ type: "freeAgent" }
-		>;
+		freeAgentTransaction: FreeAgentTransaction;
 	})[] = [];
 	for (const p of signed) {
 		const freeAgentTransaction = p.transactions?.findLast(

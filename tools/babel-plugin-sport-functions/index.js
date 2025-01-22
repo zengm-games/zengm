@@ -7,10 +7,10 @@
 "use strict";
 
 // To define types some day: https://github.com/babel/babel/issues/10637
-export const babelPluginSportFunctions = function (babel) {
-	var t = babel.types;
+export const babelPluginSportFunctions = babel => {
+	const t = babel.types;
 
-	var PROCESS_ENV_SPORT = t.memberExpression(
+	const PROCESS_ENV_SPORT = t.memberExpression(
 		t.memberExpression(t.identifier("process"), t.identifier("env")),
 		t.identifier("SPORT"),
 	);
@@ -31,7 +31,7 @@ export const babelPluginSportFunctions = function (babel) {
 		visitor: {
 			CallExpression: {
 				exit: function (path) {
-					var node = path.node;
+					const node = path.node;
 
 					if (path.get("callee").isIdentifier({ name: "isSport" })) {
 						// Turns this code:
@@ -42,7 +42,7 @@ export const babelPluginSportFunctions = function (babel) {
 						//
 						// process.env.SPORT === "basketball"
 
-						var sport = node.arguments[0];
+						const sport = node.arguments[0];
 						path.replaceWith(
 							t.binaryExpression("===", PROCESS_ENV_SPORT, sport),
 						);

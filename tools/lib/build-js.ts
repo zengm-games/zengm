@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import fse from "fs-extra";
 import { fileHash, genRev, replace, setTimestamps } from "./buildFuncs.ts";
 import { Worker } from "node:worker_threads";
 
@@ -55,31 +54,27 @@ const buildJS = async () => {
 		"real-player-data",
 		"real-player-stats",
 	];
+	const replaces = [];
 	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
-		if (fs.existsSync(filePath)) {
-			const string = fs.readFileSync(filePath, "utf8");
-			const compressed = JSON.stringify(JSON.parse(string));
-			fs.writeFileSync(filePath, compressed);
 
-			const hash = fileHash(compressed);
-			const newFilename = filePath.replace(".json", `-${hash}.json`);
-			fse.moveSync(filePath, newFilename);
+		const string = fs.readFileSync(filePath, "utf8");
+		const compressed = JSON.stringify(JSON.parse(string));
 
-			replace({
-				paths: [
-					`build/gen/worker-legacy-${rev}.js`,
-					`build/gen/worker-${rev}.js`,
-				],
-				replaces: [
-					{
-						searchValue: `/gen/${filename}.json`,
-						replaceValue: `/gen/${filename}-${hash}.json`,
-					},
-				],
-			});
-		}
+		const hash = fileHash(compressed);
+		const newFilename = filePath.replace(".json", `-${hash}.json`);
+		fs.rmSync(filePath);
+		fs.writeFileSync(newFilename, compressed);
+
+		replaces.push({
+			searchValue: `/gen/${filename}.json`,
+			replaceValue: `/gen/${filename}-${hash}.json`,
+		});
 	}
+	replace({
+		paths: [`build/gen/worker-legacy-${rev}.js`, `build/gen/worker-${rev}.js`],
+		replaces,
+	});
 };
 
 export default buildJS;

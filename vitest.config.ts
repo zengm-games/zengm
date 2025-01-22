@@ -42,6 +42,7 @@ export default defineConfig({
 	},
 	test: {
 		...test,
+		isolate: false,
 		setupFiles: ["./src/test/setup.ts", "./src/worker/index.ts"],
 	},
 });

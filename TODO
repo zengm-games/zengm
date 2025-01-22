@@ -1,3 +1,19 @@
+tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
+- places to use
+  - flag multiple players at once
+  - compare multiple players
+    - needs to know pid/playoffs/season for each row, could put in metadata
+    - replace existing links, such as award races
+  - use in export players UI
+  - import too?
+- ui
+  - could implement as "compare highlighted players", would also need a "clear highlight", idk
+  - could auto-add a checkbox column to the left
+
+compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
+- bottom: all the tables from player stats, showing one row for each player
+  - make sticky header not go over these
+
 ivestigate trade weirdness https://discord.com/channels/290013534023057409/290015591216054273/1330946762017607751
 
 GOAT lab and GOAT season date range filters https://discord.com/channels/290013534023057409/331882115119448065/1327680226477604895
@@ -331,18 +347,6 @@ new achievements
 
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
 - make it a select? or listen for keyboard shortcut?
-
-compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
-- bottom: all the tables from player stats, showing one row for each player
-  - make sticky header not go over these
-- links
-  - trade pages https://old.reddit.com/r/BasketballGM/comments/1bdi7eg/version_202403130000_new_compare_players_feature/kun5sce/?context=3
-  - watch list https://discord.com/channels/290013534023057409/1217323576257151016/1217344410925269082
-    - need popup to select which ones
-    - better: generic built into tables through ... menu
-      - needs to know pid/playoffs/season for each row, could put in metadata
-      - replace existing links, such as award races
-      - could implement as "compare highlighted players", would also need a "clear highlight", idk
 
 jersey numbers by position and frequency
 - football - classic numbers more popular

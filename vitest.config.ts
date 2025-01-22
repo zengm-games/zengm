@@ -1,9 +1,7 @@
-import * as path from "node:path";
 //import babel from "vite-plugin-babel";
 // eslint-disable-next-line import/no-unresolved
 import { configDefaults, defineConfig } from "vitest/config";
-
-const root = path.join(import.meta.dirname);
+import { getRollupAliasEntries } from "./tools/lib/rollupConfig";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 
@@ -15,12 +13,7 @@ export default defineConfig({
 		}),
 	],*/
 	resolve: {
-		alias: {
-			"league-schema": path.resolve(root, "build/files/league-schema.json"),
-			"bbgm-polyfills": path.resolve(root, "src/common/polyfills-modern.ts"),
-			"bbgm-polyfills-ui": path.resolve(root, "src/common/polyfills-noop.ts"),
-			"bbgm-debug": path.resolve(root, "src/worker/core/debug/index.ts"),
-		},
+		alias: getRollupAliasEntries("test"),
 	},
 	test: {
 		isolate: false,

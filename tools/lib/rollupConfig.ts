@@ -13,8 +13,32 @@ import { getSport } from "./buildFuncs.ts";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
+type NodeEnv = "development" | "production" | "test";
+
+export const getRollupAliasEntries = (nodeEnv: NodeEnv, legacy?: boolean) => {
+	const root = path.join(import.meta.dirname, "..", "..");
+
+	return {
+		// This is assumed to be generated prior to rollup being started
+		"league-schema": path.resolve(root, "build/files/league-schema.json"),
+
+		"bbgm-polyfills": legacy
+			? path.resolve(root, "src/common/polyfills.ts")
+			: path.resolve(root, "src/common/polyfills-modern.ts"),
+
+		"bbgm-polyfills-ui": legacy
+			? path.resolve(root, "src/ui/util/polyfills.ts")
+			: path.resolve(root, "src/common/polyfills-noop.ts"),
+
+		"bbgm-debug":
+			nodeEnv === "development"
+				? path.resolve(root, "src/worker/core/debug/index.ts")
+				: path.resolve(root, "src/worker/core/debug/prod.ts"),
+	};
+};
+
 export default (
-	nodeEnv: "development" | "production" | "test",
+	nodeEnv: NodeEnv,
 	{
 		blacklistOptions,
 		statsFilename,
@@ -27,32 +51,12 @@ export default (
 ) => {
 	const sport = getSport();
 
-	// This gets used in babel.config.js, except we don't want it set to "test" in karma because then it will activate @babel/plugin-transform-modules-commonjs
-	if (nodeEnv !== "test") {
-		process.env.NODE_ENV = nodeEnv;
-	}
-
-	const root = path.join(import.meta.dirname, "..", "..");
+	// Not sure if this does anything
+	process.env.NODE_ENV = nodeEnv;
 
 	const plugins = [
 		alias({
-			entries: {
-				// This is assumed to be generated prior to rollup being started
-				"league-schema": path.resolve(root, "build/files/league-schema.json"),
-
-				"bbgm-polyfills": legacy
-					? path.resolve(root, "src/common/polyfills.ts")
-					: path.resolve(root, "src/common/polyfills-modern.ts"),
-
-				"bbgm-polyfills-ui": legacy
-					? path.resolve(root, "src/ui/util/polyfills.ts")
-					: path.resolve(root, "src/common/polyfills-noop.ts"),
-
-				"bbgm-debug":
-					nodeEnv === "production"
-						? path.resolve(root, "src/worker/core/debug/prod.ts")
-						: path.resolve(root, "src/worker/core/debug/index.ts"),
-			},
+			entries: getRollupAliasEntries(nodeEnv, legacy),
 		}),
 		replace({
 			preventAssignment: true,

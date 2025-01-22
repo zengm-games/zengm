@@ -1,5 +1,9 @@
 import karmaConfig from "./tools/lib/karmaConfig.ts";
-import browserStack from "../../.browserstack.json" with { type: "json" };
+import { readFileSync } from "fs";
+
+const browserStack = JSON.parse(
+	readFileSync("../../.browserstack.json", "utf8"),
+);
 
 const customLaunchers = [
 	{

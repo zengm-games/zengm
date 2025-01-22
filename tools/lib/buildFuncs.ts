@@ -4,10 +4,8 @@ import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
-import fse from "fs-extra";
 import * as htmlmin from "html-minifier-terser";
 import * as sass from "sass";
-import path from "node:path";
 import { PurgeCSS } from "purgecss";
 
 const SPORTS = ["baseball", "basketball", "football", "hockey"] as const;
@@ -241,22 +239,23 @@ const copyFiles = async (watch: boolean = false) => {
 		"hockey",
 	];
 
-	await fse.copy("public", "build", {
+	await fsp.cp("public", "build", {
 		filter: filename => {
 			// Loop through folders to ignore.
 			for (const folder of foldersToIgnore) {
-				if (filename.startsWith(path.join("public", folder))) {
+				if (filename.startsWith(`public/${folder}`)) {
 					return false;
 				}
 			}
 
 			// Remove service worker, so I don't have to deal with it being wonky in dev
-			if (watch && filename === path.join("public", "sw.js")) {
+			if (watch && filename === "public/sw.js") {
 				return false;
 			}
 
 			return true;
 		},
+		recursive: true,
 	});
 
 	let sport = process.env.SPORT;
@@ -264,8 +263,9 @@ const copyFiles = async (watch: boolean = false) => {
 		sport = "basketball";
 	}
 
-	await fse.copy(path.join("public", sport), "build", {
+	await fsp.cp(`public/${sport}`, "build", {
 		filter: filename => !filename.includes(".gitignore"),
+		recursive: true,
 	});
 
 	// Remove the empty folders created by the "filter" function.
@@ -275,16 +275,18 @@ const copyFiles = async (watch: boolean = false) => {
 
 	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
 	for (const filename of realPlayerFilenames) {
-		const sourcePath = path.join("data", `${filename}.${sport}.json`);
+		const sourcePath = `data/${filename}.${sport}.json`;
 		if (fs.existsSync(sourcePath)) {
-			await fse.copy(sourcePath, `build/gen/${filename}.json`);
+			await fsp.copyFile(sourcePath, `build/gen/${filename}.json`);
 		}
 	}
 
-	await fse.copy("data/names.json", "build/gen/names.json");
-	await fse.copy("data/names-female.json", "build/gen/names-female.json");
+	await fsp.copyFile("data/names.json", "build/gen/names.json");
+	await fsp.copyFile("data/names-female.json", "build/gen/names-female.json");
 
-	await fse.copy("node_modules/flag-icons/flags/4x3", "build/img/flags");
+	await fsp.cp("node_modules/flag-icons/flags/4x3", "build/img/flags", {
+		recursive: true,
+	});
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;

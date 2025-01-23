@@ -3,6 +3,30 @@ import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow } from ".";
 
+const BulkSelectCheckbox = () => {
+	const onChange = () => {
+		console.log("CHANGE");
+	};
+
+	// Similar to singleCheckbox stuff below
+	const onClickTd = (event: MouseEvent) => {
+		if (event.target && (event.target as any).tagName === "TD") {
+			onChange();
+		}
+	};
+
+	return (
+		<td data-no-row-highlight onClick={onClickTd}>
+			<input
+				className="form-check-input"
+				type="checkbox"
+				checked={false}
+				onChange={onChange}
+			/>
+		</td>
+	);
+};
+
 const Row = ({
 	clickable,
 	highlightCols,
@@ -24,18 +48,7 @@ const Row = ({
 			})}
 			onClick={clickable ? toggleClicked : undefined}
 		>
-			{showBulkSelectCheckboxes ? (
-				<td data-no-row-highlight>
-					<input
-						className="form-check-input"
-						type="checkbox"
-						checked={false}
-						onChange={() => {
-							console.log("CHANGE");
-						}}
-					/>
-				</td>
-			) : null}
+			{showBulkSelectCheckboxes ? <BulkSelectCheckbox row={row} /> : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =

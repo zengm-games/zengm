@@ -37,7 +37,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - ProtectPlayers
     - search for other places with checkboxes
 - interaction with hideAllControls?
-- make sure clicking on table cell (not just checkbox) toggles cell, like other checkboxes in table. see singleCheckbox
 - test
   - with supercols
   - with col filters showing

@@ -18,6 +18,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
         pid: number,
         season: number,
       },
+      or should type be at the table level, and then force rows to have certain data?
   - in cases where the checkboxes aren't shown by default (activated through ... menu), we need built-in controls
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
@@ -28,7 +29,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - places to use
   - compare multiple players
     - needs to know pid/playoffs/season for each row, could put in metadata
-  - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectPlayers is false
+  - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
     - trading block
     - trade
       - would still need separate logic for selecting untraeable players
@@ -42,6 +43,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - with col filters showing
   - with stickyCols
     - need to add sticky-xxxx to handle adding 1 to 3
+    - need to recompute widths when hiding/showing
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

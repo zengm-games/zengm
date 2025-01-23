@@ -24,7 +24,7 @@ import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
 import { useDataTableState } from "./useDataTableState";
 import { processRows } from "./processRows";
-import { useBulkSelectPlayers } from "./useBulkSelectPlayers";
+import { useBulkSelectRows } from "./useBulkSelectRows";
 import { BulkActions } from "./BulkActions";
 
 export type SortBy = [number, SortOrder];
@@ -114,11 +114,8 @@ const DataTable = ({
 		name,
 	});
 
-	const {
-		bulkSelectPlayers,
-		showBulkSelectCheckboxes,
-		toggleBulkSelectPlayers,
-	} = useBulkSelectPlayers();
+	const { bulkSelectRows, showBulkSelectCheckboxes, toggleBulkSelectRows } =
+		useBulkSelectRows();
 
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const sortBys = updateSortBys({
@@ -135,8 +132,8 @@ const DataTable = ({
 		});
 	};
 
-	const handleBulkSelectPlayers = () => {
-		toggleBulkSelectPlayers();
+	const handleBulkSelectRows = () => {
+		toggleBulkSelectRows();
 	};
 
 	const handleExportCSV = () => {
@@ -397,18 +394,18 @@ const DataTable = ({
 					})}
 				>
 					<>
-						{bulkSelectPlayers ? (
+						{bulkSelectRows ? (
 							<BulkActions name={name} />
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />
 						) : null}
 						{!hideMenuToo ? (
 							<Controls
-								bulkSelectPlayers={bulkSelectPlayers}
+								bulkSelectRows={bulkSelectRows}
 								enableFilters={state.enableFilters}
 								hideAllControls={hideAllControls}
 								name={name}
-								onBulkSelectPlayers={handleBulkSelectPlayers}
+								onBulkSelectRows={handleBulkSelectRows}
 								onExportCSV={handleExportCSV}
 								onResetTable={handleResetTable}
 								onSearch={handleSearch}

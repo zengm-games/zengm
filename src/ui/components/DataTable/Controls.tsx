@@ -14,11 +14,11 @@ const style = {
 };
 
 const Controls = ({
-	bulkSelectPlayers,
+	bulkSelectRows,
 	enableFilters,
 	hideAllControls,
 	name,
-	onBulkSelectPlayers,
+	onBulkSelectRows,
 	onExportCSV,
 	onResetTable,
 	onSearch,
@@ -26,11 +26,11 @@ const Controls = ({
 	onToggleFilters,
 	searchText,
 }: {
-	bulkSelectPlayers: boolean;
+	bulkSelectRows: boolean;
 	enableFilters: boolean;
 	hideAllControls?: boolean;
 	name: string;
-	onBulkSelectPlayers: () => void;
+	onBulkSelectRows: () => void;
 	onExportCSV: () => void;
 	onResetTable: () => void;
 	onSearch: (a: SyntheticEvent<HTMLInputElement>) => void;
@@ -139,8 +139,8 @@ const Controls = ({
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					<Dropdown.Item onClick={onBulkSelectPlayers}>
-						{bulkSelectPlayers
+					<Dropdown.Item onClick={onBulkSelectRows}>
+						{bulkSelectRows
 							? "Hide bulk select players"
 							: "Bulk select players"}
 					</Dropdown.Item>

@@ -114,8 +114,12 @@ const DataTable = ({
 		name,
 	});
 
-	const { bulkSelectRows, showBulkSelectCheckboxes, toggleBulkSelectRows } =
-		useBulkSelectRows();
+	const {
+		bulkSelectRows,
+		selectedRows,
+		showBulkSelectCheckboxes,
+		toggleBulkSelectRows,
+	} = useBulkSelectRows();
 
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const sortBys = updateSortBys({
@@ -453,6 +457,10 @@ const DataTable = ({
 										row={row}
 										clickable={clickable}
 										highlightCols={highlightCols}
+										bulkSelectChecked={selectedRows.map.has(row.key)}
+										onBulkSelectToggle={row => {
+											selectedRows.toggle(row);
+										}}
 										showBulkSelectCheckboxes={showBulkSelectCheckboxes}
 									/>
 								))}

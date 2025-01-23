@@ -3,9 +3,21 @@ import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow } from ".";
 
-const BulkSelectCheckbox = () => {
+type MyRow = Omit<DataTableRow, "data"> & {
+	data: any[];
+};
+
+const BulkSelectCheckbox = ({
+	checked,
+	onToggle,
+	row,
+}: {
+	checked: boolean;
+	onToggle: (row: MyRow) => void;
+	row: MyRow;
+}) => {
 	const onChange = () => {
-		console.log("CHANGE");
+		onToggle(row);
 	};
 
 	// Similar to singleCheckbox stuff below
@@ -20,7 +32,7 @@ const BulkSelectCheckbox = () => {
 			<input
 				className="form-check-input"
 				type="checkbox"
-				checked={false}
+				checked={checked}
 				onChange={onChange}
 			/>
 		</td>
@@ -31,13 +43,17 @@ const Row = ({
 	clickable,
 	highlightCols,
 	row,
+
+	bulkSelectChecked,
+	onBulkSelectToggle,
 	showBulkSelectCheckboxes,
 }: {
 	clickable?: boolean;
 	highlightCols: number[];
-	row: Omit<DataTableRow, "data"> & {
-		data: any[];
-	};
+	row: MyRow;
+
+	bulkSelectChecked: boolean;
+	onBulkSelectToggle: (row: MyRow) => void;
 	showBulkSelectCheckboxes: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -48,7 +64,13 @@ const Row = ({
 			})}
 			onClick={clickable ? toggleClicked : undefined}
 		>
-			{showBulkSelectCheckboxes ? <BulkSelectCheckbox row={row} /> : null}
+			{showBulkSelectCheckboxes ? (
+				<BulkSelectCheckbox
+					checked={bulkSelectChecked}
+					onToggle={onBulkSelectToggle}
+					row={row}
+				/>
+			) : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =

@@ -54,9 +54,9 @@ const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
 			title={
 				watch !== undefined && watch > 0
 					? numWatchColors > 1
-						? "Cycle Watch List"
-						: "Remove from Watch List"
-					: "Add to Watch List"
+						? "Cycle watch list"
+						: "Remove from watch list"
+					: "Add to watch list"
 			}
 			watch={watch}
 		/>

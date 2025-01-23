@@ -38,7 +38,9 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - ProtectPlayers
     - search for other places with checkboxes
 - interaction with hideAllControls?
+- flag in BulkActions should show the color that all the selected players will become - is that possible? maybe async?
 - test
+  - bulk actions noop with nothing selected
   - with supercols
   - with col filters showing
   - with stickyCols

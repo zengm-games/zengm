@@ -1,6 +1,23 @@
 import { safeLocalStorage } from "../../util";
-import type { Props, State, SortBy } from ".";
+import type { Props, SortBy, StickyCols } from ".";
 import SettingsCache from "./SettingsCache";
+
+export type State = {
+	colOrder: {
+		colIndex: number;
+		hidden?: boolean;
+	}[];
+	currentPage: number;
+	enableFilters: boolean;
+	filters: string[];
+	prevName: string;
+	perPage: number;
+	searchText: string;
+	showSelectColumnsModal: boolean;
+	sortBys: SortBy[];
+	stickyCols: StickyCols;
+	settingsCache: SettingsCache;
+};
 
 const loadStateFromCache = ({
 	cols,

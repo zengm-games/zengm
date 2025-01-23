@@ -4,9 +4,7 @@ import {
 	type SyntheticEvent,
 	type MouseEvent,
 	type ReactNode,
-	useState,
 	useEffect,
-	useCallback,
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
@@ -19,16 +17,15 @@ import PerPage from "./PerPage";
 import createFilterFunction from "./createFilterFunction";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
-import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import { arrayMoveImmutable } from "array-move";
-import type SettingsCache from "./SettingsCache";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
 import { orderBy } from "../../../common/utils";
 import { normalizeIntl } from "../../../common/normalizeIntl";
+import { useDataTableState } from "./useDataTableState";
 
 export type SortBy = [number, SortOrder];
 
@@ -88,23 +85,6 @@ export type Props = {
 	addFilters?: (string | undefined)[];
 };
 
-export type State = {
-	colOrder: {
-		colIndex: number;
-		hidden?: boolean;
-	}[];
-	currentPage: number;
-	enableFilters: boolean;
-	filters: string[];
-	prevName: string;
-	perPage: number;
-	searchText: string;
-	showSelectColumnsModal: boolean;
-	sortBys: SortBy[];
-	stickyCols: StickyCols;
-	settingsCache: SettingsCache;
-};
-
 const DataTable = ({
 	className,
 	classNameWrapper,
@@ -126,22 +106,13 @@ const DataTable = ({
 	superCols,
 	addFilters,
 }: Props) => {
-	const [state, setState] = useState<State>(() =>
-		loadStateFromCache({
-			cols,
-			defaultSort,
-			defaultStickyCols,
-			disableSettingsCache,
-			name,
-		}),
-	);
-
-	const setStatePartial = useCallback((newState: Partial<State>) => {
-		setState(state2 => ({
-			...state2,
-			...newState,
-		}));
-	}, []);
+	const [state, setStatePartial, resetState] = useDataTableState({
+		cols,
+		defaultSort,
+		defaultStickyCols,
+		disableSettingsCache,
+		name,
+	});
 
 	const processRows = () => {
 		const filterFunctions = state.enableFilters
@@ -273,15 +244,13 @@ const DataTable = ({
 		state.settingsCache.clear("DataTableSort");
 		state.settingsCache.clear("DataTableStickyCols");
 
-		setState(
-			loadStateFromCache({
-				cols,
-				defaultSort,
-				defaultStickyCols,
-				disableSettingsCache,
-				name,
-			}),
-		);
+		resetState({
+			cols,
+			defaultSort,
+			defaultStickyCols,
+			disableSettingsCache,
+			name,
+		});
 	};
 
 	const handleSelectColumns = () => {
@@ -298,10 +267,9 @@ const DataTable = ({
 			state.settingsCache.set("DataTableFilters", state.filters);
 		}
 
-		setState(prevState => ({
-			...prevState,
-			enableFilters: !prevState.enableFilters,
-		}));
+		setStatePartial({
+			enableFilters: !state.enableFilters,
+		});
 	};
 
 	const handleFilterUpdate = (
@@ -348,15 +316,13 @@ const DataTable = ({
 	// If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats).
 	// If colOrder does not match cols, need to run reconciliation code in loadStateFromCache (example: current vs past seasons in League Finances).
 	if (name !== state.prevName || cols.length > state.colOrder.length) {
-		setState(
-			loadStateFromCache({
-				cols,
-				defaultSort,
-				defaultStickyCols,
-				disableSettingsCache,
-				name,
-			}),
-		);
+		resetState({
+			cols,
+			defaultSort,
+			defaultStickyCols,
+			disableSettingsCache,
+			name,
+		});
 	}
 
 	useEffect(() => {

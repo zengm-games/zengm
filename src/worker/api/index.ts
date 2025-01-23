@@ -2001,8 +2001,9 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
 		addDummySeason: true,
-		active: true,
+		active: false,
 	});
+	const teamsByTid = groupByUnique(teams, "tid");
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
@@ -2014,7 +2015,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 	return Promise.all(
 		offers.map(async offerRaw => {
 			const tid = offerRaw[1].tid;
-			const t = teams.find(t => t.tid === tid);
+			const t = teamsByTid[tid];
 			if (!t) {
 				throw new Error("No team found");
 			}

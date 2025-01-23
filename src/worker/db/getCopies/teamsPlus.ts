@@ -450,7 +450,7 @@ async function getCopies<
 		regularSeason?: boolean;
 		statType?: TeamStatType;
 		addDummySeason?: boolean;
-		active?: true;
+		active?: boolean;
 		showNoStats?: boolean;
 	} = {},
 	type?: GetCopyType,

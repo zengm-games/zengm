@@ -2001,7 +2001,6 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
 		addDummySeason: true,
-		active: false,
 	});
 	const teamsByTid = groupByUnique(teams, "tid");
 	const stats = bySport({

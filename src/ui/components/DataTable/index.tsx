@@ -326,7 +326,10 @@ const DataTable = ({
 			}),
 		);
 
-	const { stickyClass, tableRef } = useStickyXX(state.stickyCols);
+	const { stickyClass, tableRef } = useStickyXX(
+		state.stickyCols,
+		showBulkSelectCheckboxes,
+	);
 
 	return (
 		<>

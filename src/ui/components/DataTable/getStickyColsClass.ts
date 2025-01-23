@@ -1,6 +1,9 @@
-import type { StickyCols } from ".";
+import type { StickyColsPlusCheckboxes } from "./useStickyXX";
 
-const getStickyColsClass = (stickyCols: StickyCols) => {
+const getStickyColsClass = (stickyCols: StickyColsPlusCheckboxes) => {
+	if (stickyCols === 4) {
+		throw new Error("NOT IMPLEMENTED");
+	}
 	if (stickyCols === 3) {
 		return "sticky-xxx";
 	}

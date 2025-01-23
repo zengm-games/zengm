@@ -3,10 +3,19 @@ import type { StickyCols } from ".";
 import getStickyColsClass from "./getStickyColsClass";
 import { range } from "../../../common/utils";
 
+// Add 1 to the StickyCols setting
+export type StickyColsPlusCheckboxes = StickyCols | 4;
+
 // >1 sticky column requires some JS to compute the left offset of all besides the first sticky column (whose offset is always 0)
-const useStickyXX = (stickyCols: StickyCols) => {
+const useStickyXX = (
+	stickyColsRaw: StickyCols,
+	showBulkSelectCheckboxes: boolean,
+) => {
 	const tableRef = useRef<HTMLTableElement>(null);
 	const prevLefts = useRef<number[] | undefined>(undefined);
+
+	const stickyCols = (stickyColsRaw +
+		(showBulkSelectCheckboxes ? 1 : 0)) as StickyColsPlusCheckboxes;
 
 	const updateStickyCols = useCallback(() => {
 		const table = tableRef.current;

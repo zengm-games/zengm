@@ -232,7 +232,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		undefined,
 	);
 
-	const { stickyClass, tableRef } = useStickyXX(stickyCols);
+	const { stickyClass, tableRef } = useStickyXX(stickyCols, false);
 
 	// Hacky shit to try to determine click from drag. start is to track how long a click lasted.
 	const clicked = useRef<{

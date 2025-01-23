@@ -25,7 +25,7 @@ const Row = ({
 			onClick={clickable ? toggleClicked : undefined}
 		>
 			{showBulkSelectCheckboxes ? (
-				<td>
+				<td data-no-row-highlight>
 					<input
 						className="form-check-input"
 						type="checkbox"

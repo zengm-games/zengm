@@ -414,7 +414,7 @@ const DraftLotteryTable = (props: Props) => {
 
 	const showRigButton = showStartButton && godMode && rigged === undefined;
 
-	const { stickyClass, tableRef } = useStickyXX(2);
+	const { stickyClass, tableRef } = useStickyXX(2, false);
 
 	let table;
 

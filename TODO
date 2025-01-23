@@ -9,8 +9,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
       - how to handle multiple watch lists?
     - compare players
     - export players
-- auto-add a checkbox column to the left
-  - make sure it plays nice with hidden and sorted columns
 - how to display actions for selected players?
   - in cases where the checkboxes are shown by default (like trading block), we want to be able to put the button outside the table, but also maybe want built-in controls to exist
     - "selectedRows" needs to be able to be passed to DataTable so it's controlled outside. But only optionally.
@@ -44,6 +42,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - with supercols
   - with col filters showing
   - with stickyCols
+    - need to add sticky-xxxx to handle adding 1 to 3
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

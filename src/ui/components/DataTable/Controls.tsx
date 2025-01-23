@@ -121,16 +121,16 @@ const Controls = ({
 			) : null}
 			<Dropdown className="float-end">
 				<Dropdown.Toggle
-					as="span"
 					bsPrefix="no-caret"
 					id={`datatable-controls-${name}`}
 					style={{
 						cursor: "pointer",
 						fontSize: 16,
 						lineHeight: "30px",
-						paddingLeft: 5,
+						padding: "0 0 0 5px",
 					}}
 					title="Actions"
+					variant="btn-link border-0"
 				>
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>

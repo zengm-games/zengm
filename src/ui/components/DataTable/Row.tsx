@@ -1,18 +1,20 @@
-import clsx, { type ClassValue } from "clsx";
+import clsx from "clsx";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
+import type { DataTableRow } from ".";
 
 const Row = ({
 	clickable,
 	highlightCols,
 	row,
+	showBulkSelectCheckboxes,
 }: {
 	clickable?: boolean;
 	highlightCols: number[];
-	row: {
-		classNames?: ClassValue;
+	row: Omit<DataTableRow, "data"> & {
 		data: any[];
 	};
+	showBulkSelectCheckboxes: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
@@ -22,6 +24,18 @@ const Row = ({
 			})}
 			onClick={clickable ? toggleClicked : undefined}
 		>
+			{showBulkSelectCheckboxes ? (
+				<td>
+					<input
+						className="form-check-input"
+						type="checkbox"
+						checked={false}
+						onChange={() => {
+							console.log("CHANGE");
+						}}
+					/>
+				</td>
+			) : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =

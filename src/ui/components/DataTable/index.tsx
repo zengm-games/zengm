@@ -114,7 +114,11 @@ const DataTable = ({
 		name,
 	});
 
-	const { bulkSelectPlayers, toggleBulkSelectPlayers } = useBulkSelectPlayers();
+	const {
+		bulkSelectPlayers,
+		showBulkSelectCheckboxes,
+		toggleBulkSelectPlayers,
+	} = useBulkSelectPlayers();
 
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const sortBys = updateSortBys({
@@ -438,6 +442,7 @@ const DataTable = ({
 								filters={state.filters}
 								handleColClick={handleColClick}
 								handleFilterUpdate={handleFilterUpdate}
+								showBulkSelectCheckboxes={showBulkSelectCheckboxes}
 								sortBys={state.sortBys}
 								superCols={superCols}
 							/>
@@ -448,6 +453,7 @@ const DataTable = ({
 										row={row}
 										clickable={clickable}
 										highlightCols={highlightCols}
+										showBulkSelectCheckboxes={showBulkSelectCheckboxes}
 									/>
 								))}
 							</tbody>

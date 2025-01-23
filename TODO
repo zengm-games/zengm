@@ -10,10 +10,16 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - compare players
     - export players
 - auto-add a checkbox column to the left
+  - make sure it plays nice with hidden and sorted columns
 - how to display actions for selected players?
   - in cases where the checkboxes are shown by default (like trading block), we want to be able to put the button outside the table, but also maybe want built-in controls to exist
     - "selectedRows" needs to be able to be passed to DataTable so it's controlled outside. But only optionally.
-    - selectedRows should be Map<Key, Row>, where Key is defined somehow (might just be pid, but might be pid+season+playoffs) and Row is the row of data (for easy access)
+    - selectedRows should be Map<Key, Metadata>, where Key is key of the row and Metadata is the metadata property on row, like:
+      metadata?: {
+        type: "playerSeason",
+        pid: number,
+        season: number,
+      },
   - in cases where the checkboxes aren't shown by default (activated through ... menu), we need built-in controls
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
@@ -24,7 +30,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - places to use
   - compare multiple players
     - needs to know pid/playoffs/season for each row, could put in metadata
-  - could be used for places where we already have check boxes
+  - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectPlayers is false
     - trading block
     - trade
       - would still need separate logic for selecting untraeable players
@@ -33,6 +39,11 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - ProtectPlayers
     - search for other places with checkboxes
 - interaction with hideAllControls?
+- make sure clicking on table cell (not just checkbox) toggles cell, like other checkboxes in table. see singleCheckbox
+- test
+  - with supercols
+  - with col filters showing
+  - with stickyCols
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

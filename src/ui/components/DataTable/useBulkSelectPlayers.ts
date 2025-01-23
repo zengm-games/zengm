@@ -7,8 +7,11 @@ export const useBulkSelectPlayers = () => {
 		setBulkSelectPlayers(bulk => !bulk);
 	}, []);
 
+	const showBulkSelectCheckboxes = bulkSelectPlayers;
+
 	return {
 		bulkSelectPlayers,
+		showBulkSelectCheckboxes,
 		toggleBulkSelectPlayers,
 	};
 };

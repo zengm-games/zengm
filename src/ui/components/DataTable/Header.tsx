@@ -8,6 +8,7 @@ const FilterHeader = ({
 	cols,
 	filters,
 	handleFilterUpdate,
+	showBulkSelectCheckboxes,
 }: {
 	colOrder: {
 		colIndex: number;
@@ -16,9 +17,11 @@ const FilterHeader = ({
 	cols: Col[];
 	filters: string[];
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
+	showBulkSelectCheckboxes: boolean;
 }) => {
 	return (
 		<tr>
+			{showBulkSelectCheckboxes ? <th /> : null}
 			{colOrder.map(({ colIndex }) => {
 				const col = cols[colIndex];
 
@@ -42,11 +45,13 @@ const FilterHeader = ({
 
 const SuperCols = ({
 	colOrder,
+	showBulkSelectCheckboxes,
 	superCols,
 }: {
 	colOrder: {
 		colIndex: number;
 	}[];
+	showBulkSelectCheckboxes: boolean;
 	superCols: SuperCol[];
 }) => {
 	const colIndexes = colOrder.map(x => x.colIndex);
@@ -78,6 +83,7 @@ const SuperCols = ({
 
 	return (
 		<tr>
+			{showBulkSelectCheckboxes ? <th /> : null}
 			{superCols
 				.map(({ colspan, desc, title }, i) => {
 					const adjustedColspan = colspan + colspanAdjustments[i];
@@ -158,6 +164,7 @@ const Header = ({
 	filters,
 	handleColClick,
 	handleFilterUpdate,
+	showBulkSelectCheckboxes,
 	sortBys,
 	superCols,
 }: {
@@ -169,15 +176,21 @@ const Header = ({
 	filters: string[];
 	handleColClick: (b: MouseEvent, a: number) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
+	showBulkSelectCheckboxes: boolean;
 	sortBys: SortBy[];
 	superCols?: SuperCol[];
 }) => {
 	return (
 		<thead>
 			{superCols ? (
-				<SuperCols colOrder={colOrder} superCols={superCols} />
+				<SuperCols
+					colOrder={colOrder}
+					showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+					superCols={superCols}
+				/>
 			) : null}
 			<tr>
+				{showBulkSelectCheckboxes ? <th>!!!!!!</th> : null}
 				{colOrder.map(({ colIndex }) => {
 					const {
 						classNames: colClassNames,
@@ -216,6 +229,7 @@ const Header = ({
 					cols={cols}
 					filters={filters}
 					handleFilterUpdate={handleFilterUpdate}
+					showBulkSelectCheckboxes={showBulkSelectCheckboxes}
 				/>
 			) : null}
 		</thead>

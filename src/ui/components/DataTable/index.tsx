@@ -25,6 +25,7 @@ import useStickyXX from "./useStickyXX";
 import { useDataTableState } from "./useDataTableState";
 import { processRows } from "./processRows";
 import { useBulkSelectPlayers } from "./useBulkSelectPlayers";
+import { BulkActions } from "./BulkActions";
 
 export type SortBy = [number, SortOrder];
 
@@ -389,7 +390,9 @@ const DataTable = ({
 					})}
 				>
 					<>
-						{pagination && !hideAllControls ? (
+						{bulkSelectPlayers ? (
+							<BulkActions name={name} />
+						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />
 						) : null}
 						{!hideMenuToo ? (

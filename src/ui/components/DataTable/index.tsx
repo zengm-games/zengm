@@ -14,7 +14,6 @@ import Info from "./Info";
 import Row from "./Row";
 import Pagination from "./Pagination";
 import PerPage from "./PerPage";
-import createFilterFunction from "./createFilterFunction";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
@@ -23,9 +22,8 @@ import type { SortOrder, SortType } from "../../../common/types";
 import { arrayMoveImmutable } from "array-move";
 import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
-import { orderBy } from "../../../common/utils";
-import { normalizeIntl } from "../../../common/normalizeIntl";
 import { useDataTableState } from "./useDataTableState";
+import { processRows } from "./processRows";
 
 export type SortBy = [number, SortOrder];
 
@@ -114,96 +112,6 @@ const DataTable = ({
 		name,
 	});
 
-	const processRows = () => {
-		const filterFunctions = state.enableFilters
-			? state.filters.map((filter, i) =>
-					createFilterFunction(
-						filter,
-						cols[i] ? cols[i].sortType : undefined,
-						cols[i] ? cols[i].searchType : undefined,
-					),
-				)
-			: [];
-		const skipFiltering = state.searchText === "" && !state.enableFilters;
-		const searchText = normalizeIntl(state.searchText);
-		const rowsFiltered = skipFiltering
-			? rows
-			: rows.filter(row => {
-					// Search
-					if (state.searchText !== "") {
-						let found = false;
-
-						for (let i = 0; i < row.data.length; i++) {
-							// cols[i] might be undefined if number of columns in a table changed
-							if (cols[i]?.noSearch) {
-								continue;
-							}
-
-							if (
-								normalizeIntl(getSearchVal(row.data[i], false)).includes(
-									searchText,
-								)
-							) {
-								found = true;
-								break;
-							}
-						}
-
-						if (!found) {
-							return false;
-						}
-					}
-
-					// Filter
-					if (state.enableFilters) {
-						for (let i = 0; i < row.data.length; i++) {
-							// cols[i] might be undefined if number of columns in a table changed
-							if (cols[i]?.noSearch) {
-								continue;
-							}
-
-							if (
-								filterFunctions[i] &&
-								filterFunctions[i](row.data[i]) === false
-							) {
-								return false;
-							}
-						}
-					}
-
-					return true;
-				});
-
-		const sortKeys = state.sortBys.map(sortBy => (row: DataTableRow) => {
-			let i = sortBy[0];
-
-			if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
-				i = 0;
-			}
-
-			return getSortVal(row.data[i], cols[i].sortType);
-		});
-
-		const rowsOrdered = orderBy(
-			rowsFiltered,
-			sortKeys,
-			state.sortBys.map(sortBy => sortBy[1]),
-		);
-
-		const colOrderFiltered = state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden && cols[colIndex],
-		);
-
-		return rowsOrdered.map((row, i) => {
-			return {
-				...row,
-				data: colOrderFiltered.map(({ colIndex }) =>
-					colIndex === rankCol ? i + 1 : row.data[colIndex],
-				),
-			};
-		});
-	};
-
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const sortBys = updateSortBys({
 			cols,
@@ -225,7 +133,12 @@ const DataTable = ({
 		);
 		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]);
 		const colNames = columns.map(col => col.title);
-		const rows = processRows().map(row =>
+		const processedRows = processRows({
+			cols,
+			rankCol,
+			rows,
+			state,
+		}).map(row =>
 			row.data.map((val, i) => {
 				const sortType = columns[i].sortType;
 				if (sortType === "currency" || sortType === "number") {
@@ -234,7 +147,7 @@ const DataTable = ({
 				return getSearchVal(val, false);
 			}),
 		);
-		const output = csvFormatRows([colNames, ...rows]);
+		const output = csvFormatRows([colNames, ...processedRows]);
 		downloadFile(`${name}.csv`, output, "text/csv");
 	};
 
@@ -361,7 +274,12 @@ const DataTable = ({
 		state.settingsCache,
 	]);
 
-	let processedRows = processRows();
+	let processedRows = processRows({
+		cols,
+		rankCol,
+		rows,
+		state,
+	});
 	const numRowsFiltered = processedRows.length;
 	const start = 1 + (state.currentPage - 1) * state.perPage;
 	let end = start + state.perPage - 1;

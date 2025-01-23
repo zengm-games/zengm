@@ -38,9 +38,20 @@ const useStickyXX = (
 		};
 
 		const lefts = [0];
+		const row = getRow();
+		let rows;
+
+		// Remove left margin from the first column, which I think only matters when you're hiding the first column (like clicking "Hide bulk select players")
+		if (row && row.cells[0].style.left) {
+			rows = getRows();
+			for (const row of rows) {
+				if (row.cells[0]) {
+					row.cells[0].style.removeProperty("left");
+				}
+			}
+		}
 
 		if (stickyCols >= 2) {
-			const row = getRow();
 			if (!row || row.cells.length < stickyCols) {
 				return;
 			}
@@ -59,7 +70,9 @@ const useStickyXX = (
 				return;
 			}
 
-			const rows = getRows();
+			if (!rows) {
+				rows = getRows();
+			}
 
 			const widths = lefts.map(left => `${left}px`);
 
@@ -78,7 +91,9 @@ const useStickyXX = (
 			if (prevStickyCols >= 2 && prevStickyCols > stickyCols) {
 				const colsToReset = range(stickyCols, prevStickyCols);
 
-				const rows = getRows();
+				if (!rows) {
+					rows = getRows();
+				}
 				for (const row of rows) {
 					for (const i of colsToReset) {
 						const cell = row.cells[i];

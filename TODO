@@ -45,7 +45,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - with col filters showing
   - with stickyCols
     - need to add sticky-xxxx to handle adding 1 to 3
-    - need to recompute widths when hiding/showing
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

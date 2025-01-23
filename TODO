@@ -3,13 +3,13 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - if checkboxes are shown by default, still have this to show the "Bulk" button
   - when enabled, switch text to "Hide bulk select players"
 - replace the "10 per page" menu with a "Bulk actions" dropdown button
-  - show all actions/controls listed above
-- actions
-  - flag/unflag multiple players at once
-    - how to handle multiple watch lists?
-  - compare players
-  - export players
-  - custom action external to the table
+  - use primary color if >0 rows are selected
+  - actions
+    - flag/unflag multiple players at once
+      - how to handle multiple watch lists?
+    - compare players
+    - export players
+    - custom action external to the table
 - auto-add a checkbox column to the left
 - how to display actions for selected players?
   - in cases where the checkboxes are shown by default (like trading block), we want to be able to put the button outside the table, but also maybe want built-in controls to exist

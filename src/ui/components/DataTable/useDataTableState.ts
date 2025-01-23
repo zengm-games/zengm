@@ -36,5 +36,5 @@ export const useDataTableState = ({
 		[],
 	);
 
-	return [state, setStatePartial, resetState] as const;
+	return { state, setStatePartial, resetState };
 };

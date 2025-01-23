@@ -24,6 +24,7 @@ import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
 import { useDataTableState } from "./useDataTableState";
 import { processRows } from "./processRows";
+import { useBulkSelectPlayers } from "./useBulkSelectPlayers";
 
 export type SortBy = [number, SortOrder];
 
@@ -104,13 +105,15 @@ const DataTable = ({
 	superCols,
 	addFilters,
 }: Props) => {
-	const [state, setStatePartial, resetState] = useDataTableState({
+	const { state, setStatePartial, resetState } = useDataTableState({
 		cols,
 		defaultSort,
 		defaultStickyCols,
 		disableSettingsCache,
 		name,
 	});
+
+	const { bulkSelectPlayers, toggleBulkSelectPlayers } = useBulkSelectPlayers();
 
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const sortBys = updateSortBys({
@@ -125,6 +128,10 @@ const DataTable = ({
 			currentPage: 1,
 			sortBys,
 		});
+	};
+
+	const handleBulkSelectPlayers = () => {
+		toggleBulkSelectPlayers();
 	};
 
 	const handleExportCSV = () => {
@@ -387,9 +394,11 @@ const DataTable = ({
 						) : null}
 						{!hideMenuToo ? (
 							<Controls
+								bulkSelectPlayers={bulkSelectPlayers}
 								enableFilters={state.enableFilters}
 								hideAllControls={hideAllControls}
 								name={name}
+								onBulkSelectPlayers={handleBulkSelectPlayers}
 								onExportCSV={handleExportCSV}
 								onResetTable={handleResetTable}
 								onSearch={handleSearch}

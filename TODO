@@ -2,7 +2,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
 - actions
-  - need to limit number of players for compare players?
   - export players
   - on single team pages (like roster)
     - trade for

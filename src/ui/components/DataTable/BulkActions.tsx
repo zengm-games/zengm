@@ -10,6 +10,9 @@ import {
 import { useState } from "react";
 import type { SelectedRows } from "./useBulkSelectRows";
 
+// Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
+const MAX_NUM_TO_COMPARE = 20;
+
 export const BulkActions = ({
 	name,
 	selectedRows,
@@ -31,9 +34,11 @@ export const BulkActions = ({
 			playoffs: "p",
 			regularSeason: "r",
 		};
-		const players = Array.from(selectedRows.map.values()).map(metadata => {
-			return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
-		});
+		const players = Array.from(selectedRows.map.values())
+			.slice(0, MAX_NUM_TO_COMPARE)
+			.map(metadata => {
+				return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
+			});
 
 		await realtimeUpdate(
 			[],
@@ -98,6 +103,9 @@ export const BulkActions = ({
 			<Dropdown.Menu>
 				<Dropdown.Item onClick={hasSomeSelected ? onComparePlayers : undefined}>
 					Compare players
+					{selectedRows.map.size > MAX_NUM_TO_COMPARE
+						? ` (first ${MAX_NUM_TO_COMPARE} players only)`
+						: null}
 				</Dropdown.Item>
 				<Dropdown.Item onClick={hasSomeSelected ? onExportPlayers : undefined}>
 					Export players

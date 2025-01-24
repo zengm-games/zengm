@@ -64,7 +64,6 @@ export const BulkActions = ({
 			<Dropdown.Toggle
 				id={`datatable-bulk-actions-${name}`}
 				size="sm"
-				title="Bulk actions"
 				variant={hasSomeSelected ? "primary" : "secondary"}
 			>
 				Bulk actions

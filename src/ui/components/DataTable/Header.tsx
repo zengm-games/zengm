@@ -1,7 +1,15 @@
 import clsx from "clsx";
-import { type SyntheticEvent, type MouseEvent, Fragment } from "react";
+import {
+	type SyntheticEvent,
+	type MouseEvent,
+	Fragment,
+	forwardRef,
+	useRef,
+	useLayoutEffect,
+} from "react";
 import type { Col, SortBy, SuperCol } from ".";
 import { range } from "../../../common/utils";
+import { Dropdown } from "react-bootstrap";
 
 const FilterHeader = ({
 	colOrder,
@@ -157,26 +165,78 @@ export const getSortClassName = (sortBys: SortBy[], i: number) => {
 	return className;
 };
 
-const BulkSelectHeaderCheckbox = ({ checked }: { checked: boolean }) => {
-	const onChange = () => {
-		console.log("CHANGE");
-	};
+type CheckboxState = "checked" | "unchecked" | "indeterminate";
+
+// forwardRef needed for react-bootstrap types
+const CustomToggle = forwardRef(
+	(
+		{
+			children,
+			onClick,
+		}: {
+			children: CheckboxState;
+			onClick: (event: MouseEvent) => void;
+		},
+		ref,
+	) => {
+		const inputRef = useRef<HTMLInputElement>(null);
+
+		useLayoutEffect(() => {
+			if (inputRef.current) {
+				if (children === "indeterminate") {
+					inputRef.current.indeterminate = true;
+				} else if (children === "checked") {
+					inputRef.current.checked = true;
+					inputRef.current.indeterminate = false;
+				} else {
+					inputRef.current.checked = false;
+					inputRef.current.indeterminate = false;
+				}
+			}
+		}, [children]);
+
+		return (
+			<input
+				className="form-check-input"
+				type="checkbox"
+				onClick={event => {
+					event.preventDefault();
+					onClick(event);
+				}}
+				ref={element => {
+					inputRef.current = element;
+
+					if (typeof ref === "function") {
+						ref(element);
+					} else if (ref) {
+						ref.current = element;
+					}
+				}}
+			/>
+		);
+	},
+);
+
+const BulkSelectHeaderCheckbox = () => {
+	const state: CheckboxState = "indeterminate";
 
 	// Similar to singleCheckbox stuff below
 	const onClickCell = (event: MouseEvent) => {
 		if (event.target && (event.target as any).tagName === "TH") {
-			onChange();
+			console.log("TODO, SHOULD OPEN MENU");
 		}
 	};
 
 	return (
 		<th data-no-row-highlight onClick={onClickCell}>
-			<input
-				className="form-check-input"
-				type="checkbox"
-				checked={checked}
-				onChange={onChange}
-			/>
+			<Dropdown>
+				<Dropdown.Toggle as={CustomToggle}>{state}</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item>Select all</Dropdown.Item>
+					<Dropdown.Item>Select visible</Dropdown.Item>
+					<Dropdown.Item>Clear</Dropdown.Item>
+				</Dropdown.Menu>
+			</Dropdown>
 		</th>
 	);
 };
@@ -214,9 +274,7 @@ const Header = ({
 				/>
 			) : null}
 			<tr>
-				{showBulkSelectCheckboxes ? (
-					<BulkSelectHeaderCheckbox checked={false} />
-				) : null}
+				{showBulkSelectCheckboxes ? <BulkSelectHeaderCheckbox /> : null}
 				{colOrder.map(({ colIndex }) => {
 					const {
 						classNames: colClassNames,

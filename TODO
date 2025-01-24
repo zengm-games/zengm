@@ -1,13 +1,11 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - select/unselect all checkbox in the header
   - states:
-    - all checked (not just visible)
-      - show as checked
-    - some checked (whether visible or not)
-      - show as indeterminate https://stackoverflow.com/a/6269487/786644
-    - not checked
-      - show as unchecked
+    - all checked (not just visible) -> checked
+    - some checked (whether visible or not) -> indeterminate https://stackoverflow.com/a/6269487/786644
+    - not checked -> unchecked
   - on click, dropdown letting you check all, visible, or clear https://ux.stackexchange.com/a/102463
+  - make sure click on cell opens menu
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
 - replace the "10 per page" menu with a "Bulk actions" dropdown button
@@ -35,8 +33,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
 - add to all pages
 - places to use
-  - compare multiple players
-    - needs to know pid/playoffs/season for each row, could put in metadata
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
     - trading block
     - trade
@@ -46,10 +42,13 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - ProtectPlayers
     - search for other places with checkboxes
 - interaction with hideAllControls?
+- for multiple watchlists, maybe have it pop up dialog to let you select, rather than cycling
 - test
   - bulk actions noop with nothing selected
   - with supercols
   - with col filters showing
+  - career totals stats page
+  - all seasons stats page
 - blog
   - annoying to flag multiple players. compare players links.
   - watch list color

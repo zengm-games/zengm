@@ -73,7 +73,8 @@ export const BulkActions = ({
 				});
 			}
 
-			await exportPlayers(seasonsByPids);
+			const abortController = new AbortController();
+			await exportPlayers(seasonsByPids, abortController.signal);
 		} catch (error) {
 			logEvent({
 				type: "error",

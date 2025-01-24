@@ -7,14 +7,30 @@ import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 // For seasonsByPid, key is pid and value is season. No support for exporting the same player from multiple seasons
-export const exportPlayers = async (seasonsByPid: Map<number, number>) => {
+export const exportPlayers = async (
+	seasonsByPid: Map<number, number>,
+	abortSignal?: AbortSignal,
+) => {
 	const filename = await toWorker("main", "getExportFilename", "players");
+
+	if (abortSignal?.aborted) {
+		return;
+	}
 
 	const { downloadFileStream, makeExportStream } = await import(
 		"../util/exportLeague"
 	);
 
+	if (abortSignal?.aborted) {
+		return;
+	}
+
+	await new Promise(resolve => {
+		setTimeout(resolve, 10000);
+	});
+
 	const readableStream = await makeExportStream(["players"], {
+		abortSignal,
 		filter: {
 			players: p => seasonsByPid.has(p.pid),
 		},
@@ -38,7 +54,15 @@ export const exportPlayers = async (seasonsByPid: Map<number, number>) => {
 		},
 	});
 
+	if (abortSignal?.aborted) {
+		return;
+	}
+
 	const fileStream = await downloadFileStream(false, filename, false);
+
+	if (abortSignal?.aborted) {
+		return;
+	}
 
 	await readableStream.pipeThrough(new TextEncoderStream()).pipeTo(fileStream);
 };

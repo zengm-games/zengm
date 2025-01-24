@@ -42,6 +42,7 @@ type Filter = (a: any) => boolean;
 const makeExportStream = async (
 	storesInput: string[],
 	{
+		abortSignal,
 		compressed = false,
 		filter = {},
 		forEach = {},
@@ -51,6 +52,7 @@ const makeExportStream = async (
 		onPercentDone,
 		onProcessingStore,
 	}: {
+		abortSignal?: AbortSignal;
 		compressed?: boolean;
 		filter?: {
 			[key: string]: Filter;
@@ -171,7 +173,7 @@ const makeExportStream = async (
 					leagueDB.close();
 				};
 
-				if (cancelCallback) {
+				if (cancelCallback || abortSignal?.aborted) {
 					done();
 					return;
 				}
@@ -330,7 +332,11 @@ const makeExportStream = async (
 						prevKey = cursor.key as any;
 
 						const desiredSize = (controller as any).desiredSize;
-						if ((desiredSize > 0 || size < minSizePerPull) && !cancelCallback) {
+						if (
+							(desiredSize > 0 || size < minSizePerPull) &&
+							!cancelCallback &&
+							!abortSignal?.aborted
+						) {
 							// Keep going if desiredSize or minSizePerPull want us to
 							cursor = await cursor.continue();
 						} else {

@@ -1,15 +1,13 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- make sure click on cell opens menu in header
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
-- replace the "10 per page" menu with a "Bulk actions" dropdown button
-  - actions
-    - need to limit number of players for compare players?
-    - export players
-    - delete players (god mode)
-    - on single team pages (like roster)
-      - trade for
-      - release (on your team)
+- actions
+  - need to limit number of players for compare players?
+  - export players
+  - delete players (god mode)
+  - on single team pages (like roster)
+    - trade for
+    - release (on your team)
 - Show # of selected players in UI somewhere?
 - how to display actions for selected players?
   - in cases where the checkboxes are shown by default (like trading block), we want to be able to put the button outside the table, but also maybe want built-in controls to exist

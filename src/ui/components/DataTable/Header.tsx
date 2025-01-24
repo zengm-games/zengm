@@ -246,17 +246,24 @@ const BulkSelectHeaderCheckbox = ({
 		}
 	}
 
+	const dropdownToggleRef = useRef<HTMLElement>(null);
+
 	// Similar to singleCheckbox stuff below
 	const onClickCell = (event: MouseEvent) => {
 		if (event.target && (event.target as any).tagName === "TH") {
-			console.log("TODO, SHOULD OPEN MENU");
+			if (dropdownToggleRef.current) {
+				dropdownToggleRef.current.focus();
+				dropdownToggleRef.current.click();
+			}
 		}
 	};
 
 	return (
 		<th data-no-row-highlight onClick={onClickCell}>
 			<Dropdown>
-				<Dropdown.Toggle as={CustomToggle}>{state}</Dropdown.Toggle>
+				<Dropdown.Toggle as={CustomToggle} ref={dropdownToggleRef}>
+					{state}
+				</Dropdown.Toggle>
 				<Dropdown.Menu>
 					<Dropdown.Item
 						onClick={() => {

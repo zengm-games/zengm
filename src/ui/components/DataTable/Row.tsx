@@ -114,7 +114,7 @@ const Row = ({
 					actualValue.type === "button" &&
 					actualValue.props.onClick;
 
-				// Expand clickable area of checkboxes/buttons to the whole td
+				// Expand clickable area of checkboxes/buttons to the whole td - similar logic is elsewhere, search for singleCheckbox
 				if (singleCheckbox || singleButton) {
 					props.onClick = (event: MouseEvent) => {
 						if (

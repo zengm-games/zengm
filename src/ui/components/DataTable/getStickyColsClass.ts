@@ -2,7 +2,8 @@ import type { StickyColsPlusCheckboxes } from "./useStickyXX";
 
 const getStickyColsClass = (stickyCols: StickyColsPlusCheckboxes) => {
 	if (stickyCols === 4) {
-		throw new Error("NOT IMPLEMENTED");
+		// This is only used when showBulkSelectCheckboxes adds 1 extra column to sticky-xxx - no other way to select it in the UI
+		return "sticky-iv";
 	}
 	if (stickyCols === 3) {
 		return "sticky-xxx";

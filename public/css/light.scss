@@ -1516,6 +1516,7 @@ $sticky-cols: (
 	"sticky-x": 1,
 	"sticky-xx": 2,
 	"sticky-xxx": 3,
+	"sticky-iv": 4,
 );
 
 @each $class, $col-num in $sticky-cols {
@@ -1573,7 +1574,8 @@ $sticky-cols: (
 
 table.sticky-x,
 table.sticky-xx,
-table.sticky-xxx {
+table.sticky-xxx,
+table.sticky-iv {
 	tr {
 		td:nth-child(1),
 		th:nth-child(1) {

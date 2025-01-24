@@ -9,6 +9,7 @@ import {
 } from "../../util";
 import { useState } from "react";
 import type { SelectedRows } from "./useBulkSelectRows";
+import { watchListDialog } from "./watchListDialog";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -52,7 +53,21 @@ export const BulkActions = ({
 		const pids = Array.from(selectedRows.map.values()).map(metadata => {
 			return metadata.pid;
 		});
-		await toWorker("main", "updatePlayersWatch", pids);
+
+		if (numWatchColors <= 1) {
+			// Toggle watch colors
+			await toWorker("main", "updatePlayersWatch", { pids });
+		} else {
+			// Show popup to select colors
+			const watch = await watchListDialog({
+				numPlayers: selectedRows.map.size,
+				numWatchColors,
+			});
+			console.log("watch", watch);
+			if (watch !== null) {
+				await toWorker("main", "updatePlayersWatch", { pids, watch });
+			}
+		}
 	};
 
 	const onDeletePlayers = async () => {
@@ -81,16 +96,24 @@ export const BulkActions = ({
 					return;
 				}
 
-				const pids = Array.from(selectedRows.map.values()).map(metadata => {
-					return metadata.pid;
-				});
+				if (numWatchColors <= 1) {
+					// Only dynamically update color if there is 1 watch list, otherwise we open a popup to let the user select the color manually
+					const pids = Array.from(selectedRows.map.values()).map(metadata => {
+						return metadata.pid;
+					});
 
-				const newNextWatch = await toWorker(
-					"main",
-					"getPlayersNextWatch",
-					pids,
-				);
-				setNextWatch(newNextWatch);
+					const newNextWatch = await toWorker(
+						"main",
+						"getPlayersNextWatch",
+						pids,
+					);
+					setNextWatch(newNextWatch);
+				} else {
+					// Reset
+					if (nextWatch !== undefined) {
+						setNextWatch(undefined);
+					}
+				}
 			}}
 		>
 			<Dropdown.Toggle
@@ -111,7 +134,7 @@ export const BulkActions = ({
 					Export players
 				</Dropdown.Item>
 				<Dropdown.Item onClick={hasSomeSelected ? onWatchPlayers : undefined}>
-					{numWatchColors > 1 ? "Cycle" : "Toggle"} watch list{" "}
+					{numWatchColors > 1 ? "Set" : "Toggle"} watch list{" "}
 					<Flag watch={nextWatch} />
 				</Dropdown.Item>
 				{godMode ? (

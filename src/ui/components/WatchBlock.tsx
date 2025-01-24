@@ -18,7 +18,7 @@ export const Flag = ({
 	title,
 }: {
 	className?: string;
-	watch: number | undefined;
+	watch?: number | undefined;
 	onClick?: (event: SyntheticEvent) => void;
 	title?: string;
 }) => {

@@ -3958,7 +3958,13 @@ const getPlayersNextWatch = async (pids: number[]) => {
 	return getPlayerNextWatchCore(players);
 };
 
-const updatePlayersWatch = async (pids: number[]) => {
+const updatePlayersWatch = async ({
+	pids,
+	watch,
+}: {
+	pids: number[];
+	watch?: number;
+}) => {
 	// Need to get all players to see what the new watch value should be!
 	const players = await idb.getCopies.players({ pids });
 
@@ -3966,7 +3972,11 @@ const updatePlayersWatch = async (pids: number[]) => {
 		return;
 	}
 
-	const nextWatch = getPlayerNextWatchCore(players);
+	let nextWatch = watch ?? getPlayerNextWatchCore(players);
+	if (nextWatch === 0) {
+		// If we're clearing the watch list, watch value is 0, but we want to make it undefined in player object
+		nextWatch = undefined;
+	}
 
 	for (const p of players) {
 		// Only update players who changed

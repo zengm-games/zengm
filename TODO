@@ -6,40 +6,36 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - on single team pages (like roster)
     - trade for
     - release (on your team)
-- how to display actions for selected players?
-  - in cases where the checkboxes are shown by default (like trading block), we want to be able to put the button outside the table, but also maybe want built-in controls to exist
-    - "selectedRows" needs to be able to be passed to DataTable so it's controlled outside. But only optionally.
-    - selectedRows should be Map<Key, Metadata>, where Key is key of the row and Metadata is the metadata property on row, like:
-      metadata?: {
-        type: "playerSeason",
-        pid: number,
-        season: number,
-        playoffs: "playoffs" | "regularSeason" | "combined",
-      },
-      or should type be at the table level, and then force rows to have certain data?
-  - in cases where the checkboxes aren't shown by default (activated through ... menu), we need built-in controls
+- controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
+  - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
+  - can i make a separate instance of useBulkSelectRows and pass everything in easily?
+  - can i somehow use this for two columns, like on trade page with the untradeable column? unclear what the column headers would be then, so maybe not
+  - ui
+    - show checkboxes by default - all of these cases are things like trading block where the UI needs ability to select players
+    - but don't show BulkActions button until activated through ... menu
+      - bulkSelectRows vs showBulkSelectCheckboxes
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
 - add to all pages
 - places to use
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
-    - trading block
+    - trading block 
+      - would still need separate logic for selecting picks, so maybe not worth it
     - trade
-      - would still need separate logic for selecting untraeable players
+      - would still need separate logic for selecting untraeable players, so maybe not worth it
     - export players
     - import players
     - ProtectPlayers
     - search for other places with checkboxes
-- interaction with hideAllControls?
-- for multiple watchlists, maybe have it pop up dialog to let you select, rather than cycling
 - test
+  - interaction with hideAllControls and other options
   - bulk actions noop with nothing selected
   - with supercols
   - with col filters showing
   - career totals stats page
   - all seasons stats page
 - blog
-  - annoying to flag multiple players. compare players links.
+  - annoying to flag multiple players. compare players links. export players select all
   - watch list color
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/

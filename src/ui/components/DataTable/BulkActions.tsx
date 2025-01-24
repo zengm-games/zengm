@@ -5,9 +5,15 @@ import { useLocalPartial } from "../../util";
 export const BulkActions = ({
 	hasSomeSelected,
 	name,
+	onComparePlayers,
+	onExportPlayers,
+	onWatchPlayers,
 }: {
 	hasSomeSelected: boolean;
 	name: string;
+	onComparePlayers: () => void;
+	onExportPlayers: () => void;
+	onWatchPlayers: () => void;
 }) => {
 	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
 
@@ -22,9 +28,13 @@ export const BulkActions = ({
 				Bulk actions
 			</Dropdown.Toggle>
 			<Dropdown.Menu>
-				<Dropdown.Item>Compare players</Dropdown.Item>
-				<Dropdown.Item>Export players</Dropdown.Item>
-				<Dropdown.Item>
+				<Dropdown.Item onClick={hasSomeSelected ? onComparePlayers : undefined}>
+					Compare players
+				</Dropdown.Item>
+				<Dropdown.Item onClick={hasSomeSelected ? onExportPlayers : undefined}>
+					Export players
+				</Dropdown.Item>
+				<Dropdown.Item onClick={hasSomeSelected ? onWatchPlayers : undefined}>
 					{numWatchColors > 1 ? "Cycle" : "Toggle"} watch list{" "}
 					<Flag watch={1} />
 				</Dropdown.Item>

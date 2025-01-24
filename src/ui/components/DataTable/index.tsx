@@ -17,7 +17,12 @@ import PerPage from "./PerPage";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { downloadFile, helpers, safeLocalStorage } from "../../util";
+import {
+	downloadFile,
+	helpers,
+	realtimeUpdate,
+	safeLocalStorage,
+} from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import { arrayMoveImmutable } from "array-move";
 import updateSortBys from "./updateSortBys";
@@ -59,6 +64,12 @@ export type DataTableRow = {
 		  }
 	)[];
 	classNames?: ClassValue;
+	metadata?: {
+		type: "player";
+		pid: number;
+		season: number;
+		playoffs: "playoffs" | "regularSeason" | "combined";
+	};
 };
 
 export type StickyCols = 0 | 1 | 2 | 3;
@@ -402,6 +413,26 @@ const DataTable = ({
 							<BulkActions
 								hasSomeSelected={selectedRows.map.size > 0}
 								name={name}
+								onComparePlayers={() => {
+									const seasonTypes = {
+										combined: "c",
+										playoffs: "p",
+										regularSeason: "r",
+									};
+									const players = Array.from(selectedRows.map.values()).map(
+										row => {
+											const metadata = row.metadata!;
+											return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
+										},
+									);
+
+									realtimeUpdate(
+										[],
+										helpers.leagueUrl(["compare_players", players.join(",")]),
+									);
+								}}
+								onExportPlayers={() => {}}
+								onWatchPlayers={() => {}}
 							/>
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />

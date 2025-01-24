@@ -64,7 +64,7 @@ const Row = ({
 			})}
 			onClick={clickable ? toggleClicked : undefined}
 		>
-			{showBulkSelectCheckboxes ? (
+			{showBulkSelectCheckboxes && row.metadata ? (
 				<BulkSelectCheckbox
 					checked={bulkSelectChecked}
 					onToggle={onBulkSelectToggle}

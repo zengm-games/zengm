@@ -11,6 +11,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const PlayerBios = ({
 	abbrev,
@@ -50,7 +51,7 @@ const PlayerBios = ({
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 		const college = p.college && p.college !== "" ? p.college : "None";
 
@@ -144,6 +145,12 @@ const PlayerBios = ({
 			classNames: {
 				"table-danger": p.hof,
 				"table-info": p.stats.tid === userTid,
+			},
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
 			},
 		};
 	});

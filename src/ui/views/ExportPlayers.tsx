@@ -7,7 +7,7 @@ import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 // For seasonsByPid, key is pid and value is season. No support for exporting the same player from multiple seasons
-const exportPlayers = async (seasonsByPid: Map<number, number>) => {
+export const exportPlayers = async (seasonsByPid: Map<number, number>) => {
 	const filename = await toWorker("main", "getExportFilename", "players");
 
 	const { downloadFileStream, makeExportStream } = await import(

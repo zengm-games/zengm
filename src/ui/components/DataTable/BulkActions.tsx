@@ -3,6 +3,7 @@ import { Flag } from "../WatchBlock";
 import {
 	confirm,
 	helpers,
+	logEvent,
 	realtimeUpdate,
 	toWorker,
 	useLocalPartial,
@@ -10,6 +11,7 @@ import {
 import { useState } from "react";
 import type { SelectedRows } from "./useBulkSelectRows";
 import { watchListDialog } from "./watchListDialog";
+import { exportPlayers } from "../../views/ExportPlayers";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -47,7 +49,39 @@ export const BulkActions = ({
 		);
 	};
 
-	const onExportPlayers = () => {};
+	const onExportPlayers = async () => {
+		try {
+			const seasonsByPids = new Map();
+			let duplicatePids = false;
+			for (const metadata of selectedRows.map.values()) {
+				const prev = seasonsByPids.get(metadata.pid);
+				if (prev !== undefined) {
+					duplicatePids = true;
+					if (metadata.season < prev) {
+						continue;
+					}
+				}
+
+				seasonsByPids.set(metadata.pid, metadata.season);
+			}
+
+			if (duplicatePids) {
+				logEvent({
+					type: "error",
+					text: "Exporting the same player from multiple seasons is not supported, only the latest season will be exported.",
+					saveToDb: false,
+				});
+			}
+
+			await exportPlayers(seasonsByPids);
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+			});
+		}
+	};
 
 	const onWatchPlayers = async () => {
 		const pids = Array.from(selectedRows.map.values()).map(metadata => {

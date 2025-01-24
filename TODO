@@ -1,13 +1,8 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
-- actions
-  - export players
-    - need a modal to show progress?
-    - what happens if you export different seasons of the same player? error? warning? silent?
-  - on single team pages (like roster)
-    - trade for
-    - release (on your team)
+- export players - need a modal to show progress?
+  - support canceling stream
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
   - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
   - can i make a separate instance of useBulkSelectRows and pass everything in easily?
@@ -39,6 +34,10 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - blog
   - annoying to flag multiple players. compare players links. export players select all
   - watch list color
+- later
+  - actions on single team pages (like roster)
+    - trade for (could be any time all players selected are on same team, even if not a single team page)
+    - release (on your team)
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

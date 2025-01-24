@@ -122,6 +122,10 @@ export const BulkActions = ({
 						Delete players
 					</Dropdown.Item>
 				) : null}
+				<Dropdown.Header>
+					{selectedRows.map.size}{" "}
+					{helpers.plural("player", selectedRows.map.size)} selected
+				</Dropdown.Header>
 			</Dropdown.Menu>
 		</Dropdown>
 	);

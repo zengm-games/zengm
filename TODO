@@ -6,7 +6,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - on single team pages (like roster)
     - trade for
     - release (on your team)
-- Show # of selected players in UI somewhere?
 - how to display actions for selected players?
   - in cases where the checkboxes are shown by default (like trading block), we want to be able to put the button outside the table, but also maybe want built-in controls to exist
     - "selectedRows" needs to be able to be passed to DataTable so it's controlled outside. But only optionally.

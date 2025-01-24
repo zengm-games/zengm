@@ -295,7 +295,7 @@ const DataTable = ({
 		state.settingsCache,
 	]);
 
-	let processedRows = processRows({
+	const processedRows = processRows({
 		cols,
 		rankCol,
 		rows,
@@ -309,9 +309,9 @@ const DataTable = ({
 		end = processedRows.length;
 	}
 
-	if (pagination) {
-		processedRows = processedRows.slice(start - 1, end);
-	}
+	const processedRowsPage = pagination
+		? processedRows.slice(start - 1, end)
+		: processedRows;
 
 	const colOrderFiltered = state.colOrder.filter(
 		({ hidden, colIndex }) => !hidden && cols[colIndex],
@@ -452,6 +452,20 @@ const DataTable = ({
 							ref={tableRef}
 						>
 							<Header
+								bulkSelectProps={{
+									onSelectAll: () => {
+										console.log("SELECT ALL");
+									},
+									onSelectPage: () => {
+										console.log("SELECT PAGE");
+									},
+									onClear: () => {
+										console.log("CLEAR");
+									},
+									allOnePage: processedRows.length === processedRowsPage.length,
+									filteredRows: processedRows,
+									selectedRows: selectedRows.map,
+								}}
 								colOrder={colOrderFiltered}
 								cols={cols}
 								enableFilters={state.enableFilters}
@@ -463,7 +477,7 @@ const DataTable = ({
 								superCols={superCols}
 							/>
 							<tbody>
-								{processedRows.map(row => (
+								{processedRowsPage.map(row => (
 									<Row
 										key={row.key}
 										row={row}

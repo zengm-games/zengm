@@ -7,7 +7,13 @@ import {
 	useRef,
 	useLayoutEffect,
 } from "react";
-import type { Col, SortBy, SuperCol } from ".";
+import type {
+	Col,
+	DataTableRow,
+	DataTableRowMetadata,
+	SortBy,
+	SuperCol,
+} from ".";
 import { range } from "../../../common/utils";
 import { Dropdown } from "react-bootstrap";
 
@@ -217,8 +223,39 @@ const CustomToggle = forwardRef(
 	},
 );
 
-const BulkSelectHeaderCheckbox = () => {
-	const state: CheckboxState = "indeterminate";
+type BulkSelectProps = {
+	onSelectAll: () => void;
+	onSelectPage: () => void;
+	onClear: () => void;
+	allOnePage: boolean;
+	filteredRows: DataTableRow[];
+	selectedRows: Map<DataTableRow["key"], DataTableRowMetadata>;
+};
+
+const BulkSelectHeaderCheckbox = ({
+	onSelectAll,
+	onSelectPage,
+	onClear,
+	allOnePage,
+	filteredRows,
+	selectedRows,
+}: BulkSelectProps) => {
+	let state: CheckboxState;
+	if (selectedRows.size === 0) {
+		state = "unchecked";
+	} else {
+		const filteredKeys = new Set(filteredRows.map(row => row.key));
+		if (
+			filteredKeys.size === selectedRows.size &&
+			filteredKeys.isSubsetOf(selectedRows)
+		) {
+			// filteredKeys and selectedRows are the same
+			state = "checked";
+		} else {
+			// Could have rows selected but not viewable with current filters, or could simply have some of the viewable rows not selected
+			state = "indeterminate";
+		}
+	}
 
 	// Similar to singleCheckbox stuff below
 	const onClickCell = (event: MouseEvent) => {
@@ -232,9 +269,13 @@ const BulkSelectHeaderCheckbox = () => {
 			<Dropdown>
 				<Dropdown.Toggle as={CustomToggle}>{state}</Dropdown.Toggle>
 				<Dropdown.Menu>
-					<Dropdown.Item>Select all</Dropdown.Item>
-					<Dropdown.Item>Select visible</Dropdown.Item>
-					<Dropdown.Item>Clear</Dropdown.Item>
+					<Dropdown.Item onClick={onSelectAll}>Select all</Dropdown.Item>
+					{allOnePage ? null : (
+						<Dropdown.Item onClick={onSelectPage}>
+							Select all (this page only)
+						</Dropdown.Item>
+					)}
+					<Dropdown.Item onClick={onClear}>Clear</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>
 		</th>
@@ -242,6 +283,7 @@ const BulkSelectHeaderCheckbox = () => {
 };
 
 const Header = ({
+	bulkSelectProps,
 	colOrder,
 	cols,
 	enableFilters,
@@ -252,6 +294,7 @@ const Header = ({
 	sortBys,
 	superCols,
 }: {
+	bulkSelectProps: BulkSelectProps;
 	colOrder: {
 		colIndex: number;
 	}[];
@@ -274,7 +317,9 @@ const Header = ({
 				/>
 			) : null}
 			<tr>
-				{showBulkSelectCheckboxes ? <BulkSelectHeaderCheckbox /> : null}
+				{showBulkSelectCheckboxes ? (
+					<BulkSelectHeaderCheckbox {...bulkSelectProps} />
+				) : null}
 				{colOrder.map(({ colIndex }) => {
 					const {
 						classNames: colClassNames,

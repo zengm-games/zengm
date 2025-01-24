@@ -12,9 +12,14 @@ export const toPolyfillTransform: (
 
 // Chrome 122, Firefox 127, Safari 17
 // https://github.com/rauschma/set-methods-polyfill/blob/894c17391303aec7190801636c64465f653479d8/src/library.ts
+type SetReadOperations<T> = {
+	size: number;
+	has(key: T): boolean;
+	keys(): IterableIterator<T>;
+};
 if (!Set.prototype.isSubsetOf) {
 	Object.defineProperty(Set.prototype, "isSubsetOf", {
-		value: function <T>(this: Set<T>, other: Set<T>): boolean {
+		value: function <T>(this: Set<T>, other: SetReadOperations<T>): boolean {
 			for (const elem of this) {
 				if (!other.has(elem)) {
 					return false;

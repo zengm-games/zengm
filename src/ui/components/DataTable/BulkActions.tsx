@@ -12,9 +12,48 @@ import { useState } from "react";
 import type { SelectedRows } from "./useBulkSelectRows";
 import { watchListDialog } from "./watchListDialog";
 import { exportPlayers } from "../../views/ExportPlayers";
+import { createPortal } from "react-dom";
+import Modal from "../Modal";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
+
+type ExportModalStatus =
+	| {
+			show: false;
+			abortController?: undefined;
+	  }
+	| {
+			show: true;
+			abortController: AbortController;
+	  };
+
+const ExportModal = ({ abortController, show }: ExportModalStatus) => {
+	return (
+		<>
+			{show &&
+				createPortal(
+					<Modal animation show={show}>
+						<Modal.Body>
+							<h3 className="mb-0">Exporting players...</h3>
+						</Modal.Body>
+
+						<Modal.Footer>
+							<button
+								className="btn btn-danger"
+								onClick={() => {
+									abortController?.abort();
+								}}
+							>
+								Cancel
+							</button>
+						</Modal.Footer>
+					</Modal>,
+					document.body,
+				)}
+		</>
+	);
+};
 
 export const BulkActions = ({
 	name,
@@ -28,6 +67,11 @@ export const BulkActions = ({
 		"numWatchColors",
 	]);
 	const [nextWatch, setNextWatch] = useState<undefined | number>(undefined);
+	const [exportModalStatus, setExportModalStatus] = useState<ExportModalStatus>(
+		{
+			show: false,
+		},
+	);
 
 	const hasSomeSelected = selectedRows.map.size > 0;
 
@@ -50,30 +94,45 @@ export const BulkActions = ({
 	};
 
 	const onExportPlayers = async () => {
-		try {
-			const seasonsByPids = new Map();
-			let duplicatePids = false;
-			for (const metadata of selectedRows.map.values()) {
-				const prev = seasonsByPids.get(metadata.pid);
-				if (prev !== undefined) {
-					duplicatePids = true;
-					if (metadata.season < prev) {
-						continue;
-					}
+		const seasonsByPids = new Map();
+		let duplicatePids = false;
+		for (const metadata of selectedRows.map.values()) {
+			const prev = seasonsByPids.get(metadata.pid);
+			if (prev !== undefined) {
+				duplicatePids = true;
+				if (metadata.season < prev) {
+					continue;
 				}
-
-				seasonsByPids.set(metadata.pid, metadata.season);
 			}
 
-			if (duplicatePids) {
-				logEvent({
-					type: "error",
-					text: "Exporting the same player from multiple seasons is not supported, only the latest season will be exported.",
-					saveToDb: false,
+			seasonsByPids.set(metadata.pid, metadata.season);
+		}
+
+		if (duplicatePids) {
+			logEvent({
+				type: "error",
+				text: "Exporting the same player from multiple seasons is not supported, only the latest season will be exported.",
+				saveToDb: false,
+			});
+		}
+
+		const abortController = new AbortController();
+		abortController.signal.addEventListener(
+			"abort",
+			() => {
+				setExportModalStatus({
+					show: false,
 				});
-			}
+			},
+			{ once: true },
+		);
 
-			const abortController = new AbortController();
+		setExportModalStatus({
+			show: true,
+			abortController,
+		});
+
+		try {
 			await exportPlayers(seasonsByPids, abortController.signal);
 		} catch (error) {
 			logEvent({
@@ -82,6 +141,10 @@ export const BulkActions = ({
 				saveToDb: false,
 			});
 		}
+
+		setExportModalStatus({
+			show: false,
+		});
 	};
 
 	const onWatchPlayers = async () => {
@@ -98,7 +161,6 @@ export const BulkActions = ({
 				numPlayers: selectedRows.map.size,
 				numWatchColors,
 			});
-			console.log("watch", watch);
 			if (watch !== null) {
 				await toWorker("main", "updatePlayersWatch", { pids, watch });
 			}
@@ -124,67 +186,74 @@ export const BulkActions = ({
 	};
 
 	return (
-		<Dropdown
-			className="float-start"
-			onToggle={async opening => {
-				if (!opening || selectedRows.map.size === 0) {
-					return;
-				}
-
-				if (numWatchColors <= 1) {
-					// Only dynamically update color if there is 1 watch list, otherwise we open a popup to let the user select the color manually
-					const pids = Array.from(selectedRows.map.values()).map(metadata => {
-						return metadata.pid;
-					});
-
-					const newNextWatch = await toWorker(
-						"main",
-						"getPlayersNextWatch",
-						pids,
-					);
-					setNextWatch(newNextWatch);
-				} else {
-					// Reset
-					if (nextWatch !== undefined) {
-						setNextWatch(undefined);
+		<>
+			<Dropdown
+				className="float-start"
+				onToggle={async opening => {
+					if (!opening || selectedRows.map.size === 0) {
+						return;
 					}
-				}
-			}}
-		>
-			<Dropdown.Toggle
-				id={`datatable-bulk-actions-${name}`}
-				size="sm"
-				variant={hasSomeSelected ? "primary" : "secondary"}
+
+					if (numWatchColors <= 1) {
+						// Only dynamically update color if there is 1 watch list, otherwise we open a popup to let the user select the color manually
+						const pids = Array.from(selectedRows.map.values()).map(metadata => {
+							return metadata.pid;
+						});
+
+						const newNextWatch = await toWorker(
+							"main",
+							"getPlayersNextWatch",
+							pids,
+						);
+						setNextWatch(newNextWatch);
+					} else {
+						// Reset
+						if (nextWatch !== undefined) {
+							setNextWatch(undefined);
+						}
+					}
+				}}
 			>
-				Bulk actions
-			</Dropdown.Toggle>
-			<Dropdown.Menu>
-				<Dropdown.Item onClick={hasSomeSelected ? onComparePlayers : undefined}>
-					Compare players
-					{selectedRows.map.size > MAX_NUM_TO_COMPARE
-						? ` (first ${MAX_NUM_TO_COMPARE} players only)`
-						: null}
-				</Dropdown.Item>
-				<Dropdown.Item onClick={hasSomeSelected ? onExportPlayers : undefined}>
-					Export players
-				</Dropdown.Item>
-				<Dropdown.Item onClick={hasSomeSelected ? onWatchPlayers : undefined}>
-					{numWatchColors > 1 ? "Set" : "Toggle"} watch list{" "}
-					<Flag watch={nextWatch} />
-				</Dropdown.Item>
-				{godMode ? (
+				<Dropdown.Toggle
+					id={`datatable-bulk-actions-${name}`}
+					size="sm"
+					variant={hasSomeSelected ? "primary" : "secondary"}
+				>
+					Bulk actions
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
 					<Dropdown.Item
-						className="god-mode"
-						onClick={hasSomeSelected ? onDeletePlayers : undefined}
+						onClick={hasSomeSelected ? onComparePlayers : undefined}
 					>
-						Delete players
+						Compare players
+						{selectedRows.map.size > MAX_NUM_TO_COMPARE
+							? ` (first ${MAX_NUM_TO_COMPARE} players only)`
+							: null}
 					</Dropdown.Item>
-				) : null}
-				<Dropdown.Header>
-					{selectedRows.map.size}{" "}
-					{helpers.plural("player", selectedRows.map.size)} selected
-				</Dropdown.Header>
-			</Dropdown.Menu>
-		</Dropdown>
+					<Dropdown.Item
+						onClick={hasSomeSelected ? onExportPlayers : undefined}
+					>
+						Export players
+					</Dropdown.Item>
+					<Dropdown.Item onClick={hasSomeSelected ? onWatchPlayers : undefined}>
+						{numWatchColors > 1 ? "Set" : "Toggle"} watch list{" "}
+						<Flag watch={nextWatch} />
+					</Dropdown.Item>
+					{godMode ? (
+						<Dropdown.Item
+							className="god-mode"
+							onClick={hasSomeSelected ? onDeletePlayers : undefined}
+						>
+							Delete players
+						</Dropdown.Item>
+					) : null}
+					<Dropdown.Header>
+						{selectedRows.map.size}{" "}
+						{helpers.plural("player", selectedRows.map.size)} selected
+					</Dropdown.Header>
+				</Dropdown.Menu>
+			</Dropdown>
+			<ExportModal {...exportModalStatus} />
+		</>
 	);
 };

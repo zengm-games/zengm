@@ -1,9 +1,6 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
-- export players - need a modal to show progress?
-  - support canceling stream
-    - test at various points, including in stream
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
   - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
   - can i make a separate instance of useBulkSelectRows and pass everything in easily?

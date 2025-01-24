@@ -25,10 +25,6 @@ export const exportPlayers = async (
 		return;
 	}
 
-	await new Promise(resolve => {
-		setTimeout(resolve, 10000);
-	});
-
 	const readableStream = await makeExportStream(["players"], {
 		abortSignal,
 		filter: {

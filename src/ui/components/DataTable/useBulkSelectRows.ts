@@ -1,16 +1,19 @@
 import { useCallback, useState } from "react";
-import type { DataTableRow } from ".";
+import type { DataTableRow, DataTableRowMetadata } from ".";
 
 const useSelectedRows = () => {
-	const [map, setMap] = useState(new Map<DataTableRow["key"], DataTableRow>());
+	type Key = DataTableRow["key"];
+	type Metadata = DataTableRowMetadata;
 
-	const toggle = useCallback((row: DataTableRow) => {
+	const [map, setMap] = useState(new Map<Key, Metadata>());
+
+	const toggle = useCallback((key: Key, metadata: Metadata) => {
 		setMap(prev => {
 			const copy = new Map(prev);
-			if (copy.has(row.key)) {
-				copy.delete(row.key);
+			if (copy.has(key)) {
+				copy.delete(key);
 			} else {
-				copy.set(row.key, row);
+				copy.set(key, metadata);
 			}
 			return copy;
 		});

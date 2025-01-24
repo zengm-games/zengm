@@ -52,6 +52,13 @@ export type SuperCol = {
 	title: string | ReactNode;
 };
 
+export type DataTableRowMetadata = {
+	type: "player";
+	pid: number;
+	season: number;
+	playoffs: "playoffs" | "regularSeason" | "combined";
+};
+
 export type DataTableRow = {
 	key: number | string;
 	data: (
@@ -64,12 +71,7 @@ export type DataTableRow = {
 		  }
 	)[];
 	classNames?: ClassValue;
-	metadata?: {
-		type: "player";
-		pid: number;
-		season: number;
-		playoffs: "playoffs" | "regularSeason" | "combined";
-	};
+	metadata?: DataTableRowMetadata;
 };
 
 export type StickyCols = 0 | 1 | 2 | 3;
@@ -420,8 +422,7 @@ const DataTable = ({
 										regularSeason: "r",
 									};
 									const players = Array.from(selectedRows.map.values()).map(
-										row => {
-											const metadata = row.metadata!;
+										metadata => {
 											return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
 										},
 									);
@@ -492,8 +493,8 @@ const DataTable = ({
 										clickable={clickable}
 										highlightCols={highlightCols}
 										bulkSelectChecked={selectedRows.map.has(row.key)}
-										onBulkSelectToggle={row => {
-											selectedRows.toggle(row);
+										onBulkSelectToggle={(key, metadata) => {
+											selectedRows.toggle(key, metadata);
 										}}
 										showBulkSelectCheckboxes={showBulkSelectCheckboxes}
 									/>

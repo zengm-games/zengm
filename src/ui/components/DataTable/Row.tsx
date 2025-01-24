@@ -1,23 +1,30 @@
 import clsx from "clsx";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
-import type { DataTableRow } from ".";
+import type { DataTableRow, DataTableRowMetadata } from ".";
 
 type MyRow = Omit<DataTableRow, "data"> & {
 	data: any[];
 };
 
+type OnBulkSelectToggle = (
+	key: DataTableRow["key"],
+	metadata: DataTableRowMetadata,
+) => void;
+
 const BulkSelectCheckbox = ({
 	checked,
+	rowKey,
+	metadata,
 	onToggle,
-	row,
 }: {
 	checked: boolean;
-	onToggle: (row: MyRow) => void;
-	row: MyRow;
+	rowKey: DataTableRow["key"];
+	metadata: DataTableRowMetadata;
+	onToggle: OnBulkSelectToggle;
 }) => {
 	const onChange = () => {
-		onToggle(row);
+		onToggle(rowKey, metadata);
 	};
 
 	// Similar to singleCheckbox stuff below
@@ -53,7 +60,7 @@ const Row = ({
 	row: MyRow;
 
 	bulkSelectChecked: boolean;
-	onBulkSelectToggle: (row: MyRow) => void;
+	onBulkSelectToggle: OnBulkSelectToggle;
 	showBulkSelectCheckboxes: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -67,8 +74,9 @@ const Row = ({
 			{showBulkSelectCheckboxes && row.metadata ? (
 				<BulkSelectCheckbox
 					checked={bulkSelectChecked}
+					rowKey={row.key}
+					metadata={row.metadata}
 					onToggle={onBulkSelectToggle}
-					row={row}
 				/>
 			) : null}
 			{row.data.map((value = null, i) => {

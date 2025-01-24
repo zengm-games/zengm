@@ -17,13 +17,7 @@ import PerPage from "./PerPage";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import {
-	downloadFile,
-	helpers,
-	realtimeUpdate,
-	safeLocalStorage,
-	toWorker,
-} from "../../util";
+import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import { arrayMoveImmutable } from "array-move";
 import updateSortBys from "./updateSortBys";
@@ -416,32 +410,7 @@ const DataTable = ({
 							<BulkActions
 								hasSomeSelected={selectedRows.map.size > 0}
 								name={name}
-								onComparePlayers={async () => {
-									const seasonTypes = {
-										combined: "c",
-										playoffs: "p",
-										regularSeason: "r",
-									};
-									const players = Array.from(selectedRows.map.values()).map(
-										metadata => {
-											return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
-										},
-									);
-
-									await realtimeUpdate(
-										[],
-										helpers.leagueUrl(["compare_players", players.join(",")]),
-									);
-								}}
-								onExportPlayers={() => {}}
-								onWatchPlayers={async () => {
-									const pids = Array.from(selectedRows.map.values()).map(
-										metadata => {
-											return metadata.pid;
-										},
-									);
-									await toWorker("main", "updatePlayersWatch", pids);
-								}}
+								selectedRows={selectedRows.map}
 							/>
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />

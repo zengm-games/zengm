@@ -41,14 +41,13 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - ProtectPlayers
     - search for other places with checkboxes
 - interaction with hideAllControls?
-- flag in BulkActions should show the color that all the selected players will become - is that possible? maybe async?
-  - yeah, load from worker when menu is opened, get `newWatch` value from worker
 - test
   - bulk actions noop with nothing selected
   - with supercols
   - with col filters showing
 - blog
   - annoying to flag multiple players. compare players links.
+  - watch list color
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

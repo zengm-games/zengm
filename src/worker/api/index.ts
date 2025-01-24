@@ -3925,14 +3925,7 @@ const updatePlayerWatch = async ({
 	}
 };
 
-const updatePlayersWatch = async (pids: number[]) => {
-	// Need to get all players to see what the new watch value should be!
-	const players = await idb.getCopies.players({ pids });
-
-	if (players.length === 0) {
-		return;
-	}
-
+const getPlayerNextWatchCore = (players: Player[]) => {
 	const watchCounts = new Map<number, number>();
 	for (const p of players) {
 		const watch = p.watch ?? 0;
@@ -3944,15 +3937,45 @@ const updatePlayersWatch = async (pids: number[]) => {
 		1,
 	)![0];
 
-	const newWatch = (mostCommonCurrentWatch + 1) % (g.get("numWatchColors") + 1);
+	const nextWatch =
+		(mostCommonCurrentWatch + 1) % (g.get("numWatchColors") + 1);
+
+	if (nextWatch === 0) {
+		return undefined;
+	}
+
+	return nextWatch;
+};
+
+const getPlayersNextWatch = async (pids: number[]) => {
+	// Need to get all players to see what the new watch value should be!
+	const players = await idb.getCopies.players({ pids });
+
+	if (players.length === 0) {
+		return;
+	}
+
+	return getPlayerNextWatchCore(players);
+};
+
+const updatePlayersWatch = async (pids: number[]) => {
+	// Need to get all players to see what the new watch value should be!
+	const players = await idb.getCopies.players({ pids });
+
+	if (players.length === 0) {
+		return;
+	}
+
+	const nextWatch = getPlayerNextWatchCore(players);
 
 	for (const p of players) {
 		// Only update players who changed
-		if (newWatch === 0 && p.watch !== undefined) {
-			delete p.watch;
-			await idb.cache.players.put(p);
-		} else if (p.watch !== newWatch) {
-			p.watch = newWatch;
+		if (p.watch !== nextWatch) {
+			if (nextWatch === undefined) {
+				delete p.watch;
+			} else {
+				p.watch = nextWatch;
+			}
 			await idb.cache.players.put(p);
 		}
 	}
@@ -4758,6 +4781,7 @@ export default {
 		updateOptions,
 		updatePlayThroughInjuries,
 		updatePlayerWatch,
+		getPlayersNextWatch,
 		updatePlayersWatch,
 		updatePlayingTime,
 		updatePlayoffTeams,

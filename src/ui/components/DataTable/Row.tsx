@@ -28,14 +28,14 @@ const BulkSelectCheckbox = ({
 	};
 
 	// Similar to singleCheckbox stuff below
-	const onClickTd = (event: MouseEvent) => {
+	const onClickCell = (event: MouseEvent) => {
 		if (event.target && (event.target as any).tagName === "TD") {
 			onChange();
 		}
 	};
 
 	return (
-		<td data-no-row-highlight onClick={onClickTd}>
+		<td data-no-row-highlight onClick={onClickCell}>
 			<input
 				className="form-check-input"
 				type="checkbox"

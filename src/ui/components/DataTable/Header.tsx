@@ -157,6 +157,30 @@ export const getSortClassName = (sortBys: SortBy[], i: number) => {
 	return className;
 };
 
+const BulkSelectHeaderCheckbox = ({ checked }: { checked: boolean }) => {
+	const onChange = () => {
+		console.log("CHANGE");
+	};
+
+	// Similar to singleCheckbox stuff below
+	const onClickCell = (event: MouseEvent) => {
+		if (event.target && (event.target as any).tagName === "TH") {
+			onChange();
+		}
+	};
+
+	return (
+		<th data-no-row-highlight onClick={onClickCell}>
+			<input
+				className="form-check-input"
+				type="checkbox"
+				checked={checked}
+				onChange={onChange}
+			/>
+		</th>
+	);
+};
+
 const Header = ({
 	colOrder,
 	cols,
@@ -190,7 +214,9 @@ const Header = ({
 				/>
 			) : null}
 			<tr>
-				{showBulkSelectCheckboxes ? <th>!!!!!!</th> : null}
+				{showBulkSelectCheckboxes ? (
+					<BulkSelectHeaderCheckbox checked={false} />
+				) : null}
 				{colOrder.map(({ colIndex }) => {
 					const {
 						classNames: colClassNames,

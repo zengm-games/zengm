@@ -1,7 +1,15 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
+- select/unselect all checkbox in the header
+  - states:
+    - all checked (not just visible)
+      - show as checked
+    - some checked (whether visible or not)
+      - show as indeterminate https://stackoverflow.com/a/6269487/786644
+    - not checked
+      - show as unchecked
+  - on click, dropdown letting you check all, visible, or clear https://ux.stackexchange.com/a/102463
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
-  - when enabled, switch text to "Hide bulk select players"
 - replace the "10 per page" menu with a "Bulk actions" dropdown button
   - actions
     - need to limit number of players for compare players?
@@ -25,10 +33,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - in cases where the checkboxes aren't shown by default (activated through ... menu), we need built-in controls
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
-- select/unselect all checkbox in the header
-  - in gmail when you click it it says "All 50 conversations on this page are selected. Select all conversations that match this search"
-  - could have a dropdown arrow next to checkbox and then show options when clicking https://ux.stackexchange.com/a/102463
-  - display as checked if all the currently shown rows are checked, and unchecked otherwise
+- add to all pages
 - places to use
   - compare multiple players
     - needs to know pid/playoffs/season for each row, could put in metadata

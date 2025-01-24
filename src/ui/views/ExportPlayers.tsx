@@ -6,6 +6,43 @@ import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
+// For seasonsByPid, key is pid and value is season. No support for exporting the same player from multiple seasons
+const exportPlayers = async (seasonsByPid: Map<number, number>) => {
+	const filename = await toWorker("main", "getExportFilename", "players");
+
+	const { downloadFileStream, makeExportStream } = await import(
+		"../util/exportLeague"
+	);
+
+	const readableStream = await makeExportStream(["players"], {
+		filter: {
+			players: p => seasonsByPid.has(p.pid),
+		},
+		forEach: {
+			players: p => {
+				p.exportedSeason = seasonsByPid.get(p.pid);
+
+				delete p.gamesUntilTradable;
+				delete p.numDaysFreeAgent;
+				delete p.ptModifier;
+				delete p.rosterOrder;
+				delete p.statsTids;
+				delete p.value;
+				delete p.valueFuzz;
+				delete p.valueNoPot;
+				delete p.valueNoPotFuzz;
+				delete p.valueWithContract;
+				delete p.watch;
+				delete p.yearsFreeAgent;
+			},
+		},
+	});
+
+	const fileStream = await downloadFileStream(false, filename, false);
+
+	await readableStream.pipeThrough(new TextEncoderStream()).pipeTo(fileStream);
+};
+
 const ExportPlayers = ({
 	challengeNoRatings,
 	multipleSeasons,
@@ -182,55 +219,13 @@ const ExportPlayers = ({
 									setErrorMessage(undefined);
 
 									try {
-										const filename = await toWorker(
-											"main",
-											"getExportFilename",
-											"players",
+										await exportPlayers(
+											new Map(
+												selected.map(info => {
+													return [info.p.pid, info.season];
+												}),
+											),
 										);
-
-										const pids = selected.map(info => info.p.pid);
-
-										const { downloadFileStream, makeExportStream } =
-											await import("../util/exportLeague");
-
-										const readableStream = await makeExportStream(["players"], {
-											filter: {
-												players: p => pids.includes(p.pid),
-											},
-											forEach: {
-												players: p => {
-													const info = selected.find(
-														info => info.p.pid === p.pid,
-													);
-													if (info) {
-														p.exportedSeason = info.season;
-													}
-
-													delete p.gamesUntilTradable;
-													delete p.numDaysFreeAgent;
-													delete p.ptModifier;
-													delete p.rosterOrder;
-													delete p.statsTids;
-													delete p.value;
-													delete p.valueFuzz;
-													delete p.valueNoPot;
-													delete p.valueNoPotFuzz;
-													delete p.valueWithContract;
-													delete p.watch;
-													delete p.yearsFreeAgent;
-												},
-											},
-										});
-
-										const fileStream = await downloadFileStream(
-											false,
-											filename,
-											false,
-										);
-
-										await readableStream
-											.pipeThrough(new TextEncoderStream())
-											.pipeTo(fileStream);
 									} catch (error) {
 										console.error(error);
 										setErrorMessage(error.message);

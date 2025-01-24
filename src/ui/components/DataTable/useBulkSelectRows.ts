@@ -19,9 +19,25 @@ const useSelectedRows = () => {
 		});
 	}, []);
 
+	const clear = useCallback(() => {
+		setMap(new Map());
+	}, []);
+
+	const setAll = useCallback((records: { key: Key; metadata: Metadata }[]) => {
+		setMap(prev => {
+			const copy = new Map(prev);
+			for (const { key, metadata } of records) {
+				copy.set(key, metadata);
+			}
+			return copy;
+		});
+	}, []);
+
 	return {
+		clear,
 		map,
 		toggle,
+		setAll,
 	};
 };
 

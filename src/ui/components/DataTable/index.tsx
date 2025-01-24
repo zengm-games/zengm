@@ -453,18 +453,9 @@ const DataTable = ({
 						>
 							<Header
 								bulkSelectProps={{
-									onSelectAll: () => {
-										console.log("SELECT ALL");
-									},
-									onSelectPage: () => {
-										console.log("SELECT PAGE");
-									},
-									onClear: () => {
-										console.log("CLEAR");
-									},
-									allOnePage: processedRows.length === processedRowsPage.length,
 									filteredRows: processedRows,
-									selectedRows: selectedRows.map,
+									filteredRowsPage: processedRowsPage,
+									selectedRows,
 								}}
 								colOrder={colOrderFiltered}
 								cols={cols}

@@ -1,17 +1,5 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- select/unselect all checkbox in the header
-  - states:
-    - more than all checked (like if some are checked that are not currently filtered) -> indeterminate
-    - all checked (not just visible) -> checked
-    - some checked (whether visible or not) -> indeterminate https://stackoverflow.com/a/6269487/786644
-    - not checked -> unchecked
-  - if there are some ones selected but not displayed with the current filter, what happens when:
-    - select all - should it clear them, and only select the filtered ones? probably not clear
-    - clear all - should it clear them, or only clear the filtered ones? probably all
-  - select all/page should account for filtering
-  - select page should only show when there are multiple pages
-  - on click, dropdown letting you check all, visible, or clear https://ux.stackexchange.com/a/102463
-  - make sure click on cell opens menu
+- make sure click on cell opens menu in header
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
 - replace the "10 per page" menu with a "Bulk actions" dropdown button

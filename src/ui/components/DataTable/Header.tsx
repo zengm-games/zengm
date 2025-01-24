@@ -7,15 +7,10 @@ import {
 	useRef,
 	useLayoutEffect,
 } from "react";
-import type {
-	Col,
-	DataTableRow,
-	DataTableRowMetadata,
-	SortBy,
-	SuperCol,
-} from ".";
+import type { Col, DataTableRow, SortBy, SuperCol } from ".";
 import { range } from "../../../common/utils";
 import { Dropdown } from "react-bootstrap";
+import type { useBulkSelectRows } from "./useBulkSelectRows";
 
 const FilterHeader = ({
 	colOrder,
@@ -224,30 +219,24 @@ const CustomToggle = forwardRef(
 );
 
 type BulkSelectProps = {
-	onSelectAll: () => void;
-	onSelectPage: () => void;
-	onClear: () => void;
-	allOnePage: boolean;
 	filteredRows: DataTableRow[];
-	selectedRows: Map<DataTableRow["key"], DataTableRowMetadata>;
+	filteredRowsPage: DataTableRow[];
+	selectedRows: ReturnType<typeof useBulkSelectRows>["selectedRows"];
 };
 
 const BulkSelectHeaderCheckbox = ({
-	onSelectAll,
-	onSelectPage,
-	onClear,
-	allOnePage,
 	filteredRows,
+	filteredRowsPage,
 	selectedRows,
 }: BulkSelectProps) => {
 	let state: CheckboxState;
-	if (selectedRows.size === 0) {
+	if (selectedRows.map.size === 0) {
 		state = "unchecked";
 	} else {
 		const filteredKeys = new Set(filteredRows.map(row => row.key));
 		if (
-			filteredKeys.size === selectedRows.size &&
-			filteredKeys.isSubsetOf(selectedRows)
+			filteredKeys.size === selectedRows.map.size &&
+			filteredKeys.isSubsetOf(selectedRows.map)
 		) {
 			// filteredKeys and selectedRows are the same
 			state = "checked";
@@ -269,13 +258,35 @@ const BulkSelectHeaderCheckbox = ({
 			<Dropdown>
 				<Dropdown.Toggle as={CustomToggle}>{state}</Dropdown.Toggle>
 				<Dropdown.Menu>
-					<Dropdown.Item onClick={onSelectAll}>Select all</Dropdown.Item>
-					{allOnePage ? null : (
-						<Dropdown.Item onClick={onSelectPage}>
+					<Dropdown.Item
+						onClick={() => {
+							selectedRows.setAll(
+								// @ts-expect-error
+								filteredRows.filter(row => row.metadata),
+							);
+						}}
+					>
+						Select all
+					</Dropdown.Item>
+					{filteredRows.length !== filteredRowsPage.length ? (
+						<Dropdown.Item
+							onClick={() => {
+								selectedRows.setAll(
+									// @ts-expect-error
+									filteredRowsPage.filter(row => row.metadata),
+								);
+							}}
+						>
 							Select all (this page only)
 						</Dropdown.Item>
-					)}
-					<Dropdown.Item onClick={onClear}>Clear</Dropdown.Item>
+					) : null}
+					<Dropdown.Item
+						onClick={() => {
+							selectedRows.clear();
+						}}
+					>
+						Clear all
+					</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>
 		</th>

@@ -22,6 +22,7 @@ import {
 	helpers,
 	realtimeUpdate,
 	safeLocalStorage,
+	toWorker,
 } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 import { arrayMoveImmutable } from "array-move";
@@ -415,7 +416,7 @@ const DataTable = ({
 							<BulkActions
 								hasSomeSelected={selectedRows.map.size > 0}
 								name={name}
-								onComparePlayers={() => {
+								onComparePlayers={async () => {
 									const seasonTypes = {
 										combined: "c",
 										playoffs: "p",
@@ -427,13 +428,20 @@ const DataTable = ({
 										},
 									);
 
-									realtimeUpdate(
+									await realtimeUpdate(
 										[],
 										helpers.leagueUrl(["compare_players", players.join(",")]),
 									);
 								}}
 								onExportPlayers={() => {}}
-								onWatchPlayers={() => {}}
+								onWatchPlayers={async () => {
+									const pids = Array.from(selectedRows.map.values()).map(
+										metadata => {
+											return metadata.pid;
+										},
+									);
+									await toWorker("main", "updatePlayersWatch", pids);
+								}}
 							/>
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />

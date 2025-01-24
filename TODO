@@ -3,11 +3,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - if checkboxes are shown by default, still have this to show the "Bulk" button
   - when enabled, switch text to "Hide bulk select players"
 - replace the "10 per page" menu with a "Bulk actions" dropdown button
-  - use primary color if >0 rows are selected
   - actions
-    - flag/unflag multiple players at once
-      - how to handle multiple watch lists?
-      - how to handle updating rows in table?
     - need to limit number of players for compare players?
     - export players
     - delete players (god mode)
@@ -46,10 +42,13 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - search for other places with checkboxes
 - interaction with hideAllControls?
 - flag in BulkActions should show the color that all the selected players will become - is that possible? maybe async?
+  - yeah, load from worker when menu is opened, get `newWatch` value from worker
 - test
   - bulk actions noop with nothing selected
   - with supercols
   - with col filters showing
+- blog
+  - annoying to flag multiple players. compare players links.
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

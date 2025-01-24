@@ -3906,11 +3906,9 @@ const updatePlayerWatch = async ({
 			return;
 		}
 	} else {
-		p = await idb.cache.players.get(pid);
+		p = await idb.getCopy.players({ pid }, "noCopyCache");
 	}
-	if (!p) {
-		p = await idb.league.get("players", pid);
-	}
+
 	if (p) {
 		if (
 			watch < 1 ||
@@ -3925,6 +3923,41 @@ const updatePlayerWatch = async ({
 			await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 		}
 	}
+};
+
+const updatePlayersWatch = async (pids: number[]) => {
+	// Need to get all players to see what the new watch value should be!
+	const players = await idb.getCopies.players({ pids });
+
+	if (players.length === 0) {
+		return;
+	}
+
+	const watchCounts = new Map<number, number>();
+	for (const p of players) {
+		const watch = p.watch ?? 0;
+		const count = watchCounts.get(watch) ?? 0;
+		watchCounts.set(watch, count + 1);
+	}
+	const mostCommonCurrentWatch = maxBy(
+		Array.from(watchCounts.entries()),
+		1,
+	)![0];
+
+	const newWatch = (mostCommonCurrentWatch + 1) % (g.get("numWatchColors") + 1);
+
+	for (const p of players) {
+		// Only update players who changed
+		if (newWatch === 0 && p.watch !== undefined) {
+			delete p.watch;
+			await idb.cache.players.put(p);
+		} else if (p.watch !== newWatch) {
+			p.watch = newWatch;
+			await idb.cache.players.put(p);
+		}
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
 
 const updatePlayingTime = async ({
@@ -4725,6 +4758,7 @@ export default {
 		updateOptions,
 		updatePlayThroughInjuries,
 		updatePlayerWatch,
+		updatePlayersWatch,
 		updatePlayingTime,
 		updatePlayoffTeams,
 		updateTeamInfo,

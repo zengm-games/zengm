@@ -10,7 +10,7 @@ import {
 import type { Col, DataTableRow, SortBy, SuperCol } from ".";
 import { range } from "../../../common/utils";
 import { Dropdown } from "react-bootstrap";
-import type { useBulkSelectRows } from "./useBulkSelectRows";
+import type { SelectedRows } from "./useBulkSelectRows";
 
 const FilterHeader = ({
 	colOrder,
@@ -221,7 +221,7 @@ const CustomToggle = forwardRef(
 type BulkSelectProps = {
 	filteredRows: DataTableRow[];
 	filteredRowsPage: DataTableRow[];
-	selectedRows: ReturnType<typeof useBulkSelectRows>["selectedRows"];
+	selectedRows: SelectedRows;
 };
 
 const BulkSelectHeaderCheckbox = ({

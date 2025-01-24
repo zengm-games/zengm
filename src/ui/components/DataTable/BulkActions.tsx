@@ -1,20 +1,29 @@
 import { Dropdown } from "react-bootstrap";
 import { Flag } from "../WatchBlock";
-import { helpers, realtimeUpdate, toWorker, useLocalPartial } from "../../util";
-import type { DataTableRow, DataTableRowMetadata } from ".";
+import {
+	confirm,
+	helpers,
+	realtimeUpdate,
+	toWorker,
+	useLocalPartial,
+} from "../../util";
 import { useState } from "react";
+import type { SelectedRows } from "./useBulkSelectRows";
 
 export const BulkActions = ({
-	hasSomeSelected,
 	name,
 	selectedRows,
 }: {
-	hasSomeSelected: boolean;
 	name: string;
-	selectedRows: Map<DataTableRow["key"], DataTableRowMetadata>;
+	selectedRows: SelectedRows;
 }) => {
-	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+	const { godMode, numWatchColors } = useLocalPartial([
+		"godMode",
+		"numWatchColors",
+	]);
 	const [nextWatch, setNextWatch] = useState<undefined | number>(undefined);
+
+	const hasSomeSelected = selectedRows.map.size > 0;
 
 	const onComparePlayers = async () => {
 		const seasonTypes = {
@@ -22,7 +31,7 @@ export const BulkActions = ({
 			playoffs: "p",
 			regularSeason: "r",
 		};
-		const players = Array.from(selectedRows.values()).map(metadata => {
+		const players = Array.from(selectedRows.map.values()).map(metadata => {
 			return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
 		});
 
@@ -35,21 +44,39 @@ export const BulkActions = ({
 	const onExportPlayers = () => {};
 
 	const onWatchPlayers = async () => {
-		const pids = Array.from(selectedRows.values()).map(metadata => {
+		const pids = Array.from(selectedRows.map.values()).map(metadata => {
 			return metadata.pid;
 		});
 		await toWorker("main", "updatePlayersWatch", pids);
+	};
+
+	const onDeletePlayers = async () => {
+		const proceed = await confirm(
+			`Are you sure you want to delete ${selectedRows.map.size} ${helpers.plural("player", selectedRows.map.size)}?`,
+			{
+				okText: helpers.plural("Delete player", selectedRows.map.size),
+			},
+		);
+		if (proceed) {
+			const pids = Array.from(selectedRows.map.values()).map(metadata => {
+				return metadata.pid;
+			});
+			await toWorker("main", "removePlayers", pids);
+
+			// Clear because the selected players no longer exist!
+			selectedRows.clear();
+		}
 	};
 
 	return (
 		<Dropdown
 			className="float-start"
 			onToggle={async opening => {
-				if (!opening || selectedRows.size === 0) {
+				if (!opening || selectedRows.map.size === 0) {
 					return;
 				}
 
-				const pids = Array.from(selectedRows.values()).map(metadata => {
+				const pids = Array.from(selectedRows.map.values()).map(metadata => {
 					return metadata.pid;
 				});
 
@@ -79,6 +106,14 @@ export const BulkActions = ({
 					{numWatchColors > 1 ? "Cycle" : "Toggle"} watch list{" "}
 					<Flag watch={nextWatch} />
 				</Dropdown.Item>
+				{godMode ? (
+					<Dropdown.Item
+						className="god-mode"
+						onClick={hasSomeSelected ? onDeletePlayers : undefined}
+					>
+						Delete players
+					</Dropdown.Item>
+				) : null}
 			</Dropdown.Menu>
 		</Dropdown>
 	);

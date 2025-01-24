@@ -570,7 +570,7 @@ const TopStuff = ({
 									const proceed = await confirm(
 										`Are you sure you want to delete ${player.name}?`,
 										{
-											okText: "Delete Player",
+											okText: "Delete player",
 										},
 									);
 									if (proceed) {

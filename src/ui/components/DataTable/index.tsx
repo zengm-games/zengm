@@ -407,11 +407,7 @@ const DataTable = ({
 				>
 					<>
 						{bulkSelectRows ? (
-							<BulkActions
-								hasSomeSelected={selectedRows.map.size > 0}
-								name={name}
-								selectedRows={selectedRows.map}
-							/>
+							<BulkActions name={name} selectedRows={selectedRows} />
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />
 						) : null}

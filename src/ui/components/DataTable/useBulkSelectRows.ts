@@ -58,3 +58,5 @@ export const useBulkSelectRows = () => {
 		toggleBulkSelectRows,
 	};
 };
+
+export type SelectedRows = ReturnType<typeof useBulkSelectRows>["selectedRows"];

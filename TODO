@@ -4,7 +4,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - actions
   - need to limit number of players for compare players?
   - export players
-  - delete players (god mode)
   - on single team pages (like roster)
     - trade for
     - release (on your team)

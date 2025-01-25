@@ -73,21 +73,26 @@ export const processRows = ({
 				return true;
 			});
 
-	const sortKeys = state.sortBys.map(sortBy => (row: DataTableRow) => {
-		let i = sortBy[0];
+	let rowsOrdered;
+	if (state.sortBys === undefined) {
+		rowsOrdered = rowsFiltered;
+	} else {
+		const sortKeys = state.sortBys.map(sortBy => (row: DataTableRow) => {
+			let i = sortBy[0];
 
-		if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
-			i = 0;
-		}
+			if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
+				i = 0;
+			}
 
-		return getSortVal(row.data[i], cols[i].sortType);
-	});
+			return getSortVal(row.data[i], cols[i].sortType);
+		});
 
-	const rowsOrdered = orderBy(
-		rowsFiltered,
-		sortKeys,
-		state.sortBys.map(sortBy => sortBy[1]),
-	);
+		rowsOrdered = orderBy(
+			rowsFiltered,
+			sortKeys,
+			state.sortBys.map(sortBy => sortBy[1]),
+		);
+	}
 
 	const colOrderFiltered = state.colOrder.filter(
 		({ hidden, colIndex }) => !hidden && cols[colIndex],

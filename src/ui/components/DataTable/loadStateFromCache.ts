@@ -14,7 +14,7 @@ export type State = {
 	perPage: number;
 	searchText: string;
 	showSelectColumnsModal: boolean;
-	sortBys: SortBy[];
+	sortBys: SortBy[] | undefined;
 	stickyCols: StickyCols;
 	settingsCache: SettingsCache;
 };
@@ -39,19 +39,21 @@ const loadStateFromCache = ({
 	}
 
 	const sortBysFromStorage = settingsCache.get("DataTableSort");
-	let sortBys: SortBy[];
+	let sortBys: SortBy[] | undefined;
 
-	if (sortBysFromStorage === undefined) {
-		sortBys = [defaultSort];
-	} else {
-		sortBys = sortBysFromStorage;
-	}
+	if (defaultSort !== "disableSort") {
+		if (sortBysFromStorage === undefined) {
+			sortBys = [defaultSort];
+		} else {
+			sortBys = sortBysFromStorage as SortBy[];
+		}
 
-	// Don't let sortBy reference invalid col
-	sortBys = sortBys.filter(sortBy => sortBy[0] < cols.length);
+		// Don't let sortBy reference invalid col
+		sortBys = sortBys.filter(sortBy => sortBy[0] < cols.length);
 
-	if (sortBys.length === 0) {
-		sortBys = [defaultSort];
+		if (sortBys.length === 0) {
+			sortBys = [defaultSort];
+		}
 	}
 
 	const defaultFilters: string[] = cols.map(() => "");

@@ -29,11 +29,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - ProtectPlayers
     - search for other places with checkboxes
 - extra places to add DataTable
-  - Leaders
-    - don't allow sorting?
-    - pass HeadersOverride?
-  - SortableTable
-  - ResponsiveTableWrapper
+  - SortableTable - especially for roster
 - test
   - interaction with hideAllControls and other options
     - hideAllControls should move to a string always?

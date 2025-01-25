@@ -69,7 +69,7 @@ const Leaders = ({
 
 	// When season is "all", the season is displayed inline, so columns need to be a bit wider
 	const colClassName =
-		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-md-4";
+		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-lg-4";
 
 	const totals = statType === "totals" && isSport("basketball");
 
@@ -86,11 +86,7 @@ const Leaders = ({
 
 			<div className="row" style={{ marginTop: -14 }}>
 				{categories.map(cat => {
-					const cols = getCols(["#", "Name", `stat:${cat.stat}`], {
-						Name: {
-							width: "100%",
-						},
-					});
+					const cols = getCols(["#", "Name", `stat:${cat.stat}`]);
 					const statCol = cols[2];
 					if (cat.titleOverride === statCol.desc) {
 						throw new Error("Useless titleOverride");
@@ -125,7 +121,13 @@ const Leaders = ({
 								playoffs,
 							},
 							data: [
-								j + 1,
+								{
+									value: j + 1,
+									style: {
+										// Need this here rather than in cols becuase we're using hideHeader
+										width: 1,
+									},
+								},
 								<>
 									<PlayerNameLabels
 										pid={p.pid}
@@ -165,7 +167,8 @@ const Leaders = ({
 						>
 							<DataTable
 								cols={cols}
-								defaultSort={[0, "asc"]}
+								defaultSort={"disableSort"}
+								hideHeader
 								hideAllControls={
 									<h3 title={desc}>
 										{title} ({statCol.title})

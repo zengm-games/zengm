@@ -44,7 +44,7 @@ export type Col = {
 export type SuperCol = {
 	colspan: number;
 	desc?: string;
-	title: string;
+	title: ReactNode;
 };
 
 export type DataTableRowMetadata = {
@@ -76,11 +76,12 @@ export type Props = {
 	classNameWrapper?: string;
 	clickable?: boolean;
 	cols: Col[];
-	defaultSort: SortBy;
+	defaultSort: SortBy | "disableSort";
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
 	footer?: any[];
 	hideAllControls?: boolean | string | ReactNode;
+	hideHeader?: boolean;
 	hideMenuToo?: boolean;
 	name: string;
 	nonfluid?: boolean;
@@ -103,6 +104,7 @@ const DataTable = ({
 	disableSettingsCache,
 	footer,
 	hideAllControls,
+	hideHeader,
 	hideMenuToo,
 	name,
 	nonfluid,
@@ -131,18 +133,20 @@ const DataTable = ({
 	} = useBulkSelectRows(() => rows.some(row => row.metadata));
 
 	const handleColClick = (event: MouseEvent, i: number) => {
-		const sortBys = updateSortBys({
-			cols,
-			event,
-			i,
-			prevSortBys: state.sortBys,
-		});
+		if (state.sortBys !== undefined) {
+			const sortBys = updateSortBys({
+				cols,
+				event,
+				i,
+				prevSortBys: state.sortBys,
+			});
 
-		state.settingsCache.set("DataTableSort", sortBys);
-		setStatePartial({
-			currentPage: 1,
-			sortBys,
-		});
+			state.settingsCache.set("DataTableSort", sortBys);
+			setStatePartial({
+				currentPage: 1,
+				sortBys,
+			});
+		}
 	};
 
 	const handleBulkSelectRows = () => {
@@ -318,23 +322,26 @@ const DataTable = ({
 		({ hidden, colIndex }) => !hidden && cols[colIndex],
 	);
 
-	const highlightCols = state.sortBys
-		.map(sortBy => sortBy[0])
-		.map(i =>
-			colOrderFiltered.findIndex(({ colIndex }) => {
-				if (colIndex !== i) {
-					return false;
-				}
+	const highlightCols =
+		state.sortBys === undefined
+			? []
+			: state.sortBys
+					.map(sortBy => sortBy[0])
+					.map(i =>
+						colOrderFiltered.findIndex(({ colIndex }) => {
+							if (colIndex !== i) {
+								return false;
+							}
 
-				// Make sure sortSequence is not an empty array - same code is in Header
-				const sortSequence = cols[colIndex].sortSequence;
-				if (sortSequence && sortSequence.length === 0) {
-					return false;
-				}
+							// Make sure sortSequence is not an empty array - same code is in Header
+							const sortSequence = cols[colIndex].sortSequence;
+							if (sortSequence && sortSequence.length === 0) {
+								return false;
+							}
 
-				return true;
-			}),
-		);
+							return true;
+						}),
+					);
 
 	const { stickyClass, tableRef } = useStickyXX(
 		state.stickyCols,
@@ -458,22 +465,24 @@ const DataTable = ({
 							)}
 							ref={tableRef}
 						>
-							<Header
-								bulkSelectProps={{
-									filteredRows: processedRows,
-									filteredRowsPage: processedRowsPage,
-									selectedRows,
-								}}
-								colOrder={colOrderFiltered}
-								cols={cols}
-								enableFilters={state.enableFilters}
-								filters={state.filters}
-								handleColClick={handleColClick}
-								handleFilterUpdate={handleFilterUpdate}
-								showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-								sortBys={state.sortBys}
-								superCols={superCols}
-							/>
+							{hideHeader ? null : (
+								<Header
+									bulkSelectProps={{
+										filteredRows: processedRows,
+										filteredRowsPage: processedRowsPage,
+										selectedRows,
+									}}
+									colOrder={colOrderFiltered}
+									cols={cols}
+									enableFilters={state.enableFilters}
+									filters={state.filters}
+									handleColClick={handleColClick}
+									handleFilterUpdate={handleFilterUpdate}
+									showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+									sortBys={state.sortBys}
+									superCols={superCols}
+								/>
+							)}
 							<tbody>
 								{processedRowsPage.map(row => (
 									<Row

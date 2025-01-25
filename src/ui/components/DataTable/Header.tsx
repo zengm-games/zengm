@@ -328,7 +328,7 @@ const Header = ({
 	handleColClick: (b: MouseEvent, a: number) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 	showBulkSelectCheckboxes: boolean;
-	sortBys: SortBy[];
+	sortBys: SortBy[] | undefined;
 	superCols?: SuperCol[];
 }) => {
 	return (
@@ -355,8 +355,11 @@ const Header = ({
 					} = cols[colIndex];
 
 					let className;
-					if (sortSequence && sortSequence.length === 0) {
-						className = null;
+					if (
+						(sortSequence && sortSequence.length === 0) ||
+						sortBys === undefined
+					) {
+						className = undefined;
 					} else {
 						className = getSortClassName(sortBys, colIndex);
 					}

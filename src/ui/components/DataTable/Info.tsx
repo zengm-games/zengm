@@ -14,7 +14,7 @@ const Info = ({
 			? ` (filtered from ${numRowsUnfiltered})`
 			: null;
 	return (
-		<div className="datatable-info d-none d-sm-block">
+		<div className="d-none d-sm-block">
 			{numRows === 0 ? 0 : start} to {end} of {numRows}
 			{filteredText}
 		</div>

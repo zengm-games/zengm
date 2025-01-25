@@ -9,6 +9,7 @@ import {
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const AwardRaces = ({
 	awardCandidates,
@@ -48,7 +49,7 @@ const AwardRaces = ({
 						cols.push(...getCols(["Compare"]));
 					}
 
-					const rows = players.map((p, j) => {
+					const rows: DataTableRow[] = players.map((p, j) => {
 						let ps: any;
 						for (let i = p.stats.length - 1; i >= 0; i--) {
 							if (p.stats[i].season === season && !p.stats[i].playoffs) {
@@ -163,6 +164,12 @@ const AwardRaces = ({
 
 						return {
 							key: p.pid,
+							metadata: {
+								type: "player",
+								pid: p.pid,
+								season,
+								playoffs: "regularSeason",
+							},
 							data,
 							classNames: {
 								"table-danger": p.hof,
@@ -177,7 +184,6 @@ const AwardRaces = ({
 							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
 							style={{ marginTop: 14 }}
 						>
-							<h2>{name}</h2>
 							{rows.length > 0 ? (
 								<>
 									<DataTable
@@ -185,7 +191,7 @@ const AwardRaces = ({
 										cols={cols}
 										defaultSort={[0, "asc"]}
 										defaultStickyCols={window.mobile ? 0 : 2}
-										hideAllControls
+										hideAllControls={name}
 										name={`AwardRaces${name}`}
 										rows={rows}
 									/>

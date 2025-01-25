@@ -1,6 +1,4 @@
 .datatable-perpage {
-	float: left;
-
 	label {
 		font-weight: normal;
 		text-align: left;
@@ -13,8 +11,6 @@
 }
 
 .datatable-controls {
-	float: right;
-
 	input {
 		width: 200px;
 	}
@@ -27,16 +23,6 @@
 	}
 }
 
-.datatable-info {
-	float: left;
-	padding-top: 8px;
-}
-
-.datatable-pagination {
-	float: right;
-	margin: 0;
-}
-
 .datatable-filter-input {
 	background-color: $white;
 	color: $black;
@@ -44,17 +30,6 @@
 	font-weight: normal;
 	font-size: 12px;
 	width: 100%;
-}
-
-ul.pagination {
-	margin: 0;
-
-	a {
-		cursor: pointer;
-		user-select: none;
-		-moz-user-select: none;
-		-webkit-user-select: none;
-	}
 }
 
 // Without this, these buttons appear on top of notification bubbles. Bootstrap docs say the z-index here is just for handling border overlaps, meh whatever.

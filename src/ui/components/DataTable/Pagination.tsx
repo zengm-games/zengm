@@ -36,11 +36,14 @@ const Pagination = ({
 				className={clsx("page-item", i === currentPage ? "active" : null)}
 			>
 				{i === currentPage ? (
-					<span className="page-link" onClick={() => onClick(i)}>
+					<span
+						className="page-link user-select-none"
+						onClick={() => onClick(i)}
+					>
 						{i}
 					</span>
 				) : (
-					<a className="page-link" onClick={() => onClick(i)}>
+					<a className="page-link user-select-none" onClick={() => onClick(i)}>
 						{i}
 					</a>
 				)}
@@ -49,35 +52,33 @@ const Pagination = ({
 	}
 
 	return (
-		<div className="datatable-pagination">
-			<ul className="pagination">
-				<li
-					className={clsx("page-item", {
-						disabled: !showPrev,
-					})}
+		<ul className="pagination mb-0 ms-auto">
+			<li
+				className={clsx("page-item", {
+					disabled: !showPrev,
+				})}
+			>
+				<a
+					className="page-link user-select-none"
+					onClick={() => showPrev && onClick(currentPage - 1)}
 				>
-					<a
-						className="page-link"
-						onClick={() => showPrev && onClick(currentPage - 1)}
-					>
-						← Prev
-					</a>
-				</li>
-				{numberedPages}
-				<li
-					className={clsx("page-item", {
-						disabled: !showNext,
-					})}
+					← Prev
+				</a>
+			</li>
+			{numberedPages}
+			<li
+				className={clsx("page-item", {
+					disabled: !showNext,
+				})}
+			>
+				<a
+					className="page-link user-select-none"
+					onClick={() => showNext && onClick(currentPage + 1)}
 				>
-					<a
-						className="page-link"
-						onClick={() => showNext && onClick(currentPage + 1)}
-					>
-						Next →
-					</a>
-				</li>
-			</ul>
-		</div>
+					Next →
+				</a>
+			</li>
+		</ul>
 	);
 };
 

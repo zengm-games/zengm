@@ -188,7 +188,6 @@ export const BulkActions = ({
 	return (
 		<>
 			<Dropdown
-				className="float-start"
 				onToggle={async opening => {
 					if (!opening || selectedRows.map.size === 0) {
 						return;

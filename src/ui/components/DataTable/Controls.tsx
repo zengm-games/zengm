@@ -4,10 +4,6 @@ import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../../common";
 import HelpPopover from "../HelpPopover";
 
-const hideAllControlsStyle = {
-	marginTop: -30,
-};
-
 const style = {
 	height: 27,
 	marginRight: 6,
@@ -65,10 +61,7 @@ const Controls = ({
 	});
 
 	return (
-		<div
-			className="datatable-controls d-flex"
-			style={hideAllControls ? hideAllControlsStyle : undefined}
-		>
+		<div className="datatable-controls d-flex ms-auto">
 			{!hideAllControls ? (
 				<>
 					<div className="d-flex align-items-center" style={style}>
@@ -123,7 +116,7 @@ const Controls = ({
 					</label>
 				</>
 			) : null}
-			<Dropdown className="float-end">
+			<Dropdown>
 				<Dropdown.Toggle
 					bsPrefix="no-caret"
 					id={`datatable-controls-${name}`}

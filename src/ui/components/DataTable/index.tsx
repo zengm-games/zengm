@@ -80,7 +80,7 @@ export type Props = {
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
 	footer?: any[];
-	hideAllControls?: boolean;
+	hideAllControls?: boolean | string;
 	hideMenuToo?: boolean;
 	name: string;
 	nonfluid?: boolean;
@@ -405,17 +405,27 @@ const DataTable = ({
 						"d-inline-block mw-100": nonfluid,
 					})}
 				>
-					<>
+					<div className="d-flex">
 						{bulkSelectRows ? (
 							<BulkActions name={name} selectedRows={selectedRows} />
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />
 						) : null}
+						{typeof hideAllControls === "string" ? (
+							<h2
+								className={clsx(
+									"text-truncate",
+									bulkSelectRows ? "ms-2" : undefined,
+								)}
+							>
+								{hideAllControls}
+							</h2>
+						) : null}
 						{!hideMenuToo ? (
 							<Controls
 								bulkSelectRows={bulkSelectRows}
 								enableFilters={state.enableFilters}
-								hideAllControls={hideAllControls}
+								hideAllControls={!!hideAllControls}
 								name={name}
 								onBulkSelectRows={handleBulkSelectRows}
 								onExportCSV={handleExportCSV}
@@ -426,8 +436,7 @@ const DataTable = ({
 								searchText={state.searchText}
 							/>
 						) : null}
-						{nonfluid ? <div className="clearFix" /> : null}
-					</>
+					</div>
 					<ResponsiveTableWrapper
 						className={clsx(
 							classNameWrapper,
@@ -485,26 +494,21 @@ const DataTable = ({
 							/>
 						</table>
 					</ResponsiveTableWrapper>
-					{!hideAllControls ? (
-						<>
-							{nonfluid && pagination ? <div className="clearFix" /> : null}
-							{pagination ? (
-								<Info
-									end={end}
-									numRows={numRowsFiltered}
-									numRowsUnfiltered={rows.length}
-									start={start}
-								/>
-							) : null}
-							{pagination ? (
-								<Pagination
-									currentPage={state.currentPage}
-									numRows={numRowsFiltered}
-									onClick={handlePagination}
-									perPage={state.perPage}
-								/>
-							) : null}
-						</>
+					{!hideAllControls && pagination ? (
+						<div className="d-flex align-items-center">
+							<Info
+								end={end}
+								numRows={numRowsFiltered}
+								numRowsUnfiltered={rows.length}
+								start={start}
+							/>
+							<Pagination
+								currentPage={state.currentPage}
+								numRows={numRowsFiltered}
+								onClick={handlePagination}
+								perPage={state.perPage}
+							/>
+						</div>
 					) : null}
 				</div>
 			</div>

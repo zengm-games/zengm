@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { DataTableRow, DataTableRowMetadata } from ".";
 
 const useSelectedRows = () => {
@@ -41,9 +41,14 @@ const useSelectedRows = () => {
 	};
 };
 
-export const useBulkSelectRows = () => {
+export const useBulkSelectRows = (initialCanBulkSelectRows: () => boolean) => {
 	const [bulkSelectRows, setBulkSelectRows] = useState(true);
 	const selectedRows = useSelectedRows();
+
+	const canBulkSelectRows = useRef<boolean | undefined>(undefined);
+	if (canBulkSelectRows.current === undefined) {
+		canBulkSelectRows.current = initialCanBulkSelectRows();
+	}
 
 	const toggleBulkSelectRows = useCallback(() => {
 		setBulkSelectRows(bulk => !bulk);
@@ -53,6 +58,7 @@ export const useBulkSelectRows = () => {
 
 	return {
 		bulkSelectRows,
+		canBulkSelectRows: canBulkSelectRows.current,
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,

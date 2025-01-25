@@ -124,10 +124,11 @@ const DataTable = ({
 
 	const {
 		bulkSelectRows,
+		canBulkSelectRows,
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,
-	} = useBulkSelectRows();
+	} = useBulkSelectRows(() => rows.some(row => row.metadata));
 
 	const handleColClick = (event: MouseEvent, i: number) => {
 		const sortBys = updateSortBys({
@@ -424,6 +425,7 @@ const DataTable = ({
 						{!hideMenuToo ? (
 							<Controls
 								bulkSelectRows={bulkSelectRows}
+								canBulkSelectRows={canBulkSelectRows}
 								enableFilters={state.enableFilters}
 								hideAllControls={!!hideAllControls}
 								name={name}

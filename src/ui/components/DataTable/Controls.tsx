@@ -11,6 +11,7 @@ const style = {
 
 const Controls = ({
 	bulkSelectRows,
+	canBulkSelectRows,
 	enableFilters,
 	hideAllControls,
 	name,
@@ -23,6 +24,7 @@ const Controls = ({
 	searchText,
 }: {
 	bulkSelectRows: boolean;
+	canBulkSelectRows: boolean;
 	enableFilters: boolean;
 	hideAllControls?: boolean;
 	name: string;
@@ -132,11 +134,13 @@ const Controls = ({
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					<Dropdown.Item onClick={onBulkSelectRows}>
-						{bulkSelectRows
-							? "Hide bulk select players"
-							: "Bulk select players"}
-					</Dropdown.Item>
+					{canBulkSelectRows ? (
+						<Dropdown.Item onClick={onBulkSelectRows}>
+							{bulkSelectRows
+								? "Hide bulk select players"
+								: "Bulk select players"}
+						</Dropdown.Item>
+					) : null}
 					<Dropdown.Item onClick={onSelectColumns}>
 						Customize columns
 					</Dropdown.Item>

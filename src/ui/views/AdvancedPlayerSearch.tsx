@@ -16,6 +16,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import clsx from "clsx";
+import type { DataTableRow } from "../components/DataTable";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -646,12 +647,18 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		rendered.seasonStart === currentSeason;
 
 	// useMemo because this is slow, don't want to run it on every unrelated state change
-	const rows = useMemo(() => {
+	const rows = useMemo<DataTableRow[] | undefined>(() => {
 		return rendered.players?.map((p, i) => {
 			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 			return {
 				key: i,
+				metadata: {
+					type: "player",
+					pid: p.pid,
+					season: p.ratings.season,
+					playoffs,
+				},
 				data: [
 					wrappedPlayerNameLabels({
 						pid: p.pid,
@@ -713,6 +720,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	}, [
 		challengeNoRatings,
 		currentSeasonOnly,
+		playoffs,
 		rendered.players,
 		rendered.statType,
 		uniqueColFiltersWithInfo,

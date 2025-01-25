@@ -259,7 +259,13 @@ const BulkSelectHeaderCheckbox = ({
 	};
 
 	return (
-		<th data-no-row-highlight onClick={onClickCell}>
+		<th
+			data-no-row-highlight
+			onClick={onClickCell}
+			style={{
+				width: 1,
+			}}
+		>
 			<Dropdown>
 				<Dropdown.Toggle as={CustomToggle} ref={dropdownToggleRef}>
 					{state}

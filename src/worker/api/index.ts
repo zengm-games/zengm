@@ -3949,7 +3949,10 @@ const getPlayerNextWatchCore = (players: Player[]) => {
 
 const getPlayersNextWatch = async (pids: number[]) => {
 	// Need to get all players to see what the new watch value should be!
-	const players = await idb.getCopies.players({ pids });
+	const players = await idb.getCopies.players(
+		{ pids: Array.from(new Set(pids)) },
+		"noCopyCache",
+	);
 
 	if (players.length === 0) {
 		return;
@@ -3966,7 +3969,10 @@ const updatePlayersWatch = async ({
 	watch?: number;
 }) => {
 	// Need to get all players to see what the new watch value should be!
-	const players = await idb.getCopies.players({ pids });
+	const players = await idb.getCopies.players(
+		{ pids: Array.from(new Set(pids)) },
+		"noCopyCache",
+	);
 
 	if (players.length === 0) {
 		return;

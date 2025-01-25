@@ -57,6 +57,12 @@ const PlayerBios = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,
@@ -145,12 +151,6 @@ const PlayerBios = ({
 			classNames: {
 				"table-danger": p.hof,
 				"table-info": p.stats.tid === userTid,
-			},
-			metadata: {
-				type: "player",
-				pid: p.pid,
-				season,
-				playoffs: "regularSeason",
 			},
 		};
 	});

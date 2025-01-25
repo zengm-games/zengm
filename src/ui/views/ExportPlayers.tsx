@@ -8,7 +8,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 // For seasonsByPid, key is pid and value is season. No support for exporting the same player from multiple seasons
 export const exportPlayers = async (
-	seasonsByPid: Map<number, number>,
+	seasonsByPid: Map<number, number | "latest">,
 	abortSignal?: AbortSignal,
 ) => {
 	const filename = await toWorker("main", "getExportFilename", "players");
@@ -33,6 +33,9 @@ export const exportPlayers = async (
 		forEach: {
 			players: p => {
 				p.exportedSeason = seasonsByPid.get(p.pid);
+				if (p.exportedSeason === "latest") {
+					p.exportedSeason = p.ratings.at(-1).season;
+				}
 
 				delete p.gamesUntilTradable;
 				delete p.numDaysFreeAgent;

@@ -106,22 +106,24 @@ export const BulkActions = ({
 	};
 
 	const onExportPlayers = async () => {
-		const seasonsByPids = new Map<number, number | "career">();
+		const seasonsByPids = new Map<number, number | "latest">();
 		let duplicatePids = false;
 		for (const metadata of selectedRows.map.values()) {
-			const season = getSeason(metadata.season, "export");
+			const seasonRaw = getSeason(metadata.season, "export");
+
+			// Exported player must be at a specific season, so use latest season if career is specified
+			const season = seasonRaw === "career" ? "latest" : seasonRaw;
 
 			const prev = seasonsByPids.get(metadata.pid);
 			if (prev !== undefined) {
 				duplicatePids = true;
-				if (season < prev) {
+				if (prev === "latest" || (season !== "latest" && season < prev)) {
 					continue;
 				}
 			}
 
-			seasonsByPids.set(metadata.pid, getSeason(season, "export"));
+			seasonsByPids.set(metadata.pid, season);
 		}
-		console.log("seasonsByPids", seasonsByPids);
 
 		if (duplicatePids) {
 			logEvent({

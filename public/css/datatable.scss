@@ -10,16 +10,12 @@
 	}
 }
 
-.datatable-controls {
-	input {
-		width: 200px;
-	}
+.datatable-search {
+	max-width: 200px;
 }
 @include media-breakpoint-down(sm) {
-	.datatable-controls {
-		input {
-			width: 158px;
-		}
+	.datatable-search {
+		max-width: 158px;
 	}
 }
 

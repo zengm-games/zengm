@@ -60,8 +60,10 @@ const Controls = ({
 		),
 	});
 
+	// flex-grow-1 is so the search input expands to its max-width when possible, and then ms-auto needs to be on the inner div otherwise it doesn't do anything
 	return (
-		<div className="datatable-controls d-flex ms-auto">
+		<div className="d-flex flex-grow-1 ms-1">
+			<div className="ms-auto" />
 			{!hideAllControls ? (
 				<>
 					<div className="d-flex align-items-center" style={style}>
@@ -105,15 +107,13 @@ const Controls = ({
 					>
 						<span className="glyphicon glyphicon-filter" />
 					</a>
-					<label className="form-label">
-						<input
-							className="form-control form-control-sm"
-							onChange={onSearch}
-							placeholder="Search"
-							type="search"
-							value={searchText}
-						/>
-					</label>
+					<input
+						className="form-control form-control-sm datatable-search mb-2"
+						onChange={onSearch}
+						placeholder="Search"
+						type="search"
+						value={searchText}
+					/>
 				</>
 			) : null}
 			<Dropdown>

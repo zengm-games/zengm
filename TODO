@@ -1,5 +1,4 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- on pages with tables in columns that get narrow (like All-Star Teams), make search box shrink when necessary rather than overflowing
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
   - only show if some table rows have metadata? or some global prop?
@@ -15,10 +14,9 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
       - bulkSelectRows vs showBulkSelectCheckboxes
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
-- add to all pages - search for <DataTable
-  - done through AllStarTeams
 - on DraftHistory page, what should i do about the Export Draft Class button? Kind of redundant now
   - maybe we want the compare season to be "career", but the export season to be the draft year?
+  - similar for DraftScouting. anywhere else draft classes are exported?
 - places to use
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
     - trading block 
@@ -36,6 +34,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - test
   - interaction with hideAllControls and other options
     - hideAllControls should move to a string always?
+      - use on AllStarTeams/DraftClass, hide searchbox and help but not filters?
     - datatable-negative-margin-top still needed?
   - bulk actions noop with nothing selected
   - with col filters showing

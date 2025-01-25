@@ -4,6 +4,7 @@ import { helpers, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
+import type { DataTableRow } from "../../components/DataTable";
 
 // The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({
@@ -37,7 +38,7 @@ const Players = ({
 			p.retirableJerseyNumbers[number].length > 0
 				? p.retirableJerseyNumbers[number][
 						p.retirableJerseyNumbers[number].length - 1
-				  ]
+					]
 				: season;
 
 		await toWorker("main", "retiredJerseyNumberUpsert", {
@@ -72,7 +73,7 @@ const Players = ({
 		cols.pop();
 	}
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const canRetireJerseyNumber =
 			!!p.retirableJerseyNumbers &&
 			Object.keys(p.retirableJerseyNumbers).length > 0 &&
@@ -80,6 +81,12 @@ const Players = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: "career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					injury: p.injury,
@@ -103,7 +110,7 @@ const Players = ({
 							>
 								Retire Jersey
 							</button>,
-					  ]
+						]
 					: []),
 			],
 			classNames: {

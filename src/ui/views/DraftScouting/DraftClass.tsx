@@ -4,6 +4,7 @@ import { confirm, downloadFile, getCols, helpers, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { WEBSITE_ROOT } from "../../../common";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
+import type { DataTableRow } from "../../components/DataTable";
 
 const DraftClass = ({
 	challengeNoRatings,
@@ -25,9 +26,15 @@ const DraftClass = ({
 
 	const cols = getCols(["#", "Name", "Pos", "Age", "Ovr", "Pot"]);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data: [
 				p.rank,
 				wrappedPlayerNameLabels({

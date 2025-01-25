@@ -5,6 +5,7 @@ import type { View } from "../../../common/types";
 import { frivolitiesMenu } from "../Frivolities";
 import GOATFormula from "./GOATFormula";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
+import type { DataTableRow } from "../../components/DataTable";
 
 export const getValue = (
 	obj: any,
@@ -13,8 +14,8 @@ export const getValue = (
 	return typeof key === "string"
 		? obj[key]
 		: key.length === 2
-		? obj[key[0]][key[1]]
-		: obj[key[0]][key[1]][key[2]];
+			? obj[key[0]][key[1]]
+			: obj[key[0]][key[1]][key[2]];
 };
 
 const Most = ({
@@ -64,7 +65,7 @@ const Most = ({
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const rows = players.map((p, i) => {
+	const rows: DataTableRow[] = players.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
 		const draftPick =
@@ -72,6 +73,15 @@ const Most = ({
 
 		return {
 			key: i,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season:
+					p.most?.extra?.bestSeasonOverride ??
+					p.most?.extra?.season ??
+					"career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				p.rank,
 				wrappedPlayerNameLabels({

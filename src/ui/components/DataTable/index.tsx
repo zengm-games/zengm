@@ -44,7 +44,7 @@ export type Col = {
 export type SuperCol = {
 	colspan: number;
 	desc?: string;
-	title: string | ReactNode;
+	title: string;
 };
 
 export type DataTableRowMetadata = {
@@ -80,7 +80,7 @@ export type Props = {
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
 	footer?: any[];
-	hideAllControls?: boolean | string;
+	hideAllControls?: boolean | string | ReactNode;
 	hideMenuToo?: boolean;
 	name: string;
 	nonfluid?: boolean;
@@ -412,15 +412,15 @@ const DataTable = ({
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />
 						) : null}
-						{typeof hideAllControls === "string" ? (
-							<h2
+						{hideAllControls && typeof hideAllControls !== "boolean" ? (
+							<div
 								className={clsx(
-									"text-truncate",
+									"datatable-header-text text-truncate d-flex align-items-center",
 									bulkSelectRows ? "ms-2" : undefined,
 								)}
 							>
 								{hideAllControls}
-							</h2>
+							</div>
 						) : null}
 						{!hideMenuToo ? (
 							<Controls

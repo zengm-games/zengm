@@ -1,77 +1,9 @@
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import {
-	MoreLinks,
-	PlayerNameLabels,
-	ResponsiveTableWrapper,
-} from "../components";
+import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
-import useClickable from "../hooks/useClickable";
-import clsx from "clsx";
 import { bySport, isSport } from "../../common";
-
-const Row = ({
-	cat,
-	highlightActiveAndHOF,
-	p,
-	rank,
-	season,
-	totals,
-}: {
-	cat: View<"leaders">["categories"][number];
-	p: View<"leaders">["categories"][number]["leaders"][number];
-	rank: number;
-	totals: boolean;
-} & Pick<View<"leaders">, "highlightActiveAndHOF" | "season">) => {
-	const { clicked, toggleClicked } = useClickable();
-
-	const numericSeason =
-		season === "career" ? undefined : season === "all" ? p.season : season;
-
-	let teamUrlParts;
-	if (season === "career") {
-		teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
-	} else {
-		teamUrlParts = ["roster", `${p.abbrev}_${p.tid}`, numericSeason];
-	}
-
-	return (
-		<tr
-			className={clsx({
-				"table-danger": highlightActiveAndHOF && p.hof,
-				"table-success": highlightActiveAndHOF && p.retiredYear === Infinity,
-				"table-info": p.userTeam,
-				"table-warning": clicked,
-			})}
-			onClick={toggleClicked}
-		>
-			<td>
-				<div style={{ width: 18 }} className="me-1 float-start">
-					{rank}.
-				</div>
-				<PlayerNameLabels
-					pid={p.pid}
-					injury={p.injury}
-					jerseyNumber={p.jerseyNumber}
-					season={numericSeason}
-					skills={p.skills}
-					watch={p.watch}
-					firstName={p.firstNameShort}
-					firstNameShort={p.firstNameShort}
-					lastName={p.lastName}
-				/>
-				<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
-					{p.abbrev}
-					{p.season !== undefined ? ` ${p.season}` : null}
-				</a>
-				{p.pos}
-			</td>
-			<td className="text-end">
-				{helpers.roundStat(p.stat, cat.stat, totals)}
-			</td>
-		</tr>
-	);
-};
+import type { DataTableRow } from "../components/DataTable";
 
 export const LeadersTopText = ({
 	includeHighlight,
@@ -139,6 +71,8 @@ const Leaders = ({
 	const colClassName =
 		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-md-4";
 
+	const totals = statType === "totals" && isSport("basketball");
+
 	return (
 		<>
 			<MoreLinks
@@ -152,12 +86,76 @@ const Leaders = ({
 
 			<div className="row" style={{ marginTop: -14 }}>
 				{categories.map(cat => {
-					const col = getCols([`stat:${cat.stat}`])[0];
-					if (cat.titleOverride === col.desc) {
+					const cols = getCols(["#", "Name", `stat:${cat.stat}`], {
+						Name: {
+							width: "100%",
+						},
+					});
+					const statCol = cols[2];
+					if (cat.titleOverride === statCol.desc) {
 						throw new Error("Useless titleOverride");
 					}
-					const name = cat.titleOverride ?? col.desc;
-					const title = cat.titleOverride ? col.desc : undefined;
+
+					const title = cat.titleOverride ?? statCol.desc ?? "???";
+					const desc = cat.titleOverride ? statCol.desc : undefined;
+
+					const rows: DataTableRow[] = cat.leaders.map((p, j) => {
+						const numericSeason =
+							season === "career"
+								? undefined
+								: season === "all"
+									? p.season
+									: season;
+
+						let teamUrlParts;
+						if (season === "career") {
+							teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
+						} else {
+							teamUrlParts = ["roster", `${p.abbrev}_${p.tid}`, numericSeason];
+						}
+
+						const seasonText = p.season !== undefined ? ` ${p.season}` : "";
+
+						return {
+							key: p.key,
+							metadata: {
+								type: "player",
+								pid: p.pid,
+								season: numericSeason ?? "career",
+								playoffs,
+							},
+							data: [
+								j + 1,
+								<>
+									<PlayerNameLabels
+										pid={p.pid}
+										injury={p.injury}
+										season={numericSeason}
+										skills={p.skills}
+										watch={p.watch}
+										firstName={p.firstNameShort}
+										firstNameShort={p.firstNameShort}
+										lastName={p.lastName}
+									/>
+									<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
+										{p.abbrev}
+										{seasonText}
+									</a>
+									{p.pos}
+								</>,
+								{
+									value: helpers.roundStat(p.stat, cat.stat, totals),
+									classNames: "text-end",
+								},
+							],
+							classNames: {
+								"table-danger": highlightActiveAndHOF && p.hof,
+								"table-success":
+									highlightActiveAndHOF && p.retiredYear === Infinity,
+								"table-info": p.userTeam,
+							},
+						};
+					});
 
 					return (
 						<div
@@ -165,29 +163,18 @@ const Leaders = ({
 							className={colClassName}
 							style={{ marginTop: 14 }}
 						>
-							<ResponsiveTableWrapper>
-								<table className="table table-striped table-borderless table-sm leaders">
-									<thead>
-										<tr title={title}>
-											<th>{name}</th>
-											<th className="text-end">{col.title}</th>
-										</tr>
-									</thead>
-									<tbody>
-										{cat.leaders.map((p, j) => (
-											<Row
-												key={p.key}
-												cat={cat}
-												highlightActiveAndHOF={highlightActiveAndHOF}
-												p={p as any}
-												rank={j + 1}
-												season={season}
-												totals={statType === "totals" && isSport("basketball")}
-											/>
-										))}
-									</tbody>
-								</table>
-							</ResponsiveTableWrapper>
+							<DataTable
+								cols={cols}
+								defaultSort={[0, "asc"]}
+								hideAllControls={
+									<h3 title={desc}>
+										{title} ({statCol.title})
+									</h3>
+								}
+								name={`LeagueLeaders_${cat.stat}`}
+								pagination
+								rows={rows}
+							/>
 						</div>
 					);
 				})}

@@ -42,7 +42,7 @@ const useSelectedRows = () => {
 };
 
 export const useBulkSelectRows = (initialCanBulkSelectRows: () => boolean) => {
-	const [bulkSelectRows, setBulkSelectRows] = useState(true);
+	const [bulkSelectRows, setBulkSelectRows] = useState(false);
 	const selectedRows = useSelectedRows();
 
 	const canBulkSelectRows = useRef<boolean | undefined>(undefined);

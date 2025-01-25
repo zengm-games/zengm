@@ -2,6 +2,8 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - ... -> Bulk select players
   - If checkboxes are shown by default, still have this to show the "Bulk" button. Distinction between bulkSelectRows and showBulkSelectCheckboxes. If not, get rid of showBulkSelectCheckboxes
 - is getPlayersNextWatch too slow with select all on a large table? maybe don't do that on menu open?
+- if there is enough room (so not if table is in a column, and not if there is header text in hideAllControls), show distinct buttons for bulk actions rather than the dropdown menu
+  - maybe use container query?
 - if metadata season is career, how does export season work?
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
   - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
@@ -28,6 +30,8 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - search for other places with checkboxes
 - extra places to add DataTable
   - Leaders
+    - don't allow sorting?
+    - pass HeadersOverride?
   - SortableTable
   - ResponsiveTableWrapper
 - test

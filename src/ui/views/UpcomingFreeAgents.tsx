@@ -5,9 +5,11 @@ import { getCols, helpers, useLocalPartial } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,
+	currentSeason,
 	phase,
 	players,
 	projectedCapSpace,
@@ -54,9 +56,15 @@ const UpcomingFreeAgents = ({
 	cols[6 + stats.length].title = "Your Team";
 	cols[7 + stats.length].title = "Current Team";
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: currentSeason,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					injury: p.injury,

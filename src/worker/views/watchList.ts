@@ -95,6 +95,7 @@ const updatePlayers = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
+			currentSeason: g.get("season"),
 			flagNote: inputs.flagNote,
 			phase: g.get("phase"),
 			players,

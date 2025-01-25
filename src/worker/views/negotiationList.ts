@@ -88,6 +88,7 @@ const updateNegotiationList = async () => {
 		spectator: g.get("spectator"),
 		payroll: payroll / 1000,
 		players,
+		season: g.get("season"),
 		stats,
 		sumContracts,
 		userPlayers,

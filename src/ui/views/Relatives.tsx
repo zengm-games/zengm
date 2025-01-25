@@ -4,6 +4,7 @@ import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const Relatives = ({
 	challengeNoRatings,
@@ -67,7 +68,7 @@ const Relatives = ({
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const relationArray: string[] = [];
 		if (target) {
 			relationArray.push(p.relationText);
@@ -79,6 +80,12 @@ const Relatives = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: "career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

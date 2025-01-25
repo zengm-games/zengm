@@ -8,6 +8,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const PlayerRatings = ({
 	abbrev,
@@ -55,7 +56,7 @@ const PlayerRatings = ({
 		...ovrsPotsColNames,
 	]);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		const ovrsPotsRatings: string[] = [];
@@ -76,6 +77,12 @@ const PlayerRatings = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

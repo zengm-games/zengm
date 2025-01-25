@@ -73,13 +73,13 @@ const updatePlayers = async (
 				feat.score += ` (${overtimeText})`;
 			}
 
-			let type: string;
+			let type: "regularSeason" | "playoffs" | "allStar";
 			if (feat.playoffs) {
-				type = "Playoffs";
+				type = "playoffs";
 			} else if (feat.tid === -1 || feat.tid === -2) {
-				type = "All-Star";
+				type = "allStar";
 			} else {
-				type = "Regular Season";
+				type = "regularSeason";
 			}
 
 			return {

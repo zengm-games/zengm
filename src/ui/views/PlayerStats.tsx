@@ -6,6 +6,7 @@ import { isSport } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball";
+import type { DataTableRow } from "../components/DataTable";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -138,7 +139,7 @@ const PlayerStats = ({
 		});
 	}
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		// HACKS to show right stats, info
 		let actualAbbrev;
 		let actualTid;
@@ -170,6 +171,12 @@ const PlayerStats = ({
 
 		return {
 			key,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: season === "all" ? p.stats.season : season,
+				playoffs,
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

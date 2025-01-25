@@ -4,6 +4,7 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const PlayerFeats = ({
 	abbrev,
@@ -30,11 +31,17 @@ const PlayerFeats = ({
 		"Type",
 	]);
 
-	const rows = feats.map(p => {
+	const rows: DataTableRow[] = feats.map(p => {
 		const result = `${p.result} ${p.score}`;
 
 		return {
 			key: p.fid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: p.season,
+				playoffs: p.type !== "allStar" ? p.type : "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,
@@ -74,7 +81,11 @@ const PlayerFeats = ({
 					searchValue: result,
 				},
 				p.season,
-				p.type,
+				p.type === "allStar"
+					? "All-Star"
+					: p.type === "playoffs"
+						? "Playoffs"
+						: "Regular season",
 			],
 			classNames: {
 				"table-info": p.tid === userTid,

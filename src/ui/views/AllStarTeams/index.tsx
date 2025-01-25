@@ -6,6 +6,7 @@ import type { View } from "../../../common/types";
 import EditAllStars from "./EditAllStars";
 import { wait } from "../../../common";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
+import type { DataTableRow } from "../../components/DataTable";
 
 const PlayersTable = ({
 	challengeNoRatings,
@@ -65,7 +66,7 @@ const PlayersTable = ({
 		// Filter everything, because `players` might have empty slots too due to deleted players
 		.filter(p => p !== undefined);
 
-	const rows = playersAugmented
+	const rows: DataTableRow[] = playersAugmented
 		.filter(p => {
 			if (!pidsRemove) {
 				return true;
@@ -111,6 +112,12 @@ const PlayersTable = ({
 
 			return {
 				key: p.pid,
+				metadata: {
+					type: "player",
+					pid: p.pid,
+					season,
+					playoffs: "regularSeason",
+				},
 				data,
 				classNames: {
 					"table-danger": p.hof,

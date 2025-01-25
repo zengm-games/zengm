@@ -10,6 +10,7 @@ import { confirm, getCols, helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const NegotiationList = ({
 	capSpace,
@@ -23,6 +24,7 @@ const NegotiationList = ({
 	payroll,
 	players,
 	salaryCapType,
+	season,
 	stats,
 	sumContracts,
 	userPlayers,
@@ -52,7 +54,7 @@ const NegotiationList = ({
 		"Negotiate",
 	]);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const negotiateButtons = (
 			<NegotiateButtons
 				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}
@@ -66,6 +68,12 @@ const NegotiationList = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

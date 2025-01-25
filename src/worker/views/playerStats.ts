@@ -23,9 +23,8 @@ const updatePlayers = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
+		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
+		updateEvents.includes("playerMovement") ||
 		inputs.abbrev !== state.abbrev ||
 		inputs.season !== state.season ||
 		inputs.statType !== state.statType ||

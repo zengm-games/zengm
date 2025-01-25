@@ -1,9 +1,9 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
+- on pages with tables in columns that get narrow (like All-Star Teams), make search box shrink when necessary rather than overflowing
 - ... -> Bulk select players
   - if checkboxes are shown by default, still have this to show the "Bulk" button
   - only show if some table rows have metadata? or some global prop?
 - is getPlayersNextWatch too slow with select all on a large table? maybe don't do that on menu open?
-- for header checkbox, only show dropdown if pagination matters (more than 2 options shown), otherwise just toggle immediately?
 - if metadata season is career, how does export season work?
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
   - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
@@ -16,7 +16,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
 - add to all pages - search for <DataTable
-  - done through LeagueStats
+  - done through AllStarTeams
 - on DraftHistory page, what should i do about the Export Draft Class button? Kind of redundant now
   - maybe we want the compare season to be "career", but the export season to be the draft year?
 - places to use

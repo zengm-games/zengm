@@ -12,6 +12,7 @@ import {
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { Flag } from "../components/WatchBlock";
+import type { DataTableRow } from "../components/DataTable";
 
 const ClearButton = ({
 	onClick,
@@ -80,6 +81,7 @@ const ClearButton = ({
 
 const WatchList = ({
 	challengeNoRatings,
+	currentSeason,
 	flagNote,
 	phase,
 	players,
@@ -122,7 +124,7 @@ const WatchList = ({
 		},
 	);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		let contract;
 		let exp = null;
 		if (p.tid === PLAYER.RETIRED) {
@@ -143,6 +145,12 @@ const WatchList = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: currentSeason,
+				playoffs,
+			},
 			data: [
 				{
 					value: <WatchBlock pid={p.pid} watch={p.watch} />,

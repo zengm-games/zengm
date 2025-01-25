@@ -15,9 +15,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
       - bulkSelectRows vs showBulkSelectCheckboxes
 - replace existing links to "compare players" pages
   - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
-- on DraftHistory page, what should i do about the Export Draft Class button? Kind of redundant now
-  - maybe we want the compare season to be "career", but the export season to be the draft year?
-  - similar for DraftScouting. anywhere else draft classes are exported?
 - places to use
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
     - trading block 
@@ -47,6 +44,11 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)
     - release (on your team)
+
+unify export players and export draft class code
+- export players adds exportedSeason to player, and uses that to process player object on import
+- export draft class processes players on output
+- some places with export draft class buttons could be replaced by bulkSelectRows actions
 
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 - bottom: all the tables from player stats, showing one row for each player

@@ -47,10 +47,19 @@ export type SuperCol = {
 	title: ReactNode;
 };
 
+type Season = number | "career";
+
 export type DataTableRowMetadata = {
 	type: "player";
 	pid: number;
-	season: number | "career";
+	season:
+		| Season
+		| {
+				// Use this to specify different seasons for different actions
+				compare?: Season;
+				export?: Season;
+				default: Season;
+		  };
 	playoffs: "playoffs" | "regularSeason" | "combined";
 };
 

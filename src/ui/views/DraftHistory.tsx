@@ -279,7 +279,10 @@ const DraftHistory = ({
 			metadata: {
 				type: "player",
 				pid: p.pid,
-				season: "career",
+				season: {
+					export: season,
+					default: "career",
+				},
 				playoffs: "regularSeason",
 			},
 			data: [

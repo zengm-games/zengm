@@ -14,6 +14,7 @@ import { watchListDialog } from "./watchListDialog";
 import { exportPlayers } from "../../views/ExportPlayers";
 import { createPortal } from "react-dom";
 import Modal from "../Modal";
+import type { DataTableRowMetadata } from ".";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -55,6 +56,17 @@ const ExportModal = ({ abortController, show }: ExportModalStatus) => {
 	);
 };
 
+const getSeason = (
+	season: DataTableRowMetadata["season"],
+	type: "compare" | "export",
+) => {
+	if (typeof season === "string" || typeof season === "number") {
+		return season;
+	}
+
+	return season[type] ?? season.default;
+};
+
 export const BulkActions = ({
 	name,
 	selectedRows,
@@ -84,7 +96,7 @@ export const BulkActions = ({
 		const players = Array.from(selectedRows.map.values())
 			.slice(0, MAX_NUM_TO_COMPARE)
 			.map(metadata => {
-				return `${metadata.pid}-${metadata.season}-${seasonTypes[metadata.playoffs]}`;
+				return `${metadata.pid}-${getSeason(metadata.season, "compare")}-${seasonTypes[metadata.playoffs]}`;
 			});
 
 		await realtimeUpdate(
@@ -94,19 +106,22 @@ export const BulkActions = ({
 	};
 
 	const onExportPlayers = async () => {
-		const seasonsByPids = new Map();
+		const seasonsByPids = new Map<number, number | "career">();
 		let duplicatePids = false;
 		for (const metadata of selectedRows.map.values()) {
+			const season = getSeason(metadata.season, "export");
+
 			const prev = seasonsByPids.get(metadata.pid);
 			if (prev !== undefined) {
 				duplicatePids = true;
-				if (metadata.season < prev) {
+				if (season < prev) {
 					continue;
 				}
 			}
 
-			seasonsByPids.set(metadata.pid, metadata.season);
+			seasonsByPids.set(metadata.pid, getSeason(season, "export"));
 		}
+		console.log("seasonsByPids", seasonsByPids);
 
 		if (duplicatePids) {
 			logEvent({

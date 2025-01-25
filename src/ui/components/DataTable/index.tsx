@@ -50,7 +50,7 @@ export type SuperCol = {
 export type DataTableRowMetadata = {
 	type: "player";
 	pid: number;
-	season: number;
+	season: number | "career";
 	playoffs: "playoffs" | "regularSeason" | "combined";
 };
 

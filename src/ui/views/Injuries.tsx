@@ -4,6 +4,7 @@ import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const Injuries = ({
 	abbrev,
@@ -35,11 +36,19 @@ const Injuries = ({
 		"Pot Drop",
 	]);
 
-	const rows = injuries.map((p, i) => {
+	const numericSeason = typeof season === "number" ? season : currentSeason;
+
+	const rows: DataTableRow[] = injuries.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {
 			key: season === "current" ? p.pid : i,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: numericSeason,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,
@@ -50,7 +59,7 @@ const Injuries = ({
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
 					awards: p.awards,
-					awardsSeason: typeof season === "number" ? season : currentSeason,
+					awardsSeason: numericSeason,
 				}),
 				p.ratings.pos,
 				<a

@@ -7,6 +7,7 @@ import { bySport, PLAYER } from "../../common";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { orderBy } from "../../common/utils";
+import type { DataTableRow } from "../components/DataTable";
 
 const Summary = ({
 	players,
@@ -187,7 +188,7 @@ const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
 	return (
 		<button
-			className="btn btn-secondary"
+			className="btn btn-secondary mb-3"
 			disabled={exporting}
 			onClick={async () => {
 				setExporting(true);
@@ -270,11 +271,17 @@ const DraftHistory = ({
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: "career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
 				wrappedPlayerNameLabels({
@@ -288,9 +295,9 @@ const DraftHistory = ({
 				}),
 				p.pos,
 				{
-					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${teamInfoCache[
-						p.draft.originalTid
-					]?.abbrev}`,
+					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
+						teamInfoCache[p.draft.originalTid]?.abbrev
+					}`,
 					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
 					value: (
 						<DraftAbbrev

@@ -5,6 +5,7 @@ import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
 import { formatStatsDropdown } from "./LeadersYears";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const LeadersProgressive = ({
 	allLeaders,
@@ -63,9 +64,17 @@ const LeadersProgressive = ({
 
 	const spacer = <div style={{ width: 20 }} />;
 
-	const rows = allLeaders.map(({ season, ...row }) => {
+	const rows: DataTableRow[] = allLeaders.map(({ season, ...row }) => {
 		return {
 			key: season,
+			metadata: row.yearByYear
+				? {
+						type: "player",
+						pid: row.yearByYear.pid,
+						season,
+						playoffs,
+					}
+				: undefined,
 			data: [
 				row.linkSeason ? (
 					<a href={helpers.leagueUrl(["history", season])}>{season}</a>

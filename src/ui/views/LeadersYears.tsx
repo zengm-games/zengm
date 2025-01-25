@@ -3,7 +3,7 @@ import { getCols, helpers } from "../util";
 import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { LeadersTopText } from "./Leaders";
-import type { Col } from "../components/DataTable";
+import type { Col, DataTableRow } from "../components/DataTable";
 import { makeNormalResponsive } from "../hooks/useDropdownOptions";
 import { range } from "../../common/utils";
 
@@ -50,41 +50,52 @@ const LeadersYears = ({
 
 	const totals = statType === "totals";
 
-	const rows = allLeaders.map(({ season, leaders, linkSeason }) => {
-		return {
-			key: season,
-			data: [
-				linkSeason ? (
-					<a href={helpers.leagueUrl(["history", season])}>{season}</a>
-				) : (
-					season
-				),
-				...leaders.map(p => ({
-					value: (
-						<>
-							<PlayerNameLabels
-								pid={p.pid}
-								season={season}
-								watch={p.watch}
-								firstName={p.firstName}
-								firstNameShort={p.firstNameShort}
-								lastName={p.lastName}
-							/>
-							<span className="ms-2">
-								{helpers.roundStat(p.stat, stat, totals)}
-							</span>
-						</>
+	const rows: DataTableRow[] = allLeaders.map(
+		({ season, leaders, linkSeason }) => {
+			return {
+				key: season,
+				metadata:
+					leaders.length > 0
+						? {
+								type: "player",
+								pid: leaders[0].pid,
+								season,
+								playoffs,
+							}
+						: undefined,
+				data: [
+					linkSeason ? (
+						<a href={helpers.leagueUrl(["history", season])}>{season}</a>
+					) : (
+						season
 					),
-					searchValue: `${p.firstName} ${p.lastName} (${p.stat})`,
-					sortValue: p.stat,
-					classNames: {
-						"table-danger": p.hof,
-						"table-info": p.userTeam,
-					},
-				})),
-			],
-		};
-	});
+					...leaders.map(p => ({
+						value: (
+							<>
+								<PlayerNameLabels
+									pid={p.pid}
+									season={season}
+									watch={p.watch}
+									firstName={p.firstName}
+									firstNameShort={p.firstNameShort}
+									lastName={p.lastName}
+								/>
+								<span className="ms-2">
+									{helpers.roundStat(p.stat, stat, totals)}
+								</span>
+							</>
+						),
+						searchValue: `${p.firstName} ${p.lastName} (${p.stat})`,
+						sortValue: p.stat,
+						classNames: {
+							"table-danger": p.hof,
+							"table-info": p.userTeam,
+						},
+					})),
+				],
+			};
+		},
+	);
 
 	return (
 		<>

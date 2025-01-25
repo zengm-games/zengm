@@ -14,6 +14,7 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const DraftButtons = ({
 	spectator,
@@ -133,7 +134,7 @@ const Draft = ({
 		colsUndrafted.splice(3, 0, ...getCols(["Team"]));
 	}
 
-	const rowsUndrafted = undrafted.map(p => {
+	const rowsUndrafted: DataTableRow[] = undrafted.map(p => {
 		const data = [
 			p.rank,
 			wrappedPlayerNameLabels({
@@ -202,6 +203,12 @@ const Draft = ({
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data,
 		};
 	});
@@ -217,7 +224,7 @@ const Draft = ({
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
-	const rowsDrafted = drafted.map((p, i) => {
+	const rowsDrafted: DataTableRow[] = drafted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
 			{
@@ -354,6 +361,15 @@ const Draft = ({
 
 		return {
 			key: i,
+			metadata:
+				p.pid >= 0
+					? {
+							type: "player",
+							pid: p.pid,
+							season,
+							playoffs: "regularSeason",
+						}
+					: undefined,
 			data,
 			classNames: {
 				"table-info":

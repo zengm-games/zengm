@@ -3,6 +3,7 @@ import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 	useTitleBar({ title: "Hall of Fame" });
@@ -35,9 +36,15 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: "career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

@@ -5,6 +5,7 @@ import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { bySport } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const FrivolitiesDraftClasses = ({
 	challengeNoRatings,
@@ -45,12 +46,18 @@ const FrivolitiesDraftClasses = ({
 		...stats.map(stat => `stat:${stat}`),
 	]);
 
-	const rows = draftClasses.map((draftClass, i) => {
+	const rows: DataTableRow[] = draftClasses.map((draftClass, i) => {
 		const p = draftClass.bestPlayer;
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: "career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				i + 1,
 				<a href={helpers.leagueUrl(["draft_history", draftClass.season])}>

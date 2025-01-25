@@ -20,6 +20,7 @@ import clsx from "clsx";
 import { range } from "../../common/utils";
 import type { DropdownOption } from "../hooks/useDropdownOptions";
 import type { FreeAgentTransaction } from "../../worker/views/freeAgents";
+import type { DataTableRow } from "../components/DataTable";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([
@@ -188,9 +189,15 @@ const FreeAgents = ({
 		freeAgencySeason +
 		(season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: playerInfoSeason,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

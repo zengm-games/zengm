@@ -71,13 +71,17 @@ const Row = ({
 			})}
 			onClick={clickable ? toggleClicked : undefined}
 		>
-			{showBulkSelectCheckboxes && row.metadata ? (
-				<BulkSelectCheckbox
-					checked={bulkSelectChecked}
-					rowKey={row.key}
-					metadata={row.metadata}
-					onToggle={onBulkSelectToggle}
-				/>
+			{showBulkSelectCheckboxes ? (
+				row.metadata ? (
+					<BulkSelectCheckbox
+						checked={bulkSelectChecked}
+						rowKey={row.key}
+						metadata={row.metadata}
+						onToggle={onBulkSelectToggle}
+					/>
+				) : (
+					<td />
+				)
 			) : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property

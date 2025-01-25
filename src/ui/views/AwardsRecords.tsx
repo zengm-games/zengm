@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];
@@ -57,11 +58,17 @@ const AwardsRecords = ({
 		},
 	});
 
-	const rows = awardsRecords.map(a => {
+	const rows: DataTableRow[] = awardsRecords.map(a => {
 		const yearsGrouped = groupBy(a.years, "team");
 
 		return {
 			key: a.pid,
+			metadata: {
+				type: "player",
+				pid: a.pid,
+				season: a.lastYear,
+				playoffs: "regularSeason",
+			},
 			data: [
 				wrappedPlayerNameLabels({
 					pid: a.pid,

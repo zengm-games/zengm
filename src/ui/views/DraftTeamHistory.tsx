@@ -10,6 +10,7 @@ import { getCols, helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -77,11 +78,17 @@ const DraftTeamHistory = ({
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season: "career",
+				playoffs: "regularSeason",
+			},
 			data: [
 				<a href={helpers.leagueUrl(["draft_history", p.draft.year])}>
 					{p.draft.year}

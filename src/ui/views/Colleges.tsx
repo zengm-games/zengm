@@ -4,6 +4,7 @@ import { CountryFlag, DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
 
 export const genView = (
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
@@ -73,7 +74,7 @@ export const genView = (
 			},
 		);
 
-		const rows = infos.map(c => {
+		const rows: DataTableRow[] = infos.map(c => {
 			const p = c.p;
 
 			const abbrev = teamInfoCache[p.legacyTid]?.abbrev;
@@ -82,6 +83,12 @@ export const genView = (
 
 			return {
 				key: c.name,
+				metadata: {
+					type: "player",
+					pid: p.pid,
+					season: "career",
+					playoffs: "regularSeason",
+				},
 				data: [
 					<a
 						href={helpers.leagueUrl([

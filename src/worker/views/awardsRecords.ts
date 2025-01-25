@@ -374,7 +374,7 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 			season: a.season,
 		};
 	});
-	const lastYear = Math.max(...years.map(y => y.season)).toString();
+	const lastYear = Math.max(...years.map(y => y.season));
 	return {
 		firstName: p.firstName,
 		lastName: p.lastName,

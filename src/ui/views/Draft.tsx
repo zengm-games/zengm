@@ -447,22 +447,6 @@ const Draft = ({
 				<RosterComposition className="mb-3 ms-sm-3" players={userPlayers} />
 			</div>
 
-			{undrafted.length > 1 ? (
-				<div className="mb-3">
-					<a
-						href={helpers.leagueUrl([
-							"compare_players",
-							undrafted
-								.slice(0, 5)
-								.map(p => `${p.pid}-${season}-r`)
-								.join(","),
-						])}
-					>
-						Compare top {Math.min(5, undrafted.length)} remaining prospects
-					</a>
-				</div>
-			) : null}
-
 			<div className={wrapperClasses}>
 				<div className={undraftedColClasses}>
 					<h2>

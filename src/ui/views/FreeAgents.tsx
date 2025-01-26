@@ -311,22 +311,6 @@ const FreeAgents = ({
 				</>
 			) : null}
 
-			{players.length > 1 ? (
-				<div className="mb-3">
-					<a
-						href={helpers.leagueUrl([
-							"compare_players",
-							players
-								.slice(0, 5)
-								.map(p => `${p.pid}-${playerInfoSeason}-r`)
-								.join(","),
-						])}
-					>
-						Compare top {Math.min(5, players.length)} free agents
-					</a>
-				</div>
-			) : null}
-
 			{gameSimInProgress && !spectator ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}

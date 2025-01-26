@@ -9,8 +9,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - show checkboxes by default - all of these cases are things like trading block where the UI needs ability to select players
     - but don't show BulkActions button until activated through ... menu
       - bulkSelectRows vs showBulkSelectCheckboxes
-- replace existing links to "compare players" pages
-  - first, make a popup appear when you click the link explaining new UI. set reminder to delete eventually
 - places to use
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
     - trading block 
@@ -33,14 +31,16 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - career totals stats page
   - all seasons stats page
   - interaction with manually set column widths in getCols
-- blog
+- video/blog
   - annoying to flag multiple players. compare players links. export players select all
+  - checkbox cell click
+  - ctrl+k
   - watch list color popup
   - export popup
+  - no more ugly Compare Players links in arbitrary places
+    - still in useful places, like Award Races for MIP compare to self last year. but no longer just picking the top N players from a table - you can do that everywhere!
   - inline buttons
-  - video
-    - checkbox cell click
-    - ctrl+k
+  - joke other league
 - later
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)

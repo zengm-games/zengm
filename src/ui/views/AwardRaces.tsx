@@ -185,30 +185,15 @@ const AwardRaces = ({
 							style={{ marginTop: 14 }}
 						>
 							{rows.length > 0 ? (
-								<>
-									<DataTable
-										classNameWrapper="mb-1"
-										cols={cols}
-										defaultSort={[0, "asc"]}
-										defaultStickyCols={window.mobile ? 0 : 2}
-										hideAllControls={<h3>{name}</h3>}
-										name={`AwardRaces${name}`}
-										rows={rows}
-									/>
-									<div className="mb-3">
-										<a
-											href={helpers.leagueUrl([
-												"compare_players",
-												players
-													.slice(0, 5)
-													.map(p => `${p.pid}-${season}-r`)
-													.join(","),
-											])}
-										>
-											Compare top 5 players
-										</a>
-									</div>
-								</>
+								<DataTable
+									classNameWrapper="mb-1"
+									cols={cols}
+									defaultSort={[0, "asc"]}
+									defaultStickyCols={window.mobile ? 0 : 2}
+									hideAllControls={<h3>{name}</h3>}
+									name={`AwardRaces${name}`}
+									rows={rows}
+								/>
 							) : (
 								<>
 									<h3>{name}</h3>

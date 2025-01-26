@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DataTable, LeagueFileUpload } from "../../components";
-import { confirm, downloadFile, getCols, helpers, toWorker } from "../../util";
+import { confirm, downloadFile, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { WEBSITE_ROOT } from "../../../common";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
@@ -133,18 +133,6 @@ const DraftClass = ({
 							</button>
 						) : null}
 					</div>
-					<a
-						className="text-nowrap"
-						href={helpers.leagueUrl([
-							"compare_players",
-							players
-								.slice(0, 5)
-								.map(p => `${p.pid}-${season}-r`)
-								.join(","),
-						])}
-					>
-						Compare top 5 prospects
-					</a>
 				</div>
 			)}
 

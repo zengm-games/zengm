@@ -64,7 +64,7 @@ const ExportModal = ({ abortController, show }: ExportModalStatus) => {
 };
 
 const getSeason = (
-	season: DataTableRowMetadata["season"],
+	season: Extract<DataTableRowMetadata, { type: "player" }>["season"],
 	type: "compare" | "export",
 ) => {
 	if (typeof season === "string" || typeof season === "number") {
@@ -137,6 +137,7 @@ export const BulkActions = ({
 		};
 		const players = Array.from(selectedRows.map.values())
 			.slice(0, MAX_NUM_TO_COMPARE)
+			.filter(metadata => metadata.type === "player")
 			.map(metadata => {
 				return `${metadata.pid}-${getSeason(metadata.season, "compare")}-${seasonTypes[metadata.playoffs]}`;
 			});
@@ -151,20 +152,22 @@ export const BulkActions = ({
 		const seasonsByPids = new Map<number, number | "latest">();
 		let duplicatePids = false;
 		for (const metadata of selectedRows.map.values()) {
-			const seasonRaw = getSeason(metadata.season, "export");
+			if (metadata.type === "player") {
+				const seasonRaw = getSeason(metadata.season, "export");
 
-			// Exported player must be at a specific season, so use latest season if career is specified
-			const season = seasonRaw === "career" ? "latest" : seasonRaw;
+				// Exported player must be at a specific season, so use latest season if career is specified
+				const season = seasonRaw === "career" ? "latest" : seasonRaw;
 
-			const prev = seasonsByPids.get(metadata.pid);
-			if (prev !== undefined) {
-				duplicatePids = true;
-				if (prev === "latest" || (season !== "latest" && season < prev)) {
-					continue;
+				const prev = seasonsByPids.get(metadata.pid);
+				if (prev !== undefined) {
+					duplicatePids = true;
+					if (prev === "latest" || (season !== "latest" && season < prev)) {
+						continue;
+					}
 				}
-			}
 
-			seasonsByPids.set(metadata.pid, season);
+				seasonsByPids.set(metadata.pid, season);
+			}
 		}
 
 		if (duplicatePids) {
@@ -207,9 +210,11 @@ export const BulkActions = ({
 	};
 
 	const onWatchPlayers = async () => {
-		const pids = Array.from(selectedRows.map.values()).map(metadata => {
-			return metadata.pid;
-		});
+		const pids = Array.from(selectedRows.map.values())
+			.filter(metadata => metadata.type === "player")
+			.map(metadata => {
+				return metadata.pid;
+			});
 
 		if (numWatchColors <= 1) {
 			// Toggle watch colors
@@ -234,9 +239,11 @@ export const BulkActions = ({
 			},
 		);
 		if (proceed) {
-			const pids = Array.from(selectedRows.map.values()).map(metadata => {
-				return metadata.pid;
-			});
+			const pids = Array.from(selectedRows.map.values())
+				.filter(metadata => metadata.type === "player")
+				.map(metadata => {
+					return metadata.pid;
+				});
 			await toWorker("main", "removePlayers", pids);
 
 			// Clear because the selected players no longer exist!

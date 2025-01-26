@@ -155,7 +155,7 @@ const DataTable = ({
 	} = useBulkSelectRows({
 		alwaysShowBulkSelectRows,
 		controlledSelectedRows,
-		initialCanBulkSelectRows: () => rows.some(row => row.metadata),
+		rows,
 	});
 
 	const handleColClick = (event: MouseEvent, i: number) => {

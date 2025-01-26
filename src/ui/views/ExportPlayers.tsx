@@ -234,6 +234,7 @@ const ExportPlayers = ({
 								);
 								const newSelectedPids = new Set(
 									Array.from(selectedRows.map.values())
+										.filter(metadata => metadata.type === "player")
 										.filter(p => !currentSelectedPids.has(p.pid))
 										.map(p => p.pid),
 								);
@@ -313,7 +314,9 @@ const ExportPlayers = ({
 									className="btn btn-secondary"
 									onClick={() => {
 										const pidsToRemove = new Set(
-											Array.from(selectedRows2.map.values()).map(p => p.pid),
+											Array.from(selectedRows2.map.values())
+												.filter(metadata => metadata.type === "player")
+												.map(p => p.pid),
 										);
 										setSelected(
 											selected.filter(p => !pidsToRemove.has(p.p.pid)),

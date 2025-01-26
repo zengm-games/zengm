@@ -1,6 +1,6 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- some way in typescript to impose the type of metadata in a table
 - ... -> Bulk select players
+  - on import page, should not show this option because type="row"
   - If checkboxes are shown by default, still have this to show the "Bulk" button. Distinction between bulkSelectRows and showBulkSelectCheckboxes. If not, get rid of showBulkSelectCheckboxes
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
   - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
@@ -50,6 +50,8 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)
     - release (on your team)
+  - some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
+    - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import

@@ -66,11 +66,11 @@ export type SelectedRows = ReturnType<typeof useSelectedRows>;
 export const useBulkSelectRows = ({
 	alwaysShowBulkSelectRows,
 	controlledSelectedRows,
-	initialCanBulkSelectRows,
+	rows,
 }: {
 	alwaysShowBulkSelectRows?: boolean;
 	controlledSelectedRows?: SelectedRows;
-	initialCanBulkSelectRows: () => boolean;
+	rows: DataTableRow[];
 }) => {
 	const [bulkSelectRows, setBulkSelectRows] = useState(false);
 
@@ -80,9 +80,21 @@ export const useBulkSelectRows = ({
 		selectedRows = controlledSelectedRows;
 	}
 
-	const canBulkSelectRows = useRef<boolean | undefined>(undefined);
-	if (canBulkSelectRows.current === undefined) {
-		canBulkSelectRows.current = initialCanBulkSelectRows();
+	// undefined means we haven't checked contents of rows, either because there are no rows yet or because this is the first render
+	const info = useRef<
+		| undefined
+		| {
+				metadataType: NonNullable<DataTableRow["metadata"]>["type"];
+		  }
+		| {
+				metadataType: undefined;
+		  }
+	>(undefined);
+	if (info.current === undefined && rows.length > 0) {
+		info.current = {
+			// This assumes metadata type the same in every row, no table mixing two types! Some rows having no metadata is fine though (such as drafted players during draft)
+			metadataType: rows.find(row => row.metadata)?.metadata?.type,
+		};
 	}
 
 	const toggleBulkSelectRows = useCallback(() => {
@@ -93,7 +105,7 @@ export const useBulkSelectRows = ({
 
 	return {
 		bulkSelectRows,
-		canBulkSelectRows: canBulkSelectRows.current,
+		canBulkSelectRows: !!info.current?.metadataType,
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,

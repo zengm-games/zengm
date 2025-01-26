@@ -2,10 +2,17 @@ import { useState, type ChangeEvent } from "react";
 import { PLAYER, PHASE, gameAttributesArrayToObject } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocal } from "../util";
-import { DataTable, LeagueFileUpload, MoreLinks } from "../components";
+import {
+	ActionButton,
+	DataTable,
+	LeagueFileUpload,
+	MoreLinks,
+} from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { orderBy } from "../../common/utils";
+import { useSelectedRows } from "../components/DataTable/useBulkSelectRows";
+import type { DataTableRow } from "../components/DataTable";
 
 const ImportPlayers = ({
 	challengeNoRatings,
@@ -26,7 +33,6 @@ const ImportPlayers = ({
 	const [players, setPlayers] = useState<
 		{
 			p: any;
-			checked: boolean;
 			contractAmount: string;
 			contractExp: string;
 			draftYear: string;
@@ -64,6 +70,8 @@ const ImportPlayers = ({
 		dropdownView: "import_players",
 	});
 
+	const selectedRows = useSelectedRows();
+
 	const links = <MoreLinks type="importExport" page="import_players" />;
 
 	if (!godMode) {
@@ -79,19 +87,7 @@ const ImportPlayers = ({
 	}
 
 	const cols = getCols(
-		[
-			"",
-			"#",
-			"Name",
-			"",
-			"Pos",
-			"Ovr",
-			"Pot",
-			"Age",
-			"Team",
-			"Contract",
-			"Exp",
-		],
+		["#", "Name", "", "Pos", "Ovr", "Pot", "Age", "Team", "Contract", "Exp"],
 		{
 			Name: {
 				width: "100%",
@@ -104,13 +100,7 @@ const ImportPlayers = ({
 
 	const handleChange =
 		(
-			name:
-				| "age"
-				| "checked"
-				| "contractAmount"
-				| "contractExp"
-				| "draftYear"
-				| "tid",
+			name: "age" | "contractAmount" | "contractExp" | "draftYear" | "tid",
 			index: number,
 		) =>
 		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -118,9 +108,7 @@ const ImportPlayers = ({
 				...players[index],
 			};
 
-			if (name === "checked") {
-				player.checked = !player.checked;
-			} else if (name === "age") {
+			if (name === "age") {
 				player.season = parseInt(event.target.value);
 			} else if (name === "tid") {
 				player.tid = parseInt(event.target.value);
@@ -136,10 +124,13 @@ const ImportPlayers = ({
 
 	const disableButtons = status !== undefined && status !== "success";
 
-	const rows = players.map((player, i) => {
+	const metadata: DataTableRow["metadata"] = {
+		type: "row",
+	};
+
+	const rows: DataTableRow[] = players.map((player, i) => {
 		const {
 			p,
-			checked,
 			contractAmount,
 			contractExp,
 			draftYear,
@@ -180,20 +171,8 @@ const ImportPlayers = ({
 
 		return {
 			key: i,
+			metadata,
 			data: [
-				{
-					value: (
-						<input
-							className="form-check-input"
-							type="checkbox"
-							title="Import player"
-							checked={checked}
-							disabled={disableButtons}
-							onChange={handleChange("checked", i)}
-						/>
-					),
-					sortValue: checked ? 1 : 0,
-				},
 				i + 1,
 				wrappedPlayerNameLabels({
 					injury: p.injury,
@@ -208,6 +187,24 @@ const ImportPlayers = ({
 						const newPlayers = [...players];
 						newPlayers.splice(i, 0, helpers.deepCopy(player));
 						setPlayers(newPlayers);
+
+						// Hacky! We're using row index as the primary key for the bulkSelect checkboxes, so we need to adjust that
+						const checked = [];
+						for (const key of selectedRows.map.keys()) {
+							let newKey = key as number;
+							if (newKey > i) {
+								newKey += 1;
+							}
+							checked.push({ key: newKey, metadata });
+						}
+
+						// If cloned row was checked, check the clone too
+						if (selectedRows.map.has(i)) {
+							checked.push({ key: i + 1, metadata });
+						}
+
+						selectedRows.clear();
+						selectedRows.setAll(checked);
 					}}
 				>
 					Clone
@@ -301,8 +298,6 @@ const ImportPlayers = ({
 			],
 		};
 	});
-
-	const numChecked = players.filter(p => p.checked).length;
 
 	return (
 		<>
@@ -421,55 +416,27 @@ const ImportPlayers = ({
 						};
 					});
 
+					selectedRows.clear();
 					setPlayers(players);
 				}}
 			/>
 
 			{rows.length > 0 ? (
 				<>
-					<div className="mb-3">
-						<button
-							className="btn btn-link p-0"
-							onClick={() => {
-								setPlayers(
-									players.map(p => ({
-										...p,
-										checked: true,
-									})),
-								);
-							}}
-						>
-							Select All
-						</button>{" "}
-						|{" "}
-						<button
-							className="btn btn-link p-0"
-							onClick={() => {
-								setPlayers(
-									players.map(p => ({
-										...p,
-										checked: false,
-									})),
-								);
-							}}
-						>
-							Select None
-						</button>
-					</div>
-					<div className="clearfix">
-						<DataTable
-							cols={cols}
-							defaultSort={[1, "asc"]}
-							defaultStickyCols={window.mobile ? 1 : 3}
-							name="ImportPlayers"
-							pagination
-							rows={rows}
-						/>
-					</div>
+					<DataTable
+						cols={cols}
+						defaultSort={[0, "asc"]}
+						defaultStickyCols={window.mobile ? 0 : 2}
+						name="ImportPlayers"
+						pagination
+						rows={rows}
+						controlledSelectedRows={selectedRows}
+						alwaysShowBulkSelectRows
+					/>
 
-					<button
-						className="btn btn-lg btn-primary my-3"
-						disabled={disableButtons || numChecked === 0}
+					<ActionButton
+						className="my-3"
+						disabled={disableButtons || selectedRows.map.size === 0}
 						onClick={async () => {
 							setStatus("importing");
 							setErrorMessage(undefined);
@@ -477,7 +444,7 @@ const ImportPlayers = ({
 							try {
 								await toWorker("main", "importPlayers", {
 									leagueFile,
-									players: players.filter(p => p.checked),
+									players: players.filter((p, i) => selectedRows.map.has(i)),
 								});
 								setStatus("success");
 							} catch (error) {
@@ -486,9 +453,13 @@ const ImportPlayers = ({
 								setStatus(undefined);
 							}
 						}}
+						processing={status === "importing"}
+						processingText="Importing"
+						size="lg"
+						variant="primary"
 					>
-						Import {numChecked} Players
-					</button>
+						Import {selectedRows.map.size} players
+					</ActionButton>
 
 					{status === "success" ? (
 						<div>

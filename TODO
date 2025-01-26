@@ -1,4 +1,5 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
+- some way in typescript to impose the type of metadata in a table
 - ... -> Bulk select players
   - If checkboxes are shown by default, still have this to show the "Bulk" button. Distinction between bulkSelectRows and showBulkSelectCheckboxes. If not, get rid of showBulkSelectCheckboxes
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
@@ -9,7 +10,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - show checkboxes by default - all of these cases are things like trading block where the UI needs ability to select players
     - but don't show BulkActions button until activated through ... menu
       - bulkSelectRows vs showBulkSelectCheckboxes
-- ... menu name - "Bulk select players" or "Bulk select actions"?
+- ... menu name - "Bulk select players" or "Bulk select rows" or "Bulk select actions"?
   - maybe "actions" if alwaysShowBulkSelectRows
 - places to use with alwaysShowBulkSelectRows and controlledSelectedRows
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
@@ -17,7 +18,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
       - would still need separate logic for selecting picks, so maybe not worth it
     - trade
       - would still need separate logic for selecting untraeable players, so maybe not worth it
-    - import players
     - ProtectPlayers
       - use disableBulkSelectKeys for disabling when hit threshold
       - loading initial cache state from storage and pass to DataTable somehow - not worth the complexity of adding this just for ProtectPlayers
@@ -45,7 +45,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - still in useful places, like Award Races for MIP compare to self last year. but no longer just picking the top N players from a table - you can do that everywhere!
   - inline buttons
   - joke other league
-  - export players filter
+  - import/export players filter
 - later
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)

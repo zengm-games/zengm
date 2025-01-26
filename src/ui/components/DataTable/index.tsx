@@ -50,19 +50,23 @@ export type SuperCol = {
 
 type Season = number | "career";
 
-export type DataTableRowMetadata = {
-	type: "player";
-	pid: number;
-	season:
-		| Season
-		| {
-				// Use this to specify different seasons for different actions
-				compare?: Season;
-				export?: Season;
-				default: Season;
-		  };
-	playoffs: "playoffs" | "regularSeason" | "combined";
-};
+export type DataTableRowMetadata =
+	| {
+			type: "player";
+			pid: number;
+			season:
+				| Season
+				| {
+						// Use this to specify different seasons for different actions
+						compare?: Season;
+						export?: Season;
+						default: Season;
+				  };
+			playoffs: "playoffs" | "regularSeason" | "combined";
+	  }
+	| {
+			type: "row";
+	  };
 
 export type DataTableRow = {
 	key: number | string;

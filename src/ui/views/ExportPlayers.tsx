@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
 import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { DataTableRow } from "../components/DataTable";
+import { useSelectedRows } from "../components/DataTable/useBulkSelectRows";
 
 // For seasonsByPid, key is pid and value is season. No support for exporting the same player from multiple seasons
 export const exportPlayers = async (
@@ -89,6 +91,13 @@ const ExportPlayers = ({
 
 	const { gender } = useLocalPartial(["gender"]);
 
+	const selectedRows = useSelectedRows();
+	console.log("RENDER ProtectPlayers", selectedRows);
+	useEffect(() => {
+		const pids = Array.from(selectedRows.map.values()).map(p => p.pid);
+		console.log("MAP CHANGED", pids);
+	}, [selectedRows.map]);
+
 	const cols = getCols(["Name", "Pos", "Age", "Team", "Ovr", "Pot", ""], {
 		Name: {
 			width: "100%",
@@ -128,9 +137,15 @@ const ExportPlayers = ({
 
 	const selectedPids = selected.map(({ p }) => p.pid);
 
-	const rows = players.map(p => {
+	const rows: DataTableRow[] = players.map(p => {
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data: [
 				...commonRows(p),
 				<button
@@ -139,7 +154,7 @@ const ExportPlayers = ({
 					onClick={() => {
 						setSelected([...selected, { p, season }]);
 					}}
-					title="Add to list of players to export"
+					title="Add to players to export"
 				>
 					Add
 				</button>,
@@ -159,7 +174,7 @@ const ExportPlayers = ({
 					onClick={() => {
 						setSelected(selected.filter(row => row.p.pid !== p.pid));
 					}}
-					title="Remove from list of players to export"
+					title="Remove from players to export"
 				>
 					Remove
 				</button>,
@@ -195,26 +210,34 @@ const ExportPlayers = ({
 							name="ExportPlayers"
 							pagination
 							rows={rows}
+							controlledSelectedRows={selectedRows}
+							alwaysShowBulkSelectRows
 						/>
 					</div>
-					<div className="float-end btn-group my-3">
+					<div className="my-3">
 						<button
 							className="btn btn-secondary"
 							onClick={() => {
-								setSelected([]);
+								const currentSelectedPids = new Set(
+									selected.map(row => row.p.pid),
+								);
+								const newSelectedPids = new Set(
+									Array.from(selectedRows.map.values())
+										.filter(p => !currentSelectedPids.has(p.pid))
+										.map(p => p.pid),
+								);
+								setSelected([
+									...selected,
+									...players
+										.filter(p => newSelectedPids.has(p.pid))
+										.map(p => ({ p, season })),
+								]);
+								selectedRows.clear();
 							}}
-							title="Clear list of players to export"
+							disabled={selectedRows.map.size === 0}
 						>
-							Remove All
-						</button>
-						<button
-							className="btn btn-secondary"
-							onClick={() => {
-								setSelected(players.map(p => ({ p, season })));
-							}}
-							title="Add all players to export"
-						>
-							Add All
+							Add {selectedRows.map.size} selected{" "}
+							{helpers.plural("player", selectedRows.map.size)} to export
 						</button>
 					</div>
 				</div>
@@ -234,31 +257,42 @@ const ExportPlayers = ({
 								/>
 							</div>
 
-							<button
-								className="btn btn-lg btn-primary my-3"
-								disabled={exporting || selectedPids.length === 0}
-								onClick={async () => {
-									setExporting(true);
-									setErrorMessage(undefined);
+							<div className="my-3 d-flex gap-2">
+								<button
+									className="btn btn-lg btn-primary"
+									disabled={exporting || selectedPids.length === 0}
+									onClick={async () => {
+										setExporting(true);
+										setErrorMessage(undefined);
 
-									try {
-										await exportPlayers(
-											new Map(
-												selected.map(info => {
-													return [info.p.pid, info.season];
-												}),
-											),
-										);
-									} catch (error) {
-										console.error(error);
-										setErrorMessage(error.message);
-									}
+										try {
+											await exportPlayers(
+												new Map(
+													selected.map(info => {
+														return [info.p.pid, info.season];
+													}),
+												),
+											);
+										} catch (error) {
+											console.error(error);
+											setErrorMessage(error.message);
+										}
 
-									setExporting(false);
-								}}
-							>
-								Export Players
-							</button>
+										setExporting(false);
+									}}
+								>
+									Export players
+								</button>
+								<button
+									className="btn btn-lg btn-secondary"
+									onClick={() => {
+										setSelected([]);
+									}}
+									title="Clear players to export"
+								>
+									Clear
+								</button>
+							</div>
 
 							{errorMessage ? (
 								<div>

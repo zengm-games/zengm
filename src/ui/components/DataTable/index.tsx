@@ -25,7 +25,7 @@ import updateSortBys from "./updateSortBys";
 import useStickyXX from "./useStickyXX";
 import { useDataTableState } from "./useDataTableState";
 import { processRows } from "./processRows";
-import { useBulkSelectRows } from "./useBulkSelectRows";
+import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows";
 import { BulkActions } from "./BulkActions";
 
 export type SortBy = [number, SortOrder];
@@ -82,6 +82,7 @@ export type DataTableRow = {
 export type StickyCols = 0 | 1 | 2 | 3;
 
 export type Props = {
+	addFilters?: (string | undefined)[];
 	className?: string;
 	classNameWrapper?: string;
 	clickable?: boolean;
@@ -101,14 +102,20 @@ export type Props = {
 	small?: boolean;
 	striped?: boolean;
 	superCols?: SuperCol[];
-	addFilters?: (string | undefined)[];
+
+	// Pass this to control selectedRows from outside of this component (like if you want to have a button external to the table that does something with selected players). Otherwise, leave this undefined.
+	controlledSelectedRows?: SelectedRows;
+	alwaysShowBulkSelectRows?: boolean; // Often used along with controlledSelectedRows,
 };
 
 const DataTable = ({
+	addFilters,
+	alwaysShowBulkSelectRows,
 	className,
 	classNameWrapper,
 	clickable = true,
 	cols,
+	controlledSelectedRows,
 	defaultSort,
 	defaultStickyCols = 0,
 	disableSettingsCache,
@@ -124,7 +131,6 @@ const DataTable = ({
 	small,
 	striped,
 	superCols,
-	addFilters,
 }: Props) => {
 	const { state, setStatePartial, resetState } = useDataTableState({
 		cols,
@@ -140,7 +146,11 @@ const DataTable = ({
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,
-	} = useBulkSelectRows(() => rows.some(row => row.metadata));
+	} = useBulkSelectRows({
+		alwaysShowBulkSelectRows,
+		controlledSelectedRows,
+		initialCanBulkSelectRows: () => rows.some(row => row.metadata),
+	});
 
 	const handleColClick = (event: MouseEvent, i: number) => {
 		if (state.sortBys !== undefined) {

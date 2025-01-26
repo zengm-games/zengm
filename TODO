@@ -9,16 +9,22 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - show checkboxes by default - all of these cases are things like trading block where the UI needs ability to select players
     - but don't show BulkActions button until activated through ... menu
       - bulkSelectRows vs showBulkSelectCheckboxes
-- places to use
+- ... menu name - "Bulk select players" or "Bulk select actions"?
+  - maybe "actions" if alwaysShowBulkSelectRows
+- places to use with alwaysShowBulkSelectRows and controlledSelectedRows
   - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
     - trading block 
       - would still need separate logic for selecting picks, so maybe not worth it
     - trade
       - would still need separate logic for selecting untraeable players, so maybe not worth it
     - export players
+      - how to handle "add" button being disabled when a pid is already in the export list? need to pass keys for disabled checkboxes
+        - how does select all handle disabled rows?
+      - checkboxes to remove players too
     - import players
     - ProtectPlayers
-    - search for other places with checkboxes
+      - not worth it. disabling buttons when we hit threshold is tricky. loading initial cache state from storage is tricky.
+- when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
 - extra places to add DataTable
   - SortableTable - especially for roster
 - some better UI for league leaders when no players are in any table
@@ -42,6 +48,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - still in useful places, like Award Races for MIP compare to self last year. but no longer just picking the top N players from a table - you can do that everywhere!
   - inline buttons
   - joke other league
+  - export players filter
 - later
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)

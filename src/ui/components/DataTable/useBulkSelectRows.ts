@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { DataTableRow, DataTableRowMetadata } from ".";
 
-const useSelectedRows = () => {
+export const useSelectedRows = () => {
 	type Key = DataTableRow["key"];
 	type Metadata = DataTableRowMetadata;
 
@@ -41,9 +41,24 @@ const useSelectedRows = () => {
 	};
 };
 
-export const useBulkSelectRows = (initialCanBulkSelectRows: () => boolean) => {
-	const [bulkSelectRows, setBulkSelectRows] = useState(true);
-	const selectedRows = useSelectedRows();
+export type SelectedRows = ReturnType<typeof useSelectedRows>;
+
+export const useBulkSelectRows = ({
+	alwaysShowBulkSelectRows,
+	controlledSelectedRows,
+	initialCanBulkSelectRows,
+}: {
+	alwaysShowBulkSelectRows?: boolean;
+	controlledSelectedRows?: SelectedRows;
+	initialCanBulkSelectRows: () => boolean;
+}) => {
+	const [bulkSelectRows, setBulkSelectRows] = useState(false);
+
+	// We always need to call useSelectedRows because React, even if we are not using it
+	let selectedRows = useSelectedRows();
+	if (controlledSelectedRows) {
+		selectedRows = controlledSelectedRows;
+	}
 
 	const canBulkSelectRows = useRef<boolean | undefined>(undefined);
 	if (canBulkSelectRows.current === undefined) {
@@ -54,7 +69,7 @@ export const useBulkSelectRows = (initialCanBulkSelectRows: () => boolean) => {
 		setBulkSelectRows(bulk => !bulk);
 	}, []);
 
-	const showBulkSelectCheckboxes = bulkSelectRows;
+	const showBulkSelectCheckboxes = alwaysShowBulkSelectRows || bulkSelectRows;
 
 	return {
 		bulkSelectRows,
@@ -64,5 +79,3 @@ export const useBulkSelectRows = (initialCanBulkSelectRows: () => boolean) => {
 		toggleBulkSelectRows,
 	};
 };
-
-export type SelectedRows = ReturnType<typeof useBulkSelectRows>["selectedRows"];

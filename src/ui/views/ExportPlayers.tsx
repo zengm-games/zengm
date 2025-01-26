@@ -237,7 +237,7 @@ const ExportPlayers = ({
 							}}
 							disabled={selectedRows.map.size === 0 || exporting}
 						>
-							Add {selectedRows.map.size} selected{" "}
+							Add {helpers.numberWithCommas(selectedRows.map.size)} selected{" "}
 							{helpers.plural("player", selectedRows.map.size)} to export
 						</button>
 					</div>

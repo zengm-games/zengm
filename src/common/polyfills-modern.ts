@@ -17,6 +17,30 @@ type SetReadOperations<T> = {
 	has(key: T): boolean;
 	keys(): IterableIterator<T>;
 };
+if (!Set.prototype.difference) {
+	Object.defineProperty(Set.prototype, "difference", {
+		value: function <T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+			const result = new Set<T>(this);
+			if (this.size <= other.size) {
+				for (const elem of this) {
+					if (other.has(elem)) {
+						result.delete(elem);
+					}
+				}
+			} else {
+				for (const elem of other.keys()) {
+					if (result.has(elem)) {
+						result.delete(elem);
+					}
+				}
+			}
+			return result;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}
 if (!Set.prototype.isSubsetOf) {
 	Object.defineProperty(Set.prototype, "isSubsetOf", {
 		value: function <T>(this: Set<T>, other: SetReadOperations<T>): boolean {
@@ -26,6 +50,20 @@ if (!Set.prototype.isSubsetOf) {
 				}
 			}
 			return true;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}
+if (!Set.prototype.union) {
+	Object.defineProperty(Set.prototype, "union", {
+		value: function <T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+			const result = new Set<T>(this);
+			for (const elem of other.keys()) {
+				result.add(elem);
+			}
+			return result;
 		},
 		writable: true,
 		enumerable: false,

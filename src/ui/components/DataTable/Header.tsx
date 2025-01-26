@@ -236,11 +236,17 @@ const BulkSelectHeaderCheckbox = ({
 		state = "unchecked";
 	} else {
 		const filteredKeys = new Set(filteredRows.map(row => row.key));
+		const selectedKeys = new Set(selectedRows.map.keys());
+
 		if (
-			filteredKeys.size === selectedRows.map.size &&
-			filteredKeys.isSubsetOf(selectedRows.map)
+			// All selected keys are filtered (so none are not shown with the current filters)
+			selectedKeys.isSubsetOf(filteredKeys) &&
+			// All filtered keys are either selected or disabled (so no more could be selected)
+			filteredKeys.isSubsetOf(
+				selectedKeys.union(disableBulkSelectKeys ?? new Set()),
+			)
 		) {
-			// filteredKeys and selectedRows are the same
+			// filteredKeys and selectedRows are the same, or any additional filteredKeys are disabled
 			state = "checked";
 		} else {
 			// Could have rows selected but not viewable with current filters, or could simply have some of the viewable rows not selected

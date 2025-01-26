@@ -18,7 +18,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - trade
       - would still need separate logic for selecting untraeable players, so maybe not worth it
     - export players
-      - select all header indeterminate/selected state should be aware of disableBulkSelectKeys
+      - if checked when we click individual add button, should uncheck that row only
       - checkboxes to remove players too
     - import players
     - ProtectPlayers

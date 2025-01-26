@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import { DataTable, MoreLinks } from "../components";
+import { ActionButton, DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import type { DataTableRow } from "../components/DataTable";
@@ -271,9 +271,8 @@ const ExportPlayers = ({
 							</div>
 
 							<div className="my-3 d-flex align-items-center gap-2">
-								<button
-									className="btn btn-lg btn-primary"
-									disabled={exporting || selectedPids.size === 0}
+								<ActionButton
+									disabled={selectedPids.size === 0}
 									onClick={async () => {
 										setExporting(true);
 										setErrorMessage(undefined);
@@ -293,9 +292,13 @@ const ExportPlayers = ({
 
 										setExporting(false);
 									}}
+									processing={exporting}
+									processingText="Exorting"
+									size="lg"
+									variant="primary"
 								>
-									Export players
-								</button>
+									Export<span className="d-none d-sm-inline"> players</span>
+								</ActionButton>
 								<button
 									className="btn btn-secondary"
 									onClick={() => {
@@ -319,9 +322,16 @@ const ExportPlayers = ({
 									}}
 									disabled={selectedRows2.map.size === 0 || exporting}
 								>
-									Remove {helpers.numberWithCommas(selectedRows2.map.size)}{" "}
-									selected {helpers.plural("player", selectedRows2.map.size)}{" "}
-									from export
+									Remove{" "}
+									<span className="d-none d-sm-inline">
+										{helpers.numberWithCommas(selectedRows2.map.size)}{" "}
+									</span>
+									selected
+									<span className="d-none d-sm-inline">
+										{" "}
+										{helpers.plural("player", selectedRows2.map.size)} from
+										export
+									</span>
 								</button>
 							</div>
 

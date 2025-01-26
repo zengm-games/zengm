@@ -3925,7 +3925,7 @@ const updatePlayerWatch = async ({
 	}
 };
 
-const getPlayerNextWatchCore = (players: Player[]) => {
+const getPlayersNextWatch = (players: Player[]) => {
 	const watchCounts = new Map<number, number>();
 	for (const p of players) {
 		const watch = p.watch ?? 0;
@@ -3947,20 +3947,6 @@ const getPlayerNextWatchCore = (players: Player[]) => {
 	return nextWatch;
 };
 
-const getPlayersNextWatch = async (pids: number[]) => {
-	// Need to get all players to see what the new watch value should be!
-	const players = await idb.getCopies.players(
-		{ pids: Array.from(new Set(pids)) },
-		"noCopyCache",
-	);
-
-	if (players.length === 0) {
-		return;
-	}
-
-	return getPlayerNextWatchCore(players);
-};
-
 const updatePlayersWatch = async ({
 	pids,
 	watch,
@@ -3978,7 +3964,7 @@ const updatePlayersWatch = async ({
 		return;
 	}
 
-	let nextWatch = watch ?? getPlayerNextWatchCore(players);
+	let nextWatch = watch ?? getPlayersNextWatch(players);
 	if (nextWatch === 0) {
 		// If we're clearing the watch list, watch value is 0, but we want to make it undefined in player object
 		nextWatch = undefined;
@@ -4797,7 +4783,6 @@ export default {
 		updateOptions,
 		updatePlayThroughInjuries,
 		updatePlayerWatch,
-		getPlayersNextWatch,
 		updatePlayersWatch,
 		updatePlayingTime,
 		updatePlayoffTeams,

@@ -89,7 +89,6 @@ export const BulkActions = ({
 		"godMode",
 		"numWatchColors",
 	]);
-	const [nextWatch, setNextWatch] = useState<undefined | number>(undefined);
 	const [exportModalStatus, setExportModalStatus] = useState<ExportModalStatus>(
 		{
 			show: false,
@@ -247,12 +246,12 @@ export const BulkActions = ({
 
 	const actions: {
 		godMode?: boolean;
-		onClick: (() => void) | undefined;
+		onClick: () => void;
 		text: ReactNode;
 		textLong?: ReactNode;
 	}[] = [
 		{
-			onClick: hasSomeSelected ? onComparePlayers : undefined,
+			onClick: onComparePlayers,
 			text: "Compare Players",
 			textLong: (
 				<>
@@ -264,21 +263,20 @@ export const BulkActions = ({
 			),
 		},
 		{
-			onClick: hasSomeSelected ? onExportPlayers : undefined,
+			onClick: onExportPlayers,
 			text: "Export players",
 		},
 		{
-			onClick: hasSomeSelected ? onWatchPlayers : undefined,
+			onClick: onWatchPlayers,
 			text: (
 				<>
-					{numWatchColors > 1 ? "Set" : "Toggle"} watch list{" "}
-					<Flag watch={nextWatch} />
+					{numWatchColors > 1 ? "Set" : "Toggle"} watch list <Flag />
 				</>
 			),
 		},
 		{
 			godMode: true,
-			onClick: hasSomeSelected ? onDeletePlayers : undefined,
+			onClick: onDeletePlayers,
 			text: "Delete players",
 		},
 	];
@@ -296,12 +294,9 @@ export const BulkActions = ({
 							key={i}
 							className={clsx(
 								"btn btn-sm",
-								action.godMode
-									? "btn-god-mode"
-									: hasSomeSelected
-										? "btn-primary"
-										: "btn-secondary",
+								action.godMode ? "btn-god-mode" : "btn-primary",
 							)}
+							disabled={!hasSomeSelected}
 							onClick={action.onClick}
 						>
 							{action.text}
@@ -314,36 +309,11 @@ export const BulkActions = ({
 
 	return (
 		<>
-			<Dropdown
-				onToggle={async opening => {
-					if (!opening || selectedRows.map.size === 0) {
-						return;
-					}
-
-					if (numWatchColors <= 1) {
-						// Only dynamically update color if there is 1 watch list, otherwise we open a popup to let the user select the color manually
-						const pids = Array.from(selectedRows.map.values()).map(metadata => {
-							return metadata.pid;
-						});
-
-						const newNextWatch = await toWorker(
-							"main",
-							"getPlayersNextWatch",
-							pids,
-						);
-						setNextWatch(newNextWatch);
-					} else {
-						// Reset
-						if (nextWatch !== undefined) {
-							setNextWatch(undefined);
-						}
-					}
-				}}
-			>
+			<Dropdown>
 				<Dropdown.Toggle
 					id={`datatable-bulk-actions-${name}`}
 					size="sm"
-					variant={hasSomeSelected ? "primary" : "secondary"}
+					variant="primary"
 				>
 					Bulk actions
 				</Dropdown.Toggle>
@@ -358,6 +328,7 @@ export const BulkActions = ({
 								key={i}
 								className={action.godMode ? "god-mode" : undefined}
 								onClick={action.onClick}
+								disabled={!hasSomeSelected}
 							>
 								{action.textLong ?? action.text}
 							</Dropdown.Item>

@@ -127,7 +127,7 @@ const LeagueTopBar = memo(() => {
 		return () => {
 			wrapperElement.removeEventListener("wheel", handleWheel);
 			wrapperElement.removeEventListener("scroll", handleScroll);
-			resizeObserver.unobserve(wrapperElement);
+			resizeObserver.disconnect();
 		};
 	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
 

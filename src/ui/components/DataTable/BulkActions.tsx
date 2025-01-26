@@ -8,13 +8,19 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../../util";
-import { useState, type ReactNode } from "react";
+import {
+	useCallback,
+	useEffect,
+	useState,
+	type ReactNode,
+	type RefObject,
+} from "react";
 import type { SelectedRows } from "./useBulkSelectRows";
 import { watchListDialog } from "./watchListDialog";
 import { exportPlayers } from "../../views/ExportPlayers";
 import { createPortal } from "react-dom";
 import Modal from "../Modal";
-import type { DataTableRowMetadata } from ".";
+import type { DataTableRowMetadata, Props } from ".";
 import clsx from "clsx";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
@@ -69,11 +75,15 @@ const getSeason = (
 };
 
 export const BulkActions = ({
+	hideAllControls,
 	name,
 	selectedRows,
+	wrapperRef,
 }: {
+	hideAllControls?: Props["hideAllControls"];
 	name: string;
 	selectedRows: SelectedRows;
+	wrapperRef: RefObject<HTMLDivElement | null>;
 }) => {
 	const { godMode, numWatchColors } = useLocalPartial([
 		"godMode",
@@ -85,6 +95,38 @@ export const BulkActions = ({
 			show: false,
 		},
 	);
+
+	const hideAllControlsHasTitle =
+		hideAllControls !== undefined && typeof hideAllControls !== "boolean";
+
+	const getUpdatedShowInlineButtons = useCallback(() => {
+		// Never show inline if there's a title, because there's no room!
+		if (hideAllControlsHasTitle || !wrapperRef.current) {
+			return false;
+		}
+
+		// Cutoff for when there is enough room to show inline buttons
+		return wrapperRef.current.offsetWidth >= 750;
+	}, [hideAllControlsHasTitle, wrapperRef]);
+
+	const [showInlineButtons, setShowInlineButtons] = useState(false);
+
+	useEffect(() => {
+		if (wrapperRef.current) {
+			getUpdatedShowInlineButtons();
+
+			const update = () => {
+				setShowInlineButtons(getUpdatedShowInlineButtons);
+			};
+
+			const resizeObserver = new ResizeObserver(update);
+			resizeObserver.observe(wrapperRef.current);
+
+			return () => {
+				resizeObserver.disconnect();
+			};
+		}
+	}, [getUpdatedShowInlineButtons, wrapperRef]);
 
 	const hasSomeSelected = selectedRows.map.size > 0;
 
@@ -240,8 +282,6 @@ export const BulkActions = ({
 			text: "Delete players",
 		},
 	];
-
-	const showInlineButtons = true;
 
 	if (showInlineButtons) {
 		return (

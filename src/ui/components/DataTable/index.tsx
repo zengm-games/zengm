@@ -5,6 +5,7 @@ import {
 	type MouseEvent,
 	type ReactNode,
 	useEffect,
+	useRef,
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
@@ -357,6 +358,8 @@ const DataTable = ({
 		showBulkSelectCheckboxes,
 	);
 
+	const wrapperRef = useRef<HTMLDivElement>(null);
+
 	return (
 		<>
 			<CustomizeColumns
@@ -422,9 +425,14 @@ const DataTable = ({
 						"d-inline-block mw-100": nonfluid,
 					})}
 				>
-					<div className="d-flex">
+					<div className="d-flex" ref={wrapperRef}>
 						{bulkSelectRows ? (
-							<BulkActions name={name} selectedRows={selectedRows} />
+							<BulkActions
+								hideAllControls={hideAllControls}
+								name={name}
+								selectedRows={selectedRows}
+								wrapperRef={wrapperRef}
+							/>
 						) : pagination && !hideAllControls ? (
 							<PerPage onChange={handlePerPage} value={state.perPage} />
 						) : null}

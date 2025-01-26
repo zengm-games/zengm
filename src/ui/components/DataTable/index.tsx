@@ -497,6 +497,7 @@ const DataTable = ({
 							{hideHeader ? null : (
 								<Header
 									bulkSelectProps={{
+										disableBulkSelectKeys,
 										filteredRows: processedRows,
 										filteredRowsPage: processedRowsPage,
 										selectedRows,

@@ -228,7 +228,7 @@ export const BulkActions = ({
 
 	const onDeletePlayers = async () => {
 		const proceed = await confirm(
-			`Are you sure you want to delete ${selectedRows.map.size} ${helpers.plural("player", selectedRows.map.size)}?`,
+			`Are you sure you want to delete ${helpers.numberWithCommas(selectedRows.map.size)} ${helpers.plural("player", selectedRows.map.size)}?`,
 			{
 				okText: helpers.plural("Delete player", selectedRows.map.size),
 			},

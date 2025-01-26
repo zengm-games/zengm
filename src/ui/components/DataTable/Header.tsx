@@ -7,7 +7,7 @@ import {
 	useRef,
 	useLayoutEffect,
 } from "react";
-import type { Col, DataTableRow, SortBy, SuperCol } from ".";
+import type { Col, DataTableRow, Props, SortBy, SuperCol } from ".";
 import { range } from "../../../common/utils";
 import { Dropdown } from "react-bootstrap";
 import type { SelectedRows } from "./useBulkSelectRows";
@@ -219,12 +219,14 @@ const CustomToggle = forwardRef(
 );
 
 type BulkSelectProps = {
+	disableBulkSelectKeys: Props["disableBulkSelectKeys"];
 	filteredRows: DataTableRow[];
 	filteredRowsPage: DataTableRow[];
 	selectedRows: SelectedRows;
 };
 
 const BulkSelectHeaderCheckbox = ({
+	disableBulkSelectKeys,
 	filteredRows,
 	filteredRowsPage,
 	selectedRows,
@@ -258,6 +260,10 @@ const BulkSelectHeaderCheckbox = ({
 		}
 	};
 
+	const rowCanBeSelected = (row: DataTableRow) =>
+		row.metadata &&
+		(!disableBulkSelectKeys || !disableBulkSelectKeys.has(row.key));
+
 	return (
 		<th
 			data-no-row-highlight
@@ -275,7 +281,7 @@ const BulkSelectHeaderCheckbox = ({
 						onClick={() => {
 							selectedRows.setAll(
 								// @ts-expect-error
-								filteredRows.filter(row => row.metadata),
+								filteredRows.filter(rowCanBeSelected),
 							);
 						}}
 					>
@@ -286,7 +292,7 @@ const BulkSelectHeaderCheckbox = ({
 							onClick={() => {
 								selectedRows.setAll(
 									// @ts-expect-error
-									filteredRowsPage.filter(row => row.metadata),
+									filteredRowsPage.filter(rowCanBeSelected),
 								);
 							}}
 						>

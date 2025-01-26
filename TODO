@@ -18,7 +18,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - trade
       - would still need separate logic for selecting untraeable players, so maybe not worth it
     - export players
-      - select all should be aware of disableBulkSelectKeys
+      - select all header indeterminate/selected state should be aware of disableBulkSelectKeys
       - checkboxes to remove players too
     - import players
     - ProtectPlayers

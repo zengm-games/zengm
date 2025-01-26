@@ -93,6 +93,12 @@ const ExportPlayers = ({
 
 	const selectedRows = useSelectedRows();
 
+	// clearSelectedRows is for eslint
+	const clearSelectedRows = selectedRows.clear;
+	useEffect(() => {
+		clearSelectedRows();
+	}, [season, clearSelectedRows]);
+
 	const cols = getCols(["Name", "Pos", "Age", "Team", "Ovr", "Pot", ""], {
 		Name: {
 			width: "100%",

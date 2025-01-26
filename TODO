@@ -55,6 +55,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import
+  - but that is by design, on import you can pick any season
 - export draft class processes players on output
 - some places with export draft class buttons could be replaced by bulkSelectRows actions
 

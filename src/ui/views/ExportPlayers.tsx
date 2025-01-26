@@ -135,7 +135,7 @@ const ExportPlayers = ({
 		];
 	};
 
-	const selectedPids = selected.map(({ p }) => p.pid);
+	const selectedPids = new Set(selected.map(({ p }) => p.pid));
 
 	const rows: DataTableRow[] = players.map(p => {
 		return {
@@ -150,7 +150,7 @@ const ExportPlayers = ({
 				...commonRows(p),
 				<button
 					className="btn btn-xs btn-primary"
-					disabled={exporting || selectedPids.includes(p.pid)}
+					disabled={exporting || selectedPids.has(p.pid)}
 					onClick={() => {
 						setSelected([...selected, { p, season }]);
 					}}
@@ -212,6 +212,7 @@ const ExportPlayers = ({
 							rows={rows}
 							controlledSelectedRows={selectedRows}
 							alwaysShowBulkSelectRows
+							disableBulkSelectKeys={selectedPids}
 						/>
 					</div>
 					<div className="my-3">
@@ -234,7 +235,7 @@ const ExportPlayers = ({
 								]);
 								selectedRows.clear();
 							}}
-							disabled={selectedRows.map.size === 0}
+							disabled={selectedRows.map.size === 0 || exporting}
 						>
 							Add {selectedRows.map.size} selected{" "}
 							{helpers.plural("player", selectedRows.map.size)} to export
@@ -260,7 +261,7 @@ const ExportPlayers = ({
 							<div className="my-3 d-flex gap-2">
 								<button
 									className="btn btn-lg btn-primary"
-									disabled={exporting || selectedPids.length === 0}
+									disabled={exporting || selectedPids.size === 0}
 									onClick={async () => {
 										setExporting(true);
 										setErrorMessage(undefined);

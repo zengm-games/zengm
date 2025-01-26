@@ -106,6 +106,7 @@ export type Props = {
 	// Pass this to control selectedRows from outside of this component (like if you want to have a button external to the table that does something with selected players). Otherwise, leave this undefined.
 	controlledSelectedRows?: SelectedRows;
 	alwaysShowBulkSelectRows?: boolean; // Often used along with controlledSelectedRows,
+	disableBulkSelectKeys?: Set<DataTableRow["key"]>;
 };
 
 const DataTable = ({
@@ -118,6 +119,7 @@ const DataTable = ({
 	controlledSelectedRows,
 	defaultSort,
 	defaultStickyCols = 0,
+	disableBulkSelectKeys,
 	disableSettingsCache,
 	footer,
 	hideAllControls,
@@ -522,6 +524,9 @@ const DataTable = ({
 											selectedRows.toggle(key, metadata);
 										}}
 										showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+										disableBulkSelectCheckbox={
+											!!disableBulkSelectKeys?.has(row.key)
+										}
 									/>
 								))}
 							</tbody>

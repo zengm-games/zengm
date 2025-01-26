@@ -14,11 +14,13 @@ type OnBulkSelectToggle = (
 
 const BulkSelectCheckbox = ({
 	checked,
+	disabled,
 	rowKey,
 	metadata,
 	onToggle,
 }: {
 	checked: boolean;
+	disabled: boolean;
 	rowKey: DataTableRow["key"];
 	metadata: DataTableRowMetadata;
 	onToggle: OnBulkSelectToggle;
@@ -29,7 +31,7 @@ const BulkSelectCheckbox = ({
 
 	// Similar to singleCheckbox stuff below
 	const onClickCell = (event: MouseEvent) => {
-		if (event.target && (event.target as any).tagName === "TD") {
+		if (event.target && (event.target as any).tagName === "TD" && !disabled) {
 			onChange();
 		}
 	};
@@ -40,6 +42,7 @@ const BulkSelectCheckbox = ({
 				className="form-check-input"
 				type="checkbox"
 				checked={checked}
+				disabled={disabled}
 				onChange={onChange}
 			/>
 		</td>
@@ -52,6 +55,7 @@ const Row = ({
 	row,
 
 	bulkSelectChecked,
+	disableBulkSelectCheckbox,
 	onBulkSelectToggle,
 	showBulkSelectCheckboxes,
 }: {
@@ -60,6 +64,7 @@ const Row = ({
 	row: MyRow;
 
 	bulkSelectChecked: boolean;
+	disableBulkSelectCheckbox: boolean;
 	onBulkSelectToggle: OnBulkSelectToggle;
 	showBulkSelectCheckboxes: boolean;
 }) => {
@@ -75,6 +80,7 @@ const Row = ({
 				row.metadata ? (
 					<BulkSelectCheckbox
 						checked={bulkSelectChecked}
+						disabled={disableBulkSelectCheckbox}
 						rowKey={row.key}
 						metadata={row.metadata}
 						onToggle={onBulkSelectToggle}

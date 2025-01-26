@@ -92,11 +92,6 @@ const ExportPlayers = ({
 	const { gender } = useLocalPartial(["gender"]);
 
 	const selectedRows = useSelectedRows();
-	console.log("RENDER ProtectPlayers", selectedRows);
-	useEffect(() => {
-		const pids = Array.from(selectedRows.map.values()).map(p => p.pid);
-		console.log("MAP CHANGED", pids);
-	}, [selectedRows.map]);
 
 	const cols = getCols(["Name", "Pos", "Age", "Team", "Ovr", "Pot", ""], {
 		Name: {
@@ -153,6 +148,7 @@ const ExportPlayers = ({
 					disabled={exporting || selectedPids.has(p.pid)}
 					onClick={() => {
 						setSelected([...selected, { p, season }]);
+						selectedRows.delete(p.pid);
 					}}
 					title="Add to players to export"
 				>

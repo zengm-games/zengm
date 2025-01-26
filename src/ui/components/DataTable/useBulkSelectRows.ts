@@ -23,6 +23,14 @@ export const useSelectedRows = () => {
 		setMap(new Map());
 	}, []);
 
+	const deleteEntry = useCallback((key: Key) => {
+		setMap(prev => {
+			const copy = new Map(prev);
+			copy.delete(key);
+			return copy;
+		});
+	}, []);
+
 	const setAll = useCallback((records: { key: Key; metadata: Metadata }[]) => {
 		setMap(prev => {
 			const copy = new Map(prev);
@@ -35,6 +43,7 @@ export const useSelectedRows = () => {
 
 	return {
 		clear,
+		delete: deleteEntry,
 		map,
 		toggle,
 		setAll,

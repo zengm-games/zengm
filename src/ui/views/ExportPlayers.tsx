@@ -92,7 +92,9 @@ const ExportPlayers = ({
 	const { gender } = useLocalPartial(["gender"]);
 
 	const selectedRows = useSelectedRows();
+	const selectedRows2 = useSelectedRows();
 
+	// When we switch to a new season of players, clear any checkboxes because some might not exist in the new season
 	// clearSelectedRows is for eslint
 	const clearSelectedRows = selectedRows.clear;
 	useEffect(() => {
@@ -156,7 +158,7 @@ const ExportPlayers = ({
 						setSelected([...selected, { p, season }]);
 						selectedRows.delete(p.pid);
 					}}
-					title="Add to players to export"
+					title="Add player to export"
 				>
 					Add
 				</button>,
@@ -164,9 +166,15 @@ const ExportPlayers = ({
 		};
 	});
 
-	const rows2 = selected.map(({ p }, i) => {
+	const rows2: DataTableRow[] = selected.map(({ p }, i) => {
 		return {
 			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
 			data: [
 				i + 1,
 				...commonRows(p),
@@ -176,7 +184,7 @@ const ExportPlayers = ({
 					onClick={() => {
 						setSelected(selected.filter(row => row.p.pid !== p.pid));
 					}}
-					title="Remove from players to export"
+					title="Remove player from export"
 				>
 					Remove
 				</button>,
@@ -257,10 +265,12 @@ const ExportPlayers = ({
 									name="ExportPlayers2"
 									pagination
 									rows={rows2}
+									controlledSelectedRows={selectedRows2}
+									alwaysShowBulkSelectRows
 								/>
 							</div>
 
-							<div className="my-3 d-flex gap-2">
+							<div className="my-3 d-flex align-items-center gap-2">
 								<button
 									className="btn btn-lg btn-primary"
 									disabled={exporting || selectedPids.size === 0}
@@ -287,13 +297,31 @@ const ExportPlayers = ({
 									Export players
 								</button>
 								<button
-									className="btn btn-lg btn-secondary"
+									className="btn btn-secondary"
 									onClick={() => {
 										setSelected([]);
 									}}
 									title="Clear players to export"
+									disabled={exporting || selectedPids.size === 0}
 								>
 									Clear
+								</button>
+								<button
+									className="btn btn-secondary"
+									onClick={() => {
+										const pidsToRemove = new Set(
+											Array.from(selectedRows2.map.values()).map(p => p.pid),
+										);
+										setSelected(
+											selected.filter(p => !pidsToRemove.has(p.p.pid)),
+										);
+										selectedRows2.deleteAll(pidsToRemove);
+									}}
+									disabled={selectedRows2.map.size === 0 || exporting}
+								>
+									Remove {helpers.numberWithCommas(selectedRows2.map.size)}{" "}
+									selected {helpers.plural("player", selectedRows2.map.size)}{" "}
+									from export
 								</button>
 							</div>
 

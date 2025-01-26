@@ -31,6 +31,16 @@ export const useSelectedRows = () => {
 		});
 	}, []);
 
+	const deleteAll = useCallback((keys: Iterable<Key>) => {
+		setMap(prev => {
+			const copy = new Map(prev);
+			for (const key of keys) {
+				copy.delete(key);
+			}
+			return copy;
+		});
+	}, []);
+
 	const setAll = useCallback((records: { key: Key; metadata: Metadata }[]) => {
 		setMap(prev => {
 			const copy = new Map(prev);
@@ -44,6 +54,7 @@ export const useSelectedRows = () => {
 	return {
 		clear,
 		delete: deleteEntry,
+		deleteAll,
 		map,
 		toggle,
 		setAll,

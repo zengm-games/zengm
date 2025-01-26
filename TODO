@@ -18,7 +18,8 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - trade
       - would still need separate logic for selecting untraeable players, so maybe not worth it
     - export players
-      - checkboxes to remove players too
+      - actionbutton for export
+      - responsive export buttons
     - import players
     - ProtectPlayers
       - use disableBulkSelectKeys for disabling when hit threshold

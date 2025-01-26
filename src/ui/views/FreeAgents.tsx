@@ -8,7 +8,7 @@ import {
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, helpers, toWorker, useLocalPartial } from "../util";
+import { getCols, helpers, useLocalPartial } from "../util";
 import type { Phase, View } from "../../common/types";
 import { dataTableWrappedMood } from "../components/Mood";
 import {
@@ -16,7 +16,6 @@ import {
 	wrappedContractExp,
 } from "../components/contract";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import clsx from "clsx";
 import { range } from "../../common/utils";
 import type { DropdownOption } from "../hooks/useDropdownOptions";
 import type { FreeAgentTransaction } from "../../worker/views/freeAgents";
@@ -104,7 +103,6 @@ const FreeAgents = ({
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	freeAgencySeason,
-	godMode,
 	luxuryPayroll,
 	maxContract,
 	minContract,
@@ -269,44 +267,13 @@ const FreeAgents = ({
 						payroll={payroll}
 					/>
 
-					{showShowPlayersAffordButton || godMode ? (
-						<div className="d-sm-flex mb-3">
-							{showShowPlayersAffordButton ? (
-								<button
-									className="btn btn-secondary"
-									onClick={showAfforablePlayers}
-								>
-									Show players you can afford now
-								</button>
-							) : null}
-
-							<div className="d-block">
-								{godMode ? (
-									<button
-										className={clsx("btn btn-god-mode", {
-											"ms-sm-2 mt-2 mt-sm-0": showShowPlayersAffordButton,
-										})}
-										onClick={async () => {
-											const proceed = await confirm(
-												`Are you sure you want to delete all ${players.length} free agents?`,
-												{
-													okText: "Delete Players",
-												},
-											);
-											if (proceed) {
-												await toWorker(
-													"main",
-													"removePlayers",
-													players.map(p => p.pid),
-												);
-											}
-										}}
-									>
-										Delete all players
-									</button>
-								) : null}
-							</div>
-						</div>
+					{showShowPlayersAffordButton ? (
+						<button
+							className="btn btn-secondary mb-3"
+							onClick={showAfforablePlayers}
+						>
+							Show players you can afford now
+						</button>
 					) : null}
 				</>
 			) : null}

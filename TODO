@@ -1,29 +1,7 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- ... -> Bulk select players
-  - on import page, should not show this option because type="row"
-  - If checkboxes are shown by default, still have this to show the "Bulk" button. Distinction between bulkSelectRows and showBulkSelectCheckboxes. If not, get rid of showBulkSelectCheckboxes
-- controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
-  - is it possible to do this without fully defining stuff outside, like can we access the state of the child?
-  - can i make a separate instance of useBulkSelectRows and pass everything in easily?
-  - can i somehow use this for two columns, like on trade page with the untradeable column? unclear what the column headers would be then, so maybe not
-  - ui
-    - show checkboxes by default - all of these cases are things like trading block where the UI needs ability to select players
-    - but don't show BulkActions button until activated through ... menu
-      - bulkSelectRows vs showBulkSelectCheckboxes
-- ... menu name - "Bulk select players" or "Bulk select rows" or "Bulk select actions"?
-  - maybe "actions" if alwaysShowBulkSelectRows
-- places to use with alwaysShowBulkSelectRows and controlledSelectedRows
-  - could be used for places where we already have check boxes - set showBulkSelectCheckboxes to true even if bulkSelectRows is false
-    - trading block 
-      - would still need separate logic for selecting picks, so maybe not worth it
-    - trade
-      - would still need separate logic for selecting untraeable players, so maybe not worth it
-    - ProtectPlayers
-      - use disableBulkSelectKeys for disabling when hit threshold
-      - loading initial cache state from storage and pass to DataTable somehow - not worth the complexity of adding this just for ProtectPlayers
-- when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
 - extra places to add DataTable
   - SortableTable - especially for roster
+    - remove Delete Players button on roster
 - some better UI for league leaders when no players are in any table
 - test
   - interaction with hideAllControls and other options
@@ -43,6 +21,9 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - export popup
   - no more ugly Compare Players links in arbitrary places
     - still in useful places, like Award Races for MIP compare to self last year. but no longer just picking the top N players from a table - you can do that everywhere!
+    - also no more buttons to delete players in god mode
+      - free agents
+      - draft scouting
   - inline buttons
   - joke other league
   - import/export players filter
@@ -52,6 +33,17 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - release (on your team)
   - some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
     - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
+    - something like this works, but is kind of annoying with the generic being needed in various places:
+      `type RowOfType<T extends RowMetadata["type"]> = T extends RowMetadata["type"] ? { metadata: Extract<RowMetadata, { type: T }>; other: string } : never;`
+  - other places to use
+    - trading block - would still need separate logic for selecting picks, so maybe not worth it
+    - trade - would still need separate logic for selecting picks and untradeable players, so maybe not worth it
+    - ProtectPlayers - maybe not worth it considering all below
+      - use disableBulkSelectKeys for disabling when hit threshold
+      - loading initial cache state from storage and then pass to DataTable selectedRows
+      - "select all" should not actually select all, there is a limit
+  - when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
+    - interaction between table-responsive and dropdown in bootstrap, many discussions online, many potential solutions, but none of them seem to work
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import

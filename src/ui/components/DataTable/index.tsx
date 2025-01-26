@@ -148,7 +148,7 @@ const DataTable = ({
 
 	const {
 		bulkSelectRows,
-		canBulkSelectRows,
+		metadataType,
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,
@@ -464,10 +464,11 @@ const DataTable = ({
 						) : null}
 						{!hideMenuToo ? (
 							<Controls
+								alwaysShowBulkSelectRows={!!alwaysShowBulkSelectRows}
 								bulkSelectRows={bulkSelectRows}
-								canBulkSelectRows={canBulkSelectRows}
 								enableFilters={state.enableFilters}
 								hideAllControls={!!hideAllControls}
+								metadataType={metadataType}
 								name={name}
 								onBulkSelectRows={handleBulkSelectRows}
 								onExportCSV={handleExportCSV}

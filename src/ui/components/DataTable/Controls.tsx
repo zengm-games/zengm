@@ -3,6 +3,7 @@ import type { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import { bySport } from "../../../common";
 import HelpPopover from "../HelpPopover";
+import type { DataTableRowMetadata } from ".";
 
 const style = {
 	height: 27,
@@ -10,10 +11,11 @@ const style = {
 };
 
 const Controls = ({
+	alwaysShowBulkSelectRows,
 	bulkSelectRows,
-	canBulkSelectRows,
 	enableFilters,
 	hideAllControls,
+	metadataType,
 	name,
 	onBulkSelectRows,
 	onExportCSV,
@@ -23,10 +25,11 @@ const Controls = ({
 	onToggleFilters,
 	searchText,
 }: {
+	alwaysShowBulkSelectRows: boolean;
 	bulkSelectRows: boolean;
-	canBulkSelectRows: boolean;
 	enableFilters: boolean;
 	hideAllControls?: boolean;
+	metadataType: DataTableRowMetadata["type"] | undefined;
 	name: string;
 	onBulkSelectRows: () => void;
 	onExportCSV: () => void;
@@ -134,11 +137,10 @@ const Controls = ({
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					{canBulkSelectRows ? (
+					{metadataType === "player" ? (
 						<Dropdown.Item onClick={onBulkSelectRows}>
-							{bulkSelectRows
-								? "Hide bulk select players"
-								: "Bulk select players"}
+							{bulkSelectRows ? "Hide bulk select" : "Bulk select"}
+							{alwaysShowBulkSelectRows ? " actions" : null}
 						</Dropdown.Item>
 					) : null}
 					<Dropdown.Item onClick={onSelectColumns}>

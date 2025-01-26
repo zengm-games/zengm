@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DataTable, LeagueFileUpload } from "../../components";
-import { confirm, downloadFile, getCols, toWorker } from "../../util";
+import { downloadFile, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 import { WEBSITE_ROOT } from "../../../common";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
@@ -102,34 +102,6 @@ const DraftClass = ({
 								}}
 							>
 								Regenerate
-							</button>
-						) : null}
-						{godMode ? (
-							<button
-								className="btn btn-outline-god-mode btn-xs"
-								disabled={status === "exporting" || status === "loading"}
-								onClick={async () => {
-									setStatus("loading");
-
-									const proceed = await confirm(
-										`Are you sure you want to delete all ${players.length} players in the ${season} draft class?`,
-										{
-											okText: "Delete Players",
-										},
-									);
-
-									if (proceed) {
-										await toWorker(
-											"main",
-											"removePlayers",
-											players.map(p => p.pid),
-										);
-									}
-
-									setStatus(undefined);
-								}}
-							>
-								Clear
 							</button>
 						) : null}
 					</div>

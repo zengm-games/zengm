@@ -105,7 +105,7 @@ export const useBulkSelectRows = ({
 
 	return {
 		bulkSelectRows,
-		canBulkSelectRows: !!info.current?.metadataType,
+		metadataType: info.current?.metadataType,
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,

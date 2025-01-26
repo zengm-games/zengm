@@ -233,7 +233,6 @@ const updateFreeAgents = async (
 			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 			challengeNoRatings: g.get("challengeNoRatings"),
 			freeAgencySeason,
-			godMode: g.get("godMode"),
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			salaryCapType: g.get("salaryCapType"),
 			maxContract: g.get("maxContract"),

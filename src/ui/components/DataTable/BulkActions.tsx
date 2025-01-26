@@ -105,7 +105,7 @@ export const BulkActions = ({
 		}
 
 		// Cutoff for when there is enough room to show inline buttons
-		return wrapperRef.current.offsetWidth >= 750;
+		return wrapperRef.current.offsetWidth >= 510;
 	}, [hideAllControlsHasTitle, wrapperRef]);
 
 	const [showInlineButtons, setShowInlineButtons] = useState(false);
@@ -259,10 +259,10 @@ export const BulkActions = ({
 	}[] = [
 		{
 			onClick: onComparePlayers,
-			text: "Compare Players",
+			text: "Compare",
 			textLong: (
 				<>
-					Compare players
+					Compare
 					{selectedRows.map.size > MAX_NUM_TO_COMPARE
 						? ` (first ${MAX_NUM_TO_COMPARE} players only)`
 						: null}
@@ -271,11 +271,17 @@ export const BulkActions = ({
 		},
 		{
 			onClick: onExportPlayers,
-			text: "Export players",
+			text: "Export",
+			textLong: "Export players",
 		},
 		{
 			onClick: onWatchPlayers,
 			text: (
+				<>
+					Watch <Flag />
+				</>
+			),
+			textLong: (
 				<>
 					{numWatchColors > 1 ? "Set" : "Toggle"} watch list <Flag />
 				</>
@@ -284,7 +290,8 @@ export const BulkActions = ({
 		{
 			godMode: true,
 			onClick: onDeletePlayers,
-			text: "Delete players",
+			text: "Delete",
+			textLong: "Delete players",
 		},
 	];
 

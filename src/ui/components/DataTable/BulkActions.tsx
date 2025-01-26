@@ -8,13 +8,14 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../../util";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type { SelectedRows } from "./useBulkSelectRows";
 import { watchListDialog } from "./watchListDialog";
 import { exportPlayers } from "../../views/ExportPlayers";
 import { createPortal } from "react-dom";
 import Modal from "../Modal";
 import type { DataTableRowMetadata } from ".";
+import clsx from "clsx";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -202,6 +203,75 @@ export const BulkActions = ({
 		}
 	};
 
+	const actions: {
+		godMode?: boolean;
+		onClick: (() => void) | undefined;
+		text: ReactNode;
+		textLong?: ReactNode;
+	}[] = [
+		{
+			onClick: hasSomeSelected ? onComparePlayers : undefined,
+			text: "Compare Players",
+			textLong: (
+				<>
+					Compare players
+					{selectedRows.map.size > MAX_NUM_TO_COMPARE
+						? ` (first ${MAX_NUM_TO_COMPARE} players only)`
+						: null}
+				</>
+			),
+		},
+		{
+			onClick: hasSomeSelected ? onExportPlayers : undefined,
+			text: "Export players",
+		},
+		{
+			onClick: hasSomeSelected ? onWatchPlayers : undefined,
+			text: (
+				<>
+					{numWatchColors > 1 ? "Set" : "Toggle"} watch list{" "}
+					<Flag watch={nextWatch} />
+				</>
+			),
+		},
+		{
+			godMode: true,
+			onClick: hasSomeSelected ? onDeletePlayers : undefined,
+			text: "Delete players",
+		},
+	];
+
+	const showInlineButtons = true;
+
+	if (showInlineButtons) {
+		return (
+			<div className="d-flex align-items-start gap-2">
+				{actions.map((action, i) => {
+					if (action.godMode && !godMode) {
+						return null;
+					}
+
+					return (
+						<button
+							key={i}
+							className={clsx(
+								"btn btn-sm",
+								action.godMode
+									? "btn-god-mode"
+									: hasSomeSelected
+										? "btn-primary"
+										: "btn-secondary",
+							)}
+							onClick={action.onClick}
+						>
+							{action.text}
+						</button>
+					);
+				})}
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<Dropdown
@@ -238,31 +308,21 @@ export const BulkActions = ({
 					Bulk actions
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					<Dropdown.Item
-						onClick={hasSomeSelected ? onComparePlayers : undefined}
-					>
-						Compare players
-						{selectedRows.map.size > MAX_NUM_TO_COMPARE
-							? ` (first ${MAX_NUM_TO_COMPARE} players only)`
-							: null}
-					</Dropdown.Item>
-					<Dropdown.Item
-						onClick={hasSomeSelected ? onExportPlayers : undefined}
-					>
-						Export players
-					</Dropdown.Item>
-					<Dropdown.Item onClick={hasSomeSelected ? onWatchPlayers : undefined}>
-						{numWatchColors > 1 ? "Set" : "Toggle"} watch list{" "}
-						<Flag watch={nextWatch} />
-					</Dropdown.Item>
-					{godMode ? (
-						<Dropdown.Item
-							className="god-mode"
-							onClick={hasSomeSelected ? onDeletePlayers : undefined}
-						>
-							Delete players
-						</Dropdown.Item>
-					) : null}
+					{actions.map((action, i) => {
+						if (action.godMode && !godMode) {
+							return null;
+						}
+
+						return (
+							<Dropdown.Item
+								key={i}
+								className={action.godMode ? "god-mode" : undefined}
+								onClick={action.onClick}
+							>
+								{action.textLong ?? action.text}
+							</Dropdown.Item>
+						);
+					})}
 					<Dropdown.Header>
 						{selectedRows.map.size}{" "}
 						{helpers.plural("player", selectedRows.map.size)} selected

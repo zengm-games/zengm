@@ -3,6 +3,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - If checkboxes are shown by default, still have this to show the "Bulk" button. Distinction between bulkSelectRows and showBulkSelectCheckboxes. If not, get rid of showBulkSelectCheckboxes
 - is getPlayersNextWatch too slow with select all on a large table? maybe don't do that on menu open?
 - if there is enough room (so not if table is in a column, and not if there is header text in hideAllControls), show distinct buttons for bulk actions rather than the dropdown menu
+  - goal: showInlineButtons=true when table is 750px wide or higher, and hideAllControls is not boolean/undefined
   - maybe use container query?
 - controlled mode (selectedRows passed to DataTable and accessible/controlled from outside)
   - is it possible to do this without fully defining stuff outside, like can we access the state of the child?

@@ -89,7 +89,7 @@ export type Props = {
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
 	footer?: any[];
-	hideAllControls?: boolean | string | ReactNode;
+	hideAllControls?: boolean | ReactNode; // When ReactNode, display as a title above the table
 	hideHeader?: boolean;
 	hideMenuToo?: boolean;
 	name: string;

@@ -21,6 +21,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - search for other places with checkboxes
 - extra places to add DataTable
   - SortableTable - especially for roster
+- some better UI for league leaders when no players are in any table
 - test
   - interaction with hideAllControls and other options
     - hideAllControls should move to a string always?

@@ -96,15 +96,13 @@ table.table thead .sorting_desc_disabled {
 }
 
 .datatable-header-text {
-	// Usually we're putting some header in here, and this makes it nicely truncate and have no bottom margin, which is almost always desired
+	// Usually we're putting some header in here, and this makes it nicely truncate, which is almost always desired
 	h1,
 	h2,
 	h3,
 	h4,
 	h5,
 	h6 {
-		margin-bottom: 0;
-
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

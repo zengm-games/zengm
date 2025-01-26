@@ -425,7 +425,7 @@ const DataTable = ({
 						"d-inline-block mw-100": nonfluid,
 					})}
 				>
-					<div className="d-flex" ref={wrapperRef}>
+					<div className="d-flex" style={{ height: 35 }} ref={wrapperRef}>
 						{bulkSelectRows ? (
 							<BulkActions
 								hideAllControls={hideAllControls}

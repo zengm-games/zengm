@@ -50,6 +50,7 @@ type SortableTableContextInfo = {
 	highlightHandle: HighlightHandle<ShouldBeValue>;
 	renderRow: (props: RenderRowProps) => ReactNode;
 	row: string; //Row<ShouldBeValue>;
+	rows: ShouldBeValue[];
 	rowClassName: string; // RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
 	tableRef: string; //RefObject<HTMLTableElement | null>;
@@ -311,8 +312,9 @@ export const SortableContextWrappers = ({
 			rowClassName: "???",
 			rowLabels: undefined,
 			tableRef: "???",
+			rows,
 		}),
-		[clickedIndex, draggedIndex, highlightHandle, renderRow],
+		[clickedIndex, draggedIndex, highlightHandle, renderRow, rows],
 	);
 
 	// string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!
@@ -392,12 +394,18 @@ export const SortableContextWrappers = ({
 };
 
 export const MyDragOverlay = () => {
-	const { draggedIndex, row } = useContext(SortableTableContext);
+	const { draggedIndex, renderRow, rows } = useContext(SortableTableContext);
 
-	console.log("MyDragOverlay", draggedIndex, row);
 	return (
 		<DragOverlay wrapperElement="tbody">
-			{draggedIndex !== undefined ? <div>HELLO!</div> : null}
+			{draggedIndex !== undefined
+				? renderRow({
+						draggedIndex,
+						index: draggedIndex,
+						overlay: true,
+						value: rows[draggedIndex],
+					})
+				: null}
 		</DragOverlay>
 	);
 };

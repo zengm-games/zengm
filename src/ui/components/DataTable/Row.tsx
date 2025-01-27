@@ -61,7 +61,6 @@ const Row = ({
 	showBulkSelectCheckboxes,
 
 	sortable,
-	overlay,
 }: {
 	clickable?: boolean;
 	highlightCols: number[];
@@ -73,7 +72,6 @@ const Row = ({
 	showBulkSelectCheckboxes: boolean;
 
 	sortable?: RenderRowProps;
-	overlay?: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -84,14 +82,16 @@ const Row = ({
 			className={clsx(row.classNames, {
 				"table-warning": clickable && clicked,
 				"opacity-0":
-					sortable && !overlay && sortable.draggedIndex === sortable.index,
+					sortable &&
+					!sortable.overlay &&
+					sortable.draggedIndex === sortable.index,
 			})}
 			onClick={clickable ? toggleClicked : undefined}
 			ref={node => {
 				if (sortable?.setNodeRef) {
 					sortable.setNodeRef(node);
 				}
-				if (overlay) {
+				if (sortable?.overlay) {
 					overlayRowRef.current = node;
 				}
 			}}

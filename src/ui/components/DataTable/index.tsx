@@ -245,6 +245,10 @@ const DataTable = ({
 			hideAllControls: hideAllControlsBool,
 			name,
 		});
+
+		if (bulkSelectRows) {
+			toggleBulkSelectRows();
+		}
 	};
 
 	const handleSelectColumns = () => {

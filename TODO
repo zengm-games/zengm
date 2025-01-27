@@ -9,7 +9,6 @@ roster -> datatable
 - sticky/sorting interplay
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
     - same issue for the animation moving the row into place
-- what happens if you sort when it's sortable (doesn't actually happen here - always sortable in non-basketball, and never sortable in basketball because rosterOrder matters) - need same logic as hideAllControlsBool?
 - test firefox, safari, iphone
 - delete SortableTable
 

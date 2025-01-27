@@ -19,6 +19,7 @@ roster -> datatable
 datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default
 - roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
+- check how sort status is passed to row.classNames
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable

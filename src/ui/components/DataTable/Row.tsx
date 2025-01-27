@@ -6,7 +6,7 @@ import {
 	SortableHandle,
 	SortableTableContext,
 	type RenderRowProps,
-} from "./sortable";
+} from "./sortableRows";
 import { DataTableContext } from "./contexts";
 
 type MyRow = Omit<DataTableRow, "data"> & {
@@ -49,7 +49,13 @@ const BulkSelectCheckbox = ({
 	);
 };
 
-const Row = ({ row, sortable }: { row: MyRow; sortable?: RenderRowProps }) => {
+const Row = ({
+	row,
+	sortableRows,
+}: {
+	row: MyRow;
+	sortableRows?: RenderRowProps;
+}) => {
 	const { clickable, highlightCols, showBulkSelectCheckboxes } =
 		useContext(DataTableContext);
 	const { draggedIndex } = useContext(SortableTableContext);
@@ -68,13 +74,13 @@ const Row = ({ row, sortable }: { row: MyRow; sortable?: RenderRowProps }) => {
 			className={clsx(classNames, {
 				"table-warning": clickable && clicked,
 				"opacity-0":
-					sortable &&
-					!sortable.overlay &&
-					sortable.draggedIndex === sortable.index,
+					sortableRows &&
+					!sortableRows.overlay &&
+					sortableRows.draggedIndex === sortableRows.index,
 			})}
 			onClick={clickable ? toggleClicked : undefined}
-			ref={sortable?.setNodeRef}
-			style={sortable?.style}
+			ref={sortableRows?.setNodeRef}
+			style={sortableRows?.style}
 		>
 			{showBulkSelectCheckboxes ? (
 				row.metadata ? (
@@ -83,7 +89,7 @@ const Row = ({ row, sortable }: { row: MyRow; sortable?: RenderRowProps }) => {
 					<td />
 				)
 			) : null}
-			{sortable ? <SortableHandle {...sortable} /> : null}
+			{sortableRows ? <SortableHandle {...sortableRows} /> : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =

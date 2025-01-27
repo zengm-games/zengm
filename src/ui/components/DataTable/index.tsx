@@ -33,7 +33,7 @@ import {
 	MyDragOverlay,
 	SortableContextWrappers,
 	type HighlightHandle,
-} from "./sortable";
+} from "./sortableRows";
 import { DataTableContext } from "./contexts";
 
 export type SortBy = [number, SortOrder];
@@ -112,7 +112,7 @@ export type Props = {
 	rankCol?: number;
 	rows: DataTableRow[];
 	small?: boolean;
-	sortable?: {
+	sortableRows?: {
 		highlightHandle: HighlightHandle<DataTableRow>;
 		onChange: (a: { oldIndex: number; newIndex: number }) => void;
 		onSwap: (index1: number, index2: number) => void;
@@ -148,11 +148,11 @@ const DataTable = ({
 	rankCol,
 	rows,
 	small,
-	sortable,
+	sortableRows,
 	striped,
 	superCols,
 }: Props) => {
-	if (sortable && !hideAllControls) {
+	if (sortableRows && !hideAllControls) {
 		throw new Error(
 			`If you enable sortable, you must also enable hideAllControls`,
 		);
@@ -441,21 +441,21 @@ const DataTable = ({
 						handleColClick={handleColClick}
 						handleFilterUpdate={handleFilterUpdate}
 						showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-						sortable={!!sortable}
+						sortable={!!sortableRows}
 						sortBys={state.sortBys}
 						superCols={superCols}
 					/>
 				)}
 				<tbody>
 					{processedRowsPage.map(row => {
-						if (sortable) {
+						if (sortableRows) {
 							return <DraggableRow key={row.key} id={getId(row)} value={row} />;
 						}
 
 						return <Row key={row.key} row={row} />;
 					})}
 				</tbody>
-				{sortable ? <MyDragOverlay /> : null}
+				{sortableRows ? <MyDragOverlay /> : null}
 				<Footer colOrder={colOrderFiltered} footer={footer} />
 			</table>
 		</DataTableContext.Provider>
@@ -572,13 +572,13 @@ const DataTable = ({
 						)}
 						nonfluid={nonfluid}
 					>
-						{sortable ? (
+						{sortableRows ? (
 							<SortableContextWrappers
-								{...sortable}
+								{...sortableRows}
 								renderRow={sortableInfo => {
 									const row = sortableInfo.value;
 									return (
-										<Row key={row.key} row={row} sortable={sortableInfo} />
+										<Row key={row.key} row={row} sortableRows={sortableInfo} />
 									);
 								}}
 								rows={rows}

@@ -423,7 +423,7 @@ const Roster = ({
 				rows={rows}
 				hideAllControls={editable}
 				nonfluid
-				sortable={
+				sortableRows={
 					editable
 						? {
 								highlightHandle: ({ index }) => index < numPlayersOnCourt,

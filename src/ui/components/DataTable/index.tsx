@@ -408,7 +408,7 @@ const DataTable = ({
 		disableBulkSelectKeys,
 		isFiltered:
 			state.searchText !== "" ||
-			(state.enableFilters && state.filters.some(text => text !== "")),
+			(state.enableFilters && processedRows.length !== rows.length),
 		highlightCols,
 		selectedRows,
 		showBulkSelectCheckboxes,

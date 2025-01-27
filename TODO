@@ -31,7 +31,6 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
     - hideAllControls should move to a string always?
       - use on AllStarTeams/DraftClass, hide searchbox and help but not filters?
     - datatable-negative-margin-top still needed?
-  - bulk actions noop with nothing selected
   - with col filters showing
   - career totals stats page
   - all seasons stats page

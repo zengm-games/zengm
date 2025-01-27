@@ -1,33 +1,25 @@
 import clsx from "clsx";
-import { type MouseEvent } from "react";
+import { useContext, type MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow, DataTableRowMetadata } from ".";
 import { SortableHandle, type RenderRowProps } from "./sortable";
+import { DataTableContext } from "./contexts";
 
 type MyRow = Omit<DataTableRow, "data"> & {
 	data: any[];
 };
 
-type OnBulkSelectToggle = (
-	key: DataTableRow["key"],
-	metadata: DataTableRowMetadata,
-) => void;
-
 const BulkSelectCheckbox = ({
-	checked,
-	disabled,
 	rowKey,
 	metadata,
-	onToggle,
 }: {
-	checked: boolean;
-	disabled: boolean;
 	rowKey: DataTableRow["key"];
 	metadata: DataTableRowMetadata;
-	onToggle: OnBulkSelectToggle;
 }) => {
+	const { disableBulkSelectKeys, selectedRows } = useContext(DataTableContext);
+
 	const onChange = () => {
-		onToggle(rowKey, metadata);
+		selectedRows.toggle(rowKey, metadata);
 	};
 
 	// Similar to singleCheckbox stuff below
@@ -36,6 +28,9 @@ const BulkSelectCheckbox = ({
 			onChange();
 		}
 	};
+
+	const checked = selectedRows.map.has(rowKey);
+	const disabled = !!disableBulkSelectKeys?.has(rowKey);
 
 	return (
 		<td data-no-row-highlight onClick={onClickCell}>
@@ -50,29 +45,10 @@ const BulkSelectCheckbox = ({
 	);
 };
 
-const Row = ({
-	clickable,
-	highlightCols,
-	row,
+const Row = ({ row, sortable }: { row: MyRow; sortable?: RenderRowProps }) => {
+	const { clickable, highlightCols, showBulkSelectCheckboxes } =
+		useContext(DataTableContext);
 
-	bulkSelectChecked,
-	disableBulkSelectCheckbox,
-	onBulkSelectToggle,
-	showBulkSelectCheckboxes,
-
-	sortable,
-}: {
-	clickable?: boolean;
-	highlightCols: number[];
-	row: MyRow;
-
-	bulkSelectChecked: boolean;
-	disableBulkSelectCheckbox: boolean;
-	onBulkSelectToggle: OnBulkSelectToggle;
-	showBulkSelectCheckboxes: boolean;
-
-	sortable?: RenderRowProps;
-}) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	return (
@@ -90,13 +66,7 @@ const Row = ({
 		>
 			{showBulkSelectCheckboxes ? (
 				row.metadata ? (
-					<BulkSelectCheckbox
-						checked={bulkSelectChecked}
-						disabled={disableBulkSelectCheckbox}
-						rowKey={row.key}
-						metadata={row.metadata}
-						onToggle={onBulkSelectToggle}
-					/>
+					<BulkSelectCheckbox rowKey={row.key} metadata={row.metadata} />
 				) : (
 					<td />
 				)

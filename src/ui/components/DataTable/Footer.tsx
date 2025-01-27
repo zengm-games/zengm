@@ -1,17 +1,19 @@
 import clsx from "clsx";
+import { useContext } from "react";
+import { DataTableContext } from "./contexts";
 
 const Footer = ({
 	colOrder,
 	footer,
-	highlightCols,
 }: {
 	colOrder: {
 		colIndex: number;
 		hidden?: boolean;
 	}[];
 	footer?: any[];
-	highlightCols: number[];
 }) => {
+	const { highlightCols } = useContext(DataTableContext);
+
 	if (!footer) {
 		return null;
 	}

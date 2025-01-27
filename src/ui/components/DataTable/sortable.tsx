@@ -178,6 +178,11 @@ export const DraggableRow = ({
 	});
 };
 
+export const getId = (row: DataTableRow) => {
+	// string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!
+	return String(row.key);
+};
+
 export const SortableContextWrappers = ({
 	children,
 	highlightHandle,
@@ -228,8 +233,7 @@ export const SortableContextWrappers = ({
 		[clickedIndex, draggedIndex, highlightHandle, renderRow, rows, tableRef],
 	);
 
-	// string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!
-	const ids = rows.map(row => String(row.key));
+	const ids = rows.map(row => getId(row));
 
 	// If I use the default sensor (pointer rather than mouse+touch) everything works (as long as you put touch-action-none on the handle)... except on iOS for some reason it sometimes only fires click events rather than pointer events. This seems to happen for roughly the bottom 2/3 of rows in the table. No idea why.
 	const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));

@@ -29,10 +29,12 @@ import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows";
 import { BulkActions } from "./BulkActions";
 import {
 	DraggableRow,
+	getId,
 	MyDragOverlay,
 	SortableContextWrappers,
 	type HighlightHandle,
 } from "./sortable";
+import { DataTableContext } from "./contexts";
 
 export type SortBy = [number, SortOrder];
 
@@ -387,6 +389,14 @@ const DataTable = ({
 						}),
 					);
 
+	const dataTableContext = {
+		clickable,
+		disableBulkSelectKeys,
+		highlightCols,
+		selectedRows,
+		showBulkSelectCheckboxes,
+	};
+
 	const { stickyClass, tableRef } = useStickyXX(
 		state.stickyCols,
 		showBulkSelectCheckboxes,
@@ -395,72 +405,51 @@ const DataTable = ({
 	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	const table = (
-		<table
-			className={clsx(
-				"table table-hover",
-				{
-					"table-sm": small !== false,
-					"table-striped": striped !== false,
-					"table-borderless": striped !== false,
-				},
-				stickyClass,
-			)}
-			ref={tableRef}
-		>
-			{hideHeader ? null : (
-				<Header
-					bulkSelectProps={{
-						disableBulkSelectKeys,
-						filteredRows: processedRows,
-						filteredRowsPage: processedRowsPage,
-						selectedRows,
-					}}
-					colOrder={colOrderFiltered}
-					cols={cols}
-					enableFilters={state.enableFilters}
-					filters={state.filters}
-					handleColClick={handleColClick}
-					handleFilterUpdate={handleFilterUpdate}
-					showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-					sortBys={state.sortBys}
-					superCols={superCols}
-				/>
-			)}
-			<tbody>
-				{processedRowsPage.map(row => {
-					if (sortable) {
-						return (
-							<DraggableRow
-								key={String(row.key)}
-								id={String(row.key)}
-								value={row}
-							/>
-						);
-					}
+		<DataTableContext.Provider value={dataTableContext}>
+			<table
+				className={clsx(
+					"table table-hover",
+					{
+						"table-sm": small !== false,
+						"table-striped": striped !== false,
+						"table-borderless": striped !== false,
+					},
+					stickyClass,
+				)}
+				ref={tableRef}
+			>
+				{hideHeader ? null : (
+					<Header
+						bulkSelectProps={{
+							disableBulkSelectKeys,
+							filteredRows: processedRows,
+							filteredRowsPage: processedRowsPage,
+							selectedRows,
+						}}
+						colOrder={colOrderFiltered}
+						cols={cols}
+						enableFilters={state.enableFilters}
+						filters={state.filters}
+						handleColClick={handleColClick}
+						handleFilterUpdate={handleFilterUpdate}
+						showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+						sortBys={state.sortBys}
+						superCols={superCols}
+					/>
+				)}
+				<tbody>
+					{processedRowsPage.map(row => {
+						if (sortable) {
+							return <DraggableRow key={row.key} id={getId(row)} value={row} />;
+						}
 
-					return (
-						<Row
-							key={row.key}
-							row={row}
-							clickable={clickable}
-							highlightCols={highlightCols}
-							bulkSelectChecked={selectedRows.map.has(row.key)}
-							onBulkSelectToggle={(key, metadata) => {
-								selectedRows.toggle(key, metadata);
-							}}
-							showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-							disableBulkSelectCheckbox={!!disableBulkSelectKeys?.has(row.key)}
-						/>
-					);
-				})}
-			</tbody>
-			{sortable ? <MyDragOverlay /> : null}
-			<Footer
-				colOrder={colOrderFiltered}
-				footer={footer}
-				highlightCols={highlightCols}
-			/>
-		</table>
+						return <Row key={row.key} row={row} />;
+					})}
+				</tbody>
+				{sortable ? <MyDragOverlay /> : null}
+				<Footer colOrder={colOrderFiltered} footer={footer} />
+			</table>
+		</DataTableContext.Provider>
 	);
 
 	return (
@@ -583,16 +572,7 @@ const DataTable = ({
 										<Row
 											key={row.key}
 											row={row}
-											clickable={clickable}
 											highlightCols={highlightCols}
-											bulkSelectChecked={selectedRows.map.has(row.key)}
-											onBulkSelectToggle={(key, metadata) => {
-												selectedRows.toggle(key, metadata);
-											}}
-											showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-											disableBulkSelectCheckbox={
-												!!disableBulkSelectKeys?.has(row.key)
-											}
 											sortable={sortableInfo}
 										/>
 									);

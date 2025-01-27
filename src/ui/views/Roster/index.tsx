@@ -1,14 +1,9 @@
-import clsx from "clsx";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { bySport, isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
 	CountryFlag,
 	HelpPopover,
-	Mood,
-	PlayerNameLabels,
-	RatingWithChange,
-	SortableTable,
 	SafeHtml,
 	MoreLinks,
 	DataTable,
@@ -25,7 +20,7 @@ import {
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { GameAttributesLeague, Phase, View } from "../../../common/types";
-import { Contract, wrappedContract } from "../../components/contract";
+import { wrappedContract } from "../../components/contract";
 import type { DataTableRow, SortBy } from "../../components/DataTable";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { dataTableWrappedMood } from "../../components/Mood";
@@ -150,8 +145,6 @@ const Roster = ({
 	}
 
 	const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
-
-	const statCols = getCols(stats.map(stat => `stat:${stat}`));
 
 	const showMood = season === currentSeason;
 
@@ -455,238 +448,6 @@ const Roster = ({
 							}
 						: undefined
 				}
-			/>
-
-			<SortableTable
-				disabled={!editable}
-				values={playersSorted}
-				getId={p => String(p.pid)}
-				highlightHandle={({ index }) => index < numPlayersOnCourt}
-				rowClassName={({ index, isDragged, value: p }) =>
-					clsx({
-						separator:
-							!isDragged &&
-							((isSport("basketball") &&
-								index === numPlayersOnCourt - 1 &&
-								season === currentSeason) ||
-								(!isSport("basketball") &&
-									playersSorted[index + 1] &&
-									p.ratings.pos !== playersSorted[index + 1].ratings.pos)),
-						"table-danger": p.hof,
-						"table-info": p.tid === tid && season !== currentSeason,
-					})
-				}
-				onChange={async ({ oldIndex, newIndex }) => {
-					if (oldIndex === newIndex) {
-						return;
-					}
-					const pids = players.map(p => p.pid);
-					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);
-					setSortedPids(newSortedPids);
-					await toWorker("main", "reorderRosterDrag", newSortedPids);
-				}}
-				onSwap={async (index1, index2) => {
-					const newSortedPids = players.map(p => p.pid);
-					newSortedPids[index1] = players[index2].pid;
-					newSortedPids[index2] = players[index1].pid;
-					setSortedPids(newSortedPids);
-					await toWorker("main", "reorderRosterDrag", newSortedPids);
-				}}
-				cols={() => (
-					<>
-						<th>Name</th>
-						<th title="Position">Pos</th>
-						<th>Age</th>
-						<th title="Overall Rating">Ovr</th>
-						<th title="Potential Rating">Pot</th>
-						{season === currentSeason ? <th>Contract</th> : null}
-						<th title="Years With Team">YWT</th>
-						<th title="Country"></th>
-						{statCols.map(({ desc, title }) => (
-							<th key={title} title={desc}>
-								{title}
-							</th>
-						))}
-						{editable ? (
-							<th title="Playing Time Modifier">
-								PT{" "}
-								<HelpPopover title="Playing Time Modifier">
-									<p>
-										Your coach will divide up playing time based on ability and
-										stamina. If you want to influence{" "}
-										{helpers.pronoun(gender, "his")} judgement, your options
-										are:
-									</p>
-									<p>
-										<span style={ptStyles["0"]}>0 No Playing Time</span>
-										<br />
-										<span style={ptStyles["0.75"]}>- Less Playing Time</span>
-										<br />
-										<span style={ptStyles["1"]}>
-											&nbsp;&nbsp;&nbsp; Let Coach Decide
-										</span>
-										<br />
-										<span style={ptStyles["1.25"]}>+ More Playing Time</span>
-										<br />
-										<span style={ptStyles["1.5"]}>
-											++ Even More Playing Time
-										</span>
-									</p>
-								</HelpPopover>
-							</th>
-						) : null}
-						{showMood ? (
-							<th>
-								Mood{" "}
-								<HelpPopover title="Player Mood">
-									See{" "}
-									<a
-										href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										the manual
-									</a>{" "}
-									for more info about player mood.
-								</HelpPopover>
-							</th>
-						) : null}
-						{showRelease ? (
-							<th>
-								Release{" "}
-								<HelpPopover title="Release Player">
-									<p>
-										To free up a roster spot, you can release a player from your
-										team. You will still have to pay{" "}
-										{helpers.pronoun(gender, "his")} salary (and have it count
-										against the salary cap) until{" "}
-										{helpers.pronoun(gender, "his")} contract expires (you can
-										view your released players' contracts in your{" "}
-										<a href={helpers.leagueUrl(["team_finances"])}>
-											Team Finances
-										</a>
-										).
-									</p>
-									{salaryCapType === "soft" ? (
-										<p>
-											However, if you just drafted a player and the regular
-											season has not started yet,{" "}
-											{helpers.pronoun(gender, "his")} contract is not
-											guaranteed and you can release{" "}
-											{helpers.pronoun(gender, "him")} for free.
-										</p>
-									) : null}
-								</HelpPopover>
-							</th>
-						) : null}
-						{showTradeFor || showTradingBlock ? <th>Trade</th> : null}
-						<th title="How Player Was Acquired">Acquired</th>
-					</>
-				)}
-				row={({ value: p }) => {
-					const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-					return (
-						<>
-							<td>
-								<PlayerNameLabels
-									pid={p.pid}
-									injury={p.injury}
-									jerseyNumber={p.stats.jerseyNumber}
-									season={season}
-									skills={p.ratings.skills}
-									watch={p.watch}
-									firstName={p.firstName}
-									firstNameShort={p.firstNameShort}
-									lastName={p.lastName}
-									awards={p.awards}
-									neverShowCountry
-								/>
-							</td>
-							<td>{p.ratings.pos}</td>
-							<td>{p.age}</td>
-							<td>
-								{showRatings ? (
-									<RatingWithChange change={p.ratings.dovr}>
-										{p.ratings.ovr}
-									</RatingWithChange>
-								) : null}
-							</td>
-							<td>
-								{showRatings ? (
-									<RatingWithChange change={p.ratings.dpot}>
-										{p.ratings.pot}
-									</RatingWithChange>
-								) : null}
-							</td>
-							{season === currentSeason ? (
-								<td>
-									<Contract p={p} />
-								</td>
-							) : null}
-							<td>{playoffs === "playoffs" ? null : p.stats.yearsWithTeam}</td>
-							<td>
-								<a
-									href={helpers.leagueUrl([
-										"frivolities",
-										"most",
-										"country",
-										window.encodeURIComponent(helpers.getCountry(p.born.loc)),
-									])}
-								>
-									<CountryFlag country={p.born.loc} />
-								</a>
-							</td>
-							{stats.map(stat => (
-								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
-							))}
-							{editable ? (
-								<td>
-									<PlayingTime p={p} userTid={userTid} />
-								</td>
-							) : null}
-							{showMood ? (
-								<td>
-									<Mood defaultType="current" maxWidth p={p} />
-								</td>
-							) : null}
-							{showRelease ? (
-								<td>
-									<button
-										className="btn btn-light-bordered btn-xs"
-										disabled={!p.canRelease}
-										onClick={() =>
-											handleRelease(p, phase, currentSeason, gender)
-										}
-									>
-										Release
-									</button>
-								</td>
-							) : null}
-							{showTradeFor || showTradingBlock ? (
-								<td title={p.untradableMsg}>
-									<button
-										className="btn btn-light-bordered btn-xs"
-										disabled={p.untradable}
-										onClick={() => {
-											if (showTradeFor) {
-												toWorker("actions", "tradeFor", { pid: p.pid });
-											} else {
-												toWorker("actions", "addToTradingBlock", {
-													pid: p.pid,
-												});
-											}
-										}}
-									>
-										{showTradeFor ? "Trade For" : "Trade Away"}
-									</button>
-								</td>
-							) : null}
-							<td>
-								<SafeHtml dirty={p.latestTransaction} />
-							</td>
-						</>
-					);
-				}}
 			/>
 		</>
 	);

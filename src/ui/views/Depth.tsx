@@ -1,14 +1,9 @@
 import clsx from "clsx";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import {
-	DataTable,
-	MoreLinks,
-	PlayerNameLabels,
-	SortableTable,
-} from "../components";
+import { DataTable, MoreLinks } from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
@@ -158,9 +153,6 @@ const Depth = ({
 	} else {
 		playersSorted = players;
 	}
-
-	const ratingCols = getCols(ratings.map(rating => `rating:${rating}`));
-	const statCols = getCols(stats.map(stat => `stat:${stat}`));
 
 	let numStarters = 0;
 	let positions: string[];
@@ -540,186 +532,6 @@ const Depth = ({
 					}
 				/>
 			</div>
-
-			<SortableTable
-				disabled={!editable}
-				values={playersSorted}
-				getId={p => String(p.pid)}
-				highlightHandle={({ index }) => index < numStarters * numLines}
-				rowClassName={({ index, isDragged }) =>
-					clsx({
-						separator:
-							!isDragged &&
-							((isSport("baseball") && pos === "P" && index === 4) ||
-								(isSport("baseball") && pos === "D" && index === 8) ||
-								(isSport("baseball") && pos === "DP" && index === 7) ||
-								((index % numStarters) + 1 === numStarters &&
-									index < numLines * numStarters &&
-									index !== playersSorted.length - 1)),
-					})
-				}
-				rowLabels={rowLabels}
-				onChange={async ({ oldIndex, newIndex }) => {
-					const pids = players.map(p => p.pid);
-					const newSortedPids = arrayMoveImmutable(pids, oldIndex, newIndex);
-					setSortedPids(newSortedPids);
-					await toWorker("main", "reorderDepthDrag", {
-						pos,
-						sortedPids: getIDsToSave(newSortedPids),
-					});
-				}}
-				onSwap={async (index1, index2) => {
-					const newSortedPids = players.map(p => p.pid);
-					newSortedPids[index1] = players[index2].pid;
-					newSortedPids[index2] = players[index1].pid;
-					setSortedPids(newSortedPids);
-					await toWorker("main", "reorderDepthDrag", {
-						pos,
-						sortedPids: getIDsToSave(newSortedPids),
-					});
-				}}
-				cols={() => (
-					<>
-						<th>Name</th>
-						<th title="Position">Pos</th>
-						<th>Age</th>
-						{positions.map(position => (
-							<Fragment key={position}>
-								<th title={`Overall Rating (${[position]})`}>
-									Ovr{isSport("baseball") && pos !== "P" ? null : [position]}
-								</th>
-								<th title={`Potential Rating (${[position]})`}>
-									Pot{isSport("baseball") && pos !== "P" ? null : [position]}
-								</th>
-							</Fragment>
-						))}
-						{ratingCols.map(({ desc, title }, i) => (
-							<th key={ratings[i]} className="table-accent" title={desc}>
-								{title}
-							</th>
-						))}
-						{statCols.map(({ desc, title }, i) => (
-							<th key={stats[i]} title={desc}>
-								{title}
-							</th>
-						))}
-					</>
-				)}
-				row={({ index, value: p }) => {
-					let highlightPosOvr: string | undefined;
-					if (
-						isSport("hockey") &&
-						pos === "F" &&
-						index < numLines * numStarters
-					) {
-						highlightPosOvr = index % numStarters === 0 ? "C" : "W";
-					} else if (isSport("baseball") && pos === "P") {
-						if (index < 5) {
-							highlightPosOvr = "SP";
-						} else if (index < numStarters) {
-							highlightPosOvr = "RP";
-						}
-					}
-
-					let lineupPos;
-					if (isSport("baseball") && pos === "D" && rowLabels?.[index]) {
-						lineupPos = rowLabels[index];
-					} else {
-						lineupPos = p.lineupPos ?? p.ratings.pos;
-					}
-
-					return (
-						<>
-							<td>
-								{p.pid >= 0 ? (
-									<PlayerNameLabels
-										pid={p.pid}
-										injury={p.injury}
-										jerseyNumber={p.stats.jerseyNumber}
-										skills={p.ratings.skills}
-										watch={p.watch}
-										firstName={p.firstName}
-										firstNameShort={p.firstNameShort}
-										lastName={p.lastName}
-									/>
-								) : null}
-							</td>
-							<td
-								className={clsx({
-									"text-danger":
-										isSport("baseball") && p.lineupPos !== undefined
-											? p.pid >= 0 &&
-												p.lineupPos !== "DH" &&
-												p.lineupPos !== p.ratings.pos
-											: isSport("baseball") && (pos === "D" || pos === "DP")
-												? rowLabels?.[index] !== undefined &&
-													rowLabels[index] !== "DH" &&
-													rowLabels[index] !== p.ratings.pos
-												: !isSport("baseball") &&
-													p.pid >= 0 &&
-													pos !== "KR" &&
-													pos !== "PR" &&
-													!positions.includes(p.ratings.pos),
-								})}
-							>
-								{isSport("baseball") && (pos === "D" || pos === "DP")
-									? p.ratings.pos
-									: p.pid >= 0
-										? lineupPos
-										: p.pid === -1
-											? "P"
-											: null}
-							</td>
-							<td>{p.age}</td>
-							{isSport("baseball") && pos !== "P" ? (
-								p.pid >= 0 ? (
-									<>
-										<td>
-											{!challengeNoRatings
-												? (p.ratings.ovrs[lineupPos] ?? p.ratings.ovr)
-												: null}
-										</td>
-										<td>
-											{!challengeNoRatings
-												? (p.ratings.pots[lineupPos] ?? p.ratings.pot)
-												: null}
-										</td>
-									</>
-								) : (
-									<td colSpan={2} />
-								)
-							) : (
-								positions.map(position => (
-									<Fragment key={position}>
-										<td
-											className={
-												highlightPosOvr === position
-													? "table-primary"
-													: undefined
-											}
-										>
-											{!challengeNoRatings ? p.ratings.ovrs[position] : null}
-										</td>
-										<td>
-											{!challengeNoRatings ? p.ratings.pots[position] : null}
-										</td>
-									</Fragment>
-								))
-							)}
-							{ratings.map(rating => (
-								<td key={rating} className="table-accent">
-									{!challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null}
-								</td>
-							))}
-							{stats.map(stat => (
-								<td key={stat}>
-									{p.pid >= 0 ? helpers.roundStat(p.stats[stat], stat) : null}
-								</td>
-							))}
-						</>
-					);
-				}}
-			/>
 		</>
 	);
 };

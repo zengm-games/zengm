@@ -49,7 +49,6 @@ export { default as SaveTrade } from "./SaveTrade";
 export { default as SideBar } from "./SideBar";
 export { default as SkillsBlock } from "./SkillsBlock";
 export { default as Skyscraper } from "./Skyscraper";
-export { default as SortableTable } from "./SortableTable";
 export { default as StatWithChange } from "./StatWithChange";
 export { default as StickyBottomButtons } from "./StickyBottomButtons";
 export { default as TeamLogoInline } from "./TeamLogoInline";

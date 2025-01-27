@@ -111,7 +111,7 @@ const loadStateFromCache = ({
 	return {
 		colOrder,
 		currentPage: 1,
-		enableFilters: filters !== defaultFilters,
+		enableFilters: !hideAllControls && filters !== defaultFilters,
 		filters,
 		hideAllControls, // So we can know if this changes and reset state
 		perPage,

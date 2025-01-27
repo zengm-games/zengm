@@ -11,7 +11,6 @@ roster -> datatable
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
     - same issue for the animation moving the row into place
 - value -> row
-- when bulk select, highlighted handle color goes away unless hovering
 - test filtering of all cols
 - hide separator when filtering
 - hide separators when sorted by anything except no sort or position

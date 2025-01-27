@@ -1564,7 +1564,9 @@ $sticky-cols: (
 						position: sticky;
 						// left: 157px; will be set by JS
 						z-index: 10;
-						background-color: $white;
+
+						// Not sure why this was needed, but it broke sortable handle background colors
+						//background-color: $white;
 					}
 				}
 			}

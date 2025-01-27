@@ -598,6 +598,7 @@ const DataTable = ({
 									);
 								}}
 								rows={rows}
+								tableRef={tableRef}
 							>
 								{table}
 							</SortableContextWrappers>

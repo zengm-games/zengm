@@ -38,10 +38,6 @@ type RowClassName<Value = ShouldBeValue> = (a: {
 	isDragged: boolean;
 	value: Value;
 }) => string | undefined;
-type Row<Value = ShouldBeValue> = (a: {
-	index: number;
-	value: Value;
-}) => ReactNode;
 
 type SortableTableContextInfo = {
 	clickedIndex: number | undefined;
@@ -53,7 +49,7 @@ type SortableTableContextInfo = {
 	rows: ShouldBeValue[];
 	rowClassName: string; // RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
-	tableRef: string; //RefObject<HTMLTableElement | null>;
+	tableRef: RefObject<HTMLTableElement | null>;
 };
 
 const SortableTableContext = createContext<SortableTableContextInfo>(
@@ -92,6 +88,27 @@ export const SortableHandle = ({
 		tableRef,
 	} = useContext(SortableTableContext);
 
+	const sortableHandleRef = useRef<HTMLTableCellElement | null>(null);
+
+	useLayoutEffect(() => {
+		if (overlay && tableRef.current && sortableHandleRef.current) {
+			// All tds in the first row of the actual table
+			const tableTds =
+				tableRef.current.querySelector("tbody")!.children[0].children;
+
+			// All tds in the overlay row
+			const overlayTds = sortableHandleRef.current.parentElement!.children;
+
+			for (let i = 0; i < overlayTds.length; i++) {
+				const overlayTd = overlayTds[i] as HTMLTableCellElement;
+				const tableTd = tableTds[i] as HTMLTableCellElement;
+
+				overlayTd.style.width = `${tableTd.offsetWidth}px`;
+				overlayTd.style.padding = "4px";
+			}
+		}
+	}, [overlay, tableRef]);
+
 	const isDragged = draggedIndex !== undefined;
 	const selected = clickedIndex === index;
 
@@ -105,6 +122,7 @@ export const SortableHandle = ({
 				"user-select-none": isDragged,
 				"bg-primary": selected,
 			})}
+			ref={sortableHandleRef}
 		>
 			<button
 				className={`btn border-0 d-block w-100 $ ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
@@ -116,115 +134,6 @@ export const SortableHandle = ({
 				{...attributes}
 			/>
 		</td>
-	);
-};
-
-const Row = ({
-	index,
-	value,
-	overlay,
-	style,
-	attributes,
-	listeners,
-	setNodeRef,
-	setActivatorNodeRef,
-}: {
-	index: number;
-	value: ShouldBeValue;
-	overlay?: boolean;
-	style?: CSSProperties;
-} & Partial<
-	Pick<
-		ReturnType<typeof useSortable>,
-		"attributes" | "listeners" | "setNodeRef" | "setActivatorNodeRef"
-	>
->) => {
-	const {
-		clickedIndex,
-		disabled,
-		draggedIndex,
-		highlightHandle,
-		row,
-		rowClassName,
-		rowLabels,
-		tableRef,
-	} = useContext(SortableTableContext);
-
-	const isDragged = draggedIndex !== undefined;
-	const selected = clickedIndex === index;
-	const rowLabel = rowLabels ? (rowLabels[index] ?? "") : undefined;
-
-	/*const className: string | undefined = rowClassName
-		? rowClassName({ index, isDragged, value })
-		: undefined;*/
-	const className = undefined;
-	const highlight = highlightHandle({ index, value });
-
-	const overlayRowRef = useRef<HTMLTableRowElement | null>(null);
-
-	/*useLayoutEffect(() => {
-		if (overlay && tableRef.current && overlayRowRef.current) {
-			// All tds in the first row of the actual table
-			const tableTds =
-				tableRef.current.querySelector("tbody")!.children[0].children;
-
-			// All tds in the overlay row
-			const overlayTds = overlayRowRef.current.children;
-
-			for (let i = 0; i < overlayTds.length; i++) {
-				// @ts-expect-error
-				overlayTds[i].style.width = `${tableTds[i].offsetWidth}px`;
-				// @ts-expect-error
-				overlayTds[i].style.padding = "4px";
-			}
-		}
-	}, [overlay, tableRef]);*/
-
-	return (
-		<tr
-			className={clsx(className, {
-				"opacity-0": !overlay && draggedIndex === index,
-			})}
-			ref={node => {
-				if (setNodeRef) {
-					setNodeRef(node);
-				}
-				if (overlay) {
-					overlayRowRef.current = node;
-				}
-			}}
-			style={style}
-		>
-			{rowLabel !== undefined ? (
-				<td className="text-center">{rowLabel}</td>
-			) : null}
-			{disabled ? (
-				<td className="p-0" />
-			) : (
-				<td
-					className={clsx("roster-handle p-0", {
-						"table-info": !selected && highlight,
-						"table-secondary": !selected && !highlight,
-						"user-select-none": isDragged,
-						"bg-primary": selected,
-					})}
-				>
-					<button
-						className={`btn border-0 d-block w-100 $ ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
-						style={{
-							height: 27,
-						}}
-						ref={setActivatorNodeRef}
-						{...listeners}
-						{...attributes}
-					/>
-				</td>
-			)}
-			{row({
-				index,
-				value,
-			})}
-		</tr>
 	);
 };
 
@@ -276,6 +185,7 @@ export const SortableContextWrappers = ({
 	onSwap,
 	renderRow,
 	rows,
+	tableRef,
 }: {
 	children: ReactNode;
 	highlightHandle: HighlightHandle<DataTableRow>;
@@ -283,6 +193,7 @@ export const SortableContextWrappers = ({
 	onSwap: (index1: number, index2: number) => void;
 	renderRow: (props: RenderRowProps) => ReactNode;
 	rows: DataTableRow[];
+	tableRef: RefObject<HTMLTableElement | null>;
 }) => {
 	const [draggedIndex, setDraggedIndex] = useState<number | undefined>(
 		undefined,
@@ -311,10 +222,10 @@ export const SortableContextWrappers = ({
 			row: "???",
 			rowClassName: "???",
 			rowLabels: undefined,
-			tableRef: "???",
+			tableRef,
 			rows,
 		}),
-		[clickedIndex, draggedIndex, highlightHandle, renderRow, rows],
+		[clickedIndex, draggedIndex, highlightHandle, renderRow, rows, tableRef],
 	);
 
 	// string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!

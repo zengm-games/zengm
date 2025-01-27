@@ -4,14 +4,18 @@ roster -> datatable
 - test sorting/searching all cols if not editable
 - rowClassName function with isDragged passed in to hide separator
   - also in context
+  - also for non-editable ones, need to know if sorted or not
 - some `Value`s in sortable prop got changed to `ShouldBeValue`
 - ??? in sortable.ts
   - rowLabels needed for depth chart
+    - needed even if sort is disabled, like viewing another team
+    - maybe put a .label prop on DataTableRow
   - tableRef already defined in DataTable/index.tsx
 - DRY <Row> call in DataTable/index.tsx
 - header columns
 - do something with overlayRowRef
 - firstNameShort?
+- think hard about what to put in context, what to pass where, what components should exist, etc
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable

@@ -107,11 +107,12 @@ export const Contract = ({ p }: { p: ContractPlayer }) => {
 };
 
 export const wrappedContract = (p: ContractPlayer) => {
-	const formatted = `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`;
+	const formattedAmount = helpers.formatCurrency(p.contract.amount, "M");
+	const formatted = `${formattedAmount} thru ${p.contract.exp}`;
 
 	return {
 		value: <Contract p={p} />,
-		sortValue: p.contract.amount,
+		sortValue: formattedAmount,
 		searchValue: formatted,
 	};
 };

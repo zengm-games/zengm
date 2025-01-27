@@ -1,8 +1,4 @@
 roster -> datatable
-- depth
-  - test all sports
-- for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)
-    - test sorting of all cols
 - rowLabels needed for depth chart
   - needed even if sort is disabled, like viewing another team
   - maybe put a .label prop on DataTableRow

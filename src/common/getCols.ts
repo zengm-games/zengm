@@ -3056,6 +3056,7 @@ const cols: {
 		sortType: "number",
 	},
 	Mood: {
+		desc: "Player Mood",
 		width: "1px",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -3184,6 +3185,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	PT: {
+		desc: "Playing Time Modifier",
+		noSearch: true,
+		sortSequence: [],
+	},
 	PTS: {
 		desc: "Points",
 		sortSequence: ["desc", "asc"],
@@ -3202,6 +3208,11 @@ const cols: {
 		sortType: "record",
 	},
 	Relation: {},
+	Release: {
+		desc: "Release Player",
+		noSearch: true,
+		sortSequence: [],
+	},
 	Result: {},
 	Retired: {
 		sortSequence: ["desc", "asc"],
@@ -3265,6 +3276,7 @@ const cols: {
 	},
 	Trade: {
 		noSearch: true,
+		sortSequence: [],
 	},
 	OTL: {
 		desc: "Overtime Losses",

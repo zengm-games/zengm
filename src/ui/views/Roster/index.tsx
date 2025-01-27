@@ -11,6 +11,7 @@ import {
 	SortableTable,
 	SafeHtml,
 	MoreLinks,
+	DataTable,
 } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import {
@@ -25,6 +26,9 @@ import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { GameAttributesLeague, Phase, View } from "../../../common/types";
 import { Contract } from "../../components/contract";
+import type { DataTableRow } from "../../components/DataTable";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
+import { dataTableWrappedMood } from "../../components/Mood";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -150,6 +154,222 @@ const Roster = ({
 
 	const showMood = season === currentSeason;
 
+	const cols = getCols(
+		[
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			...(season === currentSeason ? ["Contract"] : []),
+			"stat:yearsWithTeam",
+			"Country",
+			...stats.map(stat => `stat:${stat}`),
+			...(editable ? ["PT"] : []),
+			...(showMood ? ["Mood"] : []),
+			...(showRelease ? ["Release"] : []),
+			...(showTradeFor || showTradingBlock ? ["Trade"] : []),
+			"Acquired",
+		],
+		{
+			Country: {
+				title: "",
+				desc: "Country",
+			},
+			PT: {
+				titleReact: (
+					<>
+						PT{" "}
+						<HelpPopover title="Playing Time Modifier">
+							<p>
+								Your coach will divide up playing time based on ability and
+								stamina. If you want to influence{" "}
+								{helpers.pronoun(gender, "his")} judgement, your options are:
+							</p>
+							<p>
+								<span style={ptStyles["0"]}>0 No Playing Time</span>
+								<br />
+								<span style={ptStyles["0.75"]}>- Less Playing Time</span>
+								<br />
+								<span style={ptStyles["1"]}>
+									&nbsp;&nbsp;&nbsp; Let Coach Decide
+								</span>
+								<br />
+								<span style={ptStyles["1.25"]}>+ More Playing Time</span>
+								<br />
+								<span style={ptStyles["1.5"]}>++ Even More Playing Time</span>
+							</p>
+						</HelpPopover>
+					</>
+				),
+			},
+			Mood: {
+				titleReact: (
+					<>
+						Mood{" "}
+						<HelpPopover title="Player Mood">
+							See{" "}
+							<a
+								href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								the manual
+							</a>{" "}
+							for more info about player mood.
+						</HelpPopover>
+					</>
+				),
+			},
+			Release: {
+				titleReact: (
+					<>
+						Release{" "}
+						<HelpPopover title="Release Player">
+							<p>
+								To free up a roster spot, you can release a player from your
+								team. You will still have to pay{" "}
+								{helpers.pronoun(gender, "his")} salary (and have it count
+								against the salary cap) until {helpers.pronoun(gender, "his")}{" "}
+								contract expires (you can view your released players' contracts
+								in your{" "}
+								<a href={helpers.leagueUrl(["team_finances"])}>Team Finances</a>
+								).
+							</p>
+							{salaryCapType === "soft" ? (
+								<p>
+									However, if you just drafted a player and the regular season
+									has not started yet, {helpers.pronoun(gender, "his")} contract
+									is not guaranteed and you can release{" "}
+									{helpers.pronoun(gender, "him")} for free.
+								</p>
+							) : null}
+						</HelpPopover>
+					</>
+				),
+			},
+		},
+	);
+	console.log(cols);
+
+	const rows: DataTableRow[] = playersSorted.map((p, i) => {
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
+		return {
+			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs,
+			},
+			classNames: {
+				separator:
+					(isSport("basketball") &&
+						i === numPlayersOnCourt - 1 &&
+						season === currentSeason) ||
+					(!isSport("basketball") &&
+						playersSorted[i + 1] &&
+						p.ratings.pos !== playersSorted[i + 1].ratings.pos),
+				"table-danger": p.hof,
+				"table-info": p.tid === tid && season !== currentSeason,
+			},
+			data: [
+				wrappedPlayerNameLabels({
+					pid: p.pid,
+					injury: p.injury,
+					jerseyNumber: p.stats.jerseyNumber,
+					season: season,
+					skills: p.ratings.skills,
+					watch: p.watch,
+					firstName: p.firstName,
+					firstNameShort: p.firstNameShort,
+					lastName: p.lastName,
+					awards: p.awards,
+					neverShowCountry: true,
+				}),
+				p.ratings.pos,
+				p.age,
+				showRatings ? (
+					<RatingWithChange change={p.ratings.dovr}>
+						{p.ratings.ovr}
+					</RatingWithChange>
+				) : null,
+				showRatings ? (
+					<RatingWithChange change={p.ratings.dpot}>
+						{p.ratings.pot}
+					</RatingWithChange>
+				) : null,
+				...(season === currentSeason ? [<Contract p={p} />] : []),
+				playoffs === "playoffs" ? null : p.stats.yearsWithTeam,
+				{
+					value: (
+						<>
+							<a
+								href={helpers.leagueUrl([
+									"frivolities",
+									"most",
+									"country",
+									window.encodeURIComponent(helpers.getCountry(p.born.loc)),
+								])}
+							>
+								<CountryFlag country={p.born.loc} />
+							</a>
+						</>
+					),
+					sortValue: p.born.loc,
+					searchValue: p.born.loc,
+				},
+				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...(editable ? [<PlayingTime p={p} userTid={userTid} />] : []),
+				...(showMood
+					? [
+							dataTableWrappedMood({
+								defaultType: "current",
+								maxWidth: true,
+								p,
+							}),
+						]
+					: []),
+				...(showRelease
+					? [
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={!p.canRelease}
+								onClick={() => handleRelease(p, phase, currentSeason, gender)}
+							>
+								Release
+							</button>,
+						]
+					: []),
+				...(showTradeFor || showTradingBlock
+					? [
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={p.untradable}
+								onClick={() => {
+									if (showTradeFor) {
+										toWorker("actions", "tradeFor", { pid: p.pid });
+									} else {
+										toWorker("actions", "addToTradingBlock", {
+											pid: p.pid,
+										});
+									}
+								}}
+							>
+								{showTradeFor ? "Trade For" : "Trade Away"}
+							</button>,
+						]
+					: []),
+				{
+					value: <SafeHtml dirty={p.latestTransaction} />,
+					sortValue: p.latestTransaction,
+					searchValue: p.latestTransaction,
+				},
+			],
+		};
+	});
+
 	return (
 		<>
 			<MoreLinks
@@ -192,7 +412,15 @@ const Roster = ({
 				</p>
 			) : null}
 
-			<div className="clearfix" />
+			<DataTable
+				cols={cols}
+				defaultSort={"disableSort"}
+				defaultStickyCols={window.mobile ? 0 : 2}
+				name="Roster"
+				rows={rows}
+				hideAllControls={editable}
+				nonfluid
+			/>
 
 			<SortableTable
 				disabled={!editable}

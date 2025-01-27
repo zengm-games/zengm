@@ -1,3 +1,9 @@
+roster -> datatable
+- hideAllContrls if editable
+  - spacing above table needs to change with editable too?
+- test sorting/searching all cols if not editable
+- rowClassName function with isDragged passed in to hide separator
+
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable
   - SortableTable - especially for roster

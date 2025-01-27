@@ -2,6 +2,7 @@ import clsx from "clsx";
 import type { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow, DataTableRowMetadata } from ".";
+import { SortableHandle, type SortableHandleProps } from "./sortable";
 
 type MyRow = Omit<DataTableRow, "data"> & {
 	data: any[];
@@ -58,6 +59,8 @@ const Row = ({
 	disableBulkSelectCheckbox,
 	onBulkSelectToggle,
 	showBulkSelectCheckboxes,
+
+	sortable,
 }: {
 	clickable?: boolean;
 	highlightCols: number[];
@@ -67,6 +70,8 @@ const Row = ({
 	disableBulkSelectCheckbox: boolean;
 	onBulkSelectToggle: OnBulkSelectToggle;
 	showBulkSelectCheckboxes: boolean;
+
+	sortable?: SortableHandleProps;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 	return (
@@ -89,6 +94,7 @@ const Row = ({
 					<td />
 				)
 			) : null}
+			{sortable ? <SortableHandle {...sortable} /> : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =

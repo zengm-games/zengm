@@ -250,7 +250,6 @@ const Roster = ({
 			},
 		},
 	);
-	console.log(cols);
 
 	const rows: DataTableRow[] = playersSorted.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
@@ -420,6 +419,33 @@ const Roster = ({
 				rows={rows}
 				hideAllControls={editable}
 				nonfluid
+				sortable={
+					editable
+						? {
+								highlightHandle: ({ index }) => index < numPlayersOnCourt,
+								onChange: async ({ oldIndex, newIndex }) => {
+									if (oldIndex === newIndex) {
+										return;
+									}
+									const pids = players.map(p => p.pid);
+									const newSortedPids = arrayMoveImmutable(
+										pids,
+										oldIndex,
+										newIndex,
+									);
+									setSortedPids(newSortedPids);
+									await toWorker("main", "reorderRosterDrag", newSortedPids);
+								},
+								onSwap: async (index1, index2) => {
+									const newSortedPids = players.map(p => p.pid);
+									newSortedPids[index1] = players[index2].pid;
+									newSortedPids[index2] = players[index1].pid;
+									setSortedPids(newSortedPids);
+									await toWorker("main", "reorderRosterDrag", newSortedPids);
+								},
+							}
+						: undefined
+				}
 			/>
 
 			<SortableTable

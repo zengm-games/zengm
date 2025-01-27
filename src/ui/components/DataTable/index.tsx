@@ -27,6 +27,11 @@ import { useDataTableState } from "./useDataTableState";
 import { processRows } from "./processRows";
 import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows";
 import { BulkActions } from "./BulkActions";
+import {
+	DraggableRow,
+	SortableContextWrappers,
+	type HighlightHandle,
+} from "./sortable";
 
 export type SortBy = [number, SortOrder];
 
@@ -104,6 +109,11 @@ export type Props = {
 	rankCol?: number;
 	rows: DataTableRow[];
 	small?: boolean;
+	sortable?: {
+		highlightHandle: HighlightHandle<DataTableRow>;
+		onChange: (a: { oldIndex: number; newIndex: number }) => void;
+		onSwap: (index1: number, index2: number) => void;
+	};
 	striped?: boolean;
 	superCols?: SuperCol[];
 
@@ -135,9 +145,16 @@ const DataTable = ({
 	rankCol,
 	rows,
 	small,
+	sortable,
 	striped,
 	superCols,
 }: Props) => {
+	if (sortable && !hideAllControls) {
+		throw new Error(
+			`If you enable sortable, you must also enable hideAllControls`,
+		);
+	}
+
 	const { state, setStatePartial, resetState } = useDataTableState({
 		cols,
 		defaultSort,
@@ -376,6 +393,92 @@ const DataTable = ({
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
 
+	const table = (
+		<table
+			className={clsx(
+				"table table-hover",
+				{
+					"table-sm": small !== false,
+					"table-striped": striped !== false,
+					"table-borderless": striped !== false,
+				},
+				stickyClass,
+			)}
+			ref={tableRef}
+		>
+			{hideHeader ? null : (
+				<Header
+					bulkSelectProps={{
+						disableBulkSelectKeys,
+						filteredRows: processedRows,
+						filteredRowsPage: processedRowsPage,
+						selectedRows,
+					}}
+					colOrder={colOrderFiltered}
+					cols={cols}
+					enableFilters={state.enableFilters}
+					filters={state.filters}
+					handleColClick={handleColClick}
+					handleFilterUpdate={handleFilterUpdate}
+					showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+					sortBys={state.sortBys}
+					superCols={superCols}
+				/>
+			)}
+			<tbody>
+				{processedRowsPage.map((row, index) => {
+					if (sortable) {
+						return (
+							<DraggableRow
+								id={String(row.key)}
+								value={row}
+								renderRow={info => {
+									return (
+										<Row
+											key={row.key}
+											row={row}
+											clickable={clickable}
+											highlightCols={highlightCols}
+											bulkSelectChecked={selectedRows.map.has(row.key)}
+											onBulkSelectToggle={(key, metadata) => {
+												selectedRows.toggle(key, metadata);
+											}}
+											showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+											disableBulkSelectCheckbox={
+												!!disableBulkSelectKeys?.has(row.key)
+											}
+											sortable={info}
+										/>
+									);
+								}}
+							/>
+						);
+					}
+
+					return (
+						<Row
+							key={row.key}
+							row={row}
+							clickable={clickable}
+							highlightCols={highlightCols}
+							bulkSelectChecked={selectedRows.map.has(row.key)}
+							onBulkSelectToggle={(key, metadata) => {
+								selectedRows.toggle(key, metadata);
+							}}
+							showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+							disableBulkSelectCheckbox={!!disableBulkSelectKeys?.has(row.key)}
+						/>
+					);
+				})}
+			</tbody>
+			<Footer
+				colOrder={colOrderFiltered}
+				footer={footer}
+				highlightCols={highlightCols}
+			/>
+		</table>
+	);
+
 	return (
 		<>
 			<CustomizeColumns
@@ -487,61 +590,13 @@ const DataTable = ({
 						)}
 						nonfluid={nonfluid}
 					>
-						<table
-							className={clsx(
-								"table table-hover",
-								{
-									"table-sm": small !== false,
-									"table-striped": striped !== false,
-									"table-borderless": striped !== false,
-								},
-								stickyClass,
-							)}
-							ref={tableRef}
-						>
-							{hideHeader ? null : (
-								<Header
-									bulkSelectProps={{
-										disableBulkSelectKeys,
-										filteredRows: processedRows,
-										filteredRowsPage: processedRowsPage,
-										selectedRows,
-									}}
-									colOrder={colOrderFiltered}
-									cols={cols}
-									enableFilters={state.enableFilters}
-									filters={state.filters}
-									handleColClick={handleColClick}
-									handleFilterUpdate={handleFilterUpdate}
-									showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-									sortBys={state.sortBys}
-									superCols={superCols}
-								/>
-							)}
-							<tbody>
-								{processedRowsPage.map(row => (
-									<Row
-										key={row.key}
-										row={row}
-										clickable={clickable}
-										highlightCols={highlightCols}
-										bulkSelectChecked={selectedRows.map.has(row.key)}
-										onBulkSelectToggle={(key, metadata) => {
-											selectedRows.toggle(key, metadata);
-										}}
-										showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-										disableBulkSelectCheckbox={
-											!!disableBulkSelectKeys?.has(row.key)
-										}
-									/>
-								))}
-							</tbody>
-							<Footer
-								colOrder={colOrderFiltered}
-								footer={footer}
-								highlightCols={highlightCols}
-							/>
-						</table>
+						{sortable ? (
+							<SortableContextWrappers {...sortable} rows={rows}>
+								{table}
+							</SortableContextWrappers>
+						) : (
+							table
+						)}
 					</ResponsiveTableWrapper>
 					{!hideAllControls && pagination ? (
 						<div className="d-flex align-items-center">

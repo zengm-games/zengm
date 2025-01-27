@@ -48,6 +48,7 @@ type SortableTableContextInfo = {
 	disabled: string; //boolean | undefined;
 	draggedIndex: number | undefined;
 	highlightHandle: HighlightHandle<ShouldBeValue>;
+	renderRow: (props: RenderRowProps) => ReactNode;
 	row: string; //Row<ShouldBeValue>;
 	rowClassName: string; // RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
@@ -233,11 +234,9 @@ export type RenderRowProps = SortableHandleProps & {
 export const DraggableRow = ({
 	id,
 	value,
-	renderRow,
 }: {
 	id: string;
 	value: ShouldBeValue;
-	renderRow: (props: RenderRowProps) => ReactNode;
 }) => {
 	const {
 		attributes,
@@ -248,7 +247,7 @@ export const DraggableRow = ({
 		transform,
 		transition,
 	} = useSortable({ id });
-	const { draggedIndex } = useContext(SortableTableContext);
+	const { draggedIndex, renderRow } = useContext(SortableTableContext);
 
 	const style = transform
 		? {
@@ -274,12 +273,14 @@ export const SortableContextWrappers = ({
 	highlightHandle,
 	onChange,
 	onSwap,
+	renderRow,
 	rows,
 }: {
 	children: ReactNode;
 	highlightHandle: HighlightHandle<DataTableRow>;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
 	onSwap: (index1: number, index2: number) => void;
+	renderRow: (props: RenderRowProps) => ReactNode;
 	rows: DataTableRow[];
 }) => {
 	const [draggedIndex, setDraggedIndex] = useState<number | undefined>(
@@ -305,12 +306,13 @@ export const SortableContextWrappers = ({
 			disabled: "???",
 			draggedIndex,
 			highlightHandle,
+			renderRow,
 			row: "???",
 			rowClassName: "???",
 			rowLabels: undefined,
 			tableRef: "???",
 		}),
-		[clickedIndex, draggedIndex, highlightHandle],
+		[clickedIndex, draggedIndex, highlightHandle, renderRow],
 	);
 
 	// string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!
@@ -386,5 +388,16 @@ export const SortableContextWrappers = ({
 				</SortableTableContext.Provider>
 			</SortableContext>
 		</DndContext>
+	);
+};
+
+export const MyDragOverlay = () => {
+	const { draggedIndex, row } = useContext(SortableTableContext);
+
+	console.log("MyDragOverlay", draggedIndex, row);
+	return (
+		<DragOverlay wrapperElement="tbody">
+			{draggedIndex !== undefined ? <div>HELLO!</div> : null}
+		</DragOverlay>
 	);
 };

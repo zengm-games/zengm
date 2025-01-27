@@ -29,6 +29,7 @@ import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows";
 import { BulkActions } from "./BulkActions";
 import {
 	DraggableRow,
+	MyDragOverlay,
 	SortableContextWrappers,
 	type HighlightHandle,
 } from "./sortable";
@@ -430,27 +431,9 @@ const DataTable = ({
 					if (sortable) {
 						return (
 							<DraggableRow
+								key={String(row.key)}
 								id={String(row.key)}
 								value={row}
-								renderRow={info => {
-									return (
-										<Row
-											key={row.key}
-											row={row}
-											clickable={clickable}
-											highlightCols={highlightCols}
-											bulkSelectChecked={selectedRows.map.has(row.key)}
-											onBulkSelectToggle={(key, metadata) => {
-												selectedRows.toggle(key, metadata);
-											}}
-											showBulkSelectCheckboxes={showBulkSelectCheckboxes}
-											disableBulkSelectCheckbox={
-												!!disableBulkSelectKeys?.has(row.key)
-											}
-											sortable={info}
-										/>
-									);
-								}}
 							/>
 						);
 					}
@@ -471,6 +454,7 @@ const DataTable = ({
 					);
 				})}
 			</tbody>
+			{sortable ? <MyDragOverlay /> : null}
 			<Footer
 				colOrder={colOrderFiltered}
 				footer={footer}
@@ -591,7 +575,30 @@ const DataTable = ({
 						nonfluid={nonfluid}
 					>
 						{sortable ? (
-							<SortableContextWrappers {...sortable} rows={rows}>
+							<SortableContextWrappers
+								{...sortable}
+								renderRow={sortableInfo => {
+									const row = sortableInfo.value;
+									return (
+										<Row
+											key={row.key}
+											row={row}
+											clickable={clickable}
+											highlightCols={highlightCols}
+											bulkSelectChecked={selectedRows.map.has(row.key)}
+											onBulkSelectToggle={(key, metadata) => {
+												selectedRows.toggle(key, metadata);
+											}}
+											showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+											disableBulkSelectCheckbox={
+												!!disableBulkSelectKeys?.has(row.key)
+											}
+											sortable={sortableInfo}
+										/>
+									);
+								}}
+								rows={rows}
+							>
 								{table}
 							</SortableContextWrappers>
 						) : (

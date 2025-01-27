@@ -79,12 +79,9 @@ export const SortableHandle = ({
 }: SortableHandleProps) => {
 	const {
 		clickedIndex,
-		disabled,
 		draggedIndex,
 		highlightHandle,
-		row,
 		rowClassName,
-		rowLabels,
 		tableRef,
 	} = useContext(SortableTableContext);
 
@@ -117,18 +114,22 @@ export const SortableHandle = ({
 	return (
 		<td
 			className={clsx("roster-handle p-0", {
+				// Colors need to be here rather than on button so they play nice with hover/clicked table row highlighting
+				"bg-primary": selected,
 				"table-info": !selected && highlight,
 				"table-secondary": !selected && !highlight,
 				"user-select-none": isDragged,
-				"bg-primary": selected,
 			})}
 			ref={sortableHandleRef}
+			style={{
+				height: 27,
+			}}
 		>
 			<button
-				className={`btn border-0 d-block w-100 $ ${isDragged ? "cursor-grabbing" : "cursor-grab"}`}
-				style={{
-					height: 27,
-				}}
+				className={clsx(
+					"btn border-0 d-block w-100 h-100",
+					isDragged ? "cursor-grabbing" : "cursor-grab",
+				)}
 				ref={setActivatorNodeRef}
 				{...listeners}
 				{...attributes}

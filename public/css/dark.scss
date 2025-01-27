@@ -408,7 +408,7 @@ table.table thead .sorting::after {
 	background-color: rgba(33, 37, 41, 0.8);
 }
 
-// Otherwise it's just black, needs manual override. This breaks hover though :(
+// For sortable table handles - otherwise it's just black, needs manual override. This breaks hover though :(
 .table-secondary {
 	background-color: $gray-100 !important;
 	--bs-table-bg: $gray-100 !important;

@@ -1582,7 +1582,9 @@ table.sticky-iv {
 			position: sticky;
 			left: 0;
 			z-index: 10;
-			background-color: $white;
+
+			// Not sure why this was needed, but it broke sortable handle background colors
+			//background-color: $white;
 		}
 	}
 
@@ -1605,13 +1607,6 @@ table.sticky-iv {
 		td,
 		td.sorting_highlight {
 			background-color: inherit !important;
-		}
-	}
-
-	// This is needed for SortableTable handles
-	@each $color, $value in $table-variants {
-		td.table-#{$color} {
-			background-color: $value !important;
 		}
 	}
 }

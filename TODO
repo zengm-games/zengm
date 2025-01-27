@@ -16,6 +16,9 @@ roster -> datatable
 - do something with overlayRowRef
 - firstNameShort?
 - think hard about what to put in context, what to pass where, what components should exist, etc
+- sticky/sorting interplay
+  - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
+    - same issue for the animation moving the row into place
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable

@@ -433,6 +433,7 @@ const DataTable = ({
 						handleColClick={handleColClick}
 						handleFilterUpdate={handleFilterUpdate}
 						showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+						sortable={!!sortable}
 						sortBys={state.sortBys}
 						superCols={superCols}
 					/>

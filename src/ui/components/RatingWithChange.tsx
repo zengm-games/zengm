@@ -26,4 +26,14 @@ const RatingWithChange = ({
 	);
 };
 
+export const wrappedRatingWithChange = (rating: number, change: number) => {
+	const formatted = `${rating} ${change !== 0 ? `(${change > 0 ? "+" : ""}{change})` : ""}`;
+
+	return {
+		value: <RatingWithChange change={change}>{rating}</RatingWithChange>,
+		sortValue: rating + (change + 500) / 1000,
+		searchValue: formatted,
+	};
+};
+
 export default RatingWithChange;

@@ -25,10 +25,11 @@ import {
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { GameAttributesLeague, Phase, View } from "../../../common/types";
-import { Contract } from "../../components/contract";
+import { Contract, wrappedContract } from "../../components/contract";
 import type { DataTableRow, SortBy } from "../../components/DataTable";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { dataTableWrappedMood } from "../../components/Mood";
+import { wrappedRatingWithChange } from "../../components/RatingWithChange";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -292,17 +293,13 @@ const Roster = ({
 				}),
 				p.ratings.pos,
 				p.age,
-				showRatings ? (
-					<RatingWithChange change={p.ratings.dovr}>
-						{p.ratings.ovr}
-					</RatingWithChange>
-				) : null,
-				showRatings ? (
-					<RatingWithChange change={p.ratings.dpot}>
-						{p.ratings.pot}
-					</RatingWithChange>
-				) : null,
-				...(season === currentSeason ? [<Contract p={p} />] : []),
+				showRatings
+					? wrappedRatingWithChange(p.ratings.ovr, p.ratings.dovr)
+					: null,
+				showRatings
+					? wrappedRatingWithChange(p.ratings.pot, p.ratings.dpot)
+					: null,
+				...(season === currentSeason ? [wrappedContract(p)] : []),
 				playoffs === "playoffs" ? null : p.stats.yearsWithTeam,
 				{
 					value: (

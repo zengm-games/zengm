@@ -1,6 +1,4 @@
 roster -> datatable
-- hideAllContrls if editable
-  - spacing above table needs to change with editable too?
 - test sorting/searching all cols if not editable
 - for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)
 - some `Value`s in sortable prop got changed to `ShouldBeValue`
@@ -14,6 +12,7 @@ roster -> datatable
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
     - same issue for the animation moving the row into place
 - value -> row
+- when bulk select, highlighted handle color goes away unless hovering
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable

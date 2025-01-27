@@ -318,7 +318,7 @@ const TopStuff = ({
 				tid={tid}
 			/>
 
-			<div className="mb-3">
+			<div>
 				<Note
 					key={JSON.stringify([tid, season])}
 					note={t.seasonAttrs.note}
@@ -336,22 +336,18 @@ const TopStuff = ({
 			</div>
 
 			{editable ? (
-				<p
-					style={{
-						clear: "both",
-					}}
-				>
+				<div className="mt-3">
 					Click or drag row handles to move players between the starting lineup{" "}
 					<span className="table-info legend-square" /> and the bench{" "}
 					<span className="table-secondary legend-square" />.
-				</p>
+				</div>
 			) : season !== currentSeason ? (
-				<p>
+				<div className="mt-3">
 					Players still on this team are{" "}
 					<span className="text-info">highlighted in blue</span>. Players in the
 					Hall of Fame are{" "}
 					<span className="text-danger">highlighted in red</span>.
-				</p>
+				</div>
 			) : null}
 		</>
 	);

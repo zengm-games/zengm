@@ -1,25 +1,24 @@
 import { useCallback, useState } from "react";
-import loadStateFromCache, { type State } from "./loadStateFromCache";
-import type { Props } from ".";
-
-type StateProps = Pick<
-	Props,
-	"cols" | "defaultSort" | "defaultStickyCols" | "disableSettingsCache" | "name"
->;
+import loadStateFromCache, {
+	type LoadStateFromCacheProps,
+	type State,
+} from "./loadStateFromCache";
 
 export const useDataTableState = ({
 	cols,
 	defaultSort,
 	defaultStickyCols,
 	disableSettingsCache,
+	hideAllControls,
 	name,
-}: StateProps) => {
+}: LoadStateFromCacheProps) => {
 	const [state, setState] = useState<State>(() =>
 		loadStateFromCache({
 			cols,
 			defaultSort,
 			defaultStickyCols,
 			disableSettingsCache,
+			hideAllControls,
 			name,
 		}),
 	);
@@ -32,7 +31,8 @@ export const useDataTableState = ({
 	}, []);
 
 	const resetState = useCallback(
-		(stateProps: StateProps) => setState(loadStateFromCache(stateProps)),
+		(stateProps: LoadStateFromCacheProps) =>
+			setState(loadStateFromCache(stateProps)),
 		[],
 	);
 

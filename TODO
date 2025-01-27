@@ -6,13 +6,20 @@ roster -> datatable
   - rowLabels needed for depth chart
     - needed even if sort is disabled, like viewing another team
     - maybe put a .label prop on DataTableRow
-- DRY <Row> call in DataTable/index.tsx
 - think hard about what to put in context, what to pass where, what components should exist, etc
 - sticky/sorting interplay
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
     - same issue for the animation moving the row into place
 - value -> row
 - when bulk select, highlighted handle color goes away unless hovering
+- test filtering of all cols
+- hide separator when filtering
+- hide separators when sorted by anything except no sort or position
+- what happens if you sort when it's sortable (doesn't actually happen here - always sortable in non-basketball, and never sortable in basketball because rosterOrder matters) - need same logic as hideAllControlsBool?
+
+datatable should support unsorted sort state
+- leaders, award races - so we don't have to highlight by default
+- roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable

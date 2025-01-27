@@ -158,11 +158,13 @@ const DataTable = ({
 		);
 	}
 
+	const hideAllControlsBool = !!hideAllControls;
 	const { state, setStatePartial, resetState } = useDataTableState({
 		cols,
 		defaultSort,
 		defaultStickyCols,
 		disableSettingsCache,
+		hideAllControls: hideAllControlsBool,
 		name,
 	});
 
@@ -234,6 +236,7 @@ const DataTable = ({
 			defaultSort,
 			defaultStickyCols,
 			disableSettingsCache,
+			hideAllControls: hideAllControlsBool,
 			name,
 		});
 	};
@@ -300,12 +303,17 @@ const DataTable = ({
 
 	// If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats).
 	// If colOrder does not match cols, need to run reconciliation code in loadStateFromCache (example: current vs past seasons in League Finances).
-	if (name !== state.prevName || cols.length > state.colOrder.length) {
+	if (
+		name !== state.prevName ||
+		cols.length > state.colOrder.length ||
+		state.hideAllControls !== hideAllControlsBool
+	) {
 		resetState({
 			cols,
 			defaultSort,
 			defaultStickyCols,
 			disableSettingsCache,
+			hideAllControls: hideAllControlsBool,
 			name,
 		});
 	}

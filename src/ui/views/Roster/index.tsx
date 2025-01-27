@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
-import { isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
+import { bySport, isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
 import {
 	CountryFlag,
 	HelpPopover,
@@ -26,7 +26,7 @@ import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 import type { GameAttributesLeague, Phase, View } from "../../../common/types";
 import { Contract } from "../../components/contract";
-import type { DataTableRow } from "../../components/DataTable";
+import type { DataTableRow, SortBy } from "../../components/DataTable";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { dataTableWrappedMood } from "../../components/Mood";
 
@@ -414,7 +414,10 @@ const Roster = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={"disableSort"}
+				defaultSort={bySport<SortBy | "disableSort">({
+					basketball: "disableSort",
+					default: [1, "desc"],
+				})}
 				defaultStickyCols={window.mobile ? 0 : 2}
 				name="Roster"
 				rows={rows}

@@ -10,6 +10,7 @@ export type State = {
 	currentPage: number;
 	enableFilters: boolean;
 	filters: string[];
+	hideAllControls: boolean;
 	prevName: string;
 	perPage: number;
 	searchText: string;
@@ -19,16 +20,20 @@ export type State = {
 	settingsCache: SettingsCache;
 };
 
+export type LoadStateFromCacheProps = Pick<
+	Props,
+	"cols" | "disableSettingsCache" | "defaultSort" | "defaultStickyCols" | "name"
+> &
+	Pick<State, "hideAllControls">;
+
 const loadStateFromCache = ({
 	cols,
 	disableSettingsCache,
 	defaultSort,
 	defaultStickyCols,
+	hideAllControls,
 	name,
-}: Pick<
-	Props,
-	"cols" | "disableSettingsCache" | "defaultSort" | "defaultStickyCols" | "name"
->): State => {
+}: LoadStateFromCacheProps): State => {
 	const settingsCache = new SettingsCache(name, !!disableSettingsCache);
 
 	// @ts-expect-error
@@ -108,6 +113,7 @@ const loadStateFromCache = ({
 		currentPage: 1,
 		enableFilters: filters !== defaultFilters,
 		filters,
+		hideAllControls, // So we can know if this changes and reset state
 		perPage,
 		prevName: name,
 		searchText: "",

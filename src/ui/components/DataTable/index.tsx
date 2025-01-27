@@ -540,45 +540,47 @@ const DataTable = ({
 						"d-inline-block mw-100": nonfluid,
 					})}
 				>
-					<div className="d-flex" style={{ height: 35 }} ref={wrapperRef}>
-						{bulkSelectRows ? (
-							<BulkActions
-								hideAllControls={hideAllControls}
-								name={name}
-								selectedRows={selectedRows}
-								wrapperRef={wrapperRef}
-							/>
-						) : pagination && !hideAllControls ? (
-							<PerPage onChange={handlePerPage} value={state.perPage} />
-						) : null}
-						{hideAllControls && typeof hideAllControls !== "boolean" ? (
-							<div
-								className={clsx(
-									"datatable-header-text text-truncate d-flex align-items-center",
-									bulkSelectRows ? "ms-2" : undefined,
-								)}
-							>
-								{hideAllControls}
-							</div>
-						) : null}
-						{!hideMenuToo ? (
-							<Controls
-								alwaysShowBulkSelectRows={!!alwaysShowBulkSelectRows}
-								bulkSelectRows={bulkSelectRows}
-								enableFilters={state.enableFilters}
-								hideAllControls={!!hideAllControls}
-								metadataType={metadataType}
-								name={name}
-								onBulkSelectRows={handleBulkSelectRows}
-								onExportCSV={handleExportCSV}
-								onResetTable={handleResetTable}
-								onSearch={handleSearch}
-								onSelectColumns={handleSelectColumns}
-								onToggleFilters={handleToggleFilters}
-								searchText={state.searchText}
-							/>
-						) : null}
-					</div>
+					{!hideAllControls || !hideMenuToo ? (
+						<div className="d-flex" style={{ height: 35 }} ref={wrapperRef}>
+							{bulkSelectRows ? (
+								<BulkActions
+									hideAllControls={hideAllControls}
+									name={name}
+									selectedRows={selectedRows}
+									wrapperRef={wrapperRef}
+								/>
+							) : pagination && !hideAllControls ? (
+								<PerPage onChange={handlePerPage} value={state.perPage} />
+							) : null}
+							{hideAllControls && typeof hideAllControls !== "boolean" ? (
+								<div
+									className={clsx(
+										"datatable-header-text text-truncate d-flex align-items-center",
+										bulkSelectRows ? "ms-2" : undefined,
+									)}
+								>
+									{hideAllControls}
+								</div>
+							) : null}
+							{!hideMenuToo ? (
+								<Controls
+									alwaysShowBulkSelectRows={!!alwaysShowBulkSelectRows}
+									bulkSelectRows={bulkSelectRows}
+									enableFilters={state.enableFilters}
+									hideAllControls={!!hideAllControls}
+									metadataType={metadataType}
+									name={name}
+									onBulkSelectRows={handleBulkSelectRows}
+									onExportCSV={handleExportCSV}
+									onResetTable={handleResetTable}
+									onSearch={handleSearch}
+									onSelectColumns={handleSelectColumns}
+									onToggleFilters={handleToggleFilters}
+									searchText={state.searchText}
+								/>
+							) : null}
+						</div>
+					) : null}
 					<ResponsiveTableWrapper
 						className={clsx(
 							classNameWrapper,

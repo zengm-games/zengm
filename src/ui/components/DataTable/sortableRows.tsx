@@ -105,7 +105,7 @@ export const SortableHandle = ({
 		>
 			<button
 				className={clsx(
-					"btn border-0 d-block w-100 h-100",
+					"btn border-0 rounded-0 d-block w-100 h-100",
 					isDragged ? "cursor-grabbing" : "cursor-grab",
 				)}
 				ref={setActivatorNodeRef}

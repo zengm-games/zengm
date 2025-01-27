@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { PHASE } from "../../common";
-import { SortableTable } from "../components";
+import { DataTable, SortableTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
+import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { shuffle } from "../../common/random";
+import type { DataTableRow } from "../components/DataTable";
 
 const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(teams.map(t => t.tid));
@@ -43,6 +44,21 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 		}
 		return found;
 	});
+
+	const cols = getCols(["#", "Team"]);
+
+	const rows: DataTableRow[] = teamsSorted.map((t, i) => {
+		return {
+			key: t.tid,
+			data: [
+				i + 1,
+				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>
+					{t.region} {t.name}
+				</a>,
+			],
+		};
+	});
+
 	return (
 		<>
 			<p>
@@ -67,58 +83,42 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 				Randomize order
 			</button>
 
-			<div className="clearfix" />
-
-			<SortableTable
-				values={teamsSorted}
-				getId={t => String(t.tid)}
-				highlightHandle={({ value }) => userTids.includes(value.tid)}
-				onChange={({ oldIndex, newIndex }) => {
-					const newSortedTids = arrayMoveImmutable(
-						sortedTids,
-						oldIndex,
-						newIndex,
-					);
-					setSortedTids(newSortedTids);
+			<DataTable
+				cols={cols}
+				defaultSort={"disableSort"}
+				name="FantasyDraft"
+				rows={rows}
+				hideAllControls
+				hideMenuToo
+				nonfluid
+				sortableRows={{
+					highlightHandle: ({ row }) => userTids.includes(row.key as number),
+					onChange: async ({ oldIndex, newIndex }) => {
+						const newSortedTids = arrayMoveImmutable(
+							sortedTids,
+							oldIndex,
+							newIndex,
+						);
+						setSortedTids(newSortedTids);
+					},
+					onSwap: async (index1, index2) => {
+						const newSortedTids = [...sortedTids];
+						newSortedTids[index1] = sortedTids[index2];
+						newSortedTids[index2] = sortedTids[index1];
+						setSortedTids(newSortedTids);
+					},
 				}}
-				onSwap={async (index1, index2) => {
-					const newSortedTids = [...sortedTids];
-					newSortedTids[index1] = sortedTids[index2];
-					newSortedTids[index2] = sortedTids[index1];
-					setSortedTids(newSortedTids);
-				}}
-				cols={() => (
-					<>
-						<th>#</th>
-						<th>Team</th>
-					</>
-				)}
-				row={({ index, value }) => (
-					<>
-						<td>{index + 1}</td>
-						<td>
-							<a
-								href={helpers.leagueUrl([
-									"roster",
-									`${value.abbrev}_${value.tid}`,
-								])}
-							>
-								{value.region} {value.name}
-							</a>
-						</td>
-					</>
-				)}
 			/>
 
-			<p>
+			<div className="mb-3">
 				<button
 					className="btn btn-large btn-success"
 					disabled={starting}
 					onClick={startDraft}
 				>
-					Start Fantasy Draft
+					Start fantasy draft
 				</button>
-			</p>
+			</div>
 
 			<span className="text-danger">
 				<b>Warning:</b> Once you start a fantasy draft, there is no going back!

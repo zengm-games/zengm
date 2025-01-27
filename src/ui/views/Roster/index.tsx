@@ -252,6 +252,9 @@ const Roster = ({
 		},
 	);
 
+	// Sort by pos for non-basketball sports
+	const defaultSortCol = 1;
+
 	const rows: DataTableRow[] = playersSorted.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
@@ -267,7 +270,10 @@ const Roster = ({
 				separator:
 					!isDragged &&
 					!isFiltered &&
-					sortBys === undefined &&
+					(sortBys === undefined ||
+						(!isSport("basketball") &&
+							sortBys.length === 1 &&
+							sortBys[0][0] === defaultSortCol)) &&
 					((isSport("basketball") &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||
@@ -415,7 +421,7 @@ const Roster = ({
 				cols={cols}
 				defaultSort={bySport<SortBy | "disableSort">({
 					basketball: "disableSort",
-					default: [1, "desc"],
+					default: [defaultSortCol, "asc"],
 				})}
 				defaultStickyCols={window.mobile ? 0 : 2}
 				name="Roster"

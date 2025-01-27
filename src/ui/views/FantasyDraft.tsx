@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import { PHASE } from "../../common";
-import { DataTable, SortableTable } from "../components";
+import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";

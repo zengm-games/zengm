@@ -1,7 +1,6 @@
 roster -> datatable
 - for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)
-  - confirm - hide separators when sorted by anything except no sort or position
-  - test sorting of all cols
+    - test sorting of all cols
 - rowLabels needed for depth chart
   - needed even if sort is disabled, like viewing another team
   - maybe put a .label prop on DataTableRow
@@ -46,6 +45,8 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - import/export players filter
   - roster/depth sticky cols
     - separator goes away depending on sort/filter
+    - other teams - can filter
+    - other sports - can sort
 - later
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)

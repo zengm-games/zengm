@@ -426,7 +426,7 @@ const DataTable = ({
 				/>
 			)}
 			<tbody>
-				{processedRowsPage.map((row, index) => {
+				{processedRowsPage.map(row => {
 					if (sortable) {
 						return (
 							<DraggableRow

@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import type { MouseEvent } from "react";
+import { useRef, type MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow, DataTableRowMetadata } from ".";
-import { SortableHandle, type SortableHandleProps } from "./sortable";
+import { SortableHandle, type RenderRowProps } from "./sortable";
 
 type MyRow = Omit<DataTableRow, "data"> & {
 	data: any[];
@@ -61,6 +61,7 @@ const Row = ({
 	showBulkSelectCheckboxes,
 
 	sortable,
+	overlay,
 }: {
 	clickable?: boolean;
 	highlightCols: number[];
@@ -71,15 +72,30 @@ const Row = ({
 	onBulkSelectToggle: OnBulkSelectToggle;
 	showBulkSelectCheckboxes: boolean;
 
-	sortable?: SortableHandleProps;
+	sortable?: RenderRowProps;
+	overlay?: boolean;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
+
+	const overlayRowRef = useRef<HTMLTableRowElement | null>(null);
+
 	return (
 		<tr
 			className={clsx(row.classNames, {
 				"table-warning": clickable && clicked,
+				"opacity-0":
+					sortable && !overlay && sortable.draggedIndex === sortable.index,
 			})}
 			onClick={clickable ? toggleClicked : undefined}
+			ref={node => {
+				if (sortable?.setNodeRef) {
+					sortable.setNodeRef(node);
+				}
+				if (overlay) {
+					overlayRowRef.current = node;
+				}
+			}}
+			style={sortable?.style}
 		>
 			{showBulkSelectCheckboxes ? (
 				row.metadata ? (

@@ -10,6 +10,8 @@ roster -> datatable
   - tableRef already defined in DataTable/index.tsx
 - DRY <Row> call in DataTable/index.tsx
 - header columns
+- do something with overlayRowRef
+- firstNameShort?
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable
@@ -39,7 +41,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - inline buttons
   - joke other league
   - import/export players filter
-  - roster sticky cols
+  - roster/depth sticky cols
 - later
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)

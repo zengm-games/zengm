@@ -364,7 +364,7 @@ const Depth = ({
 	return (
 		<>
 			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
-			<p style={{ clear: "both" }}>
+			<p>
 				{isSport("football") ? (
 					<>
 						Click or drag row handles to move players between the starting
@@ -497,46 +497,49 @@ const Depth = ({
 				</div>
 			) : null}
 
-			<DataTable
-				cols={cols}
-				defaultSort="disableSort"
-				defaultStickyCols={window.mobile ? 0 : isSport("baseball") ? 3 : 2}
-				name="Roster"
-				rows={rows}
-				hideAllControls={editable}
-				nonfluid
-				showRowLabels={!!rowLabels}
-				sortableRows={
-					editable
-						? {
-								highlightHandle: ({ index }) => index < numStarters * numLines,
-								onChange: async ({ oldIndex, newIndex }) => {
-									const pids = players.map(p => p.pid);
-									const newSortedPids = arrayMoveImmutable(
-										pids,
-										oldIndex,
-										newIndex,
-									);
-									setSortedPids(newSortedPids);
-									await toWorker("main", "reorderDepthDrag", {
-										pos,
-										sortedPids: getIDsToSave(newSortedPids),
-									});
-								},
-								onSwap: async (index1, index2) => {
-									const newSortedPids = players.map(p => p.pid);
-									newSortedPids[index1] = players[index2].pid;
-									newSortedPids[index2] = players[index1].pid;
-									setSortedPids(newSortedPids);
-									await toWorker("main", "reorderDepthDrag", {
-										pos,
-										sortedPids: getIDsToSave(newSortedPids),
-									});
-								},
-							}
-						: undefined
-				}
-			/>
+			<div style={editable ? { marginTop: -16 } : undefined}>
+				<DataTable
+					cols={cols}
+					defaultSort="disableSort"
+					defaultStickyCols={window.mobile ? 0 : isSport("baseball") ? 3 : 2}
+					name="Roster"
+					rows={rows}
+					hideAllControls={editable}
+					nonfluid
+					showRowLabels={!!rowLabels}
+					sortableRows={
+						editable
+							? {
+									highlightHandle: ({ index }) =>
+										index < numStarters * numLines,
+									onChange: async ({ oldIndex, newIndex }) => {
+										const pids = players.map(p => p.pid);
+										const newSortedPids = arrayMoveImmutable(
+											pids,
+											oldIndex,
+											newIndex,
+										);
+										setSortedPids(newSortedPids);
+										await toWorker("main", "reorderDepthDrag", {
+											pos,
+											sortedPids: getIDsToSave(newSortedPids),
+										});
+									},
+									onSwap: async (index1, index2) => {
+										const newSortedPids = players.map(p => p.pid);
+										newSortedPids[index1] = players[index2].pid;
+										newSortedPids[index2] = players[index1].pid;
+										setSortedPids(newSortedPids);
+										await toWorker("main", "reorderDepthDrag", {
+											pos,
+											sortedPids: getIDsToSave(newSortedPids),
+										});
+									},
+								}
+							: undefined
+					}
+				/>
+			</div>
 
 			<SortableTable
 				disabled={!editable}

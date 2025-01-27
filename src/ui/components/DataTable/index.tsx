@@ -95,6 +95,7 @@ export type DataTableRow = {
 				sortBys: SortBy[] | undefined;
 		  }) => ClassValue);
 	metadata?: DataTableRowMetadata;
+	rowLabel?: ReactNode;
 };
 
 export type StickyCols = 0 | 1 | 2 | 3;
@@ -117,6 +118,7 @@ export type Props = {
 	pagination?: boolean;
 	rankCol?: number;
 	rows: DataTableRow[];
+	showRowLabels?: boolean;
 	small?: boolean;
 	sortableRows?: {
 		highlightHandle: HighlightHandle;
@@ -153,6 +155,7 @@ const DataTable = ({
 	pagination,
 	rankCol,
 	rows,
+	showRowLabels,
 	small,
 	sortableRows,
 	striped,
@@ -415,6 +418,7 @@ const DataTable = ({
 			(state.enableFilters && processedRows.length !== rows.length),
 		highlightCols,
 		selectedRows,
+		showRowLabels,
 		showBulkSelectCheckboxes,
 		sortBys: state.sortBys,
 	};
@@ -455,6 +459,7 @@ const DataTable = ({
 						handleColClick={handleColClick}
 						handleFilterUpdate={handleFilterUpdate}
 						showBulkSelectCheckboxes={showBulkSelectCheckboxes}
+						showRowLabels={showRowLabels}
 						sortable={!!sortableRows}
 						sortBys={state.sortBys}
 						superCols={superCols}

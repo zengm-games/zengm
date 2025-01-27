@@ -8,6 +8,7 @@ export const DataTableContext = createContext<
 		isFiltered: boolean;
 		selectedRows: SelectedRows;
 		showBulkSelectCheckboxes: boolean;
+		showRowLabels: boolean | undefined;
 		sortBys: SortBy[] | undefined;
 	} & Pick<Props, "clickable" | "disableBulkSelectKeys">
 >({} as any);

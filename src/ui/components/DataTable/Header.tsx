@@ -327,6 +327,7 @@ const Header = ({
 	handleColClick,
 	handleFilterUpdate,
 	showBulkSelectCheckboxes,
+	showRowLabels,
 	sortable,
 	sortBys,
 	superCols,
@@ -341,6 +342,7 @@ const Header = ({
 	handleColClick: (b: MouseEvent, a: number) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 	showBulkSelectCheckboxes: boolean;
+	showRowLabels: boolean | undefined;
 	sortable: boolean;
 	sortBys: SortBy[] | undefined;
 	superCols?: SuperCol[];
@@ -358,6 +360,7 @@ const Header = ({
 				{showBulkSelectCheckboxes ? (
 					<BulkSelectHeaderCheckbox {...bulkSelectProps} />
 				) : null}
+				{showRowLabels ? <th className="p-0" /> : null}
 				{sortable ? <th className="p-0" /> : null}
 				{colOrder.map(({ colIndex }) => {
 					const {

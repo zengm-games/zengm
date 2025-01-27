@@ -61,6 +61,7 @@ const Row = ({
 		highlightCols,
 		isFiltered,
 		showBulkSelectCheckboxes,
+		showRowLabels,
 		sortBys,
 	} = useContext(DataTableContext);
 	const { draggedIndex } = useContext(SortableTableContext);
@@ -98,6 +99,7 @@ const Row = ({
 					<td />
 				)
 			) : null}
+			{showRowLabels ? <td>{row.rowLabel}</td> : null}
 			{sortableRows ? <SortableHandle {...sortableRows} /> : null}
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property

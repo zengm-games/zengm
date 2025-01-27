@@ -1,9 +1,14 @@
 roster -> datatable
+- depth
+  - highlight cols
+  - test all sports
+  - spacing above table?
 - for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)
     - test sorting of all cols
 - rowLabels needed for depth chart
   - needed even if sort is disabled, like viewing another team
   - maybe put a .label prop on DataTableRow
+  - how to handle with sticky cols?
 - think hard about what to put in context, what to pass where, what components should exist, etc
 - sticky/sorting interplay
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow

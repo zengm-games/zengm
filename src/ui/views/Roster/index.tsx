@@ -423,7 +423,7 @@ const Roster = ({
 					basketball: "disableSort",
 					default: [defaultSortCol, "asc"],
 				})}
-				defaultStickyCols={window.mobile ? 0 : 2}
+				defaultStickyCols={window.mobile ? 0 : isSport("basketball") ? 2 : 1}
 				name="Roster"
 				rows={rows}
 				hideAllControls={editable}

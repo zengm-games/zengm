@@ -3,7 +3,12 @@ import { Fragment, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import { MoreLinks, PlayerNameLabels, SortableTable } from "../components";
+import {
+	DataTable,
+	MoreLinks,
+	PlayerNameLabels,
+	SortableTable,
+} from "../components";
 import type { View } from "../../common/types";
 import { bySport, isSport } from "../../common";
 import { NUM_LINES } from "../../common/constants.hockey";
@@ -13,6 +18,8 @@ import {
 	NUM_STARTING_PITCHERS,
 } from "../../common/constants.baseball";
 import { range } from "../../common/utils";
+import type { DataTableRow } from "../components/DataTable";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", { pos });
@@ -214,6 +221,135 @@ const Depth = ({
 		return pids;
 	};
 
+	const cols = getCols([
+		"Name",
+		"Pos",
+		"Age",
+		...positions
+			.map(position => {
+				if (isSport("baseball") && pos !== "P") {
+					return ["Ovr", "Pot"];
+				} else {
+					return [`rating:ovr${position}`, `rating:ovr${position}`];
+				}
+			})
+			.flat(),
+		...ratings.map(rating => `rating:${rating}`),
+		...stats.map(stat => `stat:${stat}`),
+	]);
+
+	const rows: DataTableRow[] = playersSorted.map((p, i) => {
+		let highlightPosOvr: string | undefined;
+		if (isSport("hockey") && pos === "F" && i < numLines * numStarters) {
+			highlightPosOvr = i % numStarters === 0 ? "C" : "W";
+		} else if (isSport("baseball") && pos === "P") {
+			if (i < 5) {
+				highlightPosOvr = "SP";
+			} else if (i < numStarters) {
+				highlightPosOvr = "RP";
+			}
+		}
+
+		let lineupPos;
+		if (isSport("baseball") && pos === "D" && rowLabels?.[i]) {
+			lineupPos = rowLabels[i];
+		} else {
+			lineupPos = p.lineupPos ?? p.ratings.pos;
+		}
+
+		return {
+			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs,
+			},
+			rowLabel: rowLabels?.[i],
+			classNames: ({ isDragged }) => ({
+				separator:
+					!isDragged &&
+					((isSport("baseball") && pos === "P" && i === 4) ||
+						(isSport("baseball") && pos === "D" && i === 8) ||
+						(isSport("baseball") && pos === "DP" && i === 7) ||
+						((i % numStarters) + 1 === numStarters &&
+							i < numLines * numStarters &&
+							i !== playersSorted.length - 1)),
+			}),
+			data: [
+				p.pid >= 0
+					? wrappedPlayerNameLabels({
+							pid: p.pid,
+							injury: p.injury,
+							jerseyNumber: p.stats.jerseyNumber,
+							skills: p.ratings.skills,
+							watch: p.watch,
+							firstName: p.firstName,
+							firstNameShort: p.firstNameShort,
+							lastName: p.lastName,
+						})
+					: null,
+				{
+					value:
+						isSport("baseball") && (pos === "D" || pos === "DP")
+							? p.ratings.pos
+							: p.pid >= 0
+								? lineupPos
+								: p.pid === -1
+									? "P"
+									: null,
+					classNames: {
+						"text-danger":
+							isSport("baseball") && p.lineupPos !== undefined
+								? p.pid >= 0 &&
+									p.lineupPos !== "DH" &&
+									p.lineupPos !== p.ratings.pos
+								: isSport("baseball") && (pos === "D" || pos === "DP")
+									? rowLabels?.[i] !== undefined &&
+										rowLabels[i] !== "DH" &&
+										rowLabels[i] !== p.ratings.pos
+									: !isSport("baseball") &&
+										p.pid >= 0 &&
+										pos !== "KR" &&
+										pos !== "PR" &&
+										!positions.includes(p.ratings.pos),
+					},
+				},
+				p.age,
+				...(isSport("baseball") && pos !== "P"
+					? [
+							!challengeNoRatings && p.pid >= 0
+								? (p.ratings.ovrs[lineupPos] ?? p.ratings.ovr)
+								: null,
+							!challengeNoRatings && p.pid >= 0
+								? (p.ratings.pots[lineupPos] ?? p.ratings.pot)
+								: null,
+						]
+					: positions
+							.map(position => [
+								{
+									value:
+										!challengeNoRatings && p.pid >= 0
+											? p.ratings.ovrs[position]
+											: null,
+									classNames:
+										highlightPosOvr === position ? "table-primary" : undefined,
+								},
+								!challengeNoRatings && p.pid >= 0
+									? p.ratings.pots[position]
+									: null,
+							])
+							.flat()),
+				...ratings.map(rating =>
+					!challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null,
+				),
+				...stats.map(stat =>
+					p.pid >= 0 ? helpers.roundStat(p.stats[stat], stat) : null,
+				),
+			],
+		};
+	});
+
 	return (
 		<>
 			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
@@ -350,7 +486,46 @@ const Depth = ({
 				</div>
 			) : null}
 
-			<div className="clearfix" />
+			<DataTable
+				cols={cols}
+				defaultSort="disableSort"
+				defaultStickyCols={window.mobile ? 0 : isSport("baseball") ? 3 : 2}
+				name="Roster"
+				rows={rows}
+				hideAllControls={editable}
+				nonfluid
+				showRowLabels={!!rowLabels}
+				sortableRows={
+					editable
+						? {
+								highlightHandle: ({ index }) => index < numStarters * numLines,
+								onChange: async ({ oldIndex, newIndex }) => {
+									const pids = players.map(p => p.pid);
+									const newSortedPids = arrayMoveImmutable(
+										pids,
+										oldIndex,
+										newIndex,
+									);
+									setSortedPids(newSortedPids);
+									await toWorker("main", "reorderDepthDrag", {
+										pos,
+										sortedPids: getIDsToSave(newSortedPids),
+									});
+								},
+								onSwap: async (index1, index2) => {
+									const newSortedPids = players.map(p => p.pid);
+									newSortedPids[index1] = players[index2].pid;
+									newSortedPids[index2] = players[index1].pid;
+									setSortedPids(newSortedPids);
+									await toWorker("main", "reorderDepthDrag", {
+										pos,
+										sortedPids: getIDsToSave(newSortedPids),
+									});
+								},
+							}
+						: undefined
+				}
+			/>
 
 			<SortableTable
 				disabled={!editable}

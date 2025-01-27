@@ -34,21 +34,14 @@ export type HighlightHandle<Value = ShouldBeValue> = (a: {
 	value: Value;
 }) => boolean;
 
-type SortableTableContextInfo = {
+export const SortableTableContext = createContext<{
 	clickedIndex: number | undefined;
-	disabled: string; //boolean | undefined;
 	draggedIndex: number | undefined;
 	highlightHandle: HighlightHandle<ShouldBeValue>;
 	renderRow: (props: RenderRowProps) => ReactNode;
-	row: string; //Row<ShouldBeValue>;
 	rows: ShouldBeValue[];
-	rowLabels: string[] | undefined;
 	tableRef: RefObject<HTMLTableElement | null>;
-};
-
-export const SortableTableContext = createContext<SortableTableContextInfo>(
-	{} as SortableTableContextInfo,
-);
+}>({} as any);
 
 type SortableHandleProps = {
 	index: number;
@@ -208,13 +201,9 @@ export const SortableContextWrappers = ({
 	const context = useMemo(
 		() => ({
 			clickedIndex,
-			disabled: "???",
 			draggedIndex,
 			highlightHandle,
 			renderRow,
-			row: "???",
-			rowClassName: "???",
-			rowLabels: undefined,
 			tableRef,
 			rows,
 		}),

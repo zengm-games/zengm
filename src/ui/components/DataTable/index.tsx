@@ -87,7 +87,7 @@ export type DataTableRow = {
 				sortValue?: string | number;
 		  }
 	)[];
-	classNames?: ClassValue;
+	classNames?: ClassValue | ((args: { isDragged: boolean }) => ClassValue);
 	metadata?: DataTableRowMetadata;
 };
 
@@ -570,12 +570,7 @@ const DataTable = ({
 								renderRow={sortableInfo => {
 									const row = sortableInfo.value;
 									return (
-										<Row
-											key={row.key}
-											row={row}
-											highlightCols={highlightCols}
-											sortable={sortableInfo}
-										/>
+										<Row key={row.key} row={row} sortable={sortableInfo} />
 									);
 								}}
 								rows={rows}

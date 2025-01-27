@@ -2,7 +2,11 @@ import clsx from "clsx";
 import { useContext, type MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow, DataTableRowMetadata } from ".";
-import { SortableHandle, type RenderRowProps } from "./sortable";
+import {
+	SortableHandle,
+	SortableTableContext,
+	type RenderRowProps,
+} from "./sortable";
 import { DataTableContext } from "./contexts";
 
 type MyRow = Omit<DataTableRow, "data"> & {
@@ -48,12 +52,20 @@ const BulkSelectCheckbox = ({
 const Row = ({ row, sortable }: { row: MyRow; sortable?: RenderRowProps }) => {
 	const { clickable, highlightCols, showBulkSelectCheckboxes } =
 		useContext(DataTableContext);
+	const { draggedIndex } = useContext(SortableTableContext);
 
 	const { clicked, toggleClicked } = useClickable();
 
+	let classNames;
+	if (typeof row.classNames === "function") {
+		classNames = row.classNames({ isDragged: draggedIndex !== undefined });
+	} else {
+		classNames = row.classNames;
+	}
+
 	return (
 		<tr
-			className={clsx(row.classNames, {
+			className={clsx(classNames, {
 				"table-warning": clickable && clicked,
 				"opacity-0":
 					sortable &&

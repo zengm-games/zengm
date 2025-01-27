@@ -33,11 +33,6 @@ export type HighlightHandle<Value = ShouldBeValue> = (a: {
 	index: number;
 	value: Value;
 }) => boolean;
-type RowClassName<Value = ShouldBeValue> = (a: {
-	index: number;
-	isDragged: boolean;
-	value: Value;
-}) => string | undefined;
 
 type SortableTableContextInfo = {
 	clickedIndex: number | undefined;
@@ -47,12 +42,11 @@ type SortableTableContextInfo = {
 	renderRow: (props: RenderRowProps) => ReactNode;
 	row: string; //Row<ShouldBeValue>;
 	rows: ShouldBeValue[];
-	rowClassName: string; // RowClassName<ShouldBeValue> | undefined;
 	rowLabels: string[] | undefined;
 	tableRef: RefObject<HTMLTableElement | null>;
 };
 
-const SortableTableContext = createContext<SortableTableContextInfo>(
+export const SortableTableContext = createContext<SortableTableContextInfo>(
 	{} as SortableTableContextInfo,
 );
 
@@ -72,18 +66,12 @@ export const SortableHandle = ({
 	index,
 	value,
 	overlay,
-	style,
 	attributes,
 	listeners,
 	setActivatorNodeRef,
 }: SortableHandleProps) => {
-	const {
-		clickedIndex,
-		draggedIndex,
-		highlightHandle,
-		rowClassName,
-		tableRef,
-	} = useContext(SortableTableContext);
+	const { clickedIndex, draggedIndex, highlightHandle, tableRef } =
+		useContext(SortableTableContext);
 
 	const sortableHandleRef = useRef<HTMLTableCellElement | null>(null);
 
@@ -207,7 +195,6 @@ export const SortableContextWrappers = ({
 	const [clickedIndex, setClickedIndex] = useState<number | undefined>(
 		undefined,
 	);
-	console.log("render SortableContextWrappers", { draggedIndex, clickedIndex });
 
 	// Hacky shit to try to determine click from drag. start is to track how long a click lasted.
 	const clicked = useRef<{

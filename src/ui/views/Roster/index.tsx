@@ -262,17 +262,18 @@ const Roster = ({
 				season,
 				playoffs,
 			},
-			classNames: {
+			classNames: ({ isDragged }) => ({
 				separator:
-					(isSport("basketball") &&
+					!isDragged &&
+					((isSport("basketball") &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||
-					(!isSport("basketball") &&
-						playersSorted[i + 1] &&
-						p.ratings.pos !== playersSorted[i + 1].ratings.pos),
+						(!isSport("basketball") &&
+							playersSorted[i + 1] &&
+							p.ratings.pos !== playersSorted[i + 1].ratings.pos)),
 				"table-danger": p.hof,
 				"table-info": p.tid === tid && season !== currentSeason,
-			},
+			}),
 			data: [
 				wrappedPlayerNameLabels({
 					pid: p.pid,

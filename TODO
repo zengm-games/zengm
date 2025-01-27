@@ -2,23 +2,18 @@ roster -> datatable
 - hideAllContrls if editable
   - spacing above table needs to change with editable too?
 - test sorting/searching all cols if not editable
-- rowClassName function with isDragged passed in to hide separator
-  - also in context
-  - also for non-editable ones, need to know if sorted or not
+- for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)
 - some `Value`s in sortable prop got changed to `ShouldBeValue`
 - ??? in sortable.ts
   - rowLabels needed for depth chart
     - needed even if sort is disabled, like viewing another team
     - maybe put a .label prop on DataTableRow
-  - tableRef already defined in DataTable/index.tsx
 - DRY <Row> call in DataTable/index.tsx
-- header columns
-- do something with overlayRowRef
-- firstNameShort?
 - think hard about what to put in context, what to pass where, what components should exist, etc
 - sticky/sorting interplay
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
     - same issue for the animation moving the row into place
+- value -> row
 
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable

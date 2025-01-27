@@ -57,19 +57,20 @@ const buildJS = async () => {
 	const replaces = [];
 	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
+		if (fs.existsSync(filePath)) {
+			const string = fs.readFileSync(filePath, "utf8");
+			const compressed = JSON.stringify(JSON.parse(string));
 
-		const string = fs.readFileSync(filePath, "utf8");
-		const compressed = JSON.stringify(JSON.parse(string));
+			const hash = fileHash(compressed);
+			const newFilename = filePath.replace(".json", `-${hash}.json`);
+			fs.rmSync(filePath);
+			fs.writeFileSync(newFilename, compressed);
 
-		const hash = fileHash(compressed);
-		const newFilename = filePath.replace(".json", `-${hash}.json`);
-		fs.rmSync(filePath);
-		fs.writeFileSync(newFilename, compressed);
-
-		replaces.push({
-			searchValue: `/gen/${filename}.json`,
-			replaceValue: `/gen/${filename}-${hash}.json`,
-		});
+			replaces.push({
+				searchValue: `/gen/${filename}.json`,
+				replaceValue: `/gen/${filename}-${hash}.json`,
+			});
+		}
 	}
 	replace({
 		paths: [`build/gen/worker-legacy-${rev}.js`, `build/gen/worker-${rev}.js`],

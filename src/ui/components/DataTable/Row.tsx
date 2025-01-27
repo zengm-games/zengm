@@ -56,15 +56,24 @@ const Row = ({
 	row: MyRow;
 	sortableRows?: RenderRowProps;
 }) => {
-	const { clickable, highlightCols, showBulkSelectCheckboxes } =
-		useContext(DataTableContext);
+	const {
+		clickable,
+		highlightCols,
+		isFiltered,
+		showBulkSelectCheckboxes,
+		sortBys,
+	} = useContext(DataTableContext);
 	const { draggedIndex } = useContext(SortableTableContext);
 
 	const { clicked, toggleClicked } = useClickable();
 
 	let classNames;
 	if (typeof row.classNames === "function") {
-		classNames = row.classNames({ isDragged: draggedIndex !== undefined });
+		classNames = row.classNames({
+			isDragged: draggedIndex !== undefined,
+			isFiltered,
+			sortBys,
+		});
 	} else {
 		classNames = row.classNames;
 	}

@@ -1,6 +1,7 @@
 roster -> datatable
 - test sorting/searching all cols if not editable
 - for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)
+  - confirm - hide separators when sorted by anything except no sort or position
 - some `Value`s in sortable prop got changed to `ShouldBeValue`
 - ??? in sortable.ts
   - rowLabels needed for depth chart
@@ -12,9 +13,8 @@ roster -> datatable
     - same issue for the animation moving the row into place
 - value -> row
 - test filtering of all cols
-- hide separator when filtering
-- hide separators when sorted by anything except no sort or position
 - what happens if you sort when it's sortable (doesn't actually happen here - always sortable in non-basketball, and never sortable in basketball because rosterOrder matters) - need same logic as hideAllControlsBool?
+- test firefox, safari, iphone
 
 datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default
@@ -50,6 +50,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
   - joke other league
   - import/export players filter
   - roster/depth sticky cols
+    - separator goes away depending on sort/filter
 - later
   - actions on single team pages (like roster)
     - trade for (could be any time all players selected are on same team, even if not a single team page)

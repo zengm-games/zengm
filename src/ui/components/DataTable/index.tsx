@@ -87,7 +87,13 @@ export type DataTableRow = {
 				sortValue?: string | number;
 		  }
 	)[];
-	classNames?: ClassValue | ((args: { isDragged: boolean }) => ClassValue);
+	classNames?:
+		| ClassValue
+		| ((args: {
+				isDragged: boolean;
+				isFiltered: boolean;
+				sortBys: SortBy[] | undefined;
+		  }) => ClassValue);
 	metadata?: DataTableRowMetadata;
 };
 
@@ -400,9 +406,13 @@ const DataTable = ({
 	const dataTableContext = {
 		clickable,
 		disableBulkSelectKeys,
+		isFiltered:
+			state.searchText !== "" ||
+			(state.enableFilters && state.filters.some(text => text !== "")),
 		highlightCols,
 		selectedRows,
 		showBulkSelectCheckboxes,
+		sortBys: state.sortBys,
 	};
 
 	const { stickyClass, tableRef } = useStickyXX(

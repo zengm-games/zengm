@@ -262,9 +262,11 @@ const Roster = ({
 				season,
 				playoffs,
 			},
-			classNames: ({ isDragged }) => ({
+			classNames: ({ isDragged, isFiltered, sortBys }) => ({
 				separator:
 					!isDragged &&
+					!isFiltered &&
+					sortBys === undefined &&
 					((isSport("basketball") &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||

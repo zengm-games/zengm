@@ -221,22 +221,32 @@ const Depth = ({
 		return pids;
 	};
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		...positions
-			.map(position => {
-				if (isSport("baseball") && pos !== "P") {
-					return ["Ovr", "Pot"];
-				} else {
-					return [`rating:ovr${position}`, `rating:ovr${position}`];
-				}
-			})
-			.flat(),
-		...ratings.map(rating => `rating:${rating}`),
-		...stats.map(stat => `stat:${stat}`),
-	]);
+	const overrides: Parameters<typeof getCols>[1] = {};
+	for (const rating of ratings) {
+		overrides[`rating:${rating}`] = {
+			classNames: "table-accent",
+		};
+	}
+
+	const cols = getCols(
+		[
+			"Name",
+			"Pos",
+			"Age",
+			...positions
+				.map(position => {
+					if (isSport("baseball") && pos !== "P") {
+						return ["Ovr", "Pot"];
+					} else {
+						return [`rating:ovr${position}`, `rating:ovr${position}`];
+					}
+				})
+				.flat(),
+			...ratings.map(rating => `rating:${rating}`),
+			...stats.map(stat => `stat:${stat}`),
+		],
+		overrides,
+	);
 
 	const rows: DataTableRow[] = playersSorted.map((p, i) => {
 		let highlightPosOvr: string | undefined;
@@ -340,9 +350,10 @@ const Depth = ({
 									: null,
 							])
 							.flat()),
-				...ratings.map(rating =>
-					!challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null,
-				),
+				...ratings.map(rating => ({
+					value: !challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null,
+					classNames: "table-accent",
+				})),
 				...stats.map(stat =>
 					p.pid >= 0 ? helpers.roundStat(p.stats[stat], stat) : null,
 				),

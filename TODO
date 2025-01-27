@@ -1,6 +1,5 @@
 roster -> datatable
 - depth
-  - highlight cols
   - test all sports
   - spacing above table?
 - for non-editable tables that can be sorted, rowClassName needs to know if sorted/filtered or not (like for roster, drawing lines between positions in non-basketball sports)

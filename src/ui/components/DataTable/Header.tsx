@@ -363,28 +363,22 @@ const Header = ({
 				{showRowLabels ? <th className="p-0" /> : null}
 				{sortable ? <th className="p-0" /> : null}
 				{colOrder.map(({ colIndex }) => {
-					const {
-						classNames: colClassNames,
-						desc,
-						sortSequence,
-						title,
-						titleReact,
-						width,
-					} = cols[colIndex];
+					const { classNames, desc, sortSequence, title, titleReact, width } =
+						cols[colIndex];
 
-					let className;
+					let sortClassName;
 					if (
 						(sortSequence && sortSequence.length === 0) ||
 						sortBys === undefined
 					) {
-						className = undefined;
+						sortClassName = undefined;
 					} else {
-						className = getSortClassName(sortBys, colIndex);
+						sortClassName = getSortClassName(sortBys, colIndex);
 					}
 
 					return (
 						<th
-							className={clsx(colClassNames, className)}
+							className={clsx(classNames, sortClassName)}
 							key={colIndex}
 							onClick={event => {
 								handleColClick(event, colIndex);

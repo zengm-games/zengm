@@ -39,7 +39,7 @@ import { DataTableContext } from "./contexts";
 export type SortBy = [number, SortOrder];
 
 export type Col = {
-	classNames?: any;
+	classNames?: any; // Just header
 	desc?: string;
 	noSearch?: boolean;
 	sortSequence?: SortOrder[];

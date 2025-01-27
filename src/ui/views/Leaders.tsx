@@ -73,6 +73,8 @@ const Leaders = ({
 
 	const totals = statType === "totals" && isSport("basketball");
 
+	const noQualifiedLeaders = categories.every(cat => cat.leaders.length === 0);
+
 	return (
 		<>
 			<MoreLinks
@@ -84,104 +86,112 @@ const Leaders = ({
 			/>
 			<LeadersTopText includeHighlight={highlightActiveAndHOF} />
 
-			<div className="row" style={{ marginTop: -14 }}>
-				{categories.map(cat => {
-					const cols = getCols(["#", "Name", `stat:${cat.stat}`]);
-					const statCol = cols[2];
-					if (cat.titleOverride === statCol.desc) {
-						throw new Error("Useless titleOverride");
-					}
-
-					const title = cat.titleOverride ?? statCol.desc ?? "???";
-					const desc = cat.titleOverride ? statCol.desc : undefined;
-
-					const rows: DataTableRow[] = cat.leaders.map((p, j) => {
-						const numericSeason =
-							season === "career"
-								? undefined
-								: season === "all"
-									? p.season
-									: season;
-
-						let teamUrlParts;
-						if (season === "career") {
-							teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
-						} else {
-							teamUrlParts = ["roster", `${p.abbrev}_${p.tid}`, numericSeason];
+			{noQualifiedLeaders ? (
+				<p>No data yet.</p>
+			) : (
+				<div className="row" style={{ marginTop: -14 }}>
+					{categories.map(cat => {
+						const cols = getCols(["#", "Name", `stat:${cat.stat}`]);
+						const statCol = cols[2];
+						if (cat.titleOverride === statCol.desc) {
+							throw new Error("Useless titleOverride");
 						}
 
-						const seasonText = p.season !== undefined ? ` ${p.season}` : "";
+						const title = cat.titleOverride ?? statCol.desc ?? "???";
+						const desc = cat.titleOverride ? statCol.desc : undefined;
 
-						return {
-							key: p.key,
-							metadata: {
-								type: "player",
-								pid: p.pid,
-								season: numericSeason ?? "career",
-								playoffs,
-							},
-							data: [
-								{
-									value: j + 1,
-									style: {
-										// Need this here rather than in cols becuase we're using hideHeader
-										width: 1,
+						const rows: DataTableRow[] = cat.leaders.map((p, j) => {
+							const numericSeason =
+								season === "career"
+									? undefined
+									: season === "all"
+										? p.season
+										: season;
+
+							let teamUrlParts;
+							if (season === "career") {
+								teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
+							} else {
+								teamUrlParts = [
+									"roster",
+									`${p.abbrev}_${p.tid}`,
+									numericSeason,
+								];
+							}
+
+							const seasonText = p.season !== undefined ? ` ${p.season}` : "";
+
+							return {
+								key: p.key,
+								metadata: {
+									type: "player",
+									pid: p.pid,
+									season: numericSeason ?? "career",
+									playoffs,
+								},
+								data: [
+									{
+										value: j + 1,
+										style: {
+											// Need this here rather than in cols becuase we're using hideHeader
+											width: 1,
+										},
 									},
+									<>
+										<PlayerNameLabels
+											pid={p.pid}
+											injury={p.injury}
+											season={numericSeason}
+											skills={p.skills}
+											watch={p.watch}
+											firstName={p.firstNameShort}
+											firstNameShort={p.firstNameShort}
+											lastName={p.lastName}
+										/>
+										<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
+											{p.abbrev}
+											{seasonText}
+										</a>
+										{p.pos}
+									</>,
+									{
+										value: helpers.roundStat(p.stat, cat.stat, totals),
+										classNames: "text-end",
+									},
+								],
+								classNames: {
+									"table-danger": highlightActiveAndHOF && p.hof,
+									"table-success":
+										highlightActiveAndHOF && p.retiredYear === Infinity,
+									"table-info": p.userTeam,
 								},
-								<>
-									<PlayerNameLabels
-										pid={p.pid}
-										injury={p.injury}
-										season={numericSeason}
-										skills={p.skills}
-										watch={p.watch}
-										firstName={p.firstNameShort}
-										firstNameShort={p.firstNameShort}
-										lastName={p.lastName}
-									/>
-									<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
-										{p.abbrev}
-										{seasonText}
-									</a>
-									{p.pos}
-								</>,
-								{
-									value: helpers.roundStat(p.stat, cat.stat, totals),
-									classNames: "text-end",
-								},
-							],
-							classNames: {
-								"table-danger": highlightActiveAndHOF && p.hof,
-								"table-success":
-									highlightActiveAndHOF && p.retiredYear === Infinity,
-								"table-info": p.userTeam,
-							},
-						};
-					});
+							};
+						});
 
-					return (
-						<div
-							key={cat.stat}
-							className={colClassName}
-							style={{ marginTop: 14 }}
-						>
-							<DataTable
-								cols={cols}
-								defaultSort={"disableSort"}
-								hideHeader
-								hideAllControls={
-									<h3 title={desc}>
-										{title} ({statCol.title})
-									</h3>
-								}
-								name={`LeagueLeaders_${cat.stat}`}
-								pagination
-								rows={rows}
-							/>
-						</div>
-					);
-				})}
-			</div>
+						return (
+							<div
+								key={cat.stat}
+								className={colClassName}
+								style={{ marginTop: 14 }}
+							>
+								<DataTable
+									cols={cols}
+									defaultSort={"disableSort"}
+									hideHeader
+									hideAllControls={
+										<h3 title={desc}>
+											{title} ({statCol.title})
+										</h3>
+									}
+									name={`LeagueLeaders_${cat.stat}`}
+									pagination
+									rows={rows}
+								/>
+							</div>
+						);
+					})}
+				</div>
+			)}
 		</>
 	);
 };

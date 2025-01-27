@@ -26,26 +26,23 @@ import {
 import type { DataTableRow } from ".";
 import clsx from "clsx";
 
-// Should be Value passed through as generic parameter, but IDK how
-type ShouldBeValue = any;
-
-export type HighlightHandle<Value = ShouldBeValue> = (a: {
+export type HighlightHandle = (a: {
 	index: number;
-	value: Value;
+	row: DataTableRow;
 }) => boolean;
 
 export const SortableTableContext = createContext<{
 	clickedIndex: number | undefined;
 	draggedIndex: number | undefined;
-	highlightHandle: HighlightHandle<ShouldBeValue>;
+	highlightHandle: HighlightHandle;
 	renderRow: (props: RenderRowProps) => ReactNode;
-	rows: ShouldBeValue[];
+	rows: DataTableRow[];
 	tableRef: RefObject<HTMLTableElement | null>;
 }>({} as any);
 
 type SortableHandleProps = {
 	index: number;
-	value: ShouldBeValue;
+	row: DataTableRow;
 	overlay?: boolean;
 	style?: CSSProperties;
 } & Partial<
@@ -57,7 +54,7 @@ type SortableHandleProps = {
 
 export const SortableHandle = ({
 	index,
-	value,
+	row,
 	overlay,
 	attributes,
 	listeners,
@@ -90,7 +87,7 @@ export const SortableHandle = ({
 	const isDragged = draggedIndex !== undefined;
 	const selected = clickedIndex === index;
 
-	const highlight = highlightHandle({ index, value });
+	const highlight = highlightHandle({ index, row });
 
 	return (
 		<td
@@ -125,10 +122,10 @@ export type RenderRowProps = SortableHandleProps & {
 
 export const DraggableRow = ({
 	id,
-	value,
+	row,
 }: {
 	id: string;
-	value: ShouldBeValue;
+	row: DataTableRow;
 }) => {
 	const {
 		attributes,
@@ -150,7 +147,7 @@ export const DraggableRow = ({
 
 	return renderRow({
 		index,
-		value,
+		row,
 		style,
 		attributes,
 		listeners,
@@ -175,7 +172,7 @@ export const SortableContextWrappers = ({
 	tableRef,
 }: {
 	children: ReactNode;
-	highlightHandle: HighlightHandle<DataTableRow>;
+	highlightHandle: HighlightHandle;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
 	onSwap: (index1: number, index2: number) => void;
 	renderRow: (props: RenderRowProps) => ReactNode;
@@ -295,7 +292,7 @@ export const MyDragOverlay = () => {
 						draggedIndex,
 						index: draggedIndex,
 						overlay: true,
-						value: rows[draggedIndex],
+						row: rows[draggedIndex],
 					})
 				: null}
 		</DragOverlay>

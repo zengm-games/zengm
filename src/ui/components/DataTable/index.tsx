@@ -119,7 +119,7 @@ export type Props = {
 	rows: DataTableRow[];
 	small?: boolean;
 	sortableRows?: {
-		highlightHandle: HighlightHandle<DataTableRow>;
+		highlightHandle: HighlightHandle;
 		onChange: (a: { oldIndex: number; newIndex: number }) => void;
 		onSwap: (index1: number, index2: number) => void;
 	};
@@ -459,7 +459,7 @@ const DataTable = ({
 				<tbody>
 					{processedRowsPage.map(row => {
 						if (sortableRows) {
-							return <DraggableRow key={row.key} id={getId(row)} value={row} />;
+							return <DraggableRow key={row.key} id={getId(row)} row={row} />;
 						}
 
 						return <Row key={row.key} row={row} />;
@@ -585,10 +585,14 @@ const DataTable = ({
 						{sortableRows ? (
 							<SortableContextWrappers
 								{...sortableRows}
-								renderRow={sortableInfo => {
-									const row = sortableInfo.value;
+								renderRow={renderRowProps => {
+									const row = renderRowProps.row;
 									return (
-										<Row key={row.key} row={row} sortableRows={sortableInfo} />
+										<Row
+											key={row.key}
+											row={row}
+											sortableRows={renderRowProps}
+										/>
 									);
 								}}
 								rows={rows}

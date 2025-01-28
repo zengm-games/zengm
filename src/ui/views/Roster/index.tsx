@@ -26,6 +26,7 @@ import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { dataTableWrappedMood } from "../../components/Mood";
 import { wrappedRatingWithChange } from "../../components/RatingWithChange";
 import type { BulkAction } from "../../components/DataTable/BulkActions";
+import { groupByUnique } from "../../../common/utils";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -460,7 +461,46 @@ const Roster = ({
 					...(showTradeFor || showTradingBlock
 						? ([
 								{
-									onClick: () => {},
+									onClick: selectedRows => {
+										let numUntradeable = 0;
+
+										const playersByPid = groupByUnique(players, "pid");
+										const pids = Array.from(selectedRows.map.values())
+											.filter(metadata => metadata.type === "player")
+											.map(metadata => {
+												return metadata.pid;
+											})
+											.filter(pid => {
+												if (playersByPid[pid].untradable) {
+													numUntradeable += 1;
+													return false;
+												}
+
+												return true;
+											});
+
+										if (numUntradeable > 0) {
+											logEvent({
+												type: "error",
+												text: `${numUntradeable} selected ${helpers.plural("player", numUntradeable)} ${helpers.plural("is", numUntradeable, "are")} currently untradeable!`,
+												saveToDb: false,
+											});
+										}
+
+										if (showTradeFor) {
+											toWorker("actions", "tradeFor", {
+												otherDpids: [],
+												otherPids: pids,
+												tid,
+												userDpids: [],
+												userPids: [],
+											});
+										} else {
+											toWorker("actions", "addToTradingBlock", {
+												pid: p.pid,
+											});
+										}
+									},
 									text: showTradeFor ? "Trade for" : "Trade away",
 									textLong: showTradeFor
 										? "Trade for players"

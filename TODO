@@ -1,39 +1,13 @@
-roster -> datatable
-- sticky/sorting interplay
-  - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
-    - same issue for the animation moving the row into place
-- test firefox, safari, iphone
-
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- extra places to add DataTable
-  - SortableTable - especially for roster
-    - remove Delete Players button on roster
+- remove Delete Players button on roster
+- actions on single team pages (like roster)
+  - trade for (could be any time all players selected are on same team, even if not a single team page)
+  - release (on your team)
 - test
   - career totals stats page
   - all seasons stats page
   - interaction with manually set column widths in getCols
-- video/blog
-  - annoying to flag multiple players. compare players links. export players select all
-  - checkbox cell click
-  - ctrl+k
-  - watch list color popup
-  - export popup
-  - no more ugly Compare Players links in arbitrary places
-    - still in useful places, like Award Races for MIP compare to self last year. but no longer just picking the top N players from a table - you can do that everywhere!
-    - also no more buttons to delete players in god mode
-      - free agents
-      - draft scouting
-  - inline buttons
-  - joke other league
-  - import/export players filter
-  - roster/depth sticky cols
-    - separator goes away depending on sort/filter
-    - other teams - can filter
-    - other sports - can sort
 - later
-  - actions on single team pages (like roster)
-    - trade for (could be any time all players selected are on same team, even if not a single team page)
-    - release (on your team)
   - some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
     - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
     - something like this works, but is kind of annoying with the generic being needed in various places:
@@ -47,6 +21,9 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
       - "select all" should not actually select all, there is a limit
   - when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
     - interaction between table-responsive and dropdown in bootstrap, many discussions online, many potential solutions, but none of them seem to work
+- sticky/sorting interplay
+  - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
+    - same issue for the animation moving the row into place
 
 datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default

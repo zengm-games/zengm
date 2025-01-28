@@ -110,7 +110,7 @@ const PlayerList = ({
 				<br />
 				Max number of selected players per existing team: {numPerTeam ?? "???"}
 			</p>
-			<div className="btn-group mb-3">
+			<div className="btn-group">
 				<button
 					type="button"
 					className="btn btn-light-bordered"

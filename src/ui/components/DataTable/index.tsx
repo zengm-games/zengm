@@ -297,10 +297,8 @@ const DataTable = ({
 		}
 	};
 
-	const handlePerPage = (event: SyntheticEvent<HTMLSelectElement>) => {
-		const perPage = parseInt(event.currentTarget.value);
-
-		if (!Number.isNaN(perPage) && perPage !== state.perPage) {
+	const handlePerPage = (perPage: number) => {
+		if (perPage !== state.perPage) {
 			safeLocalStorage.setItem("perPage", String(perPage));
 			setStatePartial({
 				currentPage: 1,
@@ -548,7 +546,14 @@ const DataTable = ({
 					})}
 				>
 					{!hideAllControls || !hideMenuToo || title ? (
-						<div className="d-flex" style={{ height: 35 }} ref={wrapperRef}>
+						<div
+							className="d-flex align-items-end"
+							style={{
+								// minHeight rather than height allows title to expanad this, like on player profile pages for the tabs above stat tables
+								minHeight: 35,
+							}}
+							ref={wrapperRef}
+						>
 							{bulkSelectRows ? (
 								<BulkActions
 									hideAllControls={hideAllControls}

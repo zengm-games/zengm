@@ -190,7 +190,7 @@ const AssetList = ({
 	return (
 		<div className="row">
 			<div className="col-xl-9">
-				<Dropdown className="d-inline-block">
+				<Dropdown className="d-inline-block mb-2">
 					<Dropdown.Toggle
 						variant="secondary"
 						id={`trade-players-bulk-${userOrOtherKey}`}
@@ -225,11 +225,11 @@ const AssetList = ({
 				/>
 			</div>
 			<div className="col-xl-3">
-				<Dropdown className="d-inline-block">
+				<Dropdown className="d-inline-block mb-2">
 					<Dropdown.Toggle
 						variant="secondary"
 						id={`trade-picks-bulk-${userOrOtherKey}`}
-						className="btn-sm mb-2"
+						className="btn-sm"
 					>
 						Bulk exclude
 					</Dropdown.Toggle>
@@ -261,6 +261,7 @@ const AssetList = ({
 					</Dropdown.Menu>
 				</Dropdown>
 				<DataTable
+					className="datatable-negative-margin-top"
 					cols={pickCols}
 					defaultSort={[1, "asc"]}
 					hideAllControls

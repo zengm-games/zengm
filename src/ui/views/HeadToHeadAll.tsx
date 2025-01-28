@@ -99,11 +99,13 @@ const HeadToHeadAll = ({
 				<p>No data {season !== "all" ? "for this season yet" : "yet"}.</p>
 			) : (
 				<>
-					<p>Each table cell shows the row team's record vs the column team.</p>
+					<div>
+						Each table cell shows the row team's record vs the column team.
+					</div>
 
 					{hasInactiveTeams ? (
 						<button
-							className="btn btn-secondary mb-3"
+							className="btn btn-secondary mt-3"
 							onClick={() => {
 								setShowInactive(show => !show);
 							}}

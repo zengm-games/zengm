@@ -188,7 +188,7 @@ const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
 	return (
 		<button
-			className="btn btn-secondary mb-3"
+			className="btn btn-secondary"
 			disabled={exporting}
 			onClick={async () => {
 				setExporting(true);

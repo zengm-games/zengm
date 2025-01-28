@@ -91,8 +91,10 @@ table.table thead .sorting_desc_disabled {
         no-repeat center right;
 }*/
 
+// Use this on a DataTable if you want to ignore the ... menu on the right because if there's nothing else on the left part (no other controls, no title) then it looks like an extra gap. Sometimes you can achieve the same result just by not having a bottom margin on the element above the table, but sometimes you want things to come down even further.
 .datatable-negative-margin-top {
-	margin-top: -27px;
+	// Keep in sync with minHeight in DataTable/index.tsx
+	margin-top: -35px;
 }
 
 .datatable-header-text {

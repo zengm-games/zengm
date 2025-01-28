@@ -253,53 +253,6 @@ const StatsTable = ({
 			title={name}
 			description={hasLeader ? highlightLeaderText : null}
 		>
-			<ul className="nav nav-tabs border-bottom-0">
-				{hasRegularSeasonStats ? (
-					<li className="nav-item">
-						<button
-							className={clsx("nav-link", {
-								active: playoffs === false,
-								"border-bottom": playoffs === false,
-							})}
-							onClick={() => {
-								setPlayoffs(false);
-							}}
-						>
-							Regular Season
-						</button>
-					</li>
-				) : null}
-				{hasPlayoffStats ? (
-					<li className="nav-item">
-						<button
-							className={clsx("nav-link", {
-								active: playoffs === true,
-								"border-bottom": playoffs === true,
-							})}
-							onClick={() => {
-								setPlayoffs(true);
-							}}
-						>
-							Playoffs
-						</button>
-					</li>
-				) : null}
-				{hasRegularSeasonStats && hasPlayoffStats ? (
-					<li className="nav-item">
-						<button
-							className={clsx("nav-link", {
-								active: playoffs === "combined",
-								"border-bottom": playoffs === "combined",
-							})}
-							onClick={() => {
-								setPlayoffs("combined");
-							}}
-						>
-							Combined
-						</button>
-					</li>
-				) : null}
-			</ul>
 			<DataTable
 				className="mb-3"
 				cols={cols}
@@ -310,6 +263,55 @@ const StatsTable = ({
 				name={`Player:${name}`}
 				rows={rows}
 				superCols={superCols}
+				title={
+					<ul className="nav nav-tabs border-bottom-0">
+						{hasRegularSeasonStats ? (
+							<li className="nav-item">
+								<button
+									className={clsx("nav-link", {
+										active: playoffs === false,
+										"border-bottom": playoffs === false,
+									})}
+									onClick={() => {
+										setPlayoffs(false);
+									}}
+								>
+									Regular Season
+								</button>
+							</li>
+						) : null}
+						{hasPlayoffStats ? (
+							<li className="nav-item">
+								<button
+									className={clsx("nav-link", {
+										active: playoffs === true,
+										"border-bottom": playoffs === true,
+									})}
+									onClick={() => {
+										setPlayoffs(true);
+									}}
+								>
+									Playoffs
+								</button>
+							</li>
+						) : null}
+						{hasRegularSeasonStats && hasPlayoffStats ? (
+							<li className="nav-item">
+								<button
+									className={clsx("nav-link", {
+										active: playoffs === "combined",
+										"border-bottom": playoffs === "combined",
+									})}
+									onClick={() => {
+										setPlayoffs("combined");
+									}}
+								>
+									Combined
+								</button>
+							</li>
+						) : null}
+					</ul>
+				}
 			/>
 		</HideableSection>
 	);
@@ -442,7 +444,7 @@ const Player2 = ({
 				description={hasLeader && showRatings ? highlightLeaderText : null}
 			>
 				<DataTable
-					className="mb-3"
+					className="mb-3 datatable-negative-margin-top"
 					cols={getCols([
 						"Year",
 						"Team",
@@ -538,7 +540,7 @@ const Player2 = ({
 				<div className="col-6 col-md-3">
 					<HideableSection title="Salaries">
 						<DataTable
-							className="mb-3"
+							className="datatable-negative-margin-top mb-3"
 							cols={getCols(["Year", "Amount"])}
 							defaultSort={[0, "asc"]}
 							footer={[

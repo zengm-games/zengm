@@ -1,10 +1,8 @@
-import type { SyntheticEvent } from "react";
-
 const PerPage = ({
 	onChange,
 	value,
 }: {
-	onChange: (a: SyntheticEvent<HTMLSelectElement>) => void;
+	onChange: (perPage: number) => void;
 	value: number;
 }) => {
 	return (
@@ -12,7 +10,12 @@ const PerPage = ({
 			<label className="form-label">
 				<select
 					className="form-select form-select-sm"
-					onChange={onChange}
+					onChange={event => {
+						const perPage = parseInt(event.currentTarget.value);
+						if (!Number.isNaN(perPage)) {
+							onChange(perPage);
+						}
+					}}
 					value={value}
 				>
 					<option value="10">10</option>

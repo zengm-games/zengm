@@ -47,7 +47,7 @@ const Injuries = ({
 
 	return (
 		<DataTable
-			className="mb-3"
+			className="datatable-negative-margin-top mb-3"
 			cols={cols}
 			defaultSort={[0, "asc"]}
 			hideAllControls

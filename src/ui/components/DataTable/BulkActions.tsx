@@ -297,7 +297,7 @@ export const BulkActions = ({
 
 	if (showInlineButtons) {
 		return (
-			<div className="d-flex align-items-start gap-2">
+			<div className="d-flex align-items-start gap-2 mb-2">
 				{actions.map((action, i) => {
 					if (action.godMode && !godMode) {
 						return null;
@@ -323,7 +323,7 @@ export const BulkActions = ({
 
 	return (
 		<>
-			<Dropdown>
+			<Dropdown className="mb-2">
 				<Dropdown.Toggle
 					id={`datatable-bulk-actions-${name}`}
 					size="sm"

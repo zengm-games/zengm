@@ -17,8 +17,8 @@ const ovr = (
 		};
 	}[],
 	options: {
+		onlyPos?: string;
 		playoffs?: boolean;
-		pos?: string;
 		rating?: string;
 		wholeRoster?: boolean;
 	} = {},

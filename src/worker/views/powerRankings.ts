@@ -119,11 +119,11 @@ export const addPowerRankingsStuffToTeams = async <
 					}
 					other[pos] = team.ovr(teamPlayers, {
 						playoffs: playoffs === "playoffs",
-						pos,
+						onlyPos: pos,
 					});
 					otherCurrent[pos] = team.ovr(teamPlayersCurrent, {
 						playoffs: playoffs === "playoffs",
-						pos,
+						onlyPos: pos,
 					});
 				}
 			}

@@ -13,9 +13,8 @@ const InstructionsAndSortButtons = ({
 	keepRosterSorted,
 	editable,
 	godMode,
-	players,
 	tid,
-}: Pick<View<"roster">, "editable" | "godMode" | "players" | "tid"> & {
+}: Pick<View<"roster">, "editable" | "godMode" | "tid"> & {
 	keepRosterSorted: boolean;
 }) => {
 	return (
@@ -36,22 +35,6 @@ const InstructionsAndSortButtons = ({
 									onClick={handleResetPT}
 								>
 									Reset playing time
-								</button>
-							</div>
-						) : null}
-						{godMode ? (
-							<div>
-								<button
-									className="btn btn-outline-god-mode"
-									onClick={async () => {
-										await toWorker(
-											"main",
-											"clearInjuries",
-											players.map(p => p.pid),
-										);
-									}}
-								>
-									Heal injuries
 								</button>
 							</div>
 						) : null}

@@ -68,7 +68,6 @@ const updateInjuries = async (
 			abbrev: inputs.abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
-			godMode: g.get("godMode"),
 			injuries: addFirstNameShort(injuries),
 			season: inputs.season,
 			stats,

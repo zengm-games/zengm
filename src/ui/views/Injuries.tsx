@@ -1,6 +1,6 @@
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
@@ -10,7 +10,6 @@ const Injuries = ({
 	abbrev,
 	challengeNoRatings,
 	currentSeason,
-	godMode,
 	injuries,
 	season,
 	stats,
@@ -95,17 +94,6 @@ const Injuries = ({
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
 				.
 			</p>
-
-			{season === "current" && godMode && rows.length > 0 ? (
-				<button
-					className="btn btn-god-mode mb-3"
-					onClick={async () => {
-						await toWorker("main", "clearInjuries", "all");
-					}}
-				>
-					Heal All Injuries
-				</button>
-			) : null}
 
 			{rows.length > 0 ? (
 				<DataTable

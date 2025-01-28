@@ -355,7 +355,7 @@ const Roster = ({
 									}
 								}}
 							>
-								{showTradeFor ? "Trade For" : "Trade Away"}
+								{showTradeFor ? "Trade for" : "Trade away"}
 							</button>,
 						]
 					: []),

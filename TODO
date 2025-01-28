@@ -1,11 +1,9 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - actions on single team pages (like roster)
-  - trade for (could be any time all players selected are on same team, even if not a single team page)
+  - trade away/for (could be any time all players selected are on same team, even if not a single team page)
   - release (on your team)
-- additional actions
-  - heal injuries
-    - get rid of button on roster
-  - other buttons and god-mode buttons?
+  - could pass extra actions to DataTable, do it just from roster
+- different width cutoff for inline buttons in god mode or not
 - test
   - career totals stats page
   - all seasons stats page

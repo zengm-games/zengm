@@ -251,6 +251,15 @@ export const BulkActions = ({
 		}
 	};
 
+	const onHealPlayers = async () => {
+		const pids = Array.from(selectedRows.map.values())
+			.filter(metadata => metadata.type === "player")
+			.map(metadata => {
+				return metadata.pid;
+			});
+		await toWorker("main", "clearInjuries", pids);
+	};
+
 	const actions: {
 		godMode?: boolean;
 		onClick: () => void;
@@ -292,6 +301,12 @@ export const BulkActions = ({
 			onClick: onDeletePlayers,
 			text: "Delete",
 			textLong: "Delete players",
+		},
+		{
+			godMode: true,
+			onClick: onHealPlayers,
+			text: "Heal",
+			textLong: "Heal players",
 		},
 	];
 

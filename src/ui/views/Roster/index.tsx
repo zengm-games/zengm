@@ -263,7 +263,7 @@ const Roster = ({
 			classNames: ({ isDragged, isFiltered, sortBys }) => ({
 				separator:
 					!isDragged &&
-					!isFiltered &&
+					(!isFiltered || !isSport("basketball")) &&
 					(sortBys === undefined ||
 						(!isSport("basketball") &&
 							sortBys.length === 1 &&

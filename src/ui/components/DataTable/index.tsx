@@ -415,9 +415,7 @@ const DataTable = ({
 	const dataTableContext = {
 		clickable,
 		disableBulkSelectKeys,
-		isFiltered:
-			state.searchText !== "" ||
-			(state.enableFilters && processedRows.length !== rows.length),
+		isFiltered: processedRows.length !== rows.length,
 		highlightCols,
 		selectedRows,
 		showRowLabels,

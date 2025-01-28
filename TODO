@@ -1,3 +1,15 @@
+retire players button in god mode, along with delete players in bulk actions https://discord.com/channels/290013534023057409/1333871313898573904/1333884981835075584
+
+more aggressively use closers in playoffs https://discord.com/channels/290013534023057409/290015591216054273/1332735406176735263
+
+in FBGM game sim, simming until the next change of position doesn't trigger when a team scores a TD but throws an incomplete pass on the 2-point conversion. It simply skips through the next possession as well
+
+check color coding of FBGM new team stats https://discord.com/channels/290013534023057409/290015591216054273/1332922046044311677
+
+in late game critical situations (like tied, 0 outs, bases loaded) there should never be a fielder's choice, should always try for out at home https://discord.com/channels/290013534023057409/290015591216054273/1333641668762796035
+
+zgmb should have more doubles and triples https://discord.com/channels/290013534023057409/944392892905037885/1332600467502661717
+
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - later
   - some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 

@@ -1,5 +1,5 @@
 import type { View } from "../../../common/types";
-import { confirm, toWorker } from "../../util";
+import { toWorker } from "../../util";
 
 const handleAutoSort = async () => {
 	await toWorker("main", "autoSortRoster", undefined);
@@ -40,7 +40,7 @@ const InstructionsAndSortButtons = ({
 							</div>
 						) : null}
 						{godMode ? (
-							<div className="btn-group">
+							<div>
 								<button
 									className="btn btn-outline-god-mode"
 									onClick={async () => {
@@ -52,26 +52,6 @@ const InstructionsAndSortButtons = ({
 									}}
 								>
 									Heal injuries
-								</button>
-								<button
-									className="btn btn-outline-god-mode"
-									onClick={async () => {
-										const proceed = await confirm(
-											`Are you sure you want to delete all ${players.length} players on this team?`,
-											{
-												okText: "Delete Players",
-											},
-										);
-										if (proceed) {
-											await toWorker(
-												"main",
-												"removePlayers",
-												players.map(p => p.pid),
-											);
-										}
-									}}
-								>
-									Delete players
 								</button>
 							</div>
 						) : null}

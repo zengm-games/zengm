@@ -1,8 +1,11 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- remove Delete Players button on roster
 - actions on single team pages (like roster)
   - trade for (could be any time all players selected are on same team, even if not a single team page)
   - release (on your team)
+- additional actions
+  - heal injuries
+    - get rid of button on roster
+  - other buttons and god-mode buttons?
 - test
   - career totals stats page
   - all seasons stats page

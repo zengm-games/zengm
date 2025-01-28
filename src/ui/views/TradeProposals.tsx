@@ -138,12 +138,12 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 				<OfferTable
 					assetCols={[
 						{
-							title: "You Receive",
+							title: "You receive",
 							sortSequence: ["desc", "asc"],
 							sortType: "number",
 						},
 						{
-							title: "You Trade Away",
+							title: "You trade away",
 							sortSequence: ["desc", "asc"],
 							sortType: "number",
 						},

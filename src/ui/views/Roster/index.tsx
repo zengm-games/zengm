@@ -417,6 +417,28 @@ const Roster = ({
 					default: [defaultSortCol, "asc"],
 				})}
 				defaultStickyCols={window.mobile ? 0 : isSport("basketball") ? 2 : 1}
+				extraBulkActions={[
+					...(showRelease
+						? [
+								{
+									onClick: () => {},
+									text: "Release",
+									textLong: "Release players",
+								},
+							]
+						: []),
+					...(showTradeFor || showTradingBlock
+						? [
+								{
+									onClick: () => {},
+									text: showTradeFor ? "Trade for" : "Trade away",
+									textLong: showTradeFor
+										? "Trade for players"
+										: "Trade away players",
+								},
+							]
+						: []),
+				]}
 				name="Roster"
 				rows={rows}
 				hideAllControls={editable}

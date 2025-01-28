@@ -26,7 +26,7 @@ import useStickyXX from "./useStickyXX";
 import { useDataTableState } from "./useDataTableState";
 import { processRows } from "./processRows";
 import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows";
-import { BulkActions } from "./BulkActions";
+import { BulkActions, type BulkAction } from "./BulkActions";
 import {
 	DraggableRow,
 	getId,
@@ -109,6 +109,7 @@ export type Props = {
 	defaultSort: SortBy | "disableSort";
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
+	extraBulkActions?: BulkAction[];
 	footer?: any[];
 	hideAllControls?: boolean; // When ReactNode, display as a title above the table
 	hideHeader?: boolean;
@@ -147,6 +148,7 @@ const DataTable = ({
 	defaultStickyCols = 0,
 	disableBulkSelectKeys,
 	disableSettingsCache,
+	extraBulkActions,
 	footer,
 	hideAllControls,
 	hideHeader,
@@ -556,6 +558,7 @@ const DataTable = ({
 						>
 							{bulkSelectRows ? (
 								<BulkActions
+									extraActions={extraBulkActions}
 									hideAllControls={hideAllControls}
 									name={name}
 									selectedRows={selectedRows}

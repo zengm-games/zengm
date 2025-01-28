@@ -2,8 +2,10 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 - actions on single team pages (like roster)
   - trade away/for (could be any time all players selected are on same team, even if not a single team page)
   - release (on your team)
-  - could pass extra actions to DataTable, do it just from roster
 - different width cutoff for inline buttons in god mode or not
+  - trickier with dynamic actions like on roster page
+    - could add fudge factor per extra action
+    - could maybe somehow compute with exactly ahead of time?
 - test
   - career totals stats page
   - all seasons stats page

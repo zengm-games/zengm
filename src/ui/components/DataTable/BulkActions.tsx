@@ -74,12 +74,21 @@ const getSeason = (
 	return season[type] ?? season.default;
 };
 
+export type BulkAction = {
+	godMode?: boolean;
+	onClick: () => void;
+	text: ReactNode;
+	textLong?: ReactNode;
+};
+
 export const BulkActions = ({
+	extraActions,
 	hideAllControls,
 	name,
 	selectedRows,
 	wrapperRef,
 }: {
+	extraActions?: BulkAction[];
 	hideAllControls?: Props["hideAllControls"];
 	name: string;
 	selectedRows: SelectedRows;
@@ -260,12 +269,7 @@ export const BulkActions = ({
 		await toWorker("main", "clearInjuries", pids);
 	};
 
-	const actions: {
-		godMode?: boolean;
-		onClick: () => void;
-		text: ReactNode;
-		textLong?: ReactNode;
-	}[] = [
+	const actions: BulkAction[] = [
 		{
 			onClick: onComparePlayers,
 			text: "Compare",
@@ -296,6 +300,7 @@ export const BulkActions = ({
 				</>
 			),
 		},
+		...(extraActions ?? []),
 		{
 			godMode: true,
 			onClick: onDeletePlayers,

@@ -559,6 +559,7 @@ const DataTable = ({
 							{bulkSelectRows ? (
 								<BulkActions
 									extraActions={extraBulkActions}
+									hasTitle={title !== undefined}
 									hideAllControls={hideAllControls}
 									name={name}
 									selectedRows={selectedRows}

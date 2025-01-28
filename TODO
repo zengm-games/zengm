@@ -1,8 +1,6 @@
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- different width cutoff for inline buttons in god mode or not
-  - trickier with dynamic actions like on roster page
-    - could add fudge factor per extra action
-    - could maybe somehow compute with exactly ahead of time?
+- ... position changes vertically with hideAllControls
+  - did it used to?
 - test
   - career totals stats page
   - all seasons stats page

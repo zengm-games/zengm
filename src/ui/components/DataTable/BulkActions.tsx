@@ -83,13 +83,15 @@ export type BulkAction = {
 
 export const BulkActions = ({
 	extraActions,
+	hasTitle,
 	hideAllControls,
 	name,
 	selectedRows,
 	wrapperRef,
 }: {
-	extraActions?: BulkAction[];
-	hideAllControls?: Props["hideAllControls"];
+	extraActions: BulkAction[] | undefined;
+	hasTitle: boolean;
+	hideAllControls: Props["hideAllControls"];
 	name: string;
 	selectedRows: SelectedRows;
 	wrapperRef: RefObject<HTMLDivElement | null>;
@@ -104,18 +106,30 @@ export const BulkActions = ({
 		},
 	);
 
-	const hideAllControlsHasTitle =
-		hideAllControls !== undefined && typeof hideAllControls !== "boolean";
+	const numExtraActions = extraActions?.length ?? 0;
 
 	const getUpdatedShowInlineButtons = useCallback(() => {
 		// Never show inline if there's a title, because there's no room!
-		if (hideAllControlsHasTitle || !wrapperRef.current) {
+		if (hasTitle || !wrapperRef.current) {
 			return false;
 		}
 
-		// Cutoff for when there is enough room to show inline buttons
-		return wrapperRef.current.offsetWidth >= 510;
-	}, [hideAllControlsHasTitle, wrapperRef]);
+		// Cutoff for when there is enough room to show inline buttons - changes when more buttons are shown or more space is available
+		let baseCutoff = 460;
+
+		// Assume 80 pixels per button
+		baseCutoff += numExtraActions * 80;
+
+		if (godMode) {
+			baseCutoff += 108;
+		}
+
+		if (hideAllControls) {
+			baseCutoff -= 220;
+		}
+
+		return wrapperRef.current.offsetWidth >= baseCutoff;
+	}, [godMode, hasTitle, hideAllControls, numExtraActions, wrapperRef]);
 
 	const [showInlineButtons, setShowInlineButtons] = useState(false);
 

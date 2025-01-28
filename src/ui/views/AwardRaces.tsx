@@ -193,11 +193,11 @@ const AwardRaces = ({
 									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}
-									title={<h3>{name}</h3>}
+									title={<h2>{name}</h2>}
 								/>
 							) : (
 								<>
-									<h3>{name}</h3>
+									<h2>{name}</h2>
 									<p>No candidates yet...</p>
 								</>
 							)}

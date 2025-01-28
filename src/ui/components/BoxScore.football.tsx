@@ -415,9 +415,20 @@ const ScoringSummary = memo(
 const NUM_SECTIONS = 12;
 const DEFAULT_HEIGHT = 200;
 
-const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
+const FieldBackground = ({ t, t2, hT }: { t: Team; t2: Team; hT: string }) => {
+	const styles: CSSProperties = {
+		height: "100%",
+		width: "100%",
+		backgroundImage: "url(" + hT + ")",
+		backgroundRepeat: "no-repeat",
+		backgroundPosition: "center",
+		backgroundSize: `${(1 / 12) * 100}%`,
+		tabSize: 0,
+		position: "absolute",
+	};
 	return (
 		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
+			<div style={styles}></div>
 			{range(NUM_SECTIONS).map(i => {
 				const style: CSSProperties = {
 					width: `${(1 / 12) * 100}%`,
@@ -754,7 +765,11 @@ const FieldAndDrive = ({
 					minHeight: DEFAULT_HEIGHT,
 				}}
 			>
-				<FieldBackground t={boxScore.teams[0]} t2={boxScore.teams[1]} />
+				<FieldBackground
+					t={boxScore.teams[0]}
+					t2={boxScore.teams[1]}
+					hT={boxScore.teams[1].imgURL}
+				/>
 				{!sportState.newPeriodText ? (
 					<>
 						<VerticalLine

@@ -370,17 +370,15 @@ const PlayerGameLog = ({
 					) : null}
 					{rowsPlayoffs.length > 0 ? (
 						<>
-							<h2 className={rowsRegularSeason.length > 0 ? "mt-5" : undefined}>
-								Playoffs
-							</h2>
 							<DataTable
-								className="datatable-negative-margin-top"
+								className={rowsRegularSeason.length > 0 ? "mt-5" : undefined}
 								cols={cols}
 								defaultSort={[0, "asc"]}
 								name="PlayerGameLogPlayoffs"
 								rows={rowsPlayoffs}
 								striped={striped}
 								superCols={superCols}
+								title={<h2>Playoffs</h2>}
 							/>
 						</>
 					) : null}

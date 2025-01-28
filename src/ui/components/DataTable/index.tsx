@@ -110,7 +110,7 @@ export type Props = {
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
 	footer?: any[];
-	hideAllControls?: boolean | ReactNode; // When ReactNode, display as a title above the table
+	hideAllControls?: boolean; // When ReactNode, display as a title above the table
 	hideHeader?: boolean;
 	hideMenuToo?: boolean;
 	name: string;
@@ -127,6 +127,7 @@ export type Props = {
 	};
 	striped?: boolean;
 	superCols?: SuperCol[];
+	title?: ReactNode;
 
 	// Pass this to control selectedRows from outside of this component (like if you want to have a button external to the table that does something with selected players). Otherwise, leave this undefined.
 	controlledSelectedRows?: SelectedRows;
@@ -160,6 +161,7 @@ const DataTable = ({
 	sortableRows,
 	striped,
 	superCols,
+	title,
 }: Props) => {
 	if (sortableRows && !hideAllControls) {
 		throw new Error(
@@ -545,7 +547,7 @@ const DataTable = ({
 						"d-inline-block mw-100": nonfluid,
 					})}
 				>
-					{!hideAllControls || !hideMenuToo ? (
+					{!hideAllControls || !hideMenuToo || title ? (
 						<div className="d-flex" style={{ height: 35 }} ref={wrapperRef}>
 							{bulkSelectRows ? (
 								<BulkActions
@@ -557,14 +559,14 @@ const DataTable = ({
 							) : pagination && !hideAllControls ? (
 								<PerPage onChange={handlePerPage} value={state.perPage} />
 							) : null}
-							{hideAllControls && typeof hideAllControls !== "boolean" ? (
+							{title ? (
 								<div
 									className={clsx(
 										"datatable-header-text text-truncate d-flex align-items-center",
 										bulkSelectRows ? "ms-2" : undefined,
 									)}
 								>
-									{hideAllControls}
+									{title}
 								</div>
 							) : null}
 							{!hideMenuToo ? (
@@ -572,7 +574,7 @@ const DataTable = ({
 									alwaysShowBulkSelectRows={!!alwaysShowBulkSelectRows}
 									bulkSelectRows={bulkSelectRows}
 									enableFilters={state.enableFilters}
-									hideAllControls={!!hideAllControls}
+									hideAllControls={hideAllControls}
 									metadataType={metadataType}
 									name={name}
 									onBulkSelectRows={handleBulkSelectRows}

@@ -493,6 +493,7 @@ const Depth = ({
 				<DataTable
 					cols={cols}
 					defaultSort="disableSort"
+					// Different value for baseball is because that uses showRowLabels, which adds an extra column
 					defaultStickyCols={window.mobile ? 0 : isSport("baseball") ? 3 : 2}
 					name="Roster"
 					rows={rows}

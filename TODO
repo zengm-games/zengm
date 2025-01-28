@@ -4,20 +4,20 @@ roster -> datatable
     - same issue for the animation moving the row into place
 - test firefox, safari, iphone
 
-datatable should support unsorted sort state
-- leaders, award races - so we don't have to highlight by default
-- roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
-- check how sort status is passed to row.classNames
-
 tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
 - extra places to add DataTable
   - SortableTable - especially for roster
     - remove Delete Players button on roster
 - test
   - interaction with hideAllControls and other options
-    - hideAllControls should move to a string always?
-      - use on AllStarTeams/DraftClass, hide searchbox and help but not filters?
+    - make this boolean, use title
+      - title requires either no pagination or hideAllControls
+        - or is no pagination required? test
     - datatable-negative-margin-top still needed?
+      - most/all can move to title
+    - hideAllControls tables might look weird now with moving from float to flex - check all
+      - some can move to "title"
+      - player profile page tabs
   - with col filters showing
   - career totals stats page
   - all seasons stats page
@@ -57,6 +57,11 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
       - "select all" should not actually select all, there is a limit
   - when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
     - interaction between table-responsive and dropdown in bootstrap, many discussions online, many potential solutions, but none of them seem to work
+
+datatable should support unsorted sort state
+- leaders, award races - so we don't have to highlight by default
+- roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
+- check how sort status is passed to row.classNames
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import

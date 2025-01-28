@@ -178,14 +178,15 @@ const Leaders = ({
 									cols={cols}
 									defaultSort={"disableSort"}
 									hideHeader
-									hideAllControls={
+									hideAllControls
+									name={`LeagueLeaders_${cat.stat}`}
+									pagination
+									rows={rows}
+									title={
 										<h3 title={desc}>
 											{title} ({statCol.title})
 										</h3>
 									}
-									name={`LeagueLeaders_${cat.stat}`}
-									pagination
-									rows={rows}
 								/>
 							</div>
 						);

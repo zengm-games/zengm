@@ -190,9 +190,10 @@ const AwardRaces = ({
 									cols={cols}
 									defaultSort={[0, "asc"]}
 									defaultStickyCols={window.mobile ? 0 : 2}
-									hideAllControls={<h3>{name}</h3>}
+									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}
+									title={<h3>{name}</h3>}
 								/>
 							) : (
 								<>

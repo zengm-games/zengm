@@ -431,7 +431,7 @@ const DataTable = ({
 	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	const table = (
-		<DataTableContext.Provider value={dataTableContext}>
+		<DataTableContext value={dataTableContext}>
 			<table
 				className={clsx(
 					"table table-hover",
@@ -477,7 +477,7 @@ const DataTable = ({
 				{sortableRows ? <MyDragOverlay /> : null}
 				<Footer colOrder={colOrderFiltered} footer={footer} />
 			</table>
-		</DataTableContext.Provider>
+		</DataTableContext>
 	);
 
 	return (

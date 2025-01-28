@@ -3,7 +3,6 @@ roster -> datatable
   - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
     - same issue for the animation moving the row into place
 - test firefox, safari, iphone
-- benchmark
 
 datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useContext } from "react";
+import { use } from "react";
 import { DataTableContext } from "./contexts";
 
 const Footer = ({
@@ -12,11 +12,11 @@ const Footer = ({
 	}[];
 	footer?: any[];
 }) => {
-	const { highlightCols } = useContext(DataTableContext);
-
 	if (!footer) {
 		return null;
 	}
+
+	const { highlightCols } = use(DataTableContext);
 
 	let footers: any[][];
 

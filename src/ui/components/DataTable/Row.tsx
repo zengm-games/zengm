@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useContext, type MouseEvent } from "react";
+import { use, type MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 import type { DataTableRow, DataTableRowMetadata } from ".";
 import {
@@ -20,7 +20,7 @@ const BulkSelectCheckbox = ({
 	rowKey: DataTableRow["key"];
 	metadata: DataTableRowMetadata;
 }) => {
-	const { disableBulkSelectKeys, selectedRows } = useContext(DataTableContext);
+	const { disableBulkSelectKeys, selectedRows } = use(DataTableContext);
 
 	const onChange = () => {
 		selectedRows.toggle(rowKey, metadata);
@@ -63,13 +63,14 @@ const Row = ({
 		showBulkSelectCheckboxes,
 		showRowLabels,
 		sortBys,
-	} = useContext(DataTableContext);
-	const { draggedIndex } = useContext(SortableTableContext);
+	} = use(DataTableContext);
 
 	const { clicked, toggleClicked } = useClickable();
 
 	let classNames;
 	if (typeof row.classNames === "function") {
+		const { draggedIndex } = use(SortableTableContext);
+
 		classNames = row.classNames({
 			isDragged: draggedIndex !== undefined,
 			isFiltered,

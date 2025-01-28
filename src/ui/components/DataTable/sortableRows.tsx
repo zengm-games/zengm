@@ -14,7 +14,7 @@ import {
 } from "@dnd-kit/sortable";
 import {
 	createContext,
-	useContext,
+	use,
 	useLayoutEffect,
 	useMemo,
 	useRef,
@@ -61,7 +61,7 @@ export const SortableHandle = ({
 	setActivatorNodeRef,
 }: SortableHandleProps) => {
 	const { clickedIndex, draggedIndex, highlightHandle, tableRef } =
-		useContext(SortableTableContext);
+		use(SortableTableContext);
 
 	const sortableHandleRef = useRef<HTMLTableCellElement | null>(null);
 
@@ -136,7 +136,7 @@ export const DraggableRow = ({
 		transform,
 		transition,
 	} = useSortable({ id });
-	const { draggedIndex, renderRow } = useContext(SortableTableContext);
+	const { draggedIndex, renderRow } = use(SortableTableContext);
 
 	const style = transform
 		? {
@@ -274,16 +274,14 @@ export const SortableContextWrappers = ({
 			collisionDetection={closestCenter}
 		>
 			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-				<SortableTableContext.Provider value={context}>
-					{children}
-				</SortableTableContext.Provider>
+				<SortableTableContext value={context}>{children}</SortableTableContext>
 			</SortableContext>
 		</DndContext>
 	);
 };
 
 export const MyDragOverlay = () => {
-	const { draggedIndex, renderRow, rows } = useContext(SortableTableContext);
+	const { draggedIndex, renderRow, rows } = use(SortableTableContext);
 
 	return (
 		<DragOverlay wrapperElement="tbody">

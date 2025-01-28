@@ -305,7 +305,7 @@ const Draft = ({
 								disabled={drafting}
 								onClick={async () => {
 									await toWorker("actions", "addToTradingBlock", {
-										dpid: p.draft.dpid,
+										dpids: [p.draft.dpid],
 									});
 								}}
 							>

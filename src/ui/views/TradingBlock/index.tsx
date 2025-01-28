@@ -496,8 +496,8 @@ const TradingBlock = ({
 	challengeNoRatings,
 	challengeNoTrades,
 	gameOver,
-	initialDpid,
-	initialPid,
+	initialDpids,
+	initialPids,
 	phase,
 	salaryCap,
 	salaryCapType,
@@ -515,8 +515,8 @@ const TradingBlock = ({
 		dpids: number[];
 	}>(() => {
 		let pids: number[];
-		if (initialPid !== undefined) {
-			pids = [initialPid];
+		if (initialPids !== undefined) {
+			pids = initialPids;
 		} else if (savedTradingBlock) {
 			pids = savedTradingBlock.pids;
 		} else {
@@ -524,8 +524,8 @@ const TradingBlock = ({
 		}
 
 		let dpids: number[];
-		if (initialDpid !== undefined) {
-			dpids = [initialDpid];
+		if (initialDpids !== undefined) {
+			dpids = initialDpids;
 		} else if (savedTradingBlock) {
 			dpids = savedTradingBlock.dpids;
 		} else {

@@ -405,7 +405,7 @@ const TopStuff = ({
 						if (showTradeFor) {
 							toWorker("actions", "tradeFor", { pid: player.pid });
 						} else {
-							toWorker("actions", "addToTradingBlock", { pid: player.pid });
+							toWorker("actions", "addToTradingBlock", { pids: [player.pid] });
 						}
 					}}
 					title={player.untradableMsg}

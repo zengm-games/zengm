@@ -68,7 +68,7 @@ const updateUserRoster = async (
 		);
 
 		let savedTradingBlock;
-		if (inputs.pid === undefined && inputs.dpid === undefined) {
+		if (inputs.pids === undefined && inputs.dpids === undefined) {
 			const savedTradingBlockRaw = await idb.cache.savedTradingBlock.get(0);
 			if (savedTradingBlockRaw?.tid === g.get("userTid")) {
 				// If a pid/dpid is no longer valid on the user's team, ignore
@@ -138,8 +138,8 @@ const updateUserRoster = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
-			initialPid: inputs.pid,
-			initialDpid: inputs.dpid,
+			initialPids: inputs.pids,
+			initialDpids: inputs.dpids,
 			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),
 			salaryCapType: g.get("salaryCapType"),

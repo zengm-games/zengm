@@ -172,12 +172,15 @@ const untilPick = async (dpid: number, conditions: Conditions) => {
 };
 
 const addToTradingBlock = async (
+	// Require at least one of pids or dpids
 	param:
 		| {
-				pid: number;
+				pids: number[];
+				dpids?: number[];
 		  }
 		| {
-				dpid: number;
+				pids?: number[];
+				dpids: number[];
 		  },
 	conditions: Conditions,
 ) => {

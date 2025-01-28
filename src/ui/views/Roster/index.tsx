@@ -25,6 +25,7 @@ import type { DataTableRow, SortBy } from "../../components/DataTable";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import { dataTableWrappedMood } from "../../components/Mood";
 import { wrappedRatingWithChange } from "../../components/RatingWithChange";
+import type { BulkAction } from "../../components/DataTable/BulkActions";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -64,12 +65,11 @@ const handleRelease = async (
 	}
 
 	const proceed = await confirm(releaseMessage, {
-		okText: "Release Player",
+		okText: "Release player",
 	});
 	if (proceed) {
 		const errorMsg = await toWorker("main", "releasePlayer", {
-			pid: p.pid,
-			justDrafted: wasPlayerJustDrafted,
+			pids: [p.pid],
 		});
 		if (errorMsg) {
 			logEvent({
@@ -174,7 +174,7 @@ const Roster = ({
 				titleReact: (
 					<>
 						PT{" "}
-						<HelpPopover title="Playing Time Modifier">
+						<HelpPopover title="Playing time modifier">
 							<p>
 								Your coach will divide up playing time based on ability and
 								stamina. If you want to influence{" "}
@@ -201,7 +201,7 @@ const Roster = ({
 				titleReact: (
 					<>
 						Mood{" "}
-						<HelpPopover title="Player Mood">
+						<HelpPopover title="Player mood">
 							See{" "}
 							<a
 								href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
@@ -219,7 +219,7 @@ const Roster = ({
 				titleReact: (
 					<>
 						Release{" "}
-						<HelpPopover title="Release Player">
+						<HelpPopover title="Release player">
 							<p>
 								To free up a roster spot, you can release a player from your
 								team. You will still have to pay{" "}
@@ -419,16 +419,46 @@ const Roster = ({
 				defaultStickyCols={window.mobile ? 0 : isSport("basketball") ? 2 : 1}
 				extraBulkActions={[
 					...(showRelease
-						? [
+						? ([
 								{
-									onClick: () => {},
+									onClick: async selectedRows => {
+										const proceed = await confirm(
+											`Are you sure you want to release ${helpers.numberWithCommas(selectedRows.map.size)} ${helpers.plural("player", selectedRows.map.size)}?`,
+											{
+												okText: helpers.plural(
+													"Release player",
+													selectedRows.map.size,
+												),
+											},
+										);
+										if (proceed) {
+											const pids = Array.from(selectedRows.map.values())
+												.filter(metadata => metadata.type === "player")
+												.map(metadata => {
+													return metadata.pid;
+												});
+											const errorMsg = await toWorker("main", "releasePlayer", {
+												pids,
+											});
+											if (errorMsg) {
+												logEvent({
+													type: "error",
+													text: errorMsg,
+													saveToDb: false,
+												});
+											} else {
+												// Clear because the selected players are no longer on this team!
+												selectedRows.clear();
+											}
+										}
+									},
 									text: "Release",
 									textLong: "Release players",
 								},
-							]
+							] as BulkAction[])
 						: []),
 					...(showTradeFor || showTradingBlock
-						? [
+						? ([
 								{
 									onClick: () => {},
 									text: showTradeFor ? "Trade for" : "Trade away",
@@ -436,7 +466,7 @@ const Roster = ({
 										? "Trade for players"
 										: "Trade away players",
 								},
-							]
+							] as BulkAction[])
 						: []),
 				]}
 				name="Roster"

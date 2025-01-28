@@ -2798,30 +2798,33 @@ const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
 	await season.setSchedule(newSchedule);
 };
 
-const releasePlayer = async ({
-	pid,
-	justDrafted,
-}: {
-	pid: number;
-	justDrafted: boolean;
-}) => {
-	const p = await idb.cache.players.get(pid);
-	if (!p) {
+const releasePlayer = async ({ pids }: { pids: number[] }) => {
+	if (pids.length === 0) {
+		return;
+	}
+
+	const players = await idb.getCopies.players({ pids });
+	if (players.length !== pids.length) {
 		return "Player not found";
 	}
 
-	if (p.tid !== g.get("userTid")) {
-		return "You aren't allowed to do this.";
+	if (players.some(p => p.tid !== g.get("userTid"))) {
+		return "You aren't allowed to do this";
 	}
 
-	await player.release(p, justDrafted);
+	for (const p of players) {
+		const justDrafted = helpers.justDrafted(p, g.get("phase"), g.get("season"));
+
+		await player.release(p, justDrafted);
+	}
+
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();
 
 	// Purposely after realtimeUpdate, so the UI update happens without waiting for this to complete
 	await freeAgents.normalizeContractDemands({
 		type: "dummyExpiringContracts",
-		pids: [p.pid],
+		pids,
 	});
 };
 

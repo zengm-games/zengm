@@ -76,7 +76,7 @@ const getSeason = (
 
 export type BulkAction = {
 	godMode?: boolean;
-	onClick: () => void;
+	onClick: (selectedRows: SelectedRows) => void;
 	text: ReactNode;
 	textLong?: ReactNode;
 };
@@ -331,7 +331,9 @@ export const BulkActions = ({
 								action.godMode ? "btn-god-mode" : "btn-primary",
 							)}
 							disabled={!hasSomeSelected}
-							onClick={action.onClick}
+							onClick={() => {
+								action.onClick(selectedRows);
+							}}
 						>
 							{action.text}
 						</button>
@@ -361,7 +363,9 @@ export const BulkActions = ({
 							<Dropdown.Item
 								key={i}
 								className={action.godMode ? "god-mode" : undefined}
-								onClick={action.onClick}
+								onClick={() => {
+									action.onClick(selectedRows);
+								}}
 								disabled={!hasSomeSelected}
 							>
 								{action.textLong ?? action.text}

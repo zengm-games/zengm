@@ -74,7 +74,7 @@
 		"react": "^19.0.0",
 		"react-addons-text-content": "^0.0.4",
 		"react-bootstrap": "^2.10.8",
-		"react-confirm": "^0.3.0-7",
+		"react-confirm": "^0.3.0",
 		"react-dom": "^19.0.0",
 		"react-select": "^5.10.0",
 		"roman-numerals": "^0.3.2",

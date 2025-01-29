@@ -17,8 +17,8 @@ const compareVersions = (v1: string, v2: string): -1 | 0 | 1 => {
 	}
 
 	for (let i = 0; i < 4; i++) {
-		const int1 = parseInt(parts1[i]);
-		const int2 = parseInt(parts2[i]);
+		const int1 = Number.parseInt(parts1[i]);
+		const int2 = Number.parseInt(parts2[i]);
 
 		if (Number.isNaN(int1)) {
 			throw new Error(`Invalid version: ${v1}`);

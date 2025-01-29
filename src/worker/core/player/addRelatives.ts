@@ -26,9 +26,9 @@ const parseLastName = (lastName: string): [string, number | undefined] => {
 	try {
 		const suffixNumber = romanNumerals.toArabic(suffix);
 		return [parsedName, suffixNumber];
-	} catch (err) {
-		if (err.message !== "toArabic expects a valid roman number") {
-			throw err;
+	} catch (error) {
+		if (error.message !== "toArabic expects a valid roman number") {
+			throw error;
 		}
 
 		return [lastName, undefined];
@@ -44,7 +44,7 @@ const getSuffix = (suffixNumber: number): string => {
 };
 
 const hasRelative = (p: Player, type: RelativeType) => {
-	return !!p.relatives.find(relative => relative.type === type);
+	return p.relatives.some(relative => relative.type === type);
 };
 
 const getRelatives = async (

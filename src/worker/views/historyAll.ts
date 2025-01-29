@@ -107,8 +107,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				const teamSeason = t.seasonAttrs.find(ts => ts.season === season);
 
 				return {
-					tid: tid,
-					seed: seed,
+					tid,
+					seed,
 					abbrev: teamSeason
 						? teamSeason.abbrev
 						: g.get("teamInfoCache")[tid]?.abbrev,

@@ -33,13 +33,7 @@ const Players = ({
 			return;
 		}
 
-		const seasonTeamInfo =
-			p.retirableJerseyNumbers[number] &&
-			p.retirableJerseyNumbers[number].length > 0
-				? p.retirableJerseyNumbers[number][
-						p.retirableJerseyNumbers[number].length - 1
-					]
-				: season;
+		const seasonTeamInfo = p.retirableJerseyNumbers[number]?.at(-1) ?? season;
 
 		await toWorker("main", "retiredJerseyNumberUpsert", {
 			tid,

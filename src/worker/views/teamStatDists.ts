@@ -204,7 +204,7 @@ const updateTeams = async (
 		const teams = await idb.getCopies.teamsPlus(
 			{
 				seasonAttrs: ["won", "lost"],
-				stats: stats,
+				stats,
 				season: inputs.season,
 			},
 			"noCopyCache",

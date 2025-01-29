@@ -117,7 +117,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			} else {
 				throw new Error(`Unknown phase number ${phase}`);
 			}
-		} catch (err) {
+		} catch (error) {
 			await lock.set("newPhase", false);
 			await updatePlayMenu();
 			logEvent(
@@ -129,7 +129,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 				},
 				conditions,
 			);
-			throw err;
+			throw error;
 		}
 	}
 };

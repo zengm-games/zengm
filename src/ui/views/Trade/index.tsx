@@ -362,7 +362,7 @@ const Trade = (props: View<"trade">) => {
 							className="float-start form-select select-team mx-2 flex-shrink-1"
 							value={otherTid}
 							onChange={event => {
-								handleChangeTeam(parseInt(event.currentTarget.value));
+								handleChangeTeam(Number.parseInt(event.currentTarget.value));
 							}}
 						>
 							{teams.map(t => (

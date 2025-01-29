@@ -174,7 +174,7 @@ const updateNews = async (
 						"imgURLSmall",
 						"region",
 					],
-					season: season,
+					season,
 					addDummySeason: true,
 				},
 				"noCopyCache",

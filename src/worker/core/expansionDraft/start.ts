@@ -22,7 +22,7 @@ const start = async () => {
 	for (const [tidString, pids] of Object.entries(
 		expansionDraft.protectedPids,
 	)) {
-		const tid = parseInt(tidString);
+		const tid = Number.parseInt(tidString);
 		if (userTids.includes(tid) && !local.autoPlayUntil && !g.get("spectator")) {
 			protectedPids.push(...pids);
 		} else {

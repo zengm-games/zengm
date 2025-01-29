@@ -866,21 +866,19 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		league: true,
 		commandPalette: true,
 		commandPaletteOnly: true,
-		children: Object.entries(frivolities)
-			.map(([category, rows]) =>
-				rows.map(
-					row =>
-						({
-							type: "link",
-							league: true,
-							commandPalette: true,
-							commandPaletteOnly: true,
-							path: ["frivolities", ...row.urlParts],
-							text: `${category} > ${row.name}`,
-						}) as MenuItemLink,
-				),
-			)
-			.flat(),
+		children: Object.entries(frivolities).flatMap(([category, rows]) =>
+			rows.map(
+				row =>
+					({
+						type: "link",
+						league: true,
+						commandPalette: true,
+						commandPaletteOnly: true,
+						path: ["frivolities", ...row.urlParts],
+						text: `${category} > ${row.name}`,
+					}) as MenuItemLink,
+			),
+		),
 	},
 	{
 		type: "header",

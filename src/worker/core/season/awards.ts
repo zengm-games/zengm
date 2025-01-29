@@ -504,7 +504,7 @@ const saveAwardsByPlayer = async (
 		if (!p) {
 			p = (await idb.getCopy.players(
 				{
-					pid: pid,
+					pid,
 				},
 				"noCopyCache",
 			)) as any;

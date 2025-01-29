@@ -124,7 +124,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 		for (const { type, pids, players, dpids, picks } of missingInfos) {
 			if (pids.length !== players.length) {
 				const missingPids = pids.filter(
-					pid => !players.find(p => p.pid === pid),
+					pid => !players.some(p => p.pid === pid),
 				);
 
 				for (const pid of missingPids) {
@@ -165,7 +165,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 
 			if (dpids.length !== picks.length) {
 				const missingDpids = dpids.filter(
-					dpid => !picks.find(dp => dp.dpid === dpid),
+					dpid => !picks.some(dp => dp.dpid === dpid),
 				);
 
 				for (const dpid of missingDpids) {

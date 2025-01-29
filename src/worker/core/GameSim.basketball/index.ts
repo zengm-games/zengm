@@ -465,7 +465,7 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay.logEvent({
 			type: "shootoutShot",
-			t: t,
+			t,
 			pid: p.id,
 			made,
 		});
@@ -512,7 +512,7 @@ class GameSim extends GameSimBase {
 
 			this.playByPlay.logEvent({
 				type: "shootoutTeam",
-				t: t,
+				t,
 				pid: shooter.id,
 			});
 
@@ -561,8 +561,8 @@ class GameSim extends GameSimBase {
 		const jumpers = teamNums.map(t => {
 			const ratios = this.ratingArray("jumpBall", t);
 			const maxRatio = Math.max(...ratios);
-			let ind = ratios.findIndex(ratio => ratio === maxRatio);
-			if (ind === undefined) {
+			let ind = ratios.indexOf(maxRatio);
+			if (ind < 0) {
 				ind = 0;
 			}
 			return this.playersOnCourt[t][ind];
@@ -2867,7 +2867,7 @@ class GameSim extends GameSimBase {
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
 	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
-		const array = Array(this.numPlayersOnCourt).fill(0);
+		const array: number[] = Array(this.numPlayersOnCourt).fill(0);
 		let total = 0;
 
 		const foulLimit = rating === "fouling" ? this.getFoulTroubleLimit() : 0;

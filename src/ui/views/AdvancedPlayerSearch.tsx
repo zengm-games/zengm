@@ -770,7 +770,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 								className="form-select"
 								value={seasonStart}
 								onChange={event => {
-									const season = parseInt(event.target.value);
+									const season = Number.parseInt(event.target.value);
 									if (season > seasonEnd) {
 										setSeasonRange([season, season]);
 									} else {
@@ -787,7 +787,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 								className="form-select"
 								value={seasonEnd}
 								onChange={event => {
-									const season = parseInt(event.target.value);
+									const season = Number.parseInt(event.target.value);
 									if (season < seasonStart) {
 										setSeasonRange([season, season]);
 									} else {

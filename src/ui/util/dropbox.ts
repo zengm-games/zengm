@@ -64,20 +64,20 @@ class Buffer {
 	}
 
 	async flush() {
-		const blob = new Blob(this.buffer);
+		const contents = new Blob(this.buffer);
 
 		if (this.sessionID === undefined) {
 			const response = await this.dropbox.filesUploadSessionStart({
 				close: false,
-				contents: blob,
+				contents,
 			});
 			this.sessionID = response.result.session_id;
 		} else {
 			const cursor = this.getCursor();
 			await this.dropbox.filesUploadSessionAppendV2({
-				cursor: cursor,
+				cursor,
 				close: false,
-				contents: blob,
+				contents,
 			});
 		}
 
@@ -91,15 +91,15 @@ class Buffer {
 			await this.flush();
 		}
 
-		const blob = new Blob(this.buffer);
+		const contents = new Blob(this.buffer);
 
 		const cursor = this.getCursor();
 		const commit = { path, autorename: true };
 
 		const response = await this.dropbox.filesUploadSessionFinish({
-			cursor: cursor,
-			commit: commit,
-			contents: blob,
+			cursor,
+			commit,
+			contents,
 		});
 
 		return response;

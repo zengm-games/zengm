@@ -220,7 +220,7 @@ const updatePlayoffs = async (
 			// All first round matchups
 			const matchupsToCheck = [
 				...series[0],
-				...(playIns ? playIns.map(playIn => playIn.slice(0, 2)).flat() : []),
+				...(playIns ? playIns.flatMap(playIn => playIn.slice(0, 2)) : []),
 			];
 
 			const seedsByTid = new Map();

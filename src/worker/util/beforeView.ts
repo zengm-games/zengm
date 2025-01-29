@@ -194,9 +194,9 @@ const beforeNonLeague = async (conditions: Conditions) => {
 			}
 
 			beforeNonLeagueRunning = false;
-		} catch (err) {
+		} catch (error) {
 			beforeNonLeagueRunning = false;
-			throw err;
+			throw error;
 		}
 	}
 };

@@ -356,7 +356,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 
 	const output = { ...teams[0] };
 	delete output.disabled;
-	for (const col of [...colsSum]) {
+	for (const col of colsSum) {
 		output[col] = sumBy(teams, col);
 	}
 	for (const col of colsMin) {
@@ -457,7 +457,7 @@ const updateTeamRecords = async (
 				const addPartial = (tid: number, seasonAttrs: typeof t.seasonAttrs) => {
 					partials.push({
 						root: false,
-						tid: tid,
+						tid,
 						abbrev: seasonAttrs[0].abbrev,
 						region: seasonAttrs[0].region,
 						name: seasonAttrs[0].name,

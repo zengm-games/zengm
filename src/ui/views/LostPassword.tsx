@@ -52,12 +52,12 @@ const LostPassword = () => {
 					errorMessage: "Account not found.",
 				});
 			}
-		} catch (err) {
+		} catch (error) {
 			setState({
 				successMessage: undefined,
 				errorMessage: ajaxErrorMsg,
 			});
-			throw err;
+			throw error;
 		}
 	};
 	useTitleBar({ title: "Lost Password", hideNewWindow: true });

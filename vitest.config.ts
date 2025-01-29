@@ -1,6 +1,5 @@
 //import babel from "vite-plugin-babel";
-// eslint-disable-next-line import/no-unresolved
-import { configDefaults, defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config"; // eslint-disable-line import/no-unresolved
 import { getRollupAliasEntries } from "./tools/lib/rollupConfig";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];

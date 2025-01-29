@@ -1,19 +1,15 @@
 import { assert, describe, test } from "vitest";
-import * as babel from "@babel/core";
+import { transform } from "@babel/core";
 // @ts-expect-error
 import { babelPluginSportFunctions } from "./index.js";
 
-const transform = (input: string) => {
-	return babel.transform(input, {
+const compare = (input: string, output: string) => {
+	const compiled = transform(input, {
 		babelrc: false,
 		configFile: false,
 		filename: "test.js",
 		plugins: [babelPluginSportFunctions],
 	})!.code;
-};
-
-const compare = (input: string, output: string) => {
-	const compiled = transform(input);
 	assert.strictEqual(compiled, output);
 };
 

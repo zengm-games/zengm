@@ -33,7 +33,7 @@ const processPlayerNewLeague = async ({
 
 				// Keep in sync with bbgm-rosters
 				const key = `dp_${p.draft.year}_${name
-					.replace(/ /g, "_")
+					.replaceAll(" ", "_")
 					.toLowerCase()}`;
 				if (realPlayerPhotos[key] !== undefined) {
 					p.imgURL = realPlayerPhotos[key];

@@ -6,15 +6,15 @@ const getScript = (url: string): Promise<void> => {
 		script.async = true;
 		script.type = "text/javascript";
 
-		script.onerror = err => {
-			reject(err);
+		script.onerror = error => {
+			reject(error);
 		};
 
 		script.onload = () => {
 			resolve();
 		};
 
-		head.appendChild(script);
+		head.append(script);
 		script.src = url;
 	});
 };

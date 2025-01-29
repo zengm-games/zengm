@@ -1017,7 +1017,7 @@ function ordinal(x?: number | null): string {
 
 // On iOS in some locales, the inputMode="decimal" keyboard contians a , as the decimal separator rather than .
 const localeParseFloat = (string: string) => {
-	return parseFloat(
+	return Number.parseFloat(
 		typeof string === "string" ? string.replaceAll(",", ".") : string,
 	);
 };
@@ -1034,7 +1034,7 @@ const roundWinp = (winp: number): string => {
 
 	if (output[0] === "0") {
 		// Delete leading 0
-		output = output.slice(1, output.length);
+		output = output.slice(1);
 	} else if (output === "1.000") {
 		// 1.000 => 1.00, but for higher numbers leave 3 decimal places, like for OPS
 		output = "1.00";
@@ -1467,7 +1467,9 @@ const getRecordNumericValue = (record: string | null) => {
 		return -Infinity;
 	}
 
-	let [won, lost, otl, tied] = record.split("-").map(num => parseInt(num));
+	let [won, lost, otl, tied] = record
+		.split("-")
+		.map(num => Number.parseInt(num));
 
 	// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
 	if (typeof otl === "number" && typeof tied !== "number") {

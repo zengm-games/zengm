@@ -27,8 +27,8 @@ const initAutoPlay = async (conditions: Conditions) => {
 		return false;
 	}
 
-	const season = parseInt(result.season);
-	const phase = parseInt(result.phase);
+	const season = Number.parseInt(result.season);
+	const phase = Number.parseInt(result.phase);
 
 	if (
 		season > g.get("season") ||

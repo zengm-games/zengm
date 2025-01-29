@@ -259,7 +259,7 @@ const preProcess = async (
 			x.result === undefined &&
 			typeof x.score === "string"
 		) {
-			const pts = (x.score as string).split("-").map(y => parseInt(y));
+			const pts = (x.score as string).split("-").map(y => Number.parseInt(y));
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];
@@ -397,7 +397,7 @@ const finalizeStartingSeason = (
 	}
 
 	if (startingSeasonFromInput) {
-		const startingSeason2 = parseInt(startingSeasonFromInput);
+		const startingSeason2 = Number.parseInt(startingSeasonFromInput);
 		if (!Number.isNaN(startingSeason2)) {
 			return startingSeason2;
 		}
@@ -1076,7 +1076,6 @@ const beforeDBStream = async ({
 		repeatSeason,
 
 		// realStats is already in getLeagueOptions
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		realStats,
 
 		...otherSettings

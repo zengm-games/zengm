@@ -218,8 +218,8 @@ const updatePlayers = async (
 				pick = 0;
 			} else {
 				const parts = arg.split("-");
-				round = parseInt(parts[0]);
-				pick = parseInt(parts[1]);
+				round = Number.parseInt(parts[0]);
+				pick = Number.parseInt(parts[1]);
 
 				if (Number.isNaN(round) || Number.isNaN(pick)) {
 					throw new Error("Invalid pick");
@@ -317,25 +317,23 @@ const updatePlayers = async (
 					new Set(p.stats.filter(row => !row.playoffs).map(row => row.season)),
 				);
 
-				return seasons
-					.map(season => {
-						try {
-							const value = goatFormula.evaluate(p, undefined, {
-								type: "season",
-								season,
-							});
-							return {
-								value,
-								extra: {
-									// If this is set, it will specify the season to use for the "Best Season" section, rather than picking the best season by the normal metric. Useful if you want to display a list of seasons (like goat_season)
-									bestSeasonOverride: season,
-								},
-							};
-						} catch {}
+				return seasons.flatMap(season => {
+					try {
+						const value = goatFormula.evaluate(p, undefined, {
+							type: "season",
+							season,
+						});
+						return {
+							value,
+							extra: {
+								// If this is set, it will specify the season to use for the "Best Season" section, rather than picking the best season by the normal metric. Useful if you want to display a list of seasons (like goat_season)
+								bestSeasonOverride: season,
+							},
+						};
+					} catch {}
 
-						return [];
-					})
-					.flat();
+					return [];
+				});
 			};
 		} else if (type === "teams") {
 			title = "Most Teams";
@@ -417,33 +415,31 @@ const updatePlayers = async (
 				// Handle duplicate entries, like due to injury - we only want the first one
 				const seasonsSeen = new Set<number>();
 
-				return p.ratings
-					.map((row, i) => {
-						if (i === 0) {
-							return [];
-						}
+				return p.ratings.flatMap((row, i) => {
+					if (i === 0) {
+						return [];
+					}
 
-						if (seasonsSeen.has(row.season)) {
-							return [];
-						}
-						seasonsSeen.add(row.season);
+					if (seasonsSeen.has(row.season)) {
+						return [];
+					}
+					seasonsSeen.add(row.season);
 
-						const ovr = player.fuzzRating(row.ovr, row.fuzz);
-						const prevOvr = player.fuzzRating(
-							p.ratings[i - 1].ovr,
-							p.ratings[i - 1].fuzz,
-						);
-						const prog = ovr - prevOvr;
+					const ovr = player.fuzzRating(row.ovr, row.fuzz);
+					const prevOvr = player.fuzzRating(
+						p.ratings[i - 1].ovr,
+						p.ratings[i - 1].fuzz,
+					);
+					const prog = ovr - prevOvr;
 
-						return {
-							value: prog,
-							extra: {
-								bestSeasonOverride: row.season,
-								age: row.season - p.born.year,
-							},
-						};
-					})
-					.flat();
+					return {
+						value: prog,
+						extra: {
+							bestSeasonOverride: row.season,
+							age: row.season - p.born.year,
+						},
+					};
+				});
 			};
 		} else if (type === "progs_career") {
 			title = "Career Progs";
@@ -643,7 +639,7 @@ const updatePlayers = async (
 						maxNumSeasons = numSeasons;
 
 						// Somehow propagate these through
-						maxTid = parseInt(tid);
+						maxTid = Number.parseInt(tid);
 
 						maxGP = 0;
 						for (const ps of statsByTid[tid]) {
@@ -932,7 +928,7 @@ const updatePlayers = async (
 					: undefined;
 
 				return {
-					value: value,
+					value,
 					extra: {
 						tid: row.tid,
 						bestSeasonOverride: row.season,

@@ -38,7 +38,7 @@ const mergeGames = (games: LocalStateUI["games"]) => {
 const newLid = async (lid: number) => {
 	const parts = window.location.pathname.split("/");
 
-	if (parts[1] === "l" && parseInt(parts[2]) !== lid) {
+	if (parts[1] === "l" && Number.parseInt(parts[2]) !== lid) {
 		parts[2] = String(lid);
 		const newPathname = parts.join("/");
 		await realtimeUpdate(["firstRun"], newPathname);

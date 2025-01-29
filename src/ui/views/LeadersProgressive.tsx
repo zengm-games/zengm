@@ -81,50 +81,48 @@ const LeadersProgressive = ({
 				) : (
 					season
 				),
-				...leaderTypes
-					.map((type, i) => {
-						const p = row[type];
+				...leaderTypes.flatMap((type, i) => {
+					const p = row[type];
 
-						let tableRow: any[];
-						if (!p) {
-							tableRow = [undefined, undefined];
-						} else {
-							tableRow = [
-								{
-									...wrappedPlayerNameLabels({
-										pid: p.pid,
-										season,
-										watch: p.watch,
-										skills: p.skills,
-										jerseyNumber: p.jerseyNumber,
-										firstName: p.firstName,
-										firstNameShort: p.firstNameShort,
-										lastName: p.lastName,
-										count: type === "yearByYear" ? row[type]?.count : undefined,
-									}),
-									classNames: {
-										"table-danger": p.hof,
-										"table-info": p.userTeam,
-									},
+					let tableRow: any[];
+					if (!p) {
+						tableRow = [undefined, undefined];
+					} else {
+						tableRow = [
+							{
+								...wrappedPlayerNameLabels({
+									pid: p.pid,
+									season,
+									watch: p.watch,
+									skills: p.skills,
+									jerseyNumber: p.jerseyNumber,
+									firstName: p.firstName,
+									firstNameShort: p.firstNameShort,
+									lastName: p.lastName,
+									count: type === "yearByYear" ? row[type]?.count : undefined,
+								}),
+								classNames: {
+									"table-danger": p.hof,
+									"table-info": p.userTeam,
 								},
-								{
-									value: helpers.roundStat(p.stat, stat, totals),
-									sortValue: p.stat,
-									classNames: {
-										"table-danger": p.hof,
-										"table-info": p.userTeam,
-									},
+							},
+							{
+								value: helpers.roundStat(p.stat, stat, totals),
+								sortValue: p.stat,
+								classNames: {
+									"table-danger": p.hof,
+									"table-info": p.userTeam,
 								},
-							];
-						}
+							},
+						];
+					}
 
-						if (i !== 0) {
-							tableRow.unshift(spacer);
-						}
+					if (i !== 0) {
+						tableRow.unshift(spacer);
+					}
 
-						return tableRow;
-					})
-					.flat(),
+					return tableRow;
+				}),
 			],
 		};
 	});

@@ -39,7 +39,7 @@ function getTheme() {
       return local === "dark" ? "dark" : "light";
     }
     return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  } catch (err) {
+  } catch (error) {
     return "light";
   }
 }
@@ -181,7 +181,7 @@ function checkBrowser() {
     // {...x} is for Chrome 59 and lower
     eval("{ const x = {a: 1}; const y = {...x}; const s = Symbol(); let e = (e) => { for (let e of []) {}; }; queueMicrotask(() => {}); }");
     return true;
-  } catch (err) {
+  } catch (error) {
     return false;
   }
 };

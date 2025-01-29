@@ -55,7 +55,7 @@ const Confirm = confirmable<
 						onChange={event => {
 							const value = event.target.value;
 							setControlledValue(
-								value === "delete" ? undefined : parseInt(value),
+								value === "delete" ? undefined : Number.parseInt(value),
 							);
 						}}
 					>

@@ -20,7 +20,7 @@ const downloadFile = (
 	a.dataset.downloadurl = [mimeType, a.download, a.href].join(":");
 	a.style.display = "none";
 
-	document.body.appendChild(a);
+	document.body.append(a);
 	a.click();
 
 	document.body.removeChild(a);

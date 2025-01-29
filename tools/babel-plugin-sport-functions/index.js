@@ -30,7 +30,7 @@ export const babelPluginSportFunctions = babel => {
 	return {
 		visitor: {
 			CallExpression: {
-				exit: function (path) {
+				exit: path => {
 					const node = path.node;
 
 					if (path.get("callee").isIdentifier({ name: "isSport" })) {

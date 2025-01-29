@@ -40,7 +40,7 @@ const NUM_STARTERS = 5;
 
 export const lineupSort = (ovrDH: number, spd: number) => ovrDH + 0.2 * spd;
 
-const findMaxBy = <T extends unknown>(
+const findMaxBy = <T>(
 	records: T[],
 	count: number,
 	getScore: (record: T) => number,

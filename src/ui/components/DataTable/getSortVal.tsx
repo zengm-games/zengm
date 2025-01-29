@@ -48,12 +48,12 @@ const getSortVal = (
 
 				if (sortVal.includes(":")) {
 					const parts = sortVal.split(":");
-					const minutes = parseInt(parts[0]);
-					const seconds = parseInt(parts[1]);
+					const minutes = Number.parseInt(parts[0]);
+					const seconds = Number.parseInt(parts[1]);
 					return minutes + seconds / 60;
 				}
 
-				sortVal = sortVal.replace(/,/g, "");
+				sortVal = sortVal.replaceAll(",", "");
 			}
 
 			if (typeof sortVal !== "number") {
@@ -68,7 +68,7 @@ const getSortVal = (
 				return null;
 			}
 
-			return parseInt(sortVal.split("-")[0]);
+			return Number.parseInt(sortVal.split("-")[0]);
 		}
 
 		if (sortType === "draftPick") {
@@ -78,7 +78,7 @@ const getSortVal = (
 
 			const [round, pick] = sortVal.split("-"); // This assumes no league has more than a million teams lol
 
-			const number = parseInt(round) * 1000000 + parseInt(pick);
+			const number = Number.parseInt(round) * 1000000 + Number.parseInt(pick);
 
 			// Handle any weird values, like "none" or "undrafted" or whatever. Such as on "Best Player at Every Pick"
 			if (Number.isNaN(number)) {
@@ -145,12 +145,12 @@ const getSortVal = (
 		}
 
 		return sortVal;
-	} catch (err) {
+	} catch (error) {
 		console.error(
 			`getSortVal error on value "${String(value)}" and sortType "${String(
 				sortType,
 			)}"`,
-			err,
+			error,
 		);
 		return null;
 	}

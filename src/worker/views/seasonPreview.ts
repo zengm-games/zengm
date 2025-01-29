@@ -39,7 +39,7 @@ const updateSeasonPreview = async (
 			if (
 				g.get("season") === season &&
 				(g.get("phase") === PHASE.PRESEASON ||
-					p.stats.find(row => row.season === season) === undefined)
+					!p.stats.some(row => row.season === season))
 			) {
 				currentTid = p.tid;
 			} else {

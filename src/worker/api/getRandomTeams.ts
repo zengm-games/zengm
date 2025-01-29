@@ -77,7 +77,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 
 	const teamsBySeason = groupBy(teams, "season");
 	for (const [seasonString, teamsSeason] of Object.entries(teamsBySeason)) {
-		const season = parseInt(seasonString);
+		const season = Number.parseInt(seasonString);
 		if (Number.isNaN(season)) {
 			continue;
 		}

@@ -1006,7 +1006,7 @@ const ComandPaletteWrapper = () => {
 			return;
 		}
 
-		const lastDate = parseInt(lastUsedOrBugged);
+		const lastDate = Number.parseInt(lastUsedOrBugged);
 		if (Number.isNaN(lastDate)) {
 			saveLastUsed();
 			return;

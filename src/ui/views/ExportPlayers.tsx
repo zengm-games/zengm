@@ -121,7 +121,7 @@ const ExportPlayers = ({
 				injury: p.injury,
 				jerseyNumber: p.jerseyNumber,
 				pid: p.pid,
-				season: season,
+				season,
 				skills: p.ratings.skills,
 				watch: p.watch,
 				firstName: p.firstName,

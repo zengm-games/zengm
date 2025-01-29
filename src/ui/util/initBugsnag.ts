@@ -5,10 +5,10 @@ Bugsnag.start({
 	apiKey: window.bugsnagKey,
 	appVersion: window.bbgmVersion,
 	autoTrackSessions: false,
-	onError: function (event) {
+	onError: event => {
 		// Normalize league URLs to all look the same
 		if (event && typeof event.context === "string") {
-			event.context = event.context.replace(/^\/l\/[0-9]+/, "/l/0");
+			event.context = event.context.replace(/^\/l\/\d+/, "/l/0");
 		}
 	},
 	enabledReleaseStages: ["beta", "production"],

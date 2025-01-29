@@ -398,7 +398,7 @@ const newPhasePreseason = async (
 		"tid",
 	);
 	for (const [tidString, roster] of Object.entries(playersByTeam)) {
-		const tid = parseInt(tidString);
+		const tid = Number.parseInt(tidString);
 		for (const p of roster) {
 			const jerseyNumber = p.stats.at(-1).jerseyNumber;
 			if (!jerseyNumber) {
@@ -412,7 +412,7 @@ const newPhasePreseason = async (
 
 				// Player who was on team last year (should only be one at most)
 				let playerWhoKeepsIt = conflicts.find(
-					p => p.stats.length > 1 && p.stats[p.stats.length - 2].tid === tid,
+					p => p.stats.length > 1 && p.stats.at(-2)!.tid === tid,
 				);
 				if (!playerWhoKeepsIt) {
 					// Randomly pick one

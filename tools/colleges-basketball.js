@@ -474,7 +474,7 @@ for (const filename of fs.readdirSync(folder)) {
 		.text()
 		.replace("NBA & ABA Players Who Attended ", "")
 		.replace(" | Basketball-Reference.com", "");
-	const count = parseInt($("#players_link").attr("data-label"));
+	const count = Number.parseInt($("#players_link").attr("data-label"));
 
 	// Actually the same school
 	if (name === "Missouri State University") {

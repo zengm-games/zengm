@@ -60,7 +60,7 @@ const applyRealTeamInfo = (
 
 	// Available seasons that are less than or equal to the input season
 	const seasons = Object.keys(realInfoSeasons)
-		.map(x => parseInt(x))
+		.map(x => Number.parseInt(x))
 		.filter(x => !Number.isNaN(x))
 		.filter(x => x <= season);
 

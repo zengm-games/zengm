@@ -42,11 +42,7 @@ const updatePlayerGameLog = async (
 		const stats: string[] = [];
 
 		const allStats = Array.from(
-			new Set(
-				Object.values(PLAYER_GAME_STATS)
-					.map(x => x.stats)
-					.flat(),
-			),
+			new Set(Object.values(PLAYER_GAME_STATS).flatMap(x => x.stats)),
 		);
 
 		const games = await idb.getCopies.games({ season }, "noCopyCache");

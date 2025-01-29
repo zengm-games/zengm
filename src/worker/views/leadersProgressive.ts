@@ -32,8 +32,7 @@ const leadersProgressiveAddFirstNameShort = (
 	] as const;
 	const players = addFirstNameShort(
 		rows
-			.map(row => categories.map(category => row[category]))
-			.flat()
+			.flatMap(row => categories.map(category => row[category]))
 			.filter(row => row !== undefined) as MyLeader[],
 	);
 

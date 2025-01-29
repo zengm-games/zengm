@@ -299,7 +299,7 @@ const getSeasonsToPlot = async (
 	const statSeasons = [
 		...Object.keys(statSumsBySeason[0]),
 		...Object.keys(statSumsBySeason[1]),
-	].map(x => parseInt(x));
+	].map(x => Number.parseInt(x));
 	const maxStatSeason = Math.max(...statSeasons);
 	if (maxStatSeason > end) {
 		end = maxStatSeason;

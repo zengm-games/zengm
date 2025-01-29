@@ -105,7 +105,7 @@ const value = (
 				}
 			} else {
 				// Two most recent seasons
-				const ps2 = ps[ps.length - 2];
+				const ps2 = ps.at(-2)!;
 
 				if (Object.hasOwn(ps2, "per")) {
 					if (ps1.min + ps2.min > 0) {

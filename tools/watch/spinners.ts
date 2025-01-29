@@ -289,8 +289,8 @@ class Spinners<Key extends string = string> {
 	}
 }
 
-const TIME_CUTOFF_SPIN_1 = 1_000;
-const TIME_CUTOFF_SPIN_2 = 5_000;
+const TIME_CUTOFF_SPIN_1 = 1000;
+const TIME_CUTOFF_SPIN_2 = 5000;
 const TIME_CUTOFF_SUCCESS_1 = 10_000;
 const TIME_CUTOFF_SUCCESS_2 = 30_000;
 

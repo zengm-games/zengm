@@ -269,7 +269,7 @@ const Controls = ({
 							} else {
 								countries = orderBy(
 									infoState.countries,
-									row => parseInt(row.frequency),
+									row => Number.parseInt(row.frequency),
 									direction,
 								);
 							}

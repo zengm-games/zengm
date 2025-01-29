@@ -100,8 +100,8 @@
 			}
 			const terminalCodeUnit = chunk.charCodeAt(chunk.length - 1);
 			if (terminalCodeUnit >= 0xd800 && terminalCodeUnit < 0xdc00) {
-				this._carry = chunk.substring(chunk.length - 1);
-				chunk = chunk.substring(0, chunk.length - 1);
+				this._carry = chunk.slice(Math.max(0, chunk.length - 1));
+				chunk = chunk.slice(0, Math.max(0, chunk.length - 1));
 			}
 			const encoded = this._encoder.encode(chunk);
 			if (encoded.length > 0) {

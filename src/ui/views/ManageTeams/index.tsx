@@ -56,7 +56,7 @@ const reducer = (state: State, action: Action) => {
 				// @ts-expect-error
 				t.colors[action.field.replace("colors", "")] = action.value;
 			} else if (action.field === "did") {
-				t[action.field] = parseInt(action.value);
+				t[action.field] = Number.parseInt(action.value);
 			} else if (action.field === "disabled") {
 				t[action.field] = action.value === "1";
 			} else {

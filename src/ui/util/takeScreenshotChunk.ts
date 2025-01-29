@@ -22,9 +22,9 @@ const takeScreenshotChunk = async () => {
 	const logos = document.getElementsByClassName("spin");
 	const logoHTML =
 		logos.length > 0 && logos[0] instanceof HTMLImageElement
-			? `<img src="${logos[0].src}" width="18" height="18">`
+			? `<img src="${logos[0].src}" width="18" height="18"> `
 			: "";
-	watermark.innerHTML = `<nav class="navbar navbar-light bg-light rounded-3 px-3"><a class="navbar-brand me-auto" href="#">${logoHTML} ${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text" style="color: ${
+	watermark.innerHTML = `<nav class="navbar navbar-light bg-light rounded-3 px-3"><a class="navbar-brand me-auto" href="#">${logoHTML}${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
 	}; font-weight: bold">Play your own league free at ${process.env.SPORT}${
 		!isSport("hockey") ? "-gm" : ".zengm"
@@ -48,7 +48,7 @@ const takeScreenshotChunk = async () => {
 				el.classList.remove("notification-fadein");
 			}
 		}
-		contentEl.appendChild(notifications);
+		contentEl.append(notifications);
 	}
 
 	window.scrollTo(0, 0);
@@ -106,18 +106,18 @@ const takeScreenshotChunk = async () => {
 			persistent: true,
 			extraClass: "notification-primary",
 		});
-	} catch (err) {
-		console.log(err);
+	} catch (error) {
+		console.log(error);
 		let errorMsg;
 		if (
-			err &&
-			err.responseJSON &&
-			err.responseJSON.error &&
-			err.responseJSON.error.message
+			error &&
+			error.responseJSON &&
+			error.responseJSON.error &&
+			error.responseJSON.error.message
 		) {
-			errorMsg = `Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`;
-		} else if (err.message) {
-			errorMsg = `Error saving screenshot. Error message from Imgur: "${err.message}"`;
+			errorMsg = `Error saving screenshot. Error message from Imgur: "${error.responseJSON.error.message}"`;
+		} else if (error.message) {
+			errorMsg = `Error saving screenshot. Error message from Imgur: "${error.message}"`;
 		} else {
 			errorMsg = "Error saving screenshot.";
 		}

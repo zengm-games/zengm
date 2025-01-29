@@ -131,7 +131,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					expansionDraft.numPerTeamDrafted,
 				)) {
 					if (numPerTeam >= expansionDraft.numPerTeam) {
-						const tid = parseInt(tidString);
+						const tid = Number.parseInt(tidString);
 						tidsOverLimit.push(tid);
 					}
 				}

@@ -33,8 +33,8 @@ export const getGodModeWarnings = ({
 	};
 	godModeLimits: View<"newLeague">["godModeLimits"];
 }) => {
-	const pop = t ? helpers.localeParseFloat(t.pop) : NaN;
-	const stadiumCapacity = t ? parseInt(t.stadiumCapacity) : NaN;
+	const pop = t ? helpers.localeParseFloat(t.pop) : Number.NaN;
+	const stadiumCapacity = t ? Number.parseInt(t.stadiumCapacity) : Number.NaN;
 
 	const errors = [];
 	if (!Number.isNaN(pop) && pop > godModeLimits.pop) {
@@ -331,7 +331,7 @@ const SelectTeam = ({
 							className="form-select ms-2"
 							value={addEditTeamInfo.lid}
 							onChange={async event => {
-								const lid = parseInt(event.target.value);
+								const lid = Number.parseInt(event.target.value);
 								setAddEditTeamInfo(info => ({
 									...info,
 									lid,
@@ -366,7 +366,7 @@ const SelectTeam = ({
 								className="form-select"
 								value={season}
 								onChange={async event => {
-									const value = parseInt(event.target.value);
+									const value = Number.parseInt(event.target.value);
 									setSeason(value);
 									await loadTeams(league!, value);
 								}}
@@ -567,7 +567,7 @@ const UpsertTeamModal = ({
 		if (controlledTeam === undefined) {
 			throw new Error("Invalid team");
 		}
-		const did = parseInt(controlledTeam.did);
+		const did = Number.parseInt(controlledTeam.did);
 		const div = divs.find(div => div.did === did);
 		if (!div) {
 			throw new Error("Invalid div");
@@ -581,7 +581,7 @@ const UpsertTeamModal = ({
 			name: controlledTeam.name,
 			abbrev: controlledTeam.abbrev,
 			pop: helpers.localeParseFloat(controlledTeam.pop),
-			stadiumCapacity: parseInt(controlledTeam.stadiumCapacity),
+			stadiumCapacity: Number.parseInt(controlledTeam.stadiumCapacity),
 			colors: controlledTeam.colors,
 			jersey: controlledTeam.jersey,
 			tid,
@@ -678,7 +678,7 @@ const UpsertTeamModal = ({
 								divs={divs}
 								handleInputChange={(field, event) => {
 									if (field.startsWith("colors")) {
-										const ind = parseInt(field.replace("colors", ""));
+										const ind = Number.parseInt(field.replace("colors", ""));
 										if (ind >= 0 && ind <= 2) {
 											const colors = [...controlledTeam.colors] as [
 												string,

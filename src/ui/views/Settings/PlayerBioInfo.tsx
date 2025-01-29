@@ -41,7 +41,7 @@ export const objectToArray = <T extends string>(
 				}) as Record<T | "frequency", string>,
 		),
 		sortKey === "frequency"
-			? (row: any) => parseInt(row.frequency)
+			? (row: any) => Number.parseInt(row.frequency)
 			: (sortKey as any),
 		order,
 	);
@@ -246,7 +246,7 @@ export const formatPlayerBioInfoState = (
 	if (playerBioInfoSort.countries[0] === "frequency") {
 		countriesSorted = orderBy(
 			countries,
-			row => parseInt(row.frequency),
+			row => Number.parseInt(row.frequency),
 			playerBioInfoSort.countries[1],
 		);
 	} else {

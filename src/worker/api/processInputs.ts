@@ -20,7 +20,7 @@ export const validateAbbrev = (
 ): [number, string] => {
 	if (abbrev !== undefined) {
 		{
-			const int = parseInt(abbrev);
+			const int = Number.parseInt(abbrev);
 			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
 				return [int, g.get("teamInfoCache")[int]?.abbrev];
 			}
@@ -35,7 +35,7 @@ export const validateAbbrev = (
 
 		{
 			const parts = abbrev.split("_");
-			const int = parseInt(parts.at(-1)!);
+			const int = Number.parseInt(parts.at(-1)!);
 			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
 				return [int, g.get("teamInfoCache")[int]?.abbrev];
 			}
@@ -70,7 +70,7 @@ export const validateSeason = (season: number | string | undefined): number => {
 	}
 
 	if (typeof season === "string") {
-		season = parseInt(season);
+		season = Number.parseInt(season);
 	}
 
 	if (Number.isNaN(season)) {
@@ -112,7 +112,7 @@ const awardsRecords = (params: Params) => {
 const customizePlayer = (params: Params) => {
 	let pid: number | null = null;
 	if (typeof params.pid === "string") {
-		pid = parseInt(params.pid);
+		pid = Number.parseInt(params.pid);
 		if (Number.isNaN(pid) || pid < 0) {
 			pid = null;
 		}
@@ -304,7 +304,7 @@ const gameLog = (params: Params) => {
 			: validateAbbrev(params.abbrev);
 
 	return {
-		gid: params.gid !== undefined ? parseInt(params.gid) : -1,
+		gid: params.gid !== undefined ? Number.parseInt(params.gid) : -1,
 		season: validateSeason(params.season),
 		tid,
 		abbrev,
@@ -440,7 +440,8 @@ const dailySchedule = (params: Params) => {
 
 	const season = validateSeason(params.season);
 
-	let day = params.day === undefined ? undefined : parseInt(params.day as any);
+	let day =
+		params.day === undefined ? undefined : Number.parseInt(params.day as any);
 	if (Number.isNaN(day)) {
 		day = 1;
 	}
@@ -478,7 +479,7 @@ const liveGame = (params: Params, ctxBBGM: any) => {
 
 const message = (params: Params) => {
 	return {
-		mid: params.mid ? parseInt(params.mid) : undefined,
+		mid: params.mid ? Number.parseInt(params.mid) : undefined,
 	};
 };
 
@@ -493,7 +494,7 @@ const negotiation = (params: Params) => {
 	// undefined will load whatever the active one is
 	let pid: number | undefined;
 	if (typeof params.pid === "string") {
-		pid = parseInt(params.pid);
+		pid = Number.parseInt(params.pid);
 		if (Number.isNaN(pid) || pid < 0) {
 			pid = undefined;
 		}
@@ -524,7 +525,7 @@ const newLeague = (params: Params) => {
 	} else if (params.x === "cross_era") {
 		type = "crossEra";
 	} else if (params.x !== undefined) {
-		lid = parseInt(params.x);
+		lid = Number.parseInt(params.x);
 		if (Number.isNaN(lid)) {
 			lid = undefined;
 		}
@@ -576,7 +577,7 @@ const news = (params: Params) => {
 
 const player = (params: Params) => {
 	return {
-		pid: params.pid !== undefined ? parseInt(params.pid) : undefined,
+		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
 	};
 };
 
@@ -608,7 +609,7 @@ const playerFeats = (params: Params) => {
 
 const playerGameLog = (params: Params) => {
 	return {
-		pid: params.pid !== undefined ? parseInt(params.pid) : undefined,
+		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
 		season: validateSeason(params.season),
 	};
 };
@@ -872,7 +873,7 @@ const standings = (params: Params) => {
 
 const tradeSummary = (params: Params) => {
 	return {
-		eid: params.eid ? parseInt(params.eid) : NaN,
+		eid: params.eid ? Number.parseInt(params.eid) : Number.NaN,
 	};
 };
 
@@ -987,8 +988,8 @@ const comparePlayers = (params: Params) => {
 			...info.split(",").map(pidSeasonPlayoffs => {
 				const parts = pidSeasonPlayoffs.split("-");
 				return {
-					pid: parseInt(parts[0]),
-					season: parts[1] === "career" ? "career" : parseInt(parts[1]),
+					pid: Number.parseInt(parts[0]),
+					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]),
 					playoffs:
 						parts[2] === "c"
 							? "combined"

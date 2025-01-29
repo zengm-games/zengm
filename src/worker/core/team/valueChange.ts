@@ -489,7 +489,7 @@ const refreshCache = async () => {
 		ovr: number;
 	}[] = [];
 	for (const [tidString, players] of Object.entries(playersByTid)) {
-		const tid = parseInt(tidString);
+		const tid = Number.parseInt(tidString);
 		const ovr = team.ovr(
 			players.map(p => ({
 				pid: p.pid,
@@ -550,7 +550,7 @@ const refreshCache = async () => {
 				gp === 0
 					? teamOvrWinp
 					: seasonFraction * (record[0] / gp) +
-					  (1 - seasonFraction) * teamOvrWinp,
+						(1 - seasonFraction) * teamOvrWinp,
 		};
 	});
 
@@ -683,7 +683,7 @@ const getModifiedPickRank = async (
 		gp === 0
 			? newTeamOvrWinp
 			: seasonFraction * ((teamSeason?.won ?? 0) / gp) +
-			  (1 - seasonFraction) * newTeamOvrWinp;
+				(1 - seasonFraction) * newTeamOvrWinp;
 
 	let newRank = newWps.findIndex(w => newWp < w.wp);
 	if (newRank === -1) {

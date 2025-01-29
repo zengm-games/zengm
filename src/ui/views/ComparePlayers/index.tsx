@@ -73,13 +73,13 @@ const InfoRow = ({
 
 	// If all players are tied, highlight nobody
 	if (bestSortValue === worstSortValue) {
-		bestSortValue = NaN;
-		worstSortValue = NaN;
+		bestSortValue = Number.NaN;
+		worstSortValue = Number.NaN;
 	}
 
 	// If only 2 players, then don't highlight worst value because it's redundant. Length is 3 because of the legend column!
 	if (values.length === 3) {
-		worstSortValue = NaN;
+		worstSortValue = Number.NaN;
 	}
 
 	return (

@@ -185,8 +185,8 @@ export const Offer = (props: OfferProps) => {
 							tid: userTid,
 						},
 						{
-							pids: pids,
-							dpids: dpids,
+							pids,
+							dpids,
 							tid,
 						},
 					]}

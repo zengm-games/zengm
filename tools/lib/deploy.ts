@@ -1,6 +1,6 @@
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 import Cloudflare from "cloudflare";
-import { readFile } from "fs/promises";
+import { readFile } from "node:fs/promises";
 import build from "./build.ts";
 import { bySport, getSport } from "./buildFuncs.ts";
 

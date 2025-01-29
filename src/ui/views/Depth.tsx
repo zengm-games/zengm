@@ -172,7 +172,7 @@ const Depth = ({
 	let rowLabels: string[] | undefined;
 	if (isSport("baseball")) {
 		if (pos === "L" || pos === "LP") {
-			rowLabels = range(1, 10).map(i => String(i));
+			rowLabels = range(1, 10).map(String);
 		} else if (pos === "D") {
 			rowLabels = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH"];
 		} else if (pos === "DP") {
@@ -225,15 +225,13 @@ const Depth = ({
 			"Name",
 			"Pos",
 			"Age",
-			...positions
-				.map(position => {
-					if (isSport("baseball") && pos !== "P") {
-						return ["Ovr", "Pot"];
-					} else {
-						return [`rating:ovr${position}`, `rating:ovr${position}`];
-					}
-				})
-				.flat(),
+			...positions.flatMap(position => {
+				if (isSport("baseball") && pos !== "P") {
+					return ["Ovr", "Pot"];
+				} else {
+					return [`rating:ovr${position}`, `rating:ovr${position}`];
+				}
+			}),
 			...ratings.map(rating => `rating:${rating}`),
 			...stats.map(stat => `stat:${stat}`),
 		],
@@ -327,21 +325,19 @@ const Depth = ({
 								? (p.ratings.pots[lineupPos] ?? p.ratings.pot)
 								: null,
 						]
-					: positions
-							.map(position => [
-								{
-									value:
-										!challengeNoRatings && p.pid >= 0
-											? p.ratings.ovrs[position]
-											: null,
-									classNames:
-										highlightPosOvr === position ? "table-primary" : undefined,
-								},
-								!challengeNoRatings && p.pid >= 0
-									? p.ratings.pots[position]
-									: null,
-							])
-							.flat()),
+					: positions.flatMap(position => [
+							{
+								value:
+									!challengeNoRatings && p.pid >= 0
+										? p.ratings.ovrs[position]
+										: null,
+								classNames:
+									highlightPosOvr === position ? "table-primary" : undefined,
+							},
+							!challengeNoRatings && p.pid >= 0
+								? p.ratings.pots[position]
+								: null,
+						])),
 				...ratings.map(rating => ({
 					value: !challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null,
 					classNames: "table-accent",

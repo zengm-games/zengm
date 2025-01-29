@@ -10,8 +10,8 @@ const genFilename = (
 	season: number | "all",
 	grouping: "averages" | "games",
 ) => {
-	const filename = `${GAME_ACRONYM}_${leagueName.replace(
-		/[^a-z0-9]/gi,
+	const filename = `${GAME_ACRONYM}_${leagueName.replaceAll(
+		/[^\da-z]/gi,
 		"_",
 	)}_${season}_${season === "all" ? "seasons" : "season"}_${
 		grouping === "averages" ? "Average_Stats" : "Game_Stats"
@@ -33,7 +33,9 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 		const selectEls = event.target.getElementsByTagName("select");
 		const grouping = selectEls[0].value;
 		const season =
-			selectEls[1].value === "all" ? "all" : parseInt(selectEls[1].value);
+			selectEls[1].value === "all"
+				? "all"
+				: Number.parseInt(selectEls[1].value);
 
 		let csvPromise;
 		if (grouping === "averages") {

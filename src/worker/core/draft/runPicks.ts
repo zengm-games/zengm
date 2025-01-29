@@ -158,7 +158,7 @@ const runPicks = async (
 						expansionDraft2.numPerTeamDrafted,
 					)) {
 						if (numPerTeam >= expansionDraft2.numPerTeam) {
-							const tid = parseInt(tidString);
+							const tid = Number.parseInt(tidString);
 							tidsOverLimit.push(tid);
 						}
 					}

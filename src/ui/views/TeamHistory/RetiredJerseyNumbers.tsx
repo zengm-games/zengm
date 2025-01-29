@@ -69,7 +69,7 @@ const RetiredJerseyNumbers = ({
 	);
 
 	if (editing) {
-		const editingPidInt = parseInt(editing.pid);
+		const editingPidInt = Number.parseInt(editing.pid);
 		const playerSelectValue = sortedPlayers.some(p => p.pid === editingPidInt)
 			? editing.pid
 			: "other";
@@ -95,11 +95,11 @@ const RetiredJerseyNumbers = ({
 							i: editing.type === "edit" ? editing.index : undefined,
 							info: {
 								number: editing.number,
-								seasonRetired: parseInt(editing.seasonRetired),
-								seasonTeamInfo: parseInt(editing.seasonTeamInfo),
+								seasonRetired: Number.parseInt(editing.seasonRetired),
+								seasonTeamInfo: Number.parseInt(editing.seasonTeamInfo),
 								pid:
 									editing.linkToPlayer === "yes"
-										? parseInt(editing.pid)
+										? Number.parseInt(editing.pid)
 										: undefined,
 								text: editing.text,
 							},
@@ -344,7 +344,7 @@ const RetiredJerseyNumbers = ({
 	} else if (jerseySortKey === "jerseyNumber") {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
-			row => parseInt(row.number),
+			row => Number.parseInt(row.number),
 			jerseySortDirection,
 		);
 	} else if (jerseySortKey === "jerseyRetirementYear") {

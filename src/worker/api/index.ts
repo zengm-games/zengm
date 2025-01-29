@@ -62,7 +62,7 @@ import {
 	defaultInjuries,
 	defaultTragicDeaths,
 } from "../util";
-import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
+import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line import/no-unresolved
 import views from "../views";
 import type {
 	Conditions,
@@ -1164,6 +1164,7 @@ const evalOnWorker = async (code: string) => {
 
 	try {
 		// https://stackoverflow.com/a/63972569/786644
+		// eslint-disable-next-line prefer-arrow-callback
 		await Object.getPrototypeOf(async function () {}).constructor(code)();
 
 		if (logOutput.length > 0) {
@@ -1206,12 +1207,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	if (season === "all") {
 		seasons = Array.from(
-			new Set(
-				players
-					.map(p => p.ratings)
-					.flat()
-					.map(pr => pr.season),
-			),
+			new Set(players.flatMap(p => p.ratings).map(pr => pr.season)),
 		);
 	} else {
 		seasons = [season];
@@ -1292,9 +1288,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		...getCols(RATINGS.map(rating => `rating:${rating}`)).map(col => col.title),
 		...getCols(
 			extraRatings.length
-				? ["ovr", "pot"]
-						.map(prefix => POSITIONS.map(pos => `rating:${prefix}${pos}`))
-						.flat()
+				? ["ovr", "pot"].flatMap(prefix =>
+						POSITIONS.map(pos => `rating:${prefix}${pos}`),
+					)
 				: [],
 		).map(col => col.title),
 	];
@@ -1326,9 +1322,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				p.ratings.pot,
 				...RATINGS.map(rating => p.ratings[rating]),
 				...(extraRatings.length
-					? ["ovrs", "pots"]
-							.map(type => POSITIONS.map(pos => p.ratings[type][pos]))
-							.flat()
+					? ["ovrs", "pots"].flatMap(type =>
+							POSITIONS.map(pos => p.ratings[type][pos]),
+						)
 					: []),
 			]);
 		}
@@ -1445,7 +1441,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 };
 
 const getExportFilename = async (type: "league" | "players") => {
-	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+	const leagueName = (await league.getName()).replaceAll(/[^\da-z]/gi, "_");
 
 	if (type === "league") {
 		const phase = g.get("phase");
@@ -1454,7 +1450,7 @@ const getExportFilename = async (type: "league" | "players") => {
 
 		let filename = `${GAME_ACRONYM}_${leagueName}_${g.get(
 			"season",
-		)}_${PHASE_TEXT[phase].replace(/[^a-z0-9]/gi, "_")}`;
+		)}_${PHASE_TEXT[phase].replaceAll(/[^\da-z]/gi, "_")}`;
 
 		if (
 			phase === PHASE.REGULAR_SEASON ||
@@ -1575,7 +1571,7 @@ const exportDraftClass = async ({
 		}
 	}
 
-	const leagueName = (await league.getName()).replace(/[^a-z0-9]/gi, "_");
+	const leagueName = (await league.getName()).replaceAll(/[^\da-z]/gi, "_");
 	const filename = `${GAME_ACRONYM}_${
 		retiredPlayers ? "retired" : "draft"
 	}_class_${leagueName}_${season}.json`;
@@ -2347,7 +2343,7 @@ const importPlayers = async ({
 			college: p.college,
 			contract: {
 				amount: helpers.localeParseFloat(contractAmount) * 1000,
-				exp: parseInt(contractExp),
+				exp: Number.parseInt(contractExp),
 			},
 			draft: {
 				...p.draft,
@@ -2399,7 +2395,7 @@ const importPlayers = async ({
 		}
 
 		if (tid === PLAYER.UNDRAFTED) {
-			const draftYearInt = parseInt(draftYear);
+			const draftYearInt = Number.parseInt(draftYear);
 			if (
 				Number.isNaN(draftYearInt) ||
 				draftYearInt < currentSeason ||
@@ -3807,8 +3803,8 @@ const updateOptions = async (
 	if (options.realPlayerPhotos !== "") {
 		try {
 			realPlayerPhotos = JSON.parse(options.realPlayerPhotos);
-		} catch (err) {
-			console.log(err);
+		} catch (error) {
+			console.log(error);
 			throw new Error("Invalid JSON in real player photos");
 		}
 		if (typeof realPlayerPhotos !== "object") {
@@ -3827,8 +3823,8 @@ const updateOptions = async (
 	if (options.realTeamInfo !== "") {
 		try {
 			realTeamInfo = JSON.parse(options.realTeamInfo);
-		} catch (err) {
-			console.log(err);
+		} catch (error) {
+			console.log(error);
 			throw new Error("Invalid JSON in real team info");
 		}
 		if (typeof realTeamInfo !== "object") {
@@ -3845,7 +3841,7 @@ const updateOptions = async (
 			}
 			if ((teamInfo as any).seasons) {
 				for (const [key, value] of Object.entries((teamInfo as any).seasons)) {
-					const keyParsed = parseInt(key);
+					const keyParsed = Number.parseInt(key);
 					if (Number.isNaN(keyParsed)) {
 						throw new Error(
 							`Invalid data format in real player photos - season is not an integer`,
@@ -4048,7 +4044,7 @@ const updatePlayoffTeams = async (
 		checkMatchups(series[0]);
 
 		if (playIns) {
-			checkMatchups(playIns.map(playIn => playIn.slice(0, 2)).flat());
+			checkMatchups(playIns.flatMap(playIn => playIn.slice(0, 2)));
 		}
 
 		await idb.cache.playoffSeries.put(playoffSeries);
@@ -4121,7 +4117,7 @@ const updateTeamInfo = async (
 		t.jersey = newTeam.jersey;
 
 		t.pop = helpers.localeParseFloat(newTeam.pop as string);
-		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string);
+		t.stadiumCapacity = Number.parseInt(newTeam.stadiumCapacity as string);
 
 		const disableTeam = newTeam.disabled && !t.disabled;
 		const enableTeam = !newTeam.disabled && t.disabled;

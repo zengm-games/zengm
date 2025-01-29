@@ -344,7 +344,9 @@ const ScoringSummary = memo(
 
 							let quarterText = "???";
 							if (currentQuarter.startsWith("OT")) {
-								const overtimes = parseInt(currentQuarter.replace("OT", ""));
+								const overtimes = Number.parseInt(
+									currentQuarter.replace("OT", ""),
+								);
 								if (overtimes > 1) {
 									quarterText = `${helpers.ordinal(overtimes)} overtime`;
 								} else {
@@ -353,7 +355,9 @@ const ScoringSummary = memo(
 							} else if (currentQuarter === "SH") {
 								quarterText = "Shootout";
 							} else {
-								const quarter = parseInt(currentQuarter.replace("Q", ""));
+								const quarter = Number.parseInt(
+									currentQuarter.replace("Q", ""),
+								);
 								if (!Number.isNaN(quarter)) {
 									quarterText = `${helpers.ordinal(quarter)} ${getPeriodName(
 										numPeriods,

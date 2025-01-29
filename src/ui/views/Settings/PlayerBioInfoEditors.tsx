@@ -249,7 +249,7 @@ const CollegesControls = ({
 						} else {
 							colleges = orderBy(
 								rows,
-								row => parseInt(row.frequency),
+								row => Number.parseInt(row.frequency),
 								direction,
 							);
 						}
@@ -553,7 +553,11 @@ const NamesControls = ({
 						if (field === "name") {
 							names = orderBy(rows, field, direction);
 						} else {
-							names = orderBy(rows, row => parseInt(row.frequency), direction);
+							names = orderBy(
+								rows,
+								row => Number.parseInt(row.frequency),
+								direction,
+							);
 						}
 						onSave(names);
 					}}

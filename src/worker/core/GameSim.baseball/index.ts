@@ -1599,7 +1599,7 @@ class GameSim extends GameSimBase {
 	simPitch() {
 		let doneBatter;
 
-		const atLeastOneRunnerOnBase = this.bases.some(p => p);
+		const atLeastOneRunnerOnBase = this.bases.some(Boolean);
 		let wildPitchPassedBall: "wildPitch" | "passedBall" | undefined;
 		if (atLeastOneRunnerOnBase) {
 			if (Math.random() < this.probBalk()) {
@@ -2267,7 +2267,7 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay.logEvent({
 			type: "shootoutShot",
-			t: t,
+			t,
 			pid: p.id,
 			pitcherPid: pitcher.id,
 			att: this.team[t].t.stat.sAtt,
@@ -2324,7 +2324,7 @@ class GameSim extends GameSimBase {
 
 			this.playByPlay.logEvent({
 				type: "shootoutTeam",
-				t: t,
+				t,
 				pid: hitter.id,
 				pitcherPid: pitcher.id,
 			});
@@ -2431,7 +2431,7 @@ class GameSim extends GameSimBase {
 		const scoreDiff =
 			this.team[teamNum].t.stat.pts - this.team[otherTeamNum].t.stat.pts;
 		if (scoreDiff > 0) {
-			const runsUpToOnDeck = this.bases.filter(base => base).length + 2;
+			const runsUpToOnDeck = this.bases.filter(Boolean).length + 2;
 
 			let saveOutsNeeded;
 			if (scoreDiff <= runsUpToOnDeck) {

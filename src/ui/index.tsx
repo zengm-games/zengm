@@ -1,6 +1,6 @@
 import "./util/initBugsnag";
-import "bbgm-polyfills"; // eslint-disable-line
-import "bbgm-polyfills-ui"; // eslint-disable-line
+import "bbgm-polyfills"; // eslint-disable-line import/no-unresolved
+import "bbgm-polyfills-ui"; // eslint-disable-line import/no-unresolved
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api";
@@ -66,7 +66,7 @@ const handleVersion = async () => {
 
 		if (cmpResult === 1) {
 			// This version is newer than another tab's - send a signal to the other tabs
-			let conflictNum = parseInt(
+			let conflictNum = Number.parseInt(
 				// @ts-expect-error
 				safeLocalStorage.getItem("bbgmVersionConflict"),
 			);
@@ -258,15 +258,17 @@ const setupRoutes = () => {
 		},
 		navigationEnd: ({ context, error }) => {
 			if (error) {
-				let errMsg: ReactNode = error.message;
+				let errorMessage: ReactNode = error.message;
 
-				if (errMsg === "Matching route not found") {
-					errMsg = "Page not found.";
-				} else if (errMsg === "League not found.") {
-					errMsg = leagueNotFoundMessage;
+				if (errorMessage === "Matching route not found") {
+					errorMessage = "Page not found.";
+				} else if (errorMessage === "League not found.") {
+					errorMessage = leagueNotFoundMessage;
 				} else if (
-					typeof errMsg !== "string" ||
-					!errMsg.includes("A league can only be open in one tab at a time")
+					typeof errorMessage !== "string" ||
+					!errorMessage.includes(
+						"A league can only be open in one tab at a time",
+					)
 				) {
 					Bugsnag.notify(error);
 
@@ -275,16 +277,16 @@ const setupRoutes = () => {
 
 					// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
 					if (
-						typeof errMsg === "string" &&
-						(errMsg.includes("requested version") ||
-							errMsg.includes("existing version") ||
-							errMsg.includes("higher version") ||
-							errMsg.includes("version requested") ||
-							errMsg.includes("lower version"))
+						typeof errorMessage === "string" &&
+						(errorMessage.includes("requested version") ||
+							errorMessage.includes("existing version") ||
+							errorMessage.includes("higher version") ||
+							errorMessage.includes("version requested") ||
+							errorMessage.includes("lower version"))
 					) {
-						errMsg = (
+						errorMessage = (
 							<>
-								<p>{errMsg}</p>
+								<p>{errorMessage}</p>
 								<p>
 									Please{" "}
 									<a
@@ -304,7 +306,13 @@ const setupRoutes = () => {
 				}
 
 				const ErrorPage = (
-					<>{typeof errMsg === "string" ? <p>{errMsg}</p> : errMsg}</>
+					<>
+						{typeof errorMessage === "string" ? (
+							<p>{errorMessage}</p>
+						) : (
+							errorMessage
+						)}
+					</>
 				);
 				const errorPage = genStaticPage("error", "Error", ErrorPage, false);
 				errorPage(context);
@@ -315,7 +323,7 @@ const setupRoutes = () => {
 
 			if (!context.state.noTrack && window.enableLogging) {
 				// Track page_view here rather than in routeMatched so logged title is correct
-				const pagePath = context.path.replace(/^\/l\/[0-9]+/, "/l/0");
+				const pagePath = context.path.replace(/^\/l\/\d+/, "/l/0");
 
 				// https://developers.google.com/analytics/devguides/collection/ga4/views?client_type=gtag
 				analyticsEvent("page_view", {

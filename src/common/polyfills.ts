@@ -38,7 +38,6 @@ if (!Blob.prototype.stream) {
 		let offset = 0;
 		const chunkSize = 64 * 1024;
 
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const blob = this;
 
 		return new ReadableStream({
@@ -69,9 +68,13 @@ function at(this: any, n: number) {
 	// ToInteger() abstract op
 	n = Math.trunc(n) || 0;
 	// Allow negative indexing from the end
-	if (n < 0) n += this.length;
+	if (n < 0) {
+		n += this.length;
+	}
 	// OOB access is guaranteed to return undefined
-	if (n < 0 || n >= this.length) return undefined;
+	if (n < 0 || n >= this.length) {
+		return undefined;
+	}
 	// Otherwise, this is just normal property access
 	return this[n];
 }
@@ -89,7 +92,7 @@ if (!Array.prototype.at) {
 // Chrome 97, Firefox 104, Safari 15.4
 if (!Array.prototype.findLast) {
 	Object.defineProperty(Array.prototype, "findLast", {
-		value: function (cb: any) {
+		value(cb: any) {
 			for (let i = this.length - 1; i >= 0; i--) {
 				if (cb(this[i])) {
 					return this[i];
@@ -105,7 +108,7 @@ if (!Array.prototype.findLast) {
 // Chrome 93, Firefox 92, Safari 15.4
 if (!Object.hasOwn) {
 	Object.defineProperty(Object, "hasOwn", {
-		value: function (object: object, property: PropertyKey) {
+		value: (object: object, property: PropertyKey) => {
 			if (object == null) {
 				throw new TypeError("Cannot convert undefined or null to object");
 			}
@@ -134,6 +137,7 @@ if (!String.prototype.replaceAll) {
 		}
 
 		// If a string
+		// eslint-disable-next-line unicorn/prefer-string-replace-all
 		return this.replace(new RegExp(str, "g"), newStr);
 	};
 }

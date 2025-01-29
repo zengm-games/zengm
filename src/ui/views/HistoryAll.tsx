@@ -32,7 +32,7 @@ const awardName = (
 	const wrappedValue = wrappedPlayerNameLabels({
 		pid: award.pid,
 		pos: award.pos,
-		season: season,
+		season,
 		legacyName: award.name,
 		abbrev: award.abbrev,
 		tid: award.tid,

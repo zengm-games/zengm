@@ -3,7 +3,6 @@ import { mergeByPk } from "./helpers";
 import type { GetCopyType, ScheduledEvent } from "../../../common/types";
 
 const getCopies = async (
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	options: any = {},
 	type?: GetCopyType,
 ): Promise<ScheduledEvent[]> => {

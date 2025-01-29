@@ -4,11 +4,11 @@ import JSONParserText from "./JSONParserText";
 
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
-import schema from "league-schema"; // eslint-disable-line
+import schema from "league-schema"; // eslint-disable-line import/no-unresolved
 import { helpers, toUI } from "../util";
 import { highWaterMark } from "../core/league/createStream";
 import type { Conditions } from "../../common/types";
-import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line
+import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line import/no-unresolved
 import { DEFAULT_TEAM_COLORS, LEAGUE_DATABASE_VERSION } from "../../common";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array

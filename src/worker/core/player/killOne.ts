@@ -103,7 +103,7 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 				p.lastName
 			}</a>`,
 		)
-		.replace(/PRONOUN_(\w*)/g, (match, pronoun) => {
+		.replaceAll(/PRONOUN_(\w*)/g, (match, pronoun) => {
 			return helpers.pronoun(g.get("gender"), pronoun);
 		});
 

@@ -119,7 +119,7 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 			// Old version would try to realign disabled teams and then crash, so check for that
 			const invalidRealign = autoRelocate.realigned
 				.flat()
-				.some(tid => !teams.find(t => t.tid === tid));
+				.some(tid => !teams.some(t => t.tid === tid));
 			if (!invalidRealign) {
 				const current = getRealignInfo(teams, newTeam);
 				const realigned: typeof current = [];

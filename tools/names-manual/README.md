@@ -30,8 +30,8 @@ https://forebears.io/canada/surnames is a good data source. Here is a script you
     for (const row of rows) {
         if (row.children.length > 1) {
             const name = row.children[2].textContent;
-            const frequency = parseInt(row.children[3].textContent.replaceAll(",", ""));
-            const malePct = parseInt(row.children[1].querySelector(".m")?.textContent ?? "0");
+            const frequency = Number.parseInt(row.children[3].textContent.replaceAll(",", ""));
+            const malePct = Number.parseInt(row.children[1].querySelector(".m")?.textContent ?? "0");
             
             if (malePct >= 75) {
                 output.push({
@@ -62,7 +62,7 @@ And surnames:
     for (const row of rows) {
         if (row.children.length > 1) {
             const name = row.children[1].textContent;
-            const frequency = parseInt(row.children[2].textContent.replaceAll(",", ""));
+            const frequency = Number.parseInt(row.children[2].textContent.replaceAll(",", ""));
             output.push({
                 name,
                 frequency,

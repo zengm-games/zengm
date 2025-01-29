@@ -496,7 +496,7 @@ const Standings = ({
 			subgroups: divs
 				.filter(div => div.cid === conf.cid)
 				.map(div => {
-					const j = divs.findIndex(div2 => div2 === div);
+					const j = divs.indexOf(div);
 					return {
 						name: div.name,
 						separatorIndexes,

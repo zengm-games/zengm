@@ -1,4 +1,4 @@
-import { statSync } from "fs";
+import { statSync } from "node:fs";
 import { spinners } from "./spinners.ts";
 import watchCSS from "./watchCSS.ts";
 import watchFiles from "./watchFiles.ts";

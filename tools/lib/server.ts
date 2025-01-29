@@ -42,7 +42,7 @@ const sendFile = (res: http.ServerResponse, filename: string) => {
 };
 
 const showStatic = (url: string, res: http.ServerResponse) => {
-	sendFile(res, url.substring(1));
+	sendFile(res, url.slice(1));
 };
 const showIndex = (res: http.ServerResponse) => {
 	sendFile(res, "index.html");
@@ -68,8 +68,9 @@ const getIpAddress = () => {
 					alias.family === "IPv4" &&
 					alias.address !== "127.0.0.1" &&
 					!alias.internal
-				)
+				) {
 					return alias.address;
+				}
 			}
 		}
 	}

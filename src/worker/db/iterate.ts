@@ -62,8 +62,8 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 					} else {
 						cursor.continue();
 					}
-				} catch (err) {
-					reject(err);
+				} catch (error) {
+					reject(error);
 				}
 			} else {
 				resolve();

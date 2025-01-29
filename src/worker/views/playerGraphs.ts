@@ -100,7 +100,7 @@ const getPlayerStats = async (
 			"draft",
 			...(statTypePlus == "bio" ? ["age", "salary", "draftPosition"] : []),
 		],
-		ratings: ratings,
+		ratings,
 		stats: statKeys,
 		season: typeof season === "number" ? season : undefined,
 		tid: undefined,

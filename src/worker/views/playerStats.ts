@@ -137,21 +137,19 @@ const updatePlayers = async (
 		});
 
 		if (inputs.season === "all") {
-			players = players
-				.map(p =>
-					p.stats.map((ps: any) => {
-						const ratings =
-							p.ratings.find((pr: any) => pr.season === ps.season) ??
-							p.ratings.at(-1);
+			players = players.flatMap(p =>
+				p.stats.map((ps: any) => {
+					const ratings =
+						p.ratings.find((pr: any) => pr.season === ps.season) ??
+						p.ratings.at(-1);
 
-						return {
-							...p,
-							ratings,
-							stats: ps,
-						};
-					}),
-				)
-				.flat();
+					return {
+						...p,
+						ratings,
+						stats: ps,
+					};
+				}),
+			);
 		}
 
 		// Only keep players who actually played

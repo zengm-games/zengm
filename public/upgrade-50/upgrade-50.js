@@ -80,7 +80,7 @@ const initForm = async () => {
 	document.getElementById("form").addEventListener("submit", async event => {
 		event.preventDefault();
 
-		const lid = parseInt(leagueSelect.value);
+		const lid = Number.parseInt(leagueSelect.value);
 
 		log(`Attempting to connect to league ${lid}`);
 		const db = await idb.openDB(`league${lid}`, 50, {

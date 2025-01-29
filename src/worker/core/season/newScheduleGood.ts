@@ -306,7 +306,7 @@ const finalize = ({
 	};
 
 	for (const didString of Object.keys(teamsGroupedByDid)) {
-		const did = parseInt(didString);
+		const did = Number.parseInt(didString);
 
 		// If there are no teams in a div, this check is needed
 		if (numGamesTargetsByDid[did]) {

@@ -13,10 +13,10 @@ const templates = {};
 for (const row of rows) {
 	if (row.copy_from === "") {
 		templates[row.country] = {
-			asian: parseInt(row.asian),
-			black: parseInt(row.black),
-			brown: parseInt(row.brown),
-			white: parseInt(row.white),
+			asian: Number.parseInt(row.asian),
+			black: Number.parseInt(row.black),
+			brown: Number.parseInt(row.brown),
+			white: Number.parseInt(row.white),
 		};
 	}
 }

@@ -1075,123 +1075,121 @@ class Play {
 		}
 
 		if (options !== undefined && choosingTeam !== undefined) {
-			const results = options
-				.map(decisions => {
-					const indexAccept = decisions.indexOf("accept");
-					const indexOffset = decisions.indexOf("offset");
-					const penalty = penalties[indexAccept];
+			const results = options.flatMap(decisions => {
+				const indexAccept = decisions.indexOf("accept");
+				const indexOffset = decisions.indexOf("offset");
+				const penalty = penalties[indexAccept];
 
-					// console.log("decisions", decisions);
+				// console.log("decisions", decisions);
 
-					// Currently "offset" is every entry in the array or no entry
-					const offsetting = decisions[0] === "offset";
+				// Currently "offset" is every entry in the array or no entry
+				const offsetting = decisions[0] === "offset";
 
-					const subResults: {
-						// indexEvent is the index of the event to roll back to, if penalty is accepted. undefined means don't add any events onto state, other than the penalty. -1 means roll back everything except the penalty
-						indexEvent: number | undefined;
-						state: State;
-						tackOn: boolean;
-					}[] = [];
-					if (indexAccept < 0 && indexOffset < 0) {
+				const subResults: {
+					// indexEvent is the index of the event to roll back to, if penalty is accepted. undefined means don't add any events onto state, other than the penalty. -1 means roll back everything except the penalty
+					indexEvent: number | undefined;
+					state: State;
+					tackOn: boolean;
+				}[] = [];
+				if (indexAccept < 0 && indexOffset < 0) {
+					subResults.push({
+						indexEvent: undefined,
+						state: this.state.current,
+						tackOn: false,
+					});
+				} else {
+					const penaltyRollback =
+						this.penaltyRollbacks[indexAccept] ??
+						this.penaltyRollbacks[indexOffset];
+					// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
+					// console.log("penalty.event", penalty.event);
+					// indexEvent = penaltyRollback.indexEvent;
+
+					// Figure out what state to replay
+					if (
+						penaltyRollback.type === "cleanHandsChangeOfPossession" ||
+						offsetting
+					) {
+						const validIndexes = this.spotOfEnforcementIndexes.filter(
+							index => index < penaltyRollback.indexEvent,
+						);
+						const indexEvent =
+							validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
+
 						subResults.push({
-							indexEvent: undefined,
-							state: this.state.current,
+							indexEvent,
+							state: this.state.initial.clone(),
 							tackOn: false,
 						});
-					} else {
-						const penaltyRollback =
-							this.penaltyRollbacks[indexAccept] ??
-							this.penaltyRollbacks[indexOffset];
-						// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
-						// console.log("penalty.event", penalty.event);
-						// indexEvent = penaltyRollback.indexEvent;
+					} else if (penaltyRollback.type === "spotOfEnforcement") {
+						const validIndexes = this.spotOfEnforcementIndexes.filter(
+							index => index < penaltyRollback.indexEvent,
+						);
+						const indexEvent =
+							validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
 
-						// Figure out what state to replay
-						if (
-							penaltyRollback.type === "cleanHandsChangeOfPossession" ||
-							offsetting
-						) {
-							const validIndexes = this.spotOfEnforcementIndexes.filter(
-								index => index < penaltyRollback.indexEvent,
-							);
-							const indexEvent =
-								validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
+						subResults.push({
+							indexEvent,
+							state: this.state.initial.clone(),
+							tackOn: false,
+						});
+					} else if (penaltyRollback.type === "tackOn") {
+						subResults.push({
+							indexEvent: -1,
+							state: this.state.initial.clone(),
+							tackOn: false,
+						});
 
+						const indexEvent = this.spotOfEnforcementIndexes.at(-1)!;
+						if (indexEvent > 0) {
 							subResults.push({
 								indexEvent,
 								state: this.state.initial.clone(),
-								tackOn: false,
+								tackOn: true,
 							});
-						} else if (penaltyRollback.type === "spotOfEnforcement") {
-							const validIndexes = this.spotOfEnforcementIndexes.filter(
-								index => index < penaltyRollback.indexEvent,
-							);
-							const indexEvent =
-								validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
-
-							subResults.push({
-								indexEvent,
-								state: this.state.initial.clone(),
-								tackOn: false,
-							});
-						} else if (penaltyRollback.type === "tackOn") {
-							subResults.push({
-								indexEvent: -1,
-								state: this.state.initial.clone(),
-								tackOn: false,
-							});
-
-							const indexEvent = this.spotOfEnforcementIndexes.at(-1)!;
-							if (indexEvent > 0) {
-								subResults.push({
-									indexEvent,
-									state: this.state.initial.clone(),
-									tackOn: true,
-								});
-							}
-						}
-
-						for (const { indexEvent, state } of subResults) {
-							if (indexEvent !== undefined && indexEvent >= 0) {
-								for (let i = 0; i <= indexEvent; i++) {
-									const event = this.events[i].event;
-
-									// Only one penalty can be applied, this one! And that is done below.
-									if (event.type !== "penalty") {
-										this.updateState(state, this.events[i].event);
-									}
-								}
-							}
-
-							// No state changes for offsetting penalties
-							if (offsetStatus === "offset") {
-								state.isClockRunning = false;
-							} else {
-								this.updateState(state, penalty.event);
-
-								if (penalty.penaltyInfo.onDefense && timeExpiredAtEndOfHalf) {
-									state.playUntimedPossession = true;
-								}
-							}
-
-							this.checkDownAtEndOfPlay(state);
 						}
 					}
 
-					let statChanges: NonNullable<typeof penalty>["statChanges"] = [];
-					if (offsetStatus !== "offset") {
-						// No stat changes for offsetting penalties
-						statChanges = penalty?.statChanges;
-					}
+					for (const { indexEvent, state } of subResults) {
+						if (indexEvent !== undefined && indexEvent >= 0) {
+							for (let i = 0; i <= indexEvent; i++) {
+								const event = this.events[i].event;
 
-					return subResults.map(subResult => ({
-						indexAccept,
-						decisions,
-						statChanges,
-						...subResult,
-					}));
-				})
-				.flat();
+								// Only one penalty can be applied, this one! And that is done below.
+								if (event.type !== "penalty") {
+									this.updateState(state, this.events[i].event);
+								}
+							}
+						}
+
+						// No state changes for offsetting penalties
+						if (offsetStatus === "offset") {
+							state.isClockRunning = false;
+						} else {
+							this.updateState(state, penalty.event);
+
+							if (penalty.penaltyInfo.onDefense && timeExpiredAtEndOfHalf) {
+								state.playUntimedPossession = true;
+							}
+						}
+
+						this.checkDownAtEndOfPlay(state);
+					}
+				}
+
+				let statChanges: NonNullable<typeof penalty>["statChanges"] = [];
+				if (offsetStatus !== "offset") {
+					// No stat changes for offsetting penalties
+					statChanges = penalty?.statChanges;
+				}
+
+				return subResults.map(subResult => ({
+					indexAccept,
+					decisions,
+					statChanges,
+					...subResult,
+				}));
+			});
 
 			const gameCanEndAtEndOfPeriod =
 				this.g.team[0].stat.ptsQtrs.length >= this.g.numPeriods;
@@ -1269,7 +1267,7 @@ class Play {
 							return result.indexEvent === undefined || i > result.indexEvent;
 						})
 						.map(event => event.statChanges)
-						.map(statChanges => {
+						.flatMap(statChanges => {
 							return statChanges.map(statChange => {
 								const newStatChange = [...statChange] as StatChange;
 
@@ -1281,8 +1279,7 @@ class Play {
 
 								return newStatChange;
 							});
-						})
-						.flat(),
+						}),
 				];
 
 				for (const statChange of statChanges) {

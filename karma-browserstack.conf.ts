@@ -1,5 +1,5 @@
 import karmaConfig from "./tools/lib/karmaConfig.ts";
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 
 const browserStack = JSON.parse(
 	readFileSync("../../.browserstack.json", "utf8"),

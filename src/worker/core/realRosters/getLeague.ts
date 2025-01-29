@@ -501,10 +501,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				// Find who actually won title
 				let champTid: number | undefined;
 				if (completeBracket) {
-					const { home, away } =
-						seasonPlayoffSeries.series[
-							seasonPlayoffSeries.series.length - 1
-						][0];
+					const { home, away } = seasonPlayoffSeries.series.at(-1)![0];
 					if (away) {
 						champTid = (home.won > away.won ? home : away).tid;
 					}
@@ -784,9 +781,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						}
 						let minYears =
 							defaultGameAttributes.rookieContractLengths[p.draft.round - 1] ??
-							defaultGameAttributes.rookieContractLengths[
-								defaultGameAttributes.rookieContractLengths.length - 1
-							];
+							defaultGameAttributes.rookieContractLengths.at(-1)!;
 
 						// Offset because it starts next season
 						minYears += 1;

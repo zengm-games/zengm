@@ -81,9 +81,9 @@ const LeagueStats = ({
 	]);
 
 	if (teamOpponent.endsWith("ShotLocations")) {
-		cols[cols.length - 7].title = "M";
-		cols[cols.length - 6].title = "A";
-		cols[cols.length - 5].title = "%";
+		cols.at(-7)!.title = "M";
+		cols.at(-6)!.title = "A";
+		cols.at(-5)!.title = "%";
 	}
 
 	if (

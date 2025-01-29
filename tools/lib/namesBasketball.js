@@ -11,7 +11,7 @@ const namesBasketball = () => {
 	const upperCaseFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 	const getName = (untrimmedName, file) => {
-		const name = untrimmedName.trim().replace(/\s\s+/g, " "); // Condense whitespace to just single spaces
+		const name = untrimmedName.trim().replaceAll(/\s\s+/g, " "); // Condense whitespace to just single spaces
 		if (name === "") {
 			throw new Error(
 				`No name found in ${file}, probably it is not a valid player page`,
@@ -86,14 +86,8 @@ const namesBasketball = () => {
 			}
 
 			// Like "Luc Mbah A Moute"
-			if (
-				parts.length > 3 &&
-				(parts[parts.length - 2] === "A" || parts[parts.length - 2] === "a")
-			) {
-				parts = [
-					parts[0],
-					parts.slice(parts.length - 3, parts.length).join(" "),
-				];
+			if (parts.length > 3 && (parts.at(-2) === "A" || parts.at(-2) === "a")) {
+				parts = [parts[0], parts.slice(parts.length - 3).join(" ")];
 			}
 
 			if (parts.length > 2) {
@@ -117,7 +111,7 @@ const namesBasketball = () => {
 		}
 
 		// Fix improperly formatted abbrevations like D.J and J.r.
-		let match = parts[0].match(/^([a-zA-Z])\.([a-zA-Z])\.?$/);
+		let match = parts[0].match(/^([A-Za-z])\.([A-Za-z])\.?$/);
 		if (!match) {
 			// Fix improperly formatted abbreviations like DJ
 			match = parts[0].match(/^([A-Z])([A-Z])$/);
@@ -397,16 +391,16 @@ const namesBasketball = () => {
 		let ln;
 		try {
 			[fn, ln] = getName($(".title").first().text(), file);
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log(error.message);
 			continue;
 		}
 
 		let country;
 		try {
 			country = getCountry($('td[data-title="MISC"]').text(), file);
-		} catch (err) {
-			console.log(err.message);
+		} catch (error) {
+			console.log(error.message);
 			continue;
 		}
 		// console.log(fn, "|", ln, "|", country);

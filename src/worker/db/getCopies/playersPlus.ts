@@ -685,13 +685,11 @@ const getPlayerStats = (
 	};
 
 	if (thereAreRowsToMerge) {
-		return seasonInfos
-			.map(seasonInfo =>
-				seasonInfo.rows.length > 1
-					? getMerged(seasonInfo.rows, seasonInfo.seasonType)
-					: seasonInfo.rows,
-			)
-			.flat();
+		return seasonInfos.flatMap(seasonInfo =>
+			seasonInfo.rows.length > 1
+				? getMerged(seasonInfo.rows, seasonInfo.seasonType)
+				: seasonInfo.rows,
+		);
 	}
 
 	return rows;

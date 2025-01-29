@@ -362,7 +362,7 @@ describe("random test cases", () => {
 				for (const [tid, count] of Object.entries(counts)) {
 					if (count < 4) {
 						console.log("tid", tid, "count", count);
-						console.log(defaultTeams.find(t => t.tid === parseInt(tid)));
+						console.log(defaultTeams.find(t => t.tid === Number.parseInt(tid)));
 					}
 				}
 				console.log("tids.length", tids.length);

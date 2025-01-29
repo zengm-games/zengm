@@ -34,7 +34,7 @@ const decodeURLEncodedURIComponent = (val: string) => {
 	if (typeof val !== "string") {
 		return val;
 	}
-	return decodeURIComponent(val.replace(/\+/g, " "));
+	return decodeURIComponent(val.replaceAll("+", " "));
 };
 
 const match = (route: Route, path: string) => {
@@ -60,7 +60,7 @@ const match = (route: Route, path: string) => {
 
 export const makeRegex = (path: string) => {
 	const parts = path
-		.replace(/(^\/+|\/+$)/g, "") // Strip starting and ending slashes
+		.replaceAll(/(^\/+|\/+$)/g, "") // Strip starting and ending slashes
 		.split("/");
 
 	const keys = [];
@@ -205,8 +205,8 @@ class Router {
 					this.lastNavigatedPath = path;
 
 					await route.cb(context);
-				} catch (errorLocal) {
-					error = errorLocal;
+				} catch (error_) {
+					error = error_;
 				}
 
 				handled = true;

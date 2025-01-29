@@ -383,7 +383,7 @@ const PickStat = ({
 				value={state.season}
 				onChange={event =>
 					updateUrl({
-						[`season${xyCapital}`]: parseInt(event.target.value),
+						[`season${xyCapital}`]: Number.parseInt(event.target.value),
 					})
 				}
 				style={{

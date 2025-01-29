@@ -86,7 +86,7 @@ const LeagueMenu = <Value extends string>({
 							>
 								{values.find(v => v.key === key)!.value}
 							</button>
-					  ))
+						))
 					: null}
 			</div>
 			<div className="input-group mb-1">
@@ -113,7 +113,7 @@ const LeagueMenu = <Value extends string>({
 					<select
 						className="form-select"
 						onChange={event => {
-							const value2 = parseInt(event.target.value);
+							const value2 = Number.parseInt(event.target.value);
 							onNewValue2(value2);
 							handleNewValue(value, value2);
 						}}

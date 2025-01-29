@@ -66,7 +66,7 @@ const updatePlayers = async (
 			ratings: ["skills"],
 			stats,
 			season: inputs.season,
-			statType: statType,
+			statType,
 		});
 		if (
 			bySport({

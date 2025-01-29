@@ -18,12 +18,12 @@ import getSearchVal from "../../components/DataTable/getSearchVal";
 
 export const encodeDecodeFunctions = {
 	bool: {
-		stringify: (value: boolean) => String(value),
+		stringify: String,
 		parse: (value: string) => value === "true",
 	},
 	custom: {},
 	float: {
-		stringify: (value: number) => String(value),
+		stringify: String,
 		parse: (value: string) => {
 			const parsed = helpers.localeParseFloat(value);
 			if (Number.isNaN(parsed)) {
@@ -57,9 +57,9 @@ export const encodeDecodeFunctions = {
 		},
 	},
 	int: {
-		stringify: (value: number) => String(value),
+		stringify: String,
 		parse: (value: string) => {
-			const parsed = parseInt(value);
+			const parsed = Number.parseInt(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid integer`);
 			}
@@ -73,7 +73,7 @@ export const encodeDecodeFunctions = {
 				return null;
 			}
 
-			const parsed = parseInt(value);
+			const parsed = Number.parseInt(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid integer`);
 			}
@@ -86,7 +86,7 @@ export const encodeDecodeFunctions = {
 		parse: (value: string) => JSON.parse(value),
 	},
 	rangePercent: {
-		stringify: (value: number) => String(value),
+		stringify: String,
 		parse: (value: string) => {
 			const parsed = helpers.localeParseFloat(value);
 			if (Number.isNaN(parsed)) {

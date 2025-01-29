@@ -250,7 +250,9 @@ export const breakTies = <T extends BaseTeam>(
 			for (const t2 of teams) {
 				const firstLevel = headToHead.regularSeason[t2.tid];
 				if (firstLevel) {
-					const tids = Object.keys(firstLevel).map(string => parseInt(string));
+					const tids = Object.keys(firstLevel).map(string =>
+						Number.parseInt(string),
+					);
 					for (const tid2 of tids) {
 						if (tid2 === tid) {
 							set.add(t2.tid);
@@ -490,7 +492,7 @@ export const breakTies = <T extends BaseTeam>(
 
 						// Overwrite any existing tiebreaker. The last one is the relevant one.
 						tiebreaker,
-				  },
+					},
 			...breakTies(
 				teams.filter(t2 => t2 !== t),
 				allTeams,
@@ -575,7 +577,7 @@ export const getDivisionRanks = async <T extends BaseTeam>(
 
 	const groupedByDivision = groupBy(allTeams, (t: T) => t.seasonAttrs.did);
 	for (const [didString, teamsDiv] of Object.entries(groupedByDivision)) {
-		const did = parseInt(didString);
+		const did = Number.parseInt(didString);
 		if (dids.has(did)) {
 			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
 				season,

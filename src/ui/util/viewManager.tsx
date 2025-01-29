@@ -224,7 +224,7 @@ class ViewManager {
 
 		let newLid: number | undefined;
 		if (typeof context.params.lid === "string") {
-			const newLidInt = parseInt(context.params.lid);
+			const newLidInt = Number.parseInt(context.params.lid);
 			if (!Number.isNaN(newLidInt)) {
 				newLid = newLidInt;
 			}

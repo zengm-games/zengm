@@ -117,7 +117,7 @@ const ExpansionDraft = ({
 			};
 
 			if (field.startsWith("colors")) {
-				const ind = parseInt(field.replace("colors", ""));
+				const ind = Number.parseInt(field.replace("colors", ""));
 				if (ind >= 0 && ind <= 2) {
 					t.colors[ind] = value;
 				}

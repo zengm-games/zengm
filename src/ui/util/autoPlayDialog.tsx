@@ -32,7 +32,7 @@ const Confirm = confirmable<
 		text: string;
 	}[] = [];
 	for (const [phase, text] of Object.entries(PHASE_TEXT)) {
-		const phaseInt = parseInt(phase);
+		const phaseInt = Number.parseInt(phase);
 		if (phaseInt < 0) {
 			continue;
 		}

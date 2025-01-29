@@ -68,7 +68,7 @@ const MoveModal = ({
 							<select
 								className="form-select"
 								onChange={event => {
-									setSelectedRegion(parseInt(event.target.value));
+									setSelectedRegion(Number.parseInt(event.target.value));
 								}}
 								value={selectedRegion}
 							>

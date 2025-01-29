@@ -140,7 +140,7 @@ const buildCSS = async (watch: boolean = false) => {
 	}
 };
 
-const bySport = <T extends unknown>(
+const bySport = <T>(
 	object:
 		| {
 				baseball: T;

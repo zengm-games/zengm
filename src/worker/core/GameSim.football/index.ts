@@ -277,7 +277,7 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay.logEvent({
 			type: "shootoutShot",
-			t: t,
+			t,
 			names: [p.name],
 			made,
 			att: this.team[t].stat.sAtt,
@@ -2245,7 +2245,6 @@ class GameSim extends GameSimBase {
 	checkPenalties(
 		playType: PenaltyPlayType,
 		{
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			ballCarrier,
 			incompletePass = false,
 			playYds = 0,

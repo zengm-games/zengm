@@ -22,7 +22,7 @@ const resetCacheWithPlayers = async (info: { [key: string]: number }) => {
 	const players: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 
 	for (const tidString of Object.keys(info)) {
-		const tid = parseInt(tidString);
+		const tid = Number.parseInt(tidString);
 
 		for (let i = 0; i < info[tidString]; i++) {
 			const p = player.generate(tid, 30, 2017, true, DEFAULT_LEVEL);
@@ -36,7 +36,7 @@ const resetCacheWithPlayers = async (info: { [key: string]: number }) => {
 	}
 
 	const numTeams = Object.keys(Object.keys(info))
-		.map(tid => parseInt(tid))
+		.map(tid => Number.parseInt(tid))
 		.filter(tid => tid >= 0).length;
 	const teamsDefault = helpers.getTeamsDefault();
 	const teams = teamsDefault.slice(0, numTeams).map(team.generate);

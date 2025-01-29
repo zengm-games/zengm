@@ -1,4 +1,4 @@
-import "bbgm-polyfills"; // eslint-disable-line
+import "bbgm-polyfills"; // eslint-disable-line import/no-unresolved
 import api from "./api";
 import * as common from "../common";
 import * as core from "./core";

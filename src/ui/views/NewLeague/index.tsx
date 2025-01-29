@@ -641,7 +641,7 @@ const getRebuildInfo = () => {
 		const rebuildSlug = location.hash.replace("#rebuild=", "");
 		const parts = rebuildSlug.split("_");
 		const abbrev = parts[1].toUpperCase();
-		const season = parseInt(parts[2]);
+		const season = Number.parseInt(parts[2]);
 		if (abbrev && !Number.isNaN(season)) {
 			return {
 				abbrev,
@@ -709,11 +709,11 @@ const NewLeague = (props: View<"newLeague">) => {
 				phase = PHASE.PRESEASON;
 				// Can't set tid yet because we haven't loaded teams for this season - do it later with rebuildAbbrevPending
 			} else {
-				season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
+				season = Number.parseInt(safeLocalStorage.getItem("prevSeason") as any);
 				if (Number.isNaN(season)) {
 					season = MAX_SEASON;
 				}
-				phase = parseInt(safeLocalStorage.getItem("prevPhase") as any);
+				phase = Number.parseInt(safeLocalStorage.getItem("prevPhase") as any);
 				if (Number.isNaN(phase)) {
 					phase = PHASE.PRESEASON;
 				}
@@ -891,14 +891,14 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			realtimeUpdate([], `/l/${lid}`);
-		} catch (err) {
+		} catch (error) {
 			dispatch({
 				type: "error",
 			});
-			console.log(err);
+			console.log(error);
 			logEvent({
 				type: "error",
-				text: err.message,
+				text: error.message,
 				persistent: true,
 				saveToDb: false,
 			});
@@ -906,10 +906,10 @@ const NewLeague = (props: View<"newLeague">) => {
 	};
 
 	const handleNewLeagueFile = (
-		err: Error | null,
+		error: Error | null,
 		output?: LeagueFileUploadOutput,
 	) => {
-		if (err) {
+		if (error) {
 			dispatch({
 				type: "clearLeagueFile",
 				defaultSettings: props.defaultSettings,
@@ -1271,7 +1271,7 @@ const NewLeague = (props: View<"newLeague">) => {
 													"getLeagueInfo",
 													{
 														type: "real",
-														season: parseInt(value),
+														season: Number.parseInt(value),
 														phase: value2,
 														randomDebuts:
 															state.settings.randomization === "debuts" ||
@@ -1297,7 +1297,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												return leagueInfo;
 											}}
 											onLoading={value => {
-												const season = parseInt(value);
+												const season = Number.parseInt(value);
 												dispatch({ type: "setSeason", season });
 											}}
 											onDone={handleNewLeagueInfo}
@@ -1388,7 +1388,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										onChange={event => {
 											dispatch({
 												type: "setTid",
-												tid: parseInt(event.target.value),
+												tid: Number.parseInt(event.target.value),
 											});
 										}}
 									>

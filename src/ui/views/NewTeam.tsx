@@ -118,7 +118,7 @@ const NewTeam = ({
 	}
 
 	const handleTidChange = (event: ChangeEvent<HTMLSelectElement>) => {
-		setTid(parseInt(event.currentTarget.value));
+		setTid(Number.parseInt(event.currentTarget.value));
 	};
 
 	const handleNewTeam = async (event: FormEvent) => {

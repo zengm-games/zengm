@@ -826,7 +826,7 @@ class GameSim extends GameSimBase {
 
 		this.recordStat(this.o, shooter, "tsa");
 		this.playByPlay.logEvent({
-			type: type,
+			type,
 			clock: this.clock,
 			t: this.o,
 			names: [shooter.name],

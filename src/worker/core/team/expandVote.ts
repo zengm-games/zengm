@@ -33,7 +33,7 @@ const getBestDid = (
 	const minDivSize = Math.min(...Object.values(divCounts));
 	const candidateDids = Object.keys(divCounts)
 		.filter(did => divCounts[did] === minDivSize)
-		.map(did => parseInt(did));
+		.map(did => Number.parseInt(did));
 	if (candidateDids.length === 0) {
 		throw new Error("Should never happen");
 	}

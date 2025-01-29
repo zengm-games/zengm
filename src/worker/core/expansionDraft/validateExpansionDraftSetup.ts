@@ -52,13 +52,13 @@ const validateExpansionDraftSetup = async () => {
 		if (t.stadiumCapacity === undefined) {
 			stadiumCapacity = g.get("defaultStadiumCapacity");
 		} else {
-			stadiumCapacity = parseInt(t.stadiumCapacity);
+			stadiumCapacity = Number.parseInt(t.stadiumCapacity);
 			if (Number.isNaN(stadiumCapacity)) {
 				errors.push(`Invalid stadium capacity for ${t.abbrev}`);
 			}
 		}
 
-		const did = parseInt(t.did);
+		const did = Number.parseInt(t.did);
 		let foundDiv = false;
 		for (const div of divs) {
 			if (did === div.did) {
@@ -105,7 +105,7 @@ const validateExpansionDraftSetup = async () => {
 		errors.push("No expansion teams");
 	}
 
-	let numProtectedPlayers = parseInt(numProtectedPlayersRaw);
+	let numProtectedPlayers = Number.parseInt(numProtectedPlayersRaw);
 	if (Number.isNaN(numProtectedPlayers)) {
 		errors.push("Invalid number of protected players");
 	}
@@ -113,7 +113,7 @@ const validateExpansionDraftSetup = async () => {
 		numProtectedPlayers = 0;
 	}
 
-	const numPerTeam = parseInt(numPerTeamRaw);
+	const numPerTeam = Number.parseInt(numPerTeamRaw);
 	if (Number.isNaN(numPerTeam)) {
 		errors.push("Invalid number of draftable players per existing team");
 	} else if (numPerTeam < numPerTeamMinimum) {

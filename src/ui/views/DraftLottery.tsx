@@ -148,7 +148,7 @@ const Row = ({
 		} else if (NUM_PICKS - 1 - j <= indRevealed) {
 			// Has this round been revealed?
 			// Is this pick revealed?
-			const ind = toReveal.findIndex(ind2 => ind2 === i);
+			const ind = toReveal.indexOf(i);
 
 			if (ind === NUM_PICKS - 1 - j) {
 				highlighted = true;
@@ -253,7 +253,7 @@ const Rigged = ({
 					<select
 						className="form-select form-select-sm px-1 god-mode"
 						onChange={async event => {
-							const value = parseInt(event.target.value);
+							const value = Number.parseInt(event.target.value);
 
 							// Unset any other selection of this team
 							if (value !== -1) {

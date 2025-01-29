@@ -52,9 +52,9 @@ const Select = ({
 			el.className = "dropdown-select";
 			const el2 = document.createElement("option");
 			el2.innerHTML = sanitize(getResponsiveValue2(currentValue));
-			el.appendChild(el2);
+			el.append(el2);
 
-			document.body.appendChild(el);
+			document.body.append(el);
 			setWidth(el.offsetWidth);
 
 			document.body.removeChild(el);

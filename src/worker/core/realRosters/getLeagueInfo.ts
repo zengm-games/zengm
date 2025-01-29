@@ -103,7 +103,7 @@ const getLeagueInfo = async (options: GetLeagueOptions) => {
 
 	if (options.type === "legends") {
 		const lastSeason =
-			options.decade === "all" ? 2020 : parseInt(options.decade) + 9;
+			options.decade === "all" ? 2020 : Number.parseInt(options.decade) + 9;
 
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,

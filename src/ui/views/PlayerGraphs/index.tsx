@@ -192,7 +192,7 @@ const PickStat = ({
 						[`season${xyCapital}`]:
 							event.target.value === "career"
 								? "career"
-								: parseInt(event.target.value),
+								: Number.parseInt(event.target.value),
 					})
 				}
 				style={{
@@ -336,7 +336,7 @@ const PlayerGraphs = ({
 		updateUrl({});
 	}
 
-	let minGamesInteger = parseInt(minGames);
+	let minGamesInteger = Number.parseInt(minGames);
 	let minGamesError = false;
 	if (Number.isNaN(minGamesInteger)) {
 		minGamesInteger = 0;

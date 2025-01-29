@@ -117,8 +117,8 @@ const handleCancel = async (e: MouseEvent) => {
 			realtimeUpdate(["account"], "/account", {
 				goldResult: data,
 			});
-		} catch (err) {
-			console.log(err);
+		} catch (error) {
+			console.log(error);
 			realtimeUpdate(["account"], "/account", {
 				goldResult: {
 					success: false,

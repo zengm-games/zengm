@@ -170,9 +170,9 @@ const EditAllStars = ({
 }) => {
 	const [sections, setSections] = useState(initialSections);
 
-	const selectedPIDs = sections
-		.map(section => section.players.map(p => p?.pid))
-		.flat();
+	const selectedPIDs = sections.flatMap(section =>
+		section.players.map(p => p?.pid),
+	);
 
 	const allPossibleHealthy: typeof allPossiblePlayers = [];
 	const allPossibleInjured: typeof allPossiblePlayers = [];

@@ -72,7 +72,7 @@ const getOverrides = () => {
 		const rows = csvParse(csv);
 		const object = {};
 		for (const row of rows) {
-			object[row.Name] = parseInt(row.Frequency);
+			object[row.Name] = Number.parseInt(row.Frequency);
 			if (Number.isNaN(object[row.Name])) {
 				console.log(filename, row);
 				throw new Error("NaN found in row");

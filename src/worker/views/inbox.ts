@@ -6,7 +6,7 @@ const updateInbox = async () => {
 	let anyUnread = false;
 
 	for (const message of messages) {
-		message.text = message.text.replace(/<p>/g, "").replace(/<\/p>/g, " "); // Needs to be regex otherwise it's cumbersome to do global replace
+		message.text = message.text.replaceAll("<p>", "").replaceAll("</p>", " "); // Needs to be regex otherwise it's cumbersome to do global replace
 
 		if (!message.read) {
 			anyUnread = true;

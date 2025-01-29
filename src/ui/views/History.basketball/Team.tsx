@@ -63,7 +63,7 @@ const Teams = ({
 		content = <p>None</p>;
 	} else {
 		content = team
-			.filter(p => p)
+			.filter(Boolean)
 			.map(p => <Player key={p.pid} p={p} season={season} userTid={userTid} />);
 	}
 

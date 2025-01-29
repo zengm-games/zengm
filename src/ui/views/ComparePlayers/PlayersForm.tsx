@@ -138,7 +138,7 @@ const PlayersForm = ({
 									const newSeason =
 										event.target.value === "career"
 											? ("career" as const)
-											: parseInt(event.target.value);
+											: Number.parseInt(event.target.value);
 
 									setCurrentPlayers(players => {
 										const newPlayers = [...players];

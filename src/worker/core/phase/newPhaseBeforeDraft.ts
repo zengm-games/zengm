@@ -478,7 +478,7 @@ const newPhaseBeforeDraft = async (
 		for (const [tidString, retiredPlayers] of Object.entries(
 			retiredPlayersByTeam,
 		)) {
-			const tid = parseInt(tidString);
+			const tid = Number.parseInt(tidString);
 			const text = retiredPlayers
 				.map(
 					p =>

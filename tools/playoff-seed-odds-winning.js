@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 let lid;
 async function simSeason() {
 	await bbgm.toUI("realtimeUpdate", [[], "/"]);

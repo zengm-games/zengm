@@ -3,7 +3,7 @@ import { babel } from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
-import * as rollup from "rollup";
+import { rollup } from "rollup";
 import workboxBuild from "workbox-build";
 import { replace as replace2 } from "./buildFuncs.ts";
 
@@ -51,7 +51,7 @@ const injectManifest = async () => {
 };
 
 const bundle = async () => {
-	const bundle = await rollup.rollup({
+	const bundle = await rollup({
 		input: "build/sw.js",
 		plugins: [
 			replace({

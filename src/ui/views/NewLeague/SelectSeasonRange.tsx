@@ -28,7 +28,7 @@ export const SelectSeasonRange = ({
 						disabled={disabled}
 						value={seasonRange[i]}
 						onChange={event => {
-							const newSeason = parseInt(event.target.value);
+							const newSeason = Number.parseInt(event.target.value);
 
 							setters[i](newSeason);
 

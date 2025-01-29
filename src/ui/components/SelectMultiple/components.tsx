@@ -9,7 +9,6 @@ export const CustomOption = <T extends unknown>({
 	children,
 	...props
 }: OptionProps<T>) => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
 	const newProps = { ...props, innerProps: rest };
 	return <components.Option {...newProps}>{children}</components.Option>;

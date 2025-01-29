@@ -55,7 +55,7 @@ const augmentPartialPlayer = async (
 	) {
 		const parts = p.name.split(" ");
 		p.firstName = parts[0];
-		p.lastName = parts.slice(1, parts.length).join(" ");
+		p.lastName = parts.slice(1).join(" ");
 		delete p.name;
 	}
 

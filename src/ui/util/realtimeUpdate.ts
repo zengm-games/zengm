@@ -18,7 +18,7 @@ const realtimeUpdate = async (
 	replace?: boolean,
 ) => {
 	const urlTemp = url ?? window.location.pathname + window.location.search;
-	const inLeague = urlTemp.substr(0, 3) === "/l/";
+	const inLeague = urlTemp.slice(0, 3) === "/l/";
 	const refresh = urlTemp === window.location.pathname && inLeague;
 
 	await viewManager.fromRealtimeUpdate({

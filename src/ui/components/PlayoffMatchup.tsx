@@ -120,7 +120,7 @@ const Team = ({
 					<select
 						className="form-select god-mode"
 						onChange={event => {
-							const tid = parseInt(event.target.value);
+							const tid = Number.parseInt(event.target.value);
 							const newTeam = teams.find(t => t.tid === tid);
 							if (newTeam) {
 								editing.onChange(teamEdited, newTeam);

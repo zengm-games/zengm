@@ -11,7 +11,7 @@ const PerPage = ({
 				<select
 					className="form-select form-select-sm"
 					onChange={event => {
-						const perPage = parseInt(event.currentTarget.value);
+						const perPage = Number.parseInt(event.currentTarget.value);
 						if (!Number.isNaN(perPage)) {
 							onChange(perPage);
 						}

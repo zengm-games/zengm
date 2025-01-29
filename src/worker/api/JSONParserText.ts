@@ -184,7 +184,7 @@ class JSONParserText {
 				} else if (this.tokenizerState === "STRING5") {
 					this.tokenizerState = "STRING6";
 				} else if (this.tokenizerState === "STRING6") {
-					const intVal = parseInt(this.unicode!, 16);
+					const intVal = Number.parseInt(this.unicode!, 16);
 					this.unicode = undefined;
 					if (
 						this.highSurrogate !== undefined &&
@@ -425,7 +425,7 @@ class JSONParserText {
 	numberReviver(text: string, i: number) {
 		const number = Number(text);
 
-		if (isNaN(number)) {
+		if (Number.isNaN(number)) {
 			return this.charError(text, i);
 		}
 

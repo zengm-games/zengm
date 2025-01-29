@@ -89,13 +89,13 @@ const getSeconds = (time: string | undefined) => {
 		return 0;
 	}
 
-	const parts = time.split(":").map(x => parseInt(x));
+	const parts = time.split(":").map(x => Number.parseInt(x));
 	if (parts.length === 0) {
 		return 0;
 	}
 	if (parts.length === 1) {
 		// Seconds only being displayed
-		return parseFloat(time);
+		return Number.parseFloat(time);
 	}
 	const [min, sec] = parts;
 	return min * 60 + sec;
@@ -266,7 +266,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const [speed, setSpeed] = useLocalStorageState("live-game-speed", {
 		defaultValue: String(DEFAULT_SPEED),
 	});
-	const speedRef = useRef(parseInt(speed));
+	const speedRef = useRef(Number.parseInt(speed));
 	const [playIndex, setPlayIndex] = useState(-1);
 	const [started, setStarted] = useState(false);
 	const [confetti, setConfetti] = useState<{
@@ -507,7 +507,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = event.target.value;
 		setSpeed(speed);
-		speedRef.current = parseInt(speed);
+		speedRef.current = Number.parseInt(speed);
 	};
 
 	const handlePause = useCallback(() => {

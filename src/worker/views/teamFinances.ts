@@ -30,7 +30,7 @@ const updateTeamFinances = async (
 		if (inputs.show === "all") {
 			showInt = g.get("season") - g.get("startingSeason") + 1;
 		} else {
-			showInt = parseInt(inputs.show);
+			showInt = Number.parseInt(inputs.show);
 		}
 
 		let season = g.get("season");

@@ -90,7 +90,7 @@ const addSeasonInfoToTeams = async <
 			delete (p2 as any).name;
 			const parts = p.name.split(" ");
 			p2.firstName = parts[0];
-			p2.lastName = parts.slice(1, parts.length).join(" ");
+			p2.lastName = parts.slice(1).join(" ");
 
 			// Handle any missing stats
 			if (!p2.stats) {

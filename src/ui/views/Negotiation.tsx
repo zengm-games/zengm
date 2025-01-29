@@ -47,7 +47,7 @@ const SignButton = ({
 			disabled={disabledReason !== undefined}
 			onClick={async () => {
 				const errorMsg = await toWorker("main", "acceptContractNegotiation", {
-					pid: pid,
+					pid,
 					amount: Math.round(amount * 1000),
 					exp,
 				});

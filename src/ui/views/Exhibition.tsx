@@ -297,7 +297,7 @@ const SelectTeam = ({
 						disabled={disabled || !league}
 						onChange={async event => {
 							const value = event.target.value;
-							const lid = value === "real" ? value : parseInt(value);
+							const lid = value === "real" ? value : Number.parseInt(value);
 							const league = await loadLeague(lid);
 							setSeason(league.seasonEnd);
 							await loadTeams(league, league.seasonEnd);
@@ -318,7 +318,7 @@ const SelectTeam = ({
 						className="form-select"
 						value={season}
 						onChange={async event => {
-							const value = parseInt(event.target.value);
+							const value = Number.parseInt(event.target.value);
 							setSeason(value);
 							await loadTeams(league!, value);
 						}}
@@ -339,7 +339,7 @@ const SelectTeam = ({
 						className="form-select"
 						value={teams.length === 0 ? "loading" : tid}
 						onChange={event => {
-							const newTid = parseInt(event.target.value);
+							const newTid = Number.parseInt(event.target.value);
 							setTid(newTid);
 							const newTeam = teams.find(t => t.tid === newTid);
 							onChange(league!, newTeam as any, gameAttributes);

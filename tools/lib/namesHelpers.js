@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/53593328
 const JSONstringifyOrder = (obj, space) => {
-	var allKeys = [];
+	const allKeys = [];
 	JSON.stringify(obj, (key, value) => {
 		allKeys.push(key);
 		return value;

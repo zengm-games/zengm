@@ -192,36 +192,34 @@ const Category = ({
 						searchValue: achievements[0].name,
 						classNames: rowClassNames,
 					},
-					...achievements
-						.map(achievement => {
-							return [
-								{
-									value: achievement.normal,
-									classNames: {
-										...achievementClassNames(achievement),
-										"text-center": true,
-										"fw-bold": highlight,
-									},
+					...achievements.flatMap(achievement => {
+						return [
+							{
+								value: achievement.normal,
+								classNames: {
+									...achievementClassNames(achievement),
+									"text-center": true,
+									"fw-bold": highlight,
 								},
-								{
-									value: achievement.hard,
-									classNames: {
-										...achievementClassNames(achievement, "hard"),
-										"text-center": true,
-										"fw-bold": highlight,
-									},
+							},
+							{
+								value: achievement.hard,
+								classNames: {
+									...achievementClassNames(achievement, "hard"),
+									"text-center": true,
+									"fw-bold": highlight,
 								},
-								{
-									value: achievement.insane,
-									classNames: {
-										...achievementClassNames(achievement, "insane"),
-										"text-center": true,
-										"fw-bold": highlight,
-									},
+							},
+							{
+								value: achievement.insane,
+								classNames: {
+									...achievementClassNames(achievement, "insane"),
+									"text-center": true,
+									"fw-bold": highlight,
 								},
-							];
-						})
-						.flat(),
+							},
+						];
+					}),
 				],
 			};
 		});

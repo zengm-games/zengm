@@ -998,7 +998,9 @@ class Cache {
 
 		// Need to have the correct type here for IndexedDB
 		const idParsed =
-			this.storeInfos[store].pkType === "number" ? parseInt(obj[pk]) : obj[pk];
+			this.storeInfos[store].pkType === "number"
+				? Number.parseInt(obj[pk])
+				: obj[pk];
 
 		this._dirtyRecords[store].add(idParsed);
 
@@ -1027,7 +1029,7 @@ class Cache {
 		// Need to have the correct type here for IndexedDB
 		const idParsed =
 			this.storeInfos[store].pkType === "number" && typeof id === "string"
-				? parseInt(id)
+				? Number.parseInt(id)
 				: id;
 
 		this._deletes[store].add(idParsed);
@@ -1045,7 +1047,7 @@ class Cache {
 
 			// Need to have the correct type here for IndexedDB
 			const idParsed =
-				this.storeInfos[store].pkType === "number" ? parseInt(id) : id;
+				this.storeInfos[store].pkType === "number" ? Number.parseInt(id) : id;
 
 			this._deletes[store].add(idParsed);
 		}

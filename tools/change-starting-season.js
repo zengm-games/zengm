@@ -1,4 +1,4 @@
-import { readFile } from "fs/promises";
+import { readFile } from "node:fs/promises";
 
 if (process.argv.length < 4) {
 	console.error(
@@ -7,7 +7,7 @@ if (process.argv.length < 4) {
 	process.exit(1);
 }
 
-const targetSeason = parseInt(process.argv[2]);
+const targetSeason = Number.parseInt(process.argv[2]);
 
 if (Number.isNaN(targetSeason)) {
 	console.error(

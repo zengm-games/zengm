@@ -37,11 +37,11 @@ const copyValidValues = (
 ) => {
 	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
 	// @ts-expect-error
-	const activated = source.tid >= 0 && parseInt(target.tid) < 0;
+	const activated = source.tid >= 0 && Number.parseInt(target.tid) < 0;
 
 	for (const attr of ["hgt", "tid", "weight"] as const) {
 		// @ts-expect-error
-		const val = parseInt(source[attr]);
+		const val = Number.parseInt(source[attr]);
 		if (!Number.isNaN(val)) {
 			target[attr] = val;
 		}
@@ -89,7 +89,7 @@ const copyValidValues = (
 
 	{
 		// @ts-expect-error
-		const age = parseInt(source.age);
+		const age = Number.parseInt(source.age);
 		if (!Number.isNaN(age)) {
 			const bornYear = season - age;
 			if (bornYear !== target.born.year) {
@@ -128,7 +128,7 @@ const copyValidValues = (
 
 	{
 		// @ts-expect-error
-		const diedYear = parseInt(source.diedYear);
+		const diedYear = Number.parseInt(source.diedYear);
 		if (!Number.isNaN(diedYear)) {
 			target.diedYear = diedYear;
 		} else {
@@ -161,7 +161,7 @@ const copyValidValues = (
 
 	{
 		// @ts-expect-error
-		let exp = parseInt(source.contract.exp);
+		let exp = Number.parseInt(source.contract.exp);
 		if (!Number.isNaN(exp)) {
 			// No contracts expiring in the past
 			if (exp < season) {
@@ -214,7 +214,7 @@ const copyValidValues = (
 
 		const draftInts = ["year", "round", "pick", "tid"] as const;
 		for (const key of draftInts) {
-			const int = parseInt(source.draft[key] as any);
+			const int = Number.parseInt(source.draft[key] as any);
 			if (!Number.isNaN(int)) {
 				target.draft[key] = int;
 			}
@@ -235,7 +235,7 @@ const copyValidValues = (
 
 	{
 		// @ts-expect-error
-		let gamesRemaining = parseInt(source.injury.gamesRemaining);
+		let gamesRemaining = Number.parseInt(source.injury.gamesRemaining);
 		if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
 			gamesRemaining = 0;
 		}
@@ -248,7 +248,11 @@ const copyValidValues = (
 		const r = source.ratings.length - 1;
 		for (const rating of Object.keys(source.ratings[r])) {
 			if (RATINGS.includes(rating)) {
-				const val = helpers.bound(parseInt(source.ratings[r][rating]), 0, 100);
+				const val = helpers.bound(
+					Number.parseInt(source.ratings[r][rating]),
+					0,
+					100,
+				);
 				if (!Number.isNaN(val)) {
 					if (target.ratings[r][rating] !== val) {
 						target.ratings[r][rating] = val;
@@ -267,7 +271,7 @@ const copyValidValues = (
 	target.relatives = source.relatives
 		.map(rel => {
 			// @ts-expect-error
-			rel.pid = parseInt(rel.pid);
+			rel.pid = Number.parseInt(rel.pid);
 			return rel;
 		})
 		.filter(rel => !Number.isNaN(rel.pid));
@@ -636,7 +640,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					continue;
 				}
 				newRatings[key] = helpers.bound(
-					parseInt(oldRatings[key]) + amount,
+					Number.parseInt(oldRatings[key]) + amount,
 					0,
 					100,
 				);

@@ -113,7 +113,7 @@ const CustomMoodItemsForm = ({
 									if (event.target.value === "all") {
 										tid = undefined;
 									} else {
-										tid = parseInt(event.target.value);
+										tid = Number.parseInt(event.target.value);
 									}
 									handleCustomMoodItemsChange(i, "tid", tid);
 								}}

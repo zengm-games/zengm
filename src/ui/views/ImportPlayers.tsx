@@ -109,9 +109,9 @@ const ImportPlayers = ({
 			};
 
 			if (name === "age") {
-				player.season = parseInt(event.target.value);
+				player.season = Number.parseInt(event.target.value);
 			} else if (name === "tid") {
-				player.tid = parseInt(event.target.value);
+				player.tid = Number.parseInt(event.target.value);
 			} else {
 				player[name] = event.target.value;
 			}
@@ -290,7 +290,7 @@ const ImportPlayers = ({
 								value={contractExp}
 							/>
 						),
-						sortValue: parseInt(contractExp),
+						sortValue: Number.parseInt(contractExp),
 					}
 				) : (
 					<div style={{ minWidth: 60 }} />

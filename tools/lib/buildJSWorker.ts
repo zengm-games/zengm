@@ -1,4 +1,4 @@
-import * as rollup from "rollup";
+import { rollup, type ModuleFormat } from "rollup";
 import rollupConfig from "./rollupConfig.ts";
 import { parentPort, workerData } from "node:worker_threads";
 
@@ -20,7 +20,7 @@ const buildFile = async (
 	legacy: boolean,
 	rev: string,
 ) => {
-	const bundle = await rollup.rollup({
+	const bundle = await rollup({
 		...rollupConfig("production", {
 			blacklistOptions: BLACKLIST[name],
 			statsFilename: `stats-${name}${legacy ? "-legacy" : ""}.html`,
@@ -32,7 +32,7 @@ const buildFile = async (
 		preserveEntrySignatures: false,
 	});
 
-	let format: rollup.ModuleFormat;
+	let format: ModuleFormat;
 	if (legacy) {
 		// ES modules don't work in workers in all the browsers currently supported
 		// Chrome 80, Firefox 114, Safari 15.5/16.4
@@ -54,8 +54,6 @@ const buildFile = async (
 	parentPort!.postMessage("done");
 };
 
-(async () => {
-	const { legacy, name, rev } = workerData;
+const { legacy, name, rev } = workerData;
 
-	await buildFile(name, legacy, rev);
-})();
+await buildFile(name, legacy, rev);

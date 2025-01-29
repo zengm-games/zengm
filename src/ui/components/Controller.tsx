@@ -63,7 +63,7 @@ const Controller = () => {
 			document.body.style.paddingTop = "0";
 			const css = document.createElement("style");
 			css.innerHTML = ".new_window { display: none }";
-			document.body.appendChild(css);
+			document.body.append(css);
 		}
 	}, [popup]);
 

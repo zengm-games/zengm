@@ -70,10 +70,7 @@ export const range = (start: number, stop?: number) => {
 const maxMinByFactory = (type: "max" | "min") => {
 	const max = type === "max";
 
-	return <T extends unknown>(
-		items: T[],
-		iteratee: keyof T | ((item: T) => number),
-	) => {
+	return <T>(items: T[], iteratee: keyof T | ((item: T) => number)) => {
 		let bestItem = undefined;
 		let bestScore = max ? -Infinity : Infinity;
 
@@ -107,7 +104,7 @@ export const omit = <T extends Record<string, unknown>, U extends keyof T>(
 	return output as Omit<T, U>;
 };
 
-export const countBy = <T extends unknown>(
+export const countBy = <T>(
 	items: T[],
 	iteratee: string | ((item: T) => number | string),
 ) => {
@@ -130,7 +127,7 @@ export const countBy = <T extends unknown>(
 type OrderByKey<Item> = keyof Item | ((item: Item) => number | string);
 type AscDesc = "asc" | "desc";
 
-const createSortFunction = <Item extends unknown, Key extends OrderByKey<Item>>(
+const createSortFunction = <Item, Key extends OrderByKey<Item>>(
 	keys: Key | Key[],
 	orders?: AscDesc | AscDesc[],
 ) => {
@@ -159,7 +156,7 @@ const createSortFunction = <Item extends unknown, Key extends OrderByKey<Item>>(
 	};
 };
 
-export const orderBy = <Item extends unknown, Key extends OrderByKey<Item>>(
+export const orderBy = <Item, Key extends OrderByKey<Item>>(
 	items: Item[],
 	keys: Key | Key[],
 	orders?: AscDesc | AscDesc[],

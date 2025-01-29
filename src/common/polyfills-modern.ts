@@ -19,7 +19,7 @@ type SetReadOperations<T> = {
 };
 if (!Set.prototype.difference) {
 	Object.defineProperty(Set.prototype, "difference", {
-		value: function <T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
 			const result = new Set<T>(this);
 			if (this.size <= other.size) {
 				for (const elem of this) {
@@ -43,7 +43,7 @@ if (!Set.prototype.difference) {
 }
 if (!Set.prototype.isSubsetOf) {
 	Object.defineProperty(Set.prototype, "isSubsetOf", {
-		value: function <T>(this: Set<T>, other: SetReadOperations<T>): boolean {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): boolean {
 			for (const elem of this) {
 				if (!other.has(elem)) {
 					return false;
@@ -58,7 +58,7 @@ if (!Set.prototype.isSubsetOf) {
 }
 if (!Set.prototype.union) {
 	Object.defineProperty(Set.prototype, "union", {
-		value: function <T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
 			const result = new Set<T>(this);
 			for (const elem of other.keys()) {
 				result.add(elem);

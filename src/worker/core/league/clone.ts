@@ -59,7 +59,8 @@ export const getCloneName = (nameOld: string, namesOld: string[]) => {
 	}
 
 	const numberString = matches?.groups?.number;
-	let number = numberString !== undefined ? parseInt(numberString) + 1 : 1;
+	let number =
+		numberString !== undefined ? Number.parseInt(numberString) + 1 : 1;
 
 	while (true) {
 		const name = `${root} (clone${number > 1 ? ` ${number}` : ""})`;

@@ -18,7 +18,7 @@ const UNARY_MINUS = "#";
 
 const regexEncode = (string: string) => {
 	// eslint-disable-next-line no-useless-escape
-	return string.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+	return string.replaceAll(/[$()*+./?[\\\]^{|}\-]/g, String.raw`\$&`);
 };
 
 const regexSort = (a: string, b: string) => {
@@ -79,25 +79,22 @@ const operatorsString = Object.keys(operators)
 
 const parseUnaryMinus = (string: string) => {
 	return string
-		.replace(/\s/g, "")
-		.replace(
-			new RegExp(regexEncode(BINARY_MINUS), "g"),
-			(match, offset, string) => {
-				if (offset === 0) {
-					return UNARY_MINUS;
-				}
-				const prevChar = string[offset - 1];
-				return !!operators[prevChar] || prevChar === "("
-					? UNARY_MINUS
-					: BINARY_MINUS;
-			},
-		);
+		.replaceAll(/\s/g, "")
+		.replaceAll(BINARY_MINUS, (match, offset, string) => {
+			if (offset === 0) {
+				return UNARY_MINUS;
+			}
+			const prevChar = string[offset - 1];
+			return !!operators[prevChar] || prevChar === "("
+				? UNARY_MINUS
+				: BINARY_MINUS;
+		});
 };
 
 const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
-			"\\d+(?:[\\.]\\d+)?(?:[eE]\\d+)?|[()]" +
+			String.raw`\d+(?:[\.]\d+)?(?:[eE]\d+)?|[()]` +
 				`|${operatorsString}|[a-zA-Z\\d]+`,
 			"g",
 		),
@@ -121,7 +118,7 @@ const shuntingYard = (string: string) => {
 			} else if (operators[token]) {
 				const operator = operators[token];
 				while (
-					typeof operators[stack.at(-1)!] !== "undefined" &&
+					operators[stack.at(-1)!] !== undefined &&
 					((operator.associativity === "l" &&
 						operator.precedence <= operators[stack.at(-1)!].precedence) ||
 						(operator.associativity === "r" &&
@@ -133,7 +130,7 @@ const shuntingYard = (string: string) => {
 			} else if (token === "(") {
 				stack.push(token);
 			} else if (token === ")") {
-				while ((aux = stack.pop()) !== "(" && typeof aux !== "undefined") {
+				while ((aux = stack.pop()) !== "(" && aux !== undefined) {
 					output.push(aux);
 				}
 				if (aux !== "(") {
@@ -144,7 +141,7 @@ const shuntingYard = (string: string) => {
 			}
 		}
 
-		while (typeof (aux = stack.pop()) !== "undefined") {
+		while ((aux = stack.pop()) !== undefined) {
 			if ("(" === aux || ")" === aux) {
 				throw new Error("Mismatched parentheses");
 			}

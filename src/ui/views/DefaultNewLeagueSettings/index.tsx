@@ -50,27 +50,25 @@ const DefaultNewLeagueSettings = ({
 		const keys = helpers.keys(newOverrides);
 
 		// Handle adding parent of hidden key
-		return keys
-			.map(key => {
-				const setting = settingsByKey[key]?.[0];
+		return keys.flatMap(key => {
+			const setting = settingsByKey[key]?.[0];
 
-				if (!setting) {
-					// Remove any non-Key elements
-					return [];
+			if (!setting) {
+				// Remove any non-Key elements
+				return [];
+			}
+
+			if (setting.hidden) {
+				const partner = settings.find(setting =>
+					setting?.partners?.includes(key as Key),
+				);
+				if (partner) {
+					return [key, partner.key];
 				}
+			}
 
-				if (setting.hidden) {
-					const partner = settings.find(setting =>
-						setting?.partners?.includes(key as Key),
-					);
-					if (partner) {
-						return [key, partner.key];
-					}
-				}
-
-				return key;
-			})
-			.flat() as Key[];
+			return key;
+		}) as Key[];
 	};
 
 	const [settingsShown, setSettingsShown] = useState<Key[]>(
@@ -126,11 +124,9 @@ const DefaultNewLeagueSettings = ({
 		};
 
 		const allowedKeys = new Set<string>(
-			settings
-				.map(setting =>
-					setting.partners ? [setting.key, ...setting.partners] : setting.key,
-				)
-				.flat(),
+			settings.flatMap(setting =>
+				setting.partners ? [setting.key, ...setting.partners] : setting.key,
+			),
 		);
 		allowedKeys.add("godMode");
 		allowedKeys.add("godModeInPast");

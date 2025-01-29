@@ -71,9 +71,9 @@ const checkAccount = async (
 			username: data.username,
 			mailingList: !!data.mailing_list,
 		};
-	} catch (err) {
+	} catch (error) {
 		// Don't freak out if an AJAX request fails or whatever
-		console.log(err);
+		console.log(error);
 		adding = false;
 		return {
 			email: "",

@@ -2,11 +2,7 @@ import type { CSSProperties } from "react";
 import { helpers } from "../util";
 
 const quartile = (data: number[], quart: 1 | 2 | 3) => {
-	if (quart === 1 || quart === 2 || quart === 3) {
-		return data[Math.round((data.length * quart) / 4)];
-	}
-
-	return NaN;
+	return data[Math.round((data.length * quart) / 4)];
 };
 
 const calculateValues = (data: number[]) => {

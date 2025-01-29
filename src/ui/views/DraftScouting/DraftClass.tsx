@@ -127,8 +127,8 @@ const DraftClass = ({
 						onLoading={() => {
 							setStatus("loading");
 						}}
-						onDone={async (err, output) => {
-							if (err || !output) {
+						onDone={async (error, output) => {
+							if (error || !output) {
 								return;
 							}
 
